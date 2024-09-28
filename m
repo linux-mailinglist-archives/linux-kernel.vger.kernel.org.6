@@ -1,224 +1,454 @@
-Return-Path: <linux-kernel+bounces-342371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D80E988E11
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE26F988E20
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F35B1F218E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AE8A2827E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96E019DF6A;
-	Sat, 28 Sep 2024 07:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567CF19DF81;
+	Sat, 28 Sep 2024 07:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b="H6MJKyMm"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2103.outbound.protection.outlook.com [40.107.223.103])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5ur83Kj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E2AC156;
-	Sat, 28 Sep 2024 07:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.103
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727507266; cv=fail; b=FFnjITRaWMe2W4tw7UZQUXY3HQuEX9ew/391H9Qx0PAzHMjvkjYtgZ78UXggshxDL8SKPO5uB5ILl7auqBcLxgw5dBPS6fTtKimRixg4cjIBCr/o2VsGaD8CECpNDId7FCeTsSoquSek2gN8uAQY2hX9Bas98++HYRPBIWqJ99Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727507266; c=relaxed/simple;
-	bh=VTIubiSwVSLLdtA/FkbWXvYddOMG/y+FeN8Pxlwnksk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=CNvNgaUFpMFbjFo2MDAsNyBubIqjPhHzpkpYOZMjeVQywrU9l1llHoERKNEkowtviqsjKGctWTlC2QxOLMe0R13+CfC6Mac49oZ1//0l90pEWiLbUrixLQyiUk9pfciUQ+UO44waVxjJSTqaBZViejrfx+ZgzgKj8W6RBGC3KCU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us; spf=pass smtp.mailfrom=kneron.us; dkim=pass (1024-bit key) header.d=kneron.us header.i=@kneron.us header.b=H6MJKyMm; arc=fail smtp.client-ip=40.107.223.103
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kneron.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kneron.us
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YnUjsBuzmuKLzdnPmh8sYyvesAgmG+bYib+Q7mJGr3dF/a1mVVW6vM3idgPs5ywNgzuRGOCfI/B0cmv+Ew/hox6s678PyxV2Zgr3J1Bo9kt+EsWBp5K4c30AiE2bPy+sOwKjz/GfQuK6w0Ae3PdA91fQEz71E8vYn/sB8lb9d5YNggS/9FsBXeXOSjA7Mz0e84SkFC3WD+i/IdVVHwwh3i2qaWVKlBKK/AVX5UUqeGZJOZtYdYjG8mh/l6T2B2ZSJPFEHgoN/GP1DT+vCrTJsVCn2bdD3ykfEAEhIJYeUJRHXCiwoo5lTLK8Yf4+yHxFej08N9JvM2DQaEG5BvFdLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VTIubiSwVSLLdtA/FkbWXvYddOMG/y+FeN8Pxlwnksk=;
- b=xLS9iVobP4Sk7YsEhsK76bCBJT21kt8hvNz+H8vyWOTWNV4+OQYnnFvZoijsm75rJan4+LZalonI72oCGgL5M1UPqW9qcHxl++4MfkxIIjE27uU5FPwm9huznUKkqn18836kXJe0bsQF1jzbkV/UDcIJcJFGupEnkVl56B9hDd8pD6lFZJakMqANHtjHYnORiCI1audBx/K8U+HDKFYeCovVFXTpeYHNm5sYQZk2QLnPVLG00c7NY8qWPeOIIhqWb3/qFFb9Lh8ZBipQnllwgiOe5Q5FaMT3ZkPnHUAIVSBq2aF7hQK/10zngVDHzCOVRpcdO3nK6uH1cuDudKJ9ZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kneron.us; dmarc=pass action=none header.from=kneron.us;
- dkim=pass header.d=kneron.us; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kneron.us;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VTIubiSwVSLLdtA/FkbWXvYddOMG/y+FeN8Pxlwnksk=;
- b=H6MJKyMmzXUHuzISBM0mloRcZK+Fw9mnQKgfQJ8hGRa+JtbseM8x3YNBAJX7lnnX6RNwRFWExRl0+BCvyScf67/5VZC2WXCIxzhbboKH+2uyGsO0g8Wsiai5x2oxYtLX2IQoDyVO9jdKVBsWI6zWZM6K/Mn1sa85HsFnjArvXkc=
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com (2603:10b6:208:42b::6)
- by MW5PR14MB5362.namprd14.prod.outlook.com (2603:10b6:303:19e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.28; Sat, 28 Sep
- 2024 07:07:36 +0000
-Received: from IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94]) by IA1PR14MB6224.namprd14.prod.outlook.com
- ([fe80::c527:653c:698d:3d94%3]) with mapi id 15.20.8005.021; Sat, 28 Sep 2024
- 07:07:35 +0000
-From: Michael Wu <Michael.Wu@kneron.us>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Mika Westerberg
-	<mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, morgan chang
-	<morgan.chang@kneron.us>, "mvp.kutali@gmail.com" <mvp.kutali@gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: snps,designware-i2c: add
- bus-capacitance-pf and clk-freq-optimized
-Thread-Topic: [PATCH v2 1/2] dt-bindings: i2c: snps,designware-i2c: add
- bus-capacitance-pf and clk-freq-optimized
-Thread-Index: AQHbEJ2oa785oDCJyk61SI38zqyK6bJrTxeAgAFk3QA=
-Date: Sat, 28 Sep 2024 07:07:34 +0000
-Message-ID:
- <IA1PR14MB622419FD28CA5E7679A040B98A742@IA1PR14MB6224.namprd14.prod.outlook.com>
-References: <20240927042230.277144-1-michael.wu@kneron.us>
- <20240927042230.277144-2-michael.wu@kneron.us>
- <kr7z3qru7pfevn23pe2xwfo6vkg5m6gike6xdbi6cgy5vshtch@5nxuodh5xzuw>
-In-Reply-To: <kr7z3qru7pfevn23pe2xwfo6vkg5m6gike6xdbi6cgy5vshtch@5nxuodh5xzuw>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kneron.us;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR14MB6224:EE_|MW5PR14MB5362:EE_
-x-ms-office365-filtering-correlation-id: c5895e06-fab1-4663-2226-08dcdf8c3a7f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|376014|1800799024|80162021|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UkNUZTNuQlJSREluS1RwcStybFhuU3RzRVpTR29yajF4UE5aSENzM0U2L01x?=
- =?utf-8?B?R2MyMzNJTDJ0bU1RSFpOMFNZUjZKc01nSUNCYmQvQ29kcFgxa2xocDR3OGdC?=
- =?utf-8?B?YzhhQkx4c1k2Q2xJQUcyVHlrTUlHc0lIY0p1YmZ4Wm9GYUNoRk9kWkNsOU1N?=
- =?utf-8?B?T0RTVWhLTFVXN1ZWVmdReVFEY3FGaWd4bzNaRXhoS3BlYk9Jc2VWUFRYVC80?=
- =?utf-8?B?TlNlMVo5dExVQUJ5alZETUY2OHpOdjNrM1pEanRFS2ZuK2xVT05aZFpnOXQv?=
- =?utf-8?B?TGhobnlmY0NmSnZ2aFV5NG5SMkhNRnlVdGk2QlhjUXEwVlN3ZkZkcGg0cTk2?=
- =?utf-8?B?d3RIbjhJeFZBMDBFK2tDQnZPOUdWRUhZS3ptVG5uT0phWUtaemhnVzIycHFt?=
- =?utf-8?B?aStkck5DY1ZPQ2MyRFlFbURaUkl1ZUVjeWVIZVNXWU9MQ0V2cSt1TzJWdUR5?=
- =?utf-8?B?NkVraVFXNk1pOUIyTFgycWh0L0U2b0JCZnJEWG5nN2ZvaEZFL0JtZit5VjJT?=
- =?utf-8?B?aTY0dUNiT1oxMzREalo1SFVycUJSS01sNzZZa3JWQU1JT0ljcFJ5amdNZWVn?=
- =?utf-8?B?Vm41Zy9hK29GQytBVWJoRGpDVW9kaDE2bUxVUDIvTEU3MlpCTU5Uby9HSUQ3?=
- =?utf-8?B?VmN3Z1dDcU5vYXowdW1DRjd3SThpaTFDOW9Db0dOQ1FqTFNkZkxLUENxODJm?=
- =?utf-8?B?cWhqN1J3aVdnVzlFRytoM2RYOHl1MDNLSGE0dWhFTEdObm5CRUtSNDROZzd0?=
- =?utf-8?B?QUh5dXFNd3N6Qlp3UHorUmFnZ1R0MEFMcGV4T085cHVPVmlDOVhSTkZTMmFw?=
- =?utf-8?B?VlJ0bjJzRVhKemlUVmUyVlk4cm8yd0xYOElmdDZIcWZ2MlZTb3pmY2h1clN5?=
- =?utf-8?B?UUtnYTJRZzZiRTB5V1FvRlBmY2RucE1aaFVzTXFzMkhPWmp1bVl1cUNzcU9q?=
- =?utf-8?B?QjhFNlNwaUpvbmVnMXRiNDY1ajY3L0kyUmpacTJVbDJIbmRNUjRWK2pxcXdH?=
- =?utf-8?B?c3JLRUkzclp5ZHJidzE0WlhmU0Z5V1hBdWN0TUREQTlkMkw1TGRDcTFPWEVr?=
- =?utf-8?B?ZG1KdGdxcW81Wjc3Qlg2dUx1UFc4cDUzMENJRzB5dWVRNlhQaHpJUHdCWnpj?=
- =?utf-8?B?eDN5UlJCZnlpZlNTYkZXMXZxbjdFM1U2b2xVWXJQUkJqRTRVcFlVN1pIN0VF?=
- =?utf-8?B?cVBYaGZyVjFXOUxYVHpTS214R2NtZ1M4eklFcVdPK2N1bHdqcEwrNjNhazFj?=
- =?utf-8?B?VnBQdGwvZHYyZitiSkZHNTV3OWJkUk5QcDI0SkE5UDVBWHZMYVVUaVZ3bkZO?=
- =?utf-8?B?TUZOdWdkZE5qM3JSSXBQOGZNSkVZb29QL0tyRGFyK3o1UzZmM0tvZ0JqRm0v?=
- =?utf-8?B?NEVzSzMvVnlKVjlaQXpqb2F5bGRrMjR1cnVxcno5UlFDVUJHaktuY0wrdUZS?=
- =?utf-8?B?bldrWEdINlZXTHgvRlUxb0c5TXBqWk9kaTk1Tk1zV1I4M2krY2FDVElBdWFD?=
- =?utf-8?B?QjFKek5lWiswaVUvVmErbTE0K09rd0xZQmdFYTcrZDhpQkppOUlnMnZkU1hz?=
- =?utf-8?B?Qm9nY3lMYmxmWTBWODRvZU9SL0l6VW9xTTk5ak0vWFJEeHJqeWZtdlFXTjZa?=
- =?utf-8?B?RHpKQndTR0FMQVJIUnpzWDNNNmkwamhmaWQ3L0dxUTJvbVR6eVZhZ1JUUlZP?=
- =?utf-8?B?WExydUcycCtzeXFTTFRMRWFQZWF0dU1HRmxLakRsK1FFcXBSYnJ5UWx5bmJE?=
- =?utf-8?B?TEFDdVVmMW1EcVl1OEhlR3NCQ0lQblVkcm1hR3B0SlRhUFVJZ0FPeVpkSWlK?=
- =?utf-8?Q?e7GYKObti0d/1lnDTu6d4+fczuA1b3MAKYnDA=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR14MB6224.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(80162021)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YkVsRFFMaFY1NVhUZFJyYnZ5Q0pKQSt6VUNFRlJ1VEY2alV2dWdVZ3JVZFJD?=
- =?utf-8?B?ZXJYVDNBa0taZ1puaWtLQTFNMnV0ckdJc0VGcmJwMVkySkx1aVhZQjBDT0JV?=
- =?utf-8?B?OG14cXFmSnRsbGI5alE4bzFteUJXWVUwV0dET2JMU2hpTGtMRDFzYUZ3VTFO?=
- =?utf-8?B?dHRQL3BUSVAyQ1dSaXphWXlXNHhmazA3aGNMTXVVYkd3bGNlbEVlS1ZlbjdB?=
- =?utf-8?B?NmVJR2lNdE1HWWtlNkRZVFg2VDQrQlQ0UWpNVmovUmFMQzhYWWhoaDhmbHlk?=
- =?utf-8?B?b1N0c3RCTlUxVGdveWc2ZmdoaHlEb3dmN0V5TDBRU2VTZFhKZTFVdzQ4U1Mv?=
- =?utf-8?B?TUdHVW1FNGp4MVRVcFVVdURqV1dmaUdzVXZuWFVFM3JRQk1QMEd1SFZVcExP?=
- =?utf-8?B?dERGVlJ5aEExaHUreVV6YTBDK2VhUXVZMnZrb1laN3hFUjdpRk9FcTdkWGFU?=
- =?utf-8?B?ZzZ6ZzdlK1YwQVBITVltRWQzNTFZa2lMdmZ1czc5YzhpdVAxNWdQYkhZUnV2?=
- =?utf-8?B?ZnV0Qk5aUUdyV2JwVEUyMXZ6M0hYWnJzYm9iUFZ1ZDB4NEthVWs1V0tDYnNl?=
- =?utf-8?B?RnlpeWVqRVRHbkRrWWE3L1VWd3ZERWx3TE5JdGlCNVFvamc5ZllIZitoSHp6?=
- =?utf-8?B?NTA2bVAxSnd2ZFpKL0NHWXRadzh5MmxoTmthcG9WZTVhMFB6TVI0R2FIM3Bp?=
- =?utf-8?B?ZC9DMWVpdUpoeDNlZlc0bFArbVJETE90c1N3VkhBL0tKeGlJS0RWMTZ6S1po?=
- =?utf-8?B?T1FRZUppdS9ILzM0dmd6VUhORU9GNFBsQ2ovZGFkWlVTQVFpSkRBdTVhdCs2?=
- =?utf-8?B?bkJ2ODBNYWNwREtsN2R1b21Ua3ZNVnNBSUFsdU1IbWNCZFR0U3dENUh5L0dm?=
- =?utf-8?B?ZEdUQjd6ZmFLNFNuTWlFK3JpM0ZzYTczdDRKYkJOV29uc1FmbGRZZXIvOFpC?=
- =?utf-8?B?SkliUXlFSWo3S1NtME9yQWVuMVhHNEE0Tmd5ZW5COHpBMnhleVBSM3o5QXFL?=
- =?utf-8?B?TkY4QU5aQ1d2WW1tQjRkMkRvVkFsMk92dlRIVjdvQkdFcFo1RmUvck8wb3Zo?=
- =?utf-8?B?MDdUWjlVQlJDTytjTHdyR3k3L0F2SVFpMzlFWnZQdDlkdjE3c05HT0Z0anBK?=
- =?utf-8?B?eVhmaUVobmsrWS8ybjZtSjRWSVk1NTNoNVZJeVBNdDIrUStQWVMxMFpTbmpo?=
- =?utf-8?B?ZVE5NmR2T1JZK0cxUkNPWTVQenVIbXVZemN4VFRoRjVPM2JXUFR3VDQrODh4?=
- =?utf-8?B?dk9hb1Y5bEVZb2JkaXc2ZjJ3ZFlJRzZGZ0NjTU9QZnFxSS9IZGdYUFVWc3dX?=
- =?utf-8?B?NFRjampFUmdzeTJKdVRzMytqNVRZbytIbFZ3NkowakdJUU1mdG5naDNjMHd3?=
- =?utf-8?B?TFVUb0xKTEpVTW1nYktTZXFYZmE3RmxkRHVSYTh0alN2RnJ6OEIyUWdjM1FZ?=
- =?utf-8?B?ZXduRkVqbStnZG1JeHNxNWdmam5zTUZEV3o2SE9QRnRxb1J5dnZramd1UU9k?=
- =?utf-8?B?cFRCS0hNV3B1a1lEZW9YYXF6Tm01TXV4QlNHMG5SL3NzcHhnSG9KYVJHVUJh?=
- =?utf-8?B?S2hGVDJTbzUrUGNTTDB1Uk1WTEpLMk1SenJyWHdScExZNmttM1oyZlFuVUlw?=
- =?utf-8?B?OEtCSGU5MUMrOHUvZ1lzTnVlQTdzazMyK0Q0M3JSVlNmOGRhcmNOd2NZaysw?=
- =?utf-8?B?SjBUbnBPNDIxNmsyNFV2TGNsOWJzOU05VHp5VGhZT2VOZkRMeHdPcmtMK1ly?=
- =?utf-8?B?cGM3MW5CUmZyeUlHKzdQL1BnWE5rczlBYzZpNi93THJaaHRnbFdUU3dJc1B1?=
- =?utf-8?B?S3NaVHpUTFhSSWM5amxJb2RqNW1lV2JUVFV6Zy9BNXJhdFZBaDZza29hZWVK?=
- =?utf-8?B?aUxuaTE0NGlpUTFLZEM1WEVjZ3ZxdTN4ekkreDRWazB5VHZBZ016aFBFejJQ?=
- =?utf-8?B?VVNtZ0lJdU9nalFraTBQT0JXa2FUOG5jZ0tiN00rVFB2OXgyT2RydDhBZEta?=
- =?utf-8?B?K2VkcFZGbVM4azM3dkRTS0NPRkcyc3ppRUFOVXNScDdYZ29zaXovUE41TmVL?=
- =?utf-8?B?KzJzMDBMa1JtUEo2cGhiYVFKUmNNUEs2WFROUHBTeTd2WGczaWh0Tkd6Q0pZ?=
- =?utf-8?Q?6DQI=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E2D15A8;
+	Sat, 28 Sep 2024 07:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727508431; cv=none; b=FnTsGeJ3MEI8lzHxQyMBqMwKPKytyegpfSWRedPuHoyp8azcyWo6vp7Qf6GKg92rs33CZb1s6m+n9iJ5XTieatiW7t2/7HPyKdcHp9Bag+fC5VeuocuYZ0hotooROFbb8jNVF6lQNFt2PNtKL0OyWYF27VWZEe+kHf0s++SJdsk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727508431; c=relaxed/simple;
+	bh=KBQjJWEKVccbdf6AgMatMxz7QMXieL7+u23vwdxnYUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CTb/94y4nJf/yAziqAjwMnInCuigp9iAtM9d10xIITc/DQTm+CE3xqtEBRqcV80/xhQ0aMZXkUj8qP2CSmqf79zlqK5PNFe4U9m4yP2YUH4SUUU7e0OBW+EUqVmYKhXK5mvdTe6wXHv2PKlyuf/3QJT+ALesb+LW1kjhoGVubb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5ur83Kj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59568C4CEC3;
+	Sat, 28 Sep 2024 07:27:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727508430;
+	bh=KBQjJWEKVccbdf6AgMatMxz7QMXieL7+u23vwdxnYUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s5ur83Kjx4GAtoz6tfT4qscd3sx2T0MwZWzvw0L1pJ7lQDDH/XV3at0jhYm4S7koV
+	 04aFIocTFaHyR8YuzvbRKxE35B0jOsFDZbtdl/PIoqB2kyT7ChTDLwoGP4Miw4yHNw
+	 gPbXc5DHnNwmFETgIZ94Z19a/+UtWciEqWFdpF4IcGZkwpnPIoCIq/+/y3vr2qXkac
+	 mEQTxnEX4NNW1c4edBKVVu40gHGjuW1YNd26qHy5YTlOUtjuKdNFFXN09lBOEU0qC+
+	 FmlT8KCHZS8bcJqo2TEFIjLwBWKKXZ1pKc5aPWo1afwBcI7bVFaTifsWaCDd33jG1f
+	 G8deQRHK94Icg==
+Date: Sat, 28 Sep 2024 09:27:04 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Pavel Machek <pavel@ucw.cz>, Werner Sembach <wse@tuxedocomputers.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ZvcdNXQJmc8cjifw@amd.ucw.cz>
+ <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: kneron.us
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR14MB6224.namprd14.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5895e06-fab1-4663-2226-08dcdf8c3a7f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Sep 2024 07:07:34.9434
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f92b0f4b-650a-4d8a-bae3-0e64697d65f2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6sa6CLptwTaFX8ygSy3AbUlhqlHlwVOPZsTDTDokITuCbL9A08vsKnDEodtm/2SOdAlvb/yK6mcRt3R3fuZaYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR14MB5362
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
 
-T24gRnJpLCBTZXAgMjcgMjAyNCBhdCAxMDozNTowOUFNICswMjAwLCBLcnp5c3p0b2YgS296bG93
-c2tpIHdyb3RlOg0KPiBPbiBGcmksIFNlcCAyNywgMjAyNCBhdCAxMjoyMjoxNlBNICswODAwLCBN
-aWNoYWVsIFd1IHdyb3RlOg0KLi4uDQo+ID4gaW5kZXggNjAwMzVhNzg3ZTVjLi5mYzE5ZTZhOGIz
-MDYgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ky
-Yy9zbnBzLGRlc2lnbndhcmUtaTJjLnlhbWwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rldmlj
-ZXRyZWUvYmluZGluZ3MvaTJjL3NucHMsZGVzaWdud2FyZS1pMmMueWFtbA0KPiA+IEBAIC04Nyw2
-ICs4NywyMCBAQCBwcm9wZXJ0aWVzOg0KPiA+ICAgICAgICBUaGlzIHZhbHVlIGlzIHVzZWQgdG8g
-Y29tcHV0ZSB0aGUgdEhJR0ggcGVyaW9kLg0KPiA+ICAgICAgZGVmYXVsdDogMzAwDQo+ID4NCj4g
-PiArICBidXMtY2FwYWNpdGFuY2UtcGY6DQo+IA0KPiBXaHkgaXMgdGhpcyBnZW5lcmljIHByb3Bl
-cnR5PyBJcyB0aGlzIGdvaW5nIHRvIGJlIGFwcGxpZWQgdG8gYWxsIEkyQw0KPiBjb250cm9sbGVy
-cz8gSWYgbm90LCB5b3UgbWlzcyB2ZW5kb3JzIHByZWZpeC4NCj4NCj4gPiArICAgIGRlc2NyaXB0
-aW9uOiB8DQo+ID4gKyAgICAgIFRoaXMgcHJvcGVydHkgcmVwcmVzZW50cyB0aGUgYnVzIGNhcGFj
-aXRhbmNlIGluIHBpY29mYXJhZCAocEYpLiBJdA0KPiA+ICsgICAgICBhZmZlY3RzIHRoZSBoaWdo
-IGFuZCBsb3cgcHVsc2Ugd2lkdGggb2YgU0NMIGxpbmUgaW4gaGlnaCBzcGVlZCBtb2RlLg0KPiA+
-ICsgICAgICBUaGUgb25seSBsZWdhbCB2YWx1ZXMgZm9yIHRoaXMgcHJvcGVydHkgYXJlIDEwMCBh
-bmQgNDAwLCB3aGljaCBhcmUNCj4gdXNlZA0KPiA+ICsgICAgICB0byBjYWxjdWxhdGUgdGhlIHRI
-SUdIIGFuZCB0TE9XIHBlcmlvZHMgZm9yIGhpZ2ggc3BlZWQgbW9kZS4NCj4gPiArICAgIGRlZmF1
-bHQ6IDEwMA0KPiA+ICsNCj4gPiArICBjbGstZnJlcS1vcHRpbWl6ZWQ6DQo+IA0KPiBUaGlzIHdh
-cyBuZXZlciB0ZXN0ZWQuDQo+IA0KPiBZb3UgZ290IHRoaXMgY29tbWVudCBhbHJlYWR5IGFuZCBu
-b3QgbXVjaCBpbXByb3ZlZC4NCj4gDQo+IEl0IGRvZXMgbm90IGxvb2sgbGlrZSB5b3UgdGVzdGVk
-IHRoZSBiaW5kaW5ncywgYXQgbGVhc3QgYWZ0ZXIgcXVpY2sNCj4gbG9vay4gUGxlYXNlIHJ1biAg
-KHNlZQ0KPiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mvd3JpdGluZy1zY2hlbWEu
-cnN0IGZvciBpbnN0cnVjdGlvbnMpLg0KPiBNYXliZSB5b3UgbmVlZCB0byB1cGRhdGUgeW91ciBk
-dHNjaGVtYSBhbmQgeWFtbGxpbnQuDQo+IA0KPiA+ICsgICAgZGVzY3JpcHRpb246IHwNCj4gDQo+
-IERvIG5vdCBuZWVkICd8JyB1bmxlc3MgeW91IG5lZWQgdG8gcHJlc2VydmUgZm9ybWF0dGluZy4N
-Cj4gDQo+IE1pc3NpbmcgdmVuZG9yIHByZWZpeC4gTWlzc2luZyB0ZXN0cy4NCj4gDQo+IEFsc28s
-IGV4dGVuZCB0aGUgZXhhbXBsZSB3aXRoIHRoaXMuDQo+IA0KDQpCb3RoIGFyZSBzbnBzLGRlc2ln
-bndhcmUtaTJjIHByb3BlcnRpZXMsIGFuZCBzaG91bGQgYmUgcmVuYW1lZCB0bw0Kc25wcyxidXMt
-Y2FwYWNpdGFuY2UtcGYgYW5kIHNucHMsY2xrLWZyZXEtb3B0aW1pemVkLg0KDQpJIGFwb2xvZ2l6
-ZSBmb3IgbXkgbGFjayBvZiB1bmRlcnN0YW5kaW5nIG9mIGJpbmRpbmcuDQoNCj4gDQo+ID4gKyAg
-ICAgIElmIHRoZSBoYXJkd2FyZSBpbnB1dCBjbG9jayBmcmVxdWVuY3kgaXMgcmVkdWNlZCBieSBy
-ZWR1Y2luZyB0aGUNCj4gPiArICAgICAgaW50ZXJuYWwgbGF0ZW5jeSwgdGhpcyBwcm9wZXJ0eSBt
-dXN0IGJlIGRlY2xhcmVkIGluIHRoZSBkZXZpY2UgdHJlZS4gSXQNCj4gPiArICAgICAgYWZmZWN0
-cyB0aGUgaGlnaCBwZXJpb2QgYW5kIGxvdyBwZXJpb2Qgb2YgU0NMIGxpbmUuDQo+IA0KPiBJIGFz
-c3VtZSB0aGlzIGlzIGhhcmR3YXJlIGNob2ljZSwgbm90IGRyaXZlcj8NCg0KWWVzLCB0aGV5IGFy
-ZSBoYXJkd2FyZSBwcm9wZXJ0aWVzLiBUaGUgZHJpdmVyIG11c3QgdXNlIHRoaXMgaW5mb3JtYXRp
-b24NCmZyb20gdGhlIGRldmljZSB0cmVlIHRvIGNhbGN1bGF0ZSBTQ0wgaGlnaCBhbmQgbG93IHBl
-cmlvZHMgYXBwcm9wcmlhdGUNCmZvciB0aGUgaGFyZHdhcmUuDQoNClRoYW5rcyAmIFJlZ2FyZHMs
-DQpNaWNoYWVsDQoNCg==
+On Sep 28 2024, Armin Wolf wrote:
+> Am 27.09.24 um 23:01 schrieb Pavel Machek:
+> 
+> > Hi!
+> > 
+> > > The TUXEDO Sirius 16 Gen1 and TUXEDO Sirius 16 Gen2 devices have a per-key
+> > > controllable RGB keyboard backlight. The firmware API for it is implemented
+> > > via WMI.
+> > Ok.
+> > 
+> > > To make the backlight userspace configurable this driver emulates a
+> > > LampArray HID device and translates the input from hidraw to the
+> > > corresponding WMI calls. This is a new approach as the leds subsystem lacks
+> > > a suitable UAPI for per-key keyboard backlights, and like this no new UAPI
+> > > needs to be established.
+> > Please don't.
+> > 
+> > a) I don't believe emulating crazy HID interface si right thing to
+> > do. (Ton of magic constants. IIRC it stores key positions with
+> > micrometer accuracy or something that crazy. How is userland going to
+> > use this? Will we update micrometers for every single machine?)
+
+This is exactly why I suggest to make use of HID-BPF. The machine
+specifics is going to be controlled by userspace, leaving out the crazy
+bits out of the kernel.
+
+> > 
+> > Even if it is,
+> > 
+> > b) The emulation should go to generic layer, it is not specific to
+> > your hardware.
+
+Well, there is not so much about an emulation here. It's a different way
+of presenting the information.
+But given that HID LampArray is a HID standard, userspace is able to
+implement it once for all the operating systems, which is why this is so
+appealing for them. For reference, we have the same issue with SDL and
+Steam regarding advanced game controller: they very much prefer to
+directly use HID(raw) to talk to the device instead of having a Linux
+specific interface.
+
+Also, starting with v6.12, systemd (logind) will be able to provide
+hidraw node access to non root applications (in the same way you can
+request an input evdev node). So HID LampArray makes a lot of sense IMO.
+
+> > 
+> Maybe introducing a misc-device which provides an ioctl-based API similar
+> to the HID LampArray would be a solution?
+> 
+> Basically we would need:
+> - ioctl for querying the supported LEDs and their properties
+> - ioctl for enabling/disabling autonomous mode
+> - ioctl for updating a range of LEDs
+> - ioctl for updating multiple LEDs at once
+
+You'll definitely get the API wrong at first, then you'll need to adapt
+for a new device, extend it, etc... But then, you'll depend on one
+userspace application that can talk to your custom ioctls, because cross
+platform applications will have to implement LampArray, and they'ĺl
+probably skip your custom ioctls. And once that userspace application is
+gone, you'll still have to maintain this forever.
+
+Also, the application needs to have root access to that misc device, or
+you need to add extra support for it in systemd...
+
+> 
+> If we implement this as a separate subsystem ("illumination subsystem"), then different
+> drivers could use this. This would also allow us to add additional ioctl calls later
+> for more features.
+
+Again, I strongly advise against this.
+
+I'll just reiterate what makes the more sense to me:
+- provide a thin wmi-to-hid layer that creates a normal regular HID
+  device from your device (could be using vendor collections)
+- deal with the LampArray bits in the HID stack, that we can reuse for
+  other devices (I was planing on getting there for my Corsair and
+  Logitech keyboads).
+- Meanwhile, while prototyping the LampArray support in userspace and
+  kernelspace, make use of HID-BPF to transform your vendor protocol
+  into LampArray. This will allow to fix things without having to
+  support them forever. This is why HID-BPF exists: so we can create
+  crazy but safe kernel interfaces, without having to support them
+  forever.
+
+Cheers,
+Benjamin
+
+> 
+> Thanks,
+> Armin Wolf
+> 
+> > > +
+> > > +// We don't know if the WMI API is stable and how unique the GUID is for this ODM. To be on the safe
+> > > +// side we therefore only run this driver on tested devices defined by this list.
+> > 80 columns, /* */ is usual comment style.
+> > 
+> > To illustrate my point... this is crazy:
+> > 
+> > (and would require equally crazy par in openrgb to parse).
+> > 
+> > Best regards,
+> > 								Pavel
+> > 
+> > > +
+> > > +static const uint8_t sirius_16_ansii_kbl_mapping[] = {
+> > > +	0x29, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42,
+> > > +	0x43, 0x44, 0x45, 0xf1, 0x46, 0x4c,   0x4a, 0x4d, 0x4b, 0x4e,
+> > > +	0x35, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
+> > > +	0x27, 0x2d, 0x2e, 0x2a,               0x53, 0x55, 0x54, 0x56,
+> > > +	0x2b, 0x14, 0x1a, 0x08, 0x15, 0x17, 0x1c, 0x18, 0x0c, 0x12,
+> > > +	0x13, 0x2f, 0x30, 0x31,               0x5f, 0x60, 0x61,
+> > > +	0x39, 0x04, 0x16, 0x07, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f,
+> > > +	0x33, 0x34, 0x28,                     0x5c, 0x5d, 0x5e, 0x57,
+> > > +	0xe1, 0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x36, 0x37,
+> > > +	0x38, 0xe5, 0x52,                     0x59, 0x5a, 0x5b,
+> > > +	0xe0, 0xfe, 0xe3, 0xe2, 0x2c, 0xe6, 0x65, 0xe4, 0x50, 0x51,
+> > > +	0x4f,                                 0x62, 0x63, 0x58
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_x[] = {
+> > > +	 25000,  41700,  58400,  75100,  91800, 108500, 125200, 141900, 158600, 175300,
+> > > +	192000, 208700, 225400, 242100, 258800, 275500,   294500, 311200, 327900, 344600,
+> > > +	 24500,  42500,  61000,  79500,  98000, 116500, 135000, 153500, 172000, 190500,
+> > > +	209000, 227500, 246000, 269500,                   294500, 311200, 327900, 344600,
+> > > +	 31000,  51500,  70000,  88500, 107000, 125500, 144000, 162500, 181000, 199500,
+> > > +	218000, 236500, 255000, 273500,                   294500, 311200, 327900,
+> > > +	 33000,  57000,  75500,  94000, 112500, 131000, 149500, 168000, 186500, 205000,
+> > > +	223500, 242000, 267500,                           294500, 311200, 327900, 344600,
+> > > +	 37000,  66000,  84500, 103000, 121500, 140000, 158500, 177000, 195500, 214000,
+> > > +	232500, 251500, 273500,                           294500, 311200, 327900,
+> > > +	 28000,  47500,  66000,  84500, 140000, 195500, 214000, 234000, 255000, 273500,
+> > > +	292000,                                           311200, 327900, 344600
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_y[] = {
+> > > +	 53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,
+> > > +	 53000,  53000,  53000,  53000,  53000,  53000,    53000,  53000,  53000,  53000,
+> > > +	 67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,
+> > > +	 67500,  67500,  67500,  67500,                    67500,  67500,  67500,  67500,
+> > > +	 85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,
+> > > +	 85500,  85500,  85500,  85500,                    85500,  85500,  85500,
+> > > +	103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500,
+> > > +	103500, 103500, 103500,                           103500, 103500, 103500,  94500,
+> > > +	121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500,
+> > > +	121500, 121500, 129000,                           121500, 121500, 121500,
+> > > +	139500, 139500, 139500, 139500, 139500, 139500, 139500, 139500, 147000, 147000,
+> > > +	147000,                                           139500, 139500, 130500
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_z[] = {
+> > > +	  5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,
+> > > +	  5000,   5000,   5000,   5000,   5000,   5000,     5000,   5000,   5000,   5000,
+> > > +	  5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,
+> > > +	  5250,   5250,   5250,   5250,                     5250,   5250,   5250,   5250,
+> > > +	  5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,
+> > > +	  5500,   5500,   5500,   5500,                     5500,   5500,   5500,
+> > > +	  5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,
+> > > +	  5750,   5750,   5750,                             5750,   5750,   5750,   5625,
+> > > +	  6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,
+> > > +	  6000,   6000,   6125,                             6000,   6000,   6000,
+> > > +	  6250,   6250,   6250,   6250,   6250,   6250,   6250,   6250,   6375,   6375,
+> > > +	  6375,                                             6250,   6250,   6125
+> > > +};
+> > > +
+> > > +static const uint8_t sirius_16_iso_kbl_mapping[] = {
+> > > +	0x29, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x42,
+> > > +	0x43, 0x44, 0x45, 0xf1, 0x46, 0x4c,   0x4a, 0x4d, 0x4b, 0x4e,
+> > > +	0x35, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26,
+> > > +	0x27, 0x2d, 0x2e, 0x2a,               0x53, 0x55, 0x54, 0x56,
+> > > +	0x2b, 0x14, 0x1a, 0x08, 0x15, 0x17, 0x1c, 0x18, 0x0c, 0x12,
+> > > +	0x13, 0x2f, 0x30,                     0x5f, 0x60, 0x61,
+> > > +	0x39, 0x04, 0x16, 0x07, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x0f,
+> > > +	0x33, 0x34, 0x32, 0x28,               0x5c, 0x5d, 0x5e, 0x57,
+> > > +	0xe1, 0x64, 0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x36,
+> > > +	0x37, 0x38, 0xe5, 0x52,               0x59, 0x5a, 0x5b,
+> > > +	0xe0, 0xfe, 0xe3, 0xe2, 0x2c, 0xe6, 0x65, 0xe4, 0x50, 0x51,
+> > > +	0x4f,                                 0x62, 0x63, 0x58
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_x[] = {
+> > > +	 25000,  41700,  58400,  75100,  91800, 108500, 125200, 141900, 158600, 175300,
+> > > +	192000, 208700, 225400, 242100, 258800, 275500,   294500, 311200, 327900, 344600,
+> > > +	 24500,  42500,  61000,  79500,  98000, 116500, 135000, 153500, 172000, 190500,
+> > > +	209000, 227500, 246000, 269500,                   294500, 311200, 327900, 344600,
+> > > +	 31000,  51500,  70000,  88500, 107000, 125500, 144000, 162500, 181000, 199500,
+> > > +	218000, 234500, 251000,                           294500, 311200, 327900,
+> > > +	 33000,  57000,  75500,  94000, 112500, 131000, 149500, 168000, 186500, 205000,
+> > > +	223500, 240000, 256500, 271500,                   294500, 311200, 327900, 344600,
+> > > +	 28000,  47500,  66000,  84500, 103000, 121500, 140000, 158500, 177000, 195500,
+> > > +	214000, 232500, 251500, 273500,                   294500, 311200, 327900,
+> > > +	 28000,  47500,  66000,  84500, 140000, 195500, 214000, 234000, 255000, 273500,
+> > > +	292000,                                           311200, 327900, 344600
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_y[] = {
+> > > +	 53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,  53000,
+> > > +	 53000,  53000,  53000,  53000,  53000,  53000,    53000,  53000,  53000,  53000,
+> > > +	 67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,  67500,
+> > > +	 67500,  67500,  67500,  67500,                    67500,  67500,  67500,  67500,
+> > > +	 85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,  85500,
+> > > +	 85500,  85500,  85500,                            85500,  85500,  85500,
+> > > +	103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500, 103500,
+> > > +	103500, 103500, 103500,  94500,                   103500, 103500, 103500,  94500,
+> > > +	121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500, 121500,
+> > > +	121500, 121500, 121500, 129000,                   121500, 121500, 121500,
+> > > +	139500, 139500, 139500, 139500, 139500, 139500, 139500, 139500, 147000, 147000,
+> > > +	147000,                                           139500, 139500, 130500
+> > > +};
+> > > +
+> > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_z[] = {
+> > > +	  5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,   5000,
+> > > +	  5000,   5000,   5000,   5000, 5000, 5000,         5000,   5000,   5000,   5000,
+> > > +	  5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,   5250,
+> > > +	  5250,   5250,   5250,   5250,                     5250,   5250,   5250,   5250,
+> > > +	  5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,   5500,
+> > > +	  5500,   5500,   5500,                             5500,   5500,   5500,
+> > > +	  5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,   5750,
+> > > +	  5750,   5750,   5750,   5750,                     5750,   5750,   5750,   5625,
+> > > +	  6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,   6000,
+> > > +	  6000,   6000,   6000,   6125,                     6000,   6000,   6000,
+> > > +	  6250,   6250,   6250,   6250,   6250,   6250,   6250,   6250,   6375,   6375,
+> > > +	  6375,                                             6250,   6250,   6125
+> > > +};
+> > ...
+> > > +
+> > > +static uint8_t report_descriptor[327] = {
+> > > +	0x05, 0x59,			// Usage Page (Lighting and Illumination)
+> > > +	0x09, 0x01,			// Usage (Lamp Array)
+> > > +	0xa1, 0x01,			// Collection (Application)
+> > > +	0x85, LAMP_ARRAY_ATTRIBUTES_REPORT_ID, //  Report ID (1)
+> > > +	0x09, 0x02,			//  Usage (Lamp Array Attributes Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x03,			//   Usage (Lamp Count)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0x00, 0x00,	//   Logical Maximum (65535)
+> > > +	0x75, 0x10,			//   Report Size (16)
+> > > +	0x95, 0x01,			//   Report Count (1)
+> > > +	0xb1, 0x03,			//   Feature (Cnst,Var,Abs)
+> > > +	0x09, 0x04,			//   Usage (Bounding Box Width In Micrometers)
+> > > +	0x09, 0x05,			//   Usage (Bounding Box Height In Micrometers)
+> > > +	0x09, 0x06,			//   Usage (Bounding Box Depth In Micrometers)
+> > > +	0x09, 0x07,			//   Usage (Lamp Array Kind)
+> > > +	0x09, 0x08,			//   Usage (Min Update Interval In Microseconds)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0xff, 0x7f,	//   Logical Maximum (2147483647)
+> > > +	0x75, 0x20,			//   Report Size (32)
+> > > +	0x95, 0x05,			//   Report Count (5)
+> > > +	0xb1, 0x03,			//   Feature (Cnst,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0x85, LAMP_ATTRIBUTES_REQUEST_REPORT_ID, //  Report ID (2)
+> > > +	0x09, 0x20,			//  Usage (Lamp Attributes Request Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x21,			//   Usage (Lamp Id)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0x00, 0x00,	//   Logical Maximum (65535)
+> > > +	0x75, 0x10,			//   Report Size (16)
+> > > +	0x95, 0x01,			//   Report Count (1)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0x85, LAMP_ATTRIBUTES_RESPONSE_REPORT_ID, //  Report ID (3)
+> > > +	0x09, 0x22,			//  Usage (Lamp Attributes Response Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x21,			//   Usage (Lamp Id)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0x00, 0x00,	//   Logical Maximum (65535)
+> > > +	0x75, 0x10,			//   Report Size (16)
+> > > +	0x95, 0x01,			//   Report Count (1)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x23,			//   Usage (Position X In Micrometers)
+> > > +	0x09, 0x24,			//   Usage (Position Y In Micrometers)
+> > > +	0x09, 0x25,			//   Usage (Position Z In Micrometers)
+> > > +	0x09, 0x27,			//   Usage (Update Latency In Microseconds)
+> > > +	0x09, 0x26,			//   Usage (Lamp Purposes)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0xff, 0x7f,	//   Logical Maximum (2147483647)
+> > > +	0x75, 0x20,			//   Report Size (32)
+> > > +	0x95, 0x05,			//   Report Count (5)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x28,			//   Usage (Red Level Count)
+> > > +	0x09, 0x29,			//   Usage (Green Level Count)
+> > > +	0x09, 0x2a,			//   Usage (Blue Level Count)
+> > > +	0x09, 0x2b,			//   Usage (Intensity Level Count)
+> > > +	0x09, 0x2c,			//   Usage (Is Programmable)
+> > > +	0x09, 0x2d,			//   Usage (Input Binding)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x26, 0xff, 0x00,		//   Logical Maximum (255)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x06,			//   Report Count (6)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0x85, LAMP_MULTI_UPDATE_REPORT_ID, //  Report ID (4)
+> > > +	0x09, 0x50,			//  Usage (Lamp Multi Update Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x03,			//   Usage (Lamp Count)
+> > > +	0x09, 0x55,			//   Usage (Lamp Update Flags)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x25, 0x08,			//   Logical Maximum (8)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x02,			//   Report Count (2)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x21,			//   Usage (Lamp Id)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0x00, 0x00,	//   Logical Maximum (65535)
+> > > +	0x75, 0x10,			//   Report Size (16)
+> > > +	0x95, 0x08,			//   Report Count (8)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x26, 0xff, 0x00,		//   Logical Maximum (255)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x20,			//   Report Count (32)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0x85, LAMP_RANGE_UPDATE_REPORT_ID, //  Report ID (5)
+> > > +	0x09, 0x60,			//  Usage (Lamp Range Update Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x55,			//   Usage (Lamp Update Flags)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x25, 0x08,			//   Logical Maximum (8)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x01,			//   Report Count (1)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x61,			//   Usage (Lamp Id Start)
+> > > +	0x09, 0x62,			//   Usage (Lamp Id End)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x27, 0xff, 0xff, 0x00, 0x00,	//   Logical Maximum (65535)
+> > > +	0x75, 0x10,			//   Report Size (16)
+> > > +	0x95, 0x02,			//   Report Count (2)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0x09, 0x51,			//   Usage (Red Update Channel)
+> > > +	0x09, 0x52,			//   Usage (Green Update Channel)
+> > > +	0x09, 0x53,			//   Usage (Blue Update Channel)
+> > > +	0x09, 0x54,			//   Usage (Intensity Update Channel)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x26, 0xff, 0x00,		//   Logical Maximum (255)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x04,			//   Report Count (4)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0x85, LAMP_ARRAY_CONTROL_REPORT_ID, //  Report ID (6)
+> > > +	0x09, 0x70,			//  Usage (Lamp Array Control Report)
+> > > +	0xa1, 0x02,			//  Collection (Logical)
+> > > +	0x09, 0x71,			//   Usage (Autonomous Mode)
+> > > +	0x15, 0x00,			//   Logical Minimum (0)
+> > > +	0x25, 0x01,			//   Logical Maximum (1)
+> > > +	0x75, 0x08,			//   Report Size (8)
+> > > +	0x95, 0x01,			//   Report Count (1)
+> > > +	0xb1, 0x02,			//   Feature (Data,Var,Abs)
+> > > +	0xc0,				//  End Collection
+> > > +	0xc0				// End Collection
+> > > +};
+> > > +
 
