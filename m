@@ -1,178 +1,151 @@
-Return-Path: <linux-kernel+bounces-342500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC26988FB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D693D988FB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF99A1F21854
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88DFE1F21815
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DCB1B285;
-	Sat, 28 Sep 2024 14:38:25 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3DC1D540;
+	Sat, 28 Sep 2024 14:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bv53OEPI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EA18E11;
-	Sat, 28 Sep 2024 14:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B4118E11;
+	Sat, 28 Sep 2024 14:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727534305; cv=none; b=GDtyOifNPeWzqI2TA9YBkgPjmqJhdH0LDsl++fitSGapyoXo7D2tispvE6Gt08BZRMG7OcFu1iueHRFXR54yTFQ9ABnwuxtPnhIANirDUUZQGUYbetLqTtxChJYvdylf+GTF4h0QNrBj/e+tlu/mfUm848pMtXRaSf47POlOcdg=
+	t=1727534323; cv=none; b=TwvOuYdv3imtI+paK357affqSpVXP9+fXgtl80/AS5z+w0hOe6CD8PZsrq3aGtxgLFXVD8CewAJ1BOvSEmDq5EMj6a0etIzyM9/HPEHWTSBsa4KYzZD45onLRXTkKSNAgTweQh0hYjURN6ldpnpteWvwZss/O2hdf020g/A7R1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727534305; c=relaxed/simple;
-	bh=orNYKmAZbrf/C4rgpwI9BuYiqkQCDmytE2oEUIOF6vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGQ9O6+mBVt9wyAbdBweYtu0TMhUr15fcCZkEm3/TuOAzFJ/jc0yzR7005b3fW/mzmH7ztFUgyWyU4Z84gFDFH1oiiVCBcd983zd/Po6sJfsaZlxO2NUOl9DORHCVDPfUAKEVWobu6uUz+tqioOQFZCcgS8yRQHGiizQr8TQtjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1suYaL-000000004ig-0ri1;
-	Sat, 28 Sep 2024 14:38:13 +0000
-Date: Sat, 28 Sep 2024 15:38:09 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	John Crispin <john@phrozen.org>, linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] dt-bindings: mtd: ubi-volume: add
- 'volume-is-critical' property
-Message-ID: <ZvgU0eBEwTJ3sHuN@makrotopia.org>
-References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
- <7a2e8819-ac70-4070-a731-53994c72cd79@kernel.org>
- <Zvf_84xxhxwpPgee@makrotopia.org>
- <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
+	s=arc-20240116; t=1727534323; c=relaxed/simple;
+	bh=Mg41Czp4iLNXfN0ojsPaj+c1TJMlEK/US6inXCaque4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LLwQtDtXwmFupThUbtNerKBWJICv5gEqxeeMFjFTvOGtH6BbbU3tr+LFk21OLpsCpBvM+ig7y0iQ9TMWh93y8V5FOt3/WjYEb+4b/jNWQZSgHAqbwpyhxJ+VJuu8g7cVAGn1rawhNmxCPYzflRVVWORbV+4fIW6G/7Uj0YTF3Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bv53OEPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5946C4CEC3;
+	Sat, 28 Sep 2024 14:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727534322;
+	bh=Mg41Czp4iLNXfN0ojsPaj+c1TJMlEK/US6inXCaque4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Bv53OEPI+5t7QuxkwNBcugww/BPfD+CzrZZSO3KUCbrJ99/e3agy5Dy0e21KgA09G
+	 SQgo/5X5FSy46I6Sa+o/7vtTHiW4FRFsvBtY9Uq85Gava1J2TH+oAYeykoYQSA7vXi
+	 936KFBOtckh+uHlJ3ROYKnkgu1IZc11SYDhyh+oOlGhlLuLBB4og+QsIo1dS6SSjtd
+	 LnekcWg4xmQ1FO2GDhI2jL79zvUoRKbuhsiLuIC8O6zQxjV5l5brxTXuNot2RjUvGk
+	 bRpQBcAlxpFK7K1nySB7OxWuFmXh0RFWcc32nVXS2R0BFj2nQCwirKRWa6kUVMyUGu
+	 YGyYLZSaTvTkw==
+Date: Sat, 28 Sep 2024 15:38:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 5/7] iio: light: veml6030: update sensor resolution
+Message-ID: <20240928153834.3577ef30@jic23-huawei>
+In-Reply-To: <5199bc7c-c3fe-49e8-9122-78b476c4aa90@gmail.com>
+References: <20240913-veml6035-v1-0-0b09c0c90418@gmail.com>
+	<20240913-veml6035-v1-5-0b09c0c90418@gmail.com>
+	<20240914155716.09496630@jic23-huawei>
+	<5199bc7c-c3fe-49e8-9122-78b476c4aa90@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 28, 2024 at 03:45:49PM +0200, Krzysztof Kozlowski wrote:
-> On 28/09/2024 15:09, Daniel Golle wrote:
-> > On Sat, Sep 28, 2024 at 03:02:47PM +0200, Krzysztof Kozlowski wrote:
-> >> On 28/09/2024 14:47, Daniel Golle wrote:
-> >>> Add the 'volume-is-critical' boolean property which marks a UBI volume
-> >>> as critical for the device to boot. If set it prevents the user from
-> >>> all kinds of write access to the volume as well as from renaming it or
-> >>> detaching the UBI device it is located on.
-> >>>
-> >>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> >>> ---
-> >>>  .../devicetree/bindings/mtd/partitions/ubi-volume.yaml   | 9 +++++++++
-> >>>  1 file changed, 9 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> >>> index 19736b26056b..2bd751bb7f9e 100644
-> >>> --- a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> >>> +++ b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> >>> @@ -29,6 +29,15 @@ properties:
-> >>>      description:
-> >>>        This container may reference an NVMEM layout parser.
-> >>>  
-> >>> +  volume-is-critical:
-> >>> +    description: This parameter, if present, indicates that the UBI volume
-> >>> +      contains early-boot firmware images or data which should not be clobbered.
-> >>> +      If set, it prevents the user from renaming the volume, writing to it or
-> >>> +      making any changes affecting it, as well as detaching the UBI device it is
-> >>> +      located on, so direct access to the underlying MTD device is prevented as
-> >>> +      well.
-> >>> +    type: boolean
+On Sun, 15 Sep 2024 10:31:11 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+
+> On 14/09/2024 16:57, Jonathan Cameron wrote:
+> > On Fri, 13 Sep 2024 15:19:00 +0200
+> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >   
+> >> The driver still uses the sensor resolution provided in the datasheet
+> >> until Rev. 1.6, 28-Apr-2022, which was updated with Rev 1.7,
+> >> 28-Nov-2023. The original ambient light resolution has been updated from
+> >> 0.0036 lx/ct to 0.0042 lx/ct, which is the value that can be found in
+> >> the current device datasheet.
 > >>
-> >> UBI volumes are mapping to partitions 1-to-1, right? So rather I would
-> >> propose to use partition.yaml - we already have read-only there with
-> >> very similar description.
+> >> Update the default resolution for IT = 100 ms and GAIN = 1/8 from the
+> >> original 4608 mlux/cnt to the current value from the "Resolution and
+> >> maximum detection range" table (Application Note 84367, page 5), 5376
+> >> mlux/cnt.
+> >>
+> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> > Interesting.  So does the datasheet say this was fixing an error, or
+> > is there any chance there are different versions of the chip out there?
 > > 
-> > No, that's not the case.
+> > Also, should we treat this as a fix?  I think we probably should given
+> > we don't really want stable kernels to have wrong data being reported.
+> > If so, please reply with a fixes tag.
 > > 
-> > An MTD partition can be used as UBI device. A UBI device (and hence MTD
-> > partition) can host *several* UBI volumes.
-> > 
-> > Marking the MTD partition as 'read-only' won't work, as UBI needs
-> > read-write access to perform bad block relocation, scrubbing, ...
+> > Jonathan
+> >  
 > 
-> OK, so not partition but read-only volume.
-
-+1
-
+> According to the Product Information Notification (link in the cover
+> letter):
 > 
-> > 
-> > Also, typically not all UBI volumes on a UBI device are
-> > read-only/critical but only a subset of them.
-> > 
-> > But you are right that the description is inspired by the description
-> > of the 'read-only' property in partition.yaml ;)
-> > 
-> > I initially thought to also name the property 'read-only', just like
-> > for MTD partitions. However, as the desired effect goes beyond
-> > preventing write access to the volume itself, I thought it'd be
-> > better to use a new name.
+> "Reason for Change: Adjusted resolution as this was wrongly stated in
+> the current datasheet."
 > 
-> Yeah, maybe... critical indeed covers multiple cases but is also
-> subjective. For some bootloader is critical, for other bootloader still
-> might be fully A/B updateable thus could be modifiable. For others, they
-> want to use fw_setenv from user-space so not critical at all.
+> "If resolution is defined in the particular application by the customer,
+> no changes in the system should be made. In the case resolution was
+> taken from the datasheet or app note, this has to be adjusted accordingly."
+> 
+> Which means that stable kernels are using the wrong resolution. I don't
+> know what IIO usually does in such cases, because a fix could
+> potentially make existing applications return "wrong data". If that is
+> alright, and applications are meant to be adjusted after the kernel
+> update, I have no problems to make this patch as a fix and add the
+> stable tag.
 
-The case I want to cover here is the bootloader itself being stored
-inside a UBI volume. MediaTek's fork of ARM TrustedFirmware-A bl2 comes
-with support for UBI and loads BL3 (which is TF-A BL31 and U-Boot, and
-maybe OP-TEE as well) from a static UBI volume. Removing, renaming or
-altering that volume results in the device not being able to boot any
-more and requiring a complicated intervention (at attaching debugging
-UART and using low-level recovery tool) in order to recover.
+It's unfortunate, but fixing a bug is a valid reason for ABI change
+(which this is - sort of) so existing applications will need to be
+fixed if anyone notices.
 
-It is true that also in this case a fully A/B updateable strategy could
-be implemented, however, typically that would not be done in Linux, but
-rather the code carrying out such update would be part of the bootloader
-itself.
-UEFI update capsules are a good example for that, but in most cases
-things are much less complex on simple embedded Linux networking
-appliances such as routers, access points, switches, ...
+So please send this as a fix with appropriate tags and
+that datasheet change log included in the patch description.
+
+Thanks,
+
+Jonathan
 
 > 
-> I am in general not so happy in describing flash layout in DT, because
-> it sounds way too policy or one-use-case specific.
+> Best regards,
+> Javier Carrasco
 > 
-> UBI volume is purely SW construct. One OS can partition MTD in multiple
-> ways, so maybe I just do not understand why we have in the first place.
+> >> ---
+> >>  drivers/iio/light/veml6030.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> >> index 5d4c2e35b987..d5add040d0b3 100644
+> >> --- a/drivers/iio/light/veml6030.c
+> >> +++ b/drivers/iio/light/veml6030.c
+> >> @@ -779,7 +779,7 @@ static int veml6030_hw_init(struct iio_dev *indio_dev)
+> >>  
+> >>  	/* Cache currently active measurement parameters */
+> >>  	data->cur_gain = 3;
+> >> -	data->cur_resolution = 4608;
+> >> +	data->cur_resolution = 5376;
+> >>  	data->cur_integration_time = 3;
+> >>  
+> >>  	return ret;
+> >>  
+> >   
+> 
 
-Support for attaching UBI from DT and referencing UBI volumes has been
-added because they serve as NVMEM providers, ie. UBI volumes are used to
-store things such as Ethernet MAC addresses and Wi-Fi calibration data,
-similar to how it also works on devices with NOR flash and simple MTD
-partitions holding that data.
-And we needed the kernel drivers to be able to access that information
-directly, also in case eg. nfsroot is being used.
-
-So while it's true that both, MTD partitioning as well as use of UBI
-are pure software constructs, their use can go beyond and below the OS
-kernel, meaning that early boot firmware usually requires a specific MTD
-partition layout, and some require also certain UBI volumes to be present
-for the device to be able to even start the bootloader.
-
-It is also true that (just like MTD partitioning as well) it is
-questionable whether this should be communicated as a property of the
-flash hardware in DT, or rather end up as information filed under the
-/chosen node which to me seems more appropriate. Moving all MTD
-partitioning away from the node representing the flash chip and into the
-/chosen node would have to happen in a way which doesn't break
-compatibility with existing DT, which all describe MTD partitions as a
-subnode of the storage hardware itself. Obviously that is beyond the
-scope (and independent) of being able to mark some UBI volumes as
-critical.
 
