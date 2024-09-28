@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-342379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF50988E3C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F80988E43
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7561F21AB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37314281F44
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E512419DFA4;
-	Sat, 28 Sep 2024 07:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA6E19E822;
+	Sat, 28 Sep 2024 07:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4LG0Zmv"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Bd3yNL+o"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A491494CC;
-	Sat, 28 Sep 2024 07:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410FD19DF98;
+	Sat, 28 Sep 2024 07:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727509212; cv=none; b=pQvWlXbMsfkRKcAsWgvPsRIyYk1SekqpYd/SMEHCgK1WIR7V2q0qF6rsubk+24OZAGRospkiPfHdEA6k88YRFWSEKkookWcmql7878X5e3IzfDWSNTwHjQcoMW6gwZN6t4tcPmRR9f8yvj6ftxO025xgewoKMzB2/1v6vLe087M=
+	t=1727509234; cv=none; b=VWMpdBrsdYqLMRC/Ao9zbgBpJ++Wi4oKfmJ4LAMp+su1MLQltgQDwpi0XokFd35ejpZ9RkIoOSM0vbyQ/egkykPwNftt8JRgZOKiwXgIdFFBD98S9HmCvlOWCctRIg3EkKwvEB5qhFtChQ/eimhEgkT5QWcw6/iizAKM3RUhJTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727509212; c=relaxed/simple;
-	bh=/UWJOTsRZemcTUIr83ftWwyv8s9cpMDc8tBEv1rZNl0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AoIlVbNjfUTxOSq2SlB7uLkQVYHtud801hU5qQD+2BvMXrAIsoxolTsljGNbHOJoBVkKEmgPxN1wHMlobJfBTA74ihhAnF9UensuvTZqGEurFBbipiU1D9Cq0MXNizfoUhT5GB8vHdTlme92shZ5wEWyUYs+14aOYSwKQ3wDWzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4LG0Zmv; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71c63a43146so510792b3a.3;
-        Sat, 28 Sep 2024 00:40:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727509209; x=1728114009; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vIk5qHEBeiHNYaEjsxp0VwqnS+Dln2niDGd+PmLgkWE=;
-        b=D4LG0ZmvCmoXbvCQ5C9+DrrPgtctjFSGOSuhkTpVWgRhptLp8aJ/lCZZYD++HU/ZMf
-         gDZNvHdG4a1A5OeYMy8KozdtAte3wND8UFi4gcEToeFDMPtTnBU4kMPNuCevijckWrE8
-         70PmP3zmHhRA6R0lYo2Y9hg5P+mHOL9BSny2OjkF95aNIWaomYedfuWMNa4n/NgB8iEn
-         lY0567NIrH74XNMo2I2JbRajGFYWuQGTmTheqJFvOuYwYw6/tSYmPWJ2cO1sIGTAeYOC
-         adR0aJVLZSKFFb+GDJyIBvqjKXPw1UhEAbC3M4OGX5dWy6UgpKmC7uYz1zY+0ZKl/+Jk
-         Eo+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727509209; x=1728114009;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vIk5qHEBeiHNYaEjsxp0VwqnS+Dln2niDGd+PmLgkWE=;
-        b=tBvLBH7ShoWFDLomHREFjNCARGSGGLypHKF+mow8VlK5Y8Tl3n1Y+3nSnvV/gTHFvS
-         FSwnKq5t8ouOgd0PsRGXhWD3sRetWLvHnGRRy9NMYTlCbZj4mwJTVwCbWGo6S2LO4cCk
-         H5MSAto6V/7EYTQtU70q00C2ptXXXQgAE7221qF5/lAI76pMLQqfuZWyPtFlmhGNJPsT
-         lFDvpfGssj+Kc6W0ABVOGHHvgVUWJ/GOTcmGa747LeDPwtY9FFE+qsDHznTa1fTMTk0o
-         /48yqovCVfyURc6sG8z5Hyn1RifdFN8eVRSH4AHucy9uEjkvDPAOZjCRIUaWC8yNGh4b
-         ZCXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPQdsbW9sXOCoSlwJJDyYOPgPDaBHpEiQrrmdCRP1pEV2/QS0LElMhHXxQAoBzTqX7opIyPQLTLeDENmf4@vger.kernel.org, AJvYcCUlxEUEz4Nwof0nblW0x2S1zkpsx3eAij7BbVqNkEtRsC/lfWOCri2c4lOyS8DCTC4hYI30lTuYo8TX@vger.kernel.org, AJvYcCXSg29Oc+YCCJwtu5qhYMTSnNWDIduzhZyua1dzkYrgCjInHSxUQr9JHMptsegV+1iZirjOrgeB2eYX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLLyVhw6QP3/aq8SpnnEUxCQxQpsUGoz+ARqI3VtA7iwW9zb5S
-	+No0LP+ozmibBK9+qQgYhJYu2yspOMhP1yr3FxzPOM1aSABtIFnlB/AlQ5lT0RXmGZNrHGimIGI
-	SOYc7d3UIuaPtfwO5nIMXF7k//W4jRfvexrAbxA==
-X-Google-Smtp-Source: AGHT+IFRckPeGI3mK4TJy2Ans1VBN719sE90BUID/5AeSMpimloz0bUHIVjYsGfDx0ihK02KRAinHGQFEM/ysc/uGF0=
-X-Received: by 2002:a05:6a00:2d9b:b0:70e:9907:ef75 with SMTP id
- d2e1a72fcca58-71b25f014bcmr10074551b3a.4.1727509209060; Sat, 28 Sep 2024
- 00:40:09 -0700 (PDT)
+	s=arc-20240116; t=1727509234; c=relaxed/simple;
+	bh=WiHi+8A8AcUloQzJPM++xYrcHmkSdaWV/c2K5j5sYgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kyypFB5i9eIgMP3Cmj9QWiIpUfxxL6YLkkoJD6DKn7g+UHDTXovwyQkRKuipFuMRefMnZmKv8A9UxuEuU48NiqMFWYCO2Yg0oIYMOctAOqdmjSOTnZjjvUZVPPvm46jDj8sB01sbHq/TGYA+AOVrJ2TX6VFmsK0KL5eeRkCTeOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Bd3yNL+o; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.27] (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id D46982FC004A;
+	Sat, 28 Sep 2024 09:40:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1727509229;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8kC/eRWIHnVWlkxzZZ/FKnPuBi+ZrUHo8bPEJjkftMU=;
+	b=Bd3yNL+oZCK9jBewlU/VEi5BLgg6t7w24T1Bt08FhneXbzdN2ms6dgoZOVwavfBuQR+QD9
+	+D1hIuPfauBQeSPZNMyrWVMYKsM31J+zGJq7nQEJw2V2lMSZLxQe+7js9OrziBdjOq67ZT
+	epNZPXEMgt1K4aS8oV9J1TBXc6o5Svg=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <540c87b1-39aa-4311-b34a-a505556a501a@tuxedocomputers.com>
+Date: Sat, 28 Sep 2024 09:40:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZvBNLRc8xnAoGvoc@Emma> <a02e472c-f206-44d3-9a6b-d921e73110fd@kernel.org>
-In-Reply-To: <a02e472c-f206-44d3-9a6b-d921e73110fd@kernel.org>
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-Date: Sat, 28 Sep 2024 13:09:57 +0530
-Message-ID: <CAEDjzLK1juaOCogWgyDudOn9B1EqbE-vMuGYPxnR9B35y+uAOQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: usb: add missing compatible arraylist
-To: Roger Quadros <rogerq@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, jelle@vdwaa.nl,
+ jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
+ pavel@ucw.cz, platform-driver-x86@vger.kernel.org
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ad01bc38-3834-44c9-a5e3-540a09a20643@gmx.de>
+ <3dde4572-78a0-4a93-916a-563b7150f078@tuxedocomputers.com>
+ <3e5630c0-2ab4-49fc-8b91-988b327bdcf8@tuxedocomputers.com>
+ <95d1342d-f2a1-4f55-b8f9-d1ede1207aaa@gmx.de>
+Content-Language: de-DE
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <95d1342d-f2a1-4f55-b8f9-d1ede1207aaa@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 23 Sept 2024 at 17:23, Roger Quadros <rogerq@kernel.org> wrote:
->
-> On 22/09/2024 20:00, Karan Sanghavi wrote:
-> > Added the vice versa order for compatible property in the yaml file so
-> > that the dtb can parse for the order mentioned in the dts file
-> > k3-am642-sk.dts for ti,j721e-usb.yaml
->
-> k3-am642-sk.dts does not introduce any nodes with the said compatibles.
->
-> "ti,am64-usb" compatible is introduced by k3-am642-main.dtsi.
-> There is only one compatible introduced so there is nothing to do about
-> order here.
->
-> i.e.
->         usbss0: cdns-usb@f900000 {
->                 compatible = "ti,am64-usb";
->                 reg = <0x00 0xf900000 0x00 0x100>;
->
-> What is the functional problem you are facing? Maybe then someone
-> can point you in the right direction.
->
+Hi,
 
-Sorry for mentioning the wrong file name; yes,
-the problem is in k3-am64-main.dtsi file as mentioned below
-
- usbss0: cdns-usb@f900000 {
- 766                 compatible = "ti,am64-usb", "ti,j721e-usb";
- 767                 reg = <0x00 0xf900000 0x00 0x100>;
-
-Due to this, it gives an error as in the YAML file the order is in
-reverse order.
-Also, I cloned the repo yesterday and still found the same error in
-the dtsi file.
-So have I done something wrong? as I see I might be out of sync with
-latest changes
-
-Thank you.
-> >
-> > This is highly ambiguous to me as where exactly the changes needs to be
-> > added is it in the dts file or is the yaml where we have to reverse the
-> > order already mentioned or do we have to add the another order as I have
-> > done ?
-> >
-> > Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> > index 95ff9791baea..822653217c43 100644
-> > --- a/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> > +++ b/Documentation/devicetree/bindings/usb/ti,j721e-usb.yaml
-> > @@ -17,6 +17,9 @@ properties:
-> >        - items:
-> >            - const: ti,j721e-usb
-> >            - const: ti,am64-usb
-> > +      - items:
-> > +          - const: ti,am64-usb
-> > +          - const: ti,j721e-usb
-> >
-> >    reg:
-> >      maxItems: 1
+Am 27.09.24 um 19:18 schrieb Armin Wolf:
+> Am 27.09.24 um 13:24 schrieb Werner Sembach:
 >
-> --
-> cheers,
-> -roger
+>> Hi,
+>>
+>> an additional question below
+>>
+>> Am 27.09.24 um 08:59 schrieb Werner Sembach:
+>>> Hi,
+>>>
+>>> Am 26.09.24 um 20:39 schrieb Armin Wolf:
+>>>> Am 26.09.24 um 19:44 schrieb Werner Sembach:
+>>>>
+>>>>> [...]
+>>>>> +// We don't know if the WMI API is stable and how unique the GUID
+>>>>> is for this ODM. To be on the safe
+>>>>> +// side we therefore only run this driver on tested devices
+>>>>> defined by this list.
+>>>>> +static const struct dmi_system_id tested_devices_dmi_table[] = {
+>>>>> +    {
+>>>>> +        // TUXEDO Sirius 16 Gen1
+>>>>> +        .matches = {
+>>>>> +            DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
+>>>>> +            DMI_EXACT_MATCH(DMI_BOARD_NAME, "APX958"),
+>>>>> +        },
+>>>>> +    },
+>>>>> +    {
+>>>>> +        // TUXEDO Sirius 16 Gen2
+>>>>> +        .matches = {
+>>>>> +            DMI_EXACT_MATCH(DMI_SYS_VENDOR, "TUXEDO"),
+>>>>> +            DMI_EXACT_MATCH(DMI_BOARD_NAME, "AHP958"),
+>>>>> +        },
+>>>>> +    },
+>>>>> +    { }
+>>>>> +};
+>>>>> +
+>>>>> +static int probe(struct wmi_device *wdev, const void
+>>>>> __always_unused *context)
+>>>>> +{
+>>>>> +    struct tuxedo_nb04_wmi_driver_data_t *driver_data;
+>>>>> +
+>>>>> +    if (dmi_check_system(tested_devices_dmi_table))
+>>>>> +        return -ENODEV;
+>>>>
+>>>> Hi,
+>>>>
+>>>> please do this DMI check during module initialization. This avoids
+>>>> having an useless WMI driver
+>>>> on unsupported machines and allows for marking
+>>>> tested_devices_dmi_table as __initconst.
+>> I wonder how to do it since I don't use module_init manually but
+>> module_wmi_driver to register the module.
+>
+> In this case you cannot use module_wmi_driver. You have to manually 
+> call wmi_driver_register()/wmi_driver_unregister()
+> in module_init()/module_exit().
+ack
+>
+>>>>
+>>>> Besides that, maybe a "force" module parameter for overriding the
+>>>> DMI checking could be
+>>>> useful?
+>>
+>> Considering the bricking potential i somewhat want for people to look
+>> in the source first, so i would not implementen a force module 
+>> parameter.
+>>
+> Ok.
+>
+>> Kind regards,
+>>
+>> Werner
+>>
+>>
 
