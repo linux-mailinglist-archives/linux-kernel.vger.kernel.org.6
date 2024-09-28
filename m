@@ -1,194 +1,231 @@
-Return-Path: <linux-kernel+bounces-342445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C737988F2D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41060988F33
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952641C20C83
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A361F21B8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757B6187FF3;
-	Sat, 28 Sep 2024 12:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E092187877;
+	Sat, 28 Sep 2024 12:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SX7uwgI/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPbuWpbd"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10951187858;
-	Sat, 28 Sep 2024 12:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D374C14F9E9;
+	Sat, 28 Sep 2024 12:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727526383; cv=none; b=P4jtBjVzYW/jLypUWlkpJD6fbtYSOsLj4FHs6TZt0Hw4xyLXlFspGAoqyyDoQ+49k3uVYofN5ssvCn9EwF1zEmXqvqPoBI7ZfMjJWV2oWxA7yg6Dkh8A1XoU8EzTLvu9lO0rg5chnmHqxgV6sxV3RVGzG71DGZdeKTEVyDn3eU4=
+	t=1727526832; cv=none; b=jC7fWQzG8/BZICZmddQHixLQqeO3BEk6iMyuauRftfen49UrBrTRDboIsSbvKakpevsqfsWptQhHA3GSzMaC+0PgVbric/WVJAbuXE9jpjt4/k/VdyYC9F6QiNqGinrIKlgrO3XOE92K91goaiHfVw+zHYs6dfyO20kyA+iVcGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727526383; c=relaxed/simple;
-	bh=0O0bP0IrBhKutucM950AErodJ/ElrwHuacHsGrdmOL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fodQ4P0jZCrQHomJamEINbb+xH+vZTU1CmLNAJblr94l4nxh0a51vC9tRoSOI49xy1GapU6WSMtWXhVYM4Vz1KzLICPcOdSiy4v41q4vf2vNFJzVgDKyFy54DgWkKwINSEe/KRev5NgZtzUFuZiBw5WeZeo3W005OwGOA4avg2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SX7uwgI/; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727526382; x=1759062382;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0O0bP0IrBhKutucM950AErodJ/ElrwHuacHsGrdmOL0=;
-  b=SX7uwgI/bzo2IPYwplUAb/6TV1nzHERKIIfVJfcr997WWzNLVxBvI/Ul
-   JQwGFItuWYIScipfgSS/5Np6lu0psZF0yQPfoK/4TjLqwoyZ9VV9dYMaQ
-   9ZqsJyqILxB1Hqw78L5l5ttcQ0S44KAeRzucgtkw4hCD/P+FHkRTnUrdS
-   gtbdWA4sr1stItIyWQSf4zlUqVMXM4IKOm7i6ExnIIWYi+CmcQ8ZqaxSW
-   B+Cr/vSKKbJSMKZr3w0IDSWuvmmCJNKehfqD3zalKmNk3lEGchUdvPDXs
-   /gjqO6OcNcbcZFtG5hIupOlZJR5K+TUDLzQFLJSm2KhIH4XUugWf2OA1O
-   Q==;
-X-CSE-ConnectionGUID: OTniNFF/SMiv6IrXN1Zojg==
-X-CSE-MsgGUID: 27+CBRIgQf6mJvxSCAhgqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26174337"
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="26174337"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 05:26:21 -0700
-X-CSE-ConnectionGUID: tqVLSgj5RGiBg6fDPtfYcA==
-X-CSE-MsgGUID: iXlxDZxGRlO5tpgIe7GV2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="72677358"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 28 Sep 2024 05:26:15 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suWWa-000NFb-0k;
-	Sat, 28 Sep 2024 12:26:12 +0000
-Date: Sat, 28 Sep 2024 20:25:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	wei.huang2@amd.com, vadim.fedorenko@linux.dev, horms@kernel.org,
-	bagasdotme@gmail.com, bhelgaas@google.com, lukas@wunner.de,
-	paul.e.luse@intel.com, jing2.liu@intel.com
-Subject: Re: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
-Message-ID: <202409282017.PWd5zICd-lkp@intel.com>
-References: <20240927215653.1552411-3-wei.huang2@amd.com>
+	s=arc-20240116; t=1727526832; c=relaxed/simple;
+	bh=nvx894P26dlpD6v/izFxOgg5M0k5tJSTl1a4We/2Kj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FeU2s7tnkbK77Uhx00QWPmzTXpb92KbxcxmI6SMYbL8IZEKeKYBnZSOLeuzBDKk5T7rIHnEncTkegeERGCScFEObAXkH47OsnulTDcf7JOcDBuyHq1alsjoTgcRhuXiBR5Ndce8scAzfad7Zot3WOXjEXchsn2IROjtTBhv7ycE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPbuWpbd; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e25c5ed057dso2966910276.3;
+        Sat, 28 Sep 2024 05:33:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727526830; x=1728131630; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z+XR7nXFIWwF1tEgi8L5f5pbxumnzjoC+13KxZdr84g=;
+        b=KPbuWpbduycFncn64bHC7uwc5fbClyKwL6Ha2o9iboLURGfV8hVFZwoh35wjzJLR/2
+         +I2HT0yfg0xA/96KvSIlPa1h3B3OUoxRnrxXdY1eqzzbyZ3yo/4BpcmB+B2b4vOj97ys
+         y41lKAEjVOhr6jGlF0ihVaeEXSmQXw/SDxxbgGRXwM4JjpI5JQSKhBW2ylv2q0+ikgG6
+         uBwYk1WGIys12v+30zpfiR/xvg9JBvjU1TUd09GfiVehUgL5+mKKufs6y92jhafv24Fg
+         9+zV2VIawdJtSbkEeRsvQZmk9pbayY7PeZnkwBzFjWAV6mpWmul0UV63klJxk4UkWvxM
+         BumQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727526830; x=1728131630;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z+XR7nXFIWwF1tEgi8L5f5pbxumnzjoC+13KxZdr84g=;
+        b=TLoAuKPD2LZDwhYnnCHLHi2Oi1O0dvoSzjZ1opWQ2TA8VpFq3EbCPPYt1yrlsjBbIc
+         4FRx+ttRz2h88ESoARU5NKmRK9MTAL4WzyAX6dtPJLXDKxs1PCQfQlYqQQnrQsiu8PO2
+         WmQhYw/CuBONPGsY00MdyJZd3qHHA3QsHe8+jiyXRQcBRW+hHlJ9XfevAWOxM9CARWAj
+         3PID84Hw0mst2PtdeIw8pBdx5LUvtVbSob+vSyP49qqlf9besA1diK3OO/Himb3u6HTW
+         NpIdwq9+U2YM585vgw08EAd2yLFXBlaxaNfzIFmrGRcnyF0LSwcft6jM4lr9iQvsN7lG
+         u7Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCUmvdPDnnZeyp471gMGiZUgDFr7exMrPq5Z5+rufmiKxb+CMT9frX2imZoRGBStEh2BDZz1j37/s1bCMwRD@vger.kernel.org, AJvYcCWb2/5k2wPwuYHbMyCoM5iBLXxouSpnzH0CKj1j0AE7MGj2D67Bsrh768zfGesDUK6JUPZcxiUJ9BN2Lg==@vger.kernel.org, AJvYcCWv72pG9bqhsNRezyZIFkvvU6gF+RLM/w2kjiB448AaOSqV1R5KTuLNLiZ+4xc3Hx6AI3fCw5cATnsI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU/scJvVXr0CfxzA7zyiRHlxp5xPWoenZdXYKinEetuM7CQV4n
+	Vn30VLh1SCrZd78LSe4o9Bqyd9Ipi1ZIa9id94l7+gdMLMqdZK6tVJ7ok2ytEkb2JOvEa8hTEuK
+	AIS9Qem6NRY5752BVKNXIylbNKh8=
+X-Google-Smtp-Source: AGHT+IGuzjVP7bsAjCecGFeI8L9lM+t7/U8e6etx2Uxw2X/kzAD+ngNPcjxyMYpnPnjO4ciKvtwG+Ps5tRNOy2XjH90=
+X-Received: by 2002:a5b:1c2:0:b0:e0e:9195:be85 with SMTP id
+ 3f1490d57ef6-e2604b487b1mr4523950276.29.1727526829607; Sat, 28 Sep 2024
+ 05:33:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927215653.1552411-3-wei.huang2@amd.com>
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <20240927141445.157234-2-iansdannapel@gmail.com> <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
+ <CAKrir7irvRbwCsdjF_NNfWy68wTDfRuyW2oHb90gYgBA=L7-Tg@mail.gmail.com> <c6ac1c4d-7f7a-41a9-9f32-55428f88bdfe@kernel.org>
+In-Reply-To: <c6ac1c4d-7f7a-41a9-9f32-55428f88bdfe@kernel.org>
+From: Ian Dannapel <iansdannapel@gmail.com>
+Date: Sat, 28 Sep 2024 14:33:38 +0200
+Message-ID: <CAKrir7iyiDWXQnxMrkDhsRj4+2XEUDBFpHYyfzdJksE_HE62JA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	neil.armstrong@linaro.org, heiko.stuebner@cherry.de, rafal@milecki.pl, 
+	linus.walleij@linaro.org, linux-fpga@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Wei,
+Am Sa., 28. Sept. 2024 um 09:31 Uhr schrieb Krzysztof Kozlowski
+<krzk@kernel.org>:
+>
+> On 27/09/2024 17:34, Ian Dannapel wrote:
+> > Thanks for the review Krzysztof.
+> >
+> > Am Fr., 27. Sept. 2024 um 16:26 Uhr schrieb Krzysztof Kozlowski
+> > <krzk@kernel.org>:
+> >>
+> >> On 27/09/2024 16:14, iansdannapel@gmail.com wrote:
+> >>> From: Ian Dannapel <iansdannapel@gmail.com>
+> >>>
+> >>> Add device tree binding documentation for configuring Efinix FPGA
+> >>> using serial SPI passive programming mode.
+> >>>
+> >>> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> >>> ---
+> >>>  .../fpga/efinix,trion-spi-passive.yaml        | 85 +++++++++++++++++++
+> >>>  1 file changed, 85 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..ec6697fa6f44
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
+> >>> @@ -0,0 +1,85 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/fpga/efinix,trion-spi-passive.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Efinix SPI FPGA Manager
+> >>> +
+> >>> +maintainers:
+> >>> +  - Ian Dannapel <iansdannapel@gmail.com>
+> >>> +
+> >>> +description: |
+> >>> +  Efinix Trion and Titanium Series FPGAs support a method of loading the
+> >>> +  bitstream over what is referred to as "SPI Passive Programming".
+> >>> +  Only serial (1x bus width) is supported, setting the programming mode
+> >>> +  is not in the scope the this manager and must be done elsewhere.
+> >>> +
+> >>> +  Warning: The slave serial link is not technically SPI and therefore it is
+> >>> +  not recommended to have other devices on the same bus since it might
+> >>> +  interfere or be interfered by other transmissions.
+> >>> +
+> >>> +  References:
+> >>> +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.6.pdf
+> >>> +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.0.pdf
+> >>> +
+> >>> +allOf:
+> >>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    enum:
+> >>> +      - efinix,trion-spi-passive
+> >>> +      - efinix,titanium-spi-passive
+> >>
+> >> 1. Your driver suggests these are compatible, so make them compatible
+> >> with using fallback.
+> >>
+> >> 2. What is "spi-passive"? Compatible is supposed to be the name of the
+> >> device, so I assume this is "trion"? Can trion be anything else than fpga?
+> > spi-passive is the programming mode, where the device is in slave
+> > mode. There are also other modes, but not supported by this driver.
+>
+> But we do no describe here drivers, so it does no matter what it supports.
+>
+> > The name was inspired by similar drivers (spi-xilinx.c). Isn't just
+> > "efinix,trion"/"efinix,titanium" too generic?
+>
+> What do you mean too generic? What else could it be? BTW, that was my
+> question, which you did not answer. Bindings describe hardware, so
+> describe here hardware.
+>
+> >>
+> >>> +
+> >>> +  spi-cpha: true
+> >>> +
+> >>> +  spi-cpol: true
+> >>> +
+> >>> +  spi-max-frequency:
+> >>> +    maximum: 25000000
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  creset-gpios:
+> >>
+> >> reset-gpios
+> >>
+> >> Do not invent own properties.
+> >>
+> >>> +    description:
+> >>> +      reset and re-configuration trigger pin (low active)
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  cs-gpios:
+> >>> +    description:
+> >>> +      chip-select pin (low active)
+> >>
+> >> Eee? That's a property of controller, not child. Aren't you duplicating
+> >> existing controller property?
+> > This device uses this pin in combination with the reset to enter the
+> > programming mode. Also, the driver must guarantee that the pin is
+>
+> Isn't this the same on every SPI device?
+Yes, but I was not very clear. In this case the pin must be hold
+active including entering the programming mode. And if the controller
+transfers the data in bursts, the pin is also not allowed to go
+inactive between transfer bursts.
+>
+> > active for the whole transfer process, including ending dummy bits.
+> > This is why I added a warning to NOT use this driver with other
+> > devices on the same bus.
+>
+> Not really related. None of this grants exception from duplicating
+> controller's property.
+>
+> How do you think it will even work in Linux, if same GPIO is requested
+> twice (imagine controller also has it)? Till now, this would be -EBUSY.
+I expected that the controller is not able request the same gpio. From
+the controller point of view, it is a device that does not have a chip
+select. Not sure if the controller would be able to get to this gpio
+if it is not explicitly given.
+>
+> But regardless of implementation, I still do not understand why do you
+> need duplicate same chip-select. Maybe just the naming is the confusion,
+> dunno.
+This could be an option to make the difference to a "real chip-select"
+clear, but it would drift away from the datasheet naming. Eg,
+prog-select?
+>
+>
+> Best regards,
+> Krzysztof
+>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master next-20240927]
-[cannot apply to v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Huang/PCI-Add-TLP-Processing-Hints-TPH-support/20240928-055915
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20240927215653.1552411-3-wei.huang2%40amd.com
-patch subject: [PATCH V6 2/5] PCI/TPH: Add Steering Tag support
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240928/202409282017.PWd5zICd-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409282017.PWd5zICd-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409282017.PWd5zICd-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/pci/tph.c:236:9: warning: result of comparison of constant 18446744073709551615 with expression of type 'typeof (_Generic((mask), char: (unsigned char)0, unsigned char: (unsigned char)0, signed char: (unsigned char)0, unsigned short: (unsigned short)0, short: (unsigned short)0, unsigned int: (unsigned int)0, int: (unsigned int)0, unsigned long: (unsigned long)0, long: (unsigned long)0, unsigned long long: (unsigned long long)0, long long: (unsigned long long)0, default: (mask)))' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-     236 |         val |= FIELD_PREP(mask, st_val);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:115:3: note: expanded from macro 'FIELD_PREP'
-     115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: ");    \
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/bitfield.h:72:53: note: expanded from macro '__BF_FIELD_CHECK'
-      72 |                 BUILD_BUG_ON_MSG(__bf_cast_unsigned(_mask, _mask) >     \
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
-      73 |                                  __bf_cast_unsigned(_reg, ~0ull),       \
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      74 |                                  _pfx "type of reg too small for mask"); \
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:58: note: expanded from macro 'BUILD_BUG_ON_MSG'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
-   include/linux/compiler_types.h:517:22: note: expanded from macro 'compiletime_assert'
-     517 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:505:23: note: expanded from macro '_compiletime_assert'
-     505 |         __compiletime_assert(condition, msg, prefix, suffix)
-         |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/compiler_types.h:497:9: note: expanded from macro '__compiletime_assert'
-     497 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   1 warning generated.
-
-
-vim +236 drivers/pci/tph.c
-
-   205	
-   206	/* Write ST to MSI-X vector control reg - Return 0 if OK, otherwise -errno */
-   207	static int write_tag_to_msix(struct pci_dev *pdev, int msix_idx, u16 tag)
-   208	{
-   209		struct msi_desc *msi_desc = NULL;
-   210		void __iomem *vec_ctrl;
-   211		u32 val, mask, st_val;
-   212		int err = 0;
-   213	
-   214		msi_lock_descs(&pdev->dev);
-   215	
-   216		/* Find the msi_desc entry with matching msix_idx */
-   217		msi_for_each_desc(msi_desc, &pdev->dev, MSI_DESC_ASSOCIATED) {
-   218			if (msi_desc->msi_index == msix_idx)
-   219				break;
-   220		}
-   221	
-   222		if (!msi_desc) {
-   223			err = -ENXIO;
-   224			goto err_out;
-   225		}
-   226	
-   227		st_val = (u32)tag;
-   228	
-   229		/* Get the vector control register (offset 0xc) pointed by msix_idx */
-   230		vec_ctrl = pdev->msix_base + msix_idx * PCI_MSIX_ENTRY_SIZE;
-   231		vec_ctrl += PCI_MSIX_ENTRY_VECTOR_CTRL;
-   232	
-   233		val = readl(vec_ctrl);
-   234		mask = PCI_MSIX_ENTRY_CTRL_ST_LOWER | PCI_MSIX_ENTRY_CTRL_ST_UPPER;
-   235		val &= ~mask;
- > 236		val |= FIELD_PREP(mask, st_val);
-   237		writel(val, vec_ctrl);
-   238	
-   239		/* Read back to flush the update */
-   240		val = readl(vec_ctrl);
-   241	
-   242	err_out:
-   243		msi_unlock_descs(&pdev->dev);
-   244		return err;
-   245	}
-   246	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Ian
 
