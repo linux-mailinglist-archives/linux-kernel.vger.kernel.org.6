@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-342420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA59C988ECB
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6643C988ECF
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761EF1F21AA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:24:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0F25282515
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BE519F138;
-	Sat, 28 Sep 2024 09:24:21 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE35819EED2;
+	Sat, 28 Sep 2024 09:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iJr4oFGd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA6219E965
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:24:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCCF2AF15;
+	Sat, 28 Sep 2024 09:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727515461; cv=none; b=alT80EnRGg66CARwr36sIxauHYdqnsRoc5fCzrxV7omXLdIB0b0qFZuNWSmQ9tB/RVnb0pR05pljiduq6BPus8ceM9wHJBd/XrFoAf74hjrGNT6oW6tdDXcs04P0JUq27R7TJveDI9kYw8bABiUmxay9pRawVQXyLI+aYm8lg2E=
+	t=1727515625; cv=none; b=RfjF7bN2XN8RDArG52ZRDB9lyxq509/TYB9SsrJazddv3y8O1J51xTGtiuPPyXJxsgWylAKq//hu6IC+/8GVET0WKyL/989mHTxz6PnzUAQgNk1Sf0pQ7KJS7LTDFxUddCaMe35MGl3P0laK7aQ83K4WhVcN+W3V9jJQBKmqh/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727515461; c=relaxed/simple;
-	bh=aXnYmNA3D4Zi6MT4JWf0ODz8h/3lfqb0mT5NJS7phNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PE5kNOT70WbCSwAALBKmoo/j6okOXqmIhwSMk04eoG2o4VDFKCTqpTy3DJJ2dDuUle3EOkZRNsP6Vrrj1GgC5eb+9vbfs+VEHME7TCRXcAK6XXiFgfHsULrJIWCo6tQp/K+UuYoBf/4zdt4w5xyC4tvvzaTw+ucFfddXIy3WIWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48S9OHbo075641;
-	Sat, 28 Sep 2024 18:24:17 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
- Sat, 28 Sep 2024 18:24:17 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48S9NtdO075537
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 28 Sep 2024 18:24:17 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
-Date: Sat, 28 Sep 2024 18:23:53 +0900
+	s=arc-20240116; t=1727515625; c=relaxed/simple;
+	bh=I4GEl8noeNqn5baoETtbeN8eHN+C2zt25GPno6/BBmA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fVzZccu8De78bBFJWPqXVyLvEY5ZL5LYOkRrKQIr2c18bLhyWW0RGQxTUiyT/WOqbX70jP+kCMqKwwSwlKx87qRFzZtNOQG6UAKkOhRKFoHvUCFgd5lzcVVUavNGBRZAvoZq/SSC6dwP42v3KUTURjtamS5FkfWea5y+dpN6Vl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iJr4oFGd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48S7uknB019780;
+	Sat, 28 Sep 2024 09:26:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4ZsmIjDEG1e9FkWhJTFR2i
+	PcEwy/Bf2eceXye0AS4jc=; b=iJr4oFGdAKc4BVSxfBK9zriVquhSUFsD4haijl
+	09yH0vip7QgcOr1l06hrY1AUVnDTxFnR3zxB3BuTM0cC5N3XxTqwFGYLREofYzT0
+	RPxnqGrUd36sIiU7cEJhV7RPHxVf0seT1Ox6xzjX6iYE41Pbj+AIJRhrO4tQ5z/Y
+	uASRtBXwupIeCO7pk21bOv8EW0EBuRcPY40QSbEPwXc0OG+6OLvjSgv0jm/RgUlW
+	RCrGJZTyMNNlaZsiX++BTtyNAOKtKftyJnplWs9HSPGusZ3aeL2WImmRnD51ZumP
+	aiMd2eubLIBqyrigyLzuZrDGYaWNg6XVkXN+Io8pRaWpIjCg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa12gcce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 28 Sep 2024 09:26:47 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48S9QkbA019012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 28 Sep 2024 09:26:46 GMT
+Received: from hu-zijuhu-lv.qualcomm.com (10.49.16.6) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sat, 28 Sep 2024 02:26:46 -0700
+From: Zijun Hu <quic_zijuhu@quicinc.com>
+Date: Sat, 28 Sep 2024 02:26:27 -0700
+Subject: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
+ dev_pm_disarm_wake_irq()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
- <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
- <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
- <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
- <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
- <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
- <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
- <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMLL92YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSyML3bTMivjyxOzUzKJCXSNzs7Q0CyMzS3ODVCWgjoKiVKA02LRopSA
+ 3Z6XY2loA3NFyyGIAAAA=
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Johan Hovold <johan+linaro@kernel.org>, Tony Lindgren <tony@atomide.com>,
+        Zijun Hu <zijun_hu@icloud.com>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: b3vTMolw8jIAC_GZ608Tuqn9rVhKwJm7
+X-Proofpoint-GUID: b3vTMolw8jIAC_GZ608Tuqn9rVhKwJm7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 clxscore=1011 mlxscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409280069
 
-On 2024/09/28 17:57, Kent Overstreet wrote:
-> On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
->> On 2024/09/28 10:25, Kent Overstreet wrote:
->>> And looking further, I don't see anyhting in the console log from when
->>> bcachefs actually mounted (???), which means I don't think I have enough
->>> to go on. It's clearly an upgrade path issue - we didn't run
->>> check_allocations as is required when upgrading to 1.11 - but it's not
->>> reproducing for me when I run tests with old tools.
->>>
->>> Can we get some more information about the syzbot reproducer? Exact
->>> tools version, format command and mount command.
->>
->> Reproducer for this bug is not yet found. But syzbot does not use userspace
->> tools. That is, testing with old (or new) tools will not help. Please note
->> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
->> kernel side depends on sanity checks / validations done by the userspace
->> side, syzbot will find oversights on the kernel side. Please don't make any
->> assumptions made by the userspace tools.
->>
-> 
-> You seem to be confused; how do you expect sysbot to test a filesystem
-> without the format comand?
+IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
+the wake irq enabled by dev_pm_arm_wake_irq(), fixed by simply correcting
+the wrong if condition.
 
-Please find syz_mount_image$bcachefs from e.g.
-https://syzkaller.appspot.com/text?tag=CrashLog&x=17441e80580000 .
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+List relevant commits as following:
 
-syzbot creates in-memory filesystem image using memfd and mount it
-using loopback devices. For example,
-https://syzkaller.appspot.com/text?tag=ReproC&x=102e0907980000 is
-a C reproducer for an ext4 bug; check how setup_loop_device() and
-syz_mount_image() are used for mounting filesystems.
+johan+linaro@kernel.org  2023-07-13
+Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
 
-Again, syzbot does not use userspace tools for managing filesystems.
+tony@atomide.com  2018-02-09
+Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
+
+The former commit fixes the later.
+---
+ drivers/base/power/wakeirq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
+index 5a5a9e978e85..8b15f9a0e8f9 100644
+--- a/drivers/base/power/wakeirq.c
++++ b/drivers/base/power/wakeirq.c
+@@ -356,7 +356,7 @@ void dev_pm_disarm_wake_irq(struct wake_irq *wirq)
+ 		disable_irq_wake(wirq->irq);
+ 
+ 		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
+-		    !(wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
++		    (wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
+ 			disable_irq_nosync(wirq->irq);
+ 	}
+ }
+
+---
+base-commit: eb46cb321f1f3f3102f4ad3d61dd5c8c06cdbf17
+change-id: 20240928-fix_wakeirq-276ff826970e
+
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
