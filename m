@@ -1,201 +1,189 @@
-Return-Path: <linux-kernel+bounces-342695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54F89891DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:02:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAD99891DC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CA6285C2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:02:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F841F23781
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE4F187352;
-	Sat, 28 Sep 2024 22:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2551865E6;
+	Sat, 28 Sep 2024 22:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwXOp17E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UuZyH7J2";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="UuZyH7J2"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DCF189502;
-	Sat, 28 Sep 2024 22:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFE282488;
+	Sat, 28 Sep 2024 22:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727560850; cv=none; b=oy79w4V0LVyABm34SKnyg1DwR1ApwkZ81teg5GKbJbB0t+uCsclP5au/xt0tUjIvGNUkbLZ1z8OTYSaJF2LfCyAAe9p56z/DYRHJjCbq/jAh0KaRuWQ4hX2h26xTKXVsCKOYfB+gAmHBqr8en7o8eB0m2wUZMQfk7pkSFyZoka0=
+	t=1727561330; cv=none; b=U2a9eViNqdzMT9+ZpwnYzeHRhx7JzLMotvtq2ejbGgpXXJ6NckxW58x/7X79vwKo/f/Ia5IoXkS+A2xSko/KjPtvg5Zvoph4g9RPKP5UtVjqzxRjgfnAP3iRZsUJejCfkJ7sSWS8l780jfs+iyI2eM7OrcJG+QOd5riW20Mih3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727560850; c=relaxed/simple;
-	bh=Un5y3IwAsPJjjVsTLoX+SCgsvxWycXjRtC2sfJf3T0w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jp4MnHOsdP2SlGDnsh1M1+DP3vn1/BNeD5jVX6nCuEZR7H/g37SpZV+FacUqIukOYoxwop/B4uY2gbOuYelImYFBD5m8LNcWJKMTqf3aJwxCupSlvagASreM6dU8sWcJXrr8FoMbQSWViqt1wzpe8yPxC4UC5+rv6ge5a7+v7Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwXOp17E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0045C4CECE;
-	Sat, 28 Sep 2024 22:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727560850;
-	bh=Un5y3IwAsPJjjVsTLoX+SCgsvxWycXjRtC2sfJf3T0w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jwXOp17EpF/sGoDvIDyxR9/p5sbUIzz13D5DJ0FXGqo8waEgwMy5pHjwsvS6Gg8GN
-	 5tNpGLQsukYm18B97LrtLvEAYUhZdSl9nJ5ZnYdckqg/UPtlne+fELfKk1+9rJMzqC
-	 /MkrWLEWWnxmwi1wgTqQyh0rUzluQDWfM/9XlJCdNXeM0Z/+iA7Uzh2N57/QvGuSEz
-	 yqr2+K1MUpEEGGN8qZHn3dsNxw/oALrHPZkZrAb4yLvVoEbgTYZbKDjxpQ/Gh+YPwe
-	 bTUFZflfl1ZoVTdG/5fdx8Qp1vnUkxiC3cpmwU6KchHpSzhv/O56wz4OHTqFHBRQCP
-	 xUFkJE+RK4rHQ==
-Received: by pali.im (Postfix)
-	id D9305CB5; Sun, 29 Sep 2024 00:00:41 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] cifs: Rename posix to nfs in parse_reparse_posix() and reparse_posix_data
-Date: Sat, 28 Sep 2024 23:59:48 +0200
-Message-Id: <20240928215948.4494-9-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240928215948.4494-1-pali@kernel.org>
-References: <20240928215948.4494-1-pali@kernel.org>
+	s=arc-20240116; t=1727561330; c=relaxed/simple;
+	bh=t2EuzwMZ2VvEOXuRdiOq5zJBUKziuub94VLUxzKl4i8=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=fy96G4vOW3FlzpSltpdTSHJgFzslYsEI3QvgGspJ7Aq3ogjDcRblB8KynlGgnSny8z4OGSF/tt454SvJCNvpeUsu2ifTdopTXSkpfHBJ/eJgBbAtxtvbfkihNy3nSCfuLsUKyE47+Up0sC3TrHsXeIkfI2j6/GCgPD4tqLOYkHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UuZyH7J2; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=UuZyH7J2; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1727561327;
+	bh=t2EuzwMZ2VvEOXuRdiOq5zJBUKziuub94VLUxzKl4i8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=UuZyH7J22hLTHMb/jMWsZfLKNFuLb2nSSf+fZMGMMqYvKLQxWEI2/Spk4FncUyg3U
+	 dzlHAGyJVTyQx8srgWlaVfoTLVayevyVIM39BXDH5d/XTu8NaQ8zUvlNl+/9VEdaoO
+	 f8/BFHKJqWZ78SGyXVjjeAUKuUGGL+I6Fh1MGhjI=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id BD9E51287323;
+	Sat, 28 Sep 2024 18:08:47 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id Ej5XocrkNbyz; Sat, 28 Sep 2024 18:08:47 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1727561327;
+	bh=t2EuzwMZ2VvEOXuRdiOq5zJBUKziuub94VLUxzKl4i8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=UuZyH7J22hLTHMb/jMWsZfLKNFuLb2nSSf+fZMGMMqYvKLQxWEI2/Spk4FncUyg3U
+	 dzlHAGyJVTyQx8srgWlaVfoTLVayevyVIM39BXDH5d/XTu8NaQ8zUvlNl+/9VEdaoO
+	 f8/BFHKJqWZ78SGyXVjjeAUKuUGGL+I6Fh1MGhjI=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 219B012872CD;
+	Sat, 28 Sep 2024 18:08:47 -0400 (EDT)
+Message-ID: <0ea39075394be14ba8c809daa308a16d9330c639.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI final updates for the 6.11+ merge window
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Sat, 28 Sep 2024 18:08:45 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-This function parses NFS-style reparse points, which are used only by
-Windows NFS server since Windows Server 2012 version. This style of special
-files is not understood by Microsoft POSIX / Interix / SFU / SUA subsystems.
+These are mostly minor updates.  There are two drivers (lpfc and
+mpi3mr) which missed the initial pull and a core change to retry a
+start/stop unit which affect suspend/resume.
 
-So make it clear that parse_reparse_posix() function and reparse_posix_data
-structure are not POSIX general, but rather NFS specific.
+The patch is available here:
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/cifsglob.h |  2 +-
- fs/smb/client/cifspdu.h  |  2 +-
- fs/smb/client/reparse.c  | 14 +++++++-------
- fs/smb/client/reparse.h  |  2 +-
- fs/smb/common/smb2pdu.h  |  2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-misc
 
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index 9eae8649f90c..119537e98f77 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -223,7 +223,7 @@ struct cifs_open_info_data {
- 		__u32 tag;
- 		union {
- 			struct reparse_data_buffer *buf;
--			struct reparse_posix_data *posix;
-+			struct reparse_nfs_data *nfs;
- 		};
- 	} reparse;
- 	struct {
-diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-index c3b6263060b0..fefd7e5eb170 100644
---- a/fs/smb/client/cifspdu.h
-+++ b/fs/smb/client/cifspdu.h
-@@ -1506,7 +1506,7 @@ struct reparse_symlink_data {
- #define NFS_SPECFILE_BLK	0x00000000004B4C42
- #define NFS_SPECFILE_FIFO	0x000000004F464946
- #define NFS_SPECFILE_SOCK	0x000000004B434F53
--struct reparse_posix_data {
-+struct reparse_nfs_data {
- 	__le32	ReparseTag;
- 	__le16	ReparseDataLength;
- 	__u16	Reserved;
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 35e8f2e18530..a23ea2f78c09 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -81,7 +81,7 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 	return rc;
- }
- 
--static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
-+static int nfs_set_reparse_buf(struct reparse_nfs_data *buf,
- 			       mode_t mode, dev_t dev,
- 			       struct kvec *iov)
- {
-@@ -120,20 +120,20 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
- 		     const char *full_path, umode_t mode, dev_t dev)
- {
- 	struct cifs_open_info_data data;
--	struct reparse_posix_data *p;
-+	struct reparse_nfs_data *p;
- 	struct inode *new;
- 	struct kvec iov;
- 	__u8 buf[sizeof(*p) + sizeof(__le64)];
- 	int rc;
- 
--	p = (struct reparse_posix_data *)buf;
-+	p = (struct reparse_nfs_data *)buf;
- 	rc = nfs_set_reparse_buf(p, mode, dev, &iov);
- 	if (rc)
- 		return rc;
- 
- 	data = (struct cifs_open_info_data) {
- 		.reparse_point = true,
--		.reparse = { .tag = IO_REPARSE_TAG_NFS, .posix = p, },
-+		.reparse = { .tag = IO_REPARSE_TAG_NFS, .nfs = p, },
- 	};
- 
- 	new = smb2_get_reparse_inode(&data, inode->i_sb, xid,
-@@ -313,7 +313,7 @@ int smb2_mknod_reparse(unsigned int xid, struct inode *inode,
- }
- 
- /* See MS-FSCC 2.1.2.6 for the 'NFS' style reparse tags */
--static int parse_reparse_posix(struct reparse_posix_data *buf,
-+static int parse_reparse_nfs(struct reparse_nfs_data *buf,
- 			       struct cifs_sb_info *cifs_sb,
- 			       struct cifs_open_info_data *data)
- {
-@@ -414,7 +414,7 @@ int parse_reparse_point(struct reparse_data_buffer *buf,
- 	/* See MS-FSCC 2.1.2 */
- 	switch (le32_to_cpu(buf->ReparseTag)) {
- 	case IO_REPARSE_TAG_NFS:
--		return parse_reparse_posix((struct reparse_posix_data *)buf,
-+		return parse_reparse_nfs((struct reparse_nfs_data *)buf,
- 					   cifs_sb, data);
- 	case IO_REPARSE_TAG_SYMLINK:
- 		return parse_reparse_symlink(
-@@ -507,7 +507,7 @@ bool cifs_reparse_point_to_fattr(struct cifs_sb_info *cifs_sb,
- 				 struct cifs_fattr *fattr,
- 				 struct cifs_open_info_data *data)
- {
--	struct reparse_posix_data *buf = data->reparse.posix;
-+	struct reparse_nfs_data *buf = data->reparse.nfs;
- 	u32 tag = data->reparse.tag;
- 
- 	if (tag == IO_REPARSE_TAG_NFS && buf) {
-diff --git a/fs/smb/client/reparse.h b/fs/smb/client/reparse.h
-index 5be54878265e..2a91f64de557 100644
---- a/fs/smb/client/reparse.h
-+++ b/fs/smb/client/reparse.h
-@@ -18,7 +18,7 @@
-  */
- #define IO_REPARSE_TAG_INTERNAL ((__u32)~0U)
- 
--static inline dev_t reparse_nfs_mkdev(struct reparse_posix_data *buf)
-+static inline dev_t reparse_nfs_mkdev(struct reparse_nfs_data *buf)
- {
- 	u32 major, minor;
- 
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index c769f9dbc0b4..0e77a4c0145a 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -1550,7 +1550,7 @@ struct reparse_symlink_data_buffer {
- 	__u8	PathBuffer[]; /* Variable Length */
- } __packed;
- 
--/* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_posix_data */
-+/* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_nfs_data */
- 
- struct validate_negotiate_info_req {
- 	__le32 Capabilities;
--- 
-2.20.1
+The short changelog is:
+
+Bart Van Assche (1):
+      scsi: sd: Retry START STOP UNIT commands
+
+Brian King (1):
+      scsi: ibmvfc: Add max_sectors module parameter
+
+Chen Ni (1):
+      scsi: pmcraid: Convert comma to semicolon
+
+Christophe JAILLET (2):
+      scsi: scsi_debug: Remove a useless memset()
+      scsi: libcxgbi: Remove an unused field in struct cxgbi_device
+
+Colin Ian King (7):
+      scsi: mpt3sas: Remove trailing space after \n newline
+      scsi: lpfc: Remove trailing space after \n newline
+      scsi: qedf: Remove trailing space after \n newline
+      scsi: hisi_sas: Remove trailing space after \n newline
+      scsi: megaraid_sas: Remove trailing space after \n newline
+      scsi: pm8001: Remove trailing space after \n newline
+      scsi: zalon: Remove trailing space after \n newline
+
+Daniel Wagner (1):
+      scsi: pm8001: Do not overwrite PCI queue mapping
+
+Hongbo Li (1):
+      scsi: sd: Remove duplicate included header file linux/bio-integrity.h
+
+Justin Tee (8):
+      scsi: lpfc: Update lpfc version to 14.4.0.5
+      scsi: lpfc: Support loopback tests with VMID enabled
+      scsi: lpfc: Revise TRACE_EVENT log flag severities from KERN_ERR to KERN_WARNING
+      scsi: lpfc: Ensure DA_ID handling completion before deleting an NPIV instance
+      scsi: lpfc: Fix kref imbalance on fabric ndlps from dev_loss_tmo handler
+      scsi: lpfc: Restrict support for 32 byte CDBs to specific HBAs
+      scsi: lpfc: Update phba link state conditional before sending CMF_SYNC_WQE
+      scsi: lpfc: Add ELS_RSP cmd to the list of WQEs to flush in lpfc_els_flush_cmd()
+
+Manish Pandey (1):
+      scsi: ufs: qcom: Update MODE_MAX cfg_bw value
+
+Martin Wilck (1):
+      scsi: sd: Fix off-by-one error in sd_read_block_characteristics()
+
+Rafael Rocha (1):
+      scsi: st: Fix input/output error on empty drive reset
+
+Ranjan Kumar (5):
+      scsi: mpi3mr: Update driver version to 8.12.0.0.50
+      scsi: mpi3mr: Improve wait logic while controller transitions to READY state
+      scsi: mpi3mr: Update MPI Headers to revision 34
+      scsi: mpi3mr: Use firmware-provided timestamp update interval
+      scsi: mpi3mr: Enhance the Enable Controller retry logic
+
+Tomas Henzl (1):
+      scsi: mpi3mr: A performance fix
+
+Yan Zhen (1):
+      scsi: fusion: mptctl: Use min() macro
+
+And the diffstat:
+
+ drivers/message/fusion/mptctl.c           |   2 +-
+ drivers/scsi/cxgbi/libcxgbi.h             |   3 -
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c    |   2 +-
+ drivers/scsi/ibmvscsi/ibmvfc.c            |  21 ++++-
+ drivers/scsi/ibmvscsi/ibmvfc.h            |   2 +-
+ drivers/scsi/lpfc/lpfc_bsg.c              |   3 +
+ drivers/scsi/lpfc/lpfc_ct.c               |  22 +++--
+ drivers/scsi/lpfc/lpfc_disc.h             |   7 ++
+ drivers/scsi/lpfc/lpfc_els.c              | 132 ++++++++++++++----------------
+ drivers/scsi/lpfc/lpfc_hbadisc.c          |  10 +--
+ drivers/scsi/lpfc/lpfc_hw.h               |  21 +++++
+ drivers/scsi/lpfc/lpfc_hw4.h              |   3 +
+ drivers/scsi/lpfc/lpfc_init.c             |  32 ++++++--
+ drivers/scsi/lpfc/lpfc_scsi.c             |   2 +-
+ drivers/scsi/lpfc/lpfc_sli.c              |  52 ++++++++++--
+ drivers/scsi/lpfc/lpfc_version.h          |   2 +-
+ drivers/scsi/lpfc/lpfc_vport.c            |  43 ++++++++--
+ drivers/scsi/megaraid/megaraid_sas_base.c |   2 +-
+ drivers/scsi/mpi3mr/mpi/mpi30_cnfg.h      |  35 +++++++-
+ drivers/scsi/mpi3mr/mpi/mpi30_image.h     |  13 ++-
+ drivers/scsi/mpi3mr/mpi/mpi30_ioc.h       |   8 ++
+ drivers/scsi/mpi3mr/mpi/mpi30_transport.h |   4 +-
+ drivers/scsi/mpi3mr/mpi3mr.h              |  10 ++-
+ drivers/scsi/mpi3mr/mpi3mr_fw.c           |  79 ++++++++++++++----
+ drivers/scsi/mpt3sas/mpt3sas_base.c       |   5 +-
+ drivers/scsi/pm8001/pm8001_init.c         |   6 +-
+ drivers/scsi/pm8001/pm80xx_hwi.c          |   2 +-
+ drivers/scsi/pmcraid.c                    |   2 +-
+ drivers/scsi/qedf/qedf_io.c               |   2 +-
+ drivers/scsi/scsi_debug.c                 |   1 -
+ drivers/scsi/sd.c                         |  32 +++++++-
+ drivers/scsi/st.c                         |   5 +-
+ drivers/scsi/zalon.c                      |   2 +-
+ drivers/ufs/host/ufs-qcom.c               |   2 +-
+ 34 files changed, 415 insertions(+), 154 deletions(-)
+
+James
+
+
 
 
