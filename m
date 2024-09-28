@@ -1,184 +1,103 @@
-Return-Path: <linux-kernel+bounces-342352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CFF6988DDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:05:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A109988DE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59F441C20F98
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0CC92818D7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0406819D8B8;
-	Sat, 28 Sep 2024 05:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49C1714B6;
+	Sat, 28 Sep 2024 05:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GWHkA9QI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KW9y1xCc"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87EB4D8A3;
-	Sat, 28 Sep 2024 05:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3460E143C4C
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 05:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727499909; cv=none; b=GNz629+hofYvMfrsG7ZBFeAn0WuJIrTAmL/mwOb0dnWM3Pn4yG+YeaF9uFWcU/eW6JpFfLR5UzM9+vJkZjoHvAY56SVsaWHBJAq6oVkiAUWCTs8Meh4NpFzMvi21bi/xXBqKBpv/Fnb0C/6mLq0e2kmlm5/snTXmzc0zw04gcng=
+	t=1727502023; cv=none; b=FaVe7WNGcv7Wiqm8eE5H0VvBkv2k1IB55NGyS1zXX0M1WmNK7EiNztPoTphNM4B4w4mTU5jCC51fvUJD+8HsiIXr3q6SHX76G7Yibw4YR4oTarV2u9hQgMPtfo3NSohP3KSKGtly82xKOuuXQv1KfCfTnAKW/lokcKj/fqM6HXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727499909; c=relaxed/simple;
-	bh=Y/l8OP4Jqm74Qv6NVICljLxDy2DiosmZh6cusyq/iJ0=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=kAEZOVm7jp4txdI1VtN3H4KR2OXm/SkT4qhaDwuJdwRXaEn2t8GtNo3r7yvDk6HTwBZQBTPmDM8Qd2vB+vfL9aDwzcj3xX5adUvj9LGToD+zACQW8QfGt3pCKvgRWlMchvRlm70GUBDmq4HRaYAQYCFeJKE+mcNfIvcCDdIvzPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GWHkA9QI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48S4TCxj030469;
-	Sat, 28 Sep 2024 05:05:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=w6t2kxjxFBKo
-	evrFbAt5Q8vCLPF7LOV752ahSCKVjUs=; b=GWHkA9QIZai2C5sir08kJTtL/2ET
-	JgGbQthE4KLx9mLwLQYEAxlhjf3u6kj4caboSDGhk1ZSLVFu7rEBbZGjlgxvMaau
-	71RnzzxInOldUUO4mkV6mxYRiyX+8OmAHXtUzPYikkztgbESvNkZtETOAvSTY2wA
-	JzFLnG2pZwCjV2DHSaO8qrB9cNzbe4vBT+c1yVHfw+VWOumrHv+A8+IiX5ohfASq
-	hNrcbqAX8kfhrs6BLGy3dzfrxsqxDHxu4PJRZX6uaYrBX3qNGv1nqQNvpTzUXRip
-	JYiPij0Ruik4Apezq3ZohWavvXPzG19+6bE3/y2czy9XmwO54BRnmQeY3g==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9cy84d7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 28 Sep 2024 05:05:01 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48S54vH1005864;
-	Sat, 28 Sep 2024 05:04:57 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 41xavk85mk-1;
-	Sat, 28 Sep 2024 05:04:57 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48S514Sx002720;
-	Sat, 28 Sep 2024 05:04:57 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-spuppala-hyd.qualcomm.com [10.213.108.54])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTP id 48S54uOn005859;
-	Sat, 28 Sep 2024 05:04:57 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4137148)
-	id 57B1E5001B7; Sat, 28 Sep 2024 10:34:56 +0530 (+0530)
-From: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com,
-        quic_gaurkash@quicinc.com
-Subject: [PATCH] qcom: ice: Remove ice probe
-Date: Sat, 28 Sep 2024 10:34:56 +0530
-Message-Id: <20240928050456.27577-1-quic_spuppala@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mBUuJg3wLtnlJHFI2Oasj2u-9NECCCOE
-X-Proofpoint-ORIG-GUID: mBUuJg3wLtnlJHFI2Oasj2u-9NECCCOE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- bulkscore=0 spamscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409280033
+	s=arc-20240116; t=1727502023; c=relaxed/simple;
+	bh=Z32CX75DvLuSBsA8Hq5kIFN/fVlv1wk9DVCnjwlI3h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H0BH2IIcFciZOzyiT1/sGW7r9+BYCnfKdjOiVMkGLmada6SFeHK+OdlJ4rtsuWmIba8fvRiWSuYqHlSwzfPTjPyY0gUPu5VX7oDr8ZHdeqdWzqGVXVnsnnUIWpXbjXzUs964QW+lxSNSnV9QzZxno947xP3Jvn4YJ3mj0YGQfH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KW9y1xCc; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <cf76a8df-33f5-4667-aa90-edd9f26b6cf7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727502013;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3G6MJxlUtYVBaUZll/5jjDyeLSE35bLoeWF0+hX/w2o=;
+	b=KW9y1xCcJ78BdGBjKE6FR7lMoPqpgFcEXj3f3fGUzsqovH6hTILiU+KRS2u6cw5wPZSTd8
+	2wK0ByWIKdhUQMRiSWV3zyTUy5b+ilcEPb65q95Gj4MRbyH1jIwJG+ZFsCFwGp0/HMUi/4
+	JJiY+f6t/4xiVFGC3mIzWrGl6ise+mg=
+Date: Sat, 28 Sep 2024 13:39:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH v8 1/8] mm: Define obj_cgroup_get() if CONFIG_MEMCG is not
+ defined.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+ yosryahmed@google.com, nphamcs@gmail.com, usamaarif642@gmail.com,
+ shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+ 21cnbao@gmail.com, akpm@linux-foundation.org
+Cc: nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
+ <20240928021620.8369-2-kanchana.p.sridhar@intel.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240928021620.8369-2-kanchana.p.sridhar@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Under JEDEC specification ICE IP is tightly
-coupled with Storage. Qualcomm vendor HW
-implementation also ties the clock and power
-supply for ICE to corresponding storage clock and
-supplies. For a SoC supporting multiple storage
-types like UFS and eMMC the ICE physical address
-space is not shared and is always part of
-corresponding storage physical address space
-hence there is no need to independently probe ICE.
+On 2024/9/28 10:16, Kanchana P Sridhar wrote:
+> This resolves an issue with obj_cgroup_get() not being defined if
+> CONFIG_MEMCG is not defined.
+> 
+> Before this patch, we would see build errors if obj_cgroup_get() is
+> called from code that is agnostic of CONFIG_MEMCG.
+> 
+> The zswap_store() changes for large folios in subsequent commits will
+> require the use of obj_cgroup_get() in zswap code that falls into this
+> category.
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
-Cleanup commit 2afbf43a4aec ("soc: qcom: Make
-the Qualcomm UFS/SDCC ICE a dedicated driver")
-to remove dedicated ICE probe since there is no
-dedicated ICE IP block shared between UFS and
-SDCC as mentioned in 2afbf43a4aec.
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-Storage probe will check for the corresponding
-ICE node by using of_qcom_ice_get to get ICE
-instance. Additional support added to
-of_qcom_ice_get to support ICE instance creation
-with new approach. Backward compatibility with
-old style device tree approach is untouched.
-
-Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
----
- drivers/soc/qcom/ice.c | 44 +++++++-----------------------------------
- 1 file changed, 7 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-index fbab7fe5c652..47f1b668dc86 100644
---- a/drivers/soc/qcom/ice.c
-+++ b/drivers/soc/qcom/ice.c
-@@ -303,7 +303,13 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
- 		goto out;
- 	}
- 
--	ice = platform_get_drvdata(pdev);
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base)) {
-+		dev_warn(&pdev->dev, "ICE registers not found\n");
-+		return PTR_ERR(base);
-+	}
-+
-+	ice = qcom_ice_create(&pdev->dev, base);
- 	if (!ice) {
- 		dev_err(dev, "Cannot get ice instance from %s\n",
- 			dev_name(&pdev->dev));
-@@ -328,41 +334,5 @@ struct qcom_ice *of_qcom_ice_get(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(of_qcom_ice_get);
- 
--static int qcom_ice_probe(struct platform_device *pdev)
--{
--	struct qcom_ice *engine;
--	void __iomem *base;
--
--	base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(base)) {
--		dev_warn(&pdev->dev, "ICE registers not found\n");
--		return PTR_ERR(base);
--	}
--
--	engine = qcom_ice_create(&pdev->dev, base);
--	if (IS_ERR(engine))
--		return PTR_ERR(engine);
--
--	platform_set_drvdata(pdev, engine);
--
--	return 0;
--}
--
--static const struct of_device_id qcom_ice_of_match_table[] = {
--	{ .compatible = "qcom,inline-crypto-engine" },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, qcom_ice_of_match_table);
--
--static struct platform_driver qcom_ice_driver = {
--	.probe	= qcom_ice_probe,
--	.driver = {
--		.name = "qcom-ice",
--		.of_match_table = qcom_ice_of_match_table,
--	},
--};
--
--module_platform_driver(qcom_ice_driver);
--
- MODULE_DESCRIPTION("Qualcomm Inline Crypto Engine driver");
- MODULE_LICENSE("GPL");
--- 
-2.17.1
-
+> ---
+>   include/linux/memcontrol.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 34d2da05f2f1..15c2716f9aa3 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1282,6 +1282,10 @@ struct mem_cgroup *mem_cgroup_from_css(struct cgroup_subsys_state *css)
+>   	return NULL;
+>   }
+>   
+> +static inline void obj_cgroup_get(struct obj_cgroup *objcg)
+> +{
+> +}
+> +
+>   static inline void obj_cgroup_put(struct obj_cgroup *objcg)
+>   {
+>   }
 
