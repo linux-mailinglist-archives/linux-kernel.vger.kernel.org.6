@@ -1,269 +1,131 @@
-Return-Path: <linux-kernel+bounces-342386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105F2988E56
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA20988E5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1382828B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:01:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AE81F21F40
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A1119DF82;
-	Sat, 28 Sep 2024 08:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9C319DFB6;
+	Sat, 28 Sep 2024 08:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrLubET9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FLK1S68w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF96B42A82;
-	Sat, 28 Sep 2024 08:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D3613A40D;
+	Sat, 28 Sep 2024 08:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727510461; cv=none; b=sIwxLaMZwKYEiSenigdypiRsY6Ut14eqmwZiEtrgDg9oCkV2s20bDplhkh94f6oOa4N3gc+5MYBrHw5V6EuiDtMuI09V7YkKDFZNgRkWDzfChxcALZGwxbNFRrK4bIC0XIjo7n6dVCKxyMbcCmNiHSDjRaAfOoJ+ogcmK/Q0Rco=
+	t=1727510650; cv=none; b=Qs4rvJl7toGY8vU10i8rkG5W4XwQ0tDPdldCOXc9cYUwIThK2ZP25FzUSKv5dxuK/S//iQLe2pmIdkXAuJVu2pAuQYWtv66GvlszD72cWm7oz8Cot3Jss0/HTUuImM9nfgvNL2PLsZf9mF8Nkp40wdqmah6uD3XT7wGuBwTSDGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727510461; c=relaxed/simple;
-	bh=qlJzuJRE9Sn5Kw0Zcfet8Sxavy9TJ8gtErUmJx8vCWM=;
+	s=arc-20240116; t=1727510650; c=relaxed/simple;
+	bh=iYwiwZZbcYBs1YE9u1895Apadus7z72Bxx4TTaVUpUc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qSR8Q0GTWRKfxJeRRz6hxWXZUiPnLESQgyCe3EBi86nVb+V/zKMNjgVAAeGdp4G0dpuzuHRPTjeiPxeO3khlDYtCOQ7Cew40YzT7hI2Wu2VGsk86dUIbO5ulsEexTtaqQvJel+Y4x6Uev8U1ra42Wi8IEVcn8w0sg/hUJtBRWSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrLubET9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF4FC4CEC3;
-	Sat, 28 Sep 2024 08:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727510461;
-	bh=qlJzuJRE9Sn5Kw0Zcfet8Sxavy9TJ8gtErUmJx8vCWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IrLubET93T+OXdMS+LoTOq9d2NZJU3b2Ekbwwegi5ck8RcOUrkEYa/shXTDNXFHzY
-	 kv5kwXB6ckx/1fOia+/RgM+36ztyPZVU+lK+839m3CfsMBnWWqbHBJ5gpCK9+wDP47
-	 u1cG4xJ530oF/FRmw1ehW/Q6sEDPvTtMvGJnzq1FoQZsX6cIQaHQ5PlHNz7BC/FnQL
-	 PGjtN26mCMfRnkM4OlvFSRlvDGqYbRxGmmRI4NtTBNMPofUX57pkvmFJAF7a2pknxu
-	 Ji+6RrreaGryF4gzKRarRbTvmeku7mqftNHBh8MvHZhaapD/IJSkGB+JCj53nWPACx
-	 hK5eRuNfjjrLQ==
-Date: Sat, 28 Sep 2024 10:00:58 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: drew@pdp7.com, guoren@kernel.org, wefu@redhat.com, 
-	jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	m.szyprowski@samsung.com, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/3] mailbox: Introduce support for T-head TH1520
- Mailbox driver
-Message-ID: <vgnd5fbapw2hhjbbtzcmxikzprbnzo6m7dr6tqh7n4yepdlmyd@hs7lkieqtshk>
-References: <20240927094207.1650085-1-m.wilczynski@samsung.com>
- <CGME20240927094214eucas1p272cf99b40344f501cbbfaa91c929c709@eucas1p2.samsung.com>
- <20240927094207.1650085-2-m.wilczynski@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WzkuNA+lH5lUCZOrduMI7X09qQEXuebXA9qpbC5CPnx61V6p+gumOWFZna81/poYSMCW0Y3PyYhcvtImyKMNbN/o2/pUweBiS8fO+qJKJywA2TXupcjAEpWGzAYE+jApMiU6TVzHI5SpPODT0qTNYkDXE6hU3ZkP229RNkEkoJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FLK1S68w; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727510649; x=1759046649;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iYwiwZZbcYBs1YE9u1895Apadus7z72Bxx4TTaVUpUc=;
+  b=FLK1S68waFTiaLSREZYWatNLSkp1urP33T8hASWa2t6Xw2QhB3eWRMYL
+   sQemx+VOqeTYb5hHsRyfaRq1+LA/Dz3tQSz/n5o/yFyFeJN7RsdOjcFOB
+   IfQcnRo3kPTWuEeavOUcVcDJQLacQET5j7cbHagistH5EN3RakTdiUX/s
+   UH43qYFkeJFmNg8s/pRk0mHkZWDvvi9ehXz2vQFwH+Fa0odILPwACQF0D
+   os1+63sYHuA0L+KfVcVq8wgqRurdE4zJ0ipclaIMY1/vwFviKZzldSC5V
+   JElbF7gRqoAuHavM4/vt1RSDkdgJTB1GYPtlYTWzxaqvtogXPkWeKFJl/
+   A==;
+X-CSE-ConnectionGUID: oeOId70DRPCzSXn09cEwfw==
+X-CSE-MsgGUID: i5zn4qx8QyOmWmubOt0OBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="37331703"
+X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
+   d="scan'208";a="37331703"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 01:04:08 -0700
+X-CSE-ConnectionGUID: 5dMSq6rWRAaEU6u8vUhqEQ==
+X-CSE-MsgGUID: ZEojGvVpSUqDqljoa2Fw0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
+   d="scan'208";a="72831532"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 28 Sep 2024 01:04:04 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1suSQr-000N1Q-1O;
+	Sat, 28 Sep 2024 08:04:01 +0000
+Date: Sat, 28 Sep 2024 16:03:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Werner Sembach <wse@tuxedocomputers.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, bentiss@kernel.org,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, pavel@ucw.cz, cs@tuxedo.de,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+Message-ID: <202409281513.tYxQaGoH-lkp@intel.com>
+References: <20240927141745.145176-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927094207.1650085-2-m.wilczynski@samsung.com>
+In-Reply-To: <20240927141745.145176-1-wse@tuxedocomputers.com>
 
-On Fri, Sep 27, 2024 at 11:42:05AM +0200, Michal Wilczynski wrote:
-> This driver was tested using the drm/imagination GPU driver. It was able
-> to successfully power on the GPU, by passing a command through mailbox
-> from E910 core to E902 that's responsible for powering up the GPU. The
-> GPU driver was able to read the BVC version from control registers,
-> which confirms it was successfully powered on.
-> 
-> [   33.957467] powervr ffef400000.gpu: [drm] loaded firmware
-> powervr/rogue_36.52.104.182_v1.fw
-> [   33.966008] powervr ffef400000.gpu: [drm] FW version v1.0 (build
-> 6621747 OS)
-> [   38.978542] powervr ffef400000.gpu: [drm] *ERROR* Firmware failed to
-> boot
-> 
-> Though the driver still fails to boot the firmware, the mailbox driver
-> works when used with the not-yet-upstreamed firmware AON driver. There
-> is ongoing work to get the BXM-4-64 supported with the drm/imagination
-> driver [1], though it's not completed yet.
-> 
-> This work is based on the driver from the vendor kernel [2].
-> 
-> Link: https://gitlab.freedesktop.org/imagination/linux-firmware/-/issues/2 [1]
-> Link: https://github.com/revyos/thead-kernel.git [2]
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  MAINTAINERS                      |   1 +
->  drivers/mailbox/Kconfig          |  10 +
->  drivers/mailbox/Makefile         |   2 +
->  drivers/mailbox/mailbox-th1520.c | 551 +++++++++++++++++++++++++++++++
->  4 files changed, 564 insertions(+)
->  create mode 100644 drivers/mailbox/mailbox-th1520.c
+Hi Werner,
 
-...
+kernel test robot noticed the following build errors:
 
-> +static int th1520_mbox_startup(struct mbox_chan *chan)
-> +{
-> +	struct th1520_mbox_priv *priv = to_th1520_mbox_priv(chan->mbox);
-> +	struct th1520_mbox_con_priv *cp = chan->con_priv;
-> +	u32 data[8] = {};
-> +	int mask_bit;
-> +	int ret;
-> +
-> +	/* clear local and remote generate and info0~info7 */
-> +	th1520_mbox_chan_rmw(cp, TH_1520_MBOX_GEN, 0x0, 0xff, true);
-> +	th1520_mbox_chan_rmw(cp, TH_1520_MBOX_GEN, 0x0, 0xff, false);
-> +	th1520_mbox_chan_wr_ack(cp, &data[7], true);
-> +	th1520_mbox_chan_wr_ack(cp, &data[7], false);
-> +	th1520_mbox_chan_wr_data(cp, &data[0], true);
-> +	th1520_mbox_chan_wr_data(cp, &data[0], false);
-> +
-> +	/* enable the chan mask */
-> +	mask_bit = th1520_mbox_chan_id_to_mapbit(cp);
-> +	th1520_mbox_rmw(priv, TH_1520_MBOX_MASK, BIT(mask_bit), 0);
-> +
-> +	if (cp->type == TH_1520_MBOX_TYPE_DB)
-> +		/* tx doorbell doesn't have ACK, rx doorbell requires isr */
-> +		tasklet_init(&cp->txdb_tasklet, th1520_mbox_txdb_tasklet,
-> +			     (unsigned long)cp);
-> +
-> +	ret = request_irq(priv->irq, th1520_mbox_isr,
-> +			  IRQF_SHARED | IRQF_NO_SUSPEND, cp->irq_desc, chan);
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm-tip/drm-tip linus/master v6.11 next-20240927]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Mixing devm- and non-devm with shared interrupts is error-prone (or even
-discouraged). Your code looks here correct, but probably this deserves
-a comment that you investigated the path and it is not possible to
-trigger interrupt from another device while device is unbound.
+url:    https://github.com/intel-lab-lkp/linux/commits/Werner-Sembach/platform-x86-tuxedo-Add-virtual-LampArray-for-TUXEDO-NB04-devices/20240927-221932
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240927141745.145176-1-wse%40tuxedocomputers.com
+patch subject: [PATCH v3] platform/x86/tuxedo: Add virtual LampArray for TUXEDO NB04 devices
+config: x86_64-buildonly-randconfig-004-20240928 (https://download.01.org/0day-ci/archive/20240928/202409281513.tYxQaGoH-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409281513.tYxQaGoH-lkp@intel.com/reproduce)
 
-> +	if (ret) {
-> +		dev_err(priv->dev, "Unable to acquire IRQ %d\n", priv->irq);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void th1520_mbox_shutdown(struct mbox_chan *chan)
-> +{
-> +	struct th1520_mbox_priv *priv = to_th1520_mbox_priv(chan->mbox);
-> +	struct th1520_mbox_con_priv *cp = chan->con_priv;
-> +	int mask_bit;
-> +
-> +	/* clear the chan mask */
-> +	mask_bit = th1520_mbox_chan_id_to_mapbit(cp);
-> +	th1520_mbox_rmw(priv, TH_1520_MBOX_MASK, 0, BIT(mask_bit));
-> +
-> +	free_irq(priv->irq, chan);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409281513.tYxQaGoH-lkp@intel.com/
 
-Odd order. This should be reverse order from startup. Why is it not?
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-> +}
-> +
-> +static const struct mbox_chan_ops th1520_mbox_ops = {
-> +	.send_data = th1520_mbox_send_data,
-> +	.startup = th1520_mbox_startup,
-> +	.shutdown = th1520_mbox_shutdown,
-> +};
-> +
-> +static int th1520_mbox_init_generic(struct th1520_mbox_priv *priv)
-> +{
-> +#ifdef CONFIG_PM_SLEEP
-> +	priv->ctx = devm_kzalloc(priv->dev, sizeof(*priv->ctx), GFP_KERNEL);
-> +	if (!priv->ctx)
-> +		return -ENOMEM;
-> +#endif
-> +	/* Set default configuration */
-> +	th1520_mbox_write(priv, 0xff, TH_1520_MBOX_CLR);
-> +	th1520_mbox_write(priv, 0x0, TH_1520_MBOX_MASK);
-> +	return 0;
-> +}
-> +
-> +static struct mbox_chan *th1520_mbox_xlate(struct mbox_controller *mbox,
-> +					  const struct of_phandle_args *sp)
-> +{
-> +	struct th1520_mbox_priv *priv = to_th1520_mbox_priv(mbox);
-> +	struct th1520_mbox_con_priv *cp;
-> +	u32 chan, type;
-> +
-> +	if (sp->args_count != 2) {
-> +		dev_err(mbox->dev, "Invalid argument count %d\n",
-> +			sp->args_count);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	chan = sp->args[0]; /* comm remote channel */
-> +	type = sp->args[1]; /* comm channel type */
-> +
-> +	if (chan >= mbox->num_chans) {
-> +		dev_err(mbox->dev, "Not supported channel number: %d\n", chan);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	if (chan == priv->cur_icu_cpu_id) {
-> +		dev_err(mbox->dev, "Cannot communicate with yourself\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	if (type > TH_1520_MBOX_TYPE_DB) {
-> +		dev_err(mbox->dev, "Not supported the type for channel[%d]\n",
-> +			chan);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	cp = mbox->chans[chan].con_priv;
-> +	cp->type = type;
-> +
-> +	return &mbox->chans[chan];
-> +}
-> +
-> +static int th1520_mbox_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct th1520_mbox_priv *priv;
-> +	struct resource *res;
-> +	unsigned int remote_idx = 0;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	if (of_property_read_u32(np, "thead,icu-cpu-id", &priv->cur_icu_cpu_id)) {
-> +		dev_err(dev, "thead,icu-cpu-id is missing\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (priv->cur_icu_cpu_id != TH_1520_MBOX_ICU_CPU0 &&
-> +	    priv->cur_icu_cpu_id != TH_1520_MBOX_ICU_CPU3) {
-> +		dev_err(dev, "thead,icu-cpu-id is invalid\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	priv->dev = dev;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "local");
-> +	priv->local_icu[TH_1520_MBOX_ICU_CPU0] = devm_ioremap_resource(dev, res);
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/x86/mm/testmmiotrace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/slub_kunit.o
+ERROR: modpost: "hid_destroy_device" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+>> ERROR: modpost: "wmidev_evaluate_method" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+>> ERROR: modpost: "wmi_driver_unregister" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+>> ERROR: modpost: "__wmi_driver_register" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+ERROR: modpost: "hid_parse_report" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+ERROR: modpost: "hid_add_device" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
+ERROR: modpost: "hid_allocate_device" [drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab.ko] undefined!
 
-Use proper wrapper over these two.
-
-> +	if (IS_ERR(priv->local_icu[TH_1520_MBOX_ICU_CPU0]))
-> +		return PTR_ERR(priv->local_icu[TH_1520_MBOX_ICU_CPU0]);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "remote-icu0");
-> +	priv->remote_icu[0] = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->remote_icu[0]))
-> +		return PTR_ERR(priv->remote_icu[0]);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "remote-icu1");
-> +	priv->remote_icu[1] = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->remote_icu[1]))
-> +		return PTR_ERR(priv->remote_icu[1]);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "remote-icu2");
-> +	priv->remote_icu[2] = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(priv->remote_icu[2]))
-> +		return PTR_ERR(priv->remote_icu[2]);
-
-Best regards,
-Krzysztof
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
