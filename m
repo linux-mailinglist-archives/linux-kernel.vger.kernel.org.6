@@ -1,161 +1,124 @@
-Return-Path: <linux-kernel+bounces-342621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D43C989102
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:12:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 412AF989103
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77CCB1F21AA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:12:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DCC1F21A69
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8E814D6EF;
-	Sat, 28 Sep 2024 18:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE28154454;
+	Sat, 28 Sep 2024 18:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYAoL+dl"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvCncro+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802543C0C
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 18:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B073C0C;
+	Sat, 28 Sep 2024 18:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727547129; cv=none; b=WI+zinj+aGLjlzS3tazVn0rRzVnDOQ1ZS1wTkdqV/3LKQ8JnValzLAWrl48XwX5I+a/Od9zNoAeSGASlId3LcsFLVL3hddu1oKC6v36b6h2+rEA8ivJhtSrcuV1uv0fy7qcxPxbtYpLHHWCgdBmAnI2ivexFsPSocDe7y51Al44=
+	t=1727547213; cv=none; b=K3zW1JTpXKL+dEAIA117t6zk7YZBowUY+ZUy+d2szLAbZWQgoYQlgvIKmGReyT9dajY3jNlCT0spJ4hhgkt2fLDYz3oQZ8lwiEbTmTDvWp7PoxL9LUhgfbb16NVJ9JahZpmeWoHUgQPezWTT2J4rkaYm8pFcTHCRTn/R+Sq4gzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727547129; c=relaxed/simple;
-	bh=MdY/Y8s8xqDgKQuXtL5G9clOjcmnMm533GTnFcDL7lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AJ5mWLEGyPerzviEXlbDx6Ba727vR7jSKQLwFlrqiKk65XQK+5K1N10Nq8z3ZPAlBaaO6e0qCYNp3C03TDeI70qeEedjNIrIp1GfUYhRG/7e2ucF5rSRBQcTmzRaelcoFXRluc8gUYxhVVSSxlUwQd1BqElZp5xpk3NXmKB2org=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYAoL+dl; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso572364366b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:12:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727547126; x=1728151926; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o1tSX6KXK+1nAZ0odwK92NuRBXV6X5liZSsTngEzTrE=;
-        b=VYAoL+dly/D5nlxQbAT/MFWz33X815YgudKXdUqW7Wfay8LCQRBftK+DcDKbiw9FX3
-         xWOO9b6XKY/Es18adeqklQi6HSzwE7RuNMhmIbfFNmBByhcMjn3NTc93FElD22h2uqcW
-         gaWMcQAJc25HNRbWnR4OC7lGczrTV6WsOunJQ26Cr2JZjOEvZnfvnMKoJDwqf0+8vCcE
-         1/vd7yjsHDP6E95ETNfglh9eZKdt3uy5qL4rB4gWFXcrZpRMLq2ZQ+1VRxTvUiTynD8d
-         j2+UoprUwZz/BBISx5eIQKW6qFH7HCSmn7rB2oR273ANKVw4wLzXQMw2GN2l/ARgu7CV
-         Xohw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727547126; x=1728151926;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o1tSX6KXK+1nAZ0odwK92NuRBXV6X5liZSsTngEzTrE=;
-        b=dnRXAGQzREkmi7g7uLN1LmIv7u6u/oN/Z2k9d3mycFw/Drbdca6qNOHVybiuF6QsEH
-         VSIrwPD+7yqCKsTU1oNgW6inbNlDbEtEKyRn35ihoug7UrIgnA/WEtM5Ua5z7ibBjZLp
-         94DZaS0suzXOXotAuPPODByP1g+VOA/b0j+4WNXia3KhWiDlVO+MokIi32bEwnS+8lUJ
-         Z9cn7bKA4P6y0Wcn+Nx3pFrL1LEkSbDIUrj1d0zeWYjjKYKs+GfBkkhjpKEX2HMVehII
-         YGu1A9RXD1ZVooQ0grwEPUZ+6M3Dxv9KkAaQGkLDf5ReJfvdpuIzFGw1YejSy5pCYwl/
-         UM/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXpnKomkqAGT17xUM8bkiKZ9vzY6VB5HEpRSGg1S+SnL8CFOrmwDKx8qHbh2XUf2ukB1vAd6suYyYywJNA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9u7vGZMlwU0CAu5W8MXKxcC0I0ynKSX0vJM15++L/Y87mNJ8w
-	GNikQ+hzYXik0vvzYaACLymb6QBgxrS39KMwnMM+XN7v3O/dhY1+jFyDFFYLsMpuoXj1G8mocfO
-	XftnG9ddfuHx7FDMgdn4Ekxv02axRSOqB88Pi
-X-Google-Smtp-Source: AGHT+IGRY39i/STfC2j/oMouTeJpF0nUdCDC0tCFbOs4ADr/Lq3A7oGhwV7NiUzL2y70BVk4oJ8MVd2/97kVISbiZGQ=
-X-Received: by 2002:a17:907:2685:b0:a8d:42ec:e65d with SMTP id
- a640c23a62f3a-a93b157cc39mr1220243366b.7.1727547125478; Sat, 28 Sep 2024
- 11:12:05 -0700 (PDT)
+	s=arc-20240116; t=1727547213; c=relaxed/simple;
+	bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iix34a6J41J571B0wak5SiUyFmILne+j6uV9Ky5TVkAaOdORNrsNRwgg2Rx6i7ceU/5lk+Qx9FR1/Z9vE4mfWNItT3nv+yWV2xx0uUMIbHo/uxy/WKmwmJQygKejJp/lV6as2h7HYDx12wkaZwGOY9ptPtAtgEJSrvZZytSXRYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvCncro+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D50FC4CEC3;
+	Sat, 28 Sep 2024 18:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727547212;
+	bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
+	h=From:Date:Subject:To:Cc:From;
+	b=bvCncro+ON+B4BwXIk9HyXCWwFn8Vi25Oo/eFKWVpASEiLVs9JKTCBE/PYckDOjvr
+	 m55s2DZ9S+R3lbJwsWXcPz3xjTln1TmL6YJMed6ZU2o9d4Ju+Gl4cMNbF4Hex54mYT
+	 dURYv1WN+X6O/YEY57t29QPd+zkLX+OZ4KAef5VT3y+mKh07EI6bkcgtGmae3HZT67
+	 f1a5uFepZhGa7HoSjBm513japzUZWQuyldFUmvfqpHQvwPX5r0+Nur3nlzMx0p1AkB
+	 5fZ+Hcp0l7cjZYcGwOwdrLiHMICeH1vaQy/qMn1kyARf+K7Bf8uu5dJZ+0JxtAPdzW
+	 p4fohmhiXqwng==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Sat, 28 Sep 2024 11:13:13 -0700
+Subject: [PATCH] hardening: Adjust dependencies in selection of MODVERSIONS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
- <20240928021620.8369-7-kanchana.p.sridhar@intel.com> <CAJD7tkZRTAiEJQpg96zqDye3ViCfvBsMM1Ozmcs75e__WcF0kQ@mail.gmail.com>
- <20240928141514.GE957841@cmpxchg.org>
-In-Reply-To: <20240928141514.GE957841@cmpxchg.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Sat, 28 Sep 2024 11:11:28 -0700
-Message-ID: <CAJD7tkbw7i=JB5NDYmmsxEw--NqkOidNeO-0+Gj0EvZfk627Dw@mail.gmail.com>
-Subject: Re: [PATCH v8 6/8] mm: zswap: Support large folios in zswap_store().
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	usamaarif642@gmail.com, shakeel.butt@linux.dev, ryan.roberts@arm.com, 
-	ying.huang@intel.com, 21cnbao@gmail.com, akpm@linux-foundation.org, 
-	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240928-fix-randstruct-modversions-kconfig-warning-v1-1-27d3edc8571e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIADhH+GYC/x2NSQ7CMAwAv1L5jKU0rdi+gnoIiRMshIPsUpCq/
+ p3AcQ4zs4KRMhmcuxWUFjau0qDfdRBvQQohp8bgnR/dyR8x8wc1SLJZX3HGR00L6c8yvMcqmQu
+ +gwpLQdcPVxqDy/vDAC34VGr2f3aZtu0LUroeRXwAAAA=
+X-Change-ID: 20240928-fix-randstruct-modversions-kconfig-warning-013be4a0f673
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2094; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGk/3L1F//1ek/X5RFvh9jXXw6wXVcjFTBE1tdL8tqVg8
+ +sQS/erHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAiG70ZGe6ec99fn/z8vt+J
+ s9zl9V9XLq0vruKuYL5svrxsWfiZ3BWMDI+WCDDLROkvYb1y67GzWmlQaNtWH8Nq920rakQMF3k
+ zcQIA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Sat, Sep 28, 2024 at 7:15=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
-> wrote:
->
-> On Fri, Sep 27, 2024 at 08:42:16PM -0700, Yosry Ahmed wrote:
-> > On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
-> > >  {
-> > > +       struct page *page =3D folio_page(folio, index);
-> > >         swp_entry_t swp =3D folio->swap;
-> > > -       pgoff_t offset =3D swp_offset(swp);
-> > >         struct xarray *tree =3D swap_zswap_tree(swp);
-> > > +       pgoff_t offset =3D swp_offset(swp) + index;
-> > >         struct zswap_entry *entry, *old;
-> > > -       struct obj_cgroup *objcg =3D NULL;
-> > > -       struct mem_cgroup *memcg =3D NULL;
-> > > -
-> > > -       VM_WARN_ON_ONCE(!folio_test_locked(folio));
-> > > -       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
-> > > +       int type =3D swp_type(swp);
-> >
-> > Why do we need type? We use it when initializing entry->swpentry to
-> > reconstruct the swp_entry_t we already have.
->
-> It's not the same entry. folio->swap points to the head entry, this
-> function has to store swap entries with the offsets of each subpage.
+MODVERSIONS recently grew a dependency on !COMPILE_TEST so that Rust
+could be more easily tested. However, this introduces a Kconfig warning
+when building allmodconfig with a clang version that supports RANDSTRUCT
+natively because RANDSTRUCT_FULL and RANDSTRUCT_PERFORMANCE select
+MODVERSIONS when MODULES is enabled, bypassing the !COMPILE_TEST
+dependency:
 
-Duh, yeah, thanks.
+  WARNING: unmet direct dependencies detected for MODVERSIONS
+    Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+    Selected by [y]:
+    - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
 
->
-> Given the name of this function, it might be better to actually pass a
-> page pointer to it; do the folio_page() inside zswap_store().
->
-> Then do
->
->                 entry->swpentry =3D page_swap_entry(page);
->
-> below.
+Add the !COMPILE_TEST dependency to the selections to clear up the
+warning.
 
-That is indeed clearer.
+Fixes: 1f9c4a996756 ("Kbuild: make MODVERSIONS support depend on not being a compile test build")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ security/Kconfig.hardening | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Although this will be adding yet another caller of page_swap_entry()
-that already has the folio, yet it calls page_swap_entry() for each
-page in the folio, which calls page_folio() inside.
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 2cff851ebfd7e13b955693be9f5818ac6f8bbf03..c9d5ca3d8d08de237102f1ffe3f310636ae0d6ff 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -340,7 +340,7 @@ choice
+ 	config RANDSTRUCT_FULL
+ 		bool "Fully randomize structure layout"
+ 		depends on CC_HAS_RANDSTRUCT || GCC_PLUGINS
+-		select MODVERSIONS if MODULES
++		select MODVERSIONS if MODULES && !COMPILE_TEST
+ 		help
+ 		  Fully randomize the member layout of sensitive
+ 		  structures as much as possible, which may have both a
+@@ -356,7 +356,7 @@ choice
+ 	config RANDSTRUCT_PERFORMANCE
+ 		bool "Limit randomization of structure layout to cache-lines"
+ 		depends on GCC_PLUGINS
+-		select MODVERSIONS if MODULES
++		select MODVERSIONS if MODULES && !COMPILE_TEST
+ 		help
+ 		  Randomization of sensitive kernel structures will make a
+ 		  best effort at restricting randomization to cacheline-sized
 
-I wonder if we should add (or replace page_swap_entry()) with a
-folio_swap_entry(folio, index) helper. This can also be done as a
-follow up.
+---
+base-commit: 3efc57369a0ce8f76bf0804f7e673982384e4ac9
+change-id: 20240928-fix-randstruct-modversions-kconfig-warning-013be4a0f673
 
->
-> > >         obj_cgroup_put(objcg);
-> > > -       if (zswap_pool_reached_full)
-> > > -               queue_work(shrink_wq, &zswap_shrink_work);
-> > > -check_old:
-> > > +       return false;
-> > > +}
-> > > +
-> > > +bool zswap_store(struct folio *folio)
-> > > +{
-> > > +       long nr_pages =3D folio_nr_pages(folio);
-> > > +       swp_entry_t swp =3D folio->swap;
-> > > +       struct xarray *tree =3D swap_zswap_tree(swp);
-> > > +       pgoff_t offset =3D swp_offset(swp);
-> > > +       struct obj_cgroup *objcg =3D NULL;
-> > > +       struct mem_cgroup *memcg =3D NULL;
-> > > +       struct zswap_pool *pool;
-> > > +       size_t compressed_bytes =3D 0;
-> >
-> > Why size_t? entry->length is int.
->
-> In light of Willy's comment, I think size_t is a good idea.
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-Agreed.
 
