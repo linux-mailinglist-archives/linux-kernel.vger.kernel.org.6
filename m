@@ -1,138 +1,64 @@
-Return-Path: <linux-kernel+bounces-342290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41E8988D27
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:14:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6B0988D2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95681282C5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:14:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B457D1F2152E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C569EB673;
-	Sat, 28 Sep 2024 00:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EHUjWzE4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A17EE552;
+	Sat, 28 Sep 2024 00:18:00 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B133C2F;
-	Sat, 28 Sep 2024 00:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FBDF9E8;
+	Sat, 28 Sep 2024 00:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727482439; cv=none; b=V7fFUMTV8QHiioi8N3rr9h4N/rKgmkkCFBxvqU8bVtN27CxMT6Ruz31MQhaSOtlny0EarwNlnvk/dZfD8Qn2CoKebc42GfCwkcVcIOpGYWuGptS84rdhZlC/3mqUHZxsxRxo4tHSgOkuRtADc0zwGsum+V2XyCtIPCeOBhfB19w=
+	t=1727482679; cv=none; b=cEAzH/FwYyA/2HiZlMwwhBiqq0Em7ZrjVXKMAOL6M5WuJo7Bx6QhhBt2ji4J/6BcKVCtsnU+savuz8KMCdbEKEimiBnMJgWjM9YrVNvfTC9veZSGQZ+mQUtQpuRsvDh1YZQdDvHjEzItEvquAgPCnk4V+wCw+N9an434XOouHV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727482439; c=relaxed/simple;
-	bh=tMdDNPln+5JG3CoVlvPxtRqM5Xi9/OR8+asQHPe2hdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSToVMXXmIbXlNhPcKdQpDF2SLHbrUUvQmt1cey6CpU7nUXmVM5bvUhuWKInWWfDGN6fsAm4YRoA8PlxgyLkajW2iT2OdVmx5mJTxEfn2zNDfBbDZfLqQ6Ndx/CTJHyRR7YvcMvSIG0ZUQttGhymVMu0TtcXX3nmw1ig9ogevjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EHUjWzE4; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727482438; x=1759018438;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tMdDNPln+5JG3CoVlvPxtRqM5Xi9/OR8+asQHPe2hdE=;
-  b=EHUjWzE48h6HB/WodfMyT4RQWKuOSogqTGWq0BvoqhVWyvVZdaXt1pgt
-   keU92pZXdQCX/Kvdtvd1Xw6eEQjV28AoOCVyothrTl8RNifEqpLnYgQca
-   bw3BbyO8SeQN0Zh7FLmTILsvuN0Soo55ef5MHL1SUTo6HpW1awpFTjajN
-   pKPNBAKwxLjhoB+Twj/ULqbYvZ0Efyl+lCqvKfbFiMW37rgrifx8OnmVB
-   wLFpcC5kT/5j5zZDqMf2Ez+Hvga7ypR0IvfQjWszibm10ARQw6YusZBLb
-   /yYQes5/FDRyhief9UYTfmK181UCxf/lyy/U09wjemh44U9kof9ZgpE3U
-   w==;
-X-CSE-ConnectionGUID: O7EHH527R+Kc7/DxUayJIw==
-X-CSE-MsgGUID: kjXvmkXJTh6U2IxO7chh2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="38029211"
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="38029211"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 17:13:55 -0700
-X-CSE-ConnectionGUID: rGsBccu7QGmPsVPZd9zjYw==
-X-CSE-MsgGUID: R9SKE1glQluwUs0USghVZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="77637858"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 27 Sep 2024 17:13:53 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suL5q-000MlF-0S;
-	Sat, 28 Sep 2024 00:13:50 +0000
-Date: Sat, 28 Sep 2024 08:13:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
-	bentiss@kernel.org, jikos@kernel.org,
-	platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
-	hdegoede@redhat.com, corentin.chary@gmail.com, superm1@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: Re: [PATCH v4 9/9] platform/x86: asus-wmi: deprecate bios features
-Message-ID: <202409280735.meXnoMkl-lkp@intel.com>
-References: <20240926092952.1284435-10-luke@ljones.dev>
+	s=arc-20240116; t=1727482679; c=relaxed/simple;
+	bh=zurLLRn4Ari54Wawnuv0F4Oi02USadk8lwG5rf57RYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m/YY070HOpk2wpu1jiyAb2YNJgwGMJyKlUt6nYL5YhqgNxRCHNlKEs1oV1xsYeYN6OMl4TJAGv70q3O3MXXyJwCMOYyMByIA1vPBgyuL+wLyfr2lxpKKHIBs6hBVw4WH6eh9MvW+VDHeawvfpIzqDOUsFrqVYJayUoLhPJgzstQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E260AC4CEC4;
+	Sat, 28 Sep 2024 00:17:57 +0000 (UTC)
+Date: Fri, 27 Sep 2024 20:17:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>,
+ <mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>
+Subject: Re: [PATCH] function_graph: Simplify the initialization of fgraph
+ LRU data
+Message-ID: <20240927201755.6402ed04@rorschach.local.home>
+In-Reply-To: <20240912111550.1752115-1-liaochang1@huawei.com>
+References: <20240912111550.1752115-1-liaochang1@huawei.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926092952.1284435-10-luke@ljones.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Luke,
+On Thu, 12 Sep 2024 11:15:50 +0000
+Liao Chang <liaochang1@huawei.com> wrote:
 
-kernel test robot noticed the following build warnings:
+> This patch uses [first ... last] = value to initialize fgraph_array[].
+> And it declares all the callbacks in fgraph_stub as static, as they are
+> not called from external code.
 
-[auto build test WARNING on hid/for-next]
-[also build test WARNING on linus/master next-20240927]
-[cannot apply to v6.11]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This patch doesn't look like a simplification, and it is incorrect
+about the "not called from external code" as the kernel test robot
+pointed out!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Luke-D-Jones/platform-x86-asus-wmi-export-symbols-used-for-read-write-WMI/20240926-173528
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/20240926092952.1284435-10-luke%40ljones.dev
-patch subject: [PATCH v4 9/9] platform/x86: asus-wmi: deprecate bios features
-config: i386-randconfig-061-20240928 (https://download.01.org/0day-ci/archive/20240928/202409280735.meXnoMkl-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409280735.meXnoMkl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409280735.meXnoMkl-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/platform/x86/asus-wmi.c:154:35: warning: unused variable 'asus_ally_mcu_quirk' [-Wunused-const-variable]
-     154 | static const struct dmi_system_id asus_ally_mcu_quirk[] = {
-         |                                   ^~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +/asus_ally_mcu_quirk +154 drivers/platform/x86/asus-wmi.c
-
-0f0ac158d28ff7 Luke D. Jones 2021-10-24  153  
-d2dfed310aae07 Luke D. Jones 2024-08-06 @154  static const struct dmi_system_id asus_ally_mcu_quirk[] = {
-d2dfed310aae07 Luke D. Jones 2024-08-06  155  	{
-d2dfed310aae07 Luke D. Jones 2024-08-06  156  		.matches = {
-d2dfed310aae07 Luke D. Jones 2024-08-06  157  			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
-d2dfed310aae07 Luke D. Jones 2024-08-06  158  		},
-d2dfed310aae07 Luke D. Jones 2024-08-06  159  	},
-d2dfed310aae07 Luke D. Jones 2024-08-06  160  	{
-d2dfed310aae07 Luke D. Jones 2024-08-06  161  		.matches = {
-d2dfed310aae07 Luke D. Jones 2024-08-06  162  			DMI_MATCH(DMI_BOARD_NAME, "RC72L"),
-d2dfed310aae07 Luke D. Jones 2024-08-06  163  		},
-d2dfed310aae07 Luke D. Jones 2024-08-06  164  	},
-d2dfed310aae07 Luke D. Jones 2024-08-06  165  	{ },
-d2dfed310aae07 Luke D. Jones 2024-08-06  166  };
-d2dfed310aae07 Luke D. Jones 2024-08-06  167  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-- Steve
 
