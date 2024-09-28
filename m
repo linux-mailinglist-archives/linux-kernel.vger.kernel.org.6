@@ -1,129 +1,212 @@
-Return-Path: <linux-kernel+bounces-342653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAC7989138
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:50:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6832698913A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73482284EB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B255A2840E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C7015E5A6;
-	Sat, 28 Sep 2024 19:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EFA16132A;
+	Sat, 28 Sep 2024 19:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxHv9ksx"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SUmzg8Yu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83321CA80;
-	Sat, 28 Sep 2024 19:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A091465A0;
+	Sat, 28 Sep 2024 19:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727553033; cv=none; b=no1KTnxYNu6qtc2TjLO1SDC+4ygdt/RK301SQ2HXUo3wQwPmB8HGB8h07LVMhfiKJABa/+jDQLmQgMJmDdGKSk9e9SoKpyH86BmUMJ5/e2mirD+efiYRDzV6e3v6BmotYHYd86bUYhVShk6cf3V17OUB97Rvl7mLvkbp9cpz05s=
+	t=1727553217; cv=none; b=TDEYrBMoxLJ7NcS+7xNDUpNzs8xKSPh3msgru1J6UYmpFXrmk3gM6De/UUR6gtdV6478ja8IslPrZji8VLes6jcv/Psq/L88HdJ+lnW8peydmUByOgkkDQEJbDE9KE9mdAdB2VaScwAHDvnyaBM/Z9FQg+RH28lbJ7xn7WAw32w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727553033; c=relaxed/simple;
-	bh=LQiKpMH/ph7ZUlKx+GoGwWZjBExHGVOCY4oNQxEglf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H73B7SSxlYkOyOG09z6o2a1mg5F+TW3Tbby38Bo7PXg+1s0/FNQIYBhhHu/GCAgvF+DWh/FzOXrb8RxSFYms4XLWU2QD8Nd1fV9EUmDhTvsZnVpdpUTbOuh4msLySlLp9ZFe9VFfrsclcPQ39cIfPPFqg2h4RSQt7KmogzuVnCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxHv9ksx; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6dbbe7e51bbso25754127b3.3;
-        Sat, 28 Sep 2024 12:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727553031; x=1728157831; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FIHwIoYLONfgdXE36Akj8OIPXg8AMYwd+9WehTb8EVE=;
-        b=kxHv9ksx6Ahy77wc7S2ZujSvoTZ0MC4qscbQZV87CG+AcjVLFD3soII0IGCegZwC2f
-         N+37rygPwBr16oYqWgVeXNjvHh9cvDbs6jZsASWqNYX2Ce5ad3Z9CvxO2wtjIsgCgyap
-         tYJvNFFqwRM/GECzAFv9rfsR8Uscgfii0zwSDOzNbE3TqXfwvVd5IhPiVBP2N7NyPsPF
-         wCwnEpV3tPSBLg7sUhe8B2L5KanMZ2z2Caxt9a0MkNk/vm6SAwC2AOhuNK4m6sxmQhyB
-         CEMTmp7L0ShxVCm+pV8zvTYovXDPLQRHqmJuVMwh9fKNPtQg3z32/HcZK0m8U7tDJ1WL
-         qszw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727553031; x=1728157831;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FIHwIoYLONfgdXE36Akj8OIPXg8AMYwd+9WehTb8EVE=;
-        b=h4G49gF8gzQR1dNZuPBLb2efJup1EMBAc2vgv/1VyIZwBozxDn1d6SpH3maeUqWXDa
-         wr0US9RYBFC5kDoaiYWjH6UTG3AsRhPPQZo8SpEVHlXM4CxcgKWIOOk/F7xGeFIQnIiQ
-         WCZ81oVXLE/akXjOhxS/c2ZZK/h0EMIik4hpCRVtVVvhPSOZl4F710ikihIV0t389/4L
-         Vx2zFIerdpYCBujJxbChqC9kBbCH2djXLN936G4Es38FIUqf8SXMe61zdPSxeFhczUxG
-         Uz6vHWC6z8lw7u2qKoSqVK5pjF3nSkx1TCDeM6CsklczG7DhYTRZSecyv07fvlNkuGsr
-         5MBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnczR0eb1vgkMMXGV/sFZIrTQIgiTIrXMlVj2CwHk84i37noIxIZz4Znc3n02rFtuSvC1+iR4St5oWvMEqRFTkGsVFVg==@vger.kernel.org, AJvYcCWEz+N5MJ2gPtnZbkyh33DYg1dfnbLFWLndkyxsvMH1t7nP0YOTHqWZFvDcAL1SSSkiO1ZxiO9ZQFuCS16I@vger.kernel.org, AJvYcCWoC4B7xXLsVNZJAm7Hlp04U9uRiH4x4xVrdRxoQVFHMgAZFaxpSikSFgUoqir9v3ODSh1J2POi0w7d@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu49PFcqSKvCcXT3FqkuCa9/o6C1EEDECsbq5beyIJBUJucWOF
-	whyTgEB/YmzGTqtCLGYSkAqMQmq8S8ZX6zhMadPHHk8TbBpD8WWn
-X-Google-Smtp-Source: AGHT+IGZe2d8nDDal1LwC8XiKjrlMJJQqMfq0jJhGf1m2tBSSm52enRhK++p0LYFveZJjLXFXogzwA==
-X-Received: by 2002:a05:690c:4e02:b0:6dd:b920:6e61 with SMTP id 00721157ae682-6e247603c31mr36070427b3.40.1727553030756;
-        Sat, 28 Sep 2024 12:50:30 -0700 (PDT)
-Received: from ?IPV6:2604:2d80:4022:0:9007:a741:5566:7d2e? ([2604:2d80:4022:0:9007:a741:5566:7d2e])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e245369a20sm7694127b3.85.2024.09.28.12.50.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Sep 2024 12:50:30 -0700 (PDT)
-Message-ID: <11c36b3b-5fc4-45c6-a9d2-3d45d8cca7ee@gmail.com>
-Date: Sat, 28 Sep 2024 14:50:28 -0500
+	s=arc-20240116; t=1727553217; c=relaxed/simple;
+	bh=TsG2b3fBW6P71XH5avJ2+zbBrCJTD+5CCr5SVzCDjw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+/CCD5axXonadT096rVNvRoe0EAD0TnLrinyPdgSbYajxzS8umn5nzH5+Veep6+Lrj+e58NrpRPO2I5mRhpmRRIqVHVKPeTJcf4J+y121uH8IYW/hS0YuvEQEhagP4pkAaQn2T/YKECI8zKQ8tkp+JklXUrJsqMjT7bhL2irXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SUmzg8Yu; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727553215; x=1759089215;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=TsG2b3fBW6P71XH5avJ2+zbBrCJTD+5CCr5SVzCDjw4=;
+  b=SUmzg8YuG/fbsk/Eaf9zge6k9Py11ezpERzle7qjdGod59jJftnjjLJt
+   Jbrxkzo1RtuRijB00eGiMACUO5/OH69vzxnCu4bWq3ozxEA5iEHnq0IVl
+   jD4utAshBj36yky3mtzIlFxcbnyrDpon71HqJ3/q66G0U4WNJJjzFNuaP
+   x0WvGh2Al1qKY5qqL+WtVcDUUZJgcxmSDtWjw96kX3O6yXEHVddvsSz7/
+   Qw+5+nDYa7KWfgDLU/7I3iGnZPMcKyHx/CdNwlX0Lbgr56J9bpneR5xZl
+   RzAxGqmGHJhg1n/2NFt4/I0lTn+XOtQ0/oEwadOg1s/ec0vbfF6Dalllu
+   Q==;
+X-CSE-ConnectionGUID: CicrKSp0RKaC0PV/1+9Wfw==
+X-CSE-MsgGUID: 3b5tVCooTra07UH9/zJI1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="38036575"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="38036575"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 12:53:35 -0700
+X-CSE-ConnectionGUID: bEZ9ms7uQpCQW5HKT/DOYQ==
+X-CSE-MsgGUID: 3IHAGF6YTy+64Yig4ZHwfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="77394217"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 28 Sep 2024 12:53:31 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sudVR-000NZP-0n;
+	Sat, 28 Sep 2024 19:53:29 +0000
+Date: Sun, 29 Sep 2024 03:53:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com,
+	quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com,
+	quic_gaurkash@quicinc.com
+Subject: Re: [PATCH] qcom: ice: Remove ice probe
+Message-ID: <202409290321.quE8sBb5-lkp@intel.com>
+References: <20240928050456.27577-1-quic_spuppala@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] novatek-nvt-ts: add support for NT36672A
- touchscreen
-To: Krzysztof Kozlowski <krzk@kernel.org>, Hans de Goede
- <hdegoede@redhat.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
- <a0e00c43-a879-4a4c-a3b4-26c485e0c261@gmail.com>
- <1e43c2e2-4859-4452-a4d3-433aeea1fcef@kernel.org>
-Content-Language: en-US
-From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
-In-Reply-To: <1e43c2e2-4859-4452-a4d3-433aeea1fcef@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928050456.27577-1-quic_spuppala@quicinc.com>
 
-Hi Krzysztof Kozlowski,
+Hi Seshu,
 
-On 9/28/24 02:49, Krzysztof Kozlowski wrote:
-> On 28/09/2024 07:45, Joel Selvaraj wrote:
->> Hi,
->>
->> A gentle ping to the maintainers/reviewers. I was initially hoping this
->> patch would land in 6.11. And it got kind of missed. So I am currently
->> hoping it would land in 6.12. But I haven't seen any update in the
->> patch. There is no hurry and can wait for 6.13 or future. Just don't
->> want the patch to be forgotten/lost/missed. Kindly let me know if any
->> further changes are required! I will be happy to fix them.
-> 
-> We are still in merge window, so nothing can happen with your patches.
-> Pinging during merge window is not welcomed, just unnecessary noise.
-> Wait till merge window finishes and then ping, or better resend.
+kernel test robot noticed the following build errors:
 
-Ah I see. Understood. Sorry for the noise.
+[auto build test ERROR on v6.11]
+[also build test ERROR on next-20240927]
+[cannot apply to linus/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Your patch waited indeed way too long, but if you wanted it to reach
-> v6.12, then you should have done something earlier. No one has it in
-> their inbox anymore.
-> 
-> Please resend with accumulated tags, assuming there is no outstanding
-> review comments, after the merge window.
+url:    https://github.com/intel-lab-lkp/linux/commits/Seshu-Madhavi-Puppala/qcom-ice-Remove-ice-probe/20240928-130818
+base:   v6.11
+patch link:    https://lore.kernel.org/r/20240928050456.27577-1-quic_spuppala%40quicinc.com
+patch subject: [PATCH] qcom: ice: Remove ice probe
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240929/202409290321.quE8sBb5-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290321.quE8sBb5-lkp@intel.com/reproduce)
 
-Will do. Thanks!
-Joel Selvaraj
-> 
-> Best regards,
-> Krzysztof
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290321.quE8sBb5-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> drivers/soc/qcom/ice.c:309:10: error: incompatible integer to pointer conversion returning 'long' from a function with result type 'struct qcom_ice *' [-Wint-conversion]
+     309 |                 return PTR_ERR(base);
+         |                        ^~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +309 drivers/soc/qcom/ice.c
+
+   250	
+   251	/**
+   252	 * of_qcom_ice_get() - get an ICE instance from a DT node
+   253	 * @dev: device pointer for the consumer device
+   254	 *
+   255	 * This function will provide an ICE instance either by creating one for the
+   256	 * consumer device if its DT node provides the 'ice' reg range and the 'ice'
+   257	 * clock (for legacy DT style). On the other hand, if consumer provides a
+   258	 * phandle via 'qcom,ice' property to an ICE DT, the ICE instance will already
+   259	 * be created and so this function will return that instead.
+   260	 *
+   261	 * Return: ICE pointer on success, NULL if there is no ICE data provided by the
+   262	 * consumer or ERR_PTR() on error.
+   263	 */
+   264	struct qcom_ice *of_qcom_ice_get(struct device *dev)
+   265	{
+   266		struct platform_device *pdev = to_platform_device(dev);
+   267		struct qcom_ice *ice;
+   268		struct device_node *node;
+   269		struct resource *res;
+   270		void __iomem *base;
+   271	
+   272		if (!dev || !dev->of_node)
+   273			return ERR_PTR(-ENODEV);
+   274	
+   275		/*
+   276		 * In order to support legacy style devicetree bindings, we need
+   277		 * to create the ICE instance using the consumer device and the reg
+   278		 * range called 'ice' it provides.
+   279		 */
+   280		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ice");
+   281		if (res) {
+   282			base = devm_ioremap_resource(&pdev->dev, res);
+   283			if (IS_ERR(base))
+   284				return ERR_CAST(base);
+   285	
+   286			/* create ICE instance using consumer dev */
+   287			return qcom_ice_create(&pdev->dev, base);
+   288		}
+   289	
+   290		/*
+   291		 * If the consumer node does not provider an 'ice' reg range
+   292		 * (legacy DT binding), then it must at least provide a phandle
+   293		 * to the ICE devicetree node, otherwise ICE is not supported.
+   294		 */
+   295		node = of_parse_phandle(dev->of_node, "qcom,ice", 0);
+   296		if (!node)
+   297			return NULL;
+   298	
+   299		pdev = of_find_device_by_node(node);
+   300		if (!pdev) {
+   301			dev_err(dev, "Cannot find device node %s\n", node->name);
+   302			ice = ERR_PTR(-EPROBE_DEFER);
+   303			goto out;
+   304		}
+   305	
+   306		base = devm_platform_ioremap_resource(pdev, 0);
+   307		if (IS_ERR(base)) {
+   308			dev_warn(&pdev->dev, "ICE registers not found\n");
+ > 309			return PTR_ERR(base);
+   310		}
+   311	
+   312		ice = qcom_ice_create(&pdev->dev, base);
+   313		if (!ice) {
+   314			dev_err(dev, "Cannot get ice instance from %s\n",
+   315				dev_name(&pdev->dev));
+   316			platform_device_put(pdev);
+   317			ice = ERR_PTR(-EPROBE_DEFER);
+   318			goto out;
+   319		}
+   320	
+   321		ice->link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+   322		if (!ice->link) {
+   323			dev_err(&pdev->dev,
+   324				"Failed to create device link to consumer %s\n",
+   325				dev_name(dev));
+   326			platform_device_put(pdev);
+   327			ice = ERR_PTR(-EINVAL);
+   328		}
+   329	
+   330	out:
+   331		of_node_put(node);
+   332	
+   333		return ice;
+   334	}
+   335	EXPORT_SYMBOL_GPL(of_qcom_ice_get);
+   336	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
