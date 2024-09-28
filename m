@@ -1,133 +1,255 @@
-Return-Path: <linux-kernel+bounces-342701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC4A9891E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8CE9891E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAC27B23BDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8F8285D51
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14A6187859;
-	Sat, 28 Sep 2024 22:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KdUQgW6Q"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953EF169AE6;
+	Sat, 28 Sep 2024 22:34:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9E42940F
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAA017736
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727562428; cv=none; b=MgQyGebsACV2LGQI+0ciNeIcu7m4w73U11OsJ62fQUyjBTHSIEcAP3ImgMnkJWhDjJ+nIyaVbDTDZRjVB0q/czl6MEYgBj99crJMzDCNEM2tyFQ3W0qFLQjqY+TaPLXQzTQIn3UYG4O3OOrY5UrAMVo2u603NXIE7rZapTqyClc=
+	t=1727562865; cv=none; b=TPBthAHdsDG29tQsn3je/Kverk1K84cYTgrNEW/h3ZsQGAaTkjZCGwVfvftbxwcZ6cDlQ76PoUrc/6ATrXz8P3KerU6xzuMZsmYemlB5k6hZfb8RjIkcIfJZ/WjOAICTUPtc/OgVprbqw/OUHtB1LXzB7oxsAMPCH8OzERFuZA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727562428; c=relaxed/simple;
-	bh=IpMVgl8OfeNzuCGL9dgyCm8C+LUoNDm4dPs5qPr0vs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6nP0HPx4J1vSBzoWenkskCeHLLcxB1dcTFPxuhIWawgBTg4khKQs6Zc/RzY/oyuEKG56CvWOtVaPMPX2Zgng3T1xwNYwl/ZlwWWpmAOblYIAzecbFUoPfmG1Fu+qSV/P4OTRqXdrcCIRYa19wki+VmaCrbdKwqa6tG8RIekVGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KdUQgW6Q; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5Tpgb3eH2OqbcivhrhwLchq0LO1TD/5iLs0OHvgtW8U=; b=KdUQgW6QBPshS5+H5KBPwxEjg2
-	T3Tzl4R7fbgrJzPT67AyCvVCkSVEb2V8FH1ljH8kqEdTWWeIgxewxOumZma5Yn/M4AMNTfkOis0Yo
-	8v6vYqFGjwp8FYU1Yypk53P9zlJPgjeZ4mUUsFNSsCLfjhXMp+Gk9IFvvWwnxwjEAnUd+XuohV9vR
-	O22tcEU1xt3+Ga+4aAyILCDTVTfICrGFNV4zqar+0D9lA3nB00iGdRpwF13AD9o4D8q9doX9mAxAp
-	Z5OAPHk8IWL8QujdzfjWQsbzlnHnPiNirx6aJc9hTil0QKp5z/IbGC8EO/kDznEyDVHoEwb6Fn3aR
-	V2BQt4UQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sufu2-0000000GI3d-3Bm5;
-	Sat, 28 Sep 2024 22:27:02 +0000
-Date: Sat, 28 Sep 2024 23:27:02 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [heads-up] Re: [PATCH] reset: Further simplify locking with guard()
-Message-ID: <20240928222702.GX3550746@ZenIV>
-References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
+	s=arc-20240116; t=1727562865; c=relaxed/simple;
+	bh=qcTrxf0Ynsm/ZsKzvFGvPYIavSdZ92sdBQwSLY+ak9w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mKGNOTK2bvZxt4UBXcQh9XgC7krVzLfiaLrz1JISqlqwj7eAGusuLI6PKl+fhVwwNTzAA0KD779TED7ucF0I/hY16YUrfenyuG4knMk3ppSNae5ZiN+3+GwyxRFPyvtf8GyUUVLhzOjybSIh9KcQiINqbjFXVYhR5eZ+nGm3EpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a969fabfso40936135ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 15:34:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727562862; x=1728167662;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UUzM10drJEh/Fg2vpUbxj6xsaSQCsnottVwN/MjWrFM=;
+        b=NnHeHmJOUUGx9o5sml8QQ0CMgL9BQgIh4vmtdVxrTGiKcXXqV0z02nR3F/RFLdYuqI
+         uq8PHlfczMHmmSGfE4ikukZdlSLsUtubVm5e6dkHz1naV5S+p8MloI6bCxuXVHfO1N7Y
+         JPXaafaAX6CgLw9nYg7GOLvPY77RE7YLLFDWWa/2hKswS6NV+3FcgRVkxNOgxkpKzFbx
+         FrmgrmfrF8f2CjyS9qgl4mTvFr88xVsyao4KzGKPmocNbYOamzCx+kOxYMHqguolPn4J
+         8e2KLLIlPmcn9Llbk2c7F5oQz+KMn3SbulQuMBe0xNhZcYeHi4eliL1tTdV2SzZGT1Bp
+         Z2FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrYVviKcb0kY82JbmTiBIXABKJ9AWeL1r3lgxCTQzcLfb9EWVlqnOJG+Zi1f2VdSDHaahpJRHUJT/64d8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIRyY/KjwITx/h8pgzvlbUSZ+IPE6aIDHiXoT7bkx+AG2OJAOe
+	JgDWJ9oqvTSwY9PcFZFr6qbSE2rhOjqw92aYwTJJVMl9FHZd3FJUjo2S1ZuiKh4dmKe+EaZJGAA
+	KaN4g6f9QWfwtsGQpOim9zLm8TgWAZ1xjRL4xlJGj9LeipHIhU12+AIY=
+X-Google-Smtp-Source: AGHT+IGd+7J6RInzD0A8R39JC90iY3mjpGYSK5F64kSfNmIFWuqD6W7FaD+sySiTc7OBRdciJmLH+u7yJeQdv8unGL80lZndU5eD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a92:c54f:0:b0:3a0:9952:5fcb with SMTP id
+ e9e14a558f8ab-3a3451af2d8mr70599945ab.17.1727562862415; Sat, 28 Sep 2024
+ 15:34:22 -0700 (PDT)
+Date: Sat, 28 Sep 2024 15:34:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f8846e.050a0220.aab67.000b.GAE@google.com>
+Subject: [syzbot] [mm?] possible deadlock in upgrade_mmap_lock_carefully
+From: syzbot <syzbot+a6456f6334aa19425886@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 27, 2024 at 04:02:32PM +0200, Philipp Zabel wrote:
-> Use guard(mutex) to automatically unlock mutexes when going out of
-> scope. Simplify error paths by removing a goto and manual mutex
-> unlocking in multiple places.
+Hello,
 
-And that, folks, is a live example of the reasons why guard() is an
-attractive nuisance.  We really need a very loud warning on
-cleanup.h stuff - otherwise such patches from well-meaning folks
-will keep coming.
+syzbot found the following issue on:
 
-> @@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
->  		}
->  	}
->  
-> -	mutex_lock(&reset_list_mutex);
-> +	guard(mutex)(&reset_list_mutex);
->  	rcdev = __reset_find_rcdev(&args, gpio_fallback);
->  	if (!rcdev) {
->  		rstc = ERR_PTR(-EPROBE_DEFER);
-> -		goto out_unlock;
-> +		goto out_put;
->  	}
->  
->  	if (WARN_ON(args.args_count != rcdev->of_reset_n_cells)) {
->  		rstc = ERR_PTR(-EINVAL);
-> -		goto out_unlock;
-> +		goto out_put;
->  	}
->  
->  	rstc_id = rcdev->of_xlate(rcdev, &args);
->  	if (rstc_id < 0) {
->  		rstc = ERR_PTR(rstc_id);
-> -		goto out_unlock;
-> +		goto out_put;
->  	}
->  
->  	/* reset_list_mutex also protects the rcdev's reset_control list */
->  	rstc = __reset_control_get_internal(rcdev, rstc_id, shared, acquired);
->  
-> -out_unlock:
-> -	mutex_unlock(&reset_list_mutex);
->  out_put:
->  	of_node_put(args.np);
+HEAD commit:    684a64bf32b6 Merge tag 'nfs-for-6.12-1' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d9299f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a6456f6334aa19425886
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Guess what happens if you take goto out_put prior to the entire thing,
-in
-                ret = __reset_add_reset_gpio_device(&args);
-		if (ret) {
-			rstc = ERR_PTR(ret);
-			goto out_put;
-		}
-That patch adds implicit mutex_unlock() at the points where we leave
-the scope.  Which extends to the end of function.  In other words, there is
-one downstream of out_put, turning any goto out_put upstream of guard() into
-a bug.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-What's worse, that bug is not caught by gcc - it quietly generates bogus code
-that will get unnoticed until we get an error from __reset_add_reset_gpio_device()
-call.  At that point we'll look at the contents of uninitialized variable and,
-if we are unlucky, call mutex_unlock() (with hell knows what pointer passed to it -
-not that mutex_unlock(&reset_list_mutex) would do us any good at that point, since
-we hadn't locked it in the first place).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/72e96b8890d5/disk-684a64bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/27bdd881ea38/vmlinux-684a64bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/315166afeb3a/bzImage-684a64bf.xz
 
-Folks, that kind of cleanup patches is bloody dangerous; even something that
-currently avoids that crap can easily grow that kind of quiet breakage later.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a6456f6334aa19425886@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-10547-g684a64bf32b6 #0 Not tainted
+------------------------------------------------------
+syz.3.2933/22916 is trying to acquire lock:
+ffff88807bf96a18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ffff88807bf96a18 (&mm->mmap_lock){++++}-{3:3}, at: upgrade_mmap_lock_carefully+0xb6/0x160 mm/memory.c:6132
+
+but task is already holding lock:
+ffff888078651ce8 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff888078651ce8 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x80/0x120 mm/shmem.c:3211
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       inode_lock include/linux/fs.h:815 [inline]
+       process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+       ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
+       security_mmap_file+0x7e7/0xa40 security/security.c:2977
+       __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
+       __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&mm->mmap_lock){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       down_write_killable+0xab/0x260 kernel/locking/rwsem.c:1590
+       mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+       upgrade_mmap_lock_carefully+0xb6/0x160 mm/memory.c:6132
+       lock_mm_and_find_vma+0x107/0x2f0 mm/memory.c:6185
+       do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+       exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+       fault_in_readable+0x165/0x2b0
+       fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
+       generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
+       shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
+       new_sync_write fs/read_write.c:590 [inline]
+       vfs_write+0xa6d/0xc90 fs/read_write.c:683
+       ksys_write+0x183/0x2b0 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&sb->s_type->i_mutex_key#12);
+                               lock(&mm->mmap_lock);
+                               lock(&sb->s_type->i_mutex_key#12);
+  lock(&mm->mmap_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz.3.2933/22916:
+ #0: ffff8880391b2478 (&f->f_pos_lock){+.+.}-{3:3}, at: fdget_pos+0x24e/0x320 fs/file.c:1187
+ #1: ffff888043608420 (sb_writers#5){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
+ #1: ffff888043608420 (sb_writers#5){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
+ #2: ffff888078651ce8 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #2: ffff888078651ce8 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x80/0x120 mm/shmem.c:3211
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 22916 Comm: syz.3.2933 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ down_write_killable+0xab/0x260 kernel/locking/rwsem.c:1590
+ mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ upgrade_mmap_lock_carefully+0xb6/0x160 mm/memory.c:6132
+ lock_mm_and_find_vma+0x107/0x2f0 mm/memory.c:6185
+ do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:fault_in_readable+0x165/0x2b0 mm/gup.c:2235
+Code: b3 ff 4c 8d b3 ff 0f 00 00 48 89 d8 4d 01 e6 49 81 e6 00 f0 ff ff 49 39 c6 72 6b e8 95 cd b3 ff 4c 39 f3 74 6e 4c 89 64 24 10 <44> 8a 23 43 0f b6 04 2f 84 c0 75 18 44 88 64 24 40 48 81 c3 00 10
+RSP: 0018:ffffc9000fa67a40 EFLAGS: 00050287
+RAX: ffffffff81e0e7ab RBX: 0000000020001000 RCX: 0000000000040000
+RDX: ffffc90004fa1000 RSI: 000000000000007d RDI: 000000000000007e
+RBP: ffffc9000fa67af8 R08: ffffffff81e0e748 R09: ffffffff84b90999
+R10: 0000000000000002 R11: ffff88805c679e00 R12: 000000000000fecc
+R13: dffffc0000000000 R14: 0000000020010000 R15: 1ffff92001f4cf50
+ fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
+ generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
+ shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0xa6d/0xc90 fs/read_write.c:683
+ ksys_write+0x183/0x2b0 fs/read_write.c:736
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fde8757def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fde86fff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fde87735f80 RCX: 00007fde8757def9
+RDX: 000000000000fecc RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00007fde875f0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fde87735f80 R15: 00007fde8785fa28
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	b3 ff                	mov    $0xff,%bl
+   2:	4c 8d b3 ff 0f 00 00 	lea    0xfff(%rbx),%r14
+   9:	48 89 d8             	mov    %rbx,%rax
+   c:	4d 01 e6             	add    %r12,%r14
+   f:	49 81 e6 00 f0 ff ff 	and    $0xfffffffffffff000,%r14
+  16:	49 39 c6             	cmp    %rax,%r14
+  19:	72 6b                	jb     0x86
+  1b:	e8 95 cd b3 ff       	call   0xffb3cdb5
+  20:	4c 39 f3             	cmp    %r14,%rbx
+  23:	74 6e                	je     0x93
+  25:	4c 89 64 24 10       	mov    %r12,0x10(%rsp)
+* 2a:	44 8a 23             	mov    (%rbx),%r12b <-- trapping instruction
+  2d:	43 0f b6 04 2f       	movzbl (%r15,%r13,1),%eax
+  32:	84 c0                	test   %al,%al
+  34:	75 18                	jne    0x4e
+  36:	44 88 64 24 40       	mov    %r12b,0x40(%rsp)
+  3b:	48                   	rex.W
+  3c:	81                   	.byte 0x81
+  3d:	c3                   	ret
+  3e:	00 10                	add    %dl,(%rax)
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
