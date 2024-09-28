@@ -1,213 +1,94 @@
-Return-Path: <linux-kernel+bounces-342505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A15988FC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:44:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9F6988FC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50BA0B215C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:43:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26448B215F0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54611DFF0;
-	Sat, 28 Sep 2024 14:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knAus5gC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991D11CD2A;
+	Sat, 28 Sep 2024 14:47:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC3F18654;
-	Sat, 28 Sep 2024 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AE917545
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 14:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727534629; cv=none; b=Pe0bOdQjbSb02W1M9as8ykyeiGwH3yDrnr3dBHRVhQvcXTwnmv4FeaAU86Cktoqnjtp7RTbPIKHb4hfL2+ou39+QMh1Bx5vIzg18+okswdmL2Id5HhF0jlHcvEaFxOLOzzONA9TCLS8Noksl8DVbfUZjs8aIszy99zJl46o7wWY=
+	t=1727534825; cv=none; b=vBub5Id3sqKiPg0Py6G1yhkhh2SibBfjHvw/3Eg0B9it3t8Rj48uQN3g1ft6yf/rxNQvZW4w3y6KpxEhgRzjY//PlyRk5it/sjSIiN0LXWa64Dvps/4EZ/xE0LKnGUc0WIPUYI1dAbetIvbE9U9fkl3agIq6tTzl3ON8zCbrH2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727534629; c=relaxed/simple;
-	bh=03ju+PM9jHEBOcs3wfN0gwiXjoyXhS4e4zgfe3m+xo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kOX6sqNroApx44qXxIXuXduzZMOshQJz4QSY8bAnRXlyqqIUTnI/4CNbl1TMgIigse5R0Pks2rZw+X+3FRq2We3IE7SHMVL1Qksnrt7Q+vCsaTv5qFbfEPaK068llciXVKyyn21Alinu3IaZcI+bLtNjvzHj6YfQ7gkCeYxHqtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knAus5gC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8622AC4CEC3;
-	Sat, 28 Sep 2024 14:43:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727534628;
-	bh=03ju+PM9jHEBOcs3wfN0gwiXjoyXhS4e4zgfe3m+xo4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=knAus5gCCmkCgqJtJNaXTfKjmtRmkJpH1zp0PmLf0gRGrOipz0I21FBwp0uybrvQ4
-	 +i7douTPejHWFLhJ86wu9CME40/pDA4+pd4OXvmTr5bGUrfMvCH33934FbP0puTycd
-	 Ji1gVAqoa8NoN5mmtuwkM4sseVneQVmipw+/ZCQbPoY44e9LCSc54nW0FOFhZ7V8Iq
-	 ORjPFD1SJm4U3wCWaZlwh+RW5x0Q4dgVKVI/nkX6Hqm6s7WnWtAr0EpxixJhEuympi
-	 HHQS++pVWQEOJlKio7hHTl9ndS5Fz3V35ETBpwoVGWWk7JrQv145MKebNjSP+fE/d2
-	 mqbyG3GU/qEYQ==
-Date: Sat, 28 Sep 2024 15:43:39 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, lars@metafoo.de,
- michael.hennerich@analog.com, gstols@baylibre.com
-Subject: Re: [PATCH v7 1/8] iio: adc: ad7606: add 'bits' parameter to
- channels macros
-Message-ID: <20240928154339.2c886ba4@jic23-huawei>
-In-Reply-To: <CA+GgBR94rNX4wLh527EmfO4pzYFU02fQOr-KfzMt6Reyb5QFgA@mail.gmail.com>
-References: <20240919130444.2100447-1-aardelean@baylibre.com>
-	<20240919130444.2100447-2-aardelean@baylibre.com>
-	<CAMknhBFso4RXhhLSN_x1JEDCi70y-2BDVHKAzuh=bp7dt7dgxA@mail.gmail.com>
-	<CA+GgBR94rNX4wLh527EmfO4pzYFU02fQOr-KfzMt6Reyb5QFgA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727534825; c=relaxed/simple;
+	bh=lx7Ifb9q719owpGrIkO2jtwN2HKzH6UEVno5u3b+iF4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nWKxwkhIKKhpO8gy0B7gqUxcwZuSbxBrFHDlwjofYFTpoi89yRrOrZXgaE6yOnM6SN0O2zY/X0XrFQ+Tgq0fQuwA4y0uLzCh4Q5NYkWELG25CY5hKf87TahKFX5e3QFTIAJka26vX1z//IsyE+zLrYS+vMvf+mMqgnOu0YVFU4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a19534ac2fso40820515ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:47:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727534823; x=1728139623;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qS3n76UGkCFfSzpWf68kEL7cLIcUZy/Q42VybJ4lvPc=;
+        b=hBCmrX6HAU4WYpkEU/CmxIQ452XY1lbZcBdueLRfG3Pp4KjYg5Uh5qbIaBtMgm43Nt
+         x/XOWN6fpjv5se6yP90wENH4w0g2cXMBv660ILm015E8fLnPfDvainpX7yTQjHaghgD5
+         tYef4PlLae4OWvN6IKEQQiHwixbNrv0chiGvhKY5dqd53L3H6KOHlqev1ZW5EgOVg/BI
+         BBPIKJ2AB/dn45XhZlBwNhQRn46BGPOFKjF2QaMxJOWxBpWcQsVcniVxUovsNPmIWk3o
+         FP1C4VqrjG++P1xwsatqB8gHg4UOeVsIeSo+U1Dhqx1G2O9FgDi0w4K00LUDPf/gPQoO
+         RT5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXCoK47glWnVLpJlDDlOTYHCwyLXMU2ETuD16dPVrkVyyUPwTyfERYSiUqII1SoYEeJnY57Nn2/gDNr610=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydelI0rddAh0JU0nOurvG3w57o2RUq7A1+DeTxvX9YUgxR4cct
+	nlKwX8AuoLhZFm5hr48vCnwnRGkosU/KECQAgMASGXNeYXGXY6c7uB/QksY3F4q/iE5LaUPyJ8C
+	weTsd5+2GY3qMwbT45M+6vJn1Pzz6CAkIM/Ev8hJKuHC8o5E3IGhBIlU=
+X-Google-Smtp-Source: AGHT+IFQPRWXJ8MlIWkc8iJvXKX8p5A6JpNeYO/NKPlG50WuJZZ4zc7BrIPosH16IdW8xqGLrFONOFk/JPLQ+xYj3mCLBIvJNAzl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:1a08:b0:3a0:92b1:ec3c with SMTP id
+ e9e14a558f8ab-3a345161e57mr58864265ab.4.1727534822873; Sat, 28 Sep 2024
+ 07:47:02 -0700 (PDT)
+Date: Sat, 28 Sep 2024 07:47:02 -0700
+In-Reply-To: <000000000000aefb4d061e34a346@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f816e6.050a0220.aab67.0004.GAE@google.com>
+Subject: Re: [syzbot] [net?] INFO: task hung in linkwatch_event (4)
+From: syzbot <syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com>
+To: bsegall@google.com, davem@davemloft.net, dietmar.eggemann@arm.com, 
+	edumazet@google.com, jiri@resnulli.us, johannes.berg@intel.com, 
+	juri.lelli@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	mgorman@suse.de, mingo@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	peterz@infradead.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, 
+	vincent.guittot@linaro.org, vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 24 Sep 2024 10:11:38 +0200
-Alexandru Ardelean <aardelean@baylibre.com> wrote:
+syzbot has bisected this issue to:
 
-> On Mon, Sep 23, 2024 at 4:51=E2=80=AFPM David Lechner <dlechner@baylibre.=
-com> wrote:
-> >
-> > On Thu, Sep 19, 2024 at 3:04=E2=80=AFPM Alexandru Ardelean
-> > <aardelean@baylibre.com> wrote: =20
-> > >
-> > > There are some newer additions to the AD7606 family, which support 18=
- bit
-> > > precision. Up until now, all chips were 16 bit.
-> > >
-> > > This change adds a 'bits' parameter to the AD760X_CHANNEL macro and r=
-enames
-> > > 'ad7606_channels' -> 'ad7606_channels_16bit' for the current devices.
-> > >
-> > > The AD7606_SW_CHANNEL() macro is also introduced, as a short-hand for=
- IIO
-> > > channels in SW mode.
-> > >
-> > > Signed-off-by: Alexandru Ardelean <aardelean@baylibre.com>
-> > > --- =20
-> >
-> > ...
-> > =20
-> > > diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
-> > > index 6649e84d25de..204a343067e5 100644
-> > > --- a/drivers/iio/adc/ad7606.h
-> > > +++ b/drivers/iio/adc/ad7606.h
-> > > @@ -8,7 +8,7 @@
-> > >  #ifndef IIO_ADC_AD7606_H_
-> > >  #define IIO_ADC_AD7606_H_
-> > >
-> > > -#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all) {   \
-> > > +#define AD760X_CHANNEL(num, mask_sep, mask_type, mask_all, bits) {  =
-   \
-> > >                 .type =3D IIO_VOLTAGE,                            \
-> > >                 .indexed =3D 1,                                   \
-> > >                 .channel =3D num,                                 \
-> > > @@ -19,24 +19,26 @@
-> > >                 .scan_index =3D num,                              \
-> > >                 .scan_type =3D {                                  \
-> > >                         .sign =3D 's',                            \
-> > > -                       .realbits =3D 16,                         \
-> > > -                       .storagebits =3D 16,                      \
-> > > +                       .realbits =3D (bits),                     \
-> > > +                       .storagebits =3D (bits) > 16 ? 32 : 16,   \
-> > >                         .endianness =3D IIO_CPU,                  \
-> > >                 },                                              \
-> > >  }
-> > >
-> > >  #define AD7605_CHANNEL(num)                            \
-> > >         AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),     \
-> > > -               BIT(IIO_CHAN_INFO_SCALE), 0)
-> > > +               BIT(IIO_CHAN_INFO_SCALE), 0, 16)
-> > >
-> > > -#define AD7606_CHANNEL(num)                            \
-> > > +#define AD7606_CHANNEL(num, bits)                      \
-> > >         AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW),     \
-> > >                 BIT(IIO_CHAN_INFO_SCALE),               \
-> > > -               BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
-> > > +               BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
-> > >
-> > > -#define AD7616_CHANNEL(num)    \
-> > > +#define AD7606_SW_CHANNEL(num, bits)   \
-> > >         AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_RAW) | BIT(IIO_CHAN_INF=
-O_SCALE),\
-> > > -               0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
-> > > +               0, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO), bits)
-> > > +
-> > > +#define AD7616_CHANNEL(num)    AD7606_SW_CHANNEL(num, 16) =20
-> >
-> > It looks like the AD7616_CHANNEL macro is no longer used, so can be
-> > dropped. Or alternately, don't change the lines below to use
-> > AD7606_SW_CHANNEL. =20
->=20
-> Well, the AD7616_CHANNEL() macro is still being used for the actual
-> AD7616 channels.
-> For the AD7606B software channels, the AD7616_CHANNEL() macro was
-> being re-used, which seemed like a bit of a lazy/convenient way to do
-> it.
->=20
-> The patch here, just cleans up that minor quirk, but just for AD7606B.
-> The AD7616 driver part, still uses the AD7616_CHANNEL() macro.
->=20
-> Though, interestingly, the AD7616_CHANNEL() macro is only used for SW cha=
-nnels.
-> Maybe in a subsequent patch, the AD7616_CHANNEL() macro can be removed
-> altogether.
-> I thought about doing it in this series, but decided against it, to
-> keep the series small.
-It's been a while, and David hasn't said he disagrees with this
-argument so I've picked up David's tag whilst applying this.
+commit e8901061ca0cd9acbd3d29d41d16c69c2bfff9f0
+Author: Peter Zijlstra <peterz@infradead.org>
+Date:   Thu May 23 08:48:09 2024 +0000
 
-So David, if you'd rather I didn't then shout!
+    sched: Split DEQUEUE_SLEEP from deactivate_task()
 
-Series applied to the togreg branch of iio.git and pushed out as testing
-for all the normal reasons + I'm waiting for rc1 to rebase on.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13ce9e80580000
+start commit:   075dbe9f6e3c Merge tag 'soc-ep93xx-dt-6.12' of git://git.k..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=102e9e80580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17ce9e80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ba2d70f288cf61174e4
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e2c507980000
 
-Thanks
-Jonathan
+Reported-by: syzbot+2ba2d70f288cf61174e4@syzkaller.appspotmail.com
+Fixes: e8901061ca0c ("sched: Split DEQUEUE_SLEEP from deactivate_task()")
 
->=20
-> >
-> > With either of those changes:
-> >
-> > Reviewed-by: David Lechner <dlechner@baylibre.com>
-> > =20
-> > >
-> > >  /**
-> > >   * struct ad7606_chip_info - chip specific information
-> > > diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_sp=
-i.c
-> > > index 62ec12195307..e00f58a6a0e9 100644
-> > > --- a/drivers/iio/adc/ad7606_spi.c
-> > > +++ b/drivers/iio/adc/ad7606_spi.c
-> > > @@ -67,14 +67,14 @@ static const struct iio_chan_spec ad7616_sw_chann=
-els[] =3D {
-> > >
-> > >  static const struct iio_chan_spec ad7606b_sw_channels[] =3D {
-> > >         IIO_CHAN_SOFT_TIMESTAMP(8),
-> > > -       AD7616_CHANNEL(0),
-> > > -       AD7616_CHANNEL(1),
-> > > -       AD7616_CHANNEL(2),
-> > > -       AD7616_CHANNEL(3),
-> > > -       AD7616_CHANNEL(4),
-> > > -       AD7616_CHANNEL(5),
-> > > -       AD7616_CHANNEL(6),
-> > > -       AD7616_CHANNEL(7),
-> > > +       AD7606_SW_CHANNEL(0, 16),
-> > > +       AD7606_SW_CHANNEL(1, 16),
-> > > +       AD7606_SW_CHANNEL(2, 16),
-> > > +       AD7606_SW_CHANNEL(3, 16),
-> > > +       AD7606_SW_CHANNEL(4, 16),
-> > > +       AD7606_SW_CHANNEL(5, 16),
-> > > +       AD7606_SW_CHANNEL(6, 16),
-> > > +       AD7606_SW_CHANNEL(7, 16),
-> > >  };
-> > >
-> > >  static const unsigned int ad7606B_oversampling_avail[9] =3D {
-> > > --
-> > > 2.46.0
-> > > =20
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
