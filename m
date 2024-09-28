@@ -1,140 +1,212 @@
-Return-Path: <linux-kernel+bounces-342392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449DB988E69
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:12:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DBE988E6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7485B1C20DB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DC75280E8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176C19DF98;
-	Sat, 28 Sep 2024 08:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2BB19DF98;
+	Sat, 28 Sep 2024 08:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nJDQQbmW"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nn/VKvLK"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDAD12E75
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AACA12E75
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727511165; cv=none; b=rxEfPcXbzB2K4DnVHEtrHuftBpq11Jzsg/mFPpeHSM7NT4ianXx8hXI+AZQMi8IOIYQjlD/sfRaFBlP3M5uF8UgwVHEqR7E2AUOxe0yK0JY5RPidcMxK9RhvctpSWx8MLY3/u9XjxF4fjXAw/I6jny9/bp4pHAPTIWmnEGIH4ps=
+	t=1727511239; cv=none; b=XSEUZ2ScwiC3QU9aT/0yV99NaJXSQ09b6VK/4VCsOyQsFh5r/s0jtdhytKcecBuU12LPRIx1xGrCP3vVAxWiQQ0vbMjGNBhKqfpAOpKbUw0lFPkeTCLVBnxG7AvJDslqnhdfKw4Uwz7sseamh1nf5pGmGhEqKHTndoNdqOG3BBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727511165; c=relaxed/simple;
-	bh=dIGpCRt4md8gbhmXuRt/NsFaXFa6x6DEi9MZ1xgv8r0=;
+	s=arc-20240116; t=1727511239; c=relaxed/simple;
+	bh=PCfPUgekunsUPpNb7IEDB+/9AjSynlVl6jE+DpngVjg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGT8nYZT6ghomwPXgt8LBY0AqGRRlm4bbIlcEjhlSSPuKrcaFOD9KoD8FyWc/j3D2OArG9/eLHvqnQwkAhSR/oyLKl7vmGcvvVKG0KIH4OpDgUpWbYHm36Yp5fZB8meARsPmogo88IO4x/E7UG67ZZpaqzh5qB8zV8IfSwa9U8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nJDQQbmW; arc=none smtp.client-ip=209.85.218.46
+	 To:Cc:Content-Type; b=axThzCDg5zE32Du5pa+XM67ZJ2r82LvWhwyHcCQDmVRDDFIwkdDMQcXGMHxsKqNPgFuoUUJJ+5yu1iKGc2mzoCjJp0bAf/m0M16hZvaiY9AgZTDIHP8uDTdLZZ8GzajMqDZRjy/fqIcAxf2fKP5qEGu3RMCyacg41UG3FbPz8Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nn/VKvLK; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso321197666b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 01:12:43 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso423782766b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 01:13:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727511162; x=1728115962; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727511236; x=1728116036; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Samd0mUAzWlzelumq96uezolPu6N8J4V2/Xoj2xIqfQ=;
-        b=nJDQQbmWc4WuLlgZHolZ29TMSKegz17O3yNGppc8B6mkBuh2u0Wr67AWgiooARi+qX
-         H81iEoM0rnEeWf6JvCcGUfH08ziXV+XO0++6etQkwWTFJXedKqGIUyz9KeSzliDnNIyI
-         wQP3k+bfpTkeYeuLoPXcUrfYq0xNnl09FPhOOAw1YhIWFYs7vHuU4HG3jITb931FdB8T
-         b0nQNaGZxX8jsl+REhroooSzSvtBr1sOiBWDXuP/xqGuYhlAl9uiC2G2r6PNKzfXO518
-         0FZexBrJTh+I/91z32VU4r9EUvhAbBWBvsu0SExm3DAgxHWpvR5hq8e0E89P+X7mF5JY
-         Dd7Q==
+        bh=0ex55oB2RndkmTH+vNm3pK4T3zGQ1Bq6pi9mDoc4Yk8=;
+        b=Nn/VKvLKqHyG5iD4f37rL2aXKmvQDrwdZmXJ9gByxCWYS7cBCPeCUbOHfMdSPo7zlF
+         aP0uv1Cr/4q/G+/MwdW5lbewvJgFi6JRx0ANH3ua8D+qkBmOwnOtb7P7CS3+utOOlhAc
+         66xmSFI+OqUOUfGTAhAws5j0n3uGQmcZGaMYdNQgWBjzYF0s2jzipWfJBQ7FgJ7WE4e1
+         8BnQeGNgs8TTbHADCcATQ8qLNeSsVlLMvl5EPfWyG9nnHouOO36rPq7A4VdIVSXaTuty
+         GfCZwLdC+5ZacCxy7NLyD/btHpQdmoT4rVLyNUgiGbZzuS36vnYCfMDQDMjVtBA+u7Fi
+         xvaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727511162; x=1728115962;
+        d=1e100.net; s=20230601; t=1727511236; x=1728116036;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Samd0mUAzWlzelumq96uezolPu6N8J4V2/Xoj2xIqfQ=;
-        b=WDvsU4LV0eono4RS1kMec035rQNSDnkGS9IYa9uYl3TvrXHExugSkOBuzaIh84Qtt3
-         DsxZJKvyg8zqdE7ydhR0BrZdvMgUlL1QtK0oxRHKA89z0VY6HyAL7Ynx35JEPkasG8Tu
-         5roinuYbbMoZsskEFjopjuyBaHY98DKLZBK/Q34fzv0UKSRkyQ8h3b1kL5kypEWU1Mog
-         EuYT3uOwPadEGvHqgR0Q+/WWyOtIssYEdFNpjhSg3opWSI08kRyL7ajHIW62ez9SS0mC
-         JMS8R5A6FVpVTNyTzQ8jZrd+QBORaZAkHOHy+EjJ15AmLrZ0rbGGXxDs9AP4W37uTkyN
-         WrSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgb3QyhGU5JRMaNTuAChjZimmoup/5Rbcdx1Ck9j0jesFuHh7Om2zD90urOV5ZXM9/8yu1d9xOK85s/bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCAZpImB38RNYVXFj2vBFkUVV5AuOr7LOiBijI/lo3PP5ncm8a
-	9d+Ydj4yxul9W0/c4pZXjeS42BdRtEVMXBAUA7gsUU4qdMgorPnUoTbsslU5p0uBXt0XFH51SjQ
-	44lfPh3Pg4yJFwchNTa6fYN6cMY7xf/Pe57LBXk/eT6aAXte5ke8h
-X-Google-Smtp-Source: AGHT+IFty7FKqvcT4C7Q34oUTNws54WXjoXhfG6q3VK0rE1eH8IpvJ53SMpi9glnL4Jkh1DXThecgIWksBjhtG8ER20=
-X-Received: by 2002:a17:907:7da7:b0:a8d:439d:5c3c with SMTP id
- a640c23a62f3a-a93c48efd0fmr608359466b.8.1727511161494; Sat, 28 Sep 2024
- 01:12:41 -0700 (PDT)
+        bh=0ex55oB2RndkmTH+vNm3pK4T3zGQ1Bq6pi9mDoc4Yk8=;
+        b=qAJ2gCxSEw3BKknvO4HnBpmW9r830vpXdsdlL5w25xDN46uPzDM1su8MIYH4h2bUxg
+         QzH6ngFmHXHjuaJnsf/sUBJAUxXSYnjXFKL6JCB2Ctq+07k7ZrNzt5WK+Xlgbe5E4w+z
+         ciTZsAkK8e2PEvoDcMQGfZAFWqfbX89S8wQOjIdjAkgldjhIc3sxAyAQSKZ2h5UZ8D31
+         mKyPJGYl7Y/tlVqYYyflpWA1cgllhl+aFA8iDltwvYeJp4hjuQmHqnbtgg+xzg9xvcEJ
+         sS15QT1zLA0bC+RoN8xGrurY/0scikAeO+ziGetLJqfI8JjGG1vdpQqxngmwvg2nY9zq
+         wY/g==
+X-Gm-Message-State: AOJu0YwFSnksvyNIdpcGONs8hRyJU1OFOFKBFQ2DsztOUZGrUnx+2POp
+	y5UYPkZMDboilGGuodpIHxBI1Y/6BTaZgIwfX9uOzxDPc1/LX5pjCt49HTH0jjBmO/rtrNswRuz
+	3Hq7zuVV9PwM31pqdBF8CeaCv3PGK2qT7rThasmnZZ/O6DU9jg02S
+X-Google-Smtp-Source: AGHT+IHJoQNvj4WuoG3BEUT6h2Z59xll4tEIN5d4r+tn2ZgXb1kCmUqkyjV2H8FNdl5OuW8kQgZzNUWmgeCCug3TXqw=
+X-Received: by 2002:a17:907:9344:b0:a8d:55ce:fb7f with SMTP id
+ a640c23a62f3a-a93c4c40561mr475735066b.62.1727511235478; Sat, 28 Sep 2024
+ 01:13:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com>
- <20240928021620.8369-6-kanchana.p.sridhar@intel.com> <CAJD7tka0qyRWhgHrC9p1ytfDKVPr9bBTFCYy7HC4DZ-Ovfu7VQ@mail.gmail.com>
- <ZveLM6EINpVWwJZD@casper.infradead.org>
-In-Reply-To: <ZveLM6EINpVWwJZD@casper.infradead.org>
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com> <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240928021620.8369-6-kanchana.p.sridhar@intel.com>
 From: Yosry Ahmed <yosryahmed@google.com>
-Date: Sat, 28 Sep 2024 01:12:04 -0700
-Message-ID: <CAJD7tkZJkeoTBfs7aEphR_cg728cB0o9+_Uwq=w_=iCzCc1=4g@mail.gmail.com>
+Date: Sat, 28 Sep 2024 01:13:19 -0700
+Message-ID: <CAJD7tkbCrrpPBnm1vE2_pBZCjc1i3w37Pf-5hb1Bt7Xd552=FQ@mail.gmail.com>
 Subject: Re: [PATCH v8 5/8] mm: zswap: Modify zswap_stored_pages to be atomic_long_t.
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, hannes@cmpxchg.org, nphamcs@gmail.com, 
-	chengming.zhou@linux.dev, usamaarif642@gmail.com, shakeel.butt@linux.dev, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, nanhai.zou@intel.com, wajdi.k.feghali@intel.com, 
-	vinodh.gopal@intel.com
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 9:51=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
 >
-> On Fri, Sep 27, 2024 at 07:57:49PM -0700, Yosry Ahmed wrote:
-> > On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > > For zswap_store() to support large folios, we need to be able to do
-> > > a batch update of zswap_stored_pages upon successful store of all pag=
-es
-> > > in the folio. For this, we need to add folio_nr_pages(), which return=
-s
-> > > a long, to zswap_stored_pages.
-> >
-> > Do we really need this? A lot of places in the kernel assign the
-> > result of folio_nr_pages() to an int (thp_nr_pages(),
-> > split_huge_pages_all(), etc). I don't think we need to worry about
-> > folio_nr_pages() exceeding INT_MAX for a while.
+> For zswap_store() to support large folios, we need to be able to do
+> a batch update of zswap_stored_pages upon successful store of all pages
+> in the folio. For this, we need to add folio_nr_pages(), which returns
+> a long, to zswap_stored_pages.
 >
-> You'd be surprised.  Let's assume we add support for PUD-sized pages
-> (personally I think this is too large to make sense, but some people can'=
-t
-> be told).  On arm64, we can have a 64kB page size, so that's 13 bits per
-> level for a total of 2^26 pages per PUD.  That feels uncomfortable close
-> to 2^32 to me.
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  fs/proc/meminfo.c     |  2 +-
+>  include/linux/zswap.h |  2 +-
+>  mm/zswap.c            | 19 +++++++++++++------
+>  3 files changed, 15 insertions(+), 8 deletions(-)
 >
-> Anywhere you've found that's using an int to store folio_nr_pages() is
-> somewhere we should probably switch to long.
+> diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+> index 245171d9164b..8ba9b1472390 100644
+> --- a/fs/proc/meminfo.c
+> +++ b/fs/proc/meminfo.c
+> @@ -91,7 +91,7 @@ static int meminfo_proc_show(struct seq_file *m, void *=
+v)
+>  #ifdef CONFIG_ZSWAP
+>         show_val_kb(m, "Zswap:          ", zswap_total_pages());
+>         seq_printf(m,  "Zswapped:       %8lu kB\n",
+> -                  (unsigned long)atomic_read(&zswap_stored_pages) <<
+> +                  (unsigned long)atomic_long_read(&zswap_stored_pages) <=
+<
 
-There are a lot of them: rmap.c, shmem.c, khugepaged.c, etc.
+Do we still need this cast? "HardwareCorrupted" seems to be using
+atomic_long_read() without a cast.
 
-> And this, btw, is why I've
-> moved from using an int to store folio_size() to using size_t.  A PMD is
-> already 512MB (with a 64KB page size), and so a PUD will be 4TB.
+Otherwise this LGTM:
+Acked-by: Yosry Ahmed <yosryahmed@google.com>
 
-Thanks for pointing this out. I assumed the presence of many places
-using int to store folio_nr_pages() means that it's a general
-assumption.
-
-Also, if we think it's possible that a single folio size may approach
-INT_MAX, then we are in bigger trouble for zswap_stored_pages, because
-that's the total number of pages stored in zswap on the entire system.
-That's much more likely to exceed INT_MAX than a single folio.
-
+>                    (PAGE_SHIFT - 10));
+>  #endif
+>         show_val_kb(m, "Dirty:          ",
+> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
+> index 9cd1beef0654..d961ead91bf1 100644
+> --- a/include/linux/zswap.h
+> +++ b/include/linux/zswap.h
+> @@ -7,7 +7,7 @@
 >
-> thp_nr_pages() is not a good example.  I'll be happy when we kill it;
-> we're actually almost there.
-
-Yeah I can only see 2 callers.
+>  struct lruvec;
+>
+> -extern atomic_t zswap_stored_pages;
+> +extern atomic_long_t zswap_stored_pages;
+>
+>  #ifdef CONFIG_ZSWAP
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 0f281e50a034..43e4e216db41 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -43,7 +43,7 @@
+>  * statistics
+>  **********************************/
+>  /* The number of compressed pages currently stored in zswap */
+> -atomic_t zswap_stored_pages =3D ATOMIC_INIT(0);
+> +atomic_long_t zswap_stored_pages =3D ATOMIC_INIT(0);
+>
+>  /*
+>   * The statistics below are not protected from concurrent access for
+> @@ -802,7 +802,7 @@ static void zswap_entry_free(struct zswap_entry *entr=
+y)
+>                 obj_cgroup_put(entry->objcg);
+>         }
+>         zswap_entry_cache_free(entry);
+> -       atomic_dec(&zswap_stored_pages);
+> +       atomic_long_dec(&zswap_stored_pages);
+>  }
+>
+>  /*********************************
+> @@ -1232,7 +1232,7 @@ static unsigned long zswap_shrinker_count(struct sh=
+rinker *shrinker,
+>                 nr_stored =3D memcg_page_state(memcg, MEMCG_ZSWAPPED);
+>         } else {
+>                 nr_backing =3D zswap_total_pages();
+> -               nr_stored =3D atomic_read(&zswap_stored_pages);
+> +               nr_stored =3D atomic_long_read(&zswap_stored_pages);
+>         }
+>
+>         if (!nr_stored)
+> @@ -1501,7 +1501,7 @@ bool zswap_store(struct folio *folio)
+>         }
+>
+>         /* update stats */
+> -       atomic_inc(&zswap_stored_pages);
+> +       atomic_long_inc(&zswap_stored_pages);
+>         count_vm_event(ZSWPOUT);
+>
+>         return true;
+> @@ -1650,6 +1650,13 @@ static int debugfs_get_total_size(void *data, u64 =
+*val)
+>  }
+>  DEFINE_DEBUGFS_ATTRIBUTE(total_size_fops, debugfs_get_total_size, NULL, =
+"%llu\n");
+>
+> +static int debugfs_get_stored_pages(void *data, u64 *val)
+> +{
+> +       *val =3D atomic_long_read(&zswap_stored_pages);
+> +       return 0;
+> +}
+> +DEFINE_DEBUGFS_ATTRIBUTE(stored_pages_fops, debugfs_get_stored_pages, NU=
+LL, "%llu\n");
+> +
+>  static int zswap_debugfs_init(void)
+>  {
+>         if (!debugfs_initialized())
+> @@ -1673,8 +1680,8 @@ static int zswap_debugfs_init(void)
+>                            zswap_debugfs_root, &zswap_written_back_pages)=
+;
+>         debugfs_create_file("pool_total_size", 0444,
+>                             zswap_debugfs_root, NULL, &total_size_fops);
+> -       debugfs_create_atomic_t("stored_pages", 0444,
+> -                               zswap_debugfs_root, &zswap_stored_pages);
+> +       debugfs_create_file("stored_pages", 0444,
+> +                           zswap_debugfs_root, NULL, &stored_pages_fops)=
+;
+>
+>         return 0;
+>  }
+> --
+> 2.27.0
+>
 
