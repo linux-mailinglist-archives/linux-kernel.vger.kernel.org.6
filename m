@@ -1,87 +1,123 @@
-Return-Path: <linux-kernel+bounces-342415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B9D988EB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:08:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90184988EB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A568A281F7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:08:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E66D281A11
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA88119E962;
-	Sat, 28 Sep 2024 09:08:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4AB19EED4;
+	Sat, 28 Sep 2024 09:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1/fXMcy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914119DFBB
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9649319DFBB;
+	Sat, 28 Sep 2024 09:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727514487; cv=none; b=eX7od1rzD+bW2neC7FgBvBS72xcTWFacZYaURHB+Nw0E+/2HMzeSFL3STMIcbz6VzGt6UhNyNyDalTJyj/k1px6DBiyiF3aRU/lekOpJxijmn0QGzStaNAAIJpP7fKBsLtyQxfGjqHbEs+W6F/mncCJyrS+ef3360VuUNjPMXNM=
+	t=1727514682; cv=none; b=EGEjmeKNJtO9nf4LkgCf48DDjm5uNuZoVm1ZVeRqUc1PpLm8wAup33mHY+bZ+y5takc52NPoNhsUVrS+CMYCDnqFbED9VYNffJ6AoQ4xiGkAD740awJJ0tmAoMo9GeXpI+o8WK4wcPsOcucwZBO1Sb/2f8pN+IwYYgqIWbSLKz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727514487; c=relaxed/simple;
-	bh=i6f+ZtTuWVmq3IQd4UJQ0VhGEK782Zvnn6pPAtsRvEY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=e51Hu1ncDXpOMiOXjJ7B8Tpb0zjZefHLCV81s6KCsmhEt2OwIgO4NF+GdAPJ3xANHniBFzrQtfTu0zEJkxM+pb9abVhKkZ9lV1oT2CRqotWIKBID7OdjOAFHZhfG+uLuysGy7K/n4ITSANARErKQmSa9D+66HEdICxO8uVuzydI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0cd6a028bso30694755ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:08:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727514485; x=1728119285;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUwF+DOYOWwhUI48FQhB2+d1PUzlxud0cp5BnhMWsNE=;
-        b=N1VID2av4reFQZDB34OQrRoVagtmMwkHGCJKXGga7YM2rXOuEskLTWotgsBmFs9HZa
-         K+RwWfBuyX3eWDK1BIcStIUZaPz42i8rsiTHMrIPigw8j8s7HV5nu5IOJ6hK1mtuM6Y8
-         zfk14M0Rb6nTAz6FzkY7Dpy3g2RorGTe98b8IrgwD39UN3xU+JIqDtdqzW2eDNxNwzuu
-         IIe3egUPvepShiAZceBLjCzdjQQ8stS8NQ4Ffe1xQfPShODyI8f6+RMKSqXqC4IyjpnP
-         O5r05j/ALF8aYyQsrmaCJSGxn2kf8K2N7hTIBySy8282riz/a9uKM39K12dck9Te07Hg
-         aITA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzy8qrkVXiKPeWqjc4XeURT6jJCia868zsrKUJ4KazA3Vxtbr+Lpz/5sNkvKkKrtxUu8Gm4eREpxDTAKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3cEtEHuBLHWxrvo5F4Oz0sG7fXUVB+vjRIxpIU8NqdplkEweh
-	Bh+MmTX3dzI57fyZnWNmUavwYVPRsZBA06TY0KRuT407HM25M7AwOw4hXd5rVyD8euu8hhgax/H
-	NVzIr0h/RXSDQPpDwGD0mBHPU8c5RoLFlxHJPlorKYfh4zUkpYMOyxts=
-X-Google-Smtp-Source: AGHT+IHihBJ+GxY8eg5LzxWABRDhLublPolGwSEBg3jIrc63OS3ihXlj7Rhzorm2uoSOuoHFM7SsSCeUf/6w8BuEXWbwPC8sM9U5
+	s=arc-20240116; t=1727514682; c=relaxed/simple;
+	bh=li0bXHR0TvXcwt8qhQR9j/FFiIA5/ek6EQTh0iCst/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=stBBYkxVN+M/K2ZjVTN6gLptg2xu9XjCjwaP5dow5+fdL0ZHDQKDj8I5rjeJhiYWdi1TMsHITE9FLYgblDcmle3tb3pBHUFWBBwc88mCg7vsCA+Nuj8HZudt2jcb7MoVQMCUr1HjsiOQ3GamW7TG7jy6ZL3HUe0D/+IDzNc4Mok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1/fXMcy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041D7C4CECD;
+	Sat, 28 Sep 2024 09:11:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727514682;
+	bh=li0bXHR0TvXcwt8qhQR9j/FFiIA5/ek6EQTh0iCst/Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=b1/fXMcyj6RG+4FeYlLcnEoKnbZmjb4NUFZjgiidVyDyPc5ve0S22mvTiw4BTahWd
+	 lVLpFBvsUgtpKwHbj2sQpX3NtP6eiN4yh09Bg7NFhZa8zqs8S1tjQYUOj9+md/sM12
+	 VQ+7+3cXXyXJJ7OVqEUMpPBZc8Jsts+AoISCxUfTrAsb10z4bInevJzE5Kj1arWjxL
+	 jPed5Ds2y87JYWDbq7E6BbbNlgzMDXzglivDwOcaYKervxE/EThFLvDGuiH8hdJq+G
+	 AOaoBRSopNeN+Wm/30PPeSpi4+lfbEbk5rqZMmCFNJAJi8jDQBIkY95cPcHsaM7Ppm
+	 PGkE/TADjw+eA==
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-45812fdcd0aso35014481cf.0;
+        Sat, 28 Sep 2024 02:11:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWo7N6JWArAQ1uAcy6ixiCPPGuUqWU/uwbCKfmKhybRzv40rLbp7d5c/J9qxzsrqw5m5l/mvgMbbtchwJgP@vger.kernel.org, AJvYcCXF1+8Q3RbG2CDlcfO7DbmHfh7+u6rp/EZcwNqoVR62JDXwotabNhWjUAPQfjeSasg6nhRLuNLr@vger.kernel.org, AJvYcCXUQ5tYNO8WD3aRUN0WLbS68yrXwOM5ESt1l4FQAbwwYIqzwdy+jlfc1IvOAWWS7KUr32wrUSWttT0KEaWxA7gu@vger.kernel.org, AJvYcCXcKv69+J1a8jGAoueQntAzKchWpB/o79UX0jbzG5dD+O/nlc+ouk+vWR3AK+BzQtMcgus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYPmQXo+10vjcZarm11tN9YUZgPApRQHe5ohvWkZQY/Cf2xXqR
+	2NQjaVW0QgFu2sQb1EUFVBf+nSSCX2M7PdxPTA8d1WwAI2RXIheCklRX489JWglX6R3LpGc77P5
+	NGnVltTbf/E7XCjOQj1THGxuK2+M=
+X-Google-Smtp-Source: AGHT+IGQzctwOpKFuOtCkRYlVjrpRKVgfRrk5wUSUePsrzDaXpPbQ/kK+OwI+9znW9FBFK+ZV1jb1ra9eyUnKzEamAU=
+X-Received: by 2002:a05:6214:5012:b0:6b5:d90d:ea4f with SMTP id
+ 6a1803df08f44-6cb2f29730emr166967016d6.15.1727514681117; Sat, 28 Sep 2024
+ 02:11:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:154c:b0:3a1:a3bd:adcc with SMTP id
- e9e14a558f8ab-3a345168f6bmr45212345ab.6.1727514485432; Sat, 28 Sep 2024
- 02:08:05 -0700 (PDT)
-Date: Sat, 28 Sep 2024 02:08:05 -0700
-In-Reply-To: <20240928082205.1318-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f7c775.050a0220.aab67.0000.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240927131355.350918-1-bjorn@kernel.org> <CAEf4BzYCf2+8JkCjWZWGaNQcEc_=WO_emP2GPBQGZyrWm8APUg@mail.gmail.com>
+In-Reply-To: <CAEf4BzYCf2+8JkCjWZWGaNQcEc_=WO_emP2GPBQGZyrWm8APUg@mail.gmail.com>
+From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Date: Sat, 28 Sep 2024 11:11:10 +0200
+X-Gmail-Original-Message-ID: <CAJ+HfNgrxUmHuY8b1AmWoR+YpBnsNZxSDCeUfBOQcC70POEU_w@mail.gmail.com>
+Message-ID: <CAJ+HfNgrxUmHuY8b1AmWoR+YpBnsNZxSDCeUfBOQcC70POEU_w@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 1/2] libbpf: Add missing per-arch include path
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Mykola Lysenko <mykolal@fb.com>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Charlie Jenkins <charlie@rivosinc.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Andrii,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Fri, 27 Sept 2024 at 22:51, Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Sep 27, 2024 at 6:14=E2=80=AFAM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
+el.org> wrote:
+> >
+> > From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+> >
+> > libbpf does not include the per-arch tools include path, e.g.
+> > tools/arch/riscv/include. Some architectures depend those files to
+> > build properly.
+> >
+> > Include tools/arch/$(SUBARCH)/include in the libbpf build.
+> >
+> > Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
+> > Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+> > ---
+> >  tools/lib/bpf/Makefile | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/tools/lib/bpf/Makefile b/tools/lib/bpf/Makefile
+> > index 1b22f0f37288..857a5f7b413d 100644
+> > --- a/tools/lib/bpf/Makefile
+> > +++ b/tools/lib/bpf/Makefile
+> > @@ -61,7 +61,8 @@ ifndef VERBOSE
+> >  endif
+> >
+> >  INCLUDES =3D -I$(or $(OUTPUT),.) \
+> > -          -I$(srctree)/tools/include -I$(srctree)/tools/include/uapi
+> > +          -I$(srctree)/tools/include -I$(srctree)/tools/include/uapi \
+> > +          -I$(srctree)/tools/arch/$(SRCARCH)/include
+> >
+> >  export prefix libdir src obj
+> >
+>
+> Do you know what exactly is used from tools/arch/$(SRCARCH)/include
+> for (I assume) RISC-V? I'm asking because we'd need to make sure that
+> Github version of libbpf Makefile and include directory has all the
+> necessary pieces as well (so I'd appreciate if you could take a look
+> at that as well, if you haven't already).
 
-Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
-Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+Ah, apologies for not stating that explicitly. It's
+tools/arch/riscv/include/asm/{barrier.h,fence.h}
 
-Tested on:
-
-commit:         61387b8d Merge tag 'for-6.9/dm-vdo' of git://git.kerne..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ba0d9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=207dbbbe28068ef0
-dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13651e80580000
-
-Note: testing is done by a robot and is best-effort only.
+Cheers,
+Bj=C3=B6rn
 
