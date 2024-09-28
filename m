@@ -1,112 +1,161 @@
-Return-Path: <linux-kernel+bounces-342608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E6BC9890DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:33:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A81F9890E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93CA1F21074
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:32:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84B00281DAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1BC14A4C3;
-	Sat, 28 Sep 2024 17:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FD014C5BA;
+	Sat, 28 Sep 2024 17:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avD62nzb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tJ4Msfby"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8DB4A1B;
-	Sat, 28 Sep 2024 17:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B391F4A1B;
+	Sat, 28 Sep 2024 17:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727544769; cv=none; b=Gdb8Ef4Y/+0wZ42Tdn6FucrEZNEXAlqYqDI1aJh5ulklJ2rLb2AHQba+V6kw1jsmBKFsELt9tTs0MAJC3Zysxup9e7PWv8Uj8Dot4UFChHiAF6Jz4TUhQvRJF0mWJVh/8Lgw1V0mQStcbXRySf3w8yRLbC0KZRRO90L3T4myfxE=
+	t=1727544935; cv=none; b=hVpk/FsRBtvLbqsLpEWeIRgMpjmihpuMB7JrMXfvl5xCw55eYmVF6vMY8hKwSNxn2ETWPkQMPXOaJJEP+RiNyoYDWz9yvfOsGpfY1Wu3uuG+gIZQieSf4MNjeo0nWspru32TwrUDEjye920wc51lZ+p7rL0Yg7cIieCI4PCi+sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727544769; c=relaxed/simple;
-	bh=bCNr87d8nTJmMd7uX/KhhvvDPdq6d8BT+C3RLl0xdq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L9pzppj6Dz2J40fe90mydHo3oLc7BwMn7APg4lorNc0kwY3HQFqpe9EhaqdNHmzwIqFa4Rvov0jU9ODRsx3HtwOJoFWDyMo0CF1yZBEeSxMQ7n44UHNBemk2pXFXv+7dkfQNrPz/FIyfXtI++wWjHSwexgH2k7XktcWBFoGfjEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avD62nzb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC616C4CEC3;
-	Sat, 28 Sep 2024 17:32:39 +0000 (UTC)
+	s=arc-20240116; t=1727544935; c=relaxed/simple;
+	bh=bB2TppACa73qNvdpxzZBOI5mAq3cV8/IE4AHhZY4SiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dDsElIhp0Vg6VnXhmMoQ9VHGPbfXJD2mzVpnU3+P92ETBkB70R6mJHOZIj0XhEOVzOY2sV87+aNeuKzolJWeLa/50nnVBISEsjZhcorEo3gAlucppiv6FWmmPH7l2swt9YynTtniXeEXy3Bow4TbglNE+nrC1+Kws2Y8/mxExlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tJ4Msfby; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50CA8C4CEC3;
+	Sat, 28 Sep 2024 17:35:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727544768;
-	bh=bCNr87d8nTJmMd7uX/KhhvvDPdq6d8BT+C3RLl0xdq0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=avD62nzbRLxgzsLPXGWlLMBj/UklUB8dFnt1hXJRUlA1GhCOrw2MPNIMwqxP/1HgF
-	 aRHcfbcRJe/KlEQe8XQHodz2pIUr/PLsRcww+OU2mivCVIatRIA+fmV2IflIaakwyK
-	 FW/SfBfFRKGAadOqp2r9v2dKBM2nJyxXPgOkCvbIoIwhgYJSiriPJaweeDhsjSRtO/
-	 v62WOZqd2nZcIlVVYad5njB2eeNFwJ3AT9ufOUWJ2aQEDgxPW9SOpY+Fcm9HYNNR5U
-	 fLFuG5tBHIcA6O7lez8x6TajWMi+XuzKn5WqUbDiSHe/o/jqJuZ+weQvsPJTCGRgeO
-	 hyfyFaalx1kjQ==
-Date: Sat, 28 Sep 2024 18:32:35 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
- <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Andy Shevchenko
- <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ivan Mikhaylov <fr0st61te@gmail.com>, Dumitru Ceclan
- <mitrutzceclan@gmail.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dh?=
- =?UTF-8?B?bHZlcw==?= <joao.goncalves@toradex.com>, AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>, Mike Looijmans
- <mike.looijmans@topic.nl>, Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
- Dragos Bogdan <dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 7/7] Documentation: ABI: testing: ad485x: add ABI docs
-Message-ID: <20240928183235.6fbc4bd4@jic23-huawei>
-In-Reply-To: <20240923101206.3753-8-antoniu.miclaus@analog.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-	<20240923101206.3753-8-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1727544935;
+	bh=bB2TppACa73qNvdpxzZBOI5mAq3cV8/IE4AHhZY4SiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tJ4MsfbyKpA8Esh+QS3uAmaX1WGDmewgqfgYwVwy7C+UjMvu2+vUCvfK3vH3KMSR/
+	 ZNsVAKu9T1nJjVhLY7IsxlBe87yjC3ieL7BYmwiokaxCzLA6o5co5P32q4hEwvqE+N
+	 9aZr8yG+i38uIB6k0sU8RCPd80yhRw5X37G6jkQu+taG6EQP/oTL1QNlSzMl/XH/Mr
+	 awJ2kDI/4d8uMekYOWPzfOIlRmhqfv5LeMrrE1KxmL87cb614xDwcFMENyJFZ0ngXA
+	 aGR/AoQ2TP8GuFgSj1VSlATiM6nqScq/svAuS2jKKS+9h/AeE34k5FLpGq6rAwpq8f
+	 uIgIZQvGTAliw==
+Date: Sat, 28 Sep 2024 10:35:30 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Maksim Panchenko <max4bolt@gmail.com>, Rong Xu <xur@google.com>,
+	Han Shen <shenhan@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	John Moon <john@jmoon.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Breno Leitao <leitao@debian.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Stephane Eranian <eranian@google.com>,
+	Maksim Panchenko <maks@meta.com>
+Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
+Message-ID: <20240928173530.GC430964@thelio-3990X>
+References: <20240728203001.2551083-1-xur@google.com>
+ <20240728203001.2551083-7-xur@google.com>
+ <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
+ <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
 
-On Mon, 23 Sep 2024 13:10:24 +0300
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add documentation for the packet size.
+On Fri, Sep 27, 2024 at 03:45:39PM -0700, Nick Desaulniers wrote:
+> On Thu, Sep 19, 2024 at 4:52 AM Maksim Panchenko <max4bolt@gmail.com> wrote:
+> >
+> > On Sun, Jul 28, 2024 at 01:29:56PM -0700, Rong Xu wrote:
+> > > Add the build support for using Clang's Propeller optimizer. Like
+> > > AutoFDO, Propeller uses hardware sampling to gather information
+> > > about the frequency of execution of different code paths within a
+> > > binary. This information is then used to guide the compiler's
+> > > optimization decisions, resulting in a more efficient binary.
+> >
+> > Thank you for submitting the patches with the latest compiler features.
+> >
+> > Regarding Propeller, I want to quickly mention that I plan to send a
+> > patch to include BOLT as a profile-based post-link optimizer for the
+> > kernel. I'd like it to be considered an alternative that is selectable
+> > at build time.
+> >
+> > BOLT also uses sampling, and the profile can be collected on virtually
+> > any kernel (with some caveats).  There are no constraints on the
+> > compiler (i.e., any version of GCC or Clang is acceptable), while Linux
+> > perf is the only external dependency used for profile collection and
+> > conversion. BOLT works on top of AutoFDO and LTO but can be used without
+> > them if the user desires. The build overhead is a few seconds.
+> >
+> > As you've heard from the LLVM discussion
+> > (https://discourse.llvm.org/t/optimizing-the-linux-kernel-with-autofdo-including-thinlto-and-propeller)
+> > and LPC talk (https://lpc.events/event/18/contributions/1921/), at Meta,
+> > we've also successfully optimized the kernel and got similar results.
+> >
+> > Again, this is a heads-up before the patch, and I would like to hear
+> > what people think about having a binary optimizer as a user-selectable
+> > alternative to Propeller.
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
+> I'd imagine that folks would be interested in running Propeller, or
+> BOLT, but perhaps not both.
 > 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
-> new file mode 100644
-> index 000000000000..80aaef4eb750
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio-adc-ad485x
-> @@ -0,0 +1,14 @@
-> +What:		/sys/bus/iio/devices/iio:deviceX/packet_format_available
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		Packet sizes on the CMOS or LVDS conversion data output bus.
-> +		Reading this returns the valid values that can be written to the
-> +		packet_format.
-> +
-> +What:		/sys/bus/iio/devices/iio:deviceX/packet_format
-> +KernelVersion:
-> +Contact:	linux-iio@vger.kernel.org
-> +Description:
-> +		This attribute configures the packet size.
-> +		Reading returns the actual size used.
-This was touched upon by David's review of the driver.
-These docs tell us nothing useful unfortunately so a user would have
-no idea how to set them...
+> In that sense, Kconfig has the means to express mutual exclusion.
+> It's perhaps worth working together to get the kconfig selection
+> working such that folks can play with enabling these newer toolchain
+> related technologies.
 
+Right, I would expect this to just be a Kconfig choice with a
+description like "Post link optimization" or something of the sort, like
+the RANDSTRUCT or DEBUG_INFO ones. If it does make sense to do them at
+the same time, they can obviously be separate.
 
+> The next instance of the bi-weekly public Clang Built Linux meeting is
+> next Wednesday. (Links from https://clangbuiltlinux.github.io/)
+> 
+> Perhaps it's worth Rong (and Sriraman and Han) and Maksim to stop by and chat?
+
+I would certainly be open to discussing the plans for upstreaming these
+in the meeting. I think the sessions went well in the Toolchains Track.
+There were no major objections from what I could tell.
+
+Cheers,
+Nathan
 
