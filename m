@@ -1,284 +1,145 @@
-Return-Path: <linux-kernel+bounces-342451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8036E988F40
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F24988F43
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9781C20CD9
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB6B1C20C22
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C6B1DFF7;
-	Sat, 28 Sep 2024 12:48:31 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF41718801F;
+	Sat, 28 Sep 2024 12:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y5KRxePn"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822F1185E50;
-	Sat, 28 Sep 2024 12:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AEE157490
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 12:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727527711; cv=none; b=VXLs4iAO5FUpQyzS2s2XFwwg2WpY9BCnuJu8a05rHMDJ2ZGq30qOuypUl6+AQvk5ZKFP6wtmrC12H62tr+1Sns+8EjJOTjpBFFXWY6cDxTdf+It69lVzwENDCOMNiGLOvEJ4XTXaBCcrsA/9XivIkIPzbpCaus2t0c+Q9cAZSx8=
+	t=1727527865; cv=none; b=NQz2sbCSQSs7hxNKj1STKJGKMgbugtAqX4UVXFWTnyVgkBSqaMbAzru3JM41P4DzrUJO+y1otqMrDgmlMXmcf6SA0xAs0MkfkwwOSMXeVG6sfbdN6yt0W5wQ3Oxqm7/1aoqSsQ/Zjog6R1LcvgFx/DEr9IQLUPgZsobHudES4Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727527711; c=relaxed/simple;
-	bh=epCBAMsrS+4nyms5pTA1WPFA1BEMtZwZjL0fQGfZv0s=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQe4CRKFk77PK9Wzh1tF8F1Q9Zxt0TpS7UeS0QPXyIEMwrBVRHbGEnlWtY/SwPTNEuV3ZLkBmH39p3CXHSlZnXX0Z5J1z9FylQUx/qDe+PVWdU/uUn5xjWXUfXOOs0yQXiLjues82i2s2ydGT0tmuStkszSHlg61k2LzFGa1g1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1suWrr-000000004VK-3Rm6;
-	Sat, 28 Sep 2024 12:48:11 +0000
-Date: Sat, 28 Sep 2024 13:48:08 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	John Crispin <john@phrozen.org>, linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 2/2] mtd: ubi: add support for protecting critical volumes
-Message-ID: <b43a7155f80995c3986893951c092291caf3a5f4.1727527457.git.daniel@makrotopia.org>
-References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1727527865; c=relaxed/simple;
+	bh=uzNDFIASlcjmhnq4B84kGsWJoqwEJ2D5FOaAsLQFPDg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=htW7kcsgJ9M8sLDxagdWaBl7zkAiuzzNmy61HBTbACXRVAJK5R+e5JH8AklYStqc/jehQOrmfXeE6NP5a2KtJlloxPmkDMjGUYetjNdcCLQLnwzApgbUSqZzVfv0dS8Oq2O4nuXhyf/PqobgOJkqaH+hpJ71D+toCyWHolaNSu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--keyz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y5KRxePn; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--keyz.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-718d6ad6105so4159015b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 05:51:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727527863; x=1728132663; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WbcikcQghLA80yn7fEgUn8n+Xqz0Oab8G7/Spbe8pME=;
+        b=y5KRxePnU1SnW0YERreQntTz1nWCuJVbcA8aQG1X//dU+EizxdL4fXCLu6VZLeLOSE
+         68e7SYn7Mpe0cWiW5KiNvfODmuymMCZHjo01in0wADVr0KO/jwDeGwHjNjZcZ6/HiVJ7
+         QSfEBDR7ECtqam2CUxTShcjgfrjrwIBuTjmFINB/QNzzUPzzGgluMwrLQRin8zuggJc0
+         1l3ZKVJwYk8RgpPYiFEKGFo1hZeIAq8xVB6docMlnOkKZ/w/T5l/SpdGvhyYbCZFMZEw
+         /zAlEiLmrGb0ai7cPY9+An2HRDfKwday+p8R8taranEiDja/thcZMvuyOqUqL2gZPJDr
+         ZEUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727527863; x=1728132663;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WbcikcQghLA80yn7fEgUn8n+Xqz0Oab8G7/Spbe8pME=;
+        b=ujKuPAWJHB4VRGpviBrhfqcl5gaFq+11xeJhtmAZ4dwFOfdNuT5UvO0RR5gxeg/d4w
+         T5haK6HMk/8ogL/bp985BMoCkTxtyqsIUE+3adaNvs+o7VY6BaFK4WJO9Uiku1MYdS3y
+         zS26x2FCx3/fdIblc4oivSsCuvzMpz82Ap8R6nOX7ChlqreFYXNJKGb6Fa4Tyke+GzIS
+         iuU9j7SFmntAbC9lY9GNCLBHRHVFMsKpU2/CeuDAeXDyIe/1EOfUjwHnDLTWPOLaxkhc
+         8ay+Kv8iGAxOS+Wt51cDXpU0zRczP16G4q2L0IcDOJROfIqBhwwq+6lj7xdWNwsuzNTz
+         qBag==
+X-Forwarded-Encrypted: i=1; AJvYcCUkopCoaC7aNOyqwy1/gd1kPbd3X9m1ylrDnQvJME36qgIBnk2oWPdaYwpQ2lRAlvCXbnFdnpXqmuzLphk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhY5RK5o8sUqjTcV7wumLeskgOFg0HZFHMOujRYBfjaeNR7/Ql
+	1HwY6waOH2aK72NU0YiPuu0JOmxSOtbGb2oQNdz38entLA7Tzph4v5CpAna13G6e/n0AFw==
+X-Google-Smtp-Source: AGHT+IH3yEkpeq/TThQP8zDxhQ2tmCMlsZVCGE2CrPs/xfP5vkjvVN9L4g+viRDmbWRmMiQt1IVOrU8A
+X-Received: from keyz2.c.googlers.com ([fda3:e722:ac3:cc00:3:22c1:c0a8:27da])
+ (user=keyz job=sendgmr) by 2002:a05:6a00:38d:b0:717:9643:2043 with SMTP id
+ d2e1a72fcca58-71b26079b04mr19396b3a.4.1727527862564; Sat, 28 Sep 2024
+ 05:51:02 -0700 (PDT)
+Date: Sat, 28 Sep 2024 20:50:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240928125005.714781-1-keyz@google.com>
+Subject: [PATCH v3] devres: Fix page faults when tracing devres from unloaded modules
+From: Keita Morisaki <keyz@google.com>
+To: gregkh@linuxfoundation.org, rafael@kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: andriy.shevchenko@linux.intel.com, Keita Morisaki <keyz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Allow the boot firmware to define volumes which are critical for the
-system to boot, such as the bootloader itself if stored inside a UBI
-volume. Protect critical volumes by preventing the user from removing,
-resizing or writing to them, and also prevent the UBI device from
-being detached if a critical volume is present.
+The devres ftrace event logs the name of the devres node, which is often a
+function name (e.g., "devm_work_drop") stringified by macros like
+devm_add_action. Currently, ftrace stores this name as a string literal
+address, which can become invalid when the module containing the string is
+unloaded. This results in page faults when ftrace tries to access the name.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+This behavior is problematic because the devres ftrace event is designed to
+trace resource management throughout a device driver's lifecycle, including
+during module unload. The event should be available even after the module
+is unloaded to properly diagnose resource issues.
+
+Fix the issue by copying the devres node name into the ftrace ring buffer
+using __assign_str(), instead of storing just the address. This ensures
+that ftrace can always access the name, even if the module is unloaded.
+
+This change increases the memory usage for each of the ftrace entry by
+12-16 bytes assuming the average devres node name is 20 bytes long,
+depending on the size of const char *.
+
+Note that this change does not affect anything unless all of following
+conditions are met.
+- CONFIG_DEBUG_DEVRES is enabled
+- ftrace tracing is enabled
+- The devres event is enabled in ftrace tracing
+
+Fixes: 09705dcb63d2 ("devres: Enable trace events")
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Keita Morisaki <keyz@google.com>
 ---
- drivers/mtd/ubi/build.c | 29 +++++++++++++++++++++++++++++
- drivers/mtd/ubi/cdev.c  | 33 +++++++++++++++++++++++++++++++++
- drivers/mtd/ubi/ubi.h   |  1 +
- drivers/mtd/ubi/vmt.c   | 27 ++++++++++++++++++++++++++-
- 4 files changed, 89 insertions(+), 1 deletion(-)
+Change since v2:
+- Add a Reviewed-by tag
+---
+ drivers/base/trace.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mtd/ubi/build.c b/drivers/mtd/ubi/build.c
-index 30be4ed68fad..7a96329c5fd9 100644
---- a/drivers/mtd/ubi/build.c
-+++ b/drivers/mtd/ubi/build.c
-@@ -314,6 +314,30 @@ struct ubi_device *ubi_get_by_major(int major)
- 	return NULL;
- }
- 
-+/**
-+ * ubi_device_got_critical_volume - check if device contains critical volume
-+ * @ubi: UBI device description object
-+ *
-+ * This function checks if any volume on a given UBI device is critical.
-+ *
-+ * Context: Expects ubi_devices_lock to be held by caller.
-+ * Returns: True if there is a critical volume, false otherwise.
-+ */
-+static bool ubi_device_got_critical_volume(struct ubi_device *ubi)
-+{
-+	int i;
-+
-+	for (i = 0; i < ubi->vtbl_slots; i++) {
-+		if (!ubi->volumes[i])
-+			continue;
-+
-+		if (ubi->volumes[i]->critical)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
- /**
-  * ubi_major2num - get UBI device number by character device major number.
-  * @major: major number
-@@ -1102,6 +1126,11 @@ int ubi_detach_mtd_dev(int ubi_num, int anyway)
- 		return -EINVAL;
- 
- 	spin_lock(&ubi_devices_lock);
-+	if (ubi_device_got_critical_volume(ubi)) {
-+		spin_unlock(&ubi_devices_lock);
-+		return -EPERM;
-+	}
-+
- 	ubi->ref_count -= 1;
- 	if (ubi->ref_count) {
- 		if (!anyway) {
-diff --git a/drivers/mtd/ubi/cdev.c b/drivers/mtd/ubi/cdev.c
-index 0d8f04cf03c5..897791ebb71c 100644
---- a/drivers/mtd/ubi/cdev.c
-+++ b/drivers/mtd/ubi/cdev.c
-@@ -328,6 +328,9 @@ static ssize_t vol_cdev_write(struct file *file, const char __user *buf,
- 	struct ubi_volume *vol = desc->vol;
- 	struct ubi_device *ubi = vol->ubi;
- 
-+	if (vol->critical)
-+		return -EPERM;
-+
- 	if (!vol->updating && !vol->changing_leb)
- 		return vol_cdev_direct_write(file, buf, count, offp);
- 
-@@ -390,6 +393,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		int64_t bytes, rsvd_bytes;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		if (!capable(CAP_SYS_RESOURCE)) {
- 			err = -EPERM;
- 			break;
-@@ -430,6 +438,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		struct ubi_leb_change_req req;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		err = copy_from_user(&req, argp,
- 				     sizeof(struct ubi_leb_change_req));
- 		if (err) {
-@@ -464,6 +477,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		int32_t lnum;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		err = get_user(lnum, (__user int32_t *)argp);
- 		if (err) {
- 			err = -EFAULT;
-@@ -495,6 +513,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		struct ubi_map_req req;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		err = copy_from_user(&req, argp, sizeof(struct ubi_map_req));
- 		if (err) {
- 			err = -EFAULT;
-@@ -509,6 +532,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		int32_t lnum;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		err = get_user(lnum, (__user int32_t *)argp);
- 		if (err) {
- 			err = -EFAULT;
-@@ -537,6 +565,11 @@ static long vol_cdev_ioctl(struct file *file, unsigned int cmd,
- 	{
- 		struct ubi_set_vol_prop_req req;
- 
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+
- 		err = copy_from_user(&req, argp,
- 				     sizeof(struct ubi_set_vol_prop_req));
- 		if (err) {
-diff --git a/drivers/mtd/ubi/ubi.h b/drivers/mtd/ubi/ubi.h
-index 1c9e874e8ede..21b8ce77426b 100644
---- a/drivers/mtd/ubi/ubi.h
-+++ b/drivers/mtd/ubi/ubi.h
-@@ -364,6 +364,7 @@ struct ubi_volume {
- 	unsigned int updating:1;
- 	unsigned int changing_leb:1;
- 	unsigned int direct_writes:1;
-+	unsigned int critical:1;
- 
- #ifdef CONFIG_MTD_UBI_FASTMAP
- 	unsigned long *checkmap;
-diff --git a/drivers/mtd/ubi/vmt.c b/drivers/mtd/ubi/vmt.c
-index 5a3558bbb903..a16b84e009a1 100644
---- a/drivers/mtd/ubi/vmt.c
-+++ b/drivers/mtd/ubi/vmt.c
-@@ -370,6 +370,11 @@ int ubi_remove_volume(struct ubi_volume_desc *desc, int no_vtbl)
- 		return -EROFS;
- 
- 	spin_lock(&ubi->volumes_lock);
-+	if (vol->critical) {
-+		err = -EPERM;
-+		goto out_unlock;
-+	}
-+
- 	if (vol->ref_count > 1) {
- 		/*
- 		 * The volume is busy, probably someone is reading one of its
-@@ -472,6 +477,12 @@ int ubi_resize_volume(struct ubi_volume_desc *desc, int reserved_pebs)
- 		return PTR_ERR(new_eba_tbl);
- 
- 	spin_lock(&ubi->volumes_lock);
-+	if (vol->critical) {
-+		spin_unlock(&ubi->volumes_lock);
-+		err = -EPERM;
-+		goto out_free;
-+	}
-+
- 	if (vol->ref_count > 1) {
- 		spin_unlock(&ubi->volumes_lock);
- 		err = -EBUSY;
-@@ -578,9 +589,22 @@ int ubi_resize_volume(struct ubi_volume_desc *desc, int reserved_pebs)
-  */
- int ubi_rename_volumes(struct ubi_device *ubi, struct list_head *rename_list)
- {
--	int err;
-+	int err = 0;
- 	struct ubi_rename_entry *re;
- 
-+	spin_lock(&ubi->volumes_lock);
-+	list_for_each_entry(re, rename_list, list) {
-+		struct ubi_volume *vol = re->desc->vol;
-+
-+		if (vol->critical) {
-+			err = -EPERM;
-+			break;
-+		}
-+	}
-+	spin_unlock(&ubi->volumes_lock);
-+	if (err)
-+		return err;
-+
- 	err = ubi_vtbl_rename_volumes(ubi, rename_list);
- 	if (err)
- 		return err;
-@@ -641,6 +665,7 @@ int ubi_add_volume(struct ubi_device *ubi, struct ubi_volume *vol)
- 	vol->dev.groups = volume_dev_groups;
- 	dev_set_name(&vol->dev, "%s_%d", ubi->ubi_name, vol->vol_id);
- 	device_set_node(&vol->dev, find_volume_fwnode(vol));
-+	vol->critical = device_property_read_bool(&vol->dev, "volume-is-critical");
- 	err = device_register(&vol->dev);
- 	if (err) {
- 		cdev_del(&vol->cdev);
--- 
-2.46.2
+diff --git a/drivers/base/trace.h b/drivers/base/trace.h
+index e52b6eae060d..3b83b13a57ff 100644
+--- a/drivers/base/trace.h
++++ b/drivers/base/trace.h
+@@ -24,18 +24,18 @@ DECLARE_EVENT_CLASS(devres,
+ 		__field(struct device *, dev)
+ 		__field(const char *, op)
+ 		__field(void *, node)
+-		__field(const char *, name)
++		__string(name, name)
+ 		__field(size_t, size)
+ 	),
+ 	TP_fast_assign(
+ 		__assign_str(devname);
+ 		__entry->op = op;
+ 		__entry->node = node;
+-		__entry->name = name;
++		__assign_str(name);
+ 		__entry->size = size;
+ 	),
+ 	TP_printk("%s %3s %p %s (%zu bytes)", __get_str(devname),
+-		  __entry->op, __entry->node, __entry->name, __entry->size)
++		  __entry->op, __entry->node, __get_str(name), __entry->size)
+ );
+
+ DEFINE_EVENT(devres, devres_log,
+
+base-commit: 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8
+--
+2.46.1.824.gd892dcdcdd-goog
 
