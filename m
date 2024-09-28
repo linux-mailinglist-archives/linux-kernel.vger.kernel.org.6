@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-342622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412AF989103
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7799B989105
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DCC1F21A69
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:13:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE2061F218EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE28154454;
-	Sat, 28 Sep 2024 18:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2AB2AEEE;
+	Sat, 28 Sep 2024 18:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvCncro+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BHKYKJ/g"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B073C0C;
-	Sat, 28 Sep 2024 18:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3EEF1419A9
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 18:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727547213; cv=none; b=K3zW1JTpXKL+dEAIA117t6zk7YZBowUY+ZUy+d2szLAbZWQgoYQlgvIKmGReyT9dajY3jNlCT0spJ4hhgkt2fLDYz3oQZ8lwiEbTmTDvWp7PoxL9LUhgfbb16NVJ9JahZpmeWoHUgQPezWTT2J4rkaYm8pFcTHCRTn/R+Sq4gzw=
+	t=1727547347; cv=none; b=CuuXdjsJg6qVRDRVWixnvE5ftgvrlyLeHQ/nR6gtn+8zHWMVGQxKr+O0Fp0sk1ACRiRIPbj3zVwiSIgtuNhw22YWapw2k+nouOyx9POZl0Ot0ETu/vutgo5hEni7iJmjU+sLRtZ7zkaeWjhOE55nFeziZxcFM1/fHKRlKGImUpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727547213; c=relaxed/simple;
-	bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iix34a6J41J571B0wak5SiUyFmILne+j6uV9Ky5TVkAaOdORNrsNRwgg2Rx6i7ceU/5lk+Qx9FR1/Z9vE4mfWNItT3nv+yWV2xx0uUMIbHo/uxy/WKmwmJQygKejJp/lV6as2h7HYDx12wkaZwGOY9ptPtAtgEJSrvZZytSXRYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvCncro+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D50FC4CEC3;
-	Sat, 28 Sep 2024 18:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727547212;
-	bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
-	h=From:Date:Subject:To:Cc:From;
-	b=bvCncro+ON+B4BwXIk9HyXCWwFn8Vi25Oo/eFKWVpASEiLVs9JKTCBE/PYckDOjvr
-	 m55s2DZ9S+R3lbJwsWXcPz3xjTln1TmL6YJMed6ZU2o9d4Ju+Gl4cMNbF4Hex54mYT
-	 dURYv1WN+X6O/YEY57t29QPd+zkLX+OZ4KAef5VT3y+mKh07EI6bkcgtGmae3HZT67
-	 f1a5uFepZhGa7HoSjBm513japzUZWQuyldFUmvfqpHQvwPX5r0+Nur3nlzMx0p1AkB
-	 5fZ+Hcp0l7cjZYcGwOwdrLiHMICeH1vaQy/qMn1kyARf+K7Bf8uu5dJZ+0JxtAPdzW
-	 p4fohmhiXqwng==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Sat, 28 Sep 2024 11:13:13 -0700
-Subject: [PATCH] hardening: Adjust dependencies in selection of MODVERSIONS
+	s=arc-20240116; t=1727547347; c=relaxed/simple;
+	bh=yu6wRhjAqvi+iC2JQrjxwNhErqRWaArcKcmt8N2J6vw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cUPOQVqQpGXjGCWTZ73II9f/fOz/lkGqVfMz22Jaq/l6NP4aSP2bc2rEceOG17HXM90C3LYlTdROlH83nNeTk1mTXAYTzopAu/2nwGGOLYC9q6hvKmgesBXDG/fhGOkZVvVf5VOi2SvWJ1tSVmpciutHTzVyK3J0uWg9SHbMRdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BHKYKJ/g; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-37636c3872bso10786175ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727547345; x=1728152145; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fdzkUQpgo/og7cjoar69c4IL7JL/UbM7NZAGHUR31B4=;
+        b=BHKYKJ/gPWhOFPGweloHBJ67i0eejXcOpcTrgcnCg2GD2cI6kfuGuTZ02T4H8zL5gq
+         bPF6wwdQLhkYU6GMN3KrKV/sqhiiKaNL4rtkv01IFdc8T+pM6lqFVLLje1XbRBYsIKtH
+         8bYR+HlXnVJxxFzOVbxGSwlg1qTbzaFFnKtKw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727547345; x=1728152145;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fdzkUQpgo/og7cjoar69c4IL7JL/UbM7NZAGHUR31B4=;
+        b=blAmbU3fO+tetAgWRUooPfZ2+Sxqj+KcbBXmVQnAenSfoK+XpCV3wO5E3m7WmmQMdU
+         aPtdeRj0Sj7dqfmKX5BBRPa3zMnev7vMUOziE64BUx7/4psFCuT8ZJzhB2cMJ9v0YLk1
+         NPFtqyNP85tjoe8I6MiYE7kT1xYyWbhuDP/QigR3KzSbwC1zqBJU3D+Prv9gUg9NZyuU
+         dfId08Fuz0DZz6zjUHt5uc7OSbpR8Gw2Xc9Xa6rLTagAy7PoLpj0hxgGoG0Euspox8+4
+         7vvfPHzv1FFsCCTcvQKWgwfACfhISL50orfRVHxdRJgS3VpNClc8ZWlv34Cp2W771cL8
+         Xf5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeIQzR6o/JlG6vyzADiFP5cifKACi/vSLS+ydl9PBsnwj/EO3TZVBMpWMVxHpjU/gUv9Yb3iohOZ/P/1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrqUwUL67B018Jp3YYQRa7NV7XFsewdrbFGRrF8GdXRcVMdKWL
+	esdv9LL6VIznoKcyyQpszaEQ5ThLAvNsnRLX0LRGipFLwCVdc6fjPElXIieMELi5xcz+aLlrBD5
+	Z
+X-Google-Smtp-Source: AGHT+IEOiqDpOEt00eWVwDUK7uzgqJ9e2hJKfJcp6+t/53C47oOzths00qXcgQ+M9VuwhFHNIm8vqQ==
+X-Received: by 2002:a05:6e02:190a:b0:3a3:449b:5981 with SMTP id e9e14a558f8ab-3a3451c1f25mr50771305ab.26.1727547344716;
+        Sat, 28 Sep 2024 11:15:44 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344df2917sm13881235ab.76.2024.09.28.11.15.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 11:15:44 -0700 (PDT)
+Message-ID: <a38ef481-b66e-49d8-bc74-56c1943c2527@linuxfoundation.org>
+Date: Sat, 28 Sep 2024 12:15:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Results of the 2024 TAB election
+To: Jonathan Corbet <corbet@lwn.net>, tech-board-discuss@lists.linux.dev,
+ linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
+Cc: tab-elections@lists.linux.dev, Kees Cook <kees@kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Dave Hansen <dave.hansen@intel.com>, Shuah Khan <shuah@kernel.org>,
+ Jakub Kicinski <kuba@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@gmail.com>, Amit Shah
+ <amit@kernel.org>, Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <87y13bc05z.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <87y13bc05z.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240928-fix-randstruct-modversions-kconfig-warning-v1-1-27d3edc8571e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADhH+GYC/x2NSQ7CMAwAv1L5jKU0rdi+gnoIiRMshIPsUpCq/
- p3AcQ4zs4KRMhmcuxWUFjau0qDfdRBvQQohp8bgnR/dyR8x8wc1SLJZX3HGR00L6c8yvMcqmQu
- +gwpLQdcPVxqDy/vDAC34VGr2f3aZtu0LUroeRXwAAAA=
-X-Change-ID: 20240928-fix-randstruct-modversions-kconfig-warning-013be4a0f673
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, llvm@lists.linux.dev, 
- patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2094; i=nathan@kernel.org;
- h=from:subject:message-id; bh=z9u/5R0H+PXeJBVI3DAKu0pG2StfN1rEt4oJ5d3APac=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDGk/3L1F//1ek/X5RFvh9jXXw6wXVcjFTBE1tdL8tqVg8
- +sQS/erHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAiG70ZGe6ec99fn/z8vt+J
- s9zl9V9XLq0vruKuYL5svrxsWfiZ3BWMDI+WCDDLROkvYb1y67GzWmlQaNtWH8Nq920rakQMF3k
- zcQIA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-MODVERSIONS recently grew a dependency on !COMPILE_TEST so that Rust
-could be more easily tested. However, this introduces a Kconfig warning
-when building allmodconfig with a clang version that supports RANDSTRUCT
-natively because RANDSTRUCT_FULL and RANDSTRUCT_PERFORMANCE select
-MODVERSIONS when MODULES is enabled, bypassing the !COMPILE_TEST
-dependency:
+On 9/28/24 08:39, Jonathan Corbet wrote:
+> There were 934 eligible voters in this year's TAB election; 229 of them
+> cast ballots.  The results were (with the top five winning seats):
 
-  WARNING: unmet direct dependencies detected for MODVERSIONS
-    Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-    Selected by [y]:
-    - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=y] || GCC_PLUGINS [=n]) && MODULES [=y]
+That is about < 25% turnout even after keeping the polls open for more
+than week.
 
-Add the !COMPILE_TEST dependency to the selections to clear up the
-warning.
+> 
+>    1 Kees Cook
+>    2 Dan Williams
+>    3 Miguel Ojeda
+>    4 Dave Hansen
+>    5 Shuah Khan
 
-Fixes: 1f9c4a996756 ("Kbuild: make MODVERSIONS support depend on not being a compile test build")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- security/Kconfig.hardening | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Congratulations. I am looking forward to serving.
 
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index 2cff851ebfd7e13b955693be9f5818ac6f8bbf03..c9d5ca3d8d08de237102f1ffe3f310636ae0d6ff 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -340,7 +340,7 @@ choice
- 	config RANDSTRUCT_FULL
- 		bool "Fully randomize structure layout"
- 		depends on CC_HAS_RANDSTRUCT || GCC_PLUGINS
--		select MODVERSIONS if MODULES
-+		select MODVERSIONS if MODULES && !COMPILE_TEST
- 		help
- 		  Fully randomize the member layout of sensitive
- 		  structures as much as possible, which may have both a
-@@ -356,7 +356,7 @@ choice
- 	config RANDSTRUCT_PERFORMANCE
- 		bool "Limit randomization of structure layout to cache-lines"
- 		depends on GCC_PLUGINS
--		select MODVERSIONS if MODULES
-+		select MODVERSIONS if MODULES && !COMPILE_TEST
- 		help
- 		  Randomization of sensitive kernel structures will make a
- 		  best effort at restricting randomization to cacheline-sized
+>   ------------------
+>    6 Jakub Kicinski
+>    7 Jiri Kosina
+>    8 Daniel Borkmann
+>    9 Lorenzo Pieralisi
+>   10 Amit Shah
+>   11 Ricardo Neri
 
----
-base-commit: 3efc57369a0ce8f76bf0804f7e673982384e4ac9
-change-id: 20240928-fix-randstruct-modversions-kconfig-warning-013be4a0f673
+Thank you for tossing your hat in the ring and making this a
+competitive election.
 
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
+> 
+> Thanks to everybody who participated.
+
+Thank you Jon for running the elections and allowing a week for
+voting.
+
+thanks,
+-- Shuah
 
 
