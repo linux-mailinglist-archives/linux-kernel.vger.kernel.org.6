@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-342659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5A298915A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:34:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA6B98915E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B7401F22BE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:34:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87760B23957
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2ACA169AE6;
-	Sat, 28 Sep 2024 20:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1216EBE6;
+	Sat, 28 Sep 2024 20:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMwPDKcq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIwEGvXJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26A5800;
-	Sat, 28 Sep 2024 20:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981E8155392;
+	Sat, 28 Sep 2024 20:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727555653; cv=none; b=lIIHTqPKxYeBeXY3ICCGL5iv2xoDn1Od6DYiBwZeoZXbcyFZuhUsTnrwJlmc0WuZTZ+Jee/hXk4wdODDxvgkq7oICNvzjSBCfLWp7R3Icr/C2UyjQutOQv2xyH1OVQ0mYv/SbWRtPzAeERIfFLqaPnutUBsehuut1hkijqh2C3U=
+	t=1727555798; cv=none; b=qJbyvLWyOHU4Bv57YbA85l2HqBZRXe5OTzhYPeBTdjD/Sj7TKg8dzl+BEXODoPoVXjXBejlExeT5wk64pVPw/e5ADYuKuYEp526jVwlH69py7hstZKHw8hCD5q/1EB2/8MxcwMudWQISXfUCPiUaUuGVGBV02J3y/WEvOpdFJ5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727555653; c=relaxed/simple;
-	bh=T8UwSWJRZ6br6AGBbJFruPF3C6xfU0XMPpxn4ylzjN8=;
+	s=arc-20240116; t=1727555798; c=relaxed/simple;
+	bh=UwHG3HqVOfImzYmMh1JIgFdKgk5LEdjVPTFFdkKkbCo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tTle1KQOgmfqpfJ8tpoPpuwVyRchQIwE7LL9nS615Z0IiBjrkiMp/CNjOe+CK0EAZ5eSxzNiI65mFCVLwTq2QoeezzQaZcpc4LMFSkMr/ICnv0GFxF4MhS/jPWftQfOgdwLgutfh1G3LYsWBL428NboEUdbO6yff3McpHoLWH/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMwPDKcq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49267C4CEC3;
-	Sat, 28 Sep 2024 20:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727555653;
-	bh=T8UwSWJRZ6br6AGBbJFruPF3C6xfU0XMPpxn4ylzjN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMwPDKcqgST/Kqxuaa54fEoULxhYPE6wupQfs2MuYhPfW1JG41524tan0jHxNKt7L
-	 WFs3zrvmNz99kvgqafEfKpEUTfeWmkTIkPsFKHA9WgnSLOAIFusnfaUshUjz+gRux1
-	 CJSaYWNMEPsqbK1gK8lWpaNtXbnNbXAhUcXhquSS7Bgb46gqJBrkwozYQ+JouIguEu
-	 +BObX84BgjZgcDih8ydMPQmH7cBKKVDi+WHUzsiks1yUNkYCBj/XMGwKtOGc2hE+pz
-	 Ngy0GixpdiF7v86OVt3wq2oY/NVmsunILVH/N0NQoxxz/YMHFwFi4Dx1xnROATeywV
-	 ZpAc7Mfh247Qw==
-Date: Sat, 28 Sep 2024 13:34:12 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jan Hendrik Farr <kernel@jfarr.cc>
-Cc: Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, morbo@google.com
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <202409281331.1F04259@keescook>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <Zvg-mDsvvOueGpzs@archlinux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/WyuB5VZuYxJoPa0ZrYGTOeDizOg3k3+p/3N1PVIhEgKo/M1AIZCai5895CWgga7R/eVpiEKEg+V0oCHVCyd8YaTTGzf1nXNDkOF6JKkLrrJGl4hn/J7Mly8jr0gvn0yodHue5FUijNwafrwxSATMJ8psgDDO5cYK51PEOWeNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIwEGvXJ; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727555796; x=1759091796;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UwHG3HqVOfImzYmMh1JIgFdKgk5LEdjVPTFFdkKkbCo=;
+  b=hIwEGvXJLa/FtWnD18I0UVSLfNMgN/Zgeu3sW26wlcSUgzEpkcynwMZq
+   Ff6z0KDpO47Pi91VK31zyAtxFxoqSmHc3I8W8ty5VhlpvmSR/WcGa7ZRZ
+   wrog9M50hTeAfQhOFw07dfBehQLot+mJ6NA9LTopMLGqMMT3b4JfGKfV7
+   GfNq2ZqaDzGHQMAw2hjI7g855MbwjBThlPapm4wGQuA17PW4YG0OqomlS
+   68z6R496ESiX5Oa1qCWB8psWt1Qx3veOzMSvNsvRKUA6AdEtwkC+Pi+2H
+   G0NvYBtAkqR5mvctVTg5Gd8XJz/j7Lp3box1q367QAaTtfl8axGs4TlT2
+   A==;
+X-CSE-ConnectionGUID: 8pLxW9UnQsekRZ9RnSmSAg==
+X-CSE-MsgGUID: QyB1AkOZRHKy6/M+z0IRXQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26841306"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="26841306"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 13:36:36 -0700
+X-CSE-ConnectionGUID: LdeSy/NhTzq7MHNadFAVXw==
+X-CSE-MsgGUID: 10+AgxwNRUeWz84pomsVuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="77654173"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 28 Sep 2024 13:36:32 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sueB3-000Nar-2q;
+	Sat, 28 Sep 2024 20:36:29 +0000
+Date: Sun, 29 Sep 2024 04:35:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_rampraka@quicinc.com,
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
+	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
+Subject: Re: [PATCH] qcom: ice: Remove ice probe
+Message-ID: <202409290409.BkBQ6BVX-lkp@intel.com>
+References: <20240928050456.27577-1-quic_spuppala@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,269 +81,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zvg-mDsvvOueGpzs@archlinux>
+In-Reply-To: <20240928050456.27577-1-quic_spuppala@quicinc.com>
 
-On Sat, Sep 28, 2024 at 07:36:24PM +0200, Jan Hendrik Farr wrote:
-> On 26 18:09:57, Thorsten Blum wrote:
-> > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
-> > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > >> 
-> > >> Hi Kent,
-> > >> 
-> > >> found a strange regression in the patch set for 6.12.
-> > >> 
-> > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
-> > >> bcachefs: Annotate struct bch_xattr with __counted_by()
-> > >> 
-> > >> When compiling with clang 18.1.8 (also with latest llvm main branch) and
-> > >> CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
-> > >> detection of a buffer overflow.
-> > >> 
-> > >> The __counted_by attribute is supposed to be supported starting with gcc 15,
-> > >> not sure if it is implemented yet so I haven't tested with gcc trunk yet.
-> > >> 
-> > >> Here's the relevant section of dmesg:
-> > >> 
-> > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
-> > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
-> > >> [    6.252374] ------------[ cut here ]------------
-> > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
-> > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
-> > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
-> > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
-> > >> [    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
-> > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
-> > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
-> > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
-> > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
-> > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
-> > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
-> > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
-> > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
-> > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
-> > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
-> > >> [    6.252420] PKRU: 55555554
-> > >> [    6.252421] Call Trace:
-> > >> [    6.252423]  <TASK>
-> > >> [    6.252425]  ? __warn+0xd5/0x1d0
-> > >> [    6.252427]  ? __fortify_report+0x45/0x50
-> > >> [    6.252429]  ? report_bug+0x144/0x1f0
-> > >> [    6.252431]  ? __fortify_report+0x45/0x50
-> > >> [    6.252433]  ? handle_bug+0x6a/0x90
-> > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
-> > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
-> > >> [    6.252440]  ? __fortify_report+0x45/0x50
-> > >> [    6.252441]  __fortify_panic+0x9/0x10
-> > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
-> > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
-> > >> 
-> > >> ...
-> > >> 
-> > >> 
-> > >> The memchr in question is at:
-> > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
-> > >> 
-> > >> There is not actually a buffer overflow here, I checked with gdb that
-> > >> xattr.v->x_name does actually contain a string of the correct length and
-> > >> xattr.v->x_name_len contains the correct length and should be used to determine
-> > >> the length when memchr uses __struct_size for bounds-checking due to the
-> > >> __counted_by annotation.
-> > >> 
-> > >> I'm at the point where I think this is probably a bug in clang. I have a patch
-> > >> that does fix (more like bandaid) the problem and adds some print statements:
-> > >> 
-> > >> --
-> > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
-> > >> index 56c8d3fe55a4..8d7e749b7dda 100644
-> > >> --- a/fs/bcachefs/xattr.c
-> > >> +++ b/fs/bcachefs/xattr.c @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
-> > >>      enum bch_validate_flags flags)
-> > >> {
-> > >> struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
-> > >> + const struct bch_xattr *v = (void *)k.v;
-> > >> unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
-> > >>  le16_to_cpu(xattr.v->x_val_len));
-> > >> int ret = 0;
-> > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
-> > >> 
-> > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
-> > >> c, xattr_invalid_type,
-> > >> - "invalid type (%u)", xattr.v->x_type);
-> > >> + "invalid type (%u)", v->x_type);
-> > >> 
-> > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
-> > >> + pr_info("x_name_len: %d", v->x_name_len);
-> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
-> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
-> > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
-> > >> c, xattr_name_invalid_chars,
-> > >> "xattr name has invalid characters");
-> > >> fsck_err:
-> > >> --
-> > >> 
-> > >> 
-> > >> Making memchr access via a pointer created with
-> > >> const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
-> > >> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
-> > >> __struct_size(v->x_name) correctly returns 10 in this case (the value of
-> > >> x_name_len).
-> > >> 
-> > >> The generated assembly illustrates what is going wrong. Below is an excerpt
-> > >> of the assembly clang generated for the bch2_xattr_validate function:
-> > >> 
-> > >> mov r13d, ecx
-> > >> mov r15, rdi
-> > >> mov r14, rsi
-> > >> mov rdi, offset .L.str.3
-> > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > >> mov rbx, rdx
-> > >> mov edx, eax
-> > >> call _printk
-> > >> movzx edx, byte ptr [rbx + 1]
-> > >> mov rdi, offset .L.str.4
-> > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > >> call _printk
-> > >> movzx edx, bh
-> > >> mov rdi, offset .L.str.4
-> > >> mov rsi, offset .L__func__.bch2_xattr_validate
-> > >> call _printk
-> > >> lea rdi, [rbx + 4]
-> > >> mov r12, rbx
-> > >> movzx edx, byte ptr [rbx + 1]
-> > >> xor ebx, ebx
-> > >> xor esi, esi
-> > >> call memchr
-> > >> 
-> > >> At the start of this rdx contains k.v (and is moved into rbx). The three calls
-> > >> to printk are the ones you can see in my patch. You can see that for the
-> > >> print that uses __struct_size(v->x_name) the compiler correctly uses
-> > >> movzx edx, byte ptr [rbx + 1]
-> > >> to load x_name_len into edx.
-> > >> 
-> > >> For the printk call that uses __struct_size(xattr.v->x_name) however the
-> > >> compiler uses
-> > >> movzx edx, bh
-> > >> So it will print the high 8 bits of the lower 16 bits (second least
-> > >> significant byte) of the memory address of xattr.v->x_type. This is obviously
-> > >> completely wrong.
-> > >> 
-> > >> It is then doing the correct call of memchr because this is using my patch.
-> > >> Without my patch it would be doing the same thing for the call to memchr where
-> > >> it uses the second least significant byte of the memory address of x_type as the
-> > >> length used for the bounds-check.
-> > >> 
-> > >> 
-> > >> 
-> > >> The LLVM IR also shows the same problem:
-> > >> 
-> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > >> [...]
-> > >> %51 = ptrtoint ptr %2 to i64
-> > >> %52 = lshr i64 %51, 8
-> > >> %53 = and i64 %52, 255
-> > >> 
-> > >> This is the IR for the incorrect behavior. It simply converts the pointer to an
-> > >> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
-> > >> instead of ptrtoint this would actually work, as the second least significant
-> > >> bit of an i64 loaded from that memory address does contain the value of
-> > >> x_name_len. It's as if clang forgot to dereference a pointer here.
-> > >> 
-> > >> Correct IR does this (for the other printk invocation):
-> > >> 
-> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
-> > >> [...]
-> > >> %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
-> > >> %5 = load i8, ptr %4, align 8
-> > >> [...]
-> > >> %48 = load i8, ptr %5, align 4
-> > >> %49 = zext i8 %48 to i64
-> > >> 
-> > >> Best Regards
-> > >> Jan
-> > > 
-> > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
-> > > 
-> > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
-> > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
-> > 
-> > Could you try this and see if it resolves the problem?
-> > 
-> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> > index 1a957ea2f4fe..b09759f31789 100644
-> > --- a/include/linux/compiler_types.h
-> > +++ b/include/linux/compiler_types.h
-> > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
-> >   * When the size of an allocated object is needed, use the best available
-> >   * mechanism to find it. (For cases where sizeof() cannot be used.)
-> >   */
-> > -#if __has_builtin(__builtin_dynamic_object_size)
-> > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
-> >  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
-> >  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
-> >  #else
-> 
-> 
-> Alright, figured out why this fix doesn't work. The function signature
-> of memchr is:
-> 
-> void *memchr(const void * const POS0 p, int c, __kernel_size_t size)
-> 
-> The POS0 is the culprit. It's defined as __pass_object_size(0), which
-> leads to the call to __builtin_object_size being upgraded to
-> __builtin_dynamic_object_size.
-> 
-> So to make this work the POS0 definition needs the same
-> !defined(__clang__) on it. There's also two more
-> __has_builtin(__builtin_dynamic_object_size) checks in
-> lib/fortify_kunit.c. But they have no impact.
-> 
-> Now the fix works:
-> 
-> 
-> --
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index f14c275950b5..43ac0bca485d 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -413,7 +413,7 @@ struct ftrace_likely_data {
->   * When the size of an allocated object is needed, use the best available
->   * mechanism to find it. (For cases where sizeof() cannot be used.)
->   */
-> -#if __has_builtin(__builtin_dynamic_object_size)
-> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
->  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
->  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
->  #else
-> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
-> index 0d99bf11d260..7235655d9b80 100644
-> --- a/include/linux/fortify-string.h
-> +++ b/include/linux/fortify-string.h
-> @@ -148,7 +148,7 @@ extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size)
->   * size, rather than struct size), but there remain some stragglers using
->   * type 0 that will be converted in the future.
->   */
-> -#if __has_builtin(__builtin_dynamic_object_size)
-> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
->  #define POS			__pass_dynamic_object_size(1)
->  #define POS0			__pass_dynamic_object_size(0)
->  #else
+Hi Seshu,
 
-Sorry, I've been out of commission with covid. Globally disabling this
-macro for clang is not the right solution (way too big a hammer).
+kernel test robot noticed the following build warnings:
 
-Until Bill has a fix, we can revert commit
-86e92eeeb23741a072fe7532db663250ff2e726a, as the problem is limited to
-certain situations where 'counted_by' is in use.
+[auto build test WARNING on v6.11]
+[also build test WARNING on next-20240927]
+[cannot apply to linus/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
--Kees
+url:    https://github.com/intel-lab-lkp/linux/commits/Seshu-Madhavi-Puppala/qcom-ice-Remove-ice-probe/20240928-130818
+base:   v6.11
+patch link:    https://lore.kernel.org/r/20240928050456.27577-1-quic_spuppala%40quicinc.com
+patch subject: [PATCH] qcom: ice: Remove ice probe
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240929/202409290409.BkBQ6BVX-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290409.BkBQ6BVX-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290409.BkBQ6BVX-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/soc/qcom/ice.c: In function 'of_qcom_ice_get':
+>> drivers/soc/qcom/ice.c:309:24: warning: returning 'long int' from a function with return type 'struct qcom_ice *' makes pointer from integer without a cast [-Wint-conversion]
+     309 |                 return PTR_ERR(base);
+         |                        ^~~~~~~~~~~~~
+
+
+vim +309 drivers/soc/qcom/ice.c
+
+   250	
+   251	/**
+   252	 * of_qcom_ice_get() - get an ICE instance from a DT node
+   253	 * @dev: device pointer for the consumer device
+   254	 *
+   255	 * This function will provide an ICE instance either by creating one for the
+   256	 * consumer device if its DT node provides the 'ice' reg range and the 'ice'
+   257	 * clock (for legacy DT style). On the other hand, if consumer provides a
+   258	 * phandle via 'qcom,ice' property to an ICE DT, the ICE instance will already
+   259	 * be created and so this function will return that instead.
+   260	 *
+   261	 * Return: ICE pointer on success, NULL if there is no ICE data provided by the
+   262	 * consumer or ERR_PTR() on error.
+   263	 */
+   264	struct qcom_ice *of_qcom_ice_get(struct device *dev)
+   265	{
+   266		struct platform_device *pdev = to_platform_device(dev);
+   267		struct qcom_ice *ice;
+   268		struct device_node *node;
+   269		struct resource *res;
+   270		void __iomem *base;
+   271	
+   272		if (!dev || !dev->of_node)
+   273			return ERR_PTR(-ENODEV);
+   274	
+   275		/*
+   276		 * In order to support legacy style devicetree bindings, we need
+   277		 * to create the ICE instance using the consumer device and the reg
+   278		 * range called 'ice' it provides.
+   279		 */
+   280		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ice");
+   281		if (res) {
+   282			base = devm_ioremap_resource(&pdev->dev, res);
+   283			if (IS_ERR(base))
+   284				return ERR_CAST(base);
+   285	
+   286			/* create ICE instance using consumer dev */
+   287			return qcom_ice_create(&pdev->dev, base);
+   288		}
+   289	
+   290		/*
+   291		 * If the consumer node does not provider an 'ice' reg range
+   292		 * (legacy DT binding), then it must at least provide a phandle
+   293		 * to the ICE devicetree node, otherwise ICE is not supported.
+   294		 */
+   295		node = of_parse_phandle(dev->of_node, "qcom,ice", 0);
+   296		if (!node)
+   297			return NULL;
+   298	
+   299		pdev = of_find_device_by_node(node);
+   300		if (!pdev) {
+   301			dev_err(dev, "Cannot find device node %s\n", node->name);
+   302			ice = ERR_PTR(-EPROBE_DEFER);
+   303			goto out;
+   304		}
+   305	
+   306		base = devm_platform_ioremap_resource(pdev, 0);
+   307		if (IS_ERR(base)) {
+   308			dev_warn(&pdev->dev, "ICE registers not found\n");
+ > 309			return PTR_ERR(base);
+   310		}
+   311	
+   312		ice = qcom_ice_create(&pdev->dev, base);
+   313		if (!ice) {
+   314			dev_err(dev, "Cannot get ice instance from %s\n",
+   315				dev_name(&pdev->dev));
+   316			platform_device_put(pdev);
+   317			ice = ERR_PTR(-EPROBE_DEFER);
+   318			goto out;
+   319		}
+   320	
+   321		ice->link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
+   322		if (!ice->link) {
+   323			dev_err(&pdev->dev,
+   324				"Failed to create device link to consumer %s\n",
+   325				dev_name(dev));
+   326			platform_device_put(pdev);
+   327			ice = ERR_PTR(-EINVAL);
+   328		}
+   329	
+   330	out:
+   331		of_node_put(node);
+   332	
+   333		return ice;
+   334	}
+   335	EXPORT_SYMBOL_GPL(of_qcom_ice_get);
+   336	
 
 -- 
-Kees Cook
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
