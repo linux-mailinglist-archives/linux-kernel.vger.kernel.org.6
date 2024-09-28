@@ -1,79 +1,51 @@
-Return-Path: <linux-kernel+bounces-342625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B785F989109
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:28:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FBB98910B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9EC1C20E9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:28:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB874281D27
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C3E1537C8;
-	Sat, 28 Sep 2024 18:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EB3155C88;
+	Sat, 28 Sep 2024 18:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ETbitmjz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UNsLitGK"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FAB143744
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 18:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19BC2AEEE;
+	Sat, 28 Sep 2024 18:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727548076; cv=none; b=jhsPAJlVWG1XGJo0SqSJdza1zqAxrNAfAfpDxgryqUihEOW2xFpn5YS5X7JE+9a6CGv/LRnoyxHRfLqdpg9VaXcWZBY2qEcq9sxrMNMvecJwghfPqNbnnwQgwxZV2Vdl4QdzSA5lKIBAA0BIff5Mr+aqky0p0eujZJO3dvtjHvA=
+	t=1727548116; cv=none; b=TZC9k0GPJlD5wgK8r9DFxlYR1OlcCjyuWurHiPzCut9BCbXIz1QhzvcaFNIHVIGeKvFseSpRbrnMIY4lYU0BTVNNZIMmdvjIv3H4rlw5TPsE5V+Hv1fV04QuLRPb9FJcaoesA+ffK9xV61mQJi6FmX2cu+m1ZUD4Qi8hbo6n9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727548076; c=relaxed/simple;
-	bh=TeaENJjEU5JBBoHQ2aowfCVAk50H+CjXppvRksInNHk=;
+	s=arc-20240116; t=1727548116; c=relaxed/simple;
+	bh=3fpdki5/ICS1qNzg5oA8KwiZpQoL0BQCLzpnw1ITvsg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lrpQAns5uN9AFdrmAXwvzw/73m29O5+sipcCx7CB0nG4kUIFR5bWUfHLhLFjHvQJPlFd2z20TjGGJjpNbKajvAbm3h7pVRfuOrKJe6rXmcekV+tDftDbk71PLhtpR7zPqUqNMSCiEB+picJwC05L4pn3ecnnek6+7yhOq0jC9JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ETbitmjz; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727548072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bhengj+dgz1SZg//IZxDbLGJ1rsMPXjBU00ItGHc3PQ=;
-	b=ETbitmjzP89zSvqsNpXC7FmcmCRbUvjRZ/NQKpCgtKLmgUHOTaazI0cug7Mk5OdE+Jx4rw
-	RZA+SlZC2eQmOVQSMGPpyN2i4VcTDZtf3qWCgIyqPm8oZEzwjDB23AqboQCLu4aIgR7nuJ
-	d7uW9Q74nWrbi7blOIH4NM5swJ2vmh0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-SYK2pzpOPJqFf9NclpIHZA-1; Sat, 28 Sep 2024 14:27:50 -0400
-X-MC-Unique: SYK2pzpOPJqFf9NclpIHZA-1
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5c8838677c0so1617817a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:27:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727548069; x=1728152869;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bhengj+dgz1SZg//IZxDbLGJ1rsMPXjBU00ItGHc3PQ=;
-        b=ePwM1pfU7uiGtjEOs8cphpuxMmq8nqeWTPvzoCfr2NCi/5Br+lcYe8gzHy/L2VrhhF
-         QK4DNRR/qjgbjgUUp2UuRAUfU7RhwEm541LMfO+h3nJU2MJMv9mhtC33UeQRQenqrt3Q
-         VSxtB7Up4l/+Wh1jl4/e57SWwlSVI4cm4vN3KwA7Ndsi7Xk4mhAVJH7srIpAvaF4fPXe
-         ye3MMDMn2p7JGIaPHqgGEGs1tcPTXwB+7qfG5JiB6n2qwdpaEfivYt3AqBXZ21LZVoTK
-         TE5t8cFlrO2fXqNuyvzD0K5/aLrQeUIxvB2uwyx3M8WKtsWEmWsnBP7kIwdluJmFgDJ4
-         dwtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUadBYEtc1fSro/IblgvKvjg3ybR4l+VkPnJ0cZJOiAMoly1bcG0NZNN9D3sfmr1TodRgaafIwhyhrkCLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU3j3b7PUYgbU/fxkuicXxBg2LpzCwRHsoAYe7BmEcXejHffS3
-	W7PCH4gRgFyTa1M+IhKBADKZzF6nklm7vjQ+sMx8XVsWNm0l+MKRcaU7Q5xVk8BHV/xT5pMp7um
-	d40g+7aJzeE+f3aYHPS0JJipGS7kGY+8p6Ba9m/lx+NYp4dxY60bxFlV8MWI3WA==
-X-Received: by 2002:a05:6402:3588:b0:5c7:1eae:2e6e with SMTP id 4fb4d7f45d1cf-5c8824cf63bmr6197609a12.4.1727548069210;
-        Sat, 28 Sep 2024 11:27:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2hG58N0aftIf8AxYzcRUV7YD8cHD/TM4aNItzHNm1XPzp4839F3uHGj2/LuLhFEjEXiLt6g==
-X-Received: by 2002:a05:6402:3588:b0:5c7:1eae:2e6e with SMTP id 4fb4d7f45d1cf-5c8824cf63bmr6197589a12.4.1727548068734;
-        Sat, 28 Sep 2024 11:27:48 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245ea1dsm2408337a12.53.2024.09.28.11.27.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 28 Sep 2024 11:27:48 -0700 (PDT)
-Message-ID: <504de49f-63fc-4399-95f1-1ef3905ed74c@redhat.com>
-Date: Sat, 28 Sep 2024 20:27:46 +0200
+	 In-Reply-To:Content-Type; b=qOFs0gdRvpx0enPnAiihY+eZfiKj8zcm5zaT0e68uEkt8FUm3JKX96g2A/yrKQ7GI1g0QSC6S9j38KvwC41f3MdySEh5QpZbDM8St2c+rTEM5FMkzuV+T6MaY3lmIHED9ID8Mt8DRzAzHOfW3pZBj3HoI8z2ywtYZULFaAvEdwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UNsLitGK; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=V+9LfybIwIck4AhikQa6dEmZGnSm3uZ83KznMUGroo8=; b=UNsLitGKp/pQ1/xxaZpIZO0FUN
+	jD0Ol6wAoGd1v0c2uQe+I0sqmrbYYnodPbcL+rP/WUs9pFCFWLqp/hw+/F4gqLQoppwwnWehinu25
+	ql1nwPXp6lwcmBj1CBQHUyahHRykL2MwvGbYj/zwK1FQUMbO4jK1r/T2ONYphJTubxXOi8h7BMD6n
+	e1LoONQhLB/kEO5dNsg3hw4PwyX0O9h9hb4zyOXX7yaGAYykufFZreKVckbJ43BG5gvS/zt7aaW4E
+	YcR51xjg+ye/PmHBdqevSLiMuw2zegNoqy0sDkI6f8LigMUk1h7FUCoCj+PaPzit/x/9U48HqHw+G
+	NiGQrfqw==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sucB1-00000002XxV-3koC;
+	Sat, 28 Sep 2024 18:28:20 +0000
+Message-ID: <b7864e63-bb74-4ab2-a7ae-48662b27e234@infradead.org>
+Date: Sat, 28 Sep 2024 11:28:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,250 +53,402 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] platform: arm64: Add driver for Lenovo Yoga Slim 7x's
- EC
-To: Maya Matuszczyk <maccraft123mc@gmail.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org
-References: <20240927185345.3680-1-maccraft123mc@gmail.com>
- <20240927185345.3680-2-maccraft123mc@gmail.com>
- <4365cae6-33e2-4b86-aab9-0b9ad112e6b0@redhat.com>
- <CAO_MupJTdo8+cpx2DHtC47WDQsFRVnB7xQFOmHiEQQzVmkFywg@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAO_MupJTdo8+cpx2DHtC47WDQsFRVnB7xQFOmHiEQQzVmkFywg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] mseal: update mseal.rst
+To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
+ corbet@lwn.net
+Cc: jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, jannh@google.com, sroettger@google.com,
+ pedro.falcato@gmail.com, linux-hardening@vger.kernel.org,
+ willy@infradead.org, gregkh@linuxfoundation.org,
+ torvalds@linux-foundation.org, deraadt@openbsd.org,
+ usama.anjum@collabora.com, surenb@google.com, merimus@google.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, enh@google.com
+References: <20240927185211.729207-1-jeffxu@chromium.org>
+ <20240927185211.729207-2-jeffxu@chromium.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240927185211.729207-2-jeffxu@chromium.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On 28-Sep-24 8:04 PM, Maya Matuszczyk wrote:
-> Hi, thanks for taking a look at this driver.
+
+On 9/27/24 11:52 AM, jeffxu@chromium.org wrote:
+> From: Jeff Xu <jeffxu@chromium.org>
 > 
-> sob., 28 wrz 2024 o 17:53 Hans de Goede <hdegoede@redhat.com> napisał(a):
->>
->> Hi Maya,
->>
->> Thank you for your patch. It is great to so people working on supporting
->> more ARM64 based laptop ECs.
->>
->> Note not a full review just one remark from a quick scan of the driver.
->>
->> On 27-Sep-24 8:53 PM, Maya Matuszczyk wrote:
->>> This patch adds a basic driver for the EC in Qualcomm Snapdragon X1
->>> Elite-based Lenovo Yoga Slim 7x.
->>>
->>> For now it supports only reporting that the AP is going to suspend and
->>> the microphone mute button, however the EC seems to also support reading
->>> fan information, other key combinations and thermal data.
->>>
->>> Signed-off-by: Maya Matuszczyk <maccraft123mc@gmail.com>
->>> ---
->>>  MAINTAINERS                                 |   1 +
->>>  drivers/platform/arm64/Kconfig              |  12 ++
->>>  drivers/platform/arm64/Makefile             |   1 +
->>>  drivers/platform/arm64/lenovo-yoga-slim7x.c | 202 ++++++++++++++++++++
->>>  4 files changed, 216 insertions(+)
->>>  create mode 100644 drivers/platform/arm64/lenovo-yoga-slim7x.c
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 0d4bfdde166d..f689cba80fa3 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -12906,6 +12906,7 @@ LENOVO YOGA SLIM 7X EC DRIVER
->>>  M:   Maya Matuszczyk <maccraft123mc@gmail.com>
->>>  S:   Maintained
->>>  F:   Documentation/devicetree/bindings/platform/lenovo,yoga-slim7x-ec.yaml
->>> +F:   drivers/platform/arm64/lenovo-yoga-slim7x.c
->>>
->>>  LETSKETCH HID TABLET DRIVER
->>>  M:   Hans de Goede <hdegoede@redhat.com>
->>> diff --git a/drivers/platform/arm64/Kconfig b/drivers/platform/arm64/Kconfig
->>> index f88395ea3376..9ceae50f8b4e 100644
->>> --- a/drivers/platform/arm64/Kconfig
->>> +++ b/drivers/platform/arm64/Kconfig
->>> @@ -49,4 +49,16 @@ config EC_LENOVO_YOGA_C630
->>>
->>>         Say M or Y here to include this support.
->>>
->>> +config EC_LENOVO_YOGA_SLIM7X
->>> +     tristate "Lenovo Yoga Slim 7x Embedded Controller driver"
->>> +     depends on ARCH_QCOM || COMPILE_TEST
->>> +     depends on I2C
->>> +     help
->>> +       Select this option to enable driver for the EC found in the Lenovo
->>> +       Yoga Slim 7x.
->>> +
->>> +       This driver currently supports reporting input event for microphone
->>> +       mute button, and reporting device suspend to the EC so it can take
->>> +       appropriate actions.
->>> +
->>>  endif # ARM64_PLATFORM_DEVICES
->>> diff --git a/drivers/platform/arm64/Makefile b/drivers/platform/arm64/Makefile
->>> index b2ae9114fdd8..70dfc1fb979d 100644
->>> --- a/drivers/platform/arm64/Makefile
->>> +++ b/drivers/platform/arm64/Makefile
->>> @@ -7,3 +7,4 @@
->>>
->>>  obj-$(CONFIG_EC_ACER_ASPIRE1)        += acer-aspire1-ec.o
->>>  obj-$(CONFIG_EC_LENOVO_YOGA_C630) += lenovo-yoga-c630.o
->>> +obj-$(CONFIG_EC_LENOVO_YOGA_SLIM7X) += lenovo-yoga-slim7x.o
->>> diff --git a/drivers/platform/arm64/lenovo-yoga-slim7x.c b/drivers/platform/arm64/lenovo-yoga-slim7x.c
->>> new file mode 100644
->>> index 000000000000..8f6d523395bc
->>> --- /dev/null
->>> +++ b/drivers/platform/arm64/lenovo-yoga-slim7x.c
->>> @@ -0,0 +1,202 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2024 Maya Matuszczyk <maya.matuszczyk@gmail.com>
->>> + */
->>> +#include <linux/auxiliary_bus.h>
->>> +#include <linux/cleanup.h>
->>> +#include <linux/device.h>
->>> +#include <linux/err.h>
->>> +#include <linux/i2c.h>
->>> +#include <linux/irqreturn.h>
->>> +#include <linux/lockdep.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mutex.h>
->>> +#include <linux/notifier.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/input.h>
->>> +//#include <linux/platform_data/lenovo-yoga-slim7x.h>
->>> +
->>> +// These are the registers that i know about available from SMBUS
->>> +#define EC_IRQ_REASON_REG 0x05
->>> +#define EC_SUSPEND_RESUME_REG 0x23
->>> +#define EC_IRQ_ENABLE_REG 0x35
->>> +#define EC_BACKLIGHT_STATUS_REG 0x83
->>> +#define EC_MIC_MUTE_LED_REG 0x84
->>> +#define EC_AC_STATUS_REG 0x90
->>> +
->>> +// Valid values for EC_SUSPEND_RESUME_REG
->>> +#define EC_NOTIFY_SUSPEND_ENTER 0x01
->>> +#define EC_NOTIFY_SUSPEND_EXIT 0x00
->>> +#define EC_NOTIFY_SCREEN_OFF 0x03
->>> +#define EC_NOTIFY_SCREEN_ON 0x04
->>> +
->>> +// These are the values in EC_IRQ_REASON_REG that i could find in DSDT
->>> +#define EC_IRQ_MICMUTE_BUTTON 0x04
->>> +#define EC_IRQ_FAN1_STATUS_CHANGE 0x30
->>> +#define EC_IRQ_FAN2_STATUS_CHANGE 0x31
->>> +#define EC_IRQ_FAN1_SPEED_CHANGE 0x32
->>> +#define EC_IRQ_FAN2_SPEED_CHANGE 0x33
->>> +#define EC_IRQ_COMPLETED_LUT_UPDATE 0x34
->>> +#define EC_IRQ_COMPLETED_FAN_PROFILE_SWITCH 0x35
->>> +#define EC_IRQ_THERMISTOR_1_TEMP_THRESHOLD_CROSS 0x36
->>> +#define EC_IRQ_THERMISTOR_2_TEMP_THRESHOLD_CROSS 0x37
->>> +#define EC_IRQ_THERMISTOR_3_TEMP_THRESHOLD_CROSS 0x38
->>> +#define EC_IRQ_THERMISTOR_4_TEMP_THRESHOLD_CROSS 0x39
->>> +#define EC_IRQ_THERMISTOR_5_TEMP_THRESHOLD_CROSS 0x3a
->>> +#define EC_IRQ_THERMISTOR_6_TEMP_THRESHOLD_CROSS 0x3b
->>> +#define EC_IRQ_THERMISTOR_7_TEMP_THRESHOLD_CROSS 0x3c
->>> +#define EC_IRQ_RECOVERED_FROM_RESET 0x3d
->>> +#define EC_IRQ_LENOVO_SUPPORT_KEY 0x90
->>> +#define EC_IRQ_FN_Q 0x91
->>> +#define EC_IRQ_FN_M 0x92
->>> +#define EC_IRQ_FN_SPACE 0x93
->>> +#define EC_IRQ_FN_R 0x94
->>> +#define EC_IRQ_FNLOCK_ON 0x95
->>> +#define EC_IRQ_FNLOCK_OFF 0x96
->>> +#define EC_IRQ_FN_N 0x97
->>> +#define EC_IRQ_AI 0x9a
->>> +#define EC_IRQ_NPU 0x9b
->>> +
->>> +struct yoga_slim7x_ec {
->>> +     struct i2c_client *client;
->>> +     struct input_dev *idev;
->>> +     struct mutex lock;
->>> +};
->>> +
->>> +static irqreturn_t yoga_slim7x_ec_irq(int irq, void *data)
->>> +{
->>> +     struct yoga_slim7x_ec *ec = data;
->>> +     struct device *dev = &ec->client->dev;
->>> +     int val;
->>> +
->>> +     guard(mutex)(&ec->lock);
->>> +
->>> +     val = i2c_smbus_read_byte_data(ec->client, EC_IRQ_REASON_REG);
->>> +     if (val < 0) {
->>> +             dev_err(dev, "Failed to get EC IRQ reason: %d\n", val);
->>> +             return IRQ_HANDLED;
->>> +     }
->>> +
->>> +     switch (val) {
->>> +     case EC_IRQ_MICMUTE_BUTTON:
->>> +             input_report_key(ec->idev, KEY_MICMUTE, 1);
->>> +             input_sync(ec->idev);
->>> +             input_report_key(ec->idev, KEY_MICMUTE, 0);
->>> +             input_sync(ec->idev);
->>> +             break;
->>> +     default:
->>> +             dev_info(dev, "Unhandled EC IRQ reason: %d\n", val);
->>> +     }
->>
->> I strongly suggest to use include/linux/input/sparse-keymap.h functionality
->> here. This will make adding new keys a lot easier and will allow re-mapping
->> codes from userspace.
->>
->> E.g. replace the whole switch-case with:
->>
->>         if (!sparse_keymap_report_event(ec->idev, val, 1, true))
->>                 dev_info(dev, "Unhandled EC IRQ reason: %d\n", val);
->>
->> This takes care of mapping val -> KEY_MICMUTE, and doing all
->> the reporting (after calling sparse_keymap_setup() with an appropriate
->> keymap from probe())
+> Update doc after in-loop change: mprotect/madvise can have
+> partially updated and munmap is atomic.
 > 
-> Thank you for the suggestion. I'm not sure how to handle the non-key
-> related IRQs, like fan status changes.
-> Do you think they should be filtered out like this:
-> if (val == 0x04 || (val >= 0x90 && val <= 0x97))
+> Fix indentation and clarify some sections to improve readability.
+> 
+> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> ---
+>  Documentation/userspace-api/mseal.rst | 290 ++++++++++++--------------
+>  1 file changed, 136 insertions(+), 154 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
+> index 4132eec995a3..68986084e191 100644
+> --- a/Documentation/userspace-api/mseal.rst
+> +++ b/Documentation/userspace-api/mseal.rst
+> @@ -23,177 +23,159 @@ applications can additionally seal security critical data at runtime.
+>  A similar feature already exists in the XNU kernel with the
+>  VM_FLAGS_PERMANENT flag [1] and on OpenBSD with the mimmutable syscall [2].
+>  
+> -User API
+> -========
+> -mseal()
+> ------------
+> -The mseal() syscall has the following signature:
+> -
+> -``int mseal(void addr, size_t len, unsigned long flags)``
+> -
+> -**addr/len**: virtual memory address range.
+> -
+> -The address range set by ``addr``/``len`` must meet:
+> -   - The start address must be in an allocated VMA.
+> -   - The start address must be page aligned.
+> -   - The end address (``addr`` + ``len``) must be in an allocated VMA.
+> -   - no gap (unallocated memory) between start and end address.
+> -
+> -The ``len`` will be paged aligned implicitly by the kernel.
+> -
+> -**flags**: reserved for future use.
+> -
+> -**return values**:
+> -
+> -- ``0``: Success.
+> -
+> -- ``-EINVAL``:
+> -    - Invalid input ``flags``.
+> -    - The start address (``addr``) is not page aligned.
+> -    - Address range (``addr`` + ``len``) overflow.
+> -
+> -- ``-ENOMEM``:
+> -    - The start address (``addr``) is not allocated.
+> -    - The end address (``addr`` + ``len``) is not allocated.
+> -    - A gap (unallocated memory) between start and end address.
+> -
+> -- ``-EPERM``:
+> -    - sealing is supported only on 64-bit CPUs, 32-bit is not supported.
+> -
+> -- For above error cases, users can expect the given memory range is
+> -  unmodified, i.e. no partial update.
+> -
+> -- There might be other internal errors/cases not listed here, e.g.
+> -  error during merging/splitting VMAs, or the process reaching the max
+> -  number of supported VMAs. In those cases, partial updates to the given
+> -  memory range could happen. However, those cases should be rare.
+> -
+> -**Blocked operations after sealing**:
+> -    Unmapping, moving to another location, and shrinking the size,
+> -    via munmap() and mremap(), can leave an empty space, therefore
+> -    can be replaced with a VMA with a new set of attributes.
+> -
+> -    Moving or expanding a different VMA into the current location,
+> -    via mremap().
+> -
+> -    Modifying a VMA via mmap(MAP_FIXED).
+> -
+> -    Size expansion, via mremap(), does not appear to pose any
+> -    specific risks to sealed VMAs. It is included anyway because
+> -    the use case is unclear. In any case, users can rely on
+> -    merging to expand a sealed VMA.
+> -
+> -    mprotect() and pkey_mprotect().
+> -
+> -    Some destructive madvice() behaviors (e.g. MADV_DONTNEED)
+> -    for anonymous memory, when users don't have write permission to the
+> -    memory. Those behaviors can alter region contents by discarding pages,
+> -    effectively a memset(0) for anonymous memory.
+> -
+> -    Kernel will return -EPERM for blocked operations.
+> -
+> -    For blocked operations, one can expect the given address is unmodified,
+> -    i.e. no partial update. Note, this is different from existing mm
+> -    system call behaviors, where partial updates are made till an error is
+> -    found and returned to userspace. To give an example:
+> -
+> -    Assume following code sequence:
+> -
+> -    - ptr = mmap(null, 8192, PROT_NONE);
+> -    - munmap(ptr + 4096, 4096);
+> -    - ret1 = mprotect(ptr, 8192, PROT_READ);
+> -    - mseal(ptr, 4096);
+> -    - ret2 = mprotect(ptr, 8192, PROT_NONE);
+> -
+> -    ret1 will be -ENOMEM, the page from ptr is updated to PROT_READ.
+> -
+> -    ret2 will be -EPERM, the page remains to be PROT_READ.
+> -
+> -**Note**:
+> -
+> -- mseal() only works on 64-bit CPUs, not 32-bit CPU.
+> -
+> -- users can call mseal() multiple times, mseal() on an already sealed memory
+> -  is a no-action (not error).
+> -
+> -- munseal() is not supported.
+> +SYSCALL
+> +=======
+> +mseal syscall signature
+> +-----------------------
+> +   **int** mseal(**void \*** addr, **size_t** len, **unsigned long** flags)
 
-Yes drivers like this typically first check for special values
-like above and then either do an early "return" or have
-a structure like this:
+ugh. totally unreadable for people who just look at .rst files.
 
-	if (val == special)
-		...
-	else if (val == other-special)
-		...
-	else {
-	        if (!sparse_keymap_report_event(ec->idev, val, 1, true))
-	                dev_info(dev, "Unhandled EC IRQ reason: %d\n", val);	
-	}
+Does other documentation go to this extreme?
 
-The top-level if () ... else if () ... else may also
-be replaced with a switch () { case : ... case : ... }.
+> +
+> +   **addr**/**len**: virtual memory address range.
+> +      The address range set by **addr**/**len** must meet:
+> +         - The start address must be in an allocated VMA.
+> +         - The start address must be page aligned.
+> +         - The end address (**addr** + **len**) must be in an allocated VMA.
+> +         - no gap (unallocated memory) between start and end address.
+> +
+> +      The ``len`` will be paged aligned implicitly by the kernel.
+> +
+> +   **flags**: reserved for future use.
+> +
+> +   **Return values**:
+> +      - **0**: Success.
+> +      - **-EINVAL**:
+> +         * Invalid input ``flags``.
+> +         * The start address (``addr``) is not page aligned.
+> +         * Address range (``addr`` + ``len``) overflow.
+> +      - **-ENOMEM**:
+> +         * The start address (``addr``) is not allocated.
+> +         * The end address (``addr`` + ``len``) is not allocated.
+> +         * A gap (unallocated memory) between start and end address.
+> +      - **-EPERM**:
+> +         * sealing is supported only on 64-bit CPUs, 32-bit is not supported.
+> +
+> +   **Note about error return**:
+> +      - For above error cases, users can expect the given memory range is
+> +        unmodified, i.e. no partial update.
+> +      - There might be other internal errors/cases not listed here, e.g.
+> +        error during merging/splitting VMAs, or the process reaching the max
+> +        number of supported VMAs. In those cases, partial updates to the given
+> +        memory range could happen. However, those cases should be rare.
+> +
+> +   **Architecture support**:
+> +      mseal only works on 64-bit CPUs, not 32-bit CPU.
 
-Note that if you just want to ignore the values you can also
-do this in the keymap and generally speaking that is better,
-only adding special cases like above if the driver actually
-needs to undertake some special action in response to the IRQ.
+	                                             CPUs.
 
-static const struct key_entry keymap[] = {
-	{ KE_KEY, EC_IRQ_MICMUTE_BUTTON, { KEY_MICMUTE } },
-	{ KE_IGNORE, 0x04, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x90, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x91, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x92, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x93, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x94, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x95, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x96, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_IGNORE, 0x97, { KEY_RESERVED } }, /* Fan status change */
-	{ KE_END }
-};
+> +
+> +   **Idempotent**:
+> +      users can call mseal multiple times, mseal on an already sealed memory
 
-In this case with the 0x90 - 0x97 range that is not really pretty,
-but it probably still is best to keep the code consistent.
+	                               times. mseal
 
-Regards,
+> +      is a no-action (not error).
+> +
+> +   **no munseal**
+> +      Once mapping is sealed, it can't be unsealed. kernel should never
+> +      have munseal, this is consistent with other sealing feature, e.g.
+> +      F_SEAL_SEAL for file.
+> +
+> +Blocked mm syscall for sealed mapping
+> +-------------------------------------
+> +   It might be imporant to note: **once the mapping is sealed, it will
 
-Hans
+                  important
+
+> +   stay in the process's memory till the process terminates**.
+> +
+> +   Example::
+> +
+> +         *ptr = mmap(0, 4096, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
+> +         rc = mseal(ptr, 4096, 0);
+> +         /* munmap will fail */
+> +         rc = munmap(ptr, 4096);
+> +         assert(rc < 0);
+> +
+> +   Blocked mm syscall:
+> +      - munmap
+> +      - mmap
+> +      - mremap
+> +      - mprotect and pkey_mprotect
+> +      - some destructive madvise behaviors: MADV_DONTNEED, MADV_FREE,
+> +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK
+> +
+> +   The first set of syscall to block is munmap, mremap, mmap. They can
+> +   either leave an empty space in the address space, therefore allow
+> +   replacement with a new mapping with new set of attributes, or can
+> +   overwrite the existing mapping with another mapping.
+> +
+> +   mprotect and pkey_mprotect are blocked because they changes the
+> +   protection bits (rwx) of the mapping.
+
+preferably            (RWX)
+
+> +
+> +   Some destructive madvice behaviors (MADV_DONTNEED, MADV_FREE,
+
+                       madvise
+
+> +   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
+> +   for anonymous memory, when users don't have write permission to the
+> +   memory. Those behaviors can alter region contents by discarding pages,
+> +   effectively a memset(0) for anonymous memory.
+> +
+> +   Kernel will return -EPERM for blocked syscalls.
+> +
+> +   When blocked syscall return -EPERM due to sealing, the memory regions may or may not be changed, depends on the syscall being blocked:
+> +      - munmap: munmap is atomic. If one of VMAs in the given range is
+> +        sealed, none of VMAs are updated.
+> +      - mprotect, pkey_mprotect, madvise: partial update might happen, e.g.
+> +        when mprotect over multiple VMAs, mprotect might update the beginning
+> +        VMAs before reaching the sealed VMA and return -EPERM.
+> +      - mmap and mremap: undefined behavior.
+>  
+>  Use cases:
+>  ==========
+>  - glibc:
+>    The dynamic linker, during loading ELF executables, can apply sealing to
+> -  non-writable memory segments.
+> +  mapping segments.
+>  
+>  - Chrome browser: protect some security sensitive data-structures.
+
+                                                     data structures.
+
+>  
+> -Notes on which memory to seal:
+> -==============================
+> -
+> -It might be important to note that sealing changes the lifetime of a mapping,
+> -i.e. the sealed mapping won’t be unmapped till the process terminates or the
+> -exec system call is invoked. Applications can apply sealing to any virtual
+> -memory region from userspace, but it is crucial to thoroughly analyze the
+> -mapping's lifetime prior to apply the sealing.
+> +Don't use mseal on:
+
+Drop the ':'. Headings should not uses trailing colons.
+(throughout this file)
+
+Maybe change the heading to "When not to use mseal".
+
+> +===================
+> +Applications can apply sealing to any virtual memory region from userspace,
+> +but it is *crucial to thoroughly analyze the mapping's lifetime* prior to
+> +apply the sealing. This is because the sealed mapping *won’t be unmapped*
+> +till the process terminates or the exec system call is invoked.
+
+s/till/until/ preferably.
+
+>  
+>  For example:
+> +   - aio/shm
+> +     aio/shm can call mmap and  munmap on behalf of userspace, e.g.
+> +     ksys_shmdt() in shm.c. The lifetime of those mapping are not tied to
+> +     the lifetime of the process. If those memories are sealed from userspace,
+> +     then munmap will fail, causing leaks in VMA address space during the
+> +     lifetime of the process.
+> +
+> +   - ptr allocated by malloc (heap)
+> +     Don't use mseal on the memory ptr return from malloc().
+> +     malloc() is implemented by allocator, e.g. by glibc. Heap manager might
+> +     allocate a ptr from brk or mapping created by mmap.
+> +     If app calls mseal on ptr returned from malloc(), this can affect the heap
+
+	If an app calls mseal on a ptr
 
 
+> +     manager's ability to manage the mappings, the outcome is non-deterministic.
+
+	                                mappings; the outcome
+
+> +     Example::
+> +
+> +        ptr = malloc(size);
+> +        /* don't call mseal on ptr return from malloc. */
+> +        mseal(ptr, size);
+> +        /* free will success, allocator can't shrink heap lower than ptr */
+> +        free(ptr);
+> +
+> +mseal doesn't block:
+> +====================
+> +In a nutshell, mseal blocks certain mm syscall from modifying some of VMA's
+> +attributes, such as protection bits (rwx). Sealed mappings doesn't mean the
+
+preferably                             (RWX).
+
+> +memory is immutable.
+>  
+> -- aio/shm
+> -
+> -  aio/shm can call mmap()/munmap() on behalf of userspace, e.g. ksys_shmdt() in
+> -  shm.c. The lifetime of those mapping are not tied to the lifetime of the
+
+                lifetimes
+?
+
+> -  process. If those memories are sealed from userspace, then munmap() will fail,
+> -  causing leaks in VMA address space during the lifetime of the process.
+> -
+> -- Brk (heap)
+> -
+> -  Currently, userspace applications can seal parts of the heap by calling
+> -  malloc() and mseal().
+> -  let's assume following calls from user space:
+> -
+> -  - ptr = malloc(size);
+> -  - mprotect(ptr, size, RO);
+> -  - mseal(ptr, size);
+> -  - free(ptr);
+> -
+> -  Technically, before mseal() is added, the user can change the protection of
+> -  the heap by calling mprotect(RO). As long as the user changes the protection
+> -  back to RW before free(), the memory range can be reused.
+> -
+> -  Adding mseal() into the picture, however, the heap is then sealed partially,
+> -  the user can still free it, but the memory remains to be RO. If the address
+> -  is re-used by the heap manager for another malloc, the process might crash
+> -  soon after. Therefore, it is important not to apply sealing to any memory
+> -  that might get recycled.
+> -
+> -  Furthermore, even if the application never calls the free() for the ptr,
+> -  the heap manager may invoke the brk system call to shrink the size of the
+> -  heap. In the kernel, the brk-shrink will call munmap(). Consequently,
+> -  depending on the location of the ptr, the outcome of brk-shrink is
+> -  nondeterministic.
+> -
+> -
+> -Additional notes:
+> -=================
+>  As Jann Horn pointed out in [3], there are still a few ways to write
+> -to RO memory, which is, in a way, by design. Those cases are not covered
+> -by mseal(). If applications want to block such cases, sandbox tools (such as
+> -seccomp, LSM, etc) might be considered.
+> +to RO memory, which is, in a way, by design. And those could be blocked
+> +by different security measures.
+>  
+>  Those cases are:
+> -
+> -- Write to read-only memory through /proc/self/mem interface.
+> -- Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> -- userfaultfd.
+> +   - Write to read-only memory through /proc/self/mem interface (FOLL_FORCE).
+> +   - Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
+> +   - userfaultfd.
+>  
+>  The idea that inspired this patch comes from Stephen Röttger’s work in V8
+>  CFI [4]. Chrome browser in ChromeOS will be the first user of this API.
+>  
+>  Reference:
+>  ==========
+> -[1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
+> -
+> -[2] https://man.openbsd.org/mimmutable.2
+> -
+> -[3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
+> -
+> -[4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
+> +- [1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
+> +- [2] https://man.openbsd.org/mimmutable.2
+> +- [3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
+> +- [4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
 
