@@ -1,216 +1,539 @@
-Return-Path: <linux-kernel+bounces-342339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D701B988DBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 448EF988DBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 05:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE17B1C21106
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56DAD1C2123A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 03:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA55E1531D8;
-	Sat, 28 Sep 2024 03:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B0243146;
+	Sat, 28 Sep 2024 03:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGa8siSW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i/X6VBEp"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD753218B;
-	Sat, 28 Sep 2024 03:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FA25221
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 03:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727493906; cv=none; b=gjxniQHBbhqSuPGP+acVN0TLKM3Xnj1P92fXMTShTZxv4xvi9bsylEoqknHGqEftXOmM23Z2Uies66I7inDCevjbHjpMJIHAf48+TBGgViINNFkXViixw4mjfI6RAUhWk13L5aKwc9o5fcqTcfgD29qDapvufkryiFH7U8K58nc=
+	t=1727494977; cv=none; b=rgpBbCjcJ1dbtOFWCU99SRVetrH6oqxYgfRtn5/qQg9Gu+g0mOT9NUeIdEReBFGi9iT47KAnxo/VYlYY9SbgalXU10o6jWs98UEVwNoeviZQ3TLISSCVeaeLhug5hZrEe3qAp9/t7NczkLRzzcKqzuugeJqiADVxyVaFr7sOR4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727493906; c=relaxed/simple;
-	bh=oSv/hrz5syVfs0mQq+pOXzwhXAzulQxdP2NB6+XqghA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YiDrOZmc9BHMLh+dM7g3YqqIL/ZVTs9MMqoCTUKc6OzJF0QRc/Kr/f1JMdrC0nVTLssimSB26hvn/MfURx7691O/oCrP660/PZVEXUvL2tVWYzyB/Yar/9xtrz+6QCaimZOj5ObZn5FGsJrJgY7m+0WDoFX2pyETi2pAKgbgOEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGa8siSW; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727493905; x=1759029905;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oSv/hrz5syVfs0mQq+pOXzwhXAzulQxdP2NB6+XqghA=;
-  b=RGa8siSWahNDnHkDf1NK0foFRiuLzNEnAK6pqmVjEo+iL9ZaUQAfC9Wk
-   UYREw9/KF//DKgHcvJ3NQotkqgaPyUqcuScvu392RPS+YR0k8vuFV3kd9
-   H2UMrAdSZaV+w5Tim6cQB03Yl/arS31dy06WwvcGb2MONQBhTn7lDPEao
-   u+d/vKL07dguG1b7xRA6FEKIq/2OOkPxQ1sH7xkHkzPZ3OLXCL23dGuKc
-   3dZYXyIcoAbjfgqHxGPNMl4P+5sG92UR8VqftdiL94uHH65ab/UpqYfNB
-   N6izs95m+DbViPPwehnGiZcSYRxcKsxRZIJXpjUKuucjvy0TT2bSYPDu5
-   Q==;
-X-CSE-ConnectionGUID: Z1nhGa9QScqQpKXH9vBXkw==
-X-CSE-MsgGUID: EyKkwSthR7aVHdYfN996+g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11208"; a="26519934"
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="26519934"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Sep 2024 20:25:04 -0700
-X-CSE-ConnectionGUID: 9JmC+vnRTlKbrrThEK3U5g==
-X-CSE-MsgGUID: rPHb/3AKSrC+aAovPzJwiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,160,1725346800"; 
-   d="scan'208";a="72785976"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 27 Sep 2024 20:24:59 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suO4m-000Mt3-1O;
-	Sat, 28 Sep 2024 03:24:56 +0000
-Date: Sat, 28 Sep 2024 11:24:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Subject: Re: [PATCH v4 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs
- support
-Message-ID: <202409281117.IOrJBXgL-lkp@intel.com>
-References: <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1727494977; c=relaxed/simple;
+	bh=bZgsbldm4+g8ilcDtW5Mc+YBl5Rx47Rv7/qCck/3xYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RtUmd+IFOnp9YXunLauVcFjt3XKZD5yeSQ0gn4PR3UF4ktsOm0KJ1VOrqS6s2JFFi48sXQpp7qdEv/f4nMRCYHKnYHdgxbOC2yaA2SvKYR/ztytl3VJxAFr9xRw5ugKI3LPUoV/ulij2W/248c3fuL6TXsEZhdZ2CXexY64XqGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i/X6VBEp; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d43657255so398474366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Sep 2024 20:42:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727494974; x=1728099774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q5Tooe2W/E7vFrH7KKO3y3dPr7020Ccg8U9NuOwl7pg=;
+        b=i/X6VBEpTtftik4mJqVVsFHnFGtiw25BMkq0DX1jD6w3hLY0oJdixXWRXWUNwK2fyJ
+         O+W1esPSd0+U5oAMluZdSE0JRUv9cBQHxH82gp2pwiIjSoHbZ8T7spPRs3xnMOXwU+O8
+         Gka+XkQy/8fa9nSnBuvOvnJZ5s9fiBK1nx+05Q+/mS1LNaBWFTTFXDzcQTZIfHiH6uhX
+         AbneBSNKUgV8iZEOPcuwioho5LOJwALvMSY6OYV2JB5SM12KTb89PRMh2WEUOvhcBIMj
+         3vzSrgaQWQHC7ssEsj14zWmiOHdnYnjfK6gt7iNYbpq/nZEJ1t86WW5bYZmRGJmXPnma
+         o32A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727494974; x=1728099774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q5Tooe2W/E7vFrH7KKO3y3dPr7020Ccg8U9NuOwl7pg=;
+        b=lUQz6HMxGzcSv2Ozs6G7iZebB8qyguyFCV0pfshplhRP5WpmiqFDzww7I/fJMqd7xC
+         fcvwsXb4+XZ+aiDn1VJppPIgI8MndaM+3tQ3XRQrBUNdRNmfKVyzLatSX2iV33BZKbCy
+         tsH9RTed1Y8C5e8DzxS5u6wF8N79HcvYdz1nPeMDx+Q+gmAWHwpVE5C3SQ0rqEtPEuxm
+         0T/gbQnKMPQcK8iTOISIvHXOqg1NTHCQLeOr7VCK7AX5NKQC3E9z1k74K9pMEcKHUtmv
+         1WLluoW7jmSaTaqFSxZNP03xNXILTEGsFG99VybFNQgK8RjVBeo7TyPg5Luaec5hvK5k
+         jYqg==
+X-Gm-Message-State: AOJu0YyWv/SM1COIVvV5Y2urAXehrHitKeRwEWkxUp6CK7gL6UpntLgP
+	Xlor7tU0IcW7PIoHUc/0cs40tGkUwl0b8rKW3Hj1pShs0HoqnQ/26D4l90wVg9N8gpfH2J+xKR7
+	V5PeQds/Y7Aegf2X+/5D76HrdPzPZQV+vfIbo
+X-Google-Smtp-Source: AGHT+IHHJjBitiahFzT6xIDEBXMg1wTVjKX6UJg0YkCO2kCeKKQY3gdmTuvGZLPC3hW0xyIRmUGIiu3arD4Bo+9xoTk=
+X-Received: by 2002:a17:907:1b03:b0:a8a:8cdb:83a7 with SMTP id
+ a640c23a62f3a-a93c4aa6c29mr504838666b.54.1727494973522; Fri, 27 Sep 2024
+ 20:42:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
+References: <20240928021620.8369-1-kanchana.p.sridhar@intel.com> <20240928021620.8369-7-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240928021620.8369-7-kanchana.p.sridhar@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 27 Sep 2024 20:42:16 -0700
+Message-ID: <CAJD7tkZRTAiEJQpg96zqDye3ViCfvBsMM1Ozmcs75e__WcF0kQ@mail.gmail.com>
+Subject: Re: [PATCH v8 6/8] mm: zswap: Support large folios in zswap_store().
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, nanhai.zou@intel.com, 
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrei,
+On Fri, Sep 27, 2024 at 7:16=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> zswap_store() will store large folios by compressing them page by page.
+>
+> This patch provides a sequential implementation of storing a large folio
+> in zswap_store() by iterating through each page in the folio to compress
+> and store it in the zswap zpool.
+>
+> Towards this goal, zswap_compress() is modified to take a page instead
+> of a folio as input.
 
-kernel test robot noticed the following build errors:
+It is already modified at this point, it's not part of this patch.
 
-[auto build test ERROR on brgl/gpio/for-next]
-[also build test ERROR on driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus robh/for-next linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> Each page's swap offset is stored as a separate zswap entry.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrei-Stefanescu/drivers-provide-devm_platform_get_and_ioremap_resource_byname/20240926-223448
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20240926143122.1385658-4-andrei.stefanescu%40oss.nxp.com
-patch subject: [PATCH v4 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs support
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240928/202409281117.IOrJBXgL-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240928/202409281117.IOrJBXgL-lkp@intel.com/reproduce)
+I think "Each page is compressed individually and stored as a separate
+zswap entry" is clearer. We do not store the offsets.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409281117.IOrJBXgL-lkp@intel.com/
+>
+> We check the cgroup zswap limit and the zpool utilization against
+> the zswap max/accept_threshold limits once, at the beginning of
+> zswap_store. We also obtain a percpu_ref_tryget() reference to the
+> current zswap_pool at the start of zswap_store to prevent it from
+> being deleted while the folio is being stored.
 
-All error/warnings (new ones prefixed by >>):
+This can be clarified further:
 
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/gpio/gpio-siul2-s32g2.c:11:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/gpio/gpio-siul2-s32g2.c:296:32: warning: comparison of distinct pointer types ('typeof ((size)) *' (aka 'unsigned int *') and 'uint64_t *' (aka 'unsigned long long *')) [-Wcompare-distinct-pointer-types]
-     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
-         |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:222:28: note: expanded from macro 'do_div'
-     222 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
-         |                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
->> drivers/gpio/gpio-siul2-s32g2.c:296:32: error: incompatible pointer types passing 'resource_size_t *' (aka 'unsigned int *') to parameter of type 'uint64_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
-     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
-         |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:238:22: note: expanded from macro 'do_div'
-     238 |                 __rem = __div64_32(&(n), __base);       \
-         |                                    ^~~~
-   include/asm-generic/div64.h:213:38: note: passing argument to parameter 'dividend' here
-     213 | extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
-         |                                      ^
->> drivers/gpio/gpio-siul2-s32g2.c:296:32: warning: shift count >= width of type [-Wshift-count-overflow]
-     296 |                 conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
-         |                                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:234:25: note: expanded from macro 'do_div'
-     234 |         } else if (likely(((n) >> 32) == 0)) {          \
-         |                                ^  ~~
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   8 warnings and 1 error generated.
+We check the global and per-cgroup limits once at the beginning, and
+only check that the limit is not reached yet. This is racy and
+inaccurate, but it should be sufficient for now. We also obtain
+initial references to the relevant objcg and pool to guarantee that
+subsequent references can be acquired by zswap_store_page().
 
+>
+> If these one-time checks pass, we compress the sub-pages of the folio,
+> while maintaining a running count of compressed bytes for all the folio's
+> sub-pages. If all pages are successfully compressed and stored, we do the
+> cgroup zswap charging with the total compressed bytes, and batch update
+> the zswap_stored_pages atomic/zswpout event stats with folio_nr_pages()
+> once, before returning from zswap_store.
 
-vim +296 drivers/gpio/gpio-siul2-s32g2.c
+Please consistently use "page" instead of "sub-page", and add "()" to
+the end of function names.
 
-   273	
-   274	static struct regmap *common_regmap_init(struct platform_device *pdev,
-   275						 struct regmap_config *conf,
-   276						 const char *name)
-   277	{
-   278		struct device *dev = &pdev->dev;
-   279		struct resource *res;
-   280		resource_size_t size;
-   281		void __iomem *base;
-   282	
-   283		base = devm_platform_get_and_ioremap_resource_byname(pdev, name, &res);
-   284		if (IS_ERR(base)) {
-   285			dev_err(&pdev->dev, "Failed to get MEM resource: %s\n", name);
-   286			return ERR_PTR(-EINVAL);
-   287		}
-   288	
-   289		size = resource_size(res);
-   290		conf->val_bits = conf->reg_stride * 8;
-   291		conf->max_register = size - conf->reg_stride;
-   292		conf->name = name;
-   293		conf->use_raw_spinlock = true;
-   294	
-   295		if (conf->cache_type != REGCACHE_NONE)
- > 296			conf->num_reg_defaults_raw = do_div(size, conf->reg_stride);
-   297	
-   298		return devm_regmap_init_mmio(dev, base, conf);
-   299	}
-   300	
+>
+> The patch adds a new zswap_pool_get() function that is called in the
+> sub-page level "zswap_store_page()" function.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+"that is called by zswap_store_page(), which handles compressing and
+storing each page in the folio."
+
+>
+> If an error is encountered during the store of any page in the folio,
+> all pages in that folio currently stored in zswap will be invalidated.
+> Thus, a folio is either entirely stored in zswap, or entirely not stored
+> in zswap.
+>
+> This patch forms the basis for building compress batching of pages in a
+> large folio in zswap_store by compressing up to say, 8 pages of the folio
+> in parallel in hardware using the Intel In-Memory Analytics Accelerator
+> (Intel IAA).
+
+This patch also has its own merits, it batches some operations, and
+more importantly enables swapping out large folios to zswap without
+splitting them.
+
+>
+> This change reuses and adapts the functionality in Ryan Roberts' RFC
+> patch [1]:
+>
+>   "[RFC,v1] mm: zswap: Store large folios without splitting"
+>
+>   [1] https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.robe=
+rts@arm.com/T/#u
+>
+> Also, addressed some of the RFC comments from the discussion in [1].
+>
+> Co-developed-by: Ryan Roberts
+> Signed-off-by:
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  mm/zswap.c | 227 ++++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 165 insertions(+), 62 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 43e4e216db41..b8395ddf7b7c 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -411,6 +411,16 @@ static int __must_check zswap_pool_tryget(struct zsw=
+ap_pool *pool)
+>         return percpu_ref_tryget(&pool->ref);
+>  }
+>
+> +/*
+> + * Note: zswap_pool_get() should only be called after zswap_pool_tryget(=
+)
+> + * returns success. zswap_pool_tryget() returns success only if the "poo=
+l" is
+> + * non-NULL and the "&pool->ref" is non-0.
+
+Just use the same statement used by css_get():
+
+"The caller must already have a reference."
+
+> + */
+> +static void zswap_pool_get(struct zswap_pool *pool)
+> +{
+> +       percpu_ref_get(&pool->ref);
+> +}
+> +
+>  static void zswap_pool_put(struct zswap_pool *pool)
+>  {
+>         percpu_ref_put(&pool->ref);
+> @@ -1402,38 +1412,35 @@ static void shrink_worker(struct work_struct *w)
+>  /*********************************
+>  * main API
+>  **********************************/
+> -bool zswap_store(struct folio *folio)
+> +
+> +/*
+> + * Stores the page at specified "index" in a folio.
+> + *
+> + * @folio: The folio to store in zswap.
+> + * @index: Index into the page in the folio that this function will stor=
+e.
+> + * @objcg: The folio's objcg.
+> + * @pool:  The zswap_pool to store the compressed data for the page.
+> + *         The caller should have obtained a reference to a valid
+> + *         zswap_pool by calling zswap_pool_tryget(), to pass as this
+> + *         argument.
+> + * @compressed_bytes: The compressed entry->length value is added
+> + *                    to this, so that the caller can get the total
+> + *                    compressed lengths of all sub-pages in a folio.
+> + */
+> +static bool zswap_store_page(struct folio *folio, long index,
+> +                            struct obj_cgroup *objcg,
+> +                            struct zswap_pool *pool,
+> +                            size_t *compressed_bytes)
+
+Would it be clearer to just return the compressed size, and return -1
+upon failure?
+
+>  {
+> +       struct page *page =3D folio_page(folio, index);
+>         swp_entry_t swp =3D folio->swap;
+> -       pgoff_t offset =3D swp_offset(swp);
+>         struct xarray *tree =3D swap_zswap_tree(swp);
+> +       pgoff_t offset =3D swp_offset(swp) + index;
+>         struct zswap_entry *entry, *old;
+> -       struct obj_cgroup *objcg =3D NULL;
+> -       struct mem_cgroup *memcg =3D NULL;
+> -
+> -       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> -       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+> +       int type =3D swp_type(swp);
+
+Why do we need type? We use it when initializing entry->swpentry to
+reconstruct the swp_entry_t we already have.
+
+>
+> -       /* Large folios aren't supported */
+> -       if (folio_test_large(folio))
+> -               return false;
+> -
+> -       if (!zswap_enabled)
+> -               goto check_old;
+> -
+> -       /* Check cgroup limits */
+> -       objcg =3D get_obj_cgroup_from_folio(folio);
+> -       if (objcg && !obj_cgroup_may_zswap(objcg)) {
+> -               memcg =3D get_mem_cgroup_from_objcg(objcg);
+> -               if (shrink_memcg(memcg)) {
+> -                       mem_cgroup_put(memcg);
+> -                       goto reject;
+> -               }
+> -               mem_cgroup_put(memcg);
+> -       }
+> -
+> -       if (zswap_check_limits())
+> -               goto reject;
+> +       if (objcg)
+> +               obj_cgroup_get(objcg);
+>
+>         /* allocate entry */
+>         entry =3D zswap_entry_cache_alloc(GFP_KERNEL, folio_nid(folio));
+> @@ -1442,24 +1449,21 @@ bool zswap_store(struct folio *folio)
+>                 goto reject;
+>         }
+>
+> -       /* if entry is successfully added, it keeps the reference */
+> -       entry->pool =3D zswap_pool_current_get();
+> -       if (!entry->pool)
+> -               goto freepage;
+> +       /*
+> +        * We get here only after the call to zswap_pool_tryget() in the
+> +        * caller, zswap_store(), has returned success. Hence it is safe
+> +        * to call zswap_pool_get().
+> +        *
+> +        * if entry is successfully added, it keeps the reference
+> +        */
+> +       zswap_pool_get(pool);
+
+I would move this right above obj_cgroup_get() and have a single
+concise comment for both, e.g.:
+
+/* zswap_store() already holds a ref on 'pool' and 'objcg' */
+
+>
+> -       if (objcg) {
+> -               memcg =3D get_mem_cgroup_from_objcg(objcg);
+> -               if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERN=
+EL)) {
+> -                       mem_cgroup_put(memcg);
+> -                       goto put_pool;
+> -               }
+> -               mem_cgroup_put(memcg);
+> -       }
+> +       entry->pool =3D pool;
+>
+> -       if (!zswap_compress(&folio->page, entry))
+> +       if (!zswap_compress(page, entry))
+>                 goto put_pool;
+>
+> -       entry->swpentry =3D swp;
+> +       entry->swpentry =3D swp_entry(type, offset);
+>         entry->objcg =3D objcg;
+>         entry->referenced =3D true;
+>
+> @@ -1480,11 +1484,6 @@ bool zswap_store(struct folio *folio)
+>         if (old)
+>                 zswap_entry_free(old);
+>
+> -       if (objcg) {
+> -               obj_cgroup_charge_zswap(objcg, entry->length);
+> -               count_objcg_event(objcg, ZSWPOUT);
+> -       }
+> -
+>         /*
+>          * We finish initializing the entry while it's already in xarray.
+>          * This is safe because:
+> @@ -1496,36 +1495,140 @@ bool zswap_store(struct folio *folio)
+>          *    an incoherent entry.
+>          */
+>         if (entry->length) {
+> +               *compressed_bytes +=3D entry->length;
+>                 INIT_LIST_HEAD(&entry->lru);
+>                 zswap_lru_add(&zswap_list_lru, entry);
+>         }
+>
+> -       /* update stats */
+> -       atomic_long_inc(&zswap_stored_pages);
+> -       count_vm_event(ZSWPOUT);
+> -
+>         return true;
+>
+>  store_failed:
+>         zpool_free(entry->pool->zpool, entry->handle);
+>  put_pool:
+> -       zswap_pool_put(entry->pool);
+> -freepage:
+> +       zswap_pool_put(pool);
+>         zswap_entry_cache_free(entry);
+>  reject:
+
+Please rename this to put_objcg, we are no longer "rejecting" here.
+
+>         obj_cgroup_put(objcg);
+> -       if (zswap_pool_reached_full)
+> -               queue_work(shrink_wq, &zswap_shrink_work);
+> -check_old:
+> +       return false;
+> +}
+> +
+> +bool zswap_store(struct folio *folio)
+> +{
+> +       long nr_pages =3D folio_nr_pages(folio);
+> +       swp_entry_t swp =3D folio->swap;
+> +       struct xarray *tree =3D swap_zswap_tree(swp);
+> +       pgoff_t offset =3D swp_offset(swp);
+> +       struct obj_cgroup *objcg =3D NULL;
+> +       struct mem_cgroup *memcg =3D NULL;
+> +       struct zswap_pool *pool;
+> +       size_t compressed_bytes =3D 0;
+
+Why size_t? entry->length is int.
+
+> +       bool ret =3D false;
+> +       long index;
+> +
+> +       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> +       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+> +
+> +       if (!zswap_enabled)
+> +               goto reject;
+> +
+>         /*
+> -        * If the zswap store fails or zswap is disabled, we must invalid=
+ate the
+> -        * possibly stale entry which was previously stored at this offse=
+t.
+> -        * Otherwise, writeback could overwrite the new data in the swapf=
+ile.
+> +        * Check cgroup zswap limits:
+> +        *
+> +        * The cgroup zswap limit check is done once at the beginning of
+> +        * zswap_store(). The cgroup charging is done once, at the end
+> +        * of a successful folio store. What this means is, if the cgroup
+> +        * was within the zswap_max limit at the beginning of a large fol=
+io
+> +        * store, it could go over the limit by at most (HPAGE_PMD_NR - 1=
+)
+> +        * pages.
+
+Add ".. due to this store", as it can be much more over the limit when
+stores are racing. Also, this comment can be slightly generalized and
+the comment above zswap_check_limits() omitted.
+
+>          */
+> -       entry =3D xa_erase(tree, offset);
+> -       if (entry)
+> -               zswap_entry_free(entry);
+> -       return false;
+> +       objcg =3D get_obj_cgroup_from_folio(folio);
+> +       if (objcg && !obj_cgroup_may_zswap(objcg)) {
+> +               memcg =3D get_mem_cgroup_from_objcg(objcg);
+> +               if (shrink_memcg(memcg)) {
+> +                       mem_cgroup_put(memcg);
+> +                       goto put_objcg;
+> +               }
+> +               mem_cgroup_put(memcg);
+> +       }
+> +
+> +       /*
+> +        * Check zpool utilization against zswap limits:
+> +        *
+> +        * The zswap zpool utilization is also checked against the limits
+> +        * just once, at the start of zswap_store(). If the check passes,
+> +        * any breaches of the limits set by zswap_max_pages() or
+> +        * zswap_accept_thr_pages() that may happen while storing this
+> +        * folio, will only be detected during the next call to
+> +        * zswap_store() by any process.
+> +        */
+> +       if (zswap_check_limits())
+> +               goto put_objcg;
+> +
+> +       pool =3D zswap_pool_current_get();
+> +       if (!pool)
+> +               goto put_objcg;
+> +
+> +       if (objcg) {
+> +               memcg =3D get_mem_cgroup_from_objcg(objcg);
+> +               if (memcg_list_lru_alloc(memcg, &zswap_list_lru, GFP_KERN=
+EL)) {
+> +                       mem_cgroup_put(memcg);
+> +                       goto put_pool;
+> +               }
+> +               mem_cgroup_put(memcg);
+> +       }
+> +
+> +       /*
+> +        * Store each page of the folio as a separate entry. If we fail t=
+o
+> +        * store a page, unwind by deleting all the pages for this folio
+> +        * currently in zswap.
+> +        */
+> +       for (index =3D 0; index < nr_pages; ++index) {
+> +               if (!zswap_store_page(folio, index, objcg, pool, &compres=
+sed_bytes))
+> +                       goto put_pool;
+> +       }
+> +
+> +       /*
+> +        * All pages in the folio have been successfully stored.
+> +        * Batch update the cgroup zswap charging, zswap_stored_page atom=
+ic,
+> +        * and ZSWPOUT event stats.
+> +        */
+
+This comment seems unnecessary.
+
+> +       if (objcg) {
+> +               obj_cgroup_charge_zswap(objcg, compressed_bytes);
+> +               count_objcg_events(objcg, ZSWPOUT, nr_pages);
+> +       }
+> +
+> +       /* update stats */
+
+Please delete this comment too.
+
+> +       atomic_long_add(nr_pages, &zswap_stored_pages);
+> +       count_vm_events(ZSWPOUT, nr_pages);
+> +
+> +       ret =3D true;
+> +
+> +put_pool:
+> +       zswap_pool_put(pool);
+> +put_objcg:
+> +       obj_cgroup_put(objcg);
+> +reject:
+> +       /*
+> +        * If the zswap store fails or zswap is disabled, we must invalid=
+ate
+> +        * the possibly stale entries which were previously stored at the
+> +        * offsets corresponding to each page of the folio. Otherwise,
+> +        * writeback could overwrite the new data in the swapfile.
+> +        */
+> +       if (!ret) {
+> +               struct zswap_entry *entry;
+> +               long i;
+> +
+> +               for (i =3D 0; i < nr_pages; ++i) {
+
+Just reuse 'index' here.
+
+> +                       entry =3D xa_erase(tree, offset + i);
+> +                       if (entry)
+> +                               zswap_entry_free(entry);
+
+I think we need a comment in zswap_store_page() that we shouldn't have
+any possibility of failure after the entry is added in the tree.
+Otherwise we may duplicate the cleanup work here (e.g. putting refs).
+This is already the case in zswap_store(), but it's now more subtle
+and easier to break when the code is split and we have two cleanup
+paths.
+
+> +               }
+> +
+> +               if (zswap_pool_reached_full)
+> +                       queue_work(shrink_wq, &zswap_shrink_work);
+
+We are now doing this check even when zswap is disabled. I think this
+is a problem.
+
+If zswap gets disabled while 'zswap_pool_reached_full' is true, we
+will queue 'zswap_shrink_work' every time zswap_store() is called in
+the swapout path, but 'zswap_pool_reached_full' will never become
+false again become zswap_check_limits() will never be called.
+
+I think we need to maintain two separate "reject" and "check_old"
+labels, and avoid this check when zswap is disabled.
+
+> +       }
+> +
+> +       return ret;
+>  }
+>
+>  bool zswap_load(struct folio *folio)
+> --
+> 2.27.0
+>
 
