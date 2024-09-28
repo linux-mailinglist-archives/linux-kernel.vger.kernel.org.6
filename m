@@ -1,76 +1,147 @@
-Return-Path: <linux-kernel+bounces-342390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70260988E66
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:10:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AD5988E67
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08701C20FD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D861F216B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA8A19DF98;
-	Sat, 28 Sep 2024 08:10:40 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB4E19DF9F;
+	Sat, 28 Sep 2024 08:11:17 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F6012E75
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F6619DF68
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727511040; cv=none; b=aM5/zxQIjWLKngAiAe5omGJWXxx0dUw5AI/PXUbwyt0yo+TPTJvbI5aKrIfTdRew4L5Uz+aNzYIuXbCjYMYLGVoNy9GdKFG/k7kJq7lolVw3S3VrqczI1QiFSs/PlM3OC6NlT1ucQXJmZ3+9GQ6U80MMxuhrVld1knCtzQE60EY=
+	t=1727511076; cv=none; b=eW4SKlcC1yIizX1hEZilmNwZJC2VTDRLP8StkL6DDfIY0MCoU0WPsoB8yYBm9udHkbZ7dJvqL1vpUAmt6Tew7Owu2U5N2DnES0UaU63eho2Tkfl3i7KsFoneyLls2D7IsLIhRaXHqYzt3sUQ8geHd1LntbZkwgjmMeb+1XJxsRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727511040; c=relaxed/simple;
-	bh=fRfIT8CvIN9d9jK5p8f0+xU6O6H0GGw8T7y5yiFomYg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rChr53hIUZQsgzJulUgC3aUyJdUfkpFfyKpeq+s/Pg97S7cA/AH7E7HgyBl72ksNLM5Jx+mPBwSHxPfjGxKGUhuWGB+AIcDYe+vMsGFIV8h8iXjLP5YtneJD8G4sjCJ/qHhwNLbQKjvgBhTNWCVTSX/aNtZyTYM+SnqA1/L1JPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3440fc2d3so23991725ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 01:10:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727511038; x=1728115838;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fRfIT8CvIN9d9jK5p8f0+xU6O6H0GGw8T7y5yiFomYg=;
-        b=Q9Hs44CLLNC/xwA5WQ1MvVz/K4L1xma9rKdULbxlCgqQxOzTeXWRC7ho3301kZKonP
-         KWtLshZAZ19Ty8NUV6iFw+7VVbm5iy+MKAlm/6X4izJ3z8Fm+4uoic5nQJUxN+vwp1IY
-         pvsdk5QlsvNYTKK5JpJ9FRaFKpjNaY9+nbTBnuUOro+4/8yxHBy7FVsMhhbBrzS6Os2J
-         jmTjk5BUtNxt15fXpHdkwvOpdgKq4ORpo3G33xE+eCEg9Kw3hgXQlSuIQVDW1Kf64INp
-         GQxsKlv3iqRUB3KOloZ3+/KGYxRBsDvN1LY/8tqN97Xlq1tSWjPWrBeDk0Zv01t5iSxw
-         wKXw==
-X-Gm-Message-State: AOJu0YxpSZXl7P1cIqVfrOMxK+pTeS0iWewlh1hJ07IQoxTV8afwAs82
-	0HUuRt6o3X+CvcWCxMyH7mqqHh4WwPly1LLfb2FcBKqdftGbUSZ6bj2X9CRw6UgBS+ihfi/GipB
-	ugQ6SZyHKxwZFKy7yrwWO671GeglqLO0gu+vamT2aCrVeA2tz8JH3ta4=
-X-Google-Smtp-Source: AGHT+IGL3SCRZBsM8U8ixOuU8bTmJej1u1bFM0jrlwqx28l2Dzv2YKh4RueC2aHcyGMTkN3814f/l1DibFHeLl6Z2qoZo6EOgsSl
+	s=arc-20240116; t=1727511076; c=relaxed/simple;
+	bh=lF7oWfVNPWoj+tqpSVRTYTEtBKR4j+C9DYvfCQxL0v4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CkYtRArWK042Ep/xmPBvv2PD4Q+CzvsF0tEZ6TBX5JtNqzremgQl3RV52jhG8H/hUhyvh/BSFQntQUknN3nrprYgOMaaDQ7DNzL1IzZueO09X3CIhjb2j8ajzvuOe8XywnVmCYh1KV0SCC2ZlEHUdUIRDaqm+ZQhZL7wYBliWNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav313.sakura.ne.jp (fsav313.sakura.ne.jp [153.120.85.144])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 48S8BBx7052959;
+	Sat, 28 Sep 2024 17:11:11 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav313.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp);
+ Sat, 28 Sep 2024 17:11:11 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav313.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 48S8BBYs052955
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 28 Sep 2024 17:11:11 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <4f35b6c1-c05f-4475-a4e6-3760eefbe6b0@I-love.SAKURA.ne.jp>
+Date: Sat, 28 Sep 2024 17:11:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c56f:0:b0:3a2:7651:9850 with SMTP id
- e9e14a558f8ab-3a34516eadcmr57785525ab.12.1727511037720; Sat, 28 Sep 2024
- 01:10:37 -0700 (PDT)
-Date: Sat, 28 Sep 2024 01:10:37 -0700
-In-Reply-To: <000000000000bc46690617606123@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f7b9fd.050a0220.46d20.003b.GAE@google.com>
-Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in dtReadFirst
-From: syzbot <syzbot+65fa06e29859e41a83f3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+To: Hillf Danton <hdanton@sina.com>, Michal Koutny <mkoutny@suse.com>
+Cc: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+        cgroups@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20240817093334.6062-1-chenridong@huawei.com>
+ <20240817093334.6062-2-chenridong@huawei.com>
+ <20240911111542.2781-1-hdanton@sina.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20240911111542.2781-1-hdanton@sina.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On 2024/09/11 20:15, Hillf Danton wrote:
+> On Mon, 9 Sep 2024 16:19:38 +0200 Michal Koutny <mkoutny@suse.com>
+>> On Sat, Aug 17, 2024 at 09:33:34AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
+>>> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+>>> acquired in different tasks, which may lead to deadlock.
+>>> It can lead to a deadlock through the following steps:
+>>> 1. A large number of cpusets are deleted asynchronously, which puts a
+>>>    large number of cgroup_bpf_release works into system_wq. The max_active
+>>>    of system_wq is WQ_DFL_ACTIVE(256). Consequently, all active works are
+>>>    cgroup_bpf_release works, and many cgroup_bpf_release works will be put
+>>>    into inactive queue. As illustrated in the diagram, there are 256 (in
+>>>    the acvtive queue) + n (in the inactive queue) works.
+> Given no workqueue work executed without being dequeued, any queued work,
+> regardless if they are more than 2048, that acquires cgroup_mutex could not
+> prevent the work queued by thread-T from being executed, so thread-T can
+> make safe forward progress, therefore with no chance left for the ABBA 
+> deadlock you spotted where lockdep fails to work.
 
-***
+I made a simple test which queues many work items into system_wq and
+measures time needed for flushing last work item.
 
-Subject: UBSAN: array-index-out-of-bounds in dtReadFirst
-Author: ghanshyam1898@gmail.com
+As number of work items increased, time needed also increased.
+Although nobody uses flush_workqueue() on system_wq, several users
+use flush_work() on work item in system_wq. Therefore, I think that
+queuing thousands of work items in system_wq should be avoided,
+regardless of whether there is possibility of deadlock.
 
-#syz test
+----------------------------------------
+#include <linux/module.h>
+#include <linux/workqueue.h>
+
+static void worker_func(struct work_struct *work)
+{
+        schedule_timeout_uninterruptible(HZ);
+}
+
+#define MAX_WORKS 8192
+static struct work_struct works[MAX_WORKS];
+
+static int __init test_init(void)
+{
+        int i;
+        unsigned long start, end;
+
+        for (i = 0; i < MAX_WORKS; i++) {
+                INIT_WORK(&works[i], worker_func);
+                schedule_work(&works[i]);
+        }
+        start = jiffies;
+        flush_work(&works[MAX_WORKS - 1]);
+        end = jiffies;
+        printk("%u: Took %lu jiffies. (HZ=%u)\n", MAX_WORKS, end - start, HZ);
+        for (i = 0; i < MAX_WORKS; i++)
+                flush_work(&works[i]);
+        return -EINVAL;
+}
+
+module_init(test_init);
+MODULE_LICENSE("GPL");
+----------------------------------------
+
+12 CPUs
+256: Took 1025 jiffies. (HZ=1000)
+512: Took 2091 jiffies. (HZ=1000)
+1024: Took 4105 jiffies. (HZ=1000)
+2048: Took 8321 jiffies. (HZ=1000)
+4096: Took 16382 jiffies. (HZ=1000)
+8192: Took 32770 jiffies. (HZ=1000)
+
+1 CPU
+256: Took 1133 jiffies. (HZ=1000)
+512: Took 2047 jiffies. (HZ=1000)
+1024: Took 4117 jiffies. (HZ=1000)
+2048: Took 8210 jiffies. (HZ=1000)
+4096: Took 16424 jiffies. (HZ=1000)
+8192: Took 32774 jiffies. (HZ=1000)
+
 
