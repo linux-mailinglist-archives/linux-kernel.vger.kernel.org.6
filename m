@@ -1,211 +1,199 @@
-Return-Path: <linux-kernel+bounces-342660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA6B98915E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95291989162
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 22:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87760B23957
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:36:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7E0B23999
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1216EBE6;
-	Sat, 28 Sep 2024 20:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hIwEGvXJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273BA167271;
+	Sat, 28 Sep 2024 20:44:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981E8155392;
-	Sat, 28 Sep 2024 20:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEF114A0B8
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 20:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727555798; cv=none; b=qJbyvLWyOHU4Bv57YbA85l2HqBZRXe5OTzhYPeBTdjD/Sj7TKg8dzl+BEXODoPoVXjXBejlExeT5wk64pVPw/e5ADYuKuYEp526jVwlH69py7hstZKHw8hCD5q/1EB2/8MxcwMudWQISXfUCPiUaUuGVGBV02J3y/WEvOpdFJ5g=
+	t=1727556268; cv=none; b=jMY8623uGlcTrmW9m1dRexCEiuk5RIROuO/OTq0Ya2FW6SclXKF0rYQI6SodzrivZv1LcYOat6hQMQuCP3k2gR4c5g5FivhEmojw+Xm/DNiCXRZXCIYDj8aCdb3uwEXgN1ddZDB1UQXWsajglciraBFjA/UsgnUcqGpxym07ub0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727555798; c=relaxed/simple;
-	bh=UwHG3HqVOfImzYmMh1JIgFdKgk5LEdjVPTFFdkKkbCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/WyuB5VZuYxJoPa0ZrYGTOeDizOg3k3+p/3N1PVIhEgKo/M1AIZCai5895CWgga7R/eVpiEKEg+V0oCHVCyd8YaTTGzf1nXNDkOF6JKkLrrJGl4hn/J7Mly8jr0gvn0yodHue5FUijNwafrwxSATMJ8psgDDO5cYK51PEOWeNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hIwEGvXJ; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727555796; x=1759091796;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UwHG3HqVOfImzYmMh1JIgFdKgk5LEdjVPTFFdkKkbCo=;
-  b=hIwEGvXJLa/FtWnD18I0UVSLfNMgN/Zgeu3sW26wlcSUgzEpkcynwMZq
-   Ff6z0KDpO47Pi91VK31zyAtxFxoqSmHc3I8W8ty5VhlpvmSR/WcGa7ZRZ
-   wrog9M50hTeAfQhOFw07dfBehQLot+mJ6NA9LTopMLGqMMT3b4JfGKfV7
-   GfNq2ZqaDzGHQMAw2hjI7g855MbwjBThlPapm4wGQuA17PW4YG0OqomlS
-   68z6R496ESiX5Oa1qCWB8psWt1Qx3veOzMSvNsvRKUA6AdEtwkC+Pi+2H
-   G0NvYBtAkqR5mvctVTg5Gd8XJz/j7Lp3box1q367QAaTtfl8axGs4TlT2
-   A==;
-X-CSE-ConnectionGUID: 8pLxW9UnQsekRZ9RnSmSAg==
-X-CSE-MsgGUID: QyB1AkOZRHKy6/M+z0IRXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26841306"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="26841306"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 13:36:36 -0700
-X-CSE-ConnectionGUID: LdeSy/NhTzq7MHNadFAVXw==
-X-CSE-MsgGUID: 10+AgxwNRUeWz84pomsVuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="77654173"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 28 Sep 2024 13:36:32 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sueB3-000Nar-2q;
-	Sat, 28 Sep 2024 20:36:29 +0000
-Date: Sun, 29 Sep 2024 04:35:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_rampraka@quicinc.com,
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
-Subject: Re: [PATCH] qcom: ice: Remove ice probe
-Message-ID: <202409290409.BkBQ6BVX-lkp@intel.com>
-References: <20240928050456.27577-1-quic_spuppala@quicinc.com>
+	s=arc-20240116; t=1727556268; c=relaxed/simple;
+	bh=xK92XJKpvl2jznIpsqasxgaiZMbexEahTGhd22IAd+0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YZUMwNin8WOpluZE5Hd1KeJGN3eKy9ZmqHjz07k5PPV5sx1rN/ENfjobXwfTb1De6bJ9ZW4ygFN6gOLYIvzqJFE7j7UMEo4V2LqqvW/KvVU1911widVhxCNPYFPzfPuDnTOkC6dH6reMDP8ohcjDgrjfUS6pnjblPWhwVFgg2jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342620f50so29442565ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:44:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727556266; x=1728161066;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B9DhHbIR63gmvOumtrcegz/GcZHaECsxMzy9DdG8O6Y=;
+        b=X2M3QA8y9ieBOPL9A/WOfrt5Os/TegJV6zmU8OMijQ3qj8tUy3ZxUH5uuCwh/T3i1K
+         ZuJcFGG13QuI1jT1QxHXyicn/X9wJ3GjrOMLIti42wbndslEMXJwQ53Y3ZAvMZFqOQCM
+         YPh7oXEOTryMG5iO3NMNb1uporUt96/0Su86KvQBnIWaxeIGI9NTnBLfRUMHAZ+21AfF
+         6TpSaM/EUXSqCGBNlk5+ucRaCuIvtyP0e+atcmLCJZpUPeAyuUad5cuOuHUpd7VkcyXD
+         pCmtas0WcbjUQjSCPlwCeMVPVaMuceB8YmWoD1KfUhCVf3+DwVxgEOmuiX9kPPN/piN8
+         tR0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9V2zdVhBPKZG3raSHOd5EbtoDuidDFWaWp7GpT3/pTSga1mcTEB4T75P5u1PKG6AyePveS0asftXfq/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzxznzkC2YszchzCn9obnE3GYlJlwJpPF4OfQot2xeTuvxoiet
+	Wbe+teEYa+naIWSqmUDZkaVVv0mXjP2tse0C+9Y4hKeCXAyPbr2r3fbGt2PvT/m5/ik5HX2Duey
+	nnG1S2sOr2a9uwTnUOqPpdTHGlmDyJFZejzxpD9WYnFIpKvCjhRLd9e0=
+X-Google-Smtp-Source: AGHT+IH9uy43cE84OGkK4+G7+6S+jrXHy7Ngr4SCn/n87lL0UH3lbuPaT/7/vfnruhVrQZPq7Ku79nf3YcR2E4xYE9xStjeZ2mAS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240928050456.27577-1-quic_spuppala@quicinc.com>
+X-Received: by 2002:a05:6e02:17ca:b0:39d:4ef6:b36d with SMTP id
+ e9e14a558f8ab-3a345166ea6mr58883555ab.7.1727556266161; Sat, 28 Sep 2024
+ 13:44:26 -0700 (PDT)
+Date: Sat, 28 Sep 2024 13:44:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f86aaa.050a0220.4a974.000e.GAE@google.com>
+Subject: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
+From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Seshu,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on v6.11]
-[also build test WARNING on next-20240927]
-[cannot apply to linus/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1603b107980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1507aa27980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12d2c99f980000
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Seshu-Madhavi-Puppala/qcom-ice-Remove-ice-probe/20240928-130818
-base:   v6.11
-patch link:    https://lore.kernel.org/r/20240928050456.27577-1-quic_spuppala%40quicinc.com
-patch subject: [PATCH] qcom: ice: Remove ice probe
-config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20240929/202409290409.BkBQ6BVX-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290409.BkBQ6BVX-lkp@intel.com/reproduce)
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-abf2050f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2179ebeade58/vmlinux-abf2050f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f05289b5cf7c/bzImage-abf2050f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/fd7a8b92de34/mount_0.gz
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290409.BkBQ6BVX-lkp@intel.com/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
 
-All warnings (new ones prefixed by >>):
+==================================================================
+BUG: KASAN: use-after-free in ocfs2_replay_truncate_records fs/ocfs2/alloc.c:5959 [inline]
+BUG: KASAN: use-after-free in __ocfs2_flush_truncate_log+0x824/0x1250 fs/ocfs2/alloc.c:6054
+Read of size 4 at addr ffff888045e6fac0 by task kworker/u4:3/41
 
-   drivers/soc/qcom/ice.c: In function 'of_qcom_ice_get':
->> drivers/soc/qcom/ice.c:309:24: warning: returning 'long int' from a function with return type 'struct qcom_ice *' makes pointer from integer without a cast [-Wint-conversion]
-     309 |                 return PTR_ERR(base);
-         |                        ^~~~~~~~~~~~~
+CPU: 0 UID: 0 PID: 41 Comm: kworker/u4:3 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: ocfs2_wq ocfs2_truncate_log_worker
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ ocfs2_replay_truncate_records fs/ocfs2/alloc.c:5959 [inline]
+ __ocfs2_flush_truncate_log+0x824/0x1250 fs/ocfs2/alloc.c:6054
+ ocfs2_flush_truncate_log fs/ocfs2/alloc.c:6076 [inline]
+ ocfs2_truncate_log_worker+0xa2/0x1b0 fs/ocfs2/alloc.c:6089
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x4d pfn:0x45e6f
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+raw: 04fff00000000000 ffffea0001179b88 ffffea0001179c08 0000000000000000
+raw: 000000000000004d 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x140cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP), pid 5109, tgid 5109 (syz-executor412), ts 88738057363, free_ts 88913146991
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ folio_alloc_mpol_noprof+0x36/0x50 mm/mempolicy.c:2283
+ shmem_alloc_folio mm/shmem.c:1774 [inline]
+ shmem_alloc_and_add_folio+0x49b/0x13d0 mm/shmem.c:1813
+ shmem_get_folio_gfp+0x5a9/0x20a0 mm/shmem.c:2335
+ shmem_get_folio mm/shmem.c:2441 [inline]
+ shmem_write_begin+0x17e/0x460 mm/shmem.c:3046
+ generic_perform_write+0x344/0x6d0 mm/filemap.c:4050
+ shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
+ new_sync_write fs/read_write.c:590 [inline]
+ vfs_write+0xa6d/0xc90 fs/read_write.c:683
+ ksys_write+0x183/0x2b0 fs/read_write.c:736
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5109 tgid 5109 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_folios+0xf12/0x18d0 mm/page_alloc.c:2686
+ folios_put_refs+0x76c/0x860 mm/swap.c:1007
+ folio_batch_release include/linux/pagevec.h:101 [inline]
+ shmem_undo_range+0x64c/0x1cf0 mm/shmem.c:1032
+ shmem_truncate_range mm/shmem.c:1144 [inline]
+ shmem_evict_inode+0x29b/0xa80 mm/shmem.c:1272
+ evict+0x4e8/0x9b0 fs/inode.c:723
+ __dentry_kill+0x20d/0x630 fs/dcache.c:615
+ dput+0x19f/0x2b0 fs/dcache.c:857
+ __fput+0x5d2/0x880 fs/file_table.c:439
+ __do_sys_close fs/open.c:1565 [inline]
+ __se_sys_close fs/open.c:1550 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1550
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888045e6f980: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888045e6fa00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff888045e6fa80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                           ^
+ ffff888045e6fb00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff888045e6fb80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
 
-vim +309 drivers/soc/qcom/ice.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-   250	
-   251	/**
-   252	 * of_qcom_ice_get() - get an ICE instance from a DT node
-   253	 * @dev: device pointer for the consumer device
-   254	 *
-   255	 * This function will provide an ICE instance either by creating one for the
-   256	 * consumer device if its DT node provides the 'ice' reg range and the 'ice'
-   257	 * clock (for legacy DT style). On the other hand, if consumer provides a
-   258	 * phandle via 'qcom,ice' property to an ICE DT, the ICE instance will already
-   259	 * be created and so this function will return that instead.
-   260	 *
-   261	 * Return: ICE pointer on success, NULL if there is no ICE data provided by the
-   262	 * consumer or ERR_PTR() on error.
-   263	 */
-   264	struct qcom_ice *of_qcom_ice_get(struct device *dev)
-   265	{
-   266		struct platform_device *pdev = to_platform_device(dev);
-   267		struct qcom_ice *ice;
-   268		struct device_node *node;
-   269		struct resource *res;
-   270		void __iomem *base;
-   271	
-   272		if (!dev || !dev->of_node)
-   273			return ERR_PTR(-ENODEV);
-   274	
-   275		/*
-   276		 * In order to support legacy style devicetree bindings, we need
-   277		 * to create the ICE instance using the consumer device and the reg
-   278		 * range called 'ice' it provides.
-   279		 */
-   280		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ice");
-   281		if (res) {
-   282			base = devm_ioremap_resource(&pdev->dev, res);
-   283			if (IS_ERR(base))
-   284				return ERR_CAST(base);
-   285	
-   286			/* create ICE instance using consumer dev */
-   287			return qcom_ice_create(&pdev->dev, base);
-   288		}
-   289	
-   290		/*
-   291		 * If the consumer node does not provider an 'ice' reg range
-   292		 * (legacy DT binding), then it must at least provide a phandle
-   293		 * to the ICE devicetree node, otherwise ICE is not supported.
-   294		 */
-   295		node = of_parse_phandle(dev->of_node, "qcom,ice", 0);
-   296		if (!node)
-   297			return NULL;
-   298	
-   299		pdev = of_find_device_by_node(node);
-   300		if (!pdev) {
-   301			dev_err(dev, "Cannot find device node %s\n", node->name);
-   302			ice = ERR_PTR(-EPROBE_DEFER);
-   303			goto out;
-   304		}
-   305	
-   306		base = devm_platform_ioremap_resource(pdev, 0);
-   307		if (IS_ERR(base)) {
-   308			dev_warn(&pdev->dev, "ICE registers not found\n");
- > 309			return PTR_ERR(base);
-   310		}
-   311	
-   312		ice = qcom_ice_create(&pdev->dev, base);
-   313		if (!ice) {
-   314			dev_err(dev, "Cannot get ice instance from %s\n",
-   315				dev_name(&pdev->dev));
-   316			platform_device_put(pdev);
-   317			ice = ERR_PTR(-EPROBE_DEFER);
-   318			goto out;
-   319		}
-   320	
-   321		ice->link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
-   322		if (!ice->link) {
-   323			dev_err(&pdev->dev,
-   324				"Failed to create device link to consumer %s\n",
-   325				dev_name(dev));
-   326			platform_device_put(pdev);
-   327			ice = ERR_PTR(-EINVAL);
-   328		}
-   329	
-   330	out:
-   331		of_node_put(node);
-   332	
-   333		return ice;
-   334	}
-   335	EXPORT_SYMBOL_GPL(of_qcom_ice_get);
-   336	
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
