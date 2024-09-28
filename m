@@ -1,136 +1,268 @@
-Return-Path: <linux-kernel+bounces-342685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58FA49891A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:56:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EC6D9891AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 23:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1086D1F23A29
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66611C22D7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC191865ED;
-	Sat, 28 Sep 2024 21:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829D3186294;
+	Sat, 28 Sep 2024 21:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Teb2HkVS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6XOUF8s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057E17B428;
-	Sat, 28 Sep 2024 21:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F1016BE2A
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 21:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727560563; cv=none; b=b5CAEpt5PGLBqOdqM4HAO8Lt+5uHEdnEzrRzl8WGkp4TD75Ch5RGkWrIKcXFlxMVo9ikfeasiwUQBQZ3Hk3cojSAEQp2XOWgbSbcNLX1G3p9JReYCdvkIrVA4ATf25SmY/koxTYbSJj467Y2xwmb2RNBMdXQde5OzYKJWoYYGwk=
+	t=1727560745; cv=none; b=ZIFZzNQBoKxXKpZKxopQOP2S0aRJJPkLW1CSBmQ8vZdxCsBLmIUBLN/kk1LgDgBTw5D9BZXJ04SwuNtn1Z3LonSd11HPoZSrsiVO2PZYOq0eXVnRKQPeE2tcL4gzSMyx3V0nImVU/rTzn9PBxLNa6ticfDeTFBhTCjAMipzzTig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727560563; c=relaxed/simple;
-	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
+	s=arc-20240116; t=1727560745; c=relaxed/simple;
+	bh=VoenVUM6zRadsqe4jBg41qjc8F7PTNEo9McuOPGYUzE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bi29yvr/Z5BbjwCUmS1rXFTTSQkhL/cTvhSznhTCx+b41EW1le0lUeP4BLjiNBl1ebwCaJ8tkXBZGo710qRuMYBqKEqQLkcwuDV1R7+lUswTITp10DdMa6pDw5YomuJl+wmXR+TK8q/98iNlp7WHLn5+K78m0Ot+ouFCi/QaJ6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Teb2HkVS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1605C4CEC3;
-	Sat, 28 Sep 2024 21:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727560563;
-	bh=Bls5swmpeMzUWj2RlsQGBW8bINZMXO0c0CeG2/n6aR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Teb2HkVSXlHPGKaQcYTedlkoVOlbSwhrrHJD0daluNnTdurb5ZsbWx4N/mlLU3GVJ
-	 uTJuNrdK0n2GyH6iTeTPQRWzyCGKBkaFYMN+ED6ybnoII/TOZg7zbMBk7IfPu2+YLE
-	 akqKzVjZSHmpndorYJ3AcDK0ROyPcMDoQSfp8+K3M3gSHrxWKWIgkLcCO5So2Gafk7
-	 EReey6Ip1vTAFTo+Xj/JKL5Gyhrgp9SfWyfRdnXA0H0umdKOJcEu3gCiPUv9N2SosM
-	 8B0QXa2iZV93R3OQUvaCk4dmersJxQSJp/yPDdyYo58dEbHX2AEbj8xHsyCT+ML2Ak
-	 Narrp1bIfYvoQ==
-Date: Sat, 28 Sep 2024 14:56:02 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Tycho Andersen <tycho@tycho.pizza>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Tycho Andersen <tandersen@netflix.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH v2 1/2] exec: add a flag for "reasonable" execveat() comm
-Message-ID: <202409281453.B9B9999D@keescook>
-References: <20240927151746.391931-1-tycho@tycho.pizza>
- <87ikuhw155.fsf@email.froward.int.ebiederm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sXJjJI+C+abFlu8/bhMank65K7cqXtdDx/QA2zXszus11SV7zjbTweIyhmHNlYyXzlsi7mm/XheMDTxa8p+JkthyV3PdC+a/3Zj6e7dYBWSxAQ8UGl2SAsGL1QyLPq1/+q8euIRmna6xhBBJ7A0yGuSObFhBakoiHU2NAbUWmT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6XOUF8s; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727560744; x=1759096744;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VoenVUM6zRadsqe4jBg41qjc8F7PTNEo9McuOPGYUzE=;
+  b=A6XOUF8sFzT8O7HsFUUV8RncxPIg/eRrzUEtTZiENJyx/DSwVgo0+KIH
+   EfoJrh9eqY7vtP5BbIOhaHHl2Unu/aUr/XA8fON5kBqbFhX2QgvfpMQd6
+   JRzVyxUKrHWqMYfbSGJntMxkQSmWW+iC0tEDitQEonOZJdEJC0NNU9Kad
+   vvQjsR6Bzau7CIhzqr3RYEH2Bukp4M7KleFMNAB2wXXkeBDPabV/uApr7
+   NfyeuYYzjg5zjkHkFqBXYF0cTA6+JlownYGMXN7mvL6XBcXILm3P5YRp8
+   MXg9m29klmu0gtoBZTnf5lE9fZzvwI+KSWYn3qsYjod40HAQnJnAtTLmI
+   A==;
+X-CSE-ConnectionGUID: DzMvPt8sQZyblaoPzPb0Mg==
+X-CSE-MsgGUID: OcgTAGMHQWit7pFSz43paQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37261324"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="37261324"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 14:59:03 -0700
+X-CSE-ConnectionGUID: sGZ5C3E5Rf+BvJ7bUFGPCg==
+X-CSE-MsgGUID: 1UCfB+L1T4yh40P48CPOzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="72458896"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 28 Sep 2024 14:59:00 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sufSr-000Ngl-2y;
+	Sat, 28 Sep 2024 21:58:57 +0000
+Date: Sun, 29 Sep 2024 05:58:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>,
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: oe-kbuild-all@lists.linux.dev, Shawn Sung <shawn.sung@mediatek.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	Singo Chang <singo.chang@mediatek.com>,
+	Nancy Lin <nancy.lin@mediatek.com>,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init()
+ for different SoCs
+Message-ID: <202409290726.oaatx2OR-lkp@intel.com>
+References: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ikuhw155.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <20240925101927.17042-3-jason-jh.lin@mediatek.com>
 
-On Fri, Sep 27, 2024 at 10:45:58AM -0500, Eric W. Biederman wrote:
-> Tycho Andersen <tycho@tycho.pizza> writes:
-> 
-> > From: Tycho Andersen <tandersen@netflix.com>
-> >
-> > Zbigniew mentioned at Linux Plumber's that systemd is interested in
-> > switching to execveat() for service execution, but can't, because the
-> > contents of /proc/pid/comm are the file descriptor which was used,
-> > instead of the path to the binary. This makes the output of tools like
-> > top and ps useless, especially in a world where most fds are opened
-> > CLOEXEC so the number is truly meaningless.
-> >
-> > Change exec path to fix up /proc/pid/comm in the case where we have
-> > allocated one of these synthetic paths in bprm_init(). This way the actual
-> > exec machinery is unchanged, but cosmetically the comm looks reasonable to
-> > admins investigating things.
-> 
-> Perhaps change the subject to match the code.
-> 
-> > Signed-off-by: Tycho Andersen <tandersen@netflix.com>
-> > Suggested-by: Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
-> > CC: Aleksa Sarai <cyphar@cyphar.com>
-> > Link: https://github.com/uapi-group/kernel-features#set-comm-field-before-exec
-> > ---
-> > v2: * drop the flag, everyone :)
-> >     * change the rendered value to f_path.dentry->d_name.name instead of
-> >       argv[0], Eric
-> > ---
-> >  fs/exec.c | 13 ++++++++++++-
-> >  1 file changed, 12 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index dad402d55681..9520359a8dcc 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
-> >  		set_dumpable(current->mm, SUID_DUMP_USER);
-> >  
-> >  	perf_event_exec();
-> > -	__set_task_comm(me, kbasename(bprm->filename), true);
-> > +
-> > +	/*
-> > +	 * If fdpath was set, execveat() made up a path that will
-> > +	 * probably not be useful to admins running ps or similar.
-> > +	 * Let's fix it up to be something reasonable.
-> > +	 */
-> > +	if (bprm->fdpath) {
-> > +		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
-> > +		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
-> 
-> We can just do this regardless of bprm->fdpath.
-> 
-> It will be a change of behavior on when executing symlinks and possibly
-> mount points but I don't think we care.  If we do then we can add make
-> it conditional with "if (bprm->fdpath)"
-> 
-> At the very least using the above version unconditionally ought to flush
-> out any bugs.
+Hi Jason-JH.Lin,
 
-I'm not super comfortable doing this regardless of bprm->fdpath; that
-seems like too many cases getting changed. Can we just leave it as
-depending on bprm->fdpath?
+kernel test robot noticed the following build errors:
 
-Also, is d_name.name always going to be set? e.g. what about memfd, etc?
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on linus/master next-20240927]
+[cannot apply to v6.11]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/drm-mediatek-ovl-Add-fmt_convert-function-pointer-to-driver-data/20240925-182056
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20240925101927.17042-3-jason-jh.lin%40mediatek.com
+patch subject: [PATCH v5 2/2] drm/mediatek: Add blend_modes to mtk_plane_init() for different SoCs
+config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/archive/20240929/202409290726.oaatx2OR-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290726.oaatx2OR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290726.oaatx2OR-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10,
+                    from drivers/gpu/drm/mediatek/mtk_crtc.c:22:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10,
+                    from drivers/gpu/drm/mediatek/mtk_disp_color.c:13:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_color.c:15:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:15:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_drm_drv.h:10,
+                    from drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:16:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_mdp_rdma.c:236:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     236 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev)
+         | ^~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_crtc.h:10,
+                    from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:18:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl.c:20:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_disp_ovl.c:219:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     219 | const u32 mtk_ovl_get_blend_modes(struct device *dev)
+         | ^~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:20:
+>> drivers/gpu/drm/mediatek/mtk_ddp_comp.h:83:9: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+      83 |         const u32 (*get_blend_modes)(struct device *dev);
+         |         ^~~~~
+   drivers/gpu/drm/mediatek/mtk_ddp_comp.h:271:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     271 | const u32 mtk_ddp_comp_get_blend_modes(struct mtk_ddp_comp *comp)
+         | ^~~~~
+   In file included from drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:21:
+>> drivers/gpu/drm/mediatek/mtk_disp_drv.h:106:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     106 | const u32 mtk_ovl_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:135:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     135 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev);
+         | ^~~~~
+   drivers/gpu/drm/mediatek/mtk_disp_drv.h:170:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     170 | const u32 mtk_mdp_rdma_get_blend_modes(struct device *dev);
+         | ^~~~~
+>> drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c:403:1: error: type qualifiers ignored on function return type [-Werror=ignored-qualifiers]
+     403 | const u32 mtk_ovl_adaptor_get_blend_modes(struct device *dev)
+         | ^~~~~
+   cc1: all warnings being treated as errors
+
+
+vim +83 drivers/gpu/drm/mediatek/mtk_ddp_comp.h
+
+    48	
+    49	struct mtk_ddp_comp;
+    50	struct cmdq_pkt;
+    51	struct mtk_ddp_comp_funcs {
+    52		int (*power_on)(struct device *dev);
+    53		void (*power_off)(struct device *dev);
+    54		int (*clk_enable)(struct device *dev);
+    55		void (*clk_disable)(struct device *dev);
+    56		void (*config)(struct device *dev, unsigned int w,
+    57			       unsigned int h, unsigned int vrefresh,
+    58			       unsigned int bpc, struct cmdq_pkt *cmdq_pkt);
+    59		void (*start)(struct device *dev);
+    60		void (*stop)(struct device *dev);
+    61		void (*register_vblank_cb)(struct device *dev,
+    62					   void (*vblank_cb)(void *),
+    63					   void *vblank_cb_data);
+    64		void (*unregister_vblank_cb)(struct device *dev);
+    65		void (*enable_vblank)(struct device *dev);
+    66		void (*disable_vblank)(struct device *dev);
+    67		unsigned int (*supported_rotations)(struct device *dev);
+    68		unsigned int (*layer_nr)(struct device *dev);
+    69		int (*layer_check)(struct device *dev,
+    70				   unsigned int idx,
+    71				   struct mtk_plane_state *state);
+    72		void (*layer_config)(struct device *dev, unsigned int idx,
+    73				     struct mtk_plane_state *state,
+    74				     struct cmdq_pkt *cmdq_pkt);
+    75		unsigned int (*gamma_get_lut_size)(struct device *dev);
+    76		void (*gamma_set)(struct device *dev,
+    77				  struct drm_crtc_state *state);
+    78		void (*bgclr_in_on)(struct device *dev);
+    79		void (*bgclr_in_off)(struct device *dev);
+    80		void (*ctm_set)(struct device *dev,
+    81				struct drm_crtc_state *state);
+    82		struct device * (*dma_dev_get)(struct device *dev);
+  > 83		const u32 (*get_blend_modes)(struct device *dev);
+    84		const u32 *(*get_formats)(struct device *dev);
+    85		size_t (*get_num_formats)(struct device *dev);
+    86		void (*connect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+    87		void (*disconnect)(struct device *dev, struct device *mmsys_dev, unsigned int next);
+    88		void (*add)(struct device *dev, struct mtk_mutex *mutex);
+    89		void (*remove)(struct device *dev, struct mtk_mutex *mutex);
+    90		unsigned int (*encoder_index)(struct device *dev);
+    91		enum drm_mode_status (*mode_valid)(struct device *dev, const struct drm_display_mode *mode);
+    92	};
+    93	
 
 -- 
-Kees Cook
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
