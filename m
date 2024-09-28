@@ -1,239 +1,241 @@
-Return-Path: <linux-kernel+bounces-342375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44945988E2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:32:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99FB988E2E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CA81283B22
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C631F21D9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A4919DF94;
-	Sat, 28 Sep 2024 07:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3BETcDc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF30C19B3C3;
+	Sat, 28 Sep 2024 07:32:33 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD581859;
-	Sat, 28 Sep 2024 07:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB0F19AD85
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727508715; cv=none; b=dlIwi7G9z666SRF+r+ywJ0Ai4CcPByE94QuaB5RLiRrXjlfBIC3jGhptwieV3i9bjrkpjm29iw5e69mlyGikQjwxWebubK4YVTDqqwlPt4CeILfi8R6vk+DW32cVxU8croiTxqJmm3LvY+1ud4Ree9mmmulYXktsizzNTvKYAuM=
+	t=1727508753; cv=none; b=iumve/Novk+SpC6jtooqzAJrUhjt4TcsVnMWZ4V6MmZLCCfRq+nKOGO8smWJCL6AFmpQ1xKqiPT80rDPL1yIgyw+0oOVs7togy255v1uhELdTpNCSJGSubkL/9txI9o0tuo4ioVjtzXo7xMGn/bw9CV6BKDGGTRJxzTxKfy141A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727508715; c=relaxed/simple;
-	bh=YcrXNs/yZ3nUKsxdQjoyr6fgGMjvgH7aNff0uH5SnmM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMDZkPOSZNptKoEU/rd4xYFLlkNcTLiiFfpjfzFFo4YUiovMaJxiwibABIZ+yOt8sEL3FRy5t3WvLRsoCN/NRFQl8lm6hKEM5iTMttxyNRrlcZsiMb1rmnYyazCmixt4lg53RHrzr6MnH0W9zK8TcP1YKKw9er2uFe7U0WKhmGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3BETcDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD18C4CEC3;
-	Sat, 28 Sep 2024 07:31:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727508715;
-	bh=YcrXNs/yZ3nUKsxdQjoyr6fgGMjvgH7aNff0uH5SnmM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R3BETcDczWPBOkAwWqlYT3rF7Rr1HoHrUjo03Mpq6WSKnXVmwvWD6F/I40zjZ+QCt
-	 Vu5BNQGNluzg9w5Km0JGCXiE3bpqIhL/ERIVXdyqH27s09y7VhMU2G+WiSx3gqr2X3
-	 nZ9zWVZmj3XLk/0ZjBcJKSaukPaLR4TxhhO6MxzL1gcfJfxIX8L3c+gKNQEhNLisOe
-	 SBh9eL8YHa5z9CspjhkRs9dmgYYmDFzBg+V/v1OSRPkSNZUJCj3I4LizFBV+Y75iKQ
-	 hZlMjA7pRd03s29Y+1cuIGsa2Y/caMS+3Wl2gMdW1bYrdO3dpWLKT0zy+GB03Ecy6N
-	 zVjdi/QqTcaAQ==
-Message-ID: <c6ac1c4d-7f7a-41a9-9f32-55428f88bdfe@kernel.org>
-Date: Sat, 28 Sep 2024 09:31:49 +0200
+	s=arc-20240116; t=1727508753; c=relaxed/simple;
+	bh=iQebi6bqL+RS9rmDEgTYJqxT5c1eYcHyxFktxIpbyD8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pstoe7+W/1uZY4YtBDHOGkyQafBHnuDoEpzVIUszuCaiVaA4chou2Ka6Cl/OEw5w6uYlXWLNfsveobyuOWfJP3GxDY1Eekk3+JZeamJqOIhNGE5H8OC5tA+14Q7xhcFlAxphPau3fpX9YeOOABMAbRk5vwmowdHRh1Y1U8dSWSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1e69f6f51so29217895ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:32:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727508750; x=1728113550;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RVN6FnbwA3huhnKDHIz/m0xr8FOP4DiYHAdGNcqkPlA=;
+        b=SEdILJe6U/1cQz01+CRxLZuX/fdBVvssJc1azmth1HLStMMiVg6lQKlETyPHjPcXcX
+         pkTsnuCSIiOSLdKdbHfrZ6OKOS5uPTv6WZC7B225KYt6UOlDr67ZaL+ea9S5yc4nFFN2
+         7KwwgrFvYxy18JKQgmeEHA4yErCXH4GxrC1SXs/r/rQoMkjSdss/NXawsridCwLmFxSv
+         IzNQcdjCeKC9crifUa/B7arKWBeoj8HytC+sAXz7YRxxW2XWSwXbvRQh7cnRuGfCtY46
+         I6RbwtMzzMnQiLojTUBpoHMN0lTHP4NFMuJthXEyXis94kWrhamJD6AbzJNU96Gg4fnj
+         QZ6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUD2lqVeRXHn+y7jUKF+NA28YAx1lCvly6gJi7FUOSZNZaUiJ6df+9kUVxlmC3THBJGUfNjAYF2XxHdQYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFq+q9zcOq0qFKlbHFq9IY3GwX/IPsiQrSktWoKbGtg3/rF7jN
+	UEHSHV4etGR2PMozPpvR7sfI5WcNFCXGZ+BuPh0htBw/iM6IG+xOB5e7ZG/mVB81AFvl4/iA9us
+	ImL7rEyX+l574Hyv9KHIVn3FxCQ9fAXBdrs3glUBm1PGNvBwhYfPtwuI=
+X-Google-Smtp-Source: AGHT+IG/P8TK6Ao3MnAVao5QTuroLVb8UQZwIBOkPmvz82x3Kh9XyB2oGcdfho2jN8qhqMzByu4nqqsPn39+zfjkEh6i0bc2dVMl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dt-bindings: fpga: Add Efinix serial SPI programming
- bindings
-To: Ian Dannapel <iansdannapel@gmail.com>
-Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- neil.armstrong@linaro.org, heiko.stuebner@cherry.de, rafal@milecki.pl,
- linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240927141445.157234-1-iansdannapel@gmail.com>
- <20240927141445.157234-2-iansdannapel@gmail.com>
- <dd9ae106-3c39-423b-9413-5a7ca57f7aec@kernel.org>
- <CAKrir7irvRbwCsdjF_NNfWy68wTDfRuyW2oHb90gYgBA=L7-Tg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAKrir7irvRbwCsdjF_NNfWy68wTDfRuyW2oHb90gYgBA=L7-Tg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a46:b0:3a0:8d60:8b7d with SMTP id
+ e9e14a558f8ab-3a34516903fmr48946585ab.11.1727508750578; Sat, 28 Sep 2024
+ 00:32:30 -0700 (PDT)
+Date: Sat, 28 Sep 2024 00:32:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+Subject: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (4)
+From: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
+	ebpqwerty472123@gmail.com, eric.snowberg@oracle.com, hughd@google.com, 
+	jmorris@namei.org, linux-integrity@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
+	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 27/09/2024 17:34, Ian Dannapel wrote:
-> Thanks for the review Krzysztof.
-> 
-> Am Fr., 27. Sept. 2024 um 16:26 Uhr schrieb Krzysztof Kozlowski
-> <krzk@kernel.org>:
->>
->> On 27/09/2024 16:14, iansdannapel@gmail.com wrote:
->>> From: Ian Dannapel <iansdannapel@gmail.com>
->>>
->>> Add device tree binding documentation for configuring Efinix FPGA
->>> using serial SPI passive programming mode.
->>>
->>> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
->>> ---
->>>  .../fpga/efinix,trion-spi-passive.yaml        | 85 +++++++++++++++++++
->>>  1 file changed, 85 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
->>> new file mode 100644
->>> index 000000000000..ec6697fa6f44
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/fpga/efinix,trion-spi-passive.yaml
->>> @@ -0,0 +1,85 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/fpga/efinix,trion-spi-passive.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Efinix SPI FPGA Manager
->>> +
->>> +maintainers:
->>> +  - Ian Dannapel <iansdannapel@gmail.com>
->>> +
->>> +description: |
->>> +  Efinix Trion and Titanium Series FPGAs support a method of loading the
->>> +  bitstream over what is referred to as "SPI Passive Programming".
->>> +  Only serial (1x bus width) is supported, setting the programming mode
->>> +  is not in the scope the this manager and must be done elsewhere.
->>> +
->>> +  Warning: The slave serial link is not technically SPI and therefore it is
->>> +  not recommended to have other devices on the same bus since it might
->>> +  interfere or be interfered by other transmissions.
->>> +
->>> +  References:
->>> +  - https://www.efinixinc.com/docs/an033-configuring-titanium-fpgas-v2.6.pdf
->>> +  - https://www.efinixinc.com/docs/an006-configuring-trion-fpgas-v6.0.pdf
->>> +
->>> +allOf:
->>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - efinix,trion-spi-passive
->>> +      - efinix,titanium-spi-passive
->>
->> 1. Your driver suggests these are compatible, so make them compatible
->> with using fallback.
->>
->> 2. What is "spi-passive"? Compatible is supposed to be the name of the
->> device, so I assume this is "trion"? Can trion be anything else than fpga?
-> spi-passive is the programming mode, where the device is in slave
-> mode. There are also other modes, but not supported by this driver.
+Hello,
 
-But we do no describe here drivers, so it does no matter what it supports.
+syzbot found the following issue on:
 
-> The name was inspired by similar drivers (spi-xilinx.c). Isn't just
-> "efinix,trion"/"efinix,titanium" too generic?
+HEAD commit:    97d8894b6f4c Merge tag 'riscv-for-linus-6.12-mw1' of git:/..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14138a80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=1cd571a672400ef3a930
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118fd2a9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1038299f980000
 
-What do you mean too generic? What else could it be? BTW, that was my
-question, which you did not answer. Bindings describe hardware, so
-describe here hardware.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f181c147328d/disk-97d8894b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b8b0160d9b09/vmlinux-97d8894b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c5dab0d4f811/bzImage-97d8894b.xz
 
->>
->>> +
->>> +  spi-cpha: true
->>> +
->>> +  spi-cpol: true
->>> +
->>> +  spi-max-frequency:
->>> +    maximum: 25000000
->>> +
->>> +  reg:
->>> +    maxItems: 1
->>> +
->>> +  creset-gpios:
->>
->> reset-gpios
->>
->> Do not invent own properties.
->>
->>> +    description:
->>> +      reset and re-configuration trigger pin (low active)
->>> +    maxItems: 1
->>> +
->>> +  cs-gpios:
->>> +    description:
->>> +      chip-select pin (low active)
->>
->> Eee? That's a property of controller, not child. Aren't you duplicating
->> existing controller property?
-> This device uses this pin in combination with the reset to enter the
-> programming mode. Also, the driver must guarantee that the pin is
+The issue was bisected to:
 
-Isn't this the same on every SPI device?
+commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2
+Author: Shu Han <ebpqwerty472123@gmail.com>
+Date:   Tue Sep 17 09:41:04 2024 +0000
 
-> active for the whole transfer process, including ending dummy bits.
-> This is why I added a warning to NOT use this driver with other
-> devices on the same bus.
+    mm: call the security_mmap_file() LSM hook in remap_file_pages()
 
-Not really related. None of this grants exception from duplicating
-controller's property.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1554a99f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1754a99f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1354a99f980000
 
-How do you think it will even work in Linux, if same GPIO is requested
-twice (imagine controller also has it)? Till now, this would be -EBUSY.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
 
-But regardless of implementation, I still do not understand why do you
-need duplicate same chip-select. Maybe just the naming is the confusion,
-dunno.
+mmap: syz-executor369 (5231) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+------------------------------------------------------
+syz-executor369/5231 is trying to acquire lock:
+ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+
+but task is already holding lock:
+ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
+ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+
+which lock already depends on the new lock.
 
 
-Best regards,
-Krzysztof
+the existing dependency chain (in reverse order) is:
 
+-> #1 (&mm->mmap_lock){++++}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       down_read_killable+0xca/0xd30 kernel/locking/rwsem.c:1549
+       mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:153
+       get_mmap_lock_carefully mm/memory.c:6108 [inline]
+       lock_mm_and_find_vma+0x29c/0x2f0 mm/memory.c:6159
+       do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
+       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+       exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
+       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+       fault_in_readable+0x108/0x2b0 mm/gup.c:2227
+       fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
+       generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
+       shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
+       new_sync_write fs/read_write.c:590 [inline]
+       vfs_write+0xa6d/0xc90 fs/read_write.c:683
+       ksys_write+0x183/0x2b0 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       inode_lock include/linux/fs.h:815 [inline]
+       process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+       ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
+       security_mmap_file+0x7e7/0xa40 security/security.c:2977
+       __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
+       __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&mm->mmap_lock);
+                               lock(&sb->s_type->i_mutex_key#12);
+                               lock(&mm->mmap_lock);
+  lock(&sb->s_type->i_mutex_key#12);
+
+ *** DEADLOCK ***
+
+1 lock held by syz-executor369/5231:
+ #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
+ #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
+ #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 5231 Comm: syz-executor369 Not tainted 6.11.0-syzkaller-10045-g97d8894b6f4c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+ inode_lock include/linux/fs.h:815 [inline]
+ process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+ ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
+ security_mmap_file+0x7e7/0xa40 security/security.c:2977
+ __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
+ __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff317efa919
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff317e94238 EFLAGS: 00000246 ORIG_RAX: 00000000000000d8
+RAX: ffffffffffffffda RBX: 00007ff317f85318 RCX: 00007ff317efa919
+RDX: 0000000000000000 RSI: 0000000000800000 RDI: 0000000020800000
+RBP: 00007ff317f85310 R08: 0000000000010000 R09: 00007ff317e946c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff317f8531c
+R13: 000000000000006e R14: 00007ffd154a5180 R15: 00007ffd154a5268
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
