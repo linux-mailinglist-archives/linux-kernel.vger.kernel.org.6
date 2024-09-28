@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-342414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2BB988E9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B9D988EB0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69609282582
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A568A281F7A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F4125B9;
-	Sat, 28 Sep 2024 08:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqx6RdVZ"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA88119E962;
+	Sat, 28 Sep 2024 09:08:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8810A17C98C
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914119DFBB
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727513865; cv=none; b=Lh4ISBJgdhPhal5m5/+RgCEYF+JXlnreFNylFauqZaXGzrXd399toVtuKhrX3r09tAKTlLojnTJeykJx10aR4U/snxBh/Pk+Eb5POHjGU/EEPJHXfpAuiWXPJfE+nWUMAPU0aB7gxOXWa/uuiG3FfpzxK6x8M81sVUV+/pAaJfw=
+	t=1727514487; cv=none; b=eX7od1rzD+bW2neC7FgBvBS72xcTWFacZYaURHB+Nw0E+/2HMzeSFL3STMIcbz6VzGt6UhNyNyDalTJyj/k1px6DBiyiF3aRU/lekOpJxijmn0QGzStaNAAIJpP7fKBsLtyQxfGjqHbEs+W6F/mncCJyrS+ef3360VuUNjPMXNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727513865; c=relaxed/simple;
-	bh=8Z9JCi4yhlBV0WO699VWsRmVMtZb78fwfRNgqBbs2MQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kzipPCjP3RUSUEUap/BPyb5IAsvVmX6g3FXim1O50EuJrDC0glB8BKVoQf3jZKnbdxQ8AV1/Nx1M8B4xiSRDGI4olXe2AHCvLwZVD8uLI9zuwicEtiF8nvOIz3tEszg1BLY4FKBwXODasP+BDTrvxbVoXreZI2n7qJWeWe+1YeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqx6RdVZ; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 28 Sep 2024 04:57:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727513860;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+G/Act2+rDOGPVSEZItb2sOKKvrD8MFc52o7wVlkE5w=;
-	b=cqx6RdVZMVJWaEwzKw0oNdvg6g9wv2YV8PE44kFtbduvxrrx8WfvtJdu0NaM72BJhu0IRi
-	WFIKgb8MtDg8d5Ff7tg/S5Q7ikzRuRRnoCAku5DOKLVBYwOfxgpWj0YTQ5wk425t48TmYx
-	CbBW2SwBuawYiuUcLDaAG571yf/IOk0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
-Message-ID: <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
-References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
- <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
- <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
- <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
- <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
- <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
- <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1727514487; c=relaxed/simple;
+	bh=i6f+ZtTuWVmq3IQd4UJQ0VhGEK782Zvnn6pPAtsRvEY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=e51Hu1ncDXpOMiOXjJ7B8Tpb0zjZefHLCV81s6KCsmhEt2OwIgO4NF+GdAPJ3xANHniBFzrQtfTu0zEJkxM+pb9abVhKkZ9lV1oT2CRqotWIKBID7OdjOAFHZhfG+uLuysGy7K/n4ITSANARErKQmSa9D+66HEdICxO8uVuzydI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0cd6a028bso30694755ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:08:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727514485; x=1728119285;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jUwF+DOYOWwhUI48FQhB2+d1PUzlxud0cp5BnhMWsNE=;
+        b=N1VID2av4reFQZDB34OQrRoVagtmMwkHGCJKXGga7YM2rXOuEskLTWotgsBmFs9HZa
+         K+RwWfBuyX3eWDK1BIcStIUZaPz42i8rsiTHMrIPigw8j8s7HV5nu5IOJ6hK1mtuM6Y8
+         zfk14M0Rb6nTAz6FzkY7Dpy3g2RorGTe98b8IrgwD39UN3xU+JIqDtdqzW2eDNxNwzuu
+         IIe3egUPvepShiAZceBLjCzdjQQ8stS8NQ4Ffe1xQfPShODyI8f6+RMKSqXqC4IyjpnP
+         O5r05j/ALF8aYyQsrmaCJSGxn2kf8K2N7hTIBySy8282riz/a9uKM39K12dck9Te07Hg
+         aITA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzy8qrkVXiKPeWqjc4XeURT6jJCia868zsrKUJ4KazA3Vxtbr+Lpz/5sNkvKkKrtxUu8Gm4eREpxDTAKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3cEtEHuBLHWxrvo5F4Oz0sG7fXUVB+vjRIxpIU8NqdplkEweh
+	Bh+MmTX3dzI57fyZnWNmUavwYVPRsZBA06TY0KRuT407HM25M7AwOw4hXd5rVyD8euu8hhgax/H
+	NVzIr0h/RXSDQPpDwGD0mBHPU8c5RoLFlxHJPlorKYfh4zUkpYMOyxts=
+X-Google-Smtp-Source: AGHT+IHihBJ+GxY8eg5LzxWABRDhLublPolGwSEBg3jIrc63OS3ihXlj7Rhzorm2uoSOuoHFM7SsSCeUf/6w8BuEXWbwPC8sM9U5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:154c:b0:3a1:a3bd:adcc with SMTP id
+ e9e14a558f8ab-3a345168f6bmr45212345ab.6.1727514485432; Sat, 28 Sep 2024
+ 02:08:05 -0700 (PDT)
+Date: Sat, 28 Sep 2024 02:08:05 -0700
+In-Reply-To: <20240928082205.1318-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f7c775.050a0220.aab67.0000.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
-> On 2024/09/28 10:25, Kent Overstreet wrote:
-> > And looking further, I don't see anyhting in the console log from when
-> > bcachefs actually mounted (???), which means I don't think I have enough
-> > to go on. It's clearly an upgrade path issue - we didn't run
-> > check_allocations as is required when upgrading to 1.11 - but it's not
-> > reproducing for me when I run tests with old tools.
-> > 
-> > Can we get some more information about the syzbot reproducer? Exact
-> > tools version, format command and mount command.
-> 
-> Reproducer for this bug is not yet found. But syzbot does not use userspace
-> tools. That is, testing with old (or new) tools will not help. Please note
-> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
-> kernel side depends on sanity checks / validations done by the userspace
-> side, syzbot will find oversights on the kernel side. Please don't make any
-> assumptions made by the userspace tools.
-> 
+Hello,
 
-You seem to be confused; how do you expect sysbot to test a filesystem
-without the format comand?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         61387b8d Merge tag 'for-6.9/dm-vdo' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=15ba0d9f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=207dbbbe28068ef0
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13651e80580000
+
+Note: testing is done by a robot and is best-effort only.
 
