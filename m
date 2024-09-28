@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-342651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1446989133
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:48:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762EC989134
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1A191C22F2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:48:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E694284D7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79528186E2C;
-	Sat, 28 Sep 2024 19:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lxyt+6Qa"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0A8158A36;
+	Sat, 28 Sep 2024 19:49:32 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC8C176AAE;
-	Sat, 28 Sep 2024 19:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556FA1CA80
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 19:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727552867; cv=none; b=mfBSq5rtwG7rOs33TbrAUxzgG2tLM2DJy7W9mRZSvPL0PwBupIvuH8bPdPYpJQdhyjz/8dDUFlRztcdV7ajL+WJn7Q/wsbFBaiurK5iC22hF927zXP76CkjjHGlSyGMWM2Es4nOcfy4IYDG8pQifXcoi4k+Xlxj2mHI6WTCGVxM=
+	t=1727552971; cv=none; b=pmcrjP9HUCPk4yRUczVaW9mc+7g12JQTbpb8KJaqDzb8hafytPNsh8WFnF6J3N11P4Q6xYw19MsxTaz+9lxiTVj7gYEFU3AdKcr6G47wnah6dALwgWuUqGC2PtB4/sGhiIACFwdwL2M/U6uD/3Zr9OqAlLgowIw16BXcxVvJAPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727552867; c=relaxed/simple;
-	bh=OmSLqQKAb/QVwFN4C7eKhQPVnPYgmYpfMCMk1y2cALQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J1MTbxf7jQiJ4euHx93KFE9U+4xYhPySi6x7WAcnn0ES0/8LLK/MWs2RacJxpVZVyL9iqST2xEfpE7YmPxWamxYCxRwcePCADJJpCufmTGHrMOM/oGGetRH7MIXNMTwhH/XgAPu4wKbaosvl+LKRUleBz5TFh965L2l3lFtFFvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lxyt+6Qa; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c8844f0ccaso2210234a12.0;
-        Sat, 28 Sep 2024 12:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727552864; x=1728157664; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2iltsOj2nm0hssOij02ApkpMdrgfT0iF/UOR+aKdBio=;
-        b=Lxyt+6Qa4/Pw6iiDXG0IfYGlurKBQcY5Au4R1ByadIRIewKLgdXyZTmkk1xFjgKDNN
-         aZwwInDU7REKF93cFLoejeCT0CA7/xkCtr7bfbx+VG/3Fc27aEnZ/Xu34feTv5sezSQK
-         xzV/Zrh3utKQ/gu16JSb1ireDMrciEDFfjKhaQfV3JgdvWUu4YoEuvSRnhiEfgOuCmZy
-         vUiMIoXVVqBEAEMQV6e2zypVUfMW+0Ohv+6xmipRIYE6pACXY0EJRfC772SPSNLn81py
-         bOx+jQWwBIEMjLO/gCzDjm0O/7YitM/50L0uL79ERbGB/GJilscOQ4Pi7zBuSvZlIWjC
-         K95w==
+	s=arc-20240116; t=1727552971; c=relaxed/simple;
+	bh=6FlHeSW3PTIX1u1iE/uqFaOyn9oWo+au0hXrLQrWoE8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lWfpZW47F56Zy27YnSM7tMXmW7I6WXCK2G3c8j34EifYnrP6FvQV3HdYhoiR7bF7CTxLmDrcgf7V1Te402Bb787QleIu9T155fg5c7gnzpmvsHdBbYTzc8OomkD2M5EL6HQipn9LtZIkTKrhIgNkwinSPzvIlE3sroBu92AZJA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34ebe595bso7919925ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 12:49:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727552864; x=1728157664;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2iltsOj2nm0hssOij02ApkpMdrgfT0iF/UOR+aKdBio=;
-        b=O5hyp0U4wiWHDj/AKi+ij5tGX3UCkCw14i/3D8+jBYiyqEvrMup0Ucqf4U3TvqTgd2
-         wOYAGIUNBdQgD79YZBDfgp8RIDR+zIclDQCA3/T9DXW8K/ZwBjb0nNZdgCjWr9rrua4D
-         DeJWWkRYGa9jBUDDqTS3CepL3HpDoyWWge/9cPzbu54afWRjDkkepgToFeSZ7aE3tSCW
-         BTihOG6nDUz+2U/JSYpkQzlfWbmKSiBPfDBznlFodvSw7QceCh7lmWasWCmwWafW35ux
-         pt2j3PFSswaxey+gvsNf53lkbduMTpppMQjYNXokj7kJsTSemtmy0dAZBFLP6JLdlGZT
-         UlXw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5ICVgDX9155HkRXDT1sm/d60pmdkYAFa+4BYhPAtS3qFT04NcvY+IevygywzeVCLFpGAjAyfvOy4SX6mF@vger.kernel.org, AJvYcCXZYu6JOcWmf/JPietJ66Zhim+6EfB71umky4BSiAEXhm/HyOqRrmh5+rtC8wmE/j+X/n4EY5/SpGbS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+ewQ4s+Skc7L6fAxsatZL+IB4bB2xFkN3H2fwY/lVcGGKgW3Q
-	Z6Z2Ad3GpKR0KL4eWSKT35JH84Nx6ckK+/A4P93ciYps0Kv+whgl1YgGEw==
-X-Google-Smtp-Source: AGHT+IFft1o19Zd9czA/C4i/Nk9M0s2es2Xe7eLAYuqbNn7Q27a2SfNiUuDSSopD0Eh+G1YkUuuPow==
-X-Received: by 2002:a17:907:6094:b0:a86:c372:14c3 with SMTP id a640c23a62f3a-a93c4a4e0e5mr933056566b.48.1727552863793;
-        Sat, 28 Sep 2024 12:47:43 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-2243-8f1c-2a7e-ca73.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:2243:8f1c:2a7e:ca73])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2775c22sm283707466b.20.2024.09.28.12.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 12:47:43 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sat, 28 Sep 2024 21:47:37 +0200
-Subject: [PATCH 3/3] gpio: acpi: switch to
- device_for_each_child_node_scoped()
+        d=1e100.net; s=20230601; t=1727552969; x=1728157769;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U1Y2nY2DxZJa6WbAmluQE8FAM91TucuqHCkoV2WObGQ=;
+        b=E8vmdnKHZYIVSQJnZTIFM5DlNcO0Eq/I1L/UaNJ8S9W47DETsTtDKOgnfzXyJewOHW
+         FPLmZlg7il2G40DK62D5U4ZmAnitDoTIZJy1rXrFRF6PIKFaV/6cdJPcoAIH6oZoKDb0
+         mdIpMeDkKoXEOwmjaM/s8V10YLkod56gv5astuIzrKyHFGloeXgMK1iWhspjPkb9l+09
+         np47KxiysABWzfv2k45LU/4E3GkU7ZYqxCip6vRBCBf2GiQDu9KKOxVQ2y9qVieh6PK6
+         SsvJqZ52emXS9YMRiXKBJecGqQ/FVML4sZL7X8bWLCMEVCZBPWMxLs9vD35e5Do10z/3
+         9rCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWW9QszltCn6Deii/VpqrnQbO2Q7TdMAPTXznlEKID0/0Jr632kjDKpTacc7b3qOFMl3OIloA8Sqj/tRT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5YI7Gb3YFAdWx/fgKLdmpExcztGvhrYQ8cNE0gmhKjTve5QEV
+	+fnMWTdKNkWmpelaMen/Ub258fl1V2Dm/iIsr0H95V/PZpMHPwgs4aIi3jl7iv23aidIO4HN8LM
+	PPNkZjeVRx+IZt2yVLV/qzGaIrfSX11buksWYOXTqo2dBMGYqUwJ9vF4=
+X-Google-Smtp-Source: AGHT+IFNfHhNY9rbX5RHJ0LgkrEPamonjFF/fhkhcNKiv6P24aCAbDGYkjwgj18jKn3Ou1vN17MuARB28mvMQ15cKR8lGlhmnMDc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240928-gpio_device_for_each_child_node_scoped-v1-3-c20eff315f4f@gmail.com>
-References: <20240928-gpio_device_for_each_child_node_scoped-v1-0-c20eff315f4f@gmail.com>
-In-Reply-To: <20240928-gpio_device_for_each_child_node_scoped-v1-0-c20eff315f4f@gmail.com>
-To: Hoan Tran <hoan@os.amperecomputing.com>, 
- Serge Semin <fancer.lancer@gmail.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Mika Westerberg <mika.westerberg@linux.intel.com>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727552857; l=1319;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=OmSLqQKAb/QVwFN4C7eKhQPVnPYgmYpfMCMk1y2cALQ=;
- b=eOSvEiYIr9MxSawrD21/c/lnXe8QWnJQBkoIprV+FI1oauBP+WU4gbv9Hmjc7olsJlQadDQEB
- S+NLzUpfVpSDtsni7kcxNDp/2MgJhtuDG9m4jl5nQ/Qvsoup86C5A4m
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+X-Received: by 2002:a05:6e02:1445:b0:3a0:933d:d307 with SMTP id
+ e9e14a558f8ab-3a34516a172mr58437585ab.8.1727552969544; Sat, 28 Sep 2024
+ 12:49:29 -0700 (PDT)
+Date: Sat, 28 Sep 2024 12:49:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f85dc9.050a0220.aab67.0007.GAE@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush
+From: syzbot <syzbot+e1e7130b99d8a4ac02e4@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Switch to device_for_each_child_node_scoped() to simplify the code by
-removing the need for a call to fwnode_handle_put() in the error path.
+Hello,
 
-This also prevents possible memory leaks if new error paths are added
-without the required call to fwnode_handle_put().
+syzbot found the following issue on:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+HEAD commit:    abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f9b107980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1e7130b99d8a4ac02e4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-abf2050f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2179ebeade58/vmlinux-abf2050f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f05289b5cf7c/bzImage-abf2050f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e1e7130b99d8a4ac02e4@syzkaller.appspotmail.com
+
+(syz.0.0,5112,0):ocfs2_truncate_log_needs_flush:5822 ERROR: bug expression: le16_to_cpu(tl->tl_used) > le16_to_cpu(tl->tl_count)
+(syz.0.0,5112,0):ocfs2_truncate_log_needs_flush:5822 ERROR: slot 0, invalid truncate log parameters: used = 64512, count = 39
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/alloc.c:5822!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5112 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-09959-gabf2050f51fd #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ocfs2_truncate_log_needs_flush+0x312/0x320 fs/ocfs2/alloc.c:5819
+Code: 0f b7 00 4c 89 f7 48 c7 c6 42 42 11 8e ba be 16 00 00 48 c7 c1 60 0a 49 8c 45 89 e0 41 89 d9 50 e8 d3 aa 20 00 48 83 c4 08 90 <0f> 0b e8 c7 30 41 08 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003727540 EFLAGS: 00010292
+RAX: 72ffad2bcd159b00 RBX: 000000000000fc00 RCX: 72ffad2bcd159b00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc90003727610 R08: ffffffff81746c8c R09: 1ffff920006e4e18
+R10: dffffc0000000000 R11: fffff520006e4e19 R12: 0000000000000000
+R13: ffff888000503ac2 R14: ffffc900037275a0 R15: 1000000000000000
+FS:  00007f582a3f36c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f582a3f2f98 CR3: 000000003f8ac000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_xattr_set+0xeab/0x1930 fs/ocfs2/xattr.c:3625
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
+ vfs_setxattr+0x221/0x430 fs/xattr.c:321
+ do_setxattr fs/xattr.c:629 [inline]
+ path_setxattr+0x37e/0x4d0 fs/xattr.c:658
+ __do_sys_setxattr fs/xattr.c:676 [inline]
+ __se_sys_setxattr fs/xattr.c:672 [inline]
+ __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:672
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f582957def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f582a3f3038 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 00007f5829736058 RCX: 00007f582957def9
+RDX: 00000000200013c0 RSI: 0000000020000140 RDI: 0000000020000100
+RBP: 00007f58295f0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000700 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f5829736058 R15: 00007ffca764d158
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_truncate_log_needs_flush+0x312/0x320 fs/ocfs2/alloc.c:5819
+Code: 0f b7 00 4c 89 f7 48 c7 c6 42 42 11 8e ba be 16 00 00 48 c7 c1 60 0a 49 8c 45 89 e0 41 89 d9 50 e8 d3 aa 20 00 48 83 c4 08 90 <0f> 0b e8 c7 30 41 08 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90003727540 EFLAGS: 00010292
+RAX: 72ffad2bcd159b00 RBX: 000000000000fc00 RCX: 72ffad2bcd159b00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc90003727610 R08: ffffffff81746c8c R09: 1ffff920006e4e18
+R10: dffffc0000000000 R11: fffff520006e4e19 R12: 0000000000000000
+R13: ffff888000503ac2 R14: ffffc900037275a0 R15: 1000000000000000
+FS:  00007f582a3f36c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 000000003f8ac000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- drivers/gpio/gpiolib-acpi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 78ecd56123a3..1f9fe50bba00 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -1315,9 +1315,8 @@ acpi_gpiochip_parse_own_gpio(struct acpi_gpio_chip *achip,
- static void acpi_gpiochip_scan_gpios(struct acpi_gpio_chip *achip)
- {
- 	struct gpio_chip *chip = achip->chip;
--	struct fwnode_handle *fwnode;
- 
--	device_for_each_child_node(chip->parent, fwnode) {
-+	device_for_each_child_node_scoped(chip->parent, fwnode) {
- 		unsigned long lflags;
- 		enum gpiod_flags dflags;
- 		struct gpio_desc *desc;
-@@ -1335,7 +1334,6 @@ static void acpi_gpiochip_scan_gpios(struct acpi_gpio_chip *achip)
- 		ret = gpiod_hog(desc, name, lflags, dflags);
- 		if (ret) {
- 			dev_err(chip->parent, "Failed to hog GPIO\n");
--			fwnode_handle_put(fwnode);
- 			return;
- 		}
- 	}
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.43.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
