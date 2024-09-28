@@ -1,273 +1,140 @@
-Return-Path: <linux-kernel+bounces-342443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10675988F27
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:20:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2097988F29
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1612820DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9151C20DD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB0A187861;
-	Sat, 28 Sep 2024 12:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bojNiA6l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F0E18787D;
+	Sat, 28 Sep 2024 12:21:40 +0000 (UTC)
+Received: from mail115-95.sinamail.sina.com.cn (mail115-95.sinamail.sina.com.cn [218.30.115.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEC0C139;
-	Sat, 28 Sep 2024 12:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870A418732A
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 12:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727526037; cv=none; b=nDlMqqjApIX77510U06Y5m0s9jKBei2l4kc/V8fOy/ZxkIYjuhBycDLFrEevNM1kCVyC6GBSQuSAh//4D3zMof0zLaQxRezpjCSnnLE7SLyAPvf4c9rsRdcmpas7QJQvgPIhtisw5eBjzPvqlJxvE0UsbvPheUJ76/StkTY+NrQ=
+	t=1727526099; cv=none; b=mEgX7bJleiHce5AEqf2Y8rpKz65UwmpC0MrC/YcShqnrQO+X5KLWSAXGmTmk+H8wBF2F2spG89KKzXCL8W7FKcZQ7yXKIC8Zg82yoYcjngOPWt2iVvgMku094dwjw7udWi/A8gSKcy2cyKXarYfYm9ymFDuJrqkTts7qYqe7CxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727526037; c=relaxed/simple;
-	bh=VlJucxXTuioDoY6O7y4XDszULEPjMWJaI+McDBEM6kY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=biDu1IT11ZqgIOIr9iPhhf+/tmV1Vk+6FFMTHnxhc6+lZSTJyRPxNpgL2ShVKBcre7wG1eX/nfhIV1IAzDfBJcIAKUX8BQY6ZAiZAVoYcIPesMZFUzEAJUDQrCzEcAwqKRicSuyeNpd9xfDcYVaRbRD5U7DA9/v+J+7++dnjHvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bojNiA6l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E97E3C4CEC3;
-	Sat, 28 Sep 2024 12:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727526036;
-	bh=VlJucxXTuioDoY6O7y4XDszULEPjMWJaI+McDBEM6kY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bojNiA6ldaXTfYQI641aopuu8I3gzz3B56wd5VCZFUU7dpKOdCb0pGe2qtCooYt9W
-	 UaJK+CkzjQ/A+uAvMrpm06/mJC9uN1oVlFcAsEmwBsm6Qq1oMft0tEF9Zaj3tEdtiR
-	 /Kjp/5kBwTocZR73VJlHysszOcqLNtjNkD3y2VwRyGR46ifZI5E/XZ/ZcMRmOuZhd/
-	 GeeMoF9v4rycVIvqpVXy45rOKFOug9d7Y4d5Oj57TA+H5GSz3byB4iLjn233O5RBoW
-	 26E/nWBSPg2MpIav7n+rgnH+c8ThCHZc6viD7jeUAHdVrNrHuDALwFFSjyYeUCtpVj
-	 63PtPfCM9A++w==
-Message-ID: <28834db1-3e9e-47f4-b00e-a548589d77e9@kernel.org>
-Date: Sat, 28 Sep 2024 14:20:29 +0200
+	s=arc-20240116; t=1727526099; c=relaxed/simple;
+	bh=3vNRQfb8vdVrkvVrzATImGjzZL6Z7WiQUS82zKMTPuE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FSw6lTaP7OuIiDlALYa0VU9K6yDEUywg6hCKuD5S69eh3T40YMgi/EDAO51lybZgKwS/XCVyZigHl4IbLvL/N270DAuSbnIyjSRPwaC8t41vWDs6t16EnE7/nlXRNy/5XXS4tOz5gMCjYuoqXZ8zpxPJyiWYmLQY0xaXyiXjB4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.191])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66F7F4C100001548; Sat, 28 Sep 2024 20:21:24 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3802538913194
+X-SMAIL-UIID: 00372D9D6125415B8635D32FD6DBA2C8-20240928-202124-1
+From: Hillf Danton <hdanton@sina.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Denis Kirjanov <dkirjanov@suse.de>,
+	syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+Date: Sat, 28 Sep 2024 20:21:12 +0800
+Message-Id: <20240928122112.1412-1-hdanton@sina.com>
+In-Reply-To: <CANn89iKbygQsCLcb0STk7DVnseNQ6rkSxeJ1cFGDaufDo5eSgg@mail.gmail.com>
+References: <000000000000657ecd0614456af8@google.com> <3483096f-4782-4ca1-bd8a-25a045646026@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
- support
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- dlechner@baylibre.com
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
- <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
- <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
- <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
- <0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
- <fa27dc74-7b1f-4ef5-81dc-cc434da4ff89@kernel.org>
- <c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 25/09/2024 13:55, Nuno Sá wrote:
-> On Wed, 2024-09-25 at 09:22 +0200, Krzysztof Kozlowski wrote:
->> On 24/09/2024 14:27, Nuno Sá wrote:
->>> On Tue, 2024-09-24 at 10:02 +0200, Krzysztof Kozlowski wrote:
->>>> On 23/09/2024 17:50, Angelo Dureghello wrote:
->>>>> Hi Krzysztof,
->>>>>
->>>>> On 22/09/24 23:02, Krzysztof Kozlowski wrote:
->>>>>> On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Dureghello wrote:
->>>>>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>>>>
->>>>>>> There is a version AXI DAC IP block (for FPGAs) that provides
->>>>>>> a physical bus for AD3552R and similar chips, and acts as
->>>>>>> an SPI controller.
->>>>>>>
->>>>>>> For this case, the binding is modified to include some
->>>>>>> additional properties.
->>>>>>>
->>>>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>>>>>> ---
->>>>>>>   .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42
->>>>>>> ++++++++++++++++++++++
->>>>>>>   1 file changed, 42 insertions(+)
->>>>>>>
->>>>>>> diff --git
->>>>>>> a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>>>> b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>>>> index 41fe00034742..aca4a41c2633 100644
->>>>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>>>> @@ -60,6 +60,18 @@ properties:
->>>>>>>       $ref: /schemas/types.yaml#/definitions/uint32
->>>>>>>       enum: [0, 1, 2, 3]
->>>>>>>   
->>>>>>> +  io-backends:
->>>>>>> +    description: The iio backend reference.
->>>>>>> +      An example backend can be found at
->>>>>>> +       
->>>>>>> https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
->>>>>>> +    maxItems: 1
->>>>>>> +
->>>>>>> +  adi,synchronous-mode:
->>>>>>> +    description: Enable waiting for external synchronization
->>>>>>> signal.
->>>>>>> +      Some AXI IP configuration can implement a dual-IP layout,
->>>>>>> with
->>>>>>> internal
->>>>>>> +      wirings for streaming synchronization.
->>>>>>> +    type: boolean
->>>>>>> +
->>>>>>>     '#address-cells':
->>>>>>>       const: 1
->>>>>>>   
->>>>>>> @@ -128,6 +140,7 @@ patternProperties:
->>>>>>>             - custom-output-range-config
->>>>>>>   
->>>>>>>   allOf:
->>>>>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->>>>>>>     - if:
->>>>>>>         properties:
->>>>>>>           compatible:
->>>>>>> @@ -238,4 +251,33 @@ examples:
->>>>>>>               };
->>>>>>>           };
->>>>>>>       };
->>>>>>> +
->>>>>>> +  - |
->>>>>>> +    axi_dac: spi@44a70000 {
->>>>>>> +        compatible = "adi,axi-ad3552r";
->>>>>> That is either redundant or entire example should go to the parent
->>>>>> node,
->>>>>> if this device is fixed child of complex device (IOW, adi,ad3552r
->>>>>> cannot
->>>>>> be used outside of adi,axi-ad3552r).
->>>>>
->>>>> ad3552r can still be used by a generic "classic" spi
->>>>> controller (SCLK/CS/MISO) but at a slower samplerate, fpga
->>>>> controller only (axi-ad3552r) can reach 33MUPS.
->>>>
->>>> OK, then this is just redundant. Drop the node. Parent example should
->>>> contain the children, though.
->>>>>
->>>>>>
->>>>>>> +        reg = <0x44a70000 0x1000>;
->>>>>>> +        dmas = <&dac_tx_dma 0>;
->>>>>>> +        dma-names = "tx";
->>>>>>> +        #io-backend-cells = <0>;
->>>>>>> +        clocks = <&ref_clk>;
->>>>>>> +
->>>>>>> +        #address-cells = <1>;
->>>>>>> +        #size-cells = <0>;
->>>>>>> +
->>>>>>> +        dac@0 {
->>>>>>> +            compatible = "adi,ad3552r";
->>>>>>> +            reg = <0>;
->>>>>>> +            reset-gpios = <&gpio0 92 0>;
->>>>>> Use standard defines for GPIO flags.
->>>>>
->>>>> fixed, thanks
->>>>>
->>>>>>> +            io-backends = <&axi_dac>;
->>>>>> Why do you need to point to the parent? How much coupled are these
->>>>>> devices? Child pointing to parent is not usually expected, because
->>>>>> that's obvious.
->>>>>
->>>>>
->>>>> "io-backends" is actually the way to refer to the backend module,
->>>>> (used already for i.e. ad9739a),
->>>>> it is needed because the backend is not only acting as spi-controller,
->>>>> but is also providing some APIs for synchronization and bus setup
->>>>> support.
->>>>
->>>>
->>>> But if backend is the parent, then this is redundant. You can take it
->>>> from the child-parent relationship. Is this pointing to other devices
->>>> (non-parent) in other ad3552r configurations?
->>>>
->>>
->>> The backend is a provider-consumer type of API. On the consumer side (which
->>> is the
->>> driver the child node will probe on), we need to call devm_iio_backend_get()
->>> to get
->>> the backend object (which obviously is the parent). For that, 'io-backends'
->>> is being
->>
->> You described the driver, so how does it matter? Driver can call
->> get_backend_from_parent(), right? Or get_backend_from_fwnode(parent)?
+On Mon, 25 Mar 2024 14:08:36 +0100 Eric Dumazet <edumazet@google.com>
+> On Mon, Mar 25, 2024 at 1:10 PM Denis Kirjanov <dkirjanov@suse.de> wrote:
+> > On 3/22/24 23:10, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    61387b8dcf1d Merge tag 'for-6.9/dm-vdo' of git://git.kerne..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11effbd1180000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c6aea81bc9ff5e99
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+> > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/b972a52930fa/disk-61387b8d.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/caa2592898b6/vmlinux-61387b8d.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/4187257afcc5/bzImage-61387b8d.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+> > >
+> > > ==================================================================
+> > > BUG: KASAN: slab-use-after-free in __ethtool_get_link_ksettings+0x186/0x190 net/ethtool/ioctl.c:441
+> > > Read of size 8 at addr ffff888021f46308 by task kworker/0:4/5169
+> > >
+> > > CPU: 0 PID: 5169 Comm: kworker/0:4 Not tainted 6.8.0-syzkaller-05562-g61387b8dcf1d #0
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/29/2024
+> > > Workqueue: infiniband ib_cache_event_task
+> > > Call Trace:
+> > >  <TASK>
+> > >  __dump_stack lib/dump_stack.c:88 [inline]
+> > >  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+> > >  print_address_description mm/kasan/report.c:377 [inline]
+> > >  print_report+0xc3/0x620 mm/kasan/report.c:488
+> > >  kasan_report+0xd9/0x110 mm/kasan/report.c:601
+> > >  __ethtool_get_link_ksettings+0x186/0x190 net/ethtool/ioctl.c:441
+> > >  __ethtool_get_link_ksettings+0xf5/0x190 net/ethtool/ioctl.c:445
+> >
+> > Hmm, report says that we have a net_device freed even that we have a dev_hold()
+> > before __ethtool_get_link_ksettings()
 > 
-> Well yes, just stating what the framework (also in terms of bindings) is
-> expecting. Of course that on the driver side we can paper around it the way we
-> want. But my main point was that we can only paper around it if we use code that
-> is meant not to be used.
+>  dev_hold(dev) might be done too late, the device is already being dismantled.
 > 
-> And, FWIW, I was (trying) replying to your comment
+> ib_device_get_netdev() should probably be done under RTNL locking,
+> otherwise the final part is racy :
 > 
-> "You can take it from the child-parent relationship"
-> 
-> Again, we can only do that by introducing new code or use code that's not meant
-> to be used. The way we're supposed to reference backends is by explicitly using
-> the proper FW property.
-> 
-> Put it in another way and a completely hypothetical case. If we have a spi
-> controller which happens to export some clock and one of it's peripherals ends
-> up using that clock, wouldn't we still use 'clocks' to reference that clock?
+> if (res && res->reg_state != NETREG_REGISTERED) {
+>      dev_put(res);
+>      return NULL;
+> }
 
-I asked how coupled are these devices. Never got the answer and you are
-reflecting with question. Depends. Please do not create hypothetical,
-generic scenarios and then apply them to your one particular opposite case.
+Given paranoia in netdev_run_todo(),
 
-Best regards,
-Krzysztof
+		/* paranoia */
+		BUG_ON(netdev_refcnt_read(dev) != 1);
 
+the claim that dev_hold(dev) might be done too late could not explain
+the success of checking NETREG_REGISTERED, because of checking 
+NETREG_UNREGISTERING after rcu barrier.
+
+	/* Wait for rcu callbacks to finish before next phase */
+	if (!list_empty(&list))
+		rcu_barrier();
+
+	list_for_each_entry_safe(dev, tmp, &list, todo_list) {
+		if (unlikely(dev->reg_state != NETREG_UNREGISTERING)) {
+			netdev_WARN(dev, "run_todo but not unregistering\n");
+			list_del(&dev->todo_list);
+			continue;
+		}
 
