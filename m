@@ -1,406 +1,370 @@
-Return-Path: <linux-kernel+bounces-342612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814679890E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:47:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8509890E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:50:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08EE71F20F26
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:47:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADC411C20A22
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 17:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE4514B06C;
-	Sat, 28 Sep 2024 17:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9DD14B06C;
+	Sat, 28 Sep 2024 17:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3o8AfQd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="xCiPKmEM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qRCD/UEZ"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A7F1DDC9;
-	Sat, 28 Sep 2024 17:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187311DDC9;
+	Sat, 28 Sep 2024 17:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727545653; cv=none; b=qUUfXmpFRdPRXz0+7e7vIMFSq8IHJUBrO4a6Z4qgOcVD9ojUDKSvJN9cDdMsxjG8gFYShf0xaIk3R3Wl1hKx6TFuFBQlFj23sBmYjpbPnCEJUWxn+M7QFVTZWUsHxAHGDl27nbrF0/6h2r9Gf4LlWqwZeCmIUNUzgF6HdZu/kKo=
+	t=1727545796; cv=none; b=lTqc244ASKKnKdYFX955De56ivbafkXD7EMXDmfZY+7oy6+s78Dc0E4wPbc1GeOyec7e5KI/dEoIO+mlT8yk5OUNK3Ar+t9jczs/CPcaWdIrgHorZzUOMZPs2QyOBHFQfrBQOVX6PJvkevkGU1w1QyBh9/FisdnHS6XggQAWhzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727545653; c=relaxed/simple;
-	bh=JVWMZ2uryw2i0TZEETV/srEzMJ/lmNarVJCMpotwcaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ApP+yXkkCuAr9lU+dei4LDYhxfKcbHaViitFSZf/DElefugTBlii606/c3TRI3VIw9bdzyRjAfvs0sVmBFPbi/GSpj5MlQWHOKvKif6jXBpuOqyPbgXCgPbTMp8coKxb2k3Yvtql2U7GUyeIAyUb135/6Wbj9ezosNIJYvLaCt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3o8AfQd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF1DC4CEC3;
-	Sat, 28 Sep 2024 17:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727545653;
-	bh=JVWMZ2uryw2i0TZEETV/srEzMJ/lmNarVJCMpotwcaQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M3o8AfQdIkW/PHzyM9vZ9wb04F2SFJZi3L3wF63oB0fH6QSVKt2dBqicfdzoj3VFq
-	 Aw013BCWTik+VYjC5hH1/lnsRTdeAKxmOzs+3mxaQc6scTw31krT/44rSCsI1PcgS3
-	 sFbD2VqjzqHL+0a1RKOKUmfIlujhOPBWxVugzd8nVUiDkEqXTcSHZ+G6RWaoE16yt0
-	 NruHuaHRm3ghoCeT2D/VrzOvkzhBCGqIwdRDL8A2UXFdyBDDhHeu+E78drzpIXiw2K
-	 sSFGq9H3C0Yzv2BmDhY5k83Iyj6FUkEoUy4x3MOgyQQl2ABVN9+J8Yj40SJPKsaoOB
-	 94XL5wERyYcdQ==
-Date: Sat, 28 Sep 2024 18:47:22 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
- <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Andy Shevchenko
- <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
- =?UTF-8?B?w6dhbHZlcw==?= <joao.goncalves@toradex.com>, Mike Looijmans
- <mike.looijmans@topic.nl>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean
- <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-Message-ID: <20240928184722.314b329b@jic23-huawei>
-In-Reply-To: <20240923101206.3753-7-antoniu.miclaus@analog.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-	<20240923101206.3753-7-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727545796; c=relaxed/simple;
+	bh=ZmHyWgTZ6f578nAFPCapPQS0yGp6scQWRlvv80p6/FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SPjJ1n1uhonFlbD6cXoRpy5bKBx7ldlTtabjAalLNqt2xeWpXBehYpYlaXdCeWuxaPNZoTH8nAwFQjC1wRz4UKUYSIX6N1R0yYKfBZTztLejXyKp59jRphTeu7lfFsHoJC1z92dKIEzrqXAR/PAihh3YW3hwTagMfY7H/OdyNNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=xCiPKmEM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qRCD/UEZ; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id 3886213801DC;
+	Sat, 28 Sep 2024 13:49:53 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sat, 28 Sep 2024 13:49:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1727545793; x=1727632193; bh=zVhuv8ayXo
+	6PvtvFMboib5FvnLtF4iOySMxwwGYV6u4=; b=xCiPKmEM9jlxNgQgLd/Ay3VW4K
+	iTsvKy/sI2EvbILWa0mg/1o02sYwoErO61YAq3hOUVFYSKzg47BLZkzDCDG/Uqlx
+	cKQ7Z67EfU9IiC6qOUhwuGzY97IuLgHUmVXxt/lw/wiqxmkaUY486nmYl0bxU3/+
+	3ZSIPhE7I6o+sdG760vtYyu4WMXzPJ+o84g6rZJtJXLRA2FVtvXlP8R1tLAoezVX
+	pYccjdw8BOKlKLBrOU8yivacDbKQbzA0A9mXErcTjcg+ErG2TTceXuTUoocw1ywM
+	JgNdfLnYEllFa1C4zdzLSnY8UQnlfxWAdGGqj9X7WUbOf3wwz+rOjrMfd3wg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1727545793; x=1727632193; bh=zVhuv8ayXo6PvtvFMboib5FvnLtF
+	4iOySMxwwGYV6u4=; b=qRCD/UEZ0glQcdeOEyr1A0HBU+cZGkjBR83aVz2Lm8fy
+	9E9fnA/L2Fn6W/vWcbmX1PdctgUEFE06NJButZkcNs5veAMAcYLxOSSYPlxPc3zP
+	2F8uG5KKoWFFGXbi7hERQum2XwWG1eZn4lNHAO7i1QclG0s6Fuoe+FKwVvh91ibS
+	s8f+0OCYTtrk4H/CMxG/czghvfsdrISJmMxeYiHcgGuzpxhxKRGTT/LmVdOgOR7M
+	/A/9jThbTE1YyeppQWuJh3G+pXeGBZeGxjdBthO5fXCT3YppbDToFihQ9KWPtuqY
+	n8dlFzPaktdXRuK1HPdHZ278kWC/JEW9dX8utubrpQ==
+X-ME-Sender: <xms:wEH4ZoI4bHnZWwuAFex1g5qLxb7SZi5Q7dQqpSByzz5T9gnmXIPNCQ>
+    <xme:wEH4ZoL3pgngpqw4fG7pU4ncHN3lcE4uYSvyH6L9FNJGnD-FUxQXTXi0yQlJ9wXMA
+    KHh2XjlcvTKGZ_2j4M>
+X-ME-Received: <xmr:wEH4ZouGrv2_EydU9_dBwRMs009GUM1TzQ3qBIYK4DyP-0tjsln8jkFmS7VtGT7xp5inMpoaMDM40CwBkDWxthfDFnUo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduuddgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
+    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
+    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeffudettdei
+    udduteejgeejueejgeejueehtedtteeivedvveffkeejjeeuheeghfenucffohhmrghinh
+    epghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigv
+    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtggtpd
+    hnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehthhho
+    rhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnthdroh
+    hvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghsshhi
+    ohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgstg
+    grtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    khgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:wEH4ZlaXN6fM1_7uCt4W5nNgDczOYm1km4JicHI7dxjea2gqTKoC_w>
+    <xmx:wEH4ZvZ3Lnh4E6gFtKTjIlCV1YiMfb2V4go7Bm5VHNHuEaqePif4WQ>
+    <xmx:wEH4ZhC0Pld9LXiQCsXRXkw9GlXQGpEdJzeOpY2r-pz66TKcqnE_ww>
+    <xmx:wEH4Zlac1sz2nW1FzEsfO8z46Nncv3FMnp-KXznKoKMaz64RgvyOjw>
+    <xmx:wUH4Zpk5WdSsIvLh3SWbJrsKqEqyjA7kLXFuJFYSLeVL8ZkOSSIJCx-f>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 28 Sep 2024 13:49:51 -0400 (EDT)
+Date: Sat, 28 Sep 2024 19:49:50 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: kent.overstreet@linux.dev, regressions@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, ardb@kernel.org,
+	morbo@google.com
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <ZvhBvht3Cn6sHCVA@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <Zvg-mDsvvOueGpzs@archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zvg-mDsvvOueGpzs@archlinux>
 
-On Mon, 23 Sep 2024 13:10:23 +0300
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add support for the AD485X DAS familiy.
+On 28 19:36:27, Jan Hendrik Farr wrote:
+> On 26 18:09:57, Thorsten Blum wrote:
+> > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > >> 
+> > >> Hi Kent,
+> > >> 
+> > >> found a strange regression in the patch set for 6.12.
+> > >> 
+> > >> First bad commit is: 86e92eeeb23741a072fe7532db663250ff2e726a
+> > >> bcachefs: Annotate struct bch_xattr with __counted_by()
+> > >> 
+> > >> When compiling with clang 18.1.8 (also with latest llvm main branch) and
+> > >> CONFIG_FORTIFY_SOURCE=y my rootfs does not mount because there is an erroneous
+> > >> detection of a buffer overflow.
+> > >> 
+> > >> The __counted_by attribute is supposed to be supported starting with gcc 15,
+> > >> not sure if it is implemented yet so I haven't tested with gcc trunk yet.
+> > >> 
+> > >> Here's the relevant section of dmesg:
+> > >> 
+> > >> [    6.248736] bcachefs (nvme1n1p2): starting version 1.12: rebalance_work_acct_fix
+> > >> [    6.248744] bcachefs (nvme1n1p2): recovering from clean shutdown, journal seq 1305969
+> > >> [    6.252374] ------------[ cut here ]------------
+> > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
+> > >> [    6.252379] WARNING: CPU: 18 PID: 511 at lib/string_helpers.c:1033 __fortify_report+0x45/0x50
+> > >> [    6.252383] Modules linked in: bcachefs lz4hc_compress lz4_compress hid_generic usbhid btrfs crct10dif_pclmul libcrc32c crc32_pclmul crc32c_generic polyval_clmulni crc32c_intel polyval_generic raid6_pq ghash_clmulni_intel xor sha512_ssse3 sha256_ssse3 sha1_ssse3 aesni_intel gf128mul nvme crypto_simd ccp xhci_pci cryptd sp5100_tco xhci_pci_renesas nvme_core nvme_auth video wmi ip6_tables ip_tables x_tables i2c_dev
+> > >> [    6.252404] CPU: 18 UID: 0 PID: 511 Comm: mount Not tainted 6.11.0-10065-g6fa6588e5964 #98 d8e0beb515d91b387aa60970de7203f35ddd182c
+> > >> [    6.252406] Hardware name: Micro-Star International Co., Ltd. MS-7D78/PRO B650-P WIFI (MS-7D78), BIOS 1.C0 02/06/2024
+> > >> [    6.252407] RIP: 0010:__fortify_report+0x45/0x50
+> > >> [    6.252409] Code: 48 8b 34 c5 30 92 21 87 40 f6 c7 01 48 c7 c0 75 1b 0a 87 48 c7 c1 e1 93 07 87 48 0f 44 c8 48 c7 c7 ef 03 10 87 e8 0b c2 9b ff <0f> 0b e9 cf 5d 9e 00 cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90
+> > >> [    6.252410] RSP: 0018:ffffbb3d03aff350 EFLAGS: 00010246
+> > >> [    6.252412] RAX: 4ce590fb7c372800 RBX: ffff98d559a400e8 RCX: 0000000000000027
+> > >> [    6.252413] RDX: 0000000000000002 RSI: 00000000ffffdfff RDI: ffff98e43db21a08
+> > >> [    6.252414] RBP: ffff98d559a400d0 R08: 0000000000001fff R09: ffff98e47ddcd000
+> > >> [    6.252415] R10: 0000000000005ffd R11: 0000000000000004 R12: ffff98d559a40000
+> > >> [    6.252416] R13: ffff98d54abf1320 R14: ffffbb3d03aff430 R15: 0000000000000000
+> > >> [    6.252417] FS:  00007efc82117800(0000) GS:ffff98e43db00000(0000) knlGS:0000000000000000
+> > >> [    6.252418] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > >> [    6.252419] CR2: 000055d96658ea80 CR3: 000000010a12c000 CR4: 0000000000f50ef0
+> > >> [    6.252420] PKRU: 55555554
+> > >> [    6.252421] Call Trace:
+> > >> [    6.252423]  <TASK>
+> > >> [    6.252425]  ? __warn+0xd5/0x1d0
+> > >> [    6.252427]  ? __fortify_report+0x45/0x50
+> > >> [    6.252429]  ? report_bug+0x144/0x1f0
+> > >> [    6.252431]  ? __fortify_report+0x45/0x50
+> > >> [    6.252433]  ? handle_bug+0x6a/0x90
+> > >> [    6.252435]  ? exc_invalid_op+0x1a/0x50
+> > >> [    6.252436]  ? asm_exc_invalid_op+0x1a/0x20
+> > >> [    6.252440]  ? __fortify_report+0x45/0x50
+> > >> [    6.252441]  __fortify_panic+0x9/0x10
+> > >> [    6.252443]  bch2_xattr_validate+0x13b/0x140 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252463]  bch2_btree_node_read_done+0x125a/0x17a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252482]  btree_node_read_work+0x202/0x4a0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252499]  bch2_btree_node_read+0xa8d/0xb20 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> [    6.252514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > >> [    6.252515]  ? pcpu_alloc_noprof+0x741/0xb50
+> > >> [    6.252517]  ? srso_alias_return_thunk+0x5/0xfbef5
+> > >> [    6.252519]  ? time_stats_update_one+0x75/0x1f0 [bcachefs 8361179bbfcc59e669df38aec976f02d7211a659]
+> > >> 
+> > >> ...
+> > >> 
+> > >> 
+> > >> The memchr in question is at:
+> > >> https://github.com/torvalds/linux/blob/11a299a7933e03c83818b431e6a1c53ad387423d/fs/bcachefs/xattr.c#L99
+> > >> 
+> > >> There is not actually a buffer overflow here, I checked with gdb that
+> > >> xattr.v->x_name does actually contain a string of the correct length and
+> > >> xattr.v->x_name_len contains the correct length and should be used to determine
+> > >> the length when memchr uses __struct_size for bounds-checking due to the
+> > >> __counted_by annotation.
+> > >> 
+> > >> I'm at the point where I think this is probably a bug in clang. I have a patch
+> > >> that does fix (more like bandaid) the problem and adds some print statements:
+> > >> 
+> > >> --
+> > >> diff --git a/fs/bcachefs/xattr.c b/fs/bcachefs/xattr.c
+> > >> index 56c8d3fe55a4..8d7e749b7dda 100644
+> > >> --- a/fs/bcachefs/xattr.c
+> > >> +++ b/fs/bcachefs/xattr.c @@ -74,6 +74,7 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> > >>      enum bch_validate_flags flags)
+> > >> {
+> > >> struct bkey_s_c_xattr xattr = bkey_s_c_to_xattr(k);
+> > >> + const struct bch_xattr *v = (void *)k.v;
+> > >> unsigned val_u64s = xattr_val_u64s(xattr.v->x_name_len,
+> > >>  le16_to_cpu(xattr.v->x_val_len));
+> > >> int ret = 0;
+> > >> @@ -94,9 +95,12 @@ int bch2_xattr_validate(struct bch_fs *c, struct bkey_s_c k,
+> > >> 
+> > >> bkey_fsck_err_on(!bch2_xattr_type_to_handler(xattr.v->x_type),
+> > >> c, xattr_invalid_type,
+> > >> - "invalid type (%u)", xattr.v->x_type);
+> > >> + "invalid type (%u)", v->x_type);
+> > >> 
+> > >> - bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> > >> + pr_info("x_name_len: %d", v->x_name_len);
+> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(v->x_name));
+> > >> + pr_info("__struct_size(x_name): %ld", __struct_size(xattr.v->x_name));
+> > >> + bkey_fsck_err_on(memchr(v->x_name, '\0', v->x_name_len),
+> > >> c, xattr_name_invalid_chars,
+> > >> "xattr name has invalid characters");
+> > >> fsck_err:
+> > >> --
+> > >> 
+> > >> 
+> > >> Making memchr access via a pointer created with
+> > >> const struct bch_xattr *v = (void *)k.v fixes it. From the print statements I
+> > >> can see that __struct_size(xattr.v->x_name) incorrectly returns 0, while
+> > >> __struct_size(v->x_name) correctly returns 10 in this case (the value of
+> > >> x_name_len).
+> > >> 
+> > >> The generated assembly illustrates what is going wrong. Below is an excerpt
+> > >> of the assembly clang generated for the bch2_xattr_validate function:
+> > >> 
+> > >> mov r13d, ecx
+> > >> mov r15, rdi
+> > >> mov r14, rsi
+> > >> mov rdi, offset .L.str.3
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> mov rbx, rdx
+> > >> mov edx, eax
+> > >> call _printk
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> mov rdi, offset .L.str.4
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> call _printk
+> > >> movzx edx, bh
+> > >> mov rdi, offset .L.str.4
+> > >> mov rsi, offset .L__func__.bch2_xattr_validate
+> > >> call _printk
+> > >> lea rdi, [rbx + 4]
+> > >> mov r12, rbx
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> xor ebx, ebx
+> > >> xor esi, esi
+> > >> call memchr
+> > >> 
+> > >> At the start of this rdx contains k.v (and is moved into rbx). The three calls
+> > >> to printk are the ones you can see in my patch. You can see that for the
+> > >> print that uses __struct_size(v->x_name) the compiler correctly uses
+> > >> movzx edx, byte ptr [rbx + 1]
+> > >> to load x_name_len into edx.
+> > >> 
+> > >> For the printk call that uses __struct_size(xattr.v->x_name) however the
+> > >> compiler uses
+> > >> movzx edx, bh
+> > >> So it will print the high 8 bits of the lower 16 bits (second least
+> > >> significant byte) of the memory address of xattr.v->x_type. This is obviously
+> > >> completely wrong.
+> > >> 
+> > >> It is then doing the correct call of memchr because this is using my patch.
+> > >> Without my patch it would be doing the same thing for the call to memchr where
+> > >> it uses the second least significant byte of the memory address of x_type as the
+> > >> length used for the bounds-check.
+> > >> 
+> > >> 
+> > >> 
+> > >> The LLVM IR also shows the same problem:
+> > >> 
+> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > >> [...]
+> > >> %51 = ptrtoint ptr %2 to i64
+> > >> %52 = lshr i64 %51, 8
+> > >> %53 = and i64 %52, 255
+> > >> 
+> > >> This is the IR for the incorrect behavior. It simply converts the pointer to an
+> > >> int, shifts right by 8 bits, then and with 0xFF. If it did a load (to i64)
+> > >> instead of ptrtoint this would actually work, as the second least significant
+> > >> bit of an i64 loaded from that memory address does contain the value of
+> > >> x_name_len. It's as if clang forgot to dereference a pointer here.
+> > >> 
+> > >> Correct IR does this (for the other printk invocation):
+> > >> 
+> > >> define internal zeroext i1 @xattr_cmp_key(ptr nocapture readnone %0, ptr %1, ptr nocapture noundef readonly %2) #0 align 16 {
+> > >> [...]
+> > >> %4 = getelementptr inbounds %struct.bch_xattr, ptr %1, i64 0, i32 1
+> > >> %5 = load i8, ptr %4, align 8
+> > >> [...]
+> > >> %48 = load i8, ptr %5, align 4
+> > >> %49 = zext i8 %48 to i64
+> > >> 
+> > >> Best Regards
+> > >> Jan
+> > > 
+> > > I suspect it's the same Clang __bdos() "bug" as in [1] and [2].
+> > > 
+> > > [1] https://lore.kernel.org/linux-kernel/3D0816D1-0807-4D37-8D5F-3C55CA910FAA@linux.dev/
+> > > [2] https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
+> > 
+> > Could you try this and see if it resolves the problem?
+> > 
+> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> > index 1a957ea2f4fe..b09759f31789 100644
+> > --- a/include/linux/compiler_types.h
+> > +++ b/include/linux/compiler_types.h
+> > @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+> >   * When the size of an allocated object is needed, use the best available
+> >   * mechanism to find it. (For cases where sizeof() cannot be used.)
+> >   */
+> > -#if __has_builtin(__builtin_dynamic_object_size)
+> > +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+> >  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+> >  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+> >  #else
 > 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> 
+> Alright, figured out why this fix doesn't work. The function signature
+> of memchr is:
+> 
+> void *memchr(const void * const POS0 p, int c, __kernel_size_t size)
+> 
+> The POS0 is the culprit. It's defined as __pass_object_size(0), which
+> leads to the call to __builtin_object_size being upgraded to
+> __builtin_dynamic_object_size.
 
-A few additional comments from me.
+Correction: POS0 is defined as __pass_dynamic_object_size(0) of course.
+The below patch changes it to be defined as __pass_object_size(0).
 
-Thanks,
-
-Jonathan
-
-> diff --git a/drivers/iio/adc/ad485x.c b/drivers/iio/adc/ad485x.c
-> new file mode 100644
-> index 000000000000..3333cad9ed8f
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad485x.c
-> @@ -0,0 +1,1061 @@
-
-> +static int ad485x_setup(struct ad485x_state *st)
-> +{
-> +	unsigned int product_id;
-> +	int ret;
-> +
-> +	ret = ad485x_set_sampling_freq(st, 1000000);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_A,
-> +			   AD485X_SW_RESET);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_B,
-> +			   AD485X_SINGLE_INSTRUCTION);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_INTERFACE_CONFIG_A,
-> +			   AD485X_SDO_ENABLE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_PRODUCT_ID_L, &product_id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (product_id != st->info->product_id)
-> +		dev_warn(&st->spi->dev, "Unknown product ID: 0x%02X\n",
-> +			 product_id);
-
-dev_info() for this is probably better.  Might be fine afterall if
-the new part is fully backwards compatible with this one.
-
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_DEVICE_CTRL,
-> +			   AD485X_ECHO_CLOCK_MODE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(st->regmap, AD485X_REG_PACKET, 0);
-> +}
-
-
-> +
-> +static int ad485x_get_packet_format(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan)
-> +{
-> +	struct ad485x_state *st = iio_priv(indio_dev);
-> +	unsigned int format;
-> +	int ret;
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_PACKET, &format);
-> +	if (ret)
-> +		return ret;
-> +
-> +	format = FIELD_GET(AD485X_PACKET_FORMAT_MASK, format);
-> +
-> +	return format;
-	return FIELD_GET()
-> +}
-
-> +
-> +static int ad485x_get_calibscale(struct ad485x_state *st, int ch, int *val,
-> +				 int *val2)
-> +{
-> +	unsigned int reg_val;
-> +	int gain;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_GAIN_MSB(ch),
-> +			  &reg_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gain = (reg_val & 0xFF) << 8;
-Use a byte array into which you write the regval then a get_unalignedb_be16
-or similar to get the value.
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_GAIN_LSB(ch),
-> +			  &reg_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	gain |= reg_val & 0xFF;
-> +
-> +	*val = gain;
-> +	*val2 = 32768;
-> +
-> +	return IIO_VAL_FRACTIONAL;
-> +}
-
-> +static int ad485x_get_calibbias(struct ad485x_state *st, int ch, int *val,
-> +				int *val2)
-> +{
-> +	unsigned int lsb, mid, msb;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_MSB(ch),
-> +			  &msb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_MID(ch),
-> +			  &mid);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, AD485X_REG_CHX_OFFSET_LSB(ch),
-> +			  &lsb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (st->info->resolution == 16) {
-> +		*val = msb << 8;
-> +		*val |= mid;
-> +		*val = sign_extend32(*val, 15);
-> +	} else {
-> +		*val = msb << 12;
-> +		*val |= mid << 4;
-> +		*val |= lsb >> 4;
-As below I'd use a byte array then you can do get_unaligned_be24 to
-+ a right shift by 4 of the whole thing.
-
-> +		*val = sign_extend32(*val, 19);
-> +	}
-> +
-> +	return IIO_VAL_INT;
-> +}
-> +
-> +static int ad485x_set_calibbias(struct ad485x_state *st, int ch, int val,
-> +				int val2)
-> +{
-> +	unsigned int lsb, mid, msb;
-> +	int ret;
-> +
-> +	if (st->info->resolution == 16) {
-> +		lsb = 0;
-> +		mid = val & 0xFF;
-> +		msb = (val >> 8) & 0xFF;
-> +	} else {
-> +		lsb = (val << 4) & 0xFF;
-
-Might as well mask by 0xF0 to make it really clear
-nothing in bottom few bits.
-
-
-> +		mid = (val >> 4) & 0xFF;
-> +		msb = (val >> 12) & 0xFF;
-
-I'd be tempted to shift the whole thing left 4 bits and
-then use a put_unaligned_be24 on it into a byte array then pick
-out the bytes from that array.  Will be easier to read.
-Above 16 bit case would be a put_unaligned_be16
-
-> +	}
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_LSB(ch), lsb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_MID(ch), mid);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_write(st->regmap, AD485X_REG_CHX_OFFSET_MSB(ch), msb);
-
-I think you already got this question, but consider bulk writes.
-
-> +}
-> +
-> +static const unsigned int ad485x_scale_table[][2] = {
-> +	{2500, 0x0}, {5000, 0x1}, {5000, 0x2}, {10000, 0x3}, {6250, 0x04},
-> +	{12500, 0x5}, {10000, 0x6}, {20000, 0x7}, {12500, 0x8}, {25000, 0x9},
-> +	{20000, 0xA}, {40000, 0xB}, {25000, 0xC}, {50000, 0xD}, {40000, 0xE},
-> +	{80000, 0xF}
-
-Spaces after { and before } preferred.
-Maybe just have this as one item per line. I think that is more readable.
-
-> +};
-
-> +
-> +static int ad485x_read_raw(struct iio_dev *indio_dev,
-> +			   const struct iio_chan_spec *chan,
-> +			   int *val, int *val2, long info)
-> +{
-> +	struct ad485x_state *st = iio_priv(indio_dev);
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->sampling_freq;
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_CALIBSCALE:
-> +		return ad485x_get_calibscale(st, chan->channel, val, val2);
-> +	case IIO_CHAN_INFO_SCALE:
-> +		return ad485x_get_scale(st, chan, val, val2);
-> +	case IIO_CHAN_INFO_CALIBBIAS:
-> +		return ad485x_get_calibbias(st, chan->channel, val, val2);
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		scoped_guard(mutex, &st->lock)
-> +			* val = st->offsets[chan->channel];
-
-			*val = ...
-
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-
-> +
-> +#define AD485X_IIO_CHANNEL(index, real, storage, info)			\
-> +{									\
-> +	.type = IIO_VOLTAGE,						\
-> +	.ext_info = info,						\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
-> +		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
-> +		BIT(IIO_CHAN_INFO_SCALE) |				\
-> +		BIT(IIO_CHAN_INFO_OFFSET),				\
-> +	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),	\
-> +	.info_mask_shared_by_type_available =				\
-> +		BIT(IIO_CHAN_INFO_SCALE) |				\
-> +		BIT(IIO_CHAN_INFO_OFFSET),				\
-
-Maybe add avail for calibscale and calibbias as well.
-
-
-> +
-> +static struct iio_chan_spec_ext_info ad4858_ext_info[] = {
-> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
-> +	IIO_ENUM_AVAILABLE("packet_format",
-> +			   IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
-> +	{},
-> +};
-> +
-> +static struct iio_chan_spec_ext_info ad4857_ext_info[] = {
-> +	IIO_ENUM("packet_format", IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
-> +	IIO_ENUM_AVAILABLE("packet_format",
-> +			   IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
-> +	{},
-I think Andy pointed these out. No trailing comma on terminators.
-
-However, I'm not sure this ABI is practical currently.
-Basically I have no idea what it is or how to use it!
-> +};
-
-> +
-> +static const struct ad485x_chip_info ad4858i_info = {
-> +	.name = "ad4858i",
-> +	.product_id = AD4858I_PROD_ID,
-> +	.scale_table = ad485x_scale_table,
-> +	.num_scales = ARRAY_SIZE(ad485x_scale_table),
-> +	.offset_table = ad4858_offset_table,
-> +	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-> +	.channels = ad4858_channels,
-> +	.num_channels = ARRAY_SIZE(ad4858_channels),
-> +	.throughput = 1000000,
-
-Odd you use MEGA above, but not here.
-
-> +	.resolution = 20,
-> +};
-
-> +static int ad485x_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev;
-> +	struct ad485x_state *st;
-> +	int ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +	st->spi = spi;
-> +
-> +	mutex_init(&st->lock);
-
-Ever so slight preference for the new option of.
-	ret = devm_mutex_init(dev, &st->lock);
-	if (ret)
-		return ret;
-
-...
-
-> +}
-> +
-> +static const struct of_device_id ad485x_of_match[] = {
-> +	{ .compatible = "adi,ad4858", .data = &ad4858_info, },
-> +	{ .compatible = "adi,ad4857", .data = &ad4857_info, },
-> +	{ .compatible = "adi,ad4856", .data = &ad4856_info, },
-> +	{ .compatible = "adi,ad4855", .data = &ad4855_info, },
-> +	{ .compatible = "adi,ad4854", .data = &ad4854_info, },
-> +	{ .compatible = "adi,ad4853", .data = &ad4853_info, },
-> +	{ .compatible = "adi,ad4852", .data = &ad4852_info, },
-> +	{ .compatible = "adi,ad4851", .data = &ad4851_info, },
-> +	{ .compatible = "adi,ad4858i", .data = &ad4858i_info, },
-> +	{}
-	{ }
-> +};
-> +
-
-
+> 
+> So to make this work the POS0 definition needs the same
+> !defined(__clang__) on it. There's also two more
+> __has_builtin(__builtin_dynamic_object_size) checks in
+> lib/fortify_kunit.c. But they have no impact.
+> 
+> Now the fix works:
+> 
+> 
+> --
+> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+> index f14c275950b5..43ac0bca485d 100644
+> --- a/include/linux/compiler_types.h
+> +++ b/include/linux/compiler_types.h
+> @@ -413,7 +413,7 @@ struct ftrace_likely_data {
+>   * When the size of an allocated object is needed, use the best available
+>   * mechanism to find it. (For cases where sizeof() cannot be used.)
+>   */
+> -#if __has_builtin(__builtin_dynamic_object_size)
+> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+>  #define __struct_size(p)	__builtin_dynamic_object_size(p, 0)
+>  #define __member_size(p)	__builtin_dynamic_object_size(p, 1)
+>  #else
+> diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+> index 0d99bf11d260..7235655d9b80 100644
+> --- a/include/linux/fortify-string.h
+> +++ b/include/linux/fortify-string.h
+> @@ -148,7 +148,7 @@ extern char *__underlying_strncpy(char *p, const char *q, __kernel_size_t size)
+>   * size, rather than struct size), but there remain some stragglers using
+>   * type 0 that will be converted in the future.
+>   */
+> -#if __has_builtin(__builtin_dynamic_object_size)
+> +#if __has_builtin(__builtin_dynamic_object_size) && !defined(__clang__)
+>  #define POS			__pass_dynamic_object_size(1)
+>  #define POS0			__pass_dynamic_object_size(0)
+>  #else
 
