@@ -1,84 +1,166 @@
-Return-Path: <linux-kernel+bounces-342284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39239988D17
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 800B1988D19
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712F51C211B4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CBAA1F22223
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A925B4A0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABE2A933;
 	Sat, 28 Sep 2024 00:07:54 +0000 (UTC)
-Received: from mail115-80.sinamail.sina.com.cn (mail115-80.sinamail.sina.com.cn [218.30.115.80])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCIJibGN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7D4800
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FA523AB;
+	Sat, 28 Sep 2024 00:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727482074; cv=none; b=CxmehRiiVNWQnduTyCGSGcstxiGVClJO3OfbHwehgnnwSXwebp9S7i4BqIL46Zq/yOHOLTs6uTHP1bGjgqGW4cmmTTWgjS0WW5ep7BTiNQvS7EUChDLsnPpwI3sqShSLlsD0+lHat4NR06hDBMC4gd5HcDVDZbm4hlcl1uA3f24=
+	t=1727482074; cv=none; b=XmcE4m3LtbjpoikpOAfFjH1xvRuucu60T5Pob2OaaK3mEu1OGdWNV8AGz7dBUpV6tMIy+875VO65e0yyJR7ATsrhGG2klI1K/8/hY4u1f7phmdvP2TT2blxvyZVw9GUNswM6qpgEUXLArbvm48KP5CbxY1xcryVMW67qWLpBVWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727482074; c=relaxed/simple;
-	bh=TDLqSD+lw4KY1+l7lU2eWWFIt//CZcprmLjdRyTXGTA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oi44P9LpDlwDBhop0ksnGsD3SGvQ9LIcWceS+L3pQEpc2J8OdQRvVL/xZhFtm0CDK8LL5W2mac4yjqwxE+VLM8MRM36Xugyfz3K8MUmNwP9AeOZUH7PyNdXl2qHD+8ouk7QqReVRPvTfGmcbjIvznNdDeDojie1u7n8n9jCxn/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.191])
-	by sina.com (10.185.250.23) with ESMTP
-	id 66F748AB000065D5; Sat, 28 Sep 2024 08:07:09 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8986698913264
-X-SMAIL-UIID: 7D19F44053FF4BA6B5F3BEF716CC94AF-20240928-080709-1
-From: Hillf Danton <hdanton@sina.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: syzbot <syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] INFO: task hung in new_device_store (5)
-Date: Sat, 28 Sep 2024 08:06:57 +0800
-Message-Id: <20240928000657.1247-1-hdanton@sina.com>
-In-Reply-To: <CANn89iJMHqg4e_tErTERx=-ERXbA+CRbeC0chp9ofqANwwjhLA@mail.gmail.com>
-References: <66f5a0ca.050a0220.46d20.0002.GAE@google.com> <CANn89iKLTNs5LAuSz6xeKB39hQ2FOEJNmffZsv1F3iNHqXe0tQ@mail.gmail.com> <20240927110422.1084-1-hdanton@sina.com> <CANn89iLKhw-X-gzCJHgpEXe-1WuqTmSWLGOPf5oy1ZMkWyW9_w@mail.gmail.com> <20240927114158.1190-1-hdanton@sina.com>
+	bh=8kgpRAnyuvL767vg5X6HGRKePibuTGJqlt0etUFXi18=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=igdUOs+ejTfhHWNzh/zykzDI7qiqudyFuSCCI7TImiOR2duGG7jAgT1jyHh0sV8TTtQ+SOts0BfWCL5AFfJW/90vA/FGv0bjzVlSTVnEfA8AwUuEpVV4nqlbeNgphvRwg47q28nFAo3o/R7uav7pkRHtL+Mm2FxINBjyTMoXUJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCIJibGN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86AC5C4CEC4;
+	Sat, 28 Sep 2024 00:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727482073;
+	bh=8kgpRAnyuvL767vg5X6HGRKePibuTGJqlt0etUFXi18=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eCIJibGNojkstz62stalir/kMXNicMt/VFQmt//hAZ9q/WEyHQApOEtUiL305EaMQ
+	 YjRqk7dhAecURr5JLz1UHFdXMFLv9q6cV5Kglo5OTTgP2/v9ECzq2q5RQVuihHVPMC
+	 pfn+zjNLsGU2uHbKfC6xHCmOSCGd+rd8rN8yCxNNnFTbtteD4GrbouZwrP2aoPlNJG
+	 h59y7fBIcIP8jQa0TxjxMiAZUyCnZ7UP9J4Y2u2Dn7uhtcydTVT44v0i/lHeem+a+S
+	 Nq0gEbhLCIcqrrvddYKQ6UVlxaRE5sLxh4p2XBaSC2/XH286Zg2mnkV04IjFQvai2q
+	 HIegvrWIDXvOw==
+Date: Fri, 27 Sep 2024 19:07:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
+	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
+	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
+	robin.murphy@arm.com, will@kernel.org
+Subject: Re: [PATCH 1/2] PCI: Add enable_device() and disable_device()
+ callbacks for bridges
+Message-ID: <20240928000752.GA99095@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926-imx95_lut-v1-1-d0c62087dbab@nxp.com>
 
-On Fri, 27 Sep 2024 13:54:59 +0200 Eric Dumazet <edumazet@google.com>
-> On Fri, Sep 27, 2024 at 1:44 PM Hillf Danton <hdanton@sina.com> wrote:
-> >
-> > On Fri, 27 Sep 2024 13:24:54 +0200 Eric Dumazet <edumazet@google.com>
-> > > I suggest you look at why we have to use rtnl_trylock()
-> > >
-> > > If you know better, please send patches to remove all instances.
-> >
-> > No patch is needed before you show us deadlock. I suspect you could
-> > spot a case where lockdep fails to report deadlock.
+On Thu, Sep 26, 2024 at 06:07:47PM -0400, Frank Li wrote:
+> Some PCIe bridges require special handling when enabling or disabling
+> PCIe devices. For example, on the i.MX95 platform, a lookup table must be
+> configured to inform the hardware how to convert pci_device_id to stream
+> (bus master) ID, which is used by the IOMMU and MSI controller to identify
+> bus master device.
+
+I don't think you're talking about PCI-to-PCI bridges (including PCIe
+Root Ports and Switch Ports).  Those are all standardized and don't do
+anything with Requester IDs or Stream IDs.
+
+A PCI host bridge, e.g., a PCIe Root Complex, might have to deal with
+Stream IDs, and I think that's what you're enabling here.  If so, I
+think the hooks should be in struct pci_host_bridge instead of
+pci_ops.
+
+> Enablement will be failure when there is not enough lookup table resource.
+> Avoid DMA write to wrong position. That is the reason why pci_fixup_enable
+> can't work since not return value for fixup function.
 > 
-> Please try to not educate maintainers about their stuff.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/pci/pci.c   | 19 +++++++++++++++++++
+>  include/linux/pci.h |  2 ++
+>  2 files changed, 21 insertions(+)
 > 
-Is this the typical dude style in Paris when showing deadlock?
-
-> lockdep is usually right. And here there is an actua syzbot report.
-
-The word maintainer is abused in this case.
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 7d85c04fbba2a..e0f83ed53d964 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2057,6 +2057,7 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  {
+>  	int err;
+>  	struct pci_dev *bridge;
+> +	struct pci_bus *bus;
+>  	u16 cmd;
+>  	u8 pin;
+>  
+> @@ -2068,6 +2069,15 @@ static int do_pci_enable_device(struct pci_dev *dev, int bars)
+>  	if (bridge)
+>  		pcie_aspm_powersave_config_link(bridge);
+>  
+> +	bus = dev->bus;
+> +	while (bus) {
+> +		if (bus->ops->enable_device)
+> +			err = bus->ops->enable_device(bus, dev);
+> +		if (err)
+> +			return err;
+> +		bus = bus->parent;
+> +	}
+> +
+>  	err = pcibios_enable_device(dev, bars);
+>  	if (err < 0)
+>  		return err;
+> @@ -2262,12 +2272,21 @@ void pci_disable_enabled_device(struct pci_dev *dev)
+>   */
+>  void pci_disable_device(struct pci_dev *dev)
+>  {
+> +	struct pci_bus *bus;
+> +
+>  	dev_WARN_ONCE(&dev->dev, atomic_read(&dev->enable_cnt) <= 0,
+>  		      "disabling already-disabled device");
+>  
+>  	if (atomic_dec_return(&dev->enable_cnt) != 0)
+>  		return;
+>  
+> +	bus = dev->bus;
+> +	while (bus) {
+> +		if (bus->ops->disable_device)
+> +			bus->ops->disable_device(bus, dev);
+> +		bus = bus->parent;
+> +	}
+> +
+>  	do_pci_disable_device(dev);
+>  
+>  	dev->is_busmaster = 0;
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 573b4c4c2be61..42c25b8efd538 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -803,6 +803,8 @@ static inline int pcibios_err_to_errno(int err)
+>  struct pci_ops {
+>  	int (*add_bus)(struct pci_bus *bus);
+>  	void (*remove_bus)(struct pci_bus *bus);
+> +	int (*enable_device)(struct pci_bus *bus, struct pci_dev *dev);
+> +	void (*disable_device)(struct pci_bus *bus, struct pci_dev *dev);
+>  	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+>  	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+>  	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+> 
+> -- 
+> 2.34.1
+> 
 
