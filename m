@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-342568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4DF98906C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:26:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8F798906F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0561128335C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1151F21E51
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED21143744;
-	Sat, 28 Sep 2024 16:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40692143895;
+	Sat, 28 Sep 2024 16:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="mkaMcpZY"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrQJx65O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55C8136352;
-	Sat, 28 Sep 2024 16:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9270A5FEE6;
+	Sat, 28 Sep 2024 16:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727540753; cv=none; b=Fq1FwiBemZyuZ6j5XP0OpUWmDeeJ6sRq0sQ12BWgJyEnNJElDUPsIbp/WqchX66rrM6j3vH4NueBmJ9qNXaozvRag10wPA6l+ahxpOzIU3MTWMpGG6dGrAkYJ5mZ7d4eMtJF94VZbzA2BdVcWeHaapY87HVTXgW5DW/do+ddGUI=
+	t=1727540992; cv=none; b=gqsIRQzL33xN4xZW2y6ygH/194UV5+bQylMmsZd+6Bz2wWFmOe9PTWpB34ol2sH/DQoQqTPVk+5Cl4eh++CrW2P6PYFtL/7cpGXFgLrSokojl/fHk81RWmgAmlhAPZYr+NijXdI4DIENeWWeeIjgBZLJRJAy0BJsbISr7UxvXos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727540753; c=relaxed/simple;
-	bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=NHmsjX7J0mEzisQX+I5LoJTexPDNF/1FVitRL77o9SUAHURXABos++cmOwOHTEL7HY1pPdRGneUmv30OScxLPcS78DeK03qv+8v8LSH3yKbBYOyY8jHciKXApKAq5vRJeWZlJbuOjuLk+u34OxxeL0RuQHZ1k1Dap0gJ/Z/mjyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=mkaMcpZY; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 6A7F523CA1;
-	Sat, 28 Sep 2024 18:25:43 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id srQnTbUPZUl5; Sat, 28 Sep 2024 18:25:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727540742; bh=V5mT+wVYjQpoHBouSd/nQpnt5/+4LDMm5lqddyF74tk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=mkaMcpZYJIz+xBxoWJGqd0rIqHSd0s2VEQxFWmfpn97RgDQH+fRMlM3BFEW/C3kcX
-	 ifY0AtfwLRrLX51ObBThq0YbPMdrSI1UHG5YFYKt+jI3Nw6THBWNMtuZAMyeBlKX4f
-	 5soS39s708vXjvon9WsGEBPan0orpu3HEHgryvb1t2Ve7OnAxaLxVpTd9OwvJFP4NA
-	 tO+NmZinLmsbx6tauEXHDsIO9Jxv3DwyN3DkiRwQO3kKv6D1jMG29P+MEBICwGYw20
-	 Wqqk7z5eqAjTJR4o0/IdzDYwnDCP1Av4tUXyZ2dPGQauDtMdIYnfE2TFEwZFkAlDsK
-	 fyAlSOANWAAcQ==
+	s=arc-20240116; t=1727540992; c=relaxed/simple;
+	bh=f7It2CatrjhmD2pcjpPk4oE/AIT6Ex9NUsQxqsMgh0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bzCKJjzKC1SaWfkvbIMs2Oq3uNg7WbxDuih3fMurtEECNl9SC/IFVZLqsr1GEydBOFSNfmnkkv4bFTSoHtXY0IZRLba+vyN+7JnAKZSeDYFoLjDjOcs15wiGPfDpCWIae/8jgJ3hSzfzj1IzIYSQAXhafVZODY2popoSQG9bq44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrQJx65O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31187C4CEC3;
+	Sat, 28 Sep 2024 16:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727540992;
+	bh=f7It2CatrjhmD2pcjpPk4oE/AIT6Ex9NUsQxqsMgh0c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZrQJx65OhK6f12Q23BR5WzIdCRCFiUu3mSVHZSSFMWrFkhe0RQCly7Y1B9jzzG3Sd
+	 xsUxCx6Z2qXOiWudsogTHV6pTkE82r92WR4qkabGM5+106uENLSe7uhYtg9T950ita
+	 x/S9wQ9XGvtXkNRsEVcIumeF+yoF2t5CjGdmT92oW+uZiEieuXJm9RPZbVZCVsIl3S
+	 j7a5RI2+MdMYqRr4Qgo7dcHntvLcNjR9GBdu73mOCeIoUxTpiODFqkRA8ZXOGAURed
+	 H8CG9dRgrVzAunPkiyvyx585N1qEtXjlOR9/zqzG78cY1Ap8NQlP8YhK29p52DJLD1
+	 1pHWUhT7XnLUQ==
+Date: Sat, 28 Sep 2024 17:29:44 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Michael Hennerich <Michael.Hennerich@analog.com>,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH 0/4] iio: adc: use scoped device_for_each_childe_node()
+Message-ID: <20240928172944.10da3b60@jic23-huawei>
+In-Reply-To: <20240926-iio_device_for_each_child_node_scoped-v1-0-64ca8a424578@gmail.com>
+References: <20240926-iio_device_for_each_child_node_scoped-v1-0-64ca8a424578@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 28 Sep 2024 16:25:42 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Kwanghoon Son <k.son@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, airlied@gmail.com,
- alim.akhtar@samsung.com, conor@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, inki.dae@samsung.com,
- kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, robh@kernel.org,
- simona@ffwll.ch, sw0312.kim@samsung.com, tzimmermann@suse.de, kauschluss
- <kauschluss@disroot.org>
-Subject: Re: [PATCH 6/6] dt-bindings: display: samsung,exynos7-decon: add
- exynos7870 compatible
-In-Reply-To: <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
-References: <20240919-exynosdrm-decon-v1-0-6c5861c1cb04@disroot.org>
- <20240919-exynosdrm-decon-v1-6-8c3e3ccffad5@disroot.org>
- <32ae1188-196d-4fe8-8719-968e5149a771@kernel.org>
- <7e5caaea80390e8cf87ba0a74d9719f0@disroot.org>
- <1bc0ad48-03c0-4cf6-afb1-2296d1c259b9@kernel.org>
- <8e0672ad3fd72f69d2bdb5687e778c86@disroot.org>
- <ef786b8b-32c0-457a-9e14-ed7bd9f04172@kernel.org>
- <d8f5999921a31d7723e0aa9b12bb9eaf@disroot.org>
- <CGME20240926053449epcas1p2e8596f64b7ee5d3b8cdf565bacdc6510@epcas1p2.samsung.com>
- <d2a6b8d16b001b72fd01cfc5b4895e6fee0b7032.camel@samsung.com>
-Message-ID: <91447671a12d04e177a7a54e7facc5df@disroot.org>
-X-Sender: kauschluss@disroot.org
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024-09-26 05:34, Kwanghoon Son wrote:
-> On Wed, 2024-09-25 at 20:05 +0000, Kaustabh Chakraborty wrote:
->> On 2024-09-25 19:56, Krzysztof Kozlowski wrote:
->> > On 25/09/2024 21:36, Kaustabh Chakraborty wrote:
->> > > On 2024-09-25 19:25, Krzysztof Kozlowski wrote:
->> > > > On 25/09/2024 20:42, Kaustabh Chakraborty wrote:
->> > > > > On 2024-09-20 12:39, Krzysztof Kozlowski wrote:
->> > > > > > On 19/09/2024 17:20, Kaustabh Chakraborty wrote:
->> > > > > > > Add the compatible string of Exynos7870 to the existing list.
->> > > > > > > 
->> > > > > > > Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
->> > > > > > 
->> > > > > > ... and the DTS is <please provide lore ink in changelog>?
->> > > > > 
->> > > > > Didn't quite understand. The patch adds the compatible string
->> > > > > for Exynos7870 DECON in documentation. There's no DTS involved
->> > > > > in here, right?
->> > > > 
->> > > > Provide lore link to the DTS submission.
->> > > 
->> > > There aren't any DTS submissions *yet* which use the compatible.
->> > > Is that an issue?
->> > > 
->> > 
->> > Yeah, users are supposed to be upstream. Not downstream.
->> 
->> I understand that. I had plans to submit it in the future.
->> If that's how it's meant to be done, I'll have to revisit this
->> submission at a later date then.
+On Thu, 26 Sep 2024 18:08:36 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+
+> The device_for_each_child_node() macro requires calls to
+> fwnode_handle_put() upon early exits (break/return), and that has been a
+> constant source of bugs in the kernel.
 > 
-> Hi, may I ask for reason that you don't submit dts?
-
-It's not that I don't want, I have nowhere to submit it to yet. As
-pointed out by Krzysztof, support for exynos7870 doesn't exist in
-upstream. I'll get back to this after I get that finished.
-
-> I am asking because I wonder if there is an issue related to DPP.
-
-Exynos7870 doesn't have DPP blocks as far as I could tell. Let me
-know if I misunderstood anything.
-
+> This series switches to the more secure, scoped version of the macro
+> in the IIO subsystem, wherever the loop contains error paths. This
+> change simplifies the code and removes the explicit calls to
+> fwnode_handle_put(). In all cases the child node is only used for
+> parsing, and not assigned to be used later.
 > 
-> https://lore.kernel.org/linux-samsung-soc/2e4d3d180f535e57d9cb98e7bac1d14b51ffc5d4.camel@gmail.com/#t
+> The straightforward uses of the loop with no error paths have been left
+> untouched, as their simplicity justifies the non-scoped variant.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+All look good to me.
+
+I'll be rebasing on rc1 anyway, so there is plenty of time for any
+other reviews to come in.  In meantime I've queued these up on the testing
+branch of iio.git.
+
+Thanks,
+
+Jonathan
+> ---
+> Javier Carrasco (4):
+>       iio: adc: qcom-pm8xxx-xoadc: use scoped device_for_each_child_node()
+>       iio: adc: qcom-spmi-vadc: use scoped device_for_each_child_node()
+>       iio: adc: sun20i-gpadc: use scoped device_for_each_child_node()
+>       iio: adc: ad5755: use scoped device_for_each_child_node()
+> 
+>  drivers/iio/adc/qcom-pm8xxx-xoadc.c |  8 +++-----
+>  drivers/iio/adc/qcom-spmi-vadc.c    |  7 ++-----
+>  drivers/iio/adc/sun20i-gpadc-iio.c  |  7 ++-----
+>  drivers/iio/dac/ad5755.c            | 11 +++--------
+>  4 files changed, 10 insertions(+), 23 deletions(-)
+> ---
+> base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
+> change-id: 20240926-iio_device_for_each_child_node_scoped-cb534e6f5d9b
 > 
 > Best regards,
-> kwang.
-> 
->> 
->> > 
->> > Best regards,
->> > Krzysztof
+
 
