@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-342646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C24A989126
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:38:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3603989127
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 21:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FEB1F238D2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:38:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CC20285A9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 19:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1A5158A36;
-	Sat, 28 Sep 2024 19:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 045671586D3;
+	Sat, 28 Sep 2024 19:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="aCGJ6Pnh"
-Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021108.outbound.protection.outlook.com [52.101.100.108])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="ZeQk14iS"
+Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021099.outbound.protection.outlook.com [52.101.100.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF6917736;
-	Sat, 28 Sep 2024 19:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E661DFF0;
+	Sat, 28 Sep 2024 19:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.99
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727552292; cv=fail; b=sUEhEEDyvnmxtHYnQ7BMgx0+jQGMdiNcu+sAj1zRAgbsWCpaPezB/lZ44puhZAgRzNqcAufC3j844mNJsqreXMk/41x1c11QvapumfQ77VO4gqv6TrKq8iypacOWQMZW2Kbp5+sli29HYJ/gNA51v9TqL6Qaj7zhBPN4pg8urv4=
+	t=1727552644; cv=fail; b=kFucvg/0aFeXLqMoqHxppVkqdlam0EFp4WRnVuGJAmFfVtqE0LgOGiJDguktDst8UYSSqsjxICA5CMOgHXnRI/w2MaO65EJ2v6RQhYjFpG8100T5UKKpUlJqZv8vV9xGqQQKQDrX1WaCjWfPDYC6qFIK/onVDPSSQfqlxoB8MQk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727552292; c=relaxed/simple;
-	bh=5I9nx4PiPIdUC85xWp849W7GgX7reiVele8pbhosySE=;
+	s=arc-20240116; t=1727552644; c=relaxed/simple;
+	bh=dEWxdvl6L1JySZz98mWJTjjKsxYtvCoUFmmqwEtE93M=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bzACs0ewBKTJMa0wU37nlT+QhPT6DvuEf3/+zjqz3y3y4cUBnsGR8jDWdtOq5OSuUVAYDyS0sblDHKbodUxbSm/DhspX8VxkGSLUNyqHR5PIL8x3N0Uh+40YBgv4weOUNG4upifaE42g9zcXnrLCg8xDcoIyLXR9tiYR1VuC8jw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=aCGJ6Pnh; arc=fail smtp.client-ip=52.101.100.108
+	 Content-Type:MIME-Version; b=nKBaVqkmGq4FC3R9AHFxYUoIShUErficNWXxidOla+KInIsbRlWrTWNKAzL8E15Lg3mQQWtFDeWnsV/O8WCPsVrhczVI1TXs4CwpU3gTTT39ZNPLmbMqYVg+RpcNhj8slcjquIeRazM5ZKVXwLPzaabX9JP21l2wMhJO1OGALJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=ZeQk14iS; arc=fail smtp.client-ip=52.101.100.99
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q2iZ4NZjolksvk0kTqA/LtX+/63u5KiAG51kCtlRF+VCwfxcxGhl9+sUDz7CBG4zLd2rFDjAa7EVeyVWltt0d2jMxeEbQiCnWW51p7YmPWwSX2Y+Y8/QiZzE9QAirCsq2WczhVUXUIhqIHNi3g5SwSKOyH5h6CTBVrY8qTSf54rTkI/LZ+ZjQNcXaVuununmc9twf9tlVhqv2p+rE6aT7qtpf+9D75vL+QrxoNORDHaj1CAK0/e+h69iH8tNmp/MsJQoi2KpD9i7erx4At44uEDdk6+qJxBlDuRfCjsU1j+VqojE13l5rlWwLjwKpj06DJnMIZjmMu7Ic74oOtpSUQ==
+ b=PQnnqFt7s8+L3YNqAefyLI5qzf9yFX9Cr2b3VoIwhcXYKvrG5QLo03HdFZ/ncGvZD59qNjSP+PmeiSQV8SbVP07L8GoJeoJfxEt9obzG7Fkx4ukZuoNcbvsl1enFETFdw6n07ddzkFbfRi+jtI/JabNnbIlIn42jhMcPNwkwuZD+00kFBwDudnm0vFW42Fw822pr6XRE8sfaqqWkfQWdKig4yRaQRiT9pC3XSEDuDDsFsbGE4FY/tT6Q1aLvCz0psbe6MRNGQiZ7qhFZrXxKLFCwhdJn24sDS+k2ArLVMkW8EftFjq37Z7DaWWTnEL9Ge7iokGDt56dpB6YrkcRfyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3L9VGNcr8nzo60n5pfr0RMG5CObQ1BhWcjgZtMe3Ek4=;
- b=p9zVzAP0I68+VbP3K7LkAfxsC7jrAMAIPM5ytNOXcwJZ2gkq6MhQaqabu5SsERo99rOaUm8QG7oNl7P5a0N5zRbt8YvYwZ2DzPg1igZfoB3Y845ihuHpI9O/5gs076NLaWhwYqvhazVfj7sx7pyGxfVPUhDmru5FaQPqvIJfcdkmGHYLEqWR/c7shjeH77t/rnCzy1SFN8ad1alvYmCdhaItDDcdtvOdX7HEOBy6aZpsE60RJMNMpq7bthwklVxfC+Wq5qzHAbkSUzRh9VBYM7IN9YDutsx3hs6JHq1PljF3xcjbIr4WZvwxqiC9yJoGP0d34Ps8MMM5xnR6h21NBQ==
+ bh=ql62ECD7LH3sK7oghhnOY1pJ6+bl08rbkXuRbt//+Xg=;
+ b=FIefgM2uhWDnXyt1gAYFi+70fRMOmEqoYwF6TazMcDPfkuMyr/gzly9ZuHjMr3fgoou7msNl/RZ4R2wkv3XeXASCgMaZdOFDAvQcqgyJiV+iiqkFRN6QTG2CWTAd6kJ6Ei1S9ZorIAkN+QyQhCXIIG4Wx6lOmQkTOh2snWwOyHKoXxwWyT7Z07brJ3j16RkUskq+1TcSc+59tzwKpzK1+mLii46norOv6yIgrDYPM56Gpmz+J9uEslanQlQvI3VXnhJ+b9oaMyev3gYhqUeTGKpocA+55+gjGJI8VJUxdfRqoVP94xzM4E0XKud408GXDAERNL6gLTB52ipju7Fjhg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
  dkim=pass header.d=garyguo.net; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3L9VGNcr8nzo60n5pfr0RMG5CObQ1BhWcjgZtMe3Ek4=;
- b=aCGJ6PnhJNCUsaX9mc/gjMQ6V0SVw+wwvYkGZABEpc4/OdjtQX258SHYJTwdcSXlqDqwvpRo8hBf0YcpCxwloaJRxbIIStn67Aw8KicBZBeVYEcrf/iM/JRf/TIIIfctjOSmfmQUkrXlmolcf9Ol7+lV+LzALEhBI2CE7M8qaRU=
+ bh=ql62ECD7LH3sK7oghhnOY1pJ6+bl08rbkXuRbt//+Xg=;
+ b=ZeQk14iSKVsVQ+JnnTAWZ5/hLVS5UKyBzViMObhw4QRfrKPSFLqEB+hf6lShi+GNBkZpF7REHbfq5AVKtTQC50eIfiOxvpuV9KyxwBZYPj6C4gdPqOsDGcOrgdfWFxIGFNC8B2/vTOugIQQPAtggBrYJ8kKtqvSVkhyRItf7uX0=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=garyguo.net;
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
  by CWXP265MB3240.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:b2::5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.25; Sat, 28 Sep
- 2024 19:38:08 +0000
+ 2024 19:44:00 +0000
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.024; Sat, 28 Sep 2024
- 19:38:08 +0000
-Date: Sat, 28 Sep 2024 20:38:00 +0100
+ 19:44:00 +0000
+Date: Sat, 28 Sep 2024 20:43:57 +0100
 From: Gary Guo <gary@garyguo.net>
 To: Danilo Krummrich <dakr@kernel.org>
 Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
@@ -67,16 +67,17 @@ Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
  zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
  ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
  rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 24/26] rust: alloc: update module comment of alloc.rs
-Message-ID: <20240928203800.6dc19e5c.gary@garyguo.net>
-In-Reply-To: <20240911225449.152928-25-dakr@kernel.org>
+Subject: Re: [PATCH v7 25/26] kbuild: rust: remove the `alloc` crate and
+ `GlobalAlloc`
+Message-ID: <20240928204357.3a28dada.gary@garyguo.net>
+In-Reply-To: <20240911225449.152928-26-dakr@kernel.org>
 References: <20240911225449.152928-1-dakr@kernel.org>
-	<20240911225449.152928-25-dakr@kernel.org>
+	<20240911225449.152928-26-dakr@kernel.org>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0552.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:319::14) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-ClientProxiedBy: LO2P265CA0260.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:8a::32) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,108 +87,167 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWXP265MB3240:EE_
-X-MS-Office365-Filtering-Correlation-Id: d27e9975-8c2f-4b9a-5613-08dcdff51453
+X-MS-Office365-Filtering-Correlation-Id: dfddfacb-c437-4e1b-f190-08dcdff5e60a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9LBpwjb8uPdaoPLBraAOB2QXRHZHbK+jmnHrDkwTzJSxU8jkHedaff7qAjG8?=
- =?us-ascii?Q?CIGACM+GVWSVbEwg0npsGwX+FDj0vLV0Hg25inGm3fAMC/vahDMk6A9UF4+a?=
- =?us-ascii?Q?ELtjIgVpt8M62Y7F61GR+pnnQ0k7GxjJPh9bFe+ewa1LZ+9tCQ5fRE1JNBKT?=
- =?us-ascii?Q?Wm8rNI9t347TVR27ytUR8H8yGnATE47wL1/UiKRARsNAwGdMsZFdmOS6v0OH?=
- =?us-ascii?Q?xGVy4uh5Oc4SuwqaSA70WNIqsQyyWIps2Su+aTrcUgAaExu8y6gSfciuwNWg?=
- =?us-ascii?Q?9DMjPE15KOni2x9UrZRgK5miIvmJqqP6SoLCxI3Zb8nUyd5e5vPa0ny1NgAs?=
- =?us-ascii?Q?qfpPy88byRgrvUCE/KjV2zw4GztjSSZchf/PK/Ebnws8OSI7WXvNI4pD6zvB?=
- =?us-ascii?Q?ClOOL9bE6vGUFxJp8UVILRE/U/tpasDqIQoYpQLaRlX7kk+ALOH+uZdo8chA?=
- =?us-ascii?Q?2fJUDFRg4h9qcSPLpnqcqbUFYM4kHJyXtj/UwE8+P6o41bLx1u5SzAxqCaP0?=
- =?us-ascii?Q?+Ye3OsEJYNDNflHF9pucgjxYm4KY7XPItcb6G1JwYeWIFDgJ1EBxzAb/3uAg?=
- =?us-ascii?Q?OjIg8RifuniLTXfWkr90BiJBZ8dN+7UmloIhyZZpz8S1Q8L/fJ+auJQ8dGCM?=
- =?us-ascii?Q?x9dUEFPxodkGfVqpb20VTourPDpj2PorsMyFu78Z1I2VFhW+QssDYfTtnZkK?=
- =?us-ascii?Q?C/S+tX6ZTm4YyEEQM+MAnKOh1VdfY3w98xNAopA5bg9PF0Z8LjI67IAF/lvv?=
- =?us-ascii?Q?eniU5fp+Rl+zmxLJKe/+EvKla08tRWuQCXPX8riBh31sAVpL1Ktc6chYSEEJ?=
- =?us-ascii?Q?/mYtrL9ItSIg9b91PEzDLVDxoRNSx5eInErVNY6DCer++aYViy2dXdo18Fnp?=
- =?us-ascii?Q?q+HgqyTol8JY9Ub+NUzvRPRkwjH4BE17RPmeKAwRaGdvF5hvDez9udNLuOt3?=
- =?us-ascii?Q?WeiDBfTc51lEdR2/+qQRlTHKamATLZoj1IeS5mQxwnqvbDtk0XIlKMbqo0pd?=
- =?us-ascii?Q?oZ7u57L2/BSLlJx6cQsVx1rb9eh7AU/XXlVVEGKQX3HOyv93JX4hRpY7sXox?=
- =?us-ascii?Q?1xtgL7j9p4RE1nN6YN8AaJqxtKT5+zGt5V2HNq3SjKNpVF6uf9MgDY3Mc9rj?=
- =?us-ascii?Q?PGYb6GYVhmi6buCCXuOz2ivue86e1mub8XzXHtx35C/ZJfb4pU7Gt6hjFQao?=
- =?us-ascii?Q?mO/zHICpq5ZPf7+0gqQUrC2InJc0Twzo2XhuH6mmxGZ59TRLlH+dj6nL48Gh?=
- =?us-ascii?Q?jk4rhkSifIFgp6uB/YtHM4oL6U2G+2H7sjhNj6nrM0wokkDZt1GjVdLSmcrW?=
- =?us-ascii?Q?/JkkQIZYtmX7VCd1rS6D4mqtPmAvCzcLvs1/VqF6dsXgBw=3D=3D?=
+	=?us-ascii?Q?efzgiIhYW2KW/Y8daTWDrVczPdDKCv+ciiw3VZzphpiiR+YJIdq+2Ebyjcxt?=
+ =?us-ascii?Q?cFgB7XWzNj4zyiaZAVIWV4bItZX0Fgv4nLVy0FpJme9rDamf+/SrNh0MZmGV?=
+ =?us-ascii?Q?x6uoKQ1B9rmnmr/S/75bZlFj3sq0D3aBUAsRBm+STDUsTXCHgt36lj1gjh3S?=
+ =?us-ascii?Q?x6jxjnUsMQ/zZKsKl6CzfzRIPBiZc03gcmwptO5VpToRxEkgCebkbdDxfmzV?=
+ =?us-ascii?Q?UyIyKWrt3sb1uo0KYDK6Kfq+/ArfS3F8KjT7fjyTUsw3WL4msJmAaKtEtbAj?=
+ =?us-ascii?Q?NMBaErCsQKtCJN8dM9T/35k06vf/Vc4KqfF2iVPWiAWJlQ3z6rPCX4DNd7UX?=
+ =?us-ascii?Q?t7yaJZxH6uyxCG/Yu/QttPeS/oFu1o17zbj8P7ICGFTS6+GbzWaodTupu3H1?=
+ =?us-ascii?Q?cecovthLWAFWrV/FiHg5Lrf6UKwwOuQ/oj3Aa+V37qaYiPQ4CEaYyn0o4vb+?=
+ =?us-ascii?Q?O8p8vZVdtoUk8vIrHE0lwDbAP1c52wkag+Ze6foNTVvp3lUTRMbzGCOz+BCW?=
+ =?us-ascii?Q?FzWeIxRfBiqMJnXV0FkIL2DT9i3t9vbWJ5r28ZYjHS6ZW3Zrn5oV8m9qSCSW?=
+ =?us-ascii?Q?HFye1Rkon7Rj6MIuWz3ioq6g3HWzxdpzV294V/wQ+TY/6HzkVt/xwybB+Ar1?=
+ =?us-ascii?Q?qlGyBjYrUhraHyYhveM9GDbk8FySEYadfw26H+vzlEpavERHBZCzlU4ZIcRC?=
+ =?us-ascii?Q?4QhO8tBRQ7S3Z+6WNr5ArBSOHQ11ZwKDoAn8OBDMXHI2oofhyqc0JUbrra8H?=
+ =?us-ascii?Q?ymRuJtExPARz0YINLW8Gtvk35oU8Sm7ikN7d5fYwLcAqrC1cpOUBnAkHzWk1?=
+ =?us-ascii?Q?XF/pYW1AeY6OtLSfiAl6tuL0/91JRoxieHa1aQhQPujUZpVIksnanHmhkwdJ?=
+ =?us-ascii?Q?zK6nC+Td1YzGrGPcgWMlCUGt0OF2MHZR8H+ifWJIiHVyZG8tX6428Tipspx8?=
+ =?us-ascii?Q?hIt59FMgeg+eqYS0MKU9y3HJOhwweKP3OZUGc+bvcSsKRv0PFV+bz+iVDFu3?=
+ =?us-ascii?Q?ediYxER2niyKsAWjEykwqYrBhnQZBaivypjW5xWh4KQjqrz1FqeoViAZezOm?=
+ =?us-ascii?Q?2paemomAewhItO0SH0Tb366CNos4z/b6tgg70YUUdWg5tu1SHJHifpBD5bqg?=
+ =?us-ascii?Q?5Gl80kIlq4ESCc8n9q2wT3yDhJlIgEV6gVN9OD8L9nfJJvq42Alh0ePhvl/I?=
+ =?us-ascii?Q?rh0jKqrJgQaFWWhccjR/PWaqDGClbmjjiUo6YwchRmZsQMJV/bs0wZ7hWADk?=
+ =?us-ascii?Q?HvVPFMwXHIpnf4TVdqV/0ZCjs6/alMWo9/KGgSJiatuXejl4FUbafoYsje/3?=
+ =?us-ascii?Q?X7MYfTABp60T55kowhCC7lYCrXlaG9YMVgSPDfLh1VVoVQ=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JrlLg/J/Ftq+ojrsL+DjlBUZKuRto+uBSh9yVYnJhFLEZ/hBeXqMckkjPaxP?=
- =?us-ascii?Q?o2W5LnrrRkv3KVXLCgzlOwXWE5Yc6lm7Zqsc4B4LMYNYPbH6TbIBlaXVdACh?=
- =?us-ascii?Q?9E71V6Q1jdzqd2fQ3YCR8g6CJqaF8++vip/0sD5MCvXFCaTwiyctzHLztMlY?=
- =?us-ascii?Q?Zr2nI8vWldlEEimP+MSr2vOH6IKZYBd5WeBSllu0eZcvzjf8OR8O73zZvXjo?=
- =?us-ascii?Q?ja9S5TBveQFbnyBOLMg2Pnlk8RFoLA75a4X4MC3FzB5qEcnpppy170wcpPzt?=
- =?us-ascii?Q?u/bnakVkfYdGzCLeaetvE812iojXd1OLLGJLp3PdBGwz+eSFOmjsXjfz7HKh?=
- =?us-ascii?Q?D/Z6YDegcgwh5mnmUEoJuhioWSN/JPo5nwDRaP1KI0iGILaPEDcA17zUvoPq?=
- =?us-ascii?Q?ORfamd6bu6TleJaXtuuTZuQBHFJM7z6ed0pd5QGIYMAgORKkbbf7OFwPHYAg?=
- =?us-ascii?Q?31C5ZjhxAX8pdv938ERND3hicvlUJUnBdRTakoPb44090KIN/cF5K4ch+x7E?=
- =?us-ascii?Q?mFytpIzGgPDXs5yaVLiUETBvRoQ14hrq1Kee4sesrgfJEdiBZo+zqcUY4Xvt?=
- =?us-ascii?Q?/3lAQfcw5yZmQo5z8e2kGvvHvYdeCxxKOL66/lp+7clqYQqz1G3CxK1kcPjR?=
- =?us-ascii?Q?sXdwxHBJGuGXaMNBaL9mRhPyEebBy7og3ABOMRfb/DJBzRBO69vHWK3mODib?=
- =?us-ascii?Q?99jNyb1v9an9dEQ3mewZsumzD7bpjteLfz6WKCX325xGVe6YocOuvNCU91qi?=
- =?us-ascii?Q?JeGVqqyrtdKt9NOLcityPOpzA0q2vWRDWDacM3xRxKeClktaQ9iE7gaMttK6?=
- =?us-ascii?Q?uvPaCUD/GWeH7P9ZW26aB8Z8REjyC9PvN/QtdhwulT2fJGZ94BQ7fN5VOzg6?=
- =?us-ascii?Q?QKdm9WG5KLw4zRx6+s7kNWn2MMbZdtcxGzrOXB7gJXE8XUDVpfpffdYEhLSp?=
- =?us-ascii?Q?yYSrRqjm4mFPcbdM4czQ2qTU2K9tIIg78wHAg9SZShE+4mKOxr7jF+Gefe8O?=
- =?us-ascii?Q?NvQgD+MJ3ua2b5Aj2n1deVhSj+lGoOrRn2ejThwIL8Hyf61Y4I32QMJhs+N3?=
- =?us-ascii?Q?5JiFZlphaWxk/0y9YgWBH2B9TeOoVNvgMIM3CP8NSjRROZ6r2FRaRZ/1Teu7?=
- =?us-ascii?Q?QBKovRteUaxRPtGix+FzNfgxASQIs328gLkR/U/xte+2AvfzVeGjZDPsNLyX?=
- =?us-ascii?Q?2OeBNye1rZYJ+tiYZ1T/NLpTyVQqXON2liFS82Xvw2+xwY3wvJS7u0tx32bq?=
- =?us-ascii?Q?R/4IwHYv7CnSpUr3qTt6qy3ohtYK4jJLu9tD5lfiyKQqGqKtIsyPnWMrRYyF?=
- =?us-ascii?Q?BbWOBpJL0bNJF7PhOjIaYgAuhBtViVbNTDMJhHX4gfN1LDM8sMi9WXEQW+L4?=
- =?us-ascii?Q?UZfkmfYyRVYlRcvDibPz6bGpdLG4IYs0caip4/8/44d8buvHmSbQF2iydK4U?=
- =?us-ascii?Q?ix6CCVryPNf6lT73+qLRxCNStJE0N0nXjlJoEfIOoD9fI+TlYqZrXAiKvTN2?=
- =?us-ascii?Q?O3MGAQahf2raoF0g2A8CiRoja/b5a3UwLww0SSipkXDeTImfuXBY+10CRiI2?=
- =?us-ascii?Q?OBkwzfZQfdNpLFW+hwl+OqKTMIDk/MP4iT0d8VLh?=
+	=?us-ascii?Q?hR8IWaMTDwNZXQdrGlQmDxmCTmvD84HElSdBZSKehPkjAW7zLmcydcjMwxeg?=
+ =?us-ascii?Q?OrczfvSgpQlAC66kILyieVpi/v9LQl43YjzHmz9WApj2clRzcWOWSq3ZMAb7?=
+ =?us-ascii?Q?M682cHbIgqk3yqU+7GatUM9LGv0H4WY2f4aZ5N9BTZ7FT+82EI12XfFjjerE?=
+ =?us-ascii?Q?jaDjMAj4mg78JXujGrYs8HVs/W9WemgMDDs1LQ9KGll6RnoKfPzh1M+TizrI?=
+ =?us-ascii?Q?emO9HW7p3KcM/IJOOASM9+iuLVqQkaZfu25qGVdmm+k30D+vIjUHc52M2k9T?=
+ =?us-ascii?Q?vfSDcg5W5GlGz69+Ps+RO0qVYEslILCKNZ2Cfh616rGyCtBFL1xJ+VuL9B03?=
+ =?us-ascii?Q?23UQDM6U39SVmorPWvBhtvirKaKZhBWVakinN916PmcVu4hiJT4M/z68g/aT?=
+ =?us-ascii?Q?juNx3ArPjeiEkSA1d0tPu4514GEa8cpVHwJJk2Vf4Ixg83qzrn5hKq8WEKMa?=
+ =?us-ascii?Q?3zTgoKPUuXloiOLvFcHWeBvPy9PS3DdzD6QqD0e9DbH5gQjFGod/tgnRUobY?=
+ =?us-ascii?Q?JUkW4Y564hiUr/sUSD7XG631BUegKAcNQfi6swSWYTmB4oKUWqivGVTCVdjg?=
+ =?us-ascii?Q?L1nocCQqUIQfnS+I97PxeqJQetWg2WHAzoU0HJEOsfnylYQxPNekR/jiS1IE?=
+ =?us-ascii?Q?9uSsRuABFZbTT/d55HiIQEqVoEBOz4SkTYrVc142vHGPc/VazmT65U2NO/KJ?=
+ =?us-ascii?Q?gch0EbJDAYqR/FcwU2CVUbE0XCvSJXJJV58efm3dyaC+/kUQMsZ1wpsxWA6c?=
+ =?us-ascii?Q?L6AaD4nzU4uvo16bHC7OPWe3SE0aeIg6vt6WiDlllixPi8j0fAPPsuto4+8P?=
+ =?us-ascii?Q?pSQ8OzYh5CcEl6Sfe0Tl0l0tizWnHXLJ+B1jBfAS68Z0josXDHhHE9JwR9gV?=
+ =?us-ascii?Q?UIG6eJLwGw9ndksh3loSHq48v2eWrwCJ+k6rhureLkUuyBmh+2e3qPLlSLVw?=
+ =?us-ascii?Q?k6LpKclz9/n+dFkXQ34pM9JV9oyyA1pboukrDILAZjfMr/HdEMQsDLtzUtxU?=
+ =?us-ascii?Q?FS6vP0q7Q0Di9GoZwZcjCsLg/3MUcKELiQ6zP2kwaojJYv4VHP9AOhmxNIbk?=
+ =?us-ascii?Q?TTTDAaj5JB7jksWbD/k4G85LK9jjhde4Si4fC5Qzl+r83RXaJa2fbaBtm/9j?=
+ =?us-ascii?Q?yrWsN7tKMlQOpB3mob6SDo17RdFc0pPjeCw417e791djuAvea6qXBic5LNoK?=
+ =?us-ascii?Q?+cwW7pVfXUFjoDL6PjOByf99Juqtb5Kqh55H6jhgICn0z8SbYuKEkfFsW4a1?=
+ =?us-ascii?Q?fQBag4YnqXRcwEe+boXBxtCPBHsMZ7qqdSeVx/uQ7rgOvRCOiwYgqaBgrKjV?=
+ =?us-ascii?Q?wkQfDZ0dxICtNDdAgRRt1ChIOjG/3wYLzESYmuYtJ/xr2IpqPxGDNJOsKoc1?=
+ =?us-ascii?Q?H0qqywXvtExzc1cmg8BB07RMaEiC2mCLquBXLWpGc9NqqvTVX0otBRhzaLaB?=
+ =?us-ascii?Q?XAHdVQLRS9Kbogfuk+2/G69PnnYOENoZdVDUiSUoMb7N8XkcrSiSL7jTUNgj?=
+ =?us-ascii?Q?RqHw3jwZkqKzI3FN/Wv59SBghJEwjMqn3DTgQBWiyh9x5haXR0Bmo5cRfquc?=
+ =?us-ascii?Q?JLmp+OnzP7j8ZYcPaD6UbFWqtQJSDK3oqQkZW6+r?=
 X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: d27e9975-8c2f-4b9a-5613-08dcdff51453
+X-MS-Exchange-CrossTenant-Network-Message-Id: dfddfacb-c437-4e1b-f190-08dcdff5e60a
 X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 19:38:08.2074
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 19:44:00.0388
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fSRydiyafghsRMXrSWssUdD5JTwJpgzCsQSKTfHlLYuY/D198dk4i+0DVj4e2v/oL/0SBLwRkNbmZTxnvMEbsQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: fAgFWpddQ6zp0NUKoJ/xbUpP79ncrK9yYxt9QCnhqyvk+nmbGbhzhGCR+q5dXpKDo+afmcdALMQEvQQte2EpKQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB3240
 
-On Thu, 12 Sep 2024 00:53:00 +0200
+On Thu, 12 Sep 2024 00:53:01 +0200
 Danilo Krummrich <dakr@kernel.org> wrote:
 
-> Before we remove Rust's alloc crate, rewrite the module comment in
-> alloc.rs to avoid a rustdoc warning.
+> Now that we have our own `Allocator`, `Box` and `Vec` types we can remove
+> Rust's `alloc` crate and the `new_uninit` unstable feature.
 > 
-> Besides that, the module comment in alloc.rs isn't correct anymore,
-> we're no longer extending Rust's alloc crate.
+> Also remove `Kmalloc`'s `GlobalAlloc` implementation -- we can't remove
+> this in a separate patch, since the `alloc` crate requires a
+> `#[global_allocator]` to set, that implements `GlobalAlloc`.
 > 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-
-Reviewed-by: Gary Guo <gary@garyguo.net>
-
 > ---
->  rust/kernel/alloc.rs | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  rust/Makefile                     | 43 +++++----------------
+>  rust/exports.c                    |  1 -
+>  rust/kernel/alloc/allocator.rs    | 63 +------------------------------
+>  scripts/Makefile.build            |  7 +---
+>  scripts/generate_rust_analyzer.py | 11 +-----
+>  5 files changed, 15 insertions(+), 110 deletions(-)
 > 
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index caa0b9dfac87..2170b53acd0c 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: GPL-2.0
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 72b1232b1f7d..529ec5972e55 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -262,18 +262,13 @@ $(obj)/%.lst: $(obj)/%.c FORCE
 >  
-> -//! Extensions to the [`alloc`] crate.
-> +//! Implementation of the kernel's memory allocation infrastructure.
+>  # Compile Rust sources (.rs)
+>  # ---------------------------------------------------------------------------
+> -
+> -rust_allowed_features := new_uninit
+> -
+
+Would it make sense to throw in a soon-to-be-stable (or
+already-stable-but-beyond-min-rust-version) feature here to not have to
+remove the build system support for unstable feature directly?
+
+For example, I know that const_refs_to_static might be added here
+soon-ish.
+
+>  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+>  # current working directory, which may be not accessible in the out-of-tree
+>  # modules case.
+>  rust_common_cmd = \
+>  	RUST_MODFILE=$(modfile) $(RUSTC_OR_CLIPPY) $(rust_flags) \
+> -	-Zallow-features=$(rust_allowed_features) \
+
+I think this actually allow all features instead of allowing none.
+
+>  	-Zcrate-attr=no_std \
+> -	-Zcrate-attr='feature($(rust_allowed_features))' \
+> -	-Zunstable-options --extern force:alloc --extern kernel \
+> +	-Zunstable-options --extern kernel \
+>  	--crate-type rlib -L $(objtree)/rust/ \
+>  	--crate-name $(basename $(notdir $@)) \
+>  	--sysroot=/dev/null \
+> diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+> index d2bc63cde8c6..09e1d166d8d2 100755
+> --- a/scripts/generate_rust_analyzer.py
+> +++ b/scripts/generate_rust_analyzer.py
+> @@ -64,13 +64,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+>          [],
+>      )
 >  
->  #[cfg(not(any(test, testlib)))]
->  pub mod allocator;
+> -    append_crate(
+> -        "alloc",
+> -        sysroot_src / "alloc" / "src" / "lib.rs",
+> -        ["core", "compiler_builtins"],
+> -        cfg=crates_cfgs.get("alloc", []),
+> -    )
+> -
+>      append_crate(
+>          "macros",
+>          srctree / "rust" / "macros" / "lib.rs",
+> @@ -96,7 +89,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+>      append_crate(
+>          "kernel",
+>          srctree / "rust" / "kernel" / "lib.rs",
+> -        ["core", "alloc", "macros", "build_error", "bindings"],
+> +        ["core", "macros", "build_error", "bindings"],
+>          cfg=cfg,
+>      )
+>      crates[-1]["source"] = {
+> @@ -133,7 +126,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+>              append_crate(
+>                  name,
+>                  path,
+> -                ["core", "alloc", "kernel"],
+> +                ["core", "kernel"],
+>                  cfg=cfg,
+>              )
+>  
 
 
