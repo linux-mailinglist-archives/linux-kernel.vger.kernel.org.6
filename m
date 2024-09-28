@@ -1,254 +1,137 @@
-Return-Path: <linux-kernel+bounces-342382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A9AA988E46
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ACC988E4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7B57280C55
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:43:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A89F282667
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E66319DFB5;
-	Sat, 28 Sep 2024 07:43:31 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50ABF19DFAE;
+	Sat, 28 Sep 2024 07:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZvOVF7o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1596D19DF8B
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B0812E75;
+	Sat, 28 Sep 2024 07:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727509410; cv=none; b=o6ZyAWn8aV3PUJwuaTbypAu91B2i5una4xyiuiqNJ4RLo72HK9+RodbbHb7MM/x6843waKi5SCkboiIHbsCOM6S2f+rvSDOn61sfA0vgd4ELx3ZEJ6rW8EeM+1M+TnEASM+3U1iO/b8qeIlDuSUGAJkMfLgQo1J/+RvcF5UiLXw=
+	t=1727509750; cv=none; b=KPKGWLgFJ7vQJywJaiAb7EgxOijRCLER0w8HR9lryzRImPmryhcTm0TT7LJ9iPqmdqjMSVxVgiCtlJAYkZ2q/R16ZMzlDqD8XRK7fkAcmQNBh2WltUAemhCsk7naQwLPxNKXm7Fq+sbyksHDCZPD4bnbfVhDvP4VQIZhInMtApU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727509410; c=relaxed/simple;
-	bh=fk9gG4gQalEMc0N1bhMZCxxE0ByNLA57AB45kz8KLdc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lmGcYEYd9DpoRX4QBN2n9BMp/tvGscDS/7UIH4aPFGUlJHYbr9BCzT7UmsgIt37YQOX7dJFAre58I57sG8n+sSO59FGcN+0z3G7+eSW87Dhe5sUUWkPjJ1krlIxbL8ey5BVVJi5n/HVdznKHwA1wr2R3eRmnEqyxJIq/JFW4Meo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3479460f4so15762145ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727509408; x=1728114208;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HtGmfFQ4rTZm4/FqmOVqkSPdMe1H411qdUEqUKengqw=;
-        b=BJa2jsOHMI3io7yjWxxg/Iw4ezldXriv3eO5W/ljlgOK3Cef5BJ6wW6T0hynwTg3xy
-         vEaby+5eJ6wNEMr8DzF57OKunln1wf2hhfHlBae76GYvESQ3xjcdhXXTaf45ltYBPCpP
-         Ki+dF4clwPN4/P2eIU9NYhP+F3Kx2kS6Y5aSWLXEGlQ1+wTryYrAFBMAPuKI0EQtEleM
-         ZyujLsqZMzaMzghhSnMbMQD5iSi0Vzvi7v+IH5qhqxxoZGgjLQGD55WO5+i4d1R3pYKM
-         7RkrHiAFHaQeWB7bGUySPBRotQWUzNV9dnkGvUaMvnLLn1K9ggSf+7yDUYTBYDFqaKAy
-         hX4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVY8x097t0CIJV0uOsGBBeRZHb5zXqFPY0664hd0AGvCwYXzJry66R18ZiC3mWrSp3wXfbj4Nf0MLS940Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP2/eBVhH/zH+LQiJeFbs86IXy3KieIJ2b0p8tq1gfYi1DZ/l0
-	dolpYvY/ZEIwqZhQLuDjAbK3AfdreQLjuWBUDzMigSxAtOPRjbZAfPiw3Vu4jnrFr0yRwksMSBb
-	t4c/4/7+ZfAoBMVRzHRmB+hyYyvOScr4Nd3N5uN4Mup5SLH9F6qceWIY=
-X-Google-Smtp-Source: AGHT+IFcWue9Y2GaKT1PfcYdcnRS4BLO1UvY+S4vT1eBKqjRYvcV2dDYezsfqK+slYAThKXzQ+pbb+6BXCHzQYhgnGTxiu8fKW9H
+	s=arc-20240116; t=1727509750; c=relaxed/simple;
+	bh=c1IDKLm02EA5K7xI98m22tdfwag8mjjOWwF+gmFUCqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wvski+Ty1c9/ALKb8RArpyucCpJKKrvWN+RQ2ahTVdY6cArBwn8QxtVSjyw/64DSLvuc6Ons1Q9xOn2RmMsQk5sMTWbRaOqgcuxPuEAmGhWE73BDxUBsKFMYvkF8+TT+3BLJXibVFGEREX8M5e8e2ZOHQRyBNgfxtfN2HsUBAhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oZvOVF7o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2099EC4CEC3;
+	Sat, 28 Sep 2024 07:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727509750;
+	bh=c1IDKLm02EA5K7xI98m22tdfwag8mjjOWwF+gmFUCqA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oZvOVF7oRWnswVRQe1ByBJBheyqcd1oWyEW4x8FYTAx5e47tId8xetME5xnjtASEM
+	 hOn+/PUDCw0D2ZQHLNPlsXRyp+wwsYINyab+sEb0kygUF8V4F3fyWr+I0sec7I64EB
+	 WSO7jmroLsrzJPGP+UZKt1g56vFM/hOkBnNHmuePjlLAWErRJN/smQmYPF9+g9Zz5K
+	 UZe+4tQTXwKRO2/sk5xjDKVyUAxB+ZODdClgIn3yJKH4qUzx9Uos7KjQwkFIYX4eDb
+	 luKb0qLgDgHsgNDMXJTqRZfExaf9nYuHu8vkQpiLo1HMd+b9BAVIVqA5Cohk7AW/0+
+	 2KaFZxWxrV3MQ==
+Message-ID: <1e43c2e2-4859-4452-a4d3-433aeea1fcef@kernel.org>
+Date: Sat, 28 Sep 2024 09:49:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4c:0:b0:3a3:449b:5989 with SMTP id
- e9e14a558f8ab-3a3452ba439mr49601785ab.21.1727509408212; Sat, 28 Sep 2024
- 00:43:28 -0700 (PDT)
-Date: Sat, 28 Sep 2024 00:43:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f7b3a0.050a0220.46d20.0038.GAE@google.com>
-Subject: [syzbot] [mm?] possible deadlock in shmem_file_write_iter
-From: syzbot <syzbot+288aa6838b3263f52e7e@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] novatek-nvt-ts: add support for NT36672A
+ touchscreen
+To: Joel Selvaraj <joelselvaraj.oss@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
+ <a0e00c43-a879-4a4c-a3b4-26c485e0c261@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a0e00c43-a879-4a4c-a3b4-26c485e0c261@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 28/09/2024 07:45, Joel Selvaraj wrote:
+> Hi,
+> 
+> A gentle ping to the maintainers/reviewers. I was initially hoping this 
+> patch would land in 6.11. And it got kind of missed. So I am currently 
+> hoping it would land in 6.12. But I haven't seen any update in the 
+> patch. There is no hurry and can wait for 6.13 or future. Just don't 
+> want the patch to be forgotten/lost/missed. Kindly let me know if any 
+> further changes are required! I will be happy to fix them.
 
-syzbot found the following issue on:
+We are still in merge window, so nothing can happen with your patches.
+Pinging during merge window is not welcomed, just unnecessary noise.
+Wait till merge window finishes and then ping, or better resend.
 
-HEAD commit:    e477dba5442c Merge tag 'for-6.12/dm-changes' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=102ade27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b2d4fdf18a83ec0b
-dashboard link: https://syzkaller.appspot.com/bug?extid=288aa6838b3263f52e7e
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Your patch waited indeed way too long, but if you wanted it to reach
+v6.12, then you should have done something earlier. No one has it in
+their inbox anymore.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Please resend with accumulated tags, assuming there is no outstanding
+review comments, after the merge window.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/be1e82b0133d/disk-e477dba5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8d9e4b1a6733/vmlinux-e477dba5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b79025eddfb1/bzImage-e477dba5.xz
+Best regards,
+Krzysztof
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+288aa6838b3263f52e7e@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-11624-ge477dba5442c #0 Not tainted
-------------------------------------------------------
-syz.2.1702/9983 is trying to acquire lock:
-ffff888028091e18 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:153
-
-but task is already holding lock:
-ffff888077ef3708 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff888077ef3708 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x80/0x120 mm/shmem.c:3211
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       inode_lock include/linux/fs.h:815 [inline]
-       process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
-       ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
-       security_mmap_file+0x7e7/0xa40 security/security.c:2977
-       __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
-       __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&mm->mmap_lock){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_read_killable+0xca/0xd30 kernel/locking/rwsem.c:1549
-       mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:153
-       get_mmap_lock_carefully mm/memory.c:6108 [inline]
-       lock_mm_and_find_vma+0x29c/0x2f0 mm/memory.c:6159
-       do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-       fault_in_readable+0x165/0x2b0
-       fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
-       generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
-       shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
-       new_sync_write fs/read_write.c:590 [inline]
-       vfs_write+0xa6f/0xc90 fs/read_write.c:683
-       ksys_write+0x183/0x2b0 fs/read_write.c:736
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&sb->s_type->i_mutex_key#12);
-                               lock(&mm->mmap_lock);
-                               lock(&sb->s_type->i_mutex_key#12);
-  rlock(&mm->mmap_lock);
-
- *** DEADLOCK ***
-
-3 locks held by syz.2.1702/9983:
- #0: ffff888054784478 (&f->f_pos_lock){+.+.}-{3:3}, at: fdget_pos+0x24e/0x320 fs/file.c:1187
- #1: ffff88814a584420 (sb_writers#5){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
- #1: ffff88814a584420 (sb_writers#5){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
- #2: ffff888077ef3708 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
- #2: ffff888077ef3708 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: shmem_file_write_iter+0x80/0x120 mm/shmem.c:3211
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 9983 Comm: syz.2.1702 Not tainted 6.11.0-syzkaller-11624-ge477dba5442c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- down_read_killable+0xca/0xd30 kernel/locking/rwsem.c:1549
- mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:153
- get_mmap_lock_carefully mm/memory.c:6108 [inline]
- lock_mm_and_find_vma+0x29c/0x2f0 mm/memory.c:6159
- do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0010:fault_in_readable+0x165/0x2b0 mm/gup.c:2235
-Code: b3 ff 4c 8d b3 ff 0f 00 00 48 89 d8 4d 01 e6 49 81 e6 00 f0 ff ff 49 39 c6 72 6b e8 f5 c8 b3 ff 4c 39 f3 74 6e 4c 89 64 24 10 <44> 8a 23 43 0f b6 04 2f 84 c0 75 18 44 88 64 24 40 48 81 c3 00 10
-RSP: 0018:ffffc900045c7a40 EFLAGS: 00050283
-RAX: ffffffff81e0eba7 RBX: 00000000201e1000 RCX: 0000000000040000
-RDX: ffffc9001ddf8000 RSI: 000000000000bffd RDI: 000000000000bffe
-RBP: ffffc900045c7af8 R08: ffffffff81e0eb18 R09: ffffffff84b912a9
-R10: 0000000000000002 R11: ffff888025213c00 R12: 0000000000200000
-R13: dffffc0000000000 R14: 0000000020201000 R15: 1ffff920008b8f50
- fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
- generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
- shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xa6f/0xc90 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbca257df39
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fbca3459038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007fbca2735f80 RCX: 00007fbca257df39
-RDX: 000000000208e24b RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00007fbca25f0216 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbca2735f80 R15: 00007ffd5bf037c8
- </TASK>
-----------------
-Code disassembly (best guess):
-   0:	b3 ff                	mov    $0xff,%bl
-   2:	4c 8d b3 ff 0f 00 00 	lea    0xfff(%rbx),%r14
-   9:	48 89 d8             	mov    %rbx,%rax
-   c:	4d 01 e6             	add    %r12,%r14
-   f:	49 81 e6 00 f0 ff ff 	and    $0xfffffffffffff000,%r14
-  16:	49 39 c6             	cmp    %rax,%r14
-  19:	72 6b                	jb     0x86
-  1b:	e8 f5 c8 b3 ff       	call   0xffb3c915
-  20:	4c 39 f3             	cmp    %r14,%rbx
-  23:	74 6e                	je     0x93
-  25:	4c 89 64 24 10       	mov    %r12,0x10(%rsp)
-* 2a:	44 8a 23             	mov    (%rbx),%r12b <-- trapping instruction
-  2d:	43 0f b6 04 2f       	movzbl (%r15,%r13,1),%eax
-  32:	84 c0                	test   %al,%al
-  34:	75 18                	jne    0x4e
-  36:	44 88 64 24 40       	mov    %r12b,0x40(%rsp)
-  3b:	48                   	rex.W
-  3c:	81                   	.byte 0x81
-  3d:	c3                   	ret
-  3e:	00 10                	add    %dl,(%rax)
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
