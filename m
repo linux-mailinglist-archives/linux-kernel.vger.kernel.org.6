@@ -1,197 +1,333 @@
-Return-Path: <linux-kernel+bounces-342377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EA4988E34
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:35:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC7F988E39
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9F11F21E24
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:35:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 336EA1C20A6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 07:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5293D19E7CF;
-	Sat, 28 Sep 2024 07:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B13919DF9E;
+	Sat, 28 Sep 2024 07:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rr4n3Frj"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="tuoUuYf3"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA4461FD8
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 07:35:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B751494CC;
+	Sat, 28 Sep 2024 07:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727508904; cv=none; b=o2A1sXnBuBo6WTcRoYi3RflNLJuQIBHt2EJ8ST1ZL8ttayABx+P2voFqHdd5SGZcyy1+7bpJtIkb1ucO67RSCT2hENBiJi/su/CRi/Rqhuvz/UhHbyH6YVg47JRVaQMu7ZIfmh9FaIZ4tmim+MJjILth7AXhYCA0A6RZy8WJRts=
+	t=1727509019; cv=none; b=Lz+B89eOLschBaCZ551mF7dzzhzi87juw/gHHUjcFAhqCUkDMYT31/yzO/l2BiyMDuOKf85W0ftEsO4BTDrby3ney5lZQvXPz7tvuXYZDvDtJH2qCeliplA9j1JeIbEQo9Kct7A6JeUfjKZpaeCengCNsBjbfMZt9HIDDdVvWiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727508904; c=relaxed/simple;
-	bh=CZ3GJJVCrrzGvR7fAA0nSrjc16wiFeyBC54h9NaWyFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NLddICI+n2N+1DFGcK3DVvT2JpRrSjDXXG3+JPMTcBj08RFUUSbfW5/IVgkYq3Gc0mYjqxCvo+9J8kBk7IB9stmxHXE1Kz1NebtW4v63d6YL/7dQA2WBwEyh8J/igA0FUtwUIXt592jcocu7JAxz4yP4x5cgHKX1B8MhIcW9ZFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rr4n3Frj; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso2292687a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:35:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727508902; x=1728113702; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CZ3GJJVCrrzGvR7fAA0nSrjc16wiFeyBC54h9NaWyFQ=;
-        b=Rr4n3FrjBXa/YK0y+EroBjKWFgj+F/wBmowdytXw/fZ7YqbOsnLun6SCUPD2V22HkA
-         e13BiWWLHYpXWxUCVcF6ETXMvl9X1MLDO1QX5K3z7ahxGUSxVPdHX3iOngO+PAUeoCen
-         uMziTfSBcqyDd1eGLxUdTWRWb0SKgJDFpcYCBcnhjDpo4HwuYMRycLw3snncwvpWDHvA
-         bwOifX3c8i/Txiwpx4ZJAZvtuaRUy1n36HF2GH874IT4XVD15diQ3OThrX9HIOVMICuP
-         uOdXhpAxbOsj3qKp7zSij1AGAWqRrqIUNtICimQlSwazMmDeH1lymoZcPcs4Xzt16Y3J
-         Dtvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727508902; x=1728113702;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CZ3GJJVCrrzGvR7fAA0nSrjc16wiFeyBC54h9NaWyFQ=;
-        b=L4rRd2bGBDFxJagDfROO/zPHNtoz0u+CjXJbEpJLdatYPeg649J8bOlxc1XRoPNLgA
-         QKM+22yRTdjQWC116G2sPyYK7BJIo+SDop8ltinVqbO0i8Yk3hOTt3lke26c/af/WPYk
-         iPLFCTPnNrhjYrZ2wgRd37nm8wKZYYK917gVamyXtD17ps/A5qPD7a5ncUwXmYnGjs+n
-         o3u3EGDTxGMyPsQgJ93FcuM+ZGqOYttn9QB10wtnMQSeG1voQ6uBPUjEhJEEusMeOEup
-         iavEwsm6Rk3FquScXgrKQXQb6xg5YFjoiR8RCX85QTzDS2qM92Y2rrPwGa2KUXzIQTh4
-         gsgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnn37Z6C+KjQoBF7RMcFkNrPgbACqksvaGxU6e5Q72KTZbWa9KutonRcA8mj9uWQYMTEBo5YCSKCClgpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLyulITPBtlGaISr1gULEDr/AYAH3PUBz+NtP1BaWWarC3NehZ
-	Y4csKwlBjU6kFXZP+dOuEkY5Z4CLH0xvy5mNySD19GER2UMTE1lfKVlbYfyblLnNYpreWSqAk49
-	8Xm0WA11OUUe2j9DRoAA+Yr1UtBXVoRL0kIwucg==
-X-Google-Smtp-Source: AGHT+IE8STUqnUdbp16wn+jWytnLJo7GbATydnL1PXc5q5xA5jCeVCG+33+GkdczeH+HdjoM/t8GaXFW5O+RCkxcmVg=
-X-Received: by 2002:a05:6a00:8c2:b0:714:2482:ab3c with SMTP id
- d2e1a72fcca58-71b25f40b4cmr9950991b3a.7.1727508902091; Sat, 28 Sep 2024
- 00:35:02 -0700 (PDT)
+	s=arc-20240116; t=1727509019; c=relaxed/simple;
+	bh=L/4E2gZhcRq6yCmbtihxRySVsrH8HDI1EwDKSAdbxzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f/LxIVU1G0oWBjzKkN8FxaW10+4uD9XSaGMdbRvRNcPd0JiIQIiW1tfEfKyhLOmFCC4JSAHpa3q+drFnXCmG6o78HHMTxq64Ms698dnBhE0iS7PjHRQSUJR6YBdAc4o/POB0gYrIEF9LZNU57hng7o3jyNtR1kpHhhCyRZZZm6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=tuoUuYf3; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.27] (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C07EF2FC004A;
+	Sat, 28 Sep 2024 09:36:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1727509014;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t0fiLT8nkIUO41rrkrh1P0QEGPogiiA26unfY98r/mU=;
+	b=tuoUuYf3ZDOSjcz9rsI2tdG6CA9NUmYigJQuOB434ENqgJ6PztkPzuFA5uYpEMM0tP4AkP
+	DGMnwMrXCj549fIpmJzl85oV8NSmB4JVTzWPn0M+hEfWwwNWglD+C54W+T3wmQWAAHmgiq
+	jFedavPG/aDRm0O93xx1t29I3cTn604=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <cc7f3a74-5cb3-4e53-a941-2fc907c765f1@tuxedocomputers.com>
+Date: Sat, 28 Sep 2024 09:36:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com> <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
- <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com> <CAC_iWjLgNOtsbhqrhvvEz2C3S668qB8KatL_W+tPHMSkDrNS=w@mail.gmail.com>
- <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com> <CAC_iWjKeajwn3otjdEekE6VDLHGEvqmnQRwpN5R3yHj8UpEiDw@mail.gmail.com>
- <934d601f-be43-4e04-b126-dc86890a4bfa@huawei.com>
-In-Reply-To: <934d601f-be43-4e04-b126-dc86890a4bfa@huawei.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Sat, 28 Sep 2024 10:34:25 +0300
-Message-ID: <CAC_iWjL7m4ZL2W2OZM5F22dLvZhxU6fyCXV_xjyGf+W7UP43EQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Mina Almasry <almasrymina@google.com>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
-	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
-	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: bentiss@kernel.org, dri-devel@lists.freedesktop.org, jelle@vdwaa.nl,
+ jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com,
+ pavel@ucw.cz, platform-driver-x86@vger.kernel.org
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ad01bc38-3834-44c9-a5e3-540a09a20643@gmx.de>
+ <3dde4572-78a0-4a93-916a-563b7150f078@tuxedocomputers.com>
+ <0787a2ca-7d77-49ea-8607-a91fdac53d49@gmx.de>
+Content-Language: de-DE
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <0787a2ca-7d77-49ea-8607-a91fdac53d49@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Yunsheng,
+Hi Armin,
 
-Overall this is a patch in the right direction. I want to get feedback
-from others since Jakub and Jesper seemed to prefer the stalling idea.
-
-On Fri, 27 Sept 2024 at 14:29, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+Am 27.09.24 um 19:15 schrieb Armin Wolf:
+> [...]
+> If so, please mark your patches as "RFC" if they are not considered as 
+> a potentially "final" release.
+> Otherwise they might get accepted with the debug printing still inside.
+Talking about noob mistakes ... I'm sorry, will do this with the next patch.
 >
-> On 2024/9/27 17:58, Ilias Apalodimas wrote:
+>>>
+>>>> +
+>>>> +    mutex_lock(&driver_data->wmi_access_mutex);
+>>>
+>>> Does the underlying ACPI method really require external locking? If 
+>>> not, then please remove this mutex.
+>> Taken from the out of tree driver written by Christoffer, I will ask 
+>> him about this.
+>>>
+>>>> +    acpi_status status = wmidev_evaluate_method(wdev, 0, 
+>>>> wmi_method_id, &acpi_buffer_in,
+>>>> +                            &acpi_buffer_out);
+>>>> +    mutex_unlock(&driver_data->wmi_access_mutex);
+>>>> +    if (ACPI_FAILURE(status)) {
+>>>> +        pr_err("Failed to evaluate WMI method.\n");
+>>>> +        return -EIO;
+>>>> +    }
+>>>> +    if (!acpi_buffer_out.pointer) {
+>>>> +        pr_err("Unexpected empty out buffer.\n");
+>>>> +        return -ENODATA;
+>>>> +    }
+>>>
+>>> I believe that printing error messages should be done by the callers 
+>>> of this method.
+>>>
+>>>> +
+>>>> +    *out = acpi_buffer_out.pointer;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int __wmi_method_buffer_out(struct wmi_device *wdev, 
+>>>> uint32_t wmi_method_id, uint8_t *in,
+>>>> +                   acpi_size in_len, uint8_t *out, acpi_size out_len)
+>>>
+>>> Please use size_t instead of acpi_size.
+>>>
+>>>> +{
+>>>> +    int ret;
+>>>> +    union acpi_object *acpi_object_out = NULL;
+>>>
+>>> union acpi_object *obj;
+>>> int ret;
+>> ack ack ack
+>>>
+>>>> +
+>>>> +    ret = __wmi_method_acpi_object_out(wdev, wmi_method_id, in, 
+>>>> in_len, &acpi_object_out);
+>>>> +    if (ret)
+>>>> +        return ret;
+>>>> +
+>>>> +    if (acpi_object_out->type != ACPI_TYPE_BUFFER) {
+>>>> +        pr_err("Unexpected out buffer type. Expected: %u Got: 
+>>>> %u\n", ACPI_TYPE_BUFFER,
+>>>> +               acpi_object_out->type);
+>>>> +        kfree(acpi_object_out);
+>>>> +        return -EIO;
+>>>> +    }
+>>>> +    if (acpi_object_out->buffer.length != out_len) {
+>>>
+>>> The Windows ACPI-WMI mappers accepts oversized buffers and ignores 
+>>> any additional data,
+>>> so please change this code to also accept oversized buffers.
+>> Only for input or also for output?
 >
-> ...
+> Only forbuffers coming from the ACPI firmware.
+ack
 >
-> >>
-> >>> importantly, though, why does struct page need to know about this?
-> >>> Can't we have the same information in page pool?
-> >>> When the driver allocates pages it does via page_pool_dev_alloc_XXXXX
-> >>> or something similar. Cant we do what you suggest here ? IOW when we
-> >>> allocate a page we put it in a list, and when that page returns to
-> >>> page_pool (and it's mapped) we remove it.
-> >>
-> >> Yes, that is the basic idea, but the important part is how to do that
-> >> with less performance impact.
-> >
-> > Yes, but do you think that keeping that list of allocated pages in
-> > struct page_pool will end up being more costly somehow compared to
-> > struct page?
+>>>
+>>>> +        pr_err("Unexpected out buffer length.\n");
+>>>> +        kfree(acpi_object_out);
+>>>> +        return -EIO;
+>>>> +    }
+>>>> +
+>>>> +    memcpy(out, acpi_object_out->buffer.pointer, out_len);
+>>>> +    kfree(acpi_object_out);
+>>>> +
+>>>> +    return ret;
+>>>> +}
+>>>> +
+>>>> +int tuxedo_nb04_wmi_8_b_in_80_b_out(struct wmi_device *wdev,
+>>>> +                    enum tuxedo_nb04_wmi_8_b_in_80_b_out_methods 
+>>>> method,
+>>>> +                    union tuxedo_nb04_wmi_8_b_in_80_b_out_input 
+>>>> *input,
+>>>> +                    union tuxedo_nb04_wmi_8_b_in_80_b_out_output 
+>>>> *output)
+>>>> +{
+>>>> +    return __wmi_method_buffer_out(wdev, method, input->raw, 8, 
+>>>> output->raw, 80);
+>>>> +}
+>>>> +
+>>>> +int tuxedo_nb04_wmi_496_b_in_80_b_out(struct wmi_device *wdev,
+>>>> +                      enum 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_methods method,
+>>>> +                      union 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_input *input,
+>>>> +                      union 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_output *output)
+>>>> +{
+>>>> +    return __wmi_method_buffer_out(wdev, method, input->raw, 496, 
+>>>> output->raw, 80);
+>>>> +}
+>>>
+>>> Those two functions seem useless to me, please use 
+>>> wmi_method_buffer_out() directly by passing
+>>> a pointer to the underlying struct as data and the output of 
+>>> sizeof() as length.
+>> They are thought of bringing some type safety into the mix so that 
+>> for any method id the input/output size is correct.
 >
-> I am not sure if I understand your above question here.
-> I am supposing the question is about what's the cost between using
-> single/doubly linked list for the inflight pages or using a array
-> for the inflight pages like this patch does using pool->items?
-
-Yes, that wasn't very clear indeed, apologies for any confusion. I was
-trying to ask on a linked list that only lives in struct page_pool.
-But I now realize this was a bad idea since the lookup would be way
-slower.
-
-> If I understand question correctly, the single/doubly linked list
-> is more costly than array as the page_pool case as my understanding.
+> I do not think that this brings any real benefits when it comes to 
+> type safety. Using predefined structs and sizeof()
+> already takes care that the buffer size is correct, and choosing the 
+> correct method id already needs to be done by
+> the driver itself.
+ack
 >
-> For single linked list, it doesn't allow deleting a specific entry but
-> only support deleting the first entry and all the entries. It does support
-> lockless operation using llist, but have limitation as below:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/llist.h#L13
->
-> For doubly linked list, it needs two pointer to support deleting a specific
-> entry and it does not support lockless operation.
-
-I didn't look at the patch too carefully at first. Looking a bit
-closer now, the array is indeed better, since the lookup is faster.
-You just need the stored index in struct page to find the page we need
-to unmap. Do you remember if we can reduce the atomic pp_ref_count to
-32bits? If so we can reuse that space for the index. Looking at it
-requires a bit more work in netmem, but that's mostly swapping all the
-atomic64 calls to atomic ones.
-
->
-> For pool->items, as the alloc side is protected by NAPI context, and the
-> free side use item->pp_idx to ensure there is only one producer for each
-> item, which means for each item in pool->items, there is only one consumer
-> and one producer, which seems much like the case when the page is not
-> recyclable in __page_pool_put_page, we don't need a lock protection when
-> calling page_pool_return_page(), the 'struct page' is also one consumer
-> and one producer as the pool->items[item->pp_idx] does:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/net/core/page_pool.c#L645
->
-> We only need a lock protection when page_pool_destroy() is called to
-> check if there is inflight page to be unmapped as a consumer, and the
-> __page_pool_put_page() may also called to unmapped the inflight page as
-> another consumer,
-
-Thanks for the explanation. On the locking side, page_pool_destroy is
-called once from the driver and then it's either the workqueue for
-inflight packets or an SKB that got freed and tried to recycle right?
-But do we still need to do all the unmapping etc from the delayed
-work? Since the new function will unmap all packets in
-page_pool_destroy, we can just skip unmapping when the delayed work
-runs
-
-Thanks
-/Ilias
-
-
-
-
-
-> there is why the 'destroy_lock' is added for protection
-> when pool->destroy_cnt > 0.
->
-> >
-> > Thanks
-> > /Ilias
+>>>
+>>>> diff --git a/drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_util.h 
+>>>> b/drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_util.h
+>>>> new file mode 100644
+>>>> index 0000000000000..2765cbe9fcfef
+>>>> --- /dev/null
+>>>> +++ b/drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_util.h
+>>>> @@ -0,0 +1,112 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>> +/*
+>>>> + * This code gives functions to avoid code duplication while 
+>>>> interacting with
+>>>> + * the TUXEDO NB04 wmi interfaces.
+>>>> + *
+>>>> + * Copyright (C) 2024 Werner Sembach wse@tuxedocomputers.com
+>>>> + */
+>>>> +
+>>>> +#ifndef TUXEDO_NB04_WMI_UTIL_H
+>>>> +#define TUXEDO_NB04_WMI_UTIL_H
+>>>> +
+>>>> +#include <linux/wmi.h>
+>>>> +
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_DEVICE_ID_TOUCHPAD    1
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_DEVICE_ID_KEYBOARD    2
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_DEVICE_ID_APP_PAGES    3
+>>>> +
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KBL_TYPE_NONE        0
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KBL_TYPE_PER_KEY    1
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KBL_TYPE_FOUR_ZONE    2
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KBL_TYPE_WHITE_ONLY    3
+>>>> +
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KEYBOARD_LAYOUT_ANSII    0
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_KEYBOARD_LAYOUT_ISO    1
+>>>> +
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_RED        1
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_GREEN        2
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_YELLOW    3
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_BLUE        4
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_PURPLE    5
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_INDIGO    6
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_COLOR_ID_WHITE        7
+>>>> +
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_APP_PAGES_DASHBOARD BIT(0)
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_APP_PAGES_SYSTEMINFOS BIT(1)
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_APP_PAGES_KBL BIT(2)
+>>>> +#define WMI_AB_GET_DEVICE_STATUS_APP_PAGES_HOTKEYS BIT(3)
+>>>> +
+>>>> +
+>>>> +union tuxedo_nb04_wmi_8_b_in_80_b_out_input {
+>>>> +    uint8_t raw[8];
+>>>> +    struct __packed {
+>>>> +        uint8_t device_type;
+>>>> +        uint8_t reserved_0[7];
+>>>> +    } get_device_status_input;
+>>>> +};
+>>>> +
+>>>> +union tuxedo_nb04_wmi_8_b_in_80_b_out_output {
+>>>> +    uint8_t raw[80];
+>>>> +    struct __packed {
+>>>> +        uint16_t return_status;
+>>>> +        uint8_t device_enabled;
+>>>> +        uint8_t kbl_type;
+>>>> +        uint8_t kbl_side_bar_supported;
+>>>> +        uint8_t keyboard_physical_layout;
+>>>> +        uint8_t app_pages;
+>>>> +        uint8_t per_key_kbl_default_color;
+>>>> +        uint8_t four_zone_kbl_default_color_1;
+>>>> +        uint8_t four_zone_kbl_default_color_2;
+>>>> +        uint8_t four_zone_kbl_default_color_3;
+>>>> +        uint8_t four_zone_kbl_default_color_4;
+>>>> +        uint8_t light_bar_kbl_default_color;
+>>>> +        uint8_t reserved_0[1];
+>>>> +        uint16_t dedicated_gpu_id;
+>>>> +        uint8_t reserved_1[64];
+>>>> +    } get_device_status_output;
+>>>> +};
+>>>> +
+>>>> +enum tuxedo_nb04_wmi_8_b_in_80_b_out_methods {
+>>>> +    WMI_AB_GET_DEVICE_STATUS    = 2,
+>>>> +};
+>>>> +
+>>>> +
+>>>> +#define WMI_AB_KBL_SET_MULTIPLE_KEYS_LIGHTING_SETTINGS_COUNT_MAX 120
+>>>> +
+>>>> +union tuxedo_nb04_wmi_496_b_in_80_b_out_input {
+>>>> +    uint8_t raw[496];
+>>>> +    struct __packed {
+>>>> +        uint8_t reserved_0[15];
+>>>> +        uint8_t lighting_setting_count;
+>>>> +        struct {
+>>>> +            uint8_t key_id;
+>>>> +            uint8_t red;
+>>>> +            uint8_t green;
+>>>> +            uint8_t blue;
+>>>> +        } 
+>>>> lighting_settings[WMI_AB_KBL_SET_MULTIPLE_KEYS_LIGHTING_SETTINGS_COUNT_MAX];
+>>>> +    }  kbl_set_multiple_keys_input;
+>>>> +};
+>>>> +
+>>>> +union tuxedo_nb04_wmi_496_b_in_80_b_out_output {
+>>>> +    uint8_t raw[80];
+>>>> +    struct __packed {
+>>>> +        uint8_t return_value;
+>>>> +        uint8_t reserved_0[79];
+>>>> +    } kbl_set_multiple_keys_output;
+>>>> +};
+>>>> +
+>>>> +enum tuxedo_nb04_wmi_496_b_in_80_b_out_methods {
+>>>> +    WMI_AB_KBL_SET_MULTIPLE_KEYS    = 6,
+>>>> +};
+>>>> +
+>>>> +
+>>>> +int tuxedo_nb04_wmi_8_b_in_80_b_out(struct wmi_device *wdev,
+>>>> +                    enum tuxedo_nb04_wmi_8_b_in_80_b_out_methods 
+>>>> method,
+>>>> +                    union tuxedo_nb04_wmi_8_b_in_80_b_out_input 
+>>>> *input,
+>>>> +                    union tuxedo_nb04_wmi_8_b_in_80_b_out_output 
+>>>> *output);
+>>>> +int tuxedo_nb04_wmi_496_b_in_80_b_out(struct wmi_device *wdev,
+>>>> +                      enum 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_methods method,
+>>>> +                      union 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_input *input,
+>>>> +                      union 
+>>>> tuxedo_nb04_wmi_496_b_in_80_b_out_output *output);
+>>>> +
+>>>> +#endif
 
