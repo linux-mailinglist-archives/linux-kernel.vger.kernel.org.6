@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-342466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6420F988F5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:20:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE2D988F60
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA331F218B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 978041F21C6A
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E975188008;
-	Sat, 28 Sep 2024 13:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA6E188008;
+	Sat, 28 Sep 2024 13:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNCMgsoe"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ABYXK6ph"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541071DFF8;
-	Sat, 28 Sep 2024 13:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E9C1DFF8;
+	Sat, 28 Sep 2024 13:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727529594; cv=none; b=LPuNCIhC1pzqtE4tJJT4ENZPaAmPovcUd9hPfEBmoMjlYy/3P/doXlaDTysex9MAbASa5r6QOfDJkuClaz20mKXA1j7wvlTNcEY+lG6ZsqyQzfOTFL4vxsGnLXEhhMeikaxsccfexSsq/aSOcBKDTj6V/6OBjNEiPvvDeKQR+bg=
+	t=1727529662; cv=none; b=DlIO1ZRELdg/mo/pxA0GMvwL/2lUHwY9RzXV81xI1l0mhmdAN+JDYcqog6vns3KUSYYrcCycxreQLnjrjUbSrn55vxSLIkZoZJvSOOA4U5Mg4MUMl2uzLcTMkyTZSRSgco168RyzJoRywG0nwkVLKn53UO6fTFHmyqOIaYwkZ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727529594; c=relaxed/simple;
-	bh=FTxgGV0fndARRaInbJBSomb7m073sgDRktv/COxeuhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Elb4KnBom+KV72wsG1Nog9C/AxWn81Pg+pMu4PiahVCFFimrR5natvuG2+yYwfRT9rGsGHd+FDGw+2VP3WH2PeVvIJrQ3efyRs1vbZ5K6MnnDd3XjP0FvHcHaLaSlKpuRe0PI+irdEYGqrusUPYVVgsjebZpK5ibN/7+pP2jlWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNCMgsoe; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so178927a12.1;
-        Sat, 28 Sep 2024 06:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727529592; x=1728134392; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEHG4Y/lL09GG1v2gI8iZvDJa9no7rllEAszsGzy6GU=;
-        b=SNCMgsoeF3Ml/SxlfJHoBW7/e4Yp1jh7zUZ22RP208U37DBiJgg0jcvp+sXujNTRpm
-         MyfyIthpU4Oo3BEWnz5gY5j8R/xqH1124Rn0tBaQ1eK6I8welA5TWlV0OcAqmOyrPlRJ
-         PU0PGe2E4jpVGyRqjh82PcmBJ/EM6TZlijdn1BQO7EK+LBKMpnVrWp3618UG5oJQlFek
-         IPP9eVqtqWk68ECD4nAHXZvn1RyDy0GyCDdmh03DgYsBTL2kB7P/It+ZzE3QGvb2/VXk
-         +CClE3+LTrySz8lxe4PNVvZv8duLpOiLxxiZn9VywEM9ZtI4fcUaNScM3qs551oDHRSt
-         eehg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727529592; x=1728134392;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QEHG4Y/lL09GG1v2gI8iZvDJa9no7rllEAszsGzy6GU=;
-        b=oYouakoXs1jbIShaIF2XjNwFbpvxBjWAHUY+FgOpoJA6hvsNJg99h8yqGVg437RhXl
-         DBOnLrKobidZJ4dESAM7WfZXygOHFq2rjN5vUQYeueRBxk7/omqKUEXfOcWMaTXaBRdH
-         QtWVJdKlF6TWUB5m9pNfcXEamnJNNXNcxsT4ShUSt1mxQd3bWEe68LoHKVSxuEpzzWIK
-         nGiCLLx0x4Kfp8e34/QODc1FnFA8qd+2WJzHdJhthjtoKxYoOGf1rhIuxrVHqfuPSvCD
-         sbG3AFGfCBTNfkh3Bg5+cuTzipOM+WTLFBzLNx1aLn5hQyE+q669v+xUOzFSzqFDPHsw
-         SXEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg+d3nmqgvxaKf9zlaqgBDFo3y3cC89QX0t/+I/+rk0Z7m6s1LhVzDdTY6Zj/gZSe/DKU8GP0R@vger.kernel.org, AJvYcCXJz9+qn/iRsYxfYL3piupy3p3wa95czSM21d8PQg4ogYCYye5nPZWm7EFq7ffYlC5NV2ZoWZ1tqG41NmY=@vger.kernel.org, AJvYcCXUbcQAic7KnUAu6EZ7J6Icgb/iBoLOydd1J3KPjVrBkjDIDU8YN/fu1w6oxLmkZ+WJE9xQVAzVqyQ+xG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxPd/bgCxjFYLAh/LtpI0IIdzxvxMu2ApK2kQfpZhkzeYKp1M2
-	yH+QHr3swm5NjZM+hNu8VnbYRD3H4LmWRg4vn7Z8HQDvMQr+P6El
-X-Google-Smtp-Source: AGHT+IHbW7D+GnxBZsSdqkqhplAXMnTaQ9xufE4rC3XiSWGLDgQLRazAH0M/yYKlYU6i2+CXttb1Kw==
-X-Received: by 2002:a05:6402:254d:b0:5c8:8844:9942 with SMTP id 4fb4d7f45d1cf-5c888449972mr3305438a12.2.1727529591422;
-        Sat, 28 Sep 2024 06:19:51 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-242-114.customer.ggaweb.ch. [82.192.242.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248c672sm2281445a12.60.2024.09.28.06.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 06:19:50 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 36E93BE2EE7; Sat, 28 Sep 2024 15:19:49 +0200 (CEST)
-Date: Sat, 28 Sep 2024 15:19:49 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
-	linux-sound@vger.kernel.org
-Cc: Eric Degenetais <eric.4.debian@grabatoulnz.fr>,
-	linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
-	regressions@lists.linux.dev, Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [regression] Regular "cracks" in HDMI sound during playback since
- backport to 6.1.y for 92afcc310038 ("ALSA: hda: Conditionally use snooping
- for AMD HDMI")
-Message-ID: <ZvgCdYfKgwHpJXGE@eldamar.lan>
+	s=arc-20240116; t=1727529662; c=relaxed/simple;
+	bh=UH1WsrDfH845J7N+rwSC8AvHZeCjoIhAa/TviSrMug4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OtLogOSMx4mEGM/KlzcvZi4UGX/YGG6aW1un0/v2B/D4EahD4W/KmhgXAvQdko2Cquux0u3kxeHJvibU2Na68y+0eTzUiJxbkzGfwjxSEtFa8gbnw8nSrKBPA/5KGxVrkeeHUGCm3HrbcJvT7usWPWky8sjIGeSfi77feMhR7qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ABYXK6ph; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=tkj6nbwqzbhc3bfzg4sbzipy74.protonmail; t=1727529652; x=1727788852;
+	bh=b03AlkBxsxLRuJ6y9m9dznsNy8PcwqXKGf2lbe9Z5X8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=ABYXK6phgiAsHFNuoPmcwPAKZKbjqsrEAOy9MD6FhYm7uRrfD1i/DNLKnTgf7oJgW
+	 Fi2MTKejoxt7bkYLd9np7oVFzl1JQZRCCBv/jowNOBu7jRsSJ0mwOZS3bmfA7OiZ4T
+	 A+LZ/S8iw4lu5eLfJ/ynIATUp/U/Gc9BnXTC2H30oT5AZBSxBPy0K0nZZmzIFdT091
+	 TqWX+yxWYslkHeodxw4oZfp9xpul3nVweoO4yBitLCOAqWbtRhe3dvVMKudyVpo483
+	 YbPLUa3Ved3bGxlDU07RsRZ/sLrIMieJxe2A+Com/HU4I2jGLe9Q2A1aoZNEjdkttT
+	 IPNj0oww2Txkg==
+Date: Sat, 28 Sep 2024 13:20:45 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 13/26] rust: alloc: implement kernel `Vec` type
+Message-ID: <0d71296c-e605-47cb-a8be-8cd16c54d9d4@proton.me>
+In-Reply-To: <Zvf58aEqGEamm7s8@pollux>
+References: <20240911225449.152928-1-dakr@kernel.org> <20240911225449.152928-14-dakr@kernel.org> <1a06b767-ca02-41ec-840a-47e73f7876d8@proton.me> <Zvf58aEqGEamm7s8@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 341fb30362b194ab6bb6b8b04e97d79a43f2503d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi
+On 28.09.24 14:43, Danilo Krummrich wrote:
+> On Thu, Sep 26, 2024 at 01:47:04PM +0000, Benno Lossin wrote:
+>> On 12.09.24 00:52, Danilo Krummrich wrote:
+>>> +    /// Appends an element to the back of the [`Vec`] instance.
+>>> +    ///
+>>> +    /// # Examples
+>>> +    ///
+>>> +    /// ```
+>>> +    /// let mut v =3D KVec::new();
+>>> +    /// v.push(1, GFP_KERNEL)?;
+>>> +    /// assert_eq!(&v, &[1]);
+>>> +    ///
+>>> +    /// v.push(2, GFP_KERNEL)?;
+>>> +    /// assert_eq!(&v, &[1, 2]);
+>>> +    /// # Ok::<(), Error>(())
+>>> +    /// ```
+>>> +    pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocErro=
+r> {
+>>> +        Vec::reserve(self, 1, flags)?;
+>>> +
+>>> +        // SAFETY:
+>>> +        // - `self.len` is smaller than `self.capacity` and hence, the=
+ resulting pointer is
+>>> +        //   guaranteed to be part of the same allocated object.
+>>> +        // - `self.len` can not overflow `isize`.
+>>> +        let ptr =3D unsafe { self.as_mut_ptr().add(self.len) };
+>>> +
+>>> +        // SAFETY:
+>>> +        // - `ptr` is properly aligned and valid for writes.
+>>> +        unsafe { core::ptr::write(ptr, v) };
+>>
+>> Why not use `self.spare_capacity_mut()[0].write(v);`?
+>=20
+> Before v7 I did exactly that, but in v6 you suggested to use the raw poin=
+ter
+> instead to avoid the bounds check.
 
-In downstream Debian we got a report from  Eric Degenetais, in
-https://bugs.debian.org/1081833 that after the update to the 6.1.106
-based version, there were regular cracks in HDMI sound during
-playback.
+Ah I see... Would be pretty useful for me to have my previous comments
+easily accessible, I don't usually look at the previous thread. Is
+anyone aware of some tools for that?
 
-Eric was able to bisec the issue down to
-92afcc310038ebe5d66c689bb0bf418f5451201c in the v6.1.y series which
-got applied in 6.1.104.
+>> If you want to avoid the bounds check, you can do
+>>
+>>     let first =3D self.spare_capacity_mut().first();
+>>     // SAFETY: the call to `Vec::reserve` above ensures that `spare_capa=
+city_mut()` is non-empty.
+>>     unsafe { first.unwrap_unchecked() }.write(v);
+>=20
+> `first` does a similar check to create the `Option<&T>`, right?. I'd rath=
+er keep
+> the raw pointer access as suggested in v6.
 
-Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1081833#47
+It does a check, but the optimizer will get rid of it if you use
+`unwrap_unchecked` [1]. But feel free to leave it as-is.
 
-#regzbot introduced: 92afcc310038ebe5d66c689bb0bf418f5451201c
-#regzbot link: https://bugs.debian.org/1081833
+[1]: https://godbolt.org/z/zYbMTo86M
 
-It should be noted that Eric as well tried more recent stable series
-as well, in particular did test as well 6.10.6 based version back on
-20th september, and the issue was reproducible there as well.
+---
+Cheers,
+Benno
 
-Is there anything else we can try to provide?
-
-Regards,
-Salvatore
 
