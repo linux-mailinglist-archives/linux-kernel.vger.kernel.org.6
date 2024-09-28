@@ -1,133 +1,167 @@
-Return-Path: <linux-kernel+bounces-342417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A781988EBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:14:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42524988EC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:18:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAAD281CE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A614282424
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 09:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC71019F11A;
-	Sat, 28 Sep 2024 09:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3F719E974;
+	Sat, 28 Sep 2024 09:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsL87tHo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iF0+1lw9"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A07B14D2B1;
-	Sat, 28 Sep 2024 09:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBBD32AF15
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727514853; cv=none; b=M6JN0LwkoJfdluHsSbzWk+Kr4bbA6CBwOZ8w4Rb7243Wu102r5yLgIhPILTTM8CqpS6Yb8Rw3xK771jV5/Bz0e6eyQ7TrQMg/eJILedmJn8AmGH87WfgOaaA8eH3dtwO3Nq6oMmYCGcrBm7h30YSkBvoM5p7aoSejuXfMP94F98=
+	t=1727515091; cv=none; b=F96ejaNarWzfQ/mNKMH8zmzYeQdRsj7REcJGKRib8WHC/iOVyd8VxnsCDFk6mQXnXwGkg1pKZ021WQjQTKuMdeUH6l1js2N1BF7dzRXsftp6T7XESVFTMTqwmhMO0qTv7mUJftJid1nfXUuAzY8TlSfRlW8IiROq6kFEEXabBoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727514853; c=relaxed/simple;
-	bh=ZxUX2bSPp3e7OZZCI7nhMz8oj00AuqElgjuSvQ01SZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IEClECQVcZ7hn7K2tVIT+DbJb4exhZxcaeKxH423UaI94qdLHntxg7T8AXhPDqBjeeYPzPVAjRfrtZS3qrgbv+WckDHxIfgmyqyqOt9HrpukJv9n9mv6TRAPLhD8S29ht9+Wg8TX0Pa7q6SmNdnS4419CBqtyfkf7Td6WOlXnqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsL87tHo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4822C4CEC3;
-	Sat, 28 Sep 2024 09:14:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727514852;
-	bh=ZxUX2bSPp3e7OZZCI7nhMz8oj00AuqElgjuSvQ01SZQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jsL87tHoabQvgso0X70BChaJ8YD9i3hGMz2fN6J51wZszFHRe2b0i/Ocb5phYZhMU
-	 /aDvvB51dKXBsNVz7Cgagws98BCf0dW1NKltGawuJl6R44ME4a7pmpZqgCvCGUN1eD
-	 veKGN1FI0USmm07DotjjHzZ0pIwThuSM0hG88SY5c1l/v5WPxknPIJFMIP8AmynnV1
-	 CY21/H0j2TaMXJVQA428X0lgB8q3rT/qrEbrEHTdac5CB6UdRlIpLxR80tQ5Od1NFq
-	 tLfjDFCbOzWG7Us4dFAoFijyTBMBAJtsH55M29sbfdePSEDP8xeDE/xkcqABNQ6jBj
-	 IqCIDeJHCjvoA==
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7acdd65fbceso235181385a.3;
-        Sat, 28 Sep 2024 02:14:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjjNJ2K4c8N5XV2FXIt4pf5sYI29gnK/QHFWj+nZJoDb4d+Z7ezVAFs6nahreZFsWT+1NGsJ9B@vger.kernel.org, AJvYcCVEp6SQwIlrgjGKE/79VFi0tmue43suEIKx72lNdnSjt2eUDpHMubL3xnR5JuVDKh1XmaA=@vger.kernel.org, AJvYcCVORc6C98r1F2IaeBpPY5phz9F5lcI/gRidNvsAjDI6PZWOcJbEdI/0FZloKNhTOAjyqHN4dTPMTXZtyMsM@vger.kernel.org, AJvYcCW8MXKdVU13pvtqYTDe5e+lPnrBoINaWINXuIgXWJLpvYw0FkAEDSUi3DwSoS3ngbQ9XSWzEiYYFsFdpa/Inp0q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLakZePyPjzy4do++AcEVK1Ru3q5nJDTugnFYaXBchQuQqKCNk
-	gZI1k2kpv0Vw7ZonFE8ZAIzHhWVc9YE3gtfpDEstYgXptEWQ05Ij8FSJTKJuMGfJkwpuQmAViiM
-	JYeKqdJy/pe+EcvF8A4eychEPks4=
-X-Google-Smtp-Source: AGHT+IEIJBvI1ZnMqsnDSFPkfMNKVu+B+hYGK1Y1g1nidaxCR4JAFXKw3/qPbJRVW+JE/2IgHiMcPA8URIFsOtlvejU=
-X-Received: by 2002:a05:620a:370e:b0:7a2:a1d:f0c6 with SMTP id
- af79cd13be357-7ae37825602mr734291385a.5.1727514851848; Sat, 28 Sep 2024
- 02:14:11 -0700 (PDT)
+	s=arc-20240116; t=1727515091; c=relaxed/simple;
+	bh=/tnHTMVqWE4db5Wn37v006A8yI2jDJs76MG/NuX+nIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=dB99EznGh1Di7e1QsiOB7WmG0g7ydcS78NQs3iS8z3VIpguq7ZC29xPFv2xUckPtP2zwOXTjG0Kd2KYRsZD0s+q7wRp/sI8yQuieTmXO5ttNAXKb+fter7IskJY/YwEKnZmput+Y8SW/rvpTAb7NhI0WB6R55XARb5hl+vfENlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iF0+1lw9; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cd0b5515fso1425689f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 02:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727515088; x=1728119888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GC9KpjYQ8SyUGpndgfxHfRjpZcEF2RD6QHN1LZE1WG4=;
+        b=iF0+1lw9M3hJg6o7a48+2NmTfL/ymksjWBnsE4ujvV4c1vvNUcbDYqk0ITXyD19UkF
+         PpbUHw+Eb6mKL1/22yBmFYm4G2zeC0PlHGQSGQ2wTkB3LFkiwVxTszL9AkKe/hi/r3NF
+         +hEhc3ogSxblKqWlYYOdYyOy4+xGPR4VwovS4n1pidLXf1NY3+4Y3PJl4ZbVR9c1cbdJ
+         LC8Fnt2Wx3h/cB1bL7fg/2EVgCNt1NPcItb+rXXIVxQZkeaPCI3Jd9JOGgl38DHN45OP
+         XLPjyYEdQ6RtzGj7oCNgCuOZzkxJdLN3EP1+po5zmS0DoytbPAsIo2pEmfScOxhatoOG
+         k5Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727515088; x=1728119888;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GC9KpjYQ8SyUGpndgfxHfRjpZcEF2RD6QHN1LZE1WG4=;
+        b=RHVTroQbn/s6ErGeOJaa6GBL5CB8UdtnUkye3XoD6uDNGX2frne0MEOJOAXGzOzXwd
+         6j4g5zX2hMwZXaV4UJOGCxedRmv+mGNTZON3gMnRQU6+81nayjokhIo0BaL33BBSzVC1
+         bHnVgcrwyfC9bPKJELcQ0MS2akcc5P678Qdx6i5C8DFGG9nehe8Afh90s16sgXu2Q4B7
+         pSPHkeVxe15dnT0mBYEWTzUWRttTqNPRuA7Ku6kN7D7fvrM/3gw+o0NPg1zciJ2KfOD5
+         mMX7hrRWNfY6vJ1YDC/OAGSOVM90XGSD6ANOv1mrqyJ+nMFAJng3ak+zLiG+cf6krGQc
+         NNJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVK+XjbNBZQXVMhch/67t2nil8RMW3m1TAm9MNyAZJs11hiSrGVg0E4w0ravkyIp//EQezsQyHBYpFHVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaaZXCWVhZ0qBzcRZoQwuFqcTWsLidGuatb8vKVl1fIdKFADjA
+	dhdQgQpX2ypAGvvD1p7eIZ1j+ywqgwKkRWq85AR8WqLkSw0FdfINobdtnN7ukrw=
+X-Google-Smtp-Source: AGHT+IHS0T6F//UR7TqdmzA4oQxAr73u64ywuJhd1FFZKMRBp+6yuNZBQ4yS/8ZiDX6LnTE9hm/hsw==
+X-Received: by 2002:adf:9b87:0:b0:37c:d12c:17e0 with SMTP id ffacd0b85a97d-37cd5b285c8mr3832374f8f.56.1727515087958;
+        Sat, 28 Sep 2024 02:18:07 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd57450c7sm4335945f8f.101.2024.09.28.02.18.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 02:18:07 -0700 (PDT)
+Date: Sat, 28 Sep 2024 12:17:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Igor Prusov <ivprusov@salutedevices.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, kernel@salutedevices.com,
+	prusovigor@gmail.com
+Subject: Re: [PATCH v3 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
+Message-ID: <3a614d4a-28b0-45f4-a3be-09f312a8e679@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927131355.350918-1-bjorn@kernel.org> <20240927131355.350918-2-bjorn@kernel.org>
- <CAEf4BzaWneXBv401rOdW8ijBTqRn_Ut4FFvhbsPShh5_pjV33A@mail.gmail.com>
-In-Reply-To: <CAEf4BzaWneXBv401rOdW8ijBTqRn_Ut4FFvhbsPShh5_pjV33A@mail.gmail.com>
-From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Date: Sat, 28 Sep 2024 11:14:01 +0200
-X-Gmail-Original-Message-ID: <CAJ+HfNh+2oN_A4KtUkeSfvH+D6AHkVWErskq5+s2zgejot0BiA@mail.gmail.com>
-Message-ID: <CAJ+HfNh+2oN_A4KtUkeSfvH+D6AHkVWErskq5+s2zgejot0BiA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests: bpf: Add missing per-arch include path
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Mykola Lysenko <mykolal@fb.com>, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Charlie Jenkins <charlie@rivosinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925-ntp-amps-8918-8835-v3-6-e2459a8191a6@salutedevices.com>
 
-On Fri, 27 Sept 2024 at 22:52, Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Fri, Sep 27, 2024 at 6:14=E2=80=AFAM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
-el.org> wrote:
-> >
-> > From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> >
-> > The prog_tests programs do not include the per-arch tools include
-> > path, e.g. tools/arch/riscv/include. Some architectures depend those
-> > files to build properly.
-> >
-> > Include tools/arch/$(SUBARCH)/include in the selftests bpf build.
-> >
-> > Fixes: 6d74d178fe6e ("tools: Add riscv barrier implementation")
-> > Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> > ---
-> >  tools/testing/selftests/bpf/Makefile | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selft=
-ests/bpf/Makefile
-> > index 365740f24d2e..d6a53afa449f 100644
-> > --- a/tools/testing/selftests/bpf/Makefile
-> > +++ b/tools/testing/selftests/bpf/Makefile
-> > @@ -10,6 +10,7 @@ TOOLSDIR :=3D $(abspath ../../..)
-> >  LIBDIR :=3D $(TOOLSDIR)/lib
-> >  BPFDIR :=3D $(LIBDIR)/bpf
-> >  TOOLSINCDIR :=3D $(TOOLSDIR)/include
-> > +TOOLSARCHINCDIR :=3D $(TOOLSDIR)/arch/$(SRCARCH)/include
-> >  BPFTOOLDIR :=3D $(TOOLSDIR)/bpf/bpftool
-> >  APIDIR :=3D $(TOOLSINCDIR)/uapi
-> >  ifneq ($(O),)
-> > @@ -44,7 +45,7 @@ CFLAGS +=3D -g $(OPT_FLAGS) -rdynamic                =
-                   \
-> >           -Wall -Werror -fno-omit-frame-pointer                        =
- \
-> >           $(GENFLAGS) $(SAN_CFLAGS) $(LIBELF_CFLAGS)                   =
- \
-> >           -I$(CURDIR) -I$(INCLUDE_DIR) -I$(GENDIR) -I$(LIBDIR)         =
- \
-> > -         -I$(TOOLSINCDIR) -I$(APIDIR) -I$(OUTPUT)
-> > +         -I$(TOOLSINCDIR) -I$(TOOLSARCHINCDIR) -I$(APIDIR) -I$(OUTPUT)
->
-> Eduard was going to switch selftests to use kernel UAPI headers, I
-> wonder if we should do just that and then set up arch-specific
-> includes from kernel (not from tools/) as well?
+Hi Igor,
 
-In the end it's up to you guys! This is broken on Linus' master for
-RISC-V now, so from my (RISC-V) perspective having a workaround sooner
-than later would be nice!
+kernel test robot noticed the following build warnings:
 
-@Eduard Do you have any patches around? If so, I can take them for a spin o=
-n RV.
+url:    https://github.com/intel-lab-lkp/linux/commits/Igor-Prusov/dt-bindings-vendor-prefixes-Add-NeoFidelity-Inc/20240925-230818
+base:   c7fbbb45ef78ff349d16923b516bc8667367d1a6
+patch link:    https://lore.kernel.org/r/20240925-ntp-amps-8918-8835-v3-6-e2459a8191a6%40salutedevices.com
+patch subject: [PATCH v3 6/6] ASoC: codecs: Add NeoFidelity NTP8835 codec
+config: alpha-randconfig-r072-20240928 (https://download.01.org/0day-ci/archive/20240928/202409281054.DUTb5KxU-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202409281054.DUTb5KxU-lkp@intel.com/
 
-Bj=C3=B6rn
+smatch warnings:
+sound/soc/codecs/ntp8835.c:431 ntp8835_i2c_probe() warn: passing zero to 'PTR_ERR'
+
+vim +/PTR_ERR +431 sound/soc/codecs/ntp8835.c
+
+c4c94fd2babcb9 Igor Prusov 2024-09-25  412  static int ntp8835_i2c_probe(struct i2c_client *i2c)
+c4c94fd2babcb9 Igor Prusov 2024-09-25  413  {
+c4c94fd2babcb9 Igor Prusov 2024-09-25  414  	struct ntp8835_priv *ntp8835;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  415  	struct regmap *regmap;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  416  	int ret;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  417  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  418  	ntp8835 = devm_kzalloc(&i2c->dev, sizeof(*ntp8835), GFP_KERNEL);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  419  	if (!ntp8835)
+c4c94fd2babcb9 Igor Prusov 2024-09-25  420  		return -ENOMEM;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  421  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  422  	ntp8835->i2c = i2c;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  423  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  424  	ntp8835->reset = devm_reset_control_get_shared(&i2c->dev, NULL);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  425  	if (IS_ERR(ntp8835->reset))
+c4c94fd2babcb9 Igor Prusov 2024-09-25  426  		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
+c4c94fd2babcb9 Igor Prusov 2024-09-25  427  				     "Failed to get reset\n");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  428  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  429  	ret = reset_control_deassert(ntp8835->reset);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  430  	if (ret)
+c4c94fd2babcb9 Igor Prusov 2024-09-25 @431  		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->reset),
+
+PTR_ERR(ret)
+
+c4c94fd2babcb9 Igor Prusov 2024-09-25  432  				     "Failed to deassert reset\n");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  433  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  434  	dev_set_drvdata(&i2c->dev, ntp8835);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  435  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  436  	ntp8835_reset_gpio(ntp8835);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  437  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  438  	regmap = devm_regmap_init_i2c(i2c, &ntp8835_regmap);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  439  	if (IS_ERR(regmap))
+c4c94fd2babcb9 Igor Prusov 2024-09-25  440  		return dev_err_probe(&i2c->dev, PTR_ERR(regmap),
+c4c94fd2babcb9 Igor Prusov 2024-09-25  441  				     "Failed to allocate regmap\n");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  442  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  443  	ret = devm_snd_soc_register_component(&i2c->dev, &soc_component_ntp8835,
+c4c94fd2babcb9 Igor Prusov 2024-09-25  444  					      &ntp8835_dai, 1);
+c4c94fd2babcb9 Igor Prusov 2024-09-25  445  	if (ret)
+c4c94fd2babcb9 Igor Prusov 2024-09-25  446  		return dev_err_probe(&i2c->dev, ret,
+c4c94fd2babcb9 Igor Prusov 2024-09-25  447  				     "Failed to register component\n");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  448  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  449  	ntp8835->mclk = devm_clk_get_enabled(&i2c->dev, "mclk");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  450  	if (IS_ERR(ntp8835->mclk))
+c4c94fd2babcb9 Igor Prusov 2024-09-25  451  		return dev_err_probe(&i2c->dev, PTR_ERR(ntp8835->mclk), "failed to get mclk\n");
+c4c94fd2babcb9 Igor Prusov 2024-09-25  452  
+c4c94fd2babcb9 Igor Prusov 2024-09-25  453  	return 0;
+c4c94fd2babcb9 Igor Prusov 2024-09-25  454  }
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
