@@ -1,65 +1,85 @@
-Return-Path: <linux-kernel+bounces-342465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD77988F5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6420F988F5E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8885E1F21903
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA331F218B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4E938DDB;
-	Sat, 28 Sep 2024 13:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E975188008;
+	Sat, 28 Sep 2024 13:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I4HuwARZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SNCMgsoe"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2384CF9CB
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541071DFF8;
+	Sat, 28 Sep 2024 13:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727529375; cv=none; b=nIKEoBDqETN1t4YlnMFE2jkR8AAHN+e/OzBDuwuK/N89I/41V+XNLFCUixyyTYSVSd7o0o+1+sSf/DYMgNSs7H/v6f4WOOLK6CpGyw8j9WLWLkF2uYMOrzvaOP1uhEW05edvyqYsHbgXu8j1EWXTbHmZHShrcXBef2gDIwdQoMU=
+	t=1727529594; cv=none; b=LPuNCIhC1pzqtE4tJJT4ENZPaAmPovcUd9hPfEBmoMjlYy/3P/doXlaDTysex9MAbASa5r6QOfDJkuClaz20mKXA1j7wvlTNcEY+lG6ZsqyQzfOTFL4vxsGnLXEhhMeikaxsccfexSsq/aSOcBKDTj6V/6OBjNEiPvvDeKQR+bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727529375; c=relaxed/simple;
-	bh=PlS1FkVCP0oTd5VGmUzLYAWOvAbiKvZT9pEUET4Wyjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbmmTSiCkWMYVCjOFbJMdUiEmQ0XdvrjOU5gp2nMQddzWG2CFp2yHCE7l5x9pfjZCPa8IVwPNXdvmKTz1A8hR/OOgcMfhswwzSR3Xdn68Ka3ulqRasDawIzGwaWJlKqOCOrPT6lmToVw7fjntT5gT0Pnjo7VtiU96XOmPmrbv7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I4HuwARZ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZCQwUkoAEM4g+Tinl96KRZS7Tgj4kpM1Jom8jyVmJdA=; b=I4HuwARZEVPoqsThZhvCZAqW+E
-	WlnZHbuIRKE7DQFEw7Rj9V0OlQtipjotyiMm2fa5jEJuLVNqXxD3m6jx6TlkYpBVvJKZi2gikdFgB
-	tnGhTgIml2OSos/M9qQ6AlxxyeWXD1M4ttumcquQJbqrDkF0laXYVjssbU1wSMzSjHAJU4gMLGHeS
-	it06KHU6S4V6nZCO1IbN/h0RKMkXOH9NI/GqUHDbfpJACen3LXgE6SaVOhI6jGN43fe/hiTjdDud3
-	wME6Q77bb6HiB11lV/Ci0kgWzYNVWyyISAkplK1fFX+r2ixLEDafxpmmtPXcDs0OFmufhpo8M+Lm0
-	MKbwjRMw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1suXIp-00000002VsU-3u9a;
-	Sat, 28 Sep 2024 13:16:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 71B52300848; Sat, 28 Sep 2024 15:16:02 +0200 (CEST)
-Date: Sat, 28 Sep 2024 15:16:02 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
-	hjl.tools@gmail.com, ndesaulniers@google.com,
-	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
-	kees@kernel.org, alexei.starovoitov@gmail.com
-Subject: Re: [PATCH 14/14] x86/fineibt: Add FineIBT+BHI mitigation
-Message-ID: <20240928131602.GC19439@noisy.programming.kicks-ass.net>
-References: <20240927194856.096003183@infradead.org>
- <20240927194925.808912874@infradead.org>
- <20240928015006.agymb4decrujal37@treble>
+	s=arc-20240116; t=1727529594; c=relaxed/simple;
+	bh=FTxgGV0fndARRaInbJBSomb7m073sgDRktv/COxeuhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Elb4KnBom+KV72wsG1Nog9C/AxWn81Pg+pMu4PiahVCFFimrR5natvuG2+yYwfRT9rGsGHd+FDGw+2VP3WH2PeVvIJrQ3efyRs1vbZ5K6MnnDd3XjP0FvHcHaLaSlKpuRe0PI+irdEYGqrusUPYVVgsjebZpK5ibN/7+pP2jlWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SNCMgsoe; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c88e45f467so178927a12.1;
+        Sat, 28 Sep 2024 06:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727529592; x=1728134392; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=QEHG4Y/lL09GG1v2gI8iZvDJa9no7rllEAszsGzy6GU=;
+        b=SNCMgsoeF3Ml/SxlfJHoBW7/e4Yp1jh7zUZ22RP208U37DBiJgg0jcvp+sXujNTRpm
+         MyfyIthpU4Oo3BEWnz5gY5j8R/xqH1124Rn0tBaQ1eK6I8welA5TWlV0OcAqmOyrPlRJ
+         PU0PGe2E4jpVGyRqjh82PcmBJ/EM6TZlijdn1BQO7EK+LBKMpnVrWp3618UG5oJQlFek
+         IPP9eVqtqWk68ECD4nAHXZvn1RyDy0GyCDdmh03DgYsBTL2kB7P/It+ZzE3QGvb2/VXk
+         +CClE3+LTrySz8lxe4PNVvZv8duLpOiLxxiZn9VywEM9ZtI4fcUaNScM3qs551oDHRSt
+         eehg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727529592; x=1728134392;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QEHG4Y/lL09GG1v2gI8iZvDJa9no7rllEAszsGzy6GU=;
+        b=oYouakoXs1jbIShaIF2XjNwFbpvxBjWAHUY+FgOpoJA6hvsNJg99h8yqGVg437RhXl
+         DBOnLrKobidZJ4dESAM7WfZXygOHFq2rjN5vUQYeueRBxk7/omqKUEXfOcWMaTXaBRdH
+         QtWVJdKlF6TWUB5m9pNfcXEamnJNNXNcxsT4ShUSt1mxQd3bWEe68LoHKVSxuEpzzWIK
+         nGiCLLx0x4Kfp8e34/QODc1FnFA8qd+2WJzHdJhthjtoKxYoOGf1rhIuxrVHqfuPSvCD
+         sbG3AFGfCBTNfkh3Bg5+cuTzipOM+WTLFBzLNx1aLn5hQyE+q669v+xUOzFSzqFDPHsw
+         SXEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg+d3nmqgvxaKf9zlaqgBDFo3y3cC89QX0t/+I/+rk0Z7m6s1LhVzDdTY6Zj/gZSe/DKU8GP0R@vger.kernel.org, AJvYcCXJz9+qn/iRsYxfYL3piupy3p3wa95czSM21d8PQg4ogYCYye5nPZWm7EFq7ffYlC5NV2ZoWZ1tqG41NmY=@vger.kernel.org, AJvYcCXUbcQAic7KnUAu6EZ7J6Icgb/iBoLOydd1J3KPjVrBkjDIDU8YN/fu1w6oxLmkZ+WJE9xQVAzVqyQ+xG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxPd/bgCxjFYLAh/LtpI0IIdzxvxMu2ApK2kQfpZhkzeYKp1M2
+	yH+QHr3swm5NjZM+hNu8VnbYRD3H4LmWRg4vn7Z8HQDvMQr+P6El
+X-Google-Smtp-Source: AGHT+IHbW7D+GnxBZsSdqkqhplAXMnTaQ9xufE4rC3XiSWGLDgQLRazAH0M/yYKlYU6i2+CXttb1Kw==
+X-Received: by 2002:a05:6402:254d:b0:5c8:8844:9942 with SMTP id 4fb4d7f45d1cf-5c888449972mr3305438a12.2.1727529591422;
+        Sat, 28 Sep 2024 06:19:51 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-242-114.customer.ggaweb.ch. [82.192.242.114])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248c672sm2281445a12.60.2024.09.28.06.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 06:19:50 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 36E93BE2EE7; Sat, 28 Sep 2024 15:19:49 +0200 (CEST)
+Date: Sat, 28 Sep 2024 15:19:49 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
+	linux-sound@vger.kernel.org
+Cc: Eric Degenetais <eric.4.debian@grabatoulnz.fr>,
+	linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+	regressions@lists.linux.dev, Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [regression] Regular "cracks" in HDMI sound during playback since
+ backport to 6.1.y for 92afcc310038 ("ALSA: hda: Conditionally use snooping
+ for AMD HDMI")
+Message-ID: <ZvgCdYfKgwHpJXGE@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,25 +88,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240928015006.agymb4decrujal37@treble>
 
-On Fri, Sep 27, 2024 at 06:50:06PM -0700, Josh Poimboeuf wrote:
-> On Fri, Sep 27, 2024 at 09:49:10PM +0200, Peter Zijlstra wrote:
-> > @@ -1190,6 +1214,8 @@ static __init int cfi_parse_cmdline(char
-> >  			cfi_mode = CFI_KCFI;
-> >  		} else if (!strcmp(str, "fineibt")) {
-> >  			cfi_mode = CFI_FINEIBT;
-> > +		} else if (IS_ENABLED(CONFIG_X86_KERNEL_IBT_PLUS) && !strcmp(str, "fineibt+bhi")) {
-> > +			cfi_mode = CFI_FINEIBT_BHI;
-> >  		} else if (!strcmp(str, "norand")) {
-> >  			cfi_rand = false;
-> >  		} else {
-> 
-> Do we need to hook this in with bugs.c somehow so it skips the other BHI
-> mitigations?
+Hi
 
-Yeah.. those didn't exist when I started this code :-) But yeah, once we
-get to the point of doing this patch for real -- the compiler(s) have
-the required features implemented properly and everyrhing, this should
-be hooked up better.
+In downstream Debian we got a report from  Eric Degenetais, in
+https://bugs.debian.org/1081833 that after the update to the 6.1.106
+based version, there were regular cracks in HDMI sound during
+playback.
+
+Eric was able to bisec the issue down to
+92afcc310038ebe5d66c689bb0bf418f5451201c in the v6.1.y series which
+got applied in 6.1.104.
+
+Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1081833#47
+
+#regzbot introduced: 92afcc310038ebe5d66c689bb0bf418f5451201c
+#regzbot link: https://bugs.debian.org/1081833
+
+It should be noted that Eric as well tried more recent stable series
+as well, in particular did test as well 6.10.6 based version back on
+20th september, and the issue was reproducible there as well.
+
+Is there anything else we can try to provide?
+
+Regards,
+Salvatore
 
