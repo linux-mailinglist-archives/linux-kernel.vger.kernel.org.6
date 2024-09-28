@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-342627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34DFA98910C
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1F0198910E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06DF2821D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481AC1F215BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CEA155392;
-	Sat, 28 Sep 2024 18:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF3115AAC8;
+	Sat, 28 Sep 2024 18:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="0QxONjMw"
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021120.outbound.protection.outlook.com [52.101.95.120])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="HhuUwPwT"
+Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2097.outbound.protection.outlook.com [40.107.121.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E881CF9A;
-	Sat, 28 Sep 2024 18:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930231EB25;
+	Sat, 28 Sep 2024 18:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.97
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727548599; cv=fail; b=uBrQST+qNOBESPOKsFnDIyiLkJPF3oHSnh2oI9Fh9M0Pz+oFg/0g6krWXHxWv3dG8ZXHXVB/W00XcupC8qlHUbKj0HiBbQhDnqXgGZWbxAXmEus2xu2KxwkcUsp5VMlE9B2x1+iMGJn5+tkEvKwGEDJSCbIkLtDHq8rvVIhNEsw=
+	t=1727549690; cv=fail; b=TtE+R8U1Acwjp6+xH6Ojj1XkNe+fRpa6e4OoZzo/xwQK+x5LZoLBIvR1s8gUwbIVjMuCtRSjQGaS8PNB1fFvvo0hmo1yttLjkptpm0MAJsP2FsL3QKuuuMnJ3Ib1A47dKLffLushUiDl0w8MXESKgNNK8+H3fYKKuQTXgU6VWvo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727548599; c=relaxed/simple;
-	bh=Hf1DW27HdGf+tHiEsZmJ548OnfhYjCd2PksZxBcUw84=;
+	s=arc-20240116; t=1727549690; c=relaxed/simple;
+	bh=23NW0hSEZc5bUGTBPukzy2rH3E4czM8f1Y/9OS52Wus=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fYure0jB9f7525ULqOJtxVZtmaa49JqPlYv8h0EhSyi+GfhhDZM49M454LOX8bT/KCcq4sUYHTZogmCdHFhYwRT6fH66kPgu27BpRj8BJAWaaEa9vOKpXISszLlQzs+X2e54HPQCNs/vdN7hnMi8rK4GZ1MD8s9QyhOV50T3Lrs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=0QxONjMw; arc=fail smtp.client-ip=52.101.95.120
+	 Content-Type:MIME-Version; b=PN/c4tfUwNllnhF8Cf+b4/wz1RodRqg4wU8Penqou9YeYYiPXhqOVrJDVeGRr56h/oosWDjEZFiWo3RfxSBmJ7s2NiaW665C3xnxkEqjWV3cxIma6TYJ3H1cM3iKAEWIQCEyHuPbuQID/ig/3t/3e/+1PSLr6ZDga/PSoliKTj8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=HhuUwPwT; arc=fail smtp.client-ip=40.107.121.97
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JyDe7za/+XVVPHAE26AHgBXf/umjog3UxSRV2K3B3hJo0PAyzgy5p3UeCICwXr5HVJUMH8zwn9Ddgfp4rcSSzdy6/jWevr3a/66lUTJh50id3/DK4NT5n65rWPzs4KmfddtFFxm9PwH24ykXGoNgxss4/bXr0OIr22/Wdg2H5YN2h7APxC6HkCfdFYL9OcUYOblj884S+dqsm2jDbKfjKJ3ThrMtlBT00TpIrgDTBAXOp43PoVBOtkdyJ3dfGYX5SP+D1nv0N+7xqbKBHDhv9aJix7/bxTfc5x/HJfd1x76cY5WcrXPDthG0UVrXH7y9U81lXef5V81bRVNrVEjqpg==
+ b=rbqw7X+NWMJeH1wUC5Neu7669KhcVjy4RiNUgOsfgzZq6fe9Q207dU/L0YNyRnWsMhuAGQkHoxYc7q8sG+J3dQWJkdKPj17J62plr8Gh39v2Gqv7kRZhetfYAOAFLhBEgBCxu70wCXxWcacc0uFZyeqGlTO1rDNWJGECyeQynNwas8f3vBV6xfBot8DSw8Xf/JCWs0Cd+XgHjSd6HTK7hpSysWj51TyPoo47/9RwTKgYOklcaWO03hfZExv241foQeQcUPUkudtKtJbvHGwqtVv/TkmQp2kXATeYgQKqBt3B+RlrrWCNK5d/AfTUuP4YYtoOk8emdSeqJKI0U9oFKw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P9g67crxE/PG6HoEiYw5jCbZYbhy74dIQ6DeicACCBE=;
- b=ChsGoVT1sJ0vh/O83PP78o2Hl/BLL0uJ2lhSW52cD2J5JYeimn2Iz1zgi8oISZWD0tnZSzFFdWnT0uNsXZpMmvldEqnhW/hbUK8ZNpcxatZ6lVeTyHREj67pjCXVmsgZhwWmMSf0+zhwqxDuvDkKDKyOyqMRGSnX2rlwZ/Sd5GNz3JOG9RpSF9IGRwSxVOfsZQKACMWWh1K2GhFyQfoV/jGLclP42JtH/SUqNJDhV6vyIAXEIBCPuHqFPs1y0t0SwceK+STbBYbO3RhRA6/9zfffCfV9TVHzRxGGFJCS0EbgB0JYPysSt3rVBj64ImWJd5rwZiVujsWfErwka8n2eg==
+ bh=K/GD53aHK1rYVEfq8XTAjiRGPDUg9Q9DScDaiKMnTOI=;
+ b=OAYu7QYXZs9qXoFmRPfjcKCl48HgCgdKPBhtg2yrH9+SNvU1TRRF7cYN8zc74VeRMQgMAeBaHUuFbhdC3cOeI+CLHSGYpCvtg1+ZdB1us0OLGUXqS++Nur520Nfb4eKJc1lUBssbrmye7tH4sGnLO4b0sy3+LwW8nQfavxJ7C/dZIoJLdn0Lwc6swQaumvDSxV4nWwI7q4uCtDxiRUw0SlWS0A5rDtmMaG1p0GK1UzSCKp3+trVNmFM8B8NitQO0FojfcVG8SnOzNHWUIPOJyHruMdFxIuKyvgxVrb9mKyqM7LL/4WF95lL4hMRNLytcojaCgdSKhlUnHr3PyroVng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
  dkim=pass header.d=garyguo.net; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P9g67crxE/PG6HoEiYw5jCbZYbhy74dIQ6DeicACCBE=;
- b=0QxONjMwwlEuTA+l4VOJRgR+xsUYrpTRMDn2lPKT7hYFnl4A5Zz4Rq9MLcl1RLVFU9XnqtiGhpsjkYsX6SWx8ZmF/Jrvkryn2xcRXTQ7O0QoZfwf/v9UEYImhGqQjvy5Mc2i+OT0Dlxt9eIMqdZ4QamhihPUXGADbPu2Lge9lBc=
+ bh=K/GD53aHK1rYVEfq8XTAjiRGPDUg9Q9DScDaiKMnTOI=;
+ b=HhuUwPwTrkXtxg5KCntjbRDiE4ebzAUhcvc9sE4sygR5LAwFsB+/6/Uh3SoGlXogCaJ8hqFjyAhXhcNF1TJXstIgbtycGx8UqW5ouBbg5D6Pk512GCqJpeO6iTaTEs4iLonj3AxtPO0x5ePAaCbwhZTTrlhiBf04l12fkLjIC9I=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=garyguo.net;
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LNXP265MB2506.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:134::5) with
+ by LO4P265MB6981.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:34e::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.24; Sat, 28 Sep
- 2024 18:36:34 +0000
+ 2024 18:54:45 +0000
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.024; Sat, 28 Sep 2024
- 18:36:33 +0000
-Date: Sat, 28 Sep 2024 19:36:32 +0100
+ 18:54:45 +0000
+Date: Sat, 28 Sep 2024 19:54:36 +0100
 From: Gary Guo <gary@garyguo.net>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH] rust: kunit: use C-string literals to clean warning
-Message-ID: <20240928193632.063d62a6.gary@garyguo.net>
-In-Reply-To: <20240927164414.560906-1-ojeda@kernel.org>
-References: <20240927164414.560906-1-ojeda@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ boqun.feng@gmail.com, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org,
+ daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+ boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com,
+ zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 09/26] rust: alloc: implement kernel `Box`
+Message-ID: <20240928195436.7f9c1674.gary@garyguo.net>
+In-Reply-To: <20240911225449.152928-10-dakr@kernel.org>
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-10-dakr@kernel.org>
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0150.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::10) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-ClientProxiedBy: LO4P123CA0338.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18c::19) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,147 +85,362 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LNXP265MB2506:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a73e1a1-e5a8-4ae6-b661-08dcdfec7a46
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO4P265MB6981:EE_
+X-MS-Office365-Filtering-Correlation-Id: bfc14057-fa74-43d2-2e74-08dcdfef04ba
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|10070799003;
+	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?C8zIi03iLBZ4KDt1xUQbI7l3P0fPYmYFV1pOig5tr+Kctpr1iv7huUoOLUJv?=
- =?us-ascii?Q?fGrBWSIY+DhTUNG1sOz5OBkww0DBRPQVs5KlY+DqF+IEPMnrP9WK2w3HCAiO?=
- =?us-ascii?Q?VpfzsUxR4R/3b3PqwpgvSfPnfjnVG58J5Vw9Ze+TjfXVD11B/QszQxe4Lipw?=
- =?us-ascii?Q?n9/8EHYMHDo4kWYJNyOKLElAofkYs4bwu76+lAiFuozE/sHYSyJwVd77wX/7?=
- =?us-ascii?Q?LNE0c5rZ5N1mLwGsRmoaQx5gtq8b0p2lNuCTCSUh64+ckrGNbei2+SNJ928j?=
- =?us-ascii?Q?qKAabiyFBWjIbmXtemyVZYTZT81d5jjGel7AMHQF98PbPBUz7MRG6I0h+caT?=
- =?us-ascii?Q?nVf9GaaVjkMIHlH8DXITs5AmeJQC7IgmLLKyGGhZ8KADj3ekThDbby8dCVJd?=
- =?us-ascii?Q?q/nEdjUDpOxfbFpZj5yhGTJkvjUfK9QWFdzKBIFNLC1ZrltwrQapwr19E3mS?=
- =?us-ascii?Q?ScXz4QJ18cA0csIObw54WTn7EOj2JtMmRX7thLarDxikCQdN3CuYyfccnJle?=
- =?us-ascii?Q?e+hx9Dodm1hdNUY6z4whTm5b1pHjFm+hkskmCC5Kv7xCtaPyaEHTCa4+5vKA?=
- =?us-ascii?Q?L6PsvpMlhn5U1GfqUmG4bc1GW3csg0FjbE4S8XC+lPZ8RRMTre39O5tpnfgM?=
- =?us-ascii?Q?ihmWsWPPGu/+WjAlW8aYD+iUrYYK7rL6y6CH4kv0wHHEdwn9lZHOZJbaw0Q6?=
- =?us-ascii?Q?uFBYM4fGwUnfInbaHrshj3LGAkC1iaBMKTH/xFWnmmR2hlW0s+IAGKR2TqRh?=
- =?us-ascii?Q?furT9NqX1MrD4GSHte3saxZN58ittgr7Qkx4HJUpY3OzoC2Gj2sp4758KCmA?=
- =?us-ascii?Q?MN4mHp6ZIJd8zVEebUZ8h4pidPSRaUMRKxgHlGtNkR+12RstwYWlKyqZIXxi?=
- =?us-ascii?Q?Q/YKv+OJmrh8v+9WGCoLuYmwgUhuBCLwX5UIj1FwT8UKE0deFdct3TYZaDEG?=
- =?us-ascii?Q?RHS13EnagdjOoI+yNEMDJd4QVn+0uRFP90f1xClaIHCW8l7+1rs3Edy3AQA+?=
- =?us-ascii?Q?fyQpo1SDHgpsXB5jPZqY9xtNV8HCo885DsmXSsOdNVvNI2wPP8CaB7GblnYo?=
- =?us-ascii?Q?3ip+lc98LUUOqymjsAVGtRchYzVHK2sYhCFH/M3qPzpXAnzH0DL7oDKVWrYN?=
- =?us-ascii?Q?//Ii0dwoi4IXwv3XXoEspfLtCTVZWYR4HNlFnVUPiShMuZ/JoW3HAd+CHxz+?=
- =?us-ascii?Q?AGjvupvZcpJ6yzt03xygXjDU02xZTbbTl7kP+RwlEhldpEq/PbV6jQP2LGU?=
- =?us-ascii?Q?=3D?=
+	=?us-ascii?Q?qjQS8qG5K3OLcUGwfTLxEWaYt5ZmYjC/Sjas9yj3J0Px+8J4Kpsrghb0kHxG?=
+ =?us-ascii?Q?mWQySEJTGF+1vauXTNY2tekdZtZBh5IxDVbYBjGn/zm2OvLAKoGpuocDsaLm?=
+ =?us-ascii?Q?oFRaKwTwdzIlo2246Gg696k6+sRHfGWdqg7my7a40SYKZSSOFmHUmSWzJoJX?=
+ =?us-ascii?Q?ukprE97IKn2vfZqJ36ptI9o58GBvOjT0ie4LmKqCWNwX4JuSTZMJm0rHlKts?=
+ =?us-ascii?Q?g0c7xHegFymnWoNuQ2XJOmHyzv/vwfS+t6Zn70YApTAE6UK0J5qyQaHzHZGD?=
+ =?us-ascii?Q?b2JgCUlIUz8BMpb9w0yftARRZGxm1ZxDf8SRInj5xQNrpKuiHpSh6Gq28mAO?=
+ =?us-ascii?Q?kOP4syc4qxw3YE/rZY3NL8q0RRgWWeJly/ENz2THlsm54IC38B1btAw2TBZ4?=
+ =?us-ascii?Q?b68j+wwztG4XdO19ZmcpGkfd8sLI231jkw1aiSgSwoLVoDCgvTil+L7coF3p?=
+ =?us-ascii?Q?fM9ACiZw1SwPnBdW3tVVw0EAMHagt+4EOFaognXiVO0AdaNfVIBB/iTKTkuH?=
+ =?us-ascii?Q?HfkGzCGQiKH1Drn+fXpLNpboZDhYT1OP6teeOH0Mja5HFdhsyGsXQ4VycLue?=
+ =?us-ascii?Q?qR5b7ROTo5M/F8BJWK2yfVfGTEoFmTmjQzt7PubvL+u8vm5eMxQv2/m7KGYq?=
+ =?us-ascii?Q?mUoHnnOsqhcvvBBYj1cGgoEgreqd0OGJ052iG9qlrVlmD/xMfJ82TuRqBM6F?=
+ =?us-ascii?Q?5s25YEqbtC/ddAxFxZs5wZet1K+U65MTwUqOY98B9NpxvjnvkpQri4hejaRo?=
+ =?us-ascii?Q?6ylalU36B6uTg84R3e4CMPwfaf2xn8AcO+7t+rJxkRoHxESVRJMd5LS68fQM?=
+ =?us-ascii?Q?PgrAMAgQIgsjHnZxLmype9y4Lkrn/uaG3KArD48ZJ336CjPEqyCEeqNMC4IA?=
+ =?us-ascii?Q?gfr+XRiEMRwcw/p2xSO6oF2nRgR6WHlMLwI6dpSJ1YjyzHQGo4AkyiHVCeZk?=
+ =?us-ascii?Q?/cgt0+UqbqArPdIjCU+bBXW35kKjK/1vV2VzOGbcy3KBdGCIjZ6ouYd7RcMN?=
+ =?us-ascii?Q?O6zEPU98PsNiFRZPF3VJUtm6LMPqu1hyE0fuStbsmtzSxMUEbvk47bbuPpQc?=
+ =?us-ascii?Q?FYhvWJm8HfSHogF6ndGHfs+SsG+4tuXVF3Edaqe2bCU1scd5GwgLHMmh2m9E?=
+ =?us-ascii?Q?lnySlVGTTfZgQhhzWKlzpOwhGL3x5q/UMFDHZ7p5cY72BPh/nC4Lm4uqdi+A?=
+ =?us-ascii?Q?pGXgqVdN2wpUlsHgMA4mtUrRp0bqvhXLsYvxXPzlTLvPrHlVQ6dg+PDZG47l?=
+ =?us-ascii?Q?vOY/YpYfW+YzJVduIy9LWwLdnGTm/wCf4HUb0VOZ+g=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o4UuShTGywDSuYj7iv6oU3FDxoydaOE9oOT8LwiMFhlH1DHWrLbQNUAnvfEq?=
- =?us-ascii?Q?HGMdF9J7MGZZKxkyIRLeWzIXOFY7S+gzNZBBhP4Arov9qdTD1623n3Wb8ARj?=
- =?us-ascii?Q?iDEvIqk0oN13VtfsR5EGMWjvx9FGxiS8JkpTIzEgeB30gYp6YOgsN0KGaFIK?=
- =?us-ascii?Q?dTKPThBbC87l9pKCal+heNWfN/4bDl/pwk9I1vbzA/nBlCvOfwlyT0M9NdSR?=
- =?us-ascii?Q?pzSfpNB3O8aZwnb6jPghnPis7ZyekcnGwP7guEMWu7gOYpNJfMsijc1pu9cb?=
- =?us-ascii?Q?C+QxwpamYRGKd4iThtxS8wIRtwcU3iSwPyLw6h858ahU+gff6qF2urrYoSXG?=
- =?us-ascii?Q?M2GIkWrKitG32SlvygqU0Nbozf4a+4liWPk+A6K+GrceVA4y1YDwXqhoc3Gl?=
- =?us-ascii?Q?syzb9W3qqEVjXlBiKzq6VoPGMhKH6NntSA90F436tdSDHbTJ0S0IwS53zSTt?=
- =?us-ascii?Q?V4BAYyo4y05N+4LsYsrHDtP0pPiz+/jOvNwekC9AHr6xVyje77LhPUnxM+6A?=
- =?us-ascii?Q?SpdFaXH1rTP5kJ0jyXogoAT1bOQpcnzqDcdXpGjpJZk21aqfYEl56u4x8pJT?=
- =?us-ascii?Q?VWd/9cpQgWTm2+srnFwCI2six6zj1UZfGxtHe6Ix0MbjqkfP3zMo6YsJSwF3?=
- =?us-ascii?Q?kdVJK+1CEOpW9689UqDaXyzKXo6p5cBLjK4oLtzXMj1gyol+e/Sm93UeCLGn?=
- =?us-ascii?Q?oJfFDVBzRyVJbBwfJRjvyRoya2bFHKn/GVlj+f90K1CRFSryFSOF7YC9xRmv?=
- =?us-ascii?Q?/pXpyGhWAf7yPscjKa/jrdP5PG7OwL0Ch5CpygfPYVXdT9mxIolBaCTuI7ob?=
- =?us-ascii?Q?eAM8Vzu0x08MOb/Qela/YMGgvj6iJtbkaSJXGd2zPlAGDVySvZLW3MsyLQSD?=
- =?us-ascii?Q?u2chnLEkV/Qt1skikGmOR+wqPAigSZFXinC+XunUYiDVmIbCytvOCHAJ9X/a?=
- =?us-ascii?Q?Cl4fAECF07vKt+6ftAxKxo74rRXLt5OYX8vhInBZ/kEVkt9PW7GgbUrT2Hx0?=
- =?us-ascii?Q?tAk6wTjdnvYM9IfFzKJhBMEuybLPl1J8e0UBcZU9Mxv+kw5AvLn3ekAIjvlk?=
- =?us-ascii?Q?oAsvG+S5uAPYTEUjf6EYmRJX4iht6JuCG2VONF/sko+H5Oi95y2BAzy9aNna?=
- =?us-ascii?Q?MqQNg+wu2w5Tq4/77+ZQ0AJuJbOgRc5XPNjLdgY3gdYpRUg2Jiy15ymwQAlK?=
- =?us-ascii?Q?5acKHKCggG+jXVuKBlvd8UciABSUU1QSn/CTXzKXzf941MHBf8qF+iKqTgyy?=
- =?us-ascii?Q?EPi4Q4DGQwQU3UZNN64pkIdqDgtDif9F6nEAiShrHmKj5NjBRy+0IKOKOZ37?=
- =?us-ascii?Q?OC3xx9FZcQpDh70TiJDS8klQE/+hZh/iUsNd2mVIsIKGjcrFu6+GngNYIZMw?=
- =?us-ascii?Q?d5NHk5jOQbKL5OnR2KfhzC591y9iPIR35j9Em9s+JuRsBsdea5vPC7da9DJ5?=
- =?us-ascii?Q?gfp4R0WsX3kcl34FrCBzls+dsicB5Syy9em/znDFVLFOJzhzm4D52QR2dLOf?=
- =?us-ascii?Q?smo8rnfUX7EospIJhByLAbeFXe/zbJaS4mVFn8yJy0vGXDrl+dWmSHdhnBQ0?=
- =?us-ascii?Q?l3JtB6Orq7SOg16LnJMTXVL48cefxhGCEiNBi4R3?=
+	=?us-ascii?Q?Fy3pRdKQioJ9dOgBdWtiHU7+81s10A0YucpvFAgxZRttU/dY9/9VySnsXpLX?=
+ =?us-ascii?Q?POILAxcbSvX72LLo3iEcGJkK0Pn/s0Zb/u1yrsTg4p4D1pqII5jNu8D3cyH/?=
+ =?us-ascii?Q?0e/UP2q7HCZBv2s0woIhhRd1Zp7jZNd1iRTHGQpPnLWVxZyNOmGte2e7Fjrj?=
+ =?us-ascii?Q?I2KyeTGZ6xOBgeR8/Pk+odHHz78nqrE3iCVOnOrUounTAoJPsgV0c66cUN5R?=
+ =?us-ascii?Q?cJ1Gw1Vr/t2DLZVPNuhdjZtn1jM1i/mZdlgPO0UMqF59JF34SRKzsPvsnYMr?=
+ =?us-ascii?Q?t92Dmng3Hf3no5lPClFPFVe6MxMsh90ARA27BGJnDgvkseYFZ89eH7D1DiF8?=
+ =?us-ascii?Q?N1zWzAkLp3Uj/RFN2lbCaDwRR86efb+LZLiC+bSd+2eFP4qNYNvOYZBjtmYK?=
+ =?us-ascii?Q?7nATPsoTlXnfeTCoU8ly2+vY8Mbco3/SyPh4VuC2CPB+kpd8++uWM/4e5osJ?=
+ =?us-ascii?Q?nbzdPK+M2KASueCYYnT3cmjT6Z50iQpxjtKtBX0WwU1iohOrnCYCzw14Ep4a?=
+ =?us-ascii?Q?bfWvPJcDZKatYSLFDhK9YHzOUS/ewShyURTf3UDlSyqv4IKVajWlObtMFK9T?=
+ =?us-ascii?Q?Rc2K2k3ZQl1bK/Lsh6n30YQrIS5ue4jn3faiH2If5+A89PVTrUCnzMbq3tFt?=
+ =?us-ascii?Q?kz+Q6EICac3f8YWP/0VOSfOoerwArXH35WK3RHDBs6O4VHxtaUVy6ja9dUvc?=
+ =?us-ascii?Q?akUdeUKX8WAmTtJOpwwGn6jY1kYDhUtBpz8ibrod5p9w+jK/+1Wjgbv1VxHY?=
+ =?us-ascii?Q?oXjSnJUHYwopILKkzvxiFTz1w4gC8FarQ5kSd8mgc/5Kc2TKL9nhtqoH9M8X?=
+ =?us-ascii?Q?bE8B6kDXAecqMWd2eHChH5yoN0wiVQo3cjUQmL+1r7PVendCHWV/UUPE0R9O?=
+ =?us-ascii?Q?Yw5G4XwYQdMs4nCclQ7NzohLRvzlfsh19qgYeoVtNUxNUdwzEXMbNf7zPele?=
+ =?us-ascii?Q?NTU+HzvBpsKKOmoaOxQs4VDQ7eXiGKJ+3iqQH3h6AhrPSoPymhxYzKDZyT5h?=
+ =?us-ascii?Q?yNM8QikAFQWdcPw7EAtLhADJ+b0rwFzupkZR9kSp062lHu/uPoKp0vFuANVc?=
+ =?us-ascii?Q?oWqLMLi4xhUkEpboBV1nK46E/s07l2ddWwtyZSUsiP5NFD9qQO5SNfViVb1B?=
+ =?us-ascii?Q?mA95R5TeKTKHmXpc1sVrhqeG9RyQhVIbIs8+NlH/wc6KNqDckoXc01MYeZCF?=
+ =?us-ascii?Q?exgL7ox8pnRnqk2Ja46cfIcJ+2MyJeGqgvD8wGCaB4KEdHzykc+2XWR1Awh4?=
+ =?us-ascii?Q?UrOgh9sJsk/cmDQ5zkyIU7KzeE7Q+MgVA4Skjx3u/eMSxvpqQEqsayaE+sB5?=
+ =?us-ascii?Q?elytNeMd5t/aT2Q2JWaXTyVSTOhXn9GwdaM4uPckTikRasDF19uGSKMEFMCv?=
+ =?us-ascii?Q?/8tcvKLvFk3NfvI212AmUPr8FAxYc4OhfwdwP+FAVijHBEW5et6Vb8sN/4KI?=
+ =?us-ascii?Q?NDLD2E4knIpBJtlGr6aInZ11FXwKhfBGtQBibP/WGPF9LCekyW831bmET4KO?=
+ =?us-ascii?Q?qlXxafQRdSs8OAh+esh4NEFQJI5tihGHaxpsEGUh/1XaGQD5KGViuHSbB6Wg?=
+ =?us-ascii?Q?/jdpcKnOCUPrgEDUVmqlE5Wi7uUme4YEePqItyMbFN3rfpxTAya/E5nvsTT2?=
+ =?us-ascii?Q?eg=3D=3D?=
 X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a73e1a1-e5a8-4ae6-b661-08dcdfec7a46
+X-MS-Exchange-CrossTenant-Network-Message-Id: bfc14057-fa74-43d2-2e74-08dcdfef04ba
 X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 18:36:33.8035
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 18:54:45.0337
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K1r+KYdpBw0pQ+E/QwoLK6hM3IYoadSxmxV9c1ME6ygAx6MvRIUMpYeA29TY6Rxexb+7V4pjAaPhtl0b0OyETA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LNXP265MB2506
+X-MS-Exchange-CrossTenant-UserPrincipalName: PpPa//6cDdk5xmShd7WJVGzjMCqWvQbbZGhHE6w1NsGZT15xGzZYUUXklUh5yDgoigWbDRJrdUXT+uv8SGPefQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO4P265MB6981
 
-On Fri, 27 Sep 2024 18:44:14 +0200
-Miguel Ojeda <ojeda@kernel.org> wrote:
+On Thu, 12 Sep 2024 00:52:45 +0200
+Danilo Krummrich <dakr@kernel.org> wrote:
 
-> Starting with upstream Rust commit a5e3a3f9b6bd ("move
-> `manual_c_str_literals` to complexity"), to be released in Rust 1.83.0
-> [1], Clippy now warns on `manual_c_str_literals` by default, e.g.:
+> `Box` provides the simplest way to allocate memory for a generic type
+> with one of the kernel's allocators, e.g. `Kmalloc`, `Vmalloc` or
+> `KVmalloc`.
 > 
->     error: manually constructing a nul-terminated string
->       --> rust/kernel/kunit.rs:21:13  
->        |
->     21 |             b"\x013%pA\0".as_ptr() as _,
->        |             ^^^^^^^^^^^^^ help: use a `c""` literal: `c"\x013%pA"`
->        |
->        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_c_str_literals
->        = note: `-D clippy::manual-c-str-literals` implied by `-D warnings`
->        = help: to override `-D warnings` add `#[allow(clippy::manual_c_str_literals)]`
+> In contrast to Rust's `Box` type, the kernel `Box` type considers the
+> kernel's GFP flags for all appropriate functions, always reports
+> allocation failures through `Result<_, AllocError>` and remains
+> independent from unstable features.
 > 
-> Apply the suggestion to clean up the warnings.
-> 
-> Link: https://github.com/rust-lang/rust-clippy/pull/13263 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
-> The cast could also be cleaned up, but that is already done in Gary's
-> FFI series, so I didn't include another patch.
-
-Note that the cast actually need to be re-introduced instead of
-cleaned-up -- `c"".as_ptr()` returns `core::ffi::c_char` which might be
-signed, while after my series `*const u8` is expected by `printf`.
-
-An alternative is to use `c_str!(...).as_char_ptr()` which will
-guarantee the type is what we expected.
-
-Best,
-Gary
-
+>  rust/kernel/alloc.rs      |   6 +
+>  rust/kernel/alloc/kbox.rs | 465 ++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/prelude.rs    |   2 +-
+>  3 files changed, 472 insertions(+), 1 deletion(-)
+>  create mode 100644 rust/kernel/alloc/kbox.rs
 > 
-> C-string literals are available since Rust 1.77.0, which is higher than
-> our minimum version, but LTS kernels do not have Rust 1.77.0. But
-> perhaps for these is not a big deal, and we could also enable
-> `feature(c_str_literals)` instead.
-> 
->  rust/kernel/kunit.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-> index 0ba77276ae7e..824da0e9738a 100644
-> --- a/rust/kernel/kunit.rs
-> +++ b/rust/kernel/kunit.rs
-> @@ -18,7 +18,7 @@ pub fn err(args: fmt::Arguments<'_>) {
->      #[cfg(CONFIG_PRINTK)]
->      unsafe {
->          bindings::_printk(
-> -            b"\x013%pA\0".as_ptr() as _,
-> +            c"\x013%pA".as_ptr() as _,
->              &args as *const _ as *const c_void,
->          );
->      }
-> @@ -34,7 +34,7 @@ pub fn info(args: fmt::Arguments<'_>) {
->      #[cfg(CONFIG_PRINTK)]
->      unsafe {
->          bindings::_printk(
-> -            b"\x016%pA\0".as_ptr() as _,
-> +            c"\x016%pA".as_ptr() as _,
->              &args as *const _ as *const c_void,
->          );
->      }
-> 
-> base-commit: 570172569238c66a482ec3eb5d766cc9cf255f69
-> --
-> 2.46.2
+> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+> index 7a405d6f3034..b1f28334b27a 100644
+> --- a/rust/kernel/alloc.rs
+> +++ b/rust/kernel/alloc.rs
+> @@ -5,6 +5,7 @@
+>  #[cfg(not(any(test, testlib)))]
+>  pub mod allocator;
+>  pub mod box_ext;
+> +pub mod kbox;
+>  pub mod vec_ext;
+>  
+>  #[cfg(any(test, testlib))]
+> @@ -13,6 +14,11 @@
+>  #[cfg(any(test, testlib))]
+>  pub use self::allocator_test as allocator;
+>  
+> +pub use self::kbox::Box;
+> +pub use self::kbox::KBox;
+> +pub use self::kbox::KVBox;
+> +pub use self::kbox::VBox;
+> +
+>  /// Indicates an allocation error.
+>  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
+>  pub struct AllocError;
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> new file mode 100644
+> index 000000000000..6188494f040d
+> --- /dev/null
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -0,0 +1,465 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Implementation of [`Box`].
+> +
+> +#[allow(unused_imports)] // Used in doc comments.
+> +use super::allocator::{KVmalloc, Kmalloc, Vmalloc};
+> +use super::{AllocError, Allocator, Flags};
+> +use core::fmt;
+> +use core::marker::PhantomData;
+> +use core::mem::ManuallyDrop;
+> +use core::mem::MaybeUninit;
+> +use core::ops::{Deref, DerefMut};
+> +use core::pin::Pin;
+> +use core::ptr::NonNull;
+> +use core::result::Result;
+> +
+> +use crate::init::{InPlaceInit, InPlaceWrite, Init, PinInit};
+> +use crate::types::ForeignOwnable;
+> +
+> +/// The kernel's [`Box`] type -- a heap allocation for a single value of type `T`.
+> +///
+> +/// This is the kernel's version of the Rust stdlib's `Box`. There are several of differences,
+> +/// for example no `noalias` attribute is emitted and partially moving out of a `Box` is not
+> +/// supported. There are also several API differences, e.g. `Box` always requires an [`Allocator`]
+> +/// implementation to be passed as generic, page [`Flags`] when allocating memory and all functions
+> +/// that may allocate memory are fallible.
+> +///
+> +/// `Box` works with any of the kernel's allocators, e.g. [`Kmalloc`], [`Vmalloc`] or [`KVmalloc`].
+> +/// There are aliases for `Box` with these allocators ([`KBox`], [`VBox`], [`KVBox`]).
+> +///
+> +/// When dropping a [`Box`], the value is also dropped and the heap memory is automatically freed.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// let b = KBox::<u64>::new(24_u64, GFP_KERNEL)?;
+> +///
+> +/// assert_eq!(*b, 24_u64);
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +///
+> +/// ```
+> +/// # use kernel::bindings;
+> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> +/// struct Huge([u8; SIZE]);
+> +///
+> +/// assert!(KBox::<Huge>::new_uninit(GFP_KERNEL | __GFP_NOWARN).is_err());
+> +/// ```
+> +///
+> +/// ```
+> +/// # use kernel::bindings;
+> +/// const SIZE: usize = bindings::KMALLOC_MAX_SIZE as usize + 1;
+> +/// struct Huge([u8; SIZE]);
+> +///
+> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
+> +/// ```
+> +///
+> +/// # Invariants
+> +///
+> +/// `self.0` is always properly aligned and either points to memory allocated with `A` or, for
+> +/// zero-sized types, is a dangling, well aligned pointer.
+> +#[repr(transparent)]
+> +pub struct Box<T: ?Sized, A: Allocator>(NonNull<T>, PhantomData<A>);
+> +
+> +/// Type alias for [`Box`] with a [`Kmalloc`] allocator.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// let b = KBox::new(24_u64, GFP_KERNEL)?;
+> +///
+> +/// assert_eq!(*b, 24_u64);
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +pub type KBox<T> = Box<T, super::allocator::Kmalloc>;
+> +
+> +/// Type alias for [`Box`] with a [`Vmalloc`] allocator.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// let b = VBox::new(24_u64, GFP_KERNEL)?;
+> +///
+> +/// assert_eq!(*b, 24_u64);
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +pub type VBox<T> = Box<T, super::allocator::Vmalloc>;
+> +
+> +/// Type alias for [`Box`] with a [`KVmalloc`] allocator.
+> +///
+> +/// # Examples
+> +///
+> +/// ```
+> +/// let b = KVBox::new(24_u64, GFP_KERNEL)?;
+> +///
+> +/// assert_eq!(*b, 24_u64);
+> +/// # Ok::<(), Error>(())
+> +/// ```
+> +pub type KVBox<T> = Box<T, super::allocator::KVmalloc>;
+> +
+> +// SAFETY: `Box` is `Send` if `T` is `Send` because the `Box` owns a `T`.
+> +unsafe impl<T, A> Send for Box<T, A>
+> +where
+> +    T: Send + ?Sized,
+> +    A: Allocator,
+> +{
+> +}
+> +
+> +// SAFETY: `Box` is `Sync` if `T` is `Sync` because the `Box` owns a `T`.
+> +unsafe impl<T, A> Sync for Box<T, A>
+> +where
+> +    T: Sync + ?Sized,
+> +    A: Allocator,
+> +{
+> +}
+> +
+> +impl<T, A> Box<T, A>
+> +where
+> +    T: ?Sized,
+> +    A: Allocator,
+> +{
+> +    /// Creates a new `Box<T, A>` from a raw pointer.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// For non-ZSTs, `raw` must point at an allocation allocated with `A`that is sufficiently
+> +    /// aligned for and holds a valid `T`. The caller passes ownership of the allocation to the
+> +    /// `Box`.
+> +    ///
+> +    /// For ZSTs, `raw` must be a dangling, well aligned pointer.
+> +    #[inline]
+> +    pub const unsafe fn from_raw(raw: *mut T) -> Self {
+> +        // INVARIANT: Validity of `raw` is guaranteed by the safety preconditions of this function.
+> +        // SAFETY: By the safety preconditions of this function, `raw` is not a NULL pointer.
+> +        Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData::<A>)
 
+nit: the turbofish here is not necessary.
+
+	Self(unsafe { NonNull::new_unchecked(raw) }, PhantomData)
+
+> +    }
+> +
+> +    /// Consumes the `Box<T, A>` and returns a raw pointer.
+> +    ///
+> +    /// This will not run the destructor of `T` and for non-ZSTs the allocation will stay alive
+> +    /// indefinitely. Use [`Box::from_raw`] to recover the [`Box`], drop the value and free the
+> +    /// allocation, if any.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// let x = KBox::new(24, GFP_KERNEL)?;
+> +    /// let ptr = KBox::into_raw(x);
+> +    /// let x = unsafe { KBox::from_raw(ptr) };
+> +    ///
+> +    /// assert_eq!(*x, 24);
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+> +    #[inline]
+> +    pub fn into_raw(b: Self) -> *mut T {
+> +        let b = ManuallyDrop::new(b);
+> +
+> +        b.0.as_ptr()
+> +    }
+> +
+> +    /// Consumes and leaks the `Box<T, A>` and returns a mutable reference.
+> +    ///
+> +    /// See [Box::into_raw] for more details.
+> +    #[inline]
+> +    pub fn leak<'a>(b: Self) -> &'a mut T {
+> +        // SAFETY: `Box::into_raw` always returns a properly aligned and dereferenceable pointer
+> +        // which points to an initialized instance of `T`.
+> +        unsafe { &mut *Box::into_raw(b) }
+> +    }
+> +}
+> +
+> +impl<T, A> Box<MaybeUninit<T>, A>
+> +where
+> +    A: Allocator,
+> +{
+> +    /// Converts a `Box<MaybeUninit<T>, A>` to a `Box<T, A>`.
+> +    ///
+> +    /// It is undefined behavior to call this function while the value inside of `b` is not yet
+> +    /// fully initialized.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Callers must ensure that the value inside of `b` is in an initialized state.
+> +    pub unsafe fn assume_init(b: Self) -> Box<T, A> {
+
+I think this can take `self` and shadow the underlying
+`MaybeUninit::assume_init` -- the rationale being that the
+`MaybeUninit::assume_init` takes `self` so it cannot actually be used
+for `Box<MaybeUninit<T>>`. Rust standard library also takes the
+approach (with the unstable box assume_init takes `self`).
+
+Note the argument of `Box` not having `self` methods don't apply here,
+as it doesn't deref to an arbitrary type, but rather always
+`MaybeUninit`.
+
+> +        let raw = Self::into_raw(b);
+> +
+> +        // SAFETY: `raw` comes from a previous call to `Box::into_raw`. By the safety requirements
+> +        // of this function, the value inside the `Box` is in an initialized state. Hence, it is
+> +        // safe to reconstruct the `Box` as `Box<T, A>`.
+> +        unsafe { Box::from_raw(raw.cast()) }
+> +    }
+> +
+> +    /// Writes the value and converts to `Box<T, A>`.
+> +    pub fn write(mut b: Self, value: T) -> Box<T, A> {
+> +        (*b).write(value);
+> +        // SAFETY: We've just initialized `b`'s value.
+> +        unsafe { Self::assume_init(b) }
+> +    }
+
+same here.
+
+> +}
+> +
+> +impl<T, A> Box<T, A>
+> +where
+> +    A: Allocator,
+> +{
+> +    fn is_zst() -> bool {
+> +        core::mem::size_of::<T>() == 0
+> +    }
+> +
+> +    /// Creates a new `Box<T, A>` and initializes its contents with `x`.
+> +    ///
+> +    /// New memory is allocated with `A`. The allocation may fail, in which case an error is
+> +    /// returned. For ZSTs no memory is allocated.
+> +    pub fn new(x: T, flags: Flags) -> Result<Self, AllocError> {
+> +        let b = Self::new_uninit(flags)?;
+> +        Ok(Box::write(b, x))
+> +    }
 
