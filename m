@@ -1,248 +1,111 @@
-Return-Path: <linux-kernel+bounces-342394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24B16988E6E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:19:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDD5988E83
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 10:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ED1EB21705
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:19:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FAB81C20DD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 08:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E1219DFA5;
-	Sat, 28 Sep 2024 08:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEA919E7E0;
+	Sat, 28 Sep 2024 08:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m41TU5Kv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="P1d7WOJu"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F7815B13C;
-	Sat, 28 Sep 2024 08:19:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976F815A8
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 08:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727511547; cv=none; b=INvAy8sS4kz5Vu1EeSfYz4AIzcp9CfK5TYI49GEX+mNeHwkcvgKLnqdrD6hjvMyIYHuQnAjIcKoM5qj8uZIZlmFdcbbd4gOtZEa2xOtVGpQ1yYZVqrCTKuLBb4A2hZzBOXqKWvoU0Rkr7Yk3pmQS22ShR2jQvKvIlu9/cN7dSZU=
+	t=1727512482; cv=none; b=pUkb0Wlj/md8G8IJPVPFbHjhD1gYYLoSVuSH7zhzb6jZv2IAgns0/5fmP3AKdQIsaD3zYHCTyehD2UicR2bPlvGaxx/KafVAJG2DIvytAIoWus721RFAevLUDahn5BKkm91t7XU95BudVmSZX1xNTlt1uQFu2JK9E5upGwSRTME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727511547; c=relaxed/simple;
-	bh=t95Q70yzSXRniYkGguehvKbeFe1PNoF1YMFWI2TbiNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WKH6vEJ1EZtJwisWXS6OWpVZtUPTdwwxvM2wAq4NyjclaWR6kiW3+FPNMSYH+U49c8hhyho3rBaUhJ2+3KhdZ/XAU9bK0aKRoyNj/SGigecxqXiwshp4wc6SPDKOpSHuq3ny7Pl21vdStsQrm4mh9CphokIiA90vbBsdnLJKwQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m41TU5Kv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67814C4CEC3;
-	Sat, 28 Sep 2024 08:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727511546;
-	bh=t95Q70yzSXRniYkGguehvKbeFe1PNoF1YMFWI2TbiNs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m41TU5KvcV8AFVgBmJpblbhxbCmSJh3FPq4AACcVd9FXnSIa4V1awFedSKcuJe7Ki
-	 wi087SYdbAMXN6fV6cDwdHgxXD3vya/U/erhsJCLncXhnG7kSdC81CKJGvZfBabsfJ
-	 eyzUOn7ybqhuHO7zIRgwVxRdwn0UhC6Y8VhTZSXPnSHFlOKq97eV+ZsnXpX5jdyIBN
-	 ItbSROO0jMXFf9D/v9Nr6vCeuUwweKPDRWLmBIg1G8ZQGySSUvV8JiecHi6F1cc2AY
-	 aPdvdwQKbcPqttojEH0yyaAzkUGiVc80Huq5qNKRYyFo4HLFPkn6T1uf9nxvECnWWQ
-	 a2oP8DFtnivog==
-Message-ID: <03a1c7e7-c516-41ab-a668-7c6785ab1c4f@kernel.org>
-Date: Sat, 28 Sep 2024 10:19:01 +0200
+	s=arc-20240116; t=1727512482; c=relaxed/simple;
+	bh=y5/iFpzIRZorUWaS+yh00j6bqIdpWH3wkZ7kp5UYTXw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=BlYHKFpQyYvES0vnhQ84PVY9t6DgEpiB5FVO6HgQFQgl86Sq2gcs2GzDkaAuIfdI0BTElm5axbGEVrMGK4sKsMAQ9p8JcBBO6A+GRioc9dHGOD9dS9JWm86BrFTOq+74YPOYCsE9Uw0pULfPfw2oBh+7vdyxKqL3SB1NhbRQqY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=P1d7WOJu; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1727512470; bh=DFznOupKYFNOOHxhlk72CuszPRaib9TkPPmZ7dKeocY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=P1d7WOJuCK8nowpAvqwFG5YIU2tmV5SqcRNw305OV+gCMQIYjnLL3phzsyddFLfob
+	 tbCAxbaYQ6DV1dwKY3cS8P6wGUbMDAzfJVT/e16MY0bD5J4PCbQva1tJjnLNFHnhuB
+	 1UlWDegeiJlHKGIALDNgZ3/YbSgb0BcG7bcQ+xqQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 5521F0DC; Sat, 28 Sep 2024 16:21:18 +0800
+X-QQ-mid: xmsmtpt1727511678tm9ems04s
+Message-ID: <tencent_8709932EFAAED0CCB0A7DEC6F592C9465306@qq.com>
+X-QQ-XMAILINFO: NDgMZBR9sMmaQXVRBj81HEwijMDN0lyHr+XH42b/4lSaOVfI1kLL9OFpqU7j3B
+	 L2CkCBM+q6UR5jPKma++akGY59JDSqhHgLWaQe8dKaAtstQFbu3OKNjTIxjUq0Cq0VG7NxjLSmWT
+	 uw3rbHuuT4vLejzdPbMybtLadEaOgpQkTWP2n/wH7cqNUe+004QKoDeHhDKWw+2Jses4bomXUn9T
+	 cZ7AXeuCASfOsqEc572P3aGNKuAfS5JSrBO6OtOmx6JY7uYqiinJk77XkeQY87U0ooPTZo6R3FSd
+	 M6imsg9Qzy5QXM/Ka2isB6G9SnLIvK3EdKjDF1WaN3XRvciR3yDOK4rMWmHHCn4+wnfqLljhHr+f
+	 p3zCOYNyflNJrHFBHE0wRsZ0x6GFFy+JJLwcaYYQHJtaONhVZFbzqkaaxKVrDFkOcnDxD0LzcNsv
+	 7sc/3tFIfoEFsZYAS/GgNGJj1pPrtWhK5KOtCpqR1PZ8eaaXiPLh6ASD0CadZ33P7rrN+0MYIBsz
+	 QB/RBuokgBUKRLJMERVt94icKqahYsoVQ6hD9ttSBWpxMjyYGFD8Eln1mutvbFsj+S6J0bgDsxxO
+	 dsEhSYFk/287qzo8lnj4z+z6vXerp1bR76TADkTX1rutlv8ykqjCt61Ux62E22R4HsCFq+umdaXP
+	 mrs1TTqKUCegHx76TPsLKWeyBP3AyjqD16+4sXG674Bh6BF78PzHHqhp84Y87vrwqdlaJpJOXUEw
+	 zlULIIPM4NtJLdZa/UN1ZWBVj9gIOmyOYD9Sc+b01TrMY2xDusySGAv34xOdTAX8BJ84B0Wve1dj
+	 akbZ4Ae8JSzxgjUkxUPrhLBIsKkVd9odwSh3to4oT8NcqPsljL1oBZNtEdFgv4aUuqJfyL5Ru78m
+	 r0j3V8jHpuVWtzN7wZKh+eJM/MrJch13H/Pnc9wcdhU6aYGdtXB8c=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [integrity?] [lsm?] possible deadlock in process_measurement (4)
+Date: Sat, 28 Sep 2024 16:21:18 +0800
+X-OQ-MSGID: <20240928082117.2416683-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
- properties
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>,
- Conor Dooley <conor@kernel.org>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "Simek, Michal" <michal.simek@amd.com>,
- "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
-References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
- <20240924-impaired-starving-eef91b339f67@spud>
- <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
- <20240925-trapdoor-stunt-33516665fdc5@spud>
- <IA0PR12MB76999B696A9BA0834644AC71DC6B2@IA0PR12MB7699.namprd12.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <IA0PR12MB76999B696A9BA0834644AC71DC6B2@IA0PR12MB7699.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/09/2024 11:30, Mahapatra, Amit Kumar wrote:
-> Hello Conor,
-> 
-> 
->>>> Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks &
->>>> clock-names properties
->>>>
->>>> On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra wrote:
->>>>> Include the 'clocks' and 'clock-names' properties in the AXI
->>>>> Quad-SPI bindings. When the AXI4-Lite interface is enabled, the
->>>>> core operates in legacy mode, maintaining backward compatibility
->>>>> with version 1.00, and uses 's_axi_aclk' and 'ext_spi_clk'. For
->>>>> the AXI interface, it uses 's_axi4_aclk' and 'ext_spi_clk'.
->>>>>
->>>>> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
->>>>> ---
->>>>> BRANCH: for-next
->>>>> ---
->>>>>  .../devicetree/bindings/spi/spi-xilinx.yaml   | 29 +++++++++++++++++++
->>>>>  1 file changed, 29 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
->>>>> b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
->>>>> index 4beb3af0416d..9dfec195ecd4 100644
->>>>> --- a/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
->>>>> +++ b/Documentation/devicetree/bindings/spi/spi-xilinx.yaml
->>>>> @@ -12,6 +12,25 @@ maintainers:
->>>>>  allOf:
->>>>>    - $ref: spi-controller.yaml#
->>>>
->>>> Please move the allOf block down to the end of the binding, after
->>>> the property definitions.
->>>
->>> Sure, I'll take care of it in the next series
->>>>
->>>>> +  - if:
->>>>> +      properties:
->>>>> +        compatible:
->>>>> +          contains:
->>>>> +            const: xlnx,axi-quad-spi-1.00.a
->>>>> +    then:
->>>>> +      properties:
->>>>> +        clock-names:
->>>>> +          items:
->>>>> +            - const: s_axi_aclk
->>>>> +            - const: ext_spi_clk
->>>>
->>>> These are all clocks, there should be no need to have "clk" in the names.
->>>
->>> These are the names exported by the IP and used by the DTG.
->>
->> So? This is a binding, not a verilog file.
-> 
-> Axi Quad SPI is an FPGA-based IP, and the clock names are derived from the 
-> IP signal names as specified in the IP documentation [1]. 
-> We chose these names to ensure alignment with the I/O signal names listed 
-> in Table 2-2 on page 19 of [1].
-> 
-> [1] chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.amd.com/content/dam/xilinx/support/documents/ip_documentation/axi_quad_spi/v3_2/pg153-axi-quad-spi.pdf
+security_mmap_file() don't require protection from mm->mmap_lock, so we can
+remove it when calling security_mmap_file.
 
-So if hardware engineers call them "pink_pony_clk_aclk_really_clk" we
-should follow...
+#syz test
 
- - bus or axi
- - ext_spi or spi
-
-You have descriptions of each item to reference real signals. Conor's
-comment is valid - do no make it verilog file.
-
-> 
->>
->>>>> +
->>>>> +    else:
->>>>> +      properties:
->>>>> +        clock-names:
->>>>> +          items:
->>>>> +            - const: s_axi4_aclk
->>>>> +            - const: ext_spi_clk
-
-Nah, these are the same.
-
->>>>> +
->>>>>  properties:
->>>>>    compatible:
->>>>>      enum:
->>>>> @@ -25,6 +44,12 @@ properties:
->>>>>    interrupts:
->>>>>      maxItems: 1
->>>>>
->>>>> +  clocks:
->>>>> +    maxItems: 2
->>>>> +
->>>>> +  clock-names:
->>>>> +    maxItems: 2
->>>>> +
->>>>>    xlnx,num-ss-bits:
->>>>>      description: Number of chip selects used.
->>>>>      minimum: 1
->>>>> @@ -39,6 +64,8 @@ required:
->>>>>    - compatible
->>>>>    - reg
->>>>>    - interrupts
->>>>> +  - clocks
->>>>> +  - clock-names
->>>>
->>>> New required properties are an ABI break, where is the driver patch
->>>> that makes use of these clocks?
->>>
->>> Alright, I will remove these from the required properties to avoid
->>> breaking the ABI. We're working on the driver patch and will send it
->>> once it's ready.
->>
->> What changed to make the clocks needed now? It's possible that making them
->> required is the correct thing to do, so breaking the ABI would be justified (provided
->> the driver can still handle there being no clocks).
-> 
-> Axi Quad SPI is an FPGA-based IP that was previously tested on MicroBlaze 
-> soft-core systems, where the driver didn't need to enable the clock, as it 
-> would already be enabled before the PL is loaded. However, when used 
-> with ARM hard-core SoCs, the driver must explicitly enable the clocks, 
-
-
-Commit msg should explain this. Including ABI break impact.
-
-Best regards,
-Krzysztof
+diff --git a/mm/mmap.c b/mm/mmap.c
+index dd4b35a25aeb..97f5b150080b 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1689,15 +1689,24 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
+ 		flags |= MAP_LOCKED;
+ 
+ 	file = get_file(vma->vm_file);
++
++	mmap_write_unlock(mm);
+ 	ret = security_mmap_file(vma->vm_file, prot, flags);
++	if (mmap_write_lock_killable(mm)) {
++		fput(file);
++		goto out_pop;
++	}
++
+ 	if (ret)
+ 		goto out_fput;
++
+ 	ret = do_mmap(vma->vm_file, start, size,
+ 			prot, flags, 0, pgoff, &populate, NULL);
+ out_fput:
+ 	fput(file);
+ out:
+ 	mmap_write_unlock(mm);
++out_pop:
+ 	if (populate)
+ 		mm_populate(ret, populate);
+ 	if (!IS_ERR_VALUE(ret))
 
 
