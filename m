@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-342442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDA1988F20
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10675988F27
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 14:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C5C1F219AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1612820DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 12:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76C418785B;
-	Sat, 28 Sep 2024 12:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB0A187861;
+	Sat, 28 Sep 2024 12:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekHkL3Wv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bojNiA6l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4B186E32;
-	Sat, 28 Sep 2024 12:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEC0C139;
+	Sat, 28 Sep 2024 12:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727525603; cv=none; b=pOz8kHSgPK/t+1wh74OmOAMPUa4oA9wUtfgSV3tu8+Dmt5spWg3CD1HqqQbs649crmjiX6ABvHlWFtMu4XZraeKqbmTCntPtgf80CPPINa7b/oGUq8gcZ01+9gDkoGE51n5SgM/dSLz59makLNRPAwv3N5J33LQXcUVribgRt0M=
+	t=1727526037; cv=none; b=nDlMqqjApIX77510U06Y5m0s9jKBei2l4kc/V8fOy/ZxkIYjuhBycDLFrEevNM1kCVyC6GBSQuSAh//4D3zMof0zLaQxRezpjCSnnLE7SLyAPvf4c9rsRdcmpas7QJQvgPIhtisw5eBjzPvqlJxvE0UsbvPheUJ76/StkTY+NrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727525603; c=relaxed/simple;
-	bh=HdhiJ2c51QDa2RHjBSfRR/SdBFFKNbXSUVDqJ2cSA3k=;
+	s=arc-20240116; t=1727526037; c=relaxed/simple;
+	bh=VlJucxXTuioDoY6O7y4XDszULEPjMWJaI+McDBEM6kY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSERRVkb8+I8dbLlK/rff7tS85Va7nCx8jNB5EWLvWQ9FUBQUDGmWLmt/J9AxfJNseGwVj/PgDZXQYXXIuwlMUmM7L450k6rUqGtW5VuYU0rWsJdceJVchV4X5H+Fz6I6sgy6aMqqQTFzGNuNo+w6daFhvho2Z0+0IH29nMO7mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekHkL3Wv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28043C4CEC3;
-	Sat, 28 Sep 2024 12:13:17 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=biDu1IT11ZqgIOIr9iPhhf+/tmV1Vk+6FFMTHnxhc6+lZSTJyRPxNpgL2ShVKBcre7wG1eX/nfhIV1IAzDfBJcIAKUX8BQY6ZAiZAVoYcIPesMZFUzEAJUDQrCzEcAwqKRicSuyeNpd9xfDcYVaRbRD5U7DA9/v+J+7++dnjHvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bojNiA6l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E97E3C4CEC3;
+	Sat, 28 Sep 2024 12:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727525602;
-	bh=HdhiJ2c51QDa2RHjBSfRR/SdBFFKNbXSUVDqJ2cSA3k=;
+	s=k20201202; t=1727526036;
+	bh=VlJucxXTuioDoY6O7y4XDszULEPjMWJaI+McDBEM6kY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ekHkL3WvGTRyiLwwheRnYmrierRUnZDNJRStXCLOIg10iOB/QCZl3uKElAqgHj0Z2
-	 kbv4KH/pHMZnlGmPxUTgCpg0zfwqMm7Tc3hqwu+RWCMWOazic2q6SP34vecxmpA0k6
-	 r5Tfia55SM2EZTtAsAJac2UOkkaY4EZ/27H7sUXH3KqJwD+pA4jBVeMbncICHEdkqe
-	 4WHTYoyzKoi5udoTJrA0p/9ne8eSY5k80C1sI+LVatOZlKRWCI2/X+x5EPEWBEYbYY
-	 zipr8wYeQx/tq5qPAx9Fa7MWiG0bCGRfp8jVCz6k3GrooJRDZOg7naT9bXLyRKs/Ou
-	 NHvcvvDsREjdg==
-Message-ID: <b7ec2c3a-fab3-4ca1-9c18-f0fd00554e09@kernel.org>
-Date: Sat, 28 Sep 2024 14:13:15 +0200
+	b=bojNiA6ldaXTfYQI641aopuu8I3gzz3B56wd5VCZFUU7dpKOdCb0pGe2qtCooYt9W
+	 UaJK+CkzjQ/A+uAvMrpm06/mJC9uN1oVlFcAsEmwBsm6Qq1oMft0tEF9Zaj3tEdtiR
+	 /Kjp/5kBwTocZR73VJlHysszOcqLNtjNkD3y2VwRyGR46ifZI5E/XZ/ZcMRmOuZhd/
+	 GeeMoF9v4rycVIvqpVXy45rOKFOug9d7Y4d5Oj57TA+H5GSz3byB4iLjn233O5RBoW
+	 26E/nWBSPg2MpIav7n+rgnH+c8ThCHZc6viD7jeUAHdVrNrHuDALwFFSjyYeUCtpVj
+	 63PtPfCM9A++w==
+Message-ID: <28834db1-3e9e-47f4-b00e-a548589d77e9@kernel.org>
+Date: Sat, 28 Sep 2024 14:20:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: ti, sci: Add property for
- partial-io-wakeup-sources
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
- Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
- Vibhore Vardhan <vibhore@ti.com>, Kevin Hilman <khilman@baylibre.com>,
- Dhruva Gole <d-gole@ti.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f0f60af7-8561-433a-a027-811015fc5e16@kernel.org>
- <ti4ffymrixcpptlrn3o5bytoyc4w5oovdrzgu442ychai2fjet@wtdhrmwrozee>
- <44feed5a-95a7-4baa-b17e-514c0f50dae6@kernel.org>
- <sf2pklbnlkpgnkemv3wevldpj55kk2xqh4fabbmkcbh2tvnbzr@gg3gxgztq6pt>
- <d2eb4faf-c723-453b-a9d8-68693c96fb42@kernel.org>
- <fa11631e-48f9-4e95-95c4-20b77cb0a1be@kernel.org>
- <h4kapqs5vpparh5b3tter54fbnxubq6gpnb4yrqjdio66tj37w@l3xzum2bq5sz>
- <58f5f778-9f0a-4a05-8c33-949f3b3d1f49@kernel.org>
- <sisw3whyzr7itjtuznvt5t6cbmfxzop5c4nfrxwpxjil6rxqzc@cfnb5panavxe>
- <4f2ec575-4c2c-49d5-b1c0-85d5b6ce9f2e@kernel.org>
- <ivyujm6do2wmpgoa42amgli4yqthhqzme6xepzcj2ifzg7xzxp@rauwer3wjigp>
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ dlechner@baylibre.com
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+ <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
+ <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
+ <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
+ <0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
+ <fa27dc74-7b1f-4ef5-81dc-cc434da4ff89@kernel.org>
+ <c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -115,69 +114,158 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ivyujm6do2wmpgoa42amgli4yqthhqzme6xepzcj2ifzg7xzxp@rauwer3wjigp>
+In-Reply-To: <c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 27/09/2024 11:35, Markus Schneider-Pargmann wrote:
+On 25/09/2024 13:55, Nuno Sá wrote:
+> On Wed, 2024-09-25 at 09:22 +0200, Krzysztof Kozlowski wrote:
+>> On 24/09/2024 14:27, Nuno Sá wrote:
+>>> On Tue, 2024-09-24 at 10:02 +0200, Krzysztof Kozlowski wrote:
+>>>> On 23/09/2024 17:50, Angelo Dureghello wrote:
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> On 22/09/24 23:02, Krzysztof Kozlowski wrote:
+>>>>>> On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Dureghello wrote:
+>>>>>>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>>>>>>
+>>>>>>> There is a version AXI DAC IP block (for FPGAs) that provides
+>>>>>>> a physical bus for AD3552R and similar chips, and acts as
+>>>>>>> an SPI controller.
+>>>>>>>
+>>>>>>> For this case, the binding is modified to include some
+>>>>>>> additional properties.
+>>>>>>>
+>>>>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+>>>>>>> ---
+>>>>>>>   .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42
+>>>>>>> ++++++++++++++++++++++
+>>>>>>>   1 file changed, 42 insertions(+)
+>>>>>>>
+>>>>>>> diff --git
+>>>>>>> a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>>>>>> b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>>>>>> index 41fe00034742..aca4a41c2633 100644
+>>>>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>>>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+>>>>>>> @@ -60,6 +60,18 @@ properties:
+>>>>>>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>>>>>>       enum: [0, 1, 2, 3]
+>>>>>>>   
+>>>>>>> +  io-backends:
+>>>>>>> +    description: The iio backend reference.
+>>>>>>> +      An example backend can be found at
+>>>>>>> +       
+>>>>>>> https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  adi,synchronous-mode:
+>>>>>>> +    description: Enable waiting for external synchronization
+>>>>>>> signal.
+>>>>>>> +      Some AXI IP configuration can implement a dual-IP layout,
+>>>>>>> with
+>>>>>>> internal
+>>>>>>> +      wirings for streaming synchronization.
+>>>>>>> +    type: boolean
+>>>>>>> +
+>>>>>>>     '#address-cells':
+>>>>>>>       const: 1
+>>>>>>>   
+>>>>>>> @@ -128,6 +140,7 @@ patternProperties:
+>>>>>>>             - custom-output-range-config
+>>>>>>>   
+>>>>>>>   allOf:
+>>>>>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>>>>>>     - if:
+>>>>>>>         properties:
+>>>>>>>           compatible:
+>>>>>>> @@ -238,4 +251,33 @@ examples:
+>>>>>>>               };
+>>>>>>>           };
+>>>>>>>       };
+>>>>>>> +
+>>>>>>> +  - |
+>>>>>>> +    axi_dac: spi@44a70000 {
+>>>>>>> +        compatible = "adi,axi-ad3552r";
+>>>>>> That is either redundant or entire example should go to the parent
+>>>>>> node,
+>>>>>> if this device is fixed child of complex device (IOW, adi,ad3552r
+>>>>>> cannot
+>>>>>> be used outside of adi,axi-ad3552r).
+>>>>>
+>>>>> ad3552r can still be used by a generic "classic" spi
+>>>>> controller (SCLK/CS/MISO) but at a slower samplerate, fpga
+>>>>> controller only (axi-ad3552r) can reach 33MUPS.
+>>>>
+>>>> OK, then this is just redundant. Drop the node. Parent example should
+>>>> contain the children, though.
+>>>>>
+>>>>>>
+>>>>>>> +        reg = <0x44a70000 0x1000>;
+>>>>>>> +        dmas = <&dac_tx_dma 0>;
+>>>>>>> +        dma-names = "tx";
+>>>>>>> +        #io-backend-cells = <0>;
+>>>>>>> +        clocks = <&ref_clk>;
+>>>>>>> +
+>>>>>>> +        #address-cells = <1>;
+>>>>>>> +        #size-cells = <0>;
+>>>>>>> +
+>>>>>>> +        dac@0 {
+>>>>>>> +            compatible = "adi,ad3552r";
+>>>>>>> +            reg = <0>;
+>>>>>>> +            reset-gpios = <&gpio0 92 0>;
+>>>>>> Use standard defines for GPIO flags.
+>>>>>
+>>>>> fixed, thanks
+>>>>>
+>>>>>>> +            io-backends = <&axi_dac>;
+>>>>>> Why do you need to point to the parent? How much coupled are these
+>>>>>> devices? Child pointing to parent is not usually expected, because
+>>>>>> that's obvious.
+>>>>>
+>>>>>
+>>>>> "io-backends" is actually the way to refer to the backend module,
+>>>>> (used already for i.e. ad9739a),
+>>>>> it is needed because the backend is not only acting as spi-controller,
+>>>>> but is also providing some APIs for synchronization and bus setup
+>>>>> support.
+>>>>
+>>>>
+>>>> But if backend is the parent, then this is redundant. You can take it
+>>>> from the child-parent relationship. Is this pointing to other devices
+>>>> (non-parent) in other ad3552r configurations?
+>>>>
 >>>
->>> It's not obvious for me. Maybe you can elaborate a bit.
->>>
->>> The hardware has a different set of wakeup sources depending on the
->>> power mode it is in and I would like to describe these different sets of
->>> wakeup sources in the devicetree as for me this is a hardware property,
->>> not a driver thing.
+>>> The backend is a provider-consumer type of API. On the consumer side (which
+>>> is the
+>>> driver the child node will probe on), we need to call devm_iio_backend_get()
+>>> to get
+>>> the backend object (which obviously is the parent). For that, 'io-backends'
+>>> is being
 >>
->> I stated the argument to which you did not respond: it will not matter
->> for the device whether this is wakeup-source = S2R or wakeup-source =
->> TI-Partial-IO or whatever.
->>
->> Each device is or is not wakeup source.
->>
->> And just because your device has some registers or some configuration
->> does not mean this property is suitable for DT.
+>> You described the driver, so how does it matter? Driver can call
+>> get_backend_from_parent(), right? Or get_backend_from_fwnode(parent)?
 > 
-> I came up with a different (better) way to model this in the devicetree.
-> This group of units that are powered in Partial-IO are all powered by
-> just one regulator that is always on. I can simply describe this in the
-> devicetree by defining the regulator and consumer relationship:
+> Well yes, just stating what the framework (also in terms of bindings) is
+> expecting. Of course that on the driver side we can paper around it the way we
+> want. But my main point was that we can only paper around it if we use code that
+> is meant not to be used.
 > 
-> Defining the regulator as described in the board schematic:
+> And, FWIW, I was (trying) replying to your comment
 > 
->   vddshv_canuart: regulator-7 {
->          /* TPS22965DSGT */
->          compatible = "regulator-fixed";
->          regulator-name = "vddshv_canuart";
->          regulator-min-microvolt = <3300000>;
->          regulator-max-microvolt = <3300000>;
->          vin-supply = <&vcc_3v3_main>;
->          regulator-always-on;
->          regulator-boot-on;
->   };
+> "You can take it from the child-parent relationship"
 > 
-> Adding vio-supply to mcan and uarts, note, this binding does not exist
-> yet:
+> Again, we can only do that by introducing new code or use code that's not meant
+> to be used. The way we're supposed to reference backends is by explicitly using
+> the proper FW property.
 > 
->   &mcu_mcan0 {
->          vio-supply = <&vddshv_canuart>;
->   };
-> 
->   &mcu_mcan1 {
->          vio-supply = <&vddshv_canuart>;
->   };
-> 
->   &mcu_uart0 {
->          vio-supply = <&vddshv_canuart>;
->   };
-> 
->   &wkup_uart0 {
->          vio-supply = <&vddshv_canuart>;
->   };
-> 
+> Put it in another way and a completely hypothetical case. If we have a spi
+> controller which happens to export some clock and one of it's peripherals ends
+> up using that clock, wouldn't we still use 'clocks' to reference that clock?
 
-I am happy that problem is solved, but it really, really puzzles me how
-above fits wakeup-mode-problem at all. This is so different that I doubt
-you came up with proper hardware description.
+I asked how coupled are these devices. Never got the answer and you are
+reflecting with question. Depends. Please do not create hypothetical,
+generic scenarios and then apply them to your one particular opposite case.
 
 Best regards,
 Krzysztof
