@@ -1,64 +1,144 @@
-Return-Path: <linux-kernel+bounces-342291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C6B0988D2A
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:18:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D8E9988D2D
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B457D1F2152E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A1931C211BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A17EE552;
-	Sat, 28 Sep 2024 00:18:00 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F35D125BA;
+	Sat, 28 Sep 2024 00:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BROq7QpR"
+Received: from sonic311-31.consmr.mail.ne1.yahoo.com (sonic311-31.consmr.mail.ne1.yahoo.com [66.163.188.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FBDF9E8;
-	Sat, 28 Sep 2024 00:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B584B11711
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727482679; cv=none; b=cEAzH/FwYyA/2HiZlMwwhBiqq0Em7ZrjVXKMAOL6M5WuJo7Bx6QhhBt2ji4J/6BcKVCtsnU+savuz8KMCdbEKEimiBnMJgWjM9YrVNvfTC9veZSGQZ+mQUtQpuRsvDh1YZQdDvHjEzItEvquAgPCnk4V+wCw+N9an434XOouHV4=
+	t=1727483921; cv=none; b=mS1994THEaitABIsY+s0Vx9Yq28Oll189N9vPnPppAca47U4ER6dgJWaH99TikhqZg9SJPGOGex77bk/fHHANaDvt1v/U0L9GOLpQ9WYh2AEXv5TuWiqDxgcFfkfSrn7fLbW4BqvwzYEm8jxzT11s+k3px6BdvXzyMhAK/32ksc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727482679; c=relaxed/simple;
-	bh=zurLLRn4Ari54Wawnuv0F4Oi02USadk8lwG5rf57RYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m/YY070HOpk2wpu1jiyAb2YNJgwGMJyKlUt6nYL5YhqgNxRCHNlKEs1oV1xsYeYN6OMl4TJAGv70q3O3MXXyJwCMOYyMByIA1vPBgyuL+wLyfr2lxpKKHIBs6hBVw4WH6eh9MvW+VDHeawvfpIzqDOUsFrqVYJayUoLhPJgzstQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E260AC4CEC4;
-	Sat, 28 Sep 2024 00:17:57 +0000 (UTC)
-Date: Fri, 27 Sep 2024 20:17:55 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>,
- <mathieu.desnoyers@efficios.com>, <linux-kernel@vger.kernel.org>,
- <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH] function_graph: Simplify the initialization of fgraph
- LRU data
-Message-ID: <20240927201755.6402ed04@rorschach.local.home>
-In-Reply-To: <20240912111550.1752115-1-liaochang1@huawei.com>
-References: <20240912111550.1752115-1-liaochang1@huawei.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727483921; c=relaxed/simple;
+	bh=9h0tqDT99isRIdjfPg8yZJ6E0kiKx1ikTQgEqGB4kLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rvf1nQCNzYXDKJ9Qd9rtrE0nOAKOmW+mR3raR3bh+CJ9dhP1FVep3of+G63pnx9TzVGImIRe92JjirsvUL9rwN7rBZzRHua+OLGz9e6GBcjctkf5K6O1b7lXbk5ppKbjIpbVEvqFr5EapBrikB2UAl9EGIwrrA7IjxgKk8Wlc2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BROq7QpR; arc=none smtp.client-ip=66.163.188.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1727483918; bh=OB6FzDzFiQOcm8twiCpfgUJ8TuUwAyP31fPrEm7k3tA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BROq7QpRJgMcWwRadcirK07kvQubzGrEnAGRY6UK5jZWzl1FdUst++719+Zd/9P9277cPRz/NSPVSmyLTY+KUh4o4ouBub0fjzZ+7l9ThQiwjURq7MPj4X2HFEaUASl/WhE2Dpr9ZIq+FMKCizfrHJmhFJs3S37gZ7JTVQk5/7JIbImcoN5MUUv67SfG0OdmyU37kB3sCgDQPuZUtUSbOh23mpcKQf7te6BXfY+nMzY3oGfj2/gnzoHLymWjkUONs33RKFZQBCCNIoWi0MYVVg9fX0LLERS5xXXvtcOF+ReniahH10YjkplQ2C3qrrtZfUQ3RPwIjtdpaVaxb0Tkxg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1727483918; bh=RsreLF/aYKA/Ox4fi50vxmHamGlbfEDWukrOeHfXRHD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=E9632SJeiYUysrZgEEJHayA234y/bpNIRGaWMbL6mNOqFhP5DvsqyCGpH19CSRNX8SgOdEmOvRi3/+LDqgULOEfK6pzC8EmofY1CcpG1sEcSJEv36bW2lL6V8RWCt0byHwXx0mCR50lYfzFjghyCZxkSqUmWGMR8culA5cK1oqbmXmqpolAYkTSZk2KdCOCTd6jb96G3ZE9m5cpgiLGVwM51+frXSoL54NSr1UQNlNrZbLcZJmg8XD68Jn5F1T/g6bsVy8ICLiWdQQwWsqK0TmZifXbU0fa+t3UDtcbRAHVFDxLSbVIBoStsahyIV17kwHCqHcuVXlSS4aUepoSdKw==
+X-YMail-OSG: RovtmDUVM1nZogDJFuQNqannt5lkxe29f.m2L3PRZF84dui2.uJYAU22aedj8zP
+ ssXyqfVtbvCiq9J_bVqAH8G03X23NvyWPEWAbmqhYYcs6piqHurwSC3S3RG326rrvnuHSGm22FlO
+ Qnkxl6OjToK8TRuTxdZNPHpuEZDgatFvZUhPA4SVMDE4DTocqlrIYa5Yq5co5o..gFhLiYpkxcCm
+ ipJoieUXHtcQj9g.6fqxkoZBM3mmX2uEK9QtcODkrdSC0VH2uSqMgn1KXf1MNBez_5P03_WWTPnd
+ cEJO1X12RPL4cctEicL1gn5umLIUgCITu0kQdaF0SzO4EiKP53OIclh41qcHjaqxim_d24r7AQ_6
+ tBilpV6XQ1go2NvhfmsU8fxQmn2dpZz1KpMnN129c7EIWxJJm96Flpd_h_39m_8kbCJatwReZ6xx
+ VLS4sYbcWl6TcaUJrE0rfIosAjwU9fAhLSjQ4XMCs_gEqGr_3Tm507MJx_YaHp6YMHGnIHD0VngQ
+ g4aYEEADtRdqiYrFBeYuPxNcmVLXmZc87XMSkDM_Q78aVdXTIEcqEbutGTuw8bQbPdFvQUqVBZsn
+ 7vZ1n6r2XSeQJ7B5jylGK15veAW3AzHrEI3h4SSwiYG.ycEtLU_X8KkowXevqVLrHhA9J4txYw96
+ l.Vhh82SiF2VIz6UznYQ0JslxMHu7v4w_o7k6lq3U_7_dTwZYR..xboK.TFgQAOEuuaPedJBSv.N
+ eFh7yJtjFEhF1HSsyn2aKnqY8ayyXBWfVtPu7I7xXClUJlqOp1wxWNO2jH7pJ0VLxg.MBX7..y.4
+ 0zAxho3dRoTQfXwKHxEZLOFIupBmFbRqdKSi8bCPK8XCu3K1IrR65HjVm6Fe1mgn2YJl9PN7L1AB
+ AFUkCM4TXQ2JlAHbQxl9yatjD3XHYRbkzDna23AWWSgk1t0DWQIjd7S5dH7yO.hOh6LJ4pSMrrxc
+ loH8WAEnZr3LTANygI_C.J81_jXMu3aOlX_zV0TXC9VWct71_txmf23LYE45_zj1oMqHrpjO4zBN
+ nii0vnKnqW.41.9KgIVch7qvPIKF5yKM1Im35Nd97vgYi60tCpi20HzHDA8ZNPkJGlJx658kwAVX
+ 9qe_ap7L8lGvd3LuY1iL67BgeDYXWBlAB1j5I.U_5uTzy0M6eHPmvwmAy6tp1T4ryTpWRbhN_sWp
+ uPnwV3ljEzFc0SbrMFfv8SN6SUWgCmFTkoVj7QXrFUoa5zoDKdjzyIYNEp.CzK4hChr.UYhQn2Hz
+ JZPaommchxxKbtDLN3IVeKQilxwRKSqxtpi94vSUlihgdf2dBc6ETqfjLysUgttOacxR9QJ.e_cq
+ 7IN3mCh5tIyXVwyNjn9VWKY2S675HIn5diJhvdl26d6oaWqxg0pgCRqBmxFuH42.1oQZuA9sZlSz
+ SFFRxtXGilz8rSs808VWRkbsqwIfPYIG06tFwqpySVweAikDBLvpYcvywYEG2kiGxwm8QWYlepz4
+ wQyclA384YvQrXcxHe6yYvbzUrLPlL5jjJloOGZpbd_Q0A4nVgXogdZohZb9UpzEf5YwdQZBGwho
+ H_WxHxsJgdkZUEFqrKvSBfNGEcD16d74DXfHpuU5iOWuRdfihhC3cHpwfuzpKZLwSKrUvzSU6qy9
+ sdgAiyXqNdMziOaK_bbJBe.Eq87cmIR6hwPHhQL8bHwVGYHkuxcy68Lmv86dIap4Qook8OnTQiee
+ lPE5WrBrdWK87ARfJqHBbOdondblAvmqAwZRUQ7suTGezv1XpWyWj7.glC2xw1irdYDRhZFwQN02
+ LyCIQws4hKH9fJKi5okgiiOjiUgcF_GAJOC1Lqtrebshy46K4joBmq1Pchn9Zz7rbBn.hYW8Tnq3
+ qfpmq6NFUZ.6OyZHoWhCOFWVBENi3wRLNLjBkhvPIY0cHj1cAzIniJdLK.xrHu_da.PMuYyA8TNf
+ AcQ.neowvv5QuuUXbWmuRXDiKKnEuzqK26xXI5r.s.r5UTus57MJ_QuuyVenOlrunGPkAI0Zb7oF
+ AwDWrk_qPpZh7IShAENt9WhH7OzVwZrjZiVQZ40WvhDajoY.FTiRi2tcNoxG4JnGqWGdSDHYTRh2
+ VnsQc9uqbdM2.g1v2W7NKxznXQFZ2cfggoAW2mRCX1qZqb6aERdXbGbBw6kvvkAaVlZr1eryQ6nJ
+ kCXoqlp3LPaCqWNzNSOdWu.N0uZlyJlBfROE81s.BUkWRorQa7HW2sDzYP1HVx.UVExpCiJwblRo
+ P2a_cE1s3g4hSXLXHyTaNmC8cK0zP9nZUB8T1d.RbevUAqLDb64QmfZiKCiB3HeX5Dy2L4jeQ.WS
+ uxo8UCqHq3EuPofcb8_BKuXFirEZNRA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7842d67b-c5b7-42b8-b432-b8b880acff22
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Sat, 28 Sep 2024 00:38:38 +0000
+Received: by hermes--production-gq1-5d95dc458-7jxgc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 509cb58d9dad00d249880876ac0f8bb8;
+          Sat, 28 Sep 2024 00:18:21 +0000 (UTC)
+Message-ID: <d477ba9b-8a95-4e95-8fc6-4e6d77141fb4@schaufler-ca.com>
+Date: Fri, 27 Sep 2024 17:18:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <b79caa6f-41b9-4169-bb8e-9417611db455@schaufler-ca.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <b79caa6f-41b9-4169-bb8e-9417611db455@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, 12 Sep 2024 11:15:50 +0000
-Liao Chang <liaochang1@huawei.com> wrote:
+On 9/23/2024 9:15 AM, Casey Schaufler wrote:
+> On 9/23/2024 5:06 AM, Paul Moore wrote:
+>> On Mon, Sep 23, 2024 at 5:02 AM syzbot
+>> <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
+>>> Hello lsm maintainers/developers,
+>>>
+>>> This is a 31-day syzbot report for the lsm subsystem.
+>>> All related reports/information can be found at:
+>>> https://syzkaller.appspot.com/upstream/s/lsm
+>>>
+>>> During the period, 0 new issues were detected and 0 were fixed.
+>>> In total, 4 issues are still open and 27 have been fixed so far.
+>>>
+>>> Some of the still happening issues:
+>>>
+>>> Ref Crashes Repro Title
+>>> <1> 306     No    INFO: task hung in process_measurement (2)
+>>>                   https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+>> Mimi, Roberto,
+>>
+>> Any chance this is this related in any way to this report:
+>>
+>> https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
+>>
+>> Looking at the syzkaller dashboard for this issue, it looks like it
+>> may have been present for some time, just difficult to reproduce
+>> reliably (although it does appear to be occurring more often
+>> recently).  Any ideas about a root cause?
+>>
+>>> <2> 9       No    general protection fault in smack_inode_permission
+>>>                   https://syzkaller.appspot.com/bug?extid=4ac565a7081cc43bb185
+>> Casey?
+> Looks like an xattr or mount problem in JFS. I will have a look at it.
 
-> This patch uses [first ... last] = value to initialize fgraph_array[].
-> And it declares all the callbacks in fgraph_stub as static, as they are
-> not called from external code.
+There's a private inode check in SELinux that didn't make it into Smack.
+Looks like that should be in the infrastructure instead of the individual
+modules. I have a patch in process.
 
-This patch doesn't look like a simplification, and it is incorrect
-about the "not called from external code" as the kernel test robot
-pointed out!
-
--- Steve
+>
+>>> <3> 3       Yes   WARNING in current_check_refer_path
+>>>                   https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+>> Based on the discussion over the summer I believe the consensus was
+>> that this is a bcachefs/VFS bug, reassigning to bcachefs (or trying to
+>> anyway).
+>>
+>> https://lore.kernel.org/all/000000000000a65b35061cffca61@google.com/
+>>
 
