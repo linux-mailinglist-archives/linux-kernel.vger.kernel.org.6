@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-342485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548A0988F89
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:55:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F385988F8C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 15:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182C0281BC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:55:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B633B21147
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5031187FFA;
-	Sat, 28 Sep 2024 13:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4D5188714;
+	Sat, 28 Sep 2024 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="HtPFC/Ra"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kzEGu3Gn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E80C125DE
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F4A125DE;
+	Sat, 28 Sep 2024 13:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727531714; cv=none; b=DhYaLZXb2cCNi0BfcuOUyVHCkqCl8tTYH+TZFdNl7dI750+1GqMnGqcHBMcFDZwMztTYQyETr4JOi+0uYnjtLWqCNz+tmVhY+RSJDQunTAbXauMI8yX4LY657zixxsx0EG6mOMJAWUzG48TlwOAF+JFABl5LNTjSUwLHh520Dvw=
+	t=1727531782; cv=none; b=KJMyxtB//0j6vcWOJnkxQ1/mzt/R/zFnG4Pw2NwRo+YSD3hTARs5mu4ENUi8LEly5n8txLfck0rAHqrGMPRSfmG/kn5jZ5hHHyY/nKOLm9meK/2cNmuyBhAU98fjvw1MQur926++yOmtYjHT4dEkSb2cUyHds2HycLKFQ3u0z1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727531714; c=relaxed/simple;
-	bh=CHuyMdPc0Pq0Y00+l0fwVclS4+g9jnElbq/qOBCWgdE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h7LQTAU8ZSsh60quUVo6fmwfcaFeESPTQmwTdB0rKZQtvzTQtfOdDriKDt7CKG/71lYMMpCCo0Kq32kJnZBYvf0V0gDMDlAZLgggzdnHug8hvOfBqamSV9C4GwbeQJ52c4impNBcDIUVxi3Njbbe06U7bFJybv9u1h1QSYEFRCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=HtPFC/Ra; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4D5D341898
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727531704; bh=wcthUFttYFJfcIQ1UHU0FBtfXP+od6x0ysgOTd9jkeI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=HtPFC/RalC7H1oQjzWPDbVXLgjNJSt52jV4/P4xvLreFdH0Ge/iXnXl7PIcGNqkMe
-	 XQ8S1fWkDJWLHsjxzz2/RdJ86Jwxvs2BgY00KGdUIPQgltYxjG78szMMTtnyqLhVEL
-	 Sg0q0zv41NgwrD+/Xw6tr42Db9fOypcaX4Fn93MtS8WgG5Nyk8EnPM2TTQx9glHZYH
-	 6XWIeKqPYCZCikPfOvWr5/AsXOOddQ8pgvd2Q3vm+4TrRdKNLakU2ye6FJcauZxSGP
-	 FkxMuwDs//7JRKDtfiMgGWqhheDWZwaSq+leqt75g9+iq7OEzCCIikaE3/SH3j6f/l
-	 CdDa9o3qCkXyA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4D5D341898;
-	Sat, 28 Sep 2024 13:55:02 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-In-Reply-To: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
-Date: Sat, 28 Sep 2024 07:54:57 -0600
-Message-ID: <877cavdgsu.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1727531782; c=relaxed/simple;
+	bh=V0bC7nOSX6cbrcwlTI9Og+ymNfrAjTZQ4KChMguz4Xg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=DAmf1F3lZnDCQd6JHNgJXYX/Mq0b7bMJqOnGZorj9D5yg/o3vzDVNvm/oLktcASNG5QkN0zzXZgDWxlO3xYNP5erAjjLOLs2sFjbg9fls2zL+eKNJbZUg/+Aa6jUkJ33Jjft2yozZcTRPSeQ7p7EPXkE/Y8WAwcj0SgiS9Eg+es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kzEGu3Gn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BB5C4CEC3;
+	Sat, 28 Sep 2024 13:56:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727531781;
+	bh=V0bC7nOSX6cbrcwlTI9Og+ymNfrAjTZQ4KChMguz4Xg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kzEGu3GndeI7HhP/4+w3f8WhO9zIibC2nDGGxqHpGYgQpITxyhAX8E4+FYF5ywplQ
+	 TKGM4CAIFsHFs3ybovgU9nGj0/lMuMxT6e8j27OK26RBvVZNzgYGCR6theqj7iQMAE
+	 OaHkR78sw1jmTmQTttJ11vJEzUXPiTII/olsG0Tg=
+Date: Sat, 28 Sep 2024 06:56:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
+Cc: dmitry.kasatkin@gmail.com, ebpqwerty472123@gmail.com,
+ eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org,
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-security-module@vger.kernel.org,
+ paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com,
+ stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com,
+ zohar@linux.ibm.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ stable@kernel.org
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+Message-Id: <20240928065620.7abadb2d8552f03d785c77c9@linux-foundation.org>
+In-Reply-To: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+On Sat, 28 Sep 2024 00:32:30 -0700 syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com> wrote:
 
-> The following changes since commit ada1986d07976d60bed5017aa38b7f7cf27883f7:
->
->   tomoyo: fallback to realpath if symlink's pathname does not exist (2024-09-25 22:30:59 +0900)
->
-> are available in the Git repository at:
->
->   git://git.code.sf.net/p/tomoyo/tomoyo.git tags/tomoyo-pr-20240927
->
-> for you to fetch changes up to ada1986d07976d60bed5017aa38b7f7cf27883f7:
->
->   tomoyo: fallback to realpath if symlink's pathname does not exist (2024-09-25 22:30:59 +0900)
-> ----------------------------------------------------------------
-> One bugfix patch, one preparation patch, and one conversion patch.
+> Hello,
+> 
+> syzbot found the following issue on:
 
-[...]
+Thanks.
 
-> I was delivering pure LKM version of TOMOYO (named AKARI) to users who
-> cannot afford rebuilding their distro kernels with TOMOYO enabled. But
-> since the LSM framework was converted to static calls, it became more
-> difficult to deliver AKARI to such users. Therefore, I decided to update
-> TOMOYO so that people can use mostly LKM version of TOMOYO with minimal
-> burden for both distributors and users.
+> HEAD commit:    97d8894b6f4c Merge tag 'riscv-for-linus-6.12-mw1' of git:/..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14138a80580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1cd571a672400ef3a930
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118fd2a9980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1038299f980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/f181c147328d/disk-97d8894b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/b8b0160d9b09/vmlinux-97d8894b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/c5dab0d4f811/bzImage-97d8894b.xz
+> 
+> The issue was bisected to:
+> 
+> commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2
+> Author: Shu Han <ebpqwerty472123@gmail.com>
+> Date:   Tue Sep 17 09:41:04 2024 +0000
+> 
+>     mm: call the security_mmap_file() LSM hook in remap_file_pages()
 
-I must confess that this change confuses me a bit.  Loadable LSM modules
-have been out of the picture for a long time, has that changed now?
+That commit has cc:stable.
 
-Even stranger, to me at least, is the backdoor symbol-export mechanism.
-That seems like ... not the way we do things.  Was the need for this so
-urgent that you couldn't try to get those symbols exported properly?
+Can I suggest that you change sysbot so it includes a cc:stable if the
+faulty commit had cc:stable?  If Greg agrees that would be useful?
 
-Thanks,
 
-jon
 
