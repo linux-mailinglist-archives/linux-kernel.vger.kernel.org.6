@@ -1,454 +1,228 @@
-Return-Path: <linux-kernel+bounces-342626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FBB98910B
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:28:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DFA98910C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 20:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB874281D27
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:28:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06DF2821D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EB3155C88;
-	Sat, 28 Sep 2024 18:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CEA155392;
+	Sat, 28 Sep 2024 18:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UNsLitGK"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="0QxONjMw"
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021120.outbound.protection.outlook.com [52.101.95.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19BC2AEEE;
-	Sat, 28 Sep 2024 18:28:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727548116; cv=none; b=TZC9k0GPJlD5wgK8r9DFxlYR1OlcCjyuWurHiPzCut9BCbXIz1QhzvcaFNIHVIGeKvFseSpRbrnMIY4lYU0BTVNNZIMmdvjIv3H4rlw5TPsE5V+Hv1fV04QuLRPb9FJcaoesA+ffK9xV61mQJi6FmX2cu+m1ZUD4Qi8hbo6n9sA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727548116; c=relaxed/simple;
-	bh=3fpdki5/ICS1qNzg5oA8KwiZpQoL0BQCLzpnw1ITvsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qOFs0gdRvpx0enPnAiihY+eZfiKj8zcm5zaT0e68uEkt8FUm3JKX96g2A/yrKQ7GI1g0QSC6S9j38KvwC41f3MdySEh5QpZbDM8St2c+rTEM5FMkzuV+T6MaY3lmIHED9ID8Mt8DRzAzHOfW3pZBj3HoI8z2ywtYZULFaAvEdwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UNsLitGK; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=V+9LfybIwIck4AhikQa6dEmZGnSm3uZ83KznMUGroo8=; b=UNsLitGKp/pQ1/xxaZpIZO0FUN
-	jD0Ol6wAoGd1v0c2uQe+I0sqmrbYYnodPbcL+rP/WUs9pFCFWLqp/hw+/F4gqLQoppwwnWehinu25
-	ql1nwPXp6lwcmBj1CBQHUyahHRykL2MwvGbYj/zwK1FQUMbO4jK1r/T2ONYphJTubxXOi8h7BMD6n
-	e1LoONQhLB/kEO5dNsg3hw4PwyX0O9h9hb4zyOXX7yaGAYykufFZreKVckbJ43BG5gvS/zt7aaW4E
-	YcR51xjg+ye/PmHBdqevSLiMuw2zegNoqy0sDkI6f8LigMUk1h7FUCoCj+PaPzit/x/9U48HqHw+G
-	NiGQrfqw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sucB1-00000002XxV-3koC;
-	Sat, 28 Sep 2024 18:28:20 +0000
-Message-ID: <b7864e63-bb74-4ab2-a7ae-48662b27e234@infradead.org>
-Date: Sat, 28 Sep 2024 11:28:10 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15E881CF9A;
+	Sat, 28 Sep 2024 18:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727548599; cv=fail; b=uBrQST+qNOBESPOKsFnDIyiLkJPF3oHSnh2oI9Fh9M0Pz+oFg/0g6krWXHxWv3dG8ZXHXVB/W00XcupC8qlHUbKj0HiBbQhDnqXgGZWbxAXmEus2xu2KxwkcUsp5VMlE9B2x1+iMGJn5+tkEvKwGEDJSCbIkLtDHq8rvVIhNEsw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727548599; c=relaxed/simple;
+	bh=Hf1DW27HdGf+tHiEsZmJ548OnfhYjCd2PksZxBcUw84=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fYure0jB9f7525ULqOJtxVZtmaa49JqPlYv8h0EhSyi+GfhhDZM49M454LOX8bT/KCcq4sUYHTZogmCdHFhYwRT6fH66kPgu27BpRj8BJAWaaEa9vOKpXISszLlQzs+X2e54HPQCNs/vdN7hnMi8rK4GZ1MD8s9QyhOV50T3Lrs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=0QxONjMw; arc=fail smtp.client-ip=52.101.95.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JyDe7za/+XVVPHAE26AHgBXf/umjog3UxSRV2K3B3hJo0PAyzgy5p3UeCICwXr5HVJUMH8zwn9Ddgfp4rcSSzdy6/jWevr3a/66lUTJh50id3/DK4NT5n65rWPzs4KmfddtFFxm9PwH24ykXGoNgxss4/bXr0OIr22/Wdg2H5YN2h7APxC6HkCfdFYL9OcUYOblj884S+dqsm2jDbKfjKJ3ThrMtlBT00TpIrgDTBAXOp43PoVBOtkdyJ3dfGYX5SP+D1nv0N+7xqbKBHDhv9aJix7/bxTfc5x/HJfd1x76cY5WcrXPDthG0UVrXH7y9U81lXef5V81bRVNrVEjqpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P9g67crxE/PG6HoEiYw5jCbZYbhy74dIQ6DeicACCBE=;
+ b=ChsGoVT1sJ0vh/O83PP78o2Hl/BLL0uJ2lhSW52cD2J5JYeimn2Iz1zgi8oISZWD0tnZSzFFdWnT0uNsXZpMmvldEqnhW/hbUK8ZNpcxatZ6lVeTyHREj67pjCXVmsgZhwWmMSf0+zhwqxDuvDkKDKyOyqMRGSnX2rlwZ/Sd5GNz3JOG9RpSF9IGRwSxVOfsZQKACMWWh1K2GhFyQfoV/jGLclP42JtH/SUqNJDhV6vyIAXEIBCPuHqFPs1y0t0SwceK+STbBYbO3RhRA6/9zfffCfV9TVHzRxGGFJCS0EbgB0JYPysSt3rVBj64ImWJd5rwZiVujsWfErwka8n2eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P9g67crxE/PG6HoEiYw5jCbZYbhy74dIQ6DeicACCBE=;
+ b=0QxONjMwwlEuTA+l4VOJRgR+xsUYrpTRMDn2lPKT7hYFnl4A5Zz4Rq9MLcl1RLVFU9XnqtiGhpsjkYsX6SWx8ZmF/Jrvkryn2xcRXTQ7O0QoZfwf/v9UEYImhGqQjvy5Mc2i+OT0Dlxt9eIMqdZ4QamhihPUXGADbPu2Lge9lBc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LNXP265MB2506.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:134::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.24; Sat, 28 Sep
+ 2024 18:36:34 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.024; Sat, 28 Sep 2024
+ 18:36:33 +0000
+Date: Sat, 28 Sep 2024 19:36:32 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Subject: Re: [PATCH] rust: kunit: use C-string literals to clean warning
+Message-ID: <20240928193632.063d62a6.gary@garyguo.net>
+In-Reply-To: <20240927164414.560906-1-ojeda@kernel.org>
+References: <20240927164414.560906-1-ojeda@kernel.org>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0150.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c7::10) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] mseal: update mseal.rst
-To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
- corbet@lwn.net
-Cc: jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, jannh@google.com, sroettger@google.com,
- pedro.falcato@gmail.com, linux-hardening@vger.kernel.org,
- willy@infradead.org, gregkh@linuxfoundation.org,
- torvalds@linux-foundation.org, deraadt@openbsd.org,
- usama.anjum@collabora.com, surenb@google.com, merimus@google.com,
- lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, enh@google.com
-References: <20240927185211.729207-1-jeffxu@chromium.org>
- <20240927185211.729207-2-jeffxu@chromium.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240927185211.729207-2-jeffxu@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LNXP265MB2506:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0a73e1a1-e5a8-4ae6-b661-08dcdfec7a46
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?C8zIi03iLBZ4KDt1xUQbI7l3P0fPYmYFV1pOig5tr+Kctpr1iv7huUoOLUJv?=
+ =?us-ascii?Q?fGrBWSIY+DhTUNG1sOz5OBkww0DBRPQVs5KlY+DqF+IEPMnrP9WK2w3HCAiO?=
+ =?us-ascii?Q?VpfzsUxR4R/3b3PqwpgvSfPnfjnVG58J5Vw9Ze+TjfXVD11B/QszQxe4Lipw?=
+ =?us-ascii?Q?n9/8EHYMHDo4kWYJNyOKLElAofkYs4bwu76+lAiFuozE/sHYSyJwVd77wX/7?=
+ =?us-ascii?Q?LNE0c5rZ5N1mLwGsRmoaQx5gtq8b0p2lNuCTCSUh64+ckrGNbei2+SNJ928j?=
+ =?us-ascii?Q?qKAabiyFBWjIbmXtemyVZYTZT81d5jjGel7AMHQF98PbPBUz7MRG6I0h+caT?=
+ =?us-ascii?Q?nVf9GaaVjkMIHlH8DXITs5AmeJQC7IgmLLKyGGhZ8KADj3ekThDbby8dCVJd?=
+ =?us-ascii?Q?q/nEdjUDpOxfbFpZj5yhGTJkvjUfK9QWFdzKBIFNLC1ZrltwrQapwr19E3mS?=
+ =?us-ascii?Q?ScXz4QJ18cA0csIObw54WTn7EOj2JtMmRX7thLarDxikCQdN3CuYyfccnJle?=
+ =?us-ascii?Q?e+hx9Dodm1hdNUY6z4whTm5b1pHjFm+hkskmCC5Kv7xCtaPyaEHTCa4+5vKA?=
+ =?us-ascii?Q?L6PsvpMlhn5U1GfqUmG4bc1GW3csg0FjbE4S8XC+lPZ8RRMTre39O5tpnfgM?=
+ =?us-ascii?Q?ihmWsWPPGu/+WjAlW8aYD+iUrYYK7rL6y6CH4kv0wHHEdwn9lZHOZJbaw0Q6?=
+ =?us-ascii?Q?uFBYM4fGwUnfInbaHrshj3LGAkC1iaBMKTH/xFWnmmR2hlW0s+IAGKR2TqRh?=
+ =?us-ascii?Q?furT9NqX1MrD4GSHte3saxZN58ittgr7Qkx4HJUpY3OzoC2Gj2sp4758KCmA?=
+ =?us-ascii?Q?MN4mHp6ZIJd8zVEebUZ8h4pidPSRaUMRKxgHlGtNkR+12RstwYWlKyqZIXxi?=
+ =?us-ascii?Q?Q/YKv+OJmrh8v+9WGCoLuYmwgUhuBCLwX5UIj1FwT8UKE0deFdct3TYZaDEG?=
+ =?us-ascii?Q?RHS13EnagdjOoI+yNEMDJd4QVn+0uRFP90f1xClaIHCW8l7+1rs3Edy3AQA+?=
+ =?us-ascii?Q?fyQpo1SDHgpsXB5jPZqY9xtNV8HCo885DsmXSsOdNVvNI2wPP8CaB7GblnYo?=
+ =?us-ascii?Q?3ip+lc98LUUOqymjsAVGtRchYzVHK2sYhCFH/M3qPzpXAnzH0DL7oDKVWrYN?=
+ =?us-ascii?Q?//Ii0dwoi4IXwv3XXoEspfLtCTVZWYR4HNlFnVUPiShMuZ/JoW3HAd+CHxz+?=
+ =?us-ascii?Q?AGjvupvZcpJ6yzt03xygXjDU02xZTbbTl7kP+RwlEhldpEq/PbV6jQP2LGU?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o4UuShTGywDSuYj7iv6oU3FDxoydaOE9oOT8LwiMFhlH1DHWrLbQNUAnvfEq?=
+ =?us-ascii?Q?HGMdF9J7MGZZKxkyIRLeWzIXOFY7S+gzNZBBhP4Arov9qdTD1623n3Wb8ARj?=
+ =?us-ascii?Q?iDEvIqk0oN13VtfsR5EGMWjvx9FGxiS8JkpTIzEgeB30gYp6YOgsN0KGaFIK?=
+ =?us-ascii?Q?dTKPThBbC87l9pKCal+heNWfN/4bDl/pwk9I1vbzA/nBlCvOfwlyT0M9NdSR?=
+ =?us-ascii?Q?pzSfpNB3O8aZwnb6jPghnPis7ZyekcnGwP7guEMWu7gOYpNJfMsijc1pu9cb?=
+ =?us-ascii?Q?C+QxwpamYRGKd4iThtxS8wIRtwcU3iSwPyLw6h858ahU+gff6qF2urrYoSXG?=
+ =?us-ascii?Q?M2GIkWrKitG32SlvygqU0Nbozf4a+4liWPk+A6K+GrceVA4y1YDwXqhoc3Gl?=
+ =?us-ascii?Q?syzb9W3qqEVjXlBiKzq6VoPGMhKH6NntSA90F436tdSDHbTJ0S0IwS53zSTt?=
+ =?us-ascii?Q?V4BAYyo4y05N+4LsYsrHDtP0pPiz+/jOvNwekC9AHr6xVyje77LhPUnxM+6A?=
+ =?us-ascii?Q?SpdFaXH1rTP5kJ0jyXogoAT1bOQpcnzqDcdXpGjpJZk21aqfYEl56u4x8pJT?=
+ =?us-ascii?Q?VWd/9cpQgWTm2+srnFwCI2six6zj1UZfGxtHe6Ix0MbjqkfP3zMo6YsJSwF3?=
+ =?us-ascii?Q?kdVJK+1CEOpW9689UqDaXyzKXo6p5cBLjK4oLtzXMj1gyol+e/Sm93UeCLGn?=
+ =?us-ascii?Q?oJfFDVBzRyVJbBwfJRjvyRoya2bFHKn/GVlj+f90K1CRFSryFSOF7YC9xRmv?=
+ =?us-ascii?Q?/pXpyGhWAf7yPscjKa/jrdP5PG7OwL0Ch5CpygfPYVXdT9mxIolBaCTuI7ob?=
+ =?us-ascii?Q?eAM8Vzu0x08MOb/Qela/YMGgvj6iJtbkaSJXGd2zPlAGDVySvZLW3MsyLQSD?=
+ =?us-ascii?Q?u2chnLEkV/Qt1skikGmOR+wqPAigSZFXinC+XunUYiDVmIbCytvOCHAJ9X/a?=
+ =?us-ascii?Q?Cl4fAECF07vKt+6ftAxKxo74rRXLt5OYX8vhInBZ/kEVkt9PW7GgbUrT2Hx0?=
+ =?us-ascii?Q?tAk6wTjdnvYM9IfFzKJhBMEuybLPl1J8e0UBcZU9Mxv+kw5AvLn3ekAIjvlk?=
+ =?us-ascii?Q?oAsvG+S5uAPYTEUjf6EYmRJX4iht6JuCG2VONF/sko+H5Oi95y2BAzy9aNna?=
+ =?us-ascii?Q?MqQNg+wu2w5Tq4/77+ZQ0AJuJbOgRc5XPNjLdgY3gdYpRUg2Jiy15ymwQAlK?=
+ =?us-ascii?Q?5acKHKCggG+jXVuKBlvd8UciABSUU1QSn/CTXzKXzf941MHBf8qF+iKqTgyy?=
+ =?us-ascii?Q?EPi4Q4DGQwQU3UZNN64pkIdqDgtDif9F6nEAiShrHmKj5NjBRy+0IKOKOZ37?=
+ =?us-ascii?Q?OC3xx9FZcQpDh70TiJDS8klQE/+hZh/iUsNd2mVIsIKGjcrFu6+GngNYIZMw?=
+ =?us-ascii?Q?d5NHk5jOQbKL5OnR2KfhzC591y9iPIR35j9Em9s+JuRsBsdea5vPC7da9DJ5?=
+ =?us-ascii?Q?gfp4R0WsX3kcl34FrCBzls+dsicB5Syy9em/znDFVLFOJzhzm4D52QR2dLOf?=
+ =?us-ascii?Q?smo8rnfUX7EospIJhByLAbeFXe/zbJaS4mVFn8yJy0vGXDrl+dWmSHdhnBQ0?=
+ =?us-ascii?Q?l3JtB6Orq7SOg16LnJMTXVL48cefxhGCEiNBi4R3?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a73e1a1-e5a8-4ae6-b661-08dcdfec7a46
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Sep 2024 18:36:33.8035
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K1r+KYdpBw0pQ+E/QwoLK6hM3IYoadSxmxV9c1ME6ygAx6MvRIUMpYeA29TY6Rxexb+7V4pjAaPhtl0b0OyETA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LNXP265MB2506
 
+On Fri, 27 Sep 2024 18:44:14 +0200
+Miguel Ojeda <ojeda@kernel.org> wrote:
 
-
-On 9/27/24 11:52 AM, jeffxu@chromium.org wrote:
-> From: Jeff Xu <jeffxu@chromium.org>
+> Starting with upstream Rust commit a5e3a3f9b6bd ("move
+> `manual_c_str_literals` to complexity"), to be released in Rust 1.83.0
+> [1], Clippy now warns on `manual_c_str_literals` by default, e.g.:
 > 
-> Update doc after in-loop change: mprotect/madvise can have
-> partially updated and munmap is atomic.
+>     error: manually constructing a nul-terminated string
+>       --> rust/kernel/kunit.rs:21:13  
+>        |
+>     21 |             b"\x013%pA\0".as_ptr() as _,
+>        |             ^^^^^^^^^^^^^ help: use a `c""` literal: `c"\x013%pA"`
+>        |
+>        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_c_str_literals
+>        = note: `-D clippy::manual-c-str-literals` implied by `-D warnings`
+>        = help: to override `-D warnings` add `#[allow(clippy::manual_c_str_literals)]`
 > 
-> Fix indentation and clarify some sections to improve readability.
+> Apply the suggestion to clean up the warnings.
 > 
-> Signed-off-by: Jeff Xu <jeffxu@chromium.org>
+> Link: https://github.com/rust-lang/rust-clippy/pull/13263 [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
->  Documentation/userspace-api/mseal.rst | 290 ++++++++++++--------------
->  1 file changed, 136 insertions(+), 154 deletions(-)
+> The cast could also be cleaned up, but that is already done in Gary's
+> FFI series, so I didn't include another patch.
+
+Note that the cast actually need to be re-introduced instead of
+cleaned-up -- `c"".as_ptr()` returns `core::ffi::c_char` which might be
+signed, while after my series `*const u8` is expected by `printf`.
+
+An alternative is to use `c_str!(...).as_char_ptr()` which will
+guarantee the type is what we expected.
+
+Best,
+Gary
+
 > 
-> diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/userspace-api/mseal.rst
-> index 4132eec995a3..68986084e191 100644
-> --- a/Documentation/userspace-api/mseal.rst
-> +++ b/Documentation/userspace-api/mseal.rst
-> @@ -23,177 +23,159 @@ applications can additionally seal security critical data at runtime.
->  A similar feature already exists in the XNU kernel with the
->  VM_FLAGS_PERMANENT flag [1] and on OpenBSD with the mimmutable syscall [2].
->  
-> -User API
-> -========
-> -mseal()
-> ------------
-> -The mseal() syscall has the following signature:
-> -
-> -``int mseal(void addr, size_t len, unsigned long flags)``
-> -
-> -**addr/len**: virtual memory address range.
-> -
-> -The address range set by ``addr``/``len`` must meet:
-> -   - The start address must be in an allocated VMA.
-> -   - The start address must be page aligned.
-> -   - The end address (``addr`` + ``len``) must be in an allocated VMA.
-> -   - no gap (unallocated memory) between start and end address.
-> -
-> -The ``len`` will be paged aligned implicitly by the kernel.
-> -
-> -**flags**: reserved for future use.
-> -
-> -**return values**:
-> -
-> -- ``0``: Success.
-> -
-> -- ``-EINVAL``:
-> -    - Invalid input ``flags``.
-> -    - The start address (``addr``) is not page aligned.
-> -    - Address range (``addr`` + ``len``) overflow.
-> -
-> -- ``-ENOMEM``:
-> -    - The start address (``addr``) is not allocated.
-> -    - The end address (``addr`` + ``len``) is not allocated.
-> -    - A gap (unallocated memory) between start and end address.
-> -
-> -- ``-EPERM``:
-> -    - sealing is supported only on 64-bit CPUs, 32-bit is not supported.
-> -
-> -- For above error cases, users can expect the given memory range is
-> -  unmodified, i.e. no partial update.
-> -
-> -- There might be other internal errors/cases not listed here, e.g.
-> -  error during merging/splitting VMAs, or the process reaching the max
-> -  number of supported VMAs. In those cases, partial updates to the given
-> -  memory range could happen. However, those cases should be rare.
-> -
-> -**Blocked operations after sealing**:
-> -    Unmapping, moving to another location, and shrinking the size,
-> -    via munmap() and mremap(), can leave an empty space, therefore
-> -    can be replaced with a VMA with a new set of attributes.
-> -
-> -    Moving or expanding a different VMA into the current location,
-> -    via mremap().
-> -
-> -    Modifying a VMA via mmap(MAP_FIXED).
-> -
-> -    Size expansion, via mremap(), does not appear to pose any
-> -    specific risks to sealed VMAs. It is included anyway because
-> -    the use case is unclear. In any case, users can rely on
-> -    merging to expand a sealed VMA.
-> -
-> -    mprotect() and pkey_mprotect().
-> -
-> -    Some destructive madvice() behaviors (e.g. MADV_DONTNEED)
-> -    for anonymous memory, when users don't have write permission to the
-> -    memory. Those behaviors can alter region contents by discarding pages,
-> -    effectively a memset(0) for anonymous memory.
-> -
-> -    Kernel will return -EPERM for blocked operations.
-> -
-> -    For blocked operations, one can expect the given address is unmodified,
-> -    i.e. no partial update. Note, this is different from existing mm
-> -    system call behaviors, where partial updates are made till an error is
-> -    found and returned to userspace. To give an example:
-> -
-> -    Assume following code sequence:
-> -
-> -    - ptr = mmap(null, 8192, PROT_NONE);
-> -    - munmap(ptr + 4096, 4096);
-> -    - ret1 = mprotect(ptr, 8192, PROT_READ);
-> -    - mseal(ptr, 4096);
-> -    - ret2 = mprotect(ptr, 8192, PROT_NONE);
-> -
-> -    ret1 will be -ENOMEM, the page from ptr is updated to PROT_READ.
-> -
-> -    ret2 will be -EPERM, the page remains to be PROT_READ.
-> -
-> -**Note**:
-> -
-> -- mseal() only works on 64-bit CPUs, not 32-bit CPU.
-> -
-> -- users can call mseal() multiple times, mseal() on an already sealed memory
-> -  is a no-action (not error).
-> -
-> -- munseal() is not supported.
-> +SYSCALL
-> +=======
-> +mseal syscall signature
-> +-----------------------
-> +   **int** mseal(**void \*** addr, **size_t** len, **unsigned long** flags)
+> C-string literals are available since Rust 1.77.0, which is higher than
+> our minimum version, but LTS kernels do not have Rust 1.77.0. But
+> perhaps for these is not a big deal, and we could also enable
+> `feature(c_str_literals)` instead.
+> 
+>  rust/kernel/kunit.rs | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+> index 0ba77276ae7e..824da0e9738a 100644
+> --- a/rust/kernel/kunit.rs
+> +++ b/rust/kernel/kunit.rs
+> @@ -18,7 +18,7 @@ pub fn err(args: fmt::Arguments<'_>) {
+>      #[cfg(CONFIG_PRINTK)]
+>      unsafe {
+>          bindings::_printk(
+> -            b"\x013%pA\0".as_ptr() as _,
+> +            c"\x013%pA".as_ptr() as _,
+>              &args as *const _ as *const c_void,
+>          );
+>      }
+> @@ -34,7 +34,7 @@ pub fn info(args: fmt::Arguments<'_>) {
+>      #[cfg(CONFIG_PRINTK)]
+>      unsafe {
+>          bindings::_printk(
+> -            b"\x016%pA\0".as_ptr() as _,
+> +            c"\x016%pA".as_ptr() as _,
+>              &args as *const _ as *const c_void,
+>          );
+>      }
+> 
+> base-commit: 570172569238c66a482ec3eb5d766cc9cf255f69
+> --
+> 2.46.2
 
-ugh. totally unreadable for people who just look at .rst files.
-
-Does other documentation go to this extreme?
-
-> +
-> +   **addr**/**len**: virtual memory address range.
-> +      The address range set by **addr**/**len** must meet:
-> +         - The start address must be in an allocated VMA.
-> +         - The start address must be page aligned.
-> +         - The end address (**addr** + **len**) must be in an allocated VMA.
-> +         - no gap (unallocated memory) between start and end address.
-> +
-> +      The ``len`` will be paged aligned implicitly by the kernel.
-> +
-> +   **flags**: reserved for future use.
-> +
-> +   **Return values**:
-> +      - **0**: Success.
-> +      - **-EINVAL**:
-> +         * Invalid input ``flags``.
-> +         * The start address (``addr``) is not page aligned.
-> +         * Address range (``addr`` + ``len``) overflow.
-> +      - **-ENOMEM**:
-> +         * The start address (``addr``) is not allocated.
-> +         * The end address (``addr`` + ``len``) is not allocated.
-> +         * A gap (unallocated memory) between start and end address.
-> +      - **-EPERM**:
-> +         * sealing is supported only on 64-bit CPUs, 32-bit is not supported.
-> +
-> +   **Note about error return**:
-> +      - For above error cases, users can expect the given memory range is
-> +        unmodified, i.e. no partial update.
-> +      - There might be other internal errors/cases not listed here, e.g.
-> +        error during merging/splitting VMAs, or the process reaching the max
-> +        number of supported VMAs. In those cases, partial updates to the given
-> +        memory range could happen. However, those cases should be rare.
-> +
-> +   **Architecture support**:
-> +      mseal only works on 64-bit CPUs, not 32-bit CPU.
-
-	                                             CPUs.
-
-> +
-> +   **Idempotent**:
-> +      users can call mseal multiple times, mseal on an already sealed memory
-
-	                               times. mseal
-
-> +      is a no-action (not error).
-> +
-> +   **no munseal**
-> +      Once mapping is sealed, it can't be unsealed. kernel should never
-> +      have munseal, this is consistent with other sealing feature, e.g.
-> +      F_SEAL_SEAL for file.
-> +
-> +Blocked mm syscall for sealed mapping
-> +-------------------------------------
-> +   It might be imporant to note: **once the mapping is sealed, it will
-
-                  important
-
-> +   stay in the process's memory till the process terminates**.
-> +
-> +   Example::
-> +
-> +         *ptr = mmap(0, 4096, PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
-> +         rc = mseal(ptr, 4096, 0);
-> +         /* munmap will fail */
-> +         rc = munmap(ptr, 4096);
-> +         assert(rc < 0);
-> +
-> +   Blocked mm syscall:
-> +      - munmap
-> +      - mmap
-> +      - mremap
-> +      - mprotect and pkey_mprotect
-> +      - some destructive madvise behaviors: MADV_DONTNEED, MADV_FREE,
-> +        MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK
-> +
-> +   The first set of syscall to block is munmap, mremap, mmap. They can
-> +   either leave an empty space in the address space, therefore allow
-> +   replacement with a new mapping with new set of attributes, or can
-> +   overwrite the existing mapping with another mapping.
-> +
-> +   mprotect and pkey_mprotect are blocked because they changes the
-> +   protection bits (rwx) of the mapping.
-
-preferably            (RWX)
-
-> +
-> +   Some destructive madvice behaviors (MADV_DONTNEED, MADV_FREE,
-
-                       madvise
-
-> +   MADV_DONTNEED_LOCKED, MADV_FREE, MADV_DONTFORK, MADV_WIPEONFORK)
-> +   for anonymous memory, when users don't have write permission to the
-> +   memory. Those behaviors can alter region contents by discarding pages,
-> +   effectively a memset(0) for anonymous memory.
-> +
-> +   Kernel will return -EPERM for blocked syscalls.
-> +
-> +   When blocked syscall return -EPERM due to sealing, the memory regions may or may not be changed, depends on the syscall being blocked:
-> +      - munmap: munmap is atomic. If one of VMAs in the given range is
-> +        sealed, none of VMAs are updated.
-> +      - mprotect, pkey_mprotect, madvise: partial update might happen, e.g.
-> +        when mprotect over multiple VMAs, mprotect might update the beginning
-> +        VMAs before reaching the sealed VMA and return -EPERM.
-> +      - mmap and mremap: undefined behavior.
->  
->  Use cases:
->  ==========
->  - glibc:
->    The dynamic linker, during loading ELF executables, can apply sealing to
-> -  non-writable memory segments.
-> +  mapping segments.
->  
->  - Chrome browser: protect some security sensitive data-structures.
-
-                                                     data structures.
-
->  
-> -Notes on which memory to seal:
-> -==============================
-> -
-> -It might be important to note that sealing changes the lifetime of a mapping,
-> -i.e. the sealed mapping won’t be unmapped till the process terminates or the
-> -exec system call is invoked. Applications can apply sealing to any virtual
-> -memory region from userspace, but it is crucial to thoroughly analyze the
-> -mapping's lifetime prior to apply the sealing.
-> +Don't use mseal on:
-
-Drop the ':'. Headings should not uses trailing colons.
-(throughout this file)
-
-Maybe change the heading to "When not to use mseal".
-
-> +===================
-> +Applications can apply sealing to any virtual memory region from userspace,
-> +but it is *crucial to thoroughly analyze the mapping's lifetime* prior to
-> +apply the sealing. This is because the sealed mapping *won’t be unmapped*
-> +till the process terminates or the exec system call is invoked.
-
-s/till/until/ preferably.
-
->  
->  For example:
-> +   - aio/shm
-> +     aio/shm can call mmap and  munmap on behalf of userspace, e.g.
-> +     ksys_shmdt() in shm.c. The lifetime of those mapping are not tied to
-> +     the lifetime of the process. If those memories are sealed from userspace,
-> +     then munmap will fail, causing leaks in VMA address space during the
-> +     lifetime of the process.
-> +
-> +   - ptr allocated by malloc (heap)
-> +     Don't use mseal on the memory ptr return from malloc().
-> +     malloc() is implemented by allocator, e.g. by glibc. Heap manager might
-> +     allocate a ptr from brk or mapping created by mmap.
-> +     If app calls mseal on ptr returned from malloc(), this can affect the heap
-
-	If an app calls mseal on a ptr
-
-
-> +     manager's ability to manage the mappings, the outcome is non-deterministic.
-
-	                                mappings; the outcome
-
-> +     Example::
-> +
-> +        ptr = malloc(size);
-> +        /* don't call mseal on ptr return from malloc. */
-> +        mseal(ptr, size);
-> +        /* free will success, allocator can't shrink heap lower than ptr */
-> +        free(ptr);
-> +
-> +mseal doesn't block:
-> +====================
-> +In a nutshell, mseal blocks certain mm syscall from modifying some of VMA's
-> +attributes, such as protection bits (rwx). Sealed mappings doesn't mean the
-
-preferably                             (RWX).
-
-> +memory is immutable.
->  
-> -- aio/shm
-> -
-> -  aio/shm can call mmap()/munmap() on behalf of userspace, e.g. ksys_shmdt() in
-> -  shm.c. The lifetime of those mapping are not tied to the lifetime of the
-
-                lifetimes
-?
-
-> -  process. If those memories are sealed from userspace, then munmap() will fail,
-> -  causing leaks in VMA address space during the lifetime of the process.
-> -
-> -- Brk (heap)
-> -
-> -  Currently, userspace applications can seal parts of the heap by calling
-> -  malloc() and mseal().
-> -  let's assume following calls from user space:
-> -
-> -  - ptr = malloc(size);
-> -  - mprotect(ptr, size, RO);
-> -  - mseal(ptr, size);
-> -  - free(ptr);
-> -
-> -  Technically, before mseal() is added, the user can change the protection of
-> -  the heap by calling mprotect(RO). As long as the user changes the protection
-> -  back to RW before free(), the memory range can be reused.
-> -
-> -  Adding mseal() into the picture, however, the heap is then sealed partially,
-> -  the user can still free it, but the memory remains to be RO. If the address
-> -  is re-used by the heap manager for another malloc, the process might crash
-> -  soon after. Therefore, it is important not to apply sealing to any memory
-> -  that might get recycled.
-> -
-> -  Furthermore, even if the application never calls the free() for the ptr,
-> -  the heap manager may invoke the brk system call to shrink the size of the
-> -  heap. In the kernel, the brk-shrink will call munmap(). Consequently,
-> -  depending on the location of the ptr, the outcome of brk-shrink is
-> -  nondeterministic.
-> -
-> -
-> -Additional notes:
-> -=================
->  As Jann Horn pointed out in [3], there are still a few ways to write
-> -to RO memory, which is, in a way, by design. Those cases are not covered
-> -by mseal(). If applications want to block such cases, sandbox tools (such as
-> -seccomp, LSM, etc) might be considered.
-> +to RO memory, which is, in a way, by design. And those could be blocked
-> +by different security measures.
->  
->  Those cases are:
-> -
-> -- Write to read-only memory through /proc/self/mem interface.
-> -- Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
-> -- userfaultfd.
-> +   - Write to read-only memory through /proc/self/mem interface (FOLL_FORCE).
-> +   - Write to read-only memory through ptrace (such as PTRACE_POKETEXT).
-> +   - userfaultfd.
->  
->  The idea that inspired this patch comes from Stephen Röttger’s work in V8
->  CFI [4]. Chrome browser in ChromeOS will be the first user of this API.
->  
->  Reference:
->  ==========
-> -[1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
-> -
-> -[2] https://man.openbsd.org/mimmutable.2
-> -
-> -[3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
-> -
-> -[4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
-> +- [1] https://github.com/apple-oss-distributions/xnu/blob/1031c584a5e37aff177559b9f69dbd3c8c3fd30a/osfmk/mach/vm_statistics.h#L274
-> +- [2] https://man.openbsd.org/mimmutable.2
-> +- [3] https://lore.kernel.org/lkml/CAG48ez3ShUYey+ZAFsU2i1RpQn0a5eOs2hzQ426FkcgnfUGLvA@mail.gmail.com
-> +- [4] https://docs.google.com/document/d/1O2jwK4dxI3nRcOJuPYkonhTkNQfbmwdvxQMyXgeaRHo/edit#heading=h.bvaojj9fu6hc
 
