@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-342437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E263C988F13
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:35:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F7F988F14
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 13:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01462282318
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:35:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8958A1F211AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 11:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42147186295;
-	Sat, 28 Sep 2024 11:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4FF186287;
+	Sat, 28 Sep 2024 11:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="hOr8uGwP"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwZ+zTfs"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1482417DFE9;
-	Sat, 28 Sep 2024 11:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B615F2A1C0
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 11:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727523350; cv=none; b=uQwpBluUiyTrXk4Q5AN1e8jCWuP5PcbLSRed/P/mGr7Bi2uUZsLgNvi+pCy0Ai/11wTgi8IfwDdgHdHJpxHKVyc07QOIMjp5y/Xfs4OCAVjBT66C9zLnVY95JIVJqjr/aWk0Rm3eCmHDRgyRPR4z84nO8HG/qd+KrwueoCUW13M=
+	t=1727523401; cv=none; b=lTA+JZE+WSatBGG2MJWmV6vy4vTKuk5SnyPgH8oYFHFXC0rOp5WKsZu2NoD4hjDagTENh+m1C7igO6v7SX7df6upEo+UlfJClhIZaRuAWYBapDPOYxxIYL73ob+lGbzhE7yh45SoUyGdnfCs0/n8wdwA1jVlQp9Fudm4xJlBFGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727523350; c=relaxed/simple;
-	bh=5lMXHFtn0jEoSxgXj3YeXoWW7aLl3YwVJkTxD0aY9Cs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZIJ+a4swkOrN+cETCE7q6rbDZ/6NrEM9pYuv23AtOBIBQsgnzWVV+RAdOPicH7mBLpmhSkyKbVUx5kmpTHpc3X/Dtbs1Le+12YTj6sdtNQgIH0GYdVwwVFDEIjEgh253+Aacv+m8U5TPOEwlgHh9NdvegUvkCrf+udac5U3UTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=hOr8uGwP; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727523342;
-	bh=5lMXHFtn0jEoSxgXj3YeXoWW7aLl3YwVJkTxD0aY9Cs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hOr8uGwP1TTSe8m6DHD671x0tWa98Xb1hZRss8eWxYv6g9Qor63TrPpXcP7obYlms
-	 tnYPBRGIq97iQBkWPmB3s7CC+7GIGMuACO1mXtqtpUxkJGejBXFoxwfXM/eTXk5thW
-	 zhKZ8DTE2zeu6IpLnsRCeQyPyQD7WggQ0wQEK8QY7kl2j85U2hY5a7JiTo1pEeaqtE
-	 rUd7hS88Omfqk+EGtsd9N3rPTNnaookz4corTEJkQ9ssAfexpbTGU6jhX4kOkfNLae
-	 Qf6foZYIXejmOAM4PLp97DJd3F7qUZmnt3cEvAmTkTHYJbLxh8UgROs3DuwtdGhHqE
-	 4RTk5216pVDxQ==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XG4yk2Ys7z1Zbx;
-	Sat, 28 Sep 2024 07:35:42 -0400 (EDT)
-Message-ID: <2ca589bc-2a60-48ef-95a0-d9ee4a814dea@efficios.com>
-Date: Sat, 28 Sep 2024 07:33:37 -0400
+	s=arc-20240116; t=1727523401; c=relaxed/simple;
+	bh=I7r0OeNRYq7UEJ9WJscMDhm3+wDQOwmMd4aQSvLc2sI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mAao4OncBPnAWUYJezHLwJIrFYyt+WhPJlZdrPdvkUEybMIXhQ+uXZ7LhrQB7pkvvh0lQGfovTWQzP3G2lA6jaqfJzDXdCy6S8Qi4f0PXf9+73evBsypXsbAiU2jl/PL/0sEQcHIl9hCU4oGIH0iR+G2xtfPgTzVtzKC7xICdDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwZ+zTfs; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d50e865b7aso2283048a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 04:36:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727523399; x=1728128199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zs7gCtqY1hbtoA4ZCdcRbSkJC2v2a700bLuubXnIOkI=;
+        b=NwZ+zTfs8DYpgxVDsFl7enPQVTfC4tMhDOKAtSyczyy9D1xjMkoIaO44pgqWq3JAa9
+         dZ1cnyb0FO2R/31QY61aUlJIpaI4AexxrPMEdPIbEy77Dohwqtx9gQd/rniUZ+c4a/WZ
+         /E+8QASyAsAS6JAi5gGSBOXbgispMMtqwCGNtRt1zfP2viUI3wSBxXV/pMZx+V/yKjVA
+         QMWiPUBLeXJBJji1wsp336nr/Qpu3uylXnZKTi+7aWI0cvfyFwSUqGj6d3YfXMsCQ4Q9
+         OC7VrtGDFwRxA3aTtlsLfKoSZw6vtJQ3Peit/716nGl1ncKBOe+rdYgngdVxd8Bh4L9P
+         zz9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727523399; x=1728128199;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zs7gCtqY1hbtoA4ZCdcRbSkJC2v2a700bLuubXnIOkI=;
+        b=YcdbBulQkh4FZ86OKvuoFD7ofjdPQ6ez4yjHFkcX5X4WNA70YytqiQ7xUvLoAK1qwG
+         AQ6lNCNduvc7mlaGp9QCguqaMtHr47NwiEBcW38zoCc3LXRH194C9Eq1GJ40PyKd3FSa
+         ep0oHJyUdDp3/h5mRZgz9CJVa1CXpixaHboNZ+oa5ZmUj/5A387KfY9Hf4zbII1qqVe/
+         fJOsX2UltIi712p4DNdlaKjOfh0OdhW+RQ8NQyiO7Cy4tIFyg3DaTL72DYqzS1sZeGqf
+         0ROK/+s03hruJNEfFqFYPT+nFcJMmN9YpeZKcSBPNqlWxpq3DX3TSimaIARcBpA7OzG/
+         RMHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs+CNKm8qxghb2rqXT0wTnO5+2wbqt3uhgC/v0GsRXgjrT2op63teDOLUR8PZal75Bo98TcIWzbWqjtJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYcKgeRQJwCy5upKUjCqcohlLAP6dSJ9ZWbGbyxGh84VXfpF/O
+	9M5EmTSgQm48aE/irBPsO6W5HiZdJ3jD62ysrTjneSkFHZWUwFmP
+X-Google-Smtp-Source: AGHT+IEi2FzbvOuIK1FQQmV397I3vlvQXzbrRvDu4QC1gN5XfsT66lR1V2Wc/XxOFntGtfk2YqUI3Q==
+X-Received: by 2002:a17:903:186:b0:208:d6da:a22b with SMTP id d9443c01a7336-20b36cdb4e0mr101418725ad.23.1727523398864;
+        Sat, 28 Sep 2024 04:36:38 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264986eesm2969573b3a.38.2024.09.28.04.36.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 04:36:38 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Ching-Chun Huang <jserv@ccns.ncku.edu.tw>,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] printk: Fix signed integer overflow when defining LOG_BUF_LEN_MAX
+Date: Sat, 28 Sep 2024 19:36:08 +0800
+Message-Id: <20240928113608.1438087-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] hpref: Hazard Pointers with Reference Counter
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Alan Stern
- <stern@rowland.harvard.edu>, John Stultz <jstultz@google.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, rcu@vger.kernel.org, linux-mm@kvack.org,
- lkmm@lists.linux.dev
-References: <20240921164210.256278-1-mathieu.desnoyers@efficios.com>
- <db17633f-354d-428e-97c2-bcd455766c3a@huaweicloud.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <db17633f-354d-428e-97c2-bcd455766c3a@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-09-28 13:22, Jonas Oberhauser wrote:
-> Two more questions below:
-> 
-> Am 9/21/2024 um 6:42 PM schrieb Mathieu Desnoyers:
->> +#define NR_PERCPU_SLOTS_BITS    3
-> 
-> Have you measured any advantage of this multi-slot version vs a version 
-> with just one normal slot and one emergency slot?
+Shifting 1 << 31 on a 32-bit int causes signed integer overflow, which
+leads to undefined behavior. To prevent this, cast 1 to u32 before
+performing the shift, ensuring well-defined behavior.
 
-No, I have not. That being said, I am taking a minimalistic
-approach that takes things even further in the "simple" direction
-for what I will send as RFC against the Linux kernel:
-there is just the one "emergency slot", irqs are disabled around
-use of the HP slot, and promotion to refcount is done before
-returning to the caller.
+This change explicitly avoids any potential overflow by ensuring that
+the shift occurs on an unsigned 32-bit integer.
 
-> With just one normal slot, the normal slot version would always be zero, 
-> and there'd be no need to increment etc., which might make the common 
-> case (no conflict) faster.
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+Note: Build test only.
 
-The multi-slots allows preemption while holding the slot. It also allows
-HP slots users to keep it longer without doing to refcount right away.
+ kernel/printk/printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I even have a patch that dynamically adapts the scan depth (increase
-by reader, decrease by synchronize, with an hysteresis) in my userspace
-prototype. This splits the number of allocated slots from the scan
-depth. But I keep that for later and will focus on the simple case
-first (single HP slot, only used with irqoff).
-
-> 
-> Either way I recommend stress testing with just one normal slot to 
-> increase the chance of conflict (and hence triggering corner cases) 
-> during stress testing.
-
-Good point.
-
-> 
->> +retry:
->> +    node = uatomic_load(node_p, CMM_RELAXED);
->> +    if (!node)
->> +        return false;
->> +    /* Use rseq to try setting current slot hp. Store B. */
->> +    if (rseq_load_cbne_store__ptr(RSEQ_MO_RELAXED, RSEQ_PERCPU_CPU_ID,
->> +                (intptr_t *) &slot->node, (intptr_t) NULL,
->> +                (intptr_t) node, cpu)) {
->> +        slot = &cpu_slots->slots[HPREF_EMERGENCY_SLOT];
->> +        use_refcount = true;
->> +        /*
->> +         * This may busy-wait for another reader using the
->> +         * emergency slot to transition to refcount.
->> +         */
->> +        caa_cpu_relax();
->> +        goto retry;
->> +    }
-> 
-> I'm not familiar with Linux' preemption model. Can this deadlock if a 
-> low-interrupt-level thread is occupying the EMERGENCY slot and a 
-> higher-interrupt-level thread is also trying to take it?
-
-This is a userspace prototype. This will behave similarly to a userspace
-spinlock in that case, which is not great in terms of CPU usage, but
-should eventually unblock the waiter, unless it has a RT priority that
-really prevents any progress from the emergency slot owner.
-
-On my TODO list, I have a bullet about integrating with sys_futex to
-block on wait, wake up on slot release. I would then use the wait/wakeup
-code based on sys_futex already present in liburcu.
-
-Thanks!
-
-Mathieu
-
-
-> 
-> 
-> 
-> 
-> Best wishes,
->    jonas
-> 
-
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index beb808f4c367..ea0b2290e2d1 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -523,7 +523,7 @@ static struct latched_seq clear_seq = {
+ /* record buffer */
+ #define LOG_ALIGN __alignof__(unsigned long)
+ #define __LOG_BUF_LEN (1 << CONFIG_LOG_BUF_SHIFT)
+-#define LOG_BUF_LEN_MAX (u32)(1 << 31)
++#define LOG_BUF_LEN_MAX ((u32)1 << 31)
+ static char __log_buf[__LOG_BUF_LEN] __aligned(LOG_ALIGN);
+ static char *log_buf = __log_buf;
+ static u32 log_buf_len = __LOG_BUF_LEN;
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.34.1
 
 
