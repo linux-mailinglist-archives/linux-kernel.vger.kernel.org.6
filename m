@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-342569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8F798906F
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:30:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A41989071
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 18:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1151F21E51
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:30:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3591F21FF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 16:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40692143895;
-	Sat, 28 Sep 2024 16:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF15142659;
+	Sat, 28 Sep 2024 16:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrQJx65O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YwH2hECF"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9270A5FEE6;
-	Sat, 28 Sep 2024 16:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1274E78276
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727540992; cv=none; b=gqsIRQzL33xN4xZW2y6ygH/194UV5+bQylMmsZd+6Bz2wWFmOe9PTWpB34ol2sH/DQoQqTPVk+5Cl4eh++CrW2P6PYFtL/7cpGXFgLrSokojl/fHk81RWmgAmlhAPZYr+NijXdI4DIENeWWeeIjgBZLJRJAy0BJsbISr7UxvXos=
+	t=1727541039; cv=none; b=n8XLxhJNn84cxl5cHeDRIJ9SeAhO4vrPmiaHc8Ct7rcpsXsVcKZxTObU8dgA8v9LW4EVoNO4qHZ4L/nuWNxPDfkelNCmM7KuoyUfpH30s5lgutr4dL6rwQusqniFTl846MMw+Kv1WWTwYDjSts+ydz19zBYMsVCG9xu969GgbjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727540992; c=relaxed/simple;
-	bh=f7It2CatrjhmD2pcjpPk4oE/AIT6Ex9NUsQxqsMgh0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bzCKJjzKC1SaWfkvbIMs2Oq3uNg7WbxDuih3fMurtEECNl9SC/IFVZLqsr1GEydBOFSNfmnkkv4bFTSoHtXY0IZRLba+vyN+7JnAKZSeDYFoLjDjOcs15wiGPfDpCWIae/8jgJ3hSzfzj1IzIYSQAXhafVZODY2popoSQG9bq44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrQJx65O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31187C4CEC3;
-	Sat, 28 Sep 2024 16:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727540992;
-	bh=f7It2CatrjhmD2pcjpPk4oE/AIT6Ex9NUsQxqsMgh0c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZrQJx65OhK6f12Q23BR5WzIdCRCFiUu3mSVHZSSFMWrFkhe0RQCly7Y1B9jzzG3Sd
-	 xsUxCx6Z2qXOiWudsogTHV6pTkE82r92WR4qkabGM5+106uENLSe7uhYtg9T950ita
-	 x/S9wQ9XGvtXkNRsEVcIumeF+yoF2t5CjGdmT92oW+uZiEieuXJm9RPZbVZCVsIl3S
-	 j7a5RI2+MdMYqRr4Qgo7dcHntvLcNjR9GBdu73mOCeIoUxTpiODFqkRA8ZXOGAURed
-	 H8CG9dRgrVzAunPkiyvyx585N1qEtXjlOR9/zqzG78cY1Ap8NQlP8YhK29p52DJLD1
-	 1pHWUhT7XnLUQ==
-Date: Sat, 28 Sep 2024 17:29:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Michael Hennerich <Michael.Hennerich@analog.com>,
- linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH 0/4] iio: adc: use scoped device_for_each_childe_node()
-Message-ID: <20240928172944.10da3b60@jic23-huawei>
-In-Reply-To: <20240926-iio_device_for_each_child_node_scoped-v1-0-64ca8a424578@gmail.com>
-References: <20240926-iio_device_for_each_child_node_scoped-v1-0-64ca8a424578@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727541039; c=relaxed/simple;
+	bh=9v5LeD/VBpgdLkqY4q80UQk5vs5hnLeoXnybcXxouKI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AtCviU6lYy4+c0qocwtXeGhAK/4oHhpzIPSZIl0MrdXYkxjpbvIIlLsCU6/fXHERP9YWcOnoYX8qrRQZvPhBUUw94yksSfgneQSwA+p6mfeDpqTM4qx3V4y21K83C1IxCjPQUmQP7R52bdTQ5SC66YE5PqjoQ35uc0NQa3wqHgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YwH2hECF; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c5c3a1f474so3526186a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727541035; x=1728145835; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yRdR8JrFJlqZaxiC8ock0OkPKQarzgTETJ8XRVUeN7E=;
+        b=YwH2hECFpdfS1PC5LYAKW4LaBzXuRoCWQ0xOV/xYyKA0ljs0RWlHC4Ezsv4/u4C76W
+         KhSLVqCbhU4zbGdoXP7uC7zIHpRVXYvHRrBfgDcLFvqH07kzyzsiyrL1vD8XPxY/ASw3
+         jpc2SfCLYbFhhEwwQ91xrVNtoOOHBW9nKxrdQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727541035; x=1728145835;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yRdR8JrFJlqZaxiC8ock0OkPKQarzgTETJ8XRVUeN7E=;
+        b=hr/Ibve6e8PRqYSfsgVoFeCEiE/M+zluqxwHMxqaofpcapzjKNGrb2fpR5qC+DctWN
+         dkbGIcuzkISSrqrjBNy0PXBpJRQotuZt/lNBhmkpc4QXN2NehJd8puEm5gTTTXyYaiw2
+         w2JHRhQwZs3MpQosrPyS/uc4P+VF6txcUkS3gUmVU9/qABpXh6gG4iWTOVJmyk9iLZMH
+         c2IozQ7RvWnN8ClxvYZY7nEtKDd6zqSTQcanu67FoQTm2oABDqxlfq9xkYngrb5FKu4l
+         XN1eELp4WTSXSEuRjGWLo+jGCnm7QyJwWMWHETbHWHlt1o8xoP1EnqDzBg+Zg7yuPZIW
+         6ulA==
+X-Gm-Message-State: AOJu0YzbUKep6wqVjLy77PluxC2INs1jyIhWg6r8+QAwGT2vFrr1dk3k
+	f99injVMcqwtzbT+KFTk7/UBVm6rdFKBj1iyo9KaSjQdHOhawIghNy8LwVClZYjfUu8q2VZqW7l
+	XkhRnfA==
+X-Google-Smtp-Source: AGHT+IF1KYKqCg8UuyvcdcY+UKCnpSYvPpnL3FqJDi8fu8Dh3G3kpg88yP4J5wYZp3kIOnAcVvWfbQ==
+X-Received: by 2002:a17:906:794d:b0:a7a:9ca6:527 with SMTP id a640c23a62f3a-a93c48f0dd1mr786752466b.8.1727541035190;
+        Sat, 28 Sep 2024 09:30:35 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c5a0dsm266402666b.76.2024.09.28.09.30.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 09:30:33 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a90188ae58eso378843966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 09:30:33 -0700 (PDT)
+X-Received: by 2002:a17:906:da89:b0:a8d:3705:4115 with SMTP id
+ a640c23a62f3a-a93c4948a64mr702847366b.32.1727541033332; Sat, 28 Sep 2024
+ 09:30:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240928153302.92406-1-pbonzini@redhat.com>
+In-Reply-To: <20240928153302.92406-1-pbonzini@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 28 Sep 2024 09:30:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiT0xehDuhtcut3PFeYnQW2H6Hx9O+1vkkFJHLKWT57Fw@mail.gmail.com>
+Message-ID: <CAHk-=wiT0xehDuhtcut3PFeYnQW2H6Hx9O+1vkkFJHLKWT57Fw@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM/x86 changes for Linux 6.12
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 26 Sep 2024 18:08:36 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+On Sat, 28 Sept 2024 at 08:33, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> Apologize for the late pull request; all the traveling made things a
+> bit messy.  Also, we have a known regression here on ancient processors
+> and will fix it next week.
 
-> The device_for_each_child_node() macro requires calls to
-> fwnode_handle_put() upon early exits (break/return), and that has been a
-> constant source of bugs in the kernel.
-> 
-> This series switches to the more secure, scoped version of the macro
-> in the IIO subsystem, wherever the loop contains error paths. This
-> change simplifies the code and removes the explicit calls to
-> fwnode_handle_put(). In all cases the child node is only used for
-> parsing, and not assigned to be used later.
-> 
-> The straightforward uses of the loop with no error paths have been left
-> untouched, as their simplicity justifies the non-scoped variant.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-All look good to me.
+Gaah. Don't leave it hanging like that. When somebody reports a
+problem, I need to know if it's this known one.
 
-I'll be rebasing on rc1 anyway, so there is plenty of time for any
-other reviews to come in.  In meantime I've queued these up on the testing
-branch of iio.git.
+I've pulled it, but you really need to add a pointer to "look, this is
+the known one, we have a fix in the works"
 
-Thanks,
-
-Jonathan
-> ---
-> Javier Carrasco (4):
->       iio: adc: qcom-pm8xxx-xoadc: use scoped device_for_each_child_node()
->       iio: adc: qcom-spmi-vadc: use scoped device_for_each_child_node()
->       iio: adc: sun20i-gpadc: use scoped device_for_each_child_node()
->       iio: adc: ad5755: use scoped device_for_each_child_node()
-> 
->  drivers/iio/adc/qcom-pm8xxx-xoadc.c |  8 +++-----
->  drivers/iio/adc/qcom-spmi-vadc.c    |  7 ++-----
->  drivers/iio/adc/sun20i-gpadc-iio.c  |  7 ++-----
->  drivers/iio/dac/ad5755.c            | 11 +++--------
->  4 files changed, 10 insertions(+), 23 deletions(-)
-> ---
-> base-commit: 92fc9636d1471b7f68bfee70c776f7f77e747b97
-> change-id: 20240926-iio_device_for_each_child_node_scoped-cb534e6f5d9b
-> 
-> Best regards,
-
+             Linus
 
