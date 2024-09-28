@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-342283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FDE988D15
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:04:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39239988D17
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 02:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1031F21FE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712F51C211B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Sep 2024 00:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18974BA42;
-	Sat, 28 Sep 2024 00:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D34cNR4s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A925B4A0C;
+	Sat, 28 Sep 2024 00:07:54 +0000 (UTC)
+Received: from mail115-80.sinamail.sina.com.cn (mail115-80.sinamail.sina.com.cn [218.30.115.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FFDB641
-	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7D4800
+	for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 00:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727481887; cv=none; b=Zy9MI0qcej9IT3YbpOvojuUo1j4hsMPkuOQwM7P90iWuDNYN2H4jW+87rQgPpnva8acE94GYMDTjzZPGAXFuYt8sADNPeKDOaZkUVXNu5hxXsBkdINolzgNCB8rUefesTGL8UkQgWdRxj53DyjvIrZaWv7Dvex40sXhPob3fSUk=
+	t=1727482074; cv=none; b=CxmehRiiVNWQnduTyCGSGcstxiGVClJO3OfbHwehgnnwSXwebp9S7i4BqIL46Zq/yOHOLTs6uTHP1bGjgqGW4cmmTTWgjS0WW5ep7BTiNQvS7EUChDLsnPpwI3sqShSLlsD0+lHat4NR06hDBMC4gd5HcDVDZbm4hlcl1uA3f24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727481887; c=relaxed/simple;
-	bh=qPSr+bYFOiKJ4gHsMYwbYDfuwX5ijfbCguA7R/0Wv5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=La4apmRrHi+OV/ZsedjI1hHy48Hnd1k9XQZT+n/oPV7XCl9reNe9uEuRKHiUTQZ2gZrfbVgbkF2KkA1DqXpCLHTDWcgqjYuYPVc/FPXJnNP/Y6yb+C/h7EZmWgq6c+YzYxRKaFOfgkFrLEW0BRJB41xoQ8rWu6R97PC0X8OvnBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D34cNR4s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC7DC4CEC4;
-	Sat, 28 Sep 2024 00:04:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727481887;
-	bh=qPSr+bYFOiKJ4gHsMYwbYDfuwX5ijfbCguA7R/0Wv5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D34cNR4sf4UwJknHseHjhLyoV0kwhoggoQqLHUVHAFtH032CCLmGCpKL0ra9tGwZ7
-	 3EsvFCfFZHEmox0hpTCjxe2zBUcS1T1R1FyBci7bcGJ5bQlkmhmkd2g3JkTfajAcOB
-	 MKz8Vb0Fkwn6ixAo2uQZp3SArxNJGVyparG83at8A8kP1QtNrad+SsfnLd4Hq7F/Xg
-	 iM7fkI9UwmlB4bAXz1EWGrBb8+aUWgZkZIO/LObn9IFpD8jtm46QBiK0rYbNWrngYE
-	 r8Eqsk4VQDZrGDUhLq44w4W99ODPBMZ1zpgSNN6EPAk88FRNQhBsUz7m2raHAegLeh
-	 oiqtCMNc+45WQ==
-Date: Fri, 27 Sep 2024 17:04:44 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	andrew.cooper3@citrix.com, jose.marchesi@oracle.com,
-	hjl.tools@gmail.com, ndesaulniers@google.com,
-	samitolvanen@google.com, nathan@kernel.org, ojeda@kernel.org,
-	kees@kernel.org, alexei.starovoitov@gmail.com,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
-Message-ID: <20240928000444.grd3jxltzoiihsz3@treble>
-References: <20240927194856.096003183@infradead.org>
- <20240927194925.069013308@infradead.org>
+	s=arc-20240116; t=1727482074; c=relaxed/simple;
+	bh=TDLqSD+lw4KY1+l7lU2eWWFIt//CZcprmLjdRyTXGTA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oi44P9LpDlwDBhop0ksnGsD3SGvQ9LIcWceS+L3pQEpc2J8OdQRvVL/xZhFtm0CDK8LL5W2mac4yjqwxE+VLM8MRM36Xugyfz3K8MUmNwP9AeOZUH7PyNdXl2qHD+8ouk7QqReVRPvTfGmcbjIvznNdDeDojie1u7n8n9jCxn/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.8.191])
+	by sina.com (10.185.250.23) with ESMTP
+	id 66F748AB000065D5; Sat, 28 Sep 2024 08:07:09 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 8986698913264
+X-SMAIL-UIID: 7D19F44053FF4BA6B5F3BEF716CC94AF-20240928-080709-1
+From: Hillf Danton <hdanton@sina.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: syzbot <syzbot+05f9cecd28e356241aba@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] INFO: task hung in new_device_store (5)
+Date: Sat, 28 Sep 2024 08:06:57 +0800
+Message-Id: <20240928000657.1247-1-hdanton@sina.com>
+In-Reply-To: <CANn89iJMHqg4e_tErTERx=-ERXbA+CRbeC0chp9ofqANwwjhLA@mail.gmail.com>
+References: <66f5a0ca.050a0220.46d20.0002.GAE@google.com> <CANn89iKLTNs5LAuSz6xeKB39hQ2FOEJNmffZsv1F3iNHqXe0tQ@mail.gmail.com> <20240927110422.1084-1-hdanton@sina.com> <CANn89iLKhw-X-gzCJHgpEXe-1WuqTmSWLGOPf5oy1ZMkWyW9_w@mail.gmail.com> <20240927114158.1190-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240927194925.069013308@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 09:49:03PM +0200, Peter Zijlstra wrote:
-> Pretty much every caller of is_endbr() actually wants to test something at an
-> address and ends up doing get_kernel_nofault(). Fold the lot into a more
-> convenient helper.
+On Fri, 27 Sep 2024 13:54:59 +0200 Eric Dumazet <edumazet@google.com>
+> On Fri, Sep 27, 2024 at 1:44 PM Hillf Danton <hdanton@sina.com> wrote:
+> >
+> > On Fri, 27 Sep 2024 13:24:54 +0200 Eric Dumazet <edumazet@google.com>
+> > > I suggest you look at why we have to use rtnl_trylock()
+> > >
+> > > If you know better, please send patches to remove all instances.
+> >
+> > No patch is needed before you show us deadlock. I suspect you could
+> > spot a case where lockdep fails to report deadlock.
 > 
-> Note: this effectively reverts commit a8497506cd2c ("bpf: Avoid
-> get_kernel_nofault() to fetch kprobe entry IP") which was entirely the
-> wrong way to go about doing things. The right solution is to optimize
-> get_kernel_nofault() itself, it really doesn't need STAC/CLAC nor the
-> speculation barrier. Using __get_user is a historical hack, not a
-> requirement.
+> Please try to not educate maintainers about their stuff.
+> 
+Is this the typical dude style in Paris when showing deadlock?
 
-But these patches don't actually optimize get_kernel_nofault()?
+> lockdep is usually right. And here there is an actua syzbot report.
 
--- 
-Josh
+The word maintainer is abused in this case.
 
