@@ -1,183 +1,130 @@
-Return-Path: <linux-kernel+bounces-342730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547E7989232
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAE7989237
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937EF285D74
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52188285B2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD88F6B;
-	Sun, 29 Sep 2024 00:54:52 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A2D8F6B;
+	Sun, 29 Sep 2024 00:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyzTwTTP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAB3469D;
-	Sun, 29 Sep 2024 00:54:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3E469D;
+	Sun, 29 Sep 2024 00:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727571292; cv=none; b=M/PNxDf/bgVbr3WEe6N6tv29l5KNXGBUUa47k49USwqrc4s4D4wWLeW9CFY75CQhmvdnhu0/o5z8PovfTtNV5gY6EgquHLsa9Pw2ftyh44TiyCoz5wHiJ5foBPKHY5OEVN2v5LacJAWgl4dcdYUyCgWcg08HeJdp58YpIKTHhMA=
+	t=1727571431; cv=none; b=jnpwz0XAnzluUJ4Aij+Q1ldZHO0zisneD75Umg1+BxJd2KIFroMcliHcr5/8BqB/wXv2QaC7Kt3wKqLPwqsC64qQshvyBE7V6uOBPznTs19Cen83xeGtjGIB4mUn3UWhDcZkR2cZh7c7MJIVu4eNEYz7YZ5HYFvPcXKNqPcoTCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727571292; c=relaxed/simple;
-	bh=2B/0qFrZ4MvrYvu29+Wu+zlHj4pQsCk+raaWBiQzTm4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dtpSrbaVowVBE9AdiZ0TtJl+4eHKDyUFidTcLKOjLATs6JTCM3W/AC0NQ8BXg1ROHVcOhb6hHRVKM7+miSxAN52JBet76d6wHgpittPx4M6qAi6flxUeuwze/ffs4t6JlmNdHkZsloFAnr3MIVvk5KiX3MJ5Gsz/p/UQ/YiI+yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XGQhJ2vq7z4f3jdn;
-	Sun, 29 Sep 2024 08:54:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C88A21A0B1F;
-	Sun, 29 Sep 2024 08:54:40 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP4 (Coremail) with SMTP id gCh0CgC3N8ROpfhmE0uNCg--.34615S2;
-	Sun, 29 Sep 2024 08:54:39 +0800 (CST)
-Message-ID: <1222cf96-0382-4396-bb2d-475615070ccf@huaweicloud.com>
-Date: Sun, 29 Sep 2024 08:54:38 +0800
+	s=arc-20240116; t=1727571431; c=relaxed/simple;
+	bh=NiLVv74q1BE9keWXYGZl2tbxpA/ZRjXFnF8/A2XkZTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CP0Pk6Y+bYewhLQ+xoFSI4szWuCMqb9s/PJnPpdC8anavOZTfuq5fWKSidUMxvDgsyj8usHMFiJJWvivpYqtMRIsO6rVQpDIEXcarWkCwalj+UJl+aliWFBgH1PwREOlJ7MOvsids6cPeYD3/suSlutpQ7Fkmk+HAeOHsmd9MKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyzTwTTP; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727571430; x=1759107430;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NiLVv74q1BE9keWXYGZl2tbxpA/ZRjXFnF8/A2XkZTI=;
+  b=IyzTwTTPOZULmB18dA0ukleP2H9M9H9fMh6eWwxRLV9wF/BOosXr1SLl
+   xxobyB/Y5XwGcCD7Z8VP00TVN9cOcVMb9C9Tgnkx7FuZfflYjtBFAAm/d
+   CHP4I7VrjuZZwrU9KYxbMEleE1hNtJJ71GyDWtpV0oSh2JtUrm/au5gm3
+   TcUY15sAdHI5Uy/vJsRp9yyChhz7OmkjBje3Re378CYfhRWhuDMH0gXF3
+   hgwZE9DMcx70tU8ZqMpI9FmzdtDo0HiDpRsZJWPA//nZn5juu2o4mJicp
+   jf3pyFkeJlw0Pf8VV9D7PgA4cJDF367CKO5MJgsW5Hir24i4vTKo4TAYC
+   w==;
+X-CSE-ConnectionGUID: q8TUixXSQWSz6xiuXzNo5A==
+X-CSE-MsgGUID: KWSOFkLIQqaaMqaGykgP1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="38044598"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="38044598"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 17:57:09 -0700
+X-CSE-ConnectionGUID: /wU22n8jQGS3lz6zq1CGAA==
+X-CSE-MsgGUID: p+KE2/Q7Sle4Xk2MbDO4IQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="73068033"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 28 Sep 2024 17:57:05 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1suiFD-000Nmr-17;
+	Sun, 29 Sep 2024 00:57:03 +0000
+Date: Sun, 29 Sep 2024 08:56:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Werner Sembach <wse@tuxedocomputers.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, bentiss@kernel.org,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, pavel@ucw.cz, cs@tuxedo.de,
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO
+Message-ID: <202409290814.OGfHXRw7-lkp@intel.com>
+References: <20240927124152.139099-2-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/2] perf stat: Increase perf_attr_map entries
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240925135523.367957-1-wutengda@huaweicloud.com>
- <20240925135523.367957-2-wutengda@huaweicloud.com>
- <ZvTgHKl4eZvpyVml@google.com>
- <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
- <ZvbnePGVmbWF0fAF@google.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <ZvbnePGVmbWF0fAF@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3N8ROpfhmE0uNCg--.34615S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4DZFW3uFW8Aw4kXr1xGrg_yoW5tr1rpF
-	W8CF9FyF45Xr1UGw1Yv3ZIvF9Ygw45Wr45Wr13t3y0yF1qgr13KFWIqr4Y9FyxtrZ2yryY
-	qw4jqrW7ua90vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927124152.139099-2-wse@tuxedocomputers.com>
 
+Hi Werner,
 
+kernel test robot noticed the following build errors:
 
-On 2024/9/28 1:12, Namhyung Kim wrote:
-> On Fri, Sep 27, 2024 at 10:35:54AM +0800, Tengda Wu wrote:
->>
->>
->> On 2024/9/26 12:16, Namhyung Kim wrote:
->>> On Wed, Sep 25, 2024 at 01:55:22PM +0000, Tengda Wu wrote:
->>>> bperf restricts the size of perf_attr_map's entries to 16, which
->>>> cannot hold all events in many scenarios. A typical example is
->>>> when the user specifies `-a -ddd` ([0]). And in other cases such as
->>>> top-down analysis, which often requires a set of more than 16 PMUs
->>>> to be collected simultaneously.
->>>>
->>>> Fix this by increase perf_attr_map entries to 100, and an event
->>>> number check has been introduced when bperf__load() to ensure that
->>>> users receive a more friendly prompt when the event limit is reached.
->>>>
->>>>   [0] https://lore.kernel.org/all/20230104064402.1551516-3-namhyung@kernel.org/
->>>
->>> Apparently this patch was never applied.  I don't know how much you need
->>> but having too many events at the same time won't be very useful because
->>> multiplexing could reduce the accuracy.
->>>
->>
->> Could you please explain why patch [0] was not merged at that time? I couldn't
->> find this information from the previous emails.
-> 
-> I guess it's just fell through the crack. :)
+[auto build test ERROR on drm-misc/drm-misc-next]
+[also build test ERROR on drm-tip/drm-tip linus/master v6.11 next-20240927]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Hope it won't happen again. 😆
+url:    https://github.com/intel-lab-lkp/linux/commits/Werner-Sembach/platform-x86-tuxedo-Add-virtual-LampArray-for-TUXEDO/20240927-214157
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20240927124152.139099-2-wse%40tuxedocomputers.com
+patch subject: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+config: x86_64-randconfig-161-20240928 (https://download.01.org/0day-ci/archive/20240929/202409290814.OGfHXRw7-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290814.OGfHXRw7-lkp@intel.com/reproduce)
 
-> 
->>
->> In my scenario, we collect more than 40+ events to support necessary metric
->> calculations, which multiplexing is inevitable. Although multiplexing may
->> reduce accuracy, for the purpose of supporting metric calculations, these
->> accuracy losses can be acceptable. Perf also has the same issue with multiplexing.
->> Removing the event limit for bperf can provide users with additional options.
->>
->> In addition to accuracy, we also care about overhead. I compared the overhead
->> of bperf and perf by testing ./lat_ctx in lmbench [1], and found that the
->> overhead of bperf stat is about 4% less than perf. This is why we choose to
->> use bperf in some extreme scenarios.
-> 
-> Ok, thanks for explanation.  I think it's ok to increase the limit.
-> 
-> Thanks,
-> Namhyung
-> 
->>
->>   [1] https://github.com/intel/lmbench
->>
->> Thanks,
->> Tengda
->>
->>>
->>>>
->>>> Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
->>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
->>>> ---
->>>>  tools/perf/util/bpf_counter.c | 8 +++++++-
->>>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
->>>> index 7a8af60e0f51..3346129c20cf 100644
->>>> --- a/tools/perf/util/bpf_counter.c
->>>> +++ b/tools/perf/util/bpf_counter.c
->>>> @@ -28,7 +28,7 @@
->>>>  #include "bpf_skel/bperf_leader.skel.h"
->>>>  #include "bpf_skel/bperf_follower.skel.h"
->>>>  
->>>> -#define ATTR_MAP_SIZE 16
->>>> +#define ATTR_MAP_SIZE 100
->>>>  
->>>>  static inline void *u64_to_ptr(__u64 ptr)
->>>>  {
->>>> @@ -451,6 +451,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
->>>>  	enum bperf_filter_type filter_type;
->>>>  	__u32 filter_entry_cnt, i;
->>>>  
->>>> +	if (evsel->evlist->core.nr_entries > ATTR_MAP_SIZE) {
->>>> +		pr_err("Too many events, please limit to %d or less\n",
->>>> +			ATTR_MAP_SIZE);
->>>> +		return -1;
->>>> +	}
->>>> +
->>>>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
->>>>  		return -1;
->>>>  
->>>> -- 
->>>> 2.34.1
->>>>
->>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409290814.OGfHXRw7-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: wmidev_evaluate_method
+   >>> referenced by tuxedo_nb04_wmi_util.c:26 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_util.c:26)
+   >>>               vmlinux.o:(__wmi_method_buffer_out)
+--
+>> ld.lld: error: undefined symbol: __wmi_driver_register
+   >>> referenced by tuxedo_nb04_wmi_ab_init.c:86 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab_init.c:86)
+   >>>               vmlinux.o:(tuxedo_nb04_wmi_ab_driver_init)
+--
+>> ld.lld: error: undefined symbol: wmi_driver_unregister
+   >>> referenced by tuxedo_nb04_wmi_ab_init.c:86 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab_init.c:86)
+   >>>               vmlinux.o:(tuxedo_nb04_wmi_ab_driver_exit)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
