@@ -1,196 +1,228 @@
-Return-Path: <linux-kernel+bounces-343096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9896A9896C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:24:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DE69896C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C7B91C2168B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4941F2260F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653715466B;
-	Sun, 29 Sep 2024 18:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D9A2433B5;
+	Sun, 29 Sep 2024 18:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="fDpG0mqD"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNfGnr3S"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D52942ABE
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFF62263A;
+	Sun, 29 Sep 2024 18:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727634229; cv=none; b=svrQXT4saD22/ZucsyyOetKyW5gnElHDDP6JQOTR4DALSEjz7WUuz7oOy7dBEcLtR10Ygx2D0pTMb2cKmOHJx4skuDr5O9NP8HyOZ6zwU5ZD+usdzJF0vzwobdjCJB8JGaEOZ+ne95IuJmamnaZ3lJcVY26DhaZfxONVuPnMYoQ=
+	t=1727634423; cv=none; b=AHL+oQgTMHxCetcmC8vDnhlkDgTr1gCzdMQJmc7RyScXzNvFpNVIerR9xxWVtzvkk0rZw/f7Y8gglLo8OcULud7g9HfiN0NYK4BKwqPZZB6ktE60WxTgPhGcPkGqSMIzyhVQ3p5SW7aPzBVOSqZaC28EdH0HXfKrb2jp/3nd640=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727634229; c=relaxed/simple;
-	bh=EaeEbDkfqftHCixGBXyCEafafRodMqBM5hSAt75SEGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GLSGtqfXNxSPy279nVK/si4cG3ybPqBwtjVcSD1DRkeXfN5WB1X87DjlNqHc8yMT4DpjDcZXCT7QmLxcPdSTDm6y1b4EnMa0Sn2GyUEv5o7E5+NnozbmkYKr5Yea5xsnq3U3Amo3vBOoaaZaV8I41t7FUQJegglGWPWGmVz/OAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=fDpG0mqD; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 8197F3F197
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727634221;
-	bh=okf6FMMM+QSBRqpYSwuMmX++XMeaDITgAwFtVVXn02Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=fDpG0mqDLSfRmx3Uu72uXTvQqcS9F3sR3JR9kczFuIsZxwEUygU7qc5aY7leohfDp
-	 dDMAl0mbwBHei5WzdaKn8Ij/SBI7+0XgcS2yLDANgg/qYUHSY63oniAa/AaVjRDZBX
-	 CBlv8lC2W6TrDJFzXyiyctL4+KPCIfbmNrp8Zdbtbgz1UzKCPKRcyQBCBmG2bdrUHz
-	 xQdF3ojINdOoFv/hkhi5u8RDyGOfOwPvjKsDHGelGLbxceYT8SgTwbFUgu+gg0RS9y
-	 XmigwiEuAkmEotJvvWlJTqsEt5Ra9LCkRhAXpTtUspwN9lLl0DOCu9OcAKb8XzmHKu
-	 4RnjHDGN5WH3g==
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4a3b1957233so249181137.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 11:23:41 -0700 (PDT)
+	s=arc-20240116; t=1727634423; c=relaxed/simple;
+	bh=4HgMcXMyt1xd9y+Q34ms0nKju3WVpvwFRzIISoIbgWQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U3ib1SYl3PqQk4Qf/DXIHkBGuVBL/x1O2UowsGgyCZY7Fauv7t39nONfngjTIzeKnQ3JmoKeUmkKUyErTVzO+FMEvDzSCh75dwmiuc/3tJkoLfF8e6QUhNGjmyLlC0Fq3SK8raKcRHPsrZnFH7BU0jvnGOrIiy6r0Pnclj8stY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nNfGnr3S; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ccc597b96so2358927f8f.3;
+        Sun, 29 Sep 2024 11:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727634420; x=1728239220; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YeT6eEVeYlnUyZhHd3J725yc68DlQRaIQmtuB3sz8Ds=;
+        b=nNfGnr3SRDtDVSQ1CvfojWSlU6BK3nWySpXIBod4DvD0WH2mYJfuTLoJeMsqwmw73d
+         bjARBoWPiVV776F2TvDUGpuP4EVas7sronb3P1PNhsQQaRwNou8gu4y5vdSDKVzWQTNw
+         z6en08lyYD8UhP/9KvUHQgjAhW1U/DYT5ftIkhnmgotyLyjxomtNeqgWIBQur9rNsVlI
+         k5bhxe3BMjj8HZdAKdzpKWIe5hNTy9MIE+WW3lxlMiFFDKN5nc+K6j2HAMyLOoOdEXub
+         h9+egoe1/ulhvBPPc21xxuozBs1FcpyaCUeryHzgcbHxrjzjjZcUxKUvRyUevQPya9Zp
+         sSAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727634220; x=1728239020;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=okf6FMMM+QSBRqpYSwuMmX++XMeaDITgAwFtVVXn02Y=;
-        b=bVEBQ8h190t2aoOUFrEDKeNoxlOXpc7EmjAd9NDdDs1Zh6xyESfLJpta90wKfZaK+L
-         GUOtd/wFXH4WkyXaIVGPviLfMvfLud/nLFb9WhM6AaRw1dQlX59XefFXIvlXxvLxfZVz
-         eW2BxNh2C1IvGnILKh8s9YbW7Yw18E+9EiuFBL6Cbau7pIzXrWwNi23kU3fLA1ZZS8Wg
-         cCHqypmo84KlQCV8r7Xfu3Lxa7QKmkzVJ3s0eBN9uztxGrDwa+dEaXmGItM1tVvv2I1U
-         gsQUd5UuBVw/LlKJoL6mmomu6yy/U3elJYC1DYAf6pu8bAcA9R/mmutSQAnaUOxV2g0I
-         Bk9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsDkKYMyHzmAYeB4iF7bSEAOuIZ0+ioCnlmLl2f02Ac1IZzg6Qw7SwI+QaEbndj5JLxr9pulN5+WDvKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPMjXjemDKDtq19mq4w2Xe5m7k3eiYjSDWW0AeplvxeuZW11qJ
-	Tek/DaeVTmCTIHedklfCc9d8CIyfo0c6bfErfZnaXDF4I2ClJvcgLwtx2/RH4/TBw8mK7+eanLJ
-	IbWiFObSKd8087Ch6hMrFYNMwS0oeipO9uF/UNgfAXh2+GS9VeZpsSObaPziXFX+1j67GomeemF
-	Hq/qFuj4DNA+rGnINqSphpTB/+7RQs7+PzBv3k9Mh6Oe8CEZJ8vjXs
-X-Received: by 2002:a05:6102:3912:b0:4a3:bb4d:1965 with SMTP id ada2fe7eead31-4a3bb4d294dmr1008912137.28.1727634220310;
-        Sun, 29 Sep 2024 11:23:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeieKktbBVAoln7mvsJyimo6C4kSg2QAt1DTPZnW60fFczXHi2RIRQWDMAhbz0rX/GbM/Gp7ua5YQ7uLAy6bE=
-X-Received: by 2002:a05:6102:3912:b0:4a3:bb4d:1965 with SMTP id
- ada2fe7eead31-4a3bb4d294dmr1008911137.28.1727634219979; Sun, 29 Sep 2024
- 11:23:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727634420; x=1728239220;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YeT6eEVeYlnUyZhHd3J725yc68DlQRaIQmtuB3sz8Ds=;
+        b=tnqpTyTVSOfwDjio932+DdTBF4EdE6gyE/l28XV5quqOGChlfEMaGVQMpsL2+PTTbl
+         Qxpx9xQUXNN2zdpK4T5ZztwD8wYmbKcPmyVIXB46GETtoP6gfiiSaJi7JSPToZqOklLG
+         ERuFgkDcPUc9OlMFwItPCvnRzouOFEZPCBL98zOGyUhN5FfoD5zdUFIgdlVFy3lHMP3s
+         W0HgrGpjsJmnpuIeW37PIJT9Re88KSNTV2yDBQlOYS7Gh9PRs/JEBjJjrwBFhUJJYuxS
+         Y9kKynJy9IGLshpzMCN+h1m7hb837wEV3ftTZmc9i7YsPqxpGY6y+Ubp3Z4ChWZrdJQJ
+         /4+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV++WGFXWB35H3vZR5ZeNsf0a/6OEcusARzV7qd2wHBu8rQAVh8GQHHZJ9hFY1MBwBQ5L+xrSkwwdo=@vger.kernel.org, AJvYcCXgjzAa2Rf3J0BWFyMf6aVu9T1YCQFsGUFkysAj9C//SKCqzQfY7azj5pvrIaDhTUCMw3zOkuqfXULF6gQh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx290WMwKiV97hvYZRHCma3VDb7/dyiDXidMxGLgkphRmsUE95w
+	imMGm+cC+3irM1ZvV8xjUi5R4RiJSWlFgxQFpKNK9s+iLRnNjz01
+X-Google-Smtp-Source: AGHT+IGB9cqdwAHrsFDW2jX51mn52HKuIoqz+M7Bu/Uo1NIGvFY4UV2kCCpbbaFQ1Pyj7I9rEHlXKA==
+X-Received: by 2002:adf:cd0f:0:b0:37c:c830:3b6d with SMTP id ffacd0b85a97d-37cd5b10502mr6134023f8f.52.1727634419833;
+        Sun, 29 Sep 2024 11:26:59 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:df60:d786:cd5:d3c1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d42esm7394474f8f.14.2024.09.29.11.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 11:26:58 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sun, 29 Sep 2024 20:26:55 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, dan.carpenter@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: pressure: bmp280: Use char instead of s32
+ for data buffer
+Message-ID: <20240929182655.GB213331@vamoiridPC>
+References: <20240929112511.100292-1-vassilisamir@gmail.com>
+ <20240929112511.100292-3-vassilisamir@gmail.com>
+ <20240929181003.26abf543@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926161641.189193-1-aleksandr.mikhalitsyn@canonical.com>
- <20240929125245-mutt-send-email-mst@kernel.org> <CAEivzxdiEu3Tzg7rK=TqDg4Ats-H+=JiPjvZRAnmqO7-jZv2Zw@mail.gmail.com>
- <20240929134815-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240929134815-mutt-send-email-mst@kernel.org>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Sun, 29 Sep 2024 20:23:29 +0200
-Message-ID: <CAEivzxfX-H15e6Lt78F0_Rkp=g5QnmDH4Z3m8z7imNFaKcL6TQ@mail.gmail.com>
-Subject: Re: [PATCH] vhost/vsock: specify module version
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: stefanha@redhat.com, Stefano Garzarella <sgarzare@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929181003.26abf543@jic23-huawei>
 
-On Sun, Sep 29, 2024 at 7:48=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Sun, Sep 29, 2024 at 07:35:35PM +0200, Aleksandr Mikhalitsyn wrote:
-> > On Sun, Sep 29, 2024 at 6:56=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Thu, Sep 26, 2024 at 06:16:40PM +0200, Alexander Mikhalitsyn wrote=
-:
-> > > > Add an explicit MODULE_VERSION("0.0.1") specification
-> > > > for a vhost_vsock module. It is useful because it allows
-> > > > userspace to check if vhost_vsock is there when it is
-> > > > configured as a built-in.
-> > > >
-> > > > Without this change, there is no /sys/module/vhost_vsock directory.
-> > > >
-> > > > With this change:
-> > > > $ ls -la /sys/module/vhost_vsock/
-> > > > total 0
-> > > > drwxr-xr-x   2 root root    0 Sep 26 15:59 .
-> > > > drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
-> > > > --w-------   1 root root 4096 Sep 26 15:59 uevent
-> > > > -r--r--r--   1 root root 4096 Sep 26 15:59 version
-> > > >
-> > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonic=
-al.com>
-> > >
-> > >
-> >
-> > Dear Michael,
-> >
-> > > Why not check that the misc device is registered?
-> >
-> > It is possible to read /proc/misc and check if "241 vhost-vsock" is
-> > there, but it means that userspace
-> > needs to have a specific logic for vsock. At the same time, it's quite
-> > convenient to do something like:
-> >     if [ ! -d /sys/modules/vhost_vsock ]; then
-> >         modprobe vhost_vsock
-> >     fi
-> >
-> > > I'd rather not add a new UAPI until actually necessary.
-> >
-> > I don't insist. I decided to send this patch because, while I was
-> > debugging a non-related kernel issue
-> > on my local dev environment I accidentally discovered that LXD
-> > (containers and VM manager)
-> > fails to run VMs because it fails to load the vhost_vsock module (but
-> > it was built-in in my debug kernel
-> > and the module file didn't exist). Then I discovered that before
-> > trying to load a module we
-> > check if /sys/module/<module name> exists. And found that, for some
-> > reason /sys/module/vhost_vsock
-> > does not exist when vhost_vsock is configured as a built-in, and
-> > /sys/module/vhost_vsock *does* exist when
-> > vhost_vsock is loaded as a module. It looks like an inconsistency and
-> > I also checked that other modules in
-> > drivers/vhost have MODULE_VERSION specified and version is 0.0.1. I
-> > thought that this change looks legitimate
-> > and convenient for userspace consumers.
-> >
-> > Kind regards,
-> > Alex
->
->
-> I'll ask you to put this explanation in the commit log,
-> and I'll pick this up.
+On Sun, Sep 29, 2024 at 06:10:03PM +0100, Jonathan Cameron wrote:
+> On Sun, 29 Sep 2024 13:25:11 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > As it was reported and discussed here [1], storing the sensor data in an
+> > endian aware s32 buffer is not optimal. Advertising the timestamp as an
+> > addition of 2 s32 variables which is also implied is again not the best
+> > practice. For that reason, change the s32 sensor_data buffer to a char
+> > buffer with an extra value for the timestamp (as it is common practice).
+> > 
+> > [1]: https://lore.kernel.org/linux-iio/73d13cc0-afb9-4306-b498-5d821728c3ba@stanley.mountain/
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> Hi Vasileois.
+> 
+> I missed a purely semantic issue in previous versions :( 
+> 
+> A few other places where you can achieve the same effect with less code
+> and clear casting to correct types.
+> 
+> Jonathan
+> 
+> 
 
-Have done:
-https://lore.kernel.org/kvm/20240929182103.21882-1-aleksandr.mikhalitsyn@ca=
-nonical.com
+Hi Jonathan,
 
-Thanks, Michael!
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 78 ++++++++++++++++++------------
+> >  drivers/iio/pressure/bmp280.h      |  5 +-
+> >  2 files changed, 51 insertions(+), 32 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 472a6696303b..2c62490a40c6 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> 
+> 
+> > @@ -2523,23 +2538,24 @@ static irqreturn_t bmp180_trigger_handler(int irq, void *p)
+> >  	struct iio_poll_func *pf = p;
+> >  	struct iio_dev *indio_dev = pf->indio_dev;
+> >  	struct bmp280_data *data = iio_priv(indio_dev);
+> > -	int ret, chan_value;
+> > +	int ret, comp_temp, comp_press, offset;
+> >  
+> >  	guard(mutex)(&data->lock);
+> >  
+> > -	ret = bmp180_read_temp(data, &chan_value);
+> > +	ret = bmp180_read_temp(data, &comp_temp);
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -	data->sensor_data[1] = chan_value;
+> >  
+> > -	ret = bmp180_read_press(data, &chan_value);
+> > +	ret = bmp180_read_press(data, &comp_press);
+> >  	if (ret)
+> >  		goto out;
+> >  
+> > -	data->sensor_data[0] = chan_value;
+> > +	memcpy(&data->buffer.buf[offset], &comp_press, sizeof(s32));
+> > +	offset += sizeof(s32);
+> > +	memcpy(&data->buffer.buf[offset], &comp_temp, sizeof(s32));
+> I suppose there is a consistency argument for using memcpy even for the s32
+> cases but you 'could' if you like do
+> 	s32 *chans = (s32 *)data->buffer.buf;
+> at top
+> and 
+> 	chans[0] = comp_press;
+> 	chans[1] = comp_temp;
+> here, which is functionally equivalent, particularly as we are forcing the
+> buffer alignment to be larger than this s32.
+> 
+> Similar for the other simple native endian s32 cases.
+> 
+> The memcpy is needed for the le24 one.
+> 
+> 
 
-Kind regards,
-Alex
+I see what you mean, indeed I think your proposal will beautify it a lot!
 
->
-> > >
-> > > > ---
-> > > >  drivers/vhost/vsock.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> > > > index 802153e23073..287ea8e480b5 100644
-> > > > --- a/drivers/vhost/vsock.c
-> > > > +++ b/drivers/vhost/vsock.c
-> > > > @@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
-> > > >
-> > > >  module_init(vhost_vsock_init);
-> > > >  module_exit(vhost_vsock_exit);
-> > > > +MODULE_VERSION("0.0.1");
-> > > >  MODULE_LICENSE("GPL v2");
-> > > >  MODULE_AUTHOR("Asias He");
-> > > >  MODULE_DESCRIPTION("vhost transport for vsock ");
-> > > > --
-> > > > 2.34.1
-> > >
->
+> >  
+> > -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
+> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
+> >  					   iio_get_time_ns(indio_dev));
+> >  
+> >  out:
+> > diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
+> > index a9f220c1f77a..b0c26f55c6af 100644
+> > --- a/drivers/iio/pressure/bmp280.h
+> > +++ b/drivers/iio/pressure/bmp280.h
+> > @@ -419,7 +419,10 @@ struct bmp280_data {
+> >  	 * Data to push to userspace triggered buffer. Up to 3 channels and
+> >  	 * s64 timestamp, aligned.
+> >  	 */
+> > -	s32 sensor_data[6] __aligned(8);
+> > +	struct {
+> > +		u8 buf[12];
+> > +		aligned_s64 ts;
+> 
+> I'd missed that this depends on the number of channels.  It makes no functional
+> difference because the core code will happily write over the end of buf, but
+> from a representation point of view this might be
+> 
+> 		u8 buf[8];
+> 		aligned_s64 ts;
+> or
+> 		u8 buf[12];
+> 		aligned_s64 ts;
+> 
+> So given we can't actually fix on one or the other normal convention is
+> to just use something that forces a large enough aligned u8 buffer like
+> 		u8 buf[ALIGN(sizeof(s32) * BMP280_MAX_CHANNELS, 8) + sizeof(s64)]
+> 			__aligned(sizeof(s64));
+> 
+> Sorry for leading you astray on this!
+> 
+> Jonathan
+> 
+> 
+
+I see your point. I can fix it in next version!
+
+This is a neat issue here that requires indeed extra attention since
+this type of buffers is used basically by the majority of the drivers.
+Some type of runtime check in those registers would have been very
+very helpful, but I can't see of an easy way of doing it in the core
+code..
+
+Thanks for the review :)
+
+Cheers,
+Vasilis
+
+> > +	} buffer;
+> >  
+> >  	/*
+> >  	 * DMA (thus cache coherency maintenance) may require the
+> 
 
