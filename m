@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-342799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814CB989316
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F043598931D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4EE1C23332
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF35C2858E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246F542AAE;
-	Sun, 29 Sep 2024 04:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651D57EEFD;
+	Sun, 29 Sep 2024 05:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="Gx+vr5EN"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="d2Bd+dFG"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F63FB1B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 04:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C3B225D9
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727585853; cv=none; b=h8FEwIWNnvP1tGHage8mzkQeYYIN4QSgmKm1twnh7zcnti9HvGyG/AnWYpnDRv4rKUK6sTtVZZqenHUjRuYb2dxb/aYPLBs0PU03xxJkghfaJJbgnVf0zSmhcw8+/WK5l7XNsz2E+7vH5ebt6cfya7IL+asw6CFe+mM/Qe+Aksc=
+	t=1727586195; cv=none; b=UFuO2ChXBxGEhP7S+rVnicqP6H98FOTuFbxPbKGlFdJuAX8Yey6X+wDdQDaDAGv0ERCA9RcN/Mg+a6XtkndMss6YKL1GXaLdNIDeSoZ6HpsMNGmhBiKaNolvjEPfrDI8nG97eXLy+MEn4IkqFWeyBIBtCF7iOz8di0uXmrxwGy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727585853; c=relaxed/simple;
-	bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
+	s=arc-20240116; t=1727586195; c=relaxed/simple;
+	bh=MBBs2gBB1cs7jAj7EozRTGzyrlscYTocqcXOG2eQawU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9oL3PyEkA+yRzFxs0sX942S6ZdBbXkEPHq2EruMWEDIwEvrCPBRj+CW/WGRe2qIti9Veyh2KxQ78YtbNCuwqQjSZKAJYx1qdan2EdPQShA8vOEzK/8zERLwYKWT2o8Awmtz0CADn0OEQT40QAv0AP6uyEcLo383GdUyf7mrYfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=Gx+vr5EN; arc=none smtp.client-ip=209.85.128.179
+	 To:Cc:Content-Type; b=ZLypcurmqptfNiv9W3JwZQQ/jULVmWXSbJil0OLBhjYwzyWPEyJnvycd7XXMETXvTgdXEhZ07nS5apDyTyVLnvLYdjEsTQZeXjGyno0S1psXr7lv7TnIpW5/x/nwMHHrKHLVAOkDcfLx/YmfnZf/q4cjU2wUAGOLTlnAohLJ9GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=d2Bd+dFG; arc=none smtp.client-ip=209.85.128.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbc9a60480so27598057b3.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 21:57:31 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6dbc9a60480so27609277b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:03:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1727585850; x=1728190650; darn=vger.kernel.org;
+        d=umich.edu; s=google-2016-06-03; t=1727586193; x=1728190993; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
-        b=Gx+vr5ENXz2emDavv6lAJy7zE3503VhNh0ai5NNt5qehbsYutnQAs8TG5P5x8z732g
-         5Z5SVxz7KTK47tblddBtFwevMEc2gkRTwLnrF0KQVCAG5Nf17PmsAzlQrKEWmZmq59LA
-         PV7XRwUK5CeYwrLorE8o7MCLDBUdTUmLCOXJUeR17JjvVg+Pl4ggIzb8PDGmRZCYBIz3
-         0HqoGo32EsT/iLCaxHcRyQA28U4hpe1NpFdQgIZyYix3I+D7jEk+aegmbjfplceAr87P
-         iQSTeQEqUYYKa0rnhEeIKkyzv5hbDsGvK4Gcg73g543fivFsoj0p1sbGmr2aKq28YsCr
-         xxjw==
+        bh=T4fJ3od1/Qv1njknmjb1VUvECYnufqLrw2fjOCobJsA=;
+        b=d2Bd+dFGN+yqxUBREV2q8DhakY6tDe1Q8FK46y3VteYr/UzMvaAqyvww2RFNj5smYq
+         WGv0WXnZBZu1JVTIKb/fxRKM1J/X4oBLKBrpUOkUQDdJ+s6nxiUG6ieEiYLVh/QTH/gQ
+         AmYDdVwz1XcyILvs0IV5GFajDeg31LR1tji9PUtJT/0eqOKUN0FqJ6Mjo2mfvSUsn9I7
+         1hZ4n0ZZ2i05AHBaXI7Lk8VpKlCDfiKvUMZsxxvcKDC/H1EiY/ZNj60kUPQBXl1EsnyB
+         tjU/iqqxpdoita3Cth8rgWmhtiHeA/jAnq5rqcO07cgCkYlkRq9jWjhSN8hdqNtHsM0E
+         C/8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727585850; x=1728190650;
+        d=1e100.net; s=20230601; t=1727586193; x=1728190993;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
-        b=JsdoY9LW2QFQV1TTnpaDp+CWtsDCshTMNm7I2Plyu7lf/RkMtysGnb8GZZT/jp+Acu
-         MmljMXiyi7wtsQgkfF0Mjhbms+ma+ygKnOcjdNyJtHui7t7/tteQhzZiO6SitxuxELX9
-         ClPk3hqbLSPtX7guOvAb7H8wQmDH/USQN+D6Xq4bElccjJT/rBs+gXVZQM7PAy6TKrU0
-         mhf0/9UVijPlF97YQqC717A1UA0pELwWwiBCYUApgyG2Tm7NON/B8lJadRt0/7hqzPi1
-         GXFXzTmfPZ8klt+CCUbIQaKaxlDsR5IlMi0/6npZG8pJ35gukjJba3a3VPUWC9PeLUms
-         uRZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/0JCxLrbIgaGxgIFpxG5pq+FfThlIHzMTjUZ4RoQFX/DAebgwBLOMLOEDYAynFPo3Ptiqy4tHMfRsqgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQpvJcdK8MIwB1UC02XhEk6lv6NKIt1PEk60FWbkFh9lBT1xoB
-	a7fdhJg6Z4mUDgjd67p/iJ6a3DjQ9yeyQrurHZ4hK0xiPohcvrcx55gP3iM6iZBgzwSAVPhAcLV
-	vsV/h31TpJBhoA34bCewJo43haVqBwWX6ZSyvsA==
-X-Google-Smtp-Source: AGHT+IE++v8Td22nI2Q3soyTzNnP0Aq5WWr6h1etnmJLmPLRDEcrld8EaVYYkChWaSBJSUid1U0hDsRreiPYOsW/qIg=
-X-Received: by 2002:a05:690c:6788:b0:6d6:7c9a:bf58 with SMTP id
- 00721157ae682-6e2475e6741mr63957807b3.28.1727585850530; Sat, 28 Sep 2024
- 21:57:30 -0700 (PDT)
+        bh=T4fJ3od1/Qv1njknmjb1VUvECYnufqLrw2fjOCobJsA=;
+        b=SgAcx9tiElTKUG9WUHxtNerxqIMT9RHAx3DZg0DuwqH6MJNQPJeTuwJpjc4XxArAq2
+         tCRVLPtIZX3SjTU6s171xo6SwSDJXqOV31cZE5+Jc4XUeEOjiRWnZJ87FCE9bKih0qiq
+         qAs168aJentVUn2ccMt125N9TQD2/q/ye0Ub60BJskKw4QkI6XRDQRGvG+FfjrbYc6ta
+         aKRDwKA2NsHGUVhclcn6p4AeLP+2xQL+sKhDF3lV0mc3Kn4CZschGZTS38ncoHSmYTR0
+         YXFbqw9wJjNjfXJs88S9T7q8O/y7/4bR3j3BLkuvuxWRi03tTPS86Wq7/VfU92xy6WqP
+         1LrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFnjV0r2Jsrdo9sHzx/MJEkG6YJf+/CEgWEPSJqDvsJGx2yopyBLMymQoGYNW1CWVEmIpZPcMs/r20u0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx37vZ6INXS20Ph9vOpJIkEHogc27lo0rbgW5rYbvKPTJp1U5+/
+	oOBrKSL6rHDHgqLF7RKsLN2yS+Haujjps3A9UqKkQwwNXAl49ojf71LpT+DFN7kPAYJPwSxZdpL
+	3qm/em2jJN6hzPJOvuh2z88w5yGqQTf7YbMjccg==
+X-Google-Smtp-Source: AGHT+IGFGA2ibiacUm5SY6v/Uk0BKQDc1zVikRtFuWauzKWc3ornt2i9Ow+fpFE8fh1RyZtr7swqV66pd31i/h5zmXg=
+X-Received: by 2002:a05:690c:3385:b0:6d0:f91e:2ff0 with SMTP id
+ 00721157ae682-6e24751f3ecmr63818057b3.11.1727586192644; Sat, 28 Sep 2024
+ 22:03:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-16-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-16-ojeda@kernel.org>
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-17-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-17-ojeda@kernel.org>
 From: Trevor Gross <tmgross@umich.edu>
-Date: Sun, 29 Sep 2024 00:57:19 -0400
-Message-ID: <CALNs47uSN723+vO9d+sTry7XRDZf1BS_pyA1iu57Yk4M0rtk0w@mail.gmail.com>
-Subject: Re: [PATCH 15/19] rust: enable Clippy's `check-private-items`
+Date: Sun, 29 Sep 2024 01:03:01 -0400
+Message-ID: <CALNs47s=kCJUJstB4WW1KF_b55-e1kYQ_1rZjPu=LWxv2gmF3w@mail.gmail.com>
+Subject: Re: [PATCH 16/19] Documentation: rust: add coding guidelines on lints
 To: Miguel Ojeda <ojeda@kernel.org>
 Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -89,24 +89,76 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Sep 4, 2024 at 4:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
 e:
 >
-> In Rust 1.76.0, Clippy added the `check-private-items` lint configuration
-> option. When turned on (the default is off), it makes several lints
-> check private items as well.
+> In the C side, disabling diagnostics locally, i.e. within the source code=
+,
+> is rare (at least in the kernel). Sometimes warnings are manipulated
+> via the flags at the translation unit level, but that is about it.
 >
-> In our case, it affects two lints we have enabled [1]:
-> `missing_safety_doc` and `unnecessary_safety_doc`.
+> In Rust, it is easier to change locally the "level" of lints
+> (e.g. allowing them locally). In turn, this means it is easier to
+> globally enable more lints that may trigger a few false positives here
+> and there that need to be allowed ocally, but that generally can spot
+> issues or bugs.
+
+s/ocally/locally
+
+> Thus document this.
 >
-> It also seems to affect the new `too_long_first_doc_paragraph` lint [2],
-> even though the documentation does not mention it.
->
-> Thus allow the few instances remaining we currently hit and enable
-> the lint.
->
-> Link: https://doc.rust-lang.org/nightly/clippy/lint_configuration.html#ch=
-eck-private-items [1]
-> Link: https://rust-lang.github.io/rust-clippy/master/index.html#/too_long=
-_first_doc_paragraph [2]
 > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> ---
+>  Documentation/rust/coding-guidelines.rst | 29 ++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/Documentation/rust/coding-guidelines.rst b/Documentation/rus=
+t/coding-guidelines.rst
+> index 05542840b16c..185d3b51117d 100644
+> --- a/Documentation/rust/coding-guidelines.rst
+> +++ b/Documentation/rust/coding-guidelines.rst
+> @@ -227,3 +227,32 @@ The equivalent in Rust may look like (ignoring docum=
+entation):
+>  That is, the equivalent of ``GPIO_LINE_DIRECTION_IN`` would be referred =
+to as
+>  ``gpio::LineDirection::In``. In particular, it should not be named
+>  ``gpio::gpio_line_direction::GPIO_LINE_DIRECTION_IN``.
+> +
+> +
+> +Lints
+> +-----
+> +
+> +In Rust, it is possible to ``allow`` particular warnings (diagnostics, l=
+ints)
+> +locally, making the compiler ignore instances of a given warning within =
+a given
+> +function, module, block, etc.
+> +
+> +It is similar to ``#pragma GCC diagnostic push`` + ``ignored`` + ``pop``=
+ in C:
+> +
+> +.. code-block:: c
+> +
+> +       #pragma GCC diagnostic push
+> +       #pragma GCC diagnostic ignored "-Wunused-function"
+> +       static void f(void) {}
+> +       #pragma GCC diagnostic pop
+> +
+> +But way less verbose:
+> +
+> +.. code-block:: rust
+> +
+> +       #[allow(dead_code)]
+> +       fn f() {}
+> +
+> +By that virtue, it makes it possible to comfortably enable more diagnost=
+ics by
+> +default (i.e. outside ``W=3D`` levels). In particular, those that may ha=
+ve some
+> +false positives but that are otherwise quite useful to keep enabled to c=
+atch
+> +potential mistakes.
+
+It may be good to link to the docs on this,
+https://doc.rust-lang.org/stable/reference/attributes/diagnostics.html.
+Either way:
 
 Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
