@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-342822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D84C98934F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:37:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F7098934D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:36:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18E18B23B55
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:37:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30499B23A43
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F178D137C35;
-	Sun, 29 Sep 2024 06:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8647B13A86C;
+	Sun, 29 Sep 2024 06:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="p/+p2Vx4"
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o7FWYazJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD84743172;
-	Sun, 29 Sep 2024 06:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E332BE4E;
+	Sun, 29 Sep 2024 06:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727591836; cv=none; b=H+r9HrK13zwXpDh4RUv5/k5BpdfTKCWPVKXYYp+w4b49brAgK8cVcRaDJAM6tHm9DfS+aWnPe4tx5ujVf/44MBSKMK4JFBRvJ/EuLb883H0JQ+1Lpg168ABjjVIvmoQc3MlIcwl7w5K06iag0u0oVP+nWQBVEpLgHLLyM+YE+OA=
+	t=1727591803; cv=none; b=LQSAxZDf1uUyHNooatQmLZyYtK6FZlqDRD+TX74qG0a+4YYG9Rr9TW0hVb2VJtRL8TrC4J3HrNxHXU+f3/082VCGYapHqOYCXXC5yJQ/dCCgLyi6tiUZrlijCcvVnJPjiGM4CM9TpTiqRYDxhSHVVbOqdPYpZiWPmp1KghTtV78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727591836; c=relaxed/simple;
-	bh=4axLk3F3w0ykKUkmu2YQGXDfaHagaySoaKyMLvysj2Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r/IfaCqa/A3KM1XvQ8hH0od9M1HCxtjCcpf4n24ZOxga43VfjRc9aZYVa21x921ftdTuJdRK4NJgyL0fqkMCwq15zR9pPVum0/KvXQ7yl4g+6Tj6/EjsLzboCPTOgjnrPhdUclOGXCZ/JdHWct05g1B/Y8upBbe1ojTL06jeoq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=p/+p2Vx4; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727591822;
-	bh=rGntS9xOFiEeM/CMGDTBCcX5N9b7TzQhEkYEMSmKp44=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=p/+p2Vx404CYWe2z/PdGRr/K1iCHY8km40hECyjVh0i1n0rbZw9RIhXWo1q7BmpYf
-	 90grUOuFbkY7KPHMJGw+KygXO7bB5KGZ3Y8Jd/Z1mvjBgb8U/JJDsnPSBLdXW1LA7U
-	 WQn+ymsh79CPfeeEygfoopykUD3HYn7wQdEuwuhk=
-X-QQ-mid: bizesmtp86t1727591785to4qeecn
-X-QQ-Originating-IP: 4QAUQmEcbPL5ZW/e8HH0uHALE+ArVLh7GTVKQP+BLfI=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 29 Sep 2024 14:36:23 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7147250867363797320
-From: WangYuli <wangyuli@uniontech.com>
-To: nbd@nbd.name,
-	lorenzo@kernel.org,
-	ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com,
-	sean.wang@mediatek.com,
-	kvalo@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	raoxu@uniontech.com,
-	guanwentao@uniontech.com,
-	zhanjun@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] mt76: mt76u_vendor_request: Do not print error messages when -EPROTO
-Date: Sun, 29 Sep 2024 14:36:19 +0800
-Message-ID: <B74B0BCDDB8EFA12+20240929063619.925099-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727591803; c=relaxed/simple;
+	bh=AoeX5Bh+OPcP5MdPHb+2Fpmd785USqzbzYz38We8Qtg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CLVlecr3d3vqdAsjpilCrRVA0p/f7FFPmWmFE98wtd6oLkb+kc5BGg2Ox0CGdYo3SPeuA2+5Hj35fC8DiN+thFdfobQ7OIzLOz6I2KdcFKyVRj8zu27FnvFK1hecfcCc7wE0Fg8FdlM+R+E2HP/idvV3izUBbGd6NzTCIayNIQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o7FWYazJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48T0Q9Wq019677;
+	Sun, 29 Sep 2024 06:36:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jgdxnNBOuwqsGfRJzvNbzlP0J/XoFZgAZjLjyzscPSA=; b=o7FWYazJ88VH7i5l
+	frY+YxGjyqIA3wWRK5sAu/lv0/we2o2E+X7Qtg7w6jmz8udixAed8R30u/MLrAlk
+	5ydAxnWPXJH2V5Kcg117pYFMAhZeGVAijkbNqHeHoufQpiYrDF7153c1r1KpBWV6
+	4PxidNAXrlLleO8dKmwChlrkOnB48KkATVzsPBHT9tuTg/LGpxPmtOQiQNwaf4nD
+	zlKvtgEWjYOoSRVGNMG7qW2KtxkMBhrnBLDm1BAXEBgKNBSUZRpYP4WmTtHzcO6t
+	JqHblVGd8pZBrSf9oT5Aly6LdnRl0DfDzkT0XJzwyR+kXf95tCw/3XdOmG6dIOWw
+	WY7oow==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x94h9wba-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 29 Sep 2024 06:36:37 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48T6aaDS025012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 29 Sep 2024 06:36:36 GMT
+Received: from [10.50.42.35] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 28 Sep
+ 2024 23:36:33 -0700
+Message-ID: <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
+Date: Sun, 29 Sep 2024 12:06:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
+ engine clock
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
+ <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
+Content-Language: en-US
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NQ1SesBsQjVtzi1gNi4QUxCQjGq153ESe7+NAopDGzh0e1f/QeZqS/st
-	aA2kdaidwEU/pHiRchlYus4dEcDkKdvAptfMOjsdk9DmVUaiBkc6pxRPWeExnixVgl7KraH
-	qy6RJlmZbvguCL+0cfoHlN8guLRbHfCnJ2Am/8Hhy6S0XMm0htd2Al1gcFcu7wH7bJ6ZJP3
-	EikQ1XK0FPm+bVKJGp/prOOp8Uuqq0LirXIvw/m/01UA1sSfdY9VlXS/RFIJ7YjGtH211pZ
-	AO59jGXsoyeUE6FNFnB8YI0yXZT4mN+WMiLMMaaw1tUk46G5BA7I0n0jIFlOY2Gjn+az5SJ
-	bmOCqneUEaVmKNL4+2qXMencJ5Uz49nkrPWWeES4Wrdj03RFSiYI0Ogi3OfPf0qLal6B3HP
-	9ZV/RKecRq06DcRTVAvhVQVX4lAeoFDsugkReIE0BCDQZxzWbKLRdmffTz3EutyUJa4os4f
-	RUYq0LlchfS979RPQ12qhOF10YhgYyuMEduvYX/SSZtYul4fVWHfKBEiz2aM978Gly5gS9f
-	tn6ceDipbygWsCl3YWPDQPnmjXXoGe0tYzuj19mxo9v3F0OWn5bOzhfI8isPn3G9izNH5B+
-	VojMyRdGgK1f85+imCpWgWYvunRll0hPZxjptP5TkIUiW1/AUORLpxvg5gE8JXoWhu8B1+k
-	T2fGVhAKLnD9S2PCrTwdNvgcViVH6zEDQC75n1rI9ZYPVOLluUizvg3XMIAtFOp2DepCR7E
-	Eq9aKMfrPdjNk5lWqZtdVh/fbeYLxwBRDFpjD2fEMcQbiDjY563LXpLfjy77BjmS8cHQO+H
-	/0smVAEXNSxLzOtdWV9/LCPqLEKVHFjUdzz79FD/JFyWHigrKySf6/Z0E5p/2Eybcbl1w+I
-	Wd31QybG4hK9Q10J8FTPxaiBotX5nbML9ggvl3fz+/duIR/cugy/SlUzngNDvTUVpdUIRM6
-	dFOFJolC6uU27Olm10T9ojqC5NaEYVqJPv/BNf1/FqrEVM6KuK+lAW7UWa/1zCkaAr18ENt
-	HRtndWWBolUT6DTYpA
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 32GyGAd05XOJMRiHqCz9M_C-5RlgUS9y
+X-Proofpoint-ORIG-GUID: 32GyGAd05XOJMRiHqCz9M_C-5RlgUS9y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409290048
 
-When initializing the network card, unplugging the device will
-trigger an -EPROTO error, resulting in a flood of error messages
-being printed frantically.
 
-Signed-off-by: Xu Rao <raoxu@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/net/wireless/mediatek/mt76/usb.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/mediatek/mt76/usb.c b/drivers/net/wireless/mediatek/mt76/usb.c
-index 58ff06823389..f9e67b8c3b3c 100644
---- a/drivers/net/wireless/mediatek/mt76/usb.c
-+++ b/drivers/net/wireless/mediatek/mt76/usb.c
-@@ -33,9 +33,9 @@ int __mt76u_vendor_request(struct mt76_dev *dev, u8 req, u8 req_type,
- 
- 		ret = usb_control_msg(udev, pipe, req, req_type, val,
- 				      offset, buf, len, MT_VEND_REQ_TOUT_MS);
--		if (ret == -ENODEV)
-+		if (ret == -ENODEV || ret == -EPROTO)
- 			set_bit(MT76_REMOVED, &dev->phy.state);
--		if (ret >= 0 || ret == -ENODEV)
-+		if (ret >= 0 || ret == -ENODEV || ret == -EPROTO)
- 			return ret;
- 		usleep_range(5000, 10000);
- 	}
--- 
-2.45.2
+On 9/26/2024 3:58 PM, Vladimir Zapolskiy wrote:
+> Hello Manikanta.
+> 
+> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
+>> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
+>> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
+>>
+>> The existing map table is based on 19.2MHz. This patch incorporate
+>> the clock map table to derive the SCL clock from the 32MHz source
+>> clock frequency.
+>>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>> Changes in v2:
+>>     - Dropped IPQ5424 from the commit title
+>>     - Added else part to assign geni_i2c_clk_map_19p2mhz to itr
+>>     - Dropped MHZ macro and used HZ_PER_MHZ macro
+>>     - Expanded SE to serial engine
+>>     - Added the reason for 32MHz clock in commit message
+>>
+>>   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
+>>   1 file changed, 16 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+>> index 212336f724a6..22f2a0d83641 100644
+>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/pm_runtime.h>
+>>   #include <linux/soc/qcom/geni-se.h>
+>>   #include <linux/spinlock.h>
+>> +#include <linux/units.h>
+>>     #define SE_I2C_TX_TRANS_LEN        0x26c
+>>   #define SE_I2C_RX_TRANS_LEN        0x270
+>> @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
+>>    * clk_freq_out = t / t_cycle
+>>    * source_clock = 19.2 MHz
+>>    */
+>> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
+>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
+>>       {KHZ(100), 7, 10, 11, 26},
+>>       {KHZ(400), 2,  5, 12, 24},
+>>       {KHZ(1000), 1, 3,  9, 18},
+>>   };
+>>   +/* source_clock = 32 MHz */
+>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
+>> +    {KHZ(100), 7, 14, 18, 40},
+>> +    {KHZ(400), 4,  3, 11, 20},
+>> +    {KHZ(1000), 4, 3,  6, 15},
+>> +};
+> 
+> Please double check the values.
+> 
+> This is what I get:
+> * for 100KHz: 32000000 / (40 * 7) ~ 114286, apparently 32000000 / (40 * 8) would
+> be a better fit, however it's unclear what would be proper t_high / t_low values,
+> * for 400KHz: it seems good,
+> * for 1000KHz: 32000000 / (15 * 4) ~ 533333, which is almost 1/2 of the wanted
+> bus frequency, so this one looks very wrong.
+> 
+> Do you have any ideas how to get better bus frequency settings?
+> 
 
+Thanks for pointing this out.
+
+I will double check and get back with the proper data.
+
+Thanks & Regards,
+Manikanta.
 
