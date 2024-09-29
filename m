@@ -1,258 +1,130 @@
-Return-Path: <linux-kernel+bounces-342998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE9499895B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6E19895B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15131C20B76
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:37:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE0B1C20BBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B31317D366;
-	Sun, 29 Sep 2024 13:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988C917BB07;
+	Sun, 29 Sep 2024 13:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RAEqK46P"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/M37Bsd"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E417BED4;
-	Sun, 29 Sep 2024 13:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916A2166F3D;
+	Sun, 29 Sep 2024 13:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727617016; cv=none; b=iGP9ZZFWQT4hk9rXSHJmMHmcayoRciVJjJqMdxt60bc+GFv4cLBo39FamUbVIDcqiUd82AJIWGMcQRIsGTs56NQmYryJu2h8ENCD4hafd8/yT+bMlYIOx8+IQqnz7DIZYRt3ZwEv++2T5Tnn+gqlEIr0lUS/xgLjLeY8mTKcenE=
+	t=1727617166; cv=none; b=Lt9LZiUtudmsGs1wCKfvhDeMIeXzWtMOcwGBDBuSGc6UnNHw3/Jnpq9YiB2Pi7+MY0ur1XAtLTYY2Q6533nQLjXJ3k69EibFW9EKJbszvqSQ/wvcctb2tHfEQ49WYUXeHnExWux1jKpyl5tkG7cypM4awvBkJG7kCjY3X7bqJKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727617016; c=relaxed/simple;
-	bh=BJyfg/bYawpzN0ZweGvRjC/Ui3Wm3vXBCxldTdF1wbg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MLkD0/2BleM7rqpTefDVHv5Dlh2hdWaljGQohzsIPDzgPC9ViEaoxcWYWKD9CV5BWy3FlCa6bBp38EDQYBo+fE2u3/klrYoqU24VxHc081RVElJACBALp527zD60NQIuyK8GJJys+EvTRj8f8NdUCvLYTsE5AFeTxfXb9U74cyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RAEqK46P; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 09ABEA98;
-	Sun, 29 Sep 2024 15:35:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727616923;
-	bh=BJyfg/bYawpzN0ZweGvRjC/Ui3Wm3vXBCxldTdF1wbg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RAEqK46PDeGCHxt3bNDUacZQxVSSZYxtXDNULSH9ogiRWl8F+Wxstu7jRaygvr/pF
-	 gDzWaDs7Pv/XkfK+tUb5F/HLlpjo+PfoOYgjDQnT72H0eYbgO8yaQgMUXlVZMNpeKV
-	 er7MlV9TJvAw/XQcyCYtRtm3Lo//OLOI1Nd+nN6I=
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: 
-Cc: guoniu.zhou@oss.nxp.com,
-	imx@lists.linux.dev,
-	linux-media@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] media: imx8mq-mipi-csi2: Drop system suspend/resume handlers
-Date: Sun, 29 Sep 2024 16:36:42 +0300
-Message-ID: <20240929133646.19991-4-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240929133646.19991-1-laurent.pinchart@ideasonboard.com>
-References: <20240929133646.19991-1-laurent.pinchart@ideasonboard.com>
+	s=arc-20240116; t=1727617166; c=relaxed/simple;
+	bh=uaSO7ckDMtFc4pXP6YriPegXGMuWJMzvuEi5DJM/9xg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oXXxfShH80zlK0ep5+cbkCPk1a4A58OF6WbmqY4z4EBG6w+hiLWSgnX8c6rq67gtRtTU8nVrAxvA8lOM6hMEoFO3qKAGWPtVpsrQicB0AJoF5nD2azyZ+DKRxwOOY2hCg57S0o6H+9kpC2x+6yzOwpqMNx/l5MXtTit1ebOVk1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/M37Bsd; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4585e25f42bso37578671cf.2;
+        Sun, 29 Sep 2024 06:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727617163; x=1728221963; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p7++xq5p4wh9ASglxW3dSL3G5J/U3R+n79SJr6cjhqI=;
+        b=Z/M37Bsd6ibclVD3R76fYsNlfpfjzCpXhWbxfnrsie0k4rcguN5qoRkXWXPFjJmrOv
+         80USbvNWmpZYFeqMip8PyeWbkvHKH2mfVYuRCvfq+V/stspjTLjSnLnm84HiUN7Ahylz
+         fQE3chu7lXaIQfm7aawlAImIjijGipwz7r+7XWbdjDuqsLmJhxNGtFNdCQhxB4kg9kmr
+         QocSSufaB1v6gkH9IpRJftKboBUBLOix1Yn1+1Hva5RU5jcDXiwu0Qj9FoG71RXVSe83
+         WITUPd2d8ily5IXbdwUuB90lkEjdIMrNYMPiERkwdVV3OHKPpWt3GKAUbnIzsoA/k/QI
+         4+8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727617163; x=1728221963;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p7++xq5p4wh9ASglxW3dSL3G5J/U3R+n79SJr6cjhqI=;
+        b=d+xQP3b/2RDTUN9Iq3VeiPfDbJ74Jp8yDFGds2cdsRIDU/VhopXgZt0Zyk/+zS1ikA
+         EgKzEzrdWn8oVInM/TCuAA5wjIYKfdwUGrOwgblufAxnxAEDrZEh2yNWuJL8/3h6xSC8
+         h7/k5ENfhWM84rciNyEjnywBykyPYQWwUFgNYuY7/ZNRGugH+TZu7Wra3GM2qoMKwNdF
+         VmQAoIMHlhhq6FnlEwPRQY/Hle0fDMrcWTYBUMXTYgSLAeN6kCu3hJSfakqyZ67qRl6i
+         cGCtSDlhjjFrRcLwZ+32Wn/mjGKynP5XT0uZ6cpQgM5pDDJiyHNZ1KpG1d/nERb5rOAX
+         tojQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqxs8a+5HvW8GiYEeim3B0iyXLOxMQpJ+Wadkk7Nc2J2KSOGrXifJK/m6wptY/jNoWwjM+8PcRVzQ2a5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkJk3sTxNjg5P6zIZDsAuOA8Mnwc8M1rH7xo2J517Bx+DkDx9X
+	xyUdemZhy/w18TKfwRigWrQTVZidUdI07EFyznamE+msO8cUBlYWuR0p2eCU0WYRoEcZCinscgs
+	/Mn7tfnQ+OJ+gYVCyzgGgYGGrHMU=
+X-Google-Smtp-Source: AGHT+IFEfxKze9Slz0WhXyjFl1wqB05CgCt2uTtdWiRilZmu+NEwmt+rRZHtM1SON8q99zI0JxWQIjZBkhsWh8eiCao=
+X-Received: by 2002:a05:622a:18a2:b0:458:2523:c060 with SMTP id
+ d75a77b69052e-45c9f230216mr158254861cf.29.1727617163495; Sun, 29 Sep 2024
+ 06:39:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Date: Sun, 29 Sep 2024 10:38:47 -0300
+Message-ID: <CAM_RzfbQK5fzqXQN89JCEzD1Bz5ZtQdAz3xD0yaYFx_GC7Pm0Q@mail.gmail.com>
+Subject: [PATCH 2/2] device: rust: change the name function
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, aliceryhl@google.com, 
+	mcgrof@kernel.org, russ.weight@linux.dev, dakr@redhat.com, 
+	a.hindborg@kernel.org
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	=?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Video capture pipelines are suspended and resumes in a controlled
-manner by the top-level driver (the CSI bridge driver in this case), to
-ensure proper synchronization of sources and sinks. There is therefore
-no need for system suspend/resume handlers in the imx8mq-mipi-csi2
-driver. Drop them.
+This function increments the refcount by this command
+"bindings::get_device(prt)"
+This can be confused because the function Arc::from_raw() from
+standard library, doesn't
+increment the refcount.
+Then, this function "Device::from_raw()" will be renamed for don't
+make confusion
+in the future.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
 ---
- drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 81 +++----------------
- 1 file changed, 10 insertions(+), 71 deletions(-)
+ rust/kernel/device.rs   | 2 +-
+ rust/kernel/firmware.rs | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-index 0f56a40abf33..54b2de09692b 100644
---- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-+++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-@@ -15,7 +15,6 @@
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
--#include <linux/mutex.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
-@@ -62,10 +61,6 @@
- #define CSI2RX_CFG_VID_P_FIFO_SEND_LEVEL	0x188
- #define CSI2RX_CFG_DISABLE_PAYLOAD_1		0x130
- 
--enum {
--	ST_POWERED	= 1,
--};
--
- enum imx8mq_mipi_csi_clk {
- 	CSI2_CLK_CORE,
- 	CSI2_CLK_ESC,
-@@ -116,9 +111,6 @@ struct csi_state {
- 
- 	struct v4l2_mbus_config_mipi_csi2 bus;
- 
--	struct mutex lock; /* Protect state */
--	u32 state;
--
- 	struct regmap *phy_gpr;
- 	u8 phy_gpr_reg;
- 
-@@ -400,27 +392,23 @@ static int imx8mq_mipi_csi_s_stream(struct v4l2_subdev *sd, int enable)
- 			return ret;
- 	}
- 
--	mutex_lock(&state->lock);
--
- 	if (enable) {
- 		sd_state = v4l2_subdev_lock_and_get_active_state(sd);
- 		ret = imx8mq_mipi_csi_start_stream(state, sd_state);
- 		v4l2_subdev_unlock_state(sd_state);
- 
- 		if (ret < 0)
--			goto unlock;
-+			goto out;
- 
- 		ret = v4l2_subdev_call(state->src_sd, video, s_stream, 1);
- 		if (ret < 0)
--			goto unlock;
-+			goto out;
- 	} else {
- 		v4l2_subdev_call(state->src_sd, video, s_stream, 0);
- 		imx8mq_mipi_csi_stop_stream(state);
- 	}
- 
--unlock:
--	mutex_unlock(&state->lock);
--
-+out:
- 	if (!enable || ret < 0)
- 		pm_runtime_put(state->dev);
- 
-@@ -638,59 +626,14 @@ static int imx8mq_mipi_csi_async_register(struct csi_state *state)
-  * Suspend/resume
-  */
- 
--static void imx8mq_mipi_csi_pm_suspend(struct device *dev)
--{
--	struct v4l2_subdev *sd = dev_get_drvdata(dev);
--	struct csi_state *state = mipi_sd_to_csi2_state(sd);
--
--	mutex_lock(&state->lock);
--
--	if (state->state & ST_POWERED) {
--		imx8mq_mipi_csi_stop_stream(state);
--		imx8mq_mipi_csi_clk_disable(state);
--		state->state &= ~ST_POWERED;
--	}
--
--	mutex_unlock(&state->lock);
--}
--
--static int imx8mq_mipi_csi_pm_resume(struct device *dev)
--{
--	struct v4l2_subdev *sd = dev_get_drvdata(dev);
--	struct csi_state *state = mipi_sd_to_csi2_state(sd);
--	int ret = 0;
--
--	mutex_lock(&state->lock);
--
--	if (!(state->state & ST_POWERED)) {
--		state->state |= ST_POWERED;
--		ret = imx8mq_mipi_csi_clk_enable(state);
--	}
--
--	mutex_unlock(&state->lock);
--
--	return ret ? -EAGAIN : 0;
--}
--
--static int imx8mq_mipi_csi_suspend(struct device *dev)
--{
--	imx8mq_mipi_csi_pm_suspend(dev);
--
--	return 0;
--}
--
--static int imx8mq_mipi_csi_resume(struct device *dev)
--{
--	return imx8mq_mipi_csi_pm_resume(dev);
--}
--
- static int imx8mq_mipi_csi_runtime_suspend(struct device *dev)
- {
- 	struct v4l2_subdev *sd = dev_get_drvdata(dev);
- 	struct csi_state *state = mipi_sd_to_csi2_state(sd);
- 	int ret;
- 
--	imx8mq_mipi_csi_pm_suspend(dev);
-+	imx8mq_mipi_csi_stop_stream(state);
-+	imx8mq_mipi_csi_clk_disable(state);
- 
- 	ret = icc_set_bw(state->icc_path, 0, 0);
- 	if (ret)
-@@ -711,13 +654,14 @@ static int imx8mq_mipi_csi_runtime_resume(struct device *dev)
- 		return ret;
- 	}
- 
--	return imx8mq_mipi_csi_pm_resume(dev);
-+	ret = imx8mq_mipi_csi_clk_enable(state);
-+
-+	return ret ? -EAGAIN : 0;
- }
- 
- static const struct dev_pm_ops imx8mq_mipi_csi_pm_ops = {
- 	RUNTIME_PM_OPS(imx8mq_mipi_csi_runtime_suspend,
- 		       imx8mq_mipi_csi_runtime_resume, NULL)
--	SYSTEM_SLEEP_PM_OPS(imx8mq_mipi_csi_suspend, imx8mq_mipi_csi_resume)
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -854,15 +798,13 @@ static int imx8mq_mipi_csi_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, &state->sd);
- 
--	mutex_init(&state->lock);
--
- 	ret = imx8mq_mipi_csi_subdev_init(state);
- 	if (ret < 0)
--		goto mutex;
-+		return ret;
- 
- 	ret = imx8mq_mipi_csi_init_icc(pdev);
- 	if (ret)
--		goto mutex;
-+		return ret;
- 
- 	/* Enable runtime PM. */
- 	pm_runtime_enable(dev);
-@@ -889,8 +831,6 @@ static int imx8mq_mipi_csi_probe(struct platform_device *pdev)
- 	v4l2_async_unregister_subdev(&state->sd);
- icc:
- 	imx8mq_mipi_csi_release_icc(pdev);
--mutex:
--	mutex_destroy(&state->lock);
- 
- 	return ret;
- }
-@@ -908,7 +848,6 @@ static void imx8mq_mipi_csi_remove(struct platform_device *pdev)
- 	imx8mq_mipi_csi_runtime_suspend(&pdev->dev);
- 	media_entity_cleanup(&state->sd.entity);
- 	v4l2_subdev_cleanup(&state->sd);
--	mutex_destroy(&state->lock);
- 	pm_runtime_set_suspended(&pdev->dev);
- 	imx8mq_mipi_csi_release_icc(pdev);
- }
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index 851018eef885..ecffaff041e0 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -51,7 +51,7 @@ impl Device {
+     ///
+     /// It must also be ensured that `bindings::device::release` can
+be called from any thread.
+     /// While not officially documented, this should be the case for
+any `struct device`.
+-    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
++    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
+         // SAFETY: By the safety requirements, ptr is valid.
+         // Initially increase the reference count by one to
+compensate for the final decrement once
+         // this newly created `ARef<Device>` instance is dropped.
+diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+index dee5b4b18aec..13a374a5cdb7 100644
+--- a/rust/kernel/firmware.rs
++++ b/rust/kernel/firmware.rs
+@@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
+ ///
+ /// # fn no_run() -> Result<(), Error> {
+ /// # // SAFETY: *NOT* safe, just for the example to get an
+`ARef<Device>` instance
+-/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
++/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
+ ///
+ /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
+ /// let blob = fw.data();
 -- 
-Regards,
-
-Laurent Pinchart
-
+2.46.1
 
