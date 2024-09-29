@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-343056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61EE989650
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:51:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE2C989651
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:54:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79743284132
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:51:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80AD31F22747
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA9817C992;
-	Sun, 29 Sep 2024 16:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B3817BB13;
+	Sun, 29 Sep 2024 16:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5Nye+fm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A8379FD;
-	Sun, 29 Sep 2024 16:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="pJ/fOHHI"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB18D79FD
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 16:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727628672; cv=none; b=mQj8m7n+CVb0Ds8KN/MziAC/q/NhIwKy9+e7JWLqBsnzedAwtZTeOZQTwI65ATsQCJ8j3KT6nBR8tPAzKlJS5pnjVGvnfPtqd+/qDAz/DN1KcOimpPKAdEyxW2XYKA1fwVNhylskHDoyv7jgkpPsLoa9iBIRtfQ3RKbh3i26h00=
+	t=1727628847; cv=none; b=A2axh3aAKEshuXK33xezAoylK9m7H1u0rkJRVQ54e8s0pjzKfMJ189sTgn89UY6Vuwibn2l0yR78WH4M4PHzmAzZKB815Q3BxsGE4jRqOId7KJYoygQclAuWdJQFsQzV4qy3SZgReQoBgJcjh/wMW+h2pgnbnICgasC7ESlMfTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727628672; c=relaxed/simple;
-	bh=sHQCx2Ka3Wx8zcULuOaKllEgdbSzhbBr20aENOKAsVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FrDMUX4tzqC93jmv4G8QjY8AYCrEbZZK9PGQ++o2oGgXvI69FRgH34nSWhCDUOFol2cAHmyQx6blO3nk6MutoHEKtoeZf4T/ezwK2+mBS2eJo7tURJ91GZ6rGXqG4gv0fOOiuRQHmrQblIiFcqfy65Cnd1J8nWT3eXnJckuXcWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5Nye+fm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8FEAC4CEC5;
-	Sun, 29 Sep 2024 16:51:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727628672;
-	bh=sHQCx2Ka3Wx8zcULuOaKllEgdbSzhbBr20aENOKAsVA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h5Nye+fm7/xvXsinAtGgWobYIPU7JaGzAOx3nt0hEXZ5YDB+vuf63/VdIZkGZo5M3
-	 +5BMBLQGSJNyinAiDwR/TbCRE4KxXPhZukEi7DP3Vx+8khqM74uyFuFdRa52CpOepm
-	 fAM4QkE0f8PAaHvEoOxwmoelkQUgSpbDpJkRqSP29DuOboBKHMAUmUrDFlltYiEwG2
-	 7TyFkW+iVG8DGwYePxU/VybavlMCciBA47xKnuUdAp9yqNWsbIHc6O2mw0YCCmS0sb
-	 IjaMx1G1cjwEonKWD+lRM+4Ij90g6L8DamKrjr/Og//WMDIml1W2udn4GeeYh6ZL21
-	 erfgqq76IYCng==
-Date: Sun, 29 Sep 2024 17:51:05 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Abhash Jha <abhashkumarjha123@gmail.com>
-Cc: linux-iio@vger.kernel.org, Michael.Hennerich@analog.com,
- lars@metafoo.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: ad5770r: Convert to get_unaligned_le16
-Message-ID: <20240929175105.7d05b0dd@jic23-huawei>
-In-Reply-To: <20240928161805.165543-1-abhashkumarjha123@gmail.com>
-References: <20240928161805.165543-1-abhashkumarjha123@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727628847; c=relaxed/simple;
+	bh=Hmf65xmPAaX0KA81uMG+zeb0V7kT8bj7y3voi9BokZ8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H4UewKTFudZPKDB7sOMQ2bGlMtygmXr5atvhbWSajfBfgkwRjA6s+wzbCRWReW6Kf/mzrOfsOfv5zxzOn+mjkieKmiBm2/jltika2SHBTyFKZC9cD1tHbwIgUhFA7u8+cUAqs+MUBxMf6MEPCOtmp24mhKajHMjdyqJ+WSAU8As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=pJ/fOHHI; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=f5s0J
+	iV0hBMDez/3/VZZr5beTCYKZp//oFcyFRstHes=; b=pJ/fOHHImITp2lJtpFdXn
+	18WvQ9BOt5WXz8jCRxi70IA35uIl9oedXTRCVYZxIcmU6aZZmUKUqh61fI7iRGen
+	AWSrPBtSjweInQFfMVfmZ5bOXIpkJUUSWravn/bHMe1DYe90VxGdiV4nomx5pnoy
+	d/JFdhWD7kPqXEAPd/2XII=
+Received: from localhost.localdomain (unknown [183.192.226.126])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD332URhvlm43+AAA--.18459S2;
+	Mon, 30 Sep 2024 00:53:38 +0800 (CST)
+From: Benji Dunn <helicobacterpylori@163.com>
+To: mchehab@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: linux-kernel@vger.kernel.org,
+	Benji Dunn <helicobacterpylori@163.com>
+Subject: [PATCH] lib/math/int_log: add natural logarithmic function intloge()
+Date: Mon, 30 Sep 2024 00:53:08 +0800
+Message-Id: <20240929165308.3325-1-helicobacterpylori@163.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD332URhvlm43+AAA--.18459S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Zr4DWr4UAw48uw4fCrykZrb_yoW8WFWxpr
+	Zagwn8t39Yqa47AF9Iv34kAwsaqrs3Grn7Jr9F9w17Xr1agw1kJF13J34Utry8KrZFkFWY
+	gr4UXryDCw4DAF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JU0XH_UUUUU=
+X-CM-SenderInfo: 5khoxupredu3phus5zxrulqiywtou0bp/xtbBDw5oeGb4M3dWWgABsG
 
-On Sat, 28 Sep 2024 21:48:05 +0530
-Abhash Jha <abhashkumarjha123@gmail.com> wrote:
+Helpful to do natural logarithm on some NTC thermistors.
 
-> Convert the manual shifting to use `get_unaligned_le16` api.
-> 
-> Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
-Looks straight forward so I've applied this, but plenty of time for
-additional reviews if anyone has time to take a look.
+Signed-off-by: Benji Dunn <helicobacterpylori@163.com>
+---
+ include/linux/int_log.h | 19 +++++++++++++++++++
+ lib/math/int_log.c      | 24 ++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-Thanks,
-
-Jonathan
-
-> ---
->  drivers/iio/dac/ad5770r.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
-> index c360ebf52..12c98f3e6 100644
-> --- a/drivers/iio/dac/ad5770r.c
-> +++ b/drivers/iio/dac/ad5770r.c
-> @@ -17,6 +17,7 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/spi/spi.h>
-> +#include <asm/unaligned.h>
->  
->  #define ADI_SPI_IF_CONFIG_A		0x00
->  #define ADI_SPI_IF_CONFIG_B		0x01
-> @@ -325,7 +326,7 @@ static int ad5770r_read_raw(struct iio_dev *indio_dev,
->  		if (ret)
->  			return 0;
->  
-> -		buf16 = st->transf_buf[0] + (st->transf_buf[1] << 8);
-> +		buf16 = get_unaligned_le16(st->transf_buf);
->  		*val = buf16 >> 2;
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_SCALE:
+diff --git a/include/linux/int_log.h b/include/linux/int_log.h
+index 0a6f58c38..b452ff298 100644
+--- a/include/linux/int_log.h
++++ b/include/linux/int_log.h
+@@ -53,4 +53,23 @@ extern unsigned int intlog2(u32 value);
+  */
+ extern unsigned int intlog10(u32 value);
+ 
++/**
++ * intloge - computes loge of a value; the result is shifted left by 24 bits
++ *
++ * @value: The value (must be != 0)
++ *
++ * to use rational values you can use the following method:
++ *
++ *   intloge(value) = intloge(value * 10^x) - x * intloge(10)
++ *
++ * Some usecase examples:
++ *
++ *	intloge(10) will give 2.302... * 2^24
++ *
++ *	intloge(2.718) = intloge(2718) - 3 *intloge(10) = 0.999... * 2^24
++ *
++ * return: loge(value) * 2^24
++ */
++extern unsigned int intloge(u32 value);
++
+ #endif
+diff --git a/lib/math/int_log.c b/lib/math/int_log.c
+index 8f9da3a2a..34d1c5065 100644
+--- a/lib/math/int_log.c
++++ b/lib/math/int_log.c
+@@ -131,3 +131,27 @@ unsigned int intlog10(u32 value)
+ 	return (log * 646456993) >> 31;
+ }
+ EXPORT_SYMBOL(intlog10);
++
++unsigned int intloge(u32 value)
++{
++	/**
++	 *	returns: loge(value) * 2^24
++	 *	wrong result if value = 0 (loge(0) is undefined)
++	 */
++	u64 log;
++
++	if (unlikely(value == 0)) {
++		WARN_ON(1);
++		return 0;
++	}
++
++	log = intlog2(value);
++
++	/**
++	 *	we use the following method:
++	 *	loge(x) = log2(x) * loge(2)
++	 */
++
++	return (log * 1488522236) >> 31;
++}
++EXPORT_SYMBOL(intloge);
+-- 
+2.30.2
 
 
