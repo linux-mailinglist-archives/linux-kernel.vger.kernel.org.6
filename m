@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-343135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4207898971A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:36:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB7598971E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B331F2166D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:36:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39FDEB220EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF8574059;
-	Sun, 29 Sep 2024 19:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CDC874059;
+	Sun, 29 Sep 2024 19:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pdyoV0uR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PM4nIeh4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83A546434;
-	Sun, 29 Sep 2024 19:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64B411EA84;
+	Sun, 29 Sep 2024 19:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727638576; cv=none; b=sq3gBIr3avEZFJ+WX6TUO3HmJ3Pgv1MXUxhGYaIQ68daj1nOzkYhlbotwu86tDMn4AKI4dXuF464PjP1t33ncAOccVjkC5F+9dPlOlS6fqhnHngcpNc0y1YyeA6MZy3ZpdKkP7vu+lb8O12inA1RF2t8NkzgvVaTNEKVTTp/rY0=
+	t=1727638696; cv=none; b=uQk2ThgkaXmbURi8PudeDXu0FsVy5SGHHhFsifnbHlGNrnT27l5QpWwFBr/mXrUAvI0rkqBFwlYxtPhbsCo59MFrDwFyGzFyXX4LjOtSsmKIK4lfjkW36dm1Gq0NWRpx4TkB14wncU2lb8mXxP0TgMXIOZTqM+58Y4IRaZZKGIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727638576; c=relaxed/simple;
-	bh=/EaBVv2a4Fe/hoiGw4sg1HJ8A8Ac1/Nx8XyQX1oMtlQ=;
+	s=arc-20240116; t=1727638696; c=relaxed/simple;
+	bh=Gwtszj5Nk759k9PZ2OEt04obFCWbH2CndmW7h6sywWE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOR+jlebr5uNjhYfARImhuR/Onoxv2c4lEBhCTCyP7YdpEnVnw3+9LjfXCKTc60OChhFC1E1giztjpS9oS4RAJMAYMgDvwZGo5p0/7WfN4jLpVYxSx0THd2+rGXuAZQ/DKVBpLEpM2R/QIHLHW+JVLh7t8vrzuPJK6zGTUYlK7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pdyoV0uR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDF16C4CEC5;
-	Sun, 29 Sep 2024 19:36:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/8L/F8RBtWtfhpyPbIaa8r86K5JG44cSydExkQLBP0xiRvFV4Xn+jtsl2bk/otyXCaLNivY37hCjQw2BT0CZs7jZtxCOgxdEjecWGKiS6nxlNJksqcyv5JowIsDYQATSNJfJSZIDvfmu6qMKCt4WDPdvJZxKGniUQNEXHo7ov8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PM4nIeh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36016C4CEC5;
+	Sun, 29 Sep 2024 19:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727638576;
-	bh=/EaBVv2a4Fe/hoiGw4sg1HJ8A8Ac1/Nx8XyQX1oMtlQ=;
+	s=k20201202; t=1727638696;
+	bh=Gwtszj5Nk759k9PZ2OEt04obFCWbH2CndmW7h6sywWE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pdyoV0uRm1LVGn9+OsksAYWNCgMMr1fSt7a2yZlHrbDmhtBDzR8LTQADbJUkiGYOw
-	 bles+aF+JoR4NIWTpY2e/4KhgSnnc1f5UqQRDKh4iWJcnmbVIW81b+7LBjXP5umoUb
-	 AzmNRHa6L11TL6GjAnZjOLjM6jWDlSkUWaa25eVCYzElJYgAsA2ge+2kmTI8G1T1Wl
-	 KHnwbycgESAPSOfcKdPo5tY9Cg/wTW9hZloVcyl3aki+2tLOvoB957l8WWVMW09sWS
-	 HbaLtnyKyPgsKjmDb12iDcuh4oJIw0Xo4Ba2Zol6JGK0PU2PCDz/Ky3QYsRJ03FEJG
-	 HjhvjxFO32GZA==
-Date: Sun, 29 Sep 2024 21:36:13 +0200
+	b=PM4nIeh4tSMrUdjBaRa7EO+aHT+o5nET9fptg9WxWpnBXKGRR0sEsFvrEb+xV2+QL
+	 uAstDXDO0IiOQ+gI3wseh2m4WVVK57KlDukySnGh+Y7xHpQg0Qrbzi6cFAClLYbC0W
+	 w5KeO/iq4Xtuhob2563mQGoLdZ9atNrF+Gtv0oFC1fuacGWLLTOllrDZ9Ja/jTiHVp
+	 eCZWxZdqKe4cicY0frmV+YIG+LQA7YJ4a06isnbPeSDulMnwqIzP3f9s+w9qnnWiM5
+	 9mzB5VxbBVKxhkJrD6tDsqksk0JEkJOhUpqNrR+yyAE8RJ8B12T6eDCsLVcjFcU9WR
+	 mvAEsS8FuQZXQ==
+Date: Sun, 29 Sep 2024 21:38:12 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Frank Wang <frawang.cn@gmail.com>
 Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
@@ -48,11 +48,10 @@ Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
 	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, william.wu@rock-chips.com, 
 	tim.chen@rock-chips.com, frank.wang@rock-chips.com
-Subject: Re: [PATCH v4 2/3] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-Message-ID: <4czjtesext2ulsmcym2cpjavni7zuve2sdgyiqxkjkaxrl2gpf@7nqylzgd5f55>
+Subject: Re: [PATCH v4 1/3] phy: rockchip: inno-usb2: convert clock
+ management to bulk
+Message-ID: <jx55slsincpzq6mugfsyc6qpbku2555azj7lithwggo733ggnb@rkqsxpsyoaw7>
 References: <20240929061025.3704-1-frawang.cn@gmail.com>
- <20240929061025.3704-2-frawang.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,112 +60,111 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240929061025.3704-2-frawang.cn@gmail.com>
+In-Reply-To: <20240929061025.3704-1-frawang.cn@gmail.com>
 
-On Sun, Sep 29, 2024 at 02:10:24PM +0800, Frank Wang wrote:
+On Sun, Sep 29, 2024 at 02:10:23PM +0800, Frank Wang wrote:
 > From: Frank Wang <frank.wang@rock-chips.com>
 > 
-> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
-> 
-> This change also refactor the clocks list as there are new clocks
-> adding used for the USB MMU in RK3576 SoC.
+> Since some Rockchip SoCs (e.g RK3576) have more than one clock,
+> this converts the clock management from single to bulk method to
+> make the driver more flexible.
 > 
 > Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
 > ---
 > Changelog:
 > v4:
->  - refactor the clocks list used if:then:
+>  - a new patch split from the [PATCH v3 2/2], suggestions from Heiko.
 > 
-> v3:
->  - narrowed rk3576 clocks by compatible property.
+> v1-v3:
+>  - none
 > 
-> v2:
->  - Categorize clock names by oneOf keyword.
+>  drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 43 ++++++++++++++++---
+>  1 file changed, 36 insertions(+), 7 deletions(-)
 > 
-> v1:
->  - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-1-frank.wang@rock-chips.com/
-> 
->  .../bindings/phy/rockchip,inno-usb2phy.yaml   | 46 ++++++++++++++++++-
->  1 file changed, 44 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-> index 5254413137c6..fc2c03d01a20 100644
-> --- a/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/rockchip,inno-usb2phy.yaml
-> @@ -20,6 +20,7 @@ properties:
->        - rockchip,rk3366-usb2phy
->        - rockchip,rk3399-usb2phy
->        - rockchip,rk3568-usb2phy
-> +      - rockchip,rk3576-usb2phy
->        - rockchip,rk3588-usb2phy
->        - rockchip,rv1108-usb2phy
+> diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> index 4f71373ae6e1..ad3e65dc6aa4 100644
+> --- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> +++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+> @@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
+>   * @dev: pointer to device.
+>   * @grf: General Register Files regmap.
+>   * @usbgrf: USB General Register Files regmap.
+> - * @clk: clock struct of phy input clk.
+> + * @clks: array of phy input clocks.
+>   * @clk480m: clock struct of phy output clk.
+>   * @clk480m_hw: clock struct of phy output clk management.
+> + * @num_clks: number of phy input clocks.
+>   * @phy_reset: phy reset control.
+>   * @chg_state: states involved in USB charger detection.
+>   * @chg_type: USB charger types.
+> @@ -246,9 +247,10 @@ struct rockchip_usb2phy {
+>  	struct device	*dev;
+>  	struct regmap	*grf;
+>  	struct regmap	*usbgrf;
+> -	struct clk	*clk;
+> +	struct clk_bulk_data	*clks;
+>  	struct clk	*clk480m;
+>  	struct clk_hw	clk480m_hw;
+> +	int			num_clks;
+>  	struct reset_control	*phy_reset;
+>  	enum usb_chg_state	chg_state;
+>  	enum power_supply_type	chg_type;
+> @@ -310,6 +312,13 @@ static int rockchip_usb2phy_reset(struct rockchip_usb2phy *rphy)
+>  	return 0;
+>  }
 >  
-> @@ -34,10 +35,12 @@ properties:
->      const: 0
->  
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 3
->  
->    clock-names:
-> -    const: phyclk
-> +    minItems: 1
-> +    maxItems: 3
->  
->    assigned-clocks:
->      description:
-> @@ -172,6 +175,45 @@ allOf:
->              - interrupts
->              - interrupt-names
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - rockchip,px30-usb2phy
-> +              - rockchip,rk3128-usb2phy
-> +              - rockchip,rk3228-usb2phy
-> +              - rockchip,rk3308-usb2phy
-> +              - rockchip,rk3328-usb2phy
-> +              - rockchip,rk3366-usb2phy
-> +              - rockchip,rk3399-usb2phy
-> +              - rockchip,rk3568-usb2phy
-> +              - rockchip,rk3588-usb2phy
-> +              - rockchip,rv1108-usb2phy
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +        clock-names:
-> +          const: phyclk
-
-maxItems: 1 instead
-
+> +static void rockchip_usb2phy_clk_bulk_disable(void *data)
+> +{
+> +	struct rockchip_usb2phy *rphy = data;
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - rockchip,rk3576-usb2phy
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 3
-> +        clock-names:
-> +          items:
-> +            - const: phyclk
-> +            - const: aclk
-> +            - const: aclk_slv
+> +	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
+> +}
+> +
+>  static int rockchip_usb2phy_clk480m_prepare(struct clk_hw *hw)
+>  {
+>  	struct rockchip_usb2phy *rphy =
+> @@ -376,7 +385,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  {
+>  	struct device_node *node = rphy->dev->of_node;
+>  	struct clk_init_data init;
+> +	struct clk *refclk = NULL;
+>  	const char *clk_name;
+> +	int i;
+>  	int ret = 0;
+>  
+>  	init.flags = 0;
+> @@ -386,8 +397,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+>  	/* optional override of the clockname */
+>  	of_property_read_string(node, "clock-output-names", &init.name);
+>  
+> -	if (rphy->clk) {
+> -		clk_name = __clk_get_name(rphy->clk);
+> +	for (i = 0; i < rphy->num_clks; i++) {
+> +		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
+> +			refclk = rphy->clks[i].clk;
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!IS_ERR(refclk)) {
+> +		clk_name = __clk_get_name(refclk);
+>  		init.parent_names = &clk_name;
+>  		init.num_parents = 1;
+>  	} else {
+> @@ -1406,18 +1424,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+>  	if (IS_ERR(rphy->phy_reset))
+>  		return PTR_ERR(rphy->phy_reset);
+>  
+> -	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
+> -	if (IS_ERR(rphy->clk)) {
+> -		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
+> +	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
+> +	if (ret == -EPROBE_DEFER) {
 
-This list goes to the top property with minItems: 1. Here you have only
-minItems: 3.
+This does not make much sense. Why would you proceed on other critical
+errors?
 
-This way you have only one definition of entire list with same order of
-items between variants.
+You want to use optional variant, I guess?
 
 Best regards,
 Krzysztof
