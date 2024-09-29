@@ -1,98 +1,96 @@
-Return-Path: <linux-kernel+bounces-342834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21FFE989370
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F3D989374
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D32461F21132
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 448EF2812E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D44D13AD39;
-	Sun, 29 Sep 2024 07:24:04 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E514452F9B;
+	Sun, 29 Sep 2024 07:25:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1800E13959D;
-	Sun, 29 Sep 2024 07:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4043513A271
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727594644; cv=none; b=gV46De8s2rTftMsUV8FpGPVhQ2vxiqS+ovSE2Jvi/Si97px7oJm1hBPMLY1Fd2sxeQ+UJItIcC6hWtW7rl/gp62V0/JtYr+0jc5MvoGyQmDh1FXqWYaPEdlHjKSFjVZRnWCuc0GxaaIxWE3r5uwo3bHA999pCIwZUpEyWSx9yX8=
+	t=1727594704; cv=none; b=kfR7GPIhxfsrHLKvac8Veeka1E9zKWYWNgF6EqZwlwFS79/nG9NCNA3xzp0rkl+M4olh6z2oZqrYTa01fiS/WGUmtcRrz69SIjA6f8bLjD9M4XsvKJPAAuA/1J3yK4XM8lpk9D5ofDLri5UFuU3RJyaiTLUHZ8hBIj8fP3Bcl70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727594644; c=relaxed/simple;
-	bh=EhZTeDsP/cO7ivbbJMpV5UHje6DDvs93xgeIwHM5sCg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JzHMTXhd4mOdhiybgEp8UMmO3YhjSqkIpuu5i+B35Yoab7XFuxZE62sPn5UpBODAtiqwVguMMVGITEqTTOVOp0DqrYJ4h450jfcRxAPGrenI5yI+Hg1eErGJMeu9usQkKBtsw3TwDGUdrGIY76Rooq5InMbMCbT83BOVymjnyv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom145.biz-email.net
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id ZGA00153;
-        Sun, 29 Sep 2024 15:23:53 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201604.home.langchao.com (10.100.2.4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 29 Sep 2024 15:23:52 +0800
-Received: from localhost.localdomain (10.94.12.73) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 29 Sep 2024 15:23:52 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <kimran@codeaurora.org>, <andersson@kernel.org>, <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Charles
- Han" <hanchunchao@inspur.com>
-Subject: [PATCH] soc: qcom: Add check devm_kasprintf() returned value
-Date: Sun, 29 Sep 2024 15:23:49 +0800
-Message-ID: <20240929072349.202520-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1727594704; c=relaxed/simple;
+	bh=QUQFLsgcakmOxqNIX/ly7cXSo4bace+PZlvi10aC2bo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fTZJa8A3ursiJAUX7XSh7j5mbrectSK7hwHJsyB9toHDSER2D5THw9qFosOBpLHLcnbhJs7HBzM6Mae5je/wSSav2ET68DGrxlbp5zPlODyAUg5X/ofPybj49xHHr39u2nqtlXevoB5wuHFpl/ibqHX7eutQLFi2TCPGnanu1iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a344da7987so29959745ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:25:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727594702; x=1728199502;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RiNNBzBiCFuCTjOXv7t2eBGAGAquTt6DCpiBL4q1mkY=;
+        b=DMdmaNi7HMB2vnnnihv0LKU9JizKJmv2QKuDb6/Ip6+nBbL0wrQ3j5EHglg+X9m8ca
+         DUUGn/9+CIyy8iYIkINd8RIHm3CY67r1tcC5OyGehNFa4hdiXxoXDLeISRPwTCiLyMfr
+         7VQqn8gUJy2Im9n3MWHBXWdN4ueYxIGVxXSLVESnM2SF8k/2E7ZRiUWdwSMDJY32PsPH
+         67tnQsspD+xGIW7Tt9/lse3w3A5regxOSvu1tyRloll9Fm2+Cm6FEQX8JtP1JstA128C
+         sab4/gjPUSM4rgCIHpH2tzjKaurz6KxU7HQBf7uMxDLmrseNvaNnJcF4xAbCO5cs3z/p
+         soUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKBuIcSVDDuiBNVxdxQCQzYDZlk1DUfTDOLIubKoux/f9HIowqpxjR5rQJ/SM+p8VnIWW7kLX51kUs/TA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztr0tINl11MjRRGlm1sbHXllaEZI1A9IX3Q3d8rIYmK6jaS3US
+	1rv1AmyHri+jR5FGrObRpYtxidm+ii0oKlS7ScJhibhIgtCZASDNzVDdWF6mcRk5BZ1zjdByi/v
+	PGhjcRqwC1+9CC6lp2/foqIgmIHq7i/biGAMPxYreM08pkrkkcDz6nw8=
+X-Google-Smtp-Source: AGHT+IGsVR0t+nezjz6+3pfe6BUp37rUtReguQpi53jhig1iod5w55MHl/Xa3NwmTZ7SLsC3SAYBD2PdWw2EVHSR5Yo91lGDCLvk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 202492915235359499fb467a6607f5186e469dc76228f
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-Received: by 2002:a05:6e02:1a05:b0:3a2:74f8:675d with SMTP id
+ e9e14a558f8ab-3a3451b01c6mr78897085ab.20.1727594702296; Sun, 29 Sep 2024
+ 00:25:02 -0700 (PDT)
+Date: Sun, 29 Sep 2024 00:25:02 -0700
+In-Reply-To: <66f62bf3.050a0220.38ace9.0007.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f900ce.050a0220.aab67.000f.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] BUG: MAX_STACK_TRACE_ENTRIES too low! (4)
+From: syzbot <syzbot+c6c4861455fdd207f160@syzkaller.appspotmail.com>
+To: andrii@kernel.org, asml.silence@gmail.com, ast@kernel.org, axboe@kernel.dk, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, eddyz87@gmail.com, 
+	haoluo@google.com, john.fastabend@gmail.com, jolsa@kernel.org, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	mingo@kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
+	riel@redhat.com, sdf@fomichev.me, sdf@google.com, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, wander@redhat.com, yhs@fb.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-devm_kasprintf() can return a NULL pointer on failure but this
-returned value in qcom_socinfo_probe() is not checked.
+syzbot has bisected this issue to:
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/soc/qcom/socinfo.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+commit 893cdaaa3977be6afb3a7f756fbfd7be83f68d8c
+Author: Wander Lairson Costa <wander@redhat.com>
+Date:   Wed Jun 14 12:23:22 2023 +0000
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 24c3971f2ef1..e42d86d5f6f9 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -786,10 +786,16 @@ static int qcom_socinfo_probe(struct platform_device *pdev)
- 	qs->attr.revision = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%u.%u",
- 					   SOCINFO_MAJOR(le32_to_cpu(info->ver)),
- 					   SOCINFO_MINOR(le32_to_cpu(info->ver)));
--	if (offsetof(struct socinfo, serial_num) <= item_size)
-+	if (!qs->attr.soc_id || qs->attr.revision)
-+		return -ENOMEM;
-+
-+	if (offsetof(struct socinfo, serial_num) <= item_size) {
- 		qs->attr.serial_number = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 							"%u",
- 							le32_to_cpu(info->serial_num));
-+		if (!qs->attr.serial_number)
-+			return -ENOMEM;
-+	}
- 
- 	qs->soc_dev = soc_device_register(&qs->attr);
- 	if (IS_ERR(qs->soc_dev))
--- 
-2.31.1
+    sched: avoid false lockdep splat in put_task_struct()
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a00127980000
+start commit:   abf2050f51fd Merge tag 'media/v6.12-1' of git://git.kernel..
+git tree:       bpf
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16a00127980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a00127980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6c4861455fdd207f160
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ee7107980000
+
+Reported-by: syzbot+c6c4861455fdd207f160@syzkaller.appspotmail.com
+Fixes: 893cdaaa3977 ("sched: avoid false lockdep splat in put_task_struct()")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
