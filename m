@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-342928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317F79894E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:53:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF0D9894EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B54B7283F26
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B8C01F2256B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C082D15C150;
-	Sun, 29 Sep 2024 10:53:19 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B165415EFA1;
+	Sun, 29 Sep 2024 10:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="wk1Ntn52"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DE1152E1C;
-	Sun, 29 Sep 2024 10:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32443D96D;
+	Sun, 29 Sep 2024 10:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727607199; cv=none; b=qsPV5UuClOwtUe8KRvt/N6ejL9UEhihHQvuYXKMkXxzJEdvV4iMlo8rlNHWviqSGhwsXni2LDjrVqH0fOoeJLQ6xi9O3/n7BCQ4+KExg6ZT4PwEb3G5H8EP2XTesPMCAVw6g2APCR4g+yjBamYQOCl7TUa/l6f/nUUH+q9++4QE=
+	t=1727607233; cv=none; b=sMlMGLfHYiS6ujvR2ws+6+5TVoF6RZyy2eGeBGwBWzGP3bB2of3jzUaaM+cyicD8DX2fWUgDTGxe9CTDsYNEMgfMspxUif5Sxia6+8eXrfrzKkVlCk//LiH0H1Dff8a/Suom3Nlq9SDzyXxiVStaL7uwb90FihuPW6Dbl65gyXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727607199; c=relaxed/simple;
-	bh=cPqISAcZ4H8167b3x7BdNIv2c5BtODWuLOlPU3TW730=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVhT1/1aINwAZnAIPotz4RmYE9N1uRqSYjVevyL6WEREDZxWsar+Llp1pBrJ7J/+JTs9xmHhSva15yx8kneIMPOdyvzQ+EEqV7VMU54L7DfSaQNf40oR27Z17x9+6bK3K8QsuBTQ2FbnbfIE0hi4JkEtICTYII6/9siW5grU2l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1surY2-000000007Ck-3WVz;
-	Sun, 29 Sep 2024 10:53:06 +0000
-Date: Sun, 29 Sep 2024 11:52:59 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, John Crispin <john@phrozen.org>,
-	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] dt-bindings: mtd: ubi-volume: add
- 'volume-is-critical' property
-Message-ID: <Zvkxi-6J8R1K95PQ@makrotopia.org>
-References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
- <7a2e8819-ac70-4070-a731-53994c72cd79@kernel.org>
- <Zvf_84xxhxwpPgee@makrotopia.org>
- <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
- <ZvgU0eBEwTJ3sHuN@makrotopia.org>
- <ad5a3811-c856-4f4b-f569-bb67a0e3f751@huawei.com>
+	s=arc-20240116; t=1727607233; c=relaxed/simple;
+	bh=nFGNgpMuxNd8OSXIMpogKXIDtTfNuTnKkJcCgtNGNfw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CK2PPIwzbYCjmmnbafVllGYhQAU+I0oXprd0A5JFebYdeA2QIK2uCziT65DcauEZPxjhSb7lD1UF7beOiyCFQwW8c/BMCNJL4h9U5/AuHLRVnMaENkIt114tyoaWnu6yrfIEx1EHVFXtLeepLzM0mQ0KxokoGNT6NSoTCmMDpZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=wk1Ntn52; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727607211; x=1728212011; i=spasswolf@web.de;
+	bh=zPqD4XDiMUpUzzVnrJEh84YjVSQx4bMEZ+tyr+9GxXE=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=wk1Ntn52tMv92uJ+uLoLEfbdK9GI54LgEFQjkVWg6wg9hqCAToWzefn8qdRqulDS
+	 40FRXiuozoWdpn3CZB3r8NZx1sSIah7xFvRg8VTiZcme7tCZgZdOAaUq1/HLPkOww
+	 YLPbRMkG00Xjp0yO/jtP9HcuBKKpXeNQ+R+ob45AlF05vf0QSLXRKDCXSCsfmnmze
+	 aAItaC4eq6x3NJpcTjRp89Kt9Z49erjpuCc0Q8FJhfDJywIDFHZruPB7SVbGf7wGH
+	 yr2a/yOQ6vUxh2PmoY7RSUmoaqv5Jl3XHeq1VLmMAe0f3Wbiz03oJLabPhacjGnqk
+	 1e7uEd1YUeIEkOzlWw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb105 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1MidHZ-1sIlWH3hOp-00gDfe; Sun, 29 Sep 2024 12:53:30 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: hung tasks on shutdown in linux-next-202409{20,23,24,25}
+Date: Sun, 29 Sep 2024 12:53:28 +0200
+Message-ID: <20240929105329.4797-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 9cc0310c-1fbd-4bfc-aad7-f092583bd81b@gmail.com
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ad5a3811-c856-4f4b-f569-bb67a0e3f751@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jUOg5oDYPI5456PVoD+NDEPMW0yVJwgINi3KUma+cCCtHnuww1w
+ lLrSV3M/X1mqaLIKoLrzJPRsIdEzIF/krsm9rtyVI8Xg+E20nFwS5ynv+8fu5MdPvTiuewo
+ f5qMJU1i2wWTCEP0C029XMq3kX6HbuEMvf7HBmhEstnYRI5pJChiX/5GirkaAmv+KqBD39q
+ 5Xs/d59gupQUnaq2Pzx7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WnFflAfl0l0=;cBU2blgcJUlICd5WOY8CQsT5XVJ
+ xyUU4Ns/CqD8qnBf93/gP1FL8Nnot9/tM6m+WcdEC4OVagn7W2poHjKL2Vza61+KmYwhInfWb
+ MQprr68ckMbm8KhY26DsVwxbXsYIMZEijby5BLjAnaJz+2ldG4HIPh1CjtvA2yI1fujh1aiL6
+ XnTv13nEBDiCJx/JdO8SOsdGjgV4xs+sEp0pe+MuBVXtGcMVvoCvzYP5njPLmVwhPrPEgXGqY
+ WjkSz3qWr8Yct+ZG96UBdxc4GNxUorsvkbzwgHdmDuTMq++TAGZOMR5YxjX+EJY6Jplm6CcP/
+ krzfyOite4P1hUkqeHLgWR2Nazq7g+NFnWv7BEnwM//Dv8m1s3P4ZO7477gHl5y8Sqf6y6HyY
+ i4gSD1t77rqgSe7PN9WSwYWtHKS5DmD+iGb43zPIw7zaPlmMgDF7rCstlBZNFRsvqTqVMGs7t
+ 8O+c/hyS8JgY6m6ZDrod8bxTADpsgAs/tVulMAHbFI3irKMAbGrpDRN31oTFLjOSjjU9JQNvg
+ cXlG38cZigfDVAFbC8fotlCdWJzjnlpRG0qu1uwimm6rINOua89XpJK2PvYabqpnLSa3owm5Y
+ WmQhsjLEg2PHGuyZl9OKY4WE1tkhYJHesES5i0QdYhXHdqKTiyrIFrk5xOFeWm3TVT51RLZL1
+ 8lLvTdUiLmaUA+pvgrYY5gqqohvSrOBlGlo3Cn2/arLFYPT9nTg5F7f588y++Kd4MyraQ2YuX
+ qJvwLwhcGRcNeQiz7rHZkKJ0dqda1tFfGTAffHfZqTTH/bIM57Hh3nETyey9uIRVrYKnNDCGq
+ vXDeYrv99HehiDIsZOCcLs3A==
 
-On Sun, Sep 29, 2024 at 12:03:11PM +0800, Zhihao Cheng wrote:
-> 在 2024/9/28 22:38, Daniel Golle 写道:
-> > On Sat, Sep 28, 2024 at 03:45:49PM +0200, Krzysztof Kozlowski wrote:
-> > > On 28/09/2024 15:09, Daniel Golle wrote:
-> > > > On Sat, Sep 28, 2024 at 03:02:47PM +0200, Krzysztof Kozlowski wrote:
-> > > > > On 28/09/2024 14:47, Daniel Golle wrote:
-> > > > > > Add the 'volume-is-critical' boolean property which marks a UBI volume
-> > > > > > as critical for the device to boot. If set it prevents the user from
-> > > > > > all kinds of write access to the volume as well as from renaming it or
-> > > > > > detaching the UBI device it is located on.
-> > > > > > 
-> > > > > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > > > > > ---
-> > > > > >   .../devicetree/bindings/mtd/partitions/ubi-volume.yaml   | 9 +++++++++
-> > > > > >   1 file changed, 9 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> > > > > > index 19736b26056b..2bd751bb7f9e 100644
-> > > > > > --- a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
-> > > > > > @@ -29,6 +29,15 @@ properties:
-> > > > > >       description:
-> > > > > >         This container may reference an NVMEM layout parser.
-> > > > > > +  volume-is-critical:
-> > > > > > +    description: This parameter, if present, indicates that the UBI volume
-> > > > > > +      contains early-boot firmware images or data which should not be clobbered.
-> > > > > > +      If set, it prevents the user from renaming the volume, writing to it or
-> > > > > > +      making any changes affecting it, as well as detaching the UBI device it is
-> > > > > > +      located on, so direct access to the underlying MTD device is prevented as
-> > > > > > +      well.
-> > > > > > +    type: boolean
-> > > > > 
-> > > > > UBI volumes are mapping to partitions 1-to-1, right? So rather I would
-> > > > > propose to use partition.yaml - we already have read-only there with
-> > > > > very similar description.
-> > > > 
-> > > > No, that's not the case.
-> > > > 
-> > > > An MTD partition can be used as UBI device. A UBI device (and hence MTD
-> > > > partition) can host *several* UBI volumes.
-> > > > 
-> > > > Marking the MTD partition as 'read-only' won't work, as UBI needs
-> > > > read-write access to perform bad block relocation, scrubbing, ...
-> > > 
-> > > OK, so not partition but read-only volume.
-> > 
-> > +1
-> > 
-> > > 
-> > > > 
-> > > > Also, typically not all UBI volumes on a UBI device are
-> > > > read-only/critical but only a subset of them.
-> > > > 
-> > > > But you are right that the description is inspired by the description
-> > > > of the 'read-only' property in partition.yaml ;)
-> > > > 
-> > > > I initially thought to also name the property 'read-only', just like
-> > > > for MTD partitions. However, as the desired effect goes beyond
-> > > > preventing write access to the volume itself, I thought it'd be
-> > > > better to use a new name.
-> > > 
-> > > Yeah, maybe... critical indeed covers multiple cases but is also
-> > > subjective. For some bootloader is critical, for other bootloader still
-> > > might be fully A/B updateable thus could be modifiable. For others, they
-> > > want to use fw_setenv from user-space so not critical at all.
-> > 
-> > The case I want to cover here is the bootloader itself being stored
-> > inside a UBI volume. MediaTek's fork of ARM TrustedFirmware-A bl2 comes
-> > with support for UBI and loads BL3 (which is TF-A BL31 and U-Boot, and
-> > maybe OP-TEE as well) from a static UBI volume. Removing, renaming or
-> > altering that volume results in the device not being able to boot any
-> > more and requiring a complicated intervention (at attaching debugging
-> > UART and using low-level recovery tool) in order to recover.
-> 
-> Who removes/renames the 'critical' volume? I suggest to fix it in the upper
-> layer(not in kernel). After looking through the patch 2, it seems a hack
-> solution.
+Summary: The introduction of async reboot in commit 8064952c6504
+("driver core: shut down devices asynchronously") leads to frequent hangs =
+on
+shutdown even after commit 4f2c346e6216 ("driver core: fix async device sh=
+utdown hang")
+is introduced.
 
-The enemy is the user, the upper layer is between the keyboard and the
-screen. Just like for 'read-only' MTD partitions I'm looking
-for a similar solution for UBI which prevents the user from accidentally
-deleting or destroying the bootloader, lets say, when logged in via SSH.
+I did some further experimenting (and lots of reboots ...) and found out t=
+hat
+the bug is preemption related, for me it only occurs when using CONFIG_PRE=
+EMPT=3Dy
+or CONFIG_PREEMPT_RT=3Dy. When using CONFIG_PREEMPT_NONE=3Dy or
+CONFIG_PREEMPT_VOLUNTARY=3Dy everything works fine.
+
+Test results (linux-next-20240925):
+PREEMPT_NONE		20 reboots, no fail
+PREEMPT_VOLUNTARY	20 reboots, no fail
+PREEMPT			3 reboots, 4th reboot failed
+PREEMPT_RT		2 reboots, 3rd reboot failed
+
+The behaviour can be improved by increasing the number of min_active items
+in the async workqueue:
+
+diff --git a/kernel/async.c b/kernel/async.c
+index 4c3e6a44595f..83e9267c61e7 100644
+=2D-- a/kernel/async.c
++++ b/kernel/async.c
+@@ -358,5 +358,5 @@ void __init async_init(void)
+ 	 */
+ 	async_wq =3D alloc_workqueue("async", WQ_UNBOUND, 0);
+ 	BUG_ON(!async_wq);
+-	workqueue_set_min_active(async_wq, WQ_DFL_ACTIVE);
++	workqueue_set_min_active(async_wq, WQ_UNBOUND_MAX_ACTIVE);
+ }
+
+With this I took 11 reboots to get a hang.
+I tried increasing WQ_MAX_ACTIVE, too:
+
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 59c2695e12e7..314f554b45df 100644
+=2D-- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -412,7 +412,7 @@ enum wq_flags {
+ };
+
+ enum wq_consts {
+-	WQ_MAX_ACTIVE		=3D 512,	  /* I like 512, better ideas? */
++	WQ_MAX_ACTIVE		=3D 1024,	  /* 1024 for async shutdown with preempt{full,=
+rt}*/
+ 	WQ_UNBOUND_MAX_ACTIVE	=3D WQ_MAX_ACTIVE,
+ 	WQ_DFL_ACTIVE		=3D WQ_MAX_ACTIVE / 2,
+
+With this (and the first patch) I can get 20 clean reboots even when using=
+ CONFIG_PREEMPT=3Dy.
+I have not yet tested CONFIG_PREEMPT_RT=3Dy with this.
+
+Edit: Fixed In-Reply-To:
+
+Bert Karwatzki
 
