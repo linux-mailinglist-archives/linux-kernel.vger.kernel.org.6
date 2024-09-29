@@ -1,121 +1,509 @@
-Return-Path: <linux-kernel+bounces-342968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66140989544
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9035989547
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E8EAB235E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9712C28275C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD74F16D30B;
-	Sun, 29 Sep 2024 12:17:16 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594C11779A4;
+	Sun, 29 Sep 2024 12:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B5DaVPvm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B064C42AB1;
-	Sun, 29 Sep 2024 12:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FD713AA47;
+	Sun, 29 Sep 2024 12:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727612236; cv=none; b=ueH4pEu+7FHjQgjF1lSW+Y8oYvFS7mm+5IBuhULQ+kA7gsxJdQOpAGbhkUB5HtIRpKkn0szSCsxisPHRfeDoX+GA5HBuNh/gGJNykXgD7CYGerJyhglRr5g6YxzqJ8J8fOi7NspFgs6OmmvEqFsX5OlpmTXvmSN/YOPB0H/nQ6k=
+	t=1727612255; cv=none; b=ny5E1Fx1jjVLUL1MpLGaCkfg0u05bUDo3+eGiBpAb+xnshAVFLWl7merwoiARiupe2PHcR6cUykrN2xOiL75HQlNlP9Fr0U64qrDAzS6fSrYFBXCuUZm31Tf5wUg0WJ6jbI8ZPtQeXyrUmB8LPQpfpTARX4vkOWqlS6e8ievE80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727612236; c=relaxed/simple;
-	bh=/My963PN4JTATzj4wq56r34fE/qUpsLRAXsud6kWkuU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=tZcVh1pVnbt334R8x5sr998TtfRnk1MvqIL4EF3TUs8ch0C87KES+5Ie6itudOl14N1n4NbMxupbEf42FjSV67qhRysqARjQHfbplr7XIfQMwWasGGZ6VA6C0YaFchsOx+UzvjvuR61EmONGwoxK2rxKCGSvs+sVfxpnqHtoxoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_128_GCM_SHA256:128)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1susrI-000000007Nu-0u24;
-	Sun, 29 Sep 2024 12:17:04 +0000
-Date: Sun, 29 Sep 2024 12:16:58 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Zhihao Cheng <chengzhihao1@huawei.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, John Crispin <john@phrozen.org>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_RFC_1/2=5D_dt-bindings=3A_mtd=3A_ubi?=
- =?US-ASCII?Q?-volume=3A_add_=27volume-is-critical=27_property?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <3fbc4221-5967-fb9a-3cee-91cd5de2b805@huawei.com>
-References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org> <7a2e8819-ac70-4070-a731-53994c72cd79@kernel.org> <Zvf_84xxhxwpPgee@makrotopia.org> <18e9d774-813b-427e-9938-53853d695e18@kernel.org> <ZvgU0eBEwTJ3sHuN@makrotopia.org> <ad5a3811-c856-4f4b-f569-bb67a0e3f751@huawei.com> <Zvkxi-6J8R1K95PQ@makrotopia.org> <3fbc4221-5967-fb9a-3cee-91cd5de2b805@huawei.com>
-Message-ID: <5FEB28F8-BE2B-4C97-848C-914CA760BF7F@makrotopia.org>
+	s=arc-20240116; t=1727612255; c=relaxed/simple;
+	bh=/VERLBemMuFqRHjJ+EfZI1VF21ECNH48RJVG/sRCKjg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uqa37AE3AQzBYa84ZHDogGIlo2fvTz6nEPyW74GHpZMGMAudqb3FNJKr6/PHnRH7PdXSQiMSg03vYTmLRk6XGg6g7V22CEFQMvDnRtXBDwDk1DGBk5ZNaeXbgeQ6jw78u7xFNfY1z1gNDFQ9phe/fHqx7ZEhbTFWQbJHYcjwSSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B5DaVPvm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E346C4CEC5;
+	Sun, 29 Sep 2024 12:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727612254;
+	bh=/VERLBemMuFqRHjJ+EfZI1VF21ECNH48RJVG/sRCKjg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=B5DaVPvmdlmqbIjQbSmtJVJJh9oN+ReqVPRXHNd6aeEvwKLsb4K8URP0kL/x8yvbk
+	 3+uc7lkPYJnNVS3I8L11rXwZLCBdQcDVlmmaVjPyZGeuNgwl2cObz46JswXrtQB1xF
+	 WpvxOOA9EFrt/dYF3cRia5wogTA5vF4DBgX3eKBnwyAHulKdJ1WiL0IvZtlPz+9dnS
+	 9QaUsoowTvA3usZtZKxxG2N3VWBfmvV3pGoKtBNb7aNUasik3jFz29hC6TobidHAbh
+	 G1hX8sct6VQBJVKTfCW1U9j2+lOuFHCrKrTI2QFTK8trHbLr+4750rkYsTmmxycZhY
+	 I/JFEI4PVO0vA==
+Date: Sun, 29 Sep 2024 13:17:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH v3 09/10] iio: dac: ad3552r: add axi platform driver
+Message-ID: <20240929131727.0bb8176c@jic23-huawei>
+In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-9-a17b9b3d05d9@baylibre.com>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-9-a17b9b3d05d9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Thu, 19 Sep 2024 11:20:05 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
+
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add support for ad3552r-axi, where ad3552r has to be controlled
+
+Give more on what you mean by controlled. This driver is controlling it...
+
+> by the custom (fpga-based) ad3552r AXI DAC IP.
+
+or similar IIO backend.
+
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  drivers/iio/dac/Kconfig                   |  11 +
+>  drivers/iio/dac/Makefile                  |   1 +
+>  drivers/iio/dac/ad3552r-axi.c             | 567 ++++++++++++++++++++++++++++++
+>  drivers/iio/dac/ad3552r.h                 |   9 +
+>  include/linux/platform_data/ad3552r-axi.h |  18 +
+>  5 files changed, 606 insertions(+)
+> 
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index 1cfd7e2a622f..030af7702a3c 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -16,6 +16,17 @@ config AD3552R
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ad3552r.
+>  
+> +config AD3552R_AXI
+> +	tristate "Analog Devices AD3552R DAC driver, AXI version"
+> +	select IIO_BACKEND
+> +	help
+> +	  Say yes here to build support for Analog Devices AD3552R
+> +	  Digital to Analog Converter, connected through the Xilinx
+> +	  fpga AXI interface.
+
+This is stronger than it needs to be.  It's a driver for the DAC
+when using a suitable IIO backend that does  DDR QSPI and offloading
+of the main data acquisition.  May not be AXI related or Xilinx
+related even though that is what you happen to be using today.
+
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called ad3552r-axi.
+I also wonder if this is appropriate. This driver uses a backend.
+It doesn't strictly speaking have to be AXI based (which is the bus
+off the back of the IP block, not this side).  Maybe
+ad3552r-qspi-backend or something more generic like that?
+
+> +
+>  config AD5064
+>  	tristate "Analog Devices AD5064 and similar multi-channel DAC driver"
+>  	depends on (SPI_MASTER && I2C!=m) || I2C
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index 56a125f56284..cc2af3aa3f52 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -5,6 +5,7 @@
+>  
+>  # When adding new entries keep the list in alphabetical order
+>  obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
+> +obj-$(CONFIG_AD3552R_AXI) += ad3552r-axi.o ad3552r-common.o
+>  obj-$(CONFIG_AD5360) += ad5360.o
+>  obj-$(CONFIG_AD5380) += ad5380.o
+>  obj-$(CONFIG_AD5421) += ad5421.o
+> diff --git a/drivers/iio/dac/ad3552r-axi.c b/drivers/iio/dac/ad3552r-axi.c
+> new file mode 100644
+> index 000000000000..85c594e149fa
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad3552r-axi.c
+> @@ -0,0 +1,567 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Analog Devices AD3552R
+> + * Digital to Analog converter driver, AXI DAC backend version
+> + *
+> + * Copyright 2024 Analog Devices Inc.
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/iio/backend.h>
+> +#include <linux/iio/buffer.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_data/ad3552r-axi.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +#include <linux/units.h>
+> +
+> +#include "ad3552r.h"
+> +
+> +#define AD3552R_QSPI_LANES	4
+Would be odd if it were anything else with a name like QUAD SPI.
+Maybe this is obvious enough to just use the value 4 inline?
+Particularly as you have a comment where it is used anyway.
+
+
+> +static int ad3552r_axi_read_raw(struct iio_dev *indio_dev,
+> +				struct iio_chan_spec const *chan,
+> +				int *val, int *val2, long mask)
+> +{
+> +	struct ad3552r_axi_state *st = iio_priv(indio_dev);
+> +	int ch = chan->channel;
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> +		int sclk;
+> +
+> +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
+> +					   IIO_CHAN_INFO_FREQUENCY);
+> +		if (ret != IIO_VAL_INT)
+> +			return -EINVAL;
+> +
+> +		/* Using 4 lanes (QSPI) */
+> +		*val = DIV_ROUND_CLOSEST(sclk * AD3552R_QSPI_LANES *
+> +					 (1 + st->ddr_mode),
+> +					 chan->scan_type.storagebits);
+> +
+> +		return IIO_VAL_INT;
+> +	}
+> +	case IIO_CHAN_INFO_RAW:
+> +		ret = st->data->bus_reg_read(st->back,
+> +					     AD3552R_REG_ADDR_CH_DAC_16B(ch),
+
+As below, I'd put chan->channel inline here and drop the local variable.
+
+> +					     val, 2);
+> +		if (ret)
+> +			return ret;
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad3552r_axi_write_raw(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan,
+> +				 int val, int val2, long mask)
+> +{
+> +	struct ad3552r_axi_state *st = iio_priv(indio_dev);
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +			int ch = chan->channel;
+
+Just put chan->channel inline.  Not worth the local variable to save
+going slightly over 80 chars.  This is one where I think readability
+is slightly hurt by keeping to 80.
+
+> +
+> +			return st->data->bus_reg_write(st->back,
+> +				    AD3552R_REG_ADDR_CH_DAC_16B(ch), val, 2);
+> +		}
+> +		unreachable();
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ad3552r_axi_buffer_postenable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad3552r_axi_state *st = iio_priv(indio_dev);
+> +	struct iio_backend_data_fmt fmt = {
+> +		.type = IIO_BACKEND_DATA_UNSIGNED
+> +	};
+> +	int loop_len, val, err;
+> +
+> +	/* Inform DAC chip to switch into DDR mode */
+> +	err = ad3552r_qspi_update_reg_bits(st,
+> +					   AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +					   AD3552R_MASK_SPI_CONFIG_DDR,
+> +					   AD3552R_MASK_SPI_CONFIG_DDR, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	/* Inform DAC IP to go for DDR mode from now on */
+> +	err = iio_backend_ddr_enable(st->back);
+> +	if (err) {
+> +		dev_warn(st->dev, "could not set DDR mode, not streaming");
+> +		goto exit_err;
+> +	}
+> +
+> +	st->ddr_mode = true;
+> +
+> +	switch (*indio_dev->active_scan_mask) {
+> +	case AD3552R_CH0_ACTIVE:
+> +		st->single_channel = true;
+> +		loop_len = AD3552R_STREAM_2BYTE_LOOP;
+
+As below, = 2 is probably clearer.
+
+
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(0);
+> +		break;
+> +	case AD3552R_CH1_ACTIVE:
+> +		st->single_channel = true;
+> +		loop_len = AD3552R_STREAM_2BYTE_LOOP;
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(1);
+> +		break;
+> +	case AD3552R_CH0_CH1_ACTIVE:
+> +		st->single_channel = false;
+> +		loop_len = AD3552R_STREAM_4BYTE_LOOP;
+> +		val = AD3552R_REG_ADDR_CH_DAC_16B(1);
+> +		break;
+> +	default:
+> +		err = -EINVAL;
+> +		goto exit_err_ddr;
+> +	}
+> +
+> +	err = st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_STREAM_MODE,
+> +				      loop_len, 1);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	err = iio_backend_data_transfer_addr(st->back, val);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	/*
+> +	 * The EXT_SYNC is mandatory in the CN0585 project where 2 instances
+> +	 * of the IP are in the design and they need to generate the signals
+> +	 * synchronized.
+> +	 *
+> +	 * Note: in first IP implementations CONFIG EXT_SYNC (RO) can be 0,
+> +	 * but EXT_SYNC (ext synch ability) is enabled anyway.
+> +	 */
+> +	if (st->synchronouos_mode)
+> +		err = iio_backend_ext_sync_enable(st->back);
+> +	else
+> +		err = iio_backend_ext_sync_disable(st->back);
+> +	if (err)
+> +		goto exit_err_ddr;
+> +
+> +	err = iio_backend_data_format_set(st->back, 0, &fmt);
+> +	if (err)
+> +		goto exit_err_sync;
+> +
+> +	err = iio_backend_buffer_enable(st->back);
+> +	if (err)
+> +		goto exit_err_sync;
+> +
+> +	return 0;
+> +
+> +exit_err_sync:
+> +	iio_backend_ext_sync_disable(st->back);
+> +
+> +exit_err_ddr:
+> +	iio_backend_ddr_disable(st->back);
+> +
+> +exit_err:
+> +	ad3552r_qspi_update_reg_bits(st,
+> +				     AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +				     AD3552R_MASK_SPI_CONFIG_DDR,
+> +				     0, 1);
+> +
+> +	iio_backend_ddr_disable(st->back);
+> +
+> +	st->ddr_mode = false;
+> +
+> +	return err;
+> +}
+
+
+> +static int ad3552r_axi_setup(struct ad3552r_axi_state *st)
+> +{
+> +	struct fwnode_handle *child __free(fwnode_handle) = NULL;
+Read the docs on how to use cleanup.h fun (should have merged this
+cycle as they got stuck in review and everyone forgot about them :()
+
+This should be inline where the constructor is not at the top of
+the file.  That both helps readability and avoid unexpected reordering
+of cleanup if multiple cleanup uses occur in one file.
+
+
+> +	u8 gs_p, gs_n;
+> +	s16 goffs;
+> +	u16 id, rfb;
+> +	u16 gain = 0, offset = 0;
+> +	u32 val, range;
+> +	int err;
+> +
+> +	err = ad3552r_axi_reset(st);
+> +	if (err)
+> +		return err;
+> +
+> +	err = iio_backend_ddr_disable(st->back);
+> +	if (err)
+> +		return err;
+> +
+> +	err = ad3552r_axi_scratch_pad_test(st);
+> +	if (err)
+> +		return err;
+> +
+> +	err = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_L,
+> +				     &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	id = val;
+> +
+> +	err = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_H,
+> +				     &val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	id |= val << 8;
+> +	if (id != st->model_data->chip_id)
+> +		dev_info(st->dev, "Chip ID error. Expected 0x%x, Read 0x%x\n",
+> +			 AD3552R_ID, id);
+> +
+> +	err = st->data->bus_reg_write(st->back,
+> +				      AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> +				      0, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err = st->data->bus_reg_write(st->back,
+> +				      AD3552R_REG_ADDR_TRANSFER_REGISTER,
+> +				      AD3552R_MASK_QUAD_SPI |
+> +				      AD3552R_MASK_STREAM_LENGTH_KEEP_VALUE, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err = iio_backend_data_source_set(st->back, 0, IIO_BACKEND_EXTERNAL);
+> +	if (err)
+> +		return err;
+> +
+> +	err = iio_backend_data_source_set(st->back, 1, IIO_BACKEND_EXTERNAL);
+> +	if (err)
+> +		return err;
+> +
+> +	err = ad3552r_get_ref_voltage(st->dev);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	val = err;
+> +
+> +	err = ad3552r_qspi_update_reg_bits(st,
+> +				AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> +				AD3552R_MASK_REFERENCE_VOLTAGE_SEL,
+> +				val, 1);
+> +	if (err)
+> +		return err;
+> +
+> +	err = ad3552r_get_drive_strength(st->dev, &val);
+> +	if (!err) {
+> +		err = ad3552r_qspi_update_reg_bits(st,
+> +					AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> +					AD3552R_MASK_SDO_DRIVE_STRENGTH,
+> +					val, 1);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	st->synchronouos_mode =
+> +			fwnode_property_read_bool(dev_fwnode(st->dev),
+
+device_property_read_bool()?
+
+
+If doing this sort of wrapping, indent the line by only one tab more
+than the line above.  This combination gives about the worst
+of all the readabilty options as still requires lots of wrapping.
+
+> +						  "adi,synchronous-mode");
+> +
+> +	child = device_get_named_child_node(st->dev, "channel");
+> +	if (!child)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * One of "adi,output-range-microvolt" or "custom-output-range-config"
+> +	 * must be available in fdt.
+> +	 */
+> +	err = ad3552r_get_output_range(st->dev, st->model_data->chip_id,
+As per the normal spi driver, embed the range data in your model_data structure.
+If that requires you to export the structure contain that info then do so.
 
 
 
-On 29 September 2024 11:23:12 UTC, Zhihao Cheng <chengzhihao1@huawei=2Ecom=
-> wrote:
->=E5=9C=A8 2024/9/29 18:52, Daniel Golle =E5=86=99=E9=81=93:
->> On Sun, Sep 29, 2024 at 12:03:11PM +0800, Zhihao Cheng wrote:
->>> =E5=9C=A8 2024/9/28 22:38, Daniel Golle =E5=86=99=E9=81=93:
->>>> On Sat, Sep 28, 2024 at 03:45:49PM +0200, Krzysztof Kozlowski wrote:
->>>> [=2E=2E=2E]
->>>> The case I want to cover here is the bootloader itself being stored
->>>> inside a UBI volume=2E MediaTek's fork of ARM TrustedFirmware-A bl2 c=
-omes
->>>> with support for UBI and loads BL3 (which is TF-A BL31 and U-Boot, an=
-d
->>>> maybe OP-TEE as well) from a static UBI volume=2E Removing, renaming =
-or
->>>> altering that volume results in the device not being able to boot any
->>>> more and requiring a complicated intervention (at attaching debugging
->>>> UART and using low-level recovery tool) in order to recover=2E
->>>=20
->>> Who removes/renames the 'critical' volume? I suggest to fix it in the =
-upper
->>> layer(not in kernel)=2E After looking through the patch 2, it seems a =
-hack
->>> solution=2E
->>=20
->> The enemy is the user, the upper layer is between the keyboard and the
->> screen=2E Just like for 'read-only' MTD partitions I'm looking
->> for a similar solution for UBI which prevents the user from accidentall=
-y
->> deleting or destroying the bootloader, lets say, when logged in via SSH=
-=2E
->> =2E
->>=20
->
->I guess that other partitions(excepts mtd) have the similar situations, u=
-sers could delete a rootfs(ext4) partition by operation the raw block devic=
-e=2E The kernel has no way to stop user doing this, what if the user just w=
-ant to rebuild partions?
+> +				       child, &range);
+> +	if (!err)
+> +		return ad3552r_axi_set_output_range(st, range);
+> +	if (err != -ENOENT)
+> +		return err;
+> +
+> +	err = ad3552r_get_custom_gain(st->dev, child, &gs_p, &gs_n, &rfb,
+> +				      &goffs);
+> +	if (err)
+> +		return err;
+> +
+> +	gain = ad3552r_calc_custom_gain(gs_p, gs_n, goffs);
+> +	offset = abs((s32)goffs);
+> +
+> +	return ad3552r_axi_setup_custom_gain(st, gain, offset);
+> +}
 
-True, but as you correctly pointed out the worst-case scenario would be Li=
-nux no longer booting=2E You would fix that by using a bootable USB pendriv=
-e=2E
-However, the user wont easily manage to delete the bootloader or BIOS by a=
-ccident, such as a simple typo of the partition number or accidentally dest=
-roying GPT=2E If the storage of low-level boot firmware is accissible from =
-within Linux then there are always additional safeguards, such as the write=
--protection of mmcblkXbootY hw-partition, or MTD partitons holding bootload=
-er components being marked as read-only=2E
 
->Marking volume as critical(by a stopper in kernel) could prevent user mis=
-takenly operating, but I think it is more important that user need to know =
-what he/she is doing=2E
+> +
+> +static const struct ad3552r_axi_model_data ad3552r_model_data = {
+> +	.model_name = "ad3552r",
+> +	.chip_id = AD3552R_ID,
+> +	.num_hw_channels = 2,
+> +};
 
-I agree that education of users is crucial, yet I think the risk of needin=
-g complicated hardware interventions (direct access to NAND flash chip, att=
-aching JTAG, =2E=2E=2E) which are required in order to recover from a mista=
-ke should also be taken into account=2E
+why not reuse the existing ax3552r_model_data?
+If conveys more information than you have here but includes everything here.
+That data is about the ADC, not how it is wired up, so should be consistent
+independent of the interface.
+
+> +MODULE_LICENSE("GPL");
+> diff --git a/drivers/iio/dac/ad3552r.h b/drivers/iio/dac/ad3552r.h
+> index b1caa3c3e807..02805eec69a5 100644
+> --- a/drivers/iio/dac/ad3552r.h
+> +++ b/drivers/iio/dac/ad3552r.h
+> @@ -38,6 +38,8 @@
+>  #define AD3552R_REG_ADDR_TRANSFER_REGISTER		0x0F
+>  #define   AD3552R_MASK_MULTI_IO_MODE			GENMASK(7, 6)
+>  #define   AD3552R_MASK_STREAM_LENGTH_KEEP_VALUE		BIT(2)
+> +#define   AD3552R_MASK_DUAL_SPI				BIT(6)
+> +#define   AD3552R_MASK_QUAD_SPI				BIT(7)
+>  #define AD3552R_REG_ADDR_INTERFACE_CONFIG_C		0x10
+>  #define   AD3552R_MASK_CRC_ENABLE			(GENMASK(7, 6) |\
+>  							 GENMASK(1, 0))
+> @@ -129,6 +131,13 @@
+>  #define AD3552R_GAIN_SCALE				1000
+>  #define AD3552R_LDAC_PULSE_US				100
+>  
+> +#define AD3552R_STREAM_2BYTE_LOOP			0x02
+> +#define AD3552R_STREAM_4BYTE_LOOP			0x04
+
+I think these two should just use the numbers given 2byte == 2 and
+4byte == 4.  Defines seem to me to just add possible confusion!
+
+Jonathan
 
