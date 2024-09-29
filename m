@@ -1,247 +1,181 @@
-Return-Path: <linux-kernel+bounces-342750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60752989293
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:07:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB35989297
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 577C31C21A60
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:07:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BC6B2115C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C380D14287;
-	Sun, 29 Sep 2024 02:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6362118641;
+	Sun, 29 Sep 2024 02:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6qz/l7x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PFOwkDGf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA96B644;
-	Sun, 29 Sep 2024 02:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046BD18EB0
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 02:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727575620; cv=none; b=ebzsI4w1vtgf9f8yRF+Vt1MUPsr7b9nl4Uk0K3m6LbD8ypWAUDQKSWQ3yscbplYoquV2jw0wTwoWK9/c08q41NRQvJi5qBxvylK5QOWch9zU7A0ium4zUpDjXhv5QLS6nhXQQSuK2bO0yk+s/eXjEAFffiE10s8k31nsNQR99HU=
+	t=1727575647; cv=none; b=lQ/nmKkYCfXRIRWm4eE7HaVx4czOjXb4dv6ZiDKlOmt7WwC+1/QQfhx7eFT70wb7H+EpvLzmGxQ1FFZoRjMCTll14ZB4xaDVRD6/6dhC/NYYt8bhcG7qgu8mF+LZnxzXFKia8vKApMqU4ZyH7P2Fio9+tC2a9IX1YPhylgLE0xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727575620; c=relaxed/simple;
-	bh=qJpooV+Tfj/rEDT4W83dGke5NWIUEV7FI2v+u8We7zo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=lmOy51Aw+zUgoTFtCV6iTDesKc3cC6gJ0In2SaeL6pV38gkLZ1dkA7OvlDdIT3MhFBLzutfSz5U+hc73CGn5rug+dRiQoPX1CosPWq+AAHBZ4y3iUepqNHAwmJ8JmiNhsgqIV1H89MO/KvF9OdybCzV8CI3+/nc3VBGZIbf+T58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6qz/l7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A5A0C4CEC3;
-	Sun, 29 Sep 2024 02:06:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727575619;
-	bh=qJpooV+Tfj/rEDT4W83dGke5NWIUEV7FI2v+u8We7zo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=J6qz/l7xd3Fg5vtg8wL+jqITEEGhsnD/qtXiF89ECiseV+QOAGjVtyOR+7jSOjpDw
-	 tRlFkZmsJtdSlZ6U2jmfO5R2qKnNLABrFiDbFRJnZpGUjtcFkFbbypXSIi85V2XA4v
-	 zA+ovERN07uRk2BGAVMCY2ATv9VjpLDgK0JJI9jv3VOss6Ftd6n08FRx7bIorH9mYs
-	 tNJdxHIEQhYDcHyM3gIkF8a14+4iQ+ohV/Weq9e03krN8I9ObWlksX1oFnVngkezh8
-	 uhbSdzBRhwLdArhx3WQcr5lbeKfioHYG61Ci1q5LsB4fr5v6A+N/A/uG9eqW6z9z7r
-	 zDWRSAMb8Hrmw==
-Date: Sun, 29 Sep 2024 11:06:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
- <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
- Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
- <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
- <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, Will
- Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, Mike Leach
- <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren
- <guoren@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nick
- Terrell <terrelln@fb.com>, Guilherme Amadio <amadio@gentoo.org>, Changbin
- Du <changbin.du@huawei.com>, "Steinar H. Gunderson" <sesse@google.com>,
- Aditya Gupta <adityag@linux.ibm.com>, Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>, Kajol
- Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>, Shenlin Liang
- <liangshenlin@eswincomputing.com>, Atish Patra <atishp@rivosinc.com>,
- Oliver Upton <oliver.upton@linux.dev>, Chen Pei <cp0613@linux.alibaba.com>,
- Dima Kogan <dima@secretsauce.net>, Alexander Lobakin
- <aleksander.lobakin@intel.com>, "David S. Miller" <davem@davemloft.net>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, Yang Jihong
- <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 03/11] perf build: Rename test-dwarf to test-libdw
-Message-Id: <20240929110649.13cbcc9428e894efbd61c57c@kernel.org>
-In-Reply-To: <20240924160418.1391100-4-irogers@google.com>
-References: <20240924160418.1391100-1-irogers@google.com>
-	<20240924160418.1391100-4-irogers@google.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727575647; c=relaxed/simple;
+	bh=TO6F9WUFFXlq7WPqrSDsnpUMpKF1xFzm56hCVzpmjMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OYFg8QPMOxco57sfCz8qKZEzwZmn5J7PYlgF61i4PGYq8wj+1XTk7/JmZrDVP971eb/9mC8Nk3Dghrnc1TP9tfCetVtJqJVQzo5AH2sGruIsYs782zHu1iqMuDW+zoSMNYZwv9Ov3l8h22hvvMj5iFBqEc0z53c4cRWENJGr6k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PFOwkDGf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727575645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TO6F9WUFFXlq7WPqrSDsnpUMpKF1xFzm56hCVzpmjMk=;
+	b=PFOwkDGfqZRTdRa+vO2LbLy8UjqJg5awchQ37wMOJg5uTGD3IfXg3eIgD8DLcmn604+jcy
+	nu7qpdTEj/tFiaOUHbCN06ICgvLZTOWoyqQbomCT0+HWBHDQGhmmOoBs1T+MA60iR0nsRq
+	OYTOTkN77HTlLAFDLO3foo6zKFyztlE=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-1vXvB4zFMvqJUL7XF328dw-1; Sat, 28 Sep 2024 22:07:23 -0400
+X-MC-Unique: 1vXvB4zFMvqJUL7XF328dw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2d8e7e427d5so3119006a91.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 19:07:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727575643; x=1728180443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TO6F9WUFFXlq7WPqrSDsnpUMpKF1xFzm56hCVzpmjMk=;
+        b=FthM7UL0nLa2/E7OkVw7ZMU4vDFz+fPewdnGcPNDNdkNPzoaV8joOEf8DVoF6EQMOt
+         U3/gGSvWMszQeWrCENeOKTNP73nP7NgGeoq0jNillMdvvwYhljDUWrzDpc01QhSvKBje
+         wjgINaIOUXtbWFBytQPtdaJyCrRIumLLZSAkpFdR76JPPJYXyJ/eBBcp4BOn56t0dG7x
+         9qt6aMMSH9YxHrGohYYKbDltEV8Yq2rr4wSDMYEc2LHC8mefwYXwrLpbS78YEzebXi82
+         ssvszVdjP9cVgboIr9tubm8PAe7o2GCdJ2wtyoLz0r9PEj7Z8SMuoTZFTkKwSRAkJv8E
+         4zxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGYTZgmZ7s+nNbqggS39MClIjqaKW7OC28u11G0Git66u0MVBxMLeBxjNGQZaCamF4Iqa9wPieerP0J2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweMpRd71vUewZZd0xpKTXck8QyHNpSDaoIirNedfA3z9wcLEKJ
+	kPDUQpN9ej+i9ZxWHFUBk1Mb7e0jmoy74pAUqKp8f++EAIt8/DeqEqfkeclhbJm0qedx7aWoRo2
+	MesKl3yTFms+fWJIIKv6Nk0Gegmthp5pOwwHYje/afedmf64++pKNgg4JBPkigHerDyVuOvtSMr
+	Y0ULBR5eWDIXPEorwUw1abDsBiLvDIazsh0WeY
+X-Received: by 2002:a17:90a:d994:b0:2d8:e6d8:14c8 with SMTP id 98e67ed59e1d1-2e0b72ebe66mr12848821a91.15.1727575642711;
+        Sat, 28 Sep 2024 19:07:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEj0CCQ8up3FJXqhdPxg4H3lCO7LjesFN419E2sMSG36WbFWRO8y7aomLGECK7sl9/s5dIhUxnui4OmPKl9ZQY=
+X-Received: by 2002:a17:90a:d994:b0:2d8:e6d8:14c8 with SMTP id
+ 98e67ed59e1d1-2e0b72ebe66mr12848791a91.15.1727575642243; Sat, 28 Sep 2024
+ 19:07:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com> <CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
+ <c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com> <CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
+ <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
+In-Reply-To: <6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Sun, 29 Sep 2024 10:07:11 +0800
+Message-ID: <CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
+Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
+To: Akihiko Odaki <akihiko.odaki@daynix.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+	Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko <andrew@daynix.com>, 
+	Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 24 Sep 2024 09:04:10 -0700
-Ian Rogers <irogers@google.com> wrote:
+On Fri, Sep 27, 2024 at 3:51=E2=80=AFPM Akihiko Odaki <akihiko.odaki@daynix=
+.com> wrote:
+>
+> On 2024/09/27 13:31, Jason Wang wrote:
+> > On Fri, Sep 27, 2024 at 10:11=E2=80=AFAM Akihiko Odaki <akihiko.odaki@d=
+aynix.com> wrote:
+> >>
+> >> On 2024/09/25 12:30, Jason Wang wrote:
+> >>> On Tue, Sep 24, 2024 at 5:01=E2=80=AFPM Akihiko Odaki <akihiko.odaki@=
+daynix.com> wrote:
+> >>>>
+> >>>> virtio-net have two usage of hashes: one is RSS and another is hash
+> >>>> reporting. Conventionally the hash calculation was done by the VMM.
+> >>>> However, computing the hash after the queue was chosen defeats the
+> >>>> purpose of RSS.
+> >>>>
+> >>>> Another approach is to use eBPF steering program. This approach has
+> >>>> another downside: it cannot report the calculated hash due to the
+> >>>> restrictive nature of eBPF.
+> >>>>
+> >>>> Introduce the code to compute hashes to the kernel in order to overc=
+ome
+> >>>> thse challenges.
+> >>>>
+> >>>> An alternative solution is to extend the eBPF steering program so th=
+at it
+> >>>> will be able to report to the userspace, but it is based on context
+> >>>> rewrites, which is in feature freeze. We can adopt kfuncs, but they =
+will
+> >>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KV=
+M
+> >>>> and vhost_net).
+> >>>>
+> >>>
+> >>> I wonder if we could clone the skb and reuse some to store the hash,
+> >>> then the steering eBPF program can access these fields without
+> >>> introducing full RSS in the kernel?
+> >>
+> >> I don't get how cloning the skb can solve the issue.
+> >>
+> >> We can certainly implement Toeplitz function in the kernel or even wit=
+h
+> >> tc-bpf to store a hash value that can be used for eBPF steering progra=
+m
+> >> and virtio hash reporting. However we don't have a means of storing a
+> >> hash type, which is specific to virtio hash reporting and lacks a
+> >> corresponding skb field.
+> >
+> > I may miss something but looking at sk_filter_is_valid_access(). It
+> > looks to me we can make use of skb->cb[0..4]?
+>
+> I didn't opt to using cb. Below is the rationale:
+>
+> cb is for tail call so it means we reuse the field for a different
+> purpose. The context rewrite allows adding a field without increasing
+> the size of the underlying storage (the real sk_buff) so we should add a
+> new field instead of reusing an existing field to avoid confusion.
+>
+> We are however no longer allowed to add a new field. In my
+> understanding, this is because it is an UAPI, and eBPF maintainers found
+> it is difficult to maintain its stability.
+>
+> Reusing cb for hash reporting is a workaround to avoid having a new
+> field, but it does not solve the underlying problem (i.e., keeping eBPF
+> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
+> is a reasonable option to keep the API as stable as other virtualization
+> UAPIs while respecting the underlying intention of the context rewrite
+> feature freeze.
 
-> Be more intention revealing that the dwarf test is actually testing
-> for libdw support.
-> 
+Fair enough.
 
-Looks good to me.
+Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
+via cls or other). It might worth to see if anything we miss here.
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks
 
-Thanks!
+>
+> Regards,
+> Akihiko Odaki
+>
 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/build/Makefile.feature                     |  6 +++---
->  tools/build/feature/Makefile                     | 16 ++++++++--------
->  tools/build/feature/test-all.c                   |  6 +++---
->  .../build/feature/{test-dwarf.c => test-libdw.c} |  0
->  tools/perf/Makefile.config                       |  6 +++---
->  5 files changed, 17 insertions(+), 17 deletions(-)
->  rename tools/build/feature/{test-dwarf.c => test-libdw.c} (100%)
-> 
-> diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-> index ffd117135094..6025810cc346 100644
-> --- a/tools/build/Makefile.feature
-> +++ b/tools/build/Makefile.feature
-> @@ -30,7 +30,7 @@ endef
->  #
->  FEATURE_TESTS_BASIC :=                  \
->          backtrace                       \
-> -        dwarf                           \
-> +        libdw                           \
->          dwarf_getlocations              \
->          dwarf_getcfi                    \
->          eventfd                         \
-> @@ -120,7 +120,7 @@ ifeq ($(FEATURE_TESTS),all)
->  endif
->  
->  FEATURE_DISPLAY ?=              \
-> -         dwarf                  \
-> +         libdw                  \
->           dwarf_getlocations     \
->           glibc                  \
->           libbfd                 \
-> @@ -233,7 +233,7 @@ endef
->  
->  #
->  # generates feature value assignment for name, like:
-> -#   $(call feature_assign,dwarf) == feature-dwarf=1
-> +#   $(call feature_assign,libdw) == feature-libdw=1
->  #
->  feature_assign = feature-$(1)=$(feature-$(1))
->  
-> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-> index 5938cf799dc6..bece326ac93b 100644
-> --- a/tools/build/feature/Makefile
-> +++ b/tools/build/feature/Makefile
-> @@ -5,7 +5,7 @@ FILES=                                          \
->           test-all.bin                           \
->           test-backtrace.bin                     \
->           test-bionic.bin                        \
-> -         test-dwarf.bin                         \
-> +         test-libdw.bin                         \
->           test-dwarf_getlocations.bin            \
->           test-dwarf_getcfi.bin                  \
->           test-eventfd.bin                       \
-> @@ -168,9 +168,9 @@ $(OUTPUT)test-libopencsd.bin:
->  	$(BUILD) # -lopencsd_c_api -lopencsd provided by
->  		 # $(FEATURE_CHECK_LDFLAGS-libopencsd)
->  
-> -DWARFLIBS := -ldw
-> +DWLIBS := -ldw
->  ifeq ($(findstring -static,${LDFLAGS}),-static)
-> -  DWARFLIBS += -lelf -lz -llzma -lbz2 -lzstd
-> +  DWLIBS += -lelf -lz -llzma -lbz2 -lzstd
->  
->    LIBDW_VERSION := $(shell $(PKG_CONFIG) --modversion libdw)
->    LIBDW_VERSION_1 := $(word 1, $(subst ., ,$(LIBDW_VERSION)))
-> @@ -179,18 +179,18 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
->    # Elfutils merged libebl.a into libdw.a starting from version 0.177,
->    # Link libebl.a only if libdw is older than this version.
->    ifeq ($(shell test $(LIBDW_VERSION_2) -lt 177; echo $$?),0)
-> -    DWARFLIBS += -lebl
-> +    DWLIBS += -lebl
->    endif
->  endif
->  
-> -$(OUTPUT)test-dwarf.bin:
-> -	$(BUILD) $(DWARFLIBS)
-> +$(OUTPUT)test-libdw.bin:
-> +	$(BUILD) $(DWLIBS)
->  
->  $(OUTPUT)test-dwarf_getlocations.bin:
-> -	$(BUILD) $(DWARFLIBS)
-> +	$(BUILD) $(DWLIBS)
->  
->  $(OUTPUT)test-dwarf_getcfi.bin:
-> -	$(BUILD) $(DWARFLIBS)
-> +	$(BUILD) $(DWLIBS)
->  
->  $(OUTPUT)test-libelf-getphdrnum.bin:
->  	$(BUILD) -lelf
-> diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-> index 6f4bf386a3b5..d60e072b6eca 100644
-> --- a/tools/build/feature/test-all.c
-> +++ b/tools/build/feature/test-all.c
-> @@ -38,8 +38,8 @@
->  # include "test-glibc.c"
->  #undef main
->  
-> -#define main main_test_dwarf
-> -# include "test-dwarf.c"
-> +#define main main_test_libdw
-> +# include "test-libdw.c"
->  #undef main
->  
->  #define main main_test_dwarf_getlocations
-> @@ -187,7 +187,7 @@ int main(int argc, char *argv[])
->  	main_test_get_current_dir_name();
->  	main_test_gettid();
->  	main_test_glibc();
-> -	main_test_dwarf();
-> +	main_test_libdw();
->  	main_test_dwarf_getlocations();
->  	main_test_eventfd();
->  	main_test_libelf_getphdrnum();
-> diff --git a/tools/build/feature/test-dwarf.c b/tools/build/feature/test-libdw.c
-> similarity index 100%
-> rename from tools/build/feature/test-dwarf.c
-> rename to tools/build/feature/test-libdw.c
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index 182e14e39cd5..c8e157cc0c5e 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -159,8 +159,8 @@ ifeq ($(findstring -static,${LDFLAGS}),-static)
->      DWARFLIBS += -lebl
->    endif
->  endif
-> -FEATURE_CHECK_CFLAGS-dwarf := $(LIBDW_CFLAGS)
-> -FEATURE_CHECK_LDFLAGS-dwarf := $(LIBDW_LDFLAGS) $(DWARFLIBS)
-> +FEATURE_CHECK_CFLAGS-libdw := $(LIBDW_CFLAGS)
-> +FEATURE_CHECK_LDFLAGS-libdw := $(LIBDW_LDFLAGS) $(DWARFLIBS)
->  FEATURE_CHECK_CFLAGS-libdw-dwarf-unwind := $(LIBDW_CFLAGS)
->  FEATURE_CHECK_LDFLAGS-libdw-dwarf-unwind := $(LIBDW_LDFLAGS) $(DWARFLIBS)
->  FEATURE_CHECK_CFLAGS-dwarf_getlocations := $(LIBDW_CFLAGS)
-> @@ -470,7 +470,7 @@ else
->          $(warning No libdw DWARF unwind found, Please install elfutils-devel/libdw-dev >= 0.158 and/or set LIBDW_DIR)
->        endif
->      endif
-> -    ifneq ($(feature-dwarf), 1)
-> +    ifneq ($(feature-libdw), 1)
->        ifndef NO_LIBDW
->          $(warning No libdw.h found or old libdw.h found or elfutils is older than 0.138, disables dwarf support. Please install new elfutils-devel/libdw-dev)
->          NO_LIBDW := 1
-> -- 
-> 2.46.0.792.g87dc391469-goog
-> 
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
