@@ -1,58 +1,115 @@
-Return-Path: <linux-kernel+bounces-343142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F6F0989730
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:54:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6159C989733
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE747282350
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74531F21712
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B1A7DA6C;
-	Sun, 29 Sep 2024 19:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB1C7DA68;
+	Sun, 29 Sep 2024 19:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYJ6SyB3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="zLO1xvhU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SUqLrlSG"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FEE8F6D;
-	Sun, 29 Sep 2024 19:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753557BAEC;
+	Sun, 29 Sep 2024 19:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727639667; cv=none; b=N8HanQROS1c3YJY68wxLDqjnJc5mfM+WgKFz/v6NZa9euWWHrvEJ1SA1QXi72ufw0IWLFz9ZtuSu0DNOZ9ytM+BfGq7M4WlJr7azhyCfxZVB5MnomT6aS0B75tZtojHxTXnN9TIBTRrLkgsBHxWmsnQOCGwJxulXQxhUUCx0BpM=
+	t=1727639972; cv=none; b=i1cTiEH9CoYDIJ2o2OEiCAFBQ+CtAbs4+abiOLqhJInIcfFm75yfVF50dTCYbEAsQCbANt+Jf2YVT4vQxRHbFcDT9Ux7O1lzmLHOybrpznZTzZHfoKKNnUnA4UKbE6zKhLCVSpn/VabElac+GspUYBv8Y3G9/8q6tMRkG/sYSO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727639667; c=relaxed/simple;
-	bh=3ec6TBaIrguuCGne5BwNNYsxTdVA0VDsTr4JFGHXQN4=;
+	s=arc-20240116; t=1727639972; c=relaxed/simple;
+	bh=ZEiw6Vdio/TP2WrUL+Vf/mhXL1ax469ODYxcNdnlWC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5IBC8zm4b3qLaYfdq3vWlN/JfIC/PKEC8YysChEf15gBM882dOJA7TAESrUbg9LXI1/31pAOPJrs5R6Q+BUDPvyRUxPf1uYM5ahkIa0Q+RVPeq3K6mNnGmIlSnQxwEU6QsFJ6dO9AYrWUjjJMOFrQYIHeF0VRM5B/Mi421tTtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OYJ6SyB3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0FE7C4CEC5;
-	Sun, 29 Sep 2024 19:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727639666;
-	bh=3ec6TBaIrguuCGne5BwNNYsxTdVA0VDsTr4JFGHXQN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OYJ6SyB3FbBA+NMrI/0bnC9un38e3AceF0r4T/8no02WjKjqymImA8cNcH/wSbfRa
-	 oaWOyNVWuWWu3lIPuBgk1+iCQHclKmixyz9RDQuyTCvciJHDx67eKnbZRHyJqGBeXx
-	 AIfD+XRie4bnEx5lVCLvmGwDJv4wjqwJERArMdLo6V3XKEUsQSKyU4IgyB9ZmpPj2q
-	 yIW8Wf3jVNBmsFtWIgoFzDiVk9Hxa3duKPypWs8U2umq8vqI17JRn0qEwnB9uFXsqm
-	 WRkyHaiIag4kQvcV7IiA5mWqvQkiPjPgiB+l0/6Fn/VWi3Zci+M0Sisa//5W4eQsDZ
-	 6P/aRpxI0yK1Q==
-Date: Sun, 29 Sep 2024 21:54:23 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, linux-kernel@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>
-Subject: Re: [PATCH] dt-bindings: spi: Add bcm2835-aux-spi.yaml file.
-Message-ID: <b4sbg7k5gz2uawunvjisphiut7xs3a3ark2t7ekze22eqrs6kr@hffol2q525fj>
-References: <ZvkAPUoa96GHPnZE@Emma>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxK4K+Qm39a8/1BnIKpmzcBqotOttI/VI+cZg99YSqqOoV2e26H30njqb4JyVTxpDJVdzxTNe3oWBNpUoxdNVv+obJXY28yfMp6OoT5fMCcMbzn/N7kNvAIZQ5E3MMGJRT/aWLDB9c4kEyantZacs1Vjr01KklMVi/QL5o4rS2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=zLO1xvhU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SUqLrlSG; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8C3A8138025B;
+	Sun, 29 Sep 2024 15:59:29 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Sun, 29 Sep 2024 15:59:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1727639969;
+	 x=1727726369; bh=wjelk38W9mGSPjR1nvLcSCdYm0WK8pYBKRnjg05bhwE=; b=
+	zLO1xvhUNtnuTskHs4uOir8G6dEbx5fsn4gxqD6rvf4GKH8r+vsrmwY/eiM/kync
+	BgV3oztllypRlAUzpDaxtFGsTsID9xNM4kgHMZtHD9rpSIefylUlWF3MFs3sHGeU
+	N7yNn/Jr/ZzR71uYcgrdcCi/4otvAwlBMLF1lGiKgUg8PaZrXW5s9aLANRvk0Ytv
+	ZiGp6yURW77t7EX893gYsH3B0lihri8oRDvVx6lQI6NxWVBzOLI3cEMJKU7bhY5Z
+	wLywFNbOA0Mj5gvXk9kMWdQvSCYW8pnjoPLX6WIlq6vAwDbX7PJo3gu9XV3Ykvdg
+	5l2dtPuxVCmsp7StUONKPA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727639969; x=
+	1727726369; bh=wjelk38W9mGSPjR1nvLcSCdYm0WK8pYBKRnjg05bhwE=; b=S
+	UqLrlSGqUSSppwfVYPyb0sLAaYSr16qH8ASkKYZG3USwVfkvQND8AHiXdQZqhDJh
+	2I80BdgDND2JXs/7rIloFk0W2Q7hgZJL5fJvH04+BNOnvhy4kNTSwZr6dE1Z3kai
+	4L/p6uv22jf/QGrGW6AxDG5TQuPmh28yPSB/LYb5yoDnWV4iR9UOrCJevz00JOi/
+	xWwHBMD1l4a2e9t2nK2YV+FbAjK9MnWH+EriFgp4PTGyr+FPpV+BhQo9dOqvipUg
+	JE2bEfO3u2VLu/Lh5rJ4UVpCgvTTQ8WOj4tuWsEZXkSzxI1+lh8Rq3GljV89MSmf
+	LY1rBUhgV3zB6hnevriMQ==
+X-ME-Sender: <xms:obH5ZncGYFwsveKawsM78ViPH6JfgId4eMEmBZYrCOiQlZCGLydozw>
+    <xme:obH5ZtPGWwrg165XAdOEOKMiFpcJehegDSAOJ82PQ8njgnnl3UXOBoXvKALV8bzZa
+    NxJNbFhf_fQOGBGTL4>
+X-ME-Received: <xmr:obH5ZgiSmRkdSgJjtSNdKHK4tEg4hkible3M4a45ijNym1jqTJ27tduZFcNECyWDWgcwaZCl4SeIvsd9XOdPtQn9EHT7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddufedgudegiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenfghrlhcuvffnffculddutddmnecujfgurhepfffhvfevuffk
+    fhggtggugfgjsehtkeortddttdejnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrg
+    hrrhcuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeetjeej
+    udefveetgeehgfetleduudfhieegleetjeffudehkeeukeeigffffeeuffenucffohhmrg
+    hinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhi
+    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtg
+    gtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehk
+    vggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeht
+    hhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnth
+    drohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghs
+    shhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqd
+    gstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:obH5Zo_J2bN6ZDT_QjZLHe0tV1PBChCnX9RvagpE0YQBCI_dw5IEKA>
+    <xmx:obH5ZjsQ6UxCA3TG2LqiAJHhTuPwouIpxY7d3REw0va0FdGp_UOnDA>
+    <xmx:obH5ZnGHG8Utf5lRr7LwHSRFMxC9ei0kT46jQMS_fCT5zMk5yYJO0Q>
+    <xmx:obH5ZqPCMfVdVjsbvlnaFCdWrxem_tgGk-U3-BMIpomliV-nEbMJNg>
+    <xmx:obH5ZhJswG8A-TuWonqtoZRfoRAkni790OVx25gFhrEZoqjGyM_T0m-7>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 29 Sep 2024 15:59:28 -0400 (EDT)
+Date: Sun, 29 Sep 2024 21:59:26 +0200
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: Kees Cook <kees@kernel.org>
+Cc: Bill Wendling <morbo@google.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
+	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
+ bch2_xattr_validate
+Message-ID: <ZvmxntpAHrAwcKaH@archlinux>
+References: <ZvV6X5FPBBW7CO1f@archlinux>
+ <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
+ <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
+ <ZvWTXaqkmxP2E2dc@archlinux>
+ <ZvWd0aK7p_1rkb7E@archlinux>
+ <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
+ <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
+ <CAGG=3QVWCQB-3sM=iwgTmX8zrU81H+F_A1icJwROvW_DSvsBeA@mail.gmail.com>
+ <202409281335.5EE231B9C7@keescook>
+ <ZviSURL7kaxZPkSN@archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,99 +118,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZvkAPUoa96GHPnZE@Emma>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZviSURL7kaxZPkSN@archlinux>
 
-On Sun, Sep 29, 2024 at 07:22:37AM +0000, Karan Sanghavi wrote:
-> Converted the brcm,bcm2835-aux-spi.txt file to
-> its respective yaml file format.
+On 29 01:33:40, Jan Hendrik Farr wrote:
+> On 28 13:50:12, Kees Cook wrote:
+> > On Thu, Sep 26, 2024 at 06:30:15PM -0700, Bill Wendling wrote:
+> > > On Thu, Sep 26, 2024 at 3:18 PM Bill Wendling <morbo@google.com> wrote:
+> > > >
+> > > > On Thu, Sep 26, 2024 at 12:58 PM Ard Biesheuvel <ardb@kernel.org> wrote:
+> > > > >
+> > > > > (cc Kees and Bill)
+> > > > >
+> > > > > On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > > > > >
+> > > > > > On 26 19:01:20, Jan Hendrik Farr wrote:
+> > > > > > > On 26 18:09:57, Thorsten Blum wrote:
+> > > > > > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
+> > > > > > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
+> > > [...]
+> > > > > > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
+> > > [...]
+> > > > > > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
+> > > > > > >                        c, xattr_name_invalid_chars,
+> > > > > > >                        "xattr name has invalid characters");
+> > > [...]
+> > 
+> > The thing going wrong is that __bdos(xattr.v->x_name, 0) is returning 0.
+> > This looks exactly like the bug I minimized here:
+> > https://lore.kernel.org/all/202409170436.C3C6E7F7A@keescook/
+> > 
+> > Since there wasn't an LLVM open bug yet, I've created:
+> > https://github.com/llvm/llvm-project/issues/110385
+> > 
+> > -Kees
+> > 
+> I found a fix for the issue. Fixes both the issue in this thread as well
+> as your reproducer. First thought they might not actually be the same
+> issue, but they indeed are. Haven't tested against the issue Thorsten
+> linked.
 > 
+> Havn't run the clang tests on it yet, but it does successfully compile
+> my kernel and fix the issue.
+> 
+> I'll open a PR and give more explanation tomorrow, it's getting
+> pretty late over here in CEST.
+> 
+> 
+> Here's the patch to be applied on top of
+> https://github.com/llvm/llvm-project
+> 
+> --
+> diff --git a/clang/lib/CodeGen/CGExpr.cpp b/clang/lib/CodeGen/CGExpr.cpp
+> index 9166db4c7412..143dd3fcfcf8 100644
+> --- a/clang/lib/CodeGen/CGExpr.cpp
+> +++ b/clang/lib/CodeGen/CGExpr.cpp
+> @@ -1164,15 +1164,15 @@ llvm::Value *CodeGenFunction::EmitLoadOfCountedByField(
+>      Res = EmitDeclRefLValue(DRE).getPointer(*this);
+>      Res = Builder.CreateAlignedLoad(ConvertType(DRE->getType()), Res,
+>                                      getPointerAlign(), "dre.load");
+> -  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
+> -    LValue LV = EmitMemberExpr(ME);
+> -    Address Addr = LV.getAddress();
+> -    Res = Addr.emitRawPointer(*this);
+>    } else if (StructBase->getType()->isPointerType()) {
+>      LValueBaseInfo BaseInfo;
+>      TBAAAccessInfo TBAAInfo;
+>      Address Addr = EmitPointerWithAlignment(StructBase, &BaseInfo, &TBAAInfo);
+>      Res = Addr.emitRawPointer(*this);
+> +  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
+> +    LValue LV = EmitMemberExpr(ME);
+> +    Address Addr = LV.getAddress();
+> +    Res = Addr.emitRawPointer(*this);
+>    } else {
+>      return nullptr;
+>    }
 
-Subject: You do not add new binding, you convert it. Also, drop final
-full stop.
 
-> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
-> ---
+Here's the PR: https://github.com/llvm/llvm-project/pull/110437
+
+I hope the way I added the CHECK tags in the test is good and that they if
+they don't need manual cleanup, not familiar with the llvm test system.
 
 
-> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-> new file mode 100644
-> index 000000000000..4c24cf2fe214
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-> @@ -0,0 +1,66 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
-> +
-> +maintainers:
-> +  - Karan Sanghavi <karansanghvi98@gmail.com>
-
-This is fine, just to be clear: you have the hardware, datasheet or
-some sort of interest in this hardware?
-
-> +
-> +description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +  The BCM2835 contains two forms of SPI master controller. One is known simply as
-> +  SPI0, and the other as the "Universal SPI Master," part of the auxiliary block.
-> +  This binding applies to the SPI1 and SPI2 auxiliary controllers.
-> +
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - brcm,bcm2835-aux-spi
-> +    description: Broadcom BCM2835 Auxiliary SPI controller for SPI1 and SPI2.
-
-Drop description
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Reference to the auxiliary clock driver for the BCM2835.
-
-Instead: maxItems: 1
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/bcm2835-aux.h>
-> +    spi@7e215080 {
-> +        compatible = "brcm,bcm2835-aux-spi";
-> +        reg = <0x7e215080 0x40>;
-> +        interrupts = <1 29>;
-> +        clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +    };
-> +
-> +  - |
-
-Only one example is enough, drop the rest because they are the same.
-
-Best regards,
-Krzysztof
-
+Best Regards
+Jan
 
