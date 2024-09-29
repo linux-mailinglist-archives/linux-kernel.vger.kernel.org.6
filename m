@@ -1,130 +1,148 @@
-Return-Path: <linux-kernel+bounces-342985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4AB989585
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:53:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03210989586
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBD0AB21B43
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:53:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A0E3B2389D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FDB1791ED;
-	Sun, 29 Sep 2024 12:53:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95F314F100;
+	Sun, 29 Sep 2024 12:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWFbb8wY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9B614F100
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 12:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B744166F3D;
+	Sun, 29 Sep 2024 12:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727614385; cv=none; b=XGZsrOoWxYFFiI64zaHVjowOeONLpoxiFKQ8Jc9C9GIyFVJUvRpKlAMtv+bShZRmxUgteFM8AUWzOjDuOLPXT9cnnW9wWjN0U7DA8JLZIXGY+nInqrN2lVZ7/BbW2UAJKDg5uOWBfgJJLAQND/sz6drnnB6WNVsOJD/3kc3u8jY=
+	t=1727614404; cv=none; b=cT0fX+5ICQGUbKQdzWIyNq67RDsg1fN0tjPVlocLVd4VGtzlzN5wOA7iAjmRzZUB8icYmxisEvtujTHfBDSFpHQ5mfUd6TeT6CMTqlkcG1lGv0bai2tF9FH34Q/awCHuiHFSnr9aWwvTpTx6IXX/0YNqGX6+6wbcQMfs4en1/DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727614385; c=relaxed/simple;
-	bh=pZFS2WlX3TQsRnRE7MgXAWhVFJWP9+AbPR7JNH3ONSc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sg98tnRfbXY3zlbb+Whs731MAR2xodeyu8nu0oJWrwPVvz4WfoqTQ8SPRhfzrHYxoY3e1UKzKOie2Bq89VfIS4XcsTh5Sp5ygwiYlMuj8qv9sYLlQN2R/OUxsSD/ns4LXf5zrIlrPBxjeiLrIKBW0eW7ZjiAlQaUPRR71THh5yE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so491346539f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:53:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727614383; x=1728219183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yg4cabrsjfZ4/xtQzX+9Qv+fchyVzeYGa5QY4s5PviA=;
-        b=lZRAp9KV5+GJzcggCGtcHf4NGBHGAayECqCQmV/3USUiTcPTroKlvGOKPv/CHSBDly
-         sDv6bhNcE0IuH1iKb14Yjn0BlzcEL6cGK9Y4wKMewho6rCupeu4kwoytaXMZ9YydswBF
-         yZmYZvMpCHhXFfoGWWqLHu3Ga0Ci3XGuZ3HyP3hkycZl8XpBYvdVctQL3va7DExzyySc
-         B/ZnDr3C8wj+Of+/7Jb6dAFn/Jd/kwgZiihT+tEx/Cgxul/mToN8I5UzkzxrU6bJ8795
-         HBWtJP7CGUpM2AsK2rGgxfeCKUtOFYeRcXsBJ+iEtibSv6wVm9ERm6PDAOQkoPXD9fe0
-         n30A==
-X-Gm-Message-State: AOJu0YyrQm8nk9vlfzrWISKOrxhwkShghEdHY5LE4sR3BgQXOGgJZ6T5
-	er8pTwl6wy5nFdTyrrp2CyvetYcT33rWPZSUO4PML0+LBMr50CPSaTxQkzZdRPlFieEXE+9RHNU
-	FDfKxbCt6afJBsySKURUfALBBk11NxZGx46hNiqeV/EAvvTRL/kdldMI=
-X-Google-Smtp-Source: AGHT+IGTUc4dRkQsL2iGuSvOofI9E8FM617uu96o3E45TmMDTk8rdyoy1zXU2/mtH5DaAmXSmIga4yh++bcKZIv/BFP3msOxd20/
+	s=arc-20240116; t=1727614404; c=relaxed/simple;
+	bh=Bp1K9G0WMsALT0d5ANIdqjivrQqSUfMMybbl4HmCxsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqWgktaApR3u0SG95Dyox1SIt2yX6P19ArIA5KAno+F5acVp+ZKoebDdB2N848QtC+kQejWj7hTjQyD73FQjmcndq+z/czoHNii3Or1qNQ7Czs+xYhD9t7QXIOod4cFhmYe93/hPXEtvqKm+KlnLXxVMjbp2ET1dEFGSDxWSoeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWFbb8wY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C88C4CEC5;
+	Sun, 29 Sep 2024 12:53:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727614403;
+	bh=Bp1K9G0WMsALT0d5ANIdqjivrQqSUfMMybbl4HmCxsY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VWFbb8wYU0S1W1F1AHmyTFcb4nXxO2MdHHoQxg4vMzoLc6Ux3QC0yR2uoJKOFLO/E
+	 Z3QDTcUpsvJmZHPbFiw4VfDN7EqPV/TmbZpueaPRdVXNYMlw9Pf4BjzYl6GINPDUdw
+	 /qk+0354sajJseCamQt3PV5px0CUWDR9sS8lbSYWNt1Z1PJvBMg0NyNK2phcRa1HN3
+	 UuJ198+3CE3VB7n5QDAt5jXb7H+y3CYyMVcbZHsMfKhRsvniueDx6ILYSRHx0j6h6D
+	 CTUCkcJ+NR0qiGw1UiZvEogr1gztl2W3vwAal7QmCOiAM3dcTyM56siD9GqUaMF9wn
+	 oQeonj4E2+QbA==
+Received: by pali.im (Postfix)
+	id BD4B1872; Sun, 29 Sep 2024 14:53:17 +0200 (CEST)
+Date: Sun, 29 Sep 2024 14:53:17 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
+ reparse call
+Message-ID: <20240929125317.p7tbwvzy4bcs2a3s@pali>
+References: <20240928215948.4494-1-pali@kernel.org>
+ <20240928215948.4494-3-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4b:b0:3a0:bd91:3842 with SMTP id
- e9e14a558f8ab-3a3452b8bc8mr64419365ab.24.1727614383488; Sun, 29 Sep 2024
- 05:53:03 -0700 (PDT)
-Date: Sun, 29 Sep 2024 05:53:03 -0700
-In-Reply-To: <xpml2-IAWMWixV5X5cC9OKV2DxavafGOxt8q-Eb4WHzCouS859S5es04-mWaB3XnS4EP1QA3p4h3bITh3KKaTJELJsUyN8uKYhaCcPoVdyk=@proton.me>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f94daf.050a0220.6bad9.0012.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in bch2_btree_pos_to_text
-From: syzbot <syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, pz010001011111@proton.me, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240928215948.4494-3-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 
-Hello,
+Hello Steve, I was reading again implementation of smb2_compound_op()
+function and if I understood it correctly, then out_iov and out_buftype
+array parameters needs to have num_cmds+2 members. This is quite
+unexpected, and this patch cause buffer overflow and memory leaks.
++2 is for CREATE and CLOSE operations added automatically by compound.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: Bad rss-counter state
+Surprisingly, no memory issue and neither corrupted packed I observed.
+And therefore I thought that change is working fine.
 
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
-BUG: Bad rss-counter state mm:ffff888011da8980 type:MM_SWAPENTS val:11
-bcachefs (loop0): shutting down
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 8
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
-bcachefs (loop0): shutting down
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 8
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
-bcachefs (loop0): shutting down
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 8
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
-bcachefs (loop0): shutting down
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 8
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
-bcachefs (loop0): shutting down
-bcachefs (loop0): going read-only
-bcachefs (loop0): finished waiting for writes to stop
-bcachefs (loop0): flushing journal and stopping allocators, journal seq 8
-bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 8
-bcachefs (loop0): unshutdown complete, journal seq 9
-bcachefs (loop0): done going read-only, filesystem not clean
-bcachefs (loop0): shutdown complete
+I will send a new version of this change to increase array members and
+free all members of array.
 
-
-Tested on:
-
-commit:         3efc5736 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11360ea9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
-dashboard link: https://syzkaller.appspot.com/bug?extid=cf7b2215b5d70600ec00
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17a03e80580000
-
+On Saturday 28 September 2024 23:59:42 Pali Rohár wrote:
+> If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
+> intermediate object created by CREATE. Otherwise empty object stay on the
+> server when reparse call failed.
+> 
+> This ensures that if the creating of special files is unsupported by the
+> server then no empty file stay on the server as a result of unsupported
+> operation.
+> 
+> Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+>  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
+>  1 file changed, 19 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> index 11a1c53c64e0..af42f44bdcf4 100644
+> --- a/fs/smb/client/smb2inode.c
+> +++ b/fs/smb/client/smb2inode.c
+> @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+>  	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
+>  	struct cifsFileInfo *cfile;
+>  	struct inode *new = NULL;
+> +	int out_buftype[2] = {};
+> +	struct kvec out_iov[2];
+>  	struct kvec in_iov[2];
+>  	int cmds[2];
+>  	int rc;
+> @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+>  		cmds[1] = SMB2_OP_POSIX_QUERY_INFO;
+>  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+>  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+>  		if (!rc) {
+>  			rc = smb311_posix_get_inode_info(&new, full_path,
+>  							 data, sb, xid);
+> @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+>  		cmds[1] = SMB2_OP_QUERY_INFO;
+>  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+>  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+>  		if (!rc) {
+>  			rc = cifs_get_inode_info(&new, full_path,
+>  						 data, sb, xid, NULL);
+>  		}
+>  	}
+> +
+> +	if (rc) {
+> +		/*
+> +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
+> +		 * remove the intermediate object created by CREATE. Otherwise
+> +		 * empty object stay on the server when reparse call failed.
+> +		 */
+> +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status == STATUS_SUCCESS &&
+> +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status != STATUS_SUCCESS)
+> +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
+> +	}
+> +
+> +	free_rsp_buf(out_buftype[0], out_iov[0].iov_base);
+> +	free_rsp_buf(out_buftype[1], out_iov[1].iov_base);
+> +
+>  	return rc ? ERR_PTR(rc) : new;
+>  }
+>  
+> -- 
+> 2.20.1
+> 
 
