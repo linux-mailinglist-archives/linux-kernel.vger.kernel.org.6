@@ -1,125 +1,102 @@
-Return-Path: <linux-kernel+bounces-342733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B101989241
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF82989264
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5951C22B39
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DEE1F23AAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53374AD5E;
-	Sun, 29 Sep 2024 01:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="PQxOviIQ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318E5AD2F;
+	Sun, 29 Sep 2024 01:16:22 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D5566A;
-	Sun, 29 Sep 2024 01:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4A017C
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 01:16:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727572034; cv=none; b=rpSp9RfOj5jyh98SXSJTmbYqjK3tsvINotVxPQmnXTP52EJ8Dqv51nlmsAc8J+vqn55hkjjw+LXVog2kB85MGI9tWNOWqHsAx80xp9W4FKHnpC921SZ9y6fkLL/Lj1C65NAt8KL30I0KRR5jdF3XXKEgFPmHwsaX5tH2qfuBmSI=
+	t=1727572581; cv=none; b=Hv8AJzmnC5U7eKHtiYb3QMZ/sC33ZIxQPv+NUDW686XLWzHfhtca+l+/QJpZSzkH/dHkgGymgcDEJzztiR8Ym7Zt4jhoBe5sAQmFhviSmJOqMXq14eqU9Ej/SJk166+tI7b++syzr9LBpeyrSqG/uaCFP7t4eN88+0jbcbNzBh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727572034; c=relaxed/simple;
-	bh=hTmqR77oFiyEbCsEVBw14WDY2v8FcP70Mml8JvW2rGM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UWidad+WhuvDMTmMZfXubjIh1HYhcmM+DVHz+aajnns1N81KXJA/o8ZLErr0kLE4BhX9cL06mOn4VP1Orrn3SnlpY2wSW6zgenEwofSBsDl8s4cBFJ3xRtrzVtj14mjVo01c4UEB5JOdUCXs3PNlG0DXv6J242RNRiQTqPHNe/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=PQxOviIQ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=loBAEQ8XjMK91po1cPDTn1W0amEAW4cIC/JkA8QAxZ4=; b=PQxOviIQjXl5x28C
-	TQhyflH9vbfQjd2BfiKi7T6w1XHtRempDfgV3n9NIh0cvJMxELkihf0FqjX/4RHA9fzk+d28PKHbq
-	0zhIxSXBwCT8dm8fg+UvvdJ4oOkB55jCc6zFiZ0LnGzWcRJJQUxlp2jhkxPAfmSFjTb/MIaAnMO1u
-	MmBeNja+WuVejQNazjGKUwxbz1SH3fNvptO7JI6+AllohTnB/hWJWK3M/w+FXFv/w7Etz7u8iNlLn
-	Th4niRqbL0A2yinuU4IX9eoVxNQ7yLw5RflFyPXjxKYYhmvIRjVkLXZvP1pRtfzbH/qhl+vGSg4eZ
-	9gGDQr16twGIh9E6Jg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1suiOr-007mTN-2Q;
-	Sun, 29 Sep 2024 01:07:01 +0000
-From: linux@treblig.org
-To: irogers@google.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	jolsa@kernel.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] perf: Remove unused add_perf_probe_events
-Date: Sun, 29 Sep 2024 02:06:59 +0100
-Message-ID: <20240929010659.430208-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727572581; c=relaxed/simple;
+	bh=lBRNsGuhOo4TOee1NZmUbFYNejacWT3b5bQOh8WdNM8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=RgJ5Ytl+TXxICZMrOdawFVFzBY5r8/PUHYunzF8pNmW6otTQcoY/sXxeGbe8qmo+NEOARXc6jsIjj1Nvyj8GgEWyXa8Oj4UsSUmArhOWcnEfwkFJw2A+YhT98JILQkhaoamZEkkK6Wy1JTyn8FPhshwqyoUjtOoi2wD57T8gWKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XGR8w3rJ7zFqyP;
+	Sun, 29 Sep 2024 09:15:44 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id F3CBF140133;
+	Sun, 29 Sep 2024 09:16:09 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 29 Sep 2024 09:16:09 +0800
+Subject: Re: [PATCH RESEND] ubifs: xattr: remove unused anonymous enum
+To: <pascal.eberhard@gmail.com>, Richard Weinberger <richard@nod.at>
+CC: <miquel.raynal@bootlin.com>, Pascal Eberhard <pascal.eberhard@se.com>,
+	<linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240927145757.347630-1-pascal.eberhard@gmail.com>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <f6cbf88c-733d-95a1-c959-b2045b9edea8@huawei.com>
+Date: Sun, 29 Sep 2024 09:16:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240927145757.347630-1-pascal.eberhard@gmail.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+ÔÚ 2024/9/27 22:57, pascal.eberhard@gmail.com Ð´µÀ:
+> From: Pascal Eberhard <pascal.eberhard@se.com>
+> 
+> commit 2b88fc21cae9 ("ubifs: Switch to generic xattr handlers") removes
+> usage of this anonymous enum. Delete the enum as well.
+> 
+> Signed-off-by: Pascal Eberhard <pascal.eberhard@se.com>
+> ---
+>   fs/ubifs/xattr.c | 13 -------------
+>   1 file changed, 13 deletions(-)
+> 
 
-add_perf_probe_events has been unused since 2015's commit
-b02137cc6550 ("perf probe: Move print logic into cmd_probe()")
-which confusingly now uses perf_add_probe_events.
-
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- tools/perf/util/probe-event.c | 18 ------------------
- tools/perf/util/probe-event.h |  1 -
- 2 files changed, 19 deletions(-)
-
-diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-index a17c9b8a7a79..698a92875374 100644
---- a/tools/perf/util/probe-event.c
-+++ b/tools/perf/util/probe-event.c
-@@ -3705,24 +3705,6 @@ void cleanup_perf_probe_events(struct perf_probe_event *pevs, int npevs)
- 	}
- }
- 
--int add_perf_probe_events(struct perf_probe_event *pevs, int npevs)
--{
--	int ret;
--
--	ret = init_probe_symbol_maps(pevs->uprobes);
--	if (ret < 0)
--		return ret;
--
--	ret = convert_perf_probe_events(pevs, npevs);
--	if (ret == 0)
--		ret = apply_perf_probe_events(pevs, npevs);
--
--	cleanup_perf_probe_events(pevs, npevs);
--
--	exit_probe_symbol_maps();
--	return ret;
--}
--
- int del_perf_probe_events(struct strfilter *filter)
- {
- 	int ret, ret2, ufd = -1, kfd = -1;
-diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
-index 7e3b6c3d1f74..4850e52f274e 100644
---- a/tools/perf/util/probe-event.h
-+++ b/tools/perf/util/probe-event.h
-@@ -159,7 +159,6 @@ void line_range__clear(struct line_range *lr);
- /* Initialize line range */
- int line_range__init(struct line_range *lr);
- 
--int add_perf_probe_events(struct perf_probe_event *pevs, int npevs);
- int convert_perf_probe_events(struct perf_probe_event *pevs, int npevs);
- int apply_perf_probe_events(struct perf_probe_event *pevs, int npevs);
- int show_probe_trace_events(struct perf_probe_event *pevs, int npevs);
--- 
-2.46.2
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> diff --git a/fs/ubifs/xattr.c b/fs/ubifs/xattr.c
+> index 3db8486e3725..32927bf98306 100644
+> --- a/fs/ubifs/xattr.c
+> +++ b/fs/ubifs/xattr.c
+> @@ -48,19 +48,6 @@
+>   #include <linux/slab.h>
+>   #include <linux/xattr.h>
+>   
+> -/*
+> - * Extended attribute type constants.
+> - *
+> - * USER_XATTR: user extended attribute ("user.*")
+> - * TRUSTED_XATTR: trusted extended attribute ("trusted.*)
+> - * SECURITY_XATTR: security extended attribute ("security.*")
+> - */
+> -enum {
+> -	USER_XATTR,
+> -	TRUSTED_XATTR,
+> -	SECURITY_XATTR,
+> -};
+> -
+>   static const struct inode_operations empty_iops;
+>   static const struct file_operations empty_fops;
+>   
+> 
 
 
