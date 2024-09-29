@@ -1,149 +1,142 @@
-Return-Path: <linux-kernel+bounces-342937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A5C9894FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6E3989500
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:15:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F6E81F21334
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154241F21575
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EDD165EFE;
-	Sun, 29 Sep 2024 11:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A4615FD16;
+	Sun, 29 Sep 2024 11:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="aBnp+SXF"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipiEoNiu"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F99184D;
-	Sun, 29 Sep 2024 11:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727608301; cv=pass; b=MyKXckaT73t9wxKOEHJYw08XOjbTT772aPm/y/3BzsjHY1tYFBujBJZblu3zZOEJRgsXZWHyEdLwiY6JPPF3aPrLU3s/p6IzTrt56qctXjERsd4BulyIYOUUJBagH2yjoBeXqsL1Vg4bv2WQGCK0/FHoBt5a3sMc1UjInNId7Yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727608301; c=relaxed/simple;
-	bh=9Mk8F23/7jbtkp5ROHqadlTCcgFHMuHPEb0gM0Nr/aw=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=oyfmnCLJjWV9DDDx7PO0hxOoY5VpyNCotQoQgJLsal5lIpOisXAKjsaDOjpVoEHkEhFI97kSlAoWch4omjvjKkn/ycSdx6qd9stHG9JnYeWdz4f0c/rdVw2Pk89pVy1qKsOiTJXY/v0Ip2JhrqjRKUndDt7gFQvPofzVnFWuwPc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=aBnp+SXF; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1727608270; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZMG+vLQ3BLYL5KnIGo4x9Lz1ypnsIbZBjuAHUYt1hrWYe1+Vd1403yaJJZAvJMl7PppK+k2HuAH3bc4gd6qmAyeirw0C+2hPzq5Qu9BxYErJEzOAfpo6BwtddBW4CP4OFxaEHeXCWWAMcLq+NDWvj/2tiq+gZaBhQqlgn1ZRpfI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1727608270; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9OTTrBfB9yKk3re56uatFDd3pNVZaxB5QXQbah8W5+o=; 
-	b=A0usfQtmdGeYwBWivW5j3J7A8U3yaS47Wc6qpdlNoXEiA6MUhA84USlXusOG76cFfTFnrv9xTMdauM2myiJ/b48mevQbiXCBhFmh8bImIDI6g49DT2P21NEnSxG67vl5NANs9Y8mE8bmemLQh6u3W4VJNK9fuMC0vyNE46Ml8MQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727608270;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=9OTTrBfB9yKk3re56uatFDd3pNVZaxB5QXQbah8W5+o=;
-	b=aBnp+SXF3eeneFdk3wbfCoaJ3w0XBluI6pV6tYDqIAuR+TjGLsOXGjRBezvnIcQT
-	pUMi+ceFoazrTErgdVeHIJKlLORfavUg+rpjSuQQe2w44BQytHY5oxwrf+AU0ddYcMO
-	np12ojr6DYJThWIp1rjlEQuX4bdKTHkQtXLH9eDk=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1727608268738263.1733996401289; Sun, 29 Sep 2024 04:11:08 -0700 (PDT)
-Date: Sun, 29 Sep 2024 16:11:08 +0500
-From: Usama.Anjum@collabora.com
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-	"stable" <stable@vger.kernel.org>
-Cc: "Usama.Anjum" <Usama.Anjum@collabora.com>,
-	"patches" <patches@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"torvalds" <torvalds@linux-foundation.org>,
-	"akpm" <akpm@linux-foundation.org>, "linux" <linux@roeck-us.net>,
-	"shuah" <shuah@kernel.org>, "patches" <patches@kernelci.org>,
-	"lkft-triage" <lkft-triage@lists.linaro.org>,
-	"pavel" <pavel@denx.de>, "jonathanh" <jonathanh@nvidia.com>,
-	"f.fainelli" <f.fainelli@gmail.com>,
-	"sudipm.mukherjee" <sudipm.mukherjee@gmail.com>,
-	"srw" <srw@sladewatkins.net>, "rwarsow" <rwarsow@gmx.de>,
-	"conor" <conor@kernel.org>, "allen.lkml" <allen.lkml@gmail.com>,
-	"broonie" <broonie@kernel.org>
-Message-ID: <1923d7a27a2.dce77ca11210391.6924958602918999301@collabora.com>
-In-Reply-To: <20240927121719.714627278@linuxfoundation.org>
-References: <20240927121719.714627278@linuxfoundation.org>
-Subject: Re: [PATCH 6.6 00/54] 6.6.53-rc1 review
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51ED2566A;
+	Sun, 29 Sep 2024 11:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727608539; cv=none; b=McTjS4OAba4vq5krkDO0jGNNWUWF+eq8ZvrBrNtT5QJ+xlaxRL9m5x3ToYYkIFm2pUduMB1kEb1gy8vTbKn0haiwlKbDpDRwo2lu1CcprmiguM2vXSOIB5CzG9rZyJxhW/11LdGMBAM68wh5+4+gcVKcrLIIBj2JOb68xTPQIOA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727608539; c=relaxed/simple;
+	bh=DgrRPPlafnmB2qsdkk/HDLH5QeHR5NK6i4zLkW9bPvs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eRa5eZzpQk3NmCBITscMhI1IhcZvY7FdLldi9gSQx/iNC0eq/WOvAhUpLyaUjwxzLiO3rLQdP1KFc1OkKUITAa+qulRd8cxza+W7LasZgZEVuNVgX7BIXdBMsgV1UFmWiN7EOm1WIj8AP/LhdnuHLtv9+WPDXI9dyqtFc/p9p5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipiEoNiu; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2057835395aso37764225ad.3;
+        Sun, 29 Sep 2024 04:15:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727608537; x=1728213337; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9gpg2ZDt70ZWqdKwXPQNweurZkvJMHHsrsVb/deHCRw=;
+        b=ipiEoNiuQboejXdtFXC/o4jL6IS7RbkjuhbFtsjmdQIGJjACzJDbIvePl+B1nb9Wva
+         OFf+AKtXP+TAG8hB8EdeRGOxaqETOpyPZ/Y7asYsckOMFORuogfz4EpJsjn+QiffLMQU
+         Gw3ZPpgvZbqRCSFMlJmlqLDtP2HbXWjSRyy8zAJqaZAP6pRewZTLs3spt8Li6TXHP/Jk
+         jwALkq9ADRhFJyd2/9q2JboNN037rVJROp+Sef7SVG6vz5manCZALd922WSgP4iam+F/
+         XFihOtIIcvmf09J/40KwFtOR08WpTochfgiNqR1DJwfnlN9SLLsinft07ocRIEIvo0Wo
+         XR4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727608537; x=1728213337;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9gpg2ZDt70ZWqdKwXPQNweurZkvJMHHsrsVb/deHCRw=;
+        b=eMNQgfNy49WcwamdacQpXMkiWlsHw4jCcIvSa+T76t/9sG6Vcr+20GKJU5vz6tiwNX
+         wA9R76DXtxoUoec+4MmWmakA2MHBsNtqqY8crA+Il0fdwt3fkPD5sYLWEPEEK7pHR4vi
+         ZzClEKJnvZ59nYzasnRVTD78gvzj4pSzEVZB16Buu21DMFJGq0PXV9j6XKdCtGTbh+E8
+         3uO7fK0Wj2h++970JauPvtADXHPRLdxt4Lx+zWp0RDSLatLAqDiitSJgr5Vfcn+IwF/d
+         SlNK2NPxXlFh6Eeg9W8axRuJoMFBl3P12c+UvunTYC812UzOuX2gVsxUvdCMQL662oYG
+         yLoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7Apqtlf9I2si36Lzmu8GX8VOB9rhp/RCeS/8vgad/aYrM3ZYvvLwviQyphqFThX8rQc1AkmNuVZcATHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSRuEUjLHOprklDrd/W3SxSRJcENBSbAm2stXHuUSghSlPISyY
+	+1649+Wfussdalz3i7HRA68rvOnQwNwNCwmI8Qp6u/ve64iWC6SgZ1s8CRRoKLuv+w==
+X-Google-Smtp-Source: AGHT+IEkNbbcGJsyfF4mOcZ0PHb3hq3P4cr+YJFm+61tuVgx+PrASPFMNB7V7yliM5JTkWeiz+ptSg==
+X-Received: by 2002:a17:902:d484:b0:207:5d33:a1b8 with SMTP id d9443c01a7336-20b37b79d4bmr130838145ad.38.1727608537154;
+        Sun, 29 Sep 2024 04:15:37 -0700 (PDT)
+Received: from Hridesh-ArchLinux.am.students.amrita.edu ([2401:4900:6875:87f:e24c:5aa8:9689:9176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e63cbasm37978685ad.282.2024.09.29.04.15.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 04:15:36 -0700 (PDT)
+From: Hridesh MG <hridesh699@gmail.com>
+To: rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hridesh MG <hridesh699@gmail.com>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Jens Axboe <axboe@kernel.dk>,
+	Matt Gilbride <mattgilbride@google.com>
+Subject: [PATCH v3 1/2 RESEND] rust: kernel: clean up empty `///` lines
+Date: Sun, 29 Sep 2024 16:45:23 +0530
+Message-ID: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Transfer-Encoding: 8bit
 
-On 9/27/24 5:22 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.53 release.
-> There are 54 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
-> Anything received after that time might be too late.
->=20
-> The whole patch series can be found in one patch at:
-> =C2=A0=C2=A0=C2=A0=C2=A0https://www.kernel.org/pub/linux/kernel/v6.x/stab=
-le-review/patch-6.6.53-rc1.gz
-> or in the git tree and branch at:
-> =C2=A0=C2=A0=C2=A0=C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/sta=
-ble/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->=20
-> thanks,
->=20
-> greg k-h
+Remove unnecessary empty `///` lines in the rust docs.
 
-Hi,
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://github.com/Rust-for-Linux/linux/issues/1109
+Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+---
+Changelog:
+v1->v2
+- Fixed typo in commit title and description
+- Removed backslashes in kernel::block::mq::Request
+- Link to v1: https://lore.kernel.org/rust-for-linux/20240909161749.147076-1-hridesh699@gmail.com/
 
-Please find the KernelCI report below :-
+v2->v3
+- Fixed From: tag in patch header
+- Link to v2: https://lore.kernel.org/rust-for-linux/aa1b4059dfac001945745db02b6f6d9db2e5d1cb.1726072795.git.hridesh699@gmail.com/
+---
+ rust/kernel/block/mq/request.rs | 1 -
+ rust/kernel/rbtree.rs           | 1 -
+ 2 files changed, 2 deletions(-)
 
-
-OVERVIEW
-
-        Builds: 26 passed, 0 failed
-
-    Boot tests: 528 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: v6.6.51-145-g3ecfbb62e37a
-        hash: 3ecfbb62e37adaf95813d2e47d300dc943abbdc6
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=3D1&var-datasource=3D=
-production&var-git_commit_hash=3D3ecfbb62e37adaf95813d2e47d300dc943abbdc6&v=
-ar-patchset_hash=3D&var-origin=3Dmaestro&var-build_architecture=3DAll&var-b=
-uild_config_name=3DAll&var-test_path=3D
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
+diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+index a0e22827f3f4..313334b1bf18 100644
+--- a/rust/kernel/block/mq/request.rs
++++ b/rust/kernel/block/mq/request.rs
+@@ -30,7 +30,6 @@
+ /// D) Request is owned by driver with more than one `ARef` in existence
+ ///    (refcount > 2)
+ ///
+-///
+ /// We need to track A and B to ensure we fail tag to request conversions for
+ /// requests that are not owned by the driver.
+ ///
+diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
+index 25eb36fd1cdc..006f6e03aba5 100644
+--- a/rust/kernel/rbtree.rs
++++ b/rust/kernel/rbtree.rs
+@@ -1031,7 +1031,6 @@ fn next(&mut self) -> Option<Self::Item> {
+ 
+ /// A memory reservation for a red-black tree node.
+ ///
+-///
+ /// It contains the memory needed to hold a node that can be inserted into a red-black tree. One
+ /// can be obtained by directly allocating it ([`RBTreeNodeReservation::new`]).
+ pub struct RBTreeNodeReservation<K, V> {
+-- 
+2.46.1
 
 
