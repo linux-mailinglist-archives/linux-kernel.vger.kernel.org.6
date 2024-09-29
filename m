@@ -1,118 +1,76 @@
-Return-Path: <linux-kernel+bounces-342973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BA4989558
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:28:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDD998955A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 054EAB209E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:27:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5526FB20A0D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:32:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F439178CEC;
-	Sun, 29 Sep 2024 12:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4kCkr8x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A161684A4;
+	Sun, 29 Sep 2024 12:32:33 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAD918E29;
-	Sun, 29 Sep 2024 12:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB7E1DFF0
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 12:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727612868; cv=none; b=t0i1I45wJjBBNq2tcz/IFTTdJDGbJVSgc7G/wurbKgO+8Uka3fO0Z0+Ol4ioEtIEfoGNW/zHZlrwpNa0hvQi2J1H9N3FA+SGIGRww+OLhGvtfk0CjwKhJiu+djamwaDe0qIGtczJbYr1XYNAuC2fDPH/kHe0vhwAdRAOi960rks=
+	t=1727613153; cv=none; b=roHsMjA4TJFsQe+vXfugLImY9qzu/ShpBQKYBMgSBRUMEImCHwdx36SemwiwpUpOglg596Z1PrOsh476ERafH/0nOxIkh3l11O09lCedWAuDlymeOdMGbvt/Y+4LQqk1k6Qp2JWMXwP8pVhHVwtGfbgzSA6yjwG4FuFXKpyMBik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727612868; c=relaxed/simple;
-	bh=pW+C8/T45qdBO+LTXxiY8Y7QnwF/WqtASu3RM0+ae90=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HsogQoSpMEfWmeyPaO+LBqoBhuYvTmrpKl8lssFgfCSWA+svCQ6HvLKgSDsHydE2CpBkLqDAC0g9orLmYk2XFQTnz9ydlWzhaR6/dOVngJ9GilN0DhFXt/VkFvKWJdM1NWM+2OZbGO5VKtQUo9IqLH8N8Zqp4Cds1Trel3Gp8qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4kCkr8x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE013C4CEC5;
-	Sun, 29 Sep 2024 12:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727612867;
-	bh=pW+C8/T45qdBO+LTXxiY8Y7QnwF/WqtASu3RM0+ae90=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q4kCkr8xFkLKzAwq9mQIR61upPGCSbi+JDmkTDxBWD4erWd1Qq8J/t6F3EIIbd5pv
-	 E54tPmF/pAt+01jJ5S3T9W4eWf/YU2KvZtj3omn254KW5bCK7Dx2m4JXaPXqMvaCR+
-	 8T7NdGqMYtYmeYu2zod71htzsrUg33Lzj6Ma2dQcOE2866eT2ktC/PuIqUDtJ6Q/qm
-	 6Y/2NOYgUmKpIZay4zAuJZpjddjIhbpjqk0Pl2ZTuQpGta9p+CKezb7hPj+6xRTgQm
-	 sO+TvNrb5UtO7Lj9Yidig4AIQq1lHmS5skrVHHPstRmC/0Fd5mnkKhbPHchw0+hjrQ
-	 /sHTWwad9F30g==
-Date: Sun, 29 Sep 2024 13:27:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Guillaume Stols <gstols@baylibre.com>
-Cc: Conor Dooley <conor@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <ukleinek@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
- aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com
-Subject: Re: [PATCH v2 02/10] dt-bindings: iio: adc: ad7606: Make
- corrections on spi conditions
-Message-ID: <20240929132737.020564f4@jic23-huawei>
-In-Reply-To: <da15af17-e5cc-4714-9fe1-4683d990abbb@baylibre.com>
-References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
-	<20240920-ad7606_add_iio_backend_support-v2-2-0e78782ae7d0@baylibre.com>
-	<20240921-playgroup-regally-f26c17be26dc@spud>
-	<56090167-15a0-4386-89a6-c379d70faae6@baylibre.com>
-	<20240924-unvocal-playback-2753bbbb0e45@spud>
-	<da15af17-e5cc-4714-9fe1-4683d990abbb@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727613153; c=relaxed/simple;
+	bh=HI7L3Nzi7HHrPtEzfU1a/XedgRThEs3wOwX0WJylRgA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Z8ry/I0PFW0OJqHm0GsfJqjGNlwtjxVU9etxdmSWGw9QdwSmDzt7BTodQltPiRnPtdynTiU2hmjo89T+p48B3yleFGlCGi+s0nUYKa59BCKGvyyCFlU41xg6947kMKoUzrZRd3YqKOfcVyW88+4pvV59ahD+lQVmA++4WGJw+p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3496b480dso19603505ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:32:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727613151; x=1728217951;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HI7L3Nzi7HHrPtEzfU1a/XedgRThEs3wOwX0WJylRgA=;
+        b=gvy43cOmYBuAnBKydYT7U8ZInoIlJ0OOBRBm8PVAP0U8DMm5ZCxI+HO+3pcVkNagAu
+         /tDXkqntHQDNKPDoOkH5jw6anJIzmtGJ6CBHJrCqOes97lrj3CqP/ky1cGs6gKFHWE04
+         J5gBA4b9kJ4wYdFKnLxsvW78xzb9JVdBITcHH2ZyH20CeligUt4bYMF2hQolWEtcsCLy
+         jHCQc9oewT3tWpDXol6QgKs667RH/HSBxpPlrYeQmwRHO2e4LdGCWbp5+rguPxf96Y67
+         cw1RtTn+ALHiMgcRXnFuOf8gWwPAcgEKKb6V2MW1MfCxPnKGfLorRA3MVgVqtSZgbhrm
+         YEWA==
+X-Gm-Message-State: AOJu0YzQv8nmnp7gJUU4keuS+J9Gz40n/JwlmFUrFWfgcfKThI5jI9bW
+	mXcsgabj+w2Xin3+SuqhEHFKwJ7iElfgUjk2xWTBWjKqiaYI7mRopJYYGz70H+PvL7FESvbwZJG
+	inKTcOlg9GQFWIN76PDf/rFvDKpw51v7k4thznJJnU4K9ROWwxeeFcCM=
+X-Google-Smtp-Source: AGHT+IGRWu9ZuNkiKEdoANoZq6gWsvxMIScmR5DRBnkY2FPNBdRohQnEVVF0uE6XxOO+w0sIBQlfJZznZHytNM3LUZGcpmdMuYNk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:170b:b0:3a0:985b:ddb4 with SMTP id
+ e9e14a558f8ab-3a34514bc02mr71936005ab.2.1727613151263; Sun, 29 Sep 2024
+ 05:32:31 -0700 (PDT)
+Date: Sun, 29 Sep 2024 05:32:31 -0700
+In-Reply-To: <66ef45f0.050a0220.3195df.006d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f948df.050a0220.6bad9.000e.GAE@google.com>
+Subject: Re: [syzbot] kernel BUG in bch2_btree_pos_to_text
+From: syzbot <syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 25 Sep 2024 17:28:30 +0200
-Guillaume Stols <gstols@baylibre.com> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> On 9/24/24 16:59, Conor Dooley wrote:
-> > On Tue, Sep 24, 2024 at 04:41:50PM +0200, Guillaume Stols wrote:  
-> >> On 9/21/24 23:55, Conor Dooley wrote:  
-> >>> On Fri, Sep 20, 2024 at 05:33:22PM +0000, Guillaume Stols wrote:  
-> >>>> The SPI conditions are not always required, because there is also a
-> >>>> parallel interface. The way used to detect that the SPI interface is
-> >>>> used is to check if the reg value is between 0 and 256.  
-> >>> And, yaknow, not that the bus you're on is a spi bus? I don't think this
-> >>> comment is relevant to the binding, especially given you have a property
-> >>> for it.  
-> >> Apologies, I missed to change the commit message, it will be fixed in the
-> >> next series.
-> >>
-> >> Since Jonathan did not like very much inferring the interface with the reg's
-> >> value that I used i the previous verison, I introduced this flag.
-> >>
-> >> However this is only intended to be use in bindings, to determine whether or
-> >> not spi properties should be added.  
-> > To be honest, if it is not needed by software to understand what bus the
-> > device is on, it shouldn't be in the bindings at all. What was Jonathan
-> > opposed to? Doing an if reg < 1000: do y, otherwise do x?
-> > I'd not bother with any of that, and just make cpha (or w/e it was)
-> > optional with a description explaining the circumstances in which is it
-> > needed.  
-> OK, it will be removed from the series and sent as a side patch because 
-> it anyways does not really belong to this series.
-I can't remember the original thread (or immediately find it).
-So I may have this totally wrong. 
-- I don't want checks on reg value to change how the binding works as that
-  is a wieird corner and in theory this device could be at a small address anyway.
+***
 
-- Fine to do as Conor suggests and just add a comment for this
-  corner case rather than making it required.
+Subject: kernel BUG in bch2_btree_pos_to_text
+Author: pz010001011111@proton.me
 
-Jonathan
-> >> In the driver side of things, the bus interface is inferred by the parent's
-> >> node (SPI driver is an module_spi_driver while parallel driver is
-> >> module_platform_driver).  
-
+#syz test
 
