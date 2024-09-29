@@ -1,91 +1,100 @@
-Return-Path: <linux-kernel+bounces-343207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E178A98982F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:00:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ACF989830
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3BD21F2150E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:00:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44F3BB21B21
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8075A17AE1D;
-	Sun, 29 Sep 2024 22:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384A417AE1D;
+	Sun, 29 Sep 2024 22:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg01/2Cl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="XSOb41Q9"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57522B9B7;
-	Sun, 29 Sep 2024 22:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B3855E53
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 22:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727647237; cv=none; b=r32IM4W3e6vZPLNSBf2DxMA9Eb4i61v+Xpfd6HpvK9NjGvvqXwcSoMt2Oax8zLOe9NR7swI2J+3XaiEIp+p2766CT6uFPQjee660X+Z599eX0Y0ARxbYAzYjMHNv6slhRTAX4Eoy3s/OrVG7fL++clLdzMwJEASu+tvudJEwE8Q=
+	t=1727647309; cv=none; b=JFToAkwbmmyPQ3lLIAqNtzmFEdPUS1m+G2w65Lqa8OeF5dkGxUh9Zw0VBg8yv1Dejh/I4uu/nc0gY84uYvjR2KEF86P/9fQ3HoW7mIfGWeZ1KBumUIXS+7yfe1T1QlCCfr6RlE6U0u6qKyGeG3dT0V03tv4Z5rCH9kuIfmfhz40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727647237; c=relaxed/simple;
-	bh=l/v4S7kXdm6SKsj0hvrsWvT+/uGV0XUxl9Xyr0fw/x4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=U2a8V84CqJ33/NvvRuTHkDgPST/xrGwtq6z4V/yN7+GZxEWz6zz2c3btkPPZ01Z4I1IPxW10vrmdkN8N6JSP7xUC7BD30EHNZAniCke3cVMI1oj1Oc7snTnCoKt7Tl9Z4krJjGkJ/GhaojByqfOgJvn5D6Qx0ODY3vw8mpL46v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg01/2Cl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C97C4CEC5;
-	Sun, 29 Sep 2024 22:00:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727647237;
-	bh=l/v4S7kXdm6SKsj0hvrsWvT+/uGV0XUxl9Xyr0fw/x4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Qg01/2ClUQtwAdA4GOAw7Mj/0q5ApYNO8c7+q1/oByfZqPRMKhXoa5LbL+fBEYKFz
-	 2OIkZYydb98/Iu6mcVhuxybdmEs2Jwcf3hBBIPSwuPdYg1N/8cikdNpZhWqo9AilSR
-	 4sUCBqkQHjI0F3c3Y+XzAVVjWyXw/9RM376Bu2lCZsi2MbZQs4TK4l5s0BXR/xu1zK
-	 +zGD17achshBp+KHpPGitS+mSsJix5KV/cmiHuiMfA3BAhrFrxIzs4y/7v6DUZCGZs
-	 cWoCaFR7IhRxwG3SoKNeDshFnJrXvbq3Fj4PH5vOIaPMd+AOAAVXzXMAahuJpHQZwN
-	 qTf2LBV48JSAg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: sj@kernel.org,
-	Ba Jing <bajing@cmss.chinamobile.com>,
-	shuah@kernel.org,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests/damon/access_memory_even: remove unused variables
-Date: Sun, 29 Sep 2024 15:00:32 -0700
-Message-Id: <20240929220032.71704-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240924040846.629985-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1727647309; c=relaxed/simple;
+	bh=zMus0Pc79gKj189nyXTQAwgSBAQgMA8EYiDhd1e3tpQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k4A8KN3v+UttJhhCL1ROz/ExeSfxvVQ7gbzkVHcMJv7aZmVkEhXcRAhe2+NrWDHjQLJu2VUSAso/y7PwckenWVwYYkd7Pg0etHHfXMSM3xv2zlPgRotlfucIeQ9VpfXRscknhR2PaLgBt1MUUTDU4Ax9YSCGboZWBiyvjEn0Cbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=XSOb41Q9; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db20e22c85so32074317b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1727647306; x=1728252106; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zMus0Pc79gKj189nyXTQAwgSBAQgMA8EYiDhd1e3tpQ=;
+        b=XSOb41Q92jvV+CQXjMGw7KUxwMBwGQSmc4nL9i7osXWbL0dkqCyeuoi99xHlsw0Kmj
+         ZJyvt5p161V+2udjvwk5NlTr4NbjHWCXe1dQ2wmTOh+b8wygQJTkE3F8SZr5llom1HVp
+         S49/7lGEATSMbgBqizTwWT9R4AsEQe059VOJVhONAwkY6SWMfMrhij/nZAdcaQAToCyi
+         VhZFerv0/BIFQMBGGVjN4hxm2I+Gqos48jkojosr42nBaDH6U1SHIRdgMucMrCqBHdaM
+         VNNS+f342Xty1KvxWICueKnpXLMcMDmPDeYF57djaVBJ5xKL8uyKpbhfkkuQIIy4lcUE
+         3R5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727647306; x=1728252106;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zMus0Pc79gKj189nyXTQAwgSBAQgMA8EYiDhd1e3tpQ=;
+        b=IISMAaS6jsNnMd9GJy3Y7VOxZYyD/vPyjdClYHFvLJ2ZGH6yIj+a4ObH+rObPU/Eso
+         swilXpz2o7RzIn3+aUKgiMlUoGWONyy6gF64QATdPj9hOd53hJx1ydRbe46Z7dPcOiA7
+         a2OCK9WkVXn2uc5l5vwCq4B8bD3UPIh+Ynn+gHd5ecFbRibJodUh1HVQtbec/rasHrwC
+         1ld+tU1m5CQ+qRuNVJmaBobE3osokpl9vk6SEQToWaOHikc+0kMdqmHj1ZmvVIU1gCkl
+         4KFSkL87oOMjGksyhSI1hWIfhyvFXlGw0/6eUgQ+P23KecW2pSyiLvHKnQGRaMEvPVr0
+         aGaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXz9Nreu1kMf16U24FTP6XM4QCx16HSa9P/aevwjz9dTd1wVstq7btuo0gDj6FGMSQKj4rUWQChJCfwv5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGEBFOIajs4ijBOi1C/Cvf2djsKkQ4HL8t7eNIXIkEMX4Vjl1o
+	TtXz8Wp/OJbVMvRjq6jlPU+iCB/0gQ7vUk0p7A7pargy9ielJpWm4jUAmBC76Po/E0YbLCHeu5j
+	3EHNwhL4Q69HsPqgiOltJWzQEaLuBeS491+OYzWB+iC0xG8rhBJQ=
+X-Google-Smtp-Source: AGHT+IHq/TFRNvPSIRS6GB5Zg8xLp3T+T9PUAHYiATWgoREjCvsY04CX4FJtKGKhVBtOB4pDoj9VziUs/57ntqdlNgU=
+X-Received: by 2002:a05:690c:3745:b0:6e2:1a23:7c07 with SMTP id
+ 00721157ae682-6e24754f0edmr82993087b3.11.1727647306612; Sun, 29 Sep 2024
+ 15:01:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+In-Reply-To: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 18:01:35 -0400
+Message-ID: <CALNs47sgW2OFAUa2kdsZrkqu-Oj-HqM2qSWBtZ_o+pagcTZJwQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2 RESEND] rust: kernel: clean up empty `///` lines
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Jens Axboe <axboe@kernel.dk>, Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: sj@kernel.org
-
-On Mon, 23 Sep 2024 21:08:45 -0700 SeongJae Park <sj@kernel.org> wrote:
-
-> Hi Ba,
+On Sun, Sep 29, 2024 at 7:17=E2=80=AFAM Hridesh MG <hridesh699@gmail.com> w=
+rote:
 >
+> Remove unnecessary empty `///` lines in the rust docs.
 >
-> Thank you for revising this patch following my comment.
->
-> On Tue, 24 Sep 2024 10:14:26 +0800 Ba Jing <bajing@cmss.chinamobile.com> wrote:
->
-> > By reading the code, I found these variables are never
-> > referenced in the code. Just remove them.
-> >
-> > Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
->
-> Reviewed-by: SeongJae Park <sj@kernel.org>
+> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1109
+> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 
-Andrew, could you please add this patch to relevant mm trees?
-
-
-Thanks,
-SJ
-
-[...]
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
