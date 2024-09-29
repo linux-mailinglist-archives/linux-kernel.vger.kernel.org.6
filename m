@@ -1,140 +1,197 @@
-Return-Path: <linux-kernel+bounces-342922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41DD9894D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:45:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1609894DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B80B23651
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE6D1C20CBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5004E155758;
-	Sun, 29 Sep 2024 10:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18C515C150;
+	Sun, 29 Sep 2024 10:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Csb5vJ1y"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvKtvp9g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3853D96D;
-	Sun, 29 Sep 2024 10:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2586A3D96D;
+	Sun, 29 Sep 2024 10:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727606748; cv=none; b=m8H/v1Ricj7zT9bceO81lk/Um7vxU+kyekifb2GTs+4/IA2ND92SN5tl3pBRfFghF9AXr3jjD3L7/q8N4Cqn9SLIlVNdeuth/5sNmB5EuVhRBa5t6AwLOMl+cSbo/Xw4x8dF2k3mLA72N/Hc7QrwDxjWPJ7b0oWG/QLfKdpXbRo=
+	t=1727606778; cv=none; b=d9qDFOKboA+eXHgIsTgATre7pyvlZXBaEWC7QxB43LkVJG8jTa01MQp2RFMdnDbWG2WHUDZZYk4CF4XrTwek+pZ/jTpSvn16N/14h5FydMVuL5iJ7HIb6HE9Hh+s/v7AJQtuSUvKovVZsc4nYUTIMlMCYTYB/nUV4gYLUv3daww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727606748; c=relaxed/simple;
-	bh=oT1ANVqVZY6yidoI9iifW1Q4EWCH/e1GEFnjgmZjsaE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=rGQ3Ykxagcz9q3qLaOYWiX4wdWhimoA90RFRs8gNRWkigj01rLhr3llkizx/bDFnMpp5vA42iXpwIfRf2hC7MSt3sbDa4U663aqkTc1j/ZTxvecbkPysxlzwgadWgXgwV+xQVKPDOINVTOJ5S/bR2AacZkFv+6ZwcrR56lyVx7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Csb5vJ1y; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727606728; x=1728211528; i=markus.elfring@web.de;
-	bh=rJ6rDvlfFJ1ctzo4nqUW3IW0EJwgP8g7q/slxShq0es=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Csb5vJ1yg8qx5MAdSRIv74gYHuQhyeOMpWOLqJ6XwFy1F8Z3H/hj4vZXMXxLJzyJ
-	 AN+v3f5i/wVJZcYabbTqHpycocB15RILRBIlCXN4q0O/KBgwzKo8EPGWJFypA1bwq
-	 9qmNXro+6iNPq9cyQNMcX1XzNOfKefe+bujHhaGgUNR6y+P/JYf53yEoG1cBQil3O
-	 facFVqdphGm6ZSBSn1Dg6Cjs1Ja/AU3TdyhNsgjFrxVqtjJwDdwp70U79YbdNj6Ap
-	 6lvnQURQ7zDFQIsaqgZejOzh6zC2fF2jGHu10n0bru/gTxdBTQWGxqN3waLE1e+m7
-	 iHS5g6SiFAwERsKdqw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mq182-1s98Dt3j8c-00nhvY; Sun, 29
- Sep 2024 12:45:27 +0200
-Message-ID: <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-Date: Sun, 29 Sep 2024 12:45:27 +0200
+	s=arc-20240116; t=1727606778; c=relaxed/simple;
+	bh=hntgGK3sMevf+qeRjWC++r7wHMhMKpbwCR+qn4UMyrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HDbBcR1pB7vFJajsxhqc3UysRmaLNrdGBpbnAbNNlz8578+zFvsJ/N2Ju5ipxj3TL5tx6NnEIZR1iqj93JUjaAXTeHTjZjX9Ctv2pwJSGpJR1gNlAKecLN6ckLmpl5HSoH1ublv0yWrPMxzQgVtDikAosNqaYqi4vU7MQYq4RDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvKtvp9g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9B7C4CEC5;
+	Sun, 29 Sep 2024 10:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727606777;
+	bh=hntgGK3sMevf+qeRjWC++r7wHMhMKpbwCR+qn4UMyrw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MvKtvp9g/64IcPbCSCBesoOzFdgcscx4uoB6XwoEcGAArn1B9kMQ6PdUyjsnkCGnT
+	 iCe52/Ea4Job4qy9l5zvPQz7H2sWI+2d6EO3LmVh41j1FAU2Cj9Fn6hngbZ+aB96J/
+	 5OBus+kMM5Zk5kOW6jHAx9txtXZUe+KNj1jcpLfzDd82xl6qpbhXgvT3wUXsfewylI
+	 tMOvKVtm6aGeqlbCejH0nm5PMM8EOP5vb6IpC+QBzaOSssuXi5qrrdf99ACNeIsWuL
+	 xSLRQ7FcHDA71RDk5aMBDoK65YwS9rn/NfDCL+0lbxbmOeIwMmMcatrf/rKAtb8STy
+	 eKkG34Q08PuWg==
+Date: Sun, 29 Sep 2024 11:46:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com, Mark Brown
+ <broonie@kernel.org>, linux-spi@vger.kernel.org
+Subject: Re: [PATCH v3 02/10] dt-bindings: iio: dac: axi-dac: add ad3552r
+ axi variant
+Message-ID: <20240929114606.7500ba7e@jic23-huawei>
+In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Philipp Zabel <p.zabel@pengutronix.de>, kernel@pengutronix.de,
- linux-arm-kernel@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-Subject: Re: [PATCH] reset: Further simplify locking with guard()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qByEn6/jtm2IiGM28XvLyFij2fSLYXnBdowk5hkhQuzXMCVF3Ul
- E6VdfOnu7R/87cgiSfH0PnHPjizyXRedKETivgodbSweNvuNEHQu1Wf4J5F/Dp3Laoe/HDe
- eB+kY0D1BfMBnWplAxhlWrVkKHfjGLBM0ruTe3aaVy7vzVL4Xxlret27AH8m9YZnONEmG4s
- lpheKnTH1Mm5iA9Q/4Shg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SuThyrY8vZM=;Ta9wdDyjbK+W5dWl6j7Ws/mqV2p
- uSPrqgpD+/Gk3taKmmnk7I2DUDUmEaqrZxiujomqeMjjEDzydQtv5LwkOgBUgq4oH84ApbGaX
- QpdEac1b3SEX9eyywRZy+j03T+tXoLhcuy+Ju15m2nbI+IFLkoE8aar3Mfm8DL1Ulu5duNUUg
- FlvrSdw2RkMbq47h3sroVjuitcdGFU3gYuBBXtcc4cVdnjtZexzHhjWAsrHvmCQJL5qNBqdYX
- Qb+MG3ugHS0Nal1AJpD97V+cAjtYiQtyUlm1tJaNUaYQjXu9Dwa4BqWMZFXe8KHFiiOFLH6e1
- XPlH39iylOCKhpRKCvHOeTWN2KG7SrA2TzuBJWfjXCdThWLmNVMobFJa72OrGkAxIa0b4xoWo
- exb7OsFM+F21/Hv3ExxZu9LgIQ2mOHSopkjwd970nU65OadmaqRTFFtkKJLd4l6gqN9j0rfXT
- 0TCi6QqjG4hXmLXLbFXKTUx0ajz1WTJ+YJkkapGqscUfk5oP/52+YTe7TT+OwgP+qB1GBWOfS
- 3jRx7ByMMatyBHZ/pVQlT1zwcfVAlYFTMcVC5LV2CvZiQHGczsYTwV2P39efBhi08yWLNlwBh
- 35wTUriys0Hj7BG/8tsI9UtCQWuGDODlX4cOztd1y3SA0CRppvloEXVSky7SZO2kis61J5ouS
- x/dLJI9eCeWUvZSIEKgp5658ANQQjxckFh0yr5ka0Gz7THeWRVTrlpMMc1cgmDUwgNmmF4av3
- L3do1zVqJuLiZpzLFor8mV++GISnAZ4fDu8qketTmkyXWP4KUXVJKo9RTtW0w7X3nfXHnzUYl
- NQYbrKVp6OyzNtBueqp4FSog==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> Use guard(mutex) to automatically unlock mutexes when going out of
-> scope. Simplify error paths by removing a goto and manual mutex
-> unlocking in multiple places.
-=E2=80=A6
-> +++ b/drivers/reset/core.c
-=E2=80=A6
-@@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node *node, c=
-onst char *id, int index,
- 		}
- 	}
+On Thu, 19 Sep 2024 11:19:58 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
--	mutex_lock(&reset_list_mutex);
-+	guard(mutex)(&reset_list_mutex);
- 	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
-=E2=80=A6
- 	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared, acquired);
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Add a new compatible and related bindigns for the fpga-based
+> "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
+> 
+> The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
+> generic AXI "DAC" IP, intended to control ad3552r and similar chips,
+> mainly to reach high speed transfer rates using an additional QSPI
 
--out_unlock:
--	mutex_unlock(&reset_list_mutex);
- out_put:
- 	of_node_put(args.np);
-=E2=80=A6
+I'd drop the word additional as I assume it is an 'either/or' situation
+for the interfaces.
 
-Would you like to preserve the same lock scope (which ended before this fu=
-nction call)?
+Do we have other devices using this same IP?  I.e. does it make
+sense to provide a more generic compatible as a fallback for this one
+so that other devices would work without the need for explicit support?
 
 
-@@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device *dev, =
-const char *con_id,
- 	const char *dev_id =3D dev_name(dev);
- 	struct reset_control *rstc =3D NULL;
+I'd also ideally like a view point from Mark Brown as SPI maintainer
+on how we should deal with this highly specialized spi controller.
+Is he happy with us using an SPI like binding but not figuring out how
+to fit this engine into the SPI subsystem.
 
--	mutex_lock(&reset_lookup_mutex);
-+	guard(mutex)(&reset_lookup_mutex);
+Please +CC Mark and the spi list (done here) on future versions + provide
+a clear description of what is going on for them.
 
- 	list_for_each_entry(lookup, &reset_lookup_list, list) {
-=E2=80=A6
- 			break;
- 		}
- 	}
+Maybe with the binding fixed as spi compliant, we can figure out the
+if we eventually want to treat this as an SPI controller from the
+kernel driver point of view even if we initially do something 'special'.
 
--	mutex_unlock(&reset_lookup_mutex);
--
- 	if (!rstc)
- 		return optional ? NULL : ERR_PTR(-ENOENT);
-=E2=80=A6
+Jonathan
 
-Would you really like to increase the lock scope here?
 
-Regards,
-Markus
+> DDR interface.
+> 
+> The ad3552r device is defined as a child of the AXI DAC, that in
+> this case is acting as an SPI controller.
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 40 ++++++++++++++++++++--
+>  1 file changed, 37 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> index a55e9bfc66d7..6cf0c2cb84e7 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
+> @@ -19,11 +19,13 @@ description: |
+>    memory via DMA into the DAC.
+>  
+>    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
+> +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+>  
+>  properties:
+>    compatible:
+>      enum:
+>        - adi,axi-dac-9.1.b
+> +      - adi,axi-ad3552r
+>  
+>    reg:
+>      maxItems: 1
+> @@ -41,22 +43,54 @@ properties:
+>    '#io-backend-cells':
+>      const: 0
+>  
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+>  required:
+>    - compatible
+>    - dmas
+>    - reg
+>    - clocks
+>  
+> +patternProperties:
+> +  "^.*@([0-9])$":
+> +    type: object
+> +    additionalProperties: true
+> +    properties:
+> +      io-backends:
+> +        description: |
+> +          AXI backend reference
+> +    required:
+> +      - io-backends
+> +
+>  additionalProperties: false
+>  
+>  examples:
+>    - |
+>      dac@44a00000 {
+> -        compatible = "adi,axi-dac-9.1.b";
+> -        reg = <0x44a00000 0x10000>;
+> -        dmas = <&tx_dma 0>;
+> +      compatible = "adi,axi-dac-9.1.b";
+> +      reg = <0x44a00000 0x10000>;
+> +      dmas = <&tx_dma 0>;
+
+If it makes sense to reformat then separate patch
+please as this is hard to read as a result of this
+change.  Also, as pointed out, be consistent with spacing.
+
+> +      dma-names = "tx";
+> +      #io-backend-cells = <0>;
+> +      clocks = <&axi_clk>;
+> +    };
+> +
+> +  - |
+> +    axi_dac: spi@44a70000 {
+> +        compatible = "adi,axi-ad3552r";
+> +        reg = <0x44a70000 0x1000>;
+> +        dmas = <&dac_tx_dma 0>;
+>          dma-names = "tx";
+>          #io-backend-cells = <0>;
+>          clocks = <&axi_clk>;
+> +
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        /* DAC devices */
+>      };
+>  ...
+> 
+
 
