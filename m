@@ -1,174 +1,163 @@
-Return-Path: <linux-kernel+bounces-343088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7622098969F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:36:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEC49896A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98F9E1C2105B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84493B21328
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:36:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078F542056;
-	Sun, 29 Sep 2024 17:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017B73F9FB;
+	Sun, 29 Sep 2024 17:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="fYxSDrF7"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A0rdhj0C"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3952B2E3EE
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D49338396
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727631355; cv=none; b=etz1NdKuJB2L77zUVvw/TBMueoYvwmXQ62PxQ/yrhNUw6Sb7/6/CdtT0Thj02HxpMnTpqk/X4+SQFz0Ahi8NRRVPG/XDCQmgPVmOM5oLFcq9IZIjmzM95NL1PGMgOoU7aJMRsgbxcxGqBqpQtUI/uLq22qtG+q5bYCjxSMXhzEc=
+	t=1727631382; cv=none; b=N13gIpI4kutBPtDTBs76QkkBFIyRqtLWUBevGqRRhYATJRvlKZjrm0Yy8LwgsPD2p5xbCaiHdlRUXV/EwCZVKb12CT3J6uzPAvaOvLRLb9fYM8/auEVcfDjLPAouM0zdkpEj6H8eoamGSrh13hY6MlLIetqGZoFROc1qFHj2Qjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727631355; c=relaxed/simple;
-	bh=7FJYoAf4UNnJsGqA3YqqHhA0Hb//TkkxwczcqdaRjo8=;
+	s=arc-20240116; t=1727631382; c=relaxed/simple;
+	bh=pJ2+5xf3JPLPFG7ajx6iu9zP2xRrrmOhbM89yxGePGE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=THVops9WMsRzx2fa2h84ifeYf8WltSS1tcurafYbrxrL0FSETRHQKk0qjs7giQqTNJ/AwOc+KueXqPah8r1KdlXRF6K1rhPoVs4zZTjtsZ3Txmqh0GTjnmYAk014JIxDBUvrC5EDwzv82rbIH8LXsRBJMXhOlwOZeoXnv10ry2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=fYxSDrF7; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 7E17D3F5E4
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:35:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727631349;
-	bh=Rl/pS/wt7QkZsPdEO+ufS/ZfVUHdqAefjBl7pvxI0CY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=fYxSDrF7mpS9t1g7O6pChWQ0In0dCf+fRJGGGeFKWsrqlyFQEK0ASqj9vqlf9EKY2
-	 s1wNoY66Z2DW8ax9x40Z9Y32FM06xoJyGalHJdVppmuQz4oxDF7pFHU3fM6cQdwZGp
-	 5ARdAkxeGO4HqaV9Q3U5F0DdpNoGaykeha9bqZyPtGt2fnkqvamtZsmW4GJs+x81fa
-	 tmNnXyPxpdfzJLrrGdsd42P4go5dxzEdsPLAgtpTzA878QSzou0wTeT7pLROZOH1Lu
-	 XdbGOy0kBmwIHmixg0T7s28yUj+JX9fhRmZdggkQ+ZmZjN/oXNDELfMnT5dXEP84yw
-	 rP6tLWbRzCTHg==
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-498d181bfaeso810514137.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:35:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=gwYHiNx4jl22O5bAcnKCMfV0Dx/ziB+79EG7gEd6zfYGe+1J9j72dvGlYWKYcyn6XCNGfbewL6PcGmvtsuFx3BKLq/B8Ua3bZe++BkX885XheAUTCX4kw4ubnKI6F42bZxRkjOOA2cr7Dud1ZLegFT89lxSB/ryTpzkrxBCIh2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A0rdhj0C; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso668694766b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727631378; x=1728236178; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vi4TCfM4jiQzxcMHDXObhlmlU/euEJoDfcgbZrM6Np0=;
+        b=A0rdhj0C8G6pPe7ctTmtvRGLajRIkcIA5DYum+5yTE3V2u864UoRurrFy/y2/Q4mQC
+         fcnEPtLa4ZzgSQRQmkqYmfY2Im3s5Tn5BpW1y2JKtNy16o3dh8c4CPeqrpmr5/IpWJ6a
+         cGmIvmhSkZrJ39CYePwociZbJXFtGAOYlvkls=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727631348; x=1728236148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rl/pS/wt7QkZsPdEO+ufS/ZfVUHdqAefjBl7pvxI0CY=;
-        b=T+Qx1BKkozPdjo9uHxXR4zgAk1SoFmrYX7VobeMt0OYHyvXPtfuROcH20K2vzXHtS4
-         lggsk7tm+3XB6N26ZGqwOgWxfU0N5Cn4AmyNbxjx9ygSVSBT4aTuBaAI9yQTX5XrpDI/
-         Nwe/kbY6oxCKwMfoFuTHrWW9Q78YfHvblM2r2zpkzjG2spyWe0+Gb4CDqKug+5kiWUIx
-         nfGYf3sqfQ6H8Us1czlF1TBH0ulRFqT8QplHa/ocGo5OIi9Q22DB+0ioh8OY7XFCDXFd
-         XTVpIBEhqd61sqwROZv+BVbH8SsAJXfEhiZLy18vw6NZxazCpG4WCN5NAcj6i/Pip8oU
-         hPzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXpFdc9A6XG1mKf06B44y7qdV2VMKlPfAA476lwwDPG7bGEeFqr9p0cKqPk7caskeAD7aD3s2vWQabi/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVOuasFU2AE0+ROOM1D2rwLAdaEdPxMrX1KV4BkIrrrIeJ+DpJ
-	PCdZXTsQVLLAM6w8lGARei8I4KLCL4WnPNPFdaW1AHWD3VvahzMGPstIcbGscmpCLXgWlt0D9ml
-	fZjaWr/ptd3XpMSLDs9wC4QfHlpUR3sGAc6Q1nFMWg223vMZfV6eC3wjtMQ749BrBZx6yt/zoH4
-	h3df9qHWV1B0Q93mw90/V566dVfXeFqaKzlPMw0T361tq0TU15c0Jc
-X-Received: by 2002:a05:6102:3909:b0:4a3:c48a:6d with SMTP id ada2fe7eead31-4a3c48a072amr568328137.7.1727631347977;
-        Sun, 29 Sep 2024 10:35:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGumyMX+ocvMCel4pVMoToxGxjM87jX1L3K8ElBWypvEO0i4r1+ozb3p2pk+hDYSgoZzgLzkpNtCwVQexZ4Wy8=
-X-Received: by 2002:a05:6102:3909:b0:4a3:c48a:6d with SMTP id
- ada2fe7eead31-4a3c48a072amr568306137.7.1727631346626; Sun, 29 Sep 2024
- 10:35:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727631378; x=1728236178;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vi4TCfM4jiQzxcMHDXObhlmlU/euEJoDfcgbZrM6Np0=;
+        b=qQ4UaGNBzeGi/kkSkiZqD7RjKlNCLkQ1jvF9XRb+NV95lE9sckBFYvu/IenShEsh7Y
+         +5kcsNjNM1N+x75F4tjKIdxzV4OslZczo4zX33dD42G/Vyoi7o8C6F+CED1vAtNJFOGM
+         vRcLU2eObB0E8YhMZLQVycDavg7tGvSFXXEjnPPVTjT/eE7zT9Au7YyQwG8EaTcxha+4
+         2MEhEST8T+i2E2MJWe6ptFlbp+X54/qk4UE2S5LtoC6PqE0jmv+q3iP8HzewykqUnbEm
+         /+Kq7HJKLfSWA0Hhx5BdYu4erDoh8TdNjNXnNjnDJQMCHDhqnYpJG9Nc/gimcXUgtKi/
+         9o0A==
+X-Gm-Message-State: AOJu0YzNhLMJSEeb7j4NLGsWGBHbNJk0zWHOauJpM9mkH52gL3Z+WQkd
+	vj8DaWyhdMTvYhmbIV32B9wEvUvGxy2KUwS2HumiXP+hxtliJl5Umf1IHItzYeP99hNfZfxsAh/
+	qChM=
+X-Google-Smtp-Source: AGHT+IERxQ4Ks4JfmrBrxmcJnFo/MB6zMBWAqyhalz5Djckhr1ZEpb457YccFqDchMd0TFKxQeZblQ==
+X-Received: by 2002:a17:907:d2e5:b0:a8d:5f69:c839 with SMTP id a640c23a62f3a-a93b15f92aamr1243930066b.15.1727631378140;
+        Sun, 29 Sep 2024 10:36:18 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2978a04sm410951866b.144.2024.09.29.10.36.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Sep 2024 10:36:16 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso431653166b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:36:16 -0700 (PDT)
+X-Received: by 2002:a17:907:7f26:b0:a75:7a8:d70c with SMTP id
+ a640c23a62f3a-a93c3098a87mr1232049066b.4.1727631376200; Sun, 29 Sep 2024
+ 10:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926161641.189193-1-aleksandr.mikhalitsyn@canonical.com> <20240929125245-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240929125245-mutt-send-email-mst@kernel.org>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Sun, 29 Sep 2024 19:35:35 +0200
-Message-ID: <CAEivzxdiEu3Tzg7rK=TqDg4Ats-H+=JiPjvZRAnmqO7-jZv2Zw@mail.gmail.com>
-Subject: Re: [PATCH] vhost/vsock: specify module version
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: stefanha@redhat.com, Stefano Garzarella <sgarzare@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240928153302.92406-1-pbonzini@redhat.com>
+In-Reply-To: <20240928153302.92406-1-pbonzini@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 29 Sep 2024 10:35:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiQ2m+zkBUhb1m=m6S-H1syAgWmCHzit9=5y7XsriKFvw@mail.gmail.com>
+Message-ID: <CAHk-=wiQ2m+zkBUhb1m=m6S-H1syAgWmCHzit9=5y7XsriKFvw@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM/x86 changes for Linux 6.12
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
+	Kai Huang <kai.huang@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Farrah Chen <farrah.chen@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: multipart/mixed; boundary="0000000000007b816506234586fa"
+
+--0000000000007b816506234586fa
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 29, 2024 at 6:56=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
+On Sat, 28 Sept 2024 at 08:33, Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> On Thu, Sep 26, 2024 at 06:16:40PM +0200, Alexander Mikhalitsyn wrote:
-> > Add an explicit MODULE_VERSION("0.0.1") specification
-> > for a vhost_vsock module. It is useful because it allows
-> > userspace to check if vhost_vsock is there when it is
-> > configured as a built-in.
-> >
-> > Without this change, there is no /sys/module/vhost_vsock directory.
-> >
-> > With this change:
-> > $ ls -la /sys/module/vhost_vsock/
-> > total 0
-> > drwxr-xr-x   2 root root    0 Sep 26 15:59 .
-> > drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
-> > --w-------   1 root root 4096 Sep 26 15:59 uevent
-> > -r--r--r--   1 root root 4096 Sep 26 15:59 version
-> >
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
->
->
+> Apologize for the late pull request; all the traveling made things a
+> bit messy.  Also, we have a known regression here on ancient processors
+> and will fix it next week.
 
-Dear Michael,
+.. actually, much worse than that, you have a build error.
 
-> Why not check that the misc device is registered?
+  arch/x86/kvm/x86.c: In function =E2=80=98kvm_arch_enable_virtualization=
+=E2=80=99:
+  arch/x86/kvm/x86.c:12517:9: error: implicit declaration of function
+=E2=80=98cpu_emergency_register_virt_callback=E2=80=99
+[-Wimplicit-function-declaration]
+  12517 |
+cpu_emergency_register_virt_callback(kvm_x86_ops.emergency_disable_virtuali=
+zation_cpu);
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  arch/x86/kvm/x86.c: In function =E2=80=98kvm_arch_disable_virtualization=
+=E2=80=99:
+  arch/x86/kvm/x86.c:12522:9: error: implicit declaration of function
+=E2=80=98cpu_emergency_unregister_virt_callback=E2=80=99
+[-Wimplicit-function-declaration]
+  12522 |
+cpu_emergency_unregister_virt_callback(kvm_x86_ops.emergency_disable_virtua=
+lization_cpu);
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible to read /proc/misc and check if "241 vhost-vsock" is
-there, but it means that userspace
-needs to have a specific logic for vsock. At the same time, it's quite
-convenient to do something like:
-    if [ ! -d /sys/modules/vhost_vsock ]; then
-        modprobe vhost_vsock
-    fi
+which I hadn't noticed before, because I did just allmodconfig builds.
 
-> I'd rather not add a new UAPI until actually necessary.
+But with a smaller config, the above error happens.
 
-I don't insist. I decided to send this patch because, while I was
-debugging a non-related kernel issue
-on my local dev environment I accidentally discovered that LXD
-(containers and VM manager)
-fails to run VMs because it fails to load the vhost_vsock module (but
-it was built-in in my debug kernel
-and the module file didn't exist). Then I discovered that before
-trying to load a module we
-check if /sys/module/<module name> exists. And found that, for some
-reason /sys/module/vhost_vsock
-does not exist when vhost_vsock is configured as a built-in, and
-/sys/module/vhost_vsock *does* exist when
-vhost_vsock is loaded as a module. It looks like an inconsistency and
-I also checked that other modules in
-drivers/vhost have MODULE_VERSION specified and version is 0.0.1. I
-thought that this change looks legitimate
-and convenient for userspace consumers.
+The culprit is commit 590b09b1d88e ("KVM: x86: Register "emergency
+disable" callbacks when virt is enabled"), and the reason seems to be
+this:
 
-Kind regards,
-Alex
+  #if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
+  void cpu_emergency_register_virt_callback(cpu_emergency_virt_cb *callback=
+);
+  ...
 
->
-> > ---
-> >  drivers/vhost/vsock.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> > index 802153e23073..287ea8e480b5 100644
-> > --- a/drivers/vhost/vsock.c
-> > +++ b/drivers/vhost/vsock.c
-> > @@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
-> >
-> >  module_init(vhost_vsock_init);
-> >  module_exit(vhost_vsock_exit);
-> > +MODULE_VERSION("0.0.1");
-> >  MODULE_LICENSE("GPL v2");
-> >  MODULE_AUTHOR("Asias He");
-> >  MODULE_DESCRIPTION("vhost transport for vsock ");
-> > --
-> > 2.34.1
->
+ie if you have a config with KVM enabled, but neither KVM_INTEL nor
+KVM_AMD set, you don't get that callback thing.
+
+The fix may be something like the attached.
+
+                   Linus
+
+--0000000000007b816506234586fa
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m1nv3bmn0>
+X-Attachment-Id: f_m1nv3bmn0
+
+IGFyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIg
+aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5o
+IGIvYXJjaC94ODYvaW5jbHVkZS9hc20vcmVib290LmgKaW5kZXggZDBlZjJhNjc4ZDY2Li5jMDIx
+ODNkM2NkZDcgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oCisrKyBi
+L2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oCkBAIC0zMSw2ICszMSw4IEBAIHZvaWQgY3B1
+X2VtZXJnZW5jeV9yZWdpc3Rlcl92aXJ0X2NhbGxiYWNrKGNwdV9lbWVyZ2VuY3lfdmlydF9jYiAq
+Y2FsbGJhY2spOwogdm9pZCBjcHVfZW1lcmdlbmN5X3VucmVnaXN0ZXJfdmlydF9jYWxsYmFjayhj
+cHVfZW1lcmdlbmN5X3ZpcnRfY2IgKmNhbGxiYWNrKTsKIHZvaWQgY3B1X2VtZXJnZW5jeV9kaXNh
+YmxlX3ZpcnR1YWxpemF0aW9uKHZvaWQpOwogI2Vsc2UKK3N0YXRpYyBpbmxpbmUgdm9pZCBjcHVf
+ZW1lcmdlbmN5X3JlZ2lzdGVyX3ZpcnRfY2FsbGJhY2soY3B1X2VtZXJnZW5jeV92aXJ0X2NiICpj
+YWxsYmFjaykge30KK3N0YXRpYyBpbmxpbmUgdm9pZCBjcHVfZW1lcmdlbmN5X3VucmVnaXN0ZXJf
+dmlydF9jYWxsYmFjayhjcHVfZW1lcmdlbmN5X3ZpcnRfY2IgKmNhbGxiYWNrKSB7fQogc3RhdGlj
+IGlubGluZSB2b2lkIGNwdV9lbWVyZ2VuY3lfZGlzYWJsZV92aXJ0dWFsaXphdGlvbih2b2lkKSB7
+fQogI2VuZGlmIC8qIENPTkZJR19LVk1fSU5URUwgfHwgQ09ORklHX0tWTV9BTUQgKi8KIAo=
+--0000000000007b816506234586fa--
 
