@@ -1,173 +1,186 @@
-Return-Path: <linux-kernel+bounces-342743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E08989282
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:40:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB276989285
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EDA9B224C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701F11F2308D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 01:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2274C125A9;
-	Sun, 29 Sep 2024 01:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE94C147;
+	Sun, 29 Sep 2024 01:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LGqrQhT1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gn9j4J51"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A8FC148;
-	Sun, 29 Sep 2024 01:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DF128EF;
+	Sun, 29 Sep 2024 01:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727574013; cv=none; b=T2nBjhB5awuCC/Dr1EyCcR1SYhlOVqcP0Z3e4uF7esgM8ijPKJqxFSXGnyTUxkt2wR16E04GvLSgIE4eC1lmJH6Xma5B4dbPJLgKdfMBJM0j/j1RPrb1tp8Dz7UWbeJ5KBbADe6XDm9zVS+B1a5LVqZBa3+UnfeLj3R01YIAQBU=
+	t=1727574688; cv=none; b=BqIATblcMr3cxDnZ8mDPwj64C42ebra9LAvbTb9inT9KgWE5tlmmfAnjViOXEkI6xVNbEeXMjmBMjPhZlY0K+RuOnXmh9RWbhceYHnca4Jzc9ix12saX2LqALtYeHHZWEJhytuS2eSxaQ7I3aPRryhL2RgW7JK30iypdnR/mUjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727574013; c=relaxed/simple;
-	bh=r8YEm82IiDRZTCkCh879m0xJ5xKM7guPvEFt/0AzZZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a+Wp2qUnWFKwNijrhxJPM27hjLNQVkyVCjKbLcUhRZg633vu6hd25qSrddOQBSSEsTOud8mQIp6lHqUq/UqiGup63kNph/4uWmeKEbIISnBoP4mB7pxFml+Rj/6BxwJfKM2UWJOTrcREYM/NJURUXyFQtYIAZci1ZxdFL5BWsvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LGqrQhT1; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727574012; x=1759110012;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=r8YEm82IiDRZTCkCh879m0xJ5xKM7guPvEFt/0AzZZk=;
-  b=LGqrQhT1AII8BOfxScwYakNkpJXaQ3dAmUXWcgfgDj0g9zLhYoiVZp6X
-   1B3RxOWRZbuSW5Gs6PVmo4munAz1Hf38ajVossjlboA/O5NVxQO9O+ken
-   y8EJPNEfhaU8yURgNxAIYG1KTSGFkXBxQgdBa1J1Qg5w/4P2atRkLleK3
-   UP7m/SdhlDw/zwagGyVFJ4d67/tbO2WTP5d7mR442M5PNFAG/Jz3rTMzD
-   S6IGrfjkYBrvg+U8k1qaaJK0ze8qKfUF2ypR/sy0LDvkvuhHSldW3XnOU
-   sqTHK6+B60SxR8uqh11lcVEqjtTBSC8o47D9EhlVaOZu0ToI0L+r603xf
-   w==;
-X-CSE-ConnectionGUID: 4mewzjOCRoK04q0jAhcKwQ==
-X-CSE-MsgGUID: +FThr1RyQ2mSUaXzUIvYFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="37267830"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="37267830"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 18:40:11 -0700
-X-CSE-ConnectionGUID: lMzoxijmS/+sF1p2iiTmDA==
-X-CSE-MsgGUID: CcN8ldiURtmkZQOohAIF0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="103702516"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 28 Sep 2024 18:40:08 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suius-000Non-0T;
-	Sun, 29 Sep 2024 01:40:06 +0000
-Date: Sun, 29 Sep 2024 09:39:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dragan Simic <dsimic@manjaro.org>, linux-spi@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, broonie@kernel.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org, rafael@kernel.org, oss@helene.moe,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] driver core: Add device probe log helper
- dev_warn_probe()
-Message-ID: <202409290956.jwLrcN1S-lkp@intel.com>
-References: <2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1727574688; c=relaxed/simple;
+	bh=ISF5mY/X2zy1QRweU7f7/NLQ1VO3nI7ZQpnrZwOobWA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=cJFSBM/7NHmm2xm/fO7U8gQaV4haRgK0MuaVoEVT8rXDoAlkntr1mg3v0cNO5epjGiBQ4zSDZ1AitV9eXbhPIUfCdRDwYjflH1LdOeW11uAKXFxgK75E05juaz2biPyiLvuE6my29Cp1ZtdHFSq92OSG2+sxG4tKZl413otuAG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gn9j4J51; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718d6ad6050so2756026b3a.0;
+        Sat, 28 Sep 2024 18:51:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727574686; x=1728179486; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=21rcnj2ZyOGjbCXVWl/cWWdRIJLh4gM249ugqUOM8PU=;
+        b=Gn9j4J51OUfrLee9JykkyZgAQqYtJAQyASED6zV8SJ5OZmsjf8XSRO4FmLiPgfq00q
+         DBddMEZJIKaV79CU/0jJ8k6gUOMpuakobda6II6IVsIhcl/tUxdHag+TVZU7eENOCNiK
+         NRNplc4fiWVKbfBWNQsAjj29Bq7VzUp6rAU9tH7WWwu02yu04sXCbmJqLR1Fb4yjnai+
+         yZ922gL7ElPmfLqGFtSKukbmWIcYiKIdmpWnEGlcVVsPIPJSQfFEV93J/mpYUFywpWFc
+         9/TVj/DG5eQfYyZ3BQhHNmXZflAuQnCSsrRf/LbDOl0pZYfzqEQdWsSPQ12M4zuUq8DZ
+         U3Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727574686; x=1728179486;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=21rcnj2ZyOGjbCXVWl/cWWdRIJLh4gM249ugqUOM8PU=;
+        b=LlDBCaTwb9EIeIriyIb+Qy4nZDsBOKhgQTr3oL7NkuToqUYYmfhUYZ3O7QKjD8+3mz
+         e7ZGggXm9nVmNj9p4shgJewnQnTWsQdeqBnWieRzCEGVNdddVjPwkZOLQW0aubIYFxUd
+         4hsNr9xS6c1f/5qspT6N1YnuTqNku6G9Dn0eayrbRMVm6O7vl/hQGrq80w8f0a+kPNgm
+         Uo0Refz1tFmIkXOx5s9r6dmGSIV9zgFEa0w2j8spp1d4Y87g1jgFbhjBeNC7ICJEMNpr
+         RgiDlI9xFRmLbB7v7Luvzm37O8D/LtbGQR4KF7MHGh66/E2IxYry+EKA+jSSA7qChTDR
+         aSiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWvWNZhycZCoCsGfFmDOBRRZl7H0heK78YgeS4t3CeLHVzGxc/5///MVfH/2jx1m3mfhtgRjTiZeMiZKVpTA==@vger.kernel.org, AJvYcCVYxxFe373NHgCM4tve7+UO0MA6qZRPPNn24fCuZw/a+ECmNPZC1OU8NiQ1oX/1vibPns9D1qHj96fQWYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywnf9E9tkTPH0W++qz4QBdt83TRkk2Opm7dksK3zvgn+SL403r5
+	tKSEfIKS829NShX2w9xYjglEh6q4JEltrXm00CIR2RaPIFEJzfpYK6cg1X4p1c8=
+X-Google-Smtp-Source: AGHT+IFTf7Cg8aQrmiSvLt861+M6xP2hhbq4rulWgSru0qLO/+f/bEQEXZFdf1MnlqxCPr+6A2b/Ww==
+X-Received: by 2002:a05:6a00:3e21:b0:70d:2796:bce8 with SMTP id d2e1a72fcca58-71b2604bfe5mr13304104b3a.20.1727574686399;
+        Sat, 28 Sep 2024 18:51:26 -0700 (PDT)
+Received: from smtpclient.apple ([205.204.117.124])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc1a3sm3785448b3a.75.2024.09.28.18.51.24
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 28 Sep 2024 18:51:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic@manjaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: introduce 'stack_order' sysfs interface to
+ klp_patch
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <alpine.LSU.2.21.2409271555430.15317@pobox.suse.cz>
+Date: Sun, 29 Sep 2024 09:51:12 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Petr Mladek <pmladek@suse.com>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D229E2D7-31DC-4420-AC78-5146048E6ABE@gmail.com>
+References: <20240925064047.95503-1-zhangwarden@gmail.com>
+ <20240925064047.95503-2-zhangwarden@gmail.com>
+ <alpine.LSU.2.21.2409271555430.15317@pobox.suse.cz>
+To: Miroslav Benes <mbenes@suse.cz>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-Hi Dragan,
+Hi, Miroslav!
+>=20
+> Perhaps something like
+>=20
+> "
+> Add "stack_order" sysfs attribute which holds the order in which a =
+live=20
+> patch module was loaded into the system. A user can then determine an=20=
 
-kernel test robot noticed the following build warnings:
+> active live patched version of a function.
+>=20
+> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
+>=20
+> means that livepatch_1 is the first live patch applied
+>=20
+> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
+>=20
+> means that livepatch_module is the Nth live patch applied
+> "
+> ?
+>=20
+>> Suggested-by: Petr Mladek <pmladek@suse.com>
+>> Suggested-by: Miroslav Benes <mbenes@suse.cz>
+>> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
+>> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+>=20
+> How do you prepare your patches?
+>=20
+> "---" delimiter is missing here.
 
-[auto build test WARNING on rockchip/for-next]
-[also build test WARNING on broonie-spi/for-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I will commit my changes with 'git commit -m' option.
+Then, I use 'git format-patch' to generate my patches.
+After my patches is ready, I would use 'git send-email' to=20
+send my directory containing my patches and cover letter.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dragan-Simic/spi-rockchip-Perform-trivial-code-cleanups/20240928-121548
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic%40manjaro.org
-patch subject: [PATCH v2 4/5] driver core: Add device probe log helper dev_warn_probe()
-config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240929/202409290956.jwLrcN1S-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290956.jwLrcN1S-lkp@intel.com/reproduce)
+Is there any step I missed?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290956.jwLrcN1S-lkp@intel.com/
+>=20
+>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+>> index ecbc9b6aba3a..914b7cabf8fe 100644
+>> --- a/kernel/livepatch/core.c
+>> +++ b/kernel/livepatch/core.c
+>> @@ -346,6 +346,7 @@ int klp_apply_section_relocs(struct module *pmod, =
+Elf_Shdr *sechdrs,
+>>  * /sys/kernel/livepatch/<patch>/enabled
+>>  * /sys/kernel/livepatch/<patch>/transition
+>>  * /sys/kernel/livepatch/<patch>/force
+>> + * /sys/kernel/livepatch/<patch>/stack_order
+>>  * /sys/kernel/livepatch/<patch>/<object>
+>>  * /sys/kernel/livepatch/<patch>/<object>/patched
+>>  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
+>> @@ -443,13 +444,37 @@ static ssize_t force_store(struct kobject =
+*kobj, struct kobj_attribute *attr,
+>> return count;
+>> }
+>>=20
+>> +static ssize_t stack_order_show(struct kobject *kobj,
+>> + struct kobj_attribute *attr, char *buf)
+>> +{
+>> + struct klp_patch *patch, *this_patch;
+>> + int stack_order =3D 0;
+>> +
+>> + this_patch =3D container_of(kobj, struct klp_patch, kobj);
+>> +
+>> + /* make sure the calculate of patch order correct */
+>=20
+> The comment is not necessary.
+>=20
+>> + mutex_lock(&klp_mutex);
+>> +
+>> + klp_for_each_patch(patch) {
+>> + stack_order++;
+>> + if (patch =3D=3D this_patch)
+>> + break;
+>> + }
+>> +
+>> + mutex_unlock(&klp_mutex);
+>=20
+> Please add an empty line before return here.
+>=20
+>> +       return sysfs_emit(buf, "%d\n", stack_order);
+>> +}
+>=20
+> Miroslav
 
-All warnings (new ones prefixed by >>):
+And the rest of the suggestions will be fix in the next version.
 
-   drivers/base/core.c: In function 'dev_err_probe':
->> drivers/base/core.c:5055:1: warning: control reaches end of non-void function [-Wreturn-type]
-    5055 | }
-         | ^
-   drivers/base/core.c: In function 'dev_warn_probe':
-   drivers/base/core.c:5101:1: warning: control reaches end of non-void function [-Wreturn-type]
-    5101 | }
-         | ^
+Regards.
+Wardenjohn.
 
-
-vim +5055 drivers/base/core.c
-
-  5011	
-  5012	/**
-  5013	 * dev_err_probe - probe error check and log helper
-  5014	 * @dev: the pointer to the struct device
-  5015	 * @err: error value to test
-  5016	 * @fmt: printf-style format string
-  5017	 * @...: arguments as specified in the format string
-  5018	 *
-  5019	 * This helper implements common pattern present in probe functions for error
-  5020	 * checking: print debug or error message depending if the error value is
-  5021	 * -EPROBE_DEFER and propagate error upwards.
-  5022	 * In case of -EPROBE_DEFER it sets also defer probe reason, which can be
-  5023	 * checked later by reading devices_deferred debugfs attribute.
-  5024	 * It replaces the following code sequence::
-  5025	 *
-  5026	 * 	if (err != -EPROBE_DEFER)
-  5027	 * 		dev_err(dev, ...);
-  5028	 * 	else
-  5029	 * 		dev_dbg(dev, ...);
-  5030	 * 	return err;
-  5031	 *
-  5032	 * with::
-  5033	 *
-  5034	 * 	return dev_err_probe(dev, err, ...);
-  5035	 *
-  5036	 * Using this helper in your probe function is totally fine even if @err
-  5037	 * is known to never be -EPROBE_DEFER.
-  5038	 * The benefit compared to a normal dev_err() is the standardized format
-  5039	 * of the error code, which is emitted symbolically (i.e. you get "EAGAIN"
-  5040	 * instead of "-35"), and having the error code returned allows more
-  5041	 * compact error paths.
-  5042	 *
-  5043	 * Returns @err.
-  5044	 */
-  5045	int dev_err_probe(const struct device *dev, int err, const char *fmt, ...)
-  5046	{
-  5047		va_list args;
-  5048	
-  5049		va_start(args, fmt);
-  5050	
-  5051		/* Use dev_err() for logging when err doesn't equal -EPROBE_DEFER */
-  5052		dev_probe_failed(dev, err, true, fmt, args);
-  5053	
-  5054		va_end(args);
-> 5055	}
-  5056	EXPORT_SYMBOL_GPL(dev_err_probe);
-  5057	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
