@@ -1,156 +1,138 @@
-Return-Path: <linux-kernel+bounces-342725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96768989226
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:34:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31DC698922A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D201F236F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:34:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CE12854A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564F4A0F;
-	Sun, 29 Sep 2024 00:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC86E748A;
+	Sun, 29 Sep 2024 00:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="da9OAMN/"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onOb6PDe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B0B8460
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F133D9E;
+	Sun, 29 Sep 2024 00:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727570088; cv=none; b=CBKpgnI60Ci8J7bkobQShQ3XCuagcxziSt+fgfsU5uWRV46KGry9nXdKBcN0mwEIj9VmPxSg4ZQIJTYDuujo/oN/u/e6BuVNFTc5jlYRvjiFZZ3SeKoapRplxGTtnT0uyduhbsFV29+wrycRtKOB/2Srk6eozA4ElWj7HIe8WgY=
+	t=1727570686; cv=none; b=UeyQsS/JZmVuGnpikJRVV5x7LzbnwRwicgYP9EpLMQV+OmuVG4FlfoNZ7QU/DL82Ww1WxuJK8pycyfKOC08uMyp8Be7/5VTzLKfXGoRBV2Qy9YlkwwcJj8YKqyH8EZrVwO0gl69fIiPEZsuBKOd9U7iHcoOF0xBljlMbAFVvu94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727570088; c=relaxed/simple;
-	bh=FUnK5WsqIt7SFr1ZuMbM54fJeM1wSWwCSGDvqC9enzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ju503OBCzHSOpCvJ9PubT4dzykTePXBm5mRZQcMC3WaSl6Et1ST++Gtd1o/6SfgnZCa1T9XjieHDrDKkxaqzs0gAQAjwk059l+l0GIwxmf/45XQt2/Pr5sXTTka2OA3SHNAenYhqvpk/I8nXM5KDTlWLO5k74NlBks9Ll9LeOUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=da9OAMN/; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1727570071;
- bh=xENoRDlaw7uEZQLQGR7uTWdX3LD1ukayJIDfRPDH3Vo=;
- b=da9OAMN/U5XBUZyoZfiZdGSYTzXYwpNid04GT0SdGXMxYWmNAWJRxJmiIFDlrmZLsS0HCvuqy
- rq1K0FfgrMY2xq+0UAMgTzf6wEB1R48Pk619RiGzud5pyVexqo3fGlDVMT07Gmbmb1gIS6PMMg1
- 2kKbxWGYS3s5aA+PRaXVEMSCeOOgx5T3mNnK8n+57IB/pnBFG3/WUGe4A/4R2NUMa5PiVxUs2/0
- lsRQ7wyDeGMJDGixJG88GMnrkvPTslTdb/c7LKYcycgFeDpyk0e18ABh1W0rF6WJ+cK6OQ+GW2Y
- xF5zi2Aghx5rHt60Z8h+wbmqSXC1jG3uKmABXU636nTw==
-Message-ID: <83349da6-17bc-432d-badc-5946c42a53ed@kwiboo.se>
-Date: Sun, 29 Sep 2024 02:34:15 +0200
+	s=arc-20240116; t=1727570686; c=relaxed/simple;
+	bh=X/bQwSiSc0olvT8z73WPoLXmdvhPorhHQ+M633XrM8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IVmT9HDtr4N/HHGwv+wTLfGaBozYw80I9xPHOvdPOqjjMYlJM4L/ZJPNQnaZkTQ37+lm9jpmL+XMCQFGG9Vog2Lu1hd2sqF/12IwZjpOl40sHIn5JlzgPyNP2ysXJFGpKC9pIyT8XFDc3cQeZpH1fGtSepRI0TWoQM3YLSH5VXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onOb6PDe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACB23C4CEC3;
+	Sun, 29 Sep 2024 00:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727570685;
+	bh=X/bQwSiSc0olvT8z73WPoLXmdvhPorhHQ+M633XrM8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=onOb6PDe5IxhnfYyJmxpdR5H73ZO0yg43Un/lpzdeO0u1s2uxB9IUJlwlUgpTsbhn
+	 lCQ50ayTUIfo1gLSC4vhRxugB71hznOn9fLIg8rYJ4lYWYdg6DluvjI/z4GqOHklYd
+	 VbKiLYvxepcS/1ImLgZ7QtcxuuGIUqdSxE5apXKGk4Vr1b2p5GZgQ3oO1ysDN3WN4+
+	 GN4vtcwy7uZw/+1KFapC9i1t/b8KIOrQTeQdOswarfP7Gfl4CI3oHsyxfOW8oGv01K
+	 8FhDX5WgGt9M4mTK/Db586W3S3Ddxby7mBWf6SW4x6B+zthZHHLS3k1FCsiHsLtp1Z
+	 wEdNBs0xL1vaA==
+Received: by pali.im (Postfix)
+	id 21EBA651; Sun, 29 Sep 2024 02:44:40 +0200 (CEST)
+Date: Sun, 29 Sep 2024 02:44:39 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/8] cifs: Fix creating NFS-style char/block devices
+Message-ID: <20240929004439.4xgymuv3mnr3n4a3@pali>
+References: <20240928215948.4494-1-pali@kernel.org>
+ <20240928215948.4494-5-pali@kernel.org>
+ <CAH2r5mvvNO4NjnBKd1R_wemJ34t=N+iL023c2Op+LPuYw3UcZw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/3] drm/rockchip: Add basic RK3588 HDMI output support
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
- Algea Cao <algea.cao@rock-chips.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>
-References: <20240929-b4-rk3588-bridge-upstream-v8-0-83538c2cc325@collabora.com>
- <20240929-b4-rk3588-bridge-upstream-v8-3-83538c2cc325@collabora.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20240929-b4-rk3588-bridge-upstream-v8-3-83538c2cc325@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 66f8a093ed0aa09774abf316
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mvvNO4NjnBKd1R_wemJ34t=N+iL023c2Op+LPuYw3UcZw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-Hi Cristian,
+Ops, sorry for that. I just let my work branch on v6.11-rc7 and here
+this change was not yet. But it is funny that we have hit this problem
+independently in nearly same time.
 
-On 2024-09-29 00:36, Cristian Ciocaltea wrote:
-> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
-> Samsung IP block.
+On Saturday 28 September 2024 19:18:26 Steve French wrote:
+> Looks like a duplicate of Paulo's earlier already merged patch, so
+> will skip this one.  Reviewing the others in the series now.
 > 
-> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
-> without audio, CEC or any of the HDMI 2.1 specific features.
+> commit a9de67336a4aa3ff2e706ba023fb5f7ff681a954
+> Author: Paulo Alcantara <pc@manguebit.com>
+> Date:   Wed Sep 18 21:53:35 2024 -0300
 > 
-> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
-> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-> ---
->  drivers/gpu/drm/rockchip/Kconfig               |   9 +
->  drivers/gpu/drm/rockchip/Makefile              |   1 +
->  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 425 +++++++++++++++++++++++++
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.c    |   2 +
->  drivers/gpu/drm/rockchip/rockchip_drm_drv.h    |   1 +
->  5 files changed, 438 insertions(+)
+>     smb: client: set correct device number on nfs reparse points
 > 
-
-[snip]
-
-> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
-> new file mode 100644
-> index 000000000000..6103d30d40fb
-
-[snip]
-
-> +static irqreturn_t dw_hdmi_qp_rk3588_irq(int irq, void *dev_id)
-> +{
-> +	struct rockchip_hdmi_qp *hdmi = dev_id;
-> +	u32 intr_stat, val;
-> +	int debounce_ms;
-> +
-> +	regmap_read(hdmi->regmap, RK3588_GRF_SOC_STATUS1, &intr_stat);
-> +	if (!intr_stat)
-> +		return IRQ_NONE;
-> +
-> +	val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR,
-> +			    RK3588_HDMI0_HPD_INT_CLR);
-> +	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
-> +
-> +	debounce_ms = intr_stat & RK3588_HDMI0_LEVEL_INT ? 150 : 20;
-> +	mod_delayed_work(system_wq, &hdmi->hpd_work,
-> +			 msecs_to_jiffies(debounce_ms));
-
-If I am understanding this correctly this will wait for 150 ms after HPD
-goes high and 20 ms after HPD goes low to trigger the hpd_work.
-
-Would it not make more sense to be the other way around? In order to
-reduce unnecessary HOTPLUG=1 uevents from being triggered during short
-EDID refresh pulses? At least that is what I am playing around with for
-dw-hdmi.
-
-Regards,
-Jonas
-
-> +
-> +	val |= HIWORD_UPDATE(0, RK3588_HDMI0_HPD_INT_MSK);
-> +	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-[snip]
-
+>     Fix major and minor numbers set on special files created with NFS
+>     reparse points.
+> 
+> On Sat, Sep 28, 2024 at 5:02 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > Linux SMB client currently creates NFS-style char and block devices with
+> > swapped major and minor numbers.
+> >
+> > Per MS-FSCC 2.1.2.6 NFS_SPECFILE_CHR and NFS_SPECFILE_BLK DataBuffer's
+> > field contains two 32-bit integers that represent major and minor device
+> > numbers.
+> >
+> > So the first one 32-bit integer in DataBuffer is major number and second
+> > one in DataBuffer is minor number. Microsoft Windows NFS server reads them
+> > in this order too.
+> >
+> > But Linux CIFS client creates new reparse point DataBuffer with minor
+> > number first and major number second.
+> >
+> > Fix this problem in Linux SMB client and puts major and minor number in
+> > the correct order into DataBuffer.
+> >
+> > This change fixes interoperability of char and block devices on Windows
+> > share which is exported over both SMB and NFS protocols.
+> >
+> > Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/smb/client/reparse.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> > index 48c27581ec51..63984796721a 100644
+> > --- a/fs/smb/client/reparse.c
+> > +++ b/fs/smb/client/reparse.c
+> > @@ -108,8 +108,8 @@ static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
+> >         buf->InodeType = cpu_to_le64(type);
+> >         buf->ReparseDataLength = cpu_to_le16(len + dlen -
+> >                                              sizeof(struct reparse_data_buffer));
+> > -       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MAJOR(dev) << 32) |
+> > -                                                MINOR(dev));
+> > +       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MINOR(dev) << 32) |
+> > +                                                MAJOR(dev));
+> >         iov->iov_base = buf;
+> >         iov->iov_len = len + dlen;
+> >         return 0;
+> > --
+> > 2.20.1
+> >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
