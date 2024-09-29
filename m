@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-343045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E56698962C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:51:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1F6C98962D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E703E282E50
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631BD1F22845
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E1717A589;
-	Sun, 29 Sep 2024 15:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0999D17C22A;
+	Sun, 29 Sep 2024 15:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="vdGT7dlC"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+tU+dSW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430651C683
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FCC1C683;
+	Sun, 29 Sep 2024 15:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727625063; cv=none; b=nlyPmgDZ+teQFUF1Q+3YenmJk2+PoMXEIEi1z6XRDyPALScRqGB62Xpth9oCP/ZK/4eLAXd+fMOBE3K7fq0Z+BicbpQJog+7Jktza0qAnleiwp3FUBbLGQqrisnQOdHbzLBXKxY0ZoD4dbXY5PqfmNt4aURME9yGvKURz4xJwUI=
+	t=1727625075; cv=none; b=TD8IDUMG4WBQGXqw3mWX4rMLqhup+gIhOStO848Dbqe0bOq6KWO3c6/Lvnoni+DoipaAT09+YpNXN25pM+VFhcN6MZXrnklMvrHGcacZ/NUOuBEJfCRpHLFM/uep3l2gYf+dxJhX2fGTjgfl2TDsJGHuc5A1X84RBZtlECvatTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727625063; c=relaxed/simple;
-	bh=JZxrYxpziZiNH0RWp1bEPKptpq2xXzmCutmdLJ4h9hU=;
+	s=arc-20240116; t=1727625075; c=relaxed/simple;
+	bh=KT0NvVFCww9jUSGdpuipSki65RESc4oWk+fSOgC7mFk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5lzyFnbnawUnUYMMU50vuOi9MRZBRJGK9yUYia/Gh9JwXMRiyinK0J9Jx7acxQXLTilXkZAgge/2mWjdp62Rjii9Bb2585fOmaczS8WxH0IHEPN2+1pwTE/qwvyaWQm5AxCv6a+9eXJHpnbwyXruz4zzKu0ts1i1ssU9hz/GDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=vdGT7dlC; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cb54eef205so9234596d6.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:51:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1727625059; x=1728229859; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3Y2D6qTzk1N1f3m0kRzoxA/mFWQeqmxquaa8AlYdeFM=;
-        b=vdGT7dlChEUoLJMZsIkAHoUxLlje1p5SAsn3QkpnpPv5Yoco1ZyiTjQ0B16J0H/55W
-         Z8ledBqTq5QnEhpRWb9w5FvoAcall/pbgLOdyDoR/s0GHFl217MAdEi78v6Nxyivs/xO
-         Wk21CRPkCny5w4pXOpOLR23y2/oumx/qZe3gD+uGEvn7yIYSteV3/7zFaEy3cmkfJ4l6
-         OS7oKQJgvQwXXA6Bsnw+fqaJa/gAlILxxJ5NbL3xXzPvtmrGtL57FsK3Y6x6doHNbuZ4
-         eOLIwRWqJhlt/hgL4GTnRTS2Hne59hrj1xhnRZaj0pgPgQHMyF5WIZhSc9MNkeAZp6QF
-         pH3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727625059; x=1728229859;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Y2D6qTzk1N1f3m0kRzoxA/mFWQeqmxquaa8AlYdeFM=;
-        b=fjCiV/5MNFH+e3zY1InGeUAy4kBnFfGZl8yF7uhyMUG74xeS5CqE4JIgPoMWxml7ic
-         w7CPO0Yba7S3ZoFERg2FWOrnWiRu9T5E69zXZxcFvWOrDV0XyJPR/52V3eqPuAXlBYpb
-         zz2YHQ21c0rfiizzldzu+RXw7qerWRpHAX757iw+TJ09OWb1aaS0ZDQnIsU3EW7HcI0j
-         i0heSuGq4RcQtWVoWOcXxg+s7+HESfo3HGg26FIpxC/Mxd6O2fbRp9kaKeiXPKY4KcZx
-         pr1T7sr3ryiDW+3keGk9vV0QLDpzVBcMldzJ/mi9bS+orIePt+bbUQBcIrkLcHR/iHTO
-         dn8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWiuZtYHDeUUJgsOH3RJbMzgS9UY1Rfbc8UfpcXcWW2qONOGwLASBEZmP/ERmVx5VBjJ1aWzt12U/H9qQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt+kmLHhINXzo7mDxjq+ml2NV3T2lWJ0tW7lnkUH6eHcw4j2/f
-	FZPxnpQ2oRbHZmFR+WOHjwtCTfjX96dMOrA6U/sWgRsi1q88F6/wRncbrD1pdQ==
-X-Google-Smtp-Source: AGHT+IFZuEPBZGMBb6yILvpuGoLBRTg0zQfGWndE1JjdQ9u9RIGWwrmtLSM5wwVtRT+ilMvEG3tiNQ==
-X-Received: by 2002:a05:6214:598f:b0:6cb:2d18:dfe5 with SMTP id 6a1803df08f44-6cb3b65a8femr120236206d6.49.1727625059122;
-        Sun, 29 Sep 2024 08:50:59 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::abbf])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ffbbesm31867626d6.25.2024.09.29.08.50.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 08:50:58 -0700 (PDT)
-Date: Sun, 29 Sep 2024 11:50:52 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5iNnlMkV9bKPR48RkFhBmfG78xoSQN5QiR8E2VuFU4iAGuNQqX9/RAcJO1mJkS56J5qYko43i8n7iVzjMTD0ziGbVMzuQjDwyq66GjNQKchnmzmzyOegogfaFNGlOd6qAC/lp2+tiCK08bjgEg4pJPpsuOyidvNb6Bvp9aw/eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s+tU+dSW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4607C4CEC6;
+	Sun, 29 Sep 2024 15:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727625074;
+	bh=KT0NvVFCww9jUSGdpuipSki65RESc4oWk+fSOgC7mFk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=s+tU+dSWCQMuFEMfAoj6SdGdq6uzxmIB+i1vYvyJ/mgQM9ht7+PRH6/S6Et4B52lm
+	 UzZOb1yYNiti2lZuGXB+Wv3XfqJ6shFc6gLasSBrA12nNupa7OqO9AnLHdfzldcI3N
+	 Q2830MNNQqSD3EoiQJvUeNbtiCxCSWkeG8dcMe7gawztSDm1MMB9wGhr620n9eULbt
+	 6bAVsPM9txJJLrJ4E7SWRcRaRuku7+2Ri7MyG7wQF+tKyiw+yhAwWvAWiWpzwAlatp
+	 BPRlhX48gCpJYn9LzTD2h7lzLLH4MXvj1pR+GHJDCGqAzSmOfqFillipjwqriWwgcT
+	 /tnmwtUVctdEQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 60CE5CE04D4; Sun, 29 Sep 2024 08:51:14 -0700 (PDT)
+Date: Sun, 29 Sep 2024 08:51:14 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
 To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-kernel@vger.kernel.org,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
 	Will Deacon <will@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	John Stultz <jstultz@google.com>,
 	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Joel Fernandes <joel@joelfernandes.org>,
@@ -92,9 +70,11 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
 	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev,
 	Nikita Popov <github@npopov.com>, llvm@lists.linux.dev
-Subject: Re: [PATCH v1 0/2] Introduce ptr_eq() to preserve address dependency
-Message-ID: <df54d990-537a-418d-b748-7cc140eba236@rowland.harvard.edu>
+Subject: Re: [PATCH v1 2/2] Documentation: RCU: Refer to ptr_eq()
+Message-ID: <8153f0f1-fd18-4ae1-9dc5-f9b725429cad@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 References: <20240929111608.1016757-1-mathieu.desnoyers@efficios.com>
+ <20240929111608.1016757-3-mathieu.desnoyers@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,16 +83,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240929111608.1016757-1-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20240929111608.1016757-3-mathieu.desnoyers@efficios.com>
 
-On Sun, Sep 29, 2024 at 07:16:06AM -0400, Mathieu Desnoyers wrote:
-> Introduce ptr_eq() to compare two addresses while preserving the address
-> dependencies for later use of the address. It should be used when
-> comparing an address returned by rcu_dereference().
+On Sun, Sep 29, 2024 at 07:16:08AM -0400, Mathieu Desnoyers wrote:
+> Refer to ptr_eq() in the rcu_dereference() documentation.
+> 
+> ptr_eq() is a mechanism that preserves address dependencies when
+> comparing pointers, and should be favored when comparing a pointer
+> obtained from rcu_dereference() against another pointer.
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: John Stultz <jstultz@google.com>
+> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: Josh Triplett <josh@joshtriplett.org>
+> Cc: Uladzislau Rezki <urezki@gmail.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Cc: Zqiang <qiang.zhang1211@gmail.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: maged.michael@gmail.com
+> Cc: Mateusz Guzik <mjguzik@gmail.com>
+> Cc: Gary Guo <gary@garyguo.net>
+> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+> Cc: rcu@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: lkmm@lists.linux.dev
+> Cc: Nikita Popov <github@npopov.com>
+> Cc: llvm@lists.linux.dev
+> ---
+> Changes since v0:
+> - Include feedback from Alan Stern.
+> ---
+>  Documentation/RCU/rcu_dereference.rst | 32 ++++++++++++++++++++++-----
+>  1 file changed, 27 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
+> index 2524dcdadde2..9ef97b7ca74d 100644
+> --- a/Documentation/RCU/rcu_dereference.rst
+> +++ b/Documentation/RCU/rcu_dereference.rst
+> @@ -104,11 +104,12 @@ readers working properly:
+>  	after such branches, but can speculate loads, which can again
+>  	result in misordering bugs.
+>  
+> --	Be very careful about comparing pointers obtained from
+> -	rcu_dereference() against non-NULL values.  As Linus Torvalds
+> -	explained, if the two pointers are equal, the compiler could
+> -	substitute the pointer you are comparing against for the pointer
+> -	obtained from rcu_dereference().  For example::
+> +-	Use operations that preserve address dependencies (such as
+> +	"ptr_eq()") to compare pointers obtained from rcu_dereference()
+> +	against non-NULL pointers. As Linus Torvalds explained, if the
+> +	two pointers are equal, the compiler could substitute the
+> +	pointer you are comparing against for the pointer obtained from
+> +	rcu_dereference().  For example::
+>  
+>  		p = rcu_dereference(gp);
+>  		if (p == &default_struct)
+> @@ -125,6 +126,23 @@ readers working properly:
+>  	On ARM and Power hardware, the load from "default_struct.a"
+>  	can now be speculated, such that it might happen before the
+>  	rcu_dereference().  This could result in bugs due to misordering.
+> +	Performing the comparison with "ptr_eq()" ensures the compiler
+> +	does not perform such transformation.
+> +
+> +	If the comparison is against another pointer, the compiler is
+> +	allowed to use either pointer for the following accesses, which
+> +	loses the address dependency and allows weakly-ordered
+> +	architectures such as ARM and PowerPC to speculate the
+> +	address-dependent load before rcu_dereference().  For example::
+> +
+> +		p1 = READ_ONCE(gp);
+> +		p2 = rcu_dereference(gp);
+> +		if (p1 == p2)
+> +			do_default(p2->a);
+> +
+> +	The compiler can use p1->a rather than p2->a, destroying the
+> +	address dependency.  Performing the comparison with "ptr_eq()"
+> +	ensures the compiler preserves the address dependencies.
 
-Both patches are now much better.  Thank you.
+Bitter experience leads me to suggest a "// BUGGY" comment on the "if"
+statement in the above example, and a corrected code snippet right here.  :-/
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Other than that, loks good!
 
-Alan Stern
+							Thanx, Paul
+
+>  	However, comparisons are OK in the following cases:
+>  
+> @@ -204,6 +222,10 @@ readers working properly:
+>  		comparison will provide exactly the information that the
+>  		compiler needs to deduce the value of the pointer.
+>  
+> +	When in doubt, use operations that preserve address dependencies
+> +	(such as "ptr_eq()") to compare pointers obtained from
+> +	rcu_dereference() against non-NULL pointers.
+> +
+>  -	Disable any value-speculation optimizations that your compiler
+>  	might provide, especially if you are making use of feedback-based
+>  	optimizations that take data collected from prior runs.  Such
+> -- 
+> 2.39.2
+> 
 
