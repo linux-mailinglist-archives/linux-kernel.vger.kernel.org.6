@@ -1,150 +1,93 @@
-Return-Path: <linux-kernel+bounces-343015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CACA99895ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:11:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 443319895F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D9C2827DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7558A1C2094A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA87017B439;
-	Sun, 29 Sep 2024 14:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B36517ADE8;
+	Sun, 29 Sep 2024 14:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="crZkMk2L"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JRENhPLi"
+Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E6FF9CB;
-	Sun, 29 Sep 2024 14:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D0B16A943
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 14:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727619083; cv=none; b=dmfZBnSGadw/1PhdZ/CrM4kkqJd5P8OQSZw3iY+2XtGhgQ0yuyAnpmC/5ux1EbsPwnJjEV5Q/rPVASgGDnVMuMre2mnIdN7ZP8wB9+lqckxLLhYwOSGv8fjIgv00p0JUjFLN54yOv0f1uLPNOJamE+WLoFS6ewVaK4F9q65TeJA=
+	t=1727620021; cv=none; b=Ouv9sZIe4LfidioKTtxuMb9D0gmwNe7qtXgyz88vdZaRrRiFQhKUTOOvBOjOM4ALlhN0YoFCTdLxG/oDOo2LvydksROhYxTRVO+fIDemeFUl2P0rRr6R5ROJRnbvE+iKr12RzMMC8eQlutt9HH7gquWoOYUIUUqjc4lKvCIrnsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727619083; c=relaxed/simple;
-	bh=uknLgK7A1DeYA2/j3kMtaxg4dkD6FyaIapZEBPSNGPQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XFJPokqyHzcCVwvZRNjsa0yBMQ+f3ayosRnrPYSvWu7moXNeXo4IoGb8RzSwMrHXO8wSB23j/NpZMtCp5rVMAodHAowvc4WXncGkYhmcUR4p1IZJTR59VR1hdPc6D/nwqxKd5T8QYfC7yEZ5xpbE77PsSO2v0eIx+IWPRvCWaWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=crZkMk2L; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=iYftW1Vl91Y6d1cv4+vfyRkeUSB2Pj+mWOxao1rPqA8=; b=crZkMk2L7gUg8VBg
-	r6H+aviYOdRmCGQFlSuR0J0RsVawlqgGfThKDuzl+L3RJ4OZCwtH+rovGTt/xakBvaclUeJj2YTtx
-	jzbeyZIVugI1Dzug2VMk0qGmh7k1okNMJnlQv4mRT1qAB+jH5sr5POYKym6CNE0ZlI/3fB/s14seO
-	CgoCOL98RXmc2FHDClO/ZjWx+jiYRFyeO/biMYHw0LEAFa6iezOOJ3FyYtswUDQT+KOW3b6pmkgOM
-	N5rxGHXfPj1h7m1Cvu4lxtteP8YG8/7FQmjF/aSu6AwFLWGd4aZ+xPOMgyFR8p9YvKzlmuzcPa5qX
-	lS+v6StMJRORdqEIDA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1suudl-007pDu-1N;
-	Sun, 29 Sep 2024 14:11:13 +0000
-From: linux@treblig.org
-To: gregkh@linuxfoundation.org,
-	david.m.ertman@intel.com,
-	ira.weiny@intel.com,
-	corbet@lwn.net,
-	rafael@kernel.org
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] drivers/base: Remove unused auxiliary_find_device
-Date: Sun, 29 Sep 2024 15:11:12 +0100
-Message-ID: <20240929141112.69824-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727620021; c=relaxed/simple;
+	bh=g8a7s1gzHLOaSdNudAfUG58AcGoPlXc1ruh3Hjdn8cc=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kA1Pxiv0o1lXM5HBfzJMHBUQ7Q5uAvGmhkKNY5TTmY5j5kQ4MJFdeikYumUqXlUb9lVOwd6vqzQJ7vV8JTe+o9RopfgF3f7BwEaD12acQ9tntzdx+KR2OOlb1f/4CEp/nhoJcask/hgTLc0FDHidU+pXMPjtoMg/Q80yPgSlAaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JRENhPLi; arc=none smtp.client-ip=188.165.51.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=7n54obalj5ak7fhlgq47zg2n4e.protonmail; t=1727620009; x=1727879209;
+	bh=g8a7s1gzHLOaSdNudAfUG58AcGoPlXc1ruh3Hjdn8cc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=JRENhPLiutgdNUjgKEGjEJO/lPFhRWz4vgDfQpMM0yNsi+qbJ1BEoB8zA7WaVaBeI
+	 VgDKdG6ZPVIpsEA8ljRpWW/YNoJjeC0PlhjwXHcdlenXuO6qadwlrQQCBJox8Ka4y8
+	 ZzNw7MAy1AEVUQAck+dAfUEnHRCO13Agrwrcdjv/gf9RsadXr/dpRwMn0cyG0JphtR
+	 mYbBDHA8Y2ahBmmuztoHc+xKxmWGozWPQabPkzPWz5t8xujvlQ9a97O2vQlsOaUUK3
+	 OjIr2eb3rCNSboitmjrT80Vfh9IQHzvoIPLzs3CFOETNoXwmf1yzpqEx9jiS+zKHBs
+	 TNlPjhWTUjAbQ==
+Date: Sun, 29 Sep 2024 14:26:45 +0000
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>, syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com
+Subject: [PATCH v1] bcachefs: add check for btree id against max in try read node
+Message-ID: <20240929142348.4028284-2-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: f1d406aacf54818805e4e1b2e500a61fe82d9504
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Add check for read node's btree_id against BTREE_ID_NR_MAX in
+try_read_btree_node to prevent triggering EBUG_ON condition in
+bch2_btree_id_root[1].
 
-auxiliary_find_device has been unused since commit
-1c5de097bea3 ("net/mlx5: Fix mlx5_get_next_dev() peer device matching")
+[1] https://syzkaller.appspot.com/bug?extid=3Dcf7b2215b5d70600ec00
 
-which was the only use since it was originally added.
-
-Remove it.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Reported-by: syzbot+cf7b2215b5d70600ec00@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Dcf7b2215b5d70600ec00
+Fixes: 4409b8081d16 ("bcachefs: Repair pass for scanning for btree nodes")
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 ---
- Documentation/driver-api/auxiliary_bus.rst |  1 -
- drivers/base/auxiliary.c                   | 29 ----------------------
- include/linux/auxiliary_bus.h              |  4 ---
- 3 files changed, 34 deletions(-)
+ fs/bcachefs/btree_node_scan.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/driver-api/auxiliary_bus.rst b/Documentation/driver-api/auxiliary_bus.rst
-index cec84908fbc0..b236de773e1d 100644
---- a/Documentation/driver-api/auxiliary_bus.rst
-+++ b/Documentation/driver-api/auxiliary_bus.rst
-@@ -24,7 +24,6 @@ Auxiliary Device Creation
- 
- .. kernel-doc:: drivers/base/auxiliary.c
-    :identifiers: auxiliary_device_init __auxiliary_device_add
--                 auxiliary_find_device
- 
- Auxiliary Device Memory Model and Lifespan
- ------------------------------------------
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 7823888af4f6..69b7c93613d6 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -335,35 +335,6 @@ int __auxiliary_device_add(struct auxiliary_device *auxdev, const char *modname)
- }
- EXPORT_SYMBOL_GPL(__auxiliary_device_add);
- 
--/**
-- * auxiliary_find_device - auxiliary device iterator for locating a particular device.
-- * @start: Device to begin with
-- * @data: Data to pass to match function
-- * @match: Callback function to check device
-- *
-- * This function returns a reference to a device that is 'found'
-- * for later use, as determined by the @match callback.
-- *
-- * The reference returned should be released with put_device().
-- *
-- * The callback should return 0 if the device doesn't match and non-zero
-- * if it does.  If the callback returns non-zero, this function will
-- * return to the caller and not iterate over any more devices.
-- */
--struct auxiliary_device *auxiliary_find_device(struct device *start,
--					       const void *data,
--					       device_match_t match)
--{
--	struct device *dev;
--
--	dev = bus_find_device(&auxiliary_bus_type, start, data, match);
--	if (!dev)
--		return NULL;
--
--	return to_auxiliary_dev(dev);
--}
--EXPORT_SYMBOL_GPL(auxiliary_find_device);
--
- /**
-  * __auxiliary_driver_register - register a driver for auxiliary bus devices
-  * @auxdrv: auxiliary_driver structure
-diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
-index 31762324bcc9..65dd7f154374 100644
---- a/include/linux/auxiliary_bus.h
-+++ b/include/linux/auxiliary_bus.h
-@@ -269,8 +269,4 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
- #define module_auxiliary_driver(__auxiliary_driver) \
- 	module_driver(__auxiliary_driver, auxiliary_driver_register, auxiliary_driver_unregister)
- 
--struct auxiliary_device *auxiliary_find_device(struct device *start,
--					       const void *data,
--					       device_match_t match);
--
- #endif /* _AUXILIARY_BUS_H_ */
--- 
+diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+index b28c649c6838..a24b4004e8f0 100644
+--- a/fs/bcachefs/btree_node_scan.c
++++ b/fs/bcachefs/btree_node_scan.c
+@@ -171,6 +171,9 @@ static void try_read_btree_node(struct find_btree_nodes=
+ *f, struct bch_dev *ca,
+ =09if (BTREE_NODE_LEVEL(bn) >=3D BTREE_MAX_DEPTH)
+ =09=09return;
+=20
++=09if (BTREE_NODE_ID(bn) >=3D BTREE_ID_NR_MAX)
++=09=09return;
++
+ =09rcu_read_lock();
+ =09struct found_btree_node n =3D {
+ =09=09.btree_id=09=3D BTREE_NODE_ID(bn),
+--=20
 2.46.2
+
 
 
