@@ -1,141 +1,263 @@
-Return-Path: <linux-kernel+bounces-343132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27664989713
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF9A989717
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD3428260F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 924F11C20B99
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677C05674E;
-	Sun, 29 Sep 2024 19:23:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C825B1FB;
+	Sun, 29 Sep 2024 19:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QU65W0zu"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C117346D
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 19:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40DA41A84;
+	Sun, 29 Sep 2024 19:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727637781; cv=none; b=tcmGEBY5GHfkQ+H9zimDG1f98mkkpLXoYX/dUJUU5TkKCbrXIsRKaEgcBaOD5/4vqlSW6Z7F9dHFzmLKbDQ4uX2aDyglFuahdQ/CQgQLeMpgIPhWA3OLO9MrVn7whV106DzMfPuQzNoNJEwbS3n7fCVMBBdN5Pl76HBFO0o/mEw=
+	t=1727638280; cv=none; b=VZH0UKd9GFOPMTEtXKersQZz0PNw/D/NuYGlC/JdqbPDPoaH3otvAazXH8xNzmhXESRGPAOT2zUlKHXmY5tJvQwFElDoFB6KZSCQ/d7Dbxxj4UlSaLoVPWkI8s0QOMczkFTMUrXnuQ+We/06nYBtqhqmeduYKH+Ske/diDX8Zt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727637781; c=relaxed/simple;
-	bh=L7mjGuTuTjqihi6ACzkDkfLo81I9/BYiSeA+V8+nmqQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DC7qaIwuqUO9VrNcQD65u0rdyLq0j0KV7PUVh/snxjW8Ev8deDc+L88mwzaryfJhkVUVYpwIKaLVC8OypCeYJ47AUhAnp/qymT1vw1fQn/HteBBKw3KYg7tQRghfY/6iR9X45gJKhWCiojEZL4D6LgT3aT0UR8JAWB7FCbT1SwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1suzVR-0005Js-Me; Sun, 29 Sep 2024 21:22:57 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1suzVQ-002SFV-Nd; Sun, 29 Sep 2024 21:22:56 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1suzVQ-002EdD-2A;
-	Sun, 29 Sep 2024 21:22:56 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Sun, 29 Sep 2024 21:22:55 +0200
-Subject: [PATCH] net/9p/usbg: dont call usb9pfs_clear_tx if client is not
- connected
+	s=arc-20240116; t=1727638280; c=relaxed/simple;
+	bh=wTAFUu2HR05YCznqD3LOSXMINOzSP/J0jVLhbDAFaVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEJRdoTNgVr7ecnZ7+wCjr9hyl8zWyjLUbvX0n3jaKNj84ubIJ+vbB8vBayYzLj4Oz2+RsiArSoHRP+Yp7DElwZNVaezE/fLMVZhpeNdhb+aww0ZQz1fTQaINI8IcCCo8iarM6Oat5uh35gxaGfARWHss9X+DNAfwm+LhfJoRWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QU65W0zu; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a99fd0535bso322566185a.3;
+        Sun, 29 Sep 2024 12:31:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727638278; x=1728243078; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A1isPk0/yiaThPVpTHXqwNM5xUZ8cavb3R5rhfzcYlo=;
+        b=QU65W0zuUzNvrwTZm8BYmdDNk9cuA8LY/gI8gSn5vHZrmeT4MPWu9bDeJ3KINNf6Ua
+         m2TLHbiW3dHD+V9+S76zH7fLxN9qmyOu54wn2d1Jh4R6WK0Mnpmwytxjlr0UdJAs2BrL
+         CnQjleF33SL9CdGO1QDyNNWJD56Gxj1crxIUaZIN5hJ8L3LBsoCHd7v+p9sqEtpzfVDW
+         O375FoKbdc39+XcuzBo6YeIYdJ4yWOreusWmU4gxSxnefCkt3pRM4hzpDc4SLr1kFcFq
+         j1ADDRi7TNmiGgAWlXVn4Z1rSU/kaXLBQvRYOoPUwDsFMfucVefLoMXrT0NNjyh09K1z
+         9UZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727638278; x=1728243078;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1isPk0/yiaThPVpTHXqwNM5xUZ8cavb3R5rhfzcYlo=;
+        b=jNFaTHEbQ8cMhV1wvBRMynTVXNml5ufsGzBtbReOao/uZE0wVkvuqtb3gq1vtDJFil
+         M5uT4nYB66gPzsbqKDvqNPtxs3H9orWPBTBxy9pQjVdNUFEqA/5CM1zwc2rnnh1XmeEp
+         +N6iUnjbx1B2roHAysJjsv4E4K1yeNJgIgsLupP8xUk4BBmTcCNbjyjcUeA2SXIz6oQ6
+         XVxKMw4UYInCrA1as5nvVKt4QzjfiRKNj3rPRPKInQEyPvitE2WNUNynohw9o4uDfvfS
+         vcD4CGko2jSWdJR3htcCaI7bH1bgyyAvlfTd4NveJb96D60/gHaj8tzwfoYJ/F1kE52p
+         Meqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBdhuV0lln+SPSFCyyvkgthsn01k94RhS+RWaRD2SqUUBzNFnZt2DBseVPkJZUf4TmR/4mbEUkfSc=@vger.kernel.org, AJvYcCWSeBQGy46dVOPXgX4oe8/+jQJ70/qBlNf/ErwMWj2klnppHhnHaLnrlgv67tLaLtwvsYW4Lna4akRrfsBn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4zbu73wQP8UAZ8+Lsqn1XkWE+YCc+NOEMoNhYERwawUUSaCuA
+	NbZZBJOvTePSb55D0CKMmMO5oUG0qNdT6Zj7+2/L6DLc0xNIhs59
+X-Google-Smtp-Source: AGHT+IGsTEnIDy283jw9lkr/mcK/PBIK3rY6wv6YWW4CeyY5xrhPWizkTM/1vAeHXQvUdyhRVi7etQ==
+X-Received: by 2002:a05:620a:1925:b0:7a9:bb80:1f56 with SMTP id af79cd13be357-7ae378476dcmr1723689785a.33.1727638277644;
+        Sun, 29 Sep 2024 12:31:17 -0700 (PDT)
+Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782c533sm346399685a.97.2024.09.29.12.31.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 12:31:16 -0700 (PDT)
+Date: Sun, 29 Sep 2024 15:31:14 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: bmi270: Add spi driver for bmi270 imu
+Message-ID: <nsqdetgfr7p5klex77alaeoosgi5o5phhnri5kcn735wsn7e5o@phuellsm23nd>
+References: <20240927183717.3613601-1-lanzano.alex@gmail.com>
+ <20240929155437.60115014@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAA6p+WYC/x3KQQqAIBCF4avErJNKSrKrRAsnp5qNiQMRSHfPW
- v7vfRmEEpPAVGVIdLHwGUp0dQXr4cJOin1p0K3uW6ut2vgmsVEN3nQjIhlvEIpGJ6QwubAen/9
- ZY+N3xUR/ln1enucFZH/nW3QAAAA=
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Dominique Martinet <asmadeus@codewreck.org>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1538;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=L7mjGuTuTjqihi6ACzkDkfLo81I9/BYiSeA+V8+nmqQ=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBm+akQflDQxctyPd1jgK+LgafzXC35sy/dS9k/Y
- /1yLCGTak+JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZvmpEAAKCRC/aVhE+XH0
- q0wIEACAhZdYrodVxhcqNZFb267ESH5exofxgfnqpWCbpHmYVjyBzt42uiEH2dA2+J2uVgaLZW/
- al+6YbKo3c8+5OgusNLioELTiKmkqPSxs6XDoZ9rFCtsXlWXbO8AtSiZJ+MitkcXtdLeVfqxbCY
- BEy1DpHRwx2zTusd1vKEueKWlR+FkUeKiHAVvnO+e1TkjgUfpS6hlMiuALlVMNQ+wc1QXV23WuZ
- A13H903kxDsD4UuHQcxkZ2yw27lXzF3MRdm0+rf520Tb7/y/PLLCoiE2RvkmmbtkbfrlKI6NYRi
- x7NKJMNGpdRAjx7LJhKwnFv9kM8YVRapVCXWs4qERrcIAsRAJq50v9cKK4RyncCYudr7hnNTuCB
- ssgKPkXOXu/IOkfb1bcmAdMu+nxaXM4wlT3unfx9opPywSWfRQLPgKmNfVCYFSa2wUrH47ChNPi
- L70GWMXWK36zrRnX7QhP7osmIEVZPc80sGpvkaZK2N3VD1a3dN8M9otCirOpiFIPU9SgtLYvecD
- 9ZUqS6+dafCZhygXGNK3qKYOdYVYiorOdP2tfYCdrtcgB6n5pjitab+7aOeAmfRUUWsqj4XQ/r7
- fsU3JQo7ZM4P19U4c9sUoA7oY5CwJfZhXNla5M53/c5/tyIImPtSoHacDudzCnLt7kgsDaCvfnT
- vJb2SXCNBq/zumw==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929155437.60115014@jic23-huawei>
 
-When the client is not Connected it is not valid to call
-usb9pfs_clear_tx since the endpoints are not even allocated. By running
-into p9_usbg_close in that case we would dereference the in_req which is
-NULL when the client->status is Disconnected. Fix that by leaving
-usb9pfs_clear_tx immediately if the state is wrong.
+Thanks for the review!
 
-We also update the client->status after the for usb9pfs_clear_tx to
-check for the actual state when running from p9_usbg_close.
+On Sun, Sep 29, 2024 at 03:54:37PM GMT, Jonathan Cameron wrote:
+> On Fri, 27 Sep 2024 14:37:10 -0400
+> Alex Lanzano <lanzano.alex@gmail.com> wrote:
+> 
+> > Implement SPI driver for the Bosch BMI270 6-axis IMU. Provide raw read
+> > write access to acceleration and angle velocity measurements via the SPI
+> > interface on the device.
+> > 
+> > Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> 
+> A few minor things inline but looks good in general.
+> 
+> Jonathan
+> 
+> > diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
+> > index 608b29ea58a3..8950e6234203 100644
+> > --- a/drivers/iio/imu/bmi270/bmi270.h
+> > +++ b/drivers/iio/imu/bmi270/bmi270.h
+> > @@ -4,11 +4,13 @@
+> >  #define BMI270_H_
+> >  
+> >  #include <linux/regmap.h>
+> > +#include <linux/iio/iio.h>
+> >  
+> >  struct device;
+> >  struct bmi270_data {
+> >  	struct device *dev;
+> >  	struct regmap *regmap;
+> > +	__le16 sample __aligned(IIO_DMA_MINALIGN);
+> 
+> For the read path you are bouncing anyway, so the DMA_MINALIGN is only needed
+> for anything the write direction.  Make the suggested change below and that
+> will bounce as well so that you don't need this.
+> 
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
----
- net/9p/trans_usbg.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Understood! Will remove in v2 and use spi_write_then_read
 
-diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
-index 975b76839dca1..64a5209943dbc 100644
---- a/net/9p/trans_usbg.c
-+++ b/net/9p/trans_usbg.c
-@@ -417,6 +417,10 @@ static void usb9pfs_clear_tx(struct f_usb9pfs *usb9pfs)
- {
- 	struct p9_req_t *req;
- 
-+	/* we are not allocated - return */
-+	if (usb9pfs->client->status != Connected)
-+		return;
-+
- 	guard(spinlock_irqsave)(&usb9pfs->lock);
- 
- 	req = usb9pfs->in_req->context;
-@@ -442,10 +446,10 @@ static void p9_usbg_close(struct p9_client *client)
- 	if (!usb9pfs)
- 		return;
- 
--	client->status = Disconnected;
--
- 	usb9pfs_clear_tx(usb9pfs);
- 
-+	client->status = Disconnected;
-+
- 	opts = container_of(usb9pfs->function.fi,
- 			    struct f_usb9pfs_opts, func_inst);
- 
+> >  };
+> >  
+> >  extern const struct regmap_config bmi270_regmap_config;
+> > diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+> > index 8e45343d6472..4decdad791d9 100644
+> > --- a/drivers/iio/imu/bmi270/bmi270_core.c
+> > +++ b/drivers/iio/imu/bmi270/bmi270_core.c
+> > @@ -66,16 +66,9 @@ enum bmi270_scan {
+> >  	BMI270_SCAN_GYRO_Z,
+> >  };
+> >  
+> > -const struct regmap_config bmi270_regmap_config = {
+> > -	.reg_bits = 8,
+> > -	.val_bits = 8,
+> > -};
+> > -EXPORT_SYMBOL_NS_GPL(bmi270_regmap_config, IIO_BMI270);
+> > -
+> >  static int bmi270_get_data(struct bmi270_data *bmi270_device,
+> >  			   int chan_type, int axis, int *val)
+> >  {
+> > -	__le16 sample;
+> >  	int reg;
+> >  	int ret;
+> >  
+> > @@ -90,11 +83,13 @@ static int bmi270_get_data(struct bmi270_data *bmi270_device,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	ret = regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
+> > +	ret = regmap_bulk_read(bmi270_device->regmap, reg,
+> > +			       &bmi270_device->sample,
+> > +			       sizeof(bmi270_device->sample));
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	*val = sign_extend32(le16_to_cpu(sample), 15);
+> > +	*val = sign_extend32(le16_to_cpu(bmi270_device->sample), 15);
+> >  
+> >  	return 0;
+> >  }
+> > diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > index f70dee2d8a64..ce8279ae90cd 100644
+> > --- a/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > +++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
+> > @@ -9,12 +9,17 @@
+> >  
+> >  #include "bmi270.h"
+> >  
+> > +const struct regmap_config bmi270_i2c_regmap_config = {
+> static const
+> 
+> (same for spi one)
+> 
 
----
-base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
-change-id: 20240929-fixes9p-5d618bbe6d6b
+Will fix in v2!
 
-Best regards,
--- 
-Michael Grzeschik <m.grzeschik@pengutronix.de>
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +};
+> > +
+> >  static int bmi270_i2c_probe(struct i2c_client *client)
+> >  {
+> >  	struct regmap *regmap;
+> >  	struct device *dev = &client->dev;
+> >  
+> > -	regmap = devm_regmap_init_i2c(client, &bmi270_regmap_config);
+> > +	regmap = devm_regmap_init_i2c(client, &bmi270_i2c_regmap_config);
+> >  	if (IS_ERR(regmap))
+> >  		return dev_err_probe(dev, PTR_ERR(regmap),
+> >  				     "Failed to init i2c regmap");
+> > diff --git a/drivers/iio/imu/bmi270/bmi270_spi.c b/drivers/iio/imu/bmi270/bmi270_spi.c
+> > new file mode 100644
+> > index 000000000000..906b9b852a09
+> > --- /dev/null
+> > +++ b/drivers/iio/imu/bmi270/bmi270_spi.c
+> > @@ -0,0 +1,89 @@
+> > +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +
+> > +#include <linux/module.h>
+> > +#include <linux/spi/spi.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/module.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/regmap.h>
+> Alphabetical order preferred.
+> 
 
+Will fix in v2
+
+> > +
+> > +#include "bmi270.h"
+> > +
+> > +/*
+> > + * The following two functions are taken from the BMI323 spi driver code.
+> > + * In section 6.4 of the BMI270 data it specifies that after a read
+> > + * operation the first data byte from the device is a dummy byte
+> > + */
+> > +static int bmi270_regmap_spi_read(void *context, const void *reg_buf,
+> > +				  size_t reg_size, void *val_buf,
+> > +				  size_t val_size)
+> > +{
+> > +	struct spi_device *spi = context;
+> 
+> I'd be tempted to rename the input parameter context to spi and then
+> parse it directly to the spi_write_then_read()
+> 
+
+Will do! I named it context since that's what the function pointer uses
+
+> > +
+> > +	return spi_write_then_read(spi, reg_buf, reg_size, val_buf, val_size);
+> > +}
+> > +
+> > +static int bmi270_regmap_spi_write(void *context, const void *data,
+> > +				   size_t count)
+> > +{
+> > +	struct spi_device *spi = context;
+> > +	u8 *data_buff = (u8 *)data;
+> > +
+> > +	/*
+> > +	 * Remove the extra pad byte since its only needed for the read
+> > +	 * operation
+> > +	 */
+> > +	data_buff[1] = data_buff[0];
+> > +	return spi_write(spi, data_buff + 1, count - 1);
+> That needs a DMA safe buffer (unlike write_then_read which always
+> bounces).  I'd avoid that complexity by using spi_write_then_read
+> here as well but set the read to 0 length and pass NULL for the buffer.
+> That function is intended to be used like this as it special cases 0
+> length for either write or read buffers.
+> 
+
+Understood! Will fix in v2.
+
+> > +}
+> 
 
