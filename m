@@ -1,467 +1,295 @@
-Return-Path: <linux-kernel+bounces-343099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5E179896C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B14D9896C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:43:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B47DB23735
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7B31F225E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04D244375;
-	Sun, 29 Sep 2024 18:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3371C45027;
+	Sun, 29 Sep 2024 18:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JoFnN59B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="B5tN9Tyx";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="QcUF+GBk"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D782263A
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727634532; cv=none; b=pakhO9GGp9ViTBefmTO2ZRsu1dLQOo+VJDd6/lhJ4iGRdEe6vbqgCTyfw1IBVtjWb3q+defaL8O7q3o1pLIvoojCZ/mQpEPNXPxMf5ryq7Z8ex59L4dxv5CVeCM3c1xotQm9urvCWvYMCc5LufIi5J0unSbZqnnkfll9K6KFhjY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727634532; c=relaxed/simple;
-	bh=/fA3E5/0f0nZfBodt4r0U6WraEMDwsyW13TODN0CqqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OnFpzYm+optt/fnziO6Se4Vpr/2/HCRAOz9ifK/wzIxNuq4K8lG95fcuJJJHiVZgEKzqayPhvfoMAE/WvHLoLIjhFcb2W78KWQWtW+uPEnMI/EKZy4c4P9NMut2WZmVo26l+3eDggLPtIcOIHoTtkOM0npNu2NBkXzvmDTO24GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JoFnN59B; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727634529; x=1759170529;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=/fA3E5/0f0nZfBodt4r0U6WraEMDwsyW13TODN0CqqU=;
-  b=JoFnN59B88GPHN+/dwUoRxOmfo2oFfoyFn+Hh7pFOkI80xwF4VXQyx9N
-   3eqUWDZUQ+vPrqU5fylU57Yd/qmI8nEcH9385tNGbFcdqzwQmt1kLWUny
-   q+5pl7+6/bKUnfMKcMGgNRkAFeATFPyu8WrmfkYtktusVTibSpk6tE71S
-   PIYGGIeFelKSjVY3Qv/FoMOssAFd7rH+WnKfOxfck9STEJJMqYGLgta4B
-   i1PQ54J3z8CVjgDZukXeGj4LqHu/kYlHRjv9eEc2jXJy1TYM2wYw3k1pH
-   3aWFWpf93YVdp8VPiKbmuy4yuSxNRrbxOV7HGcwOZkmkVAYVcV22odUCJ
-   Q==;
-X-CSE-ConnectionGUID: KwEjKzeZTnya6hxCThuw3w==
-X-CSE-MsgGUID: Fc3mPpSfS5aTBHiLph1X5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="37300013"
-X-IronPort-AV: E=Sophos;i="6.11,163,1725346800"; 
-   d="scan'208";a="37300013"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 11:28:49 -0700
-X-CSE-ConnectionGUID: Xg/OtcC+RyaAbHFCr6EKDQ==
-X-CSE-MsgGUID: LhdbBhSoSqiMXhiJvTi4ZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,163,1725346800"; 
-   d="scan'208";a="110559983"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 29 Sep 2024 11:28:47 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suyey-000OaR-1p;
-	Sun, 29 Sep 2024 18:28:44 +0000
-Date: Mon, 30 Sep 2024 02:28:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Subject: arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse: sparse:
- incorrect type in argument 1 (different base types)
-Message-ID: <202409300224.rylEkKz3-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F266B33987;
+	Sun, 29 Sep 2024 18:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727635377; cv=fail; b=mzmkgZmWuv/xxQCmxoldWcTGRlwy/0ctrdRjOrhCYd53GEybmVsUU6yU/GCxb+6O8dMBSQiNVp3RSqxwgy0JOAMv9TLvYh/UoqVziHvlCVON3FHNUgL7ge7BL5e9rlCT+2uS1Hk08kl4w9Ap8l7ap8GykP7iqj9v46isCLSVetQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727635377; c=relaxed/simple;
+	bh=SP/frgGtXjSeAjl2VTO6FrorupTmmfvcnc0GPGNt2qc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=C0mAVfj0iQNtzsj/wqyV376VxCGjaCPsAwFUm8f9d9VGADu+vsjPgw2K1uSZJEyKnefT7wwjiUN9JLUPcbgaSIWCV5PsySWJuRx/KLNtWk9FGK8y66h6Zx5H7g2bZa2F9l24HTxl+eDTpft75xtpVzfnEGBC7L6sjdrvcUeCSd8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=B5tN9Tyx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=QcUF+GBk; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48SNJerb028599;
+	Sun, 29 Sep 2024 18:42:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=Hqifb0fb72Yp8b5ZmPQY/uc67yQ2SvWalamKxoFQfEs=; b=
+	B5tN9TyxTCfRwasXc+qeeaCe68JxbmYRkdzhKN4Y6MEWEsSrmdhtXHd0B/t7OIzH
+	G5KhTYeum2HIzmrJ9JMTdRHRBx928iVzx5B2SrP3X98yjL0kWCKjbu33ZLroWNwp
+	zOdViUMuJi1SLhufFyKGxlk+JOwYF4nEPkDggBlMOjeEC5TERecgb9C2ibA3rAgq
+	7bj0GedyeNNCF9s2nAxLM94ALXvkT/s1nzvS3B0jijdf4GYxB9X/6js0t9UQR1HS
+	8zMmesfmSl3oizReNTxqFbk/8G+Ks3udHBwHCgLHB5eKzunODG3balpm445kOtss
+	usj/KFXrpS9qie8bSOfRIQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x9dssuq8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 29 Sep 2024 18:42:32 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48TE0VIF038604;
+	Sun, 29 Sep 2024 18:42:32 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam04lp2168.outbound.protection.outlook.com [104.47.73.168])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41x88591nf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 29 Sep 2024 18:42:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Kk/bse4jg3lbG2xMlUht1OeipemAHPbTJ9l+yb5mQhyLhkcDo+4wvrZiA7qQCpikQqz0hjcZ7yK5MIvcSSFE4ZTF5nVm4xXYzYE92lEDWG7HgNBO1+4V4bUJQTZBDZJTYc23qZJ4GLJFgj6FzKPhtdmTA6naTlNSSkUE4wqEAv8/Y2zFLU+9CyegT44sOhqdmTOhdmjVmTOnGzjUvGdhAcWj9y4OkuWSkvVPQq4CuGKjakWQQPu2SMXuyV+mIOPq57/6Auq/ZCj4SuroD7IMqTNdUTUF6AMYg4VYJ0MvcATycWKGzvQwoLCNqwkVQl+omTEZxF7rJk9xsaYRsIuOtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hqifb0fb72Yp8b5ZmPQY/uc67yQ2SvWalamKxoFQfEs=;
+ b=GZRUaF1Aenemjl9YYyzz3j+vJD1dsL0FJaLLO0xD3TK8j7LrJSJpAfWfpYfXXNZBqjvQrnvCIx4sImZPFvvszdNawvedWsSQ4vQbK9+90ArmKwhGbYwbKt0eQsc1fSTMCHLezEbpZYRdJROEUxXvAV7+tkNoLMySes3Jc1bbTqTpib+dpCHKOEhhjYeGPPuvGhsQuL8EsUXsDMA3Fq84nxFd1+c4W5e9Zuubyb827ZbArvwABXHovx2HWLfAs73cdZ8xXYB/lmn50GjSb7Ohlr/7kEqVniCAyYPDte51WNsF019R1fccuzdZbnD5lxuo4d4VDNON8NYvaZFsFXFkVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hqifb0fb72Yp8b5ZmPQY/uc67yQ2SvWalamKxoFQfEs=;
+ b=QcUF+GBkSQ97Heso4D2T7Xki6Ft1UGev4QyCYCPa4PUeWnOQG6eDPXqQLQqxn0MzB6gghUm/Np6cZjA4DkIf5rWJGAvfYvVzPBjHEuExwkPuKzPg4kayvLhbkgu6lLI1WENwcjNtD+gdXHhF79KEB/+NYEdSb4U26kk2Mz3QIQU=
+Received: from PH0PR10MB5433.namprd10.prod.outlook.com (2603:10b6:510:e0::9)
+ by CO1PR10MB4692.namprd10.prod.outlook.com (2603:10b6:303:99::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.13; Sun, 29 Sep
+ 2024 18:42:29 +0000
+Received: from PH0PR10MB5433.namprd10.prod.outlook.com
+ ([fe80::47be:ad6e:e3be:ba80]) by PH0PR10MB5433.namprd10.prod.outlook.com
+ ([fe80::47be:ad6e:e3be:ba80%6]) with mapi id 15.20.8026.009; Sun, 29 Sep 2024
+ 18:42:29 +0000
+Message-ID: <463aeea5-c24d-41bd-888b-6e0911081aae@oracle.com>
+Date: Sun, 29 Sep 2024 20:42:24 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] coredump: Do not lock during 'comm' reporting
+To: Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+        Allen Pais <apais@linux.microsoft.com>,
+        Roman Kisel <romank@linux.microsoft.com>,
+        Xiaoming Ni
+ <nixiaoming@huawei.com>,
+        Vijay Nag <nagvijay@microsoft.com>, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org
+References: <20240928210830.work.307-kees@kernel.org>
+ <20240928143532.39559729f9eceee468358abe@linux-foundation.org>
+ <202409281438.EAC4B88C@keescook>
+ <20240928144636.d1964e6c6bb77c3e9123fc64@linux-foundation.org>
+ <202409281449.B228D0C1E7@keescook>
+Content-Language: en-US
+From: Vegard Nossum <vegard.nossum@oracle.com>
+Autocrypt: addr=vegard.nossum@oracle.com; keydata=
+ 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 8A==
+In-Reply-To: <202409281449.B228D0C1E7@keescook>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR3P189CA0049.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:102:53::24) To PH0PR10MB5433.namprd10.prod.outlook.com
+ (2603:10b6:510:e0::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5433:EE_|CO1PR10MB4692:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2c3dae7-956d-4e7a-0d30-08dce0b6786d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dm9pQkdtaWp3S0ZIdWVGVmIrTzZlSjBDSWhoM1pMcmZSZEtKYmM4bzRSWFI3?=
+ =?utf-8?B?NWdIVkZXaE9RTnlROWYxTzRqTVhrZnR5MTFwaTZwdm1tS2NEZkNkVDBIZG9K?=
+ =?utf-8?B?WFNnWFV2S2N0NHZKdmZPWXB3bE9IWmY5b3ZNcTJGdVJQblBHS2R4SlJ6R0FR?=
+ =?utf-8?B?SUxqY2ZHVzUrTkVZaXZkTE1udjlmbnl5VjBZS1MwSVlBUThNSmtyV0V2ZEsy?=
+ =?utf-8?B?NWlsT0ZKUjVrOS95WDlOYnM2ZXdLN1lld1FrMTB5eUQwbDRXN3liVitpajdU?=
+ =?utf-8?B?Qmo1ZWJEYk02SHUydjJtNzRHdENNTDVvQlVENXdqRW8wSFJGN20zM1JDWTdH?=
+ =?utf-8?B?TnFWYWoweVhBWXZINk5zZ2NzR1JqcGdZNXlXNWlETDgvbGF0ZUNWZ1BYM0FT?=
+ =?utf-8?B?WXdLekFjaFpNZUVXWko1dzk3dEdHbThZem03eWg2eGVFU1ZSbWIreXRHd0tu?=
+ =?utf-8?B?ZDlUUmdHcHpPR0lkUlRzWVlrZmJhY3pNT0tCMGNtUVp0TXM3a3owZTRNNFpr?=
+ =?utf-8?B?U0RERXdVeU5MaTFjUnBlZ1RRM2FZVU43Y3l4L2xqWXR0M25uTm41VGlvb05E?=
+ =?utf-8?B?TE5aZVg0bE5oSmtrQXNEdllNaHVTODZQT3BKYjNYYy9GdkVGUVdaOWJldFBM?=
+ =?utf-8?B?cUE1L1N5TzBsNmNGVEZ6elQ1QkJuVGZWaDZ1ZitENEg1QkRrcDZFWTNRZGJ4?=
+ =?utf-8?B?d1BoTFF6VG96YkVBcnFyMlVib3V0eFY4N2l1d0lkQTIyZXJpTmp5ZElYU1JE?=
+ =?utf-8?B?bWxoVGlCQVlpcUlBVXlINmdkVDFPbXpoeXhWQXVuZlB2WEVKT1FBd0pVc1Yw?=
+ =?utf-8?B?Q3U2eHdMenJhSG9JUk1SdGVJd1NlSnhYVk1nOEdUTzhOMkVzUlAxK0V5eERC?=
+ =?utf-8?B?b05rak50cmd3ZWplRTRsajZMdmx0QjBBVXhIRDVuV0tZcm9xdzBGek5HWjlH?=
+ =?utf-8?B?MzcwYzhnN0pvZWlWbytCWTMxV0QwVXJkTjRRRDE4QmtsQVB0cDBHVHpueTI2?=
+ =?utf-8?B?WlFxSjhQV1hNRU5iSFQrdHZva2hDa0dGYzlEOUcyelEwLzF1b1lvNld6THFO?=
+ =?utf-8?B?NXBpZXgzZXdVZUo3a002Vm9xbGNzb1RtMEREQ0FlME9TSVhrLyt1MmEzaVdM?=
+ =?utf-8?B?UCtBNFUraDVCMUlxTjA2aHUrMGsyWHZXblJUZ29wTElyeXJiSER0b0IwS2g0?=
+ =?utf-8?B?RzV4WnJGV01CV3Q0em5rTWswYkZPb1pkbnlmS0dCYWlZaDUxYzk1UGFpbkxy?=
+ =?utf-8?B?OGRLbDA4WTRhODdDMVgrMmtMT3VXV25oUlJaV0xMaWxsS05aTmxUUDVrK281?=
+ =?utf-8?B?MjJkRVVMM3gxeVdCN0xMOVJoMERKelBDRjVTajl4K2tia2QrZ3hvS3pQM1N0?=
+ =?utf-8?B?SFQwRk5yRllQUmxsSVNwQXZocXc1Unpxdnk5amtoL2I4V2JBTmNsdW1ndlJi?=
+ =?utf-8?B?T0VGaHZIck11VXZJY3lsT1gyUnNaNHNVZzJsQjJZd2NRODZaSGpiaDRSVklN?=
+ =?utf-8?B?NElqM2xGbXlmN09BYjdyT1RvY3MrdHpSTjMvcVZaa0lKb0U4OFF4N0M2NWNI?=
+ =?utf-8?B?MW1ONm0rS1IzeTUvaldvZHBwYlBma1I0Z3dLMm9KR0MyZURzZTJIL2hZSEtT?=
+ =?utf-8?B?bnZPcDVWV2xQSW9Kb0kweUcxL1VZRkU5VWk4bldpMWZveEZnWGtJeHpHTnAr?=
+ =?utf-8?B?UTNsdXBvc0FSbzVKUmFnQ2p0ckRSNFpYaFJ3bFdjM2kzekpGTEd0dXEyNFJB?=
+ =?utf-8?B?ZVM4RURjREdKam9XK2Q1RHJlWkY5aWpLa0ZucUkrblhsYXRuNU02VHVEK2pn?=
+ =?utf-8?Q?QI2Wks0X/MRYehIwcNiSkJSNjbd9dotdsnx6E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5433.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ZTc4NGJSaGhZWmg5ckUrUmxlblN4VTdXd1duUEdGcWs5RDBjNjRDM2tpMW1L?=
+ =?utf-8?B?aHZjVm5NTEp5cytXNFJEcHlIem5za1lyVmhqa1lHM2g0UFVtZFI3NXJKdWlG?=
+ =?utf-8?B?UER6M0RLY2MrU3h4eCtIdVJjMkUwRS9FMEdRajJPS1RXVXFVdVlEQU4wNHAx?=
+ =?utf-8?B?bkRYbTMwVUJjVUZ5NTc4enlmUEp4L3Z1a1Y5NUtmZEt4MjJ0Q2pOZG0zNXFt?=
+ =?utf-8?B?citMdnV6MUxZSGpxTWRBUFh0dTROZ2ZDd2hpUUhPVFllREc0bll3M1JvdUdx?=
+ =?utf-8?B?YlVtUVdMTXgzTnJneHlJVHh3MUtnU1krRDhLejF1c3orbUozWHFpdWFTQ3Zv?=
+ =?utf-8?B?WDkrSzhHbENFWFpTMEZGbHArelBIZlRHa3dYWUt3MDZQRmtPSmI2QXdTeC9U?=
+ =?utf-8?B?V1VEZW9SVWpjUTRhcFVGNm16eENEYnFMQ2lrejZjYittZFF3RE5WaFREeThs?=
+ =?utf-8?B?Nmx6dmZIUzNYd1Q1ZDFQbE1xd2F1Z0NoaWZDQUJKdWcxMzdGelhZYUtIdGFF?=
+ =?utf-8?B?SlBvcVBZZkt2OUdSRVViZFBEcVQ0STVBTmVjWktNNWJTUis1Njh0bmJnLzNV?=
+ =?utf-8?B?K1RNazZmYTQ0amcxWXBpT3hSa2swcFpzQ3IyUjlCWWZtZXZUQURQZEorMFl6?=
+ =?utf-8?B?Qm9qY2RKODQzT0YvdG41T091QStvcEJQUVExQll2d1ptV2wvUHhNa1JUUEts?=
+ =?utf-8?B?cHJMNWxmeFBQT1NkUEJHZDdVd2dHeWtiajJMVkE2NGswcVJ6VGxNVjJKNnlX?=
+ =?utf-8?B?SjNjckxQbzBBbkI4aG9RdTRpdktoSGQwUWRoZ1d6YXl5UENMcXd4ZE50T2hz?=
+ =?utf-8?B?cFNhOFVSa3NXclJLWW9aWUhqREd2Z01BSTZGNE5paG1ibkR0RlhiRm9Bczdj?=
+ =?utf-8?B?VkorNUtFQlA5OWNERU9xNEpDZmJKQjdralpBN0JWRzlJVlZ0RElOa2E4M2lo?=
+ =?utf-8?B?em44b1FsZlBMWkEzazYvTEQ1MEhmc05MM2ZPbEJZdGhmMkxHWlMzNFZDSkIx?=
+ =?utf-8?B?cGp2SEJMZHlmV2RUUm9pZ2dkRGZJTnlvb1ExU0h4VVNhekNjR0VmWHVselg0?=
+ =?utf-8?B?SlFJd3EyU0NIemtIcXJpRExsd3RlUWpHSWJOTEF2cjhJWFA3K2pqdzJ4MENq?=
+ =?utf-8?B?RGJWZjN5NlBhLzlpd0NyWmUxNEExMHQyUWlhQ3pWWkkvbGtyWCs2cDkwNXRD?=
+ =?utf-8?B?bVFwdTljVEpIcGhGUDhleWpqcVhkSTFSYm5PMDZmdlZTdC9PWmg0aGxEbHZS?=
+ =?utf-8?B?SllYY0hhR3RSM2lTSSs4NXBSOWwwbi9LRTYvMVZMSE1wak1vaTlOM1pFSjZT?=
+ =?utf-8?B?WUJLWU5aWFRZY1Z2N3cvcW5kK1A1TGVjekZvQVlZR0g3aE9BSkF0dlpZUlJF?=
+ =?utf-8?B?Vk5MQjluaFhjMFhCVy9qYVBSejhTOStuL0lOemRmNDFLT1E3RjNzaVVmM2lx?=
+ =?utf-8?B?amlCR0JqUlQrbTUrdEdJZVcwa2JadmtKRkkyWjF4cWhpTWlWaW5XbEVmQWlT?=
+ =?utf-8?B?TUhzY1NvQVQweTBSaU96R2ZTdVdnOXRocnpiUHVKR05GSFNnVGppcDBXWmdG?=
+ =?utf-8?B?YThNWC9GZmRUY21yNjNjNERsNTZlNWZpRlR6ZHNvUElXRnBsNTNUbXJ2T29H?=
+ =?utf-8?B?WnFEUnVBKzRkZEpYc2pFRjl6OTdkUUgvU1ZqcEt0TUVaOWM3Tkx3enBWWGZv?=
+ =?utf-8?B?WWl2YU40T2g2VTNLcHVDUTVTSVp0dnJYRW5JYmxnaHNnOTZCbkNRRWwrQlhx?=
+ =?utf-8?B?dWN1WjAxNThKZFFzby9ib1c1VVhWYWswKzdzdVJDam1ZOEwvQThKNGJaellJ?=
+ =?utf-8?B?WUVaSzNZN2JNMEMvYmZzZUQ1ampIc2F1Sk90Y05ad2xNV0JzSXFYOHM0MytT?=
+ =?utf-8?B?OWQzMTZwSUFWZU9HcVg0NXhzM3dCSktFcFA1aWhhckVVaVgxeHpHQVFtTHdG?=
+ =?utf-8?B?TXh2eXhjcmpSMmVPL0dRTmcvMlF5TFJVUm9tdU1qKzQyUVl0M3AxcE5Weklv?=
+ =?utf-8?B?blJpUjVsYVJENGM0MXU2V3J1TnQwYm8xOE1VUk1ZVWdJcHRBUDIrZHkxRTRP?=
+ =?utf-8?B?SDFTV2REZFFISERTejVHWG01VnRma2pRQVNiYUJBKy9PaTRFT0JsUHAwS0Zy?=
+ =?utf-8?B?RURiTkNlRUNUeEtQaGs0RUlHZzNYRzBKeVl4MWVpOGw5RnhpcmZlRytxUno4?=
+ =?utf-8?B?b3c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	dA0EUmiCHkiwfvBcxpSm4ItzJVVBmE7I70Hz+W7TeSpBKrkGl7X8MownDPauIrkbIIQ2jGPaSiMiPNeqe5GuvH56Yseq9jWhsvg34NZRnWQuC2dj9/lrXgpWOAG2NSMc2tuHwzh8NeRj5mSZA+NPORoBvVCQF5ngYMwRQVGs6sB9BVhWsQ2zJhUy32PbBN5GpGduv9jJgtDxYARQCdayeNnQRHMIUXeEDxPzM/y/KPtsEvcM1V158y3SMsZjdl3cgcur8jxHkEa9JTQVhHJmwFkA2qeeT5y4cX59FuX4hNKdxZdgSsHreiM6lYCPm0x/+3UEXToeM36kExuvoo9tQ2PYByqSZoT8PxV4W/8erBjOrII6rcUPpAmvhnSNcipTjzcP5PxDi3mlXZ+THFxygcYOVekf2oHQGbL/N2O6vrPQ+mpuBQLP4L+BiQcX+3/lrJKTcorVix3Hn1MH+bkaIw+qA++OpkgHPHwDMC6djApf+z2MYBkrFBzWbwwnLlsu/h4igFSUDkKRR8Kn3T7VmGGg+T7MEV5+fRYX0Z1SdQC05ibI1FLUhJphXVdaKLV1hQuT9Gm2Xozj2pxGwXR0jR8rrYQHL8hX4Vt4N0Joehk=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2c3dae7-956d-4e7a-0d30-08dce0b6786d
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5433.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Sep 2024 18:42:29.1926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SBpxLrYttUEvckt8MXQLUR7gZFdhgAtCuJ6eum/Zeib0UqL48VuD//JWa6vci6ap5Ds7F3g8jJgI6VoGmpYZ34nVtK3c0VB6SNYXijU0m7w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4692
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-29_16,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409290146
+X-Proofpoint-GUID: EjdzAxGZzQ9igKSbMB4PaaFBRJXEuC1k
+X-Proofpoint-ORIG-GUID: EjdzAxGZzQ9igKSbMB4PaaFBRJXEuC1k
 
-Hi Geert,
 
-First bad commit (maybe != root cause):
+On 28/09/2024 23:51, Kees Cook wrote:
+> On Sat, Sep 28, 2024 at 02:46:36PM -0700, Andrew Morton wrote:
+>> On Sat, 28 Sep 2024 14:39:45 -0700 Kees Cook <kees@kernel.org> wrote:
+>>> On Sat, Sep 28, 2024 at 02:35:32PM -0700, Andrew Morton wrote:
+>> So why does __get_task_comm() need to take task_lock()?
+> 
+> That was to make sure we didn't end up with garbled results, but
+> discussions have determined that we don't care:
+> https://lore.kernel.org/all/20240828030321.20688-1-laoar.shao@gmail.com/
+> 
+> But just for safety's sake, I'll change this memcpy to:
+> 
+>      memcpy_and_pad(comm, sizeof(comm), current->comm, sizeof(comm) - 1, 0);
+> 
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   3efc57369a0ce8f76bf0804f7e673982384e4ac9
-commit: d87123aa9a7920e88633ffc5c5a0a22ab08bdc06 sh: ecovec24: Rename missed backlight field from fbdev to dev
-date:   8 months ago
-config: sh-randconfig-r132-20240929 (https://download.01.org/0day-ci/archive/20240930/202409300224.rylEkKz3-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240930/202409300224.rylEkKz3-lkp@intel.com/reproduce)
+Reverting Linus's revert, applying the patch in this thread, and then
+changing it to that memcpy_and_pad above, everything seems to work well.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409300224.rylEkKz3-lkp@intel.com/
+Tested-by: Vegard Nossum <vegard.nossum@oracle.com>
 
-sparse warnings: (new ones prefixed by >>)
->> arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse:     got unsigned int
->> arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1133:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1153:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1153:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1153:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1154:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1154:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1154:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1161:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1161:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1161:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1162:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1162:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1162:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1203:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1213:9: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse:     got unsigned int
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int @@
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse:     expected void const volatile [noderef] __iomem *ptr
-   arch/sh/boards/mach-ecovec24/setup.c:1356:17: sparse:     got unsigned int
->> arch/sh/boards/mach-ecovec24/setup.c:621:9: sparse: sparse: Initializer entry defined twice
-   arch/sh/boards/mach-ecovec24/setup.c:622:10: sparse:   also defined here
+(However, I have not looked at the _safety_ of omitting task_lock()...)
 
-vim +1133 arch/sh/boards/mach-ecovec24/setup.c
+I'm also wondering how I could successfully cat /proc/$pid/status before
+on one of these hung processes given that it does __get_task_comm(),
+which does task_lock(), which should have presumably hung as well?
 
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1101  
-4907d57f76dc1d Kuninori Morimoto     2009-09-10  1102  static int __init arch_setup(void)
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1103  {
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1104  	struct clk *clk;
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1105  	bool cn12_enabled = false;
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1106  
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1107  	/* register board specific self-refresh code */
-2839bd61f671d3 Magnus Damm           2010-02-25  1108  	sh_mobile_register_self_refresh(SUSP_SH_STANDBY | SUSP_SH_SF |
-2839bd61f671d3 Magnus Damm           2010-02-25  1109  					SUSP_SH_RSTANDBY,
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1110  					&ecovec24_sdram_enter_start,
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1111  					&ecovec24_sdram_enter_end,
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1112  					&ecovec24_sdram_leave_start,
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1113  					&ecovec24_sdram_leave_end);
-eb0cd9e88c6a65 Magnus Damm           2009-10-30  1114  
-f78bab30707e04 Magnus Damm           2009-10-07  1115  	/* enable STATUS0, STATUS2 and PDSTATUS */
-f78bab30707e04 Magnus Damm           2009-10-07  1116  	gpio_request(GPIO_FN_STATUS0, NULL);
-f78bab30707e04 Magnus Damm           2009-10-07  1117  	gpio_request(GPIO_FN_STATUS2, NULL);
-f78bab30707e04 Magnus Damm           2009-10-07  1118  	gpio_request(GPIO_FN_PDSTATUS, NULL);
-f78bab30707e04 Magnus Damm           2009-10-07  1119  
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1120  	/* enable SCIFA0 */
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1121  	gpio_request(GPIO_FN_SCIF0_TXD, NULL);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1122  	gpio_request(GPIO_FN_SCIF0_RXD, NULL);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1123  
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1124  	/* enable debug LED */
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1125  	gpio_request(GPIO_PTG0, NULL);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1126  	gpio_request(GPIO_PTG1, NULL);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1127  	gpio_request(GPIO_PTG2, NULL);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1128  	gpio_request(GPIO_PTG3, NULL);
-b7056bc1943ec8 Kuninori Morimoto     2009-08-26  1129  	gpio_direction_output(GPIO_PTG0, 0);
-b7056bc1943ec8 Kuninori Morimoto     2009-08-26  1130  	gpio_direction_output(GPIO_PTG1, 0);
-b7056bc1943ec8 Kuninori Morimoto     2009-08-26  1131  	gpio_direction_output(GPIO_PTG2, 0);
-b7056bc1943ec8 Kuninori Morimoto     2009-08-26  1132  	gpio_direction_output(GPIO_PTG3, 0);
-9d56dd3b083a3b Paul Mundt            2010-01-26 @1133  	__raw_writew((__raw_readw(PORT_HIZA) & ~(0x1 << 1)) , PORT_HIZA);
-4138b74066cc33 Kuninori Morimoto     2009-08-19  1134  
-35a35408914bcd Kuninori Morimoto     2009-08-26  1135  	/* enable SH-Eth */
-35a35408914bcd Kuninori Morimoto     2009-08-26  1136  	gpio_request(GPIO_PTA1, NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1137  	gpio_direction_output(GPIO_PTA1, 1);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1138  	mdelay(20);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1139  
-35a35408914bcd Kuninori Morimoto     2009-08-26  1140  	gpio_request(GPIO_FN_RMII_RXD0,    NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1141  	gpio_request(GPIO_FN_RMII_RXD1,    NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1142  	gpio_request(GPIO_FN_RMII_TXD0,    NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1143  	gpio_request(GPIO_FN_RMII_TXD1,    NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1144  	gpio_request(GPIO_FN_RMII_REF_CLK, NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1145  	gpio_request(GPIO_FN_RMII_TX_EN,   NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1146  	gpio_request(GPIO_FN_RMII_RX_ER,   NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1147  	gpio_request(GPIO_FN_RMII_CRS_DV,  NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1148  	gpio_request(GPIO_FN_MDIO,         NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1149  	gpio_request(GPIO_FN_MDC,          NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1150  	gpio_request(GPIO_FN_LNKSTA,       NULL);
-35a35408914bcd Kuninori Morimoto     2009-08-26  1151  
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1152  	/* enable USB */
-9d56dd3b083a3b Paul Mundt            2010-01-26  1153  	__raw_writew(0x0000, 0xA4D80000);
-9d56dd3b083a3b Paul Mundt            2010-01-26  1154  	__raw_writew(0x0000, 0xA4D90000);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1155  	gpio_request(GPIO_PTB3,  NULL);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1156  	gpio_request(GPIO_PTB4,  NULL);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1157  	gpio_request(GPIO_PTB5,  NULL);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1158  	gpio_direction_input(GPIO_PTB3);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1159  	gpio_direction_output(GPIO_PTB4, 0);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1160  	gpio_direction_output(GPIO_PTB5, 0);
-9d56dd3b083a3b Paul Mundt            2010-01-26  1161  	__raw_writew(0x0600, 0xa40501d4);
-9d56dd3b083a3b Paul Mundt            2010-01-26  1162  	__raw_writew(0x0600, 0xa4050192);
-907050a33d3b6a Kuninori Morimoto     2009-08-26  1163  
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1164  	if (gpio_get_value(GPIO_PTB3)) {
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1165  		printk(KERN_INFO "USB1 function is selected\n");
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1166  		usb1_common_device.name = "r8a66597_udc";
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1167  	} else {
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1168  		printk(KERN_INFO "USB1 host is selected\n");
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1169  		usb1_common_device.name = "r8a66597_hcd";
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1170  	}
-3714a9a026bba0 Kuninori Morimoto     2009-10-28  1171  
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1172  	/* enable LCDC */
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1173  	gpio_request(GPIO_FN_LCDD23,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1174  	gpio_request(GPIO_FN_LCDD22,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1175  	gpio_request(GPIO_FN_LCDD21,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1176  	gpio_request(GPIO_FN_LCDD20,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1177  	gpio_request(GPIO_FN_LCDD19,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1178  	gpio_request(GPIO_FN_LCDD18,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1179  	gpio_request(GPIO_FN_LCDD17,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1180  	gpio_request(GPIO_FN_LCDD16,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1181  	gpio_request(GPIO_FN_LCDD15,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1182  	gpio_request(GPIO_FN_LCDD14,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1183  	gpio_request(GPIO_FN_LCDD13,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1184  	gpio_request(GPIO_FN_LCDD12,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1185  	gpio_request(GPIO_FN_LCDD11,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1186  	gpio_request(GPIO_FN_LCDD10,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1187  	gpio_request(GPIO_FN_LCDD9,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1188  	gpio_request(GPIO_FN_LCDD8,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1189  	gpio_request(GPIO_FN_LCDD7,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1190  	gpio_request(GPIO_FN_LCDD6,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1191  	gpio_request(GPIO_FN_LCDD5,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1192  	gpio_request(GPIO_FN_LCDD4,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1193  	gpio_request(GPIO_FN_LCDD3,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1194  	gpio_request(GPIO_FN_LCDD2,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1195  	gpio_request(GPIO_FN_LCDD1,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1196  	gpio_request(GPIO_FN_LCDD0,    NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1197  	gpio_request(GPIO_FN_LCDDISP,  NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1198  	gpio_request(GPIO_FN_LCDHSYN,  NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1199  	gpio_request(GPIO_FN_LCDDCK,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1200  	gpio_request(GPIO_FN_LCDVSYN,  NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1201  	gpio_request(GPIO_FN_LCDDON,   NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1202  	gpio_request(GPIO_FN_LCDLCLK,  NULL);
-9d56dd3b083a3b Paul Mundt            2010-01-26  1203  	__raw_writew((__raw_readw(PORT_HIZA) & ~0x0001), PORT_HIZA);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1204  
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1205  	gpio_request(GPIO_PTE6, NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1206  	gpio_request(GPIO_PTU1, NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1207  	gpio_request(GPIO_PTA2, NULL);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1208  	gpio_direction_input(GPIO_PTE6);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1209  	gpio_direction_output(GPIO_PTU1, 0);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1210  	gpio_direction_output(GPIO_PTA2, 0);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1211  
-82b33221784850 Kuninori Morimoto     2009-12-02  1212  	/* I/O buffer drive ability is high */
-9d56dd3b083a3b Paul Mundt            2010-01-26  1213  	__raw_writew((__raw_readw(IODRIVEA) & ~0x00c0) | 0x0080 , IODRIVEA);
-ea15edb292197a Kuninori Morimoto     2009-08-26  1214  
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1215  	if (gpio_get_value(GPIO_PTE6)) {
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1216  		/* DVI */
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1217  		lcdc_info.clock_source			= LCDC_CLK_EXTERNAL;
-44432407d9f5e4 Guennadi Liakhovetski 2010-09-03  1218  		lcdc_info.ch[0].clock_divider		= 1;
-93ff259846a774 Laurent Pinchart      2011-11-29  1219  		lcdc_info.ch[0].lcd_modes		= ecovec_dvi_modes;
-93ff259846a774 Laurent Pinchart      2011-11-29  1220  		lcdc_info.ch[0].num_modes		= ARRAY_SIZE(ecovec_dvi_modes);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1221  
-fe79f919f47eab Laurent Pinchart      2013-07-04  1222  		/* No backlight */
-d87123aa9a7920 Geert Uytterhoeven    2023-09-25  1223  		gpio_backlight_data.dev = NULL;
-fe79f919f47eab Laurent Pinchart      2013-07-04  1224  
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1225  		gpio_set_value(GPIO_PTA2, 1);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1226  		gpio_set_value(GPIO_PTU1, 1);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1227  	} else {
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1228  		/* Panel */
-ea15edb292197a Kuninori Morimoto     2009-08-26  1229  		lcdc_info.clock_source			= LCDC_CLK_PERIPHERAL;
-44432407d9f5e4 Guennadi Liakhovetski 2010-09-03  1230  		lcdc_info.ch[0].clock_divider		= 2;
-93ff259846a774 Laurent Pinchart      2011-11-29  1231  		lcdc_info.ch[0].lcd_modes		= ecovec_lcd_modes;
-93ff259846a774 Laurent Pinchart      2011-11-29  1232  		lcdc_info.ch[0].num_modes		= ARRAY_SIZE(ecovec_lcd_modes);
-ea15edb292197a Kuninori Morimoto     2009-08-26  1233  
-ea15edb292197a Kuninori Morimoto     2009-08-26  1234  		/* FIXME
-ea15edb292197a Kuninori Morimoto     2009-08-26  1235  		 *
-ea15edb292197a Kuninori Morimoto     2009-08-26  1236  		 * LCDDON control is needed for Panel,
-ea15edb292197a Kuninori Morimoto     2009-08-26  1237  		 * but current sh_mobile_lcdc driver doesn't control it.
-ea15edb292197a Kuninori Morimoto     2009-08-26  1238  		 * It is temporary correspondence
-ea15edb292197a Kuninori Morimoto     2009-08-26  1239  		 */
-ea15edb292197a Kuninori Morimoto     2009-08-26  1240  		gpio_request(GPIO_PTF4, NULL);
-ea15edb292197a Kuninori Morimoto     2009-08-26  1241  		gpio_direction_output(GPIO_PTF4, 1);
-8810e0553fec6f Kuninori Morimoto     2009-09-28  1242  
-8810e0553fec6f Kuninori Morimoto     2009-09-28  1243  		/* enable TouchScreen */
-8810e0553fec6f Kuninori Morimoto     2009-09-28  1244  		i2c_register_board_info(0, &ts_i2c_clients, 1);
-fcb8918fd242f3 Thomas Gleixner       2011-03-24  1245  		irq_set_irq_type(IRQ0, IRQ_TYPE_LEVEL_LOW);
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1246  	}
-fa3ba51bcf2351 Kuninori Morimoto     2009-08-26  1247  
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1248  	/* enable CEU0 */
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1249  	gpio_request(GPIO_FN_VIO0_D15, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1250  	gpio_request(GPIO_FN_VIO0_D14, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1251  	gpio_request(GPIO_FN_VIO0_D13, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1252  	gpio_request(GPIO_FN_VIO0_D12, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1253  	gpio_request(GPIO_FN_VIO0_D11, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1254  	gpio_request(GPIO_FN_VIO0_D10, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1255  	gpio_request(GPIO_FN_VIO0_D9,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1256  	gpio_request(GPIO_FN_VIO0_D8,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1257  	gpio_request(GPIO_FN_VIO0_D7,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1258  	gpio_request(GPIO_FN_VIO0_D6,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1259  	gpio_request(GPIO_FN_VIO0_D5,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1260  	gpio_request(GPIO_FN_VIO0_D4,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1261  	gpio_request(GPIO_FN_VIO0_D3,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1262  	gpio_request(GPIO_FN_VIO0_D2,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1263  	gpio_request(GPIO_FN_VIO0_D1,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1264  	gpio_request(GPIO_FN_VIO0_D0,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1265  	gpio_request(GPIO_FN_VIO0_VD,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1266  	gpio_request(GPIO_FN_VIO0_CLK, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1267  	gpio_request(GPIO_FN_VIO0_FLD, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1268  	gpio_request(GPIO_FN_VIO0_HD,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1269  
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1270  	/* enable CEU1 */
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1271  	gpio_request(GPIO_FN_VIO1_D7,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1272  	gpio_request(GPIO_FN_VIO1_D6,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1273  	gpio_request(GPIO_FN_VIO1_D5,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1274  	gpio_request(GPIO_FN_VIO1_D4,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1275  	gpio_request(GPIO_FN_VIO1_D3,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1276  	gpio_request(GPIO_FN_VIO1_D2,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1277  	gpio_request(GPIO_FN_VIO1_D1,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1278  	gpio_request(GPIO_FN_VIO1_D0,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1279  	gpio_request(GPIO_FN_VIO1_FLD, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1280  	gpio_request(GPIO_FN_VIO1_HD,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1281  	gpio_request(GPIO_FN_VIO1_VD,  NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1282  	gpio_request(GPIO_FN_VIO1_CLK, NULL);
-2153ad3294e3e1 Kuninori Morimoto     2009-08-26  1283  
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1284  	/* enable KEYSC */
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1285  	gpio_request(GPIO_FN_KEYOUT5_IN5, NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1286  	gpio_request(GPIO_FN_KEYOUT4_IN6, NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1287  	gpio_request(GPIO_FN_KEYOUT3,     NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1288  	gpio_request(GPIO_FN_KEYOUT2,     NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1289  	gpio_request(GPIO_FN_KEYOUT1,     NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1290  	gpio_request(GPIO_FN_KEYOUT0,     NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1291  	gpio_request(GPIO_FN_KEYIN0,      NULL);
-e9103e74907d74 Kuninori Morimoto     2009-09-14  1292  
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1293  	/* enable user debug switch */
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1294  	gpio_request(GPIO_PTR0, NULL);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1295  	gpio_request(GPIO_PTR4, NULL);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1296  	gpio_request(GPIO_PTR5, NULL);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1297  	gpio_request(GPIO_PTR6, NULL);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1298  	gpio_direction_input(GPIO_PTR0);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1299  	gpio_direction_input(GPIO_PTR4);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1300  	gpio_direction_input(GPIO_PTR5);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1301  	gpio_direction_input(GPIO_PTR6);
-064a16dc41be87 Kuninori Morimoto     2009-09-16  1302  
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1303  	/* SD-card slot CN11 */
-5744c88111f076 Guennadi Liakhovetski 2011-04-15  1304  #if defined(CONFIG_MMC_SDHI) || defined(CONFIG_MMC_SDHI_MODULE)
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1305  	/* enable SDHI0 on CN11 (needs DS2.4 set to ON) */
-96987d96f0058d Kuninori Morimoto     2009-10-02  1306  	gpio_request(GPIO_FN_SDHI0WP,  NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1307  	gpio_request(GPIO_FN_SDHI0CMD, NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1308  	gpio_request(GPIO_FN_SDHI0CLK, NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1309  	gpio_request(GPIO_FN_SDHI0D3,  NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1310  	gpio_request(GPIO_FN_SDHI0D2,  NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1311  	gpio_request(GPIO_FN_SDHI0D1,  NULL);
-96987d96f0058d Kuninori Morimoto     2009-10-02  1312  	gpio_request(GPIO_FN_SDHI0D0,  NULL);
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1313  #else
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1314  	/* enable MSIOF0 on CN11 (needs DS2.4 set to OFF) */
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1315  	gpio_request(GPIO_FN_MSIOF0_TXD, NULL);
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1316  	gpio_request(GPIO_FN_MSIOF0_RXD, NULL);
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1317  	gpio_request(GPIO_FN_MSIOF0_TSCK, NULL);
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1318  	gpio_request(GPIO_PTB6, NULL); /* 3.3V power control */
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1319  	gpio_direction_output(GPIO_PTB6, 0); /* disable power by default */
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1320  
-5716fb9bd9c6d3 Linus Walleij         2018-12-02  1321  	gpiod_add_lookup_table(&mmc_spi_gpio_table);
-9fda6693335cd5 Geert Uytterhoeven    2019-04-03  1322  	gpiod_add_lookup_table(&msiof_gpio_table);
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1323  	spi_register_board_info(spi_bus, ARRAY_SIZE(spi_bus));
-1ce4da7a502ea6 Magnus Damm           2009-12-07  1324  #endif
-96987d96f0058d Kuninori Morimoto     2009-10-02  1325  
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1326  	/* MMC/SD-card slot CN12 */
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1327  #if defined(CONFIG_MMC_SH_MMCIF) || defined(CONFIG_MMC_SH_MMCIF_MODULE)
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1328  	/* enable MMCIF (needs DS2.6,7 set to OFF,ON) */
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1329  	gpio_request(GPIO_FN_MMC_D7, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1330  	gpio_request(GPIO_FN_MMC_D6, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1331  	gpio_request(GPIO_FN_MMC_D5, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1332  	gpio_request(GPIO_FN_MMC_D4, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1333  	gpio_request(GPIO_FN_MMC_D3, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1334  	gpio_request(GPIO_FN_MMC_D2, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1335  	gpio_request(GPIO_FN_MMC_D1, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1336  	gpio_request(GPIO_FN_MMC_D0, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1337  	gpio_request(GPIO_FN_MMC_CLK, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1338  	gpio_request(GPIO_FN_MMC_CMD, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1339  
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1340  	cn12_enabled = true;
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1341  #elif defined(CONFIG_MMC_SDHI) || defined(CONFIG_MMC_SDHI_MODULE)
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1342  	/* enable SDHI1 on CN12 (needs DS2.6,7 set to ON,OFF) */
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1343  	gpio_request(GPIO_FN_SDHI1WP,  NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1344  	gpio_request(GPIO_FN_SDHI1CMD, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1345  	gpio_request(GPIO_FN_SDHI1CLK, NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1346  	gpio_request(GPIO_FN_SDHI1D3,  NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1347  	gpio_request(GPIO_FN_SDHI1D2,  NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1348  	gpio_request(GPIO_FN_SDHI1D1,  NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1349  	gpio_request(GPIO_FN_SDHI1D0,  NULL);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1350  
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1351  	cn12_enabled = true;
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1352  #endif
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1353  
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1354  	if (cn12_enabled)
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1355  		/* I/O buffer drive ability is high for CN12 */
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1356  		__raw_writew((__raw_readw(IODRIVEA) & ~0x3000) | 0x2000,
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1357  			     IODRIVEA);
-4eb80146f8ccd4 Guennadi Liakhovetski 2012-01-28  1358  
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1359  	/* enable FSI */
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1360  	gpio_request(GPIO_FN_FSIMCKB,    NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1361  	gpio_request(GPIO_FN_FSIIBSD,    NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1362  	gpio_request(GPIO_FN_FSIOBSD,    NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1363  	gpio_request(GPIO_FN_FSIIBBCK,   NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1364  	gpio_request(GPIO_FN_FSIIBLRCK,  NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1365  	gpio_request(GPIO_FN_FSIOBBCK,   NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1366  	gpio_request(GPIO_FN_FSIOBLRCK,  NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1367  	gpio_request(GPIO_FN_CLKAUDIOBO, NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1368  
-16afc9fb0298a6 Kuninori Morimoto     2010-02-22  1369  	/* set SPU2 clock to 83.4 MHz */
-16afc9fb0298a6 Kuninori Morimoto     2010-02-22  1370  	clk = clk_get(NULL, "spu_clk");
-56ea510962ec69 Guennadi Liakhovetski 2010-10-15  1371  	if (!IS_ERR(clk)) {
-16afc9fb0298a6 Kuninori Morimoto     2010-02-22  1372  		clk_set_rate(clk, clk_round_rate(clk, 83333333));
-16afc9fb0298a6 Kuninori Morimoto     2010-02-22  1373  		clk_put(clk);
-103058536300f8 Kuninori Morimoto     2010-05-13  1374  	}
-16afc9fb0298a6 Kuninori Morimoto     2010-02-22  1375  
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1376  	/* change parent of FSI B */
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1377  	clk = clk_get(NULL, "fsib_clk");
-56ea510962ec69 Guennadi Liakhovetski 2010-10-15  1378  	if (!IS_ERR(clk)) {
-4bd5d259e451d3 Kuninori Morimoto     2010-11-26  1379  		/* 48kHz dummy clock was used to make sure 1/1 divide */
-4bd5d259e451d3 Kuninori Morimoto     2010-11-26  1380  		clk_set_rate(&sh7724_fsimckb_clk, 48000);
-4bd5d259e451d3 Kuninori Morimoto     2010-11-26  1381  		clk_set_parent(clk, &sh7724_fsimckb_clk);
-4bd5d259e451d3 Kuninori Morimoto     2010-11-26  1382  		clk_set_rate(clk, 48000);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1383  		clk_put(clk);
-103058536300f8 Kuninori Morimoto     2010-05-13  1384  	}
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1385  
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1386  	gpio_request(GPIO_PTU0, NULL);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1387  	gpio_direction_output(GPIO_PTU0, 0);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1388  	mdelay(20);
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1389  
-ea440783411840 NISHIMOTO Hiroki      2010-01-15  1390  	/* enable motion sensor */
-ea440783411840 NISHIMOTO Hiroki      2010-01-15  1391  	gpio_request(GPIO_FN_INTC_IRQ1, NULL);
-ea440783411840 NISHIMOTO Hiroki      2010-01-15  1392  	gpio_direction_input(GPIO_FN_INTC_IRQ1);
-ea440783411840 NISHIMOTO Hiroki      2010-01-15  1393  
-6f26d19fce5907 Magnus Damm           2010-02-19  1394  	/* set VPU clock to 166 MHz */
-6f26d19fce5907 Magnus Damm           2010-02-19  1395  	clk = clk_get(NULL, "vpu_clk");
-56ea510962ec69 Guennadi Liakhovetski 2010-10-15  1396  	if (!IS_ERR(clk)) {
-6f26d19fce5907 Magnus Damm           2010-02-19  1397  		clk_set_rate(clk, clk_round_rate(clk, 166000000));
-6f26d19fce5907 Magnus Damm           2010-02-19  1398  		clk_put(clk);
-103058536300f8 Kuninori Morimoto     2010-05-13  1399  	}
-6f26d19fce5907 Magnus Damm           2010-02-19  1400  
-26365716854907 Kuninori Morimoto     2010-02-24  1401  	/* enable IrDA */
-26365716854907 Kuninori Morimoto     2010-02-24  1402  	gpio_request(GPIO_FN_IRDA_OUT, NULL);
-26365716854907 Kuninori Morimoto     2010-02-24  1403  	gpio_request(GPIO_FN_IRDA_IN,  NULL);
-26365716854907 Kuninori Morimoto     2010-02-24  1404  	gpio_request(GPIO_PTU5, NULL);
-26365716854907 Kuninori Morimoto     2010-02-24  1405  	gpio_direction_output(GPIO_PTU5, 0);
-26365716854907 Kuninori Morimoto     2010-02-24  1406  
-c2f9b05fd5c129 Jacopo Mondi          2018-03-12  1407  	/* Register gpio lookup tables for cameras and video decoder */
-c2f9b05fd5c129 Jacopo Mondi          2018-03-12  1408  	gpiod_add_lookup_table(&tw9910_gpios);
-c2f9b05fd5c129 Jacopo Mondi          2018-03-12  1409  	gpiod_add_lookup_table(&mt9t112_0_gpios);
-c2f9b05fd5c129 Jacopo Mondi          2018-03-12  1410  	gpiod_add_lookup_table(&mt9t112_1_gpios);
-c2f9b05fd5c129 Jacopo Mondi          2018-03-12  1411  
-125ecce6960e33 Kuninori Morimoto     2009-09-10  1412  	/* enable I2C device */
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1413  	i2c_register_board_info(0, i2c0_devices,
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1414  				ARRAY_SIZE(i2c0_devices));
-1980fdc4df4778 Kuninori Morimoto     2009-12-15  1415  
-125ecce6960e33 Kuninori Morimoto     2009-09-10  1416  	i2c_register_board_info(1, i2c1_devices,
-125ecce6960e33 Kuninori Morimoto     2009-09-10  1417  				ARRAY_SIZE(i2c1_devices));
-125ecce6960e33 Kuninori Morimoto     2009-09-10  1418  
+Finally, I'll add that the comm/pid format is different from some other
+messages:
 
-:::::: The code at line 1133 was first introduced by commit
-:::::: 9d56dd3b083a3bec56e9da35ce07baca81030b03 sh: Mass ctrl_in/outX to __raw_read/writeX conversion.
+kernel: coredump: 31447(entry-fuzz.1): coredump has not been created,
+error -13
+kernel: entry-fuzz.1[43396] bad frame in rt_sigreturn
+frame:00000000e4ec200e ip:40a6712e sp:40c25f20 orax:f
 
-:::::: TO: Paul Mundt <lethal@linux-sh.org>
-:::::: CC: Paul Mundt <lethal@linux-sh.org>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Vegard
 
