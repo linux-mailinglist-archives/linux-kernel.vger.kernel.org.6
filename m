@@ -1,79 +1,99 @@
-Return-Path: <linux-kernel+bounces-342990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED10D98959C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962649895A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B75F1C208E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:13:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F65F1F2211F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE85C17B427;
-	Sun, 29 Sep 2024 13:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C9117BB07;
+	Sun, 29 Sep 2024 13:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mA6OjPds"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHXR6RXf"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492AC1E868;
-	Sun, 29 Sep 2024 13:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C567617A5BD;
+	Sun, 29 Sep 2024 13:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727615617; cv=none; b=Fm4R3K407QXxaIc6WwzROSgtLzWdttmb9MqiGqNZZi2zFEFzLp7djvbGXEvQH0/4foHlm7/WLvtwBWOvfTU3dEvG6N6nFMwnDkOyv76d4A2JTj/CWM8FdiFNGSCbBCrJn1a2UJtGravhLpjJj1tUwYDKRIE0aZHtsracXaRuGfY=
+	t=1727615643; cv=none; b=kvTkJgN6YrDAM2lROCNAX+uw+2rh/JmbRfGDuklLvXsDiwnmfIQKcZ7fjuU1h+2PstEq06J3K3sgZukeanhOQVOfXgp++K0OhO1Dxw2yN6+ZSG/+BODO/fTzla55U0AyjcN2vNa5VX+qc1n8iGK5tw236pikL7BqdXL9/vfkTEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727615617; c=relaxed/simple;
-	bh=3F7xFSUGK/sZ4Xmlcg3e1EhoVv0SD/q3Pk0km8pPHFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4M1lOa2sTVSmCWHQs4m2pCyJ18zBOqZD21Lcn501xHRXuPAZwe/t3wiGGjL+CyTELbqIP/UdyeSWXEI9da/aZ4kyOf7eiRolr6JBGxS8UyFpeh1Q6AfdqFES8Kgux8UIcOr1Xw5sQnEHV0azZtZIoh+cuscAf3xW1u1iZwsr9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mA6OjPds; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727615614; x=1759151614;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3F7xFSUGK/sZ4Xmlcg3e1EhoVv0SD/q3Pk0km8pPHFg=;
-  b=mA6OjPdsBjs8Qpo8Ve7Ec6REkMrnmZHEestwkAbQ2Jvszu6rM2LMyK9C
-   rOrTnXpID/X7Au2KTt9bit4JJFWRIPZ+RctfYSpGTMyFY7F6X7vpSydiJ
-   rxuYt44Z1KFSOPyC5nDX8g8OUERA5H2MkEMFvyN2/2cbcziy6b8GECIqb
-   849eaD2DPlFIDfeWCJglUliqI5cvStrWNX7xMCLTM/wvYZZN4VI2J97TB
-   V226IA5NQZVCq6kkOOEJJjlYJt48nj8fr51hEV1roVjsylda5S1uSpwY8
-   C8P26O17iR6f3dFC0XLQ4iD3/aPs+vNaLmxSP2zRaZTMQYT7cvR2Ji3Qm
-   A==;
-X-CSE-ConnectionGUID: tzGBevkXThCl88h3swmvgQ==
-X-CSE-MsgGUID: 4Zagzan4TZiLmaTyKIU8dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="29588741"
-X-IronPort-AV: E=Sophos;i="6.11,163,1725346800"; 
-   d="scan'208";a="29588741"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 06:13:33 -0700
-X-CSE-ConnectionGUID: uiNVnPNkRKW0RuUvboYcfQ==
-X-CSE-MsgGUID: ObDZashbSnqzIpS9YNS0xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,163,1725346800"; 
-   d="scan'208";a="72892994"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 29 Sep 2024 06:13:30 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sutjr-000OIv-2Q;
-	Sun, 29 Sep 2024 13:13:27 +0000
-Date: Sun, 29 Sep 2024 21:13:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, arulponn@cisco.com,
-	djhawar@cisco.com, gcboffa@cisco.com, mkai2@cisco.com,
-	satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Karan Tilak Kumar <kartilak@cisco.com>
-Subject: Re: [PATCH v3 08/14] scsi: fnic: Add functionality in fnic to
- support FDLS
-Message-ID: <202409292037.ZYWZwIK6-lkp@intel.com>
-References: <20240927184613.52172-9-kartilak@cisco.com>
+	s=arc-20240116; t=1727615643; c=relaxed/simple;
+	bh=j0dKc3yhBOgL2knFOA/0CV+Tdfh+N5XOfQDFyGorQSg=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3/AY76p/Ak7Nh82lOWKbkkI2Ramt7MoNILjT+/i+HDhLeplqwb9/OZVhkE4EhoFsGEjuCo8LhSp5TBLgUHniXot9e4KcZsJNJ4OLLaxp3xdM4ahefks4N+73iXDxLcdHkn7Ai/srjhPKQSPOcpRofJWJQoO07KomgccZqoCo8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHXR6RXf; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so28422425e9.3;
+        Sun, 29 Sep 2024 06:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727615640; x=1728220440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=tIfkI/k5mUOou3QQlG3Flb+/Aulbsc0ROAg9MJCB1rA=;
+        b=hHXR6RXfDmkkVBZ2EESD5RTiLgWSU5PX0UyBhzsxmeJw0+WmbcLU+Tk6CvQHWS0sfp
+         9rRprdCeSc04lAUTbuphtRQXwPd92JgCRdEHl2nNqev++NhenikKjcxuMHOa8OotUAoR
+         jjsVsCKzTVXVR+p0ZZ66KwY6FUsej+vjiOs5JUDOV0P79BVSVtVt1gbHq6tKhEf3asC/
+         w7EoYWVcjaD2OdUzOL/bNSUZOLFZL6xKexU+PtImpdD3Cam5Ee5RDwiwj9DPLjG35605
+         XJmK2XGkx0Hdsy6o0PxcZ5Dz+C1BX/l7d/H7N7Nqg9yvpnQg1Y4CRA/vp6n++XLr1kWU
+         6cVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727615640; x=1728220440;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tIfkI/k5mUOou3QQlG3Flb+/Aulbsc0ROAg9MJCB1rA=;
+        b=nVP8uxE3SOh7pVj7T6epgjVW73ExOf1NZjyVk3jhSliVkNAwifVSFRWoxRlgjWZPuy
+         DvsOQnpbh0zGof1GiZIrfpjZMG8Pj39W/TUk0HL9oQ5ZsxO6ytsDw4K3rS6TiH6fr7nE
+         EGZWi6oWtzLQcE52eSLY7lg0YsxazEV/wRlTwQXfuUNdD/hgN1EbTM9aJ7WKD2yCO0Tg
+         8rEjRnf5V7rV5WFOgdAr31b5BaSCXV6bhzBfWjYXRp+eTZPRWSkAW5M6kI1PuEy4Yep3
+         MZlWwJjOFO3ih/GrAuxCioN8F5/qXhMM67tMOybkgRYCb8vQZV/jVxOzeVKBxkt6WbNS
+         Xqcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPpnfeszDbos3GRYXz3r5fje5Dd94Lr4fraTnxFqgr931tmuO/MgLvJHawlNmjgfY/j4UdKreCt5xH@vger.kernel.org, AJvYcCUmzMFi81PjoHyulZarn8x8uqIqkoE83zuBahMT0pbkTZ72OexaZnCf4U2/TpRvkUxx83kUp57w2oYc@vger.kernel.org, AJvYcCVC27liEDlnCaPEAAcZWgHHVUCaMN8xXvRtwB8K8FYSGueepX2/gRcty8+cNrkWFeJyAZNdWuiZEmCh@vger.kernel.org, AJvYcCVFoicfwm60pA1gz54fXggDh46k6TjA2dXtsd6zoOjQOD8hRBf8GSIiHfZkGzBFyIZKS4+AI4Hrzq2IV+oe@vger.kernel.org, AJvYcCWDDfPQoFLfGD91rEz5+BfSDPd/2IjD4FvdScqVlhfPKu3X6xubRJG6ui6E8mteoQEvh9TeniCGOxw5cj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFhk2TaQwhkvrp3YpLMTPDB7XHvqtBruKRjJtDfR/nkGvSR307
+	u1iyE4eHKa4+J3w/npXbu/+/tqE01RYfIerkPStXPlcBv8P/ZiNn
+X-Google-Smtp-Source: AGHT+IHaZE8qeiri03N0inPTGys9IBvkOvGroq5f+OgTAi0LQdMR6CD7GKs6HkbHM02iugLdROZ+NA==
+X-Received: by 2002:a05:600c:3552:b0:426:6eac:8314 with SMTP id 5b1f17b1804b1-42f5840ef00mr71570555e9.1.1727615639673;
+        Sun, 29 Sep 2024 06:13:59 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6875sm6837684f8f.55.2024.09.29.06.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 06:13:59 -0700 (PDT)
+Message-ID: <66f95297.050a0220.221772.5da3@mx.google.com>
+X-Google-Original-Message-ID: <ZvlSkRi60iluQduI@Ansuel-XPS.>
+Date: Sun, 29 Sep 2024 15:13:53 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Simon Glass <sjg@chromium.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>
+Subject: Re: [RFC PATCH v2 5/5] dt-bindings: mmc: Document support for
+ partition table in mmc-card
+References: <20240925214544.6114-1-ansuelsmth@gmail.com>
+ <20240925214544.6114-6-ansuelsmth@gmail.com>
+ <20240926141541.GA2625953-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,127 +102,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240927184613.52172-9-kartilak@cisco.com>
+In-Reply-To: <20240926141541.GA2625953-robh@kernel.org>
 
-Hi Karan,
+On Thu, Sep 26, 2024 at 09:15:41AM -0500, Rob Herring wrote:
+> On Wed, Sep 25, 2024 at 11:45:25PM +0200, Christian Marangi wrote:
+> > Document support for defining a partition table in the mmc-card node.
+> > 
+> > This is needed if the eMMC doesn't have a partition table written and
+> > the bootloader of the device load data by using absolute offset of the
+> > block device. This is common on embedded device that have eMMC installed
+> > to save space and have non removable block devices.
+> > 
+> > If an OF partition table is detected, any partition table written in the
+> > eMMC will be ignored and won't be parsed.
+> > 
+> > eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
+> > also provide two additional disk ("boot0" and "boot1") for special usage
+> > of boot operation where normally is stored the bootloader or boot info.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > ---
+> >  .../devicetree/bindings/mmc/mmc-card.yaml     | 57 +++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > index fd347126449a..58b6593a0f60 100644
+> > --- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > +++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
+> > @@ -13,6 +13,10 @@ description: |
+> >    This documents describes the devicetree bindings for a mmc-host controller
+> >    child node describing a mmc-card / an eMMC.
+> >  
+> > +  It's possible to define a fixed partition table for an eMMC for the user
+> > +  partition and one of the 2 boot partition (boot0/boot1) if supported by the
+> > +  eMMC.
+> > +
+> >  properties:
+> >    compatible:
+> >      const: mmc-card
+> > @@ -26,6 +30,30 @@ properties:
+> >        Use this to indicate that the mmc-card has a broken hpi
+> >        implementation, and that hpi should not be used.
+> >  
+> > +  "#address-cells":
+> > +    const: 0
+> > +
+> > +  "#size-cells":
+> > +    const: 0
+> 
+> Don't need these properties.
+> 
+> > +
+> > +patternProperties:
+> > +  "^partitions(-boot[01])?$":
+> > +    $ref: /schemas/block/partitions/partitions.yaml
+> > +
+> > +    patternProperties:
+> > +      "^partition@[0-9a-f]+$":
+> > +        $ref: /schemas/block/partitions/partition.yaml
+> > +
+> > +        properties:
+> > +          reg:
+> > +            multipleOf: 512
+> 
+> I was going to suggest this, but I think it won't actually work because 
+> it could be 2 cells for address and/or size.
+>
 
-kernel test robot noticed the following build warnings:
+While checking I was surprised for this multipleOf and was very happy to
+have something like this but I also had some fear it didn't work due to
+the 2 cell thing... Very sad. I will add a description to it.
 
-[auto build test WARNING on mkp-scsi/for-next]
-[also build test WARNING on jejb-scsi/for-next linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-dev_info-dev_err/20240928-025906
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20240927184613.52172-9-kartilak%40cisco.com
-patch subject: [PATCH v3 08/14] scsi: fnic: Add functionality in fnic to support FDLS
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20240929/202409292037.ZYWZwIK6-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409292037.ZYWZwIK6-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409292037.ZYWZwIK6-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/scsi/fnic/fnic_scsi.c:2618:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    2618 |         if (fnic->link_status) {
-         |             ^~~~~~~~~~~~~~~~~
-   drivers/scsi/fnic/fnic_scsi.c:2637:9: note: uninitialized use occurs here
-    2637 |         return ret;
-         |                ^~~
-   drivers/scsi/fnic/fnic_scsi.c:2618:2: note: remove the 'if' if its condition is always true
-    2618 |         if (fnic->link_status) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   drivers/scsi/fnic/fnic_scsi.c:2580:9: note: initialize the variable 'ret' to silence this warning
-    2580 |         int ret;
-         |                ^
-         |                 = 0
-   1 warning generated.
---
->> drivers/scsi/fnic/fnic_fcs.c:1031: warning: expecting prototype for fnic_tport_work(). Prototype was for fnic_tport_event_handler() instead
-
-
-vim +2618 drivers/scsi/fnic/fnic_scsi.c
-
-  2568	
-  2569	/*
-  2570	 * SCSI Error handling calls driver's eh_host_reset if all prior
-  2571	 * error handling levels return FAILED. If host reset completes
-  2572	 * successfully, and if link is up, then Fabric login begins.
-  2573	 *
-  2574	 * Host Reset is the highest level of error recovery. If this fails, then
-  2575	 * host is offlined by SCSI.
-  2576	 *
-  2577	 */
-  2578	int fnic_host_reset(struct Scsi_Host *shost)
-  2579	{
-  2580		int ret;
-  2581		unsigned long wait_host_tmo;
-  2582		struct fnic *fnic = *((struct fnic **) shost_priv(shost));
-  2583		unsigned long flags;
-  2584		struct fnic_iport_s *iport = &fnic->iport;
-  2585	
-  2586		spin_lock_irqsave(&fnic->fnic_lock, flags);
-  2587		if (fnic->reset_in_progress == NOT_IN_PROGRESS) {
-  2588			fnic->reset_in_progress = IN_PROGRESS;
-  2589		} else {
-  2590			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-  2591			wait_for_completion_timeout(&fnic->reset_completion_wait,
-  2592										msecs_to_jiffies(10000));
-  2593	
-  2594			spin_lock_irqsave(&fnic->fnic_lock, flags);
-  2595			if (fnic->reset_in_progress == IN_PROGRESS) {
-  2596				spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-  2597				FNIC_SCSI_DBG(KERN_WARNING, fnic->lport->host, fnic->fnic_num,
-  2598				  "Firmware reset in progress. Skipping another host reset\n");
-  2599				return SUCCESS;
-  2600			}
-  2601			fnic->reset_in_progress = IN_PROGRESS;
-  2602		}
-  2603		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-  2604	
-  2605		/*
-  2606		 * If fnic_reset is successful, wait for fabric login to complete
-  2607		 * scsi-ml tries to send a TUR to every device if host reset is
-  2608		 * successful, so before returning to scsi, fabric should be up
-  2609		 */
-  2610		fnic_reset(shost);
-  2611	
-  2612		spin_lock_irqsave(&fnic->fnic_lock, flags);
-  2613		fnic->reset_in_progress = NOT_IN_PROGRESS;
-  2614		complete(&fnic->reset_completion_wait);
-  2615		fnic->soft_reset_count++;
-  2616	
-  2617		/* wait till the link is up */
-> 2618		if (fnic->link_status) {
-  2619			wait_host_tmo = jiffies + FNIC_HOST_RESET_SETTLE_TIME * HZ;
-  2620			ret = FAILED;
-  2621			while (time_before(jiffies, wait_host_tmo)) {
-  2622				if (iport->state != FNIC_IPORT_STATE_READY
-  2623					&& fnic->link_status) {
-  2624					spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-  2625					ssleep(1);
-  2626					spin_lock_irqsave(&fnic->fnic_lock, flags);
-  2627				} else {
-  2628					ret = SUCCESS;
-  2629					break;
-  2630				}
-  2631			}
-  2632		}
-  2633		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-  2634	
-  2635		FNIC_SCSI_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-  2636					  "host reset return status: %d\n", ret);
-  2637		return ret;
-  2638	}
-  2639	
+The driver will validate the values anyway, at least on that part we are
+on the safe side.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Ansuel
 
