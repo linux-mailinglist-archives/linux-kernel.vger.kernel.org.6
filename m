@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-343035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BDD989614
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:14:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9802F989616
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64AEC1C21146
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:14:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDF91F2107A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F02417C213;
-	Sun, 29 Sep 2024 15:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A7C16E892;
+	Sun, 29 Sep 2024 15:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSvZqq8x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itBWcsI5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D541465B8;
-	Sun, 29 Sep 2024 15:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D07417C;
+	Sun, 29 Sep 2024 15:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727622858; cv=none; b=i4Qc6amN1VFuy8Wpfa+8TsHsy8s5Odl9Jgpt9Zos8O16DTZ/BCP0jk8lM8Fk2As04BZAKc9eMvehboiEKGZsmIGdOJzjCuVTZT16t++pXndh7xO9hkYSeBl0yP1/eqQDUxdDp0H4qN/l99U1fCoT/D+6ivdxcQ/HJ2ZCKQ23EKg=
+	t=1727623051; cv=none; b=p67C1m7u7liA1IfG01/MKWjkcqE4tz4fQpt3Y5XyeEN33gmJj/fiaZ6NqBbq1Jq0rJth7wQqXqmJZHzuHrgpIfZcwei1Am/SY5iO+a1dzIbNu5uabfRr4MdvFCM5Gvxv8UvBioJcWbbTImbYT6mUbKiZrVq6BsDVxtnVyQeGTlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727622858; c=relaxed/simple;
-	bh=oaEjX3/xGXdgWu1xJM0CQYYIlbcXuyVjwzYezEaTK2M=;
+	s=arc-20240116; t=1727623051; c=relaxed/simple;
+	bh=eQylGUNRxchABfJswjanp/s+IOJknU6kiHFdLqGmXTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCnznTZA8PihswA6/HfFiGSX5gZGB0J9eG3zUn3s5JgKK4WbslhKayKVX1b8u1fM6tnv9TMxFHI3j9XskfnpFL6ZoT2fwGqvAIjaLf4wr0HJQrKE/GJk9+tk3MOroFHGH/C+ofsvr1vQvjojkVDnVvFLSZv7Rmwki0B49GjO30M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSvZqq8x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43A2C4CEC5;
-	Sun, 29 Sep 2024 15:14:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiNMcreYu2zPIAGqT4EREjdXyi8YIvTgdXTLzG84eMur+rF6X1jENEl1EPXpFBjbb4FuqfY45XeDXJ3yIC2hawjyrJmBGkIl10YyWgGehQXD8IqwQqRxRF21pZFgktFnEc3Te1LLntl3mH01525+OYuu9JSkhY1sbgn72/ZleQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itBWcsI5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C03C4CEC5;
+	Sun, 29 Sep 2024 15:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727622857;
-	bh=oaEjX3/xGXdgWu1xJM0CQYYIlbcXuyVjwzYezEaTK2M=;
+	s=k20201202; t=1727623050;
+	bh=eQylGUNRxchABfJswjanp/s+IOJknU6kiHFdLqGmXTI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KSvZqq8xyU7vmkvUjAT5SUzXcgvhtaPJ7/R/T4WWUhExlPsjWCZsClCgIqlwnJPJO
-	 AgwnZ8tnn2qCEaYhzeGP0rEQXLLgXDVpYvJiK8IiwJhGwwfVpA6s5xF+o3z/RoNaPe
-	 zXuOoumeZwQ9EAYPdpqT9E20zatm8dG3MFREr8h22TJrZuX7Lk8/W/TU3XeVmKr/hc
-	 JiQ+ECx1ShPAeTrqsPoHMC0r/KvSuzsenAFnwsz/GjLYXdkRoBStI/VuHdrWeFEziN
-	 8lA7mDU0c7Bhxos0OhBforeSi98kPMJf4yGHaZiMIhrzlQV59g8g7OP5IlGI7lIPop
-	 p4BQgAafAcrOA==
-Date: Sun, 29 Sep 2024 17:14:08 +0200
+	b=itBWcsI5uSxHOMUI+hnyql50fUWWO1cwMCySRGDRJW3pELQFcx2w0m51e83B+aYe3
+	 x0e8Mnov2bCUzmpT7mdROBFZ3Z6j9hWUfj5IyBlI0Wln+W08YWPYW68OcsM3+LcpOg
+	 8YuZAMwZz05dAIjJUtk85hqL5B/G7+Fj4lMzzRtfe8JyMI7LEdI3Pi+DTgzOpWOJbp
+	 5+3gOPe5Wk7u5v7EHEuo0INXe2epKLS70bBPE4+1xRavjo79tnDRkglBDoJkzF6hVS
+	 lKOTbaEhfL0h6avtYuXOO7wgfUZ8ScSK5b2/Y7wNEL+UTW6SjBCUvP4qJdMfIf/8xp
+	 dZ0Pc71VP8XHA==
+Date: Sun, 29 Sep 2024 17:17:23 +0200
 From: Danilo Krummrich <dakr@kernel.org>
 To: Gary Guo <gary@garyguo.net>
 Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
@@ -53,12 +53,12 @@ Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
 	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
 	lyude@redhat.com, linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 22/26] rust: alloc: implement `Cmalloc` in module
- allocator_test
-Message-ID: <ZvluwEpbkLT4LP6Q@pollux>
+Subject: Re: [PATCH v7 25/26] kbuild: rust: remove the `alloc` crate and
+ `GlobalAlloc`
+Message-ID: <Zvlvg0pBkhmukh0N@pollux>
 References: <20240911225449.152928-1-dakr@kernel.org>
- <20240911225449.152928-23-dakr@kernel.org>
- <20240928203552.4d490ca0.gary@garyguo.net>
+ <20240911225449.152928-26-dakr@kernel.org>
+ <20240928204357.3a28dada.gary@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,32 +67,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240928203552.4d490ca0.gary@garyguo.net>
+In-Reply-To: <20240928204357.3a28dada.gary@garyguo.net>
 
-On Sat, Sep 28, 2024 at 08:35:52PM +0100, Gary Guo wrote:
-> On Thu, 12 Sep 2024 00:52:58 +0200
+On Sat, Sep 28, 2024 at 08:43:57PM +0100, Gary Guo wrote:
+> On Thu, 12 Sep 2024 00:53:01 +0200
 > Danilo Krummrich <dakr@kernel.org> wrote:
 > 
-> > So far the kernel's `Box` and `Vec` types can't be used by userspace
-> > test cases, since all users of those types (e.g. `CString`) use kernel
-> > allocators for instantiation.
+> > Now that we have our own `Allocator`, `Box` and `Vec` types we can remove
+> > Rust's `alloc` crate and the `new_uninit` unstable feature.
 > > 
-> > In order to allow userspace test cases to make use of such types as
-> > well, implement the `Cmalloc` allocator within the allocator_test module
-> > and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
-> > allocator uses libc's realloc() function as allocator backend.
-> 
-> I think this needs an explaination of why it needs a complex
-> implementation instead of just using aligned_alloc and free.
-
-The reason basically is that there's no `aligned_realloc` in libc. Anyways, it's
-gonna simplified by the introduction of `old_layout`.
-
-> 
+> > Also remove `Kmalloc`'s `GlobalAlloc` implementation -- we can't remove
+> > this in a separate patch, since the `alloc` crate requires a
+> > `#[global_allocator]` to set, that implements `GlobalAlloc`.
 > > 
 > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > > ---
-> >  rust/kernel/alloc/allocator_test.rs | 193 +++++++++++++++++++++++++++-
-> >  1 file changed, 186 insertions(+), 7 deletions(-)
+> >  rust/Makefile                     | 43 +++++----------------
+> >  rust/exports.c                    |  1 -
+> >  rust/kernel/alloc/allocator.rs    | 63 +------------------------------
+> >  scripts/Makefile.build            |  7 +---
+> >  scripts/generate_rust_analyzer.py | 11 +-----
+> >  5 files changed, 15 insertions(+), 110 deletions(-)
+> > 
+> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> > index 72b1232b1f7d..529ec5972e55 100644
+> > --- a/scripts/Makefile.build
+> > +++ b/scripts/Makefile.build
+> > @@ -262,18 +262,13 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+> >  
+> >  # Compile Rust sources (.rs)
+> >  # ---------------------------------------------------------------------------
+> > -
+> > -rust_allowed_features := new_uninit
+> > -
+> 
+> Would it make sense to throw in a soon-to-be-stable (or
+> already-stable-but-beyond-min-rust-version) feature here to not have to
+> remove the build system support for unstable feature directly?
+
+It's only about those two lines, right? I can only remove the `new_uninit` and
+leave `rust_allowed_features :=` and leave...
+
+> 
+> For example, I know that const_refs_to_static might be added here
+> soon-ish.
+> 
+> >  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+> >  # current working directory, which may be not accessible in the out-of-tree
+> >  # modules case.
+> >  rust_common_cmd = \
+> >  	RUST_MODFILE=$(modfile) $(RUSTC_OR_CLIPPY) $(rust_flags) \
+> > -	-Zallow-features=$(rust_allowed_features) \
+
+...this line, I guess?
+
+> 
+> I think this actually allow all features instead of allowing none.
+> 
+> >  	-Zcrate-attr=no_std \
+> > -	-Zcrate-attr='feature($(rust_allowed_features))' \
+> > -	-Zunstable-options --extern force:alloc --extern kernel \
+> > +	-Zunstable-options --extern kernel \
+> >  	--crate-type rlib -L $(objtree)/rust/ \
+> >  	--crate-name $(basename $(notdir $@)) \
+> >  	--sysroot=/dev/null \
+> > diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
+> > index d2bc63cde8c6..09e1d166d8d2 100755
+> > --- a/scripts/generate_rust_analyzer.py
+> > +++ b/scripts/generate_rust_analyzer.py
+> > @@ -64,13 +64,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+> >          [],
+> >      )
+> >  
+> > -    append_crate(
+> > -        "alloc",
+> > -        sysroot_src / "alloc" / "src" / "lib.rs",
+> > -        ["core", "compiler_builtins"],
+> > -        cfg=crates_cfgs.get("alloc", []),
+> > -    )
+> > -
+> >      append_crate(
+> >          "macros",
+> >          srctree / "rust" / "macros" / "lib.rs",
+> > @@ -96,7 +89,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+> >      append_crate(
+> >          "kernel",
+> >          srctree / "rust" / "kernel" / "lib.rs",
+> > -        ["core", "alloc", "macros", "build_error", "bindings"],
+> > +        ["core", "macros", "build_error", "bindings"],
+> >          cfg=cfg,
+> >      )
+> >      crates[-1]["source"] = {
+> > @@ -133,7 +126,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
+> >              append_crate(
+> >                  name,
+> >                  path,
+> > -                ["core", "alloc", "kernel"],
+> > +                ["core", "kernel"],
+> >                  cfg=cfg,
+> >              )
+> >  
 > 
 
