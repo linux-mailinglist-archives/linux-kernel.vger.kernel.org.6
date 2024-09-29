@@ -1,199 +1,113 @@
-Return-Path: <linux-kernel+bounces-343039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F378798961F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B811989622
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA84A285055
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:33:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 460FD1C2135D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D3D17E019;
-	Sun, 29 Sep 2024 15:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BF814A61B;
+	Sun, 29 Sep 2024 15:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="J3HT3WJ1"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="MqK4WKCz"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E94417DE06
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727624000; cv=none; b=oaIN6s1CMSt7ySoT754OfmFon+XxwTruL9BOkv2qWCzpx4dWa5hyqBBXnwrCq5OzcdA6mgznRruf+VKywzOu64b4odDGsh0oRJevtHbCSkMPm8mkypl4NUm9OTkjurYPhgp5f5Sav2Veks0FKQBYudZzXYqHn44jobDZpkITvkA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727624000; c=relaxed/simple;
-	bh=R/KAIucJR64DhM14PlnEqlxirD95bh38Qn5Yl/jW8RQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g+Kbs8aQtLwcrhZU9ayZwr441uGcSnDWhB9z8ogRvwLGLkjq/GF312uytuB6lJ9/nqPeuP7/kZ1a0Y2Nznrjl+tX93v7OSGx1E87rCKIOfvdlGRC0fUVH3N3WxnSeSSTboW4+GhU48TQVs6sveBHQURtF57hUh2j9O71lQXb4HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=J3HT3WJ1; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71b0d9535c0so2470612b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:33:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1727623997; x=1728228797; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R/KAIucJR64DhM14PlnEqlxirD95bh38Qn5Yl/jW8RQ=;
-        b=J3HT3WJ1ODhyZS+D6fqWY31XG5Rmjejjj5TPherTRHTzGub0LRGY/onYj592EpEfRF
-         7z2qL2RRSnluUeNAMhYm2d7DDTGg9IoQYdAGA3phzWyH4oGjMV6HwCJnzqjrqiSgIlZi
-         zDkHYVE84Lm3ITRZUYvoBTPj6lEv0/PxMpYPyvlaDzcyxwGHgugQub2ual0/cSAyEbnm
-         O9+ApCxNc7w5qemKLvpCZoP9uuQug3w8T1rjexsA1EscddCE/o2b35nYmhVbcn/YZvdk
-         Lp8a8d6Yn/GY5uX24SwqRaU75WmyoNQLazKyrQy5jUWF6Q4UDv3AsHWP/C4HUZ1NKy5K
-         m3gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727623997; x=1728228797;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R/KAIucJR64DhM14PlnEqlxirD95bh38Qn5Yl/jW8RQ=;
-        b=hEHSW/INuXXFv1utoNryV1Cmsw5k0ONFa+xIS1+QWWb+/I25u9l8FqscIrnrZ3Y8qj
-         i7idlpR6vyJNVf2Ktu/+V/oCVMqctIYGzwxcP9n8ROFfxwycJ8rXQqAzAvtY8nynJ+VO
-         BwZki2pUTXGi+I7ibAncfsZ2kIqF7zvP9zxzkHOt2w8Z4Tztj/mLJpOuAnvphvEMq58P
-         poKUZksTpubSWvwk+brtJeCxua+Jbksqay+2u4aXkUMxTFLrNpnQBnj1R+fHWol5fRhD
-         Ar2N2NdpOKuFtSv4rwPIIaNL7F9XKMBr/a311D+dEcxLilaBtZTBt4820uOXrPIZYyCd
-         Sphw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2G7bt1NZ0znS2h5fognDToeOTpNJMJZj1nCMAvNf9fECWx6C9UeiENQVywy+rSbvNPHBzVp42zJTVB7A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzThkBpbJu0gn5LtjQ0mNvB2D0te0fSMFogv2NlhTHzHgHaLxJg
-	3q5lQ8kN2IvJdauh9/71HNsW6toT/EqvwRQSeBd7mqcDw2kgqlsEieOFpRbEkhw=
-X-Google-Smtp-Source: AGHT+IGuZ2ZQ2xF0vqQIURXhh3/WO6fyMaueh6tDYx0LjIXGb2PeQu34yIj5VrsYQjGUWlhTfeQehQ==
-X-Received: by 2002:a05:6a00:80f:b0:71b:64c:814b with SMTP id d2e1a72fcca58-71b26062754mr15148322b3a.23.1727623997547;
-        Sun, 29 Sep 2024 08:33:17 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2653663asm4681814b3a.187.2024.09.29.08.33.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 08:33:17 -0700 (PDT)
-Date: Sun, 29 Sep 2024 08:33:14 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jason Wang <jasowang@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan
- <shuah@kernel.org>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kvm@vger.kernel.org,
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
- Yuri Benditovich <yuri.benditovich@daynix.com>, Andrew Melnychenko
- <andrew@daynix.com>, gur.stavi@huawei.com
-Subject: Re: [PATCH RFC v4 0/9] tun: Introduce virtio-net hashing feature
-Message-ID: <20240929083314.02d47d69@hermes.local>
-In-Reply-To: <447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
-References: <20240924-rss-v4-0-84e932ec0e6c@daynix.com>
-	<CACGkMEvMuBe5=wQxZMns4R-oJtVOWGhKM3sXy8U6wSQX7c=iWQ@mail.gmail.com>
-	<c3bc8d58-1f0e-4633-bb01-d646fcd03f54@daynix.com>
-	<CACGkMEu3u=_=PWW-=XavJRduiHJuZwv11OrMZbnBNVn1fptRUw@mail.gmail.com>
-	<6c101c08-4364-4211-a883-cb206d57303d@daynix.com>
-	<CACGkMEtscr17UOufUtyPp1OvALL8LcycpbRp6CyVMF=jYzAjAA@mail.gmail.com>
-	<447dca19-58c5-4c01-b60e-cfe5e601961a@daynix.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1A314287;
+	Sun, 29 Sep 2024 15:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727624165; cv=pass; b=XWXNzdWnEq1N+x7EXmM4ilR3CH3E4zY2aBhej1kYL6Zow0CUhObr0ulVn/nLRgsozXsB1oQ7wsWFUrhSjilICKEl1MIkleythkhU8pcD71g5RLr437F259gtixyijDszFoulurgd3vKAzILbw5r6C89ateGLIw9iuk63zsg8O0U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727624165; c=relaxed/simple;
+	bh=KKAjp3bMyq2nzRJpAuAW+teOZNaNGrgqCdevrix1rDc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=FOYM/SBUAy+60k97acdfjM9HsFPW/OBE0eW5q4UEcIF2k04V41dC5iVz9+eTKKAsulddCUjfSLHzuk2TkX5uE121Dt/npGfkpmTO9lBMP6kB5uVm1DgJG8va6PNTANSZ1nOq43A4rdEOcfLNUbg6q/aXiyCmb6Mka3NOTagUbxA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=MqK4WKCz; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1727624128; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=dkxPUfYIux4U5bxnPX0bq90205qwFEwHXhxG70+5lDODtO46XJ3zOD0CLKvyTUp8i3qtqVkqcyjHYvV/ZBuyiX6E4d4USay14CJctFFN9y2kcld41WoDXYP/v3G0AZantTWi8q78Zv2sf25ZMOEQulQziJXa8dhm+OCJss9zEwY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1727624128; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=KKAjp3bMyq2nzRJpAuAW+teOZNaNGrgqCdevrix1rDc=; 
+	b=I4LfIq/aitg2AUQbx1HF4RjDx6cHYYudrObeFvTTsQVzP4feNlG+IjDsG85JfMc91CugfbQMRTEVZWg7kFWCmm76L24xT+sM+wE8UF8pD6Jqw2OLdRufjYUx49rD4C7iVk6iJIP8OrRnJEWETkwrEvA7nbA/+Gbgj6RCTtQVRaw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1727624128;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=KKAjp3bMyq2nzRJpAuAW+teOZNaNGrgqCdevrix1rDc=;
+	b=MqK4WKCziw/o8FJvjKBf/oBxg1pfyBv6wikN3bYKs7zUVtc1LBXCUwK7K39noHKq
+	WOGtNKdM3E0rgHkF+vIFikq1SC55CY0Dl80jRv4fIRFZ8b3vl4IGAKTl7OGe8FY+GBD
+	Wb1/Au5KXVA0027ezg/e7uCPnbko4j05toMvrkKg=
+Received: by mx.zohomail.com with SMTPS id 1727624126111466.10034298979076;
+	Sun, 29 Sep 2024 08:35:26 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: [PATCH 1/2] device: rust: change the name function
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <CAM_RzfavjM9VPJhTi1czOSC0BFOc3FUHRMdzFrU9fJE+WJMKbw@mail.gmail.com>
+Date: Sun, 29 Sep 2024 12:35:09 -0300
+Cc: rafael@kernel.org,
+ ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ aliceryhl@google.com,
+ mcgrof@kernel.org,
+ russ.weight@linux.dev,
+ dakr@redhat.com,
+ a.hindborg@kernel.org,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <32476CD7-74D6-4575-9D93-2FBCD5AE3E10@collabora.com>
+References: <CAM_RzfavjM9VPJhTi1czOSC0BFOc3FUHRMdzFrU9fJE+WJMKbw@mail.gmail.com>
+To: =?utf-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+X-Mailer: Apple Mail (2.3818.100.11.1.3)
+X-ZohoMailClient: External
 
-On Sun, 29 Sep 2024 16:10:47 +0900
-Akihiko Odaki <akihiko.odaki@daynix.com> wrote:
+Hi Guilherme, welcome to the community!
 
-> On 2024/09/29 11:07, Jason Wang wrote:
-> > On Fri, Sep 27, 2024 at 3:51=E2=80=AFPM Akihiko Odaki <akihiko.odaki@da=
-ynix.com> wrote: =20
-> >>
-> >> On 2024/09/27 13:31, Jason Wang wrote: =20
-> >>> On Fri, Sep 27, 2024 at 10:11=E2=80=AFAM Akihiko Odaki <akihiko.odaki=
-@daynix.com> wrote: =20
-> >>>>
-> >>>> On 2024/09/25 12:30, Jason Wang wrote: =20
-> >>>>> On Tue, Sep 24, 2024 at 5:01=E2=80=AFPM Akihiko Odaki <akihiko.odak=
-i@daynix.com> wrote: =20
-> >>>>>>
-> >>>>>> virtio-net have two usage of hashes: one is RSS and another is hash
-> >>>>>> reporting. Conventionally the hash calculation was done by the VMM.
-> >>>>>> However, computing the hash after the queue was chosen defeats the
-> >>>>>> purpose of RSS.
-> >>>>>>
-> >>>>>> Another approach is to use eBPF steering program. This approach has
-> >>>>>> another downside: it cannot report the calculated hash due to the
-> >>>>>> restrictive nature of eBPF.
-> >>>>>>
-> >>>>>> Introduce the code to compute hashes to the kernel in order to ove=
-rcome
-> >>>>>> thse challenges.
-> >>>>>>
-> >>>>>> An alternative solution is to extend the eBPF steering program so =
-that it
-> >>>>>> will be able to report to the userspace, but it is based on context
-> >>>>>> rewrites, which is in feature freeze. We can adopt kfuncs, but the=
-y will
-> >>>>>> not be UAPIs. We opt to ioctl to align with other relevant UAPIs (=
-KVM
-> >>>>>> and vhost_net).
-> >>>>>> =20
-> >>>>>
-> >>>>> I wonder if we could clone the skb and reuse some to store the hash,
-> >>>>> then the steering eBPF program can access these fields without
-> >>>>> introducing full RSS in the kernel? =20
-> >>>>
-> >>>> I don't get how cloning the skb can solve the issue.
-> >>>>
-> >>>> We can certainly implement Toeplitz function in the kernel or even w=
-ith
-> >>>> tc-bpf to store a hash value that can be used for eBPF steering prog=
-ram
-> >>>> and virtio hash reporting. However we don't have a means of storing a
-> >>>> hash type, which is specific to virtio hash reporting and lacks a
-> >>>> corresponding skb field. =20
-> >>>
-> >>> I may miss something but looking at sk_filter_is_valid_access(). It
-> >>> looks to me we can make use of skb->cb[0..4]? =20
-> >>
-> >> I didn't opt to using cb. Below is the rationale:
-> >>
-> >> cb is for tail call so it means we reuse the field for a different
-> >> purpose. The context rewrite allows adding a field without increasing
-> >> the size of the underlying storage (the real sk_buff) so we should add=
- a
-> >> new field instead of reusing an existing field to avoid confusion.
-> >>
-> >> We are however no longer allowed to add a new field. In my
-> >> understanding, this is because it is an UAPI, and eBPF maintainers fou=
-nd
-> >> it is difficult to maintain its stability.
-> >>
-> >> Reusing cb for hash reporting is a workaround to avoid having a new
-> >> field, but it does not solve the underlying problem (i.e., keeping eBPF
-> >> as stable as UAPI is unreasonably hard). In my opinion, adding an ioctl
-> >> is a reasonable option to keep the API as stable as other virtualizati=
-on
-> >> UAPIs while respecting the underlying intention of the context rewrite
-> >> feature freeze. =20
-> >=20
-> > Fair enough.
-> >=20
-> > Btw, I remember DPDK implements tuntap RSS via eBPF as well (probably
-> > via cls or other). It might worth to see if anything we miss here. =20
->=20
-> Thanks for the information. I wonder why they used cls instead of=20
-> steering program. Perhaps it may be due to compatibility with macvtap=20
-> and ipvtap, which don't steering program.
->=20
-> Their RSS implementation looks cleaner so I will improve my RSS=20
-> implementation accordingly.
->=20
+The commit message needs some work IMHO. In particular, links may become =
+stale,
+so please do not link to anything.
 
-DPDK needs to support flow rules. The specific case is where packets
-are classified by a flow, then RSS is done across a subset of the queues.
-The support for flow in TUN driver is more academic than useful,
-I fixed it for current BPF, but doubt anyone is using it really.
+It=E2=80=99s also written in first person and in a verbose way, which is =
+not good.
+Just describe what you did and why the change was necessary succinctly.
 
-A full steering program would be good, but would require much more
-complexity to take a general set of flow rules then communicate that
-to the steering program.
+You can find some more tips at
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html
 
+Lastly, I can=E2=80=99t see a diff anywhere. Make sure everything you =
+send can
+actually be applied and *at least* compile-check your changes. =
+Submitting
+patches that do not apply and/or do not compile can make people lose =
+interest.
+
+Send a v2 with the fixes above and we can start to actually discuss your =
+code.
+
+BR
+
+=E2=80=94 Daniel=
 
