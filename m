@@ -1,200 +1,87 @@
-Return-Path: <linux-kernel+bounces-342942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CEB989505
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:18:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87918989503
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2F691C21983
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A811C2175F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A943616C695;
-	Sun, 29 Sep 2024 11:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="bKR/jLng"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB50C1581EB;
+	Sun, 29 Sep 2024 11:17:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363101581EB;
-	Sun, 29 Sep 2024 11:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B328566A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 11:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727608706; cv=none; b=A+V14Teasf02rcjcyaux73I0Gg89+4dTdxupA64fIWnCEu9LndJMM67NC/RIbvAVoSANS8yXAXESgrji+y1JitwIcLO5ho11KxWwckCjNdhO9EsEC3mavJr3/XVT9scpESWznowPR5t61LK7E0uk1g9K5+xpqoOxGJj7UGZtswU=
+	t=1727608625; cv=none; b=RVGyAOp74BjDhHDajDAk+ZiVgp58oN9iYNzHsI/lIpys8kGO0N7IrTZ85aLdwFYVGSkpnB8N4KEMZ0je/tCe8TD6+C61MA6TLSEtMrQgsVvDJ6cva6ednshkdLmp91Z717S87hqs+bYILjEVPJJCanUv7rk++DW+BiGI5mC4DSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727608706; c=relaxed/simple;
-	bh=g1ERcjuxIIQfzyAE04JgYpLXWJLghnUv7XhUlDPv9Y4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tgrX5IiIwE7OSpapF7FBOFSbP5Rjz6OXKW7COJK9DiBGx0ZdmHE4fXZjveU2rtOIInirEXd0eIAyoBYB9fpUrP4NMDD8KNQLXGKg2vgpGmtN0K8wM64p9OFLAsuh20lbvkeU9I8b8E0Vl1tvcSOR5JfS6tbmIjB3Nes9jzENhIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=bKR/jLng; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727608703;
-	bh=g1ERcjuxIIQfzyAE04JgYpLXWJLghnUv7XhUlDPv9Y4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bKR/jLngSMnpfkC+0RATww72JqtH1SoYAn6K35TxeOozZBSsXRNV0CBRN0ZfegI/2
-	 r/+8JtcIu/mnr+vyisFGHKYQCpbqhJzMgwf5KlY/WMQTlaVbWtVsjsmL2bw8G+Dv2B
-	 pdEAXppYbeIKbMF/A/Lq9/2RM3PMl2mHH92429U4/RbFXYOImIqKcKX+P5JpCYD+fL
-	 VT9cR8Io1Swpe+OhuwkP7Kvleoz191Ei4HHvUI7vSqAhUtSmCQWen7eNllMpbAZLQn
-	 wSfP0muk5IrqHAezuL9nH6FMnDjRQcxiSAEpRUQAXqftJHa5kuYzP6VAJBEeGwGEQq
-	 0xmbgO178/+Iw==
-Received: from thinkos.internal.efficios.com (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XGhXG75M3z6Ht;
-	Sun, 29 Sep 2024 07:18:22 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	rcu@vger.kernel.org,
-	linux-mm@kvack.org,
-	lkmm@lists.linux.dev,
-	Nikita Popov <github@npopov.com>,
-	llvm@lists.linux.dev
-Subject: [PATCH v1 2/2] Documentation: RCU: Refer to ptr_eq()
-Date: Sun, 29 Sep 2024 07:16:08 -0400
-Message-Id: <20240929111608.1016757-3-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240929111608.1016757-1-mathieu.desnoyers@efficios.com>
-References: <20240929111608.1016757-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727608625; c=relaxed/simple;
+	bh=B8CsOq98Sm2WjfXpa/AySzjrdvpdJjFWkf0rA0/qnlI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=H6mdIG4VYbEVOi9yx5j0Lw4CtXHJcA866bwHqpsKQ2iPf/l5SrCaf/judsbGqMKdLYvSM+PBGHVZxEIny9NeolAYMv/1/+a9btXkOwbQE0wzHPUIYK1BgPpBotel7BgdsaytpRvgP1h8Kvwj49TWAKSHMpGLtDUzIjoHLS/Mq3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82ad9fca614so521871639f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 04:17:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727608623; x=1728213423;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DDrppj245KSGWP0mAqmK8ZW754NeXqHUPX0tMJRPi8Q=;
+        b=nOhos4C2MkKWXMpnQZ5djJGVY0IsCzEQzztqz7QxLHQzMZYEm9ZazPmafOIsh8BCtT
+         bRnq8AiVRLJd3XP+YJxBMIdxFCAU1VH0i4E9NtIfiP2JJJ7g1OhEVIrRMi1pkYoY/6Mc
+         0CaSzMI2aGvw4Jnx55E6iL/JKXPGsq2tnSGmcHI5hefqAg4RbgenvwwL5bkRphs5y+eD
+         ZVegTQecuJVTE040wi0WiQE8Rwil3NWA/ZGS93c2Mfeh2+L3eejIt562t5uF1JSx+yC7
+         7HWhabE4+v1EDgkFltHaqWQzNhzSkcP/SzUCKSvLYbEVU4enlEHU/uFsOm2EILQYzw1K
+         dvDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVZl0Z37RQOfkd6NrkSX2okWBVMJS8PRURhznJ4OZRYbLsqNtrj0xmZt79eFnjoGFgxkc19S4xzXF5SLFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSvr7iEPU0YFkETp+vECahjwh0ZmgGEwNvvTx8q8V9jZUZqtEZ
+	jV8dr38X0AZ4RGGiGgXhJzjxJCOzTmQr+L89uRASFXvtd04r0ITGVTLS8Iv5PpNVHXFiTL0JZBK
+	0vOe+JCk01aL0eT5vn7Ne+QlbqxD95fnJhNIdUyc5BF8mzBuTBow7zqk=
+X-Google-Smtp-Source: AGHT+IE/qH4sYXWiczEV81uXsR/IfrGeLWj+WNZepLZe5DhstnrBt2dsruVVu++ariKv662rf+Oqti7oiDttknv/tj8fnGsAW1DE
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:188a:b0:3a3:41cf:f594 with SMTP id
+ e9e14a558f8ab-3a345172981mr82407405ab.12.1727608623125; Sun, 29 Sep 2024
+ 04:17:03 -0700 (PDT)
+Date: Sun, 29 Sep 2024 04:17:03 -0700
+In-Reply-To: <20240929103859.1528-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f9372f.050a0220.aab67.001a.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Refer to ptr_eq() in the rcu_dereference() documentation.
+Hello,
 
-ptr_eq() is a mechanism that preserves address dependencies when
-comparing pointers, and should be favored when comparing a pointer
-obtained from rcu_dereference() against another pointer.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: John Stultz <jstultz@google.com>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Zqiang <qiang.zhang1211@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: maged.michael@gmail.com
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: rcu@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: lkmm@lists.linux.dev
-Cc: Nikita Popov <github@npopov.com>
-Cc: llvm@lists.linux.dev
----
-Changes since v0:
-- Include feedback from Alan Stern.
----
- Documentation/RCU/rcu_dereference.rst | 32 ++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+Reported-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
+Tested-by: syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com
 
-diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
-index 2524dcdadde2..9ef97b7ca74d 100644
---- a/Documentation/RCU/rcu_dereference.rst
-+++ b/Documentation/RCU/rcu_dereference.rst
-@@ -104,11 +104,12 @@ readers working properly:
- 	after such branches, but can speculate loads, which can again
- 	result in misordering bugs.
- 
---	Be very careful about comparing pointers obtained from
--	rcu_dereference() against non-NULL values.  As Linus Torvalds
--	explained, if the two pointers are equal, the compiler could
--	substitute the pointer you are comparing against for the pointer
--	obtained from rcu_dereference().  For example::
-+-	Use operations that preserve address dependencies (such as
-+	"ptr_eq()") to compare pointers obtained from rcu_dereference()
-+	against non-NULL pointers. As Linus Torvalds explained, if the
-+	two pointers are equal, the compiler could substitute the
-+	pointer you are comparing against for the pointer obtained from
-+	rcu_dereference().  For example::
- 
- 		p = rcu_dereference(gp);
- 		if (p == &default_struct)
-@@ -125,6 +126,23 @@ readers working properly:
- 	On ARM and Power hardware, the load from "default_struct.a"
- 	can now be speculated, such that it might happen before the
- 	rcu_dereference().  This could result in bugs due to misordering.
-+	Performing the comparison with "ptr_eq()" ensures the compiler
-+	does not perform such transformation.
-+
-+	If the comparison is against another pointer, the compiler is
-+	allowed to use either pointer for the following accesses, which
-+	loses the address dependency and allows weakly-ordered
-+	architectures such as ARM and PowerPC to speculate the
-+	address-dependent load before rcu_dereference().  For example::
-+
-+		p1 = READ_ONCE(gp);
-+		p2 = rcu_dereference(gp);
-+		if (p1 == p2)
-+			do_default(p2->a);
-+
-+	The compiler can use p1->a rather than p2->a, destroying the
-+	address dependency.  Performing the comparison with "ptr_eq()"
-+	ensures the compiler preserves the address dependencies.
- 
- 	However, comparisons are OK in the following cases:
- 
-@@ -204,6 +222,10 @@ readers working properly:
- 		comparison will provide exactly the information that the
- 		compiler needs to deduce the value of the pointer.
- 
-+	When in doubt, use operations that preserve address dependencies
-+	(such as "ptr_eq()") to compare pointers obtained from
-+	rcu_dereference() against non-NULL pointers.
-+
- -	Disable any value-speculation optimizations that your compiler
- 	might provide, especially if you are making use of feedback-based
- 	optimizations that take data collected from prior runs.  Such
--- 
-2.39.2
+Tested on:
 
+commit:         61387b8d Merge tag 'for-6.9/dm-vdo' of git://git.kerne..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=10ac0ea9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=207dbbbe28068ef0
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13c40ea9980000
+
+Note: testing is done by a robot and is best-effort only.
 
