@@ -1,383 +1,195 @@
-Return-Path: <linux-kernel+bounces-343210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874CB989835
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692F4989837
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E5C28332E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E76781F21AE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B324917E01C;
-	Sun, 29 Sep 2024 22:02:47 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1382817BED0;
+	Sun, 29 Sep 2024 22:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxO72Txb"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC80F144D1A;
-	Sun, 29 Sep 2024 22:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DCF34D8BC;
+	Sun, 29 Sep 2024 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727647367; cv=none; b=XtURXYvmwBjHzaBh0uiKPmjITxPrwtWfrwvHdx2QV+XicHSpJ+JSAofL1Qf3qn+A63zvx4Ju7H6TNz6ZEHe/bMhdOa2WSoVBB0Js43Fg1QqTf9w6BH+8Uhtl44YHlEIGAMUM8C59CD1dy3m8Xkh0g5U95O8bcWh8wgVJ0CfEIMg=
+	t=1727647426; cv=none; b=CpjAln0aBnPSEsWtHn4zbqjs4tLRdM75sZ2yD4oT3SrXAalAxbRLY0lShMwOlTzggYv8sHFTuA6jrR8EvgzQHHw5hecGab5R1w6Q8BrJeXWokPqXpQUP88sfd/xaLEkKp42EMihLzv7pAduV/vWn/DLNqIQ70YBpj1k+ou2+GVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727647367; c=relaxed/simple;
-	bh=3B+Efk6LwEpH7qQJ/Vjl75IduNUnBUJ481ltwFF4sug=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nS5UvnwxnZkW9gt1fSsvmz4y38Wswc4Gl/9VPOQMxZEBNpr3gZeFRsPj7hn7wLgKi+YT7R1CHHGeZ0JgB459YnYoWzXQYuVySdJ5kN1pWw3kcBfmVlTZhAA6Pqa9k0TfdD/CEVcpq3NwJZGuMtTR2IA2plQog2KP0a40WLqVnRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sv1zk-000000000CX-0EhH;
-	Sun, 29 Sep 2024 22:02:24 +0000
-Date: Sun, 29 Sep 2024 23:02:16 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Xu Liang <lxu@maxlinear.com>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	David Bauer <mail@david-bauer.net>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	John Crispin <john@phrozen.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC net-next] net: phy: mxl-gpy: add basic LED support
-Message-ID: <55a1f247beb80c11aa7c8a24509dd77bcf0c1338.1727645992.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1727647426; c=relaxed/simple;
+	bh=gnRVU+XWSdtQw+26C68u18ttuL5GoOOs4A59OpXac30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BTTIX2okdGo5P4cgmePe5gyppGTHwAj++ddWFGkOyq5IatD5PCrkSnD742VIGEaXtvw3WP+b/SgMSBQLL+RQ2cgzMcSxD2co0AIbT2pcdT6MBPEcQH4lSoAPGWiffqiTJj7nJ2kXnZeDBAgCMfYzkUKqKGlLjRhuDdbzEh3JmaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lxO72Txb; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5389e24a4d1so3159293e87.3;
+        Sun, 29 Sep 2024 15:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727647423; x=1728252223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oOKNP9unjnbGz/vC3RNR8i3aY4wvoDtLBu9z/FV6wn0=;
+        b=lxO72TxbmS4+KRsNdPZ2rWICBypCkC2Igw0ycYetQ6KnpOtqOJdQH5WD9xeswmbBhV
+         eYfONkQ3NsMcyCtFKrOcNZd7XGcDhwBYNhBqRG3HKcsdOW66YRKkNKDASwlh8Af9ZPqK
+         mBXL/Kp4j8W6otT93voP6SWbFRqg9o1fAuQQ6z6i18GcAlgGib2Gm+ZF6oKyt5B1jOR0
+         ldz8Ba7TXGH17oRGNCxWEtrvIfTvri82J6sgAGtpyjSjEKK9ryTXWsKKCZ9p6obUrvVp
+         Zayot7UYU0B7gpxEnxlQ6FoYQh8jZadlvyFYWzMLNuGM0kR5185M/Or+x9+v9RLhch8w
+         oSDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727647423; x=1728252223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oOKNP9unjnbGz/vC3RNR8i3aY4wvoDtLBu9z/FV6wn0=;
+        b=ZuSmbafU4I04cjCYc65rOg0z2KzILcxZNVn9X7d3+hxmYGsGfnLpJ6T2ffItnbpsH/
+         AgNel5vg2ZfH+S2AVq/hBNS7D0PtCoOzPqWIJqggMZ8sBcf7FsCqV3y84TpzGrATlTeZ
+         ikkCHEvchSTTPsHkF4rXsopttxZI86iWzxwjv3cGkVv9cK+olPZw5PbC5vi7w1wEaJt1
+         ryRylHNzeD8D66UDNNBOuWvIebododET4iU2vBC2ROrIJZ1aWTQKqimSXPBdxG9cNjA8
+         9A+ve8BCG5gpY9QgWYWWqZDyI2jG5yXYYcuTgnwrmarF3cNix/a7P6oJ3Ep+wjx6SVSE
+         CMeA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6wzPb3+0Ck1KDtENdiwtqMe3tHxeqfY6y9iwp/HAnnyyPz3zh4ZGN3f5u5Bg3C9N//pZK2/LGMpah@vger.kernel.org, AJvYcCVFiJtWxVDiXS7x23ql/QQVNpb/04y2Nxmn8yLZyreZPyt05SrgFq+JVCkQ7RACjeHODkfj1q1HwVtoPno6@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLvnO8V5IJ12B5kEgAwLmjPiSnCh4pGAe8nzjxB9NX9F5aklup
+	nDd5U4iVkGS6mWLmpVUcLo7DfqIGNjRO8ftxuebfk8VC8ehqRh4Y3MNOfNekgV/tfDdMfuCih3G
+	3Cfdbd2UpbcDy8G4ufo5u5bho5+o=
+X-Google-Smtp-Source: AGHT+IFNc5tJneem8/sh8b5+49MrMDK0yObr0P9ZF4YM2s81/IAdqytBHBeK5wjTet5KJ5F6c8P9hmT7Z8WZ5BwYUHM=
+X-Received: by 2002:a05:6512:3994:b0:535:681d:34a4 with SMTP id
+ 2adb3069b0e04-5389fc348d8mr4266404e87.7.1727647422515; Sun, 29 Sep 2024
+ 15:03:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240929185053.10554-1-pali@kernel.org>
+In-Reply-To: <20240929185053.10554-1-pali@kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 29 Sep 2024 17:03:31 -0500
+Message-ID: <CAH2r5muq4S+w-W-J+YMuJ9RzPJsbmf6zKuGPN0H8DohXe--1uA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] cifs: Improve support for native SMB symlinks
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add basic support for LEDs connected to MaxLinear GPY2xx and GPY115 PHYs.
-The PHYs allow up to 4 LEDs to be connected.
-Implement controlling LEDs in software as well as netdev trigger offloading
-and LED polarity setup.
+Merged patches 2, 3, 4 and 6 from this series into cifs-2.6.git for-next
 
-The hardware claims to support 16 PWM brightness levels but there is no
-documentation on how to use that feature, hence this is not supported.
+For patch 1, seems like rename could get in the way of backports, and
+is only a minor improvement (could consider it in the future for
+6.13-rc if part of other cleanup/improvements, but lower priority)
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/net/phy/mxl-gpy.c | 212 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 212 insertions(+)
+For patch 5 it could be ok - but wanted more opinions on that ...
+since wouldn't want it to break POSIX - e.g. what would happen with
+this patch if a Linux server changed the target of a symlink from a
+file to directory (or the other way around) - is there any risk of
+breaking POSIX symlink semantics in a pure Linux->Linux case with this
+patch?
 
-diff --git a/drivers/net/phy/mxl-gpy.c b/drivers/net/phy/mxl-gpy.c
-index e5f8ac4b4604..1fc636588c18 100644
---- a/drivers/net/phy/mxl-gpy.c
-+++ b/drivers/net/phy/mxl-gpy.c
-@@ -38,6 +38,7 @@
- #define PHY_MIISTAT		0x18	/* MII state */
- #define PHY_IMASK		0x19	/* interrupt mask */
- #define PHY_ISTAT		0x1A	/* interrupt status */
-+#define PHY_LED			0x1B	/* LEDs */
- #define PHY_FWV			0x1E	/* firmware version */
- 
- #define PHY_MIISTAT_SPD_MASK	GENMASK(2, 0)
-@@ -61,6 +62,11 @@
- 				 PHY_IMASK_ADSC | \
- 				 PHY_IMASK_ANC)
- 
-+#define GPY_MAX_LEDS		4
-+#define PHY_LED_POLARITY(idx)	BIT(12 + (idx))
-+#define PHY_LED_HWCONTROL(idx)	BIT(8 + (idx))
-+#define PHY_LED_ON(idx)		BIT(idx)
-+
- #define PHY_FWV_REL_MASK	BIT(15)
- #define PHY_FWV_MAJOR_MASK	GENMASK(11, 8)
- #define PHY_FWV_MINOR_MASK	GENMASK(7, 0)
-@@ -72,6 +78,23 @@
- #define PHY_MDI_MDI_X_CD	0x1
- #define PHY_MDI_MDI_X_CROSS	0x0
- 
-+/* LED */
-+#define VSPEC1_LED(idx)		(1 + (idx))
-+#define VSPEC1_LED_BLINKS	GENMASK(15, 12)
-+#define VSPEC1_LED_PULSE	GENMASK(11, 8)
-+#define VSPEC1_LED_CON		GENMASK(7, 4)
-+#define VSPEC1_LED_BLINKF	GENMASK(3, 0)
-+
-+#define VSPEC1_LED_LINK10	BIT(0)
-+#define VSPEC1_LED_LINK100	BIT(1)
-+#define VSPEC1_LED_LINK1000	BIT(2)
-+#define VSPEC1_LED_LINK2500	BIT(3)
-+
-+#define VSPEC1_LED_TXACT	BIT(0)
-+#define VSPEC1_LED_RXACT	BIT(1)
-+#define VSPEC1_LED_COL		BIT(2)
-+#define VSPEC1_LED_NO_CON	BIT(3)
-+
- /* SGMII */
- #define VSPEC1_SGMII_CTRL	0x08
- #define VSPEC1_SGMII_CTRL_ANEN	BIT(12)		/* Aneg enable */
-@@ -835,6 +858,150 @@ static int gpy115_loopback(struct phy_device *phydev, bool enable)
- 	return genphy_soft_reset(phydev);
- }
- 
-+static int gpy_led_brightness_set(struct phy_device *phydev,
-+				  u8 index, enum led_brightness value)
-+{
-+	int ret;
-+
-+	if (index >= GPY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* clear HWCONTROL and set manual LED state */
-+	ret = phy_modify(phydev, PHY_LED,
-+			 PHY_LED_HWCONTROL(index) | PHY_LED_ON(index),
-+			 (value == LED_OFF) ? 0 : PHY_LED_ON(index));
-+	if (ret)
-+		return ret;
-+
-+	/* clear HW LED setup */
-+	return phy_write_mmd(phydev, MDIO_MMD_VEND1, VSPEC1_LED(index), 0);
-+}
-+
-+static const unsigned long supported_triggers = (BIT(TRIGGER_NETDEV_LINK) |
-+						 BIT(TRIGGER_NETDEV_LINK_100) |
-+						 BIT(TRIGGER_NETDEV_LINK_1000) |
-+						 BIT(TRIGGER_NETDEV_LINK_2500) |
-+						 BIT(TRIGGER_NETDEV_RX) |
-+						 BIT(TRIGGER_NETDEV_TX));
-+
-+static int gpy_led_hw_is_supported(struct phy_device *phydev, u8 index,
-+				   unsigned long rules)
-+{
-+	if (index >= GPY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	/* All combinations of the supported triggers are allowed */
-+	if (rules & ~supported_triggers)
-+		return -EOPNOTSUPP;
-+
-+	return 0;
-+}
-+
-+static int gpy_led_hw_control_get(struct phy_device *phydev, u8 index,
-+				  unsigned long *rules)
-+{
-+	int val;
-+
-+	if (index >= GPY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	val = phy_read_mmd(phydev, MDIO_MMD_VEND1, VSPEC1_LED(index));
-+	if (val < 0)
-+		return val;
-+
-+	if (FIELD_GET(VSPEC1_LED_CON, val) & VSPEC1_LED_LINK10)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_10);
-+
-+	if (FIELD_GET(VSPEC1_LED_CON, val) & VSPEC1_LED_LINK100)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_100);
-+
-+	if (FIELD_GET(VSPEC1_LED_CON, val) & VSPEC1_LED_LINK1000)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_1000);
-+
-+	if (FIELD_GET(VSPEC1_LED_CON, val) & VSPEC1_LED_LINK2500)
-+		*rules |= BIT(TRIGGER_NETDEV_LINK_2500);
-+
-+	if (FIELD_GET(VSPEC1_LED_CON, val) == (VSPEC1_LED_LINK10 |
-+					       VSPEC1_LED_LINK100 |
-+					       VSPEC1_LED_LINK1000 |
-+					       VSPEC1_LED_LINK2500))
-+		*rules |= BIT(TRIGGER_NETDEV_LINK);
-+
-+	if (FIELD_GET(VSPEC1_LED_PULSE, val) & VSPEC1_LED_TXACT)
-+		*rules |= BIT(TRIGGER_NETDEV_TX);
-+
-+	if (FIELD_GET(VSPEC1_LED_PULSE, val) & VSPEC1_LED_RXACT)
-+		*rules |= BIT(TRIGGER_NETDEV_RX);
-+
-+	return 0;
-+}
-+
-+static int gpy_led_hw_control_set(struct phy_device *phydev, u8 index,
-+				  unsigned long rules)
-+{
-+	int ret;
-+	u16 val = 0;
-+
-+	if (index >= GPY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_10))
-+		val |= FIELD_PREP(VSPEC1_LED_CON, VSPEC1_LED_LINK10);
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_100))
-+		val |= FIELD_PREP(VSPEC1_LED_CON, VSPEC1_LED_LINK100);
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_1000))
-+		val |= FIELD_PREP(VSPEC1_LED_CON, VSPEC1_LED_LINK1000);
-+
-+	if (rules & BIT(TRIGGER_NETDEV_LINK) ||
-+	    rules & BIT(TRIGGER_NETDEV_LINK_2500))
-+		val |= FIELD_PREP(VSPEC1_LED_CON, VSPEC1_LED_LINK2500);
-+
-+	if (rules & BIT(TRIGGER_NETDEV_TX))
-+		val |= FIELD_PREP(VSPEC1_LED_PULSE, VSPEC1_LED_TXACT);
-+
-+	if (rules & BIT(TRIGGER_NETDEV_RX))
-+		val |= FIELD_PREP(VSPEC1_LED_PULSE, VSPEC1_LED_RXACT);
-+
-+	/* allow RX/TX pulse without link indication */
-+	if ((rules & BIT(TRIGGER_NETDEV_TX) || rules & BIT(TRIGGER_NETDEV_RX)) &&
-+	    !(val & VSPEC1_LED_CON))
-+		val |= FIELD_PREP(VSPEC1_LED_PULSE, VSPEC1_LED_NO_CON) | VSPEC1_LED_CON;
-+
-+	ret = phy_set_bits(phydev, PHY_LED, PHY_LED_HWCONTROL(index));
-+	if (ret)
-+		return ret;
-+
-+	return phy_write_mmd(phydev, MDIO_MMD_VEND1, VSPEC1_LED(index), val);
-+}
-+
-+static int gpy_led_polarity_set(struct phy_device *phydev, int index,
-+				unsigned long modes)
-+{
-+	bool active_low = false;
-+	u32 mode;
-+
-+	if (index >= GPY_MAX_LEDS)
-+		return -EINVAL;
-+
-+	for_each_set_bit(mode, &modes, __PHY_LED_MODES_NUM) {
-+		switch (mode) {
-+		case PHY_LED_ACTIVE_LOW:
-+			active_low = true;
-+			break;
-+		default:
-+		return -EINVAL;
-+		}
-+	}
-+
-+	return phy_modify(phydev, PHY_LED, PHY_LED_POLARITY(index),
-+			  active_low ? 0 : PHY_LED_POLARITY(index));
-+}
-+
- static struct phy_driver gpy_drivers[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY2xx),
-@@ -852,6 +1019,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		.phy_id		= PHY_ID_GPY115B,
-@@ -870,6 +1042,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy115_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY115C),
-@@ -887,6 +1064,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy115_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		.phy_id		= PHY_ID_GPY211B,
-@@ -905,6 +1087,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY211C),
-@@ -922,6 +1109,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		.phy_id		= PHY_ID_GPY212B,
-@@ -940,6 +1132,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY212C),
-@@ -957,6 +1154,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		.phy_id		= PHY_ID_GPY215B,
-@@ -975,6 +1177,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY215C),
-@@ -992,6 +1199,11 @@ static struct phy_driver gpy_drivers[] = {
- 		.set_wol	= gpy_set_wol,
- 		.get_wol	= gpy_get_wol,
- 		.set_loopback	= gpy_loopback,
-+		.led_brightness_set = gpy_led_brightness_set,
-+		.led_hw_is_supported = gpy_led_hw_is_supported,
-+		.led_hw_control_get = gpy_led_hw_control_get,
-+		.led_hw_control_set = gpy_led_hw_control_set,
-+		.led_polarity_set = gpy_led_polarity_set,
- 	},
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_GPY241B),
--- 
-2.46.2
+For patch 7, it is relatively larger fix (and less important for pure
+Linux workloads) so wanted some additional opinions/feedback on this
+from others
 
+On Sun, Sep 29, 2024 at 1:51=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> This patch series improves interoperability of native SMB symlinks
+> (stored in IO_REPARSE_TAG_SYMLINK reparse point) between Linux SMB
+> client and Windows SMB server storage (NTFS).
+>
+> Fixed test cases by this patch series are:
+>
+> Fixes parsing of symlinks relative to the top of the export which can be
+> created on Windows by:
+>
+>   mklink symlink \relative\path\from\export
+>
+>
+> Fixes parsing of symlinks in absolute form which can be created on
+> Windows by:
+>
+>   mklink symlink C:\absolute\path
+>
+>
+> Fixes creating of symlinks pointing to directory. So Linux commands:
+>
+>   mkdir dir
+>   ln -s dir symlink1
+>   ln -s another_dir/ symlink2
+>
+> creates a symlink which would be now understood also by Windows as
+> symlinks to directories.
+>
+>
+> Fixes creating of symlinks pointing to current or parent directory.
+> So following commands create valid symlink understood by Windows:
+>
+>   ln -s . symlink_cur
+>   ln -s .. symlink_parent
+>
+>
+> Fixes creating of absolute symlinks. Absolute symlinks on Windows are
+> quite complicated due to nature of DOS/Win32 path form used by Windows
+> applications and NT path form in which are symlink paths stored. Also
+> complication is that NT object paths have different hierarchy than POSIX
+> paths generally. Required information about NT object hierarchy used in
+> native absolute symlinks are in comments in the last patch from this
+> series.
+>
+> To resolve mentioned problems I chosse way which is used by WSL, its
+> -t drvfs has mount option -o symlinkroot=3D which specify Linux path ther=
+e
+> should point absolute windows drive letter symlinks. This could make
+> -t cifs mounts in WSL2 more compatible with symlinks coming from local
+> NTFS disks mounted by -t drvfs.
+>
+> I'm not sure how good are these changes, but I think that they improve
+> compatibility of symlinks between Linux and Windows systems. Maybe there
+> is some better solution how to handle some of those issues?
+>
+>
+> Pali Roh=C3=A1r (7):
+>   cifs: Rename smb2_get_reparse_inode to smb2_create_reparse_inode
+>   cifs: Improve creating native symlinks pointing to directory
+>   cifs: Fix creating native symlinks pointing to current or parent
+>     directory
+>   cifs: Fix parsing native symlinks relative to the export
+>   cifs: Fix parsing native symlinks directory/file type
+>   cifs: Validate content of native symlink
+>   cifs: Fix creating and resolving absolute NT-style symlinks
+>
+>  fs/smb/client/cifs_unicode.c |  17 +-
+>  fs/smb/client/cifsglob.h     |   1 +
+>  fs/smb/client/cifsproto.h    |   1 +
+>  fs/smb/client/fs_context.c   |  22 ++
+>  fs/smb/client/fs_context.h   |   2 +
+>  fs/smb/client/inode.c        |   1 +
+>  fs/smb/client/reparse.c      | 513 ++++++++++++++++++++++++++++++++---
+>  fs/smb/client/reparse.h      |   4 +-
+>  fs/smb/client/smb1ops.c      |   3 +-
+>  fs/smb/client/smb2file.c     |  67 ++++-
+>  fs/smb/client/smb2inode.c    |  15 +-
+>  fs/smb/client/smb2proto.h    |  13 +-
+>  12 files changed, 602 insertions(+), 57 deletions(-)
+>
+> --
+> 2.20.1
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
