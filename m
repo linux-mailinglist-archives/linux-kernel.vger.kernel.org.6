@@ -1,237 +1,165 @@
-Return-Path: <linux-kernel+bounces-342721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46CE98921C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:20:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A11D98921F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671EA283F26
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3096828407C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91154A04;
-	Sun, 29 Sep 2024 00:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D716FB9;
+	Sun, 29 Sep 2024 00:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHdfrHcf"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BgGtaTUn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBED918622;
-	Sun, 29 Sep 2024 00:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B7E382;
+	Sun, 29 Sep 2024 00:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727569224; cv=none; b=auaLqElmHbqXWHqiVF3XfSBIj4FXG5mtKu8OfZxU4mY0/NheAUxqEEQ1UPQCBgz72NJQ2JJNrJs2Lcjk7YoKcghCzyxrLoDhCfGSC88na7A1+3ORCnPYBckNZWPn3ThtDs5eK8Rp1bUX+EgLloM+8buIRMIqfzx3XaE8M4SwKCI=
+	t=1727569571; cv=none; b=MOGzCH7MG5N34XOTFJCh/vds3u1FMa7CZVdH5jMjeN66W0dWuHL7Uim0htI1cNGbq0haERv9r6eryXThGnDnRpb8IfTwREmhCV1bEUH2OY9EwMwrlGAA7tBy5rsIm/bD0iy/UPkPNXWdrUWO8BehMHF4S8u0MNdbxIHgORk+pco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727569224; c=relaxed/simple;
-	bh=Q9NKGA9e8SpsBeHRGYpOWyq1+YIDZCPIRoH/v9mX76Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=GJurvDrOreuanwilTxNUiydeUpe0MZNGyMknIB9O5cr304kjfok4kBOYFtP10mOFFnOmZwCjLIOSv45kKsc+EJFsyMSJgJbXlXMQMr1/zOuSxBzl18HkFx4UVQ+NkoVRdCeK8K4wN5tiBCMiLu8V5pJdrUq4SgI5V2PRqKcGewU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHdfrHcf; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71971d2099cso2630298b3a.2;
-        Sat, 28 Sep 2024 17:20:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727569222; x=1728174022; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AciA5lkArq2LcuAgiidbmpLX8//NU2EZPXWMWey1klw=;
-        b=BHdfrHcfNpWDhIDQe0+Z9HOvc4bH6PA4azOhFArlMKbPW/gbXn5HuczycXYLiiU2gA
-         pb3gYistZH5BMEQL5Ii6oZhszrM2cbHQk6hD1Dhu6F1CD2T/tN3VNbtBeCQ09vfCJXLr
-         ztiWHjPjjMValXyzqN7NJAHcYmLuBtLhmEAlMczqoGz5TwX7vTtcsY22aQw9xIPqbIMf
-         0qTYzLA6J+Qvg46ZR7Z73r6RAxXEzPTPHMeO7H5TOWvDJqYv3ru5QiZ8cZP1zks+jaeo
-         gar3t15Vvh83Ofc03V7XqUEVP+YQ3ZioTu5VAu/S+kqPiTUxPuJ1D6toQBRe8GJd9oRB
-         NZOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727569222; x=1728174022;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AciA5lkArq2LcuAgiidbmpLX8//NU2EZPXWMWey1klw=;
-        b=I3q1TQEHuR7Q64BmTdo9dQIG+rfgfCzDWmY8tZbpOEuB55EbOOgsVXRgKcbf9gw9Lg
-         v+WHrT6jj8wgM45y307kg3acq6lQAbZPApVLIgqVKYH9UNtofLhGhKAOzQkTjVLoJR32
-         PyIlJCvJYUYgBtE0XUP75ngxbBegw5r0VRxRzaRbNBIkjUldL3cAxD/nW2kzuyqEhfqR
-         3m/Gbd23QjXTYRCv4aNUpJtP2sgGgTORnY+kVYmwMPHj6WBaLz3MzQhYGkySiVzvcbxh
-         AHkhn7Da5ik7+9q8HfvPci6WF/Xob77gu8Snmw1NId3VUlJOiq2V0HQWqnWXhVdeYyhw
-         RlQA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/IvkXIyN45aPZpICPX1neMr9Auq6/DKsssoW+WovPzsp8Stj+aFOVeFWMUNLZ9uE/aRbqpQxGro9oOBM=@vger.kernel.org, AJvYcCXtI4P6dM8qcm1FzYLCyU7kATDSwXY2Sdu1fqRXtbo+srdp2hDZXiZsRWlLJ/GOYoLOv1K/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW6poremw4mCcmrTnmDjO4S/5tinBKdXC4uLcZOwuBj+XnUhLS
-	PrR0G8HKoc9hVzVKRZPzZuGysvM78/V0QMklBgZxMdqHQjvHU1NB
-X-Google-Smtp-Source: AGHT+IGrPCIsZd3xVlDfQ3t7v5wWjb0n8Dw8h91/C6QpaBBBIkYhcxX80aGJo1MfszwJ4cOHtuUW3Q==
-X-Received: by 2002:a05:6a00:194f:b0:717:e01d:312f with SMTP id d2e1a72fcca58-71b26078cf5mr12778522b3a.27.1727569221947;
-        Sat, 28 Sep 2024 17:20:21 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b390dsm3889001a12.20.2024.09.28.17.20.14
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 28 Sep 2024 17:20:21 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1727569571; c=relaxed/simple;
+	bh=EwYvhotwgMeB4AfN253GUIcoDG6KLpKAA6s5FiZ2mT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t2JM/fuzQdpbIH0jw4U52Zxot9v9XJc691cTySJuLKHLVbZM0fWGDz+Gq3z1d0ivhufOSkkTArHS25X1BKqFlp2UIMBbwQqG9d3j0I7D+DZYhwBxc9OfFobhHpam26r0ytfsm5g4cA1jPj1yA9OV94lz1rf5SV1vBuyAQ4mH3mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BgGtaTUn; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727569568; x=1759105568;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=EwYvhotwgMeB4AfN253GUIcoDG6KLpKAA6s5FiZ2mT4=;
+  b=BgGtaTUnaLDELYVrjZHozl35WG3eZTiUr+Kko8bIIck/1WpCMS9MtfOE
+   810MOM8+yzu/RqYRUDhMy419p0r+ZR/x0T+VCqsEozXD93nxX6pcdk6uE
+   e4CtrxG/d2I4WRPoR3T14SEgItxf+mXq3dma8oe6+FJpTIIWrImsGDMV2
+   LVJvdTggSUNJHaSA4Ra0wX6YUgzwJLV/+BqQFPYKrrv+hhQHVTA9zsalt
+   8wU4L9N52ncF0QfraXfx3u4GzRScjoTZB6QUo7Ek56JtnlLNWnYQya/lh
+   NkE59KXgAk6x/kzyQuTKOgLjBJ5u0K7P/KQZaKRxAml71OFVca5IfBUKw
+   w==;
+X-CSE-ConnectionGUID: fv9GcW+xRMOGIitKySQgjg==
+X-CSE-MsgGUID: yHP6FbZTSo2pFHm5pvGRAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26489601"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="26489601"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 17:26:07 -0700
+X-CSE-ConnectionGUID: IJEpIeM8S9G5HFY76Z8rCQ==
+X-CSE-MsgGUID: w7lS5/EoSa6dINB4l2OmVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="77427612"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 28 Sep 2024 17:26:03 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1suhlB-000NmF-1f;
+	Sun, 29 Sep 2024 00:26:01 +0000
+Date: Sun, 29 Sep 2024 08:25:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
+	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
+Message-ID: <202409291048.zLqDeqpO-lkp@intel.com>
+References: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <60123be5-ae24-4426-b9ca-6f39e64ab76b@app.fastmail.com>
-Date: Sun, 29 Sep 2024 08:20:01 +0800
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Alan Stern <stern@rowland.harvard.edu>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- John Stultz <jstultz@google.com>,
- Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BD97A93F-EAFC-4C32-97F8-EEC8C1B48519@gmail.com>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
- <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
- <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
- <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
- <60123be5-ae24-4426-b9ca-6f39e64ab76b@app.fastmail.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
 
-2024=E5=B9=B49=E6=9C=8829=E6=97=A5 07:55=EF=BC=8CBoqun Feng =
-<boqun.feng@gmail.com> wrote=EF=BC=9A
->=20
->=20
->=20
-> On Sun, Sep 29, 2024, at 6:26 AM, Alan Huang wrote:
->> 2024=E5=B9=B49=E6=9C=8828=E6=97=A5 23:55=EF=BC=8CMathieu Desnoyers =
-<mathieu.desnoyers@efficios.com> wrote=EF=BC=9A
->>>=20
->>> On 2024-09-28 17:49, Alan Stern wrote:
->>>> On Sat, Sep 28, 2024 at 11:32:18AM -0400, Mathieu Desnoyers wrote:
->>>>> On 2024-09-28 16:49, Alan Stern wrote:
->>>>>> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers =
-wrote:
->>>>>>> equality, which does not preserve address dependencies and =
-allows the
->>>>>>> following misordering speculations:
->>>>>>>=20
->>>>>>> - If @b is a constant, the compiler can issue the loads which =
-depend
->>>>>>>   on @a before loading @a.
->>>>>>> - If @b is a register populated by a prior load, weakly-ordered
->>>>>>>   CPUs can speculate loads which depend on @a before loading @a.
->>>>>>=20
->>>>>> It shouldn't matter whether @a and @b are constants, registers, =
-or
->>>>>> anything else.  All that matters is that the compiler uses the =
-wrong
->>>>>> one, which allows weakly ordered CPUs to speculate loads you =
-wouldn't
->>>>>> expect it to, based on the source code alone.
->>>>>=20
->>>>> I only partially agree here.
->>>>>=20
->>>>> On weakly-ordered architectures, indeed we don't care whether the
->>>>> issue is caused by the compiler reordering the code (constant)
->>>>> or the CPU speculating the load (registers).
->>>>>=20
->>>>> However, on strongly-ordered architectures, AFAIU, only the =
-constant
->>>>> case is problematic (compiler reordering the dependent load), =
-because
->>>> I thought you were trying to prevent the compiler from using one =
-pointer
->>>> instead of the other, not trying to prevent it from reordering =
-anything.
->>>> Isn't this the point the documentation wants to get across when it =
-says
->>>> that comparing pointers can be dangerous?
->>>=20
->>> The motivation for introducing ptr_eq() is indeed because the
->>> compiler barrier is not sufficient to prevent the compiler from
->>> using one pointer instead of the other.
->>=20
->> barrier_data(&b) prevents that.
->>=20
->=20
-> It prevents that because it acts as barrier() + OPTIMIZER_HIDE_VAR(b).
-> I don=E2=80=99t see much value of using that since we can resolve the =
-problem
-> with OPTIMIZER_HIDE_VAR() alone.
+Hi Adrián,
 
-Yeah, barrier_data generates more instructions.
+kernel test robot noticed the following build errors:
 
->=20
-> Regards,
-> Boqun
->=20
->>>=20
->>> But it turns out that ptr_eq() is also a good tool to prevent the
->>> compiler from reordering loads in case where the comparison is
->>> done against a constant.
->>>=20
->>>>> CPU speculating the loads across the control dependency is not an
->>>>> issue.
->>>>>=20
->>>>> So am I tempted to keep examples that clearly state whether
->>>>> the issue is caused by compiler reordering instructions, or by
->>>>> CPU speculation.
->>>> Isn't it true that on strongly ordered CPUs, a compiler barrier is
->>>> sufficient to prevent the rcu_dereference() problem?  So the whole =
-idea
->>>> behind ptr_eq() is that it prevents the problem on all CPUs.
->>>=20
->>> Correct. But given that we have ptr_eq(), it's good to show how it
->>> equally prevents the compiler from reordering address-dependent =
-loads
->>> (comparison with constant) *and* prevents the compiler from using
->>> one pointer rather than the other (comparison between two =
-non-constant
->>> pointers) which affects speculation on weakly-ordered CPUs.
->>>=20
->>>> You can make your examples as specific as you like, but the fact =
-remains
->>>> that ptr_eq() is meant to prevent situations where both:
->>>> The compiler uses the wrong pointer for a load, and
->>>> The CPU performs the load earlier than you want.
->>>> If either one of those doesn't hold then the problem won't arise.
->>>=20
->>> Correct.
->>>=20
->>> Thanks,
->>>=20
->>> Mathieu
->>>=20
->>>=20
->>> --=20
->>> Mathieu Desnoyers
->>> EfficiOS Inc.
->>> https://www.efficios.com
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.11 next-20240927]
+[cannot apply to drm-misc/drm-misc-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-introduce-job-cycle-and-timestamp-accounting/20240924-071018
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240923230912.2207320-4-adrian.larumbe%40collabora.com
+patch subject: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
+config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/archive/20240929/202409291048.zLqDeqpO-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409291048.zLqDeqpO-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409291048.zLqDeqpO-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/math64.h:6,
+                    from include/linux/time.h:6,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
+                    from drivers/gpu/drm/panthor/panthor_drv.c:7:
+   drivers/gpu/drm/panthor/panthor_drv.c: In function 'panthor_gpu_show_fdinfo':
+>> drivers/gpu/drm/panthor/panthor_drv.c:1389:45: error: implicit declaration of function 'arch_timer_get_cntfrq' [-Wimplicit-function-declaration]
+    1389 |                                             arch_timer_get_cntfrq()));
+         |                                             ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/math.h:40:39: note: in definition of macro 'DIV_ROUND_DOWN_ULL'
+      40 |         ({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
+         |                                       ^~
+   drivers/gpu/drm/panthor/panthor_drv.c:1388:28: note: in expansion of macro 'DIV_ROUND_UP_ULL'
+    1388 |                            DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
+         |                            ^~~~~~~~~~~~~~~~
 
 
+vim +/arch_timer_get_cntfrq +1389 drivers/gpu/drm/panthor/panthor_drv.c
+
+  1377	
+  1378	static void panthor_gpu_show_fdinfo(struct panthor_device *ptdev,
+  1379					    struct panthor_file *pfile,
+  1380					    struct drm_printer *p)
+  1381	{
+  1382		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_ALL)
+  1383			panthor_fdinfo_gather_group_samples(pfile);
+  1384	
+  1385		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP) {
+  1386	#ifdef CONFIG_ARM_ARCH_TIMER
+  1387			drm_printf(p, "drm-engine-panthor:\t%llu ns\n",
+  1388				   DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
+> 1389						    arch_timer_get_cntfrq()));
+  1390	#endif
+  1391		}
+  1392		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_CYCLES)
+  1393			drm_printf(p, "drm-cycles-panthor:\t%llu\n", pfile->stats.cycles);
+  1394	
+  1395		drm_printf(p, "drm-maxfreq-panthor:\t%lu Hz\n", ptdev->fast_rate);
+  1396		drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequency);
+  1397	}
+  1398	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
