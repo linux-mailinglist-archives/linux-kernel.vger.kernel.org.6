@@ -1,220 +1,240 @@
-Return-Path: <linux-kernel+bounces-343033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942C9989610
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1425989613
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7E51C2159E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C74271C215CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F297117A924;
-	Sun, 29 Sep 2024 14:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD3017C213;
+	Sun, 29 Sep 2024 15:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WrsSu4ay"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcUtCgTO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9D38F6D;
-	Sun, 29 Sep 2024 14:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414E51465B8;
+	Sun, 29 Sep 2024 15:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727621685; cv=none; b=HBpUwkbvT+VNPv1G5fhZ+WKjrRQzUuct5Q3+cynmgVDpX5mRovfyvuKrhVo+kFxCnUTs3tEUNfv343kSNfrgN2wUGBlVTRV1pb3b/qQBIkdAwPyuaYlCnUUnk5ryWW+WXP9gxU8gNsonyXW0csCEImx9jCNuehnLn+xVE/Eknwg=
+	t=1727622747; cv=none; b=LCdPyI6qP4D0gbamOCO+tSGT8ZJHJz0GgKF5mTLH/9/w9VtXQciYnviUWijNxG/iWl7D0MGG1eXDQ2LRiHQTxJ+OZPw+iND+5la7GzVmIFRrWWBh2lgvyQzHna3Vv1ClmTDY+e9k/iti1LAXyU0CxeLuJ2q43ziG+wMggrkMMgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727621685; c=relaxed/simple;
-	bh=h1wCOEWNwmeVwY+5OCdLYnqmKx4uvrqO3C2WhNd2TVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IKzcAl/LSusz5IqqNoY+auT5KGcaEJ3MavdayWtV75Nq4aDvFhvAcjh0pp0CQz2vfY7bv6sSGPcOZpxY15CxT7CGoxwmRE1ktYFyFpwbOZjl+PSxj+hNt9oBvuch2oMtKzPQ8W6UXx5Aq0cHkbk29hSs7xZ1M83ScrfdKEx7G2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WrsSu4ay; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DC4C4CEC5;
-	Sun, 29 Sep 2024 14:54:42 +0000 (UTC)
+	s=arc-20240116; t=1727622747; c=relaxed/simple;
+	bh=8iK+wLu+DSCR1nDTiqALV97qNsthNxMyDvf/+B2qlKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iiBM/We1fEfaEKN8eG16suvLHGD8EQmYGLSxq/URZ65iXRgKfkzs43jjNrkGVk2SKZsMjjOKMjgfNnaXSBKMpG9zZjQPJ2kQvVuN+uid/FkEj8qpL3oyRdT6MNXoXzNJATuSkDNQyiXD8fsOu2oKD9FPet4EBWKTJV8l9YKtkUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YcUtCgTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF25BC4CEC5;
+	Sun, 29 Sep 2024 15:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727621684;
-	bh=h1wCOEWNwmeVwY+5OCdLYnqmKx4uvrqO3C2WhNd2TVA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WrsSu4ays+rLIoiR15IIuNJ7HVySCanwwOV6j788lTnWRximAWD4nrrdbaahtTzgS
-	 bixZQDpjR5XYhidmGXABHqFKV5B56HBNMEGQ1a+60FKFyYXFcFo1BMi+wpxGwQq9N0
-	 OrRYfTRQlyyS+bPc79truqaBIfXBd+BKrNw/qHM3QElCRF+j891sE/GyHtdD890cpX
-	 8KOY0XBLB8+e2ot7IzBjZYOihDe7pvhSF7lP8nMLo/Dqk1FHidmuT6MYScethQQEwN
-	 uKmIBvaAzs/BY2CEgYWT4kO0T3VoGOdv3ZlfVzljsgjFxw6N7/oM9GWQ0jBEGbuRhk
-	 qNpv2TZzEIOeg==
-Date: Sun, 29 Sep 2024 15:54:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: bmi270: Add spi driver for bmi270 imu
-Message-ID: <20240929155437.60115014@jic23-huawei>
-In-Reply-To: <20240927183717.3613601-1-lanzano.alex@gmail.com>
-References: <20240927183717.3613601-1-lanzano.alex@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1727622746;
+	bh=8iK+wLu+DSCR1nDTiqALV97qNsthNxMyDvf/+B2qlKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YcUtCgTO72dzAyuttuqQtWi9zdBJAWcr3eRvd60dIoNA6FCOtAMXPnlkEb1+lhou1
+	 Qq0KSxOJy330zrUcZmKiAwyzEZJMb2kDfwCA35JL14xzgtTiXhFxRsApVHQ9dd7Qr/
+	 y264RiKnpKrGjCUlSpmqsGPWj6dse15GQ11ybg8DZVVV/LqnXfBTa8/TEbdAqYxFQk
+	 DxmY02iHZmQ2X0BE0s1Qnsy6dC89umYmEA5Z8G8OVzx5ghctwyLQloAiTfvxcYjRmu
+	 D7Rw6DsRtOYaaLwSorgAdEcxlHX94/pwrxXyf8ZmhWP1YM3A1E62xth2wPFbPv9SAP
+	 3Akn0LafpJ2ZA==
+Date: Sun, 29 Sep 2024 17:12:19 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Gary Guo <gary@garyguo.net>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, akpm@linux-foundation.org,
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com, lina@asahilina.net,
+	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v7 15/26] rust: alloc: implement `collect` for `IntoIter`
+Message-ID: <ZvluU69LMB6nuD6r@pollux>
+References: <20240911225449.152928-1-dakr@kernel.org>
+ <20240911225449.152928-16-dakr@kernel.org>
+ <20240928202734.4b518854.gary@garyguo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240928202734.4b518854.gary@garyguo.net>
 
-On Fri, 27 Sep 2024 14:37:10 -0400
-Alex Lanzano <lanzano.alex@gmail.com> wrote:
-
-> Implement SPI driver for the Bosch BMI270 6-axis IMU. Provide raw read
-> write access to acceleration and angle velocity measurements via the SPI
-> interface on the device.
+On Sat, Sep 28, 2024 at 08:27:34PM +0100, Gary Guo wrote:
+> On Thu, 12 Sep 2024 00:52:51 +0200
+> Danilo Krummrich <dakr@kernel.org> wrote:
 > 
-> Signed-off-by: Alex Lanzano <lanzano.alex@gmail.com>
+> > Currently, we can't implement `FromIterator`. There are a couple of
+> > issues with this trait in the kernel, namely:
+> > 
+> >   - Rust's specialization feature is unstable. This prevents us to
+> >     optimze for the special case where `I::IntoIter` equals `Vec`'s
+> >     `IntoIter` type.
+> >   - We also can't use `I::IntoIter`'s type ID either to work around this,
+> >     since `FromIterator` doesn't require this type to be `'static`.
+> >   - `FromIterator::from_iter` does return `Self` instead of
+> >     `Result<Self, AllocError>`, hence we can't properly handle allocation
+> >     failures.
+> >   - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle
+> >     additional allocation flags.
+> > 
+> > Instead, provide `IntoIter::collect`, such that we can at least convert
+> > `IntoIter` into a `Vec` again.
+> > 
+> > Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> 
+> A question is how useful is this? The way this can be used seems
+> fairly limited: you `into_iter`, consume a few elements, and the
+> `collect()`?
 
-A few minor things inline but looks good in general.
+Well, it allows us to convert back to a `Vec`, which we otherwise can't until we
+implement our own `FromIterator` trait.
 
-Jonathan
+Also note that we want to have this specialization of `collect` for performance
+reasons anyways. The Rust stdlib uses specialization traits (which aren't yet
+stable) for this optimization.
 
-> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-> index 608b29ea58a3..8950e6234203 100644
-> --- a/drivers/iio/imu/bmi270/bmi270.h
-> +++ b/drivers/iio/imu/bmi270/bmi270.h
-> @@ -4,11 +4,13 @@
->  #define BMI270_H_
->  
->  #include <linux/regmap.h>
-> +#include <linux/iio/iio.h>
->  
->  struct device;
->  struct bmi270_data {
->  	struct device *dev;
->  	struct regmap *regmap;
-> +	__le16 sample __aligned(IIO_DMA_MINALIGN);
+> 
+> It feels whatever user this serves, it would make more sense for them
+> to use a `VecDeque` and just `pop_front()`.
 
-For the read path you are bouncing anyway, so the DMA_MINALIGN is only needed
-for anything the write direction.  Make the suggested change below and that
-will bounce as well so that you don't need this.
+We don't have `VecDeque` (yet).
 
->  };
->  
->  extern const struct regmap_config bmi270_regmap_config;
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> index 8e45343d6472..4decdad791d9 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_core.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> @@ -66,16 +66,9 @@ enum bmi270_scan {
->  	BMI270_SCAN_GYRO_Z,
->  };
->  
-> -const struct regmap_config bmi270_regmap_config = {
-> -	.reg_bits = 8,
-> -	.val_bits = 8,
-> -};
-> -EXPORT_SYMBOL_NS_GPL(bmi270_regmap_config, IIO_BMI270);
-> -
->  static int bmi270_get_data(struct bmi270_data *bmi270_device,
->  			   int chan_type, int axis, int *val)
->  {
-> -	__le16 sample;
->  	int reg;
->  	int ret;
->  
-> @@ -90,11 +83,13 @@ static int bmi270_get_data(struct bmi270_data *bmi270_device,
->  		return -EINVAL;
->  	}
->  
-> -	ret = regmap_bulk_read(bmi270_device->regmap, reg, &sample, sizeof(sample));
-> +	ret = regmap_bulk_read(bmi270_device->regmap, reg,
-> +			       &bmi270_device->sample,
-> +			       sizeof(bmi270_device->sample));
->  	if (ret)
->  		return ret;
->  
-> -	*val = sign_extend32(le16_to_cpu(sample), 15);
-> +	*val = sign_extend32(le16_to_cpu(bmi270_device->sample), 15);
->  
->  	return 0;
->  }
-> diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-> index f70dee2d8a64..ce8279ae90cd 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_i2c.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-> @@ -9,12 +9,17 @@
->  
->  #include "bmi270.h"
->  
-> +const struct regmap_config bmi270_i2c_regmap_config = {
-static const
+> 
+> Also, inline comments below.
+> 
+> > ---
+> >  rust/kernel/alloc/kvec.rs | 86 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 86 insertions(+)
+> > 
+> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
+> > index e91761c5c52d..686e969463f8 100644
+> > --- a/rust/kernel/alloc/kvec.rs
+> > +++ b/rust/kernel/alloc/kvec.rs
+> > @@ -690,6 +690,92 @@ impl<T, A> IntoIter<T, A>
+> >      fn as_raw_mut_slice(&mut self) -> *mut [T] {
+> >          ptr::slice_from_raw_parts_mut(self.ptr, self.len)
+> >      }
+> > +
+> > +    fn into_raw_parts(self) -> (*mut T, NonNull<T>, usize, usize) {
+> > +        let me = ManuallyDrop::new(self);
+> > +        let ptr = me.ptr;
+> > +        let buf = me.buf;
+> > +        let len = me.len;
+> > +        let cap = me.cap;
+> > +        (ptr, buf, len, cap)
+> > +    }
+> > +
+> > +    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIter`.
+> > +    ///
+> > +    /// # Examples
+> > +    ///
+> > +    /// ```
+> > +    /// let v = kernel::kvec![1, 2, 3]?;
+> > +    /// let mut it = v.into_iter();
+> > +    ///
+> > +    /// assert_eq!(it.next(), Some(1));
+> > +    ///
+> > +    /// let v = it.collect(GFP_KERNEL);
+> > +    /// assert_eq!(v, [2, 3]);
+> > +    ///
+> > +    /// # Ok::<(), Error>(())
+> > +    /// ```
+> > +    /// # Implementation Details
+> > +    ///
+> > +    /// Currently, we can't implement `FromIterator`. There are a couple of issues with this trait
+> > +    /// in the kernel, namely:
+> > +    ///
+> > +    /// - Rust's specialization feature is unstable. This prevents us to optimze for the special
+> > +    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
+> > +    /// - We also can't use `I::IntoIter`'s type ID either to work around this, since `FromIterator`
+> > +    ///   doesn't require this type to be `'static`.
+> > +    /// - `FromIterator::from_iter` does return `Self` instead of `Result<Self, AllocError>`, hence
+> > +    ///   we can't properly handle allocation failures.
+> > +    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle additional allocation
+> > +    ///   flags.
+> > +    ///
+> > +    /// Instead, provide `IntoIter::collect`, such that we can at least convert a `IntoIter` into a
+> > +    /// `Vec` again.
+> > +    ///
+> > +    /// Note that `IntoIter::collect` doesn't require `Flags`, since it re-uses the existing backing
+> > +    /// buffer. However, this backing buffer may be shrunk to the actual count of elements.
+> > +    pub fn collect(self, flags: Flags) -> Vec<T, A> {
+> > +        let (mut ptr, buf, len, mut cap) = self.into_raw_parts();
+> > +        let has_advanced = ptr != buf.as_ptr();
+> > +
+> > +        if has_advanced {
+> > +            // Copy the contents we have advanced to at the beginning of the buffer.
+> > +            //
+> > +            // SAFETY:
+> > +            // - `ptr` is valid for reads of `len * size_of::<T>()` bytes,
+> > +            // - `buf.as_ptr()` is valid for writes of `len * size_of::<T>()` bytes,
+> > +            // - `ptr` and `buf.as_ptr()` are not be subject to aliasing restrictions relative to
+> > +            //   each other,
+> > +            // - both `ptr` and `buf.ptr()` are properly aligned.
+> > +            unsafe { ptr::copy(ptr, buf.as_ptr(), len) };
+> > +            ptr = buf.as_ptr();
+> > +        }
+> > +
+> > +        // This can never fail, `len` is guaranteed to be smaller than `cap`.
+> > +        let layout = core::alloc::Layout::array::<T>(len).unwrap();
+> 
+> nit: could be `unwrap_unchecked()`. Although feel free to leave it to
+> avoid an additional unsafe.
 
-(same for spi one)
+This will be replaced with `ArrayLayout` anyways.
 
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +};
-> +
->  static int bmi270_i2c_probe(struct i2c_client *client)
->  {
->  	struct regmap *regmap;
->  	struct device *dev = &client->dev;
->  
-> -	regmap = devm_regmap_init_i2c(client, &bmi270_regmap_config);
-> +	regmap = devm_regmap_init_i2c(client, &bmi270_i2c_regmap_config);
->  	if (IS_ERR(regmap))
->  		return dev_err_probe(dev, PTR_ERR(regmap),
->  				     "Failed to init i2c regmap");
-> diff --git a/drivers/iio/imu/bmi270/bmi270_spi.c b/drivers/iio/imu/bmi270/bmi270_spi.c
-> new file mode 100644
-> index 000000000000..906b9b852a09
-> --- /dev/null
-> +++ b/drivers/iio/imu/bmi270/bmi270_spi.c
-> @@ -0,0 +1,89 @@
-> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +
-> +#include <linux/module.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/iio/iio.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/regmap.h>
-Alphabetical order preferred.
+> 
+> > +
+> > +        // SAFETY: `buf` points to the start of the backing buffer and `len` is guaranteed to be
+> > +        // smaller than `cap`. Depending on `alloc` this operation may shrink the buffer or leaves
+> > +        // it as it is.
+> > +        ptr = match unsafe { A::realloc(Some(buf.cast()), layout, flags) } {
+> > +            // If we fail to shrink, which likely can't even happen, continue with the existing
+> > +            // buffer.
+> > +            Err(_) => ptr,
+> > +            Ok(ptr) => {
+> > +                cap = len;
+> > +                ptr.as_ptr().cast()
+> > +            }
+> > +        };
+> 
+> This should be moved to `Vec::shrink_to_fit`. And then this function
+> can just `Vec::from_raw_parts(...)` and then `vec.shrink_to_fit`.
 
-> +
-> +#include "bmi270.h"
-> +
-> +/*
-> + * The following two functions are taken from the BMI323 spi driver code.
-> + * In section 6.4 of the BMI270 data it specifies that after a read
-> + * operation the first data byte from the device is a dummy byte
-> + */
-> +static int bmi270_regmap_spi_read(void *context, const void *reg_buf,
-> +				  size_t reg_size, void *val_buf,
-> +				  size_t val_size)
-> +{
-> +	struct spi_device *spi = context;
+I'll put it on my list for a follow up patch, I really think we should focus on
+landing the series now.
 
-I'd be tempted to rename the input parameter context to spi and then
-parse it directly to the spi_write_then_read()
+> 
+> But my question would be why this function needs to shrink in the first
+> place.
 
-> +
-> +	return spi_write_then_read(spi, reg_buf, reg_size, val_buf, val_size);
-> +}
-> +
-> +static int bmi270_regmap_spi_write(void *context, const void *data,
-> +				   size_t count)
-> +{
-> +	struct spi_device *spi = context;
-> +	u8 *data_buff = (u8 *)data;
-> +
-> +	/*
-> +	 * Remove the extra pad byte since its only needed for the read
-> +	 * operation
-> +	 */
-> +	data_buff[1] = data_buff[0];
-> +	return spi_write(spi, data_buff + 1, count - 1);
-That needs a DMA safe buffer (unlike write_then_read which always
-bounces).  I'd avoid that complexity by using spi_write_then_read
-here as well but set the read to 0 length and pass NULL for the buffer.
-That function is intended to be used like this as it special cases 0
-length for either write or read buffers.
+It's meant as an optimization for `Iterator::collect` in the mid / long term. A
+user expects that the resulting allocation isn't larger than actually needed for
+`Iterator::collect`.
 
-> +}
-
+> 
+> > +
+> > +        // SAFETY: If the iterator has been advanced, the advanced elements have been copied to
+> > +        // the beginning of the buffer and `len` has been adjusted accordingly.
+> > +        //
+> > +        // - `ptr` is guaranteed to point to the start of the backing buffer.
+> > +        // - `cap` is either the original capacity or, after shrinking the buffer, equal to `len`.
+> > +        // - `alloc` is guaranteed to be unchanged since `into_iter` has been called on the original
+> > +        //   `Vec`.
+> > +        unsafe { Vec::from_raw_parts(ptr, len, cap) }
+> > +    }
+> >  }
+> >  
+> >  impl<T, A> Iterator for IntoIter<T, A>
+> 
 
