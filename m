@@ -1,250 +1,167 @@
-Return-Path: <linux-kernel+bounces-342982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E6C989580
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:50:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D79A989573
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A382A1F218D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:50:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30ED71C219EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA84178372;
-	Sun, 29 Sep 2024 12:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D797E145345;
+	Sun, 29 Sep 2024 12:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="MicVUQr9"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EpXb7mLa"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2042.outbound.protection.outlook.com [40.92.20.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E3217736;
-	Sun, 29 Sep 2024 12:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727614241; cv=none; b=K3+AGsVAidYU0wcBjFqVOxduUjR1x8fCfHDpCaTkXtMrn4miWnbLYo1/l6Bx93CzWpLkz/F4vN4WHJ+lFbr8bccFZIrTuJmlNIlaOMmYNva0erFbi8cszhVC3+uHeiGHZuKkBHiSnpflqvyBWhAG4UZ2mTNlNn2DUaHjJedNQmo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727614241; c=relaxed/simple;
-	bh=A4Xma3aEfClf0VRzpy859k4O1GV720Gmw2TbUoqI8dU=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=jAiclShpsTSfOkG7HfMXwaptRnkYHJ8UF5qnFt9+va9xJyr1S55CEUe4YnlP3sw5hx8MNmMXuF91PxaKRv4p+hEJYuapYtGL/GAAYcqQrXcgodFUo3XQD3fZ4hknIBaQTLe+lzbOpQqGjQBwuj5QRk/CNWL5Kg2wZq0VWK0yhPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=MicVUQr9; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727614228; bh=7yMHizI6Cccfw0lEMZYdq67pnmHz1qj9thKRJKQGZ3E=;
-	h=From:To:Cc:Subject:Date;
-	b=MicVUQr9Qd1me3CWvMopb3yVwVPFeQ/jPj9kSBSTmseZnHMJHXeMXVH2EH8GPFNlQ
-	 BuL4RzPgNqU3OlMkFKOiivp/sfSgOKEi4LMJ+xLmraeLn711GjLXPBPaKF4mvcF4oV
-	 INoD8AfMiB4OiB99c7+0QFvT7Wj+HTHS+EX0Gcnk=
-Received: from localhost.localdomain ([27.38.127.228])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id B102B8CA; Sun, 29 Sep 2024 20:44:16 +0800
-X-QQ-mid: xmsmtpt1727613856tgq9crrdi
-Message-ID: <tencent_B2753AAC8B944F98A6F9387CECDEEBDA210A@qq.com>
-X-QQ-XMAILINFO: MMwjR1C73eIsWeupNA92WTvkHMMeiMWTVrqPFZMKAMnagpVkJ+i8EtM8M1hQb4
-	 vdDJbNtJ/pqEWyHmwrWfIWqLIYyqdyxdz/g1Vm+oagB9J6cji510Pj93fOk94+ATDc+GfXxwtlw9
-	 D5vgz77O5vKG5QeAv+26oKTj4Is+P6pAeL+wFM1WR9COy+riPRifGF0RTehNNN9haUQF+rePgYfN
-	 5W0i7341B06zwgGomNk7TbUvUEYRKG17Eq4odZRSs13WoJ6bYGR9Fo8fPHNutEUkwnG39vpxJdUD
-	 csoDKq23SPNBx3yaXH2+4djlZgKrzmknQj+w9fhKq4EexU/Q/HdxJlSM49F+sfU+AlGdCOM9QRBx
-	 Y38xlb1l5kfgmoSF41o66g51eFXpb+/Injbli8Cf5UhHItgOnZNI3gJju7vk5c2dVsGLoCbbHchd
-	 u8xSGBlnSM0cfV7i3YVP7CVpV7p08LggkGScZvfgi1baymEiEZiCGJ5izbBfMQqSiD0DUtoRVZcH
-	 RfXagHdIgh3Yilp8xUK2Xe3uHeFj3oPuiKYm3MBqjO+P5IR/D+kWxg/2FHljSZsemc8nYieVaRra
-	 yhZ6eCoOeavGZZk1KN2eyTAflRd1rB/6jtcHGXJsuyk95EcjGRNjA/DkW93nl/5jlxUJLS5lByAz
-	 +WRbhxED/lcHJJIZvAq8MAoCJSUJh2ljIxiPXIY6hkwu2uN64tY8AfIwBMbtyL7DWGisc2JJYwpo
-	 T5Ql8LEC9A/xuiSN0DLmZFu9PuhJT1UTkv5Snz9K4AcQcItal475N5A0D1FdOe1V1Z2WBs8BfxqW
-	 bLZPhAg2ym6+PHLFs/nsXYVUpT5G9+EjR3+qd+kp1jtFtRDdPsO2BctJpxzCi6XwS8fKgtmVG9hl
-	 l4cG8kCMPDSDqoUFf/WerGfsISHbJRPen8ZNW9cvvIuB4a5HybQLUsf77MTuU8+W/5JZUkEnZS0b
-	 qMIVabVadxxP+3Qbp+JyiRMkJPOYHqWDIefmxTG8UeTtDP0lAkV9zQr2B7adCC4X3PVc+U1/NVJR
-	 l4vOueLgxYlHg5EM3vpOQlbO2+/lk=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Li XingYang <lixingyang1@qq.com>
-To: kees@kernel.org,
-	tony.luck@intel.com,
-	gpiccoli@igalia.com
-Cc: linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li XingYang <lixingyang1@qq.com>,
-	Zach Wade <zachwade.k@gmail.com>
-Subject: [PATCH] pstore: Fix uaf when backend is unregistered
-Date: Sun, 29 Sep 2024 20:43:37 +0800
-X-OQ-MSGID: <20240929124337.58565-1-lixingyang1@qq.com>
-X-Mailer: git-send-email 2.46.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F53E13BC26;
+	Sun, 29 Sep 2024 12:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727613855; cv=fail; b=OiRubg4aeCmz53RrYiy1xtWW6gMDydX5hku2sMTPI1CZOBnWTHQUlGP70FLiOpAVIC57uskzccAhBLgdcxVINAfVFpMKHbpPIgtdypUGYWHxrsjZ124PfdsWWQZNd+6B7S0fCYE7MpTDN1MwEMcIOYM5rLh3P56GkBMQNjD00ww=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727613855; c=relaxed/simple;
+	bh=VK9pD9dA/UMuLshJX9bm1k+TiVPLjcCvgt2nzEM2On0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
+	 MIME-Version; b=ZlzoIksFtzyolJJL3ckbj3o5Gi13H5pzBTxdUUTXnigpfbZtN/xAP1OSaJWwtEV2BYfE6ZGoBffSLHM52Rgzb+mECEt4LO3voo3UKwZlD9wwScP8uJqDilT3uXcQ6P45k1UCWjRQlgj5vxD1/QeFYnw02+nSATjpCHsa7w46qT0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EpXb7mLa; arc=fail smtp.client-ip=40.92.20.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ULcsT/VN3UJAEyJDsSU85kvdAjy/0H/qdb8YDNtD7rN9L7R+D5w0FJ5MhJyG9mpKIK3E+eNhuAa46Tu6trhZkjhj5hfKnWYzn8eV4NaHUv1dxxKVa6TMBkzDfxjGVfALa9WWZ9fWTAJmpBcQ4u0NAbblw64vvLepnCU949aNuwywSfZOTP56AGwgWOWTiLc4fOTAhMXSQfFYLXZMk2G/GywL4kUBwZbELxaSzOe9Ug0L1D7SaSOePML1w9adTISjbQvYQit6sViSBIxf3J8AIrRDvxqDRMyJImzfKtB1JNVXqd2uSUg+EYSLGsgjGmDrJImn797bG/HT4RSg43RhJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VK9pD9dA/UMuLshJX9bm1k+TiVPLjcCvgt2nzEM2On0=;
+ b=w577RBccFo1ZVTiARgu6+d/7YwG4s0tCc8ccxjYGOQaov+5gN5P8dza4uBf2Uid2ewF03nz3zRD/Imz6FlvEOlsV5klf5w0Kijgxa0olXhJ/xpq+zPR7AOiCNx28oLjcBV+Tad3jX+G2Rc+o7aRvqzebZZiSgTzU1GUct5/MHP+jQ8HXSLY3gw3FJ2qtBJ5uJemYOSpnlCSy976IWtHtnCG9mF9RT3GP2qc86GVPOeqwBA8m6J9vLqDKpyRUpq6lLKTcFS65QU3E1FSG1ilc9i/E1+eS1JxNLO3kMyk5id349NApAJMdaiuXn6V1sZrIcMDGqrVr6J/ps+TOSgej5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VK9pD9dA/UMuLshJX9bm1k+TiVPLjcCvgt2nzEM2On0=;
+ b=EpXb7mLa81BqBXMSwV4FPWggf073TH4yC5/y+SisnuDL47LPIfi8AnYbUujseHGoDgboNuAJWTjtOS/IWmXNb3otfyFht19pOtPE2se1HDplgi/SBcjj68sxySh5dYNcryE5TEHOm93h6DHHOSEOsyrVOnMnB/m+yxVagD48NLWrE+CD6pKcxBz3X+7WrUd4HsJRaPI3Zxvb2ocRJY4fGzZYrpYSxh9NOefovhq7xjYV9tGuO093YB7v7La4rr8938bBx0KHZ9FK5WAuy7vHQTXHvXWEcSeozM9azpgmdIjcmRcOpp/OLOqVVQidAee8aC0DsISl7UPEdRK73o/1uQ==
+Received: from CH0PR20MB3932.namprd20.prod.outlook.com (2603:10b6:610:d8::9)
+ by IA0PR20MB5705.namprd20.prod.outlook.com (2603:10b6:208:437::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Sun, 29 Sep
+ 2024 12:44:08 +0000
+Received: from CH0PR20MB3932.namprd20.prod.outlook.com
+ ([fe80::f1b8:f67:339b:8e13]) by CH0PR20MB3932.namprd20.prod.outlook.com
+ ([fe80::f1b8:f67:339b:8e13%5]) with mapi id 15.20.8005.024; Sun, 29 Sep 2024
+ 12:44:08 +0000
+From: Aoba K <nExp_0x17@outlook.com>
+To: "charlie@rivosinc.com" <charlie@rivosinc.com>
+CC: "ajones@ventanamicro.com" <ajones@ventanamicro.com>,
+	"andy.chiu@sifive.com" <andy.chiu@sifive.com>, "aou@eecs.berkeley.edu"
+	<aou@eecs.berkeley.edu>, "conor.dooley@microchip.com"
+	<conor.dooley@microchip.com>, "conor@kernel.org" <conor@kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "evan@rivosinc.com" <evan@rivosinc.com>,
+	"guoren@kernel.org" <guoren@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>,
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "jrtc27@jrtc27.com"
+	<jrtc27@jrtc27.com>, "jszhang@kernel.org" <jszhang@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "linux-sunxi@lists.linux.dev"
+	<linux-sunxi@lists.linux.dev>, "palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "robh@kernel.org"
+	<robh@kernel.org>, "samuel.holland@sifive.com" <samuel.holland@sifive.com>,
+	"samuel@sholland.org" <samuel@sholland.org>, "shuah@kernel.org"
+	<shuah@kernel.org>, "wens@csie.org" <wens@csie.org>
+Subject: Re: [PATCH v10 00/14] riscv: Add support for xtheadvector
+Thread-Topic: [PATCH v10 00/14] riscv: Add support for xtheadvector
+Thread-Index: AQHbEm1FbzdD9GcS4Uub6j6FPFxzJA==
+Date: Sun, 29 Sep 2024 12:44:07 +0000
+Message-ID: <a1f41f92-6bd0-48b6-a931-e7ad7aba18cc@outlook.com>
+In-Reply-To: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CH0PR20MB3932:EE_|IA0PR20MB5705:EE_
+x-ms-office365-filtering-correlation-id: b444aba2-c96a-44ec-6e4d-08dce08468d3
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|8060799006|38102599003|19110799003|461199028|7092599003|15080799006|102099032|10035399004|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ G5EoB1JQ1dWx6ULgBfNljYsad2rCscBLQAPtZ9y8dRl3zOWeup8vLHFbOxadvibfzH7todwMsmXajxkcoKBUQ3IWdIHvgtKffRY5+P/rG2S1IChvksaW8UVigeD6iRSNK0ZEv82fCF0a6mLFbsWfYLI6xPWyjdF/9Astp8dAXuokZzXH3xmsvIOWGKefL12lDO7fxBi4Ty61yJaWEk76i4DwKhYV96wf73eLl4n2E2a3pU+f50k8rltHKqX1DNncGo7BPY7qmplpuY/VCFbpIXo0W4R1VpmWjrWLHIjnt+usfTBM+z+qLMwx1OQIYLfQMOkXUwVOVVZjXyFSQaSKG5kzL/Pbnm4sIHo0NXtascFL0OE1ZIMimQj7iCvJB/jN5vF6jfL9glNm3HUdbA69csMOZfudjMPBhh1K/5i6m+1o+BK+PajubBI12FxAEANvF53gBdiOs8A31jY/kip7pvN048d5Roinp74CLr60n6kL/Kj+7qWRJxXCtJYm8Z5bW4t33NUKQ8syfZ4Ygl7cl2v8f1dzF9J78qkHczbHK7c1dc0UBDFGGCZFmfwR0StEhmb13ail43abqGmg4x1KR7+JVGJS128cSASkf/rFFKmspq+N9LtgaXiDI1/iZ6iSUQSI62McDOdwRnao2CS/ON27KYoaA64yUy2Bqo2nia1oNi+xjn1oTCwWTNu8tSRVPKW+sUwKzh8IkTUZhYTCdRwMvNZcbrg/HNduhf8m0x/YjI1wncbTKQ2uqUGiPBwo31ETEv8ZuA9jbHsERLBEA/Bb9weCFmTg8DTVOK7rkxoqphL1MC28YM72HigJEO4EytoflRVQ8oTX1yqBoLm9q42MY7G+oD+U0nZrgVUrUfM=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?T2diaXlPSGdDM3FFV2hjS2ZkaThFcnQ3QW8xR3BXQk55OFZOK01wVTBRK0Zk?=
+ =?utf-8?B?Y1hRaFNLNllsNDlyQXhoQ1l6dnhYTmFmSFB2LzltZGRyTUc5ckVRdnFOTi9V?=
+ =?utf-8?B?bks4eXZac1gvZHdkcnlsa2xoZ25Sdmk5clNiTlpNaG1EQ095bGRYWFZpa1hj?=
+ =?utf-8?B?bXpzd1FONTIzUEtpaDllS2hVYWlJc1RJZkpMZTFKQ2E4RHp2SGtUZlY5amdt?=
+ =?utf-8?B?YWNySklTWHlNaTZHTTdNWE1ndVh5N1hhVEdpNjdRQUgxMEZPMk9vZFRrbmZP?=
+ =?utf-8?B?N21ZNk90dnNMVUVkQkJ1V2gzVXZYNVVoeHpxVjlibWdnSVViNHVpd3BQa3FW?=
+ =?utf-8?B?NzVyYXBLeE1VMElXRkI0b3lPbXA0VmFPQU42azgvcXg0UDBSVTVkN01Ic3Rs?=
+ =?utf-8?B?TmJLRGJwY2p1cW5MQlg4aUdHY21aYTBOWWRtbXNCVUxTMDExODZHVDl6Q3F3?=
+ =?utf-8?B?QW9YMjFUUWJLUDh6WUJUb3dsY3o5WEF2ZzRVd3FPTG5jQTh1VFVKOStzenJH?=
+ =?utf-8?B?aENjRjZmMnljVHkxL1JXRytKS091RHVpdS9NWitOUXV4V3I1QzBweWNwdklS?=
+ =?utf-8?B?WC9ENGY5NVF6RGxkdExnR2laVXRvcWNGaXBrV08vVVFyWGlMZWpYMURaQ21C?=
+ =?utf-8?B?Sm9PV1hRYVRzbklFVU9mcmJqRVlNNUlDblZadXRKWXZJZzI4bFVBTWpoVWQ0?=
+ =?utf-8?B?Z1RlNk5uSTBhL255TURTY0VlOEtGVU5yaGdpeW5mRlFpeFBkNGdwdnZUUWc1?=
+ =?utf-8?B?TFNLblc4eC9iaEcvY09ZWWpDelJhQk5VejBva1ZNb0Z4UE1XeDF6WVdyamFr?=
+ =?utf-8?B?TkNWVmNLbFZIaXZCczhlWkxuUXpKYURPYzRjTmJFdlFYWGFpS1QxRW9TNDM3?=
+ =?utf-8?B?c0RyUy9YejJDN2xJN3prQ0dyNjFVZU1ySWQ4Uy9oWFBIMTQ3aGVuTmZRbDB4?=
+ =?utf-8?B?aFV5bWpBMjV1UFpsVENrZmNFWTZ6WFluays3clZ3bWRlMlU2Um9ROURpckJ0?=
+ =?utf-8?B?aTF0WDJ2eTRCQWhWTGNSb3QvYTI1UldRY09MSXJ0WnhPQ25rdDJqVHhySm5X?=
+ =?utf-8?B?NVFSK3p6bGNEUXdZVUxJZ2NIVTY3QW5CUC9KRVREL3k3S3pKUTBXZ2w2TWpI?=
+ =?utf-8?B?UVFrM01mWGZ0ZHB4ZTJ4VUlqSTVWVVBmNm1zcmw1MHRPV25ZNnVzQTE2MmlG?=
+ =?utf-8?B?NnFCSEk3a0trZENKbHp6MlhYQkRsT2cvS2RkaXZxUHRsR2dDdTRWekZDZ3ZM?=
+ =?utf-8?B?WllHVFAzL0xXL3kvZXh1N0w0WVdMK2IwaFZqWFpzZXBjVFBEU09VenBrSUpI?=
+ =?utf-8?B?YUpGemhXR0h1TmFVN3dtRCtyY1JkWFY5ckRybnVyNmNGdlkxSzl2U1lMM2Nw?=
+ =?utf-8?B?Y3dzcXhkeGlmdTBYTW8zdUc3K2pYaXFWQzNVTTNuRmNvQVRPRThuTnFyT3Qw?=
+ =?utf-8?B?TVJZbVBPSjJGR3lYZGgxYnByTjR1ZXpmQks5QWZxWTdNSmVuQVQ1L3BOakVa?=
+ =?utf-8?B?T2pFZVhWblhtb1B4QUp2VSsyMldYaEZiSU1XUnhOVUdkNmtXZTNPVjhZR2Y2?=
+ =?utf-8?B?dmNVWmJlY2xkZXZIMHNpeUFHVnVJejNtUjRHMFRmTWNEZ1drdXcwSFdYY2tu?=
+ =?utf-8?Q?KMCCtv4TrLFbGeaU9J0DIdce8KSDB2tkxoJKnLZEQfyU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6487AC2D11AF5346BFE8F7280100128B@namprd20.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR20MB3932.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: b444aba2-c96a-44ec-6e4d-08dce08468d3
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Sep 2024 12:44:07.8364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR20MB5705
 
-when unload pstore_blk, we will unlink the pstore file and
-set pos->dentry to NULL, but simple_unlink(d_inode(root), pos->dentry)
-may free inode of pos->dentry and free pos by free_pstore_private,
-this may trigger uaf. kasan report:
-
-kernel: ==================================================================
-kernel: BUG: KASAN: slab-use-after-free in pstore_put_backend_records+0x3a4/0x480
-kernel: Write of size 8 at addr ffff8883efbe0390 by task modprobe/4308
-kernel:
-kernel: CPU: 1 PID: 4308 Comm: modprobe Kdump: loaded Not tainted 6.10.9-arch1-2 #2 5fd36c90225554e2cc88363729bd91e76130a89f
-kernel: Hardware name: ASUS System Product Name/TUF GAMING X670E-PLUS, BIOS 3024 08/02/2024
-kernel: Call Trace:
-kernel:  <TASK>
-kernel:  dump_stack_lvl+0x5d/0x80
-kernel:  print_report+0x174/0x505
-kernel:  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-kernel:  ? pstore_put_backend_records+0x3a4/0x480
-kernel:  kasan_report+0xd0/0x150
-kernel:  ? pstore_put_backend_records+0x3a4/0x480
-kernel:  pstore_put_backend_records+0x3a4/0x480
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  pstore_unregister+0x88/0x1b0
-kernel:  unregister_pstore_zone+0x2f/0xd0 [pstore_zone 35171c701a99c31efe207b7a718dc583e4a6503a]
-kernel:  pstore_blk_exit+0x30/0x90 [pstore_blk 589d82101219208d8968e3adda9b96a2d42df635]
-kernel:  __do_sys_delete_module+0x350/0x560
-kernel:  ? __pfx___do_sys_delete_module+0x10/0x10
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? __memcg_slab_free_hook+0x28e/0x470
-kernel:  ? __pfx___audit_syscall_exit+0x10/0x10
-kernel:  do_syscall_64+0x82/0x190
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? do_syscall_64+0x8e/0x190
-kernel:  ? seq_read_iter+0x62f/0x1220
-kernel:  ? __x64_sys_openat+0x300/0x380
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? kasan_save_track+0x14/0x30
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? vfs_read+0x9a7/0xf00
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? __audit_syscall_exit+0x38a/0x520
-kernel:  ? __pfx_vfs_read+0x10/0x10
-kernel:  ? __pfx___audit_syscall_exit+0x10/0x10
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? __audit_syscall_exit+0x38a/0x520
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? __pfx___audit_syscall_exit+0x10/0x10
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? __x64_sys_read+0x162/0x250
-kernel:  ? __pfx___x64_sys_read+0x10/0x10
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? syscall_exit_to_user_mode_prepare+0x148/0x170
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? syscall_exit_to_user_mode+0x73/0x1f0
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? do_syscall_64+0x8e/0x190
-kernel:  ? syscall_exit_to_user_mode+0x73/0x1f0
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
-kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-kernel: RIP: 0033:0x741f9d72946b
-kernel: Code: 73 01 c3 48 8b 0d a5 c8 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 75 c8 0c 00 f7 d8 64 89 01 48
-kernel: RSP: 002b:00007ffed7e621f8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-kernel: RAX: ffffffffffffffda RBX: 00006455e060ed30 RCX: 0000741f9d72946b
-kernel: RDX: 0000000000000000 RSI: 0000000000000800 RDI: 00006455e060ed98
-kernel: RBP: 00007ffed7e62220 R08: 1999999999999999 R09: 0000000000000000
-kernel: R10: 0000741f9d7a5fe0 R11: 0000000000000206 R12: 0000000000000000
-kernel: R13: 00007ffed7e62250 R14: 0000000000000000 R15: 0000000000000000
-kernel:  </TASK>
-kernel:
-kernel: Allocated by task 3957:
-kernel:  kasan_save_stack+0x30/0x50
-kernel:  kasan_save_track+0x14/0x30
-kernel:  __kasan_kmalloc+0xaa/0xb0
-kernel:  pstore_mkfile+0x47e/0xbe0
-kernel:  pstore_get_backend_records+0x560/0x920
-kernel:  pstore_get_records+0xec/0x180
-kernel:  pstore_register+0x1c3/0x5a0
-kernel:  register_pstore_zone.cold+0x298/0x3d1 [pstore_zone]
-kernel:  pstore_blk_init+0x63c/0xff0 [pstore_blk]
-kernel:  do_one_initcall+0xa4/0x380
-kernel:  do_init_module+0x28a/0x7c0
-kernel:  load_module+0x7b57/0xb020
-kernel:  init_module_from_file+0xdf/0x150
-kernel:  idempotent_init_module+0x23c/0x780
-kernel:  __x64_sys_finit_module+0xbe/0x130
-kernel:  do_syscall_64+0x82/0x190
-kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-kernel:
-kernel: Freed by task 4308:
-kernel:  kasan_save_stack+0x30/0x50
-kernel:  kasan_save_track+0x14/0x30
-kernel:  kasan_save_free_info+0x3b/0x60
-kernel:  __kasan_slab_free+0x12c/0x1b0
-kernel:  kfree+0x198/0x3b0
-kernel:  evict+0x33d/0xab0
-kernel:  __dentry_kill+0x17f/0x590
-kernel:  dput+0x2d9/0x810
-kernel:  simple_unlink+0xf4/0x140
-kernel:  pstore_put_backend_records+0x271/0x480
-kernel:  pstore_unregister+0x88/0x1b0
-kernel:  unregister_pstore_zone+0x2f/0xd0 [pstore_zone]
-kernel:  pstore_blk_exit+0x30/0x90 [pstore_blk]
-kernel:  __do_sys_delete_module+0x350/0x560
-kernel:  do_syscall_64+0x82/0x190
-kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-kernel:
-kernel: The buggy address belongs to the object at ffff8883efbe0380
-                                    which belongs to the cache kmalloc-64 of size 64
-kernel: The buggy address is located 16 bytes inside of
-                                    freed 64-byte region [ffff8883efbe0380, ffff8883efbe03c0)
-kernel:
-kernel: The buggy address belongs to the physical page:
-kernel: page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3efbe0
-kernel: memcg:ffff8883ef245801
-kernel: flags: 0x2ffff8000000000(node=0|zone=2|lastcpupid=0x1ffff)
-kernel: page_type: 0xffffefff(slab)
-kernel: raw: 02ffff8000000000 ffff88810004c8c0 ffffea00043dcc40 dead000000000004
-kernel: raw: 0000000000000000 0000000000200020 00000001ffffefff ffff8883ef245801
-kernel: page dumped because: kasan: bad access detected
-kernel:
-kernel: Memory state around the buggy address:
-kernel:  ffff8883efbe0280: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-kernel:  ffff8883efbe0300: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-kernel: >ffff8883efbe0380: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-kernel:                          ^
-kernel:  ffff8883efbe0400: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-kernel:  ffff8883efbe0480: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
-kernel: ==================================================================
-kernel: Disabling lock debugging due to kernel taint
-kernel: pstore: Unregistered pstore_blk as persistent store backend
-kernel: ------------[ cut here ]------------
-
-place the pos->dentry = NULL before simple_unlink(d_inode(root), pos->dentry)
-
-Fixes: 609e28bb139e ("pstore: Remove filesystem records when backend is unregistered")
-Signed-off-by: Li XingYang <lixingyang1@qq.com>
-Signed-off-by: Zach Wade <zachwade.k@gmail.com>
----
- fs/pstore/inode.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-index 56815799ce79..7561693e0f32 100644
---- a/fs/pstore/inode.c
-+++ b/fs/pstore/inode.c
-@@ -306,7 +306,7 @@ static struct dentry *psinfo_lock_root(void)
- int pstore_put_backend_records(struct pstore_info *psi)
- {
- 	struct pstore_private *pos, *tmp;
--	struct dentry *root;
-+	struct dentry *root, *unlink_dentry;
- 
- 	root = psinfo_lock_root();
- 	if (!root)
-@@ -316,9 +316,10 @@ int pstore_put_backend_records(struct pstore_info *psi)
- 		list_for_each_entry_safe(pos, tmp, &records_list, list) {
- 			if (pos->record->psi == psi) {
- 				list_del_init(&pos->list);
--				d_invalidate(pos->dentry);
--				simple_unlink(d_inode(root), pos->dentry);
-+				unlink_dentry = pos->dentry;
- 				pos->dentry = NULL;
-+				d_invalidate(unlink_dentry);
-+				simple_unlink(d_inode(root), unlink_dentry);
- 			}
- 		}
- 	}
--- 
-2.46.2
-
+SGVsbG8gQ2hhcmxpZSwKCkkndmUgYmVlbiB3b3JraW5nIG9uIGJyaW5naW5nIHVwIHRoZSBTaXBl
+ZWQgTGljaGVlIFJWIERvY2sKKHdoaWNoIGFsc28gdXNlcyB0aGUgRDEgU29DKSB3aXRoIHRoZSBr
+ZXJuZWwgcGF0Y2hlcyB5b3UgcHJvdmlkZWQuClRoZSBwYXRjaGVzIGFwcGxpZWQgY2xlYW5seSB0
+byBQYWxtZXIncyBmb3ItbmV4dCBicmFuY2gsCmJ1dCBJJ3ZlIGVuY291bnRlcmVkIGEgY291cGxl
+IG9mIGlzc3VlczoKCjEuIFNraWZmb3MgQ29tcGlsYXRpb24gRXJyb3IgZHVyaW5nIHRoZSBjb21w
+aWxhdGlvbiBwcm9jZXNzIG9mIGBjZ29gOgpgdW5rbm93biByZWxvY2F0aW9uIHR5cGUgMTc7IGNv
+bXBpbGVkIHdpdGhvdXQgLWZwaWM/YApVbmZvcnR1bmF0ZWx5LCBJIGNsb3NlZCB0aGUgdGVybWlu
+YWwgYmVmb3JlIHNhdmluZyB0aGUgZnVsbCBsb2csCnNvIEkgZG9uJ3QgaGF2ZSB0aGUgY29tcGxl
+dGUgZGV0YWlscywgYnV0IHRoZSByZXN1bHQgc2hvdWxkIGJlIHJlcHJvZHVjaWJsZS4KV2hpbGUg
+dGhpcyBzaG91bGQgYmUgYSBTa2lmZk9TIGlzc3VlLCBtZW50aW9uIGl0IGluIGNhc2UgU2tpZmZP
+UyBpcyB0aGUgbWV0aG9kCnRoYXQgeW91IG1lbnRpb25lZCBmb3IgYnJpbmdpbmcgdXAgdGhlIGRl
+dmljZS4KCjIuIEltYWdlIEJ1aWxkaW5nIHdpdGggc2VocmFmL3Jpc2N2LWFyY2gtaW1hZ2UtYnVp
+bGRlcjoKQWZ0ZXIgYnVpbGRpbmcgdGhlIGltYWdlLCB0aGUgZGV2aWNlIGZhaWxlZCB0byBzdGFy
+dCBhdCBhbiBlYXJseSBzdGFnZS4KSSBzdXNwZWN0IHRoaXMgbWF5IGJlIHJlbGF0ZWQgdG8gaW5j
+b3JyZWN0IFJBTSBzaXplIGRldGVjdGlvbiwKYXMgdGhlIGJvYXJkIG9ubHkgaGFzIDUxMk1CIG9m
+IFJBTS4KSW50ZXJlc3RpbmdseSwgdGhlIHZlbmRvciBpbWFnZSByZXBvcnRzIDFHQiwgYW5kIHRo
+ZSBTaXBlZWQgd2Vic2l0ZSBhbHNvIHN0YXRlcwp0aGF0IHRoZSBEb2NrIGhhcyAxR0IsIGRlc3Bp
+dGUgdGhlcmUgYmVpbmcgbm8gZXh0cmEgbWVtb3J5IGJhbmsgcHJlc2VudC4KCllvdSBjYW4gZmlu
+ZCB0aGUgYm9vdCBsb2cgaGVyZTogaHR0cHM6Ly9mYXJzLmVlL2JkWWsubG9nCgpBbnkgaGVscCB3
+b3VsZCBiZSBhcHByZWNpYXRlZCwgYW5kIGJpZyB0aGFua3MgdG8geW91ciB3b3JrCnRvIG1ha2Ug
+dGhlIGVmZmljaWVudCBwYXJ0IG9mIHRoaXMgYm9hcmQgdG8gd29yayAoYWdhaW4pIQoKQ2hlZXJz
+LApBb2JhCg==
 
