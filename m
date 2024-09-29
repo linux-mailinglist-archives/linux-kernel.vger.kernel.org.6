@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-342731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAE7989237
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25242989239
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52188285B2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3611285C21
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A2D8F6B;
-	Sun, 29 Sep 2024 00:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IyzTwTTP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360228F6B;
+	Sun, 29 Sep 2024 00:57:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3E469D;
-	Sun, 29 Sep 2024 00:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D560F4ED
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727571431; cv=none; b=jnpwz0XAnzluUJ4Aij+Q1ldZHO0zisneD75Umg1+BxJd2KIFroMcliHcr5/8BqB/wXv2QaC7Kt3wKqLPwqsC64qQshvyBE7V6uOBPznTs19Cen83xeGtjGIB4mUn3UWhDcZkR2cZh7c7MJIVu4eNEYz7YZ5HYFvPcXKNqPcoTCk=
+	t=1727571450; cv=none; b=ZXw4uL/oMgQwWxeFEqvJx4oCldEPWG5VOx2uExOmxGz9CFYZ6aliPg7dZ/Iv86kz37h0TBFS/FXFtt7Um32GpIKvJfTT9dErXMZk2TNBpaS6VPE9jB5z0GFLKe9qm7qm6hTkZu4+eUxNOOo0S3rvMDcLGifOv0GpkDZ5X4OwB8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727571431; c=relaxed/simple;
-	bh=NiLVv74q1BE9keWXYGZl2tbxpA/ZRjXFnF8/A2XkZTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CP0Pk6Y+bYewhLQ+xoFSI4szWuCMqb9s/PJnPpdC8anavOZTfuq5fWKSidUMxvDgsyj8usHMFiJJWvivpYqtMRIsO6rVQpDIEXcarWkCwalj+UJl+aliWFBgH1PwREOlJ7MOvsids6cPeYD3/suSlutpQ7Fkmk+HAeOHsmd9MKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IyzTwTTP; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727571430; x=1759107430;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NiLVv74q1BE9keWXYGZl2tbxpA/ZRjXFnF8/A2XkZTI=;
-  b=IyzTwTTPOZULmB18dA0ukleP2H9M9H9fMh6eWwxRLV9wF/BOosXr1SLl
-   xxobyB/Y5XwGcCD7Z8VP00TVN9cOcVMb9C9Tgnkx7FuZfflYjtBFAAm/d
-   CHP4I7VrjuZZwrU9KYxbMEleE1hNtJJ71GyDWtpV0oSh2JtUrm/au5gm3
-   TcUY15sAdHI5Uy/vJsRp9yyChhz7OmkjBje3Re378CYfhRWhuDMH0gXF3
-   hgwZE9DMcx70tU8ZqMpI9FmzdtDo0HiDpRsZJWPA//nZn5juu2o4mJicp
-   jf3pyFkeJlw0Pf8VV9D7PgA4cJDF367CKO5MJgsW5Hir24i4vTKo4TAYC
-   w==;
-X-CSE-ConnectionGUID: q8TUixXSQWSz6xiuXzNo5A==
-X-CSE-MsgGUID: KWSOFkLIQqaaMqaGykgP1A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="38044598"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="38044598"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 17:57:09 -0700
-X-CSE-ConnectionGUID: /wU22n8jQGS3lz6zq1CGAA==
-X-CSE-MsgGUID: p+KE2/Q7Sle4Xk2MbDO4IQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="73068033"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 28 Sep 2024 17:57:05 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suiFD-000Nmr-17;
-	Sun, 29 Sep 2024 00:57:03 +0000
-Date: Sun, 29 Sep 2024 08:56:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Werner Sembach <wse@tuxedocomputers.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, bentiss@kernel.org,
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
-	lee@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
-	onitake@gmail.com, pavel@ucw.cz, cs@tuxedo.de,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO
-Message-ID: <202409290814.OGfHXRw7-lkp@intel.com>
-References: <20240927124152.139099-2-wse@tuxedocomputers.com>
+	s=arc-20240116; t=1727571450; c=relaxed/simple;
+	bh=Lc+SLrsQn24h0M1JRsYpSoD8KksYE70xV6mwtP754nA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H96OzN8ctWz820p5hMo6Yj9GhwfDIfjrs5h37/Sa+cFm+HYFjAQO51iBWUkqAH2lFU38mwujxeBTQxfa0eErCZvOFDgyzgHDZA32pPO14RkXjPBLOzz4IyfP6H7tbToT4cOLoI/qiUn/IUvJ2sB0xaxKchVmZD9V9pUfs6dh6SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a0cd6a028bso33356515ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:57:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727571448; x=1728176248;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KxrlJcSpBKiuy6eFUK6TTJTXoFXK0vXRG0aDH5BlxfM=;
+        b=oTbQzZD0wqPj1PEpT4U7mC7772WeWE2uRXiksu6h+gqHltydhZf0Fdaczh0h1MMPGq
+         TXagzTEkVAEed4KgkKEDs2NxMaze2v/LDqap3PLmx8WMstpuaGGLjWH+JCGcgHWcZWmM
+         sGmzM1fV1hJpi/GqGyE0Qco1938r4z2QEtS3LOHUn4ZqOl1AdeyR4Y593TM4AQU8MF2h
+         0xC8bQFDSOQNOD43JAzkGIRnISaRQ+haJz64NZGkID14/LtMhgX10O5TpQl/rz3uBMlY
+         WgjhfAnrLb+VTHlv7kJW8xVhHQc+HG+ePBrbuy4efqc60CuKpJBw7fklJL9oAbNLcN3N
+         RvJg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg3ngwNTGLfBvHrMxc3SoiKwZ6c2x+5yRqKZOptApzo4tkL2TTgGdsaxUDoumqROR0+2/NLGskwwMbF4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzmdAKg+ykYTqPYpNqxCli1LGMpcBhzRxJz2ilGORKfmjA/Cgf
+	bAUgRQH68d1pmptctaBjVpELpMNC4ELhfHWYYdLnD2BZheQ0CbTeoWSTnriDC4QZc/K+7R9DaEr
+	uNGzw0hoTOxaOZpNTGyUXmtk4N20adsr8+kJ8a3jV2uD5tdn9aNu3IxE=
+X-Google-Smtp-Source: AGHT+IFbo5YCKNe94DEMG346dyv/Tz2upzDa0tOH8Dpcolfbxh2LrfBr3XzGvPPvPPj0SyLg6ERbgGMm4bMPOe2Dk6bidPS89Lgb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927124152.139099-2-wse@tuxedocomputers.com>
+X-Received: by 2002:a05:6e02:1564:b0:3a0:4df2:52e2 with SMTP id
+ e9e14a558f8ab-3a34515ca34mr64428765ab.4.1727571448338; Sat, 28 Sep 2024
+ 17:57:28 -0700 (PDT)
+Date: Sat, 28 Sep 2024 17:57:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f8a5f8.050a0220.aab67.000d.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: locking bug in __task_rq_lock
+From: syzbot <syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Werner,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot found the following issue on:
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on drm-tip/drm-tip linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15dd3507980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
+dashboard link: https://syzkaller.appspot.com/bug?extid=bb50a872bcd6dacdf184
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Werner-Sembach/platform-x86-tuxedo-Add-virtual-LampArray-for-TUXEDO/20240927-214157
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20240927124152.139099-2-wse%40tuxedocomputers.com
-patch subject: [PATCH v2 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
-config: x86_64-randconfig-161-20240928 (https://download.01.org/0day-ci/archive/20240929/202409290814.OGfHXRw7-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290814.OGfHXRw7-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290814.OGfHXRw7-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c768566853d8/disk-3efc5736.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ee971b1b59e7/vmlinux-3efc5736.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ac1746db2a57/bzImage-3efc5736.xz
 
-All errors (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bb50a872bcd6dacdf184@syzkaller.appspotmail.com
 
->> ld.lld: error: undefined symbol: wmidev_evaluate_method
-   >>> referenced by tuxedo_nb04_wmi_util.c:26 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_util.c:26)
-   >>>               vmlinux.o:(__wmi_method_buffer_out)
---
->> ld.lld: error: undefined symbol: __wmi_driver_register
-   >>> referenced by tuxedo_nb04_wmi_ab_init.c:86 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab_init.c:86)
-   >>>               vmlinux.o:(tuxedo_nb04_wmi_ab_driver_init)
---
->> ld.lld: error: undefined symbol: wmi_driver_unregister
-   >>> referenced by tuxedo_nb04_wmi_ab_init.c:86 (drivers/platform/x86/tuxedo/tuxedo_nb04_wmi_ab_init.c:86)
-   >>>               vmlinux.o:(tuxedo_nb04_wmi_ab_driver_exit)
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 1 PID: 23115 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 1 PID: 23115 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4823 [inline]
+WARNING: CPU: 1 PID: 23115 at kernel/locking/lockdep.c:232 __lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5149
+Modules linked in:
+CPU: 1 UID: 0 PID: 23115 Comm: syz.3.2691 Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4823 [inline]
+RIP: 0010:__lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5149
+Code: 00 00 83 3d 25 c6 ac 0e 00 75 23 90 48 c7 c7 60 c9 0a 8c 48 c7 c6 00 cc 0a 8c e8 df 87 e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc90003de7230 EFLAGS: 00010046
+RAX: d1a9613a9312fe00 RBX: 0000000000001368 RCX: 0000000000040000
+RDX: dffffc0000000000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: 000000000000000f R08: ffffffff8155daa2 R09: 1ffff110170e519a
+R10: dffffc0000000000 R11: ffffed10170e519b R12: ffff888030c08000
+R13: 0000000000001368 R14: 1ffff1100618116f R15: ffff888030c08b78
+FS:  00007fed1acf26c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020073030 CR3: 000000006781c000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:593
+ raw_spin_rq_lock kernel/sched/sched.h:1505 [inline]
+ __task_rq_lock+0xdf/0x3e0 kernel/sched/core.c:671
+ ttwu_runnable kernel/sched/core.c:3732 [inline]
+ try_to_wake_up+0x182/0x1480 kernel/sched/core.c:4184
+ autoremove_wake_function+0x16/0x110 kernel/sched/wait.c:384
+ __wake_up_common kernel/sched/wait.c:89 [inline]
+ __wake_up_common_lock+0x132/0x1e0 kernel/sched/wait.c:106
+ __unix_dgram_recvmsg+0x5f4/0x12f0 net/unix/af_unix.c:2462
+ sock_recvmsg_nosec+0x190/0x1d0 net/socket.c:1051
+ ____sys_recvmsg+0x3cd/0x480 net/socket.c:2819
+ ___sys_recvmsg net/socket.c:2863 [inline]
+ do_recvmmsg+0x45e/0xad0 net/socket.c:2957
+ __sys_recvmmsg net/socket.c:3036 [inline]
+ __do_sys_recvmmsg net/socket.c:3059 [inline]
+ __se_sys_recvmmsg net/socket.c:3052 [inline]
+ __x64_sys_recvmmsg+0x199/0x250 net/socket.c:3052
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fed19f7dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fed1acf2038 EFLAGS: 00000246 ORIG_RAX: 000000000000012b
+RAX: ffffffffffffffda RBX: 00007fed1a136058 RCX: 00007fed19f7dff9
+RDX: 0000000000010106 RSI: 00000000200000c0 RDI: 0000000000000004
+RBP: 00007fed19ff0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000002 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fed1a136058 R15: 00007fffc5862128
+ </TASK>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
