@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-343094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E559896BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391B19896BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D451C2129C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF971284B09
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F1043155;
-	Sun, 29 Sep 2024 18:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1B651C4A;
+	Sun, 29 Sep 2024 18:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I94D5DIl"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="JTkHnp8s"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAD32263A;
-	Sun, 29 Sep 2024 18:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF6C2263A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727634040; cv=none; b=NPJO15f3HGL22NEvdPZVUFfaTFIyJXJwEyFIctHGSk0u8ykJPVxiRM2axD2Qk0IyQiJBnY3IrXIcXSYJSLNixgfqwCPGu9sNZtKkcT/dIyWxI005LzdrA0vlTtbkwWsJbWXOHMJHdmnKxntEfBulhJTFaUAc2hxjKJH0O1Swa8c=
+	t=1727634086; cv=none; b=bj4u/OQgPExsw0iLp905l4l88MFSND0SSB9fQQf1aKgy5FyhT4oFCwW0LX0wB2g5KrY57oa3WOExLN39JRNgx0Yom+uQmt34yx0QAGYhjtfseZpmdD0d9eu7ejB+pGo2xfQn8oNhM565rMPYtKOUwqPLunDJYGM8FBIgCj8+t/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727634040; c=relaxed/simple;
-	bh=dx98SzG0vXnZ6U7aGG4CHNbUS0cwNCxmS94l7CIhOK4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVYXbp9tgTtMi8bpYnM8U3ZWLzujiFYedYpt9bY9ynZA/oTb9rWZaHZ1Lz2mtl6x1GUaZp31gAnG6cFmXd35wj4gIZSrwR1eGELRAKZXURGYEEA1cZ1+Ol7+2E3DFwKPmijFdoY72eOVR98WWcf4mLn/5VAz+Mo+qU+RaKXzF/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I94D5DIl; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso591284266b.3;
-        Sun, 29 Sep 2024 11:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727634037; x=1728238837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FIhQyB1zmp2fourf7t7A6PbiXpMcGdp9O1h0W120jps=;
-        b=I94D5DIlCabDkQj8Rr5uHmkjbDRVbGzXzoYG8Jtm1MA/ST7uQsD/BHhvlhRuyDPLQn
-         /UkseLqY/xGpuwg350et4eAGTZ/uaC/hGZUF7czBIE4OC4srjm/uiZzP/mj+0LXQ3XRb
-         1E9mEWwVtlXIox3y1qB38Mx1+deAqs0KpBS6b+SJKgQxWqkB6kTorymlZQXQpQlW94me
-         WPZt7dThprEuv7yz9NUFzjS3fOCoN9I8UrnJuuWIC43zotpq6UADrvNsUkTYAOIvyszW
-         OOJG8x0vCL2eeVi+BcweDUt4n4JX5iqUfu8GdaFxkI5kRpwE/ls8rGMZZbX8mxTap/Xp
-         y/WA==
+	s=arc-20240116; t=1727634086; c=relaxed/simple;
+	bh=IiI7k5eKIv3t3egjU4Ltp6qafG9X3D4ad7adQ1hTsrs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hmjm2XHTEed/ENiuIo5oQPkGFLz/RACSkNEH/AN6s4VFLM19TFZHCLZz5EejW0ucf0sCnLXbu6lJcQR2eaLB1zARm/oc2qBieuL1EKGujcx27AWeHH2gUcocswedg7o7QNfvDi84Yt8jMLX7reTqDWNZ0k4hnqcUJUhRIoRSLiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=JTkHnp8s; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id E6CF33F2D4
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:21:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727634080;
+	bh=NcSFbsIXgiNSIJxntSXwkK9zAY/t+TLdWZ5xLvbV6u8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=JTkHnp8s6k+gJbbZgFS4BB1kLdAjjM7ktdb/5StUZ3B7Fepl9qIC/ssnTA5BFFEst
+	 QHn/NCi5ePPNTn3LJenRjuyn7j1YykP0buURCX03+ehUIdA2E9KMDXoQRcgf/Dgr6i
+	 pl53t4ao+RO4FOiCLBzPfp+/q4BPII3a97MwBYrCmtvetum7WMnr320xKQC1H7v9Sc
+	 VdNdA63dh9mPfMA/GkWU85BhpiKGxqK6jKI3wAEFdXh+kWg3yBvmFmaGKJ8oJJksB2
+	 AktGuBlSmXEHnvJDSr3o80XnK1B7oWC6I8Rk+DpJRx3mHKrZl3eLOFmY1RlFerFlMI
+	 tIlZagQO0gBeg==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8d13a9cc2cso332947066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 11:21:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727634037; x=1728238837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FIhQyB1zmp2fourf7t7A6PbiXpMcGdp9O1h0W120jps=;
-        b=jR/FKRximzaemZQQO4EAi92Mx8LZxPnzK0TL8yHTBEpTOBWxUJpGb9pglQeN4skaeN
-         vjWPLTbmnGNMo7Me79LFHYEKZs9TP+rkQGT6Y+iDnfmuEsUsjoOJrMXy0C5nlRZB5Fti
-         BhpdYe297HeWyaGR635kya1pRDwNhQ2sjcniTg4vWnhnLs4/95N+ZDf+kMQO/s55TYNU
-         EbYfAWVWZj/lpIflSOm/4adI8sbzsioY7WnCMcnfLjOvOxWUlaQYu9rMouKHVTkePAEK
-         IlO9LzbQnseH/zzJhu5schVZ+hvwiFfoeT6JxSGBTZhnzUsHnrXHqW4epSy+qM/Liom3
-         bRDg==
-X-Forwarded-Encrypted: i=1; AJvYcCW92SBTTGCF3dj/rCFSpjnMXEGbQHrTi+iSA/yLxfoOsF5RzTKWEypkzj+ZBZXMnrcQoTddg9CO626VHWOv@vger.kernel.org, AJvYcCXiktDpjGfJtY3yTRIEi5jJj1ONvxLOi43h3U3LnkJeqMLiEYyOEMaRw927z7TyAq9EmPOm7TC1JHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm+oI5MHyrG6k84Fs50RxIHhQgg84qLdBEqc3b0J1rjB0X/5TJ
-	EhDcYCTOhn4EAkzBuEIIgz4TbZVoqAjVTD0JlilcyMjx+KyW2lfu
-X-Google-Smtp-Source: AGHT+IGEp9wZ4D2X3eyEoFntYJnl9jGs+c4/61l25eHGVK0EQEzCZ/jP2ZO52SD6zxW0l6cKqis8XA==
-X-Received: by 2002:a17:907:2685:b0:a86:a6ee:7dad with SMTP id a640c23a62f3a-a93c4a4e0a8mr971097166b.52.1727634036526;
-        Sun, 29 Sep 2024 11:20:36 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:df60:d786:cd5:d3c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297a2ffsm407216666b.157.2024.09.29.11.20.34
+        d=1e100.net; s=20230601; t=1727634080; x=1728238880;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NcSFbsIXgiNSIJxntSXwkK9zAY/t+TLdWZ5xLvbV6u8=;
+        b=X8tk0bBpIwpYr2bvUTQEdfPk8HQfEjnqYuLEW4PHfHJ1ebYSxXB1XhF4x8qbWaRFbT
+         W7Xpnp4HBEsNjp5NOSZdYzy9KPsOWUqNeQ2WMaq9Sqq1Ns373zj9SNUp3BP/Kzoo4KoP
+         pY9L5E9vodG2XWQLJQ7cos/ylHc+DXVv+N/UJ6b0BNaDCH765jQ00kTlSCzEBwl10d+F
+         TNptbp81jZz1/XE4yPU6txWM8NMeh5cg6005kzGznurT1n9b5Xaf8vuE+7BeX5RGKrsp
+         StNcba/dU9Vt3yrdiYApeKNJ/2a23+bU887qyYgvyngRML/morhGsMIlAJpwFQMYFDp3
+         rZtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRMZhwpdTprFqEDHXptuJTs6hfkLI7cUoB5ML3/pMKDc05OmRSn/VVZkZpaMIzBBLYwQTTF8GvsXkx2HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrx62uGojZPZ3o4tFBDXNLT/Z9o8/01yWK77e0olj0Jlg0q8rg
+	Uk6/Y6m4Oxukio41gDRXNwJCIkwU454e27OFHS5fZ5Xo1AXw8QcVI2rWqS0wrw7NgaCXrtvieAY
+	bg+9pIcNz+b3Tp89QiUCG6v/gob515nE8c9q02W8JtxfelA62jgGAIpBgNah5Av50zlkBFSF4OE
+	5kHw==
+X-Received: by 2002:a17:906:6a02:b0:a8d:2c00:949a with SMTP id a640c23a62f3a-a93c48f2108mr1109687766b.9.1727634080069;
+        Sun, 29 Sep 2024 11:21:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/dwfX8CpFC/wMaqb9ON9AqBmf3Q6FpW0kLVPD+7epq6zvyosEb7pk9U9oZmP8xLkgLxMtPw==
+X-Received: by 2002:a17:906:6a02:b0:a8d:2c00:949a with SMTP id a640c23a62f3a-a93c48f2108mr1109685266b.9.1727634079417;
+        Sun, 29 Sep 2024 11:21:19 -0700 (PDT)
+Received: from amikhalitsyn.lan (ipbcc0714d.dynamic.kabel-deutschland.de. [188.192.113.77])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248af1bsm3420056a12.75.2024.09.29.11.21.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 11:20:35 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sun, 29 Sep 2024 20:20:33 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, dan.carpenter@linaro.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iio: pressure: bmp280: Fix type for raw values
-Message-ID: <20240929182033.GA213331@vamoiridPC>
-References: <20240929112511.100292-1-vassilisamir@gmail.com>
- <20240929112511.100292-2-vassilisamir@gmail.com>
- <20240929175710.2e101abc@jic23-huawei>
+        Sun, 29 Sep 2024 11:21:18 -0700 (PDT)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: stefanha@redhat.com
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] vhost/vsock: specify module version
+Date: Sun, 29 Sep 2024 20:21:03 +0200
+Message-Id: <20240929182103.21882-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929175710.2e101abc@jic23-huawei>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 29, 2024 at 06:04:26PM +0100, Jonathan Cameron wrote:
-> On Sun, 29 Sep 2024 13:25:10 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > The adc values coming directly from the sensor in the BM{E,P}{2,3}xx
-> > sensors are unsigned values so treat them as such.
-> > 
-> > Fixes: 80cd23f43ddc ("iio: pressure: bmp280: Add triggered buffer support")
-> Why is this a fix rather than a cleanup?  Looks to me like all the values
-> are going to be small enough that they fit either way.
-> So good to tidy up for consistency etc, but why a fixes tag?
-> 
-> I 
-> 
+Add an explicit MODULE_VERSION("0.0.1") specification for the vhost_vsock module.
 
-Hi Jonathan,
+It is useful because it allows userspace to check if vhost_vsock is there when it is
+configured as a built-in.
 
-I used the fixes tag because I though it was appropriate since it was
-using a wrong variable type even though it was not posing any
-functional thread (I mentioned it in the cover-letter as well).
+This is what we have *without* this change and when vhost_vsock is configured
+as a module and loaded:
 
-Since I am doing a new version I can drop the tag, no problem!!!
+$ ls -la /sys/module/vhost_vsock
+total 0
+drwxr-xr-x   5 root root    0 Sep 29 19:00 .
+drwxr-xr-x 337 root root    0 Sep 29 18:59 ..
+-r--r--r--   1 root root 4096 Sep 29 20:05 coresize
+drwxr-xr-x   2 root root    0 Sep 29 20:05 holders
+-r--r--r--   1 root root 4096 Sep 29 20:05 initsize
+-r--r--r--   1 root root 4096 Sep 29 20:05 initstate
+drwxr-xr-x   2 root root    0 Sep 29 20:05 notes
+-r--r--r--   1 root root 4096 Sep 29 20:05 refcnt
+drwxr-xr-x   2 root root    0 Sep 29 20:05 sections
+-r--r--r--   1 root root 4096 Sep 29 20:05 srcversion
+-r--r--r--   1 root root 4096 Sep 29 20:05 taint
+--w-------   1 root root 4096 Sep 29 19:00 uevent
 
-Cheers,
-Vasilis
+When vhost_vsock is configured as a built-in there is *no* /sys/module/vhost_vsock directory at all.
+And this looks like an inconsistency.
 
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > ---
-> >  drivers/iio/pressure/bmp280-core.c | 9 ++++++---
-> >  1 file changed, 6 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index 6c2606f34ec4..472a6696303b 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -1023,7 +1023,8 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
-> >  	struct iio_poll_func *pf = p;
-> >  	struct iio_dev *indio_dev = pf->indio_dev;
-> >  	struct bmp280_data *data = iio_priv(indio_dev);
-> > -	s32 adc_temp, adc_press, t_fine;
-> > +	u32 adc_temp, adc_press;
-> These are filled as part of a get_unaligned_be24() so the value will never
-> be big enough that signed / unsigned should make any difference.
-> 
-> > +	s32 t_fine;
-> >  	int ret;
-> >  
-> >  	guard(mutex)(&data->lock);
-> > @@ -1137,7 +1138,8 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
-> >  	struct iio_poll_func *pf = p;
-> >  	struct iio_dev *indio_dev = pf->indio_dev;
-> >  	struct bmp280_data *data = iio_priv(indio_dev);
-> > -	s32 adc_temp, adc_press, adc_humidity, t_fine;
-> > +	u32 adc_temp, adc_press, adc_humidity;
-> Same with these.
-> > +	s32 t_fine;
-> >  	int ret;
-> >  
-> >  	guard(mutex)(&data->lock);
-> > @@ -1616,7 +1618,8 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
-> >  	struct iio_poll_func *pf = p;
-> >  	struct iio_dev *indio_dev = pf->indio_dev;
-> >  	struct bmp280_data *data = iio_priv(indio_dev);
-> > -	s32 adc_temp, adc_press, t_fine;
-> These are similar but le24.
-> 
-> > +	u32 adc_temp, adc_press;
-> > +	s32 t_fine;
-> >  	int ret;
-> >  
-> >  	guard(mutex)(&data->lock);
-> 
+With this change, when vhost_vsock is configured as a built-in we get:
+$ ls -la /sys/module/vhost_vsock/
+total 0
+drwxr-xr-x   2 root root    0 Sep 26 15:59 .
+drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
+--w-------   1 root root 4096 Sep 26 15:59 uevent
+-r--r--r--   1 root root 4096 Sep 26 15:59 version
+
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ drivers/vhost/vsock.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 802153e23073..287ea8e480b5 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
+ 
+ module_init(vhost_vsock_init);
+ module_exit(vhost_vsock_exit);
++MODULE_VERSION("0.0.1");
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Asias He");
+ MODULE_DESCRIPTION("vhost transport for vsock ");
+-- 
+2.34.1
+
 
