@@ -1,206 +1,195 @@
-Return-Path: <linux-kernel+bounces-343143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6159C989733
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:59:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFF66989736
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74531F21712
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:59:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF6141C20B49
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:00:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB1C7DA68;
-	Sun, 29 Sep 2024 19:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA207DA88;
+	Sun, 29 Sep 2024 20:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="zLO1xvhU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SUqLrlSG"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="nZT54Qu6"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753557BAEC;
-	Sun, 29 Sep 2024 19:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A92A4207A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727639972; cv=none; b=i1cTiEH9CoYDIJ2o2OEiCAFBQ+CtAbs4+abiOLqhJInIcfFm75yfVF50dTCYbEAsQCbANt+Jf2YVT4vQxRHbFcDT9Ux7O1lzmLHOybrpznZTzZHfoKKNnUnA4UKbE6zKhLCVSpn/VabElac+GspUYBv8Y3G9/8q6tMRkG/sYSO8=
+	t=1727640041; cv=none; b=C4igd4prixLVkyRaWrbRtzzxLkMIg5X5FWj7x1CTg0DTJ1QOlvC2KM0u5CN4vyVJ9vuN/OyFhTyNRfE1pB5zEMGmlyVJ0SyHFHPHZd/Dyr1kCaHO1dy4RRuHorDUrxBdpDp1quqYrUq8gS+gcKuVgw/1BrUZGvaG8wmilqphar0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727639972; c=relaxed/simple;
-	bh=ZEiw6Vdio/TP2WrUL+Vf/mhXL1ax469ODYxcNdnlWC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxK4K+Qm39a8/1BnIKpmzcBqotOttI/VI+cZg99YSqqOoV2e26H30njqb4JyVTxpDJVdzxTNe3oWBNpUoxdNVv+obJXY28yfMp6OoT5fMCcMbzn/N7kNvAIZQ5E3MMGJRT/aWLDB9c4kEyantZacs1Vjr01KklMVi/QL5o4rS2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=zLO1xvhU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SUqLrlSG; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 8C3A8138025B;
-	Sun, 29 Sep 2024 15:59:29 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Sun, 29 Sep 2024 15:59:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727639969;
-	 x=1727726369; bh=wjelk38W9mGSPjR1nvLcSCdYm0WK8pYBKRnjg05bhwE=; b=
-	zLO1xvhUNtnuTskHs4uOir8G6dEbx5fsn4gxqD6rvf4GKH8r+vsrmwY/eiM/kync
-	BgV3oztllypRlAUzpDaxtFGsTsID9xNM4kgHMZtHD9rpSIefylUlWF3MFs3sHGeU
-	N7yNn/Jr/ZzR71uYcgrdcCi/4otvAwlBMLF1lGiKgUg8PaZrXW5s9aLANRvk0Ytv
-	ZiGp6yURW77t7EX893gYsH3B0lihri8oRDvVx6lQI6NxWVBzOLI3cEMJKU7bhY5Z
-	wLywFNbOA0Mj5gvXk9kMWdQvSCYW8pnjoPLX6WIlq6vAwDbX7PJo3gu9XV3Ykvdg
-	5l2dtPuxVCmsp7StUONKPA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727639969; x=
-	1727726369; bh=wjelk38W9mGSPjR1nvLcSCdYm0WK8pYBKRnjg05bhwE=; b=S
-	UqLrlSGqUSSppwfVYPyb0sLAaYSr16qH8ASkKYZG3USwVfkvQND8AHiXdQZqhDJh
-	2I80BdgDND2JXs/7rIloFk0W2Q7hgZJL5fJvH04+BNOnvhy4kNTSwZr6dE1Z3kai
-	4L/p6uv22jf/QGrGW6AxDG5TQuPmh28yPSB/LYb5yoDnWV4iR9UOrCJevz00JOi/
-	xWwHBMD1l4a2e9t2nK2YV+FbAjK9MnWH+EriFgp4PTGyr+FPpV+BhQo9dOqvipUg
-	JE2bEfO3u2VLu/Lh5rJ4UVpCgvTTQ8WOj4tuWsEZXkSzxI1+lh8Rq3GljV89MSmf
-	LY1rBUhgV3zB6hnevriMQ==
-X-ME-Sender: <xms:obH5ZncGYFwsveKawsM78ViPH6JfgId4eMEmBZYrCOiQlZCGLydozw>
-    <xme:obH5ZtPGWwrg165XAdOEOKMiFpcJehegDSAOJ82PQ8njgnnl3UXOBoXvKALV8bzZa
-    NxJNbFhf_fQOGBGTL4>
-X-ME-Received: <xmr:obH5ZgiSmRkdSgJjtSNdKHK4tEg4hkible3M4a45ijNym1jqTJ27tduZFcNECyWDWgcwaZCl4SeIvsd9XOdPtQn9EHT7>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddufedgudegiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenfghrlhcuvffnffculddutddmnecujfgurhepfffhvfevuffk
-    fhggtggugfgjsehtkeortddttdejnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrg
-    hrrhcuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeetjeej
-    udefveetgeehgfetleduudfhieegleetjeffudehkeeukeeigffffeeuffenucffohhmrg
-    hinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjhhfrghrrhdrtg
-    gtpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehk
-    vggvsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhorhgsohesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtoheprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeht
-    hhhorhhsthgvnhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopehkvghnth
-    drohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprhgvghhrvghs
-    shhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqd
-    gstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhhrghruggvnhhinhhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:obH5Zo_J2bN6ZDT_QjZLHe0tV1PBChCnX9RvagpE0YQBCI_dw5IEKA>
-    <xmx:obH5ZjsQ6UxCA3TG2LqiAJHhTuPwouIpxY7d3REw0va0FdGp_UOnDA>
-    <xmx:obH5ZnGHG8Utf5lRr7LwHSRFMxC9ei0kT46jQMS_fCT5zMk5yYJO0Q>
-    <xmx:obH5ZqPCMfVdVjsbvlnaFCdWrxem_tgGk-U3-BMIpomliV-nEbMJNg>
-    <xmx:obH5ZhJswG8A-TuWonqtoZRfoRAkni790OVx25gFhrEZoqjGyM_T0m-7>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 29 Sep 2024 15:59:28 -0400 (EDT)
-Date: Sun, 29 Sep 2024 21:59:26 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Kees Cook <kees@kernel.org>
-Cc: Bill Wendling <morbo@google.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZvmxntpAHrAwcKaH@archlinux>
-References: <ZvV6X5FPBBW7CO1f@archlinux>
- <3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com>
- <A499F119-5F0C-43FC-9058-7AB92057F9B3@toblux.com>
- <ZvWTXaqkmxP2E2dc@archlinux>
- <ZvWd0aK7p_1rkb7E@archlinux>
- <CAMj1kXFV+Jck9Yf4w18rOzHckXvpXkhPhL-KrpBC8hqgXusw2g@mail.gmail.com>
- <CAGG=3QXG+Vsm7mjLV42Q-uA-EvgfOehSUeNQjKA3QQbw8vqSCg@mail.gmail.com>
- <CAGG=3QVWCQB-3sM=iwgTmX8zrU81H+F_A1icJwROvW_DSvsBeA@mail.gmail.com>
- <202409281335.5EE231B9C7@keescook>
- <ZviSURL7kaxZPkSN@archlinux>
+	s=arc-20240116; t=1727640041; c=relaxed/simple;
+	bh=C+HE48UOVNh3S8JegzOeS1KV251zvl3uafKiq4ay2XM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kBKHZ4u9uSlYn5fxioyHeBCLUW7RL94XB7B1RtewYcSbX5UjlwNXzsirQHVhrq8u+ZPv4ttLUrfknhgaIiGLpBz+0B7evNB4gxZsKdrgPpVOToGsRcZzAOJEpl5qbOtsTqLCm/4Mz7RVxOpwt92vi5SumJ2aw28PPcS1TOGLt8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=nZT54Qu6; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e22f10cc11so29219757b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 13:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1727640038; x=1728244838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=THVSoogwNns4Otfo36VQb2ocrUo2155C0xuop1kKVhc=;
+        b=nZT54Qu6xaErcF99YP+U9KayN5bVBE45YeMalKC0Hb/cxsUC8k7majIS86BSpwv1Tg
+         3hW7X0xB/JXn8Wzg2iF2IGvaBzUoreCUq6UAka6nifxlR0yJgCik1vrLIUi/O7kmdYJh
+         fvKDPRY5VNqHmsCcjdysoMDLDEYXpq/edrZSI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727640038; x=1728244838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=THVSoogwNns4Otfo36VQb2ocrUo2155C0xuop1kKVhc=;
+        b=Tq/3XukwmDPleiM7zyE4SVDhuWx7BiKuSke3H2pTLpKJyXBP1jerL9iLhiejrbSUnN
+         fc9GQBTyfVuFaKlAGeft2wq+9mkUhvJEmq+0mVkugge9hDoF9CfsgfeWR6SUFRjUS7ZI
+         Db6FZAKhwd1GC+ednvoodCbQECwyw9QN27DbypqZrmUGRGDZXtA2GGxIHBm6QHFnjDOn
+         v2OQf58rR2ZsmZJIPNUjNLzwoi55ajWcl1JF5xpjf76MWHgchay07Yx807iyYTjPkrIV
+         U4Aslax7XkUkik4jCJ2cgHSXUn7d/sZ1Mljb13nwqRThespaARxN97BHnPkChFrpO2Vf
+         KdKA==
+X-Gm-Message-State: AOJu0Yz/2y1f9BpSjqujWtjis0g8iWDpXVM65EVIurUSbsxjjyPfd9iK
+	QTOyL+mnNYy+5U4PaA3qn3PK+SK/3Ax3kSWnPMg/pc2CHDE+08Vxz9+kcozyyXQOGY5fSI9J0OW
+	GBibFhIMiVxMGiT8Qcgu3yh11lxQ+QmvpUcdo9A==
+X-Google-Smtp-Source: AGHT+IHIOE3+c2mX/UsbrIe1XO7FQZ+whU+SXEoKWNXBu9Vk5hhOQ7qtm4cjBU4dpR9jmUzCwLswFX+y7Pi2oOlEcv8=
+X-Received: by 2002:a05:690c:4488:b0:6db:2604:ea6b with SMTP id
+ 00721157ae682-6e24759414bmr55679827b3.25.1727640038489; Sun, 29 Sep 2024
+ 13:00:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZviSURL7kaxZPkSN@archlinux>
+References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
+ <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com> <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+In-Reply-To: <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sun, 29 Sep 2024 22:00:27 +0200
+Message-ID: <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
+ spectrum clocking
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29 01:33:40, Jan Hendrik Farr wrote:
-> On 28 13:50:12, Kees Cook wrote:
-> > On Thu, Sep 26, 2024 at 06:30:15PM -0700, Bill Wendling wrote:
-> > > On Thu, Sep 26, 2024 at 3:18 PM Bill Wendling <morbo@google.com> wrote:
-> > > >
-> > > > On Thu, Sep 26, 2024 at 12:58 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > >
-> > > > > (cc Kees and Bill)
-> > > > >
-> > > > > On Thu, 26 Sept 2024 at 19:46, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > > > > >
-> > > > > > On 26 19:01:20, Jan Hendrik Farr wrote:
-> > > > > > > On 26 18:09:57, Thorsten Blum wrote:
-> > > > > > > > On 26. Sep 2024, at 17:28, Thorsten Blum <thorsten.blum@toblux.com> wrote:
-> > > > > > > > > On 26. Sep 2024, at 17:14, Jan Hendrik Farr <kernel@jfarr.cc> wrote:
-> > > [...]
-> > > > > > > > >> [    6.252375] memchr: detected buffer overflow: 12 byte read of buffer size 0
-> > > [...]
-> > > > > > >       bkey_fsck_err_on(memchr(xattr.v->x_name, '\0', xattr.v->x_name_len),
-> > > > > > >                        c, xattr_name_invalid_chars,
-> > > > > > >                        "xattr name has invalid characters");
-> > > [...]
-> > 
-> > The thing going wrong is that __bdos(xattr.v->x_name, 0) is returning 0.
-> > This looks exactly like the bug I minimized here:
-> > https://lore.kernel.org/all/202409170436.C3C6E7F7A@keescook/
-> > 
-> > Since there wasn't an LLVM open bug yet, I've created:
-> > https://github.com/llvm/llvm-project/issues/110385
-> > 
-> > -Kees
-> > 
-> I found a fix for the issue. Fixes both the issue in this thread as well
-> as your reproducer. First thought they might not actually be the same
-> issue, but they indeed are. Haven't tested against the issue Thorsten
-> linked.
-> 
-> Havn't run the clang tests on it yet, but it does successfully compile
-> my kernel and fix the issue.
-> 
-> I'll open a PR and give more explanation tomorrow, it's getting
-> pretty late over here in CEST.
-> 
-> 
-> Here's the patch to be applied on top of
-> https://github.com/llvm/llvm-project
-> 
-> --
-> diff --git a/clang/lib/CodeGen/CGExpr.cpp b/clang/lib/CodeGen/CGExpr.cpp
-> index 9166db4c7412..143dd3fcfcf8 100644
-> --- a/clang/lib/CodeGen/CGExpr.cpp
-> +++ b/clang/lib/CodeGen/CGExpr.cpp
-> @@ -1164,15 +1164,15 @@ llvm::Value *CodeGenFunction::EmitLoadOfCountedByField(
->      Res = EmitDeclRefLValue(DRE).getPointer(*this);
->      Res = Builder.CreateAlignedLoad(ConvertType(DRE->getType()), Res,
->                                      getPointerAlign(), "dre.load");
-> -  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
-> -    LValue LV = EmitMemberExpr(ME);
-> -    Address Addr = LV.getAddress();
-> -    Res = Addr.emitRawPointer(*this);
->    } else if (StructBase->getType()->isPointerType()) {
->      LValueBaseInfo BaseInfo;
->      TBAAAccessInfo TBAAInfo;
->      Address Addr = EmitPointerWithAlignment(StructBase, &BaseInfo, &TBAAInfo);
->      Res = Addr.emitRawPointer(*this);
-> +  } else if (const MemberExpr *ME = dyn_cast<MemberExpr>(StructBase)) {
-> +    LValue LV = EmitMemberExpr(ME);
-> +    Address Addr = LV.getAddress();
-> +    Res = Addr.emitRawPointer(*this);
->    } else {
->      return nullptr;
->    }
+On Sat, Sep 28, 2024 at 2:09=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 28/09/2024 10:37, Dario Binacchi wrote:
+> > The patch adds the DT bindings for enabling and tuning spread spectrum
+> > clocking generation.
+> >
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> > ---
+> >
+> >  .../bindings/clock/fsl,imx8m-anatop.yaml      | 41 +++++++++++++++++++
+> >  1 file changed, 41 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.y=
+aml b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> > index bbd22e95b319..c91eb4229ed3 100644
+> > --- a/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/fsl,imx8m-anatop.yaml
+> > @@ -32,6 +32,47 @@ properties:
+> >
+> >    '#clock-cells':
+> >      const: 1
+> > +if:
+>
+> This should be allOf: and placed after required: block, like in example
+> schema.
+>
+>
+> > +  properties:
+> > +    compatible:
+> > +      contains:
+> > +        enum:
+> > +          - fsl,imx8mm-anatop
+> > +
+> > +then:
+> > +  properties:
+> > +    fsl,ssc-clocks:
+>
+> Nope. Properties must be defined in top-level.
+>
+> > +      $ref: /schemas/types.yaml#/definitions/phandle-array
+> > +      description:
+> > +        The phandles to the PLLs with spread spectrum clock generation
+> > +        hardware capability.
+>
+> These should be clocks.
+
+Sorry, but I can't understand what you're asking me.
+Could you kindly explain it to me in more detail?
+
+>
+> > +      maxItems: 4
+> > +
+> > +    fsl,ssc-modfreq-hz:
+> > +      $ref: /schemas/types.yaml#/definitions/uint32-array
+>
+> This should fail. I don't think you tested this patch.
+
+I executed the command
+
+make dt_binding_check DT_SCHEMA_FILES=3Dfsl,imx8m-anatop.yaml
+
+and it did not raise any errors.
+
+Thanks and regards,
+Dario
+
+>
+> https://github.com/devicetree-org/dt-schema/blob/main/dtschema/schemas/pr=
+operty-units.yaml
+>
+> > +      description:
+> > +        The values of modulation frequency (Hz unit) of spread spectru=
+m
+> > +        clocking for each PLL.
+> > +      maxItems: 4
+> > +
+> > +    fsl,ssc-modrate-percent:
+>
+> Same problems
+>
+>
+>
+> Best regards,
+> Krzysztof
+>
 
 
-Here's the PR: https://github.com/llvm/llvm-project/pull/110437
+--=20
 
-I hope the way I added the CHECK tags in the test is good and that they if
-they don't need manual cleanup, not familiar with the llvm test system.
+Dario Binacchi
+
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
 
 
-Best Regards
-Jan
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
