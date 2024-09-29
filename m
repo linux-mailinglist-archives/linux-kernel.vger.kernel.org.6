@@ -1,138 +1,191 @@
-Return-Path: <linux-kernel+bounces-343151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703C298974A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:36:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962BE98974C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C9F1F214FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63094281393
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC27DA8C;
-	Sun, 29 Sep 2024 20:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="RJf3Iif9"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9627E0E8;
+	Sun, 29 Sep 2024 20:38:23 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747972AE90
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F36852F9E
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727642203; cv=none; b=EcEhVfyIeNYFr7fgfBWRaDG4MZuuQzpLLfvOJQGco1TUwup6mR4Tg5tY0kNNXIRWI69kV35n3Ta1ZgAo/CKS6kAi4rtZ9Rnpvt1dczZ0n3LZei87zBTzNie3TwL13/UzQXKYg6fc3h2JfTg9N8x3LZqxt4IT3dnrkuhrRDD/3Uo=
+	t=1727642302; cv=none; b=ZtBS+JCfcB5NpFu4pbHY3TGVXz0oqdoI9/tFycNMl0XHXBb9Lg3w99D0Vmz0La1/xrTpyZ3AEjM1CYjHe8PKeS+GC5Qhf4+VNPYYldjYQ8p1ySu5AWijS/iLsw5Rjg9t7oTm/W5alAJwGYm0tftrh6EUNfBo/xuHQO1wSm7v1Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727642203; c=relaxed/simple;
-	bh=yJvKHFVaWy+U/hapM0yQzvNmizf07/FN1eL92Wgn+Sg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X4L96CfFXQBtbSe97cqIkzaCkv4G22nI9juEZLF/Ar0o5KsHqx74EY+iQMHP/dEkoKWsONzPJ0LaTwruxWy8Q+3cniSdLyW0XeDoSh8bNlWosM0/5vB2IAef3ZCuBTDU08V+D7zXPBrhjvtB6OjYT6MPXxSiZDB1w2JEE2wGud4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=RJf3Iif9; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e2598a0070so9868227b3.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 13:36:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1727642200; x=1728247000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OVnHMnmiF+13daBSttLD+aIXUDJcxVgtv3MA41ELUOQ=;
-        b=RJf3Iif9Spw6qAqkijtvucZ77XCj0wBbyMDahCjzLCafo5+WX+2IwfmbMcQn2Vif3C
-         4CLXqc57GWQ3BZausJoOs9yA/euW10Qr4s5EpWQkSzJtHsgp5K4+P/bOGWx7/17OSZVA
-         n4oL/rw+qapRXH0JTi14mPU+nZ8L3yAeQ+GwNMIkNxgyulYV0AMQ2Z//+kPANVl/RLba
-         Vqbb8CkJ71cKvgFp9oHyVWr7K+vn8LxolOFP0msLdEl12Rqa02lc0d09NU138oC9OUyf
-         CLJCSO9W4Nm8xSk1UGc8ecgqOcO5hZONpbflr+WBatCp4cinw5K0uPFB9XVZj5JRFpiz
-         u9kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727642200; x=1728247000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OVnHMnmiF+13daBSttLD+aIXUDJcxVgtv3MA41ELUOQ=;
-        b=btbDxEU5mdkCDSTwlPGr1KAd+wYWBbVrvWbkpXvbkN+l+3tbd3lIMLeYJMBT9NKUD7
-         9ZtOAIWpvDrFmZ4mEg3f41W1ZHNL5WinvivUYsAmhLab7FxvOAx2whnhg45lolxLa/wG
-         lQJqyChZSPmpRjRxh+7U5/Z6g6Zv/tppIg1QXph2DjopHg6gs86kqw9t9GxDj9CunO9W
-         WFwNj4THUFDEtV5S345LwfEZtPcvRFjyFd5F5ik/FLOe568iOlWFDy5ArDTC2vL2c0FV
-         NFfOjYb/3mcwOIvXDaN+d/1acN3SBdKrERqD9HLdeTdusVPrDVMsBgGHMY1wV5u/23i+
-         O6Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCU83B3OKuLzkl4bd6LZ39eYBC6gqeJLU4qcl5HiVwd7e21L2Zq5hEXUPXOvFI252t1J82n6vTYyltg0pmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLQpcybMD3iNUUWq+UXLZ2bdAMWLWYKx1cwPLvZ74CxEzBa2mm
-	pGKJ8LWv5GrtNWBQ4UCxBrcp12NOQdjaSI8ZzXQeGOhwNe5mp4hyXc+suWog97d5eigQMbIBZnd
-	/S2uJHCHKc+U0t3pfohJkji3QY1MY7iypPdKA0w==
-X-Google-Smtp-Source: AGHT+IETCze3KtAe+nbUVqoRMjK6sAQNLok2M1rHft7+nawFMwPHyIKRFgxqTTpRzDf2ozXAHljC8Nhw9SfgrzI5dTA=
-X-Received: by 2002:a05:690c:2905:b0:6e2:1062:9b90 with SMTP id
- 00721157ae682-6e247619bd8mr54586977b3.44.1727642200296; Sun, 29 Sep 2024
- 13:36:40 -0700 (PDT)
+	s=arc-20240116; t=1727642302; c=relaxed/simple;
+	bh=kDZ8DiveU6qQT4mghaV/wgrhMD9g1V+Rww0fBIDGViI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=rovom2x8TozBzP2sdJa3WFY0Kov9VqV7LTiSFuAWPbjIoyeZN8aT3kkwJGmOMcmD9R9DVMIXSC9erY9sBj8amC0sIC4UIXyRc2LqGPCt+vVqSpMiJDoR7ASVMoYBW1QFgrjZo4A/Tih+7B57CgbFSAMOIoSVqO8bcfTFoyOxU28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-249-b7mGYlNsMQO2oFNBFFPGaA-1; Sun, 29 Sep 2024 21:38:10 +0100
+X-MC-Unique: b7mGYlNsMQO2oFNBFFPGaA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 29 Sep
+ 2024 21:37:17 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 29 Sep 2024 21:37:17 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Julian Vetter' <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+	"Guo Ren" <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, Andrew Morton <akpm@linux-foundation.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-csky@vger.kernel.org"
+	<linux-csky@vger.kernel.org>, "loongarch@lists.linux.dev"
+	<loongarch@lists.linux.dev>, Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: RE: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io
+ into iomap_copy.c
+Thread-Topic: [PATCH v6 1/5] Consolidate __memcpy_{to,from}io and __memset_io
+ into iomap_copy.c
+Thread-Index: AQHbD1eMTwS2+51gCUupXjyBebLx9rJvHKbg
+Date: Sun, 29 Sep 2024 20:37:17 +0000
+Message-ID: <f1673602e3f246cf92f3453f0c13911b@AcuMS.aculab.com>
+References: <20240925132420.821473-1-jvetter@kalrayinc.com>
+ <20240925132420.821473-2-jvetter@kalrayinc.com>
+In-Reply-To: <20240925132420.821473-2-jvetter@kalrayinc.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916213025.477225-1-lyude@redhat.com> <20240916213025.477225-2-lyude@redhat.com>
-In-Reply-To: <20240916213025.477225-2-lyude@redhat.com>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Sun, 29 Sep 2024 16:36:29 -0400
-Message-ID: <CALNs47u56oVYxwNq+POgOu0m141gwG-mEoRBH8hzevj6Ve-Vag@mail.gmail.com>
-Subject: Re: [PATCH v6 1/3] rust: Introduce irq module
-To: Lyude Paul <lyude@redhat.com>
-Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	Benno Lossin <benno.lossin@proton.me>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Valentin Obst <kernel@valentinobst.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Mon, Sep 16, 2024 at 5:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
-:
->
-> This introduces a module for dealing with interrupt-disabled contexts,
-> including the ability to enable and disable interrupts
-> (with_irqs_disabled()) - along with the ability to annotate functions as
-> expecting that IRQs are already disabled on the local CPU.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
-> Reviewed-by: Gary Guo <gary@garyguo.net>
+RnJvbTogSnVsaWFuIFZldHRlcg0KPiBTZW50OiAyNSBTZXB0ZW1iZXIgMjAyNCAxNDoyNA0KPiAN
+Cj4gVmFyaW91cyBhcmNoaXRlY3R1cmVzIGhhdmUgYWxtb3N0IHRoZSBzYW1lIGltcGxlbWVudGF0
+aW9ucyBmb3INCj4gX19tZW1jcHlfe3RvLGZyb219aW8gYW5kIF9fbWVtc2V0X2lvIGZ1bmN0aW9u
+cy4gU28sIGNvbnNvbGlkYXRlIHRoZW0NCj4gaW50byB0aGUgZXhpc3RpbmcgbGliL2lvbWFwX2Nv
+cHkuYy4NCj4gDQo+IFJldmlld2VkLWJ5OiBZYW5uIFNpb25uZWF1IDx5c2lvbm5lYXVAa2FscmF5
+aW5jLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogSnVsaWFuIFZldHRlciA8anZldHRlckBrYWxyYXlp
+bmMuY29tPg0KPiAtLS0NCj4gU2lnbmVkLW9mZi1ieTogSnVsaWFuIFZldHRlciA8anZldHRlckBr
+YWxyYXlpbmMuY29tPg0KPiAtLS0NCj4gQ2hhbmdlcyBmb3IgdjY6DQo+IC0gSW5jbHVkZWQgbGlu
+dXgvYXNsaWduLmgNCj4gLSBSZXBsYWNlZCBjb21waWxlIHRpbWUgY2hlY2sgYnkgaWZkZWYgdG8g
+cmVtb3ZlIGNvbXBpbGVyIHdhcm5pbmcNCj4gLS0tDQo+ICBpbmNsdWRlL2FzbS1nZW5lcmljL2lv
+LmggfCAgMTIgKysrKysNCj4gIGxpYi9pb21hcF9jb3B5LmMgICAgICAgICB8IDEwOSArKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gIDIgZmlsZXMgY2hhbmdlZCwgMTIx
+IGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2FzbS1nZW5lcmljL2lv
+LmggYi9pbmNsdWRlL2FzbS1nZW5lcmljL2lvLmgNCj4gaW5kZXggODBkZTY5OWJmNmFmLi45Yjhl
+MDQ0OWRhMjggMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvYXNtLWdlbmVyaWMvaW8uaA0KPiArKysg
+Yi9pbmNsdWRlL2FzbS1nZW5lcmljL2lvLmgNCj4gQEAgLTEwMiw2ICsxMDIsMTggQEAgc3RhdGlj
+IGlubGluZSB2b2lkIGxvZ19wb3N0X3JlYWRfbW1pbyh1NjQgdmFsLCB1OCB3aWR0aCwgY29uc3Qg
+dm9sYXRpbGUgdm9pZCBfX2kNCj4gDQo+ICAjZW5kaWYgLyogQ09ORklHX1RSQUNFX01NSU9fQUND
+RVNTICovDQo+IA0KPiArI2lmbmRlZiBfX21lbWNweV9mcm9taW8NCj4gK3ZvaWQgX19tZW1jcHlf
+ZnJvbWlvKHZvaWQgKnRvLCBjb25zdCB2b2xhdGlsZSB2b2lkIF9faW9tZW0gKmZyb20sIHNpemVf
+dCBjb3VudCk7DQo+ICsjZW5kaWYNCj4gKw0KPiArI2lmbmRlZiBfX21lbWNweV90b2lvDQo+ICt2
+b2lkIF9fbWVtY3B5X3RvaW8odm9sYXRpbGUgdm9pZCBfX2lvbWVtICp0bywgY29uc3Qgdm9pZCAq
+ZnJvbSwgc2l6ZV90IGNvdW50KTsNCj4gKyNlbmRpZg0KPiArDQo+ICsjaWZuZGVmIF9fbWVtc2V0
+X2lvDQo+ICt2b2lkIF9fbWVtc2V0X2lvKHZvbGF0aWxlIHZvaWQgX19pb21lbSAqZHN0LCBpbnQg
+Yywgc2l6ZV90IGNvdW50KTsNCj4gKyNlbmRpZg0KPiArDQo+ICAvKg0KPiAgICogX19yYXdfe3Jl
+YWQsd3JpdGV9e2IsdyxsLHF9KCkgYWNjZXNzIG1lbW9yeSBpbiBuYXRpdmUgZW5kaWFubmVzcy4N
+Cj4gICAqDQo+IGRpZmYgLS1naXQgYS9saWIvaW9tYXBfY29weS5jIGIvbGliL2lvbWFwX2NvcHku
+Yw0KPiBpbmRleCAyZmQ1NzEyZmI3YzAuLmMyY2VlNjQxMDE1MSAxMDA2NDQNCj4gLS0tIGEvbGli
+L2lvbWFwX2NvcHkuYw0KPiArKysgYi9saWIvaW9tYXBfY29weS5jDQo+IEBAIC0zLDkgKzMsMTUg
+QEANCj4gICAqIENvcHlyaWdodCAyMDA2IFBhdGhTY2FsZSwgSW5jLiAgQWxsIFJpZ2h0cyBSZXNl
+cnZlZC4NCj4gICAqLw0KPiANCj4gKyNpbmNsdWRlIDxhc20vdW5hbGlnbmVkLmg+DQo+ICsNCj4g
+KyNpbmNsdWRlIDxsaW51eC9hbGlnbi5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L2V4cG9ydC5oPg0K
+PiArI2luY2x1ZGUgPGxpbnV4L3R5cGVzLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4g
+DQo+ICsjZGVmaW5lIE5BVElWRV9TVE9SRV9TSVpFCShCSVRTX1BFUl9MT05HLzgpDQoNCihzaXpl
+b2YgKGxvbmcpKQ0KDQo+ICsNCj4gIC8qKg0KPiAgICogX19pb3dyaXRlMzJfY29weSAtIGNvcHkg
+ZGF0YSB0byBNTUlPIHNwYWNlLCBpbiAzMi1iaXQgdW5pdHMNCj4gICAqIEB0bzogZGVzdGluYXRp
+b24sIGluIE1NSU8gc3BhY2UgKG11c3QgYmUgMzItYml0IGFsaWduZWQpDQo+IEBAIC03NiwzICs4
+MiwxMDYgQEAgdm9pZCBfX2lvd3JpdGU2NF9jb3B5KHZvaWQgX19pb21lbSAqdG8sIGNvbnN0IHZv
+aWQgKmZyb20sIHNpemVfdCBjb3VudCkNCj4gIH0NCj4gIEVYUE9SVF9TWU1CT0xfR1BMKF9faW93
+cml0ZTY0X2NvcHkpOw0KPiAgI2VuZGlmDQo+ICsNCj4gKw0KPiArI2lmbmRlZiBfX21lbWNweV9m
+cm9taW8NCj4gK3ZvaWQgX19tZW1jcHlfZnJvbWlvKHZvaWQgKnRvLCBjb25zdCB2b2xhdGlsZSB2
+b2lkIF9faW9tZW0gKmZyb20sIHNpemVfdCBjb3VudCkNCj4gK3sNCj4gKwl3aGlsZSAoY291bnQg
+JiYgIUlTX0FMSUdORUQoKHVuc2lnbmVkIGxvbmcpZnJvbSwgTkFUSVZFX1NUT1JFX1NJWkUpKSB7
+DQo+ICsJCSoodTggKil0byA9IF9fcmF3X3JlYWRiKGZyb20pOw0KPiArCQlmcm9tKys7DQo+ICsJ
+CXRvKys7DQo+ICsJCWNvdW50LS07DQo+ICsJfQ0KPiArDQo+ICsJd2hpbGUgKGNvdW50ID49IE5B
+VElWRV9TVE9SRV9TSVpFKSB7DQo+ICsjaWZkZWYgQ09ORklHXzY0QklUDQo+ICsJCQlwdXRfdW5h
+bGlnbmVkKF9fcmF3X3JlYWRxKGZyb20pLCAodWludHB0cl90ICopdG8pOw0KPiArI2Vsc2UNCj4g
+KwkJCXB1dF91bmFsaWduZWQoX19yYXdfcmVhZGwoZnJvbSksICh1aW50cHRyX3QgKil0byk7DQo+
+ICsjZW5kaWYNCg0KVGhhdCBsb29rcyBob3JyaWQgdG8gbWUuDQpZb3Ugc2VlbSB0byBiZSBtaXhp
+bmcgc2V2ZXJhbCBkaWZmZXJlbnQgdHlwZXMgYW5kIHRlc3RzLg0KTkFUSVZFX1NUT1JFX1NJWkUg
+aXMgYmFzZWQgb24gdGhlICdsb25nICcgdHlwZSAoaW5kaXJlY3RseSBhbmQgYnkgYXNzdW1wdGlv
+bikuDQpDT05GSUdfNjRCaUlUIChwcm9iYWJseSkgaW1wbGllcyBMUDY0Lg0KcmVhZGwoKSByZWFk
+cyA0IGJ5dGVzIGFuZCByZWFkcSgpIDggKGZvciBib3RoIDMyYml0IGFuZCA2NGJpdCBrZXJuZWxz
+KQ0KdWludHB0ciBpcyBhbiB1bnNpZ25lZCBpbnRlZ2VyIGxhcmdlIGVub3VnaCB0byBob2xkIGEg
+cG9pbnRlci4NClRoZSBzaXplcyBtaWdodCBhbGwgaGFwcGVuIHRvIG1hdGNoLCBidXQgdGhlcmUg
+aXMgbm8gbmVlZCB0byByZWx5IG9uIGFsbCBvZiB0aGVtLg0KDQpJIG1pZ2h0IGJlIGJlc3QgdG8g
+anVzdCB1c2UgJ3NpemVvZiAobG9uZyknIGV4Y2VwdCB0aGF0IHlvdSBtaWdodA0KZ2V0IGEgY29t
+cGlsZSBlcnJvciBvbiBzb21lIDMyYml0IGFyY2hzIGZvciB0aGU6DQoJbG9uZyB2YWwgPSBzaXpl
+b2YgKHZhbCkgPT0gOCkgPyByZWFkcShmcm9tKSA6IHJlYWRsKGZyb20pOw0KCXB1dF91bmFsaWdu
+ZWQodmFsLCAobG9uZyAqKXRvKTsNCihkdWUgdG8gdGhlcmUgYmVpbmcgbm8gZGVjbGFyYXRpb24g
+cmVhZHEoKSkNCnNvIGl0IG1pZ2h0IG5lZWQgYSAjaWYgc29tZXdoZXJlLg0KT1RPSCB0aGVyZSBt
+aWdodCBhbHdheXMgYmUgYW4gJ2V4dGVybicgZm9yIHJlYWRxKCkuDQoNCklmIHlvdSBhcmUgdXNp
+bmcgdGhlIF9fcmF3X3JlYWR4KCkgZnVuY3Rpb25zIGRvbid0IHlvdSBuZWVkIHRoZQ0Kc3luY2hy
+b25pc2F0aW9uIGJhcnJpZXJzIHRvcCBhbmQgYm90dG9tPw0KDQpBbHNvIGlmIHB1dF91bmFsaWdu
+ZWQoKSBpcyBub24tdHJpdmlhbCB0aGUgY29kZSB3aWxsIGJlIGhvcnJpZC4NCkFuIGluaXRpYWwg
+dGVzdCBmb3IgKCh0byB8IGZyb20pICYgKHNpemVvZiAobG9uZykgLSAxKSA9PSAwKSBmb3IgYW4N
+CmFsaWduZWQgY29weSBtYXkgYmUgd29ydGh3aGlsZS4NCg0KVGhlcmUgaXMgdGhlIHF1ZXN0aW9u
+IG9mIHdoZXRoZXIgdGhlIGNvZGUgaXMgYWxsb3dlZCB0byBkbyBmdWxsDQp3b3JkIHJlYWRzIC0g
+dmFsaWQgaWYgdGhlIGlvIGFyZWEgYmVoYXZlcyBsaWtlIG1lbW9yeS4NCkluIHdoaWNoIGNhc2Ug
+eW91IGRvbid0IHdhbnQgdG8gZG8gYnl0ZSB0cmFuc2ZlcnMgZm9yIGFsaWdubWVudA0KYW5kIHRh
+aWwgdHJhbnNmZXJzIC0ganVzdCByZWFkIHRoZSBmdWxsIHdvcmQgdGhhdCBjb250YWlucyB0aGUg
+ZGF0YS4NCg0KUENJZSByZWFkcyBjYW4gYmUgaG9ycmlibHkgc2xvdyAod3JpdGVzIGFyZSAncG9z
+dGVkJyBzbyBtdWNoIGJldHRlcikuDQpJJ20gbm90IHN1cmUgaG93IGxvbmcgdGhleSB0YWtlIGlu
+dG8gYSAnbm9ybWFsJyB0YXJnZXQsIGJ1dCBiYWNrIHRvDQpiYWNrIHJlYWRzIGludG8gb3VyIGZw
+Z2EgYXJlIGFib3V0IDEyOCBjbG9ja3MgYXBhcnQgb24gaXRzIGludGVybmFsDQoxMjVNaHogY2xv
+Y2sgLSB0aGUgaG9zdCBjcHUgd2lsbCBzdGFsbCBmb3IgdGhlIGVudGlyZSBwZXJpb2QuDQpTbyB5
+b3UgZGVmaW5pdGVseSB3YW50IHRvIHVzZSB0aGUgbGFyZ2VzdCByZWdpc3RlciBwb3NzaWJsZS4N
+CihPciB0cnkgdmVyeSBoYXJkIHRvIG5ldmVyIGRvIG5vbi1kbWEgcmVhZHMgaW4gZWl0aGVyIGRp
+cmVjdGlvbi4pDQoNCglEYXZpZA0KDQo+ICsNCj4gKwkJZnJvbSArPSBOQVRJVkVfU1RPUkVfU0la
+RTsNCj4gKwkJdG8gKz0gTkFUSVZFX1NUT1JFX1NJWkU7DQo+ICsJCWNvdW50IC09IE5BVElWRV9T
+VE9SRV9TSVpFOw0KPiArCX0NCj4gKw0KPiArCXdoaWxlIChjb3VudCkgew0KPiArCQkqKHU4ICop
+dG8gPSBfX3Jhd19yZWFkYihmcm9tKTsNCj4gKwkJZnJvbSsrOw0KPiArCQl0bysrOw0KPiArCQlj
+b3VudC0tOw0KPiArCX0NCj4gK30NCj4gK0VYUE9SVF9TWU1CT0woX19tZW1jcHlfZnJvbWlvKTsN
+Cj4gKyNlbmRpZg0KPiArDQo+ICsjaWZuZGVmIF9fbWVtY3B5X3RvaW8NCj4gK3ZvaWQgX19tZW1j
+cHlfdG9pbyh2b2xhdGlsZSB2b2lkIF9faW9tZW0gKnRvLCBjb25zdCB2b2lkICpmcm9tLCBzaXpl
+X3QgY291bnQpDQo+ICt7DQo+ICsJd2hpbGUgKGNvdW50ICYmICFJU19BTElHTkVEKCh1bnNpZ25l
+ZCBsb25nKXRvLCBOQVRJVkVfU1RPUkVfU0laRSkpIHsNCj4gKwkJX19yYXdfd3JpdGViKCoodTgg
+Kilmcm9tLCB0byk7DQo+ICsJCWZyb20rKzsNCj4gKwkJdG8rKzsNCj4gKwkJY291bnQtLTsNCj4g
+Kwl9DQo+ICsNCj4gKwl3aGlsZSAoY291bnQgPj0gTkFUSVZFX1NUT1JFX1NJWkUpIHsNCj4gKyNp
+ZmRlZiBDT05GSUdfNjRCSVQNCj4gKwkJCV9fcmF3X3dyaXRlcShnZXRfdW5hbGlnbmVkKCh1aW50
+cHRyX3QgKilmcm9tKSwgdG8pOw0KPiArI2Vsc2UNCj4gKwkJCV9fcmF3X3dyaXRlbChnZXRfdW5h
+bGlnbmVkKCh1aW50cHRyX3QgKilmcm9tKSwgdG8pOw0KPiArI2VuZGlmDQo+ICsNCj4gKwkJZnJv
+bSArPSBOQVRJVkVfU1RPUkVfU0laRTsNCj4gKwkJdG8gKz0gTkFUSVZFX1NUT1JFX1NJWkU7DQo+
+ICsJCWNvdW50IC09IE5BVElWRV9TVE9SRV9TSVpFOw0KPiArCX0NCj4gKw0KPiArCXdoaWxlIChj
+b3VudCkgew0KPiArCQlfX3Jhd193cml0ZWIoKih1OCAqKWZyb20sIHRvKTsNCj4gKwkJZnJvbSsr
+Ow0KPiArCQl0bysrOw0KPiArCQljb3VudC0tOw0KPiArCX0NCj4gK30NCj4gK0VYUE9SVF9TWU1C
+T0woX19tZW1jcHlfdG9pbyk7DQo+ICsjZW5kaWYNCj4gKw0KPiArI2lmbmRlZiBfX21lbXNldF9p
+bw0KPiArdm9pZCBfX21lbXNldF9pbyh2b2xhdGlsZSB2b2lkIF9faW9tZW0gKmRzdCwgaW50IGMs
+IHNpemVfdCBjb3VudCkNCj4gK3sNCj4gKwl1aW50cHRyX3QgcWMgPSAodTgpYzsNCj4gKw0KPiAr
+CXFjIHw9IHFjIDw8IDg7DQo+ICsJcWMgfD0gcWMgPDwgMTY7DQo+ICsNCj4gKyNpZmRlZiBDT05G
+SUdfNjRCSVQNCj4gKwlxYyB8PSBxYyA8PCAzMjsNCj4gKyNlbmRpZg0KPiArDQo+ICsJd2hpbGUg
+KGNvdW50ICYmICFJU19BTElHTkVEKCh1bnNpZ25lZCBsb25nKWRzdCwgTkFUSVZFX1NUT1JFX1NJ
+WkUpKSB7DQo+ICsJCV9fcmF3X3dyaXRlYihjLCBkc3QpOw0KPiArCQlkc3QrKzsNCj4gKwkJY291
+bnQtLTsNCj4gKwl9DQo+ICsNCj4gKwl3aGlsZSAoY291bnQgPj0gTkFUSVZFX1NUT1JFX1NJWkUp
+IHsNCj4gKyNpZmRlZiBDT05GSUdfNjRCSVQNCj4gKwkJCV9fcmF3X3dyaXRlcShxYywgZHN0KTsN
+Cj4gKyNlbHNlDQo+ICsJCQlfX3Jhd193cml0ZWwocWMsIGRzdCk7DQo+ICsjZW5kaWYNCj4gKw0K
+PiArCQlkc3QgKz0gTkFUSVZFX1NUT1JFX1NJWkU7DQo+ICsJCWNvdW50IC09IE5BVElWRV9TVE9S
+RV9TSVpFOw0KPiArCX0NCj4gKw0KPiArCXdoaWxlIChjb3VudCkgew0KPiArCQlfX3Jhd193cml0
+ZWIoYywgZHN0KTsNCj4gKwkJZHN0Kys7DQo+ICsJCWNvdW50LS07DQo+ICsJfQ0KPiArfQ0KPiAr
+RVhQT1JUX1NZTUJPTChfX21lbXNldF9pbyk7DQo+ICsjZW5kaWYNCj4gLS0NCj4gMi4zNC4xDQo+
+IA0KPiANCj4gDQo+IA0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFt
+bGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3Ry
+YXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
-> +impl IrqDisabled<'_> {
-> +    /// Create a new [`IrqDisabled`] token in an interrupt disabled cont=
-ext.
-> +    ///
-> +    /// This creates an [`IrqDisabled`] token, which can be passed to fu=
-nctions that must be run
-> +    /// without interrupts. If debug assertions are enabled, this functi=
-on will assert that
-> +    /// interrupts are disabled upon creation. Otherwise, it has no size=
- or cost at runtime.
-> +    ///
-> +    /// # Panics
-> +    ///
-> +    /// If debug assertions are enabled, this function will panic if int=
-errupts are not disabled
-> +    /// upon creation.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// This function must only be called in contexts where it is alread=
-y known that interrupts have
-> +    /// been disabled for the current CPU, and the user is making a prom=
-ise that they will remain
-> +    /// disabled at least until this [`IrqDisabled`] is dropped.
-> +    pub unsafe fn new() -> Self {
-
-It could be worth mentioning that you probably won't be calling this
-function directly if you need an IrqDisabled, linking to
-with_irqs_disabled instead.
-
-Either way this looks great!
-
-Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
