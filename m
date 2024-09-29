@@ -1,261 +1,487 @@
-Return-Path: <linux-kernel+bounces-342825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A38C989355
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06A6989358
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235C21C20BCF
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9B01F224D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333E8137C35;
-	Sun, 29 Sep 2024 06:58:22 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3649139CFF;
+	Sun, 29 Sep 2024 07:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Ejh9e2WC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DqcRNPpI"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0742AEEC
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 06:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C2210A0E;
+	Sun, 29 Sep 2024 07:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727593101; cv=none; b=XfaXAky/xcCD+6DjUKO+VgML+wLrUuaUAOX4WfqmM9GMuZb9sPsnfC84tBbIixcXaIx87dytT6xyVCJrUAqGSzpHM+7ORR48sAQesxQ8Df6bN+ebk3OQfDod8yIG03POiNVn5GIlyrRKoNROPjKAezViQ4yfhg0W4oKletat5J4=
+	t=1727593235; cv=none; b=RnSrMempwxFnzBo+N4AV3jNlUFCT5ktJ+whSQWxnec+B/GVdtQinG3WaqGB9vFDP+xkd8u0gxbVXu6g3A69yOLUQr/AZm07BcH3AEPU3s3AmMtK+F47NdxCI58OsQgIZCdEtOu2RiIMXeaok7Vd5DgRSWp2OrdBcJLqA1Sonu8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727593101; c=relaxed/simple;
-	bh=pRTswFexTNF31OUhgKXH7pC1L8ttyT4uSr79O9QRQDw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tha/kTNIKudAAsMZPCl1wBAi6hNF4dYRncKiIHgEMuE0wmTFRlMaTytP2jpCH36UyW0Ckq9T+6CWHPLTBAdDbrxgowfR8voBv8Sn3qnOu9zMtOG5qRD4w/iG+g3VezF/avPIYp7arGFzoebqbUwBfNCTFbrymNr10/LBUx6EteE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cda24c462so340337439f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 23:58:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727593099; x=1728197899;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwOalX9tsr3Q9s5orYX4Of7wTcGuw81q+exWjKmQ40M=;
-        b=cvDLvDhvTI3odwCLedWdcjBRwgFPR63qzo9xlT5uwGAw36Bg7F+LE6SWrLtszyZ4pB
-         JOgika/DctRmoHjfKKBLJHNViKmtp+hH1F6A31jf0WifOGaHEg673q0pZv2oVjlCe5B1
-         4knB1j1ANKUF0MjZRedYj/AoakKzd5bcK194qcZOjUr4xZklUWErElDbtCMCPgVPDmTE
-         6x7SPc3HUR7/0dCFNzVco3kE30H3jq71QoYlZJCb2nkhvuszlnOMrnWqcULl2pnzVLsa
-         waDPapwPPogoY/qU2XOjDyOMe0rTL/tJ2C497Xze2Wge6MPCCSXGbLSvPDwpeCYYS3RT
-         ttig==
-X-Forwarded-Encrypted: i=1; AJvYcCWueMTyHneCKspoTeeYQjdOjw1NYK0guw0xI345jZH236wGfjX5Iqo/cvsbuAcKpH3hX+6kl+7SLXEM7cM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy10R64G2WaxQQDI6rWIBJTVeOXuxGjyTf+yybTeO2lsdfYdXUx
-	2qMr8TVY06oKVbwsQg9Y+XALWCnltM9N13ldpXEVDRh4YKB3OGBQxmjQ2LS+a29G8UJXwIBTeDG
-	TtDKUzuVGJomuNdgvfCPJ46FkOT1UnXiNZ34t+S2jyfvt8qOsTJYJ3cw=
-X-Google-Smtp-Source: AGHT+IErh+5cETbUGyGKBCbOF9ralNA3s01s80VuyiX69ihYbVk8J/5hitJjjkGO+uu0Nn8djqLQwbIu2VS3yJvk9ULKm0nvw593
+	s=arc-20240116; t=1727593235; c=relaxed/simple;
+	bh=mh0GQ6vpZ8+N9AKbygyAn7iNx3W2e7Vj5bQ8Ntq9bOk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XZBUKdpCcCOccMXTxqwlC9ZduAdY6fWUMojUyUMgk9A0E9JAN082nHHeds3C2oU8zLenNeUUO0jkX0g4lGNdtThTFaZnXHGNHVD7JqgGA7sMq5Yp4rY1YUEtOrZHOn2wD/OAXJRqYTuJzsQfxeDGMy6yurU9ZhNCwJhofmIYcdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Ejh9e2WC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DqcRNPpI; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id AF3FE13802E8;
+	Sun, 29 Sep 2024 03:00:31 -0400 (EDT)
+Received: from phl-imap-01 ([10.202.2.91])
+  by phl-compute-08.internal (MEProxy); Sun, 29 Sep 2024 03:00:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1727593231;
+	 x=1727679631; bh=X0ljpau4cN8JTlhxCAujjc6ncwhPEmZ+3PF4qr55Ccg=; b=
+	Ejh9e2WC2GFn2KeP50B4VvwndmKcPw6nADAHprh5F1TiHWyi2mVtS9SFDsRItg5g
+	K6wfCSWf/K94ZpXgSmNn6Qr7zEUCYFC9hXVBvMmMWznsbXVG8ePgnMPq+peQ1B9y
+	0Emc0N/MmRCSAHOpp8Tj5a4NyKMfUwyP6pRIqP0EFWqZOMxfE/x/SlmTkMQRlNYg
+	hxxawjy1yS0Q9iNX4US/ZBa8iVS9QmjI+tOaLyZDqLYVgqh6o3tBkthnHmCTjp+T
+	ozsdLrCf1KEuuRbiChktWCMpwf4vVItE4PfGRnet2keoj/Pha33hB8hrbrx+Y6VC
+	MK9cK0tOVingnneCobbd9A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727593231; x=
+	1727679631; bh=X0ljpau4cN8JTlhxCAujjc6ncwhPEmZ+3PF4qr55Ccg=; b=D
+	qcRNPpIJDfdVhKX26oTAcW5PkOGhqFYKinBVhDBDXXeyM/REuwmeeR7IEOxhg5Y2
+	TcCztXeQJ2ttIZJLxd+taZTkKybKBTiSwhxdl25W8zsEobrbPb5raak4WQfRjsm2
+	451MF+Dpnp4br9yF2onpqjEdjMkWgFcSJiW5bJS9jEDiniABExJmdx1MVZt7Uj+S
+	n5OYDNy+Q4R4aGk8IoQ10oCOEK6bo6IGXODxjvaMia4706EnTb0mJnUtXiZOgBNZ
+	CB1YdJiG5qqzsAEpw/PVek91L3BVnHFuqK3vOT5Yd2IVa/hMzH+nJLLrPNYfUulq
+	ejqUmic8AfBP1HUVlJhPg==
+X-ME-Sender: <xms:Dvv4ZoEwoDr__BEKNFTV8EAophMVyjOR692sr0qoSeBn0wKOJQJl-g>
+    <xme:Dvv4ZhWpqr48VfcO7rNOQ4ClvtvM2IxRuxFX1IrNQcXL5rRh5yYYhL2i8TgXj6f6f
+    ZUk7WKs-l-FaOCECbE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduvddgudduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdfnuhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdrug
+    gvvheqnecuggftrfgrthhtvghrnhepgfeiffehtdfghfettdeiuddtfeekvdejgfevhefh
+    ffevtdfhjeelgeefffekvdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohep
+    ledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghorhgvnhhtihhnrdgthhgrrh
+    ihsehgmhgrihhlrdgtohhmpdhrtghpthhtohepsggvnhhtihhssheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsh
+    huphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhlphhordhjrghrvhhi
+    nhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggvghhovgguvg
+    esrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghr
+    qdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Dvv4ZiI0T48x_KWFDRkjr0ECKjl-3hWQ4Q6mRqdnhUrWbulUeVyXOA>
+    <xmx:Dvv4ZqEqy_1JwLZRj7D72sn0Qmta3hv2EVv-aWq1iFwKwgJomNT56w>
+    <xmx:Dvv4ZuWQfb5kPow7kWD2Gpqg4b74WoBYTNE17S_HQSDANVQVAfgpVQ>
+    <xmx:Dvv4ZtMLp5U3ZinqPR0W9LzMaJuMSbrjRBFc0qFibMNxdxqEl140FA>
+    <xmx:D_v4ZpGilC577Rhlfenfe50aTyT_MlrAwbY4V0OxLfg-solFh3uzcgXy>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 601853360077; Sun, 29 Sep 2024 03:00:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca0c:0:b0:3a0:a0a1:650c with SMTP id
- e9e14a558f8ab-3a3451b6ca7mr71959665ab.22.1727593098823; Sat, 28 Sep 2024
- 23:58:18 -0700 (PDT)
-Date: Sat, 28 Sep 2024 23:58:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f8fa8a.050a0220.aab67.000e.GAE@google.com>
-Subject: [syzbot] [dri?] [virt?] INFO: task hung in drm_atomic_get_plane_state
-From: syzbot <syzbot+eee643fdccb7c015b3a6@syzkaller.appspotmail.com>
-To: airlied@redhat.com, dri-devel@lists.freedesktop.org, 
-	gurchetansingh@chromium.org, kraxel@redhat.com, linux-kernel@vger.kernel.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, olvaffe@gmail.com, 
-	simona@ffwll.ch, syzkaller-bugs@googlegroups.com, tzimmermann@suse.de, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Date: Sun, 29 Sep 2024 20:00:10 +1300
+From: "Luke Jones" <luke@ljones.dev>
+To: "Mario Limonciello" <superm1@kernel.org>, linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org, "Benjamin Tissoires" <bentiss@kernel.org>,
+ "Jiri Kosina" <jikos@kernel.org>, platform-driver-x86@vger.kernel.org,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com
+Message-Id: <95dc6e4f-800d-4d0e-9cbf-319311dcf129@app.fastmail.com>
+In-Reply-To: <43e7898c-b6dc-408a-9762-a3e56f0613f3@kernel.org>
+References: <20240926092952.1284435-1-luke@ljones.dev>
+ <20240926092952.1284435-9-luke@ljones.dev>
+ <afd5769c-65fe-4fb7-97bc-1fc578cf2bd7@kernel.org>
+ <a5cccd62-f9a5-4fa0-ac0a-d3dbe8217737@app.fastmail.com>
+ <43e7898c-b6dc-408a-9762-a3e56f0613f3@kernel.org>
+Subject: Re: [PATCH v4 8/9] platform/x86: asus-armoury: add core count control
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Fri, 27 Sep 2024, at 10:02 AM, Mario Limonciello wrote:
+> On 9/26/2024 16:47, Luke Jones wrote:
+>> Resend, sorry. My email client defaults to HTML
+>> 
+>> On Fri, 27 Sep 2024, at 3:30 AM, Mario Limonciello wrote:
+>>> On 9/26/2024 04:29, Luke D. Jones wrote:
+>>>> Implement Intel core enablement under the asus-armoury module using the
+>>>> fw_attributes class.
+>>>>
+>>>> This allows users to enable or disable preformance or efficiency cores
+>>>> depending on their requirements. After change a reboot is required.
+>>>>
+>>>> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+>>>> ---
+>>>>    drivers/platform/x86/asus-armoury.c        | 219 +++++++++++++++++++++
+>>>>    drivers/platform/x86/asus-armoury.h        |  28 +++
+>>>>    include/linux/platform_data/x86/asus-wmi.h |   4 +
+>>>>    3 files changed, 251 insertions(+)
+>>>>
+>>>> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+>>>> index a0022dcee3a4..ce1facb40bd5 100644
+>>>> --- a/drivers/platform/x86/asus-armoury.c
+>>>> +++ b/drivers/platform/x86/asus-armoury.c
+>>>> @@ -40,6 +40,21 @@
+>>>>    #define ASUS_MINI_LED_2024_STRONG 0x01
+>>>>    #define ASUS_MINI_LED_2024_OFF 0x02
+>>>>    
+>>>> +#define ASUS_POWER_CORE_MASK GENMASK(15, 8)
+>>>> +#define ASUS_PERF_CORE_MASK GENMASK(7, 0)
+>>>> +
+>>>> +enum cpu_core_type {
+>>>> + CPU_CORE_PERF = 0,
+>>>> + CPU_CORE_POWER,
+>>>> +};
+>>>> +
+>>>> +enum cpu_core_value {
+>>>> + CPU_CORE_DEFAULT = 0,
+>>>> + CPU_CORE_MIN,
+>>>> + CPU_CORE_MAX,
+>>>> + CPU_CORE_CURRENT,
+>>>> +};
+>>>> +
+>>>>    /* Default limits for tunables available on ASUS ROG laptops */
+>>>>    #define PPT_CPU_LIMIT_MIN 5
+>>>>    #define PPT_CPU_LIMIT_MAX 150
+>>>> @@ -85,6 +100,13 @@ struct rog_tunables {
+>>>>    u32 dgpu_tgp_min;
+>>>>    u32 dgpu_tgp_max;
+>>>>    u32 dgpu_tgp;
+>>>> +
+>>>> + u32 cur_perf_cores;
+>>>> + u32 min_perf_cores;
+>>>> + u32 max_perf_cores;
+>>>> + u32 cur_power_cores;
+>>>> + u32 min_power_cores;
+>>>> + u32 max_power_cores;
+>>>>    };
+>>>>    
+>>>>    static const struct class *fw_attr_class;
+>>>> @@ -143,6 +165,8 @@ static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+>>>>    static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+>>>>    {
+>>>>    return !strcmp(attr->attr.name, "gpu_mux_mode") ||
+>>>> +        !strcmp(attr->attr.name, "cores_performance") ||
+>>>> +        !strcmp(attr->attr.name, "cores_efficiency") ||
+>>>>           !strcmp(attr->attr.name, "panel_hd_mode");
+>>>>    }
+>>>>    
+>>>> @@ -569,6 +593,198 @@ static ssize_t apu_mem_possible_values_show(struct kobject *kobj, struct kobj_at
+>>>>    }
+>>>>    ATTR_GROUP_ENUM_CUSTOM(apu_mem, "apu_mem", "Set available system RAM (in GB) for the APU to use");
+>>>>    
+>>>> +static int init_max_cpu_cores(void)
+>>>> +{
+>>>> + u32 cores;
+>>>> + int err;
+>>>> +
+>>>> + asus_armoury.rog_tunables->min_perf_cores = 4;
+>>>> + asus_armoury.rog_tunables->max_perf_cores = 4;
+>>>> + asus_armoury.rog_tunables->cur_perf_cores = 4;
+>>>> + asus_armoury.rog_tunables->min_power_cores = 0;
+>>>> + asus_armoury.rog_tunables->max_power_cores = 8;
+>>>> + asus_armoury.rog_tunables->cur_power_cores = 8;
+>>>
+>>> This seems like it's going to be dependent upon "specific" CPU SKU, no?
+>> 
+>> It is yeah. I was trying to set some sort of default but forgot about it after the fact.
+>> 
+>>> If you can't detect the bounds from the WMI API I think it would be
+>>> smarter to use the CPU vendor specific CPUID/MSR APIs to discover the
+>>> topology and how many cores of the different types exist.
+>> 
+>> Thinking about it now I would rather set it as an error and disable the ability to set cores. What do you think?
+>
+> Seems fine to me.  Just make sure you mention it's intended behavior in 
+> a comment somewhere if it's not obvious.
 
-syzbot found the following issue on:
+I've decided against my initial thoughts and added error return plus module fail out if that errors.
 
-HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12964d9f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
-dashboard link: https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>> 
+>>> Furthermore what about LP cores?  I guess those can't be turned and off
+>>> from this API?
+>> 
+>> power/efficiency cores? They can be.
+>
+> Intel has 3 core types on some products.  "Performance", "efficiency" 
+> and "low power".
+>
+> I don't know a lot about them, I just want to make sure you do so you 
+> don't back yourself into a corner on API design.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Yeah I think it should be fairly independent of efficiency/power - kind of classing them as similar/same.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3efc5736.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d0988c372a39/vmlinux-3efc5736.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8547f30d7e9d/bzImage-3efc5736.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+eee643fdccb7c015b3a6@syzkaller.appspotmail.com
-
-INFO: task swapper/0:1 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:swapper/0       state:D stack:17904 pid:1     tgid:1     ppid:0      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __ww_mutex_lock+0xec5/0x2790 kernel/locking/mutex.c:759
- ww_mutex_lock+0x40/0x1f0 kernel/locking/mutex.c:876
- modeset_lock+0x2bf/0x650 drivers/gpu/drm/drm_modeset_lock.c:314
- drm_atomic_get_plane_state+0x1c1/0x500 drivers/gpu/drm/drm_atomic.c:541
- drm_client_modeset_commit_atomic+0x1a1/0x7e0 drivers/gpu/drm/drm_client_modeset.c:1020
- drm_client_modeset_commit_locked+0xe0/0x520 drivers/gpu/drm/drm_client_modeset.c:1171
- pan_display_atomic drivers/gpu/drm/drm_fb_helper.c:1371 [inline]
- drm_fb_helper_pan_display+0x379/0xc10 drivers/gpu/drm/drm_fb_helper.c:1431
- fb_pan_display+0x3a3/0x680 drivers/video/fbdev/core/fbmem.c:191
- bit_update_start+0x4d/0x1c0 drivers/video/fbdev/core/bitblit.c:381
- fbcon_switch+0x144b/0x2250 drivers/video/fbdev/core/fbcon.c:2186
- redraw_screen+0x546/0xe90 drivers/tty/vt/vt.c:957
- fbcon_prepare_logo+0x9ba/0xd20 drivers/video/fbdev/core/fbcon.c:633
- con2fb_init_display drivers/video/fbdev/core/fbcon.c:819 [inline]
- set_con2fb_map+0xc24/0x11e0 drivers/video/fbdev/core/fbcon.c:885
- do_fb_registered drivers/video/fbdev/core/fbcon.c:2992 [inline]
- fbcon_fb_registered+0x251/0x620 drivers/video/fbdev/core/fbcon.c:3008
- do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
- register_framebuffer+0x654/0x810 drivers/video/fbdev/core/fbmem.c:515
- __drm_fb_helper_initial_config_and_unlock+0x1716/0x1df0 drivers/gpu/drm/drm_fb_helper.c:1869
- drm_fbdev_shmem_client_hotplug+0x16e/0x230 drivers/gpu/drm/drm_fbdev_shmem.c:250
- drm_client_register+0x17f/0x210 drivers/gpu/drm/drm_client.c:141
- virtio_gpu_probe+0x22e/0x3c0 drivers/gpu/drm/virtio/virtgpu_drv.c:106
- virtio_dev_probe+0x931/0xc80 drivers/virtio/virtio.c:341
- really_probe+0x2b8/0xad0 drivers/base/dd.c:658
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
- driver_probe_device+0x50/0x430 drivers/base/dd.c:830
- __driver_attach+0x45f/0x710 drivers/base/dd.c:1216
- bus_for_each_dev+0x239/0x2b0 drivers/base/bus.c:370
- bus_add_driver+0x346/0x670 drivers/base/bus.c:675
- driver_register+0x23a/0x320 drivers/base/driver.c:246
- do_one_initcall+0x248/0x880 init/main.c:1269
- do_initcall_level+0x157/0x210 init/main.c:1331
- do_initcalls+0x3f/0x80 init/main.c:1347
- kernel_init_freeable+0x435/0x5d0 init/main.c:1580
- kernel_init+0x1d/0x2b0 init/main.c:1469
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/0:1:9 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:1     state:D stack:26192 pid:9     tgid:9     ppid:2      flags:0x00004000
-Workqueue: events virtio_gpu_dequeue_ctrl_func
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- drm_client_dev_hotplug+0xd0/0x3c0 drivers/gpu/drm/drm_client.c:230
- virtio_gpu_dequeue_ctrl_func+0x605/0xa50 drivers/gpu/drm/virtio/virtgpu_vq.c:235
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/0:2:783 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:2     state:D stack:24368 pid:783   tgid:783   ppid:2      flags:0x00004000
-Workqueue: events drm_fb_helper_damage_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- virtio_gpu_queue_ctrl_sgs drivers/gpu/drm/virtio/virtgpu_vq.c:341 [inline]
- virtio_gpu_queue_fenced_ctrl_buffer+0x720/0xff0 drivers/gpu/drm/virtio/virtgpu_vq.c:415
- virtio_gpu_resource_flush drivers/gpu/drm/virtio/virtgpu_plane.c:162 [inline]
- virtio_gpu_primary_plane_update+0xd39/0x1590 drivers/gpu/drm/virtio/virtgpu_plane.c:237
- drm_atomic_helper_commit_planes+0x5ee/0xe00 drivers/gpu/drm/drm_atomic_helper.c:2800
- drm_atomic_helper_commit_tail+0x5e/0x500 drivers/gpu/drm/drm_atomic_helper.c:1750
- commit_tail+0x2c1/0x3c0 drivers/gpu/drm/drm_atomic_helper.c:1835
- drm_atomic_helper_commit+0x953/0x9f0 drivers/gpu/drm/drm_atomic_helper.c:2073
- drm_atomic_commit+0x296/0x2f0 drivers/gpu/drm/drm_atomic.c:1516
- drm_atomic_helper_dirtyfb+0xd10/0xe70 drivers/gpu/drm/drm_damage_helper.c:181
- drm_fbdev_shmem_helper_fb_dirty+0x151/0x2c0 drivers/gpu/drm/drm_fbdev_shmem.c:197
- drm_fb_helper_fb_dirty drivers/gpu/drm/drm_fb_helper.c:376 [inline]
- drm_fb_helper_damage_work+0x275/0x880 drivers/gpu/drm/drm_fb_helper.c:399
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-9 locks held by swapper/0/1:
- #0: ffff88801fb62170 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #0: ffff88801fb62170 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #0: ffff88801fb62170 (&dev->mutex){....}-{3:3}, at: __driver_attach+0x454/0x710 drivers/base/dd.c:1215
- #1: ffff8880331942f8 (&dev->clientlist_mutex){+.+.}-{3:3}, at: drm_client_register+0x4e/0x210 drivers/gpu/drm/drm_client.c:127
- #2: ffffffff8f0eb208 (registration_lock){+.+.}-{3:3}, at: register_framebuffer+0x87/0x810 drivers/video/fbdev/core/fbmem.c:514
- #3: ffffffff8e813380 (console_lock){+.+.}-{0:0}, at: fbcon_fb_registered+0x54/0x620 drivers/video/fbdev/core/fbcon.c:3004
- #4: ffff8880004cf280 (&helper->lock){+.+.}-{3:3}, at: drm_fb_helper_pan_display+0xbc/0xc10 drivers/gpu/drm/drm_fb_helper.c:1424
- #5: ffff8880331941b0 (&dev->master_mutex){+.+.}-{3:3}, at: drm_master_internal_acquire+0x20/0x70 drivers/gpu/drm/drm_auth.c:452
- #6: ffff8880004cf098 (&client->modeset_mutex){+.+.}-{3:3}, at: drm_client_modeset_commit_locked+0x50/0x520 drivers/gpu/drm/drm_client_modeset.c:1169
- #7: ffffc90000336bf0 (crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_client_modeset_commit_atomic+0xd5/0x7e0 drivers/gpu/drm/drm_client_modeset.c:1007
- #8: ffff8880004d20b0 (crtc_ww_class_mutex){+.+.}-{3:3}, at: modeset_lock+0x2bf/0x650 drivers/gpu/drm/drm_modeset_lock.c:314
-3 locks held by kworker/0:1/9:
- #0: ffff88801ac74948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac74948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900003b7d00 ((work_completion)(&vgvq->dequeue_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900003b7d00 ((work_completion)(&vgvq->dequeue_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffff8880331942f8 (&dev->clientlist_mutex){+.+.}-{3:3}, at: drm_client_dev_hotplug+0xd0/0x3c0 drivers/gpu/drm/drm_client.c:230
-1 lock held by khungtaskd/25:
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-2 locks held by kworker/u4:3/46:
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac79148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000060fd00 ((work_completion)(&(&kfence_timer)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000060fd00 ((work_completion)(&(&kfence_timer)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
-2 locks held by kswapd0/75:
-5 locks held by kworker/0:2/783:
- #0: ffff88801ac74948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac74948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000179fd00 ((work_completion)(&helper->damage_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000179fd00 ((work_completion)(&helper->damage_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffc9000179f970 (crtc_ww_class_acquire){+.+.}-{0:0}, at: drm_atomic_helper_dirtyfb+0xce/0xe70 drivers/gpu/drm/drm_damage_helper.c:123
- #3: ffff8880004d20b0 (crtc_ww_class_mutex){+.+.}-{3:3}, at: modeset_lock+0x2bf/0x650 drivers/gpu/drm/drm_modeset_lock.c:314
- #4: ffffffff8f1c5730 (drm_unplug_srcu){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
- #4: ffffffff8f1c5730 (drm_unplug_srcu){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
- #4: ffffffff8f1c5730 (drm_unplug_srcu){.+.+}-{0:0}, at: drm_dev_enter+0x45/0x150 drivers/gpu/drm/drm_drv.c:448
-
-=============================================
-
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>> 
+>>>> +
+>>>> + err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES_MAX, &cores);
+>>>> + if (err)
+>>>> + return err;
+>>>> +
+>>>> + cores &= ~ASUS_WMI_DSTS_PRESENCE_BIT;
+>>>> + asus_armoury.rog_tunables->max_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+>>>> + asus_armoury.rog_tunables->max_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+>>>> +
+>>>> + cores = 0;
+>>>> + err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_CORES, &cores);
+>>>> + if (err)
+>>>> + return err;
+>>>> +
+>>>> + asus_armoury.rog_tunables->cur_perf_cores = FIELD_GET(ASUS_PERF_CORE_MASK, cores);
+>>>> + asus_armoury.rog_tunables->cur_power_cores = FIELD_GET(ASUS_POWER_CORE_MASK, cores);
+>>>> +
+>>>> + return 0;
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_value_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf,
+>>>> + enum cpu_core_type core_type, enum cpu_core_value core_value)
+>>>> +{
+>>>> + u32 cores;
+>>>> +
+>>>> + switch (core_value) {
+>>>> + case CPU_CORE_DEFAULT:
+>>>> + case CPU_CORE_MAX:
+>>>> + if (core_type == CPU_CORE_PERF)
+>>>> + return sysfs_emit(buf, "%d\n",
+>>>> +   asus_armoury.rog_tunables->max_perf_cores);
+>>>> + else
+>>>> + return sysfs_emit(buf, "%d\n",
+>>>> +   asus_armoury.rog_tunables->max_power_cores);
+>>>> + case CPU_CORE_MIN:
+>>>> + if (core_type == CPU_CORE_PERF)
+>>>> + return sysfs_emit(buf, "%d\n",
+>>>> +   asus_armoury.rog_tunables->min_perf_cores);
+>>>> + else
+>>>> + return sysfs_emit(buf, "%d\n",
+>>>> +   asus_armoury.rog_tunables->min_power_cores);
+>>>> + default:
+>>>> + break;
+>>>> + }
+>>>> +
+>>>> + if (core_type == CPU_CORE_PERF)
+>>>> + cores = asus_armoury.rog_tunables->cur_perf_cores;
+>>>> + else
+>>>> + cores = asus_armoury.rog_tunables->cur_power_cores;
+>>>> +
+>>>> + return sysfs_emit(buf, "%d\n", cores);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
+>>>> + const char *buf, enum cpu_core_type core_type)
+>>>> +{
+>>>> + int result, err;
+>>>> + u32 new_cores, perf_cores, powr_cores, out_val, min, max;
+>>>> +
+>>>> + result = kstrtou32(buf, 10, &new_cores);
+>>>> + if (result)
+>>>> + return result;
+>>>> +
+>>>> + if (core_type == CPU_CORE_PERF) {
+>>>> + perf_cores = new_cores;
+>>>> + powr_cores = out_val = asus_armoury.rog_tunables->cur_power_cores;
+>>>> + min = asus_armoury.rog_tunables->min_perf_cores;
+>>>> + max = asus_armoury.rog_tunables->max_perf_cores;
+>>>> + } else {
+>>>> + perf_cores = asus_armoury.rog_tunables->cur_perf_cores;
+>>>> + powr_cores = out_val = new_cores;
+>>>> + min = asus_armoury.rog_tunables->min_power_cores;
+>>>> + max = asus_armoury.rog_tunables->max_power_cores;
+>>>> + }
+>>>> +
+>>>> + if (new_cores < min || new_cores > max)
+>>>> + return -EINVAL;
+>>>> +
+>>>> + out_val = 0;
+>>>> + out_val |= FIELD_PREP(ASUS_PERF_CORE_MASK, perf_cores);
+>>>> + out_val |= FIELD_PREP(ASUS_POWER_CORE_MASK, powr_cores);
+>>>> +
+>>>> + mutex_lock(&asus_armoury.mutex);
+>>>> + err = asus_wmi_set_devstate(ASUS_WMI_DEVID_CORES, out_val, &result);
+>>>> + mutex_unlock(&asus_armoury.mutex);
+>>>> +
+>>>> + if (err) {
+>>>> + pr_warn("Failed to set CPU core count: %d\n", err);
+>>>> + return err;
+>>>> + }
+>>>> +
+>>>> + if (result > 1) {
+>>>> + pr_warn("Failed to set CPU core count (result): 0x%x\n", result);
+>>>> + return -EIO;
+>>>> + }
+>>>> +
+>>>> + pr_info("CPU core count changed, reboot required\n");
+>>>> + sysfs_notify(kobj, NULL, attr->attr.name);
+>>>> + asus_set_reboot_and_signal_event();
+>>>> +
+>>>> + return 0;
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_performance_min_value_show(struct kobject *kobj,
+>>>> + struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MIN);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_performance_max_value_show(struct kobject *kobj,
+>>>> + struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_MAX);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_performance_default_value_show(struct kobject *kobj,
+>>>> +     struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_DEFAULT);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_performance_current_value_show(struct kobject *kobj,
+>>>> +     struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_PERF, CPU_CORE_CURRENT);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_performance_current_value_store(struct kobject *kobj,
+>>>> +      struct kobj_attribute *attr,
+>>>> +      const char *buf, size_t count)
+>>>> +{
+>>>> + int err;
+>>>> +
+>>>> + err = cores_current_value_store(kobj, attr, buf, CPU_CORE_PERF);
+>>>> + if (err)
+>>>> + return err;
+>>>> +
+>>>> + return count;
+>>>> +}
+>>>> +ATTR_GROUP_CORES_RW(cores_performance, "cores_performance",
+>>>> +     "Set the max available performance cores");
+>>>> +
+>>>> +static ssize_t cores_efficiency_min_value_show(struct kobject *kobj, struct kobj_attribute *attr,
+>>>> +        char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MIN);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_efficiency_max_value_show(struct kobject *kobj, struct kobj_attribute *attr,
+>>>> +        char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_MAX);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_efficiency_default_value_show(struct kobject *kobj,
+>>>> +    struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_DEFAULT);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_efficiency_current_value_show(struct kobject *kobj,
+>>>> +    struct kobj_attribute *attr, char *buf)
+>>>> +{
+>>>> + return cores_value_show(kobj, attr, buf, CPU_CORE_POWER, CPU_CORE_CURRENT);
+>>>> +}
+>>>> +
+>>>> +static ssize_t cores_efficiency_current_value_store(struct kobject *kobj,
+>>>> +     struct kobj_attribute *attr, const char *buf,
+>>>> +     size_t count)
+>>>> +{
+>>>> + int err;
+>>>> +
+>>>> + err = cores_current_value_store(kobj, attr, buf, CPU_CORE_POWER);
+>>>> + if (err)
+>>>> + return err;
+>>>> +
+>>>> + return count;
+>>>> +}
+>>>> +ATTR_GROUP_CORES_RW(cores_efficiency, "cores_efficiency",
+>>>> +     "Set the max available efficiency cores");
+>>>> +
+>>>>    /* Simple attribute creation */
+>>>>    ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
+>>>>           cpu_min, cpu_max, 1, "Set the CPU slow package limit");
+>>>> @@ -625,6 +841,8 @@ static const struct asus_attr_group armoury_attr_groups[] = {
+>>>>    { &dgpu_base_tgp_attr_group, ASUS_WMI_DEVID_DGPU_BASE_TGP },
+>>>>    { &dgpu_tgp_attr_group, ASUS_WMI_DEVID_DGPU_SET_TGP },
+>>>>    { &apu_mem_attr_group, ASUS_WMI_DEVID_APU_MEM },
+>>>> + { &cores_efficiency_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>>>> + { &cores_performance_attr_group, ASUS_WMI_DEVID_CORES_MAX },
+>>>>    
+>>>>    { &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+>>>>    { &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+>>>> @@ -802,6 +1020,7 @@ static int __init asus_fw_init(void)
+>>>>    return -ENOMEM;
+>>>>    
+>>>>    init_rog_tunables(asus_armoury.rog_tunables);
+>>>> + init_max_cpu_cores();
+>>>>    
+>>>>    err = asus_fw_attr_add();
+>>>>    if (err)
+>>>> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
+>>>> index a5f95e806b4b..f400e3af24be 100644
+>>>> --- a/drivers/platform/x86/asus-armoury.h
+>>>> +++ b/drivers/platform/x86/asus-armoury.h
+>>>> @@ -167,6 +167,34 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+>>>>    .name = _fsname, .attrs = _attrname##_attrs               \
+>>>>    }
+>>>>    
+>>>> +/* CPU core attributes need a little different in setup */
+>>>> +#define ATTR_GROUP_CORES_RW(_attrname, _fsname, _dispname)              \
+>>>> + __ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", 1);        \
+>>>> + __ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
+>>>> + static struct kobj_attribute attr_##_attrname##_current_value = \
+>>>> + __ASUS_ATTR_RW(_attrname, current_value);               \
+>>>> + static struct kobj_attribute attr_##_attrname##_default_value = \
+>>>> + __ASUS_ATTR_RO(_attrname, default_value);               \
+>>>> + static struct kobj_attribute attr_##_attrname##_min_value =     \
+>>>> + __ASUS_ATTR_RO(_attrname, min_value);                   \
+>>>> + static struct kobj_attribute attr_##_attrname##_max_value =     \
+>>>> + __ASUS_ATTR_RO(_attrname, max_value);                   \
+>>>> + static struct kobj_attribute attr_##_attrname##_type =          \
+>>>> + __ASUS_ATTR_RO_AS(type, int_type_show);                 \
+>>>> + static struct attribute *_attrname##_attrs[] = {                \
+>>>> + &attr_##_attrname##_current_value.attr,                 \
+>>>> + &attr_##_attrname##_default_value.attr,                 \
+>>>> + &attr_##_attrname##_min_value.attr,                     \
+>>>> + &attr_##_attrname##_max_value.attr,                     \
+>>>> + &attr_##_attrname##_scalar_increment.attr,              \
+>>>> + &attr_##_attrname##_display_name.attr,                  \
+>>>> + &attr_##_attrname##_type.attr,                          \
+>>>> + NULL                                                    \
+>>>> + };                                                              \
+>>>> + static const struct attribute_group _attrname##_attr_group = {  \
+>>>> + .name = _fsname, .attrs = _attrname##_attrs             \
+>>>> + }
+>>>> +
+>>>>    /*
+>>>>     * ROG PPT attributes need a little different in setup as they
+>>>>     * require rog_tunables members.
+>>>> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+>>>> index e1aeafdf05d5..8964e601543a 100644
+>>>> --- a/include/linux/platform_data/x86/asus-wmi.h
+>>>> +++ b/include/linux/platform_data/x86/asus-wmi.h
+>>>> @@ -134,6 +134,10 @@
+>>>>    /* dgpu on/off */
+>>>>    #define ASUS_WMI_DEVID_DGPU 0x00090020
+>>>>    
+>>>> +/* Intel E-core and P-core configuration in a format 0x0[E]0[P] */
+>>>> +#define ASUS_WMI_DEVID_CORES 0x001200D2
+>>>> + /* Maximum Intel E-core and P-core availability */
+>>>> +#define ASUS_WMI_DEVID_CORES_MAX 0x001200D3
+>>>>    #define ASUS_WMI_DEVID_DGPU_BASE_TGP 0x00120099
+>>>>    #define ASUS_WMI_DEVID_DGPU_SET_TGP 0x00120098
+>>>>    #define ASUS_WMI_DEVID_APU_MEM 0x000600C1
+>>>
+>>>
 
