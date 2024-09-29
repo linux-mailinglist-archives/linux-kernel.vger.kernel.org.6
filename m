@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-343148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC56F989744
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:17:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7CB989745
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED5571C20C5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6532824EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8ED4C62E;
-	Sun, 29 Sep 2024 20:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BEA7DA76;
+	Sun, 29 Sep 2024 20:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="KcJ7uV53"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FbirAg/Z"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BFB53E15
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BC44207A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727641060; cv=none; b=Pukovb8vqlT9MoD2iKynosuKtqLwYWx/S9U+rBkofjlQvRVSGx4dfAKBJ5V1CTQASw8jUiqTBGd8zQpv+1IkTUI6ekpn0ecleOCeXSSXDSVSdTi1BZuYNse+QGkjyoVYGH1uZMxIxh/1pqCJMGJQ2TyMYdYNnYHPJnJMCIh3IZY=
+	t=1727641264; cv=none; b=bEMHkhazeS/z2wsKNwdR/9Xbiabsdx3ZMziQljgXKx4n72Pe6aez0UH5+Qo9HH7ObhXG/HGsgALe0Oy5ebZexx8cJuANqhdTI43P9Mc1uk3hJ8rWRAI4ZmKAPVre1WVcFxROoN0ztwKF9AxcWwXFHt2P3B0rvJwES+qg5iSHz6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727641060; c=relaxed/simple;
-	bh=e/DLduMorhCuSFXTa5d51gLMRFOsS5++OOTim6BWp6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5ozQ7qRSQlmy2DHVFQWu4skH5Hu9oG2BvA2oIb4rE7hS0+nsh4Y6yk+kXrWk/hcPkqk110PPAjQqPlL2aT1BG/pFcqq5QHxdzw06PklSvbuG5YiYA8IhgxnenwT4Sm/M+S+EqWzo2mlFA8X7sjY0Cuf4+TXbbRVVKL/iK0y5WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=KcJ7uV53; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 364B32C04A9;
-	Mon, 30 Sep 2024 09:17:35 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1727641055;
-	bh=YN7kpomPes0I6UW4Xml3XD6fCY2IicArvQi2UkGGKzQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KcJ7uV53RcFvg4kIf3/n5E06cCXoeXbKSHtxaYjMTk6ruov8HxUtUq4Q5vmbBCqJC
-	 dQCn94K/rlodLeq0N8B3ibkv7ND7MXCtcbHtQjYZTpz4EJRp/zb/AdBhTx6gEg269C
-	 f8vNw5Kyjlsae6HdTF0HSe2JkP4yv3ztCLrdfJVvvcGn14wsNrOAOVfFwZaJMZkMkJ
-	 mbaaAJp1QixmZ4aaXKxU6HPoK71A4b9iwYPEy6QAxBtMfLcniE8Vo9R+8hZ6jCCrDD
-	 9IcCXmf8gwWLtL4PgBzgin56kLCVsigWmMW1Rj0xx7u62N6cmyIG4xqdrnX6NfzNI4
-	 ykqH8sy59j2ug==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66f9b5df0000>; Mon, 30 Sep 2024 09:17:35 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 1B85B13EE36;
-	Mon, 30 Sep 2024 09:17:35 +1300 (NZDT)
-Message-ID: <0c94d0fc-dc0c-4e35-a6c1-2d7e01a3eb43@alliedtelesis.co.nz>
-Date: Mon, 30 Sep 2024 09:17:34 +1300
+	s=arc-20240116; t=1727641264; c=relaxed/simple;
+	bh=NCMujOi7gIknHs127h5m38WVgd6G0xciBwWlyhI04G4=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=r00MQ+cRbKgfXA1/Z5yVTsjxdUvPgWTCYtdQEXfGxO7XnM0tD1WNQZ3CGjHIJpkUWgFU50HrKR51nq+5vke0ggx1aedQZg8RTfeBGFIN7JFh/IYgbDZvR7PSNRRpDVYG/FKR32wcSZpYW/4QOduSOWJKhOsr86p20HjPWg/EBCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FbirAg/Z; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7acd7d9dbefso470674385a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 13:21:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727641262; x=1728246062; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j730t5RgznBmQZu3lvSO1ELFYrR4fxxSXPbfDnOL7lc=;
+        b=FbirAg/ZSZj+9IbidxOvv4MW2hjAtpLYy2R2whBxT9uCtH9/Z19joik6o+0vayOTDK
+         JyiywBmlX8zVIQeo9Dx8dTRucpMdbGaoWhwPVDDrxbEnEJd8jKAWSfQRr7KU2aP0jE66
+         +uWhs5/IrpkAtzBoL5YynpwdN/bDtOQoEFUircp/TPvet9dejhkLD+loPdJCyMDFuuYS
+         UZEWO2HrewotMsOigrcRKTe9qDW1CrGwtF7doS+bH/ZT2GthiJQLQqyN4UvMa9LZggME
+         ww1cYsohwGHfz6ZTHqk32J9xXGeSMZY2cR/z7EcIdKJcKCRwYbK5GBydd28Gzop+4DTO
+         JP+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727641262; x=1728246062;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j730t5RgznBmQZu3lvSO1ELFYrR4fxxSXPbfDnOL7lc=;
+        b=X/n9AC/Wo7XDCnC5/K/9yz554ytoP2A9uOmHppCZuisTyLdY65og+C9dVl2xNhXQTQ
+         F4K2t6scGs1u+W7OXYPrmIG8oDObg/5lRQJ/ebl5WwZ476wqyFHlqtaJbbBP5Qw+3JBk
+         QAN8tErEDtuPpnQ0Ll6VP60UdUajMcIH30RMokbV3msZ67MEstDcmz45Ik7n03BooF0O
+         rORio3S/UfxYuPeDvgVQcyUQL7EJpBbch1BclyMmVifSk31wMHtgQQ4cN0jQ5juF+mW6
+         l5wN6tAiGIbITbgIONVvnv+b00lNB8VnCtsBIWI5Kr41R2pFCf3cj8UqzfI/rW0iXMIN
+         VzYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7fUaqwtZQ4NUC3TiyP1hD8FP2ULHWkSngRgkWCw72sNZdhFyayDpenSkHQztzPgFxSF01vPmrTHjJ14A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyKzbQ+cvtWFNszpQdb1GYkpoCfxqOygTREzonSgqDSjvjN9uR
+	bmw8GukmVvIaw0CGpkhGJkdwtATFm1S4fAJ2++XOiHvIgXBnvxWNHg87QcMkKg==
+X-Google-Smtp-Source: AGHT+IE3rPnUiHlGZpJAiiSi2r8ITRz1wB3lhzsgmG3CaQpGo6aFcM3Rt59tO+884CFfrtoXeBewRA==
+X-Received: by 2002:a05:620a:24d3:b0:7a9:b114:4704 with SMTP id af79cd13be357-7ae3783849dmr1387092785a.22.1727641262161;
+        Sun, 29 Sep 2024 13:21:02 -0700 (PDT)
+Received: from [192.168.22.104] ([62.156.169.180])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f33a4c9sm31021261cf.73.2024.09.29.13.21.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Sep 2024 13:21:01 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+CC: <linux-hardening@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+Date: Sun, 29 Sep 2024 22:20:59 +0200
+Message-ID: <1923f716100.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <20240928-maintainers-security-kconfig-hardening-v1-1-c8c64071cc02@kernel.org>
+References: <20240928-maintainers-security-kconfig-hardening-v1-1-c8c64071cc02@kernel.org>
+User-Agent: AquaMail/1.52.0 (build: 105200518)
+Subject: Re: [PATCH] MAINTAINERS: Add security/Kconfig.hardening to hardening section
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v5 6/6] i2c: Add driver for the RTL9300 I2C controller
-To: Markus Elfring <Markus.Elfring@web.de>, linux-i2c@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-mips@vger.kernel.org,
- devicetree@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- =?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
- <096aebcd-778c-4160-b478-bb26025f3940@web.de>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <096aebcd-778c-4160-b478-bb26025f3940@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f9b5df a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=P-IC7800AAAA:8 a=VwQbUJbxAAAA:8 a=czHN8OwSvR-A_l93-LoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi Markus,
-
-On 29/09/24 21:45, Markus Elfring wrote:
-> =E2=80=A6
->> +++ b/drivers/i2c/busses/i2c-rtl9300.c
->> @@ -0,0 +1,422 @@
-> =E2=80=A6
->> +static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr,=
- unsigned short flags,
->> +				  char read_write, u8 command, int size,
->> +				  union i2c_smbus_data *data)
->> +{
-> =E2=80=A6
->> +	mutex_lock(&i2c->lock);
->> +	if (chan->sda_pin !=3D i2c->sda_pin) {
-> =E2=80=A6
->> +out_unlock:
->> +	mutex_unlock(&i2c->lock);
->> +
->> +	return ret;
->> +}
-> =E2=80=A6
+On September 28, 2024 8:26:28 PM Nathan Chancellor <nathan@kernel.org> wrote:
+> When running get_maintainer.pl on security/Kconfig.hardening, only the
+> security subsystem folks show up, even though they have never taken
+> patches to this file:
 >
-> Under which circumstances would you become interested to apply a statem=
-ent
-> like =E2=80=9Cguard(mutex)(&i2c->lock);=E2=80=9D?
-> https://elixir.bootlin.com/linux/v6.11/source/include/linux/mutex.h#L19=
-6
+>  $ scripts/get_maintainer.pl security/Kconfig.hardening
+>  Paul Moore <...> (supporter:SECURITY SUBSYSTEM)
+>  James Morris <...> (supporter:SECURITY SUBSYSTEM)
+>  "Serge E. Hallyn" <...> (supporter:SECURITY SUBSYSTEM)
+>  linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+>  linux-kernel@vger.kernel.org (open list)
+>
+>  $ git log --format=%cn --no-merges security/Kconfig.hardening | sort | uniq -c
+>        3 Andrew Morton
+>        1 Greg Kroah-Hartman
+>       18 Kees Cook
+>        2 Linus Torvald
+>
+> Add it to the hardening section so that the KSPP folks are also shown,
+> which matches reality over who should comment on and take said patches
+> if necessary.
+>
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> ---
+> MAINTAINERS | 1 +
+> 1 file changed, 1 insertion(+)
 
-At this stage I don't what to change unless Andi insists that I do.
+For the sake of casual observers, the reason James, Serge, or I haven't 
+merged anything in Kconfig.hardening isn't due to any malicious intent or 
+lack of appreciation, rather it is out of respect for KSPP and not wanting 
+to step on Kees' toes.  I've happily merged KSPP related patches to those 
+subsystems which I'm tasked with looking after and I plan to continue to do so.
 
-I can't find much mention of using guard() on=20
-https://www.kernel.org/doc/html/latest/ but I can see enough examples=20
-(although notably none in drivers/i2c) that I _think_ I can see how I=20
-could use it.
+--
+paul-moore.com
+
+
 
 
