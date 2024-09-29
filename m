@@ -1,159 +1,183 @@
-Return-Path: <linux-kernel+bounces-342729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FAE4989230
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:51:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547E7989232
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2D121F239F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 937EF285D74
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594B38488;
-	Sun, 29 Sep 2024 00:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLKVWl7H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FD88F6B;
+	Sun, 29 Sep 2024 00:54:52 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964335680;
-	Sun, 29 Sep 2024 00:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAB3469D;
+	Sun, 29 Sep 2024 00:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727571082; cv=none; b=D7mFGUzqPPTYD2/KDAy8RzoU93IdBaC5xDja+BrCQBFtiUp2kwhVcsC+4GKwOb6ByffiMNuECwcO+iOL8fK5yCPEUx+UYifVeMrMta2rgmPGl1Y7O5kDNohSNYn9d9qOZXtrGfglEq5zSfvhjzuwKU50Pch1ytQKShkXLc/483c=
+	t=1727571292; cv=none; b=M/PNxDf/bgVbr3WEe6N6tv29l5KNXGBUUa47k49USwqrc4s4D4wWLeW9CFY75CQhmvdnhu0/o5z8PovfTtNV5gY6EgquHLsa9Pw2ftyh44TiyCoz5wHiJ5foBPKHY5OEVN2v5LacJAWgl4dcdYUyCgWcg08HeJdp58YpIKTHhMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727571082; c=relaxed/simple;
-	bh=pkexLRke1C+eYH00W2Deghk1jYJzAqkuP3XQ8PpT0sY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOl4Poy0HIqQMmEt/VVueDWtV/hdU4Ep2396FXi5sLP5HtW9JKJq6Ptt5OHv+5zciwLABoVzUfGHfz1xYksBvlgYC7skxvd2NxN43rUM4wEAbhha0m78P1csjBFWRSPcokoMWxbYYmdUc9o0JtcHgY1Vn5r7IXFCTw8jJMGotuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLKVWl7H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97D3C4CEC3;
-	Sun, 29 Sep 2024 00:51:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727571082;
-	bh=pkexLRke1C+eYH00W2Deghk1jYJzAqkuP3XQ8PpT0sY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WLKVWl7HJ5QZSn3k214HKQ3Sn/vaij9MyOXWlpsXJMUE+vuoL/nMUCP/oeLsOfFPk
-	 YimDKZbx8CXUScikofEij+CRGGgXBRI6cTyWIrbb5VIJY/nNVxeH7NQRqfmGarifif
-	 WkNNxnHIb6y3VNtD6j8VM3ELRpBi/uBcZcHac+0pWyCWF4oagMnNJ/g0troFz2iqfL
-	 vjUgXDZ/wDu7xufWikZ7ZeXVeGSdqzI5zMDkai+HW2brFi2/KFjuWZFW4vGIkipFCY
-	 81QJBcxKHmPgID/VAMR3Xl/bXharj4+1t8UjB3W0aaSLOxN+lnvbbwovIuh/aQ9xSK
-	 6aMF3pX8yupzg==
-Received: by pali.im (Postfix)
-	id A2469651; Sun, 29 Sep 2024 02:51:16 +0200 (CEST)
-Date: Sun, 29 Sep 2024 02:51:16 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	CIFS <linux-cifs@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] cifs: Fix creating NFS-style char/block devices
-Message-ID: <20240929005116.jojmzxymevmdyvsa@pali>
-References: <20240928215948.4494-1-pali@kernel.org>
- <20240928215948.4494-5-pali@kernel.org>
- <CAH2r5mvvNO4NjnBKd1R_wemJ34t=N+iL023c2Op+LPuYw3UcZw@mail.gmail.com>
- <20240929004439.4xgymuv3mnr3n4a3@pali>
- <CAH2r5mvbUhcW_c46oUiHzfPg97n5qiRg9kzpCkmzG9uHygOF3g@mail.gmail.com>
+	s=arc-20240116; t=1727571292; c=relaxed/simple;
+	bh=2B/0qFrZ4MvrYvu29+Wu+zlHj4pQsCk+raaWBiQzTm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dtpSrbaVowVBE9AdiZ0TtJl+4eHKDyUFidTcLKOjLATs6JTCM3W/AC0NQ8BXg1ROHVcOhb6hHRVKM7+miSxAN52JBet76d6wHgpittPx4M6qAi6flxUeuwze/ffs4t6JlmNdHkZsloFAnr3MIVvk5KiX3MJ5Gsz/p/UQ/YiI+yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XGQhJ2vq7z4f3jdn;
+	Sun, 29 Sep 2024 08:54:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C88A21A0B1F;
+	Sun, 29 Sep 2024 08:54:40 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP4 (Coremail) with SMTP id gCh0CgC3N8ROpfhmE0uNCg--.34615S2;
+	Sun, 29 Sep 2024 08:54:39 +0800 (CST)
+Message-ID: <1222cf96-0382-4396-bb2d-475615070ccf@huaweicloud.com>
+Date: Sun, 29 Sep 2024 08:54:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next 1/2] perf stat: Increase perf_attr_map entries
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240925135523.367957-1-wutengda@huaweicloud.com>
+ <20240925135523.367957-2-wutengda@huaweicloud.com>
+ <ZvTgHKl4eZvpyVml@google.com>
+ <41d1d728-dbf4-4b0d-9855-19cd06e2a594@huaweicloud.com>
+ <ZvbnePGVmbWF0fAF@google.com>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <ZvbnePGVmbWF0fAF@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mvbUhcW_c46oUiHzfPg97n5qiRg9kzpCkmzG9uHygOF3g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-CM-TRANSID:gCh0CgC3N8ROpfhmE0uNCg--.34615S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw4DZFW3uFW8Aw4kXr1xGrg_yoW5tr1rpF
+	W8CF9FyF45Xr1UGw1Yv3ZIvF9Ygw45Wr45Wr13t3y0yF1qgr13KFWIqr4Y9FyxtrZ2yryY
+	qw4jqrW7ua90vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-I guess that patch 3 can be dropped too as Paulo fixed it recently in:
-https://git.samba.org/sfrench/?p=sfrench/cifs-2.6.git;a=commit;h=663f295e35594f4c2584fc68c28546b747b637cd
 
-On Saturday 28 September 2024 19:47:52 Steve French wrote:
-> Patch 3 may need to be rebased, iirc patch 3 didn't merge but 1 and 2 did
+
+On 2024/9/28 1:12, Namhyung Kim wrote:
+> On Fri, Sep 27, 2024 at 10:35:54AM +0800, Tengda Wu wrote:
+>>
+>>
+>> On 2024/9/26 12:16, Namhyung Kim wrote:
+>>> On Wed, Sep 25, 2024 at 01:55:22PM +0000, Tengda Wu wrote:
+>>>> bperf restricts the size of perf_attr_map's entries to 16, which
+>>>> cannot hold all events in many scenarios. A typical example is
+>>>> when the user specifies `-a -ddd` ([0]). And in other cases such as
+>>>> top-down analysis, which often requires a set of more than 16 PMUs
+>>>> to be collected simultaneously.
+>>>>
+>>>> Fix this by increase perf_attr_map entries to 100, and an event
+>>>> number check has been introduced when bperf__load() to ensure that
+>>>> users receive a more friendly prompt when the event limit is reached.
+>>>>
+>>>>   [0] https://lore.kernel.org/all/20230104064402.1551516-3-namhyung@kernel.org/
+>>>
+>>> Apparently this patch was never applied.  I don't know how much you need
+>>> but having too many events at the same time won't be very useful because
+>>> multiplexing could reduce the accuracy.
+>>>
+>>
+>> Could you please explain why patch [0] was not merged at that time? I couldn't
+>> find this information from the previous emails.
 > 
-> On Sat, Sep 28, 2024, 7:44 PM Pali Rohár <pali@kernel.org> wrote:
+> I guess it's just fell through the crack. :)
+
+Hope it won't happen again. 😆
+
 > 
-> > Ops, sorry for that. I just let my work branch on v6.11-rc7 and here
-> > this change was not yet. But it is funny that we have hit this problem
-> > independently in nearly same time.
-> >
-> > On Saturday 28 September 2024 19:18:26 Steve French wrote:
-> > > Looks like a duplicate of Paulo's earlier already merged patch, so
-> > > will skip this one.  Reviewing the others in the series now.
-> > >
-> > > commit a9de67336a4aa3ff2e706ba023fb5f7ff681a954
-> > > Author: Paulo Alcantara <pc@manguebit.com>
-> > > Date:   Wed Sep 18 21:53:35 2024 -0300
-> > >
-> > >     smb: client: set correct device number on nfs reparse points
-> > >
-> > >     Fix major and minor numbers set on special files created with NFS
-> > >     reparse points.
-> > >
-> > > On Sat, Sep 28, 2024 at 5:02 PM Pali Rohár <pali@kernel.org> wrote:
-> > > >
-> > > > Linux SMB client currently creates NFS-style char and block devices
-> > with
-> > > > swapped major and minor numbers.
-> > > >
-> > > > Per MS-FSCC 2.1.2.6 NFS_SPECFILE_CHR and NFS_SPECFILE_BLK DataBuffer's
-> > > > field contains two 32-bit integers that represent major and minor
-> > device
-> > > > numbers.
-> > > >
-> > > > So the first one 32-bit integer in DataBuffer is major number and
-> > second
-> > > > one in DataBuffer is minor number. Microsoft Windows NFS server reads
-> > them
-> > > > in this order too.
-> > > >
-> > > > But Linux CIFS client creates new reparse point DataBuffer with minor
-> > > > number first and major number second.
-> > > >
-> > > > Fix this problem in Linux SMB client and puts major and minor number in
-> > > > the correct order into DataBuffer.
-> > > >
-> > > > This change fixes interoperability of char and block devices on Windows
-> > > > share which is exported over both SMB and NFS protocols.
-> > > >
-> > > > Fixes: 102466f303ff ("smb: client: allow creating special files via
-> > reparse points")
-> > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > > ---
-> > > >  fs/smb/client/reparse.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> > > > index 48c27581ec51..63984796721a 100644
-> > > > --- a/fs/smb/client/reparse.c
-> > > > +++ b/fs/smb/client/reparse.c
-> > > > @@ -108,8 +108,8 @@ static int nfs_set_reparse_buf(struct
-> > reparse_posix_data *buf,
-> > > >         buf->InodeType = cpu_to_le64(type);
-> > > >         buf->ReparseDataLength = cpu_to_le16(len + dlen -
-> > > >                                              sizeof(struct
-> > reparse_data_buffer));
-> > > > -       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MAJOR(dev) <<
-> > 32) |
-> > > > -                                                MINOR(dev));
-> > > > +       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MINOR(dev) <<
-> > 32) |
-> > > > +                                                MAJOR(dev));
-> > > >         iov->iov_base = buf;
-> > > >         iov->iov_len = len + dlen;
-> > > >         return 0;
-> > > > --
-> > > > 2.20.1
-> > > >
-> > > >
-> > >
-> > >
-> > > --
-> > > Thanks,
-> > >
-> > > Steve
-> >
+>>
+>> In my scenario, we collect more than 40+ events to support necessary metric
+>> calculations, which multiplexing is inevitable. Although multiplexing may
+>> reduce accuracy, for the purpose of supporting metric calculations, these
+>> accuracy losses can be acceptable. Perf also has the same issue with multiplexing.
+>> Removing the event limit for bperf can provide users with additional options.
+>>
+>> In addition to accuracy, we also care about overhead. I compared the overhead
+>> of bperf and perf by testing ./lat_ctx in lmbench [1], and found that the
+>> overhead of bperf stat is about 4% less than perf. This is why we choose to
+>> use bperf in some extreme scenarios.
+> 
+> Ok, thanks for explanation.  I think it's ok to increase the limit.
+> 
+> Thanks,
+> Namhyung
+> 
+>>
+>>   [1] https://github.com/intel/lmbench
+>>
+>> Thanks,
+>> Tengda
+>>
+>>>
+>>>>
+>>>> Fixes: 7fac83aaf2ee ("perf stat: Introduce 'bperf' to share hardware PMCs with BPF")
+>>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+>>>> ---
+>>>>  tools/perf/util/bpf_counter.c | 8 +++++++-
+>>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+>>>> index 7a8af60e0f51..3346129c20cf 100644
+>>>> --- a/tools/perf/util/bpf_counter.c
+>>>> +++ b/tools/perf/util/bpf_counter.c
+>>>> @@ -28,7 +28,7 @@
+>>>>  #include "bpf_skel/bperf_leader.skel.h"
+>>>>  #include "bpf_skel/bperf_follower.skel.h"
+>>>>  
+>>>> -#define ATTR_MAP_SIZE 16
+>>>> +#define ATTR_MAP_SIZE 100
+>>>>  
+>>>>  static inline void *u64_to_ptr(__u64 ptr)
+>>>>  {
+>>>> @@ -451,6 +451,12 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>>>>  	enum bperf_filter_type filter_type;
+>>>>  	__u32 filter_entry_cnt, i;
+>>>>  
+>>>> +	if (evsel->evlist->core.nr_entries > ATTR_MAP_SIZE) {
+>>>> +		pr_err("Too many events, please limit to %d or less\n",
+>>>> +			ATTR_MAP_SIZE);
+>>>> +		return -1;
+>>>> +	}
+>>>> +
+>>>>  	if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
+>>>>  		return -1;
+>>>>  
+>>>> -- 
+>>>> 2.34.1
+>>>>
+>>
+
 
