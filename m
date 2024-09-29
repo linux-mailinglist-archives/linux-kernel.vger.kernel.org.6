@@ -1,341 +1,167 @@
-Return-Path: <linux-kernel+bounces-343119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFB99896F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:59:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174AE9896F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:59:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332811F2126B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F331C20930
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603236F06D;
-	Sun, 29 Sep 2024 18:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bhtyj2i2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4862B74059;
+	Sun, 29 Sep 2024 18:59:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7442A3A1B5;
-	Sun, 29 Sep 2024 18:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A21155E53
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727636346; cv=none; b=qXYdz7TgNv5IaXJjit6/HlDEsTPfbfwo14HKIl4Xy5cNAAfC2Wf6+692mZrxM+YyeMVEBSaONbEG9MJpfQivtDIh4akFxDVfyg8nOLRiCVINNZ3+oY4zPxjfhLvc4asSwOoLNrYbCxkkDjfi1GtIuScGOYnNIlevSXJh4tYNLOE=
+	t=1727636379; cv=none; b=L8coH6BXrbFtSeSHgiUG5v+HO3vXCAPL+TjkcJXfrfz6+m5yr9f/Y0X+3wtetKDrWIRjtM4t/o/gk0yyDb6jJ/9sV4o/TMVS4xvMHNDD5KNCvfyKBg3W3fSuhLyU9etFINCIClvY/6DsDKOpCTXOKZW54UF3LXTmqOzdQoWH2yI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727636346; c=relaxed/simple;
-	bh=kR5ZVNPzgt22nrP2N5SuM9ev0rLCcrgOa8jRau1nvDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ewqn55y44QQPRU79olxzaViXEEmPyKaEMMqsPgKZftkJMB/ACuSXzmRkOB5BUtK7s+lKq7C1/SNTy4C4AC9y8ws7HIKcteHcSaxJkT9pIJuBg2MWOBqzeB4bQFJKkoPQl9xAa31WZefyaODRbZ6Z4L1XDkYSddHl9IjGavbFdNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bhtyj2i2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DF29C4CEC5;
-	Sun, 29 Sep 2024 18:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727636345;
-	bh=kR5ZVNPzgt22nrP2N5SuM9ev0rLCcrgOa8jRau1nvDw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bhtyj2i2ysGITF2G9VAYrwbmXzNj+10UvjcuxNcZl/L3aS/Ai6Eaauqvfg+YwAe/n
-	 00ZpXMFUJMb5sS/I+argbAFN+Z1B4kwSX3BwBUq8aiwignoSkViv1wy5MpLArLLSqO
-	 hY7K/fpkXlotilbfmcs7GP6/nufhWUDNpm238yvrMKaK49lWEWM9n94p7l/6VobqzT
-	 UwEo23lIPwIt/X0SCLWfdgySbqVFFlTASSw8OaAIbTSwXdqfWA8o0x6D55d49NbkCo
-	 VMUTL3zXrHAyoqWDr9Fi3O/2lQR7ZJyspiHaP9N/tsYLW4PMYF0YOdu8DTowaE4/ZY
-	 KlqFHsfpvkteg==
-Message-ID: <59b08c39-6f9b-49a8-8bcd-d0813741a247@kernel.org>
-Date: Sun, 29 Sep 2024 13:59:03 -0500
+	s=arc-20240116; t=1727636379; c=relaxed/simple;
+	bh=DBByY8mttVZ5H5VD0vsSgB1v9bTYRyRgpVk1H6Ih54o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FFfWKNwF4fmfI8MOC9xvY1tP++XfB2pB12ne/U4aL9S1HEp/jB7rdJ6852HMSKzM+1j3b2KNs8JJO4aFhSsg/+miPypcExxj3UnynB4gjfurjqS92Zv+6UE8EoMeJJL9ZlKbgYW1t09u7yaoPAGYsA7SQUxfk+uuneAjdWt/dPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suz8l-00053m-KL; Sun, 29 Sep 2024 20:59:31 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suz8k-002Ro3-V6; Sun, 29 Sep 2024 20:59:30 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suz8k-0029Vj-2u;
+	Sun, 29 Sep 2024 20:59:30 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Subject: [PATCH v6 0/9] usb: gadget: uvc: effectively fill the udc isoc
+ pipeline with available video buffers and fixes
+Date: Sun, 29 Sep 2024 20:59:20 +0200
+Message-Id: <20240403-uvc_request_length_by_interval-v6-0-08c05522e1f5@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/9] platform/x86: asus-armoury: add the ppt_* and nv_*
- tuning knobs
-To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
-Cc: linux-input@vger.kernel.org, jikos@kernel.org,
- platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
- hdegoede@redhat.com, corentin.chary@gmail.com
-References: <20240929090813.7888-1-luke@ljones.dev>
- <20240929090813.7888-6-luke@ljones.dev>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <20240929090813.7888-6-luke@ljones.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIij+WYC/5XQwWrEIBAG4FdZPNdiRqNJT32PUoLRcSMEs1Uju
+ yx595q9Nofm+A/D9w/zJAmjx0Q+Lk8Ssfjkl1CDfLsQM+lwReptzQQYCCYYp2sxQ8SfFVMeZgz
+ XPA3jY/AhYyx6plqhs22nbC85qcioE9Ix6mCmyoR1nuvwFtH5+6v167vmyae8xMfriNLs03/3l
+ YYy2gsujVCNBM4/b3VpzXEJ/v5ukex+gXMmVLMB2TOnNKBzhyY/Z/JqCqsV49xa0XWHpjhnimo
+ aDeA4FwASD832nNlWEyyqTu1fbc0fc9u2X2MfXbk2AgAA
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Daniel Scally <dan.scally@ideasonboard.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Avichal Rakesh <arakesh@google.com>, 
+ Jayant Chowdhary <jchowdhary@google.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3952;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=DBByY8mttVZ5H5VD0vsSgB1v9bTYRyRgpVk1H6Ih54o=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBm+aOJ6Clr2ObwoIh4xGvNowwqlHTJlni7HlcT/
+ 9RRsLxwcteJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZvmjiQAKCRC/aVhE+XH0
+ q1z6EACFu7AhcbV9rv4dVQsb3lTO7Q3hcTyuvv0Vd14QwcIFbDfmoxPMA1/Y7N6YL61JEpCCzez
+ 2aS+Ao2lmzKtsIwwcRFws8Df+HIPH4Hdc6Ic4MkNRXdb0l6HWaszuos7q9jn6snPWk0rv/6L/xw
+ ZpF+x8EY5Yscu9RXr0h+Lv0tV5svCgxQ8wtNeAG+/Dbiv6IU+y/q8HG54EEkXA81q3WKzqkJTim
+ i0UG6FyE+9NnQC5aqDhBklTIFd9oMbcu6cy5qYWKCT9fpeqL7yuqc4DMBNWB/qTZ+t0z2oouKHs
+ 5pRkwai40ivBVqX8S6sZKcz3q4lQ7dMxQ4zKEwIyvtFtRtcrg5oLrEjXL2BOKfSW3BPcHFYo//H
+ s2t9ibJ8cq7dHj1R5rf0WlRkrPSGZzYpBGrTdFqKPqjgCisaozzlPa2zVR/6VmcDXO8StEynLhm
+ TdDywgDLPJijCWLeSnQIMUP6V2/6lB5kZzypn5evIMsqW6Oh8kjff3zgfv8Xzdw4QdFSzdT1zkB
+ yy4ue+uynWVAZeDptXmT4WbsUW9pF2GpF/ztpdoOHXUcSnLC0t6XLjxPXrva9pE7G4/Cz2gkS77
+ 8hzLpu1l5ZHwH0mbryZunkA9zrP3lKj3gRBiu6Nts3doAuUEzS7yZ9jJ/GhzpDYZvqXAtTl7YrS
+ a+G6uLi7TczdNlQ==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
+This patch series is improving the size calculation and allocation of
+the uvc requests. Using the selected frame duration of the stream it is
+possible to calculate the number of requests based on the interval
+length.
 
+It also precalculates the request length based on the actual per frame
+size for compressed formats.
 
-On 9/29/24 04:08, Luke D. Jones wrote:
-> Adds the ppt_* and nv_* tuning knobs that are available via WMI methods
-> and adds proper min/max levels plus defaults.
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+For this calculations to work it was needed to rework the request
+queueing by moving the encoding to one extra thread (in this case we
+chose the qbuf) context.
 
-> ---
->   drivers/platform/x86/asus-armoury.c | 134 ++++++++++++++++++++++++++++
->   drivers/platform/x86/asus-armoury.h |  65 ++++++++++++++
->   2 files changed, 199 insertions(+)
-> 
-> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
-> index c885b433c39d..aadeb2a41ca6 100644
-> --- a/drivers/platform/x86/asus-armoury.c
-> +++ b/drivers/platform/x86/asus-armoury.c
-> @@ -52,12 +52,40 @@
->   #define PPT_PLATFORM_MAX 100
->   #define PPT_PLATFORM_DEFAULT 80
->   
-> +/* Tunables provided by ASUS for gaming laptops */
-> +struct rog_tunables {
-> +	u32 cpu_default;
-> +	u32 cpu_min;
-> +	u32 cpu_max;
-> +
-> +	u32 platform_default;
-> +	u32 platform_min;
-> +	u32 platform_max;
-> +
-> +	u32 ppt_pl1_spl; // cpu
-> +	u32 ppt_pl2_sppt; // cpu
-> +	u32 ppt_apu_sppt; // plat
-> +	u32 ppt_platform_sppt; // plat
-> +	u32 ppt_fppt; // cpu
-> +
-> +	u32 nv_boost_default;
-> +	u32 nv_boost_min;
-> +	u32 nv_boost_max;
-> +	u32 nv_dynamic_boost;
-> +
-> +	u32 nv_temp_default;
-> +	u32 nv_temp_min;
-> +	u32 nv_temp_max;
-> +	u32 nv_temp_target;
-> +};
-> +
->   static const struct class *fw_attr_class;
->   
->   struct asus_armoury_priv {
->   	struct device *fw_attr_dev;
->   	struct kset *fw_attr_kset;
->   
-> +	struct rog_tunables *rog_tunables;
->   	u32 mini_led_dev_id;
->   	u32 gpu_mux_dev_id;
->   
-> @@ -431,6 +459,25 @@ WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
->   ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
->   
->   /* Simple attribute creation */
-> +ATTR_GROUP_ROG_TUNABLE(ppt_pl1_spl, "ppt_pl1_spl", ASUS_WMI_DEVID_PPT_PL1_SPL, cpu_default,
-> +		       cpu_min, cpu_max, 1, "Set the CPU slow package limit");
-> +ATTR_GROUP_ROG_TUNABLE(ppt_pl2_sppt, "ppt_pl2_sppt", ASUS_WMI_DEVID_PPT_PL2_SPPT, cpu_default,
-> +		       cpu_min, cpu_max, 1, "Set the CPU fast package limit");
-> +ATTR_GROUP_ROG_TUNABLE(ppt_apu_sppt, "ppt_apu_sppt", ASUS_WMI_DEVID_PPT_APU_SPPT,
-> +		       platform_default, platform_min, platform_max, 1,
-> +		       "Set the CPU slow package limit");
-> +ATTR_GROUP_ROG_TUNABLE(ppt_platform_sppt, "ppt_platform_sppt", ASUS_WMI_DEVID_PPT_PLAT_SPPT,
-> +		       platform_default, platform_min, platform_max, 1,
-> +		       "Set the CPU slow package limit");
-> +ATTR_GROUP_ROG_TUNABLE(ppt_fppt, "ppt_fppt", ASUS_WMI_DEVID_PPT_FPPT, cpu_default, cpu_min,
-> +		       cpu_max, 1, "Set the CPU slow package limit");
-> +ATTR_GROUP_ROG_TUNABLE(nv_dynamic_boost, "nv_dynamic_boost", ASUS_WMI_DEVID_NV_DYN_BOOST,
-> +		       nv_boost_default, nv_boost_min, nv_boost_max, 1,
-> +		       "Set the Nvidia dynamic boost limit");
-> +ATTR_GROUP_ROG_TUNABLE(nv_temp_target, "nv_temp_target", ASUS_WMI_DEVID_NV_THERM_TARGET,
-> +		       nv_temp_default, nv_boost_min, nv_temp_max, 1,
-> +		       "Set the Nvidia max thermal limit");
-> +
->   ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
->   		       "Show the current mode of charging");
->   
-> @@ -451,6 +498,14 @@ static const struct asus_attr_group armoury_attr_groups[] = {
->   	{ &egpu_enable_attr_group, ASUS_WMI_DEVID_EGPU },
->   	{ &dgpu_disable_attr_group, ASUS_WMI_DEVID_DGPU },
->   
-> +	{ &ppt_pl1_spl_attr_group, ASUS_WMI_DEVID_PPT_PL1_SPL },
-> +	{ &ppt_pl2_sppt_attr_group, ASUS_WMI_DEVID_PPT_PL2_SPPT },
-> +	{ &ppt_apu_sppt_attr_group, ASUS_WMI_DEVID_PPT_APU_SPPT },
-> +	{ &ppt_platform_sppt_attr_group, ASUS_WMI_DEVID_PPT_PLAT_SPPT },
-> +	{ &ppt_fppt_attr_group, ASUS_WMI_DEVID_PPT_FPPT },
-> +	{ &nv_dynamic_boost_attr_group, ASUS_WMI_DEVID_NV_DYN_BOOST },
-> +	{ &nv_temp_target_attr_group, ASUS_WMI_DEVID_NV_THERM_TARGET },
-> +
->   	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
->   	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
->   	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
-> @@ -547,6 +602,79 @@ static int asus_fw_attr_add(void)
->   
->   /* Init / exit ****************************************************************/
->   
-> +/* Set up the min/max and defaults for ROG tunables */
-> +static void init_rog_tunables(struct rog_tunables *rog)
-> +{
-> +	u32 platform_default = PPT_PLATFORM_DEFAULT;
-> +	u32 cpu_default = PPT_CPU_LIMIT_DEFAULT;
-> +	u32 platform_max = PPT_PLATFORM_MAX;
-> +	u32 max_boost = NVIDIA_BOOST_MAX;
-> +	u32 cpu_max = PPT_CPU_LIMIT_MAX;
-> +	const char *product;
-> +
-> +	/*
-> +	 * ASUS product_name contains everything required, e.g,
-> +	 * "ROG Flow X16 GV601VV_GV601VV_00185149B".
-> +	 * The bulk of these defaults are gained from users reporting what
-> +	 * ASUS Armoury Crate in Windows provides them.
-> +	 */
-> +	product = dmi_get_system_info(DMI_PRODUCT_NAME);
-> +
-> +	if (strstr(product, "GA402R")) {
-> +		cpu_default = 125;
-> +	} else if (strstr(product, "13QY")) {
-> +		cpu_max = 250;
-> +	} else if (strstr(product, "X13")) {
-> +		cpu_max = 75;
-> +		cpu_default = 50;
-> +	} else if (strstr(product, "RC71") || strstr(product, "RC72")) {
-> +		cpu_max = 50;
-> +		cpu_default = 30;
-> +	} else if (strstr(product, "G814") || strstr(product, "G614") ||
-> +		   strstr(product, "G834") || strstr(product, "G634")) {
-> +		cpu_max = 175;
-> +	} else if (strstr(product, "GA402X") || strstr(product, "GA403") ||
-> +		   strstr(product, "FA507N") || strstr(product, "FA507X") ||
-> +		   strstr(product, "FA707N") || strstr(product, "FA707X")) {
-> +		cpu_max = 90;
-> +	} else {
-> +		pr_notice("Using default CPU limits. Please report if these are not correct.\n");
-> +	}
-> +
-> +	if (strstr(product, "GZ301ZE"))
-> +		max_boost = 5;
-> +	else if (strstr(product, "FX507ZC4"))
-> +		max_boost = 15;
-> +	else if (strstr(product, "GU605"))
-> +		max_boost = 20;
-> +
-> +	/* ensure defaults for tunables */
-> +	rog->cpu_default = cpu_default;
-> +	rog->cpu_min = PPT_CPU_LIMIT_MIN;
-> +	rog->cpu_max = cpu_max;
-> +
-> +	rog->platform_default = platform_default;
-> +	rog->platform_max = PPT_PLATFORM_MIN;
-> +	rog->platform_max = platform_max;
-> +
-> +	rog->ppt_pl1_spl = cpu_default;
-> +	rog->ppt_pl2_sppt = cpu_default;
-> +	rog->ppt_apu_sppt = cpu_default;
-> +
-> +	rog->ppt_platform_sppt = platform_default;
-> +	rog->ppt_fppt = cpu_default;
-> +
-> +	rog->nv_boost_default = NVIDIA_BOOST_MAX;
-> +	rog->nv_boost_max = NVIDIA_BOOST_MIN;
-> +	rog->nv_boost_max = max_boost;
-> +	rog->nv_dynamic_boost = NVIDIA_BOOST_MIN;
-> +
-> +	rog->nv_temp_default = NVIDIA_TEMP_MAX;
-> +	rog->nv_temp_max = NVIDIA_TEMP_MIN;
-> +	rog->nv_temp_max = NVIDIA_TEMP_MAX;
-> +	rog->nv_temp_target = NVIDIA_TEMP_MIN;
-> +}
-> +
->   static int __init asus_fw_init(void)
->   {
->   	char *wmi_uid;
-> @@ -563,6 +691,12 @@ static int __init asus_fw_init(void)
->   	if (!strcmp(wmi_uid, ASUS_ACPI_UID_ASUSWMI))
->   		return -ENODEV;
->   
-> +	asus_armoury.rog_tunables = kzalloc(sizeof(struct rog_tunables), GFP_KERNEL);
-> +	if (!asus_armoury.rog_tunables)
-> +		return -ENOMEM;
-> +
-> +	init_rog_tunables(asus_armoury.rog_tunables);
-> +
->   	err = asus_fw_attr_add();
->   	if (err)
->   		return err;
-> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
-> index 4d0dd34c52aa..ca570ed9c8ef 100644
-> --- a/drivers/platform/x86/asus-armoury.h
-> +++ b/drivers/platform/x86/asus-armoury.h
-> @@ -17,6 +17,12 @@ static ssize_t attr_int_store(struct kobject *kobj, struct kobj_attribute *attr,
->   			      const char *buf, size_t count, u32 min, u32 max,
->   			      u32 *store_value, u32 wmi_dev);
->   
-> +static ssize_t int_type_show(struct kobject *kobj, struct kobj_attribute *attr,
-> +			     char *buf)
-> +{
-> +	return sysfs_emit(buf, "integer\n");
-> +}
-> +
->   static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->   			      char *buf)
->   {
-> @@ -143,4 +149,63 @@ static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
->   		.name = _fsname, .attrs = _attrname##_attrs               \
->   	}
->   
-> +/*
-> + * ROG PPT attributes need a little different in setup as they
-> + * require rog_tunables members.
-> + */
-> +
-> +#define __ROG_TUNABLE_RW(_attr, _min, _max, _wmi)                             \
-> +	static ssize_t _attr##_current_value_store(                           \
-> +		struct kobject *kobj, struct kobj_attribute *attr,            \
-> +		const char *buf, size_t count)                                \
-> +	{                                                                     \
-> +		return attr_int_store(kobj, attr, buf, count,                 \
-> +				      asus_armoury.rog_tunables->_min,        \
-> +				      asus_armoury.rog_tunables->_max,        \
-> +				      &asus_armoury.rog_tunables->_attr,      \
-> +				      _wmi);                                  \
-> +	}                                                                     \
-> +	static ssize_t _attr##_current_value_show(                            \
-> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf) \
-> +	{                                                                     \
-> +		return sysfs_emit(buf, "%u\n",                                \
-> +				  asus_armoury.rog_tunables->_attr);          \
-> +	}                                                                     \
-> +	static struct kobj_attribute attr_##_attr##_current_value =           \
-> +		__ASUS_ATTR_RW(_attr, current_value)
-> +
-> +#define __ROG_TUNABLE_SHOW(_prop, _attrname, _val)                            \
-> +	static ssize_t _attrname##_##_prop##_show(                            \
-> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf) \
-> +	{                                                                     \
-> +		return sysfs_emit(buf, "%d\n",                                \
-> +				  asus_armoury.rog_tunables->_val);           \
-> +	}                                                                     \
-> +	static struct kobj_attribute attr_##_attrname##_##_prop =             \
-> +		__ASUS_ATTR_RO(_attrname, _prop)
-> +
-> +#define ATTR_GROUP_ROG_TUNABLE(_attrname, _fsname, _wmi, _default, _min, _max, \
-> +			       _incstep, _dispname)                            \
-> +	__ROG_TUNABLE_SHOW(default_value, _attrname, _default);                \
-> +	__ROG_TUNABLE_RW(_attrname, _min, _max, _wmi);                         \
-> +	__ROG_TUNABLE_SHOW(min_value, _attrname, _min);                        \
-> +	__ROG_TUNABLE_SHOW(max_value, _attrname, _max);                        \
-> +	__ATTR_SHOW_FMT(scalar_increment, _attrname, "%d\n", _incstep);        \
-> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);           \
-> +	static struct kobj_attribute attr_##_attrname##_type =                 \
-> +		__ASUS_ATTR_RO_AS(type, int_type_show);                        \
-> +	static struct attribute *_attrname##_attrs[] = {                       \
-> +		&attr_##_attrname##_current_value.attr,                        \
-> +		&attr_##_attrname##_default_value.attr,                        \
-> +		&attr_##_attrname##_min_value.attr,                            \
-> +		&attr_##_attrname##_max_value.attr,                            \
-> +		&attr_##_attrname##_scalar_increment.attr,                     \
-> +		&attr_##_attrname##_display_name.attr,                         \
-> +		&attr_##_attrname##_type.attr,                                 \
-> +		NULL                                                           \
-> +	};                                                                     \
-> +	static const struct attribute_group _attrname##_attr_group = {         \
-> +		.name = _fsname, .attrs = _attrname##_attrs                    \
-> +	}
-> +
->   #endif /* _ASUS_BIOSCFG_H_ */
+Next it was needed to move the actual request enqueueing to one extra
+thread which is kept busy to fill the isoc queue in the udc.
+
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+Changes in v6:
+- fixes in: ("usb: gadget: uvc: add trace of enqueued and completed requests")
+- Link to v5: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v5-0-2de78794365c@pengutronix.de
+
+Changes in v5:
+- dropped: ('usb: gadget: uvc: remove pump worker and enqueue all buffers per frame in qbuf')
+- squashed ('usb: gadget: uvc: rework to enqueue in pump worker from encoded queue') and ('usb: gadget: uvc: remove uvc_video_ep_queue_initial_requests'))
+- squashed ('usb: gadget: uvc: set req_size once when the vb2 queue is calculated') and ('usb: gadget: uvc: set req_size and n_requests based on the frame interval')
+- replaced ('usb: gadget: uvc: add min g_ctrl vidioc and set min buffs to 4') with ('usb: gadget: uvc: set nbuffers to minimum STREAMING_MIN_BUFFERS in uvc_queue_setup')
+- added ('usb: gadget: uvc: wake pump everytime we update the free list')
+- added ('usb: gadget: uvc: add trace of enqueued and completed requests')
+- added ('usb: gadget: uvc: dont call usb_composite_setup_continue when not streamin')
+- some patch reordering
+- Link to v4: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de
+
+Changes in v4:
+- fixed exit path in uvc_enqueue_buffer on loop break
+- Link to v3: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de
+
+Changes in v3:
+- Added more patches necessary to properly rework the request queueing
+- Link to v2: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v2-0-12690f7a2eff@pengutronix.de
+
+Changes in v2:
+- added header size into calculation of request size
+- Link to v1: https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v1-0-9436c4716233@pengutronix.de
+
+---
+Michael Grzeschik (9):
+      usb: gadget: uvc: wake pump everytime we update the free list
+      usb: gadget: uvc: only enqueue zero length requests in potential underrun
+      usb: gadget: uvc: rework to enqueue in pump worker from encoded queue
+      usb: gadget: uvc: add g_parm and s_parm for frame interval
+      usb: gadget: uvc: set req_size and n_requests based on the frame interval
+      usb: gadget: uvc: set req_length based on payload by nreqs instead of req_size
+      usb: gadget: uvc: set nbuffers to minimum STREAMING_MIN_BUFFERS in uvc_queue_setup
+      usb: gadget: uvc: add trace of enqueued and completed requests
+      usb: gadget: uvc: dont call usb_composite_setup_continue when not streaming
+
+ drivers/usb/gadget/function/Makefile    |   3 +
+ drivers/usb/gadget/function/f_uvc.c     |   2 +
+ drivers/usb/gadget/function/uvc.h       |  13 ++
+ drivers/usb/gadget/function/uvc_queue.c |  26 ++--
+ drivers/usb/gadget/function/uvc_queue.h |   2 +
+ drivers/usb/gadget/function/uvc_trace.c |  11 ++
+ drivers/usb/gadget/function/uvc_trace.h |  60 ++++++++
+ drivers/usb/gadget/function/uvc_v4l2.c  |  55 +++++++
+ drivers/usb/gadget/function/uvc_video.c | 264 +++++++++++++++++++-------------
+ 9 files changed, 316 insertions(+), 120 deletions(-)
+---
+base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
+change-id: 20240403-uvc_request_length_by_interval-a7efd587d963
+
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
 
 
