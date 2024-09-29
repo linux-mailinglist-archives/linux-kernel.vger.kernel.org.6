@@ -1,163 +1,146 @@
-Return-Path: <linux-kernel+bounces-342925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0690C9894E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:52:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16299894E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1B94B23779
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:52:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80D0284021
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14BE15F41B;
-	Sun, 29 Sep 2024 10:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708C415FCE5;
+	Sun, 29 Sep 2024 10:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqffkAEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="RBea93zc"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AE813A878;
-	Sun, 29 Sep 2024 10:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E73113A878;
+	Sun, 29 Sep 2024 10:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727607120; cv=none; b=V9uJpEQ/mmJbQJRATYh+cnPeOry0HsC/TXfhi0X+aMon85bCUkCjRSVy2/fHDGxJOlZSd2RUFHQ+yHwbupMyvC1W3l5y413nxPYGdrIkzzPaHLmQGTJ3vC9zfWsAq4LlAyeEsUA808bR1jfmerwa0k3E63AnEg26spfjRO3Hbbo=
+	t=1727607137; cv=none; b=aKz7QW4VrmOCpYFdQlHBHKBLE1/036Le3xLIW55rzag9znO+08O2YJ9vs5aMQEaAhGWV+HFqnzL1jHvB2Y/nmofuO6oafx3bmWkkMk8v8irLXPSApGLXZhWRSCX/NcqcgXInz0q65U5ZqKkQHckgSW3EVBfNszqYybF0cQi266k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727607120; c=relaxed/simple;
-	bh=W2VIIbTK72xMf1IVwA07QupuewDLSJU1I75NKD5Q/bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vim26tpuo0/aL5Os7dEDmZ///CVX5xrnvB11BpkqJiB//NAmswIhjCqiZJ6JGqH6rIdSmrjPLF+aYKiAXG0X64OY94wumogCCpgolQzCTeT6ckocqQ4NyHDL2YBC19J0KTfj5Zqzu2W9wSDSXaeIwsJTyuDwKIFMLlMRd8rY21k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqffkAEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB67BC4CEC5;
-	Sun, 29 Sep 2024 10:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727607119;
-	bh=W2VIIbTK72xMf1IVwA07QupuewDLSJU1I75NKD5Q/bI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bqffkAEM3w+hF9k0kHNx35Jx0cEb4wOVepFu9Iz8XJ8CbMXTgTJK/4BrrhzIXFwdx
-	 VZZ0DODFsAR+7061eKiJY8haLPHInqzDlRo4J4h9XaqY0BSiQaYy1B9pd+4bUfNTSi
-	 Y5+m0M0gWGh7Pw5Ze50Kpn9WRXIiLSsgU4TKXYP3VPy4s8lKawif1LkQE6BWURKbkl
-	 58MpyXAb10K2okFay4oydGAisHKLbBcmvlUTd2rTnYDWpcg3WKGLhTi6K2c3KvJCWb
-	 Ywr5mdDxjHzoa24652qRfJgIEzw+Cd7eo+WSGp8pVgiZMLA4AJcTum5QqYcT0L3xLc
-	 B8+FD2+72T/nA==
-Date: Sun, 29 Sep 2024 11:51:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, dlechner@baylibre.com
-Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
- support
-Message-ID: <20240929115150.6d1c22b3@jic23-huawei>
-In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
-	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727607137; c=relaxed/simple;
+	bh=4BRtjCRGp684InRlV/U6psQPIrCQ6r/tFD9/beFGKms=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UA1MfbxvPAEwskqrigUsybwNty07ZPmqCV9oxRFh1Fez/xbcLi+O9xhPgg0rX3KsziUq/pV3N9wOIdtk6TznwlQ0C/L9VANoiVD+IMXlVtAwa4d7/K8KSxp8Oan6W2AWrhg4sZAwzNJaWWhEJ4dm5npt9zE54t2+CZLdr76LXa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=RBea93zc; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727607125; x=1728211925; i=spasswolf@web.de;
+	bh=NmZLWbTDZJNUVnhfU8fTIqYMpr3T9IL5wlFnyipE6NQ=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RBea93zcaPqQf7z/VaxCRRrrSgqueZzLvPbYnZ1+qu82g5pLS0xQte3Uw+Q7a5xH
+	 aQzpcF015Vw4QRVoHSnq93w4fl230tWcPLDj8u0WRgL1MU2arTbUpECVb82sscLdC
+	 2oP+MIr/ZU5JzZdz9Ga3djjfeBuzI1vE3i2QdOcbCsfaeCA7f6sdOw3jRqpgkhXMn
+	 8v2Mi5OzJRd+RAzX2urDa2A0t6zo0TJszGNZvh/rtsLEOW9cpe/g015YA+6Xq+wiD
+	 3Xsi7WLMApUnVbWwnbHCT+R6/2h/aEuoLC1OAkAsosxLzSqi1U4dj3eUOkFD898Bs
+	 kGqx5VPh2x7gxk82TA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1MKuOP-1sby8W2qhZ-00KgEB; Sun, 29 Sep 2024 12:52:05 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	Stuart Hayes <stuart.w.hayes@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: hung tasks on shutdown in linux-next-202409{20,23,24,25}
+Date: Sun, 29 Sep 2024 12:52:02 +0200
+Message-ID: <20240929105203.4637-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: a48564f002b31cb1a8db7680729aac91bc3d3b6b.camel@web.de
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:J18rp0AQM8aEAfmV3wuzsfqyTxK0cjWSW/mat2zUS0M1KbI0u0I
+ V3QxOBx9vMmP6rKS3PKBDkEgHOo4QEoV2Y7l7IlMKZA7IyEPtkQ5vfsJexxescaRB45SCJ/
+ outjNUa+343LkCSi8KiRkYYCiiTd8wlZl6H47PaqDKDvnynCI4PVWijLc0w6p1nRcoihUZG
+ oPleK6BHwPiwwaDw6ymLw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Tng0qsbpqpo=;XRRC02Ev5d2+p43nIMcPJiOUKkq
+ /j2nqeNp5obFxnptDSRRJcMiO95P2Rid+v2QmabKi6YYCIkT1pRjKk6BsTiF/Avr69k5nwXAw
+ tCT6CjtmoDtYo1ucHUx7Osjmjsi7GnHc1U04T8QVAon9e5SCdDCRL+TqPy72Ptq5SQhsQW+pi
+ izUG2lhalu+MznVcK8LHXJTblj1OklhWAft1+f3Z9kDZWK1Im5cgKihUtLcd8c+bjexY4y1EF
+ FU3ML23Nxt/vPLAPCN3G7cviQSbZDQRNNxX1Jyd4jFl9IZKL34CPK0FtDHl7sK9oVrLFmCuJe
+ EMOb7k9nyMci+5jJ08zPGuFuLWNvHeVTenkTKYsNqWH5jgFY9HzIQlq5wRMIQU2ulFJj95DDd
+ MsSVH0qCJcDhJ6/Xvhz/gAUUZPWOK2ucaESvQgSaer149G7V5+o15KRYCjLARyJHg6x/n8ree
+ IhErUkKawQuLCiDwcNx+wOAE53UK/ywgNudqTDZOHrF2n3o7BgYcBZTufuT4pFvj8jusKaSQ2
+ sz7jx0tnIzzjamZwEd17NQauX/T2iMMkcoGlTkZ8HGEDT2HuedkRdv7Uo/vGHiM3TvFoKX98x
+ tKVky6zSPpQsGU2oRqHMyP4iIfqCRYWbUrSwG+ACuU2kVuMHiHjFKm6AmnhoqU/p6pzpdaQWu
+ cMyIDxkjemnUlCfB+kBUPx78Qyp0gTMYidljRaPBdE/zjjSfK8xBOZtC9OwF8SPrE4qX4VCGf
+ HJRVp0cR02ximBQ9efjDpkYpbZUzC/MYjcNmmzB9nnycPoor2kODhKGGeLi0aOCs7+teTf4kT
+ nubrnmWLiFC6Ktk5u6IQ3g/Q==
 
-On Thu, 19 Sep 2024 11:20:00 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+Summary: The introduction of async reboot in commit 8064952c6504
+("driver core: shut down devices asynchronously") leads to frequent hangs =
+on
+shutdown even after commit 4f2c346e6216 ("driver core: fix async device sh=
+utdown hang")
+is introduced.
 
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> There is a version AXI DAC IP block (for FPGAs) that provides
-> a physical bus for AD3552R and similar chips, and acts as
-> an SPI controller.
+I did some further experimenting (and lots of reboots ...) and found out t=
+hat
+the bug is preemption related, for me it only occurs when using CONFIG_PRE=
+EMPT=3Dy
+or CONFIG_PREEMPT_RT=3Dy. When using CONFIG_PREEMPT_NONE=3Dy or
+CONFIG_PREEMPT_VOLUNTARY=3Dy everything works fine.
 
-Wrap is a bit short. Aim for < 75 chars for patch descriptions.
+Test results (linux-next-20240925):
+PREEMPT_NONE		20 reboots, no fail
+PREEMPT_VOLUNTARY	20 reboots, no fail
+PREEMPT			3 reboots, 4th reboot failed
+PREEMPT_RT		2 reboots, 3rd reboot failed
 
-> 
-> For this case, the binding is modified to include some
-> additional properties.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++++
->  1 file changed, 42 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> index 41fe00034742..aca4a41c2633 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> @@ -60,6 +60,18 @@ properties:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      enum: [0, 1, 2, 3]
->  
-> +  io-backends:
-> +    description: The iio backend reference.
+The behaviour can be improved by increasing the number of min_active items
+in the async workqueue:
 
-Give a description of what the backend does in this case.  I.e. that it is
-a qspi DDR backend with ...
+diff --git a/kernel/async.c b/kernel/async.c
+index 4c3e6a44595f..83e9267c61e7 100644
+=2D-- a/kernel/async.c
++++ b/kernel/async.c
+@@ -358,5 +358,5 @@ void __init async_init(void)
+ 	 */
+ 	async_wq =3D alloc_workqueue("async", WQ_UNBOUND, 0);
+ 	BUG_ON(!async_wq);
+-	workqueue_set_min_active(async_wq, WQ_DFL_ACTIVE);
++	workqueue_set_min_active(async_wq, WQ_UNBOUND_MAX_ACTIVE);
+ }
 
-> +      An example backend can be found at
-> +        https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-> +    maxItems: 1
-> +
-> +  adi,synchronous-mode:
-> +    description: Enable waiting for external synchronization signal.
-> +      Some AXI IP configuration can implement a dual-IP layout, with internal
-> +      wirings for streaming synchronization.
+With this I took 11 reboots to get a hang.
+I tried increasing WQ_MAX_ACTIVE, too:
 
-I've no idea what a dual-IP layout is.  Can you provide a little more info
-here?  What are the two IPs?
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 59c2695e12e7..314f554b45df 100644
+=2D-- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -412,7 +412,7 @@ enum wq_flags {
+ };
 
-> +    type: boolean
-> +
->    '#address-cells':
->      const: 1
->  
-> @@ -128,6 +140,7 @@ patternProperties:
->            - custom-output-range-config
->  
->  allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->    - if:
->        properties:
->          compatible:
-> @@ -238,4 +251,33 @@ examples:
->              };
->          };
->      };
-> +
-> +  - |
-> +    axi_dac: spi@44a70000 {
-> +        compatible = "adi,axi-ad3552r";
-> +        reg = <0x44a70000 0x1000>;
-> +        dmas = <&dac_tx_dma 0>;
-> +        dma-names = "tx";
-> +        #io-backend-cells = <0>;
-> +        clocks = <&ref_clk>;
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        dac@0 {
-> +            compatible = "adi,ad3552r";
-> +            reg = <0>;
-> +            reset-gpios = <&gpio0 92 0>;
-> +            io-backends = <&axi_dac>;
-> +            spi-max-frequency = <66000000>;
-> +
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            channel@0 {
-> +                reg = <0>;
-> +                adi,output-range-microvolt = <(-10000000) (10000000)>;
-> +            };
-> +        };
-> +    };
->  ...
-> 
+ enum wq_consts {
+-	WQ_MAX_ACTIVE		=3D 512,	  /* I like 512, better ideas? */
++	WQ_MAX_ACTIVE		=3D 1024,	  /* 1024 for async shutdown with preempt{full,=
+rt}*/
+ 	WQ_UNBOUND_MAX_ACTIVE	=3D WQ_MAX_ACTIVE,
+ 	WQ_DFL_ACTIVE		=3D WQ_MAX_ACTIVE / 2,
 
+With this (and the first patch) I can get 20 clean reboots even when using=
+ CONFIG_PREEMPT=3Dy.
+I have not yet tested CONFIG_PREEMPT_RT=3Dy with this.
+
+Bert Karwatzki
 
