@@ -1,551 +1,931 @@
-Return-Path: <linux-kernel+bounces-343114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC4C9896E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:52:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7556D9896E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3951928213B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:52:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E08A81F21E6E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEFB487BF;
-	Sun, 29 Sep 2024 18:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807EC55E53;
+	Sun, 29 Sep 2024 18:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbwKjyBH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kikmQTc3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0307417C22B;
-	Sun, 29 Sep 2024 18:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB36618EAB;
+	Sun, 29 Sep 2024 18:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727635867; cv=none; b=TnJnHk13GBy9gC24/N3Bx9yVls4Su8Tvrp78w9YdqY8S31lU6PhM+UcWanDJdiTaffDS0M8KscsSr7DGDvrdhB89iN904LuiWynmqmGlYqMBuW79x84thnl1K4kIKVs83RYve4QjlOPpMfCYLrnFebq5H8vF5oAUrTKSBEAjX/8=
+	t=1727636038; cv=none; b=EdL300h+H2Gc4K2pVFa+1lbVzebf9EdkTkvygVwRtqZBEe9Y+GAkRea5NsaDIu7/qHdytBXOuaJX+EFAAEojm1pvoDavHyK/Cr9juaa7sLyXlBDHD9epwkWYt7ikGqVlsFP1sxcwmPU9jXvDvoS/XxcRJHjd1Ia1Tx7k4LDgB+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727635867; c=relaxed/simple;
-	bh=lAmZVsAkcynsmdPdL1C4ZHuO0aKIMeLVr+aIuAIVwWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UUYw4mvTGxGyOda3L/uJnUpHrjQB53jv1oS4u6MTU93bifABnbSjZU+1FypC7Ua0XGrVFQNWMTGFUX15KCaSpLcd5RjphMISFYILKIvjJEWsi++CnqJiaW7DWhNs9N5iwd4XDFIVrSSmEBYvpo344jFAS2/gv8XZ3H2hRYXbZGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbwKjyBH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A790C4CED1;
-	Sun, 29 Sep 2024 18:51:06 +0000 (UTC)
+	s=arc-20240116; t=1727636038; c=relaxed/simple;
+	bh=FKDdybCCbSgqK5A7O04uHp/htVghvBrLXd3DjWVjIgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EjcCJX+QxwyLTq4c9JT5/zYL1+iNBX4hkpMtJqcqOlLx9OdElfA6WxVzaQZCbV2WBr5WCoq6/IFSbwVvdcVqLdl7GUnV4lmKlYQcJob5PjBvi6WwcStRV1e3wJraCPbY2CdusNXNAc7/dCIBrglgI/quXjIT/YNmiB5RpvppX9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kikmQTc3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55606C4CEC5;
+	Sun, 29 Sep 2024 18:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727635866;
-	bh=lAmZVsAkcynsmdPdL1C4ZHuO0aKIMeLVr+aIuAIVwWg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AbwKjyBH0m8oobH9RPKEExSTqRTcPryMP0OOZp6M5L5rmY5EZow8tDLiX6UbYNezj
-	 PZPGa9wIsSvodOLUta2h3czPv+q5RbB6Y+wIuI248Y+h7rOPom7gL7SyMCMDhoNdpJ
-	 yCjjroBGo9r/7iRUtN7JTkx2IOz1hJ/etuzqJEEwhTqaCBW/7l6eHv2frhDh2K7FnN
-	 SnhR8CjEn21frKVySdnf+OSnxoD3puDrw6XugxNYEShcBd+E/gLH6vxPtfoF8UmUU4
-	 1CcT7PhFkv0FhwWqix+BYHd9l8iHK/hb72MoNVcUjKWbAweCa9KUfHORQSpOWLXccN
-	 eG/4rBzKpnPjA==
-Received: by pali.im (Postfix)
-	id 4064BD8F; Sun, 29 Sep 2024 20:50:58 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] cifs: Fix creating and resolving absolute NT-style symlinks
-Date: Sun, 29 Sep 2024 20:50:53 +0200
-Message-Id: <20240929185053.10554-8-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240929185053.10554-1-pali@kernel.org>
-References: <20240929185053.10554-1-pali@kernel.org>
+	s=k20201202; t=1727636037;
+	bh=FKDdybCCbSgqK5A7O04uHp/htVghvBrLXd3DjWVjIgs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kikmQTc3KQor065YOUNPIdbzl0sNvntCZEpBGp+lNJvgnuba93N/+fMnTATwMVFc0
+	 WSO3GV5ajRyLrY/wFtFw9Taqh4HSCoehsDQ45cQF25VCPsSUij217w2IRBqmEHdIGm
+	 kqpxb46OfmVwRxtJ23j+WWM7LND+gri/sZ8v4C5Ycmh2uzlii33G9RdfEIzCHFmQrF
+	 uv3flFfXymgy+v8uNyG6qxNYppvo0vKCQVU0f2VlClwNKj7v5Qz7PTdVFrgXZepXd+
+	 vrRhJRMJYWR7dd5DLEE6FdFiNavSYP1xAgK9DjqycQ3SCZ1rvyWEDzfZGAGPmer+nT
+	 dJSRNJDayNHiw==
+Message-ID: <a1ef09c1-767b-4cab-90c6-b064e56f1246@kernel.org>
+Date: Sun, 29 Sep 2024 13:53:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/9] platform/x86: asus-armoury: move existing tunings
+ to asus-armoury module
+To: "Luke D. Jones" <luke@ljones.dev>, linux-kernel@vger.kernel.org
+Cc: linux-input@vger.kernel.org, jikos@kernel.org,
+ platform-driver-x86@vger.kernel.org, ilpo.jarvinen@linux.intel.com,
+ hdegoede@redhat.com, corentin.chary@gmail.com
+References: <20240929090813.7888-1-luke@ljones.dev>
+ <20240929090813.7888-4-luke@ljones.dev>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20240929090813.7888-4-luke@ljones.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-If the SMB symlink is stored on NT server in absolute form then it points
-to the NT object hierarchy, which is different from POSIX one and needs
-some conversion / mapping.
 
-To make interoperability with Windows SMB server and WSL subsystem, reuse
-its logic of mapping between NT paths and POSIX paths into Linux SMB
-client.
 
-WSL subsystem on Windows uses for -t drvfs mount option -o symlinkroot=
-which specifies the POSIX path where are expected to be mounted lowercase
-Windows drive letters (without colon).
+On 9/29/24 04:08, Luke D. Jones wrote:
+> The fw_attributes_class provides a much cleaner interface to all of the
+> attributes introduced to asus-wmi. This patch moves all of these extra
+> attributes over to fw_attributes_class, and shifts the bulk of these
+> definitions to a new kernel module to reduce the clutter of asus-wmi
+> with the intention of deprecating the asus-wmi attributes in future.
+> 
+> The work applies only to WMI methods which don't have a clearly defined
+> place within the sysfs and as a result ended up lumped together in
+> /sys/devices/platform/asus-nb-wmi/ with no standard API.
+> 
+> Where possible the fw attrs now implement defaults, min, max, scalar,
+> choices, etc. As en example dgpu_disable becomes:
+> 
+> /sys/class/firmware-attributes/asus-armoury/attributes/dgpu_disable/
+> ├── current_value
+> ├── display_name
+> ├── possible_values
+> └── type
+> 
+> as do other attributes.
+> 
+> The ppt_* based attributes are removed in this initial patch as the
+> implementation is somewhat broken due to the WMI methods requiring a
+> set of limits on the values accepted (which is not provided by WMI).
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
+> ---
+>   drivers/platform/x86/Kconfig               |  12 +
+>   drivers/platform/x86/Makefile              |   1 +
+>   drivers/platform/x86/asus-armoury.c        | 588 +++++++++++++++++++++
+>   drivers/platform/x86/asus-armoury.h        | 146 +++++
+>   drivers/platform/x86/asus-wmi.c            |   4 -
+>   include/linux/platform_data/x86/asus-wmi.h |   3 +
+>   6 files changed, 750 insertions(+), 4 deletions(-)
+>   create mode 100644 drivers/platform/x86/asus-armoury.c
+>   create mode 100644 drivers/platform/x86/asus-armoury.h
+> 
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 3875abba5a79..80ec8b45022d 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -265,6 +265,18 @@ config ASUS_WIRELESS
+>   	  If you choose to compile this driver as a module the module will be
+>   	  called asus-wireless.
+>   
+> +config ASUS_ARMOURY
+> +	tristate "ASUS Armoury driver"
+> +	depends on ASUS_WMI
+> +	select FW_ATTR_CLASS
+> +	help
+> +	  Say Y here if you have a WMI aware Asus machine and would like to use the
+> +	  firmware_attributes API to control various settings typically exposed in
+> +	  the ASUS Armoury Crate application available on Windows.
+> +
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called asus-armoury.
+> +
+>   config ASUS_WMI
+>   	tristate "ASUS WMI Driver"
+>   	depends on ACPI_WMI
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index e1b142947067..fe3e7e7dede8 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -32,6 +32,7 @@ obj-$(CONFIG_APPLE_GMUX)	+= apple-gmux.o
+>   # ASUS
+>   obj-$(CONFIG_ASUS_LAPTOP)	+= asus-laptop.o
+>   obj-$(CONFIG_ASUS_WIRELESS)	+= asus-wireless.o
+> +obj-$(CONFIG_ASUS_ARMOURY)	+= asus-armoury.o
+>   obj-$(CONFIG_ASUS_WMI)		+= asus-wmi.o
+>   obj-$(CONFIG_ASUS_NB_WMI)	+= asus-nb-wmi.o
+>   obj-$(CONFIG_ASUS_TF103C_DOCK)	+= asus-tf103c-dock.o
+> diff --git a/drivers/platform/x86/asus-armoury.c b/drivers/platform/x86/asus-armoury.c
+> new file mode 100644
+> index 000000000000..bde28f3cf57f
+> --- /dev/null
+> +++ b/drivers/platform/x86/asus-armoury.c
+> @@ -0,0 +1,588 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Asus Armoury (WMI) attributes driver. This driver uses the fw_attributes
+> + * class to expose the various WMI functions that many gaming and some
+> + * non-gaming ASUS laptops have available.
+> + * These typically don't fit anywhere else in the sysfs such as under LED class,
+> + * hwmon or other, and are set in Windows using the ASUS Armoury Crate tool.
+> + *
+> + * Copyright(C) 2010 Intel Corporation.
+> + * Copyright(C) 2024-2024 Luke Jones <luke@ljones.dev>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/device.h>
+> +#include <linux/dmi.h>
+> +#include <linux/errno.h>
+> +#include <linux/fs.h>
+> +#include <linux/kernel.h>
+> +#include <linux/kmod.h>
+> +#include <linux/kobject.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/platform_data/x86/asus-wmi.h>
+> +#include <linux/types.h>
+> +#include <linux/acpi.h>
+> +
+> +#include "asus-armoury.h"
+> +#include "firmware_attributes_class.h"
+> +
+> +#define ASUS_NB_WMI_EVENT_GUID "0B3CBB35-E3C2-45ED-91C2-4C5A6D195D1C"
+> +
+> +#define ASUS_MINI_LED_MODE_MASK 0x03
+> +/* Standard modes for devices with only on/off */
+> +#define ASUS_MINI_LED_OFF 0x00
+> +#define ASUS_MINI_LED_ON 0x01
+> +/* Like "on" but the effect is more vibrant or brighter */
+> +#define ASUS_MINI_LED_STRONG_MODE 0x02
+> +/* New modes for devices with 3 mini-led mode types */
+> +#define ASUS_MINI_LED_2024_WEAK 0x00
+> +#define ASUS_MINI_LED_2024_STRONG 0x01
+> +#define ASUS_MINI_LED_2024_OFF 0x02
+> +
+> +/* Default limits for tunables available on ASUS ROG laptops */
+> +#define NVIDIA_BOOST_MIN 5
+> +#define NVIDIA_BOOST_MAX 25
+> +#define NVIDIA_TEMP_MIN 75
+> +#define NVIDIA_TEMP_MAX 87
+> +#define PPT_CPU_LIMIT_MIN 5
+> +#define PPT_CPU_LIMIT_MAX 150
+> +#define PPT_CPU_LIMIT_DEFAULT 80
+> +#define PPT_PLATFORM_MIN 5
+> +#define PPT_PLATFORM_MAX 100
+> +#define PPT_PLATFORM_DEFAULT 80
+> +
+> +static const struct class *fw_attr_class;
+> +
+> +struct asus_armoury_priv {
+> +	struct device *fw_attr_dev;
+> +	struct kset *fw_attr_kset;
+> +
+> +	u32 mini_led_dev_id;
+> +	u32 gpu_mux_dev_id;
+> +
+> +	struct mutex mutex;
+> +};
+> +
+> +static struct asus_armoury_priv asus_armoury = { .mutex = __MUTEX_INITIALIZER(
+> +							 asus_armoury.mutex) };
+> +
+> +struct fw_attrs_group {
+> +	bool pending_reboot;
+> +};
+> +
+> +static struct fw_attrs_group fw_attrs = {
+> +	.pending_reboot = false,
+> +};
+> +
+> +struct asus_attr_group {
+> +	const struct attribute_group *attr_group;
+> +	u32 wmi_devid;
+> +};
+> +
+> +static bool asus_wmi_is_present(u32 dev_id)
+> +{
+> +	u32 retval;
+> +	int status;
+> +
+> +	status = asus_wmi_evaluate_method(ASUS_WMI_METHODID_DSTS, dev_id, 0, &retval);
+> +	pr_debug("%s called (0x%08x), retval: 0x%08x\n", __func__, dev_id, retval);
+> +
+> +	return status == 0 && (retval & ASUS_WMI_DSTS_PRESENCE_BIT);
+> +}
+> +
+> +static void asus_set_reboot_and_signal_event(void)
+> +{
+> +	fw_attrs.pending_reboot = true;
+> +	kobject_uevent(&asus_armoury.fw_attr_dev->kobj, KOBJ_CHANGE);
+> +}
+> +
+> +static ssize_t pending_reboot_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+> +{
+> +	return sysfs_emit(buf, "%d\n", fw_attrs.pending_reboot);
+> +}
+> +
+> +static struct kobj_attribute pending_reboot = __ATTR_RO(pending_reboot);
+> +
+> +static bool asus_bios_requires_reboot(struct kobj_attribute *attr)
+> +{
+> +	return !strcmp(attr->attr.name, "gpu_mux_mode");
+> +}
+> +
+> +/**
+> + * attr_int_store() - Generic store function for use with most WMI functions.
+> + * @kobj: Pointer to the driver object.
+> + * @kobj_attribute: Pointer to the attribute calling this function.
+> + * @buf: The buffer to read from, this is parsed to `int` type.
+> + * @count: Required by sysfs attribute macros, pass in from the callee attr.
+> + * @min: Minimum accepted value. Below this returns -EINVAL.
+> + * @max: Maximum accepted value. Above this returns -EINVAL.
+> + * @store_value: Pointer to where the parsed value should be stored.
+> + * @wmi_dev: The WMI function ID to use.
+> + *
+> + * The WMI functions available on most ASUS laptops return a 1 as "success", and
+> + * a 0 as failed. However some functions can return n > 1 for additional errors.
+> + * The function currently treats all values which are not 1 as errors, ignoring
+> + * the possible differences in WMI error returns.
+> + *
+> + * Returns: Either count, or an error.
+> + */
+> +static ssize_t attr_int_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf,
+> +			      size_t count, u32 min, u32 max, u32 *store_value, u32 wmi_dev)
+> +{
+> +	u32 result, value;
+> +	int err;
+> +
+> +	err = kstrtouint(buf, 10, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	if (value < min || value > max)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&asus_armoury.mutex);
+> +	err = asus_wmi_set_devstate(wmi_dev, value, &result);
+> +	mutex_unlock(&asus_armoury.mutex);
+> +	if (err) {
+> +		pr_err("Failed to set %s: %d\n", attr->attr.name, err);
+> +		return err;
+> +	}
+> +
+> +	if (result != 1) {
+> +		pr_err("Failed to set %s (result): 0x%x\n", attr->attr.name, result);
+> +		return -EIO;
+> +	}
+> +
+> +	if (store_value != NULL)
+> +		*store_value = value;
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +
+> +	if (asus_bios_requires_reboot(attr))
+> +		asus_set_reboot_and_signal_event();
+> +
+> +	return count;
+> +}
+> +
+> +/* Mini-LED mode **************************************************************/
+> +static ssize_t mini_led_mode_current_value_show(struct kobject *kobj,
+> +						struct kobj_attribute *attr, char *buf)
+> +{
+> +	u32 value;
+> +	int err;
+> +
+> +	err = asus_wmi_get_devstate_dsts(asus_armoury.mini_led_dev_id, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	value &= ASUS_MINI_LED_MODE_MASK;
+> +
+> +	/*
+> +	 * Remap the mode values to match previous generation mini-LED. The last gen
+> +	 * WMI 0 == off, while on this version WMI 2 == off (flipped).
+> +	 */
+> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2) {
+> +		switch (value) {
+> +		case ASUS_MINI_LED_2024_WEAK:
+> +			value = ASUS_MINI_LED_ON;
+> +			break;
+> +		case ASUS_MINI_LED_2024_STRONG:
+> +			value = ASUS_MINI_LED_STRONG_MODE;
+> +			break;
+> +		case ASUS_MINI_LED_2024_OFF:
+> +			value = ASUS_MINI_LED_OFF;
+> +			break;
+> +		}
+> +	}
+> +
+> +	return sysfs_emit(buf, "%u\n", value);
+> +}
+> +
+> +static ssize_t mini_led_mode_current_value_store(struct kobject *kobj,
+> +						 struct kobj_attribute *attr, const char *buf,
+> +						 size_t count)
+> +{
+> +	int result, err;
+> +	u32 mode;
+> +
+> +	err = kstrtou32(buf, 10, &mode);
+> +	if (err)
+> +		return err;
+> +
+> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE &&
+> +	    mode > ASUS_MINI_LED_ON)
+> +		return -EINVAL;
+> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2 &&
+> +	    mode > ASUS_MINI_LED_STRONG_MODE)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Remap the mode values so expected behaviour is the same as the last
+> +	 * generation of mini-LED with 0 == off, 1 == on.
+> +	 */
+> +	if (asus_armoury.mini_led_dev_id == ASUS_WMI_DEVID_MINI_LED_MODE2) {
+> +		switch (mode) {
+> +		case ASUS_MINI_LED_OFF:
+> +			mode = ASUS_MINI_LED_2024_OFF;
+> +			break;
+> +		case ASUS_MINI_LED_ON:
+> +			mode = ASUS_MINI_LED_2024_WEAK;
+> +			break;
+> +		case ASUS_MINI_LED_STRONG_MODE:
+> +			mode = ASUS_MINI_LED_2024_STRONG;
+> +			break;
+> +		}
+> +	}
+> +
+> +	mutex_lock(&asus_armoury.mutex);
+> +	err = asus_wmi_set_devstate(asus_armoury.mini_led_dev_id, mode, &result);
+> +	mutex_unlock(&asus_armoury.mutex);
+> +	if (err) {
+> +		pr_warn("Failed to set mini-LED: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (result != 1) {
+> +		pr_warn("Failed to set mini-LED mode (result): 0x%x\n", result);
+> +		return -EIO;
+> +	}
+> +
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t mini_led_mode_possible_values_show(struct kobject *kobj,
+> +						  struct kobj_attribute *attr, char *buf)
+> +{
+> +	switch (asus_armoury.mini_led_dev_id) {
+> +	case ASUS_WMI_DEVID_MINI_LED_MODE:
+> +		return sysfs_emit(buf, "0;1\n");
+> +	case ASUS_WMI_DEVID_MINI_LED_MODE2:
+> +		return sysfs_emit(buf, "0;1;2\n");
+> +	}
+> +
+> +	return sysfs_emit(buf, "0\n");
+> +}
+> +
+> +ATTR_GROUP_ENUM_CUSTOM(mini_led_mode, "mini_led_mode", "Set the mini-LED backlight mode");
+> +
+> +static ssize_t gpu_mux_mode_current_value_store(struct kobject *kobj,
+> +						struct kobj_attribute *attr, const char *buf,
+> +						size_t count)
+> +{
+> +	int result, err;
+> +	u32 optimus;
+> +
+> +	err = kstrtou32(buf, 10, &optimus);
+> +	if (err)
+> +		return err;
+> +
+> +	if (optimus > 1)
+> +		return -EINVAL;
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_DGPU)) {
+> +		err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_DGPU, &result);
+> +		if (err)
+> +			return err;
+> +		if (result && !optimus) {
+> +			err = -ENODEV;
+> +			pr_warn("Can not switch MUX to dGPU mode when dGPU is disabled: %02X %02X %d\n",
+> +				result, optimus, err);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_EGPU)) {
+> +		err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_EGPU, &result);
+> +		if (err)
+> +			return err;
+> +		if (result && !optimus) {
+> +			err = -ENODEV;
+> +			pr_warn("Can not switch MUX to dGPU mode when eGPU is enabled: %d\n",
+> +				err);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	mutex_lock(&asus_armoury.mutex);
+> +	err = asus_wmi_set_devstate(asus_armoury.gpu_mux_dev_id, optimus, &result);
+> +	mutex_unlock(&asus_armoury.mutex);
+> +	if (err) {
+> +		pr_err("Failed to set GPU MUX mode: %d\n", err);
+> +		return err;
+> +	}
+> +	/* !1 is considered a fail by ASUS */
+> +	if (result != 1) {
+> +		pr_warn("Failed to set GPU MUX mode (result): 0x%x\n", result);
+> +		return -EIO;
+> +	}
+> +
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +	asus_set_reboot_and_signal_event();
+> +
+> +	return count;
+> +}
+> +WMI_SHOW_INT(gpu_mux_mode_current_value, "%d\n", asus_armoury.gpu_mux_dev_id);
+> +ATTR_GROUP_BOOL_CUSTOM(gpu_mux_mode, "gpu_mux_mode", "Set the GPU display MUX mode");
+> +
+> +/*
+> + * A user may be required to store the value twice, typical store first, then
+> + * rescan PCI bus to activate power, then store a second time to save correctly.
+> + * The reason for this is that an extra code path in the ACPI is enabled when
+> + * the device and bus are powered.
+> + */
+> +static ssize_t dgpu_disable_current_value_store(struct kobject *kobj,
+> +						struct kobj_attribute *attr, const char *buf,
+> +						size_t count)
+> +{
+> +	int result, err;
+> +	u32 disable;
+> +
+> +	err = kstrtou32(buf, 10, &disable);
+> +	if (err)
+> +		return err;
+> +
+> +	if (disable > 1)
+> +		return -EINVAL;
+> +
+> +	if (asus_armoury.gpu_mux_dev_id) {
+> +		err = asus_wmi_get_devstate_dsts(asus_armoury.gpu_mux_dev_id, &result);
+> +		if (err)
+> +			return err;
+> +		if (!result && disable) {
+> +			err = -ENODEV;
+> +			pr_warn("Can not disable dGPU when the MUX is in dGPU mode: %d\n", err);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	mutex_lock(&asus_armoury.mutex);
+> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_DGPU, disable, &result);
+> +	mutex_unlock(&asus_armoury.mutex);
+> +	if (err) {
+> +		pr_warn("Failed to set dGPU disable: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (result != 1) {
+> +		pr_warn("Failed to set dGPU disable (result): 0x%x\n", result);
+> +		return -EIO;
+> +	}
+> +
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +
+> +	return count;
+> +}
+> +WMI_SHOW_INT(dgpu_disable_current_value, "%d\n", ASUS_WMI_DEVID_DGPU);
+> +ATTR_GROUP_BOOL_CUSTOM(dgpu_disable, "dgpu_disable", "Disable the dGPU");
+> +
+> +/* The ACPI call to enable the eGPU also disables the internal dGPU */
+> +static ssize_t egpu_enable_current_value_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +					       const char *buf, size_t count)
+> +{
+> +	int result, err;
+> +	u32 enable;
+> +
+> +	err = kstrtou32(buf, 10, &enable);
+> +	if (err)
+> +		return err;
+> +
+> +	if (enable > 1)
+> +		return -EINVAL;
+> +
+> +	err = asus_wmi_get_devstate_dsts(ASUS_WMI_DEVID_EGPU_CONNECTED, &result);
+> +	if (err) {
+> +		pr_warn("Failed to get eGPU connection status: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (asus_armoury.gpu_mux_dev_id) {
+> +		err = asus_wmi_get_devstate_dsts(asus_armoury.gpu_mux_dev_id, &result);
+> +		if (err) {
+> +			pr_warn("Failed to get GPU MUX status: %d\n", result);
+> +			return result;
+> +		}
+> +		if (!result && enable) {
+> +			err = -ENODEV;
+> +			pr_warn("Can not enable eGPU when the MUX is in dGPU mode: %d\n", err);
+> +			return err;
+> +		}
+> +	}
+> +
+> +	mutex_lock(&asus_armoury.mutex);
+> +	err = asus_wmi_set_devstate(ASUS_WMI_DEVID_EGPU, enable, &result);
+> +	mutex_unlock(&asus_armoury.mutex);
+> +	if (err) {
+> +		pr_warn("Failed to set eGPU state: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	if (result != 1) {
+> +		pr_warn("Failed to set eGPU state (retval): 0x%x\n", result);
+> +		return -EIO;
+> +	}
+> +
+> +	sysfs_notify(kobj, NULL, attr->attr.name);
+> +
+> +	return count;
+> +}
+> +WMI_SHOW_INT(egpu_enable_current_value, "%d\n", ASUS_WMI_DEVID_EGPU);
+> +ATTR_GROUP_BOOL_CUSTOM(egpu_enable, "egpu_enable", "Enable the eGPU (also disables dGPU)");
+> +
+> +/* Simple attribute creation */
+> +ATTR_GROUP_ENUM_INT_RO(charge_mode, "charge_mode", ASUS_WMI_DEVID_CHARGE_MODE, "0;1;2",
+> +		       "Show the current mode of charging");
+> +
+> +ATTR_GROUP_BOOL_RW(boot_sound, "boot_sound", ASUS_WMI_DEVID_BOOT_SOUND,
+> +		   "Set the boot POST sound");
+> +ATTR_GROUP_BOOL_RW(mcu_powersave, "mcu_powersave", ASUS_WMI_DEVID_MCU_POWERSAVE,
+> +		   "Set MCU powersaving mode");
+> +ATTR_GROUP_BOOL_RW(panel_od, "panel_overdrive", ASUS_WMI_DEVID_PANEL_OD,
+> +		   "Set the panel refresh overdrive");
+> +ATTR_GROUP_BOOL_RO(egpu_connected, "egpu_connected", ASUS_WMI_DEVID_EGPU_CONNECTED,
+> +		   "Show the eGPU connection status");
+> +
+> +/* If an attribute does not require any special case handling add it here */
+> +static const struct asus_attr_group armoury_attr_groups[] = {
+> +	{ &egpu_connected_attr_group, ASUS_WMI_DEVID_EGPU_CONNECTED },
+> +	{ &egpu_enable_attr_group, ASUS_WMI_DEVID_EGPU },
+> +	{ &dgpu_disable_attr_group, ASUS_WMI_DEVID_DGPU },
+> +
+> +	{ &charge_mode_attr_group, ASUS_WMI_DEVID_CHARGE_MODE },
+> +	{ &boot_sound_attr_group, ASUS_WMI_DEVID_BOOT_SOUND },
+> +	{ &mcu_powersave_attr_group, ASUS_WMI_DEVID_MCU_POWERSAVE },
+> +	{ &panel_od_attr_group, ASUS_WMI_DEVID_PANEL_OD },
+> +};
+> +
+> +static int asus_fw_attr_add(void)
+> +{
+> +	int err;
+> +
+> +	err = fw_attributes_class_get(&fw_attr_class);
+> +	if (err)
+> +		return err;
+> +
+> +	asus_armoury.fw_attr_dev =
+> +		device_create(fw_attr_class, NULL, MKDEV(0, 0), NULL, "%s", DRIVER_NAME);
+> +
+> +	if (IS_ERR(asus_armoury.fw_attr_dev)) {
+> +		err = PTR_ERR(asus_armoury.fw_attr_dev);
+> +		goto fail_class_created;
+> +	}
+> +
+> +	asus_armoury.fw_attr_kset =
+> +		kset_create_and_add("attributes", NULL, &asus_armoury.fw_attr_dev->kobj);
+> +	if (!asus_armoury.fw_attr_dev) {
+> +		err = -ENOMEM;
+> +		pr_debug("Failed to create and add attributes\n");
 
-Do same for Linux SMB client and add a new mount option -o symlinkroot=
-which mimics the drvfs mount option of the same name. It specifies where in
-the Linux VFS hierarchy is the root of the DOS / Windows drive letters, and
-translates between absolute NT-style symlinks and absolute Linux VFS
-symlinks. Default value of symlinkroot is "/mnt", same what is using WSL.
+All the other failure paths look like they're pr_err() but this one is 
+pr_debug().  Should it also be pr_err()?
 
-Note that DOS / Windows drive letter symlinks are just subset of all
-possible NT-style symlinks. Drive letters live in NT subtree \??\ and
-important details about NT paths and object hierarchy are in the comments
-in this change.
+> +		goto err_destroy_classdev;
+> +	}
+> +
+> +	err = sysfs_create_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
+> +	if (err) {
+> +		pr_err("Failed to create sysfs level attributes\n");
+> +		goto err_destroy_classdev;
 
-When symlink target location from non-POSIX SMB server is in absolute form
-(indicated by absence of SYMLINK_FLAG_RELATIVE) then it is converted to
-Linux absolute symlink according to symlinkroot configuration.
+I think you're missing another cleanup path for kset_unregister(), no?
 
-And when creating a new symlink on non-POSIX SMB server in absolute form
-then Linux absolute target is converted to NT-style according to
-symlinkroot configuration.
-
-When SMB server is POSIX, then this change does not affect neither reading
-target location of symlink, nor creating a new symlink. It is expected that
-POSIX SMB server works with POSIX paths where the absolute root is /.
-
-This change improves interoperability of absolute SMB symlinks with Windows
-SMB servers.
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/fs_context.c |  22 +++
- fs/smb/client/fs_context.h |   2 +
- fs/smb/client/reparse.c    | 276 ++++++++++++++++++++++++++++++++++---
- 3 files changed, 281 insertions(+), 19 deletions(-)
-
-diff --git a/fs/smb/client/fs_context.c b/fs/smb/client/fs_context.c
-index 2f0c3894b0f7..22b550860cc8 100644
---- a/fs/smb/client/fs_context.c
-+++ b/fs/smb/client/fs_context.c
-@@ -178,6 +178,7 @@ const struct fs_parameter_spec smb3_fs_parameters[] = {
- 	fsparam_string("sec", Opt_sec),
- 	fsparam_string("cache", Opt_cache),
- 	fsparam_string("reparse", Opt_reparse),
-+	fsparam_string("symlinkroot", Opt_symlinkroot),
- 
- 	/* Arguments that should be ignored */
- 	fsparam_flag("guest", Opt_ignore),
-@@ -355,6 +356,7 @@ smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx
- 	new_ctx->source = NULL;
- 	new_ctx->iocharset = NULL;
- 	new_ctx->leaf_fullpath = NULL;
-+	new_ctx->symlinkroot = NULL;
- 	/*
- 	 * Make sure to stay in sync with smb3_cleanup_fs_context_contents()
- 	 */
-@@ -369,6 +371,7 @@ smb3_fs_context_dup(struct smb3_fs_context *new_ctx, struct smb3_fs_context *ctx
- 	DUP_CTX_STR(nodename);
- 	DUP_CTX_STR(iocharset);
- 	DUP_CTX_STR(leaf_fullpath);
-+	DUP_CTX_STR(symlinkroot);
- 
- 	return 0;
- }
-@@ -1614,9 +1617,26 @@ static int smb3_fs_context_parse_param(struct fs_context *fc,
- 		if (parse_reparse_flavor(fc, param->string, ctx))
- 			goto cifs_parse_mount_err;
- 		break;
-+	case Opt_symlinkroot:
-+		if (param->string[0] != '/') {
-+			cifs_errorf(fc, "symlinkroot mount options must be absolute path\n");
-+			goto cifs_parse_mount_err;
-+		}
-+		kfree(ctx->symlinkroot);
-+		ctx->symlinkroot = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->symlinkroot)
-+			goto cifs_parse_mount_err;
-+		break;
- 	}
- 	/* case Opt_ignore: - is ignored as expected ... */
- 
-+	/*
-+	 * By default resolve all native absolute symlinks relative to "/mnt/".
-+	 * Same default has drvfs driver running in WSL for resolving SMB shares.
-+	 */
-+	if (!ctx->symlinkroot)
-+		ctx->symlinkroot = kstrdup("/mnt/", GFP_KERNEL);
-+
- 	return 0;
- 
-  cifs_parse_mount_err:
-@@ -1747,6 +1767,8 @@ smb3_cleanup_fs_context_contents(struct smb3_fs_context *ctx)
- 	ctx->prepath = NULL;
- 	kfree(ctx->leaf_fullpath);
- 	ctx->leaf_fullpath = NULL;
-+	kfree(ctx->symlinkroot);
-+	ctx->symlinkroot = NULL;
- }
- 
- void
-diff --git a/fs/smb/client/fs_context.h b/fs/smb/client/fs_context.h
-index cf577ec0dd0a..8dd12498ffd8 100644
---- a/fs/smb/client/fs_context.h
-+++ b/fs/smb/client/fs_context.h
-@@ -157,6 +157,7 @@ enum cifs_param {
- 	Opt_sec,
- 	Opt_cache,
- 	Opt_reparse,
-+	Opt_symlinkroot,
- 
- 	/* Mount options to be ignored */
- 	Opt_ignore,
-@@ -284,6 +285,7 @@ struct smb3_fs_context {
- 	struct cifs_ses *dfs_root_ses;
- 	bool dfs_automount:1; /* set for dfs automount only */
- 	enum cifs_reparse_type reparse_type;
-+	char *symlinkroot; /* top level directory for native SMB symlinks in absolute format */
- };
- 
- extern const struct fs_parameter_spec smb3_fs_parameters[];
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index ca4f96c43508..5845dfde950b 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -19,35 +19,137 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 				const char *full_path, const char *symname)
- {
- 	struct reparse_symlink_data_buffer *buf = NULL;
--	struct cifs_open_info_data data;
-+	struct cifs_open_info_data data = {};
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
- 	struct inode *new;
- 	struct kvec iov;
--	__le16 *path;
-+	char *sym = NULL;
-+	__le16 *path = NULL;
- 	bool directory = false;
--	char *sym, sep = CIFS_DIR_SEP(cifs_sb);
--	u16 len, plen;
-+	char *symlink_target = NULL;
-+	char sep = CIFS_DIR_SEP(cifs_sb);
-+	u16 len, plen, poff, slen;
- 	int rc = 0;
- 
- 	len = strlen(symname)+1;
--	sym = kzalloc(len+1, GFP_KERNEL); /* +1 for possible directory slash */
--	if (!sym)
--		return -ENOMEM;
--	memcpy(sym, symname, len);
-+	symlink_target = kzalloc(len+1, GFP_KERNEL); /* +1 for possible directory slash */
-+	if (!symlink_target) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+	memcpy(symlink_target, symname, len);
- 
- 	data = (struct cifs_open_info_data) {
- 		.reparse_point = true,
- 		.reparse = { .tag = IO_REPARSE_TAG_SYMLINK, },
--		.symlink_target = sym,
-+		.symlink_target = symlink_target,
- 	};
- 
--	convert_delimiter(sym, sep);
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		/*
-+		 * This is a request to create an absolute symlink on the server
-+		 * which does not support POSIX paths, and expects symlink in
-+		 * NT-style path. So convert absolute Linux symlink target path
-+		 * to the absolute NT-style path. Root of the NT-style path for
-+		 * symlinks is specified in "symlinkroot" mount option. This will
-+		 * ensure compatibility of this symlink stored in absolute form
-+		 * on the SMB server.
-+		 */
-+		if (!strstarts(symname, cifs_sb->ctx->symlinkroot)) {
-+			/*
-+			 * If the absolute Linux symlink target path is not
-+			 * inside "symlinkroot" location then there is no way
-+			 * to convert such Linux symlink to NT-style path.
-+			 */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted to NT format "
-+				 "because it is outside of symlinkroot='%s'\n",
-+				 symname, cifs_sb->ctx->symlinkroot);
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+		len = strlen(cifs_sb->ctx->symlinkroot);
-+		if (cifs_sb->ctx->symlinkroot[len-1] != '/')
-+			len++;
-+		if (symname[len] >= 'a' && symname[len] <= 'z' &&
-+		    (symname[len+1] == '/' || symname[len+1] == '\0')) {
-+			/*
-+			 * Symlink points to Linux target /symlinkroot/x/path/...
-+			 * where 'x' is the lowercase local Windows drive.
-+			 * NT-style path for 'x' has common form \??\X:\path\...
-+			 * with uppercase local Windows drive.
-+			 */
-+			int common_path_len = strlen(symname+len+1)+1;
-+			sym = kzalloc(6+common_path_len, GFP_KERNEL);
-+			if (!sym) {
-+				rc = -ENOMEM;
-+				goto out;
-+			}
-+			memcpy(sym, "\\??\\", 4);
-+			sym[4] = symname[len] - ('a'-'A');
-+			sym[5] = ':';
-+			memcpy(sym+6, symname+len+1, common_path_len);
-+			if (sym[6] == '\0') {
-+				/*
-+				 * Symlink which target path is just a Windows
-+				 * drive letter is definitely directory symlink.
-+				 */
-+				directory = true;
-+			}
-+		} else {
-+			/* Unhandled absolute symlink. Report an error. */
-+			cifs_dbg(
-+				 VFS,
-+				 "absolute symlink '%s' cannot be converted to NT format "
-+				 "because it points to unknown target\n",
-+				 symname);
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+	} else {
-+		/*
-+		 * This is request to either create an absolute symlink on
-+		 * server which expects POSIX paths or it is an request to
-+		 * create a relative symlink from the current directory.
-+		 * These paths have same format as relative SMB symlinks,
-+		 * so no conversion is needed. So just take symname as-is.
-+		 */
-+		sym = kstrdup(symname, GFP_KERNEL);
-+		if (!sym) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+	}
-+
-+	if (sep == '\\')
-+		convert_delimiter(sym, sep);
-+
-+	/*
-+	 * For absolute NT symlinks it is required to pass also leading
-+	 * backslash and to not mangle NT object prefix "\\??\\" and not to
-+	 * mangle colon in drive letter. But cifs_convert_path_to_utf16()
-+	 * removes leading backslash and replaces '?' and ':'. So temporary
-+	 * mask these characters in NT object prefix by '_' and then change
-+	 * them back.
-+	 */
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/')
-+		sym[0] = sym[1] = sym[2] = sym[5] = '_';
-+
- 	path = cifs_convert_path_to_utf16(sym, cifs_sb);
- 	if (!path) {
- 		rc = -ENOMEM;
- 		goto out;
- 	}
- 
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		sym[0] = '\\';
-+		sym[1] = sym[2] = '?';
-+		sym[5] = ':';
-+		path[0] = '\\';
-+		path[1] = path[2] = '?';
-+		path[5] = ':';
-+	}
-+
- 	/*
- 	 * SMB distinguish between symlink to directory and symlink to file.
- 	 * They cannot be exchanged (symlink of file type which points to
-@@ -167,8 +269,18 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 		data.symlink_target[len+1] = '\0';
- 	}
- 
--	plen = 2 * UniStrnlen((wchar_t *)path, PATH_MAX);
--	len = sizeof(*buf) + plen * 2;
-+	slen = 2 * UniStrnlen((wchar_t *)path, PATH_MAX);
-+	poff = 0;
-+	plen = slen;
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && symname[0] == '/') {
-+		/*
-+		 * For absolute NT symlinks skip leading "\\??\\" in PrintName as
-+		 * PrintName is user visible location in DOS/Win32 format (not in NT format).
-+		 */
-+		poff = 4;
-+		plen -= 2 * poff;
-+	}
-+	len = sizeof(*buf) + plen + slen;
- 	buf = kzalloc(len, GFP_KERNEL);
- 	if (!buf) {
- 		rc = -ENOMEM;
-@@ -177,17 +289,17 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 
- 	buf->ReparseTag = cpu_to_le32(IO_REPARSE_TAG_SYMLINK);
- 	buf->ReparseDataLength = cpu_to_le16(len - sizeof(struct reparse_data_buffer));
-+
- 	buf->SubstituteNameOffset = cpu_to_le16(plen);
--	buf->SubstituteNameLength = cpu_to_le16(plen);
--	memcpy(&buf->PathBuffer[plen], path, plen);
-+	buf->SubstituteNameLength = cpu_to_le16(slen);
-+	memcpy(&buf->PathBuffer[plen], path, slen);
-+
- 	buf->PrintNameOffset = 0;
- 	buf->PrintNameLength = cpu_to_le16(plen);
--	memcpy(buf->PathBuffer, path, plen);
-+	memcpy(buf->PathBuffer, path+poff, plen);
-+
- 	buf->Flags = cpu_to_le32(*symname != '/' ? SYMLINK_FLAG_RELATIVE : 0);
--	if (*sym != sep)
--		buf->Flags = cpu_to_le32(SYMLINK_FLAG_RELATIVE);
- 
--	convert_delimiter(sym, '/');
- 	iov.iov_base = buf;
- 	iov.iov_len = len;
- 	new = smb2_create_reparse_inode(&data, inode->i_sb, xid,
-@@ -198,6 +310,7 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
- 	else
- 		rc = PTR_ERR(new);
- out:
-+	kfree(sym);
- 	kfree(path);
- 	cifs_free_open_info(&data);
- 	kfree(buf);
-@@ -505,6 +618,9 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 	char sep = CIFS_DIR_SEP(cifs_sb);
- 	char *linux_target = NULL;
- 	char *smb_target = NULL;
-+	int symlinkroot_len;
-+	int abs_path_len;
-+	char *abs_path;
- 	int levels;
- 	int rc;
- 	int i;
-@@ -525,7 +641,123 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 		goto out;
- 	}
- 
--	if (smb_target[0] == sep && relative) {
-+	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS) && !relative) {
-+		/*
-+		 * This is an absolute symlink from the server which does not
-+		 * support POSIX paths, so the symlink is in NT-style path.
-+		 * So convert it to absolute Linux symlink target path. Root of
-+		 * the NT-style path for symlinks is specified in "symlinkroot"
-+		 * mount option.
-+		 *
-+		 * Root of the DOS and Win32 paths is at NT path \??\
-+		 * It means that DOS/Win32 path C:\folder\file.txt is
-+		 * NT path \??\C:\folder\file.txt
-+		 *
-+		 * NT systems have some well-known object symlinks in their NT
-+		 * hierarchy, which is needed to take into account when resolving
-+		 * other symlinks. Most commonly used symlink paths are:
-+		 * \?? -> \GLOBAL??
-+		 * \DosDevices -> \??
-+		 * \GLOBAL??\GLOBALROOT -> \
-+		 * \GLOBAL??\Global -> \GLOBAL??
-+		 * \GLOBAL??\NUL -> \Device\Null
-+		 * \GLOBAL??\UNC -> \Device\Mup
-+		 * \GLOBAL??\PhysicalDrive0 -> \Device\Harddisk0\DR0 (for each harddisk)
-+		 * \GLOBAL??\A: -> \Device\Floppy0 (if A: is the first floppy)
-+		 * \GLOBAL??\C: -> \Device\HarddiskVolume1 (if C: is the first harddisk)
-+		 * \GLOBAL??\D: -> \Device\CdRom0 (if D: is first cdrom)
-+		 * \SystemRoot -> \Device\Harddisk0\Partition1\WINDOWS (or where is NT system installed)
-+		 * \Volume{...} -> \Device\HarddiskVolume1 (where ... is system generated guid)
-+		 *
-+		 * In most common cases, absolute NT symlinks points to path on
-+		 * DOS/Win32 drive letter, system-specific Volume or on UNC share.
-+		 * Here are few examples of commonly used absolute NT symlinks
-+		 * created by mklink.exe tool:
-+		 * \??\C:\folder\file.txt
-+		 * \??\\C:\folder\file.txt
-+		 * \??\UNC\server\share\file.txt
-+		 * \??\\UNC\server\share\file.txt
-+		 * \??\Volume{b75e2c83-0000-0000-0000-602f00000000}\folder\file.txt
-+		 *
-+		 * It means that the most common path prefix \??\ is also NT path
-+		 * symlink (to \GLOBAL??). It is less common that second path
-+		 * separator is double backslash, but it is valid.
-+		 *
-+		 * Volume guid is randomly generated by the target system and so
-+		 * only the target system knows the mapping between guid and the
-+		 * hardisk number. Over SMB it is not possible to resolve this
-+		 * mapping, therefore symlinks pointing to target location of
-+		 * volume guids are totally unusable over SMB.
-+		 *
-+		 * For now parse only symlink paths available for DOS and Win32.
-+		 * Those are paths with \??\ prefix or paths which points to \??\
-+		 * via other NT symlink (\DosDevices\, \GLOBAL??\, ...).
-+		 */
-+		abs_path = smb_target;
-+globalroot:
-+		if (strstarts(abs_path, "\\??\\"))
-+			abs_path += sizeof("\\??\\")-1;
-+		else if (strstarts(abs_path, "\\DosDevices\\"))
-+			abs_path += sizeof("\\DosDevices\\")-1;
-+		else if (strstarts(abs_path, "\\GLOBAL??\\"))
-+			abs_path += sizeof("\\GLOBAL??\\")-1;
-+		else {
-+			/* Unhandled absolute symlink, points outside of DOS/Win32 */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted from NT format "
-+				 "because points to unknown target\n",
-+				 smb_target);
-+			rc = -EIO;
-+			goto out;
-+		}
-+
-+		/* Sometimes path separator after \?? is double backslash */
-+		if (abs_path[0] == '\\')
-+			abs_path++;
-+
-+		while (strstarts(abs_path, "Global\\"))
-+			abs_path += sizeof("Global\\")-1;
-+
-+		if (strstarts(abs_path, "GLOBALROOT\\")) {
-+			/* Label globalroot requires path with leading '\\', so do not trim '\\' */
-+			abs_path += sizeof("GLOBALROOT")-1;
-+			goto globalroot;
-+		}
-+
-+		/* For now parse only paths to drive letters */
-+		if (((abs_path[0] >= 'A' && abs_path[0] <= 'Z') ||
-+		     (abs_path[0] >= 'a' && abs_path[0] <= 'z')) &&
-+		    abs_path[1] == ':' &&
-+		    (abs_path[2] == '\\' || abs_path[2] == '\0')) {
-+			/* Convert drive letter to lowercase and drop colon */
-+			char drive_letter = abs_path[0];
-+			if (drive_letter >= 'A' && drive_letter <= 'Z')
-+				drive_letter += 'a'-'A';
-+			abs_path++;
-+			abs_path[0] = drive_letter;
-+		} else {
-+			/* Unhandled absolute symlink. Report an error. */
-+			cifs_dbg(VFS,
-+				 "absolute symlink '%s' cannot be converted from NT format "
-+				 "because points to unknown target\n",
-+				 smb_target);
-+			rc = -EIO;
-+			goto out;
-+		}
-+
-+		abs_path_len = strlen(abs_path)+1;
-+		symlinkroot_len = strlen(cifs_sb->ctx->symlinkroot);
-+		if (cifs_sb->ctx->symlinkroot[symlinkroot_len-1] == '/')
-+			symlinkroot_len--;
-+		linux_target = kmalloc(symlinkroot_len + 1 + abs_path_len, GFP_KERNEL);
-+		if (!linux_target) {
-+			rc = -ENOMEM;
-+			goto out;
-+		}
-+		memcpy(linux_target, cifs_sb->ctx->symlinkroot, symlinkroot_len);
-+		linux_target[symlinkroot_len] = '/';
-+		memcpy(linux_target + symlinkroot_len + 1, abs_path, abs_path_len);
-+	} else if (smb_target[0] == sep && relative) {
- 		/*
- 		 * This is a relative SMB symlink from the top of the share,
- 		 * which is the top level directory of the Linux mount point.
-@@ -554,6 +786,12 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 		}
- 		memcpy(linux_target + levels*3, smb_target+1, smb_target_len); /* +1 to skip leading sep */
- 	} else {
-+		/*
-+		 * This is either an absolute symlink in POSIX-style format
-+		 * or relative SMB symlink from the current directory.
-+		 * These paths have same format as Linux symlinks, so no
-+		 * conversion is needed.
-+		 */
- 		linux_target = smb_target;
- 		smb_target = NULL;
- 	}
--- 
-2.20.1
+> +	}
+> +
+> +	asus_armoury.mini_led_dev_id = 0;
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE)) {
+> +		asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE;
+> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +					 &mini_led_mode_attr_group);
+> +	} else if (asus_wmi_is_present(ASUS_WMI_DEVID_MINI_LED_MODE2)) {
+> +		asus_armoury.mini_led_dev_id = ASUS_WMI_DEVID_MINI_LED_MODE2;
+> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +					 &mini_led_mode_attr_group);
+> +	}
+> +	if (err) {
+> +		pr_err("Failed to create sysfs-group for mini_led\n");
+> +		goto err_destroy_classdev;
+> +	}
+> +
+> +	asus_armoury.gpu_mux_dev_id = 0;
+> +	if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX)) {
+> +		asus_armoury.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX;
+> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +					 &gpu_mux_mode_attr_group);
+> +	} else if (asus_wmi_is_present(ASUS_WMI_DEVID_GPU_MUX_VIVO)) {
+> +		asus_armoury.gpu_mux_dev_id = ASUS_WMI_DEVID_GPU_MUX_VIVO;
+> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +					 &gpu_mux_mode_attr_group);
+> +	}
+> +	if (err) {
+> +		pr_err("Failed to create sysfs-group for gpu_mux\n");
+> +		goto err_destroy_classdev;
+> +	}
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(armoury_attr_groups); i++) {
+> +		if (!asus_wmi_is_present(armoury_attr_groups[i].wmi_devid))
+> +			continue;
+> +
+> +		err = sysfs_create_group(&asus_armoury.fw_attr_kset->kobj,
+> +					 armoury_attr_groups[i].attr_group);
+> +		if (err) {
+> +			pr_err("Failed to create sysfs-group for %s\n",
+> +				armoury_attr_groups[i].attr_group->name);
+> +			goto err_destroy_classdev;
+> +		}
+> +		else {
+> +			pr_debug("Created sysfs-group for %s\n",
+> +				 armoury_attr_groups[i].attr_group->name);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +err_destroy_classdev:
+> +	device_destroy(fw_attr_class, MKDEV(0, 0));
+> +
+> +fail_class_created:
+> +	fw_attributes_class_put();
+> +	return err;
+> +}
+> +
+> +/* Init / exit ****************************************************************/
+> +
+> +static int __init asus_fw_init(void)
+> +{
+> +	char *wmi_uid;
+> +	int err;
+> +
+> +	wmi_uid = wmi_get_acpi_device_uid(ASUS_WMI_MGMT_GUID);
+> +	if (!wmi_uid)
+> +		return -ENODEV;
+> +
+> +	/*
+> +	 * if equal to "ASUSWMI" then it's DCTS that can't be used for this
+> +	 * driver, DSTS is required.
+> +	 */
+> +	if (!strcmp(wmi_uid, ASUS_ACPI_UID_ASUSWMI))
+> +		return -ENODEV;
+> +
+> +	err = asus_fw_attr_add();
+> +	if (err)
+> +		return err;
+> +
+> +	return 0;
+> +}
+> +
+> +static void __exit asus_fw_exit(void)
+> +{
+> +	mutex_lock(&asus_armoury.mutex);
+> +
+> +	sysfs_remove_file(&asus_armoury.fw_attr_kset->kobj, &pending_reboot.attr);
+> +	kset_unregister(asus_armoury.fw_attr_kset);
+> +	device_destroy(fw_attr_class, MKDEV(0, 0));
+> +	fw_attributes_class_put();
+> +
+> +	mutex_unlock(&asus_armoury.mutex);
+> +}
+> +
+> +module_init(asus_fw_init);
+> +module_exit(asus_fw_exit);
+> +
+> +MODULE_IMPORT_NS(ASUS_WMI);
+> +MODULE_AUTHOR("Luke Jones <luke@ljones.dev>");
+> +MODULE_DESCRIPTION("ASUS BIOS Configuration Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("wmi:" ASUS_NB_WMI_EVENT_GUID);
+> diff --git a/drivers/platform/x86/asus-armoury.h b/drivers/platform/x86/asus-armoury.h
+> new file mode 100644
+> index 000000000000..4d0dd34c52aa
+> --- /dev/null
+> +++ b/drivers/platform/x86/asus-armoury.h
+> @@ -0,0 +1,146 @@
+> +/* SPDX-License-Identifier: GPL-2.0
+> + *
+> + * Definitions for kernel modules using asus-armoury driver
+> + *
+> + *  Copyright (c) 2024 Luke Jones <luke@ljones.dev>
+> + */
+> +
+> +#ifndef _ASUS_ARMOURY_H_
+> +#define _ASUS_ARMOURY_H_
+> +
+> +#include <linux/types.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DRIVER_NAME "asus-armoury"
+> +
+> +static ssize_t attr_int_store(struct kobject *kobj, struct kobj_attribute *attr,
+> +			      const char *buf, size_t count, u32 min, u32 max,
+> +			      u32 *store_value, u32 wmi_dev);
+> +
+> +static ssize_t enum_type_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +			      char *buf)
+> +{
+> +	return sysfs_emit(buf, "enumeration\n");
+> +}
+> +
+> +#define __ASUS_ATTR_RO(_func, _name)                                  \
+> +	{                                                             \
+> +		.attr = { .name = __stringify(_name), .mode = 0444 }, \
+> +		.show = _func##_##_name##_show,                       \
+> +	}
+> +
+> +#define __ASUS_ATTR_RO_AS(_name, _show)                               \
+> +	{                                                             \
+> +		.attr = { .name = __stringify(_name), .mode = 0444 }, \
+> +		.show = _show,                                        \
+> +	}
+> +
+> +#define __ASUS_ATTR_RW(_func, _name) \
+> +	__ATTR(_name, 0644, _func##_##_name##_show, _func##_##_name##_store)
+> +
+> +#define __WMI_STORE_INT(_attr, _min, _max, _wmi)                          \
+> +	static ssize_t _attr##_store(struct kobject *kobj,                \
+> +				     struct kobj_attribute *attr,         \
+> +				     const char *buf, size_t count)       \
+> +	{                                                                 \
+> +		return attr_int_store(kobj, attr, buf, count, _min, _max, \
+> +				      NULL, _wmi);                        \
+> +	}
+> +
+> +#define WMI_SHOW_INT(_attr, _fmt, _wmi)                                     \
+> +	static ssize_t _attr##_show(struct kobject *kobj,                   \
+> +				    struct kobj_attribute *attr, char *buf) \
+> +	{                                                                   \
+> +		u32 result;                                                 \
+> +		int err;                                                    \
+> +		err = asus_wmi_get_devstate_dsts(_wmi, &result);            \
+> +		if (err)                                                    \
+> +			return err;                                         \
+> +		return sysfs_emit(buf, _fmt,                                \
+> +				  result & ~ASUS_WMI_DSTS_PRESENCE_BIT);    \
+> +	}
+> +
+> +/* Create functions and attributes for use in other macros or on their own */
+> +
+> +#define __ATTR_CURRENT_INT_RO(_attr, _wmi)                          \
+> +	WMI_SHOW_INT(_attr##_current_value, "%d\n", _wmi);          \
+> +	static struct kobj_attribute attr_##_attr##_current_value = \
+> +		__ASUS_ATTR_RO(_attr, current_value)
+> +
+> +#define __ATTR_CURRENT_INT_RW(_attr, _minv, _maxv, _wmi)            \
+> +	__WMI_STORE_INT(_attr##_current_value, _minv, _maxv, _wmi); \
+> +	WMI_SHOW_INT(_attr##_current_value, "%d\n", _wmi);          \
+> +	static struct kobj_attribute attr_##_attr##_current_value = \
+> +		__ASUS_ATTR_RW(_attr, current_value)
+> +
+> +/* Shows a formatted static variable */
+> +#define __ATTR_SHOW_FMT(_prop, _attrname, _fmt, _val)                         \
+> +	static ssize_t _attrname##_##_prop##_show(                            \
+> +		struct kobject *kobj, struct kobj_attribute *attr, char *buf) \
+> +	{                                                                     \
+> +		return sysfs_emit(buf, _fmt, _val);                           \
+> +	}                                                                     \
+> +	static struct kobj_attribute attr_##_attrname##_##_prop =             \
+> +		__ASUS_ATTR_RO(_attrname, _prop)
+> +
+> +/* Boolean style enumeration, base macro. Requires adding show/store */
+> +#define __ATTR_GROUP_ENUM(_attrname, _fsname, _possible, _dispname)     \
+> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);    \
+> +	__ATTR_SHOW_FMT(possible_values, _attrname, "%s\n", _possible); \
+> +	static struct kobj_attribute attr_##_attrname##_type =          \
+> +		__ASUS_ATTR_RO_AS(type, enum_type_show);                \
+> +	static struct attribute *_attrname##_attrs[] = {                \
+> +		&attr_##_attrname##_current_value.attr,                 \
+> +		&attr_##_attrname##_display_name.attr,                  \
+> +		&attr_##_attrname##_possible_values.attr,               \
+> +		&attr_##_attrname##_type.attr,                          \
+> +		NULL                                                    \
+> +	};                                                              \
+> +	static const struct attribute_group _attrname##_attr_group = {  \
+> +		.name = _fsname, .attrs = _attrname##_attrs             \
+> +	}
+> +
+> +#define ATTR_GROUP_BOOL_RO(_attrname, _fsname, _wmi, _dispname) \
+> +	__ATTR_CURRENT_INT_RO(_attrname, _wmi);                 \
+> +	__ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> +
+> +#define ATTR_GROUP_BOOL_RW(_attrname, _fsname, _wmi, _dispname) \
+> +	__ATTR_CURRENT_INT_RW(_attrname, 0, 1, _wmi);           \
+> +	__ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> +
+> +/*
+> + * Requires <name>_current_value_show(), <name>_current_value_show()
+> + */
+> +#define ATTR_GROUP_BOOL_CUSTOM(_attrname, _fsname, _dispname)           \
+> +	static struct kobj_attribute attr_##_attrname##_current_value = \
+> +		__ASUS_ATTR_RW(_attrname, current_value);               \
+> +	__ATTR_GROUP_ENUM(_attrname, _fsname, "0;1", _dispname)
+> +
+> +#define ATTR_GROUP_ENUM_INT_RO(_attrname, _fsname, _wmi, _possible, _dispname) \
+> +	__ATTR_CURRENT_INT_RO(_attrname, _wmi);                                \
+> +	__ATTR_GROUP_ENUM(_attrname, _fsname, _possible, _dispname)
+> +
+> +/*
+> + * Requires <name>_current_value_show(), <name>_current_value_show()
+> + * and <name>_possible_values_show()
+> + */
+> +#define ATTR_GROUP_ENUM_CUSTOM(_attrname, _fsname, _dispname)             \
+> +	__ATTR_SHOW_FMT(display_name, _attrname, "%s\n", _dispname);      \
+> +	static struct kobj_attribute attr_##_attrname##_current_value =   \
+> +		__ASUS_ATTR_RW(_attrname, current_value);                 \
+> +	static struct kobj_attribute attr_##_attrname##_possible_values = \
+> +		__ASUS_ATTR_RO(_attrname, possible_values);               \
+> +	static struct kobj_attribute attr_##_attrname##_type =            \
+> +		__ASUS_ATTR_RO_AS(type, enum_type_show);                  \
+> +	static struct attribute *_attrname##_attrs[] = {                  \
+> +		&attr_##_attrname##_current_value.attr,                   \
+> +		&attr_##_attrname##_display_name.attr,                    \
+> +		&attr_##_attrname##_possible_values.attr,                 \
+> +		&attr_##_attrname##_type.attr,                            \
+> +		NULL                                                      \
+> +	};                                                                \
+> +	static const struct attribute_group _attrname##_attr_group = {    \
+> +		.name = _fsname, .attrs = _attrname##_attrs               \
+> +	}
+> +
+> +#endif /* _ASUS_BIOSCFG_H_ */
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 0a5221d65130..3c6d774f4453 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -55,8 +55,6 @@ module_param(fnlock_default, bool, 0444);
+>   #define to_asus_wmi_driver(pdrv)					\
+>   	(container_of((pdrv), struct asus_wmi_driver, platform_driver))
+>   
+> -#define ASUS_WMI_MGMT_GUID	"97845ED0-4E6D-11DE-8A39-0800200C9A66"
+> -
+>   #define NOTIFY_BRNUP_MIN		0x11
+>   #define NOTIFY_BRNUP_MAX		0x1f
+>   #define NOTIFY_BRNDOWN_MIN		0x20
+> @@ -105,8 +103,6 @@ module_param(fnlock_default, bool, 0444);
+>   #define USB_INTEL_XUSB2PR		0xD0
+>   #define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI	0x9c31
+>   
+> -#define ASUS_ACPI_UID_ASUSWMI		"ASUSWMI"
+> -
+>   #define WMI_EVENT_MASK			0xFFFF
+>   
+>   #define FAN_CURVE_POINTS		8
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 6ea4dedfb85e..21313e1eb6c9 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -6,6 +6,9 @@
+>   #include <linux/types.h>
+>   #include <linux/dmi.h>
+>   
+> +#define ASUS_WMI_MGMT_GUID	"97845ED0-4E6D-11DE-8A39-0800200C9A66"
+> +#define ASUS_ACPI_UID_ASUSWMI	"ASUSWMI"
+> +
+>   /* WMI Methods */
+>   #define ASUS_WMI_METHODID_SPEC	        0x43455053 /* BIOS SPECification */
+>   #define ASUS_WMI_METHODID_SFBD		0x44424653 /* Set First Boot Device */
 
 
