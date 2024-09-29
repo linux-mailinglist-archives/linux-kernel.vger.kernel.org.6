@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-343216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001AE989841
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:15:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23289989848
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37E11F21AEB
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:15:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3F7B22468
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA3C15666D;
-	Sun, 29 Sep 2024 22:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37C315666D;
+	Sun, 29 Sep 2024 22:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="QwTmHPm0"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P86dUwxi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14824C69
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 22:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE094C69;
+	Sun, 29 Sep 2024 22:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727648128; cv=none; b=WCwrKlZ3i6EzupPnZc41v4oknEbvkEuJUe68CIHM0Lwyjoa3owzmBALaRh9aWV5p11g3+Y3tGkunSwxKLgoFzSW/5QuLLmZ563y2Ml6ZVDCbTWDsbWL3YfnQacxks4iRI16oMqj3Jxxy/nGEwSm1LCj2FgGfu09iS1K6ni0euik=
+	t=1727648355; cv=none; b=obEptj867vuXFafEeBy9gHtodHAjuSdWSFTd72p0Lza7GJSSVjTuOn1WdXuLs5qpiEcQnKts9w9YpW/vtVz0odKsPp6dnku5li4sbHegSrNRbgm+WQzK9PNXzWvpukV86Hy6Db7BY3ZJlOnFGH0BfgzWrCmaztAiGbQpId1ZSmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727648128; c=relaxed/simple;
-	bh=0eFr9Bk5xiWCz8BgzMTr8R6G4u7fPxSTQA924sYJQ3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VwsvHC5VGXJRjJR2Jbrw1LMWBuDTqXd/M58YqHj2VMzy3QZokD/q3jSoOFl49AomhKFjxSo6W8i31K5HdMIpyNM1WvimF7OyYwS3wJ0ucYNkGPclq3bzi2l6+sugV8zo7A+m8qQ9IY7kTCEHzmVaOsWC3bUEUrpgs8gzbF0kUVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=QwTmHPm0; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e25cb262769so3213680276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:15:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1727648125; x=1728252925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrDiLAAMBLULdnd9JA4k6M4CX7P84ubsQWj96kmGwtA=;
-        b=QwTmHPm0jVo6pp0zIpw77t+Ks8LL6QUVmnqKQrjxO+HLhd04jl+88KZUqGEsu2/Udv
-         kcoE6pHDDOSX2Y2+RD459hT7VWHgv55lAiMiN/l8zK/thOVtJBCXwkqD7Pc1Ags4Rd5E
-         E7381WKIMz43F8wMHe1v9OXqCJ3C2KK7Fle47Yj/jikt2Em7eO25oj/ZZEbCFSDWg7Ke
-         C6xS3/CwFMCrJxpm+qPXg8/SXEe/3nDJfDl3qB0smnLO2qBp7zYqlLTXuMbQd5JYwMcx
-         M4elvFITfBcCCsdgiHBVyNE7S2lm5Pi7Uwg5jyZTkWti8scYVE2a+Fa247tVoq4/ZScR
-         1gGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727648125; x=1728252925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MrDiLAAMBLULdnd9JA4k6M4CX7P84ubsQWj96kmGwtA=;
-        b=gEV8rrX98sZG+g99PzYuIAAcCH1P3vochzdIElkumAyuUs2VfiLsoKDai/Z0YRc7ie
-         N6+XdiiDHU/OnIVtghVn1MyWDvDACqMA4olt69Un8u7a3FYG5NGpbCUEVHsyM/cMWPgZ
-         wXnceoM92fC/KKO1lIwDKZughaNBjkyxAucXROFJ+KRY2w6vWZt0anmUctf1YvNfgGyV
-         nawfBfbmgeWVCFHZphgCafBep/KsSBZnETHDzMQQMfJAZbGWMUgEU+kdSQ7Ef65LZFZP
-         yMohhoV8SOPosefdPRauD4b3mcWRQylZyLm60bRZSxZ33TDL0ulogSsIqpMBfB/1fNRr
-         /+AA==
-X-Gm-Message-State: AOJu0YwzWELoIDBbMNUFzsHFCajccp9FL/VQl0W+l/r3dxsdpheDk6DD
-	VVVHau59pKfWRdBZSay46vrNcH80+he1EFbAV1mjKN4vRc5R5sdjRuA5EjTLTgAwxJ8WRj81qRG
-	vL0zo86S0w4UNcYrqe9qojeWiCUvN4TOc8HWjuQ==
-X-Google-Smtp-Source: AGHT+IFU+upOkL1h5/rmQ3rjwqb1zvlkH0/0EkyJvLl4+CPbB389BnqR/RccU4a6zbMBvHq9yezHm2LKnS7F8Es7voE=
-X-Received: by 2002:a05:690c:2b88:b0:6e2:2c72:3aaf with SMTP id
- 00721157ae682-6e2475b980dmr54851107b3.31.1727648124778; Sun, 29 Sep 2024
- 15:15:24 -0700 (PDT)
+	s=arc-20240116; t=1727648355; c=relaxed/simple;
+	bh=HI/OkCZ1Hgkt+Bgs7QEULJ4W+ZyNZ95EhUvyGeIIDkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdu6jjsv4P0dnk+p2LcaMGUNmnnOIxBG5Hq+7RAyt4cYpzKtCYgMPhm6IoXf/S0CDYbaQ30O5h4R+DADQjQC8QC1Cz5YYl+QEhLr5lgXtE7NkdrpvLsM9XwPcJEejmbniJfJwRB2I3ajMf2OGdomxr57yGqiawYO+a8bU2nqATA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P86dUwxi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E702C4CEC7;
+	Sun, 29 Sep 2024 22:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727648354;
+	bh=HI/OkCZ1Hgkt+Bgs7QEULJ4W+ZyNZ95EhUvyGeIIDkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P86dUwxiWjXyeWC2nCkPNnp1/mB3U50ls7jR8VxUA0B1H+4SlqLiCq0n/1sgB/ksH
+	 BvCwLMU+tMmQMiRRn2w6acSfDbssUs/hsizj7CKImDUo897+jg6chN6D0DLngsVrEl
+	 fRRdOxudSaA8VVTonNubTCARnwXUT6nLmRDgmUWRujZqMcQOaAAjBAWeGqk+FBaR05
+	 fFWVM6DIOl1yTJ93Dsvr2sDyEpQrt+ftl+Qz31YghMCoTIADmhhi389iTACEfcQgor
+	 oNcmC5F3O8Y0GNTFuxuU4PhFxw1c9wwmZYFslUjRBW0gj3kF8YDGuDhJjhRXACMSD6
+	 5DY3MCLA8+ksw==
+Received: by pali.im (Postfix)
+	id D1D04872; Mon, 30 Sep 2024 00:19:08 +0200 (CEST)
+Date: Mon, 30 Sep 2024 00:19:08 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] cifs: Validate content of native symlink
+Message-ID: <20240929221908.skkup4ds6ow2s77x@pali>
+References: <20240929185053.10554-1-pali@kernel.org>
+ <20240929185053.10554-7-pali@kernel.org>
+ <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
- <bf6544faba2b53ce901b2e031f3d944babcc7018.1727606659.git.hridesh699@gmail.com>
-In-Reply-To: <bf6544faba2b53ce901b2e031f3d944babcc7018.1727606659.git.hridesh699@gmail.com>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Sun, 29 Sep 2024 18:15:14 -0400
-Message-ID: <CALNs47vT=g2D7A_cDq_8F2xJRJTK-7KtQY4brFYfkopyCSjLTw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2 RESEND] checkpatch: warn on empty rust doc comments
-To: Hridesh MG <hridesh699@gmail.com>, Patrick Miller <paddymills@proton.me>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-On Sun, Sep 29, 2024 at 7:16=E2=80=AFAM Hridesh MG <hridesh699@gmail.com> w=
-rote:
+I think that via pike it could be possible or via windows application
+running locally (to create reparse point manually with prepared buffer
+with such content). I will check it later.
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 39032224d504..c75bc3927bf6 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3884,6 +3884,13 @@ sub process {
->                         }
->                 }
->
-> +# check for consecutive empty /// lines in .rs files
-> +               if ($realfile =3D~ /\.rs$/ &&
-> +                   $rawline =3D~ /^\+\s*\/\/\/$/ && $prevrawline =3D~ /^=
-\+\s*\/\/\/$/) {
-> +                       WARN("RUST_DOC_EMPTY",
-> +                            "avoid using consecutive empty rustdoc comme=
-nts\n" . $herecurr);
-> +               }
-> +
+Just a side note: Windows NT kernel allows for object names any
+characters except backslash. For object names is not used nul-term
+string, but rather string with explicit length. So even a null character
+is a valid in a object name. NT NTFS driver has for file names more
+restrictions and null is not valid. But it does not mean that somebody
+can write own filesystem which allows null bytes in file names...
+And this design of explicit lengths is also in SMB, so NT kernel may
+export nul characters in symlink path buffers...
 
-We got a request to add a rust-specific block in another patchset [1].
-It would probably be good to coordinate here and have a patch adding
-an empty block, to be used by both of these changes.
-
-[1]: https://lore.kernel.org/rust-for-linux/a9112679-b251-4b98-b55e-e8aabf8=
-2ad46@proton.me/
+On Sunday 29 September 2024 16:48:46 Steve French wrote:
+> Is there any easy way to create such a symlink (with null in it)?
+> 
+> On Sun, Sep 29, 2024 at 1:51 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > Check that buffer does not contain UTF-16 null codepoint
+> > because Linux cannot process symlink with null byte.
+> >
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/smb/client/reparse.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> > index 5a738f65b190..ca4f96c43508 100644
+> > --- a/fs/smb/client/reparse.c
+> > +++ b/fs/smb/client/reparse.c
+> > @@ -509,6 +509,16 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
+> >         int rc;
+> >         int i;
+> >
+> > +       /*
+> > +        * Check that buffer does not contain UTF-16 null codepoint
+> > +        * because Linux cannot process symlink with null byte.
+> > +        */
+> > +       if (unicode && UniStrnlen((wchar_t *)buf, len/2) != len/2) {
+> > +               cifs_dbg(VFS, "srv returned null byte in native symlink target location\n");
+> > +               rc = -EIO;
+> > +               goto out;
+> > +       }
+> > +
+> >         smb_target = cifs_strndup_from_utf16(buf, len, unicode, cifs_sb->local_nls);
+> >         if (!smb_target) {
+> >                 rc = -ENOMEM;
+> > --
+> > 2.20.1
+> >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
