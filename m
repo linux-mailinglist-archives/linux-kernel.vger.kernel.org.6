@@ -1,248 +1,112 @@
-Return-Path: <linux-kernel+bounces-342798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6498F989315
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:57:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814CB989316
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873401C22E07
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:57:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4EE1C23332
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFFA4084D;
-	Sun, 29 Sep 2024 04:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246F542AAE;
+	Sun, 29 Sep 2024 04:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CpebcOGx"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="Gx+vr5EN"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C581FAD51;
-	Sun, 29 Sep 2024 04:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115F63FB1B
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 04:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727585842; cv=none; b=Aq/FB3POT+8RG4nL2soa6CKL8Ob1uhlslYgnA6KsgAPeI7jFfFQJJ+cmY6GWpJ6DKE70yCWTQD13txKJKW6wh/GC/5Qr/xT1+xJPLwt1Te/+phM3jPlsyHhqzpMwthRpBBk0azfjh7bz942gbu+wga59RmVc2RVJOEyJMQcpGnM=
+	t=1727585853; cv=none; b=h8FEwIWNnvP1tGHage8mzkQeYYIN4QSgmKm1twnh7zcnti9HvGyG/AnWYpnDRv4rKUK6sTtVZZqenHUjRuYb2dxb/aYPLBs0PU03xxJkghfaJJbgnVf0zSmhcw8+/WK5l7XNsz2E+7vH5ebt6cfya7IL+asw6CFe+mM/Qe+Aksc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727585842; c=relaxed/simple;
-	bh=iVKKF0BjXUG7u227051PhJZgzxqc+pmCNvnbtWbrm8M=;
+	s=arc-20240116; t=1727585853; c=relaxed/simple;
+	bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOidQBOXOhBZ+/7i8GxjRQppVoK0i0qhQxNpKtWsMD7emmCU2oprw8JY3+sZ0JTbBgCTV3v5ICkJZjp/11TzGpyHhvRAjGqD5dvmLHGET4s2DSP/3VGadqdoBNIUCTtXFpnMItSpgaPEcX3uMlRgv2UNIMo50+mWzWuf5cBQ+aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CpebcOGx; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53993c115cfso131224e87.2;
-        Sat, 28 Sep 2024 21:57:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=Q9oL3PyEkA+yRzFxs0sX942S6ZdBbXkEPHq2EruMWEDIwEvrCPBRj+CW/WGRe2qIti9Veyh2KxQ78YtbNCuwqQjSZKAJYx1qdan2EdPQShA8vOEzK/8zERLwYKWT2o8Awmtz0CADn0OEQT40QAv0AP6uyEcLo383GdUyf7mrYfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=Gx+vr5EN; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6dbc9a60480so27598057b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 21:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727585839; x=1728190639; darn=vger.kernel.org;
+        d=umich.edu; s=google-2016-06-03; t=1727585850; x=1728190650; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T6OHpzljVpojRQhUWTJ7tAWWTeoQNF/dvwIOpqQRPLs=;
-        b=CpebcOGxmpaAmnLS6Y75pK1yZdjBhjGKQaOJJUcQuetO7pM5g+HMpyZ4NCAZF/0Jva
-         G+dNAKyOW15pStGNtWpo6cVhwz9oy71qF0UaJBuiSNvXCnM0ysFNGF2n+7JxbC9Gh9Df
-         hzj/Fztumt1FhTpMvC7yHUkIRD/Oit0SSQQdwGTjJBx2w4d3caJiezrX4+52C+dQLzce
-         7KE3H9rr9ooNd72+8mb/1InezsOf1AB5BsoTcrG2I6lCbZxCwpZPV2Nna0RwKvsW9r4w
-         TqhtOorECR8VS9WtPUaaAS0ErqdM1PRP+UYmLe+ufQ8vg1KJ4IbxSnMTMkNOS1K8Vvjb
-         TcPg==
+        bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
+        b=Gx+vr5ENXz2emDavv6lAJy7zE3503VhNh0ai5NNt5qehbsYutnQAs8TG5P5x8z732g
+         5Z5SVxz7KTK47tblddBtFwevMEc2gkRTwLnrF0KQVCAG5Nf17PmsAzlQrKEWmZmq59LA
+         PV7XRwUK5CeYwrLorE8o7MCLDBUdTUmLCOXJUeR17JjvVg+Pl4ggIzb8PDGmRZCYBIz3
+         0HqoGo32EsT/iLCaxHcRyQA28U4hpe1NpFdQgIZyYix3I+D7jEk+aegmbjfplceAr87P
+         iQSTeQEqUYYKa0rnhEeIKkyzv5hbDsGvK4Gcg73g543fivFsoj0p1sbGmr2aKq28YsCr
+         xxjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727585839; x=1728190639;
+        d=1e100.net; s=20230601; t=1727585850; x=1728190650;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T6OHpzljVpojRQhUWTJ7tAWWTeoQNF/dvwIOpqQRPLs=;
-        b=rbvi7ciofql+40GDGpUUbrBZ8KjS/4cIwGbeyFMy/svoYMAXHJR0UBug3kmnMOPhYY
-         zm/ylcU1rCwookk+rG08ytPOwW/Z4yrHrHeOmHF2/RdbaYVJGzA/gxeqPk0JkU4NkNZT
-         ZBSR8w/RF0tNgQZInxceIzBUh0+m7toglHMRWqzTYm5vWFAyTk/SF6WvQda/vJ1tgnSL
-         2aXVUgeSkArRFY+hMAEiiYXzJYC9g6prSwT21fukg1XlZZPnbjsXi6haNEqYrD/Y/A0e
-         b5c+SUv9K6vMEy4bNV5pxxNllqIIJDRpE7D6wbnogcrgvuG7UqvxUyVsidEd2rcFcNbC
-         dxdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIGapbw7On92lMKyaX/NHrDrPdVFsmxkvVP1cGOUUhMAZYMg5FhditeF6wV2OxxITtDWQWSES1fhYz@vger.kernel.org, AJvYcCX3al9wd2vmISOyi4AUMpMRFVmwkXj9xXLfzusqeUbm9alB28hKxzOrS6N8f1K9IKvLnDE5HzyXtku7DFv2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBtyq/ExYwDYX9dnfJIHIVtEtWPZEsV22dlBHQmVZ1DddSmhxK
-	2w4LdTLF8ngZejl5mk0z7aVUtxgUihq5NOOhmIXxtIc3L/40iKqp0T+kM0RIkKbJ2DP8AcVjheZ
-	7pjNBnZOR/v2IQ2YIx0wbsowPnZk=
-X-Google-Smtp-Source: AGHT+IGEotrBaxlUcfXSPE0uWyVEm7deJNlk13phztuSnc+XFcV8m/n4fBrVnPemU3YiIadeyxbidLXkI08AsZOZp7Y=
-X-Received: by 2002:a05:6512:3a89:b0:536:550e:7804 with SMTP id
- 2adb3069b0e04-5389fc3afbcmr3703315e87.18.1727585838280; Sat, 28 Sep 2024
- 21:57:18 -0700 (PDT)
+        bh=8JAXnDgwC0E96DmvB7UMxZsYbUOAqQTVFvH/v4Cfgew=;
+        b=JsdoY9LW2QFQV1TTnpaDp+CWtsDCshTMNm7I2Plyu7lf/RkMtysGnb8GZZT/jp+Acu
+         MmljMXiyi7wtsQgkfF0Mjhbms+ma+ygKnOcjdNyJtHui7t7/tteQhzZiO6SitxuxELX9
+         ClPk3hqbLSPtX7guOvAb7H8wQmDH/USQN+D6Xq4bElccjJT/rBs+gXVZQM7PAy6TKrU0
+         mhf0/9UVijPlF97YQqC717A1UA0pELwWwiBCYUApgyG2Tm7NON/B8lJadRt0/7hqzPi1
+         GXFXzTmfPZ8klt+CCUbIQaKaxlDsR5IlMi0/6npZG8pJ35gukjJba3a3VPUWC9PeLUms
+         uRZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/0JCxLrbIgaGxgIFpxG5pq+FfThlIHzMTjUZ4RoQFX/DAebgwBLOMLOEDYAynFPo3Ptiqy4tHMfRsqgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQpvJcdK8MIwB1UC02XhEk6lv6NKIt1PEk60FWbkFh9lBT1xoB
+	a7fdhJg6Z4mUDgjd67p/iJ6a3DjQ9yeyQrurHZ4hK0xiPohcvrcx55gP3iM6iZBgzwSAVPhAcLV
+	vsV/h31TpJBhoA34bCewJo43haVqBwWX6ZSyvsA==
+X-Google-Smtp-Source: AGHT+IE++v8Td22nI2Q3soyTzNnP0Aq5WWr6h1etnmJLmPLRDEcrld8EaVYYkChWaSBJSUid1U0hDsRreiPYOsW/qIg=
+X-Received: by 2002:a05:690c:6788:b0:6d6:7c9a:bf58 with SMTP id
+ 00721157ae682-6e2475e6741mr63957807b3.28.1727585850530; Sat, 28 Sep 2024
+ 21:57:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928215948.4494-1-pali@kernel.org> <20240928215948.4494-9-pali@kernel.org>
-In-Reply-To: <20240928215948.4494-9-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 28 Sep 2024 23:57:06 -0500
-Message-ID: <CAH2r5mvqrWHX6n58eXGL0EgVuhKBD-aZbgrF1DBG9evdXNNaCg@mail.gmail.com>
-Subject: Re: [PATCH 8/8] cifs: Rename posix to nfs in parse_reparse_posix()
- and reparse_posix_data
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-16-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-16-ojeda@kernel.org>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 00:57:19 -0400
+Message-ID: <CALNs47uSN723+vO9d+sTry7XRDZf1BS_pyA1iu57Yk4M0rtk0w@mail.gmail.com>
+Subject: Re: [PATCH 15/19] rust: enable Clippy's `check-private-items`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-since they are being used by default for servers supporting special
-files in the "SMB3.1.1 POSIX Extensions" ... it might be appropriate
-to keep a less confusing name ("NFS" for "SMB3.1.1 POSIX" could be
-confusing)
+On Wed, Sep 4, 2024 at 4:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> In Rust 1.76.0, Clippy added the `check-private-items` lint configuration
+> option. When turned on (the default is off), it makes several lints
+> check private items as well.
+>
+> In our case, it affects two lints we have enabled [1]:
+> `missing_safety_doc` and `unnecessary_safety_doc`.
+>
+> It also seems to affect the new `too_long_first_doc_paragraph` lint [2],
+> even though the documentation does not mention it.
+>
+> Thus allow the few instances remaining we currently hit and enable
+> the lint.
+>
+> Link: https://doc.rust-lang.org/nightly/clippy/lint_configuration.html#ch=
+eck-private-items [1]
+> Link: https://rust-lang.github.io/rust-clippy/master/index.html#/too_long=
+_first_doc_paragraph [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-On Sat, Sep 28, 2024 at 5:01=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> This function parses NFS-style reparse points, which are used only by
-> Windows NFS server since Windows Server 2012 version. This style of speci=
-al
-> files is not understood by Microsoft POSIX / Interix / SFU / SUA subsyste=
-ms.
->
-> So make it clear that parse_reparse_posix() function and reparse_posix_da=
-ta
-> structure are not POSIX general, but rather NFS specific.
->
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
->  fs/smb/client/cifsglob.h |  2 +-
->  fs/smb/client/cifspdu.h  |  2 +-
->  fs/smb/client/reparse.c  | 14 +++++++-------
->  fs/smb/client/reparse.h  |  2 +-
->  fs/smb/common/smb2pdu.h  |  2 +-
->  5 files changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index 9eae8649f90c..119537e98f77 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -223,7 +223,7 @@ struct cifs_open_info_data {
->                 __u32 tag;
->                 union {
->                         struct reparse_data_buffer *buf;
-> -                       struct reparse_posix_data *posix;
-> +                       struct reparse_nfs_data *nfs;
->                 };
->         } reparse;
->         struct {
-> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
-> index c3b6263060b0..fefd7e5eb170 100644
-> --- a/fs/smb/client/cifspdu.h
-> +++ b/fs/smb/client/cifspdu.h
-> @@ -1506,7 +1506,7 @@ struct reparse_symlink_data {
->  #define NFS_SPECFILE_BLK       0x00000000004B4C42
->  #define NFS_SPECFILE_FIFO      0x000000004F464946
->  #define NFS_SPECFILE_SOCK      0x000000004B434F53
-> -struct reparse_posix_data {
-> +struct reparse_nfs_data {
->         __le32  ReparseTag;
->         __le16  ReparseDataLength;
->         __u16   Reserved;
-> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> index 35e8f2e18530..a23ea2f78c09 100644
-> --- a/fs/smb/client/reparse.c
-> +++ b/fs/smb/client/reparse.c
-> @@ -81,7 +81,7 @@ int smb2_create_reparse_symlink(const unsigned int xid,=
- struct inode *inode,
->         return rc;
->  }
->
-> -static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
-> +static int nfs_set_reparse_buf(struct reparse_nfs_data *buf,
->                                mode_t mode, dev_t dev,
->                                struct kvec *iov)
->  {
-> @@ -120,20 +120,20 @@ static int mknod_nfs(unsigned int xid, struct inode=
- *inode,
->                      const char *full_path, umode_t mode, dev_t dev)
->  {
->         struct cifs_open_info_data data;
-> -       struct reparse_posix_data *p;
-> +       struct reparse_nfs_data *p;
->         struct inode *new;
->         struct kvec iov;
->         __u8 buf[sizeof(*p) + sizeof(__le64)];
->         int rc;
->
-> -       p =3D (struct reparse_posix_data *)buf;
-> +       p =3D (struct reparse_nfs_data *)buf;
->         rc =3D nfs_set_reparse_buf(p, mode, dev, &iov);
->         if (rc)
->                 return rc;
->
->         data =3D (struct cifs_open_info_data) {
->                 .reparse_point =3D true,
-> -               .reparse =3D { .tag =3D IO_REPARSE_TAG_NFS, .posix =3D p,=
- },
-> +               .reparse =3D { .tag =3D IO_REPARSE_TAG_NFS, .nfs =3D p, }=
-,
->         };
->
->         new =3D smb2_get_reparse_inode(&data, inode->i_sb, xid,
-> @@ -313,7 +313,7 @@ int smb2_mknod_reparse(unsigned int xid, struct inode=
- *inode,
->  }
->
->  /* See MS-FSCC 2.1.2.6 for the 'NFS' style reparse tags */
-> -static int parse_reparse_posix(struct reparse_posix_data *buf,
-> +static int parse_reparse_nfs(struct reparse_nfs_data *buf,
->                                struct cifs_sb_info *cifs_sb,
->                                struct cifs_open_info_data *data)
->  {
-> @@ -414,7 +414,7 @@ int parse_reparse_point(struct reparse_data_buffer *b=
-uf,
->         /* See MS-FSCC 2.1.2 */
->         switch (le32_to_cpu(buf->ReparseTag)) {
->         case IO_REPARSE_TAG_NFS:
-> -               return parse_reparse_posix((struct reparse_posix_data *)b=
-uf,
-> +               return parse_reparse_nfs((struct reparse_nfs_data *)buf,
->                                            cifs_sb, data);
->         case IO_REPARSE_TAG_SYMLINK:
->                 return parse_reparse_symlink(
-> @@ -507,7 +507,7 @@ bool cifs_reparse_point_to_fattr(struct cifs_sb_info =
-*cifs_sb,
->                                  struct cifs_fattr *fattr,
->                                  struct cifs_open_info_data *data)
->  {
-> -       struct reparse_posix_data *buf =3D data->reparse.posix;
-> +       struct reparse_nfs_data *buf =3D data->reparse.nfs;
->         u32 tag =3D data->reparse.tag;
->
->         if (tag =3D=3D IO_REPARSE_TAG_NFS && buf) {
-> diff --git a/fs/smb/client/reparse.h b/fs/smb/client/reparse.h
-> index 5be54878265e..2a91f64de557 100644
-> --- a/fs/smb/client/reparse.h
-> +++ b/fs/smb/client/reparse.h
-> @@ -18,7 +18,7 @@
->   */
->  #define IO_REPARSE_TAG_INTERNAL ((__u32)~0U)
->
-> -static inline dev_t reparse_nfs_mkdev(struct reparse_posix_data *buf)
-> +static inline dev_t reparse_nfs_mkdev(struct reparse_nfs_data *buf)
->  {
->         u32 major, minor;
->
-> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-> index c769f9dbc0b4..0e77a4c0145a 100644
-> --- a/fs/smb/common/smb2pdu.h
-> +++ b/fs/smb/common/smb2pdu.h
-> @@ -1550,7 +1550,7 @@ struct reparse_symlink_data_buffer {
->         __u8    PathBuffer[]; /* Variable Length */
->  } __packed;
->
-> -/* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_posix_data */
-> +/* See MS-FSCC 2.1.2.6 and cifspdu.h for struct reparse_nfs_data */
->
->  struct validate_negotiate_info_req {
->         __le32 Capabilities;
-> --
-> 2.20.1
->
->
-
-
---=20
-Thanks,
-
-Steve
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
