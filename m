@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-342765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A22B9892C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F569892BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044291F2396E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8D2E1F23875
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AB31BF37;
-	Sun, 29 Sep 2024 02:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98581DA5A;
+	Sun, 29 Sep 2024 02:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E8m7cIif"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M/ZjhZTb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538E32770B;
-	Sun, 29 Sep 2024 02:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D631CA9C;
+	Sun, 29 Sep 2024 02:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727577799; cv=none; b=ZHNwp0XO8V2yi1gcS7EpokbXthBB26mHII+v8OMsJabEGhi0DtNcnY6/e+KPtYce7MEOjKXTLDpg9t6n5pSj9ibxbv/j/jHhvCiGAv8TkVMX3zovqRDkEVeDeipMrtvujBXgE/lHk6S548A7PzpPGh+pWEsd43lpEWOwpzMYGlw=
+	t=1727577735; cv=none; b=emUfCkSpaExNTJunyPubjPT6Q9I0iG9m8skb5CqqCm8zluNUEHgyGfKB5a3v33/DP4SmgZofeqirO8L66hkP++/EknliEHOQGWHrzf5tPPRh+GTNn+7sW6+8/ErQB8EfavPE7yZudqKd0gyfN2cXsrG7HBVovjrbtSR+QENvWNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727577799; c=relaxed/simple;
-	bh=g8uX7WlDZec4SnDsF7a5R6meNAivR0E+SHDO40mm4IU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bs21vp//71d4BnKgIRV9/Pfm0RU0/PT974f4uHfXhSjT3MDQ3GjdqnU/OUq8wBSZYlDbZtkMoP1LBPPZQL01K6dLZ5szWu6K0Er+cD8MGitZ/puM8395bHMr59pjim5gsN+uPMyN2W3Pfwvrk1f8CTT/mr4obQzUIkcDWkhM4dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E8m7cIif; arc=none smtp.client-ip=198.175.65.17
+	s=arc-20240116; t=1727577735; c=relaxed/simple;
+	bh=YPx5QA97jipQMMLwP45wplNXnHwAHBwZK8de9l31+I4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3EnOqbrJV7TYenwHZfQj7aN3XomNQMiyFAnCghFZxb8LmzMAOGtYoH7BLyNXSHMmJWL7F9qOudunuFj04f8EbIwjZXmNjxe7jgXg0gYATjBt/54Mc02oAgEj4dhmg+DWGkTdXLp4IBrBosLyzAt1QBQlvCtO3oGAtO4X6Ua7Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M/ZjhZTb; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727577798; x=1759113798;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=g8uX7WlDZec4SnDsF7a5R6meNAivR0E+SHDO40mm4IU=;
-  b=E8m7cIifSufcxxRrCICZ95FFMGmVk06lRSLPWNbSCA9VuIdy7Y6yVNgx
-   3jzP2h7+iFdCoSJFnEPh7B0UesUPHn44IvPBC70oL9QUPZuwwuhQvKRzJ
-   lBXyVrSQt/e/yCrsjzYHueecm2KmcY+cd631MBAUgx7/a5FORq3mb6IOC
-   URDtknP6RD2hl91g6vvJf09ICG7Jpe1QQoLhC3pNXSyyFkdY+MqfY6d96
-   XGfu7GGdsd0HR4CsxyNPJzQx2lG2WFzXnLxlTaJPkX8FZAxOmYu7Jo8WX
-   dFODaRsz7He+nqap0R+6gWl3prw09k63n1xXjpM34fkD4alVeE2KhC0YS
-   g==;
-X-CSE-ConnectionGUID: +0SaHYiNQvO3blUmGmbNYQ==
-X-CSE-MsgGUID: FQLo0IQzTBSEH37GcU/f2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26820099"
+  t=1727577734; x=1759113734;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YPx5QA97jipQMMLwP45wplNXnHwAHBwZK8de9l31+I4=;
+  b=M/ZjhZTbCBudGK/+mIeOdaK+ylyrhDE2zRJSBqsfgO17RuBcdLWPXHKD
+   t6xlLH1Lb6ojUB9iz7gPxPbGirV4RhmMES10Xt5JGqsyTyPH2XnQuxrFt
+   GMKDs2c1NNPHZQjpYecqn9eeRSVVZ7TzXL+3tZcY2uDarTN3c6Y1lgMmP
+   hB+KDuV6CT3xke0HxIHy8FqGWrNzzSsyO+gVnIdDVEnPBAT9oxQl1ACR1
+   Q8f+v1WkgEM+NFQBWDCEGkWNOpFwsJV3C937cBhFFU8uPGmB9kmWyRK37
+   WBN+s6i28U0crikhrtmYLAOxcccoM+I8PmVNtm6R2R/CZ1pbTx5mLUuEI
+   w==;
+X-CSE-ConnectionGUID: ygH1ZY9OTCCF+xgFMv0xpg==
+X-CSE-MsgGUID: dnH9syX+REefFvE42NwM8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="30390405"
 X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="26820099"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 19:43:17 -0700
-X-CSE-ConnectionGUID: 4DrfJr3eTpKPJm6yD4yWqA==
-X-CSE-MsgGUID: rHlnvx1cTy6q6al5OHj5fQ==
+   d="scan'208";a="30390405"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 19:42:13 -0700
+X-CSE-ConnectionGUID: jGBL3PlkSTqpE3bOuJ2t/g==
+X-CSE-MsgGUID: LuVzNOm3T9uf/yX7GmShIg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="103713140"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 19:43:12 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Barry Song <v-songbaohua@oppo.com>,
-  Kairui Song <kasong@tencent.com>,  Yu Zhao <yuzhao@google.com>,  David
- Hildenbrand <david@redhat.com>,  Chris Li <chrisl@kernel.org>,  Hugh
- Dickins <hughd@google.com>,  Johannes Weiner <hannes@cmpxchg.org>,
-  Matthew Wilcox <willy@infradead.org>,  Michal Hocko <mhocko@suse.com>,
-  Minchan Kim <minchan@kernel.org>,  Yosry Ahmed <yosryahmed@google.com>,
-  SeongJae Park <sj@kernel.org>,  Kalesh Singh <kaleshsingh@google.com>,
-  Suren Baghdasaryan <surenb@google.com>,  stable@vger.kernel.org,  Oven
- Liyang <liyangouwen1@oppo.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-In-Reply-To: <20240926211936.75373-1-21cnbao@gmail.com> (Barry Song's message
-	of "Fri, 27 Sep 2024 09:19:36 +1200")
-References: <20240926211936.75373-1-21cnbao@gmail.com>
-Date: Sun, 29 Sep 2024 10:39:38 +0800
-Message-ID: <871q13qj2t.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+   d="scan'208";a="77311263"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 28 Sep 2024 19:42:10 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sujst-000NqV-1Z;
+	Sun, 29 Sep 2024 02:42:07 +0000
+Date: Sun, 29 Sep 2024 10:41:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lee@kernel.org, sre@kernel.org,
+	tsbogend@alpha.franken.de
+Cc: oe-kbuild-all@lists.linux.dev, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-mips@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Re: [PATCH v5 6/6] i2c: Add driver for the RTL9300 I2C controller
+Message-ID: <202409291025.P4M4O1F2-lkp@intel.com>
+References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
 
-Hi, Barry,
+Hi Chris,
 
-Barry Song <21cnbao@gmail.com> writes:
+kernel test robot noticed the following build warnings:
 
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
-> introduced an unconditional one-tick sleep when `swapcache_prepare()`
-> fails, which has led to reports of UI stuttering on latency-sensitive
-> Android devices. To address this, we can use a waitqueue to wake up
-> tasks that fail `swapcache_prepare()` sooner, instead of always
-> sleeping for a full tick. While tasks may occasionally be woken by an
-> unrelated `do_swap_page()`, this method is preferable to two scenarios:
-> rapid re-entry into page faults, which can cause livelocks, and
-> multiple millisecond sleeps, which visibly degrade user experience.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on andi-shyti/i2c/i2c-host sre-power-supply/for-next linus/master v6.11 next-20240927]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-In general, I think that this works.  Why not extend the solution to
-cover schedule_timeout_uninterruptible() in __read_swap_cache_async()
-too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avoid
-overhead to call wake_up() when there's no task waiting, we can use an
-atomic to count waiting tasks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-reset-syscon-reboot-Add-reg-property/20240926-060355
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240925215847.3594898-7-chris.packham%40alliedtelesis.co.nz
+patch subject: [PATCH v5 6/6] i2c: Add driver for the RTL9300 I2C controller
+config: csky-randconfig-r111-20240929 (https://download.01.org/0day-ci/archive/20240929/202409291025.P4M4O1F2-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240929/202409291025.P4M4O1F2-lkp@intel.com/reproduce)
 
-[snip]
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409291025.P4M4O1F2-lkp@intel.com/
 
---
-Best Regards,
-Huang, Ying
+sparse warnings: (new ones prefixed by >>)
+>> drivers/i2c/busses/i2c-rtl9300.c:321:27: sparse: sparse: symbol 'rtl9300_i2c_quirks' was not declared. Should it be static?
+
+vim +/rtl9300_i2c_quirks +321 drivers/i2c/busses/i2c-rtl9300.c
+
+   320	
+ > 321	struct i2c_adapter_quirks rtl9300_i2c_quirks = {
+   322		.flags		= I2C_AQ_NO_CLK_STRETCH,
+   323		.max_read_len	= 16,
+   324		.max_write_len	= 16,
+   325	};
+   326	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
