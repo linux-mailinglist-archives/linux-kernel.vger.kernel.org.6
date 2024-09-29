@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-342966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0996098953E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ECAF989541
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7631C208FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:01:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B11F22965
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBF1714AF;
-	Sun, 29 Sep 2024 12:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71583176FA7;
+	Sun, 29 Sep 2024 12:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="anMzCCct"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="AmlKU45B"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29DB139D0A;
-	Sun, 29 Sep 2024 12:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBF613A268;
+	Sun, 29 Sep 2024 12:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727611264; cv=none; b=CshjNu6qHoJtsm8e/a1sHIczMuLQ+IP4uUE6SJabxAFd8j91b35lotXp2Yb+cPHrIBpbo3+y7GQdq3guVOF63OMH6i7t2aLNIw9tKMZn72S+TwUCt0kD3Iyp/uPwVl297jQ1+v9CWz/LDSe+ZuG3ewN5rXAA8LQyJreJeGNf590=
+	t=1727611638; cv=none; b=LpzMmJrjNVAVpZZ8p8wsfp3owId65J/y663sbvb7mVYWkYbGSOXdQxX7qlthrmMPkdKb6us4iH/JhEPOeDaLT6sTetGkz5Qj7d0djcdTybO0+ux1xCDgW51AEyRqCPsUbqNKYe7eV33TV55KUn3QnPqxFoSkaH7WEVlSo27tcvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727611264; c=relaxed/simple;
-	bh=MsTHzjFDvxiqe1Ec7mi+ML/OntdXgzvky9K468iFJQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LAELgqndCm0+fCkEPsWHlaal/nAI5/fHWZrY8HtHLFFuruM1GKCm1Fq5DvmWl1mybupAYbRIZ1xeJIm4yRtzHsZ3zAQNaY6gZFGIe/Avw2Tm5KMwFIK62tLWxq3UqmYMX/TqhrC2/H0AVNYd1hY0iWS5fjRvLpxIcRlNiS/JKD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=anMzCCct; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 048A6B3;
-	Sun, 29 Sep 2024 13:59:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727611164;
-	bh=MsTHzjFDvxiqe1Ec7mi+ML/OntdXgzvky9K468iFJQY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=anMzCCcts+ntXdOz4yXV/F0S66T6WcaLDAYILV5Bn57HZ7/9O+7mjT0lxmKL/rgbC
-	 82Q0/KfckAmfrBh5FbKDFnnh+5XiEi9AkpU6rd5nCBY+ffwAWC4IBKmt0YNdMYrkL4
-	 QG88ovXoa7+e7Icc+d5q8Zam1ZLjIFqhuGZz4eAU=
-Date: Sun, 29 Sep 2024 15:00:51 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: guoniu.zhou@oss.nxp.com
-Cc: rmfrfs@gmail.com, martink@posteo.de, kernel@puri.sm, mchehab@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev,
-	linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: nxp: imx8mq-mipi-csi2: Fix CSI clocks always
- enabled issue
-Message-ID: <20240929120051.GA31662@pendragon.ideasonboard.com>
-References: <20240929101635.1648234-1-guoniu.zhou@oss.nxp.com>
+	s=arc-20240116; t=1727611638; c=relaxed/simple;
+	bh=Xh5ExjcgQh/E77y3Jk6URT9DRI8CIzqO6ymaMql+pt4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QqjUhbO8r6+7PAHswu9I7jGVKUm27oLaZU/co88y7DcO3qE8rSYMDrnz0d83YxuFKIzOToaMTNNKOpZQg81rEH3stFveeqwQbo4S/tmxbTqwpyAGe9nM75DK9ArJjhAvOtBeDMt40P31c1KYsVTv8NGJxPOQvwBhu4MFG/Hy3j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=AmlKU45B; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207115e3056so29820085ad.2;
+        Sun, 29 Sep 2024 05:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727611637; x=1728216437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zjxInaNhLVD836E7kvEQ4tYnrdCtxNbjV5ha2p76v8M=;
+        b=AmlKU45BzwfLhKpNVfP9Dtu6UzRHxunUagmcABuZfn2IiGPqtyBvGvw0ft48GgfGYZ
+         2A0h3kAbDOtPTKgxhjMPZt0V+KRAGBhOGtpJOmHMSTbH1dufE9AMlpKSglyFlVI9TsYQ
+         vRaZKcdSmH4GMt9YPV4i+71KduUMQu5fqHIqD4iZROdNhTxsX2do/Pb1Ur8pC/kgvXlN
+         kaWHoDHsmjzhJ8ta7PUnOT4hlteDHauQcCMwxyDksoDSv1B9smYNWmYkCfU2IYMp8pT/
+         RhFVvs61Ysky07HVVnx9UAzMt2v/on4IMSnbiI4zwgEXWHI86Km1YoxUywJVSstf2NA5
+         2SQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727611637; x=1728216437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zjxInaNhLVD836E7kvEQ4tYnrdCtxNbjV5ha2p76v8M=;
+        b=XEj/zYu0yti1RZGf6zGtYebxvvZYz93Toa2WoGDOuzd6JkxM0Zg/dqWLhvJHndg6Cm
+         wantUDZrXe6p4YoRqsyFG1oMbdUxNChH8BiigJ/cgAKhZJ7hC2ZTBjmlDBpV98fvLzlZ
+         nDMuk8LiQRF7fQKwzi5CVBRK2XwgvAY46kc+WoimmPqY68kkWhI75PoPrzBucbJJKjuD
+         vY2v1md3G70eZTZ9w/O3PgrV1DNkDtej4YZ8ZYYxIJzjHtKwq01gDhB9QUNm5o6XF4RQ
+         HsxEfMAs3AquXPH2SyDdCOrEap+IkeakE2Wscv/2uvD4Ii4KUJOqwqpvE2zKlcKEmw6F
+         2ZZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIGWgOKi50TIdaNsRj8V0DhHkQVxNl5aMI8EFX6WPMHL2v3Zn0/ClJ+tbDvoQjjF6J/qma1QnzLIX82gqQ@vger.kernel.org, AJvYcCW1M8ekiKVi+fFywNsNf/pt93V+D1++5RfOQzJwMUbnCP7Z0UFavMlD9gnp1dKTsuTinGWma/m9fhwA@vger.kernel.org, AJvYcCWN3IrPYoq0hWMg7S/ubNuoEsGmhWvNP4iqVlNUJ75gn7qSpaeewS2KloBblY5vY3xLzHzubx0T3VxLRSeJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrun2JderNyIT/Q34szcY2rflPsc2NRGEX9POjJn9qCkOv0EZn
+	/ZbAKQix8+GZpRfegJgukVkKx4ES+FDttgWbv6j9Upi4Ia3ls6TmtO0TZDmbyLezxWVB1F+cc7R
+	TJmINti4YVkeDqhmST++2Z9NlH8A=
+X-Google-Smtp-Source: AGHT+IGkItVurXd3ky7Ze3/m8wpVZ4KRuguynlrG29y9ctBKfpIWygc9BxUDQ0/p6z4xHmFc2bL685GfGWj5pSZ1VkI=
+X-Received: by 2002:a17:902:d4c2:b0:207:13a3:a896 with SMTP id
+ d9443c01a7336-20b369d605fmr122281315ad.23.1727611636800; Sun, 29 Sep 2024
+ 05:07:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240929101635.1648234-1-guoniu.zhou@oss.nxp.com>
+References: <20240929093418.526901-1-yujiaoliang@vivo.com>
+In-Reply-To: <20240929093418.526901-1-yujiaoliang@vivo.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sun, 29 Sep 2024 14:07:05 +0200
+Message-ID: <CAFBinCBYd2W8+-oKVayFmW9sEVU0Sp+vtW7QNABdsm1Rxh=Y=A@mail.gmail.com>
+Subject: Re: [PATCH v1] mmc: Fix typos in comments across various files
+To: Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, imx@lists.linux.dev, s32@nxp.com, 
+	linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Guoniu,
-
-Thank you for the patch.
-
-On Sun, Sep 29, 2024 at 06:16:35PM +0800, guoniu.zhou@oss.nxp.com wrote:
-> From: "Guoniu.zhou" <guoniu.zhou@nxp.com>
-> 
-> Fix CSI clocks always enabled issue after run system suspend/resume.
-> 
-> The clocks for CSI will be enabled in imx8mq_mipi_csi_pm_resume()
-> when system resume and the state of CSI will be set to ST_POWERED.
-> It not only cause clock always enabled issue but also system hang
-> issue on iMX8ULP platform since imx8mq_mipi_csi_pm_suspend() will
-> access CSI registers if run system suspend/resume again, but the
-> CSI power domain is not active.
-> 
-> In order to fix this issue, using pm_runtime_force_suspend/resume
-> instead of calling imx8mq_mipi_csi_pm_suspend/resume directly.
-
-I think you can simplify suspend/resume handling in the driver by
-dropping the system suspend/resume handlers. At system suspend time the
-device should already be stopped, because the top-level driver (the CSI
-bridge in the i.MX8MQ) should have stopped the pipeline. Similarly, at
-system resume time, there should be no need to restart streaming, as the
-top-level driver will control that.
-
-I'll send a patch and CC you, could you give it a try ?
-
-> Signed-off-by: Guoniu.zhou <guoniu.zhou@nxp.com>
+On Sun, Sep 29, 2024 at 11:52=E2=80=AFAM Yu Jiaoliang <yujiaoliang@vivo.com=
+> wrote:
+>
+> This patch corrects several typos in comments within the mmc/host
+> directory. No functional changes are introduced, only comment
+> improvements for better readability.
+>
+> Detected using codespell.
+>
+> Signed-off-by: Yu Jiaoliang <yujiaoliang@vivo.com>
 > ---
->  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> index d4a6c5532969..15029bb81b35 100644
-> --- a/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> +++ b/drivers/media/platform/nxp/imx8mq-mipi-csi2.c
-> @@ -697,8 +697,11 @@ static int imx8mq_mipi_csi_suspend(struct device *dev)
->  {
->  	struct v4l2_subdev *sd = dev_get_drvdata(dev);
->  	struct csi_state *state = mipi_sd_to_csi2_state(sd);
-> +	int ret;
->  
-> -	imx8mq_mipi_csi_pm_suspend(dev);
-> +	ret = pm_runtime_force_suspend(dev);
-> +	if (ret < 0)
-> +		return ret;
->  
->  	state->state |= ST_SUSPENDED;
->  
-> @@ -713,7 +716,7 @@ static int imx8mq_mipi_csi_resume(struct device *dev)
->  	if (!(state->state & ST_SUSPENDED))
->  		return 0;
->  
-> -	return imx8mq_mipi_csi_pm_resume(dev);
-> +	return pm_runtime_force_resume(dev);
->  }
->  
->  static int imx8mq_mipi_csi_runtime_suspend(struct device *dev)
-
--- 
-Regards,
-
-Laurent Pinchart
+>  drivers/mmc/host/atmel-mci.c       | 2 +-
+>  drivers/mmc/host/au1xmmc.c         | 2 +-
+>  drivers/mmc/host/cavium-octeon.c   | 2 +-
+>  drivers/mmc/host/dw_mmc.c          | 2 +-
+>  drivers/mmc/host/meson-gx-mmc.c    | 2 +-
+for meson-gx-mmc:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
