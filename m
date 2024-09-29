@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-343150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5094C989749
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:35:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703C298974A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01E46B21ECC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:35:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29C9F1F214FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BFF7DA68;
-	Sun, 29 Sep 2024 20:35:07 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC27DA8C;
+	Sun, 29 Sep 2024 20:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="RJf3Iif9"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C5D1F95A;
-	Sun, 29 Sep 2024 20:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747972AE90
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727642106; cv=none; b=A7dSxoHvqV2nf6rFLcV4nDtOELF3DA7QeVKUbzP29hdCBmlueczn2M1N5gd63fvG3S96DmYxn36Da+zE0uHQLE3Zyg7siQZ98GFYjcyDBWB6wmnkQihsPawF4bOnlmkoQwXU0tTjF9s92A3KZsHiVSqPr8iyQiNYLQ/235U1aWw=
+	t=1727642203; cv=none; b=EcEhVfyIeNYFr7fgfBWRaDG4MZuuQzpLLfvOJQGco1TUwup6mR4Tg5tY0kNNXIRWI69kV35n3Ta1ZgAo/CKS6kAi4rtZ9Rnpvt1dczZ0n3LZei87zBTzNie3TwL13/UzQXKYg6fc3h2JfTg9N8x3LZqxt4IT3dnrkuhrRDD/3Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727642106; c=relaxed/simple;
-	bh=DLAuxEpvSOj0ujPKSoEJPWt33cOwsZsk0QVYKAyfS+w=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Z7z8H8/gpcMMFFM1V3qhkG3ZqUItYipNitaKTWcfoWgUNcoEmx549lfOcCey18x2LUhn4jAbgR+jTdN1tdUgKiDOoSlqH6sbmAAFNenhwjWuRJO1HUnZ0qVeZkDns5vQih4pSO2Q5pGFv4/XrmCNT0wm84c/KPH4XzJC/NMPa2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu; spf=pass smtp.mailfrom=artur-rojek.eu; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=artur-rojek.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=artur-rojek.eu
-Received: by mail.gandi.net (Postfix) with ESMTPSA id CB155E0002;
-	Sun, 29 Sep 2024 20:34:54 +0000 (UTC)
+	s=arc-20240116; t=1727642203; c=relaxed/simple;
+	bh=yJvKHFVaWy+U/hapM0yQzvNmizf07/FN1eL92Wgn+Sg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4L96CfFXQBtbSe97cqIkzaCkv4G22nI9juEZLF/Ar0o5KsHqx74EY+iQMHP/dEkoKWsONzPJ0LaTwruxWy8Q+3cniSdLyW0XeDoSh8bNlWosM0/5vB2IAef3ZCuBTDU08V+D7zXPBrhjvtB6OjYT6MPXxSiZDB1w2JEE2wGud4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=RJf3Iif9; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e2598a0070so9868227b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 13:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1727642200; x=1728247000; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OVnHMnmiF+13daBSttLD+aIXUDJcxVgtv3MA41ELUOQ=;
+        b=RJf3Iif9Spw6qAqkijtvucZ77XCj0wBbyMDahCjzLCafo5+WX+2IwfmbMcQn2Vif3C
+         4CLXqc57GWQ3BZausJoOs9yA/euW10Qr4s5EpWQkSzJtHsgp5K4+P/bOGWx7/17OSZVA
+         n4oL/rw+qapRXH0JTi14mPU+nZ8L3yAeQ+GwNMIkNxgyulYV0AMQ2Z//+kPANVl/RLba
+         Vqbb8CkJ71cKvgFp9oHyVWr7K+vn8LxolOFP0msLdEl12Rqa02lc0d09NU138oC9OUyf
+         CLJCSO9W4Nm8xSk1UGc8ecgqOcO5hZONpbflr+WBatCp4cinw5K0uPFB9XVZj5JRFpiz
+         u9kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727642200; x=1728247000;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OVnHMnmiF+13daBSttLD+aIXUDJcxVgtv3MA41ELUOQ=;
+        b=btbDxEU5mdkCDSTwlPGr1KAd+wYWBbVrvWbkpXvbkN+l+3tbd3lIMLeYJMBT9NKUD7
+         9ZtOAIWpvDrFmZ4mEg3f41W1ZHNL5WinvivUYsAmhLab7FxvOAx2whnhg45lolxLa/wG
+         lQJqyChZSPmpRjRxh+7U5/Z6g6Zv/tppIg1QXph2DjopHg6gs86kqw9t9GxDj9CunO9W
+         WFwNj4THUFDEtV5S345LwfEZtPcvRFjyFd5F5ik/FLOe568iOlWFDy5ArDTC2vL2c0FV
+         NFfOjYb/3mcwOIvXDaN+d/1acN3SBdKrERqD9HLdeTdusVPrDVMsBgGHMY1wV5u/23i+
+         O6Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCU83B3OKuLzkl4bd6LZ39eYBC6gqeJLU4qcl5HiVwd7e21L2Zq5hEXUPXOvFI252t1J82n6vTYyltg0pmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLQpcybMD3iNUUWq+UXLZ2bdAMWLWYKx1cwPLvZ74CxEzBa2mm
+	pGKJ8LWv5GrtNWBQ4UCxBrcp12NOQdjaSI8ZzXQeGOhwNe5mp4hyXc+suWog97d5eigQMbIBZnd
+	/S2uJHCHKc+U0t3pfohJkji3QY1MY7iypPdKA0w==
+X-Google-Smtp-Source: AGHT+IETCze3KtAe+nbUVqoRMjK6sAQNLok2M1rHft7+nawFMwPHyIKRFgxqTTpRzDf2ozXAHljC8Nhw9SfgrzI5dTA=
+X-Received: by 2002:a05:690c:2905:b0:6e2:1062:9b90 with SMTP id
+ 00721157ae682-6e247619bd8mr54586977b3.44.1727642200296; Sun, 29 Sep 2024
+ 13:36:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 29 Sep 2024 22:34:54 +0200
-From: Artur Rojek <contact@artur-rojek.eu>
-To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-Cc: dalias@libc.org, glaubitz@physik.fu-berlin.de,
- ysato@users.sourceforge.jp, kernel@quicinc.com,
- linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org, robh+dt@kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v5 1/2] sh: Restructure call site for early_reserve_mem()
-In-Reply-To: <20240718021822.1545976-2-quic_obabatun@quicinc.com>
-References: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
- <20240718021822.1545976-2-quic_obabatun@quicinc.com>
-Message-ID: <f36740a3b7f5a4b031aa656533403f1f@artur-rojek.eu>
-X-Sender: contact@artur-rojek.eu
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: contact@artur-rojek.eu
+References: <20240916213025.477225-1-lyude@redhat.com> <20240916213025.477225-2-lyude@redhat.com>
+In-Reply-To: <20240916213025.477225-2-lyude@redhat.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 16:36:29 -0400
+Message-ID: <CALNs47u56oVYxwNq+POgOu0m141gwG-mEoRBH8hzevj6Ve-Vag@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] rust: Introduce irq module
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	Benno Lossin <benno.lossin@proton.me>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-18 04:18, Oreoluwa Babatunde wrote:
-> early_reserve_mem() reserves memory for important regions in the kernel
-> such as kernel text region and bootmem bitmap.
-> Reserving these memory regions should take precedence over any other
-> reserved memory allocations so that the system does not unknowingly
-> reserve them for some other use case.
-> 
-> Hence, move the call site of early_reserve_mem() out of the
-> paging_init() function and into an earlier point in setup_arch()
-> 
-> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+On Mon, Sep 16, 2024 at 5:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> This introduces a module for dealing with interrupt-disabled contexts,
+> including the ability to enable and disable interrupts
+> (with_irqs_disabled()) - along with the ability to annotate functions as
+> expecting that IRQs are already disabled on the local CPU.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
 
-Hi Oreoluwa,
+> +impl IrqDisabled<'_> {
+> +    /// Create a new [`IrqDisabled`] token in an interrupt disabled cont=
+ext.
+> +    ///
+> +    /// This creates an [`IrqDisabled`] token, which can be passed to fu=
+nctions that must be run
+> +    /// without interrupts. If debug assertions are enabled, this functi=
+on will assert that
+> +    /// interrupts are disabled upon creation. Otherwise, it has no size=
+ or cost at runtime.
+> +    ///
+> +    /// # Panics
+> +    ///
+> +    /// If debug assertions are enabled, this function will panic if int=
+errupts are not disabled
+> +    /// upon creation.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// This function must only be called in contexts where it is alread=
+y known that interrupts have
+> +    /// been disabled for the current CPU, and the user is making a prom=
+ise that they will remain
+> +    /// disabled at least until this [`IrqDisabled`] is dropped.
+> +    pub unsafe fn new() -> Self {
 
-the patch is looking fine to me. Verified on J2 Turtle Board.
+It could be worth mentioning that you probably won't be calling this
+function directly if you need an IrqDisabled, linking to
+with_irqs_disabled instead.
 
-Reviewed-by: Artur Rojek <contact@artur-rojek.eu>
+Either way this looks great!
 
-Cheers,
-Artur
-
-> ---
->  arch/sh/include/asm/mmu.h | 1 +
->  arch/sh/kernel/setup.c    | 3 +++
->  arch/sh/mm/init.c         | 5 ++---
->  3 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/sh/include/asm/mmu.h b/arch/sh/include/asm/mmu.h
-> index 172e329fd92d..696e303a2f19 100644
-> --- a/arch/sh/include/asm/mmu.h
-> +++ b/arch/sh/include/asm/mmu.h
-> @@ -96,6 +96,7 @@ static inline int pmb_unmap(void __iomem *addr)
-> 
->  #endif /* CONFIG_PMB */
-> 
-> +void __init early_reserve_mem(void);
->  static inline void __iomem *
->  pmb_remap(phys_addr_t phys, unsigned long size, pgprot_t prot)
->  {
-> diff --git a/arch/sh/kernel/setup.c b/arch/sh/kernel/setup.c
-> index 620e5cf8ae1e..3b0bc191a2a2 100644
-> --- a/arch/sh/kernel/setup.c
-> +++ b/arch/sh/kernel/setup.c
-> @@ -40,6 +40,7 @@
->  #include <asm/setup.h>
->  #include <asm/clock.h>
->  #include <asm/smp.h>
-> +#include <asm/mmu.h>
->  #include <asm/mmu_context.h>
->  #include <asm/mmzone.h>
->  #include <asm/processor.h>
-> @@ -319,6 +320,8 @@ void __init setup_arch(char **cmdline_p)
-> 
->  	sh_mv_setup();
-> 
-> +	early_reserve_mem();
-> +
->  	/* Let earlyprintk output early console messages */
->  	sh_early_platform_driver_probe("earlyprintk", 1, 1);
-> 
-> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-> index bf1b54055316..643e3617c6a6 100644
-> --- a/arch/sh/mm/init.c
-> +++ b/arch/sh/mm/init.c
-> @@ -19,6 +19,7 @@
->  #include <linux/io.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/export.h>
-> +#include <asm/mmu.h>
->  #include <asm/mmu_context.h>
->  #include <asm/mmzone.h>
->  #include <asm/kexec.h>
-> @@ -242,7 +243,7 @@ static void __init do_init_bootmem(void)
->  	sparse_init();
->  }
-> 
-> -static void __init early_reserve_mem(void)
-> +void __init early_reserve_mem(void)
->  {
->  	unsigned long start_pfn;
->  	u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
-> @@ -282,8 +283,6 @@ void __init paging_init(void)
-> 
->  	sh_mv.mv_mem_init();
-> 
-> -	early_reserve_mem();
-> -
->  	/*
->  	 * Once the early reservations are out of the way, give the
->  	 * platforms a chance to kick out some memory.
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
