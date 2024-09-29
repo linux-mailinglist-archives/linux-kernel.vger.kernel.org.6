@@ -1,102 +1,116 @@
-Return-Path: <linux-kernel+bounces-342886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F73B989469
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:20:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E1C989477
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D5AB2489F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:20:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DF5AB250DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D032143C77;
-	Sun, 29 Sep 2024 09:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1BC178CC8;
+	Sun, 29 Sep 2024 09:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ezwybi7f"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Nusst0kc"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CB922092;
-	Sun, 29 Sep 2024 09:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D8B152790;
+	Sun, 29 Sep 2024 09:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727601602; cv=none; b=Zo6eF9uOplbl3NyvA5b3vDVcMFDB9MQUQtiPhLzGZQWmI+XBPZkWbGFqSPhBirVatMaaJKCYSDnNXFJKAmplBBbnYzUwFnz0Og/mX2jdqQzj2UqSPLhdmyKY8qC1E8jUv84Md3mfII661EGLjFzrCe6cRFkeEpX74y9EL04l2gQ=
+	t=1727601763; cv=none; b=QVgF1TYTUChuhA6xD76nR27jZoBWW16M7ii9A3+TB2PYNR/0Lb0cIWIfGqlnZF0iAbGrP3ApD2fcNznZhfYQy2VbCGlfRsYsBfYBDbhPAH90XIT3C/ljGb1hq8eQFQjFzFtgWuv1vmg+gFy36MU1V0fuK8VQFlZ644TwMlEtmzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727601602; c=relaxed/simple;
-	bh=NOlP0uEbJArlOkiWpUyGpd7tDRRkDAxP1mFI/WCzZug=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=hxppNe7GbZfvq3v6i9JhBkgHUQgN12cQ8v4H0qoNyE004nijQt763NdGYe+tYuLA1fAytkmcBzKWYAkHwQ7k3FmEKaRZZoLmmBDP3+NlSIm623nzTBPttb4aAmd5pE7X616ebUGKcHRs8ZGwQ/KxIGFoqfd8joyj3gIGNvoGmQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ezwybi7f; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727601570; x=1728206370; i=markus.elfring@web.de;
-	bh=NOlP0uEbJArlOkiWpUyGpd7tDRRkDAxP1mFI/WCzZug=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Ezwybi7fu8sxcxzaBVomY+AGdW/RNDXwSgud++uWZL1idvWeePtWwbo2WChIxSR7
-	 E/cftPjDtiuqTHbNhm+OUZbGyXldILhw/uDtT6kcS21tsUB45Q9YoKjviPCUcABI7
-	 d/0MZ/lL2QelQX2HfS+X0Vud/+earnLRCzKiXugOnzvrx8L4tu6o68ofZ4VWRM+6D
-	 woWKE2cuKATxkDAabK0bJfr3BSzyOpWeTolKXneWZcfK8Rg8aEzolwm0PJlMoYq4T
-	 a/4xNx22zFVF5Uj+r/8s2DZNSilnL/Sc+22XjyDIwtEm4q4pPfN9dKk6P6pGPgWvR
-	 QEmL1jMlwqJQhvPieA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M1aIB-1ssu0v3P7D-003hAV; Sun, 29
- Sep 2024 11:19:30 +0200
-Message-ID: <60f7626d-66c6-4ae4-bd40-03852fe2aee5@web.de>
-Date: Sun, 29 Sep 2024 11:19:21 +0200
+	s=arc-20240116; t=1727601763; c=relaxed/simple;
+	bh=HMwqAktBHR321G4V0drhu3d2RksWelOXlZchpT6OQXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o2JVBgVFa3FeSJVh4IGxTeuiisy378aXxb0JfLKgmWoRq31lM4RHT/3SPWv++1weeUCYVpbxU3gUFZopa9+UVIjhF4smRJKDt9K+LwuVitguOobs9lajMzSNRAmtR+x/vwTJ5x2ujSAzJMkJqvmmw5rGX5fn5tV2B9Ff65iXluI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Nusst0kc; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1727601694;
+	bh=dEd10cim6i43JU3mwWFeexRFb9vw0bE8/cYxC7zHp8U=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Nusst0kcYfgZA9K8UtkOXTz+R+3sezFyGabrSwNQK5pVwbi4X2uwkQK2uL3QIDVG3
+	 q3GVSmjanICDEGK/yw2y9BBTGvaWkQdVPTLwHrpzRVRQLW2x4sI3sfKHgKrv57ZtLI
+	 CfD/TgWXwldvp+ap31DaZeKm7DfUZFzj+wscmQo4=
+X-QQ-mid: bizesmtpsz11t1727601663th71y9
+X-QQ-Originating-IP: XO3PTpV1d7mu0tyJTNtMJ62elmv8jBM4+fmPaBs/1GU=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 29 Sep 2024 17:21:01 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11011655909713705943
+From: WangYuli <wangyuli@uniontech.com>
+To: pavel@ucw.cz,
+	lee@kernel.org,
+	aren@peacevolution.org,
+	tzimmermann@suse.de,
+	wangyuli@uniontech.com
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jjhiblot@traphandler.com,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com
+Subject: [RESEND. PATCH] leds: rgb: leds-group-multicolor: Correct the typo 'acccess'
+Date: Sun, 29 Sep 2024 17:20:57 +0800
+Message-ID: <DA8E8FA1F45D2F5A+20240929092057.1037448-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yanjun Zhang <zhangyanjun@cestc.cn>, linux-nfs@vger.kernel.org,
- Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240927042500.205967-1-zhangyanjun@cestc.cn>
-Subject: Re: [PATCH v2] NFSv4: fix possible NULL-pointer dereference in
- nfs42_complete_copies after state recovery failed
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240927042500.205967-1-zhangyanjun@cestc.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vsXL+w0DN2Q54ykYt+OdBYAK6YAJK44UfnNh+Nsg3ZW+SCkS+Dl
- qj/LZaHrWm/8iHGZ3gc0meEUbnPpaYGtluyUsBumUo0cm/VLPZMwEVFeM3B9hv/v+78690S
- 7k6Qw23YPwsJSUuwP8NmdbqDbbwjOhR02hJC/ayBCGQSEwIdyZtu1f3OfdjLt8pm48Yh/yx
- nwiNkhFfpmV6cBhoDLy0w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yfYv9T+6NRs=;uni9LNuNYLTkxn82LnTyom8A3XE
- zOQS3ycp8JEprgapusIVQsykMvVHgSNyqhZvHczSpzuzEYxo93tZqSU56B4JVaujC3jOLes7v
- eUxAm2xxNv0TikupvvqRYKg2+4d6GajIeOzuUJMwN8OZUO26vfXdwH9UaIeWRmNlq9n4R5Ulq
- RTQtHEbsd1ae098cs04lUQj7GejIQ1Lt6eXgKcEPnr61sUlORpBdIeFG9Wmle5GJwpdGGeHc5
- 3axD/LN5jK8tpOyfWWtWIrGpyr77Ok36ck/2lxTONPNvXSujAYnc/op3t+D42aFbodIhKvEaU
- yZo2sY78QBSu4VOGEhNt6ZkW6gE6daMMagtMHOVUoyxFnTRo+yq+/jbkjp2AmuTk/1uaEfppJ
- MSXgAPrG8GItErtjThTvPoV1FQcPpvpFzcQ6cynqLa985SIgOvtdmSu9uZ7H6h3pV3DSYjOwj
- soi6Ddhh76vXJD1+YHOkyWzIFsIUqMfmiuDI5CC98+I9Yxw7eALg17qb9ykO9phuzV9f5QG91
- aMLAgENKMtAZyJ380BmUZvnNEtCbAG3vMH4hTTF0KcyaJRSY1SxU8E7QeyZ8rSDhz9b8ByO2j
- cE1ib794UhUuqMFs2JMS+znq9gr7x81kZzuC2AzuzHX6RdyhG93HD/vQrC+Uhf8uyaWOwOqGc
- tRetsUtxJ+X9o7CA2PVKPlftpcEtUlRvK5L75wrqCdK8fMvrZCSvKq9OIUxI+zUUl8CKHUnTE
- n6sKP4ixohABCv6QGtuLn009WsF4G8hhiubDvbvgAqnSP7m3RlARqOMi/ZtUrsnYmjgr9WAJ5
- nm7eSyl4sOMI2DDY9M+nJLUA==
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: ORsPGgEyjQSPL+g5xeTt9lUpoSBYFV3HVdoq4Jm6VrXJ3Nrxdj/wipW6
+	/7aR17zPn9aHcak81PrT3cnyCeS22MiPZdffIpGKeEjCoRYRhbA2h3KcOZUIcJfepjQc7Td
+	pW17DX5q3OVhFDHvs47h/mTGck/51mV1KfyLQeS/SdGI55s6wFqz3ge4GwANqxYTUekiArJ
+	qCgstgSWXj3iSqyiuxWMmGoFLjZjODbAHBfH7OsDAY9pVhZkoFXiB1mzcnX5ug8w6FtDXaH
+	yYHBMUjFEojJHErrOdfbv3C3jRYlSJro6mClsUk9qhD+rW4EeFkJnQahYkfChTkdwS5PUjQ
+	smcYLlRD4QpR+qcnx+bSTVuHucCfJ3XxJJoiyWdrtU+xBA5uKIvNDmDCtC9F/0X/d36UKyA
+	N3uzKoMdfg9imUDabApzBLFX8dus7+dNCXgEAOdDtJhlxIbkuSlDavfau6SleG4VfjpcMhP
+	Jy1ShduMFTCDcTdI1oTr7+30klf1MD1ZdJnc1m0KYTc2ghTnNZrZiZ8Bk0X6uw2DPkqMFXH
+	s5uKQOhszihB+w46IjUT9WDukWhQjtQ/dTvIi51OmVlwqjrGwzlWWWi06Ame/La8ttwkMeD
+	IQSg8mFz63L1kEL3ZX0e1JRUyujyhfWUu8bltQ6jwkur/uOjmzX8YygktPrYNzuEYOWkwL0
+	rIKGiVCiU2FStCxpwcnmn/QvZXKtbdzHYtuPysYoIzzzK0cRvpDBH1K6takbAfzf6TN5t/G
+	lNeStRuA+jV3eQJlMVsny5tfP7f8qTvSHSdS+1dFhzqDMNV074tlAuiv8HFRQV2VNh1AgR4
+	cWhr17s/DppQz6QPV4AXUTdIPC8am9ztm3xHWCqF+JFOQAIV9XjOK2MJW7rD+Itv9SiiWth
+	lzyppXGU+wJUObQaAA0utLJUe88lCAxWWPO1oM9fnOsWV9Nu9mbl7wkFLbU7z0JqjK65BbG
+	AlJvpwk9oP65+JRXqe7/N6i0e5UVBPG14E53u2LfumVonSrohlSDg9DkOOsBQJyRY981RX5
+	c15dwz6NZz7tYxyKXgz39BqZaIAiM=
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-=E2=80=A6
-> We found that the NULL-pointer dereference was due to nfs42_complete_cop=
-ies list the nfs_server->ss_copies by
-> the field ss_copies of nfs4_copy_state. So the nfs4_copy_state address f=
-fff0100f98fa3f0 is offset by 0x10 and
-=E2=80=A6
+There is a spelling mistake of 'acccess' which should be instead of
+'access'.
 
-* Would smaller line lengths be preferred for such a change description?
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Link: https://lore.kernel.org/all/0c768bf6-bc19-43de-a30b-ff5e3ddfd0b3@suse.de/
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/leds/rgb/leds-group-multicolor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-* How do you think about to append parentheses to any function names?
+diff --git a/drivers/leds/rgb/leds-group-multicolor.c b/drivers/leds/rgb/leds-group-multicolor.c
+index b6c7679015fd..548c7dd63ba1 100644
+--- a/drivers/leds/rgb/leds-group-multicolor.c
++++ b/drivers/leds/rgb/leds-group-multicolor.c
+@@ -55,7 +55,7 @@ static void restore_sysfs_write_access(void *data)
+ {
+ 	struct led_classdev *led_cdev = data;
+ 
+-	/* Restore the write acccess to the LED */
++	/* Restore the write access to the LED */
+ 	mutex_lock(&led_cdev->led_access);
+ 	led_sysfs_enable(led_cdev);
+ 	mutex_unlock(&led_cdev->led_access);
+-- 
+2.45.2
 
-Regards,
-Markus
 
