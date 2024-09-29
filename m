@@ -1,107 +1,122 @@
-Return-Path: <linux-kernel+bounces-343060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E192B989660
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:04:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A6B989662
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1CF1F22661
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 588A71C2111E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F93180A80;
-	Sun, 29 Sep 2024 17:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23B017E012;
+	Sun, 29 Sep 2024 17:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpD8s4hW"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZ1XP8LH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D76917E472;
-	Sun, 29 Sep 2024 17:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2903C1C683;
+	Sun, 29 Sep 2024 17:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727629455; cv=none; b=pNbmb6+MOWbirPGw4k3T4uk5xC7n6QPHtS4uGob0oyMNZtn7EabZYeZJTKhyMTvL8hpIDx1+tXVzBH2rEFnkp7rKLEp6Bbver07gqOcC3rvXzKSI5IU1g6xk93rDY8CF7Ohed0ccospks6VTqBMzuaSKR6bD6jM6oLlsA+HxsoA=
+	t=1727629474; cv=none; b=dTKlHXuUJ6aHnnC7GKhXWMnXyATaRawQBkHY4FkETyCDVRLJesvtdA1m6KOZHNeyAxV2YWYmUScE4UXwrlHpKdADqbnNVEPrEoM3UYW2Td3Y4iU1MEUQNAzsLGRpfCYaM4X6FDq+73j1fEL4Phoy06ugJyNl1w5gwOOEo9iO4k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727629455; c=relaxed/simple;
-	bh=3dpZuf5mlzMXuAYofDLxF/AN6Y1VKHoIqMffTY+I0mM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NzaJgLpcpxZjBIshCFAFqYC1e7ScfX2DjqDNc8gFmPN78Upm2sWhyHle2shYhd4VgLScUtYTi7OOGVuI5TpQfWqlKTOw80TXaOuGgCt8DhXGKB8hbHOfay4hfJHT2ag7V/jSHwlcWfAy8ipMfsET32NINsdU08O5JMQIzE92u1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WpD8s4hW; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cc8782869so33796765e9.2;
-        Sun, 29 Sep 2024 10:04:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727629452; x=1728234252; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+KNmNodar/eEa8xt2lx9x8Ctw0w3iXIFOpWndbX0j5o=;
-        b=WpD8s4hWpgPPzTYql8DfmR5upX9kIEFwK4xylKSFv3hrsrWZcTrsiOcqXRzNwPS6XF
-         XfRYYHZxerhnyq2ViaZYHmxWCkkG+l1Rrg0k7LlimvcO4wNpd/nOqjrL6KPbcrj7HTe4
-         UTymJvGDUu6fmc0ieWQ3aaYarItGgsHHNWKEPX0iS1nf02h4U8k9QwjdWX9urDRRQEzk
-         J6Y8mMwoHcZxSQJqlzXEZAVgUotYv3pTDG6wHMicnc1YSsQfSzx3+VbdYGdwdJdEbcMg
-         HYTxwmHxZ5bD5p95aPmYVm5LP6aJARFxaQaW0YPMnvRzQrGT32LPwU/6OufUuyRiORUD
-         0Eyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727629452; x=1728234252;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+KNmNodar/eEa8xt2lx9x8Ctw0w3iXIFOpWndbX0j5o=;
-        b=H/cFdGeHaSAJCF49jXfKiKtolctNklh7ghTMAEaLgt4o6QWbozviCl7DlasHcgDXAd
-         Q57CpTwl9kCl7HXjQQZhD2PjWXoyaP9AYjntxuAQnBKS6Iy1qGWbU6932e3yXmn4l3m+
-         JbRlTZuHvGRwF1NAZB0NOqJB2OVlAghmyerKecJGVPMfEippKQLFLbY3Lxo+4NfMDt3d
-         qYcAU0w3cL4aaWyOO0Qo9Oolkd8L453UDBd7vo8YVRWJjhciRDNEC4OPQhj2PHx+asQv
-         8He8OF+wRbLIu1YUVlgvrFn+fYpKNE19mmIMe1rgDuj+8mEzsSnFlswO1/Diw1b7uNBa
-         CV0w==
-X-Forwarded-Encrypted: i=1; AJvYcCV01Bd4Qg9HlHfnswJ0I/0Qtw1ad6nLGDX5kvR738ZIDQ7F2J3MpXTdVnSUrpGcM2fciW8sME4pt1KqIic8@vger.kernel.org, AJvYcCVOO0WZjTe0MwfYz1GwPZB9p2tLiVbRPQd0ErBho/fwq/NXxC+2/IMZ0KPH+rLEfAwfqts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkCh3T2ISc2Tf21Re2KglTMw4yNNDOLUzzA3ass7p0gse8iuIS
-	uwQxSeLtz1mYUZUmIkEkA8jDzwrQlBOp8oPLZ7x4M5tKohCHtX6Jd/xchlafnOvvejzJtm4hMhp
-	szChZ7ystThAf0s8A3OpwCBsfTo0=
-X-Google-Smtp-Source: AGHT+IG9fdMIzAIyKzOuEVwQI+qzk40+S2RJR82r0eUZgTURwnbYJ2CkT++ONN6gi3TikMVmUxg04i3XP94jUBvFjOM=
-X-Received: by 2002:a05:600c:5125:b0:42c:b22e:fc2e with SMTP id
- 5b1f17b1804b1-42f5844b601mr73121615e9.15.1727629451995; Sun, 29 Sep 2024
- 10:04:11 -0700 (PDT)
+	s=arc-20240116; t=1727629474; c=relaxed/simple;
+	bh=wOn2rPeUN8zWonwsBPGsPi7lOi2s5OqmICI+BwvwcZ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q4Ji65ECPyesTcudU1jg4K51iJj0zn2HGXVIX2hcHdNSYeV/NFh02FIPN92bt8Eh1bPVfbZJUf77BJxIdUttloMcI897Y6fXg20fARCd2NkF9PTKSNnhKIa1RwlYRzkJvrL/F1v350IXJajvV5L09QUoqfHU7KuNgafE2xbjW8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZ1XP8LH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B3DC4CEC5;
+	Sun, 29 Sep 2024 17:04:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727629474;
+	bh=wOn2rPeUN8zWonwsBPGsPi7lOi2s5OqmICI+BwvwcZ4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DZ1XP8LHkF6oKBkNOMl3GVeJgtBLd3p1fureO1Bg529i56VuyIin+/+pTPU7HrMYz
+	 6QhCzWA6B26+uCMK7LNe8Ha1Tbz4D/D2akIW77/muL0G5tu3BZLzclOsgzBZyhYY4r
+	 IjK5p6fFIMfC6YHdR7SQB+iwVAeHzWVbakDM+JF7gK+J6VpznHbtRiA0cghNnqUYd9
+	 swRu3jr7yVwWNlRiPxlznoXZCQ2g6GHoFTINHAINcbNBMUx5XZ9PKwt35rblbAbv+j
+	 E8i3C4lk6+M1m7BLE94+sSjx+aFROp6JQnc4s1Xl1iFfIEV9KqgJxJdx8oCQDx9prX
+	 D7/e4BDrEbHmw==
+Date: Sun, 29 Sep 2024 18:04:26 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iio: pressure: bmp280: Fix type for raw values
+Message-ID: <20240929175710.2e101abc@jic23-huawei>
+In-Reply-To: <20240929112511.100292-2-vassilisamir@gmail.com>
+References: <20240929112511.100292-1-vassilisamir@gmail.com>
+	<20240929112511.100292-2-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927184133.968283-1-namhyung@kernel.org> <20240927184133.968283-2-namhyung@kernel.org>
-In-Reply-To: <20240927184133.968283-2-namhyung@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 29 Sep 2024 10:04:00 -0700
-Message-ID: <CAADnVQJBKCHJKqjNe9AHEnSbvAZ5Jf_0ULw=v7v3BEW8Pv=_6w@mail.gmail.com>
-Subject: Re: [RFC/PATCH bpf-next 1/3] bpf: Add kmem_cache iterator
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024 at 11:41=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
-> +static void *kmem_cache_iter_seq_start(struct seq_file *seq, loff_t *pos=
-)
-> +{
-> +       loff_t cnt =3D 0;
-> +       struct kmem_cache *s =3D NULL;
-> +
-> +       mutex_lock(&slab_mutex);
+On Sun, 29 Sep 2024 13:25:10 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-It would be better to find a way to iterate slabs without holding
-the mutex for the duration of the loop.
-Maybe use refcnt to hold the kmem_cache while bpf prog is looking at it?
+> The adc values coming directly from the sensor in the BM{E,P}{2,3}xx
+> sensors are unsigned values so treat them as such.
+> 
+> Fixes: 80cd23f43ddc ("iio: pressure: bmp280: Add triggered buffer support")
+Why is this a fix rather than a cleanup?  Looks to me like all the values
+are going to be small enough that they fit either way.
+So good to tidy up for consistency etc, but why a fixes tag?
+
+I 
+
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 6c2606f34ec4..472a6696303b 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1023,7 +1023,8 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct bmp280_data *data = iio_priv(indio_dev);
+> -	s32 adc_temp, adc_press, t_fine;
+> +	u32 adc_temp, adc_press;
+These are filled as part of a get_unaligned_be24() so the value will never
+be big enough that signed / unsigned should make any difference.
+
+> +	s32 t_fine;
+>  	int ret;
+>  
+>  	guard(mutex)(&data->lock);
+> @@ -1137,7 +1138,8 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct bmp280_data *data = iio_priv(indio_dev);
+> -	s32 adc_temp, adc_press, adc_humidity, t_fine;
+> +	u32 adc_temp, adc_press, adc_humidity;
+Same with these.
+> +	s32 t_fine;
+>  	int ret;
+>  
+>  	guard(mutex)(&data->lock);
+> @@ -1616,7 +1618,8 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+>  	struct iio_poll_func *pf = p;
+>  	struct iio_dev *indio_dev = pf->indio_dev;
+>  	struct bmp280_data *data = iio_priv(indio_dev);
+> -	s32 adc_temp, adc_press, t_fine;
+These are similar but le24.
+
+> +	u32 adc_temp, adc_press;
+> +	s32 t_fine;
+>  	int ret;
+>  
+>  	guard(mutex)(&data->lock);
+
 
