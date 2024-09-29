@@ -1,163 +1,121 @@
-Return-Path: <linux-kernel+bounces-343089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEC49896A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:36:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ACBA9896A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84493B21328
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:36:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31A97B21516
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017B73F9FB;
-	Sun, 29 Sep 2024 17:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E3D3B182;
+	Sun, 29 Sep 2024 17:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A0rdhj0C"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g72/VHdS"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D49338396
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0C23BBC5
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727631382; cv=none; b=N13gIpI4kutBPtDTBs76QkkBFIyRqtLWUBevGqRRhYATJRvlKZjrm0Yy8LwgsPD2p5xbCaiHdlRUXV/EwCZVKb12CT3J6uzPAvaOvLRLb9fYM8/auEVcfDjLPAouM0zdkpEj6H8eoamGSrh13hY6MlLIetqGZoFROc1qFHj2Qjw=
+	t=1727631553; cv=none; b=MO2ljaf3swtmu3CwMqS13CnW2+dowO6vzMnqasey3VHKG6lrvna/17/8hVvEf/pzJSr78lG5sFuAFr+eri83SZurSdvHUdbf1y/Gkjm6ZkCyFwvLgYx1PEjZ2W5+Eqm2LSYmwbBjne4uI7hfIj+0bz0p+5fO8XYgQsyOL02Abw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727631382; c=relaxed/simple;
-	bh=pJ2+5xf3JPLPFG7ajx6iu9zP2xRrrmOhbM89yxGePGE=;
+	s=arc-20240116; t=1727631553; c=relaxed/simple;
+	bh=hKfyPijtoUQohFsXEwl75zvMJL77b6mI+Ko4n1R5I1o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gwYHiNx4jl22O5bAcnKCMfV0Dx/ziB+79EG7gEd6zfYGe+1J9j72dvGlYWKYcyn6XCNGfbewL6PcGmvtsuFx3BKLq/B8Ua3bZe++BkX885XheAUTCX4kw4ubnKI6F42bZxRkjOOA2cr7Dud1ZLegFT89lxSB/ryTpzkrxBCIh2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A0rdhj0C; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso668694766b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:36:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=quPtb3uD1NsACAXel5VimPXKVKXOkFzjhXkn5UhVazfLd9EyN2xxYlnxZsE3fThNgZwi8h96myRKM60bMLElP8Czor4HkCVogSTHtUzcJ6PerHa9h3a3V0rKwWQ3lNOOcQCYN4OxaQ1keh6Ft9LqZ+Z9/t9A9B1ep5xmzCj79ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g72/VHdS; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so29072325e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1727631378; x=1728236178; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vi4TCfM4jiQzxcMHDXObhlmlU/euEJoDfcgbZrM6Np0=;
-        b=A0rdhj0C8G6pPe7ctTmtvRGLajRIkcIA5DYum+5yTE3V2u864UoRurrFy/y2/Q4mQC
-         fcnEPtLa4ZzgSQRQmkqYmfY2Im3s5Tn5BpW1y2JKtNy16o3dh8c4CPeqrpmr5/IpWJ6a
-         cGmIvmhSkZrJ39CYePwociZbJXFtGAOYlvkls=
+        d=gmail.com; s=20230601; t=1727631550; x=1728236350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1/XnOjX8xImxWeS9NvKvH79lWEWTobvX+Cr7s5Gbbcs=;
+        b=g72/VHdSMR3LtLzb8N1A2vcvwhy7z6rPt5iP4uJDWP79mk+RWZMLPRBwG/bYWRxHCb
+         rFPTO14Qq+dpZBK6b/09EqeaBogxKIlA4cedegRl4IhYq8NsFKpdrHLkSSLoLCutRpnw
+         VeNX+v4iah1HaPv7Ed/wHTDbLUHn6ytM9M9J6e7Iq1rgQeXqUzbLW2vev8N+N0BiK2Ft
+         VFA8ZsW+Vvio7lBvbVdWPFQiiMtepwUNSfPV1/4tXeKLEtw+trSjfXWQVA0xLNb160PP
+         8wWe6mgi/R2xG1x+qsCg3RP3u7WUjKiAEayx4Vh7JS9C/d2YUr5+kkBGRffnjWE/TQay
+         3bKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727631378; x=1728236178;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vi4TCfM4jiQzxcMHDXObhlmlU/euEJoDfcgbZrM6Np0=;
-        b=qQ4UaGNBzeGi/kkSkiZqD7RjKlNCLkQ1jvF9XRb+NV95lE9sckBFYvu/IenShEsh7Y
-         +5kcsNjNM1N+x75F4tjKIdxzV4OslZczo4zX33dD42G/Vyoi7o8C6F+CED1vAtNJFOGM
-         vRcLU2eObB0E8YhMZLQVycDavg7tGvSFXXEjnPPVTjT/eE7zT9Au7YyQwG8EaTcxha+4
-         2MEhEST8T+i2E2MJWe6ptFlbp+X54/qk4UE2S5LtoC6PqE0jmv+q3iP8HzewykqUnbEm
-         /+Kq7HJKLfSWA0Hhx5BdYu4erDoh8TdNjNXnNjnDJQMCHDhqnYpJG9Nc/gimcXUgtKi/
-         9o0A==
-X-Gm-Message-State: AOJu0YzNhLMJSEeb7j4NLGsWGBHbNJk0zWHOauJpM9mkH52gL3Z+WQkd
-	vj8DaWyhdMTvYhmbIV32B9wEvUvGxy2KUwS2HumiXP+hxtliJl5Umf1IHItzYeP99hNfZfxsAh/
-	qChM=
-X-Google-Smtp-Source: AGHT+IERxQ4Ks4JfmrBrxmcJnFo/MB6zMBWAqyhalz5Djckhr1ZEpb457YccFqDchMd0TFKxQeZblQ==
-X-Received: by 2002:a17:907:d2e5:b0:a8d:5f69:c839 with SMTP id a640c23a62f3a-a93b15f92aamr1243930066b.15.1727631378140;
-        Sun, 29 Sep 2024 10:36:18 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2978a04sm410951866b.144.2024.09.29.10.36.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Sep 2024 10:36:16 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso431653166b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:36:16 -0700 (PDT)
-X-Received: by 2002:a17:907:7f26:b0:a75:7a8:d70c with SMTP id
- a640c23a62f3a-a93c3098a87mr1232049066b.4.1727631376200; Sun, 29 Sep 2024
- 10:36:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727631550; x=1728236350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1/XnOjX8xImxWeS9NvKvH79lWEWTobvX+Cr7s5Gbbcs=;
+        b=qhFmjOKjDjj5W/aiJTN0V3N1f1SSR0FePiWdnxoi14KgQBOj8zBr5uB0KVH/N3+Nkl
+         56nisBfMrA+K3OgQ6yrJLmqwCQ7g5rbj1mTh/eGMTWtnOlb7OIbn5Q0Z47wz03q5CoxC
+         K62qFrPTVAOmPcK2dW2zm/Ni3Qnd36ulsv0kZINxrosUa7b67nP7+BzvysFcm7RRQpBY
+         4bzDMAO6NThK+DTZGUMtHm2iH/rg9EvSDGM1qal0Z7r8gGwaDwsaNlSA/cpndxfQ390P
+         D5ymgxGSlioNb4g/1oGXXUgAx/ugp34wOltsKzA4nheY77MvqaO95JefMMFtKJsRDeQ1
+         jO9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVT6FDsAPS2qVI98cBkzZFWsuUe0ORVhWZ0sODgb8Sm5oae9LN6AHcnyoY2CzfgyGlFCTkB1qJrbWBEEcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF4fTV5Tb+esaTRaVHHY5ElivKyKuvlEu4zHnl9bCZga1o//c2
+	yxUpjpn2fYvLiw5s1jdDC9sy4BkXaThWSaYn6GpY+A0SBokZ7iOQNVjbaP+4wUuC2jsRZQrcGpL
+	JCpUH5sTuZ5a/drMZpEN7XC8zCHE=
+X-Google-Smtp-Source: AGHT+IETQ3WhnTElzy0KB217/nnthiDH8DH2DZQB5+6WOx532d5Flu0wVRZCxXYLsVOHq4L4lTUorxSlLEQ2OjFFNlE=
+X-Received: by 2002:a5d:530b:0:b0:37c:ced1:dd06 with SMTP id
+ ffacd0b85a97d-37cd5b12b35mr5865145f8f.41.1727631550348; Sun, 29 Sep 2024
+ 10:39:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928153302.92406-1-pbonzini@redhat.com>
-In-Reply-To: <20240928153302.92406-1-pbonzini@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 29 Sep 2024 10:35:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiQ2m+zkBUhb1m=m6S-H1syAgWmCHzit9=5y7XsriKFvw@mail.gmail.com>
-Message-ID: <CAHk-=wiQ2m+zkBUhb1m=m6S-H1syAgWmCHzit9=5y7XsriKFvw@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM/x86 changes for Linux 6.12
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Kai Huang <kai.huang@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Farrah Chen <farrah.chen@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000007b816506234586fa"
-
---0000000000007b816506234586fa
+References: <20240927194856.096003183@infradead.org> <20240927194925.283644921@infradead.org>
+In-Reply-To: <20240927194925.283644921@infradead.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 29 Sep 2024 10:38:58 -0700
+Message-ID: <CAADnVQ+qDAzjyRuN6sdpw8RjB4XQ1EyyMJ_uYXeDspbW58fC3A@mail.gmail.com>
+Subject: Re: [PATCH 09/14] x86/ibt: Implement IBT+
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
+	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "Jose E. Marchesi" <jose.marchesi@oracle.com>, 
+	"H.J. Lu" <hjl.tools@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org, 
+	Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 28 Sept 2024 at 08:33, Paolo Bonzini <pbonzini@redhat.com> wrote:
+On Fri, Sep 27, 2024 at 12:50=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
 >
-> Apologize for the late pull request; all the traveling made things a
-> bit messy.  Also, we have a known regression here on ancient processors
-> and will fix it next week.
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -555,6 +555,8 @@ static int emit_patch(u8 **pprog, void *
+>
+>  static int emit_call(u8 **pprog, void *func, void *ip)
+>  {
+> +       if (is_endbr(func))
+> +               func +=3D ENDBR_INSN_SIZE;
+>         return emit_patch(pprog, func, ip, 0xE8);
+>  }
+>
+> @@ -562,11 +564,13 @@ static int emit_rsb_call(u8 **pprog, voi
+>  {
+>         OPTIMIZER_HIDE_VAR(func);
+>         ip +=3D x86_call_depth_emit_accounting(pprog, func, ip);
+> -       return emit_patch(pprog, func, ip, 0xE8);
+> +       return emit_call(pprog, func, ip);
+>  }
+>
+>  static int emit_jump(u8 **pprog, void *func, void *ip)
+>  {
+> +       if (is_endbr(func))
+> +               func +=3D ENDBR_INSN_SIZE;
+>         return emit_patch(pprog, func, ip, 0xE9);
+>  }
 
-.. actually, much worse than that, you have a build error.
-
-  arch/x86/kvm/x86.c: In function =E2=80=98kvm_arch_enable_virtualization=
-=E2=80=99:
-  arch/x86/kvm/x86.c:12517:9: error: implicit declaration of function
-=E2=80=98cpu_emergency_register_virt_callback=E2=80=99
-[-Wimplicit-function-declaration]
-  12517 |
-cpu_emergency_register_virt_callback(kvm_x86_ops.emergency_disable_virtuali=
-zation_cpu);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  arch/x86/kvm/x86.c: In function =E2=80=98kvm_arch_disable_virtualization=
-=E2=80=99:
-  arch/x86/kvm/x86.c:12522:9: error: implicit declaration of function
-=E2=80=98cpu_emergency_unregister_virt_callback=E2=80=99
-[-Wimplicit-function-declaration]
-  12522 |
-cpu_emergency_unregister_virt_callback(kvm_x86_ops.emergency_disable_virtua=
-lization_cpu);
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-which I hadn't noticed before, because I did just allmodconfig builds.
-
-But with a smaller config, the above error happens.
-
-The culprit is commit 590b09b1d88e ("KVM: x86: Register "emergency
-disable" callbacks when virt is enabled"), and the reason seems to be
-this:
-
-  #if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
-  void cpu_emergency_register_virt_callback(cpu_emergency_virt_cb *callback=
-);
-  ...
-
-ie if you have a config with KVM enabled, but neither KVM_INTEL nor
-KVM_AMD set, you don't get that callback thing.
-
-The fix may be something like the attached.
-
-                   Linus
-
---0000000000007b816506234586fa
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m1nv3bmn0>
-X-Attachment-Id: f_m1nv3bmn0
-
-IGFyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIg
-aW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5o
-IGIvYXJjaC94ODYvaW5jbHVkZS9hc20vcmVib290LmgKaW5kZXggZDBlZjJhNjc4ZDY2Li5jMDIx
-ODNkM2NkZDcgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oCisrKyBi
-L2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlYm9vdC5oCkBAIC0zMSw2ICszMSw4IEBAIHZvaWQgY3B1
-X2VtZXJnZW5jeV9yZWdpc3Rlcl92aXJ0X2NhbGxiYWNrKGNwdV9lbWVyZ2VuY3lfdmlydF9jYiAq
-Y2FsbGJhY2spOwogdm9pZCBjcHVfZW1lcmdlbmN5X3VucmVnaXN0ZXJfdmlydF9jYWxsYmFjayhj
-cHVfZW1lcmdlbmN5X3ZpcnRfY2IgKmNhbGxiYWNrKTsKIHZvaWQgY3B1X2VtZXJnZW5jeV9kaXNh
-YmxlX3ZpcnR1YWxpemF0aW9uKHZvaWQpOwogI2Vsc2UKK3N0YXRpYyBpbmxpbmUgdm9pZCBjcHVf
-ZW1lcmdlbmN5X3JlZ2lzdGVyX3ZpcnRfY2FsbGJhY2soY3B1X2VtZXJnZW5jeV92aXJ0X2NiICpj
-YWxsYmFjaykge30KK3N0YXRpYyBpbmxpbmUgdm9pZCBjcHVfZW1lcmdlbmN5X3VucmVnaXN0ZXJf
-dmlydF9jYWxsYmFjayhjcHVfZW1lcmdlbmN5X3ZpcnRfY2IgKmNhbGxiYWNrKSB7fQogc3RhdGlj
-IGlubGluZSB2b2lkIGNwdV9lbWVyZ2VuY3lfZGlzYWJsZV92aXJ0dWFsaXphdGlvbih2b2lkKSB7
-fQogI2VuZGlmIC8qIENPTkZJR19LVk1fSU5URUwgfHwgQ09ORklHX0tWTV9BTUQgKi8KIAo=
---0000000000007b816506234586fa--
+Makes sense, but it feels like it's fixing the existing bug
+that we somehow didn't notice earlier?
 
