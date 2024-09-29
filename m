@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-343009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4744F9895D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:04:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6119895D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEEC01F2294F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:04:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DDB281B3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC3217A924;
-	Sun, 29 Sep 2024 14:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1C417C215;
+	Sun, 29 Sep 2024 14:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/KeJ7gN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRsmcoAV"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C46F9CB;
-	Sun, 29 Sep 2024 14:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D725F9CB;
+	Sun, 29 Sep 2024 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727618637; cv=none; b=gHgvyW7vapkWhfbTGeATMogGDjC71LgK8l4MWF+AjwQEU/I4k1F8BOPq+Ctxl9FUexeDb95Ao1a7AUwB1Ua29UXZde358TdULWj62cEqAZF2PMRd8ELLrEk9piGmFgrofYWh6NhotV13RhVFWqP+9XsBvikcctWapVANEefmcJY=
+	t=1727618897; cv=none; b=ZZr1+bHGfenhXr09mJFAj4t61vMGLK+bHg3zsM/Zw4BoyAVWOhV2fZDiK2op8XgCqlsQP7hPKvvGNfx5iuQpYPUlBZMZIqra4J7OzUv3y5gm/vxSUP+w8SKvnw+yFOEghkXkXnFXj+F0NmesHm6YPrx7/C8le/IT2TgRqqZI19A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727618637; c=relaxed/simple;
-	bh=1T3C23ITgq1aQSpNDFxIMUGL29G4p187OUrb/JTMBK4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bx2ndwVfeYW9w9IZLmPSRB+aqvbNNVxoJ0Jv8K9mYdzgJghqlPzWnjEPrCv4HTZsOmCVMCKUqmaJcWt7cRHys6URUaq4x2LTaBsYsyLkXfz+WeSo9IABdU9gf663zHFkqz7Ic+IcEL8qMUAxQUbauzSMTwAvg1I4N7mWHxu9JHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/KeJ7gN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4EEC4CEC5;
-	Sun, 29 Sep 2024 14:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727618636;
-	bh=1T3C23ITgq1aQSpNDFxIMUGL29G4p187OUrb/JTMBK4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E/KeJ7gNJOHNoVYqUC76clW1milBws4OACbDFdjhAOwv9sFYPBv1D8Y8CFtPjWt7A
-	 kVolzi3Byu11b3mNwCMwRw45QmUgAgwuJXLCpnZIRQZEHHJsgs+HOhp1JCwG7ga52b
-	 HxxAweyTyJJH8f4uk2Jamr1dJiufHWTE2mb7vLyDdrmAmQeCNK80SymDoAvHVOXn0p
-	 08UqyRAZgMctr/ga5ZQBTwVzJEak00SKXmM7BJkGklo1CHOZ+vPdqE736UUErauh3h
-	 tke7eE0+sKXw2elJsePOF9MAWrJ64VM9Vzs3wLpIXziJOTPhcaNA7XG1ZxoMu476SJ
-	 3M4p0EbTlEU7A==
-Received: by pali.im (Postfix)
-	id 68C2E872; Sun, 29 Sep 2024 16:03:50 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] cifs: Remove intermediate object of failed create reparse call
-Date: Sun, 29 Sep 2024 16:03:43 +0200
-Message-Id: <20240929140343.9147-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20240928215948.4494-3-pali@kernel.org>
-References: <20240928215948.4494-3-pali@kernel.org>
+	s=arc-20240116; t=1727618897; c=relaxed/simple;
+	bh=ftB5EISWBZiCT+QCmocovh6Hf2Gur5hrEprFTTKUDDM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ZQmzk8H3iktS2U69HL1tfsdkqTilx0HBcpezO/wgjhF5nrDNrnIzNVRF38kgFnnjDHxjApt+SWJhXLKwF3+AOKaGFUGj2ROLNsoFD9iApLjN0PxOVnyrHSEDhdDvkKby460R5cUZFauagVAv0PZEnDA8CPx/CpOG8kloEE3hkuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRsmcoAV; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so31398265e9.0;
+        Sun, 29 Sep 2024 07:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727618894; x=1728223694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zxiCM0bbtgYKLaDvgbQd9GQXp8QrE6bw3MQSKeJbJXY=;
+        b=BRsmcoAVqaWTlGtWdspJG3Nf1lKN8uLnHhp1e+nxzIzo1M3SQJOCBsQN+7WMqZEKBc
+         o85yuu1M+VBMYifXCoCzL2XeeNpfHpNZW+oz2iqSYHqoU7j/wZkq7dy+suCquIHMbXFc
+         c2Vtd1xijB0DaJWqyxkZuziG/4f4Q2RzvH1OZfuCxIZS7pRCNl/USc1gNeZnPx2zq2De
+         60e+sgSBtOvwZzykFK8ifcJz+lP5cmhDpFNy1rim/VBNlpt8oNagV2P8d8bEZij55VWv
+         dnnPhI5y4juD5kH63EmN5Z3wvhUy7y4NmbB/BLGbAffkkZ4q+Xud3BDBoVB7rS8Amd8A
+         2EsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727618894; x=1728223694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zxiCM0bbtgYKLaDvgbQd9GQXp8QrE6bw3MQSKeJbJXY=;
+        b=SE7hJoKmB+hc+KAU33LE8JhGCu9/3gqoew7HMBUPdm5K/0Gy/AiBLunZK/xhf7Y/Gm
+         1M8oNPUf002DSLx2bbLku7ESIjO3dXQgoy5xLyLtmjN/AkRTpV2i15jxeYDDzyfB0sAa
+         7vPoWg65AYKiesbTpx2BuswtJn2Jf4h9KuEkqNLajEdtBKrSty80LipeyYLk+5eGmgBj
+         sDphH98xIqz7hsTtWH6t4CeOruytwgGeLhiiTdYlf9SA0TWRyH78nSP6LYdeAGjN7tew
+         qUsHyGhg+MqZZKUW5sZBSy1qobLo6GuwAlykyQnIpSI4dijyIrfJ0B2zCWCUP1hT+Qvz
+         +ktw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzksA9e3YsUndyvGLQ2SDZG1qUmO7Mc1GLIxAZb5zxqLNQumFOxv32O123Xctev0BdnhBzZ04ldSrbWxaI@vger.kernel.org, AJvYcCVbIZWkEpNcr/YEfYOq/PoPqUHx4E0OOge1iZilE3ctQeo4FKHGgOZPst7VOiKr1EDA6ywbIf2Hp1hh@vger.kernel.org, AJvYcCW4FULSj8MbdH2U4unDerYKQHATJv81SMUpGt7SFsoARjJHmIhIDv/SzllnklSquUqLPjZXozsQVmmK@vger.kernel.org, AJvYcCX7tz7ah/SBO9SncWnIY0i+snOJZl+iKmehHPH+CNDpV/x+KQxnE/zbTcuerp+F03L32fe6S8xDurlY@vger.kernel.org, AJvYcCXxYp8wgtgWnHoFmjlwwsVDW5KDoCQNQpbTOzlVfl+A4RJ8Zy7nX0t8za6ub9dXasXCAcQznRY9ShjQGjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPDAEeLVgNgCFQrwIuPGXsIVH5s/LX82myluNVEYNe0bJINFqv
+	BfxX5meEvywHacwL0e1oDDUehILXV/0+93tI1/N4fVLVYFq0JxJD
+X-Google-Smtp-Source: AGHT+IE/JYgZQz1MkME+bh2fy1sSJl5BniRbrO4Qg7lwQZpjBnyGre/nNMwhzmyStG3YOmG/JYzKxQ==
+X-Received: by 2002:a05:600c:1549:b0:42c:ac9f:b505 with SMTP id 5b1f17b1804b1-42f58490e62mr75614675e9.31.1727618894119;
+        Sun, 29 Sep 2024 07:08:14 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42f57dd3106sm77856005e9.7.2024.09.29.07.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 07:08:13 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Christian Heusel <christian@heusel.eu>,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: [PATCH v3 0/4] block: partition table OF support
+Date: Sun, 29 Sep 2024 16:06:16 +0200
+Message-ID: <20240929140713.6883-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-intermediate object created by CREATE. Otherwise empty object stay on the
-server when reparse call failed.
+Hi,
+this is an initial proposal to complete support for manually defining
+partition table.
 
-This ensures that if the creating of special files is unsupported by the
-server then no empty file stay on the server as a result of unsupported
-operation.
+Some background on this. Many OEM on embedded device (modem, router...)
+are starting to migrate from NOR/NAND flash to eMMC. The reason for this
+is that OEM are starting to require more and more space for the firmware
+and price difference is becoming so little that using eMMC is only benefits
+and no cons.
 
-Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
-Changes in v2:
-* Increase out_buftype[] and out_iov[] members from 2 to 4 as required by smb2_compound_op
-* Call free_rsp_buf() for all members of out_buftype[]/out_iov[]
+Given these reason, OEM are also using very custom way to provide a
+partition table and doesn't relay on common method like writing a table
+on the eMMC.
 
-I would like if you double check this smb2_compound_op() usage if there
-is not some other memory issue. As V1 contained both memory leak and
-buffer overflow (smb2_compound_op wrote out of those two arrays).
+One way that is commonly used is to hardcode the partition table and
+pass it to the system via various way (cmdline, special glue driver,
+block2mtd...)
+This way is also used on Android where the partition table
+is passed from the bootloader via cmdline.
 
----
- fs/smb/client/smb2inode.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+One reason to use this method is to save space on the device and to
+permit more flexibility on partition handling.
 
-diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-index 11a1c53c64e0..6e69a3b98be3 100644
---- a/fs/smb/client/smb2inode.c
-+++ b/fs/smb/client/smb2inode.c
-@@ -1205,9 +1205,12 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
- 	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
- 	struct cifsFileInfo *cfile;
- 	struct inode *new = NULL;
-+	int out_buftype[4] = {};
-+	struct kvec out_iov[4] = {};
- 	struct kvec in_iov[2];
- 	int cmds[2];
- 	int rc;
-+	int i;
- 
- 	oparms = CIFS_OPARMS(cifs_sb, tcon, full_path,
- 			     SYNCHRONIZE | DELETE |
-@@ -1228,7 +1231,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
- 		cmds[1] = SMB2_OP_POSIX_QUERY_INFO;
- 		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
- 		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
--				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-+				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
- 		if (!rc) {
- 			rc = smb311_posix_get_inode_info(&new, full_path,
- 							 data, sb, xid);
-@@ -1237,12 +1240,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
- 		cmds[1] = SMB2_OP_QUERY_INFO;
- 		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
- 		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
--				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-+				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
- 		if (!rc) {
- 			rc = cifs_get_inode_info(&new, full_path,
- 						 data, sb, xid, NULL);
- 		}
- 	}
-+
-+	if (rc) {
-+		/*
-+		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
-+		 * remove the intermediate object created by CREATE. Otherwise
-+		 * empty object stay on the server when reparse call failed.
-+		 */
-+		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status == STATUS_SUCCESS &&
-+		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status != STATUS_SUCCESS)
-+			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(out_buftype); i++)
-+		free_rsp_buf(out_buftype[i], out_iov[i].iov_base);
-+
- 	return rc ? ERR_PTR(rc) : new;
- }
- 
+What this series does is complete support for this feature.
+It's possible to use the cmdline to define a partition table similar
+to how it's done for MTD but this is problematic for a number of device
+where tweaking the cmdline is not possible. This series adds OF support
+to make it possible to define a partition table in the Device Tree.
+
+We implement a similar schema to the MTD fixed-partition, where we define
+a "label" and a "reg" with "offset" and "size".
+
+A new block partition parser is introduced that check if the block device
+have an OF node attached and check if a fixed-partition table is defined.
+
+If a correct node is found, then partition table is filled. cmdline will
+still have priority to this new parser.
+
+Some block device also implement boot1 and boot2 additional disk. Similar
+to the cmdline parser, these disk can have OF support using the
+"partitions-boot0" and "partitions-boot1" additional node.
+
+It's also completed support for declaring partition as read-only as this
+feature was introduced but never finished in the cmdline parser.
+
+Posting as RFC for any comments or additional checks on OF parser code.
+
+I hope this solution is better accepted as downstream this is becoming
+a real problem with a growing number of strange solution for the simple
+task of providing a fixed partition table.
+
+Changes v3:
+- Out of RFC
+- Drop partition schema generalization and simplify it
+- Require fixed-partitions compatible to adapt to MTD schema
+- Make label property optional and fallback to node name
+Changes v2:
+- Reference bytes in DT instead of Sector Size
+- Validate offset and size after Sector Size conversion
+- Limit boot0 and boot1 to eMMC and add comments about JEDEC spec
+- Generalize MTD partition schema and introduce block partitions schema
+- Add missing code to actually attach the OF parser to block partition core
+- Add reviewed by tag for read-only patch
+
+Christian Marangi (4):
+  block: add support for defining read-only partitions
+  docs: block: Document support for read-only partition in cmdline part
+  block: add support for partition table defined in OF
+  dt-bindings: mmc: Document support for partition table in mmc-card
+
+ Documentation/block/cmdline-partition.rst     |   5 +-
+ .../devicetree/bindings/mmc/mmc-card.yaml     |  52 ++++++
+ block/blk.h                                   |   1 +
+ block/partitions/Kconfig                      |   8 +
+ block/partitions/Makefile                     |   1 +
+ block/partitions/check.h                      |   1 +
+ block/partitions/cmdline.c                    |   3 +
+ block/partitions/core.c                       |   6 +
+ block/partitions/of.c                         | 151 ++++++++++++++++++
+ 9 files changed, 227 insertions(+), 1 deletion(-)
+ create mode 100644 block/partitions/of.c
+
 -- 
-2.20.1
+2.45.2
 
 
