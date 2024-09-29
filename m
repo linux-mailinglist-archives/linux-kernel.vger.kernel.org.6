@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-342821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F7098934D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:36:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5F1989351
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30499B23A43
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A431C20A91
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8647B13A86C;
-	Sun, 29 Sep 2024 06:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC580139D19;
+	Sun, 29 Sep 2024 06:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o7FWYazJ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="I44kMcGX"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E332BE4E;
-	Sun, 29 Sep 2024 06:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5927128E37;
+	Sun, 29 Sep 2024 06:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727591803; cv=none; b=LQSAxZDf1uUyHNooatQmLZyYtK6FZlqDRD+TX74qG0a+4YYG9Rr9TW0hVb2VJtRL8TrC4J3HrNxHXU+f3/082VCGYapHqOYCXXC5yJQ/dCCgLyi6tiUZrlijCcvVnJPjiGM4CM9TpTiqRYDxhSHVVbOqdPYpZiWPmp1KghTtV78=
+	t=1727592097; cv=none; b=BWV4I0sDBOaEOglKs+x+adDY9sG8RUGWDgkQk9r5nUBn3K2GUaGvft1iSKySC+aIElfE8XXsodLWV5EHEnAaVCoXZcDlKSb4yFu5r/g54415GTGgASSRga/yBVevDSLvXk1tNxgt2B7yc6ute679Wv05Hl3MurtsOE+lsx4srMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727591803; c=relaxed/simple;
-	bh=AoeX5Bh+OPcP5MdPHb+2Fpmd785USqzbzYz38We8Qtg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CLVlecr3d3vqdAsjpilCrRVA0p/f7FFPmWmFE98wtd6oLkb+kc5BGg2Ox0CGdYo3SPeuA2+5Hj35fC8DiN+thFdfobQ7OIzLOz6I2KdcFKyVRj8zu27FnvFK1hecfcCc7wE0Fg8FdlM+R+E2HP/idvV3izUBbGd6NzTCIayNIQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o7FWYazJ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48T0Q9Wq019677;
-	Sun, 29 Sep 2024 06:36:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jgdxnNBOuwqsGfRJzvNbzlP0J/XoFZgAZjLjyzscPSA=; b=o7FWYazJ88VH7i5l
-	frY+YxGjyqIA3wWRK5sAu/lv0/we2o2E+X7Qtg7w6jmz8udixAed8R30u/MLrAlk
-	5ydAxnWPXJH2V5Kcg117pYFMAhZeGVAijkbNqHeHoufQpiYrDF7153c1r1KpBWV6
-	4PxidNAXrlLleO8dKmwChlrkOnB48KkATVzsPBHT9tuTg/LGpxPmtOQiQNwaf4nD
-	zlKvtgEWjYOoSRVGNMG7qW2KtxkMBhrnBLDm1BAXEBgKNBSUZRpYP4WmTtHzcO6t
-	JqHblVGd8pZBrSf9oT5Aly6LdnRl0DfDzkT0XJzwyR+kXf95tCw/3XdOmG6dIOWw
-	WY7oow==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x94h9wba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 06:36:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48T6aaDS025012
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 06:36:36 GMT
-Received: from [10.50.42.35] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 28 Sep
- 2024 23:36:33 -0700
-Message-ID: <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
-Date: Sun, 29 Sep 2024 12:06:33 +0530
+	s=arc-20240116; t=1727592097; c=relaxed/simple;
+	bh=mlRKFJzlJGGf7SYJivn22/YB5fqswy9nAEADlLxOGes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gErw2ITyxtMEjNZ/JIoRwwLgf+tS7Bc0fKH8AxLTg4iVZw1+yHcfNJJXKQAcKLE8zbrGjr7i8menVwAdqcann5Deaaytrx2b9MDQBC3JNxhrfpt9d3hGQEqZhGCPq0bm6UHwvUNeImgvnMu830X8+pva1gH3Lh/at9/5zOjTt4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=I44kMcGX; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=k/e080hWv1/phh7G1n4JyJkR+5g5OEdJ7sD74mBcFBE=;
+	t=1727592095; x=1728024095; b=I44kMcGXZ7cjRam4HBeaxzv8djzvimPmkPKxb/CDSlK6Ekt
+	fPqBW3dSJUqmav/dkrEoKYsCLI12vDKlT0MJO73xSPG36sfAXhummfrCG0r5t9OFOixN668BQ2CFQ
+	2A9H2T/Vjoqbi/ELEb+8qkxPMnRh80fm8jyuiYCHXtxIuavx1orJVSlddPHeYjqLkNjBaczips0wD
+	VWYjEN0EjWDyqYrGRv4vjzM+xAA85QP+At81O48JiA7xLDzC0+ORt05DrSW2Zb/v3QE2nKr8XCikM
+	CpvDuaz9E5nmic7sLMSTe9QmrJFvQ2RO/wV22z9wlHpqY5LmdaiGued75xMOzPEQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1suncU-0006TT-Tp; Sun, 29 Sep 2024 08:41:27 +0200
+Message-ID: <3cc1eca2-0278-4b90-9cc6-e5c75ed4327d@leemhuis.info>
+Date: Sun, 29 Sep 2024 08:41:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,103 +53,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
- engine clock
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
- <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 32GyGAd05XOJMRiHqCz9M_C-5RlgUS9y
-X-Proofpoint-ORIG-GUID: 32GyGAd05XOJMRiHqCz9M_C-5RlgUS9y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409290048
+Subject: Re: [regression] Regular "cracks" in HDMI sound during playback since
+ backport to 6.1.y for 92afcc310038 ("ALSA: hda: Conditionally use snooping
+ for AMD HDMI")
+To: Salvatore Bonaccorso <carnil@debian.org>, Takashi Iwai <tiwai@suse.de>,
+ Jaroslav Kysela <perex@perex.cz>, linux-sound@vger.kernel.org
+Cc: Eric Degenetais <eric.4.debian@grabatoulnz.fr>,
+ linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
+ regressions@lists.linux.dev, Sasha Levin <sashal@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <ZvgCdYfKgwHpJXGE@eldamar.lan>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <ZvgCdYfKgwHpJXGE@eldamar.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727592095;86a46c88;
+X-HE-SMSGID: 1suncU-0006TT-Tp
 
-
-
-On 9/26/2024 3:58 PM, Vladimir Zapolskiy wrote:
-> Hello Manikanta.
+Hi! On 28.09.24 15:19, Salvatore Bonaccorso wrote:
 > 
-> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
->> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
->> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
->>
->> The existing map table is based on 19.2MHz. This patch incorporate
->> the clock map table to derive the SCL clock from the 32MHz source
->> clock frequency.
->>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in v2:
->>     - Dropped IPQ5424 from the commit title
->>     - Added else part to assign geni_i2c_clk_map_19p2mhz to itr
->>     - Dropped MHZ macro and used HZ_PER_MHZ macro
->>     - Expanded SE to serial engine
->>     - Added the reason for 32MHz clock in commit message
->>
->>   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
->>   1 file changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
->> index 212336f724a6..22f2a0d83641 100644
->> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->> @@ -16,6 +16,7 @@
->>   #include <linux/pm_runtime.h>
->>   #include <linux/soc/qcom/geni-se.h>
->>   #include <linux/spinlock.h>
->> +#include <linux/units.h>
->>     #define SE_I2C_TX_TRANS_LEN        0x26c
->>   #define SE_I2C_RX_TRANS_LEN        0x270
->> @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
->>    * clk_freq_out = t / t_cycle
->>    * source_clock = 19.2 MHz
->>    */
->> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
->> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
->>       {KHZ(100), 7, 10, 11, 26},
->>       {KHZ(400), 2,  5, 12, 24},
->>       {KHZ(1000), 1, 3,  9, 18},
->>   };
->>   +/* source_clock = 32 MHz */
->> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
->> +    {KHZ(100), 7, 14, 18, 40},
->> +    {KHZ(400), 4,  3, 11, 20},
->> +    {KHZ(1000), 4, 3,  6, 15},
->> +};
+> In downstream Debian we got a report from  Eric Degenetais, in
+> https://bugs.debian.org/1081833 that after the update to the 6.1.106
+> based version, there were regular cracks in HDMI sound during
+> playback.
 > 
-> Please double check the values.
+> Eric was able to bisec the issue down to
+> 92afcc310038ebe5d66c689bb0bf418f5451201c in the v6.1.y series which
+> got applied in 6.1.104.
 > 
-> This is what I get:
-> * for 100KHz: 32000000 / (40 * 7) ~ 114286, apparently 32000000 / (40 * 8) would
-> be a better fit, however it's unclear what would be proper t_high / t_low values,
-> * for 400KHz: it seems good,
-> * for 1000KHz: 32000000 / (15 * 4) ~ 533333, which is almost 1/2 of the wanted
-> bus frequency, so this one looks very wrong.
+> Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1081833#47
 > 
-> Do you have any ideas how to get better bus frequency settings?
+> #regzbot introduced: 92afcc310038ebe5d66c689bb0bf418f5451201c
+> #regzbot link: https://bugs.debian.org/1081833
 > 
+> It should be noted that Eric as well tried more recent stable series
+> as well, in particular did test as well 6.10.6 based version back on
+> 20th september, and the issue was reproducible there as well.
+> 
+> Is there anything else we can try to provide?
 
-Thanks for pointing this out.
+Just "the usual", which is not widely known, so allow me to explain.
 
-I will double check and get back with the proper data.
+Please in situations like this *always* try to test a recent mainline
+kernel. Given the timing, it's best to test 6.12-rc1 once it out later
+today.
 
-Thanks & Regards,
-Manikanta.
+That's because it's unclear if this is something the regular maintainers
+or the stable team/the one that asked for the backport has to handle.
+Some developers do not care, but often it's required, as otherwise
+nobody will take a close look -- especially when it comes to longterm
+kernels. That's because participation in stable/longterm maintenance is
+entirely optional for mainline developers (e.g. the author of the
+culprit). This page
+https://linux-regtracking.leemhuis.info/post/frequent-reasons-why-linux-kernel-bug-reports-are-ignored/
+has a few points that explain the problem in more detail.
+
+HTH, Ciao, Thorsten
 
