@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-342852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D67198939A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:56:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE998939B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC8141C21A68
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:56:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE1628658B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2E513C3CD;
-	Sun, 29 Sep 2024 07:56:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C15213B29B;
+	Sun, 29 Sep 2024 07:57:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A0A139D19
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A90218641
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727596565; cv=none; b=taAqADTM/5YuCzC6xVV1inan50NVSvGYEHiHC0beiCqpqtlnRAe1GN01D9g2hz6PDs4oR9dDxl/y+/jh1PMSjFgCT05Qy8POj50CfZ6B79vqxHEpZjciTojhg5LoX35AhEx1kyJZlAVLRTWaC3O6INXjkhjaoY14h+OtysGhCu0=
+	t=1727596624; cv=none; b=bt+OwBGzm6wFxGoJNi8OO9RLXzLL0sEyUOTDOfIeD5QMMTpbU4bK3YDP6rNqVLclgkp5SzcE0WrARF5QftOarGd1wpVlf4IYMHNx+iKIqT4IG0ZoQoeNH31xPffY+rgOZ6lzxW+SjhJpGb8n6ymTqsH06tWzkSWFKWsxFN6wE8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727596565; c=relaxed/simple;
-	bh=ty11Sum61fZZAjO0DbGcRGKJQtdcSRbUgdO+NSSzQ6o=;
+	s=arc-20240116; t=1727596624; c=relaxed/simple;
+	bh=TjLD1fGmRO6TDm+y0LLBayoex9fhwRyoHH58n4H0azM=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MCA5zxoPRou49bZmZtmuDUtVJhGm+gVTTwTmozgpAcTJv7wEHmukTTvE0QbdKmhmpVo+kqy/vTV+lQukkOr07n6A2S44vTJf2DGfiGzFJdvhf80tCGdK+hTDcFv0KZh4yjv+hhRgG7rrb8vis96KGm1mDKwemauV77VuusPybQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	 Content-Type; b=obrdRrX88G/rEm5uOIczOGdfcibZpTNczEpV/x8FHF8wjmpqbI2QK7pWhhVdy3FKwRCEC6swYZzRsU6ElQzydcIBN+MoVNtRsmynscX7cfeJ0CYCETiphj0kn6QNnlJ/UZ2FYVTJt/HqJ3gpSY8D/OTgRKER/IkeWJjfS7aYahg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a969fabfso43157965ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:56:03 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a344da7987so30102465ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727596563; x=1728201363;
+        d=1e100.net; s=20230601; t=1727596622; x=1728201422;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gb0JKqGgD9r9rQYEL3wVj1eMjplqkOfPlrgKK9qB4A4=;
-        b=fdiEMoDd00WHYTNr+8grMDZY3lYCbLXAHA/8IgaaqtADWEJH14lLMKOVHgsWb/yYxx
-         zxQdJlUa+HMsJCWGNFtosvatBQPVEAtRiNIxIohMj3XPZS8WCnGtfZmZruNISDXvgyx7
-         qDOzpMLT0NlVNYemBwFBJ93dxMTatqOA/JhTGXzOi0Gv48X8Nv1jBCj/yw5t4hwmYFif
-         bPeIvkA0Z/6wYLaApmmYKZWl4cAv8Ggl6MH6uzE6V3ktE6eNUNhtCet1KDRQQY3tx1Vz
-         NBc0kc1e9DECZTbu1Xfj3jTlyYaL05kMJp4bU8BLM4YhfEHVfV7cX0HJq9rPVn55u4dr
-         TNzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTggqNLMsQk/UBSP5g50nEh76hLASrJVjfCnlaUD8rf3AyedKyQx/4xL4NqaLrRESAObCNg6dw7Fq1CfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKPpZ/9H7PHX1CLggRs0Ptgp2TFQhXlDWkD7WaB99dF8drU9pb
-	/0iy71fPDaLdEo/QYgTUclM/iMQm+Q5jycu1VZ/4NOLqjnp3hkIXi50ik9b1HsvX0+K+2Xdqtil
-	C//5IgPDb73DkQcIMvLhmrUGv5rAazwfYHxPCTijHA0ng6/kZ+9XTOu8=
-X-Google-Smtp-Source: AGHT+IFpYbKMbWaIimcUUCh6mTXMJnK8saUavqWLDXVYvW/rO8nxtl1V40lsCBwDHa0AefvV8eRLYvsJTqe4OrFEROA28ftyZjhA
+        bh=vJenpfBuGg+DH1MGQoWaM2GT6fCl3wvmmgcFnFj3eU0=;
+        b=a13zjPJ9O5ZPVZwl63agCs7qmBdZCeJo1NHh+T1Y8uTXxbBldqhIDY1XT/dkCeroKl
+         FfztxONyDqg6CyfMci88IItispuB9X1wZtqEMtcKTIdIGPBJs4z6o4h/5C/tPodK4qCO
+         Y/2LDUGXZrvWz6IObo7R5jnxYKLRFtPKxKHSq4ehVng+yVN6lUixR3MoBUv8YV5i1iU3
+         khjhne41FxF1MsZKoT6VkFDSGPfBQm8s4x1EJv4pTcqBhHr1OSvl7eKN+Vmaof4nq8bS
+         iTbXkdvWFyXUfCJeqMq38vyTD62WnB3ylcAvudyeJa31jWTgwwE65ieDauifMmhAbZe/
+         V/ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXzxUepHnuYWWLqrH/SsbVfa2NuVVrEV7jGU74XgTqM+xdck4ZF1CH27Qz8+gpI8zg5oUSJfWF9dfQSMg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemLBJxk0rUPmaY2LFt88137FEFbEERoiW1t/BfNJOzeO4Uqp9
+	Kz0TX0XNeqNKYHKx7efhAJCtlZbeU+1JKGdIhh9ifGWHDmtbWaja10Df47qDWmauI/LVZpxggyB
+	IvuvzjySaW1nBNFOy8x9y5FrtKi+bmVG1yN+9bBv0zAtcnHPk6iZB0ig=
+X-Google-Smtp-Source: AGHT+IGou8bHj+Tb2WcCx0PdTkcmSpxK2Q9/7TmwjtlFydYRybATRGq4sL/cNfiLlqj1uZu9fPcdB7N1hashYGaH0WS0egpbi2Ir
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188a:b0:3a3:41cf:f594 with SMTP id
- e9e14a558f8ab-3a345172981mr80216355ab.12.1727596563182; Sun, 29 Sep 2024
- 00:56:03 -0700 (PDT)
-Date: Sun, 29 Sep 2024 00:56:03 -0700
-In-Reply-To: <e01d6067-7afb-4583-a65f-ae9519d303ea@yandex.ru>
+X-Received: by 2002:a05:6e02:152a:b0:3a0:8c68:7705 with SMTP id
+ e9e14a558f8ab-3a3451bc28cmr73046665ab.21.1727596622556; Sun, 29 Sep 2024
+ 00:57:02 -0700 (PDT)
+Date: Sun, 29 Sep 2024 00:57:02 -0700
+In-Reply-To: <54ba4ba9-46f2-4ee9-a199-ee2661ab018f@yandex.ru>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f90813.050a0220.aab67.0013.GAE@google.com>
+Message-ID: <66f9084e.050a0220.aab67.0014.GAE@google.com>
 Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_destroy
 From: syzbot <syzbot+f363afac6b0ace576f45@syzkaller.appspotmail.com>
 To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
@@ -78,11 +78,11 @@ patch: **** unexpected end of file in patch
 
 Tested on:
 
-commit:         d505d359 net: wwan: qcom_bam_dmux: Fix missing pm_runt..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
+commit:         c824deb1 cxgb4: clip_tbl: Fix spelling mistake "wont" ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
 kernel config:  https://syzkaller.appspot.com/x/.config?x=968c4fa762577d3f
 dashboard link: https://syzkaller.appspot.com/bug?extid=f363afac6b0ace576f45
 compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15300127980000
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=144ccd9f980000
 
 
