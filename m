@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-343218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23289989848
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:19:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6718B98984A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3F7B22468
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A61F215B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37C315666D;
-	Sun, 29 Sep 2024 22:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C97717C22B;
+	Sun, 29 Sep 2024 22:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P86dUwxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQNCTcHy"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BE094C69;
-	Sun, 29 Sep 2024 22:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1034C69;
+	Sun, 29 Sep 2024 22:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727648355; cv=none; b=obEptj867vuXFafEeBy9gHtodHAjuSdWSFTd72p0Lza7GJSSVjTuOn1WdXuLs5qpiEcQnKts9w9YpW/vtVz0odKsPp6dnku5li4sbHegSrNRbgm+WQzK9PNXzWvpukV86Hy6Db7BY3ZJlOnFGH0BfgzWrCmaztAiGbQpId1ZSmY=
+	t=1727648510; cv=none; b=T8Nf/EMel+YNGziBgLBHoALOTPyQ98rr97IVf37+LPPJpV5g1MNAmmAWEovcLodarLenPvMS0Ozu/r4/tAXpg9NbCq1vpvkspc96S3kyS0JtP5VV0rN3N6DB2qxRPn7xFXttLsn8gKrXdEiCQmpWMwYijmWuYHLT58zmxuCVLag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727648355; c=relaxed/simple;
-	bh=HI/OkCZ1Hgkt+Bgs7QEULJ4W+ZyNZ95EhUvyGeIIDkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pdu6jjsv4P0dnk+p2LcaMGUNmnnOIxBG5Hq+7RAyt4cYpzKtCYgMPhm6IoXf/S0CDYbaQ30O5h4R+DADQjQC8QC1Cz5YYl+QEhLr5lgXtE7NkdrpvLsM9XwPcJEejmbniJfJwRB2I3ajMf2OGdomxr57yGqiawYO+a8bU2nqATA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P86dUwxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E702C4CEC7;
-	Sun, 29 Sep 2024 22:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727648354;
-	bh=HI/OkCZ1Hgkt+Bgs7QEULJ4W+ZyNZ95EhUvyGeIIDkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P86dUwxiWjXyeWC2nCkPNnp1/mB3U50ls7jR8VxUA0B1H+4SlqLiCq0n/1sgB/ksH
-	 BvCwLMU+tMmQMiRRn2w6acSfDbssUs/hsizj7CKImDUo897+jg6chN6D0DLngsVrEl
-	 fRRdOxudSaA8VVTonNubTCARnwXUT6nLmRDgmUWRujZqMcQOaAAjBAWeGqk+FBaR05
-	 fFWVM6DIOl1yTJ93Dsvr2sDyEpQrt+ftl+Qz31YghMCoTIADmhhi389iTACEfcQgor
-	 oNcmC5F3O8Y0GNTFuxuU4PhFxw1c9wwmZYFslUjRBW0gj3kF8YDGuDhJjhRXACMSD6
-	 5DY3MCLA8+ksw==
-Received: by pali.im (Postfix)
-	id D1D04872; Mon, 30 Sep 2024 00:19:08 +0200 (CEST)
-Date: Mon, 30 Sep 2024 00:19:08 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] cifs: Validate content of native symlink
-Message-ID: <20240929221908.skkup4ds6ow2s77x@pali>
-References: <20240929185053.10554-1-pali@kernel.org>
- <20240929185053.10554-7-pali@kernel.org>
- <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
+	s=arc-20240116; t=1727648510; c=relaxed/simple;
+	bh=YNHB2K8Lz6uaot70hZOhnrmxSavlfHa3X3Km+vXArwo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T9r8Cw+LPd3lElHXB3wgDP/FUj+4QIk5Zr88z8g90rQMJf99oycYuHRV+IkAE/9nSev5h9k8kAjg6XOUwXmoZttsmJnGQjTYamjWceqwHhYtiwRxcvaPWXiw4NUk283wnCO1CWnY/el9RSi6OxTEFwgZvN3BBshO5Gih07AkN6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PQNCTcHy; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-277e4327c99so2107067fac.0;
+        Sun, 29 Sep 2024 15:21:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727648508; x=1728253308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YNHB2K8Lz6uaot70hZOhnrmxSavlfHa3X3Km+vXArwo=;
+        b=PQNCTcHyxbnNfe0fm4Wg1wznJ4OIvR5MwUrrFY7SSi/713bXSS7J8krdkaEdEVN43n
+         YgJxfAKyQzZXKuZmcr2jkneappW+qRWxO2ex0xe21vdCphi4Cc3DB3s4iVRERWYzNRvn
+         Bs2Cmcqr1Hzr2IV9AEYt4IPqYTdHKJNY0jPN7/VkTFBHXu1IH8fg43GAV8U6j7TLZ40G
+         UJG508gQ38Ofbac3rOLgPON115v4zNOgD0apSSDbPCed95IAZjlBncQqHupJKqM2YB+A
+         btHgYUI7Okp9fx4EV0+BOjkvCkuL2enomGmWpgFX57CxGOipRRuMwh/Tg9SHres8eae+
+         xfcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727648508; x=1728253308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YNHB2K8Lz6uaot70hZOhnrmxSavlfHa3X3Km+vXArwo=;
+        b=RSDYIyLb1Qq3zM3sBNnJC8rRFwBRRg8Amp2T+63OacCJy+/yc821Tz6fFgRW9ieh6Z
+         kXov3BqhjOYhINsA+imsKNdps4OAxOleS5N1GPBtnovMs1jamrMIv5Oa+AvevGEsBuS8
+         Wu8IwiKhBdNp91AOX0OGJzj55khhxrbPvBBrV848dijqPKO0yViSzilrYUd43k6hZMKC
+         Wdxv+VGmA+QnQkU/B+dCZi8Mk+0dlSk6DN9BTpbEROFEaP5In353e17bFkKTYZWXI/+W
+         1+BfKC9E9o3QmJu9XAUE6C+kAHjsRn/3O5TvbyeUHPZutcEC7V7qGTqR6Motlu2PhhYh
+         phbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Fnm23DpYRQQ8E3SxrvuhKBw8crBCLYRnEcgaBa44GK5x8zC0u6RDw/dRIS6miz7nKdsa5L2/BamN8g==@vger.kernel.org, AJvYcCXvnxrDg5Fz2Tmu0cfWZznf6FtZRKhEUtJLg4HSc0Zo4W5DqAZBzD5yYA2lsKjqvmXFIyTqb2ynAfvnpD0D@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrSGkg+Nbz2mcjLJUgpPkTHG7kRcXqBVfG62xu1feVJQuMlw60
+	2WhMtWA2yDzEHnerF4PYKVR56iJEW34nCGYJomkz5+VyQ6vkJHYUj7vBBQaW7k/FXyofn+EkPa2
+	0B/cvpZrnczu/0mq/Z/xbIlHS9Zw=
+X-Google-Smtp-Source: AGHT+IFJRYzQ7U0PGNZlrvybSMs9yWqPQ5waH00dYQRvv4jGDUcgiYX9Sh0HTg/PnWmg6KySpfvicsCTkTvBG1Zvp+M=
+X-Received: by 2002:a05:6870:ab06:b0:27b:6e04:d13a with SMTP id
+ 586e51a60fabf-28710aae385mr5630584fac.26.1727648508236; Sun, 29 Sep 2024
+ 15:21:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20230919003338.GA3748@google.com> <20240925155314.107632-1-jassisinghbrar@gmail.com>
+ <20240926043358.GD11458@google.com>
+In-Reply-To: <20240926043358.GD11458@google.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 29 Sep 2024 17:21:36 -0500
+Message-ID: <CABb+yY0geOHVz16PsZMbk2OWuJ91Cg-EBvKWfosxe7V5c-EBkQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Improve zram writeback performance
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: axboe@kernel.dk, gost.dev@samsung.com, kernel@pankajraghav.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, minchan@kernel.org, 
+	p.raghav@samsung.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I think that via pike it could be possible or via windows application
-running locally (to create reparse point manually with prepared buffer
-with such content). I will check it later.
+On Wed, Sep 25, 2024 at 11:34=E2=80=AFPM Sergey Senozhatsky
+<senozhatsky@chromium.org> wrote:
+>
+> On (24/09/25 10:53), Jassi Brar wrote:
+> > Hi Sergey, Hi Minchan,
+> >
+> > >> Gentle ping Minchan and Sergey.
+> > >
+> > May I please know where we are with the rework? Is there somewhere I
+> > could look up the compressed-writeback work-in-progress code?
+>
+> There is no code for that nor any progress that can be shared,
+> as far as I'm concerned.
+>
+> The most recent writeback-related patch series (WIP) reworks
+> how writeback and re-compression select target slots for
+> post-processing [1]
+>
+Thanks for the update, Sergey,
 
-Just a side note: Windows NT kernel allows for object names any
-characters except backslash. For object names is not used nul-term
-string, but rather string with explicit length. So even a null character
-is a valid in a object name. NT NTFS driver has for file names more
-restrictions and null is not valid. But it does not mean that somebody
-can write own filesystem which allows null bytes in file names...
-And this design of explicit lengths is also in SMB, so NT kernel may
-export nul characters in symlink path buffers...
+Minchan, if you are not pursuing that patchset anymore, is it possible
+to share the last version you had? That could avoid re-writing from
+scratch and, more importantly, straying too far from your preferred
+implementation.
 
-On Sunday 29 September 2024 16:48:46 Steve French wrote:
-> Is there any easy way to create such a symlink (with null in it)?
-> 
-> On Sun, Sep 29, 2024 at 1:51 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > Check that buffer does not contain UTF-16 null codepoint
-> > because Linux cannot process symlink with null byte.
-> >
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/reparse.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> > index 5a738f65b190..ca4f96c43508 100644
-> > --- a/fs/smb/client/reparse.c
-> > +++ b/fs/smb/client/reparse.c
-> > @@ -509,6 +509,16 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> >         int rc;
-> >         int i;
-> >
-> > +       /*
-> > +        * Check that buffer does not contain UTF-16 null codepoint
-> > +        * because Linux cannot process symlink with null byte.
-> > +        */
-> > +       if (unicode && UniStrnlen((wchar_t *)buf, len/2) != len/2) {
-> > +               cifs_dbg(VFS, "srv returned null byte in native symlink target location\n");
-> > +               rc = -EIO;
-> > +               goto out;
-> > +       }
-> > +
-> >         smb_target = cifs_strndup_from_utf16(buf, len, unicode, cifs_sb->local_nls);
-> >         if (!smb_target) {
-> >                 rc = -ENOMEM;
-> > --
-> > 2.20.1
-> >
-> >
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+Thanks
+Jassi
 
