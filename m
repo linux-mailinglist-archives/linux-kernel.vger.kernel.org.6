@@ -1,97 +1,88 @@
-Return-Path: <linux-kernel+bounces-343213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB5098983A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:08:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32999989846
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535FC1C203B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4420283B8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED7E17C9AC;
-	Sun, 29 Sep 2024 22:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JSbUfX/2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1496614B970;
+	Sun, 29 Sep 2024 22:18:30 +0000 (UTC)
+Received: from luna.linkmauve.fr (luna.linkmauve.fr [82.65.109.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF638396;
-	Sun, 29 Sep 2024 22:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613874C69
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 22:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=82.65.109.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727647671; cv=none; b=KKQ0YCpBYI8rh9op1BHF/obeaJTC3xv/6oTg1f8qOe2tCqkqlUx/IaYMTLDmsQGSfAkwFqaNwZWxYh10CSBAKyKVv02S3zDPh/Ws9MaMwJEj4WgLkmtuQmhKR3LE8oVPqwz1j+9sC5A3jmMskNiO9+hFG5cCI5G6jGogNwfazxY=
+	t=1727648309; cv=none; b=QT0voHhuKXVoowz6EFBM5LZUvbeXhw9K61I2XUzVD0OnW/Z1FvyvZW0e4Lt8WouJY9ebF91KQxa1BdOJhGgdj+C/kdzjzxY70zPnR0w8yZZ5T3FwQ7NRmSEi+jDwWZWzSYDEiwWEIfzfXtW9aZ0zeaQ7m5kra3SEMJzRn4FGhVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727647671; c=relaxed/simple;
-	bh=QCy0BybPk3+5ArjUThPJOsG+7WUB6VoPVv8Qo5KDeOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ipJctV5X457WnI0AaVDRl6vCW6MUquW21vANkG10mI959aUfgNFCzS0MvWasMOiM2bm1W7Xopm40X3//AqGIIRNxBczWvhfUBg+OtqcOlOWGhl7NSAjYpUchX1We9fGs4L2kuR5k+CIim7Q9LmQk8CI9XTsDIqYxsyd819P/DBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JSbUfX/2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727647659;
-	bh=QCy0BybPk3+5ArjUThPJOsG+7WUB6VoPVv8Qo5KDeOo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JSbUfX/2XpwiK2XoFJp01jANEX0Ss0ZZ6tbTWDJptGuGAfOpWglUz94xyGbW/zEKs
-	 ltGTD8FPqif//ASwl00BcQ1YP1sbrWcUWpv7DPeJXmR7MWd8krpKvGivO3On0P5GdN
-	 0EseTuCLtcDa+BZj7iZSZ2RNb9DsXCsKjqU7vo1ItjiKKyUkDc4rPgrD1amYGmiOTY
-	 E1pVNF3v8b5MF7K1yyNwu8HK4YsCNtVHivXMLv6xTQOVjAVMgmMrh66gVc0g3RrDHD
-	 crlG2xxNKybMeeYJdE5SzTdAWWFoBqtMfb/f8GEfPEoEQvnYkmpcU9Jx2HJu2gQopR
-	 qBrXnjTA1AiLg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XGyxR64mBz4wc3;
-	Mon, 30 Sep 2024 08:07:39 +1000 (AEST)
-Date: Mon, 30 Sep 2024 08:07:39 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: error while fetching the exportfs tree
-Message-ID: <20240930080739.53c91136@canb.auug.org.au>
+	s=arc-20240116; t=1727648309; c=relaxed/simple;
+	bh=JSXP/CFMoxRbivglErf3x29sSNHWQvSQ9Q+6Gs0YZfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nt8whUTykuPHWy/f6yN+CAvaUYdtTs+pXwWAXh17aFYs1/v3eEUeU9DVn8rjLFni7ka3+y3uNfkSZN2HUg+DEuMS/6iHFgpD7fmld37VBCn1+0DmHx9Su17cGXBV1Nn/FPJ37L3MSjL5FFVG6tk78U3u/UYSBEn+QNkI+vTmFok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr; spf=pass smtp.mailfrom=linkmauve.fr; arc=none smtp.client-ip=82.65.109.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linkmauve.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linkmauve.fr
+Received: by luna.linkmauve.fr (Postfix, from userid 1000)
+	id EB548153F903; Mon, 30 Sep 2024 00:10:35 +0200 (CEST)
+From: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+To: 
+Cc: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panthor: Set FMODE_UNSIGNED_OFFSET in fop_flags
+Date: Mon, 30 Sep 2024 00:10:31 +0200
+Message-ID: <20240929221034.1889572-1-linkmauve@linkmauve.fr>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/agAo.TYluy9bs3fl8_VJ.Yn";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/agAo.TYluy9bs3fl8_VJ.Yn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This fixes a regression introduced in commit
+641bb4394f405cba498b100b44541ffc0aed5be1.  No panthor device, card or
+render node, could be open() since this commit, returning EINVAL
+instead.  This prevented Mesa from working on SoCs such as the rk3588
+which contains a Mali-G610 GPU.
 
-Hi all,
+The commit mentions which drivers must be changed to set that flag, but
+panthor seemingly got forgotten, triggering the WARN_ON_ONCE() added
+in drm_open_helper().
+---
+ drivers/gpu/drm/panthor/panthor_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Fetching the exportfs tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux exportfs-next)
-produces this error:
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index 34182f67136c..c520f156e2d7 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -1383,6 +1383,7 @@ static const struct file_operations panthor_drm_driver_fops = {
+ 	.read = drm_read,
+ 	.llseek = noop_llseek,
+ 	.mmap = panthor_mmap,
++	.fop_flags = FOP_UNSIGNED_OFFSET,
+ };
+ 
+ #ifdef CONFIG_DEBUG_FS
+-- 
+2.46.2
 
-fatal: couldn't find remote ref refs/heads/exportfs-next
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/agAo.TYluy9bs3fl8_VJ.Yn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb5z6sACgkQAVBC80lX
-0GwK+Qf+ITxnmAiR2NeveUcAgPtX6PyhiR++u5OLlLft5DSs1I2SxtVmzUta8pBM
-q6lav9+xIh2oXX7IdktNfJeka5Vw3eaHuYjTR29aA3mH0nYbk2Mp+wGLOPUX9ZaL
-724Goc6UveXoRFqJaJ6eMbGb9vud+dmIVtOj6cUpKqEQpT5vhPoZxBmONYeO4LnD
-qJVmMD6FWu/3d56EiDAYahJGLAqLT/lTS6zCuTES6XunoIta8tBAXze32wm1c762
-JG7KlpZkizQW+FN7JmvtQW8Hec/0/y4APPU5k5ADIvmfXtGbscfziMQi9XZBvA5C
-PdHy8C4j3ZGgf0NQiTBAQJUSbcGpKA==
-=1v7m
------END PGP SIGNATURE-----
-
---Sig_/agAo.TYluy9bs3fl8_VJ.Yn--
 
