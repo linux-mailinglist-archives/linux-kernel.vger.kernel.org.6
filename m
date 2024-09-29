@@ -1,213 +1,146 @@
-Return-Path: <linux-kernel+bounces-343048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E189C989631
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E812C989632
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E73B1F226DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E451F226CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA3917C213;
-	Sun, 29 Sep 2024 16:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB7517BEC6;
+	Sun, 29 Sep 2024 16:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs9VeEoQ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgEimdwD"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C18101C8;
-	Sun, 29 Sep 2024 16:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D146C101C8
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 16:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727625713; cv=none; b=tTS5ytTKh7Ce7KawMAKbuMcu9Cneg6wpFMgfC/E2BYcsWZQ6vUr99/x654FMF583USSKDYNU3xCh8qPx6vG2D2Tv7oH1RDLVfxgzohOJpEAat33JAAmCxT8s4cmQcsLEk1aek3BtcfHgZbCqoL70AvaP0Ou/1P9WC3iTxZhJ2jI=
+	t=1727625801; cv=none; b=nCnqlu1FVXd0HtBXzN9nE0ymTrNRq35NyADZKPl989O+zUPVcLhmSWdbA0qG6lPDOBcLApBe2urzFSgxLuY/PucfrTUSpOhyAO+Ta3/tNe18Yp2fJAPc2XXCjoU+7AbMUX5CCJ3NHy/9H2CT1oBLYUHz1d+DcrlGW61xEWNAq6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727625713; c=relaxed/simple;
-	bh=EgIqzu9KVyWDxVMW2jPhzzdJLfbhTbX2AAkTO9BHsWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p1341GkPby3qyZz2HM+GblFhazqunkpZ9h/43TWZJ0H1ZCFs7TM0BvkuePiEoWjZ9LB9WQS2a1UI4Ofzk8uFYgpVY6PuXNAIPoNbjgPUkYQ2CSeQbkm4+RVd2OPHaDKA54bl/FNhAK1rVW6avvF2TO77arc8fq2TX6MQy0l/mtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs9VeEoQ; arc=none smtp.client-ip=209.85.167.43
+	s=arc-20240116; t=1727625801; c=relaxed/simple;
+	bh=LtcPiNVknBsM16c0TT1tQO40eB/cj5PvO/+nmHxfqIs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=KN1uytHNLDscqvwhyYVfoIHxqCZrFqS2KMP2gSQ2hvsY88AceIXjqbUXhgnfS2EcEXNdkl2i3xf3cRKJlxoH3FmqMmlK653alPV28hDnZMc6lxaSCCAF549sovtdgoSU3oU7+NlF2hYC73VncrrO4tbI6amLunL8oQ9nFbyCROw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgEimdwD; arc=none smtp.client-ip=209.85.210.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53994aadb66so213833e87.2;
-        Sun, 29 Sep 2024 09:01:50 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-712422564aaso2339882a34.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 09:03:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727625709; x=1728230509; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+j5mE6mA7Lzt2F2PdEtSO03E+UJc5ymhCaR2gz+DIc=;
-        b=fs9VeEoQk9F/BP1F9qcGW55z0JXeUivNy2tYRb3+fIbrAxvoMmtCUyLWel6uyeQC2O
-         5h/9a+4ztrSITs9bvhTUQLEciZGrxRF3FhCUBh9nYg3hFZeZUVBW3GPTCmsm4j+fg2mR
-         ZRK9NfY5ajOG4zMxcWQXCSyueT5xdXmP//4ctcJ/RQJTdE3kxlAhlJb9UdA8zwA0bp8j
-         yU6RZhTgZ+ZU88ad9aIVK2q7683KxACZcWQ9mFrjnmCrPAs91qAGlnsPaoouBiHCKgoD
-         E+M6AdRZeZzaycTXhdd9rS2u8MxMDdJSEQM+vy3vClkri8wUyBvJkStzXovdlh3orQfy
-         yR/A==
+        d=gmail.com; s=20230601; t=1727625799; x=1728230599; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=N9Nz67kM1tngGekEnToJnIfMZ99/7OQJ39829PPlax0=;
+        b=BgEimdwD6SGzHVCu7VHIMfB5sGu98KqJ+pFltMaS1d28f2SWUgLCY9P4HPIQccAi2g
+         Bn4EBMu8m/4BY821z0b8jr13rmfGgYjQwmfu9JYVATUTkWMamlHsxByD3awFqkTgfdUy
+         7a4TQR6hES2y+6novghthuwIwOsTfaWPY9FvoQ+sOOtNwyFY5Mkoj6VgxSAoGmqvhaup
+         h10jaamHXw/5Lbbe/aGHjnUIGLi3ol1yArEe3J1EHuGtdG0yXpqtVDAF5KU6n3mJZneb
+         NfNWajyV/laZxKWZbtZ44j1vH5jNXWw/XaTR8PwLmRqg4Uty+IGyZveitsxDcD8ZGOXO
+         0PJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727625709; x=1728230509;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+j5mE6mA7Lzt2F2PdEtSO03E+UJc5ymhCaR2gz+DIc=;
-        b=GjizTZEXiERLXVcR95jfRHwpp3a3kEM0KzxPeDmPGxZzHLvfi/DkP7JDZgfr5SOtDB
-         JrKRq2g6y6n0p42xfIvm/WTUM2vwh7z0myHfSCqpoNBR6HMT9zZApNVJCJcyceNtIJG1
-         iYsNbNaof0I/B1YguFV2xlTKwjnYt0RyzIsr/B38rUkTqjqc4QOrlGC10zGNAmayqN1A
-         ia/LnT7AcfXvJl6uIaNg+e6bABiey6X+7/xZ1Oj/zdjvQqrEsVwKebrQ3rGK2zHDItQA
-         mWppEyLTzhd1JI6IjIl9GHHGh9uhXlQWnpm5LgNs4Uend30ovjm49DUZ0WtGiVW7CNMI
-         i4jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUggVinHDJWCLjH+02MMMcnFLy9F6jPlAp3kKmEwvfte3tBQRYc9sOwr64ZACjHnx4hnDE3FCHpxY1VM2xV@vger.kernel.org, AJvYcCVhJSHy1b0uKvOnk0IlDipHXa1xF1f/gx6WiyZjhKEs5BGhPrvCrnDGt8hIx6idCS7d0yHxQLlMZLCO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc8oP729ke6xA296qtACVpcMQ0AoAkQlLveBDj2KqhEMUY6Gln
-	ItUThAbIZBNNa+4+RSqyAgB+iNRQfIvDoS/NsqU4cjxKeOlxcslskmEFYLMCRSe/dkPc3MmRjq/
-	1BaX2r03+RgHat2iI8vSVO7zc5lk=
-X-Google-Smtp-Source: AGHT+IGWR9qr1K7uGnsqXJnOR8e5EOEzNxJIt9URZAfnzk1X+BtQDiaM2b45YUT1XqJfPvP5nM5hjucWKhnOK5EPx0o=
-X-Received: by 2002:a05:6512:158f:b0:533:46cc:a736 with SMTP id
- 2adb3069b0e04-5389fc6b0c1mr4847822e87.37.1727625709130; Sun, 29 Sep 2024
- 09:01:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727625799; x=1728230599;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N9Nz67kM1tngGekEnToJnIfMZ99/7OQJ39829PPlax0=;
+        b=WOeKtwG2E5tl8YAjcydnluSmRbYrfH159g+fDUH4cmC+Y9pqgntawcUACppgYf+olm
+         DXta/tdn6Ht6QkU02pRYQ0C5UsWTGSGXPii2ScUkrntHTHEcATLZeXJlWigNt5OADwTq
+         DIQbTtv1P7kLEvA3Vra/nVKo+DcuAUV3FvphiT3F5KQ3mGMZUyQTrFLXaIM64Aa8Tj6s
+         FR+46PRuuVGgZ6AtsfwUrA/qpgtUlBzRq80O8+LVzKOFW8RIXN2U16CyO5mv3E5pUfx9
+         bU8yrazUyG4XZlUr1RMlpKUSqIIhgKK8cIbK9RFFq1rAigr+YDLxtgGuC0LcFDmcQnkx
+         sj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCU3kE3cnqt7yJ1Giv9SOU6hO+RNIB0G5G2dcINF7sQAZvjaqvNCvvqQGxANF7+kJNs0tPb0zZYRIS+Ded4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0LV3taAIrSfvBQ1pgsJ3fOhFG/+qLovTHXMN0PN7uucf4d/pu
+	4Yzz5ioOih3PXISs10yUjlwpJSbFMBCYupFjWoVi1VZX15q2SMG9F5dz+rh8QbNdWWPIXhSO4yN
+	xESpGnrdDImkbK4y+/waulQPpW95kK1TTYJA=
+X-Google-Smtp-Source: AGHT+IHYeNY9dpviBeaDcx2s4c4jtZcargGTFlE4viaH/4/8jmpncwxoldPm0H2CyLOfKtmmwG+qjORR7rzNwkqQnyM=
+X-Received: by 2002:a05:6870:4208:b0:260:ffc8:6d9f with SMTP id
+ 586e51a60fabf-28710bdc8e5mr4951518fac.19.1727625798877; Sun, 29 Sep 2024
+ 09:03:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928215948.4494-3-pali@kernel.org> <20240929140343.9147-1-pali@kernel.org>
-In-Reply-To: <20240929140343.9147-1-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 29 Sep 2024 11:01:38 -0500
-Message-ID: <CAH2r5mukT=cTCc5fRg-=w1n2zqqr73piYPHJZo+To=TARsa3UA@mail.gmail.com>
-Subject: Re: [PATCH v2] cifs: Remove intermediate object of failed create
- reparse call
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Sun, 29 Sep 2024 11:03:07 -0500
+Message-ID: <CABb+yY0_DC+usbp362+jSXF9p3y_XDcYV6MLO=kPCcnzThK8OA@mail.gmail.com>
+Subject: [GIT PULL] Mailbox changes for v6.12
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Running regression tests on these currently.  Let me know if
-additional patches to add for these experiments
+Hi Linus,
 
-1c2fcb28ce99 (HEAD -> for-next, origin/for-next, origin/HEAD) cifs: Do
-not convert delimiter when parsing NFS-style symlinks
-92484193d70a cifs: Validate content of NFS reparse point buffer
-c77a8e49f2d3 cifs: Fix buffer overflow when parsing NFS reparse points
-ab7d68fd4bcc cifs: Remove intermediate object of failed create reparse call
-ab50485ea1b4 smb: Update comments about some reparse point tags
-1600fe2d42a1 smb: client: stop flooding dmesg with automounts
-f7a33d56e52f smb: client: stop flooding dmesg on failed session setups
-e1b72ef3ba03 cifs: Check for UTF-16 null codepoint in SFU symlink
-target location
-9717d5343849 Merge tag 'v6.12-rc-ksmbd-server-fixes' of
-git://git.samba.org/ksmbd
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
-On Sun, Sep 29, 2024 at 9:04=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-> intermediate object created by CREATE. Otherwise empty object stay on the
-> server when reparse call failed.
->
-> This ensures that if the creating of special files is unsupported by the
-> server then no empty file stay on the server as a result of unsupported
-> operation.
->
-> Fixes: 102466f303ff ("smb: client: allow creating special files via repar=
-se points")
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
-> Changes in v2:
-> * Increase out_buftype[] and out_iov[] members from 2 to 4 as required by=
- smb2_compound_op
-> * Call free_rsp_buf() for all members of out_buftype[]/out_iov[]
->
-> I would like if you double check this smb2_compound_op() usage if there
-> is not some other memory issue. As V1 contained both memory leak and
-> buffer overflow (smb2_compound_op wrote out of those two arrays).
->
-> ---
->  fs/smb/client/smb2inode.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> index 11a1c53c64e0..6e69a3b98be3 100644
-> --- a/fs/smb/client/smb2inode.c
-> +++ b/fs/smb/client/smb2inode.c
-> @@ -1205,9 +1205,12 @@ struct inode *smb2_get_reparse_inode(struct cifs_o=
-pen_info_data *data,
->         struct cifs_sb_info *cifs_sb =3D CIFS_SB(sb);
->         struct cifsFileInfo *cfile;
->         struct inode *new =3D NULL;
-> +       int out_buftype[4] =3D {};
-> +       struct kvec out_iov[4] =3D {};
->         struct kvec in_iov[2];
->         int cmds[2];
->         int rc;
-> +       int i;
->
->         oparms =3D CIFS_OPARMS(cifs_sb, tcon, full_path,
->                              SYNCHRONIZE | DELETE |
-> @@ -1228,7 +1231,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_op=
-en_info_data *data,
->                 cmds[1] =3D SMB2_OP_POSIX_QUERY_INFO;
->                 cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfi=
-le);
->                 rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &o=
-parms,
-> -                                     in_iov, cmds, 2, cfile, NULL, NULL,=
- NULL);
-> +                                     in_iov, cmds, 2, cfile, out_iov, ou=
-t_buftype, NULL);
->                 if (!rc) {
->                         rc =3D smb311_posix_get_inode_info(&new, full_pat=
-h,
->                                                          data, sb, xid);
-> @@ -1237,12 +1240,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_=
-open_info_data *data,
->                 cmds[1] =3D SMB2_OP_QUERY_INFO;
->                 cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfi=
-le);
->                 rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &o=
-parms,
-> -                                     in_iov, cmds, 2, cfile, NULL, NULL,=
- NULL);
-> +                                     in_iov, cmds, 2, cfile, out_iov, ou=
-t_buftype, NULL);
->                 if (!rc) {
->                         rc =3D cifs_get_inode_info(&new, full_path,
->                                                  data, sb, xid, NULL);
->                 }
->         }
-> +
-> +       if (rc) {
-> +               /*
-> +                * If CREATE was successful but SMB2_OP_SET_REPARSE faile=
-d then
-> +                * remove the intermediate object created by CREATE. Othe=
-rwise
-> +                * empty object stay on the server when reparse call fail=
-ed.
-> +                */
-> +               if (((struct smb2_hdr *)out_iov[0].iov_base)->Status =3D=
-=3D STATUS_SUCCESS &&
-> +                   ((struct smb2_hdr *)out_iov[1].iov_base)->Status !=3D=
- STATUS_SUCCESS)
-> +                       smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-> +       }
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(out_buftype); i++)
-> +               free_rsp_buf(out_buftype[i], out_iov[i].iov_base);
-> +
->         return rc ? ERR_PTR(rc) : new;
->  }
->
-> --
-> 2.20.1
->
->
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
 
+are available in the Git repository at:
 
---=20
-Thanks,
+  git://git.kernel.org/pub/scm/linux/kernel/git/jassibrar/mailbox.git
+tags/mailbox-v6.12
 
-Steve
+for you to fetch changes up to 54595f2807d203770ee50486cb23dc5763916d72:
+
+  mailbox, remoteproc: omap2+: fix compile testing (2024-09-27 09:11:05 -0500)
+
+----------------------------------------------------------------
+mhu-v3, omap2+ : fix kconfig dependencies
+imx: use devie name instead of genereic imx_mu_chan as interrupt name
+qcom: enable sa8255p and qcs8300 ipc controllers
+bcm2835: Fix timeout during suspend mode
+mailbox: convert to use use of_property_match_string
+mediatek: enable mt8188
+spreadtrum: use devm_clk_get_enabled helpers
+rockchip: fix device-id typo
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      mailbox, remoteproc: omap2+: fix compile testing
+
+Fei Shao (1):
+      dt-bindings: mailbox: mtk,adsp-mbox: Add compatible for MT8188
+
+Geert Uytterhoeven (1):
+      mailbox: ARM_MHU_V3 should depend on ARM64
+
+Huan Yang (1):
+      mailbox: sprd: Use devm_clk_get_enabled() helpers
+
+Jingyi Wang (1):
+      dt-bindings: mailbox: qcom-ipcc: Document QCS8300 IPCC
+
+Liao Chen (1):
+      mailbox: rockchip: fix a typo in module autoloading
+
+Nikunj Kela (1):
+      dt-bindings: mailbox: qcom-ipcc: document the support for SA8255p
+
+Peng Fan (1):
+      mailbox: imx: use device name in interrupt name
+
+Rob Herring (Arm) (1):
+      mailbox: Use of_property_match_string() instead of open-coding
+
+Stefan Wahren (1):
+      mailbox: bcm2835: Fix timeout during suspend mode
+
+ .../devicetree/bindings/mailbox/mtk,adsp-mbox.yaml | 12 ++++++++---
+ .../devicetree/bindings/mailbox/qcom-ipcc.yaml     |  2 ++
+ drivers/mailbox/Kconfig                            |  3 ++-
+ drivers/mailbox/bcm2835-mailbox.c                  |  3 ++-
+ drivers/mailbox/imx-mailbox.c                      |  6 +++---
+ drivers/mailbox/mailbox.c                          | 22 ++++++-------------
+ drivers/mailbox/omap-mailbox.c                     |  2 +-
+ drivers/mailbox/rockchip-mailbox.c                 |  2 +-
+ drivers/mailbox/sprd-mailbox.c                     | 25 ++++------------------
+ drivers/remoteproc/Kconfig                         |  6 ++----
+ 10 files changed, 32 insertions(+), 51 deletions(-)
 
