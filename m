@@ -1,83 +1,156 @@
-Return-Path: <linux-kernel+bounces-342724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047A7989224
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:31:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96768989226
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1081F23A3C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D201F236F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CD56FB9;
-	Sun, 29 Sep 2024 00:30:52 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67149538A;
-	Sun, 29 Sep 2024 00:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B564F4A0F;
+	Sun, 29 Sep 2024 00:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="da9OAMN/"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B0B8460
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727569852; cv=none; b=EbRWX4b9KFTFzauR7rTG1GyOlGqFRTZy52P4JQFOMKfQggifJqlJOYA7sWDHab1oYzOSXTCe+tOuolvmZeSeRNVHyfXbv1WrV+FVjEMBIzmjucvU5JsTyTsOvfHA1ZeWDiEHfB1UranjqlB4NDScIYlPi4fhVVURmeEFZhAW3eY=
+	t=1727570088; cv=none; b=CBKpgnI60Ci8J7bkobQShQ3XCuagcxziSt+fgfsU5uWRV46KGry9nXdKBcN0mwEIj9VmPxSg4ZQIJTYDuujo/oN/u/e6BuVNFTc5jlYRvjiFZZ3SeKoapRplxGTtnT0uyduhbsFV29+wrycRtKOB/2Srk6eozA4ElWj7HIe8WgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727569852; c=relaxed/simple;
-	bh=wkC0ylvHkYKBubt20kyRIlUGtXWDFhbHoS4BMq2qwA0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DEKaeeahvFU37Kt22Pwf5z3EdXO71lvmAPnvM14H/qppWyASQKfe6AQKC98gxbpk+7AEQfIGR88yYJOpOtXadLjp6Ez6vsQDcVLOZhN1kqQ9OHx1sJElh8ptFYNBwQClsLxUvYqLpZy29Yus6gRm9zWn3Ha5emK3hZTI2FeysDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 0E8B292009C; Sun, 29 Sep 2024 02:30:42 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 0AFD492009B;
-	Sun, 29 Sep 2024 01:30:42 +0100 (BST)
-Date: Sun, 29 Sep 2024 01:30:41 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Pavel Machek <pavel@ucw.cz>
-cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, linux@leemhuis.info, 
-    ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Bricked Thinkpad x220 with 6.12-rc0
-In-Reply-To: <ZvXJjU7gpAchSqiy@amd.ucw.cz>
-Message-ID: <alpine.DEB.2.21.2409290048590.21893@angie.orcam.me.uk>
-References: <ZvW9e8qBiAT5e0Ke@amd.ucw.cz> <CAHk-=whj9dbJD0mT6VUW7i16Les5waxWBb1o_XsDKrtQ9iBO1g@mail.gmail.com> <ZvXJjU7gpAchSqiy@amd.ucw.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1727570088; c=relaxed/simple;
+	bh=FUnK5WsqIt7SFr1ZuMbM54fJeM1wSWwCSGDvqC9enzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ju503OBCzHSOpCvJ9PubT4dzykTePXBm5mRZQcMC3WaSl6Et1ST++Gtd1o/6SfgnZCa1T9XjieHDrDKkxaqzs0gAQAjwk059l+l0GIwxmf/45XQt2/Pr5sXTTka2OA3SHNAenYhqvpk/I8nXM5KDTlWLO5k74NlBks9Ll9LeOUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=da9OAMN/; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1727570071;
+ bh=xENoRDlaw7uEZQLQGR7uTWdX3LD1ukayJIDfRPDH3Vo=;
+ b=da9OAMN/U5XBUZyoZfiZdGSYTzXYwpNid04GT0SdGXMxYWmNAWJRxJmiIFDlrmZLsS0HCvuqy
+ rq1K0FfgrMY2xq+0UAMgTzf6wEB1R48Pk619RiGzud5pyVexqo3fGlDVMT07Gmbmb1gIS6PMMg1
+ 2kKbxWGYS3s5aA+PRaXVEMSCeOOgx5T3mNnK8n+57IB/pnBFG3/WUGe4A/4R2NUMa5PiVxUs2/0
+ lsRQ7wyDeGMJDGixJG88GMnrkvPTslTdb/c7LKYcycgFeDpyk0e18ABh1W0rF6WJ+cK6OQ+GW2Y
+ xF5zi2Aghx5rHt60Z8h+wbmqSXC1jG3uKmABXU636nTw==
+Message-ID: <83349da6-17bc-432d-badc-5946c42a53ed@kwiboo.se>
+Date: Sun, 29 Sep 2024 02:34:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/3] drm/rockchip: Add basic RK3588 HDMI output support
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Sandy Huang <hjc@rock-chips.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Simona Vetter <simona@ffwll.ch>,
+ Simona Vetter <simona.vetter@ffwll.ch>
+References: <20240929-b4-rk3588-bridge-upstream-v8-0-83538c2cc325@collabora.com>
+ <20240929-b4-rk3588-bridge-upstream-v8-3-83538c2cc325@collabora.com>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20240929-b4-rk3588-bridge-upstream-v8-3-83538c2cc325@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 66f8a093ed0aa09774abf316
 
-On Thu, 26 Sep 2024, Pavel Machek wrote:
+Hi Cristian,
 
-> > > When I press power button, it starts producing some noise (hdd
-> > > spinning up), but power light goes pulsating, not on, and I stare at
-> > > black screen.
-> > 
-> > No beep?
+On 2024-09-29 00:36, Cristian Ciocaltea wrote:
+> The RK3588 SoC family integrates the newer Synopsys DesignWare HDMI 2.1
+> Quad-Pixel (QP) TX controller IP and a HDMI/eDP TX Combo PHY based on a
+> Samsung IP block.
 > 
-> No beep. And no beep when I tried booting with RAM removed.
+> Add just the basic support for now, i.e. RGB output up to 4K@60Hz,
+> without audio, CEC or any of the HDMI 2.1 specific features.
+> 
+> Co-developed-by: Algea Cao <algea.cao@rock-chips.com>
+> Signed-off-by: Algea Cao <algea.cao@rock-chips.com>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  drivers/gpu/drm/rockchip/Kconfig               |   9 +
+>  drivers/gpu/drm/rockchip/Makefile              |   1 +
+>  drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c | 425 +++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c    |   2 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_drv.h    |   1 +
+>  5 files changed, 438 insertions(+)
+> 
 
- According to: 
-<https://download.lenovo.com/ibmdl/pub/pc/pccbbs/mobiles_pdf/x220_x220i_x220tablet_x220itablet_ug_en.pdf>
-pulsating power-on LED indicates the sleep mode:
+[snip]
 
-"The power switch stays lit whenever the computer is on, blinks when the 
-computer is in sleep (standby) mode, and is off when the computer is off."
+> diff --git a/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c
+> new file mode 100644
+> index 000000000000..6103d30d40fb
 
-I guess the system has become confused somehow.  In the old days pressing 
-and holding <Insert> while powering a PC up would clear any leftover NVRAM 
-(ESCD BIOS) state (I earned a dinner once this way).  I guess this trick 
-no longer works nowadays?
+[snip]
 
- I presume you've studied the linked document for any hints?
+> +static irqreturn_t dw_hdmi_qp_rk3588_irq(int irq, void *dev_id)
+> +{
+> +	struct rockchip_hdmi_qp *hdmi = dev_id;
+> +	u32 intr_stat, val;
+> +	int debounce_ms;
+> +
+> +	regmap_read(hdmi->regmap, RK3588_GRF_SOC_STATUS1, &intr_stat);
+> +	if (!intr_stat)
+> +		return IRQ_NONE;
+> +
+> +	val = HIWORD_UPDATE(RK3588_HDMI0_HPD_INT_CLR,
+> +			    RK3588_HDMI0_HPD_INT_CLR);
+> +	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
+> +
+> +	debounce_ms = intr_stat & RK3588_HDMI0_LEVEL_INT ? 150 : 20;
+> +	mod_delayed_work(system_wq, &hdmi->hpd_work,
+> +			 msecs_to_jiffies(debounce_ms));
 
- NB I do believe disconnecting all the power sources is enough for the EC 
-to get completely reset.  It's also what said document suggests to try if 
-you can't bring a system out of sleep (standby).
+If I am understanding this correctly this will wait for 150 ms after HPD
+goes high and 20 ms after HPD goes low to trigger the hpd_work.
 
-  Maciej
+Would it not make more sense to be the other way around? In order to
+reduce unnecessary HOTPLUG=1 uevents from being triggered during short
+EDID refresh pulses? At least that is what I am playing around with for
+dw-hdmi.
+
+Regards,
+Jonas
+
+> +
+> +	val |= HIWORD_UPDATE(0, RK3588_HDMI0_HPD_INT_MSK);
+> +	regmap_write(hdmi->regmap, RK3588_GRF_SOC_CON2, val);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+[snip]
+
 
