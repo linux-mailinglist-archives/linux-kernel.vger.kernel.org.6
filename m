@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-342808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D9198932C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:03:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B29F9892FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC471C226A2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B83441F22BCB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263C945C0B;
-	Sun, 29 Sep 2024 06:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD79325779;
+	Sun, 29 Sep 2024 04:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="F9lb2t0f"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="Rw0OsT8G"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E568F6B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 06:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51841E49F
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 04:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727589789; cv=none; b=MdmlptYP/A7GbhMCjE09tEbzFk79pjwTcTo0K3qdFqcooLtAftYwZqnOqL5glI0IFuahcE8LE+ByCnbadGNYqBZ07+bNcSeCbVM1RGBXh497prnH0GJjrebJ/SfpAP9FkmBXuXUEOc6CHxzdrojU9xDHZuT1Oyr4Pzl08NQ1bR0=
+	t=1727583491; cv=none; b=YQqR4gCtu7jv3gjWFKVCff6lYe498Iax4gTTKvjbXrppnlSoIZ2LjwErIKQ25ha3DViaHfcBu756Sjg1GJaLH4DccZ/VmIRCYHLS/tL7llSB4Ya1MniwVu9o72v0rp9LUW/M6YY17HcBpXWz+Tnr1D24S2ZE2JmoQ0j1UeNLgMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727589789; c=relaxed/simple;
-	bh=+akFPa+8alj51MCfrHOvoYE8LLNbQjwGyJuPEMHWLnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6MHwnrSRxmRQM8qVOADlKh7ME6cm0JXk1MKJxUI3joq6bIxxmMCDMzqe9M+ewGH+/2sLpzC4gb1YVbM5IDRFPcn7J4j6z/NsA55kydXq/LylFk7oYJUaxsJJJG9xuavu6C4cxgVSYaL4fXptZfCFhHmV5S/U904MP/C73txpy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=F9lb2t0f; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from macsyma.thunk.org ([191.96.150.29])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 48T5xa0F003145
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 01:59:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1727589579; bh=irslh8MsFcziIi7ImkqjnJQeDeABJM+Q2j1bZu9qw5Q=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=F9lb2t0f9NjX3BPjn6sGHLs9VIHknZUoi1KhvEaJOtho67SUD8rFrxfiHFKznp9+S
-	 eCajM9Fo0SdJuLBsT3cDKG/qWuY9FH/YuRXkTW0Q+McT37KKIyIM3y99vlgbpUc9AR
-	 pUZczo55ghh124GGJyyNY5jpzHkCn2kvNJeSVfQjicQCCmOqajnqaDnegEknvxd+1+
-	 tx7YlAyzawhZv4mHHPV1nM23Sp3OljZk1syml6ecHvIgWGJ3X95gcpC7H/43iBZ7Hx
-	 7fJtFtY/lj8JtED6GlIEuqqdDVhFgaugNG+qvp7s1U1bPLVXm4iMxaLWp0cZmgsuhb
-	 tNfxAH8ChHfgA==
-Received: by macsyma.thunk.org (Postfix, from userid 15806)
-	id 9B17A3402F3; Fri, 27 Sep 2024 08:50:19 -0700 (PDT)
-Date: Fri, 27 Sep 2024 08:50:19 -0700
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Max Brener <linmaxi@gmail.com>
-Cc: adilger.kernel@dilger.ca, viro@zeniv.linux.org.uk, brauner@kernel.org,
-        jack@suse.cz, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] [PATCH] vfs/ext4: Fixed a potential problem related to
- an infinite loop
-Message-ID: <20240927155019.GA365622@mit.edu>
-References: <20240926221103.24423-1-linmaxi@gmail.com>
+	s=arc-20240116; t=1727583491; c=relaxed/simple;
+	bh=FMIGLf+Y9vF5aJ2DZoLFX9IXpQMyVobrCuEt6UgGFo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MV2izDco9+v3H6mDSS+Uh/7vQ6j4RJFAJym9UbEWTOb6aE+o9wZnm9JBorJpEeAulXY3fDXE8rQc+Y0KIjhmTRoKetuq7ZL5d5XtouOvRsMVvkah6NOZD2gYPWm5aVpc23UuuiD/d2Ih0kRQ2+6meIrd5gwcOAdU+aWwkpCqa3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=Rw0OsT8G; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e232e260c2so26283627b3.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 21:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1727583488; x=1728188288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m+m8AqonS+5wkQ0t+OwfdrCfKeL0zOxEqCmb5hKElDc=;
+        b=Rw0OsT8GmZYYqglm8P6Wz0ymY7A3YaSe7gpCXqTFLQdNPh20uWauc1AHlHBFBynH92
+         DWV/MncdSIawdGrMeu4Il44XZ3PnHGKA5i8foNYHn/hm5fLW19tCa5UZDjuMDU7LeD1s
+         KndlFC7krm0ILQFQ1oDojEcz5c82R3eVCtvOCo2Vri7ZyOfFNZQLbysHBLom8qAXol0J
+         QcFm4nQJxMWlVABexneUxCswrm70C3+WQSS8tSMPOviF/CpstRxRXztdu6ZA1IowibJT
+         AylNUrb48/I9uvx1sYsdiG1FSF0dU1aj+QyEj6RcTq9eY0LK5qsKhrLrlik5fXrfosKX
+         yB9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727583488; x=1728188288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m+m8AqonS+5wkQ0t+OwfdrCfKeL0zOxEqCmb5hKElDc=;
+        b=HNZHLfFoj2MKiIZqOh3QAwem1YzETu4wLqZCddSkYdIUAjc63SgJ9OFLunlj95qcTf
+         pQBUAG7Ir7Pui1Jh6q+8NNhDCM3nDAy7gI1UIHa+4H/LR1uKath5e2haOOdzZCJvvtsX
+         0DT3qiBw19yYqHMoxECdexUrIC5A81ZU45y/pyVtfgeAXRdxKO9G4jjt9l7IuaeTu7Uh
+         0ZCtKuOw2WmbYA9Un+NbgcvITYS8+pnZeId+wtVedh60vvggkGyirQeo8kxCNNb4PB3f
+         mGT1uwZNx9qH/B1IBDmuVezuArVmHv6L2jsLcCj/1Y6BgJmsjYRBvgcB1/b+FVBy9g7j
+         /Dkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVw4huIdWrrETqPDikp8a1XoRolztlWDZbjJaJ8mfbFbBnI6GFy/6EkGxQNl52crXa26O4wK8DOiS5hWik=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa+gPJa5WIq1dRnZKkv90izdpab/WNwBC9UTVB6fCU6yCzD1Nv
+	fUFq40YxnPHRP6ZAFEaAe9nFwaYogH4Wia4lfJbOJG6v5/ykieMNgFAQZri90gl/QKkNwmiQMaI
+	5ypEm+fkHXWWr3KkNJPqQph0/nBV9kNCcQv8Jyw==
+X-Google-Smtp-Source: AGHT+IHG+ttejnUk0zyaZpRqlfVcERFzFnZe28OrhK/N94BnvFQjUgcmlw1DztcdaSHGiLlQpGJBubePZGpNHYH6Hi0=
+X-Received: by 2002:a05:690c:39a:b0:6be:92c7:a27e with SMTP id
+ 00721157ae682-6e2475e2d1emr59019207b3.28.1727583487761; Sat, 28 Sep 2024
+ 21:18:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926221103.24423-1-linmaxi@gmail.com>
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-2-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-2-ojeda@kernel.org>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 00:17:56 -0400
+Message-ID: <CALNs47sLuQU3=kT_eMi_kR1_Ak-75P1S+-G5sewop8J396EmoQ@mail.gmail.com>
+Subject: Re: [PATCH 01/19] rust: workqueue: remove unneeded ``#[allow(clippy::new_ret_no_self)]`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 01:11:03AM +0300, Max Brener wrote:
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-> 
-> This patch fixes a potential infinite journal-truncate-print
-> problem.  When systemd's journald is called, ftruncate syscall is
-> called. If anywhere down the call stack of ftruncate a printk of
-> some sort happens, it triggers journald again therefore an infinite
-> loop is established.
+On Wed, Sep 4, 2024 at 4:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Perform the same clean commit b2516f7af9d2 ("rust: kernel: remove
+> `#[allow(clippy::new_ret_no_self)]`") did for a case that appeared in
+> workqueue in parallel in commit 7324b88975c5 ("rust: workqueue: add
+> helper for defining work_struct fields"):
+>
+>     Clippy triggered a false positive on its `new_ret_no_self` lint
+>     when using the `pin_init!` macro. Since Rust 1.67.0, that does
+>     not happen anymore, since Clippy learnt to not warn about
+>     `-> impl Trait<Self>` [1][2].
+>
+>     The kernel nowadays uses Rust 1.72.1, thus remove the `#[allow]`.
+>
+>     Link: https://github.com/rust-lang/rust-clippy/issues/7344 [1]
+>     Link: https://github.com/rust-lang/rust-clippy/pull/9733 [2]
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-This isn't a good justification for this change; in general, whenever
-you have code paths which get triggered when a logging daemon is
-triggered, whether it's systemd-journald, or syslog, and this can
-cause this kind of infinite loop.  For example, suppose you are using
-remote logging (where a log message gets sent over the network via the
-remote syslog facility), and anything in the networking stack triggers
-a printk, that will also trigger an "infinite loop".  This falls in
-the "Doctor, doctor, it hurts when I do that --- so don't do that!"
-
-In this particular situation, journald is doing something silly/stupid
-which is whenver a message is logged, it is issuing a no-op ftruncate
-to the journald log file.  It's also worth noting that ext4's truncate
-path does *not* trigger a printk unless something really haw gone
-wrong (e.g., a WARN_ON when a kernel bug has happened and flags in the
-in-memory get erronously set, or the file system gets corrupted and
-this gets reported via ext4_error()).  The reporter discovered this by
-explicitly adding a printk in their privatea kernel sources, and in
-general, when you add random changes to the kernel, any unfortunate
-consequences are not something that upstream code can be expected to
-defend against.
-
-For context, see: https://bugzilla.kernel.org/show_bug.cgi?id=219306
-
-We can justify an optimization here so that in the case of
-silly/stupid userspace programs which are constnatly calling
-truncate(2) which are no-ops, we can optimize ext4's handling of these
-silly/stupid programs.  The ext4_truncate() code path causes starting
-a journal handle, adding the inode to the orphan list, and then
-removing it at the end of the truncate.  In the case where sopme
-program calls truncate() in a tight loop, we can optimize the
-behaviour.  It's not a high priority optimization, but if given that
-we can't necessarily change silly/stupid userspace programmers, it can
-be something that we can do if the patch is too invasive.
-
-HOWEVER....
-
-
-> To fix this issue:
-> Add  a new inode flag S_TRUNCATED which helps in stopping such an infinite loop by marking an in-memory inode as already truncated.
-
-Adding a generic VFS-level flag is not something that we can justify
-here.  The VFS maintainers would NACK such a change, and deservedly
-so.
-
-What I had in mind was to define a new EXT4 state flag, say,
-EXT4_STATE_TRUNCATED, and then test, set, and clear it using
-ext4_{test,set,clear}_inode_state().
-
-Cheers,
-
-					- Ted
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
