@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-343102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9849896CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:46:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C747C9896E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7A31C20A62
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:46:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 830A3281938
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:52:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82D55897;
-	Sun, 29 Sep 2024 18:46:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AB66F307;
+	Sun, 29 Sep 2024 18:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lZotxcRk"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="okskZXYK"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84A364BA;
-	Sun, 29 Sep 2024 18:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A535FDA7
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727635577; cv=none; b=kRQTJaZvLdBvWljaEUbKxb0Fwj9Rj5OkXB2M5kwOd05De7qYu1yJ4JTmHVgEotprR5jih3/ib3fhz9c51D1QUbOJtejb5gh3VSKs19efqHqv5vXZK9cD8PwdQqsI9RL2LxrRrA8ab9fdb9aiIvelDdfvgvc+sB93xyK+ayFnMPo=
+	t=1727635951; cv=none; b=P6C1kSVWoFQR8+JSfJNph5IfnlVpVx8ATjMqaKRCEXw4BrhjcB7UOSgbF3UDpqWW+Gezc10EHti2Uut0LvT126yXJD1DS7rVxBq3qonH5XerZCOnCkUd+chnclQDNJTziW9ehaqFbmbTbZ+GVtfbqs47B7lML52FkdSN5YVGK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727635577; c=relaxed/simple;
-	bh=RjMxtxQDuLXORe76uqEGn8mOtgsRg5/ahz/7B2p9fuE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WJqI/NtPgt5j8lZQ51in2EOXuYKOLrBVIGch4h09TCkkA2Nk/flmquMbv9x0YP9HYGOJALNUjQ6in2JPkmw6Iwvjc62TwFV4EZjmoCUcClDM6QF1NZ7+LibQb8mc9v0JjIB9syqrbKQ0rsU7cGl6GiYnMHz8clTVpyM6QeqCq8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lZotxcRk; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D0861418B6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727635567; bh=gmDrMhG7sZH9BFaRoq0xQy2ReKc1UDllwoB2/ScS7bg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lZotxcRko0b/kaguCB7QOUOHdFO+dglv00DzGLL76RO2fcOqPZ8iZGUv51MrgevXF
-	 B2zNyaWqWPf3YQif0aO4mtlDMJ1uwuecCKbuBx6h/e9FJrVrj8xeXVsRFBRCzpDiSv
-	 voRKBvo8/tiU4P6HM6DDepebPzwJxoUhDkcnWAubMgHgpZc8dC4kHzNU9DHmEIfC/n
-	 ZqP99Pa77mIiDVkp44x8WwsrGa57UAIrGhRAV5MbH2Lh5UovaR2sRR57BXraWQAyRa
-	 4Ngqrr+gDF68ZM3+ETcBhXDojGJTF8cPC4HL4mbsrcP7T1BLX12tdX7lyU1wuHcbUB
-	 D+RPEo+Q7EK+A==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1727635951; c=relaxed/simple;
+	bh=kVfeflwXH6Kh5KE7YwpqIIpnxAMaIFEAhhFsU51ELQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nqxmdck5qz4Hkiy2G7MFK42LTst0RbO3NKPOVsjpc2F2xOdZPrHFPNUPwfOEl7ab/vEdDBmNisp2LSZ5fDUquCBlTRUghQB8JRlOUmQO7K8rXGzDNBtmtsrGB79WtCJIhrkdGfZ3ZP1L6ykOtxMJBx4jVJjZPUpepSOlldFmY0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=okskZXYK; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D0861418B6;
-	Sun, 29 Sep 2024 18:46:06 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, =?utf-8?Q?Cl?=
- =?utf-8?Q?=C3=A9ment_L=C3=A9ger?=
- <cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>, Charlie Jenkins
- <charlie@rivosinc.com>, Andrew Jones <ajones@ventanamicro.com>,
- linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: riscv: Fix typo MIMPLID -> MIMPID
-In-Reply-To: <20240929153305.m8IHY_7l@linutronix.de>
-References: <20240925142532.31808-1-namcao@linutronix.de>
- <87h6a3fw74.fsf@trenco.lwn.net> <20240929153305.m8IHY_7l@linutronix.de>
-Date: Sun, 29 Sep 2024 12:46:02 -0600
-Message-ID: <87ldzab8np.fsf@trenco.lwn.net>
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 79E19880D8;
+	Sun, 29 Sep 2024 20:52:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1727635948;
+	bh=YU8L+6JDbb4tJqh0JpDU77dzxF7kj5LAZ1t5CtSsbCs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=okskZXYK/UgpCItQ3w8pMcTaxVUDVsOlVb7MUkOQW1rLUHfi7MK0YwEWi8pYLQXv6
+	 nnd4IY0jAulgdILSef2NwhIXoXsoxqbM5ZMDBHdZMu1uJ3iqadTflfAXVwbKmCYohZ
+	 1I0Y0gOzuRFGRAunXYp8SyG7ukavCtCEk3Jnfsm2+lFCA1w4H3MaVQBLf5L+UsQY7Q
+	 Ruz93F/z7YUScRtZanHqfgaAUaDfDFo8QCa6EVQiqytBSjlGc7SzAacAeNuhrqHgGX
+	 CxgO8Exlxc24qRrIjyXkdcT0oQRdZDL1zPB9IAqu53rb3Uy6GKZkpYrTYBSlIi98VV
+	 D19ZTQRPG0QCA==
+Message-ID: <51a87d3e-7a9c-4709-ab64-d869dca28b0a@denx.de>
+Date: Sun, 29 Sep 2024 20:47:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] soc: imx8m: Probe the SoC driver as platform
+ driver
+To: Saravana Kannan <saravanak@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kernel@dh-electronics.com,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Arnd Bergmann <arnd@arndb.de>, Fabio Estevam <festevam@gmail.com>,
+ Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240926213729.2882045-1-marex@denx.de>
+ <CAGETcx-q7+DGhPYd3QrsPh7O_0HU7T=NhaJYp0Fu7YW2zwbo7Q@mail.gmail.com>
+ <e32ed329-b012-44f2-854b-80a8b0efc4e6@denx.de>
+ <CAGETcx95ZMBJR0F-3Cr8++1_MwiMCPHiwfdx7m5q0XDAiGG75A@mail.gmail.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <CAGETcx95ZMBJR0F-3Cr8++1_MwiMCPHiwfdx7m5q0XDAiGG75A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Nam Cao <namcao@linutronix.de> writes:
+On 9/28/24 12:27 AM, Saravana Kannan wrote:
 
-> On Wed, Sep 25, 2024 at 12:02:39PM -0600, Jonathan Corbet wrote:
->> Nam Cao <namcao@linutronix.de> writes:
->> 
->> > The macro that is really defined is RISCV_HWPROBE_KEY_MIMPID, not
->> > RISCV_HWPROBE_KEY_MIMPLID (difference is the 'L').
->> >
->> > Also, the riscv privileged specification names the register "mimpid", not
->> > "mimplid".
->> >
->> > Correct these typos.
->> >
->> > Signed-off-by: Nam Cao <namcao@linutronix.de>
->> > ---
->> > ask me how I found out..
->> >
->> >  Documentation/arch/riscv/hwprobe.rst | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
->> > index 85b709257918..fb0affa61eb9 100644
->> > --- a/Documentation/arch/riscv/hwprobe.rst
->> > +++ b/Documentation/arch/riscv/hwprobe.rst
->> > @@ -51,7 +51,7 @@ The following keys are defined:
->> >  * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
->> >    defined by the RISC-V privileged architecture specification.
->> >  
->> > -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
->> > +* :c:macro:`RISCV_HWPROBE_KEY_MIMPID`: Contains the value of ``mimpid``, as
->> >    defined by the RISC-V privileged architecture specification.
->> 
->> You should be able to just say RISCV_HWPROBE_KEY_MIMPID() without the
->> :c:macro: markup and have the right thing happen.
->
-> My .rst knowledge is limited, so I probably miss something obvious, but I
-> couldn't get that to work.
+[...]
 
-It's not RST as such, it's an extension that we've added for th ekernel
-build. 
-
-> Do you mean something like below? The brackets do not seem to do anything
-> and get treated as plain text.
->
-> Sorry but you probably need to show me what to do exactly :(
->
-> Best regards,
-> Nam
->
-> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-> index 85b709257918..4b4b4ef0e0f9 100644
-> --- a/Documentation/arch/riscv/hwprobe.rst
-> +++ b/Documentation/arch/riscv/hwprobe.rst
-> @@ -51,7 +51,7 @@ The following keys are defined:
->  * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
->    defined by the RISC-V privileged architecture specification.
->  
-> -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
-> +* `RISCV_HWPROBE_KEY_MIMPID()`: Contains the value of ``mimpid``, as
->    defined by the RISC-V privileged architecture specification.
-
-Try it without the `backquotes`.
-
-Thanks,
-
-jon
+>>> I'm glad it's working for you, but I think there might still be a race
+>>> that you are just lucky enough to not hit. I think you still need to
+>>> fix up drivers/base/soc.c to return -EPROBE_DEFER when
+>>> soc_device_match() is called but soc_bus_type has no devices
+>>> registered. That way any drivers that try to use that API will defer
+>>> probe until this device gets to probe.
+>>
+>> soc_device_match() returns a pointer to soc_device_attribute or NULL, do
+>> you have some other function in mind ?
+> 
+> No, I'm talking about the same function. I'm asking to change it to
+> return ERR_PTR(-EPROBE_DEFER) instead
+> of NULL if no soc device has been registered yet.
+> 
+> And you'll also go change all the drivers that use that API and are on
+> the IMX boards supported by this soc driver, to handle the
+> -EPROBE_DEFER correctly.
+> 
+> And this error will only get returned for boards that do async probing
+> and using a platform device to register the soc device. So it's
+> not going to break everyone if you do this change.
+It seems the imx8m has no users of this, so I created a local patch, but 
+I'll send a V4 of this series first.
 
