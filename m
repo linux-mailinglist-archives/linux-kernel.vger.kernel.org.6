@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-342803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11477989320
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCE8989323
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356E71C226FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:11:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC3B28379C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230A784E18;
-	Sun, 29 Sep 2024 05:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF9E7E591;
+	Sun, 29 Sep 2024 05:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="GHsHKypO"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fQVEmKsX"
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5717C9E
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E97225A8;
+	Sun, 29 Sep 2024 05:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727586667; cv=none; b=lgkDiebjilj+eu8vdh4MDVc3xIyy4APtC87bNDFRLpM7l89ZU6MuU2j590XZ8OGNFK3a+sLxLcpE4EWo7t+xXmd/PgoHOGcHFNlRWj7ihKOOw+iSRfRIq0F1dOr3mw5cWzxhQIPXA6jk9j11qgx3NYm+TmBB0IbYJE0RNr2jwQE=
+	t=1727587182; cv=none; b=N2sRCk3VrbuqJAiicIprg9W4hhd9wF66CplpQmo11GjDF3Y8YtK6WSHvGu9e7WzsXuhnt9yeg3+p9IHsBVcAe62AQgXnzCNuUFXDe4TArJFYWSHdmDdk3A7ZAPbkmsHXPHwMA7y7iuPDVNywAozEP9D1ZEom5GgurtA3QpDfiVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727586667; c=relaxed/simple;
-	bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HpJGx2rPvah+MLCG3u3OutNR3UJ+qTK0eGWPd0zpW8klx2puFNUCgksdTr4kZLatm7sutNO6CZoQmIHH31NaM0w1KTZu/TzVn8MWcmO40MOD6JbURmMgC6Wind1CCfX+BdZKTy+Og1F/9KAYg58pWkmna/DIDXFKAcL10bveevk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=GHsHKypO; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db4b602e38so27299247b3.1
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:11:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03; t=1727586665; x=1728191465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
-        b=GHsHKypOzHZ4bYmcxf3vuQbYwLqT19xD/oYNIZDOcf+BzFZF2/zMNczUgXiFzAVkZr
-         xUO+cXYbyBdN9zTQuuPy777zjGb2cTgzw6qkN2hATZBorRQtkw2Gm2681rymWU+23HOL
-         NQtllUjCR6LAybPlFJYGkcUjdDQmKKhtYgjZJajL7hgVzfqZLl5p0kaWsqqV1f2+fvJ5
-         Bmvd8RIEKg4cZsMpU5adABfDsFh9DAV2uOucmgfdY9X8/wKloG0fOsQI3UllhHBTTrBP
-         VO5oTf3C/ZHmGqAUbWVmfHpMIXtCErI3YbMD7t3Ad5LQlrPnDkr2/L3ujzzW3VbhijiI
-         YoLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727586665; x=1728191465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
-        b=VCk5yraoY6EMCYeU3f5pYA7I4Ewj0XA3VvNjJdQZN7SZqkuXPga+RHft88ywfJzXAJ
-         lEg2Mf0Qhb/ffMxWwlttND8SACiVll9OmlhoHHNThPpvJ5VVxJh6lb5NaBcpxEFmjx5R
-         WqU4bmBYFG4fu2xQYAGwWjjJsxljppPcSOA7Ppo7/ObgsKgbwqpBqIEXs1Nfb60p5z+o
-         HBTGptDBhY8FeUKbaieP/sbsQ27R0byRXWNyjuzWSCbXSFqHjzkMHKBt/jSqvykXfJRs
-         G2J+1Kv/heqTgvIx6OtY4aFBQXsMEZoclFW1EHUvxOajUCJIFAuj2++G6Nz/R1xpr66a
-         F9lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBIDo04stEWpJT+E9X1F8mn7E7ZJm7uVdCgO0buqsrjo6HtEbsoL9a8pa1vzXxhPFcyM2ygOhAa6q1wSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3MwZ+pbyB1sD28DFFJDFgTrLAagEB0/0iGKhlmMda2jpSkfgX
-	DvalrSwB4B4dB5dT4QDGlTgx/Y+t30nISoHe8g7/2ESxB8FwDt8WYdh5Hw2ou/BypvMgo7W8RDA
-	XmpAW3Vo900uGZohrXXklSeAqTKB+jHNqmowcng==
-X-Google-Smtp-Source: AGHT+IEbuPLIS0r0UAYXOL55sJ7MsrTfAySS4mECInBKGc5OhJ5B2QgDR/M498wdGIiCmNjzbtv73pF/ogEFQj1XJkw=
-X-Received: by 2002:a05:690c:26c5:b0:6b4:e3ca:3a76 with SMTP id
- 00721157ae682-6e247571063mr46680857b3.19.1727586665054; Sat, 28 Sep 2024
- 22:11:05 -0700 (PDT)
+	s=arc-20240116; t=1727587182; c=relaxed/simple;
+	bh=M8Y4q9KqH8ynxCMxOjXWrgx59MwZDuSBaCxSv18wS24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hZM6JG6hNWBk5nvqVFxQrpmc+A7fcge6Pz/rUqcGV6Zp9Ne40OIbnDuqKFZKrFAsngRGc2P6v4iar7H/V0bmhD/gIrz3cQ7vNSbQyNgorma/2c7VFfDEGv/VVW1k7riZd0xBDsBor8kMwM6HNdI7m4CAV+OOtXM7UoH7bSfhgXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fQVEmKsX; arc=none smtp.client-ip=54.204.34.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1727587154;
+	bh=/EWWFZsUKKFI1kZ/I3oRmkSVcmx9Zzb8RUBnibFGZa4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=fQVEmKsXCOG2ETnYRZndloovk0mGG2IoAHLve1xdVhzeYNZDWVOwiV5xgKjpr+ypf
+	 n0plPVQ+ofY5lUJ/3CKcattnPwu22FdelvGCGFNKipLyAkqsEWyVEmyhmM4nvIwR5k
+	 8FRO0gBNRv+A723Nu6QKk2V8vc4NbKotvgRARqpQ=
+X-QQ-mid: bizesmtp90t1727587124tn0iekvg
+X-QQ-Originating-IP: qUnavW/MdKiQQ97GShvSuZbUAcpkgGf2oSlnELyWzjU=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Sun, 29 Sep 2024 13:18:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 12449184197820123976
+From: WangYuli <wangyuli@uniontech.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	guanwentao@uniontech.com
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH] HID: multitouch: Add quirk for HONOR MagicBook Art 14 touchpad
+Date: Sun, 29 Sep 2024 13:18:32 +0800
+Message-ID: <293F58F16AA131CA+20240929051832.869861-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-19-ojeda@kernel.org>
-In-Reply-To: <20240904204347.168520-19-ojeda@kernel.org>
-From: Trevor Gross <tmgross@umich.edu>
-Date: Sun, 29 Sep 2024 01:10:54 -0400
-Message-ID: <CALNs47vPzH7CSjRh=jW0xNTh9=oajUs4SAkTE2OHLd5M2e065A@mail.gmail.com>
-Subject: Re: [PATCH 18/19] Documentation: rust: discuss `#[expect(...)]` in
- the guidelines
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: ONNbXhDT8KJ/G1sua7Cjgnw3kvGXRlfuuVGel6n7ZWgept6C/faJIqJG
+	QEh405Ao11kK5zLvzco9MWtAl2aH5eFv/xJChMMV17rjmGnzYRoOb/R/UVV/vlI4kYZuNyr
+	HDI1M5P6x1Eyb2IkWtzTGG8a/8tMavvMfqVtNcDFbVbaXMdiCX8fpUHviFwkk+xdjWFMqny
+	blqiNfiI+XSxjtJ28Dy87N6DJmaRoDtIHJ8tEEqP3y0oREAtnR47BMgVq/wdCLv7diUPdJp
+	JhVZVTVHsz8mFioR170t7Z+cTwAKNn9FFua7DIQj5UWU6e5jcylA7QsAdrA7huEvvIG+fj5
+	UoKAHS5HDKxE+BWO5tH860HK7Je4Bmkz70xlomGbVB9o2gFWIzok0ibiPOgYXGtb0B7h2u7
+	ilAWT/+IHxtdoen/4MkduG3Xwcjl3BJkZB+/70T+Dah/f9pNmHrDJNs8zooBdFirKW0oI2h
+	KCau7IRfhERTDZc2bUMCGo7lH5eX5g7XaKVWdWqd6C1rrwDVAGpA5F2kleSIagpiQZn0BS8
+	vyjdcLLRlUHv0SqtZ9XmQe0jsPKowN/Oip7r8Oa/Xwmca2I5gvZFq+vhgiLpuvwm2H4af1L
+	z0iiz2g+AnvwZYlQpY6vph6UFreogVOq4efJLoiUJ88WQV83GuMwi90+wkfNK/SKxmXG9SA
+	Sv+UhgJ+1RsTHLwwQnNGft76GR6Eped+mjCPfOjl+Cx0Z7aElIAOlZgrr/QRQ3TLIBxTPn0
+	uSR8WkATCk6VzXKAEWWMS4QL7CtCL5H91CmSh2/kar2Bq3vY1ttAsUGtXTsiy5xC2L/1JHI
+	ISyjd/5iw8EHFh1+IRMLACAQd6cklw6bfdKv6D5kdbkL9kCdwEZaPbw8ZazdVYcwIXPSyek
+	9EVJxpQKx74hQbHeTkpLyAyluXUJ7/8qzdg6p8uD5oWFL/Xdcg8hwoWH3tYvm7nsmDE9U5W
+	HcreKepzvsE2FJuJ9gMIiNQT0/N7kDbr0ADPzYo4eKJWuXqPU1hX+MoQ89WKuIS6wNfYYJ3
+	LkIzQ4Hw0eViZzh1nm
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
-On Wed, Sep 4, 2024 at 4:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
->
-> Discuss `#[expect(...)]` in the Lints sections of the coding guidelines
-> document, which is an upcoming feature in Rust 1.81.0, and explain that
-> it is generally to be preferred over `allow` unless there is a reason
-> not to use it (e.g. conditional compilation being involved).
->
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+[Problem]
+It sometimes after reboot change output from Touchpad to Mouse,
+evtest show it output from "TOPS0102:00 35CC:0104 Touchpad"
+to "TOPS0102:00 35CC:0104 Mouse",and it works as A mouse.
 
-Would it be good to mention that a reason can be specified with
-`reason =3D "..."`? I don't think we use this anywhere yet.
+[Solution]
+Like GLO-GXXX,As a workaround, it is possible to call
+MT_QUIRK_FORCE_GET_FEATURE to force set feature in mt_set_input_mode
+for such special touchpad device.
+
+Link: https://gitlab.freedesktop.org/libinput/libinput/-/issues/1040
+Link: https://gitlab.freedesktop.org/guanwentao/libinput/-/commit/8624bc6d7539ba01e996fefb58ce393e6f129db8
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/hid/hid-multitouch.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 99812c0f830b..a1e0c3db3d4c 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -2082,6 +2082,11 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
+ 			0x347d, 0x7853) },
+ 
++	/* HONOR MagicBook Art 14 touchpad */
++	{ .driver_data = MT_CLS_VTL,
++		HID_DEVICE(BUS_I2C, HID_GROUP_MULTITOUCH_WIN_8,
++			0x35cc, 0x0104) },
++
+ 	/* Ilitek dual touch panel */
+ 	{  .driver_data = MT_CLS_NSMU,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_ILITEK,
+-- 
+2.45.2
+
 
