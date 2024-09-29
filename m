@@ -1,232 +1,318 @@
-Return-Path: <linux-kernel+bounces-343051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38E298963D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20540989645
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1102837AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7CD0284BB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EF517CA04;
-	Sun, 29 Sep 2024 16:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="svvk/LyP"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448AA17C7BE;
+	Sun, 29 Sep 2024 16:17:34 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF2216B391;
-	Sun, 29 Sep 2024 16:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B625D2AE90
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 16:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727626328; cv=none; b=MrOg4quhNh14UfgN3CQSrZNVe8ZrKnIml2WPVI3Hf3HWP5i/xgzXsrTl1IQRYwMxFBj1UO09wpjoyqoJ/m69fboRYk0jMCO5OSz2fzQGqcoWmJN0xcjYOk7KtYl/SX4C6MaR9KacLPKHoSegVeW3pA+VqB1YkHfhctZbNytHNDw=
+	t=1727626653; cv=none; b=OEOaBkA8Oz2RLhIZSdwtNk9B1Vh4XMjL7xp7gmC2fpzD5gYbAp+GStvWjZJAbY2j6T4xzHX60DA7q5zPfKPZFLdFjwCRgg6FM+ZyLyOP2J8d3GgMRNPofe1oEIi1kcb8NzJIpEDa/kOAgZSdSWpP9GIYKfuzzy5+5xsjF2VrbPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727626328; c=relaxed/simple;
-	bh=HJ2x4I/ug4vYksCIyMccxRyEoob4AW4o2pKSiT58LRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iXbEt23Gk+XW2nKiBwZZmxCLKFieSHNX/osUPRS8PqqrMIqJDRA7cwXCcZReJyyNVRk0dVPwHhlgUhE6sXoAQbF7UKxS3EiOmO/JPQyZres2n71MD0jNGn4EFxtJRLZUDe32yHE0mOy0btA+gm86/qSsDcbSjO5AGfetRaQXk0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=svvk/LyP; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727626318;
-	bh=HJ2x4I/ug4vYksCIyMccxRyEoob4AW4o2pKSiT58LRI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=svvk/LyPfqhUfzakbGZDMVX7VVByYE2AeLYi84Iat2Nmhk0SZspzSM8xYBGkeS+RM
-	 5EhqTdbyUOvmHKzU0svyESV2RNxfFLfJfqHyiHi3UL2tg05gqATM+AStng1skjJQiU
-	 nC0HWfHd12TaHRAtdRgRo/YS3aNiifWFFGWWEw9LnXauYnN2bsyh2tAqpH2X0wy1eP
-	 0Jd4hggXFtI6qamEv1y/8kKh8wEAgVT6QIiqYQ4pj5YDK0AnaUiJQravgLK+FOcXsk
-	 Z23R4E/Fnz5ickG1wgcgcUmWLPhdhrTZrzeCe8sAXf0kEL9Urw8pQPr9OdkZ0YPo9b
-	 iRXlD+On+aamg==
-Received: from [IPV6:2606:6d00:100:4000:cacb:9855:de1f:ded2] (unknown [IPv6:2606:6d00:100:4000:cacb:9855:de1f:ded2])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XGq322Nzkz8lJ;
-	Sun, 29 Sep 2024 12:11:58 -0400 (EDT)
-Message-ID: <3a298b64-dd7c-4a0d-950e-8e5b98b39fee@efficios.com>
-Date: Sun, 29 Sep 2024 12:09:54 -0400
+	s=arc-20240116; t=1727626653; c=relaxed/simple;
+	bh=k8NXOyMsWQAD5a3hs3ZVeALAHMwKQjzLJ791Q2lg9wI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M/clwebqzDFKRlSkPlPgVZVAJkUMcRdrfjdspJYBo64eSe78VlskPHRW3y9WVV741emhRnq8aHHJ15HfHQwnaWQsPON0/z2rE7MWqtKKSu1YGUGmcjzM406a3uzttVT69m9zTZLqG7oujXMxE1EckK09zvGcwQHcT97mOzVkwj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a6d8bb03so53884595ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 09:17:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727626651; x=1728231451;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PyikQQfIDGxtwVPQfab24lvxnKgbV99eRP3XmaKomBM=;
+        b=q8YFkfoR9HmKfSieGNIyvBRH3rhReCB6AFZUc/qjA6UtONPGbohvCIViiG9sDlhOVT
+         J7oqwvOidz9kPYjbidSxcp6EORpMXPz/prI+JQ9JAQLNyWHJLsy4joKjIQKnMoI9Y9rA
+         D/tmP5mkXKqr6EqTyWB5UjXtfzXPZxMONWpRRKToNxzHNAGux/3ZSWkmsgiRAvf6GG1e
+         EVi03MXVKLs4vh2yiSV+Wif/LhGq6P1ZEB3JtOF1NrJcjFeTSs8Qbc2xiTQkazvCLuFq
+         FsFx8Wk9lp37NNExMy9Fvqns82g9ocZly8W84QjQ+SSEXWEc9Lc1lFaU/vMu4akwNth8
+         tRfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdAocC7jk9yeQGUbtaCzc0aNfOIskpFN5LlY12H7QDIe9XmhMokMO4DQOeTL4i/EhEL/2sRI5aG5mnmv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd5vjEvNkviOwbt5EgAWsbUxF3glx5Z7o+VHnoGUF5q05ifNEL
+	N4vONqp/o0SpnxjyvXJuHbSUtb0fye3nnv01dHa/j6y00XYh0THG3NbES3w65W8TWfOBHmcVtBW
+	R5vgSR9uGRQo2jqHMS5hzhfO8XRCeibt2DlwxPWBdACqbrwOHrrDIMX8=
+X-Google-Smtp-Source: AGHT+IEjPaqQX7Gyca/pqAUM0VEKV1ihnLjf8SH5hmQY5QucOkr0RSXUxnJg5hRltiNwYzsc1exOUan6rxU31b1NQErmNRWpQQIr
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] Documentation: RCU: Refer to ptr_eq()
-To: paulmck@kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Alan Stern <stern@rowland.harvard.edu>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, rcu@vger.kernel.org,
- linux-mm@kvack.org, lkmm@lists.linux.dev, Nikita Popov <github@npopov.com>,
- llvm@lists.linux.dev
-References: <20240929111608.1016757-1-mathieu.desnoyers@efficios.com>
- <20240929111608.1016757-3-mathieu.desnoyers@efficios.com>
- <8153f0f1-fd18-4ae1-9dc5-f9b725429cad@paulmck-laptop>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <8153f0f1-fd18-4ae1-9dc5-f9b725429cad@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca06:0:b0:3a2:f7b1:2f89 with SMTP id
+ e9e14a558f8ab-3a3451bbf5amr72695195ab.18.1727626650871; Sun, 29 Sep 2024
+ 09:17:30 -0700 (PDT)
+Date: Sun, 29 Sep 2024 09:17:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f97d9a.050a0220.6bad9.001d.GAE@google.com>
+Subject: [syzbot] [bcachefs?] possible deadlock in pcpu_alloc_noprof
+From: syzbot <syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-09-29 17:51, Paul E. McKenney wrote:
-> On Sun, Sep 29, 2024 at 07:16:08AM -0400, Mathieu Desnoyers wrote:
->> Refer to ptr_eq() in the rcu_dereference() documentation.
->>
->> ptr_eq() is a mechanism that preserves address dependencies when
->> comparing pointers, and should be favored when comparing a pointer
->> obtained from rcu_dereference() against another pointer.
->>
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> Cc: "Paul E. McKenney" <paulmck@kernel.org>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: Alan Stern <stern@rowland.harvard.edu>
->> Cc: John Stultz <jstultz@google.com>
->> Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
->> Cc: Linus Torvalds <torvalds@linux-foundation.org>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: Frederic Weisbecker <frederic@kernel.org>
->> Cc: Joel Fernandes <joel@joelfernandes.org>
->> Cc: Josh Triplett <josh@joshtriplett.org>
->> Cc: Uladzislau Rezki <urezki@gmail.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
->> Cc: Zqiang <qiang.zhang1211@gmail.com>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Waiman Long <longman@redhat.com>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: maged.michael@gmail.com
->> Cc: Mateusz Guzik <mjguzik@gmail.com>
->> Cc: Gary Guo <gary@garyguo.net>
->> Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
->> Cc: rcu@vger.kernel.org
->> Cc: linux-mm@kvack.org
->> Cc: lkmm@lists.linux.dev
->> Cc: Nikita Popov <github@npopov.com>
->> Cc: llvm@lists.linux.dev
->> ---
->> Changes since v0:
->> - Include feedback from Alan Stern.
->> ---
->>   Documentation/RCU/rcu_dereference.rst | 32 ++++++++++++++++++++++-----
->>   1 file changed, 27 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/RCU/rcu_dereference.rst b/Documentation/RCU/rcu_dereference.rst
->> index 2524dcdadde2..9ef97b7ca74d 100644
->> --- a/Documentation/RCU/rcu_dereference.rst
->> +++ b/Documentation/RCU/rcu_dereference.rst
->> @@ -104,11 +104,12 @@ readers working properly:
->>   	after such branches, but can speculate loads, which can again
->>   	result in misordering bugs.
->>   
->> --	Be very careful about comparing pointers obtained from
->> -	rcu_dereference() against non-NULL values.  As Linus Torvalds
->> -	explained, if the two pointers are equal, the compiler could
->> -	substitute the pointer you are comparing against for the pointer
->> -	obtained from rcu_dereference().  For example::
->> +-	Use operations that preserve address dependencies (such as
->> +	"ptr_eq()") to compare pointers obtained from rcu_dereference()
->> +	against non-NULL pointers. As Linus Torvalds explained, if the
->> +	two pointers are equal, the compiler could substitute the
->> +	pointer you are comparing against for the pointer obtained from
->> +	rcu_dereference().  For example::
->>   
->>   		p = rcu_dereference(gp);
->>   		if (p == &default_struct)
->> @@ -125,6 +126,23 @@ readers working properly:
->>   	On ARM and Power hardware, the load from "default_struct.a"
->>   	can now be speculated, such that it might happen before the
->>   	rcu_dereference().  This could result in bugs due to misordering.
->> +	Performing the comparison with "ptr_eq()" ensures the compiler
->> +	does not perform such transformation.
->> +
->> +	If the comparison is against another pointer, the compiler is
->> +	allowed to use either pointer for the following accesses, which
->> +	loses the address dependency and allows weakly-ordered
->> +	architectures such as ARM and PowerPC to speculate the
->> +	address-dependent load before rcu_dereference().  For example::
->> +
->> +		p1 = READ_ONCE(gp);
->> +		p2 = rcu_dereference(gp);
->> +		if (p1 == p2)
->> +			do_default(p2->a);
->> +
->> +	The compiler can use p1->a rather than p2->a, destroying the
->> +	address dependency.  Performing the comparison with "ptr_eq()"
->> +	ensures the compiler preserves the address dependencies.
-> 
-> Bitter experience leads me to suggest a "// BUGGY" comment on the "if"
-> statement in the above example, and a corrected code snippet right here.  :-/
+Hello,
 
-Changing for the following:
+syzbot found the following issue on:
 
-+               p1 = READ_ONCE(gp);
-+               p2 = rcu_dereference(gp);
-+               if (p1 == p2)  /* BUGGY!!! */
-+                       do_default(p2->a);
-+
-+       The compiler can use p1->a rather than p2->a, destroying the
-+       address dependency.  Performing the comparison with "ptr_eq()"
-+       ensures the compiler preserves the address dependencies.
-+       Corrected code::
-+
-+               p1 = READ_ONCE(gp);
-+               p2 = rcu_dereference(gp);
-+               if (ptr_eq(p1, p2))
-+                       do_default(p2->a);
+HEAD commit:    684a64bf32b6 Merge tag 'nfs-for-6.12-1' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c6a99f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
+dashboard link: https://syzkaller.appspot.com/bug?extid=fe63f377148a6371a9db
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> 
-> Other than that, loks good!
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Let me know if I should add an acked-by from you on this
-documentation patch as well.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-684a64bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f05b4b08a420/vmlinux-684a64bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d59f9edaf3bc/bzImage-684a64bf.xz
 
-Thanks,
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com
 
-Mathieu
+netlink: 'syz.0.0': attribute type 1 has an invalid length.
+netlink: 9364 bytes leftover after parsing attributes in process `syz.0.0'.
+netlink: 'syz.0.0': attribute type 1 has an invalid length.
+loop0: detected capacity change from 0 to 32768
+bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=errors=continue,compression=lz4,no_splitbrain_check,norecovery,recovery_pass_last=check_dirents,reconstruct_alloc
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+bcachefs (loop0): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.12: rebalance_work_acct_fix
+  running recovery passes: check_allocations
+bcachefs (loop0): dropping and reconstructing all alloc info
+bcachefs (loop0): accounting_read... done
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): check_allocations...
+btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 19bc58a6c09b6540 written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0, fixing
+btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c18f4a4face03c6 written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
+btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7675f41d391e5d36 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
+btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq bcb9905dfb2993d5 written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
+bucket 0:34 gen 0 data type user has wrong fragmentation_lru: got 0, should be 67108864, fixing
+bucket 0:36 gen 0 data type user has wrong fragmentation_lru: got 0, should be 67108864, fixing
+ done
+bcachefs (loop0): going read-write
+bcachefs (loop0): Fixed errors, running fsck a second time to verify fs is clean
+bcachefs (loop0): done starting filesystem
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-syzkaller-10547-g684a64bf32b6 #0 Not tainted
+------------------------------------------------------
+syz.0.0/5104 is trying to acquire lock:
+ffffffff8ea171e8 (pcpu_alloc_mutex){+.+.}-{3:3}, at: pcpu_alloc_noprof+0x27f/0x16e0 mm/percpu.c:1795
 
-> 
-> 							Thanx, Paul
-> 
->>   	However, comparisons are OK in the following cases:
->>   
->> @@ -204,6 +222,10 @@ readers working properly:
->>   		comparison will provide exactly the information that the
->>   		compiler needs to deduce the value of the pointer.
->>   
->> +	When in doubt, use operations that preserve address dependencies
->> +	(such as "ptr_eq()") to compare pointers obtained from
->> +	rcu_dereference() against non-NULL pointers.
->> +
->>   -	Disable any value-speculation optimizations that your compiler
->>   	might provide, especially if you are making use of feedback-based
->>   	optimizations that take data collected from prior runs.  Such
->> -- 
->> 2.39.2
->>
+but task is already holding lock:
+ffff88804b901c50 (&bc->lock){+.+.}-{3:3}, at: bch2_btree_node_mem_alloc+0x4ec/0x1340 fs/bcachefs/btree_cache.c:782
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+which lock already depends on the new lock.
 
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&bc->lock){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_btree_cache_scan+0x192/0xd00 fs/bcachefs/btree_cache.c:460
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4818
+       shrink_many mm/vmscan.c:4879 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+       shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+       kswapd_shrink_node mm/vmscan.c:6765 [inline]
+       balance_pgdat mm/vmscan.c:6957 [inline]
+       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
+       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3848
+       might_alloc include/linux/sched/mm.h:327 [inline]
+       slab_pre_alloc_hook mm/slub.c:4037 [inline]
+       slab_alloc_node mm/slub.c:4115 [inline]
+       __do_kmalloc_node mm/slub.c:4264 [inline]
+       __kmalloc_noprof+0xa9/0x400 mm/slub.c:4277
+       kmalloc_noprof include/linux/slab.h:882 [inline]
+       kzalloc_noprof include/linux/slab.h:1014 [inline]
+       pcpu_mem_zalloc mm/percpu.c:510 [inline]
+       pcpu_alloc_chunk mm/percpu.c:1443 [inline]
+       pcpu_create_chunk+0x57/0xbc0 mm/percpu-vm.c:338
+       pcpu_balance_populated mm/percpu.c:2075 [inline]
+       pcpu_balance_workfn+0xc4d/0xd40 mm/percpu.c:2212
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (pcpu_alloc_mutex){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3158 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       pcpu_alloc_noprof+0x27f/0x16e0 mm/percpu.c:1795
+       __six_lock_init+0x104/0x150 fs/bcachefs/six.c:863
+       bch2_btree_lock_init+0x38/0x100 fs/bcachefs/btree_locking.c:12
+       bch2_btree_node_mem_alloc+0x4f8/0x1340 fs/bcachefs/btree_cache.c:785
+       __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:325 [inline]
+       bch2_btree_reserve_get+0x2df/0x1890 fs/bcachefs/btree_update_interior.c:554
+       bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1252
+       bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+       bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:903
+       __bch2_trans_commit+0x286e/0x9130 fs/bcachefs/btree_trans_commit.c:1135
+       bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+       bch2_logged_op_start+0x1c8/0x310 fs/bcachefs/logged_ops.c:83
+       bch2_truncate+0x1a5/0x2c0 fs/bcachefs/io_misc.c:291
+       bchfs_truncate+0x965/0xc70 fs/bcachefs/fs-io.c:464
+       notify_change+0xbca/0xe90 fs/attr.c:503
+       do_truncate+0x220/0x310 fs/open.c:65
+       handle_truncate fs/namei.c:3395 [inline]
+       do_open fs/namei.c:3778 [inline]
+       path_openat+0x2e1e/0x3590 fs/namei.c:3933
+       do_filp_open+0x235/0x490 fs/namei.c:3960
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+       do_sys_open fs/open.c:1430 [inline]
+       __do_sys_openat fs/open.c:1446 [inline]
+       __se_sys_openat fs/open.c:1441 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  pcpu_alloc_mutex --> fs_reclaim --> &bc->lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&bc->lock);
+                               lock(fs_reclaim);
+                               lock(&bc->lock);
+  lock(pcpu_alloc_mutex);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.0.0/5104:
+ #0: ffff88804e51c420 (sb_writers#11){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+ #1: ffff88804d1e9038 (&sb->s_type->i_mutex_key#19){++++}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
+ #1: ffff88804d1e9038 (&sb->s_type->i_mutex_key#19){++++}-{3:3}, at: do_truncate+0x20c/0x310 fs/open.c:63
+ #2: ffff88804b900a38 (&c->snapshot_create_lock){.+.+}-{3:3}, at: bch2_truncate+0x16d/0x2c0 fs/bcachefs/io_misc.c:290
+ #3: ffff88804b904398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire include/linux/srcu.h:151 [inline]
+ #3: ffff88804b904398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_read_lock include/linux/srcu.h:250 [inline]
+ #3: ffff88804b904398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20 fs/bcachefs/btree_iter.c:3215
+ #4: ffff88804b9266d0 (&c->gc_lock){++++}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0 fs/bcachefs/btree_update_interior.c:1202
+ #5: ffff88804b901c50 (&bc->lock){+.+.}-{3:3}, at: bch2_btree_node_mem_alloc+0x4ec/0x1340 fs/bcachefs/btree_cache.c:782
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5104 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
+ check_prev_add kernel/locking/lockdep.c:3158 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3277 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ pcpu_alloc_noprof+0x27f/0x16e0 mm/percpu.c:1795
+ __six_lock_init+0x104/0x150 fs/bcachefs/six.c:863
+ bch2_btree_lock_init+0x38/0x100 fs/bcachefs/btree_locking.c:12
+ bch2_btree_node_mem_alloc+0x4f8/0x1340 fs/bcachefs/btree_cache.c:785
+ __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:325 [inline]
+ bch2_btree_reserve_get+0x2df/0x1890 fs/bcachefs/btree_update_interior.c:554
+ bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1252
+ bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+ bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:903
+ __bch2_trans_commit+0x286e/0x9130 fs/bcachefs/btree_trans_commit.c:1135
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_logged_op_start+0x1c8/0x310 fs/bcachefs/logged_ops.c:83
+ bch2_truncate+0x1a5/0x2c0 fs/bcachefs/io_misc.c:291
+ bchfs_truncate+0x965/0xc70 fs/bcachefs/fs-io.c:464
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ do_truncate+0x220/0x310 fs/open.c:65
+ handle_truncate fs/namei.c:3395 [inline]
+ do_open fs/namei.c:3778 [inline]
+ path_openat+0x2e1e/0x3590 fs/namei.c:3933
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4a4bf7df39
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4a4cdf8038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f4a4c135f80 RCX: 00007f4a4bf7df39
+RDX: 0000000000000300 RSI: 0000000020000300 RDI: ffffffffffffff9c
+RBP: 00007f4a4bff0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f4a4c135f80 R15: 00007fff8cf7cfa8
+ </TASK>
+bucket 0:34 gen 0 data type user sector count overflow: 0 + -8 > U32_MAX
+while marking u64s 7 type extent 536870913:8:U32_MAX len 8 ver 0: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum crc32c 0:cec3872e  compress incompressible ptr: 0:34:0 gen 0, continuing
+bucket 0:34 gen 0 data type user sector count overflow: 0 + -8 > U32_MAX
+while marking u64s 7 type extent 536870913:8:U32_MAX len 8 ver 0: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum crc32c 0:cec3872e  compress incompressible ptr: 0:34:0 gen 0, continuing
+bucket 0:34 gen 0 data type user sector count overflow: 0 + -8 > U32_MAX
+while marking u64s 7 type extent 536870913:8:U32_MAX len 8 ver 0: durability: 1 crc: c_size 8 size 8 offset 0 nonce 0 csum crc32c 0:cec3872e  compress incompressible ptr: 0:34:0 gen 0, continuing
+syz.0.0 (5104) used greatest stack depth: 6384 bytes left
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
