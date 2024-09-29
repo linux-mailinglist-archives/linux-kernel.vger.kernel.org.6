@@ -1,116 +1,164 @@
-Return-Path: <linux-kernel+bounces-342767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4BD9892C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3811A9892CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:00:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF662839CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA3B2821AF
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F5F1C68C;
-	Sun, 29 Sep 2024 02:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FD58BE7;
+	Sun, 29 Sep 2024 03:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b="rfWA35D8"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jB9uNQSv"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57B6EAD0
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 02:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1490420ED
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 03:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727578515; cv=none; b=XkwXaFOZJ8oOTfNLQ16OI3q2uGdUcz5DiFCZEA59KgdHj03LdtS0xcYWgxmAoPPCzFLiYTENqvdk9+8O6HI1vIi5fKqhfj+8L7NKaDsW+wPYZC4eJ+5tdTxuaHVjSs0FYcgyeqdLpZSjdkiLA8MzXEpnLqm4X4o2kdWJrAy/hzM=
+	t=1727578832; cv=none; b=YkFMi7Wzkz387AQvcMLKFP27/fmP3KvvOl9/hOErmIcjyRCConMfz31eFalKs8cZ0zwO2aMdiRnB5Uf7kGfZaVt4NpiIPyf7DNsXfPw9LaWkRV/PYwYzIB2YukU137BtI/FSlpogWtSE064uBLSSbES7PKnrlHPJaQEe+IRSyu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727578515; c=relaxed/simple;
-	bh=4B+kpENM2KamWunn1VtNumHTJypu13muex8nBDOgblQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CHSZYgGWrgAFEzUsVNk0gG7rfTJFAYT+dZu6tOmzOsLD/Q0GtUyn0ZhwBKtoFo0HqTJ8e7f+E/SBPQ5EaEcHlniWT6biATc/amdIwozU7eDKHdPIW8TyfLwtZhK7favrwiGBvJi0Yhstj4wBFJv3cMppGPu8jvtIM1DaE5dAsaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=0x0f.com header.i=@0x0f.com header.b=rfWA35D8; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0x0f.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e06fade5eeso2588302a91.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 19:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=0x0f.com; s=google; t=1727578513; x=1728183313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GnPgRh7QFS/ZB4mm9ibjD9Mb0Rxz3mufuNvInEFJ1j0=;
-        b=rfWA35D8qsKDEwgHed2mwyOmjrD3zD+xzHmDGfKePc2C2jMs4/vvSWeiK0vS0nH1yh
-         vMYmsmaeONreaDgZxRDSoD1zovtxK8fe3UYAVlFyC+6kgULm0XLaYeS8eOZOnxTACiLW
-         qpBXw5BSYneyrxQolSvxFE+1MWO2/bJuSBEVw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727578513; x=1728183313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GnPgRh7QFS/ZB4mm9ibjD9Mb0Rxz3mufuNvInEFJ1j0=;
-        b=Y5xi1vDryhzH1Yg/6jC1MrUOioyt8V8ITssWAaExwl128lho7b5e4Kcx20SLZKhZpa
-         ftiBAKmuw08X0AbezYwTXfJOTAFXTb97os3gfHUrbfs4QkG5PNb2YMRMcVVxRMXsJRUA
-         v15dvpOLGOsUVcQYYQjuB4FeX5SoR+pYegGQUAG8YmTXCzB8kal8EcB3aBfffvNubj18
-         yk53/ufvuae/TMFBcAFdaCBD3qBx0t1s3WHy9JDTGqVBS/Hb69hBKUDuR6HluO8lOi3w
-         BLBfFSVHg1/HXWgMVnkWH4KDQfbiJJqKpppervFUrYSCPIEvZ3X1zGtFHacsDrPhlKJK
-         gpCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSWsy7PdK82w34ns+t+Wk/c6Fdb1beBe1n+7hcugAT/ZcVMCVyBMYJFKqBAjSyyKTh2gPT2CyN9EdCmwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYOt1Ggx6/JHoCq8iiqASRzeWT8y9JxLxX+J4QIQyq2KuZQTr+
-	ZUT54o08ptXOoUH7+BRVDgq6z2ocnBAoAGCOAijb8EwwcYAYa8Bd/JKrwKJ4drI=
-X-Google-Smtp-Source: AGHT+IGMBewkv5Tr2rkT9P0ANjIRY4VbuoQf93g8wX6wDvbVycvUQkG3zPgRoumtVZxN7/2BlPKkvg==
-X-Received: by 2002:a17:90a:fc85:b0:2e0:8dbc:3ead with SMTP id 98e67ed59e1d1-2e0b8ed3968mr9574605a91.33.1727578512948;
-        Sat, 28 Sep 2024 19:55:12 -0700 (PDT)
-Received: from shiro.work.home.arpa ([2400:4162:2428:2ffe:355d:54b6:cddd:c153])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e0b6e1479esm4876326a91.45.2024.09.28.19.55.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 19:55:12 -0700 (PDT)
-From: Daniel Palmer <daniel@0x0f.com>
-To: geert@linux-m68k.org
-Cc: gerg@linux-m68k.org,
-	linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	fthain@linux-m68k.org,
-	Daniel Palmer <daniel@0x0f.com>
-Subject: [PATCH] m68k: mvme147: Make mvme147_sched_init() __init
-Date: Sun, 29 Sep 2024 11:55:06 +0900
-Message-ID: <20240929025506.1212237-1-daniel@0x0f.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727578832; c=relaxed/simple;
+	bh=DQ+z8ada+GNaj1xnNNuernLATDKO5IGMqhvZCWEMRvA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEShsYE5gxq+vc3cMVwXSjro7PNC2e7nkpbPdYbTRR4t46m19fje2LJtSj+T1peyCtcNdrlL0+HAQ1rhOhcEAUBG03fM7FnRWI3vzkxdp4zbHkzOf7ZwELlYupZqSE97s+T2KQ1twsyAQRqeKKFNYT60HaXvMmkAkZqhr0te/II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jB9uNQSv; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1727578819; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=rEivD6GU1wyVEwRx14F5mTY19RoTHSY7OwXHFHHtPYc=;
+	b=jB9uNQSvneouuN9q0wYiXzGOp9TRF/KVvMnOvH7ThdaAGWtmO0os92xj2pnf01Tr5aXdN9sQLP7m8IADqoWRR/nECyRT4ZyZaU8QAk4H6ii7wAMkAGC9+iU+M1uAM7hmxjCVqdsNE7I2hxwjLjo1YrET4i52cQIZakr+C/4PCvw=
+Received: from 30.171.214.186(mailfrom:llfl@linux.alibaba.com fp:SMTPD_---0WFuk-FD_1727578818)
+          by smtp.aliyun-inc.com;
+          Sun, 29 Sep 2024 11:00:19 +0800
+Message-ID: <0e574409-cf12-47fd-b107-664e7f1b9cb6@linux.alibaba.com>
+Date: Sun, 29 Sep 2024 11:00:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] device-dax: Correct pgoff align in dax_set_mapping()
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+ Joao Martins <joao.m.martins@oracle.com>
+References: <23c02a03e8d666fef11bbe13e85c69c8b4ca0624.1727421694.git.llfl@linux.alibaba.com>
+ <20240927104646.3a0b777b5114ec62becd7f47@linux-foundation.org>
+Content-Language: en-US
+From: "Kun(llfl)" <llfl@linux.alibaba.com>
+In-Reply-To: <20240927104646.3a0b777b5114ec62becd7f47@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-mvme147_sched_init() is only used once at init time
-so it can be made __init and save a few bytes of memory.
+That's a subtle situation that only can be observed in 
+page_mapped_in_vma() after the page is page fault handled by 
+dev_dax_huge_fault. Generally, there is little chance to perform 
+page_mapped_in_vma in dev-dax's page unless in specific error injection 
+to the dax device to trigger an MCE - memory-failure. In that case, 
+page_mapped_in_vma() will be triggered to determine which task is 
+accessing the failure address and kill that task in the end.
 
-Signed-off-by: Daniel Palmer <daniel@0x0f.com>
----
- arch/m68k/mvme147/config.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index 8b5dc07f0811..4279069fbb6e 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -34,7 +34,7 @@
- 
- 
- static void mvme147_get_model(char *model);
--extern void mvme147_sched_init(void);
-+static void __init mvme147_sched_init(void);
- extern int mvme147_hwclk (int, struct rtc_time *);
- extern void mvme147_reset (void);
- 
-@@ -123,7 +123,7 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- }
- 
- 
--void mvme147_sched_init (void)
-+static void __init mvme147_sched_init(void)
- {
- 	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, IRQF_TIMER,
- 			"timer 1", NULL))
+We used self-developed dax device (which is 2M aligned mapping) , to 
+perform error injection to random address. It turned out that error 
+injected to non-2M-aligned address was causing endless MCE until panic. 
+Because page_mapped_in_vma() kept resulting wrong address and the task 
+accessing the failure address was never killed properly:
+
+
+[ 3783.719419] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3784.049006] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3784.049190] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3784.448042] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3784.448186] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3784.792026] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3784.792179] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3785.162502] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3785.162633] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3785.461116] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3785.461247] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3785.764730] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3785.764859] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3786.042128] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3786.042259] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3786.464293] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3786.464423] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3786.818090] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3786.818217] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+[ 3787.085297] mce: Uncorrected hardware memory error in user-access at 
+200c9742380
+[ 3787.085424] Memory failure: 0x200c9742: recovery action for dax page: 
+Recovered
+
+It took us several weeks to pinpoint this problem,  but we eventually 
+used bpftrace to trace the page fault and mce address and successfully 
+identified the issue.
+
+On 9/28/24 1:46 AM, Andrew Morton wrote:
+> (cc's added)
+>
+> On Fri, 27 Sep 2024 15:45:09 +0800 "Kun(llfl)" <llfl@linux.alibaba.com> wrote:
+>
+>> pgoff should be aligned using ALIGN_DOWN() instead of ALIGN(). Otherwise,
+>> vmf->address not aligned to fault_size will be aligned to the next
+>> alignment, that can result in memory failure getting the wrong address.
+>>
+>> Fixes: b9b5777f09be ("device-dax: use ALIGN() for determining pgoff")
+> That's quite an old change.  Can you suggest why it took this long to
+> be discovered?  What is your userspace doing to trigger this?
+>
+>> Signed-off-by: Kun(llfl) <llfl@linux.alibaba.com>
+>> Tested-by: JianXiong Zhao <zhaojianxiong.zjx@alibaba-inc.com>
+>> ---
+>>   drivers/dax/device.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+>> index 9c1a729cd77e..6d74e62bbee0 100644
+>> --- a/drivers/dax/device.c
+>> +++ b/drivers/dax/device.c
+>> @@ -86,7 +86,7 @@ static void dax_set_mapping(struct vm_fault *vmf, pfn_t pfn,
+>>   		nr_pages = 1;
+>>   
+>>   	pgoff = linear_page_index(vmf->vma,
+>> -			ALIGN(vmf->address, fault_size));
+>> +			ALIGN_DOWN(vmf->address, fault_size));
+>>   
+>>   	for (i = 0; i < nr_pages; i++) {
+>>   		struct page *page = pfn_to_page(pfn_t_to_pfn(pfn) + i);
+>> -- 
+>> 2.43.0
+
 -- 
-2.43.0
+Best,
+KUN
 
 
