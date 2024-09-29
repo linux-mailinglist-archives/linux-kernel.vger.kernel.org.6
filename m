@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-343073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF5A989675
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:10:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7ECF989677
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:12:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1D0283684
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF471C20C5B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00FA417E8E2;
-	Sun, 29 Sep 2024 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRVF95kB"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A0F17E44A;
+	Sun, 29 Sep 2024 17:12:35 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77F617DFF2;
-	Sun, 29 Sep 2024 17:10:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5258C17C22E
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727629825; cv=none; b=V0HNVjsZoXDMe65+i0WxvgT7OWHgxZEj0eCv+Zeg7UDRKPAkVGo/D1rSDGJBUFdMOO0ETFlD7hmxIV8LlU24lrcx7j3bVzXH1y/ndUXZtkK9lxhlhnr2oitHbr62yR+WdvmcByvuafQpWvWtkyO/v/K4PKFsK3Ff2WUVW9GlJZ4=
+	t=1727629954; cv=none; b=p0QnVD0IVwejX/s4SX252B+nA1Dr4MR3Nx0NIOK2VRTOb4uIazr3ulhSz04ciZVOhuiJfL/ZIX1W9zDOQL0YUA8Z7pKNIZ9R2tAwn1PF1ofIu40uYJuR+CFKTDzR18u47ukulgxJLjoASbcKbo9IDGjEXMu05zjXYLZ5v6tmNv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727629825; c=relaxed/simple;
-	bh=RupHcF2YMDtc5B0PvtdrFVxi7O2rIkLjnzwiVQ+8+is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nPd651u7kZOBADL3HZwh9izL0pCaIbUsYQvEpwRhaonQoyrLkfLB1jIKBh+LNQ6w2G8ZhkVXUAk6ZpNnH/WYZQ/Bj4t56HaVuHdjTHSSOwvHvzdJvDCOONX5k6cky18D0QaTn+apKsOuRCBLgb//gdAYdu4tZbdXkn1eLNcXuSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eRVF95kB; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cdb6ebc1cso995746f8f.1;
-        Sun, 29 Sep 2024 10:10:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727629822; x=1728234622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YPGuySNzaGQqh50PPbKO6DCxB7qiiEF+rpBWLfkBod0=;
-        b=eRVF95kBimxF+OJbN9d5xCfcMbyRVnKfwrvrndaTYbo7VQKls+vMBDHVbVMMN/qOPl
-         28M6OVQ4ZiZ344c6o6pICPCMcbw7Fo413j15Jmm5VmmoJvR/fDTlJG9NpwBDenGEHcYP
-         DYPbzFNhGGflAg0/txYG8wzqnV0NETZy9MjYWOJPFmMn56Bcb9MZCNMSUfWZY+SxK7Zl
-         Z5U+RCYSdUTxrOtduUvfULIFYGcvPl9SRZI9Igzqupk/T4tLsxpO+WhkSGZ3dQjoEgbc
-         EWEUoBuGerVZuTlO6aHBj2VqgcMoYDARR5EbkTDlT+0SC8beExMM8TxvEmsat3PCQeua
-         slfQ==
+	s=arc-20240116; t=1727629954; c=relaxed/simple;
+	bh=EaXRUEmfB79k/Z0BeIOPUDzlzgGDwf/cukr9QkhFr/w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XkO0RYx2ylGi8AJbFzkFaAchB7gw/XgTXVgLKCJBjS5mmnGyTfHzD+Gfs+jDSmPAXvjPtYtaAafNB+B12yex7XP03gq3HOAcgyTl2s4AWpLxeilm+p9HG/T1Oxd8PLo2MwzQ8lClk/iPo60swUDBVxB554FXiO6QWT78G3E7geo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83246ec00c7so358842639f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:12:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727629822; x=1728234622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YPGuySNzaGQqh50PPbKO6DCxB7qiiEF+rpBWLfkBod0=;
-        b=Rhj97mZwl6p0MPO0GOzLCcCcuXiYDGu3a6BvL9pVt9lYDUv7ChZ2O0F+TJJcDY/YgC
-         MiKlOeyxploxiMuj4FSTVgQGauxKeXjOa35eCY5/tn4PshTDQ5AGA+uUNEWaibQYBFi7
-         XY9cenU+ITGWtFdAGcgJYjuPPsDVzOvNTMeGQVVZ9n8tDv3ryC/2dhp1VEEc3gzixF9p
-         9lt06/r3vnwrBC6nVNialFv/E9W37HE/vL5KT79MZr/7i7tQ2r0lul+L+0hjhSVo8x1P
-         B+l1EBAMOne7jpOCpnLjrvYq0oTp2IFEROgBU+OtGQTVP2997Rvj2rnk1QjsT8fANyyK
-         YzEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOz81NZ+3FhMSCH0OKIQWP+0MbKW3mzpmSKvSKmlXtFmBy4cyhvtoa6XaPy/0XHP1bKkpSs/ctUcGerd0q@vger.kernel.org, AJvYcCVTAOdqfH235R7txLO5A75VG1iDU8Wp/2k0jGGhBr+HmnfEw0zWliLqsXmMZk8kSRoYrs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzennq37RjpLlcBT+X/NBWpUR0dKSg19RsvrzqLdqNUJyixDOSQ
-	TrgKYeZbr/bthgjFIJkd3FMloX/s3Rhw8sZ9q5Pz4sogiMTw+pHFF93SX8I8Z98TtmnRX84nFDx
-	2ada58Hk4d8AAPY/kSMAwQAbYSbU=
-X-Google-Smtp-Source: AGHT+IE71jalNcYCe9JkRHNkl+Yu72w6VOsAwtk1UKTuiSzkxtFzH0GmxCfEPUgvq5E6fy8k7JUsmPqLwFXNB4//0Uc=
-X-Received: by 2002:adf:fd52:0:b0:37c:d0f9:58c with SMTP id
- ffacd0b85a97d-37cd5af2de1mr5588923f8f.35.1727629821884; Sun, 29 Sep 2024
- 10:10:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727629952; x=1728234752;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5oLiFtWq3lpVzqaTZ+/xin618Ir4btGMwE3p+GRGDS8=;
+        b=EMEL0WuCW6Qw1ZV8qawdCS46prUjzGXcLK05qc3+kkuwtMRr2x3vfsspvlnD5NRaPT
+         IXT9a6O/wkSszNKMcsybmFvW0YdycjkLhkB74nHRyZjSYV3RZxjApN64NK+A672c3uLd
+         let/pJfIAN7P8ierChPaGe7Y+xaqSwBdgqEQAVc0S0GLBEf9U7W0ECkd4kz+C7MS9XCt
+         AhHel9ubbbeR5J+pplebZUiA91bd7vWSYhr7/Cnm8qzRB35vTqgG+2tAe6S4bEQjjYQ4
+         167Y2YuQWL1Jwcjc4TIQGGngSsGh+0wYNCStZIxCNlGDq9KCicnBFBazv1nb8nD3c+SA
+         uJNw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNCAPUvXPU0cf/59sqejzUt7v8tR66w7aj/o/hjId2so4hrCDQ0PXToksroM+6VnPtezIldc7CE+3bIv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr0sppfr5QNGu9YrSC1b5BEbrU+YT5B7oJES5XkAm8ylT/Z2Z6
+	/mlHfQdA1oTDIiWe1cPtjijxVuBtKvwMwcX/P8JwVnLzyx8n96mgCaZNc6pQ8MTVNSIPcPn6J3U
+	+6Dxf6jWP8fRfVcipxsVCqJzWS/8pIEAwz/RtP+6NFRi9frQlgZRkEbM=
+X-Google-Smtp-Source: AGHT+IHxgiVeJXHJ017W8Jzgtl1T+AZNKyPUUAUgljHC66OS0lsN4Nq4JhLIOFPVmVbbbE0ijf0zKcbfmIW266Zr3fWHC7K1k0HB
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202409261116.risxWG3M-lkp@intel.com> <20240926072755.2007-1-eric.yan@oppo.com>
-In-Reply-To: <20240926072755.2007-1-eric.yan@oppo.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Sun, 29 Sep 2024 10:10:10 -0700
-Message-ID: <CAADnVQJ5xCsBg057gKOQOYA1+9pD-X86bjYJVrTbpRNstvW=DQ@mail.gmail.com>
-Subject: Re: [PATCH v2] Add BPF Kernel Function bpf_ptrace_vprintk
-To: Eric Yan <eric.yan@oppo.com>
-Cc: kbuild test robot <lkp@intel.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, oe-kbuild-all@lists.linux.dev, 
-	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>
+X-Received: by 2002:a05:6e02:1d84:b0:3a2:74eb:91fa with SMTP id
+ e9e14a558f8ab-3a3451c1b12mr71194785ab.25.1727629952365; Sun, 29 Sep 2024
+ 10:12:32 -0700 (PDT)
+Date: Sun, 29 Sep 2024 10:12:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f98a80.050a0220.6bad9.0021.GAE@google.com>
+Subject: [syzbot] [ext4?] [ocfs2?] WARNING in jbd2_journal_update_sb_log_tail
+From: syzbot <syzbot+96ee12698391289383dd@syzkaller.appspotmail.com>
+To: jack@suse.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 12:28=E2=80=AFAM Eric Yan <eric.yan@oppo.com> wrote=
-:
->
-> add a kfunc 'bpf_ptrace_vprintk' printing bpf msg with trace_marker
-> format requirement so that these msgs can be retrieved by android
-> perfetto by default and well represented in perfetto UI.
->
-> [testing prog]
-> const volatile bool ptrace_enabled =3D true;
-> extern int bpf_ptrace_vprintk(char *fmt, u32 fmt_size, const void *args, =
-u32 args__sz) __ksym;
->
-> ({                                    \
->     if (!ptrace_enabled) { \
->         bpf_printk(fmt, __VA_ARGS__);     \
->     } else {                              \
->         char __fmt[] =3D fmt;               \
->         _Pragma("GCC diagnostic push")    \
->         _Pragma("GCC diagnostic ignored \"-Wint-conversion\"")  \
->         u64 __params[] =3D { __VA_ARGS__ }; \
->         _Pragma("GCC diagnostic pop")     \
->         bpf_ptrace_vprintk(__fmt, sizeof(__fmt), __params, sizeof(__param=
-s)); \
->     }                                  \
-> })
->
-> SEC("perf_event")
-> int do_sample(struct bpf_perf_event_data *ctx)
-> {
->         u64 ip =3D PT_REGS_IP(&ctx->regs);
->         u64 id =3D bpf_get_current_pid_tgid();
->         s32 pid =3D id >> 32;
->         s32 tid =3D id;
->         debug_printk("N|%d|BPRF-%d|BPRF:%llx", pid, tid, ip);
->         return 0;
-> }
->
-> [output]:
->        app-3151    [000] d.h1.  6059.904239: tracing_mark_write: N|2491|B=
-PRF-3151|BPRF:58750d0eec
->
-> Signed-off-by: Eric Yan <eric.yan@oppo.com>
-> ---
->  kernel/bpf/helpers.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 1a43d06eab28..1e37dae74ca6 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -2521,6 +2521,39 @@ __bpf_kfunc struct task_struct *bpf_task_from_pid(=
-s32 pid)
->         return p;
->  }
->
-> +static noinline void tracing_mark_write(char *buf)
-> +{
-> +       trace_printk(buf);
-> +}
-> +
-> +/* same as bpf_trace_vprintk, only with a trace_marker format requiremen=
-t
-> + * @fmt: Format string, e.g. <B|E|C|N>|<%d:pid>|<%s:TAG>...
-> + */
-> +__bpf_kfunc int bpf_ptrace_vprintk(char *fmt, u32 fmt_size, const void *=
-args, u32 args__sz)
-> +{
-> +       struct bpf_bprintf_data data =3D {
-> +               .get_bin_args   =3D true,
-> +               .get_buf        =3D true,
-> +       };
-> +       int ret, num_args;
-> +
-> +       if (args__sz & 7 || args__sz > MAX_BPRINTF_VARARGS * 8 || (args__=
-sz && !args))
-> +               return -EINVAL;
-> +       num_args =3D args__sz / 8;
-> +
-> +       ret =3D bpf_bprintf_prepare(fmt, fmt_size, args, num_args, &data)=
-;
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret =3D bstr_printf(data.buf, MAX_BPRINTF_BUF, fmt, data.bin_args=
-);
-> +
-> +       tracing_mark_write(data.buf);
-> +
-> +       bpf_bprintf_cleanup(&data);
-> +
-> +       return ret;
-> +}
-> +
->  /**
->   * bpf_dynptr_slice() - Obtain a read-only pointer to the dynptr data.
->   * @p: The dynptr whose data slice to retrieve
-> @@ -3090,6 +3123,7 @@ BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)
->  BTF_ID_FLAGS(func, bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)
->  BTF_ID_FLAGS(func, bpf_iter_bits_destroy, KF_ITER_DESTROY)
->  BTF_ID_FLAGS(func, bpf_copy_from_user_str, KF_SLEEPABLE)
-> +BTF_ID_FLAGS(func, bpf_ptrace_vprintk)
->  BTF_KFUNCS_END(common_btf_ids)
+Hello,
 
-Why new kfunc?
-Use bpf_snprintf() and follow with bpf_trace_printk() ?
+syzbot found the following issue on:
+
+HEAD commit:    684a64bf32b6 Merge tag 'nfs-for-6.12-1' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=138c0907980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
+dashboard link: https://syzkaller.appspot.com/bug?extid=96ee12698391289383dd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bea99f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d04aa9980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-684a64bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f05b4b08a420/vmlinux-684a64bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d59f9edaf3bc/bzImage-684a64bf.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a82758cb7d80/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+96ee12698391289383dd@syzkaller.appspotmail.com
+
+(syz-executor214,5103,0):ocfs2_block_check_validate:402 ERROR: CRC32 failed: stored: 0xb3775c19, computed 0x2dd1c265. Applying ECC.
+JBD2: Ignoring recovery information on journal
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5103 at fs/jbd2/journal.c:1887 jbd2_journal_update_sb_log_tail+0x2ba/0x360 fs/jbd2/journal.c:1887
+Modules linked in:
+CPU: 0 UID: 0 PID: 5103 Comm: syz-executor214 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:jbd2_journal_update_sb_log_tail+0x2ba/0x360 fs/jbd2/journal.c:1887
+Code: 1c ff 41 80 3c 2c 00 74 08 4c 89 ff e8 9f 71 86 ff 41 80 27 f7 4c 89 f7 e8 f3 1c 56 09 31 ed e9 72 fe ff ff e8 47 c4 1c ff 90 <0f> 0b 90 41 80 3c 2c 00 75 d5 eb db 44 89 f1 80 e1 07 80 c1 03 38
+RSP: 0018:ffffc90000e46d70 EFLAGS: 00010293
+RAX: ffffffff8277f0f9 RBX: 0000000000000000 RCX: ffff8880002ba440
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: dffffc0000000000 R08: ffffffff8277f0c9 R09: fffff520001c8d9c
+R10: dffffc0000000000 R11: fffff520001c8d9c R12: 1ffff1100808bc00
+R13: ffff88803d2e301c R14: ffff88804045e0b0 R15: ffff88804045e000
+FS:  000055558c7ca380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd277995ed8 CR3: 000000003fef2000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ journal_reset fs/jbd2/journal.c:1779 [inline]
+ jbd2_journal_load+0x708/0xbc0 fs/jbd2/journal.c:2109
+ ocfs2_journal_load+0xed/0x6d0 fs/ocfs2/journal.c:1143
+ ocfs2_check_volume fs/ocfs2/super.c:2421 [inline]
+ ocfs2_mount_volume+0xc12/0x1940 fs/ocfs2/super.c:1817
+ ocfs2_fill_super+0x475a/0x5750 fs/ocfs2/super.c:1084
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb2af90112a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe3f741ce8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe3f741d00 RCX: 00007fb2af90112a
+RDX: 0000000020004740 RSI: 0000000020004780 RDI: 00007ffe3f741d00
+RBP: 0000000000000004 R08: 00007ffe3f741d40 R09: 0000000000004701
+R10: 000000000100000a R11: 0000000000000282 R12: 000000000100000a
+R13: 00007ffe3f741d40 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
