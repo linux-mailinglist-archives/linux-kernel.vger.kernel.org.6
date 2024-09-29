@@ -1,78 +1,107 @@
-Return-Path: <linux-kernel+bounces-343068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED9F98966C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:06:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25AE98966F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E2D1F20F3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:06:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3AFA1C20FF6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2344F186602;
-	Sun, 29 Sep 2024 17:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA48183CA9;
+	Sun, 29 Sep 2024 17:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HZsQiwuZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XDX06bc1"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838A8184520
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA531822F8;
+	Sun, 29 Sep 2024 17:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727629503; cv=none; b=DE/4kYajlmb2aItQ6mMsnLDgJ3GP8KN3ZJFIdXeGDSuaaYZzSmn7J6jFMS5g+DN2HdlBQ0fWrCL5SE0eTS77QSNZj6xGhDSrj0FYjaHVxtSpoVO1cpEo+EB+bf7g0B2wwC26IVg6uOy+rr3x52PHwQWBgCd9TQty7AdMg69bO7w=
+	t=1727629556; cv=none; b=Hkl054YU57JKPY7FNuoKExpMsr9qZ4CwSX/Kxms8GkLI3EciNYqVG1x753VCqgZ7CiOcrHIQ/yiZzoPjZ+WfYsH1BsXApU7/cUODhQHyS2aszENb3Jg82SPZaP+UWY0OLDhb4EbeYvGFUlxqDrL1cPyWUjgGAK0gC3g8zl53mnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727629503; c=relaxed/simple;
-	bh=IO3uF+QUgvCwY6RtTsicA8FLoBQutF89cScx2bGPDNs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=H1FO3bRFRxexUzED0/+SZ/Uf2AVsv64fx8H9x3VZgfN54t2e3ES+P/iNknJrlk80YZlkou2froJItxa/jmbf5rfWzQXVBHh7+nNE/ycINVKVkXiAsiS8sf7oLhjMV6GIESQFYxEKEirqfI9Q9jiFvf4rWNFbDngsSKeAAJcycNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HZsQiwuZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B090C4CEC5;
-	Sun, 29 Sep 2024 17:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727629503;
-	bh=IO3uF+QUgvCwY6RtTsicA8FLoBQutF89cScx2bGPDNs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=HZsQiwuZLXon592uo3Z8dh/m6jXnM5HpiVNiVKHAy92P+Q9g0SNw6L7qzFkVnLYAU
-	 iJb5sqciCQUSyrWJSYhplc1NITQ1HrEyX0zvp5r7Mm6Yv1LDL+wnT/c0EKBhW1ODKn
-	 09PkV0ZTmRRxMActzUlk3J4BS6GeMAe3pr5Fx21N40g1aw90x9Rf954xLK+ACwUcUo
-	 eTAAkg4RD0GclaOlNGcIkBGGdZHX2uJXfWyYQqZ9qIzyQctukULO5OmUfQpvpZ0CZ1
-	 sx09KNmrO0CAKvJJF253d3aoJSN5dGZoNJyLldtgP3fihmCEUJM+K83MVy9PgRUF3x
-	 LiZpDMnjI16vQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DEC3809A80;
-	Sun, 29 Sep 2024 17:05:07 +0000 (UTC)
-Subject: Re: [GIT PULL] x86 fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zvj-zvhfI81nB2s5@gmail.com>
-References: <Zm1NIOnj0NR3U8om@gmail.com> <Zvj-zvhfI81nB2s5@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zvj-zvhfI81nB2s5@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-09-29
-X-PR-Tracked-Commit-Id: d1fb034b75a8a96fcb4bf01a7c0e1421eef833a3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d37421e655cec032084bba2601e46ea61e6f9044
-Message-Id: <172762950608.2558104.637955019259848010.pr-tracker-bot@kernel.org>
-Date: Sun, 29 Sep 2024 17:05:06 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+	s=arc-20240116; t=1727629556; c=relaxed/simple;
+	bh=/gsm/eT+uw5Tn2GnAkK529lCZKXkzR4xRuYAWKooRNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o5S14pYBF8s2Ce4c6W6V3jGStUDYfIybMP6txWpBf9U4C3i/sdVA5zPRCCiKeEbr5j8+W9fJct1URhHVrdol/NlRa+N4Vhy1b5/pXRjbeYvlAZAxzO2CQ2OiG2AIlXrKQVMQrKZoopcWNK3QcnPUYbFGJLaPaCcGaF2AuhuZVoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XDX06bc1; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cc60c9838so2022622f8f.1;
+        Sun, 29 Sep 2024 10:05:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727629553; x=1728234353; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3PsHkwE+x8JT3hBupvf6LiFN5ijzuGAyqnqGRf6VWvU=;
+        b=XDX06bc1gGdGm7bRQGk5rqIgILgtzJ2JJVCRjtjB6SLcYJ/4Q1vXlostW7zBDkBwUd
+         ipJ00i0CdR4Vqb3OUosGnoIrUVPJN3XIFGoj1N8ki/xwgztZvU0lfznmUEAzqTEtoxsM
+         lRugKD1VxAx+KsCP8v2eXdKrO5lEDgPpQeaiQYj/UOiSbQHi1+rlc3q4Xx/TxoBmsgfu
+         Sb/Qr+ZEAjQfDHR0VIl81rK3Q/ceXiKWSXQ7d0HW2udetBlftqZ285WS+2HR6IFBRDGC
+         KhDzstnFuIBMeOVVxU1LkEc0xCZQ5tGnLS1aq/HNQPbq4mIZ0FeYAjalX8kbl/2mF6s6
+         8s0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727629553; x=1728234353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3PsHkwE+x8JT3hBupvf6LiFN5ijzuGAyqnqGRf6VWvU=;
+        b=k5YVLoh4WKc61CRc32/YEZRAIm2rsU6LrkW0kNYOANyBm6UHAKYB3k+iQhybbV1uI0
+         8E44OCJ0EG/y2ZDXzxUqCL2UgM2vr/+646dq6M+ejPZz0MRc7XUhb/KSXERH6WST6TYy
+         ITgOhrIyMYketkGzw3zsPUbk6Q1Fko8MjodWRFWP2iNYjQQpgeRyJasYqKf6I0hinTIk
+         CASwChqQ8XVXwOk7eYn2TlJK/Hmoa3D5vuRrHEunCA0fQ0Z06HLTMRtgoEcZxnE5HIB5
+         7G/nA4Ozg2hA75TqKW2mfDA+YTnUcX5boAF1hYzBofgx/g5svuU+QjuD1hSeF7sN8dHe
+         K7vg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTNCIv3WA69PRoSGhVEm0e5ox1w7JWCgn68JmPVYr6bBPIw/ey1dYzqBn+PXokk2sv+RY=@vger.kernel.org, AJvYcCWpGd9J76ReDuFgZiEpk1tn0X8yLG7jsz8/x4n1c3l/0IZrOFmpq5I8JSQQ0ex1blojiHGeG4HmrYoddVBs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYos5taYlMdOuZ4aFHsPrlaBQBds1Fb7hCT9bT+YpjqIAeuHwm
+	WQAOs1zdIWl3ABDDl6iQlRnhTzheDMnjddJPfVRztkwRWWJzpHwlK1ty+NWPeUNK8n8T5oyDvNz
+	H/QaxR4bc139zdpWPDHfeCnO2MIM=
+X-Google-Smtp-Source: AGHT+IESQkCDQhwIOQ4tXcV3G5KgKbaYNyktnM/EGy/mvt5yRg16rArBeOUpxIDXvQqHh8wX8aNiB1bjlpRWUW4nbko=
+X-Received: by 2002:adf:fa43:0:b0:37c:ca20:52a with SMTP id
+ ffacd0b85a97d-37cd568bc9bmr5832448f8f.8.1727629553206; Sun, 29 Sep 2024
+ 10:05:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240927184133.968283-1-namhyung@kernel.org> <20240927184133.968283-3-namhyung@kernel.org>
+In-Reply-To: <20240927184133.968283-3-namhyung@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 29 Sep 2024 10:05:42 -0700
+Message-ID: <CAADnVQKuR2-My5jYevwQS4K6QmOQVyfK3MYFngWMrc62ZET4ZA@mail.gmail.com>
+Subject: Re: [RFC/PATCH bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sun, 29 Sep 2024 09:16:30 +0200:
+On Fri, Sep 27, 2024 at 11:41=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> +__bpf_kfunc struct kmem_cache *bpf_get_kmem_cache(u64 addr)
+> +{
+> +       struct slab *slab;
+> +
+> +       slab =3D virt_to_slab((void *)(long)addr);
+> +       return slab ? slab->slab_cache : NULL;
+> +}
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2024-09-29
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d37421e655cec032084bba2601e46ea61e6f9044
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I think this needs more safety guards on 'addr'.
+It needs to check the valid range of 'addr' before doing virt_to_slab.
 
