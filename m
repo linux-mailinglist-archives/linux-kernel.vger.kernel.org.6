@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-342860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99F99893B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:19:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57D29893BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA61E1C21591
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:19:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18329B22CE7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51F113BC2F;
-	Sun, 29 Sep 2024 08:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B4313B58C;
+	Sun, 29 Sep 2024 08:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="az8tEgoO"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="agxaYVdc"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0664513635F;
-	Sun, 29 Sep 2024 08:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D126413B29B
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727597964; cv=none; b=O5OBqNBJ+A6cGf2K3S5wyZV9+ZxlqzMp5/eA9/YTjwpuzhib8zQRrGPmJDY1qFkoECTBFbtLb4tMKZqiVWPZzj5jEpR5SCaXgQBuvpXh/gm7Hqew/XtdGEMp8EFr7z8k6kMGu6z5bS+jWOsCs9i2+9eTlUTMgzYg88J6quNptQ0=
+	t=1727598029; cv=none; b=C+59UP3/NUq6n0YoqqL/OK4ZUVSDy1YtOgh1jSSEhLX3gpipNdpvWPn9rvpuCZF3MIhbh9nL5i5aNKyR5XSVLrDxmOyW6XNpVBQtRE30DrRAdNRAQ7n4Gur1w3MqYp00ggNntUPg6lQp8YTcDe+ODhhF1etbys8jn24QPKNvThM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727597964; c=relaxed/simple;
-	bh=cnhloMqw0YF6ToVDxEGJW10wSajal1rzWAvAuR6UIqU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qwmN87BfBtQ1l8REFK8/FQpoEvHGTFSyFtuH4R6RY5kLKVLOM3bwnzsffhfrGovlQ6bumbHEJrVP+UZU9FKMhMs0mcqdhcqEw/3W57gB+KRoyCqXlPxatMNcMJyC9JDTVHwd8px86OmdxUJ9VAZTXFgH1/qQ0z4vx6peeWsn9rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=az8tEgoO; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1727597954;
-	bh=WPPtQ5yDugA9LY+gtCKLFK+aPbUmYYdCZ2ipS0rcb4A=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=az8tEgoOTJVe/T1XdSuNR3acTUMsj1MCTHq6JruKGkaHXqb7AswsWzwzwOtAorKej
-	 Cm8jo1+RrUKsESddLCR5jSbepPRVJA3RFmO1B8Z5hmbPWkECMJTkMbOFlMq96nchhs
-	 apGsxM+R0ADGsVQIe+cy1Z6mBVH99Fwr9kqLUbnw=
-Received: from [IPv6:240e:358:11fd:c900:dc73:854d:832e:6] (unknown [IPv6:240e:358:11fd:c900:dc73:854d:832e:6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 7E9AB1A4038;
-	Sun, 29 Sep 2024 04:19:08 -0400 (EDT)
-Message-ID: <8fb18e4166be8ef59ed0ccb7fa2f79844220aec2.camel@xry111.site>
-Subject: Re: [PATCH] LoongArch: Set correct size for VDSO code mapping
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@loongson.cn>, Arnd Bergmann <arnd@arndb.de>, 
- Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev, linux-arch@vger.kernel.org, Xuefeng Li
-	 <lixuefeng@loongson.cn>, Guo Ren <guoren@kernel.org>, Xuerui Wang
-	 <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn
-Date: Sun, 29 Sep 2024 16:19:03 +0800
-In-Reply-To: <20240929074944.3540514-1-chenhuacai@loongson.cn>
-References: <20240929074944.3540514-1-chenhuacai@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727598029; c=relaxed/simple;
+	bh=I13Fpw5uTMenjXWyGuatTrgB1UAtuVzq60jSYiuNPGQ=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=aXZQgBKpiiBO5yfk/BY2uDBHb4OTGb18njX1TQkYnxEIhBIRW9BFJdjbGDOGYpj6a7Z+uufR3qtcOOzG7tybh6oqbFNWbb+kRT9DzDo/8+4Onnlo3MMZOR1ap9ElXa0BP7cuI12b/KE6iBAiH3H7AF7i+NG7e6BhX8koSBLD0Vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=agxaYVdc; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id um2Os6rtniA19upACsTk6C; Sun, 29 Sep 2024 08:20:20 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id upAAsDM1wAYrQupABsyLNO; Sun, 29 Sep 2024 08:20:19 +0000
+X-Authority-Analysis: v=2.4 cv=Arzo3v9P c=1 sm=1 tr=0 ts=66f90dc3
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=apkkSM20mLLOJUAzT4/TLg3b+haxaagzswG122a304E=; b=agxaYVdcA/n6n+2JXHxQ90sX0K
+	NmtNyqreQRy41nE+RizH/RmqiSQ8Iv/WUTH7tBlS/jUxLAfnL7jkBapc0XRMru4yikC1Nrav/pR+p
+	F2tB8GUbsRYtCdf8aPtpnIqpojDbw6EyDM/TbZYZ5Mb1TGgG4ReM/ZgYe5zhmjBcLpOPST+J0J9BX
+	rCEYZfaS6MDP+aMfkOdsCFPmftMLHosVCxOZHYCdiMaNvkSe4Okt+f0LYWA2AvrIpvQM/SuuWLZC7
+	//05hlrcmijbvJt3rRFSl4kg1RSZDgPLih9cyf5405YP3/erCMZBqyCCSoCwX/fZu/bLTXzy5isyk
+	mq0eCfoQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:43234 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1supA8-003kLV-1z;
+	Sun, 29 Sep 2024 02:20:16 -0600
+Subject: Re: [PATCH 6.11 00/12] 6.11.1-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240927121715.213013166@linuxfoundation.org>
+In-Reply-To: <20240927121715.213013166@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <7e51fe90-d666-1b82-5b5e-e97cabc95ff4@w6rz.net>
+Date: Sun, 29 Sep 2024 01:20:14 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1supA8-003kLV-1z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:43234
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfO2i9xV6jX9t0xrmWmd/unk6HHRd9QAjP/+/tN7pOI1SpIalIM2x0Q6MbIjM2/wFU08byPkNmZMsRbf60hRbSEWFkHCTsurVr1h8S2TkoM+GBCTLqHDr
+ W03zFxqieHYvpj6CFMhvUpISqop40jsbHNYY4ug2gD+M7qTXd7W5fIwZJwxrL0rmoe/qTvGYu0Vh2u0P/v/KfUp2yVhsh1chlRM=
 
-On Sun, 2024-09-29 at 15:49 +0800, Huacai Chen wrote:
-> The current size of VDSO code mapping is hardcoded to PAGE_SIZE. This
-> cannot work for 4KB page size after commit 18efd0b10e0fd77 ("LoongArch:
-> vDSO: Wire up getrandom() vDSO implementation") because the code size
-> increases to 8KB. Thus set the code mapping size to its real size, i.e.
-> PAGE_ALIGN(vdso_end - vdso_start).
+On 9/27/24 5:24 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.1 release.
+> There are 12 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.1-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I get:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-$ size vdso.so
-   text	   data	    bss	    dec	  =20
-hex	filename
-   3716	    328	      0	   4044	  =20
-fcc	vdso.so
+Tested-by: Ron Economos <re@w6rz.net>
 
-So it "just" fits in 4 KiB, and of course it may exceed 4 KiB with a
-different compiler or some kernel configuration affecting code
-generation like CONFIG_INIT_STACK_ALL_ZERO or
-CONFIG_ZERO_CALL_USED_REGS).
-
-I remember I've checked `size vdso.so` before but I cannot remember why
-I didn't realize a problem here.  Sorry for the stupidity.
-
-Reviewed-by: Xi Ruoyao <xry111@xry111.site>
-
->=20
-> Fixes: 18efd0b10e0fd77 ("LoongArch: vDSO: Wire up getrandom() vDSO implem=
-entation")
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
-> =C2=A0arch/loongarch/kernel/vdso.c | 3 +--
-> =C2=A01 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
-> index f6fcc52aefae..7e0cc7f5e1ed 100644
-> --- a/arch/loongarch/kernel/vdso.c
-> +++ b/arch/loongarch/kernel/vdso.c
-> @@ -85,7 +85,6 @@ static vm_fault_t vvar_fault(const struct vm_special_ma=
-pping *sm,
-> =C2=A0
-> =C2=A0struct loongarch_vdso_info vdso_info =3D {
-> =C2=A0	.vdso =3D vdso_start,
-> -	.size =3D PAGE_SIZE,
-> =C2=A0	.code_mapping =3D {
-> =C2=A0		.name =3D "[vdso]",
-> =C2=A0		.pages =3D vdso_pages,
-> @@ -103,7 +102,7 @@ static int __init init_vdso(void)
-> =C2=A0	unsigned long i, cpu, pfn;
-> =C2=A0
-> =C2=A0	BUG_ON(!PAGE_ALIGNED(vdso_info.vdso));
-> -	BUG_ON(!PAGE_ALIGNED(vdso_info.size));
-> +	vdso_info.size =3D PAGE_ALIGN(vdso_end - vdso_start);
-> =C2=A0
-> =C2=A0	for_each_possible_cpu(cpu)
-> =C2=A0		vdso_pdata[cpu].node =3D cpu_to_node(cpu);
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
 
