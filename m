@@ -1,180 +1,107 @@
-Return-Path: <linux-kernel+bounces-342908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D10639894A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:49:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCD89894A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253E51F21009
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 308EF1C21F92
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34F614A636;
-	Sun, 29 Sep 2024 09:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B5914A093;
+	Sun, 29 Sep 2024 10:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dE4CcqPj"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yam2JsQG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEADA184D;
-	Sun, 29 Sep 2024 09:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFAA2B9BC;
+	Sun, 29 Sep 2024 10:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727603360; cv=none; b=Xrvz2XrDEiu9Frvj1GGlVnpYTt4b3YcutVFUVnMBnW9OYNJlZeLYfmp/qZv/4Np3Ojak1IA894bLKLSs+YeFBsfm6zlGKr90n/yokrNW3kDX2IMqyplJ1uwaGOOEfUiXF3k8ij/A/E9EkTkfTVd5+3dzl5pJ0p6tfc9/VQq+tDg=
+	t=1727604186; cv=none; b=JeL+vCe2xZWH4aoD02GxbNQaoESST+ZxEZMGwG7w19FUSDDMCfO/wCbBlSIKFVae40wvBJ8uuSvzzfZ4LwWg4PKRa7uP8tFgHIjie0XQBmD20+F/FoG9lTQuTKabOuYdvDELMXQZ6hjLtE4pxs5YpOAIvzYxlXrCL23ub1j/AgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727603360; c=relaxed/simple;
-	bh=/hAaLQRaGYbGjC12s1FK2c4MVPn7kXs7CHjzldec3Ko=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KHY8QwTmRSUyx7CdInG6BRW3977cOi1mbcej/EHbZdWDuGQ9pQnO/NSE1qWV2KmAU1i0r0H+KdDbA953Fm1jWIhICuuEYN25Pp8ga4agtAXXEeiOTPnpBzfUPJ/ceYGeIsrSMZDXF1Ko6y7Sret4Ey7ieJ9iAWZCJAj9n042XT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dE4CcqPj; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71798a15ce5so3386155b3a.0;
-        Sun, 29 Sep 2024 02:49:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727603358; x=1728208158; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oO6xy91qlhI83XdLLLglm85KjGrzhEnTuyP21KJW/0w=;
-        b=dE4CcqPjxgDe5fRlKIZbgNFRfqqqyXhz6ckO7YJGZWSTMo2rDEa/bDeJgD81P8tspn
-         hHY6B0c3zuDhdZptGIagtArF4wUaLrTVnteJQ59zN7Vi2UJ6TZEI0nzA7EE4NlV2/g+2
-         reha5MCaGXBXDUgoIqCfnic/wM5M835Fr9/qp6w/MeY1iuye3k78xla4Enytg36nBqm6
-         hRpL0tT2AQCGrzYXSMOPiVYI/M/5VRxXdELMEo0FTmqsd6MgGDQdmTXfioIkCpMBNZPC
-         gDrBgzH2iDgeNcvaUfCfeDdxCRYz7857iNFayaRhyT3I/jHctpwZzGXWVir9fZJoNejB
-         pn1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727603358; x=1728208158;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oO6xy91qlhI83XdLLLglm85KjGrzhEnTuyP21KJW/0w=;
-        b=S1nWx4fXpOEau3ZZHc3h7c4k/y6G+JmFIUaKIe5iO2gYv5xNwEZqbH55OpyZMqNZnp
-         ebFu3FEahgs+OxXviQnJOp95/H21C6LIQxwugIFt15zmu1H7VQ8UWkZwHhRgm2X7ISVN
-         0Rc2gSIrG2SKR6EG3MlopxdUp+HTwuTnDJMQaSMQrzfhQB544vLDcE+HjeoGI1WItcPR
-         NZeIvaKyg7hCPS/XsRkYEeBVAFDHII6e/muWTWSlz8o8uhd5C8AZAlEx5bBQ2qGjqakn
-         wYVBvLSbuhAQxCh+ENtCcZvQuWbezz9NcppNzfS2hVm8Of2VZ7Cel/OlmH/brYOmwB06
-         DxVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNqYpLYff0gQjxKQ2P9gEy7YKUj0d0gXUNymJfk+AZXPtHmWovQ5PyIhYVk1KbIKYHDpAUeEfATDc1vsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygeAMszmqLJz21NOLFLEo7nWsQ2tIKeRSnFJZLocY2ac6YaWfQ
-	gS2LwE1R7zXbO/m4mCTGj+yFHLHnQCOA4owbR7xsO5BJQqO7f1cW
-X-Google-Smtp-Source: AGHT+IH2NgmPUTDhV1ajfOzq5hJ2UM7453zMFtzTuyyj7t1lefMX6kNgEw9jugmIMKUsI1PYc/xSig==
-X-Received: by 2002:a05:6a20:c79a:b0:1c8:de01:e7e5 with SMTP id adf61e73a8af0-1d4fa249577mr14139994637.15.1727603357872;
-        Sun, 29 Sep 2024 02:49:17 -0700 (PDT)
-Received: from thushi ([171.76.87.69])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515eeesm4293531b3a.130.2024.09.29.02.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 02:49:17 -0700 (PDT)
-From: "Thushara.M.S" <thusharms@gmail.com>
-To: pbonzini@redhat.com
-Cc: kvm@vger.kernel.org,
+	s=arc-20240116; t=1727604186; c=relaxed/simple;
+	bh=ruwm4D/yxLm8odMn01JTck3NTvNild12UusqEDFMBOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/eK6etyubCw/21MQeYmxcNnSn0iWpwuWoXVIfzkgbLSUwtIIE/b5Wslz6/ZsPmGJoXRMtA8TO05iuKCFGM7qsQGcq2lJBAT1CML9UEZjGziaQ3IOMFkTjgNUTGoeBQGghjGUYxwh6bpC1qVQrN/OvDgc6kQNSMKPIsA+4HpS7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yam2JsQG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AADC4CEC5;
+	Sun, 29 Sep 2024 10:03:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727604185;
+	bh=ruwm4D/yxLm8odMn01JTck3NTvNild12UusqEDFMBOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yam2JsQGDxqj++lmusiGi0PfxdTnlUBn2rBOqghySs7Cc5uzescqK0h4dx5pBnPmO
+	 284lEKgSvMcmYTFIbcjPF1xwdgwHb63RwvjQorbh9RqsIeWitoUTUMSYPh4cMKrrxz
+	 J7fnBQOyUhyQ1hbqSMGiL7HHoPPs94zaG/gX9mSGeya5VfKOtqcHCVBdTTzoTLh/X1
+	 gmcovVZcF+UM46ymLewG+8NYaHE3eBC5G41mbkAmglY9WV0+drF3UWKY8M/d5EjHfB
+	 yZsri+brNd9iKL6GmoAZWpEvDLDSL0DpYHJdugFjNXGkSrHW7S0fZYkf6zMFniUsa5
+	 WmTCedxfeRYCQ==
+Date: Sun, 29 Sep 2024 19:02:59 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+Cc: andy.shevchenko@gmail.com, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	thusharms@gmail.com
-Subject: [PATCH] KVM: Fix checkpatch errors
-Date: Sun, 29 Sep 2024 15:19:13 +0530
-Message-Id: <20240929094913.8231-1-thusharms@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	David Laight <David.Laight@aculab.com>
+Subject: Re: [PATCH v2] tools/counter: Close fd when exit
+Message-ID: <Zvkl02bt6TPb2G_H@ishi>
+References: <20240904014253.2435-1-zhangjiao2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fjMTxti7lvF9h5FM"
+Content-Disposition: inline
+In-Reply-To: <20240904014253.2435-1-zhangjiao2@cmss.chinamobile.com>
 
-This commit addresses coding style errors reported by checkpatch.
-Warnings are not fixed in this change.
 
-Errors fixed:
-$ ./scripts/checkpatch.pl virt/kvm/*.c | grep "ERROR:"
-ERROR: open brace '{' following function definitions go on the next line
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
-ERROR: code indent should use tabs where possible
+--fjMTxti7lvF9h5FM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No functional changes made.
+On Wed, Sep 04, 2024 at 09:42:53AM +0800, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+>=20
+> Since fd is not used in the messaging it's better to=20
+> close it before printing anything. Ditto for other cases.
+>=20
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Signed-off-by: Thushara.M.S <thusharms@gmail.com>
----
- virt/kvm/kvm_main.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+Hello zhang,
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 8e72056581b5..d7b5afb5adfa 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -127,7 +127,10 @@ static long kvm_vcpu_compat_ioctl(struct file *file, unsigned int ioctl,
-  *   passed to a compat task, let the ioctls fail.
-  */
- static long kvm_no_compat_ioctl(struct file *file, unsigned int ioctl,
--				unsigned long arg) { return -EINVAL; }
-+				unsigned long arg)
-+{
-+	return -EINVAL;
-+}
- 
- static int kvm_no_compat_open(struct inode *inode, struct file *file)
- {
-@@ -3341,7 +3344,7 @@ int kvm_vcpu_read_guest(struct kvm_vcpu *vcpu, gpa_t gpa, void *data, unsigned l
- EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest);
- 
- static int __kvm_read_guest_atomic(struct kvm_memory_slot *slot, gfn_t gfn,
--			           void *data, int offset, unsigned long len)
-+				   void *data, int offset, unsigned long len)
- {
- 	int r;
- 	unsigned long addr;
-@@ -3374,7 +3377,7 @@ EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
- /* Copy @len bytes from @data into guest memory at '(@gfn * PAGE_SIZE) + @offset' */
- static int __kvm_write_guest_page(struct kvm *kvm,
- 				  struct kvm_memory_slot *memslot, gfn_t gfn,
--			          const void *data, int offset, int len)
-+				  const void *data, int offset, int len)
- {
- 	int r;
- 	unsigned long addr;
-@@ -3432,7 +3435,7 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
- EXPORT_SYMBOL_GPL(kvm_write_guest);
- 
- int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gpa_t gpa, const void *data,
--		         unsigned long len)
-+			 unsigned long len)
- {
- 	gfn_t gfn = gpa >> PAGE_SHIFT;
- 	int seg;
-@@ -3598,7 +3601,7 @@ EXPORT_SYMBOL_GPL(kvm_clear_guest);
- 
- void mark_page_dirty_in_slot(struct kvm *kvm,
- 			     const struct kvm_memory_slot *memslot,
--		 	     gfn_t gfn)
-+			     gfn_t gfn)
- {
- 	struct kvm_vcpu *vcpu = kvm_get_running_vcpu();
- 
-@@ -6088,8 +6091,8 @@ static int kvm_debugfs_open(struct inode *inode, struct file *file,
- 
- 	/*
- 	 * The debugfs files are a reference to the kvm struct which
--        * is still valid when kvm_destroy_vm is called.  kvm_get_kvm_safe
--        * avoids the race between open and the removal of the debugfs directory.
-+	 * is still valid when kvm_destroy_vm is called.  kvm_get_kvm_safe
-+	 * avoids the race between open and the removal of the debugfs directory.
- 	 */
- 	if (!kvm_get_kvm_safe(stat_data->kvm))
- 		return -ENOENT;
-@@ -6422,7 +6425,7 @@ EXPORT_SYMBOL_GPL(kvm_get_running_vcpu);
-  */
- struct kvm_vcpu * __percpu *kvm_get_running_vcpus(void)
- {
--        return &kvm_running_vcpu;
-+	return &kvm_running_vcpu;
- }
- 
- #ifdef CONFIG_GUEST_PERF_EVENTS
--- 
-2.34.1
+I appreciate you for submitting this patch. Before I can accept it, I
+need to understand the reason for it.
 
+Previously counter_example.c did call close() before returning, but as
+David Laight pointed out, we removed it for being redundant when the
+kernel closes file descriptors on exit, as well as possibly changing
+errno before perror() and strerror() are called.
+
+Is this patch made to address a particular bug you have discovered? I
+would like to document the rationale for this change in the commit
+message so we properly understand the reason for calling close() here.
+
+Sincerely,
+
+William Breathitt Gray
+
+--fjMTxti7lvF9h5FM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZvkl0wAKCRC1SFbKvhIj
+K8VkAQD93xIBirFBTTbKs2f6uEQEa948Xz8xifFb4MgIXLgMZAEAn6jteODdnMMr
+zKvDX3+WDfdsaZvabqBXgoy6k3hFugE=
+=6EWP
+-----END PGP SIGNATURE-----
+
+--fjMTxti7lvF9h5FM--
 
