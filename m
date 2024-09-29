@@ -1,138 +1,79 @@
-Return-Path: <linux-kernel+bounces-342726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DC698922A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3945598922B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2CE12854A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BAB2854E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC86E748A;
-	Sun, 29 Sep 2024 00:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onOb6PDe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F6F5661;
+	Sun, 29 Sep 2024 00:45:57 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F133D9E;
-	Sun, 29 Sep 2024 00:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB94928EF
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727570686; cv=none; b=UeyQsS/JZmVuGnpikJRVV5x7LzbnwRwicgYP9EpLMQV+OmuVG4FlfoNZ7QU/DL82Ww1WxuJK8pycyfKOC08uMyp8Be7/5VTzLKfXGoRBV2Qy9YlkwwcJj8YKqyH8EZrVwO0gl69fIiPEZsuBKOd9U7iHcoOF0xBljlMbAFVvu94=
+	t=1727570757; cv=none; b=jyGbW7fcZ4LFH31iH4ZkszaCOkQ8guMXVedwbuclSOWMS/nC2V6CFWuhoJoQsixUZ59VF7ynzSZL0+gSyoLas9CvWbFtUf4JfU8kuD2VBBiFBmXxY+P9DDBVrSVdGKJLNIgKWo/50tKkdEQE+eIoJ0/bfVZSK3BpptyNBN1z+UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727570686; c=relaxed/simple;
-	bh=X/bQwSiSc0olvT8z73WPoLXmdvhPorhHQ+M633XrM8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVmT9HDtr4N/HHGwv+wTLfGaBozYw80I9xPHOvdPOqjjMYlJM4L/ZJPNQnaZkTQ37+lm9jpmL+XMCQFGG9Vog2Lu1hd2sqF/12IwZjpOl40sHIn5JlzgPyNP2ysXJFGpKC9pIyT8XFDc3cQeZpH1fGtSepRI0TWoQM3YLSH5VXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onOb6PDe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACB23C4CEC3;
-	Sun, 29 Sep 2024 00:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727570685;
-	bh=X/bQwSiSc0olvT8z73WPoLXmdvhPorhHQ+M633XrM8w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=onOb6PDe5IxhnfYyJmxpdR5H73ZO0yg43Un/lpzdeO0u1s2uxB9IUJlwlUgpTsbhn
-	 lCQ50ayTUIfo1gLSC4vhRxugB71hznOn9fLIg8rYJ4lYWYdg6DluvjI/z4GqOHklYd
-	 VbKiLYvxepcS/1ImLgZ7QtcxuuGIUqdSxE5apXKGk4Vr1b2p5GZgQ3oO1ysDN3WN4+
-	 GN4vtcwy7uZw/+1KFapC9i1t/b8KIOrQTeQdOswarfP7Gfl4CI3oHsyxfOW8oGv01K
-	 8FhDX5WgGt9M4mTK/Db586W3S3Ddxby7mBWf6SW4x6B+zthZHHLS3k1FCsiHsLtp1Z
-	 wEdNBs0xL1vaA==
-Received: by pali.im (Postfix)
-	id 21EBA651; Sun, 29 Sep 2024 02:44:40 +0200 (CEST)
-Date: Sun, 29 Sep 2024 02:44:39 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/8] cifs: Fix creating NFS-style char/block devices
-Message-ID: <20240929004439.4xgymuv3mnr3n4a3@pali>
-References: <20240928215948.4494-1-pali@kernel.org>
- <20240928215948.4494-5-pali@kernel.org>
- <CAH2r5mvvNO4NjnBKd1R_wemJ34t=N+iL023c2Op+LPuYw3UcZw@mail.gmail.com>
+	s=arc-20240116; t=1727570757; c=relaxed/simple;
+	bh=jLD9TP3G8Y0euemK96tKa7fXwJSyflUP3Uf7M1NcG0s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=aKljW17keHQs4cSYn6lkMra9pncEat2CMCOIch/dXrWf9dr5nRwjUhiOULc0QkWPIpDSX7HdtGmYWrfP/kiqDmUDn8AprhmYuRi0+z+Miq3fXoKULcOfXUZiDk58dJP+i2MtkKymxit+1/KagaK1Xv2TjHY7L/3+/PFWTMolxCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3466d220dso27379385ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 17:45:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727570755; x=1728175555;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ncSuZTTtBgx90MQ60AafmT2E0IviF1JzCWBx2Yph2Jw=;
+        b=s1qTX4T6N9C702tt9+D9x8gDL9a4HjZev/xOqZzgZpxu34j4qb+yOFqmeKl7Pt+C5W
+         +J5HA+S57kwAyyUKi5AvkhemDP+E+jEB+wRN2g/Bb2c5RiS1Pd8Ui9RjiAZQQzccra+Q
+         7OEHcFIdecbfgMMitVmyquJkcNsRHVWzuOnRFmlpPtl7styhDAaruWMcU/A94YPSSH4g
+         HgUWEZlkbcBJTno4U4bmaswOkMLUac+Owj+Bn+62DOyBCnuWy0UUTypWTro3MJMj0gZT
+         FzeQR9znIEFpKvDAxV4YgwdG9C0zHEpLIvQrUNRXrTjCXjs3iLkLLWWYT6JSf7fgbXxh
+         7Ppw==
+X-Gm-Message-State: AOJu0YxaB2lQiKCQMt8d/2KamLrTFGj0R7taFJ/dBw0vptsEuVG+cFE4
+	WcvgqhjDkbazy9+YwqqUkHYNXEoa6GYJwn0L/fHEm5sr+Ild3JAg0it8+Qc3couuFxo6pqcOkPL
+	EYIxbA9yXbs+wg8tAdGQC70lKOZzo56S62s6kxEYIAd7wXnQ0UaN4BLI=
+X-Google-Smtp-Source: AGHT+IHdwqwEm2V9/v0qhoq8Vy79b11BBdUnByIsdWUcoH/Gd52rnzNs2inQ5VSAZtpN0UdAjDCrfVU1Id8AFNgs0IbOkME0QWpM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mvvNO4NjnBKd1R_wemJ34t=N+iL023c2Op+LPuYw3UcZw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a05:6e02:1b08:b0:3a0:8edc:d133 with SMTP id
+ e9e14a558f8ab-3a345176668mr62318945ab.9.1727570754871; Sat, 28 Sep 2024
+ 17:45:54 -0700 (PDT)
+Date: Sat, 28 Sep 2024 17:45:54 -0700
+In-Reply-To: <0000000000003d5bc30617238b6d@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f8a342.050a0220.aab67.000c.GAE@google.com>
+Subject: Re: [syzbot] retest bfs fix, please
+From: syzbot <syzbot+94891a5155abdf6821b7@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Ops, sorry for that. I just let my work branch on v6.11-rc7 and here
-this change was not yet. But it is funny that we have hit this problem
-independently in nearly same time.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-On Saturday 28 September 2024 19:18:26 Steve French wrote:
-> Looks like a duplicate of Paulo's earlier already merged patch, so
-> will skip this one.  Reviewing the others in the series now.
-> 
-> commit a9de67336a4aa3ff2e706ba023fb5f7ff681a954
-> Author: Paulo Alcantara <pc@manguebit.com>
-> Date:   Wed Sep 18 21:53:35 2024 -0300
-> 
->     smb: client: set correct device number on nfs reparse points
-> 
->     Fix major and minor numbers set on special files created with NFS
->     reparse points.
-> 
-> On Sat, Sep 28, 2024 at 5:02 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > Linux SMB client currently creates NFS-style char and block devices with
-> > swapped major and minor numbers.
-> >
-> > Per MS-FSCC 2.1.2.6 NFS_SPECFILE_CHR and NFS_SPECFILE_BLK DataBuffer's
-> > field contains two 32-bit integers that represent major and minor device
-> > numbers.
-> >
-> > So the first one 32-bit integer in DataBuffer is major number and second
-> > one in DataBuffer is minor number. Microsoft Windows NFS server reads them
-> > in this order too.
-> >
-> > But Linux CIFS client creates new reparse point DataBuffer with minor
-> > number first and major number second.
-> >
-> > Fix this problem in Linux SMB client and puts major and minor number in
-> > the correct order into DataBuffer.
-> >
-> > This change fixes interoperability of char and block devices on Windows
-> > share which is exported over both SMB and NFS protocols.
-> >
-> > Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/reparse.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> > index 48c27581ec51..63984796721a 100644
-> > --- a/fs/smb/client/reparse.c
-> > +++ b/fs/smb/client/reparse.c
-> > @@ -108,8 +108,8 @@ static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
-> >         buf->InodeType = cpu_to_le64(type);
-> >         buf->ReparseDataLength = cpu_to_le16(len + dlen -
-> >                                              sizeof(struct reparse_data_buffer));
-> > -       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MAJOR(dev) << 32) |
-> > -                                                MINOR(dev));
-> > +       *(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MINOR(dev) << 32) |
-> > +                                                MAJOR(dev));
-> >         iov->iov_base = buf;
-> >         iov->iov_len = len + dlen;
-> >         return 0;
-> > --
-> > 2.20.1
-> >
-> >
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+***
+
+Subject: retest bfs fix, please
+Author: andrew.kanner@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+-- 
+Andrew Kanner
 
