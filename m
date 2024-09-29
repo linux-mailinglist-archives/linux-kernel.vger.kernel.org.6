@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-342986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03210989586
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E980E98958C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A0E3B2389D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AF221F212EE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95F314F100;
-	Sun, 29 Sep 2024 12:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25FD217B433;
+	Sun, 29 Sep 2024 12:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWFbb8wY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtXBz0pW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B744166F3D;
-	Sun, 29 Sep 2024 12:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E72B15FD16;
+	Sun, 29 Sep 2024 12:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727614404; cv=none; b=cT0fX+5ICQGUbKQdzWIyNq67RDsg1fN0tjPVlocLVd4VGtzlzN5wOA7iAjmRzZUB8icYmxisEvtujTHfBDSFpHQ5mfUd6TeT6CMTqlkcG1lGv0bai2tF9FH34Q/awCHuiHFSnr9aWwvTpTx6IXX/0YNqGX6+6wbcQMfs4en1/DE=
+	t=1727614469; cv=none; b=ddFmw+wNfVW7ljJlQyDTSMqCxU/aJ9vmGO17SIZjMQwJSV8mJgDcZ2+DJv8dGOfaljEcS1yP9LE9txjlGhoXHcQltxkpeb1lJa1JVegW8a0+SVcur7HfNmEIA5TJ8A6CQF5wuCW2da+4o8qeNsPBp/aUp2UyMzzbmfpr6y4XbxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727614404; c=relaxed/simple;
-	bh=Bp1K9G0WMsALT0d5ANIdqjivrQqSUfMMybbl4HmCxsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqWgktaApR3u0SG95Dyox1SIt2yX6P19ArIA5KAno+F5acVp+ZKoebDdB2N848QtC+kQejWj7hTjQyD73FQjmcndq+z/czoHNii3Or1qNQ7Czs+xYhD9t7QXIOod4cFhmYe93/hPXEtvqKm+KlnLXxVMjbp2ET1dEFGSDxWSoeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWFbb8wY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29C88C4CEC5;
-	Sun, 29 Sep 2024 12:53:23 +0000 (UTC)
+	s=arc-20240116; t=1727614469; c=relaxed/simple;
+	bh=lxWU+0g8zJ8Iiq7O21CFrF8NDKioM96RoNpjxez5/tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AMhZPP8glrPIr35ThDabvV7vM25nOOQeT1BQFleD7nkU34QrkqOd2Nf5AGm8GyGsj/F2pC0LNGjZvzFPwR7QDBV0lccrsX1OmWDVQ+8oxulukshPI5tc0wfwX6n2ZYGj8nkt1vU4MYOwlMv+BalFuRMRpR827Tv9FztpuoNKVM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtXBz0pW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EFE0C4CEC5;
+	Sun, 29 Sep 2024 12:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727614403;
-	bh=Bp1K9G0WMsALT0d5ANIdqjivrQqSUfMMybbl4HmCxsY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VWFbb8wYU0S1W1F1AHmyTFcb4nXxO2MdHHoQxg4vMzoLc6Ux3QC0yR2uoJKOFLO/E
-	 Z3QDTcUpsvJmZHPbFiw4VfDN7EqPV/TmbZpueaPRdVXNYMlw9Pf4BjzYl6GINPDUdw
-	 /qk+0354sajJseCamQt3PV5px0CUWDR9sS8lbSYWNt1Z1PJvBMg0NyNK2phcRa1HN3
-	 UuJ198+3CE3VB7n5QDAt5jXb7H+y3CYyMVcbZHsMfKhRsvniueDx6ILYSRHx0j6h6D
-	 CTUCkcJ+NR0qiGw1UiZvEogr1gztl2W3vwAal7QmCOiAM3dcTyM56siD9GqUaMF9wn
-	 oQeonj4E2+QbA==
-Received: by pali.im (Postfix)
-	id BD4B1872; Sun, 29 Sep 2024 14:53:17 +0200 (CEST)
-Date: Sun, 29 Sep 2024 14:53:17 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
- reparse call
-Message-ID: <20240929125317.p7tbwvzy4bcs2a3s@pali>
-References: <20240928215948.4494-1-pali@kernel.org>
- <20240928215948.4494-3-pali@kernel.org>
+	s=k20201202; t=1727614469;
+	bh=lxWU+0g8zJ8Iiq7O21CFrF8NDKioM96RoNpjxez5/tI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RtXBz0pWx/qAcTDyaivenMTNOwy6SBOpqL+L4DqTZ64Bwg3n/YB0+QEyoUdRWclSF
+	 thASznS1TASJ+8X6YDa0FsDK+U7kLVWu2hugbyKEEfMvlwr5c+7pUgyg35ta86pLF7
+	 zOKBRM1Z4FOlufZaXp5Lp+nPCNRdyz8YHxGjCAxMmlFrj72N9HYJ+l6XCyCBB72xLJ
+	 P6ubnm/l64++m27QP46Tix4bnRWYn2W2BG45WXlCtgDwpYynM67oVsmdUA+Pafqxw8
+	 k1VBaaZy5AqKdxpqdEfVa9o+Vve7yAqmCPId4bF+4ST/1hnxqMBqNiTptXSaeE3qvB
+	 xPq7DiOvQ+tbA==
+Date: Sun, 29 Sep 2024 13:54:17 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Guillaume Stols <gstols@baylibre.com>
+Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Michal Marek
+ <mmarek@suse.com>, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ aardelean@baylibre.com, dlechner@baylibre.com, jstephan@baylibre.com
+Subject: Re: [PATCH v2 09/10] iio: adc: ad7606: Add iio-backend support
+Message-ID: <20240929135417.60d08f05@jic23-huawei>
+In-Reply-To: <20240920-ad7606_add_iio_backend_support-v2-9-0e78782ae7d0@baylibre.com>
+References: <20240920-ad7606_add_iio_backend_support-v2-0-0e78782ae7d0@baylibre.com>
+	<20240920-ad7606_add_iio_backend_support-v2-9-0e78782ae7d0@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240928215948.4494-3-pali@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello Steve, I was reading again implementation of smb2_compound_op()
-function and if I understood it correctly, then out_iov and out_buftype
-array parameters needs to have num_cmds+2 members. This is quite
-unexpected, and this patch cause buffer overflow and memory leaks.
-+2 is for CREATE and CLOSE operations added automatically by compound.
+On Fri, 20 Sep 2024 17:33:29 +0000
+Guillaume Stols <gstols@baylibre.com> wrote:
 
-Surprisingly, no memory issue and neither corrupted packed I observed.
-And therefore I thought that change is working fine.
-
-I will send a new version of this change to increase array members and
-free all members of array.
-
-On Saturday 28 September 2024 23:59:42 Pali Rohár wrote:
-> If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-> intermediate object created by CREATE. Otherwise empty object stay on the
-> server when reparse call failed.
+> - Basic support for iio backend.
+> - Supports IIO_CHAN_INFO_SAMP_FREQ R/W.
+> - Only hardware mode is available, and that IIO_CHAN_INFO_RAW is not
+>   supported if iio-backend mode is selected.
 > 
-> This ensures that if the creating of special files is unsupported by the
-> server then no empty file stay on the server as a result of unsupported
-> operation.
-> 
-> Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
-> Signed-off-by: Pali Rohár <pali@kernel.org>
+> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+One trivial comment to add to what David covered.
+I'm also curious now on what the limitation is that meant we didn't
+support the AD7606B with parallel interface before, and what stops us
+supporting other devices with the backend IP?  Is there a fundamental difference?
 > ---
->  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
+>  drivers/iio/adc/Kconfig      |  2 +
+>  drivers/iio/adc/ad7606.c     | 94 +++++++++++++++++++++++++++++++++++++-------
+>  drivers/iio/adc/ad7606.h     | 15 +++++++
+>  drivers/iio/adc/ad7606_par.c | 91 ++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 187 insertions(+), 15 deletions(-)
 > 
-> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> index 11a1c53c64e0..af42f44bdcf4 100644
-> --- a/fs/smb/client/smb2inode.c
-> +++ b/fs/smb/client/smb2inode.c
-> @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
->  	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
->  	struct cifsFileInfo *cfile;
->  	struct inode *new = NULL;
-> +	int out_buftype[2] = {};
-> +	struct kvec out_iov[2];
->  	struct kvec in_iov[2];
->  	int cmds[2];
->  	int rc;
-> @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
->  		cmds[1] = SMB2_OP_POSIX_QUERY_INFO;
->  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
->  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
->  		if (!rc) {
->  			rc = smb311_posix_get_inode_info(&new, full_path,
->  							 data, sb, xid);
-> @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
->  		cmds[1] = SMB2_OP_QUERY_INFO;
->  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
->  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
->  		if (!rc) {
->  			rc = cifs_get_inode_info(&new, full_path,
->  						 data, sb, xid, NULL);
->  		}
->  	}
-> +
-> +	if (rc) {
-> +		/*
-> +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
-> +		 * remove the intermediate object created by CREATE. Otherwise
-> +		 * empty object stay on the server when reparse call failed.
-> +		 */
-> +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status == STATUS_SUCCESS &&
-> +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status != STATUS_SUCCESS)
-> +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-> +	}
-> +
-> +	free_rsp_buf(out_buftype[0], out_iov[0].iov_base);
-> +	free_rsp_buf(out_buftype[1], out_iov[1].iov_base);
-> +
->  	return rc ? ERR_PTR(rc) : new;
->  }
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index 4ab1a3092d88..9b52d5b2c592 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -224,9 +224,11 @@ config AD7606_IFACE_PARALLEL
+>  	tristate "Analog Devices AD7606 ADC driver with parallel interface support"
+>  	depends on HAS_IOPORT
+>  	select AD7606
+> +	select IIO_BACKEND
+>  	help
+>  	  Say yes here to build parallel interface support for Analog Devices:
+>  	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
+> +	  It also support iio_backended devices for AD7606B.
+
+But not for other devices?  Is the expectation that they will need
+a different IP for the backend, or just a case of not tested yet?
+
+
 >  
-> -- 
-> 2.20.1
-> 
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called ad7606_par.
+
+> +
+> +static int ad7606_update_scan_mode(struct iio_dev *indio_dev,
+> +				   const unsigned long *scan_mask)
+> +{
+> +	struct ad7606_state *st = iio_priv(indio_dev);
+> +
+> +	/* The update scan mode is only for iio backend compatible drivers.
+	/*
+	 * The update...
+
+> +	 * If the specific update_scan_mode is not defined in the bus ops,
+> +	 * just do nothing and return 0.
+> +	 */
+> +	if (st->bops->update_scan_mode)
+> +		return st->bops->update_scan_mode(indio_dev, scan_mask);
+> +	else
+> +		return 0;
+> +}
+> +
 
