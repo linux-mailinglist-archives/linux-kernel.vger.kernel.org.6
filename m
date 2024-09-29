@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-343131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E4BB989712
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27664989713
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548A51F21373
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:22:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD3428260F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CF573477;
-	Sun, 29 Sep 2024 19:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3aI0hXq"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677C05674E;
+	Sun, 29 Sep 2024 19:23:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADEA72C1B4;
-	Sun, 29 Sep 2024 19:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C117346D
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 19:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727637753; cv=none; b=cAmF0xZCdK9SRqOX4TOs18Bz0Gm9AEvJyDuvj2pcVbjNG+JJ2BRFBskcJfkajfBjudlCkz2b3JXxDcwqcCNWqtijh5uQsQCJRsZX4AXvb9A25w9gtekRgLikL+cl6piqST8q2ANz2Q7J8iJBUWLpTZX06t7tG3j/GHv1xMZTluc=
+	t=1727637781; cv=none; b=tcmGEBY5GHfkQ+H9zimDG1f98mkkpLXoYX/dUJUU5TkKCbrXIsRKaEgcBaOD5/4vqlSW6Z7F9dHFzmLKbDQ4uX2aDyglFuahdQ/CQgQLeMpgIPhWA3OLO9MrVn7whV106DzMfPuQzNoNJEwbS3n7fCVMBBdN5Pl76HBFO0o/mEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727637753; c=relaxed/simple;
-	bh=oLXxoh6aKOly9Powt/xFXlfDVV5wCoeAxlXMnKhDi6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGJ9qKTSTv1BTGJWjtLqy0mAtSEWbgIhaF3pJkkMSjXyyyFZm89M7LxqZTq9Lj7oxfOyRBJd5jaKCbAMJzBRmvTu/tGcfVGFewCaafFpXGYF6RJ3T85dOYqqIOpHOfOaJV1Gerkz73bUuUpSI3WB/dTWbAjBEhteICRbV1dMJI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3aI0hXq; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c8952f7f95so760678a12.0;
-        Sun, 29 Sep 2024 12:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727637749; x=1728242549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pobc+AJ4aXejENeOegO+U6SgRutUJx4h2NJgcJv9KmI=;
-        b=i3aI0hXqpyd8gy7P7yBb18DMWn+OSmtEwK+yzPmsbr0a8yVG6cskE7iQ+DoY4xqoZ2
-         0bLPzdiNFn52RL044KtbXjyZ1jKi15pVbhcDC4TNqb1oC95srrusCjRyJjMValt7bOqI
-         SwDW4f+NfQWPHTiG6/SypQ/9uOISTewyChVSgnl6gvj8cMEWmbuNUl7wRbdkXsYKmEs8
-         yQIVYxR1yW2RbGADxTjmIo3bfFwQco+6NsIKxLmfiTGylVr7uJsKeKBIMd8ylFxdhmDB
-         qOqK+0QeqK3HPNlB4jVGS78VxVGP/hqz9nNJbFjJ8D+me4sZxUiYj9OAQihKXOWVxczp
-         t1Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727637749; x=1728242549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pobc+AJ4aXejENeOegO+U6SgRutUJx4h2NJgcJv9KmI=;
-        b=lHmHQ057VCl0kvp4QYIByelq8aHmRubREVrZBzfnaxuriNNbZy4rVMjCP0tEuq85uh
-         H8PFmZv07Kh60kzjk2WXLPxVEl5MKA1D+F9k+cLOeGudvjD3nC5871NFvAm9kjLH8p4U
-         IF2QuNnCfmpjgW/pITv2JEraj6EK84NpsIM0HhP0VCJ4sVekr1aMga3a0Nm0WztkN3sH
-         OJCqsTi7Q0ApLzJjqX+H5+bSYHi4WwPOzwT5iQv3swyv0U/5KRtNQBclEL9F7FqoywpT
-         YtzsBDeAZUEjS7S5fyqdOTDUg9zRkrmtqfhVFo3Ackbklhion9fJWWtx96JDx4NZ8dcI
-         TMgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVC2EeYVnaixfz5Mi1D7uA8B9DfYVuT03wfqe79HlUaRauuu8rG9Q1zJvOX/6MDQ88dXAcamFuRf2sQQbVe@vger.kernel.org, AJvYcCVN8TQ8xXvesQKz6bCJTcWFJdW6vgJR00sAgqYx131ls2NjqUPmMyh8fGCU6hou49fgdjFZ2crKoDsA@vger.kernel.org, AJvYcCWL5nO1BH3AXM0e5+aNro/QC0NUxVOvegKOm8zUI9UJzBc+2YOR0nnizzEZpa0AOL5CDdQVi9OykrR9@vger.kernel.org, AJvYcCXLQuen2hHu3dst0UifhhgkD0aG140W/GL8vwrzYxmXvqpusjjDSssZn316+biEK96Om59rbNfx3GVn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnzl7LOImXY/WQXJuRU9nbBJ4xjeHfq8DKJgxfeBCpq3PhCQ1w
-	CaW2syt8hh0chUXYD2iCoR2W+rzVlI/NhfLSZG7RjN5B3K9yDq/YOcU2nubcyikGi/ucxoQSY2v
-	+H+J2cGqjZ4WPHecDG5yTxX9eRbE=
-X-Google-Smtp-Source: AGHT+IGaxFv21uXx+/xZJU/kjl1OxZbW01D0pVYnfO3CdcXbQ/N3kGxbqbV7+Ze+Pe9bRVYVDyDb9xLbba+Qkot3y1k=
-X-Received: by 2002:a17:907:789:b0:a80:f6a9:c311 with SMTP id
- a640c23a62f3a-a93c47e2257mr1167476366b.0.1727637748858; Sun, 29 Sep 2024
- 12:22:28 -0700 (PDT)
+	s=arc-20240116; t=1727637781; c=relaxed/simple;
+	bh=L7mjGuTuTjqihi6ACzkDkfLo81I9/BYiSeA+V8+nmqQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DC7qaIwuqUO9VrNcQD65u0rdyLq0j0KV7PUVh/snxjW8Ev8deDc+L88mwzaryfJhkVUVYpwIKaLVC8OypCeYJ47AUhAnp/qymT1vw1fQn/HteBBKw3KYg7tQRghfY/6iR9X45gJKhWCiojEZL4D6LgT3aT0UR8JAWB7FCbT1SwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suzVR-0005Js-Me; Sun, 29 Sep 2024 21:22:57 +0200
+Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suzVQ-002SFV-Nd; Sun, 29 Sep 2024 21:22:56 +0200
+Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
+	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <m.grzeschik@pengutronix.de>)
+	id 1suzVQ-002EdD-2A;
+	Sun, 29 Sep 2024 21:22:56 +0200
+From: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Date: Sun, 29 Sep 2024 21:22:55 +0200
+Subject: [PATCH] net/9p/usbg: dont call usb9pfs_clear_tx if client is not
+ connected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
- <20240923101206.3753-7-antoniu.miclaus@analog.com> <CAMknhBHRfj7d8Uea8vX=t+y+9dqoPABQSzsgNhBMTK-8-f6L7w@mail.gmail.com>
- <20240928183044.0b5ea2e0@jic23-huawei>
-In-Reply-To: <20240928183044.0b5ea2e0@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 29 Sep 2024 22:21:52 +0300
-Message-ID: <CAHp75VfChXnRsQVA7nQu0L8evqFZrNoCXMq_KEc6_md4EWPyvA@mail.gmail.com>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus <antoniu.miclaus@analog.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt <marcelo.schmitt@analog.com>, 
-	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
-	Mike Looijmans <mike.looijmans@topic.nl>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean <sergiu.cuciurean@analog.com>, 
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-pwm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAA6p+WYC/x3KQQqAIBCF4avErJNKSrKrRAsnp5qNiQMRSHfPW
+ v7vfRmEEpPAVGVIdLHwGUp0dQXr4cJOin1p0K3uW6ut2vgmsVEN3nQjIhlvEIpGJ6QwubAen/9
+ ZY+N3xUR/ln1enucFZH/nW3QAAAA=
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Michael Grzeschik <m.grzeschik@pengutronix.de>
+X-Mailer: b4 0.12.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1538;
+ i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
+ bh=L7mjGuTuTjqihi6ACzkDkfLo81I9/BYiSeA+V8+nmqQ=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBm+akQflDQxctyPd1jgK+LgafzXC35sy/dS9k/Y
+ /1yLCGTak+JAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZvmpEAAKCRC/aVhE+XH0
+ q0wIEACAhZdYrodVxhcqNZFb267ESH5exofxgfnqpWCbpHmYVjyBzt42uiEH2dA2+J2uVgaLZW/
+ al+6YbKo3c8+5OgusNLioELTiKmkqPSxs6XDoZ9rFCtsXlWXbO8AtSiZJ+MitkcXtdLeVfqxbCY
+ BEy1DpHRwx2zTusd1vKEueKWlR+FkUeKiHAVvnO+e1TkjgUfpS6hlMiuALlVMNQ+wc1QXV23WuZ
+ A13H903kxDsD4UuHQcxkZ2yw27lXzF3MRdm0+rf520Tb7/y/PLLCoiE2RvkmmbtkbfrlKI6NYRi
+ x7NKJMNGpdRAjx7LJhKwnFv9kM8YVRapVCXWs4qERrcIAsRAJq50v9cKK4RyncCYudr7hnNTuCB
+ ssgKPkXOXu/IOkfb1bcmAdMu+nxaXM4wlT3unfx9opPywSWfRQLPgKmNfVCYFSa2wUrH47ChNPi
+ L70GWMXWK36zrRnX7QhP7osmIEVZPc80sGpvkaZK2N3VD1a3dN8M9otCirOpiFIPU9SgtLYvecD
+ 9ZUqS6+dafCZhygXGNK3qKYOdYVYiorOdP2tfYCdrtcgB6n5pjitab+7aOeAmfRUUWsqj4XQ/r7
+ fsU3JQo7ZM4P19U4c9sUoA7oY5CwJfZhXNla5M53/c5/tyIImPtSoHacDudzCnLt7kgsDaCvfnT
+ vJb2SXCNBq/zumw==
+X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
+ fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sat, Sep 28, 2024 at 8:30=E2=80=AFPM Jonathan Cameron <jic23@kernel.org>=
- wrote:
+When the client is not Connected it is not valid to call
+usb9pfs_clear_tx since the endpoints are not even allocated. By running
+into p9_usbg_close in that case we would dereference the in_req which is
+NULL when the client->status is Disconnected. Fix that by leaving
+usb9pfs_clear_tx immediately if the state is wrong.
 
-...
+We also update the client->status after the for usb9pfs_clear_tx to
+check for the actual state when running from p9_usbg_close.
 
-> > We have quite a few parts in the pipline right like this one that have
-> > per-sample status bits. In the past, these were generally handled with
-> > IIO events, but this doesn't really work for these high-speed backends
-> > since the data is being piped directly to DMA and we don't look at
-> > each sample in the ADC driver. So it would be worthwhile to try to
-> > find some general solution here for handling this sort of thing.
->
-> We have previously talked about schemes to describe metadata
-> alongside channels. I guess maybe it's time to actually look at how
-> that works.  I'm not sure dynamic control of that metadata
-> is going to be easy to do though or if we even want to
-> (as opposed to always on or off for a particular device).
+Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+---
+ net/9p/trans_usbg.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Time for the kernel to return JSON on a per channel basis?
+diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+index 975b76839dca1..64a5209943dbc 100644
+--- a/net/9p/trans_usbg.c
++++ b/net/9p/trans_usbg.c
+@@ -417,6 +417,10 @@ static void usb9pfs_clear_tx(struct f_usb9pfs *usb9pfs)
+ {
+ 	struct p9_req_t *req;
+ 
++	/* we are not allocated - return */
++	if (usb9pfs->client->status != Connected)
++		return;
++
+ 	guard(spinlock_irqsave)(&usb9pfs->lock);
+ 
+ 	req = usb9pfs->in_req->context;
+@@ -442,10 +446,10 @@ static void p9_usbg_close(struct p9_client *client)
+ 	if (!usb9pfs)
+ 		return;
+ 
+-	client->status = Disconnected;
+-
+ 	usb9pfs_clear_tx(usb9pfs);
+ 
++	client->status = Disconnected;
++
+ 	opts = container_of(usb9pfs->function.fi,
+ 			    struct f_usb9pfs_opts, func_inst);
+ 
 
-Just saying :-)
+---
+base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
+change-id: 20240929-fixes9p-5d618bbe6d6b
 
---=20
-With Best Regards,
-Andy Shevchenko
+Best regards,
+-- 
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+
 
