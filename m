@@ -1,112 +1,154 @@
-Return-Path: <linux-kernel+bounces-343042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31A0989624
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:39:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BE2989628
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449101F228FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0281B21141
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06AB17BED0;
-	Sun, 29 Sep 2024 15:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A4D17C9B9;
+	Sun, 29 Sep 2024 15:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCYUOfH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsVdX6VD"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494F314287
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55492224F0;
+	Sun, 29 Sep 2024 15:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727624376; cv=none; b=VWIO2OOEXviaIULStY2i2sOG7xzAggOMR9g3ZVmh593j7mK2MtX8fS34+ZsPid6CFEHKCE1uTilPfJmx6+VithP0+kTX9NW2k31dKCC+LAoa9UgYznNsMtLRq9g/MtJpKiNoqjMtUvBN8CsdxEUMCDcxwcs5O2afioQLR+2vs1s=
+	t=1727624605; cv=none; b=h2fCq/IyuPdmpWv3TBmyouRXLPZaEeCBfRu81J9qnzD4Br10og2eXxvfXqHoT8XGMuf7icnrQjqPUqWmk7hWt+yj8tUGA/Wujp4TX4UPiKTHFTtW0DO/Sm9E6Mlmu0hssr8uL5ML4UvIiUpjXvfhsxTSJgxbYC4gXqnF7COJ810=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727624376; c=relaxed/simple;
-	bh=4T0HyN4MREec+erQ9q48dRLyStUQuZD2fv6ixAs/t6w=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FNSjmKA6djlroOAKa6GtyAfOn1IZPCcsDDQD3BiHvgwpQSV8YDN6XExOJBfYCbuCG4naksNBMpF406xx9RVpgzljMbsIRU5PpgOBwihYIoWe4jG9JUPYw8yg0EYtmkSAZLfIiQvEJ1qTajM9fU4MbXEKI7LXn+hPG0ELIKw9H7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCYUOfH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167B0C4CEC5;
-	Sun, 29 Sep 2024 15:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727624375;
-	bh=4T0HyN4MREec+erQ9q48dRLyStUQuZD2fv6ixAs/t6w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NCYUOfH33zc416rVcoLXT4B8TsSxswMFg+HZyADsTGF6rx30Iwxw59Xp1NAohvnAx
-	 sBO9kiT5qAlfhr/1Wc+CrlRoCoK/HJ6S46Kxy8vgOrXsiTWxYLTbTXm2SZ24BNhWqK
-	 fiGqYJQbGL+SCUdQmzmsw+wP6zM4hbtMSQCVGyCy84AunU5Mksk7l1kxGRr/EhdDg3
-	 yxSQakTpScyCVLtat9RdJXdNGWu6NqSaJHs7q2yPxwsuprVbC7HgtBcbCi6qOTTEmE
-	 +JdOddOgVYlU7a0DUCI1KkiQXvjF5LwP1nvQVudKdGU7t5ebQ5VCpWDxzrFQaiulaf
-	 ZYfyjl0OSnSig==
-Date: Mon, 30 Sep 2024 00:39:31 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Catalin Marinas
- <catalin.marinas@arm.com>, "Liao, Chang" <liaochang1@huawei.com>, Will
- Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uprobes: fix kernel info leak via "[uprobes]" vma
-Message-Id: <20240930003931.f1927079bf6feccb6627416e@kernel.org>
-In-Reply-To: <20240929145000.GA8931@redhat.com>
-References: <20240926162901.GA9716@redhat.com>
-	<20240929223956.5043f74bc781a124e761f013@kernel.org>
-	<20240929145000.GA8931@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727624605; c=relaxed/simple;
+	bh=X6lZdRXfwZ16ku5gLjv5qTjx5nkFjMnKlGAoLts2bwY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oDfQBj4Vhx5Q6mYcDmEPRvJL1e66SxlXGeidiB1op0UAENHQtL7aeg+MSyY2qDZc5JbZjM3XNMGVQdn1AOyniORCdmVwpvy5D2ux5hjm8nj0ii1TJujSdkovambVVKZ04Xn5pUepLJaDhHeCWrydC75EuImNZ/ftLlDBVXVRwxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsVdX6VD; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-537a399e06dso4160753e87.1;
+        Sun, 29 Sep 2024 08:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727624601; x=1728229401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1n0CktSEL23ehfFD92HK9lqhjT5Y70TnnQ6oUimFnFo=;
+        b=ZsVdX6VDyriQ4xrZNw5+1tmpxHiy7Vh3JVQdDViq7jzkR4EgLaWCx0Q70qZY1YneWI
+         hHhYdpIiku4X0NtUWAWPYAFbd4bl8hbDPJ+BUBKYN+qjK8r41Gky6dfa6I9LajF46ys/
+         b8NP3PZ1B1tRuy7VYErA6k0Vaf+OuNBLVFBRtwRa9VsfyN7L5aMXdelk7nC3K+xfDRDQ
+         b1ayLsAUeCzJGjLEiNumSkgiS5R1FOa1YUaRFpQwKF17NT9MjwPrZbrJUggrYiaZwWsJ
+         9VewWH42stpEX+zTvl0D7CfdA9k4khmM/3q2K5STXzP4hWp+nh77AdLTqz5VKd8BD+hY
+         beKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727624601; x=1728229401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1n0CktSEL23ehfFD92HK9lqhjT5Y70TnnQ6oUimFnFo=;
+        b=O/9MISlbgWRtyyVV8wF8xKksU2PNplx9UI2IFqzzoQvgXT6OjXWLnLUURKhEcqia+c
+         88AKb+xtBC/SHpbV/vH7ih3k7KHtxEoyvXCAzsMW6vB8VL5sk2W5KdODsocRJSCTs4C9
+         g93vAVLZFy3KAcSzNnGWayOtu2vAIGNLQw7G50VxsybF4Hc2KnIMEV6delVIaQypNimS
+         fIQqXUxGF30zi6kw9F584pDJZONGR5jKgBqSEeEqMN70zB5S1M56gRiLl4BEQfEC5ag5
+         dC7rcm4tMUIFxJrVQoPn5Y/tl+5IvALVltUXcT4N7CL6dqZitJ4j0WtpUYjOT66O0J2u
+         ls0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVDnQ6wS9bUCUji3QG2MFs1CcSLnT5k1dRkzSctzCjT+2NQ8uWhk2tpKVUT1SR14oQf/CPHLl2Ai/nvXajk@vger.kernel.org, AJvYcCVM2FM3g9PvQ2kC1w7cLGgKbX8XtTvY5H61XoC2pDBl2qsw8pMtdRo9OFHlDbMhvg7E0qv4DX7cDu7A@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDphL7X/i7nX12n47V/jtD7NXYq+YuW2EjXBA6sG3jlxsW4VDT
+	7gSuc2Q8/Ptk4jtrpWPGMaHkH7NfX05caNIM99NOOBtwUVGbh5suYHzANbyWkGuYbo1niAIuFZm
+	jthiXlLCX1c3IYzi4te47Kc4wgtdr3A==
+X-Google-Smtp-Source: AGHT+IGp024VUv+XMb6Dwilq1n6L5N8HIfRasntJ/++FqkeLLlx2Swm9AvOQN2934run9fyj0WYHGFwZs0tF2CKE0NE=
+X-Received: by 2002:a05:6512:1396:b0:52c:8abe:51fb with SMTP id
+ 2adb3069b0e04-5389fc308bbmr5027662e87.10.1727624601165; Sun, 29 Sep 2024
+ 08:43:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240928215948.4494-1-pali@kernel.org> <20240928215948.4494-9-pali@kernel.org>
+ <CAH2r5mvqrWHX6n58eXGL0EgVuhKBD-aZbgrF1DBG9evdXNNaCg@mail.gmail.com>
+ <0105d773-3030-4ee9-8b25-b074768df73c@samba.org> <20240929092623.yaqhixsa4eot4k62@pali>
+ <5431fa20-089d-4d4e-ba9f-926860d4f202@samba.org>
+In-Reply-To: <5431fa20-089d-4d4e-ba9f-926860d4f202@samba.org>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 29 Sep 2024 10:43:10 -0500
+Message-ID: <CAH2r5mt2jjirZdNCA9ZoENwtAdhfCCs6GxhZjwGtuQpj2q7cbA@mail.gmail.com>
+Subject: Re: [PATCH 8/8] cifs: Rename posix to nfs in parse_reparse_posix()
+ and reparse_posix_data
+To: Ralph Boehme <slow@samba.org>
+Cc: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 29 Sep 2024 16:50:00 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
+On Sun, Sep 29, 2024 at 7:52=E2=80=AFAM Ralph Boehme <slow@samba.org> wrote=
+:
+>
+> On 9/29/24 11:26 AM, Pali Roh=C3=A1r wrote:
+> > Hello Ralph, thank you for information. So in case Samba is not
+> > going to use IO_REPARSE_TAG_NFS as primary way to serve special
+> > files, then it still makes sense to do this structure rename with my
+> > patch?
+>
+> that's up to Paulo and Steve. I can only talk protocol/spec and server. :=
+)
 
-> On 09/29, Masami Hiramatsu wrote:
+I don't think renaming that struct helps since to various servers we
+will have to use reparse points to save special files, and could be
+confusing to keep mentioning "nfs" for use cases in the client code
+where not really related much to NFS.
+
+> > Anyway, Windows clients mostly do not use IO_REPARSE_TAG_NFS.
+>
+> They don't *create* it, but they can *read* and present it. But I guess
+> that's what you meant.
+>
+> > From my knowledge on Windows this tag is used only by Windows NFS
+> > server. So scenario when Windows sends IO_REPARSE_TAG_NFS over SMB
+> > would be rare... It would be needed to export NFS share via Windows
+> > NFS server from SMB mount connected to Samba server.
+>
+> That's out of scope as far as SMB3 POSIX Extensions and I are concerned. =
+:)
+>
+> > Note that Windows NFS client stores data about special files in EAs.
+> > So for example if you mount export from Linux NFS server by Windows
+> > NFS client, then NFS symlink would be visible to Windows
+> > applications as regular file with "NfsSymlinkTargetName" EA. More
+> > info is in this email: https://marc.info/?l=3Dsamba-
+> > technical&m=3D121423255119680
 > >
-> > On Thu, 26 Sep 2024 18:29:01 +0200
-> > Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > > xol_add_vma() maps the uninitialized page allocated by __create_xol_area()
-> > > into userspace. On some architectures (x86) this memory is readable even
-> > > without VM_READ, VM_EXEC results in the same pgprot_t as VM_EXEC|VM_READ.
-> >
-> > Good catch!
-> > I think we push this urgently and send it to stable tree too, right?
-> 
-> Agreed, can you route this patch?
+> > And this is what are Windows applications using if they want to
+> > access data of special files. So application access
+> > "NfsSymlinkTargetName" EA and not IO_REPARSE_TAG_NFS reparse tag.
+>
+> For symlinks SMB3 POSIX Extensions will use what Windows uses natively:
+> IO_REPARSE_TAG_SYMLINK.
+>
+> > To my knowledge neither Samba, nor Linux CIFS client supports
+> > "NfsSymlinkTargetName" EA for creating or parsing symlink.
+>
+> for Samba: yup.
 
-Yeah, OK.
+Yes.  We would only want to support reading the NfsSymlinkTargetName
+for the rare
+cases where it would come up, but the default for creating symlinks on
+the client
+would be to use "mfysmlinks" (safer, client only symlinks, like Apple) when=
+ the
+mfsymlinks mount parm is specified, otherwise use the default Windows
+symlink type
+when creating a new (server side) symlink remotely.
 
-> 
-> > Fixes: d4b3b6384f98 ("uprobes/core: Allocate XOL slots for uprobes use")
-> > Cc: stable@vger.kernel.org
-> 
-> Will add this or should I resend with these tags included ?
+--=20
+Thanks,
 
-No, but can you confirm this is correct tag? I just track when the
-alloc_page() came from.
-
-> 
-> perhaps the changelog should mention that debugger can read this memory
-> regardless of pgprot_t...
-
-OK, if you can do that, can you add it and resend it?
-
-Thank you,
-
-> 
-> > Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Thanks!
-> 
-> Oleg.
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Steve
 
