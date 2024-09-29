@@ -1,138 +1,130 @@
-Return-Path: <linux-kernel+bounces-342818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1007989346
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BB7989348
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAED71C22891
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C89EC28591A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2129139CFF;
-	Sun, 29 Sep 2024 06:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE3B137772;
+	Sun, 29 Sep 2024 06:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UO+S7uDU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RpY5iw3p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA73BE4E;
-	Sun, 29 Sep 2024 06:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42BCBE4E;
+	Sun, 29 Sep 2024 06:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727591532; cv=none; b=mgdr0q9QhC/bepd37q6BloWFskTQHUJ8oqAuWEcviRoUYrD6NzM31gv/1QPRvxUuPMlZPWF19CFKYHydwsw9KKjemZ55Cb7v2gk+e4lrQmB90F2DWOL98OH2Is0OxDHxooxT66D9h948FmFMe9CE6Ap0JZkmsVaOsm8JxYz6/tY=
+	t=1727591756; cv=none; b=m5tU4Jo2eVYnOAojmAGmdEsgRGEblNx/awR8PG6hPO1syoX2sTF1Gnm2moM34Cam5Nt4OTKzkaa1DMJa0j+20lAuhp5CS5yJ9/FF9nYW2rvEm0ztGCtMJx7wAL6QGamu9cFN3O5EjvKxu+1Az0do6KrCBGPR0Rar3cMqR+x6ZOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727591532; c=relaxed/simple;
-	bh=ltc+vieAlwI7N1jOV+wsDjVH5AjyEuAavHroHn1x3Lg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pWEdeEtg21gFpBVYNlt0T4V9qlrcnnkvVsS54l7BpzOtdH9oa9BUoBwFsbEVfX6y2CpnQdwXl0uNbYsrYgi0b1v1lqyXrhYK34i79f/B96eEnJOiG89zMk2LM0tK7kKaiG1T6anHmt3Z6X/kcctWvUKUsvlSF0sMt9blviXZm3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UO+S7uDU; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48T0E5hx027354;
-	Sun, 29 Sep 2024 06:32:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qNQnRNp7z2TCyH6YZnB39qtdnzhvh6eGjKjd1ZtcPpg=; b=UO+S7uDUN2D5Vfgy
-	ez+rvOHBpGQbA+5yLuAQzokEcIzEmeghJiBSr9S3QGzJ9aCtNMKi6Wq9XP8XX/1L
-	YzJQ0b45KYjabMjtZpp3PSz8NmGQFHl/X1yvO/GDVePIVxGpo6dGGHJQB2h2GEcR
-	5aG40vdc6bMEa5KQuV0SpFJMEjSPS34R4xSzGv8UdZv16VoG7akfy6fOoxXMlgVV
-	2uPfa8NGrhgmR43AC9jJ1gtf18uMRc49NKbLmbKjqUkoA2zWobFnqaki2hE1fuEq
-	/1Vexa1v3dama6pCOarO5qXyn/gKYQiZoQIabMmz6nvxqGA+yLvLyD5TokWYu0lU
-	eAiRfg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9vu1ty4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 06:32:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48T6W3qX006675
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 29 Sep 2024 06:32:03 GMT
-Received: from [10.50.42.35] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 28 Sep
- 2024 23:32:00 -0700
-Message-ID: <12048540-9d29-48e8-8442-e0f736067d9f@quicinc.com>
-Date: Sun, 29 Sep 2024 12:02:03 +0530
+	s=arc-20240116; t=1727591756; c=relaxed/simple;
+	bh=Ma89Q2H0tI7KFvwHNDPTwSNUcp1Ny6G8lx3EUAWcb3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bvVNLvi7z/GegKEQ74asveD+UU6MjzgY35MnpzRoccAhbFBDhx8bBsZaofCWBVWiAmPAiy5+mpQk4lTtOHONXu5cZr4mnepm8/8LO31PZPdlVdsFcsST3/1qhq9XcRq90e8DNNeC32F19qQ/BzOowATHd9yzjg/8gtL8ZCswd4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RpY5iw3p; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727591755; x=1759127755;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ma89Q2H0tI7KFvwHNDPTwSNUcp1Ny6G8lx3EUAWcb3s=;
+  b=RpY5iw3pkInF6FlUnHInG7Ay+ytEy84fZ8ulftFq8TmbW3BjnKmakIKr
+   uvPTfAgJOvjctaWej9o7CYq99ayTLJPOzV9Bdx+gV/0dciayCQ8JLNfVC
+   cuVI7eqmvYUkbklt9qc3PpNSE/JRwOfdNnvDqHqcXGr39+FNIjkL2PVo5
+   XeLMct2e3ZWGaZRAGd8GooLOvDPJ+nO33z2AV7KaRoObXFXu0y6FuXvp3
+   HzZiMNkt2WYQ+Xcv55Y0gH1twuvOcSRZv3o43ESEUrqnrorzXoTq0oKpW
+   cJiBEZcuxTyjRcdB5y46GHEb1CWetrp9frU+oK93omDFpOTgdHnW/dgrF
+   w==;
+X-CSE-ConnectionGUID: ACVPcpCBT1u1Sjb5X3vTUQ==
+X-CSE-MsgGUID: /TNuEICZSZK2w9Qzv0igRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="29573896"
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="29573896"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 23:35:54 -0700
+X-CSE-ConnectionGUID: bTLtPI9uQciFseVQJ+n2ww==
+X-CSE-MsgGUID: zs6mJmtCQ8GlZfga3C8Nfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
+   d="scan'208";a="73254057"
+Received: from unknown (HELO rzhang1-mobl7.ccr.corp.intel.com) ([10.245.243.113])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 23:35:49 -0700
+From: Zhang Rui <rui.zhang@intel.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org
+Cc: hpa@zytor.com,
+	peterz@infradead.org,
+	thorsten.blum@toblux.com,
+	yuntao.wang@linux.dev,
+	tony.luck@intel.com,
+	suresh.b.siddha@intel.com,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] x86/apic: Stop the TSC Deadline timer during lapic timer shutdown
+Date: Sun, 29 Sep 2024 14:35:21 +0800
+Message-Id: <20240929063521.17284-1-rui.zhang@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
- engine clock
-To: Bjorn Andersson <andersson@kernel.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>
-CC: <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
- <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
- <wfm2xgyf67erkl57d4ztnj7t7cezkeohne2bcz42crtjwmjp5j@wfakrtwjizkq>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <wfm2xgyf67erkl57d4ztnj7t7cezkeohne2bcz42crtjwmjp5j@wfakrtwjizkq>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oRHO9_PNbSHtAXf356lufL4Wk8x4omAC
-X-Proofpoint-ORIG-GUID: oRHO9_PNbSHtAXf356lufL4Wk8x4omAC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1011 spamscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409290047
+Content-Transfer-Encoding: 8bit
 
+According to Intel SDM, for the local APIC timer,
+1. "The initial-count register is a read-write register. A write of 0 to
+   the initial-count register effectively stops the local APIC timer, in
+   both one-shot and periodic mode."
+2. "In TSC deadline mode, writes to the initial-count register are
+   ignored; and current-count register always reads 0. Instead, timer
+   behavior is controlled using the IA32_TSC_DEADLINE MSR."
+   "In TSC-deadline mode, writing 0 to the IA32_TSC_DEADLINE MSR disarms
+   the local-APIC timer."
 
+Current code in lapic_timer_shutdown() writes 0 to the initial-count
+register. This stops the local APIC timer for one-shot and periodic mode
+only. In TSC deadline mode, the timer is not properly stopped.
 
-On 9/26/2024 6:18 PM, Bjorn Andersson wrote:
-> On Thu, Sep 26, 2024 at 01:28:37PM GMT, Vladimir Zapolskiy wrote:
->> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
->>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> [..]
->>> +
->>>   static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
->>>   {
->>>   	int i;
->>> -	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
->>> +	const struct geni_i2c_clk_fld *itr;
->>> +
->>> +	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
->>> +		itr = geni_i2c_clk_map_32mhz;
->>> +	else
->>> +		itr = geni_i2c_clk_map_19p2mhz;
->>> -	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
->>> +	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map_19p2mhz); i++, itr++) {
->>
->> Struct/data organization here is so weak, that here it's implicitly assumed
->> that sizes of two arrays are equal. It could be kept as is of course, just
->> pointing to it.
->>
-> 
-> Thanks for pointing this out, Vladimir.
-> 
-> I'd prefer we fix it by adding a sentinel value to the arrays - because
-> this was only spotted due to the rename, the next guy will not be so
-> lucky.
-> 
-> Regards,
-> Bjorn
-> 
+Some CPUs are affected by this and they are woke up by the armed timer
+in s2idle in TSC deadline mode.
 
-Okay, sure.
+Stop the TSC deadline timer in lapic_timer_shutdown() by writing 0 to
+MSR_IA32_TSC_DEADLINE.
 
-Thanks & Regards,
-Manikanta.
+Cc: stable@vger.kernel.org
+Fixes: 279f1461432c ("x86: apic: Use tsc deadline for oneshot when available")
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+---
+ arch/x86/kernel/apic/apic.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index 6513c53c9459..d1006531729a 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -441,6 +441,10 @@ static int lapic_timer_shutdown(struct clock_event_device *evt)
+ 	v |= (APIC_LVT_MASKED | LOCAL_TIMER_VECTOR);
+ 	apic_write(APIC_LVTT, v);
+ 	apic_write(APIC_TMICT, 0);
++
++	if (boot_cpu_has(X86_FEATURE_TSC_DEADLINE_TIMER))
++		wrmsrl(MSR_IA32_TSC_DEADLINE, 0);
++
+ 	return 0;
+ }
+ 
+-- 
+2.34.1
+
 
