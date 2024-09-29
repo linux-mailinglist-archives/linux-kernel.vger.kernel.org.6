@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-343160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AE3989764
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:40:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF1A989765
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 895491F213CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEEA11C20B23
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81E9185954;
-	Sun, 29 Sep 2024 20:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071F01465B8;
+	Sun, 29 Sep 2024 20:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHCRTV2b"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="BJo2outH"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7171862B3;
-	Sun, 29 Sep 2024 20:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E2E178CDE
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727642349; cv=none; b=Vu3aPBWCe5eObY8/Oo5yNrygx5RAOz/FZg15l9Emhqq9J0OWai+66VqqvYamC/x+HF1X78eQNqzLk2tNEpTFZqVf9zctmT49NR/iSKkvlkdH4YuGZ+y6q3yTKd67j2X6YpAW/5XYpttslAurjnTOgPWmWc8ha/1IErmS8kkcuAE=
+	t=1727642437; cv=none; b=iRS4np+l029mAd616tiRe//5MycmVRw9dR4m1XPJurUVI4ycNMITEfCgdfP9VXArXjGzpImf/1KkmQj0knSf/+9U1xM6RM8xLapy1ARNiG/cxtzOgKVJu2qS1JrrNnkH58IMA79AMqwM90nRaoxCScEDqKbDpe5elqru/l0q0Fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727642349; c=relaxed/simple;
-	bh=nikxwyB1KSy0wsMXbnH8xFpdMCf+mKH8/245lMmqi5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lJlXcvviVEuAFQNLInh0Ufu1n6XCGb4sbSzgJJC696hpeztN7RJYO6x4Hz9MHbhbE+ex5xHItHxdb9j4uwAvPje5p7d5W30DoII4U9SOfGrhrmeZdhhbzhV/UY6zlfdoGjVmDjoGzFO8CeSF8AJ4bzKs90bbkpfNlPMjC+8OtK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHCRTV2b; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c71f1396e4so4587227a12.0;
-        Sun, 29 Sep 2024 13:39:07 -0700 (PDT)
+	s=arc-20240116; t=1727642437; c=relaxed/simple;
+	bh=aLmB8kUQ/0mwee+snvJ2Gt7/D/AU2dDh3YEUEAPAtDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcIbIJP+xCy2B7Y8xcAEDVaA04Pqcv+Aj2NhM6t6I9q7BXsXOQ2ETPaooz3qHUuEmeYuyKuXEwibXNNV+ZsDitp0v+i8yEtVrpRILFOfS+VX/FVRXfKZdRn3DMEjXK9aEnlYrlIEIB5BTWDMWzxwqm3pG/BDlGJqiNJsqRrFaJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=BJo2outH; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e25d380b464so3014549276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 13:40:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727642346; x=1728247146; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YYZIE0YZeGeQMwblv/AqzD6BdL1SJTh4oD4ee0SlK+8=;
-        b=hHCRTV2bnln9Nb6Tfkhn8X9+4DyLYAJ+z/4sRbOF57rPNyRZMbIyb+UANP7g8m96K3
-         dwIaxQqjrRMJhhN2hKfeONBCvaH7ws8o7L/91sMA4tr5F2mNq2pD1rxgFyPC/XrMQHxf
-         qw2hVwMY59V/tBZCB5AkGMYS6JThuZ7x8nHS9VET0aWuK+HlhlmRddxZCFPcpuBtYxsp
-         BO4n4CthyFxqP1oEEPnqMuuHEjQBwsqgjeZAFAgiK56GyfU7pTzd1KHR8WIqqIA5BR4I
-         hF2p22grb0dSEhlqeQBu0++Kf98F5ch6FWf3jYX49V+Vu2wVUUfbfkaTiiqn1hagVAd2
-         yDHw==
+        d=umich.edu; s=google-2016-06-03; t=1727642434; x=1728247234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aLmB8kUQ/0mwee+snvJ2Gt7/D/AU2dDh3YEUEAPAtDk=;
+        b=BJo2outHLAin0gaMb1p2eluS9Ew7bQhoW4vOLoyYBMCLo6Hu0IvNW8xJPK7jhdyJaX
+         LkX5P7KsST7/rhkqRKoFmpQ4IeAixlrMg0wLPlveVvBIb4ytPRaViFFwvdH9wDwkY+Yw
+         TWMMQmY6GUU3Wzh+MxNaRFw69GbcZLdx/9IrTPIS4NuHi9HD1fXT7wHHRMKZkpKOMCax
+         cjPwVQafkGgli09XPLFoSkSEDVduPASrz6WJd/ZHEAmB2FUNmJoqvq5bT6aXCqn+QMQD
+         yC2xm3NbnfeK8rcECFfg2ADrxHveoAfVFXkjvPISFSdW3mumGyGyZeOTYS+pz6P5ht6a
+         PqEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727642346; x=1728247146;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727642434; x=1728247234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YYZIE0YZeGeQMwblv/AqzD6BdL1SJTh4oD4ee0SlK+8=;
-        b=p3Dcimje51WbxRjzAb+wfGmyTlQPFtJY89ZWBwVMhbxbLkFMa4IHkSSf5dPCr6dqT0
-         0uDtLUzH6ltZiY/zzEuK/ikdr4aELVqWi6LWnOArjwWoArvZt+ABgBE/Qa8bNeWvt+Tw
-         gpgbFwOlxT9PNeXTr8KZ3Wg1gR2Psma5mAPSsoEET8DW2zdcnIhGQ6gVOCClWCyNOWla
-         1xZZ0wLVy4A+DBhxEu02PLm3vML/03J1zVABLeMHKAT6JMJag8iRxkbKujjcfXJxGttq
-         Ko4G32R1T8iNUJEjbREpAqT9lCOlaRK6LiTvBu6AmVh+R7M9fMSPZ8iTtdjLT/VncwrP
-         vvtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVFkzxsAkO7GN6mEwvEnzA3z9m8EUjPpP7WaHuflk+kYyhPD7YjZ2W07FvagpSyejTwuauprgL9hF31@vger.kernel.org, AJvYcCX3eqUi01CNHKx5KoF3KLro19ziM5WRYx9kCa+p2OgOgRFKm1zSna6inwqyPacXNHRXWe6PIbWy8DHv9YIZ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwridxWiicH+u6WBeXs8im5yGiTzcIMOM0G3hyRZDP9SHh9ipeh
-	iPkXRrGj1W/CDR310wGmW1fU68UhtuvvfwrFZrgZGnkkecrwoPjT
-X-Google-Smtp-Source: AGHT+IHDHCjPgBpORkOeVnZX+PWdwQZyIprUCxSaxxsKI0QYedP98oHO0HOYosJ94oUVNDjt6ZZFiA==
-X-Received: by 2002:a05:6402:26cb:b0:5c8:95ce:8cc2 with SMTP id 4fb4d7f45d1cf-5c895ce8ea9mr2371572a12.16.1727642346039;
-        Sun, 29 Sep 2024 13:39:06 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-e2c0-9a60-64a8-717a.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:e2c0:9a60:64a8:717a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c8824051c2sm3487985a12.19.2024.09.29.13.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 13:39:04 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Sun, 29 Sep 2024 22:38:52 +0200
-Subject: [PATCH 7/7] iio: light: veml6070: use dev_err_probe in probe
- function
+        bh=aLmB8kUQ/0mwee+snvJ2Gt7/D/AU2dDh3YEUEAPAtDk=;
+        b=iffOPRTXhnCdbcX2Mmb2e0oBmVPC6iimRz4zJz2gPXtE9TnEdr7L7+YhZEo5MncLcT
+         Rk74YMe4xocvhkKLiXh5TJR87BPQ6F5nXSFO78Ha1pfREd0KJKuoF55Aeay6OwEWQAew
+         9tAOCEfALgTtqyNGCjCnSXgVWHnYxEJBiVT2weoMDGzoD4fevntbZE0RdIFIM7gZGwXi
+         7UH3QHB9YEbYNCfgZGfnCLx28C1RDBQ9mYBrZQZ6SbAujupHt0nM9i3VvUI4XxhUxQlD
+         GlIRobUNiZT03q9aJF3mTW3Fi18UkkLMoCJ6nVPvc9ormV3ozQtR9uQxzgprYXg+NeOB
+         ejtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo9bF61VGvPLrvgd5c1cqMWdQzhywdTZlwHIUmFo2FpQWRtNnfykKo+w7NstuefpQFRNmeKGBaa7zL9pU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT4sf5OMXHXBXUfoY8HvqobbA1tRKDLgNwO3/0jeFnJpmTToQ7
+	NZ95xAb+W3Bx/VJifw67tfANPkDIGPSJj2eZMLTGuUMiLfZP6lPBHyIkfSVgvKEy04zfEQlM/vx
+	fUMfCejb6eBErfTAyvUglHqjksbHcXa3215jvmw==
+X-Google-Smtp-Source: AGHT+IHXgnOJWhWQWPPcXU0pDuV2DzvwB1YJEpBfK4T/FITdvjyiG4ySFAn53tpyU9ETmKPITIcbl2LgTNOK+ohVS2Y=
+X-Received: by 2002:a05:6902:100b:b0:e25:ce5f:42cc with SMTP id
+ 3f1490d57ef6-e2604b51542mr8531712276.32.1727642434508; Sun, 29 Sep 2024
+ 13:40:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240929-veml6070-cleanup-v1-7-a9350341a646@gmail.com>
-References: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
-In-Reply-To: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727642327; l=1046;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=nikxwyB1KSy0wsMXbnH8xFpdMCf+mKH8/245lMmqi5s=;
- b=fXk5tBeALOQQi99O7xzi5Ez+vuMPp40DcbCVWauoQW7Glg2WHGabdjBQam9g1F2BYqIRcjpqx
- ZKYXdy3hWSDC5aHUmCeMVfLtu7Lz3bF9YOd4NRON8RLlzMwwY7+wOBZ
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+References: <20240916213025.477225-1-lyude@redhat.com> <20240916213025.477225-3-lyude@redhat.com>
+In-Reply-To: <20240916213025.477225-3-lyude@redhat.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 16:40:23 -0400
+Message-ID: <CALNs47sSonJNyK+uJC3Kpqv3o_S+y3WfgYGXqec0Mg27nQ1y5g@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] rust: sync: Introduce lock::Backend::Context
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	Benno Lossin <benno.lossin@proton.me>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Drop the common 'dev_err() + return' combination in the probe function
-and use 'return dev_err_probe()' instead.
+On Mon, Sep 16, 2024 at 5:31=E2=80=AFPM Lyude Paul <lyude@redhat.com> wrote=
+:
+>
+> Now that we've introduced an `IrqDisabled` token for marking contexts in
+> which IRQs are disabled, we need a way to be able to pass it to locks tha=
+t
+> require that IRQs are disabled. In order to continue using the
+> `lock::Backend` type instead of inventing our own thing, we accomplish th=
+is
+> by adding the associated Context type, along with a `lock_with()` functio=
+n
+> that can accept a Context when acquiring a lock. To allow current users o=
+f
+> context-less locks to keep using the normal `lock()` method, we take an
+> example from Wedson Almeida Filho's work and add a `where T<'a>: Default`
+> bound to `lock()` so that it can only be called on lock types where the
+> context is simply a placeholder value, then re-implement it through the n=
+ew
+> `lock_with()` function.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/iio/light/veml6070.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/iio/light/veml6070.c b/drivers/iio/light/veml6070.c
-index 8d02899028d8..6221d07aa840 100644
---- a/drivers/iio/light/veml6070.c
-+++ b/drivers/iio/light/veml6070.c
-@@ -168,10 +168,9 @@ static int veml6070_probe(struct i2c_client *client)
- 		return ret;
- 
- 	data->client2 = i2c_new_dummy_device(client->adapter, VEML6070_ADDR_DATA_LSB);
--	if (IS_ERR(data->client2)) {
--		dev_err(&client->dev, "i2c device for second chip address failed\n");
--		return PTR_ERR(data->client2);
--	}
-+	if (IS_ERR(data->client2))
-+		return dev_err_probe(&client->dev, PTR_ERR(data->client2),
-+				     "i2c device for second chip address failed\n");
- 
- 	data->config = VEML6070_IT_10 | VEML6070_COMMAND_RSRVD |
- 		VEML6070_COMMAND_SD;
-
--- 
-2.43.0
-
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
