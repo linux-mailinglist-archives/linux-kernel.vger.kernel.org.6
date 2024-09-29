@@ -1,237 +1,318 @@
-Return-Path: <linux-kernel+bounces-342964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13964989534
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C0A98953A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 13:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6F402832C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:48:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A300B1C21A70
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 11:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0136715B995;
-	Sun, 29 Sep 2024 11:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48CD7170A1B;
+	Sun, 29 Sep 2024 11:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JE0b9mSs"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiKNX9rv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C900A1386B4
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 11:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C70042AB1;
+	Sun, 29 Sep 2024 11:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727610482; cv=none; b=Xs2E3GBZV2HzHGZ7fNr5fv2yrHUM59WD/LzyJGJ5HD7bNFCv9HKIYepdvsKEIMcYGiX5Uudjs4h7768p8FRnnP47815CZP/Z+B1jgivKgCHC4ik7UY/Ps6r5jXK9Vu8TR3C/gTDMK/euWx/ZTDzh5RugBcKfXcO3OJKaKNgAzo0=
+	t=1727611083; cv=none; b=Uv1MQbUBxsA63TyIm1ctyXssoN5h8lq4RswwnBk58eOps5Ua/Svbx55TOMJXhocYA5ys6C1TpHSGQNnDVf6Xs4f5wKXUrt+oDfkEfLRDkTUY9Yg8dDOsX2MAJTcWavcOF8hcFiOT/RyCk/CLivIUhunZEHRcbHdOGjFtGzXdeU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727610482; c=relaxed/simple;
-	bh=fVu5hm0T3XtCcK/SO//R6RhYykHJtbhz0Hy5v8ZAjUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z/K6FAOUhUphVl2+6HQQqbO+IpMGh5STcph9AGa2kpmHE4mekESm2xS32+PVzGDvVYfjSDq9rFcVKYvrrmukRzULNPXWoUupvOtVp3Qmm1C4QfiFYowuS/KnQWS1FGMdh/NDDNt1tdf8Z2iN2nUECmI6ky1RFSLXdX4eoCcf2pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JE0b9mSs; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e0a74ce880so2730787a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 04:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727610480; x=1728215280; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8mo8HeEngP/BFulB3FSGKzlYrx1zjrrJXGv+TyyKuAM=;
-        b=JE0b9mSsQzAeZLwZ8eGdZN3ROosxcs97JeZ/rvpLSpjNpInbOSqJ6/cFc/S4dHiBcJ
-         C0DTY6qL8+dSEIr876qt04pKZEZAXqxy7gcoALkhAAQDxeqal3YBZF8xYmcpqjPzY+Ho
-         qzBmkprd2KdGak0mTswhpZk4/hSUBgM9/TBOPPhaGbxkvpHrAFhyFL6FKiWWcfDL/1CI
-         n3jlRDN6+/NuZIdISpx2pB6ZPBYnm3VJ5iPDeo5Do8u90vJ+Y6tLn5d2QN8DVR24irt2
-         JFzlCI27ul737nGsH4WGwqzqErGg4ePtekvzPzR4wkwpxhc6nk2MrAIBJTr/i57REdVK
-         49jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727610480; x=1728215280;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8mo8HeEngP/BFulB3FSGKzlYrx1zjrrJXGv+TyyKuAM=;
-        b=RvzZzXRKhTgNf5/Q1+vcTqcYh5jfCAaOb0nstgn0Tuq8UBTaKDuDeXHHZAVSb88z8Z
-         wHqLEF1usYy0gX6q9JiNJi6xHoEPUA7Aclvn4/tqxmXMy/fFloCuWpQlIVdsbcP+noXr
-         TiUfzrup/aOP5UYlNR5feh57awC7Fwcr76kzlGPu7AkqJdN5BON80yo5wMA7BMIXABBS
-         sZrWtLNxkJhnRxV6sqm0kIt8bBmwQ4LVaMBbWAPtncjMgcYJc/URObI90NvcKqljRS1m
-         q+q2wzWtuDGclPnjmSLW5mNTsmbFaWxJyTYTdKgv4KvD/6/TsSJI3zRUVN/Q+phbZGr8
-         vhcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+omhNY5aMkreq3kvv8pxQlGEQAIXPXZIkddju0lesfgRZ8lPsSK4gITqnVE6UHLTzjA3T9EfO9wVnCw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwERSpDo/JUp3wYfXZ5So5Ccu+0wNASt09KWTzLBT7nu7bl+8fG
-	HkLaViwaDH93n11QTdbifedtPLjaw3xJLOmr6zEsMn47I7jR79Kwfh73qUUd+SXJ1OcKGH3pSsS
-	5Fiyce6jZMRf7qFek4gZ0kas0rSFznKPKbNo=
-X-Google-Smtp-Source: AGHT+IEQeDJXMe3/6U2GCh4qZ/zAkvXxZfOf3WSEPFILc7G+7Q1zU+k7I6b8yx+bCwU/SW02Ftf8DKVe0wkLa9pqXDQ=
-X-Received: by 2002:a17:90a:7302:b0:2da:61e1:1597 with SMTP id
- 98e67ed59e1d1-2e0b8ec8e99mr10620993a91.36.1727610479911; Sun, 29 Sep 2024
- 04:47:59 -0700 (PDT)
+	s=arc-20240116; t=1727611083; c=relaxed/simple;
+	bh=xnzj5weTfaICxOpnTgH952XEztWbNP8I6CAlKV8S6vs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=us4PrhvOGm0NvUm73B/KGEKBo18FEwZ7me7N892BZ3pprC99ypgx6d4M6Ol59KxHQsgl8pg20DAhnIcFWs0K4SGsuOkYg8LBCHu47G7P7ljK1W7PtjjUp8GPHy/k2fHZ7qvCBqgbVkwXnZIvl8gteIilKZF8DU07Ml0XdlTWYdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiKNX9rv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F55C4CEC5;
+	Sun, 29 Sep 2024 11:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727611083;
+	bh=xnzj5weTfaICxOpnTgH952XEztWbNP8I6CAlKV8S6vs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KiKNX9rvcCPpNHn4sPo1kq1OnWs29lgUUcVfw2G3F0Uzr8vItpG53g2Tny6rUY0CA
+	 tPSlAvIi79jnl0GAzDwj8N9myhXOMeB4Fc91c+/jHdAtK642bR2vJVjjhEk4BUqwSs
+	 lyp9M5j5+9MmjobfuErdUv3QWnr1/m84QEXxLNTmUnK1X0jq3yajPPiuPnylnjaKQA
+	 iY5+Az2hGj4POHAvAvpgBo+3ymlOWZwe2Iwwwykp0Ngc/c7Rj9UKXWn7QDtLBmAZWf
+	 CZUNRBfcBl4pUE6p9Q85wUu2ynF8TCrtZi7LnACN8Oy1WPSCSDebC+woNRTRtR2aMG
+	 TkuvgMv14B3rQ==
+Date: Sun, 29 Sep 2024 12:57:53 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH v3 08/10] iio: dac: ad3552r: extract common code (no
+ changes in behavior intended)
+Message-ID: <20240929125753.789bda87@jic23-huawei>
+In-Reply-To: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-8-a17b9b3d05d9@baylibre.com>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-8-a17b9b3d05d9@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <linuszeng@tencent.com> <20240929112642.68087-1-jingxiangzeng.cas@gmail.com>
-In-Reply-To: <20240929112642.68087-1-jingxiangzeng.cas@gmail.com>
-From: jingxiang zeng <jingxiangzeng.cas@gmail.com>
-Date: Sun, 29 Sep 2024 19:47:48 +0800
-Message-ID: <CAJqJ8ii=hzWEOVHN7ZcpzHvDF8o7njekJSpsvRfOfPrJcrHL9w@mail.gmail.com>
-Subject: Re: [PATCH] [PATCH v4] mm/vmscan: wake up flushers conditionally to
- avoid cgroup OOM
-To: linux-mm@kvack.org
-Cc: akpm@linux-foundation.org, kasong@tencent.com, linuszeng@tencent.com, 
-	linux-kernel@vger.kernel.org, tjmercier@google.com, weixugc@google.com, 
-	yuzhao@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 29 Sept 2024 at 19:26, Jingxiang Zeng
-<jingxiangzeng.cas@gmail.com> wrote:
->
-> From: Zeng Jingxiang <linuszeng@tencent.com>
+On Thu, 19 Sep 2024 11:20:04 +0200
+Angelo Dureghello <adureghello@baylibre.com> wrote:
 
-There are some formatting issues with the title of this patch, please refer to
-the latest updated patch:
-https://lore.kernel.org/all/20240929113050.76079-1-jingxiangzeng.cas@gmail.com/
->
-> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> removed the opportunity to wake up flushers during the MGLRU page
-> reclamation process can lead to an increased likelihood of triggering OOM
-> when encountering many dirty pages during reclamation on MGLRU.
->
-> This leads to premature OOM if there are too many dirty pages in cgroup:
-> Killed
->
-> dd invoked oom-killer: gfp_mask=0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRITE),
-> order=0, oom_score_adj=0
->
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5f/0x80
->   dump_stack+0x14/0x20
->   dump_header+0x46/0x1b0
->   oom_kill_process+0x104/0x220
->   out_of_memory+0x112/0x5a0
->   mem_cgroup_out_of_memory+0x13b/0x150
->   try_charge_memcg+0x44f/0x5c0
->   charge_memcg+0x34/0x50
->   __mem_cgroup_charge+0x31/0x90
->   filemap_add_folio+0x4b/0xf0
->   __filemap_get_folio+0x1a4/0x5b0
->   ? srso_return_thunk+0x5/0x5f
->   ? __block_commit_write+0x82/0xb0
->   ext4_da_write_begin+0xe5/0x270
->   generic_perform_write+0x134/0x2b0
->   ext4_buffered_write_iter+0x57/0xd0
->   ext4_file_write_iter+0x76/0x7d0
->   ? selinux_file_permission+0x119/0x150
->   ? srso_return_thunk+0x5/0x5f
->   ? srso_return_thunk+0x5/0x5f
->   vfs_write+0x30c/0x440
->   ksys_write+0x65/0xe0
->   __x64_sys_write+0x1e/0x30
->   x64_sys_call+0x11c2/0x1d50
->   do_syscall_64+0x47/0x110
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
->  memory: usage 308224kB, limit 308224kB, failcnt 2589
->  swap: usage 0kB, limit 9007199254740988kB, failcnt 0
->
->   ...
->   file_dirty 303247360
->   file_writeback 0
->   ...
->
-> oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=test,
-> mems_allowed=0,oom_memcg=/test,task_memcg=/test,task=dd,pid=4404,uid=0
-> Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
-> anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
-> oom_score_adj:0
->
-> The flusher wake up was removed to decrease SSD wearing, but if we are
-> seeing all dirty folios at the tail of an LRU, not waking up the flusher
-> could lead to thrashing easily.  So wake it up when a mem cgroups is about
-> to OOM due to dirty caches.
->
+> From: Angelo Dureghello <adureghello@baylibre.com>
+> 
+> Extracting common code, to share common code to be used later
+> by the AXI driver version (ad3552r-axi.c).
+> 
+> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+For these, main request is to move them to a namespace + GPL is
+probably the appropriate choice here.
+
+
 > ---
-> Changes from v3:
-> - Avoid taking lock and reduce overhead on folio isolation by
->   checking the right flags and rework wake up condition, fixing the
->   performance regression reported by Chris Li.
->   [Chris Li, Kairui Song]
-> - Move the wake up check to try_to_shrink_lruvec to cover kswapd
->   case as well, and update comments. [Kairui Song]
-> - Link to v3: https://lore.kernel.org/all/20240924121358.30685-1-jingxiangzeng.cas@gmail.com/
-> Changes from v2:
-> - Acquire the lock before calling the folio_check_dirty_writeback
->   function. [Wei Xu, Jingxiang Zeng]
-> - Link to v2: https://lore.kernel.org/all/20240913084506.3606292-1-jingxiangzeng.cas@gmail.com/
-> Changes from v1:
-> - Add code to count the number of unqueued_dirty in the sort_folio
->   function. [Wei Xu, Jingxiang Zeng]
-> - Link to v1: https://lore.kernel.org/all/20240829102543.189453-1-jingxiangzeng.cas@gmail.com/
-> ---
->
-> Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: T.J. Mercier <tjmercier@google.com>
-> Cc: Wei Xu <weixugc@google.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> ---
->  mm/vmscan.c | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index dc7a285b256b..2a5c2fe81467 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -4291,6 +4291,7 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
->                        int tier_idx)
->  {
->         bool success;
-> +       bool dirty, writeback;
->         int gen = folio_lru_gen(folio);
->         int type = folio_is_file_lru(folio);
->         int zone = folio_zonenum(folio);
-> @@ -4336,9 +4337,14 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
->                 return true;
->         }
->
-> +       dirty = folio_test_dirty(folio);
-> +       writeback = folio_test_writeback(folio);
-> +       if (type == LRU_GEN_FILE && dirty && !writeback)
-> +               sc->nr.unqueued_dirty += delta;
+>  drivers/iio/dac/Makefile         |   2 +-
+>  drivers/iio/dac/ad3552r-common.c | 173 +++++++++++++++++++++++
+>  drivers/iio/dac/ad3552r.c        | 293 ++++-----------------------------------
+>  drivers/iio/dac/ad3552r.h        | 190 +++++++++++++++++++++++++
+>  4 files changed, 390 insertions(+), 268 deletions(-)
+> 
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index 2cf148f16306..56a125f56284 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -4,7 +4,7 @@
+>  #
+>  
+>  # When adding new entries keep the list in alphabetical order
+> -obj-$(CONFIG_AD3552R) += ad3552r.o
+> +obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
+>  obj-$(CONFIG_AD5360) += ad5360.o
+>  obj-$(CONFIG_AD5380) += ad5380.o
+>  obj-$(CONFIG_AD5421) += ad5421.o
+> diff --git a/drivers/iio/dac/ad3552r-common.c b/drivers/iio/dac/ad3552r-common.c
+> new file mode 100644
+> index 000000000000..624f3f97cdea
+> --- /dev/null
+> +++ b/drivers/iio/dac/ad3552r-common.c
+> @@ -0,0 +1,173 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Copyright (c) 2010-2024 Analog Devices Inc.
+> +// Copyright (c) 2024 Baylibre, SAS
 > +
->         /* waiting for writeback */
-> -       if (folio_test_locked(folio) || folio_test_writeback(folio) ||
-> -           (type == LRU_GEN_FILE && folio_test_dirty(folio))) {
-> +       if (folio_test_locked(folio) || writeback ||
-> +           (type == LRU_GEN_FILE && dirty)) {
->                 gen = folio_inc_gen(lruvec, folio, true);
->                 list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
->                 return true;
-> @@ -4454,7 +4460,7 @@ static int scan_folios(struct lruvec *lruvec, struct scan_control *sc,
->         trace_mm_vmscan_lru_isolate(sc->reclaim_idx, sc->order, MAX_LRU_BATCH,
->                                 scanned, skipped, isolated,
->                                 type ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON);
-> -
-> +       sc->nr.taken += scanned;
->         /*
->          * There might not be eligible folios due to reclaim_idx. Check the
->          * remaining to prevent livelock if it's not making progress.
-> @@ -4796,6 +4802,13 @@ static bool try_to_shrink_lruvec(struct lruvec *lruvec, struct scan_control *sc)
->                 cond_resched();
->         }
->
-> +       /*
-> +        * If too many file cache in the coldest generation can't be evicted
-> +        * due to being dirty, wake up the flusher.
-> +        */
-> +       if (sc->nr.unqueued_dirty && sc->nr.unqueued_dirty == sc->nr.taken)
-> +               wakeup_flusher_threads(WB_REASON_VMSCAN);
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/property.h>
+> +#include <linux/regulator/consumer.h>
 > +
->         /* whether this lruvec should be rotated */
->         return nr_to_scan < 0;
->  }
-> --
-> 2.43.5
->
+> +#include "ad3552r.h"
+> +
+> +const s32 ad3552r_ch_ranges[AD3552R_MAX_RANGES][2] = {
+> +	[AD3552R_CH_OUTPUT_RANGE_0__2P5V]	= { 0, 2500 },
+> +	[AD3552R_CH_OUTPUT_RANGE_0__5V]		= { 0, 5000 },
+> +	[AD3552R_CH_OUTPUT_RANGE_0__10V]	= { 0, 10000 },
+> +	[AD3552R_CH_OUTPUT_RANGE_NEG_5__5V]	= { -5000, 5000 },
+> +	[AD3552R_CH_OUTPUT_RANGE_NEG_10__10V]	= { -10000, 10000 }
+> +};
+> +EXPORT_SYMBOL(ad3552r_ch_ranges);
+
+GPL and namespace them to avoid poluting the general namespace with driver
+specific exports.
+
+EXPORT_SYMBOL_NS_GPL() etc.
+
+
+> +
+> +u16 ad3552r_calc_custom_gain(u8 p, u8 n, s16 goffs)
+> +{
+> +	u16 reg;
+> +
+> +	reg = FIELD_PREP(AD3552R_MASK_CH_RANGE_OVERRIDE, 1);
+> +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_P, p);
+> +	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_N, n);
+> +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_BIT_8, abs((s32)goffs) >> 8);
+Hmm. Not sure the s32 case does anything useful here.
+Also this is a little messy from local view of code. It is not obvious
+that only BIT(0) can be set here.  I'd be tempted to mask that
+before passing to FIELD_PREP()
+
+> +	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_POLARITY, (s32)goffs < 0);
+
+Why do you need the s32 cast for this last line?
+
+> +
+> +	return reg;
+> +}
+> +
+> +int ad3552r_get_ref_voltage(struct device *dev)
+> +{
+> +	int voltage;
+> +	int delta = 100000;
+> +
+> +	voltage = devm_regulator_get_enable_read_voltage(dev, "vref");
+> +	if (voltage < 0 && voltage != -ENODEV)
+> +		return dev_err_probe(dev, voltage,
+> +				     "Error getting vref voltage\n");
+> +
+> +	if (voltage == -ENODEV) {
+> +		if (device_property_read_bool(dev, "adi,vref-out-en"))
+> +			return AD3552R_INTERNAL_VREF_PIN_2P5V;
+> +		else
+> +			return AD3552R_INTERNAL_VREF_PIN_FLOATING;
+> +	}
+> +
+> +	if (voltage > 2500000 + delta || voltage < 2500000 - delta) {
+> +		dev_warn(dev, "vref-supply must be 2.5V");
+> +		return -EINVAL;
+> +	}
+
+Obviously this is legacy code, but why do we care in the driver?
+If someone has circuitry or configuration that is wrong, do we need to check
+that?  I guess it does little harm though.
+
+> +
+> +	return AD3552R_EXTERNAL_VREF_PIN_INPUT;
+> +}
+> +
+> +int ad3552r_get_drive_strength(struct device *dev, u32 *val)
+> +{
+> +	int err;
+> +
+> +	err = device_property_read_u32(dev, "adi,sdo-drive-strength", val);
+> +	if (err)
+> +		return err;
+> +
+> +	if (*val > 3) {
+
+Usually we avoid setting values passed back on error if it is easy to do so.
+I'd bounce via a local variable and only set *val = drive_strength
+after you know it is in range.
+
+> +		dev_err(dev,
+> +			"adi,sdo-drive-strength must be less than 4\n");
+> +		return -EINVAL;
+Is dev_err_probe() appropriate here?  I haven't checked if this is called
+from non probe paths so ignore this comment if it is.
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +int ad3552r_get_custom_gain(struct device *dev, struct fwnode_handle *child,
+> +			    u8 *gs_p, u8 *gs_n, u16 *rfb, s16 *goffs)
+> +{
+> +	int err;
+> +	u32 val;
+> +	struct fwnode_handle *gain_child __free(fwnode_handle) =
+> +				fwnode_get_named_child_node(child,
+One tab more than the line above is fine for cases like this and makes for
+more readable code.
+
+> +				"custom-output-range-config");
+
+Align this final parameter with c of child.
+
+> +
+> +	if (!gain_child)
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "custom-output-range-config mandatory\n");
+> +
+> +	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-p", &val);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "adi,gain-scaling-p mandatory\n");
+> +	*gs_p = val;
+> +
+> +	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-n", &val);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "adi,gain-scaling-n property mandatory\n");
+> +	*gs_n = val;
+> +
+> +	err = fwnode_property_read_u32(gain_child, "adi,rfb-ohms", &val);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "adi,rfb-ohms mandatory\n");
+> +	*rfb = val;
+> +
+> +	err = fwnode_property_read_u32(gain_child, "adi,gain-offset", &val);
+> +	if (err)
+> +		return dev_err_probe(dev, err,
+> +				     "adi,gain-offset mandatory\n");
+> +	*goffs = val;
+> +
+> +	return 0;
+> +}
+> +
+> +static int ad3552r_find_range(u16 id, s32 *vals)
+> +{
+> +	int i, len;
+> +	const s32 (*ranges)[2];
+> +
+> +	if (id == AD3542R_ID) {
+
+This is already in your model_data. Use that not another lookup via
+an ID enum.  The ID enum approach doesn't scale as we add more parts
+as it scatters device specific code through the driver.
+
+
+> +		len = ARRAY_SIZE(ad3542r_ch_ranges);
+> +		ranges = ad3542r_ch_ranges;
+> +	} else {
+> +		len = ARRAY_SIZE(ad3552r_ch_ranges);
+> +		ranges = ad3552r_ch_ranges;
+> +	}
+> +
+> +	for (i = 0; i < len; i++)
+> +		if (vals[0] == ranges[i][0] * 1000 &&
+> +		    vals[1] == ranges[i][1] * 1000)
+> +			return i;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +int ad3552r_get_output_range(struct device *dev, enum ad3552r_id chip_id,
+> +			     struct fwnode_handle *child, u32 *val)
+As above, don't pass the enum. Either pass the model_data or pass the
+actual stuff you need which is the ranges array and size of that array.
+
+> +{
+> +	int ret;
+> +	s32 vals[2];
+> +
+> +	/* This property is optional, so returning -ENOENT if missing */
+> +	if (!fwnode_property_present(child, "adi,output-range-microvolt"))
+> +		return -ENOENT;
+> +
+> +	ret = fwnode_property_read_u32_array(child,
+> +					     "adi,output-range-microvolt",
+> +					     vals, 2);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				"invalid adi,output-range-microvolt\n");
+> +
+> +	ret = ad3552r_find_range(chip_id, vals);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret,
+> +			"invalid adi,output-range-microvolt value\n");
+> +
+> +	*val = ret;
+> +
+> +	return 0;
+> +}
+
+Thanks,
+
+Jonathan
+
+
 
