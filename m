@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-342722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A11D98921F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF37D989221
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3096828407C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C4FB1C228B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 00:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D716FB9;
-	Sun, 29 Sep 2024 00:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F774A0F;
+	Sun, 29 Sep 2024 00:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BgGtaTUn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B7E382;
-	Sun, 29 Sep 2024 00:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="hMpb+wbs"
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B60EEC4
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727569571; cv=none; b=MOGzCH7MG5N34XOTFJCh/vds3u1FMa7CZVdH5jMjeN66W0dWuHL7Uim0htI1cNGbq0haERv9r6eryXThGnDnRpb8IfTwREmhCV1bEUH2OY9EwMwrlGAA7tBy5rsIm/bD0iy/UPkPNXWdrUWO8BehMHF4S8u0MNdbxIHgORk+pco=
+	t=1727569818; cv=none; b=gNKCXTsT1fWo+juZl7OJWxqw4we4Skoo9u7cC3ExL67o1NQMM35U+ArheM2zjZQNuVudgy2hTpbElPAkrpemJItWSoAhm4JQYD2HfATXpAW1r5pSK09kVJbQPzesqG/d+y+jIwBe0pzF6PTsfpkqmehMgZpA6a41aBf8tS8D0yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727569571; c=relaxed/simple;
-	bh=EwYvhotwgMeB4AfN253GUIcoDG6KLpKAA6s5FiZ2mT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t2JM/fuzQdpbIH0jw4U52Zxot9v9XJc691cTySJuLKHLVbZM0fWGDz+Gq3z1d0ivhufOSkkTArHS25X1BKqFlp2UIMBbwQqG9d3j0I7D+DZYhwBxc9OfFobhHpam26r0ytfsm5g4cA1jPj1yA9OV94lz1rf5SV1vBuyAQ4mH3mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BgGtaTUn; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727569568; x=1759105568;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=EwYvhotwgMeB4AfN253GUIcoDG6KLpKAA6s5FiZ2mT4=;
-  b=BgGtaTUnaLDELYVrjZHozl35WG3eZTiUr+Kko8bIIck/1WpCMS9MtfOE
-   810MOM8+yzu/RqYRUDhMy419p0r+ZR/x0T+VCqsEozXD93nxX6pcdk6uE
-   e4CtrxG/d2I4WRPoR3T14SEgItxf+mXq3dma8oe6+FJpTIIWrImsGDMV2
-   LVJvdTggSUNJHaSA4Ra0wX6YUgzwJLV/+BqQFPYKrrv+hhQHVTA9zsalt
-   8wU4L9N52ncF0QfraXfx3u4GzRScjoTZB6QUo7Ek56JtnlLNWnYQya/lh
-   NkE59KXgAk6x/kzyQuTKOgLjBJ5u0K7P/KQZaKRxAml71OFVca5IfBUKw
-   w==;
-X-CSE-ConnectionGUID: fv9GcW+xRMOGIitKySQgjg==
-X-CSE-MsgGUID: yHP6FbZTSo2pFHm5pvGRAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="26489601"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="26489601"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 17:26:07 -0700
-X-CSE-ConnectionGUID: IJEpIeM8S9G5HFY76Z8rCQ==
-X-CSE-MsgGUID: w7lS5/EoSa6dINB4l2OmVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="77427612"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 28 Sep 2024 17:26:03 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1suhlB-000NmF-1f;
-	Sun, 29 Sep 2024 00:26:01 +0000
-Date: Sun, 29 Sep 2024 08:25:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
-	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
-Message-ID: <202409291048.zLqDeqpO-lkp@intel.com>
-References: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
+	s=arc-20240116; t=1727569818; c=relaxed/simple;
+	bh=C/DuLFtqNmloWQZj+S4CIOtOmXIu4ZOpi5Oy8d/vJN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NcaGasRWArne5tzc0urSWbx2yTAWnO+sey2Xrw19zFkjZDui9Yo1uJEGtEt2bUbFmd65htfe4J/C7tXfKcx8QWyuub7H/KhelICvBh2n5UYwh6nGA4FJ4SxBRicULGHEwLp4LVF5u9rS9E9p6fMU3tUkXmseXi845nvM+3fkalk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=hMpb+wbs; arc=none smtp.client-ip=220.197.31.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=fdF8Mmjrj/ErzRc6/6+QtfMgdHqEmbP2vcFinYGTDXI=;
+	b=hMpb+wbsClPmQgBuowdfwR9fbuld9cqwNoffGEe5XWrYhq5/ByCt9t7x6JXGpl
+	EbNLYus7gvGG0U9fcxa21mABoXCLJzHuAceNNm3VMORoVfZQz+PY11QEFc+YcfKm
+	YNmbq1bp7SbNBuU69q/GWc0EJALjn5FHxg4Rwu0/L6QT0=
+Received: from [192.168.109.86] (unknown [123.149.251.210])
+	by gzga-smtp-mta-g2-1 (Coremail) with SMTP id _____wDnLyKBn_hmK1R0Ag--.24826S2;
+	Sun, 29 Sep 2024 08:29:54 +0800 (CST)
+Message-ID: <817e9ada-aeae-44d5-aa74-b44fb992dfb9@126.com>
+Date: Sun, 29 Sep 2024 08:29:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240923230912.2207320-4-adrian.larumbe@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] udf: refactor udf_current_aext() to handle error
+To: Jan Kara <jack@suse.cz>
+Cc: jack@suse.com, zhaomengmeng@kylinos.cn, linux-kernel@vger.kernel.org
+References: <20240926120753.3639404-1-zhaomzhao@126.com>
+ <20240926120753.3639404-2-zhaomzhao@126.com>
+ <20240927115509.a6ie4b75c65gjvfu@quack3>
+From: Zhao Mengmeng <zhaomzhao@126.com>
+In-Reply-To: <20240927115509.a6ie4b75c65gjvfu@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_____wDnLyKBn_hmK1R0Ag--.24826S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJrW3tr1rKr1xKr1fXw47urg_yoW8Kw4kpr
+	yUGa4UK3ZIqry7Z34Iqws09a42q3yrKr4UWr4jg3y3KFWvgr95GF17Kr4avFWDCrn5Xw4I
+	v3ZYgryDuw1aya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UyWlkUUUUU=
+X-CM-SenderInfo: 52kd0zp2kd0qqrswhudrp/1tbiEBNpd2b4e3PoQAAAsj
 
-Hi Adrián,
+On 2024/9/27 19:55, Jan Kara wrote:
+> On Thu 26-09-24 20:07:51, Zhao Mengmeng wrote:
+>> From: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>>
+>> As Jan suggested in links below, refactor udf_current_aext() to
+>> differentiate between error and "hit EOF", it now takes pointer to etype
+>> to store the extent type, return 0 when get etype success; return -ENODATA
+>> when hit EOF; return -EINVAL when i_alloc_type invalid. Add two macroes to
+>> test return value.
+>>
+>> Link: https://lore.kernel.org/all/20240912111235.6nr3wuqvktecy3vh@quack3/
+>> Signed-off-by: Zhao Mengmeng <zhaomengmeng@kylinos.cn>
+>> Suggested-by: Jan Kara <jack@suse.cz>
+> ...
+>> @@ -2167,9 +2173,12 @@ int8_t udf_next_aext(struct inode *inode, struct extent_position *epos,
+>>  {
+>>  	int8_t etype;
+>>  	unsigned int indirections = 0;
+>> +	int err = 0;
+>> +
+>> +	while ((err = udf_current_aext(inode, epos, eloc, elen, &etype, inc))) {
+>> +		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
+>> +			break;
+>>  
+>> -	while ((etype = udf_current_aext(inode, epos, eloc, elen, inc)) ==
+>> -	       (EXT_NEXT_EXTENT_ALLOCDESCS >> 30)) {
+> 
+> This looks wrong. If udf_current_aext() succeeds, you'll immediately abort
+> the loop now. I'd rather code this as:
+> 
+> 	while (1) {
+> 		err = udf_current_aext(inode, epos, eloc, elen, &etype, inc);
+> 		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
+> 			break;
+> 		...
+> 	}
 
-kernel test robot noticed the following build errors:
+Yes, you are right. I forget the return check, should be:
+	while (!(err = udf_current_aext(inode, epos, eloc, elen, &etype, inc))) {
+		if (err || etype != (EXT_NEXT_EXTENT_ALLOCDESCS >> 30))
+			break;
+>> diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
+>> index 88692512a466..a902652450dd 100644
+>> --- a/fs/udf/udfdecl.h
+>> +++ b/fs/udf/udfdecl.h
+>> @@ -43,6 +43,9 @@ extern __printf(3, 4) void _udf_warn(struct super_block *sb,
+>>  #define UDF_NAME_LEN		254
+>>  #define UDF_NAME_LEN_CS0	255
+>>  
+>> +#define UDF_EXT_EOF(err)        ((err) == -ENODATA)
+>> +#define UDF_EXT_ERR(err)        (((err) < 0) && (!UDF_EXT_EOF(err)))
+>> +
+> 
+> So I agree the explicit ENODATA checks are a bit ugly but these macros
+> aren't really much better. How about the following calling convention:
+> 
+> On error, ret < 0, on EOF ret == 0, on success ret == 1. This is a similar
+> convention as e.g. for read(2) so it is well understood and easy test for
+> various combinations.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.11 next-20240927]
-[cannot apply to drm-misc/drm-misc-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+No problem, I will add some comments on these three functions do it in V3.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-introduce-job-cycle-and-timestamp-accounting/20240924-071018
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240923230912.2207320-4-adrian.larumbe%40collabora.com
-patch subject: [PATCH v8 3/5] drm/panthor: add DRM fdinfo support
-config: arm-randconfig-002-20240929 (https://download.01.org/0day-ci/archive/20240929/202409291048.zLqDeqpO-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409291048.zLqDeqpO-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409291048.zLqDeqpO-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/math64.h:6,
-                    from include/linux/time.h:6,
-                    from include/linux/stat.h:19,
-                    from include/linux/module.h:13,
-                    from drivers/gpu/drm/panthor/panthor_drv.c:7:
-   drivers/gpu/drm/panthor/panthor_drv.c: In function 'panthor_gpu_show_fdinfo':
->> drivers/gpu/drm/panthor/panthor_drv.c:1389:45: error: implicit declaration of function 'arch_timer_get_cntfrq' [-Wimplicit-function-declaration]
-    1389 |                                             arch_timer_get_cntfrq()));
-         |                                             ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/math.h:40:39: note: in definition of macro 'DIV_ROUND_DOWN_ULL'
-      40 |         ({ unsigned long long _tmp = (ll); do_div(_tmp, d); _tmp; })
-         |                                       ^~
-   drivers/gpu/drm/panthor/panthor_drv.c:1388:28: note: in expansion of macro 'DIV_ROUND_UP_ULL'
-    1388 |                            DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
-         |                            ^~~~~~~~~~~~~~~~
-
-
-vim +/arch_timer_get_cntfrq +1389 drivers/gpu/drm/panthor/panthor_drv.c
-
-  1377	
-  1378	static void panthor_gpu_show_fdinfo(struct panthor_device *ptdev,
-  1379					    struct panthor_file *pfile,
-  1380					    struct drm_printer *p)
-  1381	{
-  1382		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_ALL)
-  1383			panthor_fdinfo_gather_group_samples(pfile);
-  1384	
-  1385		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP) {
-  1386	#ifdef CONFIG_ARM_ARCH_TIMER
-  1387			drm_printf(p, "drm-engine-panthor:\t%llu ns\n",
-  1388				   DIV_ROUND_UP_ULL((pfile->stats.time * NSEC_PER_SEC),
-> 1389						    arch_timer_get_cntfrq()));
-  1390	#endif
-  1391		}
-  1392		if (ptdev->profile_mask & PANTHOR_DEVICE_PROFILING_CYCLES)
-  1393			drm_printf(p, "drm-cycles-panthor:\t%llu\n", pfile->stats.cycles);
-  1394	
-  1395		drm_printf(p, "drm-maxfreq-panthor:\t%lu Hz\n", ptdev->fast_rate);
-  1396		drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequency);
-  1397	}
-  1398	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
