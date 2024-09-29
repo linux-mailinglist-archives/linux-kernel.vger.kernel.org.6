@@ -1,555 +1,218 @@
-Return-Path: <linux-kernel+bounces-342812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF94989336
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226A4989338
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033CAB23A16
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C905D2820D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A0A13AA27;
-	Sun, 29 Sep 2024 06:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2B8136982;
+	Sun, 29 Sep 2024 06:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ds0YKh0b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSDD6CM9"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A5A52F9B;
-	Sun, 29 Sep 2024 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7887513CA93;
+	Sun, 29 Sep 2024 06:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727590228; cv=none; b=VL0i2y5erzZDhW18+8nPArZwp/giUNiH3fJrH9LJbNvfp7PV3ISbeH48ynu4AVV20aiPA/sMzC3XVC2gQVeRXCMe7kkZfeQqoXh11eDlyH7cXe5BcNk4dn/ZV2Ql3SQBDgXe2d3cH7c7myLrBuXitPdWpDyDQJ38ycCgMuGQMEo=
+	t=1727590236; cv=none; b=lbm+DLvTIHryiCr65SIb4CMfkL+SkZVca3hc1uqLp5P3n8KX0chvV2fQYptJXKnZqdXVam2Qst47xkPjxltVMbGFBqUbRVgy8o9ugjUaO1GogZ3p5A1KHJJ0rfAeOot/a08S2OHQWW/HbiKi+QXlkaO74gd0A1U6r+nlnwpZO3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727590228; c=relaxed/simple;
-	bh=5CPvQ6p78bqZi3ugnMq/mnWHLrGLVbFRKmPC/Xy/YmU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ljZUohDKNcocQ66+jbCQXkmZRJxYB807cWAhcEJbtaTLHkmnM/Sm1FwEI/R1jQ3AxqIoEaHBINBIFpIXyGUKvhduNYxApKqTIKGZfzdTdtg9DDu3M5KLcn+SkNrlR0RJ7V3NgkmYl7wIlOmcVsgMhUJDtJU1NGwLWBD0LsOdBds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ds0YKh0b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E01AAC4CECF;
-	Sun, 29 Sep 2024 06:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727590228;
-	bh=5CPvQ6p78bqZi3ugnMq/mnWHLrGLVbFRKmPC/Xy/YmU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=Ds0YKh0beBd1iKgeQ5XGCN1JTMNladCMo93PoXhkZJANmbhL4FUjro3aQnSDowEr+
-	 N6V46h6RQpg7js0KeNuisgkFOsyPKSHlXO1/J9oSWaMGQ+v64B3C4YQQdkInKXyV1T
-	 naM3V8vN2HrPgmSdQonm1FJin69uBX83LzZzBXf5ig35wMpIh4I7fxmpbWOHh+o6Hm
-	 qHpKyXSR6rJtL1zeaZe2KoIPCUNJHcP/GHeBfuwy8YTyoUo1kqQQa15IV0+bT2jNx/
-	 IK2h4vk5Lsz1kPrD+1uvVJiKXG/jNVi6tiGnPMuZFbQ+73h+k72BfiQ26NKlTQS+UQ
-	 3wFGy8eBITMGg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD9CCF649E;
-	Sun, 29 Sep 2024 06:10:27 +0000 (UTC)
-From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Date: Sun, 29 Sep 2024 14:10:06 +0800
-Subject: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
+	s=arc-20240116; t=1727590236; c=relaxed/simple;
+	bh=81vPcrtTlRln51ot+o6oFc1XjmCNjNqxMvPMmKgD3Ho=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o4uMCQINklBZEBwh+h/qngdax92G/5hFtaDsQFQprpb6MrjnihPdifPBX/FiCbIvpqcMC+a/NhxB7lkqQjaGY837ZoZsxGGWWz06RKCEJBMHU1HuPFviVxhav0bDCjl+lM+nO0NMkux2i1uZE/J6I0O2rtQgd9WUMoWaWFCJ4jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSDD6CM9; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e08071fcd9so375481a91.0;
+        Sat, 28 Sep 2024 23:10:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727590234; x=1728195034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKLiR5gYmZwZmfgs+vGwBtpwK5USPFATr2yD/8gCPKI=;
+        b=lSDD6CM9vFyG7aen7cCIBBv/ZnhFNGFQAO3YfUPvLX4xnBySgVdnQU1Ljd0YevuL00
+         02j5sKXsDyfMK9ug6N4p4lYWjgySKYY97p/BS8MKFxbH1rczHXVnTiEx7gBpFkHMHcLy
+         H7SeseU/EK3Hbz924BhwO1IMXNiU0Nz1K+pE1HxCbxqK5Af3LNRlHvwZfbsBX6281QzY
+         RpY1K4yF7LUQNMJ7vBgi2ovARMCUgPhRS38z3zIp64cbqyxnAUiThZG5vQz7mhOdH6X1
+         svErGDN648SGdDlydd0/cizoKQ/F4D9c+MDusYZI37ySSc7BV20gnkMA7ITyB4YDowV6
+         +X4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727590234; x=1728195034;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xKLiR5gYmZwZmfgs+vGwBtpwK5USPFATr2yD/8gCPKI=;
+        b=prsT1rz9foC5PvJMBd/luAV/mco3IoyzsA1blrk3INN9b8YbYta/o7syPDo4SzPaO4
+         fyvG5lZP2LFr72ZX9xWAc4OBMoOOK8uqBS6uRPnsTV/oSMknVhcyKXh/Ut3TQAMvpz8N
+         KBjusk5rI8KjV9ULJ45StVbmPvMBmLLPVaycB45xNHnyYOoVjtmeGBPPkbpU54eNd6an
+         tJHjX7k14S8drH8O0P7ucBTUHtDk9CCAtyKkXEPJp99yU79u4hxk/ttV7k081QsmtSOF
+         zBPLUBTMY/fq8uQrwX8RBXwH0H82A1dzITu4jY05J9F0EhoYn91CqRy8YtmCTOLbtXnR
+         iUZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8tnwgfd6RPsy3LC38I+U9nMCQMO+OY1ITg8bLRrZnq1I4R684Ov707YjprjP/YbKKmk+Shb98tcEueAdv@vger.kernel.org, AJvYcCXI488JylrHMTB+2I7++qBwYSCeSnEsbBPVnyc7QgM1Xhr/p4o3fWwbBueThAaJ/HFpHAHMfzohWe0t@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrmcqcqBYdy9K6U2oG7sKFGhOWZfFvRd7+TjKB1cg9rohOZLJ6
+	LUyF0jjH3Hh4Go4ZXr9ud1FIq53rBAzErNj22QYCi7Fxn3U3CgKlUOZ1/BZ+
+X-Google-Smtp-Source: AGHT+IHuhs9Kcf2V+igHziL1L5Hw5uJbO/yqgFJbHygqQCcJ8RtC/6BHGX+4wtceCMUQFmbirgH0Uw==
+X-Received: by 2002:a05:6a21:78a1:b0:1cf:5471:bbe1 with SMTP id adf61e73a8af0-1d4fa7adecbmr6059094637.8.1727590233595;
+        Sat, 28 Sep 2024 23:10:33 -0700 (PDT)
+Received: from localhost.localdomain ([103.29.142.67])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b974bsm4269584a12.34.2024.09.28.23.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Sep 2024 23:10:33 -0700 (PDT)
+From: Frank Wang <frawang.cn@gmail.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	william.wu@rock-chips.com,
+	tim.chen@rock-chips.com,
+	frank.wang@rock-chips.com
+Subject: [PATCH v4 1/3] phy: rockchip: inno-usb2: convert clock management to bulk
+Date: Sun, 29 Sep 2024 14:10:23 +0800
+Message-ID: <20240929061025.3704-1-frawang.cn@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
-References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
-In-Reply-To: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- Chuan Liu <chuan.liu@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727590225; l=13770;
- i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=L3VAxB25xJXcMFUVId4du0KkatengYbFRtL0k4k303o=;
- b=HnvntC8NRHhLcjfJshb754IypomnY64nXnMOtUom66/OC+DxSEl//wq8Y3bPb6NxvDODM8DWs
- q/mWbkqMuGXAzo0U52qUc0v5rUyeXjARIxZoqpjyVepvCK+W5RHPAgS
-X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
- pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
-X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
- auth_id=203
-X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
-Reply-To: chuan.liu@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Chuan Liu <chuan.liu@amlogic.com>
+From: Frank Wang <frank.wang@rock-chips.com>
 
-glitch free mux has two clock channels (channel 0 and channel 1) with
-the same configuration. When the frequency needs to be changed, the two
-channels ping-pong to ensure clock continuity and suppress glitch.
+Since some Rockchip SoCs (e.g RK3576) have more than one clock,
+this converts the clock management from single to bulk method to
+make the driver more flexible.
 
-Channel 0 of glitch free mux is not only the clock source for the mux,
-but also the working clock for glitch free mux. Therefore, when glitch
-free mux switches, it is necessary to ensure that channel 0 has a clock
-input, otherwise glitch free mux will not work and cannot switch to the
-target channel.
-
-Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
-switchover to suppress glitch.
-
-glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
-has clock input when switching channels.
-
-Change-Id: I6fa6ff92f7b2e0a13dd7a27feb0e8568be3ca9f9
-Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
 ---
- drivers/clk/meson/a1-peripherals.c | 12 ++++++------
- drivers/clk/meson/axg.c            | 16 ++++++++++------
- drivers/clk/meson/c3-peripherals.c |  6 +++---
- drivers/clk/meson/g12a.c           | 18 +++++++++++-------
- drivers/clk/meson/gxbb.c           | 18 +++++++++++-------
- drivers/clk/meson/s4-peripherals.c | 32 ++++++++++++++++----------------
- 6 files changed, 57 insertions(+), 45 deletions(-)
+Changelog:
+v4:
+ - a new patch split from the [PATCH v3 2/2], suggestions from Heiko.
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 7aa6abb2eb1f..7f515e002adb 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -423,7 +423,7 @@ static struct clk_regmap dspa_a = {
- 			&dspa_a_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -471,7 +471,7 @@ static struct clk_regmap dspa_b = {
- 			&dspa_b_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -489,7 +489,7 @@ static struct clk_regmap dspa_sel = {
- 			&dspa_b.hw,
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -569,7 +569,7 @@ static struct clk_regmap dspb_a = {
- 			&dspb_a_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -617,7 +617,7 @@ static struct clk_regmap dspb_b = {
- 			&dspb_b_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -635,7 +635,7 @@ static struct clk_regmap dspb_sel = {
- 			&dspb_b.hw,
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 1b08daf579b2..e2d3266f4b45 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -1077,7 +1077,8 @@ static struct clk_regmap axg_vpu_0 = {
- 		 * We want to avoid CCF to disable the VPU clock if
- 		 * display has been set by Bootloader
- 		 */
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1126,7 +1127,8 @@ static struct clk_regmap axg_vpu_1 = {
- 		 * We want to avoid CCF to disable the VPU clock if
- 		 * display has been set by Bootloader
- 		 */
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1144,7 +1146,7 @@ static struct clk_regmap axg_vpu = {
- 			&axg_vpu_1.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1194,7 +1196,8 @@ static struct clk_regmap axg_vapb_0 = {
- 			&axg_vapb_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1242,7 +1245,8 @@ static struct clk_regmap axg_vapb_1 = {
- 			&axg_vapb_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1260,7 +1264,7 @@ static struct clk_regmap axg_vapb_sel = {
- 			&axg_vapb_1.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
-index 7dcbf4ebee07..27343a73a521 100644
---- a/drivers/clk/meson/c3-peripherals.c
-+++ b/drivers/clk/meson/c3-peripherals.c
-@@ -1364,7 +1364,7 @@ static struct clk_regmap hcodec_0 = {
- 			&hcodec_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1411,7 +1411,7 @@ static struct clk_regmap hcodec_1 = {
- 			&hcodec_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1431,7 +1431,7 @@ static struct clk_regmap hcodec = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_data = hcodec_parent_data,
- 		.num_parents = ARRAY_SIZE(hcodec_parent_data),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d3539fe9f7af..21a25001e904 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -2746,7 +2746,8 @@ static struct clk_regmap g12a_vpu_0 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_0_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -2790,7 +2791,8 @@ static struct clk_regmap g12a_vpu_1 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &g12a_vpu_1_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -2812,7 +2814,7 @@ static struct clk_regmap g12a_vpu = {
- 			&g12a_vpu_1.hw,
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -3035,7 +3037,8 @@ static struct clk_regmap g12a_vapb_0 = {
- 			&g12a_vapb_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -3083,7 +3086,8 @@ static struct clk_regmap g12a_vapb_1 = {
- 			&g12a_vapb_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -3105,7 +3109,7 @@ static struct clk_regmap g12a_vapb_sel = {
- 			&g12a_vapb_1.hw,
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -4039,7 +4043,7 @@ static struct clk_regmap g12a_mali = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = g12a_mali_parent_hws,
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 262c318edbd5..812b3e20c366 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -1132,7 +1132,7 @@ static struct clk_regmap gxbb_mali = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = gxbb_mali_parent_hws,
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1543,7 +1543,8 @@ static struct clk_regmap gxbb_vpu_0 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_0_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1591,7 +1592,8 @@ static struct clk_regmap gxbb_vpu_1 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &gxbb_vpu_1_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1613,7 +1615,7 @@ static struct clk_regmap gxbb_vpu = {
- 			&gxbb_vpu_1.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1674,7 +1676,8 @@ static struct clk_regmap gxbb_vapb_0 = {
- 			&gxbb_vapb_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1726,7 +1729,8 @@ static struct clk_regmap gxbb_vapb_1 = {
- 			&gxbb_vapb_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED |
-+			 CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1748,7 +1752,7 @@ static struct clk_regmap gxbb_vapb_sel = {
- 			&gxbb_vapb_1.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_NO_REPARENT,
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index c930cf0614a0..cf10be40141d 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -1404,7 +1404,7 @@ static struct clk_regmap s4_mali_mux = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_mali_parent_hws,
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1466,7 +1466,7 @@ static struct clk_regmap s4_vdec_p0 = {
- 			&s4_vdec_p0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1516,7 +1516,7 @@ static struct clk_regmap s4_vdec_p1 = {
- 			&s4_vdec_p1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1536,7 +1536,7 @@ static struct clk_regmap s4_vdec_mux = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_vdec_mux_parent_hws,
- 		.num_parents = ARRAY_SIZE(s4_vdec_mux_parent_hws),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1586,7 +1586,7 @@ static struct clk_regmap s4_hevcf_p0 = {
- 			&s4_hevcf_p0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1636,7 +1636,7 @@ static struct clk_regmap s4_hevcf_p1 = {
- 			&s4_hevcf_p1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1656,7 +1656,7 @@ static struct clk_regmap s4_hevcf_mux = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_hevcf_mux_parent_hws,
- 		.num_parents = ARRAY_SIZE(s4_hevcf_mux_parent_hws),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1712,7 +1712,7 @@ static struct clk_regmap s4_vpu_0 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_0_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1756,7 +1756,7 @@ static struct clk_regmap s4_vpu_1 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_hws = (const struct clk_hw *[]) { &s4_vpu_1_div.hw },
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1774,7 +1774,7 @@ static struct clk_regmap s4_vpu = {
- 			&s4_vpu_1.hw,
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -1921,7 +1921,7 @@ static struct clk_regmap s4_vpu_clkc_p0 = {
- 			&s4_vpu_clkc_p0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1969,7 +1969,7 @@ static struct clk_regmap s4_vpu_clkc_p1 = {
- 			&s4_vpu_clkc_p1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -1989,7 +1989,7 @@ static struct clk_regmap s4_vpu_clkc_mux = {
- 		.ops = &clk_regmap_mux_ops,
- 		.parent_hws = s4_vpu_mux_parent_hws,
- 		.num_parents = ARRAY_SIZE(s4_vpu_mux_parent_hws),
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
-@@ -2049,7 +2049,7 @@ static struct clk_regmap s4_vapb_0 = {
- 			&s4_vapb_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -2097,7 +2097,7 @@ static struct clk_regmap s4_vapb_1 = {
- 			&s4_vapb_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_SET_RATE_GATE,
- 	},
- };
- 
-@@ -2115,7 +2115,7 @@ static struct clk_regmap s4_vapb = {
- 			&s4_vapb_1.hw
- 		},
- 		.num_parents = 2,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE,
- 	},
- };
- 
+v1-v3:
+ - none
 
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 43 ++++++++++++++++---
+ 1 file changed, 36 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+index 4f71373ae6e1..ad3e65dc6aa4 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+@@ -229,9 +229,10 @@ struct rockchip_usb2phy_port {
+  * @dev: pointer to device.
+  * @grf: General Register Files regmap.
+  * @usbgrf: USB General Register Files regmap.
+- * @clk: clock struct of phy input clk.
++ * @clks: array of phy input clocks.
+  * @clk480m: clock struct of phy output clk.
+  * @clk480m_hw: clock struct of phy output clk management.
++ * @num_clks: number of phy input clocks.
+  * @phy_reset: phy reset control.
+  * @chg_state: states involved in USB charger detection.
+  * @chg_type: USB charger types.
+@@ -246,9 +247,10 @@ struct rockchip_usb2phy {
+ 	struct device	*dev;
+ 	struct regmap	*grf;
+ 	struct regmap	*usbgrf;
+-	struct clk	*clk;
++	struct clk_bulk_data	*clks;
+ 	struct clk	*clk480m;
+ 	struct clk_hw	clk480m_hw;
++	int			num_clks;
+ 	struct reset_control	*phy_reset;
+ 	enum usb_chg_state	chg_state;
+ 	enum power_supply_type	chg_type;
+@@ -310,6 +312,13 @@ static int rockchip_usb2phy_reset(struct rockchip_usb2phy *rphy)
+ 	return 0;
+ }
+ 
++static void rockchip_usb2phy_clk_bulk_disable(void *data)
++{
++	struct rockchip_usb2phy *rphy = data;
++
++	clk_bulk_disable_unprepare(rphy->num_clks, rphy->clks);
++}
++
+ static int rockchip_usb2phy_clk480m_prepare(struct clk_hw *hw)
+ {
+ 	struct rockchip_usb2phy *rphy =
+@@ -376,7 +385,9 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+ {
+ 	struct device_node *node = rphy->dev->of_node;
+ 	struct clk_init_data init;
++	struct clk *refclk = NULL;
+ 	const char *clk_name;
++	int i;
+ 	int ret = 0;
+ 
+ 	init.flags = 0;
+@@ -386,8 +397,15 @@ rockchip_usb2phy_clk480m_register(struct rockchip_usb2phy *rphy)
+ 	/* optional override of the clockname */
+ 	of_property_read_string(node, "clock-output-names", &init.name);
+ 
+-	if (rphy->clk) {
+-		clk_name = __clk_get_name(rphy->clk);
++	for (i = 0; i < rphy->num_clks; i++) {
++		if (!strncmp(rphy->clks[i].id, "phyclk", 6)) {
++			refclk = rphy->clks[i].clk;
++			break;
++		}
++	}
++
++	if (!IS_ERR(refclk)) {
++		clk_name = __clk_get_name(refclk);
+ 		init.parent_names = &clk_name;
+ 		init.num_parents = 1;
+ 	} else {
+@@ -1406,18 +1424,29 @@ static int rockchip_usb2phy_probe(struct platform_device *pdev)
+ 	if (IS_ERR(rphy->phy_reset))
+ 		return PTR_ERR(rphy->phy_reset);
+ 
+-	rphy->clk = devm_clk_get_optional_enabled(dev, "phyclk");
+-	if (IS_ERR(rphy->clk)) {
+-		return dev_err_probe(&pdev->dev, PTR_ERR(rphy->clk),
++	ret = devm_clk_bulk_get_all(dev, &rphy->clks);
++	if (ret == -EPROBE_DEFER) {
++		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
+ 				     "failed to get phyclk\n");
+ 	}
+ 
++	/* Clocks are optional */
++	rphy->num_clks = ret < 0 ? 0 : ret;
++
+ 	ret = rockchip_usb2phy_clk480m_register(rphy);
+ 	if (ret) {
+ 		dev_err(dev, "failed to register 480m output clock\n");
+ 		return ret;
+ 	}
+ 
++	ret = clk_bulk_prepare_enable(rphy->num_clks, rphy->clks);
++	if (ret)
++		return ret;
++
++	ret = devm_add_action_or_reset(dev, rockchip_usb2phy_clk_bulk_disable, rphy);
++	if (ret)
++		return ret;
++
+ 	if (rphy->phy_cfg->phy_tuning) {
+ 		ret = rphy->phy_cfg->phy_tuning(rphy);
+ 		if (ret)
 -- 
-2.42.0
-
+2.34.1
 
 
