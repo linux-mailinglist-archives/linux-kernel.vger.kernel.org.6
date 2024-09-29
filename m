@@ -1,88 +1,102 @@
-Return-Path: <linux-kernel+bounces-342802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC4298931F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:09:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11477989320
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3A3C1C2258B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:09:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356E71C226FC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA747EEFD;
-	Sun, 29 Sep 2024 05:09:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230A784E18;
+	Sun, 29 Sep 2024 05:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="GHsHKypO"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2DF225D9
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E5717C9E
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 05:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727586546; cv=none; b=W9f2WJl5kCRJFUBFBtvs1se9bpqHS+lWHtKqqL3eSiz+VPbV/l+bcx2+0dqwBwjlD2V1pAqXdDGnoeRWiEeIQwXRs2bbxeLsNnc3RM2vuoF+9H7q/vYVNidWc649YhAG2bRTr33Y5HAxdF00Gilw0N3ieLzECxhT5zhrZLct/os=
+	t=1727586667; cv=none; b=lgkDiebjilj+eu8vdh4MDVc3xIyy4APtC87bNDFRLpM7l89ZU6MuU2j590XZ8OGNFK3a+sLxLcpE4EWo7t+xXmd/PgoHOGcHFNlRWj7ihKOOw+iSRfRIq0F1dOr3mw5cWzxhQIPXA6jk9j11qgx3NYm+TmBB0IbYJE0RNr2jwQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727586546; c=relaxed/simple;
-	bh=1fqDQMUO1L6aOZIZYZVWskI2QvY0oNjEVXmhWq6+8Sc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Bq8is3Jp/qCcjJTceUfDClv9tr+qiczX8O8mSi7M/4WkDiJhn/sBX3t6Ak2cTd29mhIB3fS2ZNIKEQIzjOxuIT0+LPENE1sv8JcwlwnVOXFX4caP7OZgdKuWd6jM1XPvEGQOdgxqfZ122ehCZDKYfy8+GDEwhOGidYR2VA6QPRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cf261659bso500150739f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:09:04 -0700 (PDT)
+	s=arc-20240116; t=1727586667; c=relaxed/simple;
+	bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HpJGx2rPvah+MLCG3u3OutNR3UJ+qTK0eGWPd0zpW8klx2puFNUCgksdTr4kZLatm7sutNO6CZoQmIHH31NaM0w1KTZu/TzVn8MWcmO40MOD6JbURmMgC6Wind1CCfX+BdZKTy+Og1F/9KAYg58pWkmna/DIDXFKAcL10bveevk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=GHsHKypO; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6db4b602e38so27299247b3.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 22:11:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1727586665; x=1728191465; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
+        b=GHsHKypOzHZ4bYmcxf3vuQbYwLqT19xD/oYNIZDOcf+BzFZF2/zMNczUgXiFzAVkZr
+         xUO+cXYbyBdN9zTQuuPy777zjGb2cTgzw6qkN2hATZBorRQtkw2Gm2681rymWU+23HOL
+         NQtllUjCR6LAybPlFJYGkcUjdDQmKKhtYgjZJajL7hgVzfqZLl5p0kaWsqqV1f2+fvJ5
+         Bmvd8RIEKg4cZsMpU5adABfDsFh9DAV2uOucmgfdY9X8/wKloG0fOsQI3UllhHBTTrBP
+         VO5oTf3C/ZHmGqAUbWVmfHpMIXtCErI3YbMD7t3Ad5LQlrPnDkr2/L3ujzzW3VbhijiI
+         YoLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727586544; x=1728191344;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Ixz4PnwE432RBX+FcXTgYnYvlP3v9+OVI1Dv2yGJdE=;
-        b=GK944ElPY6hf+0InKovjNx+axhMLglIcy/7CjgVZdpge2LzZC0vP8ojQRn3QLlMKMC
-         4HwARw9Z8/soie3nSiPvgDXpZF1wgXSaHqsSoU2AuQFXAJHPxwzyabl5dp15gaheXeWK
-         F88uNlXEvmSkkyGauJALs+OiFXRLyQvQOXV5wibXrirV2Amc2vRx0lNZY1cLcMSPzQFP
-         8MYWFH458FpWyToH7VRWUohe0VJeRNrYppc3svfQm8Drc5PrqLpGBo9aoSntj9RVtuJw
-         VGGOrpm85yiOv072+8GYSUtB4ixLyTVPfWF8tln+r1T1DnTMbyArFPPso3pZBjLe9Xo3
-         FBYg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI0htc4DTBsT3X00J6+D5fjpJYfCl+L3C3Xlo7Ru16KRqwITcIB4aLMsx09OnCkut8dKG/0dvKf4R/lEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCAAuBOjB+qIOs0I38cyHlA+NG3QL2zFkX5u/rvzcErj+B4lLu
-	8fHrSzUtpJcPFe/798OGBFXVr0hilYZSkoVZ4SFx62jcE2LivVFP9hucYLQi/FX3lWJ39IuZ7NP
-	CRkjZWn/ZCnoPNkgTy2j1dULWH0E71tf4DY1/y2kiNrA0x5lGhGsLAxY=
-X-Google-Smtp-Source: AGHT+IGE3xOEAYgej5Zskaz7mVfx5jsGS58Pis1Wkt6tlKBnbX2HPT/8treLWMJSZZNGUecPfLe++/aAAV7xuwzG6Y6qZAgbt9Id
+        d=1e100.net; s=20230601; t=1727586665; x=1728191465;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RuRZYVvei28eDcQ036NK5OQHIXSS5Y8RpN9am0sKM4c=;
+        b=VCk5yraoY6EMCYeU3f5pYA7I4Ewj0XA3VvNjJdQZN7SZqkuXPga+RHft88ywfJzXAJ
+         lEg2Mf0Qhb/ffMxWwlttND8SACiVll9OmlhoHHNThPpvJ5VVxJh6lb5NaBcpxEFmjx5R
+         WqU4bmBYFG4fu2xQYAGwWjjJsxljppPcSOA7Ppo7/ObgsKgbwqpBqIEXs1Nfb60p5z+o
+         HBTGptDBhY8FeUKbaieP/sbsQ27R0byRXWNyjuzWSCbXSFqHjzkMHKBt/jSqvykXfJRs
+         G2J+1Kv/heqTgvIx6OtY4aFBQXsMEZoclFW1EHUvxOajUCJIFAuj2++G6Nz/R1xpr66a
+         F9lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBIDo04stEWpJT+E9X1F8mn7E7ZJm7uVdCgO0buqsrjo6HtEbsoL9a8pa1vzXxhPFcyM2ygOhAa6q1wSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3MwZ+pbyB1sD28DFFJDFgTrLAagEB0/0iGKhlmMda2jpSkfgX
+	DvalrSwB4B4dB5dT4QDGlTgx/Y+t30nISoHe8g7/2ESxB8FwDt8WYdh5Hw2ou/BypvMgo7W8RDA
+	XmpAW3Vo900uGZohrXXklSeAqTKB+jHNqmowcng==
+X-Google-Smtp-Source: AGHT+IEbuPLIS0r0UAYXOL55sJ7MsrTfAySS4mECInBKGc5OhJ5B2QgDR/M498wdGIiCmNjzbtv73pF/ogEFQj1XJkw=
+X-Received: by 2002:a05:690c:26c5:b0:6b4:e3ca:3a76 with SMTP id
+ 00721157ae682-6e247571063mr46680857b3.19.1727586665054; Sat, 28 Sep 2024
+ 22:11:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ee:b0:3a2:aed1:1285 with SMTP id
- e9e14a558f8ab-3a344fc8e06mr84891645ab.0.1727586544164; Sat, 28 Sep 2024
- 22:09:04 -0700 (PDT)
-Date: Sat, 28 Sep 2024 22:09:04 -0700
-In-Reply-To: <20240929044749.135112-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f8e0f0.050a0220.4a974.0015.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
-From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-19-ojeda@kernel.org>
+In-Reply-To: <20240904204347.168520-19-ojeda@kernel.org>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Sun, 29 Sep 2024 01:10:54 -0400
+Message-ID: <CALNs47vPzH7CSjRh=jW0xNTh9=oajUs4SAkTE2OHLd5M2e065A@mail.gmail.com>
+Subject: Re: [PATCH 18/19] Documentation: rust: discuss `#[expect(...)]` in
+ the guidelines
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Sep 4, 2024 at 4:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
+e:
+>
+> Discuss `#[expect(...)]` in the Lints sections of the coding guidelines
+> document, which is an upcoming feature in Rust 1.81.0, and explain that
+> it is generally to be preferred over `allow` unless there is a reason
+> not to use it (e.g. conditional compilation being involved).
+>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
-Tested-by: syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         3efc5736 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12edfe27980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7782ef71990b6dba
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12fb4d9f980000
-
-Note: testing is done by a robot and is best-effort only.
+Would it be good to mention that a reason can be specified with
+`reason =3D "..."`? I don't think we use this anywhere yet.
 
