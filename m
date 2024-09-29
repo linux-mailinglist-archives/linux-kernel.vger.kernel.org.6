@@ -1,139 +1,92 @@
-Return-Path: <linux-kernel+bounces-343190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D151A989795
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 23:19:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C0C989797
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 23:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825D91F21738
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07F4C1C20CB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 21:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B517E107;
-	Sun, 29 Sep 2024 21:19:04 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9577346F;
+	Sun, 29 Sep 2024 21:21:38 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0377D2B9B7
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 21:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B468B65C
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 21:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727644744; cv=none; b=TTbIN5a3K5+KCfAxVQq5qrxvbCW6eWrzhJkTkDfbHS4D8tregW8fi1odaX5LycjDnHRoVkg5WNMQNGw87Im/D7NAZV7LCl3RaXSDXuskwwdMN/bhIdt/rbZ0TP+r6R96dzmHaw1/NQb3EfMb/ZsO4h7GkYdmU9TuyVX8J0/tFg8=
+	t=1727644898; cv=none; b=B7N/bA0CDtF9GASxR00k/DqZl1GFoh19v1i5CETnnmD7mj1X2De11JqUHXQWPJhQ4VY6CdhCe0IX5AUwKAvYZHVnr6qv65hEzwhvlr06MtJ5IcxlScVRJc3Svneb9nAgRYP635cu0qMUinvE8+lutoDC2dLOLbAM+ywhRV0Bl3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727644744; c=relaxed/simple;
-	bh=CnLQ5uQpXbBPCYzLAFh5wCZggo1nx9nXYZKgDefw4x0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=K4Wz/XMCk0EFh67bPfBJmpmFRpSzO6mpz7uIAPO89l+4S2GmwcuQRebXzz9cilRuUdhQLqf/U7s1u/GBFbyhI9zxaIo63A1K6GQz7DUrYbCM6fUw5AXDXlVLoFNbT271R1LRFcb+Wnf034r9GiDjZFP2XPlkxspz8hr6Bvq2pR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-256-NQcG79MeP9qOesbpHn9Sjw-1; Sun, 29 Sep 2024 22:17:42 +0100
-X-MC-Unique: NQcG79MeP9qOesbpHn9Sjw-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 29 Sep
- 2024 22:16:49 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 29 Sep 2024 22:16:49 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'marius.cristea@microchip.com'" <marius.cristea@microchip.com>,
-	"arnd@arndb.de" <arnd@arndb.de>
-CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1] asm-generic: introduce be56 unaligned accessors
-Thread-Topic: [PATCH v1] asm-generic: introduce be56 unaligned accessors
-Thread-Index: AQHbELg4aDeytMgGcUifSLsY4O8Q9LJvRwDw
-Date: Sun, 29 Sep 2024 21:16:49 +0000
-Message-ID: <207733c7c25e4e09b0774eb21322e7e5@AcuMS.aculab.com>
-References: <20240927083543.80275-1-marius.cristea@microchip.com>
-In-Reply-To: <20240927083543.80275-1-marius.cristea@microchip.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1727644898; c=relaxed/simple;
+	bh=AVp6EyGhbA+RQ4K2FJ+mwm1DNxsQfli7ptB9xX1hWy8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ewUEUvAwLzq8IAWH6Vrpgvp7jZDOM5TY567s0GPmjFSQGLbVeDYg9BOKWVwbC1c5AiHCjsqrKBnfk9QFMc0WoXBzXLR7cfdqVqmkq7jN56x6o+v91WYuHPOMgSR0t8HhQrhdA/ejEHofNnwlghR60DESUio5KnK2tLPLVNN6a34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 3D7BB1F0004D
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 21:21:31 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 59191A608D1; Sun, 29 Sep 2024 21:21:30 +0000 (UTC)
+X-Spam-Level: *
+Received: from localhost.localdomain (unknown [192.168.1.64])
+	by laika.paulk.fr (Postfix) with ESMTP id 08828A608BA;
+	Sun, 29 Sep 2024 21:21:27 +0000 (UTC)
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Russell King <linux@armlinux.org.uk>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Justin Stitt <justinstitt@google.com>,
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: [PATCH] ARM: atags: Be silent about missing ATAGs
+Date: Sun, 29 Sep 2024 23:21:22 +0200
+Message-ID: <20240929212122.701125-1-paulk@sys-base.io>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-From: marius.cristea@microchip.com
-> Sent: 27 September 2024 09:36
->=20
-> The PAC194X, IIO driver, is using some unaligned 56 bit registers.
-> Provide some helper accessors in preparation for the new driver.
+From: Paul Kocialkowski <contact@paulk.fr>
 
-Someone please shoot the hardware engineer ;-)
+While the ATAGs functionality is still available in the kernel, it has
+been deprecated for a long time already and probably has very few users
+left.
 
-Do separate unaligned access of the first 4 bytes and last four bytes.
-It can't matter if the middle byte is accessed twice.
+Stop printing a message when ATAGs are not found since this is now the
+situation most users will expect.
 
-Or, for reads read 8 bytes from 'p & ~1ul' and then fixup
-the value.
+Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+---
+ arch/arm/kernel/atags_proc.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-=09David
-
->=20
-> Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
-> ---
->  include/asm-generic/unaligned.h | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
->=20
-> diff --git a/include/asm-generic/unaligned.h b/include/asm-generic/unalig=
-ned.h
-> index a84c64e5f11e..d171a9f2377a 100644
-> --- a/include/asm-generic/unaligned.h
-> +++ b/include/asm-generic/unaligned.h
-> @@ -152,4 +152,31 @@ static inline u64 get_unaligned_be48(const void *p)
->  =09return __get_unaligned_be48(p);
->  }
->=20
-> +static inline void __put_unaligned_be56(const u64 val, u8 *p)
-> +{
-> +=09*p++ =3D (val >> 48) & 0xff;
-> +=09*p++ =3D (val >> 40) & 0xff;
-> +=09*p++ =3D (val >> 32) & 0xff;
-> +=09*p++ =3D (val >> 24) & 0xff;
-> +=09*p++ =3D (val >> 16) & 0xff;
-> +=09*p++ =3D (val >> 8) & 0xff;
-> +=09*p++ =3D val & 0xff;
-> +}
-> +
-> +static inline void put_unaligned_be56(const u64 val, void *p)
-> +{
-> +=09__put_unaligned_be56(val, p);
-> +}
-> +
-> +static inline u64 __get_unaligned_be56(const u8 *p)
-> +{
-> +=09return (u64)p[0] << 48 | (u64)p[1] << 40 | (u64)p[2] << 32 |
-> +=09=09(u64)p[3] << 24 | p[4] << 16 | p[5] << 8 | p[6];
-> +}
-> +
-> +static inline u64 get_unaligned_be56(const void *p)
-> +{
-> +=09return __get_unaligned_be56(p);
-> +}
-> +
->  #endif /* __ASM_GENERIC_UNALIGNED_H */
->=20
-> base-commit: b82c1d235a30622177ce10dcb94dfd691a49922f
-> --
-> 2.43.0
->=20
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/arch/arm/kernel/atags_proc.c b/arch/arm/kernel/atags_proc.c
+index cd09f8ab93e3..6643fffecfb7 100644
+--- a/arch/arm/kernel/atags_proc.c
++++ b/arch/arm/kernel/atags_proc.c
+@@ -41,10 +41,8 @@ static int __init init_atags_procfs(void)
+ 	struct buffer *b;
+ 	size_t size;
+ 
+-	if (tag->hdr.tag != ATAG_CORE) {
+-		pr_info("No ATAGs?\n");
++	if (tag->hdr.tag != ATAG_CORE)
+ 		return -EINVAL;
+-	}
+ 
+ 	for (; tag->hdr.size; tag = tag_next(tag))
+ 		;
+-- 
+2.46.2
 
 
