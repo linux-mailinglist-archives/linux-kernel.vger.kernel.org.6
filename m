@@ -1,161 +1,144 @@
-Return-Path: <linux-kernel+bounces-342754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02319892A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:21:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0C99892A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801561F2338F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AEC2853EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDCD182D2;
-	Sun, 29 Sep 2024 02:21:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995BD182B4;
+	Sun, 29 Sep 2024 02:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tv9QM9CB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ceal/QgE"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED2014A91;
-	Sun, 29 Sep 2024 02:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A07B667
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 02:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727576473; cv=none; b=KIYt5z16hmuRe8qWd0bRg5uyLdmBwWPkYOkiHn2V+8RBpMN3DKvcQpOo9fITUtKeMawmys5J01p/jOnWcgOkB7FkD2c6RRxpKqDHqhpl5xVjtZnX8dHYmHgqWKdhhJf1HjRn+gc40X5DaLXCPn8RXgjiIgoYn4enNzkErwA4KjA=
+	t=1727576694; cv=none; b=KB3gEg0TQtr9InhxuIYr2a6KonDna7WWKWsrfBIzkdx2N1WNWIqGT5xjlGUawcHYKlnUKEA4p2pWkyRhBImdwuZav1WwPyU5reEG0trGpWBXFX5EVLL3Tmnt6SeSGDIizagcDAJDt8T6QuofSAyMAx5jcesxJ1Vlez813iYpEvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727576473; c=relaxed/simple;
-	bh=xSb9HBBKx6Kc+DXgPCklMJpn9wz9U4K4o0J0+cEpDS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+MiEWNNsjYiisWveRii+ZNxWIczjgWKkUI3QDG4JtGO9JUftvsKWV0PjzqRQ0MfbTbU3U5HvG0r9x6YfK4gSz3mAh56nm/5ZXYEpdqsqQaGJB9JSvio3lTbFITUJw/c64gStaAGgmTeRYj+bYChvXR7k0xdKAUB7jia2mipoS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tv9QM9CB; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727576472; x=1759112472;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xSb9HBBKx6Kc+DXgPCklMJpn9wz9U4K4o0J0+cEpDS4=;
-  b=Tv9QM9CBObbi94VEBQT0JWvvDIo2xX/epYCNDFQNCLGD35q9a/Hmzxej
-   kWOMtsMN9FAVbVaFbmmmWZzuz3tpC3ICX32ZVn6BRVgWh6NuQAexAAfur
-   hn/99M6/o3iuWYtIEFEcZ3rU/r4Be9oy7BQ0eRoIPsQqRmbktVbSSonxi
-   jQA0RL4ztzbiMg6JZQtZdS2iRYQlpXZpcwmDD793gDtDwiCeObWesK8eY
-   i71iyZI6oYqhLL4x2ilwsaX/CCfBH5xe3lrE4EqUKFJinWIR6lLBYHJRZ
-   fPVVvIZ+5tiwMjr9tZnehADpqIhCg1oPfJ8lPJQJ98g1ezeuHERBCF2Mk
-   g==;
-X-CSE-ConnectionGUID: fnivp4Y/Q+OVqEdxBu9mUQ==
-X-CSE-MsgGUID: WIzd0MaRQ2ul+QrKoe2czg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11209"; a="14307809"
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="14307809"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2024 19:21:12 -0700
-X-CSE-ConnectionGUID: K8NP/KFTTzq87Al86HBMRg==
-X-CSE-MsgGUID: wyXz8uifTDuMZiZeLrFkYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,162,1725346800"; 
-   d="scan'208";a="72499187"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 28 Sep 2024 19:21:09 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sujYY-000Npf-23;
-	Sun, 29 Sep 2024 02:21:06 +0000
-Date: Sun, 29 Sep 2024 10:20:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dragan Simic <dsimic@manjaro.org>, linux-spi@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, broonie@kernel.org, heiko@sntech.de,
-	gregkh@linuxfoundation.org, rafael@kernel.org, oss@helene.moe,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] driver core: Add device probe log helper
- dev_warn_probe()
-Message-ID: <202409290910.55WdSCMH-lkp@intel.com>
-References: <2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1727576694; c=relaxed/simple;
+	bh=cBICq7Yw77KRwv/0M6WtodAXrSpzg5xQV/fSitTTGNE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OQshNratm4p+WMYWrRCcI3vX8X5h5YrYxtF+/KK+sfRcbVLXpRmx8pzojcDVwowDn9ixS0W6Zf0xEl5dMJaIkoL2TWctbfOBPqJzcGoJjT6So2ItJgeno1QyRZP+VLVcyJdINMeI6Y8T0ExUSZDUV1iXnTls044koJApIvduGPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ceal/QgE; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718e285544fso2594859b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 19:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1727576692; x=1728181492; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7J9loi/LLkdFcZG+N1SNYfaAIF+3tAmLLQpGcvQRn84=;
+        b=ceal/QgEJjidDKqkg3TYWHfsDLvspF21Nudo+q/By9Y9vjMIFI6Mxth91XVa4+5rAz
+         9IcAeKti+7Kzw5dlqDp7YKg6wXosjcHSUDpMjNlXTw+gpg5CV+RQRV9mpKuKv4tTmLan
+         UU3wUrFppYWkZNzZ4HwB1oCTCXQvfVFM0n1MsRiESO2MrjbkjTYVCkelMc4mGQS29m+R
+         Mjz0tn52ufZszfgjL6wFundzw2MksNw7SqjTK10IoXNQiro9fU5V8WJtiDNL1/g1rh2r
+         QZ8/I203HE3Bztdrm/jzF31ldD1WrpNhUWXBYmvD+NHexjc5lsk+QHsWDtohAKs/2xLS
+         o7Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727576692; x=1728181492;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7J9loi/LLkdFcZG+N1SNYfaAIF+3tAmLLQpGcvQRn84=;
+        b=wMmLFNwQ+rM6HKTcj6H8VAsGhylWGxmnQZ9+LCrE5A7RHs0J0YD9j8pdqb4gTyKR1o
+         0v2XbBFjNqEMg9rp/TYwHYQGzpikh1s7DPPuL/fgioESgEmj6GDAUf/1fmt/i6/ia/Bj
+         F6fMVRfKPwNWR35j94A5LNIV6CSLHrmdGrBEyhqL/bf1Cy3XNmADumQ8TyShH2iYMgK1
+         feVLtFGj00p2G9a2aUCEmRL0xsTx16YT7o9wweUrlMpCsIi3c4dnOVijXvIY+tXTTsjU
+         ceKQ8q5D4fa4orGMdysVwXAVcmPvn4k939IUBIseN0k10Hd8b0htq6Tye/8c0Fz7AxWY
+         1UXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaCY3D7yNXo4ToOG078R5ia/HWsiwBAI+jXcVjzPf7JnggPHNuvZ2bNMzHljJ+ZfuYJneruAF6t7AhIm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeY2wPjFq4fia04rGz/YaDXJcwRShwae9E+AY0scIwMjUmHY+M
+	pAH1h3wh5oSIDvUQhbEApKhU8CblqYkJJqsfai2TAF4pi5MAavOIxHoZE0tlOi4=
+X-Google-Smtp-Source: AGHT+IFKqKBstTmcEl8Pn3z+AfZJxb9xQL3LJdSJptREBAQiCuJU5bU5xkhlIFPtdVGXmMq5nCkFrw==
+X-Received: by 2002:a05:6a00:6110:b0:714:1bd8:35f7 with SMTP id d2e1a72fcca58-71b25f6ef3dmr8184202b3a.15.1727576692161;
+        Sat, 28 Sep 2024 19:24:52 -0700 (PDT)
+Received: from [10.70.146.105] ([203.208.189.13])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bc443sm3819772b3a.70.2024.09.28.19.24.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 28 Sep 2024 19:24:51 -0700 (PDT)
+Message-ID: <0a5f0b71-2478-456e-bf4f-5132fb4f255d@bytedance.com>
+Date: Sun, 29 Sep 2024 10:24:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic@manjaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [External] [PATCH -next] perf test: Use ARRAY_SIZE for array
+ length
+Content-Language: en-US
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abaci Robot <abaci@linux.alibaba.com>
+References: <20240927084002.8437-1-jiapeng.chong@linux.alibaba.com>
+From: Yang Jihong <yangjihong@bytedance.com>
+In-Reply-To: <20240927084002.8437-1-jiapeng.chong@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dragan,
+Hello,
 
-kernel test robot noticed the following build errors:
+On 9/27/24 16:40, Jiapeng Chong wrote:
+> Use of macro ARRAY_SIZE to calculate array size minimizes
+> the redundant code and improves code reusability.
+> 
+> ./tools/perf/tests/demangle-java-test.c:31:34-35: WARNING: Use ARRAY_SIZE.
+> 
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11173
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>   tools/perf/tests/demangle-java-test.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/tests/demangle-java-test.c b/tools/perf/tests/demangle-java-test.c
+> index 44d1be303b67..611c18cdf4d3 100644
+> --- a/tools/perf/tests/demangle-java-test.c
+> +++ b/tools/perf/tests/demangle-java-test.c
+> @@ -6,6 +6,7 @@
+>   #include "session.h"
+>   #include "debug.h"
+>   #include "demangle-java.h"
+> +#include "kselftest.h"
 
-[auto build test ERROR on rockchip/for-next]
-[also build test ERROR on broonie-spi/for-next driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.11 next-20240927]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The wrong header file is included here, causing the build to fail:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dragan-Simic/spi-rockchip-Perform-trivial-code-cleanups/20240928-121548
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git for-next
-patch link:    https://lore.kernel.org/r/2fd9a60e0efe906dc7a203cd652c8d0b7f932470.1727496560.git.dsimic%40manjaro.org
-patch subject: [PATCH v2 4/5] driver core: Add device probe log helper dev_warn_probe()
-config: powerpc-allnoconfig (https://download.01.org/0day-ci/archive/20240929/202409290910.55WdSCMH-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240929/202409290910.55WdSCMH-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409290910.55WdSCMH-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/base/core.c: In function 'dev_probe_failed':
->> drivers/base/core.c:4988:16: error: assignment to '__va_list_tag (*)[1]' from incompatible pointer type '__va_list_tag **' [-Wincompatible-pointer-types]
-    4988 |         vaf.va = &args;
-         |                ^
-   drivers/base/core.c: In function 'dev_err_probe':
-   drivers/base/core.c:5055:1: warning: control reaches end of non-void function [-Wreturn-type]
-    5055 | }
-         | ^
-   drivers/base/core.c: In function 'dev_warn_probe':
-   drivers/base/core.c:5101:1: warning: control reaches end of non-void function [-Wreturn-type]
-    5101 | }
-         | ^
+   CC      tests/demangle-java-test.o
+tests/demangle-java-test.c:9:10: fatal error: kselftest.h: No such file 
+or directory
+     9 | #include "kselftest.h"
+       |          ^~~~~~~~~~
 
 
-vim +4988 drivers/base/core.c
+The correct header file to include should be: <linux/kernel.h>
 
-  4981	
-  4982	static int dev_probe_failed(const struct device *dev, int err, bool fatal,
-  4983				    const char *fmt, va_list args)
-  4984	{
-  4985		struct va_format vaf;
-  4986	
-  4987		vaf.fmt = fmt;
-> 4988		vaf.va = &args;
-  4989	
-  4990		switch (err) {
-  4991		case -EPROBE_DEFER:
-  4992			device_set_deferred_probe_reason(dev, &vaf);
-  4993			dev_dbg(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-  4994			break;
-  4995	
-  4996		case -ENOMEM:
-  4997			/* Don't print anything on -ENOMEM, there's already enough output */
-  4998			break;
-  4999	
-  5000		default:
-  5001			/* Log fatal final failures as errors, otherwise produce warnings */
-  5002			if (fatal)
-  5003				dev_err(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-  5004			else
-  5005				dev_warn(dev, "error %pe: %pV", ERR_PTR(err), &vaf);
-  5006			break;
-  5007		}
-  5008	
-  5009		return err;
-  5010	}
-  5011	
+Thanks,
+Yang
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>   
+>   static int test__demangle_java(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+>   {
+> @@ -28,7 +29,7 @@ static int test__demangle_java(struct test_suite *test __maybe_unused, int subte
+>   		  "void java.lang.Object<init>()" },
+>   	};
+>   
+> -	for (i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); i++) {
+> +	for (i = 0; i < ARRAY_SIZE(test_cases); i++) {
+>   		buf = java_demangle_sym(test_cases[i].mangled, 0);
+>   		if (strcmp(buf, test_cases[i].demangled)) {
+>   			pr_debug("FAILED: %s: %s != %s\n", test_cases[i].mangled,
 
