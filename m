@@ -1,125 +1,161 @@
-Return-Path: <linux-kernel+bounces-343098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE44A9896C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:28:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E559896BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BFFC284880
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D451C2129C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDB242ABE;
-	Sun, 29 Sep 2024 18:28:05 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F1043155;
+	Sun, 29 Sep 2024 18:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I94D5DIl"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5374C62B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAD32263A;
+	Sun, 29 Sep 2024 18:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727634485; cv=none; b=g2OxuvL7HtLhc3tSodgFM1UEO1m2IjuFzgUzzlbrPyirf6kmxHHtrRWEzYmClLnhy+e+GP3XV1lzqVOVTYPlSQSq007NPfkeVdPdDG63BJj8WmkrpBVsJTc39mxxcAvUkXer5E26gpIkIwy3wLC1QmYkCtgHrnlYcGFghLxrhXs=
+	t=1727634040; cv=none; b=NPJO15f3HGL22NEvdPZVUFfaTFIyJXJwEyFIctHGSk0u8ykJPVxiRM2axD2Qk0IyQiJBnY3IrXIcXSYJSLNixgfqwCPGu9sNZtKkcT/dIyWxI005LzdrA0vlTtbkwWsJbWXOHMJHdmnKxntEfBulhJTFaUAc2hxjKJH0O1Swa8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727634485; c=relaxed/simple;
-	bh=Akja96EBvkfwk+Mny9hOpt9hllyh2xFazkaZpVC22TQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhC96iCPrDeQ9Mjp887KgupiFPBMN0SxWR9rk6bDoNctmkwDnqEJArKozhryurA+pgT6HDLVcb8YSuDvuGXYMmBzHA7B2jj8kP7IVQU+bgFegglgBDBFxKcB+lxBSzKc1xJgRJrlQhHiXE3ThrpgfJjZjsNzMburJCPBjXIBjBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id E4CFA1F0004B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:19:50 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id 33F95A60899; Sun, 29 Sep 2024 18:19:50 +0000 (UTC)
-X-Spam-Level: *
-Received: from localhost.localdomain (unknown [192.168.1.64])
-	by laika.paulk.fr (Postfix) with ESMTP id E147EA60899;
-	Sun, 29 Sep 2024 18:19:46 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Russell King <linux@armlinux.org.uk>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH] ARM: topology: Allow missing CPU clock-frequency device-tree property
-Date: Sun, 29 Sep 2024 20:19:36 +0200
-Message-ID: <20240929181936.644910-1-paulk@sys-base.io>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727634040; c=relaxed/simple;
+	bh=dx98SzG0vXnZ6U7aGG4CHNbUS0cwNCxmS94l7CIhOK4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVYXbp9tgTtMi8bpYnM8U3ZWLzujiFYedYpt9bY9ynZA/oTb9rWZaHZ1Lz2mtl6x1GUaZp31gAnG6cFmXd35wj4gIZSrwR1eGELRAKZXURGYEEA1cZ1+Ol7+2E3DFwKPmijFdoY72eOVR98WWcf4mLn/5VAz+Mo+qU+RaKXzF/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I94D5DIl; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso591284266b.3;
+        Sun, 29 Sep 2024 11:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727634037; x=1728238837; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FIhQyB1zmp2fourf7t7A6PbiXpMcGdp9O1h0W120jps=;
+        b=I94D5DIlCabDkQj8Rr5uHmkjbDRVbGzXzoYG8Jtm1MA/ST7uQsD/BHhvlhRuyDPLQn
+         /UkseLqY/xGpuwg350et4eAGTZ/uaC/hGZUF7czBIE4OC4srjm/uiZzP/mj+0LXQ3XRb
+         1E9mEWwVtlXIox3y1qB38Mx1+deAqs0KpBS6b+SJKgQxWqkB6kTorymlZQXQpQlW94me
+         WPZt7dThprEuv7yz9NUFzjS3fOCoN9I8UrnJuuWIC43zotpq6UADrvNsUkTYAOIvyszW
+         OOJG8x0vCL2eeVi+BcweDUt4n4JX5iqUfu8GdaFxkI5kRpwE/ls8rGMZZbX8mxTap/Xp
+         y/WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727634037; x=1728238837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FIhQyB1zmp2fourf7t7A6PbiXpMcGdp9O1h0W120jps=;
+        b=jR/FKRximzaemZQQO4EAi92Mx8LZxPnzK0TL8yHTBEpTOBWxUJpGb9pglQeN4skaeN
+         vjWPLTbmnGNMo7Me79LFHYEKZs9TP+rkQGT6Y+iDnfmuEsUsjoOJrMXy0C5nlRZB5Fti
+         BhpdYe297HeWyaGR635kya1pRDwNhQ2sjcniTg4vWnhnLs4/95N+ZDf+kMQO/s55TYNU
+         EbYfAWVWZj/lpIflSOm/4adI8sbzsioY7WnCMcnfLjOvOxWUlaQYu9rMouKHVTkePAEK
+         IlO9LzbQnseH/zzJhu5schVZ+hvwiFfoeT6JxSGBTZhnzUsHnrXHqW4epSy+qM/Liom3
+         bRDg==
+X-Forwarded-Encrypted: i=1; AJvYcCW92SBTTGCF3dj/rCFSpjnMXEGbQHrTi+iSA/yLxfoOsF5RzTKWEypkzj+ZBZXMnrcQoTddg9CO626VHWOv@vger.kernel.org, AJvYcCXiktDpjGfJtY3yTRIEi5jJj1ONvxLOi43h3U3LnkJeqMLiEYyOEMaRw927z7TyAq9EmPOm7TC1JHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm+oI5MHyrG6k84Fs50RxIHhQgg84qLdBEqc3b0J1rjB0X/5TJ
+	EhDcYCTOhn4EAkzBuEIIgz4TbZVoqAjVTD0JlilcyMjx+KyW2lfu
+X-Google-Smtp-Source: AGHT+IGEp9wZ4D2X3eyEoFntYJnl9jGs+c4/61l25eHGVK0EQEzCZ/jP2ZO52SD6zxW0l6cKqis8XA==
+X-Received: by 2002:a17:907:2685:b0:a86:a6ee:7dad with SMTP id a640c23a62f3a-a93c4a4e0a8mr971097166b.52.1727634036526;
+        Sun, 29 Sep 2024 11:20:36 -0700 (PDT)
+Received: from vamoiridPC ([2a04:ee41:82:7577:df60:d786:cd5:d3c1])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297a2ffsm407216666b.157.2024.09.29.11.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 11:20:35 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
+Date: Sun, 29 Sep 2024 20:20:33 +0200
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, dan.carpenter@linaro.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iio: pressure: bmp280: Fix type for raw values
+Message-ID: <20240929182033.GA213331@vamoiridPC>
+References: <20240929112511.100292-1-vassilisamir@gmail.com>
+ <20240929112511.100292-2-vassilisamir@gmail.com>
+ <20240929175710.2e101abc@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929175710.2e101abc@jic23-huawei>
 
-From: Paul Kocialkowski <contact@paulk.fr>
+On Sun, Sep 29, 2024 at 06:04:26PM +0100, Jonathan Cameron wrote:
+> On Sun, 29 Sep 2024 13:25:10 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > The adc values coming directly from the sensor in the BM{E,P}{2,3}xx
+> > sensors are unsigned values so treat them as such.
+> > 
+> > Fixes: 80cd23f43ddc ("iio: pressure: bmp280: Add triggered buffer support")
+> Why is this a fix rather than a cleanup?  Looks to me like all the values
+> are going to be small enough that they fit either way.
+> So good to tidy up for consistency etc, but why a fixes tag?
+> 
+> I 
+> 
 
-When no capacity-dmips-mhz property is provided, the ARM topology code
-implements a fallback mechanism that uses the clock-frequency
-device-tree property as an indication of the maximum frequency
-achievable by the CPU.
+Hi Jonathan,
 
-When the property is missing, the fallback mechanism gives up and
-prints out a nasty error message that has been haunting generations
-of ARMv7 Linux users. This is uncalled for since the property is
-optional (and now deprecated too).
+I used the fixes tag because I though it was appropriate since it was
+using a wrong variable type even though it was not posing any
+functional thread (I mentioned it in the cover-letter as well).
 
-Allow the fallback mechanism to continue by assuming the same nominal
-frequency for all CPU cores, while still benefiting from the static
-coefficient provided by the compatible-driven table entries.
-This is similar to what is done in the common arch topology code when
-it fails to find a clock to get the frequency from.
+Since I am doing a new version I can drop the tag, no problem!!!
 
-The ranging mechanism (using the middle capacity) is unaffected by
-the use of a unit frequency and still returns values in the requested
-range.
+Cheers,
+Vasilis
 
-Also add a comment to clarify what is going on.
-
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- arch/arm/kernel/topology.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index 2336ee2aa44a..0eb743c65166 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -119,13 +119,23 @@ static void __init parse_dt_topology(void)
- 		if (cpu_eff->compatible == NULL)
- 			continue;
- 
-+		/*
-+		 * Use the legacy clock-frequency property (representing the
-+		 * maximum achievable clock frequency) as an efficiency
-+		 * coefficient (divided by 2^20, roughly 1 MHz) to the table
-+		 * value. If no such property is available, use the table value
-+		 * directly and assume all CPUs are running at the same
-+		 * nominal frequency.
-+		 *
-+		 * It is assumed that clock-frequency is either provided for all
-+		 * CPUs or for none of them.
-+		 */
- 		rate = of_get_property(cn, "clock-frequency", &len);
--		if (!rate || len != 4) {
--			pr_err("%pOF missing clock-frequency property\n", cn);
--			continue;
--		}
--
--		capacity = ((be32_to_cpup(rate)) >> 20) * cpu_eff->efficiency;
-+		if (rate && len == 4)
-+			capacity = ((be32_to_cpup(rate)) >> 20) *
-+				   cpu_eff->efficiency;
-+		else
-+			capacity = cpu_eff->efficiency;
- 
- 		/* Save min capacity of the system */
- 		if (capacity < min_capacity)
--- 
-2.46.2
-
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 6c2606f34ec4..472a6696303b 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -1023,7 +1023,8 @@ static irqreturn_t bmp280_trigger_handler(int irq, void *p)
+> >  	struct iio_poll_func *pf = p;
+> >  	struct iio_dev *indio_dev = pf->indio_dev;
+> >  	struct bmp280_data *data = iio_priv(indio_dev);
+> > -	s32 adc_temp, adc_press, t_fine;
+> > +	u32 adc_temp, adc_press;
+> These are filled as part of a get_unaligned_be24() so the value will never
+> be big enough that signed / unsigned should make any difference.
+> 
+> > +	s32 t_fine;
+> >  	int ret;
+> >  
+> >  	guard(mutex)(&data->lock);
+> > @@ -1137,7 +1138,8 @@ static irqreturn_t bme280_trigger_handler(int irq, void *p)
+> >  	struct iio_poll_func *pf = p;
+> >  	struct iio_dev *indio_dev = pf->indio_dev;
+> >  	struct bmp280_data *data = iio_priv(indio_dev);
+> > -	s32 adc_temp, adc_press, adc_humidity, t_fine;
+> > +	u32 adc_temp, adc_press, adc_humidity;
+> Same with these.
+> > +	s32 t_fine;
+> >  	int ret;
+> >  
+> >  	guard(mutex)(&data->lock);
+> > @@ -1616,7 +1618,8 @@ static irqreturn_t bmp380_trigger_handler(int irq, void *p)
+> >  	struct iio_poll_func *pf = p;
+> >  	struct iio_dev *indio_dev = pf->indio_dev;
+> >  	struct bmp280_data *data = iio_priv(indio_dev);
+> > -	s32 adc_temp, adc_press, t_fine;
+> These are similar but le24.
+> 
+> > +	u32 adc_temp, adc_press;
+> > +	s32 t_fine;
+> >  	int ret;
+> >  
+> >  	guard(mutex)(&data->lock);
+> 
 
