@@ -1,163 +1,235 @@
-Return-Path: <linux-kernel+bounces-343074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ECF989677
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:12:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6301989679
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF471C20C5B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405261F226F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A0F17E44A;
-	Sun, 29 Sep 2024 17:12:35 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF3717E44A;
+	Sun, 29 Sep 2024 17:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dFBCOFXz"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5258C17C22E
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A2E154BED;
+	Sun, 29 Sep 2024 17:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727629954; cv=none; b=p0QnVD0IVwejX/s4SX252B+nA1Dr4MR3Nx0NIOK2VRTOb4uIazr3ulhSz04ciZVOhuiJfL/ZIX1W9zDOQL0YUA8Z7pKNIZ9R2tAwn1PF1ofIu40uYJuR+CFKTDzR18u47ukulgxJLjoASbcKbo9IDGjEXMu05zjXYLZ5v6tmNv4=
+	t=1727630053; cv=none; b=fShKySmVJMn1LEASy/jbtlB1gnj57UbID4IwlHWdG6nVY5jeiuR4hNsEho/JvCFisuVaxnLCNuf9gEtNxnk06AyB1CIkXehN7Ydh7T4WWeBiUO6f6Cqzu3+61b9aT/A7QJSIqmXVaoFkjXQv9k3+y6lTp56vLkGYbDlZ9s8GAlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727629954; c=relaxed/simple;
-	bh=EaXRUEmfB79k/Z0BeIOPUDzlzgGDwf/cukr9QkhFr/w=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XkO0RYx2ylGi8AJbFzkFaAchB7gw/XgTXVgLKCJBjS5mmnGyTfHzD+Gfs+jDSmPAXvjPtYtaAafNB+B12yex7XP03gq3HOAcgyTl2s4AWpLxeilm+p9HG/T1Oxd8PLo2MwzQ8lClk/iPo60swUDBVxB554FXiO6QWT78G3E7geo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83246ec00c7so358842639f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:12:32 -0700 (PDT)
+	s=arc-20240116; t=1727630053; c=relaxed/simple;
+	bh=JEYG6VvrMXHx4KWb1o2iWV/PqQza+18wa1vjRIIPF+E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=upYY2UaffALoqzgkpxvA9YQGX/OTLEzF1EkYguAoaWZH0md++gHKr4+8pkzu1hKzHJGZiwbdimhA7nUriNq1uDSFBaXNH7blZYGFdASNz80hrk6b6BaXlT6CArQP7Y1NIzw30Aaa8HRsGyqvgxkm2CG56P4LfOgHAmSuPs54hJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dFBCOFXz; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37ce14ab7eeso1000391f8f.2;
+        Sun, 29 Sep 2024 10:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727630049; x=1728234849; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ujx86CAlBOuJagVhHvFTxkQxVPjlVr6IAEtlsGZ7IPY=;
+        b=dFBCOFXzvn8m1lCV2yAvrHYYQhq2Mimnvu/5WO3dUuKFE6Q+wGp8tdn3twQJfGqIMw
+         rydykjF1K4ctFkkxzXgZlLN363ugr7UFluwln3rSWmtDJpuB9Y7ZdUsrPVdqmRZjBtvA
+         Y1sHudoqpwvLxP67Z4m9K5QNcEB9HdvIRItcXVvorZH+podnBlyX1c6awxEkjLuptNaU
+         XCfPRcDfRPTB0O5njqdRtURHynuPrq/cyAL0PZcX3P73UOTyZ4MxSbRBJbFox5RwH3Vl
+         feSoLvbruxRwb36HhhqqO+po30OwRy0FoYP2wENqwkEMUMr6GMp0WytV1TRipYIaSiUe
+         gQvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727629952; x=1728234752;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5oLiFtWq3lpVzqaTZ+/xin618Ir4btGMwE3p+GRGDS8=;
-        b=EMEL0WuCW6Qw1ZV8qawdCS46prUjzGXcLK05qc3+kkuwtMRr2x3vfsspvlnD5NRaPT
-         IXT9a6O/wkSszNKMcsybmFvW0YdycjkLhkB74nHRyZjSYV3RZxjApN64NK+A672c3uLd
-         let/pJfIAN7P8ierChPaGe7Y+xaqSwBdgqEQAVc0S0GLBEf9U7W0ECkd4kz+C7MS9XCt
-         AhHel9ubbbeR5J+pplebZUiA91bd7vWSYhr7/Cnm8qzRB35vTqgG+2tAe6S4bEQjjYQ4
-         167Y2YuQWL1Jwcjc4TIQGGngSsGh+0wYNCStZIxCNlGDq9KCicnBFBazv1nb8nD3c+SA
-         uJNw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNCAPUvXPU0cf/59sqejzUt7v8tR66w7aj/o/hjId2so4hrCDQ0PXToksroM+6VnPtezIldc7CE+3bIv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr0sppfr5QNGu9YrSC1b5BEbrU+YT5B7oJES5XkAm8ylT/Z2Z6
-	/mlHfQdA1oTDIiWe1cPtjijxVuBtKvwMwcX/P8JwVnLzyx8n96mgCaZNc6pQ8MTVNSIPcPn6J3U
-	+6Dxf6jWP8fRfVcipxsVCqJzWS/8pIEAwz/RtP+6NFRi9frQlgZRkEbM=
-X-Google-Smtp-Source: AGHT+IHxgiVeJXHJ017W8Jzgtl1T+AZNKyPUUAUgljHC66OS0lsN4Nq4JhLIOFPVmVbbbE0ijf0zKcbfmIW266Zr3fWHC7K1k0HB
+        d=1e100.net; s=20230601; t=1727630049; x=1728234849;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ujx86CAlBOuJagVhHvFTxkQxVPjlVr6IAEtlsGZ7IPY=;
+        b=fbTtq68xUNdO8fyC4Q3o7rDJBzvU8dRYGb9rcQ27hHWYyjBMCzqgU2Xr35NrUfRvuG
+         fon9kljpfrPIel7Q1q7cFXCPK2Dbfi4LCzs0WIXT98RqXG502nidqyEU/PLg4FZnuZUY
+         wzFzRTR7zxAQVrOQeMpzxrx7UOy4O+Eg407NaBiAgxuiwY2G6NlUNP5Ulsbqt+f85VSD
+         d3hOregCDpdnJsmozVZ0X4A/R4QZx6Zarzm78AcLbwJHCCxn6pxOMO7v4UkV9KmlsdS1
+         BZAnGCjeE6DrpVMK6Ar4xpFew88EtPIQ3uU+Gke4BfPGYoZMn/vDMiFUEZ4kRjthk4HB
+         IFsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbN6RdjdZBeeDbjk/U2dSX21D0PoEM3W6bVwnW0NgnTru0Ydux12R890rOXcC+Y/JV7tsGsO3uXazWwcE4@vger.kernel.org, AJvYcCXjl/SuTVUcTzPso2H0f05DlaFK8PuUF6/dLLKGJkPNjVqy9sTDEAwlrSoR9B8WGZSsuPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4cZZmZM6Bd278LxWAHMnvz44KqObauzxZo2oupd0F283WorNB
+	5oi7pg77D3U4XlwnMVqbIz2gu3EejvSjR5Dk8KuZz7hGJI7uOFIeSWbHjA3TEloQijpVxX3Gh77
+	J4KTGVks9uX79+yMcCn5cnmkLD50=
+X-Google-Smtp-Source: AGHT+IEvRwkn2gMwVAZdKl5/Khty3QtE8LNL8UvKVRpAvWk+bJ7tNsFc8gB2qyKTkbJZwPwLUP0s7jQ8/7WXiF3NMn4=
+X-Received: by 2002:a5d:4587:0:b0:37c:cea2:826f with SMTP id
+ ffacd0b85a97d-37cd5a692e1mr8138299f8f.2.1727630049388; Sun, 29 Sep 2024
+ 10:14:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d84:b0:3a2:74eb:91fa with SMTP id
- e9e14a558f8ab-3a3451c1b12mr71194785ab.25.1727629952365; Sun, 29 Sep 2024
- 10:12:32 -0700 (PDT)
-Date: Sun, 29 Sep 2024 10:12:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f98a80.050a0220.6bad9.0021.GAE@google.com>
-Subject: [syzbot] [ext4?] [ocfs2?] WARNING in jbd2_journal_update_sb_log_tail
-From: syzbot <syzbot+96ee12698391289383dd@syzkaller.appspotmail.com>
-To: jack@suse.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <20240926115328.105634-1-puranjay@kernel.org> <20240926115328.105634-2-puranjay@kernel.org>
+In-Reply-To: <20240926115328.105634-2-puranjay@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 29 Sep 2024 10:13:58 -0700
+Message-ID: <CAADnVQJL5xpF=5hWdavOcU8gbZKwqsqMBLFySqpsr+K_3C+=vA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 1/2] bpf: implement bpf_send_signal_remote() kfunc
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Puranjay Mohan <puranjay12@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Sep 26, 2024 at 4:53=E2=80=AFAM Puranjay Mohan <puranjay@kernel.org=
+> wrote:
+>
+> Implement bpf_send_signal_remote kfunc that is similar to
+> bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
+> send signals to other threads and processes. It also supports sending a
+> cookie with the signal similar to sigqueue().
+>
+> If the receiving process establishes a handler for the signal using the
+> SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
+> si_value field of the siginfo_t structure passed as the second argument
+> to the handler.
+>
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+> ---
+>  kernel/trace/bpf_trace.c | 78 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 77 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index a582cd25ca876..51b27db1321fc 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -802,6 +802,9 @@ struct send_signal_irq_work {
+>         struct task_struct *task;
+>         u32 sig;
+>         enum pid_type type;
+> +       bool is_siginfo;
+> +       kernel_siginfo_t info;
+> +       int value;
+>  };
+>
+>  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
+> @@ -811,7 +814,11 @@ static void do_bpf_send_signal(struct irq_work *entr=
+y)
+>         struct send_signal_irq_work *work;
+>
+>         work =3D container_of(entry, struct send_signal_irq_work, irq_wor=
+k);
+> -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work->t=
+ype);
+> +       if (work->is_siginfo)
+> +               group_send_sig_info(work->sig, &work->info, work->task, w=
+ork->type);
+> +       else
+> +               group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task,=
+ work->type);
+> +
+>         put_task_struct(work->task);
+>  }
+>
+> @@ -848,6 +855,7 @@ static int bpf_send_signal_common(u32 sig, enum pid_t=
+ype type)
+>                  * irq works get executed.
+>                  */
+>                 work->task =3D get_task_struct(current);
+> +               work->is_siginfo =3D false;
+>                 work->sig =3D sig;
+>                 work->type =3D type;
+>                 irq_work_queue(&work->irq_work);
+> @@ -3484,3 +3492,71 @@ static int __init bpf_kprobe_multi_kfuncs_init(voi=
+d)
+>  }
+>
+>  late_initcall(bpf_kprobe_multi_kfuncs_init);
+> +
+> +__bpf_kfunc_start_defs();
+> +
+> +__bpf_kfunc int bpf_send_signal_remote(struct task_struct *task, int sig=
+, enum pid_type type,
+> +                                      int value)
+> +{
+> +       struct send_signal_irq_work *work =3D NULL;
+> +       kernel_siginfo_t info;
+> +
+> +       if (type !=3D PIDTYPE_PID && type !=3D PIDTYPE_TGID)
+> +               return -EINVAL;
+> +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
+> +               return -EPERM;
+> +       if (unlikely(!nmi_uaccess_okay()))
+> +               return -EPERM;
+> +       /* Task should not be pid=3D1 to avoid kernel panic. */
+> +       if (unlikely(is_global_init(task)))
+> +               return -EPERM;
+> +
+> +       clear_siginfo(&info);
+> +       info.si_signo =3D sig;
+> +       info.si_errno =3D 0;
+> +       info.si_code =3D SI_KERNEL;
+> +       info.si_pid =3D 0;
+> +       info.si_uid =3D 0;
+> +       info.si_value.sival_int =3D value;
+> +
+> +       if (irqs_disabled()) {
+> +               /* Do an early check on signal validity. Otherwise,
+> +                * the error is lost in deferred irq_work.
+> +                */
+> +               if (unlikely(!valid_signal(sig)))
+> +                       return -EINVAL;
+> +
+> +               work =3D this_cpu_ptr(&send_signal_work);
+> +               if (irq_work_is_busy(&work->irq_work))
+> +                       return -EBUSY;
+> +
+> +               work->task =3D get_task_struct(task);
+> +               work->is_siginfo =3D true;
+> +               work->info =3D info;
+> +               work->sig =3D sig;
+> +               work->type =3D type;
+> +               work->value =3D value;
+> +               irq_work_queue(&work->irq_work);
+> +               return 0;
+> +       }
+> +
+> +       return group_send_sig_info(sig, &info, task, type);
 
-syzbot found the following issue on:
+This is very similar with bpf_send_signal_common().
+Pls avoid copy paste and share the code instead.
 
-HEAD commit:    684a64bf32b6 Merge tag 'nfs-for-6.12-1' of git://git.linux..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138c0907980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
-dashboard link: https://syzkaller.appspot.com/bug?extid=96ee12698391289383dd
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13bea99f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d04aa9980000
+> +}
+> +
+> +__bpf_kfunc_end_defs();
+> +
+> +BTF_KFUNCS_START(send_signal_kfunc_ids)
+> +BTF_ID_FLAGS(func, bpf_send_signal_remote, KF_TRUSTED_ARGS)
+> +BTF_KFUNCS_END(send_signal_kfunc_ids)
+> +
+> +static const struct btf_kfunc_id_set bpf_send_signal_kfunc_set =3D {
+> +       .owner =3D THIS_MODULE,
+> +       .set =3D &send_signal_kfunc_ids,
+> +};
+> +
+> +static int __init bpf_send_signal_kfuncs_init(void)
+> +{
+> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_send=
+_signal_kfunc_set);
+> +}
+> +
+> +late_initcall(bpf_send_signal_kfuncs_init);
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-684a64bf.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f05b4b08a420/vmlinux-684a64bf.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d59f9edaf3bc/bzImage-684a64bf.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a82758cb7d80/mount_0.gz
+Let's avoid all this later_init proliferation.
+We have way too many of them across the whole kernel.
+Reuse one of the existing places and add kfunc there.
+With that extra bpf_send_signal_kfunc_set and send_signal_kfunc_ids
+won't be necessary.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+96ee12698391289383dd@syzkaller.appspotmail.com
-
-(syz-executor214,5103,0):ocfs2_block_check_validate:402 ERROR: CRC32 failed: stored: 0xb3775c19, computed 0x2dd1c265. Applying ECC.
-JBD2: Ignoring recovery information on journal
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5103 at fs/jbd2/journal.c:1887 jbd2_journal_update_sb_log_tail+0x2ba/0x360 fs/jbd2/journal.c:1887
-Modules linked in:
-CPU: 0 UID: 0 PID: 5103 Comm: syz-executor214 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:jbd2_journal_update_sb_log_tail+0x2ba/0x360 fs/jbd2/journal.c:1887
-Code: 1c ff 41 80 3c 2c 00 74 08 4c 89 ff e8 9f 71 86 ff 41 80 27 f7 4c 89 f7 e8 f3 1c 56 09 31 ed e9 72 fe ff ff e8 47 c4 1c ff 90 <0f> 0b 90 41 80 3c 2c 00 75 d5 eb db 44 89 f1 80 e1 07 80 c1 03 38
-RSP: 0018:ffffc90000e46d70 EFLAGS: 00010293
-RAX: ffffffff8277f0f9 RBX: 0000000000000000 RCX: ffff8880002ba440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff8277f0c9 R09: fffff520001c8d9c
-R10: dffffc0000000000 R11: fffff520001c8d9c R12: 1ffff1100808bc00
-R13: ffff88803d2e301c R14: ffff88804045e0b0 R15: ffff88804045e000
-FS:  000055558c7ca380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd277995ed8 CR3: 000000003fef2000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- journal_reset fs/jbd2/journal.c:1779 [inline]
- jbd2_journal_load+0x708/0xbc0 fs/jbd2/journal.c:2109
- ocfs2_journal_load+0xed/0x6d0 fs/ocfs2/journal.c:1143
- ocfs2_check_volume fs/ocfs2/super.c:2421 [inline]
- ocfs2_mount_volume+0xc12/0x1940 fs/ocfs2/super.c:1817
- ocfs2_fill_super+0x475a/0x5750 fs/ocfs2/super.c:1084
- mount_bdev+0x20a/0x2d0 fs/super.c:1679
- legacy_get_tree+0xee/0x190 fs/fs_context.c:662
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb2af90112a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe3f741ce8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe3f741d00 RCX: 00007fb2af90112a
-RDX: 0000000020004740 RSI: 0000000020004780 RDI: 00007ffe3f741d00
-RBP: 0000000000000004 R08: 00007ffe3f741d40 R09: 0000000000004701
-R10: 000000000100000a R11: 0000000000000282 R12: 000000000100000a
-R13: 00007ffe3f741d40 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+pw-bot: cr
 
