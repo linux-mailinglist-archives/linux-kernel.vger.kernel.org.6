@@ -1,181 +1,150 @@
-Return-Path: <linux-kernel+bounces-342780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA109892F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 05:58:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20619892F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:03:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143701C2290F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 03:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABEBDB2157F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2660E2263A;
-	Sun, 29 Sep 2024 03:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="ATK5Ec35"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85BBA22611;
+	Sun, 29 Sep 2024 04:03:19 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E552722092
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 03:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06F117580;
+	Sun, 29 Sep 2024 04:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727582289; cv=none; b=umFKWrDr2du5qdBC/ALA29KDov601MNOVMcldf4rjowR6yslS5Yb7JFkcIJdyq5gw1xBYBZZfrMvdudvQ0bgwNNXaKjiz9PGPC7u8z4pula6MpSQ8LsuO3ZDo/Oi+H24PJ9q7OMGN6Vm5EMRBBomJOTzf6MV84Dh6sIu72ljA54=
+	t=1727582599; cv=none; b=qt4QsqKvJ1T6j/hmNjZJYOE+BQQ074UnPlSdlWdbnDHPX8nzF3W3XqokOvC9AN3+aP4GJ7gzcffOZn2WTGJ+BiQrgPNXV9cYUX1RMPj0RRdIEoi+WryTZyjb6DX/HfsZqsZ3WPgxik+vnXCMasFejBZ2BWP0aBO8CRAqi26PclY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727582289; c=relaxed/simple;
-	bh=aaVSKdkRgN4OaH6OgMY4XkDmYKUvaQpfJVKpqLC/iIc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrJ1oprR+iV624xs7lX27AM7VHUGc5c0dOP0ocNBGLBOmzIiopHL7oC5KSDjiiM9RchVoG7ZWEKuxi21X2nxT9dAEs9dUXNyzr+YFdUaRJU7e/7E1HJT8ru23xgF6ZpVS0pofewgu+usMWy5yYLURPmRb+CE+iQaduXfv8brZkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=ATK5Ec35; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-207115e3056so28612465ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Sep 2024 20:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1727582287; x=1728187087; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1YkWfPvtAH4vWwmKQhiADe/rYImGBQg3vsS8ImzGFis=;
-        b=ATK5Ec35NTMqsRmoTJEMJnDZwRkG786hWBuzzYWq0ASYfbzSdHxX4j7S9S7Jdu+Olt
-         IbbwpBHlQ5czooZr+XuoQIYjE/D9l99Dv2A6Tv/uJFv6wT4XSb5qS9OR/Y2ysN6Jg7Rt
-         nU4ZGj30RHs9qqUY78bjB6BlC63Pm2fZGuXZFwjQe9RKPxdE15JwiU8tdItUtLo9Kfdz
-         0pWfvMor4XlZGSjgCYcJp860OHnZTipVk94paAuZn0kroT30NJB/R9tNFiPR0JCYyS49
-         yS3KtfvBFPWRS6QOIXRHY4xBMUuzzwFUMTH85RXkHYMCQm1srxRTlperJ7671ir7YRkJ
-         6PDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727582287; x=1728187087;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1YkWfPvtAH4vWwmKQhiADe/rYImGBQg3vsS8ImzGFis=;
-        b=xK8gTIcX9AMRFExcLlcVRvHb58oys7Al/fTsDG1p4mUyeVqxlsaN6pXwkPq+k6NwrR
-         dWf2/Q30gYKtAzenplXL1eel4E081ppSwf+IbXsSKzB/sresfUZ4eNt6iNt+QFyBHIMb
-         tqFWDhMXGWx2nGnNDMsDNUjepWI5f2YVSwV66tFK/d4hkrVDjf58W4Z1mWnbAWlIL95C
-         I1nCMqJen0tY1dzlntgEPV6DA46N/+yBRDUDujiXSW0UVjL7mKAoS4gePQPQr9qm4CBl
-         4oerwdHtzsdMqBfwk6bxcH+lFS8LtzrS9Cprr1sJ4M7v6ljQML0ManQr3wiazEPb3EGx
-         awsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqy2RjzPJaYeDw/2blMW6acLPILXb2s/IVwMF/lPFB5OHygFrVrY9cwFd8e7Hy+JXrmhaspryZTJHKy8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoDn+Sd4VqREsp3brwZh8iBATweXwQBz5iTdyi6cje3p8Sy9Wo
-	sxI5RCcPB6cHBEX5l731hhQ7otHI8kOwyrMXeX2Thfn6Y/YM4VcAmUAsnP/0ex0=
-X-Google-Smtp-Source: AGHT+IGV/f9jzts7RDAjmlHZvifv1MNEX/u7uVlkFGTpdrqBwMyA+z/HUMV+o4vjzAPi2t1Jy3PuxA==
-X-Received: by 2002:a17:903:8cc:b0:20b:5b16:b16b with SMTP id d9443c01a7336-20b5b16b29dmr54329085ad.36.1727582286974;
-        Sat, 28 Sep 2024 20:58:06 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e36fe7sm33519615ad.211.2024.09.28.20.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Sep 2024 20:58:06 -0700 (PDT)
-Date: Sat, 28 Sep 2024 20:58:04 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] riscv: dts: thead: Add TH1520 ethernet nodes
-Message-ID: <ZvjQTD9jG12rX8Gx@x1>
-References: <20240926-th1520-dwmac-v2-0-f34f28ad1dc9@tenstorrent.com>
- <20240926-th1520-dwmac-v2-3-f34f28ad1dc9@tenstorrent.com>
- <3e26f580-bc5d-448e-b5bd-9b607c33702b@lunn.ch>
- <ZvWyQo+2mwsC1HS6@x1>
- <0b49b681-2289-412a-8969-d134ffcfb7fc@lunn.ch>
- <ZvYJfrPx75FA1IFC@x1>
- <5076789c-3a35-4349-9733-f5d47528c184@lunn.ch>
- <ZvhviRUb/CitmhgQ@x1>
+	s=arc-20240116; t=1727582599; c=relaxed/simple;
+	bh=gRGrRmADyjsXXRsWm2pTHkTbNynuPdCbmnvDnv7/BKw=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WsgogDgix6MMHfkIlbc7HLUrcl1axAM+CWxM5f6HND7b7MAzInZs8UtWVeqNLJ9lbdmfYf7QoxlgMUEJTnMY93uFa8vymuHq1p6eg8BCH3y85g5FX0J9vQF0AwzuXYWdpiWUy36htI7thhoDdus+DbqEL3GCR38e8OAC/Efw2UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XGVsg5N3dz20pTQ;
+	Sun, 29 Sep 2024 12:02:47 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D265140157;
+	Sun, 29 Sep 2024 12:03:13 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 29 Sep 2024 12:03:12 +0800
+Subject: Re: [PATCH RFC 1/2] dt-bindings: mtd: ubi-volume: add
+ 'volume-is-critical' property
+To: Daniel Golle <daniel@makrotopia.org>, Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+	<richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, John Crispin <john@phrozen.org>,
+	<linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+ <7a2e8819-ac70-4070-a731-53994c72cd79@kernel.org>
+ <Zvf_84xxhxwpPgee@makrotopia.org>
+ <18e9d774-813b-427e-9938-53853d695e18@kernel.org>
+ <ZvgU0eBEwTJ3sHuN@makrotopia.org>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <ad5a3811-c856-4f4b-f569-bb67a0e3f751@huawei.com>
+Date: Sun, 29 Sep 2024 12:03:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvhviRUb/CitmhgQ@x1>
+In-Reply-To: <ZvgU0eBEwTJ3sHuN@makrotopia.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-On Sat, Sep 28, 2024 at 02:05:13PM -0700, Drew Fustini wrote:
-> On Fri, Sep 27, 2024 at 01:58:40PM +0200, Andrew Lunn wrote:
-> > > I tried to setup an nfs server with a rootfs on my local network. I can
-> > > mount it okay from my laptop so I think it is working okay. However, it
-> > > does not seem to work on the lpi4a [3]. It appears the rgmii-id
-> > > validation fails and the dwmac driver can not open the phy:
-> > > 
-> > >  thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
-> > >  thead-dwmac ffe7060000.ethernet eth0: validation of rgmii-id with support \
-> > >              00,00000000,00000000,00006280 and advertisementa \
-> > > 	     00,00000000,00000000,00006280 failed: -EINVAL
-> > >  thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -22)
-> > 
-> > Given what Emil said, i would suggest flipping the MDIO busses
-> > around. Put the PHYs on gmac1's MDIO bus, and set the pinmux so that
-> > its MDIO bus controller is connected to the outside world. Then, when
-> > gmac1 probes first, its MDIO bus will be probed at the same time, and
-> > its PHY found.
-> > 
-> > 	Andrew
+ÔÚ 2024/9/28 22:38, Daniel Golle Ð´µÀ:
+> On Sat, Sep 28, 2024 at 03:45:49PM +0200, Krzysztof Kozlowski wrote:
+>> On 28/09/2024 15:09, Daniel Golle wrote:
+>>> On Sat, Sep 28, 2024 at 03:02:47PM +0200, Krzysztof Kozlowski wrote:
+>>>> On 28/09/2024 14:47, Daniel Golle wrote:
+>>>>> Add the 'volume-is-critical' boolean property which marks a UBI volume
+>>>>> as critical for the device to boot. If set it prevents the user from
+>>>>> all kinds of write access to the volume as well as from renaming it or
+>>>>> detaching the UBI device it is located on.
+>>>>>
+>>>>> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+>>>>> ---
+>>>>>   .../devicetree/bindings/mtd/partitions/ubi-volume.yaml   | 9 +++++++++
+>>>>>   1 file changed, 9 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+>>>>> index 19736b26056b..2bd751bb7f9e 100644
+>>>>> --- a/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/mtd/partitions/ubi-volume.yaml
+>>>>> @@ -29,6 +29,15 @@ properties:
+>>>>>       description:
+>>>>>         This container may reference an NVMEM layout parser.
+>>>>>   
+>>>>> +  volume-is-critical:
+>>>>> +    description: This parameter, if present, indicates that the UBI volume
+>>>>> +      contains early-boot firmware images or data which should not be clobbered.
+>>>>> +      If set, it prevents the user from renaming the volume, writing to it or
+>>>>> +      making any changes affecting it, as well as detaching the UBI device it is
+>>>>> +      located on, so direct access to the underlying MTD device is prevented as
+>>>>> +      well.
+>>>>> +    type: boolean
+>>>>
+>>>> UBI volumes are mapping to partitions 1-to-1, right? So rather I would
+>>>> propose to use partition.yaml - we already have read-only there with
+>>>> very similar description.
+>>>
+>>> No, that's not the case.
+>>>
+>>> An MTD partition can be used as UBI device. A UBI device (and hence MTD
+>>> partition) can host *several* UBI volumes.
+>>>
+>>> Marking the MTD partition as 'read-only' won't work, as UBI needs
+>>> read-write access to perform bad block relocation, scrubbing, ...
+>>
+>> OK, so not partition but read-only volume.
 > 
-> I'm trying to configure the pinmux to have gmac1 control the mdio bus
-> but it seems I've not done so correctly. I changed pins "GMAC0_MDC" and
-> "GMAC0_MDIO" to function "gmac1" (see the patch below).
+> +1
 > 
-> I don't see any errors about the dwmac or phy in the boot log [1] but
-> ultimately there is no carrier detected and the ethernet interface does
-> not come up.
+>>
+>>>
+>>> Also, typically not all UBI volumes on a UBI device are
+>>> read-only/critical but only a subset of them.
+>>>
+>>> But you are right that the description is inspired by the description
+>>> of the 'read-only' property in partition.yaml ;)
+>>>
+>>> I initially thought to also name the property 'read-only', just like
+>>> for MTD partitions. However, as the desired effect goes beyond
+>>> preventing write access to the volume itself, I thought it'd be
+>>> better to use a new name.
+>>
+>> Yeah, maybe... critical indeed covers multiple cases but is also
+>> subjective. For some bootloader is critical, for other bootloader still
+>> might be fully A/B updateable thus could be modifiable. For others, they
+>> want to use fw_setenv from user-space so not critical at all.
 > 
-> Section "3.3.4.103 G3_MUXCFG_007" in the TH1520 System User Manual shows
-> that bits [19:16] control GMAC0_MDIO_MUX_CFG where value of 2 selects
-> GMAC1_MDIO. Similarly, bits [15:12] control GMAC0_MDC_MUX_CFG where a
-> value of 2 also selects GMAC1_MDC.
-> 
-> Emil - do you have any suggestion as to what I might be doing wrong with
-> the pinmux?
+> The case I want to cover here is the bootloader itself being stored
+> inside a UBI volume. MediaTek's fork of ARM TrustedFirmware-A bl2 comes
+> with support for UBI and loads BL3 (which is TF-A BL31 and U-Boot, and
+> maybe OP-TEE as well) from a static UBI volume. Removing, renaming or
+> altering that volume results in the device not being able to boot any
+> more and requiring a complicated intervention (at attaching debugging
+> UART and using low-level recovery tool) in order to recover.
 
-I've been thinking about this and I don't think there is any problem on
-the LPi4a. Both Ethernet jacks work when I have the mdio bus muxed for
-gmac0 to control it. It seems to control both phy's okay.
-
-Earlier, I tried to setup nfs root but it didn't work. I believe this is
-just due to my ignorance of how to configure it correctly. I've instead
-switched to just adding 'ip=dhcp' to the kernel command. This causes
-stmmac_open() to happen shortly after the thead-dwmac is probed for both
-gmac0 and gmac1. The phy is found for both and there are no errors.
-
-Without 'ip=dhcp', stmmac_open() is not called until around 40 seconds
-into boot when NetworkManager tries to open it. Everything works
-correctly but the delay of over 30 seconds from thead-dwmac probe to
-interface up looks odd in the logs, but I am pretty sure this is just
-due the point in time at which NetworkManager decides to bring up
-the network interfaces.
-
-Booting with gmac0 connected to Ethernet cable:
-https://gist.github.com/pdp7/e1a8e7666706c7d3c99b6b7a3b43f070
-
-Booting with gmac1 connected to Ethernet cable:
-https://gist.github.com/pdp7/8a9c2066a2c20377ec3b479213b9be4c
-
-thead-dwmac probe for gmac happens around 6 seconds. stmmac_open()
-occurs shortly after that. The interface is up by around 10 seconds
-into boot. DHCP request works okay and the interface is up and working
-once the shell is ready.
-
-In short, I believe the dts configuration in patch 3/3 of this series
-works okay for both Ethernet ports on the LPi4a.
-
-Thanks,
-Drew
+Who removes/renames the 'critical' volume? I suggest to fix it in the 
+upper layer(not in kernel). After looking through the patch 2, it seems 
+a hack solution.
 
