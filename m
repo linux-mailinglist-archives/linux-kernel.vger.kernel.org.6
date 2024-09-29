@@ -1,136 +1,111 @@
-Return-Path: <linux-kernel+bounces-343058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0037989658
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 18:56:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4957498965A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 19:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ABFD2840A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14BB6B231B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023DA17E44A;
-	Sun, 29 Sep 2024 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896E517C9F8;
+	Sun, 29 Sep 2024 17:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QS33cFtA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/ESwP3q"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AA817DFF1
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A74DAD2F;
+	Sun, 29 Sep 2024 17:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727628981; cv=none; b=KjOOZKixl4JwKeDFYwtlXG5QVUZP7IK54imFRSvaLWYKemzxqL10jAHlVV5ogtp43P3DOEgqMSPXOM2yVddHF0JoPQfHDt9SSYpcJNdg7OfYH7Jd0s66PW84O1tXJT50Qb2q+IS3MEgP+NztbWWTgAmXNybebPyh6LfoVNbAZv0=
+	t=1727629271; cv=none; b=Uk26kYZAGM+chxxhUZHWLlra95RjqWLKiKOgIgoULHNnoujMU4WHqqq5+HLgqIQeh82n0xYTH83fGtBU3nLfWhwcPF9Avq+HABqFxOCdxI3mqLMJCsQ37hkC5B2+yB8rd5P77t4GA6T2pRXNa0uIZuJ2SbLoZGHAGMMQUSFfTd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727628981; c=relaxed/simple;
-	bh=OuNHc8PIGaHQxuUXtKbA+OFDsOJlQHplpqTyjl6z6CQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VR4poFSkdoQaHR01TnV49cyfUKYbENht2K9UOwVH6Fm1injqooFMFTg0yMVZDDFb7yjBN1wsSZ02kUvNBR2OmkI2QTfB9wLtTQFhmTfb3cVK2tT2PIw9l2yf94XM/3v5oxsYAh3bwL5JAnjwQkjmLR6P7E5Hld19VfxG9cRcQ/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QS33cFtA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727628979;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kqpozjXyhnvHlQRJu2I4WgyAmmMM5tqK0NqWHw3trQE=;
-	b=QS33cFtAh+UXoWEMFQ3o6ZYv8bMKtWRBTJYkLhjAT2bLWsjc9kQrfaQxzifzha2E27x2r6
-	mh33GHy/U8prXXAMYrOypX+DFdKX1zTYrhM24hTegohSOeuUJbZ1OtBvPCF4oU+nCHZPnz
-	pzmhiDbs1B3Itxe0h41DfSISimF43w4=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-QhyOG-IVNECzTh-X8seZeQ-1; Sun, 29 Sep 2024 12:56:16 -0400
-X-MC-Unique: QhyOG-IVNECzTh-X8seZeQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a8ff95023b6so291967066b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 09:56:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727628975; x=1728233775;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1727629271; c=relaxed/simple;
+	bh=l577ahIR5wLdiyALSsVJ8b3p0IEhxwg3Sa90ms3OgOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XhQDiKpMp4zGlV9EBkbiuSUMuevxHQ5uKGektN2xy1lIPVYrt/hR/WMgT4Mjjf00qX8yCS3g89kMYuYa2UOgDSYvHKnHS1SeixHsBJ4FFA1L/UB4k945D80kU20kjTiaYA4/RGMZHTdBjXp1YJb7lmTnC/Yn78kJU1G35HsAdls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/ESwP3q; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so27870445e9.3;
+        Sun, 29 Sep 2024 10:01:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727629268; x=1728234068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kqpozjXyhnvHlQRJu2I4WgyAmmMM5tqK0NqWHw3trQE=;
-        b=X6vHI9rM44K9YtlZQpU+AgNi3oWzSJ7Q3+BUgEeo30hCsgpwHJ5xDeCyEotUtXXyup
-         L0kQ/z+QXCcT1lP4F3xverxNZLhErW7X6/bHStSETxRZ2f9PIwwZ9VaLcyPvuimXOAp9
-         9qleBenRjZ/oL+59AmK2kFqSFfq3rn2pg8qPSOecu35JOQiRuCrTnUaCigyUv5MGqH6a
-         5g+bKAv1sgSBJN2Hq/NKpB3xt9Pe7PZueYONzrNVkpqd+FBPPm+ErfL6EOrRhTOizVrQ
-         Gix5/YvAqlZwy7ARXSu/1yD5VqsBdcj9JLzj/GEdhtL2CAnVJ+RJgyu3MrgH7ll7WtLv
-         pU7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWzJqGs8b/84fvmxPtCmT1MZtzdi9yquwn2y6WGXTVattwCaw9vyL6CwiPZn57BXaw3c5b6YcIbarH6Vnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrK8QfSPA5i7kp9WnY9fX01sveP21fI+cAEcu+C8cqjTUGOeTf
-	1WKWyHs/mIPh0j6p2foEQIi3zKwbmVhki+I2noDtZuJH/prkhJp3jJEhCiFWOH19vFusCAE5lX7
-	QJJk7GuoMJn2GofcufbT6NwSkxGjyLM1HHzBLFbu3+Psj18U+JhrMrp4s27D+AA==
-X-Received: by 2002:a17:907:3eaa:b0:a8a:9054:8391 with SMTP id a640c23a62f3a-a93c48f8884mr1026229166b.5.1727628975221;
-        Sun, 29 Sep 2024 09:56:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEBabYhMMakXtMQtZ10IYuTuTjIcGwfv1lKDLcZNtfQ8gg556HasAqswG+Wg0TAOWoqjInzRQ==
-X-Received: by 2002:a17:907:3eaa:b0:a8a:9054:8391 with SMTP id a640c23a62f3a-a93c48f8884mr1026226866b.5.1727628974679;
-        Sun, 29 Sep 2024 09:56:14 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:17b:822e:847c:4023:a734:1389])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2775995sm398955366b.41.2024.09.29.09.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 09:56:13 -0700 (PDT)
-Date: Sun, 29 Sep 2024 12:56:09 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc: stefanha@redhat.com, Stefano Garzarella <sgarzare@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	kvm@vger.kernel.org, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vhost/vsock: specify module version
-Message-ID: <20240929125245-mutt-send-email-mst@kernel.org>
-References: <20240926161641.189193-1-aleksandr.mikhalitsyn@canonical.com>
+        bh=l577ahIR5wLdiyALSsVJ8b3p0IEhxwg3Sa90ms3OgOM=;
+        b=W/ESwP3qZWPRU2kCcOMCeJAzFK1Dq7k0lilZiQw72/2OLpmWMFV5Qy0dCoAKSXOKhK
+         CYb8R2I4z/yFq7nBrFbd7dq3HsXU1ojMJqhz1N4ff1gBYZSbHaO0Ne7U5M+veRUhfYfK
+         rY1XfLxuZuVOmeOB2Yad60PkU/oz6v4656n91/58CKLNw6HUZ0gVPxx1M7oMRjoOttXq
+         Sq0wsxqv3SV1sAoJZTsUjCxsUAc4mwh+t05+F2QP4rHk8ybJZErwTPsaNmqeKj+3b0EA
+         sPVWJN5Qbj3q4eXo38S0dZaJyR0ab2fB5KXOAsw24M2v4DshJA2AMDu+HFh3+XwBbavF
+         XVWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727629268; x=1728234068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l577ahIR5wLdiyALSsVJ8b3p0IEhxwg3Sa90ms3OgOM=;
+        b=iaTXULEKy3xcCoEmd1qAl5eIiZ5xxIE0UVBiggZfuipLI6gsINESEbJ+cEXcFI6QLB
+         p+2JAZtRe571ckAIifYV73DtqFmUY6/hdnBG4l3CjTVwGumlHquteNcwjV4wfs3yY3Bd
+         BoyCgbdrPRPdTB4qv9ZAuUHByG3UJ4V40Vxbh3ORyL0eeBufR/uAuikK05PNq+rbGt4q
+         VbsX4/tfM0ux2e+pE8q+k77TXiueC56Rg5gmGao07+tAFXLTPFZ+NjAOBvi8b6qzYCAc
+         ySszUvHIN+rLcG2P3c/Cl5Y5Lk5K+zq4ZjZAnwVKGSjQtUs0sdtZ5iFH6PWa7xwPLO0u
+         sBFg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL82tmh6/gKml9SRldImLl5MYO41fxpmQF2L15AWI4Mlsjt8KAu4f3XCayiQzNlVMyeQE=@vger.kernel.org, AJvYcCX/H3NFWRdZBKyOhbdUAVhEj/U+PxHFlxZL0qJR6T7V9HtuZOFAhYkK8d7oBGy1ra6NRVgbbeot7E6MeOJ+@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUFkXYeAI2GAhaxwEXL4pWZ4Vaxb+h96FWABPpTKdQGMYda1gU
+	fd89Q8bmkK1H9YuouS8HyZ8nsoY76y+2YbWYBHlL/Bp/lmeiZn5ovYxXD1tlPCl7ojivJUxEB7E
+	jN6agWyqs/OHnbkcPC3qtuhe1ysk=
+X-Google-Smtp-Source: AGHT+IEjL439uyMb8VuGXv3gbJZZsJ9N/J7vWF0CFhCFVMbVaVUe4kFuMWHf/TM/QTIrkRUkKgRBkuojVDvGymtLWHM=
+X-Received: by 2002:a05:600c:4751:b0:42c:de9b:a1b5 with SMTP id
+ 5b1f17b1804b1-42f5849732amr65207635e9.32.1727629267831; Sun, 29 Sep 2024
+ 10:01:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926161641.189193-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20240927184133.968283-1-namhyung@kernel.org>
+In-Reply-To: <20240927184133.968283-1-namhyung@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sun, 29 Sep 2024 10:00:56 -0700
+Message-ID: <CAADnVQLeARMvSqg0aqgBS0vncV-m6e+sM9C_Ox0r3SL1=GpRgA@mail.gmail.com>
+Subject: Re: [RFC/PATCH bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc (v2)
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 06:16:40PM +0200, Alexander Mikhalitsyn wrote:
-> Add an explicit MODULE_VERSION("0.0.1") specification
-> for a vhost_vsock module. It is useful because it allows
-> userspace to check if vhost_vsock is there when it is
-> configured as a built-in.
-> 
-> Without this change, there is no /sys/module/vhost_vsock directory.
-> 
-> With this change:
-> $ ls -la /sys/module/vhost_vsock/
-> total 0
-> drwxr-xr-x   2 root root    0 Sep 26 15:59 .
-> drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
-> --w-------   1 root root 4096 Sep 26 15:59 uevent
-> -r--r--r--   1 root root 4096 Sep 26 15:59 version
-> 
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+On Fri, Sep 27, 2024 at 11:41=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hello,
+>
+> I'm proposing a new iterator and a kfunc for the slab memory allocator
+> to get information of each kmem_cache like in /proc/slabinfo or
+> /sys/kernel/slab in more flexible way.
+>
+> v2 changes)
 
+The subject is confusing CI and human readers.
+Please use [PATCH v3 bpf-next ..] in the future.
 
-Why not check that the misc device is registered?
-I'd rather not add a new UAPI until actually necessary.
-
-> ---
->  drivers/vhost/vsock.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> index 802153e23073..287ea8e480b5 100644
-> --- a/drivers/vhost/vsock.c
-> +++ b/drivers/vhost/vsock.c
-> @@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
->  
->  module_init(vhost_vsock_init);
->  module_exit(vhost_vsock_exit);
-> +MODULE_VERSION("0.0.1");
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Asias He");
->  MODULE_DESCRIPTION("vhost transport for vsock ");
-> -- 
-> 2.34.1
-
+Also note that RFC patches are never going to be applied and they are
+ignored by BPF CI.
+If you want things to land then drop the RFC tag.
 
