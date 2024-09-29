@@ -1,107 +1,175 @@
-Return-Path: <linux-kernel+bounces-343145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265A998973A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:09:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32DE98973E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23711F21116
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FDA61C20C44
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 20:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8FB7DA87;
-	Sun, 29 Sep 2024 20:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ADUaruCW"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7AF5FDA7;
+	Sun, 29 Sep 2024 20:16:44 +0000 (UTC)
+Received: from yyz.mikelr.com (yyz.mikelr.com [170.75.163.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002D1DFF0
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D1118EAB;
+	Sun, 29 Sep 2024 20:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.75.163.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727640590; cv=none; b=F0iiRNOyLpEpY3CX2mrKfg5taRxkqTwbqzGmetVIzytDP8yxdfbJqYtHO2GvYJTLcGRM4Ki0iAsA9b1hfxuwUD98tDn3i22gYYkkre46FQP3pHfrcOG90rT6+DnruOFbo140ujRu280jnYDSUHH3yB4E8z9FwtNsVFtjh6SNCbI=
+	t=1727641004; cv=none; b=hcfMoDoMX9f+1Z6A2sIGJ22rugV4r1fWTuXQj6ms+405tTMfhsYfQ7EEjYMOrAXAey+l3bxIubAvOP/nvPwHQPTh9rKeIQSPtWrjnufnyDE6IozMp9m9TdjSdotMvUKvWTxbhJPCn1nDFTrQJitk8IyKSPbCSyDEHLc5VfFReAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727640590; c=relaxed/simple;
-	bh=wOI++m+JL+DVE+hBvbTZ/vjmCwwuqeGl0d/3wlXsGIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jN0N8WBSlvdX++9r0TgjlOTF5mDRaalN16GzLA2dGipR+KmlHWeNaurxF1HDyI3odHhA9ZtCvbn0CSiW6Z2rtUfa7n01OX5fiPQX1bEMCjB/SyCHt8Z1ZzVYL9ueyDlt2ePNhLRoeafAXQqwDNvxpIDxgeHSr708unlYFx4tE8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ADUaruCW; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	s=arc-20240116; t=1727641004; c=relaxed/simple;
+	bh=tredQinZXruqSuQ7IrvoqP1PQHlHvSY4FpRmlPpn8dc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hxjt8alQCvg1SuGN8ak/hxm0QH9fnLSlcBnGOqYyifD4aB8OjVeSNh6XumPelxWktv7xfWRrvEl1MoZNsVKvOZIAdU+Q2kgAjNSQcN8y76UDA9DJTLAc5EWW2WjFb88+Fj615FVb+ImBVg8HzBQaGwsvr2Dl2z+BHBJJZPkKfjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com; spf=pass smtp.mailfrom=mikelr.com; arc=none smtp.client-ip=170.75.163.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mikelr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mikelr.com
+Received: from basin.ykf.mikelr.com (unknown [IPv6:2607:f2c0:e554:1200:4b8f:795f:f483:85bf])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7CD372C04A9;
-	Mon, 30 Sep 2024 09:09:38 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1727640578;
-	bh=JBwCQozm+0fMwGlfzH27gAbhtnJ574B9V1tQPJcrDEk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ADUaruCWWMRrSUjBUJdlP57U/ZcVCBSeFTIyxLFpWonoOuuVbmekeG9PGDtaF4zJa
-	 B8CvRsesE3Jssvl+wTP/uTq5G8+ojwq1vELlZZndGRo5Ji9Bo2F+7nv9fvmeZ6vNro
-	 /cMPLp5z4GzxGtiaJECQnBLC45rn/p2rN3BUBNuMslWbhvPPReb1np+B9INFl43mk5
-	 p6KBCUjJihSQ2jIE9YwMguZhtG7sChh2YJdq0yxnWDj+DNgLkPbIOoFLjEamp4puJ6
-	 bVk73TOpgRAcGBVps6v3ZnuKuq7k7B+urMlws0ev5TqAHfYGOw5i/EBMx+KNC8ibft
-	 JWtF3WoLDXiMw==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B66f9b4020000>; Mon, 30 Sep 2024 09:09:38 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 150B413EE36;
-	Mon, 30 Sep 2024 09:09:38 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-	id 146B02804EB; Mon, 30 Sep 2024 09:09:38 +1300 (NZDT)
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: andi.shyti@kernel.org
-Cc: linux-i2c@vger.kernel.org,
+	by yyz.mikelr.com (Postfix) with ESMTPSA id 0791271753;
+	Sun, 29 Sep 2024 16:09:56 -0400 (EDT)
+From: Mikel Rychliski <mikel@mikelr.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Mikel Rychliski <mikel@mikelr.com>,
 	linux-kernel@vger.kernel.org,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH] fixup! i2c: Add driver for the RTL9300 I2C controller
-Date: Mon, 30 Sep 2024 09:09:34 +1300
-Message-ID: <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
-References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH] tracing/probes: Fix MAX_TRACE_ARGS limit handling
+Date: Sun, 29 Sep 2024 16:09:37 -0400
+Message-ID: <20240929200939.162524-1-mikel@mikelr.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66f9b402 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=EaEq8P2WXUwA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=nM7u7_jTEaTSNnH6a8gA:9 a=3ZKOabzyN94A:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
 
-Hi Andi,
+When creating a trace_probe we would set nr_args prior to truncating the
+arguments to MAX_TRACE_ARGS. However, we would only initialize arguments
+up to the limit.
 
-This is a fixup for the spare complaint from the kernel test robot
-https://lore.kernel.org/lkml/202409291025.P4M4O1F2-lkp@intel.com/#t
+This caused invalid memory access when attempting to set up probes with
+more than 128 fetchargs.
 
-Not sure if you want to fold this into what is already in
-andi-shyti/i2c/i2c-host or if you want me to send it as a new patch.
+  BUG: kernel NULL pointer dereference, address: 0000000000000020
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+  PGD 0 P4D 0
+  Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+  CPU: 0 UID: 0 PID: 1769 Comm: cat Not tainted 6.11.0-rc7+ #8
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-1.fc39 04/01/2014
+  RIP: 0010:__set_print_fmt+0x134/0x330
+
+Resolve the issue by applying the MAX_TRACE_ARGS limit earlier. This
+restores the prior behaviour of silently ignoring excess arguments.
+
+Fixes: 035ba76014c0 ("tracing/probes: cleanup: Set trace_probe::nr_args at trace_probe_init")
+Signed-off-by: Mikel Rychliski <mikel@mikelr.com>
 ---
- drivers/i2c/busses/i2c-rtl9300.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_eprobe.c | 5 +++--
+ kernel/trace/trace_fprobe.c | 3 ++-
+ kernel/trace/trace_kprobe.c | 3 ++-
+ kernel/trace/trace_uprobe.c | 3 ++-
+ 4 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rt=
-l9300.c
-index ed9a45a9d803..f0bb0ede79ce 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -318,7 +318,7 @@ static const struct i2c_algorithm rtl9300_i2c_algo =3D=
- {
- 	.functionality	=3D rtl9300_i2c_func,
- };
-=20
--struct i2c_adapter_quirks rtl9300_i2c_quirks =3D {
-+static struct i2c_adapter_quirks rtl9300_i2c_quirks =3D {
- 	.flags		=3D I2C_AQ_NO_CLK_STRETCH,
- 	.max_read_len	=3D 16,
- 	.max_write_len	=3D 16,
---=20
-2.46.2
+diff --git a/kernel/trace/trace_eprobe.c b/kernel/trace/trace_eprobe.c
+index b0e0ec85912e..62c1a1fba403 100644
+--- a/kernel/trace/trace_eprobe.c
++++ b/kernel/trace/trace_eprobe.c
+@@ -914,7 +914,7 @@ static int __trace_eprobe_create(int argc, const char *argv[])
+ 
+ 	mutex_lock(&event_mutex);
+ 	event_call = find_and_get_event(sys_name, sys_event);
+-	ep = alloc_event_probe(group, event, event_call, argc - 2);
++	ep = alloc_event_probe(group, event, event_call, min(argc - 2, MAX_TRACE_ARGS));
+ 	mutex_unlock(&event_mutex);
+ 
+ 	if (IS_ERR(ep)) {
+@@ -936,8 +936,9 @@ static int __trace_eprobe_create(int argc, const char *argv[])
+ 		ep->filter_str = NULL;
+ 
+ 	argc -= 2; argv += 2;
++	argc = min(argc, MAX_TRACE_ARGS);
+ 	/* parse arguments */
+-	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
++	for (i = 0; i < argc; i++) {
+ 		trace_probe_log_set_index(i + 2);
+ 		ret = trace_eprobe_tp_update_arg(ep, argv, i);
+ 		if (ret)
+diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+index a079abd8955b..ca72fe8a04e7 100644
+--- a/kernel/trace/trace_fprobe.c
++++ b/kernel/trace/trace_fprobe.c
+@@ -1187,6 +1187,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 		argc = new_argc;
+ 		argv = new_argv;
+ 	}
++	argc = min(argc, MAX_TRACE_ARGS);
+ 
+ 	ret = traceprobe_expand_dentry_args(argc, argv, &dbuf);
+ 	if (ret)
+@@ -1203,7 +1204,7 @@ static int __trace_fprobe_create(int argc, const char *argv[])
+ 	}
+ 
+ 	/* parse arguments */
+-	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
++	for (i = 0; i < argc; i++) {
+ 		trace_probe_log_set_index(i + 2);
+ 		ctx.offset = 0;
+ 		ret = traceprobe_parse_probe_arg(&tf->tp, i, argv[i], &ctx);
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 61a6da808203..10d16b574db5 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1013,6 +1013,7 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+ 		argc = new_argc;
+ 		argv = new_argv;
+ 	}
++	argc = min(argc, MAX_TRACE_ARGS);
+ 
+ 	ret = traceprobe_expand_dentry_args(argc, argv, &dbuf);
+ 	if (ret)
+@@ -1029,7 +1030,7 @@ static int __trace_kprobe_create(int argc, const char *argv[])
+ 	}
+ 
+ 	/* parse arguments */
+-	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
++	for (i = 0; i < argc; i++) {
+ 		trace_probe_log_set_index(i + 2);
+ 		ctx.offset = 0;
+ 		ret = traceprobe_parse_probe_arg(&tk->tp, i, argv[i], &ctx);
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index c3df411a2684..985d23d57702 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -676,6 +676,7 @@ static int __trace_uprobe_create(int argc, const char **argv)
+ 
+ 	argc -= 2;
+ 	argv += 2;
++	argc = min(argc, MAX_TRACE_ARGS);
+ 
+ 	tu = alloc_trace_uprobe(group, event, argc, is_return);
+ 	if (IS_ERR(tu)) {
+@@ -690,7 +691,7 @@ static int __trace_uprobe_create(int argc, const char **argv)
+ 	tu->filename = filename;
+ 
+ 	/* parse arguments */
+-	for (i = 0; i < argc && i < MAX_TRACE_ARGS; i++) {
++	for (i = 0; i < argc; i++) {
+ 		struct traceprobe_parse_context ctx = {
+ 			.flags = (is_return ? TPARG_FL_RETURN : 0) | TPARG_FL_USER,
+ 		};
+
+base-commit: 886f3732878dc92fb0ad6d8b6740b66410d1d50a
+-- 
+2.46.1
 
 
