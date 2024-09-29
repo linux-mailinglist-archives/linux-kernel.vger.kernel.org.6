@@ -1,157 +1,97 @@
-Return-Path: <linux-kernel+bounces-343212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEDC989839
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:05:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB5098983A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1213A1C2102A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:05:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 535FC1C203B6
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F31E17BED0;
-	Sun, 29 Sep 2024 22:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ED7E17C9AC;
+	Sun, 29 Sep 2024 22:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="InLoWnBu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JSbUfX/2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C0448CDD;
-	Sun, 29 Sep 2024 22:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEF638396;
+	Sun, 29 Sep 2024 22:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727647551; cv=none; b=rHKVCfqtBRr6PrM3I7OcD+yZBjMqGnPMN61d2t4/GPhhRTgtxmiG+SwVwaqw4oI6lH/b6nxIxeVPDny0Xc+1ntp2C9CvKTJksBRnTp0ajPetLUdMAlzJ+GEdq1scXPGR2VuEGkV8ImCh+mcHWVyOxDnBm39SK3ad9xu4BBjBaGo=
+	t=1727647671; cv=none; b=KKQ0YCpBYI8rh9op1BHF/obeaJTC3xv/6oTg1f8qOe2tCqkqlUx/IaYMTLDmsQGSfAkwFqaNwZWxYh10CSBAKyKVv02S3zDPh/Ws9MaMwJEj4WgLkmtuQmhKR3LE8oVPqwz1j+9sC5A3jmMskNiO9+hFG5cCI5G6jGogNwfazxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727647551; c=relaxed/simple;
-	bh=pL3DVPu+hNJJCWE6wyqLxm2vYTihM1Hsgm9OQN+YJ8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VHHH1wZGJfjbF5qanxh6dl9Gl3HOmXzgkOJkmnYIQzASPm/X7L31Dr5qzXOPkuqai7qd4RD7wFDWh+eVSCX7IT7A06aO7Yc6AlPJ4BRaf3uVPkwJnIzT8T+96hdAturgHUqWx5Eb4l8jwWNp/daJClqkG8vTaz+HGNGG7WN28kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=InLoWnBu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD30FC4CEC5;
-	Sun, 29 Sep 2024 22:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727647551;
-	bh=pL3DVPu+hNJJCWE6wyqLxm2vYTihM1Hsgm9OQN+YJ8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=InLoWnBubo3JE3jejkrAFtadah6/8oNLDHyuys1XSBX/oFNFSU/EF2B19/0/p7f3P
-	 PbMiM7IqOpnke2t+3rc4BPPjDD3QYD/SMk6LWk3waq979PeY3thI7FeVXvxgHL+DSW
-	 CEx3K6AuF0lU9m8UuRG2YnjAiqJM7Wgj6N5G9WScIk0wYUYSg3/X7K911/aC4uQD0y
-	 HcMXwnEGlU9H4jLwCRcReKiIKhlRhGxW3d26vW+E8+y0Rn6Jk1EJRvnHSROxKooWFv
-	 1nuHbdLo59lNOEs/wu2CENNgskTV+lv+/HEFhFRIV96skhCCu/LfLmpzSPIw5sLEIG
-	 MsBQYoyU9aIPg==
-Received: by pali.im (Postfix)
-	id 0FDB2872; Mon, 30 Sep 2024 00:05:45 +0200 (CEST)
-Date: Mon, 30 Sep 2024 00:05:44 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] cifs: Rename smb2_get_reparse_inode to
- smb2_create_reparse_inode
-Message-ID: <20240929220544.fquv6h3q4q6rqked@pali>
-References: <20240929185053.10554-1-pali@kernel.org>
- <20240929185053.10554-2-pali@kernel.org>
- <CAH2r5mt71ybdLj-9X=v_tuzaLbjGtQgPJvmNvcdZqLPzYpOJhA@mail.gmail.com>
+	s=arc-20240116; t=1727647671; c=relaxed/simple;
+	bh=QCy0BybPk3+5ArjUThPJOsG+7WUB6VoPVv8Qo5KDeOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ipJctV5X457WnI0AaVDRl6vCW6MUquW21vANkG10mI959aUfgNFCzS0MvWasMOiM2bm1W7Xopm40X3//AqGIIRNxBczWvhfUBg+OtqcOlOWGhl7NSAjYpUchX1We9fGs4L2kuR5k+CIim7Q9LmQk8CI9XTsDIqYxsyd819P/DBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JSbUfX/2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727647659;
+	bh=QCy0BybPk3+5ArjUThPJOsG+7WUB6VoPVv8Qo5KDeOo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JSbUfX/2XpwiK2XoFJp01jANEX0Ss0ZZ6tbTWDJptGuGAfOpWglUz94xyGbW/zEKs
+	 ltGTD8FPqif//ASwl00BcQ1YP1sbrWcUWpv7DPeJXmR7MWd8krpKvGivO3On0P5GdN
+	 0EseTuCLtcDa+BZj7iZSZ2RNb9DsXCsKjqU7vo1ItjiKKyUkDc4rPgrD1amYGmiOTY
+	 E1pVNF3v8b5MF7K1yyNwu8HK4YsCNtVHivXMLv6xTQOVjAVMgmMrh66gVc0g3RrDHD
+	 crlG2xxNKybMeeYJdE5SzTdAWWFoBqtMfb/f8GEfPEoEQvnYkmpcU9Jx2HJu2gQopR
+	 qBrXnjTA1AiLg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XGyxR64mBz4wc3;
+	Mon, 30 Sep 2024 08:07:39 +1000 (AEST)
+Date: Mon, 30 Sep 2024 08:07:39 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: error while fetching the exportfs tree
+Message-ID: <20240930080739.53c91136@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mt71ybdLj-9X=v_tuzaLbjGtQgPJvmNvcdZqLPzYpOJhA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: multipart/signed; boundary="Sig_/agAo.TYluy9bs3fl8_VJ.Yn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-That is fine. You can also postpone changes in this patch series for
-next major version if it is needed to more testing. And if you think
-that this rename change cause issues, you can drop it. It is not
-functional change at all.
+--Sig_/agAo.TYluy9bs3fl8_VJ.Yn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Sunday 29 September 2024 16:16:44 Steve French wrote:
-> I lean against minor renames in rc2, better to focus on the bug fixes
-> in your patch (the renaming also makes it a bit harder to backport
-> fixes, so often better after all the fixes in, if important rename)
-> 
-> On Sun, Sep 29, 2024 at 1:51 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > This function creates a new reparse point, so put "create" into its name.
-> >
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/reparse.c   | 6 +++---
-> >  fs/smb/client/smb2inode.c | 2 +-
-> >  fs/smb/client/smb2proto.h | 2 +-
-> >  3 files changed, 5 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> > index a23ea2f78c09..507e17244ed3 100644
-> > --- a/fs/smb/client/reparse.c
-> > +++ b/fs/smb/client/reparse.c
-> > @@ -68,7 +68,7 @@ int smb2_create_reparse_symlink(const unsigned int xid, struct inode *inode,
-> >         convert_delimiter(sym, '/');
-> >         iov.iov_base = buf;
-> >         iov.iov_len = len;
-> > -       new = smb2_get_reparse_inode(&data, inode->i_sb, xid,
-> > +       new = smb2_create_reparse_inode(&data, inode->i_sb, xid,
-> >                                      tcon, full_path, &iov, NULL);
-> >         if (!IS_ERR(new))
-> >                 d_instantiate(dentry, new);
-> > @@ -136,7 +136,7 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
-> >                 .reparse = { .tag = IO_REPARSE_TAG_NFS, .nfs = p, },
-> >         };
-> >
-> > -       new = smb2_get_reparse_inode(&data, inode->i_sb, xid,
-> > +       new = smb2_create_reparse_inode(&data, inode->i_sb, xid,
-> >                                      tcon, full_path, &iov, NULL);
-> >         if (!IS_ERR(new))
-> >                 d_instantiate(dentry, new);
-> > @@ -282,7 +282,7 @@ static int mknod_wsl(unsigned int xid, struct inode *inode,
-> >         memcpy(data.wsl.eas, &cc->ea, len);
-> >         data.wsl.eas_len = len;
-> >
-> > -       new = smb2_get_reparse_inode(&data, inode->i_sb,
-> > +       new = smb2_create_reparse_inode(&data, inode->i_sb,
-> >                                      xid, tcon, full_path,
-> >                                      &reparse_iov, &xattr_iov);
-> >         if (!IS_ERR(new))
-> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> > index 6e69a3b98be3..0fc73035d6dc 100644
-> > --- a/fs/smb/client/smb2inode.c
-> > +++ b/fs/smb/client/smb2inode.c
-> > @@ -1193,7 +1193,7 @@ smb2_set_file_info(struct inode *inode, const char *full_path,
-> >         return rc;
-> >  }
-> >
-> > -struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
-> > +struct inode *smb2_create_reparse_inode(struct cifs_open_info_data *data,
-> >                                      struct super_block *sb,
-> >                                      const unsigned int xid,
-> >                                      struct cifs_tcon *tcon,
-> > diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-> > index b208232b12a2..4ac30d29d5a1 100644
-> > --- a/fs/smb/client/smb2proto.h
-> > +++ b/fs/smb/client/smb2proto.h
-> > @@ -56,7 +56,7 @@ extern int smb3_handle_read_data(struct TCP_Server_Info *server,
-> >  extern int smb2_query_reparse_tag(const unsigned int xid, struct cifs_tcon *tcon,
-> >                                 struct cifs_sb_info *cifs_sb, const char *path,
-> >                                 __u32 *reparse_tag);
-> > -struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
-> > +struct inode *smb2_create_reparse_inode(struct cifs_open_info_data *data,
-> >                                      struct super_block *sb,
-> >                                      const unsigned int xid,
-> >                                      struct cifs_tcon *tcon,
-> > --
-> > 2.20.1
-> >
-> >
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+Hi all,
+
+Fetching the exportfs tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux exportfs-next)
+produces this error:
+
+fatal: couldn't find remote ref refs/heads/exportfs-next
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/agAo.TYluy9bs3fl8_VJ.Yn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb5z6sACgkQAVBC80lX
+0GwK+Qf+ITxnmAiR2NeveUcAgPtX6PyhiR++u5OLlLft5DSs1I2SxtVmzUta8pBM
+q6lav9+xIh2oXX7IdktNfJeka5Vw3eaHuYjTR29aA3mH0nYbk2Mp+wGLOPUX9ZaL
+724Goc6UveXoRFqJaJ6eMbGb9vud+dmIVtOj6cUpKqEQpT5vhPoZxBmONYeO4LnD
+qJVmMD6FWu/3d56EiDAYahJGLAqLT/lTS6zCuTES6XunoIta8tBAXze32wm1c762
+JG7KlpZkizQW+FN7JmvtQW8Hec/0/y4APPU5k5ADIvmfXtGbscfziMQi9XZBvA5C
+PdHy8C4j3ZGgf0NQiTBAQJUSbcGpKA==
+=1v7m
+-----END PGP SIGNATURE-----
+
+--Sig_/agAo.TYluy9bs3fl8_VJ.Yn--
 
