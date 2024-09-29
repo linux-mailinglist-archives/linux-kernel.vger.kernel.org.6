@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-342926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16299894E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 606239894E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 12:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80D0284021
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:52:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2051C21AFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708C415FCE5;
-	Sun, 29 Sep 2024 10:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B915815F41B;
+	Sun, 29 Sep 2024 10:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="RBea93zc"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fL9p5kzu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Av+XuoK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E73113A878;
-	Sun, 29 Sep 2024 10:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4062C13C918
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 10:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727607137; cv=none; b=aKz7QW4VrmOCpYFdQlHBHKBLE1/036Le3xLIW55rzag9znO+08O2YJ9vs5aMQEaAhGWV+HFqnzL1jHvB2Y/nmofuO6oafx3bmWkkMk8v8irLXPSApGLXZhWRSCX/NcqcgXInz0q65U5ZqKkQHckgSW3EVBfNszqYybF0cQi266k=
+	t=1727607160; cv=none; b=QO+3DWLf2oza4EdLDk1LlkWjSmCwRaTtnELCHbrOqNlNTBPl8GxsxeeM6F2wVMbje6r50+tTPdjAsBNaQFWxVfuKDQuOvsuQdrZ5sfHtjSxB5CahWeaxejjR4g095afrfj9A2PdvdSvczXPm11N9hTaklo40zvXTUBbJ1UPqhwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727607137; c=relaxed/simple;
-	bh=4BRtjCRGp684InRlV/U6psQPIrCQ6r/tFD9/beFGKms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UA1MfbxvPAEwskqrigUsybwNty07ZPmqCV9oxRFh1Fez/xbcLi+O9xhPgg0rX3KsziUq/pV3N9wOIdtk6TznwlQ0C/L9VANoiVD+IMXlVtAwa4d7/K8KSxp8Oan6W2AWrhg4sZAwzNJaWWhEJ4dm5npt9zE54t2+CZLdr76LXa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=RBea93zc; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727607125; x=1728211925; i=spasswolf@web.de;
-	bh=NmZLWbTDZJNUVnhfU8fTIqYMpr3T9IL5wlFnyipE6NQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=RBea93zcaPqQf7z/VaxCRRrrSgqueZzLvPbYnZ1+qu82g5pLS0xQte3Uw+Q7a5xH
-	 aQzpcF015Vw4QRVoHSnq93w4fl230tWcPLDj8u0WRgL1MU2arTbUpECVb82sscLdC
-	 2oP+MIr/ZU5JzZdz9Ga3djjfeBuzI1vE3i2QdOcbCsfaeCA7f6sdOw3jRqpgkhXMn
-	 8v2Mi5OzJRd+RAzX2urDa2A0t6zo0TJszGNZvh/rtsLEOW9cpe/g015YA+6Xq+wiD
-	 3Xsi7WLMApUnVbWwnbHCT+R6/2h/aEuoLC1OAkAsosxLzSqi1U4dj3eUOkFD898Bs
-	 kGqx5VPh2x7gxk82TA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
- (mrweb005 [213.165.67.108]) with ESMTPSA (Nemesis) id
- 1MKuOP-1sby8W2qhZ-00KgEB; Sun, 29 Sep 2024 12:52:05 +0200
-From: Bert Karwatzki <spasswolf@web.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bert Karwatzki <spasswolf@web.de>,
-	Stuart Hayes <stuart.w.hayes@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: hung tasks on shutdown in linux-next-202409{20,23,24,25}
-Date: Sun, 29 Sep 2024 12:52:02 +0200
-Message-ID: <20240929105203.4637-1-spasswolf@web.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: a48564f002b31cb1a8db7680729aac91bc3d3b6b.camel@web.de
-References: 
+	s=arc-20240116; t=1727607160; c=relaxed/simple;
+	bh=Iq77x4MLEGgojJ8AajHtBHQUxibrdfvijC+nEkxrpyo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rr7bfd/tVbT+V+HVVG4QQrTm6E5m4Jm62EKUJ8qassMM6KIdph2EUeSqnDcT+aH3+E8ePutrmmIf+ZkV+wvVDLARS6vQd29oobrNhJVTr1M4AkphE9SLq/HR/5diDR0oF8Tp/cCM091U6ZLMypwGzAWaGd0vL9oVtHBylaZgbZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fL9p5kzu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Av+XuoK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727607151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=neHGIRG6ObTmuPNtZ+HaQ6fkZuReAPwqce8LCfhesuk=;
+	b=fL9p5kzuRIt6VGDA4RqBBmjkjWurYlThgac0kd3CKMhoj/UAzRy8EfTLixAGXmF/yelOQJ
+	/eiOL+6S3laniMoL/L4Wc1EQ+hMLivw54S+rklsqNSdDTcv9sT8RpQyK+4Fb8bO86y4Ihb
+	MJvurKXcoy9Y0+pFVJAUvDImGKATgC5iBwE/KsCaRTT9sPU1Zk9LWuY29I1YX/iEHVbEQY
+	SmOkoMNB5MfFxEyyeag4g5fj7exXam+/DuSpkX194RRFhPk8+8b8eg3u6dWl+WB9xo+1FF
+	iJleTPP7WDPjcvJnEoLYb742dyUtMVUHAOUSbUJtsS9fF+GlBPNu7c8EEMCHfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727607151;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=neHGIRG6ObTmuPNtZ+HaQ6fkZuReAPwqce8LCfhesuk=;
+	b=7Av+XuoK9qEYV+knfSqJxYR6azNXDFlqEPeW7nwvoZqQ3MsruyCQ8xtluUgrJvW5lpZYLP
+	u9fNoXOowK3D1ZCw==
+To: Remington Brasga <rbrasga@uci.edu>, Christian Heusel
+ <christian@heusel.eu>, Shuah Khan <skhan@linuxfoundation.org>, "Ahmed S .
+ Darwish" <darwi@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, Remington Brasga
+ <rbrasga@uci.edu>
+Subject: Re: [PATCH] kcpuid: Fix potential dereferencing of null pointers
+In-Reply-To: <20240926223557.2048-1-rbrasga@uci.edu>
+References: <20240926223557.2048-1-rbrasga@uci.edu>
+Date: Sun, 29 Sep 2024 12:52:30 +0200
+Message-ID: <87v7ye20lt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:J18rp0AQM8aEAfmV3wuzsfqyTxK0cjWSW/mat2zUS0M1KbI0u0I
- V3QxOBx9vMmP6rKS3PKBDkEgHOo4QEoV2Y7l7IlMKZA7IyEPtkQ5vfsJexxescaRB45SCJ/
- outjNUa+343LkCSi8KiRkYYCiiTd8wlZl6H47PaqDKDvnynCI4PVWijLc0w6p1nRcoihUZG
- oPleK6BHwPiwwaDw6ymLw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Tng0qsbpqpo=;XRRC02Ev5d2+p43nIMcPJiOUKkq
- /j2nqeNp5obFxnptDSRRJcMiO95P2Rid+v2QmabKi6YYCIkT1pRjKk6BsTiF/Avr69k5nwXAw
- tCT6CjtmoDtYo1ucHUx7Osjmjsi7GnHc1U04T8QVAon9e5SCdDCRL+TqPy72Ptq5SQhsQW+pi
- izUG2lhalu+MznVcK8LHXJTblj1OklhWAft1+f3Z9kDZWK1Im5cgKihUtLcd8c+bjexY4y1EF
- FU3ML23Nxt/vPLAPCN3G7cviQSbZDQRNNxX1Jyd4jFl9IZKL34CPK0FtDHl7sK9oVrLFmCuJe
- EMOb7k9nyMci+5jJ08zPGuFuLWNvHeVTenkTKYsNqWH5jgFY9HzIQlq5wRMIQU2ulFJj95DDd
- MsSVH0qCJcDhJ6/Xvhz/gAUUZPWOK2ucaESvQgSaer149G7V5+o15KRYCjLARyJHg6x/n8ree
- IhErUkKawQuLCiDwcNx+wOAE53UK/ywgNudqTDZOHrF2n3o7BgYcBZTufuT4pFvj8jusKaSQ2
- sz7jx0tnIzzjamZwEd17NQauX/T2iMMkcoGlTkZ8HGEDT2HuedkRdv7Uo/vGHiM3TvFoKX98x
- tKVky6zSPpQsGU2oRqHMyP4iIfqCRYWbUrSwG+ACuU2kVuMHiHjFKm6AmnhoqU/p6pzpdaQWu
- cMyIDxkjemnUlCfB+kBUPx78Qyp0gTMYidljRaPBdE/zjjSfK8xBOZtC9OwF8SPrE4qX4VCGf
- HJRVp0cR02ximBQ9efjDpkYpbZUzC/MYjcNmmzB9nnycPoor2kODhKGGeLi0aOCs7+teTf4kT
- nubrnmWLiFC6Ktk5u6IQ3g/Q==
+Content-Type: text/plain
 
-Summary: The introduction of async reboot in commit 8064952c6504
-("driver core: shut down devices asynchronously") leads to frequent hangs =
-on
-shutdown even after commit 4f2c346e6216 ("driver core: fix async device sh=
-utdown hang")
-is introduced.
+On Thu, Sep 26 2024 at 22:35, Remington Brasga wrote:
+>  	if (!func->leafs) {
+>  		func->leafs = malloc(sizeof(struct subleaf));
+> -		if (!func->leafs)
+> +		if (!func->leafs) {
+>  			perror("malloc func leaf");
+> +			return false; // On malloc failure
 
-I did some further experimenting (and lots of reboots ...) and found out t=
-hat
-the bug is preemption related, for me it only occurs when using CONFIG_PRE=
-EMPT=3Dy
-or CONFIG_PREEMPT_RT=3Dy. When using CONFIG_PREEMPT_NONE=3Dy or
-CONFIG_PREEMPT_VOLUNTARY=3Dy everything works fine.
+Please get rid of these horrible and pointless tail comments.
 
-Test results (linux-next-20240925):
-PREEMPT_NONE		20 reboots, no fail
-PREEMPT_VOLUNTARY	20 reboots, no fail
-PREEMPT			3 reboots, 4th reboot failed
-PREEMPT_RT		2 reboots, 3rd reboot failed
+Returning false here does not make sense. This simply should terminate
+the program.
 
-The behaviour can be improved by increasing the number of min_active items
-in the async workqueue:
+> +		}
+>  
+>  		func->nr = 1;
+>  	} else {
+>  		s = func->nr;
+>  		func->leafs = realloc(func->leafs, (s + 1) * sizeof(*leaf));
+> -		if (!func->leafs)
+> +		if (!func->leafs) {
+>  			perror("realloc f->leafs");
+> +			return false; // On realloc failure
+> +		}
+>  
+>  		func->nr++;
+>  	}
+>  
+> +	// Check for valid index
+> +	if (s >= func->nr) {
 
-diff --git a/kernel/async.c b/kernel/async.c
-index 4c3e6a44595f..83e9267c61e7 100644
-=2D-- a/kernel/async.c
-+++ b/kernel/async.c
-@@ -358,5 +358,5 @@ void __init async_init(void)
- 	 */
- 	async_wq =3D alloc_workqueue("async", WQ_UNBOUND, 0);
- 	BUG_ON(!async_wq);
--	workqueue_set_min_active(async_wq, WQ_DFL_ACTIVE);
-+	workqueue_set_min_active(async_wq, WQ_UNBOUND_MAX_ACTIVE);
- }
+What's the point of this? s is guaranteed to be < func->nr, no?
 
-With this I took 11 reboots to get a hang.
-I tried increasing WQ_MAX_ACTIVE, too:
+Thanks,
 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 59c2695e12e7..314f554b45df 100644
-=2D-- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -412,7 +412,7 @@ enum wq_flags {
- };
-
- enum wq_consts {
--	WQ_MAX_ACTIVE		=3D 512,	  /* I like 512, better ideas? */
-+	WQ_MAX_ACTIVE		=3D 1024,	  /* 1024 for async shutdown with preempt{full,=
-rt}*/
- 	WQ_UNBOUND_MAX_ACTIVE	=3D WQ_MAX_ACTIVE,
- 	WQ_DFL_ACTIVE		=3D WQ_MAX_ACTIVE / 2,
-
-With this (and the first patch) I can get 20 clean reboots even when using=
- CONFIG_PREEMPT=3Dy.
-I have not yet tested CONFIG_PREEMPT_RT=3Dy with this.
-
-Bert Karwatzki
+        tglx
 
