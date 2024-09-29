@@ -1,221 +1,88 @@
-Return-Path: <linux-kernel+bounces-342850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAE8989398
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:52:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB0A989399
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DDC2B22EA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17EE1C20A46
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E385A13B29B;
-	Sun, 29 Sep 2024 07:52:26 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCE813B580;
+	Sun, 29 Sep 2024 07:56:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31F680604
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF5F18641
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727596346; cv=none; b=Z47ae8Kar0025+7fwOcxiNf33F/rgSpCb0N7qG3TGN/ri5U93E8kqMqf/YYCGZYvgLTSggISazyXhP8UQwu3DF7Ob5/GI/UAdbLPJjH1ddyq0VA++ez8z5uypNpwNtsiRNm65cSxZUPQeupt0yHcBogOTEtz97WEoA1OPjzUN10=
+	t=1727596565; cv=none; b=u5s8ljMd0wDr4y35q1EgDUsYo+Z4Zq1D3F4VvMU5ufzFXShnkVAn18tUGN6Q8zZ3MtYmWbuNf0pvl5RtCvz3sqhpSa2NnaCY2nbc7B4p6dv54bBi2I9xxJIrKkrjCb92fIFhphO/fDWRXxSrJyKj4YEydQZ0+uED+8whc0g9eG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727596346; c=relaxed/simple;
-	bh=ITB0+OlYDpzDQWhHgd3zkX7HrwRqwXvZYX47JHU3PGg=;
+	s=arc-20240116; t=1727596565; c=relaxed/simple;
+	bh=8+CbVdfGDne1Hvxsrd3//a46LqNwuTENbdw2JtE2UzE=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Dv2cnkSLIxmlIBwag1JGTN6YLEV9UzpUgqKJXs7s3MbglEqxfwFl2hvDGbq7Ocw2qduTPxhGM5iRu8bkhhL5mMhPTnTmqqWSfhT4KFvADR00yr6LpqdNSzdDaiSA4mApKIus0Vw/Tb4oS8IEEAZxqMx8QGvKqbgE/pFu8CO2EaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+	 Content-Type; b=FipatTdolHHLaTobO2hSUixT/foGW844w2fRRWQA/ATpv9JQRfp892L6gXcz5iQq3iWjPZH6a1yVmOrVUgZhFbtsxs+wqVm2/drwSO22b/swGFGV1C0EohBYAAb5f4xeRGO4c0crJq/i4kr79fXJWEW/tsuiw9oU8ZszVaPUcr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a6d8bb03so49450895ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:52:24 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34205e146so39757025ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:56:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727596344; x=1728201144;
+        d=1e100.net; s=20230601; t=1727596563; x=1728201363;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xIHcvdtG0iDERh6UQqeY66Cz1jCEOiuE8AtiS4TPaXU=;
-        b=DHSSqXhJ6xBnuY6de/+Vba9A/qyoCspZVeuza9R16ynwpyoWy9Aggcyyf97LaZKEus
-         dHUsQOAYP9jE41KS56grpNP3+RJTyykiyd3ZIBv/0ghQh2PBWDtVzh/72yp4kvs8dsrG
-         wqpcRcAczE/HqAFapOoMQHvk/8VYe2lh5z4lYXFNzqoNFLF2gIyViglQfYAwhlTqsRJs
-         hHJwoC2EXbJ9HEpRPmyR3lb1uNmTClKXEnCXr9ir355wH6r8cDEKdCmXvSJi3c0sHIv2
-         IJGVSLUqYGYzaRHIHh93p9U7eONljzXs5FCkAlcRKiXjryyjhpmF/lFY/EOzs115bffs
-         rR5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoWxQXSGaQLrK5b5ZvGQGxhAevXVVUeW8G6DhVozgr8SymAsT7M0EfJ8ViArwn1VLlcfN+a0cOAd8TnB0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygeI47/H9ZzR7Cwho6lnDo2WHfD4ERet5YybdIYBfnnvJPoxcK
-	gXJju8+4bA3DcQ4u0JZmlN2D4cma4McTfuKo0Ov4SUalL9DLHOMIdfEFci/3V9xDgQ05MbaXdQn
-	/rXBe1V4z/qQqPR82kMaeE5MEAuGHZtKbhh/eZzSqbhkiq6PCX8pJ4Q8=
-X-Google-Smtp-Source: AGHT+IEdyLF+esx+qQfp73Jksq1msrFcWY1rLgc5085xEd3TjP5ILUWBqDUtreZ/1sU3rxe3gOAl/EL86GDOzIphtzr+5kHs5wet
+        bh=eUzwX6mxYVpSgUkhjeitTncoOhzHezULz3Q3yaRvXjM=;
+        b=u4QDhMtj96+dXWs8JPu+Y0lDqvuZpJ6Pzf78Ou6N9d4A3EFya2gyt+2YYd8hiuTGyQ
+         RnAt3LpIt0QUpm5XymkFNQi4YIDeuYAgM+qT/OuNqo2DTMsjoawlB7/bVP6aMNN3LIiz
+         ZDtYGcWSDp/OqXxGjI4p0Cags/PauasDYensrVpL2zFl7LD0Gno4y2V7mw2ucaGgVoH9
+         vVrSb+e15xUwtZqi0Uq2LwuafuEOn3zBWyt98lNnVvBBwu2u6brLLf4x3V51sAHja4HU
+         jV/Hfat9A4Vwq3S2K4XoILTLG2lpcM6UpjZAcY5LR0TXzeegilDMPLQKLfQbwTrTrM/3
+         yjUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpkCUGUKTFXxHQzwAIRzfvlmrxQVVTWify5SQfRNVGS81m69DfAqCu5W8ERrhdLgaknzS6F2Li4YxHSKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy81ryjfrUNQV3P4UekwdZxF/GJeh8XFuv/vy6TeXY3o+jQ35ya
+	VOBkZ7PVo4ANRViZ526CWYlF4rUL73qw1w+bIulQLOufc2cDIPpb6wUNSisg6iD2cSrNFrCr0EZ
+	P7zV03f/XxCnGVofcjSYvlWqjW0Oj9gQ9XUBWy0aGd0cnhdoBEFRScPg=
+X-Google-Smtp-Source: AGHT+IFc8qoGodlVESBKbn9rG/d2rs3mzXVHpXaOvVrEpSFvCucTOb2IR2C/D1/kV1OtjPxVdra9qaDiHj2wYxIvFMMoo4MNVCOa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d07:b0:3a0:9238:d38 with SMTP id
- e9e14a558f8ab-3a34517e824mr71928335ab.10.1727596343977; Sun, 29 Sep 2024
- 00:52:23 -0700 (PDT)
-Date: Sun, 29 Sep 2024 00:52:23 -0700
-In-Reply-To: <000000000000cb688206213d1bda@google.com>
+X-Received: by 2002:a05:6e02:1d84:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a345169bd7mr72305835ab.10.1727596563028; Sun, 29 Sep 2024
+ 00:56:03 -0700 (PDT)
+Date: Sun, 29 Sep 2024 00:56:02 -0700
+In-Reply-To: <74a699a0-d3b1-43c2-87a9-08e8336d9c6e@yandex.ru>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f90737.050a0220.4a974.001b.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
-From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+Message-ID: <66f90812.050a0220.aab67.0012.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_destroy
+From: syzbot <syzbot+f363afac6b0ace576f45@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has found a reproducer for the following issue on:
+Hello,
 
-HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11480127980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
-dashboard link: https://syzkaller.appspot.com/bug?extid=ca440b457d21568f8021
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=109ccd9f980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1476de80580000
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3efc5736.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d0988c372a39/vmlinux-3efc5736.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8547f30d7e9d/bzImage-3efc5736.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/ac59be7d6f54/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com
-
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-11993-g3efc57369a0c #0 Not tainted
-------------------------------------------------------
-syz-executor356/5112 is trying to acquire lock:
-ffff8880119d4418 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0xaa/0x120 mm/memory.c:6700
-
-but task is already holding lock:
-ffff888041bdbf60 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
-
-which lock already depends on the new lock.
+failed to apply patch:
+checking file net/core/sock_map.c
+patch: **** unexpected end of file in patch
 
 
-the existing dependency chain (in reverse order) is:
 
--> #2 (&oi->ip_alloc_sem){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       ocfs2_page_mkwrite+0x346/0xed0 fs/ocfs2/mmap.c:142
-       do_page_mkwrite+0x198/0x480 mm/memory.c:3162
-       do_shared_fault mm/memory.c:5358 [inline]
-       do_fault mm/memory.c:5420 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault+0x11fa/0x6800 mm/memory.c:5751
-       __handle_mm_fault mm/memory.c:5894 [inline]
-       handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6062
-       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+Tested on:
 
--> #1 (sb_pagefaults){.+.+}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1716 [inline]
-       sb_start_pagefault include/linux/fs.h:1881 [inline]
-       ocfs2_page_mkwrite+0x222/0xed0 fs/ocfs2/mmap.c:122
-       do_page_mkwrite+0x198/0x480 mm/memory.c:3162
-       do_shared_fault mm/memory.c:5358 [inline]
-       do_fault mm/memory.c:5420 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault+0x11fa/0x6800 mm/memory.c:5751
-       __handle_mm_fault mm/memory.c:5894 [inline]
-       handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6062
-       do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+commit:         3efc5736 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=968c4fa762577d3f
+dashboard link: https://syzkaller.appspot.com/bug?extid=f363afac6b0ace576f45
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=118ccd9f980000
 
--> #0 (&mm->mmap_lock){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       __might_fault+0xc6/0x120 mm/memory.c:6700
-       _inline_copy_to_user include/linux/uaccess.h:183 [inline]
-       _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
-       copy_to_user include/linux/uaccess.h:216 [inline]
-       fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
-       ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
-       ioctl_fiemap fs/ioctl.c:220 [inline]
-       do_vfs_ioctl+0x1bf8/0x2e40 fs/ioctl.c:841
-       __do_sys_ioctl fs/ioctl.c:905 [inline]
-       __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &mm->mmap_lock --> sb_pagefaults --> &oi->ip_alloc_sem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&oi->ip_alloc_sem);
-                               lock(sb_pagefaults);
-                               lock(&oi->ip_alloc_sem);
-  rlock(&mm->mmap_lock);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor356/5112:
- #0: ffff888041bdbf60 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_fiemap+0x377/0xf80 fs/ocfs2/extent_map.c:755
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5112 Comm: syz-executor356 Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- __might_fault+0xc6/0x120 mm/memory.c:6700
- _inline_copy_to_user include/linux/uaccess.h:183 [inline]
- _copy_to_user+0x2a/0xb0 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:216 [inline]
- fiemap_fill_next_extent+0x235/0x410 fs/ioctl.c:145
- ocfs2_fiemap+0x9f1/0xf80 fs/ocfs2/extent_map.c:796
- ioctl_fiemap fs/ioctl.c:220 [inline]
- do_vfs_ioctl+0x1bf8/0x2e40 fs/ioctl.c:841
- __do_sys_ioctl fs/ioctl.c:905 [inline]
- __se_sys_ioctl+0x81/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0c21255d99
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc7eb343e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f0c21255d99
-RDX: 00000000200001c0 RSI: 00000000c020660b RDI: 0000000000000005
-RBP: 00007f0c212ce5f0 R08: 0000000000000000 R09: 00005555783d34c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f0c212ce5f0 R14: 431bde82d7b634db R15: 00007f0c2129f03b
- </TASK>
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
