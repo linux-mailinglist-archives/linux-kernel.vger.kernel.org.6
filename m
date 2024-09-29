@@ -1,172 +1,130 @@
-Return-Path: <linux-kernel+bounces-342863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E6D9893BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:25:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B6959893C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 10:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5CC31F21BDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC24B284107
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8171D13BC26;
-	Sun, 29 Sep 2024 08:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5F913B5B6;
+	Sun, 29 Sep 2024 08:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="KcWF7fFq"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="YtOoZ2m7"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939771E4B0
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE081F60A
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727598293; cv=none; b=i7i/J4YdeWz0Kj2yEaqCKaLi3Dy26rMZpl9850s+7nlsJeY4LPqtfsLcEqFSeuBWh5NbhoRNy4wa+QsteQ6tkrx2PjelyF2YHSAtTYDynH37g1ckfRnOmAJxm7mBd0LUPS2UQ1RTciFPNoUaSueXddf3Ysi2f5i36zO/BhxrBrU=
+	t=1727598548; cv=none; b=kjTb4BF1vFOKh11nqlpaL9C4yPemvTixpSu6pM2uJuqOWg3FwK2HIWAj2yAKJ2OlFVIfR68APyic87Adpf4rId8507oTxNL8EyT6qp9+kwnN7DQUmPj6zbwxIik+uJ5TO+9Thmjr/mx8fiKjX7znRcvS+gKBNb+dOOgrhbohEnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727598293; c=relaxed/simple;
-	bh=k6SppduUKU3JGg1fWi14sVMD3eTuD4vo9gOVOUpOICI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=ECZ8xqoAXm4nRo8knrfgVNrsL9Y5ntpxf6HhQ3TAZQVEYJRl7VFPUk+kw+RTJHluX3ykqrBxE7b+OQ2n9sZb+Y4wS3ivyIuvrUj7fkVhP/zUstrfBFAXo8L7L+eLWZuQsWwdjH3dBZnKfgrGg7zJ5uhP/X2eLWiRef9eaqIvV/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=KcWF7fFq; arc=none smtp.client-ip=43.155.80.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1727598267;
-	bh=k6SppduUKU3JGg1fWi14sVMD3eTuD4vo9gOVOUpOICI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=KcWF7fFqkAXH1HT9DhW88JfIdoGOaVh31+qMp5kJBxF954DH3nvaU/kelVNCwFEJM
-	 Z2YLK8Ir76M7zVQ5GwUA5nVoeqgUbncuz2fxbHUZ85z8NkfzOqNDJQHSU2MWpO28M3
-	 K33cv69aCKfr9GeLA0QbmZpxgL8BpnctvZ6s1bJ0=
-X-QQ-mid: bizesmtp86t1727598259tqq2b3km
-X-QQ-Originating-IP: qCmwn2P0eJXYEJvCqX9wDgoZtkhFe7MnmYNhiWlStS4=
-Received: from [10.20.53.22] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 29 Sep 2024 16:24:17 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10790167505109477571
-Message-ID: <20E3795420C6CF06+ececafaf-0a3b-4e3c-a56e-448f50c537c6@uniontech.com>
-Date: Sun, 29 Sep 2024 16:24:16 +0800
+	s=arc-20240116; t=1727598548; c=relaxed/simple;
+	bh=tHRyrLPcSm3HM6u3JAcVuv3MR6egb4hEmiK5dPlx4Wk=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=ElRo13lL3Bqcyu0eSS/UmNZmgAbal4tv9Ff9gZNNtCOQPL9G6QxXb1J1gbV1qiwWtsrG4hppWfoiCgKPTnl/BOB6R/CrjYkFHpV40dEzmw7SvyhN55kReneJTF7qPQ69nCrGLBFOalfb2VVXugClPRdDZZG5TLvXgmAnc8N5h3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=YtOoZ2m7; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5004a.ext.cloudfilter.net ([10.0.29.221])
+	by cmsmtp with ESMTPS
+	id up9ysrBaInNFGupIfsgFcQ; Sun, 29 Sep 2024 08:29:05 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id upIespzgJWvXpupIesiK6Q; Sun, 29 Sep 2024 08:29:04 +0000
+X-Authority-Analysis: v=2.4 cv=LtdZyWdc c=1 sm=1 tr=0 ts=66f90fd0
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=2dUug4SSSRbXq+6phi7ey3Q6yy434qBCNBQpg/HBdho=; b=YtOoZ2m7xLloai9c6GxPqCZs2S
+	zq7cT9QhqsHlV8BGdrEPoDbrN05TzwXlAJy2DrDXMZTpDMInQETuvcQThOMWU5pmxGQtNuxwOegYT
+	8l2/BEafTtJ93IpFjM3xKfIMn7Zg77UB7JKrkN6nMIraLyA/qR7tLOTN3RNeqmFASPsYrl9KRqFpt
+	9msp4n/S6M1nl7ud6VGxGEdqNBnwvkBsxOtSInCby7Y8OS0Cq6XYxDjzTChRm2Yu/KlJ7qUVanxQ8
+	zk/O0Cgb0SoIwD/yLhkiJAPlc4bBz8pal7ukvH4vR8J5CHoU53Cd8Hf0cqPGQVwJmdf4xAY01JzcP
+	lHIrQDhQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:43242 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1supIc-003o0s-1p;
+	Sun, 29 Sep 2024 02:29:02 -0600
+Subject: Re: [PATCH 6.10 00/58] 6.10.12-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240927121718.789211866@linuxfoundation.org>
+In-Reply-To: <20240927121718.789211866@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <d9f09cee-b860-7329-0347-f556ce485cf0@w6rz.net>
+Date: Sun, 29 Sep 2024 01:28:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND.,v2] Bluetooth: btusb: Add MT7925 support for ID
- 0x13d3:0x3608
-To: linux-bluetooth@vger.kernel.org, bluez.test.bot@gmail.com
-References: <34A24B6870318797+20240929074852.977045-1-wangyuli@uniontech.com>
- <66f90d4b.170a0220.288304.076c@mx.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, johan.hedberg@gmail.com,
- matthias.bgg@gmail.com, hello@felixjara.me, wangyuli@uniontech.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, guanwentao@uniontech.com,
- zhanjun@uniontech.com, aaron.ma@canonical.com
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <66f90d4b.170a0220.288304.076c@mx.google.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------kF4g1z672TtdiqJ02ivacGnm"
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: Njf/zTiR//7AUA0hqzRDl7/yymY8vIpo1vR3pVxXX6Q7JGpfj/7S2GgA
-	2VrS/2oOzAbwhJyOlYsPvt4lIBcLp89tV+AhuW9x3ItFWSTxwEzVVS+L2ooS6l9MBu2EbGS
-	dNcX/z0vlzyubZeq7bSLdi+j3GZcpWsMrmAEQpvzD4Kl9mrzFPO9D1OKSsROpyBCL3S7sOs
-	eDUIOBgs24Oubyb2setAX50bKkx8bEW9pT8DnEmvJ2MKCbRvAoiJICix4w2h+4cPme1VgXd
-	gAAAAniuK5AFSND+IIClCu6PW3+0VTe/L/Ffumpk+QslNXINB6oociOAIImVBSRr7cAro/2
-	ao5WEz7oJqd5hRYnBgw/Gd3Pi+ActgxIhwZiRVcNXPryw0PgzWFCB952V7KXa/LPlyy8Xln
-	VaPPhRNYbvJiCjo1lDI6+gUNpK0R18WZhPMciqCHijOSnkz+dw76HymDjAQkPOtUiC19Jde
-	8n3yr3kc/vDVqZSCSGhsx9GI/5FF9NhxG/t8TRYMQ5o04LeKFzZBFvNc2XE4mm0O6aqZ2eT
-	8eQ2eVS7Fyve2/gNnNNwBh6gB8lq6H/vjHp/5GzTUJhCg7vTgbBoI4rH7LZ2+A2kIlPwY3X
-	0QO9opkS6kzle44EsLOaXgxZve5ZXgTWiUDxvr7seiXm+q3gJ0Vsssl0lcAnv3Pxx3vr+22
-	5wWrn2BmaQpfQD+8jC6P9ytN5064RFWN/kKx04HuMpGQDiLFT/+pHvkh0lte65N3/s+npuQ
-	/r3q+HLANYq1yVOy/suimqK1Beyvwsr8bf8P3nkVthydUwcbRafd9FEep5R9amGGmnH8zO7
-	MtYo7coMIrERDrnV0ahx2zQUFf7K58e7leG7TRlVNJ9r9iYyunodDjjjDAmSh5lWWKdFk7p
-	LDD6w+zgInAWlhrccsBggmQJsotCrfdv8f4mxN+Xprsm2hSahuKNT/nMdzOnqAtVDnqamsU
-	3op832lMwsWkjVNZkyjXiARzCdv/cpk92C3Fg1pp6Ck3M9rXpP0XtPGiPoD0h5MdxDeg=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1supIc-003o0s-1p
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:43242
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 23
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOS5s0Yoc1RLYcJ3DFLn6C0s0VHa2PCFBZnJbLLl4HV9VJ17oELfmQhj1rSi7S4Mh0iHgJ/AESksg6K82tuka6lL8QQREP4dnsyRE6KONBPy0IbFFJ2W
+ 52Svy2NEZhQz9bRvhxDDqtcm37hmXP7JaJ4AhLhRa/75AOpeGKhqQZw4G0ipGNVLxvtJLdNdWAOPyRQVR01NzTTrZ65VyeeQvZk=
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------kF4g1z672TtdiqJ02ivacGnm
-Content-Type: multipart/mixed; boundary="------------rYgltaidC69xRNpWNvH7ciEI";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: linux-bluetooth@vger.kernel.org, bluez.test.bot@gmail.com
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, johan.hedberg@gmail.com,
- matthias.bgg@gmail.com, hello@felixjara.me, wangyuli@uniontech.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, guanwentao@uniontech.com,
- zhanjun@uniontech.com, aaron.ma@canonical.com
-Message-ID: <ececafaf-0a3b-4e3c-a56e-448f50c537c6@uniontech.com>
-Subject: Re: [RESEND.,v2] Bluetooth: btusb: Add MT7925 support for ID
- 0x13d3:0x3608
-References: <34A24B6870318797+20240929074852.977045-1-wangyuli@uniontech.com>
- <66f90d4b.170a0220.288304.076c@mx.google.com>
-In-Reply-To: <66f90d4b.170a0220.288304.076c@mx.google.com>
+On 9/27/24 5:23 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.12 release.
+> There are 58 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 29 Sep 2024 12:17:00 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.12-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
---------------rYgltaidC69xRNpWNvH7ciEI
-Content-Type: multipart/mixed; boundary="------------6qWSTeocB9KvF9FYwKm6wpSO"
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
---------------6qWSTeocB9KvF9FYwKm6wpSO
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Tested-by: Ron Economos <re@w6rz.net>
 
-Q291bGQgYW55b25lIHNoZWQgc29tZSBsaWdodCBvbiB3aGF0J3MgZ29pbmcgb24gaGVyZT8N
-Cg0KSSdtIGFic29sdXRlbHkgY2VydGFpbiB0aGlzIHBhdGNoIGNhbiBiZSBtZXJnZWQgZGly
-ZWN0bHkgaW50byB0aGUgDQpibHVldG9vdGgtbmV4dCBicmFuY2ggb2YgdGhlIGJsdWV0b290
-aC1uZXh0IHJlcG9zaXRvcnkgDQooZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51
-eC9rZXJuZWwvZ2l0L2JsdWV0b290aC9ibHVldG9vdGgtbmV4dC5naXQpLg0KDQpBbSBJIG1p
-c3Npbmcgc29tZXRoaW5nLG9yIGlzIHRoZXJlIGEgcHJvYmxlbSB3aXRoIHRoZSBib3Q/DQoN
-Ci0tDQoNCldhbmdZdWxpDQoNCg==
---------------6qWSTeocB9KvF9FYwKm6wpSO
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------6qWSTeocB9KvF9FYwKm6wpSO--
-
---------------rYgltaidC69xRNpWNvH7ciEI--
-
---------------kF4g1z672TtdiqJ02ivacGnm
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZvkOsAUDAAAAAAAKCRDF2h8wRvQL7l5p
-AP452q7stgt+BE9fX7228H8xu3pV4e4Es4TQ7QVlNHbdGgD9Hfse70UZkqnlcL/lazmRK3bXA6US
-lVf4rYRPvYyTmgc=
-=8FY7
------END PGP SIGNATURE-----
-
---------------kF4g1z672TtdiqJ02ivacGnm--
 
