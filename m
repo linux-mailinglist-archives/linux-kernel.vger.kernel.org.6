@@ -1,169 +1,112 @@
-Return-Path: <linux-kernel+bounces-342843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43448989384
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:43:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EB698938B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 09:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745A41C21C1D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:43:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B561C21A2B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 07:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FD013AD11;
-	Sun, 29 Sep 2024 07:43:45 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC71213B2B8;
+	Sun, 29 Sep 2024 07:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GAT1U+L3"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62161F95A
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 07:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F6918C3E;
+	Sun, 29 Sep 2024 07:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727595825; cv=none; b=cjU6XlEEJL3PrGucEnOXVs5AlRd8r0YOFYGFBYuki3x81FmbKAd9O8pSRTv/bSmnEiybCY1Eo9nw+FrF8JXrbf+0SWdS9VlSjpga6fF6g3C2b+mkqxEb2ux9tWpUS1K45JzBu4NjOchT34vDZRqRbtAsfaZrkMCBx93668DU3WY=
+	t=1727595982; cv=none; b=nF6k5BeOzIy6OkoDfM1TlJqs+U/VsT71UbhAQ/UihxR+vtWGn2lzzLrNfNDOlwfjgBUqXCkfp2ofstAsIufodsfnXqpVOn995lDoFQ+CAPGVyOtp12MWs/smv0+uiT1enTQbvOs9F/il/j+U84jJZWwX4FsZqwPT0HmcGe3xCUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727595825; c=relaxed/simple;
-	bh=akUmuQy40L/jqDwQOVd0SKatg1J6iqfqMtR4anzk33s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VvwNFiOikefP4Cz/BdfomG3pPV+p7CEhRJe8ZFNSVEkV+/T9UizgOl3gUNNVGoV6Wa6Mtcj9FC9p9CtZSg3cQinal0I/tteg3gikrp9rjVxbur1YQOqGKO8ae6V96mysm2eAQziwO50IRKqQhSbDMFhVZQM9yAV8z18bI6vckDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3453139c0so33872985ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 00:43:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727595823; x=1728200623;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4fkJgh5eRWSjF2Qzdbv7OSrzr6wJfbAiblFKeWwScw=;
-        b=uYsz1x2a7qVrzZnvm4EoIc68QbtVSX/P/bsTNkRrMzAda37nxVCzts+6QRhcU1Qfo+
-         nNUHna+mMYUvm3A7Xfy9t3V2l4jatfX7+pwxnH8Pt91P8Dlo5gFksRkJ9SwJZwrPUxwl
-         T96lLQ6xUORLPDZzCLC8uIua8WkmcXCVczpO1KYuhHTeEBVdB7NlGm2bEEV5cB924+3s
-         WhVNBKCZ+mwfr4RIP0Bfb2OG64kW9aQrEiBCL7cDUh/FkukZRSSc8LLwMUfBqDQBE1bb
-         fr6aVkFimY8ihmv7AaygcnCJxQa/PCmRenPD95AZZ0I0vXftWYySyt7hbmUm88ksWqYJ
-         LTag==
-X-Gm-Message-State: AOJu0YyMx7LY/DOKJoBvaFuccXUuE83LufFVG0L0yzBT23B+ldegXU+5
-	ydRbKiRjyFaQbMGcHMk4kqtG3b9tKErW05CRAnNVvbQ/PcQz+oT7fFQhYhAVWd2QTb9fhnI2eTD
-	/lxnlAjMPR64/utmag7koRZAwofuopQnicz7b1sqh45nwDC0Yv+5jHsw=
-X-Google-Smtp-Source: AGHT+IG081qtac7Ul2klZTDFP1SUoZhqDcqPvIpMrWsdihevEV4IiO/D47RGS1t352g55mLB+dK0AM0DAHSNTkyy6kMiFLy1VqZf
+	s=arc-20240116; t=1727595982; c=relaxed/simple;
+	bh=vbWrw/gqCIdcm6xt/nYYymwi/IMuYpY2RklLNQyxA8A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mb4agQ3ek2Kt2gEmmg4gMEl+88H99ybN03TbUAue6B83rPmCsbwznw4HmzJpBu/+CKtFeIBHCKdJWMfbU+vKjLhtAg9PT2uLqA8iWLTYUFEHWSdGLVTKqToZ4sNjkawkSkrXjR/UviyMredSfRJYnNGzm7LDNV6lrGqejexfXKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=GAT1U+L3; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: e7b9b79c7e3611ef8b96093e013ec31c-20240929
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=STXCOfMr88bze3bpw9ORgaFnaHy/N/l30mbf79iV5nA=;
+	b=GAT1U+L3zSmujkwyli3YM7z1A5Jfsd1Xcpyn1xXPmyO+qChA7bQDK6iTu00TRftW+F7MBiU2zGIuDFJob71lcWk9UZfIW6dnVq1XveWNoP2CJDhDjWYu+lrsBPoPorY6oAPyylNaUMry9dLRLxefB0HtJCNcKjClNlZMWqXF+AA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:dfcb7fd5-9121-44b5-bbd4-d42295a80905,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:6638ba9e-8e9a-4ac1-b510-390a86b53c0a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: e7b9b79c7e3611ef8b96093e013ec31c-20240929
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
+	(envelope-from <andy-ld.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1567370212; Sun, 29 Sep 2024 15:46:15 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sun, 29 Sep 2024 15:46:14 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Sun, 29 Sep 2024 15:46:13 +0800
+From: Andy-ld Lu <andy-ld.lu@mediatek.com>
+To: <ulf.hansson@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<wenbin.mei@mediatek.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Andy-ld Lu <andy-ld.lu@mediatek.com>
+Subject: [PATCH v2 0/2] Add mtk-sd support for MT8196
+Date: Sun, 29 Sep 2024 15:44:04 +0800
+Message-ID: <20240929074558.2076-1-andy-ld.lu@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0f:b0:3a0:9d62:3b65 with SMTP id
- e9e14a558f8ab-3a34514ad10mr71130305ab.3.1727595822922; Sun, 29 Sep 2024
- 00:43:42 -0700 (PDT)
-Date: Sun, 29 Sep 2024 00:43:42 -0700
-In-Reply-To: <000000000000abe6b50620a7f370@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f9052e.050a0220.4a974.001a.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] WARNING in sock_map_destroy
-From: syzbot <syzbot+f363afac6b0ace576f45@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+There are some new features for Mediatek SoC MT8196, which include new
+command/data transmitting and receiving path (abbreviated as tx/rx), and
+two modified register settings.
 
-***
+The driver code has to be adapted to implement the above changes, and the
+compatible string 'mediatek,mt8196-mmc' is added to driver and devicetree
+bindings.
 
-Subject: Re: [syzbot] [bpf?] [net?] WARNING in sock_map_destroy
-Author: dmantipov@yandex.ru
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git c824deb1a89755f70156b5cdaf569fca80698719
-
- From 12b932f214f0caaaa79f929ab81b46ebea125a06 Mon Sep 17 00:00:00 2001
-From: Dmitry Antipov <dmantipov@yandex.ru>
-Date: Tue, 10 Sep 2024 14:21:20 +0300
-Subject: [PATCH net v2] net: sockmap: avoid race between sock_map_destroy() and
-  sk_psock_put()
-
-Syzbot has triggered the following race condition:
-
-On CPU0, 'sk_psock_drop()' (most likely scheduled from 'sock_map_unref()'
-called by 'sock_map_update_common()') is running at [1]:
-
-void sk_psock_drop(struct sock *sk, struct sk_psock *psock)
-{
-         write_lock_bh(&sk->sk_callback_lock);
-         sk_psock_restore_proto(sk, psock);                              [1]
-         rcu_assign_sk_user_data(sk, NULL);                              [2]
-         ...
-}
-
-If 'sock_map_destroy()' is scheduled on CPU1 at the same time, psock is
-always NULL at [3]. But, since [1] may be is in progress during [4], the
-value of 'saved_destroy' at this point is undefined:
-
-void sock_map_destroy(struct sock *sk)
-{
-         void (*saved_destroy)(struct sock *sk);
-         struct sk_psock *psock;
-
-         rcu_read_lock();
-         psock = sk_psock_get(sk);                                       [3]
-         if (unlikely(!psock)) {
-                 rcu_read_unlock();
-                 saved_destroy = READ_ONCE(sk->sk_prot)->destroy;        [4]
-         } else {
-                 saved_destroy = psock->saved_destroy;                   [5]
-                 sock_map_remove_links(sk, psock);
-                 rcu_read_unlock();
-                 sk_psock_stop(psock);
-                 sk_psock_put(sk, psock);
-         }
-         if (WARN_ON_ONCE(saved_destroy == sock_map_destroy))
-                 return;
-         if (saved_destroy)
-                 saved_destroy(sk);
-}
-
-Fix this issue in 3 steps:
-
-1. Prefer 'sk_psock()' over 'sk_psock_get()' at [3]. Since zero
-    refcount is ignored, 'psock' is non-NULL until [2] is completed.
-
-2. Add read lock around [5], to make sure that [1] is not in progress
-    when the former is executed.
-
-3. Since 'sk_psock()' does not adjust reference counting, drop
-    'sk_psock_put()' and redundant 'sk_psock_stop()' (which is
-    executed by 'sk_psock_drop()' anyway).
-
-Fixes: 5b4a79ba65a1 ("bpf, sockmap: Don't let sock_map_{close,destroy,unhash} call itself")
-Reported-by: syzbot+f363afac6b0ace576f45@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=f363afac6b0ace576f45
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
 ---
-  net/core/sock_map.c | 6 +++---
-  1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v2:
+- Use compatible string 'mediatek,mt8196-mmc' to replace 'mediatek,msdc-v2';
+- Remove the 'mediatek,stop-dly-sel', 'mediatek,pop-en-cnt' and 'mediatek,
+  prohibit-gate-cg' in devicetree bindings, due to SoC dependent;
+- Add 'stop_dly_sel' and 'pop_en_cnt' to the compatiblity structure for
+  different register settings;
+- The SoC's upgraded version would discard the bus design that detect source
+  clock CG when the CPU access the IP registers, so drop the related control
+  flow with 'prohibit_gate_cg' flag.
 
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index d3dbb92153f2..1eeb1d3a6b71 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -1649,16 +1649,16 @@ void sock_map_destroy(struct sock *sk)
-  	struct sk_psock *psock;
+Link to v1:
+https://patchwork.kernel.org/patch/13812924
 
-  	rcu_read_lock();
--	psock = sk_psock_get(sk);
-+	psock = sk_psock(sk);
-  	if (unlikely(!psock)) {
-  		rcu_read_unlock();
-  		saved_destroy = READ_ONCE(sk->sk_prot)->destroy;
-  	} else {
-+		read_lock_bh(&sk->sk_callback_lock);
-  		saved_destroy = psock->saved_destroy;
-+		read_unlock_bh(&sk->sk_callback_lock);
-  		sock_map_remove_links(sk, psock);
-  		rcu_read_unlock();
--		sk_psock_stop(psock);
--		sk_psock_put(sk, psock);
-  	}
-  	if (WARN_ON_ONCE(saved_destroy == sock_map_destroy))
-  		return;
+---
+Andy-ld Lu (2):
+  mmc: mtk-sd: Add support for MT8196
+  dt-bindings: mmc: mtk-sd: Add support for MT8196
+
+ .../devicetree/bindings/mmc/mtk-sd.yaml       |   2 +
+ drivers/mmc/host/mtk-sd.c                     | 162 +++++++++++++++---
+ 2 files changed, 143 insertions(+), 21 deletions(-)
+
 -- 
 2.46.0
 
