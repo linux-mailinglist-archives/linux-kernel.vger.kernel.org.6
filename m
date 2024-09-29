@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-343226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA3F98985A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:59:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A8A98985B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBD9C1C21145
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 22:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972B81F217F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 23:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412BE17C22F;
-	Sun, 29 Sep 2024 22:59:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D909917CA17;
+	Sun, 29 Sep 2024 23:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPi5war6"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653874204B
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B4526AD9;
+	Sun, 29 Sep 2024 23:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727650744; cv=none; b=phZqY5gyIqQEOW8KkxJnMZZ9nVtvDiuiE6VDBhcHbNhHrnC8sfZmaX/+YGzHT0Rjxb8hAMKFHMIXHD5fESNjx5n26xj5v2SrtV9XhvQZxwpl+R6czqTkbWCI6PNLuIp4Z+be1DRQlduaZ1kHSw32zA8/qrcW8kQrluhLSfkjpHY=
+	t=1727651219; cv=none; b=FJygST7522BDYgRtLFazkY7NXR0332TkarWgMVQqgaqnBbQw5otVYDRpSOu20E9xYSSqbN4s3lW6yEu2KSYhR9HFd5isWuFZpm51vYlSKpFzMRT1E6v3qERs4mxdiq9sr0tmnaVeutdFsrCZGY1gsQh0axadCyiJFCzCgoN/AXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727650744; c=relaxed/simple;
-	bh=h4oDpSQGSnJ4A29Rta5c3hm1zfzAvi7yb1gpTjkvm0Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tNZ9aYaY4fOImpfyVnlH6v5HBIym2zsFFquFmUdE3/Z328hQgA4KMtIDfKsDxSKLSU9DrXFGhCtM7oT4etEir0PFYYnxs6zoetitf9N/h0pwO02/GAJHJBMCWpP580wCOInh8swpTAcbr7+c9qvvBqNTmzIGfzkZVni00YEWKLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a1a2af837dso41124415ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:59:03 -0700 (PDT)
+	s=arc-20240116; t=1727651219; c=relaxed/simple;
+	bh=4hSaBqgEa3ayJyytv/Hn6lZcuxjYI4hzmrq6enHX3jI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W5G7kI4hzQBX1stRrryj0SZ8ctE6AimsehcoVMffGp5f4XTAMeEkaJsxxgInnGboDRDn1UQ+s+G6vs369HHpqyiwqnvCGlpm/aKVff2xjnSQq569zSJmbJV5SnszBN1DUj/5cI0opvHZFBDXJGJ46miH2Jft0vXHBjZjD/j9jMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPi5war6; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so27170125e9.3;
+        Sun, 29 Sep 2024 16:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727651216; x=1728256016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2jdFejcxdLhzzj1xvhfj2HwO/ISLBOj58Q9HnQMa3XM=;
+        b=FPi5war6gSVwLR0m8mt+gbdA+NQp588DhHM5cntbgb8c6d36EOnuz+we0oXKAboTq6
+         miRPTyjRk4i36csV2Z0iCuCOedNT7NC9lKZh83dbt+L8oh2fEW+qEvjZrX0CoQmY7bQ7
+         GyKZ+C03tM/1Pln1H2iglMY5sWo3VC5bE2s1X0AligkBqlgo9cndu7BUi+31G8IIDkRe
+         aLYJ1kY2OcE7RCaRG7KhUjiLb51oV2iQ+T1V+qvnGM/JcTddWX/MmIizZX8FOeJDizI1
+         HDMVVIrFJv1yzLvsGOjGRfRPkqOGu/f5EgB+L2upwSgaU9RnUYA9xW6/3mTKsOz/eIPJ
+         jJBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727650742; x=1728255542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OgDZBWRrTi5Xu2giUOd1pJc3GyeIttUJWGJD2ZdfcOo=;
-        b=e84NEjgJRfqCCz/KaiwR2ADPIp3kuYu2TzsyCZJGAYfOK9sDwjwBp1Q3w84bLzNuC4
-         BoX5lF5JCVhSfIXdsRrWjW1ONOxtYn2U4ZP461wavnfg/fdfM4G/vB0rXbvmjomiXEq1
-         zIGTy6I5DAwdPzc6KOVlghOwuTqS61clyvq85EP6TfW5kUyBuduAqvLg3FxOapk5vuDS
-         HHthb0aFiIY7JXwTpASHSq6ZH7j3q87zrn5LQWez32BRTlO2xtmPmMmxctQ1TDseiCnm
-         t9r5A5/wHhvtoSf0gCErJldsl5hINPNzW+sQZmoQD5qBQhYky0YHJDFqSQotC7MqCcu0
-         opLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmau8XnarkELPnRhQqJMGMdLDyhEyec9dFDWvQ+U2VRK7tXSyLOUR61N5O++EMkMy6TQ+dDIxGGRPTG/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHwvgoewL22UkoOOSyWxtRgChkaCJcPKmEYTJ0PfKczjz1oJHn
-	xs1eAoyW0RtaOrI6NHP20fv0QLisWLcXMeHCVGqAdYrgyPRWy7bgDotFL5uydrkCUy15gvbLB+s
-	B/nyVSHl+hRscwf+QfKp5bhyYzRPDd0sKCTjFIIvcbAgZ/J86p8vHALI=
-X-Google-Smtp-Source: AGHT+IE6T7rdQBojycR+PTvpV0cPqJGLT7PeVcYdiXV4w+50QowT8LM7aQOnH8gajWgxH7Lf+We8AYUcacRVDckKIqc4lejXiICv
+        d=1e100.net; s=20230601; t=1727651216; x=1728256016;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2jdFejcxdLhzzj1xvhfj2HwO/ISLBOj58Q9HnQMa3XM=;
+        b=QRDuq3DpVQRgMuhgSW5DHyn2UNzCQTQRQ1NcNISmy2C6O2hNYOa1Q81tnc4Y8YpUYX
+         H1bEC3jvXNW85Ln7h7vJrB62Zr16KXUUJ/+EkIWLsL9UkP2fMSYDEDAfeTWysHAW1muF
+         7NAIwhrdm9uYmdit9vGODHQId+aNWZc3ytizmjPhVvuSSH6KBqKbNj5Ow60AIytwyz0Q
+         XFDmBq5xghtCP35CpyaCVi+cITVNirTUdSY9KGgs9lLxstJgSGIy35jm+Eu8uB98SxXk
+         z/7P9s9CdLIRLNh9PAfxNgpAIW16xvveIGr+z/OYrgxhUdpQHc2tBy2kMvKz6rl4K5sP
+         YwsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAHb7sTSnWlIj3hIVQh845Vj3S9H/8Hr0fKuMelUQ8NkYFo126vQ9gFlD+aRkHwED/SxUhxAKvMWBvtuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3N/OrnS13mFk+oWtERhff5khaVW9jQLydyd/EkTCznmAAhP9P
+	/B3OhQ1D/Z9Mog5Pd5YQaNEUMolVEf9LhKCWygiENYWuuKP0e0UX
+X-Google-Smtp-Source: AGHT+IHh/iA4AezibHLdoZoaho0VJVidl7o8NgQVKmYwAGPqu4fmymwqfCOukvYNPNu6GcpbDT9KdA==
+X-Received: by 2002:a05:600c:4f14:b0:429:e6bb:a436 with SMTP id 5b1f17b1804b1-42f58414591mr68210565e9.9.1727651215870;
+        Sun, 29 Sep 2024 16:06:55 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:ca98:6bb1:3a23:ef55])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dd2eadsm87441985e9.6.2024.09.29.16.06.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 16:06:55 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: willy@infradead.org,
+	akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Gianfranco Trad <gianf.trad@gmail.com>,
+	syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Subject: [PATCH v1] Fix NULL pointer dereference in read_cache_folio
+Date: Mon, 30 Sep 2024 01:05:50 +0200
+Message-ID: <20240929230548.370027-3-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c8:b0:3a0:abd0:122 with SMTP id
- e9e14a558f8ab-3a27689e571mr88258755ab.8.1727650742491; Sun, 29 Sep 2024
- 15:59:02 -0700 (PDT)
-Date: Sun, 29 Sep 2024 15:59:02 -0700
-In-Reply-To: <8f9374ff-e660-4127-b192-ec9791068174@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f9dbb6.050a0220.aab67.0022.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
- dereference in read_cache_folio
-From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Add check on filler to prevent NULL pointer dereference condition in
+read_cache_folio[1].
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+[1] https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
 
 Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
 Tested-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
+ mm/filemap.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Tested on:
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4f3753f0a158..960f389e2d3b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2360,7 +2360,10 @@ static int filemap_read_folio(struct file *file, filler_t filler,
+ 	/* Start the actual read. The read will unlock the page. */
+ 	if (unlikely(workingset))
+ 		psi_memstall_enter(&pflags);
+-	error = filler(file, folio);
++	if (filler)
++		error = filler(file, folio);
++	else
++		return -EIO;
+ 	if (unlikely(workingset))
+ 		psi_memstall_leave(&pflags);
+ 	if (error)
+-- 
+2.43.0
 
-commit:         9852d85e Linux 6.12-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14bbf507980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=daa10535be443909
-dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12d58ea9980000
-
-Note: testing is done by a robot and is best-effort only.
 
