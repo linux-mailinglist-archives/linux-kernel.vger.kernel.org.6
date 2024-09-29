@@ -1,115 +1,73 @@
-Return-Path: <linux-kernel+bounces-342823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5F1989351
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:41:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D8B989352
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 08:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8A431C20A91
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C418FB23798
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 06:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC580139D19;
-	Sun, 29 Sep 2024 06:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754B21386B4;
+	Sun, 29 Sep 2024 06:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="I44kMcGX"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="dOCgjQPy"
+Received: from ci74p00im-qukt09090102.me.com (ci74p00im-qukt09090102.me.com [17.57.156.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5927128E37;
-	Sun, 29 Sep 2024 06:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BAF43172
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 06:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727592097; cv=none; b=BWV4I0sDBOaEOglKs+x+adDY9sG8RUGWDgkQk9r5nUBn3K2GUaGvft1iSKySC+aIElfE8XXsodLWV5EHEnAaVCoXZcDlKSb4yFu5r/g54415GTGgASSRga/yBVevDSLvXk1tNxgt2B7yc6ute679Wv05Hl3MurtsOE+lsx4srMA=
+	t=1727592635; cv=none; b=ATvl6nv2uoqdqNjRqCIN/JuPtkjFGg9z34uu9YLPuD4QLCfH8msEGompJWky8wOzVfLAJLZ1HQtQaTcUN3zP36+dc6R1geABCuZeWZGF7XeM90IlIiwhzIOwHe/uPEgdtM6WvahwTo5QI+5rq6Lz84zPLrdhF7RcSycq3P8RgbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727592097; c=relaxed/simple;
-	bh=mlRKFJzlJGGf7SYJivn22/YB5fqswy9nAEADlLxOGes=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gErw2ITyxtMEjNZ/JIoRwwLgf+tS7Bc0fKH8AxLTg4iVZw1+yHcfNJJXKQAcKLE8zbrGjr7i8menVwAdqcann5Deaaytrx2b9MDQBC3JNxhrfpt9d3hGQEqZhGCPq0bm6UHwvUNeImgvnMu830X8+pva1gH3Lh/at9/5zOjTt4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=I44kMcGX; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=k/e080hWv1/phh7G1n4JyJkR+5g5OEdJ7sD74mBcFBE=;
-	t=1727592095; x=1728024095; b=I44kMcGXZ7cjRam4HBeaxzv8djzvimPmkPKxb/CDSlK6Ekt
-	fPqBW3dSJUqmav/dkrEoKYsCLI12vDKlT0MJO73xSPG36sfAXhummfrCG0r5t9OFOixN668BQ2CFQ
-	2A9H2T/Vjoqbi/ELEb+8qkxPMnRh80fm8jyuiYCHXtxIuavx1orJVSlddPHeYjqLkNjBaczips0wD
-	VWYjEN0EjWDyqYrGRv4vjzM+xAA85QP+At81O48JiA7xLDzC0+ORt05DrSW2Zb/v3QE2nKr8XCikM
-	CpvDuaz9E5nmic7sLMSTe9QmrJFvQ2RO/wV22z9wlHpqY5LmdaiGued75xMOzPEQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1suncU-0006TT-Tp; Sun, 29 Sep 2024 08:41:27 +0200
-Message-ID: <3cc1eca2-0278-4b90-9cc6-e5c75ed4327d@leemhuis.info>
-Date: Sun, 29 Sep 2024 08:41:26 +0200
+	s=arc-20240116; t=1727592635; c=relaxed/simple;
+	bh=oQVrm4JM1X0wDCMXvmOHv4D9tQl39pOLC72bTquZ9bE=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:Cc:To; b=SNV8kK1V9Tk+keibjjGTlpdIf3HRVlSCyeOzx88xaF5+0UtrFiPv+L+kzofkF8I3SMXQ7adSrxDdwquEdV7v1K2i55cTzNSQxIl18VEHUHyOk7MaWBqlnkeUnHOvJ73t6fUFhZpu165Anq+JdNGz9hspgCVox3oWpohpvvm7MOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=dOCgjQPy; arc=none smtp.client-ip=17.57.156.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1727592633;
+	bh=oQVrm4JM1X0wDCMXvmOHv4D9tQl39pOLC72bTquZ9bE=;
+	h=Content-Type:From:Mime-Version:Date:Subject:Message-Id:To;
+	b=dOCgjQPyC3mQtgPJgaqxZ5hdviZoausr0+zY1Pn/O/3ty8Ih0ZzdQTAWfyeKeWmbY
+	 9OLwzitHQkut15Zm1SLgWYHyvxKz7u3z+K30lFInW6rWGZjBxbi0oYgAUggXB5HRz5
+	 W9QuvR811r9NLCKzMc2MXaGtrW4JZ+Dxb+OUxZOjq3c7TNJvIycNz7v4L7vbWJzdVn
+	 ezBwZQMVIbrH/Kgz2x2bm9fwM9mVb8GYhrmGuqTr7K5w4LHWJCvvKNNarVap9HIfxK
+	 /hUsPKNQAYHrUoj2lVQ1fm5yGgBb4nfmQFJBL4TKgq5BjVz7BH1A7qvJMOqTPki/ds
+	 9YCQQ9wSaVFrg==
+Received: from smtpclient.apple (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
+	by ci74p00im-qukt09090102.me.com (Postfix) with ESMTPSA id 4FEB13C00117;
+	Sun, 29 Sep 2024 06:50:32 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+From: Crystal M Baker <bakerdot@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] Regular "cracks" in HDMI sound during playback since
- backport to 6.1.y for 92afcc310038 ("ALSA: hda: Conditionally use snooping
- for AMD HDMI")
-To: Salvatore Bonaccorso <carnil@debian.org>, Takashi Iwai <tiwai@suse.de>,
- Jaroslav Kysela <perex@perex.cz>, linux-sound@vger.kernel.org
-Cc: Eric Degenetais <eric.4.debian@grabatoulnz.fr>,
- linux-kernel@vger.kernel.org, stable <stable@vger.kernel.org>,
- regressions@lists.linux.dev, Sasha Levin <sashal@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <ZvgCdYfKgwHpJXGE@eldamar.lan>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <ZvgCdYfKgwHpJXGE@eldamar.lan>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727592095;86a46c88;
-X-HE-SMSGID: 1suncU-0006TT-Tp
+Mime-Version: 1.0 (1.0)
+Date: Sun, 29 Sep 2024 02:50:21 -0400
+Subject: Re: [ANNOUNCE] Git v2.47.0-rc0
+Message-Id: <A0706A65-9B12-40C0-8E6C-842793C5780D@icloud.com>
+Cc: git-packagers@googlegroups.com, git@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+To: gitster@pobox.com
+X-Mailer: iPhone Mail (21H16)
+X-Proofpoint-GUID: _ePVpDPHU8759ispMG-EE6Xwpkf7SQ-y
+X-Proofpoint-ORIG-GUID: _ePVpDPHU8759ispMG-EE6Xwpkf7SQ-y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-29_04,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 clxscore=1011
+ spamscore=0 mlxlogscore=609 adultscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409290050
 
-Hi! On 28.09.24 15:19, Salvatore Bonaccorso wrote:
-> 
-> In downstream Debian we got a report from  Eric Degenetais, in
-> https://bugs.debian.org/1081833 that after the update to the 6.1.106
-> based version, there were regular cracks in HDMI sound during
-> playback.
-> 
-> Eric was able to bisec the issue down to
-> 92afcc310038ebe5d66c689bb0bf418f5451201c in the v6.1.y series which
-> got applied in 6.1.104.
-> 
-> Cf. https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1081833#47
-> 
-> #regzbot introduced: 92afcc310038ebe5d66c689bb0bf418f5451201c
-> #regzbot link: https://bugs.debian.org/1081833
-> 
-> It should be noted that Eric as well tried more recent stable series
-> as well, in particular did test as well 6.10.6 based version back on
-> 20th september, and the issue was reproducible there as well.
-> 
-> Is there anything else we can try to provide?
 
-Just "the usual", which is not widely known, so allow me to explain.
-
-Please in situations like this *always* try to test a recent mainline
-kernel. Given the timing, it's best to test 6.12-rc1 once it out later
-today.
-
-That's because it's unclear if this is something the regular maintainers
-or the stable team/the one that asked for the backport has to handle.
-Some developers do not care, but often it's required, as otherwise
-nobody will take a close look -- especially when it comes to longterm
-kernels. That's because participation in stable/longterm maintenance is
-entirely optional for mainline developers (e.g. the author of the
-culprit). This page
-https://linux-regtracking.leemhuis.info/post/frequent-reasons-why-linux-kernel-bug-reports-are-ignored/
-has a few points that explain the problem in more detail.
-
-HTH, Ciao, Thorsten
+Sent from my iPhone
 
