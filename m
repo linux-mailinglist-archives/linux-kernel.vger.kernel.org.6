@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-343027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A9A989606
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09777989608
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 16:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32884B240D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C875B284327
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 14:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65875183CCA;
-	Sun, 29 Sep 2024 14:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A1917C7CA;
+	Sun, 29 Sep 2024 14:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcOlL1X9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QiJr6vqx"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD59183098
-	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 14:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6CD152790;
+	Sun, 29 Sep 2024 14:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727621002; cv=none; b=o7u913SI74dM0CK9AHAqS6pdbiONIsn62gn9Bop0MYwEQfb1/veNarNivFBG3fHWFnnVKf6D3QkbrWXdQFKxJkTZxp2dB8QHBcJRIlj3qRy2QDr2DPvOHJHjbLzmTiiKOOjFg12fiIq0dWNQeBSVTSgQ7U+sRzo39FA5qNnGNQ8=
+	t=1727621035; cv=none; b=tD1Ca6uXhrP77YKZIc25+kNk50YeizuEUHoNRXQocy87L83/AbD95wFCwjaPzVXmnIuqYprser41b5g8yCI1z0kV+1r/zZ6kx5poCiWI2wha/xL9KTsmOZjGtAnQoRy76FfmUKebGhDI3gaoMXP5uw56b6J1bXPBKDnCBRswWzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727621002; c=relaxed/simple;
-	bh=FfaZhrQq34BZlheLdSwojN4sapArypT72+Y+nLTOLDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HfBnbHLGkdmbH4HZ9zr6ATiqY5e158mmKy8m0m7hCYUuNM1XpeELRbMX2oARkYbDV97uLyMr+gwfuuZjjSlEmJu+OPB3TioiRk+SMDTIVdMrqD9Y3EDWc92L9QuQWe638r7/+fq6FZTS6rbOtWpQyTFj/Y0/7yt7Y6LUmXDf1CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcOlL1X9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727621000;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=PFEiL3F5MSjU++Jxe01AvOazddBzZZRjIDhG9rgyzoQ=;
-	b=fcOlL1X9TFa4n8u/GCm8dWpVUOpDmdhiRws/8o/KJTDva0nQyHtKi7KGxGe6lE7ac6hsli
-	2V3CV4FlleOhUfOy9o/0TLn1BX6sm5N0o6J39/T81V+DJgBi9hH+oQCLEKT0unIZei5kLy
-	NzbyHbJfnuoqjHyCTBZrKuAAnbGMU/k=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-2aiClEGVNq6dSkKRgCxqKg-1; Sun,
- 29 Sep 2024 10:43:16 -0400
-X-MC-Unique: 2aiClEGVNq6dSkKRgCxqKg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42BB0195FE21;
-	Sun, 29 Sep 2024 14:43:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.44])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 90E271979060;
-	Sun, 29 Sep 2024 14:43:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 29 Sep 2024 16:43:01 +0200 (CEST)
-Date: Sun, 29 Sep 2024 16:42:58 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Cc: Liao Chang <liaochang1@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH 7/7] uprobes: deny mremap(xol_vma)
-Message-ID: <20240929144258.GA9492@redhat.com>
+	s=arc-20240116; t=1727621035; c=relaxed/simple;
+	bh=8rTyJxAfO3B85HP1kg6hf/axlxAl4Lj9VgohmMrNerg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqhvE1+PmubMjB0mdw0mCNsCgLcTlaMRoHOlKi7W0bCegdlOUwtIyr0/7DCpmMuCS4nwSJw9ugLHpGRdNPxqq4+bxvMHtvB9CiTc1VLyXQwEU+Kppf4BAO1fl7dArQlAd3d8EpRwIKD/dbcTrTZlQmzoKV4XvD7UFC8fM+I5b8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QiJr6vqx; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206aee40676so29465795ad.0;
+        Sun, 29 Sep 2024 07:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727621033; x=1728225833; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKH0wmfhXTT6EUqQXpt5WFcS6xMVt2z57mqdHZva2MA=;
+        b=QiJr6vqx8f5Kc9FUVP5Jf6BBuACC598kJ31IgGasuGTnS8LZcU7gNJGLwKpBc5JIPU
+         VB4mxuurz6pSTdaGirFJdiDNqxvX7f4Vh6+uedQ+DAmG5ppnm/DmygvWWqUMF3HZzobd
+         PvOfwPBSZPKDWdt08idVkUth9Qv8jow4gOlvVDk6vPiSedF0iZOVLVkp6EotMLav7rSP
+         CbHA+mSqL1FASwrjyFiMRy3pxRcSVRlMB/WcCXxMa2vkfmtolvhBieFSm6oECkxXpubr
+         G6L+emOqoMEbCk8tIwB6dPPRNnByIo5+tnGSRDD/NE4tr9ilJzydJZSo4NjpNIkl2geS
+         AXwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727621033; x=1728225833;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KKH0wmfhXTT6EUqQXpt5WFcS6xMVt2z57mqdHZva2MA=;
+        b=st4PjggpG94N185S9uEXkjHu1PfKpGUlVqyCX5kULDF+dxHUsqWL+09P6VpxLIS846
+         G3f7ivIo8iDeVk5d2ZjEpP8AYgymioqT7MMNFSBvlgrtpn+WmpmOP46i9hJJqvK7VMZO
+         HaqgAk4XtkiKKBZzf4iK7VQqolAO0XIRLVygw28P50oJZ2B7vspM5moEC5IQG4AKyqtY
+         BQbboujHrbe4hCNSvNQ5j4SLuJ+J2ikDJi9XLiS5hf8p8XQuUiWmTWouUdDBurugYCO+
+         wm7WQickC4zogasUbDDMUb/wXJXnIdp5GljeYwZDABKIG3mhfCV4mkobEptvA0nR8QZz
+         5/gg==
+X-Forwarded-Encrypted: i=1; AJvYcCUg1EG8yq7hBpYMx2f66A1x9Kj/iB4Ydc6kv7798+qAkIWuNMec7dqvlnruK9Hs9w46Uyb/Kvbb0FlBTSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8ka4XmTjEu3mrv4z57VOvtUi1tjuPDN7XOrBUBkgf00idmn2R
+	B7DHFpU3TOw283P4P3Il+SCVqfHjCeWVJwtdHFaLlDWBRDKHG0ZlVZ6WuVcE/SM=
+X-Google-Smtp-Source: AGHT+IHOZzT32HXSPX5UWq6ATXCUYK7NR4ZUJ/RlW3LAT2wFc6oxGYQj9KCI+J947N73+E8HRcKcqA==
+X-Received: by 2002:a17:902:e54e:b0:20b:5aeb:9af with SMTP id d9443c01a7336-20b5aeb0a63mr91840025ad.22.1727621032880;
+        Sun, 29 Sep 2024 07:43:52 -0700 (PDT)
+Received: from localhost.localdomain ([120.229.27.0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d5b9sm40620625ad.174.2024.09.29.07.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 07:43:52 -0700 (PDT)
+From: Wardenjohn <zhangwarden@gmail.com>
+To: jpoimboe@kernel.org,
+	mbenes@suse.cz,
+	jikos@kernel.org,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com
+Cc: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3 0/1] livepatch: Add "stack_order" sysfs attribute
+Date: Sun, 29 Sep 2024 22:43:33 +0800
+Message-Id: <20240929144335.40637-1-zhangwarden@gmail.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929144201.GA9429@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Transfer-Encoding: 8bit
 
-kernel/events/uprobes.c assumes that xol_area->vaddr is always correct but
-a malicious application can remap its "[uprobes]" vma to another adress to
-confuse the kernel. Introduce xol_mremap() to make this impossible.
+As previous discussion, maintainers think that patch-level sysfs interface is the
+only acceptable way to maintain the information of the order that klp_patch is 
+applied to the system.
 
-With this change utask->xol_vaddr in xol_free_insn_slot() can't be invalid,
-we can turn the offset check into WARN_ON_ONCE(offset >= PAGE_SIZE).
+However, the previous patch introduce klp_ops into klp_func is a optimization 
+methods of the patch introducing 'using' feature to klp_func.
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/events/uprobes.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+But now, we don't support 'using' feature to klp_func and make 'klp_ops' patch
+not necessary.
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index da45d0e5bcf4..20c58b6ee1ad 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1475,9 +1475,15 @@ static vm_fault_t xol_fault(const struct vm_special_mapping *sm,
- 	return 0;
- }
- 
-+static int xol_mremap(const struct vm_special_mapping *sm, struct vm_area_struct *new_vma)
-+{
-+	return -EPERM;
-+}
-+
- static const struct vm_special_mapping xol_mapping = {
- 	.name = "[uprobes]",
- 	.fault = xol_fault,
-+	.mremap = xol_mremap,
- };
- 
- /* Slot allocation for XOL */
-@@ -1670,21 +1676,19 @@ static void xol_free_insn_slot(struct uprobe_task *utask)
- {
- 	struct xol_area *area = current->mm->uprobes_state.xol_area;
- 	unsigned long offset = utask->xol_vaddr - area->vaddr;
-+	unsigned int slot_nr;
- 
- 	utask->xol_vaddr = 0;
--	/*
--	 * xol_vaddr must fit into [area->vaddr, area->vaddr + PAGE_SIZE).
--	 * This check can only fail if the "[uprobes]" vma was mremap'ed.
--	 */
--	if (offset < PAGE_SIZE) {
--		int slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
--
--		clear_bit(slot_nr, area->bitmap);
--		atomic_dec(&area->slot_count);
--		smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
--		if (waitqueue_active(&area->wq))
--			wake_up(&area->wq);
--	}
-+	/* xol_vaddr must fit into [area->vaddr, area->vaddr + PAGE_SIZE) */
-+	if (WARN_ON_ONCE(offset >= PAGE_SIZE))
-+		return;
-+
-+	slot_nr = offset / UPROBE_XOL_SLOT_BYTES;
-+	clear_bit(slot_nr, area->bitmap);
-+	atomic_dec(&area->slot_count);
-+	smp_mb__after_atomic(); /* pairs with prepare_to_wait() */
-+	if (waitqueue_active(&area->wq))
-+		wake_up(&area->wq);
- }
- 
- void __weak arch_uprobe_copy_ixol(struct page *page, unsigned long vaddr,
--- 
-2.25.1.362.g51ebf55
+Therefore, this new version is only introduce the sysfs feature of klp_patch 
+'stack_order'.
 
+V1 -> V2:
+1. According to the suggestion from Petr, to make the meaning more clear, rename
+'order' to 'stack_order'.
+2. According to the suggestion from Petr and Miroslav, this patch now move the 
+calculating process to stack_order_show function. Adding klp_mutex lock protection.
+
+V2 -> V3:
+1. Squash 2 patches into 1. Update description of stack_order in ABI Document.
+(Suggested by Miroslav)
+2. Update subject and commit log. (Suggested by Miroslav)
+3. Update code format for some line of the patch. (Suggested by Miroslav)
+
+Regards.
+Wardenjohn.
 
