@@ -1,101 +1,99 @@
-Return-Path: <linux-kernel+bounces-342762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-342763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03E29892B7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:37:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B55E19892B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 04:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745CE1F2293F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E659D1C223D2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 02:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5B31BF37;
-	Sun, 29 Sep 2024 02:37:41 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047941BF37;
+	Sun, 29 Sep 2024 02:38:38 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343A117580;
-	Sun, 29 Sep 2024 02:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A355E18EAB;
+	Sun, 29 Sep 2024 02:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727577461; cv=none; b=gmOnCSE4WUBae3MdhAb3HSEvysduYalJUTaRAPhG71YH4fd7xPT25fEXUAkBkJlIdzECK7FsnZ8nl1xdfBJONXrV8iZT4K7zSY9mWfZVYf+5wnAcIMRgmEqyT3ECoGUsNTPxh6sxBvPAuDNOHI0MT/xjGFrg8qs8eiDmQm+FEwY=
+	t=1727577517; cv=none; b=e1cVjNhU7VVKrBd4FERksA/l502KBFAYVOnorD8r0q8p1z18qYKcoID84JC+Nw2H1MndYm9Y2Ikcldbr0Tb5rSKFAPRHHegXn+ztXFuGCf4ZnWnZhPyVsMY/AmiHmRqfkWxv3AhHbzbV93XPl134N8DpcoKQglVwz9O2vFml+kU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727577461; c=relaxed/simple;
-	bh=BC5G+eTcM5dQ2qI4tRZTbc6C1HLgSCR8KsMitCrqfnM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=roerI+y9M53azF7Wc4vvVEZahClGaoEun00OG88hD53kqf/Q1nxGkldWxrmaAwpCmyC/GyYOxb/j5T3WM4bKaPvsDkT9PdzYcuVNLnXXaaWwuvw70Pv/SAsjMXqpw77SeyxSzzBrcdmFVc82NEbwsSjGgR87N2ew2clWyAl7H6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom145.biz-email.net
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id ZBO00025;
-        Sun, 29 Sep 2024 10:37:25 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201623.home.langchao.com (10.100.2.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 29 Sep 2024 10:37:24 +0800
-Received: from localhost.localdomain (10.94.12.73) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 29 Sep 2024 10:37:24 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <m.grzeschik@pengutronix.de>, <davem@davemloft.net>
-CC: <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] arcnet: com20020-pci: Add check devm_kasprintf() returned value
-Date: Sun, 29 Sep 2024 10:37:21 +0800
-Message-ID: <20240929023721.17338-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1727577517; c=relaxed/simple;
+	bh=nHlfBp6BkF9yN8JZZMdMt//MlWivT2rbZSjxxxCmdiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XCE83hoh+gO+y/3j2UzhVvVpfCkVcuO4avv/i3Nv9wjZ7sgkaX4znvNt2mh/PyAQaxzA7whZz+5xQMml3t5B07A0CLIxLyLKxVme2L7kxmg1Ei109KbmYb/mndkRRc7L1vKykh/hGd3Ngo4AqjtP3c6YPdqn2dUx0JAb5zkiFcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XGT0C4Ky8z4f3jkj;
+	Sun, 29 Sep 2024 10:38:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id EE9101A0C31;
+	Sun, 29 Sep 2024 10:38:30 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP1 (Coremail) with SMTP id cCh0CgBnki6lvfhmPBBECg--.64483S2;
+	Sun, 29 Sep 2024 10:38:30 +0800 (CST)
+Message-ID: <8492b8ca-cdbc-4177-b5fe-48f352d60528@huaweicloud.com>
+Date: Sun, 29 Sep 2024 10:38:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2024929103725add1256462f350b8bb3094b565fe72b7
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/3] add dedicated wq for cgroup bpf and adjust
+ WQ_MAX_ACTIVE
+To: Tejun Heo <tj@kernel.org>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, longman@redhat.com,
+ mkoutny@suse.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <ZvcN7O_UBNNQlnSz@slm.duckdns.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <ZvcN7O_UBNNQlnSz@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgBnki6lvfhmPBBECg--.64483S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
+	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAq
+	zxv26xkF7I0En4kS14v26r126r1DMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJ
+	UUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-devm_kasprintf() can return a NULL pointer on failure but this
-returned value in com20020pci_probe() is not checked.
 
-Fixes: 8890624a4e8c ("arcnet: com20020-pci: add led trigger support")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/net/arcnet/com20020-pci.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/arcnet/com20020-pci.c b/drivers/net/arcnet/com20020-pci.c
-index c5e571ec94c9..6639ee11a7f8 100644
---- a/drivers/net/arcnet/com20020-pci.c
-+++ b/drivers/net/arcnet/com20020-pci.c
-@@ -254,6 +254,8 @@ static int com20020pci_probe(struct pci_dev *pdev,
- 			card->tx_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 							"pci:green:tx:%d-%d",
- 							dev->dev_id, i);
-+			if (!card->tx_led.default_trigger || !card->tx_led.name)
-+				return -ENOMEM;
- 
- 			card->tx_led.dev = &dev->dev;
- 			card->recon_led.brightness_set = led_recon_set;
-@@ -263,6 +265,9 @@ static int com20020pci_probe(struct pci_dev *pdev,
- 			card->recon_led.name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
- 							"pci:red:recon:%d-%d",
- 							dev->dev_id, i);
-+			if (!card->recon_led.default_trigger || !card->recon_led.name)
-+				return -ENOMEM;
-+
- 			card->recon_led.dev = &dev->dev;
- 
- 			ret = devm_led_classdev_register(&pdev->dev, &card->tx_led);
--- 
-2.31.1
+On 2024/9/28 3:56, Tejun Heo wrote:
+> Hello,
+> 
+> On Mon, Sep 23, 2024 at 11:43:49AM +0000, Chen Ridong wrote:
+>> The patch series add a dedicated workqueue for cgroup bpf destruction,
+>> add adjust WQ_MAX_ACTIVE from 512 to 2048.
+> 
+> Patchset generally looks good to me. I'll wait for an updated version
+> addressing Michal's comments.
+> 
+> Thanks.
+> 
+
+Thank you, TJ, I will update version if Michal thinks the "NOTE" is 
+acceptable. I am waiting his reply.
+
+Best regards,
+Ridong
 
 
