@@ -1,171 +1,173 @@
-Return-Path: <linux-kernel+bounces-343036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9802F989616
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9E0989618
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 17:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDF91F2107A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805A3284C22
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Sep 2024 15:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A7C16E892;
-	Sun, 29 Sep 2024 15:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itBWcsI5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F48917B41F;
+	Sun, 29 Sep 2024 15:22:33 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D07417C;
-	Sun, 29 Sep 2024 15:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E6C618C31
+	for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727623051; cv=none; b=p67C1m7u7liA1IfG01/MKWjkcqE4tz4fQpt3Y5XyeEN33gmJj/fiaZ6NqBbq1Jq0rJth7wQqXqmJZHzuHrgpIfZcwei1Am/SY5iO+a1dzIbNu5uabfRr4MdvFCM5Gvxv8UvBioJcWbbTImbYT6mUbKiZrVq6BsDVxtnVyQeGTlA=
+	t=1727623352; cv=none; b=GXSbj+7N1Zlz0/ae38CEGzCpk0mwQNOHt6cgg/i8btmk83PK8w89y4diaago0sq5JScaOnrEdl43C12MWsb1enBP6NOTPIT6TjJHvZxGluuCWrS0RqtYYJqwy8C5L0oZHGf46Y1voKxJIia6J78qfzmGSlODipe1J7Fw3hm4lNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727623051; c=relaxed/simple;
-	bh=eQylGUNRxchABfJswjanp/s+IOJknU6kiHFdLqGmXTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MiNMcreYu2zPIAGqT4EREjdXyi8YIvTgdXTLzG84eMur+rF6X1jENEl1EPXpFBjbb4FuqfY45XeDXJ3yIC2hawjyrJmBGkIl10YyWgGehQXD8IqwQqRxRF21pZFgktFnEc3Te1LLntl3mH01525+OYuu9JSkhY1sbgn72/ZleQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itBWcsI5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7C03C4CEC5;
-	Sun, 29 Sep 2024 15:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727623050;
-	bh=eQylGUNRxchABfJswjanp/s+IOJknU6kiHFdLqGmXTI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=itBWcsI5uSxHOMUI+hnyql50fUWWO1cwMCySRGDRJW3pELQFcx2w0m51e83B+aYe3
-	 x0e8Mnov2bCUzmpT7mdROBFZ3Z6j9hWUfj5IyBlI0Wln+W08YWPYW68OcsM3+LcpOg
-	 8YuZAMwZz05dAIjJUtk85hqL5B/G7+Fj4lMzzRtfe8JyMI7LEdI3Pi+DTgzOpWOJbp
-	 5+3gOPe5Wk7u5v7EHEuo0INXe2epKLS70bBPE4+1xRavjo79tnDRkglBDoJkzF6hVS
-	 lKOTbaEhfL0h6avtYuXOO7wgfUZ8ScSK5b2/Y7wNEL+UTW6SjBCUvP4qJdMfIf/8xp
-	 dZ0Pc71VP8XHA==
-Date: Sun, 29 Sep 2024 17:17:23 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Gary Guo <gary@garyguo.net>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, akpm@linux-foundation.org,
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com, lina@asahilina.net,
-	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
-	lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v7 25/26] kbuild: rust: remove the `alloc` crate and
- `GlobalAlloc`
-Message-ID: <Zvlvg0pBkhmukh0N@pollux>
-References: <20240911225449.152928-1-dakr@kernel.org>
- <20240911225449.152928-26-dakr@kernel.org>
- <20240928204357.3a28dada.gary@garyguo.net>
+	s=arc-20240116; t=1727623352; c=relaxed/simple;
+	bh=2ex9y0UsAPBlrPOfl1FUXYE5dT3frzyx3jDpwpdno7I=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OhWHaW18uG9dAcK/hknbBufz6IG8/wLcfcj+c8+wIn09Nthpjm+ldiXzDz6ehhgPFieIxcYs9uV/sNGma5vuxG3NBwAyL3H5bSbUtZIahKEjbzaN0gxAJJLNGq2jOhIYLg4vhMBSNiinDISYT/+IbeRXrohi3+tHSRXVRWFfZkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa4678394so465404339f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 08:22:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727623350; x=1728228150;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HKwGfbNeJAtsIYhH979/UVUtLhmIoByeYMt6WVw6JG0=;
+        b=V9Bf/Syr6dPlG55y0kiHe6ImoTa9aYKpVZ+noraNyP+2HqhB5vAP19rHpQwQRydr0n
+         djtWLe/4czmw2ru3ufoGSDLqcJZnWVQBgqmd1L6YZJ9Mkd644UR+o69Ugtk8Yolecinc
+         tDj1pEKkroM1RagwoWD53KpvS/oRohplJrv5twFXzCQ+y5+pSqIECbUVgvbENGv3H1bO
+         DDS+E9N1jMvyz5eBX/OHl7n5qeY5uYBWvbORlZM8IWMNMcNwuh1ClkfEQDFojIefg6LS
+         bCxBQZHXk97FlUy4GG+eeMhuWsSyztySG/B8pqC2swu1h/9Y5IrVBdmpap1I1LbezdQ1
+         K/Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN+ClhqtrdCtQ1OTTRix7GOKjAJAimK3YDnLSedVqo+64N0lJuOFUCg49pWs/Aa0si5xI3fpkbecZll8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxt7oYFOZPeel5iyhpSKjyeetRoEA9lhUVKO1cGNOddzpqJwVs
+	NAwetOkUQJX/5ZItxZ54MO/aBW4vt7IIE5tc9iV4AjOeGOrVsPzaaVH+YSbBP9kTO+htHnExrig
+	As5QZwU+ETDq206t7GlevBWZGOCd74iS4+HFD8OjA64lFZhqdcqA5QD4=
+X-Google-Smtp-Source: AGHT+IH8jlOx3Vo5HWli/Hxb2cni/8759hXOSCk1x2fiNXKQSlODEvqhOq0Gu9RaiQG/5abR4DQZ2PPYp+RcUZ83ZNuv7Q/+6hcn
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240928204357.3a28dada.gary@garyguo.net>
+X-Received: by 2002:a05:6e02:b23:b0:3a0:ab86:928f with SMTP id
+ e9e14a558f8ab-3a3452cfda8mr60038855ab.26.1727623350448; Sun, 29 Sep 2024
+ 08:22:30 -0700 (PDT)
+Date: Sun, 29 Sep 2024 08:22:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66f970b6.050a0220.6bad9.001a.GAE@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_page_mkwrite
+From: syzbot <syzbot+c3ef47c4433fe4281f50@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 28, 2024 at 08:43:57PM +0100, Gary Guo wrote:
-> On Thu, 12 Sep 2024 00:53:01 +0200
-> Danilo Krummrich <dakr@kernel.org> wrote:
-> 
-> > Now that we have our own `Allocator`, `Box` and `Vec` types we can remove
-> > Rust's `alloc` crate and the `new_uninit` unstable feature.
-> > 
-> > Also remove `Kmalloc`'s `GlobalAlloc` implementation -- we can't remove
-> > this in a separate patch, since the `alloc` crate requires a
-> > `#[global_allocator]` to set, that implements `GlobalAlloc`.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/Makefile                     | 43 +++++----------------
-> >  rust/exports.c                    |  1 -
-> >  rust/kernel/alloc/allocator.rs    | 63 +------------------------------
-> >  scripts/Makefile.build            |  7 +---
-> >  scripts/generate_rust_analyzer.py | 11 +-----
-> >  5 files changed, 15 insertions(+), 110 deletions(-)
-> > 
-> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > index 72b1232b1f7d..529ec5972e55 100644
-> > --- a/scripts/Makefile.build
-> > +++ b/scripts/Makefile.build
-> > @@ -262,18 +262,13 @@ $(obj)/%.lst: $(obj)/%.c FORCE
-> >  
-> >  # Compile Rust sources (.rs)
-> >  # ---------------------------------------------------------------------------
-> > -
-> > -rust_allowed_features := new_uninit
-> > -
-> 
-> Would it make sense to throw in a soon-to-be-stable (or
-> already-stable-but-beyond-min-rust-version) feature here to not have to
-> remove the build system support for unstable feature directly?
+Hello,
 
-It's only about those two lines, right? I can only remove the `new_uninit` and
-leave `rust_allowed_features :=` and leave...
+syzbot found the following issue on:
 
-> 
-> For example, I know that const_refs_to_static might be added here
-> soon-ish.
-> 
-> >  # `--out-dir` is required to avoid temporaries being created by `rustc` in the
-> >  # current working directory, which may be not accessible in the out-of-tree
-> >  # modules case.
-> >  rust_common_cmd = \
-> >  	RUST_MODFILE=$(modfile) $(RUSTC_OR_CLIPPY) $(rust_flags) \
-> > -	-Zallow-features=$(rust_allowed_features) \
+HEAD commit:    684a64bf32b6 Merge tag 'nfs-for-6.12-1' of git://git.linux..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1518ca80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bd75e1a00004094f
+dashboard link: https://syzkaller.appspot.com/bug?extid=c3ef47c4433fe4281f50
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-...this line, I guess?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> 
-> I think this actually allow all features instead of allowing none.
-> 
-> >  	-Zcrate-attr=no_std \
-> > -	-Zcrate-attr='feature($(rust_allowed_features))' \
-> > -	-Zunstable-options --extern force:alloc --extern kernel \
-> > +	-Zunstable-options --extern kernel \
-> >  	--crate-type rlib -L $(objtree)/rust/ \
-> >  	--crate-name $(basename $(notdir $@)) \
-> >  	--sysroot=/dev/null \
-> > diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_analyzer.py
-> > index d2bc63cde8c6..09e1d166d8d2 100755
-> > --- a/scripts/generate_rust_analyzer.py
-> > +++ b/scripts/generate_rust_analyzer.py
-> > @@ -64,13 +64,6 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-> >          [],
-> >      )
-> >  
-> > -    append_crate(
-> > -        "alloc",
-> > -        sysroot_src / "alloc" / "src" / "lib.rs",
-> > -        ["core", "compiler_builtins"],
-> > -        cfg=crates_cfgs.get("alloc", []),
-> > -    )
-> > -
-> >      append_crate(
-> >          "macros",
-> >          srctree / "rust" / "macros" / "lib.rs",
-> > @@ -96,7 +89,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-> >      append_crate(
-> >          "kernel",
-> >          srctree / "rust" / "kernel" / "lib.rs",
-> > -        ["core", "alloc", "macros", "build_error", "bindings"],
-> > +        ["core", "macros", "build_error", "bindings"],
-> >          cfg=cfg,
-> >      )
-> >      crates[-1]["source"] = {
-> > @@ -133,7 +126,7 @@ def generate_crates(srctree, objtree, sysroot_src, external_src, cfgs):
-> >              append_crate(
-> >                  name,
-> >                  path,
-> > -                ["core", "alloc", "kernel"],
-> > +                ["core", "kernel"],
-> >                  cfg=cfg,
-> >              )
-> >  
-> 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-684a64bf.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f05b4b08a420/vmlinux-684a64bf.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d59f9edaf3bc/bzImage-684a64bf.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c3ef47c4433fe4281f50@syzkaller.appspotmail.com
+
+Buffer I/O error on dev loop0, logical block 11096, async page read
+Buffer I/O error on dev loop0, logical block 11097, async page read
+(syz.0.0,5102,0):ocfs2_extend_trans:438 ERROR: status = -30
+(syz.0.0,5102,0):ocfs2_try_to_merge_extent:3809 ERROR: status = -30
+(syz.0.0,5102,0):__ocfs2_journal_access:705 ERROR: Error -30 getting 1 access to buffer!
+(syz.0.0,5102,0):ocfs2_write_end_nolock:1967 ERROR: status = -30
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/mmap.c:107!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5102 Comm: syz.0.0 Not tainted 6.11.0-syzkaller-10547-g684a64bf32b6 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xec0/0xed0 fs/ocfs2/mmap.c:144
+Code: 06 50 05 fe 4c 89 f0 48 83 e0 01 75 0a e8 18 4b 05 fe e9 44 f7 ff ff 49 ff ce e8 0b 4b 05 fe e9 3c f7 ff ff e8 01 4b 05 fe 90 <0f> 0b e8 f9 4a 05 fe e9 3a fe ff ff 0f 1f 40 00 90 90 90 90 90 90
+RSP: 0018:ffffc9000b0a7540 EFLAGS: 00010293
+RAX: ffffffff838f6a3f RBX: 00000000ffffffe2 RCX: ffff8880006d2440
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000b0a76e8 R08: ffffffff838f678a R09: 1ffffffff284d117
+R10: dffffc0000000000 R11: fffffbfff284d118 R12: 000000000000e000
+R13: 1ffffd4000270684 R14: 0000000000001000 R15: 0000000000000000
+FS:  000055558f8ee500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000002000e000 CR3: 000000004b98e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_page_mkwrite+0x198/0x480 mm/memory.c:3162
+ wp_page_shared mm/memory.c:3563 [inline]
+ do_wp_page+0x23d3/0x52d0 mm/memory.c:3713
+ handle_pte_fault+0x10e3/0x6800 mm/memory.c:5767
+ __handle_mm_fault mm/memory.c:5894 [inline]
+ handle_mm_fault+0x1106/0x1bb0 mm/memory.c:6062
+ do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+ exc_page_fault+0x2b9/0x8c0 arch/x86/mm/fault.c:1539
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0033:0x7f815a94740c
+Code: 00 00 00 74 a0 83 f9 c0 0f 87 56 fe ff ff 62 e1 fe 28 6f 4e 01 48 29 fe 48 83 c7 3f 49 8d 0c 10 48 83 e7 c0 48 01 fe 48 29 f9 <f3> a4 62 c1 fe 28 7f 00 62 c1 fe 28 7f 48 01 c3 0f 1f 40 00 4c 8b
+RSP: 002b:00007fffee1acf88 EFLAGS: 00010202
+RAX: 0000000020009680 RBX: 0000000000000004 RCX: 0000000000000b8b
+RDX: 000000000000550b RSI: 00007f815a21333e RDI: 000000002000e000
+RBP: 00007f815ab37a80 R08: 0000000020009680 R09: 0000000000000002
+R10: 0000000000000000 R11: 0000000000000002 R12: 00000000000120b8
+R13: 00007fffee1ad090 R14: 0000000000000032 R15: fffffffffffffffe
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xec0/0xed0 fs/ocfs2/mmap.c:144
+Code: 06 50 05 fe 4c 89 f0 48 83 e0 01 75 0a e8 18 4b 05 fe e9 44 f7 ff ff 49 ff ce e8 0b 4b 05 fe e9 3c f7 ff ff e8 01 4b 05 fe 90 <0f> 0b e8 f9 4a 05 fe e9 3a fe ff ff 0f 1f 40 00 90 90 90 90 90 90
+RSP: 0018:ffffc9000b0a7540 EFLAGS: 00010293
+RAX: ffffffff838f6a3f RBX: 00000000ffffffe2 RCX: ffff8880006d2440
+RDX: 0000000000000000 RSI: 0000000000001000 RDI: 00000000ffffffe2
+RBP: ffffc9000b0a76e8 R08: ffffffff838f678a R09: 1ffffffff284d117
+R10: dffffc0000000000 R11: fffffbfff284d118 R12: 000000000000e000
+R13: 1ffffd4000270684 R14: 0000000000001000 R15: 0000000000000000
+FS:  000055558f8ee500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055af02d95058 CR3: 000000004b98e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
