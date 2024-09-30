@@ -1,132 +1,143 @@
-Return-Path: <linux-kernel+bounces-343694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1B16989E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C60E989E65
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9391C21267
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:33:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB328875E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E029218A6B9;
-	Mon, 30 Sep 2024 09:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3806118871D;
+	Mon, 30 Sep 2024 09:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o68bGup5"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fj4zb/r9"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9367189F39;
-	Mon, 30 Sep 2024 09:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3AD78C9D;
+	Mon, 30 Sep 2024 09:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688783; cv=none; b=aC/XwmaT9jX1KeE45qgQO7YMRryMNjv9MtGyUGUHI/f9A/relCzY1e5zXJ7uK+MXRKZOHJyuKPlqOTrSlh9CcB9q9w5qXn4jCZmFbxZ8NUkBhapXo6vL5nO+Oqsl75d88qsN1b2vin/+JWfI/HT0dA4Z3eh4Z6R+K+tN2kGTCQA=
+	t=1727688749; cv=none; b=X+YvLWxEc142HkF8DT5L//7ZXGC3yQ7ETCLLJIaakbNqJsedUYXC8Wv0+RfZ7vYqHsY0/TAXB6KHh/hOSpk/uTFlFuKfV4DbOwL4nDXQz6Ozcc0oAMu5qTnrxJQ31sTivKEJ+PHUoU/8YavfR8toiL9zJ/v2iJfNbwERvH3S+3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688783; c=relaxed/simple;
-	bh=ETCZJl2hvenovoiVHwckcLTtShZZABdCaDoHGGgnfU0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=PF1Dzf3LuqVWjAKoXQYIJqNZjXJwFMmKEqt8A8BDnSxJsouCpFr4bu8II1hgK4ZQhuu+p6y+frOZwlKkECtJMcP8sxh5f3QkX4cUsHg+0h+pn3a77t/W2ozio53qyUfEOvvvMNElcQMkV06ss1aDar3ZM+7pF7nBfSaT3j7I6os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o68bGup5; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48U9WlJw113835;
-	Mon, 30 Sep 2024 04:32:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727688767;
-	bh=9pKcgzqovl6h5rOv45dmznA3UOESkuOmvAsaDkjkxa0=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=o68bGup5Z4DtvTNRLzUNDnkOn6JLAuPiJiO4zG32AFTr31w2isdV5RybbkZDpvyKF
-	 94XnuIuA1JrbhrdIMCnFVqA/2bJ1EUU2gbdLZt823GuTVrQ5Jgj+zNnAskiLHYLLY8
-	 N4fkIhto9oAHTwBSDQ6VJW+voNvt78Q0hj0T8T+Q=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48U9WlUw081907
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 30 Sep 2024 04:32:47 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 30
- Sep 2024 04:32:46 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 30 Sep 2024 04:32:46 -0500
-Received: from [127.0.1.1] (lcpd911.dhcp.ti.com [172.24.227.226])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48U9WcvB021643;
-	Mon, 30 Sep 2024 04:32:44 -0500
-From: Dhruva Gole <d-gole@ti.com>
-Date: Mon, 30 Sep 2024 15:02:10 +0530
-Subject: [PATCH 2/2] cpufreq: ti-cpufreq: Remove revision offsets in AM62
- family
+	s=arc-20240116; t=1727688749; c=relaxed/simple;
+	bh=xuiwIaxIkbOHoM0aTEL4ISfBrGnoJf3bN4UoKM/m9nc=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=RvFwMCzRyhdnhha81Ft3TJsV5GaexjNjjJagOuuhu6flHYpBnHwuiLSEb7lln1rOz93rXyYz8fWN51/CRIaLMlbvXefJ22ytGTscgI09CJcIyHW2pNAo0ECxZABqTiEOTVRPJwoD3gXf69x6GUCN1LoUT5222EHJMJ6OEGROTAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fj4zb/r9; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so37757175e9.3;
+        Mon, 30 Sep 2024 02:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727688746; x=1728293546; darn=vger.kernel.org;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e3gTkw7xTKBFjfPeQAsDpHjrUZGDOhEfBOfuDgEB4wY=;
+        b=fj4zb/r9vXXjVgYXTtCYN3R4ZjT9KoH7podq46KuWMcYoalfg5zX9fonv9itwvWops
+         pVkIBqes3RN8C66sqWT278+xDak5iYNUVQpzLpfOnRj4yktNRabHRvE1yYZom8xTBwfK
+         oXC3wOsmVoeLxTKa9vkznuGhiodxbN4JCqT2kYeQPxZDCR2S7uV3NWZhElTKKRT/e4Ec
+         l1goOnxEiligoprE2pRkQCv+kLf8w0rgNxuldRMUnMWmcLmrUjYFpODCNwupZGcFU/i/
+         ph4sjspNHEDBXNu1AeqAEaUcf5U/sTqWMzNW/iqQwOd8e667BRqqZj6zbxjpZ9zgXjla
+         Z9Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727688746; x=1728293546;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e3gTkw7xTKBFjfPeQAsDpHjrUZGDOhEfBOfuDgEB4wY=;
+        b=LPsoWFNmA2nd09rtnKP2mkCM8IeYQDyaOKC7A5vfWQWv20m+qkMb/4geuup17LcAgL
+         PV30nm53HGiwdlANThSWHjkRQCzAuk9KhkWpNniZFipJ79u8fT++zXDKCnLpRxO3OaY2
+         x/687IQ6sQdNoHCb26XyQBmg2jNhVkLVpvOXKG1sOBf37LIyQBuAhzzM7trUuLnhKnqd
+         Slilxs46q5tvqWZ+uWoqq4wQlW6WbvY/Jog5WO+1q/Q14AM8cOT0CmOCL0LnmbZ80jUg
+         naI98Nnh7ZDcoYucepoDiK7GyObMyjjII9wdRHm+1EurjI2mdegvr/dF90VzXxJ3qQ/v
+         bYoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4XUYocow2AURzBBFX3Y8jBTA1Ntp2DaBkYv9u+c6QJt54KypJ9vI09h8YLycJfrXDR+56fgHlyqc=@vger.kernel.org, AJvYcCVjEZmvkND43xmFccpYAXR5QeUMiFrDPJ1ZfpqRvtpisTqMujOYZ+6qX6CM7Trf2Hxf3WQQOMs7bz5mfCND@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHvTy+mMc8Os7Sf3Udy1dErT72rsTNmLzkqhAmn/0URyanq+1n
+	/a4nNU1bh3vdeYIeLQcaXM3vp6BOOXO34vrXuUnYF1fSMEhj0gnA
+X-Google-Smtp-Source: AGHT+IHvj6MxPbBC4GQ3YDX25WnDza1AQMy3zlrwhwybHipguZmMLNodxIBVpYIPClX0B8gEJMO49w==
+X-Received: by 2002:a05:600c:4ecd:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-42f5840e216mr87243025e9.4.1727688746036;
+        Mon, 30 Sep 2024 02:32:26 -0700 (PDT)
+Received: from localhost (host-79-19-52-27.retail.telecomitalia.it. [79.19.52.27])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddb4csm145264235e9.6.2024.09.30.02.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 02:32:25 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240930-b4-ti-cpufreq-am62-quirk-v1-2-b5e04f0f899b@ti.com>
-References: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
-In-Reply-To: <20240930-b4-ti-cpufreq-am62-quirk-v1-0-b5e04f0f899b@ti.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar
-	<viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bryan Brattlof
-	<bb@ti.com>, Nishanth Menon <nm@ti.com>,
-        Andrew Davis <afd@ti.com>, Dhruva
- Gole <d-gole@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727688758; l=1272;
- i=d-gole@ti.com; s=20240919; h=from:subject:message-id;
- bh=ETCZJl2hvenovoiVHwckcLTtShZZABdCaDoHGGgnfU0=;
- b=gNoa9y0wY4hjf4Qz/y9YYN5fKAuVKILEDwsuyB7OmhwfCr+naWO1Xq8q9O5d6cmQH0eFEV5U5
- Dy64/5FDbsyCAoHauyl0a0pUQy9kyUqpojOeoV/J30eudDDAWL0CC7J
-X-Developer-Key: i=d-gole@ti.com; a=ed25519;
- pk=k8NnY4RbxVqeqGsYfTHeVn4hPOHkjg7Mii0Ixs4rghM=
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240928162843.4eb63f29@jic23-huawei>
+References: <20240916-iio-pac1921-nocast-v1-1-a0f96d321eee@gmail.com> <20240928162843.4eb63f29@jic23-huawei>
+Subject: Re: [PATCH] iio: pac1921: remove unnecessary explicit casts
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jonathan Cameron <jic23@kernel.org>
+Date: Mon, 30 Sep 2024 11:32:24 +0200
+Message-ID: <172768874424.228843.16360087197143367783@njaxe.localdomain>
+User-Agent: alot/0.11
 
-With the Silicon revision being taken directly from socinfo, there's no
-longer any need for reading any SOC register for revision from this driver.
-Hence, we do not require any rev_offset for AM62 family of devices.
+Quoting Jonathan Cameron (2024-09-28 17:28:43)
+> On Mon, 16 Sep 2024 14:00:05 +0200
+> Matteo Martelli <matteomartelli3@gmail.com> wrote:
+>=20
+> > Many explicit casts were introduced to address Wconversion and
+> > Wsign-compare warnings. Remove them to improve readability.
+> >=20
+> > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+>=20
+> No fixes tag on this one. Its not a bug, just a readability improvement.
+>=20
+> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> There are a few cases in here where I think the cast is about ensuring
+> we don't overflow in the maths rather than for warning suppression.
+>=20
+> We all love 32 bit architectures after all ;)
+>=20
+> Jonathan
+>=20
+> > ---
+> > Link: https://lore.kernel.org/linux-iio/1fa4ab12-0939-477d-bc92-306fd32=
+e4fd9@stanley.mountain/
+> > ---
+> >  drivers/iio/adc/pac1921.c | 43 +++++++++++++++++++++------------------=
+----
+> >  1 file changed, 21 insertions(+), 22 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> > index 4c2a1c07bc39..de69a1619a9e 100644
+> > --- a/drivers/iio/adc/pac1921.c
+> > +++ b/drivers/iio/adc/pac1921.c
+> > @@ -240,8 +240,8 @@ static inline void pac1921_calc_scale(int dividend,=
+ int divisor, int *val,
+> >  {
+> >       s64 tmp;
+> > =20
+> > -     tmp =3D div_s64(dividend * (s64)NANO, divisor);
+> > -     *val =3D (int)div_s64_rem(tmp, NANO, val2);
+> > +     tmp =3D div_s64(dividend * NANO, divisor);
+>=20
+> For this one, NANO is an unsigned long and dividend just an int.
+> Either the s64 cast is needed because dividend * NANO might go out of
+> unsigned long range which might (I think) be 32 bit on a 32bit machine
+> or it doesn't.  If it does, then you need the cast, if not you don't
+> need to use div_s64 as it's not that large.
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
- drivers/cpufreq/ti-cpufreq.c | 3 ---
- 1 file changed, 3 deletions(-)
+Oops! While removing the casts I was only thinking about the sign change
+for this case, which would not be an issue being the dividend always
+positive. However you are indeed right, this would overflow in 32-bit
+architectures. Thanks for catching it, I am going to reintroduce this
+cast and the other similar one in the next patch version.
 
-diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-index 7014cebb41e3490cadd14834e0c3e057419f2abb..5a5147277cd0ab03031926cd62f6ba61aea78512 100644
---- a/drivers/cpufreq/ti-cpufreq.c
-+++ b/drivers/cpufreq/ti-cpufreq.c
-@@ -318,7 +318,6 @@ static struct ti_cpufreq_soc_data am625_soc_data = {
- 	.efuse_offset = 0x0018,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- 	.quirks = TI_QUIRK_SYSCON_IS_SINGLE_REG,
- };
-@@ -328,7 +327,6 @@ static struct ti_cpufreq_soc_data am62a7_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
-@@ -337,7 +335,6 @@ static struct ti_cpufreq_soc_data am62p5_soc_data = {
- 	.efuse_offset = 0x0,
- 	.efuse_mask = 0x07c0,
- 	.efuse_shift = 0x6,
--	.rev_offset = 0x0014,
- 	.multi_regulator = false,
- };
- 
+...
 
--- 
-2.34.1
-
+Thanks,
+Matteo Martelli
 
