@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-343452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A37989B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:08:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C81989B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2275C28205C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:08:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7509EB21126
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2AA537FF;
-	Mon, 30 Sep 2024 07:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7EF14A09A;
+	Mon, 30 Sep 2024 07:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m8VXD7ya"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8mrf0qD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFFB45027
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D3421373;
+	Mon, 30 Sep 2024 07:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727680110; cv=none; b=rQy9Mmkr/xSb7SkI6VDoKxHh8VFhDthxK4L/5+Es81zmvIrFRRJnErkbZydw5p/Vn0i+JqD8FZdHrMXr+C37CE9o0Xt2gEDNawS//PC4mymOcJudH5j5eyyiff7wLzTSZ67GfdvgNjkArEqgLMXMF6x0YNb6u8K51dBTiFETib8=
+	t=1727680292; cv=none; b=HuMBtgJkRomgM72c9Bg5gRB0DfElTXBVx620b+z8g9EkNQMFJb5oJ2Qh9hYa2wDwRmOqAxscdzQFIOH9CSZEt8p+QyWAmKLtw/xodLPmBidzLNIF5pzqD9AH0Xq9vlX3XoEfJm0BCSIFU5evc+2LYaWMgRn6F3fou2l5NOnbSL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727680110; c=relaxed/simple;
-	bh=D25fOXeJbLoKGgr27NS29CleC8T4/PtWnoBorQk9jHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EYKg8V63Cl9ZQ62npP7dNgMJgMv3JVrIt2M595EUMOyOkIIX/7PWf1NRlB+tOnK8dTEmoqb/5Vvx9wxoCPrk2l6WUswfVDKjcIKzPS+laIJ+IO5Kq5Yj8tbSjgIHk9aFAvpOxt4zMOuE3PxOxRFGmHxi1XOVEkCdUCjxW/0HIOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m8VXD7ya; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727680101;
-	bh=D25fOXeJbLoKGgr27NS29CleC8T4/PtWnoBorQk9jHE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=m8VXD7yaNlqpy+yBCJaX/rnIFHb9Ff0X59herYW2wRQiDBZuComAQE7Nd08D9KWUj
-	 X1qfkL3m9FkjmZVWqCwtiHoxN1EEQlLInQMBmSA7fPiFTT/ptnmdKcexqWShW4YI4q
-	 fGPU7OYFNlPr/wFURAl9W0Qk5Q8NN2XVivnir6afdseodqtp4EG0Au4MlY1ZXNoy07
-	 dT3AnDK2i4SPXSFitEpiOqmQyDlRosqu4INj/bK0isX0MWlvJjkxNP7Wvr3pe4Xfcf
-	 KD4PGqyXiNJWGq8Pl8MFb6juYPHYBieu887Fgdt4YO9vnXf8ZhUsVKYXXesW7WAOpa
-	 NuJb2nsfRVvww==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3035D17E1003;
-	Mon, 30 Sep 2024 09:08:21 +0200 (CEST)
-Date: Mon, 30 Sep 2024 09:08:17 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: nicolas.ferre@microchip.com, miquel.raynal@bootlin.com, richard@nod.at,
- linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: of atmel_pmecc_destroy_user
-Message-ID: <20240930090817.0a86e538@collabora.com>
-In-Reply-To: <ZvmIvRJCf6VhHvpo@gallifrey>
-References: <ZvmIvRJCf6VhHvpo@gallifrey>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727680292; c=relaxed/simple;
+	bh=5gE0eQKarbBdG/N8GRdrx4HzsypjvkZF3NLxrW3tOmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aqtlw+hbraBmXludP/gXi6SlKT1wvGZTmhp7fipFBtNfaqsxAPZlcTqQAXu9hKIwhKpB3zxLMsI144+/mWg1iz3IBKu16ltbmBajY/iMjaVol2E8FHGHqeyrWO9XJvXpGcAwRt3//HHFrXLB+7QAqFg1qu6RLHmcSMw77s3IVs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8mrf0qD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55D8C4CEC7;
+	Mon, 30 Sep 2024 07:11:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727680292;
+	bh=5gE0eQKarbBdG/N8GRdrx4HzsypjvkZF3NLxrW3tOmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z8mrf0qDpI6U0qWT5Xfe9bVz8sdg1jtc/JHj+pPmNUuhDqlnsLLtTJTgyqPHihJFC
+	 m/YXnawC2F0f6Rp9PaYScRfFB6ZBPFnPyhZFgLCgCBBzLSNf1oVxvTlwbGqYzYEFyX
+	 yLIhJfOGQUw++9vAnxYz2B9PcsSCwNG+0wLABCKOxv3G7oFMvCOdDELAR2whw9nmik
+	 NDHX1y2Hhi4s017dEkutuu2uEouiNpZq+XKrp//ue5WZTnrHfJ6M1fIF4ICpd7OVLV
+	 GyfO1PZIlVLJfAwSUgJ1C7c9TlCsb3Iuji62zY81d2ZRHIRM4m7VwLpr+N5otLUOgH
+	 aF9qtK+q1eEBw==
+Date: Mon, 30 Sep 2024 09:11:29 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com, 
+	geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de, 
+	nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de
+Subject: Re: [PATCH 6/8] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
+Message-ID: <y4ala34bejzmw5wt3vw5ncoxdzpzda2cwi7bdzve5bn4udmr3b@eiguckpaui6d>
+References: <20240930052903.168881-1-victor.liu@nxp.com>
+ <20240930052903.168881-7-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="4pawbxwfkwm2rvaf"
+Content-Disposition: inline
+In-Reply-To: <20240930052903.168881-7-victor.liu@nxp.com>
 
-Hi David,
 
-On Sun, 29 Sep 2024 17:05:01 +0000
-"Dr. David Alan Gilbert" <linux@treblig.org> wrote:
+--4pawbxwfkwm2rvaf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Boris and co,
->   One of my scripts noticed that 'atmel_pmecc_destroy_user'
-> isn't called anywhere; I was going to delete it, but hmm, I wonder
-> if it's actually a missing call and leaking (in the unlikely case
-> the device was ever removed).
-> 
-> It was added by your:
->   commit f88fc122cc34c2545dec9562eaab121494e401ef
->   Author: Boris Brezillon <bbrezillon@kernel.org>
->   Date:   Thu Mar 16 09:02:40 2017 +0100
-> 
->     mtd: nand: Cleanup/rework the atmel_nand driver
-> 
-> and I see the allocation in:
->      user = kzalloc(size, GFP_KERNEL);
->        in
->      nand->pmecc = atmel_pmecc_create_user(nc->pmecc, &req);
->        called in atmel_nand_pmecc_init
->          from atmel_nand_ecc_init
->            from atmel_hsmc_nand_ecc_init
->  
-> But I don't see any freeing.
-> 
-> (I don't knowingly have hardware to test a fix, although I guess
-> there's probably one somewhere....)
-> 
-> Suggestions?
+Hi,
 
-There's definitely a leak. I haven't looked at NAND stuff for a while
-though, so I'll let Miquel advise you on where
-atmel_pmecc_destroy_user() should be called.
+On Mon, Sep 30, 2024 at 01:29:01PM GMT, Liu Ying wrote:
+> Add basic HDMI video output support. Currently, only RGB888 output
+> pixel format is supported.  At the LVDS input side, the driver
+> supports single LVDS link and dual LVDS links with "jeida-24" LVDS
+> mapping.
+>=20
+> Product link:
+> https://www.ite.com.tw/en/product/cate1/IT6263
+>=20
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
 
-Regards,
+Generally speaking, you need to use the new HDMI bridge infrastructure.
+There's a lot of required things you're not dealing with here (such as
+infoframes)
 
-Boris
+Also, you should add a MAINTAINERS entry
+
+Maxime
+
+--4pawbxwfkwm2rvaf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvpPIQAKCRAnX84Zoj2+
+dqvYAX9I87/HqBwOqoEON9kE2R3ppakKzN3DPMpFyFZKLJIZTnQ8dLGTfO+tDhvd
+QKRxnf8Bf31b3DAkdSxRy3s14jonZ+JPFhY1hLAPEkg6Ra3YPDeKIHMJ5NMPiUz6
+/mTkSjEfPw==
+=AjJ2
+-----END PGP SIGNATURE-----
+
+--4pawbxwfkwm2rvaf--
 
