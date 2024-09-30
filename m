@@ -1,143 +1,215 @@
-Return-Path: <linux-kernel+bounces-343991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0850398A240
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:25:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BDE98A245
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCDAE2815AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:25:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05AB1F24583
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:25:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5741917FE;
-	Mon, 30 Sep 2024 12:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C5018F2CB;
+	Mon, 30 Sep 2024 12:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2f39q8f"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a5D6Q9BM"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA86818E36E;
-	Mon, 30 Sep 2024 12:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4B518CBF7;
+	Mon, 30 Sep 2024 12:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698794; cv=none; b=BqY2GKJRfyWA1gXDBxrPhqqFr3wvsj8LW7Ldg5mv+PqJKhNiU0QbY+RSYaZa6K3RnFIEHa+/icYcpaeh7tYlJUlAHAaTvPbpEdwpjoGdJfsEgLGdSZUz3nR/XwBxpyCorqSG/EssuaSJOPahimfalZSCYa9lQnV1Z80xd95iCPY=
+	t=1727698889; cv=none; b=HSIPkEVj6KduxO113MJ4Ab3krWblYJGYMJ5oEbzXrdxXnVRaXK247zKSQLPsouR4c23HQU0x3NSRJAHJcppf53VXQVkIz3Fd8F7vUdLVDtbjYrdNQ7eOxsqGBAheVvs/nJOlTUSTwI871lT2r2ft1iu7KRPnbevBeFj/5j6XLgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698794; c=relaxed/simple;
-	bh=T0H2p5SM8zMQRwZlExn1DGe8xJM1lRLrhXS6V1nVWiE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VEanycqqA6kF7yxSAfBiwYU+dqfABn6fVN0Q8V6X98BQwcx0vs1mp+CKZP1tu0+K/0byXhrqDk8rFXTsqo58vfuIsRhlLz9m9P2E5y7Dl8rsgGF/kzyTFSiokwfbyQLnh2NbOMPY/cPlEVbASG5IVcmc+duztH7RRt476xoqanA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2f39q8f; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-84ea36b65cfso1145631241.0;
-        Mon, 30 Sep 2024 05:19:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727698791; x=1728303591; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1WKbPMrVoX41jphFFXnvsCs/qisQx+D1m9p+KCH6szc=;
-        b=T2f39q8f5hd5paSIyIu/uy5Pmpnne5XIb5VFQInCmBCiwMa+8ERvH8T94Tikpqb4Nn
-         KUDTmwQvcXgAwrjrOaS7DJgg/B1tJdocgWW5vp7D1BMrLNm/PROWlxoNHizpvzx1QpEy
-         G6ev3WOARSMJRFilKvwR+bItEKVgWOcuxgxuMYFVnMk3r3ZaUzODi6oOFf5q+7RqciZ0
-         wOKQZwa23l7oXehDqiOtGAZbfpK6RW1cF8un+PxeYP2rIs8AaiVZCYgTOLQ7byf1yvyd
-         ignX0s2e9qAtSU9GgJuNY4gnXSwoqZxXWXNVnW7EGLQIaT3HYuFJ4xoTIC48KTeyQTbY
-         5Yug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727698791; x=1728303591;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1WKbPMrVoX41jphFFXnvsCs/qisQx+D1m9p+KCH6szc=;
-        b=PfCNxkzrTnoWD9QKE9GExy6ZlEcFXBm01lzMULMPt9EC84peTZ/RM+j95vIoSa3lIC
-         YKNidKXvxj1eOlHWOjC9M8VvBqZCCNYgblo9b6Yla1eVWBk+uKWI4xPudBJ5KN4dTqPK
-         2qVHXNMqIQkApqZRYxx2QA6zUa9Z83HgIq56ik+tQghRsJuYrfz/4kY8NH8RKYmu2nM+
-         opS8fIWzDZG9hvNRL7XIgbLuJibVyAXwALVBS6kf8OrDOru9spRfELJYFXu3N8XGNNtu
-         sNdBwu/1JPAvwiccr05gTigSaU4W0yMtXI0yxr8pTD2ZJtjqniOUsONJP5tJ07dicHSN
-         LA4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrWQqI4NU5AsW3sU77OVJfEAfEO/WN/2yqhvx5tOxhWRNiBfUvhOQ7ouVGeezwhW/MMbcOzdJdEaPBYQgGC1TgHfk=@vger.kernel.org, AJvYcCW0qHSeXwFl9fcbIWUkef3KT3SyeWkXfnOEZnYPSI//RIAEMGbyuW+lEO6BgK4QwCb7o8p4iUAxKyWfdkY=@vger.kernel.org, AJvYcCXYpGxlEOe8TIz9/Ah35Y8vgbU1d3eQgc23y92OyB8xm7+9bnR8DcjEAUZRMvc5DYHlu07G70vQ06oFhOE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbBkJ+VJpq5zfyam9kthIR1uoSOqW/8iyp65kLnwccnL1Mkqoh
-	lN26eN4uNQHMic0hXe9jYoAiNn/hMazOxfcTF8ebQeS+OjMpha4MvGLbFOFKAISLgFNctjZ4HIT
-	h8j6InDMe7wB8vgqYf8awu+daTVM=
-X-Google-Smtp-Source: AGHT+IGJ/jgjqICTkD+FA8y7IpA6SgFOyWL9OuXr/jASGSGYUFBYaxvJGwLZEpbxrRYhnwwFWkiPCGR1M8tXHgztkK0=
-X-Received: by 2002:a05:6122:1e10:b0:4ef:280f:96ea with SMTP id
- 71dfb90a1353d-507816da1bemr6769696e0c.4.1727698791502; Mon, 30 Sep 2024
- 05:19:51 -0700 (PDT)
+	s=arc-20240116; t=1727698889; c=relaxed/simple;
+	bh=0Dypx4pAfpStEhGLYQ/y7T7JERCChhQRMtvM7jepOko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rIvOSpuiE4e+yBHBwA3NsjXsivDK3MaigoDTbuqJ6VQSqQ04p9dMmJVLL4sY9UB19QUQkAv99a0nX9L7DBQgpFvAgGKEPUzYaB5WGlZ2zwRsfb+7JuxXmKH7cE7mWGI+UMtNhO1smAQYbhPh7StGDMnSkQiQkyIJfTpnzu1cIz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a5D6Q9BM; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U7SCLZ016139;
+	Mon, 30 Sep 2024 12:21:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=2Iif2LLQbeGoowxFideHORcoji
+	z4pEU4x0tCzl6hF2A=; b=a5D6Q9BMmkCkg94u+0dlO8PK/BRkE12w5qOlfEnTB2
+	u/1CFbn29y0EupA6xNLL50iivSuqlQV4TM9+RhC4f6cgZWa474BQ+UOdmY3n8eno
+	BWt3xgGH/i3cckBcknP9Q/sv9CJ7EQB2ioTkn3VlIb3vxdbZLDvJMD6/7f6aB10N
+	uArICfXpy+zPrIrQonxDPNW1RX7uLDEFupw84eUhV/nKP65CoYcmGI4WMsWAI36i
+	VQV2DmlZ+A8nZm2YKd7TC1HzSyyMthE9gPqBNl6P8w1xPop/lGpd/TRGH/AwxcG1
+	NIafidfapPOPr43N+nPglcOuxom2YiCIBNqsfLMqCU5Q==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9ap9t1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 12:21:25 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48UCLGZB013047;
+	Mon, 30 Sep 2024 12:21:24 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxbj66ye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 12:21:24 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48UCLKiS57737474
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Sep 2024 12:21:20 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7337520043;
+	Mon, 30 Sep 2024 12:21:20 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 60B3820040;
+	Mon, 30 Sep 2024 12:21:20 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 30 Sep 2024 12:21:20 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55669)
+	id F2BB7E038D; Mon, 30 Sep 2024 14:21:19 +0200 (CEST)
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs/proc/kcore.c: Allow translation of physical memory addresses
+Date: Mon, 30 Sep 2024 14:21:19 +0200
+Message-ID: <20240930122119.1651546-1-agordeev@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910175357.229075-15-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240927231122.GN12322@pendragon.ideasonboard.com>
-In-Reply-To: <20240927231122.GN12322@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 30 Sep 2024 13:19:25 +0100
-Message-ID: <CA+V-a8vzf7gjcO-jPTB2Sd=4GBmpSkUfWDCnAR8BbL1xohytvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 14/16] media: platform: rzg2l-cru: rzg2l-csi2: Make use
- of rzg2l_csi2_formats array in rzg2l_csi2_enum_frame_size()
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jB1B9-4O9rrP4LiwLFFzfDcImfAUc2lX
+X-Proofpoint-GUID: jB1B9-4O9rrP4LiwLFFzfDcImfAUc2lX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-09-30_10,2024-09-27_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=871 malwarescore=0 priorityscore=1501
+ phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300087
 
-Hi Laurent,
+When /proc/kcore is read an attempt to read the first two pages
+results in HW-specific page swap on s390 and another (so called
+prefix) pages are accessed instead. That leads to a wrong read.
 
-Thank you for the review.
+Allow architecture-specific translation of memory addresses
+using kc_xlate_dev_mem_ptr() and kc_unxlate_dev_mem_ptr()
+callbacks similarily to /dev/mem xlate_dev_mem_ptr() and
+unxlate_dev_mem_ptr() callbacks. That way an architecture
+can deal with specific physical memory ranges.
 
-On Sat, Sep 28, 2024 at 12:11=E2=80=AFAM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> I've just noticed that the subject line of most of your patches is much
-> longer than the 72 characters limit. Please try to shorten them. You can
-> replace the prefixes with "media: rzg2l-cru:", and reword the subject
-> lines that mention long function names.
->
-Ok, I'll rework the subject line so that it fits within 72 characters.
+Re-use the existing /dev/mem callback implementation on s390,
+which handles the described prefix pages swapping correctly.
 
-> On Tue, Sep 10, 2024 at 06:53:55PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Make use `rzg2l_csi2_formats` array in rzg2l_csi2_enum_frame_size().
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/dr=
-ivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > index 79d99d865c1f..e630283dd1f1 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > @@ -570,7 +570,10 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_=
-subdev *sd,
-> >                                     struct v4l2_subdev_state *sd_state,
-> >                                     struct v4l2_subdev_frame_size_enum =
-*fse)
-> >  {
-> > -     if (fse->index !=3D 0)
-> > +     if (fse->index >=3D ARRAY_SIZE(rzg2l_csi2_formats))
-> > +             return -EINVAL;
->
-> Same comment as in 11/16. With this fixed,
->
-Ok, I'll drop this check.
+For other architectures the default callback is basically NOP.
+It is expected the condition (vaddr == __va(__pa(vaddr))) always
+holds true for KCORE_RAM memory type.
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
+Cc: stable@vger.kernel.org
+Suggested-by: Heiko Carstens <hca@linux.ibm.com>
+Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+---
+ arch/s390/include/asm/io.h |  2 ++
+ fs/proc/kcore.c            | 36 ++++++++++++++++++++++++++++++++++--
+ 2 files changed, 36 insertions(+), 2 deletions(-)
 
-Cheers,
-Prabhakar
+diff --git a/arch/s390/include/asm/io.h b/arch/s390/include/asm/io.h
+index 0fbc992d7a5e..fc9933a743d6 100644
+--- a/arch/s390/include/asm/io.h
++++ b/arch/s390/include/asm/io.h
+@@ -16,8 +16,10 @@
+ #include <asm/pci_io.h>
+ 
+ #define xlate_dev_mem_ptr xlate_dev_mem_ptr
++#define kc_xlate_dev_mem_ptr xlate_dev_mem_ptr
+ void *xlate_dev_mem_ptr(phys_addr_t phys);
+ #define unxlate_dev_mem_ptr unxlate_dev_mem_ptr
++#define kc_unxlate_dev_mem_ptr unxlate_dev_mem_ptr
+ void unxlate_dev_mem_ptr(phys_addr_t phys, void *addr);
+ 
+ #define IO_SPACE_LIMIT 0
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index 8e08a9a1b7ed..13a041ef0c4e 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -50,6 +50,20 @@ static struct proc_dir_entry *proc_root_kcore;
+ #define	kc_offset_to_vaddr(o) ((o) + PAGE_OFFSET)
+ #endif
+ 
++#ifndef kc_xlate_dev_mem_ptr
++#define kc_xlate_dev_mem_ptr kc_xlate_dev_mem_ptr
++static inline void *kc_xlate_dev_mem_ptr(phys_addr_t phys)
++{
++	return __va(phys);
++}
++#endif
++#ifndef kc_unxlate_dev_mem_ptr
++#define kc_unxlate_dev_mem_ptr kc_unxlate_dev_mem_ptr
++static inline void kc_unxlate_dev_mem_ptr(phys_addr_t phys, void *virt)
++{
++}
++#endif
++
+ static LIST_HEAD(kclist_head);
+ static DECLARE_RWSEM(kclist_lock);
+ static int kcore_need_update = 1;
+@@ -471,6 +485,8 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	while (buflen) {
+ 		struct page *page;
+ 		unsigned long pfn;
++		phys_addr_t phys;
++		void *__start;
+ 
+ 		/*
+ 		 * If this is the first iteration or the address is not within
+@@ -537,7 +553,8 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 			}
+ 			break;
+ 		case KCORE_RAM:
+-			pfn = __pa(start) >> PAGE_SHIFT;
++			phys = __pa(start);
++			pfn =  phys >> PAGE_SHIFT;
+ 			page = pfn_to_online_page(pfn);
+ 
+ 			/*
+@@ -557,13 +574,28 @@ static ssize_t read_kcore_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 			fallthrough;
+ 		case KCORE_VMEMMAP:
+ 		case KCORE_TEXT:
++			if (m->type == KCORE_RAM) {
++				__start = kc_xlate_dev_mem_ptr(phys);
++				if (!__start) {
++					ret = -ENOMEM;
++					if (iov_iter_zero(tsz, iter) != tsz)
++						ret = -EFAULT;
++					goto out;
++				}
++			} else {
++				__start = (void *)start;
++			}
++
+ 			/*
+ 			 * Sadly we must use a bounce buffer here to be able to
+ 			 * make use of copy_from_kernel_nofault(), as these
+ 			 * memory regions might not always be mapped on all
+ 			 * architectures.
+ 			 */
+-			if (copy_from_kernel_nofault(buf, (void *)start, tsz)) {
++			ret = copy_from_kernel_nofault(buf, __start, tsz);
++			if (m->type == KCORE_RAM)
++				kc_unxlate_dev_mem_ptr(phys, __start);
++			if (ret) {
+ 				if (iov_iter_zero(tsz, iter) != tsz) {
+ 					ret = -EFAULT;
+ 					goto out;
+-- 
+2.43.0
+
 
