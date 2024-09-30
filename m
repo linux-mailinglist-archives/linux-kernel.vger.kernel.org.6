@@ -1,106 +1,178 @@
-Return-Path: <linux-kernel+bounces-344408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832C998A937
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B00498A93B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394AC1F23945
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79E91F21999
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E05F192B99;
-	Mon, 30 Sep 2024 15:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF60B1940B2;
+	Mon, 30 Sep 2024 15:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDUjfwJx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnWkkvkK"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8276213634C;
-	Mon, 30 Sep 2024 15:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BD1194C86
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727711704; cv=none; b=QY3mXZCSQGiAHDFUqS/lGMT2xni+cwrJ4EbnMxXvTHBuEqXcujyz5DOag9lWw6VZVQaOAB5Kj9AGvGvd6PrTMiuS5GK+oDIqywLfT4LG443oJMrbDSTuGDipK5+oOmX73s27lEQ1D6E/HtesxdUGsPxmaVJlNEFpo79IGYRUQOI=
+	t=1727711727; cv=none; b=MeCCFfP0QOMvrP0mnzFjNByMDtJRcOdIlPTtqoAuEWdjBwHxSdPrn7Y847D5eZWuPNhQRe7qaubeaHPOupZowCNdzueiEX485OVeF0kFL2hWbKScQTIHdNm2B70ZuuZDldvxGTSEu+Sr0gy3D4rM8HDLt2b9Qnmg38JsM3k9xhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727711704; c=relaxed/simple;
-	bh=j/N2ftxrfNM4oegTjgoTIdXrzNAp+raVcE+sAQpwo2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hb9ae7omoLeX5vzzUZuNhhv0oE48icpEW933+Kz9Gwl92X7VsIwWIMi050sF+iJ+oaS3Px7Y2PNJwjaHWFi7CRkn/m3JPYnNVdNz15+slG6J45WIaLN7HbKa4mi+g6MDEcIkoy4B1FfYLr55y0Rnmw21LUslR1Im1Dty9NM55Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UDUjfwJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29985C4CEC7;
-	Mon, 30 Sep 2024 15:55:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727711704;
-	bh=j/N2ftxrfNM4oegTjgoTIdXrzNAp+raVcE+sAQpwo2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UDUjfwJxgXfN89wPYZL/d1Ky7VtlfT5e45GsXNJFWd2Rld245OInOTcBiBnR7uGQ+
-	 eT16htAFWee6r5X7hEnulMYBIk/UDUP2dgXqklU5FIBLXIeI8e8u/GOUsq8swa3PF9
-	 +3GsrJ/JCISCjM46Yef8kcbEiGlGRVdmrdrA3VQCSYE7hgO3i2Fr46rI9aS36ImqvG
-	 6evaxHxbv1l7PTYGN4ZHusYyynPvEmzdEXNxdg2Hy5/fyxbi93ToV0WAdlGtEdMSe4
-	 sjipOj/Uyw70xc5yD+HyYd/aEmQ9wCVBa6bFMnIzBxxht1SHfQ6wEd0jj1LxUNHnyn
-	 jz8TbxsRMOOHw==
-Date: Mon, 30 Sep 2024 16:54:59 +0100
-From: Simon Horman <horms@kernel.org>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com, leon@kernel.org,
-	colin.i.king@gmail.com, ahmed.zaki@intel.com,
-	linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2] net: mana: Add get_link and
- get_link_ksettings in ethtool
-Message-ID: <20240930155459.GE1310185@kernel.org>
-References: <1727674934-12130-1-git-send-email-ernis@linux.microsoft.com>
+	s=arc-20240116; t=1727711727; c=relaxed/simple;
+	bh=XtVyC1hr0DtWNi4Nuac6rbXEXeymJVGjtZRrIAKO+mY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=snINo8rcDwpUlJHU2poQfyUzwDUwhuJ3rqU7hybwFKIjkF1aefgPH1e12XSQuKdQ1Tw8uQ4eVHEwyyhEFcJcFB8JE5qokcTEtoRtLF4Ws7HJBWllQN6++qShOglYNgMihlFosDTSsAPN2HQLroZwkhz01umHAGb3WuYhTCBhBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnWkkvkK; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso41549735e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727711724; x=1728316524; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XNK1EtvrtSuJZNw3V4pGuR2ZltFiSb+JZRUloyhSBAM=;
+        b=DnWkkvkKeeF3KOdLGbhymraX5pB1qJIFb4ExFL70aVD0ycuWWnBcJxiU2NUDWZJqIz
+         pO5Qa7fADTKnMuktCVxHn/ashZPUJHoC2cr20SShiuS+AGKMttCMj43QvRf5O4td17hE
+         4Y6gYUbjTQegpR1HDAcWrwhIBDBU68fA36LYEhEaEmemRvrGoGbG3+JqYzwEdqlF2E37
+         0QvEDw6RwZs2nxe7Gbcaf64Aorr6efdGeKuBrHmzczVMYiBElJRNkGhzRZwjeyZV4YQw
+         mQhe08n3kMZtI315tzk635vMngKQPfVsewfh4Yn3wScFptJuWlrJZ0WOQeig2TJWOZzv
+         RXWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727711724; x=1728316524;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XNK1EtvrtSuJZNw3V4pGuR2ZltFiSb+JZRUloyhSBAM=;
+        b=efKHzpkwyC6dlOvmW8iG9MdV6BF0yr7W2qOH12A/1lzPr+ATrAghtYjBQJVuciyiIZ
+         LNSOcDso0g0Iz2KldSta5PKhkfSmequaE64g5b34NeYbhKvDHIKt9JdiWEa5cDN2t95Y
+         rmNZen2w4VreDBmAjHQ7dWIJhL8BqtbFF/uRyLS1viNd51+VUQ8NLlqRzRbm+rR1vJum
+         9m2nyV25YkhZNfRT4BujLi7BuClsw+4JJ0xfgXjzi+wnwUPmmvZAjnYGUipYa+tlr/+D
+         w8wPSViWyA+kcWVJagJZQnm+ikkWJYyNhNZVBEKcpUoMiQmV0LZ5XPIbUJ2r7AO8P2vJ
+         NOkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4W5CR8uaxSd0rM3X3uPUwqQ94xJMl/74J7CnGiFZ6J15m8k1LdHIoVs8zXV/YnIcbluqNQU2QQUkSlx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDdv2lM1kY4HnIbj4hIsacXHbs4gWpD1KQFzmDHGa+yNowweZy
+	odcTR2KjJ7nAvPNn0lZfv7qbrxmDnpRHEp0nLAhO5/VcChqKvB0EM+UuT0QV9fCWHyQ5g9WmaDF
+	3AZsjPaKOtvJwag6O/49WP5N/L5MKOjdyLFhZ
+X-Google-Smtp-Source: AGHT+IFb7z0xdg6BY2AALOSh4J0RUQARy5JDY1gnkDZORwK5i5EF0tMyCsYhRRUNu3IzoyETf8svRp9h0k8sb7MnNRQ=
+X-Received: by 2002:a05:600c:3513:b0:42c:c4c8:7090 with SMTP id
+ 5b1f17b1804b1-42f584335d8mr91991565e9.9.1727711723399; Mon, 30 Sep 2024
+ 08:55:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1727674934-12130-1-git-send-email-ernis@linux.microsoft.com>
+References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
+ <20240930144328.51098-2-trintaeoitogc@gmail.com> <2024093044-violator-voice-8d97@gregkh>
+ <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
+In-Reply-To: <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 30 Sep 2024 17:55:10 +0200
+Message-ID: <CAH5fLgjMGwBNYkOEbiSLzQ5+G0gTz+gbvsRSoRsRizAETLpLeQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
+To: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, mcgrof@kernel.org, 
+	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 29, 2024 at 10:42:14PM -0700, Erni Sri Satya Vennela wrote:
-> Add support for the ethtool get_link and get_link_ksettings
-> operations. Display standard port information using ethtool.
-> 
-> Before the change:
-> $ethtool enP30832s1
-> > No data available
-> 
-> After the change:
-> $ethtool enP30832s1
-> > Settings for enP30832s1:
->         Supported ports: [  ]
->         Supported link modes:   Not reported
->         Supported pause frame use: No
->         Supports auto-negotiation: No
->         Supported FEC modes: Not reported
->         Advertised link modes:  Not reported
->         Advertised pause frame use: No
->         Advertised auto-negotiation: No
->         Advertised FEC modes: Not reported
->         Speed: Unknown!
->         Duplex: Full
->         Auto-negotiation: off
->         Port: Other
->         PHYAD: 0
->         Transceiver: internal
->         Link detected: yes
-> 
-> Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-> ---
-> Changes in v2:
-> * Remove support for displaying auto-negotiation details
-> * Change PORT_DA to PORT_OTHER
+On Mon, Sep 30, 2024 at 4:58=E2=80=AFPM Guilherme Gi=C3=A1como Sim=C3=B5es
+<trintaeoitogc@gmail.com> wrote:
+>
+> Greg KH <gregkh@linuxfoundation.org> writes:
+> >
+> > On Mon, Sep 30, 2024 at 11:43:27AM -0300, Guilherme Giacomo Simoes wrot=
+e:
+> > > This function increments the refcount by a call to
+> > > "bindings::get_device(ptr)". This can be confused because, the functi=
+on
+> > > Arch::from_raw() from standard library, don't increments the refcount=
+.
+> > > Hence, rename "Device::from_raw()" to avoid confusion with other
+> > > "from_raw" semantics.
+> > >
+> > > Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+> > > ---
+> > >  rust/kernel/device.rs   | 2 +-
+> > >  rust/kernel/firmware.rs | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> >
+> > Hi,
+> >
+> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent hi=
+m
+> > a patch that has triggered this response.  He used to manually respond
+> > to these common problems, but in order to save his sanity (he kept
+> > writing the same thing over and over, yet to different people), I was
+> > created.  Hopefully you will not take offence and will fix the problem
+> > in your patch and resubmit it so that it can be accepted into the Linux
+> > kernel tree.
+> >
+> > You are receiving this message because of the following common error(s)
+> > as indicated below:
+> >
+> > - This looks like a new version of a previously submitted patch, but yo=
+u
+> >   did not list below the --- line any changes from the previous version=
+.
+> >   Please read the section entitled "The canonical patch format" in the
+> >   kernel file, Documentation/process/submitting-patches.rst for what
+> >   needs to be done here to properly describe this.
+> >
+> > If you wish to discuss this problem further, or you have questions abou=
+t
+> > how to resolve this issue, please feel free to respond to this email an=
+d
+> > Greg will reply once he has dug out from the pending patches received
+> > from other developers.
+> >
+> > thanks,
+> >
+> > greg k-h's patch email bot
+>
+> Yeah, I was think that only in 0/1 I should explain the changes ..
+> I'm was wrong.   I'll put the changelog in 1/1 too.
 
-Thanks, this version looks good to me.
+You can use one of my patches as an example. E.g.:
+https://lore.kernel.org/all/20240930-static-mutex-v4-1-c59555413127@google.=
+com/
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Here, the commit message itself has:
+1. Motivation for why we should add global lock support. (To replace a
+hack I had to use in the Binder driver.)
+2. Explanation for why I implemented it in a certain way. (Why
+separate initialization step?)
+
+Then, below the --- line and not part of the commit message, I have:
+1. Information about which patches it depends on.
+2. A changelog and links to previous versions.
+
+Anything below the --- line will not be part of the commit history
+when your change is merged. So you should think about what people
+would want to see when they look at your patch in the commit history.
+They care about why the change was made, and why it was implemented
+that way. What other things need to be merged first are not relevant
+to people who see the final version after it has been merged.
+
+Similarly, the changelog is important for reviewers so they can
+compare with the previous version, but for people who just see the
+final version, they don't care about which bugs you had in previous
+versions of the patch. Of course, if you change the implementation
+approach, then they might care about why you chose that approach over
+some other approach, but that explanation should be in the commit
+message (and the changelog should just say you changed the approach).
+
+Alice
 
