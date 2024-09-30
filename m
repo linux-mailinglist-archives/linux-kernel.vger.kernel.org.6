@@ -1,104 +1,136 @@
-Return-Path: <linux-kernel+bounces-344075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9191998A3E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:03:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3BA698A3EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB94CB20F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DF2281B2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A4418C011;
-	Mon, 30 Sep 2024 13:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E8318E75F;
+	Mon, 30 Sep 2024 13:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VArNVY6f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Vih0aST7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5581DA3D
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC21DA3D;
+	Mon, 30 Sep 2024 13:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701371; cv=none; b=Li6HzfIcJmvOGgvgiFv/mtQEVD2G6S8T4kvzr+E4eHXLeqCPiZezyuE9TG7gBxlvTIxRZVOezUr/AiMMR+Wsyt3e2a1lHyuKMWHskRMM/YD1kgvt6k+llCTxy/E4uPpPkI5uhIXGiP6sZO40OjSpqKN55mdrY2Nq9jNZ4ex2WCI=
+	t=1727701453; cv=none; b=C1ocIgloDe7S8amkGiYmO2annpBz7sSpwDxMatwlXbRDvOp4A/UgGTQvpuMmWR+9qB9Y+Cnq+BCm9978/RQlBdY33CH1LDJmTEi+34sgSpE5oaDYRynHtjAyNW0T0IzuzuDRzoQ3F6aAC+FTURQpuU+nzFBrDdKQTA0Rh6L2iHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701371; c=relaxed/simple;
-	bh=fkxcP//T2bdCrNiiepbSkSNWGrnL8P9uBimRUKy/Y3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xh4d6C1GvPXRYPhU5PsW/OsSL8ISrCoviNcUklfRyfYsXgq0oEb28cRgQ1aEQg7AV+vcRue9sQwLDiL5SJA16Fag+WioQ6CSaH9aiP9L8vZlPjpV4S0r18SRRQwxztZ4qpzaz3wtIGu5O7/jMlH6W1nX3/SjfT7NMmc8E1Mfkc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VArNVY6f; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727701453; c=relaxed/simple;
+	bh=X1w+aHZ1aSEC/ce63NVfAhp4cMR5ClhM0fpq2w+I4m4=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=drnQ2hA2r3oM5d7slGyO97IXlqnMSM6KLYjhEOvEnHR1NfA6Mc9PakZ26IrxA4briopsU2Eb5PjWZokg1mtmufLUFpB37KWgXvyZ7Eq9t7/zl+u61EbujJWlzVZm4dzdackptSWeSGATz5H9wEMC4iiCwf8OfA9rAnp5Fm3eHn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Vih0aST7; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727701370; x=1759237370;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=fkxcP//T2bdCrNiiepbSkSNWGrnL8P9uBimRUKy/Y3E=;
-  b=VArNVY6fv2VEe8J6C1pdz1EDGgR/f3qaSmWyPI2Q5RfwUtUjHounrYHv
-   ye/nKSQdXX+MbWGuyl5NgLExwbBlq4M8tu58vg1WEfLXhflP73+p8jF3e
-   8U8Ef1N0oMzcq29KmA3suJccyj0eWxCe1MvKK9bZt3B4uOPqiYtogCN1W
-   7bje5c4QtjD6dypQeeNxfV+WpMcaaF5itb4xhhHAko5WzMJEyTh+2NEpV
-   1SqZ//T3M6oJb94rsHa4ittKKLUQq7p8W+cZ+GMQdkrs7q+g/dWyemKEy
-   Zd03+bJ/lmLUtGNhVFHWbkVrTE/1vitnWeN+eq+eJcPuo0yiS7kiZN+zh
-   A==;
-X-CSE-ConnectionGUID: YnKwYJHSSRG63kJIek6rdQ==
-X-CSE-MsgGUID: rFrf/PUGQKKf+UTnovjTwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="44249662"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727701451; x=1759237451;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=X1w+aHZ1aSEC/ce63NVfAhp4cMR5ClhM0fpq2w+I4m4=;
+  b=Vih0aST7MeAzYbKrxOKgVfhRu35Bz2JPfLM080jR0DuM3ClTSttEUn2q
+   tf+RZ35KqUqQa1C6/mxScnHDX9hw9n//YQcepOHhGLYL4nMrE0tp2ojeS
+   GK9OlvOsSAaDVsqQ/IiKi53LhLM75MdfqRakad16AlG0+4NKruxgRWsBu
+   aQ5Gyxzx5XcXUOb/7FqFA3bt2P8AaxxU31JtuXSik2bNq7MM9E76hsUV7
+   Ke/oSSmrzYh6H8D+xeMIvLn5p3DMm7E9m5yX2K3V4+tNSQUCLJAsixIUW
+   +gaYwhEDhtWzWP5CE3t/KVXzOVyMzHNqsIp79qwHKnVqzVDztE+Pt6kJx
+   g==;
+X-CSE-ConnectionGUID: vO9Oy7ojQeG5B541OJjihw==
+X-CSE-MsgGUID: 5bccPyKoRgKxoVZkWYFVeQ==
 X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="44249662"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:02:49 -0700
-X-CSE-ConnectionGUID: IDGE5YPgQRStRbNatNEhYQ==
-X-CSE-MsgGUID: txLXHwaCSB27TWZKlrI/3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="104095475"
-Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
-  by orviesa002.jf.intel.com with ESMTP; 30 Sep 2024 06:02:48 -0700
-Message-ID: <d0de10c7-bd99-4b81-aa11-5039c514eefc@linux.intel.com>
-Date: Mon, 30 Sep 2024 16:02:46 +0300
+   d="scan'208";a="35659350"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Sep 2024 06:04:09 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 30 Sep 2024 06:04:02 -0700
+Received: from DEN-DL-M31857.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 30 Sep 2024 06:03:57 -0700
+Message-ID: <e3fca0f385e489cc30fc79c09d642c110125fd89.camel@microchip.com>
+Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item
+ when cpu-syscon is not present
+From: Steen Hegelund <steen.hegelund@microchip.com>
+To: Herve Codina <herve.codina@bootlin.com>, Geert Uytterhoeven
+	<geert@linux-m68k.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, "Simon
+ Horman" <horms@kernel.org>, Lee Jones <lee@kernel.org>, Arnd Bergmann
+	<arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
+	<dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	Lars Povlsen <lars.povlsen@microchip.com>, Daniel Machon
+	<daniel.machon@microchip.com>, <UNGLinuxDriver@microchip.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>
+CC: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, "Andrew
+ Lunn" <andrew@lunn.ch>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, "Allan
+ Nielsen" <allan.nielsen@microchip.com>, Luca Ceresoli
+	<luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date: Mon, 30 Sep 2024 15:03:56 +0200
+In-Reply-To: <20240930121601.172216-3-herve.codina@bootlin.com>
+References: <20240930121601.172216-1-herve.codina@bootlin.com>
+	 <20240930121601.172216-3-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TODO : i3c/master/mipi-i3c-hci/dma.c
-To: cvam <cvam0000@gmail.com>, alexandre.belloni@bootlin.com
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <CADVSkwnC6b3irLx58YRGJayw09AvVUqmN=3_b35vdhJKFpsgog@mail.gmail.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <CADVSkwnC6b3irLx58YRGJayw09AvVUqmN=3_b35vdhJKFpsgog@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi
+SGkgSGVydmUsCgpPbiBNb24sIDIwMjQtMDktMzAgYXQgMTQ6MTUgKzAyMDAsIEhlcnZlIENvZGlu
+YSB3cm90ZToKPiBFWFRFUk5BTCBFTUFJTDogRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0
+YWNobWVudHMgdW5sZXNzIHlvdQo+IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQo+IAo+IEluIHRo
+ZSBMQU45NjZ4IFBDSSBkZXZpY2UgdXNlIGNhc2UsIHN5c2NvbiBjYW5ub3QgYmUgdXNlZCBhcyBz
+eXNjb24KPiBkZXZpY2VzIGRvIG5vdCBzdXBwb3J0IHJlbW92YWwgWzFdLiBBIHN5c2NvbiBkZXZp
+Y2UgaXMgYSBjb3JlCj4gInN5c3RlbSIKPiBkZXZpY2UgYW5kIG5vdCBhIGRldmljZSBhdmFpbGFi
+bGUgaW4gc29tZSBhZGRvbiBib2FyZHMgYW5kIHNvLCBpdCBpcwo+IG5vdAo+IHN1cHBvc2VkIHRv
+IGJlIHJlbW92ZWQuCj4gCj4gSW4gb3JkZXIgdG8gcmVtb3ZlIHRoZSBzeXNjb24gdXNhZ2UsIHVz
+ZSBhIGxvY2FsIG1hcHBpbmcgb2YgYSByZWcKPiBhZGRyZXNzIHJhbmdlIHdoZW4gY3B1LXN5c2Nv
+biBpcyBub3QgcHJlc2VudC4KPiAKPiBMaW5rOgo+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2Fs
+bC8yMDI0MDkyMzEwMDc0MS4xMTI3NzQzOUBib290bGluLmNvbS/CoFsxXQo+IFNpZ25lZC1vZmYt
+Ynk6IEhlcnZlIENvZGluYSA8aGVydmUuY29kaW5hQGJvb3RsaW4uY29tPgo+IC0tLQo+IMKgZHJp
+dmVycy9yZXNldC9yZXNldC1taWNyb2NoaXAtc3Bhcng1LmMgfCAxNiArKysrKysrKysrKysrKyst
+Cj4gwqAxIGZpbGUgY2hhbmdlZCwgMTUgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQo+IAo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Jlc2V0L3Jlc2V0LW1pY3JvY2hpcC1zcGFyeDUuYwo+IGIv
+ZHJpdmVycy9yZXNldC9yZXNldC1taWNyb2NoaXAtc3Bhcng1LmMKPiBpbmRleCA2MzZlODVjMzg4
+YjAuLjFjMDk1ZmE0MWQ2OSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL3Jlc2V0L3Jlc2V0LW1pY3Jv
+Y2hpcC1zcGFyeDUuYwo+ICsrKyBiL2RyaXZlcnMvcmVzZXQvcmVzZXQtbWljcm9jaGlwLXNwYXJ4
+NS5jCj4gQEAgLTExNCw4ICsxMTQsMjIgQEAgc3RhdGljIGludCBtY2hwX3NwYXJ4NV9yZXNldF9w
+cm9iZShzdHJ1Y3QKPiBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHJldHVybiAtRU5PTUVNOwo+IAo+IMKgwqDCoMKgwqDCoMKgIGVyciA9IG1j
+aHBfc3Bhcng1X21hcF9zeXNjb24ocGRldiwgImNwdS1zeXNjb24iLCAmY3R4LQo+ID5jcHVfY3Ry
+bCk7Cj4gLcKgwqDCoMKgwqDCoCBpZiAoZXJyKQo+ICvCoMKgwqDCoMKgwqAgc3dpdGNoIChlcnIp
+IHsKPiArwqDCoMKgwqDCoMKgIGNhc2UgMDoKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCBicmVhazsKPiArwqDCoMKgwqDCoMKgIGNhc2UgLUVOT0RFVjoKPiArwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAvKgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKiBUaGUg
+Y3B1LXN5c2NvbiBkZXZpY2UgaXMgbm90IGF2YWlsYWJsZS4KPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgICogRmFsbCBiYWNrIHdpdGggSU8gbWFwcGluZyAoaS5lLiBtYXBwaW5nIGZy
+b20gcmVnCj4gcHJvcGVydHkpLgo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgKi8K
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBlcnIgPSBtY2hwX3NwYXJ4NV9tYXBfaW8o
+cGRldiwgMSwgJmN0eC0+Y3B1X2N0cmwpOwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IGlmIChlcnIpCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHJldHVybiBlcnI7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4gK8Kg
+wqDCoMKgwqDCoCBkZWZhdWx0Ogo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1
+cm4gZXJyOwo+ICvCoMKgwqDCoMKgwqAgfQo+ICsKPiDCoMKgwqDCoMKgwqDCoCBlcnIgPSBtY2hw
+X3NwYXJ4NV9tYXBfaW8ocGRldiwgMCwgJmN0eC0+Z2NiX2N0cmwpOwo+IMKgwqDCoMKgwqDCoMKg
+IGlmIChlcnIpCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiBlcnI7Cj4g
+LS0KPiAyLjQ2LjEKPiAKCkxHVE0KClJldmlld2VkLWJ5OiBTdGVlbiBIZWdlbHVuZCA8U3RlZW4u
+SGVnZWx1bmRAbWljcm9jaGlwLmNvbT4KCkJSClN0ZWVuCg==
 
-On 9/28/24 9:39 PM, cvam wrote:
-> Hello Alexandre
-> 
-> This mail is regarding TODO present in the i3c/master/mipi-i3c-hci/dma.c, i
-> would like to work on it, please give some more info what exactly we are
-> referring here.
-> 
-> 
->                                  dev_err(&hci->master.dev,
->                                          "response tid=%d when expecting
-> %d\n",
->                                          tid, xfer->cmd_tid);
->                                  /* TODO: do something about it? */
->                          }
->                          if (xfer->completion)
->                                  complete(xfer->completion);
-> 
-Well source code has minimum handling for unexpected but uncertain what 
-to do about it. In my opinion "TODO" is a fair comment about it.
-
-I'd leave it as it until somebody sees it on real and then we can debug 
-does it need some steps in HW/SW point of view to recover.
 
