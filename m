@@ -1,188 +1,119 @@
-Return-Path: <linux-kernel+bounces-344586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9B298ABA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:08:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C7498ABAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 894F828385D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:08:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0251C2145D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E641991A1;
-	Mon, 30 Sep 2024 18:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F101990D7;
+	Mon, 30 Sep 2024 18:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbIQQmTB"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl2aoY1Q"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34DE192D7F;
-	Mon, 30 Sep 2024 18:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F192D7F;
+	Mon, 30 Sep 2024 18:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727719679; cv=none; b=S15qyLlQuiZDU9goRS8BAllnFgACuzr6nz8LLCQmG+RIGnW3S6ngX7CmIib6YPJplOxikb9anWOBgNf1hjk/Ri6VuoZ6pfxJ+W31QtUch7GE8n4yezXlX9B7qxDCSW8S0ttmybJJwt6ngSSvViJI+YafnTVrWpZQV02B6Xvzdmw=
+	t=1727719760; cv=none; b=cAr28Hq05NcETnPhWYQPh6cG9hh9mS+gVuVJipGY8OFF1s9Az74C2d4Pt1Z9mZJ2i0YORupBUlOOViVfIM4WnMNS83di/posllsydUr26FrGn7r+NRpvkHLOAyP29Na+3hel+iR5Q6cPK+7AMqSOsOXWh6qepG9BhAkptjadxrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727719679; c=relaxed/simple;
-	bh=2yfjV0n2fQvSlVYlX7wNns3lLhJSYJ3XV83Nw0ib6YI=;
+	s=arc-20240116; t=1727719760; c=relaxed/simple;
+	bh=iDVMlPhvSyC8aDz+QP9lfgkSrj0TyoQwJsbyx9OLZG0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ti/tq+bg3I6tapCLt+8zCjGRiX3ZSrT8chKLUTTYQdD0emeJj6GPyJa+dhCyQ11SxyhJgpUG8fl+fk87Iiv34+5+T0VUFwFyYJVh7Wdh6ZLLiHR830gavemzFyjAwfMTjp2sYfEn3YgMy6eZGB8VEmlzCb1o5Rtf3Mc0eyx7uFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AbIQQmTB; arc=none smtp.client-ip=209.85.221.179
+	 To:Cc:Content-Type; b=PaqCAC1qBl8OzMHejS3IdhOcVUPOSSFOiUAKMXQK3gZXOSC1PS310Wyqv+J7Tbw64sqkzn/PvAXZlAB6pHZ3B6qtsjJjKwxHzSxd0IjvDkyVDNSl5EJbDpwApYhf1uTLMdHIK+P9b0TItbX8CuONxd3fLak5P5oQCnoTNm9LtGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl2aoY1Q; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5094e0c0d71so490466e0c.2;
-        Mon, 30 Sep 2024 11:07:57 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e03a5ed4d7so2444570b6e.1;
+        Mon, 30 Sep 2024 11:09:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727719676; x=1728324476; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/wFYcYi1x+ZrQ9uMGVi8n5XM09/Rz/A0sPv6fdkzgVU=;
-        b=AbIQQmTB28EQPewHDGrcccqgJ3qwJAwEo0PEDVPI7u1kaGt10hCvcn+cTAs10FOhmt
-         +AxOSaXsXV2Y1bcT416NjaVkOaHnYtDofs+6O/C0p7MAO/UiZ4/tz7mnvQENv5qw/q2B
-         WAAng6VWdVQPoDaQKE17fNQkPzR/8VYkpRaWXagvAQ73T2IucznpF2npHY/cxznwGNDb
-         cN+rOhNAptBbKBldvc5h88mGLJ2QlgSCVvFbtcGM6esIOQAe6LaqgPytlKcBXal73zij
-         +puMyI0vGL/llj3lx3aLItJFUaJKNEED6x4gIGu5uif0UGk5hAZrO4jn+IjrHdbliArK
-         4Hqg==
+        d=gmail.com; s=20230601; t=1727719758; x=1728324558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
+        b=kl2aoY1Q5gqrRCZfeOpWBc1nOj4XPiph+/5+/z+xP+8ag2W/GYf0xd5Kw3KRtvJxCL
+         C9Tbsx0Qgc897ycZPogd34fau1nx98lHzQWd7WyIB708b5I72UyP7WAVBZWtRFnkB3rK
+         PWeH0Xb0vFlu/kOpDYpa1pGY4qEhtYggON1Wz2p9kIB+8Rag29O+kAPpOSAg8uWuaGWr
+         Wu/Thy6+SJzBrtqUY/yM+fRct9SqepoSCvHIM7Qa95IMSRq75kKhqFbe25IVUnfl/BDQ
+         qkshyQaRxxpDaE1/kqQBFWWDLnBa5Puja0UYigDz0B9IsMqt4NdLfhGJusmaf11WAIae
+         xBrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727719676; x=1728324476;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/wFYcYi1x+ZrQ9uMGVi8n5XM09/Rz/A0sPv6fdkzgVU=;
-        b=M78hsBG8dptVUGKbxfKUrxxS7sUtLSbtmPITXxz2viqQIPsDsQ92dZS/uWlSa7sWKl
-         jWeNOpyiyKM5ds722/IgjgRA/qAc1GFxl7270b4fw08zuJxoZmJHYH0pT/OHR+Aeszz4
-         idUjkisLiQhekXGT8pXJ7GU4xv0T0957c0NhaRYncEBaBoSwHY+NvaDgyBkH7+wxGdmQ
-         /OhPr/WCHt0yttdlxMttCMn593hLus4AqojVCy1N7XcTaL2Q3XSH0+0wMbmTWAOOcWqh
-         U3v1EEauUlqOMgqNx+R1NxNs15ZtekgDlgLsRPt/8X88T46Sl6WpZi56NKEM267w6k/J
-         27rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPL1YyLhmxx+of1ZR4a+c8W8Q2dF5Ol9TDSJyikkA49oAAPawku67OXytXak1Jp5h2qFBK06Y2@vger.kernel.org, AJvYcCXYpXJLPkEBDS9A1lgeZ+wxjdT1rccEiiLvxiRs8lO2Xgbe6agYhprn8Bu6jOOQee1Q5Chqi6LDmpzjDQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfs9HaXbvUdBoXBlj4wNZNb8i4FsyfJpMsTn4UkWK5wCwBUvns
-	3IPyCkpBps9Pf1wbaV7CJFdsaQhORKgsDkDTnjs3c+t9guxCDnq3pR7ah/b4BbSeOciXi/sib4M
-	6GES4QHnRIfpHoGq5Sg9d7cXWrTA=
-X-Google-Smtp-Source: AGHT+IGid9mFu2KKC1Y3XaIGaQYrgeekYnr4QMQgDTkuCFH3p3bUX9Q6HEMdA8MtCZWqYP3vGUcd4DX3z+BnDPsymK4=
-X-Received: by 2002:a05:6122:251d:b0:50a:76c9:1bb with SMTP id
- 71dfb90a1353d-50a76d84964mr3076382e0c.11.1727719676533; Mon, 30 Sep 2024
- 11:07:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727719758; x=1728324558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
+        b=BPvPHIz9XuLIeWXiKRiczQWDjOZi1ABKKTEOf9ns/+pOU/hg/ccO7Yd7TwSz89XJx9
+         duZhAFjMCX52EKBWFn0ip19uoNG4+BpmRjIj9oQQmjxOoBd2STir5qdFMI7aJkcX8yzI
+         IIBvniznqbxq8Y1ow2HPJXrQ6rh8xyuMRbyWAszgNdJEb7NXocVazFBEN/4evW009UP0
+         LnUXket3yEqagdn6GiODmvJ0MZUWWlR+zk5m7CXsQ+Cr+E83TlVWJInEpvXL/JgAR+oP
+         xWEo58FJ7tmcB0v7bIMxrjqwksA3JZnkneAc3LQqouEq9QWzdKSOaJNhBJ99EY5zsGv0
+         H5ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfMrU4skXX8O2HAK8QQuoJnaijike8SpCNFlStZVO1NuCgQ/kX5epV1yofXLCgHDIClWZyeXavpaM@vger.kernel.org, AJvYcCVXjKojHodKjHUUqtdKNoja3yqliY6qPe+UQNPHZWta9ouP+1snnzMze/59y/sx6e/jgumD+sOkhx/FZ/Pf@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywncf1v9hsX1DM8MQpjvbLgx5PSIGXCjXqYCB+4XXi5pmn2JBQK
+	V88jWK6QK4/nl3ffgcjK9klbakrSxxxLdoD9FbPJypgvqYcOv05Bj0pTHVnpN8lAh8c6DCV1p3V
+	qpp2sMKEj8pMXfdJUDwitHPV+L/I=
+X-Google-Smtp-Source: AGHT+IFK+sgS7rJjHT4JmP4KrvFnACsWw4V1/xwvMVkBRq6nQAEM2hOEAGp7ta7mwf+TKwuP5NCyZaOR07eNe/KBZ/Y=
+X-Received: by 2002:a05:6870:5b88:b0:261:1f7d:cf6e with SMTP id
+ 586e51a60fabf-28710c45c43mr7339001fac.41.1727719758592; Mon, 30 Sep 2024
+ 11:09:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926160513.7252-1-kdipendra88@gmail.com> <20240927110236.GK4029621@kernel.org>
- <20240927112958.46unqo3adnxin2in@skbuf> <20240927120037.ji2wlqeagwohlb5d@skbuf>
-In-Reply-To: <20240927120037.ji2wlqeagwohlb5d@skbuf>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Mon, 30 Sep 2024 23:52:45 +0545
-Message-ID: <CAEKBCKP2pGoy=CWpzn+NGq8r4biu=XVnszXQ=7Ruuan8rfxM1Q@mail.gmail.com>
-Subject: Re: [PATCH net v5] net: systemport: Add error pointer checks in
- bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Simon Horman <horms@kernel.org>, florian.fainelli@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org, 
+References: <20240912153924.78724-1-thorsten.blum@toblux.com>
+In-Reply-To: <20240912153924.78724-1-thorsten.blum@toblux.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 30 Sep 2024 20:09:06 +0200
+Message-ID: <CAOi1vP_1jRDmkQBH4BaxicTyYXtTJVjLXQb9T_XCmvUm7qTf0A@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Use struct_size() helper
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vladimir,
-
-On Fri, 27 Sept 2024 at 17:45, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
+On Thu, Sep 12, 2024 at 5:39=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
 >
-> On Fri, Sep 27, 2024 at 02:29:58PM +0300, Vladimir Oltean wrote:
-> > > > + dp = dsa_port_from_netdev(slave_dev);
-> > > > + if (IS_ERR(dp))
-> > > > +         return PTR_ERR(dp);
-> >
-> > I don't see an explanation anywhere as for why dsa_port_from_netdev()
-> > could ever return a pointer-encoded error here? hmm? Did you follow the
-> > call path and found a problem?
+> Use struct_size() to calculate the number of bytes to be allocated.
 >
-
-Yeah, you are right. I ran smatch to find this and saw there is no
-validation. I did not see any problem as you said. I thought it would
-be better to include this change. If you say there is no point for
-this change, then that's also fine for me. I got the chance to learn
-new things.
-
-> To make my point even clearer. As the code goes:
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> bool dsa_user_dev_check(const struct net_device *dev)
-> {
->         // This dereferences "dev" without a NULL pointer check.
->         // If the kernel did not crash, it means that "dev" is not null.
->         return dev->netdev_ops == &dsa_user_netdev_ops;
-> }
->
-> static int bcm_sysport_netdevice_event(struct notifier_block *nb,
->                                        unsigned long event, void *ptr)
-> {
->         ...
->         switch (event) {
->         case NETDEV_CHANGEUPPER:
->                 ...
->                 if (!dsa_user_dev_check(info->upper_dev))
->                         return NOTIFY_DONE;
->
->                 // we know here that dsa_user_dev_check() is true, and
->                 // no one changes dev->netdev_ops at runtime, to suspect
->                 // it could become false after it just returned true.
->                 // Even if it did, we are under rtnl_lock(), and whoever
->                 // did that better also acquired rtnl_lock(). Thus,
->                 // there is enough guarantee that this also remains true
->                 // below.
->                 if (info->linking)
->                         ret = bcm_sysport_map_queues(dev, info->upper_dev);
->                 else
->                         ret = bcm_sysport_unmap_queues(dev, info->upper_dev);
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index c4744a02db75..ab494f250d80 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_i=
+nfo *ci,
 >         }
->         ...
-> }
 >
-> struct dsa_port *dsa_port_from_netdev(struct net_device *netdev)
-> {
->         if (!netdev || !dsa_user_dev_check(netdev))
->                 return ERR_PTR(-ENODEV);
+>         pool_ns_len =3D pool_ns ? pool_ns->len : 0;
+> -       perm =3D kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
+> +       perm =3D kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP=
+_NOFS);
+>         if (!perm) {
+>                 err =3D -ENOMEM;
+>                 goto out_unlock;
+> --
+> 2.46.0
 >
->         return dsa_user_to_port(netdev);
-> }
->
-> static int bcm_sysport_map_queues(struct net_device *dev,
->                                   struct net_device *slave_dev)
-> {
->         struct dsa_port *dp = dsa_port_from_netdev(slave_dev);
->         ...
-> }
->
-> So, if both conditions for dsa_port_from_netdev() to return ERR_PTR(-ENODEV)
-> can only be false, why would we add an error check? Is it to appease a
-> static analysis tool which doesn't analyze things very far? Or is there
-> an actual problem?
->
-> And why does this have a Fixes: tag and the expectation to be included
-> as a bug fix to stable kernels?
->
-> And why is the author of the blamed patch even CCed only at v5?!
 
-Sorry to know this, I ran the script and there I did not find your name.
+Applied.
 
-./scripts/get_maintainer.pl drivers/net/ethernet/broadcom/bcmsysport.c
-Florian Fainelli <florian.fainelli@broadcom.com> (supporter:BROADCOM
-SYSTEMPORT ETHERNET DRIVER)
-Broadcom internal kernel review list
-<bcm-kernel-feedback-list@broadcom.com> (reviewer:BROADCOM SYSTEMPORT
-ETHERNET DRIVER)
-"David S. Miller" <davem@davemloft.net> (maintainer:NETWORKING DRIVERS)
-Eric Dumazet <edumazet@google.com> (maintainer:NETWORKING DRIVERS)
-Jakub Kicinski <kuba@kernel.org> (maintainer:NETWORKING DRIVERS)
-Paolo Abeni <pabeni@redhat.com> (maintainer:NETWORKING DRIVERS)
-netdev@vger.kernel.org (open list:BROADCOM SYSTEMPORT ETHERNET DRIVER)
-linux-kernel@vger.kernel.org (open list)
+Thanks,
 
-Thank you so much for your time and effort , special thanks to Simon
-for everything ,thanks Vladimir for the way you explained. and thanks
-Florian for your help.
-
-Best regards,
-Dipendra Khadka
+                Ilya
 
