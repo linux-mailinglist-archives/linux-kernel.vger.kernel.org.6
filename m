@@ -1,115 +1,199 @@
-Return-Path: <linux-kernel+bounces-343801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB36989FAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:46:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C160989FAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B24DD285344
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:46:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45271283BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF33E18C354;
-	Mon, 30 Sep 2024 10:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE80018CBFA;
+	Mon, 30 Sep 2024 10:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBqFL69k"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NfA1IYSo"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BCB18A6B9
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A1118A6B9;
+	Mon, 30 Sep 2024 10:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693188; cv=none; b=eFgNpmYxPxHGEXcB6/OghsxTA+7+SwM6oOX5Jv45N0y31q/bWGNZXjyTDjB6SyaZijC52Oi0kZmF0hhFJTAC5XuRFeWbBRp+DV5a682BqtKcRbIzmlS7vEO6ZwWWDOv5ohWufnY7/iZscGGbxuJKUh1XAt/zvIJgEAL5BNece8g=
+	t=1727693230; cv=none; b=AryRCe2mfH0HMd+wSuOnms1QQVwi/dpU8QqwQ7qJc9auyoV3KjxXw1SAhszN7JjyYCoH1/h0s6zTHJCiMEFbQbq6W+YDqfz7Aua+wX5wEVpr4AJPprYYtOvywPtGKjMIcyJRwf/JUMO7Gwn9H7rEyYP12Y48nMUXCU7rj9YHk2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693188; c=relaxed/simple;
-	bh=lCnldRJj8EcKbLxKLQnv0DM8eJKx8fW9IhUNQDrxfrY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pO3ihOV7oOxEtdqmIQYkJS2Y5u507v+TzL0Cinnh8nIqDZOXXssUD8yb3ggmdK/dWDdbGMq1iWck77ZH+En/NXbjT0CBTU/s09jd3pKRAlAoTjMfAvUU4qaucQyIWtIfCoC3UkTQhQEHKkLkYYEsdzzTTHFNj0VI7cWgMlDXTgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBqFL69k; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb1866c8fso6238035e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:46:26 -0700 (PDT)
+	s=arc-20240116; t=1727693230; c=relaxed/simple;
+	bh=ukDCgE9s2AovRNuGCZZupL6hqRs08UhDNcHSSHqB7Ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hkfqvNb7I2+vQ8nu5AECzXcWs08S+ZqqAFNsZ9Xz8Bn2WtLiiZJowLogk97BoQJdSdDbZlEcm+Rv/oAGa6PlZjdLjMVnTEdAJOsqdobCvzc/sRGMpG4C9behwIF5ajRvWNiVlqEXpyJEw9QG5gj1BZPKYybunxNqL/EsqVfF4YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NfA1IYSo; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4a3a4432737so1633758137.1;
+        Mon, 30 Sep 2024 03:47:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727693185; x=1728297985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727693227; x=1728298027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KFE4eZeZ6weP2RRCOdMmrLdR7nkC0PcT5+tx/WtcMug=;
-        b=JBqFL69kvrRGqqj/80SyEaycFQfdc23RsxTKn0JpLuTZHXti7sR15WNGnAcnX3eSVc
-         rQdNZn9xwU0zlpIvuNsqdEKh3kgxZwTWPpQwz9D/7LZEuBLl1UeeoZm1MTvuRKC0I1Qu
-         m0pKTIdw/moMoKCszBsGRarqo948OGVye53n/fdD4A6rIoPjqUcAcdHrlqE0BHryHUpL
-         LDzhE0+pJAwSRlIsqrpJeSjCvK3hL/BbKmmQdH8XGo03q+4/3DW4r8Gd2d31+47jgYzM
-         80709mEfWh2WSvLk/wmsxhbVGpstO4wWuQUveBMNTElNmPfXDU/NiGx/6IwgPK5cMqKQ
-         aIxA==
+        bh=dLyQGxOZrKZO5tcIaOz8q5jNB5R5IP/eTsdnigI4MkQ=;
+        b=NfA1IYSoUOFm1OKcxYo+nooJoYBQRD2iSelhHlDQeco4fzcTi7/E7YR2Tstrr26TKG
+         IjcMltFVFNy3JjnWd+LCYQtmo18FRygamzs3c9mOk9ZMnNvU9S9KDT3+krJAPwl/SW8P
+         9mqlLWZq+ACf5sWPaMYfrcJbl8G69ro+VVUCU74zqiHzutNUv8kjk5gYcd5cn4csYG7X
+         Ic8Wx0tuVOUWRiUZfsPgQGM8w6YUmEYNOn2lwGQiVroTEdcfUgRf6sYuR5F8nFwORCZV
+         eR18dzBMcpiBOAQYfwjYtkN5d7faeUvvidfRx3Ivu4+WIQ45iGmvjtyj6OBwWkg4ZmQm
+         PKmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727693185; x=1728297985;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727693227; x=1728298027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KFE4eZeZ6weP2RRCOdMmrLdR7nkC0PcT5+tx/WtcMug=;
-        b=saiyfMped5K1WkW3IDVxZ9w03zNntk6YU5MdBBxlbTA4cADFV7ASFeQb49PbvKdibK
-         BZRAOlE5ftrM+LRTluHWBVU/hFerFVVnL6fCaETFxY4hyAVToXBk3Vwm0vBdSzIqFs7T
-         aM+U9lq2VMQANF6qePwcZaazCOpYB2bYblQisfPMY8CcUQtNqEVZ4Ft6xD52NmH1XeP+
-         HfOA60TiWOoaQs0QtNptJeHo1u6kBdmFci9OJ74hzbBdpamvFK9f/cEdoodwwuyrzKuv
-         HqXYt2iYTisHjtmUhmmtVMcM5dUPCX1cXjMKeHQT5RFahrdtvZRY3y571ID78sTRYPEg
-         uEew==
-X-Forwarded-Encrypted: i=1; AJvYcCVbOQeN0aeGmLcWskWEguVjZrBc7XHuHmlntoJK4tQP4azwkpvFqg2Ju5lXaeZmuVLpr7qddUyP6NJ83QA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd4Dp8gbkBXkBKcAmf6Ic7O1D6FNWYIO1KwptNhSDmi46w0SW1
-	EW2J9/Z7PM41H+LcjXzWAZCaFixw+2l6YJ4Bwgs3OVTNJtjN9GoJefxUm1ZUBFA=
-X-Google-Smtp-Source: AGHT+IEvk9FSbIzVEgOgXx9J9NrpSRuywz0Be+b84peORC+sZmXG2Y362BoPxHOnga7dUHz35qh/lA==
-X-Received: by 2002:a05:600c:45ca:b0:42c:c0d8:bf49 with SMTP id 5b1f17b1804b1-42f582a34femr38710925e9.0.1727693184931;
-        Mon, 30 Sep 2024 03:46:24 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57debe51sm98808695e9.20.2024.09.30.03.46.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 03:46:24 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Varada Pavani <v.pavani@samsung.com>
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com, 
- gost.dev@samsung.com
-In-Reply-To: <20240926145132.1763-1-v.pavani@samsung.com>
-References: <CGME20240926145332epcas5p2aa65366565950cf3d4f25b6c064a5fbe@epcas5p2.samsung.com>
- <20240926145132.1763-1-v.pavani@samsung.com>
-Subject: Re: [PATCH 0/2] clk: samsung: Fix errors and warnings reported by
-Message-Id: <172769318322.27024.16019922061491208567.b4-ty@linaro.org>
-Date: Mon, 30 Sep 2024 12:46:23 +0200
+        bh=dLyQGxOZrKZO5tcIaOz8q5jNB5R5IP/eTsdnigI4MkQ=;
+        b=UlcWBwagEg8mu4BRtRzErWve35rCv8p0ZgVZOdltxpCUAJWlFBfl9vX67t5Pae1Iay
+         Y64BOOJlwdNDXcQ5RDxt7nL/12z4RmDia7ASuM+6RdUeIU0Tl6lU5amQe7rm9FepIhI2
+         /QECdh1ExQdyis+e1skDuu+LyCAYZ+T9pSROBtLauYrJcAWvNzyNdvvUc2RIKzklwmfh
+         NNAO/LyKE3tXd2Pni4dcypqKDGUxl7i36MDpSc0MkgU4rnNOWeoG3ZxLGm1yFsKtXrZc
+         TbgKXz63iM8AtCVZHhehgN/iD6mgDoJGnTTn4ghJ/NMmzDhQ1aUkd2fwPz9DU4dseJfI
+         gOsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNGRsTGoeoZcc+RcAqVeDOczEbu6rmPmT+cJxm2tCkWosTsZRY40mztS/jTCkAWeLWhG9tUTxrrCP2O2I=@vger.kernel.org, AJvYcCUfur9g5rcnVhcrS8wE/22btzg55XB9V4HnYm6n/V8LtqmoSMWyd17pfCURngnVg32acSeZcpPf5L8P@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjVix28Ix7FnIVVnTVjdDgJ7JLZw1nvL1YXDJ9EcZgHjmUA7sS
+	IBtkitEK49j17NWqNc45Zj2QP7Lz8yuhALBjZeQO1V9Re++cDTXLSxbM4MGDdtNVukhfenj5UYq
+	QCg+T4zw6rU2IOx2/TeAVBjkmv6g=
+X-Google-Smtp-Source: AGHT+IHF6iVBDwvd3Mixp43xIgyVVdaxVV94p2ExCeILDckhXdcytdgE6PFplsRLYlRblB0dBJz8gEkhuXfqahjxEu8=
+X-Received: by 2002:a05:6102:f0d:b0:48f:b5c1:7269 with SMTP id
+ ada2fe7eead31-4a28a162b7emr7204742137.0.1727693227497; Mon, 30 Sep 2024
+ 03:47:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+References: <20240913102836.6144-1-victorshihgli@gmail.com> <dfde5172-c1b7-4c22-94ab-87a1d5d5ee9d@intel.com>
+In-Reply-To: <dfde5172-c1b7-4c22-94ab-87a1d5d5ee9d@intel.com>
+From: Victor Shih <victorshihgli@gmail.com>
+Date: Mon, 30 Sep 2024 18:46:55 +0800
+Message-ID: <CAK00qKAOd9_bSGs8sxaZjOjkpw3ge-jzXdmkZMcFmm=eg70KVQ@mail.gmail.com>
+Subject: Re: [PATCH V22 00/22] Add support UHS-II for GL9755 and GL9767
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: ulf.hansson@linaro.org, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
+	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Victor Shih <victor.shih@genesyslogic.com.tw>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi, Ulf
 
-On Thu, 26 Sep 2024 20:21:30 +0530, Varada Pavani wrote:
-> This patch series fixes clock driver errors and warnings generated from
-> checkpatch.
-> 
-> Varada Pavani (2):
->   clk: samsung: Fix block comment style warnings reported by checkpatch
->   clk: samsung: Fix errors reported by checkpatch
-> 
-> [...]
+Sorry for bothering you.
+In this series of patches I have reached the final comments of the sdhci pa=
+rts.
+Please help review this series of patches.
+I hope to get your feedback to confirm whether there are any needs to
+be modified.
+If you already have a closer look at a paragraph in the series, could
+you let me know your opinions first.
+I look forward to your reply.
 
-Applied, thanks!
+Thanks, Victor Shih
 
-[1/2] clk: samsung: Fix block comment style warnings reported by checkpatch
-      https://git.kernel.org/krzk/linux/c/3ee92799a212963bbd8f860b53dd8b9b5e6bf812
-[2/2] clk: samsung: Fix errors reported by checkpatch
-      https://git.kernel.org/krzk/linux/c/97fd5d447beff9643c2a333ebfbc95fc1d625342
-
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+On Wed, Sep 18, 2024 at 12:47=E2=80=AFPM Adrian Hunter <adrian.hunter@intel=
+.com> wrote:
+>
+> On 13/09/24 13:28, Victor Shih wrote:
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> >
+> > Summary
+> > =3D=3D=3D=3D=3D=3D=3D
+> > These patches[1] support UHS-II and fix GL9755 and GL9767
+> > UHS-II compatibility.
+> >
+> > About UHS-II, roughly deal with the following three parts:
+> > 1) A UHS-II detection and initialization:
+> > - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
+> >   Sequence[2]).
+> > - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
+> >   [2]).
+> > - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
+> >   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
+> >   Setting Register Setup Sequence.
+> >
+> > 2) Send Legacy SD command through SD-TRAN
+> > - Encapsulated SD packets are defined in SD-TRAN in order to ensure Leg=
+acy
+> >   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.=
+1
+> >   Packet Types and Format Overview[3]).
+> > - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-=
+II
+> >   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2])=
+.
+> >
+> > 3) UHS-II Interrupt
+> > - Except for UHS-II error interrupts, most interrupts share the origina=
+l
+> >   interrupt registers.
+> >
+> > Patch structure
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > patch#1-#7:  for core
+> > patch#8-#20: for sdhci
+> > patch#21:    for GL9755
+> > patch#22:    for GL9767
+> >
+> > Tests
+> > =3D=3D=3D=3D=3D
+> > Ran 'dd' command to evaluate the performance 3 times:
+> > (SanDisk UHS-II card on GL9755 controller)
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 85.5MB/s 56.3MB/s
+> > UHS-II enabled         :  182MB/s 75.5MB/s
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 86.7MB/s 52.1MB/s
+> > UHS-II enabled         :  179MB/s 77.6MB/s
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 85.8MB/s 49.1MB/s
+> > UHS-II enabled         :  181MB/s 89.8MB/s
+> > (SanDisk UHS-II card on GL9767 controller)
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 81.9MB/s 49.0MB/s
+> > UHS-II enabled         :  186MB/s 87.9MB/s
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 80.8MB/s 53.5MB/s
+> > UHS-II enabled         :  192MB/s 87.3MB/s
+> >                              Read    Write
+> > UHS-II disabled (UHS-I): 81.0MB/s 53.9MB/s
+> > UHS-II enabled         :  199MB/s 73.6MB/s
+> >
+> > Test command
+> > =3D=3D=3D=3D=3D
+> > Read: dd if=3D/dev/mmcxxx of=3D/dev/null bs=3D4096k count=3D2000 iflag=
+=3Ddirect
+> > Write:dd if=3D/dev/zero of=3D/dev/mmcxxx bs=3D4096k count=3D2000 oflag=
+=3Ddirect
+> >
+> > Changes in v22 (September. 13, 2024)
+> > * Rebase on latest mmc/next.
+> > * Adjust patch order to avoid defined but nt used warnings:
+> >   v21 patch#18 to v22 patch#14.
+> >   v21 patch#14 to v22 patch#15.
+> >   v21 patch#15 to v22 patch#16.
+> >   v21 patch#16 to v22 patch#18.
+> > * Patch#14: Remove unnecessary code to avoid defined but not used warni=
+ngs.
+> > * Patch#15: Add necessary code to avoid defined but not used warnings.
+> > * Patch#16: Remove unnecessary code to avoid defined but not used warni=
+ngs.
+> >             Modify commit message.
+> > * Patch#17: Remove unnecessary code to avoid defined but not used warni=
+ngs.
+> > * Patch#18: Add necessary code to avoid defined but not used warnings.
+>
+> For SDHCI:
+>
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>
+>
 
