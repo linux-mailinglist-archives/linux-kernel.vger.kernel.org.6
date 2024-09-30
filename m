@@ -1,161 +1,190 @@
-Return-Path: <linux-kernel+bounces-344268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FC1D98A7A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:49:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A45598A794
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BDF284260
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9937A1F23019
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0320C1946AA;
-	Mon, 30 Sep 2024 14:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE81191F7A;
+	Mon, 30 Sep 2024 14:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NS8u7rTo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K1zj5l4T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55B01922E3;
-	Mon, 30 Sep 2024 14:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743BC23D2;
+	Mon, 30 Sep 2024 14:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707666; cv=none; b=sEAn9Lev9kXJdUMe3WmolM34I30oq3ZXuNX7xDDDKnOwo3QcU8IO6ZQxYenSO2BLDaojIVmCm0vKFWacfr/DjtLPkkUFGVQlU/twOVoNYqtV6DCR66ypo5DKYsgjjR7iPWRP3WjhwOH9IbK/EXUH9DSjIFLrygllMf8I214rHNY=
+	t=1727707635; cv=none; b=Xvj3sSyb1aSP0Txss4d6BcgNeePit4Ei9MoQENvIYR1XmxCpQHm8q6oorSJ72XNoZ3LYkGXj4/dgMyudeOeSqEJoFsl7l+6W6jsZA6VAqyul8N1RnAm2qkZS0Nsn14mGElwdP9GwKPUopqny8tv0Tu6YH5/rnEKVeT/XTMo9xfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707666; c=relaxed/simple;
-	bh=7ICdLaeBJV7XmJ9jGs7OWALjtaVxkt6At4mEoM1g7OA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VaWuzFE8pd3zi7zvV0dpoWlDtXUWrIkXi0LzqiA3EOiXOUkVli71q5W2zQ80swvVk3Flze5D6NVZUIaxjD8GrxycFYT9/GfuK4l5jEMCImlscBYpCf++B9Ql/KvFafvmyaKkuaxOIOtdcnEtayyu8d8azc1Fcfa+M+ZjiMGcdDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NS8u7rTo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UBJFjG013905;
-	Mon, 30 Sep 2024 14:47:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=clccw7WHx4ww1zLuegHgD8
-	uebzO0KmHCI4GU1CtcIbQ=; b=NS8u7rToo+OFG74wmCBuI97UTE60s60zz0os1Y
-	sWnlQ4jolf4s2gVyVKgVjd7HKu3l7eAJqAmq6cetRDUGa9cedHDWfjzF8SV53yPl
-	umHL8WVOvsYp8Pg9KWZZgNlNIBWQYeUriOnWwWfOhuRTHmGCfYPCb9aS3DcBfraL
-	jSY0sjSQUlg0JfjtRuGMOoWFOA1EFZ6q7heGIhvAPghzaadHukuGaPbCDf35TTsy
-	ZNAuMw01R/2IQniHYnMB/2GLd1hGwxwnOGQspIxSDB+9qSRXVvF8RS1dCU/cW27X
-	+dmKSXXp2XWIS+iXGjYnHzyN/pEfG3O+3M/PbzegVdQS1ezg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa6750ba-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 14:47:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UElSH3022046
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 14:47:28 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 30 Sep 2024 07:47:25 -0700
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andi.shyti@kernel.org>, <quic_mmanikan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH v3 1/1] i2c: qcom-geni: Support systems with 32MHz serial engine clock
-Date: Mon, 30 Sep 2024 20:17:09 +0530
-Message-ID: <20240930144709.1222766-1-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727707635; c=relaxed/simple;
+	bh=Hry1X0VeuC1bEaNhwbkQROaJm0jnDNpE3hNkVrNT3vM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MqN4mL+CJQojwp2DraA5fDCwWh/9s38TvlYbIbgZy9Azrv8qSrwPYefJ0qvQzwvz1U9rjJv+p0vw4uJRnFetxI9yzxXP8ZsBWVbPV16bR/XaNThZPnqL4+cilT/mxHhSaftjBWu7F05wq4k+8l0W95YHdWKDf5OIcND+MhfDJWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K1zj5l4T; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727707633; x=1759243633;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Hry1X0VeuC1bEaNhwbkQROaJm0jnDNpE3hNkVrNT3vM=;
+  b=K1zj5l4TYCuibheQwoJHL27HF+QzZUH9bdgwhT7+DsLgBX23bYaa8TDD
+   iF/d815vnHNwQu5KrL3Xjgqjps+rp/0TdQmu9TDmRXq0Pl92DGCYiuPLH
+   bcWUZ1zVLoa2lH3qNoNeezwqbbR212LfIWiaW/IPVB3f2H0nrnnWy+k+v
+   1MY/SROwHU4jawqXoYHVSSFkow15mKExZp4cXFWr3ghSu4RgIzX/V+l59
+   bP4pmkMIKPwKSx6DUVgMXCkPz6E36+GvFZQUd6IcT7k89j0xCE23n3gF9
+   LMEUOi53i7LElI6zhW4cbcuSlVjPexkFiJb+E8HoYbbAFq4o0iHnpYz1s
+   g==;
+X-CSE-ConnectionGUID: R5cszCdfT1C2GBhbzrxVLg==
+X-CSE-MsgGUID: zdlioCqIQZantuuEm0jGdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="49324892"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="49324892"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:47:13 -0700
+X-CSE-ConnectionGUID: uXd4xCleT7yf678RuJNi5w==
+X-CSE-MsgGUID: ktDdk+KrSk+3CGy/2H8jwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="78073452"
+Received: from smkirkla-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.240])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:47:12 -0700
+Date: Mon, 30 Sep 2024 07:47:12 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH v4 00/10] Add CPU-type to topology
+Message-ID: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIAGa5+mYC/53NMQ+CMBAF4L9COlvSXgstThoXRwc3wwDtIU0UC
+ CDREP67DYsGmRzfu7zvRtJh67Aj22AkLQ6uc3Xlg9wExJRZdUXqrM8EGEgWc0Uza6lpHrR/NUi
+ ljVAqLAznivhJ02LhnjN3Iaf9+XAkqa9L1/V1+5qfDHw+rnsDp4zmWieJNoyjinc3Vz2eoat6v
+ IWmvs/cAF8ELAnwRJGAyi1qkVm2TogPoXm0IIQnQEgeg4iAReqH2AR/T9Npmt4ZwoBsdgEAAA= =
+X-Mailer: b4 0.14.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: iT_2kTwfrGXGQQHefdwIkTzIAQ-SIOJ1
-X-Proofpoint-ORIG-GUID: iT_2kTwfrGXGQQHefdwIkTzIAQ-SIOJ1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
- priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In existing socs, I2C serial engine is sourced from XO (19.2MHz).
-Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
+v4:
+- Series doesn't apply to upstream cleanly anymore, rebased to v6.12-rc1,
+  resolved the merge conflict in files:
+	arch/x86/include/asm/cpu_device_id.h
+	arch/x86/kernel/cpu/common.c
+- Remove redundant "hw_" in intel_hw_native_model_id().
 
-The existing map table is based on 19.2MHz. This patch incorporates
-the clock map table to derive the SCL clock from the 32MHz source
-clock frequency.
+v3: https://lore.kernel.org/r/20240815-add-cpu-type-v3-0-234162352057@linux.intel.com
+- Add a patch to prepend "0x" to hex values in cpu_debug_show() (Borislav).
+- Add support to to also get Intel Native Model ID (Dapeng).
+- Keep similar models together in the affected processor list (Josh).
+- Add a comparison of .init.data in commit message for cpu_vuln_blacklist
+  before and after decluttering patch for affected processor list (Josh).
+- Drop the debugfs file reference in the commit message (Borislav).
+- s/cpu_type/hw_cpu_type/ (Borislav).
+- Add a union for hw_cpu_type for easy retrieval of intel_core_type and
+  intel_native_model_id.
+- Updated commit messages, collected tags.
+- Rebased to v6.11-rc3.
 
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+Note, I will be off work till Tuesday, will reply to any comments then.
+
+v2: https://lore.kernel.org/r/20240627-add-cpu-type-v2-0-f927bde83ad0@linux.intel.com
+- Move CPU-type to the end of the CPU topology structure (Andrew).
+- Use c->cpuid_level instead of cpuid_eax(0) (Andrew).
+- Move CPU-type enum out of ifdef CONFIG_NUMA (kernel test robot).
+- Rename cpu_type to hw_cpu_type (Borislav).
+- Explain replacing get_this_hybrid_cpu_type() with topology_hw_cpu_type()
+  in the commit message (Dave).
+- Fix the alignment in cpu_vuln_whitelist (Andrew).
+- Add the obj compare note in the commit message (Dave/Tony).
+- s/X86_CPU_TYPE_INTEL_ATOM/ATOM/ in cpu_vuln_whitelist (Dave).
+
+v1: https://lore.kernel.org/r/20240617-add-cpu-type-v1-0-b88998c01e76@linux.intel.com
+
+Hi,
+
+This series adds support for CPU-type (CPUID.1A.EAX[31-24] on Intel) to
+differentiate between hybrid variants P+E, P-only, E-only that share the
+same Family/Model/Stepping. One of the use case for CPU-type is the
+affected CPU table for CPU vulnerabilities, which can now use the CPU-type
+to filter the unaffected variants.
+
+* Patch 1 fixes a minor formatting issue in cpu_debug_show().
+
+* Patch 2 adds hardware cpu-type to CPU topology structure and introduces
+  topology_hw_cpu_type().
+
+* Patch 3-5 replaces usages of get_this_hybrid_cpu_type() with
+  topology_hw_cpu_type().
+
+* Patch 6-8 Updates CPU-matching infrastructure to use CPU-type.
+
+* Patch 9 cleans up the affected CPU list.
+
+* Patch 10 uses the CPU-type to exclude P-only parts from the RFDS affected
+  list.
+
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 ---
-Changes in v3:
-	- Updated geni_i2c_clk_map_32mhz array values
-	- Added sentinel value to both 19.2MHz, 32MHz clk map arrays
-	- Updated loop termination condition based on sentinel value
+Pawan Gupta (10):
+      x86/cpu: Prepend 0x to the hex values in cpu_debug_show()
+      x86/cpu/topology: Add CPU type to struct cpuinfo_topology
+      cpufreq: intel_pstate: Use topology_hw_cpu_type()
+      perf/x86/intel: Use topology_hw_cpu_type()
+      x86/cpu: Remove get_this_hybrid_cpu_type()
+      x86/cpu: Name CPU matching macro more generically (and shorten)
+      x86/cpu: Add cpu_type to struct x86_cpu_id
+      x86/cpu: Update x86_match_cpu() to also use cpu-type
+      x86/bugs: Declutter vulnerable CPU list
+      x86/rfds: Exclude P-only parts from the RFDS affected list
 
- drivers/i2c/busses/i2c-qcom-geni.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+ .../admin-guide/hw-vuln/reg-file-data-sampling.rst |   8 --
+ arch/x86/events/intel/core.c                       |   3 +-
+ arch/x86/include/asm/cpu.h                         |   4 +-
+ arch/x86/include/asm/cpu_device_id.h               | 113 ++++++----------
+ arch/x86/include/asm/processor.h                   |  11 ++
+ arch/x86/include/asm/topology.h                    |   8 ++
+ arch/x86/kernel/cpu/common.c                       | 148 +++++++++++----------
+ arch/x86/kernel/cpu/debugfs.c                      |   5 +-
+ arch/x86/kernel/cpu/intel.c                        |  15 +--
+ arch/x86/kernel/cpu/match.c                        |  22 +++
+ arch/x86/kernel/cpu/topology_common.c              |  11 ++
+ drivers/cpufreq/intel_pstate.c                     |  14 +-
+ include/linux/mod_devicetable.h                    |   2 +
+ 13 files changed, 186 insertions(+), 178 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240617-add-cpu-type-4d5e47efc117
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 212336f724a6..579c01686823 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -16,6 +16,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/soc/qcom/geni-se.h>
- #include <linux/spinlock.h>
-+#include <linux/units.h>
- 
- #define SE_I2C_TX_TRANS_LEN		0x26c
- #define SE_I2C_RX_TRANS_LEN		0x270
-@@ -146,22 +147,36 @@ struct geni_i2c_clk_fld {
-  * clk_freq_out = t / t_cycle
-  * source_clock = 19.2 MHz
-  */
--static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
-+static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
- 	{KHZ(100), 7, 10, 11, 26},
- 	{KHZ(400), 2,  5, 12, 24},
- 	{KHZ(1000), 1, 3,  9, 18},
-+	{},
-+};
-+
-+/* source_clock = 32 MHz */
-+static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
-+	{KHZ(100), 8, 14, 18, 40},
-+	{KHZ(400), 4,  3, 11, 20},
-+	{KHZ(1000), 2, 3,  6, 15},
-+	{},
- };
- 
- static int geni_i2c_clk_map_idx(struct geni_i2c_dev *gi2c)
- {
--	int i;
--	const struct geni_i2c_clk_fld *itr = geni_i2c_clk_map;
-+	const struct geni_i2c_clk_fld *itr;
-+
-+	if (clk_get_rate(gi2c->se.clk) == 32 * HZ_PER_MHZ)
-+		itr = geni_i2c_clk_map_32mhz;
-+	else
-+		itr = geni_i2c_clk_map_19p2mhz;
- 
--	for (i = 0; i < ARRAY_SIZE(geni_i2c_clk_map); i++, itr++) {
-+	while (itr->clk_freq_out != 0) {
- 		if (itr->clk_freq_out == gi2c->clk_freq_out) {
- 			gi2c->clk_fld = itr;
- 			return 0;
- 		}
-+		itr++;
- 	}
- 	return -EINVAL;
- }
+Best regards,
 -- 
-2.34.1
+Thanks,
+Pawan
+
 
 
