@@ -1,126 +1,129 @@
-Return-Path: <linux-kernel+bounces-343644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8E989DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:06:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EDF0989D94
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EB1B21F48
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354271C218D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193A0186607;
-	Mon, 30 Sep 2024 09:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81DF188000;
+	Mon, 30 Sep 2024 09:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbJOHuAH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pTURRH2G"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BC184539;
-	Mon, 30 Sep 2024 09:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1664185B48
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727687199; cv=none; b=uG5rzphyYtv32JPQvFwXva9kU9wxEltoN1owNgMCLnjwf1OPHD1QmRIYxxGpXbg+idK7ZAyThb0c7KlRIISMoHiZWAVgh/KcsURu4GX6UHsstTSsngcL8aQo+a1objAp2mEcEow07FtMRU8iwDSwBSwYbrxSPJZUNsQ1wWpoohQ=
+	t=1727686987; cv=none; b=fAFJhGEvHwKj/pT/Ic9+Y/gNRti9hXEU9wRq7BTgF+R6Q/DMJwE9Fkkv3yAp4cWGSdehs/j1ZBTlawo6sOE0SJxVFNH8/oQdGof6sVCtQaTKCBS4UqngcEory1+evQwCNcY4l2sRkM6SOTtBcmVDIrRIynbtMJjBJ6kJvBspTBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727687199; c=relaxed/simple;
-	bh=6CfvxrHYGFiEEtpC6SCQ6ifQcyQ6oKY8kncFGteASpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hFAK3VNcSB5Z34WbtY3lEdoB5uMW1TNsTEGCsgpHKgGrhrzCsr63vjysjcHSzI2C9MRvemda/DH64I/BTPZPNafry2p8ZV+4vdRlJji8AbI2fGISSEL6FevHnywynoDlbKFQ9z8RECJk466mAyvp8WM1eUKFLqHYVRprq35dgwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbJOHuAH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so32542785e9.1;
-        Mon, 30 Sep 2024 02:06:37 -0700 (PDT)
+	s=arc-20240116; t=1727686987; c=relaxed/simple;
+	bh=gokyK1fF6w0xDQpaD8M5t9y0+r4rkwiHiGo4dRQk/bo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmTgvOkAgC9fg8cVYZSEJQ6BlZj5Soq9TUIoA+w5SDoGspnpNAYjfHgDRlZKQUGnUAw49baButfaD6LCrIBvgFZkdLdAxVDgj2Oan+AlwZoPoPAoSRM+2Hr4+LU4AB+DyC+fZYj4Psy96bn7QqaOUofsYUHEh/GDc/z7FKvU6bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pTURRH2G; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a910860e4dcso721949666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:03:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727687196; x=1728291996; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4T8AFr4bQcCZmnOMOOHwvGPz5biZtlw2dtZ+xRXq6po=;
-        b=gbJOHuAHzbq/bcrornthlPy1GaLZheEdSYMaAt1xiOIb0f+PrYZKpTXXAyuba1ZMU3
-         n5WAJ55rgw3HLJozQEjpDhW/yB9NRjQT10dRltqAP9nrM36wgWXjKFInDYqN68XlWXUB
-         THsoBoflZQSbiKFL5SHScdhd24zrBO84dDXMt42iFwM1KH6iK2uwNdqUW9Fr08UQ8kZH
-         OHaU5gfwy0p1sZIeHn2Lfx6MB27rJrPGFNJPnbJMsrg0EaK5LvY4lfcb61NVbX1wIG4t
-         dMS7QW1NtkBhOuF+uMOgQ1HaMl+sbhxLPhGcQb5Vg9aqFs3B+26ZPHxvcPoNfFHVJOkM
-         Nlnw==
+        d=linaro.org; s=google; t=1727686984; x=1728291784; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T9oI5Ky/TnuJmGwmRVM6MU17OzxCNKafr+pgaSjGfPw=;
+        b=pTURRH2Ga6h7Gf4meuMOaFz6gckakdZorHLCdd8w9G0jAxHtn/a4OiJ6IWeUCeKXYs
+         rF0v+GawhRbkWt6lbhUUAeIoNlj6bFlVhR8sLk7BCPs7wHF/5qspem/APmEEfhrywyRK
+         KrZWqxzQOB2ae7sLxPInfdIHVMs8DuWc0V9iKff4aid0Qp03jHuDLHx2q/Tj8LIsv62C
+         Rba7w6adE1p3rx4FFQAc2cYXe0pT9js3R4ITDkAGAFbSn/XT05vKl3Wrt2Xi9o3p1BmA
+         7jpJhytzEyEHJySuJW84KSD5kJA6e/W4gY/aa7KlHvH9+uIyj0gveCgmfVjF+/zurpIr
+         xGKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727687196; x=1728291996;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4T8AFr4bQcCZmnOMOOHwvGPz5biZtlw2dtZ+xRXq6po=;
-        b=oCdtUCdDvnwIRNIIzMDpg6DbhMO8AUuv7uzy+SJ4XTXrWlhFXCMQXiMsR2q3Z0quEs
-         +1JlAEzG+44FiUyAr4knJ8LG2vEhmbvIqM4/tNyQlHtxHfwZH6M2QqKZXLKqnot++TlD
-         gu+P2qQF+L5ToEaySpZQl0CNxczQstRUxYHwKccJ8eWke7ovuJHZbJ/hg1mkZW82fSkb
-         o0mPGoWBsFfF3I7YkV5B29WeWwBWAaG+IC2dmMCVBittrtr0ACG7YKB0iCJTHqyJN4mf
-         +XCe4J79uAJlCM9eB2fPc6TfOaVU2uksWz4KHNorYH8DR4rpPg7FK1Y1ZFzpXT7x+DGW
-         iyOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUkrOefnk7ISGGSAGv81HJBJuYsBmMXe+nYQrjkuVCyzl2JUkcbioaxEVEs8iUNzB17jefQFxRG68lI6T8V@vger.kernel.org, AJvYcCWjYI4tx8IySGvBvsS6JziG5gSmYvWIwr/e2EhLZLRndsbq+9ltsvSsJiqNd6Vb8w8zXYft/uMa95Eiap4Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4OrMSTQulsoHjSnpVUMZPwjdXAuJHuCZXLvf9LJBBi9tztCaj
-	faSELXo+fdtY1AlRRT2wYogfwGofx1VnutbWYKbF9T5tBvGjWd3K
-X-Google-Smtp-Source: AGHT+IE6NnZTvb4qmbIWGzzx3TlbOvkKjzQPrdKGGkDQERZCO2n+QeWtsQr8b4562XtqBE03o3sTzA==
-X-Received: by 2002:a05:600c:1549:b0:42c:bf70:a303 with SMTP id 5b1f17b1804b1-42f58497ebemr81465295e9.29.1727687195666;
-        Mon, 30 Sep 2024 02:06:35 -0700 (PDT)
-Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:d70c:eed6:c2c4:fae7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a56fddsm144297025e9.46.2024.09.30.02.06.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:06:35 -0700 (PDT)
-From: Gianfranco Trad <gianf.trad@gmail.com>
-To: gianf.trad@gmail.com
-Cc: akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	skhan@linuxfoundation.org,
-	syzbot+4089e577072948ac5531@syzkaller.appspotmail.com,
-	willy@infradead.org
-Subject: [PATCH v2] Fix NULL pointer dereference in read_cache_folio
-Date: Mon, 30 Sep 2024 11:02:26 +0200
-Message-ID: <20240930090225.28517-2-gianf.trad@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240929230548.370027-3-gianf.trad@gmail.com>
-References: <20240929230548.370027-3-gianf.trad@gmail.com>
+        d=1e100.net; s=20230601; t=1727686984; x=1728291784;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9oI5Ky/TnuJmGwmRVM6MU17OzxCNKafr+pgaSjGfPw=;
+        b=ODeZOd+fN1nmcrjhPmXyV74wclFFtJannfSodIPHtCzxNHn387zuyV4tacS3TaKXLy
+         70adG6r/X78mo+iTik3Y6a2bSvJDhc8+qXdCFMMiPm9Qr2la8kseV1zDOfO+k93MopB+
+         pGG4XptSnrRhJ8yGAqXRU2F56ovSk8cydcRDnmEcQR8G+j9jaTefQp7OuqB9EKonPsHq
+         CM6DCpoERPuuRs3QHwpiV/VJf+a3eMd8ceEEKxqSvpBfSboBQAy2oNcUpttGu4tRthh4
+         Q4MtSRsvuYiGFPx5XhMCqbutbrkrflXoBkgHfbPuvP7uZgXyYMBIDdqLQSqt5SIw++8g
+         tuOw==
+X-Forwarded-Encrypted: i=1; AJvYcCVITnUu9zuxUMHjYndKU5VQ4ECYJZZBFVIlNAI4cZfcaVzwEhsChMV4e5PDI4fVMDDxgLUV6WPeLDFAhfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynjMapOMuZMW3CAy8scpPMz/mMcONlBl5TTMrvVf4fnGa6oXeW
+	aNKr64juf5r/V6DBMvrSVNR2lIdiKHCN55sTQbA7abAyj8O3c8Frg6zuSrlabQI=
+X-Google-Smtp-Source: AGHT+IHj+vzIiJr3dV5T2DwDEVx5jBE4DpOpRqS3Ik1nFllpGGVCstMsUdlRE1tkoBkSMi62Km8/2A==
+X-Received: by 2002:a17:907:1b05:b0:a8d:4b02:3351 with SMTP id a640c23a62f3a-a93c4a682d3mr1119122566b.50.1727686984130;
+        Mon, 30 Sep 2024 02:03:04 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297b788sm496612166b.163.2024.09.30.02.03.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 02:03:03 -0700 (PDT)
+Message-ID: <05f845a4-599d-47cf-9209-33f086c30f5c@linaro.org>
+Date: Mon, 30 Sep 2024 10:03:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Depeng Shao <quic_depengs@quicinc.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <9ed92660-5f42-4a1a-9261-b8800133972a@linaro.org>
+ <ed012367-1bfd-4eef-931b-37e1ac839176@quicinc.com>
+ <212c880a-9a09-4433-a049-eb15a0c32322@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <212c880a-9a09-4433-a049-eb15a0c32322@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add check on filler to prevent NULL pointer dereference condition in
-read_cache_folio[1].
+On 30/09/2024 08:26, Krzysztof Kozlowski wrote:
+>>> Please sort the list above in numerical order, this will change positions
+>>> of "vfe_lite0", "vfe_lite1" etc.
+>>>
+>>> Another note, since it's not possible to map less than a page, so I believe
+>>> it might make sense to align all sizes to 0x1000.
+> And if Linux behavior changes then are you going to rewrite all the DTS
+> for new size?
+> 
+> No, the sizes reflect hardware register layout, not concept of pages.
+> 
+> I don't think that we should be coming with more nitpicky ideas, one
+> month after the patch was sent and reviewed.
 
-[1] https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+Agree.
 
-Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
-Tested-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
-Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+1. My understanding has always been:
+    - Map the entire register bank extent
+    - The main reason for that is today you might only use
+      1/4 of the registers in a given bank but tomorrow you might
+      add in new functionality - like the HardISP in which case
+      you'd want the full set of registers not just the 1/4
+      or the 4k aligned version of that bank.
+
+2. Pages can be all sorts of sizes so aligning to a page
+    makes no sense. 4k isn't special.
+    https://en.wikipedia.org/wiki/Page_(computer_memory)#Multiple_page_sizes
+
 ---
-
-Notes:
-	changes in v2:
-		-  refactored check on filler.
-
- mm/filemap.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 4f3753f0a158..88de8029133c 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file *file, filler_t filler,
- 	/* Start the actual read. The read will unlock the page. */
- 	if (unlikely(workingset))
- 		psi_memstall_enter(&pflags);
-+	if (!filler)
-+		return -EIO;
- 	error = filler(file, folio);
- 	if (unlikely(workingset))
- 		psi_memstall_leave(&pflags);
--- 
-2.43.0
-
+bod
 
