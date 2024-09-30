@@ -1,82 +1,62 @@
-Return-Path: <linux-kernel+bounces-344079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63D398A3F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEFD698A3F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:07:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D4D1C20F0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8391928447F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C43318E76D;
-	Mon, 30 Sep 2024 13:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BD518E76D;
+	Mon, 30 Sep 2024 13:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0ecTz2j"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pyqMIxbo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4AD18E028;
-	Mon, 30 Sep 2024 13:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870517A924;
+	Mon, 30 Sep 2024 13:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701602; cv=none; b=tgUKIPH8GiHsROTlbapVpFKzMyPKdUZm85en1FQ1uLLq9c7ud3bCGlxyeJVij9FIv6kyNG2tsxC3Uuysvmw2Acwg0x5+4m5Qa6d4yUYbTwlXQYIX8IHz7rBoUZagVtwj4mrKry5dP6iktlQCkNF//HawO2k76KhkbHVl4yX4OWI=
+	t=1727701636; cv=none; b=GU5evT4Jfo6TEpCVHLSKhTOA/EGfHh1dn4LtBiB2qgpMkv7vHg0wwwwGcLpSzGmM+/7yZlWzRjgJAxyHF1MFkeyf3sFSePfsL7bS8h7Rcf0Y1Q0GPIa1GQTJB4tYR0juhv3uxWWttUcBdtuo40UuZeDL6EbcTvTWLQja2AIe5XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701602; c=relaxed/simple;
-	bh=k9HhX6mVAgfUlI2jzdcXzCBCDtSr0IR/SBeHvHmeGN8=;
+	s=arc-20240116; t=1727701636; c=relaxed/simple;
+	bh=SivhM6ZoLQMeDfLky8KH9aodMb9JJD6XQTJklNmPg30=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaQhAe+BAeDZtbchJJQrBRScm89O0yOd3STzk3qcq72yiRKZP7yWhxIkHGfL0Xq7Dn3A0euriPIKg8a6BnqpIH6v7GS2bdJ3a9xZaf+KhyZBNie/oA8IjbqpBUbtXuCTzkl7cqKEfalReoWC71Vvjhe9oQF1EasIheDx5g8mufA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0ecTz2j; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2facf48157dso10567321fa.2;
-        Mon, 30 Sep 2024 06:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727701599; x=1728306399; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u82CJhAwF4wrvx/NhAEt7j3Fh6rF3J/up6OgwQM+4uY=;
-        b=J0ecTz2jTURmmKpHdrmHyrsNvzbkjF7Evcvf/aAd1Vfo8xyhZrXc+yq2WntQua/bFx
-         KIYomrF72DVvPi4ePBtv2g+LosUpvpxKhYwlpC+IBjE4Fsd+q14TWFo/S/1reMQ81ctF
-         ImoCcNeDse1ryYpRTgbMxHyDisNhSLNVzG4FlzBLc2CRKlBvquIk0r0quDcFcM9xIYxC
-         56gm0pnbXKJYAVO9+QaecQk+82x0aFknrZQhuotNLmSayeSla2PqrMDHXx/dFt+J3dWT
-         M5mvZjBxBgK+LzaIOZO4GZl3/1xYD1c8D+27ohRp0Qz2NqjrnhNbDfssl2TcPsH2mVmQ
-         HJMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727701599; x=1728306399;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u82CJhAwF4wrvx/NhAEt7j3Fh6rF3J/up6OgwQM+4uY=;
-        b=K0jts+O2ThhIUbCxofQ6ExpRXcis4vVrOCk1uAWcG1xaE5lvTLfXshrE663JPYbUAG
-         EjZDtbCiVaI7zGiJkOLccay0LIzdurR3jxTNF0FtX7FH9/oYieLwqGrGF+W4Cise69x8
-         /zbSD5iRQ7cVczQAbS8GI3f07WBS9BQ9Xp5eWiutp8m8/0bBd9tNzqm/i5hi1AwEiNtT
-         m3FsNLfMwgfECmXCD7HzpB6cUNHwDOaGhQwCS/YLGcr7V4Jw/So5t1gDRiVxgHB/Bh+/
-         gDaV6EIOtNJQAIDP6W4AyiFESEiBVPk/FeEU7X7fk5CDumYHKsohksCm56W/CJZB7WNf
-         Eezg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT0XH1ncDRMpH5pPoM3SwlGADeDL0cOfsSDnEm8nrrR03klXwtBB4uV8v088NcEXyT24HXVbTSlIvQQdyy@vger.kernel.org, AJvYcCWR6kwyg+afx+ohC2gpyIwVun7IOjRjIWBFCWjGHjQjAIdKEzzUXiJvygTsbuTrZqk7KDdkcWQRwMzs@vger.kernel.org, AJvYcCWdZiFf9Us4jyHa3xqE0pltKHlhskpa8PXX4+io+veap+oTfpqPeNqSCmc+tQaU4UN02N48JRmDzBwa9Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMYFCbxa/dn+hBlk3G+/JQmMlek9IntuC5+EUdUC2R/Do5z7sr
-	ymAYsd6kV9eeWeLx+mTsOjFX9lMYIPcHDEdcAZN4RBvMnDj2sEzx
-X-Google-Smtp-Source: AGHT+IHH0o5GH3DGKhCASbDKiA/quy7Pz8CrVNMz6JQw2ZJhJAGpu4qxhVX/MfDPRVa4NaHbe0ivNg==
-X-Received: by 2002:a05:651c:1503:b0:2f6:61d7:ab63 with SMTP id 38308e7fff4ca-2f9d3e5f104mr63563021fa.23.1727701598737;
-        Mon, 30 Sep 2024 06:06:38 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d4618f39sm13893421fa.117.2024.09.30.06.06.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 06:06:38 -0700 (PDT)
-Date: Mon, 30 Sep 2024 16:06:35 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 1/3] gpio: dwapb: switch to
- device_for_each_child_node_scoped()
-Message-ID: <kyjzvihhpsxkkuerkyg6ja6dcod7njgzmd6emz7rqd4c4lbn32@e7y4er3ngk3l>
-References: <20240928-gpio_device_for_each_child_node_scoped-v1-0-c20eff315f4f@gmail.com>
- <20240928-gpio_device_for_each_child_node_scoped-v1-1-c20eff315f4f@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t6VQWNrWvr/4uU4EqeDms6Y5FMNxVTDSJDUW7/6kuDwVoHXCVcUMf3tqTYOFuqzMPf4pOJ4AxCpiWppCKoC1GZv96pA9QOhFJw2mf6javAS9LuXhselUmu8p65GkS2LRlOdsdhEam39E1sOPcVKUWyRmF+zfxrWfKGD8nTmyiEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pyqMIxbo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8577C4CEC7;
+	Mon, 30 Sep 2024 13:07:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727701635;
+	bh=SivhM6ZoLQMeDfLky8KH9aodMb9JJD6XQTJklNmPg30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pyqMIxboKpU0SvltvGhCHepFhhSC2PP/tSKD9Wq+vacE+B+DqNRS3jVdafx4STNDr
+	 /jAO/SAJrgvOrM+GbWkpXeRjdSfQFKdA0vCcznu1XRUK5qcJt4ooAtRLBeyx1pb/IR
+	 DdRDro7Oba9sM9qwaOs545GW7B1y2lLyv0NAhXIsMa690Wvse8du9e9CXHQ386dSCV
+	 oP7pjM8sUweeWHInVmUeVXbAmmJr94ZhsECINP31Sm0zv0oOlTs393jSEtd/OLcZLV
+	 MJwXByWCE5fjbQk2dAT/+2BYFNdOGOU4UXh6VnIfVus1UsTejjKOErqWFw7WJu5oMs
+	 pGzsUmjEUZSyA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1svG7N-0000000046x-2meR;
+	Mon, 30 Sep 2024 15:07:14 +0200
+Date: Mon, 30 Sep 2024 15:07:13 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Tony Lindgren <tony@atomide.com>, Zijun Hu <zijun_hu@icloud.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] PM: sleep: wakeirq: Fix a serious logical error in
+ dev_pm_disarm_wake_irq()
+Message-ID: <ZvqigTC7RvngLpme@hovoldconsulting.com>
+References: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,56 +65,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240928-gpio_device_for_each_child_node_scoped-v1-1-c20eff315f4f@gmail.com>
+In-Reply-To: <20240928-fix_wakeirq-v1-1-25d13a7e13ba@quicinc.com>
 
-On Sat, Sep 28, 2024 at 09:47:35PM GMT, Javier Carrasco wrote:
-> Switch to device_for_each_child_node_scoped() to simplify the code by
-> removing the need for a  call to fwnode_handle_put() in the error path.
+On Sat, Sep 28, 2024 at 02:26:27AM -0700, Zijun Hu wrote:
+> IT is a serious logical error for dev_pm_disarm_wake_irq() not to disable
+> the wake irq enabled by dev_pm_arm_wake_irq()
+
+You need to explain *why* you believe this is an error.
+
+> fixed by simply correcting
+> the wrong if condition.
+
+Your commit message is basically just claims "P is wrong, fix P", which
+doesn't really explain anything.
+
+Writing good commit messages explaining what the problem is is not just
+required because this is a collaborative project where others need to
+understand your reasoning, but it also forces you as the author to think
+through your changes, which can often prevent broken patches from being
+submitted in the first place.
+
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> List relevant commits as following:
 > 
-> This also prevents possible memory leaks if new error paths are added
-> without the required call to fwnode_handle_put().
+> johan+linaro@kernel.org  2023-07-13
+> Commit: 8527beb12087 ("PM: sleep: wakeirq: fix wake irq arming")
 > 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> tony@atomide.com  2018-02-09
+> Commit: 69728051f5bf ("PM / wakeirq: Fix unbalanced IRQ enable for wakeirq")
+> 
+> The former commit fixes the later.
 
-Acked-by: Serge Semin <fancer.lancer@gmail.com>
-
--Serge(y)
+These references are relevant, but you need to include them in your
+commit messages (above ---) and explain why.
 
 > ---
->  drivers/gpio/gpio-dwapb.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/base/power/wakeirq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
-> index 798235791f70..bd374fc27174 100644
-> --- a/drivers/gpio/gpio-dwapb.c
-> +++ b/drivers/gpio/gpio-dwapb.c
-> @@ -571,7 +571,6 @@ static void dwapb_get_irq(struct device *dev, struct fwnode_handle *fwnode,
+> diff --git a/drivers/base/power/wakeirq.c b/drivers/base/power/wakeirq.c
+> index 5a5a9e978e85..8b15f9a0e8f9 100644
+> --- a/drivers/base/power/wakeirq.c
+> +++ b/drivers/base/power/wakeirq.c
+> @@ -356,7 +356,7 @@ void dev_pm_disarm_wake_irq(struct wake_irq *wirq)
+>  		disable_irq_wake(wirq->irq);
 >  
->  static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
->  {
-> -	struct fwnode_handle *fwnode;
->  	struct dwapb_platform_data *pdata;
->  	struct dwapb_port_property *pp;
->  	int nports;
-> @@ -592,7 +591,7 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
->  	pdata->nports = nports;
->  
->  	i = 0;
-> -	device_for_each_child_node(dev, fwnode)  {
-> +	device_for_each_child_node_scoped(dev, fwnode)  {
->  		pp = &pdata->properties[i++];
->  		pp->fwnode = fwnode;
->  
-> @@ -600,7 +599,6 @@ static struct dwapb_platform_data *dwapb_gpio_get_pdata(struct device *dev)
->  		    pp->idx >= DWAPB_MAX_PORTS) {
->  			dev_err(dev,
->  				"missing/invalid port index for port%d\n", i);
-> -			fwnode_handle_put(fwnode);
->  			return ERR_PTR(-EINVAL);
->  		}
->  
-> 
-> -- 
-> 2.43.0
-> 
+>  		if (wirq->status & WAKE_IRQ_DEDICATED_ALLOCATED &&
+> -		    !(wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
+> +		    (wirq->status & WAKE_IRQ_DEDICATED_ENABLED))
+>  			disable_irq_nosync(wirq->irq);
+
+I think the current code works as intended.
+
+>  	}
+>  }
+
+Johan
 
