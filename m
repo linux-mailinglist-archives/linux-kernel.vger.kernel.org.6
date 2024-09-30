@@ -1,186 +1,190 @@
-Return-Path: <linux-kernel+bounces-343420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F63989AB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:41:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D892989A99
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EDD1F21DD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB1111F21C9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A8186E27;
-	Mon, 30 Sep 2024 06:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480B4161313;
+	Mon, 30 Sep 2024 06:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ra0Cg1i1"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2074.outbound.protection.outlook.com [40.107.249.74])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PbhyxVnW"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC02D183CC7;
-	Mon, 30 Sep 2024 06:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727678323; cv=fail; b=hLiQcplL86ksUTteM+ccLNO0llHrHKwk56+hYFPKfb6pNM+dFPvhFIsKM4827rFT/l8wQamNJfEiO1ynfLOYaZS4fqGinlMPiswGNrdAlf6fmPhyhvcY7ZrD8ukl9lJnKitBLcSQIAHC+pQDOXmAmw0gwgTYfnLYGIftq9xfumY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727678323; c=relaxed/simple;
-	bh=phzpkL3hvWwhFAZK9c6zhaK0kDiACcLy4HEF+9VaZBs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ceZpJ7YxZ1wmBcR9Z9XkFjWr7KLESkimQsK5tu2RcJzJsIoPYpVYp9mDfW5ycMgQ0+nXrW+lHQek54h/IiC5lYqRD5wqGH5DSvaZj76DDHQRQmENkQ7+Pil+hNBykNkI2YxbNCDpBX9HTz+lgi+4ynudXpsE+I8VJxv02jSSVUA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ra0Cg1i1; arc=fail smtp.client-ip=40.107.249.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FbKpSCQdkn3Dv8ZIg8ddfL2cet8yjsApLoly6mT/amrEDPZgJHIBXRsqOWAqKTVPVxQny4VxqZyw8io7qZKzbKDud8bpVKmfYO/zbE2vF8Na2y+AEugc5vkTGUH2urYNhFe4gWE8nJCp54VKj8MdNiJ702eWneXONbxJ5NwjLZPQh0ptgACrhvo1eqJZz9vsw5LAD7BAJrZ99L//e1o8KnNyIrzGHqwSo5kBfNNxYICn+NzK5CUvBEzcya5/RiQYKANvE6/BdFuOxnSqtA56c1mza2LeNlKO98Uj8K1sOqcSeeuS5a4moGmXiBklFUJAn0mLHa5kx8VWqvoXGHvWUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=97/Xe14j3xdA5vSNX4xd+D6m5GBm6YuqYlLUoXjUL/s=;
- b=B11IMPtCaz6togZ2aVOolobSfpwX/LEQEy4D8bo+5Mbib9sqXCWGRGOqbiVYikrzD1REITfvX1Z/HnrW+DuyI5umB8IFGe0BzYdg6JoxjqFrHDjhcoPxI5Q9HcFsrbOBLoqOJs7dmR/54gjV7wCF8jOxc4Z9K6WK+FMwdrMr389avD97/kKtTyIOZ8iXQXhVZNE0nO5nxEvWI/WIBfIHJJG5NfAHZaWljzu889ELIqBPxD/NAsSEfFGf80E2NMrKJmMrGGe1KXl+PXTU7Suk0VQ1c/0iBy6SrUHMOEQ31ihqDDy9jzawG2PaejKnQdtKap00EWtnDxkveHTrdAGyzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=97/Xe14j3xdA5vSNX4xd+D6m5GBm6YuqYlLUoXjUL/s=;
- b=Ra0Cg1i1baQzU8u1wOWs4G+RsPm9+8THCP/f5XjTHAxDNFd2I46sf1ck5odTiikT+pJrAo6FsMr5E/JnDZ20G0M12Pr8m4eK0a5mr15T3nOC00BVC8k2nitXBS5Hj5haYePUFeMRu4pYhwOvp85IGKrt1yeZo2uY8B9p/iqA9vN45XCK/s+dj2LzY4X/bzCouyA2pBonDKq2MdQ0TSf3lhfXBeTKU//xRTMlELgVE5evCT9vW83LZUClNQ/aBECsoQKM5npeQyIMP+Cgwgitu992bwDSNm1bIkiTbY2oV44dP5Xh8XFNE2UJOPOTyhSKAJf68lwsVF36ephtA3Wghw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com (2603:10a6:102:273::20)
- by VI1PR04MB7056.eurprd04.prod.outlook.com (2603:10a6:800:12c::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
- 2024 06:38:37 +0000
-Received: from PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257]) by PA4PR04MB9638.eurprd04.prod.outlook.com
- ([fe80::f950:3bb6:6848:2257%3]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
- 06:38:37 +0000
-From: David Lin <yu-hao.lin@nxp.com>
-To: linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	briannorris@chromium.org,
-	kvalo@kernel.org,
-	francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com,
-	s.hauer@pengutronix.de,
-	David Lin <yu-hao.lin@nxp.com>
-Subject: [PATCH v3 22/22] wifi: nxpwifi: modify MAINTAINERS file
-Date: Mon, 30 Sep 2024 14:37:01 +0800
-Message-Id: <20240930063701.2566520-23-yu-hao.lin@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240930063701.2566520-1-yu-hao.lin@nxp.com>
-References: <20240930063701.2566520-1-yu-hao.lin@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: AM8P190CA0001.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:219::6) To PA4PR04MB9638.eurprd04.prod.outlook.com
- (2603:10a6:102:273::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1C615688E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727678270; cv=none; b=eI7hLgYENZ0rhDM718KF+0atWE9aQ3RGXmvUbEHRmbFT0mjKBSAwwXQsOgUDywKS9SMIdFFUwmUQD7AvNcKDWGVv9D8QvKipfv7plTMj+8yJezMMjSW8XoM3xZ4PUZ74zj2IkmrLWyLzbd7nPMW2wg4MzvetlB6eFhyMu4Rs4rQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727678270; c=relaxed/simple;
+	bh=g2JiBfYa3oTTTeoNnOlfQlEORqv4l+lUIxrqbk1Lg34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QiCHsF7a+RJgpwnkrRJjf3MW6+3FPAQwjSNgvQ70cDaLm03xDPUkmOUH0LQuvHhDRP6Vl26QasvS9uhM8R7A2RLkmXtf6IngmfFQDoW9I/aR8NCbJjzZUSa5dT01BfRhbxuiN6wBAa9Tx8INvwj5grlywYS9Twp6lb2ZZ0qJ4VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PbhyxVnW; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U5DsWE000760;
+	Mon, 30 Sep 2024 06:37:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=u
+	jtMeu0ZbHII13T4oqbcF5/gP28IDIncYHm5yLknalE=; b=PbhyxVnW6x6Eda+Dl
+	46JtGWdMyYZc6eRQGceOQOFaZgTSgerkx0ZMTSecZ2KkL/LiqwYeDbLrWm47PHE1
+	CaUgxzLwM+sHnvSM9Dlr5yE1P8VYfQZQNftNZe9h6sv+wsSeCMqL8h9TD3vXQvvo
+	sU/LKIjEz2p/tkGzMSnI0hesKOzFxALzN5Gj17xl0sLbcet4GHnzSiMECNHoBL3L
+	WVO8l5w/JKnDH/QJj8H2I3ZpPR/PFUBl9UswSKCv+LYz4Ml6Y73iRbERwJ/8j3rG
+	KPeTAfDl/ujthuOQszuvShLsv7MO+JLJKDg5GTtEBwS8hHuGLLsD9/UEox02TgKl
+	RQcMw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9ap84tk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 06:37:43 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48U6bhqY006022;
+	Mon, 30 Sep 2024 06:37:43 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9ap84tg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 06:37:42 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48U3Zccq017845;
+	Mon, 30 Sep 2024 06:37:41 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4mn16c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 06:37:41 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48U6bd7e58327400
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 30 Sep 2024 06:37:39 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B499A20043;
+	Mon, 30 Sep 2024 06:37:39 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 34F2320040;
+	Mon, 30 Sep 2024 06:37:38 +0000 (GMT)
+Received: from [9.203.115.143] (unknown [9.203.115.143])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 30 Sep 2024 06:37:38 +0000 (GMT)
+Message-ID: <f637b90c-68c8-4913-bac8-075ba765a97c@linux.ibm.com>
+Date: Mon, 30 Sep 2024 12:07:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB9638:EE_|VI1PR04MB7056:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5efd967f-7d11-4781-1e18-08dce11a832f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Sr8b8UoKZllS2lnRF+VWoP9jKOKjN+Hg645oT4YdqsFU5KvscpFTwA+Z6E1y?=
- =?us-ascii?Q?XQ21Hb396T1DGayG0v5UzbJKu7alsDVZZItb2SsiWxw9lOmuOxgyfv2+Or7K?=
- =?us-ascii?Q?UhG5i1TSVJmfgU4fH57Kvyf3RT27+YMuHca9vJOAuW0oupkK8ZPqvjcM0Y0Z?=
- =?us-ascii?Q?WtDqyc9g3BFtw+Jqks19x/m89PNPAhHFVD830nLiyIOEEtIYhcAkMWuYi2JL?=
- =?us-ascii?Q?2XD4Fie8FdpfFPCc8LDPSm0C8l+JRzctRtX+Vv64lVHTuGrQzuLOx7ycYUHN?=
- =?us-ascii?Q?8gpeqABpdbNI8WkQdarmZhNZlW9Xvyse8iSs8/CecuL4k2yKh0cY0l6fvJv+?=
- =?us-ascii?Q?F7459E4YapbxoGUIppdCldTRNz3FkRUWvlpaVwklFwOUTkVqF3YF30NEBcdv?=
- =?us-ascii?Q?5JPbdsRpiOyf25jEdUh/5iFQ5xEU5S1fNtIhLLF905BJhHUBIv455mxwji4u?=
- =?us-ascii?Q?5eaN4Ywme3zEXZvxP2cBzEUwXBeonVH4etPEf9yplx/bUULYKktPfUJnwWz+?=
- =?us-ascii?Q?3bcJZqCvcK61bEIgbFj5Xrz39WM7RM5uFanB0KHezJqRMM3Xt57m3qLzZ7SD?=
- =?us-ascii?Q?8MgIGWus2xFxoglepDSMElHdGEhckzVek7++fyB5KerMTCHZfQCCUaHQOl6w?=
- =?us-ascii?Q?2OWNZDAEABld2dK0zk7INGVNY29Gkkj8g3vCoZslhOHORjSJVe573tF6xLMW?=
- =?us-ascii?Q?LkKzJ7ZRTU4a9bzOOR6RqeZLXRSJEYa3A7krZapOosmpQ55BU4JWEsgA6nPy?=
- =?us-ascii?Q?w8Xmmn48V4p1EFJxLPbQtoJ+yRCMtOmFYfyCwZyAy4lxr88CZPDDCmk/Km8C?=
- =?us-ascii?Q?ReB3SGSbhnpxX3KVC+6W0K6T1Gwot3i78knBWtanjtb2azLBEO73W+3exNBM?=
- =?us-ascii?Q?y96I6iGFxbUSH3Dcw4R/ihfrJLdY6tr8WC2eHtSJznCqMLmVPBkJoWj1O4xg?=
- =?us-ascii?Q?oRz1A85XOza0nt1OWmvKvlJj2uentcA8Fo798VDVZT+vEEezM4bH7+TnBtoq?=
- =?us-ascii?Q?CzpTC7uRbkzHohzB4VTZt46GCWToediqJQPr7O97hZN1WPwWP1QSF7m/6Ljl?=
- =?us-ascii?Q?5NBArVhEA16Ew7M2rjYVtjNtkkhHMYUSl4TiLF/p5Lxb+XQfpQlv9X3ncHmq?=
- =?us-ascii?Q?VD7miWzrSZqvLp3U6GHmZt6vJ2tKVrEu1zgbrtKe7Uo3m6lwnvTy0U5S5Bc7?=
- =?us-ascii?Q?dDrlzEWpTL4U8kGVfufc6BlpH1VD7/+7lvSX1PAnMyNnKkvlKS3bhZSm4B4k?=
- =?us-ascii?Q?iEMMKjIs5JacbZETVGtvO7Hp2WMdmrVeqv/Eskae/hImNHTK+CvXvJbKqQQm?=
- =?us-ascii?Q?FJEGQjudfvbzLpvA7U7uXqLcKnkGlsHkPjClhKMXsdprgA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB9638.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QfuMISdBeeDP8zEr0pI3S5+ibnk6RkLNIXxSLVyeiXM6DUXW78rn6cKauPge?=
- =?us-ascii?Q?7VdZsF9NYkrasx7fPKQrrN4m82zVJM7vS2LDXm3i9tm+0O7ywg7M0aVlhXBt?=
- =?us-ascii?Q?cB9m8VJLDqg+rB9HSipTK2cE78Amd807lNoly1OJmIH0B+RYol0wopzBw0Jf?=
- =?us-ascii?Q?OBAoOqFBsLqa6yxQwBzmIQWoTAhVv/Qy80SAwZSvGMPw3Xz1sWyN/Y8jKA1V?=
- =?us-ascii?Q?NwrAuZdjQ5K2U1Hnz+f/poqIVYzWc81olQ7w/EQ3aRPGfGTg3iUi/V57Ioxj?=
- =?us-ascii?Q?qD85V2m9dUpC5Yl7qJLAH8JWWwtcApnpi5Yn31jVVCok1AroLym/1eWbyOkS?=
- =?us-ascii?Q?ClxSjQcp+qTWr+8nrCnzm2PC6ewBkfnZ0G0YLIsbymT1KUbjwOFyA2/w50f8?=
- =?us-ascii?Q?6yao7YiTxzTRhiBrTKFjEQrGhU2BjuHLPQ/vjDjDuasEAl4jxycd5Ly9+nK9?=
- =?us-ascii?Q?0l8cMtvn7ootMYrW1NC943zS+Xs89Go/jnHza4ehsMZqqNcFRplO3Gp0EInE?=
- =?us-ascii?Q?ivIoe0NruqxPMoU44gUPPjn6mWxrvxyIP655whBfYZTXJf2O99OxwOXnywSH?=
- =?us-ascii?Q?gdxl0Ak1GTxMzx7E6RoazwiAsudQlBQ0hAvjMHfzEQrSMP1PEwMOkeI5KEkQ?=
- =?us-ascii?Q?h30r9L0UgCaVKk8x8cL26jwJnR0mW7LH0S98uS+UM1bbQqRLcm+SkKr33q3w?=
- =?us-ascii?Q?tRYBo6ulEvPtryyJOGUWXwPeCwlekDznA78yPJ7yuswFhAvRHjR/Zu4GnUPv?=
- =?us-ascii?Q?zGj9K03DXQnumF2MiAl1RVVi/ni7pbztfIM50ia/zchmhUOc9PYwFuYDBk82?=
- =?us-ascii?Q?CSqUqhVQFYTP2TcJBUv9LsMfuW5tckmv/4Ljd/ZtU7skhD/CbNzx2G89pL1R?=
- =?us-ascii?Q?Ger0qKCeeEjYpiwUj2eqcCBzHXmUJWZK7hKPAKXvfzusjUb106dHX2dWWB6S?=
- =?us-ascii?Q?+iipFfO2iWX1+tBVqWdFyNfNb2Q2+AVUpCdgIuG9DEjq2cHOneNrd6EAAzhy?=
- =?us-ascii?Q?AVfYDCcD6rCYJwmZr38DsCLEsLMhqm/RjD04jk1POHsV8hg2IOC9wXCp0vWd?=
- =?us-ascii?Q?OB7W0zzS1ANoCWCdhGIABchm6caaSC+cthyOtwqZv9Ubyd/zVEA+nvRn6p9D?=
- =?us-ascii?Q?rvxI05hRF31AtUcyaKB8nr6Na2rDi71YA9+R3yjtjb4PVtlD51xoYEydVyWB?=
- =?us-ascii?Q?okuvmH3y9yqUIZVFUNOJNJM6/Ml7/NzQZn8JeHikTyaP5X9fSZqpagBrGawd?=
- =?us-ascii?Q?xxRRJg18LBaP1WIgi0a2xawTKGDMaDFZjbQFOpsF+M38NR9P7NPc+OHBOdIL?=
- =?us-ascii?Q?fefQKQOmJFWI2vWr5MAIeXS6pUnHwf4fXWulezHUUCCQFU504wdhDJmJzVZd?=
- =?us-ascii?Q?K6sqJiTf5YZ4a5pWC/kOH0JtdM/a94KZar1y2FefIOYrcpaEDAcVeBRkgnc8?=
- =?us-ascii?Q?I/wo/1UozmYnoGaH804MezC4iX4sNDP7IUuRdF3tTSNZxDFOX5rbV2MlDMsC?=
- =?us-ascii?Q?Dm+CL+67J9JSl0nCgGmY2c7cQEtRxnV44YEN0iOQ8X4Q+gr3TmBAsIqSuqIe?=
- =?us-ascii?Q?AnTyBCtgkY33nfDinBn3s2nNrRigibm8U9/oQU9h?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5efd967f-7d11-4781-1e18-08dce11a832f
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB9638.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 06:38:36.9212
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3pHQBWFmF/32i+caYXvZKRGFaIY9jNc05pLEnZQ8sXubrNm0B1sy6GcFuhVRQGSiwKt+CI6OApVH2x5v7tMADQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7056
+User-Agent: Mozilla Thunderbird
+Subject: Re: [sched_ext/for-6.11]: Issue with BPF Scheduler during CPU Hotplug
+To: Song Liu <song@kernel.org>, Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>
+References: <daf2370f5456cbf1660bbdc13621559fb3f2f6cc.camel@linux.ibm.com>
+ <Zq1NksrG9blyN-KR@slm.duckdns.org>
+ <e3069da05fb1676f8faad88b9a4dfc4a6cef4175.camel@linux.ibm.com>
+ <Zru5_UmEmWhNaPyo@slm.duckdns.org>
+ <fa56b39990dd0b90f971018f5abb7352c60af3b1.camel@linux.ibm.com>
+ <ZsTwoWJQcnsJhYbe@slm.duckdns.org>
+ <3da12c96daecaa055c478816f5e86c7b44a04d53.camel@linux.ibm.com>
+ <ZszKI2GA-8yparh_@slm.duckdns.org> <Zul6l-S_JulEnDQw@mtj.duckdns.org>
+ <516106abdf5c922ee19dffd9eb69ea3f9e20e54a.camel@linux.ibm.com>
+ <ZvGxlcMwFOmUBfr9@slm.duckdns.org>
+ <CAADnVQ+OYuaS9wYa2_aF8XFo7LcaSKbCeLwfC_z9j1Qe-eV3nw@mail.gmail.com>
+ <ab72231540149a7dd367cbf30d17b12af14c6387.camel@linux.ibm.com>
+ <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <CAPhsuW4-rkKVwWeOLhkK5gX5zO0FND+bB4vR4dbT7O1G=ZJajg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KDQkfbQlfyhy18q54wXca0m-yk50DtjF
+X-Proofpoint-GUID: aqVb05QqhM7ZFSJnZuFyBCpJI-MOyLSU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-30_05,2024-09-27_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ lowpriorityscore=0 mlxlogscore=914 malwarescore=0 priorityscore=1501
+ phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 clxscore=1011
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300039
 
-Add nxpwifi related information to MAINTAINERS file.
 
-Signed-off-by: David Lin <yu-hao.lin@nxp.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 77fcd6f802a5..9846759b0c99 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16526,6 +16526,13 @@ F:	Documentation/devicetree/bindings/clock/imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/imx*
- 
-+NXP NXPWIFI WIRELESS DRIVER
-+M:	David Lin <yu-hao.lin@nxp.com>
-+R:	Pete Hsieh <tsung-hsien.hsieh@nxp.com>
-+L:	linux-wireless@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/wireless/nxp/nxpwifi
-+
- NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
--- 
-2.34.1
+On 24/09/24 10:27 pm, Song Liu wrote:
+> On Tue, Sep 24, 2024 at 5:00 AM Aboorva Devarajan
+> <aboorvad@linux.ibm.com> wrote:
+>>
+>> On Tue, 2024-09-24 at 10:03 +0200, Alexei Starovoitov wrote:
+>>> On Mon, Sep 23, 2024 at 8:21 PM Tejun Heo <tj@kernel.org> wrote:
+>>>> Hello,
+>>>>
+>>>> (cc'ing Alexei and Andrii for the BPF part)
+>>>>
+>>>> On Mon, Sep 23, 2024 at 08:26:32PM +0530, Aboorva Devarajan wrote:
+>>>>> Sharing the crash logs observed in PowerPC here for general reference, FYI:
+>>>>>
+>>>>> [ 8638.891964] Kernel attempted to read user page (a8) - exploit attempt? (uid: 0)
+>>>>> [ 8638.892002] BUG: Kernel NULL pointer dereference on read at 0x000000a8
+>>>>> [ 8638.892019] Faulting instruction address: 0xc0000000004e7cc0
+>>>>> [ 8638.892038] Oops: Kernel access of bad area, sig: 11 [#1]
+>>>>> [ 8638.892060] LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA PowerNV
+>>>>> [ 8638.892080] Modules linked in: nf_conntrack_netlink nfnetlink xfrm_user xfrm_algo xt_addrtype
+>>>>> br_netfilter xt_CHECKSUM xt_MASQUERADE xt_conntrack ipt_REJECT nf_reject_ipv4 xt_tcpudp
+>>>>>   ip6table_mangle ip6table_nat iptable_mangle iptable_nat nf_nat nf_conntrack nf_defrag_ipv6
+>>>>> nf_defrag_ipv4 ebtable_filter ebtables vhost_vsock vmw_vsock_virtio_transport_common ip6tabl
+>>>>> e_filter ip6_tables vhost vhost_iotlb iptable_filter vsock bridge stp llc kvm_hv kvm joydev
+>>>>> input_leds mac_hid at24 ofpart cmdlinepart uio_pdrv_genirq ibmpowernv opal_prd ipmi_powernv
+>>>>> powernv_flash uio binfmt_misc sch_fq_codel nfsd mtd ipmi_devintf ipmi_msghandler auth_rpcgss
+>>>>> jc42 ramoops reed_solomon ip_tables x_tables autofs4 raid10 raid456 async_raid6_recov async
+>>>>> _memcpy async_pq async_xor async_tx raid1 raid0 dm_mirror dm_region_hash dm_log mlx5_ib ib_uverbs
+>>>>> ib_core mlx5_core hid_generic usbhid hid ast i2c_algo_bit drm_shmem_helper drm_kms_hel
+>>>>> per vmx_crypto drm mlxfw crct10dif_vpmsum crc32c_vpmsum psample tls tg3 ahci libahci
+>>>>> drm_panel_orientation_quirks
+>>>>> [ 8638.892621] CPU: 62 UID: 0 PID: 5591 Comm: kworker/62:2 Not tainted 6.11.0-rc4+ #2
+>>>>> [ 8638.892663] Hardware name: 8335-GTW POWER9 0x4e1203 opal:skiboot-v6.5.3-35-g1851b2a06 PowerNV
+>>>>> [ 8638.892693] Workqueue: events bpf_prog_free_deferred
+>>>>> [ 8638.892735] NIP:  c0000000004e7cc0 LR: c0000000004e7bbc CTR: c0000000003a9b30
+>>>>> [ 8638.892798] REGS: c000000ea4cbf7f0 TRAP: 0300   Not tainted  (6.11.0-rc4+)
+>>>>> [ 8638.892862] MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 42a00284  XER: 00000000
+>>>>> [ 8638.892915] CFAR: c0000000004e7bb8 DAR: 00000000000000a8 DSISR: 40000000 IRQMASK: 1
+>>>>> [ 8638.892915] GPR00: c0000000004e7bbc c000000ea4cbfa90 c000000002837f00 0000000000000005
+>>>>> [ 8638.892915] GPR04: 0000000000000015 0000000000000009 0000000000000009 c000000004840b00
+>>>>> [ 8638.892915] GPR08: ffffffffffffffff 00000000ffffe000 ffffffffffffffff 000001937b55db50
+>>>>> [ 8638.892915] GPR12: 0000000000200000 c000007ffdfac300 c0000000031b1fc8 0000000000010000
+>>>>> [ 8638.892915] GPR16: c00000000000018e 000000007fffffff 0000000000000000 000000000000e1c0
+>>>>> [ 8638.892915] GPR20: 61c8864680b583eb 0000000000000000 0000000000000000 00000000000de1d5
+>>>>> [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8
+>>>>> [ 8638.892915] GPR24: 0000000000000000 c000000003da4408 c000000003da4400 c000000003da43f8
+>>>>> [ 8638.892915] GPR28: 0000000000000000 0000000000000000 0000000000000000 c000000ea4cbfa90
+>>>>> [ 8638.893350] NIP [c0000000004e7cc0] walk_to_pmd+0x80/0x240
+> 
+> With "BUG: Kernel NULL pointer dereference on read at 0x000000a8" (from above),
+> it appears bpf_arch_text_invalidate() is racing with
+> text_area_cpu_down_mm(), which
+> sets cpu_patching_context.mm to NULL?
+> 
+> Am I going in the right direction?
+
+Hi Song,
+
+Yeah. That is the most plausible explanation for it.
+I have just about started looking at this.
+Will update if I find anything different..
+
+Thanks
+Hari
+
 
 
