@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-343971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D51398A1ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:18:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E205598A1E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A5E2815D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165DE1C2140A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B619049A;
-	Mon, 30 Sep 2024 12:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RuNtCHDY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F1C18F2F8;
+	Mon, 30 Sep 2024 12:06:36 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF9818E36C
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6D3183098;
+	Mon, 30 Sep 2024 12:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698189; cv=none; b=JbhEDtDoqfFjfIi6vejJAQw1wQpEHo87IfV96T2DU5KoUpNIH3aYV7MdmcU5UkKNyZeatILq3QJ0GUjcX5awhahPW/htzSfIA1fUUzj67HXxO1Pmptcy+NOMwnMiyz4cEchE99fz+PiStLgY8OBAGbBDpqhQ9S9shHqAWZa2rbk=
+	t=1727697996; cv=none; b=ODs5wqtqsRILEPrHIN/kYrmKBBQaw69zjCb9bCt10TRO/v/cyggYD+L6HTlEs7iFLN5mRlSCKiHuXIYfxsx1Mjf45kteq9A7TZUo1kFGvbgkCqcVJ7Av2fGnadruAVqxf5LwmMCFLBU+ikttle5JIl6ALTjrgbKeww8YlfAflUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698189; c=relaxed/simple;
-	bh=66Gpn3Z+P9WB7V6XC2MntK3wRYKHyN7IlAHqDWL3r7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=esxR8zDXJKdsLRXp6e+u7sCALbANX/84AeRGf3+eFeNitEzl/fnUd8LAYRQUqtyKPYq9JOaSCDFCHw2OTIQaJXWaKsvSuIz3puzjRQpAsAI9tPMkdMlgOwzA7g2nmOt/kiTM8EpsscBk9CKOnII4rJqfae1kJ6bJD7W5+MFE5mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RuNtCHDY; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727698187; x=1759234187;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=66Gpn3Z+P9WB7V6XC2MntK3wRYKHyN7IlAHqDWL3r7s=;
-  b=RuNtCHDYxDBXJ/kpbySebQfvr31+pyXPMnITDyFIFqzo7G3hF0gv1YyI
-   Y06M8CuqaCGYw0cmzFWdRq6dY6hkpXT+j6lWB3QOM9BLOuToGTOdNtGhy
-   OQFAqGaoFusPjaqViF8zUdxIZIeW+7WC/L6teEdUM4MG0N+U5MQsAz6S5
-   K/D/7h4B2sQhNqnCHfEzVku/Gt+jlxKzl8o2MCC/kBjfBxcXJsg9muPri
-   eCRNMNHJC218cClkc6wsa/YCRt0LB5+p0v+hR2Avm99pIxPypDM2SSAGi
-   7ho9R+Xv6BxpAsrTBYGp5x3JZ0eStlBoJNvKlNVcHvbRCjnqewzrMHlBv
-   w==;
-X-CSE-ConnectionGUID: s0PNS/B6RtGouCZzzs54ww==
-X-CSE-MsgGUID: JiCB+o3aRIGmCokTwC5BXQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="14407875"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="14407875"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:09:46 -0700
-X-CSE-ConnectionGUID: AiJIV5/uTAGI75st/HVEng==
-X-CSE-MsgGUID: 3HZ/FjWGQUWdlxmIwUidsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="73247159"
-Received: from baradhya-z690i-a-ultra-plus.iind.intel.com ([10.145.169.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:09:41 -0700
-From: Aradhya Bhatia <aradhya.bhatia@intel.com>
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Intel XE List <intel-xe@lists.freedesktop.org>,
-	DRI Devel List <dri-devel@lists.freedesktop.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Tejas Upadhyay <tejas.upadhyay@intel.com>,
-	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
-	Gustavo Sousa <gustavo.sousa@intel.com>,
-	Aradhya Bhatia <aradhya.bhatia@intel.com>
-Subject: [PATCH] drm/xe/xe2lpg: Add WA 15016589081
-Date: Mon, 30 Sep 2024 17:36:02 +0530
-Message-Id: <20240930120602.1720218-1-aradhya.bhatia@intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727697996; c=relaxed/simple;
+	bh=3uZm5F8HdZrf1jSahO+r1HjBDvuoNtC9/fe/8536mZc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fhuZrUNSwpnj1nB0UoaZJ9HQOlWRvg5Yau5kDQBHCNc5/adwoLTLNzmGgVEzHnh+XxLO/q61GoSIcWFv9wDqC0ARHy9H8/4RYDJcZrCgGU0RcTERdbPrW85TDsI1Qz91frLTYILfJw+/jx0vGRqlx9vZc8Mnz5VZTS+fVDCCmWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XHK6Q326Pz9v7Hy;
+	Mon, 30 Sep 2024 19:46:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id E46EC14059D;
+	Mon, 30 Sep 2024 20:06:30 +0800 (CST)
+Received: from [10.81.209.28] (unknown [10.81.209.28])
+	by APP2 (Coremail) with SMTP id GxC2BwBXBsc2lPpmpbvyAQ--.6803S2;
+	Mon, 30 Sep 2024 13:06:30 +0100 (CET)
+Message-ID: <50bd6ecb-c8e3-4043-9040-b2b4ee71fc02@huaweicloud.com>
+Date: Mon, 30 Sep 2024 14:06:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: paulmck@kernel.org
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
+ Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
+ <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
+ <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+ <25344f33-b8dc-43fb-a394-529eff03d979@rowland.harvard.edu>
+ <f635f9ce-fef4-4a9e-bee1-70dbc24a82ad@huaweicloud.com>
+ <973ae617-96a8-456a-a805-af3d61270125@paulmck-laptop>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <973ae617-96a8-456a-a805-af3d61270125@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwBXBsc2lPpmpbvyAQ--.6803S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY37kC6x804xWl14x267AKxVWrJVCq3wAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
+	xK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
+	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Add workaround (wa) 15016589081 which applies to Xe2_v3_LPG_MD.
 
-Xe2_v3_LPG_MD is a Lunar Lake platform with GFX version: 20.04.
-This wa is type: permanent, and hence is applicable on all steppings.
 
-Signed-off-by: Aradhya Bhatia <aradhya.bhatia@intel.com>
----
- drivers/gpu/drm/xe/xe_wa.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Am 9/30/2024 um 1:04 PM schrieb Paul E. McKenney:
+> On Mon, Sep 30, 2024 at 11:42:11AM +0200, Jonas Oberhauser wrote:
+>>
+>>
+>> I also currently don't see any major difference between the constant and
+>> register case. The point is that the address is known before loading into b,
+>> and hence the compiler + hardware can speculatively load *b before loading
+>> into b.
+> 
+> In theory, true.  In practice, in the register case, you need a little
+> more bad luck for the compiler to be able to exploit your mistake.
 
-diff --git a/drivers/gpu/drm/xe/xe_wa.c b/drivers/gpu/drm/xe/xe_wa.c
-index 22c148b1e996..2f9cde4b7d45 100644
---- a/drivers/gpu/drm/xe/xe_wa.c
-+++ b/drivers/gpu/drm/xe/xe_wa.c
-@@ -710,6 +710,10 @@ static const struct xe_rtp_entry_sr lrc_was[] = {
- 			     DIS_PARTIAL_AUTOSTRIP |
- 			     DIS_AUTOSTRIP))
- 	},
-+	{ XE_RTP_NAME("15016589081"),
-+	  XE_RTP_RULES(GRAPHICS_VERSION(2004), ENGINE_CLASS(RENDER)),
-+	  XE_RTP_ACTIONS(SET(CHICKEN_RASTER_1, DIS_CLIP_NEGATIVE_BOUNDING_BOX))
-+	},
- 
- 	/* Xe2_HPG */
- 	{ XE_RTP_NAME("15010599737"),
+If there's one thing I've never run out of, then it is bad luck with 
+technology.
 
-base-commit: 0c8650b09a365f4a31fca1d1d1e9d99c56071128
--- 
-2.34.1
+   jonas
 
 
