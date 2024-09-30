@@ -1,91 +1,104 @@
-Return-Path: <linux-kernel+bounces-343904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7195D98A103
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D29D98A109
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E7F280E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E778D281170
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA7018A6C6;
-	Mon, 30 Sep 2024 11:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E6F18DF75;
+	Mon, 30 Sep 2024 11:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lWbjVugB"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cc+d8/sq"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297D12B9A5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C6F189BAC;
+	Mon, 30 Sep 2024 11:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727696690; cv=none; b=IVEiwEuFKImucqaS0oe+HXpVYzonF+5gy/G4j+s9diwz94SkRVcJrS+aY0xzXPoT0/eEATZfJalOHsdhsI7hjrnPWiVeDBvvadQ2nvwfvDuif1nx8Nw9MxKzbW3TBXk5PGLapXuO0Huh4pXnl/JJp22FuFXbYSXwdlf9lxCa7XY=
+	t=1727696845; cv=none; b=Rfh9pIROHfoeLEAaJa5VfU7uImucthKPUoSYVC7ljDiSR3LGi+flgu4vo3OYG1BNmb5kV4MU3jYwtqeX72l1YO63mWTFdVO7eiDSBZRWVnc176TB8Ybwa2KC3N7dldf4BpMcd7X+RTb5ViM6Eq2WwTcFEgr3gFgkrdUWBYRZm6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727696690; c=relaxed/simple;
-	bh=mty6Agw+Heh6Q+rKXDkuXK0/noMApt3T4a4BvbKfDzU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vF1gcO6hdtYd1a/JQfQai5ZT6iNeYHVp+tmeogrDjp0b8q7MI3blgFOv8ryemHtdloAg98Mx6hTkPJWnCh7EMGbUnm/AR2L9s+/9UPhzA3+AyDLvWNckJBcyPV2nv+vwceYiGuIOZSQ6dAkMgvodNEejOlnPMeACqsCHOTfj3g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lWbjVugB; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727696685;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iNd2/gpkfuM+gLT8ZelW/yN0dV2eSiGfwz/7SwjUvzo=;
-	b=lWbjVugBPusAqHC9VSOQxKECm49btm2G/vf/RC9xAstyHNRLK2mm1OaU+32ius5FB+1DHr
-	NpneTiiPf3p8zaZ+Q60XE+gm1jpKQpIl3egeq9duWIJegFLp8DuLk4TVv3rKBuhz0F1zlg
-	DHsJxh8CCfsGNycsnPHTwKmR+LGzHQ4=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] w1: Use kfree_sensitive() instead of memset(0) and kfree()
-Date: Mon, 30 Sep 2024 13:44:04 +0200
-Message-ID: <20240930114404.80910-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1727696845; c=relaxed/simple;
+	bh=JCpSttHFP/sRNbXFgE6cXFPCgz9ErLHl5Fk8pNKtpWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PDkJB+zDamU+MyW548l6GPcZ8LGvEQvazdwyS9GGchEY9ccF4U8JNVQ/dqXbfYvAQxRjeYyPiYo9KIb4wKEAA3vWRLHl/xO0vsJdC7z3KfUWHw1UPPlIsRR0GbN6rPTny7lmqLjcfxf9jHn+02V5po2A7owMjDy41g4up/cQ+E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cc+d8/sq; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7191f1875d3so291108b3a.0;
+        Mon, 30 Sep 2024 04:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727696843; x=1728301643; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JCpSttHFP/sRNbXFgE6cXFPCgz9ErLHl5Fk8pNKtpWg=;
+        b=Cc+d8/sqcX3LOPDY5aE06VkuyowAIITJDMggcAT6D1YW98acF5B35M9IDiSvd4iqVN
+         qTIp8mgQ3AvxGLXIlLpdSJCqH55RGIGSHk+xloT0KHGR1H5IVnQYYC8Vj+DABjv7noHQ
+         truLhu1ThJ2+ALsYDserX/3RDAzu/bgzSGjZQ+DdyeHcNUnWfPjCuzVuhMnSdGrqkWfo
+         k9wi90dxPcBBRJ2j4jgnfta1wGaYtZc2mvIYOvJ9th3Pfh9dAhFSE/SXBH76xUCiJfYi
+         PHj5fZifCRSjLDt2ZKrGywrd58jn/ulN31YK/ZOH08RSKQKT0qPhEyKneRNeR2G4FYK3
+         l/9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727696843; x=1728301643;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JCpSttHFP/sRNbXFgE6cXFPCgz9ErLHl5Fk8pNKtpWg=;
+        b=vJuvxnqA7NthGq2wbsrOfSc3gWIgzUWbmYVlsaqa6UFGzKZCwzdKeLowPdYrumU6gu
+         d5hCG+a49/KaOZD2eeaFDboufKCUkHU2QlDbiWOiJYjh+lLciCcsXrC2UkPoHLDtmcC1
+         OH3IW73fgNkwFR1caDJGIXbpjhE6SBnOFxAVO3FlbrAbJirCLZqCxI/IoDNsFh8ImEsw
+         XaGkW1moTSJTHFqWuAQz61lZnbxj1rA30rxvqjB7QW4CgRNjO517OYONq5eCSbqHidye
+         oBq14KXuuEtO0xkMCwiFho7P0Nc5FESX4jVg8XDPiR5hvZXCPzqPydiLz+BzQKkBG4uw
+         Ur5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWgF54ABJjGG6uOjX+O4c7snuNNUDSq24JPAETdXKDB5x/paNvn2KANPkMLbcXZsQNFnn8vcRJdu74XYe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/FGtr4cttLpnBPvbxOtdiMri0WifHT/RZMLUHIru23eEoWMcj
+	KBrFpk/gEBtcf9NsPDdRv4GOX5QknrCnbA+anqtJ/HCfh8os2aVIdAH6s26wVXGizCLC19nxO37
+	TWc1EFjNk9zFjViYxczjrzL4hzcQ=
+X-Google-Smtp-Source: AGHT+IF75ggKJebpBSFErmR+84WGmKpaEKzUKHgJOEyYQDg7qv5O0VbMdemWI9cbiPuv9+Dbbx66lNegH4R+T3WMkps=
+X-Received: by 2002:a05:6a00:b85:b0:70d:2c09:45ff with SMTP id
+ d2e1a72fcca58-71c636f23c9mr4909037b3a.4.1727696843366; Mon, 30 Sep 2024
+ 04:47:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+ <CANiq72mrcMq7KKn5UiT2GuZPCeFMtr63tj9JTHnVLfzmYDgauQ@mail.gmail.com> <CALiyAomzktZWhGmg4O7tY8ywAG-crb4AGoyFyvQv3SBTyNXH2g@mail.gmail.com>
+In-Reply-To: <CALiyAomzktZWhGmg4O7tY8ywAG-crb4AGoyFyvQv3SBTyNXH2g@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 30 Sep 2024 13:47:11 +0200
+Message-ID: <CANiq72k139A9C-gqHJ7nmChcnYyQ7b9iP1Yq3dpuasxn0O6S3A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2 RESEND] rust: kernel: clean up empty `///` lines
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use kfree_sensitive() to simplify w1_unref_slave() and remove the
-following Coccinelle/coccicheck warning reported by
-kfree_sensitive.cocci:
+On Mon, Sep 30, 2024 at 12:36=E2=80=AFPM Hridesh MG <hridesh699@gmail.com> =
+wrote:
+>
+> Ah, I think this is a cultural difference. The "MG" does indeed have
+> an expansion but it's only used for non-official purposes; my name is
+> stamped as "Hridesh MG" on all legal documents, so I suppose it counts
+> as a known identity.
 
-  WARNING opportunity for kfree_sensitive/kvfree_sensitive
+If that is your legal name, then it is fine -- thanks for clarifying!
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Please note: this change assumes that #ifdef DEBUG is no longer needed
-and we should always zero out the memory.
----
- drivers/w1/w1.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index d82e86d3ddf6..127694180eb8 100644
---- a/drivers/w1/w1.c
-+++ b/drivers/w1/w1.c
-@@ -795,10 +795,7 @@ int w1_unref_slave(struct w1_slave *sl)
- 
- 		w1_family_notify(BUS_NOTIFY_DEL_DEVICE, sl);
- 		device_unregister(&sl->dev);
--		#ifdef DEBUG
--		memset(sl, 0, sizeof(*sl));
--		#endif
--		kfree(sl);
-+		kfree_sensitive(sl);
- 	}
- 	atomic_dec(&dev->refcnt);
- 	mutex_unlock(&dev->list_mutex);
--- 
-2.46.2
-
+Cheers,
+Miguel
 
