@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-344048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BBC98A367
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2298A36E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792D11C22B9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DD71C22C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322AD190068;
-	Mon, 30 Sep 2024 12:46:34 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FBD18E775;
+	Mon, 30 Sep 2024 12:49:24 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2428F19004D
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06F218DF76;
+	Mon, 30 Sep 2024 12:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700393; cv=none; b=i7CVxhm+o8iP81Als90yku8MgDFrpvpdiFbK7HzHBKLsyAholR3UhlCU4WOi7NGn5NZgR/g34Yi36xsd4t1RF/OK7kIHgJLJkn1QldmMGmehZUXCW4RcjSDW+QlGiu7FIZaY9UkmnNPUzly8c4raj4GzLyL1cSQ/JyEEo2gwkmg=
+	t=1727700563; cv=none; b=Gz+xUnvAWtHKLDQfeLVh7SBHjIdZmzCk9wEGvNeZanDD1hfsKRJrfAKox6XCEHnOkjvOJBuKl6LWIUKsJGnUtSFQJFcC1ozeQ5ESXHjNy3TakY28kx/GYv9thIjlwJcqWO6LiYmiPFrhw600ClE/Gkw+qCkjvAGZuo2ZDkREWEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700393; c=relaxed/simple;
-	bh=fLcOW1glmDi8nNd8++58a0Sk8ANSiapo0GJYmwFxNWA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IcvhH9M366ugGqNkdZA/dW6EXsOU6IRH0aMoQmdDgjjpwuWcLjz//qrIGyZctKNDk3tDQgsH8qNw/6VcNzQGMoaiwZOUizpxK8KlkSsb5OOxueckYm/TUrURLFekO5NDZ6YZIRgHzVl2SKelZ5WydvnHkOyDuBewWqTIY1r3N+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a345a02c23so29048005ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:46:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727700391; x=1728305191;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=awJIzvkD2Lwo+R1d6zdZ1TcxW2vEuKMslHNdyjBpWrQ=;
-        b=TsE1uHuFS7dU8KGoGqiBzlv0imbKIS2gXxz4k5g5VMhql5UENZiQwhJth875rbFJox
-         bzy91zoaXTb00LiFOuoG8sLRqGG7Ri4nBWxaxxGtj+p+DQRXDs5/82YcOGFgAZR9HDGU
-         9ddID8jT3+WEv0iD80rz+sRHKog5YOMZ6GK94U/kjgYW4I4/oWzkM++8vQYZJttLQrJc
-         pqTfENXpMG++UoNGZIwUMUbd2llGE4nBnPdDFmrT4QlePeGtBQvThAj/GO5HXL+Z3XpT
-         Q4psaE5bxvmD47PP6JeQp3Bt7DtShtI3qp0x5RbnkB0rw3O9aOFL8sLfCAQ89+mtEyhC
-         p+tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFGCufN8QvsOVLpWYQEjGaaHpDTbCguFAWD6tqrXfEwmiKrioTPcovhJ8MGk76a/04AnYBexTj1arqDHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzafo6ATMsqGOEE63EH4bBMb3Okatl2NjCd1eDjD7Epfo6Dfsms
-	Q/GIqkCk4Y5m8McGArZP1aPpGQjwsOM9qWMH6gcv0N3QBd94whsmFVeCiP6hi+y6Dy2Pxeq7w3q
-	6hNsVf2bhHH81Ru+s3Jv7803fCxu+pQ4BziQw2zz+aOuEE9Cgiyk+Hzk=
-X-Google-Smtp-Source: AGHT+IHczIB3QkxOdWEyG2fNVJLCa/e2IqmJWIIcmPwVSCQ7iPucH1uFMvCTk3LnslN0kMvhGnFVUuGTvaQTOJ3gd1Tbifs59Pwh
+	s=arc-20240116; t=1727700563; c=relaxed/simple;
+	bh=F/U0sRoJdr4E2hz881oUVHvIf/z2huLNVCZMePykZz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gArUFO0QSRqxkg0HN4+VEAzkkx1Q5UlZI48YvMchghsFQMVMuY7ROmllp7cvMOzk13mRnSE1e2DEkCpea34YvgeegfqardH3KgidAW876qobzkctvemCCPoh5DqhAoE8+6Ck3lNbkBbmpw/kiP3bqE8IOpR3HlpztWJwHUhRuuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: X8ogNJCaSBmrAMSRJn/oCQ==
+X-CSE-MsgGUID: YxEr24y/Qmya4EIelEMJyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="37927560"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="37927560"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:49:22 -0700
+X-CSE-ConnectionGUID: I3zFfxIOTm28Yq4645XqPw==
+X-CSE-MsgGUID: ALUzUGNKTcm94Z5KTfvQmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="73601077"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:49:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1svFpw-0000000Ef7L-3G1q;
+	Mon, 30 Sep 2024 15:49:12 +0300
+Date: Mon, 30 Sep 2024 15:49:12 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
+Subject: Re: [PATCH v4 4/5] block: add support for partition table defined in
+ OF
+Message-ID: <ZvqeSC3ZsRU0uEaB@smile.fi.intel.com>
+References: <20240930113045.28616-1-ansuelsmth@gmail.com>
+ <20240930113045.28616-5-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2188:b0:3a0:a311:6773 with SMTP id
- e9e14a558f8ab-3a3451b4ba4mr90915775ab.21.1727700391138; Mon, 30 Sep 2024
- 05:46:31 -0700 (PDT)
-Date: Mon, 30 Sep 2024 05:46:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fa9da7.050a0220.6bad9.003c.GAE@google.com>
-Subject: [syzbot] [kernel?] INFO: task hung in worker_thread (5)
-From: syzbot <syzbot+c27cd2da6c2dc003b4a1@syzkaller.appspotmail.com>
-To: bigeasy@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, 
-	edumazet@google.com, hpa@zytor.com, kerneljasonxing@gmail.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930113045.28616-5-ansuelsmth@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Mon, Sep 30, 2024 at 01:30:11PM +0200, Christian Marangi wrote:
+> Add support for partition table defined in Device Tree. Similar to how
+> it's done with MTD, add support for defining a fixed partition table in
+> device tree.
+> 
+> A common scenario for this is fixed block (eMMC) embedded devices that
+> have no MBR or GPT partition table to save storage space. Bootloader
+> access the block device with absolute address of data.
+> 
+> This is to complete the functionality with an equivalent implementation
+> with providing partition table with bootargs, for case where the booargs
+> can't be modified and tweaking the Device Tree is the only solution to
+> have an usabe partition table.
+> 
+> The implementation follow the fixed-partitions parser used on MTD
+> devices where a "partitions" node is expected to be declared with
+> "fixed-partitions" compatible in the OF node of the disk device
+> (mmc-card for eMMC for example) and each child node declare a label
+> and a reg with offset and size. If label is not declared, the node name
+> is used as fallback. Eventually is also possible to declare the read-only
+> property to flag the partition as read-only.
+> 
+> For eMMC block, driver scan the disk name and check if it's suffixed with
+> "boot0" or "boot1".
+> This is to handle the additional disk provided by eMMC as supported in
+> JEDEC 4.4+. If this suffix is detected, "partitions-boot0" or
+> "partitions-boot1" are used instead of the generic "partitions" for the
+> relevant disk.
 
-syzbot found the following issue on:
+...
 
-HEAD commit:    aa486552a110 Merge tag 'memblock-v6.12-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1482da80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6c71bad3e6ab6955
-dashboard link: https://syzkaller.appspot.com/bug?extid=c27cd2da6c2dc003b4a1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12afcaa9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10edb627980000
+> +	strscpy(info->volname, partname, sizeof(info->volname));
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7c6beec63de3/disk-aa486552.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fa35efb3dd39/vmlinux-aa486552.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/537d8ff45d85/bzImage-aa486552.xz
+We have 2-arguments strscpy(), please use that.
 
-The issue was bisected to:
+> +	strlcat(state->pp_buf, tmp, PAGE_SIZE);
 
-commit d15121be7485655129101f3960ae6add40204463
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon May 8 06:17:44 2023 +0000
+In new code we should not use strl*(). They are subject to remove.
+And actually why? You have used strscpy() a few lines above...
 
-    Revert "softirq: Let ksoftirqd do its job"
+...
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=153d06a9980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=133d06a9980000
+> +	for_each_child_of_node(partitions_np, np) {
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c27cd2da6c2dc003b4a1@syzkaller.appspotmail.com
-Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
+Use _scoped() variant.
 
-INFO: task kworker/1:1:51 blocked for more than 145 seconds.
-      Not tainted 6.11.0-syzkaller-10622-gaa486552a110 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/1:1     state:R  running task     stack:23864 pid:51    tgid:51    ppid:2      flags:0x00004000
-Workqueue:  0x0 (events)
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- worker_thread+0xa30/0xd30 kernel/workqueue.c:3406
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+> +		if (validate_of_partition(np, slot)) {
+> +			of_node_put(np);
+> +			ret = -1;
+> +			goto exit;
+> +		}
+> +
+> +		slot++;
+> +	}
 
-Showing all locks held in the system:
-3 locks held by kworker/u8:0/11:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937ee0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-5 locks held by kworker/u8:3/52:
-5 locks held by kworker/u9:0/54:
- #0: ffff88801ef05948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ef05948 ((wq_completion)hci1){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90000bf7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000bf7d00 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffff88807fa38d80 (&hdev->req_lock){+.+.}-{3:3}, at: hci_cmd_sync_work+0x1ec/0x400 net/bluetooth/hci_sync.c:327
- #3: ffff88807fa38078 (&hdev->lock){+.+.}-{3:3}, at: hci_abort_conn_sync+0x1ea/0xde0 net/bluetooth/hci_sync.c:5567
- #4: ffffffff8fe3e0a8 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:1957 [inline]
- #4: ffffffff8fe3e0a8 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_conn_failed+0x15d/0x300 net/bluetooth/hci_conn.c:1262
+...
+
+> +	for_each_child_of_node(partitions_np, np) {
+
+Ditto.
+
+> +		if (slot >= state->limit) {
+> +			of_node_put(np);
+> +			break;
+> +		}
+> +
+> +		add_of_partition(state, slot, np);
+> +
+> +		slot++;
+> +	}
+
+...
+
+> +	strlcat(state->pp_buf, "\n", PAGE_SIZE);
+
+Why strl*()?
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
