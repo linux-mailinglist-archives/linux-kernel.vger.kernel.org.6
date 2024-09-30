@@ -1,175 +1,183 @@
-Return-Path: <linux-kernel+bounces-343535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A471989C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF21989C3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:11:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D1B1F21E1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:08:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C89C81F21597
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956DF170A13;
-	Mon, 30 Sep 2024 08:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB42186E24;
+	Mon, 30 Sep 2024 08:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O3J2ZByD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jz2GTFnl";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="O3J2ZByD";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jz2GTFnl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FppoJLcG"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7136C15D5D9;
-	Mon, 30 Sep 2024 08:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CAE17CA03
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727683693; cv=none; b=D69MW1NWYPlryblbGyxOjrwTSEFvJV5FFN2dQ+pYJ1dtcXSASBIzMfuMn3qIyNh0Dd5mu37oHevFAYtYO6J6p94eA2zF0En2NvdCDOSNSMgFxv24Pz2KTlqWDB1i3cxcVJ+0Jz0PjoHUAkR2q+1UphpMHg4IPiETsROHZNJtskA=
+	t=1727683790; cv=none; b=UrudILMW1Sv+prDHsJQ/sIj2w5A0kWl9LJedmoG3Zw3XabH07q9DnGC1qAwNiWm1qfQBmEIEMJ3x4lOPG1WVoO5pHi+xzMav1pk/a04SbTcixvxcEgFER78Z4AbddjbM92bhxnFnwjrC2vZNnuYUdHDEZeotPZNSl0+KW9+HxA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727683693; c=relaxed/simple;
-	bh=P6Xo+mehh8QI6H7gqYXNmioph9nxWrB3vqSiwpbxXbI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u3ECDyMhC1rO3yEUh2uGzG6EjvmoJej7DSGwZycpt5StwWBGdYUYfbt6rqShEN1rENHli0/x4NboF++7cZrXSlGHSVUaj93ceFkJO9VTBqlEf+bN4diiXVdUCnEQNL53UFZJci7BEg17yKcfF4Gk+HTBN3IVh8tsUF5808wknqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O3J2ZByD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jz2GTFnl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=O3J2ZByD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jz2GTFnl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A1C641F7F0;
-	Mon, 30 Sep 2024 08:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727683689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EjTRlgNPhzw1rijGLE17ikh00xLt84X0n31FFoSHoQs=;
-	b=O3J2ZByDwfW8BL9KNPGbcjDcNr9XjHhj+Y7d74bjOOKg7I/nU3F3u++l3xJl5B16ZKBRad
-	xp0piod2pn55fS7qmdo85D564h1BOCHS5lD4k9J578+/SBsNZaRelZEN+3ocf17g6rYedi
-	YVladQlbPvWZdBJtsUTzi3aWnB+SRFQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727683689;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EjTRlgNPhzw1rijGLE17ikh00xLt84X0n31FFoSHoQs=;
-	b=jz2GTFnlmEGds46GDwf3/5LAuoy0ViGVv81AmvoN29eUipgJP9Qy+D6Qc9+dWjdi97g3RX
-	UxZEL2HzSIX3KCBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727683689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EjTRlgNPhzw1rijGLE17ikh00xLt84X0n31FFoSHoQs=;
-	b=O3J2ZByDwfW8BL9KNPGbcjDcNr9XjHhj+Y7d74bjOOKg7I/nU3F3u++l3xJl5B16ZKBRad
-	xp0piod2pn55fS7qmdo85D564h1BOCHS5lD4k9J578+/SBsNZaRelZEN+3ocf17g6rYedi
-	YVladQlbPvWZdBJtsUTzi3aWnB+SRFQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727683689;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EjTRlgNPhzw1rijGLE17ikh00xLt84X0n31FFoSHoQs=;
-	b=jz2GTFnlmEGds46GDwf3/5LAuoy0ViGVv81AmvoN29eUipgJP9Qy+D6Qc9+dWjdi97g3RX
-	UxZEL2HzSIX3KCBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47ADB13A8B;
-	Mon, 30 Sep 2024 08:08:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BMo/EGlc+mZ+FQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 30 Sep 2024 08:08:09 +0000
-Date: Mon, 30 Sep 2024 10:09:02 +0200
-Message-ID: <878qv9k1gh.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	kailang@realtek.com,
-	sbinding@opensource.cirrus.com,
-	simont@opensource.cirrus.com,
-	josh@joshuagrisham.com,
-	foss@athaariq.my.id,
-	rf@opensource.cirrus.com,
-	skhan@linuxfoundation.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda/realtek: Add a quirk for HP Pavilion 15z-ec200
-In-Reply-To: <20240926155112.8079-1-abhishektamboli9@gmail.com>
-References: <20240926155112.8079-1-abhishektamboli9@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1727683790; c=relaxed/simple;
+	bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qJ9Vd96RjmotMqvvimNO9Y8zyHmUpGmKGtB3l3SN7eIkw/fQNWE/aUVca+DBFbdeAq5Yv/utWUI10ZB2Ev3hgh0XgbD2g6TMwv5PCY0sPuGqTHCr6gdlya3AqgCYKnjz/33vZbrAYWh00n9XCUirVw8S/g2l7CGb5djkzi7RUT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FppoJLcG; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-206aee4073cso46038385ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:09:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727683788; x=1728288588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
+        b=FppoJLcGOoI00AZ8pk9Ew/JK7dacaHMNbFXsnQuvxKaTWAS4DWz6DYUvNIajVaMwkT
+         BwuQZ72IQytY6qRdTdi7DkcUAKE00W2hO3p9egE6Nro5PVyblOOngJpJEYgDH45549ne
+         FpqUzX3K08jJsk5rCS+BYKSujmu0Q8R2aANZjHQip3L+M3QzflD7YbogkinBLZwIiAo4
+         7KygE21g69FoDG4l2C6CANX0u4jMyu+A4pKRM1SXDWJXjgZJPjR2TOklOhnrImObQf+/
+         UBKKkiFPxagJJC/IFUIExb2wel5xY7CvRmaBH2+d0LxJ2hJf8qsTl3oS7ED70GQNCiF2
+         Ql/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727683788; x=1728288588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
+        b=JMKVHe7rNFUhPCjxDQcAOSTnzAfXo9BTo0Kt/WW9FKg4SBXsBcQr8hYHxEya05nLrv
+         ThAy34jd6W2Rjgw3lp/bFIP4prhB2FpnPge6GrkvMY/dWHT/aWSpfd2qsv9IRXgarJy2
+         uThurgFjoeI1Wo5jwF/PcslAlvEx3ufA0GqJcWA2gDHxiAKhpdzkpuWmIMdF6FMBFyKB
+         kVN1yJagCJMk8w8jlrEdHCahmoTAru5MLes5ckwm300y4yeQSX1vmB9ih5QT0yOFu2fH
+         h99Jpw3DDDxvdRc2h93qLyVBqcFR4SA7O6XNTcL7pH4U68amRJcAybyp3i+gyrxsBigk
+         4LXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWylokBfyBQb/ePjRI8TtocvMLov3jea0gFl5Moq2qnO5XUILUGdSftcOnGO2lFEtQZOSsFiMeH9Td4TlA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQf180ZGrQ5Lts3iJimV/NdrXv7+pD4/WsBqScHHXt8oBjA0e
+	kXDhM9GKZCdFE8s4ZZSNa27JUhqyoloEOKYw8DQsFIbAYPVhJqxVbIz1vpSTn8EBNLmBEmpFwyU
+	Cr0j56ttv9y+wsRR8y4bI94LqiEdzd+nQIjbrJA==
+X-Google-Smtp-Source: AGHT+IHL79vWrV1UbQW2i+UC3FcnuUEn4RoHxDXgrgsEhFXFX4vbKat3GD+mMJkdcENWj5dVp6Y7ppyyQzgjgk1yEE8=
+X-Received: by 2002:a17:902:ce91:b0:20b:6d8c:461 with SMTP id
+ d9443c01a7336-20b6d8c0791mr75062715ad.5.1727683788157; Mon, 30 Sep 2024
+ 01:09:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,realtek.com,opensource.cirrus.com,joshuagrisham.com,athaariq.my.id,linuxfoundation.org,gmail.com,lists.linuxfoundation.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+ <20240925075707.3970187-3-linyunsheng@huawei.com> <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
+ <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com> <CAC_iWjLgNOtsbhqrhvvEz2C3S668qB8KatL_W+tPHMSkDrNS=w@mail.gmail.com>
+ <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com> <CAC_iWjKeajwn3otjdEekE6VDLHGEvqmnQRwpN5R3yHj8UpEiDw@mail.gmail.com>
+ <934d601f-be43-4e04-b126-dc86890a4bfa@huawei.com> <CAC_iWjL7m4ZL2W2OZM5F22dLvZhxU6fyCXV_xjyGf+W7UP43EQ@mail.gmail.com>
+ <ac2eec69-8f44-4adb-8182-02c78625851d@huawei.com>
+In-Reply-To: <ac2eec69-8f44-4adb-8182-02c78625851d@huawei.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Mon, 30 Sep 2024 11:09:11 +0300
+Message-ID: <CAC_iWj+Shb6buVf+wZaWe-NZ+UVxmW9DYqsTiL27U+V_Ko_65w@mail.gmail.com>
+Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
+ already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Mina Almasry <almasrymina@google.com>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
+	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
+	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
+	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, 
+	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 26 Sep 2024 17:51:12 +0200,
-Abhishek Tamboli wrote:
-> 
-> Add the quirk for HP Pavilion Gaming laptop 15z-ec200 for
-> enabling the mute led. The fix apply the ALC285_FIXUP_HP_MUTE_LED
-> quirk for this model.
-> 
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=219303
-> 
-> Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
-> ---
->  sound/pci/hda/patch_realtek.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-> index 4ca66234e561..94125a977f08 100644
-> --- a/sound/pci/hda/patch_realtek.c
-> +++ b/sound/pci/hda/patch_realtek.c
-> @@ -10315,6 +10315,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
->  	SND_PCI_QUIRK(0x103c, 0x8786, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
->  	SND_PCI_QUIRK(0x103c, 0x8787, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
->  	SND_PCI_QUIRK(0x103c, 0x8788, "HP OMEN 15", ALC285_FIXUP_HP_MUTE_LED),
-> +	SND_PCI_QUIRK(0x103c, 0x88DD, "HP Pavilion 15z-ec200", ALC285_FIXUP_HP_MUTE_LED),
->  	SND_PCI_QUIRK(0x103c, 0x87b7, "HP Laptop 14-fq0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
->  	SND_PCI_QUIRK(0x103c, 0x87c8, "HP", ALC287_FIXUP_HP_GPIO_LED),
->  	SND_PCI_QUIRK(0x103c, 0x87d3, "HP Laptop 15-gw0xxx", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+On Sun, 29 Sept 2024 at 05:44, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>
+> On 2024/9/28 15:34, Ilias Apalodimas wrote:
+>
+> ...
+>
+> >
+> > Yes, that wasn't very clear indeed, apologies for any confusion. I was
+> > trying to ask on a linked list that only lives in struct page_pool.
+> > But I now realize this was a bad idea since the lookup would be way
+> > slower.
+> >
+> >> If I understand question correctly, the single/doubly linked list
+> >> is more costly than array as the page_pool case as my understanding.
+> >>
+> >> For single linked list, it doesn't allow deleting a specific entry but
+> >> only support deleting the first entry and all the entries. It does support
+> >> lockless operation using llist, but have limitation as below:
+> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/llist.h#L13
+> >>
+> >> For doubly linked list, it needs two pointer to support deleting a specific
+> >> entry and it does not support lockless operation.
+> >
+> > I didn't look at the patch too carefully at first. Looking a bit
+> > closer now, the array is indeed better, since the lookup is faster.
+> > You just need the stored index in struct page to find the page we need
+> > to unmap. Do you remember if we can reduce the atomic pp_ref_count to
+> > 32bits? If so we can reuse that space for the index. Looking at it
+>
+> For 64 bits system, yes, we can reuse that.
+> But for 32 bits system, we may have only 16 bits for each of them, and it
+> seems that there is no atomic operation for variable that is less than 32
+> bits.
+>
+> > requires a bit more work in netmem, but that's mostly swapping all the
+> > atomic64 calls to atomic ones.
+> >
+> >>
+> >> For pool->items, as the alloc side is protected by NAPI context, and the
+> >> free side use item->pp_idx to ensure there is only one producer for each
+> >> item, which means for each item in pool->items, there is only one consumer
+> >> and one producer, which seems much like the case when the page is not
+> >> recyclable in __page_pool_put_page, we don't need a lock protection when
+> >> calling page_pool_return_page(), the 'struct page' is also one consumer
+> >> and one producer as the pool->items[item->pp_idx] does:
+> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/net/core/page_pool.c#L645
+> >>
+> >> We only need a lock protection when page_pool_destroy() is called to
+> >> check if there is inflight page to be unmapped as a consumer, and the
+> >> __page_pool_put_page() may also called to unmapped the inflight page as
+> >> another consumer,
+> >
+> > Thanks for the explanation. On the locking side, page_pool_destroy is
+> > called once from the driver and then it's either the workqueue for
+> > inflight packets or an SKB that got freed and tried to recycle right?
+> > But do we still need to do all the unmapping etc from the delayed
+> > work? Since the new function will unmap all packets in
+> > page_pool_destroy, we can just skip unmapping when the delayed work
+> > runs
+>
+> Yes, the pool->dma_map is clear in page_pool_item_uninit() after it does
+> the unmapping for all inflight pages with the protection of pool->destroy_lock,
+> so that the unmapping is skipped in page_pool_return_page() when those inflight
+> pages are returned back to page_pool.
 
-The quirk table is sorted in PCI SSID order.  Could you try to put at
-the right position?
-Also, please use lower letters for the hex numbers there.
+Ah yes, the entire destruction path is protected which seems correct.
+Instead of that WARN_ONCE in page_pool_item_uninit() can we instead
+check the number of inflight packets vs what we just unmapped? IOW
+check 'mask' against what page_pool_inflight() gives you and warn if
+those aren't equal.
 
 
-thanks,
-
-Takashi
+Thanks
+/Ilias
+>
+> >
 
