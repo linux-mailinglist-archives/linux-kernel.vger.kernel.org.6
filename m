@@ -1,165 +1,138 @@
-Return-Path: <linux-kernel+bounces-344777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2792598AE29
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:23:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86FC098AE2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CB41C22316
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4079F1F21A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365E1A0BCF;
-	Mon, 30 Sep 2024 20:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA961A262E;
+	Mon, 30 Sep 2024 20:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xp+jErUB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NBQn5rmq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD75619882F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7BF1A2578
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727727748; cv=none; b=qcpe9BQ6Lwxg4SDE8+ub1ObDJ1I0Ua8fR1nxmAfIqQdg3rqrF0v8BUPHCJKDcQ9fXKsOwaNEUMHgNLqADC8eeDiIhR8cXF9OC5aUlZwkaOTH0+QCJ2tc3VA1ssGTBnrYZ9W7tSE1J+LbLH103dQTGuo8UCbgoIELKRIGwv7VxFY=
+	t=1727727774; cv=none; b=o/U/J2SurAQ2vAAVYBjn14vYWlVs4n8xpTJYW9NuKNz+uc0K8brYnudz6azKBO0TYLhDO3a4YpjdKFkHe4PPERwwo0fZ2c/I85wQ/Qus+3B4StyAfmUOG6pkfPEynAjPReccixe3BvUaILVa0UCCJyUKs60+yphZ+ue7cLb3bC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727727748; c=relaxed/simple;
-	bh=A1wHnKiaTlaypR5dONAN1Xy73fJmQWSKqqtUSv7ruNA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItaT13GcAEmZmpJrzFGxTKBsMQUn1jJ7CfxruZjAXZ8s7lEk0BoavOJUNP9wesumAR9GCdWMCO8fFBhpZhoUmtiF05y5KwrtZ8tTJWBomqbQTanWOgqcz7GH4qaeSRVdwAY5K3duH1xPPJLwKI43zUME656+toN977Q2Y1cNL10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xp+jErUB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A204C4CEC7;
-	Mon, 30 Sep 2024 20:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727727748;
-	bh=A1wHnKiaTlaypR5dONAN1Xy73fJmQWSKqqtUSv7ruNA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xp+jErUBnN4FRGCPZ00b7N2Qfq0C7hHCUCs6Hxx8K/lKAh3I+fQ5MK+9ynMKArF99
-	 9lqsfhxlErN+k/V6+G+M4hlDozJJXDkNGMH5QZx6BrYA7bGYU8aS1APlOo7Wqr05Mk
-	 5jZESEs/RSu4+puT0XnLplS82XQHtsaJp3X9FTuObdgmIShyTDi8aEtcO/Fw8S64kz
-	 LwncCYSJKjWwtd0wnbBALoTAIW3gzf3HVDMGnA1Vv67qiuki70HZD1WC/qwtG4jCvI
-	 REgVz/lunJPtwR0Zsy0o8EXoOAQHzSxwa5pmPfrIBgvhcGOhc012ZhwqaSpIzDi4so
-	 AdgRYtjlmzUzA==
-Date: Mon, 30 Sep 2024 13:22:26 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, kan.liang@linux.intel.com,
-	adrian.hunter@intel.com, peterz@infradead.org, mingo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] perf jevents: Don't stop at the first matched pmu when
- searching a events table
-Message-ID: <ZvsIgszeRrlWEUj8@google.com>
-References: <20240716132951.1748662-1-kan.liang@linux.intel.com>
- <CAP-5=fVZVU7kMOHz7CC7O1+2dX844dHqhqMebzEKWMA=59am-g@mail.gmail.com>
- <Zqo8kVXkN_UaTp6f@x1>
- <CAP-5=fX=QR66nQ6VKRMFfiFdueiC1EUGmxSbT9RCkW8dz67e6w@mail.gmail.com>
+	s=arc-20240116; t=1727727774; c=relaxed/simple;
+	bh=kMZH+xLU9w/w+jErL7nAUzTIjTaixU+hbZdI5UMjEAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uyq3sk4gwVvryP4TE4ONRHu/E7IZxVZ2TCXiE51nvmtDoorCw4FWeOG/uFO1poWmsPhMKjFZ+AwA32e0dGV4eC/uyBTpHGMsTmpUqMX/6taBcXt+VONSH3XiXA43+FgVIAG2ocCbqWNXt5goGkRH086udpR9MFw4cHUjAyRb2e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NBQn5rmq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727727771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVaqJm7tLoF1HWWT2ray8rPf/j7gC0aKBR8MDdz/TH4=;
+	b=NBQn5rmq8W1u6x00+cf7A5Z1r3HaWw7qWaZvJVGgjkfIbwi2cZeBoXr9xaNIAwrUpvXwTt
+	3RQ5B+QmBUShsnKaONL1qtsfEGzmVE08Ps8LjTrp56LLNOpkrOrjnXTFxN3/gJlEOHA9gX
+	aj4PFuoEtRY6QR03DQ92a6XzV/T3Iek=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-271-zdjoiHiFMgOaITjYeaoBkA-1; Mon, 30 Sep 2024 16:22:48 -0400
+X-MC-Unique: zdjoiHiFMgOaITjYeaoBkA-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2fac57a3f02so13479061fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:22:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727727767; x=1728332567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVaqJm7tLoF1HWWT2ray8rPf/j7gC0aKBR8MDdz/TH4=;
+        b=EJn3ZiY6MamJMrGevhCtCa5qSGd6hT4REkHKXWE3lfWQvLbbg7YbFhps2fmC4mxMNV
+         +Ar8tppHkxSxVAwBzgZ2qWB/LpI0ahqWbLljnDmUN4rouDKURRSlv7Zj8XJjaYXSzIuz
+         +lOHSiqXFr+1kjmnxPBb/vUw1L9SovQHLe8drNLjyyQBnEeul7AD/UwRnYsOcd+tRpNo
+         kUweKdKJSQ18+/acaPoYpxuyWDcyZbQvnG9zJIqYwHtGqZVhCqlFO8ivqNy/rpHVKcL4
+         UUtPn0+LmY32ZTmmTy9DHAYlo+WNtUNntNbt8W6dUH7Ti5RYpv5WLn0MSVOR0Rpw8fNF
+         ztkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrKa9TwHFj90ABpv9MXWXDYCQPGsryqlVmzYILQgZfy62saFCmMwku56U0BJxNiha2O+oZjdQpV6yUb9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3lOlXVHN1LasoTmPaHICHjD4KrGLoWqV47DAqgkcLFyO8SOKD
+	IP7dnc63PDWeVNOJ2g7oGInYNpuiCOexlH7vmk9oyAg9523GfD/+RaSrBDAaVtqaX8LZM0i9v6s
+	nA74QgbQTJl0VkTg89LTr16RbT7uht/UNOow9Gzk0tVl5VD6Ixlbdxcw37/MvSryvxzpnIozuqN
+	jWD4JRiW8Gff1w3nD3mYa33iMnhF3RwWtKjXt0
+X-Received: by 2002:a2e:a58d:0:b0:2ef:2cdb:5055 with SMTP id 38308e7fff4ca-2f9d3e56140mr78848781fa.20.1727727766770;
+        Mon, 30 Sep 2024 13:22:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOED+J7NIK671EAM5WNjgF/ITexh9huIebyGUKOqbFC6PtuFqTW3MFJhR+aLaTHS/W0tzN6SptNXddUS+y8JA=
+X-Received: by 2002:a2e:a58d:0:b0:2ef:2cdb:5055 with SMTP id
+ 38308e7fff4ca-2f9d3e56140mr78848661fa.20.1727727766316; Mon, 30 Sep 2024
+ 13:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fX=QR66nQ6VKRMFfiFdueiC1EUGmxSbT9RCkW8dz67e6w@mail.gmail.com>
+References: <20240930201358.2638665-1-aahringo@redhat.com> <20240930201358.2638665-12-aahringo@redhat.com>
+In-Reply-To: <20240930201358.2638665-12-aahringo@redhat.com>
+From: Alexander Aring <aahringo@redhat.com>
+Date: Mon, 30 Sep 2024 16:22:34 -0400
+Message-ID: <CAK-6q+h2-APvPUUDYgjGx2FzeJVkeAzH5Br+27A6bZyztfD5mA@mail.gmail.com>
+Subject: Re: [PATCHv2 dlm/next 11/12] dlm: add nldlm net-namespace aware UAPI
+To: teigland@redhat.com
+Cc: gfs2@lists.linux.dev, song@kernel.org, yukuai3@huawei.com, 
+	agruenba@redhat.com, mark@fasheh.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, ocfs2-devel@lists.linux.dev, 
+	netdev@vger.kernel.org, vvidic@valentin-vidic.from.hr, heming.zhao@suse.com, 
+	lucien.xin@gmail.com, donald.hunter@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 02:34:43PM -0700, Ian Rogers wrote:
-> On Wed, Jul 31, 2024 at 6:31 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Tue, Jul 16, 2024 at 09:30:01AM -0700, Ian Rogers wrote:
-> > > On Tue, Jul 16, 2024 at 6:29 AM <kan.liang@linux.intel.com> wrote:
-> > > >
-> > > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > >
-> > > > The "perf all PMU test" fails on a Coffee Lake machine.
-> > > >
-> > > > The failure is caused by the below change in the commit e2641db83f18
-> > > > ("perf vendor events: Add/update skylake events/metrics").
-> > > >
-> > > > +    {
-> > > > +        "BriefDescription": "This 48-bit fixed counter counts the UCLK cycles",
-> > > > +        "Counter": "FIXED",
-> > > > +        "EventCode": "0xff",
-> > > > +        "EventName": "UNC_CLOCK.SOCKET",
-> > > > +        "PerPkg": "1",
-> > > > +        "PublicDescription": "This 48-bit fixed counter counts the UCLK cycles.",
-> > > > +        "Unit": "cbox_0"
-> > > >      }
-> > > >
-> > > > The other cbox events have the unit name "CBOX", while the fixed counter
-> > > > has a unit name "cbox_0". So the events_table will maintain separate
-> > > > entries for cbox and cbox_0.
-> > > >
-> > > > The perf_pmus__print_pmu_events() calculates the total number of events,
-> > > > allocate an aliases buffer, store all the events into the buffer, sort,
-> > > > and print all the aliases one by one.
-> > > >
-> > > > The problem is that the calculated total number of events doesn't match
-> > > > the stored events in the aliases buffer.
-> > > >
-> > > > The perf_pmu__num_events() is used to calculate the number of events. It
-> > > > invokes the pmu_events_table__num_events() to go through the entire
-> > > > events_table to find all events. Because of the
-> > > > pmu_uncore_alias_match(), the suffix of uncore PMU will be ignored. So
-> > > > the events for cbox and cbox_0 are all counted.
-> > > >
-> > > > When storing events into the aliases buffer, the
-> > > > perf_pmu__for_each_event() only process the events for cbox.
-> > > >
-> > > > Since a bigger buffer was allocated, the last entry are all 0.
-> > > > When printing all the aliases, null will be outputted, and trigger the
-> > > > failure.
-> > > >
-> > > > The mismatch was introduced from the commit e3edd6cf6399 ("perf
-> > > > pmu-events: Reduce processed events by passing PMU"). The
-> > > > pmu_events_table__for_each_event() stops immediately once a pmu is set.
-> > > > But for uncore, especially this case, the method is wrong and mismatch
-> > > > what perf does in the perf_pmu__num_events().
-> > > >
-> > > > With the patch,
-> > > > $ perf list pmu | grep -A 1 clock.socket
-> > > >    unc_clock.socket
-> > > >         [This 48-bit fixed counter counts the UCLK cycles. Unit: uncore_cbox_0
-> > > > $ perf test "perf all PMU test"
-> > > >   107: perf all PMU test                                               : Ok
-> > > >
-> > > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > Closes: https://lore.kernel.org/all/202407101021.2c8baddb-oliver.sang@intel.com/
-> > > > Fixes: e3edd6cf6399 ("perf pmu-events: Reduce processed events by passing PMU")
-> > > > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> > >
-> > > Awesome sauce, thanks!
-> > >
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
-> >
-> > Thanks, applied to tmp.perf-tools-next,
-> 
-> Did this get applied? I'm not seeing it in perf-tools-next:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/tools/perf/pmu-events/jevents.py?h=perf-tools-next
+Hi,
 
-I'm seeing this build failure after applying this.
+On Mon, Sep 30, 2024 at 4:14=E2=80=AFPM Alexander Aring <aahringo@redhat.co=
+m> wrote:
+>
+> Recent patches introduced support to separate DLM lockspaces on a per
+> net-namespace basis. Currently the file based configfs mechanism is used
+> to configure parts of DLM. Due the lack of namespace awareness (and it's
+> probably complicated to add support for this) in configfs we introduce a
+> socket based UAPI using "netlink". As the DLM subsystem offers now a
+> config layer it can simultaneously being used with configfs, just that
+> nldlm is net-namespace aware.
+>
+> Most of the current configfs functionality that is necessary to
+> configure DLM is being adapted for now. The nldlm netlink interface
+> offers also a multicast group for lockspace events NLDLM_MCGRP_EVENT.
+> This event group can be used as alternative to the already existing udev
+> event behaviour just it only contains DLM related subsystem events.
+>
+> Attributes e.g. nodeid, port, IP addresses are expected from the user
+> space to fill those numbers as they appear on the wire. In case of DLM
+> fields it is using little endian byte order.
+>
+> The dumps are being designed to scale in future with high numbers of
+> members in a lockspace. E.g. dump members require an unique lockspace
+> identifier (currently only the name) and nldlm is using a netlink dump
+> behaviour to be prepared if all entries may not fit into one netlink
+> message.
+>
+> Signed-off-by: Alexander Aring <aahringo@redhat.com>
+> ---
+>  Documentation/netlink/specs/nldlm.yaml |  438 ++++++++
+>  fs/dlm/Makefile                        |    2 +
+>  fs/dlm/config.c                        |   20 +-
+>  fs/dlm/dlm_internal.h                  |    4 +
+>  fs/dlm/lockspace.c                     |   13 +-
+>  fs/dlm/netlink2.c                      | 1330 ++++++++++++++++++++++++
 
-    TEST    pmu-events/empty-pmu-events.log
-  --- pmu-events/empty-pmu-events.c	2024-09-26 10:27:15.600055460 -0700
-  +++ pmu-events/test-empty-pmu-events.c	2024-09-30 13:20:34.631357001 -0700
-  @@ -380,7 +380,7 @@
-                           continue;
-   
-                   ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
-  -                if (pmu || ret)
-  +                if (ret)
-                           return ret;
-           }
-           return 0;
-  make[3]: *** [pmu-events/Build:42: pmu-events/empty-pmu-events.log] Error 1
-  make[3]: *** Deleting file 'pmu-events/empty-pmu-events.log'
-  make[2]: *** [Makefile.perf:765: pmu-events/pmu-events-in.o] Error 2
-  make[2]: *** Waiting for unfinished jobs....
+and this file shouldn't be there anymore. Will be dropped in v3.
 
-Thanks,
-Namhyung
+- Alex
 
 
