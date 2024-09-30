@@ -1,217 +1,295 @@
-Return-Path: <linux-kernel+bounces-344445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE8298A9B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC5698A9B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:25:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A9BEB26F39
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:25:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756342840BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBE6193062;
-	Mon, 30 Sep 2024 16:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C49192D91;
+	Mon, 30 Sep 2024 16:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aTAxUAhc"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="hrWQmKCf"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ADB1922DA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F6D192D63
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727713490; cv=none; b=OTylvhnScnQ4xvbX+eS0AXpR8/0qsm2MkSRl7d0Npqy23dUa/nzKYaQRbSqJ2qSgefisZ0DYqt0NyS+bj4Xn7YecTMAH4EmDJcTk4JBtBmCqqwAS36pdRYKJfYlvBpRIuiegPuY7PRplyTQonRn8XfdXIpHWrg9c935rUTQXoSY=
+	t=1727713514; cv=none; b=KQ/iypsINKhQHAOXiUpTBbM1fgnXEQCXRCZHFj35LK24Wfw+e5xSZ5xo3JTzVEzL/mGE1s02oqgcsLLnN4w26cDpKdu5OSXMgNYASR6/LjRUgZS/Hy3w1fa8WasUp5nSaYVqy+fy7K3ppmPoXn6AvXgelpIlLeQUGLxfFcB1axw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727713490; c=relaxed/simple;
-	bh=cm1iMA5E1JEwQLIugczi5ID0Pj5mxPLPlfIW+emurIo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BMuYHXIHfUy/Q5R085iotvHQWdxylV2ZwosUdL+YO7i4p00bzyoTDcL6DGD1TxPQxQfGtmv93aQFX6dcC1UMzbw2d0wQxO7EEFjiLst+Zuq6xZAGtllVwpjzlBAoUsw7ozs1DWhsRBC+fg/joEckZqmcH4HybEU+1Ky4ywTqCCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aTAxUAhc; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso27707925e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727713486; x=1728318286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KTQmpWX1xjrIeCQTKfF4B9XU+G77FDiaMmwwkCmoSps=;
-        b=aTAxUAhcggzUISAs0+0IFoSmmR/4PtZ4NWCKTBcuvMbDQqXKirwi1+rRlHsawMjxTk
-         geAD1CED4zC5CmwFRiXKRU8u5cihfsmuTebTlTyhQtxm2Sw5qc3CR6189pPXpqiuroXp
-         gTKSqTsEPTsuhnLo+JpOoVIVtJgbfLnwTZMCGXpfHkpNW9V94N7njEGaffggROL27CIs
-         EXe/d8Cb+wUQ2ivt9VA15ziS6pzgqhGYeJV8S+UmJn0LxAxzupajUIPX4afEE97HPRMD
-         LvxOqVDvxsVn2YKgZNXGpkh4j1rOQgfzJqfdIreLwM8neW0EaIMgjCYJd0o8Xg3UBTDO
-         6RdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727713486; x=1728318286;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KTQmpWX1xjrIeCQTKfF4B9XU+G77FDiaMmwwkCmoSps=;
-        b=NT2WdYrv0nttpToBc1SYt/c6Au2LdG5S5tSlh9jf1y1zYB2KpOcGI3uy2ivlG0CfuN
-         WiaCfMxMWbgrBcN5hDE7o1I4FBn9pC4bViG8aB6nV8IrqIXS2v83CLNzAInvOOWNusd2
-         1ZEaPe1nNCX+nxK7Rx1tZAbv40pwrQqp3oj8weikdn0EK49Hk9FoVKGM0VUA8g5xZq+A
-         hPS4OFePQMXHZwqLH08t/clBOMILEy7BhoHxuKIgpGMEFbFvg+u3NbcRSnE+mCpbGHBN
-         NVPqdcRUbmdUiZaXE36GXaStnqcaV/msryeTrUpi741ZfXE2akcNjWgm27vpXRi3qSN9
-         p4sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrti5y1/X7WGXCAT7C1OF3dr53LSrw1JBdhN8VD1AOdaK+VFsoiYId3QxT7DAfd21yiCPrzDb070BeHvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwsIgwtabCNw7mKjP+RWEJOTdTrh3NA+j/tdluwF4G5vzgT5mA
-	QiFE/MpT1PYH5qXUVX1tmWy1NSWWGvu24VF11aDUY0GcBa7veP1gWejXx1yJbVc=
-X-Google-Smtp-Source: AGHT+IFjyl1j45oZbdtAwMgdv1A0Xh0Oniofn6QvCC2y9fqqxuW5fJm1hT9Wb31GWHDBB6/zrBOuGw==
-X-Received: by 2002:a05:600c:3b88:b0:426:64c1:8388 with SMTP id 5b1f17b1804b1-42f713698d9mr1065435e9.17.1727713485908;
-        Mon, 30 Sep 2024 09:24:45 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:bdc6:abc9:5047:7828? ([2a01:e0a:982:cbb0:bdc6:abc9:5047:7828])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dd30efsm106891195e9.9.2024.09.30.09.24.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 09:24:45 -0700 (PDT)
-Message-ID: <16bd6bc2-8f10-4b99-9903-6e9f0f8778d8@linaro.org>
-Date: Mon, 30 Sep 2024 18:24:44 +0200
+	s=arc-20240116; t=1727713514; c=relaxed/simple;
+	bh=+2MCILDC1zpNpVBwS/6W6iEVW1NVvpynbeDUB70j9vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6nStav9jgLaxlddLdxSGDolFK785eLrKL3m4E7s9g/OWDWlkGa2WNR8mhI8Hucfl42dCa7T3Y7WiqbQsJn9w2jPs1P0/RZ84/YY7PWPn8XqAwY/669/BFrbKJaSiyduf3+AM5RaqFfQQvAIP3oPLygNg7Lbcer9ibfK9KxNF5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=hrWQmKCf; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4XHRHl3KqFz9sw4;
+	Mon, 30 Sep 2024 18:25:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1727713507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lc5w0jjbjYglTEDp5V0W5PElsrzK57Oidg6NZC/yHAs=;
+	b=hrWQmKCfS/ANDShdANmZa2k3jBy7MTGHOk5rPDX1YOrog/Hhjr9UkC8+vb6CEOiRp3nlZV
+	bIkruqYUP6mP/pkkpMQBaxeHdXtnT8lqz4MLExmZqSCZhX/7PX8v+dE5FSXwe0PMOTF9YD
+	QSxiLB4vnsuJ5ws6JTPGliKDzPXmGiw14dZmD6sDlSYikAKlnXHBIlkE/0gZOAOT5BRpiJ
+	FWiwmNRFdzdhIivA536/EKK6Hk18+gDMqmuy0a+eceLwLKDIgzu5p09OUp8pGUVk+uxIXJ
+	zfXRmtfw7ctG5tX+Yc7SfuGUXfbLVT7UXl82o0UOo61Czv+6VOwMIwf9DHIikQ==
+Date: Mon, 30 Sep 2024 18:24:50 +0200
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	Christian Brauner <brauner@kernel.org>, Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/1 fyi] tools include UAPI: Sync linux/fcntl.h copy with
+ the kernel sources
+Message-ID: <20240930.162315-undated.permit.modular.catnip-THGkg7JTJlP@cyphar.com>
+References: <ZvrIKL3cREoRHIQd@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm: panel: jd9365da-h3: fix reset signal polarity
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: Jagan Teki <jagan@edgeble.ai>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Linus Walleij <linus.walleij@linaro.org>,
- Hugo Villeneuve <hvilleneuve@dimonoff.com>, stable@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240927135306.857617-1-hugo@hugovil.com>
- <f9b0cc53-00ae-4390-9ff9-1dac0c0804ba@linaro.org>
- <20240930110537.dbbd51824c2bb68506e2f678@hugovil.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240930110537.dbbd51824c2bb68506e2f678@hugovil.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 30/09/2024 17:05, Hugo Villeneuve wrote:
-> On Mon, 30 Sep 2024 16:38:14 +0200
-> Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> 
->> Hi,
->>
->> On 27/09/2024 15:53, Hugo Villeneuve wrote:
->>> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
->>>
->>> In jadard_prepare() a reset pulse is generated with the following
->>> statements (delays ommited for clarity):
->>>
->>>       gpiod_set_value(jadard->reset, 1); --> Deassert reset
->>>       gpiod_set_value(jadard->reset, 0); --> Assert reset for 10ms
->>>       gpiod_set_value(jadard->reset, 1); --> Deassert reset
->>>
->>> However, specifying second argument of "0" to gpiod_set_value() means to
->>> deassert the GPIO, and "1" means to assert it. If the reset signal is
->>> defined as GPIO_ACTIVE_LOW in the DTS, the above statements will
->>> incorrectly generate the reset pulse (inverted) and leave it asserted
->>> (LOW) at the end of jadard_prepare().
->>
->> Did you check the polarity in DTS of _all_ users of this driver ?
-> 
-> Hi Neil,
-> I confirmed that no in-tree DTS is referencing this driver. I did a
-> search of all the compatible strings defined in the
-> "jadard,jd9365da-h3.yaml" file. I also did the same on Debian code
-> search.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3u3exscggjzaaacw"
+Content-Disposition: inline
+In-Reply-To: <ZvrIKL3cREoRHIQd@x1>
 
 
-OK then:
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+--3u3exscggjzaaacw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Hugo.
-> 
-> 
->>
->> Neil
->>
->>>
->>> Fix reset behavior by inverting gpiod_set_value() second argument
->>> in jadard_prepare(). Also modify second argument to devm_gpiod_get()
->>> in jadard_dsi_probe() to assert the reset when probing.
->>>
->>> Do not modify it in jadard_unprepare() as it is already properly
->>> asserted with "1", which seems to be the intended behavior.
->>>
->>> Fixes: 6b818c533dd8 ("drm: panel: Add Jadard JD9365DA-H3 DSI panel")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
->>> ---
->>>    drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 8 ++++----
->>>    1 file changed, 4 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->>> index 44897e5218a69..6fec99cf4d935 100644
->>> --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->>> +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
->>> @@ -110,13 +110,13 @@ static int jadard_prepare(struct drm_panel *panel)
->>>    	if (jadard->desc->lp11_to_reset_delay_ms)
->>>    		msleep(jadard->desc->lp11_to_reset_delay_ms);
->>>    
->>> -	gpiod_set_value(jadard->reset, 1);
->>> +	gpiod_set_value(jadard->reset, 0);
->>>    	msleep(5);
->>>    
->>> -	gpiod_set_value(jadard->reset, 0);
->>> +	gpiod_set_value(jadard->reset, 1);
->>>    	msleep(10);
->>>    
->>> -	gpiod_set_value(jadard->reset, 1);
->>> +	gpiod_set_value(jadard->reset, 0);
->>>    	msleep(130);
->>>    
->>>    	ret = jadard->desc->init(jadard);
->>> @@ -1131,7 +1131,7 @@ static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
->>>    	dsi->format = desc->format;
->>>    	dsi->lanes = desc->lanes;
->>>    
->>> -	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
->>> +	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
->>>    	if (IS_ERR(jadard->reset)) {
->>>    		DRM_DEV_ERROR(&dsi->dev, "failed to get our reset GPIO\n");
->>>    		return PTR_ERR(jadard->reset);
->>>
->>> base-commit: 18ba6034468e7949a9e2c2cf28e2e123b4fe7a50
->>
->>
-> 
-> 
+On 2024-09-30, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> Picking the changes from:
+>=20
+>   4356d575ef0f39a3 ("fhandle: expose u64 mount id to name_to_handle_at(2)=
+")
+>   b4fef22c2fb97fa2 ("uapi: explain how per-syscall AT_* flags should be a=
+llocated")
+>   820a185896b77814 ("fcntl: add F_CREATED_QUERY")
+>=20
+> It just moves AT_REMOVEDIR around, and adds a bunch more AT_ for
+> renameat2() and name_to_handle_at(). We need to improve this situation,
+> as not all AT_ defines are applicable to all fs flags...
+>=20
+> This adds support for those new AT_ defines, addressing this build
+> warning:
+>=20
+>   diff -u tools/perf/trace/beauty/include/uapi/sound/asound.h include/uap=
+i/sound/asound.h
 
+Thanks, feel free to take my
+
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Aleksa Sarai <cyphar@cyphar.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Link: https://lore.kernel.org/lkml/
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/trace/beauty/fs_at_flags.sh        |  5 ++
+>  .../trace/beauty/include/uapi/linux/fcntl.h   | 84 +++++++++++++------
+>  2 files changed, 65 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/tools/perf/trace/beauty/fs_at_flags.sh b/tools/perf/trace/be=
+auty/fs_at_flags.sh
+> index 456f59addf741062..e3f13f96a27c227c 100755
+> --- a/tools/perf/trace/beauty/fs_at_flags.sh
+> +++ b/tools/perf/trace/beauty/fs_at_flags.sh
+> @@ -13,9 +13,14 @@ printf "static const char *fs_at_flags[] =3D {\n"
+>  regex=3D'^[[:space:]]*#[[:space:]]*define[[:space:]]+AT_([^_]+[[:alnum:]=
+_]+)[[:space:]]+(0x[[:xdigit:]]+)[[:space:]]*.*'
+>  # AT_EACCESS is only meaningful to faccessat, so we will special case it=
+ there...
+>  # AT_STATX_SYNC_TYPE is not a bit, its a mask of AT_STATX_SYNC_AS_STAT, =
+AT_STATX_FORCE_SYNC and AT_STATX_DONT_SYNC
+> +# AT_HANDLE_FID and AT_HANDLE_MNT_ID_UNIQUE are reusing values and are v=
+alid only for name_to_handle_at()
+> +# AT_RENAME_NOREPLACE reuses 0x1 and is valid only for renameat2()
+>  grep -E $regex ${linux_fcntl} | \
+>  	grep -v AT_EACCESS | \
+>  	grep -v AT_STATX_SYNC_TYPE | \
+> +	grep -v AT_HANDLE_FID | \
+> +	grep -v AT_HANDLE_MNT_ID_UNIQUE | \
+> +	grep -v AT_RENAME_NOREPLACE | \
+>  	sed -r "s/$regex/\2 \1/g"	| \
+>  	xargs printf "\t[ilog2(%s) + 1] =3D \"%s\",\n"
+>  printf "};\n"
+> diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/p=
+erf/trace/beauty/include/uapi/linux/fcntl.h
+> index c0bcc185fa48f852..87e2dec79fea4ef2 100644
+> --- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> +++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> @@ -16,6 +16,9 @@
+> =20
+>  #define F_DUPFD_QUERY	(F_LINUX_SPECIFIC_BASE + 3)
+> =20
+> +/* Was the file just created? */
+> +#define F_CREATED_QUERY	(F_LINUX_SPECIFIC_BASE + 4)
+> +
+>  /*
+>   * Cancel a blocking posix lock; internal use only until we expose an
+>   * asynchronous lock api to userspace:
+> @@ -87,37 +90,70 @@
+>  #define DN_ATTRIB	0x00000020	/* File changed attibutes */
+>  #define DN_MULTISHOT	0x80000000	/* Don't remove notifier */
+> =20
+> +#define AT_FDCWD		-100    /* Special value for dirfd used to
+> +					   indicate openat should use the
+> +					   current working directory. */
+> +
+> +
+> +/* Generic flags for the *at(2) family of syscalls. */
+> +
+> +/* Reserved for per-syscall flags	0xff. */
+> +#define AT_SYMLINK_NOFOLLOW		0x100   /* Do not follow symbolic
+> +						   links. */
+> +/* Reserved for per-syscall flags	0x200 */
+> +#define AT_SYMLINK_FOLLOW		0x400   /* Follow symbolic links. */
+> +#define AT_NO_AUTOMOUNT			0x800	/* Suppress terminal automount
+> +						   traversal. */
+> +#define AT_EMPTY_PATH			0x1000	/* Allow empty relative
+> +						   pathname to operate on dirfd
+> +						   directly. */
+> +/*
+> + * These flags are currently statx(2)-specific, but they could be made g=
+eneric
+> + * in the future and so they should not be used for other per-syscall fl=
+ags.
+> + */
+> +#define AT_STATX_SYNC_TYPE		0x6000	/* Type of synchronisation required f=
+rom statx() */
+> +#define AT_STATX_SYNC_AS_STAT		0x0000	/* - Do whatever stat() does */
+> +#define AT_STATX_FORCE_SYNC		0x2000	/* - Force the attributes to be sync=
+'d with the server */
+> +#define AT_STATX_DONT_SYNC		0x4000	/* - Don't sync attributes with the s=
+erver */
+> +
+> +#define AT_RECURSIVE			0x8000	/* Apply to the entire subtree */
+> +
+>  /*
+> - * The constants AT_REMOVEDIR and AT_EACCESS have the same value.  AT_EA=
+CCESS is
+> - * meaningful only to faccessat, while AT_REMOVEDIR is meaningful only to
+> - * unlinkat.  The two functions do completely different things and there=
+fore,
+> - * the flags can be allowed to overlap.  For example, passing AT_REMOVED=
+IR to
+> - * faccessat would be undefined behavior and thus treating it equivalent=
+ to
+> - * AT_EACCESS is valid undefined behavior.
+> + * Per-syscall flags for the *at(2) family of syscalls.
+> + *
+> + * These are flags that are so syscall-specific that a user passing thes=
+e flags
+> + * to the wrong syscall is so "clearly wrong" that we can safely call su=
+ch
+> + * usage "undefined behaviour".
+> + *
+> + * For example, the constants AT_REMOVEDIR and AT_EACCESS have the same =
+value.
+> + * AT_EACCESS is meaningful only to faccessat, while AT_REMOVEDIR is mea=
+ningful
+> + * only to unlinkat. The two functions do completely different things and
+> + * therefore, the flags can be allowed to overlap. For example, passing
+> + * AT_REMOVEDIR to faccessat would be undefined behavior and thus treati=
+ng it
+> + * equivalent to AT_EACCESS is valid undefined behavior.
+> + *
+> + * Note for implementers: When picking a new per-syscall AT_* flag, try =
+to
+> + * reuse already existing flags first. This leaves us with as many unuse=
+d bits
+> + * as possible, so we can use them for generic bits in the future if nec=
+essary.
+>   */
+> -#define AT_FDCWD		-100    /* Special value used to indicate
+> -                                           openat should use the current
+> -                                           working directory. */
+> -#define AT_SYMLINK_NOFOLLOW	0x100   /* Do not follow symbolic links.  */
+> +
+> +/* Flags for renameat2(2) (must match legacy RENAME_* flags). */
+> +#define AT_RENAME_NOREPLACE	0x0001
+> +#define AT_RENAME_EXCHANGE	0x0002
+> +#define AT_RENAME_WHITEOUT	0x0004
+> +
+> +/* Flag for faccessat(2). */
+>  #define AT_EACCESS		0x200	/* Test access permitted for
+>                                             effective IDs, not real IDs. =
+ */
+> +/* Flag for unlinkat(2). */
+>  #define AT_REMOVEDIR		0x200   /* Remove directory instead of
+>                                             unlinking file.  */
+> -#define AT_SYMLINK_FOLLOW	0x400   /* Follow symbolic links.  */
+> -#define AT_NO_AUTOMOUNT		0x800	/* Suppress terminal automount traversal =
+*/
+> -#define AT_EMPTY_PATH		0x1000	/* Allow empty relative pathname */
+> -
+> -#define AT_STATX_SYNC_TYPE	0x6000	/* Type of synchronisation required fr=
+om statx() */
+> -#define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
+> -#define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'=
+d with the server */
+> -#define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the se=
+rver */
+> -
+> -#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+> +/* Flags for name_to_handle_at(2). */
+> +#define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+> +					   object identity and may not be
+> +					   usable with open_by_handle_at(2). */
+> +#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID.=
+ */
+> =20
+> -/* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits.=
+=2E. */
+> -#define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
+> -					compare object identity and may not
+> -					be usable to open_by_handle_at(2) */
+>  #if defined(__KERNEL__)
+>  #define AT_GETATTR_NOSEC	0x80000000
+>  #endif
+> --=20
+> 2.46.0
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--3u3exscggjzaaacw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvrQ0gAKCRAol/rSt+lE
+b4xGAP9pDQeLYGBhkgIo1Y94rEhJ8eMjOKdXdl5sClNOjbWMwQD+MIQNQnLPuImD
+s/e4FiJYJtInH4EyjvJhBYeNlIQOIA8=
+=WkkI
+-----END PGP SIGNATURE-----
+
+--3u3exscggjzaaacw--
 
