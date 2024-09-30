@@ -1,157 +1,91 @@
-Return-Path: <linux-kernel+bounces-344334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5D98A885
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CEBC98A8BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8C4281CC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B661F26F10
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3378219309E;
-	Mon, 30 Sep 2024 15:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="gal2qjXA"
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2A219CD1E;
+	Mon, 30 Sep 2024 15:33:22 +0000 (UTC)
+Received: from tretyak2.mcst.ru (tretyak2.mcst.ru [212.5.119.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7789C19006F;
-	Mon, 30 Sep 2024 15:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727709952; cv=pass; b=of8RCioAdkq5KhptYosJxgkbT9z92+0ifmmJSdsNDDTEvlBE4Jr8t3vTq/fymFpiHk3yP1XtmSh68gxwy0e8XLerxHBANTOvxjdxN65S54/ZV8+16A7UPPHYPvBSjVZ9f92t4xwGMSi6EGUvNCr744mvlyXlQpa6TToE/I3aXYU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727709952; c=relaxed/simple;
-	bh=20hfKOAlqmEDqruN2uXHj2fi1xV7GxBSj3qINFXp+gU=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=Wc+bB6qhlLax9Pzfn+p+U7BNBZttn/GKD72HbajIc50HxzE8J+0E1df24cDIxmOXjSuRwS+Q2dlLOVtu92X8NgBTmi7LyxV504QKa8aaQI2YWjHsXusMz0ktIfTsBiuQyGJ1D7OhNFBB1mGrsn1K0U5nRcGatq9rv34DgGf6AlU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=gal2qjXA; arc=pass smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1727709930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=INLc2tSrcn36QCY27uxhMv9M2y5U3XqU/kdk7BsQoxs=;
-	b=gal2qjXAkD2e/DaqzvJ9Y2gQwhfY3IP7H70nD2EPqbIIBcCYwi/GvitF0k28+qItxF6SjA
-	P8FmXRp9k1Z6vCP/OJam7vkkTHvvUY+egS7QkWCGCRj13YthsCup+h81HTuS9rppTLfWhw
-	e4zMddOJvp+PfC8ZuZLWsHijtohSo7R6y+O7CeHMho3jyJT2mbb336jS9D7P0fexIxT3OY
-	NLM831TuJWY8bZii+d5U8ID6E5OpapX01105/Obzc7sTL6trDlq41OdZIY28ea95rwQc2D
-	1OtrknyihXH+eU25xI2iZnCnCEda4LqfCk/9meRT6/ZLUsMOD5L5h3+Eld2kyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1727709930; h=from:from:sender:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=INLc2tSrcn36QCY27uxhMv9M2y5U3XqU/kdk7BsQoxs=;
-	b=LEBxyWoRYP1HKaMq8FITr2BqZ399TS1UNGly6smKYiJQ8Ow/uqp5Exy909clAwtoWj5Czs
-	dJj9t/G1a5rK94r21a3ZjvpMaFUOlfkSqmpAmrcxGuBLIo00froUOhZisS/iRHBKKGD2Rb
-	LeLWKyEVSUxpQApDZkGIyE5xFImXjLP2e6iUpclxZEJKObc1op+EtEPvr44AqLBIYq6JRd
-	YgnDKH+Vb0UumjaHSbAdGHjDpqtD9mizSFH0nQLF2kUdCiHdDpHRN5wkrhmf6yllREp/Lq
-	6KayNL0XyoZ5/GSvBgyNIpc2acEMq2HU8QhtqnTWcELNxCKbEa9svWhadF8B6w==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.mailfrom=pc@manguebit.com
-ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1727709930; a=rsa-sha256;
-	cv=none;
-	b=TX1n43wl1/E9QoELkrRdPEFtGtWRQsCACAirFAi0SyKwwnT7ugDf6sJmWcustvhIwRTj4f
-	dk21J+Bo8Z/ya+0EXYuZn3Y6Q0jin4Phk6/VCEIxcZb7OwuZ0v6V6Qs52OIWsxCBbJJDt8
-	YmXg5TJTVwHoz6DGeL/eubGQrDA9zajtvzKoLf6bE7MiC+2UAGkea6e/ihwvNvJa3iI6ij
-	HMGssVxBghXe8Jl/pzjX+l72LfXLbulIivyA9gr4LYNbTc0UI8zkOyOTqBLP8VF9wDWEF7
-	tk9FHGsiRePc1XNH7jDHbmsEABJ+8Ht8LyKuLBI40U5GMBn3jC+95MYcZlp1CQ==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, Steve French
- <sfrench@samba.org>, Ronnie
- Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
- reparse call
-In-Reply-To: <20240928215948.4494-3-pali@kernel.org>
-References: <20240928215948.4494-1-pali@kernel.org>
- <20240928215948.4494-3-pali@kernel.org>
-Date: Mon, 30 Sep 2024 12:25:27 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC57919ABCD
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.5.119.215
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727710402; cv=none; b=pxP3dmpHwCJ2P/hyfAceoqZqi3Pb103VDWAd+3IjkIeJiSZUF7t0Szu3mTKoioamsU4A+eJfBKfbacAMP7BeV8z1NguZs4Jy68YvHvHLNXySrs7paICpAVpQy9+ysHAmUt83G1BvSvbXRJXi21/wQ8rpMuYlXdba2iazJ4JtYeI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727710402; c=relaxed/simple;
+	bh=j2IlBI1xK8TKv3ARgJFQxwlQn6szkcbFH4+kTBLMqVQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FiqVk9kdVGODnCPeltQtXjd0zDVjfUljplWSr0+eAcad3HZ1VsibaTc2aBF668nCq5DYfeTEKLTA0uprMB2+b4lH8rG3XNJECMJLvaVL0cKI5vcIi8mTsj6cjVcil6fu2HFDs0GcuKjRVn5ymB6q5o26izk9PUOlxPJoo7kIE6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru; spf=pass smtp.mailfrom=mcst.ru; arc=none smtp.client-ip=212.5.119.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcst.ru
+Received: from tretyak2.mcst.ru (localhost [127.0.0.1])
+	by tretyak2.mcst.ru (Postfix) with ESMTP id B175E102391;
+	Mon, 30 Sep 2024 18:33:08 +0300 (MSK)
+Received: from frog.lab.sun.mcst.ru (frog.lab.sun.mcst.ru [176.16.4.50])
+	by tretyak2.mcst.ru (Postfix) with ESMTP id ABD7C101765;
+	Mon, 30 Sep 2024 18:32:23 +0300 (MSK)
+Received: from artemiev-i.lab.sun.mcst.ru (avior-1 [192.168.63.223])
+	by frog.lab.sun.mcst.ru (8.13.4/8.12.11) with ESMTP id 48UFWMPI023053;
+	Mon, 30 Sep 2024 18:32:23 +0300
+From: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
+To: Karol Herbst <kherbst@redhat.com>
+Cc: Igor Artemiev <Igor.A.Artemiev@mcst.ru>, Lyude Paul <lyude@redhat.com>,
+        Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>,
+        Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org
+Subject: [PATCH] drm/nouveau/clk: prevent division by zero in gt215_clk_info()
+Date: Mon, 30 Sep 2024 18:25:51 +0300
+Message-Id: <20240930152551.1581766-1-Igor.A.Artemiev@mcst.ru>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus: Kaspersky Anti-Virus for Linux Mail Server 5.6.39/RELEASE,
+	 bases: 20111107 #2745587, check: 20240930 notchecked
+X-AV-Checked: ClamAV using ClamSMTP
 
-Pali Roh=C3=A1r <pali@kernel.org> writes:
+sdiv can be zero if read_vco() returns 0 or khz is greater than sclk*2.
+This value will cause a division-by-zero error in the gt215_clk_info() function.
 
-> If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-> intermediate object created by CREATE. Otherwise empty object stay on the
-> server when reparse call failed.
->
-> This ensures that if the creating of special files is unsupported by the
-> server then no empty file stay on the server as a result of unsupported
-> operation.
->
-> Fixes: 102466f303ff ("smb: client: allow creating special files via repar=
-se points")
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
->  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> index 11a1c53c64e0..af42f44bdcf4 100644
-> --- a/fs/smb/client/smb2inode.c
-> +++ b/fs/smb/client/smb2inode.c
-> @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs_op=
-en_info_data *data,
->  	struct cifs_sb_info *cifs_sb =3D CIFS_SB(sb);
->  	struct cifsFileInfo *cfile;
->  	struct inode *new =3D NULL;
-> +	int out_buftype[2] =3D {};
-> +	struct kvec out_iov[2];
->  	struct kvec in_iov[2];
->  	int cmds[2];
->  	int rc;
-> @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_op=
-en_info_data *data,
->  		cmds[1] =3D SMB2_OP_POSIX_QUERY_INFO;
->  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
->  		rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
->  		if (!rc) {
->  			rc =3D smb311_posix_get_inode_info(&new, full_path,
->  							 data, sb, xid);
-> @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_=
-open_info_data *data,
->  		cmds[1] =3D SMB2_OP_QUERY_INFO;
->  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
->  		rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
->  		if (!rc) {
->  			rc =3D cifs_get_inode_info(&new, full_path,
->  						 data, sb, xid, NULL);
->  		}
->  	}
-> +
-> +	if (rc) {
-> +		/*
-> +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
-> +		 * remove the intermediate object created by CREATE. Otherwise
-> +		 * empty object stay on the server when reparse call failed.
-> +		 */
-> +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status =3D=3D STATUS_SUC=
-CESS &&
-> +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status !=3D STATUS_SUCCE=
-SS)
-> +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-> +	}
+Add a check before division. 
 
-You should handle the case where ->iov_base is NULL or out_buftype =3D=3D
-CIFS_NO_BUFFER, otherwise you'll end up with a NULL ptr deref.
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
+
+Signed-off-by: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
+---
+ drivers/gpu/drm/nouveau/nvkm/subdev/clk/gt215.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gt215.c b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gt215.c
+index b5f3969727a2..4c53442b4167 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gt215.c
++++ b/drivers/gpu/drm/nouveau/nvkm/subdev/clk/gt215.c
+@@ -206,6 +206,9 @@ gt215_clk_info(struct nvkm_clk *base, int idx, u32 khz,
+ 	default:
+ 		sclk = read_vco(clk, idx);
+ 		sdiv = min((sclk * 2) / khz, (u32)65);
++		if (!sdiv)
++			return -EINVAL;
++
+ 		oclk = (sclk * 2) / sdiv;
+ 		diff = ((khz + 3000) - oclk);
+ 
+-- 
+2.39.2
+
 
