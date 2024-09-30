@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-343533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB39989C29
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:05:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEF0989C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D7791F21319
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:05:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7908B2376D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B63F15C15E;
-	Mon, 30 Sep 2024 08:04:58 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6F65674E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A602185B67;
+	Mon, 30 Sep 2024 08:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Luh721dP"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85781185937;
+	Mon, 30 Sep 2024 08:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727683497; cv=none; b=MzXq8WI4nGfsSB4urRVowkBG6IEeh1IwKt2sv7cAv8/BuTetxiup0M2QLyfQ8ios+jXrt1SzFspvTH3gUwb4VYZjQjZAWOdBtnEiwldIxKi9hdU+tHbOBK4QcRXs6sywrwCB5pSJ1OIu48rmVVng8KBDhjt82IRSsyV/gcb7vKw=
+	t=1727683956; cv=none; b=c+5arLzQBmVQWpUIVhqdm8Ku9UfLcWIxqVW0MTrLQGZkqGX+je53Rsqnj7XsINmZWvNnGGSC5GQXCUFcNDUAqyq82H1orZZ3AeTHhaOeDWKDuJx65oGJA8wi28xqRyPQ5ZRS8dTfpWUwdrU1VcgmKjAze9DETCounhJ5rkBR5zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727683497; c=relaxed/simple;
-	bh=n+3ucnwcpKavVDnZ0QPclYZ6KtnqyG/pl1f3tfLnuvE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G+PzMdC+kHWlmGJ6phgI6dUJj16O9Pas3Q5OgtyJZdIXnVXvJ0tG8dhrhubgQjPqyKl7q/yUk8dTedU3z+tmSeA5YwjS65NI1crr+qW0OtDctfGlVq4baAjqoClLObfKlEQ5zo0rmPnvU//ynR/LwZhAhJevLQJYi+jOWmALbO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XHDB04ZQLz20pSY;
-	Mon, 30 Sep 2024 16:04:24 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 437471400CB;
-	Mon, 30 Sep 2024 16:04:51 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Sep
- 2024 16:04:50 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <ericvh@kernel.org>, <lucho@ionkov.net>, <asmadeus@codewreck.org>,
-	<linux_oss@crudebyte.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <m.grzeschik@pengutronix.de>,
-	<gregkh@linuxfoundation.org>, <v9fs@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] net/9p/usbg: Fix build error
-Date: Mon, 30 Sep 2024 16:15:20 +0800
-Message-ID: <20240930081520.2371424-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727683956; c=relaxed/simple;
+	bh=kk/hgYJKzfrSyEZ63RX3OFjZ+ojTIwIQixIFkUGn+HY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=fJcgI9w+cAkze0OW0tBVHvnwihBXxGSyuedMfkN8s0Ot4T5fvJAVDAaJQP02rpSVeZ40AKDuXJIbv9YjTgbH0fCsIUQLVS3FAMSA+ENz+bk9xpfeMchcGYMVP7yvDIC7AdmCZavgEMHYELw/WjCzJrmC9pKWQg2xXkkrS8OoF4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Luh721dP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 3A45220C8C63; Mon, 30 Sep 2024 01:12:35 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A45220C8C63
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727683955;
+	bh=6uy2HCfWrjzOK/GPEwENb235RVQzwbIIz+wXrMpaUeA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Luh721dPCXQ/jnoJhJ72hu8j4/zuMHI7ttozso439aRvt/DTDOtQiaP5ErPh6qfXT
+	 xqghT9v/lv5eaIofpc+zViPt8KXBQxxMzbsBDC5s5Aq/gATvGyLkCc/MA2I1sFcBYd
+	 XNfHH0iFUPZVU6fY1Gn5yLN2eKZ2gh+k94geNMb0=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	dmitry.torokhov@gmail.com,
+	mikelley@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ernis@microsoft.com,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH v2 3/3] Revert "HID: hyperv: register as a wakeup source"
+Date: Mon, 30 Sep 2024 01:11:57 -0700
+Message-Id: <1727683917-31485-4-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1727683917-31485-1-git-send-email-ernis@linux.microsoft.com>
+References: <1727683917-31485-1-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
-CONFIG_CONFIGFS_FS=m, the following build error occurs:
+This reverts commit f1210455e78a610c7b316389b31c162c371d888c.
 
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
-	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
-	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
-	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
-	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
-	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
-	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
-	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
-	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
-	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
-	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
-	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
-	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
-	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
-	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
+Remove mouse as wakeup source since Suspend-To-Idle feature
+is disabled.
 
-Select the config for NET_9P_USBG to fix it.
-
-Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
 ---
- net/9p/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hid/hid-hyperv.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/net/9p/Kconfig b/net/9p/Kconfig
-index 63f988f0c9e8..ee967fd25312 100644
---- a/net/9p/Kconfig
-+++ b/net/9p/Kconfig
-@@ -43,6 +43,8 @@ config NET_9P_XEN
- config NET_9P_USBG
- 	bool "9P USB Gadget Transport"
- 	depends on USB_GADGET=y || USB_GADGET=NET_9P
-+	select CONFIGFS_FS
-+	select USB_LIBCOMPOSITE
- 	help
- 	  This builds support for a transport for 9pfs over
- 	  usb gadget.
+diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
+index f33485d83d24..b6d0f7db4c93 100644
+--- a/drivers/hid/hid-hyperv.c
++++ b/drivers/hid/hid-hyperv.c
+@@ -293,9 +293,6 @@ static void mousevsc_on_receive(struct hv_device *device,
+ 		memcpy(input_dev->input_buf, input_report->buffer, len);
+ 		hid_input_report(input_dev->hid_device, HID_INPUT_REPORT,
+ 				 input_dev->input_buf, len, 1);
+-
+-		pm_wakeup_hard_event(&input_dev->device->device);
+-
+ 		break;
+ 	default:
+ 		pr_err("unsupported hid msg type - type %d len %d\n",
+@@ -502,8 +499,6 @@ static int mousevsc_probe(struct hv_device *device,
+ 		goto probe_err2;
+ 	}
+ 
+-	device_init_wakeup(&device->device, true);
+-
+ 	input_dev->connected = true;
+ 	input_dev->init_complete = true;
+ 
+@@ -526,7 +521,6 @@ static void mousevsc_remove(struct hv_device *dev)
+ {
+ 	struct mousevsc_dev *input_dev = hv_get_drvdata(dev);
+ 
+-	device_init_wakeup(&dev->device, false);
+ 	vmbus_close(dev->channel);
+ 	hid_hw_stop(input_dev->hid_device);
+ 	hid_destroy_device(input_dev->hid_device);
 -- 
 2.34.1
 
