@@ -1,162 +1,110 @@
-Return-Path: <linux-kernel+bounces-344148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4016998A568
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:35:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81E198A581
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721061C222F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:35:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2F3B27299
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C19718F2FD;
-	Mon, 30 Sep 2024 13:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633BE18FC79;
+	Mon, 30 Sep 2024 13:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQ7XLHLQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="geDgJNFo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFFC157A5C;
-	Mon, 30 Sep 2024 13:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B500157A5C;
+	Mon, 30 Sep 2024 13:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727703336; cv=none; b=moLEdreJcrtXWuBu6rGwllpgoQqOU0hSwYlKO9JInEQoVRtc1vOpGTmjnm1dIuB/1vkPagxTkEZ36pj2FxEMN3Yn84NBhH9bmGSOm3T/rkgRft0poI0jH42q3vLQ+d8AI17ozG70rEvZc0Al7gWI+wh/oDZuGcNMpIhuPMzLVI0=
+	t=1727703400; cv=none; b=r4LEuIDKHNM3FRDeI3GxLJPhsFGUu+gAge14H/o0nr6FT7cemllqa5dyJwOXjFaI+4l2eUS+i2IsAgMkQaJjTmavPmjM/GJM5zx7Oj7P8huI2pkkQ/Ymu/GajOhfG9K3DxjmH6HcMQwG3g1wtyEipkR516k+FBazSSG7dyOuaUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727703336; c=relaxed/simple;
-	bh=wpk8Xj6hS9Lyqr2G2RKw+Zd47k6ByENaOrMXscau0g0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OtHZ/M/oaJ482iT3/sZAiavzlam/IWDKg8Kn+7F0DkDLIOmWQGVOq1/qBMkR7BFjAR7CLlauyDga+AB3UR3ZUKufFpET0tYddA7lUejZL+76yDG1/zmpihSVXUpXo9VlAHaFg56+ui7Fue+0KANCx4+PYqW2tf+GMOwA4l6l+l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQ7XLHLQ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727703335; x=1759239335;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=wpk8Xj6hS9Lyqr2G2RKw+Zd47k6ByENaOrMXscau0g0=;
-  b=CQ7XLHLQkmFNTzH7/r/V4mO0ttn2C3tGIg6eW5YmI6HTM3wokUqBMkZN
-   v2XADVq060LXIhnzh+YM13B2swISAENFrKvKA4NVAWbL/O+xPy/vK0noT
-   7jrXM8UtUhJR0N242HFw/KsSCfoypqez8PrVKJEn51oO5Y1iLeAeFPZK+
-   4vFFkC0mMiUHHfBoMUDV6KMg7VJ9vKf9rt1t+j0ZSQm8DeoDio6yRPy5Q
-   RXht6v/r51kTKW7fW1c6fVeDvcuRJLZ6GhS8myuxRbLdlzXm7qrR7oPhv
-   5iaSjI5mo6GED1s9T9G5H//TWX/x5Kzq2yOBoyoJ7KUIooLJhmZ9txqkc
-   Q==;
-X-CSE-ConnectionGUID: u0z3PIuyR8e+sWzJs0FBzw==
-X-CSE-MsgGUID: 3FhK3vVvR3yChZ/xHMrA5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44311825"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="44311825"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:35:34 -0700
-X-CSE-ConnectionGUID: OreTxhscTLKPUKPVlETLkw==
-X-CSE-MsgGUID: rn88oSeUSnaIZiqvsRXolA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="104107858"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:35:31 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Sep 2024 16:35:28 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 04/13] selftests/resctrl: Protect against array overrun
- during iMC config parsing
-In-Reply-To: <c3ff2c7df3d10931087e25e5488eb1ab2f5fe13c.1726164080.git.reinette.chatre@intel.com>
-Message-ID: <93b9f530-1d2d-dc19-1d48-c15aced32804@linux.intel.com>
-References: <cover.1726164080.git.reinette.chatre@intel.com> <c3ff2c7df3d10931087e25e5488eb1ab2f5fe13c.1726164080.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1727703400; c=relaxed/simple;
+	bh=9Jod10R4RtzEoR4Uzv7lhmO0qX6B/HcFytO0MOVHoAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NIvmjBkJoGD6xyzBeuM0aeSoUN+c6KEWmdn7/apPtUAL7XEmSX0rEa9KniOk++LGBPT/Qz45BzNyorC64Ox5slqNoR3eCgZzDPHkZqwq0XqARCfQiRaum9Ph3e91VW74hYFRQKia9wZWkfhc8nRiCUphPRjiN1xB64u7vTCyPX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=geDgJNFo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727703396;
+	bh=VoQFTK/chG5VYPCklOHOHrA7ZyeKJw67fZSy41PgLso=;
+	h=Date:From:To:Cc:Subject:From;
+	b=geDgJNFo8hGahupx8+N5tp0A9M9n8sJX8TMU9/qY8bIezzJG5LLFjcvOhKpUzRbm9
+	 3lwQqwWIwE+gZlwqKi32BJiYUG6NwAvyG6f3W6weaEq8QaL4Ucey8+bph6ERKfSGHE
+	 8K7nbbgxNEFaAg7ELoc872h34Dl6CAgE2Xx7zSQF1qo8aLDpFen2VazKJ52dGyxqD8
+	 752TcR7TGruYLqRlBxInb+HgijNN4RzqTDa7uwTLSenXwkE9YGyH06l4fD6VBHA3Fe
+	 Yam56FREBzRKNe7NO06s3mp9fYzz6Vixaj1s46oDVlH+mfksrgFbT2uIIrYxCdRE2w
+	 xXzBNIc9m1iNQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XHMYJ07Zxz4wbv;
+	Mon, 30 Sep 2024 23:36:35 +1000 (AEST)
+Date: Mon, 30 Sep 2024 23:36:34 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Sam Edwards <cfsworks@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the rockchip tree
+Message-ID: <20240930233634.3af1daa9@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-737293731-1727703328=:938"
+Content-Type: multipart/signed; boundary="Sig_/BPMoywLiDuDvRz9ONJJK6=G";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+--Sig_/BPMoywLiDuDvRz9ONJJK6=G
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---8323328-737293731-1727703328=:938
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Hi all,
 
-On Thu, 12 Sep 2024, Reinette Chatre wrote:
+In commits
 
-> The MBM and MBA tests need to discover the event and umask with which to
-> configure the performance event used to measure read memory bandwidth.
-> This is done by parsing the
-> /sys/bus/event_source/devices/uncore_imc_<imc instance>/events/cas_count_=
-read
-> file for each iMC instance that contains the formatted
-> output: "event=3D<event>,umask=3D<umask>"
->=20
-> Parsing of cas_count_read contents is done by initializing an array of
-> MAX_TOKENS elements with tokens (deliminated by "=3D,") from this file.
-> Start by removing the unnecessary append of a delimiter to the string
+  ab3cf1ab3fdb ("arm64: dts: rockchip: Designate Turing RK1's system power =
+controller")
+  ed1b30c33bb9 ("arm64: dts: rockchip: Fix Turing RK1 PCIe3 hang")
 
-Start what? (It sounds odd given the lack of any context, my guess is=20
-you're trying to refer to start/first one of the changes you make in the=20
-patch but the textual context does not support that conclusion.) I suggest=
-=20
-you just rephrase it and avoid using "start" word altogether.
+Fixes tag
 
-> needing to be parsed. Per the strtok() man page: "delimiter bytes at
-> the start or end of the string are ignored". This has no impact on
-> the token placement within the array.
->=20
-> After initialization, the actual event and umask is determined by
-> parsing the tokens directly following the "event" and "umask" tokens
-> respectively.
->=20
-> Iterating through the array up to index "i < MAX_TOKENS" but then
-> accessing index "i + 1" risks array overrun during the final iteration.
-> Avoid array overrun by ensuring that the index used within for
-> loop will always be valid.
->=20
-> Fixes: 1d3f08687d76 ("selftests/resctrl: Read memory bandwidth from perf =
-IMC counter and from resctrl file system")
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-> ---
-> Changes since V1:
-> - New patch.
-> ---
->  tools/testing/selftests/resctrl/resctrl_val.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
-g/selftests/resctrl/resctrl_val.c
-> index 70e8e31f5d1a..e88d5ca30517 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
-> @@ -83,13 +83,12 @@ static void get_event_and_umask(char *cas_count_cfg, =
-int count, bool op)
->  =09char *token[MAX_TOKENS];
->  =09int i =3D 0;
-> =20
-> -=09strcat(cas_count_cfg, ",");
->  =09token[0] =3D strtok(cas_count_cfg, "=3D,");
-> =20
->  =09for (i =3D 1; i < MAX_TOKENS; i++)
->  =09=09token[i] =3D strtok(NULL, "=3D,");
-> =20
-> -=09for (i =3D 0; i < MAX_TOKENS; i++) {
-> +=09for (i =3D 0; i < MAX_TOKENS - 1; i++) {
->  =09=09if (!token[i])
->  =09=09=09break;
->  =09=09if (strcmp(token[i], "event") =3D=3D 0) {
->=20
+  Fixes: 2806a69f3f ("arm64: dts: rockchip: Add Turing RK1 SoM support")
 
-The code change seems fine so after improving the commit message, please=20
-add:
+has these problem(s):
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+  - SHA1 should be at least 12 digits long
+
+    This can be fixed for the future by setting core.abbrev to 12 (or
+    more) or (for git v2.11 or later) just making sure it is not set
+    (or set to "auto").
 
 --=20
- i.
+Cheers,
+Stephen Rothwell
 
---8323328-737293731-1727703328=:938--
+--Sig_/BPMoywLiDuDvRz9ONJJK6=G
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb6qWIACgkQAVBC80lX
+0GzGYQgAkm5Rjdw8XHfOyLwkOisAROtrBsl9usjh7Q9TNVqZ7V9tPdE98bY/fMNS
+CfW3jCA7+5FdvvlntMRPPHIHah6GlZ1d1kQdMdorZBga2o1hkkY0ZRJRdvK0Hb22
+sNfb77CqVqjhCSq9vt0CU5Ts6tw/ccW/IAXHTwsj13aZ9KLZXvs6/jUkdz8QqsHG
+3pCZfK10ugyRgyh1wnDevmxOl+sXXmYB4L37GwAJTblp3P0tjYtFbZhenjPMOxqI
+gKYTc2x4f/UurjBlPH22WnN/iolnRRiSVeab7xDAWDxDZttjp2vR9Tv9udY0sjRb
+NRVYOd3FhB8F0ovVEmzT697XMpj9cg==
+=Xoo8
+-----END PGP SIGNATURE-----
+
+--Sig_/BPMoywLiDuDvRz9ONJJK6=G--
 
