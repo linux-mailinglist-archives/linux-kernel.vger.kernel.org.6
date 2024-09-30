@@ -1,110 +1,76 @@
-Return-Path: <linux-kernel+bounces-343595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF8D989D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CCD989D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45942814C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A397280FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70196185B4F;
-	Mon, 30 Sep 2024 08:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OfFvgxab"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33E181334;
-	Mon, 30 Sep 2024 08:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEB7186607;
+	Mon, 30 Sep 2024 08:47:25 +0000 (UTC)
+Received: from amphora2.sui-inter.net (amphora2.sui-inter.net [80.74.147.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8BF417C7A3;
+	Mon, 30 Sep 2024 08:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.74.147.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727685713; cv=none; b=ACfZzhqWskG95gMHKA9I8LG5aDGJqRD/ASAgU6ksTVoXbgA9Q+2mvfu4gqREDYfcr5w6aqQsqrvffw74W8yABTjLRht664/GXoInxkN4U0nUzvZZu4UYAaTBWJ9Ir03aUx06zZ58w5B6EyzaCgN/pLeRijbr0x63Re0t3u5L0pI=
+	t=1727686045; cv=none; b=elRSvsQOok5QT5z7R79ud9ByCyyBIXOrKRHQIuBruRt0bgYitWu44cnqxx7Q2Shm9DOws/S5n/Vao3C5OttQ2OExNBgK4YdhfUJFeyQmWKBLxJK/xV3tc97XlKxiaIScu2yr/spTaHg8ihgDhkR9IHWMia1WnD/PIv/D0OJc+y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727685713; c=relaxed/simple;
-	bh=kk/hgYJKzfrSyEZ63RX3OFjZ+ojTIwIQixIFkUGn+HY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=i2MAJH/XxPUpD9recsINTmQejBfzjlNh86WJeX2bgICfwFr9WaX1y6AxKCRRUq+zPrOsOIA4Gg20Jc+rjF1nvVov6kpf3E64j1JgDxVTZoh9Y9lI1Jxtyuc9wPkHG7sV2/Q5CIqN8uHsEtMKEXMCoy4UchKIJehOAXMrvm/ee0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OfFvgxab; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 634A320C8C66; Mon, 30 Sep 2024 01:41:52 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 634A320C8C66
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1727685712;
-	bh=6uy2HCfWrjzOK/GPEwENb235RVQzwbIIz+wXrMpaUeA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OfFvgxabXFT3sT4UkGtOZKIm83ucDqKCoHWvCW0VjhdIMGhoHrIKdovekX9i3SVge
-	 FU21XiNIWZz1keSN8v2ACV5tiuPsM1ACe96s7k65CwEI8Zvc86KZ8AMBwzyOjOYRhw
-	 wSy4YgOArqdewAvA5BsQa5+TO/kKCgwbZ8/5YShw=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	dmitry.torokhov@gmail.com,
-	mikelley@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ernis@microsoft.com,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Subject: [PATCH v3 3/3] Revert "HID: hyperv: register as a wakeup source"
-Date: Mon, 30 Sep 2024 01:41:48 -0700
-Message-Id: <1727685708-3524-4-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1727685708-3524-1-git-send-email-ernis@linux.microsoft.com>
-References: <1727685708-3524-1-git-send-email-ernis@linux.microsoft.com>
+	s=arc-20240116; t=1727686045; c=relaxed/simple;
+	bh=QxhZnwlrbbVVbS/DyQWT/dfY83S0RBvX1CzyA0kvaDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i377IY6KKe/09pSu65eRDE9+89d4DhCVv0sMPhjM4H4Nht58bm8W/vUKz1MlbNxqMk9rHauzWleZCXQQI7wMDEKd2XGnp1W3wX8RLXgTSFwIFdu71saKeO7FabBIPorNiGH1vDIWNjCnxbfbszz3uo1w5Eq/k58fnLdVye+MvHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hqv.ch; spf=none smtp.mailfrom=hqv.ch; arc=none smtp.client-ip=80.74.147.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hqv.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hqv.ch
+Received: from [192.168.172.95] (localhost [127.0.0.1]) by amphora2.sui-inter.net (Postfix) with ESMTPSA id 76C5A96824BD;
+	Mon, 30 Sep 2024 10:41:59 +0200 (CEST)
+Authentication-Results: amphora.sui-inter.net;
+        spf=pass (sender IP is 178.197.176.65) smtp.mailfrom=rs@hqv.ch smtp.helo=[192.168.172.95]
+Received-SPF: pass (amphora.sui-inter.net: connection is authenticated)
+Message-ID: <e93e1dd6-c215-4168-83e9-b8199599bc09@hqv.ch>
+Date: Mon, 30 Sep 2024 10:41:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/22] wifi: nxpwifi: create nxpwifi to support iw61x
+To: David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, kvalo@kernel.org,
+ francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de
+References: <20240930063701.2566520-1-yu-hao.lin@nxp.com>
+Content-Language: en-US, de-CH
+From: Reto Schneider <rs@hqv.ch>
+In-Reply-To: <20240930063701.2566520-1-yu-hao.lin@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This reverts commit f1210455e78a610c7b316389b31c162c371d888c.
+Hi David,
 
-Remove mouse as wakeup source since Suspend-To-Idle feature
-is disabled.
+Answering here because an OEM proposed using the IW612 in an upcoming 
+product of my employer.
 
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
----
- drivers/hid/hid-hyperv.c | 6 ------
- 1 file changed, 6 deletions(-)
+On 30.09.24 08:36, David Lin wrote:
+> [1] We had considered adding IW61x to mwifiex, however due to FW
+>      architecture, host command interface and supported features are
+>      significantly different, doing this on mwifiex will carry a lot of
+>      burdens. The effort of making sure no regression is also a huge effort.
+>      We must create a new driver nxpwifi. Subsequent NXP chipsets will be
+>      added and sustained on nxpwifi only.
 
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index f33485d83d24..b6d0f7db4c93 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -293,9 +293,6 @@ static void mousevsc_on_receive(struct hv_device *device,
- 		memcpy(input_dev->input_buf, input_report->buffer, len);
- 		hid_input_report(input_dev->hid_device, HID_INPUT_REPORT,
- 				 input_dev->input_buf, len, 1);
--
--		pm_wakeup_hard_event(&input_dev->device->device);
--
- 		break;
- 	default:
- 		pr_err("unsupported hid msg type - type %d len %d\n",
-@@ -502,8 +499,6 @@ static int mousevsc_probe(struct hv_device *device,
- 		goto probe_err2;
- 	}
- 
--	device_init_wakeup(&device->device, true);
--
- 	input_dev->connected = true;
- 	input_dev->init_complete = true;
- 
-@@ -526,7 +521,6 @@ static void mousevsc_remove(struct hv_device *dev)
- {
- 	struct mousevsc_dev *input_dev = hv_get_drvdata(dev);
- 
--	device_init_wakeup(&dev->device, false);
- 	vmbus_close(dev->channel);
- 	hid_hw_stop(input_dev->hid_device);
- 	hid_destroy_device(input_dev->hid_device);
--- 
-2.34.1
+As developer, this sounds like a huge red flag. In the long-term 
+interest of my employer, I'd oppose using this type of hardware in our 
+products even if you manage to upstream the driver (as is).
+
+Kind regards,
+Reto
 
 
