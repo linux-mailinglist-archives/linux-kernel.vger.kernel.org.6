@@ -1,108 +1,287 @@
-Return-Path: <linux-kernel+bounces-343427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9569989AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAD1989AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 598351F21DBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F020B28354D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2F71531E8;
-	Mon, 30 Sep 2024 06:40:42 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A63C155398;
+	Mon, 30 Sep 2024 06:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIbzbPtp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37C0156960
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B272D15532E;
+	Mon, 30 Sep 2024 06:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727678442; cv=none; b=Hie0ib8GashmosNoQp8lpdYF9NsLW9OiOhKuSFMQ8H2OFSGvVW7cDHOTswNmM8oLfXgwOXL9Tbf8Jze+6TMKXhmOG+ZmrIHxgVsvHlWjAhYyBbwnC+xYr93YIJb8ByxWLKLNMUeZ0/Vp/hrblfwuNh04c8BVwa5R8k1eNabK1Hs=
+	t=1727678371; cv=none; b=g2xhriYPvTTSYWjVPwt+zSAnn8EEZmBbe7G+LLo+XMhqusT07gF++tjS60dvFKMNtR5U03Y3oniLpTUN0G/6d8OGlmoqiwQ0lk2GnXTzzlsQ1d0UhTDX0fRa0aSGhObBd+RRdxAsFpv/T8BIg7ye3BX0XH3LVfOQ1RlKICfIaG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727678442; c=relaxed/simple;
-	bh=MzqW3gEeRJrhGyP1tY/hFqNBpudEX2zquWeZWAyrXwg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fViLuoW6hJpmJ/BLJFyE6vZreRxuLfFN5efmaT1olHlXFYgEEdSKXrJB0POSOO4dgBivQJsgCI6WYAznXyDbGdYjrfFeM2e/TMVYT6V/POtFeFriCQyQ/zhDj3N/5QH9UKS5CxA6fJ7Guge7tsJUhAEaFLtjCizLa6eVWnxHeJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 48U6dVJK069882;
-	Mon, 30 Sep 2024 14:39:31 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XHB6w6F09z2R6KXB;
-	Mon, 30 Sep 2024 14:31:36 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 30 Sep 2024 14:39:29 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand
-	<david@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Yu Zhao
-	<yuzhao@google.com>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCH] mm: deal with active/inactive inversion in lru_gen_is_active
-Date: Mon, 30 Sep 2024 14:39:12 +0800
-Message-ID: <20240930063912.196526-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1727678371; c=relaxed/simple;
+	bh=fiemyF/hfAE5dZX6DgxcWS8/IybMpnKKxC2VhkzqA88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MUQl0QTSBQ4wE2HC1nQ88tdBQxpH5nDYOybx6bKLJPi9oqAJcbH04wYcb3ZEkryZHkQdnpWQnmU4Xo9goRxM4EzykIqbe2TRq+lAG2DZ8SCXLdDoxd1Qpm8cyHwqDgDS3MmkfKj4XTOkJbI+36ez4Q5CmITmlZEjBzAv7ekI6+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIbzbPtp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7493C4CECE;
+	Mon, 30 Sep 2024 06:39:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727678371;
+	bh=fiemyF/hfAE5dZX6DgxcWS8/IybMpnKKxC2VhkzqA88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lIbzbPtpbnHyYbN1X26on0PORp/CgpSUUWyW07cVJkanBwSKq34yHPexa21+b4Ksl
+	 r36EUY0TKYuxG3ODYy4obi0l5MNdA2KeTsilq2mPbMN24yqPjq64Qih9usGpGdYcAN
+	 muOgD2aA+P6Ko1orSPOlBecWm8+cbMNHhLcFiJaJcVpR9YtdillhZZx9Xy+Oi6JBO0
+	 huTohGYc5SjKSh4nCvzkiyUcMCNVK+xxxPGxcjyF8e0dUI2RLQQ4GGP8Lmm+Mdi/Q3
+	 qETZqtT4HUW4pHS/1iYr6fli64U+0AxAmLQVayBMP9q+VyEnmSHHEuw/0X1l+zAT57
+	 BDjGLdX+gB6Pw==
+Date: Sun, 29 Sep 2024 23:39:29 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 5/8] perf record --off-cpu: Dump total off-cpu time at
+ the end.
+Message-ID: <ZvpHocNuQRBehUWp@google.com>
+References: <20240927202736.767941-1-howardchu95@gmail.com>
+ <20240927202736.767941-6-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 48U6dVJK069882
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240927202736.767941-6-howardchu95@gmail.com>
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Fri, Sep 27, 2024 at 01:27:33PM -0700, Howard Chu wrote:
+> By setting a placeholder sample_type and then writing real data into
+> raw_data, we mimic the direct sample method to write data at the end.
+> 
+> Note that some data serve only as placeholders and will be overwritten
+> by the data in raw_data. Additionally, since the IP will be updated in
+> evsel__parse_sample(), there is no need to handle it in off_cpu_write().
+> 
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/util/bpf_off_cpu.c | 116 +++++++++++++++++++++-------------
+>  1 file changed, 72 insertions(+), 44 deletions(-)
+> 
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
+> index f7233a09ec77..2a1cfd7e0b09 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -138,12 +138,19 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
+>  	int ncpus = 1, ntasks = 1, ncgrps = 1;
+>  	struct strlist *pid_slist = NULL;
+>  	struct str_node *pos;
+> +	struct evsel *evsel;
+>  
+>  	if (off_cpu_config(evlist) < 0) {
+>  		pr_err("Failed to config off-cpu BPF event\n");
+>  		return -1;
+>  	}
+>  
+> +	evsel = evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
+> +	if (evsel == NULL) {
+> +		pr_err("%s evsel not found\n", OFFCPU_EVENT);
+> +		return -1 ;
+> +	}
+> +
+>  	skel = off_cpu_bpf__open();
+>  	if (!skel) {
+>  		pr_err("Failed to open off-cpu BPF skeleton\n");
+> @@ -259,7 +266,6 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
+>  	}
+>  
+>  	if (evlist__first(evlist)->cgrp) {
+> -		struct evsel *evsel;
+>  		u8 val = 1;
+>  
+>  		fd = bpf_map__fd(skel->maps.cgroup_filter);
+> @@ -280,6 +286,7 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
+>  		}
+>  	}
+>  
+> +	skel->bss->sample_type   = OFFCPU_EMBEDDED_SAMPLE_TYPES;
 
-All gens will be deemed as active by lru_gen_is_active when there are
-only two generations within the node, which could have the folios
-to be active in the belowing scenarios. This commit would like to
-solve this by judging if numbers of file type gens greater than two
-since anon gens could be remains as 3 when swap is constrained and file
-type seq advanced by 1.
+Hmm.. you set the sample_type unconditionally which means the embedded
+data in the raw area has the fixed format.  Then I think you don't need
+the sample_type variable at all.
 
-1. New folios after migration done.
-2. Dropped folios from none-reclaiming context(drop_cache, madvise)
-   when they are failed of being reclaimed and go back to lru.
 
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
- include/linux/mm_inline.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+>  	skel->bss->offcpu_thresh = opts->off_cpu_thresh * 1000;
+>  
+>  	err = off_cpu_bpf__attach(skel);
+> @@ -305,7 +312,8 @@ int off_cpu_write(struct perf_session *session)
+>  {
+>  	int bytes = 0, size;
+>  	int fd, stack;
+> -	u64 sample_type, val, sid = 0;
+> +	u32 raw_size;
+> +	u64 sample_type_off_cpu, sample_type_bpf_output, val, sid = 0, tstamp = OFF_CPU_TIMESTAMP;
+>  	struct evsel *evsel;
+>  	struct perf_data_file *file = &session->data->file;
+>  	struct off_cpu_key prev, key;
+> @@ -315,7 +323,6 @@ int off_cpu_write(struct perf_session *session)
+>  			.misc = PERF_RECORD_MISC_USER,
+>  		},
+>  	};
+> -	u64 tstamp = OFF_CPU_TIMESTAMP;
+>  
+>  	skel->bss->enabled = 0;
+>  
+> @@ -325,15 +332,10 @@ int off_cpu_write(struct perf_session *session)
+>  		return 0;
+>  	}
+>  
+> -	sample_type = evsel->core.attr.sample_type;
+> -
+> -	if (sample_type & ~OFFCPU_SAMPLE_TYPES) {
+> -		pr_err("not supported sample type: %llx\n",
+> -		       (unsigned long long)sample_type);
+> -		return -1;
+> -	}
+> +	sample_type_off_cpu    = OFFCPU_EMBEDDED_SAMPLE_TYPES;
+> +	sample_type_bpf_output = evsel->core.attr.sample_type;
+>  
+> -	if (sample_type & (PERF_SAMPLE_ID | PERF_SAMPLE_IDENTIFIER)) {
+> +	if (sample_type_bpf_output & (PERF_SAMPLE_ID | PERF_SAMPLE_IDENTIFIER)) {
+>  		if (evsel->core.id)
+>  			sid = evsel->core.id[0];
+>  	}
+> @@ -344,49 +346,75 @@ int off_cpu_write(struct perf_session *session)
+>  
+>  	while (!bpf_map_get_next_key(fd, &prev, &key)) {
+>  		int n = 1;  /* start from perf_event_header */
+> -		int ip_pos = -1;
+> +		int i = 0; /* raw data index */
+>  
+>  		bpf_map_lookup_elem(fd, &key, &val);
+>  
+> -		if (sample_type & PERF_SAMPLE_IDENTIFIER)
+> +		/*
+> +		 * Zero-fill some of these fields first, they will be overwritten by the dummy
+> +		 * embedded data (in raw_data) below, when parsing the samples. And because embedded
+> +		 * data is in BPF output, perf script -F without bpf-output field will not work
+> +		 * properly.
+> +		 */
+> +		if (sample_type_bpf_output & PERF_SAMPLE_IDENTIFIER)
+>  			data.array[n++] = sid;
+> -		if (sample_type & PERF_SAMPLE_IP) {
+> -			ip_pos = n;
+> -			data.array[n++] = 0;  /* will be updated */
+> -		}
+> -		if (sample_type & PERF_SAMPLE_TID)
+> -			data.array[n++] = (u64)key.pid << 32 | key.tgid;
+> -		if (sample_type & PERF_SAMPLE_TIME)
+> -			data.array[n++] = tstamp;
+> -		if (sample_type & PERF_SAMPLE_ID)
+> -			data.array[n++] = sid;
+> -		if (sample_type & PERF_SAMPLE_CPU)
+> +		if (sample_type_bpf_output & PERF_SAMPLE_IP)
+>  			data.array[n++] = 0;
+> -		if (sample_type & PERF_SAMPLE_PERIOD)
+> -			data.array[n++] = val;
+> -		if (sample_type & PERF_SAMPLE_CALLCHAIN) {
+> -			int len = 0;
+> -
+> -			/* data.array[n] is callchain->nr (updated later) */
+> -			data.array[n + 1] = PERF_CONTEXT_USER;
+> -			data.array[n + 2] = 0;
+> +		if (sample_type_bpf_output & PERF_SAMPLE_TID)
+> +			data.array[n++] = 0;
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 6f801c7b36e2..5e4017dbec96 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -165,11 +165,16 @@ static inline int folio_lru_gen(struct folio *folio)
- static inline bool lru_gen_is_active(struct lruvec *lruvec, int gen)
- {
- 	unsigned long max_seq = lruvec->lrugen.max_seq;
-+	unsigned long min_seq = lruvec->lrugen.min_seq[LRU_GEN_FILE];
- 
- 	VM_WARN_ON_ONCE(gen >= MAX_NR_GENS);
- 
--	/* see the comment on MIN_NR_GENS */
--	return gen == lru_gen_from_seq(max_seq) || gen == lru_gen_from_seq(max_seq - 1);
-+	/* see the comment on MIN_NR_GENS
-+	 * judge if there is active/inactive inversion by the number of file
-+	 * type gens.
-+	 */
-+	return gen == lru_gen_from_seq(max_seq) ||
-+		max_seq - min_seq >= 2 ? gen == lru_gen_from_seq(max_seq - 1) : 0;
- }
- 
- static inline void lru_gen_update_size(struct lruvec *lruvec, struct folio *folio,
--- 
-2.25.1
+I'm not sure if it works correctly.  You haven't set the callchain
+length and 'n' is not updated.
 
+> +		if (sample_type_bpf_output & PERF_SAMPLE_TIME)
+> +			data.array[n++] = tstamp; /* we won't overwrite time */
+> +		if (sample_type_bpf_output & PERF_SAMPLE_CPU)
+> +			data.array[n++] = 0;
+> +		if (sample_type_bpf_output & PERF_SAMPLE_PERIOD)
+> +			data.array[n++] = 0;
+> +		if (sample_type_bpf_output & PERF_SAMPLE_RAW) {
+> +			/*
+> +			 * the format of raw data is as follows:
+> +			 *
+> +			 *  [ size ][ data ]
+> +			 *  [     data     ]
+> +			 *  [     data     ]
+> +			 *  [     data     ]
+> +			 *  [ data ][ empty]
+> +			 *
+> +			 */
+> +			if (sample_type_off_cpu & PERF_SAMPLE_TID)
+
+As I said, you can get rid of the sample_type_off_cpu check if it's
+always true.
+
+Thanks,
+Namhyung
+
+
+> +				off_cpu_raw_data[i++] = (u64)key.pid << 32 | key.tgid;
+> +			if (sample_type_off_cpu & PERF_SAMPLE_PERIOD)
+> +				off_cpu_raw_data[i++] = val;
+> +			if (sample_type_off_cpu & PERF_SAMPLE_CALLCHAIN) {
+> +				int len = 0;
+> +
+> +				/* off_cpu_raw_data[n] is callchain->nr (updated later) */
+> +				off_cpu_raw_data[i + 1] = PERF_CONTEXT_USER;
+> +				off_cpu_raw_data[i + 2] = 0;
+> +
+> +				bpf_map_lookup_elem(stack, &key.stack_id, &off_cpu_raw_data[i + 2]);
+> +				while (off_cpu_raw_data[i + 2 + len])
+> +					len++;
+> +
+> +				/* update length of callchain */
+> +				off_cpu_raw_data[i] = len + 1;
+> +
+> +				/* calculate sample callchain off_cpu_raw_data length */
+> +				i += len + 2;
+> +			}
+> +			if (sample_type_off_cpu & PERF_SAMPLE_CGROUP)
+> +				off_cpu_raw_data[i++] = key.cgroup_id;
+>  
+> -			bpf_map_lookup_elem(stack, &key.stack_id, &data.array[n + 2]);
+> -			while (data.array[n + 2 + len])
+> -				len++;
+> +			raw_size = i * sizeof(u64) + sizeof(u32); /* 4 empty bytes for alignment */
+>  
+> -			/* update length of callchain */
+> -			data.array[n] = len + 1;
+> +			/* raw_size */
+> +			memcpy((void *)data.array + n * sizeof(u64), &raw_size, sizeof(raw_size));
+>  
+> -			/* update sample ip with the first callchain entry */
+> -			if (ip_pos >= 0)
+> -				data.array[ip_pos] = data.array[n + 2];
+> +			/* raw_data */
+> +			memcpy((void *)data.array + n * sizeof(u64) + sizeof(u32), off_cpu_raw_data, i * sizeof(u64));
+>  
+> -			/* calculate sample callchain data array length */
+> -			n += len + 2;
+> +			n += i + 1;
+>  		}
+> -		if (sample_type & PERF_SAMPLE_CGROUP)
+> -			data.array[n++] = key.cgroup_id;
+> +		if (sample_type_bpf_output & PERF_SAMPLE_CGROUP)
+> +			data.array[n++] = 0;
+>  
+>  		size = n * sizeof(u64);
+>  		data.hdr.size = size;
+> -- 
+> 2.43.0
+> 
 
