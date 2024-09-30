@@ -1,287 +1,200 @@
-Return-Path: <linux-kernel+bounces-343426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAD1989AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:44:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584CB989AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F020B28354D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:43:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03FE1F20F2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A63C155398;
-	Mon, 30 Sep 2024 06:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D515098F;
+	Mon, 30 Sep 2024 06:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIbzbPtp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqgAYol5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B272D15532E;
-	Mon, 30 Sep 2024 06:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA949165EEB;
+	Mon, 30 Sep 2024 06:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727678371; cv=none; b=g2xhriYPvTTSYWjVPwt+zSAnn8EEZmBbe7G+LLo+XMhqusT07gF++tjS60dvFKMNtR5U03Y3oniLpTUN0G/6d8OGlmoqiwQ0lk2GnXTzzlsQ1d0UhTDX0fRa0aSGhObBd+RRdxAsFpv/T8BIg7ye3BX0XH3LVfOQ1RlKICfIaG8=
+	t=1727678548; cv=none; b=SZ0NDT6g1hx96bggXi8RUFN3Oq94jp9xJ8NB2VILXsGcGltE5GnXXpj4REkMKaVCwODNo+N3L/C50p22OxF7kt143xhNXwStBvngd+/EmzQUsrEOl3kZzYYezp5eWp/L7612G7f0/G49gpu5Zg8U2pdEYhxFDKpCXV/dfoREWhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727678371; c=relaxed/simple;
-	bh=fiemyF/hfAE5dZX6DgxcWS8/IybMpnKKxC2VhkzqA88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MUQl0QTSBQ4wE2HC1nQ88tdBQxpH5nDYOybx6bKLJPi9oqAJcbH04wYcb3ZEkryZHkQdnpWQnmU4Xo9goRxM4EzykIqbe2TRq+lAG2DZ8SCXLdDoxd1Qpm8cyHwqDgDS3MmkfKj4XTOkJbI+36ez4Q5CmITmlZEjBzAv7ekI6+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIbzbPtp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7493C4CECE;
-	Mon, 30 Sep 2024 06:39:30 +0000 (UTC)
+	s=arc-20240116; t=1727678548; c=relaxed/simple;
+	bh=5VoQhXwgKxpbg8eBCDJRN8Z4bGhUFPO8t2fAmZVipxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeMJcMmdYI5s0kLyY4/Ke0EqiMK7nmMVsRfcCEmLQ+hcmDSwUdUceYeWnu/VlDyUXDQEjV+JqaVxRLOAT6ZwfpkG0UD+s1PR2P1MU1ls9g7UCgQ+1hdG2JSMPbTGsoEKTBAPfaLneJIhInbN+EAIX5dtdKtqMpiBWpXcL/CjZR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqgAYol5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51AB4C4CECE;
+	Mon, 30 Sep 2024 06:42:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727678371;
-	bh=fiemyF/hfAE5dZX6DgxcWS8/IybMpnKKxC2VhkzqA88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lIbzbPtpbnHyYbN1X26on0PORp/CgpSUUWyW07cVJkanBwSKq34yHPexa21+b4Ksl
-	 r36EUY0TKYuxG3ODYy4obi0l5MNdA2KeTsilq2mPbMN24yqPjq64Qih9usGpGdYcAN
-	 muOgD2aA+P6Ko1orSPOlBecWm8+cbMNHhLcFiJaJcVpR9YtdillhZZx9Xy+Oi6JBO0
-	 huTohGYc5SjKSh4nCvzkiyUcMCNVK+xxxPGxcjyF8e0dUI2RLQQ4GGP8Lmm+Mdi/Q3
-	 qETZqtT4HUW4pHS/1iYr6fli64U+0AxAmLQVayBMP9q+VyEnmSHHEuw/0X1l+zAT57
-	 BDjGLdX+gB6Pw==
-Date: Sun, 29 Sep 2024 23:39:29 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 5/8] perf record --off-cpu: Dump total off-cpu time at
- the end.
-Message-ID: <ZvpHocNuQRBehUWp@google.com>
-References: <20240927202736.767941-1-howardchu95@gmail.com>
- <20240927202736.767941-6-howardchu95@gmail.com>
+	s=k20201202; t=1727678548;
+	bh=5VoQhXwgKxpbg8eBCDJRN8Z4bGhUFPO8t2fAmZVipxA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WqgAYol5ywLVs/5o3BAkiQbKvlsRysyy92uuvDLVQ6fu2aT/OXtXJwXej2jyB4w/j
+	 6InZMwUOyV5BI1qdMDlI8HfV8s2iyVlLq1Acm8DnokOuil+uSiNABdrLmpN22S6mYi
+	 3t5Qc5SdnqN3zJ1gx/071DGzgqNELhG+MNSuZFUViabACpGYHrWL81u84t/Gmjp9Pb
+	 eA1GksvYHf6w6P480MGTenPe447yhye0b0+/2I1ci3v2q6RhzvYAuhn1ldDfsFC4cX
+	 GWK8q3HjOmyUXoU/dTeXN35oHx9ji6hfb1mJGznqTHF7SshtxU8e4IrCKjKFhKBY5Q
+	 Vu0XworOzCrjA==
+Message-ID: <8d5ff5c7-1f66-4a1b-a235-868d13afe03e@kernel.org>
+Date: Mon, 30 Sep 2024 08:42:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240927202736.767941-6-howardchu95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20240926044217.9285-1-charles.goodix@gmail.com>
+ <20240926044217.9285-3-charles.goodix@gmail.com>
+ <998ccefa-8d4a-40c1-aacd-0897070190ce@kernel.org>
+ <ZvUwFur1vWYteQMy@ux-UP-WHL01>
+ <87d49032-cb94-4cf8-a5e0-44eb2ec37111@kernel.org>
+ <ZvoZbWQx5BfMI_Cd@ux-UP-WHL01>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZvoZbWQx5BfMI_Cd@ux-UP-WHL01>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 27, 2024 at 01:27:33PM -0700, Howard Chu wrote:
-> By setting a placeholder sample_type and then writing real data into
-> raw_data, we mimic the direct sample method to write data at the end.
+On 30/09/2024 05:22, Charles Wang wrote:
+> Hi Krzysztof,
+> Thank you very much for your advice.
 > 
-> Note that some data serve only as placeholders and will be overwritten
-> by the data in raw_data. Additionally, since the IP will be updated in
-> evsel__parse_sample(), there is no need to handle it in off_cpu_write().
+> On Thu, Sep 26, 2024 at 02:32:05PM +0200, Krzysztof Kozlowski wrote:
+>> On 26/09/2024 11:57, Charles Wang wrote:
+>>>>>  1 file changed, 71 insertions(+)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>>>> new file mode 100644
+>>>>> index 000000000..849117639
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+>>>>> @@ -0,0 +1,71 @@
+>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>> +%YAML 1.2
+>>>>> +---
+>>>>> +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>> +
+>>>>> +title: GOODIX GT7986U SPI HID Touchscreen
+>>>>> +
+>>>>> +maintainers:
+>>>>> +  - Charles Wang <charles.goodix@gmail.com>
+>>>>> +
+>>>>> +description: Supports the Goodix GT7986U touchscreen.
+>>>>> +  This touch controller reports data packaged according to the HID protocol,
+>>>>> +  but is incompatible with Microsoft's HID-over-SPI protocol.
+>>>>> +
+>>>>> +allOf:
+>>>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - goodix,gt7986u-spi
+>>>>
+>>>> NAK, you duplicate again the binding. You cannot have bus-flavors.
+>>>> Device is the same.
+>>>>
+>>>
+>>> Could you provide some suggestions regarding this issue?
+>>
+>> What is exactly the question or problem? There is a binding for this
+>> device. Extend it with SPI parts, e.g.
+>> https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml#L22
+>>
 > 
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/util/bpf_off_cpu.c | 116 +++++++++++++++++++++-------------
->  1 file changed, 72 insertions(+), 44 deletions(-)
+> This seems a little different from the adxl313.yaml.
+
+Hm? I am reading below:
+
 > 
-> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
-> index f7233a09ec77..2a1cfd7e0b09 100644
-> --- a/tools/perf/util/bpf_off_cpu.c
-> +++ b/tools/perf/util/bpf_off_cpu.c
-> @@ -138,12 +138,19 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
->  	int ncpus = 1, ntasks = 1, ncgrps = 1;
->  	struct strlist *pid_slist = NULL;
->  	struct str_node *pos;
-> +	struct evsel *evsel;
->  
->  	if (off_cpu_config(evlist) < 0) {
->  		pr_err("Failed to config off-cpu BPF event\n");
->  		return -1;
->  	}
->  
-> +	evsel = evlist__find_evsel_by_str(evlist, OFFCPU_EVENT);
-> +	if (evsel == NULL) {
-> +		pr_err("%s evsel not found\n", OFFCPU_EVENT);
-> +		return -1 ;
-> +	}
-> +
->  	skel = off_cpu_bpf__open();
->  	if (!skel) {
->  		pr_err("Failed to open off-cpu BPF skeleton\n");
-> @@ -259,7 +266,6 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
->  	}
->  
->  	if (evlist__first(evlist)->cgrp) {
-> -		struct evsel *evsel;
->  		u8 val = 1;
->  
->  		fd = bpf_map__fd(skel->maps.cgroup_filter);
-> @@ -280,6 +286,7 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
->  		}
->  	}
->  
-> +	skel->bss->sample_type   = OFFCPU_EMBEDDED_SAMPLE_TYPES;
-
-Hmm.. you set the sample_type unconditionally which means the embedded
-data in the raw area has the fixed format.  Then I think you don't need
-the sample_type variable at all.
-
-
->  	skel->bss->offcpu_thresh = opts->off_cpu_thresh * 1000;
->  
->  	err = off_cpu_bpf__attach(skel);
-> @@ -305,7 +312,8 @@ int off_cpu_write(struct perf_session *session)
->  {
->  	int bytes = 0, size;
->  	int fd, stack;
-> -	u64 sample_type, val, sid = 0;
-> +	u32 raw_size;
-> +	u64 sample_type_off_cpu, sample_type_bpf_output, val, sid = 0, tstamp = OFF_CPU_TIMESTAMP;
->  	struct evsel *evsel;
->  	struct perf_data_file *file = &session->data->file;
->  	struct off_cpu_key prev, key;
-> @@ -315,7 +323,6 @@ int off_cpu_write(struct perf_session *session)
->  			.misc = PERF_RECORD_MISC_USER,
->  		},
->  	};
-> -	u64 tstamp = OFF_CPU_TIMESTAMP;
->  
->  	skel->bss->enabled = 0;
->  
-> @@ -325,15 +332,10 @@ int off_cpu_write(struct perf_session *session)
->  		return 0;
->  	}
->  
-> -	sample_type = evsel->core.attr.sample_type;
-> -
-> -	if (sample_type & ~OFFCPU_SAMPLE_TYPES) {
-> -		pr_err("not supported sample type: %llx\n",
-> -		       (unsigned long long)sample_type);
-> -		return -1;
-> -	}
-> +	sample_type_off_cpu    = OFFCPU_EMBEDDED_SAMPLE_TYPES;
-> +	sample_type_bpf_output = evsel->core.attr.sample_type;
->  
-> -	if (sample_type & (PERF_SAMPLE_ID | PERF_SAMPLE_IDENTIFIER)) {
-> +	if (sample_type_bpf_output & (PERF_SAMPLE_ID | PERF_SAMPLE_IDENTIFIER)) {
->  		if (evsel->core.id)
->  			sid = evsel->core.id[0];
->  	}
-> @@ -344,49 +346,75 @@ int off_cpu_write(struct perf_session *session)
->  
->  	while (!bpf_map_get_next_key(fd, &prev, &key)) {
->  		int n = 1;  /* start from perf_event_header */
-> -		int ip_pos = -1;
-> +		int i = 0; /* raw data index */
->  
->  		bpf_map_lookup_elem(fd, &key, &val);
->  
-> -		if (sample_type & PERF_SAMPLE_IDENTIFIER)
-> +		/*
-> +		 * Zero-fill some of these fields first, they will be overwritten by the dummy
-> +		 * embedded data (in raw_data) below, when parsing the samples. And because embedded
-> +		 * data is in BPF output, perf script -F without bpf-output field will not work
-> +		 * properly.
-> +		 */
-> +		if (sample_type_bpf_output & PERF_SAMPLE_IDENTIFIER)
->  			data.array[n++] = sid;
-> -		if (sample_type & PERF_SAMPLE_IP) {
-> -			ip_pos = n;
-> -			data.array[n++] = 0;  /* will be updated */
-> -		}
-> -		if (sample_type & PERF_SAMPLE_TID)
-> -			data.array[n++] = (u64)key.pid << 32 | key.tgid;
-> -		if (sample_type & PERF_SAMPLE_TIME)
-> -			data.array[n++] = tstamp;
-> -		if (sample_type & PERF_SAMPLE_ID)
-> -			data.array[n++] = sid;
-> -		if (sample_type & PERF_SAMPLE_CPU)
-> +		if (sample_type_bpf_output & PERF_SAMPLE_IP)
->  			data.array[n++] = 0;
-> -		if (sample_type & PERF_SAMPLE_PERIOD)
-> -			data.array[n++] = val;
-> -		if (sample_type & PERF_SAMPLE_CALLCHAIN) {
-> -			int len = 0;
-> -
-> -			/* data.array[n] is callchain->nr (updated later) */
-> -			data.array[n + 1] = PERF_CONTEXT_USER;
-> -			data.array[n + 2] = 0;
-> +		if (sample_type_bpf_output & PERF_SAMPLE_TID)
-> +			data.array[n++] = 0;
-
-I'm not sure if it works correctly.  You haven't set the callchain
-length and 'n' is not updated.
-
-> +		if (sample_type_bpf_output & PERF_SAMPLE_TIME)
-> +			data.array[n++] = tstamp; /* we won't overwrite time */
-> +		if (sample_type_bpf_output & PERF_SAMPLE_CPU)
-> +			data.array[n++] = 0;
-> +		if (sample_type_bpf_output & PERF_SAMPLE_PERIOD)
-> +			data.array[n++] = 0;
-> +		if (sample_type_bpf_output & PERF_SAMPLE_RAW) {
-> +			/*
-> +			 * the format of raw data is as follows:
-> +			 *
-> +			 *  [ size ][ data ]
-> +			 *  [     data     ]
-> +			 *  [     data     ]
-> +			 *  [     data     ]
-> +			 *  [ data ][ empty]
-> +			 *
-> +			 */
-> +			if (sample_type_off_cpu & PERF_SAMPLE_TID)
-
-As I said, you can get rid of the sample_type_off_cpu check if it's
-always true.
-
-Thanks,
-Namhyung
-
-
-> +				off_cpu_raw_data[i++] = (u64)key.pid << 32 | key.tgid;
-> +			if (sample_type_off_cpu & PERF_SAMPLE_PERIOD)
-> +				off_cpu_raw_data[i++] = val;
-> +			if (sample_type_off_cpu & PERF_SAMPLE_CALLCHAIN) {
-> +				int len = 0;
-> +
-> +				/* off_cpu_raw_data[n] is callchain->nr (updated later) */
-> +				off_cpu_raw_data[i + 1] = PERF_CONTEXT_USER;
-> +				off_cpu_raw_data[i + 2] = 0;
-> +
-> +				bpf_map_lookup_elem(stack, &key.stack_id, &off_cpu_raw_data[i + 2]);
-> +				while (off_cpu_raw_data[i + 2 + len])
-> +					len++;
-> +
-> +				/* update length of callchain */
-> +				off_cpu_raw_data[i] = len + 1;
-> +
-> +				/* calculate sample callchain off_cpu_raw_data length */
-> +				i += len + 2;
-> +			}
-> +			if (sample_type_off_cpu & PERF_SAMPLE_CGROUP)
-> +				off_cpu_raw_data[i++] = key.cgroup_id;
->  
-> -			bpf_map_lookup_elem(stack, &key.stack_id, &data.array[n + 2]);
-> -			while (data.array[n + 2 + len])
-> -				len++;
-> +			raw_size = i * sizeof(u64) + sizeof(u32); /* 4 empty bytes for alignment */
->  
-> -			/* update length of callchain */
-> -			data.array[n] = len + 1;
-> +			/* raw_size */
-> +			memcpy((void *)data.array + n * sizeof(u64), &raw_size, sizeof(raw_size));
->  
-> -			/* update sample ip with the first callchain entry */
-> -			if (ip_pos >= 0)
-> -				data.array[ip_pos] = data.array[n + 2];
-> +			/* raw_data */
-> +			memcpy((void *)data.array + n * sizeof(u64) + sizeof(u32), off_cpu_raw_data, i * sizeof(u64));
->  
-> -			/* calculate sample callchain data array length */
-> -			n += len + 2;
-> +			n += i + 1;
->  		}
-> -		if (sample_type & PERF_SAMPLE_CGROUP)
-> -			data.array[n++] = key.cgroup_id;
-> +		if (sample_type_bpf_output & PERF_SAMPLE_CGROUP)
-> +			data.array[n++] = 0;
->  
->  		size = n * sizeof(u64);
->  		data.hdr.size = size;
-> -- 
-> 2.43.0
+> The issue we're encountering involves the chip model gt7986u,
+> which supports both I2C and SPI interfaces. For the I2C interface
+> (using the HID-over-I2C driver), it has already been declared in
+> the goodix,gt7375p.yaml file as follows:
 > 
+> i2c {
+>   #address-cells = <1>;
+>   #size-cells = <0>;
+> 
+>   ap_ts: touchscreen@5d {
+>     compatible = "goodix,gt7986u";
+>   }
+> }
+> 
+> Currently, our design requires utilizing the SPI interface with
+> a custom SPI driver. However, the declarations within the binding
+> file have led to conflicts, as shown here:
+> 
+> spi {
+>   #address-cells = <1>;
+>   #size-cells = <0>;
+> 
+>   touchscreen@0 {
+>     compatible = "goodix,gt7986u";
+>   }
+> }
+> 
+> Should I consider merging both YAML files into a single one to fix this?
+
+And there is no difference. I don't understand the problem.
+
+Best regards,
+Krzysztof
+
 
