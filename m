@@ -1,142 +1,151 @@
-Return-Path: <linux-kernel+bounces-344180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D9C98A5E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:50:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B7598A640
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD7A1F23EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:50:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F5C1F23786
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1446B18FDD8;
-	Mon, 30 Sep 2024 13:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9E0198E83;
+	Mon, 30 Sep 2024 13:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0KwEj6s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="liVVVine"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BCA1EB56;
-	Mon, 30 Sep 2024 13:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56D4198831
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704241; cv=none; b=HxlCUUEy7MGfqzYL4MFW7ZJgl7h2jkTbe1y0Nnq1uyl8IIfb52BV6WZNX2qP44tQc6WqpGI9s/IOlU3/HIhv3o9Vm1IqrzPK6Xeh710NhP3Uha8xDiiKzP7sSKU9TaA6SwX14mCgqGXN3iDLkAnevdfMoR5tZa2IHiUCg7SgQFs=
+	t=1727704385; cv=none; b=kmNYlCVFf8X5wM9PD9l8Qq3Mpz/GL3JmUCzWGI15idXIxE3qZD+1mTfQ5beG4uViUhzlUed/ysED7SWkKsQztmEZltU7E6qMa2SOB1ddCih5uetbJLFiVEHutWvrUtqVtD1FHxV6tVQ61tDIzvI62ceF8Sx3a3HYRdtPliFLpUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704241; c=relaxed/simple;
-	bh=lKoyRADkcWjiRRXHAbLZJh0byrlozFqRiaV3hRP3foc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcokflkmJQkQZZuMVLUj8wmwUQGkGvl2F8viEZZiDtIWm4MjVj9aWqgjNjBf0Q0H1I0vqx7KTMMPFObfwMaD49WP7V3Owq79mUgC/KTXkqK3vq1P/P5VIMstygBHVjKx68q5bgAYeeB3MrAfaSx/MhwbTTUYC75H7w8StwRoBts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0KwEj6s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF7C1C4CEC7;
-	Mon, 30 Sep 2024 13:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704240;
-	bh=lKoyRADkcWjiRRXHAbLZJh0byrlozFqRiaV3hRP3foc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O0KwEj6sElowAia8rnohtPGSB4x7Bue01ApMw2xH+wGPgEDLbU0kAo+kjDr9BAfaO
-	 Zkk2BSk+DvRXOOztjLhvnfURK4cRSylJocE4tSLlaAvbTZrnHLTz1iKAM9GFrCSrMT
-	 ScnbxzVrZY0FrIY8BreFKIIB/MxuD0Qu6gIkt/vklDC917scw0G/oRsV/83CeZvj6I
-	 Aregw6v/Hfv0NbXcC92KpA8OTX/6M5E8mwpWoNLvPaNe76eu/f6tNyVVytkmmykn4A
-	 hSVIx9eb5NZwRQUqbnOpjGguBujtr04AXySWfWjBUP6+e9IZRBPVRqneLhLnN1rYFC
-	 lL06QBuJDRU5w==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1svGnO-000000004jK-3Cl1;
-	Mon, 30 Sep 2024 15:50:39 +0200
-Date: Mon, 30 Sep 2024 15:50:38 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Qiu-ji Chen <chenqiuji666@gmail.com>
-Cc: dtwlin@gmail.com, elder@kernel.org, gregkh@linuxfoundation.org,
-	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] staging: Fix atomicity violation in get_serial_info()
-Message-ID: <Zvqsrj5ee9iNQXsX@hovoldconsulting.com>
-References: <20240930101403.24131-1-chenqiuji666@gmail.com>
+	s=arc-20240116; t=1727704385; c=relaxed/simple;
+	bh=0Yu/tkKhLgDKlmxGBhP4fnuSJXMi0tuTMjZVuxir/ik=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jfsy1GUFvbKtjuCjUvs8NSHlOp67bNGwCujUAtC2RtRKJHi/klkoqhuKWoZlhvYByBAdpXc1Tq2izJHg4gGs0kWRr5ZdV4FHK7C5oxLgnERO8EuhEpOxebQ/BqlUTzrWaUBgfNN2krmZ3E2Bidan/nVHZndGM6ZnvJ6q3Tr39DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=liVVVine; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UBkZ2v028034;
+	Mon, 30 Sep 2024 13:52:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=EtoCRyyW8lj/r++NHnlo/O5/Z90VmWRDmbWCubcgn7Q=; b=li
+	VVVineeLuissihI8hZho9xlCDRmDuIYd54VTTC0dIMoxLXaFUvlUA4CBV7AoGB1e
+	4udJ2Hlu0zrHR1Z3LEhF3XAucZDFfxNIuBjqIp1JmduTQN44Cqo9UClFy7TtX8w8
+	K+40r7VyfrBeqzfUDx4085zryTw7PaRKWYVzmeRb1cdz6SItd8snEi/l03GlfRzv
+	Tb/b3OJ7qNc+YmAvDz8PHSnKRRdglUrFFZZBMqiPd/8dKvxDdNPdZEIzWzSqVc5s
+	zWq2ueaNktIgoEQw20g+KwB+piCQa1J3OZiNea3CdJg7j+rzObzF9rYvHBwcRKNs
+	DcbNi0lTRmeLLAm9a/EQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xajfctdy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 13:52:15 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UDqEvX013098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 13:52:14 GMT
+Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 30 Sep 2024 06:52:09 -0700
+From: Pintu Kumar <quic_pintu@quicinc.com>
+To: <hannes@cmpxchg.org>, <surenb@google.com>, <peterz@infradead.org>,
+        <mingo@redhat.com>, <juri.lelli@redhat.com>,
+        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+        <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+        <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
+CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
+        Pintu Kumar <quic_pintu@quicinc.com>
+Subject: [PATCH] sched/psi: fix unnecessary KERN_ERR and memory barrier comment
+Date: Mon, 30 Sep 2024 19:21:19 +0530
+Message-ID: <20240930135119.21164-1-quic_pintu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930101403.24131-1-chenqiuji666@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mnzPitKeIDJlqA1tsb854Nyyb9iZ_7m9
+X-Proofpoint-ORIG-GUID: mnzPitKeIDJlqA1tsb854Nyyb9iZ_7m9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ impostorscore=0 mlxscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409300101
 
-On Mon, Sep 30, 2024 at 06:14:03PM +0800, Qiu-ji Chen wrote:
-> Atomicity violation occurs during consecutive reads of the members of 
-> gb_tty. Consider a scenario where, because the consecutive reads of gb_tty
-> members are not protected by a lock, the value of gb_tty may still be 
-> changing during the read process. 
-> 
-> gb_tty->port.close_delay and gb_tty->port.closing_wait are updated
-> together, such as in the set_serial_info() function. If during the
-> read process, gb_tty->port.close_delay and gb_tty->port.closing_wait
-> are still being updated, it is possible that gb_tty->port.close_delay
-> is updated while gb_tty->port.closing_wait is not. In this case,
-> the code first reads gb_tty->port.close_delay and then
-> gb_tty->port.closing_wait. A new gb_tty->port.close_delay and an
-> old gb_tty->port.closing_wait could be read. Such values, whether
-> before or after the update, should not coexist as they represent an
-> intermediate state.
-> 
-> This could result in a mismatch of the values read for gb_tty->minor, 
+These warnings were reported by checkpatch.
+Fix them with minor changes.
 
-No, gb_tty minor is only set at probe().
+WARNING: Possible unnecessary KERN_ERR
++                       printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
 
-> gb_tty->port.close_delay, and gb_tty->port.closing_wait, which in turn 
-> could cause ss->close_delay and ss->closing_wait to be mismatched.
+WARNING: Possible unnecessary KERN_ERR
++               printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
 
-Sure, but that's a pretty minor issue as Dan already pointed out.
+WARNING: memory barrier without comment
++       t = smp_load_acquire(trigger_ptr);
 
-> To address this issue, we have enclosed all sequential read operations of 
-> the gb_tty variable within a lock. This ensures that the value of gb_tty 
-> remains unchanged throughout the process, guaranteeing its validity.
-> 
-> This possible bug is found by an experimental static analysis tool
-> developed by our team. This tool analyzes the locking APIs
-> to extract function pairs that can be concurrently executed, and then
-> analyzes the instructions in the paired functions to identify possible
-> concurrency bugs including data races and atomicity violations.
-> 
-> Fixes: b71e571adaa5 ("staging: greybus: uart: fix TIOCSSERIAL jiffies conversions")
+WARNING: memory barrier without comment
++       smp_store_release(&seq->private, new);
 
-And this obviously isn't the correct commit to blame. Please be more
-careful.
+Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+---
+ kernel/sched/psi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> Cc: stable@vger.kernel.org
+diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
+index 020d58967d4e..ca4c5c2c7478 100644
+--- a/kernel/sched/psi.c
++++ b/kernel/sched/psi.c
+@@ -816,7 +816,7 @@ static void psi_group_change(struct psi_group *group, int cpu,
+ 		if (groupc->tasks[t]) {
+ 			groupc->tasks[t]--;
+ 		} else if (!psi_bug) {
+-			printk_deferred(KERN_ERR "psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
++			printk_deferred("psi: task underflow! cpu=%d t=%d tasks=[%u %u %u %u] clear=%x set=%x\n",
+ 					cpu, t, groupc->tasks[0],
+ 					groupc->tasks[1], groupc->tasks[2],
+ 					groupc->tasks[3], clear, set);
+@@ -885,7 +885,7 @@ static void psi_flags_change(struct task_struct *task, int clear, int set)
+ 	if (((task->psi_flags & set) ||
+ 	     (task->psi_flags & clear) != clear) &&
+ 	    !psi_bug) {
+-		printk_deferred(KERN_ERR "psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
++		printk_deferred("psi: inconsistent task state! task=%d:%s cpu=%d psi_flags=%x clear=%x set=%x\n",
+ 				task->pid, task->comm, task_cpu(task),
+ 				task->psi_flags, clear, set);
+ 		psi_bug = 1;
+@@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
+ 	if (static_branch_likely(&psi_disabled))
+ 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+ 
++	/* Pairs with the smp_store_release in psi_write */
+ 	t = smp_load_acquire(trigger_ptr);
+ 	if (!t)
+ 		return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
+@@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
+ 		return PTR_ERR(new);
+ 	}
+ 
++	/* Pairs with the smp_store_acquire in psi_trigger_poll */
+ 	smp_store_release(&seq->private, new);
+ 	mutex_unlock(&seq->lock);
+ 
+-- 
+2.17.1
 
-Since this is unlikely to cause any issues for a user, I don't think
-stable backport is warranted either.
-
-> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
-> ---
->  drivers/staging/greybus/uart.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
-> index cdf4ebb93b10..8cc18590d97b 100644
-> --- a/drivers/staging/greybus/uart.c
-> +++ b/drivers/staging/greybus/uart.c
-> @@ -595,12 +595,14 @@ static int get_serial_info(struct tty_struct *tty,
->  {
->  	struct gb_tty *gb_tty = tty->driver_data;
->  
-> +	mutex_lock(&gb_tty->port.mutex);
->  	ss->line = gb_tty->minor;
-
-gb_tty is not protected by the port mutex.
-
->  	ss->close_delay = jiffies_to_msecs(gb_tty->port.close_delay) / 10;
->  	ss->closing_wait =
->  		gb_tty->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
->  		ASYNC_CLOSING_WAIT_NONE :
->  		jiffies_to_msecs(gb_tty->port.closing_wait) / 10;
-> +	mutex_unlock(&gb_tty->port.mutex);
->  
->  	return 0;
->  }
-
-Johan
 
