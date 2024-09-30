@@ -1,129 +1,86 @@
-Return-Path: <linux-kernel+bounces-344592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284A798ABC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B71B198ABC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565ED1C212EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD0B281B8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8201990CD;
-	Mon, 30 Sep 2024 18:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD5F14BF86;
+	Mon, 30 Sep 2024 18:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="opX7zek+"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tY8sFwM/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C403E1F947
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A319191F82;
+	Mon, 30 Sep 2024 18:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727720078; cv=none; b=GWSeCqox3cgsD9uTwFdEmikaswv3fLRFye0PVsBxm9KXcn2hS0bJTOvYpQF5xIZ8kswZOOd80Adj6zgaJZ7peQ1i/IOz4dm3xK5He+uwAU/1IxGXP/RZV3Ln5pA/MgYWaL0NSuhosE+9urGR6Hk7Rb+nPqWx1PoIdR7DcuXM//E=
+	t=1727720103; cv=none; b=XtkBMgtRRXmF5Xwr2v338I6ntRtZ2Hh+jBvbELQgV+CJNYewbQZLvIaWRsa1nmHC94bZfisyI2ZHrI+eJrM3+ANNm3Di9/t4+KjlT9nS7YTc3n3R28Uz/IiuhsQHda9CPzLlrq8WGxzyAJo0iAFWCEpT/kVOMChdjDuZ23gnl6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727720078; c=relaxed/simple;
-	bh=6F+/q0/jRva0c2EPI8M6r0iUZiDuLIyyAisz5ZI78Yc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fnjGfejZ/RucDIuZP5YPE1NrHZxq8lw9hfgkInFTCAcxtwcNyO4yerUTSJ9WfR+UsyA33yVc0pMxHZPCoYi9uWoWK94iQnWMYJkqK+xLoDJPbgF9eATXIL3fhzkSDxtNUl33B994I61DnlTgcjISNwQviZaql0x40yvTPSl6K28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=opX7zek+; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb806623eso36313875e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727720073; x=1728324873; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnuPu2GyBAH6sHexBsv2SDLbI/yG/KxkbgJVgNvLoIo=;
-        b=opX7zek+sIefpJuT7AIWb/kjyC6yR1AJ/8JtQMuGWt6jV+elTij8jI5Zoe9wqKSdde
-         5kOddsdLLSSimHLpLP6BXprapMbuHP+O3TKRDjuwVWJLveF+NK1tHTz3HY8O276FR3pc
-         90y0saj4iKzJDawOx3jRjf4G9mCV/2z0lzqEp1ZfxtiiJYWR9TpGDuEDFBoXzHNip3si
-         D/IVpD0r4OBw9MOjmu7gCsZktEZjdLJpS/rlq4hLredL5lGwT5ulIulgEKWrm8pEWLQX
-         7mGb4vrImaWMcypFdU2lk5JzI9nwvcHbiFMeXlU5MRmcVlerDeUBAsG7VoV3Dk287y9n
-         NFvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727720073; x=1728324873;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BnuPu2GyBAH6sHexBsv2SDLbI/yG/KxkbgJVgNvLoIo=;
-        b=XIT2sagVTDQEaSMWdw5ZZcOf8aicPmx86Va8P2rmAlwec+uj6JAnfZf5Qk3VU2tdBk
-         7Tuo10kw9FZ4u5ZMpxnZzn5/cHSnQF+19mocumpFbN5oxzZIm+sovdQ+WgE9Zh+8OAMR
-         vuDbGyQaCyqgD1VCRRXydJeBPD7AoHuGMET39eHSuiDVIQeZZAgNoh/TnkvkLqlVC3lM
-         yf3VNozFc+KLKlxG/ecPV6cHWhG3X0Q/7/0sSO8y8MFuJh7OFffrXLrvhiFC5zdJM7XB
-         HbcxT6qDtUpkFBxn7r06LQvvx9MNBOI7jy5pb359WOBxmVAn4Ow7ZVYiKXkWnbZp+3Cf
-         0Q1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX40zLLPAnHFL3hZ5K/S7dJjeKWRBmUHAkfvdioBzrK9qQrRoMfP1yV5VMomladaXerJoNPS9eMt1vvJ1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEvhYRAJVZkdCfBwdh8hkd9fVu2SmkyYb1AiHieDQ5ZScnxZ1y
-	CBZnqyl1yVJYE2OEjhGZpXWHtW7wLG5gUygR6GgdNVh41OgsaalP1CjLf8qsjZE=
-X-Google-Smtp-Source: AGHT+IFVbFICq/gutzSxAKiw5gYsrp87+XDgg3juU+GA1eGUW05qmSByQBe9AmAMhqxRW7a0aLW0qA==
-X-Received: by 2002:a05:600c:4f92:b0:42c:ba1f:5475 with SMTP id 5b1f17b1804b1-42f58484eacmr94026735e9.26.1727720072714;
-        Mon, 30 Sep 2024 11:14:32 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b6ba:bab:ced3:2667])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffa22sm157539545e9.25.2024.09.30.11.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 11:14:32 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Kevin Hilman
- <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,
-  linux-arm-kernel@lists.infradead.org,  linux-amlogic@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] reset: amlogic: Fix small whitespace issue
-In-Reply-To: <20240930-reset-align-amlogic-v1-1-f64ed5c4efc1@pengutronix.de>
-	(Philipp Zabel's message of "Mon, 30 Sep 2024 18:55:56 +0200")
-References: <20240930-reset-align-amlogic-v1-1-f64ed5c4efc1@pengutronix.de>
-Date: Mon, 30 Sep 2024 20:14:31 +0200
-Message-ID: <1j1q11t3eg.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1727720103; c=relaxed/simple;
+	bh=Y9UIpHe+siA8FR+ez2E5i3b+gbJKwzDjhBVYk4GyLaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bpFTIypTfyVLFyd0/Jfbx+kBt8uTwuv0c/gOHrMFWrQd4PWB1ORggYE/Luyv+HkCub5NBUcqig3vEzu7WFWDlwi0jKhWJwvBbr40g9bzX41PKhTV/SWx8/R29aPpDItMOzLlCcKMnBWcj1Q1pT6ljmrmFiyH+Sp7VsXinC94Bfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tY8sFwM/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wOCs00RL/8YdRkEJRfFh/lmIJtXzREnR4LZwIYVds8U=; b=tY8sFwM/UPJOVlNnRtqgeVINuu
+	YTywwj0+LVVutFg+BCjyc3UXVwt+4Ewdu5LPer24IMeYcTpg4+6X3fHff7G05aUx7cVLcRtd2olyT
+	ZoRcwDi0Pfv88DRDOudHTVSTpbQmghhxZgu084Je2YkAwvBHKw0032R2END4SPDvUI0hHsH1V/x8w
+	2qFrdqnoBbPwpV0w3pIqPTCn0iZ8MkMA8t/BclrxjsyqkL5IGKLecEY3BhwzJu+m/2KChnId+Eate
+	5j4XM1B1h+gx8csuzA/Q4eGpHpOF3mb4XRo9PIXbsvdqvA7H6gqRN7oofpHEMchanvd64DLQ3DnTV
+	JCiX2sQg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1svKvC-00000000Jgz-3OLb;
+	Mon, 30 Sep 2024 18:14:58 +0000
+Date: Mon, 30 Sep 2024 19:14:58 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Gianfranco Trad <gianf.trad@gmail.com>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	skhan@linuxfoundation.org,
+	syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] Fix NULL pointer dereference in read_cache_folio
+Message-ID: <ZvrqotTfw06vAK9Y@casper.infradead.org>
+References: <20240929230548.370027-3-gianf.trad@gmail.com>
+ <20240930090225.28517-2-gianf.trad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930090225.28517-2-gianf.trad@gmail.com>
 
-On Mon 30 Sep 2024 at 18:55, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+On Mon, Sep 30, 2024 at 11:02:26AM +0200, Gianfranco Trad wrote:
+> @@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file *file, filler_t filler,
+>  	/* Start the actual read. The read will unlock the page. */
+>  	if (unlikely(workingset))
+>  		psi_memstall_enter(&pflags);
+> +	if (!filler)
+> +		return -EIO;
 
-> Fix a checkpatch --strict issue:
->
->   CHECK: Alignment should match open parenthesis
->   #48: FILE: drivers/reset/amlogic/reset-meson-common.c:48:
->   +static int meson_reset_level(struct reset_controller_dev *rcdev,
->   +			    unsigned long id, bool assert)
->
-> Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+This is definitely wrong because you enter memstall, but do not exit it.
 
-Thanks Philipp.
+As Andrew says, the underlying problem is that the filesystem does not
+implement ->read_folio.  Which filesystem is this?
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> ---
->  drivers/reset/amlogic/reset-meson-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/reset/amlogic/reset-meson-common.c b/drivers/reset/amlogic/reset-meson-common.c
-> index a7b1b250a64dbf94530d06138f4270fff8f56d7a..38a767c06fc71b6dd8a998958b20592499db3c8a 100644
-> --- a/drivers/reset/amlogic/reset-meson-common.c
-> +++ b/drivers/reset/amlogic/reset-meson-common.c
-> @@ -45,7 +45,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
->  }
->  
->  static int meson_reset_level(struct reset_controller_dev *rcdev,
-> -			    unsigned long id, bool assert)
-> +			     unsigned long id, bool assert)
->  {
->  	struct meson_reset *data =
->  		container_of(rcdev, struct meson_reset, rcdev);
->
-> ---
-> base-commit: 5b93105afcdcdb94d654f253850c5432555b283e
-> change-id: 20240930-reset-align-amlogic-cd4076c1421e
->
-> Best regards,
-
--- 
-Jerome
+>  	error = filler(file, folio);
+>  	if (unlikely(workingset))
+>  		psi_memstall_leave(&pflags);
+> -- 
+> 2.43.0
+> 
 
