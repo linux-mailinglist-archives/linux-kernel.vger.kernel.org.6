@@ -1,160 +1,124 @@
-Return-Path: <linux-kernel+bounces-344468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3AAB98AA18
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:43:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A8E98AA22
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:44:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E11F22ACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B102820F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DA2195FFA;
-	Mon, 30 Sep 2024 16:42:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D245419413B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FCF19408B;
+	Mon, 30 Sep 2024 16:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="38S5a+iq"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E0D193416
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714562; cv=none; b=jr3N8eCU8HHokatQGCHuiWZ7FODBJ9MTtyo0e8S9e3wIQ94bfmtZhVTdDtTZH9zDcN3+X1xuEGoZZj/fJY3nQwdhVXPd7iKkLtU0jDa3hBOe3jetQDzcGiR/tZIIPXRginvlOQh+Af9gT0tQQuhgtfn9J7DNcksnk5vPAKHnXdo=
+	t=1727714593; cv=none; b=tVWKS3q8weafdARZXUf2wmgf4BRXv3ogwgPf4EQZrkaKZWj41bEBqN+OdKyORd9UqrkcRQDfuPa9FITRn2763z8/5v56dFTHaZ6AQOV0iRNnf0sjb8A2kZk4MDru0OJd4iS/z6jXHLe5hgsKMzV40hegrzGsSpEyaogJJojE+xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714562; c=relaxed/simple;
-	bh=LeyyP1O6TvZS1JU0KHaoMN6aRjl0wxM5oKrThBUtxuc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iS+dUCTN7gGIZ86fE7qXsfcOY2X8yaHrD9eHCUx1/HHPM0mwD8sb9yOFrgGM0OfK4EDcZxXA+TiN12MZj70Vt58Fb3v8JJFSLwhw6Xh2jIX3NMrusKi1Wyq6qrLBYZ5yloPPiEr5yxfYVKpNJ05Tg1/kbi0qf7rguQX+XuDG3qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CACF367;
-	Mon, 30 Sep 2024 09:43:08 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E5A53F58B;
-	Mon, 30 Sep 2024 09:42:33 -0700 (PDT)
-Message-ID: <5492c93e-b6c6-4443-afd3-b30c6267c2ab@arm.com>
-Date: Mon, 30 Sep 2024 17:42:31 +0100
+	s=arc-20240116; t=1727714593; c=relaxed/simple;
+	bh=uUp9+2GHqfEUSAMvqRv63yi6FVWRqzTwW3Zi59LbyJ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tm/VVOGmd5zt8u2fdZIWxKyAAmz5FWaKjbBFpDOzcYra1wUP0iewfDAm/fkrbeSP+riquqt41ifocBTOCRfZj8k5Am1fU4rVy79tHQEfa7hCzVMXcb89s97WVTne70qvRry7uqk6kU7SLm/3f6hQb/ljnfxag+AkQKjVgOauYw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=38S5a+iq; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-536552fcc07so28175e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:43:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727714590; x=1728319390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uUp9+2GHqfEUSAMvqRv63yi6FVWRqzTwW3Zi59LbyJ4=;
+        b=38S5a+iqmAhY3beiLayh2cF5MEoLmQuV/Wkx7ldxPZ4UzFZrCs5cgBBqfe7M3ifqt4
+         iUturQymiTfkHza59Gnvx037ogNKDgr8RhqspoMHZYiNP7rqIzNkIcpJGXBpWK75+PLN
+         +AiTlVda0g191bktQf12KtLQQMMGxK6HDql3WyFUV6R80UitcIEvW8zEgM6KtihuPB4C
+         gHaZIFgLY69HIW/nwE260r2Cx74MLZqdXetCZKuqDgSzMuEBWiC7r2Mu8Vr2QjZ89e+c
+         9K7bUn0THQp9vNKugyWQdiKl2MkR6fqMFp2tF3iT7onssOCWt7yIgnEg6DdmfNLAt+pD
+         WkjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727714590; x=1728319390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uUp9+2GHqfEUSAMvqRv63yi6FVWRqzTwW3Zi59LbyJ4=;
+        b=sM1IEOO9JmmwnF/dMbeGWr4nPEacsfZwqlg/tgHcug8p7uXJlESSnU3ZmhSMGShA4g
+         84MCIF8HyNqwiglcMtrlP6IMdesbqPWOWJ0TJGp4hsSNF/dw3FrCDYq9hhZNABJmvIHn
+         7rSeiyMrkL7+kBeKdV65b58B9rQDOk/BzmSGGbwn9eDSDSIinmmwSfaZDyGQKjZO1cpu
+         SXleAAWS7qS5+SMd6C5zjVpXsywq+nwEbE1E0kXUVsdzb1Bdr7LCr6WxmTHMblkxbEtf
+         BMHKbV/88OtAxP95pdGYKAPjEZ1TtvAmnx+1PpM4SuncXRISXe4E6fv5t6allr6wqB+o
+         9q8w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+aUvkkGJBVm1UhHsC1+Rgju+NfxI/+A42dBsBI4UgE2oSDSdYQ6hBJFEqMQFskWT6oY4IRBrNTJ8pHyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkYKzTwhCXMUkHXr7LRi5ic8lO7CgjEJgIGrVaLBdNyudyn8cX
+	fHWM1hXNknOF5R+5Inafg0OfDj6Z4FotYXIOvGY8to6jk0HU9OfKEo0KhzXxIa9c/Sbs2PfN8yS
+	Yt8QkXMjB7wJGXq9x1O4VswBxo1pwFacg30fd
+X-Google-Smtp-Source: AGHT+IGzc8wIwInlPNzGa8R/Zmet+hDPx/pHmTsXRH1wqa/wRLB4YiXpJnP5Z6BmFj40PYdhxAPJh5Q49h18p5B3R00=
+X-Received: by 2002:a05:6512:a95:b0:530:ae18:810e with SMTP id
+ 2adb3069b0e04-5399a0addcfmr73246e87.5.1727714589838; Mon, 30 Sep 2024
+ 09:43:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 17/39] x86/resctrl: Rewrite and move the
- for_each_*_rdt_resource() walkers
-Content-Language: en-GB
-To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>,
- "shameerali.kolothum.thodi@huawei.com"
- <shameerali.kolothum.thodi@huawei.com>,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
- "lcherian@marvell.com" <lcherian@marvell.com>,
- "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
- "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
- Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
- "peternewman@google.com" <peternewman@google.com>,
- "dfustini@baylibre.com" <dfustini@baylibre.com>,
- "amitsinght@marvell.com" <amitsinght@marvell.com>,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>
-References: <20240802172853.22529-1-james.morse@arm.com>
- <20240802172853.22529-18-james.morse@arm.com>
- <OSZPR01MB8798549BD48777C0CB9A7B398B802@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <OSZPR01MB8798549BD48777C0CB9A7B398B802@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240913214316.1945951-1-vipinsh@google.com> <ZvSiCYZv5Gban0VW@google.com>
+In-Reply-To: <ZvSiCYZv5Gban0VW@google.com>
+From: Vipin Sharma <vipinsh@google.com>
+Date: Mon, 30 Sep 2024 09:42:32 -0700
+Message-ID: <CAHVum0dpHrW3cDX9FCcd5wTsetFxzWP0B6WL3uXnqmwrVJnGcw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] KVM: x86/mmu: Repurpose MMU shrinker into page cache shrinker
+To: David Matlack <dmatlack@google.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, zhi.wang.linux@gmail.com, 
+	weijiang.yang@intel.com, mizhang@google.com, liangchen.linux@gmail.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Shaopeng Tan,
+On Wed, Sep 25, 2024 at 4:51=E2=80=AFPM David Matlack <dmatlack@google.com>=
+ wrote:
+>
+> On 2024-09-13 02:43 PM, Vipin Sharma wrote:
+> > This series is extracted out from the NUMA aware page table series[1].
+> > MMU shrinker changes were in patches 1 to 9 in the old series.
+>
+> I'm curious how you tested this series. Would it be posisble to write a
+> selftest to exercise KVM's shrinker interactions? I don't think it needs
+> to be anything fancy to be useful (e.g. just run a VM, trigger lots of
+> shrinking, and make sure nothing blows up).
 
-On 15/08/2024 07:43, Shaopeng Tan (Fujitsu) wrote:
->> Subject: [PATCH v4 17/39] x86/resctrl: Rewrite and move the
->> for_each_*_rdt_resource() walkers
->>
->> The for_each_*_rdt_resource() helpers walk the architecture's array of
->> structures, using the resctrl visible part as an iterator. These became
->> over-complex when the structures were split into a filesystem and
->> architecture-specific struct. This approach avoided the need to touch every call
->> site, and was done before there was a helper to retrieve a resource by rid.
->>
->> Once the filesystem parts of resctrl are moved to /fs/, both the architecture's
->> resource array, and the definition of those structures is no longer accessible. To
->> support resctrl, each architecture would have to provide equally complex
->> macros.
->>
->> Rewrite the macro to make use of resctrl_arch_get_resource(), and move these
->> to the core header so existing x86 arch code continues to use them.
+My testing was dropping caches (echo 2 > /proc/sys/vm/drop_caches) in
+background while running dirty_log_perf_test selftest multiple times.
+I added printk in shrink_count() and shrink_scan() to make sure pages
+are being reported and released.
 
->> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h
->> b/arch/x86/kernel/cpu/resctrl/internal.h
->> index 8e52e81a044b..84e0d019423d 100644
->> --- a/arch/x86/kernel/cpu/resctrl/internal.h
->> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
->> @@ -472,14 +472,6 @@ extern struct rdt_hw_resource rdt_resources_all[];
+I can write a test which can spawn a thread to drop caches and a VM
+which touches all of its pages to generate page faults. Only downside
+is it will not detect if KVM MMU shrinker is being invoked, counting
+and freeing pages.
 
->> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h index
->> c8cd6dde91ed..04a410a5e739 100644
->> --- a/include/linux/resctrl.h
->> +++ b/include/linux/resctrl.h
->> @@ -26,6 +26,24 @@ int proc_resctrl_show(struct seq_file *m,
->>  /* max value for struct rdt_domain's mbps_val */
->>  #define MBA_MAX_MBPS   U32_MAX
->>
->> +/* Walk all possible resources, with variants for only controls or monitors. */
->> +#define for_each_rdt_resource(_r)
->> 	\
->> +	for ((_r) = resctrl_arch_get_resource(0);				\
->> +	     (_r)->rid < RDT_NUM_RESOURCES - 1;
->> 		\
->> +	     (_r) = resctrl_arch_get_resource((_r)->rid + 1))
->> +
->> +#define for_each_capable_rdt_resource(r)
->> \
->> +	for_each_rdt_resource((r))
->> \
->> +		if ((r)->alloc_capable || (r)->mon_capable)
->> +
->> +#define for_each_alloc_capable_rdt_resource(r)
->> \
->> +	for_each_rdt_resource((r))
->> \
->> +		if ((r)->alloc_capable)
->> +
->> +#define for_each_mon_capable_rdt_resource(r)
->> \
->> +	for_each_rdt_resource((r))
->> \
->> +		if ((r)->mon_capable)
->> +
+>
+> There appears to be a debugfs interface which could be used to trigger
+> shrinking from a selftest.
+>
+> https://docs.kernel.org/admin-guide/mm/shrinker_debugfs.html
 
-> ERROR: Macros with complex values should be enclosed in parentheses
+This is interesting and it does what is needed to test KVM MMU
+shrinker. However, this needs CONFIG_DEBUG_FS and
+CONFIG_SHRINKER_DEBUG. I think using shrinker_debugfs will be better,
+selftest can just skip if it cannot find shrinker_debugfs files. One
+downside is that this test will not run if these configs are not
+enabled.
 
-This is from checkpatch - I've ignored it because the 'r' values are in parenthesis...
-
-I _think_ what it wants is this:               \|/
-| #define for_each_mon_capable_rdt_resource(r)	(	\
-|        for_each_rdt_resource((r))			\
-|		if ((r)->mon_capable))			\
-
-but then this macro wouldn't work in the way it is intended to be used because it breaks
-the deliberately dangling if statement
-
-Checkpatch also complains about the existing code.
-
-I think this is just a pattern of code that is frowned on (including by me!). Previous
-versions of this series rolled these out as a loop and condition at each call site, but
-Reinette didn't think this was worth the churn as the existing helpers are well understood.
-
-
-Thanks,
-
-James
+Which one do you prefer? I am preferring shrinker_debugfs but
+concerned about its dependency on those two configs, not sure if it is
+okay to have this kind of dependency in a selftests.
 
