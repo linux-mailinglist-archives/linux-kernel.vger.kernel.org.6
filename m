@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-343487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAD3989B82
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD26989B7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70B89B211B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB631C213C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407BC158DB2;
-	Mon, 30 Sep 2024 07:32:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD2E158DB2;
+	Mon, 30 Sep 2024 07:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Oz0MJoD/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXjlnw7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA3F1552F6;
-	Mon, 30 Sep 2024 07:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A1913D8A4;
+	Mon, 30 Sep 2024 07:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727681535; cv=none; b=nQN8jDuhCmS5ERCWJWBDAga9r6ihjzGRnE4So97sKpidhABxweQgDo8R11p4tSKLqG2wMe0iVJv92/62ANKN5K4gexHL0CzGS+W6ArXcx+GkrWVzvcF2tpYWDRq0iaFmVHc/ei2nHT9f2CXxVGhFAssOUYLZAlZFIJ3KHcjdoWs=
+	t=1727681522; cv=none; b=G4vJxoKk0mWPjEKu6pL4ZmElkMMYEcyNyzJn1YDEiKcrApSuHgzTevWNvQXqSfSKeeTefdo9qOLvbXGpfTRWR98q+wZKhTXYmxd3DR9Y6iqlr3wDYkmxi7Yb84MX9sv6KCpB+VuzjkvONfD4DpiEldwBTBXVMhV/ECCVEcE2TtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727681535; c=relaxed/simple;
-	bh=M3ZGR3m5dE/OcpAuJgNW07sMzVd9xcG6hbRIN3GQi5s=;
+	s=arc-20240116; t=1727681522; c=relaxed/simple;
+	bh=8y4DZk4zrwaU3Yi99yTj4vQbY43hUWWXJi/BTH+cFcg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ntV7kpBja6qvX7WsGQvHKel6y9q5IcCOyHmPg8GC8I74v6FoC5RCmEjPUGCMviN+aSNotr0FQfJ46ufvK+JrbfxJ08zUTKW+PA+FfvN3Gdi2vLZDiIJhL9rUYhBRnvHRL/53vnkeP/EWf2hox9atjrs0gK8gddk6KT9BezTi+p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Oz0MJoD/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727681531;
-	bh=M3ZGR3m5dE/OcpAuJgNW07sMzVd9xcG6hbRIN3GQi5s=;
+	 In-Reply-To:Content-Type; b=k0N/kGeMqJUQvSAjDMjj0F4pTjV6h7EgUogsq/Z2xHd/bl58eIksl4U5Zcxz8ikkar+4wTr0K8oJef0hx3mre87E9to23sxBblT4t5IjwEubvcJeYTOoSZke3lzakGRXraobuTxJDad1XkEecN1VpWpBW9OSxyDKV3EW+jXlrvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXjlnw7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A318C4CEC7;
+	Mon, 30 Sep 2024 07:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727681521;
+	bh=8y4DZk4zrwaU3Yi99yTj4vQbY43hUWWXJi/BTH+cFcg=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oz0MJoD/WjoceXAqgBvUNpAstd9dV0jBR191CXDs3DaHEQv8fB6tEEkb3khrgiisE
-	 nh7tdsJ05/IcW/muYpcMYD2UbZ59bvLNKjDb7A7RsthSIIYy9ISk7EtNcjZZJJ/j4b
-	 46HY0ZSLujeCZ2Euue+8cxgFYaU/00AGdTSqrFGu+tvTdK4XrGCbrxAmA25H//DWD1
-	 gnBnOgQkZjyB3Rxtdykg0mDYBmcB8VRkDHDSZOdUCxlY8BYcGNoed0Ur7HnpY3zSJe
-	 +ONzA6kcS7zMAeoKr1mZ7/oMykf0KM1jTOBErKvVlvh8ykoNrOxERefW/OQ7/gJea/
-	 VGMkeeuORJQXg==
-Received: from [192.168.50.250] (unknown [171.76.80.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9E73717E1047;
-	Mon, 30 Sep 2024 09:32:07 +0200 (CEST)
-Message-ID: <5fd48673-571a-4750-9704-e172f7ea372f@collabora.com>
-Date: Mon, 30 Sep 2024 13:01:55 +0530
+	b=SXjlnw7/2yYQxkbJbRLpcirNCm6oUADc8+DXRXCeKAYhyGcirYc6siRRoNUT9EA0o
+	 V1whTr8NUK6RMcyFx1tpvYmUeJJqbKn0w8ExIpkDocYFbFVY5YFOz9vLfvl32KlxBb
+	 XHlYX/wT0F3ljrEi7uLmTh4EuMh4TMn0EaGUVqffz6/hV0mJ+Q766Xru0rB3yB/M+p
+	 3zZKewdSeQPJcOERsTF6rVTabV0H2q+tycIZ/9KTg5hEH0CzlVrBAXEmnlSxpcqTRd
+	 pBULR0FYDU7s0s30gkHZqCeK5nOsSLz5h3UxzU6K2dSQF8RlFA0ZcWbU3W+Yle6EZB
+	 bCWsWVheOVwWg==
+Message-ID: <69e61fb9-b162-4574-927a-170b45fb3394@kernel.org>
+Date: Mon, 30 Sep 2024 09:31:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,98 +49,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/gpu: ci: update flake tests requirements
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: dri-devel@lists.freedesktop.org, daniels@collabora.com,
- helen.koike@collabora.com, airlied@gmail.com, daniel@ffwll.ch,
- robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com,
- dmitry.baryshkov@linaro.org, mripard@kernel.org, quic_abhinavk@quicinc.com,
- linux-mediatek@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, amd-gfx@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240927052416.1833889-1-vignesh.raman@collabora.com>
- <ZvbCzqvyeTI_j2cD@intel.com>
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Angelo Dureghello <adureghello@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, dlechner@baylibre.com
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+ <gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
+ <418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
+ <e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
+ <0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
+ <fa27dc74-7b1f-4ef5-81dc-cc434da4ff89@kernel.org>
+ <c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
+ <28834db1-3e9e-47f4-b00e-a548589d77e9@kernel.org>
+ <20240929115919.0318034c@jic23-huawei>
+ <ae4cfdfb9880e0a833c105fcb9e9442ef04f461b.camel@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <ZvbCzqvyeTI_j2cD@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ae4cfdfb9880e0a833c105fcb9e9442ef04f461b.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Rodrigo,
-
-On 27/09/24 20:05, Rodrigo Vivi wrote:
-> On Fri, Sep 27, 2024 at 10:54:14AM +0530, Vignesh Raman wrote:
->> Update the documentation to specify linking to a relevant GitLab
->> issue or email report for each new flake entry. Added specific
->> GitLab issue urls for i915, msm and amdgpu driver.
+On 30/09/2024 09:20, Nuno Sá wrote:
+>>>>>
+>>>>> You described the driver, so how does it matter? Driver can call
+>>>>> get_backend_from_parent(), right? Or get_backend_from_fwnode(parent)?  
+>>>>
+>>>> Well yes, just stating what the framework (also in terms of bindings) is
+>>>> expecting. Of course that on the driver side we can paper around it the
+>>>> way we
+>>>> want. But my main point was that we can only paper around it if we use
+>>>> code that
+>>>> is meant not to be used.
+>>>>
+>>>> And, FWIW, I was (trying) replying to your comment
+>>>>
+>>>> "You can take it from the child-parent relationship"
+>>>>
+>>>> Again, we can only do that by introducing new code or use code that's not
+>>>> meant
+>>>> to be used. The way we're supposed to reference backends is by explicitly
+>>>> using
+>>>> the proper FW property.
+>>>>
+>>>> Put it in another way and a completely hypothetical case. If we have a spi
+>>>> controller which happens to export some clock and one of it's peripherals
+>>>> ends
+>>>> up using that clock, wouldn't we still use 'clocks' to reference that
+>>>> clock?  
+>>>
+>>> I asked how coupled are these devices. Never got the answer and you are
+>>> reflecting with question. Depends. Please do not create hypothetical,
+>>> generic scenarios and then apply them to your one particular opposite case.
 >>
->> Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
->> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
->> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
->> ---
+>> I'll throw a possible clarifying question in here.  Could we use this
+>> device with a multimaster SPI setup such that the control is on a conventional
+>> SPI controller (maybe a qspi capable one), and the data plane only goes
+>> through
+>> a specific purpose backend?  If so, then they are not tightly coupled and
+>> the reference makes sense.  Putting it another way, the difference between
+>> this case and all the prior iio-backend bindings is the control and dataplanes
+>> use the same pins.  Does that have to be the case at the host end?  If it
+>> does,
+>> then the reference isn't strictly needed and this becomes a bit like
+>> registering a single device on an spi bus or an i2c bus depending on who
+>> does the registering (which is down to the parent in DT).
 >>
->> v2:
->> - Add gitlab issue link for msm driver.
->>
->> v3:
->> - Update docs to specify we use email reporting or GitLab issues for flake entries.
->>
->> ---
->>   Documentation/gpu/automated_testing.rst | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
->> index 2d5a28866afe..03769b4a17cf 100644
->> --- a/Documentation/gpu/automated_testing.rst
->> +++ b/Documentation/gpu/automated_testing.rst
->> @@ -68,19 +68,24 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
->>   the result. They will still be run.
->>   
->>   Each new flake entry must be associated with a link to the email reporting the
->> -bug to the author of the affected driver, the board name or Device Tree name of
->> -the board, the first kernel version affected, the IGT version used for tests,
->> -and an approximation of the failure rate.
->> +bug to the author of the affected driver or the relevant GitLab issue. The entry
->> +must also include the board name or Device Tree name, the first kernel version
->> +affected, the IGT version used for tests, and an approximation of the failure rate.
->>   
->>   They should be provided under the following format::
->>   
->> -  # Bug Report: $LORE_OR_PATCHWORK_URL
->> +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
->>     # Board Name: broken-board.dtb
->>     # Linux Version: 6.6-rc1
->>     # IGT Version: 1.28-gd2af13d9f
->>     # Failure Rate: 100
->>     flaky-test
->>   
->> +Use the appropriate link below to create a GitLab issue:
->> +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
->> +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
 > 
-> Probably good to add:
+> So, we currently have two drivers (with a new one being added in this series)
+> for the same device:
 > 
-> xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
+> 1) A SPI one tied to a typical spi controller. This is the "low speed"
+> implementation and does not use backends;
+> 2) The new platform device that is connected like this to the backend.
 
-Sure, will add it.
+Drivers, platform devices are Linux specifics. These were not our
+questions here. You are responding with description matching current
+Linux code.
 
 > 
-> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> So yes, my understanding (but Angelo should know better :)) is that they are
+> tightly coupled. Putting it in another way, the new platform device is very much
+> specific to this parent (and yeah, this is a very special usecase where control
 
-Thanks.
+Again, Linux stuff.
 
-> 
->> +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
->> +
->>   drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
->>   -----------------------------------------------------------
->>   
->> -- 
->> 2.43.0
->>
+> and data planes are controlled by the IIO backend) and should not exist with it.
 
-Regards,
-Vignesh
+I pointed this issue already in this thread. You keep describing
+drivers, so of course they will be coupled as much as you write them.
+
+Best regards,
+Krzysztof
+
 
