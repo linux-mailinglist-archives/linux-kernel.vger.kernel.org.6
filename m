@@ -1,164 +1,106 @@
-Return-Path: <linux-kernel+bounces-344737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEDA98ADA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E8598AD67
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7272E1C20FA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4473D1F22BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B319DF75;
-	Mon, 30 Sep 2024 19:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E0619DF50;
+	Mon, 30 Sep 2024 19:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KLdnS7Kf"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GNlG8G6l"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE6319AA57;
-	Mon, 30 Sep 2024 19:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7861991D3
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726370; cv=none; b=sS3Na0xY0b0UU/GAuBA7YDFQ5yygyM057hXuUHS2vdEhteOiH5qPAQ+NQI/A3BI+So60XKJrpN1zw3rhpldBnf8v10OI5HHT0wJvWzrlru1WVmWDvomzh7BfaceKS5hZd9LnsZf0McWvou8m9g4sb5jmQj78/VwiCe/E/C8F3Eo=
+	t=1727726019; cv=none; b=dxoerz2aYyDOo2uBYmb7OhLt0RlYoZTPFvDO20Un8Huf/6eMX5RHcKX/PvgOhldL8Qs1VU/AJgSOIEAxyTXzSw6lrJDSK5eFsTPZP6q+l6LZ01Fj0lJboc84by6BOTFvnkuckScd8Hltd5b/t1OjMOyRMgE5OQHrpJpoR6C0RbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726370; c=relaxed/simple;
-	bh=5NmmrEnK8EnrwqH2ZUDZJZXTyYw4hqS9UFPj1sY55Pw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=tLi48+eEbJz1WvkJ/C7DH/cFuI9H4oH+0JA1rabicI/dEp7HoSIHv1+fmpFpUNTy/Fzs3dcfhRvPyldFTXbc812RRaJ2Ir1e8RzD4kPCrIh2llfKkR6y3w1ybLrEXXi8PdjKL1dRTIXtyPak0azzML6Fgn9E/GvP4BrECIaOTRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=KLdnS7Kf; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UJu9D1024103;
-	Mon, 30 Sep 2024 19:58:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id; s=corp-2023-11-20; bh=yQxDUX
-	TCMj1G4qCKFF7q4BFUmsa0iyHbrnl2P10jhq4=; b=KLdnS7KfiVG7YblgMlCFGM
-	bf3P4s0yf61W2hGsHgAgthWc2OXcg59TWahrxycM54rdafJ3CEQSOSta7NE8pWns
-	CSXk/W1vvJsuqDvutV3yei4JehivSdgg9C5W/VspkyLksAKUL92lVTN1khIquT9q
-	PgcCfdqJgjZnFiGiP4O4MZZpaqiOi00SnoWcTMhmbAQHPG1BjzOTyADKlyY8mMeI
-	5u3Sj8EydOIo51yp2xpp0YDjT/JfDzrj4vX8zCPkUBzjjrJ76SM//nc+SimXuNws
-	/aP6cf7tFxPjue1tKUIhGM9lWu2Y9UWOHa+TR0USAB6KRs6pk36yTZXvACVEc7hg
-	==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8k34q13-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 19:58:45 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48UJkuIo028453;
-	Mon, 30 Sep 2024 19:58:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x886sa9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 19:58:44 +0000
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48UJu2cs033321;
-	Mon, 30 Sep 2024 19:58:44 GMT
-Received: from gkennedy-linux.us.oracle.com (gkennedy-linux.us.oracle.com [10.152.170.45])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 41x886sa6q-1;
-	Mon, 30 Sep 2024 19:58:43 +0000
-From: George Kennedy <george.kennedy@oracle.com>
-To: ravi.bangoria@amd.com
-Cc: george.kennedy@oracle.com, harshit.m.mogalapalli@oracle.com,
-        peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dongli.zhang@oracle.com
-Subject: [PATCH] [PATCH v2] perf/x86/amd: check event before enable to avoid GPF
-Date: Mon, 30 Sep 2024 14:52:27 -0500
-Message-Id: <1727725947-18058-1-git-send-email-george.kennedy@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_19,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 malwarescore=0
- mlxlogscore=901 phishscore=0 suspectscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409300144
-X-Proofpoint-GUID: focYdnfSSzFjVpzzfX-Rnspnb2JJ5py3
-X-Proofpoint-ORIG-GUID: focYdnfSSzFjVpzzfX-Rnspnb2JJ5py3
+	s=arc-20240116; t=1727726019; c=relaxed/simple;
+	bh=EQ3niX/K3BJ+aOU+MibJwldr/HNSkC3v9ilvWwnJ/gU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3OSZNdyT4hFuAqbJvWWdMly+CvrHXNCbi567w+5MzYkiAREjP4FoRmC5Lxf3Iw+yJzC2SSCu7qwIQVL3crY1PRqGiPYLhaUMMn0PXkJqXsaiT4r2maCfqMq31XmVWRdizC61MrwuQdffHTfGcy/K/hCluYMwImd0Cq8J1H1AaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GNlG8G6l; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a0cbc08b38so24838395ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727726017; x=1728330817; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y0c1OSnjeq19GYf4nlM2ePALyEZ+IQYTBspuIuHRqiA=;
+        b=GNlG8G6lzaF+5ZzhNF1V2xcsFIQhSDyHc8Vyk6O2HZHnL5hhv0UXvuU94U8XWa9rxs
+         UAoFGgutfAw2uMxImhPexHwhWUOgX/FQMEpd9Mb5GZ2oIGy/J3HFNf6UFPSbqOud34iK
+         RvJmok9ja8rwubTV58T3k8u/7KnY4idSkko8E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727726017; x=1728330817;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0c1OSnjeq19GYf4nlM2ePALyEZ+IQYTBspuIuHRqiA=;
+        b=N08vR4ViSNBqDbgHwqkKGcdtWfP++cBmtlKz1/GMRRRaI9OkEyuZczmgRtqEAHy5GR
+         nqgPh9l8zNg5V7KSW/XaqUNMVRrPhjp45t65R64gQC7pBji1F4L04Gkz/CU08E4mLC7K
+         nUI9A52zouq1NviN7tI7JAyrVyRa240La1f1OmelaK7336UdVyeWwpK5Ct7JhoNtK4+L
+         PmJyxWwVT/l0NjpOot4caJjM6SDqfiVjMK1eocZ1Cna/4kkDHxqp/ho/zUbVrMx/jgMM
+         aJtUYNwTcBfNdyy5yL06NsVY4XNY8VfgE8Wn1qg0TIpnTlMh4G2u07mM6fdyAcmpg8Xw
+         FVsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnVU9HhA5uCsc1HBIIBSsSezqhUO6lxpuTE2EcwBU5GVQZ2NExBj6sXk+pFRlQOGc3cPDxGL8tNJkkpMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzct+Qqr3ebZb9TIg5prFHqvwfl6LQv05pDFKexxGV41n2cusgW
+	46DKQrl38jx5lY6pGC4Yzl1uDXw2OhwI7NprbuMIOAZyjPhrcZw48Ab/13zt+FY+uyWdpu/ee9J
+	Z
+X-Google-Smtp-Source: AGHT+IEA40pmYmtY4M1k1g7RDrzT3qGarF+EhIg0WflDAvUWrmq7VmoGREawyq0GRW4ud7ur3WComw==
+X-Received: by 2002:a92:ca08:0:b0:3a0:c23f:9647 with SMTP id e9e14a558f8ab-3a34514afc2mr121503965ab.1.1727726017160;
+        Mon, 30 Sep 2024 12:53:37 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344d925d8sm26298575ab.44.2024.09.30.12.53.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 12:53:36 -0700 (PDT)
+Message-ID: <121f3d6f-bc4e-4366-9282-8fda40184e3f@linuxfoundation.org>
+Date: Mon, 30 Sep 2024 13:53:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: timers: improve timer_create failure message
+To: John Stultz <jstultz@google.com>
+Cc: Gianfranco Trad <gianf.trad@gmail.com>, tglx@linutronix.de,
+ sboyd@kernel.org, anna-maria@linutronix.de, frederic@kernel.org,
+ shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <877cbz9x8t.ffs@tglx> <20240829153725.4437-1-gianf.trad@gmail.com>
+ <54d1bcb6-b817-4ab5-be0e-aea34cfe0d5f@linuxfoundation.org>
+ <CANDhNCrzWz0=5az1a9_-rzCYo42ex0aNbXgdso9sx55BAEp_jg@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CANDhNCrzWz0=5az1a9_-rzCYo42ex0aNbXgdso9sx55BAEp_jg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On AMD machines cpuc->events[idx] can become NULL in a subtle race
-condition with NMI->throttle->x86_pmu_stop().
+On 9/30/24 13:19, John Stultz wrote:
+> On Mon, Sep 30, 2024 at 11:49 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+>>
 
-Check event for NULL in amd_pmu_enable_all() before enable to avoid a GPF.
-This appears to be an AMD only issue.
+>> Jon, Does this look good to you? I can pick this up if you
+>> okay with this change.
+> 
+> No objection from me, sorry this slipped by me.
+> 
+> Acked-by: John Stultz <jstultz@google.com>
 
-Syzkaller reported a GPF in amd_pmu_enable_all.
+Thank you. Applied to linux-kselftest next for Linux 6.13-rc1
 
-INFO: NMI handler (perf_event_nmi_handler) took too long to run: 13.143
-    msecs
-Oops: general protection fault, probably for non-canonical address
-    0xdffffc0000000034: 0000  PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x00000000000001a0-0x00000000000001a7]
-CPU: 0 UID: 0 PID: 328415 Comm: repro_36674776 Not tainted 6.12.0-rc1-syzk
-RIP: 0010:x86_pmu_enable_event (arch/x86/events/perf_event.h:1195
-    arch/x86/events/core.c:1430)
-RSP: 0018:ffff888118009d60 EFLAGS: 00010012
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000034 RSI: 0000000000000000 RDI: 00000000000001a0
-RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000002
-R13: ffff88811802a440 R14: ffff88811802a240 R15: ffff8881132d8601
-FS:  00007f097dfaa700(0000) GS:ffff888118000000(0000) GS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200001c0 CR3: 0000000103d56000 CR4: 00000000000006f0
-Call Trace:
- <IRQ>
-amd_pmu_enable_all (arch/x86/events/amd/core.c:760 (discriminator 2))
-x86_pmu_enable (arch/x86/events/core.c:1360)
-event_sched_out (kernel/events/core.c:1191 kernel/events/core.c:1186
-    kernel/events/core.c:2346)
-__perf_remove_from_context (kernel/events/core.c:2435)
-event_function (kernel/events/core.c:259)
-remote_function (kernel/events/core.c:92 (discriminator 1)
-    kernel/events/core.c:72 (discriminator 1))
-__flush_smp_call_function_queue (./arch/x86/include/asm/jump_label.h:27
-    ./include/linux/jump_label.h:207 ./include/trace/events/csd.h:64
-    kernel/smp.c:135 kernel/smp.c:540)
-__sysvec_call_function_single (./arch/x86/include/asm/jump_label.h:27
-    ./include/linux/jump_label.h:207
-    ./arch/x86/include/asm/trace/irq_vectors.h:99 arch/x86/kernel/smp.c:272)
-sysvec_call_function_single (arch/x86/kernel/smp.c:266 (discriminator 47)
-    arch/x86/kernel/smp.c:266 (discriminator 47))
- </IRQ>
-
-Reported-by: syzkaller <syzkaller@googlegroups.com>
-Signed-off-by: George Kennedy <george.kennedy@oracle.com>
----
-Ravi requested patch resend with the following:
-  /*
-   * FIXME: cpuc->events[idx] can become NULL in a subtle race
-   * condition with NMI->throttle->x86_pmu_stop().
-   */
-
- arch/x86/events/amd/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-index 920e3a640cad..3a8b8db878f6 100644
---- a/arch/x86/events/amd/core.c
-+++ b/arch/x86/events/amd/core.c
-@@ -762,7 +762,8 @@ static void amd_pmu_enable_all(int added)
- 		if (!test_bit(idx, cpuc->active_mask))
- 			continue;
- 
--		amd_pmu_enable_event(cpuc->events[idx]);
-+		if (cpuc->events[idx])
-+			amd_pmu_enable_event(cpuc->events[idx]);
- 	}
- }
- 
--- 
-2.39.3
-
+thanks,
+-- Shuah
 
