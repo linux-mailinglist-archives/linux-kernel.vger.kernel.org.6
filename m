@@ -1,126 +1,99 @@
-Return-Path: <linux-kernel+bounces-344802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C817998AE63
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:30:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA03998AE66
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F9FB25E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB3EF282FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5210B1A2559;
-	Mon, 30 Sep 2024 20:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1ED31A2547;
+	Mon, 30 Sep 2024 20:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y36Z5gFU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bNfmMLXO"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915BE19882F;
-	Mon, 30 Sep 2024 20:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A9B1A0BCF;
+	Mon, 30 Sep 2024 20:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727728156; cv=none; b=AkLL96vLbEMJm5jkazzaiioUfquMsl5BQ9VOXHSnUdZiFNEQrSkmESF81bwpBeUz1o7tRA/jNKfNgobSptfvLxPi8ihURjpVkdm9zWqkZTbC15b/AEbzwME5JV6ySGNHzlD4s1ihhrv3uparS1lQAoIv/httC8SS9cfF0Dbk57s=
+	t=1727728195; cv=none; b=D6rG3Mi5tgqsIFMxspGG+wG4P1iA/3PXHcD9fuDShPqQrUQuzd3R4mAdJBEZuxAMuqfMfl7cPzdTGd4Fcuk7f0gSTiH6Lr0DNqhxKQAeF0BUBVXAO4TLMVBW+TREx35b56AH+cYJD7TM6qtOznGZ/GK+4A+vi8PyKnDQU2iJs60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727728156; c=relaxed/simple;
-	bh=YiaWmx4C+Wz5BdawBQdt6XQcHpZFtuPbrE1OBh+7RHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQqfTtAxbihpPsoVmDUuYd9TQXTir6n+oJuJNh505GHNT2n2S6SbLFGCoBLGzmtFV4z3wUMYSi+zuzNwl9jZOi4HZEheXXKXy6xHT1/YgHQ5ywYkeHm1+W6R0exphi6snYeFri771ucEWKP+XSU4ezIMrhlcQ7gBF2SW3IhSVtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y36Z5gFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C96EC4CEC7;
-	Mon, 30 Sep 2024 20:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727728156;
-	bh=YiaWmx4C+Wz5BdawBQdt6XQcHpZFtuPbrE1OBh+7RHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y36Z5gFUJMhKC1P3Fgs33xQwUxd7cXW0xvyy75tpTfLf3iKm0NocvzMZFqkFiS5tu
-	 W0anNMdHAiPyWLdBvvNvfIrTYKIK1Stb01bo+V0xg5uqt6tHD+/I3RXe1URRD2AW/r
-	 kq/ghRbt2mV/xoMb7mJB4CTp5XincIJADHBVerxaZFKKUZAbAX59ksLP9cQjn5KufN
-	 g/aSKsbeEtPHRe0uBIrHO/PwJJY8ilgb+Ytl6O53uFhoh+yw9skrJK5Bosqrf0nRPt
-	 TR5ft9baBq6pWSjsF7T8WRURA/naor6G0QMc16aTAHFZ9l64fag/acedSUrLYyjE06
-	 9DlSRg5ucss4g==
-Date: Mon, 30 Sep 2024 13:29:11 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>,
-	Maksim Panchenko <max4bolt@gmail.com>,
-	Han Shen <shenhan@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	John Moon <john@jmoon.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
-	Eric DeVolder <eric.devolder@oracle.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Breno Leitao <leitao@debian.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kees Cook <kees@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Xiao Wang <xiao.w.wang@intel.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
-	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Stephane Eranian <eranian@google.com>,
-	Maksim Panchenko <maks@meta.com>
-Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
-Message-ID: <20240930202911.GB1497385@thelio-3990X>
-References: <20240728203001.2551083-1-xur@google.com>
- <20240728203001.2551083-7-xur@google.com>
- <c65a07ef-6436-4e04-a263-7cad9758e9be@gmail.com>
- <CAKwvOdm0iZspjpuueBV1=eFt+Bf4edWBZsDsj10kEvTGZRye2w@mail.gmail.com>
- <20240928173530.GC430964@thelio-3990X>
- <CAF1bQ=QoNNLVKRpaXyJ8pm+NcnSyzmpgAN5ktu=Fqim9HkF4rA@mail.gmail.com>
+	s=arc-20240116; t=1727728195; c=relaxed/simple;
+	bh=HRR9bQHiRT+CjeQFS+GpJay61LnVnKn+EnbGQoZ2oyg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q5X0O686oKr8F9QDj7m7zteYxQD5FX+QhBLKEYtE3elt+kQnuYNOo1LWEt34bvBGtAQ6q+N99bgXs/nywMNKfZi+hj+NxhuFwbCpkVon25BCujfsEdfWvFs3H5o/jSG4ejfTbcIa/Xz8sSS6n2PvQf/Bp+0q2gIrlaNRrkUx2Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bNfmMLXO; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b7eb9e81eso16075355ad.2;
+        Mon, 30 Sep 2024 13:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727728193; x=1728332993; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlNL3fIBPDjIX94VzI+XsLBPzNtcysQHiWGsRof9Kdk=;
+        b=bNfmMLXOcLJS6n5dlOW4hfuBoV1OvsjgfjYFtRpDf35De9k4SeqVXbhlcu5ICndBKx
+         zBocQtw+k+y074JoWPICayZFIL7LzkyD0a3g+QCC31O7IameaQjHu+OBpyDsk7KipSkj
+         Yg3vXxuyK2UJ78sD0TIrNd61zLA1uJVMdGzpexVVQWGF/9p98bVoJS2hhg3lzJjqtabI
+         e4Xyz5cXozE+uHTP5RmmTkNCXwWK46SvvOfGhvoC/rlms4LeZTR7JhpiF9Cra3avLQr3
+         4rnIRCf8K5He0U3ZWI8TQlFku8sx6PzRl0A3ayI1NialKvpIUnZd+W/VX0DC2ltKr2GO
+         ZXjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727728193; x=1728332993;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TlNL3fIBPDjIX94VzI+XsLBPzNtcysQHiWGsRof9Kdk=;
+        b=KcBIE2bc6e1G9AzmAN6GxtqJnYYSZ7/skaPyaEDn3GkMnElPQ0cDdZOMIA/gXyITjL
+         edmQ2i0SUjh5pocy+3cip5D0eoT7PeWFpWW+pHXim7FDudeptwaYmssuco+SKd9yvRGT
+         79YhBuoiwCAdh/iXqmC4Qa+F0MtFZE9Dsmxua2/TvD13C4ocCQRPhsdwn36Tk46QUNcq
+         3TgurRW+nvhX9r9qz5nfZZ0ept534KwA2TQhP8dOW2nxpS0cbxl0ve+IJhw+v1KFPkJH
+         DTX8dPfo+Sm4hlimDcFFejvtPVwlU75O5J/QPm0fpUCTqBS4ALK2bhxQvNBAynEAgvt0
+         W25g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAfFQYQQ30fOgpaL4CkT+MBUE/JJqcY44A24HevW7kTgPWl7XiEIROFyXkeyK1TJzFQzG9HoE5KIJi6Mc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsIcDG2VWedmsI0WCWMgsT7YhkTHXv8aPHCtGuZi2KghRqiRYp
+	ituGzbNDjiakAul2D/Q8Hxe97apIy0a4MYMdLHCTaB1Nx7C+0B+bKPgTQKuG
+X-Google-Smtp-Source: AGHT+IGEExGblHSNU0s12qUoLFZZ+ZLKbeNKRFlHy7UNBO6pAD0miTdR3qZkv9YeCcpMfASfl3n+dg==
+X-Received: by 2002:a05:6a21:3a83:b0:1d2:e888:3a8e with SMTP id adf61e73a8af0-1d4fa68682cmr19024096637.18.1727728193108;
+        Mon, 30 Sep 2024 13:29:53 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db5eb3ecsm6812943a12.60.2024.09.30.13.29.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 13:29:52 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/2] net: mv643xx: devm fixes
+Date: Mon, 30 Sep 2024 13:29:49 -0700
+Message-ID: <20240930202951.297737-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAF1bQ=QoNNLVKRpaXyJ8pm+NcnSyzmpgAN5ktu=Fqim9HkF4rA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Rong,
+Small simplification and a fix for a seemingly wrong function usage.
 
-On Mon, Sep 30, 2024 at 10:07:05AM -0700, Rong Xu wrote:
-> I don't find the Clang Build Linux meeting in the link of
-> https://clangbuiltlinux.github.io/. There is no Wednesday meeting in the
-> upcoming event. Can you confirm there is such a meeting.
-> We will be happy to join to chat about this.
+Rosen Penev (2):
+  net: mv643xx: use devm_platform_ioremap_resource
+  net: mv643xx: fix wrong devm_clk_get usage
 
-It is in the "Useful links" section, under the "Bi-weekly video meeting"
-line. I'll copy it here just to make sure you have it.
+ drivers/net/ethernet/marvell/mv643xx_eth.c | 28 ++++++----------------
+ 1 file changed, 7 insertions(+), 21 deletions(-)
 
-Calendar, which should show the October 2nd meeting at 12pm Pacific
-time:
-https://calendar.google.com/calendar/embed?src=47005f8f50f21da6133d7239f3cb93d1624d2e1949963ea75dd86d5f2d5721e0%40group.calendar.google.com
+-- 
+2.46.2
 
-Meeting link:
-https://meet.google.com/wrr-mxkn-hdo
-
-Cheers,
-Nathan
 
