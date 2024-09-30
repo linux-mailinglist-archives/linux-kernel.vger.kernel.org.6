@@ -1,174 +1,194 @@
-Return-Path: <linux-kernel+bounces-343966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F221398A23E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:25:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D34298A1C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CAB2B26184
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4989AB29760
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714B1A262E;
-	Mon, 30 Sep 2024 12:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216B219B5AC;
+	Mon, 30 Sep 2024 12:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G/x1deI8"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMIvhKtD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37F11A2634
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9AD19AD8C;
+	Mon, 30 Sep 2024 12:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697933; cv=none; b=ANt6TFYO5XKbg0fXRkM2ptRwyaoqNfVY4RQe1WiyRVI5l/bUsH5VKa81IcRDfeHJgaGq771zZ+7Me7LOffX6YnK+wtldD3J0GiiK7EH9Y+Retez1Z8bZogM8eobjd+oiq7z+brFeqefNFUThBrC8Vt1BgGxBIwL3V4DYfhNScGQ=
+	t=1727697899; cv=none; b=s9ppSePOxCV467xyVhVeZqiFYgXfiTXd11FZ4mn5VV/ifDl7BFW8LAu6bM9MlJRNUMrFvz+jIOD9k0eWIX4WOqSpvdSzMtW9bgN5vsPrb6OnuJkHilKRDo37qN8yta800d63qPVWBlGBb2Ew/ngkoQ0qAeI0p9pp8Y+FLMCLXF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697933; c=relaxed/simple;
-	bh=jY1WzcwZ9RpRPpmgPFLEyMqg1JCaHzSShjO6IWqlOD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=obEJypVf+0YD/imvY0oe1uUitmnzC6TbkCf8+OY7SDVOY/UTIv6oj+psJaKqo6Q7m0o5JW8UrQ5iq/jXXYgNHD0Zydk7pUMisgFFfpK+VzWpu/KcsIbHmBkNBKQxRRk8h36K2vv4mHOgO+35jM/sCjSnQxjSzXEswVeOZdzADYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G/x1deI8; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-709346604a7so2210831a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:05:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697931; x=1728302731; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y4CZBI+n6IjdrtDGuJsp4m8Z3nCdNkGXw0PtmNPGNzY=;
-        b=G/x1deI8uE6uFMiFiTTRc7a0Q/1HECCL5g+Igr/mfo9wAzrWfcV8nnEY6F4RpdxvsE
-         dfRf+LePQlEBSbkzLkn8L06/0dSteMEI3uEReEVGHAjoLYpZ79lDYjLWTn1Uo/atA33k
-         wkMWza2EHWoFH2xAH4ja10bgIIPubHPECaOeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697931; x=1728302731;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y4CZBI+n6IjdrtDGuJsp4m8Z3nCdNkGXw0PtmNPGNzY=;
-        b=oUOFnxmAmdgvGwTL6Zc55/R4uAwktnTJtMbMmy4aHCHlxY+rhU1lX1T6GPOm9TdofF
-         mtbqGaftasJb9BWCrdCU8XII2h2G03PKL/5Ctv6EQ0eAHd1ScFxuKCUcfyNq4o+fGRIc
-         5VMVQz8fpDbAedfxIj8omPkPY22bF9D7n3KZlVCK4vDtKR8Ezom9SksPP4hZmM0Qsx+c
-         NA8uzVnms3wcXo88RCU1e1wocB7s3Y3YzU1ogPdyf+UrhROB5cZ9WGL2h8hMqEYkMlcA
-         eCIriKuez8yTt5ChHrg+os3UfE5u/V+RvlIgYCjFpcbZXUPJ6Ug8ZokWCQpaBVT5axxe
-         s6Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Yr3KGD0o/Hkqz3uu4oNgyKWsCmYOOEpJ0u9uDtcYFS/Fq87tgZTRevrwOhmQoSrbCpg0xeUHdym3GSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwCEV+o8MoEbZX7HTlk66shiBWWCn2ZVNhWuy3lEmh99cqOX+8
-	566iTC/aJGESKAEP+mtw2PassQu4t7GaematKUC0ocRW3/xrozA595MggJ4MEg==
-X-Google-Smtp-Source: AGHT+IF0K+EHYN7PignB/8NYu53YVj7j++O0mwk1W5RBN0+QHuQojpzGFveGrxjlPlRfoI1UafopSQ==
-X-Received: by 2002:a05:6358:2c8e:b0:1b5:c4f3:faec with SMTP id e5c5f4694b2df-1becbb585e8mr274204655d.4.1727697931042;
-        Mon, 30 Sep 2024 05:05:31 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.05.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:05:30 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:40 +0000
-Subject: [PATCH 45/45] media: i2c: adv7511: Use string_choices helpers
+	s=arc-20240116; t=1727697899; c=relaxed/simple;
+	bh=BEX61anSnk0D7CS0/D7zalmrCMGllrfpu1J8q0W7UNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d91aXO0xd1Y5D5bzKCGFsr8ZDA9NA+BEjF2S+qc00JJVeDBTjsAjNITR8UrHQYfFnbkoLk0hbkK5g+RKXK/Pl0EADtF9ZeX87c8XG+eGejsYb232ndKXa3UHjzD6tdp3TOqQQyUjFx+VmUwgFzWQvYgv5ALlC9KjIHamD2conDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMIvhKtD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFF9CC4CECE;
+	Mon, 30 Sep 2024 12:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727697898;
+	bh=BEX61anSnk0D7CS0/D7zalmrCMGllrfpu1J8q0W7UNY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=DMIvhKtD54JSLkiRNs1iDJyKZ8lRxUWbkA0Yon60SYEfa6W/mdl5JLRW4PvP4r/pr
+	 WenleCL/O1UPkuk0r+MZIlNSQkAgvIGMWY1yZ47sWHeAre6NvJQvQlAKMYBAzLlq19
+	 5lcrxdhnQM9CAuKtQl1XskM/hfMJOqeCOC3RcJo0Ufc2/cq3p7GcQvmo454UFB0BeZ
+	 JEY07R0HqGsMHP6E8ozjZK3hLuxJsQIyswwJgLAAteq6MvCeGIi8ysIwLInTKanfVQ
+	 QC+fmnBmXZC3d+okNovZ7b3cQ0wTCgT09i5ZOxsDa0+4KD1ZSTpKIq9nSeTPXNGPmy
+	 NXSCC0xac+Ttw==
+Message-ID: <faf365a0-dfc4-4d26-9057-a80b977965e3@kernel.org>
+Date: Mon, 30 Sep 2024 14:04:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] watchdog: s3c2410_wdt: add support for exynosautov920
+ SoC
+To: Taewan Kim <trunixs.kim@samsung.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20240913080325.3676181-1-trunixs.kim@samsung.com>
+ <CGME20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b@epcas2p4.samsung.com>
+ <20240913080325.3676181-3-trunixs.kim@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240913080325.3676181-3-trunixs.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-45-81e137456ce0@chromium.org>
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
-In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, Mike Isely <isely@pobox.com>, 
- Olli Salonen <olli.salonen@iki.fi>, 
- Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young <sean@mess.org>, 
- Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
- Jemma Denson <jdenson@gmail.com>, 
- Patrick Boettcher <patrick.boettcher@posteo.de>, 
- Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
- Andy Walls <awalls@md.metrocast.net>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Tim Harvey <tharvey@gateworks.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Jacopo Mondi <jacopo+renesas@jmondi.org>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, openbmc@lists.ozlabs.org, 
- linux-aspeed@lists.ozlabs.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-The following cocci warnings are fixed:
-drivers/media/i2c/adv7511-v4l2.c:873:46-52: opportunity for str_enable_disable(enable)
-drivers/media/i2c/adv7511-v4l2.c:620:28-51: opportunity for str_enabled_disabled(state -> cec_enabled_adap)
-drivers/media/i2c/adv7511-v4l2.c:642:52-54: opportunity for str_on_off(on)
-drivers/media/i2c/adv7511-v4l2.c:568:29-44: opportunity for str_on_off(state -> power_on)
+On 13/09/2024 10:03, Taewan Kim wrote:
+> From: Byoungtae Cho <bt.cho@samsung.com>
+> 
+> Adds the compatibles and drvdata for the ExynosAuto V920 SoC. This SoC
+> is almost similar to ExynosAutoV9, but some CPU configurations are quite
+> different, so it should be added. Plus it also support DBGACK like as
+> GS101 SoC.
+> 
+> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
+> ---
+>  drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++++++++++++-
+>  1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 686cf544d0ae..c25133348f0e 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -63,6 +63,10 @@
+>  #define EXYNOS850_CLUSTER1_NONCPU_INT_EN	0x1644
+>  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT	0x1520
+>  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_INT_EN	0x1544
+> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT	0x1420
+> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN	0x1444
+> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT	0x1720
+> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN	0x1744
+>  
+>  #define EXYNOS850_CLUSTER0_WDTRESET_BIT		24
+>  #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
+> @@ -303,6 +307,32 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+>  		  QUIRK_HAS_DBGACK_BIT,
+>  };
+>  
+> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
+> +	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN,
+> +	.mask_bit = 2,
+> +	.mask_reset_inv = true,
+> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
+> +	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
+> +	.cnt_en_bit = 7,
+> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> +		  QUIRK_HAS_DBGACK_BIT,
+> +};
+> +
+> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
+> +	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN,
+> +	.mask_bit = 2,
+> +	.mask_reset_inv = true,
+> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
+> +	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
+> +	.cnt_en_bit = 7,
+> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> +		  QUIRK_HAS_DBGACK_BIT,
+> +};
+> +
+>  static const struct of_device_id s3c2410_wdt_match[] = {
+>  	{ .compatible = "google,gs101-wdt",
+>  	  .data = &drv_data_gs101_cl0 },
+> @@ -320,6 +350,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+>  	  .data = &drv_data_exynos850_cl0 },
+>  	{ .compatible = "samsung,exynosautov9-wdt",
+>  	  .data = &drv_data_exynosautov9_cl0 },
+> +	{ .compatible = "samsung,exynosautov920-wdt",
+> +	  .data = &drv_data_exynosautov920_cl0},
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/i2c/adv7511-v4l2.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Missing space before }
 
-diff --git a/drivers/media/i2c/adv7511-v4l2.c b/drivers/media/i2c/adv7511-v4l2.c
-index e9406d552699..d9af81015e72 100644
---- a/drivers/media/i2c/adv7511-v4l2.c
-+++ b/drivers/media/i2c/adv7511-v4l2.c
-@@ -565,7 +565,7 @@ static int adv7511_log_status(struct v4l2_subdev *sd)
- 		"9", "A", "B", "C", "D", "E", "F"
- 	};
- 
--	v4l2_info(sd, "power %s\n", state->power_on ? "on" : "off");
-+	v4l2_info(sd, "power %s\n", str_on_off(state->power_on));
- 	v4l2_info(sd, "%s hotplug, %s Rx Sense, %s EDID (%d block(s))\n",
- 		  (adv7511_rd(sd, 0x42) & MASK_ADV7511_HPD_DETECT) ? "detected" : "no",
- 		  (adv7511_rd(sd, 0x42) & MASK_ADV7511_MSEN_DETECT) ? "detected" : "no",
-@@ -617,8 +617,8 @@ static int adv7511_log_status(struct v4l2_subdev *sd)
- 
- 	v4l2_info(sd, "i2c cec addr: 0x%x\n", state->i2c_cec_addr);
- 
--	v4l2_info(sd, "CEC: %s\n", state->cec_enabled_adap ?
--			"enabled" : "disabled");
-+	v4l2_info(sd, "CEC: %s\n",
-+		  str_enabled_disabled(state->cec_enabled_adap));
- 	if (state->cec_enabled_adap) {
- 		for (i = 0; i < ADV7511_MAX_ADDRS; i++) {
- 			bool is_valid = state->cec_valid_addrs & (1 << i);
-@@ -639,7 +639,7 @@ static int adv7511_s_power(struct v4l2_subdev *sd, int on)
- 	const int retries = 20;
- 	int i;
- 
--	v4l2_dbg(1, debug, sd, "%s: power %s\n", __func__, on ? "on" : "off");
-+	v4l2_dbg(1, debug, sd, "%s: power %s\n", __func__, str_on_off(on));
- 
- 	state->power_on = on;
- 
-@@ -870,7 +870,8 @@ static void adv7511_set_isr(struct v4l2_subdev *sd, bool enable)
- 	u8 irqs_rd;
- 	int retries = 100;
- 
--	v4l2_dbg(2, debug, sd, "%s: %s\n", __func__, enable ? "enable" : "disable");
-+	v4l2_dbg(2, debug, sd, "%s: %s\n", __func__,
-+		 str_enable_disable(enable));
- 
- 	if (state->enabled_irq == enable)
- 		return;
+>  	{},
+>  };
 
--- 
-2.46.1.824.gd892dcdcdd-goog
+
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
