@@ -1,106 +1,116 @@
-Return-Path: <linux-kernel+bounces-344542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72F0D98AB13
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:28:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397DF98AB1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A041F236FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:28:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 626D81C23126
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F63B198833;
-	Mon, 30 Sep 2024 17:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZitWeMR"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C05197512;
+	Mon, 30 Sep 2024 17:30:14 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE221940B2;
-	Mon, 30 Sep 2024 17:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7BF18EFF1;
+	Mon, 30 Sep 2024 17:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727717291; cv=none; b=IWqmMQP2U0ltd/4byw7vytrPfdtI7BjFn+wvoXrMbl0hvhuBE7YoK3ql7yXr+qxrBli4TUerI8AmaE0EKgUF3lkZVHf3uDp01cvCLZ4P+N6B/PdkAvvgD96i+YdKs/igjWrb/AIaNich86DDv98XkQQEH9gyyL7IODOJT1x0NJs=
+	t=1727717414; cv=none; b=Jyzme7DF8EmygiQluw33N9zQSjtb2LXwCm9w8ISSZKzrbvsMeDCe0Z1lV1LF5qIppMzRqtPa4YTRyh9wUc5+Ns0Aw4oM5t8NEWg8IWDzEk65//uPxXW9ojm+76elg78ZBtjpefBlzvRJDInsTjsA2W0RpupjHEjQHPuQ1XaMfFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727717291; c=relaxed/simple;
-	bh=y4BXX/3MgyDzqMoUXB/PqYpfXdVxol8FGHPAPGrXo0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y/KPsLcjk4jntjcwyVdXdR7zr5QUZafcBvLSF+5ZSk/Gyx8Ocod9RHpjNnm0FokXLYhyFdQAuI3mzAHu9iZyBIKx/tbeYL47olsGLWJXKbO/EbOspeCJE81D1hVE7klOsq2zWg9vG1sgB6/Alda6aLBHqEtimeb2cIMhYsNSB9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gZitWeMR; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db61fd92a1so204261a12.3;
-        Mon, 30 Sep 2024 10:28:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727717289; x=1728322089; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y4BXX/3MgyDzqMoUXB/PqYpfXdVxol8FGHPAPGrXo0s=;
-        b=gZitWeMRihGl49NYMAtjVwuPvfvpabulVNmmaSdIq2uSyCa7i+yXZQ8UCfqAxjrXsR
-         YIgO+0L2TP74VVYPyv6XFj5KqAmDuzuDvr7JmeIIGo/oGNp5eKANimgLUELOhC6+jIxm
-         4asfISfem6FoPTJkDD6BKc9fixH3tEuZAbb2f4fzSOb8fGfSVqXNSRfGBc3Sm3MuUA7m
-         DKMcs2U0w+evxZgeZeTwMEg8Koms1VgyTcam5yRNmJE3Vs/AZRjNmAGngItgR0VRFmyJ
-         1J44HU1iWJaC76+5CYL+++JUhtmuhXsMpUDGqeH4nJYcyJBYIzGa6sgxQHLhcrDMlJYZ
-         uFiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727717289; x=1728322089;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y4BXX/3MgyDzqMoUXB/PqYpfXdVxol8FGHPAPGrXo0s=;
-        b=M+msD5iFuTPE2OWA1gfa7rwg1/UWrXtridBe2I4ZQsCD8C/CECvDBnw+VJvRZBRxzQ
-         OsCFerdJuMuR3vAfedeHL3VOMmVshXwIuO97NLAkwjooCy1AGH/fBqJSBF3KdZ2o3Ix+
-         nvXYxnJUpIyb8HdA25PBpYTqkAznpVNML7uro3UJKVRB5FvKJpEh7obhwv6pJ+27+5xf
-         whLW5XoDwZU5Y3n9utBpQIrHB2+kQ7FUtXfK255ZJrxQ3nl1CAe/Kqo2YnKUg677QDBk
-         X5GBq4P9SX+rmGv4g2BXj8lK316RLgWU8vPBkLNYIs4oJJEPdkxtzUVjtKMz1j2rn4N9
-         TtrA==
-X-Forwarded-Encrypted: i=1; AJvYcCW46XQ6pfjlKnpTM8lRwpcCBpn7rNXWyZeJHRIJRh+UfyhdMKjkPxX9vanSOjdEncWkF0/jXBIsU3IY6Mk=@vger.kernel.org, AJvYcCWqu6PloY1H6SgxSdXWspfQAqmFIR/aex/C8ckE6+kfJJyJAn2l5cHNWbIBgIiD6fONRCUXoQiCUDlq4qiqTgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzx6hhiIOj3iIYoVHRajFY1mGYFhxAZibHBUm298Q8JrE0fTpna
-	OlZa2UAKe33lucNx8pnSAPTSkxQ2JhUXcR0B2DnMrb7RWrXQF6nMYZQHCTnLSWGcP1UgaBHnjqe
-	BPQjmy5DQbI40Kc9pkIOcLhPIAD4=
-X-Google-Smtp-Source: AGHT+IH3VabIhyLMuBTP0YVRfxEJ5e/5dl7ZWztnHXEjPqs5yQwDhZ7Mvp0CJPXRg/kXTRsTG863uzeaF6KiqEjlS2M=
-X-Received: by 2002:a05:6a00:190e:b0:717:87c5:84b with SMTP id
- d2e1a72fcca58-71c636144bdmr5543692b3a.1.1727717288794; Mon, 30 Sep 2024
- 10:28:08 -0700 (PDT)
+	s=arc-20240116; t=1727717414; c=relaxed/simple;
+	bh=X25E2UFuD2/J/94atuJ6C7pny2bCG02V+olN7Yg3Kxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Vyp71XGDjsfJeST36BoHNYNiEIvSb0f+xjZt9UYpZ9yN5q/x+c4wQfYvq116FK8iuzsLM53O7pULjwDCV4g6gINVmVGShnXKhZdGZjOFgeXA2u6YQhZ/okKgCuuRqUyT1T6xfjaYeCwqudn8U9jdcnMHN6CkJtazZbRmIu//Vhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
+ 2024 20:29:55 +0300
+Message-ID: <9e38440c-57ba-4cd8-925c-12acee7ea049@omp.ru>
+Date: Mon, 30 Sep 2024 20:29:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com> <2024093044-violator-voice-8d97@gregkh>
- <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
- <2024093007-safari-lego-45ab@gregkh> <CAM_RzfakS8=Qr=vThJcW-eX8izBs5Xdjo+p8=Ji7Nf=_ozv0Aw@mail.gmail.com>
-In-Reply-To: <CAM_RzfakS8=Qr=vThJcW-eX8izBs5Xdjo+p8=Ji7Nf=_ozv0Aw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 30 Sep 2024 19:27:56 +0200
-Message-ID: <CANiq72=tuzfe__WJN3Apva7EFYA=PJcYDEFkRtu=VMyDdoL0ig@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-To: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, aliceryhl@google.com, 
-	mcgrof@kernel.org, russ.weight@linux.dev, dakr@redhat.com, 
-	a.hindborg@kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 03/11] net: ravb: Drop IP protocol check from RX
+ csum verification
+To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-4-paul@pbarker.dev>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240930160845.8520-4-paul@pbarker.dev>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 17:09:50
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188099 [Sep 30 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
+ d90443ea3cdf6e421a9ef5a0a400f1251229ba23
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Int_BEC_cat_st_0}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/30/2024 17:13:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 2:10:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Mon, Sep 30, 2024 at 6:40=E2=80=AFPM Guilherme Gi=C3=A1como Sim=C3=B5es
-<trintaeoitogc@gmail.com> wrote:
->
-> The 0/1 email is for explanation the motivations, attach a link for
-> discussion or issue and too for explain how to test this.
+On 9/30/24 19:08, Paul Barker wrote:
 
-Yeah, that is fine. What Greg is saying is that, when it is a single
-patch, one can put that in the patch itself, below the `---` line. You
-can add explanations there for each patch, and when a patch series
-only has 1 patch, then you can use that space as the cover letter,
-thus avoiding a 0/1 email.
+> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+> 
+> We do not need to confirm that the protocol is IPv4. If the hardware
+> encounters an unsupported protocol, it will set the checksum value to
+> 0xFFFF.
+> 
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-Cheers,
-Miguel
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+
+[...]
+
+MBR, Sergey
+
 
