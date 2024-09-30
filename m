@@ -1,143 +1,313 @@
-Return-Path: <linux-kernel+bounces-343691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C60E989E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B39B989E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:33:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB328875E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E81C51F215FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3806118871D;
-	Mon, 30 Sep 2024 09:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CCE18990C;
+	Mon, 30 Sep 2024 09:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fj4zb/r9"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M4rkG22R"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3AD78C9D;
-	Mon, 30 Sep 2024 09:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1EF1885B4
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688749; cv=none; b=X+YvLWxEc142HkF8DT5L//7ZXGC3yQ7ETCLLJIaakbNqJsedUYXC8Wv0+RfZ7vYqHsY0/TAXB6KHh/hOSpk/uTFlFuKfV4DbOwL4nDXQz6Ozcc0oAMu5qTnrxJQ31sTivKEJ+PHUoU/8YavfR8toiL9zJ/v2iJfNbwERvH3S+3Y=
+	t=1727688793; cv=none; b=EZqNfWl6ux6AWRuMFBxhxp3+uENuim325uI2+kk9ypOC8fmbXyeshDVwaozpfLxPcFRzuzNlhjcfcR5d4h2e2uX1ghwYIEH5l5sp/jDOmtaxsWS1+o++OAFg2LAorKuyJ5mcKzfrIdxSECKlWcz/wmqwaXef3E/m4THX8Vk6vbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688749; c=relaxed/simple;
-	bh=xuiwIaxIkbOHoM0aTEL4ISfBrGnoJf3bN4UoKM/m9nc=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RvFwMCzRyhdnhha81Ft3TJsV5GaexjNjjJagOuuhu6flHYpBnHwuiLSEb7lln1rOz93rXyYz8fWN51/CRIaLMlbvXefJ22ytGTscgI09CJcIyHW2pNAo0ECxZABqTiEOTVRPJwoD3gXf69x6GUCN1LoUT5222EHJMJ6OEGROTAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fj4zb/r9; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so37757175e9.3;
-        Mon, 30 Sep 2024 02:32:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727688746; x=1728293546; darn=vger.kernel.org;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3gTkw7xTKBFjfPeQAsDpHjrUZGDOhEfBOfuDgEB4wY=;
-        b=fj4zb/r9vXXjVgYXTtCYN3R4ZjT9KoH7podq46KuWMcYoalfg5zX9fonv9itwvWops
-         pVkIBqes3RN8C66sqWT278+xDak5iYNUVQpzLpfOnRj4yktNRabHRvE1yYZom8xTBwfK
-         oXC3wOsmVoeLxTKa9vkznuGhiodxbN4JCqT2kYeQPxZDCR2S7uV3NWZhElTKKRT/e4Ec
-         l1goOnxEiligoprE2pRkQCv+kLf8w0rgNxuldRMUnMWmcLmrUjYFpODCNwupZGcFU/i/
-         ph4sjspNHEDBXNu1AeqAEaUcf5U/sTqWMzNW/iqQwOd8e667BRqqZj6zbxjpZ9zgXjla
-         Z9Kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727688746; x=1728293546;
-        h=user-agent:message-id:date:to:cc:from:subject:references
-         :in-reply-to:content-transfer-encoding:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e3gTkw7xTKBFjfPeQAsDpHjrUZGDOhEfBOfuDgEB4wY=;
-        b=LPsoWFNmA2nd09rtnKP2mkCM8IeYQDyaOKC7A5vfWQWv20m+qkMb/4geuup17LcAgL
-         PV30nm53HGiwdlANThSWHjkRQCzAuk9KhkWpNniZFipJ79u8fT++zXDKCnLpRxO3OaY2
-         x/687IQ6sQdNoHCb26XyQBmg2jNhVkLVpvOXKG1sOBf37LIyQBuAhzzM7trUuLnhKnqd
-         Slilxs46q5tvqWZ+uWoqq4wQlW6WbvY/Jog5WO+1q/Q14AM8cOT0CmOCL0LnmbZ80jUg
-         naI98Nnh7ZDcoYucepoDiK7GyObMyjjII9wdRHm+1EurjI2mdegvr/dF90VzXxJ3qQ/v
-         bYoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4XUYocow2AURzBBFX3Y8jBTA1Ntp2DaBkYv9u+c6QJt54KypJ9vI09h8YLycJfrXDR+56fgHlyqc=@vger.kernel.org, AJvYcCVjEZmvkND43xmFccpYAXR5QeUMiFrDPJ1ZfpqRvtpisTqMujOYZ+6qX6CM7Trf2Hxf3WQQOMs7bz5mfCND@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHvTy+mMc8Os7Sf3Udy1dErT72rsTNmLzkqhAmn/0URyanq+1n
-	/a4nNU1bh3vdeYIeLQcaXM3vp6BOOXO34vrXuUnYF1fSMEhj0gnA
-X-Google-Smtp-Source: AGHT+IHvj6MxPbBC4GQ3YDX25WnDza1AQMy3zlrwhwybHipguZmMLNodxIBVpYIPClX0B8gEJMO49w==
-X-Received: by 2002:a05:600c:4ecd:b0:42c:b9c8:2bb0 with SMTP id 5b1f17b1804b1-42f5840e216mr87243025e9.4.1727688746036;
-        Mon, 30 Sep 2024 02:32:26 -0700 (PDT)
-Received: from localhost (host-79-19-52-27.retail.telecomitalia.it. [79.19.52.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddb4csm145264235e9.6.2024.09.30.02.32.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:32:25 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727688793; c=relaxed/simple;
+	bh=MfD4X47i/yN6AHsAgI2rvTWVa9zIAO+TLc7ixKjbdjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YnKn+3I4negTqDITvyK148bsyBsZUsbeqHZ+8SJ6glp8bHAkFl05TAkqFqUkocUsuFhwpxXvGBR/ZgkDHBHOoZ1iqCXU6GCsvK4Icj8xw8ft0tqPZvfoV2Q0KuvSSxwrycQihNpoqW1FvTVeRnHuXkzDrqDNZhUaUn3Wa+qTHIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M4rkG22R; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=wlJjmpLZcW8TIOz9J05tMCIaj7+zoMy0Tpn83Sjdtl4=; b=M4rkG22R0LuK7St+l1aRGp9IUn
+	sg89TAj8/2m44K91JqIot6HB+s/TUjEaZclY5XcK3iFDgVTx4QKyfX0SEl7oqomth8lqarSJMCrh7
+	IFe5WHBhadWmHekIbwp7nLP64ddxxEsEAaq5/2nSGCSk63+DCnBsqMpMxsYWKwkeZD4rNJ3H0DNo7
+	8OjgnC2DAYVP+b3Ud1YDo/3wwGmCy0Qdv0lA94FI26Vk41HBTXP0l2lmEftDWZHb4WIVbdk+GYlRF
+	JWaajkpH0onkUzNgi4ybwfLwRJJZWCKJm+xasegxguNe6p53APKCv2DvtJnATSDZQ6tZplZTnoKNj
+	iWovpjXQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svCm6-0000000GuB7-1rak;
+	Mon, 30 Sep 2024 09:33:03 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0EE21300BAE; Mon, 30 Sep 2024 11:33:02 +0200 (CEST)
+Date: Mon, 30 Sep 2024 11:33:02 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	alyssa.milburn@intel.com, scott.d.constable@intel.com,
+	Joao Moreira <joao@overdrivepizza.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
+Message-ID: <20240930093302.GB33184@noisy.programming.kicks-ass.net>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194925.069013308@infradead.org>
+ <CAADnVQ+BASJ7kcW4Kz_NsXM0U1+GrMHNVBOro8aO0-OyEry4Ww@mail.gmail.com>
+ <20240930083026.GG5594@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240928162843.4eb63f29@jic23-huawei>
-References: <20240916-iio-pac1921-nocast-v1-1-a0f96d321eee@gmail.com> <20240928162843.4eb63f29@jic23-huawei>
-Subject: Re: [PATCH] iio: pac1921: remove unnecessary explicit casts
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Jonathan Cameron <jic23@kernel.org>
-Date: Mon, 30 Sep 2024 11:32:24 +0200
-Message-ID: <172768874424.228843.16360087197143367783@njaxe.localdomain>
-User-Agent: alot/0.11
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240930083026.GG5594@noisy.programming.kicks-ass.net>
 
-Quoting Jonathan Cameron (2024-09-28 17:28:43)
-> On Mon, 16 Sep 2024 14:00:05 +0200
-> Matteo Martelli <matteomartelli3@gmail.com> wrote:
->=20
-> > Many explicit casts were introduced to address Wconversion and
-> > Wsign-compare warnings. Remove them to improve readability.
-> >=20
-> > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
->=20
-> No fixes tag on this one. Its not a bug, just a readability improvement.
->=20
-> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> There are a few cases in here where I think the cast is about ensuring
-> we don't overflow in the maths rather than for warning suppression.
->=20
-> We all love 32 bit architectures after all ;)
->=20
-> Jonathan
->=20
-> > ---
-> > Link: https://lore.kernel.org/linux-iio/1fa4ab12-0939-477d-bc92-306fd32=
-e4fd9@stanley.mountain/
-> > ---
-> >  drivers/iio/adc/pac1921.c | 43 +++++++++++++++++++++------------------=
-----
-> >  1 file changed, 21 insertions(+), 22 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-> > index 4c2a1c07bc39..de69a1619a9e 100644
-> > --- a/drivers/iio/adc/pac1921.c
-> > +++ b/drivers/iio/adc/pac1921.c
-> > @@ -240,8 +240,8 @@ static inline void pac1921_calc_scale(int dividend,=
- int divisor, int *val,
-> >  {
-> >       s64 tmp;
-> > =20
-> > -     tmp =3D div_s64(dividend * (s64)NANO, divisor);
-> > -     *val =3D (int)div_s64_rem(tmp, NANO, val2);
-> > +     tmp =3D div_s64(dividend * NANO, divisor);
->=20
-> For this one, NANO is an unsigned long and dividend just an int.
-> Either the s64 cast is needed because dividend * NANO might go out of
-> unsigned long range which might (I think) be 32 bit on a 32bit machine
-> or it doesn't.  If it does, then you need the cast, if not you don't
-> need to use div_s64 as it's not that large.
+On Mon, Sep 30, 2024 at 10:30:26AM +0200, Peter Zijlstra wrote:
+> On Sun, Sep 29, 2024 at 10:32:38AM -0700, Alexei Starovoitov wrote:
+> > On Fri, Sep 27, 2024 at 12:50 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > --- a/kernel/trace/bpf_trace.c
+> > > +++ b/kernel/trace/bpf_trace.c
+> > > @@ -1027,19 +1027,9 @@ static const struct bpf_func_proto bpf_g
+> > >  #ifdef CONFIG_X86_KERNEL_IBT
+> > >  static unsigned long get_entry_ip(unsigned long fentry_ip)
+> > >  {
+> > > -       u32 instr;
+> > > +       if (is_endbr((void *)(fentry_ip - ENDBR_INSN_SIZE)))
+> > > +               return fentry_ip - ENDBR_INSN_SIZE;
+> > >
+> > > -       /* We want to be extra safe in case entry ip is on the page edge,
+> > > -        * but otherwise we need to avoid get_kernel_nofault()'s overhead.
+> > > -        */
+> > > -       if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+> > > -               if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE)))
+> > > -                       return fentry_ip;
+> > > -       } else {
+> > > -               instr = *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+> > > -       }
+> > > -       if (is_endbr(instr))
+> > > -               fentry_ip -= ENDBR_INSN_SIZE;
+> > >         return fentry_ip;
+> > 
+> > Pls don't.
+> > 
+> > This re-introduces the overhead that we want to avoid.
+> > 
+> > Just call __is_endbr() here and keep the optimization.
+> 
+> Well, I could do that ofcourse, but as I wrote elsewhere, the right
+> thing to do is to optimize get_kernel_nofault(), its current
+> implementation is needlessly expensive. All we really need is a load
+> with an exception entry, the STAC/CLAC and speculation nonsense should
+> not be needed.
 
-Oops! While removing the casts I was only thinking about the sign change
-for this case, which would not be an issue being the dividend always
-positive. However you are indeed right, this would overflow in 32-bit
-architectures. Thanks for catching it, I am going to reintroduce this
-cast and the other similar one in the next patch version.
+Looking at things, something like the below actually generates sane
+code:
 
-...
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index a582cd25ca87..84f65ee9736c 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1029,17 +1029,10 @@ static unsigned long get_entry_ip(unsigned long fentry_ip)
+ {
+ 	u32 instr;
+ 
+-	/* We want to be extra safe in case entry ip is on the page edge,
+-	 * but otherwise we need to avoid get_kernel_nofault()'s overhead.
+-	 */
+-	if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+-		if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE)))
+-			return fentry_ip;
+-	} else {
+-		instr = *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+-	}
++	__get_kernel_nofault(&instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE), u32, Efault);
+ 	if (is_endbr(instr))
+ 		fentry_ip -= ENDBR_INSN_SIZE;
++Efault:
+ 	return fentry_ip;
+ }
+ #else
 
-Thanks,
-Matteo Martelli
+
+Which then leads to me rewriting the proposed patch as...
+
+---
+Subject: x86/ibt: Clean up is_endbr()
+From: Peter Zijlstra <peterz@infradead.org>
+
+Pretty much every caller of is_endbr() actually wants to test something at an
+address and ends up doing get_kernel_nofault(). Fold the lot into a more
+convenient helper.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/events/core.c         |    2 +-
+ arch/x86/include/asm/ibt.h     |    5 +++--
+ arch/x86/kernel/alternative.c  |   20 ++++++++++++++------
+ arch/x86/kernel/kprobes/core.c |   11 +----------
+ arch/x86/net/bpf_jit_comp.c    |    4 ++--
+ kernel/trace/bpf_trace.c       |   14 ++------------
+ 6 files changed, 23 insertions(+), 33 deletions(-)
+
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2845,7 +2845,7 @@ static bool is_uprobe_at_func_entry(stru
+ 		return true;
+ 
+ 	/* endbr64 (64-bit only) */
+-	if (user_64bit_mode(regs) && is_endbr(*(u32 *)auprobe->insn))
++	if (user_64bit_mode(regs) && is_endbr((u32 *)auprobe->insn))
+ 		return true;
+ 
+ 	return false;
+--- a/arch/x86/include/asm/ibt.h
++++ b/arch/x86/include/asm/ibt.h
+@@ -65,7 +65,7 @@ static __always_inline __attribute_const
+ 	return 0x001f0f66; /* osp nopl (%rax) */
+ }
+ 
+-static inline bool is_endbr(u32 val)
++static inline bool __is_endbr(u32 val)
+ {
+ 	if (val == gen_endbr_poison())
+ 		return true;
+@@ -74,6 +74,7 @@ static inline bool is_endbr(u32 val)
+ 	return val == gen_endbr();
+ }
+ 
++extern __noendbr bool is_endbr(u32 *val);
+ extern __noendbr u64 ibt_save(bool disable);
+ extern __noendbr void ibt_restore(u64 save);
+ 
+@@ -102,7 +103,7 @@ extern bool __do_kernel_cp_fault(struct
+ 
+ #define __noendbr
+ 
+-static inline bool is_endbr(u32 val) { return false; }
++static inline bool is_endbr(u32 *val) { return false; }
+ 
+ static inline u64 ibt_save(bool disable) { return 0; }
+ static inline void ibt_restore(u64 save) { }
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -852,16 +852,24 @@ void __init_or_module noinline apply_ret
+ 
+ #ifdef CONFIG_X86_KERNEL_IBT
+ 
++__noendbr bool is_endbr(u32 *val)
++{
++	u32 endbr;
++
++	__get_kernel_nofault(&endbr, val, u32, Efault);
++	return __is_endbr(endbr);
++
++Efault:
++	return false;
++}
++
+ static void poison_cfi(void *addr);
+ 
+ static void __init_or_module poison_endbr(void *addr, bool warn)
+ {
+-	u32 endbr, poison = gen_endbr_poison();
+-
+-	if (WARN_ON_ONCE(get_kernel_nofault(endbr, addr)))
+-		return;
++	u32 poison = gen_endbr_poison();
+ 
+-	if (!is_endbr(endbr)) {
++	if (!is_endbr(addr)) {
+ 		WARN_ON_ONCE(warn);
+ 		return;
+ 	}
+@@ -988,7 +996,7 @@ static u32  cfi_seed __ro_after_init;
+ static u32 cfi_rehash(u32 hash)
+ {
+ 	hash ^= cfi_seed;
+-	while (unlikely(is_endbr(hash) || is_endbr(-hash))) {
++	while (unlikely(__is_endbr(hash) || __is_endbr(-hash))) {
+ 		bool lsb = hash & 1;
+ 		hash >>= 1;
+ 		if (lsb)
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -373,16 +373,7 @@ static bool can_probe(unsigned long padd
+ kprobe_opcode_t *arch_adjust_kprobe_addr(unsigned long addr, unsigned long offset,
+ 					 bool *on_func_entry)
+ {
+-	u32 insn;
+-
+-	/*
+-	 * Since 'addr' is not guaranteed to be safe to access, use
+-	 * copy_from_kernel_nofault() to read the instruction:
+-	 */
+-	if (copy_from_kernel_nofault(&insn, (void *)addr, sizeof(u32)))
+-		return NULL;
+-
+-	if (is_endbr(insn)) {
++	if (is_endbr((u32 *)addr)) {
+ 		*on_func_entry = !offset || offset == 4;
+ 		if (*on_func_entry)
+ 			offset = 4;
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -625,7 +625,7 @@ int bpf_arch_text_poke(void *ip, enum bp
+ 	 * See emit_prologue(), for IBT builds the trampoline hook is preceded
+ 	 * with an ENDBR instruction.
+ 	 */
+-	if (is_endbr(*(u32 *)ip))
++	if (is_endbr(ip))
+ 		ip += ENDBR_INSN_SIZE;
+ 
+ 	return __bpf_arch_text_poke(ip, t, old_addr, new_addr);
+@@ -2971,7 +2971,7 @@ static int __arch_prepare_bpf_trampoline
+ 		/* skip patched call instruction and point orig_call to actual
+ 		 * body of the kernel function.
+ 		 */
+-		if (is_endbr(*(u32 *)orig_call))
++		if (is_endbr(orig_call))
+ 			orig_call += ENDBR_INSN_SIZE;
+ 		orig_call += X86_PATCH_SIZE;
+ 	}
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1027,19 +1027,9 @@ static const struct bpf_func_proto bpf_g
+ #ifdef CONFIG_X86_KERNEL_IBT
+ static unsigned long get_entry_ip(unsigned long fentry_ip)
+ {
+-	u32 instr;
++	if (is_endbr((void *)(fentry_ip - ENDBR_INSN_SIZE)))
++		return fentry_ip - ENDBR_INSN_SIZE;
+ 
+-	/* We want to be extra safe in case entry ip is on the page edge,
+-	 * but otherwise we need to avoid get_kernel_nofault()'s overhead.
+-	 */
+-	if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+-		if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE)))
+-			return fentry_ip;
+-	} else {
+-		instr = *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+-	}
+-	if (is_endbr(instr))
+-		fentry_ip -= ENDBR_INSN_SIZE;
+ 	return fentry_ip;
+ }
+ #else
 
