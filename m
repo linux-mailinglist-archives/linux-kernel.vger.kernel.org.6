@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0467298A169
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:05:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D485298A16D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD89284593
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B297280DAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284B618FDC3;
-	Mon, 30 Sep 2024 12:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE17190051;
+	Mon, 30 Sep 2024 12:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b+faV4xW"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LHWSx42g"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C5018EFF5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372D18FDDF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697854; cv=none; b=IAl2piFWztXhgVD7wS/VTkqH5TH9WBDwtX+FdJy4mEKU31iMMBX9yK/U30L3pz2U4N9vBBfO6Yp1fM3PWL7+XbFKPjJVgrUD2Ndm4/j//02/Zc+eSQsJHV+BOsNtrwytvOCHg2fRR7hfy4p/ah80rX4xhGIjqBEBecwxHuGQ3es=
+	t=1727697858; cv=none; b=YS3EFNtS8XSuON4EwGNAYoFT1lumwibUbTmPElGVpC8ec+z76StMPhoILDZX/+OpqwuToFdMkU8UvLc3EwhHkYBLfgBj/1LJvNo3i1K4xwkz1EcHr2nPUaIdA6t79IxH+Wn09P8btLanvgUyMUCiq1XDWTf0Ko8ggERhuKoUdIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697854; c=relaxed/simple;
-	bh=TBylZ8SaoziYjUVhpT7D5LPjCQTvsm3WiWvgxJj6GRA=;
+	s=arc-20240116; t=1727697858; c=relaxed/simple;
+	bh=8MgT7dP1g3olMOrBUhOPMpyuDlnQim8dCackH8O66yY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VAoc5G5qQLRecajLJgfDvS1msWDSKTaNV0HbsmN22s0gjThIId9WmakefGnlSEgyZ1Y5hs1W7lj1ENCQMNBZbLelNlyOfNbdn3PnMALxi2SE7wR+w2xl+VFrhhkppegJS1b93YoYzIeagYlSV5pGfCPQdKDw2jOaKvc5lT2qEgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b+faV4xW; arc=none smtp.client-ip=209.85.222.170
+	 In-Reply-To:To:Cc; b=Cu5CG5uUPW/Fap+N5j+GpfbPvajankZTPtVBvnaoqfGDYV0zfoLJMZ3cp3Vu661G2OOU0Uc3Az8h/zJjJM1NUlYiI/3pO4c5OoSfiRUq88MotohzD2dTK4XBZIgi7mvN39uOOYa+4HjCrT8XDxQg8jQi+wFvV/IIbSw9XqXSyHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LHWSx42g; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7ae3d9a93c0so308124085a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:11 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9ab8e5f96so363333085a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697851; x=1728302651; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697855; x=1728302655; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=uHKPhMgVbBroKUSOZVkcpmjIQRoUB/Pllvr3HK97AsI=;
-        b=b+faV4xWXP7Cr0WlJo5PeXgDQs3HyfIxDyyKSUAFfFJ4c8V8pr1kUHaaw0vgKc0wWY
-         pKe8DHQ3IuuPVIPdk9rpQK2bN92jJM+CJdvqedGxAEsvRjUUuYS5QwcNs5Ey2X3ybn/V
-         QJGHSIq1S3BwTIJh/C9QRW2LF+l3ioBnEiR2E=
+        bh=qsuMyrkoVqVku50v1nfIbGtDSp7S7nG6aU9K9Rp04Bk=;
+        b=LHWSx42gHLyIoNq1Nq4L0T5kCtrw0pSICn0ZBXx8RVumloDR6XiFiWuz95phtw/bZ8
+         k9h2WyNsmAZdkvIvNcwG22zjtxc8tBIxeJlTgskfef66cP1dnRuCgIfQeOerwWMqYMPg
+         3r08jmYD7mv9jYUZir9NRaSGfR89IJ+LSmaAA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697851; x=1728302651;
+        d=1e100.net; s=20230601; t=1727697855; x=1728302655;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uHKPhMgVbBroKUSOZVkcpmjIQRoUB/Pllvr3HK97AsI=;
-        b=CGI3isAHLKUe60bOyX3wmY+csRX4atyPJ6/RDOD8b2FRyDn9PCBDoaXOlqYwsF59RX
-         lJnrT84gge8JxroKTUvw5iutxEqf8+ygxA+Ewxw3KPdn4LqdBNpd0LhV5qwJcSQnCAmw
-         okUyh13ZB6wqHWvL/M21oxKun116Aun8567mm+udt17lYmu+Jtey08dt1xqr//RK7ABu
-         rdv3Dzntw0nvEuXomvicpwVczsyya+vTbxtwWtAQCssF3vlwPvxHHvOY5L6SRJVutFok
-         jfA19LmY9AjpkxGbuoBEoJDGwzKWulAGM7LYL7/p7HN8o+APWCXqgcBW2SMqNNAD637p
-         B2DA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9A25BV+9aZNRRem2EeB0xTjlAwIg7a5sGzxpefGuaCIVry7+bjSIhosbgS+9IfD7X3S8dLiZn3QzueYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0JUhiVnhW5J0egNv2TDUJXrJwRVcr7eMgEsxj6z/HSqUCPzzp
-	tcWPAJ+IB1QrUqg5PtusY5NLLzqUomj+ZOM/ZMGjWa7ihlvqm7fb8fJNfpojTQ==
-X-Google-Smtp-Source: AGHT+IEk2U+7gH+P0zkQD3jLvaacsDuUtudGo2qx4V1eWgV4awKOL7SjyupKFoxi8Ld99dzK+gKdEQ==
-X-Received: by 2002:a05:6214:4a89:b0:6cb:2adf:751e with SMTP id 6a1803df08f44-6cb3b646986mr155979836d6.31.1727697850717;
-        Mon, 30 Sep 2024 05:04:10 -0700 (PDT)
+        bh=qsuMyrkoVqVku50v1nfIbGtDSp7S7nG6aU9K9Rp04Bk=;
+        b=Gt4UyHtPlVbG7Lem6Xy9ItKqiZXBqePYRsrU5RXaA9F4KHrNIignzewgB9/9sjb27h
+         oOa3gcc7B6upqKLf3vRInrVFwZ8BKfu6KLJ4IurZjJgEo4MzOYaX3s4zLlBM7L2DW8qQ
+         218DWzHOuQ7NxzzVJUBj974PJxZHbdTRGGuX5q/bSvJzN4xh6IE1I2ESNzoISGdHzFhY
+         bcq4pMrm9m+xQTHsb9CnFmHTSDhsOZAx2oXEEKQcvZyJ40PqyY1RSnpV3dKmPd+psPRz
+         8DeHIqz7IWkEbU79RpGGmNtnyzp6Kk9+Xjcpm2EIsQkaL2rszC/+Fi3ys+afe7DdswAw
+         AOYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsC1Aptvlqeuc07N+hBSKYwQrMUTijxjqFtjGmZla2S+v+ihYbfnYVm0owlVDc8f64ct2YQcclFZbFsfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzzc/KDiTfpm9SzfJQCcieR+ENTVxkdr71RbQjFB2tgwxJzfWcr
+	2AJSTkjMBufYaDxLf1lMpHEvn10M71Wf/qZPT/86Cjc4+5o1efGsuukltgrKEw==
+X-Google-Smtp-Source: AGHT+IGbIk2oHMQ7FRb0GeJel1Jh9P6FVq0oOGmExjq89yc9rCz3p632i5Dvmp6LRIkRrX30gKUAOQ==
+X-Received: by 2002:a05:6214:5990:b0:6cb:3925:ec95 with SMTP id 6a1803df08f44-6cb3b66d1a1mr155459916d6.53.1727697855060;
+        Mon, 30 Sep 2024 05:04:15 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.09
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:10 -0700 (PDT)
+        Mon, 30 Sep 2024 05:04:13 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:03:59 +0000
-Subject: [PATCH 04/45] media: pwc-ctl: Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:01 +0000
+Subject: [PATCH 06/45] media: em28xx: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-4-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-6-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -113,27 +113,52 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
  linux-aspeed@lists.ozlabs.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-The following cocci warning is fixed:
-drivers/media/usb/pwc/pwc-ctrl.c:492:5-10: opportunity for str_on_off(power)
+The following cocci warnings are fixed:
+drivers/media/usb/em28xx/em28xx-i2c.c:579:3-29: opportunity for str_read_write(( msgs [ i ] . flags & I2C_M_RD ))
+drivers/media/usb/em28xx/em28xx-i2c.c:590:2-28: opportunity for str_read_write(( msgs [ i ] . flags & I2C_M_RD ))
+drivers/media/usb/em28xx/em28xx-video.c:941:4-9: opportunity for str_enabled_disabled(flags)
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/pwc/pwc-ctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/usb/em28xx/em28xx-i2c.c   | 4 ++--
+ drivers/media/usb/em28xx/em28xx-video.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/pwc/pwc-ctrl.c b/drivers/media/usb/pwc/pwc-ctrl.c
-index cff64d872058..a1b4eeb41cfe 100644
---- a/drivers/media/usb/pwc/pwc-ctrl.c
-+++ b/drivers/media/usb/pwc/pwc-ctrl.c
-@@ -489,7 +489,7 @@ void pwc_camera_power(struct pwc_device *pdev, int power)
- 		SET_POWER_SAVE_MODE_FORMATTER, pdev->ctrl_buf, 1);
- 	if (r < 0)
- 		PWC_ERROR("Failed to power %s camera (%d)\n",
--			  power ? "on" : "off", r);
-+			  str_on_off(power), r);
- }
+diff --git a/drivers/media/usb/em28xx/em28xx-i2c.c b/drivers/media/usb/em28xx/em28xx-i2c.c
+index a7eb11f7fb34..62fe49876a32 100644
+--- a/drivers/media/usb/em28xx/em28xx-i2c.c
++++ b/drivers/media/usb/em28xx/em28xx-i2c.c
+@@ -576,7 +576,7 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 			goto error;
  
- int pwc_set_leds(struct pwc_device *pdev, int on_value, int off_value)
+ 		dprintk(2, "%s %s addr=%02x len=%d: %*ph\n",
+-			(msgs[i].flags & I2C_M_RD) ? "read" : "write",
++			str_read_write(msgs[i].flags & I2C_M_RD),
+ 			i == num - 1 ? "stop" : "nonstop",
+ 			addr, msgs[i].len,
+ 			msgs[i].len, msgs[i].buf);
+@@ -587,7 +587,7 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 
+ error:
+ 	dprintk(2, "%s %s addr=%02x len=%d: %sERROR: %i\n",
+-		(msgs[i].flags & I2C_M_RD) ? "read" : "write",
++		str_read_write(msgs[i].flags & I2C_M_RD),
+ 		i == num - 1 ? "stop" : "nonstop",
+ 		addr, msgs[i].len,
+ 		(rc == -ENODEV) ? "no device " : "",
+diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
+index 4aef584e21da..ff017c187aff 100644
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -938,7 +938,7 @@ static int em28xx_enable_analog_tuner(struct em28xx *dev)
+ 			dev_err(&dev->intf->dev,
+ 				"Couldn't change link %s->%s to %s. Error %d\n",
+ 				source->name, sink->name,
+-				flags ? "enabled" : "disabled",
++				str_enabled_disabled(flags),
+ 				ret);
+ 			return ret;
+ 		}
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
