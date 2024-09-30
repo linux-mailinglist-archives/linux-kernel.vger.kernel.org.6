@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A85498A18D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:09:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69B898A170
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1BCFB26EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:06:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3543A1F20F43
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62492190075;
-	Mon, 30 Sep 2024 12:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046B71917DB;
+	Mon, 30 Sep 2024 12:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LD92e8ti"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ziy9rojv"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4F918FDB1
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76672190485
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697856; cv=none; b=UvfLN84L3RTBpz5BAFerNbXXLQbwt+PP+s1FtjMB3wUaNLhHCR/sODIEaLWkDjxws+52N0yQIRog87I7QA/MjGbmQ5ZvTCpNaCBhr6gbzcG1mVj05f2jJ+V0zr9l9useieRqbiVo8wrP/Oi0ktQluwJfjZpWar/VeoRCgz1rvew=
+	t=1727697860; cv=none; b=OD3Awk9QRehKLgUNM2azXltHbh/h2/dQXWcosup/EhDxYUK4S1kp7hzDAzghkbMa8GSkZHbo0jUeUiNexYP54NfxCNvkkouTx8Uw0xCHHlf8R6opxbROrNGLdTZik/8doZhVYg+KdvibGGUM2vAOr8LLMydkY0m8LiIkq8xogII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697856; c=relaxed/simple;
-	bh=4EPc3t0RKZkMLoHchmo/OHohT6ryeJ4Oca6zFWLr0gY=;
+	s=arc-20240116; t=1727697860; c=relaxed/simple;
+	bh=ICSsuBtQWRmVw7s3R+cDaXaHD1gfa1jDUFcDWE5NTRk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CQuWHlVHwGOaynai+cQtTlJVGP71M9gu8AIh5CUlaFtrNJ55YPF4K/zFfV665Y3WcoOnSi0ruf5S1XdkUphUiDrhKEHV40kFPy46ZfROsD3CfaCLas54wbjVtoFWEdAUkK37S6BpmkJwWIGNk6UiwEcg3GKr7xwq5bSkDzzJU6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LD92e8ti; arc=none smtp.client-ip=209.85.222.178
+	 In-Reply-To:To:Cc; b=fOnabcLYFQrmZnT3OUzotvD9s40zVQ7Ag2gkp/WydMVnSBU/k0g9pbPqDjnUbgqQQYZsvPVDTFlFweMBwl+V5w16I71j8vQpiGCDonD0dziiDXRejYb6w+N/KXfSIMQTJ4Fg6gul0+7eACFbaYUe0hBC/IG1CL82z31OLxPhBbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ziy9rojv; arc=none smtp.client-ip=209.85.219.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a9a30a045cso419780585a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:14 -0700 (PDT)
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cb3062d9b5so30251376d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697853; x=1728302653; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697857; x=1728302657; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Vb+rHfycpw6eqzxAcjL5Q/NM2Cf8FBszS0leZkajSd4=;
-        b=LD92e8tiOi3A/pPzDiFdg1/Opt+a/tsnz8qR3HAFjeIXJnrdQ8Gi6L7RzzXfsg63EM
-         V7NXoW8DxafsQXYNaR7qkr/qtQh31VmirgHdYZgGayf2LJoHvkJDHxsA806DHAjqzqiW
-         9f6kF0v7Oi+UpLv57sb4BksbvA/rabiLOgRUo=
+        bh=Oi1bEzb1SAt3y006RY0yDL5v/D/r838jI6u8v0CE/P0=;
+        b=Ziy9rojvpQCxlz+ndF9x9OVAyNvUUpVAOEEyhHe974zeEGnqXvzMo3WdCbj+FZQ8IM
+         t0/SFRbwXq+T9ybd3vEyKmA3k62DT3P5y3uvZ9XW5ZlaXfK5PNLpNM+kG0UMZvNUFIh3
+         cq0jWXCGEZpz/RNMK9ja5vs/lsE7Ss30PO6go=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697853; x=1728302653;
+        d=1e100.net; s=20230601; t=1727697857; x=1728302657;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Vb+rHfycpw6eqzxAcjL5Q/NM2Cf8FBszS0leZkajSd4=;
-        b=O82S+Wm94kPg6vx8E+3ebMXXuqKoHA+3rA1pOuqx6f/IoNbKR8IIF0G+UK0Wz5MOsd
-         qsss8fu7oKzoMm9ooar+0uXZKzsODv40s0nXpS5OA5Ap+ldiIemcjw1znniWFQxwYS4G
-         BAQGVjpMy1PvMg+jTq4zriBVqcCdoNmSN+1YTEC0JJSj1Qtia1gwyGFDQWzoYGrPEhwU
-         a4MwCWJEKoMiuqSwzBCdCMRR8qJ+pGdh/6sqr4yoMuqkBQNPhwX4gc6PMRl9yEew3s/d
-         DsLGNlaw1GPRtl5HwwgPYlJPGIswuLuEcFMrfZ/WhXI/dj4HFxSwGjeRUtpedSspXjm3
-         b9rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWFPdxeGCgVJ3twREy/1y9UCs7R9ZYK3+KqVJbf1nOfOpn2/cczWsiY64BpavywRh1kMS2APXNZ8wrlBKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIZm9nTPiVxGWaLS8pT/PCmjIW0G0d86nyQR1tizoHr13g+FKh
-	Tvj9jSEBh7AdLR7Qnh2PaJOC6zg5PbGbyNuMpIH60jeqq/nAS++18uqd9fGkKw==
-X-Google-Smtp-Source: AGHT+IERK7kGfru4Q7d82RuyPjgoS6CBbu4N/h9Q+YkCupy/y3EuDtqtjn9iCQgLe1Tq04yD8BYOEQ==
-X-Received: by 2002:a05:6214:4a8e:b0:6c5:5418:a055 with SMTP id 6a1803df08f44-6cb3b5f2781mr194666026d6.30.1727697853291;
-        Mon, 30 Sep 2024 05:04:13 -0700 (PDT)
+        bh=Oi1bEzb1SAt3y006RY0yDL5v/D/r838jI6u8v0CE/P0=;
+        b=oskEMB5pMFsrF2F3hMkknYzYIIdtg9n8GV3CBpzZVzmEu8EVXid1Oty8NRO2HBVmTQ
+         EL5yO98Q1ynKGEjHQEpihN5ltaAMHBgJbVc1JYHXDU1Q7c5h7r7wNIDbF4pj2gNN/oMJ
+         IwXHTK/XooVF120HYouy/Bz70UuavHqxbDTcnDfI9l/XsoLVI3V60s9T63RE0sdhHgnY
+         pBBrG9I7Mx1dc5qvUcceABcib/PNx8nlmZRBhpgNM9TgrC3CCEO+tcZABVw2WCsr/blR
+         ECwChLUf78I6NhZdy8OXijRh1SQsOngIhRb1+CKFc8FQBgPF1PfMg9oAojO55qeWy8lW
+         gEZA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5UR0mcT4tpBI4KCvMAZfobHogGV4TtqNNX1TrqC5/8tCr4TqhWnDJ9TOq6kW6illvE49E25hFcMoT3dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJYkoun3kObvGcaceTR0U3vsWbXDBakX8s5vGLNiJWnBWpc29d
+	O9y3yUu1py7hsF05I+bPECvmfNzrjTIvKSWmaz7QNTL18314cyvVLYvFtwkIYg==
+X-Google-Smtp-Source: AGHT+IEfJSXK0Wsel23PY6RuLEcqGR+eVsnaqOIyvQM277nf0XUs151BJ1cKdgq24SPhmJrtG19jVA==
+X-Received: by 2002:a05:6214:488f:b0:6cb:5fba:e006 with SMTP id 6a1803df08f44-6cb5fbae166mr61875236d6.29.1727697857240;
+        Mon, 30 Sep 2024 05:04:17 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.10
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:12 -0700 (PDT)
+        Mon, 30 Sep 2024 05:04:15 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:00 +0000
-Subject: [PATCH 05/45] media: pvrusb2:Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:02 +0000
+Subject: [PATCH 07/45] media: dvb-usb: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-5-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-7-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -114,124 +114,101 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
 X-Mailer: b4 0.13.0
 
 The following cocci warnings are fixed:
-drivers/media/usb/pvrusb2/pvrusb2-hdw.c:341:11-14: opportunity for str_true_false(val)
-drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1727:6-17: opportunity for str_enable_disable(enable_flag)
-drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1663:6-14: opportunity for str_on_off(enablefl)
-drivers/media/usb/pvrusb2/pvrusb2-encoder.c:265:8-29: opportunity for str_true_false(hdw -> state_encoder_ok)
-drivers/media/usb/pvrusb2/pvrusb2-encoder.c:271:9-33: opportunity for str_true_false(hdw -> state_encoder_runok)
-drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:524:35-38: opportunity for str_true_false(val)
-drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:475:11-37: opportunity for str_read_write(msgs [ idx ] . flags & I2C_M_RD)
-drivers/media/usb/pvrusb2/pvrusb2-debugifc.c:151:4-31: opportunity for str_on_off(pvr2_hdw_get_streaming ( hdw ))
+drivers/media/usb/dvb-usb/opera1.c:326:26-31: opportunity for str_enable_disable(onoff)
+drivers/media/usb/dvb-usb/opera1.c:310:3-8: opportunity for str_on_off(onoff)
+drivers/media/usb/dvb-usb/opera1.c:283:19-24: opportunity for str_on_off(onoff)
+drivers/media/usb/dvb-usb/opera1.c:296:23-28: opportunity for str_on_off(onoff)
+drivers/media/usb/dvb-usb/dvb-usb-dvb.c:49:21-26: opportunity for str_on_off(onoff)
+drivers/media/usb/dvb-usb/dvb-usb-dvb.c:47:2-46: opportunity for str_yes_no(adap -> fe_adap [ adap -> active_fe ] . pid_filtering)
+drivers/media/usb/dvb-usb/af9005-fe.c:1282:27-31: opportunity for str_high_low(temp)
+drivers/media/usb/dvb-usb/af9005-fe.c:790:30-32: opportunity for str_on_off(on)
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/pvrusb2/pvrusb2-ctrl.c     | 2 +-
- drivers/media/usb/pvrusb2/pvrusb2-debugifc.c | 3 ++-
- drivers/media/usb/pvrusb2/pvrusb2-encoder.c  | 5 ++---
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c      | 6 +++---
- drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 3 +--
- 5 files changed, 9 insertions(+), 10 deletions(-)
+ drivers/media/usb/dvb-usb/af9005-fe.c   | 4 ++--
+ drivers/media/usb/dvb-usb/dvb-usb-dvb.c | 6 +++---
+ drivers/media/usb/dvb-usb/opera1.c      | 8 ++++----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
-index 8ae3ad80cccb..b6c9bda214c8 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
-@@ -521,7 +521,7 @@ int pvr2_ctrl_value_to_sym_internal(struct pvr2_ctrl *cptr,
- 		*len = scnprintf(buf,maxlen,"%d",val);
- 		ret = 0;
- 	} else if (cptr->info->type == pvr2_ctl_bool) {
--		*len = scnprintf(buf,maxlen,"%s",val ? "true" : "false");
-+		*len = scnprintf(buf, maxlen, "%s", str_true_false(val));
- 		ret = 0;
- 	} else if (cptr->info->type == pvr2_ctl_enum) {
- 		const char * const *names;
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c b/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
-index 81d711269ab5..9e4eb03133c9 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/string.h>
-+#include <linux/string_choices.h>
- #include "pvrusb2-debugifc.h"
- #include "pvrusb2-hdw.h"
- #include "pvrusb2-debug.h"
-@@ -148,7 +149,7 @@ int pvr2_debugifc_print_status(struct pvr2_hdw *hdw,
- 	bcnt += ccnt; acnt -= ccnt; buf += ccnt;
- 
- 	ccnt = scnprintf(buf,acnt,"Streaming is %s\n",
--			 pvr2_hdw_get_streaming(hdw) ? "on" : "off");
-+			 str_on_off(pvr2_hdw_get_streaming(hdw)));
- 	bcnt += ccnt; acnt -= ccnt; buf += ccnt;
- 
- 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-index c8102772344b..8a2464744e5b 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
-@@ -262,14 +262,13 @@ rdData[0]);
- 			pvr2_trace(PVR2_TRACE_STBITS,
- 				   "State bit %s <-- %s",
- 				   "state_encoder_ok",
--				   (hdw->state_encoder_ok ? "true" : "false"));
-+				   str_true_false(hdw->state_encoder_ok));
- 			if (hdw->state_encoder_runok) {
- 				hdw->state_encoder_runok = 0;
- 				pvr2_trace(PVR2_TRACE_STBITS,
- 				   "State bit %s <-- %s",
- 					   "state_encoder_runok",
--					   (hdw->state_encoder_runok ?
--					    "true" : "false"));
-+					   str_true_false(hdw->state_encoder_runok));
- 			}
- 			pvr2_trace(
- 				PVR2_TRACE_ERROR_LEGS,
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index 29cc207194b9..761d718478ca 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -338,7 +338,7 @@ static void trace_stbit(const char *name,int val)
- {
- 	pvr2_trace(PVR2_TRACE_STBITS,
- 		   "State bit %s <-- %s",
--		   name,(val ? "true" : "false"));
-+		   name, str_true_false(val));
+diff --git a/drivers/media/usb/dvb-usb/af9005-fe.c b/drivers/media/usb/dvb-usb/af9005-fe.c
+index 404e56b32145..ea3aaf3a56cb 100644
+--- a/drivers/media/usb/dvb-usb/af9005-fe.c
++++ b/drivers/media/usb/dvb-usb/af9005-fe.c
+@@ -787,7 +787,7 @@ static int af9005_fe_power(struct dvb_frontend *fe, int on)
+ 	struct af9005_fe_state *state = fe->demodulator_priv;
+ 	u8 temp = on;
+ 	int ret;
+-	deb_info("power %s tuner\n", on ? "on" : "off");
++	deb_info("power %s tuner\n", str_on_off(on));
+ 	ret = af9005_send_command(state->d, 0x03, &temp, 1, NULL, 0);
+ 	return ret;
  }
+@@ -1279,7 +1279,7 @@ static int af9005_fe_get_frontend(struct dvb_frontend *fe,
+ 	if (ret)
+ 		return ret;
+ 	/* if temp is set = high priority */
+-	deb_info("PRIORITY %s\n", temp ? "high" : "low");
++	deb_info("PRIORITY %s\n", str_high_low(temp));
  
- static int ctrl_channelfreq_get(struct pvr2_ctrl *cptr,int *vp)
-@@ -1660,7 +1660,7 @@ static int pvr2_decoder_enable(struct pvr2_hdw *hdw,int enablefl)
- 	   anyway, just in case somebody else wants to hear the
- 	   command... */
- 	pvr2_trace(PVR2_TRACE_CHIPS, "subdev v4l2 stream=%s",
--		   (enablefl ? "on" : "off"));
-+		   str_on_off(enablefl));
- 	v4l2_device_call_all(&hdw->v4l2_dev, 0, video, s_stream, enablefl);
- 	v4l2_device_call_all(&hdw->v4l2_dev, 0, audio, s_stream, enablefl);
- 	if (hdw->decoder_client_id) {
-@@ -1724,7 +1724,7 @@ int pvr2_hdw_set_streaming(struct pvr2_hdw *hdw,int enable_flag)
- 		hdw->state_pipeline_req = enable_flag != 0;
- 		pvr2_trace(PVR2_TRACE_START_STOP,
- 			   "/*--TRACE_STREAM--*/ %s",
--			   enable_flag ? "enable" : "disable");
-+			   str_enable_disable(enable_flag));
- 	}
- 	pvr2_hdw_state_sched(hdw);
- 	LOCK_GIVE(hdw->big_lock);
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-index 63db04fe12d3..60a0df018334 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
-@@ -472,8 +472,7 @@ static int pvr2_i2c_xfer(struct i2c_adapter *i2c_adap,
- 			       idx+1,num,
- 			       msgs[idx].addr,
- 			       cnt,
--			       (msgs[idx].flags & I2C_M_RD ?
--				"read" : "write"));
-+			       str_read_write(msgs[idx].flags & I2C_M_RD));
- 			if ((ret > 0) || !(msgs[idx].flags & I2C_M_RD)) {
- 				if (cnt > 8) cnt = 8;
- 				pr_cont(" [");
+ 	/* high coderate */
+ 	ret =
+diff --git a/drivers/media/usb/dvb-usb/dvb-usb-dvb.c b/drivers/media/usb/dvb-usb/dvb-usb-dvb.c
+index 0a7f8ba90992..b663c3dff25c 100644
+--- a/drivers/media/usb/dvb-usb/dvb-usb-dvb.c
++++ b/drivers/media/usb/dvb-usb/dvb-usb-dvb.c
+@@ -44,9 +44,9 @@ static int dvb_usb_ctrl_feed(struct dvb_demux_feed *dvbdmxfeed, int onoff)
+ 
+ 	/* activate the pid on the device specific pid_filter */
+ 	deb_ts("setting pid (%s): %5d %04x at index %d '%s'\n",
+-		adap->fe_adap[adap->active_fe].pid_filtering ?
+-		"yes" : "no", dvbdmxfeed->pid, dvbdmxfeed->pid,
+-		dvbdmxfeed->index, onoff ? "on" : "off");
++		str_yes_no(adap->fe_adap[adap->active_fe].pid_filtering),
++		dvbdmxfeed->pid, dvbdmxfeed->pid,
++		dvbdmxfeed->index, str_on_off(onoff));
+ 	if (adap->props.fe[adap->active_fe].caps & DVB_USB_ADAP_HAS_PID_FILTER &&
+ 		adap->fe_adap[adap->active_fe].pid_filtering &&
+ 		adap->props.fe[adap->active_fe].pid_filter != NULL)
+diff --git a/drivers/media/usb/dvb-usb/opera1.c b/drivers/media/usb/dvb-usb/opera1.c
+index 268f05fc8691..8412b64660d8 100644
+--- a/drivers/media/usb/dvb-usb/opera1.c
++++ b/drivers/media/usb/dvb-usb/opera1.c
+@@ -280,7 +280,7 @@ static int opera1_power_ctrl(struct dvb_usb_device *d, int onoff)
+ 	u8 val = onoff ? 0x01 : 0x00;
+ 
+ 	if (dvb_usb_opera1_debug)
+-		info("power %s", onoff ? "on" : "off");
++		info("power %s", str_on_off(onoff));
+ 	return opera1_xilinx_rw(d->udev, 0xb7, val,
+ 				&val, 1, OPERA_WRITE_MSG);
+ }
+@@ -293,7 +293,7 @@ static int opera1_streaming_ctrl(struct dvb_usb_adapter *adap, int onoff)
+ 		{.addr = ADDR_B1A6_STREAM_CTRL,.buf = onoff ? buf_start : buf_stop,.len = 2},
+ 	};
+ 	if (dvb_usb_opera1_debug)
+-		info("streaming %s", onoff ? "on" : "off");
++		info("streaming %s", str_on_off(onoff));
+ 	i2c_transfer(&adap->dev->i2c_adap, start_tuner, 1);
+ 	return 0;
+ }
+@@ -307,7 +307,7 @@ static int opera1_pid_filter(struct dvb_usb_adapter *adap, int index, u16 pid,
+ 	};
+ 	if (dvb_usb_opera1_debug)
+ 		info("pidfilter index: %d pid: %d %s", index, pid,
+-			onoff ? "on" : "off");
++			str_on_off(onoff));
+ 	b_pid[0] = (2 * index) + 4;
+ 	b_pid[1] = onoff ? (pid & 0xff) : (0x00);
+ 	b_pid[2] = onoff ? ((pid >> 8) & 0xff) : (0x00);
+@@ -323,7 +323,7 @@ static int opera1_pid_filter_control(struct dvb_usb_adapter *adap, int onoff)
+ 		{.addr = ADDR_B1A6_STREAM_CTRL,.buf = b_pid,.len = 3},
+ 	};
+ 	if (dvb_usb_opera1_debug)
+-		info("%s hw-pidfilter", onoff ? "enable" : "disable");
++		info("%s hw-pidfilter", str_enable_disable(onoff));
+ 	for (; u < 0x7e; u += 2) {
+ 		b_pid[0] = u;
+ 		b_pid[1] = 0;
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
