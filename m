@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-343776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C0989F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:23:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF23989F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D2D1C2154B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:23:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA4B1F220AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB22188711;
-	Mon, 30 Sep 2024 10:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771918A6C9;
+	Mon, 30 Sep 2024 10:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCT+QaHp"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCQWRtVH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A86E26AEC
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0ED26AEC;
+	Mon, 30 Sep 2024 10:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727691800; cv=none; b=N08abGmvyjjPIsxpuKKHtw71kySWXmAT3LpxZW5jK2YrJnI8R0Hy6qenLKgxEsKw6t2q7Z64KzKjdbNJVEMlxMy8u0oPmgMOt4E14o/ikmLxYhqRNJwUlGYib+6SD7OG+hf5J7aEJu7pgRIdL1e65wQPQKK/CCw7bzxDAcAa3to=
+	t=1727692125; cv=none; b=Ta+TtWm4dgvs/8tWf6zLXqeM5XH2vvjuQJXSC/0gyPzeRjG0RQoPy0qvIdwL3nLtWaChRlM346RxUVx6tZl2lGJn7+7gFbJoJC3BgfS7i0rOXFRNXENvbk3QXFdSgihN1NtgAI9+pAiKwAkGHx+y1fJ1aeJkzctOiGvEHlsTsqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727691800; c=relaxed/simple;
-	bh=gmlgwYG+vj6T+6t1roiX69+3s5nj6eQqICrmGsYyi2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AB2ahpjwzG/UBdCEjRsuYQM2Bcgtqkkh9nADsceEv7OncI59jVVbzNnkfRi3QwoFlcfIceIXts72BCU1tb3iQy2SCPxHnoQ7Rb8wHOqkpmYLJzJT1fh3VDk1vP7zku+G+2WkCpaImv+aRIp+xA7f0+k9GbZ+Uzh1XHjBjrxB6G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCT+QaHp; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5398996acbeso3045031e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:23:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727691797; x=1728296597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmEITXlR0ceUxPN6rul6hZDhcOAMvvwj8hZoqNcz/nE=;
-        b=NCT+QaHpOAlPrBi3ALG5gMiYgd93TKhLQbUVMhnlQF3CiuLrsVvZEfukq+XZykxG/g
-         X16kpPzXEWmkowjTFJWrFaOKGz6EJNQbTSyPpGzY/+v0oGKTaMSe30PcnijhfYtTJzcP
-         fixRBX9qkXLh9VENPzfzNb/1MxAQs+TPqCyvYsgPeqs0GrEM30MuEF+pcAUwk6kEZ38h
-         s2iaHsUtxBtGMb6qY9TPAaqmW8pl9PlpuuByNyKKgFJX8YmCY3rcOlWlOqp19Zy4f0Zk
-         F2LzCNCDmh6AZWTEf+v15L4vtR1kEyY2T5rsiV1+7+9yfSh1O3u0EnUyYaeC+KgJA0in
-         1HHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727691797; x=1728296597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GmEITXlR0ceUxPN6rul6hZDhcOAMvvwj8hZoqNcz/nE=;
-        b=TkGnaSCBR29ipK3mFPefPjkel0gwvLOfG7LPw2zIbGkFnN+2NmYAAGefigUJPr66+f
-         h2JOeU7bHUpp3aRMujuUxs08cLm2DsviCf4bypyWcv8+N6mZN4x/ailmtP6x1mssvMgj
-         nZs/1tyTmD86r9W7dt1Yb6TbJUAjEJbmPBHVTAl9Gs+/1s1DgBlxmVJxSTcj0CtDF7tF
-         +eC69Ysm5YCzR3kOUNLa0PIeGkVVSzjNtqrNCwrwnQG1ukGFDglWwjmH28snd0AZkKEN
-         IHZiG/YqrGh1PNNkSaSgFASq5frCy3OXJkyoifAjjrEkXskWpnR0MyfZlIaTA5FoS1fF
-         Dn5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXW300pyWs2TSdkgRvk8K0KPnNoNqf9o14Nlwb1p3CfXatyKjTUeVj9YA7RTDDil2IMqPD5Ku7RmqKtLpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvJtP0nWsY9EGrsv2//Fv6zqmKk8wQp8eVBKgtzTEPlNUGECH7
-	OSoMbgF9vL0e82gL3DTTtIBqw2JZELER9ZAUZ7F8CkwNYjEGClctBbUf4ddvs9t8iw==
-X-Google-Smtp-Source: AGHT+IHnQtAkIBhaWFdwFHnkp+CnZByohDf1mJVlXB2WmbSuBqwW0DU+WU4shf7k5U6O7yo+yKUZcA==
-X-Received: by 2002:ac2:51ce:0:b0:539:89f7:3187 with SMTP id 2adb3069b0e04-53989f7343fmr4800401e87.47.1727691796866;
-        Mon, 30 Sep 2024 03:23:16 -0700 (PDT)
-Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539903944e5sm569425e87.162.2024.09.30.03.23.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 03:23:16 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: akpm@linux-foundation.org,
-	dvyukov@google.com
-Cc: andreyknvl@gmail.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	snovitoll@gmail.com
-Subject: [PATCH] mm, kasan: proper instrument _kernel_nofault
-Date: Mon, 30 Sep 2024 15:24:05 +0500
-Message-Id: <20240930102405.2227124-1-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727692125; c=relaxed/simple;
+	bh=ehA/GE+fSfAbucHpXnsgQhs0omrlFYS3F9fhpgRCfxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lvv4KtaHYGjisu5ylPtDeOwZjYRoWPPPDeeZHXAw2xSUG6mEfhjlcZqL+zRD5uoKpWYcidZRE7aYQPFQO9iTnqHBKqAQFKcCsykKKXnKLztR/6zB/2eKsg8U1VGonsLdnVRXDR7A6DH5IpVtyY3MWJdhQ2Zjb5uJksW+kZX/1NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCQWRtVH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D992AC4CEC7;
+	Mon, 30 Sep 2024 10:28:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727692125;
+	bh=ehA/GE+fSfAbucHpXnsgQhs0omrlFYS3F9fhpgRCfxs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iCQWRtVHvE6CImzRENtho7otETVc9XaQFJINf6MwTH2/p7WCf/uiGZrHZF5+tesnv
+	 onJDUTBPU9RQg7fDdUbkTuYD/8Vy7Hq0gyyt5J/0l+nRtolbDyITiaaa8lQkSpjx17
+	 aMs0axjp+vhbFp2eO485952TY2gzPP1EpwhvxVkvh2pDsurwsAJmROZ4sG/MKhWc4y
+	 sV3pJ9+mhS2dhpgFJWkKKCktRpkaRUfXHjlq29kJJE8umbQfzoNVBmZTygZ2BnT2Zz
+	 XZDoRmSEceEuPD9e67DFpDdL3TyEJ2828CZxrxi4tCKQCmM7cgTyNH8tOlBsZW4JxY
+	 jvTv6cvdYCqlQ==
+Message-ID: <2064ea03-a396-418c-a6c3-1c0f1b12d2f3@kernel.org>
+Date: Mon, 30 Sep 2024 12:28:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the origin tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240930133813.3c8157df@canb.auug.org.au>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240930133813.3c8157df@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-In commit 88ad9dc30bbf("mm, kasan: instrument
-copy_from/to_kernel_nofault"), both src and dst were checked which might
-lead to the false-positive reports.
+On 30/09/2024 05:38, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the origin tree, today's linux-next build (s390 defconfig)
+> failed like this:
+> 
+> In file included from fs/bcachefs/bset.h:9,
+>                  from fs/bcachefs/btree_iter.h:5,
+>                  from fs/bcachefs/str_hash.h:5,
+>                  from fs/bcachefs/xattr.h:5,
+>                  from fs/bcachefs/acl.c:6:
+> fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+> fs/bcachefs/bkey.h:557:41: error: 'const struct bkey' has no member named 'bversion'; did you mean 'version'?
+>   557 |         x(BKEY_FIELD_VERSION_HI,        bversion.hi)                    \
+>       |                                         ^~~~~~~~
 
-Regular instrument_read() for copy_from and instrument_write() for
-copy_to triggers KASAN reports in mm/kasan_test_c.c
-copy_from_to_kernel_nofault_oob() kunit test.
 
-Tested on x86_64, arm64 with CONFIG_KASAN_SW_TAGS using the latest linux-next
-tree, where this commit has been merged today.
+Also reported earlier here:
+https://lore.kernel.org/all/202409272048.MZvBm569-lkp@intel.com/
+https://lore.kernel.org/all/202409271712.EZRpO2Z1-lkp@intel.com/
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=210505
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
- mm/maccess.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+But the true problem is here:
 
-diff --git a/mm/maccess.c b/mm/maccess.c
-index 2c4251df46c..f752f0c0fa3 100644
---- a/mm/maccess.c
-+++ b/mm/maccess.c
-@@ -32,7 +32,7 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
- 		return -ERANGE;
- 
- 	pagefault_disable();
--	instrument_memcpy_before(dst, src, size);
-+	instrument_read(src, size);
- 	if (!(align & 7))
- 		copy_from_kernel_nofault_loop(dst, src, size, u64, Efault);
- 	if (!(align & 3))
-@@ -40,7 +40,6 @@ long copy_from_kernel_nofault(void *dst, const void *src, size_t size)
- 	if (!(align & 1))
- 		copy_from_kernel_nofault_loop(dst, src, size, u16, Efault);
- 	copy_from_kernel_nofault_loop(dst, src, size, u8, Efault);
--	instrument_memcpy_after(dst, src, size, 0);
- 	pagefault_enable();
- 	return 0;
- Efault:
-@@ -65,7 +64,7 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
- 		align = (unsigned long)dst | (unsigned long)src;
- 
- 	pagefault_disable();
--	instrument_memcpy_before(dst, src, size);
-+	instrument_write(dst, size);
- 	if (!(align & 7))
- 		copy_to_kernel_nofault_loop(dst, src, size, u64, Efault);
- 	if (!(align & 3))
-@@ -73,7 +72,6 @@ long copy_to_kernel_nofault(void *dst, const void *src, size_t size)
- 	if (!(align & 1))
- 		copy_to_kernel_nofault_loop(dst, src, size, u16, Efault);
- 	copy_to_kernel_nofault_loop(dst, src, size, u8, Efault);
--	instrument_memcpy_after(dst, src, size, 0);
- 	pagefault_enable();
- 	return 0;
- Efault:
--- 
-2.34.1
+commit cf49f8a8c277f9f2b78e2a56189a741a508a9820
+Author:     Kent Overstreet <kent.overstreet@linux.dev>
+AuthorDate: Thu Sep 26 15:49:17 2024 -0400
+                    ^^^^^^^^^^^
+Commit:     Kent Overstreet <kent.overstreet@linux.dev>
+CommitDate: Fri Sep 27 21:46:35 2024 -0400
+                    ^^^^^^^^^^^ one day difference!
+
+Last minute commits usually won't receive wide build coverage, at least
+not instantaneously.
+
+And if you go through the history, I see around 40 commits with authored
+date ~20-26 September and committed on Sep 27. Plus another ~40 authored
+earlier but committed on September 21, which is middle of merge window.
+
+Why such commits for RC1 are sent at the end of merge window or
+committed during merge window?
+
+Best regards,
+Krzysztof
+
+Best regards,
+Krzysztof
 
 
