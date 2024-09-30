@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF8F98A185
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:09:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A85498A18D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFCBB28440
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:05:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E1BCFB26EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF4018F2D5;
-	Mon, 30 Sep 2024 12:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62492190075;
+	Mon, 30 Sep 2024 12:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OzWacppw"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LD92e8ti"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C77218E758
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4F918FDB1
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697850; cv=none; b=N44//iqa/K+SQfODqhrpq7FImsh53oKba6KeqTsqWUyJ0P7g7AOuaYNyZ/vMhxGko0oSEiqShs8pM69OkrrSqEXTT/Qi9qtKW37VKyOS8pUNo9k45nyIc1ryMNaLlvt+81MRK9XZxAJWVhJFN+liJA5GrZeZZtdJZduoD9yOq+s=
+	t=1727697856; cv=none; b=UvfLN84L3RTBpz5BAFerNbXXLQbwt+PP+s1FtjMB3wUaNLhHCR/sODIEaLWkDjxws+52N0yQIRog87I7QA/MjGbmQ5ZvTCpNaCBhr6gbzcG1mVj05f2jJ+V0zr9l9useieRqbiVo8wrP/Oi0ktQluwJfjZpWar/VeoRCgz1rvew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697850; c=relaxed/simple;
-	bh=6tsZ1NoeAxhaSKOEEQHt8kXuaM/4oPbiO7sTIQQ1WIA=;
+	s=arc-20240116; t=1727697856; c=relaxed/simple;
+	bh=4EPc3t0RKZkMLoHchmo/OHohT6ryeJ4Oca6zFWLr0gY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hZ7oDR/zxfwNgAJTXBetHeXBMIXMAUWD/g+XJeA6nnMnkox4IT1AS5W+bb3nhAYZMgbKNLkzdYvI2uzeK3fMsfACyjOmlgbKSn/zFAGXkjF3wN/sY1WRbWKgp1eZn2CIWbnrKo97PvRxVxMpGm3v00/KjZelDyMft/dB1B1YYSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OzWacppw; arc=none smtp.client-ip=209.85.219.45
+	 In-Reply-To:To:Cc; b=CQuWHlVHwGOaynai+cQtTlJVGP71M9gu8AIh5CUlaFtrNJ55YPF4K/zFfV665Y3WcoOnSi0ruf5S1XdkUphUiDrhKEHV40kFPy46ZfROsD3CfaCLas54wbjVtoFWEdAUkK37S6BpmkJwWIGNk6UiwEcg3GKr7xwq5bSkDzzJU6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LD92e8ti; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cb3bbb9cf5so31769026d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:07 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a9a30a045cso419780585a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697846; x=1728302646; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697853; x=1728302653; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RMPmE5TkHFd80YgqTri0+sfyqDiwarpX0eHsAVhj80Q=;
-        b=OzWacppwg9JT9kQFKNhN+mWJNPDgo2MEKjWRpLyP3Kd+2QQS3qpdHgZMgo1+EBrQKr
-         Oq0/z45lGXityqeOUc5YyeL71aqoqNeeTVkb72mbmZ8jnuXXE1pYne1xvkNci37kGrm8
-         R3MGiLBvIFlyRilX3p9cQ8nCWsovmZLqK98+w=
+        bh=Vb+rHfycpw6eqzxAcjL5Q/NM2Cf8FBszS0leZkajSd4=;
+        b=LD92e8tiOi3A/pPzDiFdg1/Opt+a/tsnz8qR3HAFjeIXJnrdQ8Gi6L7RzzXfsg63EM
+         V7NXoW8DxafsQXYNaR7qkr/qtQh31VmirgHdYZgGayf2LJoHvkJDHxsA806DHAjqzqiW
+         9f6kF0v7Oi+UpLv57sb4BksbvA/rabiLOgRUo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697846; x=1728302646;
+        d=1e100.net; s=20230601; t=1727697853; x=1728302653;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RMPmE5TkHFd80YgqTri0+sfyqDiwarpX0eHsAVhj80Q=;
-        b=DNNa3lVv63PWevXcZeqfEMYQxOFIjOyRTuxIHS4AaCo0ZoSQG9Iu1c1GS2n8mswb2p
-         DtuC6WHtBcDYrA87+3rKb/Z8Yp0SiK5XxQxOFH3RhhozkuXgYSMvqxxGb4sO74iq6fJG
-         X4nqKXSnPcJwN8Oo/QRsir6ff9+2cn2erLzKrHdoBrTaiNeMNjiROA6IUeGID7HnyxTW
-         tVTAEqOfFs+wQM5YeKrFPgAnfD6vDIXv9r6lGWnq02rWGMVDAB2Fnz497Sogxlbv1Ewe
-         eX44DH3KNsBQmKm3uAnKKg8q/M6hBlP9i71dTUqvRZ/Bzq/+yuVzqjTRZd16CBfkcaeo
-         651Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXYmF54n/mXG2+Y44ra1PmsP++/wNluooOJSvQvlIwiVugJA2sHYLorbaub6hmidHyplafUgLwzQAhKUqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQoJsOX/cvwbos+lO3eEsE3/kjAtyaaBsHBhXmUzC8gsp7k1Sl
-	zoBPX5cXcmeAfArNxWHRZ1nZyyxEPix9fIMv3tqEuvTm4W5Yh9jKETk3Pixmpg==
-X-Google-Smtp-Source: AGHT+IH6/D/fn5XLACymMtvSYJn9uYVBCFXPJs1Z5DofbyQa884ygogtE2Qn3wPmK1ZC7+LIXRRj0g==
-X-Received: by 2002:a05:6214:4905:b0:6cb:4ee5:8a80 with SMTP id 6a1803df08f44-6cb4ee58e92mr128655486d6.34.1727697846439;
-        Mon, 30 Sep 2024 05:04:06 -0700 (PDT)
+        bh=Vb+rHfycpw6eqzxAcjL5Q/NM2Cf8FBszS0leZkajSd4=;
+        b=O82S+Wm94kPg6vx8E+3ebMXXuqKoHA+3rA1pOuqx6f/IoNbKR8IIF0G+UK0Wz5MOsd
+         qsss8fu7oKzoMm9ooar+0uXZKzsODv40s0nXpS5OA5Ap+ldiIemcjw1znniWFQxwYS4G
+         BAQGVjpMy1PvMg+jTq4zriBVqcCdoNmSN+1YTEC0JJSj1Qtia1gwyGFDQWzoYGrPEhwU
+         a4MwCWJEKoMiuqSwzBCdCMRR8qJ+pGdh/6sqr4yoMuqkBQNPhwX4gc6PMRl9yEew3s/d
+         DsLGNlaw1GPRtl5HwwgPYlJPGIswuLuEcFMrfZ/WhXI/dj4HFxSwGjeRUtpedSspXjm3
+         b9rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFPdxeGCgVJ3twREy/1y9UCs7R9ZYK3+KqVJbf1nOfOpn2/cczWsiY64BpavywRh1kMS2APXNZ8wrlBKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIZm9nTPiVxGWaLS8pT/PCmjIW0G0d86nyQR1tizoHr13g+FKh
+	Tvj9jSEBh7AdLR7Qnh2PaJOC6zg5PbGbyNuMpIH60jeqq/nAS++18uqd9fGkKw==
+X-Google-Smtp-Source: AGHT+IERK7kGfru4Q7d82RuyPjgoS6CBbu4N/h9Q+YkCupy/y3EuDtqtjn9iCQgLe1Tq04yD8BYOEQ==
+X-Received: by 2002:a05:6214:4a8e:b0:6c5:5418:a055 with SMTP id 6a1803df08f44-6cb3b5f2781mr194666026d6.30.1727697853291;
+        Mon, 30 Sep 2024 05:04:13 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.04
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:05 -0700 (PDT)
+        Mon, 30 Sep 2024 05:04:12 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:03:57 +0000
-Subject: [PATCH 02/45] media: staging: atomisp: Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:00 +0000
+Subject: [PATCH 05/45] media: pvrusb2:Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-2-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-5-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -114,121 +114,124 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
 X-Mailer: b4 0.13.0
 
 The following cocci warnings are fixed:
-drivers/staging/media/atomisp/pci/sh_css.c:1490:16-19: opportunity for str_true_false(map)
-drivers/staging/media/atomisp/pci/atomisp_compat_css20.c:855:2-8: opportunity for str_enable_disable(enable)
-drivers/staging/media/atomisp/pci/atomisp_v4l2.c:542:40-46: opportunity for str_on_off(enable)
-drivers/staging/media/atomisp/pci/atomisp_v4l2.c:584:48-54: opportunity for str_on_off(enable)
-drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:1006:2-4: opportunity for str_on_off(on)
-drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:1019:3-5: opportunity for str_on_off(on)
-drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c:394:9-19: opportunity for str_low_high(active_low)
-drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c:1253:3-35: opportunity for str_true_false(xcandidate -> sp . enable . continuous)
+drivers/media/usb/pvrusb2/pvrusb2-hdw.c:341:11-14: opportunity for str_true_false(val)
+drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1727:6-17: opportunity for str_enable_disable(enable_flag)
+drivers/media/usb/pvrusb2/pvrusb2-hdw.c:1663:6-14: opportunity for str_on_off(enablefl)
+drivers/media/usb/pvrusb2/pvrusb2-encoder.c:265:8-29: opportunity for str_true_false(hdw -> state_encoder_ok)
+drivers/media/usb/pvrusb2/pvrusb2-encoder.c:271:9-33: opportunity for str_true_false(hdw -> state_encoder_runok)
+drivers/media/usb/pvrusb2/pvrusb2-ctrl.c:524:35-38: opportunity for str_true_false(val)
+drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c:475:11-37: opportunity for str_read_write(msgs [ idx ] . flags & I2C_M_RD)
+drivers/media/usb/pvrusb2/pvrusb2-debugifc.c:151:4-31: opportunity for str_on_off(pvr2_hdw_get_streaming ( hdw ))
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/staging/media/atomisp/pci/atomisp_compat_css20.c      | 2 +-
- drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c       | 2 +-
- drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c     | 4 ++--
- drivers/staging/media/atomisp/pci/atomisp_v4l2.c              | 4 ++--
- drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c | 2 +-
- drivers/staging/media/atomisp/pci/sh_css.c                    | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-ctrl.c     | 2 +-
+ drivers/media/usb/pvrusb2/pvrusb2-debugifc.c | 3 ++-
+ drivers/media/usb/pvrusb2/pvrusb2-encoder.c  | 5 ++---
+ drivers/media/usb/pvrusb2/pvrusb2-hdw.c      | 6 +++---
+ drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c | 3 +--
+ 5 files changed, 9 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
-index a62a5c0b3c00..34e68ea1b1f4 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
-@@ -852,7 +852,7 @@ int atomisp_css_irq_enable(struct atomisp_device *isp,
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
+index 8ae3ad80cccb..b6c9bda214c8 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
+@@ -521,7 +521,7 @@ int pvr2_ctrl_value_to_sym_internal(struct pvr2_ctrl *cptr,
+ 		*len = scnprintf(buf,maxlen,"%d",val);
+ 		ret = 0;
+ 	} else if (cptr->info->type == pvr2_ctl_bool) {
+-		*len = scnprintf(buf,maxlen,"%s",val ? "true" : "false");
++		*len = scnprintf(buf, maxlen, "%s", str_true_false(val));
+ 		ret = 0;
+ 	} else if (cptr->info->type == pvr2_ctl_enum) {
+ 		const char * const *names;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c b/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
+index 81d711269ab5..9e4eb03133c9 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-debugifc.c
+@@ -5,6 +5,7 @@
+  */
+ 
+ #include <linux/string.h>
++#include <linux/string_choices.h>
+ #include "pvrusb2-debugifc.h"
+ #include "pvrusb2-hdw.h"
+ #include "pvrusb2-debug.h"
+@@ -148,7 +149,7 @@ int pvr2_debugifc_print_status(struct pvr2_hdw *hdw,
+ 	bcnt += ccnt; acnt -= ccnt; buf += ccnt;
+ 
+ 	ccnt = scnprintf(buf,acnt,"Streaming is %s\n",
+-			 pvr2_hdw_get_streaming(hdw) ? "on" : "off");
++			 str_on_off(pvr2_hdw_get_streaming(hdw)));
+ 	bcnt += ccnt; acnt -= ccnt; buf += ccnt;
+ 
+ 
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
+index c8102772344b..8a2464744e5b 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-encoder.c
+@@ -262,14 +262,13 @@ rdData[0]);
+ 			pvr2_trace(PVR2_TRACE_STBITS,
+ 				   "State bit %s <-- %s",
+ 				   "state_encoder_ok",
+-				   (hdw->state_encoder_ok ? "true" : "false"));
++				   str_true_false(hdw->state_encoder_ok));
+ 			if (hdw->state_encoder_runok) {
+ 				hdw->state_encoder_runok = 0;
+ 				pvr2_trace(PVR2_TRACE_STBITS,
+ 				   "State bit %s <-- %s",
+ 					   "state_encoder_runok",
+-					   (hdw->state_encoder_runok ?
+-					    "true" : "false"));
++					   str_true_false(hdw->state_encoder_runok));
+ 			}
+ 			pvr2_trace(
+ 				PVR2_TRACE_ERROR_LEGS,
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+index 29cc207194b9..761d718478ca 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+@@ -338,7 +338,7 @@ static void trace_stbit(const char *name,int val)
  {
- 	dev_dbg(isp->dev, "%s: css irq info 0x%08x: %s (%d).\n",
- 		__func__, info,
--		enable ? "enable" : "disable", enable);
-+		str_enable_disable(enable), enable);
- 	if (ia_css_irq_enable(info, enable)) {
- 		dev_warn(isp->dev, "%s:Invalid irq info: 0x%08x when %s.\n",
- 			 __func__, info,
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
-index 6abda358a72f..7d1905791b9a 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
-@@ -391,7 +391,7 @@ static int atomisp_csi2_handle_acpi_gpio_res(struct acpi_resource *ares, void *_
- 	acpi_handle_info(data->adev->handle, "%s: %s crs %d %s pin %u active-%s\n",
- 			 dev_name(&data->adev->dev), name,
- 			 data->res_count - 1, agpio->resource_source.string_ptr,
--			 pin, active_low ? "low" : "high");
-+			 pin, str_low_high(active_low));
- 
- 	return 1;
- }
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-index e176483df301..85e7d14ef394 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
-@@ -1003,7 +1003,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
- 		return 0;
- 
- 	dev_dbg(subdev->dev, "Setting power state to %s\n",
--		on ? "on" : "off");
-+		str_on_off(on));
- 
- 	if (on)
- 		ret = acpi_device_set_power(adev,
-@@ -1016,7 +1016,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
- 		gs->clock_on = on;
- 	else
- 		dev_err(subdev->dev, "Couldn't set power state to %s\n",
--			on ? "on" : "off");
-+			str_on_off(on));
- 
- 	return ret;
- }
-diff --git a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-index c9984f1557b0..6fd18217df1e 100644
---- a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-+++ b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
-@@ -539,7 +539,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
- 	u32 val = enable ? MRFLD_ISPSSPM0_IUNIT_POWER_ON :
- 			   MRFLD_ISPSSPM0_IUNIT_POWER_OFF;
- 
--	dev_dbg(isp->dev, "IUNIT power-%s.\n", enable ? "on" : "off");
-+	dev_dbg(isp->dev, "IUNIT power-%s.\n", str_on_off(enable));
- 
- 	/* WA for P-Unit, if DVFS enabled, ISP timeout observed */
- 	if (IS_CHT && enable && !isp->pm_only) {
-@@ -581,7 +581,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
- 		usleep_range(100, 150);
- 	} while (1);
- 
--	dev_err(isp->dev, "IUNIT power-%s timeout.\n", enable ? "on" : "off");
-+	dev_err(isp->dev, "IUNIT power-%s timeout.\n", str_on_off(enable));
- 	return -EBUSY;
+ 	pvr2_trace(PVR2_TRACE_STBITS,
+ 		   "State bit %s <-- %s",
+-		   name,(val ? "true" : "false"));
++		   name, str_true_false(val));
  }
  
-diff --git a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
-index 7ce2b2d6da11..7e295bc83464 100644
---- a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
-+++ b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
-@@ -1250,7 +1250,7 @@ int ia_css_binary_find(struct ia_css_binary_descr *descr, struct ia_css_binary *
- 		dev_dbg(atomisp_dev, "Using binary %s (id %d), type %d, mode %d, continuous %s\n",
- 			xcandidate->blob->name, xcandidate->sp.id, xcandidate->type,
- 			xcandidate->sp.pipeline.mode,
--			xcandidate->sp.enable.continuous ? "true" : "false");
-+			str_true_false(xcandidate->sp.enable.continuous));
- 
- 	if (err)
- 		dev_err(atomisp_dev, "Failed to find a firmware binary matching the pipeline parameters\n");
-diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
-index ca97ea082cf4..89a694453e6f 100644
---- a/drivers/staging/media/atomisp/pci/sh_css.c
-+++ b/drivers/staging/media/atomisp/pci/sh_css.c
-@@ -1487,7 +1487,7 @@ map_sp_threads(struct ia_css_stream *stream, bool map)
- 	enum ia_css_pipe_id pipe_id;
- 
- 	IA_CSS_ENTER_PRIVATE("stream = %p, map = %s",
--			     stream, map ? "true" : "false");
-+			     stream, str_true_false(map));
- 
- 	if (!stream) {
- 		IA_CSS_LEAVE_ERR_PRIVATE(-EINVAL);
+ static int ctrl_channelfreq_get(struct pvr2_ctrl *cptr,int *vp)
+@@ -1660,7 +1660,7 @@ static int pvr2_decoder_enable(struct pvr2_hdw *hdw,int enablefl)
+ 	   anyway, just in case somebody else wants to hear the
+ 	   command... */
+ 	pvr2_trace(PVR2_TRACE_CHIPS, "subdev v4l2 stream=%s",
+-		   (enablefl ? "on" : "off"));
++		   str_on_off(enablefl));
+ 	v4l2_device_call_all(&hdw->v4l2_dev, 0, video, s_stream, enablefl);
+ 	v4l2_device_call_all(&hdw->v4l2_dev, 0, audio, s_stream, enablefl);
+ 	if (hdw->decoder_client_id) {
+@@ -1724,7 +1724,7 @@ int pvr2_hdw_set_streaming(struct pvr2_hdw *hdw,int enable_flag)
+ 		hdw->state_pipeline_req = enable_flag != 0;
+ 		pvr2_trace(PVR2_TRACE_START_STOP,
+ 			   "/*--TRACE_STREAM--*/ %s",
+-			   enable_flag ? "enable" : "disable");
++			   str_enable_disable(enable_flag));
+ 	}
+ 	pvr2_hdw_state_sched(hdw);
+ 	LOCK_GIVE(hdw->big_lock);
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+index 63db04fe12d3..60a0df018334 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c
+@@ -472,8 +472,7 @@ static int pvr2_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 			       idx+1,num,
+ 			       msgs[idx].addr,
+ 			       cnt,
+-			       (msgs[idx].flags & I2C_M_RD ?
+-				"read" : "write"));
++			       str_read_write(msgs[idx].flags & I2C_M_RD));
+ 			if ((ret > 0) || !(msgs[idx].flags & I2C_M_RD)) {
+ 				if (cnt > 8) cnt = 8;
+ 				pr_cont(" [");
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
