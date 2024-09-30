@@ -1,118 +1,100 @@
-Return-Path: <linux-kernel+bounces-344233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0D7598A700
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B129498A705
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F288F1C21B37
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3221F22201
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0AA1917E7;
-	Mon, 30 Sep 2024 14:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9297B1917F3;
+	Mon, 30 Sep 2024 14:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="lgC6ek+6"
-Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4n3UHiJ"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D27C1917FB;
-	Mon, 30 Sep 2024 14:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994BE18E758;
+	Mon, 30 Sep 2024 14:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727706563; cv=none; b=dFihD3RqjY/G6qhEbYW74SccixVgd4hvztngFyOO6fGt1/km1TmTP6vU6wE4fOu7oViZYdNTk74gyC/oYYqtE8hp9Y8C3sZ4bZzLRQLsCBGQ9paEhkaQlUQwKPU5xuC/xL31IU/skNl3kLPVolM8SmMIa8KOB1JpX5kIWAmky2A=
+	t=1727706598; cv=none; b=LgZKrHCcEq79NbQVCHT3s7dZRyEaWrGX3IsngtLJJbCl9ZCzX2e9QrVNd+gtVo61SLmRq2wh10vBNurxez/TjX+X8ZRJqqJlJVo4ywqt45/tVCYbw1UNCqMnhp+VP5LiXSqmv3ZhTTNPA+6FCcDZCCyL4BAaM/wiHnQPJXSbfso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727706563; c=relaxed/simple;
-	bh=R5L9S9frLH6sSiuqcL0wGsybfRpXvblEOYptLdh7ICY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/DdtuCHFp8h00G1ywvvDl3mRSe3zIaJfDeHihPkIRLZbOUTH8Yk1vtEuSJtlUp3QEBvEekirKKvT8gD+eJanuQhbY+ujoTWrORoweLR9z1dfiyNY+BoLyRQC6czkZ0Vaictod4o0AweKW9tvp6bB1CpMFCIzeLeaF12Hzup2vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=lgC6ek+6; arc=none smtp.client-ip=178.154.239.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:1301:0:640:a2b5:0])
-	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 8EA5B60CD7;
-	Mon, 30 Sep 2024 17:29:12 +0300 (MSK)
-Received: from [IPV6:2a02:6b8:b081:b681::1:3a] (unknown [2a02:6b8:b081:b681::1:3a])
-	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ATa4BH1If8c0-dq2UN1qQ;
-	Mon, 30 Sep 2024 17:29:11 +0300
-Precedence: bulk
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1727706551;
-	bh=oCgmpzamdx7GORW8uZNl4MlQuA5crMiiqpwwxrd9CA0=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=lgC6ek+6G7Vp6sgdVn8ox5NS84NpD3d3G317xmyNLAZQdIMK0dNXrZgtNr1XgCbGR
-	 hEtpGxsj/DyI7eN4xUScD9IkUyC57XjLieOTumjHWx75Bs6gLMQqKkGbS8XMmUq/2z
-	 8rn5AbuDWv8wiY/CchY6Za4XpDtXJOnW68iilGlU=
-Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <942ec747-04f6-4fd6-abcd-eea60c3ba041@yandex-team.ru>
-Date: Mon, 30 Sep 2024 17:29:10 +0300
+	s=arc-20240116; t=1727706598; c=relaxed/simple;
+	bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d7Zj3U2ToUOp1KJSQsd1Uk+k4TLyKQYSDcpUXmGG1wcAwQgJO75R9zOye+8h5M/ej7+dOOr1G7Lh55vm7buwr6emK186BNwrfUrNueMJN1IVwDsy9KmsGJrI6vKmSeYETe63q2wf0+QSsAtq/TUOFDaNKOY3UErz+H5VKztXhhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4n3UHiJ; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718e0421143so632836b3a.0;
+        Mon, 30 Sep 2024 07:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727706596; x=1728311396; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
+        b=Q4n3UHiJtM9pQjtMWXHpxoK0jMGFOP6nreJ+M/mGGKyI8jlnKKzrJU4xEJGehGcMos
+         p+8KRM37Ua9cIOB2eXQqRo0HiYNhmmMbBqtCrtdIUfqW2IoUI/YTg+QqqJIF6rd1fNVg
+         qBWki+LqEzUq+E22gRdPW2aEyavV6ctQ7VQpDHm2pmPDj5aysruQZtjWId0i8vndpPWp
+         vlYsEibq0YvVnwQNid9wFvgnHhSCYRHpsngjShIXohREtwC8c21JI6/rxsQsWj7afhD8
+         RnpqW7Re3uKOaWH5CqBbw/X8glrUt3hJlUdyKRHlEKnVBObIVR2L44wWc9UAtdedAagC
+         8M8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727706596; x=1728311396;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
+        b=nzKTu8elTq2eWqjCkSgYedEcQ/GBfk1vz6bGFQnIOVjAwTbCzlyr2jcT4nwVmUE/Iw
+         t8/rSpkZdYDBzcCnp26wh2IyjzcmwyrsLHS1mk9Sc+TmFk5X8EBH7ar2rz6BN0+AwPK0
+         cXNA1+Yeh5aST6eDWl3JoPWpkECWWS5kAxPTLtfd9LN5HuZVP+1tjaEqWnby3/kkKmRj
+         n4JOjVuxAfSe/qpVpdclnDzwOIPYP1gE+WGoGlxuWmxXtMWwsCT5WhT4lzUJ5VxjF0z9
+         edpypvelj1VxkZ0L0fZ8V5K0vDS71q5hebWRuIM74vmCDBveHSg4IKsLf2oU9IGufNKj
+         gQOw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9PCavrOtyPjxKNqhlghuDWgTutTsICrINsGD6H8D8hHx8TyeXcgGg5xiJQtls85vByxAmUPaXna/YyRX5fkI=@vger.kernel.org, AJvYcCWy5YzD4Jel0Aaayxa0clvg+FJB7zIpZJ2YXC2Euxn1/KasYK/ZhgX3OzH1yb4ty3jble5erohdl7opKrjr@vger.kernel.org, AJvYcCXShS/UCAT1kfAODjCQDfuXEQJyBpGKRp9KkdNPso6AKFpzSKbBNhgEyB8CQS33s/Oatg3obV83fb8NxZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGf58kK85PvX+/qnzd+sPl3104uFaLghDdGnM0Zhm5VHJHI/zM
+	KYVLuE3+0WkXMuvhdCF2LOo9EGd8xoK7Rg9Dav/qzj9pYuRLA9eZrnxJ6CnLvmIpM7uIUu/wqB9
+	sg3Z3qnTF37iDh5psMKk1RXbB66NDqCyi
+X-Google-Smtp-Source: AGHT+IG3SmvTus/H0mpNWKIRwZdV1RUhLilxHvRaStvGClbl7wqoxth1J56tJ815zLX2+pBSKDyeBQpV11+/JNYF/Z4=
+X-Received: by 2002:a05:6a20:a129:b0:1cf:4c3a:162a with SMTP id
+ adf61e73a8af0-1d4fa699bffmr8782391637.5.1727706595901; Mon, 30 Sep 2024
+ 07:29:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kvm/debugfs: add file to get vcpu steal time statistics
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, pbonzini@redhat.com, yc-core@yandex-team.ru,
- linux-kernel@vger.kernel.org
-References: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
- <Zu_Pl4QiBsA_yK1g@google.com>
- <0288f7f5-4ae8-4097-b00c-f1b747f80183@yandex-team.ru>
- <ZvFVFulBrzHqj2SE@google.com>
-Content-Language: en-US
-From: Denis Plotnikov <den-plotnikov@yandex-team.ru>
-In-Reply-To: <ZvFVFulBrzHqj2SE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Yandex-Filter: 1
+References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-8-masahiroy@kernel.org>
+ <ZuwJlaeFfo7CW5dC@l-nschier-nb> <ZuwrTJftLlWNtrFs@l-nschier-nb>
+In-Reply-To: <ZuwrTJftLlWNtrFs@l-nschier-nb>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 30 Sep 2024 16:29:42 +0200
+Message-ID: <CANiq72kcoJpGB1r++Hbd-4V+e5Ts7-WyZ661Uin+oYji9HrdzQ@mail.gmail.com>
+Subject: Re: [PATCH 07/23] kbuild: remove unnecessary prune of rust/alloc for rustfmt
+To: Nicolas Schier <n.schier@avm.de>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 19, 2024 at 3:47=E2=80=AFPM Nicolas Schier <n.schier@avm.de> wr=
+ote:
+>
+> oh, there is still a comment about 'rust/alloc' in Makefile that
+> probably wants to be removed, too.
 
+Indeed, good catch. Please feel free to remove it in this series,
+otherwise we can do it later. Either way:
 
-On 9/23/24 14:46, Sean Christopherson wrote:
-> On Mon, Sep 23, 2024, Denis Plotnikov wrote:
->> On 9/22/24 11:04, Sean Christopherson wrote:
->>> On Tue, Sep 17, 2024, Denis Plotnikov wrote:
->>>> It's helpful to know whether some other host activity affects a virtual
->>>> machine to estimate virtual machine quality of sevice.
->>>> The fact of virtual machine affection from the host side can be obtained
->>>> by reading "preemption_reported" counter via kvm entries of sysfs, but
->>>> the exact vcpu waiting time isn't reported to the host.
->>>> This patch adds this reporting.
->>>>
->>>> Signed-off-by: Denis Plotnikov <den-plotnikov@yandex-team.ru>
->>>> ---
->>>>    arch/x86/include/asm/kvm_host.h |  1 +
->>>>    arch/x86/kvm/debugfs.c          | 17 +++++++++++++++++
->>>
->>> Using debugfs is undesirable, as it's (a) not ABI and (b) not guaranteed to be
->>> present as KVM (correctly) ignores debugfs setup errors.
->>>
->>> Using debugfs is also unnecessary.  The total steal time is available in guest
->>> memory, and by definition that memory is shared with the host.  To query total
->>> steal time from userspace, use MSR filtering to trap writes (and reflect writes
->>> back into KVM) so that the GPA of the steal time structure is known, and then
->>> simply read the actual steal time from guest memory as needed.
->> Thanks for the reply!
->> Just to clarify, by reading the actual steal time from guest memory do you
->> mean by using some kind of new vcpu ioctl?
-> 
-> No, I mean by using the host userspace VMA to read the memory.
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-Oh, I think I got your idea. You mean
-using KVM_CAP_X86_MSR_FILTER which...
-
-"In combination with KVM_CAP_X86_USER_SPACE_MSR, this allows user space 
-to trap and emulate MSRs ..."
-
-And then having guest's steal time struct valid address read the value 
-from userspace VMM like qemu directly.
-
-Thanks for the answers!
-
-Best,
-Denis
+Cheers,
+Miguel
 
