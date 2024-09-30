@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-343975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F085C98A1FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:20:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA22298A1FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F49C1C21B1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2761F24D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CD3192B61;
-	Mon, 30 Sep 2024 12:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843E118E023;
+	Mon, 30 Sep 2024 12:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PoGvy5J5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ewoo6LbA"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D35118E778;
-	Mon, 30 Sep 2024 12:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43059155312
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698320; cv=none; b=oKwYAR7k50fwuKZGrRfj72/987Va2AjuR2lTvW61aep+FEs8GK5igcHKCM6BiZ9nNcvB3JKsaS86kig7Ds14Jw7Sy3wVZFI7lKTh8rswgwISUxYLWnqs2hzVc5cK3brYjAZmlOxr/qm+CQWCWMQFKO+pWC71+jAurt1XWoWIqCQ=
+	t=1727698535; cv=none; b=tnwHYDbRUW0KSzetV/oYOrNiI+uokvg2xfoVcibMNJQguViWd9hiaM/yM/WYcrwyPCzl7kJyb+OINZZdDQ6VKfAIH1Wqy0UwKRqR1DOKx/7BtxjHWsXQs0Umysh9t+ofOkuqtR4NTxtYwm3vCwAVqNhlj0TdvARlvb+LCzwCndw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698320; c=relaxed/simple;
-	bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A8EzSuNAzN0VltEOMuvW2Uw/Rkt+d8v0v97Tx8gIDGfpxRi2iU+qO8ueh4DQRhhOLa1YaBatiud7SDkLvEIfb7Qk966Vj0Fx9yn692gNZpm681VcELfUMGN5DE2aZi2LrAWP9u6rIPHKN5mq77G2xV0m216g51c9gC+x93Li8fI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PoGvy5J5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4136C4CEC7;
-	Mon, 30 Sep 2024 12:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727698320;
-	bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PoGvy5J5eH8MF9+NlPUsxr0y7cW7mk1uVSGZCWpodlJVW2Wpxc69+7O429eGafTAP
-	 eIGp+zkvY4w9Ks09thnUMcpXyJwh62J1Bf2GrYdvYVVL8GgdKgJ6WhJDVesFkTgW1Y
-	 LwbmJuJuMFFbVd5fwGXCSoQqrGPcChaZIoVkRFzzyk2I00ES6BvZanIvTpp7oNJhc/
-	 9BAHQDlD1rEJJc4NI79sfIL1x/rc1n8fESTpG+z/PKUhA1aWcHqAvYhbFI2Yz4thOj
-	 a4XwXh2zT4FCBQULzVkXl/q5TgAkY+OtMKlJUchABUpa1EFx60BvJKgqVrJFkC5PUx
-	 o8SdzGR9H+Q5A==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix the netfs_folio tracepoint to handle NULL mapping
-Date: Mon, 30 Sep 2024 14:11:54 +0200
-Message-ID: <20240930-gasversorger-dient-dd843f92df8b@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2917423.1727697556@warthog.procyon.org.uk>
-References: <2917423.1727697556@warthog.procyon.org.uk>
+	s=arc-20240116; t=1727698535; c=relaxed/simple;
+	bh=KTTTdA0AHVTbXipDjzirYEG7erz3pumcVb2p3ykYriY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=FQtYk4VVT4yipLlqhh2pl17gj8OWKDrnWqx/RtO9ZuhYyQXUPqN+7xj76bd8mZpbObkKEJU3pXpypTBTMjFBK1rzRfOrw+i8KnDADQY2o8dvdEIGRhFlCZOAGsz6dJ5cyL5Zo08l1vGH4MaXQTrU05unubAIDMRjkECCWe3QbIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ewoo6LbA; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727698531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CS5+mNybhONSDgWqLEn/GrgAS06NWUK5v4oao/KVKIM=;
+	b=ewoo6LbAXnP2C1Ede6RPVeaXxB4awfOKP/bw+CFmXabdW2v/FMmREtzMNUvt8Uch8Rqqd6
+	75rtjCq18xHSb5QZDU9HaSE5WziLyZ812qHRzTQMIoAWspegkiG2/UcHFkyPDWAlOdJ1LI
+	vVq4N8HvCwaViQGLc6Y5pH71uP702oY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=983; i=brauner@kernel.org; h=from:subject:message-id; bh=PN+pVT5TT24Sk4ntvNlo6LVYPStz22N4kv1xhwFM2ks=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mtrlxrd02+HPC7vncF6JUxdYa7ucJ0f6fd9DraJgv nlsJ5JlOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyV52R4dyR/hcZabtM7832 cPD38J45dUVMLp9Om/3TrGW9okdP3WH47+sYqLNvCcNeuTbP9l07VnD8Twiavv1cT4u71gPbq9P seAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] w1: Use kfree_sensitive() instead of memset(0) and
+ kfree()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <fc0c13df-a0a6-4cf7-badc-c08a9a7054f6@kernel.org>
+Date: Mon, 30 Sep 2024 14:15:18 +0200
+Cc: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <581388A8-4FC3-4FC0-9D5B-9F13DCB90073@linux.dev>
+References: <20240930114404.80910-2-thorsten.blum@linux.dev>
+ <fc0c13df-a0a6-4cf7-badc-c08a9a7054f6@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 30 Sep 2024 12:59:16 +0100, David Howells wrote:
-> Fix the netfs_folio tracepoint to handle folios that have a NULL mapping
-> pointer.  In such a case, just substitute a zero inode number.
+On 30. Sep 2024, at 13:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On 30/09/2024 13:44, Thorsten Blum wrote:
+>> Use kfree_sensitive() to simplify w1_unref_slave() and remove the
+>> following Coccinelle/coccicheck warning reported by
+>> kfree_sensitive.cocci:
+>> 
+>> WARNING opportunity for kfree_sensitive/kvfree_sensitive
 > 
+> So are you fixing coccinelle just to hide the warning or actually fixing
+> issue? Why this structure should be zeroed?
+
+No issue, just a refactoring (+zeroing out) to silence the warning. The
+structure probably doesn't need to be zeroed out, but why is it done
+for DEBUG builds?
+
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
+>> Please note: this change assumes that #ifdef DEBUG is no longer needed
+>> and we should always zero out the memory.
 > 
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: Fix the netfs_folio tracepoint to handle NULL mapping
-      https://git.kernel.org/vfs/vfs/c/f801850bc263
+> But why are you assuming that? Your patch is not equivalent and I do not
+> see any explanation in commit msg why is that.
 
