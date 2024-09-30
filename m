@@ -1,111 +1,116 @@
-Return-Path: <linux-kernel+bounces-343809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75805989FCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:50:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EF4989FCF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3687C284ADF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:50:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200FA1C21990
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355A818DF80;
-	Mon, 30 Sep 2024 10:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE58218C90C;
+	Mon, 30 Sep 2024 10:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qht2KMnW"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZSo/vkJ"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC8F18BB9E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB1518C35C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693421; cv=none; b=ObKhvCkYjEJpi+FzL07++TT8ggbmWMRUzcTSIREJEXAbcu99rvoS1ueYL+bQ7uyamh9cEvzQXLksyGl5eXaYO5N/D1QShTQAPW/7ww9Dx5Vh8Mis/zmbuH4wI9qhdLYW6W9HeizzFVrh8SIwuC3VWWLPGt6Dd2RyH2kIEw3wysQ=
+	t=1727693518; cv=none; b=UbhWt+L93VtEEdomPPWaUrj3J1jZAniEjdNG0tzmzZvpNmdZumlQAOW5DX5f229HCv4V+myzOd+C65PyscuH2N1648mKllT/zB9Eg+rWdnTckVsNEO+4J5vDY4gcFugguaC0XNuHxveSNivcY3kr5DsMBJCO0enSZIjLVzCUYA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693421; c=relaxed/simple;
-	bh=m5uyAE9D0xk5Q0BCfIzcuNhXg1MqO837M6NONfVuyNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=br7vd7Inu9e7ZfBmpDSggIEScrTeIyIge+3f5M1A6R7DI8MqV/69x7W+O2iVQtP91nGEOjeukCUyCCTB0x1fXe1GsEWsVIqe5gcUcfGNw67fkJShROKsTP91VVKgeyivM+2CgC55+DskrQeGn8Dqr2EdMXDEYEKsAs6BdMy4QmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qht2KMnW; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 30 Sep 2024 06:50:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727693416;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o7A8oyOJWOEzOSulD7HoDZhEkn6XV54xNkYVH/7cuxc=;
-	b=qht2KMnWXhObhwGZ+oNeNqrWp6qifXA8fZgVMKtPCgRTVWHfuvMk2EXPZqWS29pufy8rCm
-	AZSFWHHdZZDBUs6zpNcZR7QXZ0/qbHfBg2JOZcBL0Ei7IxTesMXma57STB+um+9NeE1VZ3
-	LKASJIA5ujQ2BHQxgv6cs3zWl+sWkdQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the origin tree
-Message-ID: <i75zg7tnd4jvelfx6qb2pc72h45kki4vfku7qwghauztgcoywe@htrp3xhyz4u2>
-References: <20240930133813.3c8157df@canb.auug.org.au>
- <2064ea03-a396-418c-a6c3-1c0f1b12d2f3@kernel.org>
+	s=arc-20240116; t=1727693518; c=relaxed/simple;
+	bh=qs7ZJEUvQkDuGY/NdNPSo7a5/3b+K7XWq8qcKl9g+0Q=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rOaIzlxIvNHwZIZw7OUkggnNEhT/VIQqAz+PPJOxV58Zo8Odw2DF/mjuDpTHum8ehrvCMU3CZu0NRQUftcruWtzoHyDwGLxSLV9Sq7YbAauyQoeuVQ+487hgBuX/5PTzKrHmW9Br4yAlmLxN+K+pvRI2RuVY7wm2BWfcVTbPj9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZSo/vkJ; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42caeb4d671so5838985e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:51:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727693515; x=1728298315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5NrpcGzq2X7FUeooo3oK/NoZGdoCws8o9zjwmd3SwC4=;
+        b=eZSo/vkJNw2QUhTp47vWhqDHAXDX5Ph+nFm7KsItW3z3SZ0GvjtKtPMFetYX8sUfBT
+         GoBdVqXSuZZjiY0uzgcuHNw/uw+ncDn71HZGcqe5c5P8mpffUckUsMRggzExSHs4MTvI
+         aouGbHhxbkD64ErVgr6rbAqnN5UyElu6oXyFZzll3ty3MmPqPTCcUUWC84iGtVPjpIVJ
+         1xhtnwmN8GttYO2tfUw3RjkDAVS9HitI2V31ACqbP5vblH3YCjqiRtObQyuTbkBlH7vD
+         S7BWNocvGQXDPEmcmPodixFUaN4ZKJ9zSGs1H180n4a1ff+XIyyvQyfvC6xOv4ynaSF/
+         WU2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727693515; x=1728298315;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5NrpcGzq2X7FUeooo3oK/NoZGdoCws8o9zjwmd3SwC4=;
+        b=BEuSjH71HakakcMoyoghZuu6JX85Jbzk7BKOxZX2qu7WPXMreis4ydelu9kNQlJ76S
+         VVih0X2ktaQuM/p1UwXSZqI1kDv1sGuDMA/tfAEI6I87q8JXZAk1krdFiHICGULCJMfC
+         gVC23Nigq+lXvgLBBUb9OTVVDr0Q8pCaMeT/71wJRj38H36MeGwiUvWAEnA+J7mKsixc
+         PwxNhh5tZzzBUHGrYeKaLKflKvK7fqGlbbquNGW51+fnMOaa/bAr0S3cVBZWety5z32P
+         gtqhgGaA6/AiGvcPfYipwtytBcqjXf/QUjH/sTwI9tz08Ui+wyyVMVLtf3Amv35trP5P
+         tUCw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5NOFYDeAYIg07uItK0tpp9msWsVb69+YB56ChAWgrNPnDVgR5WIa47bhZ7ubvQSyFE+lIj8Aw44SpNfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAK7B/YJCJUomxOCl58wxaqlsoI3kxaBGBts9dhid7BJAvf4DN
+	PKLknEdpjRTFF/k/fQNqzgJNPoHKONLwT1dsrLkoQqBbUufmC6SBqRf+SvsPeHg=
+X-Google-Smtp-Source: AGHT+IEOO29rsmHXOq1A8VX2uRLf7D10lSyWawJH83ILxagvL2rZ5u7vPabfYAr/tIknh/8GVqnDTg==
+X-Received: by 2002:a05:600c:4fd2:b0:42c:baba:13cb with SMTP id 5b1f17b1804b1-42f5e37365bmr26702885e9.2.1727693515024;
+        Mon, 30 Sep 2024 03:51:55 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dd3106sm98632815e9.7.2024.09.30.03.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 03:51:54 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, Inbaraj E <inbaraj.e@samsung.com>
+Cc: pankaj.dubey@samsung.com, gost.dev@samsung.com
+In-Reply-To: <20240917094355.37887-1-inbaraj.e@samsung.com>
+References: <CGME20240917094449epcas5p37c2593fe8f181d6b19a9a1b290488186@epcas5p3.samsung.com>
+ <20240917094355.37887-1-inbaraj.e@samsung.com>
+Subject: Re: [PATCH 0/2] clk: samsung: remove number of clocks from
+ bindings
+Message-Id: <172769351330.28623.202959929040095252.b4-ty@linaro.org>
+Date: Mon, 30 Sep 2024 12:51:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2064ea03-a396-418c-a6c3-1c0f1b12d2f3@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Mon, Sep 30, 2024 at 12:28:40PM GMT, Krzysztof Kozlowski wrote:
-> On 30/09/2024 05:38, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the origin tree, today's linux-next build (s390 defconfig)
-> > failed like this:
-> > 
-> > In file included from fs/bcachefs/bset.h:9,
-> >                  from fs/bcachefs/btree_iter.h:5,
-> >                  from fs/bcachefs/str_hash.h:5,
-> >                  from fs/bcachefs/xattr.h:5,
-> >                  from fs/bcachefs/acl.c:6:
-> > fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
-> > fs/bcachefs/bkey.h:557:41: error: 'const struct bkey' has no member named 'bversion'; did you mean 'version'?
-> >   557 |         x(BKEY_FIELD_VERSION_HI,        bversion.hi)                    \
-> >       |                                         ^~~~~~~~
-> 
-> 
-> Also reported earlier here:
-> https://lore.kernel.org/all/202409272048.MZvBm569-lkp@intel.com/
-> https://lore.kernel.org/all/202409271712.EZRpO2Z1-lkp@intel.com/
-> 
-> But the true problem is here:
-> 
-> commit cf49f8a8c277f9f2b78e2a56189a741a508a9820
-> Author:     Kent Overstreet <kent.overstreet@linux.dev>
-> AuthorDate: Thu Sep 26 15:49:17 2024 -0400
->                     ^^^^^^^^^^^
-> Commit:     Kent Overstreet <kent.overstreet@linux.dev>
-> CommitDate: Fri Sep 27 21:46:35 2024 -0400
->                     ^^^^^^^^^^^ one day difference!
-> 
-> Last minute commits usually won't receive wide build coverage, at least
-> not instantaneously.
-> 
-> And if you go through the history, I see around 40 commits with authored
-> date ~20-26 September and committed on Sep 27. Plus another ~40 authored
-> earlier but committed on September 21, which is middle of merge window.
-> 
-> Why such commits for RC1 are sent at the end of merge window or
-> committed during merge window?
 
-the rename was something I did to track down a bug in the disk accounting rewrite:
-https://lore.kernel.org/linux-bcachefs/pvga5sgp4vejnnr5ojgiuwte6qeve4x7ld4dhdmzb625l367fq@q4td2cutlfvu/T/
+On Tue, 17 Sep 2024 15:13:53 +0530, Inbaraj E wrote:
+> This patch series moves number of clock from dt-binding to driver for FSD
+> SoC.
+> 
+> Inbaraj E (2):
+>   clk: samsung: fsd: do not define number of clocks in bindings
+>   dt-bindings: clock: samsung: remove define with number of clocks for
+>     FSD
+> 
+> [...]
 
-I do need to get multi-arch build testing going on my CI, but right now
-I'm busy working on corner cases in the repair code...
+Applied, thanks!
+
+[1/2] clk: samsung: fsd: do not define number of clocks in bindings
+      https://git.kernel.org/krzk/linux/c/a86ffa40a64bd4d119c260a99e28f2a71f86d9f4
+[2/2] dt-bindings: clock: samsung: remove define with number of clocks for FSD
+      https://git.kernel.org/krzk/linux/c/2d3e0135cefccbcd8459112a8afe260e7b51ff6d
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
