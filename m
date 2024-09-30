@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-344563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8270698AB5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:48:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48E798AB62
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F9202811A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1AA1C23363
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82335198A24;
-	Mon, 30 Sep 2024 17:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b="A+GREaYN"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED89198A3F;
+	Mon, 30 Sep 2024 17:51:10 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFB238382
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC6F18C31;
+	Mon, 30 Sep 2024 17:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727718528; cv=none; b=MW2Sckx+PuCZ9ScnFujpqGzBtI0rb76l/sEyfV6okDyQrM09jv12Wpe/+jpqxktWSeEDrdP+Oh9T2iUENyX/wEj2JmBF2b9k+BhKBM5VaVO33uM2YhY/FnnzTPGp3+GZgXM7d0xQU05ggB+RYOtxjvvq1hvxXH1Ic2tlcFL+W9E=
+	t=1727718670; cv=none; b=VPyM5Q/atKRjXyPn0ToCKyyM8QwSWQlRBlzZ1ZAw0tPjaM05GoJ4hK/3E4cp77NysvSOtD4ObwicXLw3GlhDg/kdXqGOnGHGIMsaas24mg3EmRvUez2pJw+lIadzLpjcEGwCSsrFvlaCulep3AYlehZPH8GD/lgRqFozA6BHC78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727718528; c=relaxed/simple;
-	bh=Kki+Yd/NqWJxaGM3HE3XtC0ibY6abA95Uw859+djvv4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UbptwlwtffNGJGWlOP8L1eUroiRRmCi3bxcyB5mWCzQMTxkBzLAIvU796WNnCCfYO1arwVV9lNW83GM8HvCs5g16bjCP5MCWSxyFZ0tKSAtNxdEPRH3ZKgOodezrmb4phinu5E9LCunoNFmk0Q+/bwv9t6K0KVRgeTttv+gKMqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com; spf=pass smtp.mailfrom=adamthiede.com; dkim=pass (2048-bit key) header.d=adamthiede.com header.i=@adamthiede.com header.b=A+GREaYN; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=adamthiede.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adamthiede.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4XHT8864hHz9sRx;
-	Mon, 30 Sep 2024 19:48:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=adamthiede.com;
-	s=MBO0001; t=1727718520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VJqTCbdTizlZhAz4A3yFXSPDCEce+S+AbNdmNPDrioU=;
-	b=A+GREaYNnTthkGK+jJ24T+ohKWBkB/UumNmwDVhZ9fKN5fvKwYLWfNI5P/26K4a6m063qN
-	ZjDOzlsoN0MWomKDnpM5sB4tCMEpp5ofBCx8r23iHXMFDRs8lwcpUovCKFq4iMRLWQi8fZ
-	TnsxWXHiW3EutyyDmVky6QRvRYK7C5rL/nJqChmvH8PZCYP1xSYGoVG4nBNC7arWoqqLO0
-	iKnpvoOgXsMf44rNYLci8vvdX2O/vGt8HeN3IsK5FNbEf9Q7DbQEpES9Uk+j6NoZHLwNEM
-	j9yAIaUpFQgNZ9i4DruYj8MsRq40XAu/jy3r5kY+Urp98lvo4g96B3HKVdJOJw==
-Message-ID: <1a3af354-bd15-4219-960e-089b6a6e673c@adamthiede.com>
-Date: Mon, 30 Sep 2024 12:48:27 -0500
+	s=arc-20240116; t=1727718670; c=relaxed/simple;
+	bh=x0pDw+4SzE1MkSrrBfzhcseWxrldz0hn0pxuu1IaAPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gq120dC7DIduTuIz4ogWfNCPDlG0MR59qv7DTupf5xMyLMfmYt4kHawrYyGKz9DIRbFf9/skmf7n1zMu59PPMMJIEgQwjZxX2K8ISuu4um6wi1YnYp0I186eWMkwONhSUTG+uy5PunFvkbwt8h2l821j9UGICjoeaD+GiaH9qBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ddfdeed0c9so36307877b3.2;
+        Mon, 30 Sep 2024 10:51:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727718667; x=1728323467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ERWUip0Hd+3xSPGc5KF+LIvmSrz8p98q0i+WVSFZa2o=;
+        b=p7Aqwcvtq57p9vfgE4tPN3TuNn2ex3OXgaFUSgkpaDvHWaYBB96GctEZHfK85dNmb9
+         QCRV958TudcF0K+oA1Wfn29hcAB/reO+kqOMacxeWjQ15oXPmgK2PN8rd98gZSdDiLMi
+         eZn5Oo/nB0+e5uwcu3tQeLeq72apFjSDnmHR0Wv4lQg0OXUa4vtivopt5KoxlLB5LCFr
+         wqjkO1m/RjQNNlKY/Orr+Ejb5feTTVyfUltJVY/QxwZ55iofO6cC3PaJo0DnvUkFuEAo
+         KYzYB6vt72svkmHYnFI2DGZVE7kJpb7yyWDeNrbdz549xNR8SA+q2JV8sM8B3FaMdIeP
+         OXcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2xMbojouJPYbmWf/LzHa5gzdgcvXCBm2sBcBAnnlY1vfq8UeIMKuiQK6dV7olxelR9Qd7o7qxgkB4EQ==@vger.kernel.org, AJvYcCUkNc10IU1/cNpJeKvNteYIyDUPV/KrUi/9IqfhvxVtKo6yg4xq2SQHhCt3njRWJ716OcapJ9BiJOU9IA==@vger.kernel.org, AJvYcCVVJTnSqRvM5XHiK1qD4FvOnwCKV7bW3uzNULNCEJ2ay8Q5uUCYfjf/oSMFQIaikHCghgYOCIJsB5ShCG4R@vger.kernel.org, AJvYcCXOUJNeYTxA+Ji4anNBppkRLASiq3iy1TDV7l7qoCQpoWCE7mzncO2vmygw4zTPSvbQH6qauwd5q9w=@vger.kernel.org, AJvYcCXVpV8wVG5sU1GkAPTccXm+8C5akyrh1h59uiSXva/qBbmkgpIRuqWNiP8FzfuqXEeRhT5HBuT1nncZMQ==@vger.kernel.org, AJvYcCXk1WrfU56Vh3LkX/eH3H/XlvAdv0ziPSzzucloflBpFweJ6lUSlPsp3uN46FpqVLt3kpQyxuQzMFHgooCo@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCJKv66ivHGticXtBIr0Zt840NUjVV1TEv1fOswuUdMb/9SMEC
+	B8/+iCAOqHG3c2mY/wr3b2goQTq2oIK1F2MOELUW0ksBXyDlJ4eJwrhQ1cI2
+X-Google-Smtp-Source: AGHT+IGhI3xA3cIv039jfiaPXUaypRnJS+EgpF8JI6aXodMaOUUnC76Ea3hLfuXu5U9hzxiNEsrILg==
+X-Received: by 2002:a05:690c:89:b0:6e2:50a:f436 with SMTP id 00721157ae682-6e2475e2fa0mr89233007b3.36.1727718667090;
+        Mon, 30 Sep 2024 10:51:07 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2452f7c57sm14992637b3.2.2024.09.30.10.51.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 10:51:07 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6d9f65f9e3eso39744247b3.3;
+        Mon, 30 Sep 2024 10:51:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1EEN8COv+QD4dqKTC2Y8oArj9kyuGIGCl3Alvof4LWwbEd5gGSqoVQgs40X7BpjYCYg9UCTS6dUM=@vger.kernel.org, AJvYcCUEf9/HYpJPVH7jSyulvETno10N7/rxbYQbEa7599nsa80qsXK01LG+/aA7xAZigv9V1l4r4QkiwZBvUw6+@vger.kernel.org, AJvYcCVI1pEJEY1WY/uC9xNp4sEc3mJRRpPcnzvOTz6lIQP7peFNKI7uLRPKaLNbdYcH7gySMC3KhdyfXAWH5A==@vger.kernel.org, AJvYcCVKo71wgRZCGcTe/XZKzkO/KyTiCZiBpjsHoOggYN8HbPT0AZMdtbUNcGRAPYP+jkHkPwNAYHwQg1a1v3Gy@vger.kernel.org, AJvYcCWFr/jteD0p8zyR2J2uRavgRt7Mia0BoUg1Rt7nkk+G1zo4Go9fg2gfwl/IKLBTIt+Pslav93DZBQB6rw==@vger.kernel.org, AJvYcCXl/8kHvfw2XbUU7X83Kc/vNghIoZRSygY9CJ6PEYfK9BXwPs3TbewyfGB3LCarnsM3Bl0qQ50cK7Q6tQ==@vger.kernel.org
+X-Received: by 2002:a05:690c:c0f:b0:6d3:d842:5733 with SMTP id
+ 00721157ae682-6e2475e3050mr104508727b3.35.1727718666765; Mon, 30 Sep 2024
+ 10:51:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 13/14] drm/mediatek: Support DRM plane alpha in OVL
-To: shawn.sung@mediatek.com, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- CK Hu <ck.hu@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>,
- Daniel Kurtz <djkurtz@chromium.org>, Mao Huang <littlecvr@chromium.org>,
- "Nancy.Lin" <nancy.lin@mediatek.com>
-Cc: YT Shen <yt.shen@mediatek.com>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com>
- <20240620-igt-v3-13-a9d62d2e2c7e@mediatek.com>
-Content-Language: en-US
-From: Adam Thiede <me@adamthiede.com>
-Autocrypt: addr=me@adamthiede.com; keydata=
- xsBNBF+n+90BCAC2ZRLVcvdXDgfY7EppN05eNor3U7/eeiNCCEIWZkYLhikUEP1ReLGBkXpK
- Pc70hfnKAKkCoth3IwhDty9WXMNU+iLNei4ieb2luW+UqluR6xIUIA+txahMU9YcjVaQTKf/
- yZWO4yl6pfBPCxC2UdPZKBAdGoi5NnE0ABFNbhBETQhhBic533lZn33ByupfI3acECnQdjgQ
- llCUpDbw4I+S/N1iFiEHcbMXH7ZB00e3IYNorZ1E9v7p++5rDY1fQ9gXpieg1vFKwSq1NJWo
- 9xx336YjaTUbX0EwrdKd9l8AktA3yRjckaK5TAcwSQaDtHvhpbl4ebvPhtwHh699MroXABEB
- AAHNH0FkYW0gVGhpZWRlIDxtZUBhZGFtdGhpZWRlLmNvbT7CwI4EEwEIADgCGwMFCwkIBwIG
- FQoJCAsCBBYCAwECHgECF4AWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1HxQAKCRAC7fV9
- o/vRzgyRB/wLqRCvvWhQCMgvzeKvru9wcXquhb77K8H/ByLbfiT8YBuP3lZFVh0IQhgO9Ylk
- fIoOJE4V+jjxyOnO2d9xjGbvAmmR6yT0gfLzSVWqrC4k+V9MWLv43nrNzxt41dvo5j824FAl
- X+zaiRZCdO8Jtxg5Elpiop2SKLi1utX1Z8i6YZh+ccJZlchUBAGUTk+D4UjK7vUcjLWT96ya
- CtdtTfXyw36CvGOPEWfc6++Kkl/5sgej1i7biPYzu/r0vssaQYTXKSrv6Cfa3Maa89ASiTtv
- q4qmhLnJeCrPxWlRAf6LEizeBEkOasYni2u8sp4wBezEq45Ozu45sfPkqLpPolG7zsBNBF+n
- +90BCADBRt+vrToRBEG580n77S99qSEkbKD+oJtCVyovnjMNkg0K9UG68LIeCX/ezngiV1M8
- JISvw5iFOuUFqGX/1hLl9wgt/YpuIrgWOp8XxkotavTCloLDvQmufJPO1L8bnnA+WgP2YgVZ
- 5MJTj/t4DI+yQgysEjsH8aurHO2uuqgJE+xK+2dy6Cl/wskuGxObksSPmmFH5PH0Joziwrtl
- 61ouLE2XwKbkMgIGEKkbFgbfwz3/QuLZGBni+OOtLzXeZ9wNTW/AHUPy6S9U4F+5z6/09fVT
- tTH0cvrgAGjbASlYx2VqGONXAsxCfjulq6ryJBFlPLp949c/JTTgOojukCSbABEBAAHCwHYE
- GAEIACACGwwWIQQtG9pGQ7sz3tf8M/kC7fV9o/vRzgUCZL1H0gAKCRAC7fV9o/vRzlamCACs
- vHw+0heTm+BfC3S8DUST6889gidIIwdqBep1ByzetCph7Bq8Y8BlT5YTX0u/bSKkxCzFgeTm
- vC341Q09ST2XjLAl1ZTdzGhH9gcgYyOw34pr5fPQRJLB392mPzD8YReRzciNbhWzj+DLgeVe
- ouyfGajd6jDjkf4FEq+trQLGZhpfsKn3JnDbzBUs945D50l/vz9q/QN3qZO+H4F6g8ZeMnqo
- FOEFN26xVtdEDr+0DNFsbgKmEzs675kdAY78ZZdbEetX/FSknxJ+FK1ZW3J7Yswwulj34AXP
- LB49Mk8Ot7fo6mdt0DkV11JS9LmKxKvpY+KTlrKG+i7pVCSZvVUx
-In-Reply-To: <20240620-igt-v3-13-a9d62d2e2c7e@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4XHT8864hHz9sRx
+References: <20240930132321.2785718-1-jvetter@kalrayinc.com> <20240930132321.2785718-11-jvetter@kalrayinc.com>
+In-Reply-To: <20240930132321.2785718-11-jvetter@kalrayinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Sep 2024 19:50:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX03ornwefrTfSYfH-XoEE4CHN+u5m7ay5_LrTq8XHOJA@mail.gmail.com>
+Message-ID: <CAMuHMdX03ornwefrTfSYfH-XoEE4CHN+u5m7ay5_LrTq8XHOJA@mail.gmail.com>
+Subject: Re: [PATCH v7 10/10] arm: Align prototype of IO memset
+To: Julian Vetter <jvetter@kalrayinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, 
+	Yann Sionneau <ysionneau@kalrayinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/24 11:38, Hsiao Chien Sung via B4 Relay wrote:
-> From: Hsiao Chien Sung <shawn.sung@mediatek.com>
-> 
-> Set the plane alpha according to DRM plane property.
-> 
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
-> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+On Mon, Sep 30, 2024 at 3:25=E2=80=AFPM Julian Vetter <jvetter@kalrayinc.co=
+m> wrote:
+> Align prototype of the memset_io function with the new one from
+> iomap_copy.c
+>
+> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
 > ---
->   drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> index 943db4f1bd6b..4b370bc0746d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-> @@ -458,8 +458,10 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
->   	}
->   
->   	con = ovl_fmt_convert(ovl, fmt);
-> -	if (state->base.fb && state->base.fb->format->has_alpha)
-> -		con |= OVL_CON_AEN | OVL_CON_ALPHA;
-> +	if (state->base.fb) {
-> +		con |= OVL_CON_AEN;
-> +		con |= state->base.alpha & OVL_CON_ALPHA;
-> +	}
->   
->   	/* CONST_BLD must be enabled for XRGB formats although the alpha channel
->   	 * can be ignored, or OVL will still read the value from memory.
-> 
-Hello, I believe that this commit has caused a problem for my Lenovo 
-C330 Chromebook running postmarketOS.
+> Changes for v7:
+> - New patch
 
-With kernel 6.11 this device didn't show any text on the tty or splash 
-screen during booting, but graphical environments (wayland, xorg) do 
-appear. With a few bisects I found it to be this commit. With it 
-reverted I'm able to get text on the tty again.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The kernel config is here: 
-https://gitlab.com/adamthiede/pmaports/-/tree/mt8173-611/device/community/linux-postmarketos-mediatek-mt8173/
-To be perfectly clear, this device is not running Chrome OS.
+Gr{oetje,eeting}s,
 
-I'm still rather new at this so it's also likely I got something wrong 
-or have a bad configuration option. If there is any more information I 
-can provide please let me know. Thank you.
+                        Geert
 
-- Adam Thiede
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
