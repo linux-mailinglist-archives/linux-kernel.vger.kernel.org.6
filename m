@@ -1,120 +1,205 @@
-Return-Path: <linux-kernel+bounces-343614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2771A989D55
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:55:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF783989D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB49280F54
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:55:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D910B2163A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1942517E918;
-	Mon, 30 Sep 2024 08:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B93A183063;
+	Mon, 30 Sep 2024 08:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZeFsIR+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x2IddKr4"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7682917C9B8;
-	Mon, 30 Sep 2024 08:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AFA17E01C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686504; cv=none; b=MCUtwoIdVGPqfqj1cNPZdrecolnp/iOGlxu3gTNxB74a3HqIX4KCciTKpoOviD7lBUVphalWTKq7EkuM0vU3yDzP3uHY1nVyMBlnDJVPFAWoKBx57tHMEZ2o7AYr1QZuwi9AXIwVF3M5n/Hw78NsWjlSzBdMgjG53HrGkp7QuuQ=
+	t=1727686524; cv=none; b=EAB7/f3G/lsq/SNKoe4XrYXMqVD2cQ2nC/uTdhQIKUHO9zmegjtGapuQN39BKww3fdHb4RSHeNwdXWKV7igO/hY8zsCgTw3Dij4gAGftDqwUwm29h9jTfSNT6x47A9DdH+T1uGr/ASNMeIp+oXSEdjSU6G72PI1MuW0+NShiawY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686504; c=relaxed/simple;
-	bh=27bQt2MBk0WS6W2n5eBGFAv/vCkI1cxlIhRE7Zkjij0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cEXp1Gj0ZptzPQFD69gMS6LKBLbAKHkU7UpMlv85IimQZiOZxVrWUh3Wn7TfrxPo9qVTvaBvUgnGSMdYWo2WSirbr7x3Y3p2J/rDp49BJg2XzKxLSpiNuZqQIG8695wyLy9fh/BxpSl2slVK03nsQmIOnH0Zxn79hVjCWJl4knM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZeFsIR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3215FC4CEC7;
-	Mon, 30 Sep 2024 08:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727686503;
-	bh=27bQt2MBk0WS6W2n5eBGFAv/vCkI1cxlIhRE7Zkjij0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rZeFsIR+Gf2HUQMsmIFXzCOodBfy9ka9swr/fbAo7Oa6xLZzaEj7K6qPD6zUJR6Mv
-	 7iCQJBJjMpfYZ3+DMVG630St9kc3I8UqzrvPyUxED20spsrLOkIH6BU+NWEKzE7vFH
-	 pGnqDOiE7o6ezQuJsFHKqnYW1Dl/ugb1QgMFHtnBFIGfu568s/gbsP0rpvJGgydiln
-	 FF4K17i19Yx2+pTe3GBquTWFACRN8/5iERuSdAwyrGUN+9P7R7cCKO8YeD6GzQnGIl
-	 B6ieA00vzqxtKHFXGFfUHoVLJ47aK5UcuJGSUVJIdnvWmTtXOA5Gn35czsClyV4pEE
-	 C8ZPCRhMRd8Nw==
-Date: Mon, 30 Sep 2024 09:54:56 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] iio: pressure: bmp280: Use char instead of s32
- for data buffer
-Message-ID: <20240930095456.599f2304@jic23-huawei>
-In-Reply-To: <20240929182655.GB213331@vamoiridPC>
-References: <20240929112511.100292-1-vassilisamir@gmail.com>
-	<20240929112511.100292-3-vassilisamir@gmail.com>
-	<20240929181003.26abf543@jic23-huawei>
-	<20240929182655.GB213331@vamoiridPC>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727686524; c=relaxed/simple;
+	bh=Sc0whwRYzUxHFiiKA/Byp9+TYn/ZBK0ajmkeKMsqwEY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l/cJ91YLXP6EvGpMQ2LTlUgcAf7puAAwQwy6gIXm7D01XXMhlrdVrR9NfgBjHPCYwaX+P1lVbBoJ8MhstDqujlyUDg1uBlOYJtiL+tdHiSN4pMwGhG54gph8ftMr+38Ltb4jaIFgGOrd7ffdpLWKtEMzLB7SBClp+aOCtLJ6/NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x2IddKr4; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d43657255so646092166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727686521; x=1728291321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NUlj16IZIlE/BnsrhQgqo6rfm+qX/DDN32OWCmaTHPo=;
+        b=x2IddKr4Z4xcdeO9sQbz3KfXg8PfKyhuN31cByp8W7VfVQsHtpUfqI+C7Zm0hhdLIB
+         1+mpo9gA/ECDxIOM7hiDFWaH6L9PhfP59cWLram9DOW0cjqo1RsLfCwHJCt8c5hDPEA1
+         O8Dr9YErbe3AY/5zXKXm0h0QDKLvinfYgzGlqPKQ9hDSZPBxDwhzymjqAkTodEza0WZp
+         /jICOmpIwUYBwUECMrkkUyhw8cchcLFlKZS5fL35TWc5W74ex+jODbGiU2S4kLkogj+m
+         EAD1Tzi8cB/lwYbqdNA/978O/6s6dFnNn6aUn2s6kDiTrDhLHhkuE9yRzy8vEtWki8Q4
+         K6Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727686521; x=1728291321;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NUlj16IZIlE/BnsrhQgqo6rfm+qX/DDN32OWCmaTHPo=;
+        b=XoYDyspKACSx3GJjQLQD0y4ocqaqiqIhq7Ml2AagpB/+n4gmA+xB82w46S+syJhSJl
+         OR19HpmNYbxpk3vuKiJV7XhTwEGg/qw6Kysn+0WFLBV0IjTOxPcsshPQm9wPJXCRuBxA
+         fTpRn9xsWOyMcjWhz/xDzvPkIDx2rpeBM2pcV+1ZFgdjjVifFCn5X6V9UFTySQTj7SSX
+         KCDWE2msRgNPnwO8iSMrIe10K8JITs9EHd+mXQLxWr9ctr3PXqhZGgB4BYNy4kX2EgbR
+         VZ3LxWuGK4JS77kfDsZM7aSlnjjaWpdmq+4A2qO9M9vKr8KEmsFYzuM7LVSiG3Hbi9Wd
+         VZUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnsub08DRaEQJEU8uT8I5HnwhWaFgnWnOYwL8uTJx3kA4jj57smt2EBE+FYNm6nNuK/h9vnhfeV4KuD20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz83Somk5hZUo87uNOVrkRowpBD/KZJHlKP3VTGrvu2yHRjyhU1
+	1b96Ysw6phMGGuZKM7r4HlNrlcYOuLsqKhwVza9oi1GluZctiCaCMccuKA5UV5g=
+X-Google-Smtp-Source: AGHT+IFgvE/PliHY6TjajbPHmCe35TGmXquD6tqKuayO2zMJA/3GTARoVqGeboOAWokff0EVeBn8bg==
+X-Received: by 2002:a17:907:74b:b0:a86:7e7f:69ab with SMTP id a640c23a62f3a-a93c49087f3mr1182345666b.15.1727686520863;
+        Mon, 30 Sep 2024 01:55:20 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2997f50sm492236566b.198.2024.09.30.01.55.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 01:55:20 -0700 (PDT)
+Message-ID: <c1539cce-92eb-43fc-9267-f6e002611bbb@linaro.org>
+Date: Mon, 30 Sep 2024 09:55:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Depeng Shao
+ <quic_depengs@quicinc.com>, rfoss@kernel.org, todor.too@gmail.com,
+ mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <9ed92660-5f42-4a1a-9261-b8800133972a@linaro.org>
+ <ed012367-1bfd-4eef-931b-37e1ac839176@quicinc.com>
+ <65e5796a-8b8d-44f0-aef4-e420083b9d52@kernel.org>
+ <87419076-c355-4eb9-8bf4-a9f2064e3c0a@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <87419076-c355-4eb9-8bf4-a9f2064e3c0a@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 30/09/2024 09:46, Vladimir Zapolskiy wrote:
+> Hello Krzysztof,
+> 
+> On 9/30/24 10:16, Krzysztof Kozlowski wrote:
+>> On 25/09/2024 17:13, Depeng Shao wrote:
+>>> Hi Vladimir,
+>>>
+>>> On 9/6/2024 11:56 PM, Vladimir Zapolskiy wrote:
+>>>
+>>>>> +            compatible = "qcom,sm8550-camss";
+>>>>> +
+>>>>> +            reg = <0 0x0acb7000 0 0xd00>,
+>>>>> +                  <0 0x0acb9000 0 0xd00>,
+>>>>> +                  <0 0x0acbb000 0 0xd00>,
+>>>>> +                  <0 0x0acca000 0 0xa00>,
+>>>>> +                  <0 0x0acce000 0 0xa00>,
+>>>>> +                  <0 0x0acb6000 0 0x1000>,
+>>>>> +                  <0 0x0ace4000 0 0x2000>,
+>>>>> +                  <0 0x0ace6000 0 0x2000>,
+>>>>> +                  <0 0x0ace8000 0 0x2000>,
+>>>>> +                  <0 0x0acea000 0 0x2000>,
+>>>>> +                  <0 0x0acec000 0 0x2000>,
+>>>>> +                  <0 0x0acee000 0 0x2000>,
+>>>>> +                  <0 0x0acf0000 0 0x2000>,
+>>>>> +                  <0 0x0acf2000 0 0x2000>,
+>>>>> +                  <0 0x0ac62000 0 0xf000>,
+>>>>> +                  <0 0x0ac71000 0 0xf000>,
+>>>>> +                  <0 0x0ac80000 0 0xf000>,
+>>>>> +                  <0 0x0accb000 0 0x2800>,
+>>>>> +                  <0 0x0accf000 0 0x2800>;
+>>>>
+>>>> Please sort the list above in numerical order, this will change 
+>>>> positions
+>>>> of "vfe_lite0", "vfe_lite1" etc.
+>>>>
+>>>> Another note, since it's not possible to map less than a page, so I 
+>>>> believe
+>>>> it might make sense to align all sizes to 0x1000.
+>>>>
+>>>
+>>> Sure, I previously sorted by the alphabetical order of reg_name.
+>>> I will update it based on your suggestion. And will also make sure the
+>>> align all sizes to 0x1000.
+>>
+>> If I understood correctly, you want to change the order from existing
+>> devices, so no. You are supposed to keep the same order, as much as
+>> possible.
+> 
+> Please elaborate, what do you mean here by the "existing evices"?
+> 
+> The list is not sorted by reg values, I ask to sort the list by reg values.
+> 
+> -- 
+> Best wishes,
+> Vladimir
 
-> > > -	s32 sensor_data[6] __aligned(8);
-> > > +	struct {
-> > > +		u8 buf[12];
-> > > +		aligned_s64 ts;  
-> > 
-> > I'd missed that this depends on the number of channels.  It makes no functional
-> > difference because the core code will happily write over the end of buf, but
-> > from a representation point of view this might be
-> > 
-> > 		u8 buf[8];
-> > 		aligned_s64 ts;
-> > or
-> > 		u8 buf[12];
-> > 		aligned_s64 ts;
-> > 
-> > So given we can't actually fix on one or the other normal convention is
-> > to just use something that forces a large enough aligned u8 buffer like
-> > 		u8 buf[ALIGN(sizeof(s32) * BMP280_MAX_CHANNELS, 8) + sizeof(s64)]
-> > 			__aligned(sizeof(s64));
-> > 
-> > Sorry for leading you astray on this!
-> > 
-> > Jonathan
-> > 
-> >   
-> 
-> I see your point. I can fix it in next version!
-> 
-> This is a neat issue here that requires indeed extra attention since
-> this type of buffers is used basically by the majority of the drivers.
-> Some type of runtime check in those registers would have been very
-> very helpful, but I can't see of an easy way of doing it in the core
-> code..
-Adding size description has been on my todo list for a while so as to allow
-the kernel to check the buffer is big enough and get rid of subtle overrun
-bugs due to that oddity of the buffer needing to include the timestamp
-space even though it's not obvious it will be written to.
-That would also allow us to check alignment.  What we can't do is finer
-grained checking of these structures but arguably we don't want to as this
-is an elegance not correctness issue!
+We always sort by address:
 
-> 
-> Thanks for the review :)
-> 
-> Cheers,
-> Vasilis
-> 
-> > > +	} buffer;
-> > >  
-> > >  	/*
-> > >  	 * DMA (thus cache coherency maintenance) may require the  
-> >   
+                 camss: camss@ac5a000 {
+                         compatible = "qcom,sc8280xp-camss";
 
+                         reg = <0 0x0ac5a000 0 0x2000>,
+                               <0 0x0ac5c000 0 0x2000>,
+                               <0 0x0ac65000 0 0x2000>,
+                               <0 0x0ac67000 0 0x2000>,
+                               <0 0x0acaf000 0 0x4000>,
+                               <0 0x0acb3000 0 0x1000>,
+                               <0 0x0acb6000 0 0x4000>,
+                               <0 0x0acba000 0 0x1000>,
+                               <0 0x0acbd000 0 0x4000>,
+                               <0 0x0acc1000 0 0x1000>,
+                               <0 0x0acc4000 0 0x4000>,
+                               <0 0x0acc8000 0 0x1000>,
+                               <0 0x0accb000 0 0x4000>,
+                               <0 0x0accf000 0 0x1000>,
+                               <0 0x0acd2000 0 0x4000>,
+                               <0 0x0acd6000 0 0x1000>,
+                               <0 0x0acd9000 0 0x4000>,
+                               <0 0x0acdd000 0 0x1000>,
+                               <0 0x0ace0000 0 0x4000>,
+                               <0 0x0ace4000 0 0x1000>;
+                         reg-names = "csiphy2",
+                                     "csiphy3",
+                                     "csiphy0",
+                                     "csiphy1",
+                                     "vfe0",
+                                     "csid0",
+                                     "vfe1",
+                                     "csid1",
+                                     "vfe2",
+                                     "csid2",
+                                     "vfe_lite0",
+                                     "csid0_lite",
+                                     "vfe_lite1",
+                                     "csid1_lite",
+                                     "vfe_lite2",
+                                     "csid2_lite",
+                                     "vfe_lite3",
+                                     "csid3_lite",
+                                     "vfe3",
+                                     "csid3";
+
+This is the way.
+
+---
+bod
 
