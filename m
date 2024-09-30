@@ -1,293 +1,108 @@
-Return-Path: <linux-kernel+bounces-343291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717E8989939
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB03E989922
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF191F21AB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:26:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC3C1C21381
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22ED61CABA;
-	Mon, 30 Sep 2024 02:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351D3D530;
+	Mon, 30 Sep 2024 02:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fn4WWsWb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ng3i+Pbp"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB07A3C39;
-	Mon, 30 Sep 2024 02:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DC711CA9;
+	Mon, 30 Sep 2024 02:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727663204; cv=none; b=RV2QxMDKK9LHFjXs6VyRk+OXXu/Q4hqBrb+elWRjUgXw2w5BOL3Ns+e7pKMbxqseVXUn1db7t+PtbeqY+iJQKTilbMFydZ5kuCqhyaDmrPa2kU6qslJ7pV6NjlqrdvztDvCwhzg8AsiwGCoLk28jbZ3zg7zYaL2CzPeCUYQS5Fc=
+	t=1727662481; cv=none; b=m15z9nudLwdTIjUYrlAohLmQ3Frl0Kl9EfJmDgBw4IYPQ0Ey04OBy21hXqUxCLSc0BR0Ewi5Y7m4vtff5Y8PC0a2wcILBgbwKEjG0sEhzZzzr04zWsZ+hWf5Z3nH9yvsQFxMOheJeQbByVr0dqabJRF3gnKP1Lu6hCTDn1Cui60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727663204; c=relaxed/simple;
-	bh=hmNJH608TMoKPUAnPh5uHKWvVcuJ3QWR7sKD5rQ5lUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KZ2a73ZU/8au2jv/+/e5b7b000MBi3NfP/Se+/fZmKESn5mK9dSWWGejXPjrQupQYyJc7o3PMLzy+F7iEBDaLao9LjBvfKcsuPjJLymqhfyVI6Es1QG/FAE/owwGGOvh4p7VB4jcUQtMU6wHTq5KNG2ScKLuBcfpMXfg08Qt78U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fn4WWsWb; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727663202; x=1759199202;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hmNJH608TMoKPUAnPh5uHKWvVcuJ3QWR7sKD5rQ5lUg=;
-  b=fn4WWsWbbIUW/P7gawTMDUCt8jkAVzPWk7CmptNMu3WcyUAumqorZbAp
-   AAmq0T9DCTVuv31Z8MFgicrm0MgM4HvexrmlHIlcRQOuh2MNCus+70Ccb
-   TtD6IHPAL7ZaPGBXHLwDM6LZTk7IHaR0LWs7Zo08Zo/3Pt1SK0AWmHSAI
-   g8Kcp6UjEXpofGFN/Bib8Z2kgKtCwiCxO19GD0sbVdDuD0D/N3orBYuOt
-   3kvcTYQdmTOqA541U9pdL340+v/tNZKFz2jK+SqGB+nDGNgum0ChL4cTt
-   SYjrfBz0gNgelkCwEHYPveOvx8codX2weA64OlCURGA+oXhvMUb8Fhnsy
-   w==;
-X-CSE-ConnectionGUID: Zc2j4Kv5Suebr4QafrdDtw==
-X-CSE-MsgGUID: zyYeGEDOR4SbXe4nDQTsgg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="30616147"
-X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="30616147"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 19:26:42 -0700
-X-CSE-ConnectionGUID: sY2Ruv0vQBegf2ztW3zUQA==
-X-CSE-MsgGUID: uIzMYVhzSUCnXb63L40rUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="72814145"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.247.52]) ([10.125.247.52])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 19:14:04 -0700
-Message-ID: <963c40a1-5ad9-4e25-b719-9cb1d98f5122@intel.com>
-Date: Mon, 30 Sep 2024 10:14:01 +0800
+	s=arc-20240116; t=1727662481; c=relaxed/simple;
+	bh=gK1BBoZgChkfSZ7WANKhWWuEckpRI8D41X1S01uHoJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNQaeJiqguHRo2Mul18wN67jseXpTUyJLJM/ZKGGfI91zNFxIXrpnVR10uPBt+dMAab78ehpeaMaCuAMeM7BDT4XMHNfeDLlH5s+uT4s1a/x6GicskxiGvhD98uUnPBv7lYUwEl5ZWNV4YVULE8F+Diwf4Il9klmD42advI4cKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ng3i+Pbp; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71afb729f24so2906304b3a.0;
+        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727662479; x=1728267279; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ChLyKdnx+gSb/hCqQlfdYD8OWuUHcIg2ZmiHod0R/4w=;
+        b=ng3i+PbpemAJUj8egxoFY+amotFEHpDw+L/C21CCEBuu6rRZvjsdhXJ2A+brdRIBsi
+         gdvCzm8wz32xzK7RfD+o0yU6w5CJ11u00XKUH5ApBJeABSoxvj+PhbqS8VP6kNrAcTk9
+         fhzjrLIPYw6LkvmWJMH1XqqetNEEJ2/OxZ2n9gNAI6kKIBIeSCU1j0ZFEmBE/TBqEPcW
+         wD0gkPvj1kQHDT2kaKKAmQrK+jG/3myKiKWiqSmP1yGlcjKTG2HXIRQOxFeujqrscVs6
+         Dyv8w3a73gZ7jVNy6uS5pP2sNHSKtWrYwvOl12y+h/7hQeauxMM/rYO3Hew7TJVIWc3M
+         lHbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727662479; x=1728267279;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ChLyKdnx+gSb/hCqQlfdYD8OWuUHcIg2ZmiHod0R/4w=;
+        b=ImbrmZPng4o+2fNWnYZbaQY2Z5PpMe5BjxIG43gWmR10jNxcnvp/V9bb8qM8ekTk1X
+         FWu2NiQEOsaOx5eRLXXIer6OIetmU8PnORf+EIylTrM4eGZVf8Lmu9DQy3p4HL0O2Ksa
+         T2DCIpSeWosfGDM1P/jWxPFB4XiW0ZKwgs9ebzCnrACHgHEvIj5pVoa6czbdOM07W40q
+         SgyZjXxzpAl1DRLwGssE1cQ0hUhIb4PUHl74jyoOzlkLNWoB3Py1vce85CFQv0FrS5HK
+         wZ5WGsX0JeeN5utzKvqiLae+mS6kAW1BrpXvsLJYY0s/VINBCAur3KbTnFQZRrBnwKXA
+         4mwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxlqXelPLk8XxgUPN6GwoRb4VWLtF1M9RoP9PMRSjTFBbd8J+L4t+0BA9q8FiWV9vO6nMLsdAWJdzHrVM=@vger.kernel.org, AJvYcCVb/cw3INCxFDbc0EAe/HlvmuMZmtnYtXZcqfzjFkEH05RJ79ptZac4vLszw0p7NptItzN9mVqTAHXI@vger.kernel.org, AJvYcCXCh2uPGaz4X/H55Oaz3KuLV8Llf00kiMmA/sLqzZbnZUFWsQBLm8s1+1o2mqb54TMOSnFOLDMJfXZY0+1a@vger.kernel.org, AJvYcCXdGkRy0XWqzXQFhA3Fc2T1WESdraWEIf3VhzxPBq2Gigrfv2XZNv/mLpd+GTWL2EzKIjiYmxdQt5H427zRM/Guh1mU7A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoN3hWA2IELrPp8Joedj42EaMi8sYd0wCO7ufRNMpXfvl25Xbv
+	J2oPkl6yyrliEtbOAnGyG+4rN9JCF0q5SIz4WxoCnF86tBkS7/qGUWgEZQ==
+X-Google-Smtp-Source: AGHT+IGY+kaxk2R1ggPIcsAArEa6JtfWGotzUKErAP7X1L04ZVOHFs2rgvWf5e5YFRsSaQbdPc3ctA==
+X-Received: by 2002:a05:6a00:99e:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-71b260815d9mr15698970b3a.23.1727662479327;
+        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:671d:78af:f80f:975b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b263553c2sm5179734b3a.0.2024.09.29.19.14.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
+Date: Sun, 29 Sep 2024 19:14:36 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: joelselvaraj.oss@gmail.com
+Cc: Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v5 0/3] novatek-nvt-ts: add support for NT36672A
+ touchscreen
+Message-ID: <ZvoJjCY5kXfenXgE@google.com>
+References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/25] KVM: TDX: Allow userspace to configure maximum
- vCPUs for TDX guests
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org
-Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org,
- Isaku Yamahata <isaku.yamahata@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-13-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240812224820.34826-13-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
 
-On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
+On Sat, Jun 01, 2024 at 03:44:42PM -0500, Joel Selvaraj via B4 Relay wrote:
+> Extend the novatek touchscreen driver to support NT36672A chip which
+> is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
+> Added devicetree support for the driver and used i2c chip data to handle
+> the variation in chip id and wake type. Also added vcc and iovcc
+> regulators which are used to power the touchscreen hardware.
 > 
-> TDX has its own mechanism to control the maximum number of vCPUs that
-> the TDX guest can use.  When creating a TDX guest, the maximum number of
-> vCPUs of the guest needs to be passed to the TDX module as part of the
-> measurement of the guest.  Depending on TDX module's version, it may
-> also report the maximum vCPUs it can support for all TDX guests.
-> 
-> Because the maximum number of vCPUs is part of the measurement, thus
-> part of attestation, it's better to allow the userspace to be able to
-> configure it.  E.g. the users may want to precisely control the maximum
-> number of vCPUs their precious VMs can use.
-> 
-> The actual control itself must be done via the TDH.MNG.INIT SEAMCALL,
-> where the number of maximum cpus is part of the input to the TDX module,
-> but KVM needs to support the "per-VM maximum number of vCPUs" and
-> reflect that in the KVM_CAP_MAX_VCPUS.
-> 
-> Currently, the KVM x86 always reports KVM_MAX_VCPUS for all VMs but
-> doesn't allow to enable KVM_CAP_MAX_VCPUS to configure the number of
-> maximum vCPUs on VM-basis.
-> 
-> Add "per-VM maximum number of vCPUs" to KVM x86/TDX to accommodate TDX's
-> needs.
-> 
-> Specifically, use KVM's existing KVM_ENABLE_CAP IOCTL() to allow the
-> userspace to configure the maximum vCPUs by making KVM x86 support
-> enabling the KVM_CAP_MAX_VCPUS cap on VM-basis.
-> 
-> For that, add a new 'kvm_x86_ops::vm_enable_cap()' callback and call
-> it from kvm_vm_ioctl_enable_cap() as a placeholder to handle the
-> KVM_CAP_MAX_VCPUS for TDX guests (and other KVM_CAP_xx for TDX and/or
-> other VMs if needed in the future).
-> 
-> Implement the callback for TDX guest to check whether the maximum vCPUs
-> passed from usrspace can be supported by TDX, and if it can, override
-> the 'struct kvm::max_vcpus'.  Leave VMX guests and all AMD guests
-> unsupported to avoid any side-effect for those VMs.
-> 
-> Accordingly, in the KVM_CHECK_EXTENSION IOCTL(), change to return the
-> 'struct kvm::max_vcpus' for a given VM for the KVM_CAP_MAX_VCPUS.
+> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
 
-The implementation of this patch should be dropped in next version and 
-be replaced with something suggested in
-https://lore.kernel.org/kvm/ZmzaqRy2zjvlsDfL@google.com/
+Applied the series, it will go in the next merge window. Sorry for the
+delay.
 
-> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
-> uAPI breakout v1:
->   - Change to use exported 'struct tdx_sysinfo' pointer.
->   - Remove the code to read 'max_vcpus_per_td' since it is now done in
->     TDX host code.
->   - Drop max_vcpu ops to use kvm.max_vcpus
->   - Remove TDX_MAX_VCPUS (Kai)
->   - Use type cast (u16) instead of calling memcpy() when reading the
->     'max_vcpus_per_td' (Kai)
->   - Improve change log and change patch title from "KVM: TDX: Make
->     KVM_CAP_MAX_VCPUS backend specific" (Kai)
-> ---
->   arch/x86/include/asm/kvm-x86-ops.h |  1 +
->   arch/x86/include/asm/kvm_host.h    |  1 +
->   arch/x86/kvm/vmx/main.c            | 10 ++++++++++
->   arch/x86/kvm/vmx/tdx.c             | 29 +++++++++++++++++++++++++++++
->   arch/x86/kvm/vmx/x86_ops.h         |  5 +++++
->   arch/x86/kvm/x86.c                 |  4 ++++
->   6 files changed, 50 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> index 538f50eee86d..bd7434fe5d37 100644
-> --- a/arch/x86/include/asm/kvm-x86-ops.h
-> +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> @@ -19,6 +19,7 @@ KVM_X86_OP(hardware_disable)
->   KVM_X86_OP(hardware_unsetup)
->   KVM_X86_OP(has_emulated_msr)
->   KVM_X86_OP(vcpu_after_set_cpuid)
-> +KVM_X86_OP_OPTIONAL(vm_enable_cap)
->   KVM_X86_OP(vm_init)
->   KVM_X86_OP_OPTIONAL(vm_destroy)
->   KVM_X86_OP_OPTIONAL_RET0(vcpu_precreate)
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index c754183e0932..9d15f810f046 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1648,6 +1648,7 @@ struct kvm_x86_ops {
->   	void (*vcpu_after_set_cpuid)(struct kvm_vcpu *vcpu);
->   
->   	unsigned int vm_size;
-> +	int (*vm_enable_cap)(struct kvm *kvm, struct kvm_enable_cap *cap);
->   	int (*vm_init)(struct kvm *kvm);
->   	void (*vm_destroy)(struct kvm *kvm);
->   
-> diff --git a/arch/x86/kvm/vmx/main.c b/arch/x86/kvm/vmx/main.c
-> index 59f4d2d42620..cd53091ddaab 100644
-> --- a/arch/x86/kvm/vmx/main.c
-> +++ b/arch/x86/kvm/vmx/main.c
-> @@ -7,6 +7,7 @@
->   #include "pmu.h"
->   #include "posted_intr.h"
->   #include "tdx.h"
-> +#include "tdx_arch.h"
->   
->   static __init int vt_hardware_setup(void)
->   {
-> @@ -41,6 +42,14 @@ static __init int vt_hardware_setup(void)
->   	return 0;
->   }
->   
-> +static int vt_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
-> +{
-> +	if (is_td(kvm))
-> +		return tdx_vm_enable_cap(kvm, cap);
-> +
-> +	return -EINVAL;
-> +}
-> +
->   static int vt_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
->   {
->   	if (!is_td(kvm))
-> @@ -72,6 +81,7 @@ struct kvm_x86_ops vt_x86_ops __initdata = {
->   	.has_emulated_msr = vmx_has_emulated_msr,
->   
->   	.vm_size = sizeof(struct kvm_vmx),
-> +	.vm_enable_cap = vt_vm_enable_cap,
->   	.vm_init = vmx_vm_init,
->   	.vm_destroy = vmx_vm_destroy,
->   
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index f9faec217ea9..84cd9b4f90b5 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -44,6 +44,35 @@ struct kvm_tdx_caps {
->   
->   static struct kvm_tdx_caps *kvm_tdx_caps;
->   
-> +int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
-> +{
-> +	int r;
-> +
-> +	switch (cap->cap) {
-> +	case KVM_CAP_MAX_VCPUS: {
-> +		if (cap->flags || cap->args[0] == 0)
-> +			return -EINVAL;
-> +		if (cap->args[0] > KVM_MAX_VCPUS ||
-> +		    cap->args[0] > tdx_sysinfo->td_conf.max_vcpus_per_td)
-> +			return -E2BIG;
-> +
-> +		mutex_lock(&kvm->lock);
-> +		if (kvm->created_vcpus)
-> +			r = -EBUSY;
-> +		else {
-> +			kvm->max_vcpus = cap->args[0];
-> +			r = 0;
-> +		}
-> +		mutex_unlock(&kvm->lock);
-> +		break;
-> +	}
-> +	default:
-> +		r = -EINVAL;
-> +		break;
-> +	}
-> +	return r;
-> +}
-> +
->   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
->   {
->   	const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
-> diff --git a/arch/x86/kvm/vmx/x86_ops.h b/arch/x86/kvm/vmx/x86_ops.h
-> index c69ca640abe6..c1bdf7d8fee3 100644
-> --- a/arch/x86/kvm/vmx/x86_ops.h
-> +++ b/arch/x86/kvm/vmx/x86_ops.h
-> @@ -119,8 +119,13 @@ void vmx_cancel_hv_timer(struct kvm_vcpu *vcpu);
->   void vmx_setup_mce(struct kvm_vcpu *vcpu);
->   
->   #ifdef CONFIG_INTEL_TDX_HOST
-> +int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap);
->   int tdx_vm_ioctl(struct kvm *kvm, void __user *argp);
->   #else
-> +static inline int tdx_vm_enable_cap(struct kvm *kvm, struct kvm_enable_cap *cap)
-> +{
-> +	return -EINVAL;
-> +};
->   static inline int tdx_vm_ioctl(struct kvm *kvm, void __user *argp) { return -EOPNOTSUPP; }
->   #endif
->   
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 7914ea50fd04..751b3841c48f 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -4754,6 +4754,8 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->   		break;
->   	case KVM_CAP_MAX_VCPUS:
->   		r = KVM_MAX_VCPUS;
-> +		if (kvm)
-> +			r = kvm->max_vcpus;
->   		break;
->   	case KVM_CAP_MAX_VCPU_ID:
->   		r = KVM_MAX_VCPU_IDS;
-> @@ -6772,6 +6774,8 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
->   	}
->   	default:
->   		r = -EINVAL;
-> +		if (kvm_x86_ops.vm_enable_cap)
-> +			r = static_call(kvm_x86_vm_enable_cap)(kvm, cap);
->   		break;
->   	}
->   	return r;
+Thanks.
 
+-- 
+Dmitry
 
