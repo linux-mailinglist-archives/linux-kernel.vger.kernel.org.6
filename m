@@ -1,80 +1,75 @@
-Return-Path: <linux-kernel+bounces-343257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB349898A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:39:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDDD9898A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662581F2206E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:39:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D40EB2167B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BCB2F46;
-	Mon, 30 Sep 2024 00:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DD13C38;
+	Mon, 30 Sep 2024 00:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHNnMiPJ"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U40dk/Gw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87ED4A03;
-	Mon, 30 Sep 2024 00:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8454195
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727656746; cv=none; b=Cm1eFzyekXxubk4vPsOGMR+DziaN8hyr/n2BA7rJFc9/GLH5+oel7rjGa7seaBtjxs31day2xCpkQa94NSrpVwhZz47FyiH0cX9iSku5QoSoYmBJYtL0AULCU3+o2sI0RN5cWr+QdRMzBiEOIV5d37p+fH1roM2YieTq7vdqJPQ=
+	t=1727657227; cv=none; b=jgB1JsfvLJFg1CxgAlWHIoFiXTMgIUMYFsPvwXGFbnd+ea4y8QUxWv/0AgSpaLdYNlBznQQNrPJDEqlyeNt1y1V2+8RCtLWIbuMYJ8Q4M8F6/lgGuYmACn3Rz9bhScUFjf6jlXSx9RGKAbYPc52Xowt9nSBtmsrdLmwwyf0YfOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727656746; c=relaxed/simple;
-	bh=HCtkeCyZu35xdj0Vp2vqTQ3vFnF/BRpdgDnwcEOfwM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rgCvHCzJ6r9KV+q1iegc7aas+iKFjtVHb+VUrPiPF6CwicLSzLnmtKeEZmCn9kOzS8lGa7myATHaYR6s6wGWjsnfF2K/c9QWLI2neoHf/ETP4KmleVvMg2iZ+9t+A64BVElMxccKYtPWFwSWy778MHheWYoOFulJuZI95mYIOl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GHNnMiPJ; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b6458ee37so12381925ad.1;
-        Sun, 29 Sep 2024 17:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727656744; x=1728261544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=AC6q3cn/ZfdsrxB8Q4a4Ps0lEMfVIUKSK6OJM8TJvSE=;
-        b=GHNnMiPJ/j56CdPcpI5mFYFgp1Ep538USbPFydSKxDH2sBfGbvMEl2iaUQr9RkguPH
-         f3aRlycqZaFzSynOTtlDrresFYBnUo3gQsQNaGDxnjqGT9gj5O4CKIa3N/GADEUTP1Rq
-         6GMLr3URqnYr0+sv5ONbTO2bYsU75m7KSgQ80Bp9y32Q/Eicv/lMn2a5MxuJ9RNDWbtl
-         E2Ss5oy7nYb9+6hLP3LlcqKFVI/PWHKGp75GbEFQISMRxW+i0g5owNKH3v2BV+/o/V6J
-         H4457wBXWCPBvs8ZTRb5giEIrQV7/UYaUgt3eVKTZMwXRgh++9Po6AzYOz6bcWmMS8iS
-         DVyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727656744; x=1728261544;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AC6q3cn/ZfdsrxB8Q4a4Ps0lEMfVIUKSK6OJM8TJvSE=;
-        b=BuoH5r87wYTkJNcAdLQM3H8v+FyGsrQXPfJZvik1coN8sIfIVKZ1D4UuVgSUkaNPiM
-         HH1aZcTCiUvxEKp5GkJabRC/biBh03fSZ981ZyTmlha+GY8nySfpRXzNwsiTDt7mOb1d
-         4WJ3nq7Ip3NP0N98SW3TRyK2H8DzcE+4aJ3zAwVisn7BStJxlzBwD3AmH5ynTb7zCNqZ
-         mOAqS4uDOkCZ/RCq6PDgUaLURYHyCfUHnxsSvoGgB3V7e0+qjCf0IP/xTa1gUGalPwAq
-         oePIOuokD+nrZwKgZmot0DnaTfXNJIYSgke+lxCLFh0va0IPCacq74iOAcOpRIUyebsD
-         fR2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWnOqDqicUZUne5i6Md+GQ9d0ek3r664RtJjjm53H+EFh0YwJywNBOcIl+NV5gRQr9uaqEpBzzyftKAw5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzT3R9mje9GHW838kSoZf5Oa8cT6Lg4WJszLpfyWT8Qbrfybqf
-	+4lRxDZ9WeRX+YMBhdiTidEbGagE5gSpdch5yS+O98O35//hw3mqK393Xg==
-X-Google-Smtp-Source: AGHT+IF0uTDFwNsitqmA7OTJe0SwlHDLkv2Dw+SdEfHjUa/jVlhqE3Cm0lqyjhKyd+Ylenqo644OGA==
-X-Received: by 2002:a17:903:1ca:b0:20b:4d9b:e4fe with SMTP id d9443c01a7336-20b4d9beaa6mr129532975ad.45.1727656744136;
-        Sun, 29 Sep 2024 17:39:04 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e51dfesm44639395ad.260.2024.09.29.17.39.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 17:39:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1727657227; c=relaxed/simple;
+	bh=tkLECTB+l1Q6yRxTTrW2xT7OlIctPpTL1rDsIqZoMXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+F26tvguNC+D5PS21y5pcQRDJLCDt6SXnjLzrSeO0SiTapq+csQIgMVjt5on76iJf4Vx+WlJQKGizHGzNM+09WC9mEx6lmr6YsaxIItYpiF/c+JZnS1Ll/1iov901YRkmHidl2Caq9cNeJPzSPtUNX2jz/gz8TiDdMu/aGUXqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U40dk/Gw; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727657226; x=1759193226;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tkLECTB+l1Q6yRxTTrW2xT7OlIctPpTL1rDsIqZoMXM=;
+  b=U40dk/GwXkjyLSlFEXGdDM5ZtiFBT+OLCmHR44b+9yxm+O4RthHaZZf3
+   Dr85AW2S3UNQsREvrke45OQk8AoxIyB4BbBawo6STKUebQHlF8AI+rGQV
+   oryQsr8+/Vus52IPvkfn3vr59xUo2Co5SBGz6GzKaX/argYyi1ZYeHaaW
+   8tqN3Tg9kF9Qr0M3Z0p21Sa4tl67ZdAhJegvI02w/nzL7QaF4suS+n379
+   VF4jbn16dhBsdYs7bkb3TXdyyW2ChUJevijgCoSRIkoI8jWIfSoceYslv
+   9JcoYcYtcD/eV1IGCuzQgRk8QOsMWBj4QDh3nzorQWPaRiR6/LxbqCj1q
+   g==;
+X-CSE-ConnectionGUID: p4/W6899TWGHfIJ9GglehA==
+X-CSE-MsgGUID: qjX2OhCXQc6MAJQAsfnIgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26237288"
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="26237288"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 17:47:05 -0700
+X-CSE-ConnectionGUID: gck1bmcAQiiXN2htoZ+DIw==
+X-CSE-MsgGUID: Bo96lJY5TSKfH9n6pHI06w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="110610850"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by orviesa001.jf.intel.com with ESMTP; 29 Sep 2024 17:47:03 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] bcachefs: rename version -> bversion for big endian builds
-Date: Sun, 29 Sep 2024 17:39:02 -0700
-Message-ID: <20240930003902.4127294-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.45.2
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	Jason Gunthorpe <jgg@nvidia.com>
+Subject: [PATCH 1/1] iommu: Remove iommu_present()
+Date: Mon, 30 Sep 2024 08:42:35 +0800
+Message-ID: <20240930004235.69368-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,36 +78,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Builds on big endian systems fail as follows.
+The last callsite of iommu_present() is removed by commit <45c690aea8ee>
+("drm/tegra: Use iommu_paging_domain_alloc()"). Remove it to avoid dead
+code.
 
-fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
-fs/bcachefs/bkey.h:557:41: error:
-	'const struct bkey' has no member named 'bversion'
-
-The original commit only renamed the variable for little endian builds.
-Rename it for big endian builds as well to fix the problem.
-
-Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 ---
- fs/bcachefs/bcachefs_format.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/iommu.h |  6 ------
+ drivers/iommu/iommu.c | 25 -------------------------
+ 2 files changed, 31 deletions(-)
 
-diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
-index 203ee627cab5..84832c2d4df9 100644
---- a/fs/bcachefs/bcachefs_format.h
-+++ b/fs/bcachefs/bcachefs_format.h
-@@ -223,7 +223,7 @@ struct bkey {
- #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
- 	struct bpos	p;
- 	__u32		size;		/* extent size, in sectors */
--	struct bversion	version;
-+	struct bversion	bversion;
+Change log:
+- Originally posted here
+  https://lore.kernel.org/r/20240610085555.88197-21-baolu.lu@linux.intel.com
+  After several patches in that series were merged, this patch is
+  targeted for 6.12-rc.
+
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index bd722f473635..62d1b85c80d3 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -785,7 +785,6 @@ static inline void iommu_iotlb_gather_init(struct iommu_iotlb_gather *gather)
+ }
  
- 	__u8		pad[1];
- #endif
+ extern int bus_iommu_probe(const struct bus_type *bus);
+-extern bool iommu_present(const struct bus_type *bus);
+ extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
+ extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+ extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
+@@ -1081,11 +1080,6 @@ struct iommu_iotlb_gather {};
+ struct iommu_dirty_bitmap {};
+ struct iommu_dirty_ops {};
+ 
+-static inline bool iommu_present(const struct bus_type *bus)
+-{
+-	return false;
+-}
+-
+ static inline bool device_iommu_capable(struct device *dev, enum iommu_cap cap)
+ {
+ 	return false;
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 83c8e617a2c5..7bfd2caaf33b 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1840,31 +1840,6 @@ int bus_iommu_probe(const struct bus_type *bus)
+ 	return 0;
+ }
+ 
+-/**
+- * iommu_present() - make platform-specific assumptions about an IOMMU
+- * @bus: bus to check
+- *
+- * Do not use this function. You want device_iommu_mapped() instead.
+- *
+- * Return: true if some IOMMU is present and aware of devices on the given bus;
+- * in general it may not be the only IOMMU, and it may not have anything to do
+- * with whatever device you are ultimately interested in.
+- */
+-bool iommu_present(const struct bus_type *bus)
+-{
+-	bool ret = false;
+-
+-	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
+-		if (iommu_buses[i] == bus) {
+-			spin_lock(&iommu_device_lock);
+-			ret = !list_empty(&iommu_device_list);
+-			spin_unlock(&iommu_device_lock);
+-		}
+-	}
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(iommu_present);
+-
+ /**
+  * device_iommu_capable() - check for a general IOMMU capability
+  * @dev: device to which the capability would be relevant, if available
 -- 
-2.45.2
+2.43.0
 
 
