@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-344486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C2C98AA51
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A6C98AA46
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5C81F20EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D443A1C21E23
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F67194C79;
-	Mon, 30 Sep 2024 16:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF590197A7A;
+	Mon, 30 Sep 2024 16:48:12 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763D47DA79
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9C718EB0
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715141; cv=none; b=pQNaTpxwL4yEH7yMdAZy34ovGii9I6CH2JCEwy05KBkFyMfmcrpIx3iwlEawLcmWoiifkm5Go90Dp2lD0075oig4CmS3+xHEJixaA+Hl0urzl1HWaRlsjs50W4Jnke56AqcqJonhJNX9FE1fJbsK4gJBWYNHKlYWw5Ur5g2U4Us=
+	t=1727714892; cv=none; b=VwW23mcCGCvR0PrNDnkkYk6BBaj0b2eV/5TuNcF6paE8lDUwnP9tL6UNmcQ4yDAGmwCRtRlUfg9pwGk4qcjD4GBrJ3eAot/SEwbNdnMZuiiNVFhk9fDa4ix9588wht4GNrQnlIBdRHW+PuLcO/Ajeoh+KBJS24BdS5DtHLjcu80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715141; c=relaxed/simple;
-	bh=nM/DP38Al/jyTpmzMXYEJKmf9YddH2hcNxQHKVikd8s=;
+	s=arc-20240116; t=1727714892; c=relaxed/simple;
+	bh=FuvpofTPgLqgDSGrDmhE8g9UjdAkfVeTxuyGK1N7evQ=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BG5ObXL964jpDnPX/vV8u2fXuk9I1+l7Wtgo+0XH/bwPMiMe4LW2C53waAukNSvZ3BoaEn0e9+02gCn2r+vzaYMOCULwxk9ecqBPWIW4sH+EWjTuCopxOq4yYDFi6cVzIqVGJTtVz4clfgvqrf6GFgw3umiYE/7V3mqKSO7F5Mo=
+	 Content-Type:MIME-Version; b=XdbPo67CWBKEFXJlX8LTgV642BiPLFlBjyEkFBXf502TQ4OxjiXsz4I9y8hw47cIKdsv7AtNSLthJZEvG43Uf+hFqX1gvXlmnv2BwGG6LINNkT1RFX0Z/XVcTErN/djn5spdb6b6/LobzGISSJLhE3cD6oytEu4f9zz6Kp7HZR4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,27 +32,27 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJYC-0005vH-RS; Mon, 30 Sep 2024 18:47:08 +0200
+	id 1svJZ1-0006Ut-93; Mon, 30 Sep 2024 18:47:59 +0200
 Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJY9-002fu2-HV; Mon, 30 Sep 2024 18:47:05 +0200
+	id 1svJYx-002fu7-CL; Mon, 30 Sep 2024 18:47:55 +0200
 Received: from pza by lupine with local (Exim 4.96)
 	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJY9-000FA1-1X;
-	Mon, 30 Sep 2024 18:47:05 +0200
-Message-ID: <eee4634290636c873ee38c3f8dfb4a49a2095ce1.camel@pengutronix.de>
-Subject: Re: [PATCH v3] reset: starfive: jh71x0: Fix accessing the empty
- member on JH7110 SoC
+	id 1svJYx-000FHA-10;
+	Mon, 30 Sep 2024 18:47:55 +0200
+Message-ID: <e5e1c13576864c7baec9490af40e880f10934073.camel@pengutronix.de>
+Subject: Re: [PATCH v1] reset: npcm: convert comma to semicolon
 From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>, Emil Renner
-	Berthing <kernel@esmil.dk>, Hal Feng <hal.feng@starfivetech.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-  linux-riscv@lists.infradead.org
-Date: Mon, 30 Sep 2024 18:47:05 +0200
-In-Reply-To: <20240925112442.1732416-1-changhuang.liang@starfivetech.com>
-References: <20240925112442.1732416-1-changhuang.liang@starfivetech.com>
+To: Yan Zhen <yanzhen@vivo.com>, avifishman70@gmail.com,
+ tmaimon77@gmail.com,  tali.perry1@gmail.com
+Cc: venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Date: Mon, 30 Sep 2024 18:47:55 +0200
+In-Reply-To: <20240909061258.2246292-1-yanzhen@vivo.com>
+References: <20240909061258.2246292-1-yanzhen@vivo.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.4-2 
@@ -67,21 +67,15 @@ X-SA-Exim-Mail-From: p.zabel@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mi, 2024-09-25 at 04:24 -0700, Changhuang Liang wrote:
-> data->asserted will be NULL on JH7110 SoC since commit 82327b127d41
-> ("reset: starfive: Add StarFive JH7110 reset driver") was added. Add
-> the judgment condition to avoid errors when calling reset_control_status
-> on JH7110 SoC.
+On Mo, 2024-09-09 at 14:12 +0800, Yan Zhen wrote:
+> Replace a comma between expression statements by a semicolon.
 >=20
-> Fixes: 82327b127d41 ("reset: starfive: Add StarFive JH7110 reset driver")
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> Acked-by: Hal Feng <hal.feng@starfivetech.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 
 Applied to reset/fixes, thanks!
 
-[1/1] reset: starfive: jh71x0: Fix accessing the empty member on JH7110 SoC
-      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D2cf596636607
+[1/1] reset: npcm: convert comma to semicolon
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3De7b71bf181d0
 
 regards
 Philipp
