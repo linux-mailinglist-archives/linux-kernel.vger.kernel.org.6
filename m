@@ -1,106 +1,176 @@
-Return-Path: <linux-kernel+bounces-343786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34383989F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:33:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2689989F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E501E284AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40D18B24192
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808518A922;
-	Mon, 30 Sep 2024 10:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E9A18A954;
+	Mon, 30 Sep 2024 10:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ldpq5Y/D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re5Z2AzM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46015C140
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C8515C140;
+	Mon, 30 Sep 2024 10:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692414; cv=none; b=E954ffe2+6mCxUvdfIixA4E/96ueKzBEaVxRxjKgSFZeCxdy4C5/UbKp4+9pR/qOT8qABgatEkwDR4xZ1IyEEN8P4/etM8febInmNIDt0oOIymPbJF8fpNYbSEeez98dR8TqQv9cx6TsPkhu75v9HkZi/n0q++D4ypZNuTl3kZs=
+	t=1727692429; cv=none; b=KH3MORhu6K3d6zv+F0ZD6ESzyqIXohwFwecJ37bAMyj8ZUZNNDqZ0Jc2KO0F8QVcFTImmvWHs43+oakUQ7In6THhUCa8AHktApqEB4PpTclp//EoL2XVRaG8tSr68SnzC6YHbJxKFrIOCKGJ+d8HOVn8ROyWYv8Ewc6OZu71Jcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692414; c=relaxed/simple;
-	bh=GQWWTfHubQuieHaS/hviuz6e8IYCnUTftJg25TZvPag=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fUEUlqbD1DagV4fioNO+NWiSgf+4PjIvFq1ZoEFpxMqg2PUFI1+GZmyi2UWqWB8p2OY2uXJV3iB0IwF4g4C5eGT3dp1wO8NaYIgq7QnYxvCMy4ubTBZ3hyUq7k/TgdYwLqjA3NTW+X7r3Wf/nP3rb24USJ8uNjpqIXYsNGJ34WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ldpq5Y/D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727692411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QWjTQgM2FW5gQeC40mC/LxGIRFWdUXta0r321EYH9ic=;
-	b=Ldpq5Y/DwoEiTUWhv2/z5rFcSbHK+k3AXSjocANlWS6Mw7y+KcardaqpN68f95XcCU6Y7Y
-	yQC8nLBJvRfaDToMgNOcX8vGvuTqlPzUNckS0ToIReItSMCRjLVGMPCmFqvWs+WW5NqYVx
-	YnmfF6fCnfFj1G9yFEAa/Ot+pp/3jjE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-CyjLEtWuNmOvKROz4UGw9A-1; Mon,
- 30 Sep 2024 06:33:28 -0400
-X-MC-Unique: CyjLEtWuNmOvKROz4UGw9A-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 334A2195395B;
-	Mon, 30 Sep 2024 10:33:26 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.151])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A708C1956088;
-	Mon, 30 Sep 2024 10:33:21 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>,  Shuah Khan
- <shuah@kernel.org>,  "Liam R . Howlett" <Liam.Howlett@oracle.com>,  Suren
- Baghdasaryan <surenb@google.com>,  Vlastimil Babka <vbabka@suse.cz>,
-  pedro.falcato@gmail.com,  linux-kselftest@vger.kernel.org,
-  linux-mm@kvack.org,  linux-fsdevel@vger.kernel.org,
-  linux-api@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
-In-Reply-To: <cover.1727644404.git.lorenzo.stoakes@oracle.com> (Lorenzo
-	Stoakes's message of "Mon, 30 Sep 2024 10:22:27 +0100")
-References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
-Date: Mon, 30 Sep 2024 12:33:18 +0200
-Message-ID: <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1727692429; c=relaxed/simple;
+	bh=9B1h0p8HTLf6TJhVHkcuROa+wMWJ4RQ+m7E5VR/ZVlM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lGXfKqaUDN3lzRJhlq9D79F4OlYqirlTnlfaKa/qlLBmjZI20QYfKIOyDvyT/qCzaWlr7C1XFbcHHEfN/wZL/nRqXuDlEiPwERAriLtJti54eyARCUr+42PjYBQGIMcuUNJX3t2qDQb1+Xhvf93rTHVnbWxWKZn9xuFIUBkwnNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re5Z2AzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4685C4CEC7;
+	Mon, 30 Sep 2024 10:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727692429;
+	bh=9B1h0p8HTLf6TJhVHkcuROa+wMWJ4RQ+m7E5VR/ZVlM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Re5Z2AzMQtrd7ABdPZXY9ilKHEwNcEqiw8kbBKlJ0gU8TGNNr9KBoaxuIsheu2+Ds
+	 SRS8wI9l/R7ygkdeEw1eoL51tZTk09V0eAswGErWnl6LcQNlYUZdX3LGB4Z4T0nmEo
+	 swMtcmYYFvjN0uKnGcBDX+KnNXRIl5SCXQ9gsuC/HwsAnNRiEtHOD5+zk1zyyrMAdR
+	 gGLIbpT2AM3lmLo7KjkmKz7S/jQLrNSiFcQk0COq+kK6CWfeNPBaEF5YDOKluCmI/g
+	 NSiS40MT+fSgMIcQ5Wn44eTkZ7FxU0+7y3k95MBEhfHL6w/Ccx3OGTd9TFvXyrp0Eh
+	 fLqF0naaQk7lg==
+Message-ID: <3fd98d2a-2891-4579-bbdb-52c48c7b50ab@kernel.org>
+Date: Mon, 30 Sep 2024 12:33:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
+To: Jinjie Ruan <ruanjinjie@huawei.com>, s.nawrocki@samsung.com,
+ cw00.choi@samsung.com, alim.akhtar@samsung.com, mturquette@baylibre.com,
+ sboyd@kernel.org, sunyeal.hong@samsung.com,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240927102104.3268790-1-ruanjinjie@huawei.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240927102104.3268790-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Lorenzo Stoakes:
+On 27/09/2024 12:21, Jinjie Ruan wrote:
+> Currently, there is no terminator entry for exynosautov920_cmu_of_match,
+> hence facing below KASAN warning,
+> 
+> 	==================================================================
+> 	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
+> 	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
+> 
+> 	CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0+ #334
+> 	Hardware name: linux,dummy-virt (DT)
+> 	Call trace:
+> 	 dump_backtrace+0x94/0xec
+> 	 show_stack+0x18/0x24
+> 	 dump_stack_lvl+0x90/0xd0
+> 	 print_report+0x1f4/0x5b4
+> 	 kasan_report+0xc8/0x110
+> 	 __asan_report_load1_noabort+0x20/0x2c
+> 	 of_match_node+0x120/0x13c
+> 	 of_match_device+0x70/0xb4
+> 	 platform_match+0xa0/0x25c
+> 	 __device_attach_driver+0x7c/0x2d4
+> 	 bus_for_each_drv+0x100/0x188
+> 	 __device_attach+0x174/0x364
+> 	 device_initial_probe+0x14/0x20
+> 	 bus_probe_device+0x128/0x158
+> 	 device_add+0xb3c/0x10fc
+> 	 of_device_add+0xdc/0x150
+> 	 of_platform_device_create_pdata+0x120/0x20c
+> 	 of_platform_bus_create+0x2bc/0x620
+> 	 of_platform_populate+0x58/0x108
+> 	 of_platform_default_populate_init+0x100/0x120
+> 	 do_one_initcall+0x110/0x788
+> 	 kernel_init_freeable+0x44c/0x61c
+> 	 kernel_init+0x24/0x1e4
+> 	 ret_from_fork+0x10/0x20
+> 
+> 	The buggy address belongs to the variable:
+> 	 exynosautov920_cmu_of_match+0xc8/0x2c80
+> 
+> 	The buggy address belongs to the virtual mapping at
+> 	 [ffffffe31c7d0000, ffffffe31d700000) created by:
+> 	 paging_init+0x424/0x60c
+> 
+> 	The buggy address belongs to the physical page:
+> 	page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x4349e
+> 	flags: 0x3fffe0000002000(reserved|node=0|zone=0|lastcpupid=0x1ffff)
+> 	raw: 03fffe0000002000 fffffffec00d2788 fffffffec00d2788 0000000000000000
+> 	raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+> 	page dumped because: kasan: bad access detected
+> 
+> 	Memory state around the buggy address:
+> 	 ffffffe31cc9e500: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 00 00
+> 	 ffffffe31cc9e580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> 	>ffffffe31cc9e600: 00 00 00 00 00 f9 f9 f9 f9 f9 f9 f9 04 f9 f9 f9
+> 	                                  ^
+> 	 ffffffe31cc9e680: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
+> 	 ffffffe31cc9e700: f9 f9 f9 f9 00 00 06 f9 f9 f9 f9 f9 00 00 06 f9
+> 	==================================================================
 
-> If you wish to utilise a pidfd interface to refer to the current process
-> (from the point of view of userland - from the kernel point of view - the
-> thread group leader), it is rather cumbersome, requiring something like:
->
-> 	int pidfd = pidfd_open(getpid(), 0);
->
-> 	...
->
-> 	close(pidfd);
->
-> Or the equivalent call opening /proc/self. It is more convenient to use a
-> sentinel value to indicate to an interface that accepts a pidfd that we
-> simply wish to refer to the current process.
+In the future, please the trim logs from entirely unrelated parts, like
+addresses.
 
-The descriptor will refer to the current thread, not process, right?
+No need to resend for this.
 
-The distinction matters for pidfd_getfd if a process contains multiple
-threads with different file descriptor tables, and probably for
-pidfd_send_signal as well.
 
-Thanks,
-Florian
+Best regards,
+Krzysztof
 
 
