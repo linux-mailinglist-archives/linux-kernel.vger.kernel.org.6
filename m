@@ -1,251 +1,98 @@
-Return-Path: <linux-kernel+bounces-344904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60D598AF76
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:52:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD22E98AF78
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:57:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C5B2B23F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55246B241D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251AC18784E;
-	Mon, 30 Sep 2024 21:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E05D187862;
+	Mon, 30 Sep 2024 21:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPBjaXoP"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iK4ctBoL"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C9A15E97;
-	Mon, 30 Sep 2024 21:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756B21865EE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 21:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727733153; cv=none; b=UH02dWlIyw+yuwd/2JMkBNRRLYMoPAX5OLpxBOO3nT1P+Ys2IoY9z8b23mLNyOcex1MZFpEMZj3EeuF7Lz4HODR81swW1GhvaxI4iwrbZjy2NKvV/ksAVDGTXV/7zHJX/l1tB0e4AjbIiR/PCIPTjohXgmdCVH09Zxxs8r12lfU=
+	t=1727733413; cv=none; b=uxKWuf7XXZ2VCLTvrEv/mk0ErStaclaM+XmYBmwHPd1Qrk3MGXDU151qShXRK9GJEYOPnijjz1m69K4azGwDaUED3HrafEMfCjFePMWpMESSQf2j6zFjt+RP1GQag4C5XqGkzLHdoW9QmogtCd8pPC+uWGte/UyHGkRjMLuya5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727733153; c=relaxed/simple;
-	bh=7AYToSm+YLx/ySbs4rmudrF2CAZpd+LDWLQoVQwrMuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxpL/Kmg4Me3/jUsd7mz2lOKEtjMxsUzLEKlOzoK6J9G9eM6PCO9oIeZqjhhVALKg64INiQhIpKIfLgaAoj967o7JRr2QEXbpSn65pjEILz9199gSSw81J3P2yZZlV+qC+6Ml/CMRbdMf5gUiRIo+EKlZEAEL87co7m2crGvhCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPBjaXoP; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e137183587so1029766a91.3;
-        Mon, 30 Sep 2024 14:52:30 -0700 (PDT)
+	s=arc-20240116; t=1727733413; c=relaxed/simple;
+	bh=EI35CoEM1AcSciWaRt5Y7P85pwkoV/1G1OSkpZxfbPg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=YMYMQgxg3flmyzZ+ZGmnOTjTFiCxe1R2fEothVfz28wTkLUl4JSeu7YrYdbz6Qe74Mbu6qs7cmVYknSmNh8TDuKnzDkDtvr4psh8pJr582qHfr/WXXYbiGu1ToZCAGhz1+Z0lIj57MW7HHeyZ3yq/xwH4bnwrbdg/YOAbcTmFX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iK4ctBoL; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-204e310e050so57110745ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:56:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727733150; x=1728337950; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/dGOU6/DyGTPGsE+EFtrlj1MYO6DRcr08abM9lQN98=;
-        b=IPBjaXoP2+4q+Tn3/Y31RUFw0fWTX+XC3iqBSSdQagx3Z5HGciplVS2SrQz8X5zKyu
-         RpLoGeKirnCty7RhFXun3zugtqG2xgtjFQHYcyekWBl6xDV/4M6MJnpbmOMcAB4mCyzY
-         w6hYuLGDmDE+pvs7GBGSAFECshBRnLiGqcbnPV1Bph6swSl2edofN+gOEBQ/sRJihP8J
-         3skJkRqj2FNYcskVMSU8OCQVDcq34e+wMoHmRjzQnMqk2a9/DysNkcySbpN3oG7xPF1G
-         bhjwIJXTnb7KLGiW1j7+n7AquzKaVeSbJZw3QxknTQqkEHq5VVFoGFSprip+ZBWgOzeg
-         YPMw==
+        d=google.com; s=20230601; t=1727733412; x=1728338212; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PntPBodbq4krAqAL/kXN8N5SHx+RiWW9dX81Z4mrKcI=;
+        b=iK4ctBoLbfEykS27Sxro0hN4zq6Fsa8D/e4qyRX7VhXIyF1n7JXLwfPLtAr+02SsQF
+         asndJZN8oS5fIEiuyL4lY15/Qe8MXx0TKmMJ018v9DK2ltmm900NLN7gCfBtwVdOmFrC
+         ujE9k/eLQpDmP097pL4P31lLCQ/DksXqVjD7cNMQQ92Vwi8Zk66qHCaiv8fxl45/lxry
+         pBreIysoDq4cgfoPZuW7cUeTTOA/i6sy6Zzgcw28bsgQjFA4kTdp8fnHG72jkG24coZv
+         sTJnVOcZ0lUMvMqulPFuiFdzszNgB7RjudMC3dLV3w7Q1ISsB7R3+86/cFTIqjqwapMe
+         nJLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727733150; x=1728337950;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q/dGOU6/DyGTPGsE+EFtrlj1MYO6DRcr08abM9lQN98=;
-        b=Vsc+dt6vY1r7JCz8Jh9cjXu36XpScdeXgTUNbXitZyUES90X0fdWjabLButCPcYyZb
-         jqag0EB7cLalzrIpcV0SI/abmePB0fv8WYjKVq+7jS4OmNyyTlxHlIoUyL0jKDuEkIYE
-         BcViHZzexcn8fvKs3JMwy8DyKDHEjuBfk/SRQiVP9gpcCi2w0Zi3OfevMxZdN21zWM5D
-         5Gegyskle9mkjvA2yfJmZfAw787dCxG1zyvuEG93/PLuceRZkg81s91v96SR/372U3Kj
-         GDLbsDxgqIME+s6Lhp9Hfq0wCqJzqdsBtGHXaaLDustx4pI8qa5i6vSBvE2z+APdz2IU
-         cJ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWlvidMO7owTKhzXplAMm15KY5dN6AzMfNVG+AEBcnUMgD5fuy6qCw6YDwVdqbnOKDzcj0=@vger.kernel.org, AJvYcCWwKGv3mPhNaAifQs6lgKc+72lleWoHpj8sNGHvNUtq928xsZBEPPURThjbpZF5fQZlu4U9eNLeknqzwkne@vger.kernel.org
-X-Gm-Message-State: AOJu0YzChuniC2Sc9Wtm661ud2l/mOgMAkswg9sA88l3XdS57U27rOOj
-	eljW4zB1WVamsqRWCsVdrUXgYI32MCtiIh+nLl/Y179SWOjVgj9APmxCMgotKTwH2HNdRSGBE8G
-	ENIIwxsIDzrnW8lYG9ofaKW2T6zU=
-X-Google-Smtp-Source: AGHT+IG2R76mkh8zb+ZI+9j/OwCAT4Yf5sniEhlyf0cw/FcLd0xejibzVdTv7ntB03TCtxyU//Ade71LQxtoH7GwD2s=
-X-Received: by 2002:a17:90a:f00a:b0:2d8:3fe8:a18e with SMTP id
- 98e67ed59e1d1-2e0b8872d71mr15883003a91.5.1727733150147; Mon, 30 Sep 2024
- 14:52:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727733412; x=1728338212;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PntPBodbq4krAqAL/kXN8N5SHx+RiWW9dX81Z4mrKcI=;
+        b=mFhUOcJneC1Q47jyQflBvxDbl5JiN1mRLGh6PYQK5RdDZhPz8iTxJFm6agKwmjVTLt
+         0VSrFKcSz2i91TqACsPySEXaM0hqkeKUC9LdZLbOHZjcf1T7xcHBjBo+R5yzpydsok6Y
+         ru9aaP9VLkISkCMSwb8Za7NPlE1iy6DLCdadisScsBVYd0rmf404kGro1ybfMbXtkMqd
+         Zpn3SRuCdp1Wm3k+1BWWfrQKG2qsfxgn1as++1c4OcpLwNIvkmZsvIJ8KbiJ1ko2SJtU
+         8O4MaBFMokF9y+wmZTg96VL60Sra02bOj75hLO+beiUNKVRMxOp+rmRLQQITfaNru5Vj
+         wqaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWN2nK1+lOpKmc66sw7G/rTJ+QZ+zjz/YKM2TMSu4zperV6tl0BN2q5h2BrYDQQVUcLiYZdSOBB+Moqw0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNhy3zlfvTJc2+jddxjP2ZXMak2PjDrDVhr8FA4U4e0m+aXzJG
+	S4vQSSsR+Y+TCqVR1fZSRKwYbtH0UsoSlJjV+KJwdIyflnZsqPykVYdgeJBpifJAKfVVIAj9tvd
+	9lQ==
+X-Google-Smtp-Source: AGHT+IFa/3NUudFCuE72HcCwi+hM+UVm+5oAl6XGWfqHgohNP2i/0xjhJQmHwp45qjEiLZEOk9HWi9na7w8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:f691:b0:20b:aed1:bf77 with SMTP id
+ d9443c01a7336-20baed1c097mr62225ad.7.1727733411419; Mon, 30 Sep 2024 14:56:51
+ -0700 (PDT)
+Date: Mon, 30 Sep 2024 14:56:49 -0700
+In-Reply-To: <20240911204158.2034295-4-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240926115328.105634-1-puranjay@kernel.org> <20240926115328.105634-2-puranjay@kernel.org>
- <CAEf4BzaUq9WqKL1n8uHJQw3hbEFHYS4c3RN7qPWzbtYHzREThw@mail.gmail.com>
-In-Reply-To: <CAEf4BzaUq9WqKL1n8uHJQw3hbEFHYS4c3RN7qPWzbtYHzREThw@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 30 Sep 2024 14:52:18 -0700
-Message-ID: <CAEf4Bzac9hbk7vgKETsS56iqy9Did8Zq6HJkQha4ksCE-Fk-2A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: implement bpf_send_signal_remote() kfunc
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	puranjay12@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240911204158.2034295-1-seanjc@google.com> <20240911204158.2034295-4-seanjc@google.com>
+Message-ID: <ZvseoZLzmaS4MEbc@google.com>
+Subject: Re: [PATCH v2 03/13] KVM: selftests: Fudge around an apparent gcc bug
+ in arm64's PMU test
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Sep 30, 2024 at 2:48=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Thu, Sep 26, 2024 at 4:53=E2=80=AFAM Puranjay Mohan <puranjay@kernel.o=
-rg> wrote:
-> >
-> > Implement bpf_send_signal_remote kfunc that is similar to
-> > bpf_send_signal_thread and bpf_send_signal helpers  but can be used to
-> > send signals to other threads and processes. It also supports sending a
-> > cookie with the signal similar to sigqueue().
-> >
-> > If the receiving process establishes a handler for the signal using the
-> > SA_SIGINFO flag to sigaction(), then it can obtain this cookie via the
-> > si_value field of the siginfo_t structure passed as the second argument
-> > to the handler.
-> >
-> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> > ---
-> >  kernel/trace/bpf_trace.c | 78 +++++++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 77 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> > index a582cd25ca876..51b27db1321fc 100644
-> > --- a/kernel/trace/bpf_trace.c
-> > +++ b/kernel/trace/bpf_trace.c
-> > @@ -802,6 +802,9 @@ struct send_signal_irq_work {
-> >         struct task_struct *task;
-> >         u32 sig;
-> >         enum pid_type type;
-> > +       bool is_siginfo;
-> > +       kernel_siginfo_t info;
-> > +       int value;
-> >  };
-> >
-> >  static DEFINE_PER_CPU(struct send_signal_irq_work, send_signal_work);
-> > @@ -811,7 +814,11 @@ static void do_bpf_send_signal(struct irq_work *en=
-try)
-> >         struct send_signal_irq_work *work;
-> >
-> >         work =3D container_of(entry, struct send_signal_irq_work, irq_w=
-ork);
-> > -       group_send_sig_info(work->sig, SEND_SIG_PRIV, work->task, work-=
->type);
-> > +       if (work->is_siginfo)
-> > +               group_send_sig_info(work->sig, &work->info, work->task,=
- work->type);
-> > +       else
-> > +               group_send_sig_info(work->sig, SEND_SIG_PRIV, work->tas=
-k, work->type);
-> > +
-> >         put_task_struct(work->task);
-> >  }
-> >
-> > @@ -848,6 +855,7 @@ static int bpf_send_signal_common(u32 sig, enum pid=
-_type type)
-> >                  * irq works get executed.
-> >                  */
-> >                 work->task =3D get_task_struct(current);
-> > +               work->is_siginfo =3D false;
-> >                 work->sig =3D sig;
-> >                 work->type =3D type;
-> >                 irq_work_queue(&work->irq_work);
-> > @@ -3484,3 +3492,71 @@ static int __init bpf_kprobe_multi_kfuncs_init(v=
-oid)
-> >  }
-> >
-> >  late_initcall(bpf_kprobe_multi_kfuncs_init);
-> > +
-> > +__bpf_kfunc_start_defs();
-> > +
-> > +__bpf_kfunc int bpf_send_signal_remote(struct task_struct *task, int s=
-ig, enum pid_type type,
-> > +                                      int value)
+On Wed, Sep 11, 2024, Sean Christopherson wrote:
+> Use u64_replace_bits() instead of u64p_replace_bits() to set PMCR.N in
+> arm64's vPMU counter access test to fudge around what appears to be a gcc
+> bug.  With the recent change to have vcpu_get_reg() return a value in lieu
+> of an out-param, some versions of gcc completely ignore the operation
+> performed by set_pmcr_n(), i.e. ignore the output param.
 
-Bikeshedding here a bit, but would bpf_send_signal_task() be a better
-name for something that accepts task_struct?
+Filed a gcc bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116912
 
-> > +{
-> > +       struct send_signal_irq_work *work =3D NULL;
-> > +       kernel_siginfo_t info;
-> > +
-> > +       if (type !=3D PIDTYPE_PID && type !=3D PIDTYPE_TGID)
-> > +               return -EINVAL;
-> > +       if (unlikely(task->flags & (PF_KTHREAD | PF_EXITING)))
-> > +               return -EPERM;
-> > +       if (unlikely(!nmi_uaccess_okay()))
-> > +               return -EPERM;
-> > +       /* Task should not be pid=3D1 to avoid kernel panic. */
-> > +       if (unlikely(is_global_init(task)))
-> > +               return -EPERM;
-> > +
-> > +       clear_siginfo(&info);
-> > +       info.si_signo =3D sig;
-> > +       info.si_errno =3D 0;
-> > +       info.si_code =3D SI_KERNEL;
-> > +       info.si_pid =3D 0;
-> > +       info.si_uid =3D 0;
-> > +       info.si_value.sival_int =3D value;
->
-> It seems like it could be either int sival_int or `void *sival_ptr`,
-> i.e., it's actually a 64-bit value on 64-bit architectures.
->
-> Can we allow passing a full u64 here and assign it to sival_ptr (with a c=
-ast)?
-
-Seems like Alexei already suggested that on patch #2, I support the request=
-.
-
->
-> > +
-> > +       if (irqs_disabled()) {
-> > +               /* Do an early check on signal validity. Otherwise,
-> > +                * the error is lost in deferred irq_work.
-> > +                */
-> > +               if (unlikely(!valid_signal(sig)))
-> > +                       return -EINVAL;
-> > +
-> > +               work =3D this_cpu_ptr(&send_signal_work);
-> > +               if (irq_work_is_busy(&work->irq_work))
-> > +                       return -EBUSY;
-> > +
-> > +               work->task =3D get_task_struct(task);
-> > +               work->is_siginfo =3D true;
-> > +               work->info =3D info;
-> > +               work->sig =3D sig;
-> > +               work->type =3D type;
-> > +               work->value =3D value;
-> > +               irq_work_queue(&work->irq_work);
-> > +               return 0;
-> > +       }
-> > +
-> > +       return group_send_sig_info(sig, &info, task, type);
-> > +}
-> > +
-> > +__bpf_kfunc_end_defs();
-> > +
-> > +BTF_KFUNCS_START(send_signal_kfunc_ids)
-> > +BTF_ID_FLAGS(func, bpf_send_signal_remote, KF_TRUSTED_ARGS)
-> > +BTF_KFUNCS_END(send_signal_kfunc_ids)
-> > +
-> > +static const struct btf_kfunc_id_set bpf_send_signal_kfunc_set =3D {
-> > +       .owner =3D THIS_MODULE,
-> > +       .set =3D &send_signal_kfunc_ids,
-> > +};
-> > +
-> > +static int __init bpf_send_signal_kfuncs_init(void)
-> > +{
-> > +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_se=
-nd_signal_kfunc_set);
->
-> let's allow it for other program types (at least kprobes, tracepoints,
-> raw_tp, etc, etc)? Is there any problem just allowing it for any
-> program type?
->
->
-> > +}
-> > +
-> > +late_initcall(bpf_send_signal_kfuncs_init);
-> > --
-> > 2.40.1
-> >
+I'll report back if anything interesting comes out of that bug.
 
