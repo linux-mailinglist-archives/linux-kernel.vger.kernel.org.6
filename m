@@ -1,112 +1,140 @@
-Return-Path: <linux-kernel+bounces-344068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB34398A3CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD28F98A3CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE882819A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2DD6281BF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC7E190057;
-	Mon, 30 Sep 2024 12:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED891190674;
+	Mon, 30 Sep 2024 12:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUoVx6PV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeU53eZV"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EA218FDA3;
-	Mon, 30 Sep 2024 12:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6619048F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700997; cv=none; b=KC8ZmbMW2FH7M83HX23/q0uc+vg6LtHoMWa4xp8VcL/YZmX0bthV759Ky69qsOmVzSMmHoAn/k2y+zuIikcsaL1q7Ue6OBwIb8iV+yVVvoWZg8PcIjStXUxxoNHbekkEYfB8PGHeFK6+cr0RtMEmoEM5MwD/MFNchJX2Xp3FbOI=
+	t=1727701036; cv=none; b=hh/F3TQ2PftsgG/bB3V5l8LHddXz97sNoldrAVXcNIuXHxJlMu15Sf5TEp74hB6xvn+yHtU4lRT9WqCi0xdcMrjRKgaozm+Gqap8tGW9vMLwGsKRNtb+sdBEQ2kTttZeOiiGT/p/XlruywN4bIknkM5aVCKVfNe8rLRFENl1D8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700997; c=relaxed/simple;
-	bh=86l+n3oUOCw3cRUKaIVSOwRNK+3sfcj6behnUqpUl4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IaErp4JN5rXsWjaYu/fOVUzO+RkZ2k6FPPmcSaxyxdNtEHRIRg0uohJXbRTFqI9w/vDc2v+iGlfHWXHMkKnMYmXQZzVekdk4OUcUCHUozRhb1tW6mpjFLX8yiNeDkwvVwWTn7vPYyxoE7fsaF82cUnooxNsi45/+YPX6fdKqx+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUoVx6PV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D88C4CEC7;
-	Mon, 30 Sep 2024 12:56:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727700996;
-	bh=86l+n3oUOCw3cRUKaIVSOwRNK+3sfcj6behnUqpUl4U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rUoVx6PV6rUDCc6U4wZInfOCNP8K9UdicEzWn6HmqDWqtSHMeG0hQyJJSrrhT6xmq
-	 3u/bHlw9T6wv1VV1oSFimbRei++Uxh8fHUdGmMVbW7+UaoOgNJZh8qIUNx2f38wkDz
-	 0i4O+1yL5J6l5J8D0oZqI2JpEKkFIF2F46znp5YvyMYSJ6SjDRQ6/FqZgEdmeHZN9O
-	 35XEnqQRb+eXZPluuW71hMkfQdJ/fEhfcRWCOV+TG9VBRyVa0W6TZJqaovdfxZkzMS
-	 0ZSJpYFwGpNxgLdckGd45p3qyC3hlcPqPV4kJ1PCA1dVhJ4jsfm8zOGX0J+6Qy0sye
-	 OjZviUqSTgiog==
-Date: Mon, 30 Sep 2024 14:56:18 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
- <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu
- Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Mauro
- Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Andy
- Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>, Olli Salonen
- <olli.salonen@iki.fi>, Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young
- <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>, Abylay Ospan
- <aospan@netup.ru>, Jemma Denson <jdenson@gmail.com>, Patrick Boettcher
- <patrick.boettcher@posteo.de>, Ming Qian <ming.qian@nxp.com>, Zhou Peng
- <eagle.zhou@nxp.com>, Andy Walls <awalls@md.metrocast.net>, Michal Simek
- <michal.simek@amd.com>, Jean-Christophe Trotin
- <jean-christophe.trotin@foss.st.com>, Philipp Zabel
- <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Tim Harvey <tharvey@gateworks.com>, Benjamin
- Mugnier <benjamin.mugnier@foss.st.com>, Sylvain Petinot
- <sylvain.petinot@foss.st.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Niklas
- =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund+renesas@ragnatech.se>,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, openbmc@lists.ozlabs.org,
- linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH 00/45] media: Use string_choice helpers
-Message-ID: <20240930145446.10d832e9@foz.lan>
-In-Reply-To: <20240930124619.GG31662@pendragon.ideasonboard.com>
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
-	<20240930122157.GF31662@pendragon.ideasonboard.com>
-	<4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
-	<20240930124619.GG31662@pendragon.ideasonboard.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727701036; c=relaxed/simple;
+	bh=uYDILTZ0OuV9ymbF82FF+lZsQByJBzc+anI+t8B0rxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSYcuCQvhWsVjgz3O8tuV+ZM8dbFKlQizKFC7Hh/H39Tz1BsRywp5tCQmW66hzOJJtE+P536JHEz5uVPIkdJYOc2t1HXqtSEJ5PK35MEUTNjQAaSX4w0EzG6PmAXKibfmRlCGKUymrUMgMaRXONNq1fgPOgpGEUnfzaGj+Mh2TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeU53eZV; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c42f406e29so6069082a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727701033; x=1728305833; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DQgaaXdctNkKbqsrVWkdnT+P9Zhh+LtAshAU9bhmOc=;
+        b=yeU53eZV7ixLB4bSvDXP9BtxpWEu5GnRIXoyk2ZV9NDmuU2+i7JcKo5+unj84lfImf
+         doY1JcQ9KjcsOqFz4171O30w/+9CKEtiIeOshXzUn5lkRh6ivOaXBwewCyaMkyXX1Ijo
+         60V9G6P5yzDbJ6WD6R/ndhxuOyRgRXLWnfBzGhTHQa9prgnuAeBLah0xEh6+u6YPE3El
+         2bg72ZipdxiXc5YIeskyspkr7l9Frl01kExPR/YhnJHLVWAhsxF8Q8OWOYfIljpUWaTv
+         wFjVH0ltgFWq+1Sy6NR8YO0egVlxnA311sTHyK2Ss53xpOpJWUBo0yEnCDF3Q2GfoUFS
+         6A3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727701033; x=1728305833;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+DQgaaXdctNkKbqsrVWkdnT+P9Zhh+LtAshAU9bhmOc=;
+        b=LktErhrr+vq90ga3LFOLZSl18PdVa7i9xyzB9tjclWxXPxzymfgvM5Pjy5va0KTlL+
+         XuB94dZ7vGo2b/WtGE+XIruzocfWx0UgwwYTTstlH8UAAXOouDEaNcMvHgLcY9qKNXP3
+         DQ6Wae+Ssx1asp9adH/qC+x2jOqJ8ChILOZYObP8DuMjtRUDtRn09UMtb/+eowLxmHBL
+         ByjgYh/KC+Vsq6jUd7DJ5DBX/gWXW3YPWe13V3a8oT17MRzqN0SCGSMStsDFjN06h4j4
+         OH66NwVsqKhVd4GzXQB3aAb6jeHCKwJ/gZnlTSp3XvJLRAZebj9u4o9cOuH6C/qS8fWf
+         wKRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhpqas/o0qTxaxE8PVUVhlhJEghNNPfD6rMj9xzzdGJ+MS7iChoLoeSMr/in0gRk8li/u/5VH8JZS8PYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0IBl8RqTlosdRgq7iBIOW2ieJHbJv8lxaJI669JQHrd17Y/tj
+	O9B0XJXCe17dj0TMRwtVdPnyBNAwwHbAQp9s1D0px34sxtf8QYmeW+/sODCRFZ8=
+X-Google-Smtp-Source: AGHT+IFBrSKTS6LI7QA565Uk6LSxPcjcQvIGy53O7BM6eu32Xr+uoVdxUX2uFApOrsQJRCYfeR0Awg==
+X-Received: by 2002:a05:6402:42c4:b0:5c5:cbfd:b3a8 with SMTP id 4fb4d7f45d1cf-5c8824ccc12mr10308930a12.1.1727701032913;
+        Mon, 30 Sep 2024 05:57:12 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245ec1bsm4683767a12.44.2024.09.30.05.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:57:12 -0700 (PDT)
+Date: Mon, 30 Sep 2024 15:57:08 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Andy Shevchenko <andriy.shevchenko@intel.com>
+Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
+Message-ID: <bf348b5d-f6d5-4315-b072-cc1175ca4eff@stanley.mountain>
+References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
+ <10515bca-782a-47bf-9bcd-eab7fd2fa49e@stanley.mountain>
+ <bb531337-b155-40d2-96e3-8ece7ea2d927@intel.com>
+ <faff2ffd-d36b-4655-80dc-35f772748a6c@stanley.mountain>
+ <84f41bd3-2e98-4d69-9075-d808faece2ce@intel.com>
+ <129309f3-93d6-4926-8af1-b8d5ea995d48@stanley.mountain>
+ <e86748a9-6b72-4404-9042-c9b6308a9bc1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e86748a9-6b72-4404-9042-c9b6308a9bc1@intel.com>
 
-Em Mon, 30 Sep 2024 15:46:19 +0300
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
-
-> > >> Cocci has located some places where the helpers can be used. This
-> > >> patchset uses the diff generated by cocci, plus these changes:  
-> > > 
-> > > Personally I think most of those helpers just hinder readability for not
-> > > much added gain. String de-duplication is done by the linker already.
-> > > The only value I see in the helpers is ensuring that the strings are
-> > > consistently written, and I think we can do so through other means.  
-> > 
-> > Just my opinion: I'm OK with these new helpers,  
+On Mon, Sep 30, 2024 at 01:30:58PM +0200, Przemek Kitszel wrote:
+> > but your macro is wrong and will need to be re-written
 > 
-> Coding style opinions are personal preferences of course :-) My opinion
-> is that this hinders readability for no benefit.
+> could you please elaborate here?
 
-Agreed. New code somewhat obfuscates what it does with no benefit
-except maybe saving a few bytes on each drive.
+- 		__guard_ptr(_name)(&scope) && !done;
++		__guard_ptr(_name)(&scope), 1;     \
 
-Thanks,
-Mauro
+The __guard_ptr(_name)(&scope) check is checking whether lock function
+succeeded.  With the new macro we only use scoped_guard() for locks which can't
+fail.  We can (basically must) remove the __guard_ptr(_name)(&scope) check since
+we're ignoring the result.
+
+There are only four drivers which rely on conditional scoped_guard() locks.
+
+$ git grep scoped_guard | egrep '(try|_intr)'
+drivers/input/keyboard/atkbd.c: scoped_guard(mutex_intr, &atkbd->mutex) {
+drivers/input/touchscreen/tsc200x-core.c:       scoped_guard(mutex_try, &ts->mutex) {
+drivers/input/touchscreen/wacom_w8001.c:        scoped_guard(mutex_intr, &w8001->mutex) {
+drivers/platform/x86/ideapad-laptop.c:  scoped_guard(mutex_intr, &dytc->mutex) {
+
+This change breaks the drivers at runtime, but you need to ensure that drivers
+using the old API will break at compile time so that people don't introduce new
+bugs during the transition.  In other words, you will need to update the
+DEFINE_GUARD_COND() stuff as well.
+
+$ git grep DEFINE_GUARD_COND
+include/linux/cleanup.h: * DEFINE_GUARD_COND(name, ext, condlock)
+include/linux/cleanup.h:#define DEFINE_GUARD_COND(_name, _ext, _condlock) \
+include/linux/iio/iio.h:DEFINE_GUARD_COND(iio_claim_direct, _try, ({
+include/linux/mutex.h:DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
+include/linux/mutex.h:DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
+include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_read, _try, down_read_trylock(_T))
+include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T) == 0)
+include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
+
+I propose that you use scoped_try_guard() and scoped_guard_interruptible() to
+support conditional locking.  Creating different macros for conditional locks is
+the only way you can silence your GCC warnings and it makes life easier for me
+as a static checker developer as well.  It's probably more complicated than I
+have described so I'll leave that up to you, but this first draft doesn't work.
+
+regards,
+dan carpenter
 
