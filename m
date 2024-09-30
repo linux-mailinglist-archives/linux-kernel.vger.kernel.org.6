@@ -1,81 +1,59 @@
-Return-Path: <linux-kernel+bounces-344463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B3798AA02
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:41:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBE998AA08
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B2EA1F22659
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753CC1F2292D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF986193428;
-	Mon, 30 Sep 2024 16:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53C11946C8;
+	Mon, 30 Sep 2024 16:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="THob8nCB"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNRpNjOD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EE3192D97
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154DA63D5;
+	Mon, 30 Sep 2024 16:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714436; cv=none; b=FR/kjY/cWy8diKpus5opKM4KQCtEN70gE3yP4vlwpSLaypPBaxzQhL6FnexmIy7bZz6PBRzFx5c3nzQTrgXLCmVkAdHvrJDxUBRzM/hOxPMuCRXlYNJCrHM/IbWrNQvuP1l3ghFO4lxUbZwhrmsHBodt0ihPCZce7iMGsdn24F0=
+	t=1727714477; cv=none; b=bbsK5QIjtHrcW9Gmy0ihGd9MyDGPblfEevoPLJgVEsbfo1seZH8lycnBvn0Ps0Pr9BuvnIeaX/yvkW+Rf/y6foGQHceFuAfkoXi5tqxM9rk/rQLaUF0cIHuHY9NuSQKFqoG966IgMPM9kCDNW+9nJnm59hymn2rkKKniRC6M3Ms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714436; c=relaxed/simple;
-	bh=dSBOhC0bjhbSESR9jo2CyhBJlSFuwF2AEg6p/4dVTQ8=;
+	s=arc-20240116; t=1727714477; c=relaxed/simple;
+	bh=QbApHv7YO8fwsTHXzGN74yxmkRh/G1XP15EyHwKkAJg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWGYyBFHZzdq6l6f2qGclaHClXu89PHK5PMaZD/PfzVoxwp/rP3SpQz9Ov71ZXDqCYbu3Z2gIxm+vOdI2rEiRK0aDkTLJO7f1C1gb4kNB61qLVHKLj2u8a5lfZnlR3+oGQaerL1jq/bqNulUKr73QgTj78RSdVVXMQIRJU0ZxWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=THob8nCB; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b0b2528d8so50612365ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727714434; x=1728319234; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrqJ8hHUJyic1Moj+zvtd8DxfNx+7yYXWpXKI0I8z7I=;
-        b=THob8nCByvhB2oPyBxU/r5IgqWd3X8XeUekioHPCbIC2OMzRK5Uqz4RqxIZE7dfn2k
-         kVoSdRmvNyY8cgK2j13dZtiOJI7qF4IY3Mm0jIbMntRqGx2kfgsHBdF6OeVAsHL4Cwgz
-         N5gB6wuZnIRjhF2DwM+e3OvJRRmInW1PrBM0gXSb26EQQPthalNnxzhtsaQBaGlpP+4a
-         48xeuF+jRdQUMohwbdInlgBRGKSgWWOVfFBZz/D91rk0ZyuPBaWaukuhqOyhMXZBxu0G
-         NespLl4YChD+08S8bgtQSHLMHjNj/AqsWj61mDf/8812J5sodRGpuCfdlnuaX93KYxRx
-         PT0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727714434; x=1728319234;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XrqJ8hHUJyic1Moj+zvtd8DxfNx+7yYXWpXKI0I8z7I=;
-        b=lbhYm2cT1tgrxyqQNlNTMQyPEavTfzrlMxJcu8pBE5LZu/j+NFDctrzKeCALw38ptf
-         LgmfesW1jsf8jEQ5XZcTVNnLqAjIlWU3TyfAoT5C+GBZsRTgvSNqgX7ZMkR+Mrim7bDk
-         DqeZkjsaK/NEyrmB3NjECqlR6xzN59rAp/KhwiJWdQ0kPh0/2mLfdgTx2UOWCkMQYLGr
-         OMHJ/I5bOhEDdmEHKqN4jF35aFvGfkGSPKywSlUyVDGR2y7nR3JEfLsK5M3D5T6elSD0
-         2pko/q0HZ4AFHMT0tUx5+VQRSvKzC4mCB9lDOVy3tVgZY2efVsvxQi0sjHj86ONOIZbQ
-         IOZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlu6CMkpGWffww+KHxPtwBTRAWgr2RvuJ6rkRxgCHaJAXtG10pgpW8TbPRq2jTKoO6AfiwD9Zq16WRj9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWlLovFOE3i8rXptizKhvDarLSkyDA3ky/61dnlhPUw6e3EIVc
-	GYWO3xR9dOScxTCrdbcfshoky/HvRevgmcAcBpZsgOu05pLl76DWk/qVlJ9qYBE=
-X-Google-Smtp-Source: AGHT+IHsTS8iXYCxVVG4r6awYj1PyZMeOcTmX8+hwB7h5vhx6IxPbluJrOvTMvtp8iHvvANjKW2aAA==
-X-Received: by 2002:a17:902:c40a:b0:202:1bb6:1897 with SMTP id d9443c01a7336-20b367e4b7emr217898405ad.14.1727714434128;
-        Mon, 30 Sep 2024 09:40:34 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:6561:7ef:acea:822e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e357e8sm56058175ad.187.2024.09.30.09.40.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 09:40:33 -0700 (PDT)
-Date: Mon, 30 Sep 2024 10:40:30 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
-	linux-remoteproc@vger.kernel.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-Message-ID: <ZvrUfoTM6s/jv9Nv@p14s>
-References: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsEgV8Jpl7cZOKmi9PBNZ0visSAW8tgZdVZJ/Xn0RjoFrfK6QCEqyAxUQoNs/sMN1a568etufX1oxCGQaAZ/ZPdUdocZcoXVh9TklhAevZOzA1xUbNRwdMwCsyyiPYlfx9XVlpPxidb0iDvITRT6A9nArAKy5qP6Bo8rnUqZ7jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNRpNjOD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96FA3C4CEC7;
+	Mon, 30 Sep 2024 16:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727714476;
+	bh=QbApHv7YO8fwsTHXzGN74yxmkRh/G1XP15EyHwKkAJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HNRpNjODTA46B4864nC/+jWmRHvhEGqasnIfqSICU3XUE7b4x7P8b8iG9/qCtougA
+	 y68hF2W/7I4EV2k7rI2s3tLlAXN7Cni4CdQwUV97GdGVF8B13ErqW0NxciiAnQpV+c
+	 Q4SHstTZi9bo1xQJfaGW6FJ53/NDHMbX5jtdtIhLfWZYEgfSlnIBAUulhS60jCjREP
+	 SCuIzgQKeSPvCIKzSL23VKLHvHkyTE7Xu0yxrMH3DkCoVniej3U9zvC+aIGb4fIhbD
+	 pvgMjgW2SkBHvAqommPTmj3b4tDXoJU9BCtpAdMAhyf98YfWYaX4lfO6VioArG/JNH
+	 KsZ/00cRj4f6A==
+Date: Mon, 30 Sep 2024 09:41:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, martin.petersen@oracle.com,
+	catherine.hoang@oracle.com, mcgrof@kernel.org,
+	ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v6 6/7] xfs: Validate atomic writes
+Message-ID: <20240930164116.GP21853@frogsfrogsfrogs>
+References: <20240930125438.2501050-1-john.g.garry@oracle.com>
+ <20240930125438.2501050-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,46 +62,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+In-Reply-To: <20240930125438.2501050-7-john.g.garry@oracle.com>
 
-On Mon, Aug 12, 2024 at 03:28:11PM +0800, Lu Baolu wrote:
-> An iommu domain is allocated in rproc_enable_iommu() and is attached to
-> rproc->dev.parent in the same function.
+On Mon, Sep 30, 2024 at 12:54:37PM +0000, John Garry wrote:
+> Validate that an atomic write adheres to length/offset rules. Currently
+> we can only write a single FS block.
 > 
-> Use iommu_paging_domain_alloc() to make it explicit.
+> For an IOCB with IOCB_ATOMIC set to get as far as xfs_file_dio_write(),
+> FMODE_CAN_ATOMIC_WRITE will need to be set for the file; for this,
+> ATOMICWRITES flags would also need to be set for the inode.
 > 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-> Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  drivers/remoteproc/remoteproc_core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-
-I have applied this patch.
-
-Thanks,
-Mathieu
-
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index f276956f2c5c..eb66f78ec8b7 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
->  		return 0;
->  	}
+>  fs/xfs/xfs_file.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 412b1d71b52b..fa6a44b88ecc 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -688,6 +688,13 @@ xfs_file_dio_write(
+>  	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
+>  	size_t			count = iov_iter_count(from);
 >  
-> -	domain = iommu_domain_alloc(dev->bus);
-> -	if (!domain) {
-> +	domain = iommu_paging_domain_alloc(dev);
-> +	if (IS_ERR(domain)) {
->  		dev_err(dev, "can't alloc iommu domain\n");
-> -		return -ENOMEM;
-> +		return PTR_ERR(domain);
->  	}
->  
->  	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+> +	if (iocb->ki_flags & IOCB_ATOMIC) {
+> +		if (count != ip->i_mount->m_sb.sb_blocksize)
+> +			return -EINVAL;
+> +		if (!generic_atomic_write_valid(iocb, from))
+> +			return -EINVAL;
+> +	}
+
+Does xfs_file_write_iter need a catch-all so that we don't fall back to
+buffered write for a directio write that returns ENOTBLK?
+
+	if (iocb->ki_flags & IOCB_DIRECT) {
+		/*
+		 * Allow a directio write to fall back to a buffered
+		 * write *only* in the case that we're doing a reflink
+		 * CoW.  In all other directio scenarios we do not
+		 * allow an operation to fall back to buffered mode.
+		 */
+		ret = xfs_file_dio_write(iocb, from);
+		if (ret != -ENOTBLK || (iocb->ki_flags & IOCB_ATOMIC))
+			return ret;
+	}
+
+IIRC iomap_dio_rw can return ENOTBLK if pagecache invalidation fails for
+the region that we're trying to directio write.
+
+--D
+
+> +
+>  	/* direct I/O must be aligned to device logical sector size */
+>  	if ((iocb->ki_pos | count) & target->bt_logical_sectormask)
+>  		return -EINVAL;
 > -- 
-> 2.34.1
+> 2.31.1
+> 
 > 
 
