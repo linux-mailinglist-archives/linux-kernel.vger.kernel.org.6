@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-343859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E8698A068
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:25:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F6798A065
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA87283310
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:25:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25A4F1C22B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7EE7192D70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8E2192D6A;
 	Mon, 30 Sep 2024 11:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="s06oSpFg"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="D92IekYt"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5A191F8D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177A418EFC9;
 	Mon, 30 Sep 2024 11:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695311; cv=none; b=DvBhEY8XDmSq12GngvebVc087qFtJJHdl3h3bmk0nYU0D6X+qg0bRjFQbhFqfykj3BlaTE5x5vH6URLV55khNZkZgbiRnUiKO817OxHjDralaGAOb/66oAnV11IUnTjPKyyJpMCcK1oqfxx076ofhJGty7Um19TPnmNSxY2RB5A=
+	t=1727695311; cv=none; b=MmwR3paAncPNBnhVJj7vGcHvE6W/diRM5yBpN/ZqR2zy/lr7KyQbh3ATeJUOVQBM4sKHk+ugcPe4gZKi/PNQgKcoV2ut+bbudwNLp2AgeTtq2Rpl6PbTxITMFQmoVg1ei5ToVTVj9No6m4koxyAtprkTwh3L9zU06jg9MfFKyWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695311; c=relaxed/simple;
-	bh=PgwIMygjWOyNNQQhqkAx39w3297DqiDCBEhTHKUEBpo=;
+	bh=tuE2Da4z2t/+tCz+SmNxdVPgCvfDimpR2ppsoJ+MyMc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A9sq9N9TiyAqsQs8aGzmAGm27PCY5xta4T8d1d/K/v9s9jm/JrFpvm43SanYyQ6IabiKbvJhcmDWHdaJ5F9EfeEvG1bgjcvTbh8JxUnD+fEkjYliUrlOqQGc/NH5v6XnPtyZ5BlXJkRFBHBZk6suRNk8nTSL2FyfrSXbkO8GBFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=s06oSpFg; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=RytfaT209pjojtuQV19wGas/gcsZe+mhK2HXlFSdItsAnnIma8w7i3YP0SiFoGLJG7I7vuSZ4d4Xj6Z9XWSIrZfqf9cfGhRI7ArYkvZrBvvGa8CVpilxeKtJY5bpuxO5qv4/pXfFlGGvTjYqqgU7+/5NHpRZmjPtQmttUJxTjPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=D92IekYt; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=tiAMZdHfzRRadEJUpeFbdHkU5NVv6AAREPGmWLFa9N8=;
-  b=s06oSpFgNGj4vEEvBslzvjOKYQsmgjcckUHnAXT0NQdiYMYLFkYqyLKf
-   GIj0BnZ4kI2kL8qj2nuqgVAZUbMdVmTG0ceim4mOrZKYqF/Dvm+x+n11e
-   /1Y0OhDC2c3e2uNvX0jyHlKwa1N6HD6/W9OfIhrQDKI1XoM8vqiZNT4SE
-   c=;
+  bh=nyVJ0vMCjCV702KmxvH+Ho117GiwdtzCNKNDXngnBZE=;
+  b=D92IekYt3BLgXbUetq6phF8FQ/uwXsEz3sNkDdhPJyIBGG5qm7aRXeXO
+   7j7590MUgJCu8vI0ltdx3bah1E8wZLUboPqjumoduFA6bHpkfDRUs6jtW
+   bKMKQ5ojyGtMgEWU5xcUebnuMk5OCd98+f5flcVDOvcjbss+K+4YsoQMe
+   k=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956887"
+   d="scan'208";a="185956888"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:27 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: "David S. Miller" <davem@davemloft.net>
+To: Lee Jones <lee@kernel.org>
 Cc: kernel-janitors@vger.kernel.org,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 16/35] net: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:02 +0200
-Message-Id: <20240930112121.95324-17-Julia.Lawall@inria.fr>
+Subject: [PATCH 17/35] mfd: atmel-smc: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:03 +0200
+Message-Id: <20240930112121.95324-18-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -74,22 +74,32 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- net/socket.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/atmel-smc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/socket.c b/net/socket.c
-index 601ad74930ef..f4ac3939fbb0 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -235,8 +235,8 @@ static const struct net_proto_family __rcu *net_families[NPROTO] __read_mostly;
+diff --git a/drivers/mfd/atmel-smc.c b/drivers/mfd/atmel-smc.c
+index e560066e5885..4628ca14e766 100644
+--- a/drivers/mfd/atmel-smc.c
++++ b/drivers/mfd/atmel-smc.c
+@@ -255,8 +255,8 @@ EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_apply);
  /**
-  *	move_addr_to_kernel	-	copy a socket address into kernel space
-  *	@uaddr: Address in user space
-- *	@kaddr: Address in kernel space
-  *	@ulen: Length in user space
-+ *	@kaddr: Address in kernel space
+  * atmel_hsmc_cs_conf_apply - apply an SMC CS conf
+  * @regmap: the HSMC regmap
+- * @cs: the CS id
+  * @layout: the layout of registers
++ * @cs: the CS id
+  * @conf: the SMC CS conf to apply
   *
-  *	The address is copied into kernel space. If the provided address is
-  *	too long an error code of -EINVAL is returned. If the copy gives
+  * Applies an SMC CS configuration.
+@@ -296,8 +296,8 @@ EXPORT_SYMBOL_GPL(atmel_smc_cs_conf_get);
+ /**
+  * atmel_hsmc_cs_conf_get - retrieve the current SMC CS conf
+  * @regmap: the HSMC regmap
+- * @cs: the CS id
+  * @layout: the layout of registers
++ * @cs: the CS id
+  * @conf: the SMC CS conf object to store the current conf
+  *
+  * Retrieve the SMC CS configuration.
 
 
