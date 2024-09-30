@@ -1,318 +1,170 @@
-Return-Path: <linux-kernel+bounces-343885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E20C98A0B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2296298A0B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91024B28B60
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469431C25CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F12018FDD5;
-	Mon, 30 Sep 2024 11:28:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FF18E03C;
-	Mon, 30 Sep 2024 11:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E130019046D;
+	Mon, 30 Sep 2024 11:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X5VXd/mH"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45F418E047
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695714; cv=none; b=TK6HLT1EaVnHM1N0RjoOmstVD3ZYyHavKF+JW1cUbdwEWsq5zG1KWHbKmW+RqDCJysYby+JdcHoOAm0kGpZW3UpFO+f/TqBeOrICXgJwBfqAYi6Is6MA7IgJGbGnBeeCVLfhlmtESJdfdhbJZGMNynwGH5peMztN92u0UNyHHJ4=
+	t=1727695742; cv=none; b=kChzu7U6SifAadEUgb7JRo2shf09EYwnR58xcIHuQQv5wnByl4rRiBsjV0NPQtrp0kP0TVS2iimJvQqdnKtmGPZt/hrteTiAz7lf9CW4T2hbcZYHr+OEuMuzkMSzSaw7v1Skt/cm8YXDhrZvO8mrvxLJLhip6waYVC47CBxjclM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695714; c=relaxed/simple;
-	bh=i93qFv47msjB3dJ7ItEWeVxAXtW9br2+mD4Dfu9f3yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SZ2cJT9LGhpUUawZ37iWw5vnjYBSFEwQGV/lGe2Ckd4cj+0TsSelUix3G8UZoceMmM4p6ntA8VQbNmoke02mWkm1DBsEZva/Vzrd125CJy9nErUKhgx/0djyseGZ2UNoTPw/JhBZp2gobmDnguUGAvi4W1ejWuHaMDHelcdDkhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67F22DA7;
-	Mon, 30 Sep 2024 04:29:01 -0700 (PDT)
-Received: from [10.57.76.28] (unknown [10.57.76.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E3C73F58B;
-	Mon, 30 Sep 2024 04:28:28 -0700 (PDT)
-Message-ID: <43d92e28-1fef-4408-b4a4-efede6bed263@arm.com>
-Date: Mon, 30 Sep 2024 12:28:26 +0100
+	s=arc-20240116; t=1727695742; c=relaxed/simple;
+	bh=GTATx1ZjgRAIeRb4gVhlCtdMSImGj/h83r+eF+k6xOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=evMDHzfV1rKK5OoMJP7jSdzxbEg7IMTfLDFH9x2+TXtF/kvoH6cqfgQKNahTWHN1DXs/By1cQJzbAjIQkFQNrFpxZ9On8p+ldGR//RzXhLY4jqDjiot2zRdPe1UwezezVjxf4tKgpHs8s2ew+Ez8OaVvoQ8t6Jv7wg/QmeZZsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X5VXd/mH; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e04801bb65so2378173b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:29:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727695740; x=1728300540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ESV9e65f4opp3oYhgp6rCKPns7ySl2JgdhTmlcbTiZU=;
+        b=X5VXd/mHV7Dm6OJ7MXNbeLSGpHHFdF1OxtD8B+rBt50P6C6O95q3/kQ2LUzABFax6O
+         RRLGAVvJe40ZrXGKXjJ0NBg19T6Lezjy4BTbipgmmwJRvn5qG2U/mNBl5GfCRSrHohbc
+         mKf8yQDZeLYr1Ufh+xYcdM3sG7L01TFkVeTyxcdL+ti/l21cOCGDmh4j/cP86slxGthJ
+         grZptFAhCUsIwoxU1vtJN02cCjR/3By8YWg7MrL2yia+itOMezd5+TreFFJJY/FFxlFc
+         ckRnDVBt+fqFvmrlt+PBYAG/GDRJjjtY0XRXr+v7vp38tK1BCFK1VWFCzYMJoR0gDGwh
+         ebeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727695740; x=1728300540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ESV9e65f4opp3oYhgp6rCKPns7ySl2JgdhTmlcbTiZU=;
+        b=ju28iQRULRUW00RPbICkzcc/azsCFnps9AMlUa/mT9JttffI3Vm1wYynxY6czKLNFB
+         vXKDvFxTADgT5iPjb48gnqauPEmw+McJBntPD36B2nSuLHP32IQQEojEWrLgvjZmwG97
+         p/n3N7uMghtS70SjK576xV/g70poayk3f2QAVSXTGIqutTXtX9adOXRZeM5GDFZRFnR7
+         eDC1+D7D+7br0tiK7Nghob4ZhxbteroS4NJwV6VxdyNx8hfs8CZxPtMnArSJiHT4M1dC
+         ZAdJkO2KpEskXz8SrQ3SkGhizvvtPAw7WDppgSbEjOedzZ9NesfTgUx+f9EnYsUiU0Hd
+         I77Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWxwmbArOgQFCXPr0AvgbMrxpuQ9rOuq5E8otcj0RST4ssDSDFKHrNu6xAGFdmZ1WQzR60Z7xzi8Wek+ZM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfjq+YyMk2g9E/1Xkn16Ce1A+AraLHq1ycmrMEAiybS+KIYyFt
+	m2zJgmMA0N1Z6hidXnvDO9LeYlvluq2Cn6LbhAa0I7k4mDS3JhtYXnr7r+sKdFqjyKa9Swn/1Rm
+	rIcpqrG1qIZnCoxPbFxgbFj/IubW+OEyQoOqOhg==
+X-Google-Smtp-Source: AGHT+IHlrk+6ylJNPNwIsyMeU+6MgSCPdtd1Tld1jqABl45ABUDHKKwEQnK828Pbh+a/oWL/55rN02vH87DWZloHkoc=
+X-Received: by 2002:a05:6808:3387:b0:3e2:9e00:5a16 with SMTP id
+ 5614622812f47-3e3939600f3mr6239921b6e.11.1727695739914; Mon, 30 Sep 2024
+ 04:28:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
- accounting
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org
-References: <5c4d1008-261f-4c47-ab73-c527675484a4@arm.com>
- <bq6lctwgpsxvrdaajmjo3xdjt32srmsxvjhtzyebdj6izjzoaw@6duby4axg3pf>
- <ef799587-f7c2-472a-8550-9c40a395eccb@arm.com>
- <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
- <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
- <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240930103157.49259-1-brgl@bgdev.pl> <20240930103157.49259-2-brgl@bgdev.pl>
+In-Reply-To: <20240930103157.49259-2-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 30 Sep 2024 13:28:46 +0200
+Message-ID: <CAMRc=MfCOuTweTVObh5qP0CftUM_W9cduT2R=r+LP3FKrS=8ww@mail.gmail.com>
+Subject: Re: [PATCH 2/3] gpio: syscon: use generic device properties
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/09/2024 15:53, Adrián Larumbe wrote:
-> On 25.09.2024 10:56, Steven Price wrote:
->> On 23/09/2024 21:43, Adrián Larumbe wrote:
->>> Hi Steve,
->>>
->>> On 23.09.2024 09:55, Steven Price wrote:
->>>> On 20/09/2024 23:36, Adrián Larumbe wrote:
->>>>> Hi Steve, thanks for the review.
->>>>
->>>> Hi Adrián,
->>>>
->>>>> I've applied all of your suggestions for the next patch series revision, so I'll
->>>>> only be answering to your question about the calc_profiling_ringbuf_num_slots
->>>>> function further down below.
->>>>>
->>>>
->>>> [...]
->>>>
->>>>>>> @@ -3003,6 +3190,34 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
->>>>>>>  	.free_job = queue_free_job,
->>>>>>>  };
->>>>>>>  
->>>>>>> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->>>>>>> +				       u32 cs_ringbuf_size)
->>>>>>> +{
->>>>>>> +	u32 min_profiled_job_instrs = U32_MAX;
->>>>>>> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
->>>>>>> +
->>>>>>> +	/*
->>>>>>> +	 * We want to calculate the minimum size of a profiled job's CS,
->>>>>>> +	 * because since they need additional instructions for the sampling
->>>>>>> +	 * of performance metrics, they might take up further slots in
->>>>>>> +	 * the queue's ringbuffer. This means we might not need as many job
->>>>>>> +	 * slots for keeping track of their profiling information. What we
->>>>>>> +	 * need is the maximum number of slots we should allocate to this end,
->>>>>>> +	 * which matches the maximum number of profiled jobs we can place
->>>>>>> +	 * simultaneously in the queue's ring buffer.
->>>>>>> +	 * That has to be calculated separately for every single job profiling
->>>>>>> +	 * flag, but not in the case job profiling is disabled, since unprofiled
->>>>>>> +	 * jobs don't need to keep track of this at all.
->>>>>>> +	 */
->>>>>>> +	for (u32 i = 0; i < last_flag; i++) {
->>>>>>> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
->>>>>>> +			min_profiled_job_instrs =
->>>>>>> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
->>>>>>> +}
->>>>>>
->>>>>> I may be missing something, but is there a situation where this is
->>>>>> different to calc_job_credits(0)? AFAICT the infrastructure you've added
->>>>>> can only add extra instructions to the no-flags case - whereas this
->>>>>> implies you're thinking that instructions may also be removed (or replaced).
->>>>>>
->>>>>> Steve
->>>>>
->>>>> Since we create a separate kernel BO to hold the profiling information slot, we
->>>>> need one that would be able to accomodate as many slots as the maximum number of
->>>>> profiled jobs we can insert simultaneously into the queue's ring buffer. Because
->>>>> profiled jobs always take more instructions than unprofiled ones, then we would
->>>>> usually need fewer slots than the number of unprofiled jobs we could insert at
->>>>> once in the ring buffer.
->>>>>
->>>>> Because we represent profiling metrics with a bit mask, then we need to test the
->>>>> size of the CS for every single metric enabled in isolation, since enabling more
->>>>> than one will always mean a bigger CS, and therefore fewer jobs tracked at once
->>>>> in the queue's ring buffer.
->>>>>
->>>>> In our case, calling calc_job_credits(0) would simply tell us the number of
->>>>> instructions we need for a normal job with no profiled features enabled, which
->>>>> would always requiere less instructions than profiled ones, and therefore more
->>>>> slots in the profiling info kernel BO. But we don't need to keep track of
->>>>> profiling numbers for unprofiled jobs, so there's no point in calculating this
->>>>> number.
->>>>>
->>>>> At first I was simply allocating a profiling info kernel BO as big as the number
->>>>> of simultaneous unprofiled job slots in the ring queue, but Boris pointed out
->>>>> that since queue ringbuffers can be as big as 2GiB, a lot of this memory would
->>>>> be wasted, since profiled jobs always require more slots because they hold more
->>>>> instructions, so fewer profiling slots in said kernel BO.
->>>>>
->>>>> The value of this approach will eventually manifest if we decided to keep track of
->>>>> more profiling metrics, since this code won't have to change at all, other than
->>>>> adding new profiling flags in the panthor_device_profiling_flags enum.
->>>>
->>>> Thanks for the detailed explanation. I think what I was missing is that
->>>> the loop is checking each bit flag independently and *not* checking
->>>> calc_job_credits(0).
->>>>
->>>> The check for (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL) is probably what
->>>> confused me - that should be completely redundant. Or at least we need
->>>> something more intelligent if we have profiling bits which are not
->>>> mutually compatible.
->>>
->>> I thought of an alternative that would only test bits that are actually part of
->>> the mask:
->>>
->>> static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->>> 				       u32 cs_ringbuf_size)
->>> {
->>> 	u32 min_profiled_job_instrs = U32_MAX;
->>> 	u32 profiling_mask = PANTHOR_DEVICE_PROFILING_ALL;
->>>
->>> 	while (profiling_mask) {
->>> 		u32 i = ffs(profiling_mask) - 1;
->>> 		profiling_mask &= ~BIT(i);
->>> 		min_profiled_job_instrs =
->>> 			min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
->>> 	}
->>>
->>> 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
->>> }
->>>
->>> However, I don't think this would be more efficient, because ffs() is probably
->>> fetching the first set bit by performing register shifts, and I guess this would
->>> take somewhat longer than iterating over every single bit from the last one,
->>> even if also matching them against the whole mask, just in case in future
->>> additions of performance metrics we decide to leave some of the lower
->>> significance bits untouched.
->>
->> Efficiency isn't very important here - we're not on a fast path, so it's
->> more about ensuring the code is readable. I don't think the above is
->> more readable then the original for loop.
->>
->>> Regarding your question about mutual compatibility, I don't think that is an
->>> issue here, because we're testing bits in isolation. If in the future we find
->>> out that some of the values we're profiling cannot be sampled at once, we can
->>> add that logic to the sysfs knob handler, to make sure UM cannot set forbidden
->>> profiling masks.
->>
->> My comment about compatibility is because in the original above you were
->> calculating the top bit of PANTHOR_DEVICE_PROFILING_ALL:
->>
->>> u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
->>
->> then looping between 0 and that bit:
->>
->>> for (u32 i = 0; i < last_flag; i++) {
->>
->> So the test:
->>
->>> if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
->>
->> would only fail if PANTHOR_DEVICE_PROFILING_ALL had gaps in the bits
->> that it set. The only reason I can think for that to be true in the
->> future is if there is some sort of incompatibility - e.g. maybe there's
->> an old and new way of doing some form of profiling with the old way
->> being kept for backwards compatibility. But I suspect if/when that is
->> required we'll need to revisit this function anyway. So that 'if'
->> statement seems completely redundant (it's trivially always true).
-> 
-> I think you're right about this. Would you be fine with the rest of the patch
-> as it is in revision 8 if I also deleted this bitmask check?
+On Mon, Sep 30, 2024 at 12:32=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> OF-specific routines should not be used unless necessary. Generic device
+> properties are preferred so switch to using them in the driver code.
+>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/gpio/gpio-syscon.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
+> index 638095d5f459..06c07085feb8 100644
+> --- a/drivers/gpio/gpio-syscon.c
+> +++ b/drivers/gpio/gpio-syscon.c
+> @@ -9,7 +9,6 @@
+>  #include <linux/gpio/driver.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+> -#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>
+> @@ -208,12 +207,13 @@ static int syscon_gpio_probe(struct platform_device=
+ *pdev)
+>         struct device_node *np =3D dev->of_node;
+>         int ret;
+>         bool use_parent_regmap =3D false;
+> +       unsigned int props[] =3D { 0, 0 };
+>
+>         priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>         if (!priv)
+>                 return -ENOMEM;
+>
+> -       priv->data =3D of_device_get_match_data(dev);
+> +       priv->data =3D device_get_match_data(dev);
+>
+>         priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "gpio,syscon=
+-dev");
+>         if (IS_ERR(priv->syscon) && np->parent) {
+> @@ -224,19 +224,15 @@ static int syscon_gpio_probe(struct platform_device=
+ *pdev)
+>                 return PTR_ERR(priv->syscon);
+>
+>         if (!use_parent_regmap) {
+> -               ret =3D of_property_read_u32_index(np, "gpio,syscon-dev",=
+ 1,
+> -                                                &priv->dreg_offset);
+> -               if (ret)
+> +               ret =3D device_property_read_u32_array(dev, "gpio,syscon-=
+dev",
+> +                                                    props, 2);
+> +               if (ret < 0)
+>                         dev_err(dev, "can't read the data register offset=
+!\n");
+> -
+> -               priv->dreg_offset <<=3D 3;
+> -
+> -               ret =3D of_property_read_u32_index(np, "gpio,syscon-dev",=
+ 2,
+> -                                                &priv->dir_reg_offset);
+> -               if (ret)
+> +               if (ret !=3D 2)
 
-Yes the rest of it looks fine.
+Sorry, this is wrong, it doesn't return the prop count unless val is NULL.
 
-Thanks,
-Steve
+I'll send a better version.
 
->> Steve
->>
->>>> I'm also not entirely sure that the amount of RAM saved is significant,
->>>> but you've already written the code so we might as well have the saving ;)
->>>
->>> I think this was more evident before Boris suggested we reduce the basic slot
->>> size to that of a single cache line, because then the minimum profiled job
->>> might've taken twice as many ringbuffer slots as a nonprofiled one. In that
->>> case, we would need a half as big BO for holding the sampled data (in case the
->>> least size profiled job CS would extend over the 16 instruction boundary).
->>> I still think this is a good idea so that in the future we don't need to worry
->>> about adjusting the code that deals with preparing the right boilerplate CS,
->>> since it'll only be a matter of adding new instructions inside prepare_job_instrs().
->>>
->>>> Thanks,
->>>> Steve
->>>>
->>>>> Regards,
->>>>> Adrian
->>>>>
->>>>>>> +
->>>>>>>  static struct panthor_queue *
->>>>>>>  group_create_queue(struct panthor_group *group,
->>>>>>>  		   const struct drm_panthor_queue_create *args)
->>>>>>> @@ -3056,9 +3271,35 @@ group_create_queue(struct panthor_group *group,
->>>>>>>  		goto err_free_queue;
->>>>>>>  	}
->>>>>>>  
->>>>>>> +	queue->profiling.slot_count =
->>>>>>> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
->>>>>>> +
->>>>>>> +	queue->profiling.slots =
->>>>>>> +		panthor_kernel_bo_create(group->ptdev, group->vm,
->>>>>>> +					 queue->profiling.slot_count *
->>>>>>> +					 sizeof(struct panthor_job_profiling_data),
->>>>>>> +					 DRM_PANTHOR_BO_NO_MMAP,
->>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
->>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
->>>>>>> +					 PANTHOR_VM_KERNEL_AUTO_VA);
->>>>>>> +
->>>>>>> +	if (IS_ERR(queue->profiling.slots)) {
->>>>>>> +		ret = PTR_ERR(queue->profiling.slots);
->>>>>>> +		goto err_free_queue;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
->>>>>>> +	if (ret)
->>>>>>> +		goto err_free_queue;
->>>>>>> +
->>>>>>> +	/*
->>>>>>> +	 * Credit limit argument tells us the total number of instructions
->>>>>>> +	 * across all CS slots in the ringbuffer, with some jobs requiring
->>>>>>> +	 * twice as many as others, depending on their profiling status.
->>>>>>> +	 */
->>>>>>>  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
->>>>>>>  			     group->ptdev->scheduler->wq, 1,
->>>>>>> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
->>>>>>> +			     args->ringbuf_size / sizeof(u64),
->>>>>>>  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
->>>>>>>  			     group->ptdev->reset.wq,
->>>>>>>  			     NULL, "panthor-queue", group->ptdev->base.dev);
->>>>>>> @@ -3354,6 +3595,7 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>>>  {
->>>>>>>  	struct panthor_group_pool *gpool = pfile->groups;
->>>>>>>  	struct panthor_job *job;
->>>>>>> +	u32 credits;
->>>>>>>  	int ret;
->>>>>>>  
->>>>>>>  	if (qsubmit->pad)
->>>>>>> @@ -3407,9 +3649,16 @@ panthor_job_create(struct panthor_file *pfile,
->>>>>>>  		}
->>>>>>>  	}
->>>>>>>  
->>>>>>> +	job->profiling.mask = pfile->ptdev->profile_mask;
->>>>>>> +	credits = calc_job_credits(job->profiling.mask);
->>>>>>> +	if (credits == 0) {
->>>>>>> +		ret = -EINVAL;
->>>>>>> +		goto err_put_job;
->>>>>>> +	}
->>>>>>> +
->>>>>>>  	ret = drm_sched_job_init(&job->base,
->>>>>>>  				 &job->group->queues[job->queue_idx]->entity,
->>>>>>> -				 1, job->group);
->>>>>>> +				 credits, job->group);
->>>>>>>  	if (ret)
->>>>>>>  		goto err_put_job;
->>>>>>>  
->>>>>
+Bart
 
+>                         dev_dbg(dev, "can't read the dir register offset!=
+\n");
+>
+> -               priv->dir_reg_offset <<=3D 3;
+> +               priv->dreg_offset =3D props[0] << 3;
+> +               priv->dir_reg_offset =3D props[1] << 3;
+>         }
+>
+>         priv->chip.parent =3D dev;
+> --
+> 2.43.0
+>
 
