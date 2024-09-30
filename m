@@ -1,173 +1,159 @@
-Return-Path: <linux-kernel+bounces-343668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8511989DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:21:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862D8989DF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1345E1C21F6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBF92834DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E6F18787B;
-	Mon, 30 Sep 2024 09:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870DB1885AA;
+	Mon, 30 Sep 2024 09:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1WGSQNrl"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Hh+UI6Hb"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAC017C8B;
-	Mon, 30 Sep 2024 09:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFEB188018
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688111; cv=none; b=Nz7tL5wb1ZeCpZ46UK+erbejfdjYLLP7P9mocgQc9yW3yv7XqobX4hNsyvkTq0sYTmT+oy66rULBekL5IPONiPXyAJy2AyAq6BEY3Px4QR2AYbsTv2K6TsgrBOch4Vo5q/HNFan0j3oo7CUQncLo0hEGBtyB/xYpzqVjANCg1PQ=
+	t=1727688114; cv=none; b=m6cnfEKXhiHFlVx+zsKDfSf6i0vlPVHR/1Dq/9R4z+Sr8XPnn2nedUh4MDiuMpL30nO+jnlf/Y4HTl20haEJmpPmP/CJquH9qTKoAhoXuMZ+ElSrO/g9+TIKnHLzBfzqAL1gVmWfIG0CV51P5KRmng6MNjvwHEZMRThacH+oh+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688111; c=relaxed/simple;
-	bh=dWLqrkPN5YAJbpjHClBIUqfBaHM5NfV7gkZ78U7b10Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h0MIq88WuUsmyMWbIknOQ6Oh3vWUYVyWPNdOcs3YBEj1pt7zkr9szx676VlIAEKKzj6TrXGkNfNuK6sVSWPEUCalwTUAg9A5tfHrEU7yCt2mF2M6Pbr6YDJvxTJEzrs9irg+3gbbEbuuUvSrQG4QSH+uaGYibLqL4gybw6Fs2sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1WGSQNrl; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dWLqrkPN5YAJbpjHClBIUqfBaHM5NfV7gkZ78U7b10Q=; b=1WGSQNrlSi38frUwsI7zzj9YIZ
-	3yYHX8zJCI0L+TI7ojJp4JfKgnayTgXtxc10NQLNgnBXuJxJRWZvmFPQwwH9Zkt0IlpKk/OJubjYu
-	Nei9o/0J5Zut4Gti1jfXhJTJ6UVKAdddOWyBZpX8PYLd7punbcX2piveEKvWjWhQVKzXktXxAN2zT
-	zcxLlNrUK9roySJEvlDBz4TDoaINpQCkHR75i3/SqcHuuu3XJXQ7trrkLXiZlSvI3v1zwPO8Rk55g
-	c1lnyErwpbN6lzI3YAtDLRTQsz0geQiEuzYt9bEd+vgJaDBjcEindcvPM0lpm2hS+mdM/nLdpHgMy
-	LToe0gOQ==;
-Received: from i5e861925.versanet.de ([94.134.25.37] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1svCb9-00041j-Mz; Mon, 30 Sep 2024 11:21:43 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Daniel Semkowicz <dse@thaumatec.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Dragan Simic <dsimic@manjaro.org>,
- Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Vahe Grigoryan <vahe.grigoryan@theobroma-systems.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add power button for RK3399 Puma
-Date: Mon, 30 Sep 2024 11:21:42 +0200
-Message-ID: <2221314.irdbgypaU6@diego>
-In-Reply-To: <5f73e2cf-cb18-4b65-9e42-cf3192aee706@cherry.de>
-References:
- <20240925072945.18757-1-dse@thaumatec.com> <4620941.LvFx2qVVIh@diego>
- <5f73e2cf-cb18-4b65-9e42-cf3192aee706@cherry.de>
+	s=arc-20240116; t=1727688114; c=relaxed/simple;
+	bh=ihqC0moMa0gkpZDgI3toCyjoo7KCGvJzUF/2ZGkTW2U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pIOTsqXgOpSsciGVCKy2UbzOHMsiLO6ya43fbTMcPaaEwEsgfKaYAAlpQqTk9ZxL46tUS/38/IFC12Cy1YhFaHT5joVWKtwEmAaS761OZ4/fY3cAceE7VfpaFzWhtNa2mwr1O2m7niNKdjVKMqdJ0c/BHY/Ujab1aaV97cYPEYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=Hh+UI6Hb; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso6734921fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:21:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google; t=1727688111; x=1728292911; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOxBnbL6b/6p40BCLZnOmRygJyLDz0xvKxJvU54ZAcY=;
+        b=Hh+UI6HbZcPGxjieEM4TxX9epsDZL+qMmDuJ3zyGj9tt418SFzVPGRcZhiOyCP4pEB
+         UR2+4leTrlu8SqUM+nRxznVArjAjWKESk15d7PnU8qxL0M0Say2CsznYeIzGx+5Gg/A0
+         HG4hkthepBPj4si4t/c6pJaoXTRbGfmsTYQ7w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727688111; x=1728292911;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wOxBnbL6b/6p40BCLZnOmRygJyLDz0xvKxJvU54ZAcY=;
+        b=W3kQ/FBOAtm3QrJfneaYULeM4UYseEXXnE3kzWoViccBhiBRFUufNRqzgPOogGtrqr
+         t8xO/KMY297LaMHLjcKsXcuM7x0rNrK8fqjbXwW8CpJZpu1spR+AXcsIE942p1cXaiul
+         jxe6T344zs+QhWL7UPx6yasUA0Re1lgdrZFjOdus1WH798vSIfiYLCS2z8bJNINxmOJp
+         jefU6N+O1Et6b8QXGVqNBWGCtljHeFUNUQ5CPPV85vNjYMtulUFkHrsMq2MYrvWQiM37
+         kEF6VWnU1BphmACFQrb7CUMvxM0vYX+LVSoLdsPcncFQc4apO6BGMtLwbyHeuH0TPvzG
+         Ch6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBbyIovgC0smDH+maklOfZ1KQn2bk2Eo9q7rEJpq9HaY9fj9xsEVND7pLsoqyJrUH6bfoWDfbNiZPzcN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywCNEWgD5Y9zHmcFYJ8FQDk7YP3UT+1Nez1IqTcbI2scDl//KW
+	ieexKlzfZWvlR/f0J9vraCawaRAWkdSTSH+qiltEH2Mua3HDS/5jE+cmiAubOvQ=
+X-Google-Smtp-Source: AGHT+IHL3VXY5tvf4j7T6OaXxNRI231E0ILvU2TYhIVSEH7SSrJfMFW2DpRSkuCTashwRBUmWDv3uw==
+X-Received: by 2002:a2e:be1c:0:b0:2fa:cd3d:4a76 with SMTP id 38308e7fff4ca-2facd3d4c8fmr18895301fa.43.1727688111067;
+        Mon, 30 Sep 2024 02:21:51 -0700 (PDT)
+Received: from localhost ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d4618eecsm12885541fa.118.2024.09.30.02.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 02:21:50 -0700 (PDT)
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>,  Jonathan Corbet <corbet@lwn.net>,  Ulf
+ Hansson <ulf.hansson@linaro.org>,  Rob Herring <robh@kernel.org>,
+  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
+ <conor+dt@kernel.org>,  INAGAKI Hiroshi <musashino.open@gmail.com>,
+  Daniel Golle <daniel@makrotopia.org>,  Christian Brauner
+ <brauner@kernel.org>,  Al Viro <viro@zeniv.linux.org.uk>,  Jan Kara
+ <jack@suse.cz>,  Li Lingfeng <lilingfeng3@huawei.com>,  Christian Heusel
+ <christian@heusel.eu>,  linux-block@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-mmc@vger.kernel.org,  devicetree@vger.kernel.org,  Miquel Raynal
+ <miquel.raynal@bootlin.com>,  Lorenzo Bianconi <lorenzo@kernel.org>,
+  upstream@airoha.com
+Subject: Re: [PATCH v3 3/4] block: add support for partition table defined
+ in OF
+In-Reply-To: <20240929140713.6883-4-ansuelsmth@gmail.com> (Christian Marangi's
+	message of "Sun, 29 Sep 2024 16:06:19 +0200")
+References: <20240929140713.6883-1-ansuelsmth@gmail.com>
+	<20240929140713.6883-4-ansuelsmth@gmail.com>
+Date: Mon, 30 Sep 2024 11:21:53 +0200
+Message-ID: <877catlcni.fsf@prevas.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain
 
-Am Montag, 30. September 2024, 11:11:56 CEST schrieb Quentin Schulz:
-> Hi Heiko,
->=20
-> On 9/30/24 10:49 AM, Heiko St=FCbner wrote:
-> > Hey Quentin, Daniel,
-> >=20
-> > Am Donnerstag, 26. September 2024, 14:34:30 CEST schrieb Quentin Schulz:
-> >> On 9/25/24 9:28 AM, Daniel Semkowicz wrote:
-> >>> There is a PWRBTN# input pin exposed on a Q7 connector. The pin
-> >>> is routed to a GPIO0_A1 through a diode. Q7 specification describes
-> >>> the PWRBTN# pin as a Power Button signal.
-> >>> Configure the pin as KEY_POWER, so it can function as power button and
-> >>> trigger device shutdown.
-> >>> Add the pin definition to RK3399 Puma dts, so it can be reused
-> >>> by derived platforms, but keep it disabled by default.
-> >>>
-> >>> Enable the power button input on Haikou development board.
-> >>>
-> >>> Signed-off-by: Daniel Semkowicz <dse@thaumatec.com>
-> >>
-> >> This works, thanks.
-> >>
-> >> Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
-> >>
-> >> Now I have some questions I wasn't able to answer myself, maybe someone
-> >> can provide some feedback on those :)
-> >>
-> >> We already have a gpio-keys for buttons on Haikou, c.f.
-> >> https://elixir.bootlin.com/linux/v6.11/source/arch/arm64/boot/dts/rock=
-chip/rk3399-puma-haikou.dts#L22.
-> >> Those signals are directly routed to the SoM and follow the Qseven sta=
-ndard.
-> >>
-> >> The same applies to PWRBTN# signal.
-> >>
-> >> However, here we have one gpio-keys for PWRBTN# in Puma DTSI and one
-> >> gpio-keys for the buttons and sliders on Haikou devkit in Haikou DTS.
-> >>
-> >> I'm a bit undecided on where this should go.
-> >>
-> >> Having all button/slider signals following the Qseven standard in Puma
-> >> DTSI and enable the gpio-keys only in the devkit would make sense to m=
-e,
-> >> so that other baseboards could easily make use of it. However, things
-> >> get complicated if the baseboard manufacturer decides to only implement
-> >> **some** of the signals, for which we then need to remove some nodes
-> >> from gpio-keys (and pinctrl entries) since gpio-keys doesn't check the
-> >> "status" property in its child nodes (though that could be fixed). At
-> >> which point, it's not entirely clear if having it in Puma DTSI is
-> >> actually beneficial.
-> >>
-> >> Someone has an opinion/recommendation on that?
-> >=20
-> > I guess from a platform perspective nobody really cares, so as that is
-> > "your" board, it comes down to a policy decision on your part ;-) .
-> >=20
-> > While pins follow the q7 standard, there may very well be some lax
-> > handling of that standard in some places, and I guess gpio lines could
-> > be re-used for something else if needed, as something like the lid-swit=
-ch
-> > is probably non-essential.
-> >=20
-> > Also a gpio-key input does not create that much code-overhead if
-> > replicated, so personally I'd just stick the power-button with the other
-> > buttons in the haikou dts.
-> >=20
-> > Which is also a way better thing than having multiple gpio-keys instanc=
-es
-> > that userspace then has to handle.
-> >=20
->=20
-> Yes, but this also means "code" duplication for whoever needs this for=20
-> their baseboard, instead of just having to add a &gpio_keys { status =3D=
-=20
-> "okay"; }.
+Christian Marangi <ansuelsmth@gmail.com> writes:
 
-Yes :-) .
+> diff --git a/block/partitions/of.c b/block/partitions/of.c
+> new file mode 100644
+> index 000000000000..bc6200eb86b3
+> --- /dev/null
+> +++ b/block/partitions/of.c
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/blkdev.h>
+> +#include <linux/major.h>
+> +#include <linux/of.h>
+> +#include "check.h"
+> +
+> +#define BOOT0_STR	"boot0"
+> +#define BOOT1_STR	"boot1"
+> +
+> +static struct device_node *get_partitions_node(struct device_node *disk_np,
+> +					       struct gendisk *disk)
+> +{
+> +	const char *node_name = "partitions";
+> +
+> +	/*
+> +	 * JEDEC specification 4.4 for eMMC introduced 3 additional partition
+> +	 * present on every eMMC. These additional partition are always hardcoded
+> +	 * from the eMMC driver as boot0, boot1 and rpmb. While rpmb is used to
+> +	 * store keys and exposed as a char device, the other 2 are exposed as
+> +	 * real separate disk with the boot0/1 appended to the disk name.
+> +	 *
+> +	 * Here we parse the disk_name in search for such suffix and select
+> +	 * the correct partition node.
+> +	 */
+> +	if (disk->major == MMC_BLOCK_MAJOR) {
+> +		const char *disk_name = disk->disk_name;
+> +
+> +		if (!memcmp(disk_name + strlen(disk_name) - strlen(BOOT0_STR),
+> +			    BOOT0_STR, sizeof(BOOT0_STR)))
+> +			node_name = "partitions-boot0";
 
-gpio-keys is special in a way in that you could end up with a different set
-of enabled keys per baseboard - dependent on how closely it follows the
-standard.
+If strlen(disk_name) is less than 5 (and I don't know if that's actually
+possible), this well end up doing out-of-bounds access.
 
-So if someone repurposed the lid-switch only, you'd start changing the
-core node again. Hence for the gpio-keys it's probably easier to define
-the set of keys in the baseboard.
+We have a strstarts() helper, could you also add a strends() helper that
+handles this correctly? Something like
 
-It's of course different for regulator-infrastructure and such.
+/**
+ * strends - does @str end with @suffix?
+ * @str: string to examine
+ * @suffix: suffix to look for.
+ */
+static inline bool strends(const char *str, const char *suffix)
+{
+	size_t n = strlen(str);
+        size_t m = strlen(suffix);
+        return n >= m && !memcmp(str + n - m, suffix, m);
+}
 
-> I don't think there's a good solution here, so I would suggest we go=20
-> with everything in Haikou's gpio-keys as Heiko suggested then, @Daniel=20
-> if you agree can you send a v2 for that?
+[or name it str_has_suffix() or str_ends_with(), "strends" is not
+particularly readable, it's unfortunate that the existing strstarts is
+spelled like that].
 
-I'll wait for v2 then.
-
-Heiko
-
-
+Rasmus
 
