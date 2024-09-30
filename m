@@ -1,138 +1,110 @@
-Return-Path: <linux-kernel+bounces-344102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41B798A487
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:17:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C1898A488
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:18:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A34B1F24E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:17:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3E1C23117
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA8118FC67;
-	Mon, 30 Sep 2024 13:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6041190052;
+	Mon, 30 Sep 2024 13:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2L+WaLC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m5245x7c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4315218E755;
-	Mon, 30 Sep 2024 13:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC311E4AE;
+	Mon, 30 Sep 2024 13:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702025; cv=none; b=CMOHmMYVk1jxhikbqiXHCtUE/6C3gbLqYsz0L9nLV39DdFFwU9WXNQ25P7f4wU2K+0zLPzd62swMxmH2mNAF7XlxIYo18+/crCmctctKmDkJtPiFAnMcvKRYgF4Jxz3THVY72BoA0B0qxBfpHtCWyNDlli3/Bbyg/485cISyLqI=
+	t=1727702091; cv=none; b=gSQo5dSAF1ni+iwnDycWD+ZfCFy0YkzPSUIZjfblEdr4W55vjhu4ZOmw9//+fY3FGR+cbrxvYTEoH3E7xYuXhtsXnMycsQXBkNDfrWGqR6Ie3ERbvURAlTJuYbJ6uT3jvBZyREhQ0wZ6Kp2Sb7h1tqmTrTbMPfj+FFyeIqR9LtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702025; c=relaxed/simple;
-	bh=wnhQmf6b9KijXUnLutsEx25F8v79k5sda79kxBSTxRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sM3zF+SmZTt2AQbUJ43QpYWfXneUg6kExTro/EjYrcGd80W/e3dzBB84tKDhEPu50K5Hb7GlYNVdkNZAENU4N/R3xIC9Hykfhbi1Z4TCsM2qzIcNt7HzEhTjomBT1qll9vycmpAQJjCVXZiRSya7OCVLkz7nyGb64LP4J5hHNUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2L+WaLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84702C4AF0B;
-	Mon, 30 Sep 2024 13:13:41 +0000 (UTC)
+	s=arc-20240116; t=1727702091; c=relaxed/simple;
+	bh=P+hHwsbJan/OmL230vi+I8pc3qjQ3x7suvCIDyFKLRQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b8XJzF2RNmyigr5qEliJ57NgTDlX7dFJrNlBzUbtpcNx4RO8dUYVX8GxEhX6vIFxGS1/YAKY038nw2yjeB4MmAYmlSsy34n+YcL1rHgMf9wz5ORItrqlkejeWhNmQOp8YnY6zRY4QqGBr5dJLcDf205P6h+4u6Ia4XICbDaksuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m5245x7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81E8BC4CEC7;
+	Mon, 30 Sep 2024 13:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727702024;
-	bh=wnhQmf6b9KijXUnLutsEx25F8v79k5sda79kxBSTxRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T2L+WaLCsNVCz/b++Y8phnIC2k/qXkmpvwPct75K3z1xzrVGGVzEVFHZrPL7PyL+G
-	 7Gatkyt/YGePfTDYw1AkPJ9B5NSoNqUDgLMEInjUyrq7S9u5q1u5mM+R8ppDhqDo2P
-	 DHCe5FB+dDcnHyxFBkH20jsrU72gAVMsCuG21+iNH1baSGqH1jfcA9C6FrI85qrDOQ
-	 N+1XSiPP0uZflhJ3Tq1/EC9uBmqqyzx8m+G80vE1MfrC2EybCb5yW9LPf9CAPd8A4Y
-	 MMFfA7X9yokP4xK4W4tO72T0nHH/1wh0pGWkYtde1aT9xj6vdAxuyJ57UVRWy1M2Sc
-	 MyzTJJ5xlfnEA==
-Date: Mon, 30 Sep 2024 15:13:38 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	aliceryhl@google.com, mcgrof@kernel.org, russ.weight@linux.dev,
-	dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] device: rust: change the name function
-Message-ID: <ZvqkAuxWZIMZshN_@pollux>
-References: <20240930123957.49181-1-trintaeoitogc@gmail.com>
- <20240930123957.49181-2-trintaeoitogc@gmail.com>
+	s=k20201202; t=1727702090;
+	bh=P+hHwsbJan/OmL230vi+I8pc3qjQ3x7suvCIDyFKLRQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=m5245x7crezQChoH8Ssp/PFjgL4sxZyziH6vo6gykN6GN/vm5oBHrJhv9JavpUWKn
+	 NyvnpFAkUp/C0i+U0YXLoPgkvEb3lUfIQ8Y2DkufPO7zA5BladoeX1H8apepiPWEUl
+	 dT/YnYp8T3g9As9rM9KTvau0eBITTRMvdd0rT6LMxpq0ACymeEwyzV/89t9VPQTYH8
+	 /tOo1mHlylAkn76ooCSX5fK/2rJLhnixIF/GwQLWRncNsdunYJKT9sYRpG4wP5poN5
+	 /NLSvNWNAImENY/R6DobnFWWZL/iypAX5o0JggQrLTk14nDn43B17U0J8sxVPfzLuO
+	 x0C9/F3UrC/Ag==
+Date: Mon, 30 Sep 2024 15:14:45 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Rohan Barar <rohan.barar@gmail.com>
+Cc: sakari.ailus@linux.intel.com, mchehab@kernel.org, hverkuil@xs4all.nl,
+ gregkh@linuxfoundation.org, hdegoede@redhat.com, andy@kernel.org,
+ olli.salonen@iki.fi, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Added ID 1d19:6108 Dexatek Technology Ltd. Video
+ Grabber
+Message-ID: <20240930151440.632561cb@foz.lan>
+In-Reply-To: <20240930130510.1492313-2-rohan.barar@gmail.com>
+References: <20240926235048.283608-2-rohan.barar@gmail.com>
+	<20240930130510.1492313-2-rohan.barar@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930123957.49181-2-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 09:39:56AM -0300, Guilherme Giacomo Simoes wrote:
-> This function increment the refcount by this command "bindings::get_device(prt)".
+Em Mon, 30 Sep 2024 23:05:11 +1000
+Rohan Barar <rohan.barar@gmail.com> escreveu:
 
-'increments', 'bindings::get_device(ptr)'
-
-I'd also say 'by a call to' instead of 'by this command'.
-
-> This can be confuse becuase, the function Arc::from_raw() from standard library, don't increment the refcount.
-
-Neither the stdlib one, nor the kernel one.
-
-> Then, this function "Device::from_raw()" will be renamed for don't make confusing in the future.
-
-Prefer the imperative, e.g. "Hence, rename `Device::from_raw` to avoid
-confusion with other `from_raw` semantics."
-
+> Dear all,
 > 
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-
-Please make sure to run ./scripts/checkpatch.pl before submitting patches.
-
-I see the following two warnings:
-
-WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
-#6:
-This function increment the refcount by this command "bindings::get_device(prt)".
-
-WARNING: 'becuase' may be misspelled - perhaps 'because'?
-#7:
-This can be confuse becuase, the function Arc::from_raw() from standard library, don't increment the refcount.
-
-Please also use a more descriptive commit summary, e.g.
-"rust: device: rename `Device::from_raw`".
-
-> ---
->  rust/kernel/device.rs   | 2 +-
->  rust/kernel/firmware.rs | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> I am following up on my patch submission for the `cx231xx` driver, which adds support for the Dexatek Technology Ltd Video Grabber (USB Device ID: 1d19:6108).
 > 
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index 851018eef885..ecffaff041e0 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -51,7 +51,7 @@ impl Device {
->      ///
->      /// It must also be ensured that `bindings::device::release` can be called from any thread.
->      /// While not officially documented, this should be the case for any `struct device`.
-> -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-> +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
-
-As a follow-up, it probably makes sense to also change the function body to
-just: `unsafe { Self::as_ref(ptr) }.into()`.
-
->          // SAFETY: By the safety requirements, ptr is valid.
->          // Initially increase the reference count by one to compensate for the final decrement once
->          // this newly created `ARef<Device>` instance is dropped.
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index dee5b4b18aec..13a374a5cdb7 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
->  ///
->  /// # fn no_run() -> Result<(), Error> {
->  /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
-> -/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
-> +/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
->  ///
->  /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
->  /// let blob = fw.data();
-> -- 
-> 2.46.2
+> The patch is a straightforward two-line addition and has been thoroughly tested.
 > 
+> For evidence of the device functioning correctly after applying the patch, please refer to: https://github.com/KernelGhost/TapeShift
+> 
+> I would greatly appreciate any feedback or review at your earliest convenience. Thank you!
+
+Your patch is tracked here:
+
+https://patchwork.linuxtv.org/project/linux-media/list/?series=&submitter=rohan+barar&state=&q=&archive=&delegate=
+
+And media CI detected some troubles on it:
+
+https://gitlab.freedesktop.org/linux-media/users/patchwork/-/pipelines/1279069/test_report?job_name=media-patchstyle
+
+It detected problems with your SoB and with the e-mail subject.
+
+The e-mail subject should be something similar to:
+
+	media: cx231xx: Add support for a new Dexatek device
+
+Please check the process about how to submit a patch at the Linux
+documentation and, in particular, how we handle stuff on media at:
+
+	https://www.kernel.org/doc/html/latest/driver-api/media/maintainer-entry-profile.html
+
+Please fix the patch and submit a new version. 
+
+Please notice that this is a busy subsystem. We may take some time to
+review your work, but, provided that it is tracked on patchwork,
+we'll get there ;-)
+
+Regards,
+Mauro
+
+
+Thanks,
+Mauro
 
