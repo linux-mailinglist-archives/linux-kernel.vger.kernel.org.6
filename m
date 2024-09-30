@@ -1,222 +1,153 @@
-Return-Path: <linux-kernel+bounces-344652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F8098AC5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:48:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428ED98AC5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207B01C217D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E024E1F221D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B29198850;
-	Mon, 30 Sep 2024 18:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EBC198E93;
+	Mon, 30 Sep 2024 18:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gErjfmEf"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yuZwlS3s";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfZ7E+oz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBCE5466B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A5365466B;
+	Mon, 30 Sep 2024 18:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727722116; cv=none; b=YvnnFlFWcPfyYmO+R0EDJ6gfjIwCeRuKwpZG6oNu/Fxh13URdGOWnrnX0TdTfeBek/6lFEStQkv0DHzZFLUuMJzjX4+QxbB+9L+UdIvK2cLc6S8P1Vksvpxlh2r/yeOX8GK9SIipFZ+95t/v0devAkAqogNMv8Nd5pkn4oPBveE=
+	t=1727722167; cv=none; b=U4+ce4B89PaHVq47AFKqWBJkgrjgwNUKz+/fHM7VeTDrVYzw7SAqoe1zu8WE5a1GWeV4Z5KZpNn1glq0fMqktqzaHbzPCfh5l76qKMsir8jKZRUnsv2+d/ZFDBilLS6Au/uuPuo3j34t5JR/bjP+VJu6kDgU/ERa6pBPNffcan8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727722116; c=relaxed/simple;
-	bh=V73HocS3qJGceDQ58b/ymNVP4DDs0aiGpFlrLQA+khg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WWsW0R8mNArJg1VWCWHovW/LTx7Vi+OPJnnzHgM+Pr+J0bOTxQP0sR2qwcmm2lRXOHVp9edc9Z6kN17pzol/IAttt+snfVY95ENPBxeO7lzhwSXsG5jDgtb7T18w2Kf36jFQeGxu7nDyias1w5BvkqAuNv+OEdp9ZVnAcKkCejY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gErjfmEf; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25cfee6581so7157574276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:48:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727722114; x=1728326914; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gJ178Z98ooxYmSzZZ3zgy29RsVYz57fPkJggwO7eM/Y=;
-        b=gErjfmEfuTi4FKRRcZA7CyqzrVgSWIWCaoOGqaEiVUF/TXiBieKYJiFfN1Z+m8FReI
-         imLqh7PF+Lkl62SL8KpUNC20JOVZZFsU5Jgatod6x/q8cCxmEbb27tJblFxeV98Ll3+v
-         trWgWyqsP/AIyTuB8UXz7BW6hpdpeN6iy10UGzbFHJsuY/8BidkSKz3uJ4QIQgAE21cW
-         VGHFPLZfRh+ctf5jH2Gbk8DISfPJu6SHhtsvtgWxzhTu/FILtZ6nJ7/SH6igyA56zJHM
-         mawClmGM6piQHzHQ2x6FoVGVCoDZu4miWkg7rPphxyAmVI9vHXuaFSvrXbISBaAOBwWG
-         dGxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727722114; x=1728326914;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gJ178Z98ooxYmSzZZ3zgy29RsVYz57fPkJggwO7eM/Y=;
-        b=EkebYFSScH5TqA8T6DMFsgOGIBsqTJb0KXMVfzFsiD4YUSwe8l/VbvGR3Kpg4EqLWr
-         77rztnaoRFPi5w6uaeajwjq39NZaq9p1zxKFLqLLkINGYy1QgxOa9tc0bk5pPDuotPJs
-         Lr/a6s1K5NYt9DrVzERtY3OZGGTzLIEGRs8+xIoyAlx8qgh/iqgiTuNV+ZRnEjUub+XQ
-         wsjWH3y6gzb5GWPBzRk25T0qaQbG9L3OtjqabFQu/UaUGKMbcFuXE9gCkXUYJvcvf0po
-         A86gn4qqwW8llxNVRIT4k3ro93cO53o3OnqHuCWRZB8xUrFxS16Eevg+w8IQeHuLbotk
-         NdlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWaN7FQT+4LxzFgs/s+23e1oLTynxBIbE1K1urwGeD/Y3N6sNxKzdvAClKgbR9GwGuXtNI3JNUhb6/z7KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+r2LcwuCrbI879zWfrYB+z02K4dKF/+VwSlZFdA+NJhFaZBi9
-	GNa0lgb6a43y+zcGyDdgtfYZNcOVvCxwpNgfeHL8JqgTz1f1iSKmFsbcXqnvDnpQFEdG+zPeLIe
-	G8KNRpU2DHwMWSywt4AHaPbly/Ey/r+1IAQ==
-X-Google-Smtp-Source: AGHT+IHKdJwe3gXbPZkFGl9SvyFbYs0HExcWa86V3vK7SnHa+jNnD780sdTOLoZrHq6baXrlpeXJRarERm5QsET+V/WZbA==
-X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:179f:eecf:1162:3e05])
- (user=isaacmanjarres job=sendgmr) by 2002:a25:fc06:0:b0:e25:c8fc:b78c with
- SMTP id 3f1490d57ef6-e2604c7ea2amr8563276.9.1727722114003; Mon, 30 Sep 2024
- 11:48:34 -0700 (PDT)
-Date: Mon, 30 Sep 2024 11:48:24 -0700
+	s=arc-20240116; t=1727722167; c=relaxed/simple;
+	bh=HSmTiEIHSSrt+pS0buo+96bzFnIJWuKdbQE9PNvqMkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DkWGKRTUdtgt37/QrBpi9fo/ZWhjexkZcftXEhUXzitnNniYA2nMNtcT4hDsgwMw6K3EltXB56LPLk8M505waeEX2V/vXfdaoDoQGn7jC9P+mTKXN0d+wEQw3EI5h6+9TRhnmyc45of7DHE3dtDVlFyUj953EcLWpIShJg+X6A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yuZwlS3s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfZ7E+oz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 30 Sep 2024 20:49:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727722163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c7AAxiOEhyu5e/1DUPmIOTyp81qWXAG4oUsFN+Oio24=;
+	b=yuZwlS3sPoHFJ+2hTFpyde1A+HsoirGLBrEcDPyl5w2Z79zs/lj/I4wYmsEOrihI7HqO6e
+	iTw4/17/D4dp/tVNlJXTL0QQI0UIlihWW2IMcgZrksxnjVSRtzyXBMEczJmjIRPvWwdnDW
+	6feqpRsjM0pGoOssRJgk8VW/hOWVMsKXWNyoNytvTk6SPI3o+cH8R60aBVYxD6slzznO5C
+	1Gk037DVx2lwimsbw4/v9E6k8z8ITNISS0l7fkg1cGc7MaQDoam70HPtVdXRUFxIEQE5Qv
+	JwpoEwth6uDYGA2dscz1JbIUHL1jDXbUb9JyBIPCBkgP2o2Y35Q1uxlN4kgRFA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727722163;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c7AAxiOEhyu5e/1DUPmIOTyp81qWXAG4oUsFN+Oio24=;
+	b=VfZ7E+oz3kV51WXN26q0oGFgwD/VUbH98UU2auREQA+xODa1DiNqVufbDKJ8zrzCEp6P9J
+	p4wP4PsrpKxyDJBg==
+From: Nam Cao <namcao@linutronix.de>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Andrew Jones <ajones@ventanamicro.com>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: riscv: Fix typo MIMPLID -> MIMPID
+Message-ID: <20240930184915.vFs7xT1l@linutronix.de>
+References: <20240925142532.31808-1-namcao@linutronix.de>
+ <87h6a3fw74.fsf@trenco.lwn.net>
+ <20240929153305.m8IHY_7l@linutronix.de>
+ <87ldzab8np.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20240930184826.3595221-1-isaacmanjarres@google.com>
-Subject: [PATCH v2] printk: Improve memory usage logging during boot
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: surenb@google.com, "Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldzab8np.fsf@trenco.lwn.net>
 
-When the initial printk ring buffer size is updated, setup_log_buf()
-allocates a new ring buffer, as well as a set of meta-data structures
-for the new ring buffer. The function also emits the new size of the
-ring buffer, but not the size of the meta-data structures.
+On Sun, Sep 29, 2024 at 12:46:02PM -0600, Jonathan Corbet wrote:
+> Nam Cao <namcao@linutronix.de> writes:
+> 
+> > On Wed, Sep 25, 2024 at 12:02:39PM -0600, Jonathan Corbet wrote:
+> >> Nam Cao <namcao@linutronix.de> writes:
+> >> 
+> >> > The macro that is really defined is RISCV_HWPROBE_KEY_MIMPID, not
+> >> > RISCV_HWPROBE_KEY_MIMPLID (difference is the 'L').
+> >> >
+> >> > Also, the riscv privileged specification names the register "mimpid", not
+> >> > "mimplid".
+> >> >
+> >> > Correct these typos.
+> >> >
+> >> > Signed-off-by: Nam Cao <namcao@linutronix.de>
+> >> > ---
+> >> > ask me how I found out..
+> >> >
+> >> >  Documentation/arch/riscv/hwprobe.rst | 2 +-
+> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >> >
+> >> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> >> > index 85b709257918..fb0affa61eb9 100644
+> >> > --- a/Documentation/arch/riscv/hwprobe.rst
+> >> > +++ b/Documentation/arch/riscv/hwprobe.rst
+> >> > @@ -51,7 +51,7 @@ The following keys are defined:
+> >> >  * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
+> >> >    defined by the RISC-V privileged architecture specification.
+> >> >  
+> >> > -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
+> >> > +* :c:macro:`RISCV_HWPROBE_KEY_MIMPID`: Contains the value of ``mimpid``, as
+> >> >    defined by the RISC-V privileged architecture specification.
+> >> 
+> >> You should be able to just say RISCV_HWPROBE_KEY_MIMPID() without the
+> >> :c:macro: markup and have the right thing happen.
+> >
+> > My .rst knowledge is limited, so I probably miss something obvious, but I
+> > couldn't get that to work.
+> 
+> It's not RST as such, it's an extension that we've added for th ekernel
+> build. 
+> 
+> > Do you mean something like below? The brackets do not seem to do anything
+> > and get treated as plain text.
+> >
+> > Sorry but you probably need to show me what to do exactly :(
+> >
+> > Best regards,
+> > Nam
+> >
+> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> > index 85b709257918..4b4b4ef0e0f9 100644
+> > --- a/Documentation/arch/riscv/hwprobe.rst
+> > +++ b/Documentation/arch/riscv/hwprobe.rst
+> > @@ -51,7 +51,7 @@ The following keys are defined:
+> >  * :c:macro:`RISCV_HWPROBE_KEY_MARCHID`: Contains the value of ``marchid``, as
+> >    defined by the RISC-V privileged architecture specification.
+> >  
+> > -* :c:macro:`RISCV_HWPROBE_KEY_MIMPLID`: Contains the value of ``mimplid``, as
+> > +* `RISCV_HWPROBE_KEY_MIMPID()`: Contains the value of ``mimpid``, as
+> >    defined by the RISC-V privileged architecture specification.
+> 
+> Try it without the `backquotes`.
 
-This makes it difficult to assess how changing the log buffer size
-impacts memory usage during boot.
+Also doesn't work :(
 
-For instance, increasing the ring buffer size from 512 KB to 1 MB
-through the command line yields an increase of 2304 KB in reserved
-memory at boot, while the only obvious change is the 512 KB
-difference in the ring buffer sizes:
+I digged around a bit, and I think for the thing you mentioned to work,
+parse_headers.pl needs to be use on the header file (hwprobe.h in this
+case), right? And only Documentation/userspace-api/media/ supports that
+script at the moment.
 
-log_buf_len=512K:
-
-printk: log_buf_len: 524288 bytes
-Memory: ... (... 733252K reserved ...)
-
-log_buf_len=1M:
-
-printk: log_buf_len: 1048576 bytes
-Memory: ... (... 735556K reserved ...)
-
-This is because of how the size of the meta-data structures scale with
-the size of the ring buffer.
-
-Even when there aren't changes to the printk ring buffer size (i.e. the
-initial size ==  1 << CONFIG_LOG_BUF_SHIFT), it is impossible to tell
-how much memory is consumed by the printk ring buffer during boot.
-
-Therefore, unconditionally log the sizes of the printk ring buffer
-and its meta-data structures, so that it's easier to understand
-how changing the log buffer size (either through the command line or
-by changing CONFIG_LOG_BUF_SHIFT) affects boot time memory usage.
-
-With the new logs, it is much easier to see exactly why the memory
-increased by 2304 KB:
-
-log_buf_len=512K:
-
-printk: log_buf_len: 524288 bytes
-printk: prb_descs size: 393216 bytes
-printk: printk_infos size: 1441792 bytes
-Memory: ... (... 733252K reserved ...)
-
-log_buf_len=1M:
-
-printk: log_buf_len: 1048576 bytes
-printk: prb_descs size: 786432 bytes
-printk: printk_infos size: 2883584 bytes
-Memory: ... (... 735556K reserved ...)
-
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- kernel/printk/printk.c | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
-
-v1 -> v2:
-- Consolidated the printk memory usage stats into a single line, and
-  summed the printk_info and prb_desc structure sizes into a single
-  stat to make the output more user-friendly.
-- Fixed an error that caused the memory usage stats to be emitted twice
-  when using the default printk buffer.
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index beb808f4c367..9ba7dd8f352f 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -1156,6 +1156,17 @@ static unsigned int __init add_to_rb(struct printk_ringbuffer *rb,
- 
- static char setup_text_buf[PRINTKRB_RECORD_MAX] __initdata;
- 
-+static void print_log_buf_usage_stats(void)
-+{
-+	unsigned int descs_count = log_buf_len >> PRB_AVGBITS;
-+	size_t meta_data_size;
-+
-+	meta_data_size = descs_count * (sizeof(struct prb_desc) + sizeof(struct printk_info));
-+
-+	pr_info("log buffer data + meta data: %u + %zu = %zu bytes\n",
-+		log_buf_len, meta_data_size, log_buf_len + meta_data_size);
-+}
-+
- void __init setup_log_buf(int early)
- {
- 	struct printk_info *new_infos;
-@@ -1185,20 +1196,29 @@ void __init setup_log_buf(int early)
- 	if (!early && !new_log_buf_len)
- 		log_buf_add_cpu();
- 
--	if (!new_log_buf_len)
-+	if (!new_log_buf_len) {
-+		/*
-+		 * If early == 0 here, then we're using the default buffer,
-+		 * but the memory usage stats haven't been printed yet,
-+		 * so do that now.
-+		 */
-+		if (!early)
-+			goto out;
-+
- 		return;
-+	}
- 
- 	new_descs_count = new_log_buf_len >> PRB_AVGBITS;
- 	if (new_descs_count == 0) {
- 		pr_err("new_log_buf_len: %lu too small\n", new_log_buf_len);
--		return;
-+		goto out;
- 	}
- 
- 	new_log_buf = memblock_alloc(new_log_buf_len, LOG_ALIGN);
- 	if (unlikely(!new_log_buf)) {
- 		pr_err("log_buf_len: %lu text bytes not available\n",
- 		       new_log_buf_len);
--		return;
-+		goto out;
- 	}
- 
- 	new_descs_size = new_descs_count * sizeof(struct prb_desc);
-@@ -1261,7 +1281,7 @@ void __init setup_log_buf(int early)
- 		       prb_next_seq(&printk_rb_static) - seq);
- 	}
- 
--	pr_info("log_buf_len: %u bytes\n", log_buf_len);
-+	print_log_buf_usage_stats();
- 	pr_info("early log buf free: %u(%u%%)\n",
- 		free, (free * 100) / __LOG_BUF_LEN);
- 	return;
-@@ -1270,6 +1290,8 @@ void __init setup_log_buf(int early)
- 	memblock_free(new_descs, new_descs_size);
- err_free_log_buf:
- 	memblock_free(new_log_buf, new_log_buf_len);
-+out:
-+	print_log_buf_usage_stats();
- }
- 
- static bool __read_mostly ignore_loglevel;
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+Best regards,
+Nam
 
