@@ -1,61 +1,86 @@
-Return-Path: <linux-kernel+bounces-343524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8565989C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:56:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B783989C07
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:56:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99C14281844
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:56:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5A75B22B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3EC16EC1B;
-	Mon, 30 Sep 2024 07:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6D1167DB7;
+	Mon, 30 Sep 2024 07:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BX8zSG5D"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDMkKb5y"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A304E15C15E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A3E161320;
+	Mon, 30 Sep 2024 07:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682969; cv=none; b=A/wvlbnu35PG2XyXwuB749ZdrovIMu2O19nvjoEU+cyvgBr0XroEorreiwLTkhtk3nmaXYUpZvpXBfyXcZHBLyrtFBlpKEhG5eNJpZu/ihXY4pRBJ1y9V9MrNcFUqcrrBef8cXiBOt6V3csEWNVUXw2Pt/qK1f8+r98+qqGFTZI=
+	t=1727682990; cv=none; b=lDfKUU3dGdmIbTnq1SD3lwgmU4OZVFEt61op+8J9wTx8YjeO9g5/LjK8FSY0+NEBqmHT4kRJcfocdahB/McNNsj9RKRJu0sJg0zqx4jk3kUDyYF8zt+85ZMN7sUarFstxfH3kYDsKBGp6pLKpB2x5S4h2rCJkc4f6PkM1iiolw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682969; c=relaxed/simple;
-	bh=4d3Nrn7kHnwAuohhWQbfqcBFUdTsxwQdsnUZb3HL1Rk=;
+	s=arc-20240116; t=1727682990; c=relaxed/simple;
+	bh=u4JH8D5dtD3N0oSRuGdOoyH7O73NTCKnKToc+8L1u5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pDhhMfxF9q7pUYHg+DlQamd/O0HopgCw8869O9DuZyTdPiIrntK7Af3yJX8aYmhwVWuqVmqu1iy7xXM5bYxg6yX4hvagmMDWe+tHQkiaQYJREzSSTjdHNiWWv7rDZ1+LwOtvw4XQt/SGBkj20AdCVO8YN7WchlKF8IMPAxmzbrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BX8zSG5D; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3QpbLeFDR73JBt/QbGjJCGion5xSl4JCYvl/xSSks2w=; b=BX8zSG5DG+9ImPjBOG1e6A7c3Z
-	hd6C36l9/U7lWWpzWUBk+EHtC5BpRieYbTZvWiUR94Y4klua1+XKTMRbeiyOGQvWjg+ynimvJ+tSC
-	/eKkWL3Ci/P44G2OI+DbV/buvxBLwIrF0rWJaL3eK5HxmcYXM9S4pIC6+3zWwxWMPm/GOfA5e0rNz
-	lndSqxFkIUvfF286QAQGMCu1ynFyf7cQE506N5oYN7sRAu0l7DtqKcdOGFMxxcA868ar91NI6LPgh
-	icKmdaxc0tk/dm8GwU0isgYci9uXHkWu5q7kbiLNcYFVjNUTgnme0h+XFyWHXdV4+ALpGM7NomxKm
-	HzxhqPog==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1svBGD-0000000GiZC-0zTZ;
-	Mon, 30 Sep 2024 07:56:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3D052300754; Mon, 30 Sep 2024 09:56:00 +0200 (CEST)
-Date: Mon, 30 Sep 2024 09:56:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Yury Norov <yury.norov@gmail.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Question about num_possible_cpus() and cpu_possible_mask
-Message-ID: <20240930075600.GC5594@noisy.programming.kicks-ass.net>
-References: <SN6PR02MB4157210CC36B2593F8572E5ED4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1SaleM/pFM8zRFBIenH5tMHw7hgDpOyqR+nfpTq8AL+t4i8jitPDuhCUrMl+La5NgR0MfcjA0E3osjt1JdcKfas36cMUXg4nrbyZs97pC8Gcuyrfx6HdW0elIbUKExU7te4WlU3M6H8z1rrWOUrJHPczxsyI1M1CtBu/tDhkPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDMkKb5y; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so3558301a12.0;
+        Mon, 30 Sep 2024 00:56:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727682988; x=1728287788; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=at1PyvPs3ZXZENn3AS0ld/sSwCc/WMBOfkUpaTVePz8=;
+        b=gDMkKb5y255MYPVZ5ExfRGgQWmHMrr7g+TbcaihP4vM1BoCCaBcO8gtyMt+REr5iMr
+         IZ7xS5KFDcG2dFqDvVCCyerUsOGtKKvz7gH8Lye6/ixhHsEa31Y3oLkqu7HDiBSAlbSg
+         +RW/IxoWkEYwYZNa9UYx2fO84iLk0a9vHtTFqkKgjMEFzWZVKCaKPCbYXWjn/tl7VeP1
+         UqDw4hAO0ikvOUHkclnu0AzSXy5VqCnz+gToaV33Bfkbp30dPBV6wke0eZAmvOvKTnd6
+         FaOVOo0w8UNMWHCypqsD7wcLGgSALplGIN/lzPXM+HCbH8FdW6qrnuby60phHslEG5Js
+         p6Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727682988; x=1728287788;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=at1PyvPs3ZXZENn3AS0ld/sSwCc/WMBOfkUpaTVePz8=;
+        b=u+6qYMzP77FKHsOe3L0Jw0bYorPxvqpy5FFrLBoROIWGfVE8ZZ7SSht3PHyUm1MO0p
+         h/8MW39+tElxjjVXMLrplw9ltFj26DFDv+d/bcuPab4krBlLfO2cQZicWCE4KUMVrGwK
+         bh3g6SzM4qI9cBzQkPMk4UWWdkmN263/vbSvEu/d3bBmb5vcnxnOFM4k+7aquiQrEYiH
+         LVwNHf8wCj4LKQ7geVRu3/1r4Gb4zIj6xI3nkqMtiX08REjjPA5TeejdO0Cu9f8WuS1v
+         H3i7lExxXTaLhwMdY8ZanacalY+a0c/TH3A+jj0yorcgc5RrIgK7tGC+rp2qr7Q6dZCg
+         fgeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVa4v869vMCS2uDYjmyAbf2kRJJzFPbhh+dTrIL8Qgo0F4CJmx+3zXQGCyBHemWLgBvwkRPjr3egx0Z@vger.kernel.org, AJvYcCVqCdCUPYZXH906kPIXDMRJHcZge3nizZIBEWV7mDqy1sRfr9d8WnLC5yUJULlzWBBoDFrmJud/eN66bZo=@vger.kernel.org, AJvYcCVzHcxKquCBCzTQcoscuenYxqEyor+LyajBdQ/WlgcNs+Vr8gaCkmslQZWleeKSfnaNtmhwUSle9kSt4KHb@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCi41PYNNP6BmNZ141slgbvit1W06PF69oFbmR9oAPdEPR1vgt
+	HPfw8IntyaMv4iiYYaLzyHNjRJyr7f1Eb0cDEd1VOjew2YSSvUEv
+X-Google-Smtp-Source: AGHT+IEjn94NbyosPPTRT4xOcmIf4mRf6UGR5Vdu96CGbRXIOQgyIu2962SYLutXVJmtvMzakip+Rw==
+X-Received: by 2002:a17:90b:300b:b0:2d8:999a:bc37 with SMTP id 98e67ed59e1d1-2e091255254mr21400250a91.19.1727682988272;
+        Mon, 30 Sep 2024 00:56:28 -0700 (PDT)
+Received: from ux-UP-WHL01 ([2409:895a:2e50:1f2:8cfc:ea00:365f:7b04])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c4fcdbsm7211291a91.5.2024.09.30.00.56.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 00:56:27 -0700 (PDT)
+Date: Mon, 30 Sep 2024 15:56:13 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: jikos@kernel.org, bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v8 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+Message-ID: <ZvpZnYvJ-ejxe43Q@ux-UP-WHL01>
+References: <20240926044217.9285-1-charles.goodix@gmail.com>
+ <20240926044217.9285-3-charles.goodix@gmail.com>
+ <998ccefa-8d4a-40c1-aacd-0897070190ce@kernel.org>
+ <ZvUwFur1vWYteQMy@ux-UP-WHL01>
+ <87d49032-cb94-4cf8-a5e0-44eb2ec37111@kernel.org>
+ <ZvoZbWQx5BfMI_Cd@ux-UP-WHL01>
+ <8d5ff5c7-1f66-4a1b-a235-868d13afe03e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,60 +89,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157210CC36B2593F8572E5ED4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To: <8d5ff5c7-1f66-4a1b-a235-868d13afe03e@kernel.org>
 
-On Wed, Sep 25, 2024 at 04:04:33AM +0000, Michael Kelley wrote:
-> Question:  Is there any intention to guarantee that the cpu_possible_mask is
-> "dense", in that all bit positions 0 thru (nr_cpu_ids - 1) are set, with no
-> "holes"? If that were true, then num_possible_cpus() would be equal to
-> nr_cpu_ids.
+Hi Krzysztof,
 
-I think we've historically had machines where there were holes in. And I
-think we're wanting to have holes in for modern hybrid x86 that have HT,
-although I'm not entirely sure where those patches are atm.
-
-Thomas, didn't we have a patch that renumbers CPUs for hybrid crud sich
-that HT is always the low bit and we end up with holes because the atoms
-don't have HT on?
-
-Or was that on my plate and it got lost in the giant todo pile?
-
-> x86 always sets up cpu_possible_mask as dense, as does ARM64 with ACPI.
-> But it appears there are errors cases on ARM64 with DeviceTree where this
-> is not the case. I haven't looked at other architectures.
+On Mon, Sep 30, 2024 at 08:42:22AM +0200, Krzysztof Kozlowski wrote:
+> On 30/09/2024 05:22, Charles Wang wrote:
+> > Hi Krzysztof,
+> > Thank you very much for your advice.
+> > 
+> > On Thu, Sep 26, 2024 at 02:32:05PM +0200, Krzysztof Kozlowski wrote:
+> >> On 26/09/2024 11:57, Charles Wang wrote:
+> >>>>>  1 file changed, 71 insertions(+)
+> >>>>>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> >>>>> new file mode 100644
+> >>>>> index 000000000..849117639
+> >>>>> --- /dev/null
+> >>>>> +++ b/Documentation/devicetree/bindings/input/goodix,gt7986u.yaml
+> >>>>> @@ -0,0 +1,71 @@
+> >>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>>>> +%YAML 1.2
+> >>>>> +---
+> >>>>> +$id: http://devicetree.org/schemas/input/goodix,gt7986u.yaml#
+> >>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>>>> +
+> >>>>> +title: GOODIX GT7986U SPI HID Touchscreen
+> >>>>> +
+> >>>>> +maintainers:
+> >>>>> +  - Charles Wang <charles.goodix@gmail.com>
+> >>>>> +
+> >>>>> +description: Supports the Goodix GT7986U touchscreen.
+> >>>>> +  This touch controller reports data packaged according to the HID protocol,
+> >>>>> +  but is incompatible with Microsoft's HID-over-SPI protocol.
+> >>>>> +
+> >>>>> +allOf:
+> >>>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >>>>> +
+> >>>>> +properties:
+> >>>>> +  compatible:
+> >>>>> +    enum:
+> >>>>> +      - goodix,gt7986u-spi
+> >>>>
+> >>>> NAK, you duplicate again the binding. You cannot have bus-flavors.
+> >>>> Device is the same.
+> >>>>
+> >>>
+> >>> Could you provide some suggestions regarding this issue?
+> >>
+> >> What is exactly the question or problem? There is a binding for this
+> >> device. Extend it with SPI parts, e.g.
+> >> https://elixir.bootlin.com/linux/v6.4-rc7/source/Documentation/devicetree/bindings/iio/accel/adi,adxl313.yaml#L22
+> >>
+> > 
+> > This seems a little different from the adxl313.yaml.
 > 
-> There's evidence both ways:
-> 1) A somewhat recent report[1] on SPARC where cpu_possible_mask
->    isn't dense, and there's code assuming that it is dense. This report
->    got me thinking about the question.
->   
-> 2) setup_nr_cpu_ids() in kernel/smp.c is coded to *not* assume it is dense
+> Hm? I am reading below:
 > 
-> 3) But there are several places throughout the kernel that do something like
->    the following, which assumes they are dense:
+> > 
+> > The issue we're encountering involves the chip model gt7986u,
+> > which supports both I2C and SPI interfaces. For the I2C interface
+> > (using the HID-over-I2C driver), it has already been declared in
+> > the goodix,gt7375p.yaml file as follows:
+> > 
+> > i2c {
+> >   #address-cells = <1>;
+> >   #size-cells = <0>;
+> > 
+> >   ap_ts: touchscreen@5d {
+> >     compatible = "goodix,gt7986u";
+> >   }
+> > }
+> > 
+> > Currently, our design requires utilizing the SPI interface with
+> > a custom SPI driver. However, the declarations within the binding
+> > file have led to conflicts, as shown here:
+> > 
+> > spi {
+> >   #address-cells = <1>;
+> >   #size-cells = <0>;
+> > 
+> >   touchscreen@0 {
+> >     compatible = "goodix,gt7986u";
+> >   }
+> > }
+> > 
+> > Should I consider merging both YAML files into a single one to fix this?
 > 
-> 	array = kcalloc(num_possible_cpus(), sizeof(<some struct>), GFP_KERNEL);
-> 	....
-> 	index into "array" with smp_processor_id()
+> And there is no difference. I don't understand the problem.
+> 
+I'm sorry for the confusion regarding your comment
 
-I would consider this pattern broken.
+"And there is no difference." 
 
-> On balance, I'm assuming that there's no requirement for cpu_possible_mask
-> to be dense, and code like #3 above is technically wrong. It should be
-> using nr_cpu_ids instead of num_possible_cpus(), which is also faster.
-> We get away with it 99.99% of the time because all (or almost all?)
-> architectures populate cpu_possible_mask as dense.
-> 
-> There are 6 places in Hyper-V specific code that do #3. And it works because
-> Hyper-V code only runs on x86 and ARM64 where cpu_possible_mask is
-> always dense. But in the interest of correctness and robustness against
-> future changes, I'm planning to fix the Hyper-V code.
-> 
-> There are also a few other places throughout the kernel with the same
-> problem, and I may look at fixing those as well.
-> 
-> Or maybe my assumptions are off-base. Any thoughts or guidance before
-> I start submitting patches?
+Are you implying that the issue we are encountering is no different from
+'adi,adxl313.yaml'? Or are you suggesting that the gt7986u device should
+be treated as the same entity for both I2C and SPI interfaces?
 
-You're on the right track, should not assume the mask is dense.
+Original error messages: https://lore.kernel.org/all/CAL_Jsq+QfTtRj_JCqXzktQ49H8VUnztVuaBjvvkg3fwEHniUHw@mail.gmail.com/
+
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - goodix,gt7986u
+
+This is already documented in goodix,gt7375p.yaml. Now linux-next has warnings:
+
+/builds/robherring/linux-dt/Documentation/devicetree/bindings/input/goodix,gt7986u.example.dtb:
+touchscreen@0: compatible: 'oneOf' conditional failed, one must be
+fixed:
+        ['goodix,gt7986u'] is too short
+        'goodix,gt7375p' was expected
+        from schema $id:
+
+I understand this error message to mean the same chip model is redundantly declared
+in two separate files.
+
+Is my understanding incorrect? Could you provide more explicit guidance?
+
+Note that the 'gt7986u' uses different drivers and has distinct device property
+for its I2C and SPI interfaces.
+
+Best regards,
+Charles
 
