@@ -1,109 +1,226 @@
-Return-Path: <linux-kernel+bounces-344303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA7F98A800
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:00:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B107098A80E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1021C23431
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:00:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329EF1F216F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2EF191F9B;
-	Mon, 30 Sep 2024 14:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5B71917FF;
+	Mon, 30 Sep 2024 15:01:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyoEcp3U"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qiAWCsUk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4925190471;
-	Mon, 30 Sep 2024 14:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3431CFA9;
+	Mon, 30 Sep 2024 15:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708393; cv=none; b=gIw7cYwgYJNmYVH0zy42fytQDhw46i57gI2mrYAY7fXw7IQAnAGnDxHTV8+JpaDxhjl89Mp2YxMRVKTrCHrWGHX8xWw04zpg0mHlP4hlOXnkho+zJWCYIpxWlf2a43PHkfgTfH127XKcUjCsYDZkjPa9cnoTzuGf2hx+MIM8Qv0=
+	t=1727708463; cv=none; b=UMeUdPPjJsh82Fafncqn94Dk7AEoO7329WKKX8zH68iBZ8yMfzJzG3VokTejzRxaTSGKhZhTlyrLcNTKmn3idT3xbkbSyhrNWj1WDf8YknYqtRSG4GyIKVeTINQR8d6LviHzwko4Stq3DFasNMMnHBC/4+o9E9fXr3R1lNYOXy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708393; c=relaxed/simple;
-	bh=Y2tcEkmIwJKzjGaJTn+E3RreDWmeS5vWrAs2dhqRFBs=;
+	s=arc-20240116; t=1727708463; c=relaxed/simple;
+	bh=eohE6QCObep88wykExC/gfzu1IpD4jbaR8BG3GtP1Ac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chzQIBOEYzyuP7BZ2z5fmikGq3th9lBVGbNH1P5ltj3IhU8udpTGs0iT4ojbohWKwJQSPaT7INHLQEBSpU/JBjirDim07vwFLFghMdGiMOk/bWVLk2Mz4JtAD1o2OX6k2ZqUS3KUdvHD1fCRJ7yiXgsgAyWcOg9Cc+wUfTIaJiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyoEcp3U; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20696938f86so38753765ad.3;
-        Mon, 30 Sep 2024 07:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727708391; x=1728313191; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OFZabu6/EuGD9so3eFqCViJBMXs8SfL9R7DI8/Lv3Mo=;
-        b=ZyoEcp3UMrl2uaYhAe01TJ9jKQwQYmoOoxuZEGa2JdA2/FN1Qa8ALrTdhvAGXF2YUe
-         4tOAGxFxZCZqHiJwG0wnvNhI+8hwgtp3qTiQ6q6cbr5UPsRwetPQi5GsnQFOnV70rRW5
-         /RES6JkpViglhfT4Nqk9Hjr6JObhNb4xyjb2PJO6Qr8XRHazKCnHkMzm+3IJzhu3QNb6
-         hR9xf26GAo5MSxSuWkv94UR0tmMF4JRHmbfFGt9pro2D3ck8J9IpMQI5P0MldUtLks/v
-         g55NNsf/NK05PP1EP4bc+xo8bfcQ8Hkw9qOzitMB93ph3hZS6s1WHw4VlOBdzVgXsC2M
-         GumQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727708391; x=1728313191;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OFZabu6/EuGD9so3eFqCViJBMXs8SfL9R7DI8/Lv3Mo=;
-        b=NcVCT3U6VTY5qG5tTyP9cNJFkLVC9zwkjHwwOxpvbi9WQ0jljubdh6iYyx6S5VKDH4
-         XMN2D38mF033EBAIOPRpHwNiWUcValjEy/9Tw0z6Xi3ULkCJY2eO/+2j5aTDtQKvpTGp
-         i7Imd4chT0uxkosdxtVd3A+2BfowtfUMwaJ74gV8QH62wJdLBIwEPjDCTiWv0EN5BzlA
-         fdxhWO4Mlu0zLDe0CXYFLdHKQquQKPr8xNVvn9w7Cjrpq6wgz3v1AFPgRzqgzI0Z/7pN
-         UL0WAM9tJAwmoK8dzXV01aSS0xpV6PU093BmUTG8G1b+Q4rwg92WMEYuWdG0I+BuCVW9
-         Dexg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxicKZcNhwZkEweL+UiUjiYzFae0ipUqI4KOzz+nhoHTCuQ7l+XQJy8mDItq420BfdQJdunvH8r5o3eg==@vger.kernel.org, AJvYcCXKmhIbb9/6LcBWgrsvA9hquxogujiaabUOhQ7fnRQ1sLAwh7zRS1my15yar23MdfDz+4bXq8spQ710hQGk@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuu8AnLedsItrF1vnaFZs0BVJylz1qWZDl9oM+3Vdy7eWnRGbn
-	v4BNucsPJ2PrVLUU6luDJ/8pzv3lO8OMMezqa0lP4jjwcgl69d6g
-X-Google-Smtp-Source: AGHT+IHT5XTFhpto3WFrh9GWPbjt7aTddIG0CfgoiCnk4FxwdYw4bbBd0qvh/Vgt+5BdakZW/rpcNA==
-X-Received: by 2002:a17:902:e850:b0:20b:632d:27c0 with SMTP id d9443c01a7336-20b632d299bmr104795455ad.41.1727708391076;
-        Mon, 30 Sep 2024 07:59:51 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:671d:78af:f80f:975b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d68a93sm55507545ad.56.2024.09.30.07.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:59:50 -0700 (PDT)
-Date: Mon, 30 Sep 2024 07:59:48 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: o2g.org.ru@gmail.com, mitr@volny.cz, Henk.Vergonet@gmail.com,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] input: misc: Correct typos in multiple comments
- across various files
-Message-ID: <Zvq85KfvZpyPQKXv@google.com>
-References: <20240926075515.10042-1-shenlichuan@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZuMqJNCSNa/UlIuTRS0ekZyYmU42UDjmNdK24rsKNlYRDr9Y8JPGydrTP3Qc6qETJO+Y8DTAQJU7g4VJecK6y81L+d397twcgXsIEZ1RqMYIgghUCcEaNgwmYpHJKjYLfhw+fHKxSZ6TqDPa2CM5yLLd8ksn3NrIcMOCSCS/84w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qiAWCsUk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C62C4CEC7;
+	Mon, 30 Sep 2024 15:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727708462;
+	bh=eohE6QCObep88wykExC/gfzu1IpD4jbaR8BG3GtP1Ac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qiAWCsUkUogRQgFUOjRzTChQGzUNcImiaZO0kaN2QxvNiOThYXbpKlI5fo+ExMfZS
+	 /90bIfUh+bwgt7TeLd+UHumn8FxBpuBgE+mOoUjeoPprSrY7f+3p/i6Wc8LZJHogxi
+	 qdbLegcP3cZHBhe5j6wGxUYFz95qJxUabVs4skRK3xYR4eDg27xeppTz+gd7MDGiDl
+	 Pm5D700V/MnUdEODmqIyLFmAf4rr8bQ5PfZH+ulN25Dmp/OBeb1Yg3kBI95ftlSKTm
+	 D/1AA8AmvV2ukVDBTB1uR6RvvwEiL/qNqYSffHlXuXRkAK1EsVGHDhX9orLfLrteKz
+	 nBhM9Azr5pm1w==
+Date: Mon, 30 Sep 2024 16:00:57 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
+ S32G2/S32G3 SoCs
+Message-ID: <20240930-shortness-unedited-650f7996e912@spud>
+References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
+ <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
+ <20240926-apricot-unfasten-5577c54a3e2f@spud>
+ <c2d8f121-903d-4722-825f-c00604ef3991@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ks3nvjHvnjWNbDgx"
+Content-Disposition: inline
+In-Reply-To: <c2d8f121-903d-4722-825f-c00604ef3991@oss.nxp.com>
+
+
+--ks3nvjHvnjWNbDgx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240926075515.10042-1-shenlichuan@vivo.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 03:55:15PM +0800, Shen Lichuan wrote:
-> Fixed some confusing typos that were currently identified witch codespell,
-> the details are as follows:
-> 
-> -in the code comments:
-> drivers/input/misc/drv2665.c:18: Contol ==> Control
-> drivers/input/misc/drv2667.c:19: Contol ==> Control
-> drivers/input/misc/ideapad_slidebar.c:26: meaningfull ==> meaningful
-> drivers/input/misc/ims-pcu.c:742: bootoloader ==> bootloader
-> drivers/input/misc/kxtj9.c:28: funtion ==> function
-> drivers/input/misc/soc_button_array.c:518: indentical ==> identical
-> drivers/input/misc/wistron_btns.c:274: satelite ==> satellite
-> drivers/input/misc/yealink.c:380: singe ==> single
-> drivers/input/misc/yealink.c:617: coresponding ==> corresponding
-> 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+On Fri, Sep 27, 2024 at 10:13:54AM +0300, Andrei Stefanescu wrote:
+> Hi Conor,
+>=20
+> Thank you very much for the prompt review!
+>=20
+> On 26/09/2024 18:38, Conor Dooley wrote:
+> > On Thu, Sep 26, 2024 at 05:31:19PM +0300, Andrei Stefanescu wrote:
+> >> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
+> >>
+> >> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> >> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> >> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> >> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> >=20
+> > What's up with this SoB chain? You're the author what did
+> > the other 3 people do? Are they missing co-developed-by tags?
+>=20
+> Yes, thank you for suggesting it! I will also add Co-developed-by tags
+> for them. In the end it should look like this:
+>=20
+> Co-developed-by: Phu Luu An <phu.luuan@nxp.com>
+> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+>=20
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >> +    #include <dt-bindings/interrupt-controller/irq.h>
+> >> +
+> >> +    gpio@4009d700 {
+> >> +        compatible =3D "nxp,s32g2-siul2-gpio";
+> >> +        reg =3D <0x4009d700 0x10>,
+> >> +              <0x44011700 0x18>,
+> >> +              <0x4009d740 0x10>,
+> >> +              <0x44011740 0x18>,
+> >> +              <0x44010010 0xb4>,
+> >> +              <0x44011078 0x80>;
+> >=20
+> > Huh, I only noticed this now. Are you sure that this is a correct
+> > representation of this device, and it is not really part of some syscon?
+> > The "random" nature of the addresses  and the tiny sizes of the
+> > reservations make it seem that way. What other devices are in these
+> > regions?
 
-Applied, thank you.
+Thanks for your answer to my second question, but I think you missed this
+part here ^^^
 
--- 
-Dmitry
+> >=20
+> > Additionally, it looks like "opads0" and "ipads0" are in a different
+> > region to their "1" equivalents. Should this really be represented as
+> > two disctint GPIO controllers?
+>=20
+> I will add a bit more context regarding the hardware.
+>=20
+> The hardware module which implements pinctrl & GPIO is called SIUL2.
+> For both S32G2 and S32G3 we have the same version of the module and=20
+> it is integrated in the same way. Each SoC has two SIUL2 instances which
+> mostly have the same register types and only differ in the number
+> of pads associated to them:
+>=20
+> - SIUL2_0 mapped at address 0x4009c000, handling pins 0 - 101
+> - SIUL2_1 mapped at address 0x44010000, handling pins 112 - 190
+>=20
+> There are multiple registers for the SIUL2 modules which are important
+> for pinctrl & GPIO:
+>=20
+> - MSCR (Multiplexed Signal Configuration Register)
+>   It configures the function of a pin and some
+>   pinconf properties:
+>     - input buffer
+>     - output buffer
+>     - open-drain
+>     - pull-up/pull-down
+>     - slew rate
+>   Function 0 means the pin is to be used as a GPIO.
+>=20
+> - IMCR (Input Multiplexed Signal and Configuration Register)
+>   If the signal on this pad is to be read by another hardware
+>   module, this register is similar to a multiplexer, its value
+>   configures which pad the hardware will link to the module.
+>   As an example let's consider the I2C0 SDA line. It has one
+>   IMCR associated to it. Below are its possible pins and
+>   corresponding IMCR values:
+>     pin 16 <- 2
+>     pin 24 <- 7
+>     pin 31 <- 3
+>     pin 122 <- 4=20
+>       (Note that MSCR122 is part of SIUL2_1 but the IMCR for
+>        I2C0_SDA is part of SIUL2_0)
+>     pin 153 <- 5
+>     pin 161 <- 6
+>   The IMCR values should be aligned with the function bits in the
+>   MSCR bits. If we want to use pin 122 for I2C0_SDA we will configure
+>   the function bits in MSCR122 and write the value 4 to the I2C0_SDA
+>   IMCR.=20
+>=20
+> - PGPDO/PGPDI Parallel GPIO Pad Data Out/In
+>   16 bit registers where each bit(besides some gaps) represents
+>   a GPIO's output/input value
+>=20
+> - DISR0, DIRER0, IREER0, IFEER0
+>   These registers are used for: status, enable, rising/falling edge
+>   configuration for interrupts. We have 32 interrupts called EIRQ and
+>   each interrupt has one or more pads associated with it (controlled
+>   by an IMCR register per EIRQ).
+>=20
+>   However, one important thing to note is that even though there are
+>   EIRQs for SIUL2_0 pads, all the interrupt registers mentioned above
+>   are only present in SIUL2_1.
+>=20
+> Because of mixed pins (I2C0_SDA in the example above with the MSCR
+> in SIUL2_1 for pad 122 and the IMCR in SIUL2_0) and the interrupt
+> configuration registers in SIUL2_1 we decided to have a single
+> driver instance.
+>=20
+> >=20
+> >=20
+> > Cheers,
+> > Conor.
+> >=20
+>=20
+> Best regards,
+> Andrei
+>=20
+
+--ks3nvjHvnjWNbDgx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvq9KAAKCRB4tDGHoIJi
+0vmHAQDZkEsvWqk9bF65pY+mP7V4lxNXaDOc2Y3zZQ2x4yhxPwEAlTF5ibAwpY74
+4llBQ4d9tup2Szwhs4An5BnJEm0SSwA=
+=BZuW
+-----END PGP SIGNATURE-----
+
+--ks3nvjHvnjWNbDgx--
 
