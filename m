@@ -1,198 +1,162 @@
-Return-Path: <linux-kernel+bounces-343312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFBF989974
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:28:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2540989979
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B052810C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:27:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60B86B2223D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB8115C3;
-	Mon, 30 Sep 2024 03:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE31D5BAF0;
+	Mon, 30 Sep 2024 03:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ND2a+WFC"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eU0fej81"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6357D2D05D
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227282D05D;
+	Mon, 30 Sep 2024 03:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727666870; cv=none; b=T+B6Wfd3FLLAnmWPbhpDIyGtNjvGlI93Ii1rhxf0rgbICpYkstzIEm4sFXFVV1JwnSxe77COYl9u3tsypSAcGxRfX+gjAx+aYCPV4ZugosgfX9mJTcZp3n40r/s0q14jIzPm/S1TeU77zZ0e/CucHamYK9xmK2K6FL0SQmWeV5g=
+	t=1727666876; cv=none; b=jaZeMzLyi4GxHb4OPcvDxs1xEUnGRAti6xKBB19M2vMyuoV+gjMWbVRymQaSU2NS0rPXmS4dUNST6JqyMpJEWtqxNgZjINnVFiIvpLWA3+INT8onkINXtbGM5IaKuoIG5yq9ZBzq0290mvF8trCfW1g/a6Y7u5JtUv2U3+DVqWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727666870; c=relaxed/simple;
-	bh=jLI9MMQQmuZUKWNU/xHCFYdL/UPbKyDkOfCbEMNlGo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OCcE1KSRlKcCVVBR25Y8IDxJ1DfMEHDfXIrghmdCDdQlQVMOqZoPJqrKqPtQ0rD8Xq7ofWnxQxkGq3/MYakx8XOrhO0q0zOFNQNrdop5lQJos0hSDkTcAm5TUhN1ieA0EKuPbgQR5n+ewUj+wZLLMvV0aGXw3vI4kxMKFX3x/Ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ND2a+WFC; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AA0D33F0B5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:27:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727666860;
-	bh=IS7wA0xTn8FCZ6UozFnElcPvTZac7PO47dXlo5uaWuU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=ND2a+WFCmpJJUgcE4GkN0M5aofmmw5MTnZnEFapQ+ahsYz+wA+Yzjb0ihbmKiqFF0
-	 xu02s/fJEFzPVq2eIjIvpQCGIBXFVaUNDNWV5DgH9/GFpOqgZxdCwE0vg3CNb974MG
-	 zjVqv6uKgZtAuWZ1y86yW0J00xZpxyHgn9EIUXig1bWRAaekzLwcXrwadOUD+J6tsj
-	 JvapdE8n9llZVX2si7BZLw4bLeEQnckwcLomkLyrjx1LxoRmyY6OnceCU1r5iGfqdY
-	 HFlw7BieJJ8k+x7k1PcwOIQxDIBz43k4y1fdVlnWjRVUaHDxCza7IqVrBOyKTl1xdS
-	 yCQ/S36f3JQzA==
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e0b8fa94718so6309089276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 20:27:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727666859; x=1728271659;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IS7wA0xTn8FCZ6UozFnElcPvTZac7PO47dXlo5uaWuU=;
-        b=ulOJq+XOBGS+yVUwqPulaefbmLV5kjg4rO3PfnUrVFxMm3aQQH7tDvZeejlPe6K++2
-         bmcMIAK4LVVHECYFYm5U+q9XQWnsWckWCHsKOYotYOO+eZjATv1pz7TbV2WjoCD6h7/c
-         rIdPbIDX+C/QGejByn1QqCV7LdQhva0t2Kldw1xH5XaixPKMiHbI1vaDSKzqNxCik3jf
-         bDOMeUBNMl4TJXi46HXp4VqytTpu2JapSVowJ4kz4uUjZTgjT+pvYCO9vGEE5mwCquXN
-         VGhJlJNy80ZAEGi9Ma5HXpzO35v1HXAedqx8FJqVT/QPRLJTp2N6KhO3mX2Oe5ouKMpO
-         wh3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfkX1q3W/O87tY3bfgJnKSFS6RV0hvNlX+u9g5Umkq0QJJKZHpkO1+CbUOp97zobhy61q740OgyPaqkZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDrGPQ0vf4Sz1dLfYB/Sml/hG9IUPrwB+w3gHouAPds9olRwWW
-	8AJog4JHBezH2JGOnDrTIe4tcmD6rGuilp+wjtY3E9D8a1Qptyz0tUTyyh5BLyOEingk0oa/fnc
-	F0YUOZ33tn62iZOV5+Q+3O7fYRdHrYvarwMZKeghAvqsRiS2x2tkDjdcPXFEyS8H8r/s9YGH6XG
-	IfE40X4si7DHqROd/0WJMb1catlyBuT/feJPVHI46cWnGANsTlaEms
-X-Received: by 2002:a05:6902:2b84:b0:e20:2568:e371 with SMTP id 3f1490d57ef6-e2604c7999dmr7922781276.53.1727666859674;
-        Sun, 29 Sep 2024 20:27:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG5XOqqUSuKwKgB2HAvUTgCkDeBSDixhXLFmsPg1Q7TNFp4VfsxPkK/WOl6EnwJHcT53aw1DXo6+/5jH+FcFlI=
-X-Received: by 2002:a05:6902:2b84:b0:e20:2568:e371 with SMTP id
- 3f1490d57ef6-e2604c7999dmr7922776276.53.1727666859371; Sun, 29 Sep 2024
- 20:27:39 -0700 (PDT)
+	s=arc-20240116; t=1727666876; c=relaxed/simple;
+	bh=knzdApybWNkXs/EWy4A0OK+7trxRVW4r3IepuHUyAVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tF2U3651PFvzKCeZkTjLQV+JsDiuBtilP5xlyba3tUxywindP2TZPs5RpN28N1G29rSVskicHe+RMq9Z7WgKzVvYx56H4dGOJv+NAjO4lzeT6ALtTygBSSc1I1mPwoVzdG0lJwEcctCoOk+U/JxQHN+fqcEW7/TX5+ttGcFO16Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eU0fej81; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F0C9C4CEC6;
+	Mon, 30 Sep 2024 03:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727666875;
+	bh=knzdApybWNkXs/EWy4A0OK+7trxRVW4r3IepuHUyAVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eU0fej81ykmly+dr+iIyfrVNyMjShf1QYYO2qbG+fQ8FqXW4LiuVhZL2h8x48GNvq
+	 7quqEz6ttd6B+wyqy1z7zwBLPYBifM+xMuc624lV+QdWpslBgqi/8ML6aAQYM3N7W0
+	 6wnD81A/EXtVoQam5PUgqTN82bGh6Mp9OTqY8aAYHmiO4RASOMCSZb3S5MQoY4oKP+
+	 RkqVNy5BI/d94cRnQwpCX/yjX3Op4a6Hg/IRTiNhCQXu9HQJOKnjwSTJW32uUS5fhO
+	 5subcCx26GaPrXbdX0mzFZeKfQb2Mr/EHJAkxHBydMfRJvQ/Gy/yIpw1dAC0KQ2kDm
+	 Rp2qDR74aUnpA==
+Date: Sun, 29 Sep 2024 22:27:52 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andi.shyti@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
+	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
+	Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org, 
+	krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 3/4] soc: qcom: geni-se: Do not keep GPIOs to sleep
+ state for shared SE usecase
+Message-ID: <vnpl6a5accygarfowtiixbba6guxvgsyipdcte3tzf2vrvyve7@zjw4bnuckvmi>
+References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+ <20240927063108.2773304-4-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926125909.2362244-1-acelan.kao@canonical.com>
- <ZvVgTGVSco0Kg7H5@wunner.de> <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
- <ZvZ61srt3QAca2AI@wunner.de>
-In-Reply-To: <ZvZ61srt3QAca2AI@wunner.de>
-From: AceLan Kao <acelan.kao@canonical.com>
-Date: Mon, 30 Sep 2024 11:27:28 +0800
-Message-ID: <CAFv23Q=QJ+SmpwvzLmzJeCXwYrAHVvTK96Wz7rY=df7VmGbSmw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
- during suspend
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927063108.2773304-4-quic_msavaliy@quicinc.com>
 
-Lukas Wunner <lukas@wunner.de> =E6=96=BC 2024=E5=B9=B49=E6=9C=8827=E6=97=A5=
- =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=885:28=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Fri, Sep 27, 2024 at 03:33:50PM +0800, AceLan Kao wrote:
-> > Lukas Wunner <lukas@wunner.de> 2024-9-26 9:23
-> > > On Thu, Sep 26, 2024 at 08:59:09PM +0800, Chia-Lin Kao (AceLan) wrote=
-:
-> > > > Remove unnecessary pci_walk_bus() call in pciehp_resume_noirq(). Th=
-is
-> > > > fixes a system hang that occurs when resuming after a Thunderbolt d=
-ock
-> > > > with attached thunderbolt storage is unplugged during system suspen=
-d.
-> > > >
-> > > > The PCI core already handles setting the disconnected state for dev=
-ices
-> > > > under a port during suspend/resume.
-> > > >
-> > > > The redundant bus walk was
-> > > > interfering with proper hardware state detection during resume, cau=
-sing
-> > > > a system hang when hot-unplugging daisy-chained Thunderbolt devices=
-.
-> >
-> > I have no good answer for you now.
-> > After enabling some debugging options and debugging lock options, I
-> > still didn't get any message.
->
-> Have you tried "no_console_suspend" on the kernel command line?
->
->
-> > ubuntu@localhost:~$ lspci -tv
-> > -[0000:00]-+-00.0  Intel Corporation Device 6400
-> >           +-02.0  Intel Corporation Lunar Lake [Intel Graphics]
-> >           +-04.0  Intel Corporation Device 641d
-> >           +-05.0  Intel Corporation Device 645d
-> >           +-07.0-[01-38]--
-> >           +-07.2-[39-70]----00.0-[3a-70]--+-00.0-[3b]--
-> >           |                               +-01.0-[3c-4d]--
-> >           |                               +-02.0-[4e-5f]----00.0-[4f-50=
-]----01.0-[50]----00.0  Phison Electronics Corporation E12 NVMe Controller
-> >           |                               +-03.0-[60-6f]--
-> >           |                               \-04.0-[70]--
-> >
-> > This is Dell WD22TB dock
-> > 39:00.0 PCI bridge [0604]: Intel Corporation Thunderbolt 4 Bridge [Gosh=
-en Ridge 2020] [8086:0b26] (rev 03)
-> >        Subsystem: Intel Corporation Thunderbolt 4 Bridge [Goshen Ridge =
-2020] [8086:0000]
-> >
-> > This is the TBT storage connects to the dock
-> > 50:00.0 Non-Volatile memory controller [0108]: Phison Electronics
-> > Corporation E12 NVMe Controller [1987:5012] (rev 01)
-> >        Subsystem: Phison Electronics Corporation E12 NVMe Controller [1=
-987:5012]
-> >        Kernel driver in use: nvme
-> >        Kernel modules: nvme
->
-> The lspci output shows another PCIe switch in-between the WD22TB dock and
-> the NVMe drive (bus 4e and 4f).  Is that another Thunderbolt device?
-> Or is the NVMe drive built into the WD22TB dock and the switch at bus
-> 4e and 4f is a non-Thunderbolt PCIe switch in the dock?
->
-> I realize now that commit 9d573d19547b ("PCI: pciehp: Detect device
-> replacement during system sleep") is a little overzealous because it
-> not only reacts to *replaced* devices but also to *unplugged* devices:
-> If the device was unplugged, reading the vendor and device ID returns
-> 0xffff, which is different from the cached value, so the device is
-> assumed to have been replaced even though it's actually been unplugged.
->
-> The device replacement check runs in the ->resume_noirq phase.  Later on
-> in the ->resume phase, pciehp_resume() calls pciehp_check_presence() to
-> check for unplugged devices.  Commit 9d573d19547b inadvertantly reacts
-> before pciehp_check_presence() gets a chance to react.  So that's somethi=
-ng
-> that we should probably change.
->
-> I'm not sure though why that would call a hang.  But there is a known iss=
-ue
-> that a deadlock may occur when hot-removing nested PCIe switches (which i=
-s
-> what you've got here).  Keith Busch recently re-discovered the issue.
-> You may want to try if the hang goes away if you apply this patch:
->
-> https://lore.kernel.org/all/20240612181625.3604512-2-kbusch@meta.com/
->
-> If it does go away then at least we know what the root cause is.
-Yes, the 2 patches work.
+On Fri, Sep 27, 2024 at 12:01:07PM GMT, Mukesh Kumar Savaliya wrote:
+> Currently the driver provides a function called geni_serial_resources_off()
+> to turn off resources like clocks and  pinctrl.
+> 
+> For shared SE between two SS, we don't need to keep pinctrl to sleep state
+> as other SS may be actively transferring data over SE.
 
->
-> The patch is a bit hackish, but there's an ongoing effort to tackle the
-> problem more thoroughly:
->
-> https://lore.kernel.org/all/20240722151936.1452299-1-kbusch@meta.com/
-> https://lore.kernel.org/all/20240827192826.710031-1-kbusch@meta.com/
-v2 can't be applied clearly, so I made some changes.
-And this series doesn't work for me.
+"don't need to" sounds like an optimization. Is this really the case?
+The comment in the code below seems to indicate no.
 
->
-> Thanks,
->
-> Lukas
+As with the other commit message, expand your abbreviations.
+
+> Hence,bypass keeping
+> pinctrl to sleep state conditionally using shared_geni_se flag.
+> 
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> ---
+>  drivers/soc/qcom/qcom-geni-se.c  | 14 ++++++++++----
+>  include/linux/soc/qcom/geni-se.h |  3 +++
+>  2 files changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+> index 2e8f24d5da80..89cf18699336 100644
+> --- a/drivers/soc/qcom/qcom-geni-se.c
+> +++ b/drivers/soc/qcom/qcom-geni-se.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>  
+>  /* Disable MMIO tracing to prevent excessive logging of unwanted MMIO traces */
+>  #define __DISABLE_TRACE_MMIO__
+> @@ -503,10 +504,15 @@ int geni_se_resources_off(struct geni_se *se)
+>  
+>  	if (has_acpi_companion(se->dev))
+>  		return 0;
+> -
+> -	ret = pinctrl_pm_select_sleep_state(se->dev);
+> -	if (ret)
+> -		return ret;
+> +	/* Keep pinctrl to sleep state only for regular usecase.
+> +	 * Do not sleep pinctrl for shared SE because other SS(subsystems)
+> +	 * may continueto perform transfer.
+> +	 */
+> +	if (se->shared_geni_se == false) {
+> +		ret = pinctrl_pm_select_sleep_state(se->dev);
+
+I'm a bit rusty on the pinctrl API, but wouldn't you achieve the same
+result by just not specifying a "sleep" pinctrl state?
+
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+>  	geni_se_clks_off(se);
+>  	return 0;
+> diff --git a/include/linux/soc/qcom/geni-se.h b/include/linux/soc/qcom/geni-se.h
+> index c3bca9c0bf2c..359041c64ad8 100644
+> --- a/include/linux/soc/qcom/geni-se.h
+> +++ b/include/linux/soc/qcom/geni-se.h
+> @@ -1,6 +1,7 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  #ifndef _LINUX_QCOM_GENI_SE
+> @@ -61,6 +62,7 @@ struct geni_icc_path {
+>   * @num_clk_levels:	Number of valid clock levels in clk_perf_tbl
+>   * @clk_perf_tbl:	Table of clock frequency input to serial engine clock
+>   * @icc_paths:		Array of ICC paths for SE
+> + * @shared_geni_se:	Tells if SE is used by two SS in shared environment.
+
+Please avoid the abbreviations. Be succinct, e.g. does it matter that
+it's two SS - what if it's 3?
+"Tell" is not the correct verb here, struct members don't speak.
+
+Regards,
+Bjorn
+
+>   */
+>  struct geni_se {
+>  	void __iomem *base;
+> @@ -70,6 +72,7 @@ struct geni_se {
+>  	unsigned int num_clk_levels;
+>  	unsigned long *clk_perf_tbl;
+>  	struct geni_icc_path icc_paths[3];
+> +	bool shared_geni_se;
+>  };
+>  
+>  /* Common SE registers */
+> -- 
+> 2.25.1
+> 
 
