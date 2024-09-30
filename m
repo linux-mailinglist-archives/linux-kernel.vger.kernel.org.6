@@ -1,122 +1,164 @@
-Return-Path: <linux-kernel+bounces-344306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0347998A814
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:04:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A4DA98A81D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC6591F2221D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5ACEB28C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1117191F8A;
-	Mon, 30 Sep 2024 15:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6EC191F77;
+	Mon, 30 Sep 2024 15:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="R/3DjdTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="ABvi0q7C"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B71F1CFA9;
-	Mon, 30 Sep 2024 15:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526751CFA9;
+	Mon, 30 Sep 2024 15:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708650; cv=none; b=uQsB0AEaZBHqhXvT+ZfMKOR4sswlfm3nzFDtrEJ9N4pvX+u894z0YiElkHbl8aZIRdhWC8fhqoVZxjWgR4jz7izzf+vbFCBiD+j2a9nTx+HO8dxi8Nm0Q97SJ3eEjBEadM4aTr1+c7gwv5JeeP7i0we19NMZdhSvflraHQ4DvJs=
+	t=1727708834; cv=none; b=BPcyYnulOnxLwljK+kqzfO16ezbM/1V8C+VOz4TQ4F8zb4zwTxu9nS6DlpBL6CZu0F3pPfLVkdIC++eMtdOzeaQWgZBVFLeqvSuDLH4snctz+CVBPlLTVCYhLrIP/Z4c0ITjPqOiQT7piyYBToCmiAFVyJBXKC0p7XE1IOWNQpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708650; c=relaxed/simple;
-	bh=t0cSI+9yRm+T1ZkW/MTQQt7I+Oxs89+5w6dCX15teMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bNITeJHSxPsZdwibXcVRoukmdXTsgTqqhYTQoDnBBKXcYGqlluzV9EvTESaOw69PgU8Je9Xq9m030FHNn9MaziUGCirzpIyx3JA7SIE5BdfpUio/1DgEqhVR1E9dBsCdXUTvFEHk7StTs3ef+WNOX77hzznzoJm6PRIsM3JP82E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=R/3DjdTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48954C4CEC7;
-	Mon, 30 Sep 2024 15:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727708649;
-	bh=t0cSI+9yRm+T1ZkW/MTQQt7I+Oxs89+5w6dCX15teMk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/3DjdTAODgmEgYbeEeNyDIeXm/eF5bdwlMZ79qoJTqneDi2wP/2unMxkbowg0ohk
-	 0+lh3qPYlRK3obJQIsDfPjiuac8uZ6z8VSl+cwy0CBb72TKTbXWfyiZ1yC3pkKzvSj
-	 gwL4w3ILpMIFPQEib4fVQZJG67ZmjUkvvunl4Ano=
-Date: Mon, 30 Sep 2024 17:04:07 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Guilherme =?iso-8859-1?Q?Gi=E1como_Sim=F5es?= <trintaeoitogc@gmail.com>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-Message-ID: <2024093007-safari-lego-45ab@gregkh>
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com>
- <2024093044-violator-voice-8d97@gregkh>
- <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
+	s=arc-20240116; t=1727708834; c=relaxed/simple;
+	bh=GrkBy24ek8hWJ3m5QD3baqNAN2Bf56n7rOdfwvGhw/8=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=J14zBb2Gf9f8dlVDrw4PqyTQdBTEwdckOHzBYT7YLZrtHeugv6bQDnW/L0hqnbnVg05tbz7oJ25/9D1e1xfxe90JZ5NiS2ah2tBSv14D5Zba13mvkd8YNA5p+YGjBL17srt3G3tWG13yx5U9SVYW6EPGYQajx8y0WMVnVtw1lrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=ABvi0q7C; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=RI9cT7ks/zRRPDml0faWgjCfmT7+lCghnfj39/Hygdc=; b=ABvi0q7CQSI44cTLVuHO91TsZk
+	5GKEyextEkOg6yb3uVPGjb+i+m0hgA4SixwfJHEIUKTR3NwzOn487mRntHViMwSLeqZwCjqKAeAcN
+	6iDCSIG0MnTWJ31VbKmFYwTILVc6EjuR5McYj0/rEbvthtXEzDCn1sU+I2ZfZYVrW704=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:36922 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1svHz9-00084c-Vp; Mon, 30 Sep 2024 11:06:52 -0400
+Date: Mon, 30 Sep 2024 11:05:37 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: neil.armstrong@linaro.org
+Cc: Jagan Teki <jagan@edgeble.ai>, Jessica Zhang
+ <quic_jesszhan@quicinc.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>, stable@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Message-Id: <20240930110537.dbbd51824c2bb68506e2f678@hugovil.com>
+In-Reply-To: <f9b0cc53-00ae-4390-9ff9-1dac0c0804ba@linaro.org>
+References: <20240927135306.857617-1-hugo@hugovil.com>
+	<f9b0cc53-00ae-4390-9ff9-1dac0c0804ba@linaro.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -2.1 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH] drm: panel: jd9365da-h3: fix reset signal polarity
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Mon, Sep 30, 2024 at 11:57:25AM -0300, Guilherme Giácomo Simões wrote:
-> Greg KH <gregkh@linuxfoundation.org> writes:
-> >
-> > On Mon, Sep 30, 2024 at 11:43:27AM -0300, Guilherme Giacomo Simoes wrote:
-> > > This function increments the refcount by a call to
-> > > "bindings::get_device(ptr)". This can be confused because, the function
-> > > Arch::from_raw() from standard library, don't increments the refcount.
-> > > Hence, rename "Device::from_raw()" to avoid confusion with other
-> > > "from_raw" semantics.
-> > >
-> > > Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> > > ---
-> > >  rust/kernel/device.rs   | 2 +-
-> > >  rust/kernel/firmware.rs | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> >
-> > Hi,
-> >
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> >
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> >
-> > - This looks like a new version of a previously submitted patch, but you
-> >   did not list below the --- line any changes from the previous version.
-> >   Please read the section entitled "The canonical patch format" in the
-> >   kernel file, Documentation/process/submitting-patches.rst for what
-> >   needs to be done here to properly describe this.
-> >
-> > If you wish to discuss this problem further, or you have questions about
-> > how to resolve this issue, please feel free to respond to this email and
-> > Greg will reply once he has dug out from the pending patches received
-> > from other developers.
-> >
-> > thanks,
-> >
-> > greg k-h's patch email bot
+On Mon, 30 Sep 2024 16:38:14 +0200
+Neil Armstrong <neil.armstrong@linaro.org> wrote:
+
+> Hi,
 > 
-> Yeah, I was think that only in 0/1 I should explain the changes ..
-> I'm was wrong.   I'll put the changelog in 1/1 too.
+> On 27/09/2024 15:53, Hugo Villeneuve wrote:
+> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > 
+> > In jadard_prepare() a reset pulse is generated with the following
+> > statements (delays ommited for clarity):
+> > 
+> >      gpiod_set_value(jadard->reset, 1); --> Deassert reset
+> >      gpiod_set_value(jadard->reset, 0); --> Assert reset for 10ms
+> >      gpiod_set_value(jadard->reset, 1); --> Deassert reset
+> > 
+> > However, specifying second argument of "0" to gpiod_set_value() means to
+> > deassert the GPIO, and "1" means to assert it. If the reset signal is
+> > defined as GPIO_ACTIVE_LOW in the DTS, the above statements will
+> > incorrectly generate the reset pulse (inverted) and leave it asserted
+> > (LOW) at the end of jadard_prepare().
+> 
+> Did you check the polarity in DTS of _all_ users of this driver ?
 
-Was it in the 0/1 email?  I didn't see it there either.
+Hi Neil,
+I confirmed that no in-tree DTS is referencing this driver. I did a
+search of all the compatible strings defined in the
+"jadard,jd9365da-h3.yaml" file. I also did the same on Debian code
+search.
 
-And for patches where there is only one commit, you almost never need a
-0/1 email, just put the needed information in the single patch you send
-out.
+Hugo.
 
-thanks,
 
-greg k-h
+> 
+> Neil
+> 
+> > 
+> > Fix reset behavior by inverting gpiod_set_value() second argument
+> > in jadard_prepare(). Also modify second argument to devm_gpiod_get()
+> > in jadard_dsi_probe() to assert the reset when probing.
+> > 
+> > Do not modify it in jadard_unprepare() as it is already properly
+> > asserted with "1", which seems to be the intended behavior.
+> > 
+> > Fixes: 6b818c533dd8 ("drm: panel: Add Jadard JD9365DA-H3 DSI panel")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > ---
+> >   drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 8 ++++----
+> >   1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> > index 44897e5218a69..6fec99cf4d935 100644
+> > --- a/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> > +++ b/drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c
+> > @@ -110,13 +110,13 @@ static int jadard_prepare(struct drm_panel *panel)
+> >   	if (jadard->desc->lp11_to_reset_delay_ms)
+> >   		msleep(jadard->desc->lp11_to_reset_delay_ms);
+> >   
+> > -	gpiod_set_value(jadard->reset, 1);
+> > +	gpiod_set_value(jadard->reset, 0);
+> >   	msleep(5);
+> >   
+> > -	gpiod_set_value(jadard->reset, 0);
+> > +	gpiod_set_value(jadard->reset, 1);
+> >   	msleep(10);
+> >   
+> > -	gpiod_set_value(jadard->reset, 1);
+> > +	gpiod_set_value(jadard->reset, 0);
+> >   	msleep(130);
+> >   
+> >   	ret = jadard->desc->init(jadard);
+> > @@ -1131,7 +1131,7 @@ static int jadard_dsi_probe(struct mipi_dsi_device *dsi)
+> >   	dsi->format = desc->format;
+> >   	dsi->lanes = desc->lanes;
+> >   
+> > -	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> > +	jadard->reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> >   	if (IS_ERR(jadard->reset)) {
+> >   		DRM_DEV_ERROR(&dsi->dev, "failed to get our reset GPIO\n");
+> >   		return PTR_ERR(jadard->reset);
+> > 
+> > base-commit: 18ba6034468e7949a9e2c2cf28e2e123b4fe7a50
+> 
+> 
+
+
+-- 
+Hugo Villeneuve
 
