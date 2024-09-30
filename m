@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-344041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB9F98A34E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:46:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A348B98A35E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A83A1C22B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:46:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 521E1B267E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD4118E352;
-	Mon, 30 Sep 2024 12:40:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960418EFE0;
+	Mon, 30 Sep 2024 12:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmY2oSdJ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ESp4XrK8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4F8191461;
-	Mon, 30 Sep 2024 12:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3A918E77D
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700026; cv=none; b=m0BVGewCTvsuS8pcMZgXN4dn5Agjpjv8sGeQDmiPs5zS3zdkxbcMKiesK5h9RZES1zURKwul7ZJK7gYXpGQdP6GaJkfS7VGIwvwkUzmycwnZbjPl2HlzRlwMqbD1GCuKeWSJNlG4eoPzU6fA7GEt+SBxJSp7g565EPkp+B3yjeA=
+	t=1727700286; cv=none; b=OOIeSXt6uw11yK/VMGNE80zMb9NXWN9xQENr23Ul1N5SBk4eln3PC6UGqwNPKRy+s4kIGwAtVq0nRnaFMCGErigCNrz2+gOnnncfMcTnx8IDEoBNxcQxFHDA/RMnRQPpfmTKs0tEYuh+OfijLaZXwGuroiJcpnAzzVzuIAr3xA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700026; c=relaxed/simple;
-	bh=egT/zzGSDwxwC3pb8/iGUtXhyYX5+DpK8xTUMiHEOJ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NBB5Nog/eCnknf2pEVWgHvym790pkVDqDUwFmxMDzS2J3gf9xqs7t4WtqvPoFgT0EnmAyNDoGTYKPeg7cechsdThgkkzTKAnvrWi0lz8CmvK5rM3Nu/oZhl2RkCfA8NohpD2IgVpgBAm9S98HAZ2omwIN2dKB0x3ahW1SyKK+74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmY2oSdJ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2068bee21d8so46433385ad.2;
-        Mon, 30 Sep 2024 05:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727700024; x=1728304824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3iqUbwajN8v0SNStG7Mg77uQzwcTNjVZJuIao9JmtF4=;
-        b=mmY2oSdJRrPfaWzaAu6sCsNDNEzKnIP0KE51OlrC3BGdikoFxoxdLP01uOBvM2XfOG
-         YaJ8wtwfTBxar9OlnhE51YJppubGUZtfuks9s+aUlML7tdiOoIJqZefaFTfodzrNU0lF
-         xru6SwnGdWjNnJ5+CRh5ZA+SEVCl9OmEBKiufjQ2cN/j8ywYP/PXTqk06tU/DvSikEtU
-         QhTfB6hxVOuvE2dQrsXx1SukDeHrdHheEzyZt/ImKos4Gf9TQRyHlkbIQjXLWqUq/c7u
-         tuVfpqe6as2ZmnbJbc7ZoyhuW5B1L3CHXo5PlY+0tT+URGvsT3DCFzcOQRoPudONpVWU
-         ujKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727700024; x=1728304824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3iqUbwajN8v0SNStG7Mg77uQzwcTNjVZJuIao9JmtF4=;
-        b=Qc1wskALdHUsbvMpg9fgfZoOnYb26Fog3Qs/wzdsAj0d1sXoXxTpOK6Ty7uGbuKJH0
-         kFO6EHTlbgMuK5C5S6vfR29sfi6iNwfxsyi7gwxEKKIg7HCQahZhI67Lddvq/AP9/w5e
-         YdktbaDGIK522AzCnXBcy8owjWvM1pasSLiBnf7ewdfmOO98hjOptx02sFxSwV2YogDe
-         k1ZnwQoqIAfvIxQZmUEF/RALK+ryZAfHoFe/R3qV5li/6fIafv7KDf8gwfBFL01oHkbi
-         nKUGxJtWAQDu9wcLL77YvWVBbnQAvbLYwOnwNXfyyF0HnYGJy01fqlwzZAZ2JK/JPii9
-         J2Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXlxH3RblSYC4AxEnWBaKAPSCWagWIIwA/oebrN33LapSHlIgJBdBYpM6sClx5dkcxf//8YpvU7FqHAf4=@vger.kernel.org, AJvYcCWrRIFdMWjFZ/aMKRoYq2DuhyLoWEL5ViqBKaCa6kJsGo2cEGCoATlRR8+8jflB7RCmjSclq361nNeivqJn/8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXt/UQEx522Km0VYuNeg4dEMYnsf2a75SYrKvbD0gWJAYOx8F/
-	lK8PJcWNLd0Sm+xMnUitB511YuXhpivez9ASng6tc97m3bwNeUcf
-X-Google-Smtp-Source: AGHT+IHl4n7FxOxIraZg3EBJBIRqh2m0BeIReQE61B9LDzbUHHgBoawAFOryicmRFf+nSf9DE8w9qA==
-X-Received: by 2002:a17:902:c952:b0:20b:6a57:bf3a with SMTP id d9443c01a7336-20b6a57c137mr95093215ad.1.1727700024169;
-        Mon, 30 Sep 2024 05:40:24 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.154.170])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e35ce7sm53377965ad.209.2024.09.30.05.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:40:23 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	aliceryhl@google.com,
-	mcgrof@kernel.org,
-	russ.weight@linux.dev,
-	dakr@redhat.com,
-	a.hindborg@kernel.org
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] device: rust: change the name function
-Date: Mon, 30 Sep 2024 09:39:56 -0300
-Message-ID: <20240930123957.49181-2-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930123957.49181-1-trintaeoitogc@gmail.com>
-References: <20240930123957.49181-1-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1727700286; c=relaxed/simple;
+	bh=6vUuZ2dmjzVrkKIoa9FfLBuOBd8yL0AJKjCVHkJVKs0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=b73aW6Apx9GVocObtXnApk3oTbow8iIMsTunmSDsNE9bja6adierdZB8UIuMj6UNbD+cd1/quQopPWCRvq57ib1qExRa7uO96AQ0UdknxjiqIjT8ljxPOBAekkgq6808wh/8P2TDlB63kfRmZBfe3Z1ldYYWhFOhMfTMAltdXBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ESp4XrK8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727700283;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6bVDH90pWvwnLUcopy8GzWW9f5uyvFXFYBMlGFlIsT8=;
+	b=ESp4XrK8ugs1enaSltg3WyLRmon32/oqcDhvwu8jo31FLvkUhCB3tq91sJyPn9EpCurq5S
+	rw/VXtnMLOv9Xz/b+DnSFB/tUpnyRsGn4aEGf1K1ocKqv1FNRRaiUiSDcM3RXJpN7S4OQ9
+	XkV+gjlXmWr9xJZ1ME3JX/iAyJyXwR8=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-q9x6f1A7NQmqo91dzCKIUg-1; Mon,
+ 30 Sep 2024 08:44:41 -0400
+X-MC-Unique: q9x6f1A7NQmqo91dzCKIUg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 722E31944DDB;
+	Mon, 30 Sep 2024 12:44:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3243E1979060;
+	Mon, 30 Sep 2024 12:44:31 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240925103118.GE967758@unreal>
+References: <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: dhowells@redhat.com, Eduard Zingerman <eddyz87@gmail.com>,
+    Christian Brauner <brauner@kernel.org>,
+    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2968939.1727700270.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 30 Sep 2024 13:44:30 +0100
+Message-ID: <2968940.1727700270@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-This function increment the refcount by this command "bindings::get_device(prt)".
-This can be confuse becuase, the function Arc::from_raw() from standard library, don't increment the refcount.
-Then, this function "Device::from_raw()" will be renamed for don't make confusing in the future.
+Okay, let's try something a little more drastic.  See if we can at least g=
+et
+it booting to the point we can read the tracelog.  If you can apply the
+attached patch?  It won't release any folio_queue struct or put the refs o=
+n
+any pages, so it will quickly run out of memory - but if you have sufficie=
+nt
+menory, it might be enough to boot.
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+David
 ---
- rust/kernel/device.rs   | 2 +-
- rust/kernel/firmware.rs | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+9p: [DEBUGGING] Don't release pages or folioq structs
 
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index 851018eef885..ecffaff041e0 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -51,7 +51,7 @@ impl Device {
-     ///
-     /// It must also be ensured that `bindings::device::release` can be called from any thread.
-     /// While not officially documented, this should be the case for any `struct device`.
--    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-+    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
-         // SAFETY: By the safety requirements, ptr is valid.
-         // Initially increase the reference count by one to compensate for the final decrement once
-         // this newly created `ARef<Device>` instance is dropped.
-diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-index dee5b4b18aec..13a374a5cdb7 100644
---- a/rust/kernel/firmware.rs
-+++ b/rust/kernel/firmware.rs
-@@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
- ///
- /// # fn no_run() -> Result<(), Error> {
- /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
--/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
-+/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
- ///
- /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
- /// let blob = fw.data();
--- 
-2.46.2
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index af46a598f4d7..702286484176 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -84,8 +84,8 @@ static size_t netfs_load_buffer_from_ra(struct netfs_io_=
+request *rreq,
+ 		folioq->orders[i] =3D order;
+ 		size +=3D PAGE_SIZE << order;
+ =
+
+-		if (!folio_batch_add(put_batch, folio))
+-			folio_batch_release(put_batch);
++		//if (!folio_batch_add(put_batch, folio))
++		//	folio_batch_release(put_batch);
+ 	}
+ =
+
+ 	for (int i =3D nr; i < folioq_nr_slots(folioq); i++)
+diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+index 63280791de3b..cec55b7eb5bc 100644
+--- a/fs/netfs/misc.c
++++ b/fs/netfs/misc.c
+@@ -88,7 +88,7 @@ struct folio_queue *netfs_delete_buffer_head(struct netf=
+s_io_request *wreq)
+ 	if (next)
+ 		next->prev =3D NULL;
+ 	netfs_stat_d(&netfs_n_folioq);
+-	kfree(head);
++	//kfree(head);
+ 	wreq->buffer =3D next;
+ 	return next;
+ }
+@@ -108,11 +108,11 @@ void netfs_clear_buffer(struct netfs_io_request *rre=
+q)
+ 				continue;
+ 			if (folioq_is_marked(p, slot)) {
+ 				trace_netfs_folio(folio, netfs_folio_trace_put);
+-				folio_put(folio);
++				//folio_put(folio);
+ 			}
+ 		}
+ 		netfs_stat_d(&netfs_n_folioq);
+-		kfree(p);
++		//kfree(p);
+ 	}
+ }
+ =
 
 
