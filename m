@@ -1,152 +1,141 @@
-Return-Path: <linux-kernel+bounces-344535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233BC98AAFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:20:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B45A98AB01
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B9531C22E13
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C301F232E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBD0195FFA;
-	Mon, 30 Sep 2024 17:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1E196450;
+	Mon, 30 Sep 2024 17:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="h8BWNBbG"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5xOfX3u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2CC193416
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0813841C6A;
+	Mon, 30 Sep 2024 17:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716803; cv=none; b=X/RA2vvatQIuSnZ0ulGp5VW5S5LFcZTDSSoHXkO5KWGmJPlnFG/Gircy/B78Za5+tNjXv+FsXtvgRj80L/BW7n0zbaYG1wZCxTpAyzFFIpy37MuYxTNM2VEt4Ss8dhYltrjh7Piz7mc7Yz70LKQgDJqdFVmiXGQ/k2LyFQ8ppOE=
+	t=1727716834; cv=none; b=uy6iExTarkmIJXOnENxYeNFYH/sKiG32m3/rgSfFenShrBNI+9GVL1o92AFt1GlExffH3tIY3fWvbCxjMJF074b2zu+Kw75LH8bFgjGvP2wQwggYjf++rbPwZYU/M4jANESSRM7H3ZIcjaWd1dNPd0WmU2qH9ydp1wVdYYkWP1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716803; c=relaxed/simple;
-	bh=HUlp4+9vnQ8mzU5IidX9bUwbnyCuarQYAu8fAnyFcTg=;
+	s=arc-20240116; t=1727716834; c=relaxed/simple;
+	bh=JI4/YEqKLWDif6ESadf2wfzAw0CxyVpEezu9rHiCHQU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IMRKppMwBaZ00dPaYXSwviK7OcwGyEMV7tXIuTGBAO3fOGNggYke43aXUSk02nRc7sqWk3Za9DzMnxUjZ36evmWe846y9InXNS7BPlbk4MEPXwgeDSrqCwSk+Wnf4YYL7/MQm4jaQ5rVqElvTgzBfRtJtexdT3KEOu+SXJfTbo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=h8BWNBbG; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UAcmut027558;
-	Mon, 30 Sep 2024 17:19:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=QPvsOh1CGi5uMLg1SlnPg+4yIL+
-	KNmslqtGznAHWvUU=; b=h8BWNBbGYPbQrHdPJYN1Asclt9kSEm5Wi1cZvHGlszS
-	3bKba6F78hrrKrkuJHg8fP4z96P7+ge7HhnLSQRrKspMyzx54MtL4aXA2Rdctf7A
-	IK+n9NeulSugxep78+nYfcvzKNUKEU4DEdDrzC6b7A11zdm38Z8trMqZblV+H+vz
-	VEUF/8AuoMEBVaX1MD+gkcgDItQC1w07gNY7kJHp6UEnmM2GeGSVyopFNmT0uEhh
-	YVrEF5QKureoFQ1yWWe9kUaqYFuUUGrb31Yuu+XqMUAxhDruXys/UEYH5siCaAq4
-	fFHO3ZHsvGAqgCtf/nU8jTmkPxvElm9h0M5uTVewZeQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9fwu816-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 17:19:47 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48UHJkJO014421;
-	Mon, 30 Sep 2024 17:19:47 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9fwu812-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 17:19:46 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48UFoqhi002386;
-	Mon, 30 Sep 2024 17:19:46 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxu0yexn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 17:19:45 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48UHJiue7668180
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 17:19:44 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5DF242004B;
-	Mon, 30 Sep 2024 17:19:44 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2000B20043;
-	Mon, 30 Sep 2024 17:19:42 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.39.31.120])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 30 Sep 2024 17:19:41 +0000 (GMT)
-Date: Mon, 30 Sep 2024 22:49:39 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 10/20] net: pktgen: Use kthread_create_on_node()
-Message-ID: <Zvrdq43viQlcyk-K@linux.ibm.com>
-References: <20240926224910.11106-1-frederic@kernel.org>
- <20240926224910.11106-11-frederic@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LLNCG7cFzSTs4BCi38MihvPDm4RyE52nP6WhLQO3mo9uhJo4SsRs8T5YTCRhxSYRqN/ENAnQ/ykh2YaT2e944i/h9eFxBtORnODaVu57IBfo7GN2sXdEJZ08pnYXETz1MvHnIrBMA8BAdQIcCHwL9gDA/UtPRhDoNwSN8ywCrIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5xOfX3u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B4BC4CEC7;
+	Mon, 30 Sep 2024 17:20:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727716833;
+	bh=JI4/YEqKLWDif6ESadf2wfzAw0CxyVpEezu9rHiCHQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a5xOfX3uVyCOUz21b/hAWclrVwN09wZsBbXmSJNFrXgJtWBDnVKSXV+Pg9CiOObr8
+	 I/cGRvHY6I/AQiYdhAC4t5cCDaNbQMDreYwaPBSa4KpK377pTAqJLEXZiX5OwCNSnq
+	 iP08TRGvI6TjWDNbBBaiok5r+pBgc9mYtPbE1huKNj6FjmRbkuSOgysaacjDZI9kdd
+	 bnZgzAjrZccDX9ioZw0iXyJ4LqRGTR+gpPr3u2ky+8+w1f9XknD1CiOX1jgbrZhP8O
+	 TBYWXAGMNN/S6y1OULLvSQ2VmB32FEf3j5yLjoVhuHilJnqRqDyr+qsHyLr0SU8ijx
+	 b8HWRarKfQ0KA==
+Received: by pali.im (Postfix)
+	id E2CC87D0; Mon, 30 Sep 2024 19:20:27 +0200 (CEST)
+Date: Mon, 30 Sep 2024 19:20:27 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: Steve French <sfrench@samba.org>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
+ reparse call
+Message-ID: <20240930172027.yt6qijriln4sv5hc@pali>
+References: <20240928215948.4494-1-pali@kernel.org>
+ <20240928215948.4494-3-pali@kernel.org>
+ <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240926224910.11106-11-frederic@kernel.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VUi9ILBPQRH-usCTxvPxOM7twC--9Lq6
-X-Proofpoint-GUID: 7UMbkstHGfvhiz614bE2Fpoc6IezdRcX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_16,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1011 malwarescore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxscore=0 mlxlogscore=531 bulkscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300124
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
+User-Agent: NeoMutt/20180716
 
-On Fri, Sep 27, 2024 at 12:48:58AM +0200, Frederic Weisbecker wrote:
-> Use the proper API instead of open coding it.
+On Monday 30 September 2024 12:25:27 Paulo Alcantara wrote:
+> Pali Rohár <pali@kernel.org> writes:
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->  net/core/pktgen.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+> > If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
+> > intermediate object created by CREATE. Otherwise empty object stay on the
+> > server when reparse call failed.
+> >
+> > This ensures that if the creating of special files is unsupported by the
+> > server then no empty file stay on the server as a result of unsupported
+> > operation.
+> >
+> > Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
+> >  1 file changed, 19 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> > index 11a1c53c64e0..af42f44bdcf4 100644
+> > --- a/fs/smb/client/smb2inode.c
+> > +++ b/fs/smb/client/smb2inode.c
+> > @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+> >  	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
+> >  	struct cifsFileInfo *cfile;
+> >  	struct inode *new = NULL;
+> > +	int out_buftype[2] = {};
+> > +	struct kvec out_iov[2];
+> >  	struct kvec in_iov[2];
+> >  	int cmds[2];
+> >  	int rc;
+> > @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+> >  		cmds[1] = SMB2_OP_POSIX_QUERY_INFO;
+> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+> >  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+> >  		if (!rc) {
+> >  			rc = smb311_posix_get_inode_info(&new, full_path,
+> >  							 data, sb, xid);
+> > @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
+> >  		cmds[1] = SMB2_OP_QUERY_INFO;
+> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+> >  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+> >  		if (!rc) {
+> >  			rc = cifs_get_inode_info(&new, full_path,
+> >  						 data, sb, xid, NULL);
+> >  		}
+> >  	}
+> > +
+> > +	if (rc) {
+> > +		/*
+> > +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
+> > +		 * remove the intermediate object created by CREATE. Otherwise
+> > +		 * empty object stay on the server when reparse call failed.
+> > +		 */
+> > +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status == STATUS_SUCCESS &&
+> > +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status != STATUS_SUCCESS)
+> > +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
+> > +	}
 > 
-> diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-> index 34f68ef74b8f..7fcb4fc7a5d6 100644
-> --- a/net/core/pktgen.c
-> +++ b/net/core/pktgen.c
-> @@ -3883,17 +3883,14 @@ static int __net_init pktgen_create_thread(int cpu, struct pktgen_net *pn)
->  	list_add_tail(&t->th_list, &pn->pktgen_threads);
->  	init_completion(&t->start_done);
->  
-> -	p = kthread_create_on_node(pktgen_thread_worker,
-> -				   t,
-> -				   cpu_to_node(cpu),
-> -				   "kpktgend_%d", cpu);
-> +	p = kthread_create_on_cpu(pktgen_thread_worker, t, cpu, "kpktgend_%d");
-Hi Frederic, 
+> You should handle the case where ->iov_base is NULL or out_buftype ==
+> CIFS_NO_BUFFER, otherwise you'll end up with a NULL ptr deref.
 
-The Subject line says "Use kthread_create_on_node()" while
-kthread_create_on_cpu is used in the diff.
+Ok, thanks for info! I will send v3 with those checks.
 
+Anyway, what does it mean if iov_base stay NULL or out_buftype is
+CIFS_NO_BUFFER? Does it mean that the server has not returned reply for
+that command?
 
->  	if (IS_ERR(p)) {
->  		pr_err("kthread_create_on_node() failed for cpu %d\n", t->cpu);
->  		list_del(&t->th_list);
->  		kfree(t);
->  		return PTR_ERR(p);
->  	}
-> -	kthread_bind(p, cpu);
-> +
->  	t->tsk = p;
->  
->  	pe = proc_create_data(t->tsk->comm, 0600, pn->proc_dir,
-> -- 
-> 2.46.0
-> 
+I guess that it should be treated as unsuccessful result.
 
