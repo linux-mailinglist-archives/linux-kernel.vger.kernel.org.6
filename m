@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-344390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B6F98A8F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:46:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC4898A8F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A5F31C22F9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09DD51C22F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522D2189BAC;
-	Mon, 30 Sep 2024 15:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB68192D78;
+	Mon, 30 Sep 2024 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVrJ0WiA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hIOuf6fh"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A378192D7F;
-	Mon, 30 Sep 2024 15:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B58C192B61
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727711111; cv=none; b=iF+uqJLS5pZ3rglzX8pMwAjvth396TiuqvMsIWg2rGMz9Pr/Pk8uvAbQhD2lXz/euMHaCex2uOo0HUCWR/gYMisX1aBRQPQbr1owMc+hdJbQsWnNTP5OXw1eTZZ24Pf2Uw1vYTQMoK8j6s46u2q/pPcyyuv1VVLxz5qbilIJ3Ao=
+	t=1727711080; cv=none; b=TrXFVXprxqwsJtdROk2dE62tN3514+qRsZMLtG5oqRGODN1ExMNNRpQF3zm1HjVH6mo8mI/D+58mSh0xQwi/0iSFsiaTv6i34CLVf46In4751F0ldGlZnX6VE/uTxhzCKRt3MXHfjI5cn+wOnbE3D4g7ZPhg5trxYtQcVIChCz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727711111; c=relaxed/simple;
-	bh=IkZcH+dr/dc2FTVfUpgfG4mg44WAOh1K6ZY3C+oqHkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TDrq5FbwDvAoHrAOuS5WxbXO6OzUrN85D8KW/UiYXg7T6GFGywqVbu+EF5jT96N/pl4wide4k0ePG2/puLk24O8d9vLM3bfXG6KK1QyofcAuH2DXSN0U7eCaTD1/Ex8+uxRIlFdDi/g+0dT3e7JkPn7f2Fhhc5njNMyJ1GGCt/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVrJ0WiA; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727711110; x=1759247110;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=IkZcH+dr/dc2FTVfUpgfG4mg44WAOh1K6ZY3C+oqHkk=;
-  b=ZVrJ0WiAvSlcl4tpiOsZ3k5tESSTUmfr/x7LD4smbAZl8T3k85NYvp6D
-   an65fR8rzym0P4Z91HaArUKdH+ySej6zkki2ox3MSbyRk1s67VQcdY+nW
-   xSS5HKIlVJ169KQL9nFBSBmNGq43A7D8y6CI7Lgll5LvTyqjsyvIGM1wa
-   Wj57MP26HP+q57N/tokRkdCVtSwzsR4gDQTdUhg2Micm/X1rdsB0DFcnp
-   UceiTZzLicAIHKsFTlMd+ERuXyOw8NrRTp/wqZD75KnFliyC5AIDupG0F
-   IWUP9PNOv1rmVx/lyd0+1x+Rc/NrmtOGNphcjCWzaUh3+dSoT5+l6Cf5H
-   g==;
-X-CSE-ConnectionGUID: 1ngtR6tTTA6qZro9AJg37Q==
-X-CSE-MsgGUID: /G4HQFIJRWWBThphSmM7ww==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26934949"
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="26934949"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 08:45:04 -0700
-X-CSE-ConnectionGUID: DTbva3IfT/SV4r9NTMr44w==
-X-CSE-MsgGUID: hYPnjd9KQ6ieRBjSuZrFFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="78306550"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa004.jf.intel.com with ESMTP; 30 Sep 2024 08:45:01 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	kernel test robot <lkp@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	linux-arm-kernel@lists.infradead.org,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] firmware/psci: fix missing '%u' format literal in kthread_create_on_cpu()
-Date: Mon, 30 Sep 2024 17:44:33 +0200
-Message-ID: <20240930154433.521715-1-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727711080; c=relaxed/simple;
+	bh=g7yH1N8qbD3KalRQbnNOzdFQJgQ9w431UHMEl6kjtdQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=SDMDm9sdsMxb7rcDxtMPFv5MYWS/Uc20fYfkjlieghqVAWycsQig2WXtsIsY2tab2aRzTTZtpBA0nx2J9Ge6KGHbP/VD8w7W1p8iJ+A3WiluFPKjTSGIA9GCVBNSsJWVXH94RBLGWItjxtwYgK0BeFbMwV4ZvhUMR9kDFN5MLvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hIOuf6fh; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25d62bfe12so6477246276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727711077; x=1728315877; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=REdiOgzhoa31AsekrGqqdz4GlZ2Ybe9xNzEcAWoGwy4=;
+        b=hIOuf6fhR/gVRijlOxteNdqDQeUV8oRtQk9gL7pcnYvSI6Lf1d6JSVKHojtTB8GJBq
+         GJSe5GYpMCUXZTuX2wevrEd3rSZcjfSGVjb/BGmbDDe6BD+alVyX8OfhChkWO6/iob47
+         FBGjR5IGfzgjA0vZMFGe9JIT+nkBTa/MGpJG1LgU86sGp/wP/VZpVlqjVYipsuyTObPm
+         DMdPtPPygB6CMg2UJ0r0SFSWWaEQ2Wkm3eN2hwNL95NbrGt9hnNaVAdMCht9ncsbJyV8
+         ZAoaS1MjJwDEC1LkWq1Hfbl3gvS9A2h/0EuZRdWDixUmPSv5ijBBUoBhfGk9wu3RNDWk
+         jIKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727711077; x=1728315877;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=REdiOgzhoa31AsekrGqqdz4GlZ2Ybe9xNzEcAWoGwy4=;
+        b=vZiaGLwFZhUqx7wpc59mKZdFVW0s7AXZe+u3crE2064ye+hAPR+75ScMsaNIuyCcgE
+         9TZqEiVx6wJWaFmzq6E8MIdKorjEHyBe5EQGNIyvXauTi/g3B5zO9/y7x4nem1/VNGiE
+         1Mun2HKh9dJ3KGrHxri2CBNDdvqvtHNi6Eb+nEg2gJCAdGgu8sH3Rft53Bl9e8pXwj7K
+         c3k8/yeEV4/OcXIFxrzWku07H64j7soHSperB4cX7yePQhkQjDbDoNAvjeKnPn6Wx5ey
+         ftQ8xlk9Txpd/AqMiECO4nUZPDxam3FPmEJLsw7VJk13qk+f1S7Fny/cTIRMNVAUYltI
+         qS1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXD5XUe17F9/4MFZLGWGpF60f32BuzR4zQYJs3LKkeaEq1+v+iG6+j4ufd3y41uq+1iQNBoDthwxFwFjZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEFomK+28Sf5mu6zaJQ9vAHzMnrRoEjRf74whNoZsCnJjZLNHk
+	sG9D7Z8/gUO/e7kXpigGAFRjQckNCrfkcaLwtcpZY0SCRJ4Fj9knduiSahMN0YFm7Gy3OCmdGkw
+	/Cw==
+X-Google-Smtp-Source: AGHT+IGFPrNUrW8gEb8N/vRCKmA+Kcp0dg+Etw0Q19EAKUNDVTEIDJcfVqny8as85bq9oiVqRc8xz3iM7T8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:2e4d:0:b0:e16:4d66:982e with SMTP id
+ 3f1490d57ef6-e2604b436d5mr59334276.5.1727711076703; Mon, 30 Sep 2024 08:44:36
+ -0700 (PDT)
+Date: Mon, 30 Sep 2024 08:44:34 -0700
+In-Reply-To: <942ec747-04f6-4fd6-abcd-eea60c3ba041@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
+ <Zu_Pl4QiBsA_yK1g@google.com> <0288f7f5-4ae8-4097-b00c-f1b747f80183@yandex-team.ru>
+ <ZvFVFulBrzHqj2SE@google.com> <942ec747-04f6-4fd6-abcd-eea60c3ba041@yandex-team.ru>
+Message-ID: <ZvrHYoAuu2AntQYb@google.com>
+Subject: Re: [PATCH] kvm/debugfs: add file to get vcpu steal time statistics
+From: Sean Christopherson <seanjc@google.com>
+To: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, yc-core@yandex-team.ru, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-kthread_create_on_cpu() always requires format string to contain one
-'%u' at the end, as it automatically adds the CPU ID when passing it
-to kthread_create_on_node(). The former isn't marked as __printf()
-as it's not printf-like itself, which effectively hides this from
-the compiler.
-If you convert this function to printf-like, you'll see the following:
+On Mon, Sep 30, 2024, Denis Plotnikov wrote:
+> 
+> 
+> On 9/23/24 14:46, Sean Christopherson wrote:
+> > On Mon, Sep 23, 2024, Denis Plotnikov wrote:
+> > > On 9/22/24 11:04, Sean Christopherson wrote:
+> > > > On Tue, Sep 17, 2024, Denis Plotnikov wrote:
+> > > > > It's helpful to know whether some other host activity affects a virtual
+> > > > > machine to estimate virtual machine quality of sevice.
+> > > > > The fact of virtual machine affection from the host side can be obtained
+> > > > > by reading "preemption_reported" counter via kvm entries of sysfs, but
+> > > > > the exact vcpu waiting time isn't reported to the host.
+> > > > > This patch adds this reporting.
+> > > > > 
+> > > > > Signed-off-by: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+> > > > > ---
+> > > > >    arch/x86/include/asm/kvm_host.h |  1 +
+> > > > >    arch/x86/kvm/debugfs.c          | 17 +++++++++++++++++
+> > > > 
+> > > > Using debugfs is undesirable, as it's (a) not ABI and (b) not guaranteed to be
+> > > > present as KVM (correctly) ignores debugfs setup errors.
+> > > > 
+> > > > Using debugfs is also unnecessary.  The total steal time is available in guest
+> > > > memory, and by definition that memory is shared with the host.  To query total
+> > > > steal time from userspace, use MSR filtering to trap writes (and reflect writes
+> > > > back into KVM) so that the GPA of the steal time structure is known, and then
+> > > > simply read the actual steal time from guest memory as needed.
+> > > Thanks for the reply!
+> > > Just to clarify, by reading the actual steal time from guest memory do you
+> > > mean by using some kind of new vcpu ioctl?
+> > 
+> > No, I mean by using the host userspace VMA to read the memory.
+> 
+> Oh, I think I got your idea. You mean
+> using KVM_CAP_X86_MSR_FILTER which...
+> 
+> "In combination with KVM_CAP_X86_USER_SPACE_MSR, this allows user space to
+> trap and emulate MSRs ..."
+> 
+> And then having guest's steal time struct valid address read the value from
+> userspace VMM like qemu directly.
 
-In file included from drivers/firmware/psci/psci_checker.c:15:
-drivers/firmware/psci/psci_checker.c: In function 'suspend_tests':
-drivers/firmware/psci/psci_checker.c:401:48: warning: too many arguments for format [-Wformat-extra-args]
-     401 |                                                "psci_suspend_test");
-         |                                                ^~~~~~~~~~~~~~~~~~~
-drivers/firmware/psci/psci_checker.c:400:32: warning: data argument not used by format string [-Wformat-extra-args]
-     400 |                                                (void *)(long)cpu, cpu,
-         |                                                                   ^
-     401 |                                                "psci_suspend_test");
-         |                                                ~~~~~~~~~~~~~~~~~~~
-
-Add the missing format literal to fix this. Now the corresponding
-kthread will be named as "psci_suspend_test-<cpuid>", as it's meant by
-kthread_create_on_cpu().
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202408141012.KhvKaxoh-lkp@intel.com
-Closes: https://lore.kernel.org/oe-kbuild-all/202408141243.eQiEOQQe-lkp@intel.com
-Fixes: ea8b1c4a6019 ("drivers: psci: PSCI checker module")
-Cc: stable@vger.kernel.org # 4.10+
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- drivers/firmware/psci/psci_checker.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/psci/psci_checker.c b/drivers/firmware/psci/psci_checker.c
-index 116eb465cdb4..ecc511c745ce 100644
---- a/drivers/firmware/psci/psci_checker.c
-+++ b/drivers/firmware/psci/psci_checker.c
-@@ -398,7 +398,7 @@ static int suspend_tests(void)
- 
- 		thread = kthread_create_on_cpu(suspend_test_thread,
- 					       (void *)(long)cpu, cpu,
--					       "psci_suspend_test");
-+					       "psci_suspend_test-%u");
- 		if (IS_ERR(thread))
- 			pr_err("Failed to create kthread on CPU %d\n", cpu);
- 		else
--- 
-2.46.2
-
+Yep, exactly!
 
