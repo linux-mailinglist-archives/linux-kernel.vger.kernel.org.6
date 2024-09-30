@@ -1,225 +1,142 @@
-Return-Path: <linux-kernel+bounces-344179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F36098A5DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D9C98A5E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B491C2264F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD7A1F23EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AEA19006F;
-	Mon, 30 Sep 2024 13:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1446B18FDD8;
+	Mon, 30 Sep 2024 13:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQqtYTlo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0KwEj6s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7B18F2CF;
-	Mon, 30 Sep 2024 13:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BCA1EB56;
+	Mon, 30 Sep 2024 13:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704188; cv=none; b=Dudg5I+zLohaM1uq1OhMy1VpsSr/SPTVR0VkpAdYvJqeduitv1kCIiCnOes5EhpowbrnKI3/rQNdz9t/1Zl0nBxr+dNnH9+UmbPwWKXDeq2TUj2OsP2OMJKQbFRfaNibTALhlhS2QhRuX3O8RqvsEjzXZHsGcBReG3XhiqFWm1U=
+	t=1727704241; cv=none; b=HxlCUUEy7MGfqzYL4MFW7ZJgl7h2jkTbe1y0Nnq1uyl8IIfb52BV6WZNX2qP44tQc6WqpGI9s/IOlU3/HIhv3o9Vm1IqrzPK6Xeh710NhP3Uha8xDiiKzP7sSKU9TaA6SwX14mCgqGXN3iDLkAnevdfMoR5tZa2IHiUCg7SgQFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704188; c=relaxed/simple;
-	bh=CMRtgHOyVoHjwQIEEvabYPyGlC1aDfVrMwNWnFIZg1E=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=hetJzQoLw0G5x6SKO7i8hgP8/rugXX4u1sST70M6CrArrIH72LM3mt7AwnK0mhAcLGrfOgWU8nf+X7GkT0gWD6dAPWExaG+1QbzLq+GkNM2UTQRCxf6flFV+tHU+vb7eamOx+HlL3lp72xR4MGBdMtHNJiiPf82neTvWeqhc7rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQqtYTlo; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727704187; x=1759240187;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=CMRtgHOyVoHjwQIEEvabYPyGlC1aDfVrMwNWnFIZg1E=;
-  b=YQqtYTlo+Tje2AMlYHq50cjxOC8s+FB3sA7/0LeXLsDtjyrRUM4pP9y/
-   IIdcg4CMdvDtYLzzXuzymnfrtUQ8BA3Xkody216O+BfqhiGSKrChxLNgR
-   DxKUzQ1P28lfkZpfH74opwIzyqPTPVNBjZuM/ZZlYWFHEZfLIpf8ELaGh
-   bPJH07y00wBqoTrh3On0s/pqeIpRbXeGTDqqbuIau8tEJBrAREEvQnesv
-   z1NNZWceAdZ1827smCEQzBUElVBAbTFCqT+49QbCjN4QxC4AR0g7Wt4W7
-   HDPjn6ywKYrb8nlIa/aJaNNVHYDWwXLKG8jyzUiKToBZwme8vZ/SefI/m
-   A==;
-X-CSE-ConnectionGUID: 1duwETtOQH2khmf7lHN+CQ==
-X-CSE-MsgGUID: lyI+DQKaS8OlgyduPQnrAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="14417844"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="14417844"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:49:46 -0700
-X-CSE-ConnectionGUID: xV2u+7xNSK62NVSHZL/5nw==
-X-CSE-MsgGUID: a2MBGPZjQX2cXpNoodiRJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="73177741"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:49:43 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Sep 2024 16:49:39 +0300 (EEST)
-To: Reinette Chatre <reinette.chatre@intel.com>
-cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
-    peternewman@google.com, babu.moger@amd.com, 
-    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
-    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 06/13] selftests/resctrl: Remove "once" parameter
- required to be false
-In-Reply-To: <1f5ad02dc424bfc3cca705ed9a322df8f35f2ff4.1726164080.git.reinette.chatre@intel.com>
-Message-ID: <f692fe7c-e81d-2086-fc1d-f3af436580c1@linux.intel.com>
-References: <cover.1726164080.git.reinette.chatre@intel.com> <1f5ad02dc424bfc3cca705ed9a322df8f35f2ff4.1726164080.git.reinette.chatre@intel.com>
+	s=arc-20240116; t=1727704241; c=relaxed/simple;
+	bh=lKoyRADkcWjiRRXHAbLZJh0byrlozFqRiaV3hRP3foc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GcokflkmJQkQZZuMVLUj8wmwUQGkGvl2F8viEZZiDtIWm4MjVj9aWqgjNjBf0Q0H1I0vqx7KTMMPFObfwMaD49WP7V3Owq79mUgC/KTXkqK3vq1P/P5VIMstygBHVjKx68q5bgAYeeB3MrAfaSx/MhwbTTUYC75H7w8StwRoBts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0KwEj6s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF7C1C4CEC7;
+	Mon, 30 Sep 2024 13:50:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727704240;
+	bh=lKoyRADkcWjiRRXHAbLZJh0byrlozFqRiaV3hRP3foc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O0KwEj6sElowAia8rnohtPGSB4x7Bue01ApMw2xH+wGPgEDLbU0kAo+kjDr9BAfaO
+	 Zkk2BSk+DvRXOOztjLhvnfURK4cRSylJocE4tSLlaAvbTZrnHLTz1iKAM9GFrCSrMT
+	 ScnbxzVrZY0FrIY8BreFKIIB/MxuD0Qu6gIkt/vklDC917scw0G/oRsV/83CeZvj6I
+	 Aregw6v/Hfv0NbXcC92KpA8OTX/6M5E8mwpWoNLvPaNe76eu/f6tNyVVytkmmykn4A
+	 hSVIx9eb5NZwRQUqbnOpjGguBujtr04AXySWfWjBUP6+e9IZRBPVRqneLhLnN1rYFC
+	 lL06QBuJDRU5w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1svGnO-000000004jK-3Cl1;
+	Mon, 30 Sep 2024 15:50:39 +0200
+Date: Mon, 30 Sep 2024 15:50:38 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Qiu-ji Chen <chenqiuji666@gmail.com>
+Cc: dtwlin@gmail.com, elder@kernel.org, gregkh@linuxfoundation.org,
+	greybus-dev@lists.linaro.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] staging: Fix atomicity violation in get_serial_info()
+Message-ID: <Zvqsrj5ee9iNQXsX@hovoldconsulting.com>
+References: <20240930101403.24131-1-chenqiuji666@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2035177807-1727704179=:938"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930101403.24131-1-chenqiuji666@gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Sep 30, 2024 at 06:14:03PM +0800, Qiu-ji Chen wrote:
+> Atomicity violation occurs during consecutive reads of the members of 
+> gb_tty. Consider a scenario where, because the consecutive reads of gb_tty
+> members are not protected by a lock, the value of gb_tty may still be 
+> changing during the read process. 
+> 
+> gb_tty->port.close_delay and gb_tty->port.closing_wait are updated
+> together, such as in the set_serial_info() function. If during the
+> read process, gb_tty->port.close_delay and gb_tty->port.closing_wait
+> are still being updated, it is possible that gb_tty->port.close_delay
+> is updated while gb_tty->port.closing_wait is not. In this case,
+> the code first reads gb_tty->port.close_delay and then
+> gb_tty->port.closing_wait. A new gb_tty->port.close_delay and an
+> old gb_tty->port.closing_wait could be read. Such values, whether
+> before or after the update, should not coexist as they represent an
+> intermediate state.
+> 
+> This could result in a mismatch of the values read for gb_tty->minor, 
 
---8323328-2035177807-1727704179=:938
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+No, gb_tty minor is only set at probe().
 
-On Thu, 12 Sep 2024, Reinette Chatre wrote:
+> gb_tty->port.close_delay, and gb_tty->port.closing_wait, which in turn 
+> could cause ss->close_delay and ss->closing_wait to be mismatched.
 
-> The CMT, MBM, and MBA tests rely on a benchmark that runs while
-> the test makes changes to needed configuration (for example memory
-> bandwidth allocation) and takes needed measurements. By default
-> the "fill_buf" benchmark is used and by default (via its
-> "once =3D false" setting) "fill_buf" is configured to run until
-> terminated after the test completes.
->=20
-> An unintended consequence of enabling the user to override the
-> benchmark also enables the user to change parameters to the
-> "fill_buf" benchmark. This enables the user to set "fill_buf" to
-> only cycle through the buffer once (by setting "once =3D true")
-> and thus breaking the CMT, MBA, and MBM tests that expect
-> workload/interference to be reflected by their measurements.
->=20
-> Prevent user space from changing the "once" parameter and ensure
-> that it is always false for the CMT, MBA, and MBM tests.
->=20
-> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Sure, but that's a pretty minor issue as Dan already pointed out.
+
+> To address this issue, we have enclosed all sequential read operations of 
+> the gb_tty variable within a lock. This ensures that the value of gb_tty 
+> remains unchanged throughout the process, guaranteeing its validity.
+> 
+> This possible bug is found by an experimental static analysis tool
+> developed by our team. This tool analyzes the locking APIs
+> to extract function pairs that can be concurrently executed, and then
+> analyzes the instructions in the paired functions to identify possible
+> concurrency bugs including data races and atomicity violations.
+> 
+> Fixes: b71e571adaa5 ("staging: greybus: uart: fix TIOCSSERIAL jiffies conversions")
+
+And this obviously isn't the correct commit to blame. Please be more
+careful.
+
+> Cc: stable@vger.kernel.org
+
+Since this is unlikely to cause any issues for a user, I don't think
+stable backport is warranted either.
+
+> Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
 > ---
-> Changes since V1:
-> - New patch
-> ---
->  tools/testing/selftests/resctrl/fill_buf.c      |  7 ++++---
->  tools/testing/selftests/resctrl/resctrl.h       |  2 +-
->  tools/testing/selftests/resctrl/resctrl_tests.c |  8 +++++++-
->  tools/testing/selftests/resctrl/resctrl_val.c   | 11 +----------
->  4 files changed, 13 insertions(+), 15 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/s=
-elftests/resctrl/fill_buf.c
-> index 34e5df721430..854f0108d8e6 100644
-> --- a/tools/testing/selftests/resctrl/fill_buf.c
-> +++ b/tools/testing/selftests/resctrl/fill_buf.c
-> @@ -151,7 +151,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memf=
-lush)
->  =09return buf;
->  }
-> =20
-> -int run_fill_buf(size_t buf_size, int memflush, int op, bool once)
-> +int run_fill_buf(size_t buf_size, int memflush, int op)
+>  drivers/staging/greybus/uart.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/staging/greybus/uart.c b/drivers/staging/greybus/uart.c
+> index cdf4ebb93b10..8cc18590d97b 100644
+> --- a/drivers/staging/greybus/uart.c
+> +++ b/drivers/staging/greybus/uart.c
+> @@ -595,12 +595,14 @@ static int get_serial_info(struct tty_struct *tty,
 >  {
->  =09unsigned char *buf;
-> =20
-> @@ -160,9 +160,10 @@ int run_fill_buf(size_t buf_size, int memflush, int =
-op, bool once)
->  =09=09return -1;
-> =20
->  =09if (op =3D=3D 0)
-> -=09=09fill_cache_read(buf, buf_size, once);
-> +=09=09fill_cache_read(buf, buf_size, false);
->  =09else
-> -=09=09fill_cache_write(buf, buf_size, once);
-> +=09=09fill_cache_write(buf, buf_size, false);
-> +
->  =09free(buf);
-> =20
->  =09return 0;
-> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/se=
-lftests/resctrl/resctrl.h
-> index 2dda56084588..51f5f4b25e06 100644
-> --- a/tools/testing/selftests/resctrl/resctrl.h
-> +++ b/tools/testing/selftests/resctrl/resctrl.h
-> @@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event,=
- pid_t pid, int cpu,
->  unsigned char *alloc_buffer(size_t buf_size, int memflush);
->  void mem_flush(unsigned char *buf, size_t buf_size);
->  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
-> -int run_fill_buf(size_t buf_size, int memflush, int op, bool once);
-> +int run_fill_buf(size_t buf_size, int memflush, int op);
->  int initialize_mem_bw_imc(void);
->  int measure_mem_bw(const struct user_params *uparams,
->  =09=09   struct resctrl_val_param *param, pid_t bm_pid,
-> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/test=
-ing/selftests/resctrl/resctrl_tests.c
-> index ecbb7605a981..bee4123a5a9b 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-> @@ -266,7 +266,13 @@ int main(int argc, char **argv)
->  =09=09uparams.benchmark_cmd[1] =3D span_str;
->  =09=09uparams.benchmark_cmd[2] =3D "1";
->  =09=09uparams.benchmark_cmd[3] =3D "0";
-> -=09=09uparams.benchmark_cmd[4] =3D "false";
-> +=09=09/*
-> +=09=09 * Fourth parameter was previously used to indicate
-> +=09=09 * how long "fill_buf" should run for, with "false"
-> +=09=09 * ("fill_buf" will keep running until terminated)
-> +=09=09 * the only option that works.
-> +=09=09 */
-> +=09=09uparams.benchmark_cmd[4] =3D NULL;
->  =09=09uparams.benchmark_cmd[5] =3D NULL;
+>  	struct gb_tty *gb_tty = tty->driver_data;
+>  
+> +	mutex_lock(&gb_tty->port.mutex);
+>  	ss->line = gb_tty->minor;
 
-Why is the [5] assignment kept around? Is something depending on this=20
-double NULL termination? This patch removed the access to [4] so I=20
-don't see anything beyong [3] accessed explicitly.
+gb_tty is not protected by the port mutex.
 
---=20
- i.
+>  	ss->close_delay = jiffies_to_msecs(gb_tty->port.close_delay) / 10;
+>  	ss->closing_wait =
+>  		gb_tty->port.closing_wait == ASYNC_CLOSING_WAIT_NONE ?
+>  		ASYNC_CLOSING_WAIT_NONE :
+>  		jiffies_to_msecs(gb_tty->port.closing_wait) / 10;
+> +	mutex_unlock(&gb_tty->port.mutex);
+>  
+>  	return 0;
+>  }
 
->  =09}
-> =20
-> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
-g/selftests/resctrl/resctrl_val.c
-> index e88d5ca30517..5331354aaf64 100644
-> --- a/tools/testing/selftests/resctrl/resctrl_val.c
-> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
-> @@ -625,7 +625,6 @@ static void run_benchmark(int signum, siginfo_t *info=
-, void *ucontext)
->  =09int operation, ret, memflush;
->  =09char **benchmark_cmd;
->  =09size_t span;
-> -=09bool once;
->  =09FILE *fp;
-> =20
->  =09benchmark_cmd =3D info->si_ptr;
-> @@ -645,16 +644,8 @@ static void run_benchmark(int signum, siginfo_t *inf=
-o, void *ucontext)
->  =09=09span =3D strtoul(benchmark_cmd[1], NULL, 10);
->  =09=09memflush =3D  atoi(benchmark_cmd[2]);
->  =09=09operation =3D atoi(benchmark_cmd[3]);
-> -=09=09if (!strcmp(benchmark_cmd[4], "true")) {
-> -=09=09=09once =3D true;
-> -=09=09} else if (!strcmp(benchmark_cmd[4], "false")) {
-> -=09=09=09once =3D false;
-> -=09=09} else {
-> -=09=09=09ksft_print_msg("Invalid once parameter\n");
-> -=09=09=09parent_exit(ppid);
-> -=09=09}
-> =20
-> -=09=09if (run_fill_buf(span, memflush, operation, once))
-> +=09=09if (run_fill_buf(span, memflush, operation))
->  =09=09=09fprintf(stderr, "Error in running fill buffer\n");
->  =09} else {
->  =09=09/* Execute specified benchmark */
->=20
---8323328-2035177807-1727704179=:938--
+Johan
 
