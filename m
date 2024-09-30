@@ -1,81 +1,114 @@
-Return-Path: <linux-kernel+bounces-344665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97E698AC7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EEEE98AC7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D00428445C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FD21F238CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02431991A4;
-	Mon, 30 Sep 2024 19:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE481991D3;
+	Mon, 30 Sep 2024 19:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KDTpP8m+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF63153BD9;
-	Mon, 30 Sep 2024 19:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5974153BD9;
+	Mon, 30 Sep 2024 19:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727722937; cv=none; b=pGJ0BmAevi2NNHGPRcqiuRzHD3BKPFJKtpCJTFX+HDN4OiiNs8I11EvyP5K25HZ2zMWXkv63vxnr9LAI6xLU51AzsAXndPZ+29lE0Dc0NPeG8e2+lD1el7S+D8NYKzRL1SRX6I9i/xPgdrQG4Z8wQkTO2YhcUJD4uIFDCCQBABo=
+	t=1727723045; cv=none; b=QEPax+sq7wjBxrG2Ma8cHn/+urehtyvug41u6J7BwW4sxLywTWOifrEOg1Vge2EkfKB+EVRlc/GZiYkxB+V/hLhSiuwKOmW7Svkgf+DSB6qXSgesDLMAM38DwnFTfe90x2XAR+9+Bb+X1vkE0c6V/39v02BTqtz2/L8b+gZ1SkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727722937; c=relaxed/simple;
-	bh=wMbFHdXqBIdG+oRxD5J6NHowpF0hcDclJPDEViwBQ0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tRKbd2pN23jji7pVXlG+SFEakaIVOxK+j0p+ro8BYyGhiw08ErBSPEjcICiq9xy/DYY7E6nieLYedMGprKSQU/2qGbq6WJg/s28c2BWR4pGtvKcOedp1v+D4rG9OTsYyWf5//XIn8u8eXnr76rrnZFxeEhrHL8LtnZA1V5ednzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75599C4CEC7;
-	Mon, 30 Sep 2024 19:02:15 +0000 (UTC)
-Date: Mon, 30 Sep 2024 15:03:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Florent Revest <revest@chromium.org>,
- linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
- Carvalho de Melo <acme@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 05/19] function_graph: Pass ftrace_regs to retfunc
-Message-ID: <20240930150302.6c5c9f0a@gandalf.local.home>
-In-Reply-To: <20240917100848.GB27384@willie-the-truck>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-	<172615374207.133222.13117574733580053025.stgit@devnote2>
-	<20240915044920.29a86d25@rorschach.local.home>
-	<20240917100848.GB27384@willie-the-truck>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727723045; c=relaxed/simple;
+	bh=e6/lb4h3dcPvUj2TD9KX5+dXrCl8l2K+qw6RADogTTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LnxtoCXoxKE4FyCWbnhk4CdGw15vdR+khoM0kfvVO2xi8mvcBJA3chUFiB+b7Lft8qPIjq/vuSfpmxcHA96M67rCndsuFhha6h3qizC7qkhKyyAKU5E3b15ikhef1CRs+3pqak8nYFytbmBrHQjDbYzAFoxcM8kYflqr6q6PEZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KDTpP8m+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542D0C4CECE;
+	Mon, 30 Sep 2024 19:04:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727723045;
+	bh=e6/lb4h3dcPvUj2TD9KX5+dXrCl8l2K+qw6RADogTTI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KDTpP8m+mA4pqkFNJVRsWbh/d1FO/Djln9npkcRgdiXjzhZmltRPl7kTJ85iNWmKW
+	 u7mqTPsPK9N96rPk8k5yR35MSYQIjx0iGi2hXoTHWEHrHVkx0I8KpgrH1vSl+ZymKZ
+	 sXWs9DMfS7Ed2vkAXD9XgVGjqjQcKWqzgnJok06U1Q+SDHb04KnXyjtDZmU/YEbpN1
+	 eK0vGwxPqCjcHgsOXfSZgfon1ri5E2M1zIagbZncRqNZVQM1rUn9FEtgvoKFR6Uzex
+	 puXzpzpIOIdVNxly4pKht5bSFexcehP16k5jnSFbYM8w5eJ3Qgb9zzicKvLEfT5333
+	 FdGNmeR3aqpmg==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-710e910dd7dso3404849a34.2;
+        Mon, 30 Sep 2024 12:04:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQiDycU3FBw6Hw0D0Sv5ovrIkVHEY3WCIj7WV+QcHIaE9febvqCnWfO2oPNvF67/l+tZaqa1ELseHI@vger.kernel.org, AJvYcCUzYEyZRHL7QI0sHEf76/k9vqEWwqAyhJq4epUf5Nl/A0aimDbe2ehK8ficOjfLg/MolLAiwuRMRVidl1OU@vger.kernel.org, AJvYcCWxNnVoD+cP3w0RbYWnTCjg/LWIyqrCeEtdY4GAGRcBhQhfL3KlJnX6lH5Gs31a2b/5KGGRMSrjVcfvHMCxHFxPbbcyTw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ/8aRKFFZrUC8fP5b96VUNqVQYofIZY0xI3BD77s6G/lAemxU
+	nDzHZSgItKi5xVXk123zmDw/NXkps3To94OFzgiRDI6Z77q4mdOHRSRNx1fWeg2soUxm6/yk054
+	HnTygY2DN3xP5qEevoEjMOf2cBLA=
+X-Google-Smtp-Source: AGHT+IEkvKq00Zd5Xgo+FpHgEmSOlof2ytB9S1tad7MI4lv5aIHonYRW5LWKLkZGKbmqOACBcBEhA3x2ysZ6GW4cdQE=
+X-Received: by 2002:a05:6830:6282:b0:713:7e24:6151 with SMTP id
+ 46e09a7af769-714fbf0ba08mr9676408a34.25.1727723044676; Mon, 30 Sep 2024
+ 12:04:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240922064026.496422-1-W_Armin@gmx.de> <92b62046-d225-4dd8-a894-30f051267f29@gmx.de>
+In-Reply-To: <92b62046-d225-4dd8-a894-30f051267f29@gmx.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 30 Sep 2024 21:03:53 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gcJOVU-B3f34OJqHDQ1=2vKHifmqmTqH=Qi+c+Uaboww@mail.gmail.com>
+Message-ID: <CAJZ5v0gcJOVU-B3f34OJqHDQ1=2vKHifmqmTqH=Qi+c+Uaboww@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] platform/x86: dell-laptop: Battery hook fixes
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: mjg59@srcf.ucam.org, pali@kernel.org, dilinger@queued.net, 
+	rafael@kernel.org, lenb@kernel.org, hdegoede@redhat.com, 
+	ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 17 Sep 2024 11:08:48 +0100
-Will Deacon <will@kernel.org> wrote:
+On Mon, Sep 30, 2024 at 8:53=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> Am 22.09.24 um 08:40 schrieb Armin Wolf:
+>
+> > This patch series fixes some issues around the battery hook handling
+> > inside the ACPI battery driver and the dell-laptop driver.
+> >
+> > The first patch simplifies the locking during battery hook removal as
+> > a preparation for the second patch which fixes a possible crash when
+> > unregistering a battery hook.
+> >
+> > The third patch allows the dell-laptop driver to handle systems with
+> > multiple batteries.
+> >
+> > All patches where tested on a Dell Inspiron 3505 and appear to work.
+>
+> Any thoughts from the ACPI maintainers?
 
-> > > @@ -787,6 +789,9 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
-> > >  	}
-> > >  
-> > >  	trace.rettime = trace_clock_local();
-> > > +	if (fregs)
-> > > +		ftrace_regs_set_instruction_pointer(fregs, ret);  
-> 
-> Where does the instruction pointer get used after this? The arm64
-> 'return_to_handler' function doesn't look at it when we return.
+The first patch looks good to me, but I have a comment regarding the second=
+ one.
 
-It's for the hooks to the return instruction. kretprobes will start using
-function graph tracer to hook to a return of a function (via fprobes), and
-the callbacks will need access to the return pointer. The callbacks get
-passed the ftrace_regs, and this is how they can see what the function is
-returning to. For example, BPF programs will need this.
+I'll get to this tomorrow.
 
-So it's not needed for the infrastructure, only the callbacks that hook to
-it.
-
--- Steve
+> > Changes since v1:
+> > - fix the underlying issue inside the ACPI battery driver
+> > - reword patch for dell-laptop
+> >
+> > Armin Wolf (3):
+> >    ACPI: battery: Simplify battery hook locking
+> >    ACPI: battery: Fix possible crash when unregistering a battery hook
+> >    platform/x86: dell-laptop: Do not fail when encountering unsupported
+> >      batteries
+> >
+> >   drivers/acpi/battery.c                  | 27 ++++++++++++++++--------=
+-
+> >   drivers/platform/x86/dell/dell-laptop.c | 15 +++++++++++---
+> >   include/acpi/battery.h                  |  1 +
+> >   3 files changed, 31 insertions(+), 12 deletions(-)
+> >
+> > --
 
