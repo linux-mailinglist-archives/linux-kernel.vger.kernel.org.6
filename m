@@ -1,124 +1,86 @@
-Return-Path: <linux-kernel+bounces-344100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451CE98A484
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:17:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C0A98A466
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA671C22D1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:17:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01EBE281C77
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9D9194C9D;
-	Mon, 30 Sep 2024 13:12:40 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1B318F2DD;
+	Mon, 30 Sep 2024 13:12:21 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B51192D78;
-	Mon, 30 Sep 2024 13:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61D218E755
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701960; cv=none; b=IY/zR7mqsChWcQYEOn+TxoUJzSqUigg+QaxTz5nLMoFnpgbzh8cq7f1eDexx2oZv+cU/8Np/PqmGjeqMfvBTLEESD17CqdAQM25Tg35forty/f1bL1qcY+UAXxKypvaDNCgjMTeHVf6LAWWXG0GI3DIJY3rCxexaGDjj34FLxXk=
+	t=1727701941; cv=none; b=r4kJ86lO00QJ7SD51z8yi6lasUEKk+GC2wsAtTQE3gUbVz2VmXUyNGzl044hoCo08dTUT2NdLabWNcZP18XotrSQRv3HpTh13Z4L1bAKWRTlBGuqaIJEDYUxqDlmO+9WhsHc/DlzT7vNVg85O9TfBh6IrOsCaBjF85ovOvqXZ9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701960; c=relaxed/simple;
-	bh=YoM8JfTyubmHxwyaR780Z4MLjoKPXDQNorh4/OwIsSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pJ7j+Rc964VUTOeyMHKHudt5BviHODYRnpvWZXYd6enqrlm8DBRLmxEqlQc88cWlnDCklSK+I5cHHowbGdojOd4w00rwebZEyzuwbmXL5qvY6c9+X/gchSg4PW6+QJ1uMo3fkiktbliUE644OzQT4X3EcP/x3qh7C7W0N6M1AmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c88b5c375fso2784325a12.3;
-        Mon, 30 Sep 2024 06:12:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727701957; x=1728306757;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M94vldEyuuxRxO4IdgpqluNKuv+egbA35R49EuAXB5k=;
-        b=LWoEqK4AehAOiO++6o85fktIhOeMNb5PcvFI+3Im9x7p37QX4WQZEQNx9jef9Ngd7q
-         WNifFpwKBKRaa40JL4oLGOjr60Cs8CbQYOLwt+3/HKQoIAeFlKkovOtsHg3RYgNFBAd+
-         XPqxxtSojYl9qGT+wf3IpbBadDxQ8qWt3VXmg0eQQ8DuV0hg+bvSQY0P7bnBV3hNf0eK
-         UZvxfIMWAcApq3VoL/Pc7/eZvxj7eORfLFhniiw0eClC/0eSAcLiLRY6scckY/QyPsZH
-         sW5/VOtcDnZuNqVKEWY6Pi/kymxxxEU+ofyfH6u380Al3BOMPRUa6bCdXazWXXNc0Y/0
-         6zpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUENp2bfasn8IeEYx4qBwcmacgfkHAtkVzbYh42gYlQq+0KDzTQ2WVoZa93Ab+G8eudXnw+3jzFF1GSFEg=@vger.kernel.org, AJvYcCXeeEHH14vOaTOZacz9Ndw/VkhnH67HaK9+AaeT9igL9Sc18GlgX+okYZ/3Vpc0Cx7RRRDxwCy0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgkSstMR+1P6ErQ08kISahS3oyhgWP5T2s1RV31pAeVjLox6CY
-	hhOZOh8rhCVVTgf9lPLy8CXY85WMgTrqsfNJvG7or293gK7xbfxr
-X-Google-Smtp-Source: AGHT+IH6Y2rTIy3dvSJEkp+aAJG0YoFNk2Um9vgMkgloRl+3noBVk3cFbg0OQ/pVKprj/KMikAei1Q==
-X-Received: by 2002:a05:6402:2812:b0:5c8:8538:b770 with SMTP id 4fb4d7f45d1cf-5c88538bbbfmr10342103a12.8.1727701957157;
-        Mon, 30 Sep 2024 06:12:37 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245e9e2sm4485793a12.46.2024.09.30.06.12.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 06:12:36 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	Matthew Wood <thepacketgeek@gmail.com>
-Cc: horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	davej@codemonkey.org.uk,
-	max@kutsevol.com
-Subject: [PATCH net-next v4 10/10] net: netconsole: fix wrong warning
-Date: Mon, 30 Sep 2024 06:12:09 -0700
-Message-ID: <20240930131214.3771313-11-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20240930131214.3771313-1-leitao@debian.org>
-References: <20240930131214.3771313-1-leitao@debian.org>
+	s=arc-20240116; t=1727701941; c=relaxed/simple;
+	bh=J0R9sbZ1JIZNBQLvxAiot7RMxltzdfewnfyMxSH5TUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oFQv+7iPhM4JGvCfciHuC5xFc1/HWkm1V/Jso30KdDcp10UtfKcILw8mOrS9M+7c/n+IIs5n9ZuUOQNaeeTbohsSX66TKUZH/3casbCTf4k4f1qtsg3ntlfEL2t5mLhQKZJafe6mNJogdfA8fTr2rwQGjL1BjOfHNgr5vLaZuJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 3ZSqTIr9TZWOqGTYqWKWPQ==
+X-CSE-MsgGUID: 3BeSYcbxTWCPQ/GgUeN4Wg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26887347"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26887347"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:12:16 -0700
+X-CSE-ConnectionGUID: I1QIfj42RT2HHmpnABO/gg==
+X-CSE-MsgGUID: Sw+YPtN0Tay9kjWMKNKtCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="104104671"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:12:15 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1svGCD-0000000EfX1-0hO7;
+	Mon, 30 Sep 2024 16:12:13 +0300
+Date: Mon, 30 Sep 2024 16:12:12 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Robin van der Gracht <robin@protonic.nl>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] auxdisplay: Drop explicit initialization of struct
+ i2c_device_id::driver_data to 0
+Message-ID: <ZvqjrKzm672KTZHS@smile.fi.intel.com>
+References: <20240918123150.1540161-8-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240918123150.1540161-8-u.kleine-koenig@baylibre.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-A warning is triggered when there is insufficient space in the buffer
-for userdata. However, this is not an issue since userdata will be sent
-in the next iteration.
+On Wed, Sep 18, 2024 at 02:31:50PM +0200, Uwe Kleine-König wrote:
+> These drivers don't use the driver_data member of struct i2c_device_id,
+> so don't explicitly initialize this member.
+> 
+> This prepares putting driver_data in an anonymous union which requires
+> either no initialization or named designators. But it's also a nice
+> cleanup on its own.
 
-Current warning message:
+Pushed to my review and testing queue, thanks!
 
-    ------------[ cut here ]------------
-     WARNING: CPU: 13 PID: 3013042 at drivers/net/netconsole.c:1122 write_ext_msg+0x3b6/0x3d0
-      ? write_ext_msg+0x3b6/0x3d0
-      console_flush_all+0x1e9/0x330
-
-The code incorrectly issues a warning when this_chunk is zero, which is
-a valid scenario. The warning should only be triggered when this_chunk
-is negative.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 1ec9daf95093 ("net: netconsole: append userdata to fragmented netconsole messages")
----
- drivers/net/netconsole.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index f724511cf567..4ea44a2f48f7 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1164,8 +1164,14 @@ static void send_fragmented_body(struct netconsole_target *nt, char *buf,
- 
- 			this_chunk = min(userdata_len - sent_userdata,
- 					 MAX_PRINT_CHUNK - preceding_bytes);
--			if (WARN_ON_ONCE(this_chunk <= 0))
-+			if (WARN_ON_ONCE(this_chunk < 0))
-+				/* this_chunk could be zero if all the previous
-+				 * message used all the buffer. This is not a
-+				 * problem, userdata will be sent in the next
-+				 * iteration
-+				 */
- 				return;
-+
- 			memcpy(buf + this_header + this_offset,
- 			       userdata + sent_userdata,
- 			       this_chunk);
 -- 
-2.43.5
+With Best Regards,
+Andy Shevchenko
+
 
 
