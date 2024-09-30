@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-344431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861BD98A97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:13:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342DD98A980
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAA61F2499C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:13:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6D7286B23
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4522190482;
-	Mon, 30 Sep 2024 16:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB0619309C;
+	Mon, 30 Sep 2024 16:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R31BemSg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrRLEbkN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F10635894;
-	Mon, 30 Sep 2024 16:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638DC192D68
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727712628; cv=none; b=XvKmUk8oSl70UlOqNMJnudjm/SbwsteCqrsNRcLgkxytLEvY3cTdBvk3PQ+R3XEZTPUsNB6L7h1ubdgoaIV+5qmwknjzU9TsasV5Dof4OGLyt2HvwIeTTlYf87bR3WXJ6uShyn/rrT5VCMfmq3fff32H/ymEOc8jqZbjpPS+KAk=
+	t=1727712663; cv=none; b=dkqtp0l+CELnfBZDwG7epwT0o6n9GBRvawTQgGfg5OaZL93rmPp8mq91CGKzkqw52uRCBbFk7q7kwA/cr8wIz7xKidjS4AOUTiwPuGc+H3QEgi1ww8X3QmI7Y7Yete7szs8B27aJX1ruIvb6kCOsft+iX8ppx+6vwhnaINoWbv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727712628; c=relaxed/simple;
-	bh=kGXqmstFcbWcGVvFNWj4UL7lFlWvJeeSSReWGtHrnuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEyeWZyg5p2+mkpOZ2Xmqrnvf4i/Gx+unCUlKJCsbL2yy2mR5r/Fxd1lwugDwo7ZI29FdEQs2v0DiyR3k6SPZaZi06w/7y5szEZ2M7ZPp1dd8JP7LS5pLId1c6bpF4vkKWpR7/kEMuGXW3qa3W6rvXZBJuzQuW9fVKleLslh/UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R31BemSg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5DAC4CEC7;
-	Mon, 30 Sep 2024 16:10:27 +0000 (UTC)
+	s=arc-20240116; t=1727712663; c=relaxed/simple;
+	bh=aVwOkFKjEtowEpq+vv1o87FHrbCXOAj8TCEBM7b8Z5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GS7P+IbAvRNmvDb4zb8UcfV/ss5xQqti6qLi5a/r+vXtYDrYHdWdpHlT/6ZMVzG+TJw5Hnqp5XPHJDdk7CucI618o8i+WaTx64BYWFqk7/BYjFsj8GkyT/lhu9ycgrZpSQJHW0R9eqry5/fB8epzzKXbNkNmWVQovRL+2uBiYXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TrRLEbkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92BFFC4CEC7;
+	Mon, 30 Sep 2024 16:11:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727712627;
-	bh=kGXqmstFcbWcGVvFNWj4UL7lFlWvJeeSSReWGtHrnuM=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=R31BemSgmkqLWZEZ5R2bNtTOeMT9rwWxAopCLrF7SZ/3vbe4evpxc6mlOGGFfoL9Y
-	 kEGhZruhQyR/GzcMmwgVry0iTgMCN5I+UZ3TinoIqZLZ9+GiqqR4uj6bUDA3m50wE7
-	 tsegxFUAmXkFQlqOvBJ2XWINdCJo8CcceHiWBDqWFb7QyuUAZ3HJ9f6ar9nEKASncG
-	 fPg3LkvMVNCbYWfNWp7rMNNW9Xc+bYd1V0nYOO6zUtDS3HCMiN5n7CNCGMZ1JpN2Ja
-	 OTIas2LOGo2c6IoSdhRcM/5sjlmO4BWGLRsdLOGJ1GvwxzZayBqtzK2eeUuJ1jRcJh
-	 dx6ZQ20LWsT6g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 6D8FDCE0E19; Mon, 30 Sep 2024 09:10:27 -0700 (PDT)
-Date: Mon, 30 Sep 2024 09:10:27 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org
-Subject: Re: arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes
- address space '__percpu' of expression
-Message-ID: <e8f6137d-ad2c-4b06-8eb2-cd200fbb1af2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202409251336.ToC0TvWB-lkp@intel.com>
+	s=k20201202; t=1727712662;
+	bh=aVwOkFKjEtowEpq+vv1o87FHrbCXOAj8TCEBM7b8Z5I=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TrRLEbkNDJnoe3K7r+YwMfvRWVQOKqQHpo/RpMG48CuxZYoBZ3VflpDd5+f/KdrAz
+	 ats6qQjUQjMk9XGVTjytOlPC+r3mzYXy7YdoW/8vfEt5TnMinbzh1ipVVPXCHhUZhg
+	 hfrB1a3Z+4n+7P+2Yd5712+SJ2q+SnnTU3Uw4Bz//ITvfo2xWGUzc4Q0reOYkFivqj
+	 f22sOscfZLEPF6lQ//t7kl+xa+Ah7wH12ldveLwRfn8bgBUM6SeT/d97phMdac1A6o
+	 FLAxI8G0oeUskvAWLxWs0pIjC+UKIhYeWXQZiGj4+jeB9OgneDUJms47YbMY+zIZL1
+	 iI1wBFseNNRGg==
+Date: Mon, 30 Sep 2024 13:11:00 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>, Simon Horman <horms@kernel.org>
+Subject: [PATCH 1/1 fyi] tools headers UAPI: Sync the linux/in.h with the
+ kernel sources
+Message-ID: <ZvrNlLdtXAZ1sIIj@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,87 +58,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202409251336.ToC0TvWB-lkp@intel.com>
 
-On Wed, Sep 25, 2024 at 01:40:45PM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   684a64bf32b6e488004e0ad7f0d7e922798f65b6
-> commit: f2519d4d4fc4d36f2b58c5614357de9f5b4032fc ARC: Emulate one-byte cmpxchg
-> date:   12 days ago
-> config: arc-randconfig-r123-20240925 (https://download.01.org/0day-ci/archive/20240925/202409251336.ToC0TvWB-lkp@intel.com/config)
-> compiler: arc-elf-gcc (GCC) 13.2.0
-> reproduce: (https://download.01.org/0day-ci/archive/20240925/202409251336.ToC0TvWB-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202409251336.ToC0TvWB-lkp@intel.com/
-> 
-> sparse warnings: (new ones prefixed by >>)
->    arch/arc/kernel/smp.c:252:48: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long [noderef] __percpu *ipi_data_ptr @@     got unsigned long * @@
->    arch/arc/kernel/smp.c:252:48: sparse:     expected unsigned long [noderef] __percpu *ipi_data_ptr
->    arch/arc/kernel/smp.c:252:48: sparse:     got unsigned long *
->    arch/arc/kernel/smp.c:267:18: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile *v @@     got unsigned long [noderef] __percpu *__ai_ptr @@
->    arch/arc/kernel/smp.c:267:18: sparse:     expected void const volatile *v
->    arch/arc/kernel/smp.c:267:18: sparse:     got unsigned long [noderef] __percpu *__ai_ptr
-> >> arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes address space '__percpu' of expression
-> >> arch/arc/kernel/smp.c:267:18: sparse: sparse: cast removes address space '__percpu' of expression
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-I could "fix" this using __force.  Is that a reasonable approach?
+Full explanation:
 
-If I don't hear otherwise, I will take that approach.
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-							Thanx, Paul
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
->    arch/arc/kernel/smp.c:401:72: sparse: sparse: incorrect type in argument 4 (different address spaces) @@     expected void [noderef] __percpu *percpu_dev_id @@     got int *dev @@
->    arch/arc/kernel/smp.c:401:72: sparse:     expected void [noderef] __percpu *percpu_dev_id
->    arch/arc/kernel/smp.c:401:72: sparse:     got int *dev
->    arch/arc/kernel/smp.c:265:30: sparse: sparse: dereference of noderef expression
-> 
-> vim +/__percpu +267 arch/arc/kernel/smp.c
-> 
-> 41195d236e8445 Vineet Gupta    2013-01-18  249  
-> ddf84433f411b6 Vineet Gupta    2013-11-25  250  static void ipi_send_msg_one(int cpu, enum ipi_msg_type msg)
-> 41195d236e8445 Vineet Gupta    2013-01-18  251  {
-> f2a4aa5646687f Vineet Gupta    2013-11-26  252  	unsigned long __percpu *ipi_data_ptr = per_cpu_ptr(&ipi_data, cpu);
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  253  	unsigned long old, new;
-> 41195d236e8445 Vineet Gupta    2013-01-18  254  	unsigned long flags;
-> 41195d236e8445 Vineet Gupta    2013-01-18  255  
-> f2a4aa5646687f Vineet Gupta    2013-11-26  256  	pr_debug("%d Sending msg [%d] to %d\n", smp_processor_id(), msg, cpu);
-> f2a4aa5646687f Vineet Gupta    2013-11-26  257  
-> 41195d236e8445 Vineet Gupta    2013-01-18  258  	local_irq_save(flags);
-> 41195d236e8445 Vineet Gupta    2013-01-18  259  
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  260  	/*
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  261  	 * Atomically write new msg bit (in case others are writing too),
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  262  	 * and read back old value
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  263  	 */
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  264  	do {
-> c6ed4d84a2c49d Bang Li         2022-03-19  265  		new = old = *ipi_data_ptr;
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  266  		new |= 1U << msg;
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28 @267  	} while (cmpxchg(ipi_data_ptr, old, new) != old);
-> 41195d236e8445 Vineet Gupta    2013-01-18  268  
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  269  	/*
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  270  	 * Call the platform specific IPI kick function, but avoid if possible:
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  271  	 * Only do so if there's no pending msg from other concurrent sender(s).
-> 82a423053eb3cf Changcheng Deng 2021-08-14  272  	 * Otherwise, receiver will see this msg as well when it takes the
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  273  	 * IPI corresponding to that msg. This is true, even if it is already in
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  274  	 * IPI handler, because !@old means it has not yet dequeued the msg(s)
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  275  	 * so @new msg can be a free-loader
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  276  	 */
-> d8e8c7dda11f5d Vineet Gupta    2013-11-28  277  	if (plat_smp_ops.ipi_send && !old)
-> ddf84433f411b6 Vineet Gupta    2013-11-25  278  		plat_smp_ops.ipi_send(cpu);
-> 41195d236e8445 Vineet Gupta    2013-01-18  279  
-> 41195d236e8445 Vineet Gupta    2013-01-18  280  	local_irq_restore(flags);
-> 41195d236e8445 Vineet Gupta    2013-01-18  281  }
-> 41195d236e8445 Vineet Gupta    2013-01-18  282  
-> 
-> :::::: The code at line 267 was first introduced by commit
-> :::::: d8e8c7dda11f5d5cf90495f2e89d917a83509bc0 ARC: [SMP] optimize IPI send and receive
-> 
-> :::::: TO: Vineet Gupta <vgupta@synopsys.com>
-> :::::: CC: Vineet Gupta <vgupta@synopsys.com>
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+Picking the changes from:
+
+  70d0bb45fae87a3b ("net: Correct spelling in headers")
+
+Just a comment fix, addressing this perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/include/uapi/linux/in.h include/uapi/linux/in.h
+
+Please see tools/include/uapi/README for details.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Simon Horman <horms@kernel.org>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/uapi/linux/in.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/include/uapi/linux/in.h b/tools/include/uapi/linux/in.h
+index d358add1611cd13d..5d32d53508d99f86 100644
+--- a/tools/include/uapi/linux/in.h
++++ b/tools/include/uapi/linux/in.h
+@@ -141,7 +141,7 @@ struct in_addr {
+  */
+ #define IP_PMTUDISC_INTERFACE		4
+ /* weaker version of IP_PMTUDISC_INTERFACE, which allows packets to get
+- * fragmented if they exeed the interface mtu
++ * fragmented if they exceed the interface mtu
+  */
+ #define IP_PMTUDISC_OMIT		5
+ 
+-- 
+2.46.0
+
 
