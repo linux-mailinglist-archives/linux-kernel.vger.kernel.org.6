@@ -1,677 +1,1792 @@
-Return-Path: <linux-kernel+bounces-343282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425EB989917
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:06:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25AF989916
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB6E1F219F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4103D283346
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1055684;
-	Mon, 30 Sep 2024 02:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B568489;
+	Mon, 30 Sep 2024 02:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="pTn12ARc"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E684383
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727661968; cv=none; b=KlejoZYc2zkOI7yMnBliC2gogR2VsVkEWNQ5wz2cVWVoKoU89fId+MwzCiLYGpa6O0ORQZtgMJogVClWPxCGnxjzXVYa62J1rieNL67EnaCb3AxMzNDlBIs0KKYugLU/111A5twKEPLQPCLoopuQCBUD0AjASxxvot9MaPOG0WQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727661968; c=relaxed/simple;
-	bh=hpOfa8DStMVtQqGW8V+cFvKuEnqjqn7Kvu3WnAflS8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sSWlFBNkrOJja1DVIHq7YDIu1so/q+bilIlsvHj7QoArIYQLmJP5tCy23e0WqlL0x2hF6zpA2SFyU+ZqaMjStBhx4d5sDAvwllpFQieJZQXMwuw9glX0CuQoCQpFfSWqvWQQjveH2KlHAevUjYJRMBcP+nib/GVQLVSfeb9ZVC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=pTn12ARc; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=F2QxLtozImvGkW3fiM1SMzKGvlcxtTG0xNUPIfhzfms=;
-	b=pTn12ARc3wzjW/3ogW+2iq5Xrc8wm+8KgR5S3VRMcYbwGDpxA9ASi9gmxBkIn6
-	OK+yPayIO9cKT4oPoYS3z57GsYnwt51HqZ+uvvfL4tC9H44nB82IlNJdANfjAXew
-	y7Bk7yRStzxaawLWvlLKSqbN9liJVI9sMb9CriISSRzmE=
-Received: from [172.24.140.9] (unknown [111.204.182.99])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wD3v58dB_pmI9gxAA--.26133S2;
-	Mon, 30 Sep 2024 10:04:14 +0800 (CST)
-Message-ID: <8282e4e8-6d71-4402-9eed-38865a3fc6f3@126.com>
-Date: Mon, 30 Sep 2024 10:04:13 +0800
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="YeYO8Qwq"
+Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11021127.outbound.protection.outlook.com [52.101.129.127])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9697B383;
+	Mon, 30 Sep 2024 02:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.127
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727661893; cv=fail; b=hzFHsoA9kvUu79Ik+D5OQUcf4DNsAP/kuhi1GABx2O0GL2ooYryheA0OyhZ72q7WVpUGLknh+wp8m/wyPuyFzh8IP+FDmLpdd10LNmIKM70Kr0+2smLNlWuYfjIxm3nkDz/lqIdMm7u4z+JfCp1g1pBhxmd6pu68g99GutkC720=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727661893; c=relaxed/simple;
+	bh=Q+ityNVriyg1NihyEYLRwlH4qAhauIN1Um+8pXe7Hys=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SHdUJbXaJRcCrdvaGOwns33AG2C7UEa+uvQMW+LfBswgEicJ357yl4zDz5eOqzu/e5FQGCbZsnxzi8ShXwga566th86TUy7vdSPHeNAu7EMm5hJqQAHXbmYpQXIfy2+EX7vTiF7sIyChNAX5RZyZolj3c+X3Z5L1RNENOLBfzsg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=YeYO8Qwq; arc=fail smtp.client-ip=52.101.129.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=m+7AtRfI4BLyv/S6LDDI33Od6XP43E7KJcXAHspjmGt0Wc2/6ZVA+GQDC39ARraD3+OVzhq+vWsgfM1O+4p/KFwvDtl2gwyLQzzlT1Q0esLXpIhjtb05cxXIa92SeXaDYYuELFFGDtIDfVmMHJB2kuIw+QueH4xuixbeUpDWknEDVHmxaeaEGRrKfTO60Scj/x0fkwi/rr08UBN3ues4tlb3fWZv4mAoQlhuURNV0ivfuTV0FS1Lx9OYoGYEP3/8LOL+FmfivBng6pPnB0ra3senIDlDhXCBWqllm/uKO3c26MLlYLRwVgMipPEVmvKISFLT+CzUfg4NUMRZuwkhkw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LVbdhpwUQr90aIme69GmGjCojmEpLntxUkSznmloLZA=;
+ b=OPcD2jbJipIsQVESsmaQnsw6ESyoQc4ME1Dwf8umStGdyMFVw5wW3bx62dpJIpYcY7IbUg2bbtWcSrBZp903Os1bslByVEHf+2rSY8B6AVRvAVLtC/FwNEN3a0lY7cCcyMtW8g9myKwPRv34Cimyn8r0iuc/mhkQcIyNiCUBYLA+jaW6SQAlN2+5HSEr1aVz5gT8j5prRiXBpXx/gQwDpbH4wnCnkpAjAej9XhnJjerc9XxELfOH/ctd4dznfyte4HIB9ChuoXepsanVsG03kOIqYQpCmLt4qAljIucGmiu5/zLIiuOwgmH7KoInuBkDQ3Uo2vSNd/hI0KHvdsSZwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LVbdhpwUQr90aIme69GmGjCojmEpLntxUkSznmloLZA=;
+ b=YeYO8QwqFMCJuSlryYaliqWbihOiruz9mtsFu3tHXq+13Z2BSb0uellPjZ5RuFtbO1kUnwWzKBKfnvZPzHdOB9QQgf2CC4qrX8npKi6t1nuVB82zbzmwI3a1MDEcCQ79klgIn4WqGLTFtWs8KQyDC88Zl5mUQO2TK2kziSMAs7uOPVy6o+55UTcuu3qjKB/MRzTGYUIc2WWKYEtE1dqB8pwF6w80dBrNpunmb89MuyJcSJYNpmN0k5LPUiAjS6pvO1fevtvQ3iiPnbBEbtxZ9PQt/a4L0FiAfYPSJxOFJuWD6mR3EJrhjmhJIGJMLTThhzVBEZs1Mkkjmrot0q5PdQ==
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
+ by SEZPR06MB7186.apcprd06.prod.outlook.com (2603:1096:101:231::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.25; Mon, 30 Sep
+ 2024 02:04:39 +0000
+Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
+ ([fe80::9f51:f68d:b2db:da11%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 02:04:39 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>
+Subject: RE: [PATCH v4 3/3] clk: aspeed: add AST2700 clock driver.
+Thread-Topic: [PATCH v4 3/3] clk: aspeed: add AST2700 clock driver.
+Thread-Index: AQHbDY1BFpXGaU48A0W8slmdM9Tjs7Jvnq+Q
+Date: Mon, 30 Sep 2024 02:04:39 +0000
+Message-ID:
+ <OS8PR06MB7541ABE758EBBE61E8FB26B6F2762@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240923075012.2264573-1-ryan_chen@aspeedtech.com>
+ <20240923075012.2264573-4-ryan_chen@aspeedtech.com>
+In-Reply-To: <20240923075012.2264573-4-ryan_chen@aspeedtech.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|SEZPR06MB7186:EE_
+x-ms-office365-filtering-correlation-id: f0eacac4-49ef-43b8-c5d7-08dce0f43dbd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?vDuYszlIo49Zco5WQPCY1VdKmDIJ4Mw7n6NmWhFqjCdlKzBfW4RvldnCIuuY?=
+ =?us-ascii?Q?c17RZ4aRC30+HRQO1Lk36V3VPtc19Ok/VgzggPN0zjO4HBr+A+GFJ0XRE+Pk?=
+ =?us-ascii?Q?0xTFgV2kh6yiMV9g1pPjc/Ow+6U1Dmb6cguIMG4X/jDWFi9HsOOu8J08rm/t?=
+ =?us-ascii?Q?uemGUfxek5VK8+4/gUowBlj1JzXjH5de7jkD3h4XCOIUjukXL2zTkrTIeofj?=
+ =?us-ascii?Q?ikIzvMdQop+NAq25SU7U24ONhfgYvHU3fvOQEnSJMM1/VPj8eInNNHi9RCD6?=
+ =?us-ascii?Q?3gx0Au8xJhH10vFj4V1drsWY5seIhekat6KN9Tl4Xv9o4QwfGka8i/7H0kqd?=
+ =?us-ascii?Q?yRy/sQJ6/BdXuN54bVyF+SoBnj+BMUCfHKNFt8Or57+e+sK67sSclYcQEL81?=
+ =?us-ascii?Q?p7pyjFrzDXFQ/9uRLFzayAHsPJoaSl7e62PgDXdYCF60WNMwYgEM1WQmmziP?=
+ =?us-ascii?Q?2+sqhLXjsaPytLIoGQaBtVwE2BBUlv9Rkrx5/SGjxwpdxHcWDYlqY/4+rsvT?=
+ =?us-ascii?Q?vBBDkp8iVScWi+ItOjme7pq7dUeyj4Skuh2xH107OBeb2KH3RBrbEPOE2YN0?=
+ =?us-ascii?Q?Dni2Sxne3JkuMN8GbtEbD1K5z1L0pZjlN/ClLowlKWjtA+ynQpatuC9X93Ae?=
+ =?us-ascii?Q?i5IzQwJATOe4fkX5ezH61QKofuf3YNbWL4OlMpeeirfVDo6M/fhA9f5+phK+?=
+ =?us-ascii?Q?XdYENTs4aG9nmsTH94vc5XH1O1k0oepYPIiiFVcvb7PK/GuJQEPQsCY7ifCA?=
+ =?us-ascii?Q?ikfmz1uRrB1fIhs6sog9nz7EEnnmgrB0e+rKOMtSUcfbBzec9KF4eJYeIi+r?=
+ =?us-ascii?Q?/itZ/oklvSTvfMV31qin/SdBiRTSpitHR6bLw8me15rY0nZMX3dsjT6Ui1j4?=
+ =?us-ascii?Q?Q5FhVyopxSvU2pSy4SuK9FlRvab3F/GNJ5zO+zvUE6y47/+aHaqGlywijv+1?=
+ =?us-ascii?Q?PpXVeBEYTtIdFz3tkkPddaBaOmUr3Fn9fYMHpmWMNlBW1Yk0woqqYyFZfsoT?=
+ =?us-ascii?Q?I7+OR4hphiucR2AkxoSKd0mUBfHP6ee66NmnaDEwvkpMl6YtjpDQhmAlRGiC?=
+ =?us-ascii?Q?xjBdGDEpPSGg5lymQHS0sntBmj+RtDtnZj9blMp3InpIGo156z6+5VMCV3lz?=
+ =?us-ascii?Q?gVyMvWCysJkRAwMQ0NZtbqdRqgHkBciJVEkrzLFiIxQuQFT7cqWj7mqG2aSg?=
+ =?us-ascii?Q?Pf2HEpimil097jc/hsJUBVXclMt4gw6Gipdf5fc0xMQD1W+Jj0u2/snSGReJ?=
+ =?us-ascii?Q?YxY0I1pDMDpWBwctqw8u8L7j5OoNqQD7Pc2BgnmR17Sjq+6e+eBS1eneXGnC?=
+ =?us-ascii?Q?BFHBgNwf9yPT+HMYfi+JIZU0mOi91e+y5NGKygPqbXJWQ9MNf2vn/wwIfcuc?=
+ =?us-ascii?Q?oiOSxqUw4KzSNnBRmiEi4jw8fIPhF/YEBixwJDeYBAK9XFG39BFi8oEEKTcr?=
+ =?us-ascii?Q?Vb1pScWnRbg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?3gjTx49qR/YrKm245N4vRYyxyl65vqr1EX/9Xj4EjBsjixs7dbL45GrI48SM?=
+ =?us-ascii?Q?X9e0AjGykuqN9KjgVdb6tS/R+tS0NDDl90cBQ4mGfjQWpA3hPsV6BAYV+/YL?=
+ =?us-ascii?Q?L5OtbUcUlY+5wMbALClWZUsFIxbqf14vA66vFNpilLTrZL63jn3A3ls2T8rL?=
+ =?us-ascii?Q?Jk5Fphyav7yjL4X89r4RPbTl/bUuXic8RkJFNp/6yf0cJGSpGUlfAIDrPJIH?=
+ =?us-ascii?Q?uCEKcOLT/MBK3SgrrKJshZ4ywMPTtEhqFsdaUAbbbbecYhslT6meduCwXVxA?=
+ =?us-ascii?Q?bmYq3WhaHoT7NDadQzyAf4+bEQVp7N7Sh+Z5oQ0JYxTo/8/+0scMdwTTHAsb?=
+ =?us-ascii?Q?d1JPuXNScCaWc5z3mW7Zc4CtKQnDHAVqcfheTSbvvmGZFR6hIbJhn0NCGECI?=
+ =?us-ascii?Q?IJ5PpI8tNLvJ4sgBquMWEyuk40Yst3c9kGo/g1sRjQPnKOP5tbDwxG/0l2Kz?=
+ =?us-ascii?Q?cGg0knG3ETIsK2hNcShGi2yz6HUC2MIXKtTBcUAMxw0/gaxYFTiA/CNk/ltq?=
+ =?us-ascii?Q?F2YaOZnXtOWXhvXcvSWmFlTGhH5eBA+y8KztiZawmhK5mT4j7OHvk7evE8zi?=
+ =?us-ascii?Q?YbaaoYyUnlQrXHaadgKjNWOGsVvxdQw0MFZaAC0L8XfUxPW3v9NEqWpruLXf?=
+ =?us-ascii?Q?Hp3pnTQMKRGtl0yDEEyOBvA3vaMgje6yEZE8UD/tXoowgje3LUqOZtiN+jx7?=
+ =?us-ascii?Q?P7JR8V7rBop8HsuThYmi4EJqk3lmc77D/yZN4Us9XPshuT/8/8icoWvcQXXN?=
+ =?us-ascii?Q?zJtnZ0gY67kABPxar66zEc+sSOZ5vdIeLDGL89dPI60XkvRCRUESA99U0277?=
+ =?us-ascii?Q?F5Fc4VSsFbp0915FgYGy7ozayP5Kefj0ako09kjRPv+lYY6EtrwV+JLUDg6c?=
+ =?us-ascii?Q?JTfp0i1C+cuVW5xP1eNmPWuA3qqpSBENuxCRuww8o47vkSf3W3bZ/dIimOCk?=
+ =?us-ascii?Q?7rvTVsSUM8Ta65TGJuYQ7P3+kWNhGonjo/rPleQHvCKiFCO4IUNhUJSRI5W2?=
+ =?us-ascii?Q?Ca26I6mhVoxGy6UXd2RnRHwcCskUn2gqsks0Rr0OgmhkqYE/jRsC5fA7W0ca?=
+ =?us-ascii?Q?xJAhqqh9ZruoLPk+xC80eeCenlb7QD+280iXmxPXRKgvr5TDY1c2bHwPOn9o?=
+ =?us-ascii?Q?M2KN2aE1gz607HJrP6Tltd4XtCcqesNj+uJJQp8UtlZ0fgeWMF7kovSXIHan?=
+ =?us-ascii?Q?pnyBIYfIxN612eUVyHIlx/Vmu3vYV16NhUF7Ye7AseaEAVn71C2etnF6sYBH?=
+ =?us-ascii?Q?foxV1+MMtpJD0O5WoX+82ZgMNU6uQt3f1qIHo6s5J4Rn8rQXl8xM2exqKsne?=
+ =?us-ascii?Q?5EovH/R4D3YvAs7CunnVwjhEqr/PA53Lu7eEsydmjpyPb22z/5reDFnjlaul?=
+ =?us-ascii?Q?WHlOxJHaSEULbjGtRcL+sh0TxKOL0AfV1s7O92aCpNmFSYgThMoPUP5GTLXw?=
+ =?us-ascii?Q?0Rn+JWUV5h2C4IcfiYIy3n01WM5EtA27zsHg2KeQQlOytPrHN6w7gjiaD8yU?=
+ =?us-ascii?Q?sZhE+fO96m96JsRZKqqLzGvJciSPteMO3OiFhmPrbg1LYvQqKWNbbsoFJZFv?=
+ =?us-ascii?Q?3qYAmFVYKIrsQzswZLMnph/bLbb3vOj0grzp55Lz?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/eevdf: Fix wakeup-preempt by checking
- cfs_rq->nr_running
-To: Oliver Sang <oliver.sang@intel.com>, Chen Yu <yu.c.chen@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Chunxin Zang <zangchunxin@lixiang.com>, linux-kernel@vger.kernel.org,
- Chen Yu <yu.chen.surf@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>
-References: <20240925085440.358138-1-yu.c.chen@intel.com>
- <fea9b64f-4ede-475d-8788-73bce88b2e3a@126.com>
- <ZvZXEqNLcJxq+8Aw@chenyu5-mobl2>
- <c15e2f07-5a0d-4e48-b7f4-83e4689f9299@126.com>
- <ZveiDh2/ztZTP/fH@chenyu5-mobl2> <ZvlbZYQE5Slf2YEb@xsang-OptiPlex-9020>
-Content-Language: en-US
-From: Honglei Wang <jameshongleiwang@126.com>
-In-Reply-To: <ZvlbZYQE5Slf2YEb@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3v58dB_pmI9gxAA--.26133S2
-X-Coremail-Antispam: 1Uf129KBjvAXoWDAr13tr45XF1xKr1rGFyxAFb_yoWxJr43uo
-	ZIgay5uF1Utr90qan8Ca4UJ3y7Jrs8Z3s7u34q93s5GFsYqrWxKr1UXw4FgFZ3Gay0kFWx
-	Zr48W3Z8AryxZFy7n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUwoGQDUUUU
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiJAdqrWb5-NVbiQABsB
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0eacac4-49ef-43b8-c5d7-08dce0f43dbd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 02:04:39.2193
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 93GKLS86H4ZjrMqNn5osBJ5Pljm6akdkOG6nQMT5xGeu2QhqoAj+fcqxVXoYC+s2bzQa21ZvdyMALe0loYRqqt+mCu6gEFj7jJOlk3ey2SY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7186
 
-Hi Oliver,
+Hello Stephen,
+	Sorry, do you have chance review my v4 modification?
 
-On 2024/9/29 21:51, Oliver Sang wrote:
-> hi, Chenyu and Honglei,
-> 
-> On Sat, Sep 28, 2024 at 02:28:30PM +0800, Chen Yu wrote:
->> Hi Honglei,
->>
->> On 2024-09-27 at 21:38:53 +0800, Honglei Wang wrote:
->>> Hi Yu,
->>>
->>> Yep, I understand the preemption should happen in the same cfs level. Just
->>> not sure the purpose of the 'nr_running check' stuff. Perhaps its role is
->>> just to judge whether it’s necessary to do the preemption check. If there is
->>> at least one more ready (cfs) task in the rq and current is not eligible, we
->>> take care of the waiting tasks. Thoughts?
->>
->> I got your point and it makes sense. Whether the preemption check should be triggered
->> seems to be a heuristic trade-off to me. I'm ok with using more aggressive preemption
->> strategy as it depends on whether that workload prefers latency or throughput, and as
->> long as it did not introduce regression :-)
->>
->> Oliver, may I know if you happen to have time for a test if the following change
->> suggested by Honglei would make the regression go away? Thanks.
-> 
-> I applied the patch directly upon 85e511df3cec, the test found it can reduce the
-> regression but not totally reovered
-> 
-> =========================================================================================
-> compiler/cpufreq_governor/ipc/iterations/kconfig/mode/nr_threads/rootfs/tbox_group/testcase:
->   gcc-12/performance/socket/4/x86_64-rhel-8.3/process/50%/debian-12-x86_64-20240206.cgz/lkp-spr-r02/hackbench
-> 
-> commit:
->   82e9d0456e06 ("sched/fair: Avoid re-setting virtual deadline on 'migrations'")
->   85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
->   8079496d311b  <--- patch from Honglei
-> 
-> 82e9d0456e06cebe 85e511df3cec46021024176672a 8079496d311b6b0d4dae973f4df
-> ---------------- --------------------------- ---------------------------
->          %stddev     %change         %stddev     %change         %stddev
->              \          |                \          |                \
->     623219           -13.1%     541887            -3.2%     603080        hackbench.throughput
-> 
-
-Thanks a lot for running the test. The result is as expectation, as the
-strategy of short slices tends to favor more frequent scheduling to help
-delay-sensitive tasks acquire CPU as early as possible.
-
-I suspect that the current test environment does not have any special
-configurations for slices. In this case, a 3.2% regression is still
-somewhat significant. As Yu mentioned, this is a heuristic adjustment.
-In this particular case, it seems that Yu's patch is more effective in
-solving the problem. Let's delegate the preemption opportunity to the
-higher-level update_curr() function.
-
-Thanks,
-Honglei
-
->>
->> thanks,
->> Chenyu
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index fd2f3831c74e..290e5fdfc267 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -1247,7 +1247,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
->>  
->>  	account_cfs_rq_runtime(cfs_rq, delta_exec);
->>  
->> -	if (rq->nr_running == 1)
->> +	if (rq->cfs.nr_running == 1)
->>  		return;
->>  
->>  	if (resched || did_preempt_short(cfs_rq, curr)) {
->> -- 
->> 2.25.1
-> 
-> 
-> below is full comparison FYI.
-> 
-> 
-> =========================================================================================
-> compiler/cpufreq_governor/ipc/iterations/kconfig/mode/nr_threads/rootfs/tbox_group/testcase:
->   gcc-12/performance/socket/4/x86_64-rhel-8.3/process/50%/debian-12-x86_64-20240206.cgz/lkp-spr-r02/hackbench
-> 
-> commit:
->   82e9d0456e06 ("sched/fair: Avoid re-setting virtual deadline on 'migrations'")
->   85e511df3cec ("sched/eevdf: Allow shorter slices to wakeup-preempt")
->   8079496d311b  <--- patch from Honglei
-> 
-> 82e9d0456e06cebe 85e511df3cec46021024176672a 8079496d311b6b0d4dae973f4df
-> ---------------- --------------------------- ---------------------------
->          %stddev     %change         %stddev     %change         %stddev
->              \          |                \          |                \
->     150791 ±  3%      -3.9%     144868 ±  2%      -8.4%     138189 ±  3%  perf-c2c.HITM.local
->     217.40           +13.5%     246.74            +1.9%     221.55        uptime.boot
->    4679401           -15.8%    3938145           +35.5%    6342833        vmstat.system.cs
->     854648           -15.2%     724774           +35.0%    1153448        vmstat.system.in
->       0.46 ±  2%      -0.1        0.40            +0.1        0.51 ±  2%  mpstat.cpu.all.irq%
->       0.03 ±  3%      -0.0        0.03            +0.0        0.04        mpstat.cpu.all.soft%
->       3.35            -0.6        2.75            +0.3        3.65        mpstat.cpu.all.usr%
->     922628 ± 16%     +17.2%    1080933 ± 14%     +87.9%    1733278 ± 14%  numa-numastat.node0.local_node
->    1027104 ± 13%     +17.6%    1207529 ± 15%     +82.3%    1872582 ± 14%  numa-numastat.node0.numa_hit
->    2553206 ± 16%      +0.4%    2563309 ± 10%     +46.3%    3735450 ±  4%  numa-numastat.node1.local_node
->    2684151 ± 16%      -0.4%    2672834 ±  8%     +43.2%    3843864 ±  5%  numa-numastat.node1.numa_hit
->     174.58           +16.3%     203.09            +2.1%     178.28        time.elapsed_time
->     174.58           +16.3%     203.09            +2.1%     178.28        time.elapsed_time.max
->  1.654e+08            +2.2%   1.69e+08           +50.7%  2.492e+08        time.involuntary_context_switches
->      36869           +17.6%      43340            +1.6%      37461        time.system_time
->       1172            -5.5%       1107            +8.9%       1276        time.user_time
->  6.478e+08            -3.5%  6.255e+08           +36.2%  8.824e+08 ±  2%  time.voluntary_context_switches
->    8177075 ± 14%      +8.6%    8880848 ± 13%     +47.8%   12086160 ±  2%  meminfo.Cached
->    7771720 ± 15%      +9.5%    8506289 ± 13%     +50.8%   11720513 ±  2%  meminfo.Committed_AS
->    4992416 ± 31%     +17.9%    5883734 ± 19%     +83.6%    9165655 ±  2%  meminfo.Inactive
->    4992203 ± 31%     +17.9%    5883521 ± 19%     +83.6%    9165427 ±  2%  meminfo.Inactive(anon)
->    2281337 ± 19%     +17.2%    2673418 ±  4%     +38.0%    3147813 ±  3%  meminfo.Mapped
->   12824178 ± 10%      +5.9%   13577581 ±  8%     +30.4%   16717964        meminfo.Memused
->    5084291 ± 22%     +13.8%    5788029 ± 20%     +76.9%    8993338 ±  2%  meminfo.Shmem
->   13135346 ±  9%      +5.2%   13824666 ±  8%     +29.2%   16968485        meminfo.max_used_kB
->    3089827 ± 31%     +15.4%    3565461 ±  7%     +49.8%    4628448 ± 10%  numa-meminfo.node0.FilePages
->    5391461 ± 19%     +16.5%    6281524 ±  6%     +31.1%    7067023 ± 10%  numa-meminfo.node0.MemUsed
->     352581 ± 13%     +24.6%     439472 ± 16%     +11.3%     392488 ± 14%  numa-meminfo.node0.SUnreclaim
->    5090008 ± 22%      +4.5%    5317103 ± 18%     +46.6%    7462041 ±  3%  numa-meminfo.node1.FilePages
->    4237429 ± 32%     +13.8%    4822257 ± 21%     +66.3%    7045772 ±  7%  numa-meminfo.node1.Inactive
->    4237311 ± 32%     +13.8%    4822122 ± 21%     +66.3%    7045629 ±  7%  numa-meminfo.node1.Inactive(anon)
->    1875959 ± 20%     +18.1%    2215441 ±  5%     +44.6%    2711735 ±  3%  numa-meminfo.node1.Mapped
->    7434746 ± 16%      -1.8%    7298189 ± 12%     +29.9%    9655790 ±  5%  numa-meminfo.node1.MemUsed
->    4692017 ± 22%     +10.5%    5186768 ± 18%     +55.8%    7310040 ±  4%  numa-meminfo.node1.Shmem
->     623219           -13.1%     541887            -3.2%     603080        hackbench.throughput
->     606251           -14.1%     520789            -2.1%     593622        hackbench.throughput_avg
->     623219           -13.1%     541887            -3.2%     603080        hackbench.throughput_best
->     580034           -14.8%     494354            +0.4%     582377        hackbench.throughput_worst
->     174.58           +16.3%     203.09            +2.1%     178.28        hackbench.time.elapsed_time
->     174.58           +16.3%     203.09            +2.1%     178.28        hackbench.time.elapsed_time.max
->  1.654e+08            +2.2%   1.69e+08           +50.7%  2.492e+08        hackbench.time.involuntary_context_switches
->      36869           +17.6%      43340            +1.6%      37461        hackbench.time.system_time
->       1172            -5.5%       1107            +8.9%       1276        hackbench.time.user_time
->  6.478e+08            -3.5%  6.255e+08           +36.2%  8.824e+08 ±  2%  hackbench.time.voluntary_context_switches
->     772255 ± 31%     +15.4%     891384 ±  7%     +49.8%    1156899 ± 10%  numa-vmstat.node0.nr_file_pages
->    1025412 ± 13%     +17.7%    1206842 ± 15%     +82.6%    1871921 ± 14%  numa-vmstat.node0.numa_hit
->     920942 ± 16%     +17.3%    1080247 ± 14%     +88.1%    1732619 ± 14%  numa-vmstat.node0.numa_local
->    1271682 ± 22%      +4.5%    1328902 ± 18%     +46.6%    1863679 ±  3%  numa-vmstat.node1.nr_file_pages
->    1059760 ± 32%     +13.7%    1205295 ± 21%     +66.1%    1759754 ±  7%  numa-vmstat.node1.nr_inactive_anon
->     469078 ± 20%     +18.0%     553505 ±  5%     +44.2%     676623 ±  3%  numa-vmstat.node1.nr_mapped
->    1172184 ± 22%     +10.6%    1296319 ± 18%     +55.8%    1825678 ±  4%  numa-vmstat.node1.nr_shmem
->    1059759 ± 32%     +13.7%    1205294 ± 21%     +66.1%    1759752 ±  7%  numa-vmstat.node1.nr_zone_inactive_anon
->    2682254 ± 16%      -0.4%    2671316 ±  8%     +43.3%    3842866 ±  5%  numa-vmstat.node1.numa_hit
->    2551311 ± 16%      +0.4%    2561794 ± 10%     +46.4%    3734454 ±  4%  numa-vmstat.node1.numa_local
->    6233000            -0.3%    6214123            -1.6%    6135664        proc-vmstat.nr_dirty_background_threshold
->   12481241            -0.3%   12443440            -1.6%   12286330        proc-vmstat.nr_dirty_threshold
->    2044616 ± 14%      +8.6%    2220456 ± 13%     +47.8%    3022899 ±  2%  proc-vmstat.nr_file_pages
->   62706078            -0.3%   62517035            -1.6%   61731279        proc-vmstat.nr_free_pages
->    1247557 ± 31%     +17.9%    1471046 ± 19%     +83.8%    2292396 ±  2%  proc-vmstat.nr_inactive_anon
->     570709 ± 19%     +17.2%     668608 ±  4%     +38.0%     787666 ±  3%  proc-vmstat.nr_mapped
->    1271419 ± 23%     +13.8%    1447250 ± 20%     +76.9%    2249692 ±  2%  proc-vmstat.nr_shmem
->      44542            +2.7%      45755            +5.1%      46796        proc-vmstat.nr_slab_reclaimable
->     188881            -0.7%     187493            +1.4%     191440        proc-vmstat.nr_slab_unreclaimable
->    1247557 ± 31%     +17.9%    1471046 ± 19%     +83.8%    2292396 ±  2%  proc-vmstat.nr_zone_inactive_anon
->    3714588 ±  9%      +6.5%    3954189 ± 12%     +54.0%    5719994        proc-vmstat.numa_hit
->    3479163 ± 10%      +4.8%    3645729 ±  9%     +57.3%    5472276        proc-vmstat.numa_local
->     642130 ± 68%     -71.2%     184909 ± 11%     -73.9%     167609 ± 14%  proc-vmstat.pgactivate
->    4593887 ±  7%      +1.2%    4650141 ±  7%    +131.4%   10629624        proc-vmstat.pgalloc_normal
->    2170433 ±  2%      +6.8%    2318318 ±  2%      +6.4%    2308275 ±  5%  proc-vmstat.pgfault
->    2631626 ±  7%      -8.8%    2400780          +177.3%    7298788        proc-vmstat.pgfree
->     138302 ±  4%      +6.7%     147631 ±  3%      -0.7%     137382 ±  4%  proc-vmstat.pgreuse
->       0.30 ±  3%      -4.9%       0.28 ±  2%     +20.7%       0.36        perf-stat.i.MPKI
->  6.354e+10           -11.4%   5.63e+10            +2.2%  6.497e+10        perf-stat.i.branch-instructions
->       0.53            -0.0        0.52            +0.0        0.57        perf-stat.i.branch-miss-rate%
->  3.226e+08           -12.5%  2.822e+08            +9.2%  3.523e+08        perf-stat.i.branch-misses
->       3.91 ±  3%      -0.2        3.74 ±  2%      +0.9        4.80 ±  2%  perf-stat.i.cache-miss-rate%
->   94557935 ±  3%     -15.2%   80197744 ±  2%     +25.1%  1.183e+08        perf-stat.i.cache-misses
->  2.563e+09           -13.7%  2.212e+09            +1.3%  2.596e+09        perf-stat.i.cache-references
->    4710895           -15.9%    3959720           +36.7%    6439647        perf-stat.i.context-switches
->       1.86           +14.3%       2.13            -0.8%       1.85        perf-stat.i.cpi
->     224291            +0.0%     224353            +1.4%     227521        perf-stat.i.cpu-clock
->  6.345e+11            +0.4%  6.368e+11            +1.3%  6.424e+11        perf-stat.i.cpu-cycles
->     601598           -15.0%     511540           +13.7%     683759 ±  2%  perf-stat.i.cpu-migrations
->       7390 ±  5%     +28.4%       9492 ±  2%     -23.5%       5655        perf-stat.i.cycles-between-cache-misses
->  3.408e+11           -12.1%  2.997e+11            +2.1%  3.478e+11        perf-stat.i.instructions
->       0.54           -12.2%       0.47            +0.8%       0.55        perf-stat.i.ipc
->      23.73           -15.9%      19.95           +32.3%      31.39        perf-stat.i.metric.K/sec
->     224291            +0.0%     224353            +1.4%     227521        perf-stat.i.task-clock
->       0.25 ± 35%      +8.1%       0.27 ±  2%     +38.0%       0.34        perf-stat.overall.MPKI
->       0.45 ± 35%      +0.1        0.50            +0.1        0.54        perf-stat.overall.branch-miss-rate%
->       3.26 ± 35%      +0.3        3.60            +1.3        4.54        perf-stat.overall.cache-miss-rate%
->       1.66 ± 35%     +28.5%       2.13           +11.6%       1.85        perf-stat.overall.cpi
->       6006 ± 35%     +33.5%       8020 ±  2%      -9.1%       5458        perf-stat.overall.cycles-between-cache-misses
->       0.48 ± 35%      -1.5%       0.47           +13.4%       0.54        perf-stat.overall.ipc
->  2.847e+08 ± 35%      -1.6%  2.802e+08           +21.1%  3.448e+08        perf-stat.ps.branch-misses
->   83193631 ± 35%      -5.0%   79040711 ±  2%     +38.7%  1.154e+08        perf-stat.ps.cache-misses
->    4153465 ± 35%      -5.4%    3930147           +52.2%    6323104        perf-stat.ps.context-switches
->     531469 ± 35%      -4.7%     506531           +26.2%     670740 ±  2%  perf-stat.ps.cpu-migrations
->  5.287e+13 ± 35%     +15.1%  6.083e+13           +15.6%  6.114e+13        perf-stat.total.instructions
->   13829361           +51.8%   20989754            +6.0%   14655040 ± 15%  sched_debug.cfs_rq:/.avg_vruntime.avg
->   18756074 ±  5%     +44.2%   27055241 ±  3%      +3.8%   19470555 ± 13%  sched_debug.cfs_rq:/.avg_vruntime.max
->   12499623 ±  2%     +52.4%   19043277 ±  2%      +8.0%   13493604 ± 14%  sched_debug.cfs_rq:/.avg_vruntime.min
->       8.93 ±  2%     +14.1%      10.19            -5.2%       8.47 ±  7%  sched_debug.cfs_rq:/.h_nr_running.avg
->       4.68 ±  3%     +10.0%       5.15 ±  2%      -1.5%       4.62 ±  8%  sched_debug.cfs_rq:/.h_nr_running.stddev
->       0.44 ± 35%     +75.8%       0.78 ± 19%      -1.6%       0.44 ± 50%  sched_debug.cfs_rq:/.load_avg.min
->   13829361           +51.8%   20989754            +6.0%   14655040 ± 15%  sched_debug.cfs_rq:/.min_vruntime.avg
->   18756074 ±  5%     +44.2%   27055241 ±  3%      +3.8%   19470555 ± 13%  sched_debug.cfs_rq:/.min_vruntime.max
->   12499623 ±  2%     +52.4%   19043277 ±  2%      +8.0%   13493604 ± 14%  sched_debug.cfs_rq:/.min_vruntime.min
->       0.68           +11.7%       0.76            -1.3%       0.67 ±  2%  sched_debug.cfs_rq:/.nr_running.avg
->     176.30 ±  3%     -22.8%     136.16 ±  4%      -2.9%     171.17 ± 10%  sched_debug.cfs_rq:/.removed.runnable_avg.max
->     176.30 ±  3%     -22.8%     136.16 ±  4%      -2.9%     171.17 ± 10%  sched_debug.cfs_rq:/.removed.util_avg.max
->       8995           +16.0%      10437            -5.7%       8484 ±  7%  sched_debug.cfs_rq:/.runnable_avg.avg
->      18978 ±  6%     +13.7%      21579 ±  6%     -10.1%      17066 ± 11%  sched_debug.cfs_rq:/.runnable_avg.max
->       2890 ±  4%     +13.9%       3292 ±  3%      -1.5%       2848 ±  9%  sched_debug.cfs_rq:/.runnable_avg.stddev
->       1094 ±  3%      +2.9%       1125 ±  3%     +72.4%       1886 ±  5%  sched_debug.cfs_rq:/.util_est.avg
->       4561 ± 14%     +19.8%       5464 ± 19%     +50.2%       6850 ±  7%  sched_debug.cfs_rq:/.util_est.max
->     816.44 ±  6%      +7.4%     877.16 ±  4%     +78.4%       1456 ±  4%  sched_debug.cfs_rq:/.util_est.stddev
->     415209 ± 22%     -23.3%     318311 ±  3%      -8.8%     378602 ±  6%  sched_debug.cpu.avg_idle.avg
->     102333 ±  2%     +30.5%     133496 ±  2%      +4.0%     106415 ±  9%  sched_debug.cpu.clock.avg
->     102519 ±  2%     +30.4%     133722 ±  2%      +4.0%     106590 ±  8%  sched_debug.cpu.clock.max
->     102127 ±  2%     +30.5%     133254 ±  2%      +4.0%     106199 ±  9%  sched_debug.cpu.clock.min
->     101839 ±  2%     +30.5%     132880 ±  2%      +4.0%     105862 ±  8%  sched_debug.cpu.clock_task.avg
->     102169 ±  2%     +30.4%     133268 ±  2%      +3.9%     106186 ±  8%  sched_debug.cpu.clock_task.max
->      87129 ±  2%     +35.6%     118117 ±  2%      +4.6%      91152 ± 10%  sched_debug.cpu.clock_task.min
->      11573           +32.4%      15327            -0.3%      11534        sched_debug.cpu.curr->pid.avg
->      14704           +23.9%      18214            +3.2%      15178 ±  7%  sched_debug.cpu.curr->pid.max
->       1516 ±  9%     +16.4%       1765 ± 10%     +33.3%       2021 ± 44%  sched_debug.cpu.curr->pid.stddev
->       8.92 ±  2%     +14.1%      10.18            -5.2%       8.46 ±  7%  sched_debug.cpu.nr_running.avg
->       4.69 ±  2%     +10.0%       5.16 ±  2%      -1.7%       4.61 ±  8%  sched_debug.cpu.nr_running.stddev
->    1232815 ±  2%     +27.3%    1569099           +45.1%    1789014 ± 17%  sched_debug.cpu.nr_switches.avg
->    1411362 ±  5%     +26.8%    1789325 ±  3%     +48.6%    2097828 ± 20%  sched_debug.cpu.nr_switches.max
->    1045767 ±  2%     +27.3%    1331341 ±  3%     +42.5%    1489877 ± 17%  sched_debug.cpu.nr_switches.min
->     102127 ±  2%     +30.5%     133250 ±  2%      +4.0%     106198 ±  9%  sched_debug.cpu_clk
->     101071 ±  2%     +30.8%     132194 ±  2%      +4.0%     105143 ±  9%  sched_debug.ktime
->       0.00           -25.0%       0.00            -3.1%       0.00 ±  8%  sched_debug.rt_rq:.rt_nr_running.avg
->       0.33           -25.0%       0.25            -3.1%       0.32 ±  8%  sched_debug.rt_rq:.rt_nr_running.max
->       0.02           -25.0%       0.02            -3.1%       0.02 ±  8%  sched_debug.rt_rq:.rt_nr_running.stddev
->     102997 ±  2%     +30.2%     134142 ±  2%      +4.0%     107069 ±  9%  sched_debug.sched_clk
->   16347631          +100.0%   32695263          +100.0%   32695263        sched_debug.sysctl_sched.sysctl_sched_features
->       3.31 ±123%     -42.6%       1.90 ± 86%     -89.1%       0.36 ± 88%  perf-sched.sch_delay.avg.ms.__cond_resched.__alloc_pages_noprof.alloc_pages_mpol_noprof.folio_alloc_mpol_noprof.shmem_alloc_folio
->       8.46 ± 38%    +100.8%      16.98 ± 82%     -85.1%       1.26 ±134%  perf-sched.sch_delay.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.__memcg_slab_post_alloc_hook.kmem_cache_alloc_node_noprof
->       5.72 ± 38%     +21.2%       6.93 ± 80%     -85.6%       0.83 ± 85%  perf-sched.sch_delay.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.allocate_slab.___slab_alloc
->       7.88 ± 21%     +11.3%       8.77 ± 59%     -89.0%       0.87 ± 38%  perf-sched.sch_delay.avg.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->       7.16 ± 36%     -24.4%       5.42 ± 73%     -70.7%       2.10 ± 66%  perf-sched.sch_delay.avg.ms.__cond_resched.__wait_for_common.affine_move_task.__set_cpus_allowed_ptr.__sched_setaffinity
->      28.76 ±142%     -62.8%      10.70 ±198%     -99.4%       0.18 ±233%  perf-sched.sch_delay.avg.ms.__cond_resched.__wait_for_common.stop_two_cpus.migrate_swap.task_numa_migrate
->       3.75 ± 24%      +0.6%       3.77 ± 59%     -62.1%       1.42 ± 39%  perf-sched.sch_delay.avg.ms.__cond_resched.aa_sk_perm.security_socket_recvmsg.sock_recvmsg.sock_read_iter
->      10.26 ± 19%      -9.5%       9.29 ± 62%     -74.3%       2.64 ± 40%  perf-sched.sch_delay.avg.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->       2.82 ± 43%     -22.6%       2.18 ± 73%     -83.9%       0.45 ± 59%  perf-sched.sch_delay.avg.ms.__cond_resched.generic_perform_write.shmem_file_write_iter.vfs_write.ksys_write
->       2.30 ± 29%      -4.8%       2.19 ± 61%     -72.3%       0.64 ± 38%  perf-sched.sch_delay.avg.ms.__cond_resched.kmem_cache_alloc_node_noprof.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb
->       1.75 ± 49%      -5.1%       1.66 ± 65%     -61.1%       0.68 ± 39%  perf-sched.sch_delay.avg.ms.__cond_resched.mutex_lock.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->       4.13 ± 87%      +0.3%       4.15 ± 88%     -86.0%       0.58 ±133%  perf-sched.sch_delay.avg.ms.__cond_resched.shmem_inode_acct_blocks.shmem_alloc_and_add_folio.shmem_get_folio_gfp.shmem_write_begin
->       2.81 ± 59%     -20.7%       2.23 ± 61%     -72.8%       0.76 ± 38%  perf-sched.sch_delay.avg.ms.__cond_resched.task_work_run.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe
->       9.13 ± 30%      +0.5%       9.17 ± 67%     -87.4%       1.15 ± 53%  perf-sched.sch_delay.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->       9.94 ± 32%     -38.3%       6.13 ± 62%     -56.9%       4.28 ± 37%  perf-sched.sch_delay.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_reschedule_ipi.[unknown].[unknown]
->      11.06 ± 57%     -45.0%       6.08 ± 75%     -90.4%       1.06 ± 60%  perf-sched.sch_delay.avg.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->      16.36 ± 24%     -23.9%      12.45 ± 59%     -53.7%       7.57 ± 38%  perf-sched.sch_delay.avg.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       1.77 ± 23%     -28.5%       1.26 ± 60%     -66.1%       0.60 ± 38%  perf-sched.sch_delay.avg.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       2.66 ± 21%     -15.5%       2.25 ± 58%     -63.8%       0.96 ± 37%  perf-sched.sch_delay.avg.ms.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.[unknown]
->     226.74 ±108%     -40.0%     136.06 ±120%     -95.1%      11.09 ± 91%  perf-sched.sch_delay.avg.ms.worker_thread.kthread.ret_from_fork.ret_from_fork_asm
->       1412 ± 25%      -7.0%       1313 ± 66%     -83.6%     231.23 ± 47%  perf-sched.sch_delay.max.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->       1221 ±  4%     -23.0%     940.87 ± 58%     -51.1%     596.88 ± 89%  perf-sched.sch_delay.max.ms.__cond_resched.__wait_for_common.affine_move_task.__set_cpus_allowed_ptr.__sched_setaffinity
->     262.66 ±176%     -72.1%      73.22 ±239%     -99.9%       0.35 ±248%  perf-sched.sch_delay.max.ms.__cond_resched.__wait_for_common.stop_two_cpus.migrate_swap.task_numa_migrate
->     779.32 ± 29%     -15.9%     655.34 ± 72%     -80.4%     152.55 ± 45%  perf-sched.sch_delay.max.ms.__cond_resched.aa_sk_perm.security_socket_recvmsg.sock_recvmsg.sock_read_iter
->       1042 ± 23%      -8.4%     954.56 ± 63%     -81.8%     190.25 ± 44%  perf-sched.sch_delay.max.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->     463.55 ± 83%      -3.7%     446.18 ± 87%     -85.8%      65.73 ± 93%  perf-sched.sch_delay.max.ms.__cond_resched.generic_perform_write.shmem_file_write_iter.vfs_write.ksys_write
->       1128 ± 17%     -17.7%     928.10 ± 62%     -81.0%     214.51 ± 40%  perf-sched.sch_delay.max.ms.__cond_resched.kmem_cache_alloc_node_noprof.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb
->     500.79 ± 50%     -25.9%     370.90 ± 79%     -76.0%     120.40 ± 46%  perf-sched.sch_delay.max.ms.__cond_resched.mutex_lock.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->     744.38 ± 27%      +0.4%     747.54 ± 78%     -86.3%     102.18 ± 71%  perf-sched.sch_delay.max.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->     579.24 ± 43%     -10.1%     520.76 ± 62%     -65.3%     201.13 ± 62%  perf-sched.sch_delay.max.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->       1945 ± 16%     -15.9%       1635 ± 61%     -73.4%     516.65 ± 40%  perf-sched.sch_delay.max.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       1530 ± 22%      -7.2%       1420 ± 63%     -75.5%     375.37 ± 40%  perf-sched.sch_delay.max.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       3.03 ± 23%     -26.5%       2.23 ± 59%     -65.2%       1.05 ± 38%  perf-sched.total_sch_delay.average.ms
->       8.72 ± 23%     -28.5%       6.23 ± 59%     -64.2%       3.12 ± 38%  perf-sched.total_wait_and_delay.average.ms
->       8284 ± 27%     -38.2%       5118 ± 60%     -41.6%       4839 ± 44%  perf-sched.total_wait_and_delay.max.ms
->       5.68 ± 23%     -29.6%       4.00 ± 59%     -63.7%       2.06 ± 38%  perf-sched.total_wait_time.average.ms
->       5811 ±  8%     -28.5%       4155 ± 59%     -27.8%       4194 ± 38%  perf-sched.total_wait_time.max.ms
->      37.25 ± 91%     +17.8%      43.88 ± 72%     -90.7%       3.45 ±136%  perf-sched.wait_and_delay.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.__memcg_slab_post_alloc_hook.kmem_cache_alloc_node_noprof
->      44.86 ± 74%     +10.0%      49.33 ±117%     -95.6%       1.99 ±132%  perf-sched.wait_and_delay.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.allocate_slab.___slab_alloc
->      22.30 ± 21%      +6.1%      23.66 ± 59%    -100.0%       0.00        perf-sched.wait_and_delay.avg.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->      17.29 ± 21%     -28.7%      12.33 ± 66%     -60.1%       6.90 ± 45%  perf-sched.wait_and_delay.avg.ms.__cond_resched.__wait_for_common.affine_move_task.__set_cpus_allowed_ptr.__sched_setaffinity
->      28.98 ± 21%     -13.8%      24.98 ± 61%     -74.3%       7.45 ± 39%  perf-sched.wait_and_delay.avg.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->      27.08 ± 28%     -10.4%      24.27 ± 64%     -93.8%       1.69 ±129%  perf-sched.wait_and_delay.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->      27.52 ± 28%     -37.8%      17.11 ± 61%     -54.9%      12.40 ± 37%  perf-sched.wait_and_delay.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_reschedule_ipi.[unknown].[unknown]
->      38.19 ± 43%     -40.4%      22.76 ± 65%     -80.4%       7.50 ± 40%  perf-sched.wait_and_delay.avg.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->      45.63 ± 24%     -25.8%      33.84 ± 59%     -53.4%      21.28 ± 38%  perf-sched.wait_and_delay.avg.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       5.06 ± 24%     -30.6%       3.51 ± 60%     -65.6%       1.74 ± 38%  perf-sched.wait_and_delay.avg.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       7.23 ± 22%     -18.4%       5.90 ± 59%     -64.2%       2.59 ± 38%  perf-sched.wait_and_delay.avg.ms.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.[unknown]
->      17219 ± 26%     +18.6%      20422 ± 60%    -100.0%       0.00        perf-sched.wait_and_delay.count.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->     287.02 ± 72%     -56.9%     123.78 ± 90%     -90.0%      28.73 ±130%  perf-sched.wait_and_delay.max.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.allocate_slab.___slab_alloc
->       2851 ± 25%      -5.3%       2699 ± 64%    -100.0%       0.00        perf-sched.wait_and_delay.max.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->       2443 ±  4%     -23.0%       1881 ± 58%     -37.8%       1519 ± 53%  perf-sched.wait_and_delay.max.ms.__cond_resched.__wait_for_common.affine_move_task.__set_cpus_allowed_ptr.__sched_setaffinity
->       2132 ± 23%      -9.7%       1925 ± 63%     -82.0%     384.48 ± 45%  perf-sched.wait_and_delay.max.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->       3449 ± 45%     -35.6%       2220 ± 71%     -59.1%       1410 ± 49%  perf-sched.wait_and_delay.max.ms.do_wait.kernel_wait4.__do_sys_wait4.do_syscall_64
->       1507 ± 27%      +0.2%       1510 ± 79%     -93.3%     101.36 ±137%  perf-sched.wait_and_delay.max.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->       1312 ± 35%     -16.4%       1097 ± 61%     -65.2%     456.55 ± 64%  perf-sched.wait_and_delay.max.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->       3951 ± 16%     -17.0%       3278 ± 61%     -73.7%       1038 ± 40%  perf-sched.wait_and_delay.max.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       3088 ± 22%      -7.9%       2844 ± 62%     -75.1%     768.96 ± 41%  perf-sched.wait_and_delay.max.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       3.31 ±123%     -42.6%       1.90 ± 86%     -89.1%       0.36 ± 88%  perf-sched.wait_time.avg.ms.__cond_resched.__alloc_pages_noprof.alloc_pages_mpol_noprof.folio_alloc_mpol_noprof.shmem_alloc_folio
->      28.79 ±114%      -6.6%      26.89 ± 70%     -90.2%       2.82 ± 96%  perf-sched.wait_time.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.__memcg_slab_post_alloc_hook.kmem_cache_alloc_node_noprof
->      39.14 ± 89%      +8.3%      42.40 ±140%     -95.1%       1.92 ± 78%  perf-sched.wait_time.avg.ms.__cond_resched.__kmalloc_node_noprof.alloc_slab_obj_exts.allocate_slab.___slab_alloc
->      14.42 ± 21%      +3.3%      14.89 ± 59%     -88.8%       1.61 ± 37%  perf-sched.wait_time.avg.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->      10.13 ± 17%     -31.7%       6.92 ± 63%     -52.6%       4.80 ± 41%  perf-sched.wait_time.avg.ms.__cond_resched.__wait_for_common.affine_move_task.__set_cpus_allowed_ptr.__sched_setaffinity
->      40.86 ±110%     -46.6%      21.80 ±152%     -99.1%       0.35 ±248%  perf-sched.wait_time.avg.ms.__cond_resched.__wait_for_common.stop_two_cpus.migrate_swap.task_numa_migrate
->       6.56 ± 23%      -5.6%       6.20 ± 59%     -61.9%       2.50 ± 38%  perf-sched.wait_time.avg.ms.__cond_resched.aa_sk_perm.security_socket_recvmsg.sock_recvmsg.sock_read_iter
->      18.72 ± 22%     -16.2%      15.69 ± 61%     -74.3%       4.81 ± 39%  perf-sched.wait_time.avg.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->       2.82 ± 43%     -22.6%       2.18 ± 73%     -83.9%       0.45 ± 59%  perf-sched.wait_time.avg.ms.__cond_resched.generic_perform_write.shmem_file_write_iter.vfs_write.ksys_write
->       5.03 ± 24%      -6.1%       4.72 ± 59%     -63.4%       1.84 ± 38%  perf-sched.wait_time.avg.ms.__cond_resched.kmem_cache_alloc_node_noprof.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb
->       3.16 ± 33%     -19.7%       2.54 ± 65%     -60.4%       1.25 ± 38%  perf-sched.wait_time.avg.ms.__cond_resched.mutex_lock.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->       4.13 ± 87%      +0.3%       4.15 ± 88%     -86.0%       0.58 ±133%  perf-sched.wait_time.avg.ms.__cond_resched.shmem_inode_acct_blocks.shmem_alloc_and_add_folio.shmem_get_folio_gfp.shmem_write_begin
->       4.42 ± 44%     -21.0%       3.49 ± 65%     -71.3%       1.27 ± 38%  perf-sched.wait_time.avg.ms.__cond_resched.task_work_run.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe
->     224.55 ± 53%     -20.5%     178.59 ± 71%     -71.8%      63.25 ± 68%  perf-sched.wait_time.avg.ms.do_wait.kernel_wait4.__do_sys_wait4.do_syscall_64
->      17.95 ± 30%     -15.9%      15.10 ± 63%     -89.3%       1.91 ± 46%  perf-sched.wait_time.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->      17.58 ± 26%     -37.5%      10.98 ± 61%     -53.8%       8.12 ± 38%  perf-sched.wait_time.avg.ms.irqentry_exit_to_user_mode.asm_sysvec_reschedule_ipi.[unknown].[unknown]
->      27.13 ± 39%     -38.5%      16.68 ± 63%     -76.3%       6.43 ± 38%  perf-sched.wait_time.avg.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->      29.27 ± 24%     -26.9%      21.39 ± 59%     -53.2%      13.71 ± 38%  perf-sched.wait_time.avg.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       3.29 ± 24%     -31.7%       2.25 ± 60%     -65.3%       1.14 ± 38%  perf-sched.wait_time.avg.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       4.57 ± 22%     -20.1%       3.66 ± 59%     -64.4%       1.63 ± 38%  perf-sched.wait_time.avg.ms.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.[unknown]
->       1446 ± 25%      -3.4%       1396 ± 63%     -80.6%     280.50 ± 42%  perf-sched.wait_time.max.ms.__cond_resched.__kmalloc_node_track_caller_noprof.kmalloc_reserve.__alloc_skb.alloc_skb_with_frags
->     292.35 ±159%     -68.1%      93.21 ±217%     -99.8%       0.69 ±256%  perf-sched.wait_time.max.ms.__cond_resched.__wait_for_common.stop_two_cpus.migrate_swap.task_numa_migrate
->     932.87 ± 20%     -20.6%     740.44 ± 65%     -81.7%     170.42 ± 45%  perf-sched.wait_time.max.ms.__cond_resched.aa_sk_perm.security_socket_recvmsg.sock_recvmsg.sock_read_iter
->       1110 ± 24%     -11.8%     979.30 ± 62%     -81.7%     203.13 ± 43%  perf-sched.wait_time.max.ms.__cond_resched.aa_sk_perm.security_socket_sendmsg.sock_write_iter.vfs_write
->     463.55 ± 83%      -3.7%     446.18 ± 87%     -85.8%      65.73 ± 93%  perf-sched.wait_time.max.ms.__cond_resched.generic_perform_write.shmem_file_write_iter.vfs_write.ksys_write
->       1203 ± 20%     -19.5%     969.24 ± 62%     -80.5%     234.88 ± 42%  perf-sched.wait_time.max.ms.__cond_resched.kmem_cache_alloc_node_noprof.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb
->     614.81 ± 41%     -27.8%     443.79 ± 79%     -79.3%     127.43 ± 46%  perf-sched.wait_time.max.ms.__cond_resched.mutex_lock.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->     822.39 ± 32%     -24.1%     624.54 ± 74%     -82.9%     140.70 ± 43%  perf-sched.wait_time.max.ms.__cond_resched.task_work_run.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe
->     817.75 ± 28%      -6.8%     762.54 ± 79%     -85.7%     117.26 ± 58%  perf-sched.wait_time.max.ms.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt.[unknown].[unknown]
->     774.10 ± 27%     -22.5%     600.11 ± 61%     -63.0%     286.19 ± 57%  perf-sched.wait_time.max.ms.schedule_timeout.rcu_gp_fqs_loop.rcu_gp_kthread.kthread
->       2023 ± 16%     -18.8%       1643 ± 60%     -74.2%     521.59 ± 40%  perf-sched.wait_time.max.ms.schedule_timeout.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       1624 ± 25%     -12.1%       1428 ± 62%     -75.0%     405.54 ± 42%  perf-sched.wait_time.max.ms.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       2801 ± 45%     -40.4%       1669 ± 81%     -54.5%       1273 ± 52%  perf-sched.wait_time.max.ms.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.[unknown]
->      55.19            -0.7       54.46            -0.6       54.55        perf-profile.calltrace.cycles-pp.read
->      53.91            -0.6       53.30            -0.8       53.13        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe.read
->      53.76            -0.6       53.16            -0.8       52.98        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe.read
->      52.41            -0.5       51.92            -1.1       51.32        perf-profile.calltrace.cycles-pp.ksys_read.do_syscall_64.entry_SYSCALL_64_after_hwframe.read
->      52.02            -0.5       51.56            -1.1       50.92        perf-profile.calltrace.cycles-pp.vfs_read.ksys_read.do_syscall_64.entry_SYSCALL_64_after_hwframe.read
->      50.82            -0.4       50.46            -1.2       49.67        perf-profile.calltrace.cycles-pp.sock_read_iter.vfs_read.ksys_read.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      50.29            -0.3       49.98            -1.2       49.12        perf-profile.calltrace.cycles-pp.sock_recvmsg.sock_read_iter.vfs_read.ksys_read.do_syscall_64
->      49.61            -0.3       49.36            -1.2       48.42        perf-profile.calltrace.cycles-pp.unix_stream_recvmsg.sock_recvmsg.sock_read_iter.vfs_read.ksys_read
->      49.37            -0.2       49.13            -1.2       48.17        perf-profile.calltrace.cycles-pp.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg.sock_read_iter.vfs_read
->      24.50            -0.2       24.29 ±  4%      -1.1       23.39        perf-profile.calltrace.cycles-pp.alloc_skb_with_frags.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter.vfs_write
->       5.54 ±  2%      -0.2        5.34 ±  6%      -0.3        5.25 ±  2%  perf-profile.calltrace.cycles-pp.unix_stream_read_actor.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg.sock_read_iter
->       5.49 ±  2%      -0.2        5.29 ±  6%      -0.3        5.20 ±  2%  perf-profile.calltrace.cycles-pp.skb_copy_datagram_iter.unix_stream_read_actor.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->       5.40 ±  2%      -0.2        5.21 ±  6%      -0.3        5.11 ±  2%  perf-profile.calltrace.cycles-pp.__skb_datagram_iter.skb_copy_datagram_iter.unix_stream_read_actor.unix_stream_read_generic.unix_stream_recvmsg
->      24.31            -0.2       24.12 ±  4%      -1.1       23.20        perf-profile.calltrace.cycles-pp.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter
->       2.86 ±  2%      -0.2        2.68 ±  5%      -0.2        2.65 ±  2%  perf-profile.calltrace.cycles-pp.__memcg_slab_free_hook.kmem_cache_free.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->       1.60 ±  2%      -0.1        1.45 ±  5%      -0.0        1.57        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64.read
->       1.50 ±  2%      -0.1        1.36 ±  6%      -0.0        1.50        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64.write
->       0.62 ±  2%      -0.1        0.50 ± 38%      +0.3        0.95        perf-profile.calltrace.cycles-pp.enqueue_task_fair.ttwu_do_activate.try_to_wake_up.autoremove_wake_function.__wake_up_common
->       2.76 ±  2%      -0.1        2.66 ±  6%      -0.3        2.45 ±  2%  perf-profile.calltrace.cycles-pp.simple_copy_to_iter.__skb_datagram_iter.skb_copy_datagram_iter.unix_stream_read_actor.unix_stream_read_generic
->       2.65 ±  2%      -0.1        2.55 ±  6%      -0.3        2.34 ±  2%  perf-profile.calltrace.cycles-pp.__check_object_size.simple_copy_to_iter.__skb_datagram_iter.skb_copy_datagram_iter.unix_stream_read_actor
->       0.97 ±  2%      -0.1        0.89 ±  5%      +0.3        1.26        perf-profile.calltrace.cycles-pp.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.read
->       0.78 ±  2%      -0.1        0.71 ±  7%      +0.4        1.18        perf-profile.calltrace.cycles-pp.ttwu_do_activate.try_to_wake_up.autoremove_wake_function.__wake_up_common.__wake_up_sync_key
->       1.24 ±  2%      -0.1        1.16 ±  5%      +0.1        1.31 ±  2%  perf-profile.calltrace.cycles-pp.__memcg_slab_post_alloc_hook.kmem_cache_alloc_node_noprof.__alloc_skb.alloc_skb_with_frags.sock_alloc_send_pskb
->       2.20 ±  2%      -0.1        2.14 ±  6%      -0.3        1.90 ±  2%  perf-profile.calltrace.cycles-pp.check_heap_object.__check_object_size.simple_copy_to_iter.__skb_datagram_iter.skb_copy_datagram_iter
->      26.13            -0.0       26.09 ±  3%      -1.0       25.11        perf-profile.calltrace.cycles-pp.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter.vfs_write.ksys_write
->       0.53 ±  2%      -0.0        0.49 ± 38%      +0.3        0.79 ±  2%  perf-profile.calltrace.cycles-pp.dequeue_task_fair.__schedule.schedule.schedule_timeout.unix_stream_data_wait
->       1.03 ±  3%      -0.0        1.02 ±  9%      +0.1        1.12        perf-profile.calltrace.cycles-pp.skb_set_owner_w.sock_alloc_send_pskb.unix_stream_sendmsg.sock_write_iter.vfs_write
->       0.66 ±  2%      -0.0        0.65 ±  6%      +0.1        0.79        perf-profile.calltrace.cycles-pp.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.write
->       0.00            +0.0        0.00            +0.6        0.61        perf-profile.calltrace.cycles-pp.enqueue_entity.enqueue_task_fair.ttwu_do_activate.try_to_wake_up.autoremove_wake_function
->       1.83 ±  2%      +0.1        1.88 ±  6%      +0.8        2.61        perf-profile.calltrace.cycles-pp.schedule.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg
->       1.87 ±  2%      +0.1        1.93 ±  6%      +0.8        2.68        perf-profile.calltrace.cycles-pp.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg
->       1.79 ±  2%      +0.1        1.85 ±  6%      +0.8        2.56        perf-profile.calltrace.cycles-pp.__schedule.schedule.schedule_timeout.unix_stream_data_wait.unix_stream_read_generic
->       2.30 ±  2%      +0.1        2.37 ±  6%      +1.0        3.30        perf-profile.calltrace.cycles-pp.unix_stream_data_wait.unix_stream_read_generic.unix_stream_recvmsg.sock_recvmsg.sock_read_iter
->       0.40 ± 53%      +0.1        0.48 ± 38%      +0.4        0.77 ±  2%  perf-profile.calltrace.cycles-pp.dequeue_entities.dequeue_task_fair.__schedule.schedule.schedule_timeout
->       0.00            +0.3        0.26 ±100%      +0.6        0.61        perf-profile.calltrace.cycles-pp.pick_next_task_fair.__schedule.schedule.schedule_timeout.unix_stream_data_wait
->       1.62 ±  3%      +0.3        1.93 ± 24%      +0.9        2.48        perf-profile.calltrace.cycles-pp.try_to_wake_up.autoremove_wake_function.__wake_up_common.__wake_up_sync_key.sock_def_readable
->       1.63 ±  3%      +0.3        1.94 ± 24%      +0.9        2.50        perf-profile.calltrace.cycles-pp.autoremove_wake_function.__wake_up_common.__wake_up_sync_key.sock_def_readable.unix_stream_sendmsg
->       1.71 ±  3%      +0.3        2.03 ± 23%      +0.9        2.61        perf-profile.calltrace.cycles-pp.__wake_up_common.__wake_up_sync_key.sock_def_readable.unix_stream_sendmsg.sock_write_iter
->      39.00            +0.5       39.50            +0.1       39.13        perf-profile.calltrace.cycles-pp.sock_write_iter.vfs_write.ksys_write.do_syscall_64.entry_SYSCALL_64_after_hwframe
->      37.56            +0.6       38.15            +0.1       37.67        perf-profile.calltrace.cycles-pp.unix_stream_sendmsg.sock_write_iter.vfs_write.ksys_write.do_syscall_64
->       1.96 ±  3%      +0.7        2.63 ± 24%      +1.1        3.08        perf-profile.calltrace.cycles-pp.__wake_up_sync_key.sock_def_readable.unix_stream_sendmsg.sock_write_iter.vfs_write
->       3.52 ±  2%      +0.7        4.23 ± 15%      +1.1        4.62 ±  2%  perf-profile.calltrace.cycles-pp.sock_def_readable.unix_stream_sendmsg.sock_write_iter.vfs_write.ksys_write
->      55.93            -0.8       55.12            -0.7       55.27        perf-profile.children.cycles-pp.read
->      52.45            -0.5       51.95            -1.1       51.36        perf-profile.children.cycles-pp.ksys_read
->      52.06            -0.5       51.60            -1.1       50.96        perf-profile.children.cycles-pp.vfs_read
->      50.85            -0.4       50.48            -1.2       49.69        perf-profile.children.cycles-pp.sock_read_iter
->      50.34            -0.3       50.03            -1.2       49.17        perf-profile.children.cycles-pp.sock_recvmsg
->       4.68 ±  2%      -0.3        4.38 ±  5%      -0.2        4.49        perf-profile.children.cycles-pp.__memcg_slab_free_hook
->      49.64            -0.3       49.38            -1.2       48.45        perf-profile.children.cycles-pp.unix_stream_recvmsg
->      49.50            -0.2       49.25            -1.2       48.30        perf-profile.children.cycles-pp.unix_stream_read_generic
->      24.52            -0.2       24.32 ±  4%      -1.1       23.41        perf-profile.children.cycles-pp.alloc_skb_with_frags
->       5.57 ±  2%      -0.2        5.36 ±  6%      -0.3        5.27 ±  2%  perf-profile.children.cycles-pp.unix_stream_read_actor
->       5.52 ±  2%      -0.2        5.31 ±  6%      -0.3        5.22 ±  2%  perf-profile.children.cycles-pp.skb_copy_datagram_iter
->      24.38            -0.2       24.18 ±  4%      -1.1       23.27        perf-profile.children.cycles-pp.__alloc_skb
->       5.43 ±  2%      -0.2        5.24 ±  6%      -0.3        5.14 ±  2%  perf-profile.children.cycles-pp.__skb_datagram_iter
->      95.87            -0.2       95.70            -0.5       95.42        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
->       3.46 ±  2%      -0.2        3.29 ±  6%      -0.3        3.16        perf-profile.children.cycles-pp.__check_object_size
->       1.77 ±  2%      -0.2        1.61 ±  5%      -0.0        1.76        perf-profile.children.cycles-pp.entry_SYSCALL_64
->       1.87 ±  2%      -0.2        1.72 ±  5%      +0.0        1.87 ±  2%  perf-profile.children.cycles-pp.mod_objcg_state
->      95.57            -0.1       95.43            -0.5       95.11        perf-profile.children.cycles-pp.do_syscall_64
->       2.79 ±  2%      -0.1        2.68 ±  6%      -0.3        2.48        perf-profile.children.cycles-pp.simple_copy_to_iter
->       2.62 ±  2%      -0.1        2.53 ±  6%      -0.3        2.33 ±  2%  perf-profile.children.cycles-pp.check_heap_object
->       1.69 ±  2%      -0.1        1.60 ±  5%      +0.4        2.12        perf-profile.children.cycles-pp.syscall_exit_to_user_mode
->       0.90 ±  2%      -0.1        0.83 ±  5%      -0.0        0.90        perf-profile.children.cycles-pp.entry_SYSRETQ_unsafe_stack
->       0.85 ±  2%      -0.1        0.78 ±  5%      +0.0        0.86 ±  2%  perf-profile.children.cycles-pp.obj_cgroup_charge
->       0.10 ±  4%      -0.1        0.04 ±104%      +0.0        0.10 ±  8%  perf-profile.children.cycles-pp.__handle_mm_fault
->       0.10 ±  4%      -0.1        0.04 ±104%      +0.0        0.10 ±  8%  perf-profile.children.cycles-pp.handle_mm_fault
->       0.10 ±  4%      -0.1        0.04 ±102%      +0.0        0.10 ±  8%  perf-profile.children.cycles-pp.do_user_addr_fault
->       0.10 ±  4%      -0.1        0.04 ±102%      +0.0        0.10 ±  8%  perf-profile.children.cycles-pp.exc_page_fault
->       0.63 ±  2%      -0.1        0.57 ±  5%      +0.0        0.64        perf-profile.children.cycles-pp.__cond_resched
->      26.17            -0.0       26.13 ±  3%      -1.0       25.15        perf-profile.children.cycles-pp.sock_alloc_send_pskb
->       0.10 ±  4%      -0.0        0.05 ± 63%      +0.0        0.10 ±  8%  perf-profile.children.cycles-pp.asm_exc_page_fault
->       0.32 ±  2%      -0.0        0.28 ±  3%      +0.0        0.33        perf-profile.children.cycles-pp.task_mm_cid_work
->       0.32 ±  2%      -0.0        0.28 ±  3%      +0.0        0.33        perf-profile.children.cycles-pp.task_work_run
->       0.34 ±  2%      -0.0        0.30 ±  5%      -0.0        0.34 ±  2%  perf-profile.children.cycles-pp.rcu_all_qs
->       0.32 ±  3%      -0.0        0.29 ±  6%      +0.0        0.33 ±  2%  perf-profile.children.cycles-pp.__virt_addr_valid
->       0.32 ±  3%      -0.0        0.29 ±  5%      +0.0        0.36 ±  2%  perf-profile.children.cycles-pp.syscall_return_via_sysret
->       0.05            -0.0        0.02 ±129%      +0.0        0.07 ±  4%  perf-profile.children.cycles-pp.avg_vruntime
->       0.18 ±  4%      -0.0        0.16 ±  7%      +0.1        0.27        perf-profile.children.cycles-pp.__enqueue_entity
->       0.47 ±  2%      -0.0        0.44 ±  5%      +0.0        0.50        perf-profile.children.cycles-pp.mutex_lock
->       0.23 ±  3%      -0.0        0.21 ±  6%      +0.1        0.33 ±  2%  perf-profile.children.cycles-pp.set_next_entity
->       0.14 ±  4%      -0.0        0.12 ±  4%      +0.1        0.20 ±  2%  perf-profile.children.cycles-pp.__dequeue_entity
->       1.05 ±  3%      -0.0        1.04 ±  9%      +0.1        1.14        perf-profile.children.cycles-pp.skb_set_owner_w
->       0.28 ±  2%      -0.0        0.26 ±  7%      +0.1        0.38        perf-profile.children.cycles-pp.switch_fpu_return
->       0.48 ±  2%      -0.0        0.47 ±  6%      +0.2        0.70        perf-profile.children.cycles-pp.enqueue_entity
->       0.08 ±  3%      -0.0        0.07 ±  9%      +0.0        0.13 ±  6%  perf-profile.children.cycles-pp.asm_sysvec_reschedule_ipi
->       0.24 ±  4%      -0.0        0.22 ±  6%      +0.1        0.31 ±  4%  perf-profile.children.cycles-pp.__rseq_handle_notify_resume
->       0.06            -0.0        0.05            +0.0        0.08 ±  4%  perf-profile.children.cycles-pp.cpuacct_charge
->       0.29 ±  3%      -0.0        0.28 ±  7%      +0.1        0.40 ±  4%  perf-profile.children.cycles-pp.switch_mm_irqs_off
->       0.16 ±  2%      -0.0        0.15 ±  4%      +0.0        0.18        perf-profile.children.cycles-pp.syscall_exit_to_user_mode_prepare
->       0.12 ±  3%      -0.0        0.12 ±  6%      +0.1        0.18        perf-profile.children.cycles-pp.update_rq_clock_task
->       0.18 ±  3%      -0.0        0.17 ±  6%      +0.1        0.24 ±  2%  perf-profile.children.cycles-pp.restore_fpregs_from_fpstate
->       0.18 ±  4%      -0.0        0.17 ±  6%      +0.1        0.23 ±  3%  perf-profile.children.cycles-pp.rseq_ip_fixup
->       0.05 ±  6%      -0.0        0.04 ± 37%      +0.0        0.07 ±  5%  perf-profile.children.cycles-pp.rseq_update_cpu_node_id
->       0.05            -0.0        0.04 ± 37%      +0.0        0.06 ±  7%  perf-profile.children.cycles-pp.sched_clock
->       0.07 ±  7%      -0.0        0.06 ±  9%      +0.0        0.09 ±  5%  perf-profile.children.cycles-pp.os_xsave
->       0.13 ±  6%      -0.0        0.12 ±  6%      +0.0        0.17 ±  3%  perf-profile.children.cycles-pp.rseq_get_rseq_cs
->       0.12 ±  6%      -0.0        0.12 ±  7%      +0.0        0.16 ±  4%  perf-profile.children.cycles-pp.__get_user_8
->       0.14 ±  3%      -0.0        0.13 ±  7%      +0.1        0.20 ±  3%  perf-profile.children.cycles-pp.wakeup_preempt
->       0.09 ±  5%      -0.0        0.09 ±  5%      +0.0        0.11 ±  4%  perf-profile.children.cycles-pp.cgroup_rstat_updated
->       0.14 ±  3%      -0.0        0.13 ±  4%      +0.0        0.18 ±  3%  perf-profile.children.cycles-pp.__update_load_avg_se
->       0.18 ±  2%      -0.0        0.17 ±  2%      -0.0        0.14 ±  2%  perf-profile.children.cycles-pp.put_cpu_partial
->       0.13 ±  3%      -0.0        0.13 ±  7%      +0.0        0.16 ±  3%  perf-profile.children.cycles-pp.pick_eevdf
->       0.07 ±  4%      -0.0        0.07 ±  7%      +0.0        0.10 ±  5%  perf-profile.children.cycles-pp.check_preempt_wakeup_fair
->       0.08 ±  5%      -0.0        0.08 ±  8%      +0.0        0.13        perf-profile.children.cycles-pp.update_curr_se
->       0.06 ±  5%      -0.0        0.06 ±  5%      +0.0        0.07 ±  6%  perf-profile.children.cycles-pp.sched_clock_cpu
->       0.07            +0.0        0.07 ±  7%      +0.0        0.11        perf-profile.children.cycles-pp.put_prev_entity
->       0.00            +0.0        0.00            +0.1        0.05        perf-profile.children.cycles-pp.__put_user_8
->       0.06 ± 10%      +0.0        0.06 ± 21%      +0.4        0.43 ±  4%  perf-profile.children.cycles-pp.get_any_partial
->       0.22 ±  3%      +0.0        0.22 ±  7%      +0.1        0.31 ±  2%  perf-profile.children.cycles-pp.update_cfs_group
->       0.06 ±  6%      +0.0        0.06 ± 10%      +0.0        0.09 ±  5%  perf-profile.children.cycles-pp.___perf_sw_event
->       0.12 ±  2%      +0.0        0.12 ±  7%      +0.1        0.17 ±  2%  perf-profile.children.cycles-pp.wake_affine
->       0.07            +0.0        0.07 ± 11%      +0.0        0.10 ±  4%  perf-profile.children.cycles-pp.update_min_vruntime
->       0.10 ±  4%      +0.0        0.11 ±  7%      +0.0        0.15 ±  3%  perf-profile.children.cycles-pp.__update_load_avg_cfs_rq
->       0.05 ± 35%      +0.0        0.06 ±  5%      +0.0        0.08 ±  5%  perf-profile.children.cycles-pp.perf_tp_event
->       0.09 ± 35%      +0.0        0.10 ±  7%      +0.0        0.14 ±  3%  perf-profile.children.cycles-pp.perf_trace_sched_wakeup_template
->       0.05 ± 36%      +0.0        0.05 ±  6%      +0.0        0.08 ±  4%  perf-profile.children.cycles-pp.place_entity
->       0.07 ±  4%      +0.0        0.08 ±  9%      +0.0        0.10 ±  3%  perf-profile.children.cycles-pp.task_h_load
->       0.00            +0.0        0.01 ±264%      +0.1        0.06 ±  9%  perf-profile.children.cycles-pp.native_irq_return_iret
->       0.12 ±  4%      +0.0        0.12 ±  8%      +0.1        0.17 ±  4%  perf-profile.children.cycles-pp.__switch_to
->       0.12 ±  3%      +0.0        0.13 ±  6%      +0.0        0.16 ±  2%  perf-profile.children.cycles-pp.__switch_to_asm
->       0.75 ±  2%      +0.0        0.76 ±  7%      +0.3        1.08        perf-profile.children.cycles-pp.enqueue_task_fair
->       0.16 ±  5%      +0.0        0.17 ±  7%      +0.0        0.20 ±  5%  perf-profile.children.cycles-pp.task_tick_fair
->       0.47 ±  2%      +0.0        0.49 ±  6%      +0.2        0.64        perf-profile.children.cycles-pp.update_load_avg
->       0.64 ±  2%      +0.0        0.65 ±  6%      +0.3        0.90        perf-profile.children.cycles-pp.dequeue_task_fair
->       0.76 ±  2%      +0.0        0.78 ±  4%      +0.2        0.98        perf-profile.children.cycles-pp.pick_next_task_fair
->       0.22 ±  3%      +0.0        0.23 ±  7%      +0.1        0.28 ±  2%  perf-profile.children.cycles-pp.pick_task_fair
->       0.12 ±  4%      +0.0        0.13 ± 14%      +0.1        0.17        perf-profile.children.cycles-pp.reweight_entity
->       0.20 ±  3%      +0.0        0.22 ±  6%      +0.0        0.24 ±  4%  perf-profile.children.cycles-pp.sched_tick
->       0.88 ±  2%      +0.0        0.90 ±  7%      +0.4        1.29        perf-profile.children.cycles-pp.ttwu_do_activate
->       0.30 ±  4%      +0.0        0.32 ±  7%      +0.1        0.38 ±  2%  perf-profile.children.cycles-pp.tick_nohz_handler
->       0.35 ±  2%      +0.0        0.37 ±  5%      +0.1        0.49        perf-profile.children.cycles-pp.dequeue_entity
->       0.31 ±  4%      +0.0        0.33 ±  6%      +0.1        0.38 ±  2%  perf-profile.children.cycles-pp.__hrtimer_run_queues
->       0.29 ±  4%      +0.0        0.31 ±  6%      +0.1        0.36 ±  3%  perf-profile.children.cycles-pp.update_process_times
->       0.13 ±  2%      +0.0        0.15 ± 11%      +0.1        0.19 ±  2%  perf-profile.children.cycles-pp.finish_task_switch
->       0.18 ±  2%      +0.0        0.21 ±  8%      +0.1        0.26        perf-profile.children.cycles-pp.prepare_task_switch
->       0.35 ±  3%      +0.0        0.37 ±  5%      +0.1        0.43 ±  2%  perf-profile.children.cycles-pp.hrtimer_interrupt
->       0.35 ±  3%      +0.0        0.37 ±  6%      +0.1        0.44 ±  2%  perf-profile.children.cycles-pp.__sysvec_apic_timer_interrupt
->       0.63 ±  2%      +0.0        0.65 ±  7%      +0.3        0.89 ±  2%  perf-profile.children.cycles-pp.dequeue_entities
->       0.09 ±  8%      +0.0        0.12 ±  7%      +0.0        0.11 ± 11%  perf-profile.children.cycles-pp.generic_perform_write
->       2.21 ±  2%      +0.0        2.23 ±  6%      +0.8        3.04        perf-profile.children.cycles-pp.schedule_timeout
->       0.07 ± 10%      +0.0        0.10 ± 11%      +0.0        0.08 ± 20%  perf-profile.children.cycles-pp.sched_balance_find_src_group
->       0.06 ± 10%      +0.0        0.09 ± 11%      +0.0        0.06 ± 40%  perf-profile.children.cycles-pp.update_sg_lb_stats
->       0.07 ± 10%      +0.0        0.10 ± 11%      +0.0        0.07 ± 19%  perf-profile.children.cycles-pp.update_sd_lb_stats
->       0.10 ±  3%      +0.0        0.13 ± 14%      +0.0        0.13 ±  5%  perf-profile.children.cycles-pp.update_rq_clock
->       0.01 ±282%      +0.0        0.04 ± 57%      +0.1        0.06 ±  7%  perf-profile.children.cycles-pp.native_sched_clock
->       0.43 ±  3%      +0.0        0.47 ±  7%      +0.2        0.64        perf-profile.children.cycles-pp.update_curr
->       0.13 ±  8%      +0.0        0.16 ±  8%      +0.0        0.16 ± 12%  perf-profile.children.cycles-pp.writen
->       0.39 ±  3%      +0.0        0.42 ±  6%      +0.1        0.48 ±  2%  perf-profile.children.cycles-pp.sysvec_apic_timer_interrupt
->       0.42 ±  3%      +0.0        0.46 ±  6%      +0.1        0.52 ±  2%  perf-profile.children.cycles-pp.asm_sysvec_apic_timer_interrupt
->       0.02 ±111%      +0.0        0.06 ± 13%      +0.0        0.04 ± 38%  perf-profile.children.cycles-pp.set_task_cpu
->       0.02 ±141%      +0.0        0.06 ± 11%      +0.0        0.06 ± 11%  perf-profile.children.cycles-pp.ring_buffer_read_head
->       2.45 ±  2%      +0.0        2.50 ±  6%      +1.0        3.43        perf-profile.children.cycles-pp.schedule
->       0.00            +0.1        0.06 ±  8%      +0.0        0.03 ± 77%  perf-profile.children.cycles-pp.vruntime_eligible
->       0.22 ±  8%      +0.1        0.28 ±  9%      +0.1        0.27 ± 12%  perf-profile.children.cycles-pp.perf_mmap__push
->       0.23 ±  8%      +0.1        0.29 ±  9%      +0.1        0.28 ± 12%  perf-profile.children.cycles-pp.record__mmap_read_evlist
->       0.23 ±  7%      +0.1        0.29 ±  9%      +0.1        0.28 ± 11%  perf-profile.children.cycles-pp.cmd_record
->       0.23 ±  7%      +0.1        0.30 ±  9%      +0.1        0.28 ± 12%  perf-profile.children.cycles-pp.handle_internal_command
->       0.23 ±  7%      +0.1        0.30 ±  9%      +0.1        0.28 ± 12%  perf-profile.children.cycles-pp.main
->       0.23 ±  7%      +0.1        0.30 ±  9%      +0.1        0.28 ± 12%  perf-profile.children.cycles-pp.run_builtin
->       2.31 ±  2%      +0.1        2.38 ±  7%      +1.0        3.32        perf-profile.children.cycles-pp.unix_stream_data_wait
->       0.18 ± 38%      +0.1        0.26 ± 17%      +0.2        0.41 ±  3%  perf-profile.children.cycles-pp.ordered_events__queue
->       0.18 ± 38%      +0.1        0.26 ± 17%      +0.2        0.41 ±  3%  perf-profile.children.cycles-pp.queue_event
->       0.19 ± 37%      +0.1        0.26 ± 16%      +0.2        0.41 ±  3%  perf-profile.children.cycles-pp.process_simple
->       0.00            +0.1        0.07 ± 19%      +0.0        0.00        perf-profile.children.cycles-pp.schedule_idle
->       0.19 ± 37%      +0.1        0.29 ± 17%      +0.2        0.42 ±  4%  perf-profile.children.cycles-pp.perf_session__process_events
->       0.19 ± 37%      +0.1        0.29 ± 17%      +0.2        0.42 ±  4%  perf-profile.children.cycles-pp.reader__read_event
->       0.19 ± 37%      +0.1        0.29 ± 17%      +0.2        0.42 ±  4%  perf-profile.children.cycles-pp.record__finish_output
->       2.45 ±  2%      +0.1        2.56 ±  6%      +1.0        3.43        perf-profile.children.cycles-pp.__schedule
->       0.00            +0.1        0.12 ± 19%      +0.0        0.00        perf-profile.children.cycles-pp.flush_smp_call_function_queue
->       0.42 ± 18%      +0.1        0.54 ± 23%      +0.3        0.70 ±  4%  perf-profile.children.cycles-pp.__cmd_record
->       0.00            +0.1        0.14 ± 20%      +0.0        0.00        perf-profile.children.cycles-pp.sched_ttwu_pending
->       0.00            +0.2        0.15 ± 17%      +0.0        0.00        perf-profile.children.cycles-pp.intel_idle
->       0.00            +0.2        0.17 ± 18%      +0.0        0.00        perf-profile.children.cycles-pp.__flush_smp_call_function_queue
->       0.01 ±282%      +0.2        0.18 ± 70%      +0.1        0.06        perf-profile.children.cycles-pp.available_idle_cpu
->       0.23 ±  3%      +0.2        0.43 ± 16%      +0.1        0.31        perf-profile.children.cycles-pp.prepare_to_wait
->       0.00            +0.2        0.20 ± 18%      +0.0        0.03 ±104%  perf-profile.children.cycles-pp.cpuidle_enter
->       0.00            +0.2        0.20 ± 18%      +0.0        0.03 ±104%  perf-profile.children.cycles-pp.cpuidle_enter_state
->       0.01 ±282%      +0.2        0.22 ± 16%      +0.0        0.04 ± 81%  perf-profile.children.cycles-pp.cpuidle_idle_call
->       3.50 ±  2%      +0.2        3.73 ±  8%      +0.4        3.87 ±  2%  perf-profile.children.cycles-pp._raw_spin_lock
->       1.81 ±  3%      +0.3        2.12 ± 22%      +0.9        2.68        perf-profile.children.cycles-pp.autoremove_wake_function
->       1.80 ±  3%      +0.3        2.12 ± 22%      +0.9        2.66        perf-profile.children.cycles-pp.try_to_wake_up
->       1.89 ±  3%      +0.3        2.22 ± 21%      +0.9        2.80        perf-profile.children.cycles-pp.__wake_up_common
->       0.00            +0.3        0.35 ±110%      +0.0        0.00        perf-profile.children.cycles-pp.select_idle_cpu
->       0.06 ±  6%      +0.4        0.41 ± 95%      +0.0        0.09 ±  3%  perf-profile.children.cycles-pp.select_idle_sibling
->       0.22 ±  2%      +0.4        0.57 ± 70%      +0.1        0.31        perf-profile.children.cycles-pp.select_task_rq_fair
->       0.26 ±  5%      +0.4        0.62 ± 65%      +0.1        0.38        perf-profile.children.cycles-pp.select_task_rq
->       0.04 ± 77%      +0.4        0.43 ± 18%      +0.1        0.10 ± 30%  perf-profile.children.cycles-pp.start_secondary
->       0.04 ± 77%      +0.4        0.43 ± 18%      +0.1        0.10 ± 30%  perf-profile.children.cycles-pp.do_idle
->       0.04 ± 77%      +0.4        0.43 ± 17%      +0.1        0.10 ± 30%  perf-profile.children.cycles-pp.common_startup_64
->       0.04 ± 77%      +0.4        0.43 ± 17%      +0.1        0.10 ± 30%  perf-profile.children.cycles-pp.cpu_startup_entry
->      40.28            +0.4       40.71            +0.2       40.46        perf-profile.children.cycles-pp.vfs_write
->      39.04            +0.5       39.54            +0.1       39.18        perf-profile.children.cycles-pp.sock_write_iter
->      37.73            +0.6       38.31            +0.1       37.84        perf-profile.children.cycles-pp.unix_stream_sendmsg
->       2.15 ±  3%      +0.7        2.82 ± 23%      +1.1        3.27        perf-profile.children.cycles-pp.__wake_up_sync_key
->       3.55 ±  2%      +0.7        4.25 ± 15%      +1.1        4.65 ±  2%  perf-profile.children.cycles-pp.sock_def_readable
->       2.90 ±  2%      -0.2        2.74 ±  5%      -0.2        2.69 ±  2%  perf-profile.self.cycles-pp.__memcg_slab_free_hook
->       1.50 ±  2%      -0.1        1.37 ±  5%      +0.0        1.51 ±  2%  perf-profile.self.cycles-pp.mod_objcg_state
->       1.41 ±  2%      -0.1        1.30 ±  5%      -0.2        1.20 ±  2%  perf-profile.self.cycles-pp.kmem_cache_free
->       0.83 ±  3%      -0.1        0.74 ±  5%      -0.0        0.81        perf-profile.self.cycles-pp.read
->       0.88 ±  2%      -0.1        0.80 ±  5%      -0.0        0.88        perf-profile.self.cycles-pp.entry_SYSRETQ_unsafe_stack
->       0.74 ±  2%      -0.1        0.67 ±  5%      +0.0        0.75 ±  2%  perf-profile.self.cycles-pp.write
->       0.70 ±  2%      -0.1        0.64 ±  6%      +0.0        0.73 ±  2%  perf-profile.self.cycles-pp.vfs_read
->       0.67 ±  2%      -0.1        0.61 ±  5%      +0.0        0.68        perf-profile.self.cycles-pp.vfs_write
->       2.19 ±  2%      -0.1        2.13 ±  6%      -0.3        1.88 ±  2%  perf-profile.self.cycles-pp.check_heap_object
->       0.67 ±  2%      -0.1        0.62 ±  4%      -0.0        0.65        perf-profile.self.cycles-pp.__kmalloc_node_track_caller_noprof
->       0.52 ±  3%      -0.1        0.47 ±  4%      -0.0        0.52        perf-profile.self.cycles-pp.obj_cgroup_charge
->       0.51 ±  2%      -0.0        0.46 ±  5%      -0.0        0.51 ±  2%  perf-profile.self.cycles-pp.kmem_cache_alloc_node_noprof
->       0.29 ±  2%      -0.0        0.25 ±  3%      +0.0        0.31        perf-profile.self.cycles-pp.task_mm_cid_work
->       0.43 ±  2%      -0.0        0.40 ±  4%      +0.0        0.44        perf-profile.self.cycles-pp.do_syscall_64
->       0.34 ±  3%      -0.0        0.31 ±  6%      +0.0        0.35 ±  2%  perf-profile.self.cycles-pp.__skb_datagram_iter
->       0.29 ±  2%      -0.0        0.26 ±  6%      +0.0        0.30 ±  2%  perf-profile.self.cycles-pp.__virt_addr_valid
->       0.33 ±  2%      -0.0        0.30 ±  6%      +0.0        0.33 ±  2%  perf-profile.self.cycles-pp.__cond_resched
->       0.28 ±  3%      -0.0        0.25 ±  5%      +0.0        0.31 ±  2%  perf-profile.self.cycles-pp.syscall_return_via_sysret
->       0.37 ±  2%      -0.0        0.34 ±  6%      -0.0        0.36        perf-profile.self.cycles-pp.__check_object_size
->       0.18 ±  5%      -0.0        0.15 ±  6%      +0.1        0.27        perf-profile.self.cycles-pp.__enqueue_entity
->       0.70            -0.0        0.67 ±  2%      -0.1        0.60        perf-profile.self.cycles-pp.get_partial_node
->       0.21 ±  3%      -0.0        0.18 ±  6%      -0.0        0.21 ±  2%  perf-profile.self.cycles-pp.rcu_all_qs
->       0.22 ±  3%      -0.0        0.20 ±  6%      -0.0        0.22 ±  2%  perf-profile.self.cycles-pp.x64_sys_call
->       0.34 ±  2%      -0.0        0.32 ±  5%      +0.0        0.37        perf-profile.self.cycles-pp.syscall_exit_to_user_mode
->       1.75 ±  2%      -0.0        1.72 ±  5%      -0.1        1.63 ±  2%  perf-profile.self.cycles-pp.__alloc_skb
->       0.95            -0.0        0.93            -0.1        0.87        perf-profile.self.cycles-pp.___slab_alloc
->       0.42 ±  2%      -0.0        0.40 ±  7%      +0.0        0.45 ±  2%  perf-profile.self.cycles-pp.skb_release_data
->       0.19 ±  2%      -0.0        0.17 ±  6%      -0.0        0.18 ±  2%  perf-profile.self.cycles-pp.rw_verify_area
->       1.03 ±  3%      -0.0        1.02 ±  9%      +0.1        1.12        perf-profile.self.cycles-pp.skb_set_owner_w
->       0.03 ± 89%      -0.0        0.01 ±173%      +0.0        0.06        perf-profile.self.cycles-pp.avg_vruntime
->       0.06 ±  5%      -0.0        0.04 ± 37%      +0.0        0.08 ±  4%  perf-profile.self.cycles-pp.cpuacct_charge
->       0.32 ±  2%      -0.0        0.30 ±  5%      +0.0        0.34 ±  2%  perf-profile.self.cycles-pp.mutex_lock
->       0.11 ±  4%      -0.0        0.10 ±  7%      +0.0        0.15 ±  2%  perf-profile.self.cycles-pp.__dequeue_entity
->       0.06 ±  8%      -0.0        0.05 ± 38%      +0.0        0.08 ±  6%  perf-profile.self.cycles-pp.prepare_to_wait
->       0.18 ±  3%      -0.0        0.17 ±  7%      +0.1        0.24 ±  2%  perf-profile.self.cycles-pp.restore_fpregs_from_fpstate
->       0.11 ±  4%      -0.0        0.10 ±  6%      +0.1        0.17        perf-profile.self.cycles-pp.update_rq_clock_task
->       0.29 ±  3%      -0.0        0.28 ±  7%      +0.1        0.40 ±  4%  perf-profile.self.cycles-pp.switch_mm_irqs_off
->       0.12 ±  3%      -0.0        0.11 ±  7%      +0.0        0.15 ±  3%  perf-profile.self.cycles-pp.__get_user_8
->       0.05            -0.0        0.04 ± 37%      +0.0        0.07 ±  4%  perf-profile.self.cycles-pp.rseq_update_cpu_node_id
->       0.01 ±282%      -0.0        0.00            +0.1        0.06        perf-profile.self.cycles-pp.place_entity
->       0.09 ±  3%      -0.0        0.08 ±  8%      +0.0        0.13 ±  2%  perf-profile.self.cycles-pp.unix_stream_data_wait
->       0.22 ±  3%      -0.0        0.22 ±  7%      +0.1        0.31 ±  3%  perf-profile.self.cycles-pp.update_cfs_group
->       0.05 ±  8%      -0.0        0.05 ± 40%      +0.0        0.07        perf-profile.self.cycles-pp.dequeue_entities
->       0.10 ±  5%      -0.0        0.10 ±  7%      +0.0        0.15 ±  3%  perf-profile.self.cycles-pp.switch_fpu_return
->       0.05            -0.0        0.05 ± 38%      +0.0        0.06 ±  7%  perf-profile.self.cycles-pp.___perf_sw_event
->       0.05            -0.0        0.05 ± 38%      +0.0        0.07 ±  4%  perf-profile.self.cycles-pp.enqueue_task_fair
->       0.13 ±  3%      -0.0        0.12 ±  5%      +0.0        0.17 ±  2%  perf-profile.self.cycles-pp.__update_load_avg_se
->       0.10 ±  3%      -0.0        0.10 ±  7%      +0.0        0.14 ±  3%  perf-profile.self.cycles-pp.try_to_wake_up
->       0.17            -0.0        0.17            -0.0        0.13 ±  2%  perf-profile.self.cycles-pp.put_cpu_partial
->       0.06 ±  7%      -0.0        0.06 ±  9%      +0.0        0.09 ±  5%  perf-profile.self.cycles-pp.os_xsave
->       0.32            -0.0        0.32 ±  2%      -0.0        0.28        perf-profile.self.cycles-pp.__put_partials
->       0.08 ±  3%      -0.0        0.08 ±  6%      +0.0        0.12 ±  3%  perf-profile.self.cycles-pp.update_curr_se
->       0.09 ±  5%      -0.0        0.09 ±  7%      +0.0        0.14 ±  3%  perf-profile.self.cycles-pp.schedule_timeout
->       0.11 ±  4%      -0.0        0.11 ±  6%      +0.0        0.13        perf-profile.self.cycles-pp.pick_eevdf
->       0.06 ±  5%      -0.0        0.06 ±  5%      +0.0        0.08 ±  4%  perf-profile.self.cycles-pp.dequeue_entity
->       0.06            -0.0        0.06 ±  8%      +0.0        0.08 ±  5%  perf-profile.self.cycles-pp.pick_task_fair
->       0.00            +0.0        0.00            +0.1        0.05 ±  6%  perf-profile.self.cycles-pp.select_task_rq_fair
->       0.00            +0.0        0.00            +0.1        0.06        perf-profile.self.cycles-pp.reweight_entity
->       0.09 ±  3%      +0.0        0.09 ±  5%      +0.0        0.13        perf-profile.self.cycles-pp.finish_task_switch
->       0.07 ±  7%      +0.0        0.07 ±  8%      +0.0        0.10        perf-profile.self.cycles-pp.update_min_vruntime
->       0.23 ±  2%      +0.0        0.23 ±  7%      +0.1        0.30        perf-profile.self.cycles-pp.update_load_avg
->       0.07 ±  9%      +0.0        0.07 ±  9%      +0.0        0.10 ±  4%  perf-profile.self.cycles-pp.task_h_load
->       0.10 ±  3%      +0.0        0.10 ±  6%      +0.0        0.14 ±  3%  perf-profile.self.cycles-pp.__update_load_avg_cfs_rq
->       0.04 ± 53%      +0.0        0.04 ± 38%      +0.0        0.07 ±  4%  perf-profile.self.cycles-pp.select_task_rq
->       0.00            +0.0        0.01 ±264%      +0.1        0.06 ±  9%  perf-profile.self.cycles-pp.native_irq_return_iret
->       0.12 ±  2%      +0.0        0.13 ±  6%      +0.0        0.16 ±  2%  perf-profile.self.cycles-pp.__switch_to_asm
->       0.01 ±187%      +0.0        0.02 ±129%      +0.0        0.06        perf-profile.self.cycles-pp.perf_tp_event
->       0.11 ±  3%      +0.0        0.12 ±  8%      +0.0        0.16 ±  3%  perf-profile.self.cycles-pp.__switch_to
->       0.08 ±  5%      +0.0        0.09 ±  7%      +0.0        0.12 ±  2%  perf-profile.self.cycles-pp.__wake_up_common
->       0.24 ±  2%      +0.0        0.26 ±  7%      +0.1        0.35        perf-profile.self.cycles-pp.__schedule
->       0.12 ±  5%      +0.0        0.14 ± 11%      +0.1        0.18 ±  3%  perf-profile.self.cycles-pp.update_curr
->       0.00            +0.0        0.02 ±129%      +0.1        0.05 ±  9%  perf-profile.self.cycles-pp.native_sched_clock
->       0.13 ±  3%      +0.0        0.15 ±  7%      +0.1        0.18 ±  2%  perf-profile.self.cycles-pp.prepare_task_switch
->       0.05            +0.0        0.08 ± 23%      +0.0        0.06 ±  6%  perf-profile.self.cycles-pp.update_rq_clock
->       0.00            +0.0        0.04 ± 38%      +0.1        0.05 ±  9%  perf-profile.self.cycles-pp.enqueue_entity
->       0.00            +0.1        0.06 ± 11%      +0.0        0.05 ± 38%  perf-profile.self.cycles-pp.ring_buffer_read_head
->       0.18 ± 37%      +0.1        0.25 ± 17%      +0.2        0.40 ±  3%  perf-profile.self.cycles-pp.queue_event
->       0.00            +0.2        0.15 ± 17%      +0.0        0.00        perf-profile.self.cycles-pp.intel_idle
->       0.01 ±282%      +0.2        0.18 ± 70%      +0.0        0.05 ±  8%  perf-profile.self.cycles-pp.available_idle_cpu
+> Subject: [PATCH v4 3/3] clk: aspeed: add AST2700 clock driver.
+>=20
+> Add AST2700 clock controller driver and also use axiliary device framewor=
+k
+> register the reset controller driver.
+> Due to clock and reset using the same register region.
+>=20
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  drivers/clk/Kconfig       |    8 +
+>  drivers/clk/Makefile      |    1 +
+>  drivers/clk/clk-ast2700.c | 1553
+> +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 1562 insertions(+)
+>  create mode 100644 drivers/clk/clk-ast2700.c
+>=20
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
+> 983ef4f36d8c..4cc35ecba1c0 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -269,6 +269,14 @@ config COMMON_CLK_ASPEED
+>  	  The G4 and G5 series, including the ast2400 and ast2500, are
+> supported
+>  	  by this driver.
+>=20
+> +config COMMON_CLK_AST2700
+> +	bool "Clock driver for AST2700 SoC"
+> +	depends on ARCH_ASPEED || COMPILE_TEST
+> +	help
+> +	  This driver provides support for clock on AST2700 SoC.
+> +	  The driver is responsible for managing the various clocks required
+> +	  by the peripherals and cores within the AST2700.
+> +
+>  config COMMON_CLK_S2MPS11
+>  	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+>  	depends on MFD_SEC_CORE || COMPILE_TEST diff --git
+> a/drivers/clk/Makefile b/drivers/clk/Makefile index
+> f793a16cad40..fe95203c3138 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+=3D clk-fsl-sai.o
+>  obj-$(CONFIG_COMMON_CLK_GEMINI)		+=3D clk-gemini.o
+>  obj-$(CONFIG_COMMON_CLK_ASPEED)		+=3D clk-aspeed.o
+>  obj-$(CONFIG_MACH_ASPEED_G6)		+=3D clk-ast2600.o
+> +obj-$(CONFIG_COMMON_CLK_AST2700)	+=3D clk-ast2700.o
+>  obj-$(CONFIG_ARCH_HIGHBANK)		+=3D clk-highbank.o
+>  obj-$(CONFIG_CLK_HSDK)			+=3D clk-hsdk-pll.o
+>  obj-$(CONFIG_COMMON_CLK_K210)		+=3D clk-k210.o
+> diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c new fi=
+le mode
+> 100644 index 000000000000..933b5232d7c1
+> --- /dev/null
+> +++ b/drivers/clk/clk-ast2700.c
+> @@ -0,0 +1,1553 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 ASPEED Technology Inc.
+> + * Author: Ryan Chen <ryan_chen@aspeedtech.com>  */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <dt-bindings/clock/aspeed,ast2700-scu.h>
+> +
+> +#define SCU_CLK_12MHZ 12000000
+> +#define SCU_CLK_24MHZ 24000000
+> +#define SCU_CLK_25MHZ 25000000
+> +#define SCU_CLK_192MHZ 192000000
+> +
+> +/* SOC0 */
+> +#define SCU0_HWSTRAP1 0x010
+> +#define SCU0_CLK_STOP 0x240
+> +#define SCU0_CLK_SEL1 0x280
+> +#define SCU0_CLK_SEL2 0x284
+> +#define GET_USB_REFCLK_DIV(x) ((GENMASK(23, 20) & (x)) >> 20) #define
+> +UART_DIV13_EN BIT(30) #define SCU0_HPLL_PARAM 0x300 #define
+> +SCU0_DPLL_PARAM 0x308 #define SCU0_MPLL_PARAM 0x310 #define
+> +SCU0_D0CLK_PARAM 0x320 #define SCU0_D1CLK_PARAM 0x330 #define
+> +SCU0_CRT0CLK_PARAM 0x340 #define SCU0_CRT1CLK_PARAM 0x350
+> #define
+> +SCU0_MPHYCLK_PARAM 0x360
+> +
+> +/* SOC1 */
+> +#define SCU1_REVISION_ID 0x0
+> +#define REVISION_ID GENMASK(23, 16)
+> +#define SCU1_CLK_STOP 0x240
+> +#define SCU1_CLK_STOP2 0x260
+> +#define SCU1_CLK_SEL1 0x280
+> +#define SCU1_CLK_SEL2 0x284
+> +#define UXCLK_MASK GENMASK(1, 0)
+> +#define HUXCLK_MASK GENMASK(4, 3)
+> +#define SCU1_HPLL_PARAM 0x300
+> +#define SCU1_APLL_PARAM 0x310
+> +#define SCU1_DPLL_PARAM 0x320
+> +#define SCU1_UXCLK_CTRL 0x330
+> +#define SCU1_HUXCLK_CTRL 0x334
+> +#define SCU1_MAC12_CLK_DLY 0x390
+> +#define SCU1_MAC12_CLK_DLY_100M 0x394
+> +#define SCU1_MAC12_CLK_DLY_10M 0x398
+> +
+> +enum {
+> +	CLK_MUX,
+> +	CLK_PLL,
+> +	CLK_GATE,
+> +	CLK_MISC,
+> +	CLK_FIXED,
+> +	CLK_DIVIDER,
+> +	CLK_UART_PLL,
+> +	CLK_DIV_TABLE,
+> +	CLK_FIXED_FACTOR,
+> +};
+> +
+> +struct ast2700_clk_info {
+> +	const char *name;
+> +	const char * const *parent_names;
+> +	const struct clk_div_table *div_table;
+> +	unsigned long fixed_rate;
+> +	unsigned int mult;
+> +	unsigned int div;
+> +	u32 reg;
+> +	u32 flags;
+> +	u32 type;
+> +	u8 clk_idx;
+> +	u8 bit_shift;
+> +	u8 bit_width;
+> +	u8 num_parents;
+> +};
+> +
+> +struct ast2700_clk_data {
+> +	struct ast2700_clk_info const *clk_info;
+> +	unsigned int nr_clks;
+> +	const int scu;
+> +};
+> +
+> +struct ast2700_clk_ctrl {
+> +	const struct ast2700_clk_data *clk_data;
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	spinlock_t lock; /* clk lock */
+> +};
+> +
+> +static const struct clk_div_table ast2700_rgmii_div_table[] =3D {
+> +	{ 0x0, 4 },
+> +	{ 0x1, 4 },
+> +	{ 0x2, 6 },
+> +	{ 0x3, 8 },
+> +	{ 0x4, 10 },
+> +	{ 0x5, 12 },
+> +	{ 0x6, 14 },
+> +	{ 0x7, 16 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct clk_div_table ast2700_rmii_div_table[] =3D {
+> +	{ 0x0, 8 },
+> +	{ 0x1, 8 },
+> +	{ 0x2, 12 },
+> +	{ 0x3, 16 },
+> +	{ 0x4, 20 },
+> +	{ 0x5, 24 },
+> +	{ 0x6, 28 },
+> +	{ 0x7, 32 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct clk_div_table ast2700_clk_div_table[] =3D {
+> +	{ 0x0, 2 },
+> +	{ 0x1, 2 },
+> +	{ 0x2, 3 },
+> +	{ 0x3, 4 },
+> +	{ 0x4, 5 },
+> +	{ 0x5, 6 },
+> +	{ 0x6, 7 },
+> +	{ 0x7, 8 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct clk_div_table ast2700_clk_div_table2[] =3D {
+> +	{ 0x0, 2 },
+> +	{ 0x1, 4 },
+> +	{ 0x2, 6 },
+> +	{ 0x3, 8 },
+> +	{ 0x4, 10 },
+> +	{ 0x5, 12 },
+> +	{ 0x6, 14 },
+> +	{ 0x7, 16 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct clk_div_table ast2700_clk_uart_div_table[] =3D {
+> +	{ 0x0, 1 },
+> +	{ 0x1, 13 },
+> +	{ 0 }
+> +};
+> +
+> +static const struct ast2700_clk_info ast2700_scu0_clk_info[] __initconst=
+ =3D {
+> +	[SCU0_CLKIN] =3D {
+> +		.type =3D CLK_FIXED,
+> +		.name =3D "soc0-clkin",
+> +		.fixed_rate =3D SCU_CLK_25MHZ,
+> +	},
+> +	[SCU0_CLK_24M] =3D {
+> +		.type =3D CLK_FIXED,
+> +		.name =3D "soc0-clk24Mhz",
+> +		.fixed_rate =3D SCU_CLK_24MHZ,
+> +	},
+> +	[SCU0_CLK_192M] =3D {
+> +		.type =3D CLK_FIXED,
+> +		.name =3D "soc0-clk192Mhz",
+> +		.fixed_rate =3D SCU_CLK_192MHZ,
+> +	},
+> +	[SCU0_CLK_HPLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "soc0-hpll",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_HPLL_PARAM,
+> +	},
+> +	[SCU0_CLK_HPLL_DIV2] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc0-hpll_div2",
+> +		.parent_names =3D (const char *[]){ "soc0-hpll", },
+> +		.mult =3D 1,
+> +		.div =3D 2,
+> +	},
+> +	[SCU0_CLK_HPLL_DIV4] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc0-hpll_div4",
+> +		.parent_names =3D (const char *[]){ "soc0-hpll", },
+> +		.mult =3D 1,
+> +		.div =3D 4,
+> +	},
+> +	[SCU0_CLK_HPLL_DIV_AHB] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc0-hpll_div_ahb",
+> +		.parent_names =3D (const char *[]){ "soc0-hpll", },
+> +		.reg =3D SCU0_HWSTRAP1,
+> +		.bit_shift =3D 5,
+> +		.bit_width =3D 2,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU0_CLK_DPLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "dpll",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_DPLL_PARAM,
+> +	},
+> +	[SCU0_CLK_MPLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "soc0-mpll",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_MPLL_PARAM,
+> +	},
+> +	[SCU0_CLK_MPLL_DIV2] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc0-mpll_div2",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll", },
+> +		.mult =3D 1,
+> +		.div =3D 2,
+> +	},
+> +	[SCU0_CLK_MPLL_DIV4] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc0-mpll_div4",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll", },
+> +		.mult =3D 1,
+> +		.div =3D 4,
+> +	},
+> +	[SCU0_CLK_MPLL_DIV8] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc0-mpll_div8",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll", },
+> +		.mult =3D 1,
+> +		.div =3D 8,
+> +	},
+> +	[SCU0_CLK_MPLL_DIV_AHB] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc0-mpll_div_ahb",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll", },
+> +		.reg =3D SCU0_HWSTRAP1,
+> +		.bit_shift =3D 5,
+> +		.bit_width =3D 2,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU0_CLK_D0] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "d0clk",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_D0CLK_PARAM,
+> +	},
+> +	[SCU0_CLK_D1] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "d1clk",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_D1CLK_PARAM,
+> +	},
+> +	[SCU0_CLK_CRT0] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "crt0clk",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_CRT0CLK_PARAM,
+> +	},
+> +	[SCU0_CLK_CRT1] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "crt1clk",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_CRT1CLK_PARAM,
+> +	},
+> +	[SCU0_CLK_MPHY] =3D {
+> +		.type =3D CLK_MISC,
+> +		.name =3D "mphyclk",
+> +		.parent_names =3D (const char *[]){ "soc0-hpll", },
+> +		.reg =3D SCU0_MPHYCLK_PARAM,
+> +	},
+> +	[SCU0_CLK_PSP] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "pspclk",
+> +		.parent_names =3D (const char *[]){"soc0-mpll", "soc0-hpll", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU0_HWSTRAP1,
+> +		.bit_shift =3D 4,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU0_CLK_AXI0] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "axi0clk",
+> +		.parent_names =3D (const char *[]){"pspclk", },
+> +		.mult =3D 1,
+> +		.div =3D 2,
+> +	},
+> +	[SCU0_CLK_AHB] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "soc0-ahb",
+> +		.parent_names =3D (const char *[]){"soc0-mpll_div_ahb",
+> "soc0-hspll_div_ahb", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU0_HWSTRAP1,
+> +		.bit_shift =3D 7,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU0_CLK_AXI1] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "axi1clk",
+> +		.parent_names =3D (const char *[]){ "soc0-ahb", },
+> +		.mult =3D 1,
+> +		.div =3D 2,
+> +	},
+> +	[SCU0_CLK_APB] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc0-apb",
+> +		.parent_names =3D (const char *[]){ "axi0clk", },
+> +		.reg =3D SCU0_CLK_SEL1,
+> +		.bit_shift =3D 23,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table2,
+> +	},
+> +	[SCU0_CLK_GATE_MCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mclk",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll", },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 0,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_ECLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "eclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 1,
+> +	},
+> +	[SCU0_CLK_GATE_2DCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "gclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 2,
+> +	},
+> +	[SCU0_CLK_GATE_VCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "vclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 3,
+> +	},
+> +	[SCU0_CLK_GATE_BCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "bclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 4,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_VGA0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "d1clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 5,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_REFCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc0-refclk-gate",
+> +		.parent_names =3D (const char *[]){ "soc0-clkin", },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 6,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_U2PHY_REFCLK] =3D {
+> +		.type =3D CLK_MISC,
+> +		.name =3D "xhci_ref_clk",
+> +		.parent_names =3D (const char *[]){ "soc0-mpll_div8", },
+> +		.reg =3D SCU0_CLK_SEL2,
+> +	},
+> +	[SCU0_CLK_U2PHY_CLK12M] =3D {
+> +		.type =3D CLK_FIXED,
+> +		.name =3D "xhci_suspend_clk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.fixed_rate =3D SCU_CLK_12MHZ,
+> +	},
+> +	[SCU0_CLK_GATE_PORTBUSB2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "portb-usb2clk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 7,
+> +	},
+> +	[SCU0_CLK_GATE_UHCICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uhciclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 9,
+> +	},
+> +	[SCU0_CLK_GATE_VGA1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "d2clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 10,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_DDRPHYCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "ddrphy-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 11,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_E2M0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "e2m0clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 12,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_HACCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "hac-clk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 13,
+> +	},
+> +	[SCU0_CLK_GATE_PORTAUSB2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "porta-usb2clk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 14,
+> +	},
+> +	[SCU0_CLK_UART] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "soc0-uartclk",
+> +		.parent_names =3D (const char *[]){"soc0-clk24Mhz",
+> "soc0-clk192Mhz", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU0_CLK_SEL2,
+> +		.bit_shift =3D 14,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU0_CLK_UART4] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "uart4clk",
+> +		.parent_names =3D (const char *[]){ "soc0-uartclk", },
+> +		.reg =3D SCU0_CLK_SEL2,
+> +		.bit_shift =3D 30,
+> +		.bit_width =3D 1,
+> +		.div_table =3D ast2700_clk_uart_div_table,
+> +	},
+> +	[SCU0_CLK_GATE_UART4CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart4clk-gate",
+> +		.parent_names =3D (const char *[]){"uart4clk" },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 15,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_SLICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc0-sliclk-gate",
+> +		.parent_names =3D (const char *[]){	},
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 16,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_DACCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "dacclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 17,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_DP] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "dpclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 18,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_E2M1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "e2m1clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 19,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU0_CLK_GATE_CRT0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "crt0clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 20,
+> +	},
+> +	[SCU0_CLK_GATE_CRT1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "crt1clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 21,
+> +	},
+> +	[SCU0_CLK_GATE_ECDSACLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "eccclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 23,
+> +	},
+> +	[SCU0_CLK_GATE_RSACLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "rsaclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 24,
+> +	},
+> +	[SCU0_CLK_GATE_RVAS0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "rvasclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 25,
+> +	},
+> +	[SCU0_CLK_GATE_UFSCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "ufsclk",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 26,
+> +	},
+> +	[SCU0_CLK_EMMCMUX] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "emmcsrc-mux",
+> +		.parent_names =3D (const char *[]){"soc0-mpll_div4",
+> "soc0-hpll_div4", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU0_CLK_SEL1,
+> +		.bit_shift =3D 11,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU0_CLK_EMMC] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "emmcclk",
+> +		.parent_names =3D (const char *[]){ "emmcsrc-mux", },
+> +		.reg =3D SCU0_CLK_SEL1,
+> +		.bit_shift =3D 12,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table2,
+> +	},
+> +	[SCU0_CLK_GATE_EMMCCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "emmcclk-gate",
+> +		.parent_names =3D (const char *[]){ "emmcclk", },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 27,
+> +	},
+> +	[SCU0_CLK_GATE_RVAS1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "rvas2clk",
+> +		.parent_names =3D (const char *[]){ "emmcclk", },
+> +		.reg =3D SCU0_CLK_STOP,
+> +		.clk_idx =3D 28,
+> +	},
+> +};
+> +
+> +static const struct ast2700_clk_info ast2700_scu1_clk_info[] __initconst=
+ =3D {
+> +	[SCU1_CLKIN] =3D {
+> +		.type =3D CLK_FIXED,
+> +		.name =3D "soc1-clkin",
+> +		.fixed_rate =3D SCU_CLK_25MHZ,
+> +	},
+> +	[SCU1_CLK_HPLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "soc1-hpll",
+> +		.parent_names =3D (const char *[]){ "soc1-clkin", },
+> +		.reg =3D SCU1_HPLL_PARAM,
+> +	},
+> +	[SCU1_CLK_APLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "soc1-apll",
+> +		.parent_names =3D (const char *[]){ "soc1-clkin", },
+> +		.reg =3D SCU1_APLL_PARAM,
+> +	},
+> +	[SCU1_CLK_APLL_DIV2] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc1-apll_div2",
+> +		.parent_names =3D (const char *[]){ "soc1-apll", },
+> +		.mult =3D 1,
+> +		.div =3D 2,
+> +	},
+> +	[SCU1_CLK_APLL_DIV4] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "soc1-apll_div4",
+> +		.parent_names =3D (const char *[]){ "soc1-apll", },
+> +		.mult =3D 1,
+> +		.div =3D 4,
+> +	},
+> +	[SCU1_CLK_DPLL] =3D {
+> +		.type =3D CLK_PLL,
+> +		.name =3D "soc1-dpll",
+> +		.parent_names =3D (const char *[]){ "soc1-clkin", },
+> +		.reg =3D SCU1_DPLL_PARAM,
+> +	},
+> +	[SCU1_CLK_UXCLK] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uxclk",
+> +		.parent_names =3D (const char *[]){ "soc1-apll_div4", "soc1-apll_div2"=
+,
+> +						 "soc1-apll", "soc1-hpll",},
+> +		.num_parents =3D 4,
+> +		.reg =3D SCU1_CLK_SEL2,
+> +		.bit_shift =3D 0,
+> +		.bit_width =3D 2,
+> +	},
+> +	[SCU1_CLK_UARTX] =3D {
+> +		.type =3D CLK_UART_PLL,
+> +		.name =3D "uartxclk",
+> +		.parent_names =3D (const char *[]){ "uxclk", },
+> +		.reg =3D SCU1_UXCLK_CTRL,
+> +	},
+> +	[SCU1_CLK_HUXCLK] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "huxclk",
+> +		.parent_names =3D (const char *[]){"soc1-apll_div4", "soc1-apll_div2",
+> +						 "soc1-apll", "soc1-hpll",},
+> +		.num_parents =3D 4,
+> +		.reg =3D SCU1_CLK_SEL2,
+> +		.bit_shift =3D 3,
+> +		.bit_width =3D 2,
+> +	},
+> +	[SCU1_CLK_HUARTX] =3D {
+> +		.type =3D CLK_UART_PLL,
+> +		.name =3D "huartxclk",
+> +		.parent_names =3D (const char *[]){ "huxclk", },
+> +		.reg =3D SCU1_HUXCLK_CTRL,
+> +	},
+> +	[SCU1_CLK_AHB] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc1-ahb",
+> +		.parent_names =3D (const char *[]){"soc1-hpll", },
+> +		.reg =3D SCU1_CLK_SEL2,
+> +		.bit_shift =3D 20,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU1_CLK_APB] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc1-apb",
+> +		.parent_names =3D (const char *[]){"soc1-hpll", },
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 18,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table2,
+> +	},
+> +	[SCU1_CLK_RMII] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "rmii",
+> +		.parent_names =3D (const char *[]){"soc1-hpll", },
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 21,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_rmii_div_table,
+> +	},
+> +	[SCU1_CLK_MAC0RCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mac0rclk",
+> +		.parent_names =3D (const char *[]){ "rmii", },
+> +		.reg =3D SCU1_MAC12_CLK_DLY,
+> +		.clk_idx =3D 29,
+> +	},
+> +	[SCU1_CLK_MAC1RCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mac1rclk",
+> +		.parent_names =3D (const char *[]){ "rmii", },
+> +		.reg =3D SCU1_MAC12_CLK_DLY,
+> +		.clk_idx =3D 30,
+> +	},
+> +	[SCU1_CLK_RGMII] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "rgmii",
+> +		.parent_names =3D (const char *[]){"soc1-hpll", },
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 25,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_rgmii_div_table,
+> +	},
+> +	[SCU1_CLK_MACHCLK] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "machclk",
+> +		.parent_names =3D (const char *[]){"soc1-hpll", },
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 29,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU1_CLK_GATE_LCLK0] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "lclk0-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 0,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_LCLK1] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "lclk1-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 1,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_ESPI0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "espi0clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 2,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_ESPI1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "espi1clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 3,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_APLL_DIVN] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "soc1-apll_divn",
+> +		.parent_names =3D (const char *[]){"soc1-apll", },
+> +		.reg =3D SCU1_CLK_SEL2,
+> +		.bit_shift =3D 8,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU1_CLK_SDMUX] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "sdclk-mux",
+> +		.parent_names =3D (const char *[]){ "soc1-hpll", "soc1-apll", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 13,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_SDCLK] =3D {
+> +		.type =3D CLK_DIV_TABLE,
+> +		.name =3D "sdclk",
+> +		.parent_names =3D (const char *[]){"sdclk-mux", },
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 14,
+> +		.bit_width =3D 3,
+> +		.div_table =3D ast2700_clk_div_table,
+> +	},
+> +	[SCU1_CLK_GATE_SDCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "sdclk-gate",
+> +		.parent_names =3D (const char *[]){"sdclk", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 4,
+> +	},
+> +	[SCU1_CLK_GATE_IPEREFCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc1-iperefclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 5,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_REFCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc1-refclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 6,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_LPCHCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "lpchclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 7,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_MAC0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mac0clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 8,
+> +	},
+> +	[SCU1_CLK_GATE_MAC1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mac1clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 9,
+> +	},
+> +	[SCU1_CLK_GATE_MAC2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "mac2clk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 10,
+> +	},
+> +	[SCU1_CLK_UART0] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart0clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 0,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart0clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart0clk", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 11,
+> +	},
+> +	[SCU1_CLK_UART1] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart1clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 1,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart1clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart1clk", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 12,
+> +	},
+> +	[SCU1_CLK_UART2] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart2clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 2,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart2clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart2clk", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 13,
+> +	},
+> +	[SCU1_CLK_UART3] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart3clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 3,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART3CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart3clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart3clk", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 14,
+> +	},
+> +	[SCU1_CLK_GATE_I2CCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i2cclk-gate",
+> +		.parent_names =3D (const char *[]){	},
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 15,
+> +	},
+> +	[SCU1_CLK_GATE_I3C0CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c0clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 16,
+> +	},
+> +	[SCU1_CLK_GATE_I3C1CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c1clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 17,
+> +	},
+> +	[SCU1_CLK_GATE_I3C2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c2clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 18,
+> +	},
+> +	[SCU1_CLK_GATE_I3C3CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c3clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 19,
+> +	},
+> +	[SCU1_CLK_GATE_I3C4CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c4clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 20,
+> +	},
+> +	[SCU1_CLK_GATE_I3C5CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c5clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 21,
+> +	},
+> +	[SCU1_CLK_GATE_I3C6CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c6clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 22,
+> +	},
+> +	[SCU1_CLK_GATE_I3C7CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c7clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 23,
+> +	},
+> +	[SCU1_CLK_GATE_I3C8CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c8clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 24,
+> +	},
+> +	[SCU1_CLK_GATE_I3C9CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c9clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 25,
+> +	},
+> +	[SCU1_CLK_GATE_I3C10CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c10clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 26,
+> +	},
+> +	[SCU1_CLK_GATE_I3C11CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c11clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 27,
+> +	},
+> +	[SCU1_CLK_GATE_I3C12CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c12clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 28,
+> +	},
+> +	[SCU1_CLK_GATE_I3C13CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c13clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 29,
+> +	},
+> +	[SCU1_CLK_GATE_I3C14CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c14clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 30,
+> +	},
+> +	[SCU1_CLK_GATE_I3C15CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "i3c15clk-gate",
+> +		.parent_names =3D (const char *[]){ "soc1-ahb", },
+> +		.reg =3D SCU1_CLK_STOP,
+> +		.clk_idx =3D 31,
+> +	},
+> +	[SCU1_CLK_UART5] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart5clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 5,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART5CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart5clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart5clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 0,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_UART6] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart6clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 6,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART6CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart6clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart6clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 1,
+> +	},
+> +	[SCU1_CLK_UART7] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart7clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 7,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART7CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart7clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart7clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 2,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_UART8] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart8clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 8,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART8CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart8clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart8clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 3,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_UART9] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart9clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 9,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART9CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart9clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart9clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 4,
+> +	},
+> +	[SCU1_CLK_UART10] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart10clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 10,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART10CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart10clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart10clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 5,
+> +	},
+> +	[SCU1_CLK_UART11] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart11clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 11,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART11CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart11clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart11clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 6,
+> +	},
+> +	[SCU1_CLK_UART12] =3D {
+> +		.type =3D CLK_MUX,
+> +		.name =3D "uart12clk",
+> +		.parent_names =3D (const char *[]){"uartxclk", "huartxclk", },
+> +		.num_parents =3D 2,
+> +		.reg =3D SCU1_CLK_SEL1,
+> +		.bit_shift =3D 12,
+> +		.bit_width =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_UART12CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "uart12clk-gate",
+> +		.parent_names =3D (const char *[]){ "uart12clk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 7,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_UART13] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "uart13clk",
+> +		.parent_names =3D (const char *[]){ "huartxclk", },
+> +		.mult =3D 1,
+> +		.div =3D 1,
+> +	},
+> +	[SCU1_CLK_UART14] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "uart14clk",
+> +		.parent_names =3D (const char *[]){ "huartxclk", },
+> +		.mult =3D 1,
+> +		.div =3D 1,
+> +	},
+> +	[SCU1_CLK_GATE_FSICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "fsiclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 8,
+> +	},
+> +	[SCU1_CLK_GATE_LTPIPHYCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "ltpiphyclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 9,
+> +	},
+> +	[SCU1_CLK_GATE_LTPICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "ltpiclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 10,
+> +	},
+> +	[SCU1_CLK_GATE_VGALCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "vgalclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 11,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_UHCICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "usbuartclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 12,
+> +	},
+> +	[SCU1_CLK_CAN] =3D {
+> +		.type =3D CLK_FIXED_FACTOR,
+> +		.name =3D "canclk",
+> +		.parent_names =3D (const char *[]){ "soc1-apll", },
+> +		.mult =3D 1,
+> +		.div =3D 10,
+> +	},
+> +	[SCU1_CLK_GATE_CANCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "canclk-gate",
+> +		.parent_names =3D (const char *[]){ "canclk", },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 13,
+> +	},
+> +	[SCU1_CLK_GATE_PCICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "pciclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 14,
+> +	},
+> +	[SCU1_CLK_GATE_SLICLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc1-sliclk-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 15,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_E2MCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "soc1-e2m-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 16,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_PORTCUSB2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "portcusb2-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 17,
+> +		.flags =3D CLK_IS_CRITICAL,
+> +	},
+> +	[SCU1_CLK_GATE_PORTDUSB2CLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "portdusb2-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 18,
+> +	},
+> +	[SCU1_CLK_GATE_LTPI1TXCLK] =3D {
+> +		.type =3D CLK_GATE,
+> +		.name =3D "ltp1tx-gate",
+> +		.parent_names =3D (const char *[]){  },
+> +		.reg =3D SCU1_CLK_STOP2,
+> +		.clk_idx =3D 19,
+> +	},
+> +};
+> +
+> +static struct clk_hw *ast2700_clk_hw_register_pll(int clk_idx, void __io=
+mem
+> *reg,
+> +						  const struct ast2700_clk_info *clk,
+> +						  struct ast2700_clk_ctrl *clk_ctrl) {
+> +	int scu =3D clk_ctrl->clk_data->scu;
+> +	unsigned int mult, div;
+> +	u32 val;
+> +
+> +	if (!scu && clk_idx =3D=3D SCU0_CLK_HPLL) {
+> +		val =3D readl(clk_ctrl->base + SCU0_HWSTRAP1);
+> +		if ((val & GENMASK(3, 2)) !=3D 0) {
+> +			switch ((val & GENMASK(3, 2)) >> 2) {
+> +			case 1:
+> +				return devm_clk_hw_register_fixed_rate(clk_ctrl->dev,
+> "soc0-hpll",
+> +								       NULL, 0, 1900000000);
+> +			case 2:
+> +				return devm_clk_hw_register_fixed_rate(clk_ctrl->dev,
+> "soc0-hpll",
+> +								       NULL, 0, 1800000000);
+> +			case 3:
+> +				return devm_clk_hw_register_fixed_rate(clk_ctrl->dev,
+> "soc0-hpll",
+> +								       NULL, 0, 1700000000);
+> +			default:
+> +				return ERR_PTR(-EINVAL);
+> +			}
+> +		}
+> +	}
+> +
+> +	val =3D readl(reg);
+> +
+> +	if (val & BIT(24)) {
+> +		/* Pass through mode */
+> +		mult =3D 1;
+> +		div =3D 1;
+> +	} else {
+> +		u32 m =3D val & 0x1fff;
+> +		u32 n =3D (val >> 13) & 0x3f;
+> +		u32 p =3D (val >> 19) & 0xf;
+> +
+> +		if (scu) {
+> +			mult =3D (m + 1) / (n + 1);
+> +			div =3D (p + 1);
+> +		} else {
+> +			if (clk_idx =3D=3D SCU0_CLK_MPLL) {
+> +				mult =3D m / (n + 1);
+> +				div =3D (p + 1);
+> +			} else {
+> +				mult =3D (m + 1) / (2 * (n + 1));
+> +				div =3D (p + 1);
+> +			}
+> +		}
+> +	}
+> +
+> +	return devm_clk_hw_register_fixed_factor(clk_ctrl->dev, clk->name,
+> +						 clk->parent_names[0], 0, mult, div); }
+> +
+> +static struct clk_hw *ast2700_clk_hw_register_uartpll(int clk_idx, void
+> __iomem *reg,
+> +						      const struct ast2700_clk_info *clk,
+> +						      struct ast2700_clk_ctrl *clk_ctrl) {
+> +	unsigned int mult, div;
+> +	u32 val =3D readl(reg);
+> +	u32 r =3D val & 0xff;
+> +	u32 n =3D (val >> 8) & 0x3ff;
+> +
+> +	mult =3D r;
+> +	div =3D n * 2;
+> +
+> +	return devm_clk_hw_register_fixed_factor(clk_ctrl->dev, clk->name,
+> +						 clk->parent_names[0], 0, mult, div); }
+> +
+> +static struct clk_hw *ast2700_clk_hw_register_misc(int clk_idx, void
+> __iomem *reg,
+> +						   const struct ast2700_clk_info *clk,
+> +						   struct ast2700_clk_ctrl *clk_ctrl) {
+> +	u32 div =3D 0;
+> +
+> +	if (clk_idx =3D=3D SCU0_CLK_MPHY)
+> +		div =3D readl(reg) + 1;
+> +	else if (clk_idx =3D=3D SCU0_CLK_U2PHY_REFCLK)
+> +		div =3D (GET_USB_REFCLK_DIV(readl(reg)) + 1) << 1;
+> +	else
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return devm_clk_hw_register_fixed_factor(clk_ctrl->dev, clk->name,
+> +						   clk->parent_names[0], clk->flags,
+> +						   1, div);
+> +}
+> +
+> +static int ast2700_clk_is_enabled(struct clk_hw *hw) {
+> +	struct clk_gate *gate =3D to_clk_gate(hw);
+> +	u32 clk =3D BIT(gate->bit_idx);
+> +	u32 reg;
+> +
+> +	reg =3D readl(gate->reg);
+> +
+> +	return !(reg & clk);
+> +}
+> +
+> +static int ast2700_clk_enable(struct clk_hw *hw) {
+> +	struct clk_gate *gate =3D to_clk_gate(hw);
+> +	u32 clk =3D BIT(gate->bit_idx);
+> +
+> +	if (readl(gate->reg) & clk)
+> +		writel(clk, gate->reg + 0x04);
+> +
+> +	return 0;
+> +}
+> +
+> +static void ast2700_clk_disable(struct clk_hw *hw) {
+> +	struct clk_gate *gate =3D to_clk_gate(hw);
+> +	u32 clk =3D BIT(gate->bit_idx);
+> +
+> +	/* Clock is set to enable, so use write to set register */
+> +	writel(clk, gate->reg);
+> +}
+> +
+> +static const struct clk_ops ast2700_clk_gate_ops =3D {
+> +	.enable =3D ast2700_clk_enable,
+> +	.disable =3D ast2700_clk_disable,
+> +	.is_enabled =3D ast2700_clk_is_enabled,
+> +};
+> +
+> +static struct clk_hw *ast2700_clk_hw_register_gate(struct device *dev, c=
+onst
+> char *name,
+> +						   const char *parent_name, unsigned long
+> flags,
+> +						   void __iomem *reg, u8 clock_idx,
+> +						   u8 clk_gate_flags, spinlock_t *lock) {
+> +	struct clk_gate *gate;
+> +	struct clk_hw *hw;
+> +	struct clk_init_data init;
+> +	int ret =3D -EINVAL;
+> +
+> +	gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name =3D name;
+> +	init.ops =3D &ast2700_clk_gate_ops;
+> +	init.flags =3D flags;
+> +	init.parent_names =3D parent_name ? &parent_name : NULL;
+> +	init.num_parents =3D parent_name ? 1 : 0;
+> +
+> +	gate->reg =3D reg;
+> +	gate->bit_idx =3D clock_idx;
+> +	gate->flags =3D clk_gate_flags;
+> +	gate->lock =3D lock;
+> +	gate->hw.init =3D &init;
+> +
+> +	hw =3D &gate->hw;
+> +	ret =3D clk_hw_register(dev, hw);
+> +	if (ret) {
+> +		kfree(gate);
+> +		hw =3D ERR_PTR(ret);
+> +	}
+> +
+> +	return hw;
+> +}
+> +
+> +static void aspeed_reset_unregister_adev(void *_adev) {
+> +	struct auxiliary_device *adev =3D _adev;
+> +
+> +	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void aspeed_reset_adev_release(struct device *dev) {
+> +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> +
+> +	kfree(adev);
+> +}
+> +
+> +static int aspeed_reset_controller_register(struct device *clk_dev,
+> +					    void __iomem *base, const char *adev_name) {
+> +	struct auxiliary_device *adev;
+> +	int ret;
+> +
+> +	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> +	if (!adev)
+> +		return -ENOMEM;
+> +
+> +	adev->name =3D adev_name;
+> +	adev->dev.parent =3D clk_dev;
+> +	adev->dev.release =3D aspeed_reset_adev_release;
+> +	adev->id =3D 666u;
+> +
+> +	ret =3D auxiliary_device_init(adev);
+> +	if (ret) {
+> +		kfree(adev);
+> +		return ret;
+> +	}
+> +
+> +	ret =3D auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		return ret;
+> +	}
+> +
+> +	adev->dev.platform_data =3D (__force void *)base;
+> +
+> +	return devm_add_action_or_reset(clk_dev,
+> aspeed_reset_unregister_adev,
+> +adev); }
+> +
+> +static int ast2700_soc_clk_probe(struct platform_device *pdev) {
+> +	struct ast2700_clk_data *clk_data;
+> +	struct ast2700_clk_ctrl *clk_ctrl;
+> +	struct clk_hw_onecell_data *clk_hw_data;
+> +	struct device *dev =3D &pdev->dev;
+> +	void __iomem *clk_base;
+> +	struct clk_hw **hws;
+> +	char *reset_name;
+> +	int ret;
+> +	int i;
+> +
+> +	clk_ctrl =3D devm_kzalloc(dev, sizeof(*clk_ctrl), GFP_KERNEL);
+> +	if (!clk_ctrl)
+> +		return -ENOMEM;
+> +	clk_ctrl->dev =3D dev;
+> +	dev_set_drvdata(&pdev->dev, clk_ctrl);
+> +
+> +	spin_lock_init(&clk_ctrl->lock);
+> +
+> +	clk_base =3D devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(clk_base))
+> +		return PTR_ERR(clk_base);
+> +
+> +	clk_ctrl->base =3D clk_base;
+> +
+> +	clk_data =3D (struct ast2700_clk_data *)of_device_get_match_data(dev);
+> +	if (!clk_data)
+> +		return devm_of_platform_populate(dev);
+> +
+> +	clk_ctrl->clk_data =3D clk_data;
+> +	reset_name =3D devm_kasprintf(dev, GFP_KERNEL, "reset%d",
+> +clk_data->scu);
+> +
+> +	clk_hw_data =3D devm_kzalloc(dev, struct_size(clk_hw_data, hws,
+> clk_data->nr_clks),
+> +				   GFP_KERNEL);
+> +	if (!clk_hw_data)
+> +		return -ENOMEM;
+> +
+> +	clk_hw_data->num =3D clk_data->nr_clks;
+> +	hws =3D clk_hw_data->hws;
+> +
+> +	for (i =3D 0; i < clk_data->nr_clks; i++) {
+> +		const struct ast2700_clk_info *clk =3D &clk_data->clk_info[i];
+> +		void __iomem *reg =3D clk_ctrl->base + clk->reg;
+> +
+> +		if (clk->type =3D=3D CLK_FIXED) {
+> +			hws[i] =3D devm_clk_hw_register_fixed_rate(dev, clk->name,
+> NULL,
+> +								 clk->flags, clk->fixed_rate);
+> +		} else if (clk->type =3D=3D CLK_FIXED_FACTOR) {
+> +			hws[i] =3D devm_clk_hw_register_fixed_factor(dev, clk->name,
+> +								   clk->parent_names[0], clk->flags,
+> +								   clk->mult, clk->div);
+> +		} else if (clk->type =3D=3D CLK_PLL) {
+> +			hws[i] =3D ast2700_clk_hw_register_pll(i, reg, clk, clk_ctrl);
+> +		} else if (clk->type =3D=3D CLK_UART_PLL) {
+> +			hws[i] =3D ast2700_clk_hw_register_uartpll(i, reg, clk, clk_ctrl);
+> +		} else if (clk->type =3D=3D CLK_MUX) {
+> +			hws[i] =3D devm_clk_hw_register_mux(dev, clk->name,
+> clk->parent_names,
+> +							  clk->num_parents, clk->flags, reg,
+> +							  clk->bit_shift, clk->bit_width,
+> +							  0, &clk_ctrl->lock);
+> +		} else if (clk->type =3D=3D CLK_MISC) {
+> +			hws[i] =3D ast2700_clk_hw_register_misc(i, reg, clk, clk_ctrl);
+> +		} else if (clk->type =3D=3D CLK_DIVIDER) {
+> +			hws[i] =3D devm_clk_hw_register_divider(dev, clk->name,
+> clk->parent_names[0],
+> +							      clk->flags, reg, clk->bit_shift,
+> +							      clk->bit_width, 0,
+> +							      &clk_ctrl->lock);
+> +		} else if (clk->type =3D=3D CLK_DIV_TABLE) {
+> +			hws[i] =3D clk_hw_register_divider_table(dev, clk->name,
+> clk->parent_names[0],
+> +							       clk->flags, reg, clk->bit_shift,
+> +							       clk->bit_width, 0,
+> +							       clk->div_table, &clk_ctrl->lock);
+> +		} else {
+> +			hws[i] =3D ast2700_clk_hw_register_gate(dev, clk->name,
+> clk->parent_names[0],
+> +							      clk->flags, reg, clk->clk_idx,
+> +							      clk->flags, &clk_ctrl->lock);
+> +		}
+> +
+> +		if (IS_ERR(hws[i]))
+> +			return PTR_ERR(hws[i]);
+> +	}
+> +
+> +	ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> clk_hw_data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return aspeed_reset_controller_register(dev, clk_base, reset_name); }
+> +
+> +static const struct ast2700_clk_data ast2700_clk0_data =3D {
+> +	.scu =3D 0,
+> +	.nr_clks =3D ARRAY_SIZE(ast2700_scu0_clk_info),
+> +	.clk_info =3D ast2700_scu0_clk_info,
+> +};
+> +
+> +static const struct ast2700_clk_data ast2700_clk1_data =3D {
+> +	.scu =3D 1,
+> +	.nr_clks =3D ARRAY_SIZE(ast2700_scu1_clk_info),
+> +	.clk_info =3D ast2700_scu1_clk_info,
+> +};
+> +
+> +static const struct of_device_id ast2700_scu_match[] =3D {
+> +	{ .compatible =3D "aspeed,ast2700-scu0", .data =3D &ast2700_clk0_data }=
+,
+> +	{ .compatible =3D "aspeed,ast2700-scu1", .data =3D &ast2700_clk1_data }=
+,
+> +	{ /* sentinel */ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, ast2700_scu_match);
+> +
+> +static struct platform_driver ast2700_scu_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "clk-ast2700",
+> +		.of_match_table =3D ast2700_scu_match,
+> +	},
+> +};
+> +
+> +builtin_platform_driver_probe(ast2700_scu_driver,
+> +ast2700_soc_clk_probe);
+> --
+> 2.34.1
 
 
