@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-343263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317849898BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 359409898C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CCE1C2115B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:03:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD00C1F218D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9DE63D5;
-	Mon, 30 Sep 2024 01:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24705684;
+	Mon, 30 Sep 2024 01:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5SwvTOu"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipWowmfK"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F912F41;
-	Mon, 30 Sep 2024 01:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93C8383;
+	Mon, 30 Sep 2024 01:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727658221; cv=none; b=EfPTlsGNgPg8+YdfQhRk/ilJvEuVOKO60g3XpcpfVYAullhWFkmpy0pQ+nFJ/GGm7UpYSXn/Ydfl47z/pEnYFGFac2XPy8PCF6bBSB6ZdhjK9sOEvB1G7/wIZTTOnLFuFmIGZK3K5SrcYjqp1jvPXQD+QeU7tlzammkO2j7Za0k=
+	t=1727658676; cv=none; b=RqBddz4Qo3eaoRACbn/x+lDoO3Kq+23UG9O/LAmur8bPGGKRDvgXefJOCjbtMmQsyBATzqkWWxIaFOBdEzMi9Jk7Gqgn+UGS3lO7ckxzqX49HG0jDZvDMRwolAgIYGsajCTkA9IOeHmJrg0dNpp+TEuJOMSsGVivL/Rdrc01siI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727658221; c=relaxed/simple;
-	bh=FYJvokFsFfxvZorMb9mxDOI08z4JveI00Fjl+Z7IpQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DgSOE9agZQcGP+WMETT/D94T5jhhHX/2tmnCCy7/yTwdQD670MH375U4TBeolgKLNQIYbcg4rbGG3pDgWagaVUR69MB17sJlpELjp1bZw0WbM9F5KuaI2Sr6KATqjDIMp5b6O4/l4SXlPmDbSnIw/9/OjPZOujtaj+IcTTDtAFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5SwvTOu; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1727658676; c=relaxed/simple;
+	bh=KCmptHGyLnCzPpQNXWEcq7JMgjBKFRG+QCCVWwICfSA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vp625KGxuGahiw7qpiw9SnUr/dWfYJHJAHtFw8LxrQJyKO6qdjjOMLZbePAY00goT+libFeOu6H5EeYvoN4NiTUZGCeQ7YDri1K62/F4DjC5mAG+h4crM1ibtzPTniRjNvoMtQ/gL4iXAYo/gdCmoQr5iB3+N7ygRP8YnF5mAuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipWowmfK; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b84bfbdfcso2083515ad.0;
-        Sun, 29 Sep 2024 18:03:39 -0700 (PDT)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so4977219a12.3;
+        Sun, 29 Sep 2024 18:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727658219; x=1728263019; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FYJvokFsFfxvZorMb9mxDOI08z4JveI00Fjl+Z7IpQg=;
-        b=i5SwvTOuUZgFIlHe87opVuZGR/7q6Qd48crnMFdUkfV1NA965tCCg8rzAbI4NeIl98
-         4rRmLkqJkd5c6YSx+PYX3vbGxlA9i/WcfKtRCVQS/qQIXv7csVxIBI5U23ZLL3f8r/rZ
-         eq31mrh672BbBOm6SFkiE0d6Q/AIRhQgAccIWNTS6vmGccByzURWGupmhz9orCmllMe/
-         n3JXRCJrSQeXRFOZrg3xyupptYU9G/f7cEo2JbrOdUwuhnOWSMZKCMUZy+Chm3tVX3bl
-         PObvzK9YVLowejmBWJ0VAB3eXuR3MOjZaMTF3NpuGRFM7+R6hnMkD5elHVZcF3CwFm+x
-         6M4w==
+        d=gmail.com; s=20230601; t=1727658673; x=1728263473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BeYuF7N8M1F/C8P4GndUFn3y/clkOx7utFNr66Yhz+g=;
+        b=ipWowmfKPNYipVNlDevF7gOywNsqyrzV5AaJ/nfXEXgvD83I5qDYvwuszQNjI87dNp
+         6dvtMO5icqhZNSx5NeHC1jJbcUT1sa4kK7Fpmnee59jgmGzCuOvyDm3HaBM3O/RbtB+/
+         bEZ7YV3fT9zjMAh0xKMT1W+hlvj40sAHXM2mnYLMjiH/dw5qJM0V3bQVqrfCBCKjmTjr
+         Dp5EinpIfzWrpvVl85VOdM4QvmdtUbFu/v7wapOaG0xcDNsnucKQi3eCXMVaoA+TmwyA
+         3oTm8RtVpww0HTVsxq7KHLfNFU+mbUTwNRGhVeGzMTTi4IK0X7BIR62E4WwBO3MEjHKI
+         k8aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727658219; x=1728263019;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FYJvokFsFfxvZorMb9mxDOI08z4JveI00Fjl+Z7IpQg=;
-        b=eEIMOfXINl8Pxhaz1zDQmPzH9OvhGiUO5CitiRbje4Tvv+Ax3WatYhnqtEqDUGC2p3
-         Tj+JGPRzKxaDLbWxEw0rRbvGi08gpR+B600ht6W898aQVMiLm3IYLx2+9RLTDQiJIMr+
-         pYST7oxa2amhK2ULk2rV0uw6e74Z340vyXj9ispH+vGltuyeutQQyJzz0RxF+UIGobt2
-         hB1JFs8vRqctW45Qt6/6DdacjNEpqmFQneFMmaioBMGdLkDN8PmDe83CJOXNrR8acg9N
-         t+f3exYxbb5/YkAaygy0Tz2f2M2BsaIxXIgO/tUPX5PXIEIrORjB6rjHwNGnV1alx4Sg
-         2QVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVU4xe6tnYgpEux43zsHn5hX6/rOMxr/Zx7FrAnAzoNNEEyWpsdVXj76b60l55l2tnuSIqvLGycmpesiuax@vger.kernel.org, AJvYcCVb5qdhFgyv5qrOc0cJX7w2UhIY2P2Nt3VxhWgURO3phoYYs2g5pQTuFD5V3U3sYC4mE+Wr17aG7HOV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz50UQFVTcWdzmQZKONI6lRK6KfL71WhScjjtiqQ0vaCc6AbLhs
-	fVC6aRtwfQeaK+XAbpv+QKEpzEApaq3BezQYYHUWm2PniqTtvYZ+zLtHAZbT
-X-Google-Smtp-Source: AGHT+IHBWChnPSHp0awl4ZVfXLkZ3RFXVi6tcZsYZ3cPP0tUhDJGUC7SSFxDazrTKOBxHfi6IhFseA==
-X-Received: by 2002:a17:902:e801:b0:20b:1335:e173 with SMTP id d9443c01a7336-20b19bc128dmr207258315ad.4.1727658218848;
-        Sun, 29 Sep 2024 18:03:38 -0700 (PDT)
-Received: from rigel (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d6717fsm44934865ad.14.2024.09.29.18.03.36
+        d=1e100.net; s=20230601; t=1727658673; x=1728263473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BeYuF7N8M1F/C8P4GndUFn3y/clkOx7utFNr66Yhz+g=;
+        b=jayWCzeQVZs4MeGeptxgw7FERN3YzV1TXjJO3xEwW7w0D0pPd9xFnRw4PXFpNs6sXk
+         zPgMRgcQwTK9B24M/uVlRk0pELo3xZ829eQoDgmVVwgntRiMlOD+hZ5sJHvuXNQr014O
+         di3KuVHFuVK/KeREzOuWK710aLaiQtVfb3zJcwFHwDrrZ5e1FSVDdodLBO7YR+jCQw2g
+         92ScjqNS6EmqD8I4Hxv9OliDO1wFkdBHW+3jely2JVrDFMtnUIbrE8uoJ0IUbWvOAucf
+         kS3DHL2GFWj7FLKSbYVG3vNDn04XKB4q9Ext9qz0xeY6Y9vXdqcSJ98D6J/hJh5pQY2F
+         IFqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfJFjW5sXsnLOLSTN3o5Fv33fJbrviwo6LgvOR6pZ4jvo6I1Pku0AZnabPxDQ1+Y0Trlr663LFIsAzQ70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY45weyOUuWVc9MM8LrWvdQJdvcNmwG/7xoMJlKVoZ1XMyr4DX
+	FlPkbc9JcSNV3t4/nBBYGQvMm7ALjtD6eA9plREsx5kV33e17ZLh
+X-Google-Smtp-Source: AGHT+IFcbq0CXgyfkJAWl9hmlux6QUXtX5tuZuWXb/a3wj0evg151ROUunlppn1WUge0p4Bqxb6voQ==
+X-Received: by 2002:a05:6402:3813:b0:5c5:c0ef:282c with SMTP id 4fb4d7f45d1cf-5c8824d5f37mr10345997a12.11.1727658672785;
+        Sun, 29 Sep 2024 18:11:12 -0700 (PDT)
+Received: from localhost.localdomain ([79.115.63.238])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88240a38asm3827414a12.22.2024.09.29.18.11.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 18:03:38 -0700 (PDT)
-Date: Mon, 30 Sep 2024 09:03:34 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        Sun, 29 Sep 2024 18:11:12 -0700 (PDT)
+From: Tudor Gheorghiu <tudor.reda@gmail.com>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Cc: rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [RFC PATCH] gpio: sysfs: make the sysfs export behavior
- consistent
-Message-ID: <20240930010334.GA6286@rigel>
-References: <20240927074221.9985-1-brgl@bgdev.pl>
+	Tudor Gheorghiu <tudor.reda@gmail.com>
+Subject: [PATCH] rust: re-order exports to fix rustfmt
+Date: Mon, 30 Sep 2024 04:09:32 +0300
+Message-ID: <20240930010931.64080-2-tudor.reda@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927074221.9985-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 09:42:21AM +0200, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> For drivers or board files that set gpio_chip->names, the links to the
-> GPIO attribute group created on sysfs export will be named after the
-> line's name set in that array. For lines that are named using device
-> properties, the names pointer of the gpio_chip struct is never assigned
-> so they are exported as if they're not named.
->
-> The ABI documentation does not mention the former behavior and given
-> that the majority of modern systems use device-tree, ACPI or other way
-> of passing GPIO names using device properties - bypassing gc->names -
-> it's better to make the behavior consistent by always exporting lines as
-> "gpioXYZ".
->
+In the recent rust-6.12 tag merge at 570172569238, the rbtree export was
+added after the sizes export, thus breaking rustfmt's alphabetical
+export ordering rules.
 
-I have no opinions on sysfs changes.
+Signed-off-by: Tudor Gheorghiu <tudor.reda@gmail.com>
+---
+ rust/kernel/lib.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Story time:
->
-> I decided to learn rust. I figured I'd best find me a project to work on
-> that would involve some proper coding but wouldn't have much impact on
-> anything important when I inevitably get it wrong the first few times.
->
-> I decided to write a sysfs-to-libgpiod compatibility layer based on
-> FUSE. Since Rust is hard, I started prototyping the thing in python
-> first to at least have the logic nailed down before I tackle the rust
-> part.
->
-
-Something along these lines[1]?
-
-Cheers,
-Kent.
-
-[1]https://dev.to/krjakbrjak/simulating-gpio-sysfs-interface-with-fuse-and-c-30ga
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 22a3bfa5a9e9..b5f4b3ce6b48 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -44,8 +44,8 @@
+ pub mod page;
+ pub mod prelude;
+ pub mod print;
+-pub mod sizes;
+ pub mod rbtree;
++pub mod sizes;
+ mod static_assert;
+ #[doc(hidden)]
+ pub mod std_vendor;
+-- 
+2.43.0
 
 
