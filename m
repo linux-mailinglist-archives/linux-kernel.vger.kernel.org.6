@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-344877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355FC98AF2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:32:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE52298AF2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:33:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E15C51F22792
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:32:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8461F23289
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6040418892E;
-	Mon, 30 Sep 2024 21:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56EB17BB0C;
+	Mon, 30 Sep 2024 21:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rw4MlEot"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="OvlXWuNe"
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB960183CCA;
-	Mon, 30 Sep 2024 21:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727731862; cv=none; b=q9iby5UZi4wycpQ/qqPT2kEi6WSCBd0mIT4PEwfvkCxRHr9LNFcRvhztvdfOFiGm1FITQgYyKPS+XwykqZFqWViDs0GCXR1HBZvjodlur29hkuEoDc8Dsnn4pBTPxh7A/f7BuHzyWVB5T8fwgEzk1uKS3AT0lUPb+Kwnnh8TsuM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727731862; c=relaxed/simple;
-	bh=sG0WjLTVUV4DLkeZIrde7W6dgLLQSQa+eK0I6BJYcWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fplMJZ5Uc5CXAn0UDkLqjva3KQw9nyeWz1QPhcGqFlysOCxw2MDsYGrDiuICZY+zywdU2YPVrYnCf/eYCNVKoJ0pPVOMnfryQmJ4XqCl0eNkK863MhOneFdfUdGs3hzAYqWvEFNBrU5T+/Od4CNJo2oYwCOq9xNJESZN/dkpyf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rw4MlEot; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4759C4CECD;
-	Mon, 30 Sep 2024 21:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727731862;
-	bh=sG0WjLTVUV4DLkeZIrde7W6dgLLQSQa+eK0I6BJYcWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rw4MlEotZEFE5Npk0WTvCl1Fvj9NKs0Gg30zelvD9leBFFOzoYZbKcblUYbQ46VBa
-	 abAXJ7v9Pznolkbs4xHDTfm09ofvSUt5R+14FGbMxCGD6yeoAN8p5Q6PU2MY0K2PBS
-	 DJmvz1+gjt6iKyplREY8EMYD9FXssBJwW2OWV5bV8iPlA63/3F7LNDBmuFuShyFJ6T
-	 NNzaFSgYIB4/lVJkNcw9U85MQmq+Rbgd9x6rfFZHB8Y6YBos5RCp7UOTc8+lxH9sYg
-	 MP/J2eagbdSEVNY6csQvo1z8Eyyl21Mqaq/9JdaBwW/tdO2uJY0YMCjQKyHFvIfv2h
-	 DqVLfiwzQcIpg==
-Date: Mon, 30 Sep 2024 22:30:59 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Benjamin Hahn <B.Hahn@phytec.de>
-Cc: Shenghao Ding <shenghao-ding@ti.com>, Kevin Lu <kevin-lu@ti.com>,
-	Baojun Xu <baojun.xu@ti.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Teresa Remmet <t.remmet@phytec.de>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: Re: [PATCH] sound: soc: codecs: tlv320aic3x: Fix codec gpio-reset
-Message-ID: <ZvsYk4aGCPvR2kyf@finisterre.sirena.org.uk>
-References: <20240930-wip-bhahn-tlv320aic3x_fix_reset-v1-1-c040d86a4b93@phytec.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247BEEDE;
+	Mon, 30 Sep 2024 21:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727731989; cv=pass; b=JKK9ynGS0odyjEAPiPhc9XekAnOq8PqiG8ovucc6dd3Do9CvpvTjGC4OylGC64m01Oxzrm2YmbwTwbzwBnS4B77Bbb4YCuDD1vuh8bmfAD8LiYmBSnfww0b9wp+/QgLP4Wa2tuLi+54t0ftN/XVVtyuzH6xDTTGmkNa++yN+alk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727731989; c=relaxed/simple;
+	bh=kBqt/PxLo4aGIX0V+4W9o//rRdDJhhZEY1eMo3vvyfw=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=oxRPgM+RxhSGcgUWOdHEieoZBB9AOiv4cPqI2x7twdtRXjdo1TiJRXMfZSHErqDXPKmCGiZ1WsPAX7CypqytNGU8pznNlXEvcsVuuMntmghAUjazQslI1y3Q0kANwtXU2GoVst5LAXf3DpB81ScR8hpWEiFMNBx/K0WmKYXi+rI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=OvlXWuNe; arc=pass smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <0f46702ac6106b7a406d0ae2d19d1a0a@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1727731986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w1HzoV/mla8sK9dyrWH0WzzavJXSOX6A1DFy6cjDCIY=;
+	b=OvlXWuNehK4fPpS87nwrTAUaYvy73FWhzWrimj2IFsvTZWxyhMX8hGului9Ff752pIrfuq
+	F0sHANTfOKQ1tjF85d0OYobHVxZB6i66nxYexepFmr5aPlOjf1FN/flhDOznGT+mNbDaAT
+	5loTZZm0Cd/6DPCCi0HOKrOdvRcRcn6UUiEVfm2FgTGL/mnb9KrBaLxZP2hl9gl4Qr3Yg+
+	z0IBrZU2W4iR68oJC42yhOPBP4JDWRRrn+op5wilr6aKhHogScf3+KRg1kwNkSbR0TM6zn
+	iyue2+hnIH3lHXWasgra3Gp0AuAlnZxejmtd4cTaekqKHjk1x4R2abkUc6EdKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1727731986; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w1HzoV/mla8sK9dyrWH0WzzavJXSOX6A1DFy6cjDCIY=;
+	b=ZUrxKUxwQY8073HRkX0TVra5FlVrX40tzun4vm0p8iYK7agtw0MOTO2nSHjj6mCEkrOww2
+	R8S1HqP7fj+sfr3pc49zlZAw3hO+qw6e3SpOiTfuGAAx6LObBtgm0ireycP2vtYFm+QyV7
+	QDfmPdBjyr7uopIDEDU/JZXTh+ZOwFqB9axd9tYBIv/AFn3H1cJbxt/oaxxXmwNqTUTLxL
+	LaR0TrfDBEHsu3/OY/ixVRSp70skPtRL+rDN5LZ598O8DtnxX8M/X22f8YbmgErqqX8IQQ
+	Adu8oRltJA7Y8mRvqMB95FqLsRDrcpBqWMkmtXwfulnyf+j/taZyyfSa3ETfdw==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.mailfrom=pc@manguebit.com
+ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1727731986; a=rsa-sha256;
+	cv=none;
+	b=NNaYcBlbqHtf15GVQXTwd3xaOf7bOmEJpxNIUm0HprX+xsCgPxT0Wx0jUG3Lou8JdyW2ef
+	kq13t5/WhIayat3+5AAxiHbqz8rUt6Vd4qj3Q8V9qAbHFHAtE4YK5VCu3WhxPsVWgfkzGm
+	y3PGanH06DAOaGJx38icMkDuRtttVeuTK64NbzDIKaOj7CBH0mVIAMiALZIhRw88xy4oCw
+	q1CR+MMwTa9JZGh760PdEAwzleedhDR3dIJe1jZ/zMD4AesnzIZFY0uRLrG+tRo2zYCiB5
+	os0r3mnSOTZxRNyURLWb5FyeDWtlpocuz9QQXDmN6Rq0l0vmwr/DnDyy94XmWA==
+From: Paulo Alcantara <pc@manguebit.com>
+To: Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Ronnie Sahlberg
+ <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
+ reparse call
+In-Reply-To: <20240930172027.yt6qijriln4sv5hc@pali>
+References: <20240928215948.4494-1-pali@kernel.org>
+ <20240928215948.4494-3-pali@kernel.org>
+ <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
+ <20240930172027.yt6qijriln4sv5hc@pali>
+Date: Mon, 30 Sep 2024 18:33:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ss51HuvtAhdbVrv8"
-Content-Disposition: inline
-In-Reply-To: <20240930-wip-bhahn-tlv320aic3x_fix_reset-v1-1-c040d86a4b93@phytec.de>
-X-Cookie: Editing is a rewording activity.
-
-
---ss51HuvtAhdbVrv8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 09:16:46AM +0200, Benjamin Hahn wrote:
+Pali Roh=C3=A1r <pali@kernel.org> writes:
 
-> The TLV320AIC3007 requires a hardware reset after power-up for proper
-> operation. After all power supplies are at their specified values,
-> the RESET pin must be driven low for at least 10 ns. Even though the
-> datasheet sais min 10ns, I needed more than 10ns when testing this out.
-> 15ns worked for me.
+> On Monday 30 September 2024 12:25:27 Paulo Alcantara wrote:
+>> Pali Roh=C3=A1r <pali@kernel.org> writes:
+>>=20
+>> > If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
+>> > intermediate object created by CREATE. Otherwise empty object stay on =
+the
+>> > server when reparse call failed.
+>> >
+>> > This ensures that if the creating of special files is unsupported by t=
+he
+>> > server then no empty file stay on the server as a result of unsupported
+>> > operation.
+>> >
+>> > Fixes: 102466f303ff ("smb: client: allow creating special files via re=
+parse points")
+>> > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+>> > ---
+>> >  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
+>> >  1 file changed, 19 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+>> > index 11a1c53c64e0..af42f44bdcf4 100644
+>> > --- a/fs/smb/client/smb2inode.c
+>> > +++ b/fs/smb/client/smb2inode.c
+>> > @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs=
+_open_info_data *data,
+>> >  	struct cifs_sb_info *cifs_sb =3D CIFS_SB(sb);
+>> >  	struct cifsFileInfo *cfile;
+>> >  	struct inode *new =3D NULL;
+>> > +	int out_buftype[2] =3D {};
+>> > +	struct kvec out_iov[2];
+>> >  	struct kvec in_iov[2];
+>> >  	int cmds[2];
+>> >  	int rc;
+>> > @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs=
+_open_info_data *data,
+>> >  		cmds[1] =3D SMB2_OP_POSIX_QUERY_INFO;
+>> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+>> >  		rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+>> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+>> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+>> >  		if (!rc) {
+>> >  			rc =3D smb311_posix_get_inode_info(&new, full_path,
+>> >  							 data, sb, xid);
+>> > @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct ci=
+fs_open_info_data *data,
+>> >  		cmds[1] =3D SMB2_OP_QUERY_INFO;
+>> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
+>> >  		rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
+>> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
+>> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
+>> >  		if (!rc) {
+>> >  			rc =3D cifs_get_inode_info(&new, full_path,
+>> >  						 data, sb, xid, NULL);
+>> >  		}
+>> >  	}
+>> > +
+>> > +	if (rc) {
+>> > +		/*
+>> > +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
+>> > +		 * remove the intermediate object created by CREATE. Otherwise
+>> > +		 * empty object stay on the server when reparse call failed.
+>> > +		 */
+>> > +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status =3D=3D STATUS_=
+SUCCESS &&
+>> > +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status !=3D STATUS_SU=
+CCESS)
+>> > +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
+>> > +	}
+>>=20
+>> You should handle the case where ->iov_base is NULL or out_buftype =3D=3D
+>> CIFS_NO_BUFFER, otherwise you'll end up with a NULL ptr deref.
+>
+> Ok, thanks for info! I will send v3 with those checks.
+>
+> Anyway, what does it mean if iov_base stay NULL or out_buftype is
+> CIFS_NO_BUFFER? Does it mean that the server has not returned reply for
+> that command?
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
-> -		if (aic3x->gpio_reset)
-> +		if (aic3x->gpio_reset) {
->  			gpiod_set_value(aic3x->gpio_reset, 1);
-> +			ndelay(15);
-> +			gpiod_set_value(aic3x->gpio_reset, 0);
-> +		}
-
-This seems obviously buggy, it leaves the GPIO with the opposite state
-to that it would have prior to the patch.  It's also not joined up with
-your changelog, that talks about actions taken after powering up the
-device but this is a callback run after power has been removed from the
-device so nothing in your changelog motivates leaving reset deasserted.
-
->  		regcache_mark_dirty(aic3x->regmap);
->  	}
-> =20
-> @@ -1813,6 +1816,10 @@ int aic3x_probe(struct device *dev, struct regmap =
-*regmap, kernel_ulong_t driver
-> =20
->  	gpiod_set_consumer_name(aic3x->gpio_reset, "tlv320aic3x reset");
-> =20
-> +	/* CODEC datasheet says minimum of 10ns */
-> +	ndelay(15);
-> +	gpiod_set_value(aic3x->gpio_reset, 0);
-> +
-
-This seems more relevant to your changelog, but I don't understand why
-aic3x_set_power() is not also (instead?) updated?
-
---ss51HuvtAhdbVrv8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb7GJMACgkQJNaLcl1U
-h9BieAf/Vp5HfjKUfjOE+hQQ22cmOPcRL2UDliOw+WcX/kxj1TfBpi34eMlq9njN
-D/tYemfgRJ6+oro0mi3vBb+tETc3XkQWqOXBEtogrOmQyjZLRW3SBYqcFUX2rwBA
-iG2U+132Mw6cGF6HA9obD+W9zIlB8vDg+FktjJ1FTkyo2Wjk7IFgkbNl1q+V5gk5
-5t2PIRfDuxCG9GwN8QZzDXZUlsN9Q8kF647JXP3CezOxr8UwUfjZENRD/UaENwol
-rUW+5drNKUk+brOMPKGSD2IRY6nE9rnWpGRkoNQuFbwZgyALOZ5NHpJdBsHrV8hc
-aUvt4u7yfr6Q1+pM2GT8sO9lSABsWQ==
-=+A+z
------END PGP SIGNATURE-----
-
---ss51HuvtAhdbVrv8--
+Not necessarily.  Just consider a simple case where smb2_compound_op()
+would fail to allocate memory for @vars, then it would return -ENOMEM
+and you would end up dereferencing ->iov_base which is still NULL.  That
+is, compound_send_recv() wasn't called and then no response buffers were
+set yet.
 
