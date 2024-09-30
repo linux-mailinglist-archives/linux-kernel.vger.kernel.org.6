@@ -1,342 +1,158 @@
-Return-Path: <linux-kernel+bounces-343912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D4498A12D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:54:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B440998A132
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98E25B276DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A101C203F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7881418DF86;
-	Mon, 30 Sep 2024 11:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7372718E045;
+	Mon, 30 Sep 2024 11:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zFHgkkMO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MuSKSdL3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zFHgkkMO";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MuSKSdL3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aehP+3gq"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7625118990E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F49D18DF75
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697157; cv=none; b=BXUN57pGR1xNfbB1De09V7bKF+PJgNP1GCCaAm4HPiuNYulTxTMOhfuXDAJfdxkkFTRVl/H5JnGTkQErER7C8JgYtJgJByMkB3cNNjCXpniFw8YtaHb9oqqsBJDHGRa/su2FXkVvqXU83oH/qywYNwyXsBJPs7rrhAFf8eNHRtE=
+	t=1727697245; cv=none; b=b/xQMdPiW9kqB7Aj2UEaqja7MJU6pY1YJ0V112y8kL1mEKVZOqn/+uzsPFh9+tDA/c7V1HosN1APFTa9qp4a8nqdGkLYKrTm46C1eqDSEDxKgo81e5Uzfkpve2OYWgHSM6rAf23tPSeQarnYaEO7k59FOy/QX8PuAom2uNkkPOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697157; c=relaxed/simple;
-	bh=BQ3ammF6+633BA/ACXw5T4DVVVop4JiH1dRjxP1N6Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RQJ3CWwQsBnZyGf5MXqrLmnpqbdu45QV8sWanRWBMmPzqO4/bCB2fXo+TxIVvTjk1koKDtG3NTaN8z1q7uH70aJTWURBrUg8WR5yTDZMRJPXVgrxlC/NuKIXYgPPihJHqRIbHCDR3GI0AWEQmsdizoh+7VStJMs7hEKEbGGXWC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zFHgkkMO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MuSKSdL3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zFHgkkMO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MuSKSdL3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7DC1A21A3C;
-	Mon, 30 Sep 2024 11:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727697153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=/pnUAT53WPuScqS8657hEzD2/NsbLFYs+1LRgOYBBt0=;
-	b=zFHgkkMOImtP8l/21m9DAB8/l4GSPmhKWShwEgOZDLDMyrxVtZkbTDfLH4IF6Sh8TnMIkJ
-	ugmhzDyK1w1lwlfq4R6j+MBHW9tqKAdxpnjphEQOIa8OXOgzJkyhUczUT7sB/IMyoc9Zkn
-	pgbTJlD75BB+dC+thJFdf/R03+Du4ag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727697153;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=/pnUAT53WPuScqS8657hEzD2/NsbLFYs+1LRgOYBBt0=;
-	b=MuSKSdL3tZaWWb3Lb8q7aFppyOl2H5PJk08iywjeCx8KsMTvJx32nVKX68GNiGP61Hzo/I
-	8qqbOUjJTIOz+IAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zFHgkkMO;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=MuSKSdL3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727697153; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=/pnUAT53WPuScqS8657hEzD2/NsbLFYs+1LRgOYBBt0=;
-	b=zFHgkkMOImtP8l/21m9DAB8/l4GSPmhKWShwEgOZDLDMyrxVtZkbTDfLH4IF6Sh8TnMIkJ
-	ugmhzDyK1w1lwlfq4R6j+MBHW9tqKAdxpnjphEQOIa8OXOgzJkyhUczUT7sB/IMyoc9Zkn
-	pgbTJlD75BB+dC+thJFdf/R03+Du4ag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727697153;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=/pnUAT53WPuScqS8657hEzD2/NsbLFYs+1LRgOYBBt0=;
-	b=MuSKSdL3tZaWWb3Lb8q7aFppyOl2H5PJk08iywjeCx8KsMTvJx32nVKX68GNiGP61Hzo/I
-	8qqbOUjJTIOz+IAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6729613A8B;
-	Mon, 30 Sep 2024 11:52:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4rNuGAGR+mb+WwAAD6G6ig
-	(envelope-from <chrubis@suse.cz>); Mon, 30 Sep 2024 11:52:33 +0000
-Date: Mon, 30 Sep 2024 13:51:32 +0200
-From: Cyril Hrubis <chrubis@suse.cz>
-To: ltp@lists.linux.it, linux-kernel@vger.kernel.org,
-	libc-alpha@sourceware.org
-Cc: lwn@lwn.net, akpm@linux-foundation.org, torvalds@linux-foundation.org
-Subject: [ANNOUNCE] The Linux Test Project has been released for SEPTEMBER
- 2024
-Message-ID: <ZvqQxP9KVW6PqFOo@yuki.lan>
+	s=arc-20240116; t=1727697245; c=relaxed/simple;
+	bh=qkLNUngCO3vVH4Yoiw8pI/xWuNpcbC03902wQmKdSRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iDRvcPKWctaVDvYaWiCMHaKdKpbmQIrJ0Ws4zfXAUFKPgHDNzBRKka7fY1xPPvrXsRdbh1eLyJv+KfQa/gHjfsMXhOVzDYJwQGdAXNmy+MsrqUC9pGRi9ASjbiVopTOQ/UBvqn0OZ1V2dzI+f0+urLERgd2BZlK45S6O3kFpOK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aehP+3gq; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so910775766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727697242; x=1728302042; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YEimAb6QNu/M6q7/HcG/qwn6XiKDPC6S4Ayvzi/SkBk=;
+        b=aehP+3gqWaJULQ/vvtoMbIhicHnjlGTnF/1ekDyvgz67A8/hbi5eE+ARYI+otoYbxs
+         i+SGrdVfUnzE00hBqm8QqaOxeygz8rWRm01vLklsqUyue8m/kGnatd23N8atOCHc9cTX
+         ric11/wHXRv7AKZ6rRHJVfZUJxTFIkOV67WXCF7dccxovgIEhkhKI6xcFQ6ScrnGNByZ
+         Np7ag45VK+sIta/dfTyWFFr8O74ehxHWnXiGfBTCUFDcJgtuqZH58bMSPIoT9KwpF4ut
+         3cW4gcoZ+2DF/PdNYFj2hUQskyWxjSrFKRLQtPyEM8C6/42zqHo2GYGMivatX9/+wYQc
+         xuRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727697242; x=1728302042;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YEimAb6QNu/M6q7/HcG/qwn6XiKDPC6S4Ayvzi/SkBk=;
+        b=IAP5xhyTsSlNk5Ff44R2QED+R9noNvcexWftqa8ls4Iv6Uo4MjBEJrRiY2GWVGik1/
+         NfWoRAwkOtXzSJ7W2jhAEBN6JGaDLIkKZaflqChMt/XYvkYDRYEwd8yPagUpFLz0wTb1
+         wzvp5/n/ynaiT9791vE5BkFTl+XafyS8mawZkPO2GKYl9Nkk9NRTEZ+tskn84SMV9QNe
+         0TaYnPpECfmXFeK4Zjh56pch+X0MudXCnjE5nAyPiAGMzjQD50ykYlZUujmLnY0hMMEW
+         3OAxBzLtytpXr3c0GadSe0z1R+rtQfb1Sgbc7jTKQI8di1wrU5AhKo9ueLvuxp6CGN31
+         3u0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWcRFeOdmaOX2eFoxw3lfXcYMt0nPGrfq128CiZwkUa/dsfnTMaG1qsGshTQGhNcLIKTFqMU9AfjRGIeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxNT6SOyfHLPZ0HDQSPHeSl+Cldx3bk5w6laHXjocDW1EEkiL3
+	DNx/CALoq6yF0Nu/sN2hH6p8q0zmS0Cr55A2+A/3kfcgHC5Nc7BIGU0Jo6Ms8zI=
+X-Google-Smtp-Source: AGHT+IGgin2IoYFaSU76/H2WqaTZ8JyrgVaOMWPRHPfSW65ukzeOWOYx6iUHDJKgyZKQ7I4p0bVHKQ==
+X-Received: by 2002:a17:906:db06:b0:a8d:ee9:3888 with SMTP id a640c23a62f3a-a93b1679678mr1578907566b.32.1727697242334;
+        Mon, 30 Sep 2024 04:54:02 -0700 (PDT)
+Received: from [192.168.0.15] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2997445sm517446566b.202.2024.09.30.04.54.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 04:54:02 -0700 (PDT)
+Message-ID: <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
+Date: Mon, 30 Sep 2024 12:54:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Rspamd-Queue-Id: 7DC1A21A3C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] (no cover subject)
+To: Luca Weiss <luca.weiss@fairphone.com>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
+ Hariram Purushothaman <hariramp@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ cros-qcom-dts-watchers@chromium.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Suresh Vankadara <quic_svankada@quicinc.com>,
+ Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>, stable@vger.kernel.org,
+ Hariram Purushothaman <quic_hariramp@quicinc.com>
+References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
+ <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Good news everyone,
+On 30/09/2024 11:52, Luca Weiss wrote:
+> On Wed Sep 4, 2024 at 1:10 PM CEST, Vikram Sharma wrote:
+>> SC7280 is a Qualcomm SoC. This series adds support to
+>> bring up the CSIPHY, CSID, VFE/RDI interfaces in SC7280.
+>>
+>> SC7280 provides
+>>
+>> - 3 x VFE, 3 RDI per VFE
+>> - 2 x VFE Lite, 4 RDI per VFE
+>> - 3 x CSID
+>> - 2 x CSID Lite
+>> - 5 x CSI PHY
+> 
+> Hi Vikram,
+> 
+> I tried this on my QCM6490 Fairphone 5 smartphone.
+> 
+> Unfortunately I couldn't get e.g. CSID test pattern out of camss. I've
+> tested this patchset on v6.11.
+> 
+> These commands did work on an older sc7280 camss patchset (which was
+> never sent to the lists). Can you please take a look?
+> 
+> v4l2-ctl -d /dev/v4l-subdev5 -c test_pattern=1
+> media-ctl -d /dev/media0 -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+> media-ctl -d /dev/media0 -V '"msm_csid0":1[fmt:UYVY8_2X8/1920x1080 field:none],"msm_vfe0_rdi0":0[fmt:UYVY8_2X8/1920x1080 field:none]'
+> gst-launch-1.0 v4l2src device=/dev/video0 num-buffers=1 ! 'video/x-raw,format=UYVY,width=1920,height=1080' ! jpegenc ! filesink location=image01.jpg
 
-the Linux Test Project test suite stable release for *September 2024* has been
-released.
+Here's what I have for rb5
 
-Since the last release 266 patches by 47 authors were merged.
+# CSID0 TPG RB5
+media-ctl --reset
+yavta --no-query -w '0x009f0903 2' /dev/v4l-subdev6
+yavta --list /dev/v4l-subdev6
+media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
+media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
+media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+media-ctl -d /dev/media0 -p
 
-Patch review is what most of the projects struggle with and LTP is no
-different. If you can spare some effort helping with the patch review is more
-than welcomed.
+Maybe on FP5 ...
 
-NOTABLE CHANGES
-===============
+media-ctl --reset
+yavta --no-query -w '0x009f0903 2' /dev/v4l-subdev5
+yavta --list /dev/v4l-subdev5
+media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
+media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
+media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+media-ctl -d /dev/media0 -p
 
-* New tests
+?
 
-  - chown09 regression test for 5d1f903f75a8 ("attr: block mode changes of symlinks")
-  - request_key06 Negative tests for request_key() syscall
-  - signalfd02 Negative tests for signalfd() syscall
-  - mseal02 Negative tests for mseal() syscall
-  - hugeshmget06 A hugepage shm test
-  - landlock07 Landlock Houdini reproducer aka CVE-2024-42318
-  - getcpu02 Negative tests for getcpu() syscall
-  - landlock06 Tests for LANDLOCK_ACCESS_FS_IOCTL_DEV
-  - landlock05 Tests for LONDLOCK_ACCESS_FS_REFER
-  - landlock04 Tests that syscalls are enabled/disable accordingly to the ruleset
-  - landlock03 Negative tests for landlock_restrict_self() syscall
-  - landlock02 Negative tests for landlock_add_rule() syscall
-  - landlock01 Negative tests for landlock_create_ruleset() syscall
-  - mseal01 Tests that memory is protected from being changed after it's sealed
-  - fchmodat2_02 Negative tests for fchmodat2()
-  - fchmodat2_01 Tests for AT_SYMLINK_NOFOLLOW for fchmodat2()
-  - cachestat04 Checks that cachestat() syscall either reports EBADF or zeroed
-    statistics on all kinds of unsupported fds
-  - cachestat03 Negative tests for cachestat() syscall
-  - cachestat02 Basic cachestat tests with fd pointing to shared memory
-  - cachestat01 Basic cachestat tests for regular files
-  - shutdown01 Basic shutdown tests
-  - shutdown02 Negative tests for shutdown() sycall
-
-* The symlink01 mess is being split into separate testcases
-
-  - open15 A test that open() syscall works correctly with symlinks
-  - lstat03 A basic lstat() test.
-  - rename15 Tests that rename works correctly with symlinks
-  - chmod08 Tests that chmod() works correctly with symlinks
-
-* Increased coverage
-
-  - readdir and getdents tests were enabled to run on all supported filesystems
-    after we found that bcachefs had sublty broken implementation
-  - gedent02 Adds more negative tests
-  - timer_settime01 Now checks for premature timer expiration as well
-  - pkey01 Now includes tests for PKEY_DISABLE_EXECUTE
-  - request_key01 Added more negative tests
-  - acct02 Added more negative tests
-  - prctl04 has been renamed to seccomp01 and now covers also the seccomp()
-    syscall along with the older prctl(PR_SET_SECCOMP) calls
-  - msync04 now uses direct I/O to verify that data have been written to disk
-
-* Rewritten tests
-
-  - fork05 was rewritten and correctly reports TCONF on non i386 hardware
-  - fcnt14 a file locking test was rewriten to generate subtests at runtime
-  - sched_starvation now autocallibrates expected runtime based on CPU speed
-  - sched_footbal was rewritten and is now executed as part of the sched
-    runtest file
-
-* The test library now supports specifying mkfs and mount options per a
-  filesystem
-
-* Bunch of checks for kernels older than 4.4 were removed from the tests since
-  the currently minimal kernel version LTP supports is 4.4
-
-* We have a new shell test library that:
-  - makes shell code seamlessly interoperable with C
-  - reuses most of the C test library
-  - makes use shared memory to report test results
-  - there are currently no tests using this library, we will start rewriting
-    existing tests after the release
-
-* 3 testcases were converted to the new test library
-
-+ The usual amount of fixes and cleanups
-
-REMOVED SCRIPTS AND FILES
-=========================
-
-- Removed old and outdated man pages.
-
-- Removed ltpmenu an legacy script that was unmaintained for a decade.
-
-NOTABLE CHANGES IN NETWORK TESTS
-================================
-brought to you by Petr Vorel
-
-- nfsstat02.sh new test for per-NS NFS client statistics
-               (checks that /proc/net/rpc/nfs exists in nested network namespaces)
-
-- nfsstat01.sh read client stats from netns rhost
-               (fix for kernel 6.9, backported up to 5.10 so far)
-
-- nfs02.sh Added subtest for O_DIRECT
-
-KIRK
-====
-
-- Kirk has been update to 1.4
-- Kirk can now be installed from pypi
-
-DOWNLOAD AND LINKS
-==================
-
-The latest version of the test-suite contains 3000+ tests for the Linux
-and can be downloaded at:
-
-https://github.com/linux-test-project/ltp/releases/tag/20240930
-
-The project pages as well as GIT repository are hosted on GitHub:
-
-https://github.com/linux-test-project/ltp
-
-If you ever wondered how to write a LTP testcase, don't miss our developer
-documentation at:
-
-https://linux-test-project.readthedocs.io/en/latest/developers/test_case_tutorial.html
-
-And our library API documentation at:
-
-https://linux-test-project.readthedocs.io/en/latest/developers/api_c_tests.html
-
-Patches, new tests, bugs, comments or questions should go to to our mailing
-list at ltp@lists.linux.it.
-
-CREDITS
-=======
-
-Many thanks to the people contributing to this release:
-
-git shortlog -s -e -n 20240129..
-
-   233	Petr Vorel <pvorel@suse.cz>
-    74	Andrea Cervesato <andrea.cervesato@suse.com>
-    39	Martin Doucha <mdoucha@suse.cz>
-    36	Li Wang <liwang@redhat.com>
-    25	Cyril Hrubis <chrubis@suse.cz>
-    25	Yang Xu <xuyang2018.jy@fujitsu.com>
-    22	Xinjian Ma (Fujitsu) <maxj.fnst@fujitsu.com>
-    21	Wei Gao <wegao@suse.com>
-    15	Andrea Manzini <andrea.manzini@suse.com>
-     6	Avinesh Kumar <akumar@suse.de>
-     6	Edward Liaw <edliaw@google.com>
-     6	John Stultz <jstultz@google.com>
-     4	Hui Min Mina Chou <minachou@andestech.com>
-     4	Jan Stancek <jstancek@redhat.com>
-     3	Andreas Schwab <schwab@suse.de>
-     3	Xiao Yang <ice_yangxiao@163.com>
-     3	lufei <lufei@uniontech.com>
-     2	Dennis Brendel <dbrendel@redhat.com>
-     2	Jiwei Sun <sunjw10@lenovo.com>
-     2	Po-Hsu Lin <po-hsu.lin@canonical.com>
-     1	Ajay Kaher <ajay.kaher@broadcom.com>
-     1	Amir Goldstein <amir73il@gmail.com>
-     1	Chen Haonan <chen.haonan2@zte.com.cn>
-     1	Chuck Lever <chuck.lever@oracle.com>
-     1	Detlef Riekenberg via ltp <ltp@lists.linux.it>
-     1	Filippo Storniolo <fstornio@redhat.com>
-     1	Haifeng Xu <haifeng.xu@shopee.com>
-     1	Jingyi Song <jingyisong@hust.edu.cn>
-     1	Khem Raj <raj.khem@gmail.com>
-     1	Kuan-Ying Lee <kuan-ying.lee@canonical.com>
-     1	Li Xiaosong <rj45usb@163.com>
-     1	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-     1	Mete Durlu <meted@linux.ibm.com>
-     1	Murphy Zhou <jencce.kernel@gmail.com>
-     1	Nirjhar Roy <nirjhar@linux.ibm.com>
-     1	Remi Peuvergne <remi.peuvergne@kaizen-solutions.net>
-     1	Sachin P Bappalige <sachinpb@linux.ibm.com>
-     1	Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-     1	Sebastian Chlad <sebastianchlad@gmail.com>
-     1	Sergey Ulanov via ltp <ltp@lists.linux.it>
-     1	Shiyang Ruan <ruansy.fnst@fujitsu.com>
-     1	Shizhao Chen <shichen@redhat.com>
-     1	Wenjie Xu <xuwenjie04@baidu.com>
-     1	Xiangyu Chen <xiangyu.chen@windriver.com>
-     1	Yiwei Lin <s921975628@gmail.com>
-     1	Zizhi Wo <wozizhi@huawei.com>
-     1	yangfeng <yangfeng@kylinos.cn>
-
-And also thanks to patch reviewers:
-
-git log 20240129.. | grep -Ei '(reviewed|acked)-by:' | sed 's/.*by: //' | sort | uniq -c | sort -n -r
-
-    212 Petr Vorel <pvorel@suse.cz>
-    181 Cyril Hrubis <chrubis@suse.cz>
-    108 Li Wang <liwang@redhat.com>
-     39 Avinesh Kumar <akumar@suse.de>
-     28 Andrea Cervesato <andrea.cervesato@suse.com>
-     16 Martin Doucha <mdoucha@suse.cz>
-     10 Jan Stancek <jstancek@redhat.com>
-      6 Jan Kara <jack@suse.cz>
-      4 Wei Gao <wegao@suse.com>
-      4 Richard Palethorpe <io@richiejp.com>
-      3 Marius Kittler <mkittler@suse.de>
-      3 Amir Goldstein <amir73il@gmail.com>
-      2 Adrian Huang <ahuang12@lenovo.com>
-      1 Vlastimil Babka <vbabka@suse.cz>
-      1 Po-Hsu Lin <po-hsu.lin@canonical.com>
-      1 Matt Bobrowski <mattbobrowski@google.com>
-      1 Kent Overstreet <kent.overstreet@linux.dev>
-      1 Joerg Vehlow <joerg.vehlow@aox.de>
-
--- 
-Cyril Hrubis
-chrubis@suse.cz
+---
+bod
 
