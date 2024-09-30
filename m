@@ -1,163 +1,215 @@
-Return-Path: <linux-kernel+bounces-343449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC75989B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF21989B0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F9C1C21114
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:07:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42911F22A7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B8414A0AB;
-	Mon, 30 Sep 2024 07:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9659155758;
+	Mon, 30 Sep 2024 07:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GtQwInaZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PZ47fVQl";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ftifLR3a";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i5nQ+cL7";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A6JZmWjX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04C855887
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439603F8F7;
+	Mon, 30 Sep 2024 07:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727679992; cv=none; b=BOlC0WvJrqrqMpQH9k3/FTsi+DMFt25DylaajY1ipEXxN2Tf8u7PGiYJSRA7r4w+NBnoCWPye95BTXxwgOWvVcMguY55i+MVS+kwmmN23seXo8WQoe/9lZvJH+eZ+9b3CMSYG9uMnF2DHWNcn2YG3317gYauczBZjAFLEBSLU4c=
+	t=1727680000; cv=none; b=B6T/5TUgSJS48oku5FcxnZoDfxe7kHHQHLsYi4dUd6Eev3gjabWX1SSK/bTZR9t74qkbbv0eOdpy57tj0myH4kvLfqD889X7q6AjJdwnjXiDQ38KFo3epIpj2ys/ucTqZCVyD3AoEz71pYO5X1qrjwM6f3DwyRatQOOheEWLabw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727679992; c=relaxed/simple;
-	bh=PB0MEC1CKGl5nX9ER1cPtNYmSWES5H/VnZiXDThMwbA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A+iBJu5jcRdosPLXq4ap8fJdVfqhflzGjRZ1qvws+L8gaVaHhnrkGFXaKJIoxtw0lVbYFyWHrHcl22ALREobpayPbMuMCjiMy2DNsu1lpbaZeAoTrkNCZ1RKEag8x3eqZ4x6jiTajtZo978tUqUWnt04yzL1lVpgaq5qgogz+pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GtQwInaZ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727679990; x=1759215990;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PB0MEC1CKGl5nX9ER1cPtNYmSWES5H/VnZiXDThMwbA=;
-  b=GtQwInaZDD1zl8XR1zV6ok9PsM90HVy0GMg31g/5XdgyVv5V9qlz0Kim
-   EAr/KNJg+viLZaY1Ui3bt53PgA7XmGpLiA0yok/OwdsaWLYI5+yhg3xjE
-   EFVp13P52pp9sMGTmhvKpTYRlunL8FtlrnuC26guws6KV9YE4QsU8wvsw
-   frMM4CtpOgUmC/6QjAXSPI4015ConQ4tJr2MtEZh7fso2PV9PVKn3geGg
-   HKBTpH3Fv34df2pqvExo6SKiT00vn/oUCwBVCWX4u4LoSkN1IkYDkHASA
-   eoX9bb8KQIwk2932NvVV2SKMxph9hhgq+G3bB9+qxElBzwY6IAKveYfuY
-   w==;
-X-CSE-ConnectionGUID: mzstUAb0QGiLhCWqBPqH4A==
-X-CSE-MsgGUID: GN+HyHHKROugnx3oDNveCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26925487"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="26925487"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:06:29 -0700
-X-CSE-ConnectionGUID: AXnZssvLRtCqvA+3eaPI4A==
-X-CSE-MsgGUID: HfY1+I/lThyzjk6e2QLVfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="103989457"
-Received: from liyihao-mobl.ccr.corp.intel.com (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.124.238.112])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:06:28 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Kees Bakker <kees@ijzerbout.nl>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH] resource, kunit: Fix user-after-free in resource_test_region_intersects()
-Date: Mon, 30 Sep 2024 15:06:11 +0800
-Message-Id: <20240930070611.353338-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1727680000; c=relaxed/simple;
+	bh=PotLZwDi5Yn3It3Pes6b0XwMPfc9wuQfYXMsEM/VJbA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LFw+fIUj+ks0GyetPzRpnmWq+7rlPYT0bWArQr+esrze0Y0958/vm5XVjMNlBS1U7w4ROC0VMfCaZKr8AStvEPzSBb80Nvc6BXLrkYuJrGD0H94XFPBazvlIEBQl0LllBd75QYYTbK2uw3uqWEW0hX0EiNWmllKY1xXEU3c6O98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PZ47fVQl; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ftifLR3a; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i5nQ+cL7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A6JZmWjX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 745BB1F7F6;
+	Mon, 30 Sep 2024 07:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727679996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=177nEv4uUYwMiSy4ojSffrx/NKqvcPjca2MWS5tDcDg=;
+	b=PZ47fVQlDngNztm9ejPF2XihQLVorhV6b92VvwpP5xkBUEWoJ4sJzNZ9lKMMgmTO//D00m
+	KQfUQwjAf214Zx7V/fH0g7uNHJneG0Y2hzkMNdCwqBPiLZZCbklnz5j7epSlEwEYgTqxNR
+	wbCie2yFb1oPh4QfFj3j4YQ5PdoIoRM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727679996;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=177nEv4uUYwMiSy4ojSffrx/NKqvcPjca2MWS5tDcDg=;
+	b=ftifLR3aN9slgkSjXhmdiyJ4q8RGj0XV0P+IOZNa3uKEuxvPmhpFSgIx0eYU12oAQ/EVSq
+	RanqofXNBx4gzHBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727679995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=177nEv4uUYwMiSy4ojSffrx/NKqvcPjca2MWS5tDcDg=;
+	b=i5nQ+cL7VQsEkkKVnOf5SINcKBPIWIrja9dTjgsEB2JN4Xt3KpyDxHzgrsx9YMTgRrNLgs
+	VlME/EMA4O3DKBaEzTL2n/VIO2xNc/+j7EF5y4bTXc3eB2ofWaTxtjfQ5l+BEOJN/YByOk
+	EO75qB4kjBD6Vfg5KhqSt9LIcCTRIoI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727679995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=177nEv4uUYwMiSy4ojSffrx/NKqvcPjca2MWS5tDcDg=;
+	b=A6JZmWjXRQx6/AswvxFbvUBeTmGL8pPSNpcwt0gAuycV7W4G6rDm0LFGeRxobnvwKZDTxI
+	xk135IUXxBonX4Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33D7413AAA;
+	Mon, 30 Sep 2024 07:06:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9VRSC/tN+mYGfwAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 30 Sep 2024 07:06:35 +0000
+Message-ID: <bcf7e1e9-b876-4efc-83ef-b48403315d31@suse.de>
+Date: Mon, 30 Sep 2024 09:06:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
+ drm_plane_helper_funcs.atomic_update
+To: Maxime Ripard <mripard@kernel.org>, Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, stable@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sean Paul <seanpaul@chromium.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240927204616.697467-1-lyude@redhat.com>
+ <htfplghwrowt4oihykcj53orgaeudo7a664ysyybint2oib3u5@lcyhfss3nyja>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <htfplghwrowt4oihykcj53orgaeudo7a664ysyybint2oib3u5@lcyhfss3nyja>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.freedesktop.org,vger.kernel.org,linux.intel.com,gmail.com,ffwll.ch,chromium.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,lists.freedesktop.org:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-In resource_test_insert_resource(), the pointer is used in error
-message after kfree().  This is user-after-free.  To fix this, we need
-to call kunit_add_action_or_reset() to schedule memory freeing after
-usage.  But kunit_add_action_or_reset() itself may fail and free the
-memory.  So, its return value should be checked and abort the test for
-failure.  Then, we found that other usage of
-kunit_add_action_or_reset() in resource_test_region_intersects() needs
-to be fixed too.  We fix all these user-after-free bugs in this patch.
+Hi
 
-Fixes: 99185c10d5d9 ("resource, kunit: add test case for region_intersects()")
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reported-by: Kees Bakker <kees@ijzerbout.nl>
-Closes: https://lore.kernel.org/lkml/87ldzaotcg.fsf@yhuang6-desk2.ccr.corp.intel.com/
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
----
- kernel/resource_kunit.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+Am 30.09.24 um 09:01 schrieb Maxime Ripard:
+> Hi,
+>
+> On Fri, Sep 27, 2024 at 04:46:16PM GMT, Lyude Paul wrote:
+>> Something I discovered while writing rvkms since some versions of the
+>> driver didn't have a filled out atomic_update function - we mention that
+>> this callback is "optional", but we don't actually check whether it's NULL
+>> or not before calling it. As a result, we'll segfault if it's not filled
+>> in.
+>>
+>>    rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset on [ENCODER:36:Virtual-36]
+>>    BUG: kernel NULL pointer dereference, address: 0000000000000000
+>>    PGD 0 P4D 0
+>>    Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+>>    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-1.fc40 08/13/2024
+>>    RIP: 0010:0x0
+>>
+>> So, let's fix that.
+>>
+>> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>> Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
+>> Cc: dri-devel@lists.freedesktop.org
+>> Cc: <stable@vger.kernel.org> # v3.19+
+> So we had kind of a similar argument with drm_connector_init early this
+> year, but I do agree we shouldn't fault if we're missing a callback.
+>
+> I do wonder how we can implement a plane without atomic_update though?
+> Do we have drivers in such a case?
 
-diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
-index 42d2d8d20f5d..b8ef75b99eb2 100644
---- a/kernel/resource_kunit.c
-+++ b/kernel/resource_kunit.c
-@@ -169,6 +169,8 @@ static void resource_test_intersection(struct kunit *test)
- #define RES_TEST_RAM3_SIZE	SZ_1M
- #define RES_TEST_TOTAL_SIZE	((RES_TEST_WIN1_OFFSET + RES_TEST_WIN1_SIZE))
- 
-+KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
-+
- static void remove_free_resource(void *ctx)
- {
- 	struct resource *res = (struct resource *)ctx;
-@@ -177,6 +179,14 @@ static void remove_free_resource(void *ctx)
- 	kfree(res);
- }
- 
-+static void resource_test_add_action_or_abort(
-+	struct kunit *test, void (*action)(void *), void *ctx)
-+{
-+	KUNIT_ASSERT_EQ_MSG(test, 0,
-+			    kunit_add_action_or_reset(test, action, ctx),
-+			    "Fail to add action");
-+}
-+
- static void resource_test_request_region(struct kunit *test, struct resource *parent,
- 					 resource_size_t start, resource_size_t size,
- 					 const char *name, unsigned long flags)
-@@ -185,7 +195,7 @@ static void resource_test_request_region(struct kunit *test, struct resource *pa
- 
- 	res = __request_region(parent, start, size, name, flags);
- 	KUNIT_ASSERT_NOT_NULL(test, res);
--	kunit_add_action_or_reset(test, remove_free_resource, res);
-+	resource_test_add_action_or_abort(test, remove_free_resource, res);
- }
- 
- static void resource_test_insert_resource(struct kunit *test, struct resource *parent,
-@@ -202,11 +212,11 @@ static void resource_test_insert_resource(struct kunit *test, struct resource *p
- 	res->end = start + size - 1;
- 	res->flags = flags;
- 	if (insert_resource(parent, res)) {
--		kfree(res);
-+		resource_test_add_action_or_abort(test, kfree_wrapper, res);
- 		KUNIT_FAIL_AND_ABORT(test, "Fail to insert resource %pR\n", res);
- 	}
- 
--	kunit_add_action_or_reset(test, remove_free_resource, res);
-+	resource_test_add_action_or_abort(test, remove_free_resource, res);
- }
- 
- static void resource_test_region_intersects(struct kunit *test)
-@@ -220,7 +230,7 @@ static void resource_test_region_intersects(struct kunit *test)
- 				       "test resources");
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
- 	start = parent->start;
--	kunit_add_action_or_reset(test, remove_free_resource, parent);
-+	resource_test_add_action_or_abort(test, remove_free_resource, parent);
- 
- 	resource_test_request_region(test, parent, start + RES_TEST_RAM0_OFFSET,
- 				     RES_TEST_RAM0_SIZE, "Test System RAM 0", flags);
+That would likely be an output with an entirely static display. Hard to 
+imaging, I think.
+
+>
+> If not, a better solution would be to make it mandatory and check it
+> when registering.
+
+Although I r-b'ed the patch already, I'd also prefer this solution.
+
+
+>
+> Maxime
+
 -- 
-2.39.2
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
