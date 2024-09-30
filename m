@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-343785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FD8989F70
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:32:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34383989F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444251F2352B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E501E284AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6886C18C35F;
-	Mon, 30 Sep 2024 10:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0808518A922;
+	Mon, 30 Sep 2024 10:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bbEc9eV/"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ldpq5Y/D"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7071018C322
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46015C140
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692330; cv=none; b=TMT4Wkjkd0HgH9dZNZikz5SDYEalXXL4mC50FN2CUeo/6W9w1VxmHc2EfIxWsnh+zx7cFN69V5XTwoEmynSw1OmMKZkzzOMQ9owlkXmYOcGk6bAVEuDxFOJu10JLQ39qVhS12vdH3GQJnY7oShRK3ExWZCEGaLlFfbP9JX37OWQ=
+	t=1727692414; cv=none; b=E954ffe2+6mCxUvdfIixA4E/96ueKzBEaVxRxjKgSFZeCxdy4C5/UbKp4+9pR/qOT8qABgatEkwDR4xZ1IyEEN8P4/etM8febInmNIDt0oOIymPbJF8fpNYbSEeez98dR8TqQv9cx6TsPkhu75v9HkZi/n0q++D4ypZNuTl3kZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692330; c=relaxed/simple;
-	bh=5E6KTTiaOKc/2wVB8+QH9mI5osox+uyEdBEePOu4R7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ksBbaYdiFL2yIzaKrLME1DV3FYN8mA3xcI18NP9D5gkc9AUyM069dMdjY0iIPSs28dUzS718xC1JVO3apS5IC++mmBSDJABWXTJbb4SFOSwR3FILj+NXUdsyIkrX/mlxMC/h2wtUo8kHZrIQbA6lMcUH0Jf9RrKwaYvleM2UQ9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bbEc9eV/; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so5174365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727692328; x=1728297128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=laT5Lrp2VC3fnoAmsJC3kBCiqkiMwP636Ixvur8jZe8=;
-        b=bbEc9eV/7U1Px0+TV7uzYjRuxhjG61QeC2WCsHR2wKm9ZPrdWTxLC9w/j0qhBNv2c+
-         OPqi+b0J2/oGUrFETtV/oKk+61E+kzIDKXhHn5CkNZh9ZGHZSTi0+7woxVw9wD3nLkeA
-         obkpq8xQssQJeDuPbVsXVZSnkzTTA5+DPCIG624pw3UFxR6mylUJ3AQo7wkmv8lAF4Y7
-         uHRIYf69FXGNsFjDSsqjWRylmK2wLVlMEAuAEbrQBypNqsDD6iSQnmlaMyM+C1mvCo57
-         7Dezp4WgUWSwhbRVi1LGERjESXkGTbLm3oLP2Gh6HWXZCqr0aSK7kPUGVdRYpbrYKMMg
-         gTVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727692328; x=1728297128;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=laT5Lrp2VC3fnoAmsJC3kBCiqkiMwP636Ixvur8jZe8=;
-        b=D/rxES4ITU4Z/+sDmUd6+Wu9wkIispiresOmpK3KLQBWmsjGwI+oyd5QMUogVIASzD
-         UxBUZIaNZDgujILkYT0Xvr8iMxptPSePnVQHF5YuYi9SCXlYFy8TeXIslsGlr7J3bn0e
-         thTwnLfqgo6MGy7mYMyM7ZGVc/SOnsjPvq6/EUKzKEPYZ1T4NI2vbtrZWx3BVIxosQFK
-         89vs19BOjYfqGJVlzn8MqcRE2tWxWW8kyJZPA1vwG9irO4kAXkLwIDCLRPyNBsc/YWuT
-         d6Lv1TQFZre596R/sY8hZaJMYt7wNrZrdOCcK5L5KBDPwfp6qR7W+jNzlOCQAK1QXMAi
-         6mLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVoyGpQAUR0s07F9seFqlXLPffPmgmPGabLKgr1aCkvMezyiZvu9roJcZcQoCe2GOuMWkq6Fc2i+Nuc7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLJ5umIOTuNlj4eq7rAuNeuLPKjLC5UpSe3o4ZuPnTxDyAH/lw
-	0XPyQFuGb2sDtYjJrpEA4khMC/9ZWtq05kLW/NVjyYELmOwlM/rYp56bOdlMMbA=
-X-Google-Smtp-Source: AGHT+IHXW8upZaxGdmS5j+5vFJ2MR5/aTCr9eVUSyE0063qQAsrBbXctV5+mv/YiqGlFZoN4sus5IQ==
-X-Received: by 2002:a05:600c:3541:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-42f5849fb09mr88579745e9.30.1727692327877;
-        Mon, 30 Sep 2024 03:32:07 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5745696sm8633491f8f.106.2024.09.30.03.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 03:32:05 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 3/3] gpio: syscon: drop dependency on CONFIG_OF
-Date: Mon, 30 Sep 2024 12:31:57 +0200
-Message-ID: <20240930103157.49259-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240930103157.49259-1-brgl@bgdev.pl>
-References: <20240930103157.49259-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1727692414; c=relaxed/simple;
+	bh=GQWWTfHubQuieHaS/hviuz6e8IYCnUTftJg25TZvPag=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fUEUlqbD1DagV4fioNO+NWiSgf+4PjIvFq1ZoEFpxMqg2PUFI1+GZmyi2UWqWB8p2OY2uXJV3iB0IwF4g4C5eGT3dp1wO8NaYIgq7QnYxvCMy4ubTBZ3hyUq7k/TgdYwLqjA3NTW+X7r3Wf/nP3rb24USJ8uNjpqIXYsNGJ34WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ldpq5Y/D; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727692411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QWjTQgM2FW5gQeC40mC/LxGIRFWdUXta0r321EYH9ic=;
+	b=Ldpq5Y/DwoEiTUWhv2/z5rFcSbHK+k3AXSjocANlWS6Mw7y+KcardaqpN68f95XcCU6Y7Y
+	yQC8nLBJvRfaDToMgNOcX8vGvuTqlPzUNckS0ToIReItSMCRjLVGMPCmFqvWs+WW5NqYVx
+	YnmfF6fCnfFj1G9yFEAa/Ot+pp/3jjE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-CyjLEtWuNmOvKROz4UGw9A-1; Mon,
+ 30 Sep 2024 06:33:28 -0400
+X-MC-Unique: CyjLEtWuNmOvKROz4UGw9A-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 334A2195395B;
+	Mon, 30 Sep 2024 10:33:26 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.45.224.151])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A708C1956088;
+	Mon, 30 Sep 2024 10:33:21 +0000 (UTC)
+From: Florian Weimer <fweimer@redhat.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <christian@brauner.io>,  Shuah Khan
+ <shuah@kernel.org>,  "Liam R . Howlett" <Liam.Howlett@oracle.com>,  Suren
+ Baghdasaryan <surenb@google.com>,  Vlastimil Babka <vbabka@suse.cz>,
+  pedro.falcato@gmail.com,  linux-kselftest@vger.kernel.org,
+  linux-mm@kvack.org,  linux-fsdevel@vger.kernel.org,
+  linux-api@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
+In-Reply-To: <cover.1727644404.git.lorenzo.stoakes@oracle.com> (Lorenzo
+	Stoakes's message of "Mon, 30 Sep 2024 10:22:27 +0100")
+References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
+Date: Mon, 30 Sep 2024 12:33:18 +0200
+Message-ID: <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+* Lorenzo Stoakes:
 
-MFD_SYSCON does not depend on OF and we now removed OF symbols from
-gpio-syscon. Drop the Kconfig dependency.
+> If you wish to utilise a pidfd interface to refer to the current process
+> (from the point of view of userland - from the kernel point of view - the
+> thread group leader), it is rather cumbersome, requiring something like:
+>
+> 	int pidfd = pidfd_open(getpid(), 0);
+>
+> 	...
+>
+> 	close(pidfd);
+>
+> Or the equivalent call opening /proc/self. It is more convenient to use a
+> sentinel value to indicate to an interface that accepts a pidfd that we
+> simply wish to refer to the current process.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The descriptor will refer to the current thread, not process, right?
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 98722e814e81..643747da4475 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -681,7 +681,7 @@ config GPIO_STP_XWAY
- 
- config GPIO_SYSCON
- 	tristate "GPIO based on SYSCON"
--	depends on MFD_SYSCON && OF
-+	depends on MFD_SYSCON
- 	help
- 	  Say yes here to support GPIO functionality though SYSCON driver.
- 
--- 
-2.43.0
+The distinction matters for pidfd_getfd if a process contains multiple
+threads with different file descriptor tables, and probably for
+pidfd_send_signal as well.
+
+Thanks,
+Florian
 
 
