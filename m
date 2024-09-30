@@ -1,313 +1,130 @@
-Return-Path: <linux-kernel+bounces-343715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3201E989EA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:41:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFC7989EA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB7E1F221C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:41:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA1AB280BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC09188739;
-	Mon, 30 Sep 2024 09:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="N8rvJTck"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE97718873F;
+	Mon, 30 Sep 2024 09:42:43 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294D07DA6F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D3C7DA6F;
+	Mon, 30 Sep 2024 09:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689308; cv=none; b=Vn/DGECkNA+flrnIgdImf0NOujpq0WOpsqSH88H4wuWcZupqVrfy8DeKeYkabB0ijC8sDs5UzeFWcVSjmbKacx0OBe40Epq5giKIolgZlSa5IcUGrtUaF0vY9rTsRJ8ctToN5mvgHT4U2CRFh3SATSBgjAChtwPpVsUa55NSOsI=
+	t=1727689363; cv=none; b=EBe6wCXi4ehUrfH0vMhQaZE5UJo6z680shDo7JxolI1kmv/o9pYagW0W1nymTUCbiuW7NiRCNkSlnh314igMiGkkttgz5ZGzUmRRxDswo5EqH3m0l1GxC3CbMP/qpbjP2X6m59+VtHhXyCgIoIXdjaYWtXCNzljDbRf3SZ0k95c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689308; c=relaxed/simple;
-	bh=DvFK/oihNNbtavdQEAMviuE3tItFW+M28krtDAX8Rds=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TATRo9S83Rcyys4zix9o32BoeSxgp41Cn2p81rqkcptbBNa7dhcZ1t6knDgfoPcGZ4CSTwD4jtnoYqQiNq3FzfImiGIVmPA6YilbdYWGSgKaHVOaEM2+Lv80pDThEuekRcGncaWKCuM2mfYk0er+fZ2Tlpk9I/cAZ8tKul06Bq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=N8rvJTck; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cc43454d5so29884515e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727689303; x=1728294103; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sr7h1omB7PXcqQIy1y7utZoiAixP16ugYOgZJbdB6E8=;
-        b=N8rvJTck/17sOFkjvPlb38uXt9U1KxgNNXmQcKPeinal47TRcEfYAgC4NLHFLgvb4s
-         XdsEpn+Al6FOWmxhT1eqB4irGRaMfUUh9RraoTg77PMZTOtE0gUv5W/KjoaOjnPUKITb
-         Y1rcQn4lRK06GIjGoIm3j+y5TKoJk6HbWHjJxcmt5BMoRBqTAltql7fXkdys/g4QSb/7
-         ninOINjMmfvnBnVdRR5h2JDscyF5SYtDJHdVYA8y6qgZ/BX3vuXzspAEuYYYgtp9ILKh
-         1UKNmXRglLycDKXIokuI8urTy6LnUqdIPnR4gIkM7Z/ei5ovA5pSKqfE+l+YyEQPd1Mu
-         JbDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727689303; x=1728294103;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sr7h1omB7PXcqQIy1y7utZoiAixP16ugYOgZJbdB6E8=;
-        b=pNVxD28Fc/p9ngPaMtss4Mq/+vrrZJrb3UBQERo3NmzGEq7Zt19xYce86n+pjPsvF+
-         PrlYRiLTcbYwUbCvLYBg4g4Uiihm1tP/dLBZvxHPyZbH/FE+KaB7sARnDNZjxdn0fTsj
-         ZGo8JEcN70UevQZOM0dBiIkHXul9akVe/IGMe33vztuegy5K+11k0blFLJcI5r3gbrvu
-         8KbkgkA60cCpHOGTYr3KnwLe+AgfF+bBxhbo4DAEDeB+bfB0TPDVtQ6vD3N6eIBxy4Oa
-         biKxzs/1WFQndYOS+Xj7IOybDQfQ6pSSxCz1Xvx9CZuEIO+L4i78OD4OzZB/Ep4UVH+X
-         5UPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ViY2VmkhjQ38o/RLHueE63J3RoZ0NCdRnuPPxeaOENBLPr1p8i70mJmz+7JiINLz6p6BkZuq7Q0xSro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZtUpN1zpJoM8mtXsU6aWWi5dFyVugHM64N8w6SdODyPM6+Pds
-	0CU8sBQAZv+tlOPOI5GXLUBOTbd+3/rFH8yR6DXQZOgSKOA2E16lt7kU9XoqqjU=
-X-Google-Smtp-Source: AGHT+IHeE72eB+QBjTT9unQFami/x9Aj5lzN1iDLPKcaORkrj4XgY+DA+r5Wajd2QzFxhub7jH2UNg==
-X-Received: by 2002:a05:600c:4747:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-42f5849092dmr86852765e9.31.1727689303490;
-        Mon, 30 Sep 2024 02:41:43 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b6ba:bab:ced3:2667])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5742230sm8576501f8f.92.2024.09.30.02.41.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:41:42 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>,
-  Neil Armstrong <neil.armstrong@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>,  Rob Herring
- <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor
- Dooley <conor+dt@kernel.org>,  Chuan Liu <chuan.liu@amlogic.com>,  Kevin
- Hilman <khilman@baylibre.com>,  Martin Blumenstingl
- <martin.blumenstingl@googlemail.com>,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/5] clk: meson: add support for the A5 SoC PLL clock
-In-Reply-To: <4e2c7bb7-b97c-43c3-8938-4831e9d1376d@amlogic.com> (Xianwei
-	Zhao's message of "Sun, 29 Sep 2024 16:17:40 +0800")
-References: <20240914-a5-clk-v1-0-5ee2c4f1b08c@amlogic.com>
-	<20240914-a5-clk-v1-4-5ee2c4f1b08c@amlogic.com>
-	<1jplotxg8e.fsf@starbuckisacylon.baylibre.com>
-	<4e2c7bb7-b97c-43c3-8938-4831e9d1376d@amlogic.com>
-Date: Mon, 30 Sep 2024 11:41:42 +0200
-Message-ID: <1jploltr55.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1727689363; c=relaxed/simple;
+	bh=9W8nIrUOmbOmuENo8g1JQ4uOsruDintbvPRye4u2hD4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WqFuzUixXxBQEPd7Pt1KMEraV+0LO7c9k5KSOyZcuMRwT6XfTa1VcEHBCioN/HHeDsfuKPrwmZW3bR2fjQD7TXpwInMn0iGB6kHp9pRTCsxGsb54kBcB9/4nqKibyB9tNJhBJEYNsHc4VVv/Lug+ILTmbF7jmKbU9myMF5P7o4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XHFwS1sKyz9v7JC;
+	Mon, 30 Sep 2024 17:22:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 86280140590;
+	Mon, 30 Sep 2024 17:42:28 +0800 (CST)
+Received: from [10.81.211.60] (unknown [10.81.211.60])
+	by APP2 (Coremail) with SMTP id GxC2BwAn18d1cvpmZwzxAQ--.6356S2;
+	Mon, 30 Sep 2024 10:42:27 +0100 (CET)
+Message-ID: <f635f9ce-fef4-4a9e-bee1-70dbc24a82ad@huaweicloud.com>
+Date: Mon, 30 Sep 2024 11:42:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: Alan Stern <stern@rowland.harvard.edu>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
+ <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
+ <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+ <25344f33-b8dc-43fb-a394-529eff03d979@rowland.harvard.edu>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <25344f33-b8dc-43fb-a394-529eff03d979@rowland.harvard.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwAn18d1cvpmZwzxAQ--.6356S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur1DKr13GFyxZrykXw43ZFb_yoW8Jw47pr
+	ZrKF4qkF4vyFWYvFW7Zw48Ca4jyw1ktFyFkrykKr47uryFqFyfuF42yr15ZFy5Ar1xX34Y
+	yrWFq3W2gasxJaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xU4R6zUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Sun 29 Sep 2024 at 16:17, Xianwei Zhao <xianwei.zhao@amlogic.com> wrote:
-
-> Hi Jerome,
->    Thanks for your reply.
->
-> On 2024/9/24 22:45, Jerome Brunet wrote:
->> [ EXTERNAL EMAIL ]
->> On Sat 14 Sep 2024 at 13:25, Xianwei Zhao via B4 Relay
->> <devnull+xianwei.zhao.amlogic.com@kernel.org> wrote:
->> 
->>> From: Chuan Liu <chuan.liu@amlogic.com>
->>>
->>> Add the PLL clock controller driver for the Amlogic A5 SoC family.
->>>
->>> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->>> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
->>> ---
->>>   drivers/clk/meson/Kconfig  |  14 ++
->>>   drivers/clk/meson/Makefile |   1 +
->>>   drivers/clk/meson/a5-pll.c | 553 +++++++++++++++++++++++++++++++++++++++++++++
->>>   3 files changed, 568 insertions(+)
->>>
->>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->>> index 78f648c9c97d..2a713276e46c 100644
->>> --- a/drivers/clk/meson/Kconfig
->>> +++ b/drivers/clk/meson/Kconfig
->>> @@ -132,6 +132,20 @@ config COMMON_CLK_A1_PERIPHERALS
->>>          device, A1 SoC Family. Say Y if you want A1 Peripherals clock
->>>          controller to work.
->>>
->>> +config COMMON_CLK_A5_PLL
->>> +     tristate "Amlogic A5 PLL clock controller"
->>> +     depends on ARM64
->>> +     default y
->>> +     imply ARM_SCMI_PROTOCOL
->> don't think this is needed, same as c3
->> 
->
-> Will delete it in the next version.
 
 
-Ideally, please trim your replies. This avoid the need for me to dig in
-such long patch and find whatever it is that you replied.
+Am 9/28/2024 um 11:15 PM schrieb Alan Stern:
+> On Sat, Sep 28, 2024 at 11:55:22AM -0400, Mathieu Desnoyers wrote:
+>> On 2024-09-28 17:49, Alan Stern wrote:
+>>> Isn't it true that on strongly ordered CPUs, a compiler barrier is
+>>> sufficient to prevent the rcu_dereference() problem?  So the whole idea
+>>> behind ptr_eq() is that it prevents the problem on all CPUs.
+>>
+>> Correct. But given that we have ptr_eq(), it's good to show how it
+>> equally prevents the compiler from reordering address-dependent loads
+>> (comparison with constant) *and* prevents the compiler from using
+>> one pointer rather than the other (comparison between two non-constant
+>> pointers) which affects speculation on weakly-ordered CPUs.
+> 
+> I don't see how these two things differ from each other.  In the
+> comparison-with-a-constant case, how is the compiler reordering
+> anything?  Isn't it just using the constant address rather than the
+> loaded pointer and thereby breaking the address dependency?
 
-That means, remove text that is not necessary to the reply, leaving the
-necessary context for the discussion.
+I also currently don't see any major difference between the constant and 
+register case. The point is that the address is known before loading 
+into b, and hence the compiler + hardware can speculatively load *b 
+before loading into b.
 
-Also, if it is just to say that 'you will do it', a reply is no
-necessary. Just do it, it will be fine. Reply if you have further
-questions, remarks or do not agree.
+The only difference is how far before loading into b the address is known.
 
->
->>> +     imply COMMON_CLK_SCMI
->>> +     select COMMON_CLK_MESON_REGMAP
->>> +     select COMMON_CLK_MESON_PLL
->>> +     select COMMON_CLK_MESON_CLKC_UTILS
->>> +     help
->>> +       Support for the PLL clock controller on Amlogic AV40x device, AKA A5.
->>> +       Say Y if you want the board to work, because PLLs are the parent
->>> +       of most peripherals.
->>> +
->>>   config COMMON_CLK_C3_PLL
->>>        tristate "Amlogic C3 PLL clock controller"
->>>        depends on ARM64
->>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->>> index bc56a47931c1..fc4b8a723145 100644
->>> --- a/drivers/clk/meson/Makefile
->>> +++ b/drivers/clk/meson/Makefile
->>> @@ -20,6 +20,7 @@ obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
->>>   obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
->>>   obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
->>>   obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
->>> +obj-$(CONFIG_COMMON_CLK_A5_PLL) += a5-pll.o
->>>   obj-$(CONFIG_COMMON_CLK_C3_PLL) += c3-pll.o
->>>   obj-$(CONFIG_COMMON_CLK_C3_PERIPHERALS) += c3-peripherals.o
->>>   obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
->>> diff --git a/drivers/clk/meson/a5-pll.c b/drivers/clk/meson/a5-pll.c
->>> new file mode 100644
->>> index 000000000000..d96ed72ef8d4
->>> --- /dev/null
->>> +++ b/drivers/clk/meson/a5-pll.c
->>> @@ -0,0 +1,553 @@
+Best wishes,
+   jonas
 
-[...]
-
->>> +static struct clk_regmap gp0_pll = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = ANACTRL_GP0PLL_CTRL0,
->>> +             .shift = 16,
->>> +             .width = 3,
->>> +             .table = gp0_pll_od_table,
->>> +             .flags = CLK_DIVIDER_POWER_OF_TWO,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "gp0_pll",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &gp0_pll_dco.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
->>> +static const struct reg_sequence hifi_init_regs[] = {
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0X08000000 },
->> What is bit you are flipping in CTRL0 ? it is suspicious
->> 
->
-> Yes, CTRL0 and CTRL1 are not necessary here and will be removed in the
-> next version.
-
-That does not really answer my question, does it ?
-
->
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x00000000 },
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00000000 },
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x6a295c00 },
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x65771290 },
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL5, .def = 0x3927200a },
->>> +     { .reg = ANACTRL_HIFIPLL_CTRL6, .def = 0x54540000 }
->>> +};
->>> +
->>> +static const struct pll_mult_range hifi_pll_mult_range = {
->>> +     .min = 125,
->>> +     .max = 250,
->>> +};
->>> +
->>> +static struct clk_regmap hifi_pll_dco = {
->>> +     .data = &(struct meson_clk_pll_data) {
->>> +             .en = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>> +                     .shift   = 28,
->>> +                     .width   = 1,
->>> +             },
->>> +             .m = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>> +                     .shift   = 0,
->>> +                     .width   = 8,
->>> +             },
->>> +             .frac = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL1,
->>> +                     .shift   = 0,
->>> +                     .width   = 17,
->>> +             },
->>> +             .n = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>> +                     .shift   = 10,
->>> +                     .width   = 5,
->>> +             },
->>> +             .l = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>> +                     .shift   = 31,
->>> +                     .width   = 1,
->>> +             },
->>> +             .rst = {
->>> +                     .reg_off = ANACTRL_HIFIPLL_CTRL0,
->>> +                     .shift   = 29,
->>> +                     .width   = 1,
->>> +             },
->>> +             .range = &hifi_pll_mult_range,
->>> +             .init_regs = hifi_init_regs,
->>> +             .init_count = ARRAY_SIZE(hifi_init_regs),
->>> +             .frac_max = 100000,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "hifi_pll_dco",
->>> +             .ops = &meson_clk_pll_ops,
->>> +             .parent_data = &(const struct clk_parent_data) {
->>> +                     .fw_name = "xtal_24m",
->>> +             },
->>> +             .num_parents = 1,
->>> +     },
->>> +};
->>> +
->>> +/* The maximum frequency divider supports is 16, not 128(2^7) */
->>> +static const struct clk_div_table hifi_pll_od_table[] = {
->>> +     { 0,  1 },
->>> +     { 1,  2 },
->>> +     { 2,  4 },
->>> +     { 3,  8 },
->> Why don't you ajust the mask then ? Looks like a POW_OF_2 basic
->> dividider to me.
->> 
->
-> The maximum frequency division value above the design document is 8,
-> such as the configuration 4/5/6... The actual frequency division value
-> is still 8, so this table is defined, why there is this restriction in
-> detail I am not clear about.
->
-> Will add these comment ot describe it.
-
-I'm not asking you to add a comment.
-With your explanation, my comment still stands.
-
->
->>> +     { /* sentinel */ }
->>> +};
->>> +
->>> +static struct clk_regmap hifi_pll = {
->>> +     .data = &(struct clk_regmap_div_data) {
->>> +             .offset = ANACTRL_HIFIPLL_CTRL0,
->>> +             .shift = 16,
->>> +             .width = 3,
->>> +             .table = hifi_pll_od_table,
->>> +             .flags = CLK_DIVIDER_POWER_OF_TWO,
->>> +     },
->>> +     .hw.init = &(struct clk_init_data) {
->>> +             .name = "hifi_pll",
->>> +             .ops = &clk_regmap_divider_ops,
->>> +             .parent_hws = (const struct clk_hw *[]) {
->>> +                     &hifi_pll_dco.hw
->>> +             },
->>> +             .num_parents = 1,
->>> +             .flags = CLK_SET_RATE_PARENT,
->>> +     },
->>> +};
->>> +
 
