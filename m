@@ -1,163 +1,143 @@
-Return-Path: <linux-kernel+bounces-344671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8090C98AC89
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7271798AC8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A461C21E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:11:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C53283089
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03596199928;
-	Mon, 30 Sep 2024 19:11:35 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A320C199E8D;
+	Mon, 30 Sep 2024 19:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gJ/KxS1M";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u6tZgxkK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707911991D3;
-	Mon, 30 Sep 2024 19:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E44743AB0;
+	Mon, 30 Sep 2024 19:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723494; cv=none; b=kg5+OqKwySpobOF6myYDrPUBoW8jyA0ez6LmGF17X4v8jpfY+20tpNyzvlWK5NTmt53j6889w8oARoEVcsu0FZP4YNG9wrCeA5uCWLv570VSQ64de8jPnJmXb4WGsQwkn11NtyZDyWFBA5v+ON0n63zV/As4K53n8wY6Rsg8sEY=
+	t=1727723615; cv=none; b=DhY8X8jZFJ79/PkHWcCud7hJ42upeh6m65ZIgqTG7GMP2FI+STabxSsJv0yA01309+iEuUS/+V4pMWQDqNODlkq/0gokaF6FAYN4SZS8CLxmytbYH3c4Nu4t8u8nCNfux4znfsiVVHt4wd6yVeoF+u7Hm9n6LmlaaTKetqThXH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723494; c=relaxed/simple;
-	bh=nlN3tNCZ6HWT3Bpw4JsI9Ww2HIUiOECQXGJjadRjQlA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rkH5EMF74fSSs9zk0H9lJZIExe7NhCt71mHGPOi1MakZKR5BJ8BaxFJnlhjJxiRnmaeI1h3cvNcIXr4PPpOJ0LKQ1+HoqmD469WykEI2QVk+qedQST6YbwehJqsH1rnMPSv1KAALAgldm4vs/u9/xKKTU5c4NjnCKl0x1RIFYqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
- 2024 22:11:17 +0300
-Message-ID: <b4707880-2be4-4132-a3e1-8b104b89828c@omp.ru>
-Date: Mon, 30 Sep 2024 22:11:17 +0300
+	s=arc-20240116; t=1727723615; c=relaxed/simple;
+	bh=g9wTua1j7Rm8PkyuL03HXWc8qMSqSE7FD3GXzmwZQGk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Nh9qPWPaSwUQWBXc3KKvJxDfWe3R/QZk/+RYh95ZohrejEf3wKqmeP9vaG7RoZq9R8Xn5T8pnsT8NuAK0bhupBoIzqFOvZDhK9CI11J4SPDkHvWSkqCNZ3lY8ABQ+3ABgtDwYt/tBoZy2OM6etH4oyzg5hw3lI2ROUxV7McZ268=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gJ/KxS1M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u6tZgxkK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727723611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFBOud7anAZyztkYeQWuXr4vYsC9F6E8D/HPnn/0BOg=;
+	b=gJ/KxS1M9QBiD9jT7XM70vomQS8njPKEUEFPhzAr1j+v8H8tYnKZFu/E0imRNBPUn6wmQM
+	63zxh87CjWjrcX8XeQp2CuaTKNGKsl9Gh0gmWMrzQhGuH5yRH7VBCaPq27hRMG/rtKfC1J
+	NyA1NeSHi1DtWXEDZ1OBlegulrkgvwMNNFLReMPCu6H/lx5aE5d1Jyr+X1asET1BArubpi
+	MzfGQLeV0JIL5UnJsvkdHXulEKCZVIi5t4GHKmVkC0+Qi/oAG5rELQYrnQotOTXfqsMOE8
+	BRCV4t1BqGMBxTZeBO1nDDqTg11Iix2OEul8FtsHI0ok5j2ZOPlfZFTlS2xG8w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727723611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fFBOud7anAZyztkYeQWuXr4vYsC9F6E8D/HPnn/0BOg=;
+	b=u6tZgxkKVS2Jwn34typ3Qtq8h/7YSyYXitKctJvkyMHyOED4yEOoKXy+UnCqzMM3x56A1E
+	YX6g2x7VODFL8aBw==
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org, Jeff Layton
+ <jlayton@kernel.org>
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+In-Reply-To: <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+ <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
+Date: Mon, 30 Sep 2024 21:13:30 +0200
+Message-ID: <87bk050xb9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 05/11] net: ravb: Simplify types in RX csum
- validation
-To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240930160845.8520-1-paul@pbarker.dev>
- <20240930160845.8520-6-paul@pbarker.dev>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240930160845.8520-6-paul@pbarker.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 18:54:28
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
- d90443ea3cdf6e421a9ef5a0a400f1251229ba23
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2024 18:58:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain
 
-On 9/30/24 19:08, Paul Barker wrote:
+On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
 
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
-> 
-> The HW checksum value is used as a 16-bit flag, it is zero when the
+> For multigrain timestamps, we must keep track of the latest timestamp
+> that has ever been handed out, and never hand out a coarse time below
+> that value.
 
-   I think I prefer s/HW/hardware/ but there's no hard feelings... :-)
+How is that correct when the clock is off by an hour and then set back
+to the correct value? Then you'd get the same stale timestamp for an
+hour unless something invokes ktime_get_real_ts64_mg() which will set
+the "latest" timestamp back to a time before the previous one.
 
-> checksum has been validated and non-zero otherwise. Therefore we don't
-> need to treat this as an actual __wsum type or call csum_unfold(), we
-> can just use a u16 pointer.
-> 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 1dd2152734b0..9350ca10ab22 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-[...]
-> @@ -762,23 +761,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
->  	 * The last 2 bytes are the protocol checksum status which will be zero
->  	 * if the checksum has been validated.
->  	 */
-> -	if (unlikely(skb->len < sizeof(__sum16) * 2))
-> +	csum_len = sizeof(*hw_csum) * 2;
+> Add a static singleton atomic64_t into timekeeper.c that we can use to
+> keep track of the latest fine-grained time ever handed out. This is
+> tracked as a monotonic ktime_t value to ensure that it isn't affected by
+> clock jumps.
 
-   Could've been done by an initializer instead?
+That's just wishful thinking.
 
-> +	if (unlikely(skb->len < csum_len))
->  		return;
->  
->  	if (skb_is_nonlinear(skb)) {
-> -		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
-> -		hw_csum = skb_frag_address(last_frag) +
-> -			  skb_frag_size(last_frag);
-> -		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
-> +		skb_frag_t *last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+ktime_get_real_ts64_mg(ts)
+   ts = Tmono_1 + offset_1;   // TReal_1
+   floor = Tmono_1;
 
-   Could've been done in the previous patch...
+                                // newtime < TReal_1                                
+                                clock_settime(REALTIME, newtime);
+                                   xtime = newtime; // TReal_2
+                                   offset_2 = offset_1 + Treal_2 - TReal(now);
+                                   --> offset_2 < offset_1
 
-> +
-> +		hw_csum = (u16 *)(skb_frag_address(last_frag) +
-> +				  skb_frag_size(last_frag));
-> +		skb_frag_size_sub(last_frag, csum_len);
->  	} else {
-> -		hw_csum = skb_tail_pointer(skb);
-> -		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
-> +		hw_csum = (u16 *)skb_tail_pointer(skb);
-> +		skb_trim(skb, skb->len - csum_len);
->  	}
->  
-> -	hw_csum -= sizeof(__sum16);
-> -	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
-> -
-> -	if (!csum_proto)
-> +	if (!*--hw_csum)
+ktime_get_coarse_real_ts64_mg(ts)
+    ts = tk_xtime();       // TReal_2
+    offs = offset_2;
 
-   Hm, you lost get_unaligned_le16() here. The checksum can be anywhere,
-unaligned too...
+    if (Tmono_1 + offset_2 > ts)
+       ts = Tmono_1 + offset_2; // Not taken
 
-[...]
+So this returns T_Real_2 because
 
-MBR, Sergey
+    offset_2 < offset_1
 
+and therefore
+
+    Tmono_1 + offset_2 < TReal_2
+
+so the returned time will jump backwards vs. TReal_1 as it should
+because that's the actual time, no?
+
+So if that's the intended behaviour then the changelog is misleading at
+best.
+
+If the intention is to never return a value < TReal_1 then this does not
+work. You can make it work by using the Realtime timestamp as floor, but
+that'd be more than questionable vs. clock_settime() making the clock go
+backwards.
+
+Thanks,
+
+        tglx
 
