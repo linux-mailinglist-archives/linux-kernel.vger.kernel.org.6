@@ -1,297 +1,104 @@
-Return-Path: <linux-kernel+bounces-343689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14D88989E54
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DAD989E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972621F214D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:31:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9070D1F214A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F5516B391;
-	Mon, 30 Sep 2024 09:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A9F18871E;
+	Mon, 30 Sep 2024 09:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="WiaKVJvR"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1mlAyy9d"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F221885A4
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C151885B5
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688690; cv=none; b=akhjYH351NqWIDkqv31fQ/mmJDE+R4jknLsFwFKdTh/84YZy558n3LM3w/9YS8+jmbmIt5Zc87Wz2KI0Rfy8CMtlGLXlvOY94pnOVFqzsQzHgva8LPjyZYdlwbp8TmzvuczOwkJJTWcFFYszyDU/PoPSDqOxg1mZvmQoyHpLxuY=
+	t=1727688702; cv=none; b=uXwCY82RTrOgvnpH7ZqD1hT78OX8rhGCLHV/szLOC1Nnh8dl38mrAdR7zZL22ox6sjQAEainJ8Ksy5EVBS/24UuJh9WOfyLsRDDXZ2ggMGfjBEW4i72Jdf/QZ+WujkqA3RiA163jipsjLKLCL+K1+nAxiYwhwBN98/LIbnwYbIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688690; c=relaxed/simple;
-	bh=nCs6FKCjKBOetwtxF9nrvTt/IMTsk78fyiw5Egieybk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nMlD0V7X0yeZ9y753tsYNCw6oSMnPZd1AgwAsNeExkwHgzu94sQ0CywV76QjBCGlOT8WySCLoHTwQLwTOxQmYaVqYjg+yoxCt+FQlNFHVa9IAs0kmkHDCYlAvY+6auUMwpJYSczQ3rT8D0C8d98VQ0NJca/as/BFWv/UV2Hx/2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=WiaKVJvR; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e24a2bc0827so3664503276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:31:28 -0700 (PDT)
+	s=arc-20240116; t=1727688702; c=relaxed/simple;
+	bh=pQqea1cs7+qg74Lz/hGv4IeluB9zMEXXxVL9wZhlP4E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Pl1FUv4dJ8+YjYxIQc0iL6KzBcVJICvQ3oq9vvA1VBYhow2LltiWpUh7zCub3ONEEPKgYNsXHCWGbysZnt3I2PGQcl6LlEgPM1B65r+sAHzp5iHrUc/rdFjaBjDuVLsnoYVoasUN923q+VA0EiCpJr6+sh8gwqOuQjVsl93rv2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1mlAyy9d; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb2191107so33166195e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:31:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1727688687; x=1728293487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727688698; x=1728293498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pxZyqKrnaoOfhz9e6NtLyIlT2I06I9kff0OkB3B4AVY=;
-        b=WiaKVJvRfWdVAz3wkAgHpHOJ/S3lg0NML9ZcyEeyHUwc/B5bY5wFkiSS7D3T1j5hK1
-         jV1pc9BINVmnzm1JhRYEV8UfKV6iun2RGmEgCyJpELcoY9YKuVj7+3UgQu31+MffBZZZ
-         pFzbrUBV+Y5sYC9o9tTxgoaI1+d2brCbCNs6HWtU8INuyi1LJyZUf5cvrn8ENY/u2z8R
-         xGvPhPVjlI6mG2dwX7cN9ZvOfjFeWq4ika1dNJJcSaUp+rBJrBSZ1FETPkz2k+Lexe+I
-         zOBvVurE3qljUtXU81uI6Ef5b8wpyOpIIEVUOEK+Awpgy3y2xtZKaAsPlGKXhVRwjcAG
-         iMKg==
+        bh=LwF53HfMvlXuhOmi8Jap57yZA7y1v6ek9XyMVgwuNQY=;
+        b=1mlAyy9d+hZdS9NzKTBOqdhByMtK7hnYU8FWzRAsbyN1OY2ZUd1FfplyZvFDL73TPW
+         wwLCGbIwnt+b8JDxZN4KD5xQ885jD/2+ftQUo5SArMsZZDEPrAu2SAGdmLYHDtlNdi3u
+         EWPGqCp0tDkCFxLCqmImJzw8NeNJsTX42n6GROyLLAfGjyGbNhQVaNmOKL8+1n+SUbnF
+         hO5w42OEnw2uDdl/jTRmzYQ6cf4y6ViPrSfAQg4S/xzJWNpbFs608EDv7FIthh8Mp1mq
+         89/HbMr0IslPYz87KKPKrHg3VwQ2yE3t04HflHJ0lm9vOxXhTVD6ZIFWlANkw8pFMdr/
+         DSYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727688687; x=1728293487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727688698; x=1728293498;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pxZyqKrnaoOfhz9e6NtLyIlT2I06I9kff0OkB3B4AVY=;
-        b=vyTVq1ueWZuovzb/CCVcpuSDa4qV0cLMLGq3fkf+/2JRTgeIyGoebuWricfMOXMY+7
-         JOf8cQbIO6uIHcIpOxvDkaFE2sS9IANrsVB2N1W3usrwNPW68P3EcYtpwb2zExAAEsWS
-         jf0uYJWCcvxshQVwnZR2+4Z6BYcUxcbDP9gE7ZJ1Qbni7T0CdGT4xXvyB0WZ+GinZKrk
-         kJtFaP1xHxnBom0+MGI0yg72mUoSxCkqImaiUJucoDC2u5ey8Wu3SUGi/FjboAqXFB9P
-         2ltXVvVCqQikoLJCkoZcC8bpCrKiltpZviJOEogPkY6i4mLcj2dVvA9zjaGMXBg5hk2a
-         uiGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRCvNHhtAZ2cq1bvTDIGdEym1yjVvM64UXJfWhRg4zXP+APWX2GPEHDGkrQpVkBWNzayOgKgT6U86kPu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCCyud9YO69VKue39oNYcAGsdaZNKJcEsGcbmO79NnbCd2/elG
-	TrIynwjEFHlrRVC1ik/Gl8Kod7NB0w9f7Zyzs9kDKO9ceHKGPliNcn0R91FFApwcUlT66nGe78b
-	SsQ6gYpnzwi35bS1SubkYEc5APSqZbJWj+wdxyQ==
-X-Google-Smtp-Source: AGHT+IHsjj409DwAgG3iTMFd2BikTnOcKbFqzYwFBtkTa8KGwuYprz3wGxSeN2o22o7NlxZGozGAKgppYiKCPGYI6lg=
-X-Received: by 2002:a05:6902:12c5:b0:e20:11fc:325b with SMTP id
- 3f1490d57ef6-e2604c9ce5amr7044631276.56.1727688687430; Mon, 30 Sep 2024
- 02:31:27 -0700 (PDT)
+        bh=LwF53HfMvlXuhOmi8Jap57yZA7y1v6ek9XyMVgwuNQY=;
+        b=SSGxel5EkV+e1LXIKkOnOulpyoo0AryP7TD0DCg0Bqm69S7K/xsuiOkKo8CbJ5ekRn
+         WVcquuGW30oGhTM/RYyOyXwJ6LLAC+5MLjQHe6hTWIYVHtC33jfGW9TAduksUurP3gd9
+         Xns2c6ULSirZuWoHT5TqlYUD28OCPug5KXr8Wu1S23q0fKZgSCn/LCVKVtOeGOhVBupz
+         fD7FDCvD/8mnLDmPPm8gBdWzxocDFAuniLijRRQ0OtAO6Nv7VjLZeXxD+0zhRZiJoi62
+         UdhUO1xquAa+979IScZANceB9R2hpvKYtte08J0tuaYJJEEyZR4HdwaFiAX/7mQ9K4cD
+         f4BA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1QqrsD4NDcEx3mH5mxgz9fLYamCLuruonxX7I1d5ZiS1B8vYRX6SLrYqLhROcT/MGJFJdVHz5psn8TcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywih+Xqe0kbfUb+Xx5pHvlkEF9r2a1JJMKBZyg7pC0xkBU6lPGz
+	TIH8gWIOfKopQ8scCBZbd9gAlwVqUoADI+xjzsWpWNT9X6Y1W//T33q5+bPhbyA=
+X-Google-Smtp-Source: AGHT+IHzoe6B9tw2TkIPiu3wQYEMqRU3r49tMqeybrJ5X9qmi6lref0ezf3DDmzQDmXsOhKwsOO//g==
+X-Received: by 2002:a05:600c:1e17:b0:42b:a88f:f872 with SMTP id 5b1f17b1804b1-42f584993aamr81370595e9.32.1727688698185;
+        Mon, 30 Sep 2024 02:31:38 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:b6ba:bab:ced3:2667])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e96a521f3sm145603465e9.40.2024.09.30.02.31.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 02:31:37 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
+References: <20240911-topic-amlogic-arm32-upstream-bindings-fixes-convert-meson8-clkc-v1-1-e0b8623c090d@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: convert amlogic,meson8b-clkc.txt
+ to dtschema
+Message-Id: <172768869708.21792.17420534128069202977.b4-ty@baylibre.com>
+Date: Mon, 30 Sep 2024 11:31:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927103231.24244-2-jhp@endlessos.org> <20240927103723.24622-2-jhp@endlessos.org>
- <a6502c65-770b-4dee-3fab-2ec58c277404@linux.intel.com>
-In-Reply-To: <a6502c65-770b-4dee-3fab-2ec58c277404@linux.intel.com>
-From: Jian-Hong Pan <jhp@endlessos.org>
-Date: Mon, 30 Sep 2024 17:30:51 +0800
-Message-ID: <CAPpJ_edFBRCk6LciQ+hVkq93NOneeCJHk3B1s_QQsZO20zSoQw@mail.gmail.com>
-Subject: Re: [PATCH v10 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
- child and parent's L1SS configuration
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	David Box <david.e.box@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Nirmal Patel <nirmal.patel@linux.intel.com>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=
-=E6=9C=8827=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=887:17=E5=AF=AB=E9=
-=81=93=EF=BC=9A
->
-> On Fri, 27 Sep 2024, Jian-Hong Pan wrote:
->
-> > PCI devices' parameters on the VMD bus have been programmed properly
-> > originally. But, cleared after pci_reset_bus() and have not been restor=
-ed
-> > correctly. This leads the link's L1.2 between PCIe Root Port and child
-> > device gets wrong configs.
-> >
-> > Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-> > bridge and NVMe device should have the same LTR1.2_Threshold value.
-> > However, they are configured as different values in this case:
-> >
-> > 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Proces=
-sor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
-> >   ...
-> >   Capabilities: [200 v1] L1 PM Substates
-> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Sub=
-states+
-> >       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
-> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-> >     L1SubCtl2: T_PwrOn=3D0us
-> >
-> > 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Bl=
-ue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
-> >   ...
-> >   Capabilities: [900 v1] L1 PM Substates
-> >     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Sub=
-states+
-> >       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
-> >     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
-> >     L1SubCtl2: T_PwrOn=3D50us
-> >
-> > Here is VMD mapped PCI device tree:
-> >
-> > -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
-> >  | ...
-> >  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
-> >               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
-> >
-> > When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-> > restores NVMe's state before and after reset.
->
-> > Because bus [e1] has only one
-> > device: 10000:e1:00.0 NVMe.
->
-> This is incomplete sentence. And I don't understand why the number of
-> devices is relevant. Perhaps just drop it?
->
-> > The PCIe bridge is missed.
->
-> Unclear what this refers to (I know what you mean but please write it
-> so that other reading this 10 years from now will also get what is
-> missed).
->
-> > However, when it
-> > restores the NVMe's state, it also restores the ASPM L1SS between the P=
-CIe
-> > bridge and the NVMe by pci_restore_aspm_l1ss_state().
->
-> "it also restores ..." -> "ASPM code restores L1SS for both the parent
-> bridge and the NVMe in pci_restore_aspm_l1ss_state()."
->
-> > The NVMe's L1SS is
-> > restored correctly. But, the PCIe bridge's L1SS is restored with the wr=
-ong
-> > value 0x0 [1]. Because, the parent device (PCIe bridge)'s L1SS is not s=
-aved
->
-> Join these sentences without . and drop the comma.
->
-> I'd say "was not saved" because at that point it occurred clearly before
-> the restore.
->
-> > by pci_save_aspm_l1ss_state() before reset. That is why
-> > pci_restore_aspm_l1ss_state() gets the parent device (PCIe bridge)'s sa=
-ved
-> > state capability data and restores L1SS with value 0.
->
-> This last sentence seems duplicated.
->
-> > So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() sav=
-e
-> > the parent's L1SS configuration, too. This is symmetric on
-> > pci_restore_aspm_l1ss_state().
-> >
-> > [1]: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6S=
-dS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
->
-> Just put this into Link tag.
->
-> > Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
->
-> Closes: ?
->
-> Fixes tag is also missing.
->
-> Add:
->
-> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
->
-> > Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> > ---
-> > v9:
-> > - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instea=
-d.
-> >
-> > v10:
-> > - Drop the v9 fix about drivers/pci/controller/vmd.c
-> > - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_stat=
-e()
-> >   and pci_restore_aspm_l1ss_state()
-> >
-> >  drivers/pci/pcie/aspm.c | 39 +++++++++++++++++++++++++++++++--------
-> >  1 file changed, 31 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> > index bd0a8a05647e..823aaf813978 100644
-> > --- a/drivers/pci/pcie/aspm.c
-> > +++ b/drivers/pci/pcie/aspm.c
-> > @@ -81,24 +81,47 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
-> >
-> >  void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> >  {
-> > -     struct pci_cap_saved_state *save_state;
-> > -     u16 l1ss =3D pdev->l1ss;
-> > +     struct pci_cap_saved_state *pl_save_state, *cl_save_state;
-> > +     struct pci_dev *parent;
-> >       u32 *cap;
-> >
-> >       /*
-> >        * Save L1 substate configuration. The ASPM L0s/L1 configuration
-> >        * in PCI_EXP_LNKCTL_ASPMC is saved by pci_save_pcie_state().
-> >        */
-> > -     if (!l1ss)
-> > +     if (!pdev->l1ss)
-> >               return;
-> >
-> > -     save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1SS);
-> > -     if (!save_state)
-> > +     cl_save_state =3D pci_find_saved_ext_cap(pdev, PCI_EXT_CAP_ID_L1S=
-S);
-> > +     if (!cl_save_state)
-> >               return;
-> >
-> > -     cap =3D &save_state->cap.data[0];
-> > -     pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL2, cap++);
-> > -     pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
-> > +     cap =3D &cl_save_state->cap.data[0];
-> > +     pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL2, cap++);
-> > +     pci_read_config_dword(pdev, pdev->l1ss + PCI_L1SS_CTL1, cap++);
-> > +
-> > +     /*
-> > +      * If here is a parent device and it has not saved state, save pa=
-rent's
-> > +      * L1 substate configuration, too. This is symmetric on
-> > +      * pci_restore_aspm_l1ss_state().
-> > +      */
-> > +     if (!pdev->bus || !pdev->bus->self)
-> > +             return;
-> > +
-> > +     parent =3D pdev->bus->self;
-> > +     if (!parent->l1ss)
-> > +             return;
-> > +
-> > +     pl_save_state =3D pci_find_saved_ext_cap(parent, PCI_EXT_CAP_ID_L=
-1SS);
-> > +     if (!pl_save_state)
-> > +             return;
-> > +
-> > +     if (parent->state_saved)
-> > +             return;
->
-> This decision can be made before even reading the pl_saved_state.
->
-> > +
-> > +     cap =3D &pl_save_state->cap.data[0];
-> > +     pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL2, cap++=
-);
-> > +     pci_read_config_dword(parent, parent->l1ss + PCI_L1SS_CTL1, cap++=
-);
->
-> This approach duplicates code and that seems unnecessary to me.
->
-> Could you instead leave the current function (nearly?) as is and use it a=
-s
-> a helper for a new pci_save_aspm_l1ss_state() which calls the helper firs=
-t
-> for the pdev and then for its parent (if needed). Or do I miss something
-> why that is not possible?
+Applied to clk-meson (clk-meson-next), thanks!
 
-I was thinking of invoking it recursively the first time. But, that
-will go to parent's parent and so on ...
-So, I flattened the code in pci_save_aspm_l1ss_state().
+[1/1] dt-bindings: clock: convert amlogic,meson8b-clkc.txt to dtschema
+      https://github.com/BayLibre/clk-meson/commit/6bac1ffa9ca4
 
-Having a helper doing what original pci_save_aspm_l1ss_state()'s work
-sounds good!
+Best regards,
+--
+Jerome
 
-Sent the v11 patch, including the modified commit message.
-
-Jian-Hong Pan
 
