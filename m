@@ -1,225 +1,164 @@
-Return-Path: <linux-kernel+bounces-344840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B13E98AED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC67D98AED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD4FF1C22AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:04:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6395283B2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6FB1A0BED;
-	Mon, 30 Sep 2024 21:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7FE1A256C;
+	Mon, 30 Sep 2024 21:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Jrj4LPkH"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmlZ/sSV"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C3F17CA1B;
-	Mon, 30 Sep 2024 21:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573C3194082;
+	Mon, 30 Sep 2024 21:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727730273; cv=none; b=jkZyFQkdTkRu5VntNNK03J9MqDsF9wqwsnwNGFxjC5P59/XMLY0tgMHW3ivbs0fcltKv69QOAEdSlJtXpdPm0Ac/D+BSSU7tbXBOVAgV+DHdtqpE1jgFWE7rmve2L42IfcImB6gIaYBMDhDeCp7QhxkUz4kRQpIYj9plw3fMtLE=
+	t=1727730298; cv=none; b=LErUWCMpjnZcUiFLQaKpAP/RTvtbpxb+PE9XUTbO5ZUC55gxJQVLaoh9LJpWbBIq3JOlwqcUjVuYcJvWLV6x7JvYJO2jlin1YiFx9mki5MrPt76x0IN51RWV7EaHXP6vcwGbSwhsKIikuD76ctsIReIQoqgNcQdOliPZ+FgLcPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727730273; c=relaxed/simple;
-	bh=s6NZsPtURPNvt13a+YAayRjW35F2DCFucwm2FL4TMAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OJloLZH7QYRdLfQCsgUe8CGDhXeVIMkNQd8r6/M8vZh4/VIEnwod1QG0kRajyQRRldiACcM7wGuGviSm4BtJ2LkLFkB8K4TGVoLhSxauApTse3ci1rA9JlZTZ3SfwFue9WfnK+uAdB/aCt1zg5cvKNpwUYQTCfy6JjrV+Qpg3p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Jrj4LPkH; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=5fx3V1fw5iBFqrziJcCAoQs3pzlQ+VIh1ghxNkzwjBs=; b=Jrj4LPkHxLPrt5f6QyIS0tlDHC
-	tRfsJiCuDFQGXISGQTBGV7Cu9TXe12xKV25U3tTzpESGLSAFKX9AVD31bx6jEa+/Cv/drTo6F8ru3
-	ibCIDYhJPOr51s/0LH6YbIVHXvJEaqZBMAxcaEYbIBSIbNcYhp6pQqD7BOBVsqTT591PYXJXhWT+M
-	YiDlyKH++AnpHhyCJO5QHkki78VqoLbc2qP1xdhPM+mHpt/j9rCaYtYS172qjAdarhRFjfgFYwwp6
-	ElqoeJWH8OQ4S+Lr5HlCS0wUAjUppJECKQdGVP/An4TFd02Cp2Z141Q3YWDjYjbktH8lRPnZpBKTA
-	yZBlAPNA==;
-Received: from i5e861925.versanet.de ([94.134.25.37] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1svNZE-0008Bk-MI; Mon, 30 Sep 2024 23:04:28 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] dt-bindings: regulator: vctrl-regulator: convert to YAML
-Date: Mon, 30 Sep 2024 23:04:24 +0200
-Message-ID: <20240930210424.1994047-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727730298; c=relaxed/simple;
+	bh=YxTZas78/NVXOmwsaCMZ22i6fm5T8b7+NoKP/9BLJdo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8rNn9c1BJGJ+0lFwd0MsyY61xF2pp0x6HV0gVc0B3LfFZ7iyPvfQBKJQsX+EHhAuY0Z+TcVj9x563ivCuBwhI0iMY081R9dB0RFbGRwLGeCktluAuxOEZMKQinRIYc+CymmKPpDBX25L5lzn57I5Z133AkrzZ4pTrPXJliu8Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmlZ/sSV; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93a1cda54dso695298466b.2;
+        Mon, 30 Sep 2024 14:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727730294; x=1728335094; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UJTX8BYXxpTUWbRF4KnmS10smbwnBFAOcVX85CE1+8k=;
+        b=TmlZ/sSVWt+CS+8/RyXMYBRcHqjwgLOyLuEwu+3rQjLRP0xofmSBiAbc4VR4dt9TQf
+         z1cG6dRSJ4fZwJrCXzkjTYSeI/zMRzKZUARkOFDrnA8aR+bM/sRLjH6sw7hwq/rqUO+U
+         lMjyoAcjWf3Qx2noNe7Rz9d2N1h0CFrivcxlTWnS5k57mfaTobPfq7kXYJK9uP/4Bv/T
+         v4c+ttfaeXFkb7iadhLrh+fHCllMJJR2ZKkOHD8pWVhgPO13QBXcyIGileZn9G2d+di7
+         r7f5gB948cRweHdhg/FLhRiaAZmY/oxqfqyMVKRfUIcelrh4NgQD6TYERLi3+xC9fQZp
+         H/sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727730294; x=1728335094;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UJTX8BYXxpTUWbRF4KnmS10smbwnBFAOcVX85CE1+8k=;
+        b=FOOw5xXKz421b9XCnfdJBun2LFDHzbfEUtp8JsqPXWuoDDtF/O3MiTC/2h93NSXFM3
+         dMTnoLANptkyEVB9LzQr90iTMlZy/LjX3q0I51wc/B7jkeHa9RFuhYlw2kF7rRrMWBu4
+         /F5GO+9lxgSpUdRGZyc/0IKdzuSeCqDcF0YprJWy/hHJPMubkiOF0XgZS7bA+l8nyveF
+         4jXQhBbTZ4pGTjw3p1RfA5gfHY2KbGDW4UNYeAVVwy/iPKNNZPNjfO5MpUoqg3XTvnwv
+         IrHUIBHlO9jkjo6bKnFjcOudnv7yn8GFvzRjno4b5MNWFGI+zlqgAsIBjwbZxpra4/9V
+         uvhA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7bvnLbYvHDE05IvGHDCQRMhbMQASoA+4D5fs8njdp/V+0snsP8avcwx2QP3wyn103j5xrljHSNG3zounyA2y6Ig==@vger.kernel.org, AJvYcCVqLNCqdkSgk8fbDKoD+reejVibFo7QSbjIZeZ7DMjv87nZ6QgLGO6tS7RyNd3FZxJ585s=@vger.kernel.org, AJvYcCXeYnM48hntmHceUiS7YiFcYTqvFpNlPql++f2KS8l04kD2avMS4k0cP6hWHhV1UxPv/G7RUd47uItpES3e@vger.kernel.org, AJvYcCXs2RQw/0ev1AjBE0emlGhx0nXDdtpKv7C+8PUWXLVS48ttru4/ZLwOQu8WakgwhWg1nbitNbHYAcmWHLEzHJXXkAaV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkC1Cfwhh0Q9mpCsndKqYaoodfe9UZAzk5nQ2DkG5fKtC1LIIV
+	wP/+2zwZodpFP6Hsbn3ebg2IrkBpFzJVWyYY4yco2UN+ZJxVnjLJ1eupqBiwqxwpDyTnWdfzfkO
+	oVEWz4MB/9knT0zf1GImr9VFNrz4=
+X-Google-Smtp-Source: AGHT+IFFnwJrCikvTvRLc8lqDTvqbg69fZuem9RLrHkDEjEy0d9sjVQtg22pvwVdaVVu6YjCj0ymK3NNOCf6UzCJ5Tw=
+X-Received: by 2002:a17:907:96a7:b0:a8a:3f78:7b7b with SMTP id
+ a640c23a62f3a-a93c4916e6cmr1200525166b.14.1727730294341; Mon, 30 Sep 2024
+ 14:04:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240927094549.3382916-1-liaochang1@huawei.com>
+In-Reply-To: <20240927094549.3382916-1-liaochang1@huawei.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 30 Sep 2024 14:04:40 -0700
+Message-ID: <CAEf4BzaWkkfxTHdkDZKZ1htCB90wM3gb1m_xrCpkZo_w_eJMUw@mail.gmail.com>
+Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better scalability
+To: Liao Chang <liaochang1@huawei.com>
+Cc: ak@linux.intel.com, mhiramat@kernel.org, oleg@redhat.com, 
+	andrii@kernel.org, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
+	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert the vctrl-regulator bindings to DT schema.
-This resolves a dtbs check warning for the rk3399-gru devices.
+On Fri, Sep 27, 2024 at 2:56=E2=80=AFAM Liao Chang <liaochang1@huawei.com> =
+wrote:
+>
+> The uprobe handler allocates xol slot from xol_area and quickly release
+> it in the single-step handler. The atomic operations on the xol bitmap
+> and slot_count lead to expensive cache line bouncing between multiple
+> CPUs. Given the xol slot is on the hot path for uprobe and kretprobe
+> handling, the profiling results on some Arm64 machine show that nearly
+> 80% of cycles are spent on this. So optimizing xol slot usage will
+> become important to scalability after the Andrii's series land.
+>
+> This patch address this scalability issues from two perspectives:
+>
+> - Allocated xol slot is now saved in the thread associated utask data.
+>   It allows to reuse it throughout the therad's lifetime. This avoid
+>   the frequent atomic operation on the slot bitmap and slot_count of
+>   xol_area data, which is the major negative impact on scalability.
+>
+> - A garbage collection routine xol_recycle_insn_slot() is introduced to
+>   reclaim unused xol slots. utask instances that own xol slot but
+>   haven't reclaimed them are linked in a linked list. When xol_area runs
+>   out of slots, the garbage collection routine travel the list to free
+>   one slot. Allocated xol slots is marked as unused in single-step
+>   handler. While the marking relies on the refcount of utask instance,
+>   due to thread can't run on multiple CPUs at same time, therefore, it
+>   is unlikely CPUs take the refcount of same utask, minimizing cache
+>   line bouncing.
+>
+>   Upon thread exit, the utask is deleted from the linked-list, and the
+>   associated xol slot will be free.
+>
+> v2->v1:
+> -------
+> As suggested by Andi Kleen [1], the updates to the garbage collection
+> list of xol slots is not a common case. This revision replaces the
+> complex lockless RCU scheme with a simple raw spinlock.
+>
+> Here's an explanation of the locking and refcount update scheme in the
+> patch:
+>
+> - area->gc_lock protects the write operations on the area->gc_list. This
+>   includes inserting slot into area->gc_list in xol_get_insn_slot() and
+>   removing slot from area->gc_list in xol_recycle_insn_slot().
+>
+> - utask->slot_ref is used to track the status of uprobe_task instance
+>   associated insn_slot. It has three values, the value of 1 means the
+>   slot is free to use or recycle. The value of 2 means the slot is in
+>   use. The value of 0 means the slot is being recycled. This design
+>   ensure that slots in use aren't recycled from GC list and that slots
+>   being recycled aren't available for uprobe use. For example,
+>   refcount_inc_not_zero() turns the value from 1 to 2 in uprobe BRK
+>   handling, Using refcount_dec() to turn it from 2 to 1 during uprobe
+>   single-step handling. Using refcount_dec_if_one() to turn the value
+>   from 1 to 0 when recycling slot from GC list.
+>
+> [1] https://lore.kernel.org/all/ZuwoUmqXrztp-Mzh@tassilo/
+>
+> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> ---
+>  include/linux/uprobes.h |   4 +
+>  kernel/events/uprobes.c | 177 ++++++++++++++++++++++++++++++----------
+>  2 files changed, 139 insertions(+), 42 deletions(-)
+>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- .../bindings/regulator/vctrl-regulator.yaml   | 80 +++++++++++++++++++
- .../devicetree/bindings/regulator/vctrl.txt   | 49 ------------
- 2 files changed, 80 insertions(+), 49 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/vctrl-regulator.yaml
- delete mode 100644 Documentation/devicetree/bindings/regulator/vctrl.txt
+Liao,
 
-diff --git a/Documentation/devicetree/bindings/regulator/vctrl-regulator.yaml b/Documentation/devicetree/bindings/regulator/vctrl-regulator.yaml
-new file mode 100644
-index 000000000000..2311f79990a1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/vctrl-regulator.yaml
-@@ -0,0 +1,80 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/regulator/vctrl-regulator.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Voltage controlled regulators
-+
-+maintainers:
-+  - Heiko Stuebner <heiko@sntech.de>
-+
-+allOf:
-+  - $ref: regulator.yaml#
-+
-+properties:
-+  compatible:
-+    const: vctrl-regulator
-+
-+  ctrl-supply:
-+    description: Regulator supplying the control voltage
-+
-+  ctrl-voltage-range:
-+    description:
-+      Array of two integer values describing the range (min/max) of the
-+      control voltage. The values specify the control voltage needed to
-+      generate the corresponding regulator-min/max-microvolt output
-+      voltage.
-+    minItems: 2
-+    maxItems: 2
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+
-+  min-slew-down-rate:
-+    description:
-+      Describes how slowly the regulator voltage will decay down in the
-+      worst case (lightest expected load). Specified in uV / us (like
-+      main regulator ramp rate). This value is required when
-+      ovp-threshold-percent is specified.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  ovp-threshold-percent:
-+    description:
-+      Overvoltage protection (OVP) threshold of the regulator in percent.
-+      Some regulators have an OVP circuitry which shuts down the regulator
-+      when the actual output voltage deviates beyond a certain margin from
-+      the expected value for a given control voltage. On larger voltage
-+      decreases this can occur undesiredly since the output voltage does
-+      not adjust immediately to changes in the control voltage. To avoid
-+      this situation the vctrl driver breaks down larger voltage decreases
-+      into multiple steps, where each step is within the OVP threshold.
-+    minimum: 0
-+    maximum: 100
-+
-+unevaluatedProperties: false
-+
-+dependencies:
-+  ovp-threshold-percent: [ min-slew-down-rate ]
-+
-+required:
-+  - compatible
-+  - ctrl-supply
-+  - ctrl-voltage-range
-+  - regulator-min-microvolt
-+  - regulator-max-microvolt
-+
-+examples:
-+  - |
-+    vctrl-reg {
-+            compatible = "vctrl-regulator";
-+            regulator-name = "vctrl_reg";
-+
-+            ctrl-supply = <&ctrl_reg>;
-+            ctrl-voltage-range = <200000 500000>;
-+
-+            min-slew-down-rate = <225>;
-+            ovp-threshold-percent = <16>;
-+
-+            regulator-min-microvolt = <800000>;
-+            regulator-max-microvolt = <1500000>;
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/regulator/vctrl.txt b/Documentation/devicetree/bindings/regulator/vctrl.txt
-deleted file mode 100644
-index e940377cfd69..000000000000
---- a/Documentation/devicetree/bindings/regulator/vctrl.txt
-+++ /dev/null
-@@ -1,49 +0,0 @@
--Bindings for Voltage controlled regulators
--==========================================
--
--Required properties:
----------------------
--- compatible		  : must be "vctrl-regulator".
--- regulator-min-microvolt : smallest voltage consumers may set
--- regulator-max-microvolt : largest voltage consumers may set
--- ctrl-supply		  : The regulator supplying the control voltage.
--- ctrl-voltage-range	  : an array of two integer values describing the range
--			    (min/max) of the control voltage. The values specify
--			    the control voltage needed to generate the corresponding
--			    regulator-min/max-microvolt output voltage.
--
--Optional properties:
----------------------
--- ovp-threshold-percent	: overvoltage protection (OVP) threshold of the
--			  regulator in percent. Some regulators have an OVP
--			  circuitry which shuts down the regulator when the
--			  actual output voltage deviates beyond a certain
--			  margin from the expected value for a given control
--			  voltage. On larger voltage decreases this can occur
--			  undesiredly since the output voltage does not adjust
--			  immediately to changes in the control voltage. To
--			  avoid this situation the vctrl driver breaks down
--			  larger voltage decreases into multiple steps, where
--			  each step is within the OVP threshold.
--- min-slew-down-rate	: Describes how slowly the regulator voltage will decay
--			  down in the worst case (lightest expected load).
--			  Specified in uV / us (like main regulator ramp rate).
--			  This value is required when ovp-threshold-percent is
--			  specified.
--
--Example:
--
--	vctrl-reg {
--		compatible = "vctrl-regulator";
--		regulator-name = "vctrl_reg";
--
--		ctrl-supply = <&ctrl_reg>;
--
--		regulator-min-microvolt = <800000>;
--		regulator-max-microvolt = <1500000>;
--
--		ctrl-voltage-range = <200000 500000>;
--
--		min-slew-down-rate = <225>;
--		ovp-threshold-percent = <16>;
--	};
--- 
-2.43.0
+Assuming your ARM64 improvements go through, would you still need
+these changes? XOL case is a slow case and if possible should be
+avoided at all costs. If all common cases for ARM64 are covered
+through instruction emulation, would we need to add all this
+complexity to optimize slow case?
 
+
+[...]
 
