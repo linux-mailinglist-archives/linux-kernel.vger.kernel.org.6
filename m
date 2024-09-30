@@ -1,209 +1,298 @@
-Return-Path: <linux-kernel+bounces-343368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6AB989A22
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:31:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDACC989A28
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764C42821C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 571541F22157
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AEB42070;
-	Mon, 30 Sep 2024 05:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FDA143748;
+	Mon, 30 Sep 2024 05:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bsdj+JrP"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2088.outbound.protection.outlook.com [40.107.22.88])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i5+pA7k5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B56416631C;
-	Mon, 30 Sep 2024 05:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727674205; cv=fail; b=Hzw7pZ13nbcwcAU+PSeB6m0hhEzgIoefctjy/0IGrt/7oGNXxTU/OJZ0LhVS6UoidInoIzPeOjjZutZQtBkK+UtNNcYHei+SID/NL+G1Sbh2B14bYDLL4MJK6nzXgz/AO8iNE5uED5WJkAkKIpX9oV+qy7Hz4KPGayZ6LHLMvAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727674205; c=relaxed/simple;
-	bh=j7fA/JC5FjzP1Y9PzRidYGYjANyLpO7yYjJ5TlKxFOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=R01J+s6Rtptm/hKNTEhJpGuNqQWn7xm7qx/P9QLYrlByYSqmctE0n8Lu751evDwlwWcQ4MNYrsmS2bwQC+VKZ7LvqdmfPkHOxKlXZ85/XbMRaiQKKMItYUdhx2SzBCkIR8XtyWbK8H+Li9cM7Y8H2GKUbzhHe9S9tGudwhTJUVk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Bsdj+JrP; arc=fail smtp.client-ip=40.107.22.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=riIETv8+dE8a7un6iin2pUIpsVvUWQaAYSUzmS3wVkMz6FLJ94BZi05cs5668NQaxEdShUj+kyp2/zBG7IIUUsF2P/VUfjyT2O7s2ZXXLJTpE98WVo2xKWu30XvoLN7NKl8BAasTSJJ4Ts17tyD9vLokC9e+qs2+FsFYcHTk5kUkk0clGc77PSrvhir5W53a0IUAn6baD/6netnt+iNLbe0fOz8RuvjDkZJQjv7xgDZg5ENQf98zgQxTguJ7QlxShXgX7AcaLBWUVEUOEB5lNXSdwTsrz2GsoEkv10xwNeZpLjRX9PTpZzxhemDnKSuam7/PUHrHLLKg3Lt+WxwmjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5RUqrTNZbKimeOVTPjdQkQNCF4ikDMS01e5WkWjIIzE=;
- b=fVh+kxUy5GgiLBHENCTp2EIoz9nyKNjsFFR85cN9RSEm1eneCG64pfKrslQbVXNQAi0h8pHvczhSh3ZLIQ3sHsL1HAvDl/sKwIewEMNdybJM9mkD5fMS3P89ugFLNt9l2sqiwgKQf1YXquDTmtwXvdQFTxqJn1cP/f/D10wnp7YSCnu7tPVxsT37OLesBNX55EKBLbtiQbNprOoSh7D3gSDkQ35IXd7uMpkJisUPzM7+JnyK0yEWUztI8o1adiW8hTHHduFCZdKAKh9dHIPYZmEUNcnAjTOtHu3+zdfMeE72JhfvSAu9uSre9Zco8bmGRw9z92f/f9qVADuWGaIdJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5RUqrTNZbKimeOVTPjdQkQNCF4ikDMS01e5WkWjIIzE=;
- b=Bsdj+JrP3dKKhogFIcXrb/EkT57qSnybNmqq7CJ1QGmgfFFVm0UgWN/7eOgq/RELuE0VVzi6apf3bS9txXxe5JH1OmWBKt0QvM4eiOLS7xE9NY9RrNDX80pkNAW/bgir20LzLVC45LpbULoeaJlKtRl9vvEpmkxPBupxUSuFEUrzKaYkdEa1UFXGFHKGhvnMPMeXbiIPxonw3EPC3U5xjDisEUkR21lsSwS49tWa1h+pQ6HqeOhNISse4rrHDUojo9gfE0HTj+0bG0TJvkNI99W3Fnow4Z/T0/JJqlTSs5OrC/KGGtUhWA4qn06i0jV/ASPZRFuX34M3/nFYQ2hH7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AS8PR04MB9141.eurprd04.prod.outlook.com (2603:10a6:20b:448::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Mon, 30 Sep
- 2024 05:30:01 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
- 05:30:01 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	quic_bjorande@quicinc.com,
-	geert+renesas@glider.be,
-	dmitry.baryshkov@linaro.org,
-	arnd@arndb.de,
-	nfraprado@collabora.com,
-	o.rempel@pengutronix.de,
-	y.moog@phytec.de
-Subject: [PATCH 8/8] arm64: defconfig: Enable ITE IT6263 driver
-Date: Mon, 30 Sep 2024 13:29:03 +0800
-Message-Id: <20240930052903.168881-9-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240930052903.168881-1-victor.liu@nxp.com>
-References: <20240930052903.168881-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR06CA0015.apcprd06.prod.outlook.com
- (2603:1096:4:186::7) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2125A26AD9;
+	Mon, 30 Sep 2024 05:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727674350; cv=none; b=RZB1dLKBYXoU5xco2INh1jVgAqM3/itrFwRx/R27O9EeYaR8EEP9DJ4dOBxugtqf3Uyiji6HWyN7NR9nu5c/SLrMXT+FB+fJHrHFPIQ17O0ITbgK999C65mhsPiDp9+EvHS1zf5cdSNvV3otjDTyJqYNgBVANqjvILOoJYvgxqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727674350; c=relaxed/simple;
+	bh=NbyetRH8oTFCzTOoilkVMc3XjJuHIU7YcPWd5k/4M5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KxHDk1MSOhRHK7hqMqOhVPP1S9w0NPArIvwV2ScVpe/anY42ve6abx19oJLp/ETWB4/iKXBeGDxXggIK9HgcZQNpCIOPbgd6vMX/2wAkYggjNWQlxF3np97ZlCZJ2wqNEKpxCfK24pYLd7b1uIT5J3G/FZeSGpjC4je7YASHiAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i5+pA7k5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U0j2Pn013972;
+	Mon, 30 Sep 2024 05:32:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=jgiOEtWWIEx5t+733crHI5
+	ePVCydglOQi6i5NFfxCyU=; b=i5+pA7k5oeXdlhUN/xBbn7OObUDZ0KuEIQgbdO
+	cA9CIRcdklV5z6tXawM7AsQqiCyGBHXO03Cklmmx0pfG25cusWeqmVBUmoT87xDR
+	QGcMJ6BnERzlkwkTNZ+TDvvJwdZ3OiuNWksr5v9CnGjBzcDop9d8mav1vVOxN1ge
+	6iCH2RAXWYbDAk1AkHl50ws+O4+URlAjMWur8J5T/4KhZlyJU2XHmNCOTyGZ9WzI
+	q+E6vkV6n3HN/l/6ukA6B4F0Nt59awzxoMX9SVHJDfaTOF57NteyO3QHRgJrr8/k
+	Iszw0sUci9MqxC+/iUD15aq5zyyIEAKt6+ITr514e6cl+Ftg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa673j60-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 05:31:59 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48U5VwMW019400
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 05:31:58 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 29 Sep 2024 22:31:52 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Srinivas
+ Kandagatla" <srinivas.kandagatla@linaro.org>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>, <linux-arm-msm@vger.kernel.org>,
+        <kernel@quicinc.com>, Rohit kumar <quic_rohkumar@quicinc.com>,
+        "Mohammad Rafi
+ Shaik" <quic_mohs@quicinc.com>
+Subject: [PATCH v1] ASoC: codecs: lpass-macro: Add support for channel map mixer control
+Date: Mon, 30 Sep 2024 11:01:11 +0530
+Message-ID: <20240930053111.3986838-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB9141:EE_
-X-MS-Office365-Filtering-Correlation-Id: cfb61ac6-a946-462e-9fc6-08dce110ee1e
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|376014|52116014|366016|1800799024|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?EJLG1dsHzCcTjaiWLrauQM8cKQGW1YMSxEAo9mVR0wD7hmAJKBrKittagn7O?=
- =?us-ascii?Q?xCILRPeZfiRvpRDTPSJ/EJJmOHOENCpdupuTLEpcfb7OsxipbsxB06SoiOXj?=
- =?us-ascii?Q?Rkartq2DClEzGesWbW6rzCd2J/tsWs62Zlxbh46Pzc+7+XEIQ/Pv+2SVJm/e?=
- =?us-ascii?Q?0wpjtv/qr3hphWpjUW/aeNcZIkvHMpTHMwyqw/m8ygW9SrN/+olXwU5pYTYg?=
- =?us-ascii?Q?C0cYmV+JlVq2bNiGgId7EALsa6Ai/LRISAFHRQQUw/AlLeZIQ2Xj1UEMmWT+?=
- =?us-ascii?Q?+mI3E0WeDLBhIhspXYhopN4qtdlovqj2KMP83QsxPWepq4K/2YSrC5/kjF35?=
- =?us-ascii?Q?LfV4JBBz4a/RO9hRH3Egxu8qL0H8pXGZncjMTrhM7Qd5XdtC2XL6/D4I03Md?=
- =?us-ascii?Q?K0Jf9uY90owksLd5DnPAodGP/rDTMdG5x/Pf4kbuVUcz4QqjSUvc6y5r2fn5?=
- =?us-ascii?Q?PIJDtllCAIp3tmrZG1fmGwRtPOUgOS0m9auRZfZn/c/EDsEezADCdGoF1/DE?=
- =?us-ascii?Q?COMGrWGI0qVnwxmYKflJGvEjYtjlNCgDeTqbEX/m2fK85AeLjPOPlp/KIB3M?=
- =?us-ascii?Q?20/RiqEuwk06LvksDcSPSeqiUZA9zN75gWFiY59EkaX0lgi0uUhUQoACjcLu?=
- =?us-ascii?Q?pqtZYk+PBQR2RKw3ZNFIkPeVARGp/ti4QZ6EY/z/Y/Xbtb6tnPH7GXWiaAle?=
- =?us-ascii?Q?nmVGZ0gMiSxjCXgNbJdjUOHcyp/9pHeLwqNGkU+Wb4BjxvNZkRT6E52/pWBP?=
- =?us-ascii?Q?ZydyNIq/OXt3PjKaCGSiQej+vl/qRoRViP1uu5wdTZ8hKBhVLfDeMueMkimY?=
- =?us-ascii?Q?6jaim5tn5hkujGYrAzepW/swkEiRswgahxvdVQtrheBPSyZi7STz77jvXyYf?=
- =?us-ascii?Q?Y0jRdceUp9pAlx9jBQcf5d0TDg2o+dtDJ42iJQtre3W4Or+mtPc40+WyuLbl?=
- =?us-ascii?Q?ING5K5iNB4+JTJDhXLaBr40zNtEzW9UpXB2FXY7rWVksVJpAzrSmOYDIfhbB?=
- =?us-ascii?Q?OSIQNxu1yl64UCIfRsBmjOz8WfOh4FCALNVTvIBtsBEDucPxzJ8BZ3u8VhlF?=
- =?us-ascii?Q?U0r3j8HmD0lMHF0/jcSIPTObLRNVIzIKskDtz0HiVKkGfhS8EwwbezbbG88j?=
- =?us-ascii?Q?M8lDQEUobyA7SveDkx7mz5+TVNiXkt1YpUFrQG9ynQDOfkoAQhsTJXN6dv3l?=
- =?us-ascii?Q?k3EyKjp1XtMC2mvWVB4EvImfAlF87FKBBD8+YkufDzjbdRS3hicftz/7964e?=
- =?us-ascii?Q?Fj4dk4xsYR16VGZ/K6I+ikLZFzjCrUGpHq6qv7rc1bZCbG+GSJDKow4FDxGD?=
- =?us-ascii?Q?N8Is/Iv4loTJxsfISUq3lO5Qhtd+XXG2sH3bfyQngJebiNE3ZPtGOm/E1IgC?=
- =?us-ascii?Q?MRAe8AgTmvCGo79LFke7b9SZK9gwf6El8QzVp59ZuPiQn8GuuA=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?LFTzD88T2Ve0/wdvT+mrDSoeA7YEO/L0SjB4o+ZriRjXD+7bmBQZbNibIPls?=
- =?us-ascii?Q?pJH1VBptYO+aUOGk8Pa3K2bKCOYZPhiL5apRJwVHgmsHV/MkWJvtLf26t5FJ?=
- =?us-ascii?Q?zjjroTCUW0prgBSAKygrZgurhbgHn6wIR821DcIIDDQZU55DsHvBUZYbW6oM?=
- =?us-ascii?Q?RLwfkfWcJZ3sj0uBnmqx1W4FLbvd1lywXhUscSy5bUqoM8KCbRbI3VMFr6VN?=
- =?us-ascii?Q?ZgExr5Zyc5jrbRtF6dAoFoNKI2KOl8M6QpZHdnqOAQ9IahoQSxw8fW2fBGmB?=
- =?us-ascii?Q?I74vWhb9z1tSsRAHCAudm1n24XtKhGE+DNaGD6L/UwQX6jmQTE+n62kMOOs0?=
- =?us-ascii?Q?paXFOVQSQIBj57Qjpns4eSZ+IbYv7V7jiPUV0ByJmo+/3HJxRrHP+JdAa9v2?=
- =?us-ascii?Q?ga0j6dv6O05BV5A/zg6yan9seEvIn7fjnNmGkK5AKD+t8pPtl/+xtm82Ebk6?=
- =?us-ascii?Q?TfBF/D70okbSpm8ZD+0W6k5SyS5H6Eq/wQuN8QDEqoEBqI2kRFG4GrX4eaSz?=
- =?us-ascii?Q?J7GRvABRWXZ9RziUzyLIf+on+ZK1nG5qh19CyWYm4ma+pNtbK9wTxIQMcys1?=
- =?us-ascii?Q?aLCGuMidzx6rXEy/VAlspJFmWSRJFgAvyNMGZddM/BJvJkfz+b9iecRrA9nL?=
- =?us-ascii?Q?5/YhBkdITz2C6X99Nt02iaMjQj2Hs3UsIUmYQNawn4QYzDa+aHDfcESCh4Y4?=
- =?us-ascii?Q?C+WguSy8OyKNJ9jvA6Wqhz+cfcThq7t9ZHG2L2UG5xlqGSCC+zeuYiK+vMgm?=
- =?us-ascii?Q?WxVSqyD6sOk6+iviW65cTbknWGOZJZUkDuUvVRuY2EOZ3X145Yd+8qrMsrvZ?=
- =?us-ascii?Q?pVsalBlAmejnJRJsQvcyMrdvZwxHDpEaKQNrNQdfLmKLDYrBnUpZO+4NXaxm?=
- =?us-ascii?Q?byha+vncCayD1I+ggiRk41QEgVcomqcHyjTSA+RWP5gprkA1+mnfgiVVLpGf?=
- =?us-ascii?Q?RMV7F3qcbDXXJ8gGS/pdVrv3gocEsHR+66x0ktklyfdQgWE9xR8c4f5kGns/?=
- =?us-ascii?Q?uvdS+1XO7NIB+ISQika2AkDMZsaG1ole1jeagvKRVa33aA/7HoWa5Mbp8IAJ?=
- =?us-ascii?Q?PLSBE8gfjzjGjL6EKucN9Qe3iLJsGKRRlCZqGxEKb1gi+DfH34GUJLIAikM4?=
- =?us-ascii?Q?5F2skaPrMFME7DF5xuwMa2ZMaCeAbD5c4vygK7c63KJb07AR0+GhPzHyYJgc?=
- =?us-ascii?Q?cFl9rHzLd5Q+0YJfSfzg304QhsRYbzZF93lAdRHCqyX91MQcvyNxtiquDS01?=
- =?us-ascii?Q?lR5IgEze9+49SXHzUiA6Jc2JN8nUpXrXCeDF4FmvHb/qyaBdMszw9CyBRKtW?=
- =?us-ascii?Q?UA00xPjAByIurWQ4BkrCqpKzO8wWFDhJc+VARXGl2IcPbLd2E0Wv8+zd01//?=
- =?us-ascii?Q?d/B5sdtC2U7eueD4bpjDnGlvjYA5V8KWSLjhkXnoLXkNQAiq/ey4s7MAmpS1?=
- =?us-ascii?Q?bbuLoS8p9cNoFmAXb4w0YFhcWQdnUOnOzOroGbnaahmAzEFaRlZjOtkwN1p0?=
- =?us-ascii?Q?w5RyX+Tk7FlImKOvz6VM2C5Uo63YP+DmjfdmIoq4NCGh/gYcHSRjsZgnYTa2?=
- =?us-ascii?Q?yLwtavfzJqSYARU6EVK3nICwaUH9ibrO8zBGFv1c?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfb61ac6-a946-462e-9fc6-08dce110ee1e
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 05:30:01.3684
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mJRNkwDKc/7zloWKwmgInf3XnzmhwVfuYcO6N5u/jWS7UGLPRMJlu5hlfOWYMxIuwOTw7ACFNxenulcecrnZGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9141
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: L6BPmGWeKMLibxdNUiIM0oI5Slm5Mksr
+X-Proofpoint-ORIG-GUID: L6BPmGWeKMLibxdNUiIM0oI5Slm5Mksr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1011 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300038
 
-ITE IT6263 LVDS to HDMI converter is populated on NXP IMX-LVDS-HDMI
-and IMX-DLVDS-HDMI adapter cards.  The adapter cards can connect to
-i.MX8MP EVK base board to support video output through HDMI connectors.
-Build the ITE IT6263 driver as a module.
+From: Rohit kumar <quic_rohkumar@quicinc.com>
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
+Add channel map mixer control for lpass macro codec DAIs.
+
+Signed-off-by: Rohit kumar <quic_rohkumar@quicinc.com>
+Co-developed-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/lpass-macro-common.c | 55 +++++++++++++++++++++++++++
+ sound/soc/codecs/lpass-macro-common.h |  2 +
+ sound/soc/codecs/lpass-rx-macro.c     | 12 ++++++
+ sound/soc/codecs/lpass-tx-macro.c     |  9 +++++
+ sound/soc/codecs/lpass-va-macro.c     |  9 +++++
+ sound/soc/codecs/lpass-wsa-macro.c    | 12 ++++++
+ 6 files changed, 99 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5fdbfea7a5b2..d8a232e285d4 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -899,6 +899,7 @@ CONFIG_DRM_PANEL_SITRONIX_ST7703=m
- CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
- CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
- CONFIG_DRM_FSL_LDB=m
-+CONFIG_DRM_ITE_IT6263=m
- CONFIG_DRM_LONTIUM_LT8912B=m
- CONFIG_DRM_LONTIUM_LT9611=m
- CONFIG_DRM_LONTIUM_LT9611UXC=m
+diff --git a/sound/soc/codecs/lpass-macro-common.c b/sound/soc/codecs/lpass-macro-common.c
+index 6e3b8d0897dd..777af4885245 100644
+--- a/sound/soc/codecs/lpass-macro-common.c
++++ b/sound/soc/codecs/lpass-macro-common.c
+@@ -8,12 +8,67 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/pm_runtime.h>
++#include <sound/control.h>
++#include <sound/pcm.h>
++#include <sound/soc.h>
+ 
+ #include "lpass-macro-common.h"
+ 
+ static DEFINE_MUTEX(lpass_codec_mutex);
+ static enum lpass_codec_version lpass_codec_version;
+ 
++static int lpass_macro_chmap_ctl_get(struct snd_kcontrol *kcontrol,
++				     struct snd_ctl_elem_value *ucontrol)
++{
++	struct snd_pcm_chmap *info = snd_kcontrol_chip(kcontrol);
++	struct snd_soc_dai *dai = info->private_data;
++	u32 *chmap_data = NULL;
++	u32 rx_ch_cnt = 0;
++	u32 tx_ch_cnt = 0;
++	u32 rx_ch, tx_ch;
++
++	chmap_data = kzalloc(sizeof(u32) * 2, GFP_KERNEL);
++	if (!chmap_data)
++		return -ENOMEM;
++
++	snd_soc_dai_get_channel_map(dai, &tx_ch_cnt, &tx_ch, &rx_ch_cnt, &rx_ch);
++	if (rx_ch_cnt) {
++		chmap_data[0] = rx_ch_cnt;
++		chmap_data[1] = rx_ch;
++	} else if (tx_ch_cnt) {
++		chmap_data[0] = tx_ch_cnt;
++		chmap_data[1] = tx_ch;
++	}
++	memcpy(ucontrol->value.bytes.data, chmap_data, sizeof(u32) * 2);
++
++	kfree(chmap_data);
++	return 0;
++}
++
++int lpass_macro_add_chmap_ctls(struct snd_soc_pcm_runtime *rtd,
++			       struct snd_soc_dai *dai, int dir)
++{
++	struct snd_pcm_chmap *info;
++	int ret;
++
++	info = kzalloc(sizeof(*info), GFP_KERNEL);
++	if (!info)
++		return -ENOMEM;
++
++	ret =  snd_pcm_add_chmap_ctls(rtd->pcm, dir, NULL,
++				      2 * sizeof(u32), 0, &info);
++	if (ret < 0) {
++		kfree(info);
++		return ret;
++	}
++
++	/* override handlers */
++	info->private_data = dai;
++	info->kctl->get = lpass_macro_chmap_ctl_get;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(lpass_macro_add_chmap_ctls);
++
+ struct lpass_macro *lpass_macro_pds_init(struct device *dev)
+ {
+ 	struct lpass_macro *l_pds;
+diff --git a/sound/soc/codecs/lpass-macro-common.h b/sound/soc/codecs/lpass-macro-common.h
+index fb4b96cb2b23..23ed6836addf 100644
+--- a/sound/soc/codecs/lpass-macro-common.h
++++ b/sound/soc/codecs/lpass-macro-common.h
+@@ -40,6 +40,8 @@ struct lpass_macro *lpass_macro_pds_init(struct device *dev);
+ void lpass_macro_pds_exit(struct lpass_macro *pds);
+ void lpass_macro_set_codec_version(enum lpass_codec_version version);
+ enum lpass_codec_version lpass_macro_get_codec_version(void);
++int lpass_macro_add_chmap_ctls(struct snd_soc_pcm_runtime *rtd,
++			       struct snd_soc_dai *dai, int dir);
+ 
+ static inline void lpass_macro_pds_exit_action(void *pds)
+ {
+diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
+index 71e0d3bffd3f..05bd0f8d126b 100644
+--- a/sound/soc/codecs/lpass-rx-macro.c
++++ b/sound/soc/codecs/lpass-rx-macro.c
+@@ -1954,10 +1954,22 @@ static int rx_macro_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+ 	return 0;
+ }
+ 
++static int rx_macro_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			    struct snd_soc_dai *dai)
++{
++	int dir = SNDRV_PCM_STREAM_PLAYBACK;
++
++	if (dai->id == RX_MACRO_AIF_ECHO)
++		dir = SNDRV_PCM_STREAM_CAPTURE;
++
++	return lpass_macro_add_chmap_ctls(rtd, dai, dir);
++}
++
+ static const struct snd_soc_dai_ops rx_macro_dai_ops = {
+ 	.hw_params = rx_macro_hw_params,
+ 	.get_channel_map = rx_macro_get_channel_map,
+ 	.mute_stream = rx_macro_digital_mute,
++	.pcm_new = rx_macro_pcm_new,
+ };
+ 
+ static struct snd_soc_dai_driver rx_macro_dai[] = {
+diff --git a/sound/soc/codecs/lpass-tx-macro.c b/sound/soc/codecs/lpass-tx-macro.c
+index a134584acf90..c7a8e2694e36 100644
+--- a/sound/soc/codecs/lpass-tx-macro.c
++++ b/sound/soc/codecs/lpass-tx-macro.c
+@@ -1211,10 +1211,19 @@ static int tx_macro_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+ 	return 0;
+ }
+ 
++static int tx_macro_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			    struct snd_soc_dai *dai)
++{
++	int dir = SNDRV_PCM_STREAM_CAPTURE;
++
++	return lpass_macro_add_chmap_ctls(rtd, dai, dir);
++}
++
+ static const struct snd_soc_dai_ops tx_macro_dai_ops = {
+ 	.hw_params = tx_macro_hw_params,
+ 	.get_channel_map = tx_macro_get_channel_map,
+ 	.mute_stream = tx_macro_digital_mute,
++	.pcm_new = tx_macro_pcm_new,
+ };
+ 
+ static struct snd_soc_dai_driver tx_macro_dai[] = {
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index c781da476240..1a13f472ed3a 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -939,10 +939,19 @@ static int va_macro_digital_mute(struct snd_soc_dai *dai, int mute, int stream)
+ 	return 0;
+ }
+ 
++static int va_macro_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			    struct snd_soc_dai *dai)
++{
++	int dir = SNDRV_PCM_STREAM_CAPTURE;
++
++	return lpass_macro_add_chmap_ctls(rtd, dai, dir);
++}
++
+ static const struct snd_soc_dai_ops va_macro_dai_ops = {
+ 	.hw_params = va_macro_hw_params,
+ 	.get_channel_map = va_macro_get_channel_map,
+ 	.mute_stream = va_macro_digital_mute,
++	.pcm_new = va_macro_pcm_new,
+ };
+ 
+ static struct snd_soc_dai_driver va_macro_dais[] = {
+diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
+index c989d82d1d3c..7c4fd4bf2668 100644
+--- a/sound/soc/codecs/lpass-wsa-macro.c
++++ b/sound/soc/codecs/lpass-wsa-macro.c
+@@ -1344,9 +1344,21 @@ static int wsa_macro_get_channel_map(const struct snd_soc_dai *dai,
+ 	return 0;
+ }
+ 
++static int wsa_macro_pcm_new(struct snd_soc_pcm_runtime *rtd,
++			     struct snd_soc_dai *dai)
++{
++	int dir = SNDRV_PCM_STREAM_PLAYBACK;
++
++	if (dai->id == WSA_MACRO_AIF_VI || dai->id == WSA_MACRO_AIF_ECHO)
++		dir = SNDRV_PCM_STREAM_CAPTURE;
++
++	return lpass_macro_add_chmap_ctls(rtd, dai, dir);
++}
++
+ static const struct snd_soc_dai_ops wsa_macro_dai_ops = {
+ 	.hw_params = wsa_macro_hw_params,
+ 	.get_channel_map = wsa_macro_get_channel_map,
++	.pcm_new = wsa_macro_pcm_new,
+ };
+ 
+ static struct snd_soc_dai_driver wsa_macro_dai[] = {
 -- 
-2.34.1
+2.25.1
 
 
