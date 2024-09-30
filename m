@@ -1,288 +1,167 @@
-Return-Path: <linux-kernel+bounces-344151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37CE98A571
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B7398A56F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3142E1F25C54
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:39:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D4E1F25C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279FA18FDDE;
-	Mon, 30 Sep 2024 13:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F7E18F2FD;
+	Mon, 30 Sep 2024 13:38:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D19Oy0ep"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V+2xNaGg"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1C518FDB4;
-	Mon, 30 Sep 2024 13:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D79F2AE8E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727703534; cv=none; b=BaBpGa7MeGa/neWWNw39DItNjCJaL1zVIbywiW800YNxYSYYdYGf5fSBhTm7LQy1UVjvkkb6jWPxBo/fuzNv+s39+fStGIK9OwuC8QEFg1/sYj+gXYxSG1yAVMQJ2HonjqRDGzZRkSHVaGxdK0kfVIiYt74DrkDIRKX6DFE5cRo=
+	t=1727703532; cv=none; b=PC769/jzz2ziE/ZeuV+xm9n3xZJ3ByyCKgU40mlgn3sO7PxANAyT8sCxzaNcCsreqsOvB7UVUazt6LDDBZmwjyNDRHc7ppB3eDvZD2QN2TT2hVhS3dDlKd756DbZLT/Jjez0/2yOODsfRh24W9wu+5VF59knnrGdJ9L7d4mXkjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727703534; c=relaxed/simple;
-	bh=B/VV63MwNx1qhR1X4eT8fuNwsJ15t+hyEuKa3vST/cY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FPoZxZBC0+oi1VQmbyMWvvxEPXhMNpxP4QzCNgRoSBLPPOE826PjPwKepjzm4ojuTdZvVCh6DZSw/9Qwg6WVwAk74pwHUsXaihLQGRdtbXkM4O0CNPfFNH94m6pHdqB1TCCrrA+m1oXWVGoRYYuhXXKtMwQSh+0gdg8rMecjdoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D19Oy0ep; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47E7EC4CECE;
-	Mon, 30 Sep 2024 13:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727703534;
-	bh=B/VV63MwNx1qhR1X4eT8fuNwsJ15t+hyEuKa3vST/cY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D19Oy0epQowzvqI1yS46db9I9eiWJCdGOieekJ58ZPOsyVU6uBcJUVz2FzfjxeeuZ
-	 FilzAXKmNtMYII33HMumRjKvAqbxyuMPbdyhSTd8E90Q4tx2u8pvuLJ73A77JJQje8
-	 +A3zsa2/xo5qgZJe/LUkae8mVJtxxTaCFCvjCRBzQO9NwGBqheVio4f0/60JeZXleC
-	 So6SvZnMWOcMK8oC05Y/a4JkQ7zdAojvDj9AAsZO8E8+qHhVtGexemv3fBmt23cFGl
-	 taqRwz4KEMmMKh3xTKdt9UGqKvOva9/mtPWwD16t0AVp+X2ReEdzP3KA8aBaJH4qgo
-	 FeOBnsCm4b48w==
-From: Conor Dooley <conor@kernel.org>
-To: linux-i2c@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wolfram Sang <wsa@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] i2c: microchip-core: actually use repeated sends
-Date: Mon, 30 Sep 2024 14:38:27 +0100
-Message-ID: <20240930-uneasy-dorsal-1acda9227b0d@spud>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1727703532; c=relaxed/simple;
+	bh=TZ7/jgwcXpRcsdAwMW9ewmGuXzJP8KTXecY527RD8Bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EIG3eMCYb+O7nT7OrSuxVVjNCgReQF8/Cn13YtXwjdlHRfrQsFJ0EBUYBd7DTl3hml37q3PnZGVwtfzm5fn3QDaBUkO9GqmNBLHLkOPJIRlSEy4KwCNO9/kTO7U5N4dK2ilE6Y3Xh7cGq0qgzIkm9J7DHgbyTGHmO/f978KMJBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V+2xNaGg; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8d4979b843so641263666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:38:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727703529; x=1728308329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0MPniYXfYKgln6nb/HfyU4HnTcRjrBrRpvvr6Y9lixw=;
+        b=V+2xNaGgmc7t/h/wexhHBDapiVM4unU1UVLSZE8Y+kuKpZxqHs5oDy2HsVvB8guESw
+         HBLHbBoWW3QeZ9IKuhNn48PDT4kLceOHJBhAhqrOkhUJnlIXKpngEvijxVgxm+9Rdoo6
+         mTXrBF0x1Ib4UftCIKcmuGSMbbjaB3x+WUguXDl7Ibi/v/4skBXMyV3Mkx0O3GaDa7MR
+         4JbXYcI2E92IOuc1Ve92AFW+Gu6PXtG7KHCdcn9dYM00s/uf3kkxqxFgR1oSMA3UprHj
+         jomKFGOTxE5VRCcBS5x1bEO7gp2tFPqldoXr+sJZ4RTUD9BWTJXiP2cmXRprAkg20acv
+         BpDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727703529; x=1728308329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0MPniYXfYKgln6nb/HfyU4HnTcRjrBrRpvvr6Y9lixw=;
+        b=XRb+mv2iBM9/8UuU3zZUhzQ5mGwesT62vBoQ7I0Q2oJ4xMdeT9RBInyGhRWF0yIoU2
+         9Dpj5RfjIbBL62YkHp+0O0s+bOpGEydn6tkpgMiMCSaXMPaTerov463cB7qgg9Eco6BQ
+         kYn2Q75kg4JJ6KXdjfoc5O+4Op9GL1ugapuGqRwyIWfnUtHJjFjA0OI4fQZLRSgJBvWy
+         DcCbgG8kjsyUDlqHDrmNq0QnXb9nACUpUnYxzTqjBUHf217ET3RwuIC3rdo5v55DrUZX
+         qPBR8hCUm45nANxf9JgEt+h8qm6/BhArB0lmRUxidhbrVy7FBh+q6k9Mm+XGTTgoOm/2
+         rX+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5WYaYNZ8nNA5uZjM/4eKSZhH6u+VEZCd8n72K3rkV1zZABj0AM9h+b15LLbEHJYqSp69q5wvCX6g9MPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdMn28yZU/xM9R2euzKXGCfmqKmQgRFR4frVUxCYPH4ov5ovUt
+	ufuTj34zsDYg2JpwjmKHDRSFxFI40CTJcddO3uLGgz36B6kHb1KnVQtEpM+Lv5WdIzGK7jncTY9
+	V
+X-Google-Smtp-Source: AGHT+IEkiG8JoBQ2q71WF4hYUTEomiQ1lmEgIlsCWFA6CXH1JGsqBPW61T/bXlNinIrB1ExJnC2LkQ==
+X-Received: by 2002:a17:907:9445:b0:a86:9d39:a2a with SMTP id a640c23a62f3a-a93c48f61c0mr1488055166b.8.1727703528590;
+        Mon, 30 Sep 2024 06:38:48 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299af9esm531203866b.216.2024.09.30.06.38.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 06:38:48 -0700 (PDT)
+Date: Mon, 30 Sep 2024 15:38:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>, surenb@google.com,
+	kernel-team@android.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] printk: Improve memory usage logging during boot
+Message-ID: <Zvqp5jNa7XCRfSu9@pathway.suse.cz>
+References: <20240926011203.1472798-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6485; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=QA08FTIV1GTEkwQtjktl709XqeTd7VgIcDB7m2evfOI=; b=kA0DAAgWeLQxh6CCYtIByyZiAGb6qdKj8OVYwTMi2GiRDPV5xfeiplIOanrok0j+sCJEIflJp Yh1BAAWCAAdFiEEYduOhBqv/ES4Q4zteLQxh6CCYtIFAmb6qdIACgkQeLQxh6CCYtIpgQEA/Cwr aP+0h61J4vCrQmBJT5AlI3KcG2su9WiQ2rR5QuEBAIov/ive9dDSq3/lZykZwC+Y23wszVayUhH gKUSlSFMK
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240926011203.1472798-1-isaacmanjarres@google.com>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed 2024-09-25 18:12:01, Isaac J. Manjarres wrote:
+> When the initial printk ring buffer size is updated, setup_log_buf()
+> allocates a new ring buffer, as well as a set of meta-data structures
+> for the new ring buffer. The function also emits the new size of the
+> ring buffer, but not the size of the meta-data structures.
+> 
+> This makes it difficult to assess how changing the log buffer size
+> impacts memory usage during boot.
+> 
+> For instance, increasing the ring buffer size from 512 KB to 1 MB
+> through the command line yields an increase of 2304 KB in reserved
+> memory at boot, while the only obvious change is the 512 KB
+> difference in the ring buffer sizes:
 
-At present, where repeated sends are intended to be used, the
-i2c-microchip-core driver sends a stop followed by a start. Lots of i2c
-devices must not malfunction in the face of this behaviour, because the
-driver has operated like this for years! Try to keep track of whether or
-not a repeated send is required, and suppress sending a stop in these
-cases.
+Good point.
 
-Fixes: 64a6f1c4987e ("i2c: add support for microchip fpga i2c controllers")
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Andi Shyti <andi.shyti@kernel.org>
-CC: Wolfram Sang <wsa@kernel.org>
-CC: linux-riscv@lists.infradead.org
-CC: linux-i2c@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- drivers/i2c/busses/i2c-microchip-corei2c.c | 124 ++++++++++++++++-----
- 1 file changed, 96 insertions(+), 28 deletions(-)
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -1156,6 +1156,17 @@ static unsigned int __init add_to_rb(struct printk_ringbuffer *rb,
+>  
+>  static char setup_text_buf[PRINTKRB_RECORD_MAX] __initdata;
+>  
+> +static void print_log_buf_usage_stats(void)
+> +{
+> +	unsigned int descs_count = log_buf_len >> PRB_AVGBITS;
+> +	size_t descs_size = descs_count * sizeof(struct prb_desc);
+> +	size_t infos_size = descs_count * sizeof(struct printk_info);
+> +
+> +	pr_info("log_buf_len: %u bytes\n", log_buf_len);
+> +	pr_info("prb_descs size: %zu bytes\n", descs_size);
+> +	pr_info("printk_infos size: %zu bytes\n", infos_size);
+> +}
 
-diff --git a/drivers/i2c/busses/i2c-microchip-corei2c.c b/drivers/i2c/busses/i2c-microchip-corei2c.c
-index 0b0a1c4d17cae..332dd14483c05 100644
---- a/drivers/i2c/busses/i2c-microchip-corei2c.c
-+++ b/drivers/i2c/busses/i2c-microchip-corei2c.c
-@@ -93,27 +93,35 @@
-  * @base:		pointer to register struct
-  * @dev:		device reference
-  * @i2c_clk:		clock reference for i2c input clock
-+ * @msg_queue:		pointer to the messages requiring sending
-  * @buf:		pointer to msg buffer for easier use
-  * @msg_complete:	xfer completion object
-  * @adapter:		core i2c abstraction
-  * @msg_err:		error code for completed message
-  * @bus_clk_rate:	current i2c bus clock rate
-  * @isr_status:		cached copy of local ISR status
-+ * @total_num:		total number of messages to be sent/received
-+ * @current_num:	index of the current message being sent/received
-  * @msg_len:		number of bytes transferred in msg
-  * @addr:		address of the current slave
-+ * @restart_needed:	whether or not a repeated start is required after current message
-  */
- struct mchp_corei2c_dev {
- 	void __iomem *base;
- 	struct device *dev;
- 	struct clk *i2c_clk;
-+	struct i2c_msg *msg_queue;
- 	u8 *buf;
- 	struct completion msg_complete;
- 	struct i2c_adapter adapter;
- 	int msg_err;
-+	int total_num;
-+	int current_num;
- 	u32 bus_clk_rate;
- 	u32 isr_status;
- 	u16 msg_len;
- 	u8 addr;
-+	bool restart_needed;
- };
- 
- static void mchp_corei2c_core_disable(struct mchp_corei2c_dev *idev)
-@@ -222,6 +230,47 @@ static int mchp_corei2c_fill_tx(struct mchp_corei2c_dev *idev)
- 	return 0;
- }
- 
-+static void mchp_corei2c_next_msg(struct mchp_corei2c_dev *idev)
-+{
-+	struct i2c_msg *this_msg;
-+	u8 ctrl;
-+
-+	if (idev->current_num >= idev->total_num) {
-+		complete(&idev->msg_complete);
-+		return;
-+	}
-+
-+	/*
-+	 * If there's been an error, the isr needs to return control
-+	 * to the "main" part of the driver, so as not to keep sending
-+	 * messages once it completes and clears the SI bit.
-+	 */
-+	if (idev->msg_err) {
-+		complete(&idev->msg_complete);
-+		return;
-+	}
-+
-+	this_msg = (idev->msg_queue)++;
-+
-+	if (idev->current_num < (idev->total_num - 1)) {
-+		struct i2c_msg *next_msg = idev->msg_queue;
-+
-+		idev->restart_needed = next_msg->flags & I2C_M_RD;
-+	} else {
-+		idev->restart_needed = false;
-+	}
-+
-+	idev->addr = i2c_8bit_addr_from_msg(this_msg);
-+	idev->msg_len = this_msg->len;
-+	idev->buf = this_msg->buf;
-+
-+	ctrl = readb(idev->base + CORE_I2C_CTRL);
-+	ctrl |= CTRL_STA;
-+	writeb(ctrl, idev->base + CORE_I2C_CTRL);
-+
-+	idev->current_num++;
-+}
-+
- static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *idev)
- {
- 	u32 status = idev->isr_status;
-@@ -247,10 +296,14 @@ static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *idev)
- 		break;
- 	case STATUS_M_SLAW_ACK:
- 	case STATUS_M_TX_DATA_ACK:
--		if (idev->msg_len > 0)
-+		if (idev->msg_len > 0) {
- 			mchp_corei2c_fill_tx(idev);
--		else
--			last_byte = true;
-+		} else {
-+			if (idev->restart_needed)
-+				finished = true;
-+			else
-+				last_byte = true;
-+		}
- 		break;
- 	case STATUS_M_TX_DATA_NACK:
- 	case STATUS_M_SLAR_NACK:
-@@ -287,7 +340,7 @@ static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *idev)
- 		mchp_corei2c_stop(idev);
- 
- 	if (last_byte || finished)
--		complete(&idev->msg_complete);
-+		mchp_corei2c_next_msg(idev);
- 
- 	return IRQ_HANDLED;
- }
-@@ -311,21 +364,48 @@ static irqreturn_t mchp_corei2c_isr(int irq, void *_dev)
- 	return ret;
- }
- 
--static int mchp_corei2c_xfer_msg(struct mchp_corei2c_dev *idev,
--				 struct i2c_msg *msg)
-+static int mchp_corei2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
-+			     int num)
- {
--	u8 ctrl;
-+	struct mchp_corei2c_dev *idev = i2c_get_adapdata(adap);
-+	struct i2c_msg *this_msg = msgs;
- 	unsigned long time_left;
--
--	idev->addr = i2c_8bit_addr_from_msg(msg);
--	idev->msg_len = msg->len;
--	idev->buf = msg->buf;
--	idev->msg_err = 0;
--
--	reinit_completion(&idev->msg_complete);
-+	u8 ctrl;
- 
- 	mchp_corei2c_core_enable(idev);
- 
-+	/*
-+	 * The isr controls the flow of a transfer, this info needs to be saved
-+	 * to a location that it can access the queue information from.
-+	 */
-+	idev->restart_needed = false;
-+	idev->msg_queue = msgs;
-+	idev->total_num = num;
-+	idev->current_num = 0;
-+
-+	/*
-+	 * But the first entry to the isr is triggered by the start in this
-+	 * function, so the first message needs to be "dequeued".
-+	 */
-+	idev->addr = i2c_8bit_addr_from_msg(this_msg);
-+	idev->msg_len = this_msg->len;
-+	idev->buf = this_msg->buf;
-+	idev->msg_err = 0;
-+
-+	if (idev->total_num > 1) {
-+		struct i2c_msg *next_msg = msgs + 1;
-+
-+		idev->restart_needed = next_msg->flags & I2C_M_RD;
-+	}
-+
-+	idev->current_num++;
-+	idev->msg_queue++;
-+
-+	reinit_completion(&idev->msg_complete);
-+
-+	/*
-+	 * Send the first start to pass control to the isr
-+	 */
- 	ctrl = readb(idev->base + CORE_I2C_CTRL);
- 	ctrl |= CTRL_STA;
- 	writeb(ctrl, idev->base + CORE_I2C_CTRL);
-@@ -335,20 +415,8 @@ static int mchp_corei2c_xfer_msg(struct mchp_corei2c_dev *idev,
- 	if (!time_left)
- 		return -ETIMEDOUT;
- 
--	return idev->msg_err;
--}
--
--static int mchp_corei2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
--			     int num)
--{
--	struct mchp_corei2c_dev *idev = i2c_get_adapdata(adap);
--	int i, ret;
--
--	for (i = 0; i < num; i++) {
--		ret = mchp_corei2c_xfer_msg(idev, msgs++);
--		if (ret)
--			return ret;
--	}
-+	if (idev->msg_err)
-+		return idev->msg_err;
- 
- 	return num;
- }
--- 
-2.45.2
+I would make the information more user friendly. Also a single line
+might be enough. Something like:
 
+static void print_log_buf_usage_stats(void)
+{
+	unsigned int descs_count = log_buf_len >> PRB_AVGBITS;
+	size_t meta_data_size;
+
+	meta_data_size = descs_count *
+		(sizeof(struct prb_desc) + sizeof(struct printk_info));
+
+	pr_info("log buffer data + meta data: %u + %zu = %zu bytes\n",
+		log_buf_len, meta_data_size, log_buf_len + meta_data_size);
+}
+
+> +
+>  void __init setup_log_buf(int early)
+>  {
+>  	struct printk_info *new_infos;
+> @@ -1186,19 +1197,19 @@ void __init setup_log_buf(int early)
+>  		log_buf_add_cpu();
+>  
+>  	if (!new_log_buf_len)
+> -		return;
+> +		goto out;
+
+The same information is printed twice when the default buffer is used.
+We should do something like:
+
+	if (!new_log_buf_len) {
+		if (early)
+			goto out;
+		return;
+	}
+
+>  	new_descs_count = new_log_buf_len >> PRB_AVGBITS;
+>  	if (new_descs_count == 0) {
+>  		pr_err("new_log_buf_len: %lu too small\n", new_log_buf_len);
+> -		return;
+> +		goto out;
+>  	}
+>  
+
+Best Regards,
+Petr
 
