@@ -1,73 +1,50 @@
-Return-Path: <linux-kernel+bounces-343347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127509899ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:55:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A1B9899EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15911F217E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2661F21A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D400D12EBEA;
-	Mon, 30 Sep 2024 04:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EDB13B59B;
+	Mon, 30 Sep 2024 05:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FT9CL003"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UEIXulHc"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 252B71362
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58212AF16
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727672153; cv=none; b=D6WpeVGw2cV65u5MKcRxMESEzuiVrs9yH0C4GF3WEJemeSSMKxj1mAifnGMowUd6YpSaN1snf65SP0KO8FE9PC+HWxgAqYJdb+dgx9N/vwsLjqZlRYmT1v1Lz+HrLr2uRU18EL6WT5SXkv9YZ2QBPmKzDwdNBWyNw7eThk/OeZM=
+	t=1727672403; cv=none; b=gBJXOISJo/nZc/2ft3+N7OD+w6//5nDuJlKieYGnIZPM4BWTc0XUQASrdwTp1WFN1b5vOym+CRigW0z3e1wmXIQB511RskOv4IKtSnDLchcdB7+R7IjSMx4rAQ9r6VF44JLGYeVwZcxTCTDdtXJt/eYclJHzVUEcwTeBXtTf92I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727672153; c=relaxed/simple;
-	bh=Q55zwcK9NHHveRM5fKdkKDh6Ss/hCJR9Dsw/ROEkuZc=;
+	s=arc-20240116; t=1727672403; c=relaxed/simple;
+	bh=Xg+5OUHzvGJDGnwi7oSEVY3RnFR9MPU+iYKPO4MFJDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IdKjvzVq0ITZFBhE36YwAZFUHHLMYYsflbXOb10utq6q5jqx0M450ZngEiRYgb6tngdfU8TaH/shjZ2Aryb0aMlwLOwHyHpo0V5blSSu01sCPoKd1j9vzlp1uY+zrzY7YGiBF9rWZNMnCblOFj8N73a7nTlrB/YuTl57CdoSCiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FT9CL003; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727672150; x=1759208150;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Q55zwcK9NHHveRM5fKdkKDh6Ss/hCJR9Dsw/ROEkuZc=;
-  b=FT9CL0039/95fvrvEU2c2ZrMaTda6uOgKXJ/rgGy9P6pO5314oUoOYrq
-   6mc29PuaY47Zhekig4mOeRPjC9upnv9TmeyJi7YFr6CYZIsi3rURoXowK
-   iV6ORhkYzdpAl1W/o42Oe/tIv5ujrqJWgAmF4nCN9TB16JXElIeY7bbOY
-   p28onSdpeidADW2UPy+5ELwG0ypJeadNjKgOQbs/HtEdtRGJQgSL1Lupd
-   2EG8FWjHQXr4E4+SGENiWVKjvrSnFF1Zd4lspo5w7PBfwG6JEQIMhU8Pl
-   9I6MWTOTkPi1Q1z1MN+4AMSnOgDbFCnzKcP/pCWu89XiEowvBWieFkQ69
-   Q==;
-X-CSE-ConnectionGUID: r6LAD4+/TEaIU2cGv1vRdQ==
-X-CSE-MsgGUID: seNE6+6KQ9u1GzNm29xkOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="37304119"
-X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="37304119"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 21:55:49 -0700
-X-CSE-ConnectionGUID: Pt5FmVBVRcilAKBRB6MS5w==
-X-CSE-MsgGUID: jxF4VoX4Teusqr4NXPXcHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="73449632"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 29 Sep 2024 21:55:48 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sv8Rm-000P3T-06;
-	Mon, 30 Sep 2024 04:55:46 +0000
-Date: Mon, 30 Sep 2024 12:55:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Johannes Berg <johannes.berg@intel.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: llvm-objcopy: error: Link field value 78 in section .rel.plt is not
- a symbol table
-Message-ID: <202409301246.IGnVGOfv-lkp@intel.com>
+	 Content-Disposition; b=nGw4rb3pKbno94yYnf+yO5zTlHOGtR1lQniPKtFxo78VlpRQXsw/MRMf3lgb0hVi3ko3BNzUSG0mhkMZlRtibLlmU8yRjtm4SkzCB+nXt/PVsmJXlHb1kCzK3UuTxLfPMeKkBB71kPIoB8NJ0vU4gX/L5+xuOo0JYLnnKFpRRhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UEIXulHc; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 30 Sep 2024 00:59:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727672396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=3BLemO7sS3aMVH4+gPXT9eyXDJ6Xvmp5pzb1asfWkyU=;
+	b=UEIXulHcVTXIG2iS/5kLRSzxDLQh+HMO1u6bMDpiCGKBAzSw/A3fshaihhoN5+PMDbM+u+
+	yIpPk9zW+kq6UCoUoOpoY+duVkYoE5KQb4QqgAG/Ase5/8lEHZRzF3dPJFF5kOk4Kk6Gm1
+	u9NZFoHqZ2Ysp6tMDxl65E2oCi4NoAU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs big endian fixup
+Message-ID: <afdmrsibtwc655t55tnlysfbetlb57nrdmk3k2ke6o6aebssqh@3g3mhqsvaswx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,30 +53,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9852d85ec9d492ebef56dc5f229416c925758edc
-commit: 8c6174503c7b7134c22072b45f92724c8a959f06 um: hostfs: define our own API boundary
-date:   1 year, 5 months ago
-config: um-randconfig-001-20240929 (https://download.01.org/0day-ci/archive/20240930/202409301246.IGnVGOfv-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240930/202409301246.IGnVGOfv-lkp@intel.com/reproduce)
+This fixes the build on big endian
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409301246.IGnVGOfv-lkp@intel.com/
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-All errors (new ones prefixed by >>):
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-   /usr/bin/ld: warning: .tmp_vmlinux.btf has a LOAD segment with RWX permissions
->> llvm-objcopy: error: Link field value 78 in section .rel.plt is not a symbol table
-   btf_encoder__write_elf: failed to add .BTF section to '.tmp_vmlinux.btf': 2!
-   Failed to encode BTF
-   .btf.vmlinux.bin.o: file not recognized: file format not recognized
-   clang: error: linker command failed with exit code 1 (use -v to see invocation)
+are available in the Git repository at:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-30
+
+for you to fetch changes up to 2007d28ec0095c6db0a24fd8bb8fe280c65446cd:
+
+  bcachefs: rename version -> bversion for big endian builds (2024-09-29 23:55:52 -0400)
+
+----------------------------------------------------------------
+bcachefs fixes for 6.12-rc2
+
+Fix build on big endian.
+
+----------------------------------------------------------------
+Guenter Roeck (1):
+      bcachefs: rename version -> bversion for big endian builds
+
+ fs/bcachefs/bcachefs_format.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
