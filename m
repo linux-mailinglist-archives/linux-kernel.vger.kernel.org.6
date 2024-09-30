@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE8A98A1C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7EE98A1C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F64285851
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158EB1C2106E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D40819FA9F;
-	Mon, 30 Sep 2024 12:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681881A01A6;
+	Mon, 30 Sep 2024 12:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ddnBEYSY"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZCD5B08q"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B4619F478
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2473D19FA6B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697919; cv=none; b=bJxB/TSbdkw9qMmYabojW2AuxHaq1EsUp00S3IZm/jN8Ka1liFvtlWz0JydcjTypXNZJc/HTvVbCPpMZTdGgqzIIDvzG829oBCa/+N/be38WvKqFqfxzGseLbHqBD4T2MVucKaFRUSr6TsT8VUgqEtHFi3k2AB2FIlh1k3nJIYU=
+	t=1727697920; cv=none; b=GsSLYU8TexPaZVd+K7KhU2/WCIKHxZxZ3tIpiEgcc88HlmlwCGRavSX35/XWH8NXJ6xr7NqkGw6UTnriee8r5uimsod8K7WBnaSR7kck6w/tOd+tWRChXACDtBS+3mQItdz8mGzRbbW2GTY/TMKQCBDmpBKP3Xs9IN8MHJgsSIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697919; c=relaxed/simple;
-	bh=seoZG/qn3lQcbBj3ynNAVC3sP37LRPVbxYubokeh8WE=;
+	s=arc-20240116; t=1727697920; c=relaxed/simple;
+	bh=aBtuDT9YPo78PM4HWkajYyL24yWOJ9YEO0Dm4FdZ3Rg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MArP2BSCtlrP5NyXUUVp+6tJXwiN6130c8JYr5UlobsIPmTh2CeRx4Gtg1cRKE9MUwPFmdEKYeM/MZsVd9+1lWYwhLc8FootkmLOxg3pOKv6MiCfsLiAM1qqj0mIAN6Rhaf9KdaLe113MVMBaOs5MehU5G6DQChqr/sImrUD2GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ddnBEYSY; arc=none smtp.client-ip=209.85.210.54
+	 In-Reply-To:To:Cc; b=XsOUiWwoJMHHN7UBgNR90uFBw1cGqA1XPtjeTmVHn1ye3LQxEhWOdvYdGrVQkrRPdKJ2fgxX/Zx6Hs00fa4t/Z09XexznLt5dhn2/865Q+IvmObugemvU586ZSjdYcG4N0/7wAxZIko7MqcXe0WeAvzxbkCYRdPBTPco2DQw708=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZCD5B08q; arc=none smtp.client-ip=209.85.219.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-71116d8504bso2652397a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:05:17 -0700 (PDT)
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cb2c5128d5so31327076d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:05:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697917; x=1728302717; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697918; x=1728302718; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VS7D6fkzy/mB93t3oLBUPb5JuZ0mJyEpuRoOfQlLof8=;
-        b=ddnBEYSYm6sHMJ5ysJVhgEqK5j1hVnIKj2EOGuUj0jLTrmWVlmPFwF5OJQD0guWAyl
-         JOonTZi5w826g3PDijE0KCPI79qFneXzA37KyDIV+6OvtrsqD2/gYSIO+/2xLozGi7Ge
-         PclVryg7W2OTDDjO1ij9uQw0LThRtY0CQIFzU=
+        bh=HJx29BD9yZboyGEAUyw+4rBBbXZtXq331Q8okj0vBtk=;
+        b=ZCD5B08qgC087lPHrULv0sb4AT/R4EQtvNOnHcoYz2UdSrpU6sdz/c++EQb6VSh0ge
+         5wRsZgjaKFSO5knR3DStPQjQBf2j3JCnUxBcFllImVCnX+Zyxn6Ym7wZDYEEq0406OYI
+         bYQvfawfrF8075UiuSnyFIkObLzHpJD4lq0zA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697917; x=1728302717;
+        d=1e100.net; s=20230601; t=1727697918; x=1728302718;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VS7D6fkzy/mB93t3oLBUPb5JuZ0mJyEpuRoOfQlLof8=;
-        b=OgHyulrIEbkuR98AznK5icrHt0s59ccCdG6ujXUVxaTSFRDuH3fuA751tEBKWVfpGJ
-         jVhKhpVnSPi2ff3eW5FSL8IjMwYh/FKb0dfoI98j2IghB0vGhUZHoZ1PEfbamoSkMnVR
-         +2vzaeIj8ZLgmlTGfROUhTqgEo3tT4aOBjLv1pbkJ3vV1c/0jzqYecvUw+ItdhUAI5lN
-         UdYu10ZuYGai2JmkkEtiZ5zQ6ahL3IXlom5BxAo+B+VA2uwwVfylrs6KOdOHn/nZO4mc
-         TukxkvUedCBh+KCxKZOdd7US8csnBlrDi3yAvQURlJ4vZJCe2WOqcyh66Z1KFrJbxIJv
-         uJcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5gkG2eEpp2pT/PD4Nuhw4GObHxdFKMuTgNjWQuwV/j2AfiAO+Az41hDQ6WpM9UesWJrzhvDCStT5EP8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA4+TfyBQuCVLPWZ3FMXxVsDEI58xgmi/9wZCAYE9PTw9EDA5e
-	bpPesSWMDnYOhPWm0juXWK4RVLcoc6YoiDhm5joG2Rcblxc17FZyIUE6i5Pw2Q==
-X-Google-Smtp-Source: AGHT+IEsGDncZXqIOKaIooO2hw5tICb0OJqubpFFkQiHlkBn39PImu6hgDgqbreQ/CasmuZpa2D32A==
-X-Received: by 2002:a05:6358:5288:b0:1ba:580e:dea2 with SMTP id e5c5f4694b2df-1becbc86414mr292235955d.17.1727697917163;
-        Mon, 30 Sep 2024 05:05:17 -0700 (PDT)
+        bh=HJx29BD9yZboyGEAUyw+4rBBbXZtXq331Q8okj0vBtk=;
+        b=Kl3KOTnQaE7hhIVMd5Cy8E4049UZ+J4Zp+B7RCOtnVLM8pKE7kAEUBv4diiJf15leh
+         Bp4aJQJ6fmd7HhV23jl0fgr85uAusqgXZcTNA4VaNvSIwtKGRa6NzhganSulqJ1XkqI8
+         zttjJZpcCYjYcQ1drvwRvlq+6gdKfDRvoKA27xuMEgxD/07A/XvpNseNPnU0e5QWMd5u
+         pdnpNjMqPqBAu5NvIhsdz15GhZAMYfUC8ZnbjYThOo164ZsSyTBbawqcrOqtwgIqzy9z
+         Ur+/7GYhjfocxsKx6bce/AzZlexXJm3SrsCsbe1AlWl2VuIE+LhPZ7Ad8VqqcZ/wotWo
+         5kcA==
+X-Forwarded-Encrypted: i=1; AJvYcCV++7v7TI6QghBZJxc+bk6KlD3Cu35BfDKfySCX+Kyy+wxO+068WalKZifCFxT0xSFK+fsXI4ax6Ca9Y1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0360G+uL1NB+azGtZEIjAht6ZQULnYSgyoro7yoncUkjeAHYD
+	3azJQOk4bRP9gG2QXGZZzmqmNi8by2Xcupm0SFtgwZfEGYr/rCtCQVojK34z+Q==
+X-Google-Smtp-Source: AGHT+IHvBkaWPQbVKiD/u2iOrMRkK3daurGtkkhjknrAX1KIWB3cA5A9a8FHevVPAdBTGyigNIjY6g==
+X-Received: by 2002:a05:6214:3a88:b0:6cb:2e94:3e24 with SMTP id 6a1803df08f44-6cb3b5b7edcmr189314226d6.11.1727697918247;
+        Mon, 30 Sep 2024 05:05:18 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.05.15
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.05.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:05:16 -0700 (PDT)
+        Mon, 30 Sep 2024 05:05:17 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:32 +0000
-Subject: [PATCH 37/45] media: i2c: msp3400: Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:33 +0000
+Subject: [PATCH 38/45] media: i2c: max9286: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-37-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-38-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -114,29 +114,27 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
 X-Mailer: b4 0.13.0
 
 The following cocci warnings are fixed:
-drivers/media/i2c/msp3400-driver.c:341:4-21: opportunity for str_on_off(state -> muted -> val)
-drivers/media/i2c/msp3400-driver.c:342:4-27: opportunity for str_yes_no(state -> scan_in_progress)
+drivers/media/i2c/max9286.c:1333:3-9: opportunity for str_on_off(enable)
+drivers/media/i2c/saa7115.c:1366:3-9: opportunity for str_enable_disable(enable)
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/i2c/msp3400-driver.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/i2c/max9286.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/msp3400-driver.c b/drivers/media/i2c/msp3400-driver.c
-index 4c0b0ad68c08..c7807b17add9 100644
---- a/drivers/media/i2c/msp3400-driver.c
-+++ b/drivers/media/i2c/msp3400-driver.c
-@@ -338,8 +338,8 @@ static int msp_s_ctrl(struct v4l2_ctrl *ctrl)
- 			val = (val * 0x7f / 65535) << 8;
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index 9fc4e130a273..d0f542343344 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -1330,7 +1330,7 @@ static int max9286_poc_enable(struct max9286_priv *priv, bool enable)
  
- 		dev_dbg_lvl(&client->dev, 1, msp_debug, "mute=%s scanning=%s volume=%d\n",
--				state->muted->val ? "on" : "off",
--				state->scan_in_progress ? "yes" : "no",
-+				str_on_off(state->muted->val),
-+				str_yes_no(state->scan_in_progress),
- 				state->volume->val);
+ 	if (ret < 0)
+ 		dev_err(&priv->client->dev, "Unable to turn power %s\n",
+-			enable ? "on" : "off");
++			str_on_off(enable));
  
- 		msp_write_dsp(client, 0x0000, val);
+ 	return ret;
+ }
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
