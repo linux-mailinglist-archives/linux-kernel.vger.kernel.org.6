@@ -1,108 +1,206 @@
-Return-Path: <linux-kernel+bounces-344186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0F498A610
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76CC798A621
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D5E61C22280
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B4FB23803
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9982191F74;
-	Mon, 30 Sep 2024 13:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ED8193074;
+	Mon, 30 Sep 2024 13:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4oCRo+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJ8ZdTN7"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672E1917DE;
-	Mon, 30 Sep 2024 13:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CA5191F75;
+	Mon, 30 Sep 2024 13:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704368; cv=none; b=KMkmCx7I/yzTHM2XIDuoCCDNWCofAmFZwYE1F/+KNm/5SXlKk9QHAgvrjGHTP3RJXe16ul43ll6v0ZV7bWsx5W2eD0T4ihZedBgfIMVtDtWWo8LrGwdCI6xPLiJWIlqBjkBQY58cK0r+CzJ2wFOUdL0V8Hs1zi98YITdc1fJIq0=
+	t=1727704375; cv=none; b=SMfZo8kT2wT/Z7MrgxQi2X3Cp5ai8oMBC7rdn4qZvhzvOfhaV/GMGS7EkC9DpM4wNN0zh290ZwnADdGTSN2jZRbvGXuG9b1blMozXN1K8YdcBnpJZVv2IL2c1jyANgtEBqtPnEtlDkVLOvu0hxFGJBNoIGCgsMA+7bTlkdJ7vWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704368; c=relaxed/simple;
-	bh=wdUZmpIBZdNPj4I1JKNhPU/kdEl+3H2071J5EjhlRZ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoVbLhTWX+aZC+qMf98C8WsctTkvFmq0AIFZEoDsy0Xf/Ecf5fvZJHxlX8AeUSbG3XrbiR1lw3TfwzLJNXYKKTN5LEaxiQEtQmHpScf4S/hCxc9OUHU8f10j/idqGOIsI0RujFKYq0ZnrCJkkOmGseOwk9A0+G6OmC++gouFk3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4oCRo+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F75FC4CED0;
-	Mon, 30 Sep 2024 13:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704367;
-	bh=wdUZmpIBZdNPj4I1JKNhPU/kdEl+3H2071J5EjhlRZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s4oCRo+5A1o9iOJUsyH14zG5F7G1eSVDx443n9SPjYn/xpC77MlhtrQTLwEIDzxaH
-	 MGWxMvDbyCgAjoJFM4i7FcuzzjU61g6rpMJ1sPpZ2pSe/mlIcPCvz+PyzWQu8qcmPQ
-	 6yBBVyr9NZtWJxeOCg/mISrLnUt7T5LCnZG/1b067RXvpUtHP7Hn7fPF7w8Wz1UHun
-	 uXJHhrazCTWd3OlV1DUHdXc3JutB4iEH32dQKkzUF3nRIUYI5IPdCqMeQxI3OCAAmI
-	 A52H+a8nq1Zy4vYv4QbGP/C9ol9B3EvVh/4ATIF2iCsNV2chK4+L14/sWfeGotDhJH
-	 ZcyxnXgo5BEmQ==
-Date: Mon, 30 Sep 2024 14:52:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 04/20] dt-bindings: spi: add PIC64GX SPI/QSPI
- compatibility to MPFS SPI/QSPI bindings
-Message-ID: <1f54805f-f06d-4732-a124-270a36dbff4f@sirena.org.uk>
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-5-pierre-henry.moussay@microchip.com>
+	s=arc-20240116; t=1727704375; c=relaxed/simple;
+	bh=/wWoq9phTQOtf3DbnY9akGSVrFARm8V71ASGyLN3bu4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=VKc3UgElmLvipmI0gaZ7Rdnga5PSkmfjSGWIiczVcYlPorIIudq0HSeosCUPs0YPa/vb8TB1KNAsFv9dysQSeZfETeAAB3HtQQMAJVmkupmRL8fPErnj+S7Fi5Ve+b6rxLX0/NRm4P096DdhdZNqHoKiHujC9aWq2EP+Jhgw4Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJ8ZdTN7; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c721803a89so5750821a12.1;
+        Mon, 30 Sep 2024 06:52:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727704372; x=1728309172; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U8vL189vTh8iXNA4lYnscfArOlPBvDZ3K4+HECdKLUM=;
+        b=SJ8ZdTN73QkG9eDYfkOn1enx2q5glHsMdDBzcMyifBUXTIX8+wLdr5tIRDPbygfNDe
+         jw1oyWMWp+/ksX9LmBcxvshEWvOfA76V8ujHdwCJ4bdFqnqkPGIgd11Iv6NsSQ/1psHO
+         Z6uzs3AwquRpugOYeTC54Y90cL59xtwl/lC3x+uoLAZ1eFUn5hQtr1pP9PEgAZpJDw6J
+         mvoTjMYe7MKFN4m6CDSRak2HuooRlwi+cuJvKtHaZrjE0m09Gy6OV2UNUHjb3fxyiNre
+         7Ki7J6pArhUOhhjRdtvsxYTMV9Jwtrwe9/Ewa78InVga8x9mmL/61pTljO81l7mdHBke
+         6mnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727704372; x=1728309172;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U8vL189vTh8iXNA4lYnscfArOlPBvDZ3K4+HECdKLUM=;
+        b=ewvtJZL5IyzDXfq1sQUX3xJiSN0nRxuE+JfEiR9ckxmlKwU2uJI1e8Nbfw4bUhXH0I
+         HfWfW71jzSK2ImpuV+V+o0pGWeB7O24n+pSD9nyMRRq/c+3j61tvKVX184oIsxhU49f/
+         1+1ltPtALmdOBY6vfeUAlIvA/AQnjWvmosclDIaBaUe6ikAkheVc+2K31nJWihVkyFup
+         +lxXGGhQBIM4HQZA0+784+L0gUI51G6l3mn+yuXRcWuPRuPi1euYQbmJ9Y7f2eIc44xC
+         qi/gJW1gfw2P5FiXktJzswn3lIDswnCH0VMrnYySe9Kflc+qvYs9ta6EwhoSVubyCOdF
+         0DKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUynoWRXqt/GZzCX9yN4xlAoS9VEhGYMcX7lIm+kRApSZ+hf81w9vjCioonUj3lGGDuldT8a10kGiRQWHp+@vger.kernel.org, AJvYcCWKbXHEtyUQImgFklByOzE/6IAW8POkiuqlctUERKJ49aly8O+ujHlq7w8bIkkhkpHxGPMzD7rGY1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9k0c2UiuXfFGtq711dmdr5peTo5SnS9mqdL+9ITBMB+n5DO2+
+	Zw+qnvWaQcsadxLxBbSJd9hepGaxsiyKjoAzuXi5kw5DchB+f2Ah
+X-Google-Smtp-Source: AGHT+IEtEHvA++ACAq3+/Xn8PG90rxIADGbdFhcm0asOS75rHEmMB3MrcHbNxTrRQNa66Fn864KPBg==
+X-Received: by 2002:a05:6402:34c4:b0:5c8:8381:c1bf with SMTP id 4fb4d7f45d1cf-5c88381c226mr8680369a12.3.1727704372364;
+        Mon, 30 Sep 2024 06:52:52 -0700 (PDT)
+Received: from [192.168.1.17] (host-95-250-55-22.retail.telecomitalia.it. [95.250.55.22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245ea57sm4507540a12.55.2024.09.30.06.52.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 06:52:52 -0700 (PDT)
+From: Antonino Maniscalco <antomani103@gmail.com>
+Date: Mon, 30 Sep 2024 15:52:42 +0200
+Subject: [PATCH v7 07/12] drm/msm/a6xx: Sync relevant adreno_pm4.xml
+ changes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ON/Pr4mvjRo5l4wh"
-Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-5-pierre-henry.moussay@microchip.com>
-X-Cookie: My EARS are GONE!!
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240930-preemption-a750-t-v7-7-47803c7a5a64@gmail.com>
+References: <20240930-preemption-a750-t-v7-0-47803c7a5a64@gmail.com>
+In-Reply-To: <20240930-preemption-a750-t-v7-0-47803c7a5a64@gmail.com>
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727704357; l=4077;
+ i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=/wWoq9phTQOtf3DbnY9akGSVrFARm8V71ASGyLN3bu4=;
+ b=47iWK2j17SvgYMevDnKcX9MYYXBX8tLf6jqCulkRTmMTXG4gLjA4OKUlyksvgteyBIqChCyvv
+ TepYYJSTT2TCq5ZNoJBtZx1Pm0264bU1fTYjgGm5b0/lLy7oPBXaaWw
+X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
+In mesa CP_SET_CTXSWITCH_IB is renamed to CP_SET_AMBLE and some other
+names are changed to match KGSL. Import those changes.
 
---ON/Pr4mvjRo5l4wh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The changes have not been merged yet in mesa but are necessary for this
+series.
 
-On Mon, Sep 30, 2024 at 10:54:33AM +0100, pierre-henry.moussay@microchip.co=
-m wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX SPI/QSPI are compatible with MPFS SPI/QSPI, just use
-> fallback mechanism
+Tested-by: Rob Clark <robdclark@gmail.com>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8550-QRD
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8450-HDK
+Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+---
+ .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    | 39 ++++++++++------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
 
-You've not copied me on the rest of the series so I don't know what's
-going on with dependencies.  When sending a patch series it is important
-to ensure that all the various maintainers understand what the
-relationship between the patches as the expecation is that there will be
-interdependencies.  Either copy everyone on the whole series or at least
-copy them on the cover letter and explain what's going on.  If there are
-no strong interdependencies then it's generally simplest to just send
-the patches separately to avoid any possible confusion.
+diff --git a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+index cab01af55d22268ccf88f1a5032b6081d8e4e475..55a35182858ccac3292849faaf12727257e053c7 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/adreno_pm4.xml
+@@ -581,8 +581,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
+                 and forcibly switch to the indicated context.
+ 	</doc>
+ 	<value name="CP_CONTEXT_SWITCH" value="0x54" variants="A6XX"/>
+-	<!-- Note, kgsl calls this CP_SET_AMBLE: -->
+-	<value name="CP_SET_CTXSWITCH_IB" value="0x55" variants="A6XX-"/>
++	<value name="CP_SET_AMBLE" value="0x55" variants="A6XX-"/>
+ 
+ 	<!--
+ 	Seems to always have the payload:
+@@ -2013,42 +2012,38 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ </domain>
+ 
+-<domain name="CP_SET_CTXSWITCH_IB" width="32">
++<domain name="CP_SET_AMBLE" width="32">
+ 	<doc>
+-                Used by the userspace driver to set various IB's which are
+-                executed during context save/restore for handling
+-                state that isn't restored by the
+-                context switch routine itself.
+-	</doc>
+-	<enum name="ctxswitch_ib">
+-		<value name="RESTORE_IB" value="0">
++                Used by the userspace and kernel drivers to set various IB's
++                which are executed during context save/restore for handling
++                state that isn't restored by the context switch routine itself.
++  </doc>
++	<enum name="amble_type">
++		<value name="PREAMBLE_AMBLE_TYPE" value="0">
+ 			<doc>Executed unconditionally when switching back to the context.</doc>
+ 		</value>
+-		<value name="YIELD_RESTORE_IB" value="1">
++		<value name="BIN_PREAMBLE_AMBLE_TYPE" value="1">
+                         <doc>
+ 				Executed when switching back after switching
+ 				away during execution of
+-				a CP_SET_MARKER packet with RM6_YIELD as the
+-				payload *and* the normal save routine was
+-				bypassed for a shorter one. I think this is
+-				connected to the "skipsaverestore" bit set by
+-				the kernel when preempting.
++				a CP_SET_MARKER packet with RM6_BIN_RENDER_END as the
++				payload *and* skipsaverestore is set. This is
++				expected to restore static register values not
++				saved when skipsaverestore is set.
+ 			</doc>
+ 		</value>
+-		<value name="SAVE_IB" value="2">
++		<value name="POSTAMBLE_AMBLE_TYPE" value="2">
+                         <doc>
+ 				Executed when switching away from the context,
+ 				except for context switches initiated via
+ 				CP_YIELD.
+                         </doc>
+ 		</value>
+-		<value name="RB_SAVE_IB" value="3">
++		<value name="KMD_AMBLE_TYPE" value="3">
+ 			<doc>
+ 				This can only be set by the RB (i.e. the kernel)
+ 				and executes with protected mode off, but
+-				is otherwise similar to SAVE_IB.
+-
+-				Note, kgsl calls this CP_KMD_AMBLE_TYPE
++				is otherwise similar to POSTAMBLE_AMBLE_TYPE.
+ 			</doc>
+ 		</value>
+ 	</enum>
+@@ -2060,7 +2055,7 @@ opcode: CP_LOAD_STATE4 (30) (4 dwords)
+ 	</reg32>
+ 	<reg32 offset="2" name="2">
+ 		<bitfield name="DWORDS" low="0" high="19" type="uint"/>
+-		<bitfield name="TYPE" low="20" high="21" type="ctxswitch_ib"/>
++		<bitfield name="TYPE" low="20" high="21" type="amble_type"/>
+ 	</reg32>
+ </domain>
+ 
 
---ON/Pr4mvjRo5l4wh
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.46.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb6rSoACgkQJNaLcl1U
-h9D1pwf+JFH727JFNoEx84gYQwKAvz+cdKLsqrQxz+8QuE0z4nlSUrRoNCV9BKSN
-TzRE6wddI3I7fl5W1cnqDvRHoevwreZDTzqMW9dVVuFhyUcIriUH42yFTk1nsGt7
-A58VM0bneMcjyltwtT5ZdVanMl8dJCuNsPXEedQ3RdEwHO3s7VxyAJFVfGflPNPC
-6fk35U/arMyMZHcKrzNFXYdd4SJxa2zFK+9Ns4uH4K3N/F8JmzYwT85cXNrW3Jd2
-Mp7o/ztY8UAuP3oclsjlelUGzLgFIVjQ49+wm+cq0t5IOWZ4IgmZT9HWTodbMWcC
-3d2VyHY/9NrlSjyMrz4HJNwJk97u1g==
-=CNfL
------END PGP SIGNATURE-----
-
---ON/Pr4mvjRo5l4wh--
 
