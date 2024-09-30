@@ -1,510 +1,284 @@
-Return-Path: <linux-kernel+bounces-344412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA6098A948
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:04:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADAD98A94A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66E61B20EB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:04:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D83B218FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E70192D6F;
-	Mon, 30 Sep 2024 16:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DD7191F6B;
+	Mon, 30 Sep 2024 16:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LFViEzIM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ExPmNT4c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1081CFA9;
-	Mon, 30 Sep 2024 16:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727712230; cv=none; b=JQzq+nlJxKjFH39NLw30dUNh5xuVP0yLFIMHBAG1X0oAfDWMHCQNmdBW4Q+/5xaNm0CaoaW2IToB3iXsy1gyuQvOY7Sp14YwnFp1IxQu1Wt59uVVQ4FDENpkoOqhrca+4Bv+clj0RtuK45486GX3MhHIUpBT1M/A2NCtL6YWzkM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727712230; c=relaxed/simple;
-	bh=4YAjKWnZbvGQ2Yixp4nhse6OZ289KE1O9u0jAP55/XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkkKXjt4iI16cGHBHbJYAccgHcN3qVlUDRkzxLZP+IKYY/npIMIBH8ltw7cC4yocB6OpUD7br7j2ejgs4w+RpdljS9XwwE1PLz6fj7/uLPWbglWyS9u5oRiC7RS+pDakcmEMO6I92oN2Vm8QIWIx8pe8CgP+k0pU+MduAwZhVSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LFViEzIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88AE8C4CEC7;
-	Mon, 30 Sep 2024 16:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727712230;
-	bh=4YAjKWnZbvGQ2Yixp4nhse6OZ289KE1O9u0jAP55/XE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LFViEzIMjJpl8lwFECw+9CA8kInlrD5lvGJJgsH7sKKY8qkmQH0wmK3VFN9bExTmr
-	 cAXksl179bn6fE2AuLyDtI9olx68jXEDtGxOQ8qRC4Wbz17eStwdxj50UsdDczkdpV
-	 JAUJnNt/ogSfRGvCyp64PRXmgwn65y190AvW834xKrRgFh1kRVdw/9WxuoHQKKn660
-	 QHPgJI+zpnKgU7KFFKrPJkhs/SI77iJnIJa5vLQ0rGsAndFvNWhJ1qZtRa1Fl8sNi5
-	 l3/TuVJ9NdNTEzOnr3pKqEKMBowHCuvjMZfqLlsLD920ezK5eyzZlHRqB9oCSIgtuP
-	 I2qoJrkGwaMmg==
-Date: Mon, 30 Sep 2024 09:03:49 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, martin.petersen@oracle.com,
-	catherine.hoang@oracle.com, mcgrof@kernel.org,
-	ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v6 4/7] xfs: Support FS_XFLAG_ATOMICWRITES
-Message-ID: <20240930160349.GN21853@frogsfrogsfrogs>
-References: <20240930125438.2501050-1-john.g.garry@oracle.com>
- <20240930125438.2501050-5-john.g.garry@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A2935894;
+	Mon, 30 Sep 2024 16:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727712255; cv=fail; b=T0rowa297//tBug8ij2IBttErQLVl1C/wxL/FvxdTn89oNizkNuStpYGtfxfrZVHTPpG8yiG9vArUyAdV4BGNa9sre4nP6xPDyJdf3hyMHBj9rOpAh4a3r7dAfc0JlFwH2O0A6HuxYXbZsx0Um94kQiH+upTnMUVJl/gWLRQflI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727712255; c=relaxed/simple;
+	bh=tdGP+EqdAwwd5yhk3TFkNMv46ZDBF5XIAm0qs5RfkLA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=AaTQ+XVgS69G89zBtyr/EBmCV/mpZr80Kff5v76HeaADaHnPJpuR2ClpzLGwVggfC2u5aJp3g72FA5Vt+amobWmDDMOYDnWh80BHiLGzO1Hsf+gkR40hEBzeVe05JA7U+n8YWpJiKFJgNTtNl9SGcV4ZkdT8gsLdN9qnaItDCC4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ExPmNT4c; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727712253; x=1759248253;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=tdGP+EqdAwwd5yhk3TFkNMv46ZDBF5XIAm0qs5RfkLA=;
+  b=ExPmNT4ccYvNzatHyf0Sc3p4jMXojDqqPxhK+Kk/7TfRJcBhYYcUOEL8
+   5hesgIjQmzPUK+/XYUoyKyh5Z7HYkgf+FMTz5MhxyyewQCeArB4yviz1x
+   XxKzjsDGvnKT7TccXhTrHc0ZuxNTuPKVAANKq9MwhszhJb1KWQoAAJkZX
+   BeG4acKjcHnIzqaGOZtnevwZHeUQKvJkhXp86rtEaDjsn6tyHhHBOkKzL
+   f7luQCtYfiSGZX4rfhMFsVPz4WsIP8fLA74U4iVTUmMwEJhf34E6IzCWM
+   0qYCkWAxIRH0Ga9vfORfsN18wimqPwDQ0KN9kxhAAtt044ugqD9AZfoMv
+   Q==;
+X-CSE-ConnectionGUID: tVpPXZfdQDmLUasXwiVN+Q==
+X-CSE-MsgGUID: UuaLaXNzR2KIThfOl6p2wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="30608491"
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="30608491"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 09:04:12 -0700
+X-CSE-ConnectionGUID: CH09mVtrQwOGPte/i5oIgQ==
+X-CSE-MsgGUID: A1FAmS93SPumCtXb5VukKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="104149348"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Sep 2024 09:04:12 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 30 Sep 2024 09:04:11 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 30 Sep 2024 09:04:11 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.40) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 30 Sep 2024 09:04:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XTP1QVQrED9bX8LyxfO79DIKjpHZIf9sPrrnzEbqN1jxC8fiMYy3QFl4EspnvEx+GNGzzv6ouRTehQWc0aCFIVga7Hpc6QPmTXQVCs/oCOXx+1KCdj1OVEoqXMGy4lORcnafWa+PmJo/gfolUr/kTD6aYcej1hHozxSQeQYMo1vOegMzSSO2nbwzXlD3oWzY9ikhoEhhsH22XmdVsr+tQbf80okQXMfzGBhc9uBgVfMDFTlvM7lThqf7HHUoV6uXcN2YEz4kE2IkTUjYW8wxTsTU7iJvnCqveBLTTokT049F3C6yGIeLNQiD5C3qeZj/VswLb5JrGwh4eKtRK6aCYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f6wV0mDaG2yo7WB7Af23D4jTopFRgFvn30Q8IcjfHy8=;
+ b=oGwDueHas8r8wR56tTtG4hf6IWE0LDcCYBC8kkUGmO+ucmGr7lEeUqDP0L20cB0q41z8HVVZfvR54LGVBeAYUgex+yyvUV3spK319VnUKP6OVVniKx8PmO0bpGBUk6viPzXMyMpwP348a3cZRx6myh2POf3RFvu40tYWfr0Iodf99lWCyE1Dody/9CjgyR5/tTuBTa5VrV+p0jcyN+51BDW1K1XQTfPbGYI5kz7qFZNnXQN3BZb4Ua6QIjp5TfSL2TVYiRmc4XHCJb4vQSiRYCEFVjIBkU40EMy+4yXqeYtC14a2OzRXymbaZtwfZ8t6nPmumFnP7oNMKcZl7Uiywg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SN7PR11MB7592.namprd11.prod.outlook.com (2603:10b6:806:343::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 16:04:08 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%6]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 16:04:08 +0000
+Message-ID: <cbfc027c-264d-47f4-949a-3216cd79bf0b@intel.com>
+Date: Mon, 30 Sep 2024 09:04:06 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 04/13] selftests/resctrl: Protect against array overrun
+ during iMC config parsing
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <fenghua.yu@intel.com>, <shuah@kernel.org>, <tony.luck@intel.com>,
+	<peternewman@google.com>, <babu.moger@amd.com>,
+	=?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
+	<linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <cover.1726164080.git.reinette.chatre@intel.com>
+ <c3ff2c7df3d10931087e25e5488eb1ab2f5fe13c.1726164080.git.reinette.chatre@intel.com>
+ <93b9f530-1d2d-dc19-1d48-c15aced32804@linux.intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <93b9f530-1d2d-dc19-1d48-c15aced32804@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR03CA0157.namprd03.prod.outlook.com
+ (2603:10b6:303:8d::12) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930125438.2501050-5-john.g.garry@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SN7PR11MB7592:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a442731-7ba0-48e0-9e3c-08dce1698437
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?dnFPZU94YkgyZTFFdE0veC9YTi93V0ZHYklEcGlXN3gyTS9FWmwrRkNtTE9I?=
+ =?utf-8?B?MTJYOFNZdW1SMDZzOE5yMmNtdm5SQzczbm5aUFMxalMrUjVtOTBSVGEwbXM3?=
+ =?utf-8?B?T0xOU1dCZ2FtQ0RoYUVvNkpGcVhPU3VMcG45My9adkNJTHY0dUI0Uk8wWnFQ?=
+ =?utf-8?B?dW52WGdnMVJQMzRRcHdqSmFQM3hjdWdYNVBJNm5sbEhKUDRZMWZ5aFRiMVB4?=
+ =?utf-8?B?Q0Rzc2JwcUZmcUgzcHFDMk0vWnl4b2x2MTlBcks3WXZNS2kySzBvbm9FU2tw?=
+ =?utf-8?B?djltNDNoMFZIdG1YWURsNWdZTmtHUU9rM29uUVJ4ai9WQlN6WTVYQzNUOTdB?=
+ =?utf-8?B?ZkdMVkd4OW5ET2dkTm8zbzZBN1ZPdDdNUnFpSVJVNXQ1cXNxTjhEd21Hc3Fn?=
+ =?utf-8?B?UkdldnZqT21DbG1SS2NERUNVejJtSFloM2VjaFVCM1RIOEZvMWFNTVd1amZm?=
+ =?utf-8?B?SHRLZnBqUmVIb055OFVWR25Eb2hKYk1MalJUMkRyVncyS0JTRlBkc3JDajYy?=
+ =?utf-8?B?c3VtUVBtTjBtNnlSYzA5Y1VoZzNlVElaZHZ0T0taZHVBMm1MV2pOeHFnUVF1?=
+ =?utf-8?B?SzMwZWR1SkFnTVgzK3VOZVhQbXJ0VWxmWU4rZG4rVGV4a3IranBwSndPMzJN?=
+ =?utf-8?B?dW9KSkFZamZ6aVVWT3FCTkQ4dC9QRmdabmZzTzNYbDNsTE1YL1hWVktnT1NX?=
+ =?utf-8?B?MnE3dzlUUW5jdTdrNlNWcERVR1N1NzV4TnN0VzJVZkVFeEdXRU5kWXg0RUFF?=
+ =?utf-8?B?YmZ0anpnOFRSMEg1c3ZBb0RHL2VEV1A1T3ZQNGplelAwU0c3OVFYVTc4bGtW?=
+ =?utf-8?B?ZVdtMnU1WlVRQjlyVTJNS2J2dWU0dDhEdUFCRVI5TUx1UFNucjI5QTM0NHJM?=
+ =?utf-8?B?dEMrenExd0t4anJFZmRjM1N2NU91WnNjd2dxSXJJUGl6dXJjQ3BSQXg4bzFJ?=
+ =?utf-8?B?dUNtZmp1MkhPcm5TTGx4N0UxaFJVRFlNQVdBbnV5R04wMjZwVTlYbHoyMzIr?=
+ =?utf-8?B?UmgyOEZ6OXpEdVRlNWJzc1JPL1pUbjc4ZUQ1L1RnS080Ym1ZSTVRN2MrSDJn?=
+ =?utf-8?B?VEVVL2FhRXdVSWx5N3R3RjEvQ3dwS0tSU2ZzTkZDaFV0OUFTSlZ4SHRhaFpy?=
+ =?utf-8?B?MEE3bnZ6bFhSM1dTMlZGQzc4QkVKd1dzUHVyczljeEpMTHVOQWtiUUw4K2tI?=
+ =?utf-8?B?SVZJRnJ1V3c5SU9hblNKUXphRUw3NkRXcnBzNnFEdG5iSmlNZXhvR2hSd0cv?=
+ =?utf-8?B?UzkyY0d4ZmFXL0lrTE55aWZSWDhjUFNCMmd5eklyUmpROXBGT2V5ZDBRb0NX?=
+ =?utf-8?B?MDNjajlTTExVOC83QjVnY3c3d000bzBITFpMTFMybEhaZTdrV0UwZjhzZXI2?=
+ =?utf-8?B?bC9sa29hMzZtZjFCMUJSTDFCbXlxSXRVM0dpMVQ4ZmtxMEdDK0oyZ20vUkk1?=
+ =?utf-8?B?SU5Hd1hCVFZHaXlWWVR6UnY4Rjk5cnFjL2h5QUJRNlYwbWNXdDNwSzFEdEZQ?=
+ =?utf-8?B?L01hNDVvVEZYdEZIcEtJcm5zNndqRGVkNjA4WVlRNFJvenYrMkhzNzBFODdG?=
+ =?utf-8?B?RHk2M0NIZGlhOFhya0VjMjA1eXQwYVpucHViY0xNQ3JnSmxNRzY2ZVhQSE9x?=
+ =?utf-8?B?Sk9WOUszZ3JmOEFWUHBIZURrQVlubklzanV4Z3czMDF2VmhZcnVmN2ZZdEZC?=
+ =?utf-8?B?THNHTzc1RWxlQlduaDhrOW9jOGM1SG5YejRJRjdBcmJBRG5xSW1pVDV3PT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?QmQ2RktIZHVzZ0NMdG5BSkJNYWpHVkZCNE9JL0doRjBQdTRPc24wQ1pURnhW?=
+ =?utf-8?B?bXgyMk1JWTRJc2V5MDlJa3JSNmhrZWVQR1FpN04wQnI2TDQwWlJGeHlsRkRE?=
+ =?utf-8?B?YW5rcVEzN212NDZHdUY1cG55WFFYNG94Q1BWRk9pRUUvM005S0VJMUdEYnNO?=
+ =?utf-8?B?ZlFNQ2pkNzUraDV3WmlwWk15S3hkR3RYNVJLbU1idmRRckZ4VTdLNzh6TGgr?=
+ =?utf-8?B?RzEvVlBVMm5wbi9obGV0VVRrbFhwSEE1ZGUwTW03ZjE0eUtGOHh1TkkvSjJF?=
+ =?utf-8?B?ZUg3V2NGaFBHTnA3aUpVMXlGQmhmZDR3bElSaXRGZDVyYUsvUktROGdaMHBm?=
+ =?utf-8?B?Q01Yd3FwdklMWHZ6WmR3YUlGb25YMWlzNmoxYjE5VTlKRkFrc0hadUxiMkVC?=
+ =?utf-8?B?Wk1DaUp0YWthRWliZFRFcGRKOFpScmdGbGc2dzJ6aEErYmcyMWNEeXAxblc3?=
+ =?utf-8?B?SS96NzVHQUI0Z3YvcG1URFBFelgxSFVGNVJlUWxoSGlibnlGR3ZUNm9tUmpT?=
+ =?utf-8?B?YUw4UjhkeGQ3ZmhtQi93Ujg0c3dMRzdOMldoS0Q0V08yQVdydVRVQXNYVW5H?=
+ =?utf-8?B?TTEvbkJRd3RkL0xOYjRUUWpsVzdtNEFBbmEzcFdseEFMeTZQNFdPKzBvd3ZV?=
+ =?utf-8?B?blQ5NnBGai9KMC85MldrQXUxdnBKbHlORS9RUmdsSVY2RkNFckVpdjh0RlV6?=
+ =?utf-8?B?Q1BYRFBQMjRubnlZdkt3N29waFNVc3hFcy8xM0lQbFBMTFFKS0NzTGVWUWt6?=
+ =?utf-8?B?MTJzZytGU0FoME5uTGRpUXBBOWo1akVQdU52M1R2Y2VCdjZkeWgwbUErWTY2?=
+ =?utf-8?B?ejBHWEFMRTFuVWhKUWxhSlhPTnBUQjcxbnRXeWJmNmVLbHh4c2NQUGRZdjZw?=
+ =?utf-8?B?L3VPMHQ5b0ptZTBramp3K2xOaHRkcklOVnRuWDJIOUo1WTVDblpxSW5VYXpl?=
+ =?utf-8?B?VHdhdVYyYU1IWXh0cktDZzQ4dFdjSWppdmU1T21lS3gyVUZGMFB0WndNdkNS?=
+ =?utf-8?B?THZCajdudFpkVVNlWTVDVnI0OXpFWEhHWDZwK2pBQ2tlTW9Zektib3dCQ0la?=
+ =?utf-8?B?dDQ4cFpaSFpKTVBUM1o5WUcvNjdzYlJQc1NFVjlHbnNvd3J0c3A1TFlWUm50?=
+ =?utf-8?B?dlh5ZFJXbG9PaC9HM083MkprcStKTHFBTDVzWTZ3YUtqRkdsdUdYTHhUQUI1?=
+ =?utf-8?B?MVd6QTlXaENSa2QxcmNBdHl3OXpLNTNUbE5UdDRKc3lBT0U3NWsvQmIzU1l5?=
+ =?utf-8?B?RHBBcnZNVVBXTDluN1JTZEMwMmNNeUFSRnRnM3JCdUROMzVETnNQUzllV3N0?=
+ =?utf-8?B?SVVaKzlSQm1EK3RJZnFkQ004NmozNHlyY1RMU1dCVHljU1M5WDNZTlhDTlBt?=
+ =?utf-8?B?ay9xd01HOWN3a1d2TUhGaTFDM29GRjRuQjl4RGhEOXR6YVhiN0pqa241dXJP?=
+ =?utf-8?B?ZTdKNGNVNG9MR2lwM0o0MUhxVkZKUVBYa3JNL2tPT0RmbURxK1JHQUU0SFZM?=
+ =?utf-8?B?YVdzRVZsdCtwRTlqUStmUWs3K1YyNng2ek90RWFyMEs4MWF5NW1LcUQxaldT?=
+ =?utf-8?B?M0t5emlzT1VpSzVrbisxeTBwT2dMK2FIYkh2VmJGWDlIZWpoejZKN05nVWYr?=
+ =?utf-8?B?RXhybWNxaDEyc3ppaXV4bk9DbjJaVkhTTGtxTm5XczNOOVhUNFZ1NStpOUxB?=
+ =?utf-8?B?U01lMG1RTll3Q1BzUzIrai9IMkxGRFB2REVWMnhXbDVYSGluREtFVk5STCtB?=
+ =?utf-8?B?WWdZR3lIWUE0enFKSjJCZzlDRUt3Wk5nMWRPbUJMVUdTbXJLblBKcVJObWdC?=
+ =?utf-8?B?UHU3Sk1JWGFSNGFlWllVOFFhTWZ3c0JXcS9lMVRsS3hGWjczOXpkMzJTalUy?=
+ =?utf-8?B?ZlVaZzRWMkFHaGorV2VYN0lIUkJkR0t0OXJkVkxncFJYTWJpNnl3N1JMSTlw?=
+ =?utf-8?B?UjVlczBqcGVVcXVRSllzcDU3SktNUVBiVjZVVHRFTDhjRTBwQytxbis1QmVz?=
+ =?utf-8?B?VTVHQ3RNeHp0SGdBRU9wRjRQdGgwZmtjYjQzdUhEYWR1U2xOU2tPMWNnWFJo?=
+ =?utf-8?B?UUpMN1paeFptWHV5dmc0ZDFNSGZLUS9KWEJaSkJzZFErVU5PcnlHYTFXTjlR?=
+ =?utf-8?B?MDN5TW5zREVPQzRvUlBpa2Z3TDloT3FuR2dXSm95UVJ1TGxVZmVjckErSFAw?=
+ =?utf-8?B?TFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a442731-7ba0-48e0-9e3c-08dce1698437
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 16:04:08.7355
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I+bwefgA2lOiDFCEso4Qx0J9tUqgtknz0ofHtRLZr77ooJPQ03RcaFRurbiWIa0/ecEMz3coIHTrEwvx7jYbxRHwHLvOccm8J2kuYLN2ADY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7592
+X-OriginatorOrg: intel.com
 
-On Mon, Sep 30, 2024 at 12:54:35PM +0000, John Garry wrote:
-> Add initial support for new flag FS_XFLAG_ATOMICWRITES.
+Hi Ilpo,
+
+On 9/30/24 6:35 AM, Ilpo Järvinen wrote:
+> On Thu, 12 Sep 2024, Reinette Chatre wrote:
 > 
-> This flag is a file attribute that mirrors an ondisk inode flag.  Actual
-> support for untorn file writes (for now) depends on both the iflag and the
-> underlying storage devices, which we can only really check at statx and
-> pwritev2() time.  This is the same story as FS_XFLAG_DAX, which signals to
-> the fs that we should try to enable the fsdax IO path on the file (instead
-> of the regular page cache), but applications have to query STAT_ATTR_DAX to
-> find out if they really got that IO path.
+>> The MBM and MBA tests need to discover the event and umask with which to
+>> configure the performance event used to measure read memory bandwidth.
+>> This is done by parsing the
+>> /sys/bus/event_source/devices/uncore_imc_<imc instance>/events/cas_count_read
+>> file for each iMC instance that contains the formatted
+>> output: "event=<event>,umask=<umask>"
+>>
+>> Parsing of cas_count_read contents is done by initializing an array of
+>> MAX_TOKENS elements with tokens (deliminated by "=,") from this file.
+>> Start by removing the unnecessary append of a delimiter to the string
 > 
-> Current kernel support for atomic writes is based on HW support (for atomic
-> writes). Since for regular files XFS has no way to specify extent alignment
-> or granularity, atomic write size is limited to the FS block size.
+> Start what? (It sounds odd given the lack of any context, my guess is 
+> you're trying to refer to start/first one of the changes you make in the 
+> patch but the textual context does not support that conclusion.) I suggest 
+> you just rephrase it and avoid using "start" word altogether.
+
+Indeed, I'll just drop the "Start by" and have the sentence be:
+"Remove the unnecessary append of a delimiter ..."
+
 > 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/xfs/libxfs/xfs_format.h     | 11 ++++++++--
->  fs/xfs/libxfs/xfs_inode_buf.c  | 38 ++++++++++++++++++++++++++++++++++
->  fs/xfs/libxfs/xfs_inode_util.c |  6 ++++++
->  fs/xfs/libxfs/xfs_sb.c         |  2 ++
->  fs/xfs/xfs_buf.c               | 15 +++++++++++++-
->  fs/xfs/xfs_buf.h               |  5 ++++-
->  fs/xfs/xfs_buf_mem.c           |  2 +-
->  fs/xfs/xfs_inode.h             |  5 +++++
->  fs/xfs/xfs_ioctl.c             | 37 +++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_mount.h             |  2 ++
->  fs/xfs/xfs_reflink.c           |  4 ++++
->  fs/xfs/xfs_super.c             |  4 ++++
->  include/uapi/linux/fs.h        |  1 +
->  13 files changed, 127 insertions(+), 5 deletions(-)
+>> needing to be parsed. Per the strtok() man page: "delimiter bytes at
+>> the start or end of the string are ignored". This has no impact on
+>> the token placement within the array.
+>>
+>> After initialization, the actual event and umask is determined by
+>> parsing the tokens directly following the "event" and "umask" tokens
+>> respectively.
+>>
+>> Iterating through the array up to index "i < MAX_TOKENS" but then
+>> accessing index "i + 1" risks array overrun during the final iteration.
+>> Avoid array overrun by ensuring that the index used within for
+>> loop will always be valid.
+>>
+>> Fixes: 1d3f08687d76 ("selftests/resctrl: Read memory bandwidth from perf IMC counter and from resctrl file system")
+>> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+>> ---
+>> Changes since V1:
+>> - New patch.
+>> ---
+>>  tools/testing/selftests/resctrl/resctrl_val.c | 3 +--
+>>  1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
+>> index 70e8e31f5d1a..e88d5ca30517 100644
+>> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+>> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+>> @@ -83,13 +83,12 @@ static void get_event_and_umask(char *cas_count_cfg, int count, bool op)
+>>  	char *token[MAX_TOKENS];
+>>  	int i = 0;
+>>  
+>> -	strcat(cas_count_cfg, ",");
+>>  	token[0] = strtok(cas_count_cfg, "=,");
+>>  
+>>  	for (i = 1; i < MAX_TOKENS; i++)
+>>  		token[i] = strtok(NULL, "=,");
+>>  
+>> -	for (i = 0; i < MAX_TOKENS; i++) {
+>> +	for (i = 0; i < MAX_TOKENS - 1; i++) {
+>>  		if (!token[i])
+>>  			break;
+>>  		if (strcmp(token[i], "event") == 0) {
+>>
 > 
-> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
-> index e1bfee0c3b1a..ed5e5442f0d4 100644
-> --- a/fs/xfs/libxfs/xfs_format.h
-> +++ b/fs/xfs/libxfs/xfs_format.h
-> @@ -352,11 +352,15 @@ xfs_sb_has_compat_feature(
->  #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
->  #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
->  #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
-> +#define XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES (1 << 31)	/* atomicwrites enabled */
-> +
->  #define XFS_SB_FEAT_RO_COMPAT_ALL \
->  		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
->  		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
->  		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
-> -		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
-> +		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT | \
-> +		 XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
-> +
->  #define XFS_SB_FEAT_RO_COMPAT_UNKNOWN	~XFS_SB_FEAT_RO_COMPAT_ALL
->  static inline bool
->  xfs_sb_has_ro_compat_feature(
-> @@ -1093,16 +1097,19 @@ static inline void xfs_dinode_put_rdev(struct xfs_dinode *dip, xfs_dev_t rdev)
->  #define XFS_DIFLAG2_COWEXTSIZE_BIT   2  /* copy on write extent size hint */
->  #define XFS_DIFLAG2_BIGTIME_BIT	3	/* big timestamps */
->  #define XFS_DIFLAG2_NREXT64_BIT 4	/* large extent counters */
-> +#define XFS_DIFLAG2_ATOMICWRITES_BIT 5	/* atomic writes permitted */
->  
->  #define XFS_DIFLAG2_DAX		(1 << XFS_DIFLAG2_DAX_BIT)
->  #define XFS_DIFLAG2_REFLINK     (1 << XFS_DIFLAG2_REFLINK_BIT)
->  #define XFS_DIFLAG2_COWEXTSIZE  (1 << XFS_DIFLAG2_COWEXTSIZE_BIT)
->  #define XFS_DIFLAG2_BIGTIME	(1 << XFS_DIFLAG2_BIGTIME_BIT)
->  #define XFS_DIFLAG2_NREXT64	(1 << XFS_DIFLAG2_NREXT64_BIT)
-> +#define XFS_DIFLAG2_ATOMICWRITES	(1 << XFS_DIFLAG2_ATOMICWRITES_BIT)
->  
->  #define XFS_DIFLAG2_ANY \
->  	(XFS_DIFLAG2_DAX | XFS_DIFLAG2_REFLINK | XFS_DIFLAG2_COWEXTSIZE | \
-> -	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64)
-> +	 XFS_DIFLAG2_BIGTIME | XFS_DIFLAG2_NREXT64 | \
-> +	 XFS_DIFLAG2_ATOMICWRITES)
->  
->  static inline bool xfs_dinode_has_bigtime(const struct xfs_dinode *dip)
->  {
-> diff --git a/fs/xfs/libxfs/xfs_inode_buf.c b/fs/xfs/libxfs/xfs_inode_buf.c
-> index 79babeac9d75..1e852cdd1d6f 100644
-> --- a/fs/xfs/libxfs/xfs_inode_buf.c
-> +++ b/fs/xfs/libxfs/xfs_inode_buf.c
-> @@ -483,6 +483,36 @@ xfs_dinode_verify_nrext64(
->  	return NULL;
->  }
->  
-> +static xfs_failaddr_t
-> +xfs_inode_validate_atomicwrites(
-> +	struct xfs_mount	*mp,
-> +	uint32_t		cowextsize,
-> +	uint16_t		mode,
-> +	int64_t			flags2)
-> +{
-> +	/* superblock rocompat feature flag */
-> +	if (!xfs_has_atomicwrites(mp))
-> +		return __this_address;
-> +
-> +	/* Only regular files and directories */
-> +	if (!S_ISREG(mode) && !(S_ISDIR(mode)))
-> +		return __this_address;
-> +
-> +	/* COW extsize disallowed */
-> +	if (flags2 & XFS_DIFLAG2_COWEXTSIZE)
-> +		return __this_address;
-> +
-> +	/* cowextsize must be zero */
-> +	if (cowextsize)
-> +		return __this_address;
-> +
-> +	/* reflink is disallowed */
-> +	if (flags2 & XFS_DIFLAG2_REFLINK)
-> +		return __this_address;
-
-If we're only allowing atomic writes that are 1 fsblock or less, then
-copy on write will work correctly because CoWs are always done with
-fsblock granularity.  The ioend remap is also committed atomically.
-
-IOWs, it's forcealign that isn't compatible with reflink and you can
-drop this incompatibility.
-
-> +
-> +	return NULL;
-> +}
-> +
->  xfs_failaddr_t
->  xfs_dinode_verify(
->  	struct xfs_mount	*mp,
-> @@ -663,6 +693,14 @@ xfs_dinode_verify(
->  	    !xfs_has_bigtime(mp))
->  		return __this_address;
->  
-> +	if (flags2 & XFS_DIFLAG2_ATOMICWRITES) {
-> +		fa = xfs_inode_validate_atomicwrites(mp,
-> +				be32_to_cpu(dip->di_cowextsize),
-
-Technically speaking, the space used by di_cowextsize isn't defined on
-!reflink filesystems.  The contents are supposed to be zero, but nobody
-actually checks that, so you might want to special case this:
-
-		fa = xfs_inode_validate_atomicwrites(mp,
-				xfs_has_reflink(mp) ?
-					be32_to_cpu(dip->di_cowextsize) : 0,
-				mode, flags2);
-
-(inasmuch as this code is getting ugly and maybe you want to use a
-temporary variable)
-
-> +				mode, flags2);
-> +		if (fa)
-> +			return fa;
-> +	}
-> +
->  	return NULL;
->  }
->  
-> diff --git a/fs/xfs/libxfs/xfs_inode_util.c b/fs/xfs/libxfs/xfs_inode_util.c
-> index cc38e1c3c3e1..e59e98783bf7 100644
-> --- a/fs/xfs/libxfs/xfs_inode_util.c
-> +++ b/fs/xfs/libxfs/xfs_inode_util.c
-> @@ -80,6 +80,8 @@ xfs_flags2diflags2(
->  		di_flags2 |= XFS_DIFLAG2_DAX;
->  	if (xflags & FS_XFLAG_COWEXTSIZE)
->  		di_flags2 |= XFS_DIFLAG2_COWEXTSIZE;
-> +	if (xflags & FS_XFLAG_ATOMICWRITES)
-> +		di_flags2 |= XFS_DIFLAG2_ATOMICWRITES;
->  
->  	return di_flags2;
->  }
-> @@ -126,6 +128,8 @@ xfs_ip2xflags(
->  			flags |= FS_XFLAG_DAX;
->  		if (ip->i_diflags2 & XFS_DIFLAG2_COWEXTSIZE)
->  			flags |= FS_XFLAG_COWEXTSIZE;
-> +		if (ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES)
-> +			flags |= FS_XFLAG_ATOMICWRITES;
->  	}
->  
->  	if (xfs_inode_has_attr_fork(ip))
-> @@ -224,6 +228,8 @@ xfs_inode_inherit_flags2(
->  	}
->  	if (pip->i_diflags2 & XFS_DIFLAG2_DAX)
->  		ip->i_diflags2 |= XFS_DIFLAG2_DAX;
-> +	if (pip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES)
-> +		ip->i_diflags2 |= XFS_DIFLAG2_ATOMICWRITES;
->  
->  	/* Don't let invalid cowextsize hints propagate. */
->  	failaddr = xfs_inode_validate_cowextsize(ip->i_mount, ip->i_cowextsize,
-> diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
-> index d95409f3cba6..dd819561d0a5 100644
-> --- a/fs/xfs/libxfs/xfs_sb.c
-> +++ b/fs/xfs/libxfs/xfs_sb.c
-> @@ -164,6 +164,8 @@ xfs_sb_version_to_features(
->  		features |= XFS_FEAT_REFLINK;
->  	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
->  		features |= XFS_FEAT_INOBTCNT;
-> +	if (sbp->sb_features_ro_compat & XFS_SB_FEAT_RO_COMPAT_ATOMICWRITES)
-> +		features |= XFS_FEAT_ATOMICWRITES;
->  	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_FTYPE)
->  		features |= XFS_FEAT_FTYPE;
->  	if (sbp->sb_features_incompat & XFS_SB_FEAT_INCOMPAT_SPINODES)
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index aa4dbda7b536..44bee3e2b2bb 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -2060,6 +2060,8 @@ int
->  xfs_init_buftarg(
->  	struct xfs_buftarg		*btp,
->  	size_t				logical_sectorsize,
-> +	unsigned int			awu_min,
-> +	unsigned int			awu_max,
->  	const char			*descr)
->  {
->  	/* Set up device logical sector size mask */
-> @@ -2086,6 +2088,9 @@ xfs_init_buftarg(
->  	btp->bt_shrinker->scan_objects = xfs_buftarg_shrink_scan;
->  	btp->bt_shrinker->private_data = btp;
->  	shrinker_register(btp->bt_shrinker);
-> +
-> +	btp->bt_bdev_awu_min = awu_min;
-> +	btp->bt_bdev_awu_max = awu_max;
->  	return 0;
->  
->  out_destroy_io_count:
-> @@ -2102,6 +2107,7 @@ xfs_alloc_buftarg(
->  {
->  	struct xfs_buftarg	*btp;
->  	const struct dax_holder_operations *ops = NULL;
-> +	unsigned int awu_min = 0, awu_max = 0;
->  
->  #if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
->  	ops = &xfs_dax_holder_operations;
-> @@ -2115,6 +2121,13 @@ xfs_alloc_buftarg(
->  	btp->bt_daxdev = fs_dax_get_by_bdev(btp->bt_bdev, &btp->bt_dax_part_off,
->  					    mp, ops);
->  
-> +	if (bdev_can_atomic_write(btp->bt_bdev)) {
-> +		struct request_queue *q = bdev_get_queue(btp->bt_bdev);
-> +
-> +		awu_min = queue_atomic_write_unit_min_bytes(q);
-> +		awu_max = queue_atomic_write_unit_max_bytes(q);
-> +	}
-> +
->  	/*
->  	 * When allocating the buftargs we have not yet read the super block and
->  	 * thus don't know the file system sector size yet.
-> @@ -2122,7 +2135,7 @@ xfs_alloc_buftarg(
->  	if (xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev)))
->  		goto error_free;
->  	if (xfs_init_buftarg(btp, bdev_logical_block_size(btp->bt_bdev),
-> -			mp->m_super->s_id))
-> +			awu_min, awu_max, mp->m_super->s_id))
->  		goto error_free;
-
-Rather than passing this into the constructor and making the xmbuf code
-pass zeroes, why not set the awu values here in xfs_alloc_buftarg just
-before returning btp?
-
-	if (bdev_can_atomic_write(btp->bt_bdev)) {
-		struct request_queue *q = bdev_get_queue(btp->bt_bdev);
-
-		btp->bt_bdev_awu_min = queue_atomic_write_unit_min_bytes(q);
-		btp->bt_bdev_awu_max = queue_atomic_write_unit_max_bytes(q);
-	}
-
-
---D
-
->  	return btp;
-> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> index 209a389f2abc..b813cb60a8f3 100644
-> --- a/fs/xfs/xfs_buf.h
-> +++ b/fs/xfs/xfs_buf.h
-> @@ -124,6 +124,9 @@ struct xfs_buftarg {
->  	struct percpu_counter	bt_io_count;
->  	struct ratelimit_state	bt_ioerror_rl;
->  
-> +	/* Atomic write unit values */
-> +	unsigned int		bt_bdev_awu_min, bt_bdev_awu_max;
-> +
->  	/* built-in cache, if we're not using the perag one */
->  	struct xfs_buf_cache	bt_cache[];
->  };
-> @@ -393,7 +396,7 @@ bool xfs_verify_magic16(struct xfs_buf *bp, __be16 dmagic);
->  
->  /* for xfs_buf_mem.c only: */
->  int xfs_init_buftarg(struct xfs_buftarg *btp, size_t logical_sectorsize,
-> -		const char *descr);
-> +		unsigned int awu_min, unsigned int awu_max, const char *descr);
->  void xfs_destroy_buftarg(struct xfs_buftarg *btp);
->  
->  #endif	/* __XFS_BUF_H__ */
-> diff --git a/fs/xfs/xfs_buf_mem.c b/fs/xfs/xfs_buf_mem.c
-> index 07bebbfb16ee..722d75f89767 100644
-> --- a/fs/xfs/xfs_buf_mem.c
-> +++ b/fs/xfs/xfs_buf_mem.c
-> @@ -93,7 +93,7 @@ xmbuf_alloc(
->  	btp->bt_meta_sectorsize = XMBUF_BLOCKSIZE;
->  	btp->bt_meta_sectormask = XMBUF_BLOCKSIZE - 1;
->  
-> -	error = xfs_init_buftarg(btp, XMBUF_BLOCKSIZE, descr);
-> +	error = xfs_init_buftarg(btp, XMBUF_BLOCKSIZE, 0, 0, descr);
->  	if (error)
->  		goto out_bcache;
->  
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 97ed912306fd..1c62ee294a5a 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -327,6 +327,11 @@ static inline bool xfs_inode_has_bigrtalloc(struct xfs_inode *ip)
->  	(XFS_IS_REALTIME_INODE(ip) ? \
->  		(ip)->i_mount->m_rtdev_targp : (ip)->i_mount->m_ddev_targp)
->  
-> +static inline bool xfs_inode_has_atomicwrites(struct xfs_inode *ip)
-> +{
-> +	return ip->i_diflags2 & XFS_DIFLAG2_ATOMICWRITES;
-> +}
-> +
->  /*
->   * In-core inode flags.
->   */
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index a20d426ef021..81872c32dcb2 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -469,6 +469,36 @@ xfs_fileattr_get(
->  	return 0;
->  }
->  
-> +static int
-> +xfs_ioctl_setattr_atomicwrites(
-> +	struct xfs_inode	*ip,
-> +	struct fileattr		*fa)
-> +{
-> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
-> +	struct xfs_mount	*mp = ip->i_mount;
-> +	struct xfs_sb		*sbp = &mp->m_sb;
-> +
-> +	if (!xfs_has_atomicwrites(mp))
-> +		return -EINVAL;
-> +
-> +	if (target->bt_bdev_awu_min > sbp->sb_blocksize)
-> +		return -EINVAL;
-> +
-> +	if (target->bt_bdev_awu_max < sbp->sb_blocksize)
-> +		return -EINVAL;
-> +
-> +	if (xfs_is_reflink_inode(ip))
-> +		return -EINVAL;
-> +
-> +	if (fa->fsx_xflags & FS_XFLAG_COWEXTSIZE)
-> +		return -EINVAL;
-> +
-> +	if (fa->fsx_cowextsize)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  xfs_ioctl_setattr_xflags(
->  	struct xfs_trans	*tp,
-> @@ -478,6 +508,7 @@ xfs_ioctl_setattr_xflags(
->  	struct xfs_mount	*mp = ip->i_mount;
->  	bool			rtflag = (fa->fsx_xflags & FS_XFLAG_REALTIME);
->  	uint64_t		i_flags2;
-> +	int			error;
->  
->  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
->  		/* Can't change realtime flag if any extents are allocated. */
-> @@ -512,6 +543,12 @@ xfs_ioctl_setattr_xflags(
->  	if (i_flags2 && !xfs_has_v3inodes(mp))
->  		return -EINVAL;
->  
-> +	if (fa->fsx_xflags & FS_XFLAG_ATOMICWRITES) {
-> +		error = xfs_ioctl_setattr_atomicwrites(ip, fa);
-> +		if (error)
-> +			return error;
-> +	}
-> +
->  	ip->i_diflags = xfs_flags2diflags(ip, fa->fsx_xflags);
->  	ip->i_diflags2 = i_flags2;
->  
-> diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-> index 96496f39f551..6ac6518a2ef3 100644
-> --- a/fs/xfs/xfs_mount.h
-> +++ b/fs/xfs/xfs_mount.h
-> @@ -298,6 +298,7 @@ typedef struct xfs_mount {
->  #define XFS_FEAT_NEEDSREPAIR	(1ULL << 25)	/* needs xfs_repair */
->  #define XFS_FEAT_NREXT64	(1ULL << 26)	/* large extent counters */
->  #define XFS_FEAT_EXCHANGE_RANGE	(1ULL << 27)	/* exchange range */
-> +#define XFS_FEAT_ATOMICWRITES	(1ULL << 28)	/* atomic writes support */
->  
->  /* Mount features */
->  #define XFS_FEAT_NOATTR2	(1ULL << 48)	/* disable attr2 creation */
-> @@ -384,6 +385,7 @@ __XFS_ADD_V4_FEAT(projid32, PROJID32)
->  __XFS_HAS_V4_FEAT(v3inodes, V3INODES)
->  __XFS_HAS_V4_FEAT(crc, CRC)
->  __XFS_HAS_V4_FEAT(pquotino, PQUOTINO)
-> +__XFS_HAS_FEAT(atomicwrites, ATOMICWRITES)
->  
->  /*
->   * Mount features
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index 6fde6ec8092f..6679b12a56c9 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -1471,6 +1471,10 @@ xfs_reflink_remap_prep(
->  	if (XFS_IS_REALTIME_INODE(src) || XFS_IS_REALTIME_INODE(dest))
->  		goto out_unlock;
->  
-> +	/* Don't reflink atomic write inodes */
-> +	if (xfs_inode_has_atomicwrites(src) || xfs_inode_has_atomicwrites(dest))
-> +		goto out_unlock;
-> +
->  	/* Don't share DAX file data with non-DAX file. */
->  	if (IS_DAX(inode_in) != IS_DAX(inode_out))
->  		goto out_unlock;
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index fbb3a1594c0d..97c1d9493cdb 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -1733,6 +1733,10 @@ xfs_fs_fill_super(
->  		mp->m_features &= ~XFS_FEAT_DISCARD;
->  	}
->  
-> +	if (xfs_has_atomicwrites(mp))
-> +		xfs_warn(mp,
-> +	"EXPERIMENTAL atomicwrites feature in use. Use at your own risk!");
-> +
->  	if (xfs_has_reflink(mp)) {
->  		if (mp->m_sb.sb_rblocks) {
->  			xfs_alert(mp,
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 753971770733..e813217e0fe4 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -158,6 +158,7 @@ struct fsxattr {
->  #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
->  #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
->  #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-> +#define FS_XFLAG_ATOMICWRITES	0x00020000	/* atomic writes enabled */
->  #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
->  
->  /* the read-only stuff doesn't really belong here, but any other place is
-> -- 
-> 2.31.1
+> The code change seems fine so after improving the commit message, please 
+> add:
 > 
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 > 
+
+Thank you very much.
+
+Reinette
+
 
