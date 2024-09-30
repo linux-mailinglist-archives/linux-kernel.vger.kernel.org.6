@@ -1,179 +1,106 @@
-Return-Path: <linux-kernel+bounces-343325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3319899A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 543DD9899AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 664261C20FFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:55:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835471C20C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7633F9D2;
-	Mon, 30 Sep 2024 03:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8195A4F881;
+	Mon, 30 Sep 2024 04:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnu+o4S/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="LJATheIe"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01421878;
-	Mon, 30 Sep 2024 03:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22ABE224DC;
+	Mon, 30 Sep 2024 04:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727668520; cv=none; b=HnBlbMO9InbVoOGNuDgzCOc98Tyt8ZMOdn01+0Q4FzRHVxnfZmn6udmmc0loNGBOGlIHUvr2aY2lcXHdUPMFxZnGxwP8NaGlOMYMLsioaBz7XVvd9xRshbogtyS338pc7Xjm+K20glReJPo6hi0YL9g9AEeQKO43qqMFI+0+Ui4=
+	t=1727668834; cv=none; b=UnxQjpEidw4tCHRvgEoX1aAjK6Wf8fyia1TOVA8KRaAvJMMs5Ewb2fXeLuQlffqBIBVGPHHVN4sGLXQyvX5dWlBsYUmAg0SpQlSW+XWN1q19cYzHtV0hb3XPiOFjfI7dkTu15XuR0Cu/GXB3/0N1ye8PYlnq+GLFzOs9PuZI7Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727668520; c=relaxed/simple;
-	bh=IJa8Mg1aKbFf8WzwjqMhoot4wnFim9U6zMkwBTOCArY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GnGKVUaN9kRUSrkZpje7VY9yvdXkGN5H3yaTBNQ+wWZ8L09s6w7paQBihwyab1Skq9E0+dl/QbW3ARkDK/tCKPscJ3PBcZXDEGesuQ8IAvSrnfiUCDenZ8mquLpe+eJ1fZywJdLGSadDHEfNRVz7urEbzk5zxgIHyhG4lGUid58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnu+o4S/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B64C4CECE;
-	Mon, 30 Sep 2024 03:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727668520;
-	bh=IJa8Mg1aKbFf8WzwjqMhoot4wnFim9U6zMkwBTOCArY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dnu+o4S/ksubI4Bb4bxGIsPg0I0Ls0s/LFe4FiTfuXR9HoiHSv7O+jQN6NeeD6cI6
-	 uvgJdLx7RcG385IAINmqVhz97uvR5baPAPLO+s1OOn7z5av3BS/bWoXeKDTIg3jfzZ
-	 En9lw21nLQiZ71bt7zW8g2z9ZGprQopoihqdGb0De+s9x+3EygQmu0HrvxGXwTxTNh
-	 I4BKNy8RNyssS9rLkbx6PIlSz6GlglWeLAs7d1aHleOITRohvrtFnmPMY4Cu0+mE4Q
-	 AkEvwH7sp+gGhs+5apfOgJJEobUEQJCm6av/UVfngGH7Wq2Rb9PafOKGshsq4nqtVy
-	 Xm1Dp8TyV4gFw==
-Date: Sun, 29 Sep 2024 22:55:17 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: cros-qcom-dts-watchers@chromium.org, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 11/12] arm64: dts: qcom: starqltechn: add graphics
- support
-Message-ID: <cbsxqssei5lcsnnphk5cx77qpnnnjticvtzn2jemkm6h333llx@hzygsxsc6t22>
-References: <20240926-starqltechn_integration_upstream-v5-0-d2084672ff2f@gmail.com>
- <20240926-starqltechn_integration_upstream-v5-11-d2084672ff2f@gmail.com>
+	s=arc-20240116; t=1727668834; c=relaxed/simple;
+	bh=ZBd+kJ6avV4R6OiMc0ua20WnotT9z+UmMt29VwuQpeA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Avucv/wxqle4BSIIN9X7T5gUGzaMDhY7p0G1QuhVxelH4EGUmiYbJxp3xe22bi7zQJ1V4B0eYMdxy+p0Nxu+CGeNXY3Samr8S41IRLWtAAtlIc41qU+89Q+0GFQda0YNZSTBKu/vr/JFy3kABHZBRhtbVnxYRAiOwC2o9XzmiHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=LJATheIe; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1727668830;
+	bh=x1MVByC9IZmGZ5pP4eLbpu0Q6zUMxyr6LSy+i01ws1M=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=LJATheIezZWFVcv0H7jqy6XdHb6EQP8mqcS6854GkA7Uqr3uzBDzna/qPZZq/PRsp
+	 h0CjV4Gu1Zc0RXlnm9NbKz1zBkeL+9qbZONBZxfFx/GANzRP3/VapsBo3YQ85FIxZG
+	 ZuXXlpvE6NLPKsSPGiYJLZ28a+RM/QDu3tBjGgclGO7Qv4tn7Rx7mSrm1y496+PctR
+	 NFJIq7LjbZQfthFeFiRiq4tEWG6MR/TTwFbJ9mUDOed1mosFMhMHktDSnmu+ynudOn
+	 WCLF2t7X0YC4m+K+KAclzPwrC37wbt2IBepfwQUcqfWcwCFF5wfFYMGshxzLth9VIM
+	 9dnSzP0SGKIqw==
+Received: from [192.168.68.112] (ppp118-210-73-17.adl-adc-lon-bras32.tpg.internode.on.net [118.210.73.17])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id BD0FB6511E;
+	Mon, 30 Sep 2024 12:00:26 +0800 (AWST)
+Message-ID: <ff05349166eac044a05d74d969749c5d144cd5b0.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v6 3/7] gpio: aspeed: Create llops to handle hardware
+ access
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org, 
+ brgl@bgdev.pl, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ joel@jms.id.au, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, BMC-SW@aspeedtech.com,
+ Peter.Yin@quantatw.com,  Jay_Zhang@wiwynn.com
+Date: Mon, 30 Sep 2024 13:30:25 +0930
+In-Reply-To: <20240927111744.3511373-4-billy_tsai@aspeedtech.com>
+References: <20240927111744.3511373-1-billy_tsai@aspeedtech.com>
+	 <20240927111744.3511373-4-billy_tsai@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240926-starqltechn_integration_upstream-v5-11-d2084672ff2f@gmail.com>
 
-On Thu, Sep 26, 2024 at 05:22:11PM GMT, Dzmitry Sankouski wrote:
-
-It would be much appreciated if we included "sdm845-starqltechn" in the
-subject. That way it will help me when I try to write the pull request
-later, and try to group sdm845 changes together...
-
-> Add support for gpu and panel.
-> 
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-> Changes for v5:
-> - fix label names
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> index 230e984b5ba3..f7cb09734d2f 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-> @@ -203,6 +203,52 @@ vib_pwm: pwm {
->  	};
->  };
->  
-> +&gpu {
-> +	status = "okay";
+On Fri, 2024-09-27 at 19:17 +0800, Billy Tsai wrote:
+>=20
 > +
-> +	zap-shader {
-> +		memory-region = <&gpu_mem>;
-> +		firmware-name = "qcom/sdm845/starqltechn/a630_zap.mbn";
-> +	};
+> +static const struct aspeed_gpio_llops aspeed_g4_llops =3D {
+> +	.copro_request =3D aspeed_g4_copro_request,
+> +	.copro_release =3D aspeed_g4_copro_release,
+> +	.reg_bit_set =3D aspeed_g4_reg_bit_set,
+> +	.reg_bit_get =3D aspeed_g4_reg_bit_get,
+> +	.reg_bank_get =3D aspeed_g4_reg_bank_get,
+> +	.privilege_ctrl =3D aspeed_g4_privilege_ctrl,
+> +	.privilege_init =3D aspeed_g4_privilege_init,
 > +};
-> +
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vreg_l26a_1p2>;
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "samsung,s6e3ha8";
-> +		reg = <0>;
-> +		vci-supply = <&s2dos05_ldo4>;
-> +		vddr-supply = <&s2dos05_buck>;
-> +		vdd3-supply = <&s2dos05_ldo1>;
-> +		te-gpios = <&tlmm 10 GPIO_ACTIVE_HIGH>;
-> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-0 = <&sde_dsi_default &sde_te>;
-> +		pinctrl-1 = <&sde_dsi_suspend &sde_te>;
-> +		pinctrl-names = "default", "suspend";
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint = <&mdss_dsi0_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss_dsi0_out {
-> +	data-lanes = <0 1 2 3>;
-> +	remote-endpoint = <&panel_in>;
-> +};
-> +
-> +&mdss_dsi0_phy {
-> +	vdds-supply = <&vdda_mipi_dsi0_pll>;
-> +	status = "okay";
-> +};
->  
->  &apps_rsc {
->  	regulators-0 {
-> @@ -837,6 +883,27 @@ &tlmm {
->  	gpio-reserved-ranges = <27 4>, /* SPI (eSE - embedded Secure Element) */
->  			       <85 4>; /* SPI (fingerprint reader) */
->  
-> +	sde_dsi_default: sde-dsi-default-state {
 
-I'd prefer we leave the "sde" out of here.
+A brief nitpick as I have another comment below - can you order these
+assignments in the same order as the member declarations in the struct
+(you re-ordered that in v6)?
 
-Also, 'sde' > 'sdc2', so in its current form this should be moved down a
-bit.
+> @@ -1191,6 +1214,10 @@ static int __init aspeed_gpio_probe(struct platfor=
+m_device *pdev)
+> =20
+>  	gpio->config =3D gpio_id->data;
+> =20
+> +	if (!gpio->config->llops->reg_bit_set || !gpio->config->llops->reg_bit_=
+get ||
+> +	    !gpio->config->llops->reg_bank_get)
+> +		return -EINVAL;
+> +
 
-Regards,
-Bjorn
+I think the patch is largely in good shape. I've given it some light
+testing. The only concern I have is this is introducing another
+resource cleanup bug right now, but that's only because you've ordered
+the devm_clk_get_enabled() patch as the last in the series. If you
+order it before this patch then the direct return above should no-
+longer be a concern.
 
-> +		pins = "gpio6";
-> +		function = "gpio";
-> +		drive-strength = <8>;
-> +		bias-disable;
-> +	};
-> +
-> +	sde_dsi_suspend: sde-dsi-suspend-state {
-> +		pins = "gpio6";
-> +		function = "gpio";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +	};
-> +
-> +	sde_te: sde-te-state {
-> +		pins = "gpio10";
-> +		function = "mdp_vsync";
-> +		drive-strength = <2>;
-> +		bias-pull-down;
-> +	};
-> +
->  	sdc2_clk_state: sdc2-clk-state {
->  		pins = "sdc2_clk";
->  		bias-disable;
-> 
-> -- 
-> 2.39.2
-> 
+Andrew
 
