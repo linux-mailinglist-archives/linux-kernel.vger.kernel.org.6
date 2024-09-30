@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-343910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B32598A126
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:51:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD5898A123
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33E381F25B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2285281628
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59818E347;
-	Mon, 30 Sep 2024 11:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D96218DF8A;
+	Mon, 30 Sep 2024 11:51:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtvxzVci"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qowd6vvh"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C738D18E039;
-	Mon, 30 Sep 2024 11:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9A514389F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697090; cv=none; b=MGtiHiLcaJsFYi6yJ7GetiXwEQAKjuwA8npx9prYn7qB42UYXEf8B8cnuqQ+b4OC0hJ8m0jmQthP4QZCp4clOee8hsO8RhIvqIE1NFlUsvoRYLnY78BcQCBjhXNSfGZihIlNGrd9I1EtNOref8CkpCxUtplAV49Qo4KuNPLxgvI=
+	t=1727697087; cv=none; b=qDx2lPwk4gpuKUHq72JG7dpdxzYkBqseFS1vzlr3Xf6KsFFX1nXLBGE0PTGic+fGaj0SjdaL6PdVXlo+x/Hsph6KxLqnj4rHIz444FlZpUpIq4cc+lfAJR5611SiameuwPDLwhR8gtB2zdaGNY6/LJJTWn0iTm98pI0QM5IDSOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697090; c=relaxed/simple;
-	bh=tdV9uVts2mI3/F5PUrh9npWP04do1rqaF0hXOVll7rY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DNc6/KmrOA2VrH0AwY/uSHUaB5UT1j4gdkzkCH+w6Wqx7EDR7Az3crgK9sve4vtUWw6EYqFo7cCJkDnp97P8NVhMZXU6HRGuTVJKBgzu8IXkme5HtC37pA+t0/i7gt9/bT3jDV7UuSZnQoCRIMadbKzCPg1nsIXBTOYw/IobSt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtvxzVci; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-50958a19485so406866e0c.2;
-        Mon, 30 Sep 2024 04:51:28 -0700 (PDT)
+	s=arc-20240116; t=1727697087; c=relaxed/simple;
+	bh=08fE7fYBrd9zzYFvSZGijl+vlzjHnu0p+at/BJfSCRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SRGgSq8TJ8q1ryVu12loEjxn/5hakBpnOli7LMEMWvjZFTxZo41FNj+cC7woIKmXFN2EyTGf89PGeD3EDegkRy5+eu0QBVhE81lpSV0UK3c7bKrUvPUfNt/7CGhjEeHXBlaJkOyxcphgS3EZ0ba5KGRw8NrKbD8h6p4tUpfllrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qowd6vvh; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37cd6ece97cso1528752f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:51:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727697087; x=1728301887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tdV9uVts2mI3/F5PUrh9npWP04do1rqaF0hXOVll7rY=;
-        b=FtvxzVciKnbUiPXyaUOXJzhTIa6iMYnU7PBiIWWO4eI8U5GB20zZZ4GorYJ5NJOU4l
-         Hlgz35pWCsloYOyWR49hni2ciftwMdEDcNl1tZIiffCpDdnQVnOAI16hOnVaQa9oX+Zz
-         t4hSZukFzPaL8ZjgcexJXE6iaViKJ6rQA2tUZLT50F6+avA7hm/L/pYdExQV2Kk1VENv
-         ns6DAvRVsjBjvogNvVjKg7wlEofUhsiJbybG4AYx3Zb7aVeYQaoFN1gysQTqV9qw8C2A
-         OyVkxtmJ3iAqgor53n6xYd0uHmcx1VD3RdDB+G6/w8HCQAQAJu36V/4psfSiOGPJ7bnK
-         HuSw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727697083; x=1728301883; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cnhN28xiUyoIoByfTbaiA2O0cDcMJ2MqwIpLUCd9bBI=;
+        b=qowd6vvhpW+QgPrXQvnCTJrPC3k1QOGfY7SOLDCDIXKrrOu5ofKXS4KB8QsyRBRtsB
+         aDLTkQeHYigkj1TG8cWEfNjh6Ez4o1NfjupZEmQvdmtX308dEvA5LvzZhG0XMGJZOTkJ
+         RguE5AJDOhgMuxIlM2xJ1Xh8utjLLsJApY+I0Np2ezANJ8fbSnU0SCwUV2TKdL7b5oqp
+         LlWzT1gNb3VrL2xFR+z7jy/o6fkvN3RCFtvvnbLhFRWl4qo99rcRgsRLBGQ52RZ6z+NV
+         WnGgowHXp/QD+ZZlDwRZtknxH4QL3gXaJH8hPtxeucNiODYzn4Cltc/bDkdkiC8O3EqW
+         0M9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697087; x=1728301887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tdV9uVts2mI3/F5PUrh9npWP04do1rqaF0hXOVll7rY=;
-        b=AGV+3/3VkS68SBujecj0N+WNelzvQjaz7cZepIaqJNnZYPq2lk2ilagFGA3Uf8dVA4
-         uk7xASsoB6QXFLjOB7yWLoXvHKId36mt/4fAbHWA+rimVN/K+2At8hXG6HsR13SaavPv
-         amLkmaPWZx0/3AC1Qj6vWRSVuWoP/kdFIgDa0srXGGrhJKy4YBzy4e5k54GH+OW2iYNQ
-         JXSCcKJdcCFwOdwPtzNNVHMESc0w0Nr5LFq6hN5u8AVGOwWNiiTwjmSj13/QPFw3x7yO
-         fMUmN2akLh6pEVzooJvsmAJehNoGdEhOPKKKrbnlGrxI5UtGCOPoy19Qw9k2ZXfsoJjo
-         I70Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUfpx8tLswY0joE5Cp6mV06bdjqimESQbUTmH2hx7wYyNsk/5EnQCHkKc+e89qYWNnU2unGhBH16sul+fk=@vger.kernel.org, AJvYcCVyhVNIxWkTwPrylLEpndwgbKO6C7jVl+ujl2gNBHp7WyYci9J9Q0VXYtXy2wLqjAS2PI2M3bQ1SlsdJxbICFrCn0k=@vger.kernel.org, AJvYcCXt6HjC8gGCA0ZL853G9B91bacC5r0Hf0D7cm3VQZkqxUQQtyJi7qZpPCrTXjvDGesQ454uv6YFsMnFHgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHlKRFa9/pPwQBVhJmishQcPhYjg8BT6yYBeVJKRhtTV9zLxOL
-	nSyRKDkDTK9ziDpoFLTeQ6crFBTBzIAftjDVVCq0EFGHDrV6Nk2GSlBiiYwDT3mk5cfLKKrRrZ7
-	xged3LdsrdRfzWPV/MVRkLCduD2I=
-X-Google-Smtp-Source: AGHT+IEr3HLb/CcIg/mYgqJo3eSkEV6VHqba8bGSn5TXI7VVhlA0l3O3Ei/7lzB+GuU7uh0727lyq+zaB26ullrGWdM=
-X-Received: by 2002:a05:6122:17a8:b0:4f6:b240:4af8 with SMTP id
- 71dfb90a1353d-507818cc9e7mr6876249e0c.11.1727697087426; Mon, 30 Sep 2024
- 04:51:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727697083; x=1728301883;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cnhN28xiUyoIoByfTbaiA2O0cDcMJ2MqwIpLUCd9bBI=;
+        b=hOccAEG8ipRr8baUIx7bHhkQu4HArBmkTGNsqCqUJDEQP8vM9VT6hi3b8AfXsH0N82
+         PjTLrU+G6GWSoeWPJU5zdn3c76hSa6adCqThZrGB4FCmfWGl4ni4Pqtt1Idyg5XiSlRu
+         VbCkD4RtfsZp/LPh9d5yOemhTEaXZPbRE9Y0JfYg/deQmEdkASvG9msJAKSotvOrf9EW
+         1CzvE9WreUrl0ACZ6PwP0Iv+PNgAPtIfoetTIduJDcXvi69XJfktlCQAiOILDzAYBlsY
+         OAsp526QTPFz8x+9EvUUwyuPa7o6R6Ta5N+X/dZhuOyQU3Pcqv+nCn5tlmNg4EwbylpX
+         Mm/w==
+X-Gm-Message-State: AOJu0Yx8zrkjtdA+99hDiwP6fT3I8DYmf9HGAl40PzVN8vKRr3oe9Yss
+	1AouWEzokuW4ca+VcYE3t5DQlpxz0HoNMTGcWuEwmNwDdccVLb+to5oiSipPGeU=
+X-Google-Smtp-Source: AGHT+IF/MGS3gPBd6+OZGEUxxfHt2P526pBHts9h9Ayu/AEOFTFndhTAJWIXTMj2X7G41ltMrPoZyQ==
+X-Received: by 2002:a5d:45c8:0:b0:374:c847:83a with SMTP id ffacd0b85a97d-37cd5a6b581mr6341799f8f.8.1727697083178;
+        Mon, 30 Sep 2024 04:51:23 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a362bcsm148996985e9.36.2024.09.30.04.51.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 04:51:21 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Keerthy <j-keerthy@ti.com>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 1/2] gpio: davinci: allow building the module with COMPILE_TEST=y
+Date: Mon, 30 Sep 2024 13:51:15 +0200
+Message-ID: <20240930115116.54626-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240910175357.229075-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240927222400.GE12322@pendragon.ideasonboard.com>
-In-Reply-To: <20240927222400.GE12322@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 30 Sep 2024 12:51:01 +0100
-Message-ID: <CA+V-a8v=Su=FPUVXoqRqPJkhoWALT5U-7BQmTaogbTAQ4Y-xJw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/16] media: platform: rzg2l-cru: rzg2l-csi2: Mark
- sink and source pad with MUST_CONNECT flag
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Thank you for the review.
+Make it possible to build the module when COMPILE_TEST is enabled for
+better build coverage.
 
-On Fri, Sep 27, 2024 at 11:24=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Prabhakar,
->
-> Thank you for the patch.
->
-> On Tue, Sep 10, 2024 at 06:53:44PM +0100, Prabhakar wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Mark the sink and source pad with the MEDIA_PAD_FL_MUST_CONNECT flag to
-> > ensure pipeline validation fails if it is not connected.
->
-> The MUST_CONNECT flag only affects sink pads. That's not documented
-> though, and it seems that most drivers using the flag sets it on both
-> sink and source pads. That's probably a good practice, and the fact that
-> the flag is only checked for sink pads is more of an implementation
-> detail. This patch is thus fine.
->
-Agreed.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> However, I think you should then set the flag on the source pad of the
-> IP entity in patch 02/16. You can keep my Rb.
->
-Sure, I'll add this flag in v3.
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 643747da4475..746f2a8f3106 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -243,7 +243,7 @@ config GPIO_CLPS711X
+ config GPIO_DAVINCI
+ 	tristate "TI Davinci/Keystone GPIO support"
+ 	default y if ARCH_DAVINCI
+-	depends on (ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)
++	depends on ((ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)) || COMPILE_TEST
+ 	help
+ 	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
+ 
+-- 
+2.43.0
 
-Cheers,
-Prabhakar
 
