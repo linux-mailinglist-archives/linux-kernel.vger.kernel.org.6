@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-344947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D634298B071
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:48:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E6398B078
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:49:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149611C2287F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D311F22F43
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C07B188CC6;
-	Mon, 30 Sep 2024 22:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740B3188CAE;
+	Mon, 30 Sep 2024 22:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q3Hxchp/"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mA1pZUsE"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009041836FA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F1117B516;
+	Mon, 30 Sep 2024 22:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727736509; cv=none; b=hxFhAp3dsr8TiPXxUvUhu38qniWv5X2Fdes7Maqk8IMMy0LSNjyggV8IPISTJOpVm4Myybuawmr8Fit/sU6iw5JAYnHBXrSXxsv35OqAIVm2ly14DtFecF1vAVespl2jG0YNsrC6vaJF8j3KBeB9LBzUFsp1Ub/udb/Xp1raeE8=
+	t=1727736563; cv=none; b=MVnqwM6ZHPAdyZMu57oIBxBb7YpC6b/PpASS3/PO6utRVkY1W6VFbwFTsdhblnsBTpBNeFrEvZiMLz+2tUUyKW3Q8pQbYJJB4FJpPB/ygX7Yeid9d5IRaDbCUwpZwfQwaf3KHRtlHmv2waxxvgvf12TUJiaud2CPy5ZnRfGRtnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727736509; c=relaxed/simple;
-	bh=S2Z1JwX1MU6DLUEoEGwV8nRjiTHOC576ZcrLMcIfVj0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=TtXR1T34HM5oU3ztoXnoowD7azjdVJnTPQa571O0svHBIOaZbnuKXfVrB7BraowD+v+1Hhb8aqc9omvaP0eu6Nm0NH8FL1LRcOAY/NM6GJDEAQC5GecB+l/CTfM9vBXwwCWWzD/Sg7/hUm7tqzS2Of9O8aGmJs2EGbCQ80Anxb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q3Hxchp/; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-718e2da2e33so5291134b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:48:27 -0700 (PDT)
+	s=arc-20240116; t=1727736563; c=relaxed/simple;
+	bh=Qqh/hGu2mFPMEXD/hLAjyaD03WXmExxiqqz+q1V/oDw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WM3hDQQIApBuaPVl7lZy3A8t1mRLzd36W7xyhhyebKah2IURYJCIZO398iCIpFggD/Wq+WrDqjD1RIdvFzH7aSx9xHkJD8QREqgF9ug5JpQnKhZ29jALHnWrNNdgasUdyTEXq1ucUwW+bNpy0z8qozHiv+Orqve7UsuGY9NMBPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mA1pZUsE; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7179069d029so3495208b3a.2;
+        Mon, 30 Sep 2024 15:49:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727736507; x=1728341307; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XEKROrbsF+Qc32qai9a0qLWUFdx11pYvvS7Yvup4cZY=;
-        b=q3Hxchp/yabyxR8sxLQ1wvjZw517OcZbIWReUFnDvyUcy7BUyUG4zzkDmY+F+3dxpB
-         7x0yn0O1947629aF5TokYUSfDHSgUApASANI8eJ03DGVVeDL2LIcfHK/IpCcEEfS8O5W
-         s++R3uCDarrmtxA3QNH3rIVQ7k1nmFmsvIsKvzWotM0L6LDCT0YR5+C1/ib8eygDygDv
-         Sst//R5WZniDZ/Dcw0PZOsxpavQLlomIUwmMsKMm68pxecAzIlzZ6YsSOwZpW+Wugy+5
-         Gt/jBFB4RWvXzUXgYrYAU5MTHR4zDr9wt1XoT9CjcyASrj9gtMp6B5cLmF5hISVPywy4
-         eoLw==
+        d=gmail.com; s=20230601; t=1727736562; x=1728341362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0xszBDXhCdb0aB17XDm2OeZTEXlfiZ1uBmMn3tuJfbM=;
+        b=mA1pZUsECBdUA+TxPbbjl5y6J8R4kgU7Ffa7aprciKsZ35JgX1lW1OWPbJtsnp/GMY
+         mC6/iVOELbvRUQamcj5wyPMetdUbrAZL/HSRfKXs7B2dXMpaaACUX8ICWCC81+ud3iIn
+         DrMhTZ4CM2GeXpCHW7K044xZlZTUExY8mE76DvcicCM7waCZRMgT/5YcNhX98ZQLRDXP
+         A8XYWeo16mBzI7nLcv/L1VdgUe+5bzMsXVsHVuNoi1+7nmroqnAre+I13x4bV5e12LrM
+         8sv2U3xlp+xmSvG43vsMKHBsSDOCnJEKcWDC+PeX0LhYxpYgmi7GjVmZhXmHjrnkl6cJ
+         wiHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727736507; x=1728341307;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEKROrbsF+Qc32qai9a0qLWUFdx11pYvvS7Yvup4cZY=;
-        b=aux+ApL6d3xCtfwxGGYld4WMLyHUE4sJhsu6fzVkz3+S8WCHjoSZ6VX9blprQLItUr
-         U/wXjFF0jrRD7lUVbsV45tKDx3oY7OFJ4owJMgrU7+VrqMyw9vPVLGC1Pbqcj2ZFvRh4
-         WiPYZKay0hovEK2QVhiCThtY7amSYCDugXfsDY9ychrP5IX4doOCSMtkGL/mbzCQ/tLM
-         7ZKudtuE/+wASuZWviHwYCJC+s9irX+dlHZjU2XyJjTj/E1wN3DVZ6srDQ3tdiGlI0Gi
-         EhWYToq0PlF9IvnJKpX5ciSrEZ5K4CbpRgH3vesq4OZdEpxs6fbzFrTLCgblc4eQVlhL
-         UMLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrcHulZZLTMdFtMd64rNSG92znvyVazRjdy9bvnaikOApF/+GtexqcmbLyes0uOi7bJkc90dVJdXvIIiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUOT7w8rfCye6QwR3TGZ8gwd3nsmJEDAr+ndVET50Rl8BDDvVb
-	hiIrBSEnh4KTziFAuWGaVQ7GEa71K/vZY6TIrcsWmCA4WPsl/7yZmuhgU0zEknCgwPUzgZCo3hJ
-	3PQ==
-X-Google-Smtp-Source: AGHT+IFBqE4b3ETKHUb3GkTpAmeIZlaPPTKak751rxnBHWeoFOgyWmnqPX8beCCGnb8n0RirfB1L8PS0CMc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:83ca:0:b0:718:d8af:4551 with SMTP id
- d2e1a72fcca58-71b25f2ca30mr23827b3a.1.1727736507148; Mon, 30 Sep 2024
- 15:48:27 -0700 (PDT)
-Date: Mon, 30 Sep 2024 15:48:25 -0700
-In-Reply-To: <ZvseoZLzmaS4MEbc@google.com>
+        d=1e100.net; s=20230601; t=1727736562; x=1728341362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0xszBDXhCdb0aB17XDm2OeZTEXlfiZ1uBmMn3tuJfbM=;
+        b=v77jhQ62rYBT2tSVbj1HyTIdlq9mdglHFF/g6X5Q/jg5YUwsE6R85in661qUy1CDfq
+         rJ9pWoJHetRdGw8AukrT4QhvOTnpADn9DA7MzPKFUzeid2JcHBW0B28IciPuw0XDMDsC
+         XGyY6XUPGSXGy2A61FfoWsFbf3AI2l8dFTSEYzoC+8lNgNaQahOWuNo5Xk8jALbjAoDX
+         ZmhPoFGdFaK+sllBANIs1owjrU7xzS9ESzd2UiLqhE+KveyMBgrytG2gfOgARkCTtlIM
+         eGwU1/kd+e6slEPFE4xb3WJ2mTZ0bmjXhu1lVL4yTHAz+EwyMkkretO4UQFfdEUNACvn
+         EIJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR5EdmeGt80bxNgNPWRXvHYghiy9fp6El2+1ANr3j64Q3qrxItbmvrun3jqsCzxJi51lluuhnkGM2uAVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEfGziqkd3iKwEEHIPeIlPWrdwBcBBDcE6HWl9fCcBTpZHZAZy
+	l9ljgMcWZIZdf1OazUHWpsLzQV6aq0vm4e4VeTbMJCnAaT+sQMTZ30EdjGdG
+X-Google-Smtp-Source: AGHT+IEf4AX2/OJSd2OKQmIQAQNVzsNBaD7ptWjOXjS3029g3K4oYPIoj4Pii6mnziS2Ebog8LIKTg==
+X-Received: by 2002:a05:6a20:d805:b0:1cf:4d4e:532b with SMTP id adf61e73a8af0-1d4fa806e2dmr18891455637.43.1727736561727;
+        Mon, 30 Sep 2024 15:49:21 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b391bsm7029528a12.22.2024.09.30.15.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 15:49:21 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-mmc@vger.kernel.org
+Cc: Chaotian Jing <chaotian.jing@mediatek.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
+	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
+Subject: [PATCH 0/3] mmc: mtk-sd: add some devm
+Date: Mon, 30 Sep 2024 15:49:16 -0700
+Message-ID: <20240930224919.355359-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240911204158.2034295-1-seanjc@google.com> <20240911204158.2034295-4-seanjc@google.com>
- <ZvseoZLzmaS4MEbc@google.com>
-Message-ID: <Zvsquaq-Lo4umoTI@google.com>
-Subject: Re: [PATCH v2 03/13] KVM: selftests: Fudge around an apparent gcc bug
- in arm64's PMU test
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024, Sean Christopherson wrote:
-> On Wed, Sep 11, 2024, Sean Christopherson wrote:
-> > Use u64_replace_bits() instead of u64p_replace_bits() to set PMCR.N in
-> > arm64's vPMU counter access test to fudge around what appears to be a gcc
-> > bug.  With the recent change to have vcpu_get_reg() return a value in lieu
-> > of an out-param, some versions of gcc completely ignore the operation
-> > performed by set_pmcr_n(), i.e. ignore the output param.
-> 
-> Filed a gcc bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116912
-> 
-> I'll report back if anything interesting comes out of that bug.
+Simplifies the code. Also a bugfix with devm_clk_get_optional.
 
-Well, there goes several hours that I'll never get back.  Selftests are compiled
-with -O2, which enables strict-aliasing optimizations, and "unsigned long" and
-"unsigned long long" technically don't alias despite being the same size on 64-bit
-builds, so the compiler is allowed to optimize away the load.  *sigh*
+Rosen Penev (3):
+  mmc: mtk-sd: use devm_mmc_alloc_host
+  mmc: mtd-sd: use devm_platform_ioremap_resource
+  mmc: mtk-sd: fix devm_clk_get_optional usage
 
-I'll replace this with a patch to disable strict-aliasing, which the kernel has
-done since forever (literally predates git).  Grr.
+ drivers/mmc/host/mtk-sd.c | 70 ++++++++++++++-------------------------
+ 1 file changed, 25 insertions(+), 45 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 48d32c5aa3eb..a6f92129bb02 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -235,10 +235,10 @@ CFLAGS += -Wall -Wstrict-prototypes -Wuninitialized -O2 -g -std=gnu99 \
-        -Wno-gnu-variable-sized-type-not-at-end -MD -MP -DCONFIG_64BIT \
-        -fno-builtin-memcmp -fno-builtin-memcpy \
-        -fno-builtin-memset -fno-builtin-strnlen \
--       -fno-stack-protector -fno-PIE -I$(LINUX_TOOL_INCLUDE) \
--       -I$(LINUX_TOOL_ARCH_INCLUDE) -I$(LINUX_HDR_PATH) -Iinclude \
--       -I$(<D) -Iinclude/$(ARCH_DIR) -I ../rseq -I.. $(EXTRA_CFLAGS) \
--       $(KHDR_INCLUDES)
-+       -fno-stack-protector -fno-PIE -fno-strict-aliasing \
-+       -I$(LINUX_TOOL_INCLUDE) -I$(LINUX_TOOL_ARCH_INCLUDE) \
-+       -I$(LINUX_HDR_PATH) -Iinclude -I$(<D) -Iinclude/$(ARCH_DIR) \
-+       -I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
+-- 
+2.46.2
+
 
