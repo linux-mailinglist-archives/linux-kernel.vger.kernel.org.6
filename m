@@ -1,178 +1,162 @@
-Return-Path: <linux-kernel+bounces-344146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7878F98A561
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:33:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4016998A568
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003B91F25431
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:33:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721061C222F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BD518FC79;
-	Mon, 30 Sep 2024 13:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C19718F2FD;
+	Mon, 30 Sep 2024 13:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T9pDMmXe"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CQ7XLHLQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878482AE8E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFFC157A5C;
+	Mon, 30 Sep 2024 13:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727703221; cv=none; b=RfPuB2CF8a2Px2qQOgfyWDxOw+driqmGgxNTgPRotWwPfhMvfDH5GItJAAv6nY6EAibRV7kivebkYEcdTSFhyu1i+8GtHlIPSdVliLfTTpi8VXIyQ84qhYfCO8irLvU0ix0F+FSKCyPyN0a8K8V8D4pYM3OGHg4pSs6eTFaLbOI=
+	t=1727703336; cv=none; b=moLEdreJcrtXWuBu6rGwllpgoQqOU0hSwYlKO9JInEQoVRtc1vOpGTmjnm1dIuB/1vkPagxTkEZ36pj2FxEMN3Yn84NBhH9bmGSOm3T/rkgRft0poI0jH42q3vLQ+d8AI17ozG70rEvZc0Al7gWI+wh/oDZuGcNMpIhuPMzLVI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727703221; c=relaxed/simple;
-	bh=AdETirvF3wcdOb3DW5GCvr469kBotBZhk+1MCxQyejk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gId7dVPSx1EvXoCx0qi4OqyGRMtVQHaXLK2n00MTCJIE5I4+cCa9tHdlZek9N0C2wDwiV8pr5N8DVw2YHS//FJoF7JaLM07iiLODZHN9yn/HzJJTuF0g3uZqO75/bvYe0gulUwWMaRhDG5nZ5rKaohJQzmdHNEfxcHPGadxYzEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T9pDMmXe; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb1dd2886so267125e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727703218; x=1728308018; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3VVCxvZrybUBrzJDdX4zyvndOPszmnOFeDIEh38tMFA=;
-        b=T9pDMmXenKluO+oPjkfpTVlkeeF73aLDBSev9V6+zCu6WEX4krlmTVQpvYQ3qRoouF
-         8w5vF17/GM9pOTt5ZGNzyKbWcci/qmz432sr4wx9NFCe2gVmoLgv68dRY2RLb6NsXX76
-         Tmz2kyPHehYvSX4J2dfNjpH1P9PAzjYDp9+WTJAnVx3HPpseN3gzJK4t+KkESlakXuHn
-         KcsPaFT8M4YuL9NCcsDQjSxC3fvpIDUsA/DZu6/QU7DZsHjM6nHM6kiD4t8fo5/V+t1D
-         SA7v4oRUt2TWr5rjTJbR3A6gBaAwDbjgtR6AmK593HPFE07Pp4oRVLbs5XQ82zwLYzIv
-         RSWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727703218; x=1728308018;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3VVCxvZrybUBrzJDdX4zyvndOPszmnOFeDIEh38tMFA=;
-        b=V+JpFceHtkoWHO8TBcRN7FoZNkRnA52KH+s/A1ix9t3wFFQiOPQAsQU+Jqj0Du0pVt
-         wanMzZzfgWh7NhdI7Y1E8hbRqQleOLEMmAwSiSTiEwiPwOK62Op5/z32ESiKtmsEJz+n
-         HmluLr1y/QtLKdRuRm6+4SGafWGKzMbneqjglcsdbRd9ftW1pbCQmsLVJSybk4TwW/sk
-         y+17FjqHlwgXH/rN3/Nncf8TGwlHSRRNhE74FBXshUUcK+yWNYm+ZZZu3vTAQy8Z9ufn
-         N3fzvfhuloZIieoHkiC3iSEgRDotI9wrfCXTz5zuAL/K4q4MjV01FM/8f+T9yPvBVDbw
-         99GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxNt6FQAioYhQYxrthwdbQA8S4D5udOm2JEhrY4EeIbYsErmywOzjBuE+/K3+1dyXdmurG5e/8c6ArnqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPAx70gtzC6YmhCCUNwpGMbdnS29AttLxJPogDril3zvSG8GlB
-	BhKIyz7boszYlK8I5P44TdiYxXkXNIua9XlP9+A+QDZ9hRdYPxKrm5gA+d6wvA==
-X-Google-Smtp-Source: AGHT+IFMH5L0pvpmEOu9B/xo7F1qms5sXo0CY3+b4sAlhT15NuJIZjNjckS85DY40ep0tj6rvI/YIQ==
-X-Received: by 2002:a05:600c:4e16:b0:426:6edd:61a7 with SMTP id 5b1f17b1804b1-42f5f860051mr4781325e9.7.1727703217493;
-        Mon, 30 Sep 2024 06:33:37 -0700 (PDT)
-Received: from google.com (105.93.155.104.bc.googleusercontent.com. [104.155.93.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd565e767sm9094454f8f.38.2024.09.30.06.33.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 06:33:36 -0700 (PDT)
-Date: Mon, 30 Sep 2024 13:33:32 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Eric Auger <eric.auger@redhat.com>
-Cc: kvm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>, kwankhede@nvidia.com,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Quentin Perret <qperret@google.com>
-Subject: Re: [RFC] Simple device assignment with VFIO platform
-Message-ID: <ZvqorIqETNmk4V4p@google.com>
-References: <CAFgf54rCCWjHLsLUxrMspNHaKAa1o8n3Md2_ZNGVtj0cU_dOPg@mail.gmail.com>
- <0e87a96a-98ed-48ad-9235-900d46fe5400@redhat.com>
+	s=arc-20240116; t=1727703336; c=relaxed/simple;
+	bh=wpk8Xj6hS9Lyqr2G2RKw+Zd47k6ByENaOrMXscau0g0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OtHZ/M/oaJ482iT3/sZAiavzlam/IWDKg8Kn+7F0DkDLIOmWQGVOq1/qBMkR7BFjAR7CLlauyDga+AB3UR3ZUKufFpET0tYddA7lUejZL+76yDG1/zmpihSVXUpXo9VlAHaFg56+ui7Fue+0KANCx4+PYqW2tf+GMOwA4l6l+l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CQ7XLHLQ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727703335; x=1759239335;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=wpk8Xj6hS9Lyqr2G2RKw+Zd47k6ByENaOrMXscau0g0=;
+  b=CQ7XLHLQkmFNTzH7/r/V4mO0ttn2C3tGIg6eW5YmI6HTM3wokUqBMkZN
+   v2XADVq060LXIhnzh+YM13B2swISAENFrKvKA4NVAWbL/O+xPy/vK0noT
+   7jrXM8UtUhJR0N242HFw/KsSCfoypqez8PrVKJEn51oO5Y1iLeAeFPZK+
+   4vFFkC0mMiUHHfBoMUDV6KMg7VJ9vKf9rt1t+j0ZSQm8DeoDio6yRPy5Q
+   RXht6v/r51kTKW7fW1c6fVeDvcuRJLZ6GhS8myuxRbLdlzXm7qrR7oPhv
+   5iaSjI5mo6GED1s9T9G5H//TWX/x5Kzq2yOBoyoJ7KUIooLJhmZ9txqkc
+   Q==;
+X-CSE-ConnectionGUID: u0z3PIuyR8e+sWzJs0FBzw==
+X-CSE-MsgGUID: 3FhK3vVvR3yChZ/xHMrA5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44311825"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="44311825"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:35:34 -0700
+X-CSE-ConnectionGUID: OreTxhscTLKPUKPVlETLkw==
+X-CSE-MsgGUID: rn88oSeUSnaIZiqvsRXolA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="104107858"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:35:31 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Sep 2024 16:35:28 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 04/13] selftests/resctrl: Protect against array overrun
+ during iMC config parsing
+In-Reply-To: <c3ff2c7df3d10931087e25e5488eb1ab2f5fe13c.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <93b9f530-1d2d-dc19-1d48-c15aced32804@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <c3ff2c7df3d10931087e25e5488eb1ab2f5fe13c.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0e87a96a-98ed-48ad-9235-900d46fe5400@redhat.com>
+Content-Type: multipart/mixed; boundary="8323328-737293731-1727703328=:938"
 
-Hi Eric,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Mon, Sep 30, 2024 at 03:05:38PM +0200, Eric Auger wrote:
-> Hi Mostafa,
-> 
-> On 9/27/24 18:17, Mostafa Saleh wrote:
-> > Hi All,
-> >
-> > Background
-> > ==========
-> > I have been looking into assigning simple devices which are not DMA
-> > capable to VMs on Android using VFIO platform.
-> >
-> > I have been mainly looking with respect to Protected KVM (pKVM), which
-> > would need some extra modifications mostly to KVM-VFIO, that is quite
-> > early under prototyping at the moment, which have core pending pKVM
-> > dependencies upstream as guest memfd[1] and IOMMUs support[2].
-> >
-> > However, this problem is not pKVM(or KVM) specific, and about the
-> > design of VFIO.
-> >
-> > [1] https://lore.kernel.org/kvm/20240801090117.3841080-1-tabba@google.com/
-> > [2] https://lore.kernel.org/kvmarm/20230201125328.2186498-1-jean-philippe@linaro.org/
-> >
-> > Problem
-> > =======
-> > At the moment, VFIO platform will deny a device from probing (through
-> > vfio_group_find_or_alloc()), if it’s not part of an IOMMU group,
-> > unless (CONFIG_VFIO_NOIOMMU is configured)
-> >
-> > As far as I understand the current solutions to pass through platform
-> > devices that are not DMA capable are:
-> > - Use VFIO platform + (CONFIG_VFIO_NOIOMMU): The problem with that, it
-> > taints the kernel and this doesn’t actually fit the device description
-> > as the device doesn’t only have an IOMMU, but it’s not DMA capable at
-> > all, so the kernel should be safe with assigning the device without
-> > DMA isolation.
-> >
-> > - Use VFIO mdev with an emulated IOMMU, this seems it could work. But
-> > many of the code would be duplicate with the VFIO platform code as the
-> > device is a platform device.
-> >
-> > - Use UIO: Can map MMIO to userspace which seems to be focused for
-> > userspace drivers rather than VM passthrough and I can’t find its
-> > support in Qemu.
-> In case you did not have this reference, you may have a look at Alex'
-> reply in
-> https://patchew.org/QEMU/1518189456-2873-1-git-send-email-geert+renesas@glider.be/1518189456-2873-5-git-send-email-geert+renesas@glider.be/
-> >
-> > One other benefit from supporting this in VFIO platform, that we can
-> > use the existing UAPI for platform devices (and support in VMMs)
-> >
-> > Proposal
-> > ========
-> > Extend VFIO platform to allow assigning devices without an IOMMU, this
-> > can be possibly done by
-> > - Checking device capability from the platform bus (would be something
-> > ACPI/OF specific similar to how it configures DMA from
-> > platform_dma_configure(), we can add a new function something like
-> > platfrom_dma_capable())
-> >
-> > - Using emulated IOMMU for such devices
-> > (vfio_register_emulated_iommu_dev()), instead of having intrusive
-> > changes about IOMMUs existence.
-> >
-> > If that makes sense I can work on RFC(I don’t have any code at the moment)
-> So if I understand correctly, assuming you are able to safely detect the
-> device is not DMA capable you would use the
-> 
-> vfio_register_emulated_iommu_dev() trick. Is that correct?
+--8323328-737293731-1727703328=:938
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Yes, my guess the challenge here would be discovering that through the
-platform bus.
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
 
-Thanks,
-Mostafa
+> The MBM and MBA tests need to discover the event and umask with which to
+> configure the performance event used to measure read memory bandwidth.
+> This is done by parsing the
+> /sys/bus/event_source/devices/uncore_imc_<imc instance>/events/cas_count_=
+read
+> file for each iMC instance that contains the formatted
+> output: "event=3D<event>,umask=3D<umask>"
+>=20
+> Parsing of cas_count_read contents is done by initializing an array of
+> MAX_TOKENS elements with tokens (deliminated by "=3D,") from this file.
+> Start by removing the unnecessary append of a delimiter to the string
 
-> 
-> Thanks
-> 
-> Eric
-> 
-> >
-> > Thanks,
-> > Mostafa
-> >
-> 
+Start what? (It sounds odd given the lack of any context, my guess is=20
+you're trying to refer to start/first one of the changes you make in the=20
+patch but the textual context does not support that conclusion.) I suggest=
+=20
+you just rephrase it and avoid using "start" word altogether.
+
+> needing to be parsed. Per the strtok() man page: "delimiter bytes at
+> the start or end of the string are ignored". This has no impact on
+> the token placement within the array.
+>=20
+> After initialization, the actual event and umask is determined by
+> parsing the tokens directly following the "event" and "umask" tokens
+> respectively.
+>=20
+> Iterating through the array up to index "i < MAX_TOKENS" but then
+> accessing index "i + 1" risks array overrun during the final iteration.
+> Avoid array overrun by ensuring that the index used within for
+> loop will always be valid.
+>=20
+> Fixes: 1d3f08687d76 ("selftests/resctrl: Read memory bandwidth from perf =
+IMC counter and from resctrl file system")
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V1:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/resctrl_val.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
+g/selftests/resctrl/resctrl_val.c
+> index 70e8e31f5d1a..e88d5ca30517 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -83,13 +83,12 @@ static void get_event_and_umask(char *cas_count_cfg, =
+int count, bool op)
+>  =09char *token[MAX_TOKENS];
+>  =09int i =3D 0;
+> =20
+> -=09strcat(cas_count_cfg, ",");
+>  =09token[0] =3D strtok(cas_count_cfg, "=3D,");
+> =20
+>  =09for (i =3D 1; i < MAX_TOKENS; i++)
+>  =09=09token[i] =3D strtok(NULL, "=3D,");
+> =20
+> -=09for (i =3D 0; i < MAX_TOKENS; i++) {
+> +=09for (i =3D 0; i < MAX_TOKENS - 1; i++) {
+>  =09=09if (!token[i])
+>  =09=09=09break;
+>  =09=09if (strcmp(token[i], "event") =3D=3D 0) {
+>=20
+
+The code change seems fine so after improving the commit message, please=20
+add:
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-737293731-1727703328=:938--
 
