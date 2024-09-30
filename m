@@ -1,104 +1,100 @@
-Return-Path: <linux-kernel+bounces-343278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E924598990B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B54D98990E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231831C21016
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FEB1F211FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6B48F62;
-	Mon, 30 Sep 2024 01:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmVvqDai"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2278A8F45;
+	Mon, 30 Sep 2024 01:56:18 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11214566A;
-	Mon, 30 Sep 2024 01:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86685684;
+	Mon, 30 Sep 2024 01:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727661124; cv=none; b=GpGjEx86CkWKvYd84TKNDGuyU0MWTKo9JydcmXmPSMFk3QdbEBIQoLXi/7L7Q5skHAd1H5pWAt0yAJyftqVG/nAkOE6y3kOBJ6qzL2x6ft2dWYkuE1J0k9wEMRCzzyB2WItdKshiFOKDIaaDddMMi9vHu65POiu2QsDgJBP4wzA=
+	t=1727661377; cv=none; b=n5wlmRdpShQg8DN5bkIy2p39QiXTIcJm9vuggqJ/usf7ygxteyw3CwnCt1FzYzh5mphLI7NZ21wNtrdvhmRGflEusF6JKK42kGMByXFom1c1o0L4+yxZJ5IKnF+UkvT8UWWEIOaLkrIMmuiaCA/o6LbUVQOHF3g0ikWTB55idcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727661124; c=relaxed/simple;
-	bh=Ygv82u8MaTIGw4j1VwEn56lzxTjIHWN4CaJ19mHyz0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UW+dPwIMwwV+ZK0ABGxli6tGkk2ux7ym7yB9DEIJnLPJ/pAlFPeFdmG3kxYIVxPNrc1ozNN3Zngt2Ia9xUSD7Tt22X5/ZQICf/rxjF35vFUCX08S9B6ELhOnz1RG53KPlQ8YyMC8jgOVlZsxC10kiPMu7ypjn7D5te5meVYgfWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmVvqDai; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F90C4CEC6;
-	Mon, 30 Sep 2024 01:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727661123;
-	bh=Ygv82u8MaTIGw4j1VwEn56lzxTjIHWN4CaJ19mHyz0Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lmVvqDaip7ffiKitmaimglVXV49v4LM2VaFEG3Ryx439qSXFIadR68oSzwx/OmVK/
-	 mfR4/mgtN3wUkXUmW+YEUKvb/DPxKNTmnffTXCtAMJi8JX09MyyALtPVxe6/3+aLwq
-	 FDfm3Ozt0hBKI/P1GBmIQZGiuwdUfTCuuA+bumITf3wl4ELL/1gEhmneinCvhn2y0m
-	 Rm6oj8tOhSoYFq50CH4pylzEraDiuP0qyEZ0gbUhW63/f9QUd16nCf5FF65bmrJrPQ
-	 e8dBlbFU9OGOBvi+diPRBZBLKTyhN7ptXXYWVV08PVq83B2e4cgErbWdED8KeUNO4R
-	 8LjtXqEiT2+8A==
-Date: Sun, 29 Sep 2024 18:51:59 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm <linux-mm@kvack.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [RFC/PATCH bpf-next 0/3] bpf: Add kmem_cache iterator and kfunc
- (v2)
-Message-ID: <ZvoEPyrJF4uk1_LI@google.com>
-References: <20240927184133.968283-1-namhyung@kernel.org>
- <CAADnVQLeARMvSqg0aqgBS0vncV-m6e+sM9C_Ox0r3SL1=GpRgA@mail.gmail.com>
+	s=arc-20240116; t=1727661377; c=relaxed/simple;
+	bh=gGsFD+AZhQFZxsdoLEWaRSU1CeWly8c8qiggoTeF2ck=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=J9vihXvO7C6ml7b/eJX+/teSb3kTaf18ecgJ6/kY2snipjdZYGM/lm8vWZqzRuseO5adSn3kLR1YvpGzD7/kSWX9YOlMQULIZmvjqLS6UUv25e/naRjEMWeJwuXCGioqVgM7usmJbL7KUvpSEJZnI1v3ihmyHVYnUZTPlrhwhZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XH3wc376Rz1HKR6;
+	Mon, 30 Sep 2024 09:52:16 +0800 (CST)
+Received: from kwepemm000013.china.huawei.com (unknown [7.193.23.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id F1B76140360;
+	Mon, 30 Sep 2024 09:56:11 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemm000013.china.huawei.com (7.193.23.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 30 Sep 2024 09:56:10 +0800
+Subject: Re: [PATCH RFC 2/2] mtd: ubi: add support for protecting critical
+ volumes
+To: Richard Weinberger <richard@nod.at>, Daniel Golle <daniel@makrotopia.org>
+CC: Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra
+	<vigneshr@ti.com>, robh <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, John Crispin
+	<john@phrozen.org>, linux-mtd <linux-mtd@lists.infradead.org>, devicetree
+	<devicetree@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+ <b43a7155f80995c3986893951c092291caf3a5f4.1727527457.git.daniel@makrotopia.org>
+ <251386789.117942.1727612762462.JavaMail.zimbra@nod.at>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <ed98871a-b41a-9755-4eed-18ad9e00869c@huawei.com>
+Date: Mon, 30 Sep 2024 09:56:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <251386789.117942.1727612762462.JavaMail.zimbra@nod.at>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQLeARMvSqg0aqgBS0vncV-m6e+sM9C_Ox0r3SL1=GpRgA@mail.gmail.com>
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000013.china.huawei.com (7.193.23.81)
 
-Hello Alexei,
-
-On Sun, Sep 29, 2024 at 10:00:56AM -0700, Alexei Starovoitov wrote:
-> On Fri, Sep 27, 2024 at 11:41 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hello,
-> >
-> > I'm proposing a new iterator and a kfunc for the slab memory allocator
-> > to get information of each kmem_cache like in /proc/slabinfo or
-> > /sys/kernel/slab in more flexible way.
-> >
-> > v2 changes)
+在 2024/9/29 20:26, Richard Weinberger 写道:
+> ----- Ursprüngliche Mail -----
+>> Von: "Daniel Golle" <daniel@makrotopia.org>
+>> Allow the boot firmware to define volumes which are critical for the
+>> system to boot, such as the bootloader itself if stored inside a UBI
+>> volume. Protect critical volumes by preventing the user from removing,
+>> resizing or writing to them, and also prevent the UBI device from
+>> being detached if a critical volume is present.
 > 
-> The subject is confusing CI and human readers.
-> Please use [PATCH v3 bpf-next ..] in the future.
+> I agree with the doubts raised in patch 1/2, if userspace is so hostile
+> to delete system partitions, there is little hope.
+> But I'm still open for discussion.
+
+Yes, I agree that it is meaningful to prevent user from operating 
+volumes accidently. How about doing that by some existing methods? Eg. 
+selinux(Design sepolicy for ioctl cmd).
 > 
-> Also note that RFC patches are never going to be applied and they are
-> ignored by BPF CI.
-> If you want things to land then drop the RFC tag.
+> What I veto is preventing detach.
+> This makes a clean tear down of the system impossible.
+> It becomes more and more common that advanced userspace shuts down
+> everything it setup during boot. e.g. while reboot switching back
+> to an initramfs, umounting root, shutting down all storage, etc...
+> 
+> Thanks,
+> //richard
+> 
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+> 
 
-Ok, I'll change the subject line in the next version.
-
-Thanks,
-Namhyung
 
