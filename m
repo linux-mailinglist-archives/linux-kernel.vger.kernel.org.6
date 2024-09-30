@@ -1,116 +1,205 @@
-Return-Path: <linux-kernel+bounces-343812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C650989FDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:53:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A48989FDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A64D9B23DC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:53:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 450F61C21687
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B2BB65C;
-	Mon, 30 Sep 2024 10:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XYERiYDp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FD018C939
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB9F18CC1E;
+	Mon, 30 Sep 2024 10:54:15 +0000 (UTC)
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E165B65C;
+	Mon, 30 Sep 2024 10:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693590; cv=none; b=TNoskEwsKfzBAszbdVFb6VMp9emj7yPaqutdEvJecNf0txovNMYxeFF81EMq6QQz2W7YoP62HcRcCzntb3/NzXxDRfE9B/2THoyV5jBy4NSPeo7dVcYPj8lMV6nNbQ6q6AOk9+bp3hPoJ0r1Gp9SWcKXccoQ8nGtLd3e3PpKnD4=
+	t=1727693655; cv=none; b=lFvuR57T/WC0wa8XrJhDOZz6v56aComXl73exLkrtjpb0OYObBBQGurT97e6KRTJEvP16sYhFq2CoZe9he9eEwVj408vo8QPf9dOT04SgT94wvN4bDNRr8Cg4Z6GGOe4yq/m+a+N+NVeRlzJ5OnAoQry4dYF+FpcFXmm+ZDqaBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693590; c=relaxed/simple;
-	bh=R2oUj7MDtm4hWVv71UWEveQWhFJSK6XkDTbHfRryS7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E7BQ7LNuiV3iHlKjo5xkRLDUGf+mGGI9AI5mydMqhYjSUxuviJ53uOra6z6mBK8DcI60CgRWG9HWgJ591Lt+SVJFPO+3VeyjYj28/xDGgyAz1E6lMah+37pqt2QVaHYLx834m5DSSKOoKhosxaikbB8Hv0dkax52qSe39RCg7no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XYERiYDp; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727693589; x=1759229589;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=R2oUj7MDtm4hWVv71UWEveQWhFJSK6XkDTbHfRryS7k=;
-  b=XYERiYDp+y1AC7VRQLNM0uaqTo04X4y41Lgi28ex9/dEq7+VyrH98H80
-   TdCBUkdyC5YeOWXPaDqpMzQQVAqYae0nwP2G+PogTh/9YwFTOmnOVgQSU
-   s5csNyef4Kdd36rI3z4bUIv75fbWm12gbwKy1/nt3U8bj4Ix9Ky0GWQTF
-   Ph0j3mbZBKkNFy4tIqE3k3WWxhiEcGD7UmaolTZcsL5luTS23PQmrYby/
-   zz8o3wwtELEAvwbHzqZemSNVTYUD0heEfaFkAAUMBfQQH63AEuWtPE8iB
-   GuQTWuRK5B6k4aq2TRlDgI3Xu+w6k57RkZUbZPzrlEx740GplAajoiluc
-   Q==;
-X-CSE-ConnectionGUID: Nkb4yHeNTaK9eilDF0EIpg==
-X-CSE-MsgGUID: et/1nx0JQoWd4YP7E3H/6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26660106"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="26660106"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 03:53:08 -0700
-X-CSE-ConnectionGUID: PfnqrRNfQsiiK2aSFbbaJg==
-X-CSE-MsgGUID: W7T7HlzFSkWoLlcElUBiqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="73658802"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 30 Sep 2024 03:53:07 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svE1Y-000PLx-3D;
-	Mon, 30 Sep 2024 10:53:04 +0000
-Date: Mon, 30 Sep 2024 18:52:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: fs/bcachefs/reflink.c:37:5-8: Unneeded variable: "ret". Return "0"
- on line 44
-Message-ID: <202409301841.NRs5IxiB-lkp@intel.com>
+	s=arc-20240116; t=1727693655; c=relaxed/simple;
+	bh=O5nRE9hhVdbt60KS+UAuLQZ/+3pxiQO4oKFXq/b1Hok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAn3gAh1STqNwvyspzn3t0yjnaNRGNVpkBrLybXsCkiUwCKmuaCke8r83XjEyrDdIoJupPW4CUtTq4gcLmisRKDt9dImrYi7GAY5HYJGg/sossA65mREisytS5jSawNyIiOtFo4leWPQTwpRnAX5asqkuQyEEbUIOQc3tdH1dCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48UArWPe027811;
+	Mon, 30 Sep 2024 05:53:32 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48UArUVj027810;
+	Mon, 30 Sep 2024 05:53:30 -0500
+Date: Mon, 30 Sep 2024 05:53:30 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+Message-ID: <20240930105330.GA27787@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp> <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp> <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com> <20240927085841.GA3642@wind.enjellic.com> <2ea23569-6fb2-4a4e-acc1-e3927dd5615d@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <2ea23569-6fb2-4a4e-acc1-e3927dd5615d@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 30 Sep 2024 05:53:32 -0500 (CDT)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9852d85ec9d492ebef56dc5f229416c925758edc
-commit: 074cbcdaeee433a02d6d0565b936bee0915cc5da bcachefs: fsck_err()s don't need to manually check c->sb.version anymore
-date:   9 months ago
-config: arc-randconfig-r061-20240930 (https://download.01.org/0day-ci/archive/20240930/202409301841.NRs5IxiB-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
+On Fri, Sep 27, 2024 at 09:33:19AM -0700, Casey Schaufler wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409301841.NRs5IxiB-lkp@intel.com/
+Good morning Casey, always good to get your reflections, we hope your
+week is starting well.
 
-cocci warnings: (new ones prefixed by >>)
->> fs/bcachefs/reflink.c:37:5-8: Unneeded variable: "ret". Return "0" on line 44
+> On 9/27/2024 1:58 AM, Dr. Greg wrote:
+> > On Mon, Sep 16, 2024 at 04:08:11AM -0400, Paul Moore wrote:
+> >
+> > Good morning, I hope the end of the week is going well for everyone.
+> >
+> >> On Sun, Sep 15, 2024 at 8:38???PM Tetsuo Handa
+> >> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>> On 2024/09/14 0:28, Paul Moore wrote:
+> >>>> I find it somewhat amusing that you are complaining about the LSM
+> >>>> framework not accepting new LSMs in the same pull request where we are
+> >>>> adding a new LSM (IPE).  As a reminder, we have documented guidelines
+> >>>> regarding the addition of new LSMs:
+> >>>>
+> >>>> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+> >>> (...snipped...)
+> >>>> While I have no intention to negatively impact out-of-tree LSMs,
 
-vim +37 fs/bcachefs/reflink.c
+> >>> What I call "patent examination" is "New LSM Guidelines" section
+> >>> within that link. That section includes "here are a list of
+> >>> requirements for new LSM submissions:" and "The new LSM must be
+> >>> sufficiently unique", and out-of-tree LSMs which cannot satisfy
+> >>> it won't be able to become in-tree.  If we apply this
+> >>> requirement to userspace program, this requirement means you are
+> >>> declaring that "postfix" (or anything except "sendmail") cannot
+> >>> become in-tree because "sendmail" is already in-tree. This is a
+> >>> clear intention of negatively impact out-of-tree LSMs. People
+> >>> have the right to use whatever subsets/alternatives. Even if a
+> >>> new LSM has were completely a subset of existing in-tree LSMs,
+> >>> people have the right to use such LSM.
 
-    31	
-    32	int bch2_reflink_p_invalid(struct bch_fs *c, struct bkey_s_c k,
-    33				   enum bkey_invalid_flags flags,
-    34				   struct printbuf *err)
-    35	{
-    36		struct bkey_s_c_reflink_p p = bkey_s_c_to_reflink_p(k);
-  > 37		int ret = 0;
-    38	
-    39		bkey_fsck_err_on(le64_to_cpu(p.v->idx) < le32_to_cpu(p.v->front_pad),
-    40				 c, err, reflink_p_front_pad_bad,
-    41				 "idx < front_pad (%llu < %u)",
-    42				 le64_to_cpu(p.v->idx), le32_to_cpu(p.v->front_pad));
-    43	fsck_err:
-  > 44		return ret;
-    45	}
-    46	
+> >> Comparing userspace applications to kernel code isn't a fair
+> >> comparison as a userspace application can generally be added without
+> >> impacting the other applications on the system.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > Tetsuo's comparison may be a bit strained, but it remains relevant.
+> >
+> > Linux was founded on a concept of choice, the current LSM architecture
+> > struggles with the ability to facilitate generalized choice and
+> > flexibility.
+
+> >>> While I consider that some of out-of-tree LSMs being unable to
+> >>> become in-tree is inevitable, the requirement that any LSM has to
+> >>> be built-in is a barrier for LSMs which cannot be built-in.
+
+> >> Anyone is always free to build their own kernel with whatever code
+> >> changes they like, this is the beauty of the kernel source being
+> >> available and licensed as Open Source.  You are free to build a
+> >> kernel with whatever LSM you like included and enabled.  You have
+> >> been shown examples on how to do this in previous threads.
+
+> >>> People have the right to install whatever userspace software /
+> >>> kernel modules they need.
+
+> >> Anyone is free to build their own kernel with whatever LSMs they want,
+> >> either in-tree or out-of-tree; the static call changes do not prevent
+> >> that.
+
+> > This line of reasoning represents a bit of an indulgence in a false
+> > binary logic fallacy.
+> >
+> > Anyone reading this forum is certainly capable of building a kernel in
+> > any configuration they want to.  That being said, the general Linux
+> > technical community now represents a cohort far larger than
+> > individuals who have the ability to build and platform a kernel of
+> > their choosing.
+> >
+> > From a security perspective, Linux will benefit from providing a
+> > better means to serve a middle ground where alternate security models
+> > and architectures can be implemented without building a kernel from
+> > scratch.
+
+> Ye Gads.
+
+That certainly dates both of us, the last time I heard that phrase it
+was from Thurston Howell the III....
+
+> One can create SELinux policy to support just about any security
+> model you can think of, although I was the first to decry its
+> complexity.  Smack access rules can be configured to support a wide
+> variety of models, including Bell & LaPadula, Biba and rings of
+> trust. AppArmor is very useful for targeted application security
+> model enforcement. And then there's BPF.
+>
+> It seems to me that the problem isn't with the facilities provided
+> to support the implementation of new security models, it is with the
+> definition of those security modules. Or rather, the lack
+> thereof. The ancient Bell & LaPadula sensitivity model can be
+> implemented using Smack rules because it is sufficiently well
+> defined. If the end user can define their policy as clearly as B&P
+> does, its a slam dunk for any of the aforementioned LSMs.
+
+We certainly wouldn't choose to argue with any of this, given your
+repertoire in the field of mandatory access controls and security
+models.
+
+But therein lies the rub with respect to the implementation of system
+security.
+
+There are what, maybe 5-6 people in the world like yourself, that have
+the technical chops to translate the theoretical expressiveness you
+describe above into functional, let alone maintainable, security
+implementations?
+
+If there was the ability to practically implement just about any
+security model with SeLinux there would be no need for the LSM, yet
+its existence has arisen, given the desire to support multiple
+security schemes.  That alone would seem to suggest the lack of
+technical prowess that is required to translate theoretical
+expressiveness into practical implementations.
+
+A primary challenge to security is scale of skill.
+
+In the face of limited advanced security skills, we have hundreds of
+thousands of people around the world creating and modifying millions
+of workloads, on a daily basis.
+
+I mentioned just recently, in a meeting with technical influencers
+here in the Great State of North Dakota, that we are never going to
+train our way out of this security problem.
+
+Cisco recognized this with network security and this fact was central
+to the concept of it's Application Centric Infrastructure (ACI).  With
+respect to scale, ACI is based on the premise that the manageability
+of network security has to be an artifact of the development process.
+
+One of the motivations behind TSEM is to deliver that same concept to
+system security.  The notion of allowing development teams to create a
+customized, bounded and mandatorily enforced security behavior,
+specific to a workload, as an extension of the development process.
+
+Another tool in the 'Secure By Design' toolbox.  A concept that
+entities like NIST, DHS/CISA and particularly the insurance companies
+are going to force the industry to translate into practice,
+particularly in critical infrastructure systems.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
 
