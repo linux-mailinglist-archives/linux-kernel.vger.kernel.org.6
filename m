@@ -1,206 +1,126 @@
-Return-Path: <linux-kernel+bounces-343634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0A7B989D91
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:02:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA8E989DA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39C031F22036
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:02:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EB1B21F48
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:06:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B41B186607;
-	Mon, 30 Sep 2024 09:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193A0186607;
+	Mon, 30 Sep 2024 09:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JsZUd5fX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbJOHuAH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD5A183CA9;
-	Mon, 30 Sep 2024 09:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28BC184539;
+	Mon, 30 Sep 2024 09:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686957; cv=none; b=JgKTSXhiSEysNMr3mWB9YaWB2MfeWdarb/OvbmADpw/nzjqMe+sUWbI2Chwf7siCXJuntBMJFYq8YonucFk+8KIfKgUGyXLIOGHcZjZJh8WcIIjVfCm+Hsd/U2gYWlU5hi+491y3AJkmAbn7kq0ERuPzyxqc8QWw14gJWeREBiM=
+	t=1727687199; cv=none; b=uG5rzphyYtv32JPQvFwXva9kU9wxEltoN1owNgMCLnjwf1OPHD1QmRIYxxGpXbg+idK7ZAyThb0c7KlRIISMoHiZWAVgh/KcsURu4GX6UHsstTSsngcL8aQo+a1objAp2mEcEow07FtMRU8iwDSwBSwYbrxSPJZUNsQ1wWpoohQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686957; c=relaxed/simple;
-	bh=/A2IpXIL2K41ulfZwfZj/W7YA8EZBkC9G5vpdYy/QCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U82XdTP+XbD62JbGceIvahhcbPXcWOMSUxW5H2x/HTs/gxla67atMXd2PSbG1UhUT747T+QGLYzKgTWRrgf6pXNfi02JLopI07NrokR/kgJmSnun6vrXZ9VjGb8mIeOtMc6JnFb4XObJSkJpOwWFAfN140E0PIbwqRNW/ccQjGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JsZUd5fX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48TLv5fF031959;
-	Mon, 30 Sep 2024 09:02:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FNX5YhowYy+eVjnzuyMs3w2HI0xLolYtOn4aoWW1iOY=; b=JsZUd5fXATgwLzn+
-	mTwWUtQS30MjJNZmzDWLxS+C6dwZsGWElRBv7Dc7Fa64f1DcGp3wf1ifxi9rAGMs
-	Vs5MNLQ6+LUnQ3rUxyRzB/LmyTqhuxD68RdP/mPjPytFxFosvxy/i+L08ySVPUX8
-	W1BIkk822lSuAbU9iuZ4ksRn8RQjb6f/iq7EVLmP43+gKDDtWC9zGriD3VXpew/t
-	MqCD4/fm9uFnHtv4zu0VUObPnM0n8AwC8tIBbBla5s0tGqWUUjVVbYZDS600ZRm4
-	bPSAFnr+sZIiPzv77WkPaMVYUBup47RagmRy83NfXPMMdzw+/a+HpOYJHP4myqSg
-	4rHudg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xaymc4k7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 09:02:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48U9291M017417
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 09:02:09 GMT
-Received: from [10.204.67.11] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
- 2024 02:02:01 -0700
-Message-ID: <6bd73b6e-dde7-4bbf-b367-3479bbedf483@quicinc.com>
-Date: Mon, 30 Sep 2024 14:31:58 +0530
+	s=arc-20240116; t=1727687199; c=relaxed/simple;
+	bh=6CfvxrHYGFiEEtpC6SCQ6ifQcyQ6oKY8kncFGteASpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hFAK3VNcSB5Z34WbtY3lEdoB5uMW1TNsTEGCsgpHKgGrhrzCsr63vjysjcHSzI2C9MRvemda/DH64I/BTPZPNafry2p8ZV+4vdRlJji8AbI2fGISSEL6FevHnywynoDlbKFQ9z8RECJk466mAyvp8WM1eUKFLqHYVRprq35dgwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbJOHuAH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so32542785e9.1;
+        Mon, 30 Sep 2024 02:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727687196; x=1728291996; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4T8AFr4bQcCZmnOMOOHwvGPz5biZtlw2dtZ+xRXq6po=;
+        b=gbJOHuAHzbq/bcrornthlPy1GaLZheEdSYMaAt1xiOIb0f+PrYZKpTXXAyuba1ZMU3
+         n5WAJ55rgw3HLJozQEjpDhW/yB9NRjQT10dRltqAP9nrM36wgWXjKFInDYqN68XlWXUB
+         THsoBoflZQSbiKFL5SHScdhd24zrBO84dDXMt42iFwM1KH6iK2uwNdqUW9Fr08UQ8kZH
+         OHaU5gfwy0p1sZIeHn2Lfx6MB27rJrPGFNJPnbJMsrg0EaK5LvY4lfcb61NVbX1wIG4t
+         dMS7QW1NtkBhOuF+uMOgQ1HaMl+sbhxLPhGcQb5Vg9aqFs3B+26ZPHxvcPoNfFHVJOkM
+         Nlnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727687196; x=1728291996;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4T8AFr4bQcCZmnOMOOHwvGPz5biZtlw2dtZ+xRXq6po=;
+        b=oCdtUCdDvnwIRNIIzMDpg6DbhMO8AUuv7uzy+SJ4XTXrWlhFXCMQXiMsR2q3Z0quEs
+         +1JlAEzG+44FiUyAr4knJ8LG2vEhmbvIqM4/tNyQlHtxHfwZH6M2QqKZXLKqnot++TlD
+         gu+P2qQF+L5ToEaySpZQl0CNxczQstRUxYHwKccJ8eWke7ovuJHZbJ/hg1mkZW82fSkb
+         o0mPGoWBsFfF3I7YkV5B29WeWwBWAaG+IC2dmMCVBittrtr0ACG7YKB0iCJTHqyJN4mf
+         +XCe4J79uAJlCM9eB2fPc6TfOaVU2uksWz4KHNorYH8DR4rpPg7FK1Y1ZFzpXT7x+DGW
+         iyOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkrOefnk7ISGGSAGv81HJBJuYsBmMXe+nYQrjkuVCyzl2JUkcbioaxEVEs8iUNzB17jefQFxRG68lI6T8V@vger.kernel.org, AJvYcCWjYI4tx8IySGvBvsS6JziG5gSmYvWIwr/e2EhLZLRndsbq+9ltsvSsJiqNd6Vb8w8zXYft/uMa95Eiap4Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4OrMSTQulsoHjSnpVUMZPwjdXAuJHuCZXLvf9LJBBi9tztCaj
+	faSELXo+fdtY1AlRRT2wYogfwGofx1VnutbWYKbF9T5tBvGjWd3K
+X-Google-Smtp-Source: AGHT+IE6NnZTvb4qmbIWGzzx3TlbOvkKjzQPrdKGGkDQERZCO2n+QeWtsQr8b4562XtqBE03o3sTzA==
+X-Received: by 2002:a05:600c:1549:b0:42c:bf70:a303 with SMTP id 5b1f17b1804b1-42f58497ebemr81465295e9.29.1727687195666;
+        Mon, 30 Sep 2024 02:06:35 -0700 (PDT)
+Received: from gi4n-KLVL-WXX9.. ([2a01:e11:5400:7400:d70c:eed6:c2c4:fae7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a56fddsm144297025e9.46.2024.09.30.02.06.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 02:06:35 -0700 (PDT)
+From: Gianfranco Trad <gianf.trad@gmail.com>
+To: gianf.trad@gmail.com
+Cc: akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	skhan@linuxfoundation.org,
+	syzbot+4089e577072948ac5531@syzkaller.appspotmail.com,
+	willy@infradead.org
+Subject: [PATCH v2] Fix NULL pointer dereference in read_cache_folio
+Date: Mon, 30 Sep 2024 11:02:26 +0200
+Message-ID: <20240930090225.28517-2-gianf.trad@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240929230548.370027-3-gianf.trad@gmail.com>
+References: <20240929230548.370027-3-gianf.trad@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <swboyd@chromium.org>,
-        <konrad.dybcio@linaro.org>, <danila@jiaxyga.com>,
-        <bigfoot@classfun.cn>, <neil.armstrong@linaro.org>,
-        <mailingradian@gmail.com>, <quic_jesszhan@quicinc.com>,
-        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kalyant@quicinc.com>, <quic_jmadiset@quicinc.com>,
-        <quic_vpolimer@quicinc.com>
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-2-quic_mahap@quicinc.com>
- <ZvVgmFUs2bwfEoWD@hu-bjorande-lv.qualcomm.com>
-Content-Language: en-US
-From: Mahadevan P <quic_mahap@quicinc.com>
-In-Reply-To: <ZvVgmFUs2bwfEoWD@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: YpPzTDr9dkWwX9yJvwLbswVE89-G7XaX
-X-Proofpoint-GUID: YpPzTDr9dkWwX9yJvwLbswVE89-G7XaX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxscore=0 adultscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 mlxlogscore=999
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300065
 
+Add check on filler to prevent NULL pointer dereference condition in
+read_cache_folio[1].
 
-On 9/26/2024 6:54 PM, Bjorn Andersson wrote:
-> On Thu, Sep 26, 2024 at 04:31:33PM +0530, Mahadevan wrote:
->> Document the MDSS hardware found on the Qualcomm SA8775P platform.
->>
->> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
->> ---
->>
->> [v2]
->> - Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
->> - Update bindings by fixing dt_binding_check tool errors (update includes in example),
->>    adding proper spacing and indentation in binding example, dropping unused labels,
->>    dropping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
-> No concerns with the changelog, but please adopt b4 (go/upstream has
-> instructions) for sending patches upstream.
+[1] https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
 
+Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+Tested-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+---
 
-Sure, will follow while posting next patch.
+Notes:
+	changes in v2:
+		-  refactored check on filler.
 
+ mm/filemap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->
->> ---
->>   .../display/msm/qcom,sa8775p-mdss.yaml        | 239 ++++++++++++++++++
->>   1 file changed, 239 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->> new file mode 100644
->> index 000000000000..e610b66ffa9f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
->> @@ -0,0 +1,239 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/msm/qcom,sa8775p-mdss.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Technologies, Inc. SA87755P Display MDSS
->> +
->> +maintainers:
->> +  - Mahadevan <quic_mahap@quicinc.com>
-> Please use Firstname Lastname, if possible
-
-
-My name has only First name,  can I please go ahead with this.
-
-
->
->> +
->> +description:
->> +  SA8775P MSM Mobile Display Subsystem(MDSS), which encapsulates sub-blocks like
->> +  DPU display controller, DP interfaces and EDP etc.
->> +
->> +$ref: /schemas/display/msm/mdss-common.yaml#
->> +
-> [..]
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/interconnect/qcom,icc.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->> +    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->> +    #include <dt-bindings/power/qcom,rpmhpd.h>
->> +    #include <dt-bindings/power/qcom-rpmpd.h>
->> +
->> +    display-subsystem@ae00000 {
->> +        compatible = "qcom,sa8775p-mdss";
->> +        reg = <0 0x0ae00000 0 0x1000>;
-> #address-cells and #size-cells are 1 in the example root node, so drop
-> the two 0 entries.
->
->> +        reg-names = "mdss";
->> +
->> +        /* same path used twice */
-> What do you mean? All three paths below are unique.
-
-
-Yes all three are paths are unique, its same sm8450-mdss.
-Will remove the comment /* same path used twice */.
-
-
->
->> +        interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
->> +                        <&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
->> +                        <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
->> +                        &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
->> +        interconnect-names = "mdp0-mem",
->> +                             "mdp1-mem",
->> +                             "cpu-cfg";
->> +
->> +
-> Regards,
-> Bjorn
-
-
-Thanks,
-Mahadevan
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4f3753f0a158..88de8029133c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2360,6 +2360,8 @@ static int filemap_read_folio(struct file *file, filler_t filler,
+ 	/* Start the actual read. The read will unlock the page. */
+ 	if (unlikely(workingset))
+ 		psi_memstall_enter(&pflags);
++	if (!filler)
++		return -EIO;
+ 	error = filler(file, folio);
+ 	if (unlikely(workingset))
+ 		psi_memstall_leave(&pflags);
+-- 
+2.43.0
 
 
