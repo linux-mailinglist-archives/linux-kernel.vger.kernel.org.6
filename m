@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-344937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C5698B014
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:38:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EF098B017
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B171F21D0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7D51F22E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD86E188929;
-	Mon, 30 Sep 2024 22:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B389188A21;
+	Mon, 30 Sep 2024 22:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqPBsMSl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8tIsMnx"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267AE21373
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADF421373;
+	Mon, 30 Sep 2024 22:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727735931; cv=none; b=iYovhGN1bnJVAEXwLYeULP3pvfODMIQVxtfViktXG8GykYCa8Rc6aF74bPhc9dmvcpCkWJuxYxiS6zOlhAlbAM++sY/1N4xntxJx5OBCXc5QPJZB1DAQSXw6uZkHPNx8pGin1uHrP7D9Y/DNCo8TsaZmouLO0OfOytS6uvJMO7c=
+	t=1727736061; cv=none; b=dvTYn4WUDkexcnUcELmlEtTtgb8WbpyXvkd79UCuH/tA/Vc1tNUO/Lsmrkp0Zvpiiphwc2xytCz6tLDLeSLMnkMFn/3GBda1TgnwiHgj8ttCbIj+jGopMpdvD+cyQUe0g3o2kELmZgPr44CQpDK5uw0ae/SmuUQ64eOVZk7OFJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727735931; c=relaxed/simple;
-	bh=WNT9003AkFv8E8wTS9wKNscfgRo4eUoUEcioZYXRmRc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7B72NC5EuCqxAkmZeEqdc3fs1gtQufiy9fkBJIIKpoAW0eAjQuaiHvB4KiH5YfoNUmcGnQvggEhq+kosm6UUT255nUHb8vpKNnfWgJvsdWW9/S5MsWzXqCi1SeDPgiJrChmaKHMMHXK1gGzNY4PXQO/WGwWA3B/2y1z/eT8r64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqPBsMSl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74554C4CEC7;
-	Mon, 30 Sep 2024 22:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727735931;
-	bh=WNT9003AkFv8E8wTS9wKNscfgRo4eUoUEcioZYXRmRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oqPBsMSlVeW5QOwgjU40tVxF47qq7TTtaA8vx3/7gOKA//xgpJ/A9gUyIeUSs4GN2
-	 1aFAmTkojkCc2yrYgquGRdvoskArLpI14IGSexYZdBsiq5J74bjDGCwITVu8uZqkOU
-	 1SDgHl1V7eeNpWbIp0alXnAsCQDN1ltPxV2GEu7ygsVudOd/Y9eX8jbYsK4BUi2SNB
-	 iA9mRXL365zwFjteDF21rw428fHTD8uNgZlc1P/oA76i7/Jr9xHquoLRV1VAQoChFt
-	 lw8JgqUaLc4YyeZtKQk5ITMq2TQHjjY4yE082IJVgsKno9t1rSjW2twbxNb2X67amY
-	 TG6JULH3xhVrA==
-Date: Mon, 30 Sep 2024 15:38:48 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
-	scott.d.constable@intel.com, joao@overdrivepizza.com,
-	jose.marchesi@oracle.com, hjl.tools@gmail.com,
-	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
-	ojeda@kernel.org, kees@kernel.org, alexei.starovoitov@gmail.com
-Subject: Re: [PATCH 13/14] x86: BHI stubs
-Message-ID: <20240930223848.ulipiky3uw52ej56@treble>
-References: <20240927194856.096003183@infradead.org>
- <20240927194925.707462984@infradead.org>
- <20240930213030.ixbsyzziy6frh62f@treble>
- <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
+	s=arc-20240116; t=1727736061; c=relaxed/simple;
+	bh=o1Zu6w4Iw09n/cOM6Wq3Vq238B+WtzBcg31YfTQPacU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Suj2BTDJTkDF2eYDBrgqeB99cSW2DjnSZHbeLRuYkQjzXMvpwF1fTgxTfCl5LcJahWwe5Rzophx8jsrVjQOmtPOLakx1OUNY/mL1nA41pNggekfQbk8LzbMlwqr0S8wzXFsOYTUB87p7FOZrmcDDW2rmCh27qtgktOVruNFUnug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8tIsMnx; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717934728adso3735370b3a.2;
+        Mon, 30 Sep 2024 15:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727736059; x=1728340859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oRkOcV87s6az5YpOkLdvaYPED568xUK0Wegd+fONFX0=;
+        b=O8tIsMnxVrIKi1qxKtuyvke1IDOVOOLNhaa/4m7WctfMHzEv7sSlojRO6ku4uqUbNp
+         ieD0jbYW3/bpmkhoOiOYI6CdmdFXi16ppjIiPYF29JnaTHf7IXSMkqn87ytDDuJNkrZ1
+         1O5x4x2LUhTmYWo4E1cgNlvAF2guhT4D4bJt76Veh0lWywO+ifBdhC5uAGFXkj9HZLaR
+         OROnVqIgrJMCrkw3B4iTeQh3tMuOTGCReuxPGylvVm8osWU2SiOIBi2TXgCPl7kMFTd3
+         +PZTLoSp7b0vNHQ5PeZA5ly6ZwaVyJ8016Itipq76acWPAvm2IsTuBCbdxGl71cYTv1I
+         7Ymw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727736059; x=1728340859;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oRkOcV87s6az5YpOkLdvaYPED568xUK0Wegd+fONFX0=;
+        b=sSN5W/Znx8VV9pOHpnPgWKU4WPHLVIVzZZnLtpn0shPAoC4F7f0LHmjiAoH3adXpJK
+         1TSAaSmFCW5IgwnzUpgI76mFJoJB9qvg34rMu19xiRlX9E9uD2rfN9Ck8CB1PXyg+Ubh
+         /jxALnUzdhBCgciBPN6MTUAKeCPfzpx9SOIsb9oZV+g0ZbMWphDQYY1mz/FVd97W5m4f
+         LgvNl+umQHTa4300Y/6Hob8zEIeR1Ih950QRoYFwtL0hnQzLq0eDz1xg4SAiy0UUvnv7
+         zVTiWLPTb78zOD0eqMiKhybk2ECQW7y5vlczXSnf/7u9p9RU90dDnF4/4fts1XzkK9+e
+         kXZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+qmY3PxRKZCdTsx8CKrE3qHoKKqfc3ugLiC0dHUZISAEeXsj70/LXTGr9z0sdBFoosnLx4rNjmzogecU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSk61Uofb1pkzLEc+5i7JkvxkTG4/7hfCGx7vOTpeKAX1muj/o
+	usKjoFyoCC1vMXZGK6drPVRGM9N3jigvdgQvem1x8L6ewhcBmPxlS9P6T8N2
+X-Google-Smtp-Source: AGHT+IE4Rhy53+h1DFVY6PGq7cx5dg8ErASkS2q6w9oTz4AzQaf0GGGMgYmW8BpMyJ1qD9N7mWfMWg==
+X-Received: by 2002:a05:6a00:1403:b0:717:90cd:7943 with SMTP id d2e1a72fcca58-71b260a6d45mr18618832b3a.28.1727736059459;
+        Mon, 30 Sep 2024 15:40:59 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515e40sm6786921b3a.117.2024.09.30.15.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 15:40:59 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	steve.glendinning@shawell.net
+Subject: [PATCH net-next 0/8] net: smsc911x: clean up with devm
+Date: Mon, 30 Sep 2024 15:40:48 -0700
+Message-ID: <20240930224056.354349-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 11:23:38PM +0100, Andrew Cooper wrote:
-> On 30/09/2024 10:30 pm, Josh Poimboeuf wrote:
-> > On Fri, Sep 27, 2024 at 09:49:09PM +0200, Peter Zijlstra wrote:
-> >> +SYM_INNER_LABEL(__bhi_args_0, SYM_L_LOCAL)
-> >> +	UNWIND_HINT_FUNC
-> >> +	cmovne %r10, %rdi
-> > IIUC, this works because if the "jz" in the CFI preamble mispredicts to
-> > the __bhi_args_* code, "cmovne" will zero out the speculative value of
-> > rdi.
-> >
-> > Why use %r10 instead of a literal $0?  Also how do you know %r10 is 0?
-> 
-> There's no encoding for CMOVcc which takes an $imm.
+It happens to fix missing frees, especially with mdiobus functions.
 
-Ah.
+Rosen Penev (8):
+  net: smsc911x: use devm_platform_ioremap_resource
+  net: smsc911x: use devm_alloc_etherdev
+  net: smsc911x: use devm for regulators
+  net: smsc911x: use devm for mdiobus functions
+  net: smsc911x: use devm for register_netdev
+  net: smsc911x: remove debug stuff from _remove
+  net: smsc91xx: move down struct members
+  net: smsc911x: remove pointless NULL checks
 
-> %r10 is guaranteed zero after the FineIBT prologue
-
-If the "jz" in the FineIBT prologue mispredicts, isn't %r10 non-zero by
-definition?
-
-> , but I don't see
-> anything in patch 11 which makes this true in the !FineIBT case.
-
-I thought this code is only used by FineIBT?
+ drivers/net/ethernet/smsc/smsc911x.c | 216 ++++-----------------------
+ 1 file changed, 28 insertions(+), 188 deletions(-)
 
 -- 
-Josh
+2.46.2
+
 
