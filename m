@@ -1,264 +1,311 @@
-Return-Path: <linux-kernel+bounces-344122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAED98A4B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:23:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB63398A4B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E603C1F24EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D17C1F24ECA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D4190496;
-	Mon, 30 Sep 2024 13:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A609191F63;
+	Mon, 30 Sep 2024 13:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gJ9r2S6k"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TxTfzwWO"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC68918FDDA;
-	Mon, 30 Sep 2024 13:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3580418FDDA;
+	Mon, 30 Sep 2024 13:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702450; cv=none; b=V8iP4ks64kAN83CaqYNNMRdiNMXYJTyQHFybDgNXpFXPtp1QQqmuuerc2TKaI4BRitg6EchPXwYWBjJj5GvAGlTfDiXLARocvrhE/eGkI3EKjpU4aYMOtgSzqj5c6F+QTsgNqJaewce2oBYqTC7m1+Jm2CDKnM5T/rpI5sF+VaA=
+	t=1727702472; cv=none; b=aRHsI7Kag2ynM3rKCiNVHOO7GmaSxPutBnQewv6tFUVPz4aenOB/he3qDUOlqkuvGKy5iHc9aFjDR030zV1JvAYdp+BkROQzapc6ZDA5137l8SJ7NcAKRKX2C+sCBYAIRK5CibfpnMqJELBpkXKORGRVFZF+HSXSaEVT4qNImX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702450; c=relaxed/simple;
-	bh=1IWkyp1luxPA/PVmroBHpj8L7Xshr10wK7hTg1y6CRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQz17NwyZXbeEsCDuRzh8crZ84Ia9OdK/6AQdpSHp39SjwBdcjzBfVZW4roKaG3XmOW27SsdLOvwsTDCyXFqUnoIJw7n4OIEB+xeG3UWABWFjSgycADiCVUxXMSBj7d0Z/uU4Jkm4k2lVFhEdq5m5r9Dm5bEAIDTRMTbtDStK7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gJ9r2S6k; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UAtPMa019886;
-	Mon, 30 Sep 2024 13:20:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=hRBl0bNdlf2qX
-	c+6Ah6a2822a+NX/25nXMWlZVyNL4I=; b=gJ9r2S6kN9qjMX3GPXBAloekfJseI
-	a5GA8ymj4+Mt20x6Q99Jb4LXxpdSCduL3abeDfdoXhsUQ0sj8FXjoBRgTuDVBdj3
-	YNy+2pzVrmGGiHCosaXH311ui/n2PW1WA0Il4JzyOQZkYuGu04i+SldiiD9NLjmC
-	YMOhA6GECq72N1si5jj9LYf0rVaV/vLlsqpSc3I821II1LGwTYgbOCiGT62laCwM
-	nkaXdV8yV7l7RqP5AnmJ3HR3J9CZ6blep69Ebf9KOQVUeKJsqMsv6o/mqzz7OOdC
-	Pvt320prg6PY7fQVX41yhdDBxX1cQJbPlIB7+/iQTjdgbBanH7IlriXJg==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9hb21dc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 13:20:47 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48UCLGqV013047;
-	Mon, 30 Sep 2024 13:20:46 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xxbj6evs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 13:20:46 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48UDKh7g46530842
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 13:20:43 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 287E22004D;
-	Mon, 30 Sep 2024 13:20:43 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DA52D20043;
-	Mon, 30 Sep 2024 13:20:42 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 30 Sep 2024 13:20:42 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v1 2/2] s390/uv: Provide host-key hashes in sysfs
-Date: Mon, 30 Sep 2024 15:20:41 +0200
-Message-ID: <20240930132042.2081982-3-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240930132042.2081982-1-seiden@linux.ibm.com>
-References: <20240930132042.2081982-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1727702472; c=relaxed/simple;
+	bh=OVmH+Sm7HlQEXN9vBz5xfclFnlcU5sNczZ+6jg14Wxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pXNpSD3IHrm2vl8LJAGQte4v6GSyQkxAGBAF2mJi4AXgK7bsXuToV8vRE9jaIA5Gmj3z9pHTrzsdM8WlpwIItwEYer8w/pQK6GkFM4mZKFZIT0cLrKLRnNV8Rk+9fSRY4vOuvGYqO2oGa9PicRHQrCIWTziVvfxfBtyQnEhm6d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TxTfzwWO; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-710da656c0bso1592447a34.0;
+        Mon, 30 Sep 2024 06:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727702470; x=1728307270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rtno9snXCnOXEYe+LmBrqbtpTspPjb7R9BkymIrCt2Y=;
+        b=TxTfzwWOsuEXZyAbHYkQkQpimOPC+58CkhP2nAi1yz7j0NadDK1B0O0Z0DFSBbqvzL
+         sLCTdksDMY0bkujcU5UGCp+jVP0BCuiKVCPudcTQuWxPu2gy3uvCpQRGnrNAn3ArJqvJ
+         S+hnq34cuZRzKRktB0bD99jMEZmB664GwdwRjjocADKPUY2RluOdHXb9p+a1sWENFBtS
+         KYuCskZvBC5urK4JvHtyZUbHIJVM6wkE17BacaBoxrJLcAyIhQ2O3ptO/a7JVWMFu8lf
+         w1blj8XQymGnkQbiJkh0HdASBlLgyBcc2ctJUmqUnlTROeLZcFz7rl16uhr7cz+4Xung
+         nQeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727702470; x=1728307270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rtno9snXCnOXEYe+LmBrqbtpTspPjb7R9BkymIrCt2Y=;
+        b=JLQFTVMgYokQYzh9lUbZm4pjCmyaSbipoGtm8RXRgA5PpExPFcp6rLuS23zIZf4x5I
+         K0osB8GMG8tB0YHe6SpwOxuBgH+YdCunE+K/W1MTOr4eXKp1bqGREE6/kUFVJzjqY8r3
+         p77D4AqJwvscdRT8VHkGOa2caS5UIL++s15bA/mKlpUA93q1EMuoYjYChxorjjBMPwnl
+         B7/+jq06465bRNKhdl4wkUQzIhvbs9ogOrPrF1JGWzkDl9AgKSAlnuhhSwPAWSIBV5hA
+         tmqED65FViV72ME37CUa07/qy9ysgm3dyPc4OGP3FPdSth1WV8PVoOte363+2BwmZNQX
+         04Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVRxN6cxzkuIHcnpvDFFsZZC8+RcKdxr6NijYWFH/+9y5y4n8vNYTJu/4LZfqLrp13ABilU3ZRVZcx+ipo=@vger.kernel.org, AJvYcCWAZpUg44jRIfMpb+oTKze+CWglvahnxiv5P1CdkndVcxf4rZypHv5/xLU7Idexmm2pSAd07u+S4C2KKx0=@vger.kernel.org, AJvYcCXFRiR3QOfQnrxHJYepLqOq7Z+bayW2T1Eyn/eCMmr+D+q9mm/jFSuMk99Pntld6mGZyUDiRSSJzePnQpQXzg7JD+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY43wOQfCBB6e5J+0cahBOp232LOqDGxp3kU2PpItL1E9fa12H
+	IJAONO/XKRk+AICeSlZLY9inANYdG/mpvQwALEtoYvA32PQDKDG6gUp5eph/c/nky300XPXS/3g
+	0mwsfHJlepyH1xY0Z8Ml20oXWRas=
+X-Google-Smtp-Source: AGHT+IEtnmcoVDr7t7+Kx04IZO06NWMtkInz2sIjynCa0SdR8d7eu1ZY5OPXC3i6GPKbRkAxSoaIQPQzXyOgM96DPrQ=
+X-Received: by 2002:a05:6358:54a6:b0:1b8:3245:be3d with SMTP id
+ e5c5f4694b2df-1becbb9702fmr351328055d.13.1727702470058; Mon, 30 Sep 2024
+ 06:21:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ArgOT-_IxNjUL4DvJZMiSPARujOzK3_U
-X-Proofpoint-ORIG-GUID: ArgOT-_IxNjUL4DvJZMiSPARujOzK3_U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_12,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300095
+References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910175357.229075-11-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240927225923.GJ12322@pendragon.ideasonboard.com>
+In-Reply-To: <20240927225923.GJ12322@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 30 Sep 2024 14:20:43 +0100
+Message-ID: <CA+V-a8sQfynxxUYRrPNwUabcQyrmNvz=U3_P6FRK91s+t3KX3w@mail.gmail.com>
+Subject: Re: [PATCH v2 10/16] media: platform: rzg2l-cru: Simplify handling of
+ supported formats
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Utilize the new Query Ultravisor Keys to give user space the information
-which host-keys are installed on the system.
+Hi Laurent,
 
-Create a new sysfs directory 'firmware/uv/keys' that contains the hash
-of the host-key and the backup host-key of that system. Additionally,
-the file 'all' contains the response from the UVC possibly containing
-more key-hashes than currently known.
+Thank you for the review.
 
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
- arch/s390/include/asm/uv.h | 16 ++++++++
- arch/s390/kernel/uv.c      | 75 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 91 insertions(+)
+On Fri, Sep 27, 2024 at 11:59=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Tue, Sep 10, 2024 at 06:53:51PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Refactor the handling of supported formats in the RZ/G2L CRU driver by
+> > moving the `rzg2l_cru_ip_format` struct to the common header to allow
+> > reuse across multiple files and adding pixelformat and bpp members to i=
+t.
+> > This change centralizes format handling, making it easier to manage and
+> > extend.
+> >
+> > - Moved the `rzg2l_cru_ip_format` struct to `rzg2l-cru.h` for better
+> >   accessibility.
+> > - Added format, datatype and bpp members to `rzg2l_cru_ip_format` struc=
+t
+> > - Dropped rzg2l_cru_formats
+> > - Introduced helper functions `rzg2l_cru_ip_code_to_fmt()`,
+> >   `rzg2l_cru_ip_pix_fmt_to_bpp()`, and
+> >   `rzg2l_cru_ip_index_to_pix_fmt()` to streamline format lookups.
+> > - Refactored the `rzg2l_cru_csi2_setup` and format alignment functions
+> >   to utilize the new helpers.
+> >
+> > Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
+om>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    | 20 +++++-
+> >  .../platform/renesas/rzg2l-cru/rzg2l-ip.c     | 35 +++++++--
+> >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 71 +++++++------------
+> >  3 files changed, 72 insertions(+), 54 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/dri=
+vers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > index 4fe24bdde5b2..24097df14881 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> > @@ -62,6 +62,20 @@ struct rzg2l_cru_ip {
+> >       struct v4l2_subdev *remote;
+> >  };
+> >
+> > +/**
+> > + * struct rzg2l_cru_ip_format - CRU IP format
+> > + * @code: Media bus code
+> > + * @format: 4CC format identifier (V4L2_PIX_FMT_*)
+> > + * @datatype: MIPI CSI2 data type
+> > + * @bpp: bytes per pixel
+> > + */
+> > +struct rzg2l_cru_ip_format {
+> > +     u32 code;
+> > +     u32 format;
+> > +     u32 datatype;
+> > +     u8 bpp;
+> > +};
+> > +
+> >  /**
+> >   * struct rzg2l_cru_dev - Renesas CRU device structure
+> >   * @dev:             (OF) device
+> > @@ -144,10 +158,12 @@ int rzg2l_cru_video_register(struct rzg2l_cru_dev=
+ *cru);
+> >  void rzg2l_cru_video_unregister(struct rzg2l_cru_dev *cru);
+> >  irqreturn_t rzg2l_cru_irq(int irq, void *data);
+> >
+> > -const struct v4l2_format_info *rzg2l_cru_format_from_pixel(u32 format)=
+;
+> > -
+> >  int rzg2l_cru_ip_subdev_register(struct rzg2l_cru_dev *cru);
+> >  void rzg2l_cru_ip_subdev_unregister(struct rzg2l_cru_dev *cru);
+> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_d=
+ev *cru);
+> >
+> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
+t code);
+> > +u8 rzg2l_cru_ip_pix_fmt_to_bpp(u32 format);
+> > +int rzg2l_cru_ip_index_to_pix_fmt(u32 index);
+> > +
+> >  #endif
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/driv=
+ers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > index cc297e137f3e..2d3b985b7b0d 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
+> > @@ -6,17 +6,21 @@
+> >   */
+> >
+> >  #include <linux/delay.h>
+> > -#include "rzg2l-cru.h"
+> >
+> > -struct rzg2l_cru_ip_format {
+> > -     u32 code;
+> > -};
+> > +#include <media/mipi-csi2.h>
+> > +
+> > +#include "rzg2l-cru.h"
+> >
+> >  static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] =3D {
+> > -     { .code =3D MEDIA_BUS_FMT_UYVY8_1X16, },
+> > +     {
+> > +             .code =3D MEDIA_BUS_FMT_UYVY8_1X16,
+> > +             .format =3D V4L2_PIX_FMT_UYVY,
+> > +             .datatype =3D MIPI_CSI2_DT_YUV422_8B,
+> > +             .bpp =3D 2,
+> > +     },
+> >  };
+> >
+> > -static const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsi=
+gned int code)
+> > +const struct rzg2l_cru_ip_format *rzg2l_cru_ip_code_to_fmt(unsigned in=
+t code)
+> >  {
+> >       unsigned int i;
+> >
+> > @@ -27,6 +31,25 @@ static const struct rzg2l_cru_ip_format *rzg2l_cru_i=
+p_code_to_fmt(unsigned int c
+> >       return NULL;
+> >  }
+> >
+> > +u8 rzg2l_cru_ip_pix_fmt_to_bpp(u32 format)
+> > +{
+> > +     unsigned int i;
+> > +
+> > +     for (i =3D 0; i < ARRAY_SIZE(rzg2l_cru_ip_formats); i++)
+> > +             if (rzg2l_cru_ip_formats[i].format =3D=3D format)
+> > +                     return rzg2l_cru_ip_formats[i].bpp;
+> > +
+> > +     return 0;
+> > +}
+>
+> Instead of making this a ad-hoc 4cc -> bpp conversion, I would rename
+> the function to rzg2l_cru_ip_format_to_fmt() (or something similar) and
+> return a const struct rzg2l_cru_ip_format *. The caller can use the .bpp
+> field.
+>
+OK, I'll introduce rzg2l_cru_ip_format_to_fmt().
 
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index 153d93468b77..7eda73073cdd 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -31,6 +31,7 @@
- #define UVC_RC_NEED_DESTROY	0x8000
- 
- #define UVC_CMD_QUI			0x0001
-+#define UVC_CMD_QUK			0x0002
- #define UVC_CMD_INIT_UV			0x000f
- #define UVC_CMD_CREATE_SEC_CONF		0x0100
- #define UVC_CMD_DESTROY_SEC_CONF	0x0101
-@@ -94,6 +95,7 @@ enum uv_cmds_inst {
- 	BIT_UVC_CMD_ADD_SECRET = 29,
- 	BIT_UVC_CMD_LIST_SECRETS = 30,
- 	BIT_UVC_CMD_LOCK_SECRETS = 31,
-+	BIT_UVC_CMD_QUERY_KEYS = 34,
- };
- 
- enum uv_feat_ind {
-@@ -145,6 +147,20 @@ struct uv_cb_qui {
- 	u8 reserved112[0x120 - 0x112];		/* 0x0112 */
- } __packed __aligned(8);
- 
-+struct uv_key_hash {
-+	u64 dword[4];
-+} __packed __aligned(8);
-+
-+#define UVC_QUERY_KEYS_IDX_HK		0
-+#define UVC_QUERY_KEYS_IDX_BACK_HK		1
-+
-+/* Query Ultravisor Keys */
-+struct uv_cb_query_keys {
-+	struct uv_cb_header header;	/* 0x0000 */
-+	u64 reserved08[3];		/* 0x0008 */
-+	struct uv_key_hash keys[15];	/* 0x0020 */
-+} __packed __aligned(8);
-+
- /* Initialize Ultravisor */
- struct uv_cb_init {
- 	struct uv_cb_header header;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index d703ecc9aea5..5496bceba275 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -721,10 +721,79 @@ static struct attribute *uv_query_attrs[] = {
- 	NULL,
- };
- 
-+static inline struct uv_cb_query_keys uv_query_keys(void)
-+{
-+	struct uv_cb_query_keys uvcb = {
-+		.header.cmd = UVC_CMD_QUK,
-+		.header.len = sizeof(uvcb)
-+	};
-+
-+	if (!test_bit_inv(BIT_UVC_CMD_QUERY_KEYS, uv_info.inst_calls_list))
-+		return uvcb;
-+
-+	uv_call(0, (uint64_t)&uvcb);
-+	return uvcb;
-+}
-+
-+static inline ssize_t emit_hash(struct uv_key_hash *hash, char *buf, int at)
-+{
-+	return sysfs_emit_at(buf, at, "%016llx%016llx%016llx%016llx\n",
-+			    hash->dword[0], hash->dword[1], hash->dword[2], hash->dword[3]);
-+}
-+
-+static ssize_t uv_keys_host_key(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+
-+	return emit_hash(&uvcb.keys[UVC_QUERY_KEYS_IDX_HK], buf, 0);
-+}
-+
-+static struct kobj_attribute uv_keys_host_key_attr =
-+	__ATTR(host_key, 0444, uv_keys_host_key, NULL);
-+
-+static ssize_t uv_keys_backup_host_key(struct kobject *kobj,
-+				       struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+
-+	return emit_hash(&uvcb.keys[UVC_QUERY_KEYS_IDX_BACK_HK], buf, 0);
-+}
-+
-+static struct kobj_attribute uv_keys_backup_host_key_attr =
-+	__ATTR(backup_host_key, 0444, uv_keys_backup_host_key, NULL);
-+
-+static ssize_t uv_keys_all(struct kobject *kobj,
-+			   struct kobj_attribute *attr, char *buf)
-+{
-+	struct uv_cb_query_keys uvcb = uv_query_keys();
-+	ssize_t len = 0;
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(uvcb.keys); i++)
-+		len += emit_hash(uvcb.keys + i, buf, len);
-+
-+	return len;
-+}
-+
-+static struct kobj_attribute uv_keys_all_attr =
-+	__ATTR(all, 0444, uv_keys_all, NULL);
-+
- static struct attribute_group uv_query_attr_group = {
- 	.attrs = uv_query_attrs,
- };
- 
-+static struct attribute *uv_keys_attrs[] = {
-+	&uv_keys_host_key_attr.attr,
-+	&uv_keys_backup_host_key_attr.attr,
-+	&uv_keys_all_attr.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group uv_keys_attr_group = {
-+	.attrs = uv_keys_attrs,
-+};
-+
- static ssize_t uv_is_prot_virt_guest(struct kobject *kobj,
- 				     struct kobj_attribute *attr, char *buf)
- {
-@@ -750,6 +819,7 @@ static const struct attribute *uv_prot_virt_attrs[] = {
- };
- 
- static struct kset *uv_query_kset;
-+static struct kset *uv_keys_kset;
- static struct kobject *uv_kobj;
- 
- static int __init uv_sysfs_dir_init(const struct attribute_group *grp,
-@@ -789,6 +859,11 @@ static int __init uv_sysfs_init(void)
- 	rc = uv_sysfs_dir_init(&uv_query_attr_group, &uv_query_kset, "query");
- 	if (rc)
- 		goto out_ind_files;
-+
-+	// Get installed key hashes if available, ignore any errors
-+	if (test_bit_inv(BIT_UVC_CMD_QUERY_KEYS, uv_info.inst_calls_list))
-+		uv_sysfs_dir_init(&uv_keys_attr_group, &uv_keys_kset, "keys");
-+
- 	return 0;
- 
- out_ind_files:
--- 
-2.43.0
+> > +
+> > +int rzg2l_cru_ip_index_to_pix_fmt(u32 index)
+> > +{
+> > +     if (index >=3D ARRAY_SIZE(rzg2l_cru_ip_formats))
+> > +             return -EINVAL;
+> > +
+> > +     return rzg2l_cru_ip_formats[index].format;
+>
+> There's no guarantee the 4CC won't map to a negative 32-bit integer. I
+> would return a onst struct rzg2l_cru_ip_format * from this function, and
+> rename it accordingly. The call can then use the .format field.
+>
+OK, I'll introduce rzg2l_cru_ip_index_to_fmt().
 
+> > +}
+> > +
+> >  struct v4l2_mbus_framefmt *rzg2l_cru_ip_get_src_fmt(struct rzg2l_cru_d=
+ev *cru)
+> >  {
+> >       struct v4l2_subdev_state *state;
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index de88c0fab961..014c0ff2721b 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -300,21 +300,10 @@ static void rzg2l_cru_initialize_axi(struct rzg2l=
+_cru_dev *cru)
+> >       rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
+> >  }
+> >
+> > -static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, bool *inpu=
+t_is_yuv,
+> > -                              struct v4l2_mbus_framefmt *ip_sd_fmt, u8=
+ csi_vc)
+> > +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru, u8 csi_vc,
+> > +                              u32 csi2_datatype)
+> >  {
+> > -     u32 icnmc;
+> > -
+> > -     switch (ip_sd_fmt->code) {
+> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
+> > -             icnmc =3D ICnMC_INF(MIPI_CSI2_DT_YUV422_8B);
+> > -             *input_is_yuv =3D true;
+> > -             break;
+> > -     default:
+> > -             *input_is_yuv =3D false;
+> > -             icnmc =3D ICnMC_INF(MIPI_CSI2_DT_USER_DEFINED(0));
+> > -             break;
+> > -     }
+> > +     u32 icnmc =3D ICnMC_INF(csi2_datatype);
+> >
+> >       icnmc |=3D (rzg2l_cru_read(cru, ICnMC) & ~ICnMC_INF_MASK);
+> >
+> > @@ -328,17 +317,23 @@ static int rzg2l_cru_initialize_image_conv(struct=
+ rzg2l_cru_dev *cru,
+> >                                          struct v4l2_mbus_framefmt *ip_=
+sd_fmt,
+> >                                          u8 csi_vc)
+> >  {
+> > -     bool output_is_yuv =3D false;
+> > -     bool input_is_yuv =3D false;
+> > +     const struct v4l2_format_info *src_finfo, *dst_finfo;
+> > +     const struct rzg2l_cru_ip_format *cru_ip_fmt;
+> >       u32 icndmr;
+> >
+> > -     rzg2l_cru_csi2_setup(cru, &input_is_yuv, ip_sd_fmt, csi_vc);
+> > +     cru_ip_fmt =3D rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+> > +     if (!cru_ip_fmt)
+> > +             return -EINVAL;
+>
+> I think you can drop this check, as the code is guaranteed to be valid.
+>
+Agreed, I will drop this check.
+
+Cheers,
+Prabhakar
 
