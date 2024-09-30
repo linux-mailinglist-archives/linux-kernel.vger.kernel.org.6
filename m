@@ -1,147 +1,160 @@
-Return-Path: <linux-kernel+bounces-344466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB40F98AA0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AAB98AA18
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751381F23B93
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:42:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6E11F22ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBCD19413B;
-	Mon, 30 Sep 2024 16:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HnTo1ML9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D5D19309E;
-	Mon, 30 Sep 2024 16:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DA2195FFA;
+	Mon, 30 Sep 2024 16:42:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D245419413B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714518; cv=none; b=JVsPGA3R/RkCEggl5S02vygjABbNQgwbfn6zgqShP/z7zsMmr3e+W/xk+C4++0cjecFe16qtpwsx0N+PPqKIVBh9v/yAqPrXB3qsFoAGDmSERe99fnZqICS320kk6w/vYrRf9A9Z0gZ8LnHmunyGXja9rLiWiaxoR0VJWXkY/6g=
+	t=1727714562; cv=none; b=jr3N8eCU8HHokatQGCHuiWZ7FODBJ9MTtyo0e8S9e3wIQ94bfmtZhVTdDtTZH9zDcN3+X1xuEGoZZj/fJY3nQwdhVXPd7iKkLtU0jDa3hBOe3jetQDzcGiR/tZIIPXRginvlOQh+Af9gT0tQQuhgtfn9J7DNcksnk5vPAKHnXdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714518; c=relaxed/simple;
-	bh=E3mcGZ+rWDw9nsWQRCjWdLt6GoBHCgrZtJYw1N+0JfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dhp+SSOKuTfRc4Lyk+eCxt1Z1/HDtfthj3D4aHmbWpIcA9PvFlNfYiVV0OpahbS42Y9goRY99l9c7srvoJrqDX9YSXWPJoeG5K0v7RTTNSzLxg+spqiPGD+sKyKyOj8IOGd+xTDnuKZZQH2CBixO+bYivma+yxFs4NAEfDlb9ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HnTo1ML9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEFFC4CEC7;
-	Mon, 30 Sep 2024 16:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727714517;
-	bh=E3mcGZ+rWDw9nsWQRCjWdLt6GoBHCgrZtJYw1N+0JfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HnTo1ML943VUDW7sizvgArsOvpBOwC1C3QtWAS72EwFtQiWPuuTGHeCdNDUMobOGa
-	 aT/BhQ5B549nY4PlIAB2YZ08tRu7IrVN1pjkwFGzBiPFg5X5UvmOVd1S7TTgHhNCoE
-	 wIDPUEP3IRwLWcsL9stVJpOsdr3M9gHkLczbcxtLovIEZBrpgCvWeCMadwm+/+fB2A
-	 jmadj441Vm5606RWCEVuMPy5MUpwjIUcE5JYz8PQwXXNw0vNOK2z5zTUCYglmB/YjV
-	 IjWEjW8XzHhubgfduEoMLw7WuiT85ChxqB8spPX16CP0Nt+xhoKHZE1QH67yVJOych
-	 lmNuA7ZgjqbKw==
-Date: Mon, 30 Sep 2024 17:41:54 +0100
-From: Simon Horman <horms@kernel.org>
-To: Danielle Ratson <danieller@nvidia.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, yuehaibing@huawei.com,
-	linux-kernel@vger.kernel.org, petrm@nvidia.com
-Subject: Re: [PATCH net-next v3 2/2] net: ethtool: Add support for writing
- firmware blocks using EPL payload
-Message-ID: <20240930164154.GG1310185@kernel.org>
-References: <20240930084637.1338686-1-danieller@nvidia.com>
- <20240930084637.1338686-3-danieller@nvidia.com>
+	s=arc-20240116; t=1727714562; c=relaxed/simple;
+	bh=LeyyP1O6TvZS1JU0KHaoMN6aRjl0wxM5oKrThBUtxuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iS+dUCTN7gGIZ86fE7qXsfcOY2X8yaHrD9eHCUx1/HHPM0mwD8sb9yOFrgGM0OfK4EDcZxXA+TiN12MZj70Vt58Fb3v8JJFSLwhw6Xh2jIX3NMrusKi1Wyq6qrLBYZ5yloPPiEr5yxfYVKpNJ05Tg1/kbi0qf7rguQX+XuDG3qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CACF367;
+	Mon, 30 Sep 2024 09:43:08 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E5A53F58B;
+	Mon, 30 Sep 2024 09:42:33 -0700 (PDT)
+Message-ID: <5492c93e-b6c6-4443-afd3-b30c6267c2ab@arm.com>
+Date: Mon, 30 Sep 2024 17:42:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930084637.1338686-3-danieller@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 17/39] x86/resctrl: Rewrite and move the
+ for_each_*_rdt_resource() walkers
+Content-Language: en-GB
+To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>,
+ "shameerali.kolothum.thodi@huawei.com"
+ <shameerali.kolothum.thodi@huawei.com>,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+ "lcherian@marvell.com" <lcherian@marvell.com>,
+ "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+ "peternewman@google.com" <peternewman@google.com>,
+ "dfustini@baylibre.com" <dfustini@baylibre.com>,
+ "amitsinght@marvell.com" <amitsinght@marvell.com>,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>
+References: <20240802172853.22529-1-james.morse@arm.com>
+ <20240802172853.22529-18-james.morse@arm.com>
+ <OSZPR01MB8798549BD48777C0CB9A7B398B802@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <OSZPR01MB8798549BD48777C0CB9A7B398B802@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 11:46:37AM +0300, Danielle Ratson wrote:
-> In the CMIS specification for pluggable modules, LPL (Low-Priority Payload)
-> and EPL (Extended Payload Length) are two types of data payloads used for
-> managing various functions and features of the module.
-> 
-> EPL payloads are used for more complex and extensive management
-> functions that require a larger amount of data, so writing firmware
-> blocks using EPL is much more efficient.
-> 
-> Currently, only LPL payload is supported for writing firmware blocks to
-> the module.
-> 
-> Add support for writing firmware block using EPL payload, both to
-> support modules that supports only EPL write mechanism, and to optimize
-> the flashing process of modules that support LPL and EPL.
-> 
-> Signed-off-by: Danielle Ratson <danieller@nvidia.com>
-> Reviewed-by: Petr Machata <petrm@nvidia.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Hi Shaopeng Tan,
 
-...
+On 15/08/2024 07:43, Shaopeng Tan (Fujitsu) wrote:
+>> Subject: [PATCH v4 17/39] x86/resctrl: Rewrite and move the
+>> for_each_*_rdt_resource() walkers
+>>
+>> The for_each_*_rdt_resource() helpers walk the architecture's array of
+>> structures, using the resctrl visible part as an iterator. These became
+>> over-complex when the structures were split into a filesystem and
+>> architecture-specific struct. This approach avoided the need to touch every call
+>> site, and was done before there was a helper to retrieve a resource by rid.
+>>
+>> Once the filesystem parts of resctrl are moved to /fs/, both the architecture's
+>> resource array, and the definition of those structures is no longer accessible. To
+>> support resctrl, each architecture would have to provide equally complex
+>> macros.
+>>
+>> Rewrite the macro to make use of resctrl_arch_get_resource(), and move these
+>> to the core header so existing x86 arch code continues to use them.
 
-> @@ -556,6 +563,49 @@ __ethtool_cmis_cdb_execute_cmd(struct net_device *dev,
->  	return err;
->  }
->  
-> +#define CMIS_CDB_EPL_PAGE_START			0xA0
-> +#define CMIS_CDB_EPL_PAGE_END			0xAF
-> +#define CMIS_CDB_EPL_FW_BLOCK_OFFSET_START	128
-> +#define CMIS_CDB_EPL_FW_BLOCK_OFFSET_END	255
-> +
-> +static int
-> +ethtool_cmis_cdb_execute_epl_cmd(struct net_device *dev,
-> +				 struct ethtool_cmis_cdb_cmd_args *args,
-> +				 struct ethtool_module_eeprom *page_data)
-> +{
-> +	u16 epl_len = be16_to_cpu(args->req.epl_len);
-> +	u32 bytes_written;
-> +	u8 page;
-> +	int err;
-> +
-> +	for (page = CMIS_CDB_EPL_PAGE_START;
-> +	     page <= CMIS_CDB_EPL_PAGE_END && bytes_written < epl_len; page++) {
+>> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h
+>> b/arch/x86/kernel/cpu/resctrl/internal.h
+>> index 8e52e81a044b..84e0d019423d 100644
+>> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+>> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+>> @@ -472,14 +472,6 @@ extern struct rdt_hw_resource rdt_resources_all[];
 
-bytes_written does not seem to be initialised here for the first iteration
-of the loop.
+>> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h index
+>> c8cd6dde91ed..04a410a5e739 100644
+>> --- a/include/linux/resctrl.h
+>> +++ b/include/linux/resctrl.h
+>> @@ -26,6 +26,24 @@ int proc_resctrl_show(struct seq_file *m,
+>>  /* max value for struct rdt_domain's mbps_val */
+>>  #define MBA_MAX_MBPS   U32_MAX
+>>
+>> +/* Walk all possible resources, with variants for only controls or monitors. */
+>> +#define for_each_rdt_resource(_r)
+>> 	\
+>> +	for ((_r) = resctrl_arch_get_resource(0);				\
+>> +	     (_r)->rid < RDT_NUM_RESOURCES - 1;
+>> 		\
+>> +	     (_r) = resctrl_arch_get_resource((_r)->rid + 1))
+>> +
+>> +#define for_each_capable_rdt_resource(r)
+>> \
+>> +	for_each_rdt_resource((r))
+>> \
+>> +		if ((r)->alloc_capable || (r)->mon_capable)
+>> +
+>> +#define for_each_alloc_capable_rdt_resource(r)
+>> \
+>> +	for_each_rdt_resource((r))
+>> \
+>> +		if ((r)->alloc_capable)
+>> +
+>> +#define for_each_mon_capable_rdt_resource(r)
+>> \
+>> +	for_each_rdt_resource((r))
+>> \
+>> +		if ((r)->mon_capable)
+>> +
 
-Flagged by W=1 builds with clang-18.
+> ERROR: Macros with complex values should be enclosed in parentheses
 
-> +		u16 offset = CMIS_CDB_EPL_FW_BLOCK_OFFSET_START;
-> +
-> +		while (offset <= CMIS_CDB_EPL_FW_BLOCK_OFFSET_END &&
-> +		       bytes_written < epl_len) {
-> +			u32 bytes_left = epl_len - bytes_written;
-> +			u16 space_left, bytes_to_write;
-> +
-> +			space_left = CMIS_CDB_EPL_FW_BLOCK_OFFSET_END - offset + 1;
-> +			bytes_to_write = min_t(u16, bytes_left,
-> +					       min_t(u16, space_left,
-> +						     args->read_write_len_ext));
-> +
-> +			err = __ethtool_cmis_cdb_execute_cmd(dev, page_data,
-> +							     page, offset,
-> +							     bytes_to_write,
-> +							     args->req.epl + bytes_written);
-> +			if (err < 0)
-> +				return err;
-> +
-> +			offset += bytes_to_write;
-> +			bytes_written += bytes_to_write;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
->  static u8 cmis_cdb_calc_checksum(const void *data, size_t size)
->  {
->  	const u8 *bytes = (const u8 *)data;
+This is from checkpatch - I've ignored it because the 'r' values are in parenthesis...
 
-...
+I _think_ what it wants is this:               \|/
+| #define for_each_mon_capable_rdt_resource(r)	(	\
+|        for_each_rdt_resource((r))			\
+|		if ((r)->mon_capable))			\
 
--- 
-pw-bot: changes-requested
+but then this macro wouldn't work in the way it is intended to be used because it breaks
+the deliberately dangling if statement
+
+Checkpatch also complains about the existing code.
+
+I think this is just a pattern of code that is frowned on (including by me!). Previous
+versions of this series rolled these out as a loop and condition at each call site, but
+Reinette didn't think this was worth the churn as the existing helpers are well understood.
+
+
+Thanks,
+
+James
 
