@@ -1,78 +1,112 @@
-Return-Path: <linux-kernel+bounces-344066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3DB98A3C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:59:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB34398A3CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A86B29C78
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE882819A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDA818E756;
-	Mon, 30 Sep 2024 12:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC7E190057;
+	Mon, 30 Sep 2024 12:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRw13xnu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUoVx6PV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C94192D86;
-	Mon, 30 Sep 2024 12:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EA218FDA3;
+	Mon, 30 Sep 2024 12:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700953; cv=none; b=LHJKHpoKfPTCTBjW8OXsY2VxuG6eF8M+B/jt1FadukYSFMYLv4f9pxj0EFe/oIH5NDweldIwqjL+3MOdgQp2h6cki6o+TYPp7QL+WRi4rGMsguuy3UJQe5W82S8maw7UyPrqad9NSQv7d6TZKlVfnXdbnLF1j+0mYeF5fsjzbVQ=
+	t=1727700997; cv=none; b=KC8ZmbMW2FH7M83HX23/q0uc+vg6LtHoMWa4xp8VcL/YZmX0bthV759Ky69qsOmVzSMmHoAn/k2y+zuIikcsaL1q7Ue6OBwIb8iV+yVVvoWZg8PcIjStXUxxoNHbekkEYfB8PGHeFK6+cr0RtMEmoEM5MwD/MFNchJX2Xp3FbOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700953; c=relaxed/simple;
-	bh=ZkOKTBg9HnSwyIfJv2ogItEM8FFlmo+OKiYh3SAC7U8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O1fkAe4nmrhuGBkaILTXwbcGt6LA89dt+uoKDUb+WjFwZxEH/Mte8ToiDgSl2NKISX8vME7zrpMGIoiLDveD9MGwm4AxWJZ4LJPdceAAhVirSjFVVPAn6ITrrvYlc6NlkDVxBj0cmzZOFkGcd9hcs9P1n0BXwbLVPE2mXUY6Vo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRw13xnu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10451C4CEC7;
-	Mon, 30 Sep 2024 12:55:50 +0000 (UTC)
+	s=arc-20240116; t=1727700997; c=relaxed/simple;
+	bh=86l+n3oUOCw3cRUKaIVSOwRNK+3sfcj6behnUqpUl4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IaErp4JN5rXsWjaYu/fOVUzO+RkZ2k6FPPmcSaxyxdNtEHRIRg0uohJXbRTFqI9w/vDc2v+iGlfHWXHMkKnMYmXQZzVekdk4OUcUCHUozRhb1tW6mpjFLX8yiNeDkwvVwWTn7vPYyxoE7fsaF82cUnooxNsi45/+YPX6fdKqx+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUoVx6PV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71D88C4CEC7;
+	Mon, 30 Sep 2024 12:56:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727700952;
-	bh=ZkOKTBg9HnSwyIfJv2ogItEM8FFlmo+OKiYh3SAC7U8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=SRw13xnuw+GY/oTpMMLYex91TBeZlHGX85pOz/s/gVvAXqfLYa6Op1RXKGV+EMkjk
-	 2JkZVuQziXKWpQScqt6uS6K2OdW6CYsfVQRcEvI9PyUsv1XA3lIcxRYyFKEDG8WcKk
-	 ahb5v9oUG+rKFGZcEeOjKSvkMRwwvq5TjK08zEYHU9RMC6kGu57/ORbLWOKyKSqDZq
-	 JURLm80xE/cvdCr6HR+HBXv35relSbuKywtLj6XaAT8HbLk1Es01+mj9DQXVj2/Sku
-	 pkWnmgrzNe/Nlsv0b1OtoE/QpKeGnWL8koNtHTvrqt9ulqDA7gZgu8r9N+I+7ymtVN
-	 XsMwnlQSaDvZQ==
-From: Lee Jones <lee@kernel.org>
-To: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- Liao Chen <liaochen4@huawei.com>
-Cc: linux-kernel@vger.kernel.org, lujianhua000@gmail.com, lee@kernel.org, 
- daniel.thompson@linaro.org, jingoohan1@gmail.com, deller@gmx.de
-In-Reply-To: <20240820121628.42321-1-liaochen4@huawei.com>
-References: <20240820121628.42321-1-liaochen4@huawei.com>
-Subject: Re: (subset) [PATCH -next] backlight: ktz8866: fix module
- autoloading
-Message-Id: <172770095080.460970.7941679869764996013.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 13:55:50 +0100
+	s=k20201202; t=1727700996;
+	bh=86l+n3oUOCw3cRUKaIVSOwRNK+3sfcj6behnUqpUl4U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rUoVx6PV6rUDCc6U4wZInfOCNP8K9UdicEzWn6HmqDWqtSHMeG0hQyJJSrrhT6xmq
+	 3u/bHlw9T6wv1VV1oSFimbRei++Uxh8fHUdGmMVbW7+UaoOgNJZh8qIUNx2f38wkDz
+	 0i4O+1yL5J6l5J8D0oZqI2JpEKkFIF2F46znp5YvyMYSJ6SjDRQ6/FqZgEdmeHZN9O
+	 35XEnqQRb+eXZPluuW71hMkfQdJ/fEhfcRWCOV+TG9VBRyVa0W6TZJqaovdfxZkzMS
+	 0ZSJpYFwGpNxgLdckGd45p3qyC3hlcPqPV4kJ1PCA1dVhJ4jsfm8zOGX0J+6Qy0sye
+	 OjZviUqSTgiog==
+Date: Mon, 30 Sep 2024 14:56:18 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Ricardo Ribalda
+ <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Bingbu
+ Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Hans de Goede <hdegoede@redhat.com>, Andy
+ Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>, Olli Salonen
+ <olli.salonen@iki.fi>, Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young
+ <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>, Abylay Ospan
+ <aospan@netup.ru>, Jemma Denson <jdenson@gmail.com>, Patrick Boettcher
+ <patrick.boettcher@posteo.de>, Ming Qian <ming.qian@nxp.com>, Zhou Peng
+ <eagle.zhou@nxp.com>, Andy Walls <awalls@md.metrocast.net>, Michal Simek
+ <michal.simek@amd.com>, Jean-Christophe Trotin
+ <jean-christophe.trotin@foss.st.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>,
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+ <andrew@codeconstruct.com.au>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Tomasz Figa <tfiga@chromium.org>, Marek Szyprowski
+ <m.szyprowski@samsung.com>, Tim Harvey <tharvey@gateworks.com>, Benjamin
+ Mugnier <benjamin.mugnier@foss.st.com>, Sylvain Petinot
+ <sylvain.petinot@foss.st.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, Niklas
+ =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund+renesas@ragnatech.se>,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, openbmc@lists.ozlabs.org,
+ linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH 00/45] media: Use string_choice helpers
+Message-ID: <20240930145446.10d832e9@foz.lan>
+In-Reply-To: <20240930124619.GG31662@pendragon.ideasonboard.com>
+References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
+	<20240930122157.GF31662@pendragon.ideasonboard.com>
+	<4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
+	<20240930124619.GG31662@pendragon.ideasonboard.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, 20 Aug 2024 12:16:28 +0000, Liao Chen wrote:
-> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
-> based on the alias from of_device_id table.
+Em Mon, 30 Sep 2024 15:46:19 +0300
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> escreveu:
+
+> > >> Cocci has located some places where the helpers can be used. This
+> > >> patchset uses the diff generated by cocci, plus these changes:  
+> > > 
+> > > Personally I think most of those helpers just hinder readability for not
+> > > much added gain. String de-duplication is done by the linker already.
+> > > The only value I see in the helpers is ensuring that the strings are
+> > > consistently written, and I think we can do so through other means.  
+> > 
+> > Just my opinion: I'm OK with these new helpers,  
 > 
-> 
+> Coding style opinions are personal preferences of course :-) My opinion
+> is that this hinders readability for no benefit.
 
-Applied, thanks!
+Agreed. New code somewhat obfuscates what it does with no benefit
+except maybe saving a few bytes on each drive.
 
-[1/1] backlight: ktz8866: fix module autoloading
-      commit: 2d3553b76ecaf23c98f3070a2db8d08906be37b8
-
---
-Lee Jones [李琼斯]
-
+Thanks,
+Mauro
 
