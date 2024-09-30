@@ -1,146 +1,119 @@
-Return-Path: <linux-kernel+bounces-343471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00505989B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03828989B55
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF4F1F24340
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4A21F243B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204B155312;
-	Mon, 30 Sep 2024 07:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB073155346;
+	Mon, 30 Sep 2024 07:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qwR2GjGD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="aGrxWo51"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA45714A0AB;
-	Mon, 30 Sep 2024 07:21:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA9714A0AB;
+	Mon, 30 Sep 2024 07:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727680918; cv=none; b=kX4EAd1AS1nq7bvbJvxktVddTs8GABqSlXzmyAbaRCwQdLgSgZSzOQ3ELLCbCr2KA3M+84OQzKwWkW54sguSKPZE+XDbG/fPW02ArLKjq4wl1QC56sEaADCYDuz7KHI0e763weS4sSrTf6zq+CQnEGRAaVvmkhwGdbj3NZJAw0k=
+	t=1727681039; cv=none; b=aaoe/jgTRcmAMCw49AR/dKcXU/8r2uUx0xrVWK+l81IrfiTpeyTwGdU0XlX+30K3/EI0DQYWs+XEeMWyb5D8P+BWugyx9ZAohxOOkh0iXtGgURr+WLN6W/nt11PhexdBe1RDHfT18flUBjERo74Yo/HDnj4U+ukBt4jQw8vEMLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727680918; c=relaxed/simple;
-	bh=cdcHOH4arkLm0zru6oCJ02VyxLBvcCTvbxkPC2+57Qk=;
+	s=arc-20240116; t=1727681039; c=relaxed/simple;
+	bh=TB+lAUntaUaqbb0cnwsq5yTV7KiTDQl3nqbvmuCkaSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFmpZfl2nfByYeJoHs7mGQWMH1i3BgLF5rxANDspy6Q+WYZ4Tfx60Bs7RYKUsz6C2lr0JdRXPvgGztpr0OnpE6af1fwNQ5S7uu8O4Fsaj8X2DXsjRycYVb1hRF1NQ6eUYBzgIS4dNrcjr+BJhGzHTaR2WgK7tfDGb/8N34JrSc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qwR2GjGD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D8711A1A;
-	Mon, 30 Sep 2024 09:20:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1727680824;
-	bh=cdcHOH4arkLm0zru6oCJ02VyxLBvcCTvbxkPC2+57Qk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qwR2GjGDisyXvS3FC5gFhsn8Ueel5CcCWd9dMIdd4Z5OwGc+5tqCLhshuX/tWtFAk
-	 Tf8imkuL+nW0Y1cESO+6Cco6Qb31JRD9mfCs510HYV7pFtEf3Ram9eMo+rvAPNiwMy
-	 NoR5qnivQxJsM/DvOQYUYCmGvXpGvdPt91A+9YSk=
-Date: Mon, 30 Sep 2024 10:21:51 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "G.N. Zhou (OSS)" <guoniu.zhou@oss.nxp.com>
-Cc: "rmfrfs@gmail.com" <rmfrfs@gmail.com>,
-	"martink@posteo.de" <martink@posteo.de>,
-	"kernel@puri.sm" <kernel@puri.sm>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] media: imx8mq-mipi-csi2: Simplify power management
- handling
-Message-ID: <20240930072151.GC31662@pendragon.ideasonboard.com>
-References: <20240929134354.20735-1-laurent.pinchart@ideasonboard.com>
- <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3D2aTuUpFOgMt+SmHd7GSRlSy7SPLafxBmPZiqChw8gMX5B6FK1kW6LhSLuwuXvcY6egOXmmH0kQaI+mlU0M8rXJ8tsVedHjP5IQ1K6aJL7qQvqCJldzY9ksbRkdbrcqINiHfnbbTfiJOLYlFgqUGnSKA7KQtj/r7bEzKpiQqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=aGrxWo51; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id AA2F11C009E; Mon, 30 Sep 2024 09:23:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1727681027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hDMeTQHukrC1IMq/Dz0vfZpF3Fws59G6fh/19WKGSek=;
+	b=aGrxWo51Giacs+I/9mGxdpHn5O+j0lzEj2rJ/XD5qT88MvNucWlsarIgij+At/L5gU5gPh
+	fnGkkvOMhNjq5seH6/1VA1QjuCycNVjnPOlh6iBeeJYpARK8mWPF2/RZmwTyio+eo0ZUZw
+	rA1HftgEXqOL32EgoJ2OkDgMlyp7b1c=
+Date: Mon, 30 Sep 2024 09:23:47 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Jann Horn <jannh@google.com>, David Hildenbrand <david@redhat.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Muchun Song <muchun.song@linux.dev>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Chris Zankel <chris@zankel.net>,
+	Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org,
+	Shuah Khan <shuah@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-kselftest@vger.kernel.org,
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+	Vlastimil Babka <vbabka@suze.cz>
+Subject: Re: [RFC PATCH 0/4] implement lightweight guard pages
+Message-ID: <ZvpSA7ks/qATHEq3@duo.ucw.cz>
+References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W0cxVuCFjuLpnb26"
 Content-Disposition: inline
-In-Reply-To: <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
+In-Reply-To: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
 
-On Mon, Sep 30, 2024 at 07:08:09AM +0000, G.N. Zhou (OSS) wrote:
-> On Sunday, September 29, 2024 9:44 PM, Laurent Pinchart wrote:
-> > 
-> > Hello,
-> > 
-> > This small patch series is a reaction to "[PATCH] media: nxp:
-> > imx8mq-mipi-csi2: Fix CSI clocks always enabled issue" ([1]). Instead of making
-> > the PM handling more complex, I think it can be greatly simplified.
-> > 
-> > I have only compile-tested the patches. Guoniu, could you give this a try ?
-> 
-> After applying the patches and test both on iMX8ULP.
-> 
-> For iMX8ULP, it will cause kernel dump when access CSI registers and
-> system hang during do suspend/resume while streaming
-> Need to add system suspend/resume handlers and call
-> pm_runtime_force_suspend/resume in the handlers.
-> 
-> I tried to debug this issue and found pm runtime callback won't be
-> called when system resume. The state of power domain won't enabled.
 
-Thank you for testing.
+--W0cxVuCFjuLpnb26
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I wonder if this could be caused by the CSI bridge being resumed from
-system sleep before the CSI-2 receiver. Could you check if that's the
-case ? If so, does the following change fix the issue ?
+Hi!
 
-diff --git a/drivers/media/platform/nxp/imx7-media-csi.c b/drivers/media/platform/nxp/imx7-media-csi.c
-index 9566ff738818..c66b0621e395 100644
---- a/drivers/media/platform/nxp/imx7-media-csi.c
-+++ b/drivers/media/platform/nxp/imx7-media-csi.c
-@@ -2057,9 +2057,22 @@ static int imx7_csi_notify_bound(struct v4l2_async_notifier *notifier,
- {
- 	struct imx7_csi *csi = imx7_csi_notifier_to_dev(notifier);
- 	struct media_pad *sink = &csi->sd.entity.pads[IMX7_CSI_PAD_SINK];
-+	struct device_link *link;
- 
- 	csi->src_sd = sd;
- 
-+	/*
-+	 * Enforce suspend/resume ordering between the source (supplier) and
-+	 * the CSI (consumer). The source will be suspended before and resume
-+	 * after the CSI.
-+	 */
-+	link = device_link_add(csi->dev, sd->dev, DL_FLAG_STATELESS);
-+	if (!link) {
-+		dev_err(csi->dev,
-+			"Failed to create device link to source %s\n", sd->name);
-+		return -EINVAL;
-+	}
-+
- 	return v4l2_create_fwnode_links_to_pad(sd, sink, MEDIA_LNK_FL_ENABLED |
- 					       MEDIA_LNK_FL_IMMUTABLE);
- }
+> Userland library functions such as allocators and threading implementatio=
+ns
+> often require regions of memory to act as 'guard pages' - mappings which,
+> when accessed, result in a fatal signal being sent to the accessing
+> process.
+=2E..
+> Suggested-by: Vlastimil Babka <vbabka@suze.cz>
 
-> > [1] https://lore.kernel.org/r/20240929101635.1648234-1-guoniu.zhou@oss.nxp.com
-> > 
-> > Laurent Pinchart (3):
-> >   media: imx8mq-mipi-csi2: Drop stream stop/restart at suspend/resume
-> >     time
-> >   media: imx8mq-mipi-csi2: Drop ST_SUSPENDED guard
-> >   media: imx8mq-mipi-csi2: Drop system suspend/resume handlers
-> > 
-> >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 113 ++----------------
-> >  1 file changed, 10 insertions(+), 103 deletions(-)
-> > 
-> > 
-> > base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+suse.cz, I believe. (They may prefer suse.com address).
 
--- 
-Regards,
+BR,
+									Pavel
 
-Laurent Pinchart
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--W0cxVuCFjuLpnb26
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvpSAwAKCRAw5/Bqldv6
+8hAuAJ92TjqtQXkEDCopy+H3+ERGTckKJgCfZ6IwGhZZzzVTDKuv9wjxbwBtzgE=
+=UXT7
+-----END PGP SIGNATURE-----
+
+--W0cxVuCFjuLpnb26--
 
