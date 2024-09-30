@@ -1,116 +1,100 @@
-Return-Path: <linux-kernel+bounces-344204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E7898A658
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D13A98A65A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DD821F2397C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:57:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0940D1F2367F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D0218FDD8;
-	Mon, 30 Sep 2024 13:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019F219047C;
+	Mon, 30 Sep 2024 13:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="he6j7o2c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJXUfV7c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C2619047A;
-	Mon, 30 Sep 2024 13:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEFD190462;
+	Mon, 30 Sep 2024 13:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704463; cv=none; b=L90F228josf9ktDiJzMWCZ64chJQ+Su7/cSmVxL98wSGnk2gjoH5axA5bvUTTOeJ7MZ0dvD05ubJ2y6NIrPcEuhsGRRh/8Y7GN0ZNaMrtFJ1GeioQKcKE56FmEHPcc3/kCV0s8cr/jnYtLQ+qv/Py+RhJMkaQMKJsjEd7Mcyblk=
+	t=1727704473; cv=none; b=Twxtqm9qI6H/F1MzHmwog/ejG4GwHfLKJjgcg1P0ez+BZXQJd3ewv9jkglVwSrXPKkMsoCHGFMzwduJqhL9zSKAx/AYEYuojSp1H06VCUmDLc2X6NQ5xk/xlb8YkJMdTNRnGUwwKhd9qIEiGxiDM4T+Ov7abEnKNZN3AT5fgO58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704463; c=relaxed/simple;
-	bh=Kb3o7fbCjfsS+L3nJzr7RT2aH+ia/D09v5IrixjDUkg=;
+	s=arc-20240116; t=1727704473; c=relaxed/simple;
+	bh=d7gElJyf7D9ksXwAIpophG5Uqbgtl7nqygwS91dUJ38=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuijhV8vIY/J3f7wRqMIsk71yS7ri34dGZhYrVEBpxW0rOmFfMtrfQ9vclkpDpUqinrrNdt8FrVJ3RlbgDicjGdTJ82XqTHE6UVFZPzpH3Qp1doBr/cWre4g82hLeRR+OYmY735TdaA3zf/bnHzv6eEN6csoUkIUaqieXYqGgrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=he6j7o2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6BD4C4CEC7;
-	Mon, 30 Sep 2024 13:54:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lOrwHZGQI8rDDd7pgquWm4njMa8p8BHj5oWNzH8XoLgx3NiByfwo+cGcUqRkrafhp5P4CkB09nVoSCuHPeNZRdj0Kt+EfrqKCVFdyxwX4/D0LAACgJf3KgWC+5dMNjSEJV+KDruOxsrriD+j/b2fgnJMR16rgQ+z1pfJLfnt3Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJXUfV7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9C0C4CECF;
+	Mon, 30 Sep 2024 13:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704462;
-	bh=Kb3o7fbCjfsS+L3nJzr7RT2aH+ia/D09v5IrixjDUkg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=he6j7o2cLX6V6c1gCqDhsPYvCjBaT/5Z5XKivgQoHNlJxlkjPlAVbDQocEzCCtXqE
-	 J4Jz3d+rFTr5iB2qR2Q6ec7OfflGNuFIQefrZs4SLVsQXFo/HwBk+gTbWPbpg5rkV8
-	 0oU59WzJBYiqix2kCZ6syFQuzVecKUMGE9roc/9/V2ftNfC6n5u9blax1MeiPTIiRb
-	 imQ00XX+3zl8EduUE/wn2xgaYFxxyPAe2qfrtEMp0nwF15pZDgXwzO0QgNlm0rJpcV
-	 Mg/V11CbpnTy5GO+KKI8h3YpT3/qO7LFvndMTcfJWqqZtklzpSHxpmP8q1GGm7LTKL
-	 qJ3ekaL/7YnxA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9868BCE0DB6; Mon, 30 Sep 2024 06:54:22 -0700 (PDT)
-Date: Mon, 30 Sep 2024 06:54:22 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Message-ID: <490f7491-5e4f-4c03-89a0-854aff3c7ecf@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
- <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
- <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
- <25344f33-b8dc-43fb-a394-529eff03d979@rowland.harvard.edu>
- <f635f9ce-fef4-4a9e-bee1-70dbc24a82ad@huaweicloud.com>
- <973ae617-96a8-456a-a805-af3d61270125@paulmck-laptop>
- <50bd6ecb-c8e3-4043-9040-b2b4ee71fc02@huaweicloud.com>
+	s=k20201202; t=1727704470;
+	bh=d7gElJyf7D9ksXwAIpophG5Uqbgtl7nqygwS91dUJ38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cJXUfV7cCMSkCaK5VN1ykIgI6bvWdDJfSG4mh1k5Hr5NeY/xi9qatMjlr3Ud077uv
+	 LSX0khtMy9DyBRAaoLTeNoU6DOx5PIXX1qHipQIaiNHaZ0HA5M+LJQYKq+t4deHzQd
+	 6dVO+ffGD+oMUrgIaGE2PD0Y8D+q0IxWw7u427cphbu3aqHEN4SOZZvi6JMXvA45xe
+	 12L5azxtBta4vRmon85LlA4ttUv9tcfjUv49zpQDyMWzYbEn+WAyAXlW+cLc9UMHPV
+	 Fihnc1GI9xwrbVOuprYjw71PEspjD/geJxVVkcwviChiJu/Pa10M+voCQ1WfGurHGQ
+	 asCWbvZ8mgTAw==
+Date: Mon, 30 Sep 2024 14:54:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: pierre-henry.moussay@microchip.com
+Cc: Linux4Microchip@microchip.com,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [linux][PATCH v2 15/20] dt-bindings: riscv: microchip: document
+ the PIC64GX curiosity kit
+Message-ID: <20240930-knelt-sway-04060e0ee22b@spud>
+References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
+ <20240930095449.1813195-16-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7QH427KuhNWnm3Mj"
+Content-Disposition: inline
+In-Reply-To: <20240930095449.1813195-16-pierre-henry.moussay@microchip.com>
+
+
+--7QH427KuhNWnm3Mj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <50bd6ecb-c8e3-4043-9040-b2b4ee71fc02@huaweicloud.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 02:06:12PM +0200, Jonas Oberhauser wrote:
-> 
-> 
-> Am 9/30/2024 um 1:04 PM schrieb Paul E. McKenney:
-> > On Mon, Sep 30, 2024 at 11:42:11AM +0200, Jonas Oberhauser wrote:
-> > > 
-> > > 
-> > > I also currently don't see any major difference between the constant and
-> > > register case. The point is that the address is known before loading into b,
-> > > and hence the compiler + hardware can speculatively load *b before loading
-> > > into b.
-> > 
-> > In theory, true.  In practice, in the register case, you need a little
-> > more bad luck for the compiler to be able to exploit your mistake.
-> 
-> If there's one thing I've never run out of, then it is bad luck with
-> technology.
+On Mon, Sep 30, 2024 at 10:54:44AM +0100, pierre-henry.moussay@microchip.co=
+m wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+>=20
+> Update devicetree bindings document with PIC64GX Curiosity Kit, known
+> by its "Curiosity-GX1000" product code.
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-Careful!  Someone might try to recruit you as tester.  ;-)
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-							Thanx, Paul
+--7QH427KuhNWnm3Mj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqtkQAKCRB4tDGHoIJi
+0s9QAQCk+iAJ6+t1MuQmVPsS7UwIejIRLvJZBRC44V9oqc7iUQEA6iSPYqHZ0Byj
+a5bXIew4y2/U/Gbw6YuzeCkNzT4jOAY=
+=IK+Q
+-----END PGP SIGNATURE-----
+
+--7QH427KuhNWnm3Mj--
 
