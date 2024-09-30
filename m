@@ -1,170 +1,199 @@
-Return-Path: <linux-kernel+bounces-343886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2296298A0B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:32:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD08298A0C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469431C25CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4106C1F27D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E130019046D;
-	Mon, 30 Sep 2024 11:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1797118E764;
+	Mon, 30 Sep 2024 11:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="X5VXd/mH"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWAt2evQ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45F418E047
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F05618E74C;
+	Mon, 30 Sep 2024 11:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695742; cv=none; b=kChzu7U6SifAadEUgb7JRo2shf09EYwnR58xcIHuQQv5wnByl4rRiBsjV0NPQtrp0kP0TVS2iimJvQqdnKtmGPZt/hrteTiAz7lf9CW4T2hbcZYHr+OEuMuzkMSzSaw7v1Skt/cm8YXDhrZvO8mrvxLJLhip6waYVC47CBxjclM=
+	t=1727695889; cv=none; b=c9dsf+L40WIuwQi7pZuKud2yxAxRVMHWQakW83nbVe/wnbeMCVRTHJG0Rtwcd4s6bzYHieJKLWthHfVCSFXYGqOoOFYZ9txmr/mGt2QIw/qoCusoFQg+9TMrOAkJzG4X7v+w53lcmsoX/XN7/jLt01ugtyHxA81gxgr0FOYl++M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695742; c=relaxed/simple;
-	bh=GTATx1ZjgRAIeRb4gVhlCtdMSImGj/h83r+eF+k6xOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=evMDHzfV1rKK5OoMJP7jSdzxbEg7IMTfLDFH9x2+TXtF/kvoH6cqfgQKNahTWHN1DXs/By1cQJzbAjIQkFQNrFpxZ9On8p+ldGR//RzXhLY4jqDjiot2zRdPe1UwezezVjxf4tKgpHs8s2ew+Ez8OaVvoQ8t6Jv7wg/QmeZZsdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=X5VXd/mH; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e04801bb65so2378173b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:29:00 -0700 (PDT)
+	s=arc-20240116; t=1727695889; c=relaxed/simple;
+	bh=Gz5KW5hALie3z9g2VJENb2IHqaJJS+XfH8IpYkcxYQY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=bYNOX2LRhcBN0nXvBR9neK2c7iuxUKcWdJStRch2dLxRUjYUZZOPh5bSmKwFihrFWpdNzd7nYQxiuRj8pVr0uJNdMLu46uOmxjpVydrW3eGkMY+/tMSqxq8ozCfe9tad0HxQXU3VGEnVu5tSor08b8dSb68IbVQA4UbV3GtMk+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWAt2evQ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ce8458ae3so894668f8f.1;
+        Mon, 30 Sep 2024 04:31:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727695740; x=1728300540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ESV9e65f4opp3oYhgp6rCKPns7ySl2JgdhTmlcbTiZU=;
-        b=X5VXd/mHV7Dm6OJ7MXNbeLSGpHHFdF1OxtD8B+rBt50P6C6O95q3/kQ2LUzABFax6O
-         RRLGAVvJe40ZrXGKXjJ0NBg19T6Lezjy4BTbipgmmwJRvn5qG2U/mNBl5GfCRSrHohbc
-         mKf8yQDZeLYr1Ufh+xYcdM3sG7L01TFkVeTyxcdL+ti/l21cOCGDmh4j/cP86slxGthJ
-         grZptFAhCUsIwoxU1vtJN02cCjR/3By8YWg7MrL2yia+itOMezd5+TreFFJJY/FFxlFc
-         ckRnDVBt+fqFvmrlt+PBYAG/GDRJjjtY0XRXr+v7vp38tK1BCFK1VWFCzYMJoR0gDGwh
-         ebeg==
+        d=gmail.com; s=20230601; t=1727695886; x=1728300686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YiIs3bHOwFCglJ1XZ2b3oRoZl2j5PvNMKUkUk+rZC0=;
+        b=cWAt2evQBB3goeNESmR75n9KNr0dQ8Rm7DhK6O3oU9FgWULR8f3WYpq1YO6ZbbsqKn
+         JEsk9u48hbq9rnVRG7H5No4E8DPVb8T+0JFneWqnDdxZvbXP2jQv5CadDy/wIKMPcNXu
+         l389UeP/+gw//oF3g5HGXDwqPF8o22uFrmundkJGuWySFrxi8XKd6aT/DtwnB7Ehenrc
+         h435MpMZLBZUiJOGGWKEbV6Z67IELWCcNp+mWwiWH6OQq5aN9bmCbKK5jLwzDDqi3JmI
+         BaE1cSzFWaK5pkDbsnPZfaHqSuDJhXjwyWlB79sG46htibBWlxSu+NzW04dPclWnjqS/
+         8EMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727695740; x=1728300540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ESV9e65f4opp3oYhgp6rCKPns7ySl2JgdhTmlcbTiZU=;
-        b=ju28iQRULRUW00RPbICkzcc/azsCFnps9AMlUa/mT9JttffI3Vm1wYynxY6czKLNFB
-         vXKDvFxTADgT5iPjb48gnqauPEmw+McJBntPD36B2nSuLHP32IQQEojEWrLgvjZmwG97
-         p/n3N7uMghtS70SjK576xV/g70poayk3f2QAVSXTGIqutTXtX9adOXRZeM5GDFZRFnR7
-         eDC1+D7D+7br0tiK7Nghob4ZhxbteroS4NJwV6VxdyNx8hfs8CZxPtMnArSJiHT4M1dC
-         ZAdJkO2KpEskXz8SrQ3SkGhizvvtPAw7WDppgSbEjOedzZ9NesfTgUx+f9EnYsUiU0Hd
-         I77Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWxwmbArOgQFCXPr0AvgbMrxpuQ9rOuq5E8otcj0RST4ssDSDFKHrNu6xAGFdmZ1WQzR60Z7xzi8Wek+ZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfjq+YyMk2g9E/1Xkn16Ce1A+AraLHq1ycmrMEAiybS+KIYyFt
-	m2zJgmMA0N1Z6hidXnvDO9LeYlvluq2Cn6LbhAa0I7k4mDS3JhtYXnr7r+sKdFqjyKa9Swn/1Rm
-	rIcpqrG1qIZnCoxPbFxgbFj/IubW+OEyQoOqOhg==
-X-Google-Smtp-Source: AGHT+IHlrk+6ylJNPNwIsyMeU+6MgSCPdtd1Tld1jqABl45ABUDHKKwEQnK828Pbh+a/oWL/55rN02vH87DWZloHkoc=
-X-Received: by 2002:a05:6808:3387:b0:3e2:9e00:5a16 with SMTP id
- 5614622812f47-3e3939600f3mr6239921b6e.11.1727695739914; Mon, 30 Sep 2024
- 04:28:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727695886; x=1728300686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3YiIs3bHOwFCglJ1XZ2b3oRoZl2j5PvNMKUkUk+rZC0=;
+        b=M1ZIXYIz3NgUcdTKPSH9v9TqVeS4elmwyXYmw22wn/YCxBnYj70uQ8+457G2H6ynBq
+         BbXCAKF3glIlpU0dmM0EwYpE6yxwKdT/GRIvQ+k2Ku56UOvhC/0zDA5+ph2eGwcQaMEm
+         o4Y1N3p0ec6c/Fey7lf4ePuLrnj+Vs46DDOw8j6hWmsyM7s86U6aDSvIf10NmbYJfUYL
+         7v01OAWCACLLu/6wr1P3aJyJ5b9fL6/05YiWap4wOImwRCm+KllCjrnfnJsG1glxN5rV
+         iXAPdjglu6NYWdMbqNwkmJ8Ixi0CrDTFy33ICAtVclgMELS4ohA8/qI+jCFZCJyuQXAC
+         Ge5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDuem/bf7r6R/+CWNpynymmJjAbqdVbHb8wB4A/zW25sFfT07kJC86aV8H5/B01ewVos/NUDYidSQr@vger.kernel.org, AJvYcCUS1HDjggyRhvL5HCDxa20gl6Ql3ubQwzPynntXo5f1RGi2l7z9vD6ySgFxTbLW5Aywp/OeiE+w9arJb04=@vger.kernel.org, AJvYcCUfix8eqNATeOivlL395nnZ7Oy7Nov0hkibH/Uvai1mLkPdaC//WGsMB/YbrCyUCMXAj2G2Xo4M4iGP@vger.kernel.org, AJvYcCVD78MNkrJw9mbJSeTUkvvcllQ4Rf32h1Jxt5nYK2N69PMKxs8mzj2XTIU53uJS8bO8cPwSohkw8torIInQ@vger.kernel.org, AJvYcCVEigZmhzPGkcCEZxdXr2Xj2lg9IaJqD+SJsUjaK1dUeoI0DwY2Dv+MQSY1qpoZfW9K7VwkqGHSeuftwRHEINwS@vger.kernel.org, AJvYcCXPZfKJnYhFYyOoodMm2sU5U4qZlZkI/Hx8oRDet5k6qFkHc/n/2yGdAXEzB7I2g3RyAdokApv78arS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlGWf9BtJdQ1g2b6/PSNIYskTdEqfpCj7Dm6sxBCKzv5on5Fvb
+	/HSNlCby+QyWAJmmxi/H8MpzqKo2D4uL9HK6JZLnzTF6AWw139Rx
+X-Google-Smtp-Source: AGHT+IEIsdcRgsyK864MeREGM2feJVQach96Q/sGvKiTG2PTKeFbkb9eida+L8WPLH+9ZNFVIrSS3Q==
+X-Received: by 2002:a5d:5447:0:b0:378:8b84:4de9 with SMTP id ffacd0b85a97d-37cd5a69798mr10450453f8f.12.1727695885496;
+        Mon, 30 Sep 2024 04:31:25 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cd57427c6sm8889363f8f.96.2024.09.30.04.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 04:31:24 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Christian Heusel <christian@heusel.eu>,
+	linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: [PATCH v4 0/5] block: partition table OF support
+Date: Mon, 30 Sep 2024 13:30:07 +0200
+Message-ID: <20240930113045.28616-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930103157.49259-1-brgl@bgdev.pl> <20240930103157.49259-2-brgl@bgdev.pl>
-In-Reply-To: <20240930103157.49259-2-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 30 Sep 2024 13:28:46 +0200
-Message-ID: <CAMRc=MfCOuTweTVObh5qP0CftUM_W9cduT2R=r+LP3FKrS=8ww@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpio: syscon: use generic device properties
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 12:32=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> OF-specific routines should not be used unless necessary. Generic device
-> properties are preferred so switch to using them in the driver code.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/gpio/gpio-syscon.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-syscon.c b/drivers/gpio/gpio-syscon.c
-> index 638095d5f459..06c07085feb8 100644
-> --- a/drivers/gpio/gpio-syscon.c
-> +++ b/drivers/gpio/gpio-syscon.c
-> @@ -9,7 +9,6 @@
->  #include <linux/gpio/driver.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/module.h>
-> -#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->
-> @@ -208,12 +207,13 @@ static int syscon_gpio_probe(struct platform_device=
- *pdev)
->         struct device_node *np =3D dev->of_node;
->         int ret;
->         bool use_parent_regmap =3D false;
-> +       unsigned int props[] =3D { 0, 0 };
->
->         priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->         if (!priv)
->                 return -ENOMEM;
->
-> -       priv->data =3D of_device_get_match_data(dev);
-> +       priv->data =3D device_get_match_data(dev);
->
->         priv->syscon =3D syscon_regmap_lookup_by_phandle(np, "gpio,syscon=
--dev");
->         if (IS_ERR(priv->syscon) && np->parent) {
-> @@ -224,19 +224,15 @@ static int syscon_gpio_probe(struct platform_device=
- *pdev)
->                 return PTR_ERR(priv->syscon);
->
->         if (!use_parent_regmap) {
-> -               ret =3D of_property_read_u32_index(np, "gpio,syscon-dev",=
- 1,
-> -                                                &priv->dreg_offset);
-> -               if (ret)
-> +               ret =3D device_property_read_u32_array(dev, "gpio,syscon-=
-dev",
-> +                                                    props, 2);
-> +               if (ret < 0)
->                         dev_err(dev, "can't read the data register offset=
-!\n");
-> -
-> -               priv->dreg_offset <<=3D 3;
-> -
-> -               ret =3D of_property_read_u32_index(np, "gpio,syscon-dev",=
- 2,
-> -                                                &priv->dir_reg_offset);
-> -               if (ret)
-> +               if (ret !=3D 2)
+Hi,
+this is an initial proposal to complete support for manually defining
+partition table.
 
-Sorry, this is wrong, it doesn't return the prop count unless val is NULL.
+Some background on this. Many OEM on embedded device (modem, router...)
+are starting to migrate from NOR/NAND flash to eMMC. The reason for this
+is that OEM are starting to require more and more space for the firmware
+and price difference is becoming so little that using eMMC is only benefits
+and no cons.
 
-I'll send a better version.
+Given these reason, OEM are also using very custom way to provide a
+partition table and doesn't relay on common method like writing a table
+on the eMMC.
 
-Bart
+One way that is commonly used is to hardcode the partition table and
+pass it to the system via various way (cmdline, special glue driver,
+block2mtd...)
+This way is also used on Android where the partition table
+is passed from the bootloader via cmdline.
 
->                         dev_dbg(dev, "can't read the dir register offset!=
-\n");
->
-> -               priv->dir_reg_offset <<=3D 3;
-> +               priv->dreg_offset =3D props[0] << 3;
-> +               priv->dir_reg_offset =3D props[1] << 3;
->         }
->
->         priv->chip.parent =3D dev;
-> --
-> 2.43.0
->
+One reason to use this method is to save space on the device and to
+permit more flexibility on partition handling.
+
+What this series does is complete support for this feature.
+It's possible to use the cmdline to define a partition table similar
+to how it's done for MTD but this is problematic for a number of device
+where tweaking the cmdline is not possible. This series adds OF support
+to make it possible to define a partition table in the Device Tree.
+
+We implement a similar schema to the MTD fixed-partition, where we define
+a "label" and a "reg" with "offset" and "size".
+
+A new block partition parser is introduced that check if the block device
+have an OF node attached and check if a fixed-partition table is defined.
+
+If a correct node is found, then partition table is filled. cmdline will
+still have priority to this new parser.
+
+Some block device also implement boot1 and boot2 additional disk. Similar
+to the cmdline parser, these disk can have OF support using the
+"partitions-boot0" and "partitions-boot1" additional node.
+
+It's also completed support for declaring partition as read-only as this
+feature was introduced but never finished in the cmdline parser.
+
+Posting as RFC for any comments or additional checks on OF parser code.
+
+I hope this solution is better accepted as downstream this is becoming
+a real problem with a growing number of strange solution for the simple
+task of providing a fixed partition table.
+
+Changes v4:
+- Fix wrong description and title in Kconfig
+- Validate reg len with addr and size cells
+- Drop offset 0 constraint (not needed)
+- Rework bytes to sector conversion
+- Follow common logic with ignore partitions after state->limit
+- Better handle device_node put
+- Add suggested strends string helper
+Changes v3:
+- Out of RFC
+- Drop partition schema generalization and simplify it
+- Require fixed-partitions compatible to adapt to MTD schema
+- Make label property optional and fallback to node name
+Changes v2:
+- Reference bytes in DT instead of Sector Size
+- Validate offset and size after Sector Size conversion
+- Limit boot0 and boot1 to eMMC and add comments about JEDEC spec
+- Generalize MTD partition schema and introduce block partitions schema
+- Add missing code to actually attach the OF parser to block partition core
+- Add reviewed by tag for read-only patch
+
+Christian Marangi (5):
+  block: add support for defining read-only partitions
+  docs: block: Document support for read-only partition in cmdline part
+  string: add strends() helper to check if a string ends with a suffix
+  block: add support for partition table defined in OF
+  dt-bindings: mmc: Document support for partition table in mmc-card
+
+ Documentation/block/cmdline-partition.rst     |   5 +-
+ .../devicetree/bindings/mmc/mmc-card.yaml     |  52 ++++++
+ block/blk.h                                   |   1 +
+ block/partitions/Kconfig                      |   9 ++
+ block/partitions/Makefile                     |   1 +
+ block/partitions/check.h                      |   1 +
+ block/partitions/cmdline.c                    |   3 +
+ block/partitions/core.c                       |   6 +
+ block/partitions/of.c                         | 151 ++++++++++++++++++
+ include/linux/string.h                        |  13 ++
+ 10 files changed, 241 insertions(+), 1 deletion(-)
+ create mode 100644 block/partitions/of.c
+
+-- 
+2.45.2
+
 
