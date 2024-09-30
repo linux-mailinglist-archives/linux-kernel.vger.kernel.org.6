@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-343684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3366989E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F907989E80
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E6B287436
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:29:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFCF1F231A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1C11885B4;
-	Mon, 30 Sep 2024 09:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhVGf7oj"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA3018872F;
+	Mon, 30 Sep 2024 09:33:51 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182FC14E2E8;
-	Mon, 30 Sep 2024 09:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0991885A4;
+	Mon, 30 Sep 2024 09:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688551; cv=none; b=iCU29dvdHs1/O1H1HLKwW/nAq+l2EiXv2Mt/qXcz/1jswu5c7IuD1lp1V/A89yCiLELNVwzUr7MIdpYEhobZeo0p+i6H7FyhU7vXddh5ONXlN9TfM5/WxLsDBKKRvhRv3xt8ny4OUnKeBKwPNcU1dYgr78euB37utNf06gXfXqg=
+	t=1727688831; cv=none; b=RvEQ3qDNLD30FQBM9e9sU7gpsKUQUX5Fupe5CvnakD+0Vjrd13yKqD0e27EIj19AqjGzYNwp14vgSHJxxrc0O1g4U7NSF+Tr0ORT8UVYG6yuwcZIXwv40mY/UzbQpbTCu+qlL3Bjn2I7yXX2lUZwxEgNeW84MhNhTYWkh/SfbTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688551; c=relaxed/simple;
-	bh=RXUtGAHXcO0wXEAI0WJ+RI9nPgGIftP9AK5xim27KUM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cfo9i5hmICgKvnk1jDTD2AC2HfesnccgKbhW/IGFMl4f0CSdZ0w4CDF9Tiu6AxFnayHVwZRSd/BQANv8D6qesiqfqwUVoiftDlBLkONABSuOGjkDvIx/+5lF/2oDzrONsVa5d1oB9hdvT5ECQ6hmHLlwAT6j3FpLHbs2700Q7Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhVGf7oj; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso764609566b.1;
-        Mon, 30 Sep 2024 02:29:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727688548; x=1728293348; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RXUtGAHXcO0wXEAI0WJ+RI9nPgGIftP9AK5xim27KUM=;
-        b=RhVGf7ojiABF18udgptw+9J5yY1uOW0IjrfK4NHry9Iu/Q+lM5mxNkNRhcKVV4W64m
-         Id28wjI9yUE67O1vI2eFIESPEPxdhKLImTOTeu6rNQLRMS8tI8gGCWPHDs1Fc2L1Q/jU
-         a4DF09nxIYO5n8K5ZnOfMWiiMmJBzRp2xd46Kk3tBiY5rS8d2MJGMupIofTrV5jP3EI6
-         P160b1DHLayufuQa3SWwsA1YBZumv+6ilvjZq2BHmffnDEsxKafyempn/yFpIbRGkcxL
-         Fbr8iC5Qa5MGWkyEY9UyVo2N65Mm/6fAIsCacQd4VAkoqJsJ8+yLuvYoMlEUaPRh+MYM
-         rtgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727688548; x=1728293348;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RXUtGAHXcO0wXEAI0WJ+RI9nPgGIftP9AK5xim27KUM=;
-        b=KioIKUOS533CLPKnVOtJCNlS9GpXdvLqCkwoVbtcu6bwsCe30+uL8I75TQzGPCPg0L
-         JOX9wWJdMnz/FR54laMO2rEGaLG4iskqKCRbv0+4BF0kNDjmEEw2/pESTrFJ5Exp5lB0
-         HpwWpjsT+Fp9O5UZDKXttX6GJwUervXdWBQSD2/qkHLqVrUklP/ROjFhNGTJcbIS10XF
-         E4ec2rOJkIJPLjBThDnrAwyZ2fs3ma8Lx1ZqqqVkwQ+KOtbcnCJMyo/y7nys8dxNIEht
-         Ub/pHUBN1tDeozm1yBJ1StyR+WDuZEc4RodhUyXNPmsMZXoEXuSUJxJ2bAfAJRJGjV2f
-         23pg==
-X-Forwarded-Encrypted: i=1; AJvYcCU90C7iVqE0WoQ+fVEfky2IU5rylhzsejJ6qO509Dp+xggqz3kepj/HTqoLHD92jmgLOZp3RqxQXTZtFKUl@vger.kernel.org, AJvYcCU932iVL1yDigwGPGcJIDpCIyw2q2cJflCHoswnqH3ig3EIaPwv7TJ5PUn4LdWa5JuRQHJYalOX@vger.kernel.org, AJvYcCVKHLRirmN7ZgPUekVAKrsewk5JzuP9H4xBn5XDaAvBw2JV6SAws4UEeIDxw+OFLapRNd4Hklr2BUngMQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS0H7ocpBHK7GZiC7jFydYIhI1U4N4b9rCO5NujVf/fkdhqFgT
-	+ZZlE+B7+8rR4I9SmNnQZ0Yi/yH0Sf8AC6+bpLz957PD4MA2Abubcnva3SurWPg=
-X-Google-Smtp-Source: AGHT+IEcdrzhftO2MhbSvmp7ttVFjiBUQmBlYYAiPtxN0Lo+quCOgeiDypXbVJwG4xMfLWOX6LK0lA==
-X-Received: by 2002:a17:907:6e8c:b0:a8a:6bd8:b671 with SMTP id a640c23a62f3a-a93b157ee03mr1511190166b.5.1727688548172;
-        Mon, 30 Sep 2024 02:29:08 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef02:2700:7684:3ff1:6790:3866? (p200300f6ef02270076843ff167903866.dip0.t-ipconnect.de. [2003:f6:ef02:2700:7684:3ff1:6790:3866])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299861bsm500796866b.192.2024.09.30.02.29.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:29:07 -0700 (PDT)
-Message-ID: <526e885abc278a2d369de82d80ebc21d56c7f7ba.camel@gmail.com>
-Subject: Re: [PATCH] Input: adp5588-keys - Added checking of key and key_val
- variables
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Denis Arefev <arefev@swemel.ru>, Michael Hennerich
-	 <michael.hennerich@analog.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- linux-input@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, 	stable@vger.kernel.org
-Date: Mon, 30 Sep 2024 11:33:20 +0200
-In-Reply-To: <20240930083649.4703-1-arefev@swemel.ru>
-References: <20240930083649.4703-1-arefev@swemel.ru>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727688831; c=relaxed/simple;
+	bh=ttw3/7AfZzhAFU54uuXkNQKKqdfEwEj/HVqjJllteuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VBbET7PbzPe/9TY/AO8R4r9X367ukgSWGR0W5xld6CiNSO0EcwpDQIV25z+S4wiAS6QHQsGQoOSVPewk9NBSBIA180aSI0rhSazt6qTgt1PziiYoMiPgN8uW//F5d11JLCfVI/2bNnFxSA3V+9ZUHRJU3x9+fvySNy5P5ZG1+as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XHFbP2LCDz9v7JS;
+	Mon, 30 Sep 2024 17:08:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 8CCC71404F6;
+	Mon, 30 Sep 2024 17:33:45 +0800 (CST)
+Received: from [10.81.211.60] (unknown [10.81.211.60])
+	by APP2 (Coremail) with SMTP id GxC2BwD3psdocPpmCvLwAQ--.5053S2;
+	Mon, 30 Sep 2024 10:33:44 +0100 (CET)
+Message-ID: <c2e5b1ee-eeee-4614-9b42-d6bbf7a67162@huaweicloud.com>
+Date: Mon, 30 Sep 2024 11:33:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: Alan Huang <mmpgouride@gmail.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Alan Stern <stern@rowland.harvard.edu>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ RCU <rcu@vger.kernel.org>, linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
+ <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
+ <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+ <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
+ <8d20cf79-9fa5-4ced-aa91-232ccd545b59@huaweicloud.com>
+ <EEAE4623-DCD7-4BBE-8E06-7F6FF6E3070B@gmail.com>
+ <E2551572-494D-46A0-A1D5-DF91DDB8B9F9@gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <E2551572-494D-46A0-A1D5-DF91DDB8B9F9@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwD3psdocPpmCvLwAQ--.5053S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr1kKw48GFyUtrWxCFy3Jwb_yoW8Ar1Dpr
+	W7Kay7KFn7XF4YyFWUtw18Cw1jqFZaqa90v3Z5Ar1xCFZ0k3WfCr4xtryUCa43u397J340
+	vrWY934Ig3W5AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-On Mon, 2024-09-30 at 11:36 +0300, Denis Arefev wrote:
-> If the adp5588_read function returns 0, then there will be an
-> overflow of the kpad->keycode buffer.
->=20
-> If the adp5588_read function returns a negative value, then the
-> logic is broken - the wrong value is used as an index of
-> the kpad->keycode array.
->=20
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->=20
-> Cc: stable@vger.kernel.org=C2=A0# v5.10+
-> Signed-off-by: Denis Arefev <arefev@swemel.ru>
-> ---
 
-Hi Denis,
 
-Thanks for the patch. However, I'm working on a more complete rework of thi=
-s as
-suggested in [1]. I should be sending patches for it today or tomorrow.
+Am 9/30/2024 um 11:27 AM schrieb Alan Huang:
+> 2024年9月30日 17:15，Alan Huang <mmpgouride@gmail.com> 写道：
+>>
+>> 2024年9月30日 16:57，Jonas Oberhauser <jonas.oberhauser@huaweicloud.com> 写道：
+>>>
+>>>
+>>>
+>>> Am 9/29/2024 um 12:26 AM schrieb Alan Huang:
+>>>> 2024年9月28日 23:55，Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote：
+>>>>>
+>>>>> The motivation for introducing ptr_eq() is indeed because the
+>>>>> compiler barrier is not sufficient to prevent the compiler from
+>>>>> using one pointer instead of the other.
+>>>> barrier_data(&b) prevents that.
+>>>
+>>> I don't think one barrier_data can garantuee preventing this, because right after doing the comparison, the compiler still could do b=a.
+>>>
+>>> In that case you would be guaranteed to use the value in b, but that value is not the value loaded into b originally but rather the value loaded into a, and hence your address dependency goes to the wrong load still.
+>>
+>> After barrier_data(&b), *b will be loaded from memory, you mean even if *b is loaded from memory, the address dependency goes to the wrong load still?
+> 
+> Sorry, *b should b.
 
-[1]: https://lore.kernel.org/linux-input/Zu0vq0ogr2HzXWv7@google.com/
-- Nuno S=C3=A1
+That's exactly what I meant to say. In my understanding, it can happen 
+like this:
+
+a = READ_ONCE(*p);
+...
+b = READ_ONCE(*p);
+if (a == b) {
+    b = a; // inserted by compiler
+
+    barrier_data(&b);
+
+    foo(*b); // compiler definitely use the current value in b
+}
+
+
+
+In the end, the address dependency is from the first load, and the CPU 
+can speculatively (with register renaming, forwarding etc) execute
+
+a = READ_ONCE(*p);
+b2 = a; // speculatively
+tmp = load *b2 // speculatively
+b1 = READ_ONCE(*p);
+if (a == b1) { // confirmed
+    foo(tmp);
+}
+
+
+best wishes,
+   jonas
 
 
