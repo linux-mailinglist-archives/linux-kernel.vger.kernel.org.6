@@ -1,224 +1,163 @@
-Return-Path: <linux-kernel+bounces-343437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C269989AE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:01:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC75989B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4D61C20F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:01:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3F9C1C21114
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F674F218;
-	Mon, 30 Sep 2024 07:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B8414A0AB;
+	Mon, 30 Sep 2024 07:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DT1b5XR9"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GtQwInaZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4869429CE8;
-	Mon, 30 Sep 2024 07:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04C855887
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727679656; cv=none; b=a3S57UVWklKbIdO3rOIVplRbrAgr+gUNrEqgbM1BFCQkJISPkoYmCTRenkcCoxyBa3BejUbpG1cJDf1b/Rb3otofkg04KHBU+RFS2+ouS9j/fL8N9ObPjdrkgim9M8aRhrZO4t85skwc6WtnjtGc+T0IXzM7nlBf1TfCoChlKSM=
+	t=1727679992; cv=none; b=BOlC0WvJrqrqMpQH9k3/FTsi+DMFt25DylaajY1ipEXxN2Tf8u7PGiYJSRA7r4w+NBnoCWPye95BTXxwgOWvVcMguY55i+MVS+kwmmN23seXo8WQoe/9lZvJH+eZ+9b3CMSYG9uMnF2DHWNcn2YG3317gYauczBZjAFLEBSLU4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727679656; c=relaxed/simple;
-	bh=CZtDJUpV3Zlj/Gxot2w0D/1EE/JiWAoo8UUMcKsOETs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g5d7SV1O7Yq1EBFL0MIaBSa5Yx1/azSx+BD6D+qxWR9EIggbEp/9rXxF4uZbO+Ca6oBJoLABtL2NujWgClHp5MYEjgKI9ghsfjumhcOLWH5YvK2yD2xDEoxIfYWqfXo5X6IphM6tChxPu5JrZ/hNEoIBdBGPf1Mg8ZP3Wv/FtW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DT1b5XR9; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso49776985e9.2;
-        Mon, 30 Sep 2024 00:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727679652; x=1728284452; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CZtDJUpV3Zlj/Gxot2w0D/1EE/JiWAoo8UUMcKsOETs=;
-        b=DT1b5XR9WMbtjZ/WfSVtsiI9dKiEH0/pz08QyfX7sDeJXxnxMmFF/CL8FSufW/vcHa
-         ZOjsONkMkup5ovb2udpqFOG0q2aZ5jYKkGwp/VLnBRy2UQyuO4I0MvKNN/rMT3IxF8Pm
-         k4ztEynWd61KK07dDwmyQ2g2GqYvvWpdGqtnbd3dqGc1/Rk5l1P8zL7nDCTMGeVroeRf
-         U61K6RErIRh9oT6eA/TEmhDkR27g9jYGzClxNmQQBCtXgwBB3YZcExtrdj78A1isfN2J
-         KikHGq+55hkfFYU4pcKTUSN4yra+ZHvX9apYwmhvqkrqo2U2vt1/qJUaDzhtP0quFMvM
-         e4qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727679652; x=1728284452;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CZtDJUpV3Zlj/Gxot2w0D/1EE/JiWAoo8UUMcKsOETs=;
-        b=XHYRfa0uIhSsuB2mHk6wKKTP03TK+vXhLzeH5Wdn8ru7fXjB52wv8IvlS8hnmmErN7
-         KFWt/E/rQeW/UvZlZvRib42j7vbJB/L4EP2OKr2zpzJz6qjCbn1QThbzooa2g0qIqcpT
-         ddQiY0oaCo/b4Q6GrfRiGc/qegGbGpSp2lI9Zo4MXjxpuUdRe2oS0A2YlALI3jsBnCNK
-         Lqh88nVqPUI7uPbpHiCNbQcHVoi2xJnTPR40RQLcgBXq9u8UaqPg7Mt8V2LA++HlsZYK
-         IrmqNWfchE9eyYM2oVpyDOw4xt6VLXnHNrcDSWp+9b/PoiK4lmu6jjInsK9OZzyuT0Rf
-         W+HA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLGjMENqlED8wn4YnYJ339udZ3TqV+e1vIp828SQ6mXOWHJYFtCdK8/OjTurOc8hioz9klvTzutSBPgNKg@vger.kernel.org, AJvYcCVlWuhwvDWblblZhwluBoZsHGgI7rpyqpgWf41ACiNlIQDPGLbLSQehy3XXpuzB2J7LwHDsipdELAm9@vger.kernel.org, AJvYcCW6AhbwNEmbqb/Xi+1aDCIYSfPkAtiMV4inVA/KTNZVJQlnRVODzf7uZt0F141DERh91R0h6fjzGstB@vger.kernel.org, AJvYcCWzQPQ550uduU9kxtpPuAdq96SP24aCvX46yBAhW81jagbSQwXGXcvpdaCVartVLVgpQBsxCrU5CxBO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFYOrFZZpseBRtryoj1kTHJ6MBGuAUdOHZxxa7Mx5eJlkd7hkb
-	D8wUhgK7pjwAuLtW5O3mw5uKK4MUk5TpIga82TwzFJt41OZTi02p
-X-Google-Smtp-Source: AGHT+IGPBSoC7SSSxJw5e1nyBbrWBM2ilTkscMj069g3k/+Z/G9YCUVLCocBeeSY1t4O10x8CUBIeA==
-X-Received: by 2002:a05:600c:1c85:b0:42c:bd4d:e8ab with SMTP id 5b1f17b1804b1-42f584340f8mr122860235e9.10.1727679652271;
-        Mon, 30 Sep 2024 00:00:52 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef02:2700:7684:3ff1:6790:3866? (p200300f6ef02270076843ff167903866.dip0.t-ipconnect.de. [2003:f6:ef02:2700:7684:3ff1:6790:3866])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec1c7sm94026255e9.27.2024.09.30.00.00.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 00:00:52 -0700 (PDT)
-Message-ID: <35944d57af0ed62124e1e7cea544ef357fad1659.camel@gmail.com>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Lars-Peter Clausen	
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, Olivier Moysan
-	 <olivier.moysan@foss.st.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
- <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt	
- <marcelo.schmitt@analog.com>, =?ISO-8859-1?Q?Jo=E3o?= Paulo
- =?ISO-8859-1?Q?Gon=E7alves?=	 <joao.goncalves@toradex.com>, Mike Looijmans
- <mike.looijmans@topic.nl>,  Dumitru Ceclan <mitrutzceclan@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean
- <sergiu.cuciurean@analog.com>, Dragos Bogdan	 <dragos.bogdan@analog.com>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-pwm@vger.kernel.org
-Date: Mon, 30 Sep 2024 09:05:04 +0200
-In-Reply-To: <20240928183044.0b5ea2e0@jic23-huawei>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-		<20240923101206.3753-7-antoniu.miclaus@analog.com>
-		<CAMknhBHRfj7d8Uea8vX=t+y+9dqoPABQSzsgNhBMTK-8-f6L7w@mail.gmail.com>
-	 <20240928183044.0b5ea2e0@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+	s=arc-20240116; t=1727679992; c=relaxed/simple;
+	bh=PB0MEC1CKGl5nX9ER1cPtNYmSWES5H/VnZiXDThMwbA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A+iBJu5jcRdosPLXq4ap8fJdVfqhflzGjRZ1qvws+L8gaVaHhnrkGFXaKJIoxtw0lVbYFyWHrHcl22ALREobpayPbMuMCjiMy2DNsu1lpbaZeAoTrkNCZ1RKEag8x3eqZ4x6jiTajtZo978tUqUWnt04yzL1lVpgaq5qgogz+pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GtQwInaZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727679990; x=1759215990;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PB0MEC1CKGl5nX9ER1cPtNYmSWES5H/VnZiXDThMwbA=;
+  b=GtQwInaZDD1zl8XR1zV6ok9PsM90HVy0GMg31g/5XdgyVv5V9qlz0Kim
+   EAr/KNJg+viLZaY1Ui3bt53PgA7XmGpLiA0yok/OwdsaWLYI5+yhg3xjE
+   EFVp13P52pp9sMGTmhvKpTYRlunL8FtlrnuC26guws6KV9YE4QsU8wvsw
+   frMM4CtpOgUmC/6QjAXSPI4015ConQ4tJr2MtEZh7fso2PV9PVKn3geGg
+   HKBTpH3Fv34df2pqvExo6SKiT00vn/oUCwBVCWX4u4LoSkN1IkYDkHASA
+   eoX9bb8KQIwk2932NvVV2SKMxph9hhgq+G3bB9+qxElBzwY6IAKveYfuY
+   w==;
+X-CSE-ConnectionGUID: mzstUAb0QGiLhCWqBPqH4A==
+X-CSE-MsgGUID: GN+HyHHKROugnx3oDNveCA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26925487"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26925487"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:06:29 -0700
+X-CSE-ConnectionGUID: AXnZssvLRtCqvA+3eaPI4A==
+X-CSE-MsgGUID: HfY1+I/lThyzjk6e2QLVfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="103989457"
+Received: from liyihao-mobl.ccr.corp.intel.com (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.124.238.112])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 00:06:28 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Huang Ying <ying.huang@intel.com>,
+	Kees Bakker <kees@ijzerbout.nl>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] resource, kunit: Fix user-after-free in resource_test_region_intersects()
+Date: Mon, 30 Sep 2024 15:06:11 +0800
+Message-Id: <20240930070611.353338-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sat, 2024-09-28 at 18:30 +0100, Jonathan Cameron wrote:
->=20
-> >=20
-> > > +static struct iio_chan_spec_ext_info ad4858_ext_info[] =3D {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", IIO_S=
-HARED_BY_ALL, &ad4858_packet_fmt),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_form=
-at",
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
-> > > +};
-> > > +
-> > > +static struct iio_chan_spec_ext_info ad4857_ext_info[] =3D {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", IIO_S=
-HARED_BY_ALL, &ad4857_packet_fmt),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_form=
-at",
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
-> > > +};=C2=A0=20
-> >=20
-> > Usually, something like this packet format would be automatically
-> > selected when buffered reads are enabled based on what other features
-> > it provides are needed, i.e only enable the status bits when events
-> > are enabled.
-> >=20
-> > (For those that didn't read the datasheet, the different packet
-> > formats basically enable extra status bits per sample. And in the case
-> > of oversampling, one of the formats also selects a reduced number of
-> > sample bits.)
-> >=20
-> > We have quite a few parts in the pipline right like this one that have
-> > per-sample status bits. In the past, these were generally handled with
-> > IIO events, but this doesn't really work for these high-speed backends
-> > since the data is being piped directly to DMA and we don't look at
-> > each sample in the ADC driver. So it would be worthwhile to try to
-> > find some general solution here for handling this sort of thing.
+In resource_test_insert_resource(), the pointer is used in error
+message after kfree().  This is user-after-free.  To fix this, we need
+to call kunit_add_action_or_reset() to schedule memory freeing after
+usage.  But kunit_add_action_or_reset() itself may fail and free the
+memory.  So, its return value should be checked and abort the test for
+failure.  Then, we found that other usage of
+kunit_add_action_or_reset() in resource_test_region_intersects() needs
+to be fixed too.  We fix all these user-after-free bugs in this patch.
 
-I did not read the datasheet that extensively but here it goes my 2 cents
-(basically my internal feedback on this one):
+Fixes: 99185c10d5d9 ("resource, kunit: add test case for region_intersects()")
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reported-by: Kees Bakker <kees@ijzerbout.nl>
+Closes: https://lore.kernel.org/lkml/87ldzaotcg.fsf@yhuang6-desk2.ccr.corp.intel.com/
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+---
+ kernel/resource_kunit.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-So this packet format thingy may be a very "funny" discussion if we really =
-need
-to support it. I'm not sure how useful it is the 32 bits format rather than
-being used in test pattern. I'm not seeing too much benefit on the channel =
-id or
-span id information (we can already get that info with other attributes). T=
-he
-OR/UR is the one that could be more useful but is there someone using it? D=
-o we
-really need to have it close to the sample? If not, there's the status regi=
-ster
-and... Also, I think this can be implemented using IIO events (likely what =
-we
-will be asked). So what comes to mind could be:
+diff --git a/kernel/resource_kunit.c b/kernel/resource_kunit.c
+index 42d2d8d20f5d..b8ef75b99eb2 100644
+--- a/kernel/resource_kunit.c
++++ b/kernel/resource_kunit.c
+@@ -169,6 +169,8 @@ static void resource_test_intersection(struct kunit *test)
+ #define RES_TEST_RAM3_SIZE	SZ_1M
+ #define RES_TEST_TOTAL_SIZE	((RES_TEST_WIN1_OFFSET + RES_TEST_WIN1_SIZE))
+ 
++KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
++
+ static void remove_free_resource(void *ctx)
+ {
+ 	struct resource *res = (struct resource *)ctx;
+@@ -177,6 +179,14 @@ static void remove_free_resource(void *ctx)
+ 	kfree(res);
+ }
+ 
++static void resource_test_add_action_or_abort(
++	struct kunit *test, void (*action)(void *), void *ctx)
++{
++	KUNIT_ASSERT_EQ_MSG(test, 0,
++			    kunit_add_action_or_reset(test, action, ctx),
++			    "Fail to add action");
++}
++
+ static void resource_test_request_region(struct kunit *test, struct resource *parent,
+ 					 resource_size_t start, resource_size_t size,
+ 					 const char *name, unsigned long flags)
+@@ -185,7 +195,7 @@ static void resource_test_request_region(struct kunit *test, struct resource *pa
+ 
+ 	res = __request_region(parent, start, size, name, flags);
+ 	KUNIT_ASSERT_NOT_NULL(test, res);
+-	kunit_add_action_or_reset(test, remove_free_resource, res);
++	resource_test_add_action_or_abort(test, remove_free_resource, res);
+ }
+ 
+ static void resource_test_insert_resource(struct kunit *test, struct resource *parent,
+@@ -202,11 +212,11 @@ static void resource_test_insert_resource(struct kunit *test, struct resource *p
+ 	res->end = start + size - 1;
+ 	res->flags = flags;
+ 	if (insert_resource(parent, res)) {
+-		kfree(res);
++		resource_test_add_action_or_abort(test, kfree_wrapper, res);
+ 		KUNIT_FAIL_AND_ABORT(test, "Fail to insert resource %pR\n", res);
+ 	}
+ 
+-	kunit_add_action_or_reset(test, remove_free_resource, res);
++	resource_test_add_action_or_abort(test, remove_free_resource, res);
+ }
+ 
+ static void resource_test_region_intersects(struct kunit *test)
+@@ -220,7 +230,7 @@ static void resource_test_region_intersects(struct kunit *test)
+ 				       "test resources");
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
+ 	start = parent->start;
+-	kunit_add_action_or_reset(test, remove_free_resource, parent);
++	resource_test_add_action_or_abort(test, remove_free_resource, parent);
+ 
+ 	resource_test_request_region(test, parent, start + RES_TEST_RAM0_OFFSET,
+ 				     RES_TEST_RAM0_SIZE, "Test System RAM 0", flags);
+-- 
+2.39.2
 
-For test_pattern (could be implemented as ext_info or an additional channel=
- I
-think - not for now I guess) we can easily look at our word side and dynami=
-cally
-set the proper packet size. So, to me, this is effectively the only place w=
-here
-32bits would make sense (assuming we don't implement OR/UR for now).
-For oversampling we can have both 20/24 bit averaged data. But from the
-datasheet:
-
-"Oversampling is useful in applications requiring lower noise and higher dy=
-namic
-range per output data-word, which the AD4858 supports with 24-bit output
-resolution and reduced average output data rates"
-
-So from the above it looks like it could make sense to default to 24bit pac=
-kets
-if oversampling is enabled.
-
-Now the question is OR/UR. If that is something we can support with events,=
- we
-could see when one of OR/UR is being requested to either enable 24 packets =
-(no
-oversampling) or 32 bit packets (oversampling on).
-
-
-
->=20
-> We have previously talked about schemes to describe metadata
-> alongside channels. I guess maybe it's time to actually look at how
-> that works.=C2=A0 I'm not sure dynamic control of that metadata
-> is going to be easy to do though or if we even want to
-> (as opposed to always on or off for a particular device).
->=20
-
-Indeed this is something we have been discussing and the ability to have st=
-atus
-alongside a buffered samples is starting to be requested more and more. Som=
-e
-parts do have the status bit alongside the sample (meaning in the same regi=
-ster
-read) which means it basically goes with the sample as part of it's
-storage_bits. While not ideal, an application caring about those bits still=
- has
-access to the complete raw sample and can access them. It gets more complic=
-ated
-where the status (sometimes a per device status register) is located in ano=
-ther
-register. I guess we can have two case:
-
-1) A device status which applies for all channels being sampled;
-2) A per channel status (where the .metada approach could make sense).
-
-But I'm not sure how we could define something like this other than assumin=
-g
-that raw status data is being sent to userspace (given that every device ha=
-s
-it's own custom status bits and quirks).
-
-- Nuno S=C3=A1 =20
 
