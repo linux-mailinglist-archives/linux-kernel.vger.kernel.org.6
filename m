@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-344234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B129498A705
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354A398A709
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3221F22201
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1BE9280C23
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9297B1917F3;
-	Mon, 30 Sep 2024 14:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65B023D2;
+	Mon, 30 Sep 2024 14:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4n3UHiJ"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dqFPEmpX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994BE18E758;
-	Mon, 30 Sep 2024 14:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEAA31917E3;
+	Mon, 30 Sep 2024 14:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727706598; cv=none; b=LgZKrHCcEq79NbQVCHT3s7dZRyEaWrGX3IsngtLJJbCl9ZCzX2e9QrVNd+gtVo61SLmRq2wh10vBNurxez/TjX+X8ZRJqqJlJVo4ywqt45/tVCYbw1UNCqMnhp+VP5LiXSqmv3ZhTTNPA+6FCcDZCCyL4BAaM/wiHnQPJXSbfso=
+	t=1727706608; cv=none; b=h3ICrds4YTLBgtZcVNTIOaKVVPRrJWRkwyk/pY4C9NOFjDn1hrgVosDryMTW/E5/jHmF+9HgYRnF1xdesaMuPNndG/YZOO7isUuo5J3Zr6HXKqDHudbyxzZamiVswrvo0unWObUxzIgzCsaKViOSIxxhehJFtEmJcaYjXytEIkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727706598; c=relaxed/simple;
-	bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7Zj3U2ToUOp1KJSQsd1Uk+k4TLyKQYSDcpUXmGG1wcAwQgJO75R9zOye+8h5M/ej7+dOOr1G7Lh55vm7buwr6emK186BNwrfUrNueMJN1IVwDsy9KmsGJrI6vKmSeYETe63q2wf0+QSsAtq/TUOFDaNKOY3UErz+H5VKztXhhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4n3UHiJ; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-718e0421143so632836b3a.0;
-        Mon, 30 Sep 2024 07:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727706596; x=1728311396; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
-        b=Q4n3UHiJtM9pQjtMWXHpxoK0jMGFOP6nreJ+M/mGGKyI8jlnKKzrJU4xEJGehGcMos
-         p+8KRM37Ua9cIOB2eXQqRo0HiYNhmmMbBqtCrtdIUfqW2IoUI/YTg+QqqJIF6rd1fNVg
-         qBWki+LqEzUq+E22gRdPW2aEyavV6ctQ7VQpDHm2pmPDj5aysruQZtjWId0i8vndpPWp
-         vlYsEibq0YvVnwQNid9wFvgnHhSCYRHpsngjShIXohREtwC8c21JI6/rxsQsWj7afhD8
-         RnpqW7Re3uKOaWH5CqBbw/X8glrUt3hJlUdyKRHlEKnVBObIVR2L44wWc9UAtdedAagC
-         8M8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727706596; x=1728311396;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rp5uKjFHFuilMkiE7TIxmYebYiD9m5wOVPo1nV3iAVU=;
-        b=nzKTu8elTq2eWqjCkSgYedEcQ/GBfk1vz6bGFQnIOVjAwTbCzlyr2jcT4nwVmUE/Iw
-         t8/rSpkZdYDBzcCnp26wh2IyjzcmwyrsLHS1mk9Sc+TmFk5X8EBH7ar2rz6BN0+AwPK0
-         cXNA1+Yeh5aST6eDWl3JoPWpkECWWS5kAxPTLtfd9LN5HuZVP+1tjaEqWnby3/kkKmRj
-         n4JOjVuxAfSe/qpVpdclnDzwOIPYP1gE+WGoGlxuWmxXtMWwsCT5WhT4lzUJ5VxjF0z9
-         edpypvelj1VxkZ0L0fZ8V5K0vDS71q5hebWRuIM74vmCDBveHSg4IKsLf2oU9IGufNKj
-         gQOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9PCavrOtyPjxKNqhlghuDWgTutTsICrINsGD6H8D8hHx8TyeXcgGg5xiJQtls85vByxAmUPaXna/YyRX5fkI=@vger.kernel.org, AJvYcCWy5YzD4Jel0Aaayxa0clvg+FJB7zIpZJ2YXC2Euxn1/KasYK/ZhgX3OzH1yb4ty3jble5erohdl7opKrjr@vger.kernel.org, AJvYcCXShS/UCAT1kfAODjCQDfuXEQJyBpGKRp9KkdNPso6AKFpzSKbBNhgEyB8CQS33s/Oatg3obV83fb8NxZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGf58kK85PvX+/qnzd+sPl3104uFaLghDdGnM0Zhm5VHJHI/zM
-	KYVLuE3+0WkXMuvhdCF2LOo9EGd8xoK7Rg9Dav/qzj9pYuRLA9eZrnxJ6CnLvmIpM7uIUu/wqB9
-	sg3Z3qnTF37iDh5psMKk1RXbB66NDqCyi
-X-Google-Smtp-Source: AGHT+IG3SmvTus/H0mpNWKIRwZdV1RUhLilxHvRaStvGClbl7wqoxth1J56tJ815zLX2+pBSKDyeBQpV11+/JNYF/Z4=
-X-Received: by 2002:a05:6a20:a129:b0:1cf:4c3a:162a with SMTP id
- adf61e73a8af0-1d4fa699bffmr8782391637.5.1727706595901; Mon, 30 Sep 2024
- 07:29:55 -0700 (PDT)
+	s=arc-20240116; t=1727706608; c=relaxed/simple;
+	bh=b09YgrVJmvgRvMBhcaVCn7o5eWZqdGkkra9l64YUxvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LZRiRP3ye8wpZZv1OB0uNN9PuGq/gE1czugHx0DILgnqgDrDES2Oq21qVmZa2prLk2oUY8CfHWHoVmMBf49HF4gT79+jV4FxK2T7exuWCCrA5Naa5FSjvhvEdMBCNU9jV0vBZaiWTB0q9ljYp+Nx3FGZAkd4VbbTrZjJY7fzt7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dqFPEmpX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UCGRJH032600;
+	Mon, 30 Sep 2024 14:29:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	67L6sCzfDHRdsopuyWGssY6DOebG1iMqtYOyqTtRtwA=; b=dqFPEmpXDy5qytvr
+	82tYrmYnshp8ZE2clF0e/7yHufzsq2gFLNY+JMUDJu7aKKQGreJNgbL9femc9XOv
+	ZIFPn2uA95sHOBDST70OXeLW8YmI1BSTt9SvkwXPc2RjN9+tm0k+8VMALy3p7iu5
+	hIbmxDZ0ABdEJwFOtkZ4HsgjNfNzHQ8iQIUO/FsFRxVwTxo0xS6Gv5+khXZ9PTfN
+	wRoxTELxgB6O/WjRmlE755q2uvr43AeaWMv9seRW3LnkfBf0WWhMXEqbO4S+O6cD
+	uXezWMRW4lvQ14xcfw8E71qa+UafOy7UMwZ1Uu1op7XnNJmJ6+Pa7pWqyYqZw4Cz
+	lMFkkA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa12n0k2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 14:29:54 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UETrCV008012
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 14:29:53 GMT
+Received: from [10.111.183.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
+ 2024 07:29:52 -0700
+Message-ID: <6a07392e-b296-4a1b-9444-aa0e2f7eb78c@quicinc.com>
+Date: Mon, 30 Sep 2024 07:29:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <20240917141725.466514-8-masahiroy@kernel.org>
- <ZuwJlaeFfo7CW5dC@l-nschier-nb> <ZuwrTJftLlWNtrFs@l-nschier-nb>
-In-Reply-To: <ZuwrTJftLlWNtrFs@l-nschier-nb>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 30 Sep 2024 16:29:42 +0200
-Message-ID: <CANiq72kcoJpGB1r++Hbd-4V+e5Ts7-WyZ661Uin+oYji9HrdzQ@mail.gmail.com>
-Subject: Re: [PATCH 07/23] kbuild: remove unnecessary prune of rust/alloc for rustfmt
-To: Nicolas Schier <n.schier@avm.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 27/35] mac80211: Reorganize kerneldoc parameter names
+To: Julia Lawall <Julia.Lawall@inria.fr>,
+        Johannes Berg
+	<johannes@sipsolutions.net>
+CC: <kernel-janitors@vger.kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+ <20240930112121.95324-28-Julia.Lawall@inria.fr>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <20240930112121.95324-28-Julia.Lawall@inria.fr>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: oam3lfWcCdJQAVnqNPKThWDjszyIyDMS
+X-Proofpoint-GUID: oam3lfWcCdJQAVnqNPKThWDjszyIyDMS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=574
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300105
 
-On Thu, Sep 19, 2024 at 3:47=E2=80=AFPM Nicolas Schier <n.schier@avm.de> wr=
-ote:
->
-> oh, there is still a comment about 'rust/alloc' in Makefile that
-> probably wants to be removed, too.
+On 9/30/2024 4:21 AM, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-Indeed, good catch. Please feel free to remove it in this series,
-otherwise we can do it later. Either way:
-
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-
-Cheers,
-Miguel
 
