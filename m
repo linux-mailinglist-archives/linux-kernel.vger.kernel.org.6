@@ -1,107 +1,177 @@
-Return-Path: <linux-kernel+bounces-344077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56D898A3EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:05:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A42798A3F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F97281C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B193B2449C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C241618E75A;
-	Mon, 30 Sep 2024 13:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFFC18FDB2;
+	Mon, 30 Sep 2024 13:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgHbXfTO"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bVKV7mFw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA82717A924;
-	Mon, 30 Sep 2024 13:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B0818FC89
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701546; cv=none; b=Jc/Dt1Ur4edTyEKC17405tp9bmYxho7NVoom3/4oP9zaoQFaSgE2rmQ3yTmyM56cusXfW8Ez8XgSBDu6ug2oJ/EvXoeLmsTxu0dQzMXkFMwLZwe89PB8HBKRdDXyWFmSV+S5ydUxKD5jX0Wq1jLWKX5YH2TXvYJXU3ff9p5qoLY=
+	t=1727701550; cv=none; b=SfOt8OAPqWPV4tz2ymoSMPgo2w1kX+H+on6kS7cU7nCoBj6PFZ78BViJ506dQ16XIZqX9KQNewZkOhQqtzCflAzn9CW0EXfpMyEIuCRtz1HlKOVsDOgWLyyuUdQpRRreDbaKkRgKPEsisnUTPNPaPX/Tlwgr4ERZxoJQyflTjGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701546; c=relaxed/simple;
-	bh=LTWWGl1taaHnqOciXPv7pW7UIi5V/SBjuYZFQhbPq/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mFLZ+HyEZJoMDmdxBQQC0FH7bg8jURgSvcjMv4EhExO0dM6NCGZi/wZmC3WMOxBabmBCuiiqo3TudaBLRJXMLfnQ1ikX6QWKbC0OrXXDyX743YIpwydOJxTSzfmZpsRomMtrhoDv6Co9+o0lvXwNaBUId0dTJPNtwPUtNKI4VaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgHbXfTO; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-208cf673b8dso43876485ad.3;
-        Mon, 30 Sep 2024 06:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727701544; x=1728306344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hy4I5SYwIQE50JMmdusd/rWGrGo4PlUgJRUEb8XLGGo=;
-        b=RgHbXfTOyweO8UKSR/q3fAF8fvszDXdorXr3tboZi+CdxFWkBohuc7JLlUXnfcaPQd
-         S3tJWU4kCtDjZRpP8meRTjoKO24HQ6OKXQZIV96fl/Z0YgCjG7olHtDIplxd+8g6PtL3
-         z9fzb27ZxUefVi+5SHoJZ4v2SgDqw3q6a8fTLijPNQiUSMMIZOO8YN/uiZr0rPCY1pF+
-         wghD2js58YkzZ1LlgeLtGNu9iMWlhhCKrwyD6sC4zPxitktFNuSJSuXZIS/Hg3bvxVj7
-         m9SDQ3wmqSMPh6j2d1pZF7t7XpX3eGPOTixuv2TwFzc9p8/pJpVQXtZnOhf9E2H6eveB
-         YPRw==
+	s=arc-20240116; t=1727701550; c=relaxed/simple;
+	bh=hj/SNwljcEycIBCEDJrPTLpUEwkueOxa0HSYZ8D4ub4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fKw+0X5rat9Lyjks48THnoUw1eyHdTclkgQcUj09rQeajxXln3kqTN7mPILYkdhFvpl4UA3y12LcWS9/GQ9N4iyNVr/L/f247aN0blFPALWrluCl2wZqDH5nXRUBnL9pklizOe4RmkbTkuzdhT2rMm6uU12E88yLRzONR0giT9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bVKV7mFw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727701547;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hj/SNwljcEycIBCEDJrPTLpUEwkueOxa0HSYZ8D4ub4=;
+	b=bVKV7mFwsshfSmvIUMWlU7gzg9ujKXBC/E6RqAvJKLkETuQ+jjync9uscX+QZJLg1wYtBX
+	ju58KVhWcH2sqIE8vjT2hkzKN+7I1y1OpYiA9yoUotP1l7/l3FEpKhk4mKFRWXbrO1B48P
+	bCP3RkFYWuQjHvELv7Oa5/wl9Ipl7l8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-62-bIi0eiJ5M_qFYVC-uO7Zkg-1; Mon, 30 Sep 2024 09:05:45 -0400
+X-MC-Unique: bIi0eiJ5M_qFYVC-uO7Zkg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cb2c5d634so28868935e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:05:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727701544; x=1728306344;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hy4I5SYwIQE50JMmdusd/rWGrGo4PlUgJRUEb8XLGGo=;
-        b=Uq+vl26QGOJAaNTrVUQtbQEkUOtIjNjo1lsbIOGyHMJ3H9Cyqd4P47DJiJxj27sKeA
-         6V9WQuBQV0d1MrsfixxfNJ7I6Ymwz3tIWmGLEn8F+U56VJfITFZeAlR838IMa7WkXxLV
-         /3CRPV59JLbtWG5mnRCEjqX/WUFvuxnd7FAOgYWVf/t/oQp+GLrMoHG5ugR1kD+3/JqB
-         vjQM4XdZM4OcB1A+jnaZnWUvHTaMt2FKI68wWa+4gnHnFIRbgzfAz+WbKZ9sUq0YJ8Aj
-         jNuY2Z8/dAavmpkRrxVFBNZJMg0M1n9fcP3Xwew2fFf1yCdXAK/zMd2e7cbz4dIIPeG+
-         lSFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdmQ8N8BxeG/oAuyWpp0DojwseCHcO/wRJjRHluV3iol7VbinOlPnz1xVKcMzzF+HWJyI5v1U5VKWg2pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9782ZODB/eYNj46B43fd6ZcZcqXteQrM6QUCkvy07hSkjCVD0
-	m6e4+L4ShD1QaroEL5ZIjXwskyRNFMKIdrZxQSooxoMN6pdBvg5g
-X-Google-Smtp-Source: AGHT+IHGHVoOP4D8f5LUO2Tj/UhoqYDveRGBAUkCuc5SV2f6L2+QonxrRHVc2jzVpfZLoHsgiCElGA==
-X-Received: by 2002:a17:902:da8e:b0:20b:7dda:1fd7 with SMTP id d9443c01a7336-20b7dda21f7mr73214515ad.48.1727701544063;
-        Mon, 30 Sep 2024 06:05:44 -0700 (PDT)
-Received: from localhost.localdomain (n203-164-232-111.bla21.nsw.optusnet.com.au. [203.164.232.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e357absm53698855ad.190.2024.09.30.06.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 06:05:43 -0700 (PDT)
-From: Rohan Barar <rohan.barar@gmail.com>
-To: sakari.ailus@linux.intel.com,
-	mchehab@kernel.org,
-	hverkuil@xs4all.nl,
-	gregkh@linuxfoundation.org,
-	hdegoede@redhat.com,
-	andy@kernel.org,
-	olli.salonen@iki.fi
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rohan Barar <rohan.barar@gmail.com>
-Subject: Re: [PATCH] Added ID 1d19:6108 Dexatek Technology Ltd. Video Grabber
-Date: Mon, 30 Sep 2024 23:05:11 +1000
-Message-ID: <20240930130510.1492313-2-rohan.barar@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240926235048.283608-2-rohan.barar@gmail.com>
-References: <20240926235048.283608-2-rohan.barar@gmail.com>
+        d=1e100.net; s=20230601; t=1727701543; x=1728306343;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hj/SNwljcEycIBCEDJrPTLpUEwkueOxa0HSYZ8D4ub4=;
+        b=hWNqJTs7mwlsx9Z36cddsO7P486j9hi3HPQjFT8w5Vvn1fFqjj1bMjxqv+CaI7tihW
+         OdumRlyOLA1CsPTOsR1m6um7WsKEapiuoYGdUO8VAmMRigTFr0np1fHUagD1M2h7mihr
+         ++MrWKbsZ51HfXKohZJJyoXj7hdbX30cGyWcSEhrgqmmHclvAdISPkAsehHjg4FghAGH
+         6qBSDx887PCD/rx9D9XyZggL5ZbooVWiXx/FhdrzRZ53cM27AbOY1U8mXg4g7D6dVydQ
+         rGHEiR4HdlYq+nrEbtS8ixVjE3mHSBDc9kdxOqNc4zTCz4NC8zt/sVcceqCHHN7X12qV
+         1T+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXc0mqQc/gWFSSwZMesKamte/ahM5qb1cAl61UdliHXixVqgl7SkVi1jXtaQBspcsx9HFam1Mdx5N19wHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmmAq1f5souvluR6eaWAK+T7bf36C8uFyPrQ99hX63PEG2tKDK
+	qH8S+aEYNXvGtO4IjiWCeHfd+58O8Qkl11DfxBfAK40XBqr6WYZyPMBtY7iaAm3/0EyfNhTD1M5
+	XJCqycxx3jSXKMpKGjallPA0rYZhpdY+QvFidDJ88anOmwJ52ZOoFyd4CbzswW3k7X7Jx3kAf
+X-Received: by 2002:a05:600c:3b06:b0:42c:d7da:737b with SMTP id 5b1f17b1804b1-42f58430021mr81419015e9.9.1727701542287;
+        Mon, 30 Sep 2024 06:05:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEN2T7BnuOY+eccu/wlVP80snQssOjZepMM/r/Vvdnjg7tLAxJOpAg/1glj/2ePX/3nEJHRMA==
+X-Received: by 2002:a05:600c:3b06:b0:42c:d7da:737b with SMTP id 5b1f17b1804b1-42f58430021mr81418535e9.9.1727701541560;
+        Mon, 30 Sep 2024 06:05:41 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddadcsm151215335e9.7.2024.09.30.06.05.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 06:05:40 -0700 (PDT)
+Message-ID: <0e87a96a-98ed-48ad-9235-900d46fe5400@redhat.com>
+Date: Mon, 30 Sep 2024 15:05:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Reply-To: eric.auger@redhat.com
+Subject: Re: [RFC] Simple device assignment with VFIO platform
+Content-Language: en-US
+To: Mostafa Saleh <smostafa@google.com>, kvm@vger.kernel.org,
+ open list <linux-kernel@vger.kernel.org>
+Cc: Alex Williamson <alex.williamson@redhat.com>, kwankhede@nvidia.com,
+ Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ Quentin Perret <qperret@google.com>
+References: <CAFgf54rCCWjHLsLUxrMspNHaKAa1o8n3Md2_ZNGVtj0cU_dOPg@mail.gmail.com>
+From: Eric Auger <eric.auger@redhat.com>
+In-Reply-To: <CAFgf54rCCWjHLsLUxrMspNHaKAa1o8n3Md2_ZNGVtj0cU_dOPg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Dear all,
+Hi Mostafa,
 
-I am following up on my patch submission for the `cx231xx` driver, which adds support for the Dexatek Technology Ltd Video Grabber (USB Device ID: 1d19:6108).
+On 9/27/24 18:17, Mostafa Saleh wrote:
+> Hi All,
+>
+> Background
+> ==========
+> I have been looking into assigning simple devices which are not DMA
+> capable to VMs on Android using VFIO platform.
+>
+> I have been mainly looking with respect to Protected KVM (pKVM), which
+> would need some extra modifications mostly to KVM-VFIO, that is quite
+> early under prototyping at the moment, which have core pending pKVM
+> dependencies upstream as guest memfd[1] and IOMMUs support[2].
+>
+> However, this problem is not pKVM(or KVM) specific, and about the
+> design of VFIO.
+>
+> [1] https://lore.kernel.org/kvm/20240801090117.3841080-1-tabba@google.com/
+> [2] https://lore.kernel.org/kvmarm/20230201125328.2186498-1-jean-philippe@linaro.org/
+>
+> Problem
+> =======
+> At the moment, VFIO platform will deny a device from probing (through
+> vfio_group_find_or_alloc()), if it’s not part of an IOMMU group,
+> unless (CONFIG_VFIO_NOIOMMU is configured)
+>
+> As far as I understand the current solutions to pass through platform
+> devices that are not DMA capable are:
+> - Use VFIO platform + (CONFIG_VFIO_NOIOMMU): The problem with that, it
+> taints the kernel and this doesn’t actually fit the device description
+> as the device doesn’t only have an IOMMU, but it’s not DMA capable at
+> all, so the kernel should be safe with assigning the device without
+> DMA isolation.
+>
+> - Use VFIO mdev with an emulated IOMMU, this seems it could work. But
+> many of the code would be duplicate with the VFIO platform code as the
+> device is a platform device.
+>
+> - Use UIO: Can map MMIO to userspace which seems to be focused for
+> userspace drivers rather than VM passthrough and I can’t find its
+> support in Qemu.
+In case you did not have this reference, you may have a look at Alex'
+reply in
+https://patchew.org/QEMU/1518189456-2873-1-git-send-email-geert+renesas@glider.be/1518189456-2873-5-git-send-email-geert+renesas@glider.be/
+>
+> One other benefit from supporting this in VFIO platform, that we can
+> use the existing UAPI for platform devices (and support in VMMs)
+>
+> Proposal
+> ========
+> Extend VFIO platform to allow assigning devices without an IOMMU, this
+> can be possibly done by
+> - Checking device capability from the platform bus (would be something
+> ACPI/OF specific similar to how it configures DMA from
+> platform_dma_configure(), we can add a new function something like
+> platfrom_dma_capable())
+>
+> - Using emulated IOMMU for such devices
+> (vfio_register_emulated_iommu_dev()), instead of having intrusive
+> changes about IOMMUs existence.
+>
+> If that makes sense I can work on RFC(I don’t have any code at the moment)
+So if I understand correctly, assuming you are able to safely detect the
+device is not DMA capable you would use the
 
-The patch is a straightforward two-line addition and has been thoroughly tested.
+vfio_register_emulated_iommu_dev() trick. Is that correct?
 
-For evidence of the device functioning correctly after applying the patch, please refer to: https://github.com/KernelGhost/TapeShift
+Thanks
 
-I would greatly appreciate any feedback or review at your earliest convenience. Thank you!
+Eric
 
-Best regards,  
+>
+> Thanks,
+> Mostafa
+>
 
-Rohan Barar
 
