@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-343987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B8298A234
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:24:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0850398A240
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFF31C217E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCDAE2815AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:25:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7810619047D;
-	Mon, 30 Sep 2024 12:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5741917FE;
+	Mon, 30 Sep 2024 12:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="D6ovWNo2"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2f39q8f"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F2818E35E;
-	Mon, 30 Sep 2024 12:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA86818E36E;
+	Mon, 30 Sep 2024 12:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698720; cv=none; b=BPbEnLC6jt/tr/F9ktXZ57bjlnirYAVrafGs81snBor2L1zW9TU6oFbnHyt5fMkUsHTvTENHm6eOGLaBe0xGwxuDw/VdRZ7O1Rn5M0b421msMwWC65Yu2sXAyvBR55y4yTXaBtUp+eafYpGAni2hhih5iLkpl4Fw8pOLMTem7KQ=
+	t=1727698794; cv=none; b=BqY2GKJRfyWA1gXDBxrPhqqFr3wvsj8LW7Ldg5mv+PqJKhNiU0QbY+RSYaZa6K3RnFIEHa+/icYcpaeh7tYlJUlAHAaTvPbpEdwpjoGdJfsEgLGdSZUz3nR/XwBxpyCorqSG/EssuaSJOPahimfalZSCYa9lQnV1Z80xd95iCPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698720; c=relaxed/simple;
-	bh=guHMbWaEEdPVx0Pw4VLIbA5GQWnfmm1gXeQcnd5Z7zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BrUDbL/++7mcJfhb1x5e8F26ZFHd766fRBmCyw41E0tVe1VjmU0YT2WM5C4VvGBw74t7vwVZIgGnl2vcx+E7B9RjumHpG5H3FGIF7YM+0koCes05Ht2w6UmW6ZpqVnC/js1kAQIh3t8EenVmd6K23evzoKXaflbO7CAu4cN25cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=D6ovWNo2; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=06QZSKwqhwLTUNoII8XtuXX1x9Gml0lTnBP3QfC7rd4=; b=D6ovWNo2Yekt8CCyNeE4+XpUJR
-	ScMzyIaQubyccMoVMhYdRyjXlqulw7yrPFkssCHc6Ax6uMkSjlTRX0E42flfHFXxJx3jbpii8gdsz
-	gNiTOWjT99XjIq79qX2SAvZmVLGdjj7UEHj9iC1Y2BnM6SkYv+L4zV+ShTAz/J4KSD4M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1svFMA-008cD8-S4; Mon, 30 Sep 2024 14:18:26 +0200
-Date: Mon, 30 Sep 2024 14:18:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
-Subject: Re: [PATCH net v4 2/2] net: phy: aquantia: remove usage of
- phy_set_max_speed
-Message-ID: <262e7702-68aa-40c9-aa2a-60a18b7f747d@lunn.ch>
-References: <20240927010553.3557571-1-quic_abchauha@quicinc.com>
- <20240927010553.3557571-3-quic_abchauha@quicinc.com>
- <20240927183756.16d3c6a3@fedora.home>
- <048bbc09-b7e1-4f49-8eff-a2c6cec28d05@quicinc.com>
- <20240928105242.5fe7f0e1@fedora.home>
- <ZvfQw0adwC/Ldngk@shell.armlinux.org.uk>
+	s=arc-20240116; t=1727698794; c=relaxed/simple;
+	bh=T0H2p5SM8zMQRwZlExn1DGe8xJM1lRLrhXS6V1nVWiE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VEanycqqA6kF7yxSAfBiwYU+dqfABn6fVN0Q8V6X98BQwcx0vs1mp+CKZP1tu0+K/0byXhrqDk8rFXTsqo58vfuIsRhlLz9m9P2E5y7Dl8rsgGF/kzyTFSiokwfbyQLnh2NbOMPY/cPlEVbASG5IVcmc+duztH7RRt476xoqanA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2f39q8f; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-84ea36b65cfso1145631241.0;
+        Mon, 30 Sep 2024 05:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727698791; x=1728303591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1WKbPMrVoX41jphFFXnvsCs/qisQx+D1m9p+KCH6szc=;
+        b=T2f39q8f5hd5paSIyIu/uy5Pmpnne5XIb5VFQInCmBCiwMa+8ERvH8T94Tikpqb4Nn
+         KUDTmwQvcXgAwrjrOaS7DJgg/B1tJdocgWW5vp7D1BMrLNm/PROWlxoNHizpvzx1QpEy
+         G6ev3WOARSMJRFilKvwR+bItEKVgWOcuxgxuMYFVnMk3r3ZaUzODi6oOFf5q+7RqciZ0
+         wOKQZwa23l7oXehDqiOtGAZbfpK6RW1cF8un+PxeYP2rIs8AaiVZCYgTOLQ7byf1yvyd
+         ignX0s2e9qAtSU9GgJuNY4gnXSwoqZxXWXNVnW7EGLQIaT3HYuFJ4xoTIC48KTeyQTbY
+         5Yug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727698791; x=1728303591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1WKbPMrVoX41jphFFXnvsCs/qisQx+D1m9p+KCH6szc=;
+        b=PfCNxkzrTnoWD9QKE9GExy6ZlEcFXBm01lzMULMPt9EC84peTZ/RM+j95vIoSa3lIC
+         YKNidKXvxj1eOlHWOjC9M8VvBqZCCNYgblo9b6Yla1eVWBk+uKWI4xPudBJ5KN4dTqPK
+         2qVHXNMqIQkApqZRYxx2QA6zUa9Z83HgIq56ik+tQghRsJuYrfz/4kY8NH8RKYmu2nM+
+         opS8fIWzDZG9hvNRL7XIgbLuJibVyAXwALVBS6kf8OrDOru9spRfELJYFXu3N8XGNNtu
+         sNdBwu/1JPAvwiccr05gTigSaU4W0yMtXI0yxr8pTD2ZJtjqniOUsONJP5tJ07dicHSN
+         LA4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrWQqI4NU5AsW3sU77OVJfEAfEO/WN/2yqhvx5tOxhWRNiBfUvhOQ7ouVGeezwhW/MMbcOzdJdEaPBYQgGC1TgHfk=@vger.kernel.org, AJvYcCW0qHSeXwFl9fcbIWUkef3KT3SyeWkXfnOEZnYPSI//RIAEMGbyuW+lEO6BgK4QwCb7o8p4iUAxKyWfdkY=@vger.kernel.org, AJvYcCXYpGxlEOe8TIz9/Ah35Y8vgbU1d3eQgc23y92OyB8xm7+9bnR8DcjEAUZRMvc5DYHlu07G70vQ06oFhOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbBkJ+VJpq5zfyam9kthIR1uoSOqW/8iyp65kLnwccnL1Mkqoh
+	lN26eN4uNQHMic0hXe9jYoAiNn/hMazOxfcTF8ebQeS+OjMpha4MvGLbFOFKAISLgFNctjZ4HIT
+	h8j6InDMe7wB8vgqYf8awu+daTVM=
+X-Google-Smtp-Source: AGHT+IGJ/jgjqICTkD+FA8y7IpA6SgFOyWL9OuXr/jASGSGYUFBYaxvJGwLZEpbxrRYhnwwFWkiPCGR1M8tXHgztkK0=
+X-Received: by 2002:a05:6122:1e10:b0:4ef:280f:96ea with SMTP id
+ 71dfb90a1353d-507816da1bemr6769696e0c.4.1727698791502; Mon, 30 Sep 2024
+ 05:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvfQw0adwC/Ldngk@shell.armlinux.org.uk>
+References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910175357.229075-15-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240927231122.GN12322@pendragon.ideasonboard.com>
+In-Reply-To: <20240927231122.GN12322@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 30 Sep 2024 13:19:25 +0100
+Message-ID: <CA+V-a8vzf7gjcO-jPTB2Sd=4GBmpSkUfWDCnAR8BbL1xohytvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 14/16] media: platform: rzg2l-cru: rzg2l-csi2: Make use
+ of rzg2l_csi2_formats array in rzg2l_csi2_enum_frame_size()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I think this is getting overly complex, so let's rewind a bit.
-> 
-> I believe Abhishek mentioned in a previous review what the differences
-> are between what the PHY reports when read, and what it actually
-> supports, and the result was that there was not a single bit in the
-> supported mask that was correct. I was hopeful that maybe Andrew would
-> respond to that, but seems not to, so I'm putting this statement here.
-> More on this below.
+Hi Laurent,
 
-Yes, i did not really realise how wrong Marvell got this. As you point
-out, it is more wrong than right.
+Thank you for the review.
 
-My thinking with calling the usual feature discovery mechanism and
-then fixing them up, is that we keep extending them. BaseT1 has been
-added etc. If a PHY is mostly getting it right, we might in the future
-get new features implemented for free, if the hardware correctly
-declares them. But in this case, if it cannot get even the basics
-mostly correct, there is little hope it will get more exotic features
-correct.
+On Sat, Sep 28, 2024 at 12:11=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> I've just noticed that the subject line of most of your patches is much
+> longer than the 72 characters limit. Please try to shorten them. You can
+> replace the prefixes with "media: rzg2l-cru:", and reword the subject
+> lines that mention long function names.
+>
+Ok, I'll rework the subject line so that it fits within 72 characters.
 
-So, i agree in Russell. Forget about asking the hardware, just hard
-code the correct features.
+> On Tue, Sep 10, 2024 at 06:53:55PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Make use `rzg2l_csi2_formats` array in rzg2l_csi2_enum_frame_size().
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/dr=
+ivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > index 79d99d865c1f..e630283dd1f1 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> > @@ -570,7 +570,10 @@ static int rzg2l_csi2_enum_frame_size(struct v4l2_=
+subdev *sd,
+> >                                     struct v4l2_subdev_state *sd_state,
+> >                                     struct v4l2_subdev_frame_size_enum =
+*fse)
+> >  {
+> > -     if (fse->index !=3D 0)
+> > +     if (fse->index >=3D ARRAY_SIZE(rzg2l_csi2_formats))
+> > +             return -EINVAL;
+>
+> Same comment as in 11/16. With this fixed,
+>
+Ok, I'll drop this check.
 
-Sorry for making you do extra work which you now need to discard.
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>
 
-However, please do keep it as two patches. It makes it easier to deal
-with regressions on the device you cannot test if we can just revert
-one patch.
-
-	Andrew
+Cheers,
+Prabhakar
 
