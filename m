@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-343898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7E498A0EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:37:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1E198A0EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D241F2828B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:37:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700E31C21B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556AD18E02B;
-	Mon, 30 Sep 2024 11:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A35E17DFF1;
+	Mon, 30 Sep 2024 11:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7PAdV0k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vfmtx40T"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F92717CA17;
-	Mon, 30 Sep 2024 11:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6563D17CA17;
+	Mon, 30 Sep 2024 11:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727696193; cv=none; b=hNUFpwwZBkMRY+U8c8a4UI3dg6Nu7UMdq5k5MXCociIhsC1jBU8HT0dbNAdgu4/d4CsLYXK3wWDD4obb4iwud3kgqGPubVZYL5kDF4W/yrihNVnEDNiQQmCzWOLLMZx+nzpp4ZCAJ1aaLkvfG9fGPxClNDdSjE+zK+oOHHNvgeA=
+	t=1727696237; cv=none; b=BhkdvhqP0FavvsiYkZ3iqsN2r/ELQevtwIXiKHsBS1OGZSXoWd4/WeqO+WFLTq6UvHG7K8+M+yD+hHuTuROap+dRldhspJqWZvFth+XKlhlL3TMkpZTiv2hiI1hq5azubmrAu1Vvw9iqk0DeUB3nCKz9N6ozdfTXeJqkaRekiR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727696193; c=relaxed/simple;
-	bh=bMmMOfCi1FnNsXF2Epr8ZFa6gc2aQa3wVmSiK4GUDj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WySWjf2muOoJYAlWu3iBT2duwD5RPsiX3Ck6Fs9ekIpE7xofL86j/gu7JCjp1z1yXc/CvEp7uDS2W2P8Ln2pU54Y3tSJVWy8T39ETafrS3DgNvJIiyni4aqqfGA4oeA/vEKKxt0mmPJtTNC/wwoUJ/gCWGfFb45KDumOwBPJvEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7PAdV0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FB0C4CEC7;
-	Mon, 30 Sep 2024 11:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727696193;
-	bh=bMmMOfCi1FnNsXF2Epr8ZFa6gc2aQa3wVmSiK4GUDj8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P7PAdV0kEPOOMid1CR016o0gAiQem+vmKByb/qcURY+nHCvBxtk7SM6btl/eHW24T
-	 7FgNDslI20xjtYQtsi+BPpxhzDUo1fBUMNZ3dDsqll6Erubzx70xucwyrXDJRGOwLp
-	 Sdz7DI0dLpwry6sYqaQeiLg2TvXAisjS4GWPkSiGRbqczJzJOGmrujhZA0U6HcKvDE
-	 XmZutIGELgls+Bmlf4EEwhEu1cTNtQHp5V/JrQFk1KgVc+X4bJpJtTkhUk/v2JxWJV
-	 mb0bsG2c0P8oTVxDUkPfcGd9PgJffQ3yw9WXpVJ2qLNA5IldRlOtWlZbyAY93VbLjU
-	 HkBDHCO3iurlQ==
-Message-ID: <db9dc2ef-2c24-4f1b-82c8-316c347daf60@kernel.org>
-Date: Mon, 30 Sep 2024 13:36:28 +0200
+	s=arc-20240116; t=1727696237; c=relaxed/simple;
+	bh=FyvIzX2J4QCmwHO7Zih4e/9cezEiSl2n09knZnq5RwQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y1Rrsd/7ou5pPwuyYZHNGvrm/PVWiM/UbCk2vZfoe/95buPxTbtcxr4UayoaSJPoIxU0mVTx9ftJ0tRydJ+bu8oXhr3Qmo1azIW8/4MkoOR8dehK38S0TucEaWktT+snHWNpI+TbcpqTaCmyd5uAQnR7uZC71jFkVyKNVJ4IPws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vfmtx40T; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398cc2fcb7so1789678e87.1;
+        Mon, 30 Sep 2024 04:37:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727696233; x=1728301033; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tyZcUMUAegpNAvD640Pc8Za3YSgkV9krfroLC5X2l+A=;
+        b=Vfmtx40TcJ0laGFr6ArDjrGbFnXK/KOzugExOY8/Shv69FaTVuM4rN7FlCpZeTirav
+         po0k6kv+GvSeUBNuODO73kcdt3ltQvteqeYq7h/n/U7/3BEk98j2eY66L2a7XixXXRdL
+         ktZqRk4iuGgbz0NKQs6e9OAUP+lcZdlZv6nMMjK4Nzy7CMe8EUdS3ehKlE1iwggklG3f
+         ACrXI4YmtXaJeN9zLDBs329KIf7ystF6xMPUdeJJi6eJgLjJz/Yin/Sknlteawi6SGeP
+         f5te8s68Ufhij87nZMJ1VJNus1Jw2k+KBnqgCVWvaaAA03NtQn43Y0niC4iT6+gibWH2
+         4yBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727696233; x=1728301033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tyZcUMUAegpNAvD640Pc8Za3YSgkV9krfroLC5X2l+A=;
+        b=xUO+0tQee4J595nP4LSGokfsWyhGTlRwHcJAsLdLa8DhTCUH3kO2m/67+8NQly3XJv
+         AELHoMXtCZyKuXauc8LXbu626cTky1JDRYmoheJVr1q8otkGhQis648+AGQo9j+2Gh/q
+         XACWwztWmY2sZROc1zciuX3xujG3toJQdCcbQ3zpHy88Gyiqenwj9NPZGkfkKGNhQwiy
+         xS4K8MVF8J5E60BmcNHjeo2v6FUJOFyLz7+ZVJ2buGYkwYm4QCkgZ1cJ6c2hLsA21T97
+         9nhbzxTF6I1qRRJ4eumxHxj/aD8V6oBkR/7El+qejNFmdxdvAVSQMXG21KQ4LgQ1BP5h
+         MAlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0A/hVC3u0w+xM9drspX4eiOsdKEfio1lnn5FS0LBNeqwszJW7pMbUVGvQy/NYRTMtCZq2I+9b7HZ4DFU=@vger.kernel.org, AJvYcCXGDCx08FXVyuzZ3KLvoLkfhZE7aMJRvrPibgaeTb8mhu4GKdv+EHA7rqbPVI+SJI+Lr95E@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0alqnG5JF8JmPPqZ3nyzZ8smxITwJeXcgN9AyZNeRx82RkhiJ
+	zoTqE1CDgnxF4rRqbuoyRMfcl7QaHgqt/Fpm5SC/7qleZSl/C7EC
+X-Google-Smtp-Source: AGHT+IHUaAhg9KQgh8A1ZU9wg+SL/2DNNV/9m+UwXwbZE9MiidjUVI6cMxKxlQe6d/jTrzmr1O5nQQ==
+X-Received: by 2002:a05:6512:158d:b0:536:548a:ff89 with SMTP id 2adb3069b0e04-5389fc6fc0amr5914529e87.39.1727696233087;
+        Mon, 30 Sep 2024 04:37:13 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-538a043992fsm1219820e87.210.2024.09.30.04.37.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 04:37:12 -0700 (PDT)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>,
+	RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] rcu/kvfree: Refactor kvfree_rcu_queue_batch()
+Date: Mon, 30 Sep 2024 13:37:10 +0200
+Message-Id: <20240930113710.637833-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] clk: samsung: exynosautov920: add peric1, misc and
- hsi0/1 clock support
-To: Sunyeal Hong <sunyeal.hong@samsung.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240912103856.3330631-1-sunyeal.hong@samsung.com>
- <CGME20240912103903epcas2p4fb9aaeafb223b63c57c2f0cac7f37c3d@epcas2p4.samsung.com>
- <20240912103856.3330631-3-sunyeal.hong@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240912103856.3330631-3-sunyeal.hong@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/09/2024 12:38, Sunyeal Hong wrote:
-> Like CMU_PERIC1, this provides clocks for USI09 ~ USI17, USI_I2C and USI_I3C.
-> Like CMU_MISC, this provides clocks for MISC, GIC and OTP.
-> Like CMU_HSI0, this provides clocks for PCIE.
-> Like CMU_HSI1, this provides clocks for USB and MMC.
-> 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
-> ---
+Improve readability of kvfree_rcu_queue_batch() function
+in away that, after a first batch queuing, the loop is break
+and success value is returned to a caller.
 
-...
+There is no reason to loop and check batches further as all
+outstanding objects have already been picked and attached to
+a certain batch to complete an offloading.
 
-> +
->  static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
->  {
->  	const struct samsung_cmu_info *info;
-> @@ -1154,6 +1431,19 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
->  	{
->  		.compatible = "samsung,exynosautov920-cmu-peric0",
->  		.data = &peric0_cmu_info,
-> +	}, {
-> +		 .compatible = "samsung,exynosautov920-cmu-peric1",
-> +		 .data = &peric1_cmu_info,
-> +	}, {
-> +		 .compatible = "samsung,exynosautov920-cmu-misc",
-> +		 .data = &misc_cmu_info,
-> +	}, {
-> +		.compatible = "samsung,exynosautov920-cmu-hsi0",
-> +		.data = &hsi0_cmu_info,
-> +	}, {
-> +		.compatible = "samsung,exynosautov920-cmu-hsi1",
-> +		.data = &hsi1_cmu_info,
-> +	}, {
+Link: https://lore.kernel.org/lkml/ZvWUt2oyXRsvJRNc@pc636/T/
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/tree.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-This is unrelated change. Please rebase.
-
-Best regards,
-Krzysztof
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index a60616e69b66..b1f883fcd918 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3607,11 +3607,12 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
+ 			}
+ 
+ 			// One work is per one batch, so there are three
+-			// "free channels", the batch can handle. It can
+-			// be that the work is in the pending state when
+-			// channels have been detached following by each
+-			// other.
++			// "free channels", the batch can handle. Break
++			// the loop since it is done with this CPU thus
++			// queuing an RCU work is _always_ success here.
+ 			queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
++			WARN_ON_ONCE(!queued);
++			break;
+ 		}
+ 	}
+ 
+-- 
+2.39.5
 
 
