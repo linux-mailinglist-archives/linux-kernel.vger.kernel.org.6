@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel+bounces-343301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A787989953
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886E1989956
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319CB1C20C82
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F8A51F218F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BF827466;
-	Mon, 30 Sep 2024 03:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D958329CE8;
+	Mon, 30 Sep 2024 03:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DavZyLXW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnjTPXwT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7A4163
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E899383;
+	Mon, 30 Sep 2024 03:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727665258; cv=none; b=Kde9AIwPQvf1+p51FpEU1kB0RbWBOhaEmeRxFc38HwtwEAB1R7sRjmHGCfd8E4ux2//c6Q0S/XGptbb2+NxeH3ltnPMDQtGwLMplmFnMQyz4Sjw35ITgDLjoeGtMT8KaRj3RE6y/9w/jpcUsaMMW+zFOcdj5UZuDMFbNsd070f0=
+	t=1727665406; cv=none; b=VA3CF8pUWzRzTOOYMHyZbw+9oRAIkFLKJZE37k8oYHmdni7Z1xlks7gkmhZbIyUkp38fw005AythcCVNPO0bleom9AXp4KfpeR+iRo94729qfG/yS2wssDnD63ODPD6Ht/D8JF8ozVMyJcm2w+G8drs8COpmE8cJs44dphdRvK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727665258; c=relaxed/simple;
-	bh=5L2RW5xxyTA2EzxVRd6oLsu/w7M/vk61ONldLEJDAAQ=;
+	s=arc-20240116; t=1727665406; c=relaxed/simple;
+	bh=ZPLeceSoms1LJsjZuhWfOriodeA4mCGIP5lnp9n3uWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8gpe4OP1Z4uIobtjTTTAjA74aJFkzGfx0mbd8kJHlGMVOQIsFW/8CSGyvtHBXvd4bIhIIyruGsna3j2Ym/IsRwDofN5wmqpMXmDvtJXKNo/xl/WN3I05Usn+wwy0k73ZRZjh+4om72Fn+yX9GvpwbDumxPKHJWwXhD72v7SIhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DavZyLXW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727665255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sZM5NdSEWWxV+d7/NgptFaq3MVMQUll/nVFG6CmLrnI=;
-	b=DavZyLXWGASsqp2Cc4bIs2gsvKV0dLqV1826agrw/wV5LHIHK23BwD3SgkT/uiNF2d3K/c
-	CGfOLparHiTPLaD7Edn0gPUMVvKXheQuC7FgNBS9TFLzUNY6VyXmnpf/xUA0zl0nmazuuH
-	KO7yVJ8VYJCCeRdVf/gJbD0EJGo0IpE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-zSa0gl6AMSaSWEkIjUVrkg-1; Sun,
- 29 Sep 2024 23:00:54 -0400
-X-MC-Unique: zSa0gl6AMSaSWEkIjUVrkg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EFDFB19030A8;
-	Mon, 30 Sep 2024 03:00:52 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.26])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F161D19541A2;
-	Mon, 30 Sep 2024 03:00:50 +0000 (UTC)
-Date: Mon, 30 Sep 2024 11:00:46 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Dave Young <dyoung@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org
-Subject: Re: [PATCH] x86/e820: update code comment about e820_table_kexec
-Message-ID: <ZvoUXjWmojyNs6dx@MiWiFi-R3L-srv>
-References: <ZuVxlJ77V2_U0HPM@darkstar.users.ipa.redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9tqKBfqR1AGwsiS4c8W/ejrOttgh8U45CnnA7oIXchlGLX+1LTWfOzBEX9Ot2X1R4EsODb7FLpb+qwFC+2Jj8wWCEFCHuijKzviN8/Nf0AQ/pprly/Fz1Ys5KTj2UPQwjGrs0mHNz7A6vkyK5U/7G7wkqX62rPu/cLJu5I+U3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnjTPXwT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246F2C4CEC5;
+	Mon, 30 Sep 2024 03:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727665405;
+	bh=ZPLeceSoms1LJsjZuhWfOriodeA4mCGIP5lnp9n3uWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FnjTPXwTWozYj5fYuGn8DNPKlcBl20zqc6nd6xZx8+xGmowTe+k+NgxbxC76gLGzE
+	 BRU1PnwlRTdBLlJocCgy2wpPKx/PGD5KSmiUGkKQcpoZJSWDfIy1RSJz7cfu8I/Eng
+	 Ac7x7sK4wUW0d6VgsQpitWPB4/wWYHoWac9mI1J2dMyXF0tOo8A6Dy/ud2Zjwwr9iv
+	 B82R9wtJqeE9L+WLaULFhxdpahgotVWRM0+xxRFe5x0k/jQec3Le71eQgpDQoCvE3q
+	 YIr1j9n9cDXVP0B36mqYsEOXzUCKu+4RfFpoIjGsaxSO2rDgPDoaQIMJhf5l3z2b6O
+	 gEuOjYG7v7G7w==
+Date: Sun, 29 Sep 2024 22:03:23 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Wasim Nazir <quic_wasimn@quicinc.com>
+Cc: Shuah Khan <shuah@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v2] selftest: remoteproc: Add basic test for start/stop
+ sequence
+Message-ID: <xee5pz7qha3nn2ldr6ogtikbrc23d4mrxabdfv6ujtbtj7fcch@whh726b6xlhc>
+References: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,47 +58,222 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuVxlJ77V2_U0HPM@darkstar.users.ipa.redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20240927112132.3927298-1-quic_wasimn@quicinc.com>
 
-On 09/14/24 at 07:20pm, Dave Young wrote:
-> The setup_data ranges are not reserved for kexec any more after
-> commit fc7f27cda843 ("x86/kexec: Do not update E820 kexec table
-> for setup_data"), so update the code comment here.
-> 
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> ---
->  arch/x86/kernel/e820.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> Index: linux-x86/arch/x86/kernel/e820.c
-> ===================================================================
-> --- linux-x86.orig/arch/x86/kernel/e820.c	2024-09-14 10:39:57.423551301 +0800
-> +++ linux-x86/arch/x86/kernel/e820.c	2024-09-14 18:56:30.158316496 +0800
-> @@ -36,10 +36,8 @@
->   *
->   * - 'e820_table_kexec': a slightly modified (by the kernel) firmware version
->   *   passed to us by the bootloader - the major difference between
-> - *   e820_table_firmware[] and this one is that, the latter marks the setup_data
-> - *   list created by the EFI boot stub as reserved, so that kexec can reuse the
-> - *   setup_data information in the second kernel. Besides, e820_table_kexec[]
-> - *   might also be modified by the kexec itself to fake a mptable.
-> + *   e820_table_firmware[] and this one is that e820_table_kexec[]
-> + *   might be modified by the kexec itself to fake a mptable.
->   *   We use this to:
-
-LGTM,
-
-Acked-by: Baoquan He <bhe@redhat.com>
-
->   *
->   *       - kexec, which is a bootloader in disguise, uses the original E820
-> 
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+On Fri, Sep 27, 2024 at 04:51:32PM GMT, Wasim Nazir wrote:
+> This test includes:
+>     1) Start/stop test for each rproc instance sequencially
+>     2) Start/stop test for all rproc instances concurrently
 > 
 
+This fails to describe the purpose of the patch. Provide a proper commit
+mesasge.
+
+In particular, I expect an argumentation for your test scheme. Will this
+work across all remoteproc instances? Does it have any dependencies,
+etc...
+
+> Changes in v2:
+> - Update commit message
+> - Addressed start/stop flow
+
+The changelog goes below the '---' line, adjacent to your diffstat -
+which is missing from your patch. I don't know how you're sending these
+patches, but your system is either configured weirdly or you're not
+following my instructions on go/upstream.
+
+> 
+> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a77770cd96b8..02ebad5ae790 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -19596,6 +19596,7 @@ F:	Documentation/staging/remoteproc.rst
+>  F:	drivers/remoteproc/
+>  F:	include/linux/remoteproc.h
+>  F:	include/linux/remoteproc/
+> +F:	tools/testing/selftests/remoteproc/
+> 
+>  REMOTE PROCESSOR MESSAGING (RPMSG) SUBSYSTEM
+>  M:	Bjorn Andersson <andersson@kernel.org>
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index b38199965f99..0c8a0f427d01 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -82,6 +82,7 @@ TARGETS += proc
+>  TARGETS += pstore
+>  TARGETS += ptrace
+>  TARGETS += openat2
+> +TARGETS += remoteproc
+>  TARGETS += resctrl
+>  TARGETS += riscv
+>  TARGETS += rlimits
+> diff --git a/tools/testing/selftests/remoteproc/Makefile b/tools/testing/selftests/remoteproc/Makefile
+> new file mode 100644
+> index 000000000000..a84b3934fd36
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/Makefile
+> @@ -0,0 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +TEST_PROGS := remoteproc_test.sh
+> +
+> +include ../lib.mk
+> diff --git a/tools/testing/selftests/remoteproc/config b/tools/testing/selftests/remoteproc/config
+> new file mode 100644
+> index 000000000000..a5c237d2f3b4
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/config
+> @@ -0,0 +1 @@
+> +CONFIG_REMOTEPROC=y
+> diff --git a/tools/testing/selftests/remoteproc/remoteproc_test.sh b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> new file mode 100644
+> index 000000000000..589368285307
+> --- /dev/null
+> +++ b/tools/testing/selftests/remoteproc/remoteproc_test.sh
+> @@ -0,0 +1,134 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> +#
+> +
+> +DIR="$(dirname $(readlink -f "$0"))"
+> +
+> +KTAP_HELPERS="${DIR}/../kselftest/ktap_helpers.sh"
+> +if [ -e "$KTAP_HELPERS" ]; then
+> +    . "$KTAP_HELPERS"
+> +else
+> +    echo -n "1..0 # SKIP $KTAP_HELPERS file not found"
+> +    exit 4
+> +fi
+> +
+> +RPROC_SYS=/sys/class/remoteproc
+> +RPROC_SEQ_SLEEP=5
+> +rproc_instances=
+> +# Declare an array to save initial states of each instance
+> +org_instance_to_state=""
+> +num_tests=0
+> +test_err=0
+> +
+> +check_error() {
+> +	if [ $? -ne 0 ]; then
+> +		test_err=$((test_err+1))
+> +		ktap_print_msg "$@"
+> +	fi
+> +}
+> +
+> +rproc_stop_instances() {
+> +	for instance in ${rproc_instances}; do
+> +		rproc=${RPROC_SYS}/$instance
+> +		rproc_name=$(cat $rproc/name)
+> +		rproc_state=$(cat $rproc/state)
+> +
+> +		echo stop > "$rproc/state"
+> +		check_error "$rproc_name state-stop failed at state $rproc_state"
+> +	done
+> +	sleep ${RPROC_SEQ_SLEEP}
+> +}
+> +
+> +rproc_start_instances() {
+> +	for instance in ${rproc_instances}; do
+> +		rproc=${RPROC_SYS}/$instance
+> +		rproc_name=$(cat $rproc/name)
+> +		rproc_state=$(cat $rproc/state)
+> +
+> +		echo start > "$rproc/state"
+> +		check_error "$rproc_name state-start failed at state $rproc_state"
+> +	done
+> +	sleep ${RPROC_SEQ_SLEEP}
+> +}
+> +
+> +rproc_seq_test_instance_one() {
+> +	instance=$1
+> +	rproc=${RPROC_SYS}/$instance
+> +	rproc_name=$(cat $rproc/name)
+> +	rproc_state=$(cat $rproc/state)
+> +	ktap_print_msg "Testing rproc sequence for $rproc_name"
+> +
+> +	# Reset test_err value
+> +	test_err=0
+> +
+> +	# Begin start/stop sequence
+> +	echo start > "$rproc/state"
+> +	check_error "$rproc_name state-start failed at state $rproc_state"
+> +
+> +	sleep ${RPROC_SEQ_SLEEP}
+> +
+> +	echo stop > "$rproc/state"
+> +	check_error "$rproc_name state-stop failed at state $rproc_state"
+> +
+> +	if [ $test_err -ne 0 ]; then
+> +		ktap_test_fail "$rproc_name"
+> +	else
+> +		ktap_test_pass "$rproc_name"
+> +	fi
+> +}
+> +
+> +rproc_seq_test_instances_concurrently() {
+> +	# Reset test_err value
+> +	test_err=0
+> +
+> +	rproc_start_instances
+> +
+> +	rproc_stop_instances
+> +
+> +	if [ $test_err -ne 0 ]; then
+> +		ktap_test_fail "for any of $rproc_instances"
+> +	else
+> +		ktap_test_pass "for all $rproc_instances"
+> +	fi
+> +}
+> +
+> +ktap_print_header
+> +
+> +if [ ! -d "${RPROC_SYS}" ]; then
+> +	ktap_skip_all "${RPROC_SYS} doesn't exist."
+> +	exit "${KSFT_SKIP}"
+> +fi
+> +
+> +rproc_instances=$(find ${RPROC_SYS}/remoteproc* -maxdepth 1 -exec basename {} \;)
+> +num_tests=$(echo ${rproc_instances} | wc -w)
+> +if [ "${num_tests}" -eq 0 ]; then
+> +	ktap_skip_all "${RPROC_SYS}/remoteproc* doesn't exist."
+> +	exit "${KSFT_SKIP}"
+> +fi
+> +
+> +# Total tests will be:
+> +# 1) Seq tests for each instance sequencially
+> +# 2) Seq tests for all instances concurrently
+> +num_tests=$((num_tests+1))
+> +
+> +ktap_set_plan "${num_tests}"
+> +
+> +# Stop all instances
+> +rproc_stop_instances
+
+Will this not fail for remoteproc instances that aren't started
+automatically?
+
+Regards,
+Bjorn
+
+> +
+> +# Test 1
+> +ktap_print_msg "Testing rproc start/stop sequence for each instance sequencially"
+> +for instance in ${rproc_instances}; do
+> +	rproc_seq_test_instance_one $instance
+> +done
+> +
+> +# Test 2
+> +ktap_print_msg "Testing rproc start/stop sequence for all instances concurrently"
+> +rproc_seq_test_instances_concurrently
+> +
+> +# Restore all instances
+> +rproc_start_instances
+> +
+> +ktap_finished
+> --
+> 2.46.1
+> 
 
