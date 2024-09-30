@@ -1,216 +1,91 @@
-Return-Path: <linux-kernel+bounces-344383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60CE98A8FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D3F98A902
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4078EB2990A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:44:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B285B29040
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:43:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD731925A4;
-	Mon, 30 Sep 2024 15:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E26193063;
+	Mon, 30 Sep 2024 15:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oI4L83S1"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2skAnshz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WouAlOvr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576331922F8;
-	Mon, 30 Sep 2024 15:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8896A1917FF;
+	Mon, 30 Sep 2024 15:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710948; cv=none; b=miGEXR+yifmdauFS9hPnUmaROYajU6cWqrHXtlphHVWqv/O48f1GnG5i+O6ydIUiwMDrS+sx2rWlzp27G8gaSMF9VFrdr1jeqn0kktLSee6hoqauvv4QdSrMqqy7AWLXTSkeCVW3KsrGBbHKDGArQEltlHGDsfoKt2p2oeFSY8U=
+	t=1727710941; cv=none; b=Lz4OeKAA9eDWe3jCwsJeh9CE1QCF+nMelpJYZIT3UaeXOmNOeW1fIUdUJqz1rqGh25lOaSoQVnW2Unbh5uS0hLJkxEm/XVYCFqdgBo40gV/B0UAphtzB20hcwRPt2nfEcBs3nSjDfKNIiD+a10cK8zTCaBCZvx/X9fsG1sAxp9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710948; c=relaxed/simple;
-	bh=Cc7YRhvoDQtKghJg2029k4QYtuU686bB42dKb2xpnTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mWYzKnRMC0vw1cmWZ4xrIYbDzPMHB/gs//sO8nq6G/dFftQsXMchmR+OIAkLpwckPB2cwkzMcJyKjBld+vgnLzK8L/FVv5JUazIQEg6RKgfElWw0YrU5q2+2DRKi69HLZp47bKSAfCBzQJ/Iy2bT0uYVld64FmLYx+v388fOzcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oI4L83S1; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U6RwYN014784;
-	Mon, 30 Sep 2024 15:41:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Gc55ob5J5ocO4uDw82svtlrKc6l6j/9azVaUVKIUbzg=; b=oI4L83S1Yru2ByEf
-	oaSvklSYWWKAJIYTd4fvvdv+/1FLUWnJikQlFF5FAc63q+qsAwuiyItbPPoS+NPb
-	mEln0G2d5hjOMOnr4VTm9vVGsFq4r2HAGV0KiBCMaVsIx9VEYtwfyxyUcx+zSJHS
-	7Anduf9GAHea1R1mcz6Zm9Wod/1GCg3EqCi1WuMMLi56MFFARyhacR/adVIiO0lI
-	3u2vVTqMs1dPKKNuPn3k1W/FQ3QNqV73fzPlxtmGXyjsm8fvutJjJqbijwvDPrY2
-	Fv96HIwV0e/IxaRio+HnMmGyWqgxy7O1GtfGGZRa/Aa+eAApRZYwKaB9X94Iyvay
-	SpISrQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41yprahfsv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 15:41:53 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UFfqHM000802
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 15:41:52 GMT
-Received: from [10.216.16.87] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
- 2024 08:41:41 -0700
-Message-ID: <942f6385-295a-4b48-8c1b-159930eeb828@quicinc.com>
-Date: Mon, 30 Sep 2024 21:11:36 +0530
+	s=arc-20240116; t=1727710941; c=relaxed/simple;
+	bh=72Fwc82csBHX1yYHcF3YSU/MkefXjlYgCuVUjgPljVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QSSN9i7Lxr+gTnVZAYtFeW2nlbrkQqRsSExuY/oNz3Lqx6XcH112KekFc5smh5FPsU6iGtXb0bB/1O3fGtrN9odsoBMVcTih7yM7J5J77mUZNmMKZCwnm8HgHIZWxZELWPi3mZNod3/Kfw/3W9VS3GIJkMgQaaKRYoxgANw5GMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2skAnshz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WouAlOvr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 30 Sep 2024 17:42:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727710937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=6hOUC4vKSw/TkGzAPlg+JSA0OmQu2RHMwDcYpg6iIoU=;
+	b=2skAnshzV8Js6gsJ6eJeANcMGYEsKNa+mLaT6WuTtXZ87u9Fucr4oaSeU/oh01XF/ekaRd
+	WorUocuHgptcb8cbJDAHREXq8ulCVO+UDprigVXnAjBlXxHeP12RZGT1bwPYL+RwXElpua
+	ih/PKwzJZMO1u1iD2SraH+YMLbssJTo/L4M9wBlspGZvYfkUm5AaNFIlVHAHsk1BTwQC5G
+	JZ/XpIsU9jt1LvHOwHLWrdT1XZpD/vnVR0WWGGbn3Y7vDniEsyI4l8UJ0D1TTB4gLpcFgY
+	2pM9p8K+ZEaa18MHamPNg3vv/Htm8AwH81M1kaldK3stYb7439uOqidP3ZU8OA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727710937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=6hOUC4vKSw/TkGzAPlg+JSA0OmQu2RHMwDcYpg6iIoU=;
+	b=WouAlOvr3+JPd+muImtqRMQdMDCLD9F+L4jtWnvFs8HCBHXb+AtVEerTViJUzRvWSXiDpn
+	/QVGXGNYGIsB+aAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.12-rc1-rt1
+Message-ID: <20240930154216.ua_fDZt4@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] drm/msm/dpu: Add SA8775P support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <swboyd@chromium.org>,
-        <konrad.dybcio@linaro.org>, <danila@jiaxyga.com>,
-        <bigfoot@classfun.cn>, <neil.armstrong@linaro.org>,
-        <mailingradian@gmail.com>, <quic_jesszhan@quicinc.com>,
-        <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_kalyant@quicinc.com>, <quic_jmadiset@quicinc.com>,
-        <quic_vpolimer@quicinc.com>
-References: <20240926110137.2200158-1-quic_mahap@quicinc.com>
- <20240926110137.2200158-5-quic_mahap@quicinc.com>
- <w26xpuqeltoxjvewo4zesnjazw23onovcasltzcwrejdpgav2h@p6fj2lts2n4s>
-Content-Language: en-US
-From: Mahadevan P <quic_mahap@quicinc.com>
-In-Reply-To: <w26xpuqeltoxjvewo4zesnjazw23onovcasltzcwrejdpgav2h@p6fj2lts2n4s>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dsmez5AIwekIwyx4FTHzul4uvDZHFR0g
-X-Proofpoint-ORIG-GUID: dsmez5AIwekIwyx4FTHzul4uvDZHFR0g
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
- clxscore=1015 adultscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300112
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
+Dear RT folks!
 
-On 9/26/2024 6:39 PM, Dmitry Baryshkov wrote:
-> On Thu, Sep 26, 2024 at 04:31:36PM GMT, Mahadevan wrote:
->> Add definitions for the display hardware used on the
->> Qualcomm SA8775P platform.
->>
->> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
->> ---
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
-> Minor nit below.
->
->> [v2]
->> - Reorder compatible string of DPU based on alphabetical order.[Dmitry]
->>
->> ---
->>   .../msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h   | 485 ++++++++++++++++++
->>   .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |   3 +-
->>   .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |   3 +-
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   3 +-
->>   4 files changed, 491 insertions(+), 3 deletions(-)
->>   create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
->>
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
->> new file mode 100644
->> index 000000000000..14d65b5d4093
->> --- /dev/null
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
->> @@ -0,0 +1,485 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2015-2018, 2020 The Linux Foundation. All rights reserved.
-> What exactly is copyrighted by LF?
+I'm pleased to announce the v6.12-rc1-rt1 patch set. 
 
+Changes since v6.11-rt7:
 
-LF copyright is not needed.
+  - Update to v6.12-rc1
 
-Thanks for pointing out the copyrights in other files too. Will update 
-in subsequent patch.
+Known issues
+    None.
 
+You can get this release via the git tree at:
 
->
->> + */
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
->> index dcb4fd85e73b..6f60fff2c9a6 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c
->> @@ -1,6 +1,6 @@
->>   // SPDX-License-Identifier: GPL-2.0-only
->>   /* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
->> - * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> I am not a lawyer, but I don't think a single #include is copyrightable.
-> Neither are single data lines in other files.
->
->>    */
->>   
->>   #define pr_fmt(fmt)	"[drm:%s:%d] " fmt, __func__, __LINE__
->> @@ -699,6 +699,7 @@ static const struct dpu_qos_lut_entry sc7180_qos_nrt[] = {
->>   
->>   #include "catalog/dpu_8_0_sc8280xp.h"
->>   #include "catalog/dpu_8_1_sm8450.h"
->> +#include "catalog/dpu_8_4_sa8775p.h"
->>   
->>   #include "catalog/dpu_9_0_sm8550.h"
->>   
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->> index 37e18e820a20..cff16dcf277f 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
->> @@ -1,6 +1,6 @@
->>   /* SPDX-License-Identifier: GPL-2.0-only */
->>   /*
->> - * Copyright (c) 2022-2023, Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2022-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>    * Copyright (c) 2015-2018, 2020 The Linux Foundation. All rights reserved.
->>    */
->>   
->> @@ -850,6 +850,7 @@ extern const struct dpu_mdss_cfg dpu_sm8350_cfg;
->>   extern const struct dpu_mdss_cfg dpu_sc7280_cfg;
->>   extern const struct dpu_mdss_cfg dpu_sc8280xp_cfg;
->>   extern const struct dpu_mdss_cfg dpu_sm8450_cfg;
->> +extern const struct dpu_mdss_cfg dpu_sa8775p_cfg;
->>   extern const struct dpu_mdss_cfg dpu_sm8550_cfg;
->>   extern const struct dpu_mdss_cfg dpu_sm8650_cfg;
->>   extern const struct dpu_mdss_cfg dpu_x1e80100_cfg;
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
->> index 9bcae53c4f45..16a0b417435e 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
->> @@ -2,7 +2,7 @@
->>   /*
->>    * Copyright (C) 2013 Red Hat
->>    * Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
->> - * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>    *
->>    * Author: Rob Clark <robdclark@gmail.com>
->>    */
->> @@ -1447,6 +1447,7 @@ static const struct dev_pm_ops dpu_pm_ops = {
->>   static const struct of_device_id dpu_dt_match[] = {
->>   	{ .compatible = "qcom,msm8998-dpu", .data = &dpu_msm8998_cfg, },
->>   	{ .compatible = "qcom,qcm2290-dpu", .data = &dpu_qcm2290_cfg, },
->> +	{ .compatible = "qcom,sa8775p-dpu", .data = &dpu_sa8775p_cfg, },
->>   	{ .compatible = "qcom,sdm630-mdp5", .data = &dpu_sdm630_cfg, },
->>   	{ .compatible = "qcom,sdm660-mdp5", .data = &dpu_sdm660_cfg, },
->>   	{ .compatible = "qcom,sdm670-dpu", .data = &dpu_sdm670_cfg, },
->> -- 
->> 2.34.1
->>
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.12-rc1-rt1
+
+The RT patch against v6.12-rc1 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patch-6.12-rc1-rt1.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/older/patches-6.12-rc1-rt1.tar.xz
+
+Sebastian
 
