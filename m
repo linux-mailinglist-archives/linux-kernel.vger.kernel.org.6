@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-343264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 359409898C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:11:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB9C9898EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD00C1F218D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:11:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9EEB21CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24705684;
-	Mon, 30 Sep 2024 01:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812744685;
+	Mon, 30 Sep 2024 01:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipWowmfK"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="OJYj6KNr";
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="na5HGljU"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93C8383;
-	Mon, 30 Sep 2024 01:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2823BE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727658676; cv=none; b=RqBddz4Qo3eaoRACbn/x+lDoO3Kq+23UG9O/LAmur8bPGGKRDvgXefJOCjbtMmQsyBATzqkWWxIaFOBdEzMi9Jk7Gqgn+UGS3lO7ckxzqX49HG0jDZvDMRwolAgIYGsajCTkA9IOeHmJrg0dNpp+TEuJOMSsGVivL/Rdrc01siI=
+	t=1727659132; cv=none; b=tLjb3JH5CVA00xFgQH70P+Dicks0PkWee8iqSc3IRkCJzQH+x5FGgTzxR0j8phoAhUHDNe3WuApCPGPL1yQamJx2P17cDpn7qoREfHdiqyvthLOq8QYqTaD++p5G0YLDjYs+xfsYxG4TpPJorM56KIXA7YaO6/mVkpiETNx+nRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727658676; c=relaxed/simple;
-	bh=KCmptHGyLnCzPpQNXWEcq7JMgjBKFRG+QCCVWwICfSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vp625KGxuGahiw7qpiw9SnUr/dWfYJHJAHtFw8LxrQJyKO6qdjjOMLZbePAY00goT+libFeOu6H5EeYvoN4NiTUZGCeQ7YDri1K62/F4DjC5mAG+h4crM1ibtzPTniRjNvoMtQ/gL4iXAYo/gdCmoQr5iB3+N7ygRP8YnF5mAuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipWowmfK; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c718bb04a3so4977219a12.3;
-        Sun, 29 Sep 2024 18:11:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727658673; x=1728263473; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BeYuF7N8M1F/C8P4GndUFn3y/clkOx7utFNr66Yhz+g=;
-        b=ipWowmfKPNYipVNlDevF7gOywNsqyrzV5AaJ/nfXEXgvD83I5qDYvwuszQNjI87dNp
-         6dvtMO5icqhZNSx5NeHC1jJbcUT1sa4kK7Fpmnee59jgmGzCuOvyDm3HaBM3O/RbtB+/
-         bEZ7YV3fT9zjMAh0xKMT1W+hlvj40sAHXM2mnYLMjiH/dw5qJM0V3bQVqrfCBCKjmTjr
-         Dp5EinpIfzWrpvVl85VOdM4QvmdtUbFu/v7wapOaG0xcDNsnucKQi3eCXMVaoA+TmwyA
-         3oTm8RtVpww0HTVsxq7KHLfNFU+mbUTwNRGhVeGzMTTi4IK0X7BIR62E4WwBO3MEjHKI
-         k8aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727658673; x=1728263473;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BeYuF7N8M1F/C8P4GndUFn3y/clkOx7utFNr66Yhz+g=;
-        b=jayWCzeQVZs4MeGeptxgw7FERN3YzV1TXjJO3xEwW7w0D0pPd9xFnRw4PXFpNs6sXk
-         zPgMRgcQwTK9B24M/uVlRk0pELo3xZ829eQoDgmVVwgntRiMlOD+hZ5sJHvuXNQr014O
-         di3KuVHFuVK/KeREzOuWK710aLaiQtVfb3zJcwFHwDrrZ5e1FSVDdodLBO7YR+jCQw2g
-         92ScjqNS6EmqD8I4Hxv9OliDO1wFkdBHW+3jely2JVrDFMtnUIbrE8uoJ0IUbWvOAucf
-         kS3DHL2GFWj7FLKSbYVG3vNDn04XKB4q9Ext9qz0xeY6Y9vXdqcSJ98D6J/hJh5pQY2F
-         IFqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfJFjW5sXsnLOLSTN3o5Fv33fJbrviwo6LgvOR6pZ4jvo6I1Pku0AZnabPxDQ1+Y0Trlr663LFIsAzQ70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY45weyOUuWVc9MM8LrWvdQJdvcNmwG/7xoMJlKVoZ1XMyr4DX
-	FlPkbc9JcSNV3t4/nBBYGQvMm7ALjtD6eA9plREsx5kV33e17ZLh
-X-Google-Smtp-Source: AGHT+IFcbq0CXgyfkJAWl9hmlux6QUXtX5tuZuWXb/a3wj0evg151ROUunlppn1WUge0p4Bqxb6voQ==
-X-Received: by 2002:a05:6402:3813:b0:5c5:c0ef:282c with SMTP id 4fb4d7f45d1cf-5c8824d5f37mr10345997a12.11.1727658672785;
-        Sun, 29 Sep 2024 18:11:12 -0700 (PDT)
-Received: from localhost.localdomain ([79.115.63.238])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88240a38asm3827414a12.22.2024.09.29.18.11.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 18:11:12 -0700 (PDT)
-From: Tudor Gheorghiu <tudor.reda@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tudor Gheorghiu <tudor.reda@gmail.com>
-Subject: [PATCH] rust: re-order exports to fix rustfmt
-Date: Mon, 30 Sep 2024 04:09:32 +0300
-Message-ID: <20240930010931.64080-2-tudor.reda@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727659132; c=relaxed/simple;
+	bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=P8b+JzLKEamoVsxJHfq6etYdDnlSTHKDs2V3ODLnvEQV+psXeQEVzxi824yo1v15V/JbAlALg99kzgLQXx5uRTfY/BYHEWUV+3HcqNZpBkP+N/lwtZk7lsKpDLEa9yc5EWpCuRiajfUl81O/H0oKXUeK71DFqBZDT2L/SkHlfzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=OJYj6KNr; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=na5HGljU; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
+DKIM-Signature: a=rsa-sha256; b=OJYj6KNrugyBLKFx1+CjyhQ/sXMtv88UX1AMwVCKCm6JVd6ks+hoQR+r16CL1MfRBVORoMoO9RIF9Vd5ZDn4LGI69XMgvm7S7JXd2/cEuWh+bonHb0iXHcop/eNjt7BldE62A8PXaO3GH6OE5AsHzMUSRXKy6M6E/TfLU8ICp29cMsIrwoSb2AayHKrRkfIQqr3GESJCDXx5Fg0SLVko6FZkm8KK+tShM1k4aKGwQ7IM4jLfXTnU01lfVewjLA2ojYJjYygqSCt2TMk2xSPrNhdtSySr1VwZE/dv0SMic943My5HGi3hvlR41lpQ9N8LjcNwZckqtPjvYu6vDz6oxA==; s=purelymail1; d=lkcamp.dev; v=1; bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=; h=Received:Date:Subject:To:From;
+DKIM-Signature: a=rsa-sha256; b=na5HGljU8ildFIXXp5wa6hZWU/0ai5GaXobOBdKAgkdQ0tRPWQi3dJRcyOs/RReyFW4K7rg7zUiThqsV8cwMPTsS/YmrNKwpR/1x2n50CXyKzUi9A9/ZE6gPLu0XlvEZweipy76egrYLnywb7c8OuXhvuHVvSHJ80IeXFM6R/Pnl79XjzeyQ1AgmeEzrOD1StIDIBup3xcZPXtO0AOjinXKg1H67OVM+PU2d1Sxr0QlZGGunwR40Hi3WeCTF2W/hUCrTygW54WJmOreDGXvUTeHjRUNYDIjJN83aj09XPdNCjIsDJLh72slDIN4F4Q1KzlUSjUa59x/DXCB0Lab9Og==; s=purelymail1; d=purelymail.com; v=1; bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=; h=Feedback-ID:Received:Date:Subject:To:From;
+Feedback-ID: 40580:7130:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -2015297320;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 30 Sep 2024 01:18:30 +0000 (UTC)
+Message-ID: <1ca713fc-2675-4154-ad46-a3fe11839148@lkcamp.dev>
+Date: Sun, 29 Sep 2024 22:18:26 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] Add KUnit tests for lib/crc16.c
+To: David Laight <David.Laight@ACULAB.COM>,
+ Brendan Higgins <brendan.higgins@linux.dev>, David Gow
+ <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "kunit-dev@googlegroups.com" <kunit-dev@googlegroups.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "~lkcamp/patches@lists.sr.ht" <~lkcamp/patches@lists.sr.ht>
+References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
+ <51c4ba25f9284a749b451ca203fcc124@AcuMS.aculab.com>
+Content-Language: en-US
+From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
+In-Reply-To: <51c4ba25f9284a749b451ca203fcc124@AcuMS.aculab.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In the recent rust-6.12 tag merge at 570172569238, the rbtree export was
-added after the sizes export, thus breaking rustfmt's alphabetical
-export ordering rules.
+Hi David,
 
-Signed-off-by: Tudor Gheorghiu <tudor.reda@gmail.com>
----
- rust/kernel/lib.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 9/25/24 08:26, David Laight wrote:
+> From: Vinicius Peixoto
+>> Sent: 23 September 2024 00:27
+>>
+>> Hi all,
+>>
+>> This patch was developed during a hackathon organized by LKCAMP [1],
+>> with the objective of writing KUnit tests, both to introduce people to
+>> the kernel development process and to learn about different subsystems
+>> (with the positive side effect of improving the kernel test coverage, of
+>> course).
+>>
+>> We noticed there were tests for CRC32 in lib/crc32test.c and thought it
+>> would be nice to have something similar for CRC16, since it seems to be
+>> widely used in network drivers (as well as in some ext4 code).
+>>
+>> Although this patch turned out quite big, most of the LOCs come from
+>> tables containing randomly-generated test data that we use to validate
+>> the kernel's implementation of CRC-16.
+>>
+>> We would really appreciate any feedback/suggestions on how to improve
+>> this. Thanks! :-)
+> 
+> Would is be better to use a trivial PRNG to generate repeatable 'random enough'
+> data, rather than having a large static array?
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 22a3bfa5a9e9..b5f4b3ce6b48 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -44,8 +44,8 @@
- pub mod page;
- pub mod prelude;
- pub mod print;
--pub mod sizes;
- pub mod rbtree;
-+pub mod sizes;
- mod static_assert;
- #[doc(hidden)]
- pub mod std_vendor;
--- 
-2.43.0
+That's fair, the big static arrays are indeed very unwieldy. I reworked 
+it to use next_pseudo_random32 (from include/linux/prandom.h) to fill 
+the tables with pseudorandom data before running the tests, and will 
+send a v2 soon.
+
+The LOC count is a lot smaller, although it is still using static tables 
+to store the data and the tests (I thought it would be simpler than 
+allocating them at runtime). Do you think this is acceptable?
+
+> As a matter of interest, how in crc16 implemented (I know I could look).
+> The code version:
+> 
+> uint32_t
+> crc_step(uint32_t crc, uint32_t byte_val)
+> {
+>      uint32_t t = crc ^ (byte_val & 0xff);
+>      t = (t ^ t << 4) & 0xff;
+>      return crc >> 8 ^ t << 8 ^ t << 3 ^ t >> 4;
+> }
+> 
+> may well be faster than a lookup table version.
+> Especially on modern multi-issue cpu and/or for small buffers where the lookup
+> table won't necessarily be resident in the D-cache.
+
+lib/crc16.c does use a lookup table. I haven't had the time to run 
+benchmarks testing whether this version is faster, but I'm curious as 
+well, so I'll look into it.
+
+Thanks,
+Vinicius
+
+> 
+> It is slightly slower than the table lookup on the simple Nios-II cpu.
+> But we use a custom instruction to do it in one clock.
+> 
+> 	David
+> 
+>>
+>> Vinicius Peixoto (1):
+>>    lib/crc16_kunit.c: add KUnit tests for crc16
+>>
+>>   lib/Kconfig.debug |   8 +
+>>   lib/Makefile      |   1 +
+>>   lib/crc16_kunit.c | 715 ++++++++++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 724 insertions(+)
+>>   create mode 100644 lib/crc16_kunit.c
+>>
+>> --
+>> 2.43.0
+>>
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
 
 
