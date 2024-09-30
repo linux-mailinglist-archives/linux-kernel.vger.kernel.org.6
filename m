@@ -1,183 +1,147 @@
-Return-Path: <linux-kernel+bounces-343538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF21989C3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:11:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BA5989C3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C89C81F21597
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D6D281117
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB42186E24;
-	Mon, 30 Sep 2024 08:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E7717A58F;
+	Mon, 30 Sep 2024 08:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FppoJLcG"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R5lf32x0"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CAE17CA03
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F26175D4C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727683790; cv=none; b=UrudILMW1Sv+prDHsJQ/sIj2w5A0kWl9LJedmoG3Zw3XabH07q9DnGC1qAwNiWm1qfQBmEIEMJ3x4lOPG1WVoO5pHi+xzMav1pk/a04SbTcixvxcEgFER78Z4AbddjbM92bhxnFnwjrC2vZNnuYUdHDEZeotPZNSl0+KW9+HxA0=
+	t=1727683785; cv=none; b=E1lB1pawJSe+pI7/b+UeeLrnlafbcYKyKL0H5X+U/j+WG4VsbQZ00e2QrayZVahKeFYW4QUdketYPl8+pKCO9IM8/X4a2xLMb5+fhvfr0W3/HraReGmDES+aTPHtViZm/4KxBpn95j8WIgyo3CUOJmtog+fp4O1V/6iw1ej2Q1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727683790; c=relaxed/simple;
-	bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qJ9Vd96RjmotMqvvimNO9Y8zyHmUpGmKGtB3l3SN7eIkw/fQNWE/aUVca+DBFbdeAq5Yv/utWUI10ZB2Ev3hgh0XgbD2g6TMwv5PCY0sPuGqTHCr6gdlya3AqgCYKnjz/33vZbrAYWh00n9XCUirVw8S/g2l7CGb5djkzi7RUT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FppoJLcG; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-206aee4073cso46038385ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:09:48 -0700 (PDT)
+	s=arc-20240116; t=1727683785; c=relaxed/simple;
+	bh=eJWJ5O7IhSzIyCjxLeR9OylqZkh5gY0V+stMheEKz2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BU9aLH5IWmTkV7Ysh+UhbSjpb1W+OLaLtbq8zm7bZs1lmbk/N+sEieX6e4cpwNIVZo9c9GKresD0HLjbSGwc1Agqys4cNNThYQmHbTYv/ZrVFaUav9X3RasEUZDQuIAcMKJx4qi5UOGv2RfEFDQ8rwb8aWwz1r19JRoXM+Jryxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R5lf32x0; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37cdb6ebc1cso1187705f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727683788; x=1728288588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
-        b=FppoJLcGOoI00AZ8pk9Ew/JK7dacaHMNbFXsnQuvxKaTWAS4DWz6DYUvNIajVaMwkT
-         BwuQZ72IQytY6qRdTdi7DkcUAKE00W2hO3p9egE6Nro5PVyblOOngJpJEYgDH45549ne
-         FpqUzX3K08jJsk5rCS+BYKSujmu0Q8R2aANZjHQip3L+M3QzflD7YbogkinBLZwIiAo4
-         7KygE21g69FoDG4l2C6CANX0u4jMyu+A4pKRM1SXDWJXjgZJPjR2TOklOhnrImObQf+/
-         UBKKkiFPxagJJC/IFUIExb2wel5xY7CvRmaBH2+d0LxJ2hJf8qsTl3oS7ED70GQNCiF2
-         Ql/Q==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727683782; x=1728288582; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t3cG+kWNy0aWF/w1xI6GPRKYc2TRij9cCl7c9R+dadU=;
+        b=R5lf32x0rWEJ9SkjDTI9tNTFIfqZ4iBPKvcugL5mJPBg0cL1sCSAS6lXvNaUzRoggO
+         RpHOeS1zHejl/AiB1MCs7RIdXC7sDyDOYX6Fa+wpOzbbLxK9yQtTvE2KjneceqVefSZa
+         yqWqvw3FjtpDYURDvsETVSNXfFSMDJ1TgvjbYD8/+KTi4gPCisaX9tkqDzVgKYfbkmPJ
+         rm6SltDAbTUhal1HJVksSGUQzlJrgxOgR3K4G/rSGgnyFVU+6b1chmrCazmm6IusggNS
+         avCkPSmQ7RN4T30uxv8K7v5/xPCprxkKVXYj/1PhGcwS9Cyr2OrxpMKqCxmje5AZunUd
+         /2bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727683788; x=1728288588;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727683782; x=1728288582;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Xx414iMLuxALXKs+wO5vcFTmabes1w6H5Py+TNbMyPA=;
-        b=JMKVHe7rNFUhPCjxDQcAOSTnzAfXo9BTo0Kt/WW9FKg4SBXsBcQr8hYHxEya05nLrv
-         ThAy34jd6W2Rjgw3lp/bFIP4prhB2FpnPge6GrkvMY/dWHT/aWSpfd2qsv9IRXgarJy2
-         uThurgFjoeI1Wo5jwF/PcslAlvEx3ufA0GqJcWA2gDHxiAKhpdzkpuWmIMdF6FMBFyKB
-         kVN1yJagCJMk8w8jlrEdHCahmoTAru5MLes5ckwm300y4yeQSX1vmB9ih5QT0yOFu2fH
-         h99Jpw3DDDxvdRc2h93qLyVBqcFR4SA7O6XNTcL7pH4U68amRJcAybyp3i+gyrxsBigk
-         4LXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWylokBfyBQb/ePjRI8TtocvMLov3jea0gFl5Moq2qnO5XUILUGdSftcOnGO2lFEtQZOSsFiMeH9Td4TlA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEQf180ZGrQ5Lts3iJimV/NdrXv7+pD4/WsBqScHHXt8oBjA0e
-	kXDhM9GKZCdFE8s4ZZSNa27JUhqyoloEOKYw8DQsFIbAYPVhJqxVbIz1vpSTn8EBNLmBEmpFwyU
-	Cr0j56ttv9y+wsRR8y4bI94LqiEdzd+nQIjbrJA==
-X-Google-Smtp-Source: AGHT+IHL79vWrV1UbQW2i+UC3FcnuUEn4RoHxDXgrgsEhFXFX4vbKat3GD+mMJkdcENWj5dVp6Y7ppyyQzgjgk1yEE8=
-X-Received: by 2002:a17:902:ce91:b0:20b:6d8c:461 with SMTP id
- d9443c01a7336-20b6d8c0791mr75062715ad.5.1727683788157; Mon, 30 Sep 2024
- 01:09:48 -0700 (PDT)
+        bh=t3cG+kWNy0aWF/w1xI6GPRKYc2TRij9cCl7c9R+dadU=;
+        b=tYEn14Scdnv1scM9rpw4/KwikWJfS2Q0mA7MjWqfNiXw6cRj8btaQA6iBMRulBYfUW
+         Hqemv1W1g+mbGUpxlfNEbMsp87QDt+hzuR/WiE2iJq0O5rz8W6ywIDHyKtyFry0ohAiw
+         8n2i3lgHRKg3afol4COe+xVmIjDsfjKAEjcPHCq4KGhZnKqIj6zAs2YGZVwno7vd/l5d
+         3gAPCgPiHvAX9+0NS5eKILwvFpVvM/ThfepypAfM2Y2vzwJdXW6WFUzj5mouRztyA+Kc
+         jr6VZadFgSCDmjiGGiyNswAfAZUllc4vJ7K+OqkewCRhrTs3Ajt7LvvJlOaJwGT8hfDb
+         eb7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPjIqg/slVWPE/WqKStY1Z0JS1hLpIVFjxA0gLKTKxMS4TksTWAx7d1F7ZkKgypCQEva5MXE2ykvLfWaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5MpeT6qAYIzV0avIIZAmgPAiA4IgOunuOtuQjAQgB2WfJcsjX
+	++svyIvuGQDKokEIxBIAWmfx8ffUJbX0x+khfOzVmCmDlRxkyTYRAWOJHNcYsrU=
+X-Google-Smtp-Source: AGHT+IGdNfSheQTh+ej2FO2pI5eUxUQadxS7l9tN6fT0khbGP+eIx+6Q+BdPZ4OvlzHCqNBKewtGng==
+X-Received: by 2002:a5d:480e:0:b0:364:6c08:b9b2 with SMTP id ffacd0b85a97d-37cd5b31988mr5870067f8f.45.1727683782297;
+        Mon, 30 Sep 2024 01:09:42 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd5742499sm8306463f8f.93.2024.09.30.01.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 01:09:42 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [RESEND PATCH] Bluetooth: hci_qca: use devm_clk_get_optional_enabled_with_rate()
+Date: Mon, 30 Sep 2024 10:09:38 +0200
+Message-ID: <20240930080938.12505-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925075707.3970187-1-linyunsheng@huawei.com>
- <20240925075707.3970187-3-linyunsheng@huawei.com> <CAHS8izOxugzWJDTc-4CWqaKABTj=J4OHs=Lcb=SE9r8gX0J+yg@mail.gmail.com>
- <842c8cc6-f716-437a-bc98-70bc26d6fd38@huawei.com> <CAC_iWjLgNOtsbhqrhvvEz2C3S668qB8KatL_W+tPHMSkDrNS=w@mail.gmail.com>
- <0ef315df-e8e9-41e8-9ba8-dcb69492c616@huawei.com> <CAC_iWjKeajwn3otjdEekE6VDLHGEvqmnQRwpN5R3yHj8UpEiDw@mail.gmail.com>
- <934d601f-be43-4e04-b126-dc86890a4bfa@huawei.com> <CAC_iWjL7m4ZL2W2OZM5F22dLvZhxU6fyCXV_xjyGf+W7UP43EQ@mail.gmail.com>
- <ac2eec69-8f44-4adb-8182-02c78625851d@huawei.com>
-In-Reply-To: <ac2eec69-8f44-4adb-8182-02c78625851d@huawei.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Mon, 30 Sep 2024 11:09:11 +0300
-Message-ID: <CAC_iWj+Shb6buVf+wZaWe-NZ+UVxmW9DYqsTiL27U+V_Ko_65w@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] page_pool: fix IOMMU crash when driver has
- already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: Mina Almasry <almasrymina@google.com>, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, liuyonglong@huawei.com, fanghaiqing@huawei.com, 
-	zhangkun09@huawei.com, Robin Murphy <robin.murphy@arm.com>, 
-	Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, 
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, Eric Dumazet <edumazet@google.com>, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Felix Fietkau <nbd@nbd.name>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee <ryder.lee@mediatek.com>, 
-	Shayne Chen <shayne.chen@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
-	Kalle Valo <kvalo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, imx@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 29 Sept 2024 at 05:44, Yunsheng Lin <linyunsheng@huawei.com> wrote:
->
-> On 2024/9/28 15:34, Ilias Apalodimas wrote:
->
-> ...
->
-> >
-> > Yes, that wasn't very clear indeed, apologies for any confusion. I was
-> > trying to ask on a linked list that only lives in struct page_pool.
-> > But I now realize this was a bad idea since the lookup would be way
-> > slower.
-> >
-> >> If I understand question correctly, the single/doubly linked list
-> >> is more costly than array as the page_pool case as my understanding.
-> >>
-> >> For single linked list, it doesn't allow deleting a specific entry but
-> >> only support deleting the first entry and all the entries. It does support
-> >> lockless operation using llist, but have limitation as below:
-> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/include/linux/llist.h#L13
-> >>
-> >> For doubly linked list, it needs two pointer to support deleting a specific
-> >> entry and it does not support lockless operation.
-> >
-> > I didn't look at the patch too carefully at first. Looking a bit
-> > closer now, the array is indeed better, since the lookup is faster.
-> > You just need the stored index in struct page to find the page we need
-> > to unmap. Do you remember if we can reduce the atomic pp_ref_count to
-> > 32bits? If so we can reuse that space for the index. Looking at it
->
-> For 64 bits system, yes, we can reuse that.
-> But for 32 bits system, we may have only 16 bits for each of them, and it
-> seems that there is no atomic operation for variable that is less than 32
-> bits.
->
-> > requires a bit more work in netmem, but that's mostly swapping all the
-> > atomic64 calls to atomic ones.
-> >
-> >>
-> >> For pool->items, as the alloc side is protected by NAPI context, and the
-> >> free side use item->pp_idx to ensure there is only one producer for each
-> >> item, which means for each item in pool->items, there is only one consumer
-> >> and one producer, which seems much like the case when the page is not
-> >> recyclable in __page_pool_put_page, we don't need a lock protection when
-> >> calling page_pool_return_page(), the 'struct page' is also one consumer
-> >> and one producer as the pool->items[item->pp_idx] does:
-> >> https://elixir.bootlin.com/linux/v6.7-rc8/source/net/core/page_pool.c#L645
-> >>
-> >> We only need a lock protection when page_pool_destroy() is called to
-> >> check if there is inflight page to be unmapped as a consumer, and the
-> >> __page_pool_put_page() may also called to unmapped the inflight page as
-> >> another consumer,
-> >
-> > Thanks for the explanation. On the locking side, page_pool_destroy is
-> > called once from the driver and then it's either the workqueue for
-> > inflight packets or an SKB that got freed and tried to recycle right?
-> > But do we still need to do all the unmapping etc from the delayed
-> > work? Since the new function will unmap all packets in
-> > page_pool_destroy, we can just skip unmapping when the delayed work
-> > runs
->
-> Yes, the pool->dma_map is clear in page_pool_item_uninit() after it does
-> the unmapping for all inflight pages with the protection of pool->destroy_lock,
-> so that the unmapping is skipped in page_pool_return_page() when those inflight
-> pages are returned back to page_pool.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Ah yes, the entire destruction path is protected which seems correct.
-Instead of that WARN_ONCE in page_pool_item_uninit() can we instead
-check the number of inflight packets vs what we just unmapped? IOW
-check 'mask' against what page_pool_inflight() gives you and warn if
-those aren't equal.
+Use the new devm_clk_get_optional_enabled_with_rate() clock helper to
+shrink the code a bit.
 
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Resending now that devm_clk_get_optional_enabled_with_rate() is in
+mainline.
 
-Thanks
-/Ilias
->
-> >
+ drivers/bluetooth/hci_qca.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index 678f150229e7..ad40118c9f82 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -2294,13 +2294,6 @@ static int qca_init_regulators(struct qca_power *qca,
+ 	return 0;
+ }
+ 
+-static void qca_clk_disable_unprepare(void *data)
+-{
+-	struct clk *clk = data;
+-
+-	clk_disable_unprepare(clk);
+-}
+-
+ static int qca_serdev_probe(struct serdev_device *serdev)
+ {
+ 	struct qca_serdev *qcadev;
+@@ -2433,25 +2426,12 @@ static int qca_serdev_probe(struct serdev_device *serdev)
+ 		if (!qcadev->bt_en)
+ 			power_ctrl_enabled = false;
+ 
+-		qcadev->susclk = devm_clk_get_optional(&serdev->dev, NULL);
++		qcadev->susclk = devm_clk_get_optional_enabled_with_rate(
++					&serdev->dev, NULL, SUSCLK_RATE_32KHZ);
+ 		if (IS_ERR(qcadev->susclk)) {
+ 			dev_warn(&serdev->dev, "failed to acquire clk\n");
+ 			return PTR_ERR(qcadev->susclk);
+ 		}
+-		err = clk_set_rate(qcadev->susclk, SUSCLK_RATE_32KHZ);
+-		if (err)
+-			return err;
+-
+-		err = clk_prepare_enable(qcadev->susclk);
+-		if (err)
+-			return err;
+-
+-		err = devm_add_action_or_reset(&serdev->dev,
+-					       qca_clk_disable_unprepare,
+-					       qcadev->susclk);
+-		if (err)
+-			return err;
+-
+ 	}
+ 	
+ 	err = hci_uart_register_device(&qcadev->serdev_hu, &qca_proto);
+-- 
+2.43.0
+
 
