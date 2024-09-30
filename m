@@ -1,165 +1,129 @@
-Return-Path: <linux-kernel+bounces-343306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22312989962
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CFE989968
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4B04B222B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:20:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ED78B22552
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7462D05D;
-	Mon, 30 Sep 2024 03:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE4E4D8BC;
+	Mon, 30 Sep 2024 03:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lYgI99Bn"
-Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SubN16GC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA551A288;
-	Mon, 30 Sep 2024 03:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677BF39FF3;
+	Mon, 30 Sep 2024 03:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727666448; cv=none; b=Nnc9fxZqQZZkJeWkbnEkJgASMpjky4IN+7ch//1jpj+VDxzaPHiag9aqfhaXzrH7XhgVR4kkmZugibkxtJ0jbV8cjtLsIVPxgk1/y5LBW8AHq06e6FsTD9Ts3RFPKUkUQPR//jS/h6Z92JMQWYqs4MYJHIlbofx4qwAVaenkqPA=
+	t=1727666450; cv=none; b=gYWbh7FhpLWZ5lsZCGqWKdl0/POitm5VMmP6/pjsDm8mldRRcT0Wwhyj22b2b8nOrPzmdiqiqFLA8yGnc1nfknAicd1IDyKToL/plaBXfbVQwSoFKvFEMFpREvfsvEB+xpdlA081P3qd3wMKNboccD8zcFiIUIin05rcFpC/V0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727666448; c=relaxed/simple;
-	bh=ay3MUvCZq9yN8i2gbuXEpbVKhpEcZbnPWAHyGy5OcUs=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=S9uXG+yM6Yyf6hxn/sTWeeoFUFo5XxDybXWJKSzXrp6cQ7UOfPI1jVIqGYfJiDaYNqPK68UIBTO9bci61oC/9gkOGlp1fzf6Gtnin/Nwm+S8jBaxcPCs3Lr/Pnrq/IzbD12NXO6ptfJcPKtcnU473pvEzJgFgTfMZQ5eipyeMaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lYgI99Bn; arc=none smtp.client-ip=203.205.221.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1727666437; bh=VGNgmHrqrFOv2Niu9U2cuhY4Og3BHlCKU4x9HInKv7A=;
-	h=From:To:Cc:Subject:Date;
-	b=lYgI99BnDhzSCsoC9fc/wQB0NTm03jOcFzXLM+WA/HGRJuSxLYvQ7ctffIfQbv575
-	 jBlKGRHNxYnkbAZ2wzw/SRH5leD/g868DGjQ6+cKM5hAazezpQJYmKd4FgNhO197Ez
-	 +nX78oDBSQc55QS+qpcykE/WF7vZv3VacfKsqsm8=
-Received: from LAPTOP-58DOKDH3.localdomain ([115.153.148.27])
-	by newxmesmtplogicsvrszgpua4-0.qq.com (NewEsmtp) with SMTP
-	id 4D12F4CF; Mon, 30 Sep 2024 11:19:17 +0800
-X-QQ-mid: xmsmtpt1727666357tj6rw4mjo
-Message-ID: <tencent_A926284D28E1F878F1888699245B2E06CF0A@qq.com>
-X-QQ-XMAILINFO: NC/J3CrDtaBb9UqwR/kqPl5opia5IMQu/cD8tH4WlJXZvXLvJewaMsAeezPMPg
-	 E+FRq2APEWBpfRa2jjhCQXTDkFuO3SbBHp/W1aqOlqBoLXux4RafkmaDzRKS7Becr4Ns6n2XmgGs
-	 1LnV1jnnm3h9xgC/QTeLN0vgbOuvkeKWPs/pc0XccvoKtcBYuKcsLR+N5vjJJhpiiTIYrZ4/T6uE
-	 +pI6gxQ6ug3phVqY31iimNPUBiVBjTCW1Irz859frTyabG5s3ulzOmAUSE9EiQlH2t2F/kXb8hzw
-	 2l6oQvGbOmP9eOGv6lPP7eP8msf3iCvOtWlORUKJkLWRA30n/enSEuNmGY6PKzIFGMJb/PEgmidI
-	 ztO+HMYt5I6q3b4ViPnRE5wVDZOKMkCVXRUGeEXy6pQ3T58iRyUOa3wi1r9y0oMvsfSZFwAtJFrP
-	 Ba///1+M4p+BzQzODZnmSFOvzFfoz2QKiH3sfJQnnjsYAH5+VSB8mReXGHTqbkVvQSebSxdzA0uA
-	 f6ZSYzXMBe5A29Q3nOOLTAZl1sXuRgLQIAcNmU4MxknEI3llHPkom/5JKOWclxmDVaJBS7mMkP7i
-	 mvli7rKYKMlHrEib7NjZ/btesBcMP8ch3CbXqe0uDuH4rL20kQfJMu97k9WcNGsH2WmJeguYAU5i
-	 SfeRfhX8SzJx4StmU+273tNa0J8+uv91BplpiOT+wgREU4epcrSw7j8BvBqUJb6xRYWUW1Hf7LAx
-	 mSGCtWdpo1YTOjZFXYZ7UhuqOcHmIdOP2WcXnqYvI+ZcU8gQNQIMZA0SLdBkEwSyCvZ/h5SHVaMO
-	 OvvjNbHkCfz2sTy9nz6nnxy00DUuL5sZiAfVdl/JvMJhaJZTNmHfu9Gq+wTVaH82y66yoq0wRUCt
-	 0E0hixFdwzMaGRIAA6yp1VPpDBVXyZLk7+ljsv8G3MLygJ4dbrZkSzuakJCymOWvmyqmzldTeViL
-	 f5nx/+K38IXWvay8UetxMcnyxh1MEJmaAWpZFh9vM=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: winterver <295107659@qq.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	winterver <295107659@qq.com>
-Subject: [PATCH] dio: Improve readability: rename dio_scodetophysaddr
-Date: Mon, 30 Sep 2024 11:18:37 +0800
-X-OQ-MSGID: <20240930031837.2341-1-295107659@qq.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727666450; c=relaxed/simple;
+	bh=pu+tBzgdU6YbOS8CSmAkmouW3UeVIsJa5ewszORsm80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i63eL4VkwiHIOwDGOgjdqw9FaRdnkpqOuKCQIHs98CRPYzX0OgAS6thOW/dDtdpDaXyfYunSJtrbpP2iUOPvnSbI1Y2F5YSAAvy8rxh68c2ajMYZ4fyiYzVhYRoDPJNKy0hR8UA9EykTPihwzcSIo8NVvjKqbHHdDGOxyEA/0j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SubN16GC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAE3C4CEC5;
+	Mon, 30 Sep 2024 03:20:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727666450;
+	bh=pu+tBzgdU6YbOS8CSmAkmouW3UeVIsJa5ewszORsm80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SubN16GCl3Xwlpein6ssWhDm31R8tuOZVk//vK+VoZrbPn5lx32C7mlarcZ4GPsqX
+	 royB/EsgDk7RsMEqahQ1SJlbghTLTBPSuKkC0V3CLur/znKlhAcZztAWBnAzsCdFFx
+	 5ZsQZpUvKu6ItQMbgye9ckr00zx+5GcsZPI/Ae+cBPhPJP9JgbUVg/BbxxwJpJX/KH
+	 /iUKgPSEEXvWnrVNowzj9XWULfTdaCCYbgeTz3C2SGnj5NFzEhsBTU/rPiuxovTmwg
+	 j9Oycyt3r43dqBpiOd4gIwSQIJvEYbeTaoabxbGi/7ifzZeOAhF8QwC/je48y0hZCr
+	 qqt41YYkKvuvA==
+Date: Sun, 29 Sep 2024 22:20:46 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andi.shyti@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
+	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
+	Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org, 
+	krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+Message-ID: <anfqjd5rcslplfqannqqli2k2gnq2p4qsnkyrfgmavdpll7p42@c7o4tdouiav4>
+References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+ <20240927063108.2773304-2-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927063108.2773304-2-quic_msavaliy@quicinc.com>
 
-Rename dio_scodetophysaddr to dio_scode_to_physaddr.
-Also dio_scodetoipl -> dio_scode_to_ipl and dio_scode_to_name
--> dio_scode_to_name, though they're not implemented yet.
-I've searched these names in the repo. There are only a few of references.
-I think it's OK and worth renaming them for readability.
+On Fri, Sep 27, 2024 at 12:01:05PM GMT, Mukesh Kumar Savaliya wrote:
+> Adds qcom,shared-se flag usage. Use this when particular I2C serial
+> controller needs to be shared between two subsystems.
+> 
 
-Signed-off-by: winterver <295107659@qq.com>
----
- drivers/dio/dio.c                    | 12 ++++++------
- drivers/tty/serial/8250/8250_hp300.c |  2 +-
- include/linux/dio.h                  |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
 
-diff --git a/drivers/dio/dio.c b/drivers/dio/dio.c
-index 0a051d656..143e58c9f 100644
---- a/drivers/dio/dio.c
-+++ b/drivers/dio/dio.c
-@@ -11,12 +11,12 @@
-  *    This means that framebuffers should pass it as
-  *    DIO_ENCODE_ID(DIO_ID_FBUFFER,DIO_ID2_TOPCAT)
-  *    (or whatever); everybody else just uses DIO_ID_FOOBAR.
-- * unsigned long dio_scodetophysaddr(int scode)
-+ * unsigned long dio_scode_to_physaddr(int scode)
-  *    Return the physical address corresponding to the given select code.
-- * int dio_scodetoipl(int scode)
-+ * int dio_scode_to_ipl(int scode)
-  *    Every DIO card has a fixed interrupt priority level. This function
-  *    returns it, whatever it is.
-- * const char *dio_scodetoname(int scode)
-+ * const char *dio_scode_to_name(int scode)
-  *    Return a character string describing this board [might be "" if
-  *    not CONFIG_DIO_CONSTANTS]
-  * void dio_config_board(int scode)     mark board as configured in the list
-@@ -130,7 +130,7 @@ int __init dio_find(int deviceid)
- 		if (DIO_SCINHOLE(scode))
- 			continue;
- 
--		pa = dio_scodetophysaddr(scode);
-+		pa = dio_scode_to_physaddr(scode);
- 
- 		if (!pa)
- 			continue;
-@@ -203,7 +203,7 @@ static int __init dio_init(void)
- 		if (DIO_SCINHOLE(scode))
- 			continue;
- 
--		pa = dio_scodetophysaddr(scode);
-+		pa = dio_scode_to_physaddr(scode);
- 
- 		if (!pa)
- 			continue;
-@@ -274,7 +274,7 @@ subsys_initcall(dio_init);
- /* Bear in mind that this is called in the very early stages of initialisation
-  * in order to get the address of the serial port for the console...
-  */
--unsigned long dio_scodetophysaddr(int scode)
-+unsigned long dio_scode_to_physaddr(int scode)
- {
- 	if (scode >= DIOII_SCBASE)
- 		return (DIOII_BASE + (scode - 132) * DIOII_DEVSIZE);
-diff --git a/drivers/tty/serial/8250/8250_hp300.c b/drivers/tty/serial/8250/8250_hp300.c
-index 3012ea03d..1bef48842 100644
---- a/drivers/tty/serial/8250/8250_hp300.c
-+++ b/drivers/tty/serial/8250/8250_hp300.c
-@@ -124,7 +124,7 @@ int __init hp300_setup_serial_console(void)
- #endif
- 	} else {
- #ifdef CONFIG_HPDCA
--		unsigned long pa = dio_scodetophysaddr(scode);
-+		unsigned long pa = dio_scode_to_physaddr(scode);
- 		if (!pa)
- 			return 0;
- 
-diff --git a/include/linux/dio.h b/include/linux/dio.h
-index 464331c4c..1677cdf6d 100644
---- a/include/linux/dio.h
-+++ b/include/linux/dio.h
-@@ -241,7 +241,7 @@ struct dio_driver {
-  */
- 
- extern int dio_find(int deviceid);
--extern unsigned long dio_scodetophysaddr(int scode);
-+extern unsigned long dio_scode_to_physaddr(int scode);
- extern int dio_create_sysfs_dev_files(struct dio_dev *);
- 
- /* New-style probing */
--- 
-2.25.1
+> SE = Serial Engine, meant for I2C controller here.
+> TRE = Transfer Ring Element, refers to Queued Descriptor.
+> SS = Subsystems (APPS processor, Modem, TZ, ADSP etc).
 
+Expressing yourself in terms of abbreviations just makes the text harder
+to read. The dictionary is nice, but I don't see that it adds value to
+introduce these abbreviations with the reader.
+
+> 
+> Example :
+> Two clients from different SS can share an I2C SE for same slave device
+> OR their owned slave devices.
+> Assume I2C Slave EEPROM device connected with I2C controller.
+> Each client from ADSP SS and APPS Linux SS can perform i2c transactions.
+> This gets serialized by lock TRE + DMA Transfers + Unlock TRE at HW level.
+> 
+
+Don't describe your problem using a bullet-point list. You should be
+able to express it in a flowing English sentence/paragraph.
+
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> index 9f66a3bb1f80..3b9b20a0edff 100644
+> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+> @@ -60,6 +60,10 @@ properties:
+>    power-domains:
+>      maxItems: 1
+>  
+> +  qcom,shared-se:
+> +    description: True if I2C needs to be shared between two or more subsystems(SS).
+
+I see no value in establishing the "SS" abbreviation here, what would be
+useful is to write this sentence such that it establishes the "SE"
+abbreviation (to avoid having to expand the property).
+
+On the other hand, it's a boolean property in a serial-engine node, so
+I don't know if it's worth repeating "se" here. "qcom,is-shared" sounds
+like a better boolean in a se-node.
+
+Regards,
+Bjorn
+
+> +    type: boolean
+> +
+>    reg:
+>      maxItems: 1
+>  
+> -- 
+> 2.25.1
+> 
 
