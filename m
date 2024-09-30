@@ -1,442 +1,355 @@
-Return-Path: <linux-kernel+bounces-344218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE3198A691
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0660B98A5D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CE61C21F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29AB11C20B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE9B18FDDB;
-	Mon, 30 Sep 2024 14:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6533018FDB2;
+	Mon, 30 Sep 2024 13:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ii5mTUaw"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="V/ePQ6qn"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2050.outbound.protection.outlook.com [40.107.117.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DFC848E;
-	Mon, 30 Sep 2024 14:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727705060; cv=none; b=sgdFQq//P09FMLQr41+COmPQUxYbkRONHuQsP0yjyynkcOagmq5Dwf8E49dZmPCsK5HKB4lR+cwuBknz5ZYbHsAwqrXf8b7W/DXEEv7nfFH8zHBYaxAlEtXNazqDMy2N51dg+JhGK8UT+TZWQO1fpBEPp9t+1Qora5PBldh1rnY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727705060; c=relaxed/simple;
-	bh=DkiIyYqe/y/28oveuc6XQ1bi80q/O7JJrwNfG6Cufks=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BO0IaepgELsh3b7KXfAteODlIhqCka66iPkisn1EMytCIHl9dQIuJDe00xdnw2S7r8NzTw9es6cBcHYi/IvtDwVdHGDHw572ziSven1p2fJIF8pXoDEo0d+GiOkWSnkFs+MIPeVeqbc7WGRk/oG62PNCX8v+IIy7Vwfvzu0eoFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ii5mTUaw; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=yw5nwged4jd6hisz6c6aeuwbei.protonmail; t=1727705051; x=1727964251;
-	bh=AKF+9PLOtZ3inttQHvGzN0pX4cfjXoP+IlE3WJSpAq4=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=ii5mTUaw6UHBXjWV/b/wTzCOrZEl/5ZlF6F9NmBH4aIMHda3rMGM/ZbRMeVwSuXbY
-	 n5xrDQC1HnvcpSYW5oz5iN+ABgX11LuHGArfsI/zO4TGAgZvr4sExax7PA2eaF7Vh1
-	 AhvtaaN4nLsX4XnX1LU90kL7bjJtOQC48t1XstmBBVhaob1tfJjG32D2kXIHf12lrH
-	 izQ5UdTBzPctKXnSAoVztFQSvWQsFJTZeZ5HGjOQgZor9h/4VlU108DQ4rJgFYZ0Bb
-	 MDcpv0mwnItBY1y3KrL9TEh3o2fBek9Di0uFZF6dWXLwd5S6rP6ele9gJ+rqpkZBa7
-	 aMGqo9iDtGz4w==
-Date: Mon, 30 Sep 2024 14:04:06 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Subject: Re: [PATCH v2 1/2] rust: add untrusted data abstraction
-Message-ID: <254496ac-bc5f-4622-99c4-9e2ada27e069@proton.me>
-In-Reply-To: <ZvU6JQEN_92nPH4k@phenom.ffwll.local>
-References: <20240925205244.873020-1-benno.lossin@proton.me> <20240925205244.873020-2-benno.lossin@proton.me> <ZvU6JQEN_92nPH4k@phenom.ffwll.local>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 7b0a779bb177ff9ad4af23d49f87489eaf67c158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2919819047D
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727704158; cv=fail; b=JvuVdHYeFQ1dl0GrOfTbjc3U6Su7zNCv1PVwx5vx4HLqp7Lu7Wcx50IEZx36QBgY1N6bco5xN/7wGMBAbFAIxlsOjllrlKoF1aeVAKAGNxaiSse5mVuTRUqoDTVs+i5Y1rr8dafl+DE3eEZoIyoHxInxz9pMa4vhnwZAvIeJHNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727704158; c=relaxed/simple;
+	bh=jM1TFfcHkRbqiZTqVO294ZI1I0kYgtiBeFmwoxD2gHw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=TsaSVZTWwvp1fmqF644kUbs0gr15pxVXb16HCxyxDTTaUoq+MbTWAzM0y/E9gsuaaQSPhNlg9YeBfhqJuLpJFVUF+oiz7tN0KF6ezNq6Te0lChrLXdls4fIcEin4e/D8rS0iulFImYg1Siu+OmZFv5nlGuH3jNTJxvKIYFGcXD8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=V/ePQ6qn; arc=fail smtp.client-ip=40.107.117.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WsDGALWplrYOfrTqf9ozPoiwib2KZaWY55Vncp+viI+y+RufuBJtg6/OryNOMkRNu7VoKif/QvHBG8N+z+Y9eQ9ll51isqIUySWoluxiMPudI/Qv+D+r4eu7/GTJK21nekb/8xP6Cujo3Io4XWZNM2U5DsfrvWL5uLO+v/KbD/OjvL9B7CrDTiSNeWWrPkA/abtbjaKNA7LVvDH6cngYMqsQYqIvL6HNu3612xyLatdbcCI/NnM8Vbg5fnPs/ekRuR5MmBox5PCjsY8wCAdX+cpdE14esAXBimxO+DAkImvmPr0LCFCE3pP2NsZCZwpzCesgxGTR/JEo4SUc1PWNng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=126COAvLR+mfAIPAAtUcG8djqtraYfYxcriyM7aH2Vo=;
+ b=d133PLWedXheXiz1oSnEASvZ24jCnYmblVHT10NE9N4kGlJQ9l7mmgh8i66UUPnIaipHS9L6X07B/hG9apRM13hVFuHjFBaioIK3AxQvPXm6BDrQ8sy3epvyNuntctIe2uekGTdbGIGqYAWemj2c04ExOTj2c78GyQBRavfD8mHR/x4bvs0Mmvm1PQQTIVW29SwuEz6vF9lBxkcW3LV6SY6ZYnL8nAV4zloWueHHKqezliW2UL5yoR6toENknUCxt8QJDqOFIhCCQW69+6s9a/CUzIOqyHbEjmamL4XFuSE3eldm+hgpca01irjGf0YrS4lQ2t6ZITBDJcZE8oTV4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=126COAvLR+mfAIPAAtUcG8djqtraYfYxcriyM7aH2Vo=;
+ b=V/ePQ6qnJ8K3dInoSPM/P7myfu2i/tuzRuF1Wu+9H/0RtP+493uVz97a8v7n2yQwJ2vhxQLXgPtUk4dLRhGGBbaaxjKSU+QzBCy/nXG3QVBgRwzx49y/CTRo/IdIznI0rvEQXgCbDubS7UBaYFVGb35wLgDRqHg8yc+UI8GkqDNAvUx5PCxQFqudDLx7hKxJ5yAY96aRR+mY2yed+4mnNoy6KZylt5Q5HBS1YW/y3qjULdAv9G2FsPBWfRjX1IvVPQ+wnbzjJuUo7ySPqnMqCMEodjEzqTlJsfWC6LkEcXGk1yCq6fkEkSuiew1RSzHBpFd8vhyc2iMGC37L0XIKCA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com (2603:1096:405:b5::13)
+ by SEZPR06MB5413.apcprd06.prod.outlook.com (2603:1096:101:64::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.24; Mon, 30 Sep
+ 2024 13:49:10 +0000
+Received: from TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b]) by TYZPR06MB7096.apcprd06.prod.outlook.com
+ ([fe80::6c3a:9f76:c4a5:c2b%2]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 13:49:10 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: xiang@kernel.org
+Cc: chao@kernel.org,
+	huyue2@coolpad.com,
+	jefflexu@linux.alibaba.com,
+	dhavale@google.com,
+	linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH] erofs: free pcluster right after decompression if possible
+Date: Mon, 30 Sep 2024 08:04:24 -0600
+Message-Id: <20240930140424.4049195-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0189.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::15) To TYZPR06MB7096.apcprd06.prod.outlook.com
+ (2603:1096:405:b5::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB7096:EE_|SEZPR06MB5413:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cbf5a39-ab96-4ad7-9da4-08dce156a904
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?UfN83kQeHi/eRjEsw6nId6JZ4ouhJbfLKWCprrTDMMZxt0dw8uQ9X2M6Ah/P?=
+ =?us-ascii?Q?HwxYHh5H2EwxdP6Ujnggfpg9utwHOBN3wSbrOVhrCr60p79XLazOzHDebY5e?=
+ =?us-ascii?Q?+xK06mgv2x8yJu4VNEnmYkRIPEvx4TTp+BdyDO1qWVAONmRkKLPQbvn5YbFI?=
+ =?us-ascii?Q?pFHlK7s91GKKG3S1/8uQFkUtMXkh5lr235jUkc+t9ZMdKKRtl7uNaEqVlmNk?=
+ =?us-ascii?Q?d9RWHza3N8Z2dyZhAJxtQYD1GQU0zGiSZTG4YO7geZ4T3U241YDazSq6Yheb?=
+ =?us-ascii?Q?WCh80ixH0PCXEvwLd3Q3EjIGm//Ur6O+zpw/Qz8w1lUZMHQYy/XAT4Uhx3qn?=
+ =?us-ascii?Q?T5bW3QiEtHfc/cJDaxUFRCYOEQC3wYajPUfEr8+JNORrtTvwEHub/vJnObmY?=
+ =?us-ascii?Q?/xAG39Bd0gNt4fO0Yh+LwBMOqBhAueRY/VwKTnkay4+yo6OdIMVlzx+G9xCj?=
+ =?us-ascii?Q?C+d0+QA0tvWcqhoBejt4otmOyvzV1eLFmvb7MBxkl7um6bsBSjX0EKTIvmqS?=
+ =?us-ascii?Q?BHinezyuL/L2cKeE5SCGroH915DwtD1HECKNrFd9mcRM7vAIQkR0zW+vqLBs?=
+ =?us-ascii?Q?HN4x/79KTZnbRUKQxzxZyCC6AZYWmqaTFkOyUMgUggpzAiSwHnrZkaaiKZmc?=
+ =?us-ascii?Q?FU5GdWX9+pCnBiJGAGxeIKnEVyf17pUiKNYG0XmQECKhnVAN3JlpqHbvtZ6H?=
+ =?us-ascii?Q?kRnSceve4nhKt3TjwvNL/yuS/TNlNdEkSfLArsQ7RIfzwSyHfNfUgb60tzF9?=
+ =?us-ascii?Q?TCQov9XxohT9GMg4ZfFlplYDUXwu/Mi3DLRAwwZhUfKVJfGcAOjlsdOz96Lg?=
+ =?us-ascii?Q?BAjDUXAYGmBDzOaJzsptu+0QcqQC0jR/0f7wyZqZWxdhxgxltyFeTiukm0Hp?=
+ =?us-ascii?Q?Ah9/rxFsQpBG3GP8JOLNB+b6m8DU2rN6oThOYI4rgZfstYVOtI/FDQaEg5KW?=
+ =?us-ascii?Q?me9lCQPTbBQPT0joRFe76sdK6BurmkPRbJr2sARTq1GSocQ7MWoYDpzOcKBz?=
+ =?us-ascii?Q?yROM9d0tPHDJdPEllbaUOBTO4E+YjUNKNV1QKM2+eWA44tgLxE4sk43MowmH?=
+ =?us-ascii?Q?7eo0AkFoFgeo5Pvp5SJawJtHVnnLos05e0cVa2ULohw5CGO3m8vnmeRWRJof?=
+ =?us-ascii?Q?3OxzMsNPQ2NRLhT8uCXQvsEJHZbNRweysmuWHAKdQty/bIjAjaD4hImt4QY+?=
+ =?us-ascii?Q?1pOO8SeKHO2/VzfMhqzpXYcGrwwpnnaFohsXoltN1JtTcqFv2YdmWO9/6j/D?=
+ =?us-ascii?Q?dP5andjdU139TTbpjRtxWZR5+pngtvYYnk86TTRMhKCwnpo/W4gPB1324Ehn?=
+ =?us-ascii?Q?R+uIJ25yPSpkom396nzumIbjwHTvNXUTq3BKE+UvSea8DOEgiQ4547mzZPpy?=
+ =?us-ascii?Q?j6bmiXsVoSEhzy9hsznnOJD4r6T+0WbmvNScGFuTgOBnB3JKpw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB7096.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ycGYBBWnZFoOhBv6otp2qD1X6GenWlKNknrAuzMGd6acDMLrmUmyq3kTbhxr?=
+ =?us-ascii?Q?cdMjA3gNlktRBHBrDqlpYgldR6Z3/HF3eqWeaEfC3fbRtgo0A8t/p95txjjf?=
+ =?us-ascii?Q?S2EF0kWA0ARxiujl2cYTJF0oiFUKs6VT557Nzm8uhAJP3M0OcRVA8kmToEbR?=
+ =?us-ascii?Q?Z03/ZpQbFBe4bHL3l11oAmNjxdHVIR6QBHwtCOPDvMv+9qn/2cEW7q0uyRvf?=
+ =?us-ascii?Q?VkdIKcrCmucljMyjXRqKS6u37pCqb9D9RAVVbGq09tGyJ0COmOs8OTGjua/A?=
+ =?us-ascii?Q?+TcIKfA4Npub/2wCfgKcKAMr/6YdMyoFqzFevded8FFvij+fdw666N0BpqN/?=
+ =?us-ascii?Q?E8I1qJ7JNpgJkObihxjbaY7IaPGgk2dkWCzo0Gn/0A+TAfB1NiHlwwmgX/wT?=
+ =?us-ascii?Q?D0ihGyk4ddXJyq4sVwY/0Hl7J0YKO2JSfTfzztFwE+m+3MZGqYsCJuYjBmv0?=
+ =?us-ascii?Q?Uk2wZ5E2CjIPTdqjK2XlgEusmzVKKyC0SgrpI7yqXKQlePgrrNlbx0RRaRXN?=
+ =?us-ascii?Q?td6l+JC6aKQj4gWgQOVGCPTQbjOZuX0xPY/embTNgZKNdCdn04A0nAr2brHX?=
+ =?us-ascii?Q?aHi2BFhoWrPCVoe5CCA5Q+B0SLsuvVJ/BVrj+B2Ir7agXGpRRMjULUWyjna6?=
+ =?us-ascii?Q?PoNgnrp9fiUMJg2ZWiLqPM7TILr9vuEbCosj1mN8LJPkZ/hdxHIirQ6qdWzv?=
+ =?us-ascii?Q?Rk8L+uopN8c/OWdicp1HMhXtXxbTLnORJf/cA5U1b6Y/CqlT0bQ5UtAZnJ5f?=
+ =?us-ascii?Q?1Qcw/dwsAeYJnpEOvFJ2IOqZOkLuImm/YBObwT1FS51HHSyrALZQXHVR1otE?=
+ =?us-ascii?Q?gWac+tnf8BwP+nyo+QE0/T8giQZuuxhoT4yi/Hxjm2SZk7zgAcP/XcRi0B2v?=
+ =?us-ascii?Q?S/H7zCrvdyIbqD+WOI1Bd7IsL0em7w0kp3pisJqkgWGhRgrMyzuSFeYPDGGl?=
+ =?us-ascii?Q?1HkU+ps2sjdG37G3KHs0gmVNE5fbPoXtQQWiwP2zGjGvsz1Qxgov6aarzXYQ?=
+ =?us-ascii?Q?E3dIgnvA7IT6lEx0JozkxMArA2i6YLDQLHEVdXZIQy6t7gWrbVFD5ZLI0CKm?=
+ =?us-ascii?Q?pPKMS1FJWwb1nwO6ac8udGK6+0G0sHRWBH7P5HIEjGjznX3/QuuqrY5JggQ5?=
+ =?us-ascii?Q?1TlY1Rv8sTlwemH4nVv50UijCTSSeBuYVSAWAvJ8XfyjwiLur5TZbt4Q+Jaz?=
+ =?us-ascii?Q?cH2j0x1fvWoYkw4jrNOZNqMYpydtizjzr5fu81r6d22S1J5/JdPCLgi5klYC?=
+ =?us-ascii?Q?PMxHMPVbGAXuOFRmimnVH8jIFFyCi6/+3mfZRCSM8TF/3dZWluo8MZ0FN/xX?=
+ =?us-ascii?Q?72Q1LTqppVeYRd7/HbQCiIwzm1ougZ+pMjX5Q1dWa4Svdu2P+pSmuNobznVu?=
+ =?us-ascii?Q?25p5AezVigC2xNEb3vQjK4I0hQtzaWG8BcHTKH45ISPThVd2uj8Y/fjoN00T?=
+ =?us-ascii?Q?PqmCX1dHAnKWppuMuHpVI9DxMoC2zXTRAc196vwO7CoMLoVs0LrIbnJC+Lkr?=
+ =?us-ascii?Q?PLslqjEPx11eGs0BxqWiXS+OwOA7QFpZbi9BYjDdRVljXhuHc3CpTGqFCRRu?=
+ =?us-ascii?Q?4Xfx6vti9aBXcr1CcxmzBHBDdhrBe2pMYP8EUjda?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cbf5a39-ab96-4ad7-9da4-08dce156a904
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB7096.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 13:49:10.0137
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kgHDrTOBON5D1E363hINcojUPM49CrOKWsjTXN8EMynrqpLvDsMoQoG65i8gw5rlTybZyuet4e+XwHyICrDkng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5413
 
-On 26.09.24 12:40, Simona Vetter wrote:
-> On Wed, Sep 25, 2024 at 08:53:05PM +0000, Benno Lossin wrote:
->> +    /// Sets the underlying untrusted value.
->> +    ///
->> +    /// # Examples
->> +    ///
->> +    /// ```
->> +    /// use kernel::validate::Untrusted;
->> +    ///
->> +    /// let mut untrusted =3D Untrusted::new(42);
->> +    /// untrusted.write(24);
->> +    /// ```
->> +    pub fn write(&mut self, value: impl Init<T>) {
->> +        let ptr: *mut T =3D &mut self.0 .0;
->> +        // SAFETY: `ptr` came from a mutable reference and the value is=
- overwritten before it is
->> +        // read.
->> +        unsafe { ptr::drop_in_place(ptr) };
->> +        // SAFETY: `ptr` came from a mutable reference and the initiali=
-zer cannot error.
->> +        match unsafe { value.__init(ptr) } {
->> +            Ok(()) =3D> {}
->> +        }
->> +    }
->=20
-> So I think this doesn't work for a few reasons:
->=20
-> - there's a lot of unsafe both here and when using this (even without
->   MaybeUninit), at least if I understand things correctly. And forcing
->   unsafe for something that inheritedly does not break any of the rust
->   memory safety rules feels silly.
->=20
-> - it also looks awkward, because you have the special versions
->   write_uninit and write_uninit_slice, and imo if our write isn't good
->   enought to just work with abritrary box/container types, it's not good.
->=20
-> - it doesn't actually work for one of the main uaccess.rs use-cases beyon=
-d
->   just enabling the current interface. Example in pseudo-rust:
->=20
->   struct IoctlParams {
->       input: u32,
->       ouptut: u32,
->   }
->=20
->   The thing is that ioctl that use the struct approach like drm does, use
->   the same struct if there's both input and output paramterers, and
->   furthermore we are not allowed to overwrite the entire struct because
->   that breaks ioctl restarting. So the flow is roughly
->=20
->   let userptr : UserSlice;
->   let params : Untrusted<IoctlParams>;
->=20
->   userptr.read(params));
->=20
->   // validate params, do something interesting with it params.input
->=20
->   // this is _not_ allowed to overwrite params.input but must leave it
->   // unchanged
->=20
->   params.write(|x| { x.output =3D 42; });
->=20
->   userptr.write(params);
->=20
->   Your current write doesn't allow this case, and I think that's not good
->   enough.
+Once a pcluster is fully decompressed and there are no attached cached
+pages, its corresponding struct z_erofs_pcluster will be freed. This
+will significantly reduce the frequency of calls to erofs_shrink_scan()
+and the memory allocated for struct z_erofs_pcluster.
 
-I see. One thing that makes this API work better is field projections
-(it's a rust language feature for which we do have a PoC macro
-implementation and which I am working on getting into the language):
-To only overwrite a part of a struct you would do
+The tables below show approximately a 95% reduction in the calls to
+erofs_shrink_scan() and in the memory allocated for struct
+z_erofs_pcluster after applying this patch. The results were obtained by
+performing a test to copy a 2.1 GB partition on ARM64 Android devices
+running the 5.15 kernel with an 8-core CPU and 8GB of memory.
 
-    params->output.write(42);
+1. The reduction in calls to erofs_shrink_scan():
++-----------------+-----------+----------+---------+
+|                 | w/o patch | w/ patch |  diff   |
++-----------------+-----------+----------+---------+
+| Average (times) |   3152    |   160    | -94.92% |
++-----------------+-----------+----------+---------+
 
-The `->` syntax "projects" the `output` field, turning
-`Untrusted<IoctlParams>` into `Untrusted<u32>`.
+2. The reduction in memory released by erofs_shrink_scan():
++-----------------+-----------+----------+---------+
+|                 | w/o patch | w/ patch |  diff   |
++-----------------+-----------+----------+---------+
+| Average (Byte)  | 44503200  | 2293760  | -94.84% |
++-----------------+-----------+----------+---------+
 
-I think that this would solve your problem with the API. (we probably
-need a stop gap solution though until field projections are part of the
-language).
-
->   The one I propsed in private does:
->=20
->   Untrusted<T>::write(&mut self, Fn(&mut T)->())
->=20
->   It's not perfect because it allows you to do other stuff than writing,
->   but it's still pretty good by limiting any potentially dangerous code t=
-o
->   the provided closure. And with these of protection apis we need to
->   strike the right balance between as much protection as possible while
->   still allowing users to get the job done.
-
-Ideally I would like to avoid exposing the value.
-
->   Now I guess you can do this with your write too using a copy constructo=
-r
->   approach, but that will result in less efficient code and it's probably
->   also too much functional programming design for kernel developers to
->   cope with.
-
-Agreed.
-
->> +
->> +    /// Turns a slice of untrusted values into an untrusted slice of va=
-lues.
->> +    pub fn transpose_slice(slice: &[Untrusted<T>]) -> &Untrusted<[T]>
->> +    where
->> +        T: Sized,
->> +    {
->> +        let ptr =3D slice.as_ptr().cast::<T>();
->> +        // SAFETY: `ptr` and `len` come from the same slice reference.
->> +        let slice =3D unsafe { slice::from_raw_parts(ptr, slice.len()) =
-};
->> +        Untrusted::new_ref(slice)
->> +    }
->> +
->> +    /// Turns a slice of uninitialized, untrusted values into an untrus=
-ted slice of uninitialized
->> +    /// values.
->> +    pub fn transpose_slice_uninit(
->> +        slice: &[MaybeUninit<Untrusted<T>>],
->> +    ) -> &Untrusted<[MaybeUninit<T>]>
->=20
-> So these and some of the related functions to handle slice of box vs box
-> of slice feel a bit awkward. I think we can do better if we rename
-> Untrusted and Unvalidated to UntrustedBox and UnvalidatedBox, and then
-> make Untrusted and Unvalidated traits, with implementations for
-> UntrustedBox<T>, [Untrusted<T>], and all the others we want.
-
-Hmm that might work for `Untrusted`, I will see how that looks. For
-`Unvalidated` I am less confident.
-
-> I expect that in the future we'll get more boxes with special semantics
-> that we want to use together with Untrusted, not just [] and MaybeUninit.
-> One example would be when the Untrusted data is shared with userspace
-> (mmap()ed into both kernel and userspace for example for a ringbuffer), i=
-n
-> which case the data is both Untrusted but also SharedUnsafe or whatever
-> we'll call memory that's fundamentally breaking the rust memory model
-> because there's no exclusive access (userspace can always do whatever it
-> feels like), and all access has to go through at least
-> READ_ONCE/WRITE_ONCE from the C side, or often even full blown atomics.
-
-I don't think that we need to wrap that in `Untrusted`, instead the type
-representing shared data between kernel and userspace should return
-`Untrusted<u8>` instead of `u8`.
-
-> And that memory is not MaybeUninit, because we have to initialize it
-> before userspace can mmap it, for otherwise it's an information leak and
-> hence security issue.
->=20
-> tldr; I think going with traits for Untrusted and Unvalidated here will b=
-e
-> worth it, even if a bit more pain at first. Plus cleaner interfaces.
->=20
->> +    where
->> +        T: Sized,
->> +    {
->> +        let ptr =3D slice.as_ptr().cast::<MaybeUninit<T>>();
->> +        // SAFETY: `ptr` and `len` come from the same mutable slice ref=
-erence.
->> +        let slice =3D unsafe { slice::from_raw_parts(ptr, slice.len()) =
-};
->> +        Untrusted::new_ref(slice)
->> +    }
-
-[...]
-
->> +/// Validates untrusted data.
->> +///
->> +/// # Examples
->> +///
->> +/// The simplest way to validate data is to just implement `Validate<&U=
-nvalidated<[u8]>>` for the
->> +/// type that you wish to validate:
->> +///
->> +/// ```
->> +/// use kernel::{
->> +///     error::{code::EINVAL, Error},
->> +///     str::{CStr, CString},
->> +///     validate::{Unvalidated, Validate},
->> +/// };
->> +///
->> +/// struct Data {
->> +///     flags: u8,
->> +///     name: CString,
->> +/// }
->> +///
->> +/// impl Validate<&Unvalidated<[u8]>> for Data {
->> +///     type Err =3D Error;
->> +///
->> +///     fn validate(unvalidated: &Unvalidated<[u8]>) -> Result<Self, Se=
-lf::Err> {
->> +///         let raw =3D unvalidated.raw();
->> +///         let (&flags, name) =3D raw.split_first().ok_or(EINVAL)?;
->> +///         let name =3D CStr::from_bytes_with_nul(name)?.to_cstring()?=
-;
->> +///         Ok(Data { flags, name })
->> +///     }
->> +/// }
->> +/// ```
->> +///
->> +/// This approach copies the data and requires allocation. If you want =
-to avoid the allocation and
->> +/// copying the data, you can borrow from the input like this:
->> +///
->> +/// ```
->> +/// use kernel::{
->> +///     error::{code::EINVAL, Error},
->> +///     str::CStr,
->> +///     validate::{Unvalidated, Validate},
->> +/// };
->> +///
->> +/// struct Data<'a> {
->> +///     flags: u8,
->> +///     name: &'a CStr,
->> +/// }
->> +///
->> +/// impl<'a> Validate<&'a Unvalidated<[u8]>> for Data<'a> {
->> +///     type Err =3D Error;
->> +///
->> +///     fn validate(unvalidated: &'a Unvalidated<[u8]>) -> Result<Self,=
- Self::Err> {
->> +///         let raw =3D unvalidated.raw();
->> +///         let (&flags, name) =3D raw.split_first().ok_or(EINVAL)?;
->> +///         let name =3D CStr::from_bytes_with_nul(name)?;
->> +///         Ok(Data { flags, name })
->> +///     }
->> +/// }
->> +/// ```
->> +///
->> +/// If you need to in-place validate your data, you currently need to r=
-esort to `unsafe`:
->> +///
->> +/// ```
->> +/// use kernel::{
->> +///     error::{code::EINVAL, Error},
->> +///     str::CStr,
->> +///     validate::{Unvalidated, Validate},
->> +/// };
->> +/// use core::mem;
->> +///
->> +/// // Important: use `repr(C)`, this ensures a linear layout of this t=
-ype.
->> +/// #[repr(C)]
->> +/// struct Data {
->> +///     version: u8,
->> +///     flags: u8,
->> +///     _reserved: [u8; 2],
->> +///     count: u64,
->> +///     // lots of other fields...
->> +/// }
->> +///
->> +/// impl Validate<&Unvalidated<[u8]>> for &Data {
->> +///     type Err =3D Error;
->> +///
->> +///     fn validate(unvalidated: &Unvalidated<[u8]>) -> Result<Self, Se=
-lf::Err> {
->> +///         let raw =3D unvalidated.raw();
->> +///         if raw.len() < mem::size_of::<Data>() {
->> +///             return Err(EINVAL);
->> +///         }
->> +///         // can only handle version 0
->> +///         if raw[0] !=3D 0 {
->> +///             return Err(EINVAL);
->> +///         }
->> +///         // version 0 only uses the lower 4 bits of flags
->> +///         if raw[1] & 0xf0 !=3D 0 {
->> +///             return Err(EINVAL);
->> +///         }
->> +///         let ptr =3D raw.as_ptr();
->> +///         // CAST: `Data` only contains integers and has `repr(C)`.
->> +///         let ptr =3D ptr.cast::<Data>();
->> +///         // SAFETY: `ptr` came from a reference and the cast above i=
-s valid.
->> +///         Ok(unsafe { &*ptr })
->> +///     }
->> +/// }
->> +/// ```
->> +///
->> +/// To be able to modify the parsed data, while still supporting zero-c=
-opy, you can implement
->> +/// `Validate<&mut Unvalidated<[u8]>>`:
->> +///
->> +/// ```
->> +/// use kernel::{
->> +///     error::{code::EINVAL, Error},
->> +///     str::CStr,
->> +///     validate::{Unvalidated, Validate},
->> +/// };
->> +/// use core::mem;
->> +///
->> +/// // Important: use `repr(C)`, this ensures a linear layout of this t=
-ype.
->> +/// #[repr(C)]
->> +/// struct Data {
->> +///     version: u8,
->> +///     flags: u8,
->> +///     _reserved: [u8; 2],
->> +///     count: u64,
->> +///     // lots of other fields...
->> +/// }
->> +///
->> +/// impl Validate<&mut Unvalidated<[u8]>> for &Data {
->> +///     type Err =3D Error;
->=20
-> I think we should make that one the default, but not sure that's doable
-> with associated types instead of generics.
-
-There is the `associated_type_defaults` unstable feature:=20
-https://github.com/rust-lang/rust/issues/29661
-
-But I actually think that we should get away from making the `Error`
-type the return error of Rust functions. It's much better to have
-function-specific errors, since they can be more descriptive. In cases
-where we have to return to userspace or C, sure use the existing
-`Error`.
-
-> The input parameter should definitely default to the output paramter,
-> because often they're just exactly the same e.g. when validating ioctl
-> input structures.
-
-I don't understand what you mean by this? The input parameter has to be
-some sort of `..Untrusted..` and the output shouldn't have that.
-
-> On this version you've also left out the in-place validation (originally
-> validate_bytes), but we can add that later on when a need arises I guess.
-> Or do you think it's just not a good idea in general?
-
-This version supports in-place validation, this example and the one
-above showcase how you would implement `Validate` in that case.
-
-You can then call `.vaildate()` on an `&[mut ]Unvalidated<[u8]>` and you
-get a `&Data` that borrows from the unvalidated data without copying the
-data.
-
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
 ---
-Cheers,
-Benno
+ fs/erofs/internal.h |  3 ++-
+ fs/erofs/zdata.c    | 14 ++++++++---
+ fs/erofs/zutil.c    | 58 +++++++++++++++++++++++++++++----------------
+ 3 files changed, 51 insertions(+), 24 deletions(-)
 
->> +///
->> +///     fn validate(unvalidated: &mut Unvalidated<[u8]>) -> Result<Self=
-, Self::Err> {
->> +///         let raw =3D unvalidated.raw_mut();
->> +///         if raw.len() < mem::size_of::<Data>() {
->> +///             return Err(EINVAL);
->> +///         }
->> +///         match raw[0] {
->> +///             0 =3D> {},
->> +///             1 =3D> {
->> +///                 // version 1 implicitly sets the first bit.
->> +///                 raw[1] |=3D 1;
->> +///             },
->> +///             // can only handle version 0 and 1
->> +///             _ =3D> return Err(EINVAL),
->> +///         }
->> +///         // version 0 and 1 only use the lower 4 bits of flags
->> +///         if raw[1] & 0xf0 !=3D 0 {
->> +///             return Err(EINVAL);
->> +///         }
->> +///         if raw[1] =3D=3D 0 {}
->> +///         let ptr =3D raw.as_ptr();
->> +///         // CAST: `Data` only contains integers and has `repr(C)`.
->> +///         let ptr =3D ptr.cast::<Data>();
->> +///         // SAFETY: `ptr` came from a reference and the cast above i=
-s valid.
->> +///         Ok(unsafe { &*ptr })
->> +///     }
->> +/// }
->> +/// ```
->> +pub trait Validate<I: ValidateInput>: Sized {
->> +    /// Validation error.
->> +    type Err;
->> +
->> +    /// Validate the given untrusted data and parse it into the output =
-type.
->> +    fn validate(unvalidated: I) -> Result<Self, Self::Err>;
->> +}
+diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+index 4efd578d7c62..17b04bfd743f 100644
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -456,7 +456,8 @@ static inline void erofs_pagepool_add(struct page **pagepool, struct page *page)
+ void erofs_release_pages(struct page **pagepool);
+ 
+ #ifdef CONFIG_EROFS_FS_ZIP
+-void erofs_workgroup_put(struct erofs_workgroup *grp);
++void erofs_workgroup_put(struct erofs_sb_info *sbi, struct erofs_workgroup *grp,
++		bool can_released);
+ struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
+ 					     pgoff_t index);
+ struct erofs_workgroup *erofs_insert_workgroup(struct super_block *sb,
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index 8936790618c6..656fd65aec33 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -888,7 +888,7 @@ static void z_erofs_pcluster_end(struct z_erofs_decompress_frontend *fe)
+ 	 * any longer if the pcluster isn't hosted by ourselves.
+ 	 */
+ 	if (fe->mode < Z_EROFS_PCLUSTER_FOLLOWED_NOINPLACE)
+-		erofs_workgroup_put(&pcl->obj);
++		erofs_workgroup_put(EROFS_I_SB(fe->inode), &pcl->obj, false);
+ 
+ 	fe->pcl = NULL;
+ }
+@@ -1046,6 +1046,9 @@ struct z_erofs_decompress_backend {
+ 	struct list_head decompressed_secondary_bvecs;
+ 	struct page **pagepool;
+ 	unsigned int onstack_used, nr_pages;
++
++	/* whether the pcluster can be released after its decompression */
++	bool try_free;
+ };
+ 
+ struct z_erofs_bvec_item {
+@@ -1244,12 +1247,15 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
+ 		WRITE_ONCE(pcl->compressed_bvecs[0].page, NULL);
+ 		put_page(page);
+ 	} else {
++		be->try_free = true;
+ 		/* managed folios are still left in compressed_bvecs[] */
+ 		for (i = 0; i < pclusterpages; ++i) {
+ 			page = be->compressed_pages[i];
+ 			if (!page ||
+-			    erofs_folio_is_managed(sbi, page_folio(page)))
++			    erofs_folio_is_managed(sbi, page_folio(page))) {
++				be->try_free = false;
+ 				continue;
++			}
+ 			(void)z_erofs_put_shortlivedpage(be->pagepool, page);
+ 			WRITE_ONCE(pcl->compressed_bvecs[i].page, NULL);
+ 		}
+@@ -1285,6 +1291,7 @@ static int z_erofs_decompress_pcluster(struct z_erofs_decompress_backend *be,
+ 	if (be->decompressed_pages != be->onstack_pages)
+ 		kvfree(be->decompressed_pages);
+ 
++	be->try_free = be->try_free && !pcl->partial;
+ 	pcl->length = 0;
+ 	pcl->partial = true;
+ 	pcl->multibases = false;
+@@ -1320,7 +1327,8 @@ static int z_erofs_decompress_queue(const struct z_erofs_decompressqueue *io,
+ 		if (z_erofs_is_inline_pcluster(be.pcl))
+ 			z_erofs_free_pcluster(be.pcl);
+ 		else
+-			erofs_workgroup_put(&be.pcl->obj);
++			erofs_workgroup_put(EROFS_SB(io->sb), &be.pcl->obj,
++					be.try_free);
+ 	}
+ 	return err;
+ }
+diff --git a/fs/erofs/zutil.c b/fs/erofs/zutil.c
+index 37afe2024840..cf59ba6a2322 100644
+--- a/fs/erofs/zutil.c
++++ b/fs/erofs/zutil.c
+@@ -285,26 +285,11 @@ static void  __erofs_workgroup_free(struct erofs_workgroup *grp)
+ 	erofs_workgroup_free_rcu(grp);
+ }
+ 
+-void erofs_workgroup_put(struct erofs_workgroup *grp)
+-{
+-	if (lockref_put_or_lock(&grp->lockref))
+-		return;
+-
+-	DBG_BUGON(__lockref_is_dead(&grp->lockref));
+-	if (grp->lockref.count == 1)
+-		atomic_long_inc(&erofs_global_shrink_cnt);
+-	--grp->lockref.count;
+-	spin_unlock(&grp->lockref.lock);
+-}
+-
+-static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
++static bool erofs_prepare_to_release_workgroup(struct erofs_sb_info *sbi,
+ 					   struct erofs_workgroup *grp)
+ {
+-	int free = false;
+-
+-	spin_lock(&grp->lockref.lock);
+ 	if (grp->lockref.count)
+-		goto out;
++		return false;
+ 
+ 	/*
+ 	 * Note that all cached pages should be detached before deleted from
+@@ -312,7 +297,7 @@ static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+ 	 * the orphan old workgroup when the new one is available in the tree.
+ 	 */
+ 	if (erofs_try_to_free_all_cached_folios(sbi, grp))
+-		goto out;
++		return false;
+ 
+ 	/*
+ 	 * It's impossible to fail after the workgroup is freezed,
+@@ -322,14 +307,47 @@ static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
+ 	DBG_BUGON(__xa_erase(&sbi->managed_pslots, grp->index) != grp);
+ 
+ 	lockref_mark_dead(&grp->lockref);
+-	free = true;
+-out:
++	return true;
++}
++
++static bool erofs_try_to_release_workgroup(struct erofs_sb_info *sbi,
++					   struct erofs_workgroup *grp)
++{
++	bool free = false;
++
++	/* Using trylock to avoid deadlock with erofs_workgroup_put() */
++	if (!spin_trylock(&grp->lockref.lock))
++		return free;
++	free = erofs_prepare_to_release_workgroup(sbi, grp);
+ 	spin_unlock(&grp->lockref.lock);
+ 	if (free)
+ 		__erofs_workgroup_free(grp);
+ 	return free;
+ }
+ 
++void erofs_workgroup_put(struct erofs_sb_info *sbi, struct erofs_workgroup *grp,
++		bool try_free)
++{
++	bool free = false;
++
++	if (lockref_put_or_lock(&grp->lockref))
++		return;
++
++	DBG_BUGON(__lockref_is_dead(&grp->lockref));
++	if (--grp->lockref.count == 0) {
++		atomic_long_inc(&erofs_global_shrink_cnt);
++
++		if (try_free) {
++			xa_lock(&sbi->managed_pslots);
++			free = erofs_prepare_to_release_workgroup(sbi, grp);
++			xa_unlock(&sbi->managed_pslots);
++		}
++	}
++	spin_unlock(&grp->lockref.lock);
++	if (free)
++		__erofs_workgroup_free(grp);
++}
++
+ static unsigned long erofs_shrink_workstation(struct erofs_sb_info *sbi,
+ 					      unsigned long nr_shrink)
+ {
+-- 
+2.25.1
 
 
