@@ -1,83 +1,124 @@
-Return-Path: <linux-kernel+bounces-343348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29A1B9899EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34139899F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2661F21A04
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F251F1C20F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EDB13B59B;
-	Mon, 30 Sep 2024 05:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F0B13A244;
+	Mon, 30 Sep 2024 05:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UEIXulHc"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GO82FlTc"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58212AF16
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9572F46;
+	Mon, 30 Sep 2024 05:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727672403; cv=none; b=gBJXOISJo/nZc/2ft3+N7OD+w6//5nDuJlKieYGnIZPM4BWTc0XUQASrdwTp1WFN1b5vOym+CRigW0z3e1wmXIQB511RskOv4IKtSnDLchcdB7+R7IjSMx4rAQ9r6VF44JLGYeVwZcxTCTDdtXJt/eYclJHzVUEcwTeBXtTf92I=
+	t=1727672739; cv=none; b=kRjRIVSqZhORilIzmd7wQlh79PKWyeoFryIuzg+UGBrWrxFCO/awgCbyeyWLWOfNrFnTQnHMwVhdZ1ZO5FqTzFBZ7kz9AYPTS4sAD+PxAsHHujgK6bEhb7tpjc43audqv2rKV2fm8TTeJ8q8rRFUMllHjowc6RPqfKg85eiIiw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727672403; c=relaxed/simple;
-	bh=Xg+5OUHzvGJDGnwi7oSEVY3RnFR9MPU+iYKPO4MFJDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nGw4rb3pKbno94yYnf+yO5zTlHOGtR1lQniPKtFxo78VlpRQXsw/MRMf3lgb0hVi3ko3BNzUSG0mhkMZlRtibLlmU8yRjtm4SkzCB+nXt/PVsmJXlHb1kCzK3UuTxLfPMeKkBB71kPIoB8NJ0vU4gX/L5+xuOo0JYLnnKFpRRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UEIXulHc; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 30 Sep 2024 00:59:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727672396;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=3BLemO7sS3aMVH4+gPXT9eyXDJ6Xvmp5pzb1asfWkyU=;
-	b=UEIXulHcVTXIG2iS/5kLRSzxDLQh+HMO1u6bMDpiCGKBAzSw/A3fshaihhoN5+PMDbM+u+
-	yIpPk9zW+kq6UCoUoOpoY+duVkYoE5KQb4QqgAG/Ase5/8lEHZRzF3dPJFF5kOk4Kk6Gm1
-	u9NZFoHqZ2Ysp6tMDxl65E2oCi4NoAU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs big endian fixup
-Message-ID: <afdmrsibtwc655t55tnlysfbetlb57nrdmk3k2ke6o6aebssqh@3g3mhqsvaswx>
+	s=arc-20240116; t=1727672739; c=relaxed/simple;
+	bh=/f+6PC0GUbBeBDchNrSFPIr57wSvQZ9pDTBU5C9xZvk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnSV9Oyo93EugGFZjeC725gkFEMjFTpd72w+a4k6qheaN9aN5f6po2RWgSfJMHki/aoACx6ZgBef0arCDY2Ty7rdpdPxuxr3F7K5e/XPqgl5uGGi2PXXNE4cefrrpaXGeHqjJbO76saqDPpPIOgLChh+r3fsXRlHJSWdVg4sgzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GO82FlTc; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48U55E4r107191;
+	Mon, 30 Sep 2024 00:05:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1727672714;
+	bh=FRcF2IH9LR6MlafQJfDMBB5G104JUIYoqUMR5YQ2sFI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=GO82FlTcGofCXHyLDfMW6YoktWxdiNhWI/RGQ6q8FkTzj9c+RYUX316ca37SMj5b9
+	 Gd4EvTYISuWJ8cj9E+SHQupY7fgFn387S7cjkHOLvNDOlnRwVq4jKF2JvAd+Z8aLqc
+	 PyPTQNA4BRxFj2zcyXCTKexranGlu7Jeh2LYW1f8=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48U55E7h020627
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 30 Sep 2024 00:05:14 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 30
+ Sep 2024 00:05:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 30 Sep 2024 00:05:14 -0500
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48U55DTR093660;
+	Mon, 30 Sep 2024 00:05:14 -0500
+Date: Mon, 30 Sep 2024 10:35:12 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Nishanth Menon <nm@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Andrew Davis
+	<afd@ti.com>, Bryan Brattlof <bb@ti.com>,
+        Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
+        Markus Schneider-Pargmann
+	<msp@baylibre.com>
+Subject: Re: [PATCH v7 0/6] ti: k3-am62{a,p}x-sk: add opp frequencies
+Message-ID: <20240930050512.mq3hmukyzzcobbaq@lcpd911>
+References: <20240926-ti-cpufreq-fixes-v5-v7-0-3c94c398fe8f@ti.com>
+ <20240927134003.j73m4cqo6q2orxvt@stream>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240927134003.j73m4cqo6q2orxvt@stream>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-This fixes the build on big endian
+On Sep 27, 2024 at 08:40:03 -0500, Nishanth Menon wrote:
+> On 14:04-20240926, Dhruva Gole wrote:
+> [...]
+> 
+> > Bryan Brattlof (4):
+> >   arm64: dts: ti: k3-am62a: add opp frequencies
+> >   arm64: dts: ti: k3-am62a7-sk: add 1.4ghz opp entry
+> >   arm64: dts: ti: k3-am62p: add opp frequencies
+> >   arm64: dts: ti: k3-am62p5-sk: add 1.4ghz opp entry
+> > 
+> > Dhruva Gole (2):
+> >   arm64: dts: ti: k3-am62: use opp_efuse_table for opp-table syscon
+> >   cpufreq: ti-cpufreq: Update efuse/rev offsets in AM62 family
+> 
+> Please drop the dt patches from the series - they are completely
+> un-related. just fix the driver for compatibility and we can attack the
+> am625 cpufreq support fixup separately. AM62a/62p etc are independent of
+> this completely - those need to go to the DT maintainer separately
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+OK, will drop them out and post them later on to the TI maintainers.
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+> 
+> am625: Just post the driver fixups for backward compatibility and get it
+> merged prior to dt fixup.
+> 
 
-are available in the Git repository at:
+Got it, I'll incorporate your suggestion on the driver patch and post it
+independently. Then post the DT fixups later.
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-30
+Thanks for all the inputs!
 
-for you to fetch changes up to 2007d28ec0095c6db0a24fd8bb8fe280c65446cd:
-
-  bcachefs: rename version -> bversion for big endian builds (2024-09-29 23:55:52 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.12-rc2
-
-Fix build on big endian.
-
-----------------------------------------------------------------
-Guenter Roeck (1):
-      bcachefs: rename version -> bversion for big endian builds
-
- fs/bcachefs/bcachefs_format.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-- 
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
