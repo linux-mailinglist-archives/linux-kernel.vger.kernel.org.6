@@ -1,159 +1,225 @@
-Return-Path: <linux-kernel+bounces-343669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862D8989DF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:22:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BE3989DC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CBF92834DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44EA81F21F20
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870DB1885AA;
-	Mon, 30 Sep 2024 09:21:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C22618872C;
+	Mon, 30 Sep 2024 09:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Hh+UI6Hb"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="n62MaAWm"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2086.outbound.protection.outlook.com [40.107.104.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FFEB188018
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688114; cv=none; b=m6cnfEKXhiHFlVx+zsKDfSf6i0vlPVHR/1Dq/9R4z+Sr8XPnn2nedUh4MDiuMpL30nO+jnlf/Y4HTl20haEJmpPmP/CJquH9qTKoAhoXuMZ+ElSrO/g9+TIKnHLzBfzqAL1gVmWfIG0CV51P5KRmng6MNjvwHEZMRThacH+oh+M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688114; c=relaxed/simple;
-	bh=ihqC0moMa0gkpZDgI3toCyjoo7KCGvJzUF/2ZGkTW2U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pIOTsqXgOpSsciGVCKy2UbzOHMsiLO6ya43fbTMcPaaEwEsgfKaYAAlpQqTk9ZxL46tUS/38/IFC12Cy1YhFaHT5joVWKtwEmAaS761OZ4/fY3cAceE7VfpaFzWhtNa2mwr1O2m7niNKdjVKMqdJ0c/BHY/Ujab1aaV97cYPEYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=Hh+UI6Hb; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad100dd9fso6734921fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:21:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1727688111; x=1728292911; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wOxBnbL6b/6p40BCLZnOmRygJyLDz0xvKxJvU54ZAcY=;
-        b=Hh+UI6HbZcPGxjieEM4TxX9epsDZL+qMmDuJ3zyGj9tt418SFzVPGRcZhiOyCP4pEB
-         UR2+4leTrlu8SqUM+nRxznVArjAjWKESk15d7PnU8qxL0M0Say2CsznYeIzGx+5Gg/A0
-         HG4hkthepBPj4si4t/c6pJaoXTRbGfmsTYQ7w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727688111; x=1728292911;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wOxBnbL6b/6p40BCLZnOmRygJyLDz0xvKxJvU54ZAcY=;
-        b=W3kQ/FBOAtm3QrJfneaYULeM4UYseEXXnE3kzWoViccBhiBRFUufNRqzgPOogGtrqr
-         t8xO/KMY297LaMHLjcKsXcuM7x0rNrK8fqjbXwW8CpJZpu1spR+AXcsIE942p1cXaiul
-         jxe6T344zs+QhWL7UPx6yasUA0Re1lgdrZFjOdus1WH798vSIfiYLCS2z8bJNINxmOJp
-         jefU6N+O1Et6b8QXGVqNBWGCtljHeFUNUQ5CPPV85vNjYMtulUFkHrsMq2MYrvWQiM37
-         kEF6VWnU1BphmACFQrb7CUMvxM0vYX+LVSoLdsPcncFQc4apO6BGMtLwbyHeuH0TPvzG
-         Ch6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVBbyIovgC0smDH+maklOfZ1KQn2bk2Eo9q7rEJpq9HaY9fj9xsEVND7pLsoqyJrUH6bfoWDfbNiZPzcN4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywCNEWgD5Y9zHmcFYJ8FQDk7YP3UT+1Nez1IqTcbI2scDl//KW
-	ieexKlzfZWvlR/f0J9vraCawaRAWkdSTSH+qiltEH2Mua3HDS/5jE+cmiAubOvQ=
-X-Google-Smtp-Source: AGHT+IHL3VXY5tvf4j7T6OaXxNRI231E0ILvU2TYhIVSEH7SSrJfMFW2DpRSkuCTashwRBUmWDv3uw==
-X-Received: by 2002:a2e:be1c:0:b0:2fa:cd3d:4a76 with SMTP id 38308e7fff4ca-2facd3d4c8fmr18895301fa.43.1727688111067;
-        Mon, 30 Sep 2024 02:21:51 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f9d4618eecsm12885541fa.118.2024.09.30.02.21.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:21:50 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>,  Jonathan Corbet <corbet@lwn.net>,  Ulf
- Hansson <ulf.hansson@linaro.org>,  Rob Herring <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  Conor Dooley
- <conor+dt@kernel.org>,  INAGAKI Hiroshi <musashino.open@gmail.com>,
-  Daniel Golle <daniel@makrotopia.org>,  Christian Brauner
- <brauner@kernel.org>,  Al Viro <viro@zeniv.linux.org.uk>,  Jan Kara
- <jack@suse.cz>,  Li Lingfeng <lilingfeng3@huawei.com>,  Christian Heusel
- <christian@heusel.eu>,  linux-block@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-mmc@vger.kernel.org,  devicetree@vger.kernel.org,  Miquel Raynal
- <miquel.raynal@bootlin.com>,  Lorenzo Bianconi <lorenzo@kernel.org>,
-  upstream@airoha.com
-Subject: Re: [PATCH v3 3/4] block: add support for partition table defined
- in OF
-In-Reply-To: <20240929140713.6883-4-ansuelsmth@gmail.com> (Christian Marangi's
-	message of "Sun, 29 Sep 2024 16:06:19 +0200")
-References: <20240929140713.6883-1-ansuelsmth@gmail.com>
-	<20240929140713.6883-4-ansuelsmth@gmail.com>
-Date: Mon, 30 Sep 2024 11:21:53 +0200
-Message-ID: <877catlcni.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19CC18870E;
+	Mon, 30 Sep 2024 09:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727687628; cv=fail; b=J7NCzAnyZsgg9lQAdMpjhZlpdip6TrrKiqpxeRl+zKIzzp4GySCVQQArdD2hISAjwTbs2NNTGF1JoW50SZwwoYRSF1X+YdT1amoh130Bh5CiFIxbqKJhKcxntR2/TlDznevQuyPSye+gw6GGq3qRRh1vYtFdF7F+pNHJ114zDPU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727687628; c=relaxed/simple;
+	bh=PtI8014DMZnYOudcm7pF9CrJZXj1JvHbY7LS+zXVRLE=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=R7aAsmJZLJMNfYZXUH55FT1s67e+cRM60uCvESocXJ1vg8L4wgLY3T0HcvQf8TYZjeQY2KYr6zJnXApMN+xGY6oTIE+UUsr5tCxyz4LRg3YO0jesCac5x/UImqqkDXkJkZKahFb9WkbhHYBe0HjUvTSJCAgBisoeLrxZ7ZT8GDY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=n62MaAWm; arc=fail smtp.client-ip=40.107.104.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ScPEb2RAPlFAAuOR5iOuYH7qXzKUVD8Y90D5jqXiX79qaZRae18ALkofKAQyr2Pol+D41cBGJ8W+sucCbC/1c9y2smCSAYkU5sT0VH5WuZ65KJ3xTAAuagg9DNMkdWrBic96rOIOC3HjLl7QDeljD6xlAZf4ODzHPUWMKAuoKiffZh6KRiQ9FI2c3GqsM3gKyP8p/4/1Vc5CcIqGUeBAI3W5zY8qKvsqWVNoQtJtHMcG3G7PyMCu9/VXyOfrgWh+iZoGWh7Z4U9u9LuEM6KpATa+yxhjbayMTy7HO+Gy4R+stTc3TlXAw4mJTLtB0z9uxy0HvemSf/70QSywsdJs1g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u3tBpcwTarJeabAbIf+aX3vaNBLJPXySUxiUY2Yl5m0=;
+ b=FLCMCZwNaMlZ4PrLx4f93+iIZv3OUNCXdLL8W3BR9cx28fPbvf2V5erF08J3WFAeAkDgsMsOMDxYN+v4AggFtJrLt1YSTb+HJzXUnKGSOadnU5hi1LG0DJBfhobPv588RNw6aLgK2pcROdcNiCZ++eKRoD2CfeWTLh8zBqTrcFUt3bQ9HLfdX1oHpxQ438tHyksBLxyekCrak9Ij0EeZqZ51TYbHSo6Ci/JTZj+xuOimSJm3WxjPYX5f0JEFR1ZfkuzAz09l2+6yIFd4DogdtmVXyFhdq+9NMx4o0o0lRoDYM0N+nlMt3t+YchCjpmMgcXHn5CSjSZzUCw/xguQnFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u3tBpcwTarJeabAbIf+aX3vaNBLJPXySUxiUY2Yl5m0=;
+ b=n62MaAWmzL73qytB+w9JrIb6o5ILyraAl0h2sd6sSxbcW+c/meN1pi4SpeT9syt3jenmQY2F8sDFtl5TAoFEFnULxGZ7wj4fRJ39hvKZ+PjtcDPrBY2pxu/PlkXMQMCQOfVWtIVcn9/BwPCwmEbJikmqbGHw1dMdls0cqnYyBZlaZBhY2516MgGWBPba1KuEZRqH8TukyqFxz9+RLyo/rTRi7ozB9Y9Te2jT5jXhPFqjZWMT3LyzRnMmahwr4nwZ3wVdnRZxZtUkMr+X0jQFmygxG5iCX7RDXL9Nmh/bhr3HnHVTyZICBBHhQiliPGkio6KAUD5VvzqTZpFWFRE73g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AS5PR04MB9893.eurprd04.prod.outlook.com (2603:10a6:20b:653::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Mon, 30 Sep
+ 2024 09:13:43 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7982.018; Mon, 30 Sep 2024
+ 09:13:43 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v2 0/3] spi-nor: add optional vcc-supply and enable it for
+ i.MX93
+Date: Mon, 30 Sep 2024 17:22:23 +0800
+Message-Id: <20240930-spi-v2-0-ed7f6bcbe0df@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM9t+mYC/1WMQQ7CIBBFr9LMWswwJZK68h6mi4ZO7SwEAobUN
+ Nxd7K7L9/Pf2yFzEs5w73ZIXCRL8A3o0oFbJ/9iJXNjICSDA6HKUVRvqNc8WWNvGtozJl5kOyr
+ PsfEq+RPS94gW/V/PftEK1WAXInTEGt3Db/HqwhvGWusPDbN5spQAAAA=
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Marco Felsch <m.felsch@pengutronix.de>
+Cc: linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727688153; l=1258;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=PtI8014DMZnYOudcm7pF9CrJZXj1JvHbY7LS+zXVRLE=;
+ b=LVU3VcwsL/KbzN6WbG3qBy4BHZ+6dQbMNLCoECd6puaKU552ZGVBeghTx6qqiQUalHxA/ImFf
+ 437v6rBa44wDAp0prVSMRP6HOHA0aw+lxFsIYOJ2quLmoy5EGg4Ld88
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::19) To PAXPR04MB8459.eurprd04.prod.outlook.com
+ (2603:10a6:102:1da::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AS5PR04MB9893:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fdc1d84-75ba-44bf-7f99-08dce1302e54
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|7416014|376014|366016|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NU5CR2dMNHUzTHh4LzlKYmQrb2NQZTRmQ0JyT2YyeG05RmtQN3FPNDZIZmZr?=
+ =?utf-8?B?WlQ1STMxNm5XcVFCRndhVVNWcVAwcEVsb0NtRU8rN2lWVHo4aHowUEp3V09R?=
+ =?utf-8?B?clhlNmNSYncrZTBtMkdNbDVXZTBoRWNMdlR6YVFGUmprSWd6RjR0Z3hYZFlv?=
+ =?utf-8?B?VGI3NEVLdkgvYUNwVHlhL1RwTWlIMXhTNWFTZHo1aUg1QXZGUjVFbnA5c2tx?=
+ =?utf-8?B?ZHdZMTJSc2tHRStnRzgyQW9Jb2NvZGRDZmw0bnB2NUU5YjZIdkFHRWI5ZVoz?=
+ =?utf-8?B?MU8wRzJQcGpDcXh5bnNBL1V6VHA1SkY1OEo4Y0o0MVhDT2l5WUZqUi8xZ3lW?=
+ =?utf-8?B?b3hYOHgzazg4OUNxN2k1OHRydkdjdmNkVGtsRlNBdlRqM3cwL0VGc1VtVkNP?=
+ =?utf-8?B?eVdDSFY4TjFURU1IeTQrRlNCREVwalkycjV6Y1RLeFVkTjVCNXkvcjZzbnFw?=
+ =?utf-8?B?N0FNbEZXT2o4WWlIL3YrREU1dkJCeENreUhVSVBwNjdJNmxxMkJ2THRjaUI5?=
+ =?utf-8?B?R0xvOEI0ekJQbFVrbzczbkQwL2RlcjYyb2J3bm5xaXYyNm9odEtQRVAzQ2tL?=
+ =?utf-8?B?MDNIdTFFU1I5VXhGUUhRYnF4Ynl5RkpjejcwRE1scW9mTExyaTBPcC9hUG9S?=
+ =?utf-8?B?UHpIT053QlhwdE9ZcTRPZzlxV3NJa0NHS25ZRERyVFhiUkxjd2J3QjMzMjgx?=
+ =?utf-8?B?YnJlY3IwWElJb2F1V1ZuazhGaW5UWTFzRnNGcWdpQjJrR3dQOFFBZGhwaHNw?=
+ =?utf-8?B?TjFRUEtOSGRlaDlHNWE4LzB0ekpKR3F0azFWcjhzRGQ3YWQrbDdpT3ZlNGNG?=
+ =?utf-8?B?ZDR6UlJkdmw2dmdDQnRtZW9leURRR1dGcUdHdmZCcjBCbFBscURvTUJKcG9k?=
+ =?utf-8?B?RTh3eFRpcjJ1MzE2UjBDazRvbWJ6WHdtQkNPQndXT0hHNXEwYWx5c1BMUlI2?=
+ =?utf-8?B?ODVSSjJDdzA5U1pTMXJHZHcrV3BPMS9yUWVRUW83N3l4bXJ5YU52NWNNTTBi?=
+ =?utf-8?B?UkdUeTd4OXFjVkxHWXNDODMxN2JRN1ZaKzJja2xHcWpkVmJSR1l2OXYycjhs?=
+ =?utf-8?B?cFZLd3dIa0RRTHlSK2pucWV5Qk50Q0pnZVdIL1Bhd0ZzZ0NCTzdXdjBBOTEv?=
+ =?utf-8?B?a0VublYySWdSdVdBVlFjODY4b0lmblZWQlpQdzkyUDRzWE1MUnIyNkREYk01?=
+ =?utf-8?B?enhjeVFPcVR5bG1DUVFrN2YxbzVTdSttc2w0Y21MOFl0d3dGbm56NjlNaXBi?=
+ =?utf-8?B?SHZPQmFtVUpmMmJMdUUxL25tUVgwc0E0SlpPRWhrd2pMVEd2bm9ZeEdmS3dH?=
+ =?utf-8?B?MEhVZHFsRWtKazdsa3VHWWlPb0FOU2ZJRkxoS0FDSG5aOXRKWk9kdUxHSkM1?=
+ =?utf-8?B?ZUZjVVhHY0IzTWN2QWIrU2RnaEpjYmFzWitTTTZ5ZXlsUStnbGdlUlZmVDh6?=
+ =?utf-8?B?MU9JL2hDNi9GNkE0QmtBeFRtUXIzVXZyck9KOWM1a3I3VWYxZjNrTnVzMENq?=
+ =?utf-8?B?NE9NOGJqUUJvM0xoUHlBLzlQbTNJY3I5Q0xMUmFmQVNKK05XYXQ5bkRJR1Fn?=
+ =?utf-8?B?ZmZoVUE0dVhNYU5xRlcrMjl0dm0zZ0lvQ2N3OGVGRGx0OEQwRVpsUXZCRGE2?=
+ =?utf-8?B?QnNDSVQ1empkRXBCQmRNZ2Iyc2JDdTFBeTNESWJpcGprMkYwNDhYYWNCZWhv?=
+ =?utf-8?B?eHk4SmlqenF1czBsajZpR01HdHhSUUd4MTJnRVpvZkRnMlNta2Z1VitwLy9s?=
+ =?utf-8?B?QU55b3Z3T2xmam00d3BpdWNjdVluMXlTY0x3S3NPZUhGbVRIZEZOaDNmNE11?=
+ =?utf-8?Q?OKSNue978cMvXwsJyJfBV+MSKMtqQ5n1iS3Xw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(7416014)(376014)(366016)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VFNGYTVFM2tLNkhTZWJTRStKOVBVWWVTaUdVbmc1cGhaaDJCalpRS2dpS1RX?=
+ =?utf-8?B?WCt0NC9rRHk0aEtJR0Rldmg0em1nTGRsT0tyb1U2bFRrd3Y2czA3eVJoU3Ro?=
+ =?utf-8?B?U053UFZUVFRwZnZmcm0zOWhVcEYxcWhlQytiTGQ1UEdGVDZhVmpEVS9pa1FB?=
+ =?utf-8?B?Z2hEemVUZjNwekhrYUU4REt6TzlEL0tZU1dhc3V2cTNYanhkRHpOVjR2TEFX?=
+ =?utf-8?B?Q2JHNlcwRVBueXBMSWlMam1KQ3lGVDFKRmlZSVFLYi9wclFINEVUcXAxa0o4?=
+ =?utf-8?B?RDIwTGtwbEpzTXo5cndsTnZVNzBlWU42NTdjRHl4UVVaNU0vNnRnVXJqQnBw?=
+ =?utf-8?B?RndsQ2p5aWd5ZmcxMlZwSTZZYU9QdlRmZGdBYUZsYXZxNGlVZytTT3o3eDg2?=
+ =?utf-8?B?STVNRGVpRkp3TWpob3hFZ3Y4WktIL1I3WGFyeFAwbWtQTXJkQW41ZzBKUnVn?=
+ =?utf-8?B?RzhPOUhRR2ptVG5nc09zdVI5QTZnYm1PQ0s4U3VEZmRzL1JjOGlTcEhaam82?=
+ =?utf-8?B?ak05WjlCQ1ZYNFp0ZHh4YWVRcjMwa2I4WmI2V2Z1cDgyWDFka1FybDAwenA1?=
+ =?utf-8?B?Z0FXSTZwdnVvMnVpd2wzenYyZDBESS9ROFpqVjcxK0tXMWIrRmYxUEswaHJp?=
+ =?utf-8?B?ckFCMW5ZQVpOUzB3L0gwcnkySTVseVNFcGlqRS9jRk9XeVU0eFAzN004NzJ5?=
+ =?utf-8?B?NkNQWWhsKzlZYStRMlF1M1UvTUtwZUVKcmhoSnZadVJUd2dTN3lKUFVnS3Vt?=
+ =?utf-8?B?d2pJOEdvbHl4OUxMZUgxcHN5elowS0tDOWFKOFBvdGdweXc5QkNrbmJGOHBj?=
+ =?utf-8?B?VVhsc01jRmQ2bFdNWElOOUhjVWREekIycVdmMWxGbDFjdkVidktQZlpydGR1?=
+ =?utf-8?B?ajQrTnZMRWkvdG5Ua0ZJQUdYcDV5dU5xbjNEVzlxOGlub1ZKUjd2KzBIcTN6?=
+ =?utf-8?B?Uzd2NXloTWdlMVBIeHdGK3huSE52YVR3OERGa0pGMW12R2J2Qi9VUW44ZjNB?=
+ =?utf-8?B?aFg4RDBqT21TMDBLdlYyRG8yaDFxRlk2eWFXOUVCL3VUWVRNbkRLWDUxdy9n?=
+ =?utf-8?B?SzVtTjA3NjFKYm9wTEF4bDhmR3RMUE1oUG84bk9MdmNpWkZkT0Y5WEh3UUVz?=
+ =?utf-8?B?K0RFcjQyK0JVZHh3RnF1RXJpS2xvd0ZOZ2xHSloxTTM5MUJuSTA0MklsaWhw?=
+ =?utf-8?B?UGxOT0NHZFF2QmRpdG9QNE5KdHM0RkloSVU0dFBiWXNadVZvZTNpVUpwZ2Iy?=
+ =?utf-8?B?L3J6THE0Z2hHY1RzbVMydUM1LzIrNUhmcW9vTFlUeU92dFk2NHFRUW4yRi9v?=
+ =?utf-8?B?c2szRXl2bHp1RHFCUGdtNk1JZlN6K3ZHRk1XY2MxUElJcnR4MU1BdmRHc0tJ?=
+ =?utf-8?B?cGppRUtxTWJ4cmo4Nk1FNjVCUWJYODdYQlFPUDVQVFo2VGR6SmJNaXVydzJU?=
+ =?utf-8?B?dEFrS3lMbWM5c1JydlJDSG5PNnFLOVU4ZWpENGVhYWNXdVZVQUVMM0Q3OUZ2?=
+ =?utf-8?B?ekNDZEJPOTJxd1lZdklwS1E2WCtWbGwvZHFxZWZ0ZklnWU9aT1UyaFdVMzVB?=
+ =?utf-8?B?eFE4SFd6bVVLR0s1a24rQitldm40QXR3aXJ6YWszWUpkbE5peEtoZ1pvRkNz?=
+ =?utf-8?B?dU9qWEF1dUwwSUtuV3ZnTUF4bFhRRUhwMUQrV2xmeUdoRHRwSkU2ZnhxWENm?=
+ =?utf-8?B?c3I4eVhOMTVrVnV3N0JXL3R1cDJJUmJ2cWQ3TDQ0RElIQS9VMlJHVHEyMFJN?=
+ =?utf-8?B?VWtVMGdnN1dyWTY0SnhsWHJzQzNkYTN6U1JtekkzdDIzNTFoa2src2NEY214?=
+ =?utf-8?B?aGRoYmhRRnlDUlNwS1VpUGs0bThqNk92TGZ0czYzK0ZzQzFsOGEzTXBGRXZo?=
+ =?utf-8?B?Wk5jWSt2M0t0dWJNS1hzOG8rdFcySVd3RkNUMHBHUmxFNGtyanhVdHByMEJG?=
+ =?utf-8?B?Tm9SWWFIaXZBeHpZdlRoSUZZL0ZkdTlDV3FEUjdwaDUzOWQzWUphQmZQV0FC?=
+ =?utf-8?B?aW44bERkQ0FIcDMyS09nbnB4S0h6eUkrbmtLM0hxbjJJM1FqZFBoWVVWYktS?=
+ =?utf-8?B?WVE3MEJIVlNPc2JIRGNKYzhNVjZIU0N2dnhXbWtEcG11bUhTVHJra3hmcEQw?=
+ =?utf-8?Q?c5tcDr0e0oXKmf0TYo0EpuQ5+?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fdc1d84-75ba-44bf-7f99-08dce1302e54
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 09:13:43.4082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UKRJ7+69z5lnDoAsSlX5dF5PbgutHXyk/y91pPcBgOnfgR3eBjZmmCgOcLdV45P6eIxhdb6JJL6l96pH3R9GIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9893
 
-Christian Marangi <ansuelsmth@gmail.com> writes:
+spi-nor flash needs power supply to work properly, the power supply
+could be software controlled. So need enable the power before using the
+flash.
 
-> diff --git a/block/partitions/of.c b/block/partitions/of.c
-> new file mode 100644
-> index 000000000000..bc6200eb86b3
-> --- /dev/null
-> +++ b/block/partitions/of.c
-> @@ -0,0 +1,151 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/blkdev.h>
-> +#include <linux/major.h>
-> +#include <linux/of.h>
-> +#include "check.h"
-> +
-> +#define BOOT0_STR	"boot0"
-> +#define BOOT1_STR	"boot1"
-> +
-> +static struct device_node *get_partitions_node(struct device_node *disk_np,
-> +					       struct gendisk *disk)
-> +{
-> +	const char *node_name = "partitions";
-> +
-> +	/*
-> +	 * JEDEC specification 4.4 for eMMC introduced 3 additional partition
-> +	 * present on every eMMC. These additional partition are always hardcoded
-> +	 * from the eMMC driver as boot0, boot1 and rpmb. While rpmb is used to
-> +	 * store keys and exposed as a char device, the other 2 are exposed as
-> +	 * real separate disk with the boot0/1 appended to the disk name.
-> +	 *
-> +	 * Here we parse the disk_name in search for such suffix and select
-> +	 * the correct partition node.
-> +	 */
-> +	if (disk->major == MMC_BLOCK_MAJOR) {
-> +		const char *disk_name = disk->disk_name;
-> +
-> +		if (!memcmp(disk_name + strlen(disk_name) - strlen(BOOT0_STR),
-> +			    BOOT0_STR, sizeof(BOOT0_STR)))
-> +			node_name = "partitions-boot0";
+Patch 1,2 is to add vcc-supply for spi-nor
+Patch 3 is to add overlays for i.MX93-11x11-EVK
 
-If strlen(disk_name) is less than 5 (and I don't know if that's actually
-possible), this well end up doing out-of-bounds access.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+Changes in v2:
+- Add A-b for patch 1, typo in patch 1
+- Use devm_regulator_get_enable in patch 2
+  I still keep it in spi_nor_scan because it is in probe stage.
+- Link to v1: https://lore.kernel.org/r/20240920-spi-v1-0-97f220c2e10c@nxp.com
 
-We have a strstarts() helper, could you also add a strends() helper that
-handles this correctly? Something like
+---
+Peng Fan (3):
+      dt-bindings: mtd: jedec,spi-nor: add optional vcc-supply
+      mtd: spi-nor: support vcc-supply regulator
+      arm64: dts: imx93-11x11-evk: add overlays for flexspi flash
 
-/**
- * strends - does @str end with @suffix?
- * @str: string to examine
- * @suffix: suffix to look for.
- */
-static inline bool strends(const char *str, const char *suffix)
-{
-	size_t n = strlen(str);
-        size_t m = strlen(suffix);
-        return n >= m && !memcmp(str + n - m, suffix, m);
-}
+ .../devicetree/bindings/mtd/jedec,spi-nor.yaml     |  4 ++
+ arch/arm64/boot/dts/freescale/Makefile             |  3 ++
+ .../dts/freescale/imx93-11x11-evk-flexspi-m2.dtso  | 59 ++++++++++++++++++++++
+ arch/arm64/boot/dts/freescale/imx93-11x11-evk.dts  | 10 ++++
+ drivers/mtd/spi-nor/core.c                         |  5 ++
+ 5 files changed, 81 insertions(+)
+---
+base-commit: 1dfc4eba4ed353d2c6b26acc0f3518d3eecf28c3
+change-id: 20240920-spi-34231ea74761
 
-[or name it str_has_suffix() or str_ends_with(), "strends" is not
-particularly readable, it's unfortunate that the existing strstarts is
-spelled like that].
+Best regards,
+-- 
+Peng Fan <peng.fan@nxp.com>
 
-Rasmus
 
