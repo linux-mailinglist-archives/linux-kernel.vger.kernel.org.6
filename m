@@ -1,70 +1,126 @@
-Return-Path: <linux-kernel+bounces-344880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E971198AF33
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA2C98AF38
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91433281361
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D2E1F2268B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813AF184520;
-	Mon, 30 Sep 2024 21:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC71185B44;
+	Mon, 30 Sep 2024 21:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZB+GR19z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YgR2fuSG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OLBn3xaq"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C827EDE;
-	Mon, 30 Sep 2024 21:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6C9EDE;
+	Mon, 30 Sep 2024 21:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727732017; cv=none; b=KNwXWiVM3Hp+gwCk2q5t0EHLRhqgLY2G/96xR+jyfj9ob6oFq+Ly0tmg+af5OyTlfxWJm6jsfGemYnedCKtkSKmxywbGA65oZSCZggtrJgydL3kZstAW+PWbf8GbQ6JhgmjD1jljFHRXfP5vg/Q3LKS4frgE7MjHebbTHIfMJF8=
+	t=1727732117; cv=none; b=naEh++21QmxFDDKo6Dfl0rDBnD3dCjZpaXQgR83FzX6sgU47Fz1pbAkTx3Dmkao9Y2lwFqS04ThIKwpv1B68+WmTcQy29LMYdyodBmfXys3sXzOS+YA3TItpqIBbZedCqYJhhTfpfAtwi75Uym5z99vO8BNFNfGtE3xB3GCVPvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727732017; c=relaxed/simple;
-	bh=/SRb6Jaylu4nikGcNmpwMw1bw3/7CwlBvKRUqbu/Ye4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iuFR43glBah1/EDya7KiNQ0OmscVDsMO/0yOvb9zY4RwDTt63JKstQfdidRzRtYGqDJnSp+sChy4J3aTfjvV1/xdbhWBPlD3MBMI6irENVpo4CsI8J0zYw87N2TjWpWyZQ1k8XdJbJJ8jY9JV7aLThfDdnNKV9GIUyLP0YJ/J5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZB+GR19z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=tMoXWmbk6w2tetKwiah6k8IcqLtsrPCKf4dOWdpPRDU=; b=ZB+GR19zZEGaHm7Dxy6pqEpghx
-	K0fE2ZiZZjS5oGfggtkaGpn48/Vkit/qePPbvtHMz0hsprwhicEGg1rq9mF+ooi1yOSqM7eKCYqo8
-	DlSqAYMfjBxcLtxJ1my1aCjKqbPb3s+pCH6tM7mONIAkPbBPnjF7rpnEX5QWuivyfNF4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1svO1B-008fY1-Br; Mon, 30 Sep 2024 23:33:21 +0200
-Date: Mon, 30 Sep 2024 23:33:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
-	tobias@waldekranz.com, anna-maria@linutronix.de
-Subject: Re: [PATCH net-next] net: marvell: mvmdio: use clk_get_optional
-Message-ID: <d4ad72ed-9826-4524-8c4c-0fddc97a8670@lunn.ch>
-References: <20240930211628.330703-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727732117; c=relaxed/simple;
+	bh=dxuL2+8ZVHuUyZGDZyBs/XcF0TJ+A4SDCBg5GNm49/8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QoGacCURkZJ84TA7yV+AECPhkWqYMUcLtIoI8OjAlrnRLO8G2LgMQuDTiQ7jvBmSdyfF5pwSL4nIoEp0mjHLNeo5a2j2c4kNl+gxcpWsCg27c5ZqaxzjdgOUALM0kRN9/7KBNW+zADvEmZItFf8GZ7QEqNKtDI7Z25ExrKPnyE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YgR2fuSG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OLBn3xaq; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727732113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uVbdFg6I8fwu/3AqZyEvbGS1WvCMLB3EhLlpsNhR5nI=;
+	b=YgR2fuSGQ+1CC0G5H4MzE4t8olbAFU5BafUyaLxjF2QIjTs3UbzCwwk7QvMFHeeLW8vuY5
+	HIuz05kBaI+PAU5kDbE9O5ysw0ZigkKVd+8BT9ZePG9tf2kJcuF4pv35EhkZ99cPbhVZbC
+	GQ7Jjbx9vgE0Rcx85zIefGMO0cL2dvmr4gN0aD9m2NtQeKfb7b8TsCdFADjl1RJyD/x6T5
+	2c0wF9l6tXZjPe+9VRbHHcVyeREQUnQ1EWRZc+6eA8hsmw0RLjF4PEs0g0/Gf5TgScX/Mf
+	xmwiJC8MCArfDFIIe+35ZCXxip+JZBfa+y8nD1s/uIVBn02yxnXIdg3SaXmy3A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727732113;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uVbdFg6I8fwu/3AqZyEvbGS1WvCMLB3EhLlpsNhR5nI=;
+	b=OLBn3xaqldkwQyCXLWWfC5gXBWhLeCEwb2syNUFGVZ4mPsvyd455m2aCZBRPk2SHmQTkzb
+	bQfsnyFmm/fDZ2Dg==
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+In-Reply-To: <79a32ab9308d6e63e066aa17c5c2492b51b55850.camel@kernel.org>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+ <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
+ <874j6f99dg.ffs@tglx>
+ <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
+ <878qv90x6w.ffs@tglx>
+ <4933075b1023f466edb516e86608e0938de28c1d.camel@kernel.org>
+ <87y138zyfu.ffs@tglx>
+ <79a32ab9308d6e63e066aa17c5c2492b51b55850.camel@kernel.org>
+Date: Mon, 30 Sep 2024 23:35:13 +0200
+Message-ID: <87plokzuy6.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930211628.330703-1-rosenp@gmail.com>
+Content-Type: text/plain
 
-On Mon, Sep 30, 2024 at 02:16:28PM -0700, Rosen Penev wrote:
-> The code seems to be handling EPROBE_DEFER explicitly and if there's no
-> error, enables the clock. clk_get_optional exists for that.
+On Mon, Sep 30 2024 at 16:53, Jeff Layton wrote:
+> On Mon, 2024-09-30 at 22:19 +0200, Thomas Gleixner wrote:
+>> On Mon, Sep 30 2024 at 15:37, Jeff Layton wrote:
+>> > If however, two threads have racing syscalls that overlap in time, then there                       
+>> > is no such guarantee, and the second file may appear to have been modified                          
+>> > before, after or at the same time as the first, regardless of which one was                         
+>> > submitted first.
+>> 
+>> That makes me ask a question. Are the timestamps always taken in thread
+>> (syscall) context or can they be taken in other contexts (worker,
+>> [soft]interrupt, etc.) too?
+>> 
+>
+> That's a good question.
+>
+> The main place we do this is inode_set_ctime_current(). That is mostly
+> called in the context of a syscall or similar sort of operation
+> (io_uring, nfsd RPC request, etc.).
+>
+> I certainly wouldn't rule out a workqueue job calling that function,
+> but this is something we do while dirtying an inode, and that's not
+> typically done in interrupt context.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+The reason I'm asking is that if it's always syscall context,
+i.e. write() or io_uring()/RPC request etc., then you can avoid the
+whole global floor value dance and make it strictly per thread, which
+simplifies the exercise significantly.
 
-    Andrew
+But even if it's not syscall/thread context then the worker or io_uring
+state machine might just require to serialize against itself and not
+coordinate with something else. But what do I know.
+
+Thanks,
+
+        tglx
 
