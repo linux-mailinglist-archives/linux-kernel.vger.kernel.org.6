@@ -1,199 +1,112 @@
-Return-Path: <linux-kernel+bounces-344765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576FB98AE06
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:18:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EE598AE11
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605DC1C22B8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5C71F2142F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2856C1A255C;
-	Mon, 30 Sep 2024 20:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCF71A00C9;
+	Mon, 30 Sep 2024 20:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgQ1+e/a"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MhW83lyu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zclkxnGp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AEFB1A0BEB
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C653219922D;
+	Mon, 30 Sep 2024 20:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727727288; cv=none; b=awxWnabCcy950EO2zTXlDRxZCX7sEnuCbJpmA6J0F+RQU31vlK5Y9AszQcbhuRQxnTh0karOqiVvZDuZfS88xRyScQW3uEdaOEHt/rQnQQ+Q4ClH8gR55wfnYeq1f9IaL1zCqXzu8JMqOqgC3Z6ojY0lPs1nMrbDXrFyty9YC6s=
+	t=1727727343; cv=none; b=Iz1+YKrqd6ql+c3FV0Dzagnt8vVEij0aqaSj2qV8RTB0rAPSR/1y8dZhdg1StGC1BoEy/vRZmR83K/gCT1FlBL96etrGV4s/llbAtbbLPZNXTE3WxHcyFE2iT2xmKhl8y+tRnEiPm9L9f2HvBJYblkwQLR6KUGdQya53IC5UkC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727727288; c=relaxed/simple;
-	bh=X/4e7mZxuw2J+n9vnToA8fMOd1pL/QZg+X4D355Gd6g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mrGL+bbSxvgJjpzCGtoDgjy6NILUIGgS+0RF52Wn2jTNfQT5doEhF+jtTAtzIRdkfP0aLat/3YyzmxWLp3DvmOTNz1R1/D5yZPqtYsogwMB74rzHrPRNCYPqBAZZ5OQPv6UbLakmlLYqjtEp1kj0W7dkPNAVfMZF/knKaHHiPsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IgQ1+e/a; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e214c3d045so37726767b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:14:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727727284; x=1728332084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pprKSaNRuk4RU9vGlhC9xypgMoYbs/DlEn6atpZhZX0=;
-        b=IgQ1+e/aYhrvpPcZVPrCJ9h+UaepHAeuRAE5y4GV+e9YKVZ1n2SLbXTWXGULYm/YFn
-         QiGlpagbdKg9pX5TjQgQkHhzOs8nOLhNsCsYPg5JKPWuKus40DVR16dp9OiGVCUZv8MW
-         Pu4olqTwWnUDDjrvD2GRPUHBQ4mWoOM/thaPREmADIMqwqwNM4ujytpy2+Ra/kTTtiMB
-         zElSnqrhOrq28+3hSFR0qXjBEvkYaC1nBvFgbDRVIjJXUFUn/7R6MXmbTlf7nVvHdYZi
-         nsg+1gUe/y1zgjA5zTNJSx6LRd2Zd5qW3/cmj5IWsl1TyarjnoqI6nWU3bqIjsamhl9G
-         IyYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727727284; x=1728332084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pprKSaNRuk4RU9vGlhC9xypgMoYbs/DlEn6atpZhZX0=;
-        b=ugUN+C9ZcJ9/5saJX/ngbjIT1nJFtK2zS3M/2cH6A65uTdTmrjkcZs0wRFhm/DcfFf
-         Fz98/bKCRgC5DrUmbVzsGTX8W3vDuECGncgNPzawiszPV5JhoR9XojmqMKk8Eyc8adF0
-         LLbCAQW2oHZuGxSmmR9zHaiQVRkALlTV/OlLntaY7RauK51vvo5Ms2DTy6z4n6QnTQKZ
-         Y6TrC4EtjVVwlxPfX0fmtdG5adAQr3lUFkS7/3zAdj6lOmEQNUxKyyZIwQwT3U0DGYxB
-         WUESBmAaa6vAYkH7GqqyYPvRgrztPJ9c+c4Euzut26utjaQyJ6+vxG8wNbf2zaiQh6CN
-         Qd7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVzX3xoaBwFTNnVApznbSX/caDj5mLnZXX9MwiPfJWcqDmeC0a8hZ5/+qAiRP6FnmuMPLXa2Wd9dnrz9ZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJf+1OOubX33MScD5XuXIi97bIE0NwswS/63FxUrWGdfM/DWU8
-	LV9hXNe6azVBiURF9txaeUI0bIkM+iLcl7DAn9z5fpOmSxLa/7swLdDpIXR9JpMnuoITumeSqta
-	fkXjiq7QuVw8sc+C0EaWx0J2vDS+NrzRAjqVBUg==
-X-Google-Smtp-Source: AGHT+IGw89Yi103G7oHwBihXrrG7C1HKFwoxrFWy4eJ4ItSgybQDiDfYN6d7HhLwkVImZdJ046BeMXWV/7ACSsaScYs=
-X-Received: by 2002:a05:690c:6403:b0:646:7b75:5c2c with SMTP id
- 00721157ae682-6e247546f2bmr112204887b3.16.1727727284450; Mon, 30 Sep 2024
- 13:14:44 -0700 (PDT)
+	s=arc-20240116; t=1727727343; c=relaxed/simple;
+	bh=M7S+gdWXGa3PLSbsG6OdZUVcDn/PBbUxrZ5/qJ+DMEw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NY7iQAHq98kFPkhqlwUTFbNAHTVf72f4NUece3+jNdthpW3U6KFLTX4pKK3hV+95KTupqV0lXkncBgLvqCYd9GeqPto996Ix/SXQ5RkgWgxKI3+1vojuOZhznbF94J3+PowL3ONyfLJEqfu8wOIWxB+dNctYc/4QJoLBFThqo6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MhW83lyu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zclkxnGp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727727339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7S+gdWXGa3PLSbsG6OdZUVcDn/PBbUxrZ5/qJ+DMEw=;
+	b=MhW83lyupKjcTRSYb6BhSWLgQ/nBViA9+6PePLs6Nipl86pAHMy0p2nNURvKDdJKSPRXRM
+	LNK9srxo+rdQAL/q9aBHffjqipLUd9iXVfrEM2nGga6xk1EKNmG6d2Ta1ITkfukUGHRbr4
+	FzOtufN+1jlLEL1MJQuEPd9z2bMQhxzlX8wJBlOl+Z3Dv2r3lPF6SWRZTti7ZEZjF6F8fp
+	TEMOlkLQBmBNStXDlGNw812QgoaUuraqXPR8NaAEFkv4wt3hzPtLM5oV4gql/IgfLg5LWl
+	4KS1klvVzBw662UCQ3TiL7K6fwd9rBTE5tn3xajscpCmUc4eM1Wk68CYAA+Ddg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727727339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M7S+gdWXGa3PLSbsG6OdZUVcDn/PBbUxrZ5/qJ+DMEw=;
+	b=zclkxnGp1atI4LKz/391HDmc/xuV+6cnt/bWku76i0l7uDYj3Gzik7Lmq5q0tWoZKY4jE1
+	duHSRiKZaAD49xDg==
+To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+In-Reply-To: <753938ef8e46e9f3d9ea7d977537cd8f5a6533b2.camel@kernel.org>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+ <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87bk050xb9.ffs@tglx>
+ <753938ef8e46e9f3d9ea7d977537cd8f5a6533b2.camel@kernel.org>
+Date: Mon, 30 Sep 2024 22:15:39 +0200
+Message-ID: <871q102904.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b@epcas2p4.samsung.com>
- <20240913080325.3676181-1-trunixs.kim@samsung.com> <20240913080325.3676181-3-trunixs.kim@samsung.com>
-In-Reply-To: <20240913080325.3676181-3-trunixs.kim@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 30 Sep 2024 15:14:33 -0500
-Message-ID: <CAPLW+4k0rpS0F14sqMGPbq_m=aMqK+g=PZewtZYYroQ+OQBeOQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] watchdog: s3c2410_wdt: add support for exynosautov920 SoC
-To: Taewan Kim <trunixs.kim@samsung.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-watchdog@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	Byoungtae Cho <bt.cho@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Sep 13, 2024 at 3:04=E2=80=AFAM Taewan Kim <trunixs.kim@samsung.com=
-> wrote:
+On Mon, Sep 30 2024 at 15:27, Jeff Layton wrote:
+> On Mon, 2024-09-30 at 21:13 +0200, Thomas Gleixner wrote:
+>> So if that's the intended behaviour then the changelog is misleading at
+>> best.
 >
-> From: Byoungtae Cho <bt.cho@samsung.com>
+> That is the intended behavior and I'll plan to fix the changelog to
+> clarify this point:
 >
-> Adds the compatibles and drvdata for the ExynosAuto V920 SoC. This SoC
-> is almost similar to ExynosAutoV9, but some CPU configurations are quite
-> different, so it should be added. Plus it also support DBGACK like as
-> GS101 SoC.
->
-> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
-> ---
->  drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++++++++++++-
->  1 file changed, 36 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 686cf544d0ae..c25133348f0e 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -63,6 +63,10 @@
->  #define EXYNOS850_CLUSTER1_NONCPU_INT_EN       0x1644
->  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT       0x1520
->  #define EXYNOSAUTOV9_CLUSTER1_NONCPU_INT_EN    0x1544
-> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT     0x1420
-> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN  0x1444
-> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT     0x1720
-> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN  0x1744
->
->  #define EXYNOS850_CLUSTER0_WDTRESET_BIT                24
->  #define EXYNOS850_CLUSTER1_WDTRESET_BIT                23
-> @@ -303,6 +307,32 @@ static const struct s3c2410_wdt_variant drv_data_gs1=
-01_cl1 =3D {
->                   QUIRK_HAS_DBGACK_BIT,
->  };
->
-> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 =3D =
-{
-> +       .mask_reset_reg =3D EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN,
-> +       .mask_bit =3D 2,
-> +       .mask_reset_inv =3D true,
-> +       .rst_stat_reg =3D EXYNOS5_RST_STAT_REG_OFFSET,
-> +       .rst_stat_bit =3D EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
-> +       .cnt_en_reg =3D EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
-> +       .cnt_en_bit =3D 7,
-> +       .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-> +                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> +                 QUIRK_HAS_DBGACK_BIT,
-> +};
-> +
-> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 =3D =
-{
-> +       .mask_reset_reg =3D EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN,
-> +       .mask_bit =3D 2,
-> +       .mask_reset_inv =3D true,
-> +       .rst_stat_reg =3D EXYNOS5_RST_STAT_REG_OFFSET,
-> +       .rst_stat_bit =3D EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
-> +       .cnt_en_reg =3D EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
-> +       .cnt_en_bit =3D 7,
-> +       .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
-> +                 QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
-> +                 QUIRK_HAS_DBGACK_BIT,
-> +};
-> +
->  static const struct of_device_id s3c2410_wdt_match[] =3D {
->         { .compatible =3D "google,gs101-wdt",
->           .data =3D &drv_data_gs101_cl0 },
-> @@ -320,6 +350,8 @@ static const struct of_device_id s3c2410_wdt_match[] =
-=3D {
->           .data =3D &drv_data_exynos850_cl0 },
->         { .compatible =3D "samsung,exynosautov9-wdt",
->           .data =3D &drv_data_exynosautov9_cl0 },
-> +       { .compatible =3D "samsung,exynosautov920-wdt",
-> +         .data =3D &drv_data_exynosautov920_cl0},
->         {},
->  };
->  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> @@ -643,7 +675,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev=
-, struct s3c2410_wdt *wdt)
->         /* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index=
- */
->         if (variant =3D=3D &drv_data_exynos850_cl0 ||
->             variant =3D=3D &drv_data_exynosautov9_cl0 ||
-> -           variant =3D=3D &drv_data_gs101_cl0) {
-> +           variant =3D=3D &drv_data_gs101_cl0 ||
-> +           variant =3D=3D &drv_data_exynosautov920_cl0) {
->                 u32 index;
->                 int err;
->
-> @@ -662,6 +695,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev=
-, struct s3c2410_wdt *wdt)
->                                 variant =3D &drv_data_exynosautov9_cl1;
->                         else if (variant =3D=3D &drv_data_gs101_cl0)
->                                 variant =3D &drv_data_gs101_cl1;
-> +                       else if (variant =3D=3D &drv_data_exynosautov920_=
-cl1)
+> If someone jumps the realtime clock backward by a large value, then the
+> realtime timestamp _can_ appear to go backward. This is a problem today
+> even without this patchset.
 
-Shouldn't it be cl0 here?
+Correct.
 
-> +                               variant =3D &drv_data_exynosautov920_cl1;
->                         break;
->                 default:
->                         return dev_err_probe(dev, -EINVAL, "wrong cluster=
- index: %u\n", index);
-> --
-> 2.46.0
->
->
+> If two files get stamped and a realtime clock jump backward happens in
+> between them, all bets are off as to which one will appear to have been
+> modified first. I don't think that is something we can reasonably
+> prevent, since we must stamp files according to the realtime clock.
+
+True. I just was utterly confused about the changelog.
+
+> The main thing I'm trying to prevent is the timestamps being misordered
+> in the absence of such a clock jump. Without tracking the floor as I am
+> here, that's a possibility.
+
+Correct.
 
