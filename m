@@ -1,126 +1,205 @@
-Return-Path: <linux-kernel+bounces-343984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10FD98A222
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:23:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC9F98A22E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201921C21635
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6850228411D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024B3192D80;
-	Mon, 30 Sep 2024 12:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE5E190049;
+	Mon, 30 Sep 2024 12:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cS0L1nBd"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jYNUBsH2"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460D11990AE;
-	Mon, 30 Sep 2024 12:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EBD18FDD8
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698584; cv=none; b=dLUpDR60LW+5qK9MpHk4otb6R6hBZSwVCH4efKQrEyJ65rpWfeXXkQsB8Jl3dOBcQG+x7EjV2MmndihV+QkRbt4o1RaU9uzmz8++Nl/QY0BamB4J9d8w12LjcZi6Wl36Po8xmUWp0uM9RTju3miODvHqKKJksn2xbSuSpF5SfQo=
+	t=1727698701; cv=none; b=IjhxiGOA64nHP4QvFxKY+Jp97sL9+1EzFJSouC/hFBye0aAXXUaOgXvL/jJnVVSH9GbqBL+kaBT0zbOU9PmsFUUfYy9jivVkrg/on5xE5KEDO7jAchmYLSIgPbozIUHJztLYwjdkyMLEanDL16ZJuhEMYFIMnWRJ3+2QHv7Y0uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698584; c=relaxed/simple;
-	bh=YqkT5IGi9UJunH2tshNXA2e24IZtms2Ugwn6KtSdJ+M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bHq17zFnv5b2wLf5OTFSReuyONgSI3QaE5LU4lrzstLQVUc/n227XIlBDzcPsEgFfm1l2VS/4ldRKIQJG+wFx5QSN0q5ChbhjB8psHi3nxmMdNkX8WtLxZUR6ZzCN+F25qKK4yeRlkAYMfBBLwYhDo46T4JagVkLvWBdGKUqXck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cS0L1nBd; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id 37F091C000C;
-	Mon, 30 Sep 2024 12:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727698580;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YjuDwokkG7OF/4ROPKeyv/vcxKhZ7wMvKgFy1WdBHx4=;
-	b=cS0L1nBdhie2Hf5FoT9Y7d67EIfa0ezwe3WrbEWmrMBAlZz5DMWnyvGlyOkV7Kse8J3dS6
-	PK+8+L5lvYOrhrRNxbt9HgajRA56P1k+w73q7A0mj2rih1OgjqamOUe60b5VtBxN0fITRf
-	SxmpKtRAUw7xn9hutrm34X4bOdtcuYKLl5pQRL7zRalRAtb41vR7xry7kWg51WLz/lMGN/
-	Kv/aW+jvNMCqQWKY3AwDPFNVdfRE76sV1n5E1WtYwlNXynbNTmP+SNe2Mckeyy1UwD0MBs
-	73chAvpNUWm5m1wyl1ZsiMDpt9Y/N6w2YyETZrugaBk2dS2zpj249+Da4mhXTg==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v6 7/7] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Mon, 30 Sep 2024 14:15:47 +0200
-Message-ID: <20240930121601.172216-8-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20240930121601.172216-1-herve.codina@bootlin.com>
-References: <20240930121601.172216-1-herve.codina@bootlin.com>
+	s=arc-20240116; t=1727698701; c=relaxed/simple;
+	bh=Sfw0mdEMDh/K3VhBFy3s8i5VHolr+g/Xq0J0N41drMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ow0+cbqq0uxD6HCWKDXZWDucI6FzovRQm88hgZ/AdFFbPUX1aMevY2emHo/6hWw1MD5bBcNd91fC/o2hFStlzw4eKaoejPRI5eyGDoCCiIC5OWblPz43mKrF3wt4ktemYf/2QXLMPzpYP1RQ3tWzJjgiJrIDmP9XEkBl1DYfONQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jYNUBsH2; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb1dd2886so248955e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:18:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727698698; x=1728303498; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ep8QUlUnrds1SGucXi/YgAp2nqtwi1+G8zbAJEqKkms=;
+        b=jYNUBsH2+D6AwBTcF9MZyJVUlB3DJfOlxljIPTnpEgUUxuXMJbElREFKhkFQV5rEbI
+         9ZJV8xmon6JdBe0VGJVvQdhWlvHA9LBzl7gkIA0y1i4IFmJRPfclyg0/gFCOY4mU+aSc
+         MySspSr0EOgMd43BTnYaVeT2pOGQCvQhXnDKxdkM+7fo4xAr5LrTEHd5DLJ2Z55z5UrG
+         mV+f15dTYuDvK2vWLcIGGrv9HCjV+cILDnsAYrSZV2jRIopPzyapfDbjdLCPP++dT4U8
+         3ZQ0nZvByldlkCV28RE64SQott+i1V8iBEU8WxhL7+tEabYkQyXw4Fue2hAS6Fx2/KAN
+         E3mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727698698; x=1728303498;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ep8QUlUnrds1SGucXi/YgAp2nqtwi1+G8zbAJEqKkms=;
+        b=hUVHEY2RhTA06iU5XWJmhUvCaJTXFcvvvyFSROchMLsJ9MfD3PbX8Spo7O1gmadtGp
+         GklwYYDS6ngn1HwaM6jp4O6pBtC3NISInLAS2J1A2WRKTs64ZzC9fqUOtuq3TZkgqGNv
+         vZmv3NktiSuKvt08RoL9m2C2ee4kIJ2dC3hVOi8+/Ffjk50j3+MBXf3DEUUpOLYw+ckW
+         FFrYfTJgSBt878qFcY7CE0AXOBE9+1Pbim+8J40i1cxO+TWiJSTNr9J20HEZhtbp9eVB
+         q2XzYltlMuR4lgzaK9DZgQ77pHWTWh4jUyotx8MnZuD9RHFj1CK0OVXyvP5305CAHd+2
+         udnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPkv9bvdnca3PF0l5FXm02t6jlY+aj7Foq7NxPwa1IVsAcbosmke6QjbY86asr5o7lzDQPYR7356otySE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhwidZ0h0asHEnDXQB12rnAYlLriKOQA4F8kPczKbkdMEQByoZ
+	ucQ8vH4r+fICgnGlfhn0UPS/QfMSNANtVP5DpuRdZxQzTckS6OY9+VXz9qdJYw==
+X-Google-Smtp-Source: AGHT+IH+eizAu2CnZGC3hefAOZi6cXpOLeMx7dOz1tK0DzkSpIg3YK9bWw+nq6Fd1qcBeFmDAlYILQ==
+X-Received: by 2002:a05:600c:1e15:b0:426:66a0:6df6 with SMTP id 5b1f17b1804b1-42f5e86ebbdmr5573495e9.0.1727698697581;
+        Mon, 30 Sep 2024 05:18:17 -0700 (PDT)
+Received: from google.com (105.93.155.104.bc.googleusercontent.com. [104.155.93.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e645fsm8861945f8f.59.2024.09.30.05.18.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:18:17 -0700 (PDT)
+Date: Mon, 30 Sep 2024 12:18:13 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Yi Liu <yi.l.liu@intel.com>
+Cc: kvm@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	Eric Auger <eric.auger@redhat.com>,
+	Alex Williamson <alex.williamson@redhat.com>, kwankhede@nvidia.com,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Quentin Perret <qperret@google.com>
+Subject: Re: [RFC] Simple device assignment with VFIO platform
+Message-ID: <ZvqXBY12_53HLV9k@google.com>
+References: <CAFgf54rCCWjHLsLUxrMspNHaKAa1o8n3Md2_ZNGVtj0cU_dOPg@mail.gmail.com>
+ <27b1055b-aee3-4d00-a4f8-d7d026cfbdd6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+In-Reply-To: <27b1055b-aee3-4d00-a4f8-d7d026cfbdd6@intel.com>
 
-From: Clément Léger <clement.leger@bootlin.com>
+Hi Yi,
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+Thanks a lot for the feedback.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
----
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
+On Mon, Sep 30, 2024 at 03:19:05PM +0800, Yi Liu wrote:
+> On 2024/9/28 00:17, Mostafa Saleh wrote:
+> > Hi All,
+> > 
+> > Background
+> > ==========
+> > I have been looking into assigning simple devices which are not DMA
+> > capable to VMs on Android using VFIO platform.
+> > 
+> > I have been mainly looking with respect to Protected KVM (pKVM), which
+> > would need some extra modifications mostly to KVM-VFIO, that is quite
+> > early under prototyping at the moment, which have core pending pKVM
+> > dependencies upstream as guest memfd[1] and IOMMUs support[2].
+> > 
+> > However, this problem is not pKVM(or KVM) specific, and about the
+> > design of VFIO.
+> > 
+> > [1] https://lore.kernel.org/kvm/20240801090117.3841080-1-tabba@google.com/
+> > [2] https://lore.kernel.org/kvmarm/20230201125328.2186498-1-jean-philippe@linaro.org/
+> > 
+> > Problem
+> > =======
+> > At the moment, VFIO platform will deny a device from probing (through
+> > vfio_group_find_or_alloc()), if it’s not part of an IOMMU group,
+> > unless (CONFIG_VFIO_NOIOMMU is configured)
+> 
+> so your device does not have an IOMMU and also it does not do DMA at all?
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index 8b931af67383..6bcc3669b71a 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -135,6 +135,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
- 
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
--- 
-2.46.1
+Exactly.
 
+> 
+> > As far as I understand the current solutions to pass through platform
+> > devices that are not DMA capable are:
+> > - Use VFIO platform + (CONFIG_VFIO_NOIOMMU): The problem with that, it
+> > taints the kernel and this doesn’t actually fit the device description
+> > as the device doesn’t only have an IOMMU, but it’s not DMA capable at
+> > all, so the kernel should be safe with assigning the device without
+> > DMA isolation.
+> 
+> you need to set the vfio_noiommu parameter as well. yes, this would give
+> your device a fake iommu group. But the kernel would say this taints it.
+
+Yes, that would be the main problem with this approach.
+
+> 
+> > 
+> > - Use VFIO mdev with an emulated IOMMU, this seems it could work. But
+> > many of the code would be duplicate with the VFIO platform code as the
+> > device is a platform device.
+> > 
+> > - Use UIO: Can map MMIO to userspace which seems to be focused for
+> > userspace drivers rather than VM passthrough and I can’t find its
+> > support in Qemu.
+> 
+> QEMU is for device passthrough, it makes sense it needs to use the VFIO
+> without noiommu instead of UIO. The below link has more explanations.
+> 
+
+I agree, the reason I considered UIO, is that it allows mmap of the device
+MMIO, so in theory those can be passed to KVM, but that might be abuse of
+the UAPI? Specially I can’t find any VMM support for that.
+
+> https://wiki.qemu.org/Features/VT-d
+> 
+> As the introduction of vfio cdev, you may compile the vfio group out
+> by CONFIG_VFIO_GROUP==n. Supposedly, you will not be blocked by the
+> vfio_group_find_or_alloc(). But you might be blocked due to no present
+> iommu. You may have a try though.
+
+That fails at probe also, because of the device has no IOMMU as
+vfio_platform_probe() ends up calling device_iommu_capable().
+
+Also, AFAIU, using cdev must be tied with IOMMUFD, which assumes
+existence of IOMMU and would failt at bind.
+
+> 
+> > One other benefit from supporting this in VFIO platform, that we can
+> > use the existing UAPI for platform devices (and support in VMMs)
+> > 
+> > Proposal
+> > ========
+> > Extend VFIO platform to allow assigning devices without an IOMMU, this
+> > can be possibly done by
+> > - Checking device capability from the platform bus (would be something
+> > ACPI/OF specific similar to how it configures DMA from
+> > platform_dma_configure(), we can add a new function something like
+> > platfrom_dma_capable())
+> > 
+> > - Using emulated IOMMU for such devices
+> > (vfio_register_emulated_iommu_dev()), instead of having intrusive
+> > changes about IOMMUs existence.
+> 
+> is it the mdev approach listed in the above?
+
+No, I meant to extended VFIO-platform to understand that, so in case the
+device has no IOMMU group, it can check with the platform bus if the
+device is DMA capable or not and it can allow those devices (maybe
+gated behind a command line) to be probed with emulated group.
+
+Having an new mdev just for platform devices with no DMA capabilities might
+be good if we don’t want to change VFIO platform, but my main concern is that
+might need more code + duplication with VFIO-platform.
+
+Thanks,
+Mostafa
+
+> -- 
+> Regards,
+> Yi Liu
 
