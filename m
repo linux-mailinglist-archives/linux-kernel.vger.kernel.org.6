@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-344518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7B198AAB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCE698AAC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 576101F22488
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DACA1F22460
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72958194C92;
-	Mon, 30 Sep 2024 17:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22072197A98;
+	Mon, 30 Sep 2024 17:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uXcJQt8F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOK28VA4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70BD193418;
-	Mon, 30 Sep 2024 17:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B5A194C85;
+	Mon, 30 Sep 2024 17:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716263; cv=none; b=jd5scSLgwd0cI0ycfQDQGlfz4muhgrpXXpKYoP9+lwuNxekUoXqnoQ9JZ3IYqtGlaH1qCuFeh8XaxQs8s4F2JX2JW+7OnyAAWopTMGPvb4Xjk10Ll6itnq0fbInbagmPrk8kbpLlXolI3ng34v3AmZQsnTW9HgRvGjQrPX/P3rw=
+	t=1727716305; cv=none; b=QSiWNShYGNobI/vfxNGGbWxpat7apl3q+u4cbMTu+F9PNvffj4ULzl5QzktdZnSQNh7A6ZtpGMj756d9N9aIe08ZXZJ2lxZhGM60sxmJ7Slgn4K/F/YJMANpZNflMyex+9RD1Z1bADnehtOrx2EYxrZHX9pkYXSlAxRssWpPH9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716263; c=relaxed/simple;
-	bh=Tuc19cZt8pASN1cS3Vmu7tFxdzk2Z6Kwbjf+vvjqIE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=l/5xeKkgGbWI9fUDvYijYENReAHW8acwErTSuPmFjiXkU1aZl0+3B0BHwturdjcsm2p7rdQgAJ7844Bu88RbgF+T7BNKn6G/INsxN3h1Ltn7DOgKP7FLryWJhzFL+qKcnkqQVs2AEZDZcntMCXSt1wN79xrh6nu1lQlOr6K14jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uXcJQt8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B72AC4CEC7;
-	Mon, 30 Sep 2024 17:11:03 +0000 (UTC)
+	s=arc-20240116; t=1727716305; c=relaxed/simple;
+	bh=o1K5k91qZFtJQYCTb40/SpUrr1tTX/a1xr5upzEJtqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTTSPjdBsuAbGWL9F7hSNhvfyg421u7J7+beh7t0BS31Cl+tviiNpEs0B6g6ALdc0vghJvg5xK0x9vsrfCVrB8I2iMD4MsiDUbGdvqvD/YU6sWBWegm/nYyz7D9vYuAJ5x2bNzNXOLDGqtZ77ohjJ55XS2v7z7s/7wS1WK1oDyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOK28VA4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00FF4C4CEC7;
+	Mon, 30 Sep 2024 17:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727716263;
-	bh=Tuc19cZt8pASN1cS3Vmu7tFxdzk2Z6Kwbjf+vvjqIE0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=uXcJQt8FVIoKNnyxtENcKSApJ6kdEGqExSDTm1cWSv7M6h/opy64lHWGTscYaTdN9
-	 eMqA9XMaKF4QYB1H5Hs2dgqPmfLyr/ir6aJaQdIMXOPVk/I7StnCLSBMRkbnebr9Ps
-	 a1mdJ8Fk9XIm5NOWx9OZBWWUmh9PE1rxl8BZ7RVkyOCEG3RqVSpnL7fYGWP8iDU7H/
-	 l+HM4w8nyi+TUYBmzPS69ObUzLlItedk7CbQW1+KdHUt9cXZNY/06QO5j15wnlq+BA
-	 Xa9WO+OuBvnn5u9UgDAa1X58g8j7+7f1guj4HH1DI6reaPXUB/rLwQrwf7ZNiK19VE
-	 sevCZd6+LQlDQ==
-Date: Mon, 30 Sep 2024 12:11:01 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_qianyu@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>
-Subject: Re: [PATCH] PCI: qcom: Enable MSI interrupts together with Link up
- if global IRQ is supported
-Message-ID: <20240930171101.GA180132@bhelgaas>
+	s=k20201202; t=1727716305;
+	bh=o1K5k91qZFtJQYCTb40/SpUrr1tTX/a1xr5upzEJtqc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GOK28VA42BH/9l2Mzkt+edgDzkh6uVrog9wYVsopfRRVbkfwtJWfC86r6AObas7G/
+	 X7uRmDPJgy6yElqw4vny6Y41Hnz9hH5maV9JkMPsYBlW0sljV7Vtif9L1XC+TFQOew
+	 zpQHmZqsZUBknmVA/DNvYQSlXowhFSTJdXlQ1zZJ0R6w3P1r7+J37IMfjcbuzfHbIE
+	 BacLyk6zEaM6NNjOJSJIdA3nkAeBOFmZZUY1sk+OSNSQZ0zGxEjCwmKAEhW0N/D6Em
+	 TkEWrtUXngL09fL8K9soegSbM5+VmeOwg6k1XVcxx1JfCiaqegTpfni2eA55Kz9Ky1
+	 1jh7t1wS8CEcw==
+Date: Mon, 30 Sep 2024 07:11:44 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
+Message-ID: <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
+References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
+ <20240930085302.1558217-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,75 +58,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930134409.168494-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20240930085302.1558217-2-yukuai1@huaweicloud.com>
 
-On Mon, Sep 30, 2024 at 07:14:09PM +0530, Manivannan Sadhasivam wrote:
-> Currently, if global IRQ is supported by the platform, only the Link up
-> interrupt is enabled in the PARF_INT_ALL_MASK register. But on some Qcom
-> platforms like SM8250, and X1E80100, MSIs are getting masked due to this.
-> They require enabling the MSI interrupt bits in the register to unmask
-> (enable) the MSIs.
+Hello,
 
-"global IRQ" is a very generic name.  If that's the official name, it
-should at least be capitalized, e.g., "Global IRQ", to show that it is
-a proper noun that refers to a specific IRQ.
+On Mon, Sep 30, 2024 at 04:52:58PM +0800, Yu Kuai wrote:
+> +static inline bool blkg_print_dev_name(struct seq_file *sf,
+> +				       struct blkcg_gq *blkg)
+> +{
+> +	struct gendisk *disk = blkg->q->disk;
+> +
+> +	if (!disk)
+> +		return false;
+> +
+> +	seq_printf(sf, "%u:%u", disk->major, disk->first_minor);
+> +	return true;
+> +}
+> +
 
-> Even though the MSI interrupt enable bits in PARF_INT_ALL_MASK are
-> described as 'diagnostic' interrupts in the internal documentation,
-> disabling them masks MSI on these platforms. Due to this,
+I wonder whether we just should add a name field to disk.
 
-> MSIs were not
-> reported to be received these platforms while supporting global IRQ.
+Thanks.
 
-I'm trying to parse "while supporting global IRQ."  We basically
-support global IRQ by installing qcom_pcie_global_irq_thread(), but of
-course the device doesn't see that, so I assume it would be more
-informative to say that MSIs are masked by some register setting.
-
-The patch suggests that MSIs are masked internally unless
-PARF_INT_MSI_DEV_0_7 is set in PARF_INT_ALL_MASK.
-
-Are you saying that prior to 4581403f6792, MSIs did work?  Does that
-mean PARF_INT_MSI_DEV_0_7 was set by a bootloader or something, so
-MSIs worked?  And then 4581403f6792 came along and implicitly cleared
-PARF_INT_MSI_DEV_0_7, so MSIs were then masked?
-
-> So enable the MSI interrupts along with the Link up interrupt in the
-> PARF_INT_ALL_MASK register if global IRQ is supported. This ensures that
-> the MSIs continue to work and also the driver is able to catch the Link
-> up interrupt for enumerating endpoint devices.
-> 
-> Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
-> Reported-by: Konrad Dybcio <konradybcio@kernel.org>
-> Closes: https://lore.kernel.org/linux-pci/9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org/
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ef44a82be058..2b33d03ed054 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -133,6 +133,7 @@
->  
->  /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
->  #define PARF_INT_ALL_LINK_UP			BIT(13)
-> +#define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
->  
->  /* PARF_NO_SNOOP_OVERIDE register fields */
->  #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
-> @@ -1716,7 +1717,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
->  			goto err_host_deinit;
->  		}
->  
-> -		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
-> +		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
-> +			       pcie->parf + PARF_INT_ALL_MASK);
->  	}
->  
->  	qcom_pcie_icc_opp_update(pcie);
-> -- 
-> 2.25.1
-> 
+-- 
+tejun
 
