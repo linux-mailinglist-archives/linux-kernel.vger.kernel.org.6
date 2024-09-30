@@ -1,131 +1,225 @@
-Return-Path: <linux-kernel+bounces-344004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2637298A266
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18CE98A264
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91AE1F210B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:28:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0208C1C203A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88BAE18CBE5;
-	Mon, 30 Sep 2024 12:28:41 +0000 (UTC)
-Received: from mail78-36.sinamail.sina.com.cn (mail78-36.sinamail.sina.com.cn [219.142.78.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BDA18CC0F;
+	Mon, 30 Sep 2024 12:27:59 +0000 (UTC)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1251714C0
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCC31714C0
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699321; cv=none; b=PgxV2Ewt7GBwRUFpVxKy/3PXuDmBGlEfT4PLCM5dt1d9TGdodYyhE6IjvShuJJpsw3/Ok0a5VtgYzsQbVEngMEVsXRG6BiR11Va1/AkmqvoU7G6xkhkECMgI3FUVVfbL5rzMiiDlBAjHwQQFX02INfmQpXwKp3X6bCxSxEC8cXM=
+	t=1727699279; cv=none; b=dKyWMpJWM0EDCTAbOGoaM0WjqupccOrEHhXaFsZwD2sKjC//WNWT2BgptpG14o+2SgYTgN3+DqvQQMEdRnwMq3fpguU6DOKgn5Wcg5N0S6WqWpKEzl7sJjgnE4KoMkBPOQDj7sCJWP9WNreIES44mVqt7jU2UqxZTaHoYFQ+1oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699321; c=relaxed/simple;
-	bh=ZmIMd9CxD3goe6qpo6vgQZOjgkRBAsdDm47UnFTSl3Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ADakEhAIzJjvS/gHbWV0+Krz65XwRwlBsbZ8xFi2MrtCYPLrj5Xv6OajFZaSYRZqXCmMJYXFF/TpTYGo+5w5n1ClgnmANmhiZpY6ElYiyL9Y09MNKHYAWUKKnToK30jgy0/trqfdWXKe5GyJLEdoQJED7HTAscmCHnLTHKar568=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.162])
-	by sina.com (10.185.250.24) with ESMTP
-	id 66FA994300002973; Mon, 30 Sep 2024 20:27:51 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 56998710748373
-X-SMAIL-UIID: 6385258744A54465BDD893B3A4B606C9-20240930-202751-1
-From: Hillf Danton <hdanton@sina.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Denis Kirjanov <dkirjanov@suse.de>,
-	syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-Date: Mon, 30 Sep 2024 20:27:38 +0800
-Message-Id: <20240930122738.1668-1-hdanton@sina.com>
-In-Reply-To: <CANn89iJwe-Q2Ve3O1OP4WTVuD6eawFvV+3eDvuvs4Xk=+j5yBg@mail.gmail.com>
-References: <000000000000657ecd0614456af8@google.com> <3483096f-4782-4ca1-bd8a-25a045646026@suse.de> <20240928122112.1412-1-hdanton@sina.com> <20240929114601.1584-1-hdanton@sina.com>
+	s=arc-20240116; t=1727699279; c=relaxed/simple;
+	bh=m41vD3XS2qNR5ZsELkfM/IIdIqmysp/yUzMrGBZMRHk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tb9J1qgFt13WQBvFkJGuXqMi6EvYt38HNmvm14mVbUO7/b6jN8C+yrjupDs0fsObM4a65CBYIU+klYq5wpqI2NJ4rfL4mRdUhf7Nc6E4AU4hiTU5GU1weczCDSSXQI4cSwPSAss0UDO9iW0OqUW9pMPnF1d/oreOBBs9HiRtNn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:99bb:7ad4:7fac:370a])
+	by michel.telenet-ops.be with cmsmtp
+	id JcTn2D00Q4pGYif06cTnSj; Mon, 30 Sep 2024 14:27:48 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1svFV6-000uSC-4s;
+	Mon, 30 Sep 2024 14:27:47 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1svFVD-000S1M-IS;
+	Mon, 30 Sep 2024 14:27:47 +0200
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: linux-m68k@lists.linux-m68k.org
+Cc: linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] m68k: defconfig: Update defconfigs for v6.12-rc1
+Date: Mon, 30 Sep 2024 14:27:46 +0200
+Message-Id: <4092672cb64b86ec3f300b4cf0ea0c2db2b52e2e.1727699197.git.geert@linux-m68k.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Sep 2024 10:32:32 +0200 Eric Dumazet <edumazet@google.com>
-> On Sun, Sep 29, 2024 at 1:46 PM Hillf Danton <hdanton@sina.com> wrote:
-> > On Sat, 28 Sep 2024 20:21:12 +0800 Hillf Danton <hdanton@sina.com>
-> > > On Mon, 25 Mar 2024 14:08:36 +0100 Eric Dumazet <edumazet@google.com>
-> > > > On Mon, Mar 25, 2024 at 1:10 PM Denis Kirjanov <dkirjanov@suse.de> wrote:
-> > > > >
-> > > > > Hmm, report says that we have a net_device freed even that we have a dev_hold()
-> > > > > before __ethtool_get_link_ksettings()
-> > > >
-> > > > dev_hold(dev) might be done too late, the device is already being dismantled.
-> > > >
-> > > > ib_device_get_netdev() should probably be done under RTNL locking,
-> > > > otherwise the final part is racy :
-> > > >
-> > > > if (res && res->reg_state != NETREG_REGISTERED) {
-> > > >      dev_put(res);
-> > > >      return NULL;
-> > > > }
-> > >
-> > > Given paranoia in netdev_run_todo(),
-> > >
-> > >               /* paranoia */
-> > >               BUG_ON(netdev_refcnt_read(dev) != 1);
-> > >
-> > > the claim that dev_hold(dev) might be done too late could not explain
-> > > the success of checking NETREG_REGISTERED, because of checking
-> > > NETREG_UNREGISTERING after rcu barrier.
-> > >
-> > >       /* Wait for rcu callbacks to finish before next phase */
-> > >       if (!list_empty(&list))
-> > >               rcu_barrier();
-> > >
-> > >       list_for_each_entry_safe(dev, tmp, &list, todo_list) {
-> > >               if (unlikely(dev->reg_state != NETREG_UNREGISTERING)) {
-> > >                       netdev_WARN(dev, "run_todo but not unregistering\n");
-> > >                       list_del(&dev->todo_list);
-> > >                       continue;
-> > >               }
-> > >
-> > As simply bumping kref up could survive the syzbot reproducer [1], Eric's reclaim
-> > is incorrect.
-> 
-> I have about 50 different syzbot reports all pointing to netdevsim and
-> sysfs buggy interaction.
-> 
-> We will see if you can fix all of them :)
->
-Looks like something I know
-[1] https://lore.kernel.org/all/20220819220827.1639-1-hdanton@sina.com/
-[2] https://lore.kernel.org/all/20231011211846.1345-1-hdanton@sina.com/
-[3] https://lore.kernel.org/all/20240719112012.1562-1-hdanton@sina.com/
+  - Enable modular build of the new mul_u64_u64_div_u64() test.
 
-BTW I won the 2020 google OSPB Award (How many cents did you donate that year?).
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+To be queued in the m68k tree for v6.13.
 
-And my current target is the Independent Observer at the 2025 Linux Plumbers
-Conference if the LT king thinks observers are welcome.
+ arch/m68k/configs/amiga_defconfig    | 1 +
+ arch/m68k/configs/apollo_defconfig   | 1 +
+ arch/m68k/configs/atari_defconfig    | 1 +
+ arch/m68k/configs/bvme6000_defconfig | 1 +
+ arch/m68k/configs/hp300_defconfig    | 1 +
+ arch/m68k/configs/mac_defconfig      | 1 +
+ arch/m68k/configs/multi_defconfig    | 1 +
+ arch/m68k/configs/mvme147_defconfig  | 1 +
+ arch/m68k/configs/mvme16x_defconfig  | 1 +
+ arch/m68k/configs/q40_defconfig      | 1 +
+ arch/m68k/configs/sun3_defconfig     | 1 +
+ arch/m68k/configs/sun3x_defconfig    | 1 +
+ 12 files changed, 12 insertions(+)
 
-Now turn to uaf. As the netdev_hold() in ib_device_set_netdev() matches the
-netdev_put() in free_netdevs(), in combination with the dev_hold() in
-ib_device_get_netdev(), the syz report discovers a valid case where kref fails
-to prevent netdev from being freed under feet, even given the paranoia
-in netdev_run_todo().
+diff --git a/arch/m68k/configs/amiga_defconfig b/arch/m68k/configs/amiga_defconfig
+index d01dc47d52ea2ffd..a70aec9a05c41f0c 100644
+--- a/arch/m68k/configs/amiga_defconfig
++++ b/arch/m68k/configs/amiga_defconfig
+@@ -620,6 +620,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/apollo_defconfig b/arch/m68k/configs/apollo_defconfig
+index 46808e581d7b4709..312853f3d26ae043 100644
+--- a/arch/m68k/configs/apollo_defconfig
++++ b/arch/m68k/configs/apollo_defconfig
+@@ -577,6 +577,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/atari_defconfig b/arch/m68k/configs/atari_defconfig
+index f09d1d687d0779a2..45737fe6d1add519 100644
+--- a/arch/m68k/configs/atari_defconfig
++++ b/arch/m68k/configs/atari_defconfig
+@@ -613,6 +613,7 @@ CONFIG_TEST_DHRY=m
+ CONFIG_LKDTM=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/bvme6000_defconfig b/arch/m68k/configs/bvme6000_defconfig
+index c0719322c0283751..f738202d1f369a65 100644
+--- a/arch/m68k/configs/bvme6000_defconfig
++++ b/arch/m68k/configs/bvme6000_defconfig
+@@ -569,6 +569,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/hp300_defconfig b/arch/m68k/configs/hp300_defconfig
+index 8d429e63f8f21471..74f74e03ccc97d14 100644
+--- a/arch/m68k/configs/hp300_defconfig
++++ b/arch/m68k/configs/hp300_defconfig
+@@ -579,6 +579,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/mac_defconfig b/arch/m68k/configs/mac_defconfig
+index bafd33da27c1101a..14c8f1b374aaa725 100644
+--- a/arch/m68k/configs/mac_defconfig
++++ b/arch/m68k/configs/mac_defconfig
+@@ -596,6 +596,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/multi_defconfig b/arch/m68k/configs/multi_defconfig
+index 6f5ca3f85ea16028..41c8112c6d0dff72 100644
+--- a/arch/m68k/configs/multi_defconfig
++++ b/arch/m68k/configs/multi_defconfig
+@@ -682,6 +682,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/mvme147_defconfig b/arch/m68k/configs/mvme147_defconfig
+index d16b328c71363f51..e72d37ee90a7e679 100644
+--- a/arch/m68k/configs/mvme147_defconfig
++++ b/arch/m68k/configs/mvme147_defconfig
+@@ -568,6 +568,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/mvme16x_defconfig b/arch/m68k/configs/mvme16x_defconfig
+index 80f6c15a5ed5c8f8..733f1fc9a50a03cf 100644
+--- a/arch/m68k/configs/mvme16x_defconfig
++++ b/arch/m68k/configs/mvme16x_defconfig
+@@ -569,6 +569,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/q40_defconfig b/arch/m68k/configs/q40_defconfig
+index 0e81589f0ee26d76..3efe254355619bb0 100644
+--- a/arch/m68k/configs/q40_defconfig
++++ b/arch/m68k/configs/q40_defconfig
+@@ -586,6 +586,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/sun3_defconfig b/arch/m68k/configs/sun3_defconfig
+index 8cd785290339db25..1b8ea0e7acb4cfef 100644
+--- a/arch/m68k/configs/sun3_defconfig
++++ b/arch/m68k/configs/sun3_defconfig
+@@ -566,6 +566,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+diff --git a/arch/m68k/configs/sun3x_defconfig b/arch/m68k/configs/sun3x_defconfig
+index 78035369f60f1b4b..5bda93f6a2000d99 100644
+--- a/arch/m68k/configs/sun3x_defconfig
++++ b/arch/m68k/configs/sun3x_defconfig
+@@ -567,6 +567,7 @@ CONFIG_KUNIT_ALL_TESTS=m
+ CONFIG_TEST_DHRY=m
+ CONFIG_TEST_MIN_HEAP=m
+ CONFIG_TEST_DIV64=m
++CONFIG_TEST_MULDIV64=m
+ CONFIG_REED_SOLOMON_TEST=m
+ CONFIG_ATOMIC64_SELFTEST=m
+ CONFIG_ASYNC_RAID6_TEST=m
+-- 
+2.34.1
 
-Hillf
 
