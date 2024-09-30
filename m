@@ -1,146 +1,237 @@
-Return-Path: <linux-kernel+bounces-344686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7390598ACC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:25:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E4298ACCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57A31C210A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:25:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401F41F225F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBA7199E88;
-	Mon, 30 Sep 2024 19:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D095199396;
+	Mon, 30 Sep 2024 19:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="pl7GyzWA"
-Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j27rHrwc"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DDB183CC5;
-	Mon, 30 Sep 2024 19:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922BD1991B2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724350; cv=none; b=NqdZ/ynnlTXGa677tX+ukkg7u6MoW2rBIE40dFWZetGNoOpXwmpf+Pto7TRrI1V73ssjXm95o7/6k5TFq3ErcDXwp7uKdG2cuC1ANp4EmmGGnc1SNYPgTdhYrw3gqCefFb66tb2Q/vZK9P95SEvToDwZZ0PCJ9+Z5+fgyD4HEyE=
+	t=1727724363; cv=none; b=gYRtwQV1OHPcXlSec0nGyklBtxmxvW2IKnFDWsbR371+oLLkg11MuqwkHLk0wyOkmuuUncisDlsq1ax9l3ImYGOnN8y/LEr9U99dfOwJokTYkTcj5rpf7ONu7O3hRn5zwFBe01Cj7b5c3OTci+ZOqZFvRNW7MjR3kSLeybXVeVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724350; c=relaxed/simple;
-	bh=m2InjGm6QM5pyYnJxFHj7qzzzbLfudPdQ2oG3fwdpAI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=lyXqwRjYsX2Sq14UxI1UpOgm3PymCuJd7BqVcdDB8sTASkLw0HwUR9QlstvL9qzGYsAlGMcxcpgj84GRcvfZiXCifVXC//VipkHrD0pFnxlfeFTMOJuBjmiLGbWma3zCUrJJI/EB9mwLWINLOWRBkdo9irYEheWWDrZSaNRfMCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=pl7GyzWA; arc=none smtp.client-ip=212.122.41.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
-	s=mail; t=1727724344;
-	bh=/oqYHO23CtlMs38L/l795oaos4aeK2PzyY47DMjMR0g=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To;
-	b=pl7GyzWA3rCcYvPx25TKfcekTSb/0hWU288mSYTsN0c4t6kbB4raN4nCg69qC6Q+K
-	 FtYSNwSGnaBefcatTqxZdPQrmZoE9LdVprrzZ44yv9MipNZ7w5ULsiFRDzasOHmQn2
-	 TpljjdeQIHBXsN8it8IH2fsPeiuUC3PRDpvpbPt8=
+	s=arc-20240116; t=1727724363; c=relaxed/simple;
+	bh=upXczX9xyZlgGn4PPLtbLvXxPzMauKCBcBofWs39sYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L5TwhTom/VqkIrEMjLaiiFcucByDePUQhrp1Wu4iPoj9Fh6CFyCDLZqO66GyfilaJUBv+IbLq4HJhyPSoSe/cON62quwOLGy1hHsA+HB4AemeEKEdEmF58yEnjMqefnE2l0jxuToj62QWAzLLcO+TIeGwcl29XMpu+d8y3Hbx+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j27rHrwc; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e0719668e8so2135806b6e.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:26:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727724361; x=1728329161; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nwBcs3gI4LkvtP1tfi1gw48Tjhc70X0W4lawVSHPYHQ=;
+        b=j27rHrwcH6sazDh70H48ubq8Fb34BeBLU2oXca+CzvLDtw9dPQNv7BJcIBk5dWPyJO
+         JEWOA8aRQo0iX3ZcFtDX/Ry5p2Fss6NfUFrfYrUegC+lRZ5juzzLnnIY936xv03U6DBE
+         NCg8BuE4KA33s8u2Xfixbpa91KZGgaAAEEm0YRZOMr1NKkXmad5KdBKKCYfRIQSqCHAY
+         4/8U20pQSX4ajCYmYaKOem2JtEg64Iw8TOOyqOCUrp478TW3mGrfB6MvXVmZxzJOmlNC
+         niemNKiuVFaRe5uP9SB2OZr6bjgtaP+6q1UEkXOnTwq4KcdPZtxQVnTQOp+tAUTMQL57
+         UCmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727724361; x=1728329161;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nwBcs3gI4LkvtP1tfi1gw48Tjhc70X0W4lawVSHPYHQ=;
+        b=pX/91dzeAaPS86m3moyXmuOVmxtzAQPO611JKwKcvlguMwJ/Msfd5mo5biaBsmjZF/
+         GOkCJ1vUcoswdBqVd6cXNJD17I1+ns0dj/9JVOsmyGQKqXLqP26RyCebWArXHHrjvPVb
+         au06FcInwc2CmQzMTj7V4mZ5rNqNnglM5I/IYWQv+jV2A2ty4ZLbLkJKSg1Lt7dxgoxq
+         y5BKtNrO2mH05YyCWlbFuajbWK1cxk/o3X2lkKnAR1R6PN6Kk8SqNmaBOmY60ncauRFc
+         5pX7a0gwo+qBGdK2OAo+KPyIVYhEflGBywh6c9P2HeMS5vUC3gIMINwaiviy7dISYghx
+         EsJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWd7xWXn2S3K/wVYR4vofj4psh8qbJzBdESnl4UYcNzakxOjH2Ku6ZP/MkZ7KU7xwmOUh+cLJs5TF6+Dbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEc7rvbZiUrraH3GVc8nvo40SZi0NjJPXbYByerhDCAeJ2G4cs
+	k/lAbccTliUla3i4AS3+Q2eNDfCQUSzp5NWCmdNxwsBrhp/dfjfvHgCw5jIDmQE=
+X-Google-Smtp-Source: AGHT+IFUg9O4QQqYDWBYxWMhU88gXfp4i3F/4V8s8sFNruPO7jyvNsgoybkJIaGG2NjPdM9jhqqsLw==
+X-Received: by 2002:a05:6808:1b8c:b0:3e0:80ed:3f9b with SMTP id 5614622812f47-3e393984970mr8248308b6e.27.1727724360674;
+        Mon, 30 Sep 2024 12:26:00 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e39357a90dsm2650904b6e.10.2024.09.30.12.25.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 12:25:59 -0700 (PDT)
+Message-ID: <c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
+Date: Mon, 30 Sep 2024 14:25:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-From: Christian Theune <ct@flyingcircus.io>
-In-Reply-To: <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
-Date: Mon, 30 Sep 2024 21:25:22 +0200
-Cc: Dave Chinner <david@fromorbit.com>,
- Matthew Wilcox <willy@infradead.org>,
- Chris Mason <clm@meta.com>,
- Jens Axboe <axboe@kernel.dk>,
- linux-mm@kvack.org,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Daniel Dao <dqminh@cloudflare.com>,
- regressions@lists.linux.dev,
- regressions@leemhuis.info
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <295BE120-8BF4-41AE-A506-3D6B10965F2B@flyingcircus.io>
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <Zud1EhTnoWIRFPa/@dread.disaster.area>
- <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
- <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org>
- <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org>
- <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com>
- <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
- <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
- <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
- <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] iio: backend: extend features
+To: Jonathan Cameron <jic23@kernel.org>,
+ Angelo Dureghello <adureghello@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
+ <20240929120535.6b41c37e@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240929120535.6b41c37e@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 9/29/24 6:05 AM, Jonathan Cameron wrote:
+> On Thu, 19 Sep 2024 11:20:01 +0200
+> Angelo Dureghello <adureghello@baylibre.com> wrote:
+> 
+>> From: Angelo Dureghello <adureghello@baylibre.com>
+>>
+>> Extend backend features with new calls needed later on this
+>> patchset from axi version of ad3552r.
+>>
+>> The follwoing calls are added:
+>>
+>> iio_backend_ext_sync_enable
+>> 	enable synchronize channels on external trigger
+>> iio_backend_ext_sync_disable
+>> 	disable synchronize channels on external trigger
+>> iio_backend_ddr_enable
+>> 	enable ddr bus transfer
+>> iio_backend_ddr_disable
+>> 	disable ddr bus transfer
+>> iio_backend_set_bus_mode
+>> 	select the type of bus, so that specific read / write
+>> 	operations are performed accordingly
+>> iio_backend_buffer_enable
+>> 	enable buffer
+>> iio_backend_buffer_disable
+>> 	disable buffer
+>> iio_backend_data_transfer_addr
+>> 	define the target register address where the DAC sample
+>> 	will be written.
+>>
+>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> Hi Angelo,
+> A few trivial comments inline.
+> 
+>> ---
+>>  drivers/iio/industrialio-backend.c | 111 +++++++++++++++++++++++++++++++++++++
+>>  include/linux/iio/backend.h        |  23 ++++++++
+>>  2 files changed, 134 insertions(+)
+>>
+>> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+>> index 20b3b5212da7..f4802c422dbf 100644
+>> --- a/drivers/iio/industrialio-backend.c
+>> +++ b/drivers/iio/industrialio-backend.c
+>> @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+> ...
+> 
+>> +/**
+>> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
+>> + * @back: Backend device
+>> + *
+>> + * Disabling DDR data is generated byt the IP at rising or falling front
+> 
+> Spell check your comments.
+> 
+>> + * of the interface clock signal (SDR, Single Data Rate).
+>> + *
+>> + * RETURNS:
+>> + * 0 on success, negative error number on failure.
+>> + */
+>> +int iio_backend_ddr_disable(struct iio_backend *back)
+>> +{
+>> +	return iio_backend_op_call(back, ddr_disable);
+>> +}
+>> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
+> 				 struct fwnode_handle *fwnode)
+>>  {
+>> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+>> index 37d56914d485..41619b803cd6 100644
+>> --- a/include/linux/iio/backend.h
+>> +++ b/include/linux/iio/backend.h
+>> @@ -14,12 +14,14 @@ struct iio_dev;
+>>  enum iio_backend_data_type {
+>>  	IIO_BACKEND_TWOS_COMPLEMENT,
+>>  	IIO_BACKEND_OFFSET_BINARY,
+>> +	IIO_BACKEND_DATA_UNSIGNED,
+>>  	IIO_BACKEND_DATA_TYPE_MAX
+>>  };
+>>  
+>>  enum iio_backend_data_source {
+>>  	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
+>>  	IIO_BACKEND_EXTERNAL,
+>> +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
+>>  	IIO_BACKEND_DATA_SOURCE_MAX
+>>  };
+>>  
+>> @@ -89,6 +91,13 @@ enum iio_backend_sample_trigger {
+>>   * @read_raw: Read a channel attribute from a backend device
+>>   * @debugfs_print_chan_status: Print channel status into a buffer.
+>>   * @debugfs_reg_access: Read or write register value of backend.
+>> + * @ext_sync_enable: Enable external synchronization.
+>> + * @ext_sync_disable: Disable external synchronization.
+>> + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+>> + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+>> + * @buffer_enable: Enable data buffer.
+>> + * @buffer_disable: Disable data buffer.
+> 
+> This needs more specific text. What buffer?  I think this came
+> up earlier but it needs to say something about the fact it's enabling
+> or disabling the actual capture of data into the DMA buffers that
+> userspace will read.
+> 
+>> + * @data_transfer_addr: Set data address.
+>>   **/
+>>  struct iio_backend_ops {
+>>  	int (*enable)(struct iio_backend *back);
+>> @@ -129,6 +138,13 @@ struct iio_backend_ops {
+>>  					 size_t len);
+>>  	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
+>>  				  unsigned int writeval, unsigned int *readval);
+>> +	int (*ext_sync_enable)(struct iio_backend *back);
+> I know we've done it this way for existing items, but I wonder if we should
+> squish down the ops slightly and have new enable/disable pairs as
+> single functions.
+> 	int (*ext_sync_set_state)(struct iio_backend *back, bool enable);
+> etc.  If nothing else reduces how many things need documentation ;)
+> 
+> Nuno, what do you think? Worth squashing these pairs into single
+> callbacks?
 
-> On 30. Sep 2024, at 20:46, Linus Torvalds =
-<torvalds@linux-foundation.org> wrote:
->=20
-> On Mon, 30 Sept 2024 at 10:35, Christian Theune <ct@flyingcircus.io> =
-wrote:
->>=20
->> Sep 27 00:51:20 <redactedhostname>13 kernel:  =
-folio_wait_bit_common+0x13f/0x340
->> Sep 27 00:51:20 <redactedhostname>13 kernel:  =
-folio_wait_writeback+0x2b/0x80
->=20
-> Gaah. Every single case you point to is that folio_wait_writeback() =
-case.
->=20
-> And this might be an old old annoyance.
+I'm not a fan of combining enable and disable functions into one function.
 
-I=E2=80=99m being told that I=E2=80=99m somewhat of a truffle pig for =
-dirty code =E2=80=A6 how long ago does =E2=80=9Cold old=E2=80=9D refer =
-to, btw?
+The implementation will pretty much always be:
 
-> [=E2=80=A6]
-> IOW, this code is known-broken and might have extreme unfairness
-> issues (although I had blissfully forgotten about it), because while
-> the actual writeback *bit* itself is set and cleared atomically, the
-> wakeup for the bit is asynchronous and can be delayed almost
-> arbitrarily, so you can get basically spurious wakeups that were from
-> a previous bit clear.
+if (enabled) {
+        /* so stuff */
+} else {
+        /* do other stuff */
+}
 
-I wonder whether the extreme unfairness gets exacerbated when in a =
-cgroup throttled context =E2=80=A6 It=E2=80=99s a limited number of =
-workloads we=20
-have seen this with, some of which are parallelized and others aren=E2=80=99=
-t. (and I guess non-parallelized code shouldn=E2=80=99t suffer much from =
-this?)
+Which just adds indent and makes code harder to read.
 
-Maybe I can reproduce this more easily and  ...
-
-> So the code here is questionable, and might cause some issues, but the
-> starvation of folio_wait_writeback() can't explain _all_ the cases you
-> see.
-
-=E2=80=A6 also get you more data and dig for maybe more cases more =
-systematically.
-Anything particular you=E2=80=99d like me to look for? Any specific =
-additional data
-points that would help?
-
-We=E2=80=99re going to keep with 6.11 in staging and avoid rolling it =
-out to the production machines for now.
-
-Christian
-
---=20
-Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
-Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
-Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
-HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
-Christian Zagrodnick
+> 
+>> +	int (*ext_sync_disable)(struct iio_backend *back);
+>> +	int (*ddr_enable)(struct iio_backend *back);
+>> +	int (*ddr_disable)(struct iio_backend *back);
+>> +	int (*buffer_enable)(struct iio_backend *back);
+>> +	int (*buffer_disable)(struct iio_backend *back);
+>> +	int (*data_transfer_addr)(struct iio_backend *back, u32 address);
+>>  };
 
 
