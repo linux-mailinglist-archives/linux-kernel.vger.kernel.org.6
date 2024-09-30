@@ -1,326 +1,485 @@
-Return-Path: <linux-kernel+bounces-344086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD6A98A462
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:11:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEC3F98A465
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5E81C20860
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:11:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D03791C20363
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3CC18FC81;
-	Mon, 30 Sep 2024 13:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9204A18E77D;
+	Mon, 30 Sep 2024 13:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eqe4ji4f";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KrKezREL"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dzNfrpbX"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B6018E77D;
-	Mon, 30 Sep 2024 13:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701872; cv=fail; b=lLIgqNn16RLbFfWjkfnBFMDHrpqvD32UdjlRMQpPcHH0Vy+QP2Kh++cx4PRwIeZ5TGdFQC86x7R6gjSc8DzDRz5omsdXzhsQrY7RUppCDK0lmuGD0puXJ2s9uSZcLMM+O7l89FG/omBB3jBxCy+xZQWlF8+NtHvHf538DgYcHO8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701872; c=relaxed/simple;
-	bh=os00Tf5EH/xtiQpP7Hof8WOlFURPOMnZxHWy1SI0vWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iH3WbQqUqV/Ku5fBsv/iHPag4nZM5yMJ7Ex1CRDpJ492c0tzpjggo3Gj8jWTH7gCDQzxIyCTZb7MwTSqp4fNk7mSB4+tdHFZtsuoD4g3Q2QtqaxRTwnJ1hzafZqvlq0rY3A3aXV1Jf7PkgjECsYWc2jhxHsidjZFCkeb8vrhn/c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=eqe4ji4f; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KrKezREL; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UChmDE011205;
-	Mon, 30 Sep 2024 13:10:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=4QsBlYdsXkKFvKt
-	DzrfwkiallVw3P09Q2zUvNrfhG3c=; b=eqe4ji4f75CTMO4kAWmA3PPDnJauOgf
-	qi9xCIkSJJIXZWed7nss1TtoFoC9u/D8drVQBSBTF0t54TrQVvMc0MxGCwzfqSbs
-	7ayb93k8e7I6v4f1lcltrYiSDKYAMVSkzI2NWkaIHCm2Fw0NtaSFaIbT7oL7zTMb
-	dTtg07+frOMIsk9Swekm7uAkgbTtWLvfbsnHE1ALaVGrpWH7Xl2sUBq1C5JoxX40
-	rCvyIDctiMHrLKaf0Ca5qwKYoB5lwry0u06GOYNP76tsXDya5x3QMlkfD5gcIJLC
-	SkKx+GAZOfz2j73F3LC5zRrcV9TWp85OpBDqensJA1/4OBomddw2jhA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8k3397q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 13:10:56 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48UC3bVX017368;
-	Mon, 30 Sep 2024 13:10:56 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41x8860xdc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 13:10:55 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pDSrH2pbcQQyPGJPJoMUFkkSBQ+UUy1TrlXxJJB8qbAo6VKolWHxUcFgSsRzm+Tip2uzAWaYTLxY0XvuGyRNhU5xnlXASi2+74Q+rKC1EjaJbte1Ya2RLV9LjUAotT5IRVu+vRVmY7gj6N28OdG73aPwCMVx2zvnAsBAEla7LqJqwbLbHU5FgekY3l94Wwh/72ciMFhejQNeM8Y8UY/p4GMQAjPFapphUfTVJvGx9i6YdnR2R5H6bjx7OxwkIWCZlEXKfRpyo9l77Q7fNbmA384phQ9nOAA6rPEnOcxtt0wm1wABePqwjGuu/zgEfzYshSLQLS08i4w5LNXZdokEng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4QsBlYdsXkKFvKtDzrfwkiallVw3P09Q2zUvNrfhG3c=;
- b=g1HK8b05Ib/TdUXpD0JXxj/3stR5Ye0dicDqK1PdnZ9+EhtTirbaCjo3qNCIKM6HbpeujSwBV1iorrDA+khr1GDwZ3439n5iTtq6FcucffIjPH4qf5EzuvZbteS0u9DZL3CKQIpSHkrzP/hn5AjXQm+Uyuq3VwB+e51QI8Oz9UqAUGuLfdktNJU7ACK8F36pyFM0yvgjQZJV6vstyLbXqj8UB5Y55Iv89rcjEXEBRVFxuD/3C48PmdH3SNZMuPPw51ivftEpql9ULsyfh2Oy15+moKXXuOWjA4i8uB2i8IbXW+/+CH3JvLEpeHRlNN7c4jow0OQ3T4f0xowaG5SWAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C2C2AE8E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727701889; cv=none; b=DYR1BpWDl51LaEIaAaL/Kq+mrrDTQwgavvpnBNK6LjHdz1tyKbE2c/iMI6khFRRJ9LQHordGZi1DPGV7fltrNChErWNzUWRNLc3ryqlt3xZzyge6S4i2OSdHBaqrTZ3XhBHU6aHhHAlcsUSbueRMYj1wmrpRc9Ncba9D5UuLswI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727701889; c=relaxed/simple;
+	bh=ZHEs22Daz4QvKz5oScRejcETNm8btjOQRhWZT7jRSlY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JNhSvlpUh2rv0LtQUkR0KV5V6X2H/iMDywuNJLAef9KRP8cYZDsZ+VKCQ6iqr04g3k8CMZvxM4oTdDPtGmuHxkV3M25iMvAxQHDFLhr140fYAsa+dHXdeqis0GiB6phqDphhlKTvMn+AzQcydR1ckTZiWcrY12+gM3m6cBqPI2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dzNfrpbX; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-37cd08d3678so1931411f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:11:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4QsBlYdsXkKFvKtDzrfwkiallVw3P09Q2zUvNrfhG3c=;
- b=KrKezRELy3IzXxiCfmkGWdN5MJsOuscXRBEmWJoaRbcIkjjAWMlCTNNws5S+ynzbYL0MElDCsYOgu2/UliwfdD2x4ocgMK6esws8vJnImqWLs4lbUWE1oTEH1vRM2tVRhmyk7iKy1Fx8ONPtDHcE8p4NX5LPubaUGiPhz8Znskk=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by DS0PR10MB7407.namprd10.prod.outlook.com (2603:10b6:8:15c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Mon, 30 Sep
- 2024 13:10:53 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.014; Mon, 30 Sep 2024
- 13:10:53 +0000
-Date: Mon, 30 Sep 2024 14:10:49 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Florian Weimer <fweimer@redhat.com>,
-        Christian Brauner <christian@brauner.io>,
-        Shuah Khan <shuah@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
-Message-ID: <cdd24e6d-4300-4afe-b2ef-1b8ee528bccc@lucifer.local>
-References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
- <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
- <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
- <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
-X-ClientProxiedBy: LO4P123CA0034.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:151::21) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=google.com; s=20230601; t=1727701885; x=1728306685; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iJE1fIvCFAihx4BGzM30cPoK2UT1O6xOWdZusSBd04A=;
+        b=dzNfrpbXULdwlDscB7qJNGUoKjj7Tc0tIgINM6tJugF/poK/zqYTCaQqIRaiy1zhNN
+         FQIVQ7wCazhu8ETDdxAzF54CSog9QKs+FcjLG98OT7g2Ekgqx2bHDRApE4H7VZ7obuLy
+         Wy+BGDbLIiCQ0PxrRxbnP9WLJwWYQmT89ivf4aW7vytWZ55s0jJiKaC1mbxASmXEetO5
+         OQS71pHQjMuoIJLNpHc9sX4p57MCVY7wplwTeAHItGuDo3/ZKphpA02wIq0K6l4UvMn9
+         Qgow6g1THVcIq7yAxcmGCeY09oQgEK38ef7/IuEUVntWWwp9fRoEI5kg+NVcyUDypZTl
+         wA7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727701885; x=1728306685;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iJE1fIvCFAihx4BGzM30cPoK2UT1O6xOWdZusSBd04A=;
+        b=tNwmR3WR5SuPjFDrUnyyJTRsOhXbhusv0lg0kkKbMzkpxu4SwQ1qmHsNmn70fd+LnD
+         UCrJo8srmEge4s0RnPI7bdeWbNZzIbiiMZsFMFQRYVuOAQ4QLbonbknrUFfUs6JLmmE3
+         hG8RW0B/0kyICt3hHpfU6Yf8dxSQgGBEyGCS1ZgAy/ghLVY1FxSjsR1pge9ybjNGHV5T
+         FjTyDANfPLBVdBqcTVhIHG4GczS8LBp9Q1/rtB0EV4ZsyHqXf6nWFgBZRA7bB/Q9Swlb
+         nsch2LUm1G94UCOMY1aarvw3Gb2f58GU6s0PknUI5XQkKEcx6RJSCmQvAyh3UBAht4Jy
+         PhnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWr46QSU7FyO4N8pukhoUv43dEsRnUT7b4/aOpMTcWdD1h1xzDZhn4UMcK95dZbgCHlJvwke6fcY/p9lVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj1MPRJgKH32rURDp2hMFPABjOi1//Ncx0flga9jE28J36hkQ/
+	iadCvrsdwf2VsYAoATasVd5avmH1asx9fdT6VqwcR7ZEQDWktYUnFm21XPmjzYkhkfAQ8111+co
+	Br+mQx5ZNR6Mvdw==
+X-Google-Smtp-Source: AGHT+IHjjMTKvCoZXwfBrE3INjvVX6XxDkAdS1/OATBrDw5jPUNsj9e0q/g1CLyKjtVozzC40lXn30IvdDZcHHY=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a5d:456e:0:b0:374:c359:a7e8 with SMTP id
+ ffacd0b85a97d-37cd56d0359mr19675f8f.4.1727701884851; Mon, 30 Sep 2024
+ 06:11:24 -0700 (PDT)
+Date: Mon, 30 Sep 2024 13:11:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|DS0PR10MB7407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c15bec8-f821-4372-3ffa-08dce1514ff8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Tg0X9BXIQ/rZP9c40Re59vV706uAmaC+/0NQ8gAhAO3VQrFeZBJ1JZ3frWA6?=
- =?us-ascii?Q?Qfv+jTsoEYMqUyE0AUsXRZqlWxKnILTKBTjzKiyC5QIOrciJyGRQksDRrpkF?=
- =?us-ascii?Q?Wgv+LI1p1uzv761FIE9g9Pu3He9C8xe78dOfCveQ59uy4s1kyQRv9zTb+WV/?=
- =?us-ascii?Q?FGX7OfZ/YwEM7DF2FtCMeGb5FWMqNEi+kuv+t3SR6zjJ5WSrnhzIR7mjP2dT?=
- =?us-ascii?Q?FKRLE6sRVjTFIpkR26g3gfHiwLXmNhy0vuee0AfgDD9x6otSEq+nnSA34uYe?=
- =?us-ascii?Q?AyU3I2HU+ajcMAwiT72OeR9OrHtMClCTSmhjFBEe5udAXaihKta37v8CE1Ry?=
- =?us-ascii?Q?o+a+Ym8kX2OYUI36OHRt5bGp/s0Xdv+xW4sexi3Pdkkc7u0oiICL6/1wCAdC?=
- =?us-ascii?Q?61D8VKrvgvCVElcOE9bOxTrbkuZZjGzreDsshvdYzzJLj8cdy6N5y1dVldSv?=
- =?us-ascii?Q?Zu1Sqr2QFsQ5TGg8saRCRlXjOTfpsnuBxx8pSKVcTCRtBMM9u6lWL3fB9aUA?=
- =?us-ascii?Q?jZn3sKHr6dqpVlcXMQ/HD8KZ/gA6+FnpHeqYtlECPmaWJijXuFkivsQBt8F7?=
- =?us-ascii?Q?6R7u+d0DGhIHrsEqRy4Rz35+ZWeNcho4TjCGmb4kZxjFxlVdvjlk753oyk2a?=
- =?us-ascii?Q?rHGvw80jYZ9mN8mULI+ANkH6NT2+tpzd892FlQV3JvbDKdsO3VQuh8bO/s69?=
- =?us-ascii?Q?vQYPAI1hawypRGsLKFpWH96fCEDhjnLWHDyWm8xtn1PuyK84y++xAiPl5HAJ?=
- =?us-ascii?Q?uZ2QxZ9foAG+II8OtPX34mR8nrkcaTPA3+npHP05TCnEYp6816OVei9wxMHp?=
- =?us-ascii?Q?zcu084o1OGx6p2bqtX8OTWMJfL15KFPDgbYCBaWDpozgVImlE7qYxa5BHup3?=
- =?us-ascii?Q?eb+Zyc5rDZwjIpieK+UUTEX78AGzu2TtSE2IzrjF3TkcsXo6HxDcTQb7xHob?=
- =?us-ascii?Q?qAA9tisP+Qhi9A1zZGGvXIOQhsy0IYsJUXjvvRFXPY3vp7gOHzB7C2HDKXdE?=
- =?us-ascii?Q?A6A8B7wqxUzHzGNOG/p1CkWn4JWba5CbzGW3T0hZkHW9QVdVXadLIHuUZk4Q?=
- =?us-ascii?Q?ewpoAc7JanZask7TpqFmC4rEtUdWgJjsyKcgReU7K8iFlJQH/2Ud6wCIENKE?=
- =?us-ascii?Q?Zllyf1SAwWsYAvxSMZCjO+vQoZsM25L4oyTOXkTlrFJVzTjTVRTXHyQ4hf+C?=
- =?us-ascii?Q?djWoNguZrF7667l0gYFhctRPVLC0KOXnfJZABKxUCLCeuJONZxVDDwdytZPd?=
- =?us-ascii?Q?Z3E5fEpcNe2gkX2ozZo0ZRmlBAablNOdFLUgsDgfTQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?g7rDDyzVvYajNhWzwiIOD/7sqC3E92fimPRoZwsbsu/gmLagt2i1508LvdPE?=
- =?us-ascii?Q?tlsLgEHyoxwkTIst14fYYEX+JCMXEGbwnjl2d2lEHsk23mLpg2PbrVvp/KHm?=
- =?us-ascii?Q?/HEZ72AxqnMTHIBD5QDyVbOWumQeXA8yTdrv+V7yFZ3eyVkR1Ax36tS4OwZf?=
- =?us-ascii?Q?Yp1O6AF4iRI3z6KV9TTn0pwg7vDJVg+lO0JiXuAfnTl8yYnmaTstJJRi+sUu?=
- =?us-ascii?Q?4p4rqU36shTa7xokImuC9w2aTOF0fB4OIqexW1gUuAWaHls9d3B/baORASBH?=
- =?us-ascii?Q?s8yMmbJF/yL2zWWoppUVzMHJ7uTMrPZtDZAhryMdm0LSuMON4kBFOXMGtv0N?=
- =?us-ascii?Q?PVwKltEIWnaCLheRNd88BXMzzVk7BxEBIF7cof/dvmdlUedXDd1M5PwCeigF?=
- =?us-ascii?Q?lKK3pb4k0+4LnjloLY+eFrqYS5qXd94YF1bni5Y0yO9I2uM+SJsgi/+Aqb0t?=
- =?us-ascii?Q?+ztYfNlcIZ0/DKGB4yp2CtyRxFsWP6UHiij8dPrx2PZq+AVab0b7RGgmz56p?=
- =?us-ascii?Q?nbksRtLzdTt8lvzesnYC+oqKaPFYdvi8DCdhKN76HfldPN7ra9UCcz830RxQ?=
- =?us-ascii?Q?91FBsfau9ecuACWEjdEUsCBxaVUdauIxU5B3vwsHM4InA/yNgUyNkj3rXj/i?=
- =?us-ascii?Q?ec/R3ghC0mgyyPMC4osdyIyMNnjFGBupcHJW6NI7QK+yJJiTwN2ot0fW6pfP?=
- =?us-ascii?Q?YkOWAVCDhviN0legkAEhKR/FfL8EpJ1KSZqJ8oezyn6cynjjAZ616egSY8MX?=
- =?us-ascii?Q?l+mY319lEOT+E9ei7YUBwjN3aIhfD6sZXHIdOjHV52z625wR+zTLmHi2xqn8?=
- =?us-ascii?Q?yZ86b1CbRy9/BMuR+O01SdEU3q1t/URuOM198y1P1CHjGPeV68Q8q4WArDun?=
- =?us-ascii?Q?Y2BZYBE8MqlgiYqRlz6OKER62rnTnKhg6KC0RhuIM5dr2XmtsGoVSsuwLLwz?=
- =?us-ascii?Q?cmCeA8jE6DiHiMBHSN8o5ktwpiCbGUrTo5D7oXAxWlA5dchzEk25IJnitmEp?=
- =?us-ascii?Q?DUyJboa4H5RIkggYiPIvT/XnqpfVOh9vcfkXYRVwBDIWAniS5Kt9GDqMpdEk?=
- =?us-ascii?Q?JhDbpkKLm4B1SX6icZvdMRSxNb4hpK9lD0Um/jXBr8jnzS3hhpna6K72umTc?=
- =?us-ascii?Q?aIVyXb6G0rxl9e9vURpUA5NvVEaeLwLoGctrdljG4paraVb+/+u7G+OoaqdW?=
- =?us-ascii?Q?fTfPpxy7bB8Vt8d1enQfT2EadgoRcTiFie2gRzeMJaBcG7dfjA/Q6Uei1n8Y?=
- =?us-ascii?Q?mmFU1LhoEpVqBoMBT/WgtX5qXBcS/lFzoKpvmCGE5+3qSU/cVcQ25xyQ67Ir?=
- =?us-ascii?Q?I8z8JboM8bXTmgwpZuUxoH7daShuG2OueCtZsGoctDUCdPWUwPYMlw/DM3eE?=
- =?us-ascii?Q?pZgs9QABWqKlc4LIxJy3Vl0wITWDf3Q3FFRTroyIjX84WI7p4VCKl8r4YA/v?=
- =?us-ascii?Q?XUSKEbOC08dDZsaYPGmhwtIdnJ67dn0ZNsBVphWoosv5+9pFQMyBjI+Hpsyi?=
- =?us-ascii?Q?qJJBom/+cWDIfSapVJiQuzALkQuw2U0t0gR2eB17dRdX2CF4PLmGXtc4jGls?=
- =?us-ascii?Q?RZwUY4NjD2fGPqol7o0JzhujOmVuFXbfe2onCJDWNFXJZcZDP1rtWl6PsqqM?=
- =?us-ascii?Q?Qg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Iup8l0AupyzehP56u/TYwW3Utd0hbcRA70ZbyingWN4WsZp/hVU3zWq7V8k0fi2VgjBlCh5Ztbah+T94tqJNQ8snRh2G2yCjN6xgxJPxz87ZpTeXqFo1AwtCXevzs0mRxTpqYB83DHMKihB8Objf/rlHwomfK9jbUwdR5zyxQU0clgPtCDi6un/w36CsxcjX2DHlk+a2eYhSnCzDYflzJ0HkHs1/vutQZbE/CQPYXEMjS6Nppn+wBMTBJ2L680yVZWVI4F/FOKUZ4Tc8/n9X5fG1AxE87Qikgb2N3L7uvWWfqfw5rp4II4dhYKh3WMnK3KHubn6O3lUZaVKp9YMGDejnUBigZbWUQhOM+dMjaxOY8hLcaZThlU4AioE16l9gX06wCxZx/V/QQnraSrbkvelax2z1zZzcE/Pv4x8wgbiL+DGI5SAQrJEnhUE/y/GTRmLdRpcim/sljVfizM3Qa9ISq6LbdDn6C9Hv0T2WcMz/s0HEQrfE9lH6N8Amc9Q6ip0tFSEyJp1sBDxRrJGmKt3jNsOk7k7Qd7nJ49UprUS+tnT1EpK7vmpX5MgGAPAIPCbIyD66OkYcAxKHuB0Wle/imtl4vkn+ZG8RrMA8Imo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c15bec8-f821-4372-3ffa-08dce1514ff8
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 13:10:53.1207
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u3cB2Bw5giYkIe7OiOY1w1Y0u+J1LAzVWo8my+84/RzyhkUYrHQCkM1toAUAtKamAkjy/7/vziBnjM7EnyK7GK0f7voJIFD6EjYzVzsKK/g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7407
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_12,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 mlxscore=0 mlxlogscore=943 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409300095
-X-Proofpoint-GUID: cHJQ-XzXq85wG8l9nYDfY5tPnGMmjRlS
-X-Proofpoint-ORIG-GUID: cHJQ-XzXq85wG8l9nYDfY5tPnGMmjRlS
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAHSj+mYC/3XMSw6CMBSF4a2Qjq3pvS0PHbkP46CFW2gi1lAkG
+ MLeLUxUjMNzku+fWKDOUWDHZGIdDS44f4tD7RJWNvpWE3dV3AwFKlFgxkOve1fy9tHTyLUyiAU
+ JyrRmkdw7sm5cc+dL3I0Lve+ea32A5f0TGoAD16CIckgzsPJUe19faV/6li2lAT91vtEYNeS2l GhQSIk/Wr71AcRGy6hTQ6YCMJWV5kvP8/wCM5bMICUBAAA=
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14375; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=ZHEs22Daz4QvKz5oScRejcETNm8btjOQRhWZT7jRSlY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm+qN1KbmW2M8KUzULnPkNmwD+8Sv1ikc3B1HrA
+ ploDH1lk5SJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvqjdQAKCRAEWL7uWMY5
+ RkwNEACrldThw09M6MSHAwNcGk/JFDzIQ44FunY9DwaqxgWhzfXtUKC3pmnDh2W4e8mB0+HGsiw
+ nPjQjkER/TN2Trb42ni8ASGCfvjoYc7ymMH6Bb5Zij+Yip6/A/mfg/kRq4+zSJ1J/+IG+ldW+89
+ adBGwFVd8ggFu/od0aSd07fJaNmbriKVwqiXx5Ipu5nut5U+WSbgGBXpnXQm12sEb/oyb3yThm2
+ a6JSut17X9m4r33QPyPkLgKCvP4O40RRjnzviKT7++Zcxpar5ZfvksoEwWJZOHOP3P/AxGssQUJ
+ J8Gh+nAs/PV0UaXZSpivWEMgmNWdvkwfUiTtnhlHWqJjC+vonbJqGeIcciF0hVp3Rl8aFfKQBei
+ I0IfnpOk/Z+tyoGf7+gjkKrZ0Unj+88Rs+7EHbL06w9wBzTbP3ho1NolhvkwTTbnbZxDXtJ3VHv
+ ChzuJuwrvEI+yWo3pJgsBpmowhoryLitQjBiZBxEEH7Yf/WmWGe7bcV/iN2WmLbxWA9ddJaugXJ
+ nulblZURj1CAiDfcqFOSqJArLiRxh4ufstpoL7xiudfJhjwkiGXsTTWDH2pfz1npIHdFBPwRgp9
+ d8+5Lnrav7HZXBDEm2bulkMc+3O/CjiMJWwVg/I3xvyX8lU9ucSyYDpllSv/pngcgQ8a0bV5iTN upyfhfcH6YoFjvg==
+X-Mailer: b4 0.13.0
+Message-ID: <20240930-static-mutex-v4-1-c59555413127@google.com>
+Subject: [PATCH v4] rust: add global lock support
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Sep 30, 2024 at 02:34:33PM GMT, Christian Brauner wrote:
-> On Mon, Sep 30, 2024 at 11:39:49AM GMT, Lorenzo Stoakes wrote:
-> > On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
-> > > * Lorenzo Stoakes:
-> > >
-> > > > If you wish to utilise a pidfd interface to refer to the current process
-> > > > (from the point of view of userland - from the kernel point of view - the
-> > > > thread group leader), it is rather cumbersome, requiring something like:
-> > > >
-> > > > 	int pidfd = pidfd_open(getpid(), 0);
-> > > >
-> > > > 	...
-> > > >
-> > > > 	close(pidfd);
-> > > >
-> > > > Or the equivalent call opening /proc/self. It is more convenient to use a
-> > > > sentinel value to indicate to an interface that accepts a pidfd that we
-> > > > simply wish to refer to the current process.
-> > >
-> > > The descriptor will refer to the current thread, not process, right?
-> >
-> > No it refers to the current process (i.e. thread group leader from kernel
-> > perspective). Unless you specify PIDFD_THREAD, this is the same if you did the above.
-> >
-> > >
-> > > The distinction matters for pidfd_getfd if a process contains multiple
-> > > threads with different file descriptor tables, and probably for
-> > > pidfd_send_signal as well.
-> >
-> > You mean if you did a strange set of flags to clone()? Otherwise these are
-> > shared right?
-> >
-> > Again, we are explicitly looking at process not thread from userland
-> > perspective. A PIDFD_SELF_THREAD might be possible, but this series doesn't try
-> > to implement that.
->
-> Florian raises a good point. Currently we have:
->
-> (1) int pidfd_tgid = pidfd_open(getpid(), 0);
-> (2) int pidfd_thread = pidfd_open(getpid(), PIDFD_THREAD);
->
-> and this instructs:
->
-> pidfd_send_signal()
-> pidfd_getfd()
->
-> to do different things. For pidfd_send_signal() it's whether the
-> operation has thread-group scope or thread-scope for pidfd_send_signal()
-> and for pidfd_getfd() it determines the fdtable to use.
->
-> The thing is that if you pass:
->
-> pidfd_getfd(PDIFD_SELF)
->
-> and you have:
->
-> TGID
->
-> T1 {
->     clone(CLONE_THREAD)
->     unshare(CLONE_FILES)
-> }
->
-> T2 {
->     clone(CLONE_THREAD)
->     unshare(CLONE_FILES)
-> }
->
-> You have 3 threads in the same thread-group that all have distinct file
-> descriptor tables from each other.
->
-> So if T1 did:
->
-> pidfd_getfd(PIDFD_SELF, ...)
->
-> and we mirror the PIDTYPE_TGID behavior then T1 will very likely expect
-> to get the fd from its file descriptor table. IOW, its reasonable to
-> expect that T1 is interested in their very own resource, not someone
-> else's even if it is the thread-group leader.
->
-> But what T1 will get in reality is an fd from TGID's file descriptor
-> table (and similar for T2).
->
-> Iirc, yes that confusion exists already with /proc/self. But the
-> question is whether we should add the same confusion to the pidfd api or
-> whether we make PIDFD_SELF actually mean PIDTYPE_PID aka the actual
-> calling thread.
->
-> My thinking is that if you have the reasonable suspicion that you're
-> multi-threaded and that you're interested in the thread-group resource
-> then you should be using:
->
-> int pidfd = pidfd_open(getpid(), 0)
->
-> and hand that thread-group leader pidfd around since you're interested
-> in another thread. But if you're really just interested in your own
-> resource then pidfd_open(getpid(), 0) makes no sense and you would want
-> PIDFD_SELF.
->
-> Thoughts?
+Add support for creating global variables that are wrapped in a mutex or
+spinlock. Optionally, the macro can generate a special LockedBy type
+that does not require a runtime check.
 
-I mean from my perspective, my aim is to get current->mm for
-process_madvise() so both work for me :) however you both raise a very good
-point here (sorry Florian, perhaps I was a little too dismissive as to your
-point, you're absolutely right).
+The implementation here is intended to replace the global mutex
+workaround found in the Rust Binder RFC [1]. In both cases, the global
+lock must be initialized before first use. The macro is unsafe to use
+for the same reason.
 
-My intent was for PIDFD_SELF to simply mirror the pidfd_open(getpid(), 0)
-behaviour, but you and Florian make a strong case that you'd _probably_
-find this very confusing had you unshared in this fashion.
+The separate initialization step is required because it is tricky to
+access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+require changes to the C side. That change will happen as a follow-up to
+this patch.
 
-I mean in general this confusion already exists, and is for what
-PIDFD_THREAD was created, but I suspect ideally if you could go back you
-might actually do this by default Christian + let the TGL behaviour be the
-optional thing?
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08ba9197f637@google.com/#Z31drivers:android:context.rs [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+This patch is based on top of v6.12-rc1 with:
+* https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+---
+Changes in v4:
+- Evaluate `$value` in the surrounding scope.
+- Make types `pub(crate)` to avoid "private type in public interface"
+  errors when using the macro.
+- Add trylock method.
+  - using https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+- Add Send/Sync implementations of LockedBy.
+- Fix examples so they compile.
+- Link to v3: https://lore.kernel.org/r/20240910-static-mutex-v3-1-5bebd11bdf3b@google.com
 
-For most users this will not be an issue, but for those they'd get the same
-result whichever they used, but yes actually I think you're both right -
-PIDFD_SELF should in effect imply PIDFD_THREAD.
+Changes in v3:
+- Rewrite to provide a macro instead.
+- Link to v2: https://lore.kernel.org/r/20240827-static-mutex-v2-1-17fc32b20332@google.com
 
-We can adjust the pidfd_send_signal() call to infer the correct scope
-(actually nicely we can do that without any change there, by having
-__pidfd_get_pid() set f_flags accordingly).
+Changes in v2:
+- Require `self: Pin<&Self>` and recommend `Pin::static_ref`.
+- Other doc improvements including new example.
+- Link to v1: https://lore.kernel.org/r/20240826-static-mutex-v1-1-a14ee71561f3@google.com
+---
+ rust/kernel/sync.rs             |   1 +
+ rust/kernel/sync/lock.rs        |  31 ++++-
+ rust/kernel/sync/lock/global.rs | 260 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 291 insertions(+), 1 deletion(-)
 
-So TL;DR: I agree, I will respin with PIDFD_SELF referring to the thread.
+diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+index 0ab20975a3b5..2e97e22715db 100644
+--- a/rust/kernel/sync.rs
++++ b/rust/kernel/sync.rs
+@@ -14,6 +14,7 @@
+ 
+ pub use arc::{Arc, ArcBorrow, UniqueArc};
+ pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
++pub use lock::global::global_lock;
+ pub use lock::mutex::{new_mutex, Mutex};
+ pub use lock::spinlock::{new_spinlock, SpinLock};
+ pub use locked_by::LockedBy;
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 360d06e9c57a..528e885ee535 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -7,12 +7,14 @@
+ 
+ use super::LockClassKey;
+ use crate::{init::PinInit, pin_init, str::CStr, types::Opaque, types::ScopeGuard};
+-use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned};
++use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned, pin::Pin};
+ use macros::pin_data;
+ 
+ pub mod mutex;
+ pub mod spinlock;
+ 
++pub(super) mod global;
++
+ /// The "backend" of a lock.
+ ///
+ /// It is the actual implementation of the lock, without the need to repeat patterns used in all
+@@ -124,6 +126,33 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
+             }),
+         })
+     }
++
++    /// # Safety
++    ///
++    /// Before any other method on this lock is called, `global_lock_helper_init` must be called.
++    #[doc(hidden)]
++    pub const unsafe fn global_lock_helper_new(state: Opaque<B::State>, data: T) -> Self {
++        Self {
++            state,
++            data: UnsafeCell::new(data),
++            _pin: PhantomPinned,
++        }
++    }
++
++    /// # Safety
++    ///
++    /// * This lock must have been created using `global_lock_helper_new`.
++    /// * Must only be called once for each lock.
++    #[doc(hidden)]
++    pub unsafe fn global_lock_helper_init(
++        self: Pin<&Self>,
++        name: &'static CStr,
++        key: &'static LockClassKey,
++    ) {
++        // SAFETY: The pointer to `state` is valid for the duration of this call, and both `name`
++        // and `key` are valid indefinitely.
++        unsafe { B::init(self.state.get(), name.as_char_ptr(), key.as_ptr()) }
++    }
+ }
+ 
+ impl<T: ?Sized, B: Backend> Lock<T, B> {
+diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
+new file mode 100644
+index 000000000000..fc02fac864f6
+--- /dev/null
++++ b/rust/kernel/sync/lock/global.rs
+@@ -0,0 +1,260 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Support for defining statics containing locks.
++
++/// Defines a global lock.
++///
++/// Supports the following options:
++///
++/// * `value` specifies the initial value in the global lock.
++/// * `wrapper` specifies the name of the wrapper struct.
++/// * `guard` specifies the name of the guard type.
++/// * `locked_by` specifies the name of the `LockedBy` type.
++///
++/// # Examples
++///
++/// A global counter.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     static MY_COUNTER: Mutex<u32> = unsafe { uninit };
++///     value: 0;
++/// }
++///
++/// fn increment_counter() -> u32 {
++///     let mut guard = MY_COUNTER.lock();
++///     *guard += 1;
++///     *guard
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_COUNTER.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++///
++/// A global mutex used to protect all instances of a given struct.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     static MY_MUTEX: Mutex<()> = unsafe { uninit };
++///     value: ();
++///     guard: MyGuard;
++///     locked_by: LockedByMyMutex;
++/// }
++///
++/// /// All instances of this struct are protected by `MY_MUTEX`.
++/// struct MyStruct {
++///     my_counter: LockedByMyMutex<u32>,
++/// }
++///
++/// impl MyStruct {
++///     /// Increment the counter in this instance.
++///     ///
++///     /// The caller must hold the `MY_MUTEX` mutex.
++///     fn increment(&self, guard: &mut MyGuard) -> u32 {
++///         let my_counter = self.my_counter.as_mut(guard);
++///         *my_counter += 1;
++///         *my_counter
++///     }
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_MUTEX.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++#[macro_export]
++macro_rules! global_lock {
++    {
++        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valuety:ty> = unsafe { uninit };
++        value: $value:expr;
++        wrapper: $wrapper:ident;
++        $( name: $lname:literal; )?
++        $(
++            guard: $guard:ident;
++            locked_by: $locked_by:ident;
++        )?
++    } => {
++        $crate::macros::paste! {
++            type [< __static_lock_ty_ $name >] = $valuety;
++            const [< __static_lock_init_ $name >]: [< __static_lock_ty_ $name >] = $value;
++
++            #[allow(unused_pub)]
++            mod [< __static_lock_mod_ $name >] {
++                use super::[< __static_lock_ty_ $name >] as Val;
++                use super::[< __static_lock_init_ $name >] as INIT;
++                type Backend = $crate::global_lock_inner!(backend $kind);
++                type GuardTyp = $crate::global_lock_inner!(guard $kind, Val $(, $guard)?);
++
++                /// # Safety
++                ///
++                /// Must be used to initialize `super::$name`.
++                pub(super) const unsafe fn new() -> $wrapper {
++                    let state = $crate::types::Opaque::uninit();
++                    $wrapper {
++                        // SAFETY: The user of this macro promises to call `init` before calling
++                        // `lock`.
++                        inner: unsafe {
++                            $crate::sync::lock::Lock::global_lock_helper_new(state, INIT)
++                        }
++                    }
++                }
++
++                /// Wrapper type for a global lock.
++                pub(crate) struct $wrapper {
++                    inner: $crate::sync::lock::Lock<Val, Backend>,
++                }
++
++                impl $wrapper {
++                    /// Initialize the global lock.
++                    ///
++                    /// # Safety
++                    ///
++                    /// This method must not be called more than once.
++                    pub(crate) unsafe fn init(&'static self) {
++                        // SAFETY:
++                        // * This type can only be created by `new`.
++                        // * Caller promises to not call this method more than once.
++                        unsafe {
++                            $crate::sync::lock::Lock::global_lock_helper_init(
++                                ::core::pin::Pin::static_ref(&self.inner),
++                                $crate::optional_name!($($lname)?),
++                                $crate::static_lock_class!(),
++                            );
++                        }
++                    }
++
++                    /// Lock this global lock.
++                    pub(crate) fn lock(&'static self) -> GuardTyp {
++                        $crate::global_lock_inner!(new_guard $($guard)? {
++                            self.inner.lock()
++                        })
++                    }
++
++                    /// Lock this global lock.
++                    pub(crate) fn try_lock(&'static self) -> Option<GuardTyp> {
++                        Some($crate::global_lock_inner!(new_guard $($guard)? {
++                            self.inner.try_lock()?
++                        }))
++                    }
++                }
++
++                $(
++                pub(crate) struct $guard($crate::sync::lock::Guard<'static, Val, Backend>);
++
++                impl ::core::ops::Deref for $guard {
++                    type Target = Val;
++                    fn deref(&self) -> &Val {
++                        &self.0
++                    }
++                }
++
++                impl ::core::ops::DerefMut for $guard {
++                    fn deref_mut(&mut self) -> &mut Val {
++                        &mut self.0
++                    }
++                }
++
++                pub(crate) struct $locked_by<T: ?Sized>(::core::cell::UnsafeCell<T>);
++
++                // SAFETY: `LockedBy` can be transferred across thread boundaries iff the data it
++                // protects can.
++                unsafe impl<T: ?Sized + Send> Send for $locked_by<T> {}
++
++                // SAFETY: `LockedBy` serialises the interior mutability it provides, so it is `Sync` as long as the
++                // data it protects is `Send`.
++                unsafe impl<T: ?Sized + Send> Sync for $locked_by<T> {}
++
++                impl<T> $locked_by<T> {
++                    pub(crate) fn new(val: T) -> Self {
++                        Self(::core::cell::UnsafeCell::new(val))
++                    }
++                }
++
++                impl<T: ?Sized> $locked_by<T> {
++                    pub(crate) fn as_ref<'a>(&'a self, _guard: &'a $guard) -> &'a T {
++                        // SAFETY: The lock is globally unique, so there can only be one guard.
++                        unsafe { &*self.0.get() }
++                    }
++
++                    pub(crate) fn as_mut<'a>(&'a self, _guard: &'a mut $guard) -> &'a mut T {
++                        // SAFETY: The lock is globally unique, so there can only be one guard.
++                        unsafe { &mut *self.0.get() }
++                    }
++
++                    pub(crate) fn get_mut(&mut self) -> &mut T {
++                        self.0.get_mut()
++                    }
++                }
++                )?
++            }
++
++            use [< __static_lock_mod_ $name >]::$wrapper;
++            $( use [< __static_lock_mod_ $name >]::{$guard, $locked_by}; )?
++
++            $(#[$meta])*
++            $pub static $name: $wrapper = {
++                // SAFETY: We are using this to initialize $name.
++                unsafe { [< __static_lock_mod_ $name >]::new() }
++            };
++        }
++    };
++
++    {
++        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ident<$valuety:ty> = unsafe { uninit };
++        value: $value:expr;
++        $( name: $lname:literal; )?
++        $(
++            guard: $guard:ident;
++            locked_by: $locked_by:ident;
++        )?
++    } => {
++        $crate::macros::paste! {
++            $crate::global_lock! {
++                $(#[$meta])* $pub static $name: $kind<$valuety> = unsafe { uninit };
++                value: $value;
++                wrapper: [< __static_lock_wrapper_ $name >];
++                $( name: $lname; )?
++                $( guard: $guard; locked_by: $locked_by; )?
++            }
++        }
++    }
++}
++pub use global_lock;
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! global_lock_inner {
++    (backend Mutex) => { $crate::sync::lock::mutex::MutexBackend };
++    (backend SpinLock) => { $crate::sync::lock::spinlock::SpinLockBackend };
++    (guard Mutex, $val:ty) => {
++        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::mutex::MutexBackend>
++    };
++    (guard SpinLock, $val:ty) => {
++        $crate::sync::lock::Guard<'static, $val, $crate::sync::lock::spinlock::SpinLockBackend>
++    };
++    (guard $kind:ident, $val:ty, $name:ident) => { $name };
++    (new_guard { $val:expr }) => { $val };
++    (new_guard $name:ident { $val:expr }) => { $name($val) };
++}
 
-My question in return here then is - should we introduce PIDFD_SELF_PROCESS
-also (do advise if you feel this naming isn't quite right) - to provide
-thread group leader behaviour?
+---
+base-commit: e2bde5e2cb2e5b8dca87adce3a9eb605133518ea
+change-id: 20240826-static-mutex-a4b228e0e6aa
 
-Thanks!
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
