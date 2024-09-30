@@ -1,100 +1,130 @@
-Return-Path: <linux-kernel+bounces-343501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433A1989BC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E4C4989BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B781C2169A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:44:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588001F21222
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D2F165EFC;
-	Mon, 30 Sep 2024 07:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD85165F11;
+	Mon, 30 Sep 2024 07:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gCTSJMGF"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="1jmzJMtY"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F06A15C13A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C8E15C13A;
+	Mon, 30 Sep 2024 07:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682287; cv=none; b=bVt4ioawbdtF4AFT8P1/Vr08vcCWnKAjMS70IlSwNpebDAmG5MbamriOcmMG6GoDtNt4S4OOjFOsHy97dW1QS9Tm0nZK76oS3/DZutDdIPHzD90A4Z9WwlPNW0CUPm6pxNqhb7drWQ5rpnB/PDL+2Fp4BmdgdiZO7Ih+MKDHYjQ=
+	t=1727682292; cv=none; b=otrUBUjzZrQKB5t/3H38T4F2gZvp8oPLAB0CQZJYm2UruxzxtoA+i27MbyFSWsXlnm51Z84sqGa9LfgplFDST97c8sCpL1pUcxYrwdHNv4ht4sNpweIpvwHVAg/sjuIS3RMe+co+sGwWkyt56L1HX7HVIOyWtuyxxY8rFFH1/MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682287; c=relaxed/simple;
-	bh=KYSaRZpyai2Viv1660kI2dZ5xHhGUTyEvRTAv0HKjM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VInYd/IkYigPsw6a9E2wjjyZmyBejkW+4VtLdTWLUCf0TqTLgBdrNJISTWKdrzo+GMd/tNhRv+eaEqnpGf1G4ZnZCcGsRh5yxxxDxXtL175HgirhmXggNNpbcoWDCDYKTLNDq0PbP3MVsnHM/NcfqJ0SmjOakT1OvMgVH2Ww0Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gCTSJMGF; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37cd8a5aac9so1168347f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:44:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727682284; x=1728287084; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KYSaRZpyai2Viv1660kI2dZ5xHhGUTyEvRTAv0HKjM0=;
-        b=gCTSJMGFESNIzWQI0Abn7HzDHbQVchdktnYf2mnsyhe7UsrbqOGfzCnsR7OcoFfVTa
-         YjM4Jk/k/V4Ryj+UeChG2AyVkvQxHWPf0AOzcLknuukSvsp+XO1oGYp57oJFc5b61/5G
-         4rxQGDkMpAhQ3Elb7YmhkG9TbnJx8zRiY16jH2260709Ue+rmhMZg2e9HxOVvOcMSuep
-         vfFRyE5jb0+Ke2lNbSQg8yvQ4200klNlsHMFwGKOz7KyKdmztkB/IickDneO7UIL85Qh
-         yAtt8RH0D5Y87T8SR2KTHGej4iOb6j5dG2dwfdozJPAo5764u+J7qAqtNKVYz4oMUbPD
-         N6Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727682284; x=1728287084;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KYSaRZpyai2Viv1660kI2dZ5xHhGUTyEvRTAv0HKjM0=;
-        b=AdIupxmzzpnwanvVJ+gCe678zQ/9nJOpgur71zayXwxpRm7A4HCcBvIBuPLFq/t/b4
-         9Ld2zsHu/wLrODunNMxLxj05Vaaw2Et7PYbPnQ2Xlonjmw/y9HiHvRw5X7aQhlXnkXnY
-         EUKkf3a1MbjhMwTWpezHw4KYhCmHPhn/n+JX18N4pg1JXprgY61L95LAKyx463IKQt5V
-         77orqSfvuWGw8Rl8HNvSLJDmhlaCcd1xfFMjR4+3b8TSTcywEJNmQEnl62+Wa7IXX8J3
-         lfQt9GSfpPHMDDZv2VLo8g/2FeqO4JVFUsPmlL9lzaLLM9mTOn6h0w8mFFZQ6kjhg239
-         w/CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYOCak4Jv8pRU6ubazDi/vBKzQ18RUDP3jwfwbLgjjLRaX5f8OS0fRDtGR0VUcGarotEmq2CKo8crFVcE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4kZb6AfJtxnVhuCvH88/HCe7E7iOUzQMoDXyqY4d74RXoU4LN
-	FJQ2sFNDxBUKiKEYN6AZxRz/wALMIJ4/R3lvkgM6PkXutt5mpNB/b4fS2JbO4BZuhvzIigxghxR
-	aLh4qHxzs+BfJMKheDOoMXAQuhQwQn9XMUA3i
-X-Google-Smtp-Source: AGHT+IGE/D6/QsIIP4J0H1QxONOWgQS7g25lI+QYgi6phml6YNi4c/xIuskX5uQ6Dmztfg0ZWQV/gHDvQRxzFlDLoZU=
-X-Received: by 2002:a5d:4d06:0:b0:37c:d0f2:baaf with SMTP id
- ffacd0b85a97d-37cd5a8075amr5990512f8f.13.1727682283447; Mon, 30 Sep 2024
- 00:44:43 -0700 (PDT)
+	s=arc-20240116; t=1727682292; c=relaxed/simple;
+	bh=j7RGII9g3Po6cu1gX7o2B+tuk4vrlYYa6ySx2mjDLuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GXze2UcnjfwT6gjkLsCxvFsfNIdHWvc4O4eoTS/Vg1w9KFrzntO2/ZoGNLpo2dW9TZWllkgZED1D91gZNga9Ys3tdiicR4LydMWJbVDtW+NNv2pWKJOp5s/Dx9ldYt33T56dgbyLITD917JlVg3y++QVLl7muqv+yIamf4x5xmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=1jmzJMtY; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=k1U/88ZtoQLAF8tHTyw8LiGNPUA1RAE+qVtpSBnQjhg=; t=1727682290;
+	x=1728114290; b=1jmzJMtYITtqa15sn7EargiBu6f2yeuB0IKpLSm+k557merPh87mr+Afc0XMw
+	XqehCP1oGbiudEEdvpYO6S6brD1hNRgkbTFHmQn46EYb7SQjDF6n6asnDirOXpZsNblyBcuHtlYYk
+	iyL5y8ffP9zNUYYUvE8ynTwIXp9fB2rTZ74BnkQODleGVHnSzRBYRT+l4wK6qrCltLtNExAImmJU1
+	Dehhmi68B+JuM2sLIwCVABkS0cEg7vh+EwsuvjciDRSCF06qonRPNRtACQpP54+mWZDfhh10diOjF
+	QmccdH4Sq36lX3rWAjuNtYGS555uiYU46mKQ2bDk//+vTWXmIA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svB5G-0003Ng-LM; Mon, 30 Sep 2024 09:44:42 +0200
+Message-ID: <38fc4bf7-804f-449b-a9a4-a33bb7486656@leemhuis.info>
+Date: Mon, 30 Sep 2024 09:44:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
-In-Reply-To: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 30 Sep 2024 09:44:30 +0200
-Message-ID: <CAH5fLgiCAW68tGaG0imi7ia4XvOp+EQcENjF-P-ec_MonEuFrQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2 RESEND] rust: kernel: clean up empty `///` lines
-To: Hridesh MG <hridesh699@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
-	Matt Gilbride <mattgilbride@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: resource: Skip IRQ override on Asus Vivobook Go
+ E1404GAB
+To: Hans de Goede <hdegoede@redhat.com>, Tamim Khan <tamim@fusetak.com>,
+ linux-acpi@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: rafael@kernel.org, lenb@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240903014317.38858-1-tamim@fusetak.com>
+ <c73420b7-c186-4b5d-a074-961b35ed829c@leemhuis.info>
+ <f79854bd-b338-458f-bc04-466376d05a65@leemhuis.info>
+ <87cf24b3-5ddd-4532-b186-dd1dcc62f712@leemhuis.info>
+ <c1276139-d26f-457a-8a73-7f17538dbd28@redhat.com>
+ <7ce7f7cc-870f-4f7f-98c6-95eb784008ff@leemhuis.info>
+ <9feac709-fbab-424a-bc5c-dedbcec40dea@redhat.com>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+In-Reply-To: <9feac709-fbab-424a-bc5c-dedbcec40dea@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727682290;e7ea498c;
+X-HE-SMSGID: 1svB5G-0003Ng-LM
 
-On Sun, Sep 29, 2024 at 1:15=E2=80=AFPM Hridesh MG <hridesh699@gmail.com> w=
-rote:
->
-> Remove unnecessary empty `///` lines in the rust docs.
->
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1109
-> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+On 27.09.24 16:19, Hans de Goede wrote:
+> On 26-Sep-24 12:18 PM, Thorsten Leemhuis wrote:
+>> On 25.09.24 16:31, Hans de Goede wrote:
+>>> On 25-Sep-24 1:56 PM, Thorsten Leemhuis wrote:
+>>>>> https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
+>>> Ok, I wonder did you Cc me so that I can write / submit patches upstream
+>>> for these ones?
+>>
+>> Not really. Of course it would be nice if you or someone else took care
+>> of that one and...
+>>
+>>> It seems that there are 3 missing models:
+>>> - E1404GA: https://bugzilla.kernel.org/show_bug.cgi?id=219224
+>>> - X1704VAP https://lore.kernel.org/all/1226760b-4699-4529-bf57-6423938157a3@wanadoo.fr/
+>>> - B2502CV: https://bugzilla.kernel.org/show_bug.cgi?id=217760#c12
+>>>
+>>> Which someone needs to submit upstream, right ?
+>>
+>> ...these as well -- and ideally would even be willing to act as go-to
+>> person from now on in case more of these quirk entries are needed, which
+>> I guess will be the case. But given the backstory (see below) I don't
+>> think you or anyone else is obliged to do this, even if the current
+>> situation is parlty caused by regressions and recent fixes for them.
+> 
+> I have already done a bunch of these patches. So I would be happy to
+> submit more of these, but someone needs to bring them to my attention first.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Great, good to know.
+
+> Also maybe Paul Menzel (added to the Cc) and Tamim Khan can help with
+> adding more quirks, when reports come in ?
+
+That would be great, but nevertheless allow me to ask:
+
+Does anyone now if kernelnewbies has some place where we could submit
+requests for creating quirk entries?
+
+> Either way I have submitted a set of patches to add quirks for the 3 new
+> known broken models now.
+
+Many thx!
+
+>> Writing this lead to another thought: does anyone have contacts to Asus
+>> and could just ask if there is some generic way to detect which of their
+>> Laptops need a quirk?
+> I don't have any contacts at Asus.
+
+I asked in the fediverse, maybe someone knows somebody that can help.
+And if not: no harm done.
+
+Have a nice week everyone!
+
+Ciao, Thorsten
 
