@@ -1,126 +1,346 @@
-Return-Path: <linux-kernel+bounces-344837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0460B98AEC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:57:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDA898AEC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44251F241F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:57:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E337283B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEB71A0BD8;
-	Mon, 30 Sep 2024 20:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14661A0BDA;
+	Mon, 30 Sep 2024 20:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="To4/C4W9"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMp7o1bg"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F196B19F42E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9496C17BB38
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727729850; cv=none; b=gI/gwdJnllgf5/VZUhX/ocviD8XEsRVHJxyYOrC7zs2X911bKHMm2m/9aHjZUtGwULc2Ka+zG99VROYpEeaqV6/2B/lSYw+WId0EKVcG39OBDHmXj5+Z+sh4ClhBWLvhFwtcvSYfbRw1ATDl4g5k3r0p6+MOiQTMA5Ew42pC2d4=
+	t=1727729896; cv=none; b=CHh/A7H7fVrtmGZKfDOC+Hu3vwlDx3L0ctJlQKrtYE/wqCDaw6WP7F7H8g9qz739P9eHX7PC2Rn4hQdVOq0KlvID+IBrYrwv02nGv/5KkpojyG80DtT65RHQpYepeC8tcCPNIGLLp1h9JRU2/N3ulpc2D5VyCjwL7Z89jqBRf+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727729850; c=relaxed/simple;
-	bh=DSHUum/B8b3jGdeFXxORM8MingRk2dWycd/+sDgEp48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KHRyjcIRe3wKMYTPVTlh3gs4GQ/NSv0jaluYNaKfdO0JWhg2kkmDy9Wtnvwt0Fyme3jZo2zX3MHOP5f1S5Py4wEiJRpOzlWDqCfhIv4inIGs2xGZiWXt8N0tojqVhRbd8T29lnF17dXVoch87UsD6cSAnEVx9DAiE2IvRMD0T00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=To4/C4W9; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a33a5a3b5cso17115025ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:57:28 -0700 (PDT)
+	s=arc-20240116; t=1727729896; c=relaxed/simple;
+	bh=glYqUcIpzfsKVj7ppiqTip3g0yCnhfX3t5X9scU5618=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TQtcIMJQ09GFVbWLWGaPt4glIKi32louDjpvDHYgdG8bxQ5v+W/PDQfu5P6I2AvcCa8qNgmr2Jl6lwDWPCY15Ims0IGvWlUsIhjvjyaaF+2w3EI4dwbRLR9n44o6PTPNw1kocNR9SdObBsXgGEc3Ywm0BlLqoz+u5ub3W8QxIAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMp7o1bg; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e09fe0a878so3175390a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:58:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727729848; x=1728334648; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AW12f3fV0hnyKGmmmTzPeXu+IfjPN42/qOVSHOfH93Y=;
-        b=To4/C4W9F5fCVeeE8Jzy/DgGTkxNOscGYGXrwH753pNJZt5EZtj2treow+A1wb5HYv
-         QOGkjMKa1sIbpXV4jUs+E9nTAMX5OIbIt/9bCEmZa/O94rNY0jC1RXG6ekQ+lHKbopfl
-         MOK3sLFmJMUJf8GeT0CIYo1WyH5ZYsyBqQthI=
+        d=gmail.com; s=20230601; t=1727729894; x=1728334694; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YEbXvT4SnqQhvnH+qIpz2xvP+hEnbU9w8hvLakcDGNg=;
+        b=hMp7o1bgkMqO98od7fIgir1n6dIgh9f1mZj7KhnNGyxZH/gcu24rFer5lqItz77Zii
+         jsOjWsX+6syUe4Ai0gIsKIFBU6g9gbRtJ6/EnBWOx+Pclgz9CfYiUkUwT7E28qUgZWWe
+         vfXDMMXHfZMgXVH1i8MLcr++P/SaQFlwqswXIhj8LYBY9El+IJDq/rs96wWsDBMJlbGW
+         MCgNr2k0qpSKs6/KFlextmMCkL9ZfO1q+jJZdj5p6NC3fQ5P6le+shJKMD9zKOHXuHAX
+         sg608uKePhz0GdSVDnf0/KBPWdEQc23bNA8pdKSdb+TmBVu9sYcReZ8fDRnCq1Ux4gLd
+         UdQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727729848; x=1728334648;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AW12f3fV0hnyKGmmmTzPeXu+IfjPN42/qOVSHOfH93Y=;
-        b=LQgRIIm/FAR+ahH/vGa/mLuPHFBFL/Ji7qiDJlQDwWXtQL/Nd5r/hv/smry0p7ZnHc
-         qxE7yDz7/iNb+QN6GzomElod5+YdxApXZWXsWgNVTjnkymJp4Y1pYtbS9MI1AkBWjVPH
-         QDKN7XHnNsMvJt4lIDA2YxAAoLOnjkcAuObxkAnBukYOMjYNodNaLZN3OK1AEJ4xzfan
-         SlKUj6+8Lky5bEjgZLL3aM43A2yIxvFf2zrsJc4H5yDS0JEpGI8+3qaNkHwb2hfsXTzn
-         X80TcJmXyolid2jZbAa2JlBQiOoOWEZYcz9E+hM6nFy8KDFp+qSmZbOHmKFNSqnpQx77
-         fLLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJlAApsn0e7FA4/emAe5SfwC4kuJjrQTuIkSQLxaOdTknVL3lYANOfBy5vYOqkEyV1wtAIuodrwtmpALc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzFkScephAOzoGWO9dcJb2fyN0hwZnZUtJz96XAFQ1tTdu27z3
-	XuxnVkOtpnQ5BehNqz2NNyuoUnuQEZYEzK6AMGgM80yaxegikUtWZHfqMyfIi8E=
-X-Google-Smtp-Source: AGHT+IH6+aml0RNiH7eTsWsGVqK93eOEN3UEu1k2nN3+MRDt4bFti+AQepgmBbNSpbK5JtsjZIb4sA==
-X-Received: by 2002:a92:ca0c:0:b0:3a2:aed1:12a6 with SMTP id e9e14a558f8ab-3a345166cd6mr105578745ab.6.1727729847981;
-        Mon, 30 Sep 2024 13:57:27 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344df41a8sm26488915ab.88.2024.09.30.13.57.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 13:57:27 -0700 (PDT)
-Message-ID: <7910784d-18c2-4e72-9dd8-6b8bd1b9dd0b@linuxfoundation.org>
-Date: Mon, 30 Sep 2024 14:57:26 -0600
+        d=1e100.net; s=20230601; t=1727729894; x=1728334694;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YEbXvT4SnqQhvnH+qIpz2xvP+hEnbU9w8hvLakcDGNg=;
+        b=t9PWOLd0L8iUlhOmIriuN25z9Zkg/rAkFuEuCNVMsAcNYmMqX68Eww09g1rhAAM7/e
+         mLpevTtOWLlZI8KTYD8+RFxssllJjngSG/kQEWEyceS2LqB8VKINhfGQ5y0+BVqTpFSF
+         RE8dmR18SGSojVfOA20A0qjhOkU9DC2+/FeKc4lZJgSzTBRpu5ozNiS0aXKpPhfnOFGG
+         El7IwCo9lGfKbMobTmbR0gEsQbedBzBeZ6t7O3LeoLdf6pKQNHNPoMA/esUDprnA9DyT
+         7U1sg2dzVjZeXJUWmwHAu+7nOiljr3j4mgbx02tcF4zCbOHVmULaMgDEb58IQs+MuQXs
+         Cn7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU927JYHIv6fclIpu2ns+oFsfU9YJ672N86u7Oz4+DDYS3SII+8gTHsH6832Ifet4cZJvRyPVqcwdEX4ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkPD5l7wNneGXH1rWWokXS6sO9mmoz1A2Du3r0eNB1Wnlo7kTC
+	LRLW5SYyILa5S3otdl4LktknDChwjzeL3Tw6MwCy2shVeShuyEe1UUaewHLIgLsXrz8pi8bVZH+
+	T1ajujdujKW9ukgU8riHH0FbnYlE=
+X-Google-Smtp-Source: AGHT+IEPiZB7T4421evaJ+D1Bg1sTg6wo0Gaqcm1Z3vT15MhBtbY3CUV+oleSiDoEplTzjQ50BNHHabrzYUb1gjrMkM=
+X-Received: by 2002:a17:90a:398e:b0:2d8:8c82:10a with SMTP id
+ 98e67ed59e1d1-2e0b8865133mr14885570a91.5.1727729893734; Mon, 30 Sep 2024
+ 13:58:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: hid: add missing run-hid-tools-tests.sh
-To: Benjamin Tissoires <bentiss@kernel.org>, Yun Lu <luyun@kylinos.cn>
-Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240929085549.3528293-1-luyun@kylinos.cn>
- <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240927194856.096003183@infradead.org> <20240927194925.069013308@infradead.org>
+ <CAADnVQ+BASJ7kcW4Kz_NsXM0U1+GrMHNVBOro8aO0-OyEry4Ww@mail.gmail.com>
+ <20240930083026.GG5594@noisy.programming.kicks-ass.net> <20240930093302.GB33184@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240930093302.GB33184@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 30 Sep 2024 13:58:01 -0700
+Message-ID: <CAEf4BzZx5iCAwS0iZv_0S1cADw840S8Ra=_PHPZhnW9cOYhFOQ@mail.gmail.com>
+Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Jiri Olsa <jolsa@kernel.org>, X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
+	Joao Moreira <joao@overdrivepizza.com>, Andrew Cooper <andrew.cooper3@citrix.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "Jose E. Marchesi" <jose.marchesi@oracle.com>, 
+	"H.J. Lu" <hjl.tools@gmail.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/30/24 02:38, Benjamin Tissoires wrote:
-> On Sep 29 2024, Yun Lu wrote:
->> The HID test cases actually run tests using the run-hid-tools-tests.sh
->> script. However, if installed with "make install", the run-hid-tools-tests.sh
->> script will not be copied over, resulting in the following error message.
->>
->>    make -C tools/testing/selftests/ TARGETS=hid install \
->>    	  INSTALL_PATH=$KSFT_INSTALL_PATH
->>
->>    cd $KSFT_INSTALL_PATH
->>    ./run_kselftest.sh -c hid
->>
->> selftests: hid: hid-core.sh
->> bash: ./run-hid-tools-tests.sh: No such file or directory
->>
->> So add the run-hid-tools-tests.sh script to the TEST_FILES in the Makefile.
->>
-> 
-> I assume we probably also want:
-> 
-> Cc: stable@vger.kernel.org
-> 
->> Signed-off-by: Yun Lu <luyun@kylinos.cn>
-> 
-> Not sure about the timing regarding our next PR to Linus, so in any cases:
-> 
-> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
+On Mon, Sep 30, 2024 at 2:33=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Mon, Sep 30, 2024 at 10:30:26AM +0200, Peter Zijlstra wrote:
+> > On Sun, Sep 29, 2024 at 10:32:38AM -0700, Alexei Starovoitov wrote:
+> > > On Fri, Sep 27, 2024 at 12:50=E2=80=AFPM Peter Zijlstra <peterz@infra=
+dead.org> wrote:
+> >
+> > > > --- a/kernel/trace/bpf_trace.c
+> > > > +++ b/kernel/trace/bpf_trace.c
+> > > > @@ -1027,19 +1027,9 @@ static const struct bpf_func_proto bpf_g
+> > > >  #ifdef CONFIG_X86_KERNEL_IBT
+> > > >  static unsigned long get_entry_ip(unsigned long fentry_ip)
+> > > >  {
+> > > > -       u32 instr;
+> > > > +       if (is_endbr((void *)(fentry_ip - ENDBR_INSN_SIZE)))
+> > > > +               return fentry_ip - ENDBR_INSN_SIZE;
+> > > >
+> > > > -       /* We want to be extra safe in case entry ip is on the page=
+ edge,
+> > > > -        * but otherwise we need to avoid get_kernel_nofault()'s ov=
+erhead.
+> > > > -        */
+> > > > -       if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+> > > > -               if (get_kernel_nofault(instr, (u32 *)(fentry_ip - E=
+NDBR_INSN_SIZE)))
+> > > > -                       return fentry_ip;
+> > > > -       } else {
+> > > > -               instr =3D *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+> > > > -       }
+> > > > -       if (is_endbr(instr))
+> > > > -               fentry_ip -=3D ENDBR_INSN_SIZE;
+> > > >         return fentry_ip;
+> > >
+> > > Pls don't.
+> > >
+> > > This re-introduces the overhead that we want to avoid.
+> > >
+> > > Just call __is_endbr() here and keep the optimization.
+> >
+> > Well, I could do that ofcourse, but as I wrote elsewhere, the right
+> > thing to do is to optimize get_kernel_nofault(), its current
+> > implementation is needlessly expensive. All we really need is a load
+> > with an exception entry, the STAC/CLAC and speculation nonsense should
+> > not be needed.
+>
+> Looking at things, something like the below actually generates sane
+> code:
+>
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index a582cd25ca87..84f65ee9736c 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -1029,17 +1029,10 @@ static unsigned long get_entry_ip(unsigned long f=
+entry_ip)
+>  {
+>         u32 instr;
+>
+> -       /* We want to be extra safe in case entry ip is on the page edge,
+> -        * but otherwise we need to avoid get_kernel_nofault()'s overhead=
+.
+> -        */
+> -       if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+> -               if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_I=
+NSN_SIZE)))
+> -                       return fentry_ip;
+> -       } else {
+> -               instr =3D *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+> -       }
+> +       __get_kernel_nofault(&instr, (u32 *)(fentry_ip - ENDBR_INSN_SIZE)=
+, u32, Efault);
+>         if (is_endbr(instr))
+>                 fentry_ip -=3D ENDBR_INSN_SIZE;
+> +Efault:
+>         return fentry_ip;
+>  }
+>  #else
+>
+>
+> Which then leads to me rewriting the proposed patch as...
+>
+> ---
+> Subject: x86/ibt: Clean up is_endbr()
+> From: Peter Zijlstra <peterz@infradead.org>
+>
+> Pretty much every caller of is_endbr() actually wants to test something a=
+t an
+> address and ends up doing get_kernel_nofault(). Fold the lot into a more
+> convenient helper.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  arch/x86/events/core.c         |    2 +-
+>  arch/x86/include/asm/ibt.h     |    5 +++--
+>  arch/x86/kernel/alternative.c  |   20 ++++++++++++++------
+>  arch/x86/kernel/kprobes/core.c |   11 +----------
+>  arch/x86/net/bpf_jit_comp.c    |    4 ++--
+>  kernel/trace/bpf_trace.c       |   14 ++------------
+>  6 files changed, 23 insertions(+), 33 deletions(-)
+>
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -2845,7 +2845,7 @@ static bool is_uprobe_at_func_entry(stru
+>                 return true;
+>
+>         /* endbr64 (64-bit only) */
+> -       if (user_64bit_mode(regs) && is_endbr(*(u32 *)auprobe->insn))
+> +       if (user_64bit_mode(regs) && is_endbr((u32 *)auprobe->insn))
+>                 return true;
+>
+>         return false;
+> --- a/arch/x86/include/asm/ibt.h
+> +++ b/arch/x86/include/asm/ibt.h
+> @@ -65,7 +65,7 @@ static __always_inline __attribute_const
+>         return 0x001f0f66; /* osp nopl (%rax) */
+>  }
+>
+> -static inline bool is_endbr(u32 val)
+> +static inline bool __is_endbr(u32 val)
+>  {
+>         if (val =3D=3D gen_endbr_poison())
+>                 return true;
+> @@ -74,6 +74,7 @@ static inline bool is_endbr(u32 val)
+>         return val =3D=3D gen_endbr();
+>  }
+>
+> +extern __noendbr bool is_endbr(u32 *val);
+>  extern __noendbr u64 ibt_save(bool disable);
+>  extern __noendbr void ibt_restore(u64 save);
+>
+> @@ -102,7 +103,7 @@ extern bool __do_kernel_cp_fault(struct
+>
+>  #define __noendbr
+>
+> -static inline bool is_endbr(u32 val) { return false; }
+> +static inline bool is_endbr(u32 *val) { return false; }
+>
+>  static inline u64 ibt_save(bool disable) { return 0; }
+>  static inline void ibt_restore(u64 save) { }
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -852,16 +852,24 @@ void __init_or_module noinline apply_ret
+>
+>  #ifdef CONFIG_X86_KERNEL_IBT
+>
+> +__noendbr bool is_endbr(u32 *val)
+> +{
+> +       u32 endbr;
+> +
+> +       __get_kernel_nofault(&endbr, val, u32, Efault);
+> +       return __is_endbr(endbr);
+> +
+> +Efault:
+> +       return false;
+> +}
+> +
+>  static void poison_cfi(void *addr);
+>
+>  static void __init_or_module poison_endbr(void *addr, bool warn)
+>  {
+> -       u32 endbr, poison =3D gen_endbr_poison();
+> -
+> -       if (WARN_ON_ONCE(get_kernel_nofault(endbr, addr)))
+> -               return;
+> +       u32 poison =3D gen_endbr_poison();
+>
+> -       if (!is_endbr(endbr)) {
+> +       if (!is_endbr(addr)) {
+>                 WARN_ON_ONCE(warn);
+>                 return;
+>         }
+> @@ -988,7 +996,7 @@ static u32  cfi_seed __ro_after_init;
+>  static u32 cfi_rehash(u32 hash)
+>  {
+>         hash ^=3D cfi_seed;
+> -       while (unlikely(is_endbr(hash) || is_endbr(-hash))) {
+> +       while (unlikely(__is_endbr(hash) || __is_endbr(-hash))) {
+>                 bool lsb =3D hash & 1;
+>                 hash >>=3D 1;
+>                 if (lsb)
+> --- a/arch/x86/kernel/kprobes/core.c
+> +++ b/arch/x86/kernel/kprobes/core.c
+> @@ -373,16 +373,7 @@ static bool can_probe(unsigned long padd
+>  kprobe_opcode_t *arch_adjust_kprobe_addr(unsigned long addr, unsigned lo=
+ng offset,
+>                                          bool *on_func_entry)
+>  {
+> -       u32 insn;
+> -
+> -       /*
+> -        * Since 'addr' is not guaranteed to be safe to access, use
+> -        * copy_from_kernel_nofault() to read the instruction:
+> -        */
+> -       if (copy_from_kernel_nofault(&insn, (void *)addr, sizeof(u32)))
+> -               return NULL;
+> -
+> -       if (is_endbr(insn)) {
+> +       if (is_endbr((u32 *)addr)) {
+>                 *on_func_entry =3D !offset || offset =3D=3D 4;
+>                 if (*on_func_entry)
+>                         offset =3D 4;
+> --- a/arch/x86/net/bpf_jit_comp.c
+> +++ b/arch/x86/net/bpf_jit_comp.c
+> @@ -625,7 +625,7 @@ int bpf_arch_text_poke(void *ip, enum bp
+>          * See emit_prologue(), for IBT builds the trampoline hook is pre=
+ceded
+>          * with an ENDBR instruction.
+>          */
+> -       if (is_endbr(*(u32 *)ip))
+> +       if (is_endbr(ip))
+>                 ip +=3D ENDBR_INSN_SIZE;
+>
+>         return __bpf_arch_text_poke(ip, t, old_addr, new_addr);
+> @@ -2971,7 +2971,7 @@ static int __arch_prepare_bpf_trampoline
+>                 /* skip patched call instruction and point orig_call to a=
+ctual
+>                  * body of the kernel function.
+>                  */
+> -               if (is_endbr(*(u32 *)orig_call))
+> +               if (is_endbr(orig_call))
+>                         orig_call +=3D ENDBR_INSN_SIZE;
+>                 orig_call +=3D X86_PATCH_SIZE;
+>         }
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -1027,19 +1027,9 @@ static const struct bpf_func_proto bpf_g
+>  #ifdef CONFIG_X86_KERNEL_IBT
+>  static unsigned long get_entry_ip(unsigned long fentry_ip)
+>  {
+> -       u32 instr;
+> +       if (is_endbr((void *)(fentry_ip - ENDBR_INSN_SIZE)))
+> +               return fentry_ip - ENDBR_INSN_SIZE;
+>
+> -       /* We want to be extra safe in case entry ip is on the page edge,
+> -        * but otherwise we need to avoid get_kernel_nofault()'s overhead=
+.
+> -        */
+> -       if ((fentry_ip & ~PAGE_MASK) < ENDBR_INSN_SIZE) {
+> -               if (get_kernel_nofault(instr, (u32 *)(fentry_ip - ENDBR_I=
+NSN_SIZE)))
+> -                       return fentry_ip;
+> -       } else {
+> -               instr =3D *(u32 *)(fentry_ip - ENDBR_INSN_SIZE);
+> -       }
+> -       if (is_endbr(instr))
+> -               fentry_ip -=3D ENDBR_INSN_SIZE;
+>         return fentry_ip;
+>  }
+>  #else
 
-Thank you. This commit appears to be right one for Fixes tag?
+LGTM.
 
-Is this the right commit for Fixes tag:
-
-Fixes: commit ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
-
-Will apply with this tag added to linux-kselftest fixes for next rc
-once I get conformation.
-
-thanks,
--- Shuah
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
