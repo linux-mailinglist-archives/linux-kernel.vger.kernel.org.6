@@ -1,343 +1,184 @@
-Return-Path: <linux-kernel+bounces-343317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764AD989985
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3D9989986
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3118A282C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:32:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CEE4B210B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B539126BF1;
-	Mon, 30 Sep 2024 03:31:48 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6DE55E73;
-	Mon, 30 Sep 2024 03:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7393C466;
+	Mon, 30 Sep 2024 03:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LyjbRmLZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FE3364BA
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 03:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727667108; cv=none; b=ekaQyC1LGXHODwbLbsfkdxUXkRq8gcdF7f7si6ZmhFIumiL2h2jfhs1qgJiNYEKoyE3k4bsjwILo0eXV6R4KEzDFHgmhKslj1BWIs0NmNvPDpfJh2tPjWJV1G5MgaxWOuVwBlZGF8DqXMIJH/aSyl8tIm2uHiUwYseGBG1lQgCc=
+	t=1727667229; cv=none; b=sHtQOBMOjVH5mbfVJnz19VtMSW46Lk4hVpsitAdXbA2DdYWZ/DrzCjUT5S70/ZG3A4aKFONi0gYni7o1CV1tshBPU14nqmI/sicZ/Vxzq5Y05lfG11D0YV296hK+/Fhj84GkFMyQSUR+yMH5lNdKBtTR17WIHLJLsQtN2nq2bgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727667108; c=relaxed/simple;
-	bh=ExdNWHNzkd5pS53sl8d0jjJJ/SMyEYWzXyVEg3EQa7o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nb1c1lZb7uDsZx6aoclecp2fx0x5iFXFC+6oGSmhFWl6UKykTG+Z6zXSfKa6aYbVaK4AQOPQ0wLTzFJ9ZBX+YR9DfMBBpbkJyuIle9mr0ZC8MjXVh4Ew/1hRPXI2/04ZXKXNuFZy1XLKqd7eN1OZSKAeWC1nAcPDSNdkuuDs4As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.40.54.90])
-	by gateway (Coremail) with SMTP id _____8Dxn_GgG_pmtF8EAA--.8833S3;
-	Mon, 30 Sep 2024 11:31:44 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.40.54.90])
-	by front2 (Coremail) with SMTP id qciowMCxbceZG_pmD9gYAA--.23677S4;
-	Mon, 30 Sep 2024 11:31:42 +0800 (CST)
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	chenhuacai@kernel.org,
-	bp@alien8.de,
-	tony.luck@intel.com,
-	james.morse@arm.com,
-	mchehab@kernel.org,
-	rric@kernel.org
-Cc: linux-edac@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel@xen0n.name,
-	loongarch@lists.linux.dev,
-	Jonathan.Cameron@Huawei.com,
-	Zhao Qunqin <zhaoqunqin@loongson.cn>
-Subject: [PATCH v6 2/2] EDAC: Add EDAC driver for loongson memory controller
-Date: Mon, 30 Sep 2024 11:29:43 +0800
-Message-Id: <20240930032943.5182-3-zhaoqunqin@loongson.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240930032943.5182-1-zhaoqunqin@loongson.cn>
-References: <20240930032943.5182-1-zhaoqunqin@loongson.cn>
+	s=arc-20240116; t=1727667229; c=relaxed/simple;
+	bh=/EhgcihdbO7KAMWo1kJ6xl6i7PCE8SDzjdxGVn7McVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=h1biB5RCJK2GZW7Zg4ZFLxnAGMu5xv8A4Zsn8pR3VY3MU9NyOLceqpykiZG703f0Fis2EpWarBpAjSbDfW+DIV3PHxxW9xPorZG+LI+MPfqNl1UAn6JzXK5mN5ANUzdO+ws35MngyUrCnJ0V+G4/s0u7m3SO97ghVXTBhb7LqSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LyjbRmLZ; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727667227; x=1759203227;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=/EhgcihdbO7KAMWo1kJ6xl6i7PCE8SDzjdxGVn7McVQ=;
+  b=LyjbRmLZiNKxhM4mdVtEiFhDe2izxkxOT1C6PAv3fpIYY6kjtk2t0tCU
+   lMfvyuy7UD2Q57VWBw3b9M/OkHQOG8xaS8L4DH/4rIhux5JdQidYqJyph
+   jhIbOIqW++2ErC6oKGT7k0IJ4UWRM3fFzeGZbdoeporaNGD8zXn2MSa1X
+   hgQQRipHcjO6Fej6XvmfwhLvQPk82LeQpUKE+kd7uT1XOTWm2Ml9kDKAJ
+   tDmqCeIqOKgF/e9q4yUchs0S3dxBTZIW5bqzWdyGScVhhIzKIM+MzIUpq
+   STIuSOzNUZPvyYaARwC1y5vDmuFSYT9ojKGe0eO1lfia6z/0+28PNbMeB
+   A==;
+X-CSE-ConnectionGUID: ee+Mk1/YTwuHXm8AnOyEHQ==
+X-CSE-MsgGUID: l3ub9HNcQl+iz28Apun76A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26832949"
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="26832949"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 20:33:47 -0700
+X-CSE-ConnectionGUID: nDZmhUulTSyttEOsC0dehQ==
+X-CSE-MsgGUID: x48+36+lQBu0lA8ZXm9cQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="73205738"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 29 Sep 2024 20:33:46 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sv7AN-000P06-15;
+	Mon, 30 Sep 2024 03:33:43 +0000
+Date: Mon, 30 Sep 2024 11:33:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: fs/bcachefs/super.c:712:35-36: Unneeded semicolon
+Message-ID: <202409301117.WU3PIi28-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qciowMCxbceZG_pmD9gYAA--.23677S4
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3ArWUXr18Kr45Jr1fKFy5ZFc_yoWxur13pF
-	15Aw1fGrW8tr13uws3ZrWUuF15Cws2ga42y3y3A3yY93srAryDZr95tFy2yFnrCrykGrW3
-	Xa4rKw4DuF4DGwbCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Gr1j6F4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
-	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
-	Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x
-	0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
-	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4YLvDUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reports single bit errors (CE) only.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9852d85ec9d492ebef56dc5f229416c925758edc
+commit: 1c6fdbd8f2465ddfb73a01ec620cbf3d14044e1a bcachefs: Initial commit
+date:   11 months ago
+config: arc-randconfig-r061-20240930 (https://download.01.org/0day-ci/archive/20240930/202409301117.WU3PIi28-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
 
-Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
----
-Changes in v6:
-	- Change the Kconfig name to CONFIG_EDAC_LOONGSON
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409301117.WU3PIi28-lkp@intel.com/
 
-Changes in v5:
-	- Drop the loongson_ prefix from all static functions.
-	- Align function arguments on the opening brace.
-	- Drop useless comments and useless wrapper. Drop side comments.
-	- Reorder variable declarations.
+cocci warnings: (new ones prefixed by >>)
+>> fs/bcachefs/super.c:712:35-36: Unneeded semicolon
 
-Changes in v4:
-	- None
+vim +712 fs/bcachefs/super.c
 
-Changes in v3:
-	- Addressed review comments raised by Krzysztof and Huacai
+   642	
+   643	const char *bch2_fs_start(struct bch_fs *c)
+   644	{
+   645		const char *err = "cannot allocate memory";
+   646		struct bch_sb_field_members *mi;
+   647		struct bch_dev *ca;
+   648		time64_t now = ktime_get_seconds();
+   649		unsigned i;
+   650		int ret = -EINVAL;
+   651	
+   652		mutex_lock(&c->state_lock);
+   653	
+   654		BUG_ON(c->state != BCH_FS_STARTING);
+   655	
+   656		mutex_lock(&c->sb_lock);
+   657	
+   658		for_each_online_member(ca, c, i)
+   659			bch2_sb_from_fs(c, ca);
+   660	
+   661		mi = bch2_sb_get_members(c->disk_sb.sb);
+   662		for_each_online_member(ca, c, i)
+   663			mi->members[ca->dev_idx].last_mount = cpu_to_le64(now);
+   664	
+   665		mutex_unlock(&c->sb_lock);
+   666	
+   667		for_each_rw_member(ca, c, i)
+   668			bch2_dev_allocator_add(c, ca);
+   669		bch2_recalc_capacity(c);
+   670	
+   671		ret = BCH_SB_INITIALIZED(c->disk_sb.sb)
+   672			? bch2_fs_recovery(c)
+   673			: bch2_fs_initialize(c);
+   674		if (ret)
+   675			goto err;
+   676	
+   677		err = "dynamic fault";
+   678		if (bch2_fs_init_fault("fs_start"))
+   679			goto err;
+   680	
+   681		if (c->opts.read_only) {
+   682			bch2_fs_read_only(c);
+   683		} else {
+   684			err = bch2_fs_read_write(c);
+   685			if (err)
+   686				goto err;
+   687		}
+   688	
+   689		set_bit(BCH_FS_STARTED, &c->flags);
+   690	
+   691		err = NULL;
+   692	out:
+   693		mutex_unlock(&c->state_lock);
+   694		return err;
+   695	err:
+   696		switch (ret) {
+   697		case BCH_FSCK_ERRORS_NOT_FIXED:
+   698			bch_err(c, "filesystem contains errors: please report this to the developers");
+   699			pr_cont("mount with -o fix_errors to repair\n");
+   700			err = "fsck error";
+   701			break;
+   702		case BCH_FSCK_REPAIR_UNIMPLEMENTED:
+   703			bch_err(c, "filesystem contains errors: please report this to the developers");
+   704			pr_cont("repair unimplemented: inform the developers so that it can be added\n");
+   705			err = "fsck error";
+   706			break;
+   707		case BCH_FSCK_REPAIR_IMPOSSIBLE:
+   708			bch_err(c, "filesystem contains errors, but repair impossible");
+   709			err = "fsck error";
+   710			break;
+   711		case BCH_FSCK_UNKNOWN_VERSION:
+ > 712			err = "unknown metadata version";;
+   713			break;
+   714		case -ENOMEM:
+   715			err = "cannot allocate memory";
+   716			break;
+   717		case -EIO:
+   718			err = "IO error";
+   719			break;
+   720		}
+   721	
+   722		BUG_ON(!err);
+   723		set_bit(BCH_FS_ERROR, &c->flags);
+   724		goto out;
+   725	}
+   726	
 
-Changes in v2:
-	- Addressed review comments raised by Krzysztof
-
- MAINTAINERS                  |   1 +
- arch/loongarch/Kconfig       |   1 +
- drivers/edac/Kconfig         |   8 ++
- drivers/edac/Makefile        |   1 +
- drivers/edac/loongson_edac.c | 168 +++++++++++++++++++++++++++++++++++
- 5 files changed, 179 insertions(+)
- create mode 100644 drivers/edac/loongson_edac.c
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6cc8cfc8f..5b4526638 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13242,6 +13242,7 @@ M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
- L:	linux-edac@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
-+F:	drivers/edac/loongson_edac.c
- 
- LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
- M:	Sathya Prakash <sathya.prakash@broadcom.com>
-diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
-index 70f169210..9c135f1a2 100644
---- a/arch/loongarch/Kconfig
-+++ b/arch/loongarch/Kconfig
-@@ -181,6 +181,7 @@ config LOONGARCH
- 	select PCI_MSI_ARCH_FALLBACKS
- 	select PCI_QUIRKS
- 	select PERF_USE_VMALLOC
-+	select EDAC_SUPPORT
- 	select RTC_LIB
- 	select SPARSE_IRQ
- 	select SYSCTL_ARCH_UNALIGN_ALLOW
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index 81af6c344..1cf432102 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -564,5 +564,13 @@ config EDAC_VERSAL
- 	  Support injecting both correctable and uncorrectable errors
- 	  for debugging purposes.
- 
-+config EDAC_LOONGSON
-+	tristate "Loongson Memory Controller"
-+	depends on LOONGARCH || COMPILE_TEST
-+	help
-+	  Support for error detection and correction on the Loongson
-+	  family memory controller. This driver reports single bit
-+	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3C5000L/3A6000/3C6000
-+	  are compatible.
- 
- endif # EDAC
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index faf310eec..f8bdbc895 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
- obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
- obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
- obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
-+obj-$(CONFIG_EDAC_LOONGSON)		+= loongson_edac.o
-diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
-new file mode 100644
-index 000000000..2721dfba5
---- /dev/null
-+++ b/drivers/edac/loongson_edac.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Loongson Technology Corporation Limited.
-+ */
-+
-+#include <linux/edac.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/platform_device.h>
-+
-+#include "edac_module.h"
-+
-+enum ecc_index {
-+	ECC_SET = 0,
-+	ECC_RESERVED,
-+	ECC_COUNT,
-+	ECC_CS_COUNT,
-+	ECC_CODE,
-+	ECC_ADDR,
-+	ECC_DATA0,
-+	ECC_DATA1,
-+	ECC_DATA2,
-+	ECC_DATA3,
-+};
-+
-+struct loongson_edac_pvt {
-+	u64 *ecc_base;
-+	int last_ce_count;
-+};
-+
-+static int read_ecc(struct mem_ctl_info *mci)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+	u64 ecc;
-+	int cs;
-+
-+	if (!pvt->ecc_base)
-+		return pvt->last_ce_count;
-+
-+	ecc = pvt->ecc_base[ECC_CS_COUNT];
-+	/* cs0 -- cs3 */
-+	cs = ecc & 0xff;
-+	cs += (ecc >> 8) & 0xff;
-+	cs += (ecc >> 16) & 0xff;
-+	cs += (ecc >> 24) & 0xff;
-+
-+	return cs;
-+}
-+
-+static void edac_check(struct mem_ctl_info *mci)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+	int new, add;
-+
-+	new = read_ecc(mci);
-+	add = new - pvt->last_ce_count;
-+	pvt->last_ce_count = new;
-+	if (add <= 0)
-+		return;
-+
-+	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
-+			     0, 0, 0, 0, 0, -1, "error", "");
-+	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
-+}
-+
-+static int get_dimm_config(struct mem_ctl_info *mci)
-+{
-+	struct dimm_info *dimm;
-+	u32 size, npages;
-+
-+	/* size not used */
-+	size = -1;
-+	npages = MiB_TO_PAGES(size);
-+
-+	dimm = edac_get_dimm(mci, 0, 0, 0);
-+	dimm->nr_pages = npages;
-+	snprintf(dimm->label, sizeof(dimm->label),
-+		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
-+	dimm->grain = 8;
-+
-+	return 0;
-+}
-+
-+static void pvt_init(struct mem_ctl_info *mci, u64 *vbase)
-+{
-+	struct loongson_edac_pvt *pvt = mci->pvt_info;
-+
-+	pvt->ecc_base = vbase;
-+	pvt->last_ce_count = read_ecc(mci);
-+}
-+
-+static int edac_probe(struct platform_device *pdev)
-+{
-+	struct edac_mc_layer layers[2];
-+	struct loongson_edac_pvt *pvt;
-+	struct mem_ctl_info *mci;
-+	u64 *vbase;
-+	int ret;
-+
-+	vbase = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(vbase))
-+		return PTR_ERR(vbase);
-+
-+	/* allocate a new MC control structure */
-+	layers[0].type = EDAC_MC_LAYER_CHANNEL;
-+	layers[0].size = 1;
-+	layers[0].is_virt_csrow = false;
-+	layers[1].type = EDAC_MC_LAYER_SLOT;
-+	layers[1].size = 1;
-+	layers[1].is_virt_csrow = true;
-+	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
-+	if (mci == NULL)
-+		return -ENOMEM;
-+
-+	mci->mc_idx = edac_device_alloc_index();
-+	mci->mtype_cap = MEM_FLAG_RDDR4;
-+	mci->edac_ctl_cap = EDAC_FLAG_NONE;
-+	mci->edac_cap = EDAC_FLAG_NONE;
-+	mci->mod_name = "loongson_edac.c";
-+	mci->ctl_name = "loongson_edac_ctl";
-+	mci->dev_name = "loongson_edac_dev";
-+	mci->ctl_page_to_phys = NULL;
-+	mci->pdev = &pdev->dev;
-+	mci->error_desc.grain = 8;
-+	/* Set the function pointer to an actual operation function */
-+	mci->edac_check = edac_check;
-+
-+	pvt_init(mci, vbase);
-+	get_dimm_config(mci);
-+
-+	ret = edac_mc_add_mc(mci);
-+	if (ret) {
-+		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
-+		edac_mc_free(mci);
-+		return ret;
-+	}
-+	edac_op_state = EDAC_OPSTATE_POLL;
-+
-+	return 0;
-+}
-+
-+static void edac_remove(struct platform_device *pdev)
-+{
-+	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
-+
-+	if (mci)
-+		edac_mc_free(mci);
-+}
-+
-+static const struct of_device_id loongson_edac_of_match[] = {
-+	{ .compatible = "loongson,ls3a5000-mc-edac", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
-+
-+static struct platform_driver loongson_edac_driver = {
-+	.probe		= edac_probe,
-+	.remove		= edac_remove,
-+	.driver		= {
-+		.name	= "loongson-mc-edac",
-+		.of_match_table = loongson_edac_of_match,
-+	},
-+};
-+module_platform_driver(loongson_edac_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
-+MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
