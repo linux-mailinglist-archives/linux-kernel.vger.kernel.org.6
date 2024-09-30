@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-343838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C46698A01B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ED398A019
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D178A1F213FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:08:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E6D1F21226
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E583D18D65E;
-	Mon, 30 Sep 2024 11:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHRjIyHb"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9F318CBE5;
+	Mon, 30 Sep 2024 11:08:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12E9189902
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125B71885A1
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727694531; cv=none; b=qQ+tMo1aDOOwv08vd6+2HmS3H9mwdyvf/lguMlnkvs4hAGJYzT7naNLuGuo6Zuu/TKfxQDvPOSmKjHoPpMXoJPxVGhs0kUXqJcyoyU9BrZ5UMT0l8xzsH9dyGigWFqNmnZf9y7Ap/xwKZp5GJYmPfh+9c/VacNIaLmwdsHFVicw=
+	t=1727694517; cv=none; b=saAy01hnm3y9w9FBy6PB6STZvO7vN+0JXAHMoTCWAF2oKYv5mwUAUMiRFsO0awDiMd0tfVQH1HcVnbOhrTykq2v1Vw882pp/xHtQa3FnLb7lry7y9pQHbYackCjrXc7S4pvObPIgFiuyV23u7W/UwKKb+wBF3cdWqBgObSGX/kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727694531; c=relaxed/simple;
-	bh=ZW51ODNUv+K2+wQaXfngP1wkDubT9uHM4iEgGzXdkhs=;
+	s=arc-20240116; t=1727694517; c=relaxed/simple;
+	bh=dUHXrAjaEgbJdnwfe10A/Ln6LcEHMun1Bgy2uHw0MUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L27nviQjkGux2u4XacGuNqJmtplE1Lvd1ZcanqJxpXgK0HDjRd0WgT1EmqlMpTUZ+ZD4Jyo5V85eZhLBNjuQtWd8y1xvVfAya7IbnjveYeYUUKfnO8NgWeMmxXT2rMspsi5wRXZy5zXaEvaoNat1ch08Ujk/WYHqAaSQomxFwg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kHRjIyHb; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso38741625e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727694528; x=1728299328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jS5foYPFw+7MlHtlttaFVc51kmQyW9V+nLbvWZ1rUR0=;
-        b=kHRjIyHb1piJXys9T9mkozTOTqasDM82rpfT/C7sAOBSeB8dAygLEpCIeAq+lgGKFM
-         U5E1T/0xX8Y2sDBDwZuNuwzgnQTF4hBUcZFe2p6j7IyNJiijvPzsK4hTkm1Sgf6Wkk8D
-         JpxkOJ9LNPD0L5p0A0FolRsdwS98RwCbdo+Dl86YyFEnKZYAl5h6lIzJGM2TbbzHH1aS
-         IZfHX1zIv1O97CRcLCfAJp/dYMvGQLomchs8RTgRPALCNUIFnAf/mHQ95nXdaJdGx6SR
-         uUuJ2Rg7/WkCR9+QIf6hrVqjAQZad2t/YXQfGPkBXS1HbINTTvMi6SEhEnNt8LM+oVbz
-         M5sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727694528; x=1728299328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jS5foYPFw+7MlHtlttaFVc51kmQyW9V+nLbvWZ1rUR0=;
-        b=nNmvD5rKzOtt6DUTu2+8pN1j84oRVlKAD06+txIty56Cav/L6riSntUR4XrkYNpy7u
-         WMEB48LFhJJPJSpnLzuTbbAcoQKFhzZSl5TP9cs9rbkonUs1ALddUdhytRbp8kV+Z/qW
-         XeC9eTpK5GnbCgopm00o9diZHTPnMIvDw/QQT5ivjfo3fbBK/w1dbx+XDvyHzmb69nFt
-         t1m7phYqVTFt4MM1+ijK8GMk2zqCC1l70lc4Kd4qBXxtseEWXLT0KwWCGNa7xT8LdH8x
-         wQ2lmzU8J5cssi1Fud4SuFDxCP+LLvV8ky46AlsVXTEyHhHYOIQ+0+IE+b1rZbiWeP8O
-         8fBg==
-X-Gm-Message-State: AOJu0YwIU96JNK6syDIFC3HVp4/1SE+epGbOOe+w9Dj7axOCw3t9MDOl
-	iehkgNf2n8re592DQ4WJAQYcK0V1/CjQq9pgAQc27fwLssyXl5lDL+gQdyAMj4Y=
-X-Google-Smtp-Source: AGHT+IFGg2veOSfnmKLkdXdNH1vwXOxwCNmNPQdYmbq5EeHtVBttVKz1yThA3rghx3EQfbeYSVomVA==
-X-Received: by 2002:a05:600c:63c5:b0:42f:6d3d:399f with SMTP id 5b1f17b1804b1-42f6d3d3a1fmr12755275e9.21.1727694527929;
-        Mon, 30 Sep 2024 04:08:47 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffc56sm147423715e9.22.2024.09.30.04.08.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 04:08:47 -0700 (PDT)
-Date: Mon, 30 Sep 2024 14:08:26 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
-Message-ID: <129309f3-93d6-4926-8af1-b8d5ea995d48@stanley.mountain>
-References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
- <10515bca-782a-47bf-9bcd-eab7fd2fa49e@stanley.mountain>
- <bb531337-b155-40d2-96e3-8ece7ea2d927@intel.com>
- <faff2ffd-d36b-4655-80dc-35f772748a6c@stanley.mountain>
- <84f41bd3-2e98-4d69-9075-d808faece2ce@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YBCNZ4qxbybUJa6l2HoMy8fneS52hgzLpKGOGz+1XX5fqT7pBhjpUG3BH/VrnzUXFIcEXPgZkSankG+Yr1U9g4hR88Gf00dreYYLPsVI92Dqi585Ntsj5KU/k/oKqiLt9DesNAGy0Mtuz1+BPhiuNhEpyJdX2WicAlxEv0hd6ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1svEGS-0003CR-0j; Mon, 30 Sep 2024 13:08:28 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1svEGQ-002cHG-Tc; Mon, 30 Sep 2024 13:08:26 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1svEGQ-0033C8-2g;
+	Mon, 30 Sep 2024 13:08:26 +0200
+Date: Mon, 30 Sep 2024 13:08:26 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH] net/9p/usbg: dont call usb9pfs_clear_tx if client is not
+ connected
+Message-ID: <ZvqGqilMi3Zpm_Fv@pengutronix.de>
+References: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Sp3Y2y65ZqqPTOiT"
 Content-Disposition: inline
-In-Reply-To: <84f41bd3-2e98-4d69-9075-d808faece2ce@intel.com>
+In-Reply-To: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, Sep 30, 2024 at 12:21:44PM +0200, Przemek Kitszel wrote:
-> 
-> Most of the time it is just easier to bend your driver than change or
-> extend the core of the kernel.
-> 
-> There is actually scoped_cond_guard() which is a trylock variant.
-> 
-> scoped_guard(mutex_try, &ts->mutex) you have found is semantically
-> wrong and must be fixed.
 
-What?  I'm so puzzled by this conversation.
+--Sp3Y2y65ZqqPTOiT
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Anyway, I don't have a problem with your goal, but your macro is wrong and will
-need to be re-written.  You will need to update any drivers which use the
-scoped_guard() for try locks.  I don't care how you do that.  Use
-scoped_cond_guard() if you want or invent a new macro.  But that work always
-falls on the person changing the API.  Plus, it's only the one tsc200x-core.c
-driver so I don't understand why you're making a big deal about it.
+Please drop this patch for now. I will have to do some more testing
+regarding the prompt connect mount and disconnect state changes
+and will come back with a proper solution.
 
-regards,
-dan carpenter
+On Sun, Sep 29, 2024 at 09:22:55PM +0200, Michael Grzeschik wrote:
+>When the client is not Connected it is not valid to call
+>usb9pfs_clear_tx since the endpoints are not even allocated. By running
+>into p9_usbg_close in that case we would dereference the in_req which is
+>NULL when the client->status is Disconnected. Fix that by leaving
+>usb9pfs_clear_tx immediately if the state is wrong.
+>
+>We also update the client->status after the for usb9pfs_clear_tx to
+>check for the actual state when running from p9_usbg_close.
+>
+>Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>---
+> net/9p/trans_usbg.c | 8 ++++++--
+> 1 file changed, 6 insertions(+), 2 deletions(-)
+>
+>diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
+>index 975b76839dca1..64a5209943dbc 100644
+>--- a/net/9p/trans_usbg.c
+>+++ b/net/9p/trans_usbg.c
+>@@ -417,6 +417,10 @@ static void usb9pfs_clear_tx(struct f_usb9pfs *usb9pf=
+s)
+> {
+> 	struct p9_req_t *req;
+>
+>+	/* we are not allocated - return */
+>+	if (usb9pfs->client->status !=3D Connected)
+>+		return;
+>+
+> 	guard(spinlock_irqsave)(&usb9pfs->lock);
+>
+> 	req =3D usb9pfs->in_req->context;
+>@@ -442,10 +446,10 @@ static void p9_usbg_close(struct p9_client *client)
+> 	if (!usb9pfs)
+> 		return;
+>
+>-	client->status =3D Disconnected;
+>-
+> 	usb9pfs_clear_tx(usb9pfs);
+>
+>+	client->status =3D Disconnected;
+>+
+> 	opts =3D container_of(usb9pfs->function.fi,
+> 			    struct f_usb9pfs_opts, func_inst);
+>
+>
+>---
+>base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
+>change-id: 20240929-fixes9p-5d618bbe6d6b
+>
+>Best regards,
+>--=20
+>Michael Grzeschik <m.grzeschik@pengutronix.de>
+>
+>
 
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--Sp3Y2y65ZqqPTOiT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmb6hqYACgkQC+njFXoe
+LGTacRAAorBN3ZIxPQ3yEJ94ySkNxxX09jnCW5UQLjldnQ4ibbet0lpmXShxpBc7
+G9CubOZOJ6efYci8Kzd4dtM1WXI8/QM3Io1BYJJ8IQj3AT8CWFdARRhtviCianqQ
+VOQPWXJhtId0l6TPHRMvc76blSF5F1eirAjV4PEHV/mWreNu1WypKVXanAJcApVI
+f1qGfc9EcIDEWb9KJdB8x98SgCsaJR60SQfuiWQn2VtZnxFRMz+VwOn5gR20H56m
+YWlMQsofkDf5J+KLPV9r48AZ2ArqUTWU5KMrIx7z9wOhzVmU4C3/b/exwT1Fmg9R
+iloU4Toq2Mp9d6QNH+pkadGgMlxCB0LqUbh85sMKOj1DQvbrTkiCJqSK2RkxTLe/
+Cp4nVUUavx7CjDY0JeAsVl4UdvoZN4KtHl3ftRoNU/48I69srdHMv+AefNN2OW7I
+kbS0HI3cEW7uLb64IifD4QLEEuadCDUlfkNfkFapS+0DpshSFp2ldABTw6Rc7y6J
+awUIiTAFiKSq0gPZZm7fR1CmFqgUvSRDnNv9Tcg7hm9r/WP6mqrfwx+aKWWAVLll
+fEwpL45IomkKjqKUrYCNcd12obosgc1D5zkxcsBzmchet3QVvhPUQ5Gaj9vISGdc
+9ddeZKCcLt8iBbWiDm82h54SwGtbI4iVXIpMtJy2WHEQ93ZO70U=
+=SRyv
+-----END PGP SIGNATURE-----
+
+--Sp3Y2y65ZqqPTOiT--
 
