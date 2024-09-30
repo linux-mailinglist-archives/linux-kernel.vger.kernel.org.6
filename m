@@ -1,91 +1,65 @@
-Return-Path: <linux-kernel+bounces-343393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BF2989A77
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:20:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BD1989A79
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCEBE1C2123C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440C12831E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97F77DA6A;
-	Mon, 30 Sep 2024 06:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D5F1487CD;
+	Mon, 30 Sep 2024 06:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ViBfy4lx"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="VozEvNlW"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06E423BE
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F8D23BE;
+	Mon, 30 Sep 2024 06:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727677247; cv=none; b=FDpStBUyMLBajbu/6v2WjrfooRQ3z29kAUnQRIk5OtB1CaaGycEJa+kxFv4Hf7rVpP2TsaYP5aPyNB157Xzi9KtTSYnO2ep7CHOIpLDmljdDpgVjBRgy1/DgRD9WjHFV9esLgMzc/p7TSjXVu8B33VUMUSqA2fLM9bkH7u7ygLg=
+	t=1727677417; cv=none; b=dggTTqPesvqUh6KAOWuqTVssvFI/g4b6HRW7mV8LGF9EHSr5YBTZWzx/ebcyKc+mLuNGEV0e3gvE9X4jkB9b9PJcKsSHby/tX5U3CToruEo/U4puVPvxTcNONqg7p0MoNe3OGZfQJFN7D0w8laakbn1zGFcRH6g2RCiflqdNE+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727677247; c=relaxed/simple;
-	bh=pGPc+JYDsZqFewmXA9OYhQgLIhty7QPS90kktb+w6AA=;
+	s=arc-20240116; t=1727677417; c=relaxed/simple;
+	bh=KacTsB1rDIoVQtRILrYR7CSH9zw8PB+63mpb1v0klqs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MsXLfBYnfPmeBjKT2uK1bTxpYpJrQBcRpo9n5efUgL74gZjWQNaa/PkuI6OOkz5fa2sTQmprcG3zjyBgqCq1+EiDRXLUHZSJVSn5WqFES7JvUlIniitSTgeZmHcYR5k2RKMvi6T18R7+1RBUlR+HBgrOobecQm2iHJQ1UmpHSJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ViBfy4lx; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a99fd4ea26so352810685a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 23:20:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727677244; x=1728282044; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NhTbPt1aUPRRqMfF/iI2ldaEOQJQVcgQDTvk5oRV9Co=;
-        b=ViBfy4lx6SZiA79tOH2tup+LCIVY8/Fs74SJ1VYUNNrZV8iphkhohQhinfaB3TZBMK
-         DYdx2wYAutC5x5ekQ7Dwl8lGkplxA+iK3HLP17UByZGziVg66+zw1PNz/kq3g91wO4F3
-         T06lt/T+NTuMmHL89gLcBMvxMV4l0mt/8Qk8C8a8fX7OWI6mysIPIS3ZPakISuWotype
-         JLN68gTctcHcBvUcwpqZtjIA2MX7O6Tf7wPKtM9+x4Jdo2QT8x/9Q3se6xtrlBL0fPhp
-         w5Nb3rOHNTx0uPvr/419/a+RoId6asZc0Xpc6WxNSQghVH6/2uN2JLlocfY5MDjdmgad
-         AIBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727677244; x=1728282044;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhTbPt1aUPRRqMfF/iI2ldaEOQJQVcgQDTvk5oRV9Co=;
-        b=mi+Cnmxa6XOEpIkzSlEPT6/wJSKb16GAbgcem4iVlQ5tHg37YC4ZUQoELKhtKzBUQn
-         HmROWWHkra5oX69ALaRHYSva51TAiwfmTTjIkBEspz2kFFECl9yMbZ8PhShPYOUuh6rC
-         VDOjX9EbLXCT5w7dN0luSzFHsdgMJ3/6NW6wD0ntZ9wstMMqThOaEad8jU4iKxmXhgLB
-         /AjAVHRXOxVnoo6MR9yWBuk7J6d5SeHIuD0U+t4uXKfAxX/t/eqIFntuFloU3CP/qaW0
-         rrm/BjvZYguO1kWd5+QrOysVIQzjZzCYE9chHQizBvzzZ1d9MBZ+wb+6WvirMnX9Qp56
-         nDfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVCdfZoO3way4SAfvIfcF8QMall9S+GUbOIsE1i6QpX0GAB3J9ndVXOQWhPOlovBU3CX8ophJZMOfb+NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCp+deojy2aNKUn3gNL/SXL+Vdsr6HFUJzNUU0LxH579cbnURG
-	GDnYceqW1bJgBh+YxgBJdJZWC9H7G42zfG66AQypkvLDayAvWh53PfSgLhtjaNymWw==
-X-Google-Smtp-Source: AGHT+IEXLITWRzMYezDnabDByPKOLgZhSmoB9VoyzWMRR7EMYd6z8a4rkGrGOADqwIVxy1gGuMLxfQ==
-X-Received: by 2002:a05:620a:1a06:b0:7a6:6447:19ab with SMTP id af79cd13be357-7ae378bc056mr1713694585a.46.1727677244482;
-        Sun, 29 Sep 2024 23:20:44 -0700 (PDT)
-Received: from jia-21cx ([185.221.23.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3783fdd8sm383704485a.102.2024.09.29.23.20.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 23:20:43 -0700 (PDT)
-Date: Mon, 30 Sep 2024 14:20:35 +0800
-From: Jia Qingtong <jiaqingtong97@gmail.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>, 
-	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
-	Jia Qingtong <jiaqingtong@huawei.com>, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbWvQxJIInDv+WtwRKm+UnrnYrLgWlT366+Bk5uSzGrL9QS10L94b2OntYxX6kkjM2HI6N9HBzoQTw2NakbivD4F8ISX2K6PgsT2njIrFOM4702AhTNkPAFOZXJbYGnenI5f1yvNR9KkciH6v4KzOAsAv8gq96xtqCbnQCgc1CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=VozEvNlW; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 480E01486A9B;
+	Mon, 30 Sep 2024 08:23:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1727677405; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=ibzyBjuzfNPPavMmEdBN1WsLI+EZeL5i4GIN1cYlFHk=;
+	b=VozEvNlWldunq8C8NmKVlf2t3Mmb0692CEG8R6PG9YyCUd7AsHvI9SoDetP2/e0x2owL1P
+	PVbw/sSwEQiNrHyK0JP5/wJwa4S23DuSwHA6CyENGCS0qOgj0HqcnDjrgY84wmLqnsdUYM
+	KYs8H+mZuiR/rQzU9YultDmaLkLU+l3kWynFBR4g0aU/vb6CVdTQZxEKqhfjp6r06KLwcJ
+	i+7XHvlup1hzGB54fUR2cHT7Y71MqBJjEBQJyELi0BOPSQ8WIZk/lRd1zvCfQoDQRiJIL9
+	DIiAdxjHjXC/84Q/15+c4akbgN88kFa14jYzymtjk0f4Nn/ffItXRUJLGENcGA==
+Date: Mon, 30 Sep 2024 08:23:12 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: iansdannapel@gmail.com
+Cc: mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com, trix@redhat.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	neil.armstrong@linaro.org, heiko.stuebner@cherry.de,
+	rafal@milecki.pl, linus.walleij@linaro.org,
+	linux-fpga@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: vgic: fix GICR_STATUSR in
- vgic_v3_rd_registers
-Message-ID: <mhwgdkcgoan7r53bubpvlnu4xoexmnldwlk6ni5zjvkn4cnr72@fhxnwlfw536t>
-Mail-Followup-To: Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
-	Jia Qingtong <jiaqingtong@huawei.com>, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-References: <20240929043937.242769-2-jiaqingtong97@gmail.com>
- <87v7yevlyc.wl-maz@kernel.org>
+Subject: Re: [PATCH 3/3] dt-bindings: vendor-prefix: Add prefix for Efinix,
+ Inc.
+Message-ID: <20240930-tranquil-glitch-f48685f77942@thorsis.com>
+Mail-Followup-To: iansdannapel@gmail.com, mdf@kernel.org, hao.wu@intel.com,
+	yilun.xu@intel.com, trix@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, neil.armstrong@linaro.org,
+	heiko.stuebner@cherry.de, rafal@milecki.pl,
+	linus.walleij@linaro.org, linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240927141445.157234-1-iansdannapel@gmail.com>
+ <20240927141445.157234-3-iansdannapel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,52 +68,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87v7yevlyc.wl-maz@kernel.org>
+In-Reply-To: <20240927141445.157234-3-iansdannapel@gmail.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 29 Sep 10:38, Marc Zyngier wrote:
-> On Sun, 29 Sep 2024 05:39:35 +0100,
-> jiaqingtong97@gmail.com wrote:
-> > 
-> > From: Jia Qingtong <jiaqingtong@huawei.com>
-> > 
-> > vgic_uaccess use bsearch search regs in vgic_io_device.regions, but the
-> > GICR_STATUSR have wrong order in vgic_v3_rd_registers.
-> > When check all vgic_register_region, it turned out that only
-> > vgic_v3_rd_registers has this problem.
-> > 
-> > It's harmless since vgic_uaccess behaves as RAZ&WI when it can't find the
-> > specified reg. This is exactly the same as the behavior of the GICR_STATUSR
-> > register.
-> >
-> > So just move GICR_STATUSR to the right place.
-> 
-> That looks correct, but I think we should have some code that ensures
-> that these tables are correct at boot time, just like we're doing for
-> the system registers. Or completely remove our reliance on bsearch().
-> 
-struct vgic_register_region was defined in vgic-{its,mmio-v2,mmio-v3},
-do you think it's appropriate to extern and check tables's item order in
-vgic-init.c's kvm_vgic_hyp_init?.
+Hello Ian,
 
-> Another thing is that GICD_STATUSR looks pretty wrong. It is handled
-> as RAO, but we never clear any "error" (it is WI). This has been buggy
-> since GICv3 save/restore was added, 7 years ago.
+Am Fri, Sep 27, 2024 at 04:14:44PM +0200 schrieb iansdannapel@gmail.com:
+> From: Ian Dannapel <iansdannapel@gmail.com>
 > 
-Let's change it to RAZ? We will implement the complete logic when someone
-really needs this feature.
+> Add entry for Efinix, Inc. (https://www.efinixinc.com/)
+> 
+> Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index b320a39de7fe..cb92df951fa7 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -430,6 +430,8 @@ patternProperties:
+>      description: Emtop Embedded Solutions
+>    "^eeti,.*":
+>      description: eGalax_eMPIA Technology Inc
+> +  "^efinix,.*":
+> +    description: Efinix, Inc.
+>    "^einfochips,.*":
+>      description: Einfochips
+>    "^eink,.*":
 
-> Do you mind spinning a series fixing this up?
-> 
-Sure. 
+Acked-by: Alexander Dahl <ada@thorsis.com>
 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
+Greets
+Alex
 
---
-Thanks,
-Qingtong
 
