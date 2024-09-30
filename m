@@ -1,164 +1,218 @@
-Return-Path: <linux-kernel+bounces-344841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC67D98AED4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E398AED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:07:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6395283B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF941F21C92
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7FE1A256C;
-	Mon, 30 Sep 2024 21:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39941A255F;
+	Mon, 30 Sep 2024 21:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmlZ/sSV"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aewxxuq0"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573C3194082;
-	Mon, 30 Sep 2024 21:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A00194082;
+	Mon, 30 Sep 2024 21:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727730298; cv=none; b=LErUWCMpjnZcUiFLQaKpAP/RTvtbpxb+PE9XUTbO5ZUC55gxJQVLaoh9LJpWbBIq3JOlwqcUjVuYcJvWLV6x7JvYJO2jlin1YiFx9mki5MrPt76x0IN51RWV7EaHXP6vcwGbSwhsKIikuD76ctsIReIQoqgNcQdOliPZ+FgLcPs=
+	t=1727730451; cv=none; b=g1+VPlnrL6IzpIlDxTyWCiQUjWh3LTG6fZKOYfkbaBXvCS4llHxE8p/N/0CjF6iRzUxRPD4cvuAk+Jm3QSiX2LvA9HXHiq1O1T+0N7JxSNclJyHeeBHnL3zU/6/QLYRnBOWdvYR8g3+QV/F0rOPAonRDEk5XwZcdCaMn3xTKq8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727730298; c=relaxed/simple;
-	bh=YxTZas78/NVXOmwsaCMZ22i6fm5T8b7+NoKP/9BLJdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o8rNn9c1BJGJ+0lFwd0MsyY61xF2pp0x6HV0gVc0B3LfFZ7iyPvfQBKJQsX+EHhAuY0Z+TcVj9x563ivCuBwhI0iMY081R9dB0RFbGRwLGeCktluAuxOEZMKQinRIYc+CymmKPpDBX25L5lzn57I5Z133AkrzZ4pTrPXJliu8Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TmlZ/sSV; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1727730451; c=relaxed/simple;
+	bh=MIuwoDgLe2AxxsbXxhhQTFYaYYVJ0K9c35h1FQ6Gdtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MzpK73YPGxMtbAWVmAqcaliRDwx1csDHE7uCfUcBlasPwXygDW67qvmFKCNh4wAWtF67yAERVJYzoylaikavNFs5s7Ryvb5ov2HQBwXGK7xGw7Gpaux65BhtGBOQ9Qo25WcW84n4t/aBjVy8z2VTnknbBsC+V3MhCaf2x/cdYWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aewxxuq0; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93a1cda54dso695298466b.2;
-        Mon, 30 Sep 2024 14:04:56 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71b0722f221so3701601b3a.3;
+        Mon, 30 Sep 2024 14:07:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727730294; x=1728335094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UJTX8BYXxpTUWbRF4KnmS10smbwnBFAOcVX85CE1+8k=;
-        b=TmlZ/sSVWt+CS+8/RyXMYBRcHqjwgLOyLuEwu+3rQjLRP0xofmSBiAbc4VR4dt9TQf
-         z1cG6dRSJ4fZwJrCXzkjTYSeI/zMRzKZUARkOFDrnA8aR+bM/sRLjH6sw7hwq/rqUO+U
-         lMjyoAcjWf3Qx2noNe7Rz9d2N1h0CFrivcxlTWnS5k57mfaTobPfq7kXYJK9uP/4Bv/T
-         v4c+ttfaeXFkb7iadhLrh+fHCllMJJR2ZKkOHD8pWVhgPO13QBXcyIGileZn9G2d+di7
-         r7f5gB948cRweHdhg/FLhRiaAZmY/oxqfqyMVKRfUIcelrh4NgQD6TYERLi3+xC9fQZp
-         H/sw==
+        d=gmail.com; s=20230601; t=1727730449; x=1728335249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kzJZvIAboYocgxdwgFUevxFj0WeoKQNCloTNimtHndQ=;
+        b=aewxxuq0whYgz5yze68pxGjgVdnfo+iLqebWIwRM/a41LO7Q+dBVwyC0DtbH1NOER1
+         TzZavl+kcDMQrvJoKo5+E1SEgwbxZDd54zgVZIRGAiyrYME3qnI6KJtXJOfsLoWgqr24
+         uddxz2DA852yrOYOIa8d/ou1tZrvJ3QR8+KMdtSCoU6zWDbom/Rsz2Yl6Qf5K6+FszCE
+         PKxzoxc9cvlBIg1QQ3+bfX0MgK9pljfWsUx87GhMZqjrtujARacwSyR5lpsyfn61kSgK
+         mgDa4CulX/UMiFCPLLTaU03BfjZeq0cFvUhTmy/ZObcqvmxSpblNh7j9B+zJYHT1kxkB
+         HSow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727730294; x=1728335094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UJTX8BYXxpTUWbRF4KnmS10smbwnBFAOcVX85CE1+8k=;
-        b=FOOw5xXKz421b9XCnfdJBun2LFDHzbfEUtp8JsqPXWuoDDtF/O3MiTC/2h93NSXFM3
-         dMTnoLANptkyEVB9LzQr90iTMlZy/LjX3q0I51wc/B7jkeHa9RFuhYlw2kF7rRrMWBu4
-         /F5GO+9lxgSpUdRGZyc/0IKdzuSeCqDcF0YprJWy/hHJPMubkiOF0XgZS7bA+l8nyveF
-         4jXQhBbTZ4pGTjw3p1RfA5gfHY2KbGDW4UNYeAVVwy/iPKNNZPNjfO5MpUoqg3XTvnwv
-         IrHUIBHlO9jkjo6bKnFjcOudnv7yn8GFvzRjno4b5MNWFGI+zlqgAsIBjwbZxpra4/9V
-         uvhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7bvnLbYvHDE05IvGHDCQRMhbMQASoA+4D5fs8njdp/V+0snsP8avcwx2QP3wyn103j5xrljHSNG3zounyA2y6Ig==@vger.kernel.org, AJvYcCVqLNCqdkSgk8fbDKoD+reejVibFo7QSbjIZeZ7DMjv87nZ6QgLGO6tS7RyNd3FZxJ585s=@vger.kernel.org, AJvYcCXeYnM48hntmHceUiS7YiFcYTqvFpNlPql++f2KS8l04kD2avMS4k0cP6hWHhV1UxPv/G7RUd47uItpES3e@vger.kernel.org, AJvYcCXs2RQw/0ev1AjBE0emlGhx0nXDdtpKv7C+8PUWXLVS48ttru4/ZLwOQu8WakgwhWg1nbitNbHYAcmWHLEzHJXXkAaV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkC1Cfwhh0Q9mpCsndKqYaoodfe9UZAzk5nQ2DkG5fKtC1LIIV
-	wP/+2zwZodpFP6Hsbn3ebg2IrkBpFzJVWyYY4yco2UN+ZJxVnjLJ1eupqBiwqxwpDyTnWdfzfkO
-	oVEWz4MB/9knT0zf1GImr9VFNrz4=
-X-Google-Smtp-Source: AGHT+IFFnwJrCikvTvRLc8lqDTvqbg69fZuem9RLrHkDEjEy0d9sjVQtg22pvwVdaVVu6YjCj0ymK3NNOCf6UzCJ5Tw=
-X-Received: by 2002:a17:907:96a7:b0:a8a:3f78:7b7b with SMTP id
- a640c23a62f3a-a93c4916e6cmr1200525166b.14.1727730294341; Mon, 30 Sep 2024
- 14:04:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727730449; x=1728335249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kzJZvIAboYocgxdwgFUevxFj0WeoKQNCloTNimtHndQ=;
+        b=pcCvfRVwEWVs3B2547hD0YPTpC0SXxYE9vXVpG+BPAR5jQLKYcrO7EsFG4wk896wrm
+         71pFNyd7W8rbQTQW6qngeKEsN2nJgEpwlZDmtyi1Q6O40l39hnYybZkEN5tKZqBmPJL6
+         yqTrBQpbgesjvJBc4pBY1xwVjHB157uVqm07cyS0KK8EsyT/psp4BLLNA1BA6RGax2KR
+         eGXGUxYK/mJXju3ExBDZEBule2VA9HccJBkL44t5TAkoiBG3vPAe5IF3i7xGXWDv/agZ
+         Zaa/GtVXvX6MIJuvnHSdZqPHelYuepm+R4M+lGGtQv0cI62oISszxWj2tJ10GlyGvvhU
+         0bKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8GFCV6mxc6hVuz32MNK88F8bQuilGJH9zkfEyoiqy/J+mnhWu3oA+LaFa9Wmdm0at7OuvNGCgEzMd@vger.kernel.org, AJvYcCWjeaucIy4MnR8gV1vXgPzCnf2mHK8YpQG/kM37mDwjOV05p7kUIEcNDf5WwQcOFri4fDj3fHdqkHjdEE4L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9YIu41cDCOC49xl4gYGnsvfNttquco7ThxCA7954Bz7RSkYVB
+	hBhI1MAlpNbfVmpIlGrWKJT3/yJVIVsgXXeryWTcjMz5DqpktMDcwrGM4X1lCC0=
+X-Google-Smtp-Source: AGHT+IHunwyc/wkH7CD68flB2cwYZ/fEV5URz+9NNo3tl2FP3eO4wQo9g7Uyz5g3jz0dhYU2qa9Wsw==
+X-Received: by 2002:a05:6a00:22cc:b0:705:c0a1:61c9 with SMTP id d2e1a72fcca58-71b25f45f2dmr18712842b3a.9.1727730448999;
+        Mon, 30 Sep 2024 14:07:28 -0700 (PDT)
+Received: from luna.turtle.lan ([2601:1c2:c184:dc00:f1c9:3376:480c:3b08])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26537e8dsm6683220b3a.203.2024.09.30.14.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 14:07:28 -0700 (PDT)
+From: Sam Edwards <cfsworks@gmail.com>
+X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ondrej Jirman <megi@xff.cz>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Alex Zhao <zzc@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Jing Luo <jing@jing.rocks>,
+	Kever Yang <kever.yang@rock-chips.com>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Daniel=20Kukie=C5=82a?= <daniel@kukiela.pl>,
+	Joshua Riek <jjriek@verizon.net>,
+	Sam Edwards <CFSworks@gmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH v2] arm64: dts: rockchip: Enable all 3 USBs on Turing RK1
+Date: Mon, 30 Sep 2024 14:06:52 -0700
+Message-ID: <20240930210652.1232951-1-CFSworks@gmail.com>
+X-Mailer: git-send-email 2.44.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927094549.3382916-1-liaochang1@huawei.com>
-In-Reply-To: <20240927094549.3382916-1-liaochang1@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 30 Sep 2024 14:04:40 -0700
-Message-ID: <CAEf4BzaWkkfxTHdkDZKZ1htCB90wM3gb1m_xrCpkZo_w_eJMUw@mail.gmail.com>
-Subject: Re: [PATCH v2] uprobes: Improve the usage of xol slots for better scalability
-To: Liao Chang <liaochang1@huawei.com>
-Cc: ak@linux.intel.com, mhiramat@kernel.org, oleg@redhat.com, 
-	andrii@kernel.org, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 27, 2024 at 2:56=E2=80=AFAM Liao Chang <liaochang1@huawei.com> =
-wrote:
->
-> The uprobe handler allocates xol slot from xol_area and quickly release
-> it in the single-step handler. The atomic operations on the xol bitmap
-> and slot_count lead to expensive cache line bouncing between multiple
-> CPUs. Given the xol slot is on the hot path for uprobe and kretprobe
-> handling, the profiling results on some Arm64 machine show that nearly
-> 80% of cycles are spent on this. So optimizing xol slot usage will
-> become important to scalability after the Andrii's series land.
->
-> This patch address this scalability issues from two perspectives:
->
-> - Allocated xol slot is now saved in the thread associated utask data.
->   It allows to reuse it throughout the therad's lifetime. This avoid
->   the frequent atomic operation on the slot bitmap and slot_count of
->   xol_area data, which is the major negative impact on scalability.
->
-> - A garbage collection routine xol_recycle_insn_slot() is introduced to
->   reclaim unused xol slots. utask instances that own xol slot but
->   haven't reclaimed them are linked in a linked list. When xol_area runs
->   out of slots, the garbage collection routine travel the list to free
->   one slot. Allocated xol slots is marked as unused in single-step
->   handler. While the marking relies on the refcount of utask instance,
->   due to thread can't run on multiple CPUs at same time, therefore, it
->   is unlikely CPUs take the refcount of same utask, minimizing cache
->   line bouncing.
->
->   Upon thread exit, the utask is deleted from the linked-list, and the
->   associated xol slot will be free.
->
-> v2->v1:
-> -------
-> As suggested by Andi Kleen [1], the updates to the garbage collection
-> list of xol slots is not a common case. This revision replaces the
-> complex lockless RCU scheme with a simple raw spinlock.
->
-> Here's an explanation of the locking and refcount update scheme in the
-> patch:
->
-> - area->gc_lock protects the write operations on the area->gc_list. This
->   includes inserting slot into area->gc_list in xol_get_insn_slot() and
->   removing slot from area->gc_list in xol_recycle_insn_slot().
->
-> - utask->slot_ref is used to track the status of uprobe_task instance
->   associated insn_slot. It has three values, the value of 1 means the
->   slot is free to use or recycle. The value of 2 means the slot is in
->   use. The value of 0 means the slot is being recycled. This design
->   ensure that slots in use aren't recycled from GC list and that slots
->   being recycled aren't available for uprobe use. For example,
->   refcount_inc_not_zero() turns the value from 1 to 2 in uprobe BRK
->   handling, Using refcount_dec() to turn it from 2 to 1 during uprobe
->   single-step handling. Using refcount_dec_if_one() to turn the value
->   from 1 to 0 when recycling slot from GC list.
->
-> [1] https://lore.kernel.org/all/ZuwoUmqXrztp-Mzh@tassilo/
->
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
-> ---
->  include/linux/uprobes.h |   4 +
->  kernel/events/uprobes.c | 177 ++++++++++++++++++++++++++++++----------
->  2 files changed, 139 insertions(+), 42 deletions(-)
->
+The Turing RK1 contains 3 different USBs:
+- USB0: USB 2.0, OTG
+- USB1: USB 3.0, host
+- USB2: USB 2.0, host
 
-Liao,
+This patch activates the necessary DT nodes to enable all 3 buses.
 
-Assuming your ARM64 improvements go through, would you still need
-these changes? XOL case is a slow case and if possible should be
-avoided at all costs. If all common cases for ARM64 are covered
-through instruction emulation, would we need to add all this
-complexity to optimize slow case?
+Future work will be needed on USB0: it is not USB3-capable, so the USB0
+controller needs to be told that there is no USB3 port. Per Jonas's
+suggestion, the USBDP0 node is given a `rockchip,dp-lane-mux` property
+that tells the USBDP driver that USBDP0 is not involved in USB so that
+it can make the necessary configuration changes in hardware.
+Technically, this is USB *controller* configuration, not *PHY*
+configuration, so the underlying code may be moved in the future to the
+USB controller driver instead, freeing up the (software) dependency on
+USBDP0. A TODO comment is added to explain this.
 
+Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+Suggested-by: Jonas Karlman <jonas@kwiboo.se>
 
-[...]
+---
+
+Happy Monday folks,
+
+This is an updated version of one patch broken out from my previous series [1]
+that enables USB on the Turing RK1 SoM.
+
+Changes v1->v2:
+- `rockchip,dp-lane-mux` added to tell USBDP0 explicitly that it is not
+  involved in USB (thanks Jonas)
+- Comment updated to more accurately reflect the situation, and to use one- not
+  two-space-per-sentence style.
+
+Kind regards,
+Sam
+
+[1]: https://lore.kernel.org/lkml/20240912025034.180233-1-CFSworks@gmail.com/T/
+---
+ .../boot/dts/rockchip/rk3588-turing-rk1.dtsi  | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+index 0c4d809a860e..cdc525a8b157 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
+@@ -683,3 +683,68 @@ &uart9 {
+ 	pinctrl-0 = <&uart9m0_xfer>;
+ 	status = "okay";
+ };
++
++/* USB 0: USB 2.0 only, OTG-capable */
++&u2phy0 {
++	status = "okay";
++};
++
++&u2phy0_otg {
++	status = "okay";
++};
++
++&usbdp_phy0 {
++	/*
++	 * TODO: On the RK1, USBDP0 drives the DisplayPort pins and is not
++	 * involved in this USB2-only bus. The bus controller (below) needs to
++	 * know that it doesn't have a USB3 port so it can ignore any
++	 * USB3-related signals. This is handled in hardware by updating the
++	 * GRFs corresponding to that bus controller. Alas, Linux currently
++	 * puts the code to do that in the USBDP driver, so USBDP0 must be
++	 * enabled for now.
++	 */
++	status = "okay";
++	rockchip,dp-lane-mux = <0 1 2 3>; /* "No USB lanes" */
++};
++
++&usb_host0_xhci {
++	extcon = <&u2phy0>;
++	maximum-speed = "high-speed";
++	status = "okay";
++};
++
++/* USB 1: USB 3.0, host only */
++&u2phy1 {
++	status = "okay";
++};
++
++&u2phy1_otg {
++	status = "okay";
++};
++
++&usbdp_phy1 {
++	status = "okay";
++};
++
++&usb_host1_xhci {
++	extcon = <&u2phy1>;
++	dr_mode = "host";
++	status = "okay";
++};
++
++/* USB 2: USB 2.0, host only */
++&u2phy2 {
++	status = "okay";
++};
++
++&u2phy2_host {
++	status = "okay";
++};
++
++&usb_host0_ehci {
++	status = "okay";
++};
++
++&usb_host0_ohci {
++	status = "okay";
++};
+-- 
+2.44.2
+
 
