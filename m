@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-343609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3929989D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:49:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7168A989D3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A474C2813EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:49:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0751DB24796
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B46B17E01C;
-	Mon, 30 Sep 2024 08:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938F717E8F7;
+	Mon, 30 Sep 2024 08:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PEZEQAo4"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2xOjVht"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EE813D531;
-	Mon, 30 Sep 2024 08:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B327417B4FC;
+	Mon, 30 Sep 2024 08:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686152; cv=none; b=Y70voHhKX8Q6bzxL6CoxD6YxbQb2GHnjB269zsZtlwhfEImEENyZpn5fRR8U2uRht3EaSA4+jHVnvDTwsxZMHLRVd2Sjj/UL4wU/fBPBL84KjTjXvqWQRWPz4KbKbW+dMTVlDG921wdDKIv7WUorbViJTzwLKNsroEHX7I+nd9s=
+	t=1727686168; cv=none; b=tO950X/6dKbDdFjA2dJOEGJ/jnuSUBwhfk3zJJlTtamlcu/grCZaX8rh1iX+F72juV75CKznJCgmKdPDz96fgXxVdCHoce4UiyyBpIETddzy8+aVjdhbN6cReAaK3xEfVbGT+GDerLRGeV3WTTptQi80my3MuZrgIuzHw2TWo9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686152; c=relaxed/simple;
-	bh=VJzCGMMRci/BiZjulnBSG77pRU6y2deSbKtvy/pU2pY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gX0F4zmUc1TjkddrsuDs/7AgE1OjoSLxLOPLhceZfxUrCgICjFpACPPNUtH5u+rn6SnaqUbaxpGsUZiFNTdFWB9F8yZjWpDUm0UaMLYtcpfheVzYKTYFwY2zbfubyJ1bzrvS6AmSMX1VycmEooz7K/N3B+hQNuv72v+Il9k9GFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PEZEQAo4; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727686147;
-	bh=VJzCGMMRci/BiZjulnBSG77pRU6y2deSbKtvy/pU2pY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PEZEQAo4oB0HrZ6hyP//YB/w7n6xJyG5PinuwSHzdOx8AOmj5Ixfq89MPhXWSxLjH
-	 KEi+/4bQzhnDIybedEyuX/RZBdi7K8UmoiaXn2zHwV4nJFYdlPrA1AQlUVIEjBMKOm
-	 UHx623s1TF8BknFyk1paXHosCBPSeYgwLrIC5b+D9DMlPRCWVXDH24ixypfyzzCLyy
-	 EQcIcVE0GLjGByWkc7qohQpkONmrKnrc9nPPDH1iJi/2XuSWVxbgYUl9ANpMGPvYe7
-	 1skqXCgezJWh+s/+N3XhNKLqRLmKJhmHh7OtBnB7BywKpUWNuxu7j4Q6lMPCXeOAz4
-	 kdQ8HOqp53crQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 98BEC17E10AB;
-	Mon, 30 Sep 2024 10:49:06 +0200 (CEST)
-Message-ID: <8883c84d-8333-4b04-83b5-022be5b6153c@collabora.com>
-Date: Mon, 30 Sep 2024 10:49:06 +0200
+	s=arc-20240116; t=1727686168; c=relaxed/simple;
+	bh=lqTiyXirW32QfOM0FkJASZM8KV41WbXnidi5f4JRW4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uTHNt0vmBngawjBDlQmnePk8FhzUJUG6HWDvfgm9TxeSA8q9yhbhX02xUE9l9cyRU253eZmxtM5ZXilVNDeRYKR0BwKsBSeCIQd9hTjbwoKLOyM5t5+8k+ySgK4yLdiWHXux8Gy2cyvK7DAqP4D4zdNtv1w9LkDMH//cLsVp4Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2xOjVht; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e0ad414718so804247a91.2;
+        Mon, 30 Sep 2024 01:49:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727686166; x=1728290966; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lqTiyXirW32QfOM0FkJASZM8KV41WbXnidi5f4JRW4w=;
+        b=C2xOjVhtkDNUTbp+PGhHWfsDvI59hNXPncTAH/V9ODcIN269zMD4zd4SWHRZnlMyU1
+         Emh+o38hjUBAFxE9jEnKC+KBiGeEoBjN+7Ydg2pT0N3OG65/h9QHaXkvcqG/cYK91yVv
+         aXrumN7Eg2Zn6Bx2S4Fv+pGPzt+IroN6+b8+m6sK5yuqh4SR1xdciCOgtaH2GPWHpM6q
+         t7nwhsaVnR7rsqiWmvXxNnwfSQFdTNdrz/dEgD+zFxovzWTqmHarL4e2ql/hu8P4fukM
+         ZUTgnjR27WfnHICk3b8BCA1+MaRNKRj+iBbN6aOol/Ci0LH3ec8E/3Qttus4ohGM483l
+         BhMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727686166; x=1728290966;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lqTiyXirW32QfOM0FkJASZM8KV41WbXnidi5f4JRW4w=;
+        b=VP1ptlOyEI+gv+dhFTxidhM/ndZs25IqZlS9Cx9DrBO5fWAlUSjyV3Qo8g5cLqxRk4
+         /nguPCzw9aBradW5gjKUMTK60pX5mBZ9qWNui+GKUWtEf9V7GFKr9pXW8yCeHEhiVYcC
+         5PeyiWtx1uyGY/W0h52UHHW1UvLsnhShVb6Ki8TCnUzTKhfqQ15tDrnIMAJwlTGDKW09
+         pG7N58+P2lIVjej6TYc/zOAn0VjggTChrf18+lYjg8QAleWUVTt7EbQeiTyPjRJZa65x
+         Pny5CmIDdUavsV07vCO23OHQCSlU2R7XCF41FtSFrDlTdLfc0CnJKykftckvPdVVFthW
+         UL1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXo/rNBVVtRDXiEW51hzTx0h3wWrHKNGNp8TT5TVlJmKHKJKqlfbO32uPkHCTmhvf+XiTI8WYsFNCsZNZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSa/BOeht4GDrZSr0WeBrPhFFdq1h93FrWWHpLxjTPgxEok/su
+	xu3nXU1Xj07Co20caYTAnbPleu3hFJ6qQPBT0pPfS9A5vugmAuNtMIKSRA1dCjf9Tr8RMJ/Sq2m
+	5sb9Xlyj4ORK3l3H9gu6+EwzEj2s=
+X-Google-Smtp-Source: AGHT+IEQ1tdrQhsCvZI+arTKIhH29l9Gv8+v9ylxuggJaKyYGTRwbYu39EbSEyWqUiwQKvMqwVaUPKmwadNyJOzltA8=
+X-Received: by 2002:a05:6a20:a113:b0:1cf:2be2:6524 with SMTP id
+ adf61e73a8af0-1d509ba84f7mr5326919637.10.1727686166045; Mon, 30 Sep 2024
+ 01:49:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] dt-bindings: iommu: mediatek: Fix interrupt count
- constraint for new SoCs
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, CK Hu <ck.hu@mediatek.com>,
- Jitao shi <jitao.shi@mediatek.com>, Tinghan Shen
- <tinghan.shen@mediatek.com>, Seiya Wang <seiya.wang@mediatek.com>,
- Ben Lok <ben.lok@mediatek.com>, "Nancy . Lin" <nancy.lin@mediatek.com>,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>,
- Chris-qj chen <chris-qj.chen@mediatek.com>,
- MediaTek Chromebook Upstream
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-References: <20240926111449.9245-1-macpaul.lin@mediatek.com>
- <20240926111449.9245-2-macpaul.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240926111449.9245-2-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+In-Reply-To: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 30 Sep 2024 10:49:12 +0200
+Message-ID: <CANiq72mrcMq7KKn5UiT2GuZPCeFMtr63tj9JTHnVLfzmYDgauQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2 RESEND] rust: kernel: clean up empty `///` lines
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Jens Axboe <axboe@kernel.dk>, 
+	Matt Gilbride <mattgilbride@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 26/09/24 13:14, Macpaul Lin ha scritto:
-> The infra-iommu node in mt8195.dtsi was triggering a CHECK_DTBS error due
-> to an excessively long 'interrupts' property. The error message was:
-> 
->    infra-iommu@10315000: interrupts: [[0, 795, 4, 0], [0, 796, 4, 0],
->                       [0, 797, 4, 0], [0, 798, 4, 0], [0, 799, 4, 0]]
->                       is too long
-> 
-> To address this issue, add "minItems: 1" and "maxItems: 5" constraints to
-> the 'interrupts' property in the DT binding schema. This change allows for
-> flexibility in the number of interrupts for new SoCs.
-> The purpose of these 5 interrupts is also added.
-> 
-> Fixes: bca28426805d ("dt-bindings: iommu: mediatek: Convert IOMMU to DT schema")
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->   .../bindings/iommu/mediatek,iommu.yaml        | 25 ++++++++++++++++++-
->   1 file changed, 24 insertions(+), 1 deletion(-)
-> 
-> Changes for v2:
->   - commit message: re-formatting and add a description of adding 5 interrupts.
->   - add 'description' and 'maxItems: 5' for 'interrupt' property of
->     'mt8195-iommu-infra'
->   - others keeps 'maxItems: 1'
-> 
-> diff --git a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> index ea6b0f5f24de..fdd2996d2a31 100644
-> --- a/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/mediatek,iommu.yaml
-> @@ -96,7 +96,8 @@ properties:
->       maxItems: 1
->   
->     interrupts:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 5
->   
->     clocks:
->       items:
-> @@ -210,6 +211,28 @@ allOf:
->         required:
->           - mediatek,larbs
->   
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt8195-iommu-infra
-> +
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          description: |
+On Sun, Sep 29, 2024 at 1:15=E2=80=AFPM Hridesh MG <hridesh699@gmail.com> w=
+rote:
+>
+> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
 
-Do you really need to keep the formatting?
+The patch looks good, thanks!
 
-If you rephrase that as:
-
-The infra IOMMU in MT8195 has five banks: each features one set
-of APB registers for the normal world (set 0), one for the protected
-world (sets 1-3) and one for the secure world (set 4), and each set
-has its own interrupt. Therefore, five interrupts are needed.
-
-...you won't need the bar :-)
-
-> +            The IOMMU of MT8195 has 5 banks: 0/1/2/3/4.
-> +            Each bank has a set of APB registers corresponding to the
-> +            normal world, protected world 1/2/3, and secure world, respectively.
-> +            Therefore, 5 interrupt numbers are needed.
-> +          maxItems: 5
-
-minItems: 5
+However, the kernel needs known identities to accept patches -- I know
+you added "MG" since the first version when I asked, but is that your
+full surname? i.e. it appears to be initials -- if they are not, then
+I apologize in advance.
 
 Cheers,
-Angelo
-
-
+Miguel
 
