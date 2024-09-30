@@ -1,161 +1,174 @@
-Return-Path: <linux-kernel+bounces-344081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0545E98A3FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:08:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5831E98A3FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A3C51C20433
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175D5281A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A77218E77D;
-	Mon, 30 Sep 2024 13:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+9ctvT8"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4A718E77D;
+	Mon, 30 Sep 2024 13:08:27 +0000 (UTC)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB4617A924;
-	Mon, 30 Sep 2024 13:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7055941A84;
+	Mon, 30 Sep 2024 13:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701680; cv=none; b=IcuuYS4cn3huOQx1JOqBFPrNtHcztI60XrTR70/UMjneZRD0hI8pxMNsb+QKrXW/BIiZxNsVNvKf7JEqaEC1Bjr7kjxhmBdMKblwBdaabZByRRCSxtvmXeoFgGqigUc7pDW+JHfuEYzbVhShjvjSfsW0R7iuu3UUEzh4AYb9U7A=
+	t=1727701707; cv=none; b=Iz+Cf094jzYDAw5SwzjcU5mFDSiA4jLgnau8l7In5FsW0h/IZdDXY14vAwbDL6Nh24pMUR6TB0sHNHKlF00L9PWFBpFUPDtBVYbSr0F3ZQOLrPkq22omTLtRWSX+b9d74f46XzOseOj4DtzYmCeYX4kRzI9GmraqTsNYL9tOI/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701680; c=relaxed/simple;
-	bh=slBJildSLS8lvUx0hquew3Id4g/8MV7J25bixsZpogc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/vKfXH+A9hEUlRL8GcuHIGerPsq9a1U3J+yqsuNxKPslSBnjvlvvHb1RLxTDYdhQd6zwDzmunwiXiQmiLdr5FfBXNcEsdjKiHovRY7hyMK4ztP16DIvYpSBR6qWatg2Z1kGQ1rpOdLvIBb9PYdXKNE+bcjf619OKw4JisNH0RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+9ctvT8; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1727701707; c=relaxed/simple;
+	bh=lJMbXOLaoTQWPHteatcACbF5SHhiwAK5RcwdJdHkHIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AiF7VT9uTfzClJX8nD0kN9qN2mXaTXmY+hh9i0kFtbfUEMWArA9rE29BJzlJUtnTyT+IJUC1HtjnjKf9D6wx7R5fNGEFSgQBGN09fmN+0aLp64nVyMCixs1cvVPiSuVaKLMiJH5lRvep5BJ4MxFswZANxStzagm4r3o04iDrdO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e06f5d4bc7so3733829a91.2;
-        Mon, 30 Sep 2024 06:07:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727701678; x=1728306478; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xtWyt8Wc5r3RiOGFMVOEwNeg5crfeCiOe+iG3jYozms=;
-        b=S+9ctvT8GY6f+Jnzm2lqTPUIvN1Wzu9yBYKV4KB5lztP0i7XM0y7b7SLyfJVaDENbl
-         jlZMFNUc1leVQpf8Sd+mEmNl6bHw0uaXb6YCLHhb4u7mdOzYJMyUIe1xrSw28eZ2bvHi
-         cIjfvCgq49xD5qjKcLDJVPx/7t1+FjYezhkv7xqMLOSdHNTscpEXD4rF7LuFiZbjANMS
-         VlcpAIKLUCm5pmGxM9fR/TXRexJck+bknp8hGQBr0Ck4Qio3sst31vMPfOx6UM4deLqC
-         +6bGhS4dynWIHN/KlGQNgBf4qRrIx06XjCPcs3zzRLeoknGBCiU52lzFGPcO0Dm6UMvf
-         2dLA==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-710dad96bf7so1007531a34.0;
+        Mon, 30 Sep 2024 06:08:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727701678; x=1728306478;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xtWyt8Wc5r3RiOGFMVOEwNeg5crfeCiOe+iG3jYozms=;
-        b=gsnUOf/EZ4hroqVRRmi+MXLaiOcC3L10jNQ4QpMw8EGRthomuPe3agpTjsI7N0cObE
-         1fTOmh+UYu6kojg2H5hp1QCDfjzqZ0VYHlvMKpNm4zkizcdB9nVK0sZOlZNQlXL9Ab8b
-         A4pCwUiwg/imZuWlzuzyYaQNvPKsSBKB+VkuPrXzp3nw6etUXWOwC0JNsneo9bQfvU70
-         2gKfur1M1jC92tz35uukp0hGqkn+n2X77zJ8RkbDAdrWRXgG9/nQii24aCj+GaPbFR9M
-         vJatE4loUJzrwEyNYgqq8eTW33WEQIHaD06vUQK6y8OAQEnxonuYcEdICiJ2KqHHv/NT
-         SyNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/pKetmIONZpUNFVZBwI4Ti2WpICf7PAgptnDnR6KBD5VJyTgyMLKeuA9/d6h/1GPpq7TMkTwP2XGScWo=@vger.kernel.org, AJvYcCUwH3SNbs0tI3yvVS1/wOEroIHl6YoJ5O5elLBFrqqtXgzJoj8WZJ0AH6oBScMAf8mOuDlDRyfL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb00dW2fI+UXjpa3Vhggy0ylM89Xb2QELeaq/+rPyH9PzE3Scn
-	E49ondpabqj2mGEU2d13mCHQaLE044sjcyOJD+HdckIXVSa9fX4uGnZyl0Dhg54=
-X-Google-Smtp-Source: AGHT+IGFNLMf9Iv3d8clzn2xPx0gj/ssQNa7jGMzoLycBLhjBOQZLwQAoSeXnLBfNSAY6BywqlIkuQ==
-X-Received: by 2002:a17:90a:a009:b0:2d8:7561:db71 with SMTP id 98e67ed59e1d1-2e0b8ea16f8mr13833976a91.25.1727701678223;
-        Mon, 30 Sep 2024 06:07:58 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:671d:78af:f80f:975b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c6cbc8sm7888043a91.13.2024.09.30.06.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 06:07:57 -0700 (PDT)
-Date: Mon, 30 Sep 2024 06:07:54 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
-Message-ID: <ZvqiqiAhn7EG_l_V@google.com>
-References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
- <10515bca-782a-47bf-9bcd-eab7fd2fa49e@stanley.mountain>
- <bb531337-b155-40d2-96e3-8ece7ea2d927@intel.com>
- <faff2ffd-d36b-4655-80dc-35f772748a6c@stanley.mountain>
- <84f41bd3-2e98-4d69-9075-d808faece2ce@intel.com>
- <129309f3-93d6-4926-8af1-b8d5ea995d48@stanley.mountain>
- <e86748a9-6b72-4404-9042-c9b6308a9bc1@intel.com>
- <bf348b5d-f6d5-4315-b072-cc1175ca4eff@stanley.mountain>
+        d=1e100.net; s=20230601; t=1727701704; x=1728306504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0bv7MwMEuMoMwsONGPmFGg2sAv+OxcqxVlJPO/nIu4M=;
+        b=iI0zaHUbiDf+gViujukwgR30o81jGg79b7nxx0tg4+cGSWNqNtLoF5nFu+vW2I6EcC
+         flnBhF1tCPUncHdwsOFZ1CciQ9hJzaDpDNWKBIK3Bb8sYA1tANgetaL6CY4zl86WkQrA
+         T0n5a3go2AKgHHkwN2ZJaghghUdOFskbILv1mPrysDvgpflZmx5ybb/Rtpq2qaoZ3CPz
+         MxuB92koXFZuQOhngJAK1c9prjFcYaYwIu8JuUh8Dpa2aW4uR8S0Q0riVLhoUBGQai7W
+         enuh7ET1Jsu7ahsTxw2plFgkLL5+KvQcjpqA6VOYyY73eytGAKCCFnaxV7kSDf2g1/O8
+         9GaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQtBeTQPi401ouhcNuC2PCcnqjnPbtiIXzMO7fYgUPSybezrZU+DwhI1yl71lB7QzaIEzye5iG9+xPVTsD@vger.kernel.org, AJvYcCUsAuDaqOD4cNH89zau2OpAJOaVaIXytz+yPhfoPtsBq8xzdqEMEBCZFOtjOIP/3M8Vy/YWHiAVBdaMXwIykw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlWQZZmAH66vnbskdqe0Lvkkxg4z+XZtrLW7YfqCp21xlmOQId
+	6xCPRKXZY8+1exlK/+H2QSI1UF2ciOGvWvw4w5aF1OHbmyVFPvG5AA6giQZu
+X-Google-Smtp-Source: AGHT+IHvebmGV9jzv7CiMPY6K3xjtcqFfIx62SkjJKQFEEInwlG8XtYI6FA5+5eMcddC6w5nkPu8xQ==
+X-Received: by 2002:a05:6830:348e:b0:710:f8df:33d2 with SMTP id 46e09a7af769-714fbde5aa1mr7404713a34.0.1727701704023;
+        Mon, 30 Sep 2024 06:08:24 -0700 (PDT)
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com. [209.85.160.45])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e770eabe2fsm2141423eaf.38.2024.09.30.06.08.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 06:08:23 -0700 (PDT)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-27ce4f37afeso1741468fac.0;
+        Mon, 30 Sep 2024 06:08:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqKUfP8RKeufZc6sqF347d0KaaONnb2jp6Uj3p4Xr1HivJaqAPpSjII5ZqhH9+fJDA23EbodQXrfC4TF1U1A==@vger.kernel.org, AJvYcCXAOC5AeukT4n2Vw4qtAH2Dht888Cvclp2T6zn9zpHkFoiga8jxizvpCYLOBHGuPuDlxogmJEO9bT7nqOAP@vger.kernel.org
+X-Received: by 2002:a05:6871:8713:b0:287:4e4a:a2da with SMTP id
+ 586e51a60fabf-2874e4aba6amr1313043fac.26.1727701703155; Mon, 30 Sep 2024
+ 06:08:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf348b5d-f6d5-4315-b072-cc1175ca4eff@stanley.mountain>
+References: <20240930003902.4127294-1-linux@roeck-us.net> <CAMuHMdWcPpBgsK0r0U=k8NyjTjUTwBTLe6Bg_ORD2zmSNoRgJA@mail.gmail.com>
+ <obpogbufu5awsn2a6olh2ondrgwl7bgdowjcpv6jcpm2ey4s5h@obcml2w3csap>
+ <CAMuHMdXZ_N+uvXROpNvvSO3AZ7A-7hQTE4FxEa=1aMX-NC5rbA@mail.gmail.com> <fo6bvxt5o5veelshcig3zrqyktwvpxzxpvz4bb3n6gyk2vwejk@fx7opeolkbvj>
+In-Reply-To: <fo6bvxt5o5veelshcig3zrqyktwvpxzxpvz4bb3n6gyk2vwejk@fx7opeolkbvj>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Sep 2024 15:08:10 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUNoomsTKu=X5C=HBd+RAkzgcBoYyqmMy2-NsM0DqbRoQ@mail.gmail.com>
+Message-ID: <CAMuHMdUNoomsTKu=X5C=HBd+RAkzgcBoYyqmMy2-NsM0DqbRoQ@mail.gmail.com>
+Subject: Re: [PATCH] bcachefs: rename version -> bversion for big endian builds
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 03:57:08PM +0300, Dan Carpenter wrote:
-> On Mon, Sep 30, 2024 at 01:30:58PM +0200, Przemek Kitszel wrote:
-> > > but your macro is wrong and will need to be re-written
-> > 
-> > could you please elaborate here?
-> 
-> - 		__guard_ptr(_name)(&scope) && !done;
-> +		__guard_ptr(_name)(&scope), 1;     \
-> 
-> The __guard_ptr(_name)(&scope) check is checking whether lock function
-> succeeded.  With the new macro we only use scoped_guard() for locks which can't
-> fail.  We can (basically must) remove the __guard_ptr(_name)(&scope) check since
-> we're ignoring the result.
-> 
-> There are only four drivers which rely on conditional scoped_guard() locks.
-> 
-> $ git grep scoped_guard | egrep '(try|_intr)'
-> drivers/input/keyboard/atkbd.c: scoped_guard(mutex_intr, &atkbd->mutex) {
-> drivers/input/touchscreen/tsc200x-core.c:       scoped_guard(mutex_try, &ts->mutex) {
-> drivers/input/touchscreen/wacom_w8001.c:        scoped_guard(mutex_intr, &w8001->mutex) {
-> drivers/platform/x86/ideapad-laptop.c:  scoped_guard(mutex_intr, &dytc->mutex) {
+Hi Kent,
 
-FTR I have many more pending changes using scoped_guard() this way.
+On Mon, Sep 30, 2024 at 2:31=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> On Mon, Sep 30, 2024 at 02:08:25PM GMT, Geert Uytterhoeven wrote:
+> > On Mon, Sep 30, 2024 at 12:11=E2=80=AFPM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > > On Mon, Sep 30, 2024 at 12:04:42PM GMT, Geert Uytterhoeven wrote:
+> > > > On Mon, Sep 30, 2024 at 2:39=E2=80=AFAM Guenter Roeck <linux@roeck-=
+us.net> wrote:
+> > > > > Builds on big endian systems fail as follows.
+> > > > >
+> > > > > fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+> > > > > fs/bcachefs/bkey.h:557:41: error:
+> > > > >         'const struct bkey' has no member named 'bversion'
+> > > > >
+> > > > > The original commit only renamed the variable for little endian b=
+uilds.
+> > > > > Rename it for big endian builds as well to fix the problem.
+> > > > >
+> > > > > Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
+> > > >
+> > > > Which is (again) not found on any mailing list, and has never been =
+in
+> > > > linux-next before it hit upstream...
+> > > >
+> > > > > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > > >
+> > > > > --- a/fs/bcachefs/bcachefs_format.h
+> > > > > +++ b/fs/bcachefs/bcachefs_format.h
+> > > > > @@ -223,7 +223,7 @@ struct bkey {
+> > > > >  #elif __BYTE_ORDER__ =3D=3D __ORDER_BIG_ENDIAN__
+> > > > >         struct bpos     p;
+> > > > >         __u32           size;           /* extent size, in sector=
+s */
+> > > > > -       struct bversion version;
+> > > > > +       struct bversion bversion;
+> > > > >
+> > > > >         __u8            pad[1];
+> > > > >  #endif
+> > > >
+> > > > BTW, how does this work when accessing a non-native file system?
+> > > > Didn't we stop doing bi-endian file systems in v2.1.10, when ext2 w=
+as
+> > > > converted from a bi-endian to a little-endian file system?
+> > >
+> > > we byte swab if necessary
+> >
+> > So you have to test 4 combinations instead of 2 (which you don't do,
+> > obviously ;-)
+> >
+> > Ext2 was converted from a bi-endian to a little-endian file system
+> > because it turned out the conditional byte-swapping was more
+> > expensive than unconditional (not) byte-swapping. Given all the
+> > bcache structures are already tagged with __packed anyway, I guess
+> > this is even more true for bcachefs.
+> >
+> > The proper way established +25y ago was to settle on one endianness
+> > layout for all on-disk data. That way you do not have to duplicate
+> > data and code for little vs. big endian, keep both paths in sync, and
+> > you can annotate everything with __[bl]eXX attributes to let sparse
+> > help you catch bugs.
+> >
+> > Which endianness to pick is up to you. Ext2 settled on little-endian,
+> > XFS on big-endian.
+>
+> If you peruse that code even slightly, you'll see that what we're doing
+> is treating the key as a multi word integer, so word order has to match
+> machine byte order in order for various things in the btree lookup code
+> to work.
 
-> 
-> This change breaks the drivers at runtime, but you need to ensure that drivers
-> using the old API will break at compile time so that people don't introduce new
-> bugs during the transition.  In other words, you will need to update the
-> DEFINE_GUARD_COND() stuff as well.
-> 
-> $ git grep DEFINE_GUARD_COND
-> include/linux/cleanup.h: * DEFINE_GUARD_COND(name, ext, condlock)
-> include/linux/cleanup.h:#define DEFINE_GUARD_COND(_name, _ext, _condlock) \
-> include/linux/iio/iio.h:DEFINE_GUARD_COND(iio_claim_direct, _try, ({
-> include/linux/mutex.h:DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
-> include/linux/mutex.h:DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
-> include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_read, _try, down_read_trylock(_T))
-> include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_read, _intr, down_read_interruptible(_T) == 0)
-> include/linux/rwsem.h:DEFINE_GUARD_COND(rwsem_write, _try, down_write_trylock(_T))
-> 
-> I propose that you use scoped_try_guard() and scoped_guard_interruptible() to
-> support conditional locking.  Creating different macros for conditional locks is
-> the only way you can silence your GCC warnings and it makes life easier for me
-> as a static checker developer as well.  It's probably more complicated than I
-> have described so I'll leave that up to you, but this first draft doesn't work.
+I have seen the multi-word integers...
 
-No, please do not. Right now the whether resource acquisition can fail
-or not is decided by a particular class (which in turn can be used in
-various guard macros). You are proposing to bubble this knowledge up and
-make specialized "try" and "interruptible" and "killable" and "fallible"
-version of the previously generic macros.
+> But sure, try and tell me there's something about filesystems I don't
+> already know...
 
-Now, the whole issue is because GCC is unable to figure out the flow
-control of a complex macro. Please either fix GCC or rework that one
-call site to shut GCC up. Do not wreck nice generic guard
-implementation, that is flexible and supports several styles of use.
+Okay...
 
-Again, the fact that scoped_guard() body can be skipped if the
-constructor fails is explicitly documented as a desirable property.
+Gr{oetje,eeting}s,
 
-Thanks.
+                        Geert
 
--- 
-Dmitry
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
