@@ -1,195 +1,135 @@
-Return-Path: <linux-kernel+bounces-343375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E95989A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:40:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3216D989A3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056E2281D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 699981C212E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:42:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C1913D51C;
-	Mon, 30 Sep 2024 05:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5001013D890;
+	Mon, 30 Sep 2024 05:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBT6T+67"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E796813D881;
-	Mon, 30 Sep 2024 05:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qGGDOKpk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2B013B288;
+	Mon, 30 Sep 2024 05:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727674820; cv=none; b=uRS5+XgGKJHuYYubpYHcK2RrY3baW5WAtEbuxwlEHEuv5jgl7FqtWthn6ObHpjdOKYQTvXo/vRKqTF01KQLEh3Fn8ZaS4zNxR3b9d51MFJcGBHYjxDf7qDlLIzDMXhb15yM7fd200zgSFo40iUEN82Lyt0WMNm0hzbpXGoRDIRc=
+	t=1727674938; cv=none; b=SeaTiVAcMuuoZQg10RhxeV9zDEXjoCI0VXw3SgXeoD9uBc4i1/qZ4pJDYhtkN6TUnBEI6zxkf8oxszX0VxoW7afDXE0xi/munyADN7cU2wx5ukQHVzN9p192+UygCwlx9YEg1Nzjmm0yROYkDhEIcdeoqbKbKhnt3pzcmizhRPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727674820; c=relaxed/simple;
-	bh=73ua3ebCJFBwUFZlCvtMIQ/sfiZmDsqsyODFb2ktLlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=su5Pg3SLUVH6Q0Tv5xP0wYRTRjvrr99ju0Rl1NbbXJQ+YkNMSxm6iCilO7v29UEf+DeGZjtmiVJk6tF0Hi+bvK3g9u3rQEiGRwdI9LfKvnzlRS9oGFr9X7M1s+72uOulCSyuiIBB3/QKPxbN0tgG8I+xkNWiBaC2MMpxk1vJGJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBT6T+67; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04F4C4CECE;
-	Mon, 30 Sep 2024 05:40:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727674819;
-	bh=73ua3ebCJFBwUFZlCvtMIQ/sfiZmDsqsyODFb2ktLlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EBT6T+67aVzJZd2Kg1UTB+42YafTzmzy3zwt3fdcV3rYWVqr650TqeN0QB6syIwUB
-	 1RoD5dnsGrqQHtS1rTZuYO1DZfrwi9kv9GQklunO8iq08xOhXznfxMTFhAzvnv0GvG
-	 1zDMZWa0iD1G5rQwLVl/a3PVjFA5nlNlh3InbCpizAdBHPmoYr4CWIKuZ7U+aXsW1f
-	 O7beiIQ7XMXg8I5RkL6JYyBLLNntA3zxqWxqOuUA9Ic1vvjD7HI1PEc6psbmbt2kuS
-	 sH2/tOiGC0h4Q6mOQPcsoK/sUXj66S2diJ0DOKWiY8wRckq4FVq8LMvf0JBnMTQkmA
-	 5V1eDRgo2tJrg==
-Date: Sun, 29 Sep 2024 22:40:17 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	s=arc-20240116; t=1727674938; c=relaxed/simple;
+	bh=VBBKALegdhR59CYTd2UllHzTLDvAds0WaiDy8WW2DKM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=hQngRhuS70Pco2WhECQNGKzDCkuIAGt+NnAg+plgL9JbJlk/SMz+p5M6ab0a/nyC8+Hjjv/7GJnKqb8bw616rirodTcoOSCQWXfV3yfRxGpPhUbcTIWwLpFX0zvyOyW91G9mF71s3jqG3mztT2BIBEvbJxiqZTImGxp1i06Zo5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qGGDOKpk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id E2F8120C8BD1; Sun, 29 Sep 2024 22:42:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E2F8120C8BD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727674936;
+	bh=BpdSP4DAHYZuzbODydBsRdZaeOFwXuLS3KrCe9Oaq38=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qGGDOKpkCZ7Lutc2RCMRNAb8WIP87y7qp0kQdme7n7NEALFnhJShNitWkbP5qpWsR
+	 qs8TQ3UzM8xlQwwrqMcke6HRKvKnsRbOD9IK96bInKj9XflMEFQI5wL3Q0N89Uj2Lg
+	 cxBnGO+ROoXL3zYNZdCXClho6yWk/uUIXWc9fHbQ=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shradhagupta@linux.microsoft.com,
+	leon@kernel.org,
+	colin.i.king@gmail.com,
+	ahmed.zaki@intel.com,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/8] perf record --off-cpu: Add --off-cpu-thresh
-Message-ID: <Zvo5weauCaaKQQ8b@google.com>
-References: <20240927202736.767941-1-howardchu95@gmail.com>
- <20240927202736.767941-3-howardchu95@gmail.com>
+Cc: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH net-next v2] net: mana: Add get_link and get_link_ksettings in ethtool
+Date: Sun, 29 Sep 2024 22:42:14 -0700
+Message-Id: <1727674934-12130-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240927202736.767941-3-howardchu95@gmail.com>
 
-On Fri, Sep 27, 2024 at 01:27:30PM -0700, Howard Chu wrote:
-> Add the --off-cpu-thresh argument to specify the off-cpu time threshold.
-> If the off-cpu time exceeds this threshold, dump the off-cpu data
-> directly.
-> 
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/builtin-record.c            | 26 ++++++++++++++++++++++++++
->  tools/perf/util/bpf_off_cpu.c          |  2 ++
->  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
->  tools/perf/util/off_cpu.h              |  2 ++
->  tools/perf/util/record.h               |  1 +
->  5 files changed, 33 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-> index adbaf80b398c..bd53fb3c98ec 100644
-> --- a/tools/perf/builtin-record.c
-> +++ b/tools/perf/builtin-record.c
-> @@ -3149,6 +3149,28 @@ static int record__parse_mmap_pages(const struct option *opt,
->  	return ret;
->  }
->  
-> +static int record__parse_off_cpu_thresh(const struct option *opt,
-> +					const char *str,
-> +					int unset __maybe_unused)
-> +{
-> +	struct record_opts *opts = opt->value;
-> +	char *endptr;
-> +	u64 off_cpu_thresh;
-> +
-> +	if (!str)
-> +		return -EINVAL;
-> +
-> +	off_cpu_thresh = strtoul(str, &endptr, 10);
+Add support for the ethtool get_link and get_link_ksettings
+operations. Display standard port information using ethtool.
 
-Do you mean strtoull() ?
+Before the change:
+$ethtool enP30832s1
+> No data available
 
+After the change:
+$ethtool enP30832s1
+> Settings for enP30832s1:
+        Supported ports: [  ]
+        Supported link modes:   Not reported
+        Supported pause frame use: No
+        Supports auto-negotiation: No
+        Supported FEC modes: Not reported
+        Advertised link modes:  Not reported
+        Advertised pause frame use: No
+        Advertised auto-negotiation: No
+        Advertised FEC modes: Not reported
+        Speed: Unknown!
+        Duplex: Full
+        Auto-negotiation: off
+        Port: Other
+        PHYAD: 0
+        Transceiver: internal
+        Link detected: yes
 
-> +
-> +	/* threshold isn't string "0", yet strtoull() returns 0, parsing failed */
-> +	if (*endptr || (off_cpu_thresh == 0 && strcmp(str, "0")))
-> +		return -EINVAL;
-> +	else
-> +		opts->off_cpu_thresh = off_cpu_thresh;
-> +
-> +	return 0;
-> +}
-> +
->  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts __maybe_unused)
->  {
->  }
-> @@ -3342,6 +3364,7 @@ static struct record record = {
->  		.ctl_fd              = -1,
->  		.ctl_fd_ack          = -1,
->  		.synth               = PERF_SYNTH_ALL,
-> +		.off_cpu_thresh      = OFF_CPU_THRESH_DEFAULT,
->  	},
->  };
->  
-> @@ -3564,6 +3587,9 @@ static struct option __record_options[] = {
->  	OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analysis"),
->  	OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
->  		   "BPF filter action"),
-> +	OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "us",
-> +		     "Dump off-cpu samples if off-cpu time reaches this threshold. The unit is microsecond (default: 500000)",
-> +		     record__parse_off_cpu_thresh),
->  	OPT_END()
->  };
->  
-> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
-> index a590a8ac1f9d..eaef643f50e3 100644
-> --- a/tools/perf/util/bpf_off_cpu.c
-> +++ b/tools/perf/util/bpf_off_cpu.c
-> @@ -272,6 +272,8 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
->  		}
->  	}
->  
-> +	skel->bss->offcpu_thresh = opts->off_cpu_thresh * 1000;
-> +
->  	err = off_cpu_bpf__attach(skel);
->  	if (err) {
->  		pr_err("Failed to attach off-cpu BPF skeleton\n");
-> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> index c152116df72f..5ea320aa9a53 100644
-> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> @@ -97,6 +97,8 @@ const volatile bool uses_cgroup_v1 = false;
->  
->  int perf_subsys_id = -1;
->  
-> +__u64 sample_id, sample_type, offcpu_thresh;
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+---
+Changes in v2:
+* Remove support for displaying auto-negotiation details
+* Change PORT_DA to PORT_OTHER
+---
+ drivers/net/ethernet/microsoft/mana/mana_ethtool.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-The sample_id and sample_type aren't used in the patch.
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+index dc3864377538..349f11bf8e64 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+@@ -443,6 +443,15 @@ static int mana_set_ringparam(struct net_device *ndev,
+ 	return err;
+ }
+ 
++static int mana_get_link_ksettings(struct net_device *ndev,
++				   struct ethtool_link_ksettings *cmd)
++{
++	cmd->base.duplex = DUPLEX_FULL;
++	cmd->base.port = PORT_OTHER;
++
++	return 0;
++}
++
+ const struct ethtool_ops mana_ethtool_ops = {
+ 	.get_ethtool_stats	= mana_get_ethtool_stats,
+ 	.get_sset_count		= mana_get_sset_count,
+@@ -456,4 +465,6 @@ const struct ethtool_ops mana_ethtool_ops = {
+ 	.set_channels		= mana_set_channels,
+ 	.get_ringparam          = mana_get_ringparam,
+ 	.set_ringparam          = mana_set_ringparam,
++	.get_link_ksettings	= mana_get_link_ksettings,
++	.get_link		= ethtool_op_get_link,
+ };
+-- 
+2.34.1
 
-Thanks,
-Namhyung
-
-> +
->  /*
->   * Old kernel used to call it task_struct->state and now it's '__state'.
->   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
-> diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
-> index 2dd67c60f211..357231cb1c38 100644
-> --- a/tools/perf/util/off_cpu.h
-> +++ b/tools/perf/util/off_cpu.h
-> @@ -10,6 +10,8 @@ struct record_opts;
->  
->  #define OFFCPU_EVENT  "offcpu-time"
->  
-> +#define OFF_CPU_THRESH_DEFAULT 500000ull
-> +
->  #define OFFCPU_SAMPLE_TYPES  (PERF_SAMPLE_IDENTIFIER | PERF_SAMPLE_IP | \
->  			      PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
->  			      PERF_SAMPLE_ID | PERF_SAMPLE_CPU | \
-> diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-> index a6566134e09e..3c11416e6627 100644
-> --- a/tools/perf/util/record.h
-> +++ b/tools/perf/util/record.h
-> @@ -79,6 +79,7 @@ struct record_opts {
->  	int	      synth;
->  	int	      threads_spec;
->  	const char    *threads_user_spec;
-> +	u64	      off_cpu_thresh;
->  };
->  
->  extern const char * const *record_usage;
-> -- 
-> 2.43.0
-> 
 
