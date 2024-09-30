@@ -1,164 +1,134 @@
-Return-Path: <linux-kernel+bounces-344826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC96A98AEA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FF498AEA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE16C1C21DAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D139B281EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BD71A0BD0;
-	Mon, 30 Sep 2024 20:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC54B1A0BEB;
+	Mon, 30 Sep 2024 20:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KpS94XCO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4T/DpeS"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ACCB21373
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B754A1925A2;
+	Mon, 30 Sep 2024 20:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727729074; cv=none; b=nXD8TcsUemGK9Z9llRhAh+5J0V5DEKxhgrgp7VMu62J0ZPCJMc70DjI/M5WQ3ioPeA9B4lDJjyLSep8VkMK5v0VKAdLzePHZinhgND5/M55QY1ZzHlJ72wR3exgy+6OxoyviiSbvznSzfiS51nD8M4ec01aQZm4sQBnpjprE510=
+	t=1727729170; cv=none; b=NvH+sm102dpPKu66FlxoBQ2D0aSWxsZlA+AsML+NfRVWwb6dRxFWP5DY/Dg1R1kWgXxQ2fWUAdZXI/Z8pfn4hARmLf7LY/vh/CLPobImoOqf6bxCqM+RAF4kmjgSpVGpERQYqUXKGlH6uTLeHrW1s+luKYsKnYwcp6yymff+GQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727729074; c=relaxed/simple;
-	bh=c72X7rthoTw3UZ+SQ1NNx6VPjSXuahNV8Yeg+OSrwYM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YL1r/RkLND7drsuzFEl7YLSndcn4TXvJTmAr7SvATBrqp358VfzFuD3KYfpuZcvlcBk8PkXuQAfGDsnx9BtGt0AZ7X1V9tgwfz542PJf4eTBVc6xWfmu0G7aeyQtH0REc8WWI79D5394o+2udteCvQ5KcUK6lOr9tiznzKR/aXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KpS94XCO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727729071;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=365yvXyrH4HDYhpTGG7hYppkncBneUPU1yFT5H0aB0A=;
-	b=KpS94XCO0g9rY5oQzqPw6rRvWuycw/b3B88+QtvujdARvEQZhpH6LzxlH172Qlw9lbEEUS
-	Pdyepaeyluey5p0SFtM1D8C6ZDwmL6foCqH5OCBCN+Ty/IivzGEC1QrnOQBUQd685sfdk3
-	KlsuPlS4EBpgPErUg8KdDsW8r68GQe8=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-mzMmRun8Oj23ZJjEnWC6ww-1; Mon, 30 Sep 2024 16:44:28 -0400
-X-MC-Unique: mzMmRun8Oj23ZJjEnWC6ww-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb6ed7f9dso48545835e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:44:27 -0700 (PDT)
+	s=arc-20240116; t=1727729170; c=relaxed/simple;
+	bh=9izmi5veQPemQfUYkQWBdx9f98WFityEVLTULSD4KaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9DfeCNeHw0vbfYihOqp03ipPxpTSmDetlZUx3LmvcGSGCGaO3WPoER6kbu8bA0q6ve5TMfr7BODQmf4vfhEFBUDGhF4hKgOTOOBxoBeMQs7c4sEIwjFLimcU2dTZbi4itBGxHBnHRZox8iIfpJGyc/JLUYNIZGwlqOBvjo0Gpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4T/DpeS; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so3196714f8f.2;
+        Mon, 30 Sep 2024 13:46:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727729167; x=1728333967; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o1yrxJnH5nQnXbPyHVjxBJoXIBi7Ad6qhWyJ8z7RAAM=;
+        b=E4T/DpeSGbt8Vb7gEUMXUWmagkl9NNd7lE5E4hRKVqieIZj+RvhcEIPTGeXh7QzSKO
+         fsbqSRUHzkjI3tBQvgWmMGqLazNoszkZCWRZURyqEDAFXZPm471+OHaxaalxoEVVIeA6
+         9ktJc50PakaVk4Wp1N809DanM4sGhD0/y+gj+mh/Sq1tv6Ye1yB9vbPvpa4Tr4wJP/a1
+         XYA/7rWvxKStJWyj15f4wJ9gyIbsEk4aKyj52OolPLdIRHuiD7CaNlX7OmYaHuVsuQVM
+         kXJ9gGP+XyMObUX/GxRCIf56ddinb1inA3HRsfgI0U8TK0XzRI+Ik86ah41Nau5dlwkl
+         68lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727729067; x=1728333867;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=365yvXyrH4HDYhpTGG7hYppkncBneUPU1yFT5H0aB0A=;
-        b=KbI4GQZpjqy7N/n5cV1NQXoCsYfuTuPdDpDpoxx9jZ8X8piZ5E8O0L4x/AH2RrKW6R
-         hp6+LmQshibK7Oxoe/N3KOZ51lUQpSd2bfmbryLUSQVZK3cyWrNl+2vzSbj1JrmTgBDH
-         9RKme6Hbsdx0J6Gkh1rrONFEWzJh5vmXdMPGhUvNQkjqY2X77A2S38q+xagrRUViVa/p
-         G/PhpRsoWkTTZRfjTRg4yQhecu4nl3tMcVAlPQ8KiJiWFDAQkAZYZXJqXLeniUxiywjJ
-         V4zV0YzLEPm8LN5nkB3f7BTP69A0/mhZoQNepGoRg76zy2SqftXu65+0VpGY1ZtH51Zx
-         enRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOZL1OC4UHr2WrjeBgzILN53TOYQpr9AZn9wGAb+efZsFzUQwn3LaV1EHorr06j4BeBmkv8Y4OQbthYdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI3+vi2e55US4uklJfh6u9cK85U9KNBfzDwMu8bZDzXKL59cAN
-	i0/ACAH4iv2YB6z53HFsnOR+evdyHAZS3NZpUx6XtKuvTtrlvaU46/WVdNYl2GSWzxqTJPL/I1h
-	HLWMkNLsXowRP3dW386mi+JkwLKPpNjWFjGCY9Vbfm8MgFuSwEhN0EQcBZvNnnA==
-X-Received: by 2002:a05:600c:5117:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-42f5844b9dcmr147785275e9.15.1727729066742;
-        Mon, 30 Sep 2024 13:44:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3QwwtLTQ50I8wwuCMh3xfz8nU4lYj9l/hZpN5kLgSBt4DCsR7xs1/zC1/fF3VISo1BGRq2A==
-X-Received: by 2002:a05:600c:5117:b0:42c:a8cb:6a5a with SMTP id 5b1f17b1804b1-42f5844b9dcmr147785155e9.15.1727729066351;
-        Mon, 30 Sep 2024 13:44:26 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57debe51sm114910415e9.20.2024.09.30.13.44.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 13:44:25 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: paulmck@kernel.org
-Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
- linux-next@vger.kernel.org, kernel-team@meta.com, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-In-Reply-To: <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
-References: <5ea3658b-5aec-4969-92c5-49a2d23171c3@paulmck-laptop>
- <xhsmh4j74o6l9.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
- <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
- <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop>
- <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
- <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop>
- <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
- <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
-Date: Mon, 30 Sep 2024 22:44:24 +0200
-Message-ID: <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1727729167; x=1728333967;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o1yrxJnH5nQnXbPyHVjxBJoXIBi7Ad6qhWyJ8z7RAAM=;
+        b=jtXWmxUw7r0T145NDlQd5G0y0BrUJ0sghRYhRza0nvHiCp1pTzJYewJMY14JSrkWPR
+         DW2TfX7pbITaBdyFiqkJdxn7hyUNvvfKwBZthktsxUops31AVIu9Xo3FhNx+AMUwc6fI
+         +AWd9UKBFNdur60I1v9uBC75VTz7jwi2TfUgeAJFTC6jD6npWmjA8+153OlgST9La1Pq
+         jd5DlbAJZwZXG1LgHkjRRYOAbLs19Jb4mPoRTeYPOeMz2/7p6QykIFgkvGaQMxLg2ns3
+         kuApMk/S8vI7odxANY3rY6VzJTo6UxLWwEnV7HRG++RvvYXNBPp6k7ZQxryuzs5Snrj4
+         InQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVy5MbviBtMM6AdhyBHULu4Ti9LyELUPK+AFhIg0aqmaaliAYjvZ9dAfaDVP/H5jpQbT7n9MSclYCU=@vger.kernel.org, AJvYcCWMD9MaDsyK0d2uW/PqeUpXzOnFuTEwW+LC8zv4QZ02dnqaDLCU8VKiaA8Fp3AZG49zdxcw6eRA+3hbOJoP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrpDBPFgdW3F7yNj/orFsN07Z5bmeKVdQdDmdUZNcte/UFRyR8
+	3OciEhFt5ZNr3yXYpEOS2H6xbzHRhKSg9B4HLRNnHtQR9H2CW9w5
+X-Google-Smtp-Source: AGHT+IFN83IwpYxF7n0KKmGF0euKzStr7d5ZcOkwyLjUGk7ldPttwtSPY9/JRgjF6RHhWT3y2zV3MQ==
+X-Received: by 2002:a5d:6448:0:b0:37c:c5fc:5802 with SMTP id ffacd0b85a97d-37cd5b1ba9dmr6944695f8f.36.1727729166919;
+        Mon, 30 Sep 2024 13:46:06 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:91b0:e3db:523:d17? (2a02-8389-41cf-e200-91b0-e3db-0523-0d17.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:91b0:e3db:523:d17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6587sm10154402f8f.47.2024.09.30.13.46.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 13:46:05 -0700 (PDT)
+Message-ID: <f12447b5-e26b-4f28-90e3-b5f61fdfcd6b@gmail.com>
+Date: Mon, 30 Sep 2024 22:46:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-6.12-rc1/drivers/iio/imu/bmi323/bmi323_core.c:133: Array
+ contents defined but not used ?
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: David Binderman <dcb314@hotmail.com>,
+ "jagathjog1996@gmail.com" <jagathjog1996@gmail.com>,
+ "jic23@kernel.org" <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
+ "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com>
+ <7e9ae281-448c-429b-9ca5-86581f777f68@gmail.com>
+ <20240930151542.GA3556370@thelio-3990X>
+ <0342111e-47f7-4981-a1f1-e694392fa741@gmail.com>
+ <20240930202642.GA1497385@thelio-3990X>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <20240930202642.GA1497385@thelio-3990X>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 30/09/24 12:09, Paul E. McKenney wrote:
-> On Fri, Sep 13, 2024 at 11:00:39AM -0700, Paul E. McKenney wrote:
->> On Fri, Sep 13, 2024 at 06:55:34PM +0200, Valentin Schneider wrote:
->> > On 13/09/24 07:08, Paul E. McKenney wrote:
->> > > On Sun, Sep 08, 2024 at 09:32:18AM -0700, Paul E. McKenney wrote:
->> > >>
->> > >> Just following up...
->> > >>
->> > >> For whatever it is worth, on last night's run of next-20240906, I g=
-ot
->> > >> nine failures out of 100 6-hour runs of rcutorture=E2=80=99s TREE03=
- scenario.
->> > >> These failures were often, but not always, shortly followed by a ha=
-rd hang.
->> > >>
->> > >> The warning at line 1995 is the WARN_ON_ONCE(on_dl_rq(dl_se))
->> > >> in enqueue_dl_entity() and the warning at line 1971 is the
->> > >> WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node)) in __enqueue_dl_entit=
-y().
->> > >>
->> > >> The pair of splats is shown below, in case it helps.
->> > >
->> > > Again following up...
->> > >
->> > > I am still seeing this on next-20240912, with six failures out of 100
->> > > 6-hour runs of rcutorture=E2=80=99s TREE03 scenario.  Statistics sug=
-gests that
->> > > we not read much into the change in frequency.
->> > >
->> > > Please let me know if there are any diagnostic patches or options th=
-at
->> > > I should apply.
->> >
->> > Hey, sorry I haven't forgotten about this, I've just spread myself a b=
-it
->> > too thin and also apparently I'm supposed to prepare some slides for n=
-ext
->> > week, I'll get back to this soonish.
->>
->> I know that feeling!  Just didn't want it to get lost.
->
-> And Peter asked that I send along a reproducer, which I am finally getting
-> around to doing:
->
->       tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration =
-12h --configs "100*TREE03" --trust-make
->
+On 30/09/2024 22:26, Nathan Chancellor wrote:
+> Hi Javier,
+> 
+> On Mon, Sep 30, 2024 at 06:50:14PM +0200, Javier Carrasco wrote:
+>> But if that wasn't the case, and since you can't use sizeof(<type>),
+>> should it be marked with __maybe_unused / __attribute__((unused)) even
+>> though it's known in advance that it won't be used, or at least that its
+>> use will be to get its size?
+> 
+> Correct.
+> 
+>> Is it then just to silence the warning, or does it have other
+>> implications? Thanks again!
+> 
+> Yes, the use of the unused attribute would just be to silence the
+> warning; the variable would still not be emitted in the final binary.
+> clang's behavior matches GCC's (aside from the special warning):
+> 
+> https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-unused-variable-attribute
+> 
+> If the variable needed to be emitted in the object file,
+> __attribute__((used)) would need to be used, which explicitly has code
+> generation implications:
+> 
+> https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-used-variable-attribute
+> 
+> A contrived example:
+> 
+> https://godbolt.org/z/oGGbqK98o
+> 
+> Cheers,
+> Nathan
 
-FYI Tomas (on Cc) has been working on getting pretty much this to run on
-our infra, no hit so far.
+Thanks a lot for spoon-feeding it to me :)
 
-How much of a pain would it be to record an ftrace trace while this runs?
-I'm thinking sched_switch, sched_wakeup and function-tracing
-dl_server_start() and dl_server_stop() would be a start.
-
-AIUI this is running under QEMU so we'd need to record the trace within
-that, I'm guessing we can (ab)use --bootargs to feed it tracing arguments,
-but how do we get the trace out?
-
+Best regards,
+Javier Carrasco
 
