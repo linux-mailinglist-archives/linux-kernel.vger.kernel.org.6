@@ -1,92 +1,86 @@
-Return-Path: <linux-kernel+bounces-343973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96C298A1F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:19:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BAD298A1F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB4B1F2213C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552451C210A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB11922E5;
-	Mon, 30 Sep 2024 12:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F154719258D;
+	Mon, 30 Sep 2024 12:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DtW7/GyH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Od0MQhSI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC9F18E75F;
-	Mon, 30 Sep 2024 12:11:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81A18C914;
+	Mon, 30 Sep 2024 12:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698289; cv=none; b=cATqNJYXEfFQlqnVBQgov4x6GAcXzH1W60KEjVpQiei6vZIYJPlXvJZkFpzqEKtKsOKAvEKBVPaT++kOASzHhpmnxHXahF4eR63AQbSekJMQac8HjiI6EsWmkZhzzOra7lNJaWSyc/90Jxr4EtV0JGa4HwpLWG/0I4N+pWadyZ0=
+	t=1727698304; cv=none; b=ifHpYwPydbGhutZVxTl4yNjyfdTumTc7nYvEO5OtJSpFOXUQvE61+l6V6mbvGO+0TY3EnRz1+DdppQfqCh38816700mn0tBDUDKnQpz1/f0acGJLFIES7wmQanYFQ70Ahdrea8istxFrMCOlQR6sCBBaa4l9zhV/wsoAYqy5Ds4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698289; c=relaxed/simple;
-	bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NOSh5C7FALJBMvvpAplGktuPNAvdLb+I1PY4uhtADjfFxr8quaIQ8es3Y1pEIRwqeuXZzP6KFj61cz6AqnWeI6EonRvnbBgAQEeZhephJAcVOLftNFTjVP/igaEMGwi+GD82I+n0yAt4kCNnM2ZBaC2/Prm7iHpSFjp2s2R7AVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DtW7/GyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD78C4CEC7;
-	Mon, 30 Sep 2024 12:11:26 +0000 (UTC)
+	s=arc-20240116; t=1727698304; c=relaxed/simple;
+	bh=oq3KtUpOAIfHyHAiEBZ8yU5kDI6r5YanfJ2OjSY5yB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjaQH+fqbvtpcTvIDPiqJhlrD+txJh+zF34yo14nnlYYmDVtWsNEzKD0SN9bCcgiyRgurpsV1QAp/mxTRisps/PUo4wf4wplbSs3pwGiyXF6bhVBEsKO5Pllia7wlA+TwLObZ4IxrUN5V9pj/XqqXLbi7eVS0+1Bll5UbLEo0hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Od0MQhSI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DC3C4CEC7;
+	Mon, 30 Sep 2024 12:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727698288;
-	bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DtW7/GyH4g10ziUg9s5F+jREy77B0GIPKsSrEPcpFH/JvNCzMKcqs/ItrlREKtPOa
-	 9EC2ctjfh70STkNZ+tsJnmRGjatdPOuPWCDdWE4IGrVvIl2AKu/Ro0G1C+HnK5W36H
-	 QUj5ZwxlzYekodauDrU1eZb+/58mU7nZu/LBi0U0Qv/7b36tqPXYBpdysyO7UGYTt7
-	 W89lQv3L+DWhbvWMPJTSpNOQbglEptxhyshUWWtWCihXybRSsiVP/ipqkvd9XYLgCN
-	 U1vNvcV6GZ9Xyz73AUnbFuq8zTZKh6XLr72tZ76vtYF0/LXi3ooi1x1C/r9zbt9ZPA
-	 WcKdMeHzLvFBg==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Add folio_queue API documentation
-Date: Mon, 30 Sep 2024 14:11:17 +0200
-Message-ID: <20240930-baubranche-unbewusst-8646dc251e66@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2912369.1727691281@warthog.procyon.org.uk>
-References: <2912369.1727691281@warthog.procyon.org.uk>
+	s=k20201202; t=1727698304;
+	bh=oq3KtUpOAIfHyHAiEBZ8yU5kDI6r5YanfJ2OjSY5yB4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Od0MQhSIdgc/LSJSbwwnCH4XDSw8bveiTbHUCQ0/D0JwidpdFAukL5fmbmF70DHEt
+	 Gc0/JVvriiAvpp+QgutRX++NPogwLbtvfUPixnugEiiZeD5LabclmdhfwQ9arAA2Ie
+	 5yI6HLyJO60c9/hf0fRWa33xtHmA5HrdwWycBEw0vaGmkrbYIaxZ4vEZ21rtsfE9c8
+	 YcvHDJIy4awcktS4Qn/U9I15x11JeyIuWEqXfSVNT714Bn/6Pho9VRvESVWrw6AH4A
+	 BE3V2mecI1XxgdM0NkAJ9NMXwfozcsZahJCEOv0cjX8AjvylI1YX7wsdKsDJRIlfhD
+	 jqMz+3AVN5Vtg==
+Date: Mon, 30 Sep 2024 14:11:37 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: Guilherme =?iso-8859-1?Q?Gi=E1como_Sim=F5es?= <trintaeoitogc@gmail.com>,
+	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
+	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] device: rust: change the name function
+Message-ID: <ZvqVedQhdyiWREcd@pollux>
+References: <CAM_RzfbQK5fzqXQN89JCEzD1Bz5ZtQdAz3xD0yaYFx_GC7Pm0Q@mail.gmail.com>
+ <2024093044-emblaze-disrupt-d479@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=867; i=brauner@kernel.org; h=from:subject:message-id; bh=9tWYCp4vpeMn12EPX2msoogZdQh1CDg3ECXvFAwQFrI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mpq5rcmS6R738hc6YjnHHuYeOG3aydDfI1zH7v1Ef PU1oW6ZjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIks12VkOLfhfUIsh7aUqpXB XSOlVuPS0Ozrr86lWDfPkXzdddRal+F/jnGGeca7dab+op9eRe78Jtlp9S1+X9/OSzpCr2TLdj7 iBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024093044-emblaze-disrupt-d479@gregkh>
 
-On Mon, 30 Sep 2024 11:14:41 +0100, David Howells wrote:
+On Mon, Sep 30, 2024 at 01:35:09PM +0200, gregkh@linuxfoundation.org wrote:
 > 
-> Add API documentation for folio_queue.
+> >      /// While not officially documented, this should be the case for
+> > any `struct device`.
+> > -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
+> > +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
 > 
-> 
+> With this change, nothing broke?  Does nothing call this code yet?  I
+> thought the firmware interface did that, but I could be wrong...
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+The firmware code uses the `Device` structure, but it doesn't create a
+reference from a raw pointer.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+This function should probably only ever be called from bus abstractions. I
+thought the PHY layer needed this urgently (which also was the reason we merged
+it already), so I'd expect the PHY code to use it.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Though, they might just use `as_ref`.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: Add folio_queue API documentation
-      https://git.kernel.org/vfs/vfs/c/28e8c5c095ec
+- Danilo
 
