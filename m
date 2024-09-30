@@ -1,120 +1,145 @@
-Return-Path: <linux-kernel+bounces-344974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158E198B0CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A7398B0CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0EB21A54
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508231F23925
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0B191F6B;
-	Mon, 30 Sep 2024 23:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AD8188A1F;
+	Mon, 30 Sep 2024 23:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWvbYtwE"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ne5jDm9g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83359189525;
-	Mon, 30 Sep 2024 23:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486845339F;
+	Mon, 30 Sep 2024 23:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727738730; cv=none; b=dOVsTGRaM5Vz+Jh6/3Bf4crK/PyrTAizR3RlTQsa0iMurNhFK7nc1GxzmWl1futgagD+Ys0lqAXwPTRaF9WvLV1MA1lCiRegG1Om8divSRsTkXPAVJ/ob6XXxDmmxCCs2qIZP7IyhZGhrZZ+2IgChuUKzcsTxfSFe3UcOkMEVc4=
+	t=1727738727; cv=none; b=pHtZy64tVMmhObCVhRuUryu+AGRwVxq6dbPoY8yb0F4YAN3/B0DBj6aAmPaNt+Lu9HLb7zEUOi5vfonnHhpC6KWnJDf6Q+pt3j9Zx4y02oSe4HT1xt1P2+qWL8vj66B1caHHo7sGP/KeO7FSot3qO37W16xbwy3BAwbtzi2e/Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727738730; c=relaxed/simple;
-	bh=vdadp3w0ZndLd/AU8pPOP+RMAlcwpwoNKHgB1DPUHVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=THCYxZ3VKt9PMEUX/ZL347cr7vzqYuinK8e45XZRGf6N2MuCWkvRhHgPh8UVaSufpirLf+8HjT8nShxmQ199e3keQjvOjVcuKfkS8qQwTdrXrxMaWvPTMqx6Jtd8359uHH5wgkqBzDWGRL89QrY9LvwTe75IMkgNc8j2lomlkHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWvbYtwE; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b0b5cdb57so38976405ad.1;
-        Mon, 30 Sep 2024 16:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727738728; x=1728343528; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b2l/INc1G6hGl42jJZMjqWTMmdh1MqpMdLpE6m9LxGY=;
-        b=GWvbYtwEJBIQeT4wEXgNxOYPQjFu205rybFTA5o7bdFlZuqhh8YN1SflGGSe+u+9il
-         5IpqpHdoKnA72M8eJkmlpKhi2SP62LIaXAJlLG9JQuEX35RY2mfC62LhGpVH1WH9RooZ
-         DjqQr56aMhcbEb5M0ex/hKNVKf1t3kaG6Pg5dYzW3JNFSrq4LSDshqxSA8ILNRDBkYpm
-         djjRn9QLUvm60qFzFVRDpyctMPax0tBpq2Oj/nxjyKWyoA+41hr4lzyjGf5gh3XD4GeZ
-         1dETVysiIjCcXjV7WgxDxsXHQe2iow08oCBw9Y1q0TsVnTYf/WjVqmKJ3iO5bB15mi51
-         njlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727738728; x=1728343528;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b2l/INc1G6hGl42jJZMjqWTMmdh1MqpMdLpE6m9LxGY=;
-        b=r1CjlLwwq3ttXj5pU5kQIthq/PBxf2Cx6QoK9/BJ6NMaPE4vtfA4JGkJbVHwJ/wZCZ
-         M4jFwosmY8Q2ygHUwqYnfUqiJxQjTXXLtKoFX77UfDp2DhdLioD1WNnnRcZMjPC4uoOu
-         r7+2yQjb7ZPqL2RuzjdDmZ/4BDuKQF65zWZ3Ft4LcTATCFdnUuSeCdgNSp6EbZT4/x//
-         yAzllx94kjIQJnbO8RhLOIBT1yNYdbE3pNBL5t76SWkNpmVdL1OModzxCUmIOpAAZzAX
-         4GUA+4bUDJknF1YYpXohewA1rUfQHlzjpbJCqTZ22GFm7zwfFqqnkuTG7eOE9hP1lGSr
-         MFjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQerbanHoU25kvhAWN3T4g0f3bbpG9CknvBo0g+tLd+0pmMM21f/8t999MCoQqAs9FZNecvCm2i/4kwu8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOMqbmNU9bqN73veqRz/YpzZg0yiglzR4/yx/1g5Yf6EHdsi9p
-	fwRRr/+x8dFALCQt8K7cChTvUUjnRnY9z23PvL2/4C+D8wdMSW14
-X-Google-Smtp-Source: AGHT+IFxQCnTkI/10QO/SwLIHejO9Ai2n1epW19WOKy3mNuQBfLgXAzzRkOLwniFyBlRx0KPlhl02g==
-X-Received: by 2002:a17:902:c403:b0:207:1845:bc48 with SMTP id d9443c01a7336-20ba9f3023emr15528665ad.30.1727738728377;
-        Mon, 30 Sep 2024 16:25:28 -0700 (PDT)
-Received: from localhost.localdomain (n203-164-232-111.bla21.nsw.optusnet.com.au. [203.164.232.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b50423894sm46892245ad.207.2024.09.30.16.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 16:25:28 -0700 (PDT)
-From: Rohan Barar <rohan.barar@gmail.com>
-To: mchehab@kernel.org,
-	hverkuil@xs4all.nl
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rohan Barar <rohan.barar@gmail.com>
-Subject: [PATCH v2] media: cx231xx: Add support for a new 'Dexatek' device (USB ID: 1d19:6108)
-Date: Tue,  1 Oct 2024 09:25:01 +1000
-Message-ID: <20240930232500.1700330-2-rohan.barar@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240926235048.283608-2-rohan.barar@gmail.com>
-References: <20240926235048.283608-2-rohan.barar@gmail.com>
+	s=arc-20240116; t=1727738727; c=relaxed/simple;
+	bh=lftSWREXCHgVnSbzfjYCNT7qOJF1RErf634jGjQfgJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p+JliW5k8NejauUDaLSfcMBvBLYbrw3Od0r40sa5TQyiJaHgvhTIvdObG0AI9RzqUI0jka7uNjI5k29XNVN+RfKCq8KehbodiWst6k1kXR4E+V8w9CkwJd7ipHGtHLxoGZbjfOd6UQ0jCNHtloi8/r3KY9meuxJl34rtUIDVpeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ne5jDm9g; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727738726; x=1759274726;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lftSWREXCHgVnSbzfjYCNT7qOJF1RErf634jGjQfgJI=;
+  b=Ne5jDm9gAXuEXzfvxk4y2AjW0dncB/3KWI8lhH6hKh3i7q0opXKCe3Ez
+   F1q4XeFAFKnVUVq67DobjPVhgoe1kzPUm4DKzNvWWiUbSmiQLSZYvNqSw
+   CewQGDIT0D4mwKI2hGzFF/Gca3Qu9g6+T4PnxuKh1PQew5xBz6Y8vNasZ
+   23iFLLeHsZvZ4KU3Nx8TJcl/vaf3I6A+bZKvE04Yj3JVRVL4hW+H6Fu+r
+   7/uDf5SiPT8pSoAubWuHjjFTbKYFLiHh6l2sZN5+414ry/6COeitMyv4V
+   /BTRmTwSIshBQ/xj/sR3/+MzdfetTgOZQOmNZ0xwhm8sXgVe/wIfFreGM
+   g==;
+X-CSE-ConnectionGUID: YMwt0/WwQDGsBwfZZRclWQ==
+X-CSE-MsgGUID: SPFKwu5YRo+mHWclvpFXSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26950724"
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="26950724"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 16:25:26 -0700
+X-CSE-ConnectionGUID: hGmeayM0QHCxeP3Jg/p2XA==
+X-CSE-MsgGUID: Hd0ZH7Z1T9W8hwwKLU2eyw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="104242228"
+Received: from msangele-mobl.amr.corp.intel.com (HELO [10.124.223.122]) ([10.124.223.122])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 16:25:24 -0700
+Message-ID: <f751ffe7-9900-4d91-9e7a-e560777725e1@intel.com>
+Date: Mon, 30 Sep 2024 16:25:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/2] nosnp sev command line support
+To: Pavan Kumar Paluri <papaluri@amd.com>, linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Eric Van Tassell <Eric.VanTassell@amd.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ Michael Roth <michael.roth@amd.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20240930231102.123403-1-papaluri@amd.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240930231102.123403-1-papaluri@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch adds support for a Dexatek Technology Ltd Video Grabber (USB ID: 1d19:6108) to the `cx231xx` driver.
+On 9/30/24 16:11, Pavan Kumar Paluri wrote:
+> Provide "nosnp" boot option via "sev=nosnp" kernel command line to
+> prevent SEV-SNP[1] capable host kernel from enabling SEV-SNP and
+> initializing Reverse Map Table (RMP) [1].
+> 
+> On providing sev=nosnp via kernel command line:
+> cat /sys/module/kvm_amd/parameters/sev_snp should be "N".
 
-This device, sold under the name "BAUHN DVD Maker (DK8723)" by ALDI in Australia, is similar to the device with USB ID `1d19:6109`.
+I don't see any mention in the changelog, cover letter or Documentation/
+about why someone would want to do this.
 
-The latter is already supported in the `cx231xx` driver.
+I assume it's because of performance (walking the RMP table is non-zero
+cost).
 
-Both video and audio capture have been tested and confirmed to work after compiling, signing, and loading the patched driver.
-
-For evidence of the device functioning correctly, refer to: https://github.com/KernelGhost/TapeShift
-
-Signed-off-by: Rohan Barar <rohan.barar@gmail.com>
-
----
- drivers/media/usb/cx231xx/cx231xx-cards.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
-index 92efe6c1f..bda729b42 100644
---- a/drivers/media/usb/cx231xx/cx231xx-cards.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
-@@ -994,6 +994,8 @@ const unsigned int cx231xx_bcount = ARRAY_SIZE(cx231xx_boards);
-
- /* table of devices that work with this driver */
- struct usb_device_id cx231xx_id_table[] = {
-+	{USB_DEVICE(0x1D19, 0x6108),
-+	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
- 	{USB_DEVICE(0x1D19, 0x6109),
- 	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
- 	{USB_DEVICE(0x0572, 0x5A3C),
---
-2.46.1
+The BIOS allocates the RMP table, right?  So this option presumably gets
+the performance back, but not the memory.  That's probably also worth
+mentioning ... somewhere.
 
