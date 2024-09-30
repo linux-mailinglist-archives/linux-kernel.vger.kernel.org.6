@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D298A177
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:07:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD39698A18C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624CB1C20FC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:07:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7699EB24E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0001922CC;
-	Mon, 30 Sep 2024 12:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06489192598;
+	Mon, 30 Sep 2024 12:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ezr5xw2N"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MLPcKC+H"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A081917D9
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8523E191F82
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697862; cv=none; b=Vb4lGYSqsSIp3glgtWdVnIMld93dEXRHTvCAIP6AJeX/gyfjVr0S6cfKbaw0tPJdUl7YiImMO6ymD7WjjJgrc/o4EA8ez4EhT3ypjiu/3xjVKLiZaQJ0hHvI0BtqQ5T6mblSrkiUi7SChD+ONBg/0YDR94FdhGv6pWl9t3Jb8K0=
+	t=1727697864; cv=none; b=jVA5TR7EW9BWiIV0xkIiT33+yeJyCLfT9FrcoC5UVicS4xYQ1wNgN3ppLilWunxiym4r3UIRhvjRV2FrSpqNUhVH486gGk49uy+Kw94Rg4LA6bbJAxDcDuqxzAOcKlTcTkngCoigi51FEX0WmoMUZU9XcsPmZ7iSK3EBdNJs8MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697862; c=relaxed/simple;
-	bh=BvA7+CDkEDbwQNrCD6szhKebs9WzOh0Xxj8N0zINlEg=;
+	s=arc-20240116; t=1727697864; c=relaxed/simple;
+	bh=GRNRTE3KFYZCTqmHqSQFYdbDtQolStbwq9AxxoNYcUM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MNCknhFT/Uq/ph2aiDV+egrc7+EgiRFs1fS1y8A+mRpXuDU6vWt49nCsTugo1pzkYo2nBP+h0j8ypvPw4ULv3+TLRFGvXWuEvEqx7ysn1nawfboYDfuQHO+yk9buUcJ9YnoaMV8T0PpAzJS5IrB7yYRrGnhKaOrP+F3+qEccGT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ezr5xw2N; arc=none smtp.client-ip=209.85.210.45
+	 In-Reply-To:To:Cc; b=tlLCBJHOTq5crtCdgVjTQtHYOCMrao1LOJ1Gss6KdxdPI7jMAYYodvGPB0/9ciOxzrgWMRltSIasYcNnbkn47wDs7wlyzz9BTtxGBphKnj5KXOTPbVjyWrNezZkjha/rIITfuUlUcPkSpqKbdMPfGqEfOLUow7PTO+EbbfhaEa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MLPcKC+H; arc=none smtp.client-ip=209.85.219.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710fe5c3b44so2523508a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:20 -0700 (PDT)
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cb3062d9a6so36150916d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697860; x=1728302660; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697861; x=1728302661; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oyq88t8pWb3nvRMsH4SWW8lN0+v/o8BALR3Lyr5Ymdo=;
-        b=Ezr5xw2NNr0mkx4s8kIeMgeMjmlN7uJcaf+p8U9LSSwIHDAhndTlItmY6WLsoVPNA9
-         s5eFp6sLrkykK96ox089oGwa9Z9cTKYeavL4rVB6ZY5UQUBsK52HwBvW0hmlrsZUTX2y
-         5XFlfFpgZLrXxjYtJDnfb1gWmRXoWxdlI/dUk=
+        bh=o0DduMWqX0LlLrfJFzeOwfQDx0mBLtEZV9WrRhA8PwA=;
+        b=MLPcKC+H5g1f7pl32q5ujlg/ILompcNeudAhYQSXsx9ogt6D5TCSzrmqpVRZ/JtLWy
+         T6ES9WI0O6mNOcYfOExqdCk6y1r+z6r2fVK4wh0D04v6gKLAaFrb0eedHU+vifhwM9W/
+         WV//oGfeHw+6PG1EGtHyoQA1k5NnvUNKchczY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697860; x=1728302660;
+        d=1e100.net; s=20230601; t=1727697861; x=1728302661;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oyq88t8pWb3nvRMsH4SWW8lN0+v/o8BALR3Lyr5Ymdo=;
-        b=bOq1GE0IVJksXOUwT8RKrJQ324W1MDvYIzrKmcrCg4gysVJleFtkg+YnFuldkzGR71
-         +m4bxAo5PM4BsDrlGxpkABToR4SHQwsQ0QaBIISPpsWyGOlbAdqUJNeHiiKUtYUXPxxJ
-         CguCfbH8CuMBLb2B1bajiUukmXFYj0aJuNKqRlE54mKoE/ZHbQwPwHDEW5fu1Q47IJYs
-         521/m0oQk+/3Mgc4kb3yxuAPjOaKQvIViDFyx5Z0xbOboAEH2NxoXSAT80SIGsVcmRGn
-         8t7j6VFxQHxLRbT+wc4OCaVoktzhDYiK50E7G3PmqrqYBkuLbgB6NeKIRBVGfLdtcPLC
-         XzgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWrGKPb/rTT2L1VnnJtuJWA4wygM/rntKayVcR0IOHCcd0abZX+qKRtF/kjxQ8WA9TrBjZd+h7nrpL+NYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrB1P2QIwUTWszHilXcJiP0LsLY6ytVY4DBN2t/PVxCmQVrdrq
-	u8pmzcx4JByFnYvu8qfG8UyvC49FAN4QxB8XiUCAex/tSDOGcWxs7d/yBcg+Qw==
-X-Google-Smtp-Source: AGHT+IGlFIIrabSCXdg/bJ9e3MVgi6gfLFZpzZGyv3CgenARKjE0A4bquSvob8woJ1CdObZm4BjrEg==
-X-Received: by 2002:a05:6359:8488:b0:1bc:d1ba:225 with SMTP id e5c5f4694b2df-1becbb8fbe2mr306353155d.10.1727697859596;
-        Mon, 30 Sep 2024 05:04:19 -0700 (PDT)
+        bh=o0DduMWqX0LlLrfJFzeOwfQDx0mBLtEZV9WrRhA8PwA=;
+        b=W8XWpc9fDdhpwY1PVYG1trFgW9ebhBZgvAgYQrvR3y8WWFBIzFzpi2qw3+ATg/oquv
+         LBWC84bFkXx16T1q2Qyr3Pk9p+Eoi+JpVXbnQbCeXag9Go0P9ZR7CsXl9iFptf7QbvU1
+         8ncfw7/CqDq44oaAK2t/L/loNdTwYxcNIlho0+hGPOMKDDwwS/VNdU7dTDdlV2WjCWho
+         nnHPJuu/OMNmXJ3E8dsikT8R1Kqe5MSggO225Y09b0Pb/lCsv7VKn8W6FYvYHOTUAP2v
+         CjrTYIh2sc6nCq1iIHRc7RzGBoA2WU8YKo9Toaf4ZMG1OeqKZrX0++k+u5vCnAddrRWt
+         GgBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4Zse4mMNzDIQLZoKew+qI0p7UQ5/XYoUsMZXFmEsqpUPbuYS12k7WBsv/dA8R6kyLt/Qs8NuMPSEhL3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz6+T84vFfYVTwK2kvDSbVWa0o73ExQ0VHIs/xcaCp33ZUW8W5
+	vZC+B19kvSfRMQ0OLLcQqqOxaj7MU1MHzqwsXEX/aIQLdP9WgpbOO+YXIfxOdg==
+X-Google-Smtp-Source: AGHT+IFW5o76WLto1m5OIr01yojLQTVPsUEplusVOtBKeM+zgF4Mr8Jjm4ekkrZvP/8oEpp3jj7xuA==
+X-Received: by 2002:a05:6214:3a88:b0:6cb:35ea:a343 with SMTP id 6a1803df08f44-6cb3b5b60c5mr157899696d6.5.1727697861311;
+        Mon, 30 Sep 2024 05:04:21 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.17
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:18 -0700 (PDT)
+        Mon, 30 Sep 2024 05:04:20 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:03 +0000
-Subject: [PATCH 08/45] media: dvb-usb-v2: Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:04 +0000
+Subject: [PATCH 09/45] media: cx231xx: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-8-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-9-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -114,61 +114,51 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
 X-Mailer: b4 0.13.0
 
 The following cocci warnings are fixed:
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:250:3-22: opportunity for str_yes_no(adap -> pid_filtering)
-drivers/media/usb/dvb-usb-v2/dvb_usb_core.c:337:3-22: opportunity for str_yes_no(adap -> pid_filtering)
-drivers/media/usb/dvb-usb-v2/az6007.c:82:32-38: opportunity for str_enable_disable(enable)
-drivers/media/usb/dvb-usb-v2/az6007.c:192:32-37: opportunity for str_enable_disable(onoff)
+drivers/media/usb/cx231xx/cx231xx-video.c:144:4-9: opportunity for str_enabled_disabled(flags)
+drivers/media/usb/cx231xx/cx231xx-i2c.c:373:4-30: opportunity for str_read_write(( msgs [ i ] . flags & I2C_M_RD ))
+drivers/media/usb/cx231xx/cx231xx-i2c.c:402:4-32: opportunity for str_read_write(( msgs [ i + 1 ] . flags & I2C_M_RD ))
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/usb/dvb-usb-v2/az6007.c       | 4 ++--
- drivers/media/usb/dvb-usb-v2/dvb_usb_core.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/usb/cx231xx/cx231xx-i2c.c   | 4 ++--
+ drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
-index 2410054ddb2c..1e9f946193a6 100644
---- a/drivers/media/usb/dvb-usb-v2/az6007.c
-+++ b/drivers/media/usb/dvb-usb-v2/az6007.c
-@@ -79,7 +79,7 @@ static int drxk_gate_ctrl(struct dvb_frontend *fe, int enable)
- 	struct dvb_usb_adapter *adap = fe->sec_priv;
- 	int status = 0;
+diff --git a/drivers/media/usb/cx231xx/cx231xx-i2c.c b/drivers/media/usb/cx231xx/cx231xx-i2c.c
+index 6da8e7943d94..6d8b70562f6d 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-i2c.c
++++ b/drivers/media/usb/cx231xx/cx231xx-i2c.c
+@@ -370,7 +370,7 @@ static int cx231xx_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 		addr = msgs[i].addr;
  
--	pr_debug("%s: %s\n", __func__, enable ? "enable" : "disable");
-+	pr_debug("%s: %s\n", __func__, str_enable_disable(enable));
- 
- 	if (!adap || !st)
- 		return -EINVAL;
-@@ -189,7 +189,7 @@ static int az6007_streaming_ctrl(struct dvb_frontend *fe, int onoff)
- {
- 	struct dvb_usb_device *d = fe_to_d(fe);
- 
--	pr_debug("%s: %s\n", __func__, onoff ? "enable" : "disable");
-+	pr_debug("%s: %s\n", __func__, str_enable_disable(onoff));
- 
- 	return az6007_write(d, 0xbc, onoff, 0, NULL, 0);
- }
-diff --git a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-index f1c79f351ec8..c0a40112d043 100644
---- a/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-+++ b/drivers/media/usb/dvb-usb-v2/dvb_usb_core.c
-@@ -247,7 +247,7 @@ static int dvb_usb_start_feed(struct dvb_demux_feed *dvbdmxfeed)
- 	dev_dbg(&d->udev->dev,
- 			"%s: adap=%d active_fe=%d feed_type=%d setting pid [%s]: %04x (%04d) at index %d\n",
- 			__func__, adap->id, adap->active_fe, dvbdmxfeed->type,
--			adap->pid_filtering ? "yes" : "no", dvbdmxfeed->pid,
-+			str_yes_no(adap->pid_filtering), dvbdmxfeed->pid,
- 			dvbdmxfeed->pid, dvbdmxfeed->index);
- 
- 	/* wait init is done */
-@@ -334,7 +334,7 @@ static int dvb_usb_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
- 	dev_dbg(&d->udev->dev,
- 			"%s: adap=%d active_fe=%d feed_type=%d setting pid [%s]: %04x (%04d) at index %d\n",
- 			__func__, adap->id, adap->active_fe, dvbdmxfeed->type,
--			adap->pid_filtering ? "yes" : "no", dvbdmxfeed->pid,
-+			str_yes_no(adap->pid_filtering), dvbdmxfeed->pid,
- 			dvbdmxfeed->pid, dvbdmxfeed->index);
- 
- 	if (adap->active_fe == -1)
+ 		dprintk2(2, "%s %s addr=0x%x len=%d:",
+-			 (msgs[i].flags & I2C_M_RD) ? "read" : "write",
++			 str_read_write(msgs[i].flags & I2C_M_RD),
+ 			 i == num - 1 ? "stop" : "nonstop", addr, msgs[i].len);
+ 		if (!msgs[i].len) {
+ 			/* no len: check only for device presence */
+@@ -399,7 +399,7 @@ static int cx231xx_i2c_xfer(struct i2c_adapter *i2c_adap,
+ 			}
+ 			/* read bytes */
+ 			dprintk2(2, "plus %s %s addr=0x%x len=%d:",
+-				(msgs[i+1].flags & I2C_M_RD) ? "read" : "write",
++				str_read_write(msgs[i + 1].flags & I2C_M_RD),
+ 				i+1 == num - 1 ? "stop" : "nonstop", addr, msgs[i+1].len);
+ 			rc = cx231xx_i2c_recv_bytes_with_saddr(i2c_adap,
+ 							       &msgs[i],
+diff --git a/drivers/media/usb/cx231xx/cx231xx-video.c b/drivers/media/usb/cx231xx/cx231xx-video.c
+index 435eb0b32cb1..4cdcfe635ad7 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-video.c
++++ b/drivers/media/usb/cx231xx/cx231xx-video.c
+@@ -141,7 +141,7 @@ static int cx231xx_enable_analog_tuner(struct cx231xx *dev)
+ 			dev_err(dev->dev,
+ 				"Couldn't change link %s->%s to %s. Error %d\n",
+ 				source->name, sink->name,
+-				flags ? "enabled" : "disabled",
++				str_enabled_disabled(flags),
+ 				ret);
+ 			return ret;
+ 		} else
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
