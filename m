@@ -1,190 +1,122 @@
-Return-Path: <linux-kernel+bounces-344492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B302C98AA62
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1080398AA66
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAFD1F23C10
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 650F3B20DE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5105B193418;
-	Mon, 30 Sep 2024 16:56:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7E61946AA;
+	Mon, 30 Sep 2024 16:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SteVKDgc"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61C1925B8
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74A8192B73
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715374; cv=none; b=RF1oKKiueUcxd2d8UXYo1vMYheODWvthr/u4/m2YeAp+2kbGnchSZNVJ/DWFx4D+Qd+m4+GmyexV7ArCs3zS/r10nm5nV66XwRZuF4LKPxD6SvpKKiPlpM0+uggxO2s0lekVRtzf5nKRlow/luKzvXwnwHSea2KDuW45QRaR+Po=
+	t=1727715394; cv=none; b=puV9DEFEQnu5yjQuUO+OgF80bEMo1vsHGou17luq5aIGBnPEkbchJzd+sF0K9JURThHn4YnSPr9Y+nZO4XdVA16JqQWkkCKt0sFYbodnTPKFrvHPKZCezDfRWIyWh4r0clZ8RDv/vsrE+F7cnQoXbPVOJIMpj7kcKkLBjtxMPXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715374; c=relaxed/simple;
-	bh=4zBNprMZl9BBdFUcZxU//hySXcCOgRT08A1NmFvH89Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O6TlJ8RM8Wt4/uE423bq7E4BwNt1imxEAIDcATJZSHSPz6xax3Wqfn0/RhHMdoWB6VNBcEYgvCpnRLqyXYL5m/Vxmn6ceiIJYa7G4onlXrY3M1fWg5Mk4Wmjh5ggWa/dUZ+oWeP9F88wNrVlOaVGLqI9irAocvVORMoIyf9Tc5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJgs-0003Pg-7Z; Mon, 30 Sep 2024 18:56:06 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJgr-002fvN-Eg; Mon, 30 Sep 2024 18:56:05 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svJgr-000FXL-1G;
-	Mon, 30 Sep 2024 18:56:05 +0200
-Message-ID: <01aff9c0f129f8c1cf41c7ae53dac38048aa34a8.camel@pengutronix.de>
-Subject: Re: [PATCH v5 8/9] reset: amlogic: split the device core and
- platform probe
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Jiucheng Xu
- <jiucheng.xu@amlogic.com>, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 30 Sep 2024 18:56:05 +0200
-In-Reply-To: <1jldzwkpsu.fsf@starbuckisacylon.baylibre.com>
-References: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
-	 <20240910-meson-rst-aux-v5-8-60be62635d3e@baylibre.com>
-	 <8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
-	 <1jldzwkpsu.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727715394; c=relaxed/simple;
+	bh=bmuEUyqk2bT1c3O+xO2sNPpOqDNsTNasFyYcsnwXMAo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=MY2P2tfcLYMlWKQMJX8IQYimWC3ipDn+w4g648wtv+iR1m5DMoTuT4uB1yQuL/XWVOtKYkFwyW60G6oAVrkT+2xiPmQTQQF9SKER/RgwtdKDXYpgS8o6/sX3ezwzn9kCrdReieMm/HnBoWn0ZTxqKEC2VCNl/XYnXHdG65kPpZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SteVKDgc; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25cd76fb92so7316000276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727715392; x=1728320192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bmuEUyqk2bT1c3O+xO2sNPpOqDNsTNasFyYcsnwXMAo=;
+        b=SteVKDgc4uqeIQW9aTFTUWbIU6JfB+PItmEUiuqHqPA4Ey2K2rZRC/OjKvoEcC2OZG
+         XyHia6vx/s0yDj5gNTQth0RuJT+Uzx5WLRH4hzq9LiY90sKDMU7ynP9Bly7pv/AJCVCD
+         hKaX0jXk1NTcpooWAMfaU00LstQwU9esg6MO/e9Bkb2afeuNSvNkVLowG+6fFzA7sV+X
+         Qzo9rYAoZVIGLRaTGwZEzt2E90qrgzrsDs+aasGkxXiwlCFswWvygUAzNOy2uQCLdgmJ
+         Y8CanrcWug44CUXq1cE/N/6HzevU+F5YvS9vNNFwac7BKdpNZ1miLWVpSrVWedf34oQu
+         yi5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727715392; x=1728320192;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bmuEUyqk2bT1c3O+xO2sNPpOqDNsTNasFyYcsnwXMAo=;
+        b=DoLDorg0gt7isVwVhnBB4NlQ8WtapvgsLovZDAkm9YTLbqbibv7KXhx/Zfiwz7E152
+         q4Fbf6FgcBBo7um8Nk5NPXeL0S+wdWyA60dM3JipxgJ4DIiej8mx8ZoOIP1dZDyOH9Rd
+         d4snw61IWtxwUU6L1R/b7K06TcQOPbclh8ffutGKOJE7DFOmf+YpfmomGZzEo1F6EXkJ
+         XB7D7K0S2PWShCIGvS1cMBEJDMduywBA1NXyKXom+kX7xZTqi+nCvBET/gHcxfa8z4/a
+         Ul4Fk9+yjhm9EL9R0ar9edZUXypIbCVAAwnzFQ6359DVoLeawsat8RHcmOwf8ueCM1QL
+         7eXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjhVVQBJl5y7yZ/OzlW/CLdgKXY46j40Vp6VxL4OiemBcfKt9atSbRTyUtrR3Vb9A2cu3821RkDMTupqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt7MN5/aYQs4TklygOUp0mzn6qOp2P4javPo/Qhe7N27i+Z8i8
+	EM9buuIqZlnznV9WOBfVl0TGYOjkBv/i26wOwbTL5CX4NE8xlcN828h3L54paGu8ySD8/MP7Mbi
+	iMA==
+X-Google-Smtp-Source: AGHT+IEC5NPofYVzP+Wzs2dXMq4oR3r2G7SGyWOX8ZxrYfWVkpnj7bsqqKMZB753besVJFViOSuQTmArTz8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:2e4d:0:b0:e16:4d66:982e with SMTP id
+ 3f1490d57ef6-e2604b436d5mr59541276.5.1727715391824; Mon, 30 Sep 2024 09:56:31
+ -0700 (PDT)
+Date: Mon, 30 Sep 2024 09:56:26 -0700
+In-Reply-To: <208429ae-d9c5-4b73-86ff-a9b31e68f7eb@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-8-xin3.li@intel.com>
+ <ZiJzFsoHR41Sd8lE@chao-email> <ZmoT0jaX_3Ww3Uzu@google.com>
+ <feefa9d1-f266-414f-bb7b-b770ef0d8ec6@zytor.com> <ZuNJlzXntREQVb3n@google.com>
+ <d65e62d2-ca64-4b29-8656-bb8411fe837d@zytor.com> <ZvQaNRhrsSJTYji3@google.com>
+ <496a337d-a20d-4122-93a9-1520779c6d2d@zytor.com> <208429ae-d9c5-4b73-86ff-a9b31e68f7eb@zytor.com>
+Message-ID: <ZvrYOj0Nn9m8VIWV@google.com>
+Subject: Re: [PATCH v2 07/25] KVM: VMX: Set intercept for FRED MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin@zytor.com>
+Cc: Chao Gao <chao.gao@intel.com>, Xin Li <xin3.li@intel.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, shuah@kernel.org, 
+	vkuznets@redhat.com, peterz@infradead.org, ravi.v.shankar@intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fr, 2024-09-13 at 08:53 +0200, Jerome Brunet wrote:
-> On Thu 12 Sep 2024 at 10:12, Philipp Zabel <p.zabel@pengutronix.de> wrote=
-:
->=20
-> > On Di, 2024-09-10 at 18:32 +0200, Jerome Brunet wrote:
-> > > To prepare the addition of the auxiliary device support, split
-> > > out the device coomon functions from the probe of the platform device=
-.
+On Fri, Sep 27, 2024, Xin Li wrote:
+> > > > When FRED is advertised to a guest, KVM should allow FRED SSP MSRs
+> > > > accesses through disabling FRED SSP MSRs interception no matter whe=
+ther
+> > > > supervisor shadow stacks are enabled or not.
 > > >=20
-> > > The device core function will be common to both the platform and auxi=
-liary
-> > > driver.
+> > > KVM doesn't necessarily need to disabling MSR interception, e.g. if
+> > > the expectation
+> > > is that the guest will rarely/never access the MSRs when CET is
+> > > unsupported, then
+> > > we're likely better off going with a trap-and-emulate model.=C2=A0 KV=
+M
+> > > needs to emulate
+> > > RDMSR and WRMSR no matter what, e.g. in case the guest triggers a
+> > > WRMSR when KVM
+> > > is emulating, and so that userspace can get/set MSR values.
 > > >=20
-> > > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> > > ---
-> > >  drivers/reset/amlogic/Kconfig              |   7 +-
-> > >  drivers/reset/amlogic/Makefile             |   1 +
-> > >  drivers/reset/amlogic/reset-meson-common.c | 121 +++++++++++++++++++=
-+++++++++
-> > >  drivers/reset/amlogic/reset-meson.c        | 122 ++++---------------=
-----------
-> > >  drivers/reset/amlogic/reset-meson.h        |  24 ++++++
-> > >  5 files changed, 167 insertions(+), 108 deletions(-)
+> > > And this means that yes, FRED virtualization needs to land after CET
+> > > virtualization,
+> > > otherwise managing the conflicts/dependencies will be a nightmare.
 > > >=20
-> > > diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kc=
-onfig
-> > > index 532e6a4f7865..1d77987088f4 100644
-> > > --- a/drivers/reset/amlogic/Kconfig
-> > > +++ b/drivers/reset/amlogic/Kconfig
-> > > @@ -1,10 +1,15 @@
-> > > +config RESET_MESON_COMMON
-> > > +	tristate
-> > > +	select REGMAP
-> > > +
-> > >  config RESET_MESON
-> > >  	tristate "Meson Reset Driver"
-> > >  	depends on ARCH_MESON || COMPILE_TEST
-> > >  	default ARCH_MESON
-> > >  	select REGMAP_MMIO
-> > > +	select RESET_MESON_COMMON
-> > >  	help
-> > > -	  This enables the reset driver for Amlogic Meson SoCs.
-> > > +	  This enables the reset driver for Amlogic SoCs.
-> > > =20
-> > >  config RESET_MESON_AUDIO_ARB
-> > >  	tristate "Meson Audio Memory Arbiter Reset Driver"
-> > > diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/M=
-akefile
-> > > index 55509fc78513..74aaa2fb5e13 100644
-> > > --- a/drivers/reset/amlogic/Makefile
-> > > +++ b/drivers/reset/amlogic/Makefile
-> > > @@ -1,2 +1,3 @@
-> > >  obj-$(CONFIG_RESET_MESON) +=3D reset-meson.o
-> > > +obj-$(CONFIG_RESET_MESON_COMMON) +=3D reset-meson-common.o
-> > >  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) +=3D reset-meson-audio-arb.o
-> > > diff --git a/drivers/reset/amlogic/reset-meson-common.c b/drivers/res=
-et/amlogic/reset-meson-common.c
-> > > new file mode 100644
-> > > index 000000000000..d57544801ae9
-> > > --- /dev/null
-> > > +++ b/drivers/reset/amlogic/reset-meson-common.c
-> > > @@ -0,0 +1,121 @@
-> > > +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> > > +/*
-> > > + * Amlogic Meson Reset core functions
-> > > + *
-> > > + * Copyright (c) 2016-2024 BayLibre, SAS.
-> > > + * Authors: Neil Armstrong <narmstrong@baylibre.com>
-> > > + *          Jerome Brunet <jbrunet@baylibre.com>
-> > > + */
-> > > +
-> > > +#include <linux/device.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/reset-controller.h>
-> > > +
-> > > +#include "reset-meson.h"
-> > > +
-> > > +struct meson_reset {
-> > > +	const struct meson_reset_param *param;
-> > > +	struct reset_controller_dev rcdev;
-> > > +	struct regmap *map;
-> > > +};
-> > > +
-> > > +static void meson_reset_offset_and_bit(struct meson_reset *data,
-> > > +				       unsigned long id,
-> > > +				       unsigned int *offset,
-> > > +				       unsigned int *bit)
-> > > +{
-> > > +	unsigned int stride =3D regmap_get_reg_stride(data->map);
-> > > +
-> > > +	*offset =3D (id / (stride * BITS_PER_BYTE)) * stride;
-> > > +	*bit =3D id % (stride * BITS_PER_BYTE);
-> > > +}
-> > > +
-> > > +static int meson_reset_reset(struct reset_controller_dev *rcdev,
-> > > +			     unsigned long id)
-> >=20
-> > checkpatch --strict complains about the alignment here.
-> > I'll fix this up when applying, no need to resend.
 >=20
-> Thanks Philipp.
->=20
-> FYI, those mis-alignement were already present in the original code and
-> there has been comments when I re-indented code while moving it
-> around so I did not touch it.
+> I still plan to send another iteration of the FRED patch set for review,
+> however I haven't seen your x86 KVM changes land into Linus' tree, it
+> will happen soon, right?
 
-Oh, ok.
-
-I've applied them to reset/next them unchanged, at:
-https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D5b93105afcdc
-and sent a follow-up patch to fix the alignment.
-
-regards
-Philipp
+Yep, we squeaked into rc1, the pull request to Linus was delayed because of
+travel and conferences.
 
