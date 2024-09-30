@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-343661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3433F989DE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:17:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0C5989DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B7A28614D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:17:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6B8D28637B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:17:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1139018D64B;
-	Mon, 30 Sep 2024 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lEvlYdAE"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484E318B465;
+	Mon, 30 Sep 2024 09:16:07 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F1D18CC0D;
-	Mon, 30 Sep 2024 09:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EE218801E;
+	Mon, 30 Sep 2024 09:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727687778; cv=none; b=DcY6tsMl1Olhfn/OTRMs4J0Tr/xCsjSKcjib2OHdDXFgBKH76BwZhBi9MOjdbYsN6q1PgX+c8Wa6NBe9wXfg2sEeImarDzcf39PtmmxrrFd5jANYE4nQw0AbAFHTtdL/gn8EufuuBOrasrZnbcztgrV7a3RLc5+jRWYyKlDl01c=
+	t=1727687766; cv=none; b=Zez1KnGEc1VkLZw77raM6fZk4hAMGdwXCS6+qNRAz2acXoO1D9lVrlYs5Wu6mkEpmtHhoBNtwKOipRpbtDrYegsjzVCgANsJFGZ8fcn4cosKNFGDPSN51EwfsFmAkegSfPuV+pFuO57t5ziPUR8iRfM9t2iP7Otu5D9POqYEfg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727687778; c=relaxed/simple;
-	bh=3ZaS5ci2O/iXzesvxtnx5ZTTVXJ8/KT4uu0R/JeWq5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hQGjEVXESkhMT8ntezyES1VoZDA9R8h5NVvxBb6uLJcEJGNa7YpTIIQvP2bP0bqvn16OFdNW5QEiS5Iq9AnKkNCvES8oLf+7dc5tWYQy0pOAZINgDohN5xHngvqWh220ZNp7s2BvAbcMk/vOXtcWi6GqZp7uHYGSC2a/+lmkSVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lEvlYdAE; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1727687750; x=1728292550; i=markus.elfring@web.de;
-	bh=uwTjh6i3049CPUq0sWZShkHXqlpCPCZ6b0JNmqkVCF8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=lEvlYdAEodHS/FN+K11XryRwIDny5ZHJZQWEnUofWNwZQIo48oOnyHkDgejwpcgL
-	 st4Plwag7eG947raSTc8DdZPMYcmhdeeBNlpn9oSiqawCbD6jtQNrKRZtnWR+wkQf
-	 IJtHNLwNoOEYoSdPMXl0qp/H/kA27VBNb441f476uV/mOWkCTjwNyfXmdSIudkkO4
-	 EGwCtApR6XV2GzPJofA//d0iccynJXYUhJGRqFI8o37WKkFX6zQTvp8+MaJvHx0Xe
-	 WbQiRO7MiDWj0z7xwVvvQ6FvBo0FgVD4Dtc+WKFfDGpEzWahVvg+iwakKQ2CgRQKb
-	 DStrEbXyaJ94tFdEpA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mkmzr-1sBvGz2wWN-00khad; Mon, 30
- Sep 2024 11:15:50 +0200
-Message-ID: <092af1e5-0d36-4f9f-94f1-083f0d61f63b@web.de>
-Date: Mon, 30 Sep 2024 11:15:42 +0200
+	s=arc-20240116; t=1727687766; c=relaxed/simple;
+	bh=HPoR5OGNEXDZs6E/hPEzNFBIUqBuZrFxaX8QUHpMnEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bq+gmKjEXn9vq1jS6c3v3NEdLd8HBdkg1tFKtvgXD9PT8GUBQQ1EUjRXLFAbW9CRsOy/HjdO4OGv6XO4PMLfuEQQTkXFprotjtP/sy9IcCc8rF7Cbtw0kbQ3Iasw4Y6ebBQa/bLTVmsmM5bXq+pc7/PGZdyA3u8hYrKDSKs8If4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id C5D132800BB5C;
+	Mon, 30 Sep 2024 11:15:54 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id AECA23D75F9; Mon, 30 Sep 2024 11:15:54 +0200 (CEST)
+Date: Mon, 30 Sep 2024 11:15:54 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Maxim Mikityanskiy <maxtram95@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Bjorn Helgaas <bhelgaas@google.com>, Peter Wu <peter@lekensteyn.nl>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
+Message-ID: <ZvpsSjgDFd-pbzFW@wunner.de>
+References: <871q1ygov9.wl-tiwai@suse.de>
+ <ZttEUjeYFzdznYKM@mail.gmail.com>
+ <87wmjndbha.wl-tiwai@suse.de>
+ <ZtxZBUjlF8TeIUKC@mail.gmail.com>
+ <87jzfncvm0.wl-tiwai@suse.de>
+ <ZtyMWSA0bg1SjFSU@mail.gmail.com>
+ <87ed5vcp23.wl-tiwai@suse.de>
+ <Zu5_faxUwoIl09fW@mail.gmail.com>
+ <87msjpk5el.wl-tiwai@suse.de>
+ <ZvpTRLxSkcqn03Fk@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] NFSv4: fix possible NULL-pointer dereference in
- nfs42_complete_copies()
-To: Yanjun Zhang <zhangyanjun@cestc.cn>, linux-nfs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna Schumaker <anna@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>
-References: <20240930090115.463284-1-zhangyanjun@cestc.cn>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240930090115.463284-1-zhangyanjun@cestc.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:L/VeQR3V/XY+olTzSE6cZ79rl/AcJeh9uFl3GC/NmfJdu9Y2yjM
- 9ojNsnnyGxx9z4ymm/98iON/6xdPEr8d/VSldwFJahf4UoyJ0KdP7xslqNAP8/Eq3ktWGPN
- bU9+RgHUHTUx+e7BSdpBhYUntX86zD64g9yl4puYyLm3ee38f1eV76hhiRcZoJz4+fnYRW7
- ECsJl9HuuUHAUvBEfQkXw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6Hmd6C3Vcoo=;q1FF7MjhdqacCiCgp6/lkVR5ftc
- FipYr4RbF5oXlAK6AHPX+p+ZS8smZ+mQlv69Kw5U03iIMCWTyMwrJMvmfg2EZJX92xc2nlDZy
- y0ao7Qpv+E5ZHmZ7ImPiig5YrwqWENm9rKNkmfcBlsPd0uNR0gErHZwVQBD1cq/En5gphlpVz
- oF/yGsX9AIRW7nynxInrmP5UawtJ/lnAydNZiY8NJBUMU9lYLfMfJdyH81Cwa2vEr4ggcw4/y
- /2gk8JLGOJ+kOg27J+eXj1lHupeFsUBPF6u+JIKMebRhSSeENHlZdYLpnsztWBADOagi5If5G
- UbBW1GQupR5nBUgPerwVDFECzSSWziYTKTNtaEgLNKDz2cSvojpDxrMBEspjbki8KyZegrkA/
- QT8U+rGs++2qkmqeyigWgLkbV6eqXAY78ntx81JQhf2W/g2HlaxNsAgFMNn1YDJMT6lv8cK6/
- 148VzkG9zr8+/OsCTbYtixTJhjtJovwxBeI3hsM2XDk0q5QW+qDmwDBCN43knNTEkajM9D3QM
- 3w0kfKj9vVOPQdFKZuHvtmBCGxiT4/EztToT/+0kwaQKOl+qDCT7NotoNy+zi6Q4+7SOvHEMc
- W1JThMiIX4eJ/8/wgRMQiQONs1P617IocHcUkZuIc7PPf/i0EAzW9JQNvFTFc35D+wDysdB1T
- FhDza2/ejQ0QIXrNRWpFtreA5lU3Vj8LYev+Jxuroih8+s7HafBlIjaMrNa0gsyrNarpm3UsO
- ovPwTM9sgc0o19Rh6eU4OKY1TSn74KUZyA03kO08IIh6/OeQmaLQwPNv55WZZafBdeLd6JI/4
- grNfTrSXrTjyWDfa7v90Py7w==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZvpTRLxSkcqn03Fk@mail.gmail.com>
 
-> On the node of an nfs client, some files saved in the mountpoint of the
-> nfs server were coping within the same nfs server. Accidentally, the
-> nfs42_complete_copies() get a NULL-pointer dereference crash, as can be
-> seen in following syslog:
-=E2=80=A6
-> Fixes: 0e65a32c8a56 ("NFS: handle source server reboot")
-> Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
-> ---
->  fs/nfs/client.c           | 1 +
-=E2=80=A6
+On Mon, Sep 30, 2024 at 10:29:08AM +0300, Maxim Mikityanskiy wrote:
+> Anyways, adding a DMI check to hda_intel or quirk_nvidia_hda seems the
+> same level of efforts, so I can proceed with the former. It's the same
+> power consumption either way, right?
+> 
+> I'm also thinking of adding a module parameter to block probing of the
+> DGPU audio. Back in the days, there were plenty of similar Lenovo
+> laptops, which might also suffer from the same issue.
 
-Thanks for your patch adjustment.
-Would you like to present any version descriptions accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11#n310
+Adding new command line parameters for hardware quirks is generally
+frowned upon these days and is usually greeted by Greg KH's trademark
+"this isn't the 1990s anymore" comment.
 
-Regards,
-Markus
+Drivers are supposed to auto-detect hardware with quirks and handle
+them correctly without the user having to add a command line option.
+
+Users should not get accustomed to fiddling with the command line.
+They won't have the need to report broken hardware and the driver
+may never be amended to deal with affected models automatically.
+
+Thanks,
+
+Lukas
 
