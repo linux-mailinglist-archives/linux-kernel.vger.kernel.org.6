@@ -1,227 +1,161 @@
-Return-Path: <linux-kernel+bounces-344697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4C298ACEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AEC98ACF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB751C21353
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E9C4B21EE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223D419A2A3;
-	Mon, 30 Sep 2024 19:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK0TAJUJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C45B199EB1;
+	Mon, 30 Sep 2024 19:30:32 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B8B192D91;
-	Mon, 30 Sep 2024 19:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3A94206E;
+	Mon, 30 Sep 2024 19:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724434; cv=none; b=K90MnHf0vFOgboOC4rMeoVkddNpWxid13MKEIdP2AsIUzoP6SNS/h1qIhZO8BeZaY4+CvL5u1ZKZ7yxb3ER00ijfbTDcBGXNEfM7UwzPq12Uk19Vp98/acxSr8oIwDRVJ24sTgMaw2sHbhS+XWu09IRnUBckFC9g5I9qgKthtIM=
+	t=1727724631; cv=none; b=DLpfaMaBkFxhbA6+/JtCngOPsfP99wQTdNdqAVJEOM+GEBrTmqdzldzt0B4g0WV/lUbN1L6Z13mXVqtW2X16r84s3gl5Z5TwYJfDutmKsXhHIuY7K5mXaghTiQUrhNRKYHtHAkXGQYW8Ct38h5Yggpzt8tJbWMMWCs39pUdr8nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724434; c=relaxed/simple;
-	bh=/5wXr1oh9gufFfSYG1R2hwOhkyVnx3BomvZ9/lVLzIo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eSfTvdvdGTfuhrVzTn/gQ6oiHfyX3h8XB+Alf+E9sponCIOa/3Zu+WvDjs8v548zqj9aHJNdL/AKjQSZcuBHu837M+C/sn+aSEvprC1kLaHW8fxnq5axCYTHos5e4bxQ3y0ZyG5GfBqq1hbFmGLtdQI353B7ZJ8ZVKEgGWHytKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK0TAJUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB838C4CED4;
-	Mon, 30 Sep 2024 19:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727724433;
-	bh=/5wXr1oh9gufFfSYG1R2hwOhkyVnx3BomvZ9/lVLzIo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=AK0TAJUJM3Xv49IK6XGCyH92xhnwOY2zorCgMuKqi+LttdoItINQPDXlkzdwHxTTF
-	 CLLSCLIMEFRGMUXv9UYBGiBlmrL8MbgXPcxfP5IDpuguKrlrFxv1SKZ1fzRn5zOEY5
-	 6UlP24HTWIqyztmoECd5Z9pVkRSUdK/gSGRoPtvtJeHiyOkMQtsXkugqw001yq2Hmo
-	 1rtFHzZfZta+4ulA1KQzQCfkRIylvZQdE2xUJb1YDXeCpGvZO0Uo6E0HeHQhS2Ilg2
-	 IYLG8kBdyBQuhxHl8oP28QoJIK5BNZqQD+D8GxQ/64pdwvtLjigDbEsUJ+bSr2L1/B
-	 uYtSEDnDhz2pQ==
-Message-ID: <753938ef8e46e9f3d9ea7d977537cd8f5a6533b2.camel@kernel.org>
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-From: Jeff Layton <jlayton@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,  Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Date: Mon, 30 Sep 2024 15:27:09 -0400
-In-Reply-To: <87bk050xb9.ffs@tglx>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
-	 <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87bk050xb9.ffs@tglx>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1727724631; c=relaxed/simple;
+	bh=OVm5n8rRgeWWLWcPZNj0/VWtcXnxpJfHbaBD144bNzk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=LVdiEXFrbH/SM3xG6KGaJ9GBRDN3m2BqY3hTeK+MOXll4D0rX40V0V6daVLOFsK4ITaqvObaSiXOdNkQjvqPinLKf9ZUAOsbkTAXS2GwQlRyNZqUpc+14WqVAOioQLpLoGgy0FTCsgdw9nJjp912hUxRAsHEYI3V1MheuMwOnkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
+ 2024 22:30:25 +0300
+Message-ID: <8cb1de35-a40a-4d1b-a081-1b8fc08e0a6a@omp.ru>
+Date: Mon, 30 Sep 2024 22:30:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 05/11] net: ravb: Simplify types in RX csum
+ validation
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-6-paul@pbarker.dev>
+ <b4707880-2be4-4132-a3e1-8b104b89828c@omp.ru>
+Content-Language: en-US
+Organization: Open Mobile Platform
+In-Reply-To: <b4707880-2be4-4132-a3e1-8b104b89828c@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 19:14:44
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
+ d90443ea3cdf6e421a9ef5a0a400f1251229ba23
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/30/2024 19:18:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Mon, 2024-09-30 at 21:13 +0200, Thomas Gleixner wrote:
-> On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
->=20
-> > For multigrain timestamps, we must keep track of the latest timestamp
-> > that has ever been handed out, and never hand out a coarse time below
-> > that value.
->=20
-> How is that correct when the clock is off by an hour and then set back
-> to the correct value? Then you'd get the same stale timestamp for an
-> hour unless something invokes ktime_get_real_ts64_mg() which will set
-> the "latest" timestamp back to a time before the previous one.
->
-> > Add a static singleton atomic64_t into timekeeper.c that we can use to
-> > keep track of the latest fine-grained time ever handed out. This is
-> > tracked as a monotonic ktime_t value to ensure that it isn't affected b=
-y
-> > clock jumps.
->=20
-> That's just wishful thinking.
->=20
-> ktime_get_real_ts64_mg(ts)
->    ts =3D Tmono_1 + offset_1;   // TReal_1
->    floor =3D Tmono_1;
->=20
->                                 // newtime < TReal_1                     =
-          =20
->                                 clock_settime(REALTIME, newtime);
->                                    xtime =3D newtime; // TReal_2
->                                    offset_2 =3D offset_1 + Treal_2 - TRea=
-l(now);
->                                    --> offset_2 < offset_1
->=20
-> ktime_get_coarse_real_ts64_mg(ts)
->     ts =3D tk_xtime();       // TReal_2
->     offs =3D offset_2;
->=20
->     if (Tmono_1 + offset_2 > ts)
->        ts =3D Tmono_1 + offset_2; // Not taken
->=20
-> So this returns T_Real_2 because
->=20
->     offset_2 < offset_1
->=20
-> and therefore
->=20
->     Tmono_1 + offset_2 < TReal_2
->=20
-> so the returned time will jump backwards vs. TReal_1 as it should
-> because that's the actual time, no?
->=20
-> So if that's the intended behaviour then the changelog is misleading at
-> best.
->=20
-> If the intention is to never return a value < TReal_1 then this does not
-> work. You can make it work by using the Realtime timestamp as floor, but
-> that'd be more than questionable vs. clock_settime() making the clock go
-> backwards.
->=20
+On 9/30/24 22:11, Sergey Shtylyov wrote:
+[...]
 
-That is the intended behavior and I'll plan to fix the changelog to
-clarify this point:
+>> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+>>
+>> The HW checksum value is used as a 16-bit flag, it is zero when the
+> 
+>    I think I prefer s/HW/hardware/ but there's no hard feelings... :-)
+> 
+>> checksum has been validated and non-zero otherwise. Therefore we don't
+>> need to treat this as an actual __wsum type or call csum_unfold(), we
+>> can just use a u16 pointer.
+>>
+>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> [...]
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index 1dd2152734b0..9350ca10ab22 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> [...]
+>> @@ -762,23 +761,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
+[...]
+>> +	if (unlikely(skb->len < csum_len))
+>>  		return;
+>>  
+>>  	if (skb_is_nonlinear(skb)) {
+>> -		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+>> -		hw_csum = skb_frag_address(last_frag) +
+>> -			  skb_frag_size(last_frag);
+>> -		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
+>> +		skb_frag_t *last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+> 
+>    Could've been done in the previous patch...
 
-If someone jumps the realtime clock backward by a large value, then the
-realtime timestamp _can_ appear to go backward. This is a problem today
-even without this patchset.
+   Even fit better there, I think...
 
-If two files get stamped and a realtime clock jump backward happens in
-between them, all bets are off as to which one will appear to have been
-modified first. I don't think that is something we can reasonably
-prevent, since we must stamp files according to the realtime clock.
+>> +
+>> +		hw_csum = (u16 *)(skb_frag_address(last_frag) +
+>> +				  skb_frag_size(last_frag));
+>> +		skb_frag_size_sub(last_frag, csum_len);
+>>  	} else {
+>> -		hw_csum = skb_tail_pointer(skb);
+>> -		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
+>> +		hw_csum = (u16 *)skb_tail_pointer(skb);
+>> +		skb_trim(skb, skb->len - csum_len);
+>>  	}
+>>  
+>> -	hw_csum -= sizeof(__sum16);
+>> -	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
+>> -
+>> -	if (!csum_proto)
+>> +	if (!*--hw_csum)
+> 
+>    Hm, you lost get_unaligned_le16() here. The checksum can be anywhere,
+> unaligned too...
 
-The main thing I'm trying to prevent is the timestamps being misordered
-in the absence of such a clock jump. Without tracking the floor as I am
-here, that's a possibility.
---=20
-Jeff Layton <jlayton@kernel.org>
+   No need to keep using get_unaligned_le16() itself but you should then switch to 
+using get_unaligned().
+
+[...]
+
+MBR, Sergey
+
 
