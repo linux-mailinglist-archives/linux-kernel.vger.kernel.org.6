@@ -1,82 +1,104 @@
-Return-Path: <linux-kernel+bounces-344074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D093398A3D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:01:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9191998A3E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E21D1F283EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:01:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB94CB20F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB0118E76D;
-	Mon, 30 Sep 2024 13:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A4418C011;
+	Mon, 30 Sep 2024 13:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FB8+2eEI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VArNVY6f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85AA18E346;
-	Mon, 30 Sep 2024 13:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5581DA3D
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727701261; cv=none; b=lfAG8vZCUegRt1pOv8ebs/FSMel21geXP1US+ucUnYXHNoOTxr71LSoQdmf2MD8cmvbmSshfwBxna/fXh2o9zd1+tNGIxkFpSLf3MvYZMsrCrzovooSq+7OU2TgMZf/CknK9xlP+BJoo7V/GvUsYk+9o9u1MhYflB0yw73ux008=
+	t=1727701371; cv=none; b=Li6HzfIcJmvOGgvgiFv/mtQEVD2G6S8T4kvzr+E4eHXLeqCPiZezyuE9TG7gBxlvTIxRZVOezUr/AiMMR+Wsyt3e2a1lHyuKMWHskRMM/YD1kgvt6k+llCTxy/E4uPpPkI5uhIXGiP6sZO40OjSpqKN55mdrY2Nq9jNZ4ex2WCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727701261; c=relaxed/simple;
-	bh=MYtdHPBH9D0toFpQLKEM+x4oOnqFVTkl+BJ11BF5efA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n9dwuHvWDQE4bXZnX29BRmjKyblxmQ3HbRuXlsjYmRnNIpfdqdun5DUeWGAO/eust5yFkCjVaormF02W8yhE8eITNsHDciFbxpt0QmYVxN2psuCb5lYn2ETKRxIecIfOZ/ZtjqdmIDzzW+0jkExAcv7c8bqtv6EZFa+kgQcMJQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FB8+2eEI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8A4C4CED1;
-	Mon, 30 Sep 2024 13:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727701260;
-	bh=MYtdHPBH9D0toFpQLKEM+x4oOnqFVTkl+BJ11BF5efA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FB8+2eEIzpFGAVkJ1vHsZ/fQ5CSfrD2v0kbRtjMMXcBEohNII7KKWtv8WmGoON9Lm
-	 NByAomWVIbDhDPEgc45k+tIXi+vrduAV8ppL6EWHhnIotwo0axVyashf09FXx67pnz
-	 sGgB9euEh4VpoEN/QU2JZgJZPsHDJZgXBoaIq5bY=
-Date: Mon, 30 Sep 2024 15:00:57 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] device: rust: change the name function
-Message-ID: <2024093014-endnote-swapping-6626@gregkh>
-References: <20240930123957.49181-1-trintaeoitogc@gmail.com>
- <20240930123957.49181-2-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1727701371; c=relaxed/simple;
+	bh=fkxcP//T2bdCrNiiepbSkSNWGrnL8P9uBimRUKy/Y3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xh4d6C1GvPXRYPhU5PsW/OsSL8ISrCoviNcUklfRyfYsXgq0oEb28cRgQ1aEQg7AV+vcRue9sQwLDiL5SJA16Fag+WioQ6CSaH9aiP9L8vZlPjpV4S0r18SRRQwxztZ4qpzaz3wtIGu5O7/jMlH6W1nX3/SjfT7NMmc8E1Mfkc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VArNVY6f; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727701370; x=1759237370;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=fkxcP//T2bdCrNiiepbSkSNWGrnL8P9uBimRUKy/Y3E=;
+  b=VArNVY6fv2VEe8J6C1pdz1EDGgR/f3qaSmWyPI2Q5RfwUtUjHounrYHv
+   ye/nKSQdXX+MbWGuyl5NgLExwbBlq4M8tu58vg1WEfLXhflP73+p8jF3e
+   8U8Ef1N0oMzcq29KmA3suJccyj0eWxCe1MvKK9bZt3B4uOPqiYtogCN1W
+   7bje5c4QtjD6dypQeeNxfV+WpMcaaF5itb4xhhHAko5WzMJEyTh+2NEpV
+   1SqZ//T3M6oJb94rsHa4ittKKLUQq7p8W+cZ+GMQdkrs7q+g/dWyemKEy
+   Zd03+bJ/lmLUtGNhVFHWbkVrTE/1vitnWeN+eq+eJcPuo0yiS7kiZN+zh
+   A==;
+X-CSE-ConnectionGUID: YnKwYJHSSRG63kJIek6rdQ==
+X-CSE-MsgGUID: rFrf/PUGQKKf+UTnovjTwQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="44249662"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="44249662"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:02:49 -0700
+X-CSE-ConnectionGUID: IDGE5YPgQRStRbNatNEhYQ==
+X-CSE-MsgGUID: txLXHwaCSB27TWZKlrI/3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="104095475"
+Received: from mylly.fi.intel.com (HELO [10.237.72.151]) ([10.237.72.151])
+  by orviesa002.jf.intel.com with ESMTP; 30 Sep 2024 06:02:48 -0700
+Message-ID: <d0de10c7-bd99-4b81-aa11-5039c514eefc@linux.intel.com>
+Date: Mon, 30 Sep 2024 16:02:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930123957.49181-2-trintaeoitogc@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: TODO : i3c/master/mipi-i3c-hci/dma.c
+To: cvam <cvam0000@gmail.com>, alexandre.belloni@bootlin.com
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <CADVSkwnC6b3irLx58YRGJayw09AvVUqmN=3_b35vdhJKFpsgog@mail.gmail.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <CADVSkwnC6b3irLx58YRGJayw09AvVUqmN=3_b35vdhJKFpsgog@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 09:39:56AM -0300, Guilherme Giacomo Simoes wrote:
-> This function increment the refcount by this command "bindings::get_device(prt)".
-> This can be confuse becuase, the function Arc::from_raw() from standard library, don't increment the refcount.
-> Then, this function "Device::from_raw()" will be renamed for don't make confusing in the future.
+Hi
 
-Your editor should have asked you to wrap these at 72 columns, can you
-please do that?
-
+On 9/28/24 9:39 PM, cvam wrote:
+> Hello Alexandre
 > 
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> ---
->  rust/kernel/device.rs   | 2 +-
->  rust/kernel/firmware.rs | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> This mail is regarding TODO present in the i3c/master/mipi-i3c-hci/dma.c, i
+> would like to work on it, please give some more info what exactly we are
+> referring here.
+> 
+> 
+>                                  dev_err(&hci->master.dev,
+>                                          "response tid=%d when expecting
+> %d\n",
+>                                          tid, xfer->cmd_tid);
+>                                  /* TODO: do something about it? */
+>                          }
+>                          if (xfer->completion)
+>                                  complete(xfer->completion);
+> 
+Well source code has minimum handling for unexpected but uncertain what 
+to do about it. In my opinion "TODO" is a fair comment about it.
 
-What changed from v1?  That should go under the --- line.
-
-thanks,
-
-greg k-h
+I'd leave it as it until somebody sees it on real and then we can debug 
+does it need some steps in HW/SW point of view to recover.
 
