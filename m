@@ -1,136 +1,118 @@
-Return-Path: <linux-kernel+bounces-344232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19EB98A6FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D7598A700
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 302C81C225D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F288F1C21B37
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2730B1917E9;
-	Mon, 30 Sep 2024 14:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0AA1917E7;
+	Mon, 30 Sep 2024 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uifwhi6P"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="lgC6ek+6"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BF518E758;
-	Mon, 30 Sep 2024 14:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D27C1917FB;
+	Mon, 30 Sep 2024 14:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727706554; cv=none; b=NsN8k4D/R9bl/3TT84DPRnd+X3Ph0LZDaY0eaZNaa2cDaBtaRLdC3EGUNp6j/+JRBJX+lrNkfsW2aPP0QReC4PwbLZODMgdmK6c9KP4yeMkHZ048MAmbL3Y7U8qNJ+lIlRIzZcBJBVKTnBBlHId9Jv9Jjm0gyzwyyfPxIrxpblI=
+	t=1727706563; cv=none; b=dFihD3RqjY/G6qhEbYW74SccixVgd4hvztngFyOO6fGt1/km1TmTP6vU6wE4fOu7oViZYdNTk74gyC/oYYqtE8hp9Y8C3sZ4bZzLRQLsCBGQ9paEhkaQlUQwKPU5xuC/xL31IU/skNl3kLPVolM8SmMIa8KOB1JpX5kIWAmky2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727706554; c=relaxed/simple;
-	bh=dZXin4+GRSMludy5RtFwIifr3KWtFLMopND6FYwycBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ViVQojUeYzZMBBuBvk5Os9je6NqhyNYbzjKAeyzDZZ4u5UWtdsKtGjZp2wiTW4W66ddYNmyuKvLMQGmMEPrXOqstr86MrNDpXEgAiR4OkkA4ipAEQSgM0sjxlZqsBzTV/jcl0Wk+nvqibkm6oTevLeokU81YMGi3DO+96NTIevY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uifwhi6P; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71793afc07bso152023b3a.0;
-        Mon, 30 Sep 2024 07:29:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727706552; x=1728311352; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TDNE1FkKcdfZWcYc+nVbhJ6ewjvhhPypgqB+D8tWaPo=;
-        b=Uifwhi6PV6XkezyYw8agswVWgVcKThtgbdXVzUzl6vYJPkQdpcx1D6afd97fE/g8cA
-         NHOlNr6aY/lMYeXQuTxPzyzLAW4yW+Kr4ziFy1otsa3dueMIbfmo8yY78IbzfBIjG739
-         3L0VHCO6//1TzuNM7MwWdGd4/zADR0sLoaDEz+8tSXsLuTh8R2EWbixlhWAuEkdU+XCQ
-         Jpyv8qgbfL8+zCyQC9PYbNXB9ixT8da8dV+S5h0RVTn/0tqSbYb6sjlq5uGc/PJ8V3Hk
-         gslbdUG/PbfN24X+HyUcY+g1qUomwE57jI3NX5OkPnoIDiSqw3yZ0J1KYGRCf100UTKx
-         r7WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727706552; x=1728311352;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TDNE1FkKcdfZWcYc+nVbhJ6ewjvhhPypgqB+D8tWaPo=;
-        b=fnz/HnQXvx4S4xRYclwUSr6GaRrzZwjhQ7hLj3oGZHHPVdUrYNpRVKi985Onmqg4+V
-         uHeJtksZpsC6WJAr98TKbDtdGlSuCdZ7dAJ94TFJ1h1p5+xb4oa+3gk1NYViLwC2gGZd
-         TvzxDFg04JGAd631vJXdWTPnOD/n8xnFeZsSV+w7n/ChUbcA8d7A1vVAECXb3/rXRv4q
-         mM4lysMmZ/8wHFVUjIVso+ipfS0I1E9GW7qHmCTsNqhPl3aN0+3CSpYozBaTnVLDy3W1
-         dk75iiytdqBR9BaXL5mqxJeLLZoNmyShZebm+v3PcAKIEmq+d9MNAb041sxfTqJori8b
-         D1Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+XQHq+Ld6J6bXw4QdKZJYQFIWx9b/L6xD3qNOxHMlDwYzeetn753AJqZPaC1GizqTgZPt7Hm+hm0T/eIZsvc=@vger.kernel.org, AJvYcCUWJF1sZUDnCpG8GirXkZkFRSTzv6S7yP85jlAHLq92/mtvbSsU3vCOJ77PGR9wNbbtYpFhhHNzvJD5vzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHCrMHx8M9EqT1cRYsvze0Q4kwzPpZUTjw0XwrQLH5cBiDGUJT
-	p3CvxS7vOGqB/UqiW890j4vdpIFlG340mB7CtzQrHmuYX/5dMhWpwt6TBWESpUpJEt6SkyLdx1o
-	o+MDIqYaKp6zNQo62TZwOVLinAFOVbGzH
-X-Google-Smtp-Source: AGHT+IH0H65JVjk/DdPd3VkcZSOZq/CcyaO2lcFUbYvdGpJhoWh9uyu/2BNWxeYzLp9Sd78yFqanHsqKG9UdRb95yYk=
-X-Received: by 2002:a05:6a20:8420:b0:1cf:2be2:6525 with SMTP id
- adf61e73a8af0-1d509ba8450mr5385056637.11.1727706551787; Mon, 30 Sep 2024
- 07:29:11 -0700 (PDT)
+	s=arc-20240116; t=1727706563; c=relaxed/simple;
+	bh=R5L9S9frLH6sSiuqcL0wGsybfRpXvblEOYptLdh7ICY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o/DdtuCHFp8h00G1ywvvDl3mRSe3zIaJfDeHihPkIRLZbOUTH8Yk1vtEuSJtlUp3QEBvEekirKKvT8gD+eJanuQhbY+ujoTWrORoweLR9z1dfiyNY+BoLyRQC6czkZ0Vaictod4o0AweKW9tvp6bB1CpMFCIzeLeaF12Hzup2vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=lgC6ek+6; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:1301:0:640:a2b5:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 8EA5B60CD7;
+	Mon, 30 Sep 2024 17:29:12 +0300 (MSK)
+Received: from [IPV6:2a02:6b8:b081:b681::1:3a] (unknown [2a02:6b8:b081:b681::1:3a])
+	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id ATa4BH1If8c0-dq2UN1qQ;
+	Mon, 30 Sep 2024 17:29:11 +0300
+Precedence: bulk
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1727706551;
+	bh=oCgmpzamdx7GORW8uZNl4MlQuA5crMiiqpwwxrd9CA0=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=lgC6ek+6G7Vp6sgdVn8ox5NS84NpD3d3G317xmyNLAZQdIMK0dNXrZgtNr1XgCbGR
+	 hEtpGxsj/DyI7eN4xUScD9IkUyC57XjLieOTumjHWx75Bs6gLMQqKkGbS8XMmUq/2z
+	 8rn5AbuDWv8wiY/CchY6Za4XpDtXJOnW68iilGlU=
+Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <942ec747-04f6-4fd6-abcd-eea60c3ba041@yandex-team.ru>
+Date: Mon, 30 Sep 2024 17:29:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917141725.466514-1-masahiroy@kernel.org> <CAK7LNASDcpk3k+SKZ61dPW_D=pqfekEcnu2c+00MynpomE2RNw@mail.gmail.com>
-In-Reply-To: <CAK7LNASDcpk3k+SKZ61dPW_D=pqfekEcnu2c+00MynpomE2RNw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 30 Sep 2024 16:28:58 +0200
-Message-ID: <CANiq72mWvnnJqFKU_YYUmtbG0oQAB7AyEMRCk7w0mC6T9kEoGg@mail.gmail.com>
-Subject: Re: [PATCH 00/23] kbuild: support building external modules in a
- separate build directory
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, linux-kernel@vger.kernel.org, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] kvm/debugfs: add file to get vcpu steal time statistics
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, pbonzini@redhat.com, yc-core@yandex-team.ru,
+ linux-kernel@vger.kernel.org
+References: <20240917112028.278005-1-den-plotnikov@yandex-team.ru>
+ <Zu_Pl4QiBsA_yK1g@google.com>
+ <0288f7f5-4ae8-4097-b00c-f1b747f80183@yandex-team.ru>
+ <ZvFVFulBrzHqj2SE@google.com>
+Content-Language: en-US
+From: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+In-Reply-To: <ZvFVFulBrzHqj2SE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Yandex-Filter: 1
 
-On Sat, Sep 28, 2024 at 8:50=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> I CC'ed rust ML because Ack for the following patches are appreciated.
->
-> [07/23] kbuild: remove unnecessary prune of rust/alloc for rustfmt
-> [08/23] kbuild: simplify find command for rustfmt
-> [11/23] kbuild: check the presence of include/generated/rustc_cfg
 
-Sorry, it was in my backlog after the conferences.
 
-I am not sure what the base of the series was, but ran my usual tests
-on top of v6.11 and then on top of `rust-fixes` after some manual
-adjustment in both cases, and things appear to still work fine (i.e.
-what I usually build, without taking advantage of the separate build
-directory support).
+On 9/23/24 14:46, Sean Christopherson wrote:
+> On Mon, Sep 23, 2024, Denis Plotnikov wrote:
+>> On 9/22/24 11:04, Sean Christopherson wrote:
+>>> On Tue, Sep 17, 2024, Denis Plotnikov wrote:
+>>>> It's helpful to know whether some other host activity affects a virtual
+>>>> machine to estimate virtual machine quality of sevice.
+>>>> The fact of virtual machine affection from the host side can be obtained
+>>>> by reading "preemption_reported" counter via kvm entries of sysfs, but
+>>>> the exact vcpu waiting time isn't reported to the host.
+>>>> This patch adds this reporting.
+>>>>
+>>>> Signed-off-by: Denis Plotnikov <den-plotnikov@yandex-team.ru>
+>>>> ---
+>>>>    arch/x86/include/asm/kvm_host.h |  1 +
+>>>>    arch/x86/kvm/debugfs.c          | 17 +++++++++++++++++
+>>>
+>>> Using debugfs is undesirable, as it's (a) not ABI and (b) not guaranteed to be
+>>> present as KVM (correctly) ignores debugfs setup errors.
+>>>
+>>> Using debugfs is also unnecessary.  The total steal time is available in guest
+>>> memory, and by definition that memory is shared with the host.  To query total
+>>> steal time from userspace, use MSR filtering to trap writes (and reflect writes
+>>> back into KVM) so that the GPA of the steal time structure is known, and then
+>>> simply read the actual steal time from guest memory as needed.
+>> Thanks for the reply!
+>> Just to clarify, by reading the actual steal time from guest memory do you
+>> mean by using some kind of new vcpu ioctl?
+> 
+> No, I mean by using the host userspace VMA to read the memory.
 
-Moreover, I tested the separate build directory support (`MO=3D`), for a
-trivial Rust out-of-tree module, with a subdir as well as with a
-directory outside the out-of-tree source code.
+Oh, I think I got your idea. You mean
+using KVM_CAP_X86_MSR_FILTER which...
 
-I also tested the new approach suggested for the out-of-tree
-`Makefile` (i.e. `export KBUILD_EXTMOD` and `include
-$(KDIR)/Makefile`), and it all worked as expected, so:
+"In combination with KVM_CAP_X86_USER_SPACE_MSR, this allows user space 
+to trap and emulate MSRs ..."
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+And then having guest's steal time struct valid address read the value 
+from userspace VMM like qemu directly.
 
-...except for arm64, where I found that I needed this bit:
+Thanks for the answers!
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index b058c4803efb..4cd9a1f2ec3d 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -71,7 +71,7 @@ stack_protector_prepare: prepare0
-                                -mstack-protector-guard-reg=3Dsp_el0       =
- \
-                                -mstack-protector-guard-offset=3D$(shell   =
- \
-                        awk '{if ($$2 =3D=3D "TSK_STACK_CANARY") print $$3;=
-}' \
--                                       include/generated/asm-offsets.h))
-+
-$(objtree)/include/generated/asm-offsets.h))
- endif
-
- ifeq ($(CONFIG_ARM64_BTI_KERNEL),y)
-
-Cheers,
-Miguel
+Best,
+Denis
 
