@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-343265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA8B9898C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574FA9898F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96BB11F21878
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:11:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DFA62836E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7C64C85;
-	Mon, 30 Sep 2024 01:11:53 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4079B18EA2;
-	Mon, 30 Sep 2024 01:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB2A3209;
+	Mon, 30 Sep 2024 01:28:13 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2A363D5;
+	Mon, 30 Sep 2024 01:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727658713; cv=none; b=NwGLhvnKoQBQ2dTcL1s0Y9Kl79mi7cHQRod1wq1w3WLw0KWQQr/0m3SmDu97bgrRIOgnSoqt2n4Osi5DN9Qzhm5LP+MDkhlz3w16/NJQofjmcPhWvEBn7nuD3kNXKZysXUi2Mn9tcm4aw2t0yPnzjWTWZo0Wqx7xy1hdsuifdiE=
+	t=1727659692; cv=none; b=YpW4UqpiNo5AnPsUn+roDQCetu/NqQK5Bogtn0eRV6QXol65ys6c/vJg1cCEuUnjFqldzRs5b7QPr7A/ZikjUSZLOIX15b/1HecWfWWltfY2c6RE4Hr4jePeJ/uguVwlYIKbH+IsA/ZmFu36UoCCJdR4tsdkNdY6633qt5IBEvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727658713; c=relaxed/simple;
-	bh=cV3dIfCsFw0OkSjWqt0dxqZXGka2Xb4ezjREudoyS7M=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sGazX4S6YJFvJXvF6p0iDD88Gvwg73YRTwevtgMB0m6NcjS4EIxwK20Vpa1iyCmzcqYFx522za20/QBhPmedRq8Zh6P3UqdveivyUfHUGAN9csghxlsIUlAWBrqqCIWBfCSbRdR7azaVSSqM6pTencDXXFoUCQ5zJHwy4+j6Vys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XH2xM5VQqz1HKPF;
-	Mon, 30 Sep 2024 09:07:51 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4675C140360;
-	Mon, 30 Sep 2024 09:11:47 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Sep
- 2024 09:11:46 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <robh@kernel.org>, <saravanak@google.com>, <sboyd@kernel.org>,
-	<davidgow@google.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] of: Fix unbalanced of node refcount in of_overlay_apply_kunit_cleanup()
-Date: Mon, 30 Sep 2024 09:22:17 +0800
-Message-ID: <20240930012217.138786-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1727659692; c=relaxed/simple;
+	bh=XlW7xZsiSgFr8ZYbY1/SaS2cZveC155rdkRFUKRHJW0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JhddPsY8z9AtwDQ9uSySTbsrFl74VxZLkj6N5E+IZToiXSB9wsFfARwonwuhpFEStX+QYI23wGNyIWaD/RwaejlOG1f5xG5v2whR2fPKLiZZvgQCkyNjhGmbbVq2x7cpEjQe5XFR46Dqg5FO6YpxYk0qNmLB/mftfAa+HkbomfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee266f9fe9f4af-e94bc;
+	Mon, 30 Sep 2024 09:27:59 +0800 (CST)
+X-RM-TRANSID:2ee266f9fe9f4af-e94bc
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee866f9fe9e252-c65b7;
+	Mon, 30 Sep 2024 09:27:59 +0800 (CST)
+X-RM-TRANSID:2ee866f9fe9e252-c65b7
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: ritesh.list@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	mpe@ellerman.id.au,
+	shuah@kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH v2] selftests/powerpc: Remove the path after initialization.
+Date: Mon, 30 Sep 2024 09:27:57 +0800
+Message-Id: <20240930012757.2395-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,47 +56,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
-Got following report when doing overlay_test:
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-	OF: ERROR: memory leak, expected refcount 1 instead of 2,
-	of_node_get()/of_node_put() unbalanced - destroy cset entry:
-	attach overlay node            /kunit-test
+If there were no anamolies noted, then we can
+simply remove the log file and return.
 
-	OF: ERROR: memory leak before free overlay changeset,  /kunit-test
-
-In of_overlay_apply_kunit_cleanup(), the "np" will be overwritten by the
-second of_find_node_by_name(), and the error message came from
-kunit_cleanup(), just call of_node_put() before it to fix it.
-
-Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test managed APIs")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 ---
- drivers/of/overlay_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v1->v2:
+	Remove the path after initialization.
 
-diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
-index 19a292cdeee3..e95b1152612c 100644
---- a/drivers/of/overlay_test.c
-+++ b/drivers/of/overlay_test.c
-@@ -73,12 +73,12 @@ static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+ tools/testing/selftests/powerpc/mm/tlbie_test.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/powerpc/mm/tlbie_test.c b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+index 48344a74b212..35f0098399cc 100644
+--- a/tools/testing/selftests/powerpc/mm/tlbie_test.c
++++ b/tools/testing/selftests/powerpc/mm/tlbie_test.c
+@@ -313,16 +313,16 @@ static inline void end_verification_log(unsigned int tid, unsigned nr_anamolies)
  
- 	np = of_find_node_by_name(NULL, kunit_node_name);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
--	of_node_put_kunit(test, np);
+ 	fclose(f);
  
- 	pdev = of_find_device_by_node(np);
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
- 	put_device(&pdev->dev); /* Not derefing 'pdev' after this */
+-	if (nr_anamolies == 0) {
+-		remove(path);
+-		return;
+-	}
+-
+ 	sprintf(logfile, logfilename, tid);
+ 	strcpy(path, logdir);
+ 	strcat(path, separator);
+ 	strcat(path, logfile);
  
-+	of_node_put(np);
- 	/* Remove overlay */
- 	kunit_cleanup(&fake);
- 
++	if (nr_anamolies == 0) {
++		remove(path);
++		return;
++	}
++
+ 	printf("Thread %02d chunk has %d corrupted words. For details check %s\n",
+ 		tid, nr_anamolies, path);
+ }
 -- 
-2.34.1
+2.33.0
+
+
 
 
