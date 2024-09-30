@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-344682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D06598ACB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E1398ACBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D721B228FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D481F24560
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3628199958;
-	Mon, 30 Sep 2024 19:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="d7sqlWWJ"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEE5199E82;
+	Mon, 30 Sep 2024 19:23:37 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE95319925A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A4E15E97;
+	Mon, 30 Sep 2024 19:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724021; cv=none; b=dabIKHmiH3J4nxMI4Me/dh1nyGMizF22aFRx7K1P/rLp3Q8dF6B7MU/Treza8OEsHH+UJKbg1Kf0KL54MmHJ5ec+vWMTXK0GklpaPIBQyIy432D4WDao+fZcJqvmocoDmFs+coyr+k9qQEIslq2w/EFJEAo7VG5bvjZA8LeVUmg=
+	t=1727724217; cv=none; b=USU85FUfbrM/++0atS3vAYGntF+iEAPU3Vjz0OxsSrNSjsH3jD9VQ4Vz1C04Y39buzF7/uvZ4jjcMu5z01AhVVkQujJk8yw8DTH++8+j0ZHnc1i77FVuVHYvn7YJtXQXOr2uQwjfLLsF+Fqn1A886p2kSd1CkKCwRt8eHpxCb5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724021; c=relaxed/simple;
-	bh=v33zJJImsgWY5WZ6J+4rL4X+i9E5OfT0yAer3DbY/EI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ecxLSl13lIA2xHp6uXFsvWOXfqxhItqH8Hd4Pv/B0fiMASnu8oO6pp9R2uzi63bEyyjd6QjMNZlGw/b36YefH6Fg+Sy64h6F3TKeNZaXYWoB+qleXja0fqd65V4Q37GWFrueQbP583nEJnE3pcVcU63YV4MLiUQHfuVOUWFxLRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=d7sqlWWJ; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e045525719so2984810b6e.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727724018; x=1728328818; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kTVVRMqsPGHu6bOYdoMoWVl7/YgauExSen9EjsdvUOQ=;
-        b=d7sqlWWJ0WM8T13ksJ6durhLMp4VrSp2wIWSmh1uP7M41GI5LPl4cenP4THoSt40Ax
-         1UFlXEoeb8YS9mbuUDNi4OEzNtdpRjsSRauRtGVCD866tMrI9nBbAT4/U/I41+S/joBA
-         Vkv7BGqbhA8VTSUiHnde2KHP6xwyKFHHct/i7vxT5CeCLMTQ8k0agdXiDeyBmK0UZ95S
-         a1TVR0lcYUPPuIJQLuRy11R5a4lUKfcyA0l/khVcM33Ft/523UZVVnepVBqBou+6E8uf
-         p8fNX3rQiYVVH9qNFwzLueC2p7tx0WS257dpePu+85VMI8QOUaXoxIJ7U429tHoQU0FK
-         v0Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727724018; x=1728328818;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kTVVRMqsPGHu6bOYdoMoWVl7/YgauExSen9EjsdvUOQ=;
-        b=PAUukhJxnPYJkYUkw/5QYZhGPSutRoA+QFWNHoGcUFOQdR8Ar5unmNXRtOv+ycisws
-         YFSWv03j+O5XAsehlSWKGAuaAWh27g8CZWC/4HAk8d211eMqA5nLAyQBFzGA/tVz6Qy0
-         SKl3OYyXxoKQNFyoc7NCc3n8BcFtk6+nft8q8vhbAC9CmNUnEWbGa95BfFrMYMjA6YfN
-         nNHW4ZrT7rMw3VnTTeJ5+XmkpZoH+kByUShg7lqTYJk4vdS6dNle8i+ksQWvo1U6VwQB
-         hq/WPKAhVgkD02QHqf1kcIg5vFRIj/t2V6dCxo02kxMvSR8rmkqSv5n6qaEWSXrnPbPr
-         3TiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL5Nqo4X7lMuop0rGQ1NWhYTEcbuMJunkTaZ39rPVEG/MNgdEN4rWmY2KsQiZEEexLwpbwRgzYikukhBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwhoqXYVAesUfX2QYkl9isaWV92f5NnQI/mHUl5c7NhNJI5oTy
-	j5478gPpUKzZsbcQ1+haLRHKhYZc3xeV/ieD+mHH3jz8WTMF+qWi6gheHx9ZzIU=
-X-Google-Smtp-Source: AGHT+IFHzPyHZYh+zdE2H8Gm2U7gQ3q4+OkB0iAnn6eHXVEkNp8HCjYM7po70AdANgZRBSb9KNsr6Q==
-X-Received: by 2002:a05:6808:bd5:b0:3d9:350b:4159 with SMTP id 5614622812f47-3e3939dcb37mr8405496b6e.31.1727724017728;
-        Mon, 30 Sep 2024 12:20:17 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5e770da39fcsm2352823eaf.1.2024.09.30.12.20.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 12:20:16 -0700 (PDT)
-Message-ID: <453ab98b-618f-45ba-9eab-e462829d25ae@baylibre.com>
-Date: Mon, 30 Sep 2024 14:20:14 -0500
+	s=arc-20240116; t=1727724217; c=relaxed/simple;
+	bh=pPVeA+4jMbnbY0ql5EIHXGocMCZimi+6zU7Djo9iZhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XyxZMPDr0lGI0xBpIuT33b70gfyVE0e+B9szd1DJdhRF0GwidLIq4rT+0TbckukwGmHmhMnnptZDeuiaSmsYWlOEPgJ16uIiQCmTnL33ipKEeREDVo9JdTMERUFyHCj1cXAtqms7q0HYi2wxULM6MnJB3TVilusXoG9QhdfGt2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
+ 2024 22:23:25 +0300
+Message-ID: <48afbbe9-36bc-4479-a576-379a4f9f05b0@omp.ru>
+Date: Mon, 30 Sep 2024 22:23:24 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,123 +41,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
- support
-To: Angelo Dureghello <adureghello@baylibre.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
- <20240929115150.6d1c22b3@jic23-huawei>
- <oh2xoym6dwvfn5lbzx3j5ckd3gfzvl2ukohrs4ukumkv6kzwi5@ume3z224gjta>
- <20240930154958.00004507@Huawei.com>
- <ipnqs4uektoysenkr7jvf6ic2rh56n3e5fmmheay323yhavs7u@th7qmxwmkiqo>
+Subject: Re: [net-next PATCH 06/11] net: ravb: Disable IP header TX checksum
+ offloading
+To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-7-paul@pbarker.dev>
 Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ipnqs4uektoysenkr7jvf6ic2rh56n3e5fmmheay323yhavs7u@th7qmxwmkiqo>
-Content-Type: text/plain; charset=UTF-8
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240930160845.8520-7-paul@pbarker.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 19:08:02
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
+ d90443ea3cdf6e421a9ef5a0a400f1251229ba23
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.154.82 in (user)
+ dbl.spamhaus.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/30/2024 19:13:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 9/30/24 10:08 AM, Angelo Dureghello wrote:
-> On 30.09.2024 15:49, Jonathan Cameron wrote:
->> On Mon, 30 Sep 2024 16:15:41 +0200
->> Angelo Dureghello <adureghello@baylibre.com> wrote:
->>
->>> On 29.09.2024 11:51, Jonathan Cameron wrote:
->>>> On Thu, 19 Sep 2024 11:20:00 +0200
->>>> Angelo Dureghello <adureghello@baylibre.com> wrote:
->>>>   
->>>>> From: Angelo Dureghello <adureghello@baylibre.com>
->>>>>
->>>>> There is a version AXI DAC IP block (for FPGAs) that provides
->>>>> a physical bus for AD3552R and similar chips, and acts as
->>>>> an SPI controller.  
->>>>
->>>> Wrap is a bit short. Aim for < 75 chars for patch descriptions.
->>>>   
->>>>>
->>>>> For this case, the binding is modified to include some
->>>>> additional properties.
->>>>>
->>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
->>>>> ---
->>>>>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++++
->>>>>  1 file changed, 42 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>> index 41fe00034742..aca4a41c2633 100644
->>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
->>>>> @@ -60,6 +60,18 @@ properties:
->>>>>      $ref: /schemas/types.yaml#/definitions/uint32
->>>>>      enum: [0, 1, 2, 3]
->>>>>  
->>>>> +  io-backends:
->>>>> +    description: The iio backend reference.  
->>>>
->>>> Give a description of what the backend does in this case.  I.e. that it is
->>>> a qspi DDR backend with ...
->>>>   
->>>>> +      An example backend can be found at
->>>>> +        https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
->>>>> +    maxItems: 1
->>>>> +
->>>>> +  adi,synchronous-mode:
->>>>> +    description: Enable waiting for external synchronization signal.
->>>>> +      Some AXI IP configuration can implement a dual-IP layout, with internal
->>>>> +      wirings for streaming synchronization.  
->>>>
->>>> I've no idea what a dual-IP layout is.  Can you provide a little more info
->>>> here?  What are the two IPs?
->>>>  
->>> IP is a term used in fpga design as "intellectual property", that is
->>> intended as a functional block of logic or data used to make a 
->>> field-programmable gate array module.
->>>
->>> A dual layout is just 2 same fpga modules in place of one.
->>>  
->>> I can add a "fpga" regerence to be more clear.
->>
->> IP I was familiar with.  I'm more interested in what each IP is doing in this
->> case.  Or at least an example of what sort of split of functionality might
->> make use of this.
->>
+On 9/30/24 19:08, Paul Barker wrote:
+
+> From: Paul Barker <paul.barker.ct@bp.renesas.com>
 > 
-> I have an image of the project (that is under development or testing now),
-> not sure how to attach the image here, btw, something as
->  
->           axi_ad3552r_0  ----------->---- qspi0
->               sync_ext_device --.
->        .- external_sync          |
->        |                         |
->        |-------------<-----------                        
->        |
->        |   axi_ad3552r_1 ----------->---- qspi1
->        `- external_sync
->  
-> My understanding is that it's just a method to use a octal spi,
-> duplicating the transfer rate. I can collect more info in case.
+> For IPv4 packets, the header checksum will always be calculated in software
+> in the TX path (Documentation/networking/checksum-offloads.rst says "No
+> offloading of the IP header checksum is performed; it is always done in
+> software.") so there is no advantage in asking the hardware to also
+> calculate this checksum.
 > 
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
 
-No, it's not for octal SPI. It is for synchronizing the data
-transfer to two different DAC chips.
+Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-I think we need a bit more in the DT bindings for this to fully
-describe the wiring shown. We need to indicate that both of the
-two AXI AD3552R IP blocks have external_sync connected, so a
-adi,external-sync flag could be used for this. Then we also need
-to describe that sync_ext_device is only wired up on one of the
-IP blocks. So we would need a separate adi,sync-ext-device flag.
+[...]
 
-Then the driver would use this information to A) know that we
-need to set the external sync arm bit when starting buffered
-reads and B) know that the buffered read for the IP block
-instance with sync_ext_device needs to be started last so that
-the data streams for both DACs will be synchronized.
+MBR, Sergey
+
 
