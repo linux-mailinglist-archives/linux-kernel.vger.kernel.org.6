@@ -1,196 +1,262 @@
-Return-Path: <linux-kernel+bounces-344962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CAC98B0A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:11:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5258F98B0A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE4F7B23057
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A1A1F22E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1E218C918;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4351898E6;
 	Mon, 30 Sep 2024 23:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="JCWSXbb5"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2LcHx94"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582A9186E24;
-	Mon, 30 Sep 2024 23:11:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727737896; cv=fail; b=f2BYjE6ajBb/dmFBa93bASRktqyEc7D1jIoJyp4r+2qmHu9/A/EVXvUx3kpUQTNCf8VHSqOMU9vfQw6hh/WvKwQy2kROwxW6IkiB34wmXJJqbIHLLOHaIozCA93ZyI4AGPb2eZGH8mXYPKeV59zflyIRHrjuYX1HeKMcjxWBkP4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3A7189511
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727737896; cv=none; b=k+AaNBSbt3snrS7sIkU9MUT/QsW+RNs1PWv5yiUbiNGWah8XztZflLib+pXPqsh92nqJpNsY+RgdhTFwK+/3xVqDDP2Xw6LMO3uJOvQKYSXuwFehfLSOr/jlwYBSn6JWFKJ6Phj9jUvqZ/b7L/6AvLng23HmfHrvVJvscxj0OAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727737896; c=relaxed/simple;
-	bh=hroTRP738OghtaNu2KOoXMspeAzXmy2nwXkRcARulBA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSSzhcCOUP1xggkj55lVjP7IB0orAPlSeAUFhCiXDjKrjg0LRcqJMNrBjdZG93qjS+E7amH11wAM8+/ZFOoI+pkRMgdeGmMIObJcN0ePYYy/WngvEKF6yhQ1DkUKiGCNhKA3FLyyD5NUvMWrvw8gWUWU5l8GS92tNLUEAoTJml0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=JCWSXbb5; arc=fail smtp.client-ip=40.107.220.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wc57YchSxGXnbTEPt/UvApkfumA/3knsss0ClV6Pab1glsbAUeDNIuc0/9BA9d+SAE8syZkNz4p1npUAHMpb2IiOo3gtcq2RBpCXVcnI/B0zuZHm8s4fjqQ0BmADhaWeJlC4wKZXQpTYBELdAJfdR/+deFreSWbsZvme2URme2+LrJkoXW2Dzu5FcbPvuPmtgPZf/M1gBa7H3V0fzj6DrjJ/bgV3UTZkiePDZtkT65zRu15xfeB2rtgKTwBL2qrq0b/vkyrVfI/59ESk+KMfmZ0SIRYLe/9bFCtgTe8yWRkL2r/IKvRFKBYqEGBZO5F4T0vRVsYXX8rZ3+mBtwWV9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5nL/0FNC6qWDEBaZ1+OnJnqPmWoEQikTtvbzKCSvDmw=;
- b=fTaLQAI/I6mG1AE/3arR1Zp+NyO8XWOFrWzC51fUA01Mm7hhYjRkuQLh7v6yI4IGusJ9b/PmHwIVPNYsfi0D1AkQDKlPORHfbQWzZJ3siwkxm7Gr4sRn/BbJCX410syCuP69acVjTye/PCdr1tJJ+SOSx0nZxqUQIJUNtlnwwjXxy4zcTz688PMTvJk4gv3PZvMQcwDY2p4y17r9osi8B8c6+bh1rnSJbJYboYzyTC4F+6k1wk02z+BsjvH75mLzHxx3937loJxmJ7HHHTrK8Y7AtzmNpuzEAAigVUS8wRkKbWfZu9XL5jN6iUtCwfPmYAa7Q0HoQjRc05OBw3fBkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5nL/0FNC6qWDEBaZ1+OnJnqPmWoEQikTtvbzKCSvDmw=;
- b=JCWSXbb5oXH+klbFP06zhYhSLfUPuVdzTp/U+STtk7B2JNj8bAFdv8WXCOJJf+j6ML/ZSOrbcCbMr8k8g5qKguiFu8/c5Gowk/1miWLFTKo8UrjMvANbHz1nlodDsmvOZqwzEs0GBFd7R0yC1PEsXsXH87EoVtxS7UlvEiVURP8=
-Received: from CH2PR02CA0026.namprd02.prod.outlook.com (2603:10b6:610:4e::36)
- by DM4PR12MB6085.namprd12.prod.outlook.com (2603:10b6:8:b3::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Mon, 30 Sep
- 2024 23:11:32 +0000
-Received: from CH1PEPF0000A345.namprd04.prod.outlook.com
- (2603:10b6:610:4e:cafe::66) by CH2PR02CA0026.outlook.office365.com
- (2603:10b6:610:4e::36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27 via Frontend
- Transport; Mon, 30 Sep 2024 23:11:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000A345.mail.protection.outlook.com (10.167.244.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 23:11:32 +0000
-Received: from ethanolx16dchost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Sep
- 2024 18:11:31 -0500
-From: Pavan Kumar Paluri <papaluri@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-doc@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
-	<dave.hansen@linux.intel.com>, Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>, "H . Peter Anvin" <hpa@zytor.com>,
-	"Peter Zijlstra" <peterz@infradead.org>, Pavan Kumar Paluri
-	<papaluri@amd.com>
-Subject: [PATCH v5 2/2] x86 KVM:SVM: Provide "nosnp" boot option for sev kernel command line
-Date: Mon, 30 Sep 2024 18:11:02 -0500
-Message-ID: <20240930231102.123403-3-papaluri@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240930231102.123403-1-papaluri@amd.com>
-References: <20240930231102.123403-1-papaluri@amd.com>
+	bh=qZvLJWiuZnrkQ+xxFDcNlyv22UZ5W/pSHbwIRIrklKs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aoxIrVsxKnOg3Dq3phlvQDmkYImcbZp8EpeZZmB9MVh5c8HgxR2rRAtdZ+ldlQ1YgW1pYItkY8RWrgYq4OCCRCN1dT76gjqTEL6h09e8uOHY/o3OjfBM6jZBLNg68HdEZeAXHDvI5VW1OzUCAEUQenBBAt73j4C0RPH2LvYxVGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a2LcHx94; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a9aec89347so318585685a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:11:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727737893; x=1728342693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bt1p6qi/avv3Z7JNtcGvm+YnEBXlYqUjxh3iCuxFEK4=;
+        b=a2LcHx94raMTOIayYqd2idEWgrOyY9QI9slMsXQN4Yk/br3vPSWYwh4RQYqYDhy05+
+         0uw9Dj1tUvIzGy8UxC0uHtIWb5Nge3V4/OZsKkt8BIfjebIBTFAq7pU0vaj0nR8oU7r2
+         MFe7L+mpZnYM3IqZ0SoiVduB+VqFqlOeR6UqNo0CBbauyieeXPjwEfz8JWHh+CNcsNgB
+         D5mpKDG17mYmG3URrGPFMSP8yFE59vw0cBeuCtjFq/KHCLZZYte+5nSH85e7l8M7SFmm
+         H8cglpup/U0yI1bb35cgNS5LFSCfmRnJXbQc73dpvkAXzGUlTBm4ls2eDhqrZH/HAGOZ
+         d8gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727737893; x=1728342693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bt1p6qi/avv3Z7JNtcGvm+YnEBXlYqUjxh3iCuxFEK4=;
+        b=nV9jji8I4hv5NEoHQJZ6VRu35yScVemDQ2gUpGl8fidLfiXEhJICkxqCNzrNmyUElw
+         KjOP6HgDPtW0EaYd9REHAxNslXgAqB67VXvYiwa5mc5GKEDMNQhl6uN/07+H3nhgwwO8
+         m6A7serePVCGLQwXdpanV9hc9OrWJpPr7gHBtAz9dEAemJh2IMXbvPv6/LVErF0ZzbSm
+         MA8pcIx0OApIJgunzJhwNhOPlAbDphQDdtlH17DpYLicMPErhLqA6wM3+imZSL4fDOZU
+         0b+L4tH0LcSC3/Xxav0biJme0itwsBnqqKBwZMu36mRdrz1zNBiUsveJwh/ay+69XhSD
+         ZOfg==
+X-Gm-Message-State: AOJu0Yy4UodtxfiFbRRyduvxB2cQru0Zt5kFlIOPEVZ4KM18rgg5VLUB
+	yHQdvCFaIwQRtJel+5kQHHaLRcQGLpm30seDDMOOTJ7zX6In7bHxUEdI69knBiPQwFvtdotM75r
+	68YyE1KW6DiA5Was62aidMXSUoIs=
+X-Google-Smtp-Source: AGHT+IEZsCfg9FoV3ap/Q71ShaRhWDJAzq8H8/gftDicFSR8wkle3axkldA0oLqVhTU52iUKUH4ysSsEsc91Ico8dZg=
+X-Received: by 2002:a05:620a:17ab:b0:7a9:c13d:6e5c with SMTP id
+ af79cd13be357-7ae37852751mr1708462385a.29.1727737893167; Mon, 30 Sep 2024
+ 16:11:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000A345:EE_|DM4PR12MB6085:EE_
-X-MS-Office365-Filtering-Correlation-Id: 097ed8e0-4add-4af9-d8cf-08dce1a53963
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?H/bQLThXNUkx+UDZytJT8LVuTA4uT3lPyEWdYBpnbFMfUHt3QvRnCzWaPhgV?=
- =?us-ascii?Q?rzcon0TllNNPkVF3l1OKSzD+3PajrR1fjJrDo3Fo+C1i4zUVhYgrcuhThnHt?=
- =?us-ascii?Q?8u6JtEb5GAmIZg74HcPf1yezJbyQeZCbSUeplgmLH3HL3/6Nm374zs2Wu4Li?=
- =?us-ascii?Q?4erH6j63fnCfu5cBYfqI3vY6nCTjPpSZRPaY4Qof4DDIkco3Un6tfH902Am+?=
- =?us-ascii?Q?WU4d1vM3I8Pf1TBlQH/A8oghWIOEhXMRLHUrOEy7oEWWsH9KXlW7RbQHIlbf?=
- =?us-ascii?Q?8e1Z3TH2LNbsDIAU8P0MU03C63h4Mz7BcpWZuOkI6KLxYaNkS8KtsRaOYkkt?=
- =?us-ascii?Q?vehcR6dEmyMNT+SnlNl24tGdtgyMIiPXjz4cniuo0bqhdFQASuJuL2lcBIV4?=
- =?us-ascii?Q?m0vp/oQNO8bkCW3z619t5PsPXykdi7jvgCnXCs3Z3ucXtFNI58pvLKIsNKCP?=
- =?us-ascii?Q?qMi7xCZ7IuM0AW081WgLMuRsQwgJttrt1hK+GVqZfM9236TTLkVDwIU9QZ80?=
- =?us-ascii?Q?pUHb0gjuHeMWoJRcmlfGqUqQ2ab2Mfw2nrS0n17FkyWhMU/G7ZNPrBJ37UI5?=
- =?us-ascii?Q?42zxb9HmrCY5ACQLlokN9ps90IXZAR6KGAyZyU7+q4JRURFQ9I3OmRLBUzAG?=
- =?us-ascii?Q?co/pZjkDk7KCNSQa1d2TE0siu//HLFAhwgpZr2Un+xRxo3I1ZRnBaVelBrs3?=
- =?us-ascii?Q?LovMeHQvAMegepy0B9VCQUy2dsCCBmkEx5azlexl8z70urV28R21+IGiByxL?=
- =?us-ascii?Q?kGDMiWMiIhJT4gSKkHTZ0/vadAQb7Qqa97q3lonS6uZoJxRKh5VoiQhquKpg?=
- =?us-ascii?Q?2aKfa0rdstQc+wxyb3QI5n/xdqdqoCinQm2RzXYh0kck7guFD0pw38B9Ou+w?=
- =?us-ascii?Q?Et/j0NgI9Gf4WzeqAxGTkSFDE2fj9Lr1SYEKerF+weRG4+f4YfQjYlei4lJI?=
- =?us-ascii?Q?jqIFFlXLKZeAew00BgzMglaLMBTdIB5vv/XpsRWMK7zMTGdmgLXDfhIukEWe?=
- =?us-ascii?Q?MN+yhHWsGxxHwD9kIJmebHqcuWE0UleOwqLe5UZm2yrk5cRbpPsvN1kpFyWx?=
- =?us-ascii?Q?stb6vcm1uyw1Uc6CG2rrpUV3pAhU3fP67Rp4wp77EbKSclK8bPf+/DJMSQIi?=
- =?us-ascii?Q?DGst2IoMZtPiQevIlc3OgDmzLTW4zvAbGxrXk6HE9cumCem/Q4gyFSYrxkeL?=
- =?us-ascii?Q?Umik/J2H0aBcYmwI83+6sGA4BWxUoUwPyFeTtbyXKCVZXu5c5nbv+LkY/7nC?=
- =?us-ascii?Q?UYjXXOpxM1JQD9bdG/W1LIHvpUglA+E0b6NQTL7sRQ4OZdDxwWEdCP1F27lt?=
- =?us-ascii?Q?lFGrFwe8wsppSiaa37LVNCQrZGj6uPIaCJUpphfQhsWRP0Lq/rzF1MTtGEME?=
- =?us-ascii?Q?7aP5tDa0/Hv8LJohDI4RLyTzJRgm?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 23:11:32.7684
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 097ed8e0-4add-4af9-d8cf-08dce1a53963
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000A345.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6085
+References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com> <20240930221221.6981-7-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240930221221.6981-7-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 30 Sep 2024 16:11:22 -0700
+Message-ID: <CAKEwX=Podz0XkX4=sutZk_nRTPy_aQ3JSVUZ9GNxPbX=t7R2kg@mail.gmail.com>
+Subject: Re: [PATCH v9 6/7] mm: zswap: Support large folios in zswap_store().
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, willy@infradead.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Provide a "nosnp" kernel command line option to prevent enabling of the
-RMP and SEV-SNP features in the host/hypervisor. Not initializing the
-RMP removes system overhead associated with RMP checks.
+On Mon, Sep 30, 2024 at 3:12=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> zswap_store() will store large folios by compressing them page by page.
+>
+> This patch provides a sequential implementation of storing a large folio
+> in zswap_store() by iterating through each page in the folio to compress
+> and store it in the zswap zpool.
+>
+> zswap_store() calls the newly added zswap_store_page() function for each
+> page in the folio. zswap_store_page() handles compressing and storing eac=
+h
+> page.
+>
+> We check the global and per-cgroup limits once at the beginning of
+> zswap_store(), and only check that the limit is not reached yet. This is
+> racy and inaccurate, but it should be sufficient for now. We also obtain
+> initial references to the relevant objcg and pool to guarantee that
+> subsequent references can be acquired by zswap_store_page(). A new functi=
+on
+> zswap_pool_get() is added to facilitate this.
+>
+> If these one-time checks pass, we compress the pages of the folio, while
+> maintaining a running count of compressed bytes for all the folio's pages=
+.
+> If all pages are successfully compressed and stored, we do the cgroup
+> zswap charging with the total compressed bytes, and batch update the
+> zswap_stored_pages atomic/zswpout event stats with folio_nr_pages() once,
+> before returning from zswap_store().
+>
+> If an error is encountered during the store of any page in the folio,
+> all pages in that folio currently stored in zswap will be invalidated.
+> Thus, a folio is either entirely stored in zswap, or entirely not stored
+> in zswap.
+>
+> The most important value provided by this patch is it enables swapping ou=
+t
+> large folios to zswap without splitting them. Furthermore, it batches som=
+e
+> operations while doing so (cgroup charging, stats updates).
+>
+> This patch also forms the basis for building compress batching of pages i=
+n
+> a large folio in zswap_store() by compressing up to say, 8 pages of the
+> folio in parallel in hardware using the Intel In-Memory Analytics
+> Accelerator (Intel IAA).
+>
+> This change reuses and adapts the functionality in Ryan Roberts' RFC
+> patch [1]:
+>
+>   "[RFC,v1] mm: zswap: Store large folios without splitting"
+>
+>   [1] https://lore.kernel.org/linux-mm/20231019110543.3284654-1-ryan.robe=
+rts@arm.com/T/#u
+>
+> Also, addressed some of the RFC comments from the discussion in [1].
+>
+> Co-developed-by: Ryan Roberts
+> Signed-off-by:
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  mm/zswap.c | 220 +++++++++++++++++++++++++++++++++++++----------------
+>  1 file changed, 153 insertions(+), 67 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 2b8da50f6322..b74c8de99646 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -411,6 +411,12 @@ static int __must_check zswap_pool_tryget(struct zsw=
+ap_pool *pool)
+>         return percpu_ref_tryget(&pool->ref);
+>  }
+>
+> +/* The caller must already have a reference. */
+> +static void zswap_pool_get(struct zswap_pool *pool)
+> +{
+> +       percpu_ref_get(&pool->ref);
+> +}
+> +
+>  static void zswap_pool_put(struct zswap_pool *pool)
+>  {
+>         percpu_ref_put(&pool->ref);
+> @@ -1402,68 +1408,52 @@ static void shrink_worker(struct work_struct *w)
+>  /*********************************
+>  * main API
+>  **********************************/
+> -bool zswap_store(struct folio *folio)
+> +
+> +/*
+> + * Stores the page at specified "index" in a folio.
+> + *
+> + * @page:  The page to store in zswap.
+> + * @objcg: The folio's objcg. Caller has a reference.
+> + * @pool:  The zswap_pool to store the compressed data for the page.
+> + *         The caller should have obtained a reference to a valid
+> + *         zswap_pool by calling zswap_pool_tryget(), to pass as this
+> + *         argument.
+> + * @tree:  The xarray for the @page's folio's swap.
+> + * @compressed_bytes: The compressed entry->length value is added
+> + *                    to this, so that the caller can get the total
+> + *                    compressed lengths of all sub-pages in a folio.
+> + */
+> +static bool zswap_store_page(struct page *page,
+> +                            struct obj_cgroup *objcg,
+> +                            struct zswap_pool *pool,
+> +                            struct xarray *tree,
+> +                            size_t *compressed_bytes)
+>  {
+> -       swp_entry_t swp =3D folio->swap;
+> -       pgoff_t offset =3D swp_offset(swp);
+> -       struct xarray *tree =3D swap_zswap_tree(swp);
+>         struct zswap_entry *entry, *old;
+> -       struct obj_cgroup *objcg =3D NULL;
+> -       struct mem_cgroup *memcg =3D NULL;
+> -
+> -       VM_WARN_ON_ONCE(!folio_test_locked(folio));
+> -       VM_WARN_ON_ONCE(!folio_test_swapcache(folio));
+> -
+> -       /* Large folios aren't supported */
+> -       if (folio_test_large(folio))
+> -               return false;
+> -
+> -       if (!zswap_enabled)
+> -               goto check_old;
+> -
+> -       /* Check cgroup limits */
+> -       objcg =3D get_obj_cgroup_from_folio(folio);
+> -       if (objcg && !obj_cgroup_may_zswap(objcg)) {
+> -               memcg =3D get_mem_cgroup_from_objcg(objcg);
+> -               if (shrink_memcg(memcg)) {
+> -                       mem_cgroup_put(memcg);
+> -                       goto reject;
+> -               }
+> -               mem_cgroup_put(memcg);
+> -       }
+> -
+> -       if (zswap_check_limits())
+> -               goto reject;
+>
+>         /* allocate entry */
+> -       entry =3D zswap_entry_cache_alloc(GFP_KERNEL, folio_nid(folio));
+> +       entry =3D zswap_entry_cache_alloc(GFP_KERNEL, folio_nid(page_foli=
+o(page)));
+>         if (!entry) {
+>                 zswap_reject_kmemcache_fail++;
+>                 goto reject;
+>         }
+>
+> -       /* if entry is successfully added, it keeps the reference */
+> -       entry->pool =3D zswap_pool_current_get();
+> -       if (!entry->pool)
+> -               goto freepage;
+> +       /* zswap_store() already holds a ref on 'objcg' and 'pool' */
+> +       if (objcg)
+> +               obj_cgroup_get(objcg);
+> +       zswap_pool_get(pool);
 
-Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-Signed-off-by: Pavan Kumar Paluri <papaluri@amd.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
----
- Documentation/arch/x86/x86_64/boot-options.rst | 3 +++
- arch/x86/virt/svm/cmdline.c                    | 7 +++++++
- 2 files changed, 10 insertions(+)
+Should we also batch-get references to the pool as well? i.e add a
+helper function:
 
-diff --git a/Documentation/arch/x86/x86_64/boot-options.rst b/Documentation/arch/x86/x86_64/boot-options.rst
-index 98d4805f0823..7ae6d882ea52 100644
---- a/Documentation/arch/x86/x86_64/boot-options.rst
-+++ b/Documentation/arch/x86/x86_64/boot-options.rst
-@@ -305,3 +305,6 @@ The available options are:
- 
-    debug
-      Enable debug messages.
-+
-+   nosnp
-+     Do not enable SEV-SNP (applies to host/hypervisor only).
-diff --git a/arch/x86/virt/svm/cmdline.c b/arch/x86/virt/svm/cmdline.c
-index 9640507342e0..313415d6f53f 100644
---- a/arch/x86/virt/svm/cmdline.c
-+++ b/arch/x86/virt/svm/cmdline.c
-@@ -11,6 +11,7 @@
- #include <linux/printk.h>
- 
- #include <asm/sev-common.h>
-+#include <asm/cpufeature.h>
- 
- struct sev_config sev_cfg __read_mostly;
- 
-@@ -24,6 +25,12 @@ static int __init init_sev_config(char *str)
- 			continue;
- 		}
- 
-+		if (!strcmp(s, "nosnp")) {
-+			setup_clear_cpu_cap(X86_FEATURE_SEV_SNP);
-+			cc_platform_clear(CC_ATTR_HOST_SEV_SNP);
-+			continue;
-+		}
-+
- 		pr_info("SEV command-line option '%s' was not recognized\n", s);
- 	}
- 
--- 
-2.34.1
+/* The caller must already have a reference. */
+static void zswap_pool_get_many(struct zswap_pool *pool, unsigned long nr)
+{
+       percpu_ref_get_many(&pool->ref, nr);
+}
 
+then do it in a fell swoop after you're done storing all individual subpage=
+s
+(near atomic_long_add(nr_pages, &zswap_stored_pages)).
+
+Do double check that it is safe - I think it should be, since we have
+the folio locked in swapcache, so there should not be any shenanigans
+(for e.g no race with concurrent free or writeback).
+
+Perhaps a fixlet suffices?
 
