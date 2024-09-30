@@ -1,347 +1,216 @@
-Return-Path: <linux-kernel+bounces-343549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E76F989C67
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:15:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A10E989C71
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB1CB1C21771
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:15:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8036EB23E76
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9637D1741CB;
-	Mon, 30 Sep 2024 08:14:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE74E14D6F9;
+	Mon, 30 Sep 2024 08:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TmaIEd0L"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD1516F0DC
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9999A364AE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727684098; cv=none; b=ROSPSGSRvYDcVLtgkmTYzSzv2lyQ42mRhIdme9Nv73SBx7LVb76BhYQ7f2nKoVm41kvC071XS1sBIWvFtPYCa4RkLxsu0YvrfQZBwFTTgZr+OjrWSJejHd9lDvbs3uC0he73Ov9gE0thshR6amGIHU3KT9XeNzrEilvdWc0Dkng=
+	t=1727684219; cv=none; b=sFu1pALvyTEGOY4mFCqWuNGFJPy/iAMrz4W1ELDX+sSgIcwRvNGUmFie32/Ru7Mh44Slmgx0T3vj9w6Y3s/h4LtnPFbEMdQa5MznzCuisMR71OxceJVAsE5MV2gpCDdo5wn1+A9TTbUZgcMh+6nYKXzbqMyU3/updGTsk0QZNmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727684098; c=relaxed/simple;
-	bh=Ceu/nVD+ZRhjdNGaopzqvLqPyVf9Z+iuNWVvvy/ZI78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuloMIGuaurYq6u6r76V+3xtJ12WcMry3LVbcJ9XR4NwzH6tOdnPBrdqaZh2hIB0FZBbdjvlGjkLWv+UbT/g0W8fEZZw19Vu9Tz/ShCOydJWZeGfJ8pG10uoOLuc6KuX3UEfjPWoW+5fTrmnCGyIkzoQbn1iGXpnmp1r/9w9pRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1svBY9-0007aq-P2; Mon, 30 Sep 2024 10:14:33 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1svBY3-002aWI-LV; Mon, 30 Sep 2024 10:14:27 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1svBY3-0030yV-1k;
-	Mon, 30 Sep 2024 10:14:27 +0200
-Date: Mon, 30 Sep 2024 10:14:27 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-Subject: Re: [PATCH v3 3/4] block: add support for partition table defined in
- OF
-Message-ID: <Zvpd48oOYletv7Ko@pengutronix.de>
-References: <20240929140713.6883-1-ansuelsmth@gmail.com>
- <20240929140713.6883-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1727684219; c=relaxed/simple;
+	bh=ThynKLz4AT1nAOZ6rGyGFHQY9EBLOWpnysHGls5f8jk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bmrLa3HAb0pdsWHyfQ1tY27OK5VA/+WMoYUqDhAk0c4Ce7HepSWua2/tUIfkE+gUjqSpC7LLHddvl+l9/KNxrbZliI367n+2q07UVu07Gu4D/8XLy197qomEGB3soJZrFeZMK3cIEPxwLv3aV8CoTo+T5y0TVGcPIBNSPaLRJhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TmaIEd0L; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e07ad50a03so3035324a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:16:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1727684217; x=1728289017; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bg/JsHbRYOY17LCnQI4+RfnyVR2NGBJO3j7fCVMNrwM=;
+        b=TmaIEd0LyUmr1kqMnHMgrqwW9UCBXOjTD/CiEAN77ibWehl7dND56RVTHUZEmyaQNr
+         mvaoX7UlVvKE+g/hXF670r3CSjlAE3PBuKVGaCAdEbE0kylPysl9Sec9k1xTFnGgpJ3b
+         gyO2ulN9NjSo+Crj9P99uEfwaQKuJbD1nprzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727684217; x=1728289017;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bg/JsHbRYOY17LCnQI4+RfnyVR2NGBJO3j7fCVMNrwM=;
+        b=s2XluckXpIhp/Oj94V9+Ql595XSNeiR4ANPC390UlAXJIJ4DvnBFtYQQrM8NuooBKb
+         XQNIatVOsodovE6TAZOuYHA1S5kIbgy/p/crCAnMmPFaKdQIUBiuATFb+XS8IIMI4YFP
+         doDnj4PFBxnaLku+xOTX0/Ii081Fuqm+lHh4sni1MtsZoPo4nVtv2mzE0KynPhIIvwTa
+         /2x83WA4iOymNEbQcRjKTHYIVaysC/JaNVAKO2wks1Kq3dfVYFsn2oGXTGeVaxPLspIg
+         SR9cioE+qdIOqSJRJWQW0YtGPvrFXig8zFNq9waaZPpNVzKJQQsSPOH0ajRYyZFOYk3/
+         Z5sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfYknHWQSi0WS+iT+ik92grb6Uat23PYXnqeeAtAsyVocl2YryvNs7j2kn+riLCXs5LrQ19Us/k37hNG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9A6CzP0LnKD78QnFUhCCor0ytEegFdtNXXgiIiFVGMd+s6kpP
+	tunMx1uwLB5n8OGHb7t2QsHiEGA1MyyMvheH4RTjcZ7FWXdyGKnkO5PxvRCfiDYPXY6ceH1Se6R
+	FrF7EXwzXUVTnM2Ptcj6gtPB0PrEGJt1ReHwP
+X-Google-Smtp-Source: AGHT+IHNMzSmCdD3VPOdcz482zoFVww7dbes5TEsCEi5MWLVMwG2b9u7aU4e3LYYRwfdytM1ljogLnNL3Z/Tqj9v+iw=
+X-Received: by 2002:a17:90a:ad8e:b0:2e0:944b:9524 with SMTP id
+ 98e67ed59e1d1-2e0b8b19d3amr13282945a91.22.1727684216710; Mon, 30 Sep 2024
+ 01:16:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240929140713.6883-4-ansuelsmth@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <1727667875-29908-1-git-send-email-shradhagupta@linux.microsoft.com>
+In-Reply-To: <1727667875-29908-1-git-send-email-shradhagupta@linux.microsoft.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Mon, 30 Sep 2024 13:46:44 +0530
+Message-ID: <CALs4sv31-ZT1j5y+f=SaCrW54w2UYZ1RzEm1ncAeSRjZFdnUsQ@mail.gmail.com>
+Subject: Re: [PATCH net-next RESEND] net: mana: Increase the
+ DEF_RX_BUFFERS_PER_QUEUE to 1024
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Long Li <longli@microsoft.com>, Simon Horman <horms@kernel.org>, 
+	Konstantin Taranov <kotaranov@microsoft.com>, 
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>, Erick Archer <erick.archer@outlook.com>, 
+	Ahmed Zaki <ahmed.zaki@intel.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Shradha Gupta <shradhagupta@microsoft.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000000db0cc062351d4fd"
 
-Hi Christian,
+--0000000000000db0cc062351d4fd
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for working on this, it will be useful for me as well.
-Some comments inside.
-
-On Sun, Sep 29, 2024 at 04:06:19PM +0200, Christian Marangi wrote:
-> Add support for partition table defined in Device Tree. Similar to how
-> it's done with MTD, add support for defining a fixed partition table in
-> device tree.
-> 
-> A common scenario for this is fixed block (eMMC) embedded devices that
-> have no MBR or GPT partition table to save storage space. Bootloader
-> access the block device with absolute address of data.
-> 
-> This is to complete the functionality with an equivalent implementation
-> with providing partition table with bootargs, for case where the booargs
-> can't be modified and tweaking the Device Tree is the only solution to
-> have an usabe partition table.
-> 
-> The implementation follow the fixed-partitions parser used on MTD
-> devices where a "partitions" node is expected to be declared with
-> "fixed-partitions" compatible in the OF node of the disk device
-> (mmc-card for eMMC for example) and each child node declare a label
-> and a reg with offset and size. If label is not declared, the node name
-> is used as fallback. Eventually is also possible to declare the read-only
-> property to flag the partition as read-only.
-> 
-> For eMMC block, driver scan the disk name and check if it's suffixed with
-> "boot0" or "boot1".
-> This is to handle the additional disk provided by eMMC as supported in
-> JEDEC 4.4+. If this suffix is detected, "partitions-boot0" or
-> "partitions-boot1" are used instead of the generic "partitions" for the
-> relevant disk.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+On Mon, Sep 30, 2024 at 9:14=E2=80=AFAM Shradha Gupta
+<shradhagupta@linux.microsoft.com> wrote:
+>
+> Through some experiments, we found out that increasing the default
+> RX buffers count from 512 to 1024, gives slightly better throughput
+> and significantly reduces the no_wqe_rx errs on the receiver side.
+> Along with these, other parameters like cpu usage, retrans seg etc
+> also show some improvement with 1024 value.
+>
+> Following are some snippets from the experiments
+>
+> ntttcp tests with 512 Rx buffers
+> ---------------------------------------
+> connections|  throughput|  no_wqe errs|
+> ---------------------------------------
+> 1          |  40.93Gbps | 123,211     |
+> 16         | 180.15Gbps | 190,120     |
+> 128        | 180.20Gbps | 173,508     |
+> 256        | 180.27Gbps | 189,884     |
+>
+> ntttcp tests with 1024 Rx buffers
+> ---------------------------------------
+> connections|  throughput|  no_wqe errs|
+> ---------------------------------------
+> 1          |  44.22Gbps | 19,864      |
+> 16         | 180.19Gbps | 4,430       |
+> 128        | 180.21Gbps | 2,560       |
+> 256        | 180.29Gbps | 1,529       |
+>
+> So, increasing the default RX buffers per queue count to 1024
+>
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
 > ---
->  block/partitions/Kconfig  |   8 ++
->  block/partitions/Makefile |   1 +
->  block/partitions/check.h  |   1 +
->  block/partitions/core.c   |   3 +
->  block/partitions/of.c     | 151 ++++++++++++++++++++++++++++++++++++++
->  5 files changed, 164 insertions(+)
->  create mode 100644 block/partitions/of.c
-> 
-> diff --git a/block/partitions/Kconfig b/block/partitions/Kconfig
-> index 7aff4eb81c60..8534f7544f26 100644
-> --- a/block/partitions/Kconfig
-> +++ b/block/partitions/Kconfig
-> @@ -270,4 +270,12 @@ config CMDLINE_PARTITION
->  	  Say Y here if you want to read the partition table from bootargs.
->  	  The format for the command line is just like mtdparts.
->  
-> +config OF_PARTITION
-> +	bool "Command line partition support" if PARTITION_ADVANCED
+>  include/net/mana/mana.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Should be "device tree partition support".
+Looks good to me.
+Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
-> +	depends on OF
-> +	help
-> +	  Say Y here if you want to enable support for partition table
-> +	  defined in Device Tree. (mainly for eMMC)
-> +	  The format for the command line is just like MTD fixed-partition schema.
-> +
->  endmenu
+--0000000000000db0cc062351d4fd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-[...]
-
-> diff --git a/block/partitions/of.c b/block/partitions/of.c
-> new file mode 100644
-> index 000000000000..bc6200eb86b3
-> --- /dev/null
-> +++ b/block/partitions/of.c
-> @@ -0,0 +1,151 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/blkdev.h>
-> +#include <linux/major.h>
-> +#include <linux/of.h>
-> +#include "check.h"
-> +
-> +#define BOOT0_STR	"boot0"
-> +#define BOOT1_STR	"boot1"
-> +
-> +static struct device_node *get_partitions_node(struct device_node *disk_np,
-> +					       struct gendisk *disk)
-> +{
-> +	const char *node_name = "partitions";
-> +
-> +	/*
-> +	 * JEDEC specification 4.4 for eMMC introduced 3 additional partition
-> +	 * present on every eMMC. These additional partition are always hardcoded
-> +	 * from the eMMC driver as boot0, boot1 and rpmb. While rpmb is used to
-> +	 * store keys and exposed as a char device, the other 2 are exposed as
-> +	 * real separate disk with the boot0/1 appended to the disk name.
-> +	 *
-> +	 * Here we parse the disk_name in search for such suffix and select
-> +	 * the correct partition node.
-> +	 */
-> +	if (disk->major == MMC_BLOCK_MAJOR) {
-> +		const char *disk_name = disk->disk_name;
-> +
-> +		if (!memcmp(disk_name + strlen(disk_name) - strlen(BOOT0_STR),
-> +			    BOOT0_STR, sizeof(BOOT0_STR)))
-> +			node_name = "partitions-boot0";
-> +		if (!memcmp(disk_name + strlen(disk_name) - strlen(BOOT1_STR),
-> +			    BOOT1_STR, sizeof(BOOT1_STR)))
-> +			node_name = "partitions-boot1";
-> +	}
-> +
-> +	return of_get_child_by_name(disk_np, node_name);
-> +}
-> +
-> +static int validate_of_partition(struct device_node *np, int slot)
-> +{
-> +	int a_cells, s_cells;
-> +	const __be32 *reg;
-> +	u64 offset, size;
-> +	int len;
-> +
-> +	reg = of_get_property(np, "reg", &len);
-> +
-> +	a_cells = of_n_addr_cells(np);
-> +	s_cells = of_n_size_cells(np);
-> +
-
-The corresponding mtd ofpart parser validates a_cells + s_cells against
-len, like this:
-
-	if (len / 4 != a_cells + s_cells) {
-		pr_debug("%s: ofpart partition %pOF (%pOF) error parsing reg property.\n",
-			 master->name, pp,
-			 mtd_node);
-		goto ofpart_fail;
-	}
-
-I think you should do it here as well.
-
-> +	/*
-> +	 * Validate offset conversion from bytes to sectors.
-> +	 * Only the first partition is allowed to have offset 0.
-> +	 */
-
-Where is this constraint coming from? I would put the partitions in
-order into the device tree as well, but the binding doesn't enforce it
-and I see no reason to do so.
-
-> +	offset = of_read_number(reg, a_cells);
-> +	if (do_div(offset, SECTOR_SIZE) ||
-
-How about (offset % SECTOR_SIZE) or (offset & (SECTOR_SIZE - 1))? Might
-be a bit more intuitive to read.
-
-> +	    (slot > 1 && !offset))
-> +		return -EINVAL;
-> +
-> +	/* Validate size conversion from bytes to sectors */
-> +	size = of_read_number(reg + a_cells, s_cells);
-> +	if (do_div(size, SECTOR_SIZE) || !size)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static void add_of_partition(struct parsed_partitions *state, int slot,
-> +			     struct device_node *np)
-> +{
-> +	struct partition_meta_info *info;
-> +	char tmp[sizeof(info->volname) + 4];
-> +	int a_cells, s_cells;
-> +	const char *partname;
-> +	const __be32 *reg;
-> +	u64 offset, size;
-> +	int len;
-> +
-> +	reg = of_get_property(np, "reg", &len);
-> +
-> +	a_cells = of_n_addr_cells(np);
-> +	s_cells = of_n_size_cells(np);
-> +
-> +	/* Convert bytes to sector size */
-> +	offset = of_read_number(reg, a_cells) / SECTOR_SIZE;
-> +	size = of_read_number(reg + a_cells, s_cells) / SECTOR_SIZE;
-> +
-> +	put_partition(state, slot, offset, size);
-> +
-> +	if (of_property_read_bool(np, "read-only"))
-> +		state->parts[slot].flags |= ADDPART_FLAG_READONLY;
-> +
-> +	/*
-> +	 * Follow MTD label logic, search for label property,
-> +	 * fallback to node name if not found.
-> +	 */
-> +	info = &state->parts[slot].info;
-> +	partname = of_get_property(np, "label", &len);
-> +	if (!partname)
-> +		partname = of_get_property(np, "name", &len);
-> +	strscpy(info->volname, partname, sizeof(info->volname));
-> +
-> +	snprintf(tmp, sizeof(tmp), "(%s)", info->volname);
-> +	strlcat(state->pp_buf, tmp, PAGE_SIZE);
-> +}
-> +
-> +int of_partition(struct parsed_partitions *state)
-> +{
-> +	struct device_node *disk_np, *partitions_np, *np;
-> +	struct device *ddev = disk_to_dev(state->disk);
-> +	int slot;
-> +
-> +	disk_np = of_node_get(ddev->parent->of_node);
-> +	if (!disk_np)
-> +		return 0;
-> +
-> +	partitions_np = get_partitions_node(disk_np, state->disk);
-> +	if (!partitions_np ||
-> +	    !of_device_is_compatible(partitions_np, "fixed-partitions"))
-> +		return 0;
-
-of_node_put(disk_np) missing here before return.
-
-> +
-> +	/* Check if child are over the limit */
-> +	slot = of_get_child_count(partitions_np);
-> +	if (slot >= state->limit)
-> +		goto err;
-
-Other partition parsers just silently ignore the partitions
-exceeding state->limit instead of throwing an error. Maybe do the same
-here?
-
-> +
-> +	slot = 1;
-> +	/* Validate parition offset and size */
-> +	for_each_child_of_node(partitions_np, np) {
-> +		if (validate_of_partition(np, slot))
-> +			goto err;
-> +
-> +		slot++;
-> +	}
-> +
-> +	slot = 1;
-> +	for_each_child_of_node(partitions_np, np) {
-> +		add_of_partition(state, slot, np);
-> +
-> +		slot++;
-> +	}
-> +
-> +	strlcat(state->pp_buf, "\n", PAGE_SIZE);
-> +
-> +	return 1;
-> +err:
-> +	of_node_put(partitions_np);
-> +	of_node_put(disk_np);
-
-You should put the nodes for the non error case as well.
-
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+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
+OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
+dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
+fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
+9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
+pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
+25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
+Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOV4rNVZKWTzkJrDhqy5ooCInaN7w/c7
+NTdFg+cFW7WvMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkz
+MDA4MTY1N1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQAXgCHdHAYQfr4n2g6L7gIelGZykGoziYXWFx0TUKQCV4Sb4gb+
+dsOAeZZ47B8gMhDfnbnJ+JzynE7UV2McxMouMq5vYqoxd3Y7ndW9RoVsLFp4xJJNRXPz/LzKrOcm
+NK3QCsk0lKuDQF/cB0aMquXstf7lEAM+qPYdmyzugF1pMP+qGn/hPKQ6PPCyqyBPFNRYKjTrZ/Vi
+/PSittF1InqBOlGDHi72qz7zCvdgCHFXGpz9vG0X8ioqrq+7VDiZsTlmvaClMk1IRKSoDFlxu7yJ
+jt4WFZR6OY8EyQ6ExzOZmV1CXhBUYpElkEkHJbPET71rQBqHYyoZhtKljs3iFG+R
+--0000000000000db0cc062351d4fd--
 
