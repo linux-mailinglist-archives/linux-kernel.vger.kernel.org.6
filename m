@@ -1,122 +1,222 @@
-Return-Path: <linux-kernel+bounces-344651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193C298AC5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:47:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05F8098AC5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B883228175A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 207B01C217D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F591991D3;
-	Mon, 30 Sep 2024 18:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B29198850;
+	Mon, 30 Sep 2024 18:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzpE/FBd"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gErjfmEf"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C491991A4;
-	Mon, 30 Sep 2024 18:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBCE5466B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727722041; cv=none; b=d7xvN+bCEtyf5Cf+PFXX31Slhs2P4xChJcB0e85XyQy6TydpTN0/7gfi+aQpRF2qmFigY3HR8lDY4VduUJIMI9hGlumDJ2mit0k98k7b3vxggHMERzR3kuDRxNvaNNXZ+xmZI2sE1g8qYPKp1ihrxd/YfEUDa67CCKpFAyFXyvE=
+	t=1727722116; cv=none; b=YvnnFlFWcPfyYmO+R0EDJ6gfjIwCeRuKwpZG6oNu/Fxh13URdGOWnrnX0TdTfeBek/6lFEStQkv0DHzZFLUuMJzjX4+QxbB+9L+UdIvK2cLc6S8P1Vksvpxlh2r/yeOX8GK9SIipFZ+95t/v0devAkAqogNMv8Nd5pkn4oPBveE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727722041; c=relaxed/simple;
-	bh=wlKR5YJKB1mmVV3+WAkqqj7X5XgFZixGlMgFKAXGVmc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=nnqMY2uLNMHDSFKAJ51H0LJI/qlUSe1NLMjpsxXgxcszsiP6GprjwBksOkmQD0tqQzlh6yy9u2cAlYvlB5HfKuNY06LtuDrD6vVJmD143GsEBJCG9owvmCa+4qAzXES9Lz1r6HTngew7gZwYuiwuKZnn+ugj4PR2XDztyQCKu34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzpE/FBd; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e25d15846baso4028748276.3;
-        Mon, 30 Sep 2024 11:47:19 -0700 (PDT)
+	s=arc-20240116; t=1727722116; c=relaxed/simple;
+	bh=V73HocS3qJGceDQ58b/ymNVP4DDs0aiGpFlrLQA+khg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=WWsW0R8mNArJg1VWCWHovW/LTx7Vi+OPJnnzHgM+Pr+J0bOTxQP0sR2qwcmm2lRXOHVp9edc9Z6kN17pzol/IAttt+snfVY95ENPBxeO7lzhwSXsG5jDgtb7T18w2Kf36jFQeGxu7nDyias1w5BvkqAuNv+OEdp9ZVnAcKkCejY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gErjfmEf; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e25cfee6581so7157574276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:48:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727722039; x=1728326839; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J9KMPP1jbyyxtbkcgcPK1qa0G10Iw9wXQN8QIpti5/w=;
-        b=AzpE/FBdmvwqeFfSMy9IFlGrjD7dbuHrJNtptwrpk0yhq/JfaqCFJ7nKDnxDY0JP62
-         Oyb+SBnnw2047oe6z/Ue0aPpRUvrJ4Nz8DedkjF/tW8ciZ2/6uVtcbQdCIwYgwxuzlAT
-         nyLZ0exLdJfIq8skTXhBf0/qnpEmCQhhY6H1Uu/tYNhWkieIrdSpp5dbuR0HqFf0Q3Gq
-         aTRwjJh6TAQjwlt8Y+WCacX8QWn3uk+iKx+xmvFgoiRwwEgpjcZwDLpXfAYq/Jhr5Xnd
-         OMTDZeEko8vI+kx7Y7PqHgaU+txO3mGCycsUaCKFSZF0ZQoCs5CNNXvg0cobwbtF4C8f
-         iyvQ==
+        d=google.com; s=20230601; t=1727722114; x=1728326914; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gJ178Z98ooxYmSzZZ3zgy29RsVYz57fPkJggwO7eM/Y=;
+        b=gErjfmEfuTi4FKRRcZA7CyqzrVgSWIWCaoOGqaEiVUF/TXiBieKYJiFfN1Z+m8FReI
+         imLqh7PF+Lkl62SL8KpUNC20JOVZZFsU5Jgatod6x/q8cCxmEbb27tJblFxeV98Ll3+v
+         trWgWyqsP/AIyTuB8UXz7BW6hpdpeN6iy10UGzbFHJsuY/8BidkSKz3uJ4QIQgAE21cW
+         VGHFPLZfRh+ctf5jH2Gbk8DISfPJu6SHhtsvtgWxzhTu/FILtZ6nJ7/SH6igyA56zJHM
+         mawClmGM6piQHzHQ2x6FoVGVCoDZu4miWkg7rPphxyAmVI9vHXuaFSvrXbISBaAOBwWG
+         dGxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727722039; x=1728326839;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=J9KMPP1jbyyxtbkcgcPK1qa0G10Iw9wXQN8QIpti5/w=;
-        b=MT0FATLN/+HDLmgqG0M3r0ny0YNX0bjuFYk3RZGIC67BsNOcSYmyqjEkOC2v8ygqpL
-         VWfFRGOZgLxOi6VWQp0/KJuF/DXjw4NufF/V5cs6ch0CnGgFPC2GuLrgvJWG+rcsAAgR
-         XfAm5nfXvOtnnMCoNvkWroZcVB442E7555VTSDAwOZ1uZ87mI30YG7mUOndYf9YrrmGH
-         OeWvERJUQt2xT91P5VyB7z62etkUMQwiOe+ph8AOCuzZhorI97l/CRh96rSDleQ2zuu4
-         NCK8FKfCQO5caBjO7jltg8WjRemkClSd6jMs3u/BQMUWf9LLNOdxS3Q/0S77xUg7/uVf
-         HaEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCZbKvFlB8TiMe/dZcILuCgTPYpIk1lQbLeDqK6jvWWtvnQ/7wCjm7YmzF3XI1g2RPYDDuttqXL/A9kSM=@vger.kernel.org, AJvYcCUMJJFjwjtq+ODWOV70gyJVrOO8I4xaH7mb/uiNf2rBaOftMPkqamGQMrKh4lsrirh0W5Ocb7ijDIY6Q0yLMyIM@vger.kernel.org, AJvYcCW5s2AVST0d84qQHF5fnHTGWbinxWZx+PmfKLWA0HLRbPgC45i5oQ96Xaa6w33UT2BRnK27Bm2Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSaOYsima80fouOTunccWkmDaqVjkxXBjQkHfTdE3QegnPomvP
-	xeM/1ZEe6lej8G1XRm5qM6P1oXHwewcf2uv1AJDPu379NL85YHKp
-X-Google-Smtp-Source: AGHT+IHL1BKLenw0daNrXqmMBT6YtFG5iCpdSCAsluFTxb9w7Gu9kxwH/P1PDrObdQkb6/fTphuFKg==
-X-Received: by 2002:a05:6902:2b03:b0:e22:515e:7e7d with SMTP id 3f1490d57ef6-e2604c7b782mr10782836276.35.1727722038983;
-        Mon, 30 Sep 2024 11:47:18 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b5ff1basm42375786d6.12.2024.09.30.11.47.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 11:47:18 -0700 (PDT)
-Date: Mon, 30 Sep 2024 14:47:18 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Sean Anderson <sean.anderson@linux.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- "David S . Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org
-Cc: Willem de Bruijn <willemb@google.com>, 
- Shuah Khan <shuah@kernel.org>, 
- linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <66faf2363787a_18c93d294fe@willemb.c.googlers.com.notmuch>
-In-Reply-To: <83297afc-f2fa-4fb6-be0f-f73905f726ef@linux.dev>
-References: <20240930162935.980712-1-sean.anderson@linux.dev>
- <66fadcd4b8f08_18740029417@willemb.c.googlers.com.notmuch>
- <83297afc-f2fa-4fb6-be0f-f73905f726ef@linux.dev>
-Subject: Re: [PATCH net-next] selftests: net: csum: Clean up
- recv_verify_packet_ipv6
+        d=1e100.net; s=20230601; t=1727722114; x=1728326914;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gJ178Z98ooxYmSzZZ3zgy29RsVYz57fPkJggwO7eM/Y=;
+        b=EkebYFSScH5TqA8T6DMFsgOGIBsqTJb0KXMVfzFsiD4YUSwe8l/VbvGR3Kpg4EqLWr
+         77rztnaoRFPi5w6uaeajwjq39NZaq9p1zxKFLqLLkINGYy1QgxOa9tc0bk5pPDuotPJs
+         Lr/a6s1K5NYt9DrVzERtY3OZGGTzLIEGRs8+xIoyAlx8qgh/iqgiTuNV+ZRnEjUub+XQ
+         wsjWH3y6gzb5GWPBzRk25T0qaQbG9L3OtjqabFQu/UaUGKMbcFuXE9gCkXUYJvcvf0po
+         A86gn4qqwW8llxNVRIT4k3ro93cO53o3OnqHuCWRZB8xUrFxS16Eevg+w8IQeHuLbotk
+         NdlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaN7FQT+4LxzFgs/s+23e1oLTynxBIbE1K1urwGeD/Y3N6sNxKzdvAClKgbR9GwGuXtNI3JNUhb6/z7KU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+r2LcwuCrbI879zWfrYB+z02K4dKF/+VwSlZFdA+NJhFaZBi9
+	GNa0lgb6a43y+zcGyDdgtfYZNcOVvCxwpNgfeHL8JqgTz1f1iSKmFsbcXqnvDnpQFEdG+zPeLIe
+	G8KNRpU2DHwMWSywt4AHaPbly/Ey/r+1IAQ==
+X-Google-Smtp-Source: AGHT+IHKdJwe3gXbPZkFGl9SvyFbYs0HExcWa86V3vK7SnHa+jNnD780sdTOLoZrHq6baXrlpeXJRarERm5QsET+V/WZbA==
+X-Received: from isaacmanjarres.irv.corp.google.com ([2620:15c:2d:3:179f:eecf:1162:3e05])
+ (user=isaacmanjarres job=sendgmr) by 2002:a25:fc06:0:b0:e25:c8fc:b78c with
+ SMTP id 3f1490d57ef6-e2604c7ea2amr8563276.9.1727722114003; Mon, 30 Sep 2024
+ 11:48:34 -0700 (PDT)
+Date: Mon, 30 Sep 2024 11:48:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240930184826.3595221-1-isaacmanjarres@google.com>
+Subject: [PATCH v2] printk: Improve memory usage logging during boot
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	John Ogness <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: surenb@google.com, "Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Sean Anderson wrote:
-> On 9/30/24 13:16, Willem de Bruijn wrote:
-> > Sean Anderson wrote:
-> >> Rename ip_len to payload_len since the length in this case refers only
-> >> to the payload, and not the entire IP packet like for IPv4. While we're
-> >> at it, just use the variable directly when calling
-> >> recv_verify_packet_udp/tcp.
-> >> 
-> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> > 
-> > Not sure such refactoring patches are worth the effort.
-> 
-> Well, FWIW you commented on this in your review, so I figured I'd send it.
-> 
-> https://lore.kernel.org/all/66dbb4fcbf560_2af86229423@willemb.c.googlers.com.notmuch/
+When the initial printk ring buffer size is updated, setup_log_buf()
+allocates a new ring buffer, as well as a set of meta-data structures
+for the new ring buffer. The function also emits the new size of the
+ring buffer, but not the size of the meta-data structures.
 
-True. I meant if respun.
+This makes it difficult to assess how changing the log buffer size
+impacts memory usage during boot.
 
-Whether such changes are worth it as standalone patch is subjective.
-And I get where you're coming from, given that thread.
+For instance, increasing the ring buffer size from 512 KB to 1 MB
+through the command line yields an increase of 2304 KB in reserved
+memory at boot, while the only obvious change is the 512 KB
+difference in the ring buffer sizes:
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+log_buf_len=512K:
+
+printk: log_buf_len: 524288 bytes
+Memory: ... (... 733252K reserved ...)
+
+log_buf_len=1M:
+
+printk: log_buf_len: 1048576 bytes
+Memory: ... (... 735556K reserved ...)
+
+This is because of how the size of the meta-data structures scale with
+the size of the ring buffer.
+
+Even when there aren't changes to the printk ring buffer size (i.e. the
+initial size ==  1 << CONFIG_LOG_BUF_SHIFT), it is impossible to tell
+how much memory is consumed by the printk ring buffer during boot.
+
+Therefore, unconditionally log the sizes of the printk ring buffer
+and its meta-data structures, so that it's easier to understand
+how changing the log buffer size (either through the command line or
+by changing CONFIG_LOG_BUF_SHIFT) affects boot time memory usage.
+
+With the new logs, it is much easier to see exactly why the memory
+increased by 2304 KB:
+
+log_buf_len=512K:
+
+printk: log_buf_len: 524288 bytes
+printk: prb_descs size: 393216 bytes
+printk: printk_infos size: 1441792 bytes
+Memory: ... (... 733252K reserved ...)
+
+log_buf_len=1M:
+
+printk: log_buf_len: 1048576 bytes
+printk: prb_descs size: 786432 bytes
+printk: printk_infos size: 2883584 bytes
+Memory: ... (... 735556K reserved ...)
+
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+---
+ kernel/printk/printk.c | 30 ++++++++++++++++++++++++++----
+ 1 file changed, 26 insertions(+), 4 deletions(-)
+
+v1 -> v2:
+- Consolidated the printk memory usage stats into a single line, and
+  summed the printk_info and prb_desc structure sizes into a single
+  stat to make the output more user-friendly.
+- Fixed an error that caused the memory usage stats to be emitted twice
+  when using the default printk buffer.
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index beb808f4c367..9ba7dd8f352f 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1156,6 +1156,17 @@ static unsigned int __init add_to_rb(struct printk_ringbuffer *rb,
+ 
+ static char setup_text_buf[PRINTKRB_RECORD_MAX] __initdata;
+ 
++static void print_log_buf_usage_stats(void)
++{
++	unsigned int descs_count = log_buf_len >> PRB_AVGBITS;
++	size_t meta_data_size;
++
++	meta_data_size = descs_count * (sizeof(struct prb_desc) + sizeof(struct printk_info));
++
++	pr_info("log buffer data + meta data: %u + %zu = %zu bytes\n",
++		log_buf_len, meta_data_size, log_buf_len + meta_data_size);
++}
++
+ void __init setup_log_buf(int early)
+ {
+ 	struct printk_info *new_infos;
+@@ -1185,20 +1196,29 @@ void __init setup_log_buf(int early)
+ 	if (!early && !new_log_buf_len)
+ 		log_buf_add_cpu();
+ 
+-	if (!new_log_buf_len)
++	if (!new_log_buf_len) {
++		/*
++		 * If early == 0 here, then we're using the default buffer,
++		 * but the memory usage stats haven't been printed yet,
++		 * so do that now.
++		 */
++		if (!early)
++			goto out;
++
+ 		return;
++	}
+ 
+ 	new_descs_count = new_log_buf_len >> PRB_AVGBITS;
+ 	if (new_descs_count == 0) {
+ 		pr_err("new_log_buf_len: %lu too small\n", new_log_buf_len);
+-		return;
++		goto out;
+ 	}
+ 
+ 	new_log_buf = memblock_alloc(new_log_buf_len, LOG_ALIGN);
+ 	if (unlikely(!new_log_buf)) {
+ 		pr_err("log_buf_len: %lu text bytes not available\n",
+ 		       new_log_buf_len);
+-		return;
++		goto out;
+ 	}
+ 
+ 	new_descs_size = new_descs_count * sizeof(struct prb_desc);
+@@ -1261,7 +1281,7 @@ void __init setup_log_buf(int early)
+ 		       prb_next_seq(&printk_rb_static) - seq);
+ 	}
+ 
+-	pr_info("log_buf_len: %u bytes\n", log_buf_len);
++	print_log_buf_usage_stats();
+ 	pr_info("early log buf free: %u(%u%%)\n",
+ 		free, (free * 100) / __LOG_BUF_LEN);
+ 	return;
+@@ -1270,6 +1290,8 @@ void __init setup_log_buf(int early)
+ 	memblock_free(new_descs, new_descs_size);
+ err_free_log_buf:
+ 	memblock_free(new_log_buf, new_log_buf_len);
++out:
++	print_log_buf_usage_stats();
+ }
+ 
+ static bool __read_mostly ignore_loglevel;
+-- 
+2.46.1.824.gd892dcdcdd-goog
 
 
