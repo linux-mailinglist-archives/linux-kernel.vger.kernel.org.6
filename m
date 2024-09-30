@@ -1,145 +1,155 @@
-Return-Path: <linux-kernel+bounces-344169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582AF98A5C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078FF98A5C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F851C21A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:46:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8A5C282916
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706BC18FC89;
-	Mon, 30 Sep 2024 13:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B45E18FDB2;
+	Mon, 30 Sep 2024 13:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3ZYtKfy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rdi6RxGG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94E11EA91;
-	Mon, 30 Sep 2024 13:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878CA17C21B;
+	Mon, 30 Sep 2024 13:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727703979; cv=none; b=OYQDsA1wtrY2aiqNEIEZhF3w69BDqnVUzrZ06OdvWOoWpx71gaFU4AqPrTqNpMNDg18PELyDsBl3m+NNQa6OlbolGR5OD2IMJ8XUqWlh+zDqtAis94hCpMFnJglk2tQ8+Qr3QrqlarEPakKUshaWLT56dn8gTu1ICwpKGL1AV8k=
+	t=1727704003; cv=none; b=r9TkaDUSPxNWz9HNBy9gsSkcGye/OncNPRgRmZIg9BBVrpLaOP2/NXt4fcGrY2/B4uvpzGkYBnJFvG3TkF+ba8aKqlVMh06J8Plqjw9saeYXGtM1S14+IqmsDMCizk8J5NzGgtI/rETOuBrr/l3NuQzRFVF8/2Q1z26ALQk8SS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727703979; c=relaxed/simple;
-	bh=aMJaYzXY1jg3S4x/G45yWq/QZRII8Ge4YR9ZlqyRsB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jy4yLAiyDIYB/zkA5XmglPm2SBBULn4K7qbyRTXsgraGSvGd6/mpWVm0Keuy7g7INZnDNEDsC2FXg9KQHxUCDCC58lDP7bkgeN8tGamQxNNguoVEUiFwYOgBYDIFqzJioPlI1qGe09XhQYDz3wV9MjFR5P4Ubi45hB/qhbLVbZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3ZYtKfy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC98AC4CEC7;
-	Mon, 30 Sep 2024 13:46:16 +0000 (UTC)
+	s=arc-20240116; t=1727704003; c=relaxed/simple;
+	bh=GxAiUuq0Wy2S7R+JT9seOJxEAJ7pXPNyTraE+Y9IWk4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OyqyiWKNGRtHlbUxc6kIkOHZNTSC6NTvd59cKFOZOObqlmV8W+j0sWaDyfcXZK3b9sRoThGYpGSoAE1O60EIA6eDNg/uoLXfKvJNwy66s0rm/PMwmQjQTGRsNr8A4ZBRccBoXIlvse5U20w2dN11P69h9ODXqF+tPoqVJ0MKyIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rdi6RxGG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBA6C4CEC7;
+	Mon, 30 Sep 2024 13:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727703979;
-	bh=aMJaYzXY1jg3S4x/G45yWq/QZRII8Ge4YR9ZlqyRsB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T3ZYtKfyUFS48qvHgbCX7RTJf1ZyWm6pNL1pfytw04oTlnFB/AOTlFL93z46iPwP8
-	 UduAsF/71nTs4Phg+5oPhQMfaBYeEWabmqUEDzx+AoMiCSwyL2MNXeld7T0X6Mvx0F
-	 EPAMvxPL/97ZXqiYd6BkpfcosuV+paPkiQsL8CtQn+lPIxOlDfjItho6vmuxXTUurY
-	 wo+Tll2augLHeF0U65Qz6qFCitBe0NbSycwFT4vS4upHhzbELvouP4aMYAFH2kjyQk
-	 qgMdz6tUsc3nx1dvUMHbrRBqTihE6Utgf+EBEK0jiFrrRMKB+0Tx3XJ2y9giKB65gN
-	 3jK0vFOIV76PQ==
-Date: Mon, 30 Sep 2024 14:46:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 05/20] dt-bindings: gpio: mpfs-gpio: Add
- PIC64GX GPIO compatibility
-Message-ID: <20240930-mourner-sharpness-1b049c7e5c85@spud>
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-6-pierre-henry.moussay@microchip.com>
+	s=k20201202; t=1727704003;
+	bh=GxAiUuq0Wy2S7R+JT9seOJxEAJ7pXPNyTraE+Y9IWk4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rdi6RxGGBxYXeYLiJVuDnkk5oKeFX47e2I/R54i4091f1K3YGfwwjFPMVvsFLl8AH
+	 nQnaLCLpxBYsMc7GSXsSiKaiNfpBSgWXGnDwEXVtGnCslKKuqG0FsiD1+D2TugGZNC
+	 qkvH3tVtdJhv5TP/8wcC31YZ1wdRSQcNlxVlu0iBbZwUqugdK0k+4SGAgBQTPSatDC
+	 qAG3UIVqR2tww6Xuttz7W8jpC+FmL3U+IU0eDbK3jPoopIq/zFWmav0MtOl8RXupm1
+	 uNabCiIK0CSUy2TnXp6JrgfMvpksjvViCEjcU31G7mLwVFPXChBU0SlTbYCW+nATAS
+	 4NsogbeGiJ72g==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 30 Sep 2024 15:46:29 +0200
+Message-ID: <20240930-vfs-fixes-cfedf8d8fa81@brauner>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xs4yn0wAy3h5xCya"
-Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-6-pierre-henry.moussay@microchip.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3004; i=brauner@kernel.org; h=from:subject:message-id; bh=GxAiUuq0Wy2S7R+JT9seOJxEAJ7pXPNyTraE+Y9IWk4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9Wr29IvPCp19itadrjTO3LUppst2nrnRq2981uzOb7 p+Z9f1LfUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEwgsY/tk4L6h17MlTa0/5 6GJqcOvL7d39SceyLn51PnYyTT3mmS/DPxUHyQMnajYxb7jBJMNo8GralmOy+gL5Swz6X3J+zn1 8lw8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+Hey Linus,
 
---xs4yn0wAy3h5xCya
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+/* Summary */
+This contains fixes for this merge window:
 
-On Mon, Sep 30, 2024 at 10:54:34AM +0100, pierre-henry.moussay@microchip.co=
-m wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX GPIO is compatible with mpfs-gpio controller, just add fallback
->=20
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> ---
->  .../bindings/gpio/microchip,mpfs-gpio.yaml        | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.y=
-aml b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> index d61569b3f15b..febe8c2cd70d 100644
-> --- a/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/microchip,mpfs-gpio.yaml
-> @@ -11,10 +11,14 @@ maintainers:
-> =20
->  properties:
->    compatible:
-> -    items:
-> -      - enum:
-> -          - microchip,mpfs-gpio
-> -          - microchip,coregpio-rtl-v3
-> +    oneOf:
-> +      - items:
-> +          - const: microchip,pic64gx-gpio
-> +          - const: microchip,mpfs-gpio
-> +      - items:
+afs:
 
-This items shouldn't be required, the enum should suffice alone.
+- Fix setting of the server responding flag.
 
-> +          - enum:
-> +              - microchip,mpfs-gpio
-> +              - microchip,coregpio-rtl-v3
-> =20
->    reg:
->      maxItems: 1
+- Remove unused struct afs_address_list and afs_put_address_list() function.
 
-> @@ -69,7 +73,8 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: microchip,mpfs-gpio
-> +            enum:
-> +              - microchip,mpfs-gpio
+- Fix infinite loop because of unresponsive servers.
 
-This doesn't need to be changed, it is fine as is, no?
+- Ensure that afs_retry_request() function is correctly added to the
+  afs_req_ops netfs operations table.
 
->      then:
->        required:
->          - interrupts
-> --=20
-> 2.30.2
->=20
->=20
+netfs:
 
---xs4yn0wAy3h5xCya
-Content-Type: application/pgp-signature; name="signature.asc"
+- Fix netfs_folio tracepoint handling to handle NULL mappings.
 
------BEGIN PGP SIGNATURE-----
+- Add a missing folio_queue API documentation.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqrpgAKCRB4tDGHoIJi
-0rDzAP9pyLnXr2ho/eWNw9/JV5Swb++EFvIPKm55QehjzAbh1QEA+DpSQJaEpK8z
-I83zNR0nHiajzvuhxVkKZjofswIbuQ4=
-=Z0/3
------END PGP SIGNATURE-----
+- Ensure that netfs_write_folio() correctly advances the iterator via
+  iov_iter_advance().
 
---xs4yn0wAy3h5xCya--
+- Fix a dentry leak during concurrent cull and cookie lookup operations in
+  cachefiles.
+
+pidfs:
+
+- Correctly handle accessing another task's pid namespace.
+
+/* Testing */
+
+gcc version 14.2.0 (Debian 14.2.0-3)
+Debian clang version 16.0.6 (27+b1)
+
+/* Conflicts */
+
+No known conflicts.
+
+The following changes since commit 075dbe9f6e3c21596c5245826a4ee1f1c1676eb8:
+
+  Merge tag 'soc-ep93xx-dt-6.12' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc (2024-09-26 12:00:25 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12-rc2.fixes
+
+for you to fetch changes up to f801850bc263d7fa0a4e6d9a36cddf4966c79c14:
+
+  netfs: Fix the netfs_folio tracepoint to handle NULL mapping (2024-09-30 14:11:05 +0200)
+
+Please consider pulling these changes from the signed vfs-6.12-rc2.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.12-rc2.fixes
+
+----------------------------------------------------------------
+Baokun Li (1):
+      cachefiles: fix dentry leak in cachefiles_open_file()
+
+Christian Brauner (1):
+      pidfs: check for valid pid namespace
+
+David Howells (5):
+      afs: Fix missing wire-up of afs_retry_request()
+      afs: Fix the setting of the server responding flag
+      netfs: Advance iterator correctly rather than jumping it
+      netfs: Add folio_queue API documentation
+      netfs: Fix the netfs_folio tracepoint to handle NULL mapping
+
+Marc Dionne (1):
+      afs: Fix possible infinite loop with unresponsive servers
+
+Thorsten Blum (1):
+      afs: Remove unused struct and function prototype
+
+ Documentation/core-api/folio_queue.rst | 212 +++++++++++++++++++++++++++++++++
+ fs/afs/afs_vl.h                        |   9 --
+ fs/afs/file.c                          |   1 +
+ fs/afs/fs_operation.c                  |   2 +-
+ fs/afs/fs_probe.c                      |   4 +-
+ fs/afs/rotate.c                        |  11 +-
+ fs/cachefiles/namei.c                  |   7 +-
+ fs/netfs/write_issue.c                 |  12 +-
+ fs/pidfs.c                             |   5 +-
+ include/linux/folio_queue.h            | 168 ++++++++++++++++++++++++++
+ include/trace/events/netfs.h           |   3 +-
+ 11 files changed, 410 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/core-api/folio_queue.rst
 
