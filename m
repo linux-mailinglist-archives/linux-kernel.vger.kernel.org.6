@@ -1,137 +1,180 @@
-Return-Path: <linux-kernel+bounces-344257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45CD998A787
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:45:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF77998A78A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AC2B25107
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A601F218C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269D0190688;
-	Mon, 30 Sep 2024 14:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF2718E755;
+	Mon, 30 Sep 2024 14:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iz98trQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d14X/7Xp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0DA2032A;
-	Mon, 30 Sep 2024 14:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3417B2032A;
+	Mon, 30 Sep 2024 14:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707526; cv=none; b=Mj2Ry8d13E7JIA2IhDFOeFfLYRzpcy4ryrF1lvMK/jntO/j/mDFUZyhcDNcwDh1rYpiIUPL9t380+BqXMh/RSTAqOq+tXQjF4nCfZhQkqv6cZUFJJWa/F4XfEo8dZpjy2/RHgQQLb6fAmVcWd8YhXhGDO2NxGPjT2gqVPIgBzr4=
+	t=1727707537; cv=none; b=A3ajj6E1M147YkC/5Gq2BwRD/eifbZOgwi9KmvfxktgJbDoFrJYiPaVeXVVSlz6AIEiSV364QWkBZM/MrF/aKeoljohO+CvYTreXc7gCXEQFVd68anrN11yoiDsm4og2dxkZ74FDXfHRk4RTHd7K3owE+M+YT+zCAEHeFKfVWZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707526; c=relaxed/simple;
-	bh=toXibZWzNbQCTDtO/xK4MILxz8ZPi0W2drIRCMgiiS0=;
-	h=Date:Message-ID:From:To:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pS/fPm4Eu2GLqdC4wLvShutzCw0eC1vjZeIGZxqELbfKMUp4CqEteYOUsFSSkPiU5lxfTVv5loy0NKKe5Fu1uXIRdCbVmGSf1PnLGyoY3mcTwPngW7vap5UbLNqKrsDEbQDjDLSHz6+a+57SMcYmrOIbV9oOZA5iJTTr6boyJ0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iz98trQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA42C4CEC7;
-	Mon, 30 Sep 2024 14:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727707526;
-	bh=toXibZWzNbQCTDtO/xK4MILxz8ZPi0W2drIRCMgiiS0=;
-	h=Date:From:To:Subject:In-Reply-To:References:From;
-	b=Iz98trQnFK36YYFCrVz90DGb6srEAyESJuwt/TSfUGS2v7PUNzUt0cau1Ny4h/n6B
-	 /YgDdz/CDQOv0xUn8c1xhTdqPbYZOTRsnIU4vQZpQ6hdSqHshokNZKEzdQe3JSfBow
-	 7QkMl/oo+0e/UGT4bl/GsWMJOGhPpiY9ONKvBctuplAP63mT5Wi7u5eVje9eMhg8FT
-	 dJN3aVDDQnzqkji9gelKI2nqeYtLtAanPYGcxqWhEeyxeSngdrtJmkFSPxJJ7K/HLG
-	 YFCygIKvmuHSj/zuWGiQAwgqDxAJ8wptHcYNG2guDNdhtRNwYqn1NLUdtuY7OHI7a2
-	 gaU2kXA6eU3Pw==
-Received: from [12.191.124.166] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1svHeN-00GTHo-MC;
-	Mon, 30 Sep 2024 15:45:24 +0100
-Date: Mon, 30 Sep 2024 15:45:17 +0100
-Message-ID: <87o745urnm.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Jia Qingtong <jiaqingtong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: vgic: fix GICR_STATUSR in vgic_v3_rd_registers
-In-Reply-To: <mhwgdkcgoan7r53bubpvlnu4xoexmnldwlk6ni5zjvkn4cnr72@fhxnwlfw536t>
-References: <20240929043937.242769-2-jiaqingtong97@gmail.com>
-	<87v7yevlyc.wl-maz@kernel.org>
-	<mhwgdkcgoan7r53bubpvlnu4xoexmnldwlk6ni5zjvkn4cnr72@fhxnwlfw536t>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1727707537; c=relaxed/simple;
+	bh=3HetSWB8pauIgHnpbc+Jan/OHiAVA1t62OSsi/uUbGY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=Qi9hJjPkcvdtrinbWgcobNsNFAWiJXodAnwewbWD/+sQDYeAQ3KKtzrmZ70z+GrJJf3hRYmr6W9eCpT1LC0r5DmHj9KRKd1/7faRTNxhDyTofGvARx3KRIY5ntfOOov9/e1yZPaYtV0AWfHyuMiOG/skyOoDl5eJ1nofp4QQ+lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d14X/7Xp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U6RwRZ014784;
+	Mon, 30 Sep 2024 14:45:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WSQC+/onyBzDMrxeEgdTEe7kX3EdK1p7LxLmFcRXzx0=; b=d14X/7XpXp4WxhcQ
+	PcFCmvG1+VHoUhEyH08tHdwj5VwkiE/XNKfaHzRXaGNy4jj8kCFomdwSYxXvLfRR
+	odX4oFSoMOcP5SZBssmC3EKRnnkPOUxmy+dA48e7tf2XGOH2Dzk/UhLyjfwmJR5V
+	65JwDqL3lqG1hMrgr+jMX4sX++7sUM/Y42GazC2LkpnX02+pFxyFxh/FvUCcHqA5
+	6z2q1Q67xfkhTWbfA8roK/fQ0hWv0hJ8piOiJidVoEt4cOIjNySZYeI+Ji8DWK39
+	ng7J3mQV/PZimJPTSBgekt3eEdzBDIC41GuO+Fguo0huyB2hnhRsfNMcaf3mJkvb
+	a+s/Ag==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41yprah8fd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 14:45:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UEjVUI025992
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 14:45:31 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
+ 2024 07:45:28 -0700
+Message-ID: <0e38cd39-ba91-48f8-a4ee-c90bf95acdfe@quicinc.com>
+Date: Mon, 30 Sep 2024 20:15:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 12.191.124.166
-X-SA-Exim-Rcpt-To: maz@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, jiaqingtong@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
+ engine clock
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
+ <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
+ <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NqkfyRA8fxHIJ_Gw0wCPyI82Bhw_ngIA
+X-Proofpoint-ORIG-GUID: NqkfyRA8fxHIJ_Gw0wCPyI82Bhw_ngIA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
+ clxscore=1015 adultscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300107
 
-On Mon, 30 Sep 2024 07:20:35 +0100,
-Jia Qingtong <jiaqingtong97@gmail.com> wrote:
+
+
+On 9/29/2024 12:06 PM, Manikanta Mylavarapu wrote:
 > 
-> On 29 Sep 10:38, Marc Zyngier wrote:
-> > On Sun, 29 Sep 2024 05:39:35 +0100,
-> > jiaqingtong97@gmail.com wrote:
-> > > 
-> > > From: Jia Qingtong <jiaqingtong@huawei.com>
-> > > 
-> > > vgic_uaccess use bsearch search regs in vgic_io_device.regions, but the
-> > > GICR_STATUSR have wrong order in vgic_v3_rd_registers.
-> > > When check all vgic_register_region, it turned out that only
-> > > vgic_v3_rd_registers has this problem.
-> > > 
-> > > It's harmless since vgic_uaccess behaves as RAZ&WI when it can't find the
-> > > specified reg. This is exactly the same as the behavior of the GICR_STATUSR
-> > > register.
-> > >
-> > > So just move GICR_STATUSR to the right place.
-> > 
-> > That looks correct, but I think we should have some code that ensures
-> > that these tables are correct at boot time, just like we're doing for
-> > the system registers. Or completely remove our reliance on bsearch().
-> > 
-> struct vgic_register_region was defined in vgic-{its,mmio-v2,mmio-v3},
-> do you think it's appropriate to extern and check tables's item order in
-> vgic-init.c's kvm_vgic_hyp_init?.
-
-I'd rather we have local functions performing the check, one in each
-of the GIC "modules", calling a global helper taking a pointer to the
-register array as a parameter.
-
 > 
-> > Another thing is that GICD_STATUSR looks pretty wrong. It is handled
-> > as RAO, but we never clear any "error" (it is WI). This has been buggy
-> > since GICv3 save/restore was added, 7 years ago.
-> > 
-> Let's change it to RAZ? We will implement the complete logic when someone
-> really needs this feature.
-
-Exactly. Which is probably *never*.
-
+> On 9/26/2024 3:58 PM, Vladimir Zapolskiy wrote:
+>> Hello Manikanta.
+>>
+>> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
+>>> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
+>>> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
+>>>
+>>> The existing map table is based on 19.2MHz. This patch incorporate
+>>> the clock map table to derive the SCL clock from the 32MHz source
+>>> clock frequency.
+>>>
+>>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>>> ---
+>>> Changes in v2:
+>>>     - Dropped IPQ5424 from the commit title
+>>>     - Added else part to assign geni_i2c_clk_map_19p2mhz to itr
+>>>     - Dropped MHZ macro and used HZ_PER_MHZ macro
+>>>     - Expanded SE to serial engine
+>>>     - Added the reason for 32MHz clock in commit message
+>>>
+>>>   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
+>>>   1 file changed, 16 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+>>> index 212336f724a6..22f2a0d83641 100644
+>>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+>>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+>>> @@ -16,6 +16,7 @@
+>>>   #include <linux/pm_runtime.h>
+>>>   #include <linux/soc/qcom/geni-se.h>
+>>>   #include <linux/spinlock.h>
+>>> +#include <linux/units.h>
+>>>     #define SE_I2C_TX_TRANS_LEN        0x26c
+>>>   #define SE_I2C_RX_TRANS_LEN        0x270
+>>> @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
+>>>    * clk_freq_out = t / t_cycle
+>>>    * source_clock = 19.2 MHz
+>>>    */
+>>> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
+>>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
+>>>       {KHZ(100), 7, 10, 11, 26},
+>>>       {KHZ(400), 2,  5, 12, 24},
+>>>       {KHZ(1000), 1, 3,  9, 18},
+>>>   };
+>>>   +/* source_clock = 32 MHz */
+>>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
+>>> +    {KHZ(100), 7, 14, 18, 40},
+>>> +    {KHZ(400), 4,  3, 11, 20},
+>>> +    {KHZ(1000), 4, 3,  6, 15},
+>>> +};
+>>
+>> Please double check the values.
+>>
+>> This is what I get:
+>> * for 100KHz: 32000000 / (40 * 7) ~ 114286, apparently 32000000 / (40 * 8) would
+>> be a better fit, however it's unclear what would be proper t_high / t_low values,
+>> * for 400KHz: it seems good,
+>> * for 1000KHz: 32000000 / (15 * 4) ~ 533333, which is almost 1/2 of the wanted
+>> bus frequency, so this one looks very wrong.
+>>
+>> Do you have any ideas how to get better bus frequency settings?
+>>
 > 
-> > Do you mind spinning a series fixing this up?
-> > 
-> Sure. 
+> Thanks for pointing this out.
+> 
+> I will double check and get back with the proper data.
+> 
+> Thanks & Regards,
+> Manikanta.
+> 
 
-Thanks,
+Based on Qualcomm's internal hardware programming guide, below values need to be used for 100K & 1000K.
+{KHZ(100), 8, 14, 18, 40}
+{KHZ(1000), 2, 3,  6, 15}
 
-	M.
+I will update these values in next version.
 
--- 
-Without deviation from the norm, progress is not possible.
+Thanks & Regards,
+Manikanta.
 
