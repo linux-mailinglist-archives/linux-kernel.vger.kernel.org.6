@@ -1,125 +1,93 @@
-Return-Path: <linux-kernel+bounces-343970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027EE98A1EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:18:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD0098A1EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3EB61F281AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7483282DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C010B18E360;
-	Mon, 30 Sep 2024 12:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF58E1917C9;
+	Mon, 30 Sep 2024 12:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aStAWMxj"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHMI/Q98"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD40F18E341;
-	Mon, 30 Sep 2024 12:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC04191473;
+	Mon, 30 Sep 2024 12:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698145; cv=none; b=tY1Vfl5O/kh3/2yxp2lyudqR04A6FRYeWyEIn+7VaRmoZnMhmUn0CcJY5Nn0xzhKHPcCutRmd8ktaC5RUhG+zx6pKuz1P5usFfiD+Dcju7RN90vCW4dId4Gq6nIWUORDBnol7S+CpBpvlw3rJcM/Ma4CEE8eeFNH9g/6uP1eKn4=
+	t=1727698206; cv=none; b=d4FG7C3NpM8HaNH3SuSfNcuoFK9T94st9/1sO0inLOonbbTJ+DdUQHs3KHqliFK3VFnvjjOV2jWOdRJTKv2hLWHJ1Yz386kEw2NESUrExWwr7+lM3uaUNxE8q7xxeSmnkZSslgJ7PylWCqCgE3eG2AdDaeGYxqJy60AwDZJ21aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698145; c=relaxed/simple;
-	bh=v9q3x7z8QvhX052EYW3xZ+X0Rw9aY0rzg99yCATyEtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOfPCpIFFQQGdct2prJzi/pWmDiUSS0BBTkvkjMkGBrLK+xfV7wP+W0223Cv8sQp9dgprRMaeuPdr7lMXRndpG+HfKSmJmtVezaAYIpwRl7mXoi8ymDcvH9BRZamMQiZPDm8yCtXt57ypx8ZJtrlc03D4tJnXkMs3yicR23NqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aStAWMxj; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7db12af2f31so3564495a12.1;
-        Mon, 30 Sep 2024 05:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727698143; x=1728302943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLCfsAOM/sf8jX6lMsEq45E9J6koxN4fTvlUf2fHSJk=;
-        b=aStAWMxj4akqmcYkxAIgo29WES1QOgtpxwKyKtEW4u863G5DaSCPG7MYV+plkG3B7m
-         cP/IiVcU29My4iRaCrGWaeac9ZZRQvfIW1VdgXFrj5OmEqfPBKIcbMrS0EYT2TkZ1+Sx
-         DZe1PPwGs/zuvRSiBjevwbgJXJ9av/fsL2Xu5etBEa54aTQMh0RiLTbBCwfE7PT07iFD
-         UGTEqIb1Ktj8bpAoqibf5C4gydYNXW21zWMV4gEUBQZBZDTS5Jq52wPaT01w7H0y7uwi
-         Ml3YGjewK6LvsgKpVU+BtykUN6yOAIaGccE+4VXhuyCpZZtSEeBsZF5ZrFQbPYurWBzv
-         e0AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727698143; x=1728302943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLCfsAOM/sf8jX6lMsEq45E9J6koxN4fTvlUf2fHSJk=;
-        b=YhTbgw/0HWWQ6m4TwzDSlbm8FZMKjE3OjjMTMyB1n3ZwmDUGS6cClaj+JHPJpVWNIn
-         CXnjd+NVa5k4jlXFWgh8GLhhSVt6EUY2r1HeB7Oi4wNFQggxRFJDoBroONKWLOJTzjSV
-         LrCsAtmQvjnjshhnll0ZLHsZW7Gzea1LKyOoMdEq1c5+ubpxZWGQQrU3InmUJtCMWVRC
-         7IIMwGNIK9M0/cnd+ckvI/r8iil1ubAg9njzDT5OtsWxtRE/VNURY48SINKaAtmnAhwf
-         KKkkU4HQuDy1TMyuHfZuZpdBW0NYnkfXAHBJJGGd0h6HRLP+Ok2b4vGPOYbcjvOxOUkL
-         qG9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW58Z7zinNPvfR86HbOozRihili0kdGT/yZJ5c4WX/bsT/WrUh3Aq/vCLCZW3zwP76hyIV8uF0oUoaGDyeG@vger.kernel.org, AJvYcCXLBURdbW8Z0vDuzP9/OWikxn2yQ3d0uP2Hx3/0L7FMXO6T/KoedVzpp2x69Gvzd6XhI6ypZ5jvoGjCoQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSbAybi7ua6vsNv3Phxz/nULteilCGDytwC8RFDfb+0Os7HlLH
-	XyfDr0hreshqMtegAfB6G9RApy4EU3dO0hNufuG1MQJy7A3fCSgCJDOrMVHY0bO7YUMG/W4/HN5
-	prqwF6Kqrkxg9neuQnvb+u5gsa3YobH0MKgc=
-X-Google-Smtp-Source: AGHT+IGVtNKUzCfcnZJqltrJXhGmWKupIdnDAgKWSurVkc3n976IsCMk9heB4JmhBC5qqsWzjb/F2Hjgwcy9W2a8kfs=
-X-Received: by 2002:a17:90a:8a17:b0:2da:d2a2:4a71 with SMTP id
- 98e67ed59e1d1-2e0b8ee9508mr11239187a91.40.1727698142969; Mon, 30 Sep 2024
- 05:09:02 -0700 (PDT)
+	s=arc-20240116; t=1727698206; c=relaxed/simple;
+	bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W9IHAFEkQIEw6SZi0dLjTaJf+PyXZP2zc3Dx/I/B4iHTzAizSZ8SM5XEWYUAkZMxMTsVQoJ2MiGNBs8KaRDAfcIARoNyUdDItdgaZJ657PZQNq3FHJtba2bw7T7hhT7sCuk4b7hHRaQN9xkBQZdzHquRI3LL9kJx2X/RIdnvREM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHMI/Q98; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134ACC4CEC7;
+	Mon, 30 Sep 2024 12:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727698205;
+	bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GHMI/Q98ONkPO+WOEfj07iO+SINuE50eXzgTuVUU3mYksjvGTknNxqz9YYy9Wc09j
+	 Z7Gja9UOU5B2jTr9QIAKVDeKucdjJlJkYrnKbLPHnCmgZMAjQ+3uewPKCXBZaBJkX2
+	 ikLxouw+diNe+FXTrYPVJMH84lE86FKjyxBNSDX3XxgFxiHwYntmtPuHXqLa1qH7fd
+	 c4CduoXOa/7FQMmO1ryN6f35eQIBz40lX01cGqSl25KOwcFLZ2IZJg4QSiad5e95u5
+	 AM5XaEaTNP/mwGVneYbbxJmeZf8mO3ZOjZdXZibU60F2lNPgksnZ6ZCwM5Wka4jdhf
+	 4OS/ugcegS95A==
+From: Christian Brauner <brauner@kernel.org>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH 08/35] fs: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 14:09:58 +0200
+Message-ID: <20240930-lesebrille-bankgeheimnis-00a2b1def47f@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240930112121.95324-9-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr> <20240930112121.95324-9-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240917100432.10887-1-vishnuocv@gmail.com> <202409211318.ZsE7JGOi-lkp@intel.com>
- <CABxCQKuya7HUWPPw+3vSigddHa84hGZdtuN-02mxvNdfieLXZQ@mail.gmail.com> <nycvar.YFH.7.76.2409272018370.31206@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.2409272018370.31206@cbobk.fhfr.pm>
-From: Vishnu Sankar <vishnuocv@gmail.com>
-Date: Mon, 30 Sep 2024 21:08:26 +0900
-Message-ID: <CABxCQKvWsKVoHtz3vkuwePSpQuJpWCkCch5RxXdYM7b0_sY-Zg@mail.gmail.com>
-Subject: Re: [PATCH] hid: hid-lenovo: Supporting TP-X12-TAB-1/2 Kbd Hotkeys
- using raw events.
-To: Jiri Kosina <jikos@kernel.org>
-Cc: kernel test robot <lkp@intel.com>, bentiss@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	mpearson-lenovo@squebb.ca, vsankar@lenovo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=962; i=brauner@kernel.org; h=from:subject:message-id; bh=bCr2jzrz9425tbOMb2k3hNmIpw62+BDOoCUJbWT6eBk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9mip+5cpSNZN/8W9azk/ofMr3uGnpkVleEfZ+QpFbJ 5hPvSl5oqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiCt0M/5R7WZ9vSss6vzab Ra1G5NOkew+TBIzLIwMaPqXcqb6euZDhv3Pvm1W1Da1BGj5fjnMf3PDTv7GfS+JjiaproZ4bb9B kTgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Thank you.
+On Mon, 30 Sep 2024 13:20:54 +0200, Julia Lawall wrote:
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> 
 
-I will resubmit the patch rebasing on hid.git#for-6.13/lenovo.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-On Sat, Sep 28, 2024 at 3:19=E2=80=AFAM Jiri Kosina <jikos@kernel.org> wrot=
-e:
->
-> On Tue, 24 Sep 2024, Vishnu Sankar wrote:
->
-> > Sorry for the inconvenience.
-> > The base I used was the Master branch.
-> >
-> > Should I resubmit this patch again with the base as linus/master next-2=
-024xxxx?
->
-> Please ideally base your patches on:
->
-> - topic branch in hid.git for the particular driver you are touching (in
->   this case it'd be called hid.git#for-6.13/lenovo)
->
-> - hid.git#master if a topic branch for your particular driver doesn't
->   exist in hid.git
->
-> Thanks,
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---=20
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Regards,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-      Vishnu Sankar
-     +817015150407 (Japan)
+[08/35] fs: Reorganize kerneldoc parameter names
+        https://git.kernel.org/vfs/vfs/c/513f3387a9f3
 
