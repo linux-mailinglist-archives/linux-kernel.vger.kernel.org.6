@@ -1,168 +1,120 @@
-Return-Path: <linux-kernel+bounces-343837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95ED398A019
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:08:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D5398A020
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41E6D1F21226
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB671C2123D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9F318CBE5;
-	Mon, 30 Sep 2024 11:08:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6082B18D627;
+	Mon, 30 Sep 2024 11:14:55 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125B71885A1
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D6E189902
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727694517; cv=none; b=saAy01hnm3y9w9FBy6PB6STZvO7vN+0JXAHMoTCWAF2oKYv5mwUAUMiRFsO0awDiMd0tfVQH1HcVnbOhrTykq2v1Vw882pp/xHtQa3FnLb7lry7y9pQHbYackCjrXc7S4pvObPIgFiuyV23u7W/UwKKb+wBF3cdWqBgObSGX/kI=
+	t=1727694895; cv=none; b=EtBHU7qWeE4o6QhjS4kGKcXpCnhvLb0pHm51wUhG0Duroa0Ei43mFrQVVos/uIrxG3r3u/1H/iu8Nr8JrKbRR4NP6lmL6UD5/sUbnvPb2UvPGxD03fWnLQ52IxLeWRti+DMJaRVHlgLO6gNne79jtYyN/E43b0G0AgbSdp8a3LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727694517; c=relaxed/simple;
-	bh=dUHXrAjaEgbJdnwfe10A/Ln6LcEHMun1Bgy2uHw0MUQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBCNZ4qxbybUJa6l2HoMy8fneS52hgzLpKGOGz+1XX5fqT7pBhjpUG3BH/VrnzUXFIcEXPgZkSankG+Yr1U9g4hR88Gf00dreYYLPsVI92Dqi585Ntsj5KU/k/oKqiLt9DesNAGy0Mtuz1+BPhiuNhEpyJdX2WicAlxEv0hd6ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1svEGS-0003CR-0j; Mon, 30 Sep 2024 13:08:28 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1svEGQ-002cHG-Tc; Mon, 30 Sep 2024 13:08:26 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1svEGQ-0033C8-2g;
-	Mon, 30 Sep 2024 13:08:26 +0200
-Date: Mon, 30 Sep 2024 13:08:26 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de
-Subject: Re: [PATCH] net/9p/usbg: dont call usb9pfs_clear_tx if client is not
- connected
-Message-ID: <ZvqGqilMi3Zpm_Fv@pengutronix.de>
-References: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
+	s=arc-20240116; t=1727694895; c=relaxed/simple;
+	bh=Muj4u1jXspjCCD1s0hKhK51KRt9DDCkn/lFDY2vnQ4U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Au4zrPcXzgVaTequzDNgerAR0XZukaCWsgGZud8FPjYwqx48lw6wtXo3OMufffIcZhpWJQq/UTjvmX7bOFYoB9mcncd1D5TB+79i2vn+E/0gV0+yBGafjoFBM7T0JB7OyjpUQ02Q3eAp2WvldVjrbWoplkLVLy2M0XP6BALyZSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf147a566so335289039f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:14:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727694893; x=1728299693;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dn8u8b4MNSgHRWmASvsbSPMzBxf6cvqbUY4zQ+OWk+w=;
+        b=ekJj2zq/fP+NEaWOoKbAaiJ6f9zUI4EWJgkiJ15N+eAURR25H1XDEORW0OgwOW7HC5
+         6rayhGkpWDzIVuliKaXwuBBxTUsiyehLfW5w0GpLw/Eec/ioI3fbMrvH1wXHV0YyRwC3
+         qZeel0EPdO1hFw8QQDA6I3XLLWx2uTa9xr5ssCWxMqGFhcAG8XmQZn8OgSfrab7Qzovt
+         LpCnnuwS5tIE9OMRJvmEjPX8ghMRGi+/PPXK2FJ7bwQP4EfIfCAwhox2KLOimdX2IzfN
+         ki2kvbrf79D52GVp0IncnlmaeiNsnY6gkc++gzvVuUwD8t4zX5MKAQs+l/PLNYZFOEZZ
+         Ja6w==
+X-Gm-Message-State: AOJu0YzY/r+YSj+N+c0BIOj2hplMiUZH+W5/QUsi82u1DQrTrhMzGIdF
+	/u/yPqrDu2E75L5WzDOvDI7m7g566NwfL6HlaWTDMqkKkd7ixb29LZDdyeRvaBiW9uHxRW5/+nH
+	FSnyX7TRta8nwGtYcmtrROQ3K9sxQ0pa6n1A3u/oadlldX6LXt+K41Uk=
+X-Google-Smtp-Source: AGHT+IGRyAFE76oIKij/VUq9Bv+xUQaUhdDtsHKlEHQ0jmBrbg/De03YldRTWeSn8pTwPwrhTNorgCTTQNZ/OsH9am5i7xV43nFP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Sp3Y2y65ZqqPTOiT"
-Content-Disposition: inline
-In-Reply-To: <20240929-fixes9p-v1-1-40000d94d836@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:c266:0:b0:3a1:a57a:40a1 with SMTP id
+ e9e14a558f8ab-3a34515565emr77321885ab.5.1727694892663; Mon, 30 Sep 2024
+ 04:14:52 -0700 (PDT)
+Date: Mon, 30 Sep 2024 04:14:52 -0700
+In-Reply-To: <000000000000c848d3060cd1d16a@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fa882c.050a0220.aab67.0030.GAE@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in advance_sched
+From: syzbot <syzbot+b65e0af58423fc8a73aa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
---Sp3Y2y65ZqqPTOiT
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+***
 
-Please drop this patch for now. I will have to do some more testing
-regarding the prompt connect mount and disconnect state changes
-and will come back with a proper solution.
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in advance_sched
+Author: dmantipov@yandex.ru
 
-On Sun, Sep 29, 2024 at 09:22:55PM +0200, Michael Grzeschik wrote:
->When the client is not Connected it is not valid to call
->usb9pfs_clear_tx since the endpoints are not even allocated. By running
->into p9_usbg_close in that case we would dereference the in_req which is
->NULL when the client->status is Disconnected. Fix that by leaving
->usb9pfs_clear_tx immediately if the state is wrong.
->
->We also update the client->status after the for usb9pfs_clear_tx to
->check for the actual state when running from p9_usbg_close.
->
->Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->---
-> net/9p/trans_usbg.c | 8 ++++++--
-> 1 file changed, 6 insertions(+), 2 deletions(-)
->
->diff --git a/net/9p/trans_usbg.c b/net/9p/trans_usbg.c
->index 975b76839dca1..64a5209943dbc 100644
->--- a/net/9p/trans_usbg.c
->+++ b/net/9p/trans_usbg.c
->@@ -417,6 +417,10 @@ static void usb9pfs_clear_tx(struct f_usb9pfs *usb9pf=
-s)
-> {
-> 	struct p9_req_t *req;
->
->+	/* we are not allocated - return */
->+	if (usb9pfs->client->status !=3D Connected)
->+		return;
->+
-> 	guard(spinlock_irqsave)(&usb9pfs->lock);
->
-> 	req =3D usb9pfs->in_req->context;
->@@ -442,10 +446,10 @@ static void p9_usbg_close(struct p9_client *client)
-> 	if (!usb9pfs)
-> 		return;
->
->-	client->status =3D Disconnected;
->-
-> 	usb9pfs_clear_tx(usb9pfs);
->
->+	client->status =3D Disconnected;
->+
-> 	opts =3D container_of(usb9pfs->function.fi,
-> 			    struct f_usb9pfs_opts, func_inst);
->
->
->---
->base-commit: 68d4209158f43a558c5553ea95ab0c8975eab18c
->change-id: 20240929-fixes9p-5d618bbe6d6b
->
->Best regards,
->--=20
->Michael Grzeschik <m.grzeschik@pengutronix.de>
->
->
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git d505d3593b52b6c43507f119572409087416ba28
 
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+From 5450d2cda2e81d3fd79526e1efb76578472851fb Mon Sep 17 00:00:00 2001
+From: Dmitry Antipov <dmantipov@yandex.ru>
+Date: Mon, 30 Sep 2024 13:25:01 +0300
+Subject: [PATCH v6 1/2] net: sched: fix use-after-free in taprio_change()
 
---Sp3Y2y65ZqqPTOiT
-Content-Type: application/pgp-signature; name="signature.asc"
+In 'taprio_change()', 'admin' pointer may become dangling due to sched
+switch / removal caused by 'advance_sched()', and critical section
+protected by 'q->current_entry_lock' is too small to prevent from such
+a scenario (which causes use-after-free detected by KASAN). Fix this
+by prefer 'rcu_replace_pointer()' over 'rcu_assign_pointer()' to update
+'admin' immediately before an attempt to schedule freeing.
 
------BEGIN PGP SIGNATURE-----
+Fixes: a3d43c0d56f1 ("taprio: Add support adding an admin schedule")
+Reported-by: syzbot+b65e0af58423fc8a73aa@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=b65e0af58423fc8a73aa
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+v6: adjust to match recent changes
+v5: unchanged since v4 but resend due to series change
+v4: adjust subject to target net tree
+v3: unchanged since v2
+v2: unchanged since v1
+---
+ net/sched/sch_taprio.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmb6hqYACgkQC+njFXoe
-LGTacRAAorBN3ZIxPQ3yEJ94ySkNxxX09jnCW5UQLjldnQ4ibbet0lpmXShxpBc7
-G9CubOZOJ6efYci8Kzd4dtM1WXI8/QM3Io1BYJJ8IQj3AT8CWFdARRhtviCianqQ
-VOQPWXJhtId0l6TPHRMvc76blSF5F1eirAjV4PEHV/mWreNu1WypKVXanAJcApVI
-f1qGfc9EcIDEWb9KJdB8x98SgCsaJR60SQfuiWQn2VtZnxFRMz+VwOn5gR20H56m
-YWlMQsofkDf5J+KLPV9r48AZ2ArqUTWU5KMrIx7z9wOhzVmU4C3/b/exwT1Fmg9R
-iloU4Toq2Mp9d6QNH+pkadGgMlxCB0LqUbh85sMKOj1DQvbrTkiCJqSK2RkxTLe/
-Cp4nVUUavx7CjDY0JeAsVl4UdvoZN4KtHl3ftRoNU/48I69srdHMv+AefNN2OW7I
-kbS0HI3cEW7uLb64IifD4QLEEuadCDUlfkNfkFapS+0DpshSFp2ldABTw6Rc7y6J
-awUIiTAFiKSq0gPZZm7fR1CmFqgUvSRDnNv9Tcg7hm9r/WP6mqrfwx+aKWWAVLll
-fEwpL45IomkKjqKUrYCNcd12obosgc1D5zkxcsBzmchet3QVvhPUQ5Gaj9vISGdc
-9ddeZKCcLt8iBbWiDm82h54SwGtbI4iVXIpMtJy2WHEQ93ZO70U=
-=SRyv
------END PGP SIGNATURE-----
+diff --git a/net/sched/sch_taprio.c b/net/sched/sch_taprio.c
+index 8498d0606b24..9f4e004cdb8b 100644
+--- a/net/sched/sch_taprio.c
++++ b/net/sched/sch_taprio.c
+@@ -1965,7 +1965,8 @@ static int taprio_change(struct Qdisc *sch, struct nlattr *opt,
+ 
+ 		taprio_start_sched(sch, start, new_admin);
+ 
+-		rcu_assign_pointer(q->admin_sched, new_admin);
++		admin = rcu_replace_pointer(q->admin_sched, new_admin,
++					    lockdep_rtnl_is_held());
+ 		if (admin)
+ 			call_rcu(&admin->rcu, taprio_free_sched_cb);
+ 
+-- 
+2.46.2
 
---Sp3Y2y65ZqqPTOiT--
 
