@@ -1,146 +1,173 @@
-Return-Path: <linux-kernel+bounces-343670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7FB989DF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:22:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8511989DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ABB61C228A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1345E1C21F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33965188007;
-	Mon, 30 Sep 2024 09:22:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E6F18787B;
+	Mon, 30 Sep 2024 09:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1WGSQNrl"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBC0187FF2
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BAC017C8B;
+	Mon, 30 Sep 2024 09:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727688126; cv=none; b=IAieBJtrzRv4Cs7AEOxeX1tIV8FvfjNGN5PCWn9xGfh/qutB7unyGyc//Vi1WepsZcWgo0AdhTzXbmgLzmoXSlunHW4gZzrxQlqZ8CGTSsqgMrUYbYKqkBxT58ptAgD5/oIY8y69Ov07x1evh8NoVGCgMEQpAeyjoy4823QRsu0=
+	t=1727688111; cv=none; b=Nz7tL5wb1ZeCpZ46UK+erbejfdjYLLP7P9mocgQc9yW3yv7XqobX4hNsyvkTq0sYTmT+oy66rULBekL5IPONiPXyAJy2AyAq6BEY3Px4QR2AYbsTv2K6TsgrBOch4Vo5q/HNFan0j3oo7CUQncLo0hEGBtyB/xYpzqVjANCg1PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727688126; c=relaxed/simple;
-	bh=BhD2kSrrhXn9dSQUUKAGRnvodBZRJ1oc5oUYhjr/Gf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjefCswsA0hsndEsWk5Zbq7lCVUvNixj5KlFGTgkiWy417sRzeH+v4Iwjc11Nu1HsfE5L7ciwytn57ZA7VMle97d2aZSLPhGbM+VRfUU/+cuxyAO6u+v9p9Gq06wuahMQq/6OEUpfWanUtVDRsZaUsrrABXao80kL0n8JpBBwIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1svCb0-0004O1-M0; Mon, 30 Sep 2024 11:21:34 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	s=arc-20240116; t=1727688111; c=relaxed/simple;
+	bh=dWLqrkPN5YAJbpjHClBIUqfBaHM5NfV7gkZ78U7b10Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h0MIq88WuUsmyMWbIknOQ6Oh3vWUYVyWPNdOcs3YBEj1pt7zkr9szx676VlIAEKKzj6TrXGkNfNuK6sVSWPEUCalwTUAg9A5tfHrEU7yCt2mF2M6Pbr6YDJvxTJEzrs9irg+3gbbEbuuUvSrQG4QSH+uaGYibLqL4gybw6Fs2sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1WGSQNrl; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dWLqrkPN5YAJbpjHClBIUqfBaHM5NfV7gkZ78U7b10Q=; b=1WGSQNrlSi38frUwsI7zzj9YIZ
+	3yYHX8zJCI0L+TI7ojJp4JfKgnayTgXtxc10NQLNgnBXuJxJRWZvmFPQwwH9Zkt0IlpKk/OJubjYu
+	Nei9o/0J5Zut4Gti1jfXhJTJ6UVKAdddOWyBZpX8PYLd7punbcX2piveEKvWjWhQVKzXktXxAN2zT
+	zcxLlNrUK9roySJEvlDBz4TDoaINpQCkHR75i3/SqcHuuu3XJXQ7trrkLXiZlSvI3v1zwPO8Rk55g
+	c1lnyErwpbN6lzI3YAtDLRTQsz0geQiEuzYt9bEd+vgJaDBjcEindcvPM0lpm2hS+mdM/nLdpHgMy
+	LToe0gOQ==;
+Received: from i5e861925.versanet.de ([94.134.25.37] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1svCau-002bBg-7Q; Mon, 30 Sep 2024 11:21:28 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id CDE5A346819;
-	Mon, 30 Sep 2024 09:21:27 +0000 (UTC)
-Date: Mon, 30 Sep 2024 11:21:27 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Marco Felsch <m.felsch@pengutronix.de>, devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>, 
-	imx@lists.linux.dev, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] mtd: spi-nor: support vcc-supply regulator
-Message-ID: <20240930-wonderful-wealthy-aardwolf-b455d6-mkl@pengutronix.de>
-References: <20240930-spi-v2-0-ed7f6bcbe0df@nxp.com>
- <20240930-spi-v2-2-ed7f6bcbe0df@nxp.com>
+	(envelope-from <heiko@sntech.de>)
+	id 1svCb9-00041j-Mz; Mon, 30 Sep 2024 11:21:43 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Daniel Semkowicz <dse@thaumatec.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+ Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
+ Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+ Vahe Grigoryan <vahe.grigoryan@theobroma-systems.com>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Add power button for RK3399 Puma
+Date: Mon, 30 Sep 2024 11:21:42 +0200
+Message-ID: <2221314.irdbgypaU6@diego>
+In-Reply-To: <5f73e2cf-cb18-4b65-9e42-cf3192aee706@cherry.de>
+References:
+ <20240925072945.18757-1-dse@thaumatec.com> <4620941.LvFx2qVVIh@diego>
+ <5f73e2cf-cb18-4b65-9e42-cf3192aee706@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mwv5x2hdeuwf3seu"
-Content-Disposition: inline
-In-Reply-To: <20240930-spi-v2-2-ed7f6bcbe0df@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---mwv5x2hdeuwf3seu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On 30.09.2024 17:22:25, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+Am Montag, 30. September 2024, 11:11:56 CEST schrieb Quentin Schulz:
+> Hi Heiko,
 >=20
-> SPI NOR flashes needs power supply to work properly. The power supply
-> maybe software controllable per board design. So add the support
-> for an vcc-supply regulator.
+> On 9/30/24 10:49 AM, Heiko St=FCbner wrote:
+> > Hey Quentin, Daniel,
+> >=20
+> > Am Donnerstag, 26. September 2024, 14:34:30 CEST schrieb Quentin Schulz:
+> >> On 9/25/24 9:28 AM, Daniel Semkowicz wrote:
+> >>> There is a PWRBTN# input pin exposed on a Q7 connector. The pin
+> >>> is routed to a GPIO0_A1 through a diode. Q7 specification describes
+> >>> the PWRBTN# pin as a Power Button signal.
+> >>> Configure the pin as KEY_POWER, so it can function as power button and
+> >>> trigger device shutdown.
+> >>> Add the pin definition to RK3399 Puma dts, so it can be reused
+> >>> by derived platforms, but keep it disabled by default.
+> >>>
+> >>> Enable the power button input on Haikou development board.
+> >>>
+> >>> Signed-off-by: Daniel Semkowicz <dse@thaumatec.com>
+> >>
+> >> This works, thanks.
+> >>
+> >> Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
+> >>
+> >> Now I have some questions I wasn't able to answer myself, maybe someone
+> >> can provide some feedback on those :)
+> >>
+> >> We already have a gpio-keys for buttons on Haikou, c.f.
+> >> https://elixir.bootlin.com/linux/v6.11/source/arch/arm64/boot/dts/rock=
+chip/rk3399-puma-haikou.dts#L22.
+> >> Those signals are directly routed to the SoM and follow the Qseven sta=
+ndard.
+> >>
+> >> The same applies to PWRBTN# signal.
+> >>
+> >> However, here we have one gpio-keys for PWRBTN# in Puma DTSI and one
+> >> gpio-keys for the buttons and sliders on Haikou devkit in Haikou DTS.
+> >>
+> >> I'm a bit undecided on where this should go.
+> >>
+> >> Having all button/slider signals following the Qseven standard in Puma
+> >> DTSI and enable the gpio-keys only in the devkit would make sense to m=
+e,
+> >> so that other baseboards could easily make use of it. However, things
+> >> get complicated if the baseboard manufacturer decides to only implement
+> >> **some** of the signals, for which we then need to remove some nodes
+> >> from gpio-keys (and pinctrl entries) since gpio-keys doesn't check the
+> >> "status" property in its child nodes (though that could be fixed). At
+> >> which point, it's not entirely clear if having it in Puma DTSI is
+> >> actually beneficial.
+> >>
+> >> Someone has an opinion/recommendation on that?
+> >=20
+> > I guess from a platform perspective nobody really cares, so as that is
+> > "your" board, it comes down to a policy decision on your part ;-) .
+> >=20
+> > While pins follow the q7 standard, there may very well be some lax
+> > handling of that standard in some places, and I guess gpio lines could
+> > be re-used for something else if needed, as something like the lid-swit=
+ch
+> > is probably non-essential.
+> >=20
+> > Also a gpio-key input does not create that much code-overhead if
+> > replicated, so personally I'd just stick the power-button with the other
+> > buttons in the haikou dts.
+> >=20
+> > Which is also a way better thing than having multiple gpio-keys instanc=
+es
+> > that userspace then has to handle.
+> >=20
 >=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/mtd/spi-nor/core.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index 9d6e85bf227b..5249c8b13916 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/mtd/spi-nor.h>
->  #include <linux/mutex.h>
->  #include <linux/of_platform.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/sched/task_stack.h>
->  #include <linux/sizes.h>
->  #include <linux/slab.h>
-> @@ -3462,6 +3463,10 @@ int spi_nor_scan(struct spi_nor *nor, const char *=
-name,
->  	if (!nor->bouncebuf)
->  		return -ENOMEM;
-> =20
-> +	ret =3D devm_regulator_get_enable(dev, "vcc");
-> +	if (ret)
-> +		return ret;
-> +
+> Yes, but this also means "code" duplication for whoever needs this for=20
+> their baseboard, instead of just having to add a &gpio_keys { status =3D=
+=20
+> "okay"; }.
 
-What happens if the SPI-NOR doesn't have a "vcc" regulator?
+Yes :-) .
 
-Marc
+gpio-keys is special in a way in that you could end up with a different set
+of enabled keys per baseboard - dependent on how closely it follows the
+standard.
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+So if someone repurposed the lid-switch only, you'd start changing the
+core node again. Hence for the gpio-keys it's probably easier to define
+the set of keys in the baseboard.
 
---mwv5x2hdeuwf3seu
-Content-Type: application/pgp-signature; name="signature.asc"
+It's of course different for regulator-infrastructure and such.
 
------BEGIN PGP SIGNATURE-----
+> I don't think there's a good solution here, so I would suggest we go=20
+> with everything in Haikou's gpio-keys as Heiko suggested then, @Daniel=20
+> if you agree can you send a v2 for that?
 
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmb6bZQACgkQKDiiPnot
-vG8uiQf8DcseKRoAJiTxjtqWo2GwihpClJ843qTNRLCvPcW/ntH1rv1wiF0NXA4v
-jtGOLCiSHCVHx5gV68zWvJTmT9ZeQ3O4z24KHsr7IF5Cbf9TOwq1YZCHXqFn4bOy
-71CJ1ApXb776przvR2Foy9H33h8I5r+LUUIppdWo0IebOHVf4Ry+pDmEzffqS0Iu
-HyCMaAo8x+q+t95WPWooRjlUmShpCQapdzRmNYtw5uxYtPSQ7r0HycSeIMZ6bsip
-hHhkKwNeOSDZmeJwdPBXf2dwD4WcF6aIMe3O1MVZcHUIVNW/0V5FHjaAKCW/S26t
-VrBSNtv3Sl8BilQiuIoQhYHm4PjLrw==
-=LL2n
------END PGP SIGNATURE-----
+I'll wait for v2 then.
 
---mwv5x2hdeuwf3seu--
+Heiko
+
+
 
