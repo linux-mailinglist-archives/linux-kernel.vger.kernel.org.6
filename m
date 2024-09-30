@@ -1,88 +1,137 @@
-Return-Path: <linux-kernel+bounces-344253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 178D098A77F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:44:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45CD998A787
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7867283B65
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:44:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0AC2B25107
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CAF11925A4;
-	Mon, 30 Sep 2024 14:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269D0190688;
+	Mon, 30 Sep 2024 14:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ey1iSMRh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iz98trQn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DF01922F6;
-	Mon, 30 Sep 2024 14:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E0DA2032A;
+	Mon, 30 Sep 2024 14:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707426; cv=none; b=M8rEBnD+uWJVacQxoyytLuNtmofY0D1EelrO4cC1kan4mn1dxxJA6grtREoIsLDRFGBpsTcpJTBTIM1ai8aI9Ji/pJbWo5AiBzs9DbXydczz2IgFmhyP/+pybz7kotGDLWDcKIeYdt1qoZQeeExg5jcUxFxbhBtDTRUiSX23nVw=
+	t=1727707526; cv=none; b=Mj2Ry8d13E7JIA2IhDFOeFfLYRzpcy4ryrF1lvMK/jntO/j/mDFUZyhcDNcwDh1rYpiIUPL9t380+BqXMh/RSTAqOq+tXQjF4nCfZhQkqv6cZUFJJWa/F4XfEo8dZpjy2/RHgQQLb6fAmVcWd8YhXhGDO2NxGPjT2gqVPIgBzr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707426; c=relaxed/simple;
-	bh=Q2YuJhchLQ06poSHZTzxtq2r4V1ioxkny0f6QHo+LAU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eyNBEhF0DjWg5fqpKeLWEfHOa7Mw0Ug28i8I9DF+J/SBIzcp4IRkhUNN1jseyVp3nohxI+6ceUC3xAJOaPieGr6otLOBweTCSrJyApVKcz1l400lvLlqM/KtDjvqrOCsbG16AK//okcJKefr5KNykCgdbiFnssK5vQP605110J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ey1iSMRh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F900C4CEC7;
-	Mon, 30 Sep 2024 14:43:43 +0000 (UTC)
+	s=arc-20240116; t=1727707526; c=relaxed/simple;
+	bh=toXibZWzNbQCTDtO/xK4MILxz8ZPi0W2drIRCMgiiS0=;
+	h=Date:Message-ID:From:To:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pS/fPm4Eu2GLqdC4wLvShutzCw0eC1vjZeIGZxqELbfKMUp4CqEteYOUsFSSkPiU5lxfTVv5loy0NKKe5Fu1uXIRdCbVmGSf1PnLGyoY3mcTwPngW7vap5UbLNqKrsDEbQDjDLSHz6+a+57SMcYmrOIbV9oOZA5iJTTr6boyJ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iz98trQn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA42C4CEC7;
+	Mon, 30 Sep 2024 14:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727707426;
-	bh=Q2YuJhchLQ06poSHZTzxtq2r4V1ioxkny0f6QHo+LAU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ey1iSMRhogguUBkHmM2gdxTFxCJ7EEaHnXOcz/fEy5qg/C9Td8rGsuQ7vjC2cL8XD
-	 J/Vt2agO32fRKlkQCoZOfyveSJl4UO9WKfZL2cH50mSKPTJUxL63RaT/nTapEKmjwI
-	 1Cr6J+GBsxFOxBkmlzGYyMYW1JUXtGzyAM2ELYUjb5n0WkouJAgnLmBCZfXt2OVyuZ
-	 vRdGVUn9N86kTUKjUUbSPIBAuk9JsQtvf/Yn/i2XJteH/y3yeQVHGou5ufb8pf2bnY
-	 LMitkZa96iQc1mxIOgHrJGnN2GobBb94MfFWkBuqDK76Aqse7jJ8MA30wHU14q1Jrm
-	 R5PpBJR8u5BRQ==
-From: Lee Jones <lee@kernel.org>
-To: Lee Jones <lee@kernel.org>, Nishanth Menon <nm@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- Shawn Guo <shawnguo@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- bcm-kernel-feedback-list@broadcom.com, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240903184710.1552067-1-nm@ti.com>
-References: <20240903184710.1552067-1-nm@ti.com>
-Subject: Re: (subset) [PATCH V2] mfd: syscon: Use regmap max_register_is_0
- as needed
-Message-Id: <172770742318.523866.16912261914335612487.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 15:43:43 +0100
+	s=k20201202; t=1727707526;
+	bh=toXibZWzNbQCTDtO/xK4MILxz8ZPi0W2drIRCMgiiS0=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=Iz98trQnFK36YYFCrVz90DGb6srEAyESJuwt/TSfUGS2v7PUNzUt0cau1Ny4h/n6B
+	 /YgDdz/CDQOv0xUn8c1xhTdqPbYZOTRsnIU4vQZpQ6hdSqHshokNZKEzdQe3JSfBow
+	 7QkMl/oo+0e/UGT4bl/GsWMJOGhPpiY9ONKvBctuplAP63mT5Wi7u5eVje9eMhg8FT
+	 dJN3aVDDQnzqkji9gelKI2nqeYtLtAanPYGcxqWhEeyxeSngdrtJmkFSPxJJ7K/HLG
+	 YFCygIKvmuHSj/zuWGiQAwgqDxAJ8wptHcYNG2guDNdhtRNwYqn1NLUdtuY7OHI7a2
+	 gaU2kXA6eU3Pw==
+Received: from [12.191.124.166] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1svHeN-00GTHo-MC;
+	Mon, 30 Sep 2024 15:45:24 +0100
+Date: Mon, 30 Sep 2024 15:45:17 +0100
+Message-ID: <87o745urnm.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Jia Qingtong <jiaqingtong@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: vgic: fix GICR_STATUSR in vgic_v3_rd_registers
+In-Reply-To: <mhwgdkcgoan7r53bubpvlnu4xoexmnldwlk6ni5zjvkn4cnr72@fhxnwlfw536t>
+References: <20240929043937.242769-2-jiaqingtong97@gmail.com>
+	<87v7yevlyc.wl-maz@kernel.org>
+	<mhwgdkcgoan7r53bubpvlnu4xoexmnldwlk6ni5zjvkn4cnr72@fhxnwlfw536t>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 12.191.124.166
+X-SA-Exim-Rcpt-To: maz@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, joey.gouly@arm.com, jiaqingtong@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 03 Sep 2024 13:47:10 -0500, Nishanth Menon wrote:
-> syscon has always set the optional max_register configuration of
-> regmap to ensure the correct checks are in place. However, a recent
-> commit 0ec74ad3c157 ("regmap: rework ->max_register handling")
-> introduced explicit configuration in regmap framework for register
-> maps that is exactly 1 register, when max_register is pointing to a
-> valid register 0. This commit solved a previous limitation of regmap
-> framework.
+On Mon, 30 Sep 2024 07:20:35 +0100,
+Jia Qingtong <jiaqingtong97@gmail.com> wrote:
 > 
-> [...]
+> On 29 Sep 10:38, Marc Zyngier wrote:
+> > On Sun, 29 Sep 2024 05:39:35 +0100,
+> > jiaqingtong97@gmail.com wrote:
+> > > 
+> > > From: Jia Qingtong <jiaqingtong@huawei.com>
+> > > 
+> > > vgic_uaccess use bsearch search regs in vgic_io_device.regions, but the
+> > > GICR_STATUSR have wrong order in vgic_v3_rd_registers.
+> > > When check all vgic_register_region, it turned out that only
+> > > vgic_v3_rd_registers has this problem.
+> > > 
+> > > It's harmless since vgic_uaccess behaves as RAZ&WI when it can't find the
+> > > specified reg. This is exactly the same as the behavior of the GICR_STATUSR
+> > > register.
+> > >
+> > > So just move GICR_STATUSR to the right place.
+> > 
+> > That looks correct, but I think we should have some code that ensures
+> > that these tables are correct at boot time, just like we're doing for
+> > the system registers. Or completely remove our reliance on bsearch().
+> > 
+> struct vgic_register_region was defined in vgic-{its,mmio-v2,mmio-v3},
+> do you think it's appropriate to extern and check tables's item order in
+> vgic-init.c's kvm_vgic_hyp_init?.
 
-Applied, thanks!
+I'd rather we have local functions performing the check, one in each
+of the GIC "modules", calling a global helper taking a pointer to the
+register array as a parameter.
 
-[1/1] mfd: syscon: Use regmap max_register_is_0 as needed
-      commit: bf5b2ddf06da57fa623c11d599697a98f1007752
+> 
+> > Another thing is that GICD_STATUSR looks pretty wrong. It is handled
+> > as RAO, but we never clear any "error" (it is WI). This has been buggy
+> > since GICv3 save/restore was added, 7 years ago.
+> > 
+> Let's change it to RAZ? We will implement the complete logic when someone
+> really needs this feature.
 
---
-Lee Jones [李琼斯]
+Exactly. Which is probably *never*.
 
+> 
+> > Do you mind spinning a series fixing this up?
+> > 
+> Sure. 
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
