@@ -1,376 +1,301 @@
-Return-Path: <linux-kernel+bounces-343761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7ED5989F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:12:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F791989F1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE0C1C21728
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60D471C21B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771618B48B;
-	Mon, 30 Sep 2024 10:12:20 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86235189902;
+	Mon, 30 Sep 2024 10:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4NH+Bth"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 470AF188711
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDECF183098;
+	Mon, 30 Sep 2024 10:10:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727691139; cv=none; b=C+coHztd3zzCuMyUtCXzotCVojWiah6uVdnmFOkGmUSMlLnp8UKCfxIaV1iv03BciVkIU/GvSXlqytrs2o8tKQNlJ2+X7Oqsai3pNZG0QjH1o/g9URO+SdVoueRHP6Ytc1nzxcid+tnarePJAYBkuR6MXWAjvSlZbtREYqK7a/g=
+	t=1727691033; cv=none; b=PLwDTQMin8kFCOudYamHNbE2rWeLP+Lnkllp8yRHXD0yqrTCVoyC7uwxhAbq6L3BKOdgXPt0aR5UJBQP9MV40H1lzmwzHUpxmw0fOmIUDxlXEY/e0A2ELs/XbrwojubaFw/XWKO90kAsNGhrLp+Oe6iEprx0d+6iUSA3LG0LXFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727691139; c=relaxed/simple;
-	bh=Qma68DagMMYWb77MEmsbkjnN3GJ4qwLe5FpzeJHeJkM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jF+SNRtsVkqivr5hKqnUOtlp9w3KDXQm21K504GKELf7SemNNURRg7ubRWXDkqPZqXMmuB43VKnqgniBlruN/9mQKjvo6rHFP9qpB4uk7ufFyU5zFQ4QqOZg459N161oZwoQoYFZ6ciw9haxVYjR/xyAC5J9yUn2rBu9AspPLGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XHH0S36GSz1SC7Q;
-	Mon, 30 Sep 2024 18:11:20 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id BAD9A1A016C;
-	Mon, 30 Sep 2024 18:12:14 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 30 Sep 2024 18:12:13 +0800
-From: shiyongbang <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH drm-dp 4/4] drm/hisilicon/hibmc: add dp module in hibmc
-Date: Mon, 30 Sep 2024 18:06:10 +0800
-Message-ID: <20240930100610.782363-5-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240930100610.782363-1-shiyongbang@huawei.com>
-References: <20240930100610.782363-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1727691033; c=relaxed/simple;
+	bh=IK+SuzHiGxVHRL4chgXp/d4YfwTVWJxQn9hzmkDfWw8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bwEfZM9kqeOB6qqWvDEZWvgbHBBjJBPTpOTs3SiqhAXRZ04gh0SyESi9Rawuty1/R1p5bqDcm7yepW0hg1ZTO6aR1HBPe4hz2Jj3CJE7+yVEwGwajv1VqjiKVhABhvc4nOdGzYxMkjG5q2PYYbEsyPy7VUUgaSU/76ihGQAzTu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4NH+Bth; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cacabd2e0so31907215e9.3;
+        Mon, 30 Sep 2024 03:10:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727691030; x=1728295830; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8rM4vaCgNhaV0OL1RGwyXhfJ2KpUtBg+F/ROraRtak=;
+        b=W4NH+Bthj/sDICrY2vIv7nyz03+pdqoos5hUoC09jf0XLPxwIMBqZEl+rqoKl3Ejy5
+         SnBfVvvWwDgnAlYKlKYkzwQ33u6b6GXoMapvYMtNN1kyR7ZUQMW25/YmtlmeKjwMFV21
+         VLJPuXt9YEGS2kDjb78Jmhjr/09yFvZLzrcTVrtuZsZygFvqga1PLJF919wT9FroDNd+
+         qmZH8rKmAGJoZpgUSAJ9ZklJKuT9J6xmNexvZLhN1hq6aqiiFud2vrFAuYeIDU6wAwrC
+         xHvAi5Jv62/hB6rfdYDkrFMZkXzO2l5kMQs6KZ7prajYvdJXLoIeF4VGeWRt7KfSgiTh
+         PH9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727691030; x=1728295830;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y8rM4vaCgNhaV0OL1RGwyXhfJ2KpUtBg+F/ROraRtak=;
+        b=SNU/BVA+xqG2B0By3Ig2thA3WDBtCFRQQMhCuIUqSo9reAA5xHNg5bQF7h+d+vg28T
+         gep3HP7kc5bJZAjLmaV8BYpE7ab7sIedOEJslQz5rBT074gOdb0ju/N6EfX1J2UDx3G/
+         oR8zbhNvMYygkAbmi8X14vJzIH/WBeqKTDvYszoB4YwrGZ+rMN9u3NkCdBLV+HaDM+AI
+         n1XRGasYbjalxhhW3KNviAGN2YZyiK8+GNU9cmrcWjqMsGkG+OS/4AbGsM/qhT3F2P2e
+         cq8cjR/07YeFBYK4u9/aH75WHy+lIJ3m2yTCrCumyi+epytYhPtrQTtUQw1QYMW3ccR2
+         k1qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUl65QmdTdpcHR7xfRaopdKgZo8UVbFSHs7yjybYWwkL9Wv831Pv8F/woqK6UZMBaSsqNELzW29Sm4ucsNf@vger.kernel.org, AJvYcCWMGBBhrJbzzG03cC49/IpHrNqpkp31jVZeN1ixvUB+dW+kBdXkBw0jrO7CQN3dF6s2owc78a5yaQZa@vger.kernel.org
+X-Gm-Message-State: AOJu0YysfoilPUuIptly3ST53pKlQfTpZCk5bH+sxh7I69oN9+ctwhxn
+	m931+pEQpHrjp0XETMagv2tWJuRwDIXPZEGYeJZMUcE83CqHGiDC
+X-Google-Smtp-Source: AGHT+IForZE+pZqxxqdfv6Tm5Wx3aKxtf2heafNKQrlGZqGJXBKs6oQZ0PV9/fIbGL4uQ3QmDirm7A==
+X-Received: by 2002:a05:600c:3ca6:b0:426:6710:223c with SMTP id 5b1f17b1804b1-42f584128f9mr78677545e9.9.1727691029809;
+        Mon, 30 Sep 2024 03:10:29 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd575e322sm8597501f8f.110.2024.09.30.03.10.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 03:10:29 -0700 (PDT)
+Message-ID: <66fa7915.050a0220.1da288.aeca@mx.google.com>
+X-Google-Original-Message-ID: <Zvp5DQVxOxhe5bGk@Ansuel-XPS.>
+Date: Mon, 30 Sep 2024 12:10:21 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/3] dt-bindings: mtd: Add Documentation for Airoha
+ fixed-partitions
+References: <20240925101422.8373-1-ansuelsmth@gmail.com>
+ <20240925101422.8373-3-ansuelsmth@gmail.com>
+ <20240925133003.619c40c4@xps-13>
+ <66f3f58e.5d0a0220.5d655.b48a@mx.google.com>
+ <20240925135256.32d3a0f7@xps-13>
+ <66f3fcb7.5d0a0220.3ca4c2.ba83@mx.google.com>
+ <20240930114819.609f9341@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930114819.609f9341@xps-13>
 
-From: baihan li <libaihan@huawei.com>
+On Mon, Sep 30, 2024 at 11:48:19AM +0200, Miquel Raynal wrote:
+> Hi Christian,
+> 
+> ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 14:06:11 +0200:
+> 
+> > On Wed, Sep 25, 2024 at 01:52:56PM +0200, Miquel Raynal wrote:
+> > > Hi Christian,
+> > > 
+> > > ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 13:35:38 +0200:
+> > >   
+> > > > On Wed, Sep 25, 2024 at 01:30:03PM +0200, Miquel Raynal wrote:  
+> > > > > Hi Christian,
+> > > > > 
+> > > > > ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 12:13:58 +0200:
+> > > > >     
+> > > > > > Add Documentation for Airoha fixed-partitions compatibles.
+> > > > > > 
+> > > > > > Airoha based SoC declare a dedicated partition at the end of the flash to
+> > > > > > store calibration and device specific data, in addition to fixed
+> > > > > > partitions.
+> > > > > > 
+> > > > > > The offset of this special partition is not well defined as a custom bad
+> > > > > > block management driver is used that reserve space at the end of the flash.
+> > > > > > 
+> > > > > > This binding allows defining all fixed partitions and marking the last one
+> > > > > > to detect the correct offset.
+> > > > > > 
+> > > > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > > > > > ---
+> > > > > >  .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++++++++
+> > > > > >  .../bindings/mtd/partitions/partitions.yaml   |  1 +
+> > > > > >  2 files changed, 81 insertions(+)
+> > > > > >  create mode 100644 Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > > > 
+> > > > > > diff --git a/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > > > new file mode 100644
+> > > > > > index 000000000000..a45df51065af
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/devicetree/bindings/mtd/partitions/airoha,fixed-partitions.yaml
+> > > > > > @@ -0,0 +1,80 @@
+> > > > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > > > > +%YAML 1.2
+> > > > > > +---
+> > > > > > +$id: http://devicetree.org/schemas/mtd/partitions/airoha,fixed-partitions.yaml#
+> > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > +
+> > > > > > +title: Airoha SoC partitioning
+> > > > > > +
+> > > > > > +description: |
+> > > > > > +  Airoha based SoC declare a dedicated partition at the end of the flash to
+> > > > > > +  store calibration and device specific data, in addition to fixed partitions.
+> > > > > > +
+> > > > > > +  The offset of this special partition is not well defined as a custom bad block
+> > > > > > +  management driver is used that reserve space at the end of the flash.
+> > > > > > +
+> > > > > > +  This binding allows defining all fixed partitions and marking the last one to
+> > > > > > +  detect the correct offset from the new end of the flash.
+> > > > > > +
+> > > > > > +maintainers:
+> > > > > > +  - Christian Marangi <ansuelsmth@gmail.com>
+> > > > > > +
+> > > > > > +select: false
+> > > > > > +
+> > > > > > +properties:
+> > > > > > +  compatible:
+> > > > > > +    const: airoha,fixed-partitions
+> > > > > > +
+> > > > > > +  "#address-cells":
+> > > > > > +    enum: [ 1, 2 ]
+> > > > > > +
+> > > > > > +  "#size-cells":
+> > > > > > +    enum: [ 1, 2 ]
+> > > > > > +
+> > > > > > +patternProperties:
+> > > > > > +  "^partition@[0-9a-f]+$":
+> > > > > > +    $ref: partition.yaml#
+> > > > > > +    properties:
+> > > > > > +      compatible:
+> > > > > > +        const: airoha,dynamic-art
+> > > > > > +    unevaluatedProperties: false
+> > > > > > +
+> > > > > > +required:
+> > > > > > +  - "#address-cells"
+> > > > > > +  - "#size-cells"
+> > > > > > +
+> > > > > > +additionalProperties: false
+> > > > > > +
+> > > > > > +examples:
+> > > > > > +  - |
+> > > > > > +    partitions {
+> > > > > > +        compatible = "airoha,fixed-partitions";
+> > > > > > +        #address-cells = <1>;
+> > > > > > +        #size-cells = <1>;
+> > > > > > +
+> > > > > > +        partition@0 {
+> > > > > > +          label = "bootloader";
+> > > > > > +          reg = <0x00000000 0x00080000>;
+> > > > > > +        };
+> > > > > > +
+> > > > > > +        partition@80000 {
+> > > > > > +          label = "tclinux";
+> > > > > > +          reg = <0x00080000 0x02800000>;
+> > > > > > +        };
+> > > > > > +
+> > > > > > +        partition@2880000 {
+> > > > > > +          label = "tclinux_slave";
+> > > > > > +          reg = <0x02880000 0x02800000>;
+> > > > > > +        };
+> > > > > > +
+> > > > > > +        partition@5080000 {
+> > > > > > +          label = "rootfs_data";
+> > > > > > +          reg = <0x5080000 0x00800000>;
+> > > > > > +        };
+> > > > > > +
+> > > > > > +        partition@ffffffff {
+> > > > > > +          compatible = "airoha,dynamic-art";
+> > > > > > +          label = "art";
+> > > > > > +          reg = <0xffffffff 0x00300000>;    
+> > > > > 
+> > > > > I'm a little bit puzzled by this kind of information which is known to
+> > > > > be wrong. As the partition offset and size must be dynamically
+> > > > > calculated, this reg property (as well as the size parameter of the
+> > > > > previous one) are notably wrong. I guess we are not fully constrained
+> > > > > by the fixed-partitions schema here, so could we avoid the reg property
+> > > > > in the airoha,dynamic-art partition? Maybe we also need a #define for a
+> > > > > specific placeholder in the penultimate reg property too (for the size).
+> > > > >    
+> > > > 
+> > > > Maybe instead of reg we can use a property like size?
+> > > > 
+> > > > Can you better elaborate the suggestion about the #define?
+> > > > 
+> > > > Do you mean for case where the last partition might overlap
+> > > > with the penultimate? Honestly in such case I would error hard, that
+> > > > case happen when too much space is reserved and that is a
+> > > > misconfiguration of the system (developer error)  
+> > > 
+> > > That's not what I mean.
+> > > 
+> > > In the above case you say partition "partition@5080000" is 0x800000
+> > > bytes long. This is obviously wrong otherwise you would know where the
+> > > art partition starts. And right after you're saying partition
+> > > "partition@ffffffff" starts at 0xffffffff and is 0x300000 bytes long.
+> > > This is also wrong because 0xffffffff is not a valid start address and
+> > > IIUC 0x300000 is also unknown and dynamically derived.
+> > > 
+> > > So for the art partition my advise if you know nothing about the
+> > > start/length is to just skip the reg property. For the previous
+> > > partition I'd maybe use a definition (whose name is to discuss) instead
+> > > of the wrong size argument (the start offset being correct on his side).
+> > >  
+> > 
+> > Ok probably the description isn't clear enough. The missing info that
+> > require this parser is the flash end.
+> > 
+> > Following the example we know the size of rootfs_data and start offset
+> > AND we know the size of the ART partition.
+> > 
+> > There might be a space in the middle unused between the rootfs_data
+> > partition and the art partition. What is derived is the starting offset
+> > of the art partition that is flash end - art partition size.
+> > (where flash end change and is not always the same due to how the special
+> > bad block managament table reserved space is handled)
+> > 
+> > This is why 0xffffffff, used as a dummy offset to signal it will be parsed at
+> > runtime. On second tought tho maybe using this dummy offset is wrong and
+> > I should just have something like
+> > 
+> > length = <0x300000>;
+> > 
+> > Is it clear now? Sorry for any confusion.
+> 
+> I'm sorry but not really. You know the end of the physical device and
+> the size of the ART partition, so you must know its start as well?
+>
 
-To support DP interface displaying in hibmc driver. Add
-a encoder and connector for DP modual.
+Before the system boot we know:
+- size of the ART partition
+- real size of the physical device (512mb... 1G... 64mb...)
 
-Signed-off-by: baihan li <libaihan@huawei.com>
----
- drivers/gpu/drm/hisilicon/hibmc/Makefile      |   2 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 195 ++++++++++++++++++
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  17 +-
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |   5 +
- 4 files changed, 217 insertions(+), 2 deletions(-)
- create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+When the physical device is probed (nand) a special driver is loaded
+(before mtd parsing logic) that change the physical size of the device
+(mtd->size) as at the end of the nand some space is reserved for bad
+block management and other metadata info.
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-index 693036dfab52..8cf74e0d4785 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
-+++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
-@@ -1,5 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0-only
- hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
--	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o
-+	       dp/dp_aux.o dp/dp_link.o dp/dp_kapi.o hibmc_drm_dp.o
- 
- obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-new file mode 100644
-index 000000000000..7a50f1d81aac
---- /dev/null
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
-@@ -0,0 +1,195 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+#include <linux/io.h>
-+
-+#include <drm/drm_probe_helper.h>
-+#include <drm/drm_simple_kms_helper.h>
-+#include <drm/drm_atomic_helper.h>
-+#include <drm/drm_drv.h>
-+#include <drm/drm_edid.h>
-+
-+#include "hibmc_drm_drv.h"
-+#include "dp/dp_kapi.h"
-+
-+static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
-+{
-+	int count;
-+
-+	count = drm_add_modes_noedid(connector, connector->dev->mode_config.max_width,
-+				     connector->dev->mode_config.max_height);
-+	drm_set_preferred_mode(connector, 800, 600); /* default 800x600 */
-+
-+	return count;
-+}
-+
-+static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
-+	.get_modes = hibmc_dp_connector_get_modes,
-+};
-+
-+static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
-+	.reset = drm_atomic_helper_connector_reset,
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.destroy = drm_connector_cleanup,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+};
-+
-+static void dp_mode_cfg(struct drm_device *dev, struct dp_mode *dp_mode,
-+			struct drm_display_mode *mode)
-+{
-+	dp_mode->field_rate = drm_mode_vrefresh(mode);
-+	dp_mode->pixel_clock = mode->clock / 1000; /* 1000: khz to hz */
-+
-+	dp_mode->h_total = mode->htotal;
-+	dp_mode->h_active = mode->hdisplay;
-+	dp_mode->h_blank = mode->htotal - mode->hdisplay;
-+	dp_mode->h_front = mode->hsync_start - mode->hdisplay;
-+	dp_mode->h_sync = mode->hsync_end - mode->hsync_start;
-+	dp_mode->h_back = mode->htotal - mode->hsync_end;
-+
-+	dp_mode->v_total = mode->vtotal;
-+	dp_mode->v_active = mode->vdisplay;
-+	dp_mode->v_blank = mode->vtotal - mode->vdisplay;
-+	dp_mode->v_front = mode->vsync_start - mode->vdisplay;
-+	dp_mode->v_sync = mode->vsync_end - mode->vsync_start;
-+	dp_mode->v_back = mode->vtotal - mode->vsync_end;
-+
-+	if (mode->flags & DRM_MODE_FLAG_PHSYNC) {
-+		drm_info(dev, "horizontal sync polarity: positive\n");
-+		dp_mode->h_pol = 1;
-+	} else if (mode->flags & DRM_MODE_FLAG_NHSYNC) {
-+		drm_info(dev, "horizontal sync polarity: negative\n");
-+		dp_mode->h_pol = 0;
-+	} else {
-+		drm_err(dev, "horizontal sync polarity: unknown or not set\n");
-+	}
-+
-+	if (mode->flags & DRM_MODE_FLAG_PVSYNC) {
-+		drm_info(dev, "vertical sync polarity: positive\n");
-+		dp_mode->v_pol = 1;
-+	} else if (mode->flags & DRM_MODE_FLAG_NVSYNC) {
-+		drm_info(dev, "vertical sync polarity: negative\n");
-+		dp_mode->v_pol = 0;
-+	} else {
-+		drm_err(dev, "vertical sync polarity: unknown or not set\n");
-+	}
-+}
-+
-+static int dp_prepare(struct hibmc_dp *dp, struct drm_display_mode *mode)
-+{
-+	struct dp_mode dp_mode = {0};
-+	int ret;
-+
-+	hibmc_dp_display_en(dp, false);
-+
-+	dp_mode_cfg(dp->drm_dev, &dp_mode, mode);
-+	ret = hibmc_dp_mode_set(dp, &dp_mode);
-+	if (ret)
-+		drm_err(dp->drm_dev, "hibmc dp mode set failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void dp_enable(struct hibmc_dp *dp)
-+{
-+	hibmc_dp_display_en(dp, true);
-+}
-+
-+static void dp_disable(struct hibmc_dp *dp)
-+{
-+	hibmc_dp_display_en(dp, false);
-+}
-+
-+static int hibmc_dp_hw_init(struct hibmc_drm_private *priv)
-+{
-+	int ret;
-+
-+	ret = hibmc_dp_kapi_init(&priv->dp);
-+	if (ret)
-+		return ret;
-+
-+	hibmc_dp_display_en(&priv->dp, false);
-+
-+	return 0;
-+}
-+
-+static void hibmc_dp_hw_uninit(struct hibmc_drm_private *priv)
-+{
-+	hibmc_dp_kapi_uninit(&priv->dp);
-+}
-+
-+static void hibmc_dp_encoder_enable(struct drm_encoder *drm_encoder,
-+				    struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+	struct drm_display_mode *mode = &drm_encoder->crtc->state->mode;
-+
-+	if (dp_prepare(dp, mode))
-+		return;
-+
-+	dp_enable(dp);
-+}
-+
-+static void hibmc_dp_encoder_disable(struct drm_encoder *drm_encoder,
-+				     struct drm_atomic_state *state)
-+{
-+	struct hibmc_dp *dp = container_of(drm_encoder, struct hibmc_dp, encoder);
-+
-+	dp_disable(dp);
-+}
-+
-+static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
-+	.atomic_enable = hibmc_dp_encoder_enable,
-+	.atomic_disable = hibmc_dp_encoder_disable,
-+};
-+
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv)
-+{
-+	hibmc_dp_hw_uninit(priv);
-+}
-+
-+int hibmc_dp_init(struct hibmc_drm_private *priv)
-+{
-+	struct drm_device *dev = &priv->dev;
-+	struct drm_crtc *crtc = &priv->crtc;
-+	struct hibmc_dp *dp = &priv->dp;
-+	struct drm_connector *connector = &dp->connector;
-+	struct drm_encoder *encoder = &dp->encoder;
-+	int ret;
-+
-+	dp->mmio = priv->mmio;
-+	dp->drm_dev = dev;
-+
-+	ret = hibmc_dp_hw_init(priv);
-+	if (ret) {
-+		drm_err(dev, "dp hw init failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	encoder->possible_crtcs = drm_crtc_mask(crtc);
-+	ret = drm_simple_encoder_init(dev, encoder, DRM_MODE_ENCODER_TMDS);
-+	if (ret) {
-+		drm_err(dev, "init dp encoder failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_encoder_helper_add(encoder, &hibmc_dp_encoder_helper_funcs);
-+
-+	ret = drm_connector_init(dev, connector, &hibmc_dp_conn_funcs,
-+				 DRM_MODE_CONNECTOR_DisplayPort);
-+	if (ret) {
-+		drm_err(dev, "init dp connector failed: %d\n", ret);
-+		goto err_init;
-+	}
-+
-+	drm_connector_helper_add(connector, &hibmc_dp_conn_helper_funcs);
-+
-+	drm_connector_attach_encoder(connector, encoder);
-+
-+	return 0;
-+
-+err_init:
-+	hibmc_dp_hw_uninit(priv);
-+
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 9f9b19ea0587..c90a8db021b0 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -93,6 +93,10 @@ static const struct drm_mode_config_funcs hibmc_mode_funcs = {
- 
- static int hibmc_kms_init(struct hibmc_drm_private *priv)
- {
-+#define DP_HOST_SERDES_CTRL		0x1f001c
-+#define DP_HOST_SERDES_CTRL_VAL		0x8A00
-+#define DP_HOST_SERDES_CTRL_MASK	0x7FFFE
-+
- 	struct drm_device *dev = &priv->dev;
- 	int ret;
- 
-@@ -116,10 +120,17 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
- 		return ret;
- 	}
- 
-+	/* if DP existed, init DP */
-+	if ((readl(priv->mmio + DP_HOST_SERDES_CTRL) &
-+	     DP_HOST_SERDES_CTRL_MASK) == DP_HOST_SERDES_CTRL_VAL) {
-+		ret = hibmc_dp_init(priv);
-+		if (ret)
-+			drm_err(dev, "failed to init dp: %d\n", ret);
-+	}
-+
- 	ret = hibmc_vdac_init(priv);
- 	if (ret) {
- 		drm_err(dev, "failed to init vdac: %d\n", ret);
--		return ret;
- 	}
- 
- 	return 0;
-@@ -239,6 +250,7 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
- 
- static int hibmc_unload(struct drm_device *dev)
- {
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
- 	struct pci_dev *pdev = to_pci_dev(dev->dev);
- 
- 	drm_atomic_helper_shutdown(dev);
-@@ -247,6 +259,9 @@ static int hibmc_unload(struct drm_device *dev)
- 
- 	pci_disable_msi(to_pci_dev(dev->dev));
- 
-+	if (priv->dp.encoder.possible_crtcs)
-+		hibmc_dp_uninit(priv);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-index 6b566f3aeecb..aa79903fe022 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-@@ -19,6 +19,7 @@
- #include <linux/i2c.h>
- 
- #include <drm/drm_framebuffer.h>
-+#include "dp/dp_kapi.h"
- 
- struct hibmc_connector {
- 	struct drm_connector base;
-@@ -37,6 +38,7 @@ struct hibmc_drm_private {
- 	struct drm_crtc crtc;
- 	struct drm_encoder encoder;
- 	struct hibmc_connector connector;
-+	struct hibmc_dp dp;
- };
- 
- static inline struct hibmc_connector *to_hibmc_connector(struct drm_connector *connector)
-@@ -59,4 +61,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv);
- 
- int hibmc_ddc_create(struct drm_device *drm_dev, struct hibmc_connector *connector);
- 
-+int hibmc_dp_init(struct hibmc_drm_private *priv);
-+void hibmc_dp_uninit(struct hibmc_drm_private *priv);
-+
- #endif
+So on the mtd parsing logic we know:
+- size of the ART partitiomn
+- new size of the physical device (512-reserved space...)
+
+And we calculate the start offset of the ART partition.
+
+It's very difficult to know what is the new size of the physical device
+after the driver change it as it might change based on the internal
+configuration of the driver itself.
+
 -- 
-2.33.0
-
+	Ansuel
 
