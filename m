@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-344616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF0598ABE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:20:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54BB498ABD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FB811C22ABA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:20:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD365B21522
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A6E219F42C;
-	Mon, 30 Sep 2024 18:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABC319ABC4;
+	Mon, 30 Sep 2024 18:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="AXrxa8dt"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbXBYXkY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD7819EED3
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727720216; cv=none; b=ApgpBoDp64O/3KohM8CsrZQbmNRaaZAQ8hf0Nb1NHXRGmseTCYTruxl3mQ/R1uU3HZdcXRigeplkXFH/6F/bUdOd54xPTv3Da76x8L7dNzhbm4DideQHWQyaS5b4AD95ffpVM6UdhxpobIYS/WAUD5JOYbwtF/XRqC0shuAla58=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727720216; c=relaxed/simple;
-	bh=FFNIGd1PTwXL41R/P9rsLH3qrxw/xZOnH4jWZnAlG+s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SIgfV07HmCpN3rYDucV2i4y3MWQ+eEn3dNUDjpiCW8MnyBDfmhii3t2WR6AIvoWFbBPghKkOPH6oaKEyZu39Ksdigxf6oz65nkqeIho26bYJcAfNgfU0tcdotc0WX9HZM9/kU5TbL6L3jdzklVKoPHkXaFdtz6EYtJqoZutHyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=AXrxa8dt; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XHTmV2lCszlgMVt;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BA419AA4E;
 	Mon, 30 Sep 2024 18:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1727720200; x=1730312201; bh=ZUVil
-	A+1yNgLRbERUpn2nw9/1mhPQfi+T3ff+eFHMH8=; b=AXrxa8dtHPshV3brU2Gtf
-	OSWLs1hH4HD2915CcW0LsotXjP6CP9cZdJtSdwhTN7dMbMURQUooFSlw1QA0ZGSZ
-	NJLX83tbn9NlbYbVf5SycNYfkCkLN1JTnLlfHcjNTSHWMppxtfnPRc+uAPOMmr00
-	ed0UHrttkNhUs6ReCPZ5CkmnYIuHzvoj9Gktez2bCnwvZ9djQtRDyddRR1tlX0m6
-	np3wtTe5jxX/NHJdEot61fm6J7hWpQLiL3z/bZnCxe1XhJ50zhKjt7KCKtcnSVq7
-	NCvY+dZh+3Xd3JH3+cbtGkAIzYL5zGVSRoqEI0cAXG835rywXEsI1wTDCt4X/E60
-	A==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id y86niYjyHECS; Mon, 30 Sep 2024 18:16:40 +0000 (UTC)
-Received: from bvanassche.mtv.corp.google.com (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XHTmS0Dw5zlgMVp;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727720203; cv=none; b=HYc0v2ICUZ+oz+KQl3IJz44uFWFeqFgd5rdkE797pQb21tmrJXbwIgbQLpMaCx+FBdnsuUJnSS81KaPWCiCuNKCaN/B3XQeSHqVjIReOD4ZtKwhyj5e/BAvra+rxiXrYr2y6+hoJ/TTawPXJtfw+c8ADgSiPQzyzmYkGkgYISYo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727720203; c=relaxed/simple;
+	bh=VCrdlTntQ95qWL4t3QB3ipBkFH7QItj4R8rGZcyzAFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0aro8sfyU9CVhMr7zqTDgbNPpSGupvVAWdza/zl53URsAH7HAJQ0fzXFb6As2sRSO5FmxWjqLnTHAEZz3d+H17/MYPLtx31VeO2YO9u4GVxgHIElu6ZougiEYsx8xhYCk3LyKes8IRA/7N1eeCwfZmxO4w+mc5vPyd29RhLDwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbXBYXkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20242C4CED2;
 	Mon, 30 Sep 2024 18:16:39 +0000 (UTC)
-From: Bart Van Assche <bvanassche@acm.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 21/21] genirq: Unexport nr_irqs
-Date: Mon, 30 Sep 2024 11:16:00 -0700
-Message-ID: <20240930181600.1684198-22-bvanassche@acm.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20240930181600.1684198-1-bvanassche@acm.org>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727720202;
+	bh=VCrdlTntQ95qWL4t3QB3ipBkFH7QItj4R8rGZcyzAFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FbXBYXkYLYvrh5wG2uXVkbjroBgW6xudVIdZKZK/qMgkhcvz4jJHNn2FSegxq7z/f
+	 EqWLXm/fSNOkfer8ouNRxcy89yBB/FdN8rAjCBT9i53OmEGeZN5seCoN1iLjxhnAZ1
+	 xNfCk0eQhs1WLspsws4mb1X7z9vQyAHOBh1eDULa3GeRA46pQuphSzPk4GP0gdN5vh
+	 Y/EF3uh43sa97IO28DAnhm2/V3ulcPLk6qrmy8JIHGOM/5KVV5E4htlSmMlJEfniJm
+	 ozhMU9XTNyZfrfPWMSClNkrfqwwC/rlkPS2FgTOVi1SqG3pOMtw4WLoMFyyKr9DHaE
+	 rWugP43xSudvQ==
+Date: Mon, 30 Sep 2024 19:16:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Zichen Xie <zichenxie0106@gmail.com>, alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Rohit kumar <quic_rohkumar@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Takashi Iwai <tiwai@suse.com>, LKML <linux-kernel@vger.kernel.org>,
+	Zijie Zhao <zzjas98@gmail.com>,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: Re: [PATCH] Fix possible NULL Pointer Dereference in
+ 'asoc_qcom_lpass_cpu_platform_probe'
+Message-ID: <75ec53cc-ffd7-484a-8c98-d02fdc6aa847@sirena.org.uk>
+References: <20240930011521.26283-1-zichenxie0106@gmail.com>
+ <30cfc980-3b38-4e98-a753-b149746cf93c@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6M3j18/8xJpvc7f0"
+Content-Disposition: inline
+In-Reply-To: <30cfc980-3b38-4e98-a753-b149746cf93c@web.de>
+X-Cookie: My EARS are GONE!!
+
+
+--6M3j18/8xJpvc7f0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Unexport nr_irqs and declare it static now that all code that reads or
-modifies nr_irqs has been converted to number_of_interrupts() /
-set_number_of_interrupts().
+On Mon, Sep 30, 2024 at 06:33:49PM +0200, Markus Elfring wrote:
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- include/linux/irqnr.h | 1 -
- kernel/irq/irqdesc.c  | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+> How do you think about a wording variant like the following?
 
-diff --git a/include/linux/irqnr.h b/include/linux/irqnr.h
-index 81b76949c52e..82060d75642c 100644
---- a/include/linux/irqnr.h
-+++ b/include/linux/irqnr.h
-@@ -5,7 +5,6 @@
- #include <uapi/linux/irqnr.h>
-=20
-=20
--extern int nr_irqs;
- int number_of_interrupts(void) __pure;
- int set_number_of_interrupts(int nr);
- extern struct irq_desc *irq_to_desc(unsigned int irq);
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 8c6280843964..dea51c641f87 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -138,8 +138,7 @@ static void desc_set_defaults(unsigned int irq, struc=
-t irq_desc *desc, int node,
- 	desc_smp_init(desc, node, affinity);
- }
-=20
--int nr_irqs =3D NR_IRQS;
--EXPORT_SYMBOL_GPL(nr_irqs);
-+static int nr_irqs =3D NR_IRQS;
-=20
- int number_of_interrupts(void)
- {
+>   The result from a call of the function =E2=80=9Cdevm_kzalloc=E2=80=9D w=
+as passed to
+>   a subsequent function call without checking for a null pointer before
+>   (according to a memory allocation failure).
+>   Thus return directly after a failed devm_kzalloc() call.
+
+Feel free to ignore Markus, he has a long history of sending
+unhelpful review comments and continues to ignore repeated requests
+to stop.
+
+--6M3j18/8xJpvc7f0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb66wQACgkQJNaLcl1U
+h9DDGwf+NnAvu+yXZ+1Avz8syo7V5EvlIz6QlMOuUMIW5mOBY1wpiVTxRqJinUHv
+MlwzXH4ja6NFSOI5xUJrrAMzIV5M37iY9gxaY0t4Ru9XVjzdDOT2pzL3ZiZp0j7O
+xOg3+xKjw6sHxppNuRhji9T29qDn+qgERfqdyA4BxRDLmoMd2QODPVG8DuYBOdXu
+XDKLYRLvMl4A6dhfVHyg2cegHSFf5TRe9/SwkTM1D53Ir4AI1DYALag5FZmZVXJD
+3v7akWseVADudrgmGLgj7g837Bvcut6qLDNMI4IcPKSoT3OlqF0BCSKsZfjDh2A8
+F66LwOaBNHCrbOgm3KaFRt0n6ldyBQ==
+=r1s9
+-----END PGP SIGNATURE-----
+
+--6M3j18/8xJpvc7f0--
 
