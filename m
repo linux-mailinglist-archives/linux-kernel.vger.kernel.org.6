@@ -1,168 +1,209 @@
-Return-Path: <linux-kernel+bounces-344126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CA198A4C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:25:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D93E98A4C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F75F1C211C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED529284176
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4009190049;
-	Mon, 30 Sep 2024 13:23:55 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6012191484;
+	Mon, 30 Sep 2024 13:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="JJh5GpuP"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010064.outbound.protection.outlook.com [52.101.69.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B11D18EFE0;
-	Mon, 30 Sep 2024 13:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702635; cv=none; b=UoOwMGW6goQn/ZhrmXaHXtHsMggu9cUsGTli3IXPUzNSyXONBnLB/SVHtLJZWcvJFPQm4LWoSKsI538MumRpAoEpMceqrXq64K/83nKwSvD61vt1pPADzNxx75AqX2z5V8WofwoJUTIeF7/vSl33l3k6ojx/A3fcuKOk3i7zoOI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702635; c=relaxed/simple;
-	bh=NP8jjB23QLX+S3BSx5sj/XPrv18+qsyiocQiyL4WsKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qOYeOeWGkMo+mIAjrr+NdVYJ9fN/5V1dcKN+xtaPj3VPwNyovDVtB4vqXqfQw43ZJykdcSMbEtK+p4RdTTTUeRjlk9S5278bRzqY0VzxD8ngUibLsHTSL2IbezdGRaN03pJ//GQVqIYHmPnt1p4QiOywClqn5szdkYjpjDQAzdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e25f3748e0so13168407b3.0;
-        Mon, 30 Sep 2024 06:23:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727702632; x=1728307432;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZEBwxrpoLE/VvANGlwD0fZQRFkLr5Jij21iFhSOg0E=;
-        b=Ny+brfuRI0mD5jGft+XwV0ns+QULBfUaRHokH4l6opSGxQ/Ts2IFunUdOwcxcMYqvR
-         BPnB7yWoTgQD01gTouoSukmJzk2q4R35oOV1FWsPhVY68aleH6ZE1PYj50JAoafVqSMh
-         IHuGvhyav1/86KhMnBEQaRT7XK5PNqJRAM7OJckism28eAmwQl/dOnc8aPirtMM6zXH3
-         09IzTcxVRKQ9TfykgxzH8YF25pr6gK1HiHA0vJRFPFYp52/v6vPalO9PDsiIhU0vhrDh
-         uFBVq7jjWmcorMfzYOYMPsInZ+jk3A6FuBml2l1BZgpL17kG+SYvTptf36bv74mbPkWY
-         liwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTFkfjpjQnAtssSdAFa/xHw2hPa9G9GfmfUKBQIBFRzr1PQrAsI8ntYKQEfiYwz3gDe4B9UVC3ZPmp@vger.kernel.org, AJvYcCWFCvipBFthvROU+Y9wWOa3DdPlRUqAW3qBvFGYZAwFoh5X5vjGwYCJyCVZNzgxYo3OTU+m+hVX@vger.kernel.org, AJvYcCWGVMSwRWvi1oLDt4f1qO2vPN5fZu7Mi/65iYjcYdv6WpSk39lFrKcjpa8ctvsStHL93AbLgra1w9/WuUl4@vger.kernel.org, AJvYcCXBqxI43nFQ2jyBlYocJoingNPDbER3E8lwL7RjGoVUzt4av+K9EJZl1W0fOAYxxGlkmO8U+9WEJ23E@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2s3hMwR4s6i4G3kBAJliUZg7lYB2z+a8Gox/T1bVk7XBHGzaE
-	qK3TFmCK/Ln+QkjrsvzxzAqFKs5ZyNjM49GO47d29J8mp1xDqNd1r8p/DrYK
-X-Google-Smtp-Source: AGHT+IGLCnlU657xJcYU/8fHe95pp7TnjlS5Glm36BYWtS0N1BCldXcsEtAzK3PM1O9s1GCVcUaSKw==
-X-Received: by 2002:a05:690c:4285:b0:6d7:f32:735b with SMTP id 00721157ae682-6e24759c116mr68881877b3.27.1727702631701;
-        Mon, 30 Sep 2024 06:23:51 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2454a1dc9sm13480477b3.142.2024.09.30.06.23.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 06:23:51 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e25f3748e0so13167997b3.0;
-        Mon, 30 Sep 2024 06:23:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMbdbgKtE3FE4bCYDvMaOinVTZJM7SY25+4sTCjhMXo6v8cidvEDvupA80tes0wkwoNqgg3P4v3yGj@vger.kernel.org, AJvYcCVeyQS82wYUgZblU2lfXUsTIRVY6ioJoCOg5MgYbOqBT2neZiHGjrSQzPNJzgJuwmX3Ry+yn6Av@vger.kernel.org, AJvYcCVxJ3KShLqjwbQn4q71izq/vp7Q0dVIUGFEebCmnI/xsAn57u5d7s86cNWDPO2kgvKPt72dyr0McXnD@vger.kernel.org, AJvYcCXDKSV3TDRNc5XBpXJu9FmQe9xeUIdPCsOmU4y6utHfABRTWWaQZAOM2SgkqtsSEQovTYEF3UYn7Phw+IuN@vger.kernel.org
-X-Received: by 2002:a05:690c:26c6:b0:6e2:1b46:27c1 with SMTP id
- 00721157ae682-6e24761f502mr54518597b3.45.1727702630751; Mon, 30 Sep 2024
- 06:23:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2EA18FC89;
+	Mon, 30 Sep 2024 13:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727702677; cv=fail; b=A3rEStdP8njI8sRai+NHEy+QuXO6EJzFhBIA7X85iNWouiDupbHDNR57belkFsVuS0sfE1/3JQbefTPQuA9mYTg3k2uGYEYIgWNg0wWekIL3CKO7r8ydY2LfGl7/seSCGf9/tJa8kNUXoqPM3HYkUV0R0tZOkHJoJW0e/xp/dKA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727702677; c=relaxed/simple;
+	bh=sqhYvabIA46GaInXj4MwSkllkrE+3+C9w3v5S1i+qAY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=BD58wObaqS8nYVaxa4PROpOKd7K93vyD3lbHoueHFYO5Gs1iEH2ylSUU06ItPmB9qOegddf/OaJirAUSsyIbFh/MwAxxC+wMflw1P47DsnsLHN8kt7omBlId9C/Uj6nhFL5+0rQJkd/ll2tXBYhRBSoBFiRRxCIS2SQimK6Z+WU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=JJh5GpuP; arc=fail smtp.client-ip=52.101.69.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xq0BZWKSxVpAZKfPkE3CkQ21Vk6KWUqfXLEdB3hpLR8N0oRNfR0SnZB3Eg1FrpF97h5Tz2Hz9Gw5qXu9gXun3el/QsvwT+bVu6QGLu/vLwzTgBfSRv2n6oPTOcGLK0Oylp8zZUzJWHWnM8QjK5BgvihTyMzclYjxqVUgHxnwjPPTvP7KhocvfpTeWPm/d8QE5KfxxaXm75hzhYOq5LhuyZZUxDGJYh6kymH1Q+b+ebYcWmdIhynNq/S3R0jTq//7QxkqzKG/69OIMEuxbl02ytR/J6kzaMLoJMhNVgCIJvqL7HtntTU7pNngjTbw5YKkpHIPFS/zNLSyXWg7De2YGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9fHxsDeBqFFJNUYgtSBJCRNCwXJy3zU/2cFEG3X69fw=;
+ b=rmRduAc24T5wGXif3NQGt+3w4JkhqkZcE91Gno1K/t4qmGoFg4nHfiHPhMl6shH3n82MOnptYyu5zG1Z6Lt+ZlahE0it+WGmqFOlkJNMpZU2VqklaQPs0x3/bKvrBL5mWe8U2Zr1FhklUvKgZGcmou33d4k9wfxw+9z0P0/IkiPIFaeHcyFJKMCsxxoC5k0byDdlJBi25I4ttqyaeWbcVW4gB2E7OqlnUqgcRR2nxBYe246UCEr/O4mboTvTHDDtwgPVuI39AQDCm5/fHI4dSNXEQ3ib91ncteD11DLoFHG7W0d2CUcwNx6riFwwVJmP8E0nKmwteYnAd1nE/IKkag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9fHxsDeBqFFJNUYgtSBJCRNCwXJy3zU/2cFEG3X69fw=;
+ b=JJh5GpuPel/PTFUcGeqVWefsSHY0LP4eQGJzggm6hQWLe39E+j1pFKMmEuTEKxeQHiYkTPjdDify5eDvNK1NRZXYNTRxMPRl97IRlmv4EwEHTatkzGN691T3iWy31JWyaDLBX1mr5QiOxdCMe+AKVU7jWnKhM+lXldRRkL3IPSSZohA87DmIas7LgCBaG6flbqX94iMY3MsY/H3ENT9nQgYIkTVI+mgVUKsBJzVxcYYFENIz1WOUYKvIGVo2hn4Qxlw8waq+XHgUmrjhs/UekshTiPRzZTrL+edck4xPpZndcENorJ1/z31xvI1F1125I4k2OM7ZN6xg50j2A9RZug==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by AS5PR04MB9942.eurprd04.prod.outlook.com (2603:10a6:20b:67e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 13:24:31 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Mon, 30 Sep 2024
+ 13:24:31 +0000
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Jacky Bai <ping.bai@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ghennadi Procopciuc <Ghennadi.Procopciuc@oss.nxp.com>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Subject: [PATCH 0/3] pinctrl: s32: add missing pins and an S32G3 compatible
+Date: Mon, 30 Sep 2024 16:23:41 +0300
+Message-ID: <20240930132344.3001876-1-andrei.stefanescu@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR02CA0116.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28c::13) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930121601.172216-1-herve.codina@bootlin.com> <20240930121601.172216-3-herve.codina@bootlin.com>
-In-Reply-To: <20240930121601.172216-3-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 30 Sep 2024 15:23:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX97ESvg-htynOJC5408Hf1bKN46ji-fnuzr94wBcZSXw@mail.gmail.com>
-Message-ID: <CAMuHMdX97ESvg-htynOJC5408Hf1bKN46ji-fnuzr94wBcZSXw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/7] reset: mchp: sparx5: Use the second reg item when
- cpu-syscon is not present
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Lars Povlsen <lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>, 
-	Daniel Machon <daniel.machon@microchip.com>, UNGLinuxDriver@microchip.com, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|AS5PR04MB9942:EE_
+X-MS-Office365-Filtering-Correlation-Id: ede13067-af14-4460-674c-08dce153377d
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|7416014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VDVnOWNzZmp0ZWY3N2Nxck1mSmxvVzVHNG9JRUtJMERJc1BWUmNMclZnclZa?=
+ =?utf-8?B?TGdrWGgydGtrMVgzdWJldUUxS2dlZ2RrL0lLOWhENnptb0s1RjlIMGp6aWgy?=
+ =?utf-8?B?djl3QmRGVy9MZndzSUdyL0N1U2t2eHFmSko2dzBERHZnWC9wS1dQWUh1bXFU?=
+ =?utf-8?B?YzlRYlQvUjdxOTBvUEwwQ1RVakVDemhXenNJZk4xMTBpMjNDT080VzQ4ZUg0?=
+ =?utf-8?B?Kzd6TktzMllUSGViTGEreHlqUWN2UVJjVDF0TVRKT1JGeFJsdFlhaE5NdjZ6?=
+ =?utf-8?B?ZGlaTnlkQzBEa1cxTGN2d0NYL0Y2Wk8wemIvMng4SHgvdTNucDUra1pWNzlB?=
+ =?utf-8?B?NXcxaUFHeEl3TXhFbXhYUVc1N0lxalhlUFNqakpWKy9NK2MrRGovWXduTWRy?=
+ =?utf-8?B?dFYwK0Riemhjb2pYTTJwM2ltZWhpTDFrV0pJVk1GdmR3Qm9oWkxUQXdEU29L?=
+ =?utf-8?B?NUtKTVl5RDhKZklPVDFRYjVHeTBONWhUMzBWR3lZWjhHQmZCdGI1bjJkRC9t?=
+ =?utf-8?B?MmNKWEhMcFF2SVg3V3ZqMVdvdVVnYnNtbENUNGkwTXBVUVVJWFpHSzZwSVAz?=
+ =?utf-8?B?eDhrL01EemR2Wnc0blZscnFBbXFBczRETVJYU3VpZUlGRzdBM3VnK0RyUmwr?=
+ =?utf-8?B?RUxMUnJhaVNaYUtmNjkxeTNoM2tNU2FZbzBDdy9WcTRjcXYrdm1kbmliOFFW?=
+ =?utf-8?B?cHFRTlFsYU5ZWlpEWUYxc3lNTjJReS8wUjF4UE9sc1hDUktROWV3MXNoanRw?=
+ =?utf-8?B?N05BY2d6MnFyTThwdjdWc2tFdndDZ3MyQUo5ZGdtUkNBZWRyVVZ6aUVxTks3?=
+ =?utf-8?B?Wm1hazhIRUd2ZmdPVndCSW1jOERUdDQzdlhNR1FZc1VEV2xrcHJkMGtKOVZK?=
+ =?utf-8?B?d09UMTR2cytDc1d3TmR4VFhVbUJmM0lOWGJsRkxXNGU2MTkyczRYN1o4Skxv?=
+ =?utf-8?B?blREc1FES0FXWnRCWVd0NGl3N3NvVUN1MGh2NUtoNGFnWXphQzBCV2RtbndD?=
+ =?utf-8?B?QlZQME4zdzhaVU1xNmYzYjlWL1JKVFVXbytzMHFQWWc4RkdaYU53b0pIVlBW?=
+ =?utf-8?B?RjJuUFVSVW51MmZ5aWZWNC85VS92OU9KRlB0OFQyOGZGVVBIdEFOYnJ2K1g1?=
+ =?utf-8?B?Wkd3LytaN2syeVlteEtUWEN4dUlEWjVxQ254S3hEWWwvS2ZvOXM4d0JyVlhV?=
+ =?utf-8?B?L0c4SnJ4K1VQTGFLZzAwYUtyclJSaGZlemFQOE9CWUNMUWF5Y0RoZ2VHbk9i?=
+ =?utf-8?B?WUIra2hURWxTZHZ3WVNhbHdYQStkZFkrdGo4eldCaUw2Sm0yZks4MUNsRUNr?=
+ =?utf-8?B?QllMODU0anUya1prTE5rVTMxQ1NTbi9QeHQrUnhKbXFLS1lWcnFtNWh5STlt?=
+ =?utf-8?B?WElvbmIxVkRhM3JNTSt6dlVYU1U4T0ZnWE16cUpjQlgxcEVURjB3ZjBkQjJL?=
+ =?utf-8?B?NDJZcktGTmhxMEJ1YVJ0NEFkOFp5QUNCTjBQVUI1bmJtaVdNbms1cXM0MUkr?=
+ =?utf-8?B?SlJCWlA4S2k5NlpzZUk4V3lxZXRmMUZTYm42ekg2L2htajlxdjdMa05MdzdN?=
+ =?utf-8?B?TEg0RDNTdzVPaDd3YTVnclRWSENhZnovNHZvRE1Kbktyc3BDeU5mcUd2Nnl3?=
+ =?utf-8?B?T0poZ3FQd0hWOEVGOWN0NDJEZjlnWVFXM0pQZkdIZjNQeXUrZC81RVdrQVBj?=
+ =?utf-8?B?SW5QbzNjeDgwZzFhdFlOL1o3U1BZTUtrbkVoa0hYRkN4dVdFeTQyZTVyYzRq?=
+ =?utf-8?B?ZUY3aHdPOUlQbmEvRGt4c0xYY0FBNzU5UjY5M1kxaEVlUVMweDBLbEtnc25M?=
+ =?utf-8?Q?NvRx8ZIXU32W/SpRV57XgrFtJqQ12xcuevQyA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UW56VFZsVFpBdDMwa3BlOEQ2Z0JpcDQyMHM5Zlh4VlBHeEtVUnpLZmwvY05n?=
+ =?utf-8?B?ZmU4MmZGeUN0WE15K1NtNXlpVlRKZFVESThXVmkzSGdnTnh3dWZSWUt6NXhX?=
+ =?utf-8?B?MUx0aDhsRWoxcEJiYnY4WFh3Wjl5TmVuOHYxRGl2VE5sekRHY3QvdkRHSldU?=
+ =?utf-8?B?TnJVZkxxQ1N1VHpxZkZsNlBXWHNaR1Z4UHIvMlozMWlwRHBGY2ZuNURUa3ph?=
+ =?utf-8?B?Um1KSGFXNE1rOHZBd0V0akpOS0UrMGF0WllLUTc4Y2t5R2NTQ2UwREw1RHQz?=
+ =?utf-8?B?cVdjV0xGRmlOL2hPMHdJTnpMeDBFb3djOG44bXVuTkhhbnZ5N0plYVN1YitQ?=
+ =?utf-8?B?c2pxQzhyOWR5dU5aTG1obHJ4T0xlRTdPcEhZOFdzT0JwYlVid0cyOVlNK21G?=
+ =?utf-8?B?OWZIRUVnZEhTRHZ2aGQyVXVjS1Y4N3dHZGcyUXNxUSt4NS8rRFlvSVlmaGgv?=
+ =?utf-8?B?UjFuaVB0TTk5emw0NXg0MUFWQjVPK2NacExTZDIvdkQ1MlE3Q0trZ0h1VlVo?=
+ =?utf-8?B?dG1meDhzVjhobm1MSEpYQ3JVQXpJODlhbnVsbDZXUjB5K3k2cXZsblllajdj?=
+ =?utf-8?B?NFlENzd5ZUxpL3ByWDJmcHJBSzdkMzZVQTlMbS9lb2c4YnB1MG9vWG1JTWtt?=
+ =?utf-8?B?akppN3YwYkRkaHBLUEtrMERYdDRHUWoxTFh1a2FwejA3bm8rS2dVQmdBQXhk?=
+ =?utf-8?B?cDdMNGVadk0wNEZ1SGlUWUVmenh1ZStvN2l6TU9FR2d2SDB3d3Frc1c0UWU0?=
+ =?utf-8?B?TjZXN0lSREdOT3djdjkvSncxcEMzMlF4YkZDYWkydnpyTkZuaDgycDRZL0Rv?=
+ =?utf-8?B?eE9ITWpZT3pVU1RsY0NFNTJ0SUo3TVpsN3pXQUJDcVM2WmxFRi9FTDRtZ3l5?=
+ =?utf-8?B?TTdnMngyR29FMFlad2ZJaHJQSVNFRkp4VlNyYVV5QytJYmhVOWNYL1ZkWG5T?=
+ =?utf-8?B?SW0vSGMzNzBLQ0N1REljT3c2TmVEd2VuRUZwQ1VQclNQSGRKYjdVblNTTGtK?=
+ =?utf-8?B?dFZnN3hYRldSblBmbVJlNUFKZk1iOFF6NWRqNDh5d3RVbXV6SFNTeG4va3Jt?=
+ =?utf-8?B?Tmt5NWxTUm9KVHhjcmdPcmxWaFQyQTlVQzVMM1Q4bXgwV2l1ajBXSklTNnkw?=
+ =?utf-8?B?d3BNWVJkQ053RUsxOUdZbjh0WjMxN2ZRajExUFQyK1VwN3pnbWI1K2c4U0Fu?=
+ =?utf-8?B?ejZuSEFoSWZxemJaZkh0MENNSm9JSERMa2JvTlZoK0VsQUN1WllQK2NUUXM2?=
+ =?utf-8?B?NmVuSVpuSnRKTW1FUE0zY3VpTEJucmo0Y256Y1FDSjJvbnJCZUh5M01KTnZ5?=
+ =?utf-8?B?ci9KMVFycW52eFZhOVpCbUFrRjRMbmdTVE5iWEU3UlIzQlVvcnorbEhMZnVo?=
+ =?utf-8?B?eWN3TmQwSVg0bEhHa1I1Q2JZSHdEWGM2YnVKVWJzRGlybEZLTFBlWUMyRzNF?=
+ =?utf-8?B?YWI4bVpjTGozUHBoQjN0bm8vTlZWZHZlSUkwZld0MFROTEpKU0liQUx4SU1I?=
+ =?utf-8?B?dTN1c01ZT3lXRUF4NGMxNkhLc2pNclZaWU9jN0w0bkp6N2FWNzFzRGloLzBr?=
+ =?utf-8?B?dXhVNDREU0Raa0RwUk5VdUNmOWxqNDZPc1ZtdnQwRE1jN1I4ZkcxMlhBb2JO?=
+ =?utf-8?B?NXpRMzBieHFYa0hIbS91QkZ3NGUramdFdFhpVXUzeURJUG9BR0UrKzZZYkUw?=
+ =?utf-8?B?cm1Td1RsdlBVUExTZy8rM1FKZDN6ank2emFlU1crQ3ZXaGtmMVJwcXhDNVhz?=
+ =?utf-8?B?M2dLdGtLRWxBWC9idjdGbEtXR21zcVY0akcrd2tJZjBsblcvZ0ZuQU1LRHB3?=
+ =?utf-8?B?dzZNdlo5WlF5aERqWnkxRVFRTmkxelFxVkN2aXVvaHp1WHpCdFlsUkduNjMz?=
+ =?utf-8?B?V3YyN1J1Nkp2UWR6Qk13V1lLTjlUYllFbnYyYXZTWTViczdjSjllTWRUaWFY?=
+ =?utf-8?B?WGM4d3hmVG9iMXhxMkthMlNIa1ZSYkNEbDVCdm5lQml4dVI2OGJsWjBGaU1I?=
+ =?utf-8?B?eHJMTERDZVV3WlljVU1ETWlCTDI0RXNGRWlEd2lOUWxubldLT1Q4d3ZVWGx3?=
+ =?utf-8?B?R3ZaOXlNcDQ3d0hzTnRkSncySndjc0VqQkJwV2ptQmpuSk9UankwQ2MzVk5C?=
+ =?utf-8?B?N2xTQXVZemZubWx1YU1SMEhrQ3ZxRTRKdGs2SzZmZnNhS25wMU9CVzJhWWVN?=
+ =?utf-8?B?OUE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ede13067-af14-4460-674c-08dce153377d
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 13:24:31.3023
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bn9iNAlf/FB/MHgt7OvI8egj3/7kC+OE6m0mJNN+Zq50fxB68wJKWw5vooXJVBzNLGEeO+HtHKU5sFb8NQWeF7btmKJR/X9HKKAfAwtC/vU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9942
 
-Hi Herv=C3=A9,
+This patch series adds some small fixes to the SIUL2 pinctrl driver:
+- Add some missing pin definitions.
+- Add another S32G3 compatible and use it in the s32g3.dtsi file.
+  It will fall back to the S32G2 compatible.
 
-On Mon, Sep 30, 2024 at 2:16=E2=80=AFPM Herve Codina <herve.codina@bootlin.=
-com> wrote:
-> In the LAN966x PCI device use case, syscon cannot be used as syscon
-> devices do not support removal [1]. A syscon device is a core "system"
-> device and not a device available in some addon boards and so, it is not
-> supposed to be removed.
->
-> In order to remove the syscon usage, use a local mapping of a reg
-> address range when cpu-syscon is not present.
->
-> Link: https://lore.kernel.org/all/20240923100741.11277439@bootlin.com/ [1=
-]
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+Andrei Stefanescu (3):
+  pinctrl: s32: add missing pins definitions
+  dt-bindings: pinctrl: add S32G3 compatible for the SIUL2 driver
+  arm64: dts: S32G3: add S32G3 compatible for the pinctrl node
 
-Thanks for your patch!
+ .../pinctrl/nxp,s32g2-siul2-pinctrl.yaml      | 10 +++-
+ arch/arm64/boot/dts/freescale/s32g3.dtsi      |  3 +-
+ drivers/pinctrl/nxp/pinctrl-s32g2.c           | 52 +++++++++++++++++++
+ 3 files changed, 62 insertions(+), 3 deletions(-)
 
-> --- a/drivers/reset/reset-microchip-sparx5.c
-> +++ b/drivers/reset/reset-microchip-sparx5.c
-> @@ -114,8 +114,22 @@ static int mchp_sparx5_reset_probe(struct platform_d=
-evice *pdev)
->                 return -ENOMEM;
->
->         err =3D mchp_sparx5_map_syscon(pdev, "cpu-syscon", &ctx->cpu_ctrl=
-);
-> -       if (err)
-> +       switch (err) {
-> +       case 0:
-> +               break;
-> +       case -ENODEV:
-> +               /*
-> +                * The cpu-syscon device is not available.
-> +                * Fall back with IO mapping (i.e. mapping from reg prope=
-rty).
-> +                */
-> +               err =3D mchp_sparx5_map_io(pdev, 1, &ctx->cpu_ctrl);
-> +               if (err)
-> +                       return err;
-> +               break;
-> +       default:
->                 return err;
-> +       }
-> +
+-- 
+2.45.2
 
-This can be shortened to:
-
-    if (err =3D=3D -ENODEV) {
-            /*
-             * The cpu-syscon device is not available.
-             * Fall back with IO mapping (i.e. mapping from reg property).
-             */
-            err =3D mchp_sparx5_map_io(pdev, 1, &ctx->cpu_ctrl);
-    }
-    if (err)
-            return err;
-
->         err =3D mchp_sparx5_map_io(pdev, 0, &ctx->gcb_ctrl);
->         if (err)
->                 return err;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
