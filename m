@@ -1,220 +1,211 @@
-Return-Path: <linux-kernel+bounces-343598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC98989D1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:44:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB9A989D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A261F247C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:44:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D21501C2103E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:45:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0C417C219;
-	Mon, 30 Sep 2024 08:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BF6180A76;
+	Mon, 30 Sep 2024 08:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fkXBNU2r"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011015.outbound.protection.outlook.com [52.101.70.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wf3UqaKF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6865517BB34;
-	Mon, 30 Sep 2024 08:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727685842; cv=fail; b=Eq8Ys9IAggfgQIduYBF4r8Lsxf0Ywr+nnQ3NH6Q+J9zcGnej8L5lD+aYG8VKglef4j6anspe4zZTIa5ruTiQ2y2aOU1yHdbtt0rE27qJ2noht4Q6eXvGKQoCYpL1cmqV+euyaApFoEiG2BgJKI5Yp0fQ2QLi3+PJtxy/RECe2DU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727685842; c=relaxed/simple;
-	bh=T65YoPAPvB35HuaeBXO97VTbd8R/sSxqTQUH7pyx2x4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MC4y2VJTY441yCV+Rx6X0rp+fyePKb3boj0OorjetLlrQ78yQ4I4RUKBeyM/04c/oHEkoBDYQGN5/k7ytxdhKS+HoKOwc6rgH2ebo13CKR1hh6U8Zm60xH9JSXAhbmUIPWrg22/ZgFDagTlqBzOv+IBWIPEhg4djz9p5Gayqm3U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fkXBNU2r; arc=fail smtp.client-ip=52.101.70.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ABcNP4oibiFCeypWMksDqhhJp91DgDOLGImcP+uUrEMOWDRFwOqvRgkvPX3RBxpwvD9rxh5ZbyL0p0vab9od4u2dPBwaZl85nxpGujRUHeSNvkFwp9O4dg0sQCjJd0UoHK1HDeS+jYXlCpp85gqTJasIplUqyNoYuIcM186p00LVP3irShOhi/ThvzJLWpYn2mJaJihPHI85xtbNXkH9uGkSJxr7tE2m2ADOopRgA/ZIh3d0MdRU+ZGYVxJ428sxXxPtd5nAcwo94JkWmYnxiC3VqVB5+NzbvGW05llZP6KRR2SxLLY5unAhvW7czpoSAPJvYrvWpffpXmFjdBORxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uMs50eefJPObkuty3lpU8Q+bVLjUv7VLzOdtnob3VEY=;
- b=TNGMrQQEtiqyLLXkpCjHwkMoigvs2GAoNTl6x9WBm+792QNxNwDpwmWmuiM6vy5ep21sACvyrl8HpS10Lp6BMW0emE8ijPBxmUySgq84ZgxN21qKUUKUj9bvEC6tsP3LbsZ8Zt7W7u7lmJGzrpjKOMZDJZGUZgd8cg1Y8lB2daLhZbmclK6jbACtzr5vwMcqmm5ENlIn07Bn0G41tNI1zZAdY4Yl8/ycif3o8xoPt/r485k9RvbjHgIriilGpxQbY7n3MsS3WImOgsAQRcx/UzlzEubwrnapTp8b6wtQ3RmFwEZ2kjO/PqtZfTDZm5wjQ3KidRvl0jvq/EN1PDQG9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uMs50eefJPObkuty3lpU8Q+bVLjUv7VLzOdtnob3VEY=;
- b=fkXBNU2r+Cx7+CBDSVIdRVsSvYaEVdEEM+wqjhv5YYont8G6FZH0s21fvmrr/4GOkZKdGSkzk28sopBrS1FENlGOWQuGNFJm4B20g6eISBxtJipI46GFUaAkx9WHJoTCrZGsA0E28X0eBiCxmnm9hwHk95hp5wywo5fgk6AwLrfwSaAHcQoWrBEGqPI6rP7fopkCEDuUAi6aJZWaeccwQv2Lmimz54PnkzRK35/wUbcUq7WmQfJDpMncJJx5VRbXLcG8Jb2AA5H/4ldLWXoWfB+zkRA4WQPzu5PGKdHrJZAgHHYBmwh4K37ipQp8JWu8ENFV87eW9QpKLYJyzXIeZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM9PR04MB8970.eurprd04.prod.outlook.com (2603:10a6:20b:409::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Mon, 30 Sep
- 2024 08:43:57 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
- 08:43:56 +0000
-Message-ID: <2017eb23-a2a9-4fa5-8d9f-675cc6d114ec@nxp.com>
-Date: Mon, 30 Sep 2024 16:44:17 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
-To: Maxime Ripard <mripard@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com,
- geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de,
- nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de
-References: <20240930052903.168881-1-victor.liu@nxp.com>
- <20240930052903.168881-7-victor.liu@nxp.com>
- <y4ala34bejzmw5wt3vw5ncoxdzpzda2cwi7bdzve5bn4udmr3b@eiguckpaui6d>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <y4ala34bejzmw5wt3vw5ncoxdzpzda2cwi7bdzve5bn4udmr3b@eiguckpaui6d>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2P153CA0036.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::11) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CD817C219;
+	Mon, 30 Sep 2024 08:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727685913; cv=none; b=PHsjD4xVvFBK2maFBsSiKRIab019xv1eykqPqgvLQo7oMT3HLQSvOPKu55hhmJFTeMaZMU/yQJ3rcxljbbO/f+/163ieYSr2YEs/nalEuZJwg4IdirK13SZXfegwGL7/cIA/yimruuxB3uy6yFoKo4vFiXg3ofTJ4RS+y3euT1s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727685913; c=relaxed/simple;
+	bh=8v2BFCQwEyRP/lKr7FZGb4mMbrvidJoepvthlT6jZPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B56bYcbsq5tuHNZ5bASVvWcJbf659m/e1e9tFln5MeCpXMhPo4Av/XqIK8GOWzxrq8m9PhryLCBUteCWkstWPam/ExyCIlGZigRQZDAZrpENpedK1NU68jx0t0TdlQ6JstInJUGkbGp+Hh7Bf8EULZiFTgw6cZQ88Y1ChTaICvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wf3UqaKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B883C4CEC7;
+	Mon, 30 Sep 2024 08:45:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727685912;
+	bh=8v2BFCQwEyRP/lKr7FZGb4mMbrvidJoepvthlT6jZPY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Wf3UqaKFKfgVWRzrytnOMrjJiTuwRwT+MSptyH/2T0lnjx8yZTbD9bmrAFzE2JMYP
+	 RnFMHg0W62U4a7iycm08jyhLtH8UT4sVPHtwypEBJfae9hQ54MfA3TN3Mpdh1LSqgQ
+	 aeLdL9kcj0vfw3vC2HgSmNLBvgTt1PTsb1SrcZ/JIe0fz5EPurXjWIe7M99rywqh24
+	 genwSGQPJAMqWfBsEvlMBhwVl3PP2w1PDStk3cNYtrGNImklx437r6KuvXyux+46UD
+	 eqY0llwFf/smJLeP/c4MYaLARm+6aIy6tq+3oa9YY/iRQufk0WaDPK2MUC6eP5aAPH
+	 zQMgDaX+FJLTQ==
+Date: Mon, 30 Sep 2024 09:45:03 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH v2 06/10] iio: light: veml6030: use read_avail() for
+ available attributes
+Message-ID: <20240930094503.459b4382@jic23-huawei>
+In-Reply-To: <b4a72e65-b8b0-41da-ac6e-372371f3943a@gmail.com>
+References: <20240923-veml6035-v2-0-58c72a0df31c@gmail.com>
+	<20240923-veml6035-v2-6-58c72a0df31c@gmail.com>
+	<20240928171922.0caccaf3@jic23-huawei>
+	<b4a72e65-b8b0-41da-ac6e-372371f3943a@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB8970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83affbb3-5c32-44de-b2b5-08dce12c055e
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?eGVHNE96MWRlaFVnOWpSS1JWWC9leEZUQ1FvRmUrZUs4c0Y4dzM1Si8rODZs?=
- =?utf-8?B?NGNkZWpITjlJV0J2TUVXaWwwK0RxK01YZDQ2dVdtUktQaXo4Nk5VMHc1d21O?=
- =?utf-8?B?T1l4Qk0zS0JqSlc4djBxbWZRbnNodGhBNnRQbnhDRVI2cEpob3B3R1M1UFRE?=
- =?utf-8?B?VHVrcSswUHZxMGF5RnUzQ2lEMXcxTElya2JTbnNINi9tdmk4ZkR1WlF6SWhC?=
- =?utf-8?B?SWt1YUtOZ2JGeWtXYms2Z1YrMkRUcHMxblJMSlRTL3d0S0xyU1RWQVByUW1x?=
- =?utf-8?B?RHJQN3ozK0Q1a2IvcjlEUmpsaWlQOG1hTWN0eVhCYk91YUp5MjcvMVlnY2xs?=
- =?utf-8?B?azRpVytmdFRBMmk1cG9sMEYxSDFOU29GZFpOYVFzb01jbHEwNzRjVkhrYTZF?=
- =?utf-8?B?UkpYY1JVL21BR2pnRVNLMDRkR3pBQm5nNUdScFRMODM2TW55NHlkblA0VGpT?=
- =?utf-8?B?bWs2NEo5QkZ0ZGI1R1ZVREp4V3lQa0xPalBNeFNKc3pJSWttY2xQdm92bEly?=
- =?utf-8?B?aWZzUVZENTFXdEFQdmNJL2cvVUxYMXh1ZjQrRWdxUTZJelJkRnF6K3pzYm5H?=
- =?utf-8?B?RUh2TnQ1YU1xWGttQVhmOG9ta2ZZQ21jSThKTFR4SVN4TExDVkxaNnV1cEZ5?=
- =?utf-8?B?YVhwOUZscFFFSXZNZ1h5MmNoNHRzV1ZpQytQelYzSmpBUlBDMi80eWltdXdT?=
- =?utf-8?B?ZkJ0cTNBWHFSRUU4dlJORzZhaTF1NTJ4ZGlnWG5lY2Q5Ty9pNDIrZEZvN2dx?=
- =?utf-8?B?RjFYVHFLRi9WekQ3QlNvVEZuMXNkM1QwY1Fyb1E2aDl6SFVoVHdTSFRXUk1Y?=
- =?utf-8?B?dXNWMkFzam9PTVdVK00yMTV4Vlc4WVJkY2svKzluRlV6d1NPMms0OFhNWTlT?=
- =?utf-8?B?SmxRSXE5WXZoS282dGhPMHNDNVRLYUU4NytlbE9uWkxmVUZIb1BYZnpoazlK?=
- =?utf-8?B?SG1pazlOYTQ2QUNLc1UwUDl6TldWYnpQeXhIbW9PVTBuSjMyc0wrQkp3N2FI?=
- =?utf-8?B?MUZaU1J6anl4OC9JeUJQRVE4dnIvbk9aLzMrVUxIeFlKcExmRmtnNXN3RkZs?=
- =?utf-8?B?VmZIUDJkdnBnMW5vaGFSbktiWWF0ZGdTMlNwNmhPY2NuSFRUcEplc2trU0tY?=
- =?utf-8?B?Zzhmc2p1T2ZYSmtmM05ER3FaajRjYmRVSWZXNUFDV2NHbHNJQ2ovK0l0K3po?=
- =?utf-8?B?SnE4S0gzcGRrbmREdWhkUXpoRkp0ZDlMYWg2RUF1UnA5VVQ3Umw0UkZZOVdV?=
- =?utf-8?B?VTVoVHNqZUl1V0JNeFJGMjVPNHJ5Q0psUXkrZkpEV3Q1emlaUXUzVzFwTU9D?=
- =?utf-8?B?VjUvZHFMc01xNjlOZ3lSSXZUU1BSMG4wbmwwcU5xZmdTQkg4NGtFVnBxT1gr?=
- =?utf-8?B?Y0thS2xpNVRTa2J1M0tlUkFjSHk5QVdLcEU0V1A1SWpxYnZVNTRSUitabjRk?=
- =?utf-8?B?UVdSSE9MSFZUOXZsb282a3JzN24waEFCVTRkdy9TaTVWN3NvaU1vZHJmcE5X?=
- =?utf-8?B?dU9oNHd0TzV4eUtzYUQ3eWJxK2J2aGJRdklRK1NhMnN2VVlzb2lQNzhQeUxp?=
- =?utf-8?B?ckZQTkxGY0NldUtiS01IQStDQWpIanZ2cEZuRmFoVFRWc1VremhuVXQzQUc2?=
- =?utf-8?B?eGlDRHRIOWZ2MTRiVjNGcG9uN3RTOXpraHJCcEdmU2xEdHpyUlIxZWF2Yzhp?=
- =?utf-8?B?a1JmalVFQkgwSWw5R2Z4YUFheHJGSmVmTnAwMlY0MVd3eGx0ZFpqTEFNUE94?=
- =?utf-8?B?SWlMeUdiVkROaFNpNjM1UFhKVGNVOXVtSUkrb01veDF2REQ4ck5EWlBCOGMv?=
- =?utf-8?B?RmJWd3Buek5HdzVzeGRodz09?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?d25SQTNTcERJL0NZaUJKU2tSRGVjTTRMSXhyWXRVaHhBOFVPYWdUVXpET1dr?=
- =?utf-8?B?cG5FS2szRDFzQ2pyelM4MU00OE40c2kvZVdVQnZ1Z1lsQW10UnY1WG1oMUNn?=
- =?utf-8?B?anNZQ3pRWVAvZzdPb1VhcitVOWJBdUd6TlU2ZDdYZHM3eXF1a2REOTN5MjIr?=
- =?utf-8?B?Wlg3Vy9QWEJBZjJlZlBHV2lKRUUvcFRRbWJxdkRNMEFtaVVxTUVXb3VNY3BL?=
- =?utf-8?B?SEV1TVNxSEg3dmR4VnZpUG9UVS9jUnhCNnhGT2xiME9QeVFSc0cveE5GM0pj?=
- =?utf-8?B?cTJkTnlITUhhaHIwVnpsNEZsVXVoUDZDYk1OMmVocUE5VjIzNmpUTkJFL01m?=
- =?utf-8?B?NlNZR2VrenQrVEtmTEd1L2U5ZVRhQlNmS04yWGw0K1pUSndaMlMxTUVZVXdK?=
- =?utf-8?B?eHpXNEZMc1NsQ1hoUS9mSE90cVY5TW1FMzYvWUJRUkhORHNqMU90V3pPaHl0?=
- =?utf-8?B?d1d5WUt3M3JGeG1LbFkwbHhEM2h6VUJocWtCbzlOa0VCVnphQVc3eDZLZTUr?=
- =?utf-8?B?R0UvN1RjcFJ6SDhSQ3ord2J0eEVoS2ZrVCt6RGl1SWRFRGdsSDZUS2dOdWV5?=
- =?utf-8?B?b0RZLzRMVVhIQnFjNUEwNEE1YVc0QlEyT3hOZ1kwSDdTOWswVnBBUlVrazlR?=
- =?utf-8?B?WkgxWjFBWi9DSnpiNnIrdDFraiswSUk5NVFOYWEyVzAyWEpmTU1hS2xuWlJ3?=
- =?utf-8?B?WGdVc251S1YzZzBjZC8yN01oTmdHSEo2cWc5SHRmSG1nZ24yMm1oM0txYy9n?=
- =?utf-8?B?Uy9hU0lJZ1RGTEVBZkJ4Y3VNZ0hGbkVhRThzVTlLU3lBd0hPSm4wNkFiSWsz?=
- =?utf-8?B?Sk9xR2twYjdYaWtTcEZqMThRLy9Lc2M1MFY3aFBrQmVjM0pGUlBLb0pzSDY2?=
- =?utf-8?B?SDhyalN0U0kzamxBbEhqUUwzV1dvZW1Da1FMQVhESm5rSXNYdFJTLytHSW9o?=
- =?utf-8?B?ZmR1N0lNek9KbThEUG1hRDJtN3g0SzhrQlAxSVNGY296L1VnYUUvSTc2eEIv?=
- =?utf-8?B?cGg1TnpsbU1KTUtNdTlTZDBKUWlWcVdjUVozbHN3aGxEWEY2TXpCaXQySjFH?=
- =?utf-8?B?SlZHUmJuT2dNQWdOUjB4bE9sVGhoaFJYRmhsTE5mZlllbnFQU2hCb1J0bVow?=
- =?utf-8?B?M2tXc3Rab2lPYlBidWlHSEhLVjNWQmMwRkVPaWZla1BRcDhVVmpnV1BFd1pw?=
- =?utf-8?B?ejV3K2JFMzNjcUpLdWdQN3I4TTR6MWR6NEw4a2p5Y05tNXZLZStvR2tYek8v?=
- =?utf-8?B?SXVkUVVQSURmQ3NJcHVIa0RUbkw5dTRiTlJtRlFoWkQxOFBDUXphanFjZlhK?=
- =?utf-8?B?RE5TdzZDa3J1MXhpRWlMUDlROW1rNWw0bFFtOEh5K3RVQjc2My9LYUVUTUpo?=
- =?utf-8?B?VGd4YkZSeThUNHZtSGpHU0xQTDg1YkNpYVd1MVY0dWdrQjdKOWJRdE5TQXVP?=
- =?utf-8?B?YTFML056bG95TXYwdGdVL0ZzNzR2Q1FxZ1AvaUNNNnJEWlIwZUQraSs3K3lQ?=
- =?utf-8?B?UWxER0h2L2laS1MwVXdzeXVtZEJBd2lXOTV1RmVqUk81SDVZQkdnc1pUb29Z?=
- =?utf-8?B?Q1V0dU1xbFlyaUpqaEZ3UXJzRjBSdVo0bDI1ZmVjbHZSM0UxOEhKRmh3dmxv?=
- =?utf-8?B?cHBPalI5Nzh5bEc2SjZtWlBRcGJpTndBeVozZ3grRFR1b2VRL3Vxam8ydnh2?=
- =?utf-8?B?YlpYUXRYUXptVG0rSFVrNTJWSHJiVXEyS29oWWVsMWhrc1JvOWdlYlZrbjFR?=
- =?utf-8?B?KytkNjZXdCs0bzZLb2RDLzU5VTVKY3kzdG9tQlU3bE9mS09EWGcxYkhzeHVk?=
- =?utf-8?B?Ulk4UkxQL3BhR0JPK2F4UFRCbDJDN0wwZnZxVTRqVjJidnVvOHpkS0Z4ZjVN?=
- =?utf-8?B?VVZ2Vmt6cE9CMXVSMGt0OVkvWjlOZkMrL2djaU16QU9vVHlCRTNVTWJaOXg5?=
- =?utf-8?B?a05OWk1KR0RsdEsvOHdkMEY2dnN6TE1VOWRzb1RwbDRxK1Jqamd5S0hnUGVT?=
- =?utf-8?B?Q2lYV1BXVE1FLzM2TU5qLzg2bmhvcjRxT2xoTXNzbFFGSGRwWWxZS3R6NmFj?=
- =?utf-8?B?YWVSOXVFMHdiK0R1OGVsN2ZDUFptUzJ4ZExvY0YxVFlsRDIzQnpad2tyUmVh?=
- =?utf-8?Q?2vtaOYgq1m4+pmid7TNbnAydl?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83affbb3-5c32-44de-b2b5-08dce12c055e
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 08:43:56.7413
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ra4gdZ5ER9EKsGzBH+JGpyyIxawORAUyxlRquEAkZstK4zBK66NHBu1oBdkDJQ9NgUX8qvg6hFK92oiB0Ne35Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8970
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 09/30/2024, Maxime Ripard wrote:
-> Hi,
+On Sun, 29 Sep 2024 20:45:40 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-Hi,
+> On 28/09/2024 18:19, Jonathan Cameron wrote:
+> > On Mon, 23 Sep 2024 00:17:54 +0200
+> > Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> >   
+> >> Drop custom attributes by using the standard read_avail() callback to
+> >> read scale and integration time. When at it, define these attributes as
+> >> available by all channels, as they affect the values of both the ALS and
+> >> the WHITE channel.
+> >>
+> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> > Hi Javier
+> > 
+> > Some comments inline
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> >> ---
+> >>  drivers/iio/light/veml6030.c | 64 +++++++++++++++++++++++++++++++-------------
+> >>  1 file changed, 45 insertions(+), 19 deletions(-)
+> >>
+> >> diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
+> >> index 89c98bfc5191..a3190fab3add 100644
+> >> --- a/drivers/iio/light/veml6030.c
+> >> +++ b/drivers/iio/light/veml6030.c
+> >> @@ -58,25 +58,24 @@ struct veml6030_data {
+> >>  	int cur_integration_time;
+> >>  };
+> >>  
+> >> -/* Integration time available in seconds */
+> >> -static IIO_CONST_ATTR(in_illuminance_integration_time_available,
+> >> -				"0.025 0.05 0.1 0.2 0.4 0.8");
+> >> +static const int veml6030_it_times[][2] = {
+> >> +	{0, 25000},  
+> > Really minor but I'm trying to get IIO standardized on formatting for this
+> > sort of array and I'd like not to introduce more instances of it
+> > done without the extra spaces as it will just give more to clean up
+> > at some point.
+> > 
+> > 	{ 0, 25000 },
+> > etc please.  
+> >> +	{0, 50000},
+> >> +	{0, 100000},
+> >> +	{0, 200000},
+> >> +	{0, 400000},
+> >> +	{0, 800000},
+> >> +};
+> >>  
+> >>  /*
+> >>   * Scale is 1/gain. Value 0.125 is ALS gain x (1/8), 0.25 is
+> >>   * ALS gain x (1/4), 1.0 = ALS gain x 1 and 2.0 is ALS gain x 2.
+> >>   */
+> >> -static IIO_CONST_ATTR(in_illuminance_scale_available,
+> >> -				"0.125 0.25 1.0 2.0");
+> >> -
+> >> -static struct attribute *veml6030_attributes[] = {
+> >> -	&iio_const_attr_in_illuminance_integration_time_available.dev_attr.attr,
+> >> -	&iio_const_attr_in_illuminance_scale_available.dev_attr.attr,
+> >> -	NULL
+> >> -};
+> >> -
+> >> -static const struct attribute_group veml6030_attr_group = {
+> >> -	.attrs = veml6030_attributes,
+> >> +static const int veml6030_scale_vals[][2] = {
+> >> +	{0, 125000},
+> >> +	{0, 250000},
+> >> +	{1, 0},
+> >> +	{2, 0},  
+> > 
+> > As above, add some spaces for minor readability improvement.
+> >   
+> >>  };
+> >>  
+> >>  /*
+> >> @@ -197,9 +196,11 @@ static const struct iio_chan_spec veml6030_channels[] = {
+> >>  		.type = IIO_LIGHT,
+> >>  		.channel = CH_ALS,
+> >>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> >> -				BIT(IIO_CHAN_INFO_PROCESSED) |
+> >> -				BIT(IIO_CHAN_INFO_INT_TIME) |
+> >> -				BIT(IIO_CHAN_INFO_SCALE),
+> >> +				BIT(IIO_CHAN_INFO_PROCESSED),
+> >> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME) |
+> >> +					       BIT(IIO_CHAN_INFO_SCALE),  
+> > This bit is an ABI change and technically old code wasn't a bug, so
+> > we don't really have a good enough reason to change it.  So Please
+> > leave these as separate.
+> >   
+> >> +		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) |
+> >> +						     BIT(IIO_CHAN_INFO_SCALE),  
+> > That doesn't stop us sharing the available as that always was shared
+> > in the attribute naming above.
+> >   
+> >>  		.event_spec = veml6030_event_spec,
+> >>  		.num_event_specs = ARRAY_SIZE(veml6030_event_spec),
+> >>  	},
+> >> @@ -210,6 +211,10 @@ static const struct iio_chan_spec veml6030_channels[] = {
+> >>  		.channel2 = IIO_MOD_LIGHT_BOTH,
+> >>  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> >>  				BIT(IIO_CHAN_INFO_PROCESSED),
+> >> +		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_INT_TIME) |
+> >> +					       BIT(IIO_CHAN_INFO_SCALE),  
+> > This confuses me.  Is it fixing a bug by effectively adding attributes for this
+> > channel that were previously missing? If so we'll have to go with searpte
+> > even though they are shared to avoid breaking the ABI for other channel.
+> >   
+> >> +		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_INT_TIME) |
+> >> +						     BIT(IIO_CHAN_INFO_SCALE),
+> >>  	},
+> >>  };
+> >>    
+> > 
+> >   
+> 
+> This confused me as well, because even though the attributes where
+> defined as separate for the ALS channel, modifying their values affected
+> the values from the WHITE channel.
+> 
+> The integration time and the scale affect both channels, and therefore I
+> thought they should be shared attributes. But in that case, and to avoid
+> breaking the ABI for the other channel, I will make them separate even
+> though writing to one of them will change the value of the other as well.
+Yes.  The ABI fortunately always allows that sort of cross effect as we
+have devices where similar controls affect some but not all channels on
+a device, or different types of channel, but still not all channels.
+Our fairly simple hierarchical sharing scheme never describes those.
+
+Here we will have to take advantage of that being allowed even though
+the driver should have had these shared in the first place :(
+
+Jonathan
 
 > 
-> On Mon, Sep 30, 2024 at 01:29:01PM GMT, Liu Ying wrote:
->> Add basic HDMI video output support. Currently, only RGB888 output
->> pixel format is supported.  At the LVDS input side, the driver
->> supports single LVDS link and dual LVDS links with "jeida-24" LVDS
->> mapping.
->>
->> Product link:
->> https://www.ite.com.tw/en/product/cate1/IT6263
->>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> Thanks and best regards,
+> Javier Carrasco
 > 
-> Generally speaking, you need to use the new HDMI bridge infrastructure.
-> There's a lot of required things you're not dealing with here (such as
-> infoframes)
-
-I'll add AVI infoframe support in the next version.
-My system doesn't wire up any audio line to IT6263, so I cannot
-add audio infoframe.  I hope this is enough.
-
-> 
-> Also, you should add a MAINTAINERS entry
-
-Ok, will add this.
-
-> 
-> Maxime
-
--- 
-Regards,
-Liu Ying
 
 
