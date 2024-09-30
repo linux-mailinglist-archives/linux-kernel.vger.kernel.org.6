@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-344022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC3698A2E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E107398A28D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EC0BB272EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994441F237C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88031922CE;
-	Mon, 30 Sep 2024 12:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4B518E041;
+	Mon, 30 Sep 2024 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IO7OQX/0"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kHSYaaeu"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB0191461;
-	Mon, 30 Sep 2024 12:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828561367
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699839; cv=none; b=f09SoUhJsjIApT7fng/tDAxIbZ4NVF/+9yTcPw8lMRay0+4lcwkBtzraTzLUBBHLBa2bjjvzCqNJZ7lDW7rOHdAQDJ1AAgdzk1PaJSzDgoTCV0Z36nuooIU+memE2+Lz09y+WXfusMFqVsKlBYvA2xQ0EK+9MxDQrduL+JG87lI=
+	t=1727699612; cv=none; b=DHS8lrfMKTwlPMujTSqo/yjOH/newBJBgCK4aSfE56mOarFGimx9TXyeR1KLw5Vq6BW22GeHep3JQn/z77tVZrUBrvoXCwmSkS943iMnqcoZjjIV1X9z/NC4sECniakTu+EWz6x0s6SDU1R0FUNtlqx2fFp5YqEFwEocX4M2eKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699839; c=relaxed/simple;
-	bh=eyqLoQ6tOjYdsem/GmZ7tIXtJ+3/koGZ4orrV5NEPFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mbujs5AfWdkrOPNZUy5iq6d4RidWrqA6ui4/u3YNpL693v+vJ2F4SuNihnqSxkeaEBAgRfWXHVrJ5ZBYGw4Q2USL2FNs/XeeP+EgDx07YdG6nejY84nr5iME704Ng7VaAwj2GxSqEyjw8zyuSq8fAutO1b6rTwaTM1dA75WQ7YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IO7OQX/0; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so38166385e9.1;
-        Mon, 30 Sep 2024 05:37:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727699836; x=1728304636; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NOB1xBCChyVodl1AKBCRn0/gjY8Cy4B28eaNVB3ngoA=;
-        b=IO7OQX/0SsdDZ1ZuwiJll2oosoI4/usH/okcapDpOfjGqScRZSTjTVEcahrP6o9bty
-         YEQBOjLId7NQmqFlxkti0hzvfCuz6V5q/HhDeREpV3S6fGeIQ0+xFyG/Ij4KySoqrmvM
-         lfemPxWSkSMu1C6uiXkIvZSpQtTHLB7vjZDjDJ7lFsT3SRa7WfdPq2gRcm096MJCx8GB
-         Kl7eaFGvef/3aRub7G8RWdxZLH0LgwALUySz/AJquDEa9yR8V+MnIThI/1Fb9HLZ9IU3
-         aa6UR+SLiTpF/NGu7XGmuTuYFYB2YKtqumu0zNQZ0GbZfk6nuGoWkINposNCpEjdi5G3
-         0Xwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727699836; x=1728304636;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NOB1xBCChyVodl1AKBCRn0/gjY8Cy4B28eaNVB3ngoA=;
-        b=LtvUADDuzMoJqxy4KDpX9WpUVo4+VqtCVSq8kB9DQgoxHNC7gJ4/VyeuqAAA5iAAZ5
-         3pyOLZsHXy6aDHkn1tRRPMd995VQdXWgsUgc3Dw7XgNpHzmwUgSDu0vuGq+T5wd+Hing
-         tSejwDrk5kWpSOWrkr+1W4gm/+1u2V/FgDgDqJ5+ZWBbJd14fAiVRun1jLlenKvGMtlG
-         RM7qnbclhcdLgSJIkQnSS5Zr4fr3nSOa0bJw6j4X1NFg8Tt7dDXWMyMl3eZsV2rfhrRQ
-         IS8BeO3t9rd68N1EBSi2j7ewQMIN9MszEVq99ML2d43ULs0eCEXSYRQv6VVkqPSp+oBy
-         Bjxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUV8FI7PB0S0whRRUW/ccfkM+oi5MQyKhuNHa6pm9yOwFy19cLwQqXfpHktqwaGWBhT6xF6l6TK9kP8Y1ztog==@vger.kernel.org, AJvYcCUw9aebcf+UjlcrBwUC6ubai1ZethUi7KA+kjTr4w4EbQkedwxBo3wKYK4XUCsNX2/BB34=@vger.kernel.org, AJvYcCV4UnBu+nezVh+QZSU0tnnVK4MH8/QhdwcmSCfN26qp9g5a/yjt2fRNF3Cf/lPKCc16kB0Sb0tfXAFYc8lM@vger.kernel.org, AJvYcCWmAinVtDgo/HbCJw6sKnT7VKHYF5TExYgaui+VO1WPlmUNacAxJDHbJwycihvWef1IGWzPyrAbCaGqI4X7Bz6/@vger.kernel.org, AJvYcCX2df2puRwKM/jnPWx1apNOgQE9JdXCXgdrg1HBj//NpWVbGzIkDUNzy9Fnxvg/RBSomtWALZrB1sASk/o=@vger.kernel.org, AJvYcCXDRdYdrbXxHpmqekNXLckvhY95rSyNuEoVl69LjEmsaz26poWJ4QfxLmSJItiAdEFGEq6iTiWwT7DzzSPc@vger.kernel.org, AJvYcCXTHuQmcoKd6w8Kd3mFP7B+DkpL97qghoXX71ff+ezhhkOeci/yXWeHUffS5M9kNy5AZCbIm94Rfc/IlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxPUoezsheRACyfyyx5HvuHzi5SA7P0ph/FqrqW5zWRXEmOf1p
-	dDVMwNjxTB6P1ChwtcNt+xC0APUNPyt2ha+RcV6kV64G20ZIZB1z
-X-Google-Smtp-Source: AGHT+IFX7UFFJ9mFBZg+bn1buBc9cHhJrMVxmqzrsXfLIQStfn4WgdL6i0BO6HCbDChBmeLhRHv16g==
-X-Received: by 2002:a05:600c:1c85:b0:42c:c073:412b with SMTP id 5b1f17b1804b1-42f58490786mr95354705e9.30.1727699835819;
-        Mon, 30 Sep 2024 05:37:15 -0700 (PDT)
-Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a52308sm149011355e9.43.2024.09.30.05.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:37:15 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-crypto@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-fscrypt@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH v3 05/19] media: vivid: Include <linux/prandom.h> in vivid-vid-cap.c
-Date: Mon, 30 Sep 2024 14:33:16 +0200
-Message-ID: <20240930123702.803617-6-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930123702.803617-1-ubizjak@gmail.com>
-References: <20240930123702.803617-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1727699612; c=relaxed/simple;
+	bh=hsn6qIHCV8EE898kuj1+46bwDUw4E/pbekYed91CyDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R+g+UcrR6A2pU/zi6IC2/9EYTLxdRrfJ3QuHnYOF/yQNZpSIAA7/UFrECoxjTv+iixk0zsU+QhDZ5nIKS1H5D7RbtFHpPBNQSHvNONakAyUAPh69vBcI7MeU+iK8rpeJDAcSZeo0/U6P4i7HR+uxysChzqwPAxHyemwdOs7Mhkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kHSYaaeu; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=bsjyQJc6rlUDtp6Ad1gt+O9AIpQT/zdHP7sLmtwCgpU=; b=kHSYaaeuva5nyyvn
+	+yCz0THwMO7NK/fB7hVCdEe3bgxrKKLYQ9lEAfve2q2AHPhPqR4UizKaMQlqy9Q8A1Y5YtOlrc0i0
+	Xp6+2m4FzoQ+Ljktg22Dif53UwoUHV/QCXhIuNmkO73X92kyYhxQkzZgDdEbB08VneHyXahe2WqzZ
+	JvOgM9M9e1Twxioe/v77e8LDKfLmlj4hb2Ga0sJBBCI/wHj2U0xucDRvRUkSHnt6mDQccajXmyzPl
+	1e0tR5G64wp8OongOAW+zSiZflKfWhWQ6Nsxa9FCdfQ10Pz1ICARHKO9LBF8XxQMZBlMD8pYWOBek
+	MepbaiAZVIa14yHBSg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1svFaX-007xkK-23;
+	Mon, 30 Sep 2024 12:33:17 +0000
+Date: Mon, 30 Sep 2024 12:33:17 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Aradhya Bhatia <aradhya.bhatia@intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Intel XE List <intel-xe@lists.freedesktop.org>,
+	DRI Devel List <dri-devel@lists.freedesktop.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Matt Roper <matthew.d.roper@intel.com>,
+	Tejas Upadhyay <tejas.upadhyay@intel.com>,
+	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
+	Gustavo Sousa <gustavo.sousa@intel.com>
+Subject: Re: [PATCH] drm/xe/xe2lpg: Add WA 15016589081
+Message-ID: <ZvqajY_bLH_eULv5@gallifrey>
+References: <20240930120602.1720218-1-aradhya.bhatia@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20240930120602.1720218-1-aradhya.bhatia@intel.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 12:31:20 up 144 days, 23:45,  1 user,  load average: 0.01, 0.04,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Include <linux/prandom.h> to allow the removal of legacy
-inclusion of <linux/prandom.h> from <linux/random.h>.
+* Aradhya Bhatia (aradhya.bhatia@intel.com) wrote:
+> Add workaround (wa) 15016589081 which applies to Xe2_v3_LPG_MD.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Acked-by: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org
----
- drivers/media/test-drivers/vivid/vivid-vid-cap.c | 1 +
- 1 file changed, 1 insertion(+)
+It would be great in this type of patch if you could
+briefly say what symptom it fixes;  Some people might not know what
+WA 15016589081  does.
 
-diff --git a/drivers/media/test-drivers/vivid/vivid-vid-cap.c b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-index 69620e0a35a0..184460eb356e 100644
---- a/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-+++ b/drivers/media/test-drivers/vivid/vivid-vid-cap.c
-@@ -10,6 +10,7 @@
- #include <linux/sched.h>
- #include <linux/vmalloc.h>
- #include <linux/videodev2.h>
-+#include <linux/prandom.h>
- #include <linux/v4l2-dv-timings.h>
- #include <media/v4l2-common.h>
- #include <media/v4l2-event.h>
+Dave
+
+> Xe2_v3_LPG_MD is a Lunar Lake platform with GFX version: 20.04.
+> This wa is type: permanent, and hence is applicable on all steppings.
+> 
+> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@intel.com>
+> ---
+>  drivers/gpu/drm/xe/xe_wa.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_wa.c b/drivers/gpu/drm/xe/xe_wa.c
+> index 22c148b1e996..2f9cde4b7d45 100644
+> --- a/drivers/gpu/drm/xe/xe_wa.c
+> +++ b/drivers/gpu/drm/xe/xe_wa.c
+> @@ -710,6 +710,10 @@ static const struct xe_rtp_entry_sr lrc_was[] = {
+>  			     DIS_PARTIAL_AUTOSTRIP |
+>  			     DIS_AUTOSTRIP))
+>  	},
+> +	{ XE_RTP_NAME("15016589081"),
+> +	  XE_RTP_RULES(GRAPHICS_VERSION(2004), ENGINE_CLASS(RENDER)),
+> +	  XE_RTP_ACTIONS(SET(CHICKEN_RASTER_1, DIS_CLIP_NEGATIVE_BOUNDING_BOX))
+> +	},
+>  
+>  	/* Xe2_HPG */
+>  	{ XE_RTP_NAME("15010599737"),
+> 
+> base-commit: 0c8650b09a365f4a31fca1d1d1e9d99c56071128
+> -- 
+> 2.34.1
+> 
+> 
 -- 
-2.46.2
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
