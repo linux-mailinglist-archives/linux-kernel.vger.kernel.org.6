@@ -1,157 +1,78 @@
-Return-Path: <linux-kernel+bounces-344776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F4398AE25
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:23:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD6B98AE20
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:21:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96081F221D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:23:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E946A1F22248
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5051A2C22;
-	Mon, 30 Sep 2024 20:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C571A2544;
+	Mon, 30 Sep 2024 20:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sroRbiPB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeWou5Nz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5381A2C12;
-	Mon, 30 Sep 2024 20:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D8A47F53;
+	Mon, 30 Sep 2024 20:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727727711; cv=none; b=IECXjmKb4umVuPWRT8W+ua4b4NzKh15ICgbtD3dWSm4gduGsO40EO8SWm7AS7s/hUpwklXFCX4rtLJKCVLda/jNx21TYFWD5zUHFMXUNAkvvsGbmHS77JpgwLOgjbG7pbXG4+8o9dnZg6OLLPGfJ9KfQcz6NR3W93m/iqrqeSFs=
+	t=1727727695; cv=none; b=YjlRtp5nCtuAy4jVMV00O/0C6HOlf9eF1NObS2OcGws1MLqXdT0WNDWfCXTtoJ46hbwp1NcWZuDLE2UrNdv3GXmQHQ4dXxR00cTPzu9YetD1uCNUZqmsIptbd5VrAY4fKon2WAPbNBSy692yPtGEXkii752zr/Ipuzw0iFKjt8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727727711; c=relaxed/simple;
-	bh=jXqXcgNnUwt+jkY243np7C+vQy3arGQQ55B/TLigoVc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SbU9Nur82wZ3vWppdPsO5E+qMTDVuTeXlQ+pPQqoXM75DxGNcD1ylYTvHVYb8n152xmGqVxidCC7IpcWQMVCbOnyJCQxt7XEYNaQhV5ObQ2C1xud+JQq9JJ90AUYxdKXxVYJESQrarWixBS70JUxb15KVs8XpWXjBZSaF8JCbWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sroRbiPB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A3DC4CED0;
-	Mon, 30 Sep 2024 20:21:48 +0000 (UTC)
+	s=arc-20240116; t=1727727695; c=relaxed/simple;
+	bh=M3d7GRd5Mrju/ZeF8INiV25mUxMIVvG1eA0gS06GfYk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ON9EVGr+9YJRVFiCfzfGXWZEM+/v9qcaf4dFrpzURIfxkTgAgmvzo1OPCehUx+Ug1J8gx59gzDortEIl4CRXMD0ZpoO35cXVs5iMuGZDwruNAj1pENPDyVmFAUSagt26MURSbbn7q1WV4fNLncBhssJza+LxohuuzkLknERcF1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeWou5Nz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7019EC4CEC7;
+	Mon, 30 Sep 2024 20:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727727711;
-	bh=jXqXcgNnUwt+jkY243np7C+vQy3arGQQ55B/TLigoVc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sroRbiPBFlbFvfzFIpGIRVrfeFxiEg7cJyFsUMF/lANT04JXkufAE25iXedPIAnRk
-	 +3fe6eAwM064ehIU3nrNCm7Ifb0MBD2uoOrmiuO42r32p2qIwKRDfA7H6jHmHex0Wo
-	 znTFxdw6uFbEWvTEeeKbA4sL3uUCy/90kEojiTQWleROgFw8tfxhniYpB0UCKup/iV
-	 UZgxUegYRQYzXEuAA870xk3cgK7UVqNCNf7ktWBed8Ts3QHvTVWE5WKCDW+xRA1WWN
-	 7coOyMPmki34GF6/XVPZHvwGR2l11U4oI7Hf8AbMyPR33AhMTR5McBkF7wg/yWBEH3
-	 5fRYXa1MHmg6Q==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 2/2] perf tools: Cope with differences for lib/list_sort.c copy from the kernel
-Date: Mon, 30 Sep 2024 17:21:36 -0300
-Message-ID: <20240930202136.16904-3-acme@kernel.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930202136.16904-1-acme@kernel.org>
-References: <20240930202136.16904-1-acme@kernel.org>
+	s=k20201202; t=1727727694;
+	bh=M3d7GRd5Mrju/ZeF8INiV25mUxMIVvG1eA0gS06GfYk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=OeWou5NzGEOuxhw42B9S0HurWPk6sH+DgDcOZsJQ1CWVEQTn8LtocCIZQiRuEGC/2
+	 6Tws7xp7yTBSIFblHy6KUi2CQ7f/DnR6+bmWXgoIOitZ4iNx3oZrgAKtr4sAxpDBk+
+	 p95tFUUn+ocMi/FujM400o5xgq6H1ZFOd1oTNjA2j1KTdtJZPrlLZNvr86aR50ltxq
+	 OjDxp8foL6yixE++mcJQhbRXCcpUm4DBCaaRFlaFv5RevKQ3/ufW4y7bVecHxpPnAb
+	 JG1Zs8QQj1pn2hsPJR4MUTTPyZmZRs+xAeYUyTp+dD80Eq+kq1IoP8OySZbKas+7xt
+	 CHCRi5K1xb1Cw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE893804CB9;
+	Mon, 30 Sep 2024 20:21:38 +0000 (UTC)
+Subject: Re: [GIT PULL] bcachefs big endian fixup
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <afdmrsibtwc655t55tnlysfbetlb57nrdmk3k2ke6o6aebssqh@3g3mhqsvaswx>
+References: <afdmrsibtwc655t55tnlysfbetlb57nrdmk3k2ke6o6aebssqh@3g3mhqsvaswx>
+X-PR-Tracked-List-Id: <linux-bcachefs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <afdmrsibtwc655t55tnlysfbetlb57nrdmk3k2ke6o6aebssqh@3g3mhqsvaswx>
+X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-30
+X-PR-Tracked-Commit-Id: 2007d28ec0095c6db0a24fd8bb8fe280c65446cd
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a5f24c795513ff098dc8e350e5733aec8796fbf8
+Message-Id: <172772769736.3918229.15606464507414950885.pr-tracker-bot@kernel.org>
+Date: Mon, 30 Sep 2024 20:21:37 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+The pull request you sent on Mon, 30 Sep 2024 00:59:51 -0400:
 
-With 6d74e1e371d43a7b ("tools/lib/list_sort: remove redundant code for
-cond_resched handling") we need to use the newly added hunk based
-exceptions when comparing the copy we carry in tools/lib/ to the
-original file, do it by adding the hunks that we know will be the
-expected diff.
+> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2024-09-30
 
-If at some point the original file is updated in other parts, then we
-should flag and check the file for update.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a5f24c795513ff098dc8e350e5733aec8796fbf8
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- .../check-header_ignore_hunks/lib/list_sort.c | 31 +++++++++++++++++++
- tools/perf/check-headers.sh                   |  5 ++-
- 2 files changed, 35 insertions(+), 1 deletion(-)
- create mode 100644 tools/perf/check-header_ignore_hunks/lib/list_sort.c
+Thank you!
 
-diff --git a/tools/perf/check-header_ignore_hunks/lib/list_sort.c b/tools/perf/check-header_ignore_hunks/lib/list_sort.c
-new file mode 100644
-index 0000000000000000..32d98cb34f80a987
---- /dev/null
-+++ b/tools/perf/check-header_ignore_hunks/lib/list_sort.c
-@@ -0,0 +1,31 @@
-+@@ -1,5 +1,6 @@
-+ // SPDX-License-Identifier: GPL-2.0
-+ #include <linux/kernel.h>
-++#include <linux/bug.h>
-+ #include <linux/compiler.h>
-+ #include <linux/export.h>
-+ #include <linux/string.h>
-+@@ -52,6 +53,7 @@
-+ 			struct list_head *a, struct list_head *b)
-+ {
-+ 	struct list_head *tail = head;
-++	u8 count = 0;
-+ 
-+ 	for (;;) {
-+ 		/* if equal, take 'a' -- important for sort stability */
-+@@ -77,6 +79,15 @@
-+ 	/* Finish linking remainder of list b on to tail */
-+ 	tail->next = b;
-+ 	do {
-++		/*
-++		 * If the merge is highly unbalanced (e.g. the input is
-++		 * already sorted), this loop may run many iterations.
-++		 * Continue callbacks to the client even though no
-++		 * element comparison is needed, so the client's cmp()
-++		 * routine can invoke cond_resched() periodically.
-++		 */
-++		if (unlikely(!++count))
-++			cmp(priv, b, b);
-+ 		b->prev = tail;
-+ 		tail = b;
-+ 		b = b->next;
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index 55aba47e5aec9292..f1080d4096663ba1 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -193,7 +193,6 @@ check include/uapi/linux/mman.h       '-I "^#include <\(uapi/\)*asm/mman.h>"'
- check include/linux/build_bug.h       '-I "^#\(ifndef\|endif\)\( \/\/\)* static_assert$"'
- check include/linux/ctype.h	      '-I "isdigit("'
- check lib/ctype.c		      '-I "^EXPORT_SYMBOL" -I "^#include <linux/export.h>" -B'
--check lib/list_sort.c		      '-I "^#include <linux/bug.h>"'
- 
- # diff non-symmetric files
- check_2 tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/x86/entry/syscalls/syscall_32.tbl
-@@ -211,6 +210,10 @@ done
- check_2 tools/perf/util/hashmap.h tools/lib/bpf/hashmap.h
- check_2 tools/perf/util/hashmap.c tools/lib/bpf/hashmap.c
- 
-+# Files with larger differences
-+
-+check_ignore_some_hunks lib/list_sort.c
-+
- cd tools/perf || exit
- 
- if [ ${#FAILURES[@]} -gt 0 ]
 -- 
-2.46.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
