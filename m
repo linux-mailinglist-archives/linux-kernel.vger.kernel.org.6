@@ -1,99 +1,263 @@
-Return-Path: <linux-kernel+bounces-344250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB4A98A778
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E207F98A6E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A943B249CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674131F23691
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EFD192B78;
-	Mon, 30 Sep 2024 14:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475BF1917D6;
+	Mon, 30 Sep 2024 14:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b="Kc35nYQx"
-Received: from www381.your-server.de (www381.your-server.de [78.46.137.84])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="w9ynys3f"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83F7192B7A;
-	Mon, 30 Sep 2024 14:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.137.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2F62CA5;
+	Mon, 30 Sep 2024 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707372; cv=none; b=smSEhHuLPo63DDHjf3ew6wxwzLWewaPGoBTgPM8EWhpeiT+VC9qL9jwoZjN61KznsRhxtvtok+xEct049Hze4CwJrBaLjPTkw99GDPVdxePTglDVNSZ8AE1LfrjkCbOCWf4bkgDpPWaxYB8npoUYmdwr15F8Eh5jxMgmpoCWZYM=
+	t=1727706111; cv=none; b=GP0Zu5v57bUGiVIXs4fXLfMzGJGiSnT+jRjRMb5W7AiKcdFW3NsLEpMCOeF5Kuw7lyYdqp6O/Os0R/OaWZgok0CKko6PslggGKxl9qGeEltiEctItCcO7KFFFI9Jh5lt7l1+Kp+u/AJ/erIHW9FgzjtAmqIa1pO86DU2aPdfmdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707372; c=relaxed/simple;
-	bh=W9bsvYrAThKR+wftdAQLaVFdtP9YWRFxLvhXAJHD9Ek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=m7s6XvwlCIH7jTO2YCdt6Fao+IALz3p7AxxOM44mUBe/CeGla7beOEjitqp5Jo8x2QGsKkrB82zXI8rwdeK7SIh2dg4IKHOatr6USTgnXoNOcHKzHgX/KSXMHZHtSInmEIgyeh44z+gxdS0ng+wiMRE6PQhTiju7n9JSgZf5rPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de; spf=pass smtp.mailfrom=metafoo.de; dkim=pass (2048-bit key) header.d=metafoo.de header.i=@metafoo.de header.b=Kc35nYQx; arc=none smtp.client-ip=78.46.137.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=metafoo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metafoo.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=metafoo.de;
-	s=default2002; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=hR24CTg5rXq5zAgUEFlysfp4eqif9NCMaCtlEIjL1ss=; b=Kc35nYQxSdgWvDl6NclGdQQkzV
-	8opDuFyEkLPzubJAyJtmrnVnYOzlPqFNxb4HSkw/qcbBQosdk6xDvMCLQYCXwXx+8iM4h96oFRWJZ
-	sEWF9Zf5BPN63cgHO4ZA/3WKDfCTDYjQnAffkmr2GnN7gSbU7UaC6bVaVyZO8VBsoH4moVtRA3gAe
-	zdLJZPiLrRG5vfXWnMxRirxTvBfXvmWSpG/HQV16JP8qRDflRGKqlO1V9/FTnKa2nHIxZWJ6dALXk
-	cSLvZUgBzSJQLJHSXADXooDmbY8ABwI2qCcS7EGCoUTkK/McN5rlPcK/HjSIt/Rkjxl9cu4JRaLX3
-	SRoCzbPA==;
-Received: from sslproxy06.your-server.de ([78.46.172.3])
-	by www381.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <lars@metafoo.de>)
-	id 1svHF7-000Cak-7g; Mon, 30 Sep 2024 16:19:17 +0200
-Received: from [136.25.87.181] (helo=[192.168.86.26])
-	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <lars@metafoo.de>)
-	id 1svHF7-0001nY-01;
-	Mon, 30 Sep 2024 16:19:16 +0200
-Message-ID: <14a21c87-22f9-4637-b663-bb0a28fe8e46@metafoo.de>
-Date: Mon, 30 Sep 2024 07:19:14 -0700
+	s=arc-20240116; t=1727706111; c=relaxed/simple;
+	bh=3/yRJEQ92EpQSzsipntMFR1scWRGwYAoXb2wempQSaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q8Pev4YHWY0BBC7iK4Ewe+JEZvNqTrT8EY73sIbEKVAPEcX2Jf0eMJ3krvKERNKoTeu7C/VEzKVTq1qsIXPGM+NcFDW6SwSr9l5cEnqwd5i3r2wpUryJZqtdxVuT21jNscU2QyxUSPfHQKOwLcH5Hv4P5zsvzEBsin36LwyNXcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=w9ynys3f; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XHNYN2m3Jz9sPn;
+	Mon, 30 Sep 2024 16:21:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1727706104;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AbDlpohMGyKbU24tJpU7s9PNV5HIsnEIUJ337YJEe0E=;
+	b=w9ynys3f5TGtKkd8kaUSuPTTOef++CqXfd5FlZGlDnB6B/xA6kPvZEcSaIl8ntCz/49z6O
+	wZdzkCWh8n7l156xTCAMsWG2dBluZVnuG1OCVy25ckbImIvH94K9GDJCXWUAA/0/XNDUcV
+	JLwKDNq6CetEYGIUNqER0yZoDtdsJ1YIrcy08Hx0MxzfHGez3VNox2cZLqrc6FuyBICJdX
+	JSA8vqb0v6pHlHxFxORqoiCUcfXVkPE6bbkMUPNkJ3D9u8m1P4qCa0Y3yxs1eCpKpciO3o
+	zzTF/gqG2PTE3ASWFngVEo/E0dk5lBcFXzvnLi7sJO8H73LcyPTAO3ob9sbYrQ==
+Date: Mon, 30 Sep 2024 16:21:23 +0200
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Florian Weimer <fweimer@redhat.com>, Christian Brauner <christian@brauner.io>, 
+	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
+Message-ID: <20240930.141721-salted.birth.growing.forges-5Z29YNO700C@cyphar.com>
+References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
+ <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
+ <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
+ <20240930-verbiegen-zinspolitik-cafb730c3c84@brauner>
+ <cdd24e6d-4300-4afe-b2ef-1b8ee528bccc@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-6.12-rc1/drivers/iio/imu/bmi323/bmi323_core.c:133: Array
- contents defined but not used ?
-To: David Binderman <dcb314@hotmail.com>,
- "jagathjog1996@gmail.com" <jagathjog1996@gmail.com>,
- "jic23@kernel.org" <jic23@kernel.org>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com>
-Content-Language: en-US
-From: Lars-Peter Clausen <lars@metafoo.de>
-In-Reply-To: <AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: lars@metafoo.de
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27413/Mon Sep 30 10:48:24 2024)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6a2j2i22ruyltnqf"
+Content-Disposition: inline
+In-Reply-To: <cdd24e6d-4300-4afe-b2ef-1b8ee528bccc@lucifer.local>
 
-On 9/30/24 06:49, David Binderman wrote:
-> Hello there,
->
-> I just tried to build linux-6.12-rc1 with clang. It said:
->
-> drivers/iio/imu/bmi323/bmi323_core.c:133:27: warning: variable 'bmi323_ext_reg_savestate' is not needed and will not be emitted [-Wunneeded-internal-declaration]
->
-> A grep for the identifier shows the following strange results::
->
-> inux-6.12-rc1 $ grep bmi323_ext_reg_savestate drivers/iio/imu/bmi323/bmi323_core.c
-> static const unsigned int bmi323_ext_reg_savestate[] = {
-> 	unsigned int ext_reg_settings[ARRAY_SIZE(bmi323_ext_reg_savestate)];
-> 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
-> 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
-> linux-6.12-rc1 $
->
-> I see no mention of bmi323_ext_reg_savestate[ i]. Is there a possible
-> cut'n'paste error in one of the two for loops ?
-Yes. Do you want to send a fix?
+
+--6a2j2i22ruyltnqf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2024-09-30, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> On Mon, Sep 30, 2024 at 02:34:33PM GMT, Christian Brauner wrote:
+> > On Mon, Sep 30, 2024 at 11:39:49AM GMT, Lorenzo Stoakes wrote:
+> > > On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
+> > > > * Lorenzo Stoakes:
+> > > >
+> > > > > If you wish to utilise a pidfd interface to refer to the current =
+process
+> > > > > (from the point of view of userland - from the kernel point of vi=
+ew - the
+> > > > > thread group leader), it is rather cumbersome, requiring somethin=
+g like:
+> > > > >
+> > > > > 	int pidfd =3D pidfd_open(getpid(), 0);
+> > > > >
+> > > > > 	...
+> > > > >
+> > > > > 	close(pidfd);
+> > > > >
+> > > > > Or the equivalent call opening /proc/self. It is more convenient =
+to use a
+> > > > > sentinel value to indicate to an interface that accepts a pidfd t=
+hat we
+> > > > > simply wish to refer to the current process.
+> > > >
+> > > > The descriptor will refer to the current thread, not process, right?
+> > >
+> > > No it refers to the current process (i.e. thread group leader from ke=
+rnel
+> > > perspective). Unless you specify PIDFD_THREAD, this is the same if yo=
+u did the above.
+> > >
+> > > >
+> > > > The distinction matters for pidfd_getfd if a process contains multi=
+ple
+> > > > threads with different file descriptor tables, and probably for
+> > > > pidfd_send_signal as well.
+> > >
+> > > You mean if you did a strange set of flags to clone()? Otherwise thes=
+e are
+> > > shared right?
+> > >
+> > > Again, we are explicitly looking at process not thread from userland
+> > > perspective. A PIDFD_SELF_THREAD might be possible, but this series d=
+oesn't try
+> > > to implement that.
+> >
+> > Florian raises a good point. Currently we have:
+> >
+> > (1) int pidfd_tgid =3D pidfd_open(getpid(), 0);
+> > (2) int pidfd_thread =3D pidfd_open(getpid(), PIDFD_THREAD);
+> >
+> > and this instructs:
+> >
+> > pidfd_send_signal()
+> > pidfd_getfd()
+> >
+> > to do different things. For pidfd_send_signal() it's whether the
+> > operation has thread-group scope or thread-scope for pidfd_send_signal()
+> > and for pidfd_getfd() it determines the fdtable to use.
+> >
+> > The thing is that if you pass:
+> >
+> > pidfd_getfd(PDIFD_SELF)
+> >
+> > and you have:
+> >
+> > TGID
+> >
+> > T1 {
+> >     clone(CLONE_THREAD)
+> >     unshare(CLONE_FILES)
+> > }
+> >
+> > T2 {
+> >     clone(CLONE_THREAD)
+> >     unshare(CLONE_FILES)
+> > }
+> >
+> > You have 3 threads in the same thread-group that all have distinct file
+> > descriptor tables from each other.
+> >
+> > So if T1 did:
+> >
+> > pidfd_getfd(PIDFD_SELF, ...)
+> >
+> > and we mirror the PIDTYPE_TGID behavior then T1 will very likely expect
+> > to get the fd from its file descriptor table. IOW, its reasonable to
+> > expect that T1 is interested in their very own resource, not someone
+> > else's even if it is the thread-group leader.
+> >
+> > But what T1 will get in reality is an fd from TGID's file descriptor
+> > table (and similar for T2).
+> >
+> > Iirc, yes that confusion exists already with /proc/self. But the
+> > question is whether we should add the same confusion to the pidfd api or
+> > whether we make PIDFD_SELF actually mean PIDTYPE_PID aka the actual
+> > calling thread.
+> >
+> > My thinking is that if you have the reasonable suspicion that you're
+> > multi-threaded and that you're interested in the thread-group resource
+> > then you should be using:
+> >
+> > int pidfd =3D pidfd_open(getpid(), 0)
+> >
+> > and hand that thread-group leader pidfd around since you're interested
+> > in another thread. But if you're really just interested in your own
+> > resource then pidfd_open(getpid(), 0) makes no sense and you would want
+> > PIDFD_SELF.
+> >
+> > Thoughts?
+>=20
+> I mean from my perspective, my aim is to get current->mm for
+> process_madvise() so both work for me :) however you both raise a very go=
+od
+> point here (sorry Florian, perhaps I was a little too dismissive as to yo=
+ur
+> point, you're absolutely right).
+>=20
+> My intent was for PIDFD_SELF to simply mirror the pidfd_open(getpid(), 0)
+> behaviour, but you and Florian make a strong case that you'd _probably_
+> find this very confusing had you unshared in this fashion.
+>=20
+> I mean in general this confusion already exists, and is for what
+> PIDFD_THREAD was created, but I suspect ideally if you could go back you
+> might actually do this by default Christian + let the TGL behaviour be the
+> optional thing?
+>=20
+> For most users this will not be an issue, but for those they'd get the sa=
+me
+> result whichever they used, but yes actually I think you're both right -
+> PIDFD_SELF should in effect imply PIDFD_THREAD.
+
+Funnily enough we ran into issues with this when running Go code in runc
+that did precisely this -- /proc/self gave you the wrong fd table in
+very specific circumstances that were annoying to debug. For languages
+with green-threading you can't turn off (like Go) these kinds of issues
+pop up surprisingly often.
+
+> We can adjust the pidfd_send_signal() call to infer the correct scope
+> (actually nicely we can do that without any change there, by having
+> __pidfd_get_pid() set f_flags accordingly).
+>=20
+> So TL;DR: I agree, I will respin with PIDFD_SELF referring to the thread.
+>=20
+> My question in return here then is - should we introduce PIDFD_SELF_PROCE=
+SS
+> also (do advise if you feel this naming isn't quite right) - to provide
+> thread group leader behaviour?
+
+Sorry to bike-shed, but to match /proc/self and /proc/thread-self, maybe
+they should be called PIDFD_SELF (for tgid) and PIDFD_THREAD_SELF (for
+current's tid)? In principle I guess users might use PIDFD_SELF by
+accident but if we mirror the naming with /proc/{,thread-}self that
+might not be that big of an issue?
+
+Just a thought.
+
+>=20
+> Thanks!
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--6a2j2i22ruyltnqf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvqz4wAKCRAol/rSt+lE
+b7GGAQChOyMNzOC/RM56OVrgBcSbrRYTofZfidupfTSRne9UVAEArUjap0YYofOn
+VdJnnofMreht73y08E5gdexZZ9eZmg4=
+=CCUx
+-----END PGP SIGNATURE-----
+
+--6a2j2i22ruyltnqf--
 
