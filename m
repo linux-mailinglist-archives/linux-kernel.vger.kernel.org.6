@@ -1,98 +1,174 @@
-Return-Path: <linux-kernel+bounces-344435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E6698A98E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:16:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7031998A991
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37212838F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466012836A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FB5192B99;
-	Mon, 30 Sep 2024 16:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84DA192B99;
+	Mon, 30 Sep 2024 16:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CIh6xCNC"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lmg5vTvC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6871922F4
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566973BB24
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727713010; cv=none; b=TY8at9nqHLBEtk+xjULWxugbYS/frYzorfItgkiPGQ9eDT9plGpbEGNcfy5tbEDIEPgsYUYL9/2x/vVSXWa2V3gWwMnNCjpN3S6vZzGJqvFqVfquciRDWmF1q4gi4D937BAmUsHl3R4uaVSHZny3ylK6bnhOg/ltm4xiehNT+BA=
+	t=1727713024; cv=none; b=e4ZW4UUi29CNxPem1Ix3rettc2lBBGDBi7tXr0PLaZHbQHKrw5LMLMGZTaomIFOi3h6BRPbrXWz94x7e8rc2EEQL8wwO1OxF0xUEC05XZB+dl/BNENofduCFsIznba0DypHdrUKDkMrggAdpZWt4UyntlgIsZck9Xg3frAQIQR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727713010; c=relaxed/simple;
-	bh=COSEK+4dv7wY2pDAKZRF+dlcGiahU2sfuueUYyuf4es=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=FRKWtWaaIbj3J0lktuvWsi+Y8X54d0aL7dCH/0FoHN2FAldWw75Mf5yK07YHxbpHXwMZCaX16XQRc9WuqIkepNH2BJuZj9i0N4uiUPm2MsIBIgbi2HSxnMRW8c65EoteeIfxETJ8GUJESNa+OQpLT5+6T4RO99UseYZImK0tbNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CIh6xCNC; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60D6540E0198;
-	Mon, 30 Sep 2024 16:16:44 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 7QFSNGHRKQ3j; Mon, 30 Sep 2024 16:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1727712998; bh=yoQF9HTv7kdfmn9L4fH2ohJUwEDAAzNVzVNbJEYhRZs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=CIh6xCNCdlw94vtB33cHZfKGl/3gNjPPtebyWHj/n3e9g5XSfTMsFDSCgzN0STZWu
-	 FC89PoUWESGXfrM1n4q0gBkV/vdiSr6I+EFTfiNW+oJTCxT8jPYLDrE+nwrVVeauS0
-	 roJmQ6ZtECnYfXvodoN148vqHoAp1212m3Aedieb4D3wMABubKyQGM6efDNHF+9vqs
-	 t1qsACwMG8A9rJHIsTelE9lyusb+AoIVpP7++tW9r9CqYDuBCoxv9XU1kEYiujMPjN
-	 rzfGciG0mS28cUdeAwxOkKaymD70BBerpMAk8Q83GrfJrCiUeuoXxyPnrk8HNsvj8Z
-	 ftbayxaU+hr8F6aI6AuvbRKFdohOW7vEiIJXVLtZmOBD5r1uCKxlG6K/alkrhp4MLX
-	 3EH1NNpxig8+8oyCIpdxBSqqfqU5i0dSK4xHgUBDJjR+UVZKM6/zB+dsa1QVBi2dCi
-	 qzi1Cbujvwa/1dYTMKxfkvrujU0y61+cpsa/HcykADpW6eZjGURqCbt1ztCnY11spY
-	 /PcYGycU8KxhWxsEUflnDrYXWKsDBEBskgzmFrT4RoCQ8cyz8otclXsL4XRtXNSeBb
-	 Cn6Vs8LgAu1eGgwJdICX4keXNiuXjlS8C/nUWCdtip/YDxK2cKlhmCh5x4lMP+4qIf
-	 zj8AHojJhACDmfT4ZNIamR4k=
-Received: from [127.0.0.1] (82.red-81-42-199.staticip.rima-tde.net [81.42.199.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2F2F540E0169;
-	Mon, 30 Sep 2024 16:16:33 +0000 (UTC)
-Date: Mon, 30 Sep 2024 18:16:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-CC: Thomas Gleixner <tglx@linutronix.de>,
- the arch/x86 maintainers <x86@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Subject: Re: AMD zen microcode updates breaks boot
-User-Agent: K-9 Mail for Android
-In-Reply-To: <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
-References: <91194406-3fdf-4e38-9838-d334af538f74@kernel.dk> <20240928061038.GAZved3hMSU3XahWrJ@fat_crate.local> <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk> <20240930044313.GAZvosYZF5mHi2OZbC@fat_crate.local> <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
-Message-ID: <CC418B80-5ED9-4F64-917F-BA6F94130F83@alien8.de>
+	s=arc-20240116; t=1727713024; c=relaxed/simple;
+	bh=yv/NpqWspx2ikPukRsUnuTqKA0MMIfsopgGu6hrNcgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y/L/PcSCAxH3V+5c/c9sfYxVqgfIhNh/SLoTq0w4PjD7zt3fp+V3j1agHrK7kPlIboIYbNFMEYddMlpa2cIHFBqqDKxCVEoFwgMyCXAw9FRRmAEmCrFWF/wE35w8I0NKqDG8lGNp0QpZVykb5SvtIUXeH9IBHrx9OjeuCOeBoxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lmg5vTvC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA2EC4CEC7;
+	Mon, 30 Sep 2024 16:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727713023;
+	bh=yv/NpqWspx2ikPukRsUnuTqKA0MMIfsopgGu6hrNcgI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lmg5vTvCOBuRpPUIOJs8cQEWTeJqPIr7KdUwJOkKThzC7q88pz78ysWYpUK9ukPPP
+	 8dALzd5vcrMLVBRf1o0MHb27h3ZzQpUoZoKXWbIk3I+zcWVvkixTjwBh//63f83tZz
+	 7HgRq+fjuVU9i7DmHM/EB/rSw2buoXgpVcI0INMLYS2XGc1obcvw+mCzMyEgFUWzVB
+	 TIqDYya10AqkquoLrYB2RDBjID7B1p1DgxvnTyidxpnIFL9PGRjWfvwP3xsFw7P7X2
+	 /krvkkOg/hPw+FQznct4FG6OtVqJsdB3fvxC7yImtwaEUzjEd3ynIGVwbcewrXnrbb
+	 yiQ28spV2cseQ==
+Date: Mon, 30 Sep 2024 13:17:01 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1 fyi] perf beauty: Update copy of linux/socket.h with the
+ kernel sources
+Message-ID: <ZvrO_eT9e_41xrNv@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On September 30, 2024 2:27:03 PM GMT+02:00, Jens Axboe <axboe@kernel=2Edk> =
-wrote:
->Would it perhaps be an idea to revert the cleanup until then? I can't
->be the only one hit by this=2E We obviously missed -rc1 now, but=2E=2E=2E
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-You're the first one I'm hearing about=2E Either your configuration is wei=
-rd or something else is amiss=2E I've tested this patch on all AMD families=
-=2E But sure, feel free to send a properly explained revert and I'll ack it=
-=2E
+Full explanation:
 
-Thx=2E
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
---=20
-Sent from a small device: formatting sucks and brevity is inevitable=2E 
+The way these headers are used in perf are not restricted to just
+including them to compile something.
+
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+To pick the changes in:
+
+  8f0b3cc9a4c102c2 ("tcp: RX path for devmem TCP")
+
+That don't result in any changes in the tables generated from that
+header.
+
+But while updating I noticed we need to support the new MSG_SOCK_DEVMEM
+flag in the hard coded table for the msg flags table, add it.
+
+This silences this perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/perf/trace/beauty/include/linux/socket.h include/linux/socket.h
+
+Please see tools/include/uapi/README for details.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mina Almasry <almasrymina@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/include/linux/socket.h | 1 +
+ tools/perf/trace/beauty/msg_flags.c            | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/tools/perf/trace/beauty/include/linux/socket.h b/tools/perf/trace/beauty/include/linux/socket.h
+index df9cdb8bbfb88428..d18cc47e89bd0164 100644
+--- a/tools/perf/trace/beauty/include/linux/socket.h
++++ b/tools/perf/trace/beauty/include/linux/socket.h
+@@ -327,6 +327,7 @@ struct ucred {
+ 					  * plain text and require encryption
+ 					  */
+ 
++#define MSG_SOCK_DEVMEM 0x2000000	/* Receive devmem skbs as cmsg */
+ #define MSG_ZEROCOPY	0x4000000	/* Use user data in kernel path */
+ #define MSG_SPLICE_PAGES 0x8000000	/* Splice the pages from the iterator in sendmsg() */
+ #define MSG_FASTOPEN	0x20000000	/* Send data in TCP SYN */
+diff --git a/tools/perf/trace/beauty/msg_flags.c b/tools/perf/trace/beauty/msg_flags.c
+index ed3ff969b5465bbf..2da581ff0c802df8 100644
+--- a/tools/perf/trace/beauty/msg_flags.c
++++ b/tools/perf/trace/beauty/msg_flags.c
+@@ -11,6 +11,9 @@
+ #ifndef MSG_BATCH
+ #define MSG_BATCH		   0x40000
+ #endif
++#ifndef MSG_SOCK_DEVMEM
++#define MSG_SOCK_DEVMEM		 0x2000000
++#endif
+ #ifndef MSG_ZEROCOPY
+ #define MSG_ZEROCOPY		 0x4000000
+ #endif
+@@ -57,6 +60,7 @@ static size_t syscall_arg__scnprintf_msg_flags(char *bf, size_t size,
+ 	P_MSG_FLAG(MORE);
+ 	P_MSG_FLAG(WAITFORONE);
+ 	P_MSG_FLAG(BATCH);
++	P_MSG_FLAG(SOCK_DEVMEM);
+ 	P_MSG_FLAG(ZEROCOPY);
+ 	P_MSG_FLAG(SPLICE_PAGES);
+ 	P_MSG_FLAG(FASTOPEN);
+-- 
+2.46.0
+
 
