@@ -1,103 +1,105 @@
-Return-Path: <linux-kernel+bounces-344286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F49398A7D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:54:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D00B098A7F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AC4B25901
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8595C282144
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:58:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D391922D5;
-	Mon, 30 Sep 2024 14:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NdcXtmHm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF48418BBB0;
-	Mon, 30 Sep 2024 14:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1793B192D66;
+	Mon, 30 Sep 2024 14:58:24 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0141925A3;
+	Mon, 30 Sep 2024 14:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707928; cv=none; b=HhNnCwKtBlwrN+BCyfZMH6dsgujpa76kP+CeDcLtuV4/BGmasj6WCCVhEj7/IsYNhyGQ/rfUp//Fi1XeVLJ03IqWtSPlsj2Zh0KpSOUwf+x6In+9uwAWb9q6zF8muZ14nHT48xd7gyl84JqoNmI2I79vKgxdSoie887Jpioxom8=
+	t=1727708303; cv=none; b=c4lgWcnjxiOHZCqMWADdSMM5INOW6kQrZVfTsZg+8mBHPy0SLSEzmffQcaeWY9XtoGQzAlCDDJM/wm5T4M2CRE2MoEX5SJXlJ9qfMrMZNTUNM+Ah9kG9smMasbMlKjIYMz8xN+1pxW7wSI56d3Jl2ght62pzVKhrIjC84vluY6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707928; c=relaxed/simple;
-	bh=zj6qkf2jJptAzjCgXAlSXsfQHb3M5Vn8XRoZeBYhWXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxpWyFZKXmvesO7R+Efcgi4X/11PpIe9cqqbVc/wMq4F2CZKsDe3TSob6C/YTLW1/IUZvLOMI5ZITqFpT9ZytLW1bHVPybh4WYKL1Hu46+tQAHGyaMS7rvRMphRUMC9j/Ppd8QyMdKVRu266JEaBfJ9KO8zSDqdC2QseTZ7M220=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NdcXtmHm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECBBC4CEC7;
-	Mon, 30 Sep 2024 14:52:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727707927;
-	bh=zj6qkf2jJptAzjCgXAlSXsfQHb3M5Vn8XRoZeBYhWXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NdcXtmHmZ16PtmjA0nrL9pSO57/+6/Ugirj+awgd2nlJYuGZ3JMk8f7dDkuhKt/hJ
-	 U3P8x5Ev3h29XqsQX5T6Xn4qeIvKx4reS89XhBQMPE6yjnhhfjmKDZgLUzJQd43EfX
-	 ouSxg9OQHknth9WAvPH/scida2cONEYIOQNudESU=
-Date: Mon, 30 Sep 2024 16:52:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-Message-ID: <2024093044-violator-voice-8d97@gregkh>
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1727708303; c=relaxed/simple;
+	bh=7RX6RwRNa67Vv/ld0q+wViNY36r0TS+nBtx/sUS5LYk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=E8HcQCS1AiGHQ4wj4JBzUkskDc3NHmymF5nzGlzuXVX2gxeNUQHrehFP+6fA1O/JSVLX8uDJ9xvOGI+W0PA3K9gGUDfzol9Rgae36fM+/WkKFfU1TM1RAiXTanZmnau1zDeANdh5Awp1SticUlXJkKsdavEqpbrhWq/gXwi2FyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,165,1725289200"; 
+   d="scan'208";a="220366597"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Sep 2024 23:53:12 +0900
+Received: from mulinux.home (unknown [10.226.92.226])
+	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3763A4204B8B;
+	Mon, 30 Sep 2024 23:52:54 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/5] Add support for the RZ/V2H Interrupt Control Unit
+Date: Mon, 30 Sep 2024 15:52:39 +0100
+Message-Id: <20240930145244.356565-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930144328.51098-2-trintaeoitogc@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 11:43:27AM -0300, Guilherme Giacomo Simoes wrote:
-> This function increments the refcount by a call to
-> "bindings::get_device(ptr)". This can be confused because, the function
-> Arch::from_raw() from standard library, don't increments the refcount.
-> Hence, rename "Device::from_raw()" to avoid confusion with other
-> "from_raw" semantics.
-> 
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> ---
->  rust/kernel/device.rs   | 2 +-
->  rust/kernel/firmware.rs | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
+Dear All,
 
-Hi,
+This series adds whatever is required for supporting NMI, IRQ, and
+TINT interrupts to the Renesas RZ/V2H SoC.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+v1->v2:
+* Dropped patch "dt-bindings: pinctrl: renesas: rzg2l-pinctrl: Add interrupt-parent".
+* Patch "dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt Controller"
+  amended as per Rob's comments.
+* Patch "irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver"
+  fixed missing put_device.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Thanks,
+Fab
 
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
+Fabrizio Castro (5):
+  pinctrl: renesas: rzg2l: Remove RZG2L_TINT_IRQ_START_INDEX
+  dt-bindings: interrupt-controller: Add Renesas RZ/V2H(P) Interrupt
+    Controller
+  clk: renesas: r9a09g057: Add clock and reset entries for ICU
+  irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU) driver
+  arm64: dts: renesas: r9a09g057: Add ICU node
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+ .../renesas,rzv2h-icu.yaml                    | 276 +++++++++
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |  88 +++
+ drivers/clk/renesas/r9a09g057-cpg.c           |   2 +
+ drivers/irqchip/Kconfig                       |   7 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-renesas-rzv2h.c           | 527 ++++++++++++++++++
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c       |   8 +-
+ drivers/soc/renesas/Kconfig                   |   1 +
+ 8 files changed, 908 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzv2h-icu.yaml
+ create mode 100644 drivers/irqchip/irq-renesas-rzv2h.c
 
-thanks,
+-- 
+2.34.1
 
-greg k-h's patch email bot
 
