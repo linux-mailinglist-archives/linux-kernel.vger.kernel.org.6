@@ -1,459 +1,1066 @@
-Return-Path: <linux-kernel+bounces-344369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CEC298A8C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:39:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D914C98A8C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE25B28ABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257BB281BED
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1919259E;
-	Mon, 30 Sep 2024 15:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2492B193064;
+	Mon, 30 Sep 2024 15:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X3+s/iQz"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V8EkMU8L"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B231922DA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F21518FDCE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710511; cv=none; b=H8yt7N89fKldbLhqJxjaa+UD37cEgVDCpWCJq9ghuhmOt0nqTV3MifuTdPlafmFWGFOhDqREp89getPs59p4Qn9gy5RA+RzD6jiujc2D0JXqYrUfaJBb4NZuGpQnOjwgskTaiFUbddS+LcxBNaC/XqQ7/y//IKdwf7dySZvZOoI=
+	t=1727710512; cv=none; b=Aii6T8/3iRQm4YL1BuaOkdEwNj8aOFWXSBO9QGb17OlNgViPG0fPaAsrPcmZW7rSI4KmLWsWjGeTgDDiQRJ22kikzCX+lgS8oOthJ/MiGW0d5F9x3A3xiinn1mD4nE+twJ6x3Z0/kS3S+5AmZw2L4CYEKGM4kzGiwOPJ+VjhC7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710511; c=relaxed/simple;
-	bh=0XJpAdHnjMSi0vjMY45hVoBPZADVUp0uIsFIR0QVyeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HGr/HBqy0fBqi6ub5kVH8jamwl1lCmZTsi2H37/ZPE8Kmi95Gm3jMrRx4FvCQvtSmm5qULEFlSTmgWGa11Tfwy8FA+9e8qti94NME06iWeZrGCCY/QQOmN1qp+x+VXnOg/ZJnSINwu29Z8ifZo/pmGNPzf4fANpMnaVbfzHwcCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X3+s/iQz; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a626d73efso163159739f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:35:09 -0700 (PDT)
+	s=arc-20240116; t=1727710512; c=relaxed/simple;
+	bh=WbX8hkH0X8va2GockTNxffv1VLL7xknAnMFMr+uyUnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OSPnr75qh4sjVwdbCWNbig8IpgmtQvL4J9FKu81VF1xNLlzbzt4fah0OU/gLFishMlzQoEu+ZM/kLZozrp0gwQDqrLacdn0/zWq6kO7QpnCRUfJgLCsfLbaK7uM1olgp+GdRKABmo9HRMiech5dzp/dyV7satgW+eHFKNGjiMkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=V8EkMU8L; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82aef2c1e5fso167193739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727710508; x=1728315308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QZc5l7HwmrBo73UWrdHZ1JVPdCSgRTelmWziJOuNMk4=;
-        b=X3+s/iQzVwTNjXxVDzrjOS/cJr8rc2YJ8jNdvpLQEbvF7W3qMJ5JZM2ap0+r4zQ90A
-         /Gb7HKJUlqH4XNNpc/c8j9VR+ktaFeyLOvQj1YCSdGAHyPpKnw/3Rt9vEm7xd0NRuuaV
-         Wpbhlm+Cl5en94snBONcwJE/jLuogGw9RbSSc=
+        d=linuxfoundation.org; s=google; t=1727710507; x=1728315307; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=opvvxDdaM5/hMNmylGRLNY0fmEhnPy7cAbYhM+UtVOU=;
+        b=V8EkMU8LcBPEkkBMaof4d1PMkRcrbQLtI58Blvyn7BH/swQYvENx/2puHKWNOQqebO
+         eQTkB9MtyHhN+Z4EP1H8RWpRqZ6r9J1GxAZGG/Ou43S1NWm6AV6u9jCvP03Znh2JlZW5
+         jhhPmfxjD6paHoMRuUDxBw349mX1/a2wzotsA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727710508; x=1728315308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QZc5l7HwmrBo73UWrdHZ1JVPdCSgRTelmWziJOuNMk4=;
-        b=rKRlw9LRuk/5wEm4F0asYSdN5gUdl/ZDEr4WrCl+AyzMKd8Ofr7y+ycp95B9AHrLqs
-         3++BbHvidNyfA3D7MaDATiey8JnM9XdFDNmD605csMi5rA9j1/BE/xc89szfedGyuUCL
-         gCxTxZBDVsXBKAtopd0vNuWcYtpF8iUDqIQjB3wwikQzXVgP3jaLSk1oIqsvoQPQwaJ0
-         ToPJYC8+92rW2o0fO1pa/mqUKRuNcYZPGJURlV+BU9afZKMiFQYwo4xlVQXoHsuw8PCj
-         ZZrwI/rX1g9PPDvn6rNqhSsrZMSpN3R031kzJ520SY5QVElndieltvWqm/qQRIOq/BSZ
-         rjRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkJZgWv/KnQtqIKoOZnNguGVpXjc+2EvgQSoRD4r/Ng+4B3FJcawMoE31JD7Xg2t3Layc36fOhUqdcWEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaMl2a+gf0MdJwvmDpGEYgOley8F66FGL8tWcMr7a9R7WOk1Wx
-	AqkU5XeYFzzzTRTerUCRT3FCj3C5HVSXgztUsFAzjczT7Tk8NIeDgKQbaWYSUhD8PPUOa0hyrLQ
-	7V9Nm
-X-Google-Smtp-Source: AGHT+IGr9gIzffeCWaobKd5nUUeLWrptU1hxQc9a44u10RIktGivtZlWrMR7eNnMC/gZtoYANUPXJw==
-X-Received: by 2002:a05:6602:2d8a:b0:82d:9b0:ecb7 with SMTP id ca18e2360f4ac-8349318ae5dmr974870139f.3.1727710507740;
+        d=1e100.net; s=20230601; t=1727710507; x=1728315307;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=opvvxDdaM5/hMNmylGRLNY0fmEhnPy7cAbYhM+UtVOU=;
+        b=KbdJ4cBwmLiTKoqgP7Ofmm5j6rbb/MssQ32fOjRPCAB8PHGEi+15ny+OSzVDK+wd1Q
+         KoZ638RxfJreaqXdVUL5SAeJYZJDORnzn2VwEq/nuajWHX/76VLdSpzMHCak9xufXVuq
+         KYWL+0S40EkqZSs/hkeyOWXDnNUDOnHcEa4vvXfjL34XXH2SRV2TSfDiTBqgyLHonR06
+         Eyd00nSIsxT3wqJxniNdoklJmPwkOtin2mT79svAA3TzyH3XF9fXqE5srs8zOLwz1iMj
+         ADkbsx9hzEt1OTbQmijis9ouIICTtTnEV4ZLS+CtDwPY8lOwjWjVtr6XGGAgkAoz7Pqh
+         RsYw==
+X-Gm-Message-State: AOJu0Yy41rfF0kG/NcBg6PcYogJHFgFCSK3S2dRZSWI+tpCj9NsgyI/Y
+	TRLmKlB8hsWpBfbsZ7pJVtbjSzXStvZ3VSFZwyJQC0kriT3cH4xsWAMKBcZECws=
+X-Google-Smtp-Source: AGHT+IH8G63ZPFNw6Kucgp6zJdxLdHqEwS+xkGVz88ZO9GaKg/IctkEaj2No4Zl9L2810h2k4knmCg==
+X-Received: by 2002:a05:6602:2dc2:b0:82a:a454:6306 with SMTP id ca18e2360f4ac-834931b41c7mr1197280739f.1.1727710507264;
         Mon, 30 Sep 2024 08:35:07 -0700 (PDT)
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com. [209.85.166.177])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888849fbesm2150318173.63.2024.09.30.08.35.06
-        for <linux-kernel@vger.kernel.org>
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83493744f7esm225584039f.55.2024.09.30.08.35.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 08:35:07 -0700 (PDT)
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso1027865ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:35:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUafHAtpnvsRLUyX2pVB6nkCQqVcXcxd7uRaO5PhK4u34peNLuKVT6kL1kltRiqPM2WTPi5B2UoeEOPzRM=@vger.kernel.org
-X-Received: by 2002:a05:6e02:1383:b0:39e:68d8:2891 with SMTP id
- e9e14a558f8ab-3a35e53e6a9mr350535ab.6.1727710505990; Mon, 30 Sep 2024
- 08:35:05 -0700 (PDT)
+        Mon, 30 Sep 2024 08:35:06 -0700 (PDT)
+Message-ID: <1f4dc3b7-f05d-487b-b22b-5f0c37921672@linuxfoundation.org>
+Date: Mon, 30 Sep 2024 09:35:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
- <20240930122157.GF31662@pendragon.ideasonboard.com> <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
-In-Reply-To: <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Tue, 1 Oct 2024 00:34:44 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AZhdZkaM=mVqmKY-uTuGrVUnpaTWTvOqUyOKLDS6LSKg@mail.gmail.com>
-Message-ID: <CAAFQd5AZhdZkaM=mVqmKY-uTuGrVUnpaTWTvOqUyOKLDS6LSKg@mail.gmail.com>
-Subject: Re: [PATCH 00/45] media: Use string_choice helpers
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Ricardo Ribalda <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>, 
-	Olli Salonen <olli.salonen@iki.fi>, Maxim Levitsky <maximlevitsky@gmail.com>, 
-	Sean Young <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
-	Jemma Denson <jdenson@gmail.com>, Patrick Boettcher <patrick.boettcher@posteo.de>, 
-	Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
-	Andy Walls <awalls@md.metrocast.net>, Michal Simek <michal.simek@amd.com>, 
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Eddie James <eajames@linux.ibm.com>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Tim Harvey <tharvey@gateworks.com>, 
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
-	Sylvain Petinot <sylvain.petinot@foss.st.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	imx@lists.linux.dev, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpupower: Add Chinese Simplified translation
+To: Kieran Moy <kfatyuip@gmail.com>, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240522165745.76561-1-kfatyuip@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240522165745.76561-1-kfatyuip@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 9:38=E2=80=AFPM Hans Verkuil <hverkuil@xs4all.nl> w=
-rote:
->
-> On 30/09/2024 14:21, Laurent Pinchart wrote:
-> > Hi Ricardo,
-> >
-> > On Mon, Sep 30, 2024 at 12:03:55PM +0000, Ricardo Ribalda wrote:
-> >> include/linux/string_choices.h contains a set of helpers that can be
-> >> used instead of hard coding some strings.
-> >>
-> >> Cocci has located some places where the helpers can be used. This
-> >> patchset uses the diff generated by cocci, plus these changes:
-> >
-> > Personally I think most of those helpers just hinder readability for no=
-t
-> > much added gain. String de-duplication is done by the linker already.
-> > The only value I see in the helpers is ensuring that the strings are
-> > consistently written, and I think we can do so through other means.
->
-> Just my opinion: I'm OK with these new helpers, but I am not too keen to =
-apply
-> all this to existing source code. I.e., for new code it is fine, but if w=
-e have
-> to update all drivers every time a new cocci test is added, then that wil=
-l not
-> scale.
+On 5/22/24 10:57, Kieran Moy wrote:
+> Add Chinese Simplified translation for cpupower
+> 
+> Signed-off-by: Kieran Moy <kfatyuip@gmail.com>
 
-+1 for avoiding applying this to existing code. It will just make it
-more difficult to backport changes to stable kernels because of
-meaningless conflicts.
+Sorry this got stuck in my Inbox.
+Adding linux-pm
 
-Best,
-Tomasz
+Also I would like Chineese speakers in the community review
+and give me a Reviwed-by - any help is much appreciated.
 
->
-> Note that I never ran cocci in my build scripts, so this is a new check t=
-hat
-> we haven't set rules for or have much experience with.
->
-> checkpatch just checks the patches, it doesn't force you to fix existing =
-code.
->
-> Some of the cocci tests are clearly checking for incorrect code, but othe=
-rs are
-> for code improvements (i.e. the code was correct, it can just be done sli=
-ghtly
-> better). It's the second category were I think that should only apply to =
-new code,
-> and not existing code.
->
-> Regards,
->
->         Hans
->
-> >
-> >> diff --git a/drivers/media/dvb-frontends/ascot2e.c b/drivers/media/dvb=
--frontends/ascot2e.c
-> >> index 8c3eb5d69dda..ec7a718428fc 100644
-> >> --- a/drivers/media/dvb-frontends/ascot2e.c
-> >> +++ b/drivers/media/dvb-frontends/ascot2e.c
-> >> @@ -104,7 +104,7 @@ static void ascot2e_i2c_debug(struct ascot2e_priv =
-*priv,
-> >>                               u8 reg, u8 write, const u8 *data, u32 le=
-n)
-> >>  {
-> >>         dev_dbg(&priv->i2c->dev, "ascot2e: I2C %s reg 0x%02x size %d\n=
-",
-> >> -               str_read_write(write =3D=3D 0), reg, len);
-> >> +               str_write_read(write), reg, len);
-> >>         print_hex_dump_bytes("ascot2e: I2C data: ",
-> >>                 DUMP_PREFIX_OFFSET, data, len);
-> >>  }
-> >> diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/d=
-vb-frontends/cxd2841er.c
-> >> index db684f314b47..d1b84cd9c510 100644
-> >> --- a/drivers/media/dvb-frontends/cxd2841er.c
-> >> +++ b/drivers/media/dvb-frontends/cxd2841er.c
-> >> @@ -206,7 +206,7 @@ static void cxd2841er_i2c_debug(struct cxd2841er_p=
-riv *priv,
-> >>  {
-> >>         dev_dbg(&priv->i2c->dev,
-> >>                 "cxd2841er: I2C %s addr %02x reg 0x%02x size %d data %=
-*ph\n",
-> >> -               str_read_write(write =3D=3D 0), addr, reg, len, len, d=
-ata);
-> >> +               str_write_read(write), addr, reg, len, len, data);
-> >>  }
-> >>
-> >>  static int cxd2841er_write_regs(struct cxd2841er_priv *priv,
-> >> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-=
-frontends/helene.c
-> >> index 52198cb49dba..b4527c141d9c 100644
-> >> --- a/drivers/media/dvb-frontends/helene.c
-> >> +++ b/drivers/media/dvb-frontends/helene.c
-> >> @@ -279,7 +279,7 @@ static void helene_i2c_debug(struct helene_priv *p=
-riv,
-> >>                 u8 reg, u8 write, const u8 *data, u32 len)
-> >>  {
-> >>         dev_dbg(&priv->i2c->dev, "helene: I2C %s reg 0x%02x size %d\n"=
-,
-> >> -                       str_read_write(write =3D=3D 0), reg, len);
-> >> +                       str_write_read(write), reg, len);
-> >>         print_hex_dump_bytes("helene: I2C data: ",
-> >>                         DUMP_PREFIX_OFFSET, data, len);
-> >>  }
-> >> diff --git a/drivers/media/dvb-frontends/horus3a.c b/drivers/media/dvb=
--frontends/horus3a.c
-> >> index 84385079918c..10300ebf3ca0 100644
-> >> --- a/drivers/media/dvb-frontends/horus3a.c
-> >> +++ b/drivers/media/dvb-frontends/horus3a.c
-> >> @@ -38,7 +38,7 @@ static void horus3a_i2c_debug(struct horus3a_priv *p=
-riv,
-> >>                               u8 reg, u8 write, const u8 *data, u32 le=
-n)
-> >>  {
-> >>         dev_dbg(&priv->i2c->dev, "horus3a: I2C %s reg 0x%02x size %d\n=
-",
-> >> -               str_read_write(write =3D=3D 0), reg, len);
-> >> +               str_write_read(write), reg, len);
-> >>         print_hex_dump_bytes("horus3a: I2C data: ",
-> >>                 DUMP_PREFIX_OFFSET, data, len);
-> >>  }
-> >> diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
-> >> index ba174aa45afa..a43479c3ff03 100644
-> >> --- a/drivers/media/i2c/adv7842.c
-> >> +++ b/drivers/media/i2c/adv7842.c
-> >> @@ -2763,7 +2763,7 @@ static int adv7842_cp_log_status(struct v4l2_sub=
-dev *sd)
-> >>                           str_true_false(io_read(sd, 0x6a) & 0x10));
-> >>         }
-> >>         v4l2_info(sd, "CP free run: %s\n",
-> >> -                 str_on_off(!!(cp_read(sd, 0xff) & 0x10)));
-> >> +                 str_on_off(cp_read(sd, 0xff) & 0x10));
-> >>         v4l2_info(sd, "Prim-mode =3D 0x%x, video std =3D 0x%x, v_freq =
-=3D 0x%x\n",
-> >>                   io_read(sd, 0x01) & 0x0f, io_read(sd, 0x00) & 0x3f,
-> >>                   (io_read(sd, 0x01) & 0x70) >> 4);
-> >> diff --git a/drivers/media/pci/saa7134/saa7134-cards.c b/drivers/media=
-/pci/saa7134/saa7134-cards.c
-> >> index 301b89e799d8..79cd61fb0205 100644
-> >> --- a/drivers/media/pci/saa7134/saa7134-cards.c
-> >> +++ b/drivers/media/pci/saa7134/saa7134-cards.c
-> >> @@ -7981,7 +7981,7 @@ int saa7134_board_init2(struct saa7134_dev *dev)
-> >>                         rc =3D i2c_transfer(&dev->i2c_adap, &msg, 1);
-> >>                         pr_info("%s: probe IR chip @ i2c 0x%02x: %s\n"=
-,
-> >>                                    dev->name, msg.addr,
-> >> -                                  str_yes_no(1 =3D=3D rc));
-> >> +                                  str_yes_no(rc =3D=3D 1));
-> >>                         if (rc =3D=3D 1)
-> >>                                 dev->has_remote =3D SAA7134_REMOTE_I2C=
-;
-> >>                 }
-> >> diff --git a/drivers/media/pci/saa7134/saa7134-input.c b/drivers/media=
-/pci/saa7134/saa7134-input.c
-> >> index 90837ec6e70f..239f0b9d080a 100644
-> >> --- a/drivers/media/pci/saa7134/saa7134-input.c
-> >> +++ b/drivers/media/pci/saa7134/saa7134-input.c
-> >> @@ -895,7 +895,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
-> >>                 rc =3D i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
-> >>                 input_dbg("probe 0x%02x @ %s: %s\n",
-> >>                         msg_msi.addr, dev->i2c_adap.name,
-> >> -                       str_yes_no(1 =3D=3D rc));
-> >> +                       str_yes_no(rc =3D=3D 1));
-> >>                 break;
-> >>         case SAA7134_BOARD_SNAZIO_TVPVR_PRO:
-> >>                 dev->init_data.name =3D "SnaZio* TVPVR PRO";
-> >> @@ -931,7 +931,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
-> >>                 rc =3D i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
-> >>                 input_dbg("probe 0x%02x @ %s: %s\n",
-> >>                         msg_msi.addr, dev->i2c_adap.name,
-> >> -                       str_yes_no(1 =3D=3D rc));
-> >> +                       str_yes_no(rc =3D=3D 1));
-> >>                 break;
-> >>         case SAA7134_BOARD_HAUPPAUGE_HVR1110:
-> >>                 dev->init_data.name =3D saa7134_boards[dev->board].nam=
-e;
-> >> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c b/drivers/media/=
-usb/pvrusb2/pvrusb2-ctrl.c
-> >> index 448c40caf363..b6c9bda214c8 100644
-> >> --- a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
-> >> +++ b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
-> >> @@ -521,7 +521,7 @@ int pvr2_ctrl_value_to_sym_internal(struct pvr2_ct=
-rl *cptr,
-> >>                 *len =3D scnprintf(buf,maxlen,"%d",val);
-> >>                 ret =3D 0;
-> >>         } else if (cptr->info->type =3D=3D pvr2_ctl_bool) {
-> >> -               *len =3D scnprintf(buf,maxlen,"%s",str_true_false(val)=
-);
-> >> +               *len =3D scnprintf(buf, maxlen, "%s", str_true_false(v=
-al));
-> >>                 ret =3D 0;
-> >>         } else if (cptr->info->type =3D=3D pvr2_ctl_enum) {
-> >>                 const char * const *names;
-> >> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/u=
-sb/pvrusb2/pvrusb2-hdw.c
-> >> index 96d3a0045fac..761d718478ca 100644
-> >> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> >> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> >> @@ -338,7 +338,7 @@ static void trace_stbit(const char *name,int val)
-> >>  {
-> >>         pvr2_trace(PVR2_TRACE_STBITS,
-> >>                    "State bit %s <-- %s",
-> >> -                  name,str_true_false(val));
-> >> +                  name, str_true_false(val));
-> >>  }
-> >>
-> >> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> >> ---
-> >> Ricardo Ribalda (45):
-> >>       media: staging: ipu3: Use string_choices helpers
-> >>       media: staging: atomisp: Use string_choices helpers
-> >>       media: core: Use string_choices helpers
-> >>       media: pwc-ctl: Use string_choices helpers
-> >>       media: pvrusb2:Use string_choices helpers
-> >>       media: em28xx: Use string_choices helpers
-> >>       media: dvb-usb: Use string_choices helpers
-> >>       media: dvb-usb-v2: Use string_choices helpers
-> >>       media: cx231xx: Use string_choices helpers
-> >>       media: tuners: Use string_choices helpers
-> >>       media: rc: Use string_choices helpers
-> >>       media: dvb-frontends: Use string_choices helpers
-> >>       media: pci: cx23885: Use string_choices helpers
-> >>       media: saa7134: Use string_choices helpers
-> >>       media: amphion: Use string_choices helpers
-> >>       media: pci: ivtv: Use string_choices helpers
-> >>       media: bttv: Use string_choices helpers
-> >>       media: xilinx: Use string_choices helpers
-> >>       media: platform: ti: Use string_choices helpers
-> >>       media: st: Use string_choices helpers
-> >>       media: coda: Use string_choices helpers
-> >>       media: aspeed: Use string_choices helpers
-> >>       media: ipu6: Use string_choices helpers
-> >>       media: cx18: Use string_choices helpers
-> >>       media: cobalt: Use string_choices helpers
-> >>       media: videobuf2: Use string_choices helpers
-> >>       media: cec: Use string_choices helpers
-> >>       media: b2c2: Use string_choices helpers
-> >>       media: siano: Use string_choices helpers
-> >>       media: i2c: cx25840: Use string_choices helpers
-> >>       media: i2c: vpx3220: Use string_choices helpers
-> >>       media: i2c: tvp7002: Use string_choices helpers
-> >>       media: i2c: ths8200: Use string_choices helpers
-> >>       media: i2c: tda1997x: Use string_choices helpers
-> >>       media: i2c: tc358743: Use string_choices helpers
-> >>       media: i2c: st-mipid02: Use string_choices helpers
-> >>       media: i2c: msp3400: Use string_choices helpers
-> >>       media: i2c: max9286: Use string_choices helpers
-> >>       media: i2c: saa717x: Use string_choices helpers
-> >>       media: i2c: saa7127: Use string_choices helpers
-> >>       media: i2c: saa7115: Use string_choices helpers
-> >>       media: i2c: saa7110: Use string_choices helpers
-> >>       media: i2c: adv7842: Use string_choices helpers
-> >>       media: i2c: adv76xx: Use string_choices helpers
-> >>       media: i2c: adv7511: Use string_choices helpers
-> >>
-> >>  drivers/media/cec/platform/cec-gpio/cec-gpio.c     |  4 +-
-> >>  drivers/media/cec/usb/pulse8/pulse8-cec.c          |  4 +-
-> >>  drivers/media/common/b2c2/flexcop-hw-filter.c      |  4 +-
-> >>  drivers/media/common/siano/sms-cards.c             |  3 +-
-> >>  drivers/media/common/videobuf2/videobuf2-core.c    |  5 ++-
-> >>  drivers/media/dvb-frontends/ascot2e.c              |  2 +-
-> >>  drivers/media/dvb-frontends/cx24120.c              |  4 +-
-> >>  drivers/media/dvb-frontends/cxd2841er.c            |  2 +-
-> >>  drivers/media/dvb-frontends/drxk_hard.c            |  4 +-
-> >>  drivers/media/dvb-frontends/helene.c               |  2 +-
-> >>  drivers/media/dvb-frontends/horus3a.c              |  2 +-
-> >>  drivers/media/dvb-frontends/sp2.c                  |  2 +-
-> >>  drivers/media/i2c/adv7511-v4l2.c                   | 11 +++---
-> >>  drivers/media/i2c/adv7604.c                        | 25 ++++++------
-> >>  drivers/media/i2c/adv7842.c                        | 40 ++++++++++---=
--------
-> >>  drivers/media/i2c/cx25840/cx25840-core.c           |  4 +-
-> >>  drivers/media/i2c/cx25840/cx25840-ir.c             | 34 ++++++++-----=
-----
-> >>  drivers/media/i2c/max9286.c                        |  2 +-
-> >>  drivers/media/i2c/msp3400-driver.c                 |  4 +-
-> >>  drivers/media/i2c/saa7110.c                        |  2 +-
-> >>  drivers/media/i2c/saa7115.c                        |  2 +-
-> >>  drivers/media/i2c/saa7127.c                        | 15 +++++---
-> >>  drivers/media/i2c/saa717x.c                        |  2 +-
-> >>  drivers/media/i2c/st-mipid02.c                     |  2 +-
-> >>  drivers/media/i2c/tc358743.c                       | 44 ++++++++++---=
----------
-> >>  drivers/media/i2c/tda1997x.c                       |  6 +--
-> >>  drivers/media/i2c/ths8200.c                        |  4 +-
-> >>  drivers/media/i2c/tvp7002.c                        |  2 +-
-> >>  drivers/media/i2c/vpx3220.c                        |  2 +-
-> >>  drivers/media/pci/bt8xx/bttv-cards.c               | 16 ++++----
-> >>  drivers/media/pci/bt8xx/bttv-driver.c              |  6 +--
-> >>  drivers/media/pci/cobalt/cobalt-driver.c           |  2 +-
-> >>  drivers/media/pci/cx18/cx18-av-core.c              |  4 +-
-> >>  drivers/media/pci/cx23885/altera-ci.c              |  2 +-
-> >>  drivers/media/pci/cx23885/cimax2.c                 |  2 +-
-> >>  drivers/media/pci/cx23885/cx23888-ir.c             | 36 +++++++++----=
------
-> >>  drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c      |  2 +-
-> >>  drivers/media/pci/ivtv/ivtvfb.c                    |  4 +-
-> >>  drivers/media/pci/saa7134/saa7134-cards.c          |  2 +-
-> >>  drivers/media/pci/saa7134/saa7134-dvb.c            |  2 +-
-> >>  drivers/media/pci/saa7134/saa7134-input.c          |  6 +--
-> >>  drivers/media/pci/saa7134/saa7134-video.c          |  2 +-
-> >>  drivers/media/platform/amphion/venc.c              |  2 +-
-> >>  drivers/media/platform/amphion/vpu_dbg.c           |  2 +-
-> >>  drivers/media/platform/aspeed/aspeed-video.c       |  4 +-
-> >>  drivers/media/platform/chips-media/coda/imx-vdoa.c |  3 +-
-> >>  drivers/media/platform/st/sti/hva/hva-debugfs.c    |  6 +--
-> >>  drivers/media/platform/ti/omap3isp/ispstat.c       |  2 +-
-> >>  drivers/media/platform/xilinx/xilinx-csi2rxss.c    | 18 ++++-----
-> >>  drivers/media/rc/ene_ir.c                          |  3 +-
-> >>  drivers/media/rc/mceusb.c                          |  3 +-
-> >>  drivers/media/rc/serial_ir.c                       |  5 ++-
-> >>  drivers/media/tuners/tda18250.c                    |  2 +-
-> >>  drivers/media/tuners/tda9887.c                     | 10 ++---
-> >>  drivers/media/usb/cx231xx/cx231xx-i2c.c            |  4 +-
-> >>  drivers/media/usb/cx231xx/cx231xx-video.c          |  2 +-
-> >>  drivers/media/usb/dvb-usb-v2/az6007.c              |  4 +-
-> >>  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c        |  4 +-
-> >>  drivers/media/usb/dvb-usb/af9005-fe.c              |  4 +-
-> >>  drivers/media/usb/dvb-usb/dvb-usb-dvb.c            |  6 +--
-> >>  drivers/media/usb/dvb-usb/opera1.c                 |  8 ++--
-> >>  drivers/media/usb/em28xx/em28xx-i2c.c              |  4 +-
-> >>  drivers/media/usb/em28xx/em28xx-video.c            |  2 +-
-> >>  drivers/media/usb/pvrusb2/pvrusb2-ctrl.c           |  2 +-
-> >>  drivers/media/usb/pvrusb2/pvrusb2-debugifc.c       |  3 +-
-> >>  drivers/media/usb/pvrusb2/pvrusb2-encoder.c        |  5 +--
-> >>  drivers/media/usb/pvrusb2/pvrusb2-hdw.c            |  6 +--
-> >>  drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c       |  3 +-
-> >>  drivers/media/usb/pwc/pwc-ctrl.c                   |  2 +-
-> >>  drivers/media/v4l2-core/v4l2-ctrls-core.c          |  3 +-
-> >>  drivers/media/v4l2-core/v4l2-fwnode.c              | 12 +++---
-> >>  .../media/atomisp/pci/atomisp_compat_css20.c       |  2 +-
-> >>  .../media/atomisp/pci/atomisp_csi2_bridge.c        |  2 +-
-> >>  .../media/atomisp/pci/atomisp_gmin_platform.c      |  4 +-
-> >>  drivers/staging/media/atomisp/pci/atomisp_v4l2.c   |  4 +-
-> >>  .../media/atomisp/pci/runtime/binary/src/binary.c  |  2 +-
-> >>  drivers/staging/media/atomisp/pci/sh_css.c         |  2 +-
-> >>  drivers/staging/media/ipu3/ipu3-v4l2.c             |  4 +-
-> >>  78 files changed, 240 insertions(+), 239 deletions(-)
-> >> ---
-> >> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> >> change-id: 20240930-cocci-opportunity-40bca6a17c42
-> >
->
+> ---
+>   tools/power/cpupower/Makefile    |   2 +-
+>   tools/power/cpupower/po/zh_CN.po | 942 +++++++++++++++++++++++++++++++
+>   2 files changed, 943 insertions(+), 1 deletion(-)
+>   create mode 100644 tools/power/cpupower/po/zh_CN.po
+> 
+> diff --git a/tools/power/cpupower/Makefile b/tools/power/cpupower/Makefile
+> index b53753dee..ccbd78da3 100644
+> --- a/tools/power/cpupower/Makefile
+> +++ b/tools/power/cpupower/Makefile
+> @@ -57,7 +57,7 @@ LIB_MIN=			1
+>   
+>   PACKAGE =			cpupower
+>   PACKAGE_BUGREPORT =		linux-pm@vger.kernel.org
+> -LANGUAGES = 			de fr it cs pt ka
+> +LANGUAGES = 			de fr it cs pt ka zh_CN
+>   
+>   
+>   # Directory definitions. These are default and most probably
+> diff --git a/tools/power/cpupower/po/zh_CN.po b/tools/power/cpupower/po/zh_CN.po
+> new file mode 100644
+> index 000000000..cca9a1725
+> --- /dev/null
+> +++ b/tools/power/cpupower/po/zh_CN.po
+> @@ -0,0 +1,942 @@
+> +# Chinese Simplified translations for cpufrequtils package
+> +# Copyright (C) 2004 THE PACKAGE'S COPYRIGHT HOLDER
+> +# This file is distributed under the same license as the cpufrequtils package.
+> +#
+> +#, fuzzy
+> +msgid ""
+> +msgstr ""
+> +"Project-Id-Version: cpufrequtils 006\n"
+> +"Report-Msgid-Bugs-To: \n"
+> +"POT-Creation-Date: 2011-03-08 17:03+0100\n"
+> +"PO-Revision-Date: 2024-05-22 15:36+0000\n"
+> +"Last-Translator: Kieran Moy <kfatyuip@gmail.com>\n"
+> +"Language-Team: NONE\n"
+> +"Language: zh_CN\n"
+> +"MIME-Version: 1.0\n"
+> +"Content-Type: text/plain; charset=UTF-8\n"
+> +"Content-Transfer-Encoding: 8bit\n"
+> +"X-Generator: Poedit 3.4.2\n"
+> +
+> +#: utils/idle_monitor/nhm_idle.c:36
+> +msgid "Processor Core C3"
+> +msgstr "处理器核心 C3"
+> +
+> +#: utils/idle_monitor/nhm_idle.c:43
+> +msgid "Processor Core C6"
+> +msgstr "处理器核心 C6"
+> +
+> +#: utils/idle_monitor/nhm_idle.c:51
+> +msgid "Processor Package C3"
+> +msgstr "处理器套件 C3"
+> +
+> +#: utils/idle_monitor/nhm_idle.c:58 utils/idle_monitor/amd_fam14h_idle.c:70
+> +msgid "Processor Package C6"
+> +msgstr "处理器套件 C6"
+> +
+> +#: utils/idle_monitor/snb_idle.c:33
+> +msgid "Processor Core C7"
+> +msgstr "处理器核心 C7"
+> +
+> +#: utils/idle_monitor/snb_idle.c:40
+> +msgid "Processor Package C2"
+> +msgstr "处理器套件 C2"
+> +
+> +#: utils/idle_monitor/snb_idle.c:47
+> +msgid "Processor Package C7"
+> +msgstr "处理器套件 C7"
+> +
+> +#: utils/idle_monitor/amd_fam14h_idle.c:56
+> +msgid "Package in sleep state (PC1 or deeper)"
+> +msgstr "处于睡眠状态的包（PC1 或更深）"
+> +
+> +#: utils/idle_monitor/amd_fam14h_idle.c:63
+> +msgid "Processor Package C1"
+> +msgstr "处理器套件 C1"
+> +
+> +#: utils/idle_monitor/amd_fam14h_idle.c:77
+> +msgid "North Bridge P1 boolean counter (returns 0 or 1)"
+> +msgstr "北桥 P1 布尔计数器（返回 0 或 1）"
+> +
+> +#: utils/idle_monitor/mperf_monitor.c:35
+> +msgid "Processor Core not idle"
+> +msgstr "处理器核心不空闲"
+> +
+> +#: utils/idle_monitor/mperf_monitor.c:42
+> +msgid "Processor Core in an idle state"
+> +msgstr "处理器核心处于空闲状态"
+> +
+> +#: utils/idle_monitor/mperf_monitor.c:50
+> +msgid "Average Frequency (including boost) in MHz"
+> +msgstr "平均频率（包括增加频率），单位 MHz"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:66
+> +#, c-format
+> +msgid ""
+> +"cpupower monitor: [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
+> +"interval_sec | -c command ...]\n"
+> +msgstr ""
+> +"cpupower monitor：[-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
+> +"interval_sec | -c command...]\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:69
+> +#, c-format
+> +msgid ""
+> +"cpupower monitor: [-v] [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
+> +"interval_sec | -c command ...]\n"
+> +msgstr ""
+> +"cpupower monitor：[-v] [-h] [ [-t] | [-l] | [-m <mon1>,[<mon2>] ] ] [-i "
+> +"interval_sec | -c command...]\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:71
+> +#, c-format
+> +msgid "\t -v: be more verbose\n"
+> +msgstr "-v：更详细\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:73
+> +#, c-format
+> +msgid "\t -h: print this help\n"
+> +msgstr "-h：打印此帮助\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:74
+> +#, c-format
+> +msgid "\t -i: time interval to measure for in seconds (default 1)\n"
+> +msgstr "-i：测量的时间间隔（以秒为单位）（默认 1）\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:75
+> +#, c-format
+> +msgid "\t -t: show CPU topology/hierarchy\n"
+> +msgstr "-t：显示CPU拓扑/层次结构\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:76
+> +#, c-format
+> +msgid "\t -l: list available CPU sleep monitors (for use with -m)\n"
+> +msgstr "-l：列出可用的 CPU 睡眠监视器（与 -m 一起使用）\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:77
+> +#, c-format
+> +msgid "\t -m: show specific CPU sleep monitors only (in same order)\n"
+> +msgstr "-m：仅显示特定的CPU睡眠监视器（按相同顺序）\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:79
+> +#, c-format
+> +msgid ""
+> +"only one of: -t, -l, -m are allowed\n"
+> +"If none of them is passed,"
+> +msgstr ""
+> +"仅允许以下之一：-t、-l、-m\n"
+> +"如果都没有通过的话"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:80
+> +#, c-format
+> +msgid " all supported monitors are shown\n"
+> +msgstr " 显示所有支持的显示器\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:197
+> +#, c-format
+> +msgid "Monitor %s, Counter %s has no count function. Implementation error\n"
+> +msgstr "监视器 %s、计数器 %s 无计数功能。 执行错误\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:207
+> +#, c-format
+> +msgid " *is offline\n"
+> +msgstr " *离线\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:236
+> +#, c-format
+> +msgid "%s: max monitor name length (%d) exceeded\n"
+> +msgstr "%s：超出最大监视器名称长度 (%d)\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:250
+> +#, c-format
+> +msgid "No matching monitor found in %s, try -l option\n"
+> +msgstr "在 %s 中找不到匹配的监视器，请尝试 -l 选项\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:266
+> +#, c-format
+> +msgid "Monitor \"%s\" (%d states) - Might overflow after %u s\n"
+> +msgstr "监视器“%s”（%d 状态）- 可能会在 %u 秒后溢出\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:319
+> +#, c-format
+> +msgid "%s took %.5f seconds and exited with status %d\n"
+> +msgstr "%s 用了 %.5f 秒并退出，状态为 %d\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:406
+> +#, c-format
+> +msgid "Cannot read number of available processors\n"
+> +msgstr "无法读取可用处理器的数量\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:417
+> +#, c-format
+> +msgid "Available monitor %s needs root access\n"
+> +msgstr "可用监视器 %s 需要 root 访问权限\n"
+> +
+> +#: utils/idle_monitor/cpupower-monitor.c:428
+> +#, c-format
+> +msgid "No HW Cstate monitors found\n"
+> +msgstr "未找到 HW Cstate 监视器\n"
+> +
+> +#: utils/cpupower.c:78
+> +#, c-format
+> +msgid "cpupower [ -c cpulist ] subcommand [ARGS]\n"
+> +msgstr "cpupower [ -c cpulist ] subcommand [ARGS]\n"
+> +
+> +#: utils/cpupower.c:79
+> +#, c-format
+> +msgid "cpupower --version\n"
+> +msgstr "cpupower --version\n"
+> +
+> +#: utils/cpupower.c:80
+> +#, c-format
+> +msgid "Supported subcommands are:\n"
+> +msgstr "支持的子命令有：\n"
+> +
+> +#: utils/cpupower.c:83
+> +#, c-format
+> +msgid ""
+> +"\n"
+> +"Some subcommands can make use of the -c cpulist option.\n"
+> +msgstr ""
+> +"\n"
+> +"某些子命令可以使用 -c cpulist 选项。\n"
+> +
+> +#: utils/cpupower.c:84
+> +#, c-format
+> +msgid "Look at the general cpupower manpage how to use it\n"
+> +msgstr "看看一般的cpupower manpage如何使用它\n"
+> +
+> +#: utils/cpupower.c:85
+> +#, c-format
+> +msgid "and read up the subcommand's manpage whether it is supported.\n"
+> +msgstr "并阅读子命令的manpage是否受支持。\n"
+> +
+> +#: utils/cpupower.c:86
+> +#, c-format
+> +msgid ""
+> +"\n"
+> +"Use cpupower help subcommand for getting help for above subcommands.\n"
+> +msgstr ""
+> +"\n"
+> +"使用 cpupower help subcommand获取上述子命令的帮助。\n"
+> +
+> +#: utils/cpupower.c:91
+> +#, c-format
+> +msgid "Report errors and bugs to %s, please.\n"
+> +msgstr "请向 %s 报告错误和错误。\n"
+> +
+> +#: utils/cpupower.c:114
+> +#, c-format
+> +msgid "Error parsing cpu list\n"
+> +msgstr "解析cpu列表时出错\n"
+> +
+> +#: utils/cpupower.c:172
+> +#, c-format
+> +msgid "Subcommand %s needs root privileges\n"
+> +msgstr "子命令 %s 需要 root 权限\n"
+> +
+> +#: utils/cpufreq-info.c:31
+> +#, c-format
+> +msgid "Couldn't count the number of CPUs (%s: %s), assuming 1\n"
+> +msgstr "无法计算 CPU 数量（%s：%s），假设为 1\n"
+> +
+> +#: utils/cpufreq-info.c:63
+> +#, c-format
+> +msgid ""
+> +"          minimum CPU frequency  -  maximum CPU frequency  -  governor\n"
+> +msgstr "最低 CPU 频率 - 最高 CPU 频率 - 调速器\n"
+> +
+> +#: utils/cpufreq-info.c:151
+> +#, c-format
+> +msgid "Error while evaluating Boost Capabilities on CPU %d -- are you root?\n"
+> +msgstr "评估 CPU %d 上的 Boost 功能时出错 - 您是 root 吗？\n"
+> +
+> +#. P state changes via MSR are identified via cpuid 80000007
+> +#. on Intel and AMD, but we assume boost capable machines can do that
+> +#. if (cpuid_eax(0x80000000) >= 0x80000007
+> +#. && (cpuid_edx(0x80000007) & (1 << 7)))
+> +#.
+> +#: utils/cpufreq-info.c:161
+> +#, c-format
+> +msgid "  boost state support: \n"
+> +msgstr "  升压状态支持：\n"
+> +
+> +#: utils/cpufreq-info.c:163
+> +#, c-format
+> +msgid "    Supported: %s\n"
+> +msgstr "    支持：%s\n"
+> +
+> +#: utils/cpufreq-info.c:163 utils/cpufreq-info.c:164
+> +msgid "yes"
+> +msgstr "是"
+> +
+> +#: utils/cpufreq-info.c:163 utils/cpufreq-info.c:164
+> +msgid "no"
+> +msgstr "不是"
+> +
+> +#: utils/cpufreq-info.c:164
+> +#, c-format
+> +msgid "    Active: %s\n"
+> +msgstr "    活跃：%s\n"
+> +
+> +#: utils/cpufreq-info.c:177
+> +#, c-format
+> +msgid "    Boost States: %d\n"
+> +msgstr "    提升状态：%d\n"
+> +
+> +#: utils/cpufreq-info.c:178
+> +#, c-format
+> +msgid "    Total States: %d\n"
+> +msgstr "    状态总数：%d\n"
+> +
+> +#: utils/cpufreq-info.c:181
+> +#, c-format
+> +msgid "    Pstate-Pb%d: %luMHz (boost state)\n"
+> +msgstr "    Pstate-Pb%d：%luMHz（升压状态）\n"
+> +
+> +#: utils/cpufreq-info.c:184
+> +#, c-format
+> +msgid "    Pstate-P%d:  %luMHz\n"
+> +msgstr "    Pstate-P%d：%luMHz\n"
+> +
+> +#: utils/cpufreq-info.c:211
+> +#, c-format
+> +msgid "  no or unknown cpufreq driver is active on this CPU\n"
+> +msgstr "  该 CPU 上没有或未知的 cpufreq 驱动程序处于活动状态\n"
+> +
+> +#: utils/cpufreq-info.c:213
+> +#, c-format
+> +msgid "  driver: %s\n"
+> +msgstr "  驱动程序：%s\n"
+> +
+> +#: utils/cpufreq-info.c:219
+> +#, c-format
+> +msgid "  CPUs which run at the same hardware frequency: "
+> +msgstr "  以相同硬件频率运行的 CPU："
+> +
+> +#: utils/cpufreq-info.c:230
+> +#, c-format
+> +msgid "  CPUs which need to have their frequency coordinated by software: "
+> +msgstr "  需要通过软件协调频率的 CPU："
+> +
+> +#: utils/cpufreq-info.c:241
+> +#, c-format
+> +msgid "  maximum transition latency: "
+> +msgstr "  最大转换延迟："
+> +
+> +#: utils/cpufreq-info.c:247
+> +#, c-format
+> +msgid "  hardware limits: "
+> +msgstr "  硬件限制："
+> +
+> +#: utils/cpufreq-info.c:256
+> +#, c-format
+> +msgid "  available frequency steps: "
+> +msgstr "  可用频率范围："
+> +
+> +#: utils/cpufreq-info.c:269
+> +#, c-format
+> +msgid "  available cpufreq governors: "
+> +msgstr "  可用的cpufreq调节器："
+> +
+> +#: utils/cpufreq-info.c:280
+> +#, c-format
+> +msgid "  current policy: frequency should be within "
+> +msgstr "  当前政策：频率应在"
+> +
+> +#: utils/cpufreq-info.c:282
+> +#, c-format
+> +msgid " and "
+> +msgstr "和"
+> +
+> +#: utils/cpufreq-info.c:286
+> +#, c-format
+> +msgid ""
+> +"The governor \"%s\" may decide which speed to use\n"
+> +"                  within this range.\n"
+> +msgstr ""
+> +"调速器“%s”可以决定使用哪种速度\n"
+> +"                   在这个范围内。\n"
+> +
+> +#: utils/cpufreq-info.c:293
+> +#, c-format
+> +msgid "  current CPU frequency is "
+> +msgstr "  当前CPU频率是"
+> +
+> +#: utils/cpufreq-info.c:296
+> +#, c-format
+> +msgid " (asserted by call to hardware)"
+> +msgstr " （通过调用硬件来断言）"
+> +
+> +#: utils/cpufreq-info.c:304
+> +#, c-format
+> +msgid "  cpufreq stats: "
+> +msgstr "  cpu频率统计："
+> +
+> +#: utils/cpufreq-info.c:472
+> +#, c-format
+> +msgid "Usage: cpupower freqinfo [options]\n"
+> +msgstr "用法：cpupower freqinfo [选项]\n"
+> +
+> +#: utils/cpufreq-info.c:473 utils/cpufreq-set.c:26 utils/cpupower-set.c:23
+> +#: utils/cpupower-info.c:22 utils/cpuidle-info.c:148
+> +#, c-format
+> +msgid "Options:\n"
+> +msgstr "选项：\n"
+> +
+> +#: utils/cpufreq-info.c:474
+> +#, c-format
+> +msgid "  -e, --debug          Prints out debug information [default]\n"
+> +msgstr "  -e, --debug 打印出调试信息[默认]\n"
+> +
+> +#: utils/cpufreq-info.c:475
+> +#, c-format
+> +msgid ""
+> +"  -f, --freq           Get frequency the CPU currently runs at, according\n"
+> +"                       to the cpufreq core *\n"
+> +msgstr ""
+> +"  -f, --freq 获取CPU当前运行的频率，根据\n"
+> +"                        到 cpufreq 核心 *\n"
+> +
+> +#: utils/cpufreq-info.c:477
+> +#, c-format
+> +msgid ""
+> +"  -w, --hwfreq         Get frequency the CPU currently runs at, by reading\n"
+> +"                       it from hardware (only available to root) *\n"
+> +msgstr ""
+> +"  -w, --hwfreq 通过读取获取CPU当前运行的频率\n"
+> +"                        它来自硬件（仅适用于root）*\n"
+> +
+> +#: utils/cpufreq-info.c:479
+> +#, c-format
+> +msgid ""
+> +"  -l, --hwlimits       Determine the minimum and maximum CPU frequency "
+> +"allowed *\n"
+> +msgstr "  -l, --hwlimits 确定允许的最小和最大 CPU 频率 *\n"
+> +
+> +#: utils/cpufreq-info.c:480
+> +#, c-format
+> +msgid "  -d, --driver         Determines the used cpufreq kernel driver *\n"
+> +msgstr "  -d, --driver 确定使用的 cpufreq 内核驱动程序 *\n"
+> +
+> +#: utils/cpufreq-info.c:481
+> +#, c-format
+> +msgid "  -p, --policy         Gets the currently used cpufreq policy *\n"
+> +msgstr "  -p, --policy 获取当前使用的cpufreq策略 *\n"
+> +
+> +#: utils/cpufreq-info.c:482
+> +#, c-format
+> +msgid "  -g, --governors      Determines available cpufreq governors *\n"
+> +msgstr "  -g, --governors 确定可用的 cpufreq 调节器 *\n"
+> +
+> +#: utils/cpufreq-info.c:483
+> +#, c-format
+> +msgid ""
+> +"  -r, --related-cpus   Determines which CPUs run at the same hardware "
+> +"frequency *\n"
+> +msgstr "  -r, --lated-cpus 确定哪些 CPU 以相同的硬件频率运行 *\n"
+> +
+> +#: utils/cpufreq-info.c:484
+> +#, c-format
+> +msgid ""
+> +"  -a, --affected-cpus  Determines which CPUs need to have their frequency\n"
+> +"                       coordinated by software *\n"
+> +msgstr ""
+> +"  -a, --affected-cpus 确定哪些 CPU 需要其频率\n"
+> +"                        由软件协调*\n"
+> +
+> +#: utils/cpufreq-info.c:486
+> +#, c-format
+> +msgid "  -s, --stats          Shows cpufreq statistics if available\n"
+> +msgstr "  -s, --stats 显示 cpufreq 统计信息（如果有）\n"
+> +
+> +#: utils/cpufreq-info.c:487
+> +#, c-format
+> +msgid ""
+> +"  -y, --latency        Determines the maximum latency on CPU frequency "
+> +"changes *\n"
+> +msgstr "  -y, --latency 确定 CPU 频率变化的最大延迟*\n"
+> +
+> +#: utils/cpufreq-info.c:488
+> +#, c-format
+> +msgid "  -b, --boost          Checks for turbo or boost modes  *\n"
+> +msgstr "  -b, --boost 检查 Turbo 或 boost 模式 *\n"
+> +
+> +#: utils/cpufreq-info.c:489
+> +#, c-format
+> +msgid ""
+> +"  -o, --proc           Prints out information like provided by the /proc/"
+> +"cpufreq\n"
+> +"                       interface in 2.4. and early 2.6. kernels\n"
+> +msgstr ""
+> +"  -o, --proc 打印 /proc/cpufreq 提供的信息\n"
+> +"                        2.4 中的接口。 以及 2.6 之前的内核。\n"
+> +
+> +#: utils/cpufreq-info.c:491
+> +#, c-format
+> +msgid ""
+> +"  -m, --human          human-readable output for the -f, -w, -s and -y "
+> +"parameters\n"
+> +msgstr "  -m, -- human -f, -w, -s 和 -y 参数的人类可读输出\n"
+> +
+> +#: utils/cpufreq-info.c:492 utils/cpuidle-info.c:152
+> +#, c-format
+> +msgid "  -h, --help           Prints out this screen\n"
+> +msgstr "  -h, --help 打印此屏幕\n"
+> +
+> +#: utils/cpufreq-info.c:495
+> +#, c-format
+> +msgid ""
+> +"If no argument or only the -c, --cpu parameter is given, debug output "
+> +"about\n"
+> +"cpufreq is printed which is useful e.g. for reporting bugs.\n"
+> +msgstr ""
+> +"screen如果没有参数或仅给出了 -c, --cpu 参数，则调试输出有关\n"
+> +"cpufreq 被打印出来，这很有用，例如 用于报告错误。\n"
+> +
+> +#: utils/cpufreq-info.c:497
+> +#, c-format
+> +msgid ""
+> +"For the arguments marked with *, omitting the -c or --cpu argument is\n"
+> +"equivalent to setting it to zero\n"
+> +msgstr ""
+> +"对于标有 * 的参数，省略 -c 或 --cpu 参数是\n"
+> +"相当于将其设置为零\n"
+> +
+> +#: utils/cpufreq-info.c:580
+> +#, c-format
+> +msgid ""
+> +"The argument passed to this tool can't be combined with passing a --cpu "
+> +"argument\n"
+> +msgstr "传递给此工具的参数不能与传递 --cpu 参数结合使用\n"
+> +
+> +#: utils/cpufreq-info.c:596
+> +#, c-format
+> +msgid ""
+> +"You can't specify more than one --cpu parameter and/or\n"
+> +"more than one output-specific argument\n"
+> +msgstr ""
+> +"您不能指定多个 --cpu 参数和/或\n"
+> +"多个特定于输出的参数\n"
+> +
+> +#: utils/cpufreq-info.c:600 utils/cpufreq-set.c:82 utils/cpupower-set.c:42
+> +#: utils/cpupower-info.c:42 utils/cpuidle-info.c:213
+> +#, c-format
+> +msgid "invalid or unknown argument\n"
+> +msgstr "无效或未知的参数\n"
+> +
+> +#: utils/cpufreq-info.c:617
+> +#, c-format
+> +msgid "couldn't analyze CPU %d as it doesn't seem to be present\n"
+> +msgstr "无法分析 CPU %d，因为它似乎不存在\n"
+> +
+> +#: utils/cpufreq-info.c:620 utils/cpupower-info.c:142
+> +#, c-format
+> +msgid "analyzing CPU %d:\n"
+> +msgstr "分析 CPU %d：\n"
+> +
+> +#: utils/cpufreq-set.c:25
+> +#, c-format
+> +msgid "Usage: cpupower frequency-set [options]\n"
+> +msgstr "用法：cpupower frequency-set [选项]\n"
+> +
+> +#: utils/cpufreq-set.c:27
+> +#, c-format
+> +msgid ""
+> +"  -d FREQ, --min FREQ      new minimum CPU frequency the governor may "
+> +"select\n"
+> +msgstr "  -d FREQ, --min FREQ 调控器可以选择的新的最小 CPU 频率\n"
+> +
+> +#: utils/cpufreq-set.c:28
+> +#, c-format
+> +msgid ""
+> +"  -u FREQ, --max FREQ      new maximum CPU frequency the governor may "
+> +"select\n"
+> +msgstr "  -u FREQ, --max FREQ 调控器可以选择的新的最大 CPU 频率\n"
+> +
+> +#: utils/cpufreq-set.c:29
+> +#, c-format
+> +msgid "  -g GOV, --governor GOV   new cpufreq governor\n"
+> +msgstr "  -g GOV, --governor GOV 新的 cpufreq 调节器\n"
+> +
+> +#: utils/cpufreq-set.c:30
+> +#, c-format
+> +msgid ""
+> +"  -f FREQ, --freq FREQ     specific frequency to be set. Requires "
+> +"userspace\n"
+> +"                           governor to be available and loaded\n"
+> +msgstr ""
+> +"  -f FREQ, --freq FREQ 要设置的特定频率。 需要用户空间\n"
+> +"                            调速器可用并已加载\n"
+> +
+> +#: utils/cpufreq-set.c:32
+> +#, c-format
+> +msgid "  -r, --related            Switches all hardware-related CPUs\n"
+> +msgstr "  -r, --related 切换所有与硬件相关的CPU\n"
+> +
+> +#: utils/cpufreq-set.c:33 utils/cpupower-set.c:28 utils/cpupower-info.c:27
+> +#, c-format
+> +msgid "  -h, --help               Prints out this screen\n"
+> +msgstr "  -h, --help 打印此屏幕\n"
+> +
+> +#: utils/cpufreq-set.c:35
+> +#, c-format
+> +msgid ""
+> +"Notes:\n"
+> +"1. Omitting the -c or --cpu argument is equivalent to setting it to "
+> +"\"all\"\n"
+> +msgstr ""
+> +"注意：\n"
+> +"1.省略-c或--cpu参数相当于将其设置为“all”\n"
+> +
+> +#: utils/cpufreq-set.c:37
+> +#, c-format
+> +msgid ""
+> +"2. The -f FREQ, --freq FREQ parameter cannot be combined with any other "
+> +"parameter\n"
+> +"   except the -c CPU, --cpu CPU parameter\n"
+> +"3. FREQuencies can be passed in Hz, kHz (default), MHz, GHz, or THz\n"
+> +"   by postfixing the value with the wanted unit name, without any space\n"
+> +"   (FREQuency in kHz =^ Hz * 0.001 =^ MHz * 1000 =^ GHz * 1000000).\n"
+> +msgstr ""
+> +"2. -f FREQ、--freq FREQ参数不能与任何其他参数组合使用\n"
+> +"    除了 -c CPU、--cpu CPU 参数\n"
+> +"3. 频率可以以 Hz、kHz（默认）、MHz、GHz 或 THz 为单位传递\n"
+> +"    通过在值后面添加所需的单位名称，不带任何空格\n"
+> +"    （以 kHz 为单位的频率 =^ Hz * 0.001 =^ MHz * 1000 =^ GHz * 1000000）。\n"
+> +
+> +#: utils/cpufreq-set.c:57
+> +#, c-format
+> +msgid ""
+> +"Error setting new values. Common errors:\n"
+> +"- Do you have proper administration rights? (super-user?)\n"
+> +"- Is the governor you requested available and modprobed?\n"
+> +"- Trying to set an invalid policy?\n"
+> +"- Trying to set a specific frequency, but userspace governor is not "
+> +"available,\n"
+> +"   for example because of hardware which cannot be set to a specific "
+> +"frequency\n"
+> +"   or because the userspace governor isn't loaded?\n"
+> +msgstr ""
+> +"设置新值时出错。 常见错误：\n"
+> +"- 您有适当的管理权吗？ （超级用户？）\n"
+> +"- 您请求的调控器是否可用并已进行 modprobed？\n"
+> +"- 尝试设置无效的策略？\n"
+> +"- 尝试设置特定频率，但用户空间调控器不可用，\n"
+> +"    例如由于硬件无法设置为特定频率\n"
+> +"    或者因为用户空间调控器未加载？\n"
+> +
+> +#: utils/cpufreq-set.c:170
+> +#, c-format
+> +msgid "wrong, unknown or unhandled CPU?\n"
+> +msgstr "错误、未知或未处理的CPU？\n"
+> +
+> +#: utils/cpufreq-set.c:302
+> +#, c-format
+> +msgid ""
+> +"the -f/--freq parameter cannot be combined with -d/--min, -u/--max or\n"
+> +"-g/--governor parameters\n"
+> +msgstr ""
+> +"-f/--freq 参数不能与 -d/--min、-u/--max 或\n"
+> +"-g/--调速器参数\n"
+> +
+> +#: utils/cpufreq-set.c:308
+> +#, c-format
+> +msgid ""
+> +"At least one parameter out of -f/--freq, -d/--min, -u/--max, and\n"
+> +"-g/--governor must be passed\n"
+> +msgstr ""
+> +"-f/--freq、-d/--min、-u/--max 和 -f/--freq 中的至少一个参数\n"
+> +"-g/--governor 必须通过\n"
+> +
+> +#: utils/cpufreq-set.c:347
+> +#, c-format
+> +msgid "Setting cpu: %d\n"
+> +msgstr "设置CPU：%d\n"
+> +
+> +#: utils/cpupower-set.c:22
+> +#, c-format
+> +msgid "Usage: cpupower set [ -b val ] [ -m val ] [ -s val ]\n"
+> +msgstr "用法： cpupower set [ -b val ] [ -m val ] [ -s val ]\n"
+> +
+> +#: utils/cpupower-set.c:24
+> +#, c-format
+> +msgid ""
+> +"  -b, --perf-bias [VAL]    Sets CPU's power vs performance policy on some\n"
+> +"                           Intel models [0-15], see manpage for details\n"
+> +msgstr ""
+> +"  -b, --perf-bias [VAL] 设置 CPU 的功耗与性能策略\n"
+> +"                            Intel 型号 [0-15]，请参阅manpage了解详细信息\n"
+> +
+> +#: utils/cpupower-set.c:26
+> +#, c-format
+> +msgid ""
+> +"  -m, --sched-mc  [VAL]    Sets the kernel's multi core scheduler policy.\n"
+> +msgstr "  -m, --sched-mc [VAL] 设置内核的多核调度程序策略。\n"
+> +
+> +#: utils/cpupower-set.c:27
+> +#, c-format
+> +msgid ""
+> +"  -s, --sched-smt [VAL]    Sets the kernel's thread sibling scheduler "
+> +"policy.\n"
+> +msgstr "  -s, --sched-smt [VAL] 设置内核的线程同级调度程序策略。\n"
+> +
+> +#: utils/cpupower-set.c:80
+> +#, c-format
+> +msgid "--perf-bias param out of range [0-%d]\n"
+> +msgstr "--perf-bias 参数超出范围 [0-%d]\n"
+> +
+> +#: utils/cpupower-set.c:91
+> +#, c-format
+> +msgid "--sched-mc param out of range [0-%d]\n"
+> +msgstr "--sched-mc 参数超出范围 [0-%d]\n"
+> +
+> +#: utils/cpupower-set.c:102
+> +#, c-format
+> +msgid "--sched-smt param out of range [0-%d]\n"
+> +msgstr "--sched-smt 参数超出范围 [0-%d]\n"
+> +
+> +#: utils/cpupower-set.c:121
+> +#, c-format
+> +msgid "Error setting sched-mc %s\n"
+> +msgstr "设置 sched-mc %s 时出错\n"
+> +
+> +#: utils/cpupower-set.c:127
+> +#, c-format
+> +msgid "Error setting sched-smt %s\n"
+> +msgstr "设置 sched-smt %s 时出错\n"
+> +
+> +#: utils/cpupower-set.c:146
+> +#, c-format
+> +msgid "Error setting perf-bias value on CPU %d\n"
+> +msgstr "在 CPU %d 上设置性能偏差值时出错\n"
+> +
+> +#: utils/cpupower-info.c:21
+> +#, c-format
+> +msgid "Usage: cpupower info [ -b ] [ -m ] [ -s ]\n"
+> +msgstr "用法：cpupower info [-b][-m][-s]\n"
+> +
+> +#: utils/cpupower-info.c:23
+> +#, c-format
+> +msgid ""
+> +"  -b, --perf-bias    Gets CPU's power vs performance policy on some\n"
+> +"                           Intel models [0-15], see manpage for details\n"
+> +msgstr ""
+> +"  -b, --perf-bias    获取 CPU 在某些方面的功耗与性能策略\n"
+> +"                            Intel 型号 [0-15]，请参阅联机帮助页了解详细信"
+> +"息\n"
+> +
+> +#: utils/cpupower-info.c:25
+> +#, c-format
+> +msgid "  -m, --sched-mc     Gets the kernel's multi core scheduler policy.\n"
+> +msgstr "  -m, --sched-mc 获取内核的多核调度程序策略。\n"
+> +
+> +#: utils/cpupower-info.c:26
+> +#, c-format
+> +msgid ""
+> +"  -s, --sched-smt    Gets the kernel's thread sibling scheduler policy.\n"
+> +msgstr "  -s, --sched-smt    获取内核的线程同级调度程序策略。\n"
+> +
+> +#: utils/cpupower-info.c:28
+> +#, c-format
+> +msgid ""
+> +"\n"
+> +"Passing no option will show all info, by default only on core 0\n"
+> +msgstr ""
+> +"\n"
+> +"不传递任何选项将显示所有信息，默认情况下仅在核心 0 上\n"
+> +
+> +#: utils/cpupower-info.c:102
+> +#, c-format
+> +msgid "System's multi core scheduler setting: "
+> +msgstr "系统的多核调度器设置："
+> +
+> +#. if sysfs file is missing it's: errno == ENOENT
+> +#: utils/cpupower-info.c:105 utils/cpupower-info.c:114
+> +#, c-format
+> +msgid "not supported\n"
+> +msgstr "不支持\n"
+> +
+> +#: utils/cpupower-info.c:111
+> +#, c-format
+> +msgid "System's thread sibling scheduler setting: "
+> +msgstr "系统的线程兄调度程序设置："
+> +
+> +#: utils/cpupower-info.c:126
+> +#, c-format
+> +msgid "Intel's performance bias setting needs root privileges\n"
+> +msgstr "Intel的性能偏差设置需要root权限\n"
+> +
+> +#: utils/cpupower-info.c:128
+> +#, c-format
+> +msgid "System does not support Intel's performance bias setting\n"
+> +msgstr "系统不支持Intel的性能偏差设置\n"
+> +
+> +#: utils/cpupower-info.c:147
+> +#, c-format
+> +msgid "Could not read perf-bias value\n"
+> +msgstr "无法读取性能偏差值\n"
+> +
+> +#: utils/cpupower-info.c:150
+> +#, c-format
+> +msgid "perf-bias: %d\n"
+> +msgstr "性能偏差：%d\n"
+> +
+> +#: utils/cpuidle-info.c:28
+> +#, c-format
+> +msgid "Analyzing CPU %d:\n"
+> +msgstr "正在分析 CPU %d：\n"
+> +
+> +#: utils/cpuidle-info.c:32
+> +#, c-format
+> +msgid "CPU %u: No idle states\n"
+> +msgstr "CPU %u：无空闲状态\n"
+> +
+> +#: utils/cpuidle-info.c:36
+> +#, c-format
+> +msgid "CPU %u: Can't read idle state info\n"
+> +msgstr "CPU %u：无法读取空闲状态信息\n"
+> +
+> +#: utils/cpuidle-info.c:41
+> +#, c-format
+> +msgid "Could not determine max idle state %u\n"
+> +msgstr "无法确定最大空闲状态 %u\n"
+> +
+> +#: utils/cpuidle-info.c:46
+> +#, c-format
+> +msgid "Number of idle states: %d\n"
+> +msgstr "空闲状态数：%d\n"
+> +
+> +#: utils/cpuidle-info.c:48
+> +#, c-format
+> +msgid "Available idle states:"
+> +msgstr "可用的空闲状态："
+> +
+> +#: utils/cpuidle-info.c:71
+> +#, c-format
+> +msgid "Flags/Description: %s\n"
+> +msgstr "标志/描述：%s\n"
+> +
+> +#: utils/cpuidle-info.c:74
+> +#, c-format
+> +msgid "Latency: %lu\n"
+> +msgstr "延迟：%lu\n"
+> +
+> +#: utils/cpuidle-info.c:76
+> +#, c-format
+> +msgid "Usage: %lu\n"
+> +msgstr "用法：%lu\n"
+> +
+> +#: utils/cpuidle-info.c:78
+> +#, c-format
+> +msgid "Duration: %llu\n"
+> +msgstr "持续时间：%llu\n"
+> +
+> +#: utils/cpuidle-info.c:90
+> +#, c-format
+> +msgid "Could not determine cpuidle driver\n"
+> +msgstr "无法确定 cpuidle 驱动程序\n"
+> +
+> +#: utils/cpuidle-info.c:94
+> +#, c-format
+> +msgid "CPUidle driver: %s\n"
+> +msgstr "CPU 空闲驱动程序：%s\n"
+> +
+> +#: utils/cpuidle-info.c:99
+> +#, c-format
+> +msgid "Could not determine cpuidle governor\n"
+> +msgstr "无法确定 cpuidle 调控器\n"
+> +
+> +#: utils/cpuidle-info.c:103
+> +#, c-format
+> +msgid "CPUidle governor: %s\n"
+> +msgstr "CPU 空闲调节器：%s\n"
+> +
+> +#: utils/cpuidle-info.c:122
+> +#, c-format
+> +msgid "CPU %u: Can't read C-state info\n"
+> +msgstr "CPU %u：无法读取 C 状态信息\n"
+> +
+> +#. printf("Cstates: %d\n", cstates);
+> +#: utils/cpuidle-info.c:127
+> +#, c-format
+> +msgid "active state:            C0\n"
+> +msgstr "活动状态:            C0\n"
+> +
+> +#: utils/cpuidle-info.c:128
+> +#, c-format
+> +msgid "max_cstate:              C%u\n"
+> +msgstr "最大c状态:              C%u\n"
+> +
+> +#: utils/cpuidle-info.c:129
+> +#, c-format
+> +msgid "maximum allowed latency: %lu usec\n"
+> +msgstr "允许的最大延迟：%lu usec\n"
+> +
+> +#: utils/cpuidle-info.c:130
+> +#, c-format
+> +msgid "states:\t\n"
+> +msgstr "状态：\t\n"
+> +
+> +#: utils/cpuidle-info.c:132
+> +#, c-format
+> +msgid "    C%d:                  type[C%d] "
+> +msgstr "    C%d:                  类型[C%d]"
+> +
+> +#: utils/cpuidle-info.c:134
+> +#, c-format
+> +msgid "promotion[--] demotion[--] "
+> +msgstr "晋升[--] 降级[--]"
+> +
+> +#: utils/cpuidle-info.c:135
+> +#, c-format
+> +msgid "latency[%03lu] "
+> +msgstr "延迟[%03lu]"
+> +
+> +#: utils/cpuidle-info.c:137
+> +#, c-format
+> +msgid "usage[%08lu] "
+> +msgstr "使用情况[%08lu]"
+> +
+> +#: utils/cpuidle-info.c:139
+> +#, c-format
+> +msgid "duration[%020Lu] \n"
+> +msgstr "持续时间[%020Lu]\n"
+> +
+> +#: utils/cpuidle-info.c:147
+> +#, c-format
+> +msgid "Usage: cpupower idleinfo [options]\n"
+> +msgstr "用法：cpupower idleinfo [选项]\n"
+> +
+> +#: utils/cpuidle-info.c:149
+> +#, c-format
+> +msgid "  -s, --silent         Only show general C-state information\n"
+> +msgstr "  -s, --silent 只显示一般C状态信息\n"
+> +
+> +#: utils/cpuidle-info.c:150
+> +#, c-format
+> +msgid ""
+> +"  -o, --proc           Prints out information like provided by the /proc/"
+> +"acpi/processor/*/power\n"
+> +"                       interface in older kernels\n"
+> +msgstr ""
+> +"  -o, --proc 打印 /proc/acpi/processor/*/power 提供的信息\n"
+> +"                        旧内核中的接口\n"
+> +
+> +#: utils/cpuidle-info.c:209
+> +#, c-format
+> +msgid "You can't specify more than one output-specific argument\n"
+> +msgstr "您不能指定多个特定于输出的参数\n"
+> +
+> +#~ msgid ""
+> +#~ "  -c CPU, --cpu CPU    CPU number which information shall be determined "
+> +#~ "about\n"
+> +#~ msgstr ""
+> +#~ "  -c CPU, --cpu CPU    NumÃ©ro du CPU pour lequel l'information sera "
+> +#~ "affichÃ©e\n"
+> +
+> +#~ msgid ""
+> +#~ "  -c CPU, --cpu CPU        number of CPU where cpufreq settings shall be "
+> +#~ "modified\n"
+> +#~ msgstr ""
+> +#~ "  -c CPU, --cpu CPU        numÃ©ro du CPU Ã  prendre en compte pour les\n"
+> +#~ "                           changements\n"
+
+
+thanks,
+-- Shuah
 
