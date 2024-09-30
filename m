@@ -1,146 +1,144 @@
-Return-Path: <linux-kernel+bounces-344294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EAD98A7E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB8698A7E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EAB1C23775
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:55:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C6F1F23311
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90A31922D7;
-	Mon, 30 Sep 2024 14:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7FizeEN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9911917F2
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507CB18F2C1;
+	Mon, 30 Sep 2024 14:56:02 +0000 (UTC)
+Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2183018E755;
+	Mon, 30 Sep 2024 14:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708072; cv=none; b=OvQ+TngqFzzRBNtB5/eJGdzdXR8oM5jjRfTgpaChwCE226upYc2GXCNTK2BVQx96WZOyaN2v+ysFPC0zBpbXr/rDNj69rb7g3qlPorU4aqVsOuwxjaK+72kc5PsYPi+VMfgeDiHhgxp7lB9CcU3gGN855RceKfXzSVC7gWPzUvs=
+	t=1727708162; cv=none; b=PKvnYq4LOzNcDSYuqMXfgC2uALAhBFjqILLui3h90xvnbtSV19EMK1QUcR3Od3MP5mBZAk8kMqtaAY3dhMSzaSEgdeeOaSHJz+XDM2t7ruEMQgPCGUgqYWzvMAEjXRcpiY3fR9z5OnX8yOvNQwfK2KnHabzo93xlQION54nv+Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708072; c=relaxed/simple;
-	bh=/JWk2c3RJLiKkNr4uJaQal5/fmki64lMPPToa0iog7E=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=R2UoY3bAGOXLEEjH/NlWOW6bPKEfyJf551I8zQ5X/Hg7tsUuvlwuaam1e4exhj8XH8/WEAnC5Xr0bKw2byR7Ogmqt73KgAo4m+69ItydSGZ+mVZH+CMnQJi9IIuQvniu4OuBqgpHtt3sZETfM8GSg1AaSzU43N20Wjnl/DEL5TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7FizeEN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3935C4CECF
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727708071;
-	bh=/JWk2c3RJLiKkNr4uJaQal5/fmki64lMPPToa0iog7E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=b7FizeENg77MKbom+2zTJGU4IpbLDyRzueqz1pgn11Erca+an93XR6UMqbg2hXPlZ
-	 j0esz+ZmB/8TGmA5iy2uWPppf6EooooreE9qFvYxdz8zBu9PJPEhtcDrklPRD0yizi
-	 1K55z5c38G5J+v5DHSSeQ02nMehByrHdTh79CLJFLOgvioQthmDjuj9dPkHvHQkqHr
-	 WhlXzvfSjmBWC5GNYgCApK6AjkqmXS/WtY2ItGap7lcxk3bxIYQgwX/M1JYdcUsGDZ
-	 /9GgOnVUrt2BZtw4RPS3EuckC31dSuKYFIZfFfZEWgBYP0KihLD2aeFibHwTi2Ho0Z
-	 koTKf/908iLww==
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb37b34a87so31948246d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:54:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXwHt18VQmUgy6dOW1y1HSVGEEk27gMW4JZ0+fEkBpR/9MC8OXtjBuZ9mXs8t6ABhLZ0V9puW2wkhR2b1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWAuxLFc9BOxnqBOdLL8M3C20wq0nh7PtU93xcXK+nHrSmd1+8
-	XF6SP406iTLMju3+y30J2MwGDZV2iLabF419vncOmL+/nCP3Oz5Wo1NQDut+EXwAieC5t10idOl
-	VE//g8/4qcILSIzuTdaNUYdC1t1E=
-X-Google-Smtp-Source: AGHT+IH/4DZQp0uzTsMI40zAn+1n2UViUSzRuwG37vCHfnoR2MSpWkb0k5JZSIt5ebWGcwB4s3FMVmIQSsDEap60QEA=
-X-Received: by 2002:a05:6214:4519:b0:6cb:5f8a:4fda with SMTP id
- 6a1803df08f44-6cb5f8a54e0mr66594666d6.6.1727708070837; Mon, 30 Sep 2024
- 07:54:30 -0700 (PDT)
+	s=arc-20240116; t=1727708162; c=relaxed/simple;
+	bh=gJ6PsIOZiM2cIBuDM/fsMvk8lDnGPaNbcWXuXHUeb98=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AVhda6TtsKZahvFk4s3tIS622ASz6zMiR4sU0ODvL1GoyHoZlhe6k+bBs7JY1lCybV9gPlXHCDEUVZypM9NiQKr5X4atWOkXbvqL4JSvb076yLIL1e0fyVSAgiunqxP4q4IDeRH55tbwM5ZWfwNI2fMKt5n9luLqKGccZVE5E1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-IronPort-AV: E=Sophos;i="6.11,165,1725289200"; 
+   d="scan'208";a="220366721"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Sep 2024 23:55:58 +0900
+Received: from mulinux.home (unknown [10.226.92.226])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 12DB540071E5;
+	Mon, 30 Sep 2024 23:55:43 +0900 (JST)
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Marc Zyngier <maz@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+Date: Mon, 30 Sep 2024 15:55:39 +0100
+Message-Id: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Date: Mon, 30 Sep 2024 16:54:19 +0200
-X-Gmail-Original-Message-ID: <CAJ+HfNjwqMhAFUvKRsWEAD1BZNC19ouYmJ9XMNP2HrcyKo6Ltg@mail.gmail.com>
-Message-ID: <CAJ+HfNjwqMhAFUvKRsWEAD1BZNC19ouYmJ9XMNP2HrcyKo6Ltg@mail.gmail.com>
-Subject: Github RISC-V CI (BoF follow-up)
-To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-riscv <linux-riscv@lists.infradead.org>
-Cc: Charlie Jenkins <charlie@rivosinc.com>, Conor Dooley <conor@kernel.org>, 
-	Samuel Holland <samuel.holland@sifive.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	Drew Fustini <dfustini@tenstorrent.com>, Arnd Bergmann <arnd@arndb.de>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi,
+rzg2l_irqc_common_init calls of_find_device_by_node, but the
+corresponding put_device call is missing.
 
-Following up on the discussion around CI that came up during Plumbers
-RISC-V BoF.
+Make sure we call put_device both when failing and when
+succeeding.
 
-TL;DR: There's a CI running builds/and tests for RISC-V. Check out [4],
-if you're a nice person, try to fix what's broken.
+Fixes: 3fed09559cd8 ("irqchip: Add RZ/G2L IA55 Interrupt Controller driver")
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
+ drivers/irqchip/irq-renesas-rzg2l.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
-Long version: As most of you know there are a number of Linux kernel
-CIs out there, that build/test some areas of RISC-V. kernelci does
-some, and Linaro LKFT some.
+diff --git a/drivers/irqchip/irq-renesas-rzg2l.c b/drivers/irqchip/irq-renesas-rzg2l.c
+index 693ff285ca2c..2bc9d3befa61 100644
+--- a/drivers/irqchip/irq-renesas-rzg2l.c
++++ b/drivers/irqchip/irq-renesas-rzg2l.c
+@@ -542,33 +542,40 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 	parent_domain = irq_find_host(parent);
+ 	if (!parent_domain) {
+ 		dev_err(&pdev->dev, "cannot find parent domain\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto put_dev;
+ 	}
+ 
+ 	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
+-	if (!rzg2l_irqc_data)
+-		return -ENOMEM;
++	if (!rzg2l_irqc_data) {
++		ret = -ENOMEM;
++		goto put_dev;
++	}
+ 
+ 	rzg2l_irqc_data->irqchip = irq_chip;
+ 
+ 	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
+-	if (IS_ERR(rzg2l_irqc_data->base))
+-		return PTR_ERR(rzg2l_irqc_data->base);
++	if (IS_ERR(rzg2l_irqc_data->base)) {
++		ret = PTR_ERR(rzg2l_irqc_data->base);
++		goto put_dev;
++	}
+ 
+ 	ret = rzg2l_irqc_parse_interrupts(rzg2l_irqc_data, node);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "cannot parse interrupts: %d\n", ret);
+-		return ret;
++		goto put_dev;
+ 	}
+ 
+ 	resetn = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+-	if (IS_ERR(resetn))
+-		return PTR_ERR(resetn);
++	if (IS_ERR(resetn)) {
++		ret = PTR_ERR(resetn);
++		goto put_dev;
++	}
+ 
+ 	ret = reset_control_deassert(resetn);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to deassert resetn pin, %d\n", ret);
+-		return ret;
++		goto put_dev;
+ 	}
+ 
+ 	pm_runtime_enable(&pdev->dev);
+@@ -591,6 +598,7 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ 
+ 	register_syscore_ops(&rzg2l_irqc_syscore_ops);
+ 
++	put_device(&pdev->dev);
+ 	return 0;
+ 
+ pm_put:
+@@ -598,6 +606,9 @@ static int rzg2l_irqc_common_init(struct device_node *node, struct device_node *
+ pm_disable:
+ 	pm_runtime_disable(&pdev->dev);
+ 	reset_control_assert(resetn);
++put_dev:
++	put_device(&pdev->dev);
++
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
 
-Yet another CI runs in parallel to the RISC-V Patchwork CI on Github,
-running on the RISE sponsored runners [1].
-
-A major piece missing is a summary/dashboard page. That's still in the
-planning phase. I'll be looking into what the kernel CI folks are
-offering in that space (KCIDB).
-
-The CI pulls in a couple of branches, e.g. Linus' master, Palmer's
-staging branches, and more. All branches are listed via the PRs here
-[4].
-
-There are two workflows ci-series (build and boot), and for bpf,
-bpf-next, and Linus' master ci-kselftest is running as an experiment.
-I'll be adding kselftest to the other branches, and a couple of other
-suites once we get more build machines, and the tests are somewhat
-more stable. ;-)
-
-All the builds are cross compiled, and the tests are performed on
-qemu. It's all run in a Docker container [3], that can be pulled with:
-
-  $ docker pull ghcr.io/linux-riscv/pw-builder:latest
-
-The Github CI scripts (again, shared with Patchwork) reside here [2].
-
-Each time a tree moves, a new build is performed. Sometimes, the tree
-moves before the job is done. In that case it's cancelled, and re-run
-on the new head.
-
-Build/boot: A 6.12-rc1 run is here [6]. The log artifacts are at the bottom=
-.
-Click "build-series", and expand "Run checks" for more details (or
-checkout the logs).
-
-Kselftest: A 6.12-rc1 run is here [5]. The kernel configuration is
-defconfig+kselftest-merge (plus some additional bandaid patches that
-haven't made it to mainline [7]. The test suites include everything
-that's explicitly in TARGETS (top kselftest Makefile), and that has
-cross compile support (e.g. NOT sched_ext yet ;-)).
-
-Download the logs from [5], and then:
-
-  $ egrep -a '^TEST|^not|Kernel panic' *__kselftest{,-bpf,-net,-ftrace}.log
-
-to view the failed tests. On 6.12-rc1 the ftrace suite panics! :-P
-
-It's far from perfect, and we're still not running enough (AFAIK) tests on
-real HW, but it's something that's available now. Patches are *welcome*
-X-D.
-
-
-Bj=C3=B6rn
-
-[1] https://github.com/linux-riscv/linux-riscv
-[2] https://github.com/linux-riscv/github-ci/
-[3] https://github.com/linux-riscv/docker
-[4] https://github.com/linux-riscv/linux-riscv/pulls?q=3Dis%3Apr+is%3Aopen+=
-test%5D
-[5] https://github.com/linux-riscv/linux-riscv/actions/runs/11096387863
-[6] https://github.com/linux-riscv/linux-riscv/actions/runs/11096387858
-[7] https://github.com/linux-riscv/github-ci/tree/main/.github/scripts/seri=
-es/patches
 
