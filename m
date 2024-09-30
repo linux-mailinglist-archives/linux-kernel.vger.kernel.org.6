@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-344175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43DE98A5D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A354F98A5D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB611C225EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6503C281E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B108A18FDD8;
-	Mon, 30 Sep 2024 13:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B3D190067;
+	Mon, 30 Sep 2024 13:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayS6bjx2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q+C1Aw4B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1849F1EA91;
-	Mon, 30 Sep 2024 13:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136B818FC74;
+	Mon, 30 Sep 2024 13:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704136; cv=none; b=htFP+YsUI+EAXpaw/5O/iaZ/IUeItf8ERrbYtX4YHmk1C9UyXAlPcosfa80wzX288eC4VAUVj2g4/YGyYKN2zLbJ3Rveqa0+9GQI7fybD1NppNMSyNvxF3SapKeefyJqRxdcpe98PHwVolQDi2Ag6j/Pd6Rhx1P/d6r63hz8qzQ=
+	t=1727704154; cv=none; b=d4i6qcvJyfTHZHl/KZtDFKg07aucIvw7dCSI2lLQSxHgepyjYYmygv2kzVzo90sxat4LQxVE4DpC/6AsXi/qh1emDwGoQUqMxmZnNJY9jw3rnTs0BqIvyjAS6rzfYqpY+l+5sy3eWs0kF1TEjRuNOjROhpYwmr38BgSm2/y8Xek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704136; c=relaxed/simple;
-	bh=mLxOv40+thabk1P2b32vNUikvJ6eQGXWajpc61FvYNU=;
+	s=arc-20240116; t=1727704154; c=relaxed/simple;
+	bh=SkKdWR6Zc3Q+WJ73XbYu0E7L3E7jp16JZ4FTbmoEYow=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meE8nTsCjygMwYS5cTqX58L2Z6xadw9hekFWwH6OCnqMK12bJuIknF/X6eha60TXAvHqT/I4e/wI90LzJOBpIfBoj4hw/mZDu53JYIPUUji/i8pYzIICwJv3HEF2V4YHecKGuFcW/WxUkYHjNDUgoX/Zmt9spHVA08VBDyKK+TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayS6bjx2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73DCFC4CEC7;
-	Mon, 30 Sep 2024 13:48:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBuvYHZEy0P8LDzrGoeaCOyylx6LrhWZIo7UEXzg3GeIkMbwJdoZSynZ7R7e+L7BarIBK5mKBwHoMeRxP5xR9iYGpBZJguv8Ws9wUa2nPcN23hsEXSI+lR2lzrNVmbIOH0IhhMiExfL1wZ4QC6GgHXcKCMJSo4tHyAam8hQIxEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q+C1Aw4B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1ACC4CEC7;
+	Mon, 30 Sep 2024 13:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704135;
-	bh=mLxOv40+thabk1P2b32vNUikvJ6eQGXWajpc61FvYNU=;
+	s=k20201202; t=1727704153;
+	bh=SkKdWR6Zc3Q+WJ73XbYu0E7L3E7jp16JZ4FTbmoEYow=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ayS6bjx2YId3rnhgA9QtkiJMUfIFDG0/uTe//BDRDTA4WoWSwAXLER98bXAupPJD5
-	 H3uWwA/ReTdToHdIQiPrzd1tinyirhIvquDjZEJ5m8hxh51ulBbWrR8J4beQb6Exp1
-	 BtSvdKwWziw30Ga/fjoZoEYGXYdhefn0ddI93yb0L68r9s3zK4QhLEjAJA/3vV1eGY
-	 S7K+8xVGRYNAH/tnQemESmyg4WHzVoGGCtFPDwxbTCPN7MgQSYsoetWCoax0vlyWJa
-	 LhUYFntwsqI/jj5lkQUv7CVMPgpxnSO+YoIvqMC2rdcsvmzAPZOgzFDn7IAxVjY0zC
-	 v7gHc867uVeBw==
-Date: Mon, 30 Sep 2024 14:48:51 +0100
+	b=Q+C1Aw4BGq8+xPUColHxaqwGn8bn497CTJ/3ZKnacQdt68jlva79GJinOgc4OoG03
+	 QebsMKFlHSSUKK/5fRsaeIZ6NsXoq+8/vwF4xltfD9zOdqI4VHQ6T9ED2Y8L/+pwXm
+	 AHwhBKB+0fnuPOKKq17S31eVMDbJpY8ls5A6d3nQrmc0Lt5kldiTE4uKaQ4RiwY1eD
+	 ozR3cW0fz2Tud+uCHGVqR/nddW4qHzN/RHMI6hLBXO5HA2UwpkvUBR3TAY87MOLwiN
+	 OLzdywjVluVPuttI2hCh/9QY4R6tKFCh850bnFooWRnXlF8I1jVxKznc7HrPZ6YGEm
+	 fBuXZ5lxxiIMw==
+Date: Mon, 30 Sep 2024 14:49:09 +0100
 From: Conor Dooley <conor@kernel.org>
 To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+Cc: Linux4Microchip@microchip.com, Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 10/20] dt-bindings: i2c: microchip: corei2c:
- Add PIC64GX as compatible with driver
-Message-ID: <20240930-hunting-outthink-f8627440e467@spud>
+	Conor Dooley <conor+dt@kernel.org>,
+	Masahiro Yamada <yamada.masahiro@socionext.com>,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [linux][PATCH v2 11/20] dt-bindings: mmc: cdns: document
+ Microchip PIC64GX MMC/SDHCI controller
+Message-ID: <20240930-chimp-comma-6db698200b62@spud>
 References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-11-pierre-henry.moussay@microchip.com>
+ <20240930095449.1813195-12-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,37 +62,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="k080Mv3kRXZMROiA"
+	protocol="application/pgp-signature"; boundary="hOdBjTLrXI5lY4Lo"
 Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-11-pierre-henry.moussay@microchip.com>
+In-Reply-To: <20240930095449.1813195-12-pierre-henry.moussay@microchip.com>
 
 
---k080Mv3kRXZMROiA
+--hOdBjTLrXI5lY4Lo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 10:54:39AM +0100, pierre-henry.moussay@microchip.co=
+On Mon, Sep 30, 2024 at 10:54:40AM +0100, pierre-henry.moussay@microchip.co=
 m wrote:
 > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 >=20
-> PIC64GX i2c is compatible with the microchip corei2c, just add fallback
+> PIC64GX is compatible with cdns,sd4hc without any additional feature
 >=20
 > Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-
---k080Mv3kRXZMROiA
+--hOdBjTLrXI5lY4Lo
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqsQwAKCRB4tDGHoIJi
-0t7YAP9aDUIuBl8jWcIIhjpW26o6UvJxAOQG38tKO4CTvFfKZQEA2ay0zWhPrzvm
-GKaKQvG58A/nuXv/xPthr9/IGACkxQM=
-=B153
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqsVQAKCRB4tDGHoIJi
+0oOKAQCU4R/1xo9B6pPOR3TbYx9IffvFqwHarfzW6jfN1QcgIAEAzfaGJijbvaMD
+i9LsJJTBZhtJTwZBS0t4kj0xWvPEdwA=
+=2x+V
 -----END PGP SIGNATURE-----
 
---k080Mv3kRXZMROiA--
+--hOdBjTLrXI5lY4Lo--
 
