@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-343267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6008F9898EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:19:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA8B9898C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:11:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26881284F2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96BB11F21878
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B53717736;
-	Mon, 30 Sep 2024 01:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s46HyWnK"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7C64C85;
+	Mon, 30 Sep 2024 01:11:53 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5148A2F30;
-	Mon, 30 Sep 2024 01:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4079B18EA2;
+	Mon, 30 Sep 2024 01:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727659137; cv=none; b=etLsUgTr+lTzT4oWRhzTZgAbU4wdS2zfuNJrDSprhjdcM6Cg3wtBQx7RHI48UX2W0O462eUJWRYBbpKizIR/Tm6PhF23+R2fXGecpZgteJn0421ghVD7hhscqdYS1sLW0o7+5Leo+XqicsCEEnzJXD2xlHJv5D3+ZyungNZ71oI=
+	t=1727658713; cv=none; b=NwGLhvnKoQBQ2dTcL1s0Y9Kl79mi7cHQRod1wq1w3WLw0KWQQr/0m3SmDu97bgrRIOgnSoqt2n4Osi5DN9Qzhm5LP+MDkhlz3w16/NJQofjmcPhWvEBn7nuD3kNXKZysXUi2Mn9tcm4aw2t0yPnzjWTWZo0Wqx7xy1hdsuifdiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727659137; c=relaxed/simple;
-	bh=U9n8XTV277nLBjpDiMnmvf4MWzQxzHAw7LLCngVHIxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AeO67KMxopceAAWmRePQB9k4gLD/cowun+H06F8P8ftnBeTOgrHHqBPllfXsueVhumdA8pAxoWmv7f1yo6uudxw/A/3W2v75u3lbASx/Io75gTC27SE5kDVJs5iwiniHPFXbizmfso/mCIX93FYT+1z0UHz5X2Cp+ApWPXxH/Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s46HyWnK; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727659130;
-	bh=QluYZPVxSoa3hBsCuWcJZrZ8oOIxonhv+zsAfubSKX4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=s46HyWnKKPylsm3phKgH3SR98FOd2JABSoH6h9GXn40q5lxibfd5QTwbDFn+bMJ5T
-	 ghJsxHPNvo/luAHgPcwfe3bOgh7Kdmuoj5nJIZ0huUb5JC3ye/Memcm7WLP72AFof6
-	 ECkqQIobkU3oOAxJlWwkZF2qQkdPgCRQPduH/3YIw8wMiBDnrL8gTPBwH0yaegjMz1
-	 PlR8sV+8++UuvX+epjrgEOH2R44G0EP5u/Yf8ml5yDdWaT44TGMzmQNcb+2OMY0Od2
-	 x1/dRDjwq2UVHHD5AIffHE5MmHT00e6Ne17054nNDLtJEXW5wuTAgstojSU63YngBb
-	 RCI5/aJF5P53g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XH3B15Hzxz4wbv;
-	Mon, 30 Sep 2024 11:18:49 +1000 (AEST)
-Date: Mon, 30 Sep 2024 11:18:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, Alexander Aring
- <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the wpan-next tree
-Message-ID: <20240930111849.09fa7c9a@canb.auug.org.au>
+	s=arc-20240116; t=1727658713; c=relaxed/simple;
+	bh=cV3dIfCsFw0OkSjWqt0dxqZXGka2Xb4ezjREudoyS7M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sGazX4S6YJFvJXvF6p0iDD88Gvwg73YRTwevtgMB0m6NcjS4EIxwK20Vpa1iyCmzcqYFx522za20/QBhPmedRq8Zh6P3UqdveivyUfHUGAN9csghxlsIUlAWBrqqCIWBfCSbRdR7azaVSSqM6pTencDXXFoUCQ5zJHwy4+j6Vys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XH2xM5VQqz1HKPF;
+	Mon, 30 Sep 2024 09:07:51 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4675C140360;
+	Mon, 30 Sep 2024 09:11:47 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 30 Sep
+ 2024 09:11:46 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <robh@kernel.org>, <saravanak@google.com>, <sboyd@kernel.org>,
+	<davidgow@google.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] of: Fix unbalanced of node refcount in of_overlay_apply_kunit_cleanup()
+Date: Mon, 30 Sep 2024 09:22:17 +0800
+Message-ID: <20240930012217.138786-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/w2WOznnLAN_gf_Dh=w3gPn7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
---Sig_/w2WOznnLAN_gf_Dh=w3gPn7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Got following report when doing overlay_test:
 
-Hi all,
+	OF: ERROR: memory leak, expected refcount 1 instead of 2,
+	of_node_get()/of_node_put() unbalanced - destroy cset entry:
+	attach overlay node            /kunit-test
 
-The following commit is also in the wpan tree as a different commit
-(but the same patch):
+	OF: ERROR: memory leak before free overlay changeset,  /kunit-test
 
-  ace2b5331355 ("net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in reques=
-t_ir
-q()")
+In of_overlay_apply_kunit_cleanup(), the "np" will be overwritten by the
+second of_find_node_by_name(), and the error message came from
+kunit_cleanup(), just call of_node_put() before it to fix it.
 
-This is commit
+Fixes: 5c9dd72d8385 ("of: Add a KUnit test for overlays and test managed APIs")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/of/overlay_test.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  09573b1cc76e ("net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in reques=
-t_irq()")
+diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+index 19a292cdeee3..e95b1152612c 100644
+--- a/drivers/of/overlay_test.c
++++ b/drivers/of/overlay_test.c
+@@ -73,12 +73,12 @@ static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+ 
+ 	np = of_find_node_by_name(NULL, kunit_node_name);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+-	of_node_put_kunit(test, np);
+ 
+ 	pdev = of_find_device_by_node(np);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
+ 	put_device(&pdev->dev); /* Not derefing 'pdev' after this */
+ 
++	of_node_put(np);
+ 	/* Remove overlay */
+ 	kunit_cleanup(&fake);
+ 
+-- 
+2.34.1
 
-in the wpan tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/w2WOznnLAN_gf_Dh=w3gPn7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb5/HkACgkQAVBC80lX
-0GyCYAf7Ba/GdNY3Panhx7POXWXNOddiDOGT9GUofs7VfX4Bk+kjeWsFVeQN9+8F
-IUBFFsYHg39Kh88bOxdt/r1qUsSvQY8v8G7mb9wQainoyI9iHDYNjjrNzdMP1j2Y
-FDTIFY5p5mwUlMLC4q/HSIbacmf1aSbW0iqMccC2Aqh3wCHWi44ObWd+7EPqdu4b
-C2konP3Y8tSXNI9RIUisWdCU6w2GP9z3CGWWJCy6ZQLY3t3/i4KFnvbvc9K7/LNW
-LAYwwAISNedpIo6yKZc8pfCd5yZBlXABqPu35rMlAz3fLpti4ZH9TpS1QqGGzrq1
-OYrt1uK6caUGAYR7VQk2BpjyCRU+wQ==
-=vMWa
------END PGP SIGNATURE-----
-
---Sig_/w2WOznnLAN_gf_Dh=w3gPn7--
 
