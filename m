@@ -1,80 +1,87 @@
-Return-Path: <linux-kernel+bounces-344672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7271798AC8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:13:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA0898AC93
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:14:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C53283089
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C306D1C212BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:14:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A320C199E8D;
-	Mon, 30 Sep 2024 19:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7143719994B;
+	Mon, 30 Sep 2024 19:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gJ/KxS1M";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u6tZgxkK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RQcp2ovD"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2078.outbound.protection.outlook.com [40.107.223.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E44743AB0;
-	Mon, 30 Sep 2024 19:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723615; cv=none; b=DhY8X8jZFJ79/PkHWcCud7hJ42upeh6m65ZIgqTG7GMP2FI+STabxSsJv0yA01309+iEuUS/+V4pMWQDqNODlkq/0gokaF6FAYN4SZS8CLxmytbYH3c4Nu4t8u8nCNfux4znfsiVVHt4wd6yVeoF+u7Hm9n6LmlaaTKetqThXH8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723615; c=relaxed/simple;
-	bh=g9wTua1j7Rm8PkyuL03HXWc8qMSqSE7FD3GXzmwZQGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Nh9qPWPaSwUQWBXc3KKvJxDfWe3R/QZk/+RYh95ZohrejEf3wKqmeP9vaG7RoZq9R8Xn5T8pnsT8NuAK0bhupBoIzqFOvZDhK9CI11J4SPDkHvWSkqCNZ3lY8ABQ+3ABgtDwYt/tBoZy2OM6etH4oyzg5hw3lI2ROUxV7McZ268=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gJ/KxS1M; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u6tZgxkK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727723611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fFBOud7anAZyztkYeQWuXr4vYsC9F6E8D/HPnn/0BOg=;
-	b=gJ/KxS1M9QBiD9jT7XM70vomQS8njPKEUEFPhzAr1j+v8H8tYnKZFu/E0imRNBPUn6wmQM
-	63zxh87CjWjrcX8XeQp2CuaTKNGKsl9Gh0gmWMrzQhGuH5yRH7VBCaPq27hRMG/rtKfC1J
-	NyA1NeSHi1DtWXEDZ1OBlegulrkgvwMNNFLReMPCu6H/lx5aE5d1Jyr+X1asET1BArubpi
-	MzfGQLeV0JIL5UnJsvkdHXulEKCZVIi5t4GHKmVkC0+Qi/oAG5rELQYrnQotOTXfqsMOE8
-	BRCV4t1BqGMBxTZeBO1nDDqTg11Iix2OEul8FtsHI0ok5j2ZOPlfZFTlS2xG8w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727723611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fFBOud7anAZyztkYeQWuXr4vYsC9F6E8D/HPnn/0BOg=;
-	b=u6tZgxkKVS2Jwn34typ3Qtq8h/7YSyYXitKctJvkyMHyOED4yEOoKXy+UnCqzMM3x56A1E
-	YX6g2x7VODFL8aBw==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org, Jeff Layton
- <jlayton@kernel.org>
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-In-Reply-To: <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-1-5bd872330bed@kernel.org>
-Date: Mon, 30 Sep 2024 21:13:30 +0200
-Message-ID: <87bk050xb9.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E11F43AB0;
+	Mon, 30 Sep 2024 19:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727723628; cv=fail; b=IUeGaKkor9cwebPYLK1wM3qDfHcuUQaC447VOAzKzQlU5L+GO2rpnnnOIDutfGmNfNlAVCY+xB5gkWftmfKTCeUwH7cW64WjsMwDgfOTWQz2ILjyvrfu7HSRBtjX8yq5C+J/LiavsLWI0Xds7+dhPzrJyN0tC2FdofdBb0t1a6w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727723628; c=relaxed/simple;
+	bh=GFGW6I4yioVu62C1cplLbRKpSt4SpqM7YNhHaMet6gA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HnIJc0qvy1XWKQM77o/h/Je/dDHlkeKQQUk/nAay1pjY+Q2bYvCJ7446hYF96qbXFJtBkZSUweGDqk0F49qJgJeuwkbIu3b3YLi4oqFoXUYJu+SNeLwsMkjZfaCG8lHoW/Jpq19q0k02YfRdBzk1fiX07qBR1CWkLtX/xPh7mJA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RQcp2ovD; arc=fail smtp.client-ip=40.107.223.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NgV77Ap4nEUAPr9rUMYrzvUJ1n3aWJGw+Hk+JhKBse2oSv1nvwaQr79jq+KgHpz2UQeoZ3Oq9K/8Eljx08mFpWEA2IYh925yw8Np5M5d0O6alzNaW6EhfYIgZ8Bkf2aD/Kh+M3n5wmEoTW/gdRDo1byISl+gEjYUeadtgfFxVYe7xDsC+Bpm9mwAwd/bemn3GdasVBgGjaMV5ghtNBY9zU/Fwucwcn1FaOSiKnU3HousjtFRThk3eerl5JL2Dk8uonPc1EwdkVwNY8zWaMvyaTb0gjO7aSN3r6SyU8+pD3i9srmxA047JW8icnx1V7skvMwOrJA2crwZ11C+kUVGIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qpsiBrBzDEMnN0KBph4SfMMClbSpPnwO9mSLpoI1YKA=;
+ b=FLRhSmdQPnPIMy1g7eQZWjUTrFCT2A098wF/EqzWmsE6yLUwcbbeZVIg3uG35yQD3WQa2wbhZi6ZmJLgJW7kxCWLgIm7dunXE+ezneHwPYq2oxPZYDCogWXCvUp2+H5J6dQQ7vscYtxivSr3mq1Qo+NPq471yLqlU9bhrALcQ989CRD4yM/ephvEVZWrILqms6C2I5/GYso3cdQAHgPefGkTXWvOPj/mjI7zjBpYEiOvt6TGNJjIis2LaN7/7PPjcMlgCWQS/V0ThDMnqLwU//smfjZsj9guYyORtI7PAFkMHzLXzKtKScxPwNAW+F04axiEBtTu7M/WdGygrRlKoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=davemloft.net smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qpsiBrBzDEMnN0KBph4SfMMClbSpPnwO9mSLpoI1YKA=;
+ b=RQcp2ovDDNdX9mihoJo9kcAZRvXGTyrPBpjLnDFA58eo/OdqI8/MCNxTK+m3cF/E6qTd3AjmaiSJnidGpNTR2u3penI3g4yW75Xo2Xu/jt+igzp7fWy3tzXPr6tA06h3W08NOBHVeU5kIeuXay8lRhfI262NTTSYGOVVdqzVvrU=
+Received: from BN0PR03CA0059.namprd03.prod.outlook.com (2603:10b6:408:e7::34)
+ by CH3PR12MB8307.namprd12.prod.outlook.com (2603:10b6:610:12f::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Mon, 30 Sep
+ 2024 19:13:44 +0000
+Received: from BL02EPF0002992E.namprd02.prod.outlook.com
+ (2603:10b6:408:e7:cafe::df) by BN0PR03CA0059.outlook.office365.com
+ (2603:10b6:408:e7::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27 via Frontend
+ Transport; Mon, 30 Sep 2024 19:13:44 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF0002992E.mail.protection.outlook.com (10.167.249.59) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 19:13:44 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Sep
+ 2024 14:13:42 -0500
+Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 30 Sep 2024 14:13:39 -0500
+From: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+To: <radhey.shyam.pandey@amd.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <git@amd.com>, Ravikanth Tuniki
+	<ravikanth.tuniki@amd.com>
+Subject: [PATCH net] dt-bindings: net: xlnx,axi-ethernet: Add missing reg minItems
+Date: Tue, 1 Oct 2024 00:43:35 +0530
+Message-ID: <1727723615-2109795-1-git-send-email-radhey.shyam.pandey@amd.com>
+X-Mailer: git-send-email 2.1.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,62 +89,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: radhey.shyam.pandey@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF0002992E:EE_|CH3PR12MB8307:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3502169-bc54-4f93-557e-08dce184008e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EjL8w3qSBZ5p8Tp3N7lFHRod1dU475RFrvmgAqujy2jNrwFuTsFpnocZB8qT?=
+ =?us-ascii?Q?7GbTuq3xwrqdiT+oO+Qb+ZC4nns7z+nD1JODbVlpAcSPDbQsqK7Ax/CKWagb?=
+ =?us-ascii?Q?mHqHIX75hdrdJOisBNUk6KcXxYEipO4sdPGm/1VedfdrmJuKlrHy0WOfeWaH?=
+ =?us-ascii?Q?ltS3OUaEGYxZ2Jl3U2W9jGgIBJRUv6E+N4oFUByJA7c4fdYUWw8KdTWTlBBQ?=
+ =?us-ascii?Q?2OSNN+yvN1ksaTR/DJFtzQsbMT38Dl2HhDbMGKBv09ZjgwqXwEBtRlFli3tk?=
+ =?us-ascii?Q?CsXS4qFGjluhN52ax9vB1GHNF3iVBVRzDvqRS+z696JEIbjivmw5thRs3DfO?=
+ =?us-ascii?Q?5I6NRf90Ln1+y5izbeOG1tlov5sW+YXaVivfuYuKzOYcMc3bV9encrUP9fiN?=
+ =?us-ascii?Q?dapQbEN5QyzKB5XtpZxmYxw5nWaShMjHGh6R+Ii6wMkYsUSTERI0zkfH99yb?=
+ =?us-ascii?Q?Tx0fL3QmmXB38O233Oc71++1VoiNA9iSZIG7aIuQjOXnyacFTn8Y3cAqV+fK?=
+ =?us-ascii?Q?MUDQW6zF/FSisQYuZrWFoSimbEJloV99hM6LAGj3MK2RgSRamCq4+kP+aK+d?=
+ =?us-ascii?Q?/Dp9zMLaEX8+diPCqyDX3j5tvdyVcpS0CqQzyP6QnC8f399crHsr3MoxoBAH?=
+ =?us-ascii?Q?DhuYly7JZFjOLtJ0gwTIWq5TltxDmSmJ06CClKtVvrIDaywpqAB495eLhm2l?=
+ =?us-ascii?Q?ydn004SJPGlplwSMG6T6SMvlwCotDI8x3sfCVofTQeuabgqennxf5vE6PmCY?=
+ =?us-ascii?Q?rCMmJ+UBEGkswXILJQkp0M5FzvkFwFVa3RztSbnJ8wukcqYRImSTpd0BCweb?=
+ =?us-ascii?Q?JZa3XOb4CemgJte0uZiesZ59Dsm4nO9v8tubOtl7WRErZlj52ornpIwhCkBA?=
+ =?us-ascii?Q?l+d32IYoUE3HW9UhDbIET2/907ehoBCr0Nqo/1kfYC3siNiOoi0b6tGyrVs5?=
+ =?us-ascii?Q?u749oHlcBuNEtGEKLueKR/NZk8T6pbV17Eo+JHm52HIbqd0JTaFNmiTz+rwu?=
+ =?us-ascii?Q?PAvIqmPi4NZYSwmC25XPbMiaAFd1jytYJZ3PX3hycg+r/nwQkRilh9lqGgT6?=
+ =?us-ascii?Q?D1dEEAmwvWK/f8lNF3INBqs7LfHFByXuSlvEQFOdCWEr96vLH3WBKE88Sujy?=
+ =?us-ascii?Q?x8kloJyoI+JaVcZLoXTjgheR/mSGds6zXJP+Xe2X0YzkIlV4yYZoSyGZ6cOW?=
+ =?us-ascii?Q?6XYZK7h0N5vAAx0vkONX6Aj5t5IPlS4ojdy0J24hSrLFXSgCRve3VWLIsT7D?=
+ =?us-ascii?Q?s8QbtvCLP4K6h12CUhf5zXWSjIJf5o7HdgxuQ9NBs3EbGsnkmy+cyNrzeWKq?=
+ =?us-ascii?Q?PgJ+JyWcbM5Vmw3jVDBrSiLbWgsVK74WxJdoo3GiLJ0WupG+fRRe9tTTAgvF?=
+ =?us-ascii?Q?oePi2rn0RSqHZ8wnprUcY1BOU9Yzs8o3oB3cCbYYGU8s1tKQWTk7nUT1CEkz?=
+ =?us-ascii?Q?Yl8799uiQ6OCx1665Et4oFKfNwrmvFoF?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 19:13:44.0403
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3502169-bc54-4f93-557e-08dce184008e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0002992E.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8307
 
-On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
+From: Ravikanth Tuniki <ravikanth.tuniki@amd.com>
 
-> For multigrain timestamps, we must keep track of the latest timestamp
-> that has ever been handed out, and never hand out a coarse time below
-> that value.
+Add missing reg minItems as based on current binding document
+only ethernet MAC IO space is a supported configuration.
 
-How is that correct when the clock is off by an hour and then set back
-to the correct value? Then you'd get the same stale timestamp for an
-hour unless something invokes ktime_get_real_ts64_mg() which will set
-the "latest" timestamp back to a time before the previous one.
+There is a bug in schema, current examples contain 64-bit
+addressing as well as 32-bit addressing. The schema validation
+does pass incidentally considering one 64-bit reg address as
+two 32-bit reg address entries. If we change axi_ethernet_eth1
+example node reg addressing to 32-bit schema validation reports:
 
-> Add a static singleton atomic64_t into timekeeper.c that we can use to
-> keep track of the latest fine-grained time ever handed out. This is
-> tracked as a monotonic ktime_t value to ensure that it isn't affected by
-> clock jumps.
+Documentation/devicetree/bindings/net/xlnx,axi-ethernet.example.dtb:
+ethernet@40000000: reg: [[1073741824, 262144]] is too short
 
-That's just wishful thinking.
+To fix it add missing reg minItems constraints and to make things clearer
+stick to 32-bit addressing in examples.
 
-ktime_get_real_ts64_mg(ts)
-   ts = Tmono_1 + offset_1;   // TReal_1
-   floor = Tmono_1;
+Fixes: cbb1ca6d5f9a ("dt-bindings: net: xlnx,axi-ethernet: convert bindings document to yaml")
+Signed-off-by: Ravikanth Tuniki <ravikanth.tuniki@amd.com>
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+---
+ Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-                                // newtime < TReal_1                                
-                                clock_settime(REALTIME, newtime);
-                                   xtime = newtime; // TReal_2
-                                   offset_2 = offset_1 + Treal_2 - TReal(now);
-                                   --> offset_2 < offset_1
+diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+index bbe89ea9590c..e95c21628281 100644
+--- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
++++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+@@ -34,6 +34,7 @@ properties:
+       and length of the AXI DMA controller IO space, unless
+       axistream-connected is specified, in which case the reg
+       attribute of the node referenced by it is used.
++    minItems: 1
+     maxItems: 2
+ 
+   interrupts:
+@@ -181,7 +182,7 @@ examples:
+         clock-names = "s_axi_lite_clk", "axis_clk", "ref_clk", "mgt_clk";
+         clocks = <&axi_clk>, <&axi_clk>, <&pl_enet_ref_clk>, <&mgt_clk>;
+         phy-mode = "mii";
+-        reg = <0x00 0x40000000 0x00 0x40000>;
++        reg = <0x40000000 0x40000>;
+         xlnx,rxcsum = <0x2>;
+         xlnx,rxmem = <0x800>;
+         xlnx,txcsum = <0x2>;
 
-ktime_get_coarse_real_ts64_mg(ts)
-    ts = tk_xtime();       // TReal_2
-    offs = offset_2;
+base-commit: d505d3593b52b6c43507f119572409087416ba28
+-- 
+2.34.1
 
-    if (Tmono_1 + offset_2 > ts)
-       ts = Tmono_1 + offset_2; // Not taken
-
-So this returns T_Real_2 because
-
-    offset_2 < offset_1
-
-and therefore
-
-    Tmono_1 + offset_2 < TReal_2
-
-so the returned time will jump backwards vs. TReal_1 as it should
-because that's the actual time, no?
-
-So if that's the intended behaviour then the changelog is misleading at
-best.
-
-If the intention is to never return a value < TReal_1 then this does not
-work. You can make it work by using the Realtime timestamp as floor, but
-that'd be more than questionable vs. clock_settime() making the clock go
-backwards.
-
-Thanks,
-
-        tglx
 
