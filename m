@@ -1,120 +1,155 @@
-Return-Path: <linux-kernel+bounces-343968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E205598A1E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:18:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E32798A1EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 165DE1C2140A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC521F27DE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F1C18F2F8;
-	Mon, 30 Sep 2024 12:06:36 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8810D18E347;
+	Mon, 30 Sep 2024 12:08:42 +0000 (UTC)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6D3183098;
-	Mon, 30 Sep 2024 12:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8386D21105;
+	Mon, 30 Sep 2024 12:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697996; cv=none; b=ODs5wqtqsRILEPrHIN/kYrmKBBQaw69zjCb9bCt10TRO/v/cyggYD+L6HTlEs7iFLN5mRlSCKiHuXIYfxsx1Mjf45kteq9A7TZUo1kFGvbgkCqcVJ7Av2fGnadruAVqxf5LwmMCFLBU+ikttle5JIl6ALTjrgbKeww8YlfAflUQ=
+	t=1727698122; cv=none; b=gi0hcxoFIEtMRwXK1S72WkmChR6o7mraH+/r7taZj+ugxwGI4Yat1CXefL40GImqWHqdIettxeibLe7/TUNGfS2EN9prQ0WxspCQF/QFtiWXT+Jv3sABEajixXBl95K3LFtox7r3Q3q1iK5TfCw8iHU4Nm00hBEtP1i7ItWG+8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697996; c=relaxed/simple;
-	bh=3uZm5F8HdZrf1jSahO+r1HjBDvuoNtC9/fe/8536mZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fhuZrUNSwpnj1nB0UoaZJ9HQOlWRvg5Yau5kDQBHCNc5/adwoLTLNzmGgVEzHnh+XxLO/q61GoSIcWFv9wDqC0ARHy9H8/4RYDJcZrCgGU0RcTERdbPrW85TDsI1Qz91frLTYILfJw+/jx0vGRqlx9vZc8Mnz5VZTS+fVDCCmWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XHK6Q326Pz9v7Hy;
-	Mon, 30 Sep 2024 19:46:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id E46EC14059D;
-	Mon, 30 Sep 2024 20:06:30 +0800 (CST)
-Received: from [10.81.209.28] (unknown [10.81.209.28])
-	by APP2 (Coremail) with SMTP id GxC2BwBXBsc2lPpmpbvyAQ--.6803S2;
-	Mon, 30 Sep 2024 13:06:30 +0100 (CET)
-Message-ID: <50bd6ecb-c8e3-4043-9040-b2b4ee71fc02@huaweicloud.com>
-Date: Mon, 30 Sep 2024 14:06:12 +0200
+	s=arc-20240116; t=1727698122; c=relaxed/simple;
+	bh=6j0o9FIGMN+GsY1VVNW1bDqJznpxzbVADT6Kw4LqRLk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e9eQWPa3vPmeBZXJVodwjrAbRDzcfUDZBTNnW23g7TXrScO9tWoEBjsNurl6jMIsvM/ym4DBF8zCTbIATiMdnLP/WAaBVeNhWCvtZG+g6o3cqLlI4mQsokzCzWzi+n9hvZ6XpYrahzoalE5wZW3GoVmRM3NEHNSWOqkp6HaA5Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2598a0070so14354217b3.1;
+        Mon, 30 Sep 2024 05:08:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727698118; x=1728302918;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VBVZmNDqRGfEDYngJl/uKE8h3d1LhGCm3KqQOd6+fHE=;
+        b=XWtvFAQKzt7Jp+lLQOOuR2hlRZBzIGI5uhGEylmzwIxz0uUqvaaQVhJJWXeXXjQHsS
+         GBYwsk75Dl8pvU8HYZXe8AxdVl4r3Frlo80WYph2h397y9dSHQ2+YDm+f+cn0TiCQ1Sr
+         Q+nIk3CTQd0R+a/4qtoPWW3wYFuqSkxIrs6fokN9aNQbvgm5F0EDPpYI0lrZJPMfbdok
+         c/CDAMfXI0Pq1fvbXbf5Iq2ocBOuVH7SPL2uytyuntx7jmsWbBRe9VsjTgGyJuaCuuu1
+         d7F0WShsCQ1awhHoldhB6OLvpF+XKVGFGgYnTzq2LXc9Omo39UqBWhwlDku+eBrXd5DO
+         PROw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGjr+JCq8lt1xYcLjDJ3Aymw0TWd5Q4KWePCbOQlVYvNNl58+EV6RubB4lcLEjfEVnFwHT5wL1iluz6pnr@vger.kernel.org, AJvYcCWPSPtTWaEMYN+yQYVQ2eAXqa3YCG1odd6olZZ8mG4Q4cOeujkQVPON7EOfqToBKMbdwT3iS4dAwu1Na7sicQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7Aekohod872EEpOaVQxoghxTG/0NbiwKsB+uBiK5F5gvLozmp
+	YwbYpHeZVpG49TSZ/VaKz9f8mmQQsbaPU2/G45o6P2xUcD2IDxhyFkXGalvj
+X-Google-Smtp-Source: AGHT+IFjHAIchdqhmFYq8aMxXsQHGSewrO/E96IsgkRRMb9M+mIe82iBzm+frMVH8k7ARtGKkynN4g==
+X-Received: by 2002:a05:690c:d96:b0:686:1240:621a with SMTP id 00721157ae682-6e2475dff92mr90410207b3.31.1727698117994;
+        Mon, 30 Sep 2024 05:08:37 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e2452f7865sm13420557b3.7.2024.09.30.05.08.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 05:08:37 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6dbbe7e51bbso32859067b3.3;
+        Mon, 30 Sep 2024 05:08:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXoA65BLDfFSmcZQfmkiZvPxu11S1o/Lg7aMPgbtz0+iio0Ks6j1d+Zx2hMKbHgo/uq5MxK3KNBedksWMATzw==@vger.kernel.org, AJvYcCXwF2klSdgO3xstyvQk8OKEEM43hTzsUYMGaAesEklMPRTRoLmsmVmq1KkcIS1VTXXEFkCVWsHoYhFkJ3WA@vger.kernel.org
+X-Received: by 2002:a05:690c:2905:b0:6e2:1062:9b90 with SMTP id
+ 00721157ae682-6e247619bd8mr62582227b3.44.1727698117280; Mon, 30 Sep 2024
+ 05:08:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: paulmck@kernel.org
-Cc: Alan Stern <stern@rowland.harvard.edu>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
- Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
- <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
- <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
- <25344f33-b8dc-43fb-a394-529eff03d979@rowland.harvard.edu>
- <f635f9ce-fef4-4a9e-bee1-70dbc24a82ad@huaweicloud.com>
- <973ae617-96a8-456a-a805-af3d61270125@paulmck-laptop>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <973ae617-96a8-456a-a805-af3d61270125@paulmck-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBXBsc2lPpmpbvyAQ--.6803S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY37kC6x804xWl14x267AKxVWrJVCq3wAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUFYFCUUUUU
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+References: <20240930003902.4127294-1-linux@roeck-us.net> <CAMuHMdWcPpBgsK0r0U=k8NyjTjUTwBTLe6Bg_ORD2zmSNoRgJA@mail.gmail.com>
+ <obpogbufu5awsn2a6olh2ondrgwl7bgdowjcpv6jcpm2ey4s5h@obcml2w3csap>
+In-Reply-To: <obpogbufu5awsn2a6olh2ondrgwl7bgdowjcpv6jcpm2ey4s5h@obcml2w3csap>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Sep 2024 14:08:25 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXZ_N+uvXROpNvvSO3AZ7A-7hQTE4FxEa=1aMX-NC5rbA@mail.gmail.com>
+Message-ID: <CAMuHMdXZ_N+uvXROpNvvSO3AZ7A-7hQTE4FxEa=1aMX-NC5rbA@mail.gmail.com>
+Subject: Re: [PATCH] bcachefs: rename version -> bversion for big endian builds
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Kent,
 
+On Mon, Sep 30, 2024 at 12:11=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+> On Mon, Sep 30, 2024 at 12:04:42PM GMT, Geert Uytterhoeven wrote:
+> > On Mon, Sep 30, 2024 at 2:39=E2=80=AFAM Guenter Roeck <linux@roeck-us.n=
+et> wrote:
+> > > Builds on big endian systems fail as follows.
+> > >
+> > > fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+> > > fs/bcachefs/bkey.h:557:41: error:
+> > >         'const struct bkey' has no member named 'bversion'
+> > >
+> > > The original commit only renamed the variable for little endian build=
+s.
+> > > Rename it for big endian builds as well to fix the problem.
+> > >
+> > > Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
+> >
+> > Which is (again) not found on any mailing list, and has never been in
+> > linux-next before it hit upstream...
+> >
+> > > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> >
+> > > --- a/fs/bcachefs/bcachefs_format.h
+> > > +++ b/fs/bcachefs/bcachefs_format.h
+> > > @@ -223,7 +223,7 @@ struct bkey {
+> > >  #elif __BYTE_ORDER__ =3D=3D __ORDER_BIG_ENDIAN__
+> > >         struct bpos     p;
+> > >         __u32           size;           /* extent size, in sectors */
+> > > -       struct bversion version;
+> > > +       struct bversion bversion;
+> > >
+> > >         __u8            pad[1];
+> > >  #endif
+> >
+> > BTW, how does this work when accessing a non-native file system?
+> > Didn't we stop doing bi-endian file systems in v2.1.10, when ext2 was
+> > converted from a bi-endian to a little-endian file system?
+>
+> we byte swab if necessary
 
-Am 9/30/2024 um 1:04 PM schrieb Paul E. McKenney:
-> On Mon, Sep 30, 2024 at 11:42:11AM +0200, Jonas Oberhauser wrote:
->>
->>
->> I also currently don't see any major difference between the constant and
->> register case. The point is that the address is known before loading into b,
->> and hence the compiler + hardware can speculatively load *b before loading
->> into b.
-> 
-> In theory, true.  In practice, in the register case, you need a little
-> more bad luck for the compiler to be able to exploit your mistake.
+So you have to test 4 combinations instead of 2 (which you don't do,
+obviously ;-)
 
-If there's one thing I've never run out of, then it is bad luck with 
-technology.
+Ext2 was converted from a bi-endian to a little-endian file system
+because it turned out the conditional byte-swapping was more
+expensive than unconditional (not) byte-swapping. Given all the
+bcache structures are already tagged with __packed anyway, I guess
+this is even more true for bcachefs.
 
-   jonas
+The proper way established +25y ago was to settle on one endianness
+layout for all on-disk data. That way you do not have to duplicate
+data and code for little vs. big endian, keep both paths in sync, and
+you can annotate everything with __[bl]eXX attributes to let sparse
+help you catch bugs.
 
+Which endianness to pick is up to you. Ext2 settled on little-endian,
+XFS on big-endian.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
