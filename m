@@ -1,169 +1,168 @@
-Return-Path: <linux-kernel+bounces-344276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F400098A7B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5EB98A7BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2348B1C2347C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147E61F2459D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1D199246;
-	Mon, 30 Sep 2024 14:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D721991A5;
+	Mon, 30 Sep 2024 14:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MQnPF69R"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jrtg7e6B"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167D71991A5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BF01993B5
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707696; cv=none; b=sbITQyFdRcB1SKIRbrVIXGSoGbtZpTXYNotWzhqP/fQgsvKe0DyVMcpB0g71Ysrh5SKnFYPOBDsTPNfNe5qZA7i+TV4oVLND8ejyYL4kRD6rfouUV63d8yIwTMy+abois0ySO69Yo/aP+sB0U4/jxy1sJcan7TW4BGdcse0+RH4=
+	t=1727707700; cv=none; b=OUAGBTKjVDjRe4f8Eb6BQq9v8CQC43EsCNr5qJaFgJa83jjVBoUvg9H1Lzd5Pz/hrpuLIBgHQnpUOFODySylDfndYWnNkQcOCXzD8k6IlA75J52705ix0HMUVBl9aQyPFHQZXGgxDoQ6cQ6uEeFJeUHDLrIUnvJVFsPg8yY3ZUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707696; c=relaxed/simple;
-	bh=XyeXw8eHm4U0xRIzD5hFcCRVmwEbNSDv589PG5lUl74=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aYcN88zZF24A4q3wHlrgrEyoimKmY9vuP3DMIu86cvKzx56WT6sAkT6cKHwd+7YE7En2SAqzFUxHQwX2d2m59KqIy8+OatIQIPOMAzwnukyfFf536+ttGuGvcMWfi0cN8qdIim8GppSWBbmC7X0hy7t2LnYd4MYIdUUuy0nOOkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MQnPF69R; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so2964995f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:48:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727707693; x=1728312493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfRPqMQ2YRL7cytKg67BDcrJy4YgVjPhIG+hcafClNU=;
-        b=MQnPF69RLDKe2DhPGAmndJgnKxSniaiyRZkyaX2Nm4adIw9A8ciIB0yIDSTg6Fyh0J
-         PLZTWpe+dUaVelgYYgvzZqREeKn41hv/jBSAzQdK1GodsLqvsWFdscuH1EeeNrTURjdG
-         AagOwC7biLl7CuD5VGey7U9ZgMrKRDqSvfB4rfa1HEMunu+xllnKlEDV5Ief0Kc0Ybvi
-         KIBeI0pV+Pc8qRUUI4LN46qkEeDjjnbj9qYSZkCuLE5zrLxnu4KBTaDXES3rM+ULtLJ6
-         IWUIEtZsDVeOXc4GKmxGAnua3fePAMhHeL54V4L5QHQKklgSWlKZVbl/sMINlChrPiJo
-         0dCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727707693; x=1728312493;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HfRPqMQ2YRL7cytKg67BDcrJy4YgVjPhIG+hcafClNU=;
-        b=Calb4iJHbtH+Jg6/L9xjhQZNBjqhs6N1vh5cHFSAVyjN0CmRWFHPIKABvwknddiTez
-         2iGuQe7sqRjlkgRuFR+m+4xKpykCvN34X8ncVh/qJiXjqwSkeNVJ/9AqMKyTC5zJBBRQ
-         GhbDG0ITWKivVLQ/m6XGHWXAAGbGdXYIscG2dyVxD6FGbgFjTrPJliWj6OZQp4tF7d6e
-         jBqAcKxWM9bxSWSaPbIqERu4asIJC6eVYEhaUZJBnj04DetZoXLDKZrgk36EdfVlzwn/
-         sWu+y/schfV3SNFKQybDYya1iv3lVV0dspssEroATPQU6DqpNhIvKRLDWPtRCaRbTM+k
-         y9fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOtmkI928dMe3cKlfvMEKnhjSFeKPv7YzDyYL5En/nibSKznRP3gJwUlGDSnN/EdqIWo8fAZb8CpjHH5Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6aDtiypG6OSvPsXxNPPK6FXLtSnVOlxtBG57Xr1xrpY4RMl7F
-	yzcwDTwT+6Ngpq7viCxut4B/k9V1erBmu03n3V1Sc9JQxi1rOej+BvdQuuoWB0o=
-X-Google-Smtp-Source: AGHT+IFS82UmXpIStxa6SqM6CC7PH3OIn3uYOLSrafHNIkj5K/JZaHIK6K+sosLECIqdEFs+/WLaOw==
-X-Received: by 2002:a5d:644c:0:b0:37c:c4b4:339e with SMTP id ffacd0b85a97d-37cd5acba99mr8323137f8f.25.1727707693439;
-        Mon, 30 Sep 2024 07:48:13 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm9241505f8f.45.2024.09.30.07.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:48:12 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 3/3] gpio: xilinx: use generic device properties
-Date: Mon, 30 Sep 2024 16:48:04 +0200
-Message-ID: <20240930144804.75068-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240930144804.75068-1-brgl@bgdev.pl>
-References: <20240930144804.75068-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1727707700; c=relaxed/simple;
+	bh=PEeD4LINg/XZ4cAE4RGQB/SrHIE7OPTCvNFW7JgNZmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jycbePG8HMnT+oyGvZj55mEujY4JuHCRGFXCkDAeDp9yksv2JBhTHmoSU0c9XcuPQ4bBI2Yhbg2p8IvkyhEp0jD0AdPBooAApEAFN5+dZGVllU08HrLv76wYkxl9xxbKfYKYEtk/roj8jiGt+UU0NmIgit4JMUDDBEGJFFli4c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jrtg7e6B; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Qzpc0SHfXpAqzDDZmUPeIvD78KrlcYRHYwb8zg1frxA=; b=Jrtg7e6BbLi4HJYJhsMlC3CaxA
+	5CoHtn3ukPGP0jq+OH3cpgfaHiRaI6KJa2PmOeykPQ/5aCswCrcSbtiiMc1jozZD49wlvf6ph3KXf
+	jCFTxIXWtmDGuLRwDjYadKN7zBL0q74xvKlhzogWljMl1o/3TFWqZcTFszfnHX9nmt9cM5zK86h60
+	DNGqlUpXsJXO1xnnZDe8JFgnEJ3sXwT6eHHmm47rVy603MVGx4Knpfa+L3fo3dSylQxpflce/6vVo
+	mrHR6LmkZ6BrzJr9RUPBkNiZM4RT7OxZuawlVPFXIw9x9xEQ4vzcRWaImI+Ox7JF07TXzl1AkyeT0
+	e4Ioi/vg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svHh3-00000002qan-2Kn7;
+	Mon, 30 Sep 2024 14:48:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 34123300754; Mon, 30 Sep 2024 16:48:09 +0200 (CEST)
+Date: Mon, 30 Sep 2024 16:48:09 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: 6.12-rc1: general protection fault at pick_task_fair()
+Message-ID: <20240930144809.GI5594@noisy.programming.kicks-ass.net>
+References: <20240930-mysterious-meek-goldfish-2f851f@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-mysterious-meek-goldfish-2f851f@leitao>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Sep 30, 2024 at 05:52:49AM -0700, Breno Leitao wrote:
+> Hello,
+> 
+> I've been testing v6.12-rc1 and I got some crashes that I would like to
+> share, since I haven't seen anything in the mailing list yet.
+> 
+> This kernel was compiled with some debug options, against 11a299a7933e
+> ("Merge tag 'for-6.12/block-20240925' of git://git.kernel.dk/linux").
+> 
+> 
+>    [146800.130180] Oops: general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN
+>    [146800.156067] KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
+>    [146800.200109] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN, [E]=UNSIGNED_MODULE, [L]=SOFTLOCKUP, [N]=TEST
+>    [146800.218119] Hardware name: Quanta Delta Lake MP 29F0EMA00E0/Delta Lake-Class1, BIOS F0E_3A19 04/27/2023
+>    [146800.237177] Workqueue:  0x0 (events)
+>    [146800.244615] RIP: 0010:pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
+>    [146800.253955] Code: 74 08 48 89 df e8 3d 78 01 00 e9 29 01 00 00 0f 1f 44 00 00 48 89 df e8 5b ef 01 00 49 89 c6 48 8d 68 51 48 89 eb 48 c1 eb 03 <42> 0f b6 04 3b 84 c0 0f 85 98 00 00 00 80 7d 00 00 0f 84 3a 03 00
+>    All code
+>    ========
+>       0:	74 08                	je     0xa
+>       2:	48 89 df             	mov    %rbx,%rdi
+>       5:	e8 3d 78 01 00       	call   0x17847
+>       a:	e9 29 01 00 00       	jmp    0x138
+>       f:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+>      14:	48 89 df             	mov    %rbx,%rdi
+>      17:	e8 5b ef 01 00       	call   0x1ef77
+>      1c:	49 89 c6             	mov    %rax,%r14
+>      1f:	48 8d 68 51          	lea    0x51(%rax),%rbp
+>      23:	48 89 eb             	mov    %rbp,%rbx
+>      26:	48 c1 eb 03          	shr    $0x3,%rbx
+>      2a:*	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax		<-- trapping instruction
+>      2f:	84 c0                	test   %al,%al
+>      31:	0f 85 98 00 00 00    	jne    0xcf
+>      37:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
+>      3b:	0f                   	.byte 0xf
+>      3c:	84 3a                	test   %bh,(%rdx)
+>      3e:	03 00                	add    (%rax),%eax
+>    
+>    Code starting with the faulting instruction
+>    ===========================================
+>       0:	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax
+>       5:	84 c0                	test   %al,%al
+>       7:	0f 85 98 00 00 00    	jne    0xa5
+>       d:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
+>      11:	0f                   	.byte 0xf
+>      12:	84 3a                	test   %bh,(%rdx)
+>      14:	03 00                	add    (%rax),%eax
+>    [146800.291790] RSP: 0018:ffff8889ae3dfbc0 EFLAGS: 00010006
+>    [146800.302506] RAX: 0000000000000000 RBX: 000000000000000a RCX: dffffc0000000000
+>    [146800.317040] RDX: ffff8889ae3dfd30 RSI: ffff8889af5bca00 RDI: ffff888e38546380
+>    [146800.331573] RBP: 0000000000000051 R08: ffffffff86ddef37 R09: 1ffffffff0dbbde6
+>    [146800.346109] R10: dffffc0000000000 R11: fffffbfff0dbbde7 R12: 1ffff111c70a8c6a
+>    [146800.360642] R13: 1ffff111c70a8c71 R14: 0000000000000000 R15: dffffc0000000000
+>    [146800.375175] FS:  0000000000000000(0000) GS:ffff888e38500000(0000) knlGS:0000000000000000
+>    [146800.391619] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>    [146800.403369] CR2: 0000559372540094 CR3: 0000000017c8c001 CR4: 00000000007706f0
+>    [146800.417906] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>    [146800.432437] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>    [146800.446969] PKRU: 55555554
+>    [146800.452638] Call Trace:
+>    [146800.457784]  <TASK>
+>    [146800.462238] ? __die_body (arch/x86/kernel/dumpstack.c:421) 
+>    [146800.469479] ? die_addr (arch/x86/kernel/dumpstack.c:?) 
+>    [146800.476373] ? exc_general_protection (arch/x86/kernel/traps.c:? arch/x86/kernel/traps.c:693) 
+>    [146800.486078] ? asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:617) 
+>    [146800.496111] ? pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
+>    [146800.504219] ? rcu_is_watching (./include/linux/context_tracking.h:128 kernel/rcu/tree.c:737) 
+>    [146800.512321] ? util_est_update (./include/trace/events/sched.h:814 kernel/sched/fair.c:5054) 
+>    [146800.520777] pick_next_task_fair (kernel/sched/fair.c:8877) 
+>    [146800.529408] __schedule (kernel/sched/core.c:5956 kernel/sched/core.c:6477 kernel/sched/core.c:6629) 
+>    [146800.536841] ? sched_submit_work (kernel/sched/core.c:6708) 
+>    [146800.545472] schedule (kernel/sched/core.c:6753 kernel/sched/core.c:6767) 
+>    [146800.552189] worker_thread (kernel/workqueue.c:3344) 
+>    [146800.559983] kthread (kernel/kthread.c:390) 
+>    [146800.566696] ? pr_cont_work (kernel/workqueue.c:3337) 
+>    [146800.574623] ? kthread_blkcg (kernel/kthread.c:342) 
+>    [146800.582379] ret_from_fork (arch/x86/kernel/process.c:153) 
+>    [146800.589784] ? kthread_blkcg (kernel/kthread.c:342) 
+>    [146800.597537] ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+>    [146800.605664]  </TASK>
+> 
+> Important to say that I am also seeing the following warning before the
+> crash:
+> 
+>  workqueue: drain_vmap_area_work hogged CPU for >20000us 4 times, consider switching to WQ_UNBOUND
+>  ------------[ cut here ]------------
+>            !se->on_rq
+>            WARNING: CPU: 24 PID: 17 at kernel/sched/fair.c:704 dequeue_entity+0xd21/0x17c0
+> 
+> Is this helpful?
+> 
+> Thanks
+> --breno
 
-OF-specific routines should not be used unless necessary. Generic device
-properties are preferred so switch to using them in the driver code.
+This looks to be the same issue as reported here:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-xilinx.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+  https://lkml.kernel.org/r/20240930144157.GH5594@noisy.programming.kicks-ass.net
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index d99824d42c77..41c552a58059 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -15,7 +15,6 @@
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/module.h>
--#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
-@@ -564,7 +563,6 @@ static int xgpio_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct xgpio_instance *chip;
- 	int status = 0;
--	struct device_node *np = dev->of_node;
- 	u32 is_dual = 0;
- 	u32 width[2];
- 	u32 state[2];
-@@ -579,7 +577,7 @@ static int xgpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, chip);
- 
- 	/* First, check if the device is dual-channel */
--	of_property_read_u32(np, "xlnx,is-dual", &is_dual);
-+	device_property_read_u32(dev, "xlnx,is-dual", &is_dual);
- 
- 	/* Setup defaults */
- 	memset32(width, 0, ARRAY_SIZE(width));
-@@ -587,14 +585,14 @@ static int xgpio_probe(struct platform_device *pdev)
- 	memset32(dir, 0xFFFFFFFF, ARRAY_SIZE(dir));
- 
- 	/* Update GPIO state shadow register with default value */
--	of_property_read_u32(np, "xlnx,dout-default", &state[0]);
--	of_property_read_u32(np, "xlnx,dout-default-2", &state[1]);
-+	device_property_read_u32(dev, "xlnx,dout-default", &state[0]);
-+	device_property_read_u32(dev, "xlnx,dout-default-2", &state[1]);
- 
- 	bitmap_from_arr32(chip->state, state, 64);
- 
- 	/* Update GPIO direction shadow register with default value */
--	of_property_read_u32(np, "xlnx,tri-default", &dir[0]);
--	of_property_read_u32(np, "xlnx,tri-default-2", &dir[1]);
-+	device_property_read_u32(dev, "xlnx,tri-default", &dir[0]);
-+	device_property_read_u32(dev, "xlnx,tri-default-2", &dir[1]);
- 
- 	bitmap_from_arr32(chip->dir, dir, 64);
- 
-@@ -602,13 +600,13 @@ static int xgpio_probe(struct platform_device *pdev)
- 	 * Check device node and parent device node for device width
- 	 * and assume default width of 32
- 	 */
--	if (of_property_read_u32(np, "xlnx,gpio-width", &width[0]))
-+	if (device_property_read_u32(dev, "xlnx,gpio-width", &width[0]))
- 		width[0] = 32;
- 
- 	if (width[0] > 32)
- 		return -EINVAL;
- 
--	if (is_dual && of_property_read_u32(np, "xlnx,gpio2-width", &width[1]))
-+	if (is_dual && device_property_read_u32(dev, "xlnx,gpio2-width", &width[1]))
- 		width[1] = 32;
- 
- 	if (width[1] > 32)
--- 
-2.43.0
-
+Is there anything you can share about your setup / workload that manages
+to trigger this?
 
