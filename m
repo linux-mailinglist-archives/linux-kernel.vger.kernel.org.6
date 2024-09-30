@@ -1,172 +1,195 @@
-Return-Path: <linux-kernel+bounces-343374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F35989A34
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:38:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35E95989A37
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:40:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3F91F228EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 056E2281D88
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B7213D8B2;
-	Mon, 30 Sep 2024 05:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C1913D51C;
+	Mon, 30 Sep 2024 05:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WmtYzL0T"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBT6T+67"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF64A47;
-	Mon, 30 Sep 2024 05:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E796813D881;
+	Mon, 30 Sep 2024 05:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727674691; cv=none; b=FqfsrMvNuX8TJpIjLOD4OuJT13CR0m7jB8yUc50mHO0JkzSPUEkOSKBI8/grSavOtRHtUlto8AvcK2UImfRMjQWSD/3/1qUB+EDtzh5sC3qfIqRWfxmiRlU1SRI+bqV7qySXCU4F+CLSAWMC1hNEqnp4GrNHuiUw2QkwiJzKj/4=
+	t=1727674820; cv=none; b=uRS5+XgGKJHuYYubpYHcK2RrY3baW5WAtEbuxwlEHEuv5jgl7FqtWthn6ObHpjdOKYQTvXo/vRKqTF01KQLEh3Fn8ZaS4zNxR3b9d51MFJcGBHYjxDf7qDlLIzDMXhb15yM7fd200zgSFo40iUEN82Lyt0WMNm0hzbpXGoRDIRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727674691; c=relaxed/simple;
-	bh=y6BqW0adLuSNbEpDtlt1wTQwouIIcVZHMgkSlDe6AIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HZ61mahcMT+H5SsRIteDrENN1001mex4YhUaZm7vdXxqn8UEcAAzfEAnssZM0D6Ig4k56dkmDSx2iDOQzGhdFy7OarPhsIq/IvSyiXE7HAVrbni27ygFQ9sr7VQdwNE7fqdHAEMwjSaCvwntOccbSMKePywoaBrvg1vbUFLTpRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WmtYzL0T; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48TMTuOm001779;
-	Mon, 30 Sep 2024 05:37:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YltmkjNOP5VKAuTTCBOm6ghW3ZDdOOIG25kE35a0XaA=; b=WmtYzL0T5t1Vbk23
-	MnVdr0LI0mOfmKi52+BlFPc0ZGq1+S/J5N+D9N3D6VvaVcg7BwPBek1BZzPKdvbO
-	wLlhCRr/YDEjTIw9J/q/vQWWHp8FlpUqphmWuIURPOuYbmcIWFx5nLowiLCsyZ0S
-	kPZDi6SaFoTE3s1VXYShi/wkRF0UUi3oJT4ukQdnvIYGeEzqHOo7tNjAibWnZDNs
-	Hh+Zj53egUEs3yFTwNRIPykrVlq4N+V1hvr7TK5TW+y2DVrg7qrqW7m/a9cv6RgP
-	S4L/OsKi/WfZRvG2U1BaNQEDvFMqOtZCcI9HkZhMD+8FWfPUJUh2TcUa4hL7/taD
-	LataRQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa12knd3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 05:37:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48U5bphg028551
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 05:37:51 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 29 Sep
- 2024 22:37:46 -0700
-Message-ID: <f31c2b15-d1ae-41fa-952b-eab806b0e15d@quicinc.com>
-Date: Mon, 30 Sep 2024 13:37:43 +0800
+	s=arc-20240116; t=1727674820; c=relaxed/simple;
+	bh=73ua3ebCJFBwUFZlCvtMIQ/sfiZmDsqsyODFb2ktLlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=su5Pg3SLUVH6Q0Tv5xP0wYRTRjvrr99ju0Rl1NbbXJQ+YkNMSxm6iCilO7v29UEf+DeGZjtmiVJk6tF0Hi+bvK3g9u3rQEiGRwdI9LfKvnzlRS9oGFr9X7M1s+72uOulCSyuiIBB3/QKPxbN0tgG8I+xkNWiBaC2MMpxk1vJGJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBT6T+67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F04F4C4CECE;
+	Mon, 30 Sep 2024 05:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727674819;
+	bh=73ua3ebCJFBwUFZlCvtMIQ/sfiZmDsqsyODFb2ktLlw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EBT6T+67aVzJZd2Kg1UTB+42YafTzmzy3zwt3fdcV3rYWVqr650TqeN0QB6syIwUB
+	 1RoD5dnsGrqQHtS1rTZuYO1DZfrwi9kv9GQklunO8iq08xOhXznfxMTFhAzvnv0GvG
+	 1zDMZWa0iD1G5rQwLVl/a3PVjFA5nlNlh3InbCpizAdBHPmoYr4CWIKuZ7U+aXsW1f
+	 O7beiIQ7XMXg8I5RkL6JYyBLLNntA3zxqWxqOuUA9Ic1vvjD7HI1PEc6psbmbt2kuS
+	 sH2/tOiGC0h4Q6mOQPcsoK/sUXj66S2diJ0DOKWiY8wRckq4FVq8LMvf0JBnMTQkmA
+	 5V1eDRgo2tJrg==
+Date: Sun, 29 Sep 2024 22:40:17 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/8] perf record --off-cpu: Add --off-cpu-thresh
+Message-ID: <Zvo5weauCaaKQQ8b@google.com>
+References: <20240927202736.767941-1-howardchu95@gmail.com>
+ <20240927202736.767941-3-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 13/13] media: qcom: camss: Add support for VFE hardware
- version Titan 780
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-14-quic_depengs@quicinc.com>
- <6ddaa41b-86cf-44e5-a671-fd70f266642b@linaro.org>
- <eb77972c-9c9a-48f9-b850-21e6c2df005a@quicinc.com>
- <d842a992-e04f-4a11-abaa-da50808fea77@quicinc.com>
- <6b702201-4418-4bbe-95b2-50039c08b4d8@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <6b702201-4418-4bbe-95b2-50039c08b4d8@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iiMyueU0O6mCP_eI_8A9IKY2BvRqXltt
-X-Proofpoint-GUID: iiMyueU0O6mCP_eI_8A9IKY2BvRqXltt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 spamscore=0 clxscore=1015 mlxscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300039
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240927202736.767941-3-howardchu95@gmail.com>
 
-Hi Bryan,
-
-On 9/30/2024 7:57 AM, Bryan O'Donoghue wrote:
-> On 29/09/2024 02:28, Depeng Shao wrote:
->>>>
->>>
->>> Thanks for catching this, I forget to add the rup irq, so this logic 
->>> is also missed. I have tried it just now, the logic works good, will 
->>> add it in next version patch.
->>>
->>
->> I go through the code again, and find we don't do the wait for 
->> completion in VFE 480 driver, this is just used in VFE gen1 driver and 
->> just during disabling port.
+On Fri, Sep 27, 2024 at 01:27:30PM -0700, Howard Chu wrote:
+> Add the --off-cpu-thresh argument to specify the off-cpu time threshold.
+> If the off-cpu time exceeds this threshold, dump the off-cpu data
+> directly.
 > 
-> Right but, we _should_ wait for completion there, the fact we don't is a 
-> bug.
+> Suggested-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> ---
+>  tools/perf/builtin-record.c            | 26 ++++++++++++++++++++++++++
+>  tools/perf/util/bpf_off_cpu.c          |  2 ++
+>  tools/perf/util/bpf_skel/off_cpu.bpf.c |  2 ++
+>  tools/perf/util/off_cpu.h              |  2 ++
+>  tools/perf/util/record.h               |  1 +
+>  5 files changed, 33 insertions(+)
 > 
-> One context issues a command to take an action and another context in 
-> this case an ISR has to fire for that action to be complete.
-> 
-> Therefore we _should_ wait_for_completion() in the initiating context 
-> and timeout if it exceeds a reasonable timeout.
-> 
-> Granted, we've "dropped the ball" in 480 you're right, it needs to be 
-> fixed and will be but, please in your submission do the right thing.
-> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index adbaf80b398c..bd53fb3c98ec 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -3149,6 +3149,28 @@ static int record__parse_mmap_pages(const struct option *opt,
+>  	return ret;
+>  }
+>  
+> +static int record__parse_off_cpu_thresh(const struct option *opt,
+> +					const char *str,
+> +					int unset __maybe_unused)
+> +{
+> +	struct record_opts *opts = opt->value;
+> +	char *endptr;
+> +	u64 off_cpu_thresh;
+> +
+> +	if (!str)
+> +		return -EINVAL;
+> +
+> +	off_cpu_thresh = strtoul(str, &endptr, 10);
 
-Qualcomm downstream camera driver use the rup to move the req to a list 
-to maintenance a state machine. If we don't get rup then we will enter 
-bubble state.
-But we are downplaying this process now due to AUP, and the bubble 
-processing has been disabled in latest code base, since we think the 
-buffer must be filled to the given address if we have configured the AUP 
-and got buf done irq.
+Do you mean strtoull() ?
 
 
-And this per frame wait_for_completion flow isn't exist in whole camss 
-code, and current camss driver just use buf done irq to trigger the per 
-frame flow.
+> +
+> +	/* threshold isn't string "0", yet strtoull() returns 0, parsing failed */
+> +	if (*endptr || (off_cpu_thresh == 0 && strcmp(str, "0")))
+> +		return -EINVAL;
+> +	else
+> +		opts->off_cpu_thresh = off_cpu_thresh;
+> +
+> +	return 0;
+> +}
+> +
+>  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts __maybe_unused)
+>  {
+>  }
+> @@ -3342,6 +3364,7 @@ static struct record record = {
+>  		.ctl_fd              = -1,
+>  		.ctl_fd_ack          = -1,
+>  		.synth               = PERF_SYNTH_ALL,
+> +		.off_cpu_thresh      = OFF_CPU_THRESH_DEFAULT,
+>  	},
+>  };
+>  
+> @@ -3564,6 +3587,9 @@ static struct option __record_options[] = {
+>  	OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analysis"),
+>  	OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
+>  		   "BPF filter action"),
+> +	OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "us",
+> +		     "Dump off-cpu samples if off-cpu time reaches this threshold. The unit is microsecond (default: 500000)",
+> +		     record__parse_off_cpu_thresh),
+>  	OPT_END()
+>  };
+>  
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
+> index a590a8ac1f9d..eaef643f50e3 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -272,6 +272,8 @@ int off_cpu_prepare(struct evlist *evlist, struct target *target,
+>  		}
+>  	}
+>  
+> +	skel->bss->offcpu_thresh = opts->off_cpu_thresh * 1000;
+> +
+>  	err = off_cpu_bpf__attach(skel);
+>  	if (err) {
+>  		pr_err("Failed to attach off-cpu BPF skeleton\n");
+> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> index c152116df72f..5ea320aa9a53 100644
+> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
+> @@ -97,6 +97,8 @@ const volatile bool uses_cgroup_v1 = false;
+>  
+>  int perf_subsys_id = -1;
+>  
+> +__u64 sample_id, sample_type, offcpu_thresh;
 
-E.g.,
-irqreturn_t vfe_irq()
-{
-	if (rup_irq)
-		reg_update_clear();
-
-	if (buf_done_irq) {
-		vfe_wm_update();
-		reg_update();    --> We can't do wait_for_completion at here in irq 
-context
-		vb2_buffer_done();
-	}
-}
-
-Just VFE gen1 driver use this wait_for_complete in vfe_disable_output, 
-and this flow has been removed in vfe gen2(camss-vfe.c), so looks like
-we don't need to add this wait_for_completion support and also can 
-remove below code in camss-vfe-480.c
-
-vfe_isr_reg_update()
-{
-	if (output->wait_reg_update) {
-		output->wait_reg_update = 0;
-		complete(&output->reg_update);
-	}
-}
+The sample_id and sample_type aren't used in the patch.
 
 Thanks,
-Depeng
+Namhyung
 
+> +
+>  /*
+>   * Old kernel used to call it task_struct->state and now it's '__state'.
+>   * Use BPF CO-RE "ignored suffix rule" to deal with it like below:
+> diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
+> index 2dd67c60f211..357231cb1c38 100644
+> --- a/tools/perf/util/off_cpu.h
+> +++ b/tools/perf/util/off_cpu.h
+> @@ -10,6 +10,8 @@ struct record_opts;
+>  
+>  #define OFFCPU_EVENT  "offcpu-time"
+>  
+> +#define OFF_CPU_THRESH_DEFAULT 500000ull
+> +
+>  #define OFFCPU_SAMPLE_TYPES  (PERF_SAMPLE_IDENTIFIER | PERF_SAMPLE_IP | \
+>  			      PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
+>  			      PERF_SAMPLE_ID | PERF_SAMPLE_CPU | \
+> diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
+> index a6566134e09e..3c11416e6627 100644
+> --- a/tools/perf/util/record.h
+> +++ b/tools/perf/util/record.h
+> @@ -79,6 +79,7 @@ struct record_opts {
+>  	int	      synth;
+>  	int	      threads_spec;
+>  	const char    *threads_user_spec;
+> +	u64	      off_cpu_thresh;
+>  };
+>  
+>  extern const char * const *record_usage;
+> -- 
+> 2.43.0
+> 
 
