@@ -1,99 +1,158 @@
-Return-Path: <linux-kernel+bounces-343339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB7B9899D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:43:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6299899D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379EE2829C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:43:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0390BB21521
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E0B7DA67;
-	Mon, 30 Sep 2024 04:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD1213A244;
+	Mon, 30 Sep 2024 04:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="cC+ayzOo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FpY+fjX2"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB29F2F29
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F0642AAF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727671422; cv=none; b=X6WHPM5bJA+8AJKayBqQPJFe+9ZRmjS0Lg8DBSM//40hxtq12mUQfF5sR4HzudQ0It/RvydP+AOGIUi3mg8XzJ6QYEWtGIithePBZzlpwlIurNsUHkNBRVK8q3vvAXHbuVmOcRLD/pEcLX+8wVqaV2kHPwAXwgqbhFYYvebJwHU=
+	t=1727671597; cv=none; b=VbYnKtNu2K0RYiIq0cQncTxLPu0DnTJrYyKfKSq7B749ELC2Sf6R0RHiPdzwt/eb4gp3qLQ/aKne18pISKXhO/mv/cQhKocEnlx6FvPKVkwOp9TXAsVomUxRdeKdGTGi4yUKfegavmIH41hCaILHO+D+qIt7IuxxtYhf+GZ+hg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727671422; c=relaxed/simple;
-	bh=wedc9imWhpym+O+VXa9BVxSk33HPk2fMWrNxxZTvdic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYrszq6e3qswU39YpQbHMjz2HH7Fvlij/gDjkaEQJtqbNbqR8gYuu0xr1+/0Ry6bf6w8zfiF5o/sB4zEPu5Te1nL7sL6mS3TV8eTM0pk1lNEUoIgjBkRxQkLBMAh4VEOcwoW2ar5jKmek6ku74subWr+9ZDIvVCxuU0yWRalmTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=cC+ayzOo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 06FDB40E021A;
-	Mon, 30 Sep 2024 04:43:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fgBiHBLGsxCI; Mon, 30 Sep 2024 04:43:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1727671407; bh=M2NHqiHS8zSOGwrLzsFU1jh5a0T/LEfTfte9sDHw4Dg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cC+ayzOoqZyiwjm0p3PtWIazGy7Yj39L4ztPLewWT3AIO8XcAoTNOX6BnhgllkcNg
-	 cMmyhJs8o3u06HZNDJX5YDasESoyqWm6ck2D/XYDiqlPEojo2tIgOtQjeAYEf4FExu
-	 3r2co+Jn4UYnlEx1XYP8ruMxFu2dYkDBhm1HKcsHkuqoVysbV2x7IMsQIb7cE0zoHP
-	 3PQJWH+6SQt1eSC4SEC6lQQEjtJ/OT8/PL8jsmSf7am8009i3dmNjTewLJWArG8J2/
-	 5LvDbRakpOj9mj14S31mRC8tcofAbfgamcCrMNAl5nTtGSInBBv9Wxk28+e5W64c/h
-	 14BdtjWLSwW0uguiR3BMt5Uh0eyRQHOWK7RSt+cZL1ZympIOBzRTHs2MDY9jwv6YWq
-	 GSWdNwZUQNqfoV5yeIUG9vpxcBEMj/yp52T5jND8GyG1z78N6HTT+LfHLywLNoea2z
-	 iKNN3mKvNl3m1UvYi8TZ0BfoHLWumEWPVV2LdTVcLRR46CRmuNH2rmxoUcIgi2LHDc
-	 JwJqxdsB7wPr6OoUs0+KLUf/gdew869eZzZeXLBTsa9Ks4pLWyygeyGFRWendVLskR
-	 zxY5s+HoL3cMKsW1T/dy4aRzVOi9PCkpUbPfKfN6CJylY4/iw3TyPRa7A7WemmoMf1
-	 fIqeQaa/PPneXeGo6ySPmseA=
-Received: from nazgul.tnic (dynamic-176-000-005-255.176.0.pool.telefonica.de [176.0.5.255])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DD7EF40E0169;
-	Mon, 30 Sep 2024 04:43:22 +0000 (UTC)
-Date: Mon, 30 Sep 2024 06:43:13 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	the arch/x86 maintainers <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: AMD zen microcode updates breaks boot
-Message-ID: <20240930044313.GAZvosYZF5mHi2OZbC@fat_crate.local>
-References: <91194406-3fdf-4e38-9838-d334af538f74@kernel.dk>
- <20240928061038.GAZved3hMSU3XahWrJ@fat_crate.local>
- <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk>
+	s=arc-20240116; t=1727671597; c=relaxed/simple;
+	bh=Xri5kWiebzmt5N8SwFi0njY4c80jL9hRys92Pd7U5HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kKw3Cmue8Ff8CgNOanltj4+e9fu4JBkH4Gjgy7mGQx5Hvn6FlKFlzLEELSDhrXIEaauOmCXhsiehNV/8wOS4CRaPt2138/CLIg6Cb9X8bDMFjm/NbHlakLAjXGnd3QGLB8YKIv7+Ad+BY6bZFamJsVnOQi6yyJ8AAzalBc/Jx3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FpY+fjX2; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-206bd1c6ccdso36110585ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 21:46:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727671594; x=1728276394; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6fQANF7cLgNYEImELd2aRDhcfXDngeWPNi/O1BMJo8=;
+        b=FpY+fjX2RBNXBwckhuiMobUqEmK0p5YzPmdCGmJ1gF3QwIqhBAM7jkJ4Ny/qrJz0Mi
+         N8e4TtKJb2PZ/9/d8TAcWcNnBhuHTmgIhHHzQ57hTWBc7y9dS0oPwiYIBALIbiwSdn/o
+         p+9Z/9YnvlyccLANSGkJN1K58NjJGvqPp1lOE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727671594; x=1728276394;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x6fQANF7cLgNYEImELd2aRDhcfXDngeWPNi/O1BMJo8=;
+        b=VqkJSxgzxt9fVLnGcXcgDhk4vGxV8aJXmbMqFfoyYi2+wes3EfDPrRHoVECrPmIZqo
+         RodL3OrYI0cf+yEF9SiUkxbVD5VefBJC8sOF6BX5bX67yqbMryM0W+I9oL2B8RelJesn
+         RsM+U5Zwyvowp7QawA0LlUhUtNh8wnEOqgF0mnjgDxnxKTLXWmulzKbkYIU9e5NH5pQg
+         d2HcXzxy3UVbrTkvVhokVZJAjmcoLRr3Rq7fqW5oIURWRcqtN0RNwZBnforkGj81KlkB
+         GO3aUPEdts1B7AW2B1YJoCDhc/XZf8ebukK3fwPTBcultMlglLQMmKWaxflv5xdRuHG1
+         srqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAw24sBmb2LfdAlnPSLW6/vbi4s35Y51nWelHN26sOQLe2ULqNuIPcykQA5J2IHhQEYLtKmGevW6jCyXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnuhBavYIZOYM4wpGxgCani3ZNfKqvsGubf4Pag7pf56WoLjUV
+	LlvHlN/3K3LEWQohL3+3yaxpwBsSltZnoCCOTvcYF9K+IN76QhhuQrfmiqr8GA==
+X-Google-Smtp-Source: AGHT+IENQ7NhAJEfEEzudtLCJxzrSxYTgcSTJ2qYcUG48+ffvUH/sGw4msh0WJHorJMBcHhknsJBxQ==
+X-Received: by 2002:a17:902:e844:b0:20b:65a8:917c with SMTP id d9443c01a7336-20b65a923c0mr77993745ad.10.1727671594304;
+        Sun, 29 Sep 2024 21:46:34 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:659b:6caf:831b:3926])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d65asm46236925ad.123.2024.09.29.21.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Sep 2024 21:46:33 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v9 0/3] Add of_regulator_get_optional() and Fix MTK Power Domain Driver
+Date: Mon, 30 Sep 2024 12:45:20 +0800
+Message-ID: <20240930044525.2043884-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 28, 2024 at 05:31:36AM -0600, Jens Axboe wrote:
-> as the box is running debian testing/unstable.
+Hi folks,
 
-Thanks, I need to go find a box like yours to try to reproduce it there,
-after I get back from vacation.
+This is v9 of my of_regulator_get_optional() series. This series was
+split off from my "DT hardware prober" series [1].
 
-In the meantime, you can add "dis_ucode_ldr" to the kernel cmdline if
-you want to boot the box with -rc1.
+Changes since v8:
+- Reformated stub versions with `clang-format`
+- Collected Andy's Reviewed-by for the first patch
+- Moved OF-specific devres version to of_regulator.c
+- Made _of_regulator_get() static again
+- Made devm_regulator_release non-static
 
-Thx.
+Changes since v7:
+- Added stub versions for of_regulator_get_optional() for !CONFIG_OF
+  and !CONFIG_REGULATOR
+- Added new patches for devres version and converting MTK pmdomain
+  driver
 
+At ELCE, Sebastian told me about his recent work on adding regulator
+supply support to the Rockchip power domain driver [2], how the MediaTek
+driver has been using the existing devm_regulator_get() API and
+reassigning different device nodes to the device doing the lookup, and
+how the new of_regulator_get_optional() is the proper fit for this.
+
+Patch 1 adds a new of_regulator_get_optional() function to look up
+regulator supplies using device tree nodes.
+
+Patch 2 adds a devres version of the aforementioned function at
+Sebastian's request for the two power domain drivers.
+
+Patch 3 converts the MediaTek power domain driver to use function.
+
+
+Each of the latter two patches depend on the previous one at build time.
+Ulf would like the regulator patches on an immutable topic branch so
+that he can merge it and the pmdomain patch. Mark, if you could oblige?
+
+
+Thanks
+ChenYu
+
+
+[1] https://lore.kernel.org/all/20240911072751.365361-1-wenst@chromium.org/
+[2] https://lore.kernel.org/all/20240919091834.83572-1-sebastian.reichel@collabora.com/
+
+Chen-Yu Tsai (3):
+  regulator: Add of_regulator_get_optional() for pure DT regulator
+    lookup
+  regulator: Add devres version of of_regulator_get_optional()
+  pmdomain: mediatek: Use OF-specific regulator API to get power domain
+    supply
+
+ drivers/pmdomain/mediatek/mtk-pm-domains.c | 12 +--
+ drivers/regulator/core.c                   |  4 +-
+ drivers/regulator/devres.c                 |  2 +-
+ drivers/regulator/internal.h               |  4 +
+ drivers/regulator/of_regulator.c           | 88 ++++++++++++++++++++--
+ include/linux/regulator/consumer.h         | 31 ++++++++
+ 6 files changed, 121 insertions(+), 20 deletions(-)
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
 -- 
-Regards/Gruss,
-    Boris.
+2.46.1.824.gd892dcdcdd-goog
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
