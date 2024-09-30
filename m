@@ -1,166 +1,133 @@
-Return-Path: <linux-kernel+bounces-344049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA2298A36E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:49:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D266D98A378
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DD71C22C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CBF1C22BAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FBD18E775;
-	Mon, 30 Sep 2024 12:49:24 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AAF18E352;
+	Mon, 30 Sep 2024 12:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dd9OB9uA"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06F218DF76;
-	Mon, 30 Sep 2024 12:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D4F917DFFD
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700563; cv=none; b=Gz+xUnvAWtHKLDQfeLVh7SBHjIdZmzCk9wEGvNeZanDD1hfsKRJrfAKox6XCEHnOkjvOJBuKl6LWIUKsJGnUtSFQJFcC1ozeQ5ESXHjNy3TakY28kx/GYv9thIjlwJcqWO6LiYmiPFrhw600ClE/Gkw+qCkjvAGZuo2ZDkREWEc=
+	t=1727700622; cv=none; b=OsKiroOa2WUWJLGp6G5XNW9ds2+otZ/4XibLGd4IjUD79o/KArcc6hYiKAko3hM/C6FZeesGJzIc746P92oEUbICsFaE07KbG0kyuk7j2tRUCd2FnY0/LMX26nD8CM7GwZQSv+rj6R1J6Osmfu+Ey4HfkpHNHiEI2w219Gp+E18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700563; c=relaxed/simple;
-	bh=F/U0sRoJdr4E2hz881oUVHvIf/z2huLNVCZMePykZz4=;
+	s=arc-20240116; t=1727700622; c=relaxed/simple;
+	bh=Ae6fHVmCIfVJ4+AzMERz/YbJyUGo91QW663NFmx0Lvg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gArUFO0QSRqxkg0HN4+VEAzkkx1Q5UlZI48YvMchghsFQMVMuY7ROmllp7cvMOzk13mRnSE1e2DEkCpea34YvgeegfqardH3KgidAW876qobzkctvemCCPoh5DqhAoE8+6Ck3lNbkBbmpw/kiP3bqE8IOpR3HlpztWJwHUhRuuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: X8ogNJCaSBmrAMSRJn/oCQ==
-X-CSE-MsgGUID: YxEr24y/Qmya4EIelEMJyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="37927560"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="37927560"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:49:22 -0700
-X-CSE-ConnectionGUID: I3zFfxIOTm28Yq4645XqPw==
-X-CSE-MsgGUID: ALUzUGNKTcm94Z5KTfvQmg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="73601077"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:49:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1svFpw-0000000Ef7L-3G1q;
-	Mon, 30 Sep 2024 15:49:12 +0300
-Date: Mon, 30 Sep 2024 15:49:12 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
-Subject: Re: [PATCH v4 4/5] block: add support for partition table defined in
- OF
-Message-ID: <ZvqeSC3ZsRU0uEaB@smile.fi.intel.com>
-References: <20240930113045.28616-1-ansuelsmth@gmail.com>
- <20240930113045.28616-5-ansuelsmth@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f37XcXgCT0x5f+ulx+HZWrWt33g6HJIRvoxRMeoFtwesceRyw0Fb6YYI2OgiK9Vj/0iyMZG5lvTZR0BCZzvSCpCWjClAYLXO9kz4oP/pCuKOHCAXHZ/YRSlcMGUbNEJj1mNaZFCzsosr3WIs3Lu9XLb/Fh3zdT5yCQD8OMnlf0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dd9OB9uA; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53997328633so1049204e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727700618; x=1728305418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ae6fHVmCIfVJ4+AzMERz/YbJyUGo91QW663NFmx0Lvg=;
+        b=dd9OB9uAvlzsCCff0RQAQt8XL6cZzRfUBdVwxxKOoQm7eQqf3BTO7iBSmYWOSF139T
+         ddebyQbRTuf8Mokq08VTI/NYt7mC+70GFJZLvvwxRqEuCM35OcAkljKJYpamso7epN/S
+         0CbQwngZgRzYaV/CE9V9dIkfsL4uDwhB4HPOmLPXfYh6zPujHlvYdrgYJg/9G1RNmzwk
+         qi9ErysU/9Niyv40urbwHYx6FD7zlLHMbmmylnVWhcn6szbYIrwi+MdjcbvMlh4ElauD
+         kxz9t/UbnEiY2/zyjitdOv2w4sPCxjkOz55KGrvgCR90Umr9mQP2oRxcEkfN5o0SI3Vo
+         Q6bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727700618; x=1728305418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ae6fHVmCIfVJ4+AzMERz/YbJyUGo91QW663NFmx0Lvg=;
+        b=qr6Wyue0KpabFNd6euWULhBqrHVNXO5r9R6ZceA1HFm8B9SgnyfFiGETbLUWR3/xwG
+         d46Cm1VufdArIGBpei+/a92tnCRkgqAFK1U3O8Gj66+3QvFP/fDONq8STZKatMeCzeNn
+         z+kD/eJnuLlI7QRunlTNI7XYEDVkYfE7i08oJhf41QdrvAGzFa39AwNkde683JySsMS6
+         22oStcKBx9fmigwzJrVR0rTeyTXgEy9KiEo+kmajl9F17IttDoX9t73qBK8jTBKUUYBM
+         7HVFYmxE4ey3YUECAuKb2nB0kPEK4pUu6fxN0/tnc13FEk13HB8/HBtMT9H8N6At4W/f
+         VFIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLhe6SVqVP55m0EfxkQQNBansYWr1IwsId36cYosnZzSROiiLlged/L7QaC1FnIrJ/CbUqpPfeGs8fjdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2yXJK802yfQPqHtWsgGV6ie3Yt5cxMFqD1MuUz+LS0hLPfQiD
+	5+xSGiHThqujXSuSl5qzQEbqt0XNiamaGAkJA9q2cw3LN7gh9tT9rrxtMG5BeX8pVKxUcR9PuCh
+	vb/o=
+X-Google-Smtp-Source: AGHT+IHNtGIRXS8i7sXXHufH8mFkbMkr6KqSwOLz+zsKlUefPFDs4E7VjtiNBZAlfADWmkKM/c304A==
+X-Received: by 2002:a05:6512:238f:b0:538:9e36:7b6a with SMTP id 2adb3069b0e04-5389fc4b91bmr8103339e87.32.1727700618292;
+        Mon, 30 Sep 2024 05:50:18 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bc88sm535044166b.177.2024.09.30.05.50.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:50:17 -0700 (PDT)
+Date: Mon, 30 Sep 2024 14:50:16 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	longman@redhat.com, chenridong@huawei.com, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] workqueue: doc: Add a note saturating the
+ system_wq is not permitted
+Message-ID: <hk4gfwg7cua6rbcly7qzpqah7bfxbzgndgwasmsqqzsim5uxzu@ofpo4e6koms2>
+References: <20240923114352.4001560-1-chenridong@huaweicloud.com>
+ <20240923114352.4001560-3-chenridong@huaweicloud.com>
+ <ipabgusdd5zhnp5724ycc5t4vbraeblhh3ascyzmbkrxvwpqec@pdy3wk5hokru>
+ <6a2f4e01-c9f5-4fb5-953e-2999e00a4b37@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="u3msq2pqsn4nl45u"
+Content-Disposition: inline
+In-Reply-To: <6a2f4e01-c9f5-4fb5-953e-2999e00a4b37@huaweicloud.com>
+
+
+--u3msq2pqsn4nl45u
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930113045.28616-5-ansuelsmth@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Sep 30, 2024 at 01:30:11PM +0200, Christian Marangi wrote:
-> Add support for partition table defined in Device Tree. Similar to how
-> it's done with MTD, add support for defining a fixed partition table in
-> device tree.
-> 
-> A common scenario for this is fixed block (eMMC) embedded devices that
-> have no MBR or GPT partition table to save storage space. Bootloader
-> access the block device with absolute address of data.
-> 
-> This is to complete the functionality with an equivalent implementation
-> with providing partition table with bootargs, for case where the booargs
-> can't be modified and tweaking the Device Tree is the only solution to
-> have an usabe partition table.
-> 
-> The implementation follow the fixed-partitions parser used on MTD
-> devices where a "partitions" node is expected to be declared with
-> "fixed-partitions" compatible in the OF node of the disk device
-> (mmc-card for eMMC for example) and each child node declare a label
-> and a reg with offset and size. If label is not declared, the node name
-> is used as fallback. Eventually is also possible to declare the read-only
-> property to flag the partition as read-only.
-> 
-> For eMMC block, driver scan the disk name and check if it's suffixed with
-> "boot0" or "boot1".
-> This is to handle the additional disk provided by eMMC as supported in
-> JEDEC 4.4+. If this suffix is detected, "partitions-boot0" or
-> "partitions-boot1" are used instead of the generic "partitions" for the
-> relevant disk.
+Hi.
 
-...
+On Fri, Sep 27, 2024 at 04:08:26PM GMT, Chen Ridong <chenridong@huaweicloud.com> wrote:
+> How about:
+> Note: If something may generate works frequently, it may saturate the
+> system_wq and potentially lead to deadlock. It should utilize its own
+> dedicated workqueue rather than system wq.
 
-> +	strscpy(info->volname, partname, sizeof(info->volname));
+It doesn't depend only on generating frequency (in Tetsuo's example with
+slow works, the "high" would only be 256/s) and accurate information is
+likely only empirical, thus I'd refine it further:
 
-We have 2-arguments strscpy(), please use that.
+> Note: If something may generate more than @max_active outstanding
+> work items (do stress test your producers), it may saturate a system
+> wq and potentially lead to deadlock. It should utilize its own
+> dedicated workqueue rather than the system wq.
 
-> +	strlcat(state->pp_buf, tmp, PAGE_SIZE);
+(besides @max_active reference, I also changed generic system_wq to
+system wq as the surrounding text seems to refer to any of the
+system_*wq)
 
-In new code we should not use strl*(). They are subject to remove.
-And actually why? You have used strscpy() a few lines above...
+Michal
 
-...
+--u3msq2pqsn4nl45u
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +	for_each_child_of_node(partitions_np, np) {
+-----BEGIN PGP SIGNATURE-----
 
-Use _scoped() variant.
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZvqehQAKCRAt3Wney77B
+SR3xAP9PHT1jJtEbsiuiwo1WgbhnDVHPXZDXJhr8SjF3wOi6EwD/ZWIJTwmm3xwT
+R0QOL4IXDsaTHR3ZsKwx8/LBEtmwqgM=
+=h7W7
+-----END PGP SIGNATURE-----
 
-> +		if (validate_of_partition(np, slot)) {
-> +			of_node_put(np);
-> +			ret = -1;
-> +			goto exit;
-> +		}
-> +
-> +		slot++;
-> +	}
-
-...
-
-> +	for_each_child_of_node(partitions_np, np) {
-
-Ditto.
-
-> +		if (slot >= state->limit) {
-> +			of_node_put(np);
-> +			break;
-> +		}
-> +
-> +		add_of_partition(state, slot, np);
-> +
-> +		slot++;
-> +	}
-
-...
-
-> +	strlcat(state->pp_buf, "\n", PAGE_SIZE);
-
-Why strl*()?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--u3msq2pqsn4nl45u--
 
