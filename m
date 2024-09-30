@@ -1,278 +1,348 @@
-Return-Path: <linux-kernel+bounces-343482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD92E989B6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:27:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5B8989B71
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08880B210CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1C11F210BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953C4155A52;
-	Mon, 30 Sep 2024 07:27:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6D415573F;
+	Mon, 30 Sep 2024 07:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QzzMUH7A"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A3515445B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5F115B0F2;
+	Mon, 30 Sep 2024 07:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727681247; cv=none; b=tNtjrsDsvd9jITMBDMnycgs6v7WhboaoyQzh/Hlp0DKnTWzBPkcpV5Qrqger1spn4eOdtfXx2kTiASMzejKtw+PDzco6OaV4pNCAUah1k1OMz0xs8zpiHLqvXJ9VTktpO8tTTnmip3tfwIplx5rN5+AOFz50/bXrQBwbNnxb0+c=
+	t=1727681355; cv=none; b=qEBmEpAJ2zJ+tYz6kTbSL1Qw4takXwFvLONavOsem962+dL7ntJ6Wm+t0HxrRK7cP0VfazObKtZtvChGNP0Qn9k89GtREhOsDLWnW7qfroT0UNFwVedg84oaaQZHOTwSSYTgu4/VLSA5FTGxSkF9ucNRjM9flelnUU/fb+j3bh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727681247; c=relaxed/simple;
-	bh=ZThZRLligTh28RonQKHEKoJQneD243pGBwxcW6YcuKY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r3lt2oI8igNcvB6/OOh+l7RDQaAbiBdD+v4JrNvFsCCBWITX7dvUE5x1dQ+8u3xfJdDbiB5/3gao2CkAYsSHGawgARnKsG3WsDKpFQXv4ouOXW3r+zJbgnlNCkALCQRRK6rURxAQyjWUEotSG3CbU9zhXeeeqez9G/Gu5/Pn7IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a343c444afso36075535ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:27:25 -0700 (PDT)
+	s=arc-20240116; t=1727681355; c=relaxed/simple;
+	bh=4cDa+u88I0pMWqWCNEMDn5VkzDxbaj2BkSk0iZiE4to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXr9IjwWaYFo0CAXNc+GzGGzvqTVumHWiYj5mwn44YpTGfif6+ccBDvgFg0rCsEGbuFhDg1+fzJL2o6N/VvNSEidjqi//2I8oVe4k0nxEn9bQpCAO7oC4dB9/WNVZ4/QNT4WrexQ9Hh7YhKwURUUeHE3j1kSG+BsCq7r5FLYXwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QzzMUH7A; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-8323b555ae2so195227839f.2;
+        Mon, 30 Sep 2024 00:29:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727681353; x=1728286153; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ue4slqDzCbCmGA30w+Pb5YzimVTExtoPtfBb9HsY6Oc=;
+        b=QzzMUH7AJGi01UuNqEQEB798JYE/rls9dJcJr7kTb4BphstDK/An6bIqqxotb6rwhX
+         KyQH9N/uxJXZ3xOJdSiiVELVA+5yRCp6LbqdKZvafCKahZWNSatLse1ZVVn8XqohGGWa
+         K9UOAygy8QbTYtgOvI6rXOePWkiOdeA0lcpaGhYlbGEaY2hr2y7I5BocbIVGOg40A5B/
+         y21HGnGrUqsJCJ/KAXGRz+hb0uv+/QcDT2/0L3UvaL6KT537QuAIQnh3hGGofOaKhnTz
+         OXYC0W/BtuCJlOkuF0Oij/FHXA1PeuqKc/brv9Cfji+379B07Is//fr+s0SU7wGBGr8H
+         +L7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727681245; x=1728286045;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ibv2MWph/JA1dVh9QSqKLFcxcE57JRmfUUJ5ufEIptU=;
-        b=igfIsmty+JQgk5x7Zj3LZ7lobsMfbeNEiboJ1Lmp0HZc146PH8cJxD30cOSAFC3DSE
-         lS7l3kG1GcNV+xeYOBtKy3ip849yixg7bcUKDLqp5wQ0Ff/gi+DbuJg/eTpTeHg/Ndnw
-         gPSc0VnpnLAqCa6oJEl9czhIdp4tdez5lnF25tCpzReAjkeK7tvoAJ6/C43OtzNpuBHE
-         LgUeatXlrrH6fdxFNIkVTA0OyW0x3oc+wOLFwXSk5k5AVB9n1vatQK81Ikii/Iwt3Ltc
-         z5GVU9bmmv2u5PByHkvUv7ilLVE6KduInTzMa5wG3cNOGqttEM8Ra9BW2FEWnhq98N/t
-         uZkw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtv1GA9YYX51IUZJqSkwsQm57JRR/xH6Z8mHDpZuRofmMRLFpJa+uKCJYuKTzx3yXLo7Ug/N1mZmHmljQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7fEotd0YqzDAFvg88/GSgdQYIBwvZwhD0YOGXN9xUuc68Odtw
-	uFaHji9sDpW08JGV4XcclH8MK0lxkx6kgwbcpEpLgpUEYI7dI0BqCPVAFTvyDtrRlp9yYLr6sfV
-	7XOhsn8qu9iftba3y9dCVIkPWnPDgt3yA/MPcG7mO33XAljHDPH/qrms=
-X-Google-Smtp-Source: AGHT+IG74rLtVenlCQXcyhHTuPfGnuipVqUkCQNRZaP69AECgQhu6wAUWoBmQDWfy66uS/dWw34DfsaJO59B8jQR4nlUNhalX5hX
+        d=1e100.net; s=20230601; t=1727681353; x=1728286153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ue4slqDzCbCmGA30w+Pb5YzimVTExtoPtfBb9HsY6Oc=;
+        b=vkACEnJXn+Hd7xpH7QK3XY6M6sBQz62asyyYD70ZNM0Z24WLTJnpWVpBCkmR347o0x
+         Yj+nIm5Qlbh3CLpxCuI2IQ98/8y1PWVj+C9GYM10mba7L5pW8GXx/oSvYhXGpGTl6Rjf
+         1UDZBxNX9lyz8W1pri4Mr/YK5AKhm/3CosKeCwV0VK45JcYCVKIWBjov9402/EqC+Zzv
+         E9LSkc4pN6HzxDVzvnskhPN/csmPRWmzzLaHCVJG2v2OjN7jtNedpKx8dTa7RFRHyveM
+         w1fZBRegBfR03GgawQ5YJMawWUAYhxCfbflkwOhSkyO0bvUFiHpjQByB2GuZ6+t/Ecvn
+         zRZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5BQAx10xTRK7KZ62qj1o4Ghct1OjC1RLZx+hrEdOQlpIKHAxoADEDudZe2AMTXyVyr/YlALsiuauv9BE=@vger.kernel.org, AJvYcCXXyGT9A21N1TRkl+jfuA/vd4Svq5PN4CDMdmBzCAF0PdLC4v4nCtzWDHSi3Noks17Y8SiYnUGGIE/N7pI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvOvST5enm1MQHnZxCipcpuR/7hf9tBCVlV+Mkm3/g3NhzS59D
+	qAEVHGHDqvu0jKLpBS6YhZA8MemE8DkLBCL8W3c9/agV/v7fU+TP
+X-Google-Smtp-Source: AGHT+IGacX11scw+O2iK40BP9s20/lwFcvx5mVYDNS4YesXdgGUPbznMoSpeqjGTjAv5kktO6CF/RQ==
+X-Received: by 2002:a05:6602:2b13:b0:82a:418d:b03f with SMTP id ca18e2360f4ac-83493205446mr1095731039f.8.1727681352695;
+        Mon, 30 Sep 2024 00:29:12 -0700 (PDT)
+Received: from localhost ([38.97.116.244])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d88884a015sm2005155173.38.2024.09.30.00.29.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 00:29:11 -0700 (PDT)
+Date: Mon, 30 Sep 2024 10:29:08 +0300
+From: Maxim Mikityanskiy <maxtram95@gmail.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Bjorn Helgaas <bhelgaas@google.com>, Peter Wu <peter@lekensteyn.nl>,
+	Lukas Wunner <lukas@wunner.de>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
+Message-ID: <ZvpTRLxSkcqn03Fk@mail.gmail.com>
+References: <20240904203955.245085-1-maxtram95@gmail.com>
+ <871q1ygov9.wl-tiwai@suse.de>
+ <ZttEUjeYFzdznYKM@mail.gmail.com>
+ <87wmjndbha.wl-tiwai@suse.de>
+ <ZtxZBUjlF8TeIUKC@mail.gmail.com>
+ <87jzfncvm0.wl-tiwai@suse.de>
+ <ZtyMWSA0bg1SjFSU@mail.gmail.com>
+ <87ed5vcp23.wl-tiwai@suse.de>
+ <Zu5_faxUwoIl09fW@mail.gmail.com>
+ <87msjpk5el.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a6:b0:3a0:451b:ade3 with SMTP id
- e9e14a558f8ab-3a3451766a1mr90566995ab.10.1727681245304; Mon, 30 Sep 2024
- 00:27:25 -0700 (PDT)
-Date: Mon, 30 Sep 2024 00:27:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fa52dd.050a0220.aab67.0028.GAE@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in journal_flush_done
-From: syzbot <syzbot+3b312e826b8023c294e8@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87msjpk5el.wl-tiwai@suse.de>
 
-Hello,
+On Mon, 30 Sep 2024 at 08:43:46 +0200, Takashi Iwai wrote:
+> On Sat, 21 Sep 2024 10:10:37 +0200,
+> Maxim Mikityanskiy wrote:
+> > 
+> > On Sat, 07 Sep 2024 at 20:10:44 +0200, Takashi Iwai wrote:
+> > > On Sat, 07 Sep 2024 19:24:41 +0200,
+> > > Maxim Mikityanskiy wrote:
+> > > > 
+> > > > On Sat, 07 Sep 2024 at 17:49:11 +0200, Takashi Iwai wrote:
+> > > > > On Sat, 07 Sep 2024 15:45:41 +0200,
+> > > > > Maxim Mikityanskiy wrote:
+> > > > > > 
+> > > > > > On Sat, 07 Sep 2024 at 12:06:25 +0200, Takashi Iwai wrote:
+> > > > > > > On Fri, 06 Sep 2024 20:05:06 +0200,
+> > > > > > > Maxim Mikityanskiy wrote:
+> > > > > > > > 
+> > > > > > > > On Thu, 05 Sep 2024 at 16:24:26 +0200, Takashi Iwai wrote:
+> > > > > > > > > On Wed, 04 Sep 2024 22:39:55 +0200,
+> > > > > > > > > Maxim Mikityanskiy wrote:
+> > > > > > > > > > 
+> > > > > > > > > > Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
+> > > > > > > > 
+> > > > > > > > Spotted a typo: s/520M/540M/
+> > > > > > > > 
+> > > > > > > > > > the discrete GPU. snd_hda_intel probes the device and schedules
+> > > > > > > > > > azx_probe_continue(), which fails at azx_first_init(). The driver ends
+> > > > > > > > > > up probed, but calls azx_free() and stops the chip. However, from the
+> > > > > > > > > > runtime PM point of view, the device remains active, because the PCI
+> > > > > > > > > > subsystem makes it active on probe, and it's still bound. It prevents
+> > > > > > > > > > vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
+> > > > > > > > > > power management for the video and audio devices).
+> > > > > > > > > > 
+> > > > > > > > > > Fix it by forcing the device to the suspended state in azx_free().
+> > > > > > > > > > 
+> > > > > > > > > > Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
+> > > > > > > > > > Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
+> > > > > > > > > 
+> > > > > > > > > What if this device probe is skipped (e.g. adding your device entry to
+> > > > > > > > > driver_denylist[] in hda_intel.c)?  Is the device also in the
+> > > > > > > > > runtime-suspended state?
+> > > > > > > > 
+> > > > > > > > I added the following:
+> > > > > > > > 
+> > > > > > > > { PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) },
+> > > > > > > > 
+> > > > > > > > The probe was apparently skipped (the device is not attached to a
+> > > > > > > > driver), runtime_status=suspended, runtime_usage=0, the GPU goes to
+> > > > > > > > DynOff.
+> > > > > > > 
+> > > > > > > OK, that's good.
+> > > > > > > 
+> > > > > > > > However, I'm not sure whether it's a good idea to blacklist 540M
+> > > > > > > > entirely, as there might be other laptops with this GPU that have sound,
+> > > > > > > > and AFAIK there are variants of Lenovo Z570 with other NVIDIA GPUs.
+> > > > > > > 
+> > > > > > > You should specify the PCI SSID of your device instead of 0:0 in the
+> > > > > > > above, so that it's picked up only for yours.
+> > > > > > 
+> > > > > > Where can I get it?
+> > > > > > 
+> > > > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_vendor
+> > > > > > 0x0000
+> > > > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_device
+> > > > > > 0x0000
+> > > > > 
+> > > > > Ouch, Lenovo didn't set it right.
+> > > > > Alternatively we may introduce a deny list based on DMI.  Hmm...
+> > > > 
+> > > > A DMI-based quirk sounds better than blocking any NVIDIA 540M, it would
+> > > > also allow handling alternative GPUs on this laptop model.
+> > > > 
+> > > > But could you explain what's wrong with a generic approach that I
+> > > > suggest (probe_continue failed => mark as suspended)? It doesn't require
+> > > > any lists. Any drawbacks?
+> > > 
+> > > As you noticed, it will leave the device bound with driver, i.e. this
+> > > looks as if it were operative.  It means that the sound driver is
+> > > still responsible for suspend/resume or whatever action even though
+> > > it's totally useless.  In that sense, it makes more sense to give it
+> > > away at the early stage before actually binding it, and the deny list
+> > > is exactly for that.
+> > 
+> > Thanks for your feedback!
+> 
+> Sorry for the late reply, as I've been off in the last weeks.
+> 
+> > Do you happen to know whether there is a way for a driver to unbind
+> > itself after probe() returned success? I've never seen anything like
+> > this, but it would be a perfect solution: no lists and no driver bound
+> > after the delayed initialization fails.
+> 
+> I don't think it's possible for now (at least in a clean way).
+> It should be a call of device_driver_detach(), but it's no exported
+> API.
+> 
+> > > Apart from that, the suggested change itself can be applied
+> > > independently from the deny list update, too.  It'd be good for other
+> > > similar devices, too.
+> > 
+> > I was trying to avoid lists, because it's a maintainance nightmare (the
+> > lists are never complete, there might be false positives, etc.), and
+> > we'd need to add another type of a list for DMI quirks. Moreover, adding
+> > both my change and a list entry has a drawback that similarly broken
+> > devices will use different workaround code (i.e. less robust), and the
+> > ones that use the generic fallback will never get on the list, because
+> > no one will report it.
+> > 
+> > As a maintainer, what's your preferred approach?
+> > 
+> > 1. Unbind ourselves on failure in azx_probe_continue() (but I don't know
+> > whether it's possible).
+> 
+> So it's no easy way.
+> 
+> > 2. Add a DMI deny list to hda_intel.
+> > 
+> > 3. Add a DMI check to quirk_nvidia_hda (i.e. don't enable a non-existent
+> > HDA if it's not enabled by BIOS on this laptop model).
+> 
+> I'm afraid that it may break other systems; IIRC, the power up was
+> needed explicitly even if it's disabled on BIOS.
 
-syzbot found the following issue on:
+I'm not suggesting full removal of quirk_nvidia_hda. If we add a DMI
+check to disable quirk_nvidia_hda on this particular laptop model, it
+can't break other systems, can it?
 
-HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16848127980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=26c9ab6638097a6
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b312e826b8023c294e8
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Anyways, adding a DMI check to hda_intel or quirk_nvidia_hda seems the
+same level of efforts, so I can proceed with the former. It's the same
+power consumption either way, right?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+I'm also thinking of adding a module parameter to block probing of the
+DGPU audio. Back in the days, there were plenty of similar Lenovo
+laptops, which might also suffer from the same issue.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/27eb9e7acef6/disk-3efc5736.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6ca1f5529a2c/vmlinux-3efc5736.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7a0c4c354c23/bzImage-3efc5736.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3b312e826b8023c294e8@syzkaller.appspotmail.com
-
-INFO: task syz-executor:5227 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:20992 pid:5227  tgid:5227  ppid:1      flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1843/0x4ae0 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- journal_flush_done+0x79/0x260 fs/bcachefs/journal_reclaim.c:817
- bch2_journal_flush_pins+0x102/0x3a0 fs/bcachefs/journal_reclaim.c:852
- bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
- __bch2_fs_read_only+0x124/0x430 fs/bcachefs/super.c:274
- bch2_fs_read_only+0xb57/0x1200 fs/bcachefs/super.c:354
- __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:619
- generic_shutdown_super+0x139/0x2d0 fs/super.c:642
- bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2179
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f615017f327
-RSP: 002b:00007ffc2994c968 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f615017f327
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc2994ca20
-RBP: 00007ffc2994ca20 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffc2994daa0
-R13: 00007f61501f0134 R14: 00000000000146a3 R15: 00007ffc2994dae0
- </TASK>
-
-Showing all locks held in the system:
-3 locks held by kworker/u8:0/11:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-3 locks held by kworker/u8:4/68:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900020afd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900020afd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-3 locks held by kworker/u8:7/1116:
- #0: ffff88802e608948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88802e608948 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90004117d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90004117d00 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4196
-2 locks held by dhcpcd/4888:
- #0: ffffffff8fca3ae8 (vlan_ioctl_mutex){+.+.}-{3:3}, at: sock_ioctl+0x661/0x8e0 net/socket.c:1308
- #1: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: vlan_ioctl_handler+0x112/0x9d0 net/8021q/vlan.c:553
-2 locks held by getty/4979:
- #0: ffff8880327120a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-3 locks held by syz-executor/5227:
- #0: ffff8880246280e0 (&type->s_umount_key#74){++++}-{3:3}, at: __super_lock fs/super.c:56 [inline]
- #0: ffff8880246280e0 (&type->s_umount_key#74){++++}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
- #0: ffff8880246280e0 (&type->s_umount_key#74){++++}-{3:3}, at: deactivate_super+0xb5/0xf0 fs/super.c:505
- #1: ffff88806ac00278 (&c->state_lock){+.+.}-{3:3}, at: __bch2_fs_stop+0xfd/0x540 fs/bcachefs/super.c:618
- #2: ffff88806ac4b0a8 (&j->reclaim_lock){+.+.}-{3:3}, at: journal_flush_done+0x79/0x260 fs/bcachefs/journal_reclaim.c:817
-3 locks held by kworker/1:6/5274:
- #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc900043a7d00 (deferred_process_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc900043a7d00 (deferred_process_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: switchdev_deferred_process_work+0xe/0x20 net/switchdev/switchdev.c:104
-3 locks held by bch-reclaim/loo/5449:
-1 lock held by syz.2.92/5865:
- #0: ffff8880246280e0 (&type->s_umount_key#74){++++}-{3:3}, at: __super_lock fs/super.c:58 [inline]
- #0: ffff8880246280e0 (&type->s_umount_key#74){++++}-{3:3}, at: super_lock+0x27c/0x400 fs/super.c:120
-5 locks held by kworker/u8:11/6471:
- #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801baeb148 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000326fd00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000326fd00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcb24d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
- #3: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: cleanup_net+0x6af/0xcc0 net/core/net_namespace.c:616
- #4: ffffffff8e93d338 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:297 [inline]
- #4: ffffffff8e93d338 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:976
-1 lock held by syz-executor/6606:
- #0: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
-7 locks held by syz-executor/6722:
- #0: ffff88802eb0c420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
- #0: ffff88802eb0c420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
- #1: ffff888068a85088 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
- #2: ffff888027e86968 (kn->active#49){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
- #3: ffffffff8f55d068 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: del_device_store+0xfc/0x480 drivers/net/netdevsim/bus.c:216
- #4: ffff88805ffc50e8 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1014 [inline]
- #4: ffff88805ffc50e8 (&dev->mutex){....}-{3:3}, at: __device_driver_lock drivers/base/dd.c:1095 [inline]
- #4: ffff88805ffc50e8 (&dev->mutex){....}-{3:3}, at: device_release_driver_internal+0xce/0x7c0 drivers/base/dd.c:1293
- #5: ffff88802572a250 (&devlink->lock_key#14){+.+.}-{3:3}, at: nsim_drv_remove+0x50/0x160 drivers/net/netdevsim/dev.c:1672
- #6: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: nsim_destroy+0x71/0x5c0 drivers/net/netdevsim/netdev.c:773
-4 locks held by syz-executor/6736:
- #0: ffff88802eb0c420 (sb_writers#8){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2931 [inline]
- #0: ffff88802eb0c420 (sb_writers#8){.+.+}-{0:0}, at: vfs_write+0x224/0xc90 fs/read_write.c:679
- #1: ffff88803224f888 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x1ea/0x500 fs/kernfs/file.c:325
- #2: ffff888027e86968 (kn->active#49){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x20e/0x500 fs/kernfs/file.c:326
- #3: ffffffff8f55d068 (nsim_bus_dev_list_lock){+.+.}-{3:3}, at: del_device_store+0xfc/0x480 drivers/net/netdevsim/bus.c:216
-1 lock held by syz-executor/6747:
- #0: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcbefc8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5449 Comm: bch-reclaim/loo Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:bytes_is_nonzero mm/kasan/generic.c:87 [inline]
-RIP: 0010:memory_is_nonzero mm/kasan/generic.c:104 [inline]
-RIP: 0010:memory_is_poisoned_n mm/kasan/generic.c:129 [inline]
-RIP: 0010:memory_is_poisoned mm/kasan/generic.c:161 [inline]
-RIP: 0010:check_region_inline mm/kasan/generic.c:180 [inline]
-RIP: 0010:kasan_check_range+0x86/0x290 mm/kasan/generic.c:189
-Code: 00 fc ff df 4f 8d 3c 31 4c 89 fd 4c 29 dd 48 83 fd 10 7f 29 48 85 ed 0f 84 3e 01 00 00 4c 89 cd 48 f7 d5 48 01 dd 41 80 3b 00 <0f> 85 c9 01 00 00 49 ff c3 48 ff c5 75 ee e9 1e 01 00 00 45 89 dc
-RSP: 0018:ffffc900039a74c8 EFLAGS: 00000246
-RAX: ffffffff8420ae01 RBX: 1ffff9200304006e RCX: ffffffff8420ae65
-RDX: 0000000000000000 RSI: 0000000000000050 RDI: ffffc90018200370
-RBP: fffffffffffffffe R08: ffffc900182003bf R09: 1ffff92003040077
-R10: dffffc0000000000 R11: fffff52003040076 R12: 0000000000000050
-R13: ffffc90018200370 R14: dffffc0000000001 R15: fffff52003040078
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8da3a7f000 CR3: 000000000e734000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- __asan_memcpy+0x29/0x70 mm/kasan/shadow.c:105
- bch2_btree_write_buffer_flush_locked+0x54a5/0x59f0 fs/bcachefs/btree_write_buffer.c:465
- btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
- bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
- journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
- __bch2_journal_reclaim+0x789/0xdc0 fs/bcachefs/journal_reclaim.c:698
- bch2_journal_reclaim_thread+0x174/0x560 fs/bcachefs/journal_reclaim.c:740
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > 4. Driver becomes a stub no failure in azx_probe_continue() (this
+> > patch).
+> 
+> It's OK, but slightly risky.  It's kept bound, hence any unexpected
+> thing might happen if the code is changed without noticing it.
+> 
+> > 5. Some combo of 4 and 2/3?
+> 
+> Not safe.
+> 
+> So, from the safety POV, I'd rather take the DMI deny list approach.
+> 
+> 
+> thanks,
+> 
+> Takashi
+> 
+> > > Though, a slight concern is the sequence of runtime PM you applied in
+> > > the patch.  Is it a standard idiom to perform pm_runtime_disable(),
+> > > set_suspended() and enable()?
+> > 
+> > I'm not an expert in PM. Before I wrote this code, I was meditating on
+> > the docs for a few hours, and what I understood was:
+> > 
+> > 1. As we are disabling the device (below in the same function), we need
+> > set_suspended() to just update the state.
+> > 
+> > 2. set_suspended() must be called with PM disabled (see the comment
+> > above the function).
+> > 
+> > 3. Disable and enable must come in pairs, because there is refcounting.
+> > 
+> > I've seen set_suspended() after disable() on device remove (e.g.,
+> > rt9120_remove()). For hda_intel, assuming that disable/enable are
+> > already paired, adding a new disable without a matching enable would
+> > break refcounting. Hence such a sequence.
+> > 
+> > I'd love to hear an opinion from someone more experienced in PM.
+> > 
+> > > Also, azx_free() is the common
+> > > destructor, hence it's called also at the regular driver unbinding.
+> > > I'm not entirely sure whether it's OK to call there also at
+> > > unbinding.
+> > 
+> > I don't have hardware to test this flow, but theoretically it looks OK
+> > to me: we set the suspended state as we disable the device.
+> > 
+> > > 
+> > > thanks,
+> > > 
+> > > Takashi
+> > > 
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > Takashi
+> > > > > 
+> > > > > 
+> > > > > > 
+> > > > > > Is it not the right place?
+> > > > > > 
+> > > > > > > 
+> > > > > > > Takashi
+> > > > > > > 
+> > > > > > > > Another way to make vga_switcheroo work is to disable quirk_nvidia_hda,
+> > > > > > > > although I don't know whether it can be done without recompiling the
+> > > > > > > > kernel. In this case, 0000:01:00.1 doesn't even appear on the bus.
+> > > > > > > > 
+> > > > > > > > (Note that I need to set nouveau.modeset=2 either way, otherwise it
+> > > > > > > > stays in DynPwr if the screen is on.)
+> > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > 
+> > > > > > > > > thanks,
+> > > > > > > > > 
+> > > > > > > > > Takashi
+> > > > > > > > > 
+> > > > > > > > > > ---
+> > > > > > > > > >  sound/pci/hda/hda_intel.c | 14 +++++++++++++-
+> > > > > > > > > >  1 file changed, 13 insertions(+), 1 deletion(-)
+> > > > > > > > > > 
+> > > > > > > > > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+> > > > > > > > > > index b79020adce63..65fcb92e11c7 100644
+> > > > > > > > > > --- a/sound/pci/hda/hda_intel.c
+> > > > > > > > > > +++ b/sound/pci/hda/hda_intel.c
+> > > > > > > > > > @@ -1361,8 +1361,20 @@ static void azx_free(struct azx *chip)
+> > > > > > > > > >  	if (use_vga_switcheroo(hda)) {
+> > > > > > > > > >  		if (chip->disabled && hda->probe_continued)
+> > > > > > > > > >  			snd_hda_unlock_devices(&chip->bus);
+> > > > > > > > > > -		if (hda->vga_switcheroo_registered)
+> > > > > > > > > > +		if (hda->vga_switcheroo_registered) {
+> > > > > > > > > >  			vga_switcheroo_unregister_client(chip->pci);
+> > > > > > > > > > +
+> > > > > > > > > > +			/* Some GPUs don't have sound, and azx_first_init fails,
+> > > > > > > > > > +			 * leaving the device probed but non-functional. As long
+> > > > > > > > > > +			 * as it's probed, the PCI subsystem keeps its runtime
+> > > > > > > > > > +			 * PM status as active. Force it to suspended (as we
+> > > > > > > > > > +			 * actually stop the chip) to allow GPU to suspend via
+> > > > > > > > > > +			 * vga_switcheroo.
+> > > > > > > > > > +			 */
+> > > > > > > > > > +			pm_runtime_disable(&pci->dev);
+> > > > > > > > > > +			pm_runtime_set_suspended(&pci->dev);
+> > > > > > > > > > +			pm_runtime_enable(&pci->dev);
+> > > > > > > > > > +		}
+> > > > > > > > > >  	}
+> > > > > > > > > >  
+> > > > > > > > > >  	if (bus->chip_init) {
+> > > > > > > > > > -- 
+> > > > > > > > > > 2.46.0
+> > > > > > > > > > 
 
