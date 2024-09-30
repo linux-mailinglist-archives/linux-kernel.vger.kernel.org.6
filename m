@@ -1,345 +1,260 @@
-Return-Path: <linux-kernel+bounces-343275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBC0989901
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:47:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B466989903
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0A491F21A2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:47:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159761F219F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC4C6FC3;
-	Mon, 30 Sep 2024 01:47:23 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087B88F45;
+	Mon, 30 Sep 2024 01:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b="uz+u4/U2"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2086.outbound.protection.outlook.com [40.107.255.86])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21995684
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727660842; cv=none; b=QcMqz3IDilcmjcViFvfWA5bXvaRnD23E0l2HZg/oc7R8c/CE2AJPXlD7UHQqm3HxEILm0sf/r4HdbGglpMmQyooL/mSYvOoExQgHmS5V7Wd89bYfg9ulcw8hi4da9qwEbFgw6uCVDMckh8egFQeCCmcvjyLQf+QLzmt8Tx7tSkA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727660842; c=relaxed/simple;
-	bh=5w7bvdn01DGtQmcWOweYLWywUuoaciALn65k3W9LIQ4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DDB1aSbrrXPZsP53FiE6oSOwlk+ZTaUvaS+foW0NAQeQRZTDI2GwmzBAXPNT8V7UYk1sicT7iJdWs14EpPN9yXP7/+pqg4tC/J8Wf5x1Uzen1azeEHhB+kFHeMUn12ZgbqF96IyZrtqSikLBWbWjw1e632sFTbFDAHNkmMIR254=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so39453535ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 18:47:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727660840; x=1728265640;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q5pnIQ0XH0sqZOejmYvmRq43SJ3jo8JaPi4wZKNRILU=;
-        b=AMyIOTjdRQLyNVzPutz7YcEN7RF90iVHChIBO1aj4MgqxOBWtnZKipeuy9Wa9rEQp0
-         NBsm1oGMQ6GNBXVqh1zs0dppd/oaN9EGfLq7bNh8h/tTLF2NIoasajAhZ63TF1F3sMZu
-         w9B/QJysqykH9d/PnmQTvOdP0LX2OR8xJFHck21veU10ugQuZh8rkV5o/hpCK+L0jCsB
-         y+wNxF9J34qVVcMS7zdGmW1fmieWNRPlOIeiGeEG+1Pdbp66FZ2KSD7pnWgbXk65/snp
-         KWqRC53UNx44iV3ABpVjvZ+SNui8u8rlkpuMbFJA/s1NhmppdnN/7Jzfh+v30RU7PbUH
-         O0eg==
-X-Forwarded-Encrypted: i=1; AJvYcCUui9ayIeute5ImIn+IUsCpaXnjLYXh/vy2HzXD+pA4klxQt3l1MpslZs2ibY97phyJl8hjoAeYgE9SSbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpZ3qJfLG21ODfHqlA6lSchbTRI4s49QI2WW2TYuin2vsnZ2Hv
-	2ntRJlvtS5PxEVPfIy0WkpwmqIh+DBJBX+1mWvtbEZn3xKjJBdShI/j9Kkq5OfGbMo8WP6XUFxr
-	uT/jpnkW+6bot04s5NEHuAgw3Muvpkw31XliJ0yQsbrQfpKjRD4OXCNw=
-X-Google-Smtp-Source: AGHT+IFhX6YIBiRQtctHphDlcOa2dITtZCO+iCIut9IGiS4+w1mQDC+3U6hmvLETdXzEC2ECFFP3rGet1t0t/J+Q4Ornve3jpqTy
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF306FC3;
+	Mon, 30 Sep 2024 01:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727660882; cv=fail; b=AC9+8vBKpdr1qJdHxT5IkGchXHayIYcjY1Ly4VHKptBqblUmG8N5gXUzwPq407aXfJuTaK4WHC9OEEe8LGsF0QtikD1p4LHF7XGOk84q/kjaJf6kpzXPoXpwbiBcM012b8XTdPVMbUIZ542PooP+ZR2SGv+46n3jptvDOg8TL5o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727660882; c=relaxed/simple;
+	bh=FneLy7/IT3VfbFlK5jfh0Gf1Vw29Enb3uG3ct7eGRxo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MpzS7mLBUj+llOIyuzcctUz0B4IS7POkox6TkGxmDymce/BGoUvr2sLL+N8JcTHqxElBL3M8rSP1lZ4wCJSkAiPNqDCNxfDLcyHDZ4RH677GcSvBRn7MT3L2nVxpg2QACv2EvHKS/O1d5S6aigyJGhMy1AhyZbAM0U39P5q/Yds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com; spf=pass smtp.mailfrom=wiwynn.com; dkim=pass (2048-bit key) header.d=wiwynn.com header.i=@wiwynn.com header.b=uz+u4/U2; arc=fail smtp.client-ip=40.107.255.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiwynn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiwynn.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s7ve4EcVLGEJ/6fK6+3iuZkFoXOxmCNNB8qLY3+fCsbked9hkmIS8+aXkkLNyrewhAlO1elkV5suIZT6DEQ6XjZGMlsMX4vr388HNbMj9rzvFEJdCsWiyZ6QHLzCGh1FKJf1d8ZCxdllS4xAUM7LErhcozxfNoG353HuiL2d9ZZ0t85HbegY4DcotRZvedb7NuV38oDKbetAvxXmHeUFVLHbBYNaT8QN1WRZL7kfeH+ko/U33UlR7lTmq0cJ97ygVAsyUX+g5K5Lqbvg6xzCwQPvFkUg+QnA1yS3NrjP9V7duVwi1e9/VfkX0olnV9DesVlKSsPxMdNtuwOScMq1Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zRqDcvoK/NlrS9UqVSUaoWLDhf6jPrFpUmrvNMSrSNw=;
+ b=MiYSatxJwb1Q7eBVjM6Qs90DkdTsuS1yzBBrpHBwzjD/ye2yP7SSC19EhtwG33KOFGtDp6tQKeCi7EFxs2iVyi3icyTtmCA4oAy4cwP9GJ2TmpUsadFbaOb+S79hLsyBiPoL/Cdpd5EZlLrQM7PunlEL76d5r2IPLspXuo7YeIgjD+RfBrEdR+8m16kn4Hgz2/6Kk0RH5LH3oJyD8jU6Oo9Yqp4pEkYMjezd4UuQyeGOoxpQqnyWiCtZvEpRknJpPB9HAyAyDY+5zRxBLfgX4iMz/ynkJXMRsKUz9LszWFEdbgwNV6ecYJR2FRraz6DdZ269+1MA1hLdyhXgp+YZ5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wiwynn.com; dmarc=pass action=none header.from=wiwynn.com;
+ dkim=pass header.d=wiwynn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiwynn.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zRqDcvoK/NlrS9UqVSUaoWLDhf6jPrFpUmrvNMSrSNw=;
+ b=uz+u4/U2Pa5GoWWgG5Z4bKt6LPRPoHYafzzwSTef/4rNO15rrKZ14qbSEHY2atl317qGPDCnO5u64F7K/joBEjqH1lIFen+8wyUxEskmRyMVUfBl1kShSD7Kgk1obiW6iMNKyXmvbUTdAEislY8o4qVS7yMOh6SjMsFMrCHJgbHogHn5KBSzpG9AzbqezeOmPSo7/wm2rYg0Yly6M1x/QM8+dMirwVP1LsnIXfixIiO3Qh2UACP38yhbegHlecs8UIl/AqAP8F7fGRuij80vWv0mEta/qIiwkEN/MDwJH+tYwAAvl3jJvMflqf0vziIDL10QMkmQgx5219Zldzm/Tg==
+Received: from TYZPR04MB5853.apcprd04.prod.outlook.com (2603:1096:400:1f3::5)
+ by PUZPR04MB6607.apcprd04.prod.outlook.com (2603:1096:301:fd::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.24; Mon, 30 Sep
+ 2024 01:47:52 +0000
+Received: from TYZPR04MB5853.apcprd04.prod.outlook.com
+ ([fe80::ae7d:7486:9319:8d96]) by TYZPR04MB5853.apcprd04.prod.outlook.com
+ ([fe80::ae7d:7486:9319:8d96%6]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 01:47:52 +0000
+From: Delphine_CC_Chiu/WYHQ/Wiwynn <Delphine_CC_Chiu@wiwynn.com>
+To: Andrew Jeffery <andrew@codeconstruct.com.au>, Patrick Williams
+	<patrick@stwcx.xyz>, Delphine_CC_Chiu/WYHQ/Wiwynn
+	<Delphine_CC_Chiu@wiwynn.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Ricky CX
+ Wu <ricky.cx.wu.wiwynn@gmail.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v1] ARM: dts: aspeed: yosemite4: Add i2c-mux for CPLD IOE
+ on Spider Board
+Thread-Topic: [PATCH v1] ARM: dts: aspeed: yosemite4: Add i2c-mux for CPLD IOE
+ on Spider Board
+Thread-Index: AQHbD72dvqgTMAKzWkuYvi4zIhwj+rJrJMWAgAAxixCAASfCAIAC9XGAgAAdDXA=
+Date: Mon, 30 Sep 2024 01:47:52 +0000
+Message-ID:
+ <TYZPR04MB5853A70A99CEDE8EB64A317DD6762@TYZPR04MB5853.apcprd04.prod.outlook.com>
+References: <20240926024133.3786712-1-Delphine_CC_Chiu@wiwynn.com>
+	 <fbdc9efe87a1bed9fea7d0abaf955aa1a3dc24ac.camel@codeconstruct.com.au>
+	 <TYZPR04MB5853B51141F3D0610D970265D66B2@TYZPR04MB5853.apcprd04.prod.outlook.com>
+	 <Zvdq7o6NFXRVCJqX@heinlein.vulture-banana.ts.net>
+ <16c89a7b9b85d21f1f23aa0d67742c6bde94a295.camel@codeconstruct.com.au>
+In-Reply-To:
+ <16c89a7b9b85d21f1f23aa0d67742c6bde94a295.camel@codeconstruct.com.au>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wiwynn.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR04MB5853:EE_|PUZPR04MB6607:EE_
+x-ms-office365-filtering-correlation-id: 74f8f06c-b640-4e6e-2c53-08dce0f1e5ad
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Nev4Gr3P4039pDHGmIzQl/t9hB6VV/4jeXUTam0wRtRFAAee0kXaIe5Tsvsy?=
+ =?us-ascii?Q?6h4223tCFqyuQEakwRBcK3ci8e0LvvZhQNlS4s/sEr7o+ciZhMvZGshzn19i?=
+ =?us-ascii?Q?trWdrhFLlOfv7qW704ajKxiWJCOeDyaeftKk+cHBMjoINCF3UWnVzs4rLlop?=
+ =?us-ascii?Q?GxcpNh90ENq5IHdsRzMpMpNnxCgAlAn6AjbmN61i2geNW6sjnl93oXXSzLqh?=
+ =?us-ascii?Q?xj0XkLnJeEJFjDqkKwPr6Fzht3fiV6Y5s03CvA6QPeyocGc/Em5NeBKsu4W5?=
+ =?us-ascii?Q?kCN5VxsTZ3Y2LEk4FruLJ4/wFjh11BV9xQskUMk5451BHo8Q7JgIVvHgPgHG?=
+ =?us-ascii?Q?ng60hPdYIA4hB4/ImtOpEDLvQYRnHHcZRcPg7arAekbwhASB/Dt0U82C1qOw?=
+ =?us-ascii?Q?Hk3KYw5lpMbT3YXAQtRkh4pflq49BsglHHU83nfe+6Zb3nDt7na4dedxar8s?=
+ =?us-ascii?Q?SDMS/x9ssgGyPXN61S1yGbvt49HoYPQRW/8Je3BgNh90SC+SQSHGXPWC/MyO?=
+ =?us-ascii?Q?HtqmDWXzw72EYV6yZMVJIhK4jbwGTyQwh3pDwc2kMP6498wO0bBTduWTCpF6?=
+ =?us-ascii?Q?ZXo08bGfMFzNZigwqsV3Aqx3iHJOXRHPcN3x+aERqV/YQPrm277TGt6zOk+D?=
+ =?us-ascii?Q?YLrak2JnttJjj+WGdH1nUyKcbl42bH57oH1ryuW2r8wpd/OAWRZ+2yDo6bpC?=
+ =?us-ascii?Q?HbnLfvPrx2Qd3eyLnDnJNjD5vgm0h0b5vhgcNe5juoQ+zLCll22zU7ols/dE?=
+ =?us-ascii?Q?BUTT4abvWFXzgFH9ClVz3TBR9PPKAX8EKlDCGQRqnqHCqvgtd8nSeawq0EqX?=
+ =?us-ascii?Q?yworiLo/VR9v+KN7njI+ZUI7JVGamfSZes4/MkMzV+wh6KmDtyS2l54Lqzud?=
+ =?us-ascii?Q?FQJllG0qPYQgO3MPM2b0d0W4rBnBjPpXTV5de54rvvfDY3HKbDpDzHBxdwR2?=
+ =?us-ascii?Q?f5pd5PocFBfiucb9ToX0RiMeRfrCOjxw0ulajHkQF/p6hTbR+4d+k+YP/4c2?=
+ =?us-ascii?Q?wNiKYhIFMT0EBKKKIkH0U5J7wMwoPEDAOVyn32lgWuAt/stXLgVcr2UYWo3c?=
+ =?us-ascii?Q?UoonZ5tKw1FfF028x6TacqWmDKKPtCZi4ypFLelcLxyYUw/4UceRIwlLLf8r?=
+ =?us-ascii?Q?eg/FSFxU47VSgKsa5U2G+kY8ZWvB2iqkvUd9nmmH55ZEkF3P5AjMo1qfNF0c?=
+ =?us-ascii?Q?va3ObPS6wSrVEHNoaDgzjkxz1Y7IrVmeLzHYNKwnoSYI7f8fJ1zI8BlFsfRO?=
+ =?us-ascii?Q?YqbKoUGaSH6lFJ5iRQBzDMga2+HObxAAZT15WPAwKtUgvx2NVe0/yxevd5po?=
+ =?us-ascii?Q?sOKVfCsnEVZA/px17UebxluJ3lQ0CrwLbtFz/2KGpy+KXA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR04MB5853.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?zMho9Q2vCWWkopXeO0HrOCBZSS1y/GlzeVcUNl041OvVcF8rleABy1so+eTX?=
+ =?us-ascii?Q?qQZmFHY8LNrISPexE09E77XZHG5QFnwgeEor2pXy4ybR+IWvHkMXEvFPR89o?=
+ =?us-ascii?Q?sX7Az9qF6tJXJWhJdHZJHa44jBoSw/zNflGzZDG1uKbvrQPI3mXwTbDtENdM?=
+ =?us-ascii?Q?3ig+nQ2BfOcyDJH1HOshcpNlRKtHvtV6ZtaiRh6rvSwWzAotIvY54hojRpKv?=
+ =?us-ascii?Q?VnZQ9w8bgT2K9axL+YBQAVr8dcXCMjIMDlXEeLKeVWFtb/EZHBGgTne77bLc?=
+ =?us-ascii?Q?bkQNX8Ns/vEnwho1kDw/bgAjiMp1SAWbzKb5vRQDtEHU00m9KfPx0tG5Bz84?=
+ =?us-ascii?Q?fMvMDiBY2aj7Q+zzZLseaSVXim5hrat69JN86GfBSUWle53PX7CKN2vRFpfG?=
+ =?us-ascii?Q?32rxqnmyBRKbenc6RXOxVmqI4pLL8d0wPQ+hc55ZhbPKhaGa/EkvM4jDIE1e?=
+ =?us-ascii?Q?WTIFdWXlBSQI7pOVzc88Z0cN9gROd0Rtbz7rf9VmpvQOf5zz6xTaMnBoC/qP?=
+ =?us-ascii?Q?HR95oEkk2Hhx3NpifQYEcMqwSZZgApW+2AdIYkpPh++XQDDRt7eHbE7asMmA?=
+ =?us-ascii?Q?3/SW+fDDFwWDA2XJ4QyKNIRAMu61per+kMAGPhjGPF1KVceB91UzNGFpr1tw?=
+ =?us-ascii?Q?KpZk5IbGvKikBlGa1NQ7+ucgBHH5sXEsK1vwrIiCdzz6WCxcABtGJCS9UI+1?=
+ =?us-ascii?Q?1HLJ5kWclGQdvQ1e5mFg/Rq1ZWfFG3V28uRWATwrKgEb014nCYQUcLHy/C5o?=
+ =?us-ascii?Q?9qfLVkcyPEKST3AIH31fGsTTlCOXuDpya5hmgT58IofObarCkkjupnsXPJ87?=
+ =?us-ascii?Q?U0rHLpdH5tJ4UP64UZlLdyNuCLsfea5tBJ9pkSWnGCENWBh/zBqWJTomon8O?=
+ =?us-ascii?Q?KMYYoEjqCKn6EORQitZSMv+BttIPniSspPNCGQy+CosA0wvvyDoyEjmQnQOK?=
+ =?us-ascii?Q?9FoUKOU0Ac9HMdYr3yVnfnyaxHU+h3EtT3btFDWmVdbLYcE7GksiYmxN5vsV?=
+ =?us-ascii?Q?O5+1BGz6XskYWI2bnWryA3fcYPuvxYK/3F9kHUIGb6+o/cNlRaF09FBuOpQG?=
+ =?us-ascii?Q?wb1bmJdcrbtEkVoJxwO+QNzK32EsFfALcMueRG81HFJO+K07tKdbwc7IQ9fa?=
+ =?us-ascii?Q?sen13OyKo82AmqTjUGpNXnW63VPEB5jBzsyjN+RDk4nHXy9UrCBUuwC9pqFk?=
+ =?us-ascii?Q?O+4lIZ3sJlRd3GUQybybxXFAVWsl86QIJ+fnoe1RgOngWc2Ml9RopP8IUKkt?=
+ =?us-ascii?Q?OfN45mIeEGwReoHLHrbil/2xO0fL7yjozYDu13diUG8eW0xejj5Wz3n0Eyk0?=
+ =?us-ascii?Q?dixNUXALT8bnArbbMbZCN503eaA3qIp4T4BmCYlDTwuB9c+Hz/xsCkZHiXU/?=
+ =?us-ascii?Q?jSYFyyrpH+AD2Hh421JtgnpEvubhJ/dAPmoiZHUy6xbwKms8Ks+LnjFeePJz?=
+ =?us-ascii?Q?0k4vCyKCVBZwh68ldb04L9t/NGDwClaikEb+Orxb7+e000tMhdZKOfpnQo0b?=
+ =?us-ascii?Q?qZNb22dUjQZ8OVZYqLILqhTQMIMDYxJmM6jp/8QwCojACCrobvclsevabE9W?=
+ =?us-ascii?Q?f29KVT/4IEvPqn87XSP5RQKQXUWs3h9MfNt0CBbP?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d84:b0:3a0:8c5f:90c0 with SMTP id
- e9e14a558f8ab-3a345169bd7mr87105315ab.10.1727660840136; Sun, 29 Sep 2024
- 18:47:20 -0700 (PDT)
-Date: Sun, 29 Sep 2024 18:47:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fa0328.050a0220.6bad9.002c.GAE@google.com>
-Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_acquire_dquot
-From: syzbot <syzbot+51244a05705883616c95@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    e7ed34365879 Merge tag 'mailbox-v6.12' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10af8ea9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=84a3f3ed29aaafa0
-dashboard link: https://syzkaller.appspot.com/bug?extid=51244a05705883616c95
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/eb021424c7db/disk-e7ed3436.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2f5f0d22ea96/vmlinux-e7ed3436.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/47176809b11c/bzImage-e7ed3436.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+51244a05705883616c95@syzkaller.appspotmail.com
-
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-12113-ge7ed34365879 #0 Not tainted
-------------------------------------------------------
-syz.0.286/7825 is trying to acquire lock:
-ffff88807a27a610 (sb_internal#4){.+.+}-{0:0}, at: ocfs2_acquire_dquot+0x6df/0xb80 fs/ocfs2/quota_global.c:855
-
-but task is already holding lock:
-ffff88805ca04da0 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_lock_global_qf+0x225/0x2b0 fs/ocfs2/quota_global.c:314
-
-which lock already depends on the new lock.
+X-OriginatorOrg: wiwynn.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR04MB5853.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74f8f06c-b640-4e6e-2c53-08dce0f1e5ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 01:47:52.4747
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: da6e0628-fc83-4caf-9dd2-73061cbab167
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Dy+V7wNv+mY8G0KTjENle4aJgK6ywL4V7J+qTHfO1ATfGouiS/MIFQuqVGiXXP7D+RjISUCJZMZq0FmyD7LNtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR04MB6607
 
 
-the existing dependency chain (in reverse order) is:
 
--> #6 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       ocfs2_lock_global_qf+0x225/0x2b0 fs/ocfs2/quota_global.c:314
-       ocfs2_acquire_dquot+0x2b0/0xb80 fs/ocfs2/quota_global.c:823
-       dqget+0x770/0xeb0 fs/quota/dquot.c:976
-       __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1504
-       ocfs2_get_init_inode+0x158/0x1c0 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0xcfa/0x2b40 fs/ocfs2/namei.c:308
-       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
-       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-       do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-       __do_sys_mkdir fs/namei.c:4300 [inline]
-       __se_sys_mkdir fs/namei.c:4298 [inline]
-       __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> -----Original Message-----
+> From: Andrew Jeffery <andrew@codeconstruct.com.au>
+> Sent: Monday, September 30, 2024 7:44 AM
+> To: Patrick Williams <patrick@stwcx.xyz>; Delphine_CC_Chiu/WYHQ/Wiwynn
+> <Delphine_CC_Chiu@wiwynn.com>
+> Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.or=
+g>;
+> Conor Dooley <conor+dt@kernel.org>; Joel Stanley <joel@jms.id.au>; Ricky =
+CX
+> Wu <ricky.cx.wu.wiwynn@gmail.com>; devicetree@vger.kernel.org;
+> linux-arm-kernel@lists.infradead.org; linux-aspeed@lists.ozlabs.org;
+> linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Add i2c-mux for CPLD
+> IOE on Spider Board
+>=20
+>  [External Sender]
+>=20
+>  [External Sender]
+>=20
+> Hi Ricky, Patrick,
+>=20
+> On Fri, 2024-09-27 at 22:33 -0400, Patrick Williams wrote:
+> > On Fri, Sep 27, 2024 at 09:24:11AM +0000,
+> Delphine_CC_Chiu/WYHQ/Wiwynn wrote:
+> >
+> > > Would like to ask should I base on the openbmc/linux repo to create
+> > > the remaining patches that have context dependencies and add the
+> > > lore link of the those patches that I've sent in the cover letter?
+> >
+> > I believe you're trying to get the patches applied onto the upstream
+> > tree, so no you should not base on the openbmc/linux repo.  That repo
+> > is a 6.6 branch.  You need to base the commits on torvalds/linux.
+> >
+>=20
+> In my previous email[1] I requested:
+>=20
+> > Please assess the remaining yosemite4 devicetree patches (those you
+> > haven't received a thank-you email for) and send an appropriately
+> > constructed series so they can all be applied together, based on the
+> > tree here:
+> >
+> > https://urldefense.com/v3/__https://github.com/amboar/linux/tree/for/b
+> >
+> mc/dt__;!!J63qqgXj!N56Dq0KcUR0NerePsoY0JUBCDvFG_F3KyRF0D4qNdu_Ozc
+> SGVPC
+> > SBOJk6u28AWPfgDRWsLE1B__-_ZNVKYv-zhc_6PY$
+>=20
+> So I'm not sure why there's confusion and speculation as to which tree sh=
+ould
+> be used :( Note that the for/bmc/dt branch above is currently based on
+> v6.12-rc1.
+>=20
+> [1]:
+> https://urldefense.com/v3/__https://lore.kernel.org/all/fbdc9efe87a1bed9f=
+ea7
+> d0abaf955aa1a3dc24ac.camel@codeconstruct.com.au/__;!!J63qqgXj!N56Dq0
+> KcUR0NerePsoY0JUBCDvFG_F3KyRF0D4qNdu_OzcSGVPCSBOJk6u28AWPfgDRW
+> sLE1B__-_ZNVKYv-uNCc7qE$
+>=20
+> Anyway, I asked that because I have already applied one of the
+> Yosemite4 patches there, and developing the remaining patches against any
+> other tree will again cause conflicts (due to the lack of that patch).
+>=20
+> More broadly though, Patrick is right: If you're sending your patches ups=
+tream,
+> it is required that you develop and test your patches against an appropri=
+ate
+> upstream tree. Usually this is the most recent -rc1 tag, unless there are=
+ reasons
+> otherwise (such as conflicts). The OpenBMC kernel fork is not an appropri=
+ate
+> tree on which to base work you intend to send upstream.
+>=20
+> Thanks,
+>=20
+> Andrew
 
--> #5 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       inode_lock include/linux/fs.h:815 [inline]
-       ocfs2_lock_global_qf+0x206/0x2b0 fs/ocfs2/quota_global.c:313
-       ocfs2_acquire_dquot+0x2b0/0xb80 fs/ocfs2/quota_global.c:823
-       dqget+0x770/0xeb0 fs/quota/dquot.c:976
-       __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1504
-       ocfs2_get_init_inode+0x158/0x1c0 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0xcfa/0x2b40 fs/ocfs2/namei.c:308
-       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
-       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-       do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-       __do_sys_mkdir fs/namei.c:4300 [inline]
-       __se_sys_mkdir fs/namei.c:4298 [inline]
-       __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Hi Andrew,
 
--> #4 (&dquot->dq_lock){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
-       wait_on_dquot fs/quota/dquot.c:355 [inline]
-       dqget+0x6e6/0xeb0 fs/quota/dquot.c:971
-       dquot_transfer+0x2c2/0x6d0 fs/quota/dquot.c:2139
-       ext4_setattr+0xaf3/0x1bc0 fs/ext4/inode.c:5368
-       notify_change+0xbca/0xe90 fs/attr.c:503
-       chown_common+0x501/0x850 fs/open.c:793
-       do_fchownat+0x16a/0x240 fs/open.c:824
-       __do_sys_lchown fs/open.c:849 [inline]
-       __se_sys_lchown fs/open.c:847 [inline]
-       __x64_sys_lchown+0x85/0xa0 fs/open.c:847
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&ei->xattr_sem){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       ext4_write_lock_xattr fs/ext4/xattr.h:154 [inline]
-       ext4_xattr_set_handle+0x277/0x1580 fs/ext4/xattr.c:2373
-       ext4_initxattrs+0xa3/0x120 fs/ext4/xattr_security.c:44
-       security_inode_init_security+0x29c/0x480 security/security.c:1846
-       __ext4_new_inode+0x3635/0x4380 fs/ext4/ialloc.c:1323
-       ext4_create+0x279/0x550 fs/ext4/namei.c:2834
-       lookup_open fs/namei.c:3595 [inline]
-       open_last_lookups fs/namei.c:3694 [inline]
-       path_openat+0x1c03/0x3590 fs/namei.c:3930
-       do_filp_open+0x235/0x490 fs/namei.c:3960
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
-       do_sys_open fs/open.c:1430 [inline]
-       __do_sys_openat fs/open.c:1446 [inline]
-       __se_sys_openat fs/open.c:1441 [inline]
-       __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (jbd2_handle){++++}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       start_this_handle+0x1eb4/0x2110 fs/jbd2/transaction.c:448
-       jbd2__journal_start+0x2da/0x5d0 fs/jbd2/transaction.c:505
-       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
-       ocfs2_start_trans+0x3c9/0x700 fs/ocfs2/journal.c:352
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x9f6/0x4eb0 fs/ocfs2/suballoc.c:832
-       ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
-       ocfs2_mknod+0x143a/0x2b40 fs/ocfs2/namei.c:345
-       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3595 [inline]
-       open_last_lookups fs/namei.c:3694 [inline]
-       path_openat+0x1c03/0x3590 fs/namei.c:3930
-       do_filp_open+0x235/0x490 fs/namei.c:3960
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
-       do_sys_open fs/open.c:1430 [inline]
-       __do_sys_creat fs/open.c:1506 [inline]
-       __se_sys_creat fs/open.c:1500 [inline]
-       __x64_sys_creat+0x123/0x170 fs/open.c:1500
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&journal->j_trans_barrier){.+.+}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1524
-       ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x9f6/0x4eb0 fs/ocfs2/suballoc.c:832
-       ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
-       ocfs2_mknod+0x143a/0x2b40 fs/ocfs2/namei.c:345
-       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3595 [inline]
-       open_last_lookups fs/namei.c:3694 [inline]
-       path_openat+0x1c03/0x3590 fs/namei.c:3930
-       do_filp_open+0x235/0x490 fs/namei.c:3960
-       do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
-       do_sys_open fs/open.c:1430 [inline]
-       __do_sys_creat fs/open.c:1506 [inline]
-       __se_sys_creat fs/open.c:1500 [inline]
-       __x64_sys_creat+0x123/0x170 fs/open.c:1500
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sb_internal#4){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1716 [inline]
-       sb_start_intwrite include/linux/fs.h:1899 [inline]
-       ocfs2_start_trans+0x2b9/0x700 fs/ocfs2/journal.c:348
-       ocfs2_acquire_dquot+0x6df/0xb80 fs/ocfs2/quota_global.c:855
-       dqget+0x770/0xeb0 fs/quota/dquot.c:976
-       __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1504
-       ocfs2_get_init_inode+0x158/0x1c0 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0xcfa/0x2b40 fs/ocfs2/namei.c:308
-       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
-       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
-       do_mkdirat+0x264/0x3a0 fs/namei.c:4280
-       __do_sys_mkdir fs/namei.c:4300 [inline]
-       __se_sys_mkdir fs/namei.c:4298 [inline]
-       __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#4 --> &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7 --> &ocfs2_quota_ip_alloc_sem_key
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ocfs2_quota_ip_alloc_sem_key);
-                               lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7);
-                               lock(&ocfs2_quota_ip_alloc_sem_key);
-  rlock(sb_internal#4);
-
- *** DEADLOCK ***
-
-6 locks held by syz.0.286/7825:
- #0: ffff88807a27a420 (sb_writers#16){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
- #1: ffff888059d289c0 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:850 [inline]
- #1: ffff888059d289c0 (&type->i_mutex_dir_key#10/1){+.+.}-{3:3}, at: filename_create+0x260/0x540 fs/namei.c:4026
- #2: ffff8880574e1800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
- #2: ffff8880574e1800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{3:3}, at: ocfs2_reserve_suballoc_bits+0x192/0x4eb0 fs/ocfs2/suballoc.c:786
- #3: ffff88805cbf20a8 (&dquot->dq_lock){+.+.}-{3:3}, at: ocfs2_acquire_dquot+0x2a3/0xb80 fs/ocfs2/quota_global.c:818
- #4: ffff88805ca05100 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
- #4: ffff88805ca05100 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#7){+.+.}-{3:3}, at: ocfs2_lock_global_qf+0x206/0x2b0 fs/ocfs2/quota_global.c:313
- #5: ffff88805ca04da0 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}, at: ocfs2_lock_global_qf+0x225/0x2b0 fs/ocfs2/quota_global.c:314
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 7825 Comm: syz.0.286 Not tainted 6.11.0-syzkaller-12113-ge7ed34365879 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1716 [inline]
- sb_start_intwrite include/linux/fs.h:1899 [inline]
- ocfs2_start_trans+0x2b9/0x700 fs/ocfs2/journal.c:348
- ocfs2_acquire_dquot+0x6df/0xb80 fs/ocfs2/quota_global.c:855
- dqget+0x770/0xeb0 fs/quota/dquot.c:976
- __dquot_initialize+0x2e3/0xec0 fs/quota/dquot.c:1504
- ocfs2_get_init_inode+0x158/0x1c0 fs/ocfs2/namei.c:202
- ocfs2_mknod+0xcfa/0x2b40 fs/ocfs2/namei.c:308
- ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdir fs/namei.c:4300 [inline]
- __se_sys_mkdir fs/namei.c:4298 [inline]
- __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f61b017dff9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f61afbff038 EFLAGS: 00000246 ORIG_RAX: 0000000000000053
-RAX: ffffffffffffffda RBX: 00007f61b0335f80 RCX: 00007f61b017dff9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000000
-RBP: 00007f61b01f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f61b0335f80 R15: 00007ffdf22d8ec8
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Sorry for my misunderstanding.
+So I should combine the remaining yosemite4 device tree patches as a single=
+ serial based on torvalds/linux and test on openbmc/linux then send the ser=
+ial patches to torvalds/linux.
+And you will help to fix the conflicts when you apply the serial patches to=
+ openbmc/linux.
+Do I understand it correctly?
 
