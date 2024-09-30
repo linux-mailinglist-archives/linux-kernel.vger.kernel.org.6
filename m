@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-343268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3AF9898F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:19:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6008F9898EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91D81C20FF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:19:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26881284F2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4406D8F45;
-	Mon, 30 Sep 2024 01:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B53717736;
+	Mon, 30 Sep 2024 01:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B+lDR0rE"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s46HyWnK"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9648C137E;
-	Mon, 30 Sep 2024 01:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5148A2F30;
+	Mon, 30 Sep 2024 01:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727659155; cv=none; b=KMwsc1190IWFRG1q/o0u3EibGGE/bUPa+6jt+z2RXl7uQZL1zwsqXru9jSARDMyhwBpstibSxNaVJjp3hSPiovVUoC+aJM/1yppa6k4/ZB0qI9Nc2W8uQt4YZcK68k3AMb2slqWRetT5ILExmvTa6esQpdhFCxKCdbc1QBxtWZQ=
+	t=1727659137; cv=none; b=etLsUgTr+lTzT4oWRhzTZgAbU4wdS2zfuNJrDSprhjdcM6Cg3wtBQx7RHI48UX2W0O462eUJWRYBbpKizIR/Tm6PhF23+R2fXGecpZgteJn0421ghVD7hhscqdYS1sLW0o7+5Leo+XqicsCEEnzJXD2xlHJv5D3+ZyungNZ71oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727659155; c=relaxed/simple;
-	bh=tZQzrKVzETh1J2Qe2bPKOKRVYDkKpapUxu/uICsTvmU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sLr8QYx6VuaikHeK7kMeOPphLWKQs+fxGHp/dhvVB/bJdEFVQWBIE9MNTZlBUJ5cYdXh0GTePfXBBZ0+q+go10MS6/kL9hlqI0V9iSN4IxdsmBVEJU4T37rkKua77QlxGpEr22kjlNKvQW216nhNxbq+4y+QJLh6ytBNc1zy3PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B+lDR0rE; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=XVccFwntIwGBot0bIyb243qoyiqLnKzfjEB3b3z4NJw=; b=B+lDR0rEjnDvDIseihIucVxlsM
-	bEOlRLaw/MYIdBG1rFqjC1LXN9V6Xkscg6BbMcQpVpKP73Zb3y7VK6rBFkW//1b0+TatIwrtPrjIK
-	MkSyz0UT1i2Oy6uKOf9KqfQBdqCRgseAtx1mbN1D8Lb6OOzyh5uHHxVzS9CnM0ZcQgEv3c0wnXPXg
-	DHocaofjI5FWT+Dy9/ag9LCN5N3WopnyfOZ5RyRYX6PzWGkU8tmwh/oYCw+nLjskHHSNgR4JL89Xr
-	fR1LfKBjI/sTgdluZTd9M4s32CEs8Ln5fWX4bUnBQnqx8do7sPAu37i9vozhB+dXEa+zwxB4NN3Fe
-	zt8+AbMQ==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sv53p-00000002jgO-43X8;
-	Mon, 30 Sep 2024 01:18:50 +0000
-Message-ID: <a604f707-83ba-49e0-b90a-db357f8d7cce@infradead.org>
-Date: Sun, 29 Sep 2024 18:18:40 -0700
+	s=arc-20240116; t=1727659137; c=relaxed/simple;
+	bh=U9n8XTV277nLBjpDiMnmvf4MWzQxzHAw7LLCngVHIxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AeO67KMxopceAAWmRePQB9k4gLD/cowun+H06F8P8ftnBeTOgrHHqBPllfXsueVhumdA8pAxoWmv7f1yo6uudxw/A/3W2v75u3lbASx/Io75gTC27SE5kDVJs5iwiniHPFXbizmfso/mCIX93FYT+1z0UHz5X2Cp+ApWPXxH/Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s46HyWnK; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1727659130;
+	bh=QluYZPVxSoa3hBsCuWcJZrZ8oOIxonhv+zsAfubSKX4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=s46HyWnKKPylsm3phKgH3SR98FOd2JABSoH6h9GXn40q5lxibfd5QTwbDFn+bMJ5T
+	 ghJsxHPNvo/luAHgPcwfe3bOgh7Kdmuoj5nJIZ0huUb5JC3ye/Memcm7WLP72AFof6
+	 ECkqQIobkU3oOAxJlWwkZF2qQkdPgCRQPduH/3YIw8wMiBDnrL8gTPBwH0yaegjMz1
+	 PlR8sV+8++UuvX+epjrgEOH2R44G0EP5u/Yf8ml5yDdWaT44TGMzmQNcb+2OMY0Od2
+	 x1/dRDjwq2UVHHD5AIffHE5MmHT00e6Ne17054nNDLtJEXW5wuTAgstojSU63YngBb
+	 RCI5/aJF5P53g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XH3B15Hzxz4wbv;
+	Mon, 30 Sep 2024 11:18:49 +1000 (AEST)
+Date: Mon, 30 Sep 2024 11:18:49 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Miquel Raynal <miquel.raynal@bootlin.com>, Alexander Aring
+ <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the wpan-next tree
+Message-ID: <20240930111849.09fa7c9a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
- value
-To: Jiri Slaby <jirislaby@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
- Devarsh Thakkar <devarsht@ti.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- sebastian.fricke@collabora.com, linux-doc@vger.kernel.org, praneeth@ti.com,
- nm@ti.com, vigneshr@ti.com, s-jain1@ti.com, r-donadkar@ti.com,
- b-brnich@ti.com, detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
- andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
- dlatypov@google.com, corbet@lwn.net, broonie@kernel.org,
- nik.borisov@suse.com, Dave.Martin@arm.com
-References: <20240826150822.4057164-1-devarsht@ti.com>
- <20240826150822.4057164-2-devarsht@ti.com>
- <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
- <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com> <87frqqyw9r.fsf@intel.com>
- <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com> <878qwfy9cg.fsf@intel.com>
- <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/w2WOznnLAN_gf_Dh=w3gPn7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/w2WOznnLAN_gf_Dh=w3gPn7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 8/29/24 2:54 AM, Jiri Slaby wrote:
-> On 29. 08. 24, 11:19, Jani Nikula wrote:
->> The stupid thing here is, I still don't remember which one is the
->> generic thing, rounddown() or round_down(). I have to look it up every
->> single time to be sure. I refuse to believe I'd be the only one.
->>
->> It's okay to accidentally use the generic version, no harm done. It's
->> definitely not okay to accidentally use the special pow-2 version, so it
->> should have a special name. I think _pow2() or _pow_2() is a fine
->> suffix.
-> 
-> Concur.
-> 
+The following commit is also in the wpan tree as a different commit
+(but the same patch):
 
-Ack here also. I prefer _pow2().
+  ace2b5331355 ("net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in reques=
+t_ir
+q()")
 
+This is commit
+
+  09573b1cc76e ("net: ieee802154: mcr20a: Use IRQF_NO_AUTOEN flag in reques=
+t_irq()")
+
+in the wpan tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/w2WOznnLAN_gf_Dh=w3gPn7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb5/HkACgkQAVBC80lX
+0GyCYAf7Ba/GdNY3Panhx7POXWXNOddiDOGT9GUofs7VfX4Bk+kjeWsFVeQN9+8F
+IUBFFsYHg39Kh88bOxdt/r1qUsSvQY8v8G7mb9wQainoyI9iHDYNjjrNzdMP1j2Y
+FDTIFY5p5mwUlMLC4q/HSIbacmf1aSbW0iqMccC2Aqh3wCHWi44ObWd+7EPqdu4b
+C2konP3Y8tSXNI9RIUisWdCU6w2GP9z3CGWWJCy6ZQLY3t3/i4KFnvbvc9K7/LNW
+LAYwwAISNedpIo6yKZc8pfCd5yZBlXABqPu35rMlAz3fLpti4ZH9TpS1QqGGzrq1
+OYrt1uK6caUGAYR7VQk2BpjyCRU+wQ==
+=vMWa
+-----END PGP SIGNATURE-----
+
+--Sig_/w2WOznnLAN_gf_Dh=w3gPn7--
 
