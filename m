@@ -1,79 +1,207 @@
-Return-Path: <linux-kernel+bounces-344223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9414998A6A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FA0098A6D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C4F1F213C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9441F236CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C9119047A;
-	Mon, 30 Sep 2024 14:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8E2190685;
+	Mon, 30 Sep 2024 14:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP8RpTzd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tuWm9eEo"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013A1433B6;
-	Mon, 30 Sep 2024 14:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585B913D539
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727705285; cv=none; b=t7lnEeSL7E+FgPkpT39l42QKaNKLfKNVTXndcECaBx9Epn2G6804UXRwaSHEh4ZwcL/s39DbezPb5tXaSk/ndQhvzslUdznT1SHzQIBmRHMAmY8dbNoYFSRzFtyFtWI9xbNOjJF96Y3suJ5Ms3AT5zd21gX72QuEgRmuFL7b86M=
+	t=1727705823; cv=none; b=KLwdsW8G3+eIa9q5ZdOeBW7sclvQhKtAHTSPoz+dlhRZ7KUl8xCOwG1QeiM+tIe2ZPAqIoxXD4HLV3VtQaIJ0QUigA2kCIS/lcmhUHcYU4Ci5+4NiAFWkd4HKtWUgZAofxtETNnYy4+f95szcVe0uuV+U62d3cIqDlbDATC1WZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727705285; c=relaxed/simple;
-	bh=W2U1pC6An35U2FQHTZotmd+ty3Noyou45ahQIT3vrYY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ua3YUp+YA/X4aXSuOY30soRCfX6Yubx2rj3yy7XrUzTCgVrOGepg+2h+RTRHt0i0ga6cJQsQdZjy+Idpw0xcy4dEFjVXSODhmcoOu18txNt4Y4+CSXuIJmPPeWwq8F64SWiKPv6QMXibCxOp0kkVe3e3Lc1MTw3dqs4YZMiKVvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP8RpTzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CBEC4CEC7;
-	Mon, 30 Sep 2024 14:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727705284;
-	bh=W2U1pC6An35U2FQHTZotmd+ty3Noyou45ahQIT3vrYY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qP8RpTzdQtQA9oJLKDce2L6dkQeOORR7hQXgQst1nTgj1/0aXYs6flCmybBoe0jfH
-	 EpcBdlnRzuz4Y1659XJeIjbPfxyP4MCOUHDSP9qcf2tMAd/FC263GUorqMs11UTF5H
-	 nW50NXpTUHr+erQDVSc5JR1IHGGu6QMxGocFCsxWTunFERAelMO7Of4Uwm0RyRw1lx
-	 7tAF9UrbDjb/xyYedKHwUg2+hM+bj9vBYGhP+5EdNQhkwGBDaMT3obrlvxO7+1rrKd
-	 22Zhbz4A8ZUiWjLsFlyOWSk4N2oDQxojFUTr8xT1AQeneolwQxd/om3J3feoMDq1EB
-	 VURhI8FY/2/QA==
-Message-ID: <282af31b-5682-4ff0-8247-03d3079ee86b@kernel.org>
-Date: Mon, 30 Sep 2024 17:07:59 +0300
+	s=arc-20240116; t=1727705823; c=relaxed/simple;
+	bh=n5YfBVlZGJzjqd3xdXk2PnimFcnATvjiKeL1SmweExM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cvW7U0vYGr/DrDUTArJSEVSAhmppo37K4HaRQqFvforVy3R3GRR6sfJWvaANioyQNLtTTpxKw9hTj/whC/Z9/j4RLZvz+dPgceODmxH/cNIrdCGkcQ0kYQuH2IPeFzU3TDjwuE4JSinBx4VFwz+kqF1/SqdVVT/qrZrmQItAtHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tuWm9eEo; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so39157385e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727705819; x=1728310619; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VFOVFwYjoF4fxpgMI56XK1zOuahk2wnp54J6hso7bWM=;
+        b=tuWm9eEoF3SpWfIMtEjdcelPuJ5tQ7wtLR8sdh6yd82lERee1n3a4iI53zT1ysusYS
+         iYdXtSTF0XHAfpkCNg1weYCIa3H4vUhPg9fELoX1g0c3+wBH2UWdOa0KcUAxwj/JTCLn
+         AuUB+zzVXrXi+04lUMUE5xN8mMbq2v3ikkyMJJrkkTrngXMqV7SNJGEIH7NaZ6vtrHOV
+         /M5QQqjiTV6qHtkBAl3h7ILv5MNqHSMF8SqJL26zhHuAu98Vj1alVz7gv7phaUcS+FLy
+         TvRHh81yO2y6mW6ybAmKl0d8N6j/1wB17UMNLSnpqfXu4ftDpmfqoj36BHzWUp0OOyUs
+         B+7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727705819; x=1728310619;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VFOVFwYjoF4fxpgMI56XK1zOuahk2wnp54J6hso7bWM=;
+        b=ZJ1tSr1dBWDJPugkB6BcnjhTnLGcQuURVFMUVZquloqGPGRBp8TYOshPswUkxVJc9x
+         cQFgs1nZfRThXLuXCu2j054gjV1FDlHnlwip8QLYt8JNCGSxs6Ml2kgmZAwhbnGYn4HV
+         l0hVrDqKuuADAiLoG68RneAhlu4uAy4lLwzfoJNIYQrbW7WCPwmiba6esjNyKgZLlHez
+         6INzNUShAfjrJ5wMOXYRDXsTg79ySvRfcTijLbUsQKF1Ur4fbeYGZo1MBJmHiEYtRczJ
+         ORN/hvYiWPSB1w5dvqc36rzOOlQNJBBk5brFfdjfZU1/YUN4S8/tJkHHyugKi68THApb
+         CL+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXrnU+3ck5SgL6K91gJnvI628VUnOmCup/fzMMtGT5IXStjjEY/rhfEsF6lotVxe0C7FscdQwCH+y8laYQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUwXxPPfRerzxl3ouQJmWlM4a92n3/Mcgs/2pfXzeLcV3/iOVj
+	SgFal2sc18zZxAStnFRZ8aY2VLQQzFnh2APVa/YhRRCIou5ZGG1Epc7v9xc755g=
+X-Google-Smtp-Source: AGHT+IHftwfUBo6pzdrUhKd0aJFd4MebeXnEU5QwFMsPWvGui292M+2dObmcHg0SZANLx6oXYSWqLw==
+X-Received: by 2002:adf:ce8f:0:b0:37c:d179:2f73 with SMTP id ffacd0b85a97d-37cd5a93aeemr6753207f8f.13.1727705818679;
+        Mon, 30 Sep 2024 07:16:58 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d2aasm9239338f8f.4.2024.09.30.07.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 07:16:58 -0700 (PDT)
+Date: Mon, 30 Sep 2024 16:15:41 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, dlechner@baylibre.com
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+Message-ID: <oh2xoym6dwvfn5lbzx3j5ckd3gfzvl2ukohrs4ukumkv6kzwi5@ume3z224gjta>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+ <20240929115150.6d1c22b3@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/35] ARM: OMAP2/3: PRM: Reorganize kerneldoc parameter
- names
-To: Julia Lawall <Julia.Lawall@inria.fr>, Paul Walmsley <paul@pwsan.com>
-Cc: kernel-janitors@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>,
- Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
- linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
- <20240930112121.95324-2-Julia.Lawall@inria.fr>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20240930112121.95324-2-Julia.Lawall@inria.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929115150.6d1c22b3@jic23-huawei>
 
-
-
-On 30/09/2024 14:20, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
+On 29.09.2024 11:51, Jonathan Cameron wrote:
+> On Thu, 19 Sep 2024 11:20:00 +0200
+> Angelo Dureghello <adureghello@baylibre.com> wrote:
 > 
-> Problems identified using Coccinelle.
+> > From: Angelo Dureghello <adureghello@baylibre.com>
+> > 
+> > There is a version AXI DAC IP block (for FPGAs) that provides
+> > a physical bus for AD3552R and similar chips, and acts as
+> > an SPI controller.
 > 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Wrap is a bit short. Aim for < 75 chars for patch descriptions.
+> 
+> > 
+> > For this case, the binding is modified to include some
+> > additional properties.
+> > 
+> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > ---
+> >  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++++
+> >  1 file changed, 42 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > index 41fe00034742..aca4a41c2633 100644
+> > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > @@ -60,6 +60,18 @@ properties:
+> >      $ref: /schemas/types.yaml#/definitions/uint32
+> >      enum: [0, 1, 2, 3]
+> >  
+> > +  io-backends:
+> > +    description: The iio backend reference.
+> 
+> Give a description of what the backend does in this case.  I.e. that it is
+> a qspi DDR backend with ...
+> 
+> > +      An example backend can be found at
+> > +        https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+> > +    maxItems: 1
+> > +
+> > +  adi,synchronous-mode:
+> > +    description: Enable waiting for external synchronization signal.
+> > +      Some AXI IP configuration can implement a dual-IP layout, with internal
+> > +      wirings for streaming synchronization.
+> 
+> I've no idea what a dual-IP layout is.  Can you provide a little more info
+> here?  What are the two IPs?
+>
+IP is a term used in fpga design as "intellectual property", that is
+intended as a functional block of logic or data used to make a 
+field-programmable gate array module.
 
-Reviewed-by: Roger Quadros <rogerq@kernel.org>
+A dual layout is just 2 same fpga modules in place of one.
+ 
+I can add a "fpga" regerence to be more clear.
+
+> > +    type: boolean
+> > +
+> >    '#address-cells':
+> >      const: 1
+> >  
+> > @@ -128,6 +140,7 @@ patternProperties:
+> >            - custom-output-range-config
+> >  
+> >  allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >    - if:
+> >        properties:
+> >          compatible:
+> > @@ -238,4 +251,33 @@ examples:
+> >              };
+> >          };
+> >      };
+> > +
+> > +  - |
+> > +    axi_dac: spi@44a70000 {
+> > +        compatible = "adi,axi-ad3552r";
+> > +        reg = <0x44a70000 0x1000>;
+> > +        dmas = <&dac_tx_dma 0>;
+> > +        dma-names = "tx";
+> > +        #io-backend-cells = <0>;
+> > +        clocks = <&ref_clk>;
+> > +
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> > +
+> > +        dac@0 {
+> > +            compatible = "adi,ad3552r";
+> > +            reg = <0>;
+> > +            reset-gpios = <&gpio0 92 0>;
+> > +            io-backends = <&axi_dac>;
+> > +            spi-max-frequency = <66000000>;
+> > +
+> > +            #address-cells = <1>;
+> > +            #size-cells = <0>;
+> > +
+> > +            channel@0 {
+> > +                reg = <0>;
+> > +                adi,output-range-microvolt = <(-10000000) (10000000)>;
+> > +            };
+> > +        };
+> > +    };
+> >  ...
+> > 
+> 
+
+Regards,
+Angelo
+
+-- 
+
+  o/ QW5nZWxvIER1cmVnaGVsbG8=
+   www.kernel-space.org
+    e: angelo at kernel-space.org
+      c: +39 388 8550663
+       
 
