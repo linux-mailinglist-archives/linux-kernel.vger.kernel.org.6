@@ -1,85 +1,64 @@
-Return-Path: <linux-kernel+bounces-344055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDE498A38B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:53:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACB898A38A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73071F25FEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:53:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3414FB24DFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E3118E75F;
-	Mon, 30 Sep 2024 12:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KhOGiAG9"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA8C18E751;
+	Mon, 30 Sep 2024 12:52:56 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BB218E361
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB778126C07
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727700811; cv=none; b=fF0JiqOSj9CXmvJqf7msaENFablJCUCi+iQWg1nI+BjXzbZmcu8myCMctfdxx/clJ7KdT4lxdUUzh2gvfIMcW0Ex0bDYTenvLq/QuKIEda0DezfeaTdaqkpdE5udMLxfiYbHhCj95eaWtpazTPnLwXAPX12DMVxfxObcJiDTlbM=
+	t=1727700775; cv=none; b=K5ezaesZOYbfBBkRIoTOycrQuHmdGo1vPi/YgfDKfRm1TefTNfAIxMeLxFVyeQ7uN1us15j5xsq033bbQpYq3nIkKFRFr1oOhelbdHcg75SfBLRkVshexp+OUaf7I0/4Z/HPSNd3AIFzdHoMQa+7YoH49YlK89OaN1YY58HELZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727700811; c=relaxed/simple;
-	bh=FI6P/Vz2G1P9FtQdIR02rYpG8hPx1kHCzzvah3QhfmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e5FmMYyE3SvucIIFpKbADBsEFUPeBnR8jR7jSdLjMLoiocx5rv69B7cSQSTF+mrg1XvTBd9HYnMtkuwELJSS2VGLVdbDe58R1J1wn7aje/6gUUkUPRYlw8Ujwattms3UcpNd7V8o6um0PIrAsmS8LvJce77IWistbUSsq3GcUkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KhOGiAG9; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e7b7bef42so34914345e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727700808; x=1728305608; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h849igZr4Ixq8Z3CBdQvzfuVtVpkRBJfrNu7EAZT8oc=;
-        b=KhOGiAG9x7rt54sFgjlrYMWehkvltRzsi27TmeuM0bRCGH7OVRlOudlwCWY5Ihn7yL
-         61c/B8e2g7IkJL2XKGDEzIsx4CRMKwTXNi9tbu8F5CTgTe6R+pbXLToGPna2o+JcRVNP
-         W0OKCuwDk449W4kiOgH+9awyGrL8ljE5HG34CER+krRYLfV75ZmyqltoRdww7YxVUt9H
-         LJyUyRAWqwnOhNJsAdF8cAhYI6ZuO0c/Ff12x8PBAwjTOJ0LcrISB2j1AMNb8KwK6i5d
-         KdojA448eeZOOsQxPOt0ax2/NfCJAnmvksjj2gSFR/bGCYsjCNkU5fOmdmry77jIPouK
-         4x+A==
+	s=arc-20240116; t=1727700775; c=relaxed/simple;
+	bh=/V56lk7ZegXlAfXt0mXZYXzDpMI1H5yOFejQXAJJ+vA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cz8PGtFBGv3e48VAXN42eJeA0PhGkNt+1sAziWW6OMlqLONanVopgqI7DglncJs5swrtS6zyXINniiiW2g3Ab4UakeWdB85zVJUuahSnrWAr00OFDZe4gdyBMYJ1oJyjyUbMk454YEh3hlvLaNuRKDlYVi7DShGNVn/9vz3ZClw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a83562f9be9so493745466b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:52:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727700808; x=1728305608;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h849igZr4Ixq8Z3CBdQvzfuVtVpkRBJfrNu7EAZT8oc=;
-        b=FWe/WXRNwcGTR/v3YLMvnM/ZsG26aTdt/KtNixpyDu0Uru2LuwJuy2EndoeBgPkhrR
-         icy6ejRrpWDg7yUzLvjuS1PtCsokeM//W+b3ziZjRvbZRmTVjd0oImTOsVizo3yvei8+
-         eExVhphgLjSeMRWXZt1cO1IMAC0mFwhpAReKooWhWSA/+Y7moLwo/e5MAsTVS2mG0q58
-         6SPhG+Q9xh+QxubqxWHSEhAdq3j264oOUzX74bKbMIZW0Gz+oOPnKwe0cu0CMnb3Kyh+
-         +49PEyFD3umJj90wvq6YyGjXne7cD4YCrwoQ9ykFU30wcLfZTrdES4zMzgci6LL7ArzX
-         kxvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXn3z/3puhBYtkTsHslh8dpb7Rk8sBvo3zYrzAbNpHu7Aqo0wNsG3Wn/vj+XoW2T2UskAI8JMpwMv6gIfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzolM69OdbXbCUlUMKs4JvztDmkaKT+G9H0U8YHPR6YH/4aC4QE
-	sejWUiVUV9/Jt0g8Nk0eCdm99F6xMDp37Z8YSeQfdSrdh1X+91FLbiHBRX3OO/k=
-X-Google-Smtp-Source: AGHT+IGGEtHWxlpRHRB4xGyRHsYZF85KLKYWr8ofp+5/Ypf02UC8nfqWCvvKeV7hxj3tjVwUYi4U0Q==
-X-Received: by 2002:a05:600c:4f14:b0:42c:de2f:da27 with SMTP id 5b1f17b1804b1-42f5840e765mr93078445e9.2.1727700807785;
-        Mon, 30 Sep 2024 05:53:27 -0700 (PDT)
-Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6547sm9076767f8f.58.2024.09.30.05.53.26
+        d=1e100.net; s=20230601; t=1727700772; x=1728305572;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R1TlKW/417T6V+OHhC40MAa3QR7g+i27iZseLpNTNxY=;
+        b=xNP2TEloGIHJttBAkOojMFEJZVy3a5aPLCvvPtqt0CUnFX5cos6iRdjDxXbtNoIIhS
+         0gfQkQg/zyxnh2eUU+bYKY31lPff9FIK6EKwuyxURi0OjmsyR/22seTQHgrkd0yf87xP
+         1TQRvECn6gXExN/R6Pml4OHFPR7QZHiV3rUVPX/nO8CWUsTwJeKIIoEB8kXGiRidgxlm
+         yRULA63CMWLCanZYMGPPjCwdQEv+GHWhLC9DRYmzHouaPiFM8WVvsw4oQqCedx/k6TOh
+         ps3QzaTjIvWGJO8MhkgJ+Ecx2mPugJVi0P5bZNyAex3V7HbOWMMViBrkLZTULotv6FkR
+         Y91g==
+X-Gm-Message-State: AOJu0YxTBJMbfCB0yewdTIvOLt3ep6HZq+oGslVfpycEfqC2whEBpkEn
+	x0WWaEbwUxSL0aYi3bGbjRZOgyHFjx51ibQYVyzhSaAdQv1mvBdN
+X-Google-Smtp-Source: AGHT+IE2+mUmus2a/8fNq1KMpKrMx3DnOMdP0TGlcz2hatdK9qGznAauya3pnsh7TW27wUKm5kP+iQ==
+X-Received: by 2002:a17:907:9341:b0:a8d:4e26:c9b9 with SMTP id a640c23a62f3a-a93c49218abmr1271171666b.17.1727700771635;
+        Mon, 30 Sep 2024 05:52:51 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2776df8sm526504666b.26.2024.09.30.05.52.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:53:27 -0700 (PDT)
-Date: Mon, 30 Sep 2024 14:52:10 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, dlechner@baylibre.com, Mark Brown <broonie@kernel.org>, 
-	linux-spi@vger.kernel.org
-Subject: Re: [PATCH v3 02/10] dt-bindings: iio: dac: axi-dac: add ad3552r axi
- variant
-Message-ID: <sowmuxfsedwdshyothf7jc6mcrbzqbs2vzw7x4p3tg3iqnlnjt@5qa3kazkce46>
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
- <20240929114606.7500ba7e@jic23-huawei>
+        Mon, 30 Sep 2024 05:52:51 -0700 (PDT)
+Date: Mon, 30 Sep 2024 05:52:49 -0700
+From: Breno Leitao <leitao@debian.org>
+To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+Subject: 6.12-rc1: general protection fault at pick_task_fair()
+Message-ID: <20240930-mysterious-meek-goldfish-2f851f@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,155 +67,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240929114606.7500ba7e@jic23-huawei>
 
-On 29.09.2024 11:46, Jonathan Cameron wrote:
-> On Thu, 19 Sep 2024 11:19:58 +0200
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Add a new compatible and related bindigns for the fpga-based
-> > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> > 
-> > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> > generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> > mainly to reach high speed transfer rates using an additional QSPI
-> 
-> I'd drop the word additional as I assume it is an 'either/or' situation
-> for the interfaces.
-> 
-> Do we have other devices using this same IP?  I.e. does it make
-> sense to provide a more generic compatible as a fallback for this one
-> so that other devices would work without the need for explicit support?
-> 
->
-no, actually ad3552r-axi is only interfacing to ad3552r.
-I could eventually set adi,axi-dac-9.1.b as a fallback, since it
-is the "gneric" AXI implementation.
- 
-> I'd also ideally like a view point from Mark Brown as SPI maintainer
-> on how we should deal with this highly specialized spi controller.
-> Is he happy with us using an SPI like binding but not figuring out how
-> to fit this engine into the SPI subsystem.
-> 
-> Please +CC Mark and the spi list (done here) on future versions + provide
-> a clear description of what is going on for them.
-> 
+Hello,
 
-Ok.
-Actually i fixed the bindings for v4 setting axi-ad3552r as an
-spi-controller, and the target ad3552r as a spi-peripheral (child node).
-This axi-ad3552r is not only a pure spi-controller since providing
-some synchronization features not typical of a spi-controller. 
+I've been testing v6.12-rc1 and I got some crashes that I would like to
+share, since I haven't seen anything in the mailing list yet.
 
-> Maybe with the binding fixed as spi compliant, we can figure out the
-> if we eventually want to treat this as an SPI controller from the
-> kernel driver point of view even if we initially do something 'special'.
->
+This kernel was compiled with some debug options, against 11a299a7933e
+("Merge tag 'for-6.12/block-20240925' of git://git.kernel.dk/linux").
 
-> Jonathan
-> 
-> 
-> > DDR interface.
-> > 
-> > The ad3552r device is defined as a child of the AXI DAC, that in
-> > this case is acting as an SPI controller.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> >  .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   | 40 ++++++++++++++++++++--
-> >  1 file changed, 37 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > index a55e9bfc66d7..6cf0c2cb84e7 100644
-> > --- a/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,axi-dac.yaml
-> > @@ -19,11 +19,13 @@ description: |
-> >    memory via DMA into the DAC.
-> >  
-> >    https://wiki.analog.com/resources/fpga/docs/axi_dac_ip
-> > +  https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
-> >  
-> >  properties:
-> >    compatible:
-> >      enum:
-> >        - adi,axi-dac-9.1.b
-> > +      - adi,axi-ad3552r
-> >  
-> >    reg:
-> >      maxItems: 1
-> > @@ -41,22 +43,54 @@ properties:
-> >    '#io-backend-cells':
-> >      const: 0
-> >  
-> > +  '#address-cells':
-> > +    const: 1
-> > +
-> > +  '#size-cells':
-> > +    const: 0
-> > +
-> >  required:
-> >    - compatible
-> >    - dmas
-> >    - reg
-> >    - clocks
-> >  
-> > +patternProperties:
-> > +  "^.*@([0-9])$":
-> > +    type: object
-> > +    additionalProperties: true
-> > +    properties:
-> > +      io-backends:
-> > +        description: |
-> > +          AXI backend reference
-> > +    required:
-> > +      - io-backends
-> > +
-> >  additionalProperties: false
-> >  
-> >  examples:
-> >    - |
-> >      dac@44a00000 {
-> > -        compatible = "adi,axi-dac-9.1.b";
-> > -        reg = <0x44a00000 0x10000>;
-> > -        dmas = <&tx_dma 0>;
-> > +      compatible = "adi,axi-dac-9.1.b";
-> > +      reg = <0x44a00000 0x10000>;
-> > +      dmas = <&tx_dma 0>;
-> 
-> If it makes sense to reformat then separate patch
-> please as this is hard to read as a result of this
-> change.  Also, as pointed out, be consistent with spacing.
-> 
-> > +      dma-names = "tx";
-> > +      #io-backend-cells = <0>;
-> > +      clocks = <&axi_clk>;
-> > +    };
-> > +
-> > +  - |
-> > +    axi_dac: spi@44a70000 {
-> > +        compatible = "adi,axi-ad3552r";
-> > +        reg = <0x44a70000 0x1000>;
-> > +        dmas = <&dac_tx_dma 0>;
-> >          dma-names = "tx";
-> >          #io-backend-cells = <0>;
-> >          clocks = <&axi_clk>;
-> > +
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +
-> > +        /* DAC devices */
-> >      };
-> >  ...
-> > 
-> 
 
--- 
+   [146800.130180] Oops: general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN
+   [146800.156067] KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
+   [146800.200109] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN, [E]=UNSIGNED_MODULE, [L]=SOFTLOCKUP, [N]=TEST
+   [146800.218119] Hardware name: Quanta Delta Lake MP 29F0EMA00E0/Delta Lake-Class1, BIOS F0E_3A19 04/27/2023
+   [146800.237177] Workqueue:  0x0 (events)
+   [146800.244615] RIP: 0010:pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
+   [146800.253955] Code: 74 08 48 89 df e8 3d 78 01 00 e9 29 01 00 00 0f 1f 44 00 00 48 89 df e8 5b ef 01 00 49 89 c6 48 8d 68 51 48 89 eb 48 c1 eb 03 <42> 0f b6 04 3b 84 c0 0f 85 98 00 00 00 80 7d 00 00 0f 84 3a 03 00
+   All code
+   ========
+      0:	74 08                	je     0xa
+      2:	48 89 df             	mov    %rbx,%rdi
+      5:	e8 3d 78 01 00       	call   0x17847
+      a:	e9 29 01 00 00       	jmp    0x138
+      f:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+     14:	48 89 df             	mov    %rbx,%rdi
+     17:	e8 5b ef 01 00       	call   0x1ef77
+     1c:	49 89 c6             	mov    %rax,%r14
+     1f:	48 8d 68 51          	lea    0x51(%rax),%rbp
+     23:	48 89 eb             	mov    %rbp,%rbx
+     26:	48 c1 eb 03          	shr    $0x3,%rbx
+     2a:*	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax		<-- trapping instruction
+     2f:	84 c0                	test   %al,%al
+     31:	0f 85 98 00 00 00    	jne    0xcf
+     37:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
+     3b:	0f                   	.byte 0xf
+     3c:	84 3a                	test   %bh,(%rdx)
+     3e:	03 00                	add    (%rax),%eax
+   
+   Code starting with the faulting instruction
+   ===========================================
+      0:	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax
+      5:	84 c0                	test   %al,%al
+      7:	0f 85 98 00 00 00    	jne    0xa5
+      d:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
+     11:	0f                   	.byte 0xf
+     12:	84 3a                	test   %bh,(%rdx)
+     14:	03 00                	add    (%rax),%eax
+   [146800.291790] RSP: 0018:ffff8889ae3dfbc0 EFLAGS: 00010006
+   [146800.302506] RAX: 0000000000000000 RBX: 000000000000000a RCX: dffffc0000000000
+   [146800.317040] RDX: ffff8889ae3dfd30 RSI: ffff8889af5bca00 RDI: ffff888e38546380
+   [146800.331573] RBP: 0000000000000051 R08: ffffffff86ddef37 R09: 1ffffffff0dbbde6
+   [146800.346109] R10: dffffc0000000000 R11: fffffbfff0dbbde7 R12: 1ffff111c70a8c6a
+   [146800.360642] R13: 1ffff111c70a8c71 R14: 0000000000000000 R15: dffffc0000000000
+   [146800.375175] FS:  0000000000000000(0000) GS:ffff888e38500000(0000) knlGS:0000000000000000
+   [146800.391619] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+   [146800.403369] CR2: 0000559372540094 CR3: 0000000017c8c001 CR4: 00000000007706f0
+   [146800.417906] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+   [146800.432437] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+   [146800.446969] PKRU: 55555554
+   [146800.452638] Call Trace:
+   [146800.457784]  <TASK>
+   [146800.462238] ? __die_body (arch/x86/kernel/dumpstack.c:421) 
+   [146800.469479] ? die_addr (arch/x86/kernel/dumpstack.c:?) 
+   [146800.476373] ? exc_general_protection (arch/x86/kernel/traps.c:? arch/x86/kernel/traps.c:693) 
+   [146800.486078] ? asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:617) 
+   [146800.496111] ? pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
+   [146800.504219] ? rcu_is_watching (./include/linux/context_tracking.h:128 kernel/rcu/tree.c:737) 
+   [146800.512321] ? util_est_update (./include/trace/events/sched.h:814 kernel/sched/fair.c:5054) 
+   [146800.520777] pick_next_task_fair (kernel/sched/fair.c:8877) 
+   [146800.529408] __schedule (kernel/sched/core.c:5956 kernel/sched/core.c:6477 kernel/sched/core.c:6629) 
+   [146800.536841] ? sched_submit_work (kernel/sched/core.c:6708) 
+   [146800.545472] schedule (kernel/sched/core.c:6753 kernel/sched/core.c:6767) 
+   [146800.552189] worker_thread (kernel/workqueue.c:3344) 
+   [146800.559983] kthread (kernel/kthread.c:390) 
+   [146800.566696] ? pr_cont_work (kernel/workqueue.c:3337) 
+   [146800.574623] ? kthread_blkcg (kernel/kthread.c:342) 
+   [146800.582379] ret_from_fork (arch/x86/kernel/process.c:153) 
+   [146800.589784] ? kthread_blkcg (kernel/kthread.c:342) 
+   [146800.597537] ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
+   [146800.605664]  </TASK>
 
-  o/ QW5nZWxvIER1cmVnaGVsbG8=
-   www.kernel-space.org
-    e: angelo at kernel-space.org
-      c: +39 388 8550663
-       
+Important to say that I am also seeing the following warning before the
+crash:
+
+ workqueue: drain_vmap_area_work hogged CPU for >20000us 4 times, consider switching to WQ_UNBOUND
+ ------------[ cut here ]------------
+           !se->on_rq
+           WARNING: CPU: 24 PID: 17 at kernel/sched/fair.c:704 dequeue_entity+0xd21/0x17c0
+
+Is this helpful?
+
+Thanks
+--breno
 
