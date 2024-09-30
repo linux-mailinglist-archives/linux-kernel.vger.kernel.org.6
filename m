@@ -1,89 +1,114 @@
-Return-Path: <linux-kernel+bounces-344470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B13A98AA1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:43:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B0E98AA24
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CFB21C2162D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:43:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFF3A1F241FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA461990A1;
-	Mon, 30 Sep 2024 16:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F91195FF0;
+	Mon, 30 Sep 2024 16:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAadccar"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czbSTrIl"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB5D195381;
-	Mon, 30 Sep 2024 16:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F45419925B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714568; cv=none; b=EiqaYGjdfz/fXeDTdO/XqW3hg6+brurRN4O1hb+YBQynQroF/cXXMUx/Z27jZCreIzWQpde3TWfrqRHBMcbuQtJKM14xL45swZ6HcbOq1gXfFwQ+WtBs/k5EPwFec8jkCRV0Y166VxyorMSNLBPlvABLA6z2p2No5w6z/xJ7qHY=
+	t=1727714602; cv=none; b=rIgzT+Fk2aWkAjS5KV7LeERDsTlZN9dqhXKi5RhuyRoG9AA8mflEdkKX7KVj8pm4j3TwNsqy/PASUwjx/Jgl3vHfQR7qfCmWOZQ39jEnvtJT7kT8pq/qujk5iUKoMsGxPhulqK7um2lAeKJWaPnWYuAEyJfsH0nQvNZGn0PpN70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714568; c=relaxed/simple;
-	bh=e+N9Wftnz138OBY0jZAnIIG3PVBfXY7dM/DnQeglwJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=nFbVRP84bnPZYL/Sf/+Z4qVPqkDOHCekFySSHrlEIZ3MH26JNovbx0eN6uv8Oeo4WTLZChi87CA6olFHizoZ2V/CRbuH1w5DNEeNj6xiuxTRbHvsdFwKPBBDVhehC893XXwtv7/URiyobqd/NFyKp2lxZEbgMmdgImhV9rUJr1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAadccar; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B17C4CEC7;
-	Mon, 30 Sep 2024 16:42:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727714568;
-	bh=e+N9Wftnz138OBY0jZAnIIG3PVBfXY7dM/DnQeglwJ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YAadccarkoZ4zofCPFCli2wMk25pASpvSoOAu/n0OGgnI4tL/5aogbJqJGj5TcPfE
-	 N4d01tRwN3eOfxM/zVJTluGZEDD9cMSaxEk4cfP4JWljbcT4gKb+uHeqzXrOHu8Oo4
-	 Rz3p23GQeSMvKf/eqfQj6i5vjxRhXTI0jl2ayP1rvmL11/2pRQNZoAtEeAl9M46e4b
-	 XBEbkhfyEJMtW4Wm/9z1kvpKYCWmE9H6+4+27Koh3W1LNwKvsV0trGVWsLRCEC25VB
-	 aWnI5Rq221yhrmn9CSsb7JSY7nHiKY1U5qxl+FwsA692lDO9tsrCDZO9Ji6zFjLWGG
-	 ZrswqEKHl4lGQ==
-Date: Mon, 30 Sep 2024 11:42:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, kernel-janitors@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 22/35] PCI: hotplug: Reorganize kerneldoc parameter names
-Message-ID: <20240930164246.GA179357@bhelgaas>
+	s=arc-20240116; t=1727714602; c=relaxed/simple;
+	bh=m1qbC/AvOhyEZrrIYOj0Qe2mKQAxepoFR3RJr+Hnc1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BO/WKqcADN7Ss00bxj2QWlDH9Tsqs2vI3SVkJnocX43NXR3pbJTEIzT7XQVx2WHoKp7L9iOreVRu8OyxQnACxEdM8XspwkSj98PJktG1Gsty2qRLxfuIwYCKbuHNd0vjVypas0XOMXUje+FMs1Lq8Lq/dKUoqlZzOR87rnndm3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czbSTrIl; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53991d05416so1868445e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727714599; x=1728319399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gsoudYHBDIwk3hP9Mb6c9UkWLKNWFBMDDV5+BgCAESM=;
+        b=czbSTrIlnQV2NCl9rwoX6PisfWTnfnijXLOSGHntrYUJEjdBUkM1J7bAa9kyZpjdpp
+         pAKf3llg5mnL97G7Pk2cQpSzZnpjcATQVBNfjLK0hPhO8sChnZ6aqJaGe0wUyTmFPyg1
+         devZpz5NKNM4hdhc6YkYPuMYt0Qn9SpqZM+VO1rG/HCS4E7GC6dfmZpV+4Lcqdoj5lH6
+         96CqECtPebV6HGvIi7RJfiBDfHVOyAnuof0H+6wCi+fK15ZcVw8Lc3TRZp4y8MNwsrT+
+         p5wZwqtaYAR1vjDhVZKhyxqr0jh/DM19tK5BPvH7uO8K6IVolesnvWdD18HPG4hdrWue
+         YE2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727714599; x=1728319399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gsoudYHBDIwk3hP9Mb6c9UkWLKNWFBMDDV5+BgCAESM=;
+        b=CJZWXVF+UbG3tb3aqr6H/heKHHSr6odPewo/WOh8bftLsEUTO7/QmUPFHqjKRp83VX
+         JVxyX8+CGHmJ7WDnYd9PITWx0cwKCSy898/1Xcr8rtaAqEU4Ap22peZz8cpy7i/5tkv+
+         11kF/noyfQ5nGt9NLW+FCDRAd7J4chzgck2b0nOiG4wiPjLKKbyny9N/Imxhno+b6t4X
+         hly9VUohP6IPSMGAvAF80pt+onZoGGNdoNCdQFrpY7VDw7DRa81Qlm3XMsslbKaSHAhT
+         krtyY6VCYmDAbUQbutVFhP6RZgrGPgSN1aeOtZ3wu9dSbdOcU39doN8hweJxS9QyIWiA
+         0SHg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA1upcYkb2zi6griZ+QhLKH09vc7O5CLYvNa94Kxs4jfKHUlDHUuY98ZfaNJEZ7R3oAN4cYMQBhrolBiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/O476p3HBhOd6LgEtqMRdoLe3U2deOcDWE82H0ISEoohgJuOf
+	WnO5OTqH5/GoolnosO5ERXZlj3xU3esWCmea9Qay9+MTB48u3SiF5KaU1cRS8DCH5ifTDzVtgAy
+	HCIOonXizqrpZacbDIFOn03gIq44=
+X-Google-Smtp-Source: AGHT+IF6Xrru1T/j53oS5NZzW+QOHch4IQf+2m2ycID4Y0g28m9qHaOvjNjOZGialOxJF3OMgvO+U9/ed6rY6XF788U=
+X-Received: by 2002:a05:6512:238f:b0:538:9e36:7b6a with SMTP id
+ 2adb3069b0e04-5389fc4b91bmr8949797e87.32.1727714598379; Mon, 30 Sep 2024
+ 09:43:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930112121.95324-23-Julia.Lawall@inria.fr>
+References: <20240927194856.096003183@infradead.org> <20240927194925.069013308@infradead.org>
+ <CAADnVQ+BASJ7kcW4Kz_NsXM0U1+GrMHNVBOro8aO0-OyEry4Ww@mail.gmail.com>
+ <20240930083026.GG5594@noisy.programming.kicks-ass.net> <20240930093302.GB33184@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240930093302.GB33184@noisy.programming.kicks-ass.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 30 Sep 2024 09:43:06 -0700
+Message-ID: <CAADnVQLbZRJyoF8yBZV3nnm8yQVeevQW0=stYv0HXBmZpY2BJw@mail.gmail.com>
+Subject: Re: [PATCH 07/14] x86/ibt: Clean up is_endbr()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, X86 ML <x86@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, alyssa.milburn@intel.com, 
+	scott.d.constable@intel.com, Joao Moreira <joao@overdrivepizza.com>, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"Jose E. Marchesi" <jose.marchesi@oracle.com>, "H.J. Lu" <hjl.tools@gmail.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Nathan Chancellor <nathan@kernel.org>, ojeda@kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 01:21:08PM +0200, Julia Lawall wrote:
-> Reorganize kerneldoc parameter names to match the parameter
-> order in the function header.
-> 
-> Problems identified using Coccinelle.
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+On Mon, Sep 30, 2024 at 2:33=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+>
+> Which then leads to me rewriting the proposed patch as...
 
-Applied to pci/misc for v6.13, thank you!
+...
 
-> ---
->  drivers/pci/hotplug/pci_hotplug_core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/hotplug/pci_hotplug_core.c b/drivers/pci/hotplug/pci_hotplug_core.c
-> index 058d5937d8a9..db09d4992e6e 100644
-> --- a/drivers/pci/hotplug/pci_hotplug_core.c
-> +++ b/drivers/pci/hotplug/pci_hotplug_core.c
-> @@ -388,8 +388,8 @@ static struct hotplug_slot *get_slot_from_name(const char *name)
->  
->  /**
->   * __pci_hp_register - register a hotplug_slot with the PCI hotplug subsystem
-> - * @bus: bus this slot is on
->   * @slot: pointer to the &struct hotplug_slot to register
-> + * @bus: bus this slot is on
->   * @devnr: device number
->   * @name: name registered with kobject core
->   * @owner: caller module owner
-> 
+> +__noendbr bool is_endbr(u32 *val)
+> +{
+> +       u32 endbr;
+> +
+> +       __get_kernel_nofault(&endbr, val, u32, Efault);
+> +       return __is_endbr(endbr);
+> +
+> +Efault:
+> +       return false;
+> +}
+
+That looks much better.
+
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
