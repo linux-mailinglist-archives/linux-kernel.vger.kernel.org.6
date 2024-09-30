@@ -1,178 +1,169 @@
-Return-Path: <linux-kernel+bounces-344273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1B798A7B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F400098A7B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D59284B6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2348B1C2347C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23385198E7B;
-	Mon, 30 Sep 2024 14:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A1D199246;
+	Mon, 30 Sep 2024 14:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nN/f4tuW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="MQnPF69R"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210CC19258D;
-	Mon, 30 Sep 2024 14:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167D71991A5
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707686; cv=none; b=QuXbcD2eqyVCwb+2B3m0qJjhWg7qSnPo6sFVj2KBFygb0twTyhteWzWlnftDAfFkLYLQf5bBWJmDEuB/M7YyjxJrTy2PsKcByTcj5lSM6SWJ9Q5CrpGz9VUzgSYUMfGIZHo6j5Ujz/xdmDhbHhof9RDSVO7SPZvK0mf2fz6OiL4=
+	t=1727707696; cv=none; b=sbITQyFdRcB1SKIRbrVIXGSoGbtZpTXYNotWzhqP/fQgsvKe0DyVMcpB0g71Ysrh5SKnFYPOBDsTPNfNe5qZA7i+TV4oVLND8ejyYL4kRD6rfouUV63d8yIwTMy+abois0ySO69Yo/aP+sB0U4/jxy1sJcan7TW4BGdcse0+RH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707686; c=relaxed/simple;
-	bh=xh6tIBAiefMUKKnq7Fug8Rp1DBToya0xZhE5aVNLtIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPqLV7DYzRkDpNMfZcJHUAIf15yBlFGYOkXP/dIWrWWGefn5cQGpjTfU+SOGMDiyms5hASLoNWrYDtLIrHD9wAwPdMZbuAv6yFRV0bs6z2mMiUGS7fR8ko2F61an0EDdHMYx43rvJbMUWC/RRPEmh5cTnhWDRhEhkNPwKuRcu94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nN/f4tuW; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727707685; x=1759243685;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xh6tIBAiefMUKKnq7Fug8Rp1DBToya0xZhE5aVNLtIE=;
-  b=nN/f4tuWsnjwqiJdlrqIoWn1NrKECH36oE57nxONNSe19fvb+0/EksmI
-   9pdkQOpuoAWXwpfDXNshv1ds+9B0g/+G7EGl9TRAhc5M7D9JaAOU0Um8v
-   PqOFNCnBLDwXvOAIVhr4kd+Unrdf7yuRgKUJruEVkK6fzVs7ipJzJtzhY
-   XbPjRmuPDmkRql5IBy+v60xd1ucJL8x6v+l3GJKEBzvIjAgIhnKKYrsfv
-   wDWVdZ/qnpJb1LoWkbBxszkpC91ZOxN6Ph2y0WP1ZwciRAVkluW2oLxSM
-   7VWUgg9WuCTm2rQ53R0kLHaDJu/PcXNtKiwJo/s1y/dVr6L2ZY4DG+1yd
-   w==;
-X-CSE-ConnectionGUID: mGRGdVB9Tv28lZD8vKuy8w==
-X-CSE-MsgGUID: xSY6zQNiS1aZYh4PnNsyHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44262294"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="44262294"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:04 -0700
-X-CSE-ConnectionGUID: qSCly8R3RjqKXRdUFqlC8Q==
-X-CSE-MsgGUID: SH6ywn9bR2qHfpQ7KZvKdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="110804511"
-Received: from smkirkla-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.240])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:05 -0700
-Date: Mon, 30 Sep 2024 07:48:04 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH v4 08/10] x86/cpu: Update x86_match_cpu() to also use cpu-type
-Message-ID: <20240930-add-cpu-type-v4-8-104892b7ab5f@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+	s=arc-20240116; t=1727707696; c=relaxed/simple;
+	bh=XyeXw8eHm4U0xRIzD5hFcCRVmwEbNSDv589PG5lUl74=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aYcN88zZF24A4q3wHlrgrEyoimKmY9vuP3DMIu86cvKzx56WT6sAkT6cKHwd+7YE7En2SAqzFUxHQwX2d2m59KqIy8+OatIQIPOMAzwnukyfFf536+ttGuGvcMWfi0cN8qdIim8GppSWBbmC7X0hy7t2LnYd4MYIdUUuy0nOOkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=MQnPF69R; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so2964995f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727707693; x=1728312493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HfRPqMQ2YRL7cytKg67BDcrJy4YgVjPhIG+hcafClNU=;
+        b=MQnPF69RLDKe2DhPGAmndJgnKxSniaiyRZkyaX2Nm4adIw9A8ciIB0yIDSTg6Fyh0J
+         PLZTWpe+dUaVelgYYgvzZqREeKn41hv/jBSAzQdK1GodsLqvsWFdscuH1EeeNrTURjdG
+         AagOwC7biLl7CuD5VGey7U9ZgMrKRDqSvfB4rfa1HEMunu+xllnKlEDV5Ief0Kc0Ybvi
+         KIBeI0pV+Pc8qRUUI4LN46qkEeDjjnbj9qYSZkCuLE5zrLxnu4KBTaDXES3rM+ULtLJ6
+         IWUIEtZsDVeOXc4GKmxGAnua3fePAMhHeL54V4L5QHQKklgSWlKZVbl/sMINlChrPiJo
+         0dCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727707693; x=1728312493;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HfRPqMQ2YRL7cytKg67BDcrJy4YgVjPhIG+hcafClNU=;
+        b=Calb4iJHbtH+Jg6/L9xjhQZNBjqhs6N1vh5cHFSAVyjN0CmRWFHPIKABvwknddiTez
+         2iGuQe7sqRjlkgRuFR+m+4xKpykCvN34X8ncVh/qJiXjqwSkeNVJ/9AqMKyTC5zJBBRQ
+         GhbDG0ITWKivVLQ/m6XGHWXAAGbGdXYIscG2dyVxD6FGbgFjTrPJliWj6OZQp4tF7d6e
+         jBqAcKxWM9bxSWSaPbIqERu4asIJC6eVYEhaUZJBnj04DetZoXLDKZrgk36EdfVlzwn/
+         sWu+y/schfV3SNFKQybDYya1iv3lVV0dspssEroATPQU6DqpNhIvKRLDWPtRCaRbTM+k
+         y9fw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOtmkI928dMe3cKlfvMEKnhjSFeKPv7YzDyYL5En/nibSKznRP3gJwUlGDSnN/EdqIWo8fAZb8CpjHH5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6aDtiypG6OSvPsXxNPPK6FXLtSnVOlxtBG57Xr1xrpY4RMl7F
+	yzcwDTwT+6Ngpq7viCxut4B/k9V1erBmu03n3V1Sc9JQxi1rOej+BvdQuuoWB0o=
+X-Google-Smtp-Source: AGHT+IFS82UmXpIStxa6SqM6CC7PH3OIn3uYOLSrafHNIkj5K/JZaHIK6K+sosLECIqdEFs+/WLaOw==
+X-Received: by 2002:a5d:644c:0:b0:37c:c4b4:339e with SMTP id ffacd0b85a97d-37cd5acba99mr8323137f8f.25.1727707693439;
+        Mon, 30 Sep 2024 07:48:13 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm9241505f8f.45.2024.09.30.07.48.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 07:48:12 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Srinivas Neeli <srinivas.neeli@amd.com>,
+	Michal Simek <michal.simek@amd.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH 3/3] gpio: xilinx: use generic device properties
+Date: Mon, 30 Sep 2024 16:48:04 +0200
+Message-ID: <20240930144804.75068-3-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240930144804.75068-1-brgl@bgdev.pl>
+References: <20240930144804.75068-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-Non-hybrid CPU variants that share the same Family/Model could be
-differentiated by their cpu-type. x86_match_cpu() currently does not use
-cpu-type for CPU matching.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Dave Hansen suggested to use below conditions to match CPU-type:
+OF-specific routines should not be used unless necessary. Generic device
+properties are preferred so switch to using them in the driver code.
 
-  1. If CPU_TYPE_ANY (the wildcard), then matched
-  2. If hybrid, then matched
-  3. If !hybrid, look at the boot CPU and compare the cpu-type to determine
-     if it is a match.
-
-  This special case for hybrid systems allows more compact vulnerability
-  list.  Imagine that "Haswell" CPUs might or might not be hybrid and that
-  only Atom cores are vulnerable to Meltdown.  That means there are three
-  possibilities:
-
-  	1. P-core only
-  	2. Atom only
-  	3. Atom + P-core (aka. hybrid)
-
-  One might be tempted to code up the vulnerability list like this:
-
-  	MATCH(     HASWELL, X86_FEATURE_HYBRID, MELTDOWN)
-  	MATCH_TYPE(HASWELL, ATOM,               MELTDOWN)
-
-  Logically, this matches #2 and #3. But that's a little silly. You would
-  only ask for the "ATOM" match in cases where there *WERE* hybrid cores in
-  play. You shouldn't have to _also_ ask for hybrid cores explicitly.
-
-  In short, assume that processors that enumerate Hybrid==1 have a
-  vulnerable core type.
-
-Update x86_match_cpu() to also match cpu-type. Also treat hybrid systems as
-special, and match them to any cpu-type.
-
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/x86/kernel/cpu/match.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/gpio/gpio-xilinx.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
-index 8e7de733320a..351b583cb9b5 100644
---- a/arch/x86/kernel/cpu/match.c
-+++ b/arch/x86/kernel/cpu/match.c
-@@ -5,6 +5,26 @@
- #include <linux/export.h>
+diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
+index d99824d42c77..41c552a58059 100644
+--- a/drivers/gpio/gpio-xilinx.c
++++ b/drivers/gpio/gpio-xilinx.c
+@@ -15,7 +15,6 @@
+ #include <linux/io.h>
+ #include <linux/irq.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
  #include <linux/slab.h>
+@@ -564,7 +563,6 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct xgpio_instance *chip;
+ 	int status = 0;
+-	struct device_node *np = dev->of_node;
+ 	u32 is_dual = 0;
+ 	u32 width[2];
+ 	u32 state[2];
+@@ -579,7 +577,7 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, chip);
  
-+/**
-+ * x86_match_hw_cpu_type - helper function to match the hardware defined
-+ *                         cpu-type for a single entry in the x86_cpu_id table.
-+ * @c: Pointer to the cpuinfo_x86 structure of the CPU to match.
-+ * @m: Pointer to the x86_cpu_id entry to match against.
-+ *
-+ * Return: true if the cpu-type matches, false otherwise.
-+ */
-+static bool x86_match_hw_cpu_type(struct cpuinfo_x86 *c, const struct x86_cpu_id *m)
-+{
-+	if (m->cpu_type == X86_CPU_TYPE_ANY)
-+		return true;
-+
-+	/* Hybrid CPUs are special, they are assumed to match all cpu-types */
-+	if (boot_cpu_has(X86_FEATURE_HYBRID_CPU))
-+		return true;
-+
-+	return m->cpu_type == topology_hw_cpu_type(c);
-+}
-+
- /**
-  * x86_match_cpu - match current CPU again an array of x86_cpu_ids
-  * @match: Pointer to array of x86_cpu_ids. Last entry terminated with
-@@ -50,6 +70,8 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
- 			continue;
- 		if (m->feature != X86_FEATURE_ANY && !cpu_has(c, m->feature))
- 			continue;
-+		if (!x86_match_hw_cpu_type(c, m))
-+			continue;
- 		return m;
- 	}
- 	return NULL;
-
+ 	/* First, check if the device is dual-channel */
+-	of_property_read_u32(np, "xlnx,is-dual", &is_dual);
++	device_property_read_u32(dev, "xlnx,is-dual", &is_dual);
+ 
+ 	/* Setup defaults */
+ 	memset32(width, 0, ARRAY_SIZE(width));
+@@ -587,14 +585,14 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	memset32(dir, 0xFFFFFFFF, ARRAY_SIZE(dir));
+ 
+ 	/* Update GPIO state shadow register with default value */
+-	of_property_read_u32(np, "xlnx,dout-default", &state[0]);
+-	of_property_read_u32(np, "xlnx,dout-default-2", &state[1]);
++	device_property_read_u32(dev, "xlnx,dout-default", &state[0]);
++	device_property_read_u32(dev, "xlnx,dout-default-2", &state[1]);
+ 
+ 	bitmap_from_arr32(chip->state, state, 64);
+ 
+ 	/* Update GPIO direction shadow register with default value */
+-	of_property_read_u32(np, "xlnx,tri-default", &dir[0]);
+-	of_property_read_u32(np, "xlnx,tri-default-2", &dir[1]);
++	device_property_read_u32(dev, "xlnx,tri-default", &dir[0]);
++	device_property_read_u32(dev, "xlnx,tri-default-2", &dir[1]);
+ 
+ 	bitmap_from_arr32(chip->dir, dir, 64);
+ 
+@@ -602,13 +600,13 @@ static int xgpio_probe(struct platform_device *pdev)
+ 	 * Check device node and parent device node for device width
+ 	 * and assume default width of 32
+ 	 */
+-	if (of_property_read_u32(np, "xlnx,gpio-width", &width[0]))
++	if (device_property_read_u32(dev, "xlnx,gpio-width", &width[0]))
+ 		width[0] = 32;
+ 
+ 	if (width[0] > 32)
+ 		return -EINVAL;
+ 
+-	if (is_dual && of_property_read_u32(np, "xlnx,gpio2-width", &width[1]))
++	if (is_dual && device_property_read_u32(dev, "xlnx,gpio2-width", &width[1]))
+ 		width[1] = 32;
+ 
+ 	if (width[1] > 32)
 -- 
-2.34.1
-
+2.43.0
 
 
