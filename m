@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-344400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E8898A91D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D5B98A91E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B6A61F237FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:53:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF101C22C3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BB7191F8A;
-	Mon, 30 Sep 2024 15:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB4301922DC;
+	Mon, 30 Sep 2024 15:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LhG+K8Z2"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bVG8TMXC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B2713634C
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3B418FDD8
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727711578; cv=none; b=O498MaSwisyS2NulE65QEq7ThwX0V3JolZychg2VDu+7eDaPB8AYj2KU4HmhHgW27iePdNuemmG6QGDyii4wH14ReYu8Dnsl22vPJj5f8PJg6QkSOG+MWU4wT4hjqQY1GkSpba8dVQFOf3OVm8PJwkx3oLJkTVMO4MENP6m7f+c=
+	t=1727711591; cv=none; b=eLiG0B+cw0LZvhOGOa9PiLgZG+gsd8fQTVA+n2E+JT7B1sNEYbkj+QQyyCvHhgKc4s8V5dkCyTNYKMggkq4ijvIQ2vbqTvHgYxXbKLdxjgbMFVsmnGJNUo57Z9YgO7fDm9fGnwuDlv1XyyqxgAnZ5N6WYDq3S2hfg5JyMn+TCzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727711578; c=relaxed/simple;
-	bh=0TLcAgHH7m/siCgQu8Dey/SFlXIMwkFOzNOmiqnZK1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iLUBymwQvcPhf8sbn6obnU7KvJga9F7TFj02OnW5j2BYoX9gjaWCaTjnauAKgFwqoies7tz+C84jeT0pSnho+hZ/w4JIPS8XBkwxzFxI+CLTJu+bAOvLenL2IrRkEK+Lg7F7TGOBAvwD5e0Lyak0dNfksx8bDQNKNd9qyMBMQBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LhG+K8Z2; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a1a90bd08cso16232375ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:52:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727711576; x=1728316376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pQM3NCJDPN3JicDKJjF5JzneVwHgszVonhw5AwjmTvo=;
-        b=LhG+K8Z2S0Zr37Jhy253l55ebvBhhgPPNngyfqIUCuDCvq6haI+/nhv4iteQAlngSm
-         PkkhDgnJpwHRiWz5xFwEYGov5flquEP0+ZT5qy5cuKYoRtrrbxytJ9GzHs+PNo6b7rOz
-         1OpfrV79V5NmhzrZWZ8NnhBh3zZ9aKYJD8w+o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727711576; x=1728316376;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pQM3NCJDPN3JicDKJjF5JzneVwHgszVonhw5AwjmTvo=;
-        b=XDwwEcV9b6r5NNznO51N+xZ8vaVhmFaQ5x4yR1BHK4v1NrOF4YV4kFYmimGF7jJDIu
-         siNgK6CIgSJ491grGTrbpRjwoKui/PSqOMygWJi2jqojTk9YhMue+OGeqR0SxFk/tuPP
-         nmI861NOIRi92YPOlalTmaZnco0VVIMu0tPl/VlpUa4SjXQ9JZFRFbcjIuh7foHJ5RtG
-         MMUJqRxVNnLsZlBQoCorONcYzx/AhjZzp6PsvGV5Ri5bF4AQn+gQkS08mm5rl67OjWNE
-         LzelYBf5EoLDi6SLjkYa+AqO5ZrlmtRLwp9jYT0FFuNQw+Pnw6o/MP2K83CSC6aTqYxi
-         dDng==
-X-Forwarded-Encrypted: i=1; AJvYcCUlcunvnkwUXI0mWoq5cWsLNAq+cNRHXRoPN7A3bfsSKX7yglbzKxRsT0Y078kFslktPQuTFSghXoJ2rTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAGQYmjIFH8yRGnCJMhUnCANQtqq+fF5tkgw7971hxhJEao/wg
-	tcJYx8oH0qk9UfcXAiWXEwGppDDsUpUfJJz2dZR/ZZ5V+/HFCEqyJqnG47g7HWc=
-X-Google-Smtp-Source: AGHT+IGcBcQUqsljvEyKjVjYHWn7+Ju8/TkXHpj/UJODiFspBNxDpDxN2XPSpV3o99CUipgQnCvYmw==
-X-Received: by 2002:a92:ca0c:0:b0:3a0:a0a1:650c with SMTP id e9e14a558f8ab-3a3451b6ca7mr112165035ab.22.1727711576524;
-        Mon, 30 Sep 2024 08:52:56 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d8888c34d4sm2184304173.108.2024.09.30.08.52.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 08:52:56 -0700 (PDT)
-Message-ID: <bc8f9633-57b4-4c70-b7ad-0da0b5d66dfa@linuxfoundation.org>
-Date: Mon, 30 Sep 2024 09:52:52 -0600
+	s=arc-20240116; t=1727711591; c=relaxed/simple;
+	bh=AwaHZSWLoq9RhitcWfm4I5KvdRm+x7N/Oe9lgZWp5sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DEJvX0eCpA26V1cmw5VoQHAAssSC6SQxjSLJzNYAH+sQD48uSD5tXhnKVUtYf1MO6Piw3q1mMNW7bsU7hmjegdqVCN4ER4RURwqOk9FoCLevU4s+2b+DoMu/579glBQhgfoPxrXnc3wslZC+6Sa0znobYot/wq25PatUHVuzQ3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bVG8TMXC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D415C4CEC7;
+	Mon, 30 Sep 2024 15:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727711590;
+	bh=AwaHZSWLoq9RhitcWfm4I5KvdRm+x7N/Oe9lgZWp5sU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bVG8TMXCsR7Gkn4tDw9RnsTdGkyEOCCoqJxIvI2p8MdAUIVhq2hAJMV61x9HhKkXG
+	 BQWWMIBVEjMt0B7ws8NlBi2fzBMU1MfeXB29e4DYebJRuYhAjrlTNANgskJE6U1o+9
+	 swU2d3Sw53mHjgMi90E8Pi3SCMJEkuW3lRjXsyH0jala6KpJOv1DqYYFT9ODBZPMYC
+	 brfHhBh7mESYoUs0U+wCHnBiAe3WiP/xy6AwUUmwFVrAlynqGFx4Mp2GNMhOFDcxw/
+	 rgfmrsSFFoPpy7E94kWp5P90tyVO/i4XK5hbJPVeSRls5HZL8agALQsJDG9Lu7cnO7
+	 yIfH48NIiRIyw==
+Date: Mon, 30 Sep 2024 12:53:07 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Jithu Joseph <jithu.joseph@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1 fyi] tools arch x86: Sync the msr-index.h copy with the
+ kernel sources
+Message-ID: <ZvrJY68Btx3a_yV4@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
- cross-compiling envs
-To: Peng Fan <peng.fan@nxp.com>, "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Renninger
- <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
- John Kacur <jkacur@redhat.com>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240919-pm-v2-0-0f25686556b5@nxp.com>
- <ZuxTjy7I-pZBcXa0@rhfedora>
- <PAXPR04MB845910C56EA61D3215DA5452886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <PAXPR04MB84591B0819F847D79548CFB0886C2@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <Zu1uNyTWDgot8cQY@rhfedora>
- <PAXPR04MB845992183A08AAF05C339C05886F2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <PAXPR04MB845992183A08AAF05C339C05886F2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9/23/24 00:26, Peng Fan wrote:
->> Subject: Re: [PATCH v2 0/2] tools: power: cpupower: Allow overriding
->> cross-compiling envs
->>
->> On Fri, Sep 20, 2024 at 09:01:49AM +0000, Peng Fan wrote:
->>>>> Not sure you need 'tools: power: cpupower:' in the cover letter.
->>>>
->>>> Will use "tools: power:" in v3.
->>>>>
->>>>>> pm: cpupower: bench: print config file path when open
->>>>>> cpufreq-bench.conf fails
->>>>>
->>>>> I do not think you need bench either.
->>>>
->>>> Will drop "bench" in v3.
->>
->> I do not think those alone are needed for a v3 since I was corrected on
->> the changelog; at least as far I am concerned.
-> 
-> I will do a v3 to convert perror to strerror per the reply in v1 from
-> Shuah.
-> 
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-You can send perror to strerror in this file in a separate patch on top
-of my cpupower branch.
+Full explanation:
 
-Thank you. Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux.git/log/?h=cpupower
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-It will be included in my next pull request to PM maintainer.
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
-thanks,
--- Shuah
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+To pick up the changes from these csets:
+
+  0a3e4e94d137daac ("platform/x86/intel/ifs: Add SBAF test image loading support")
+
+That cause no changes to tooling:
+
+  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > before
+  $ cp arch/x86/include/asm/msr-index.h tools/arch/x86/include/asm/msr-index.h
+  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > after
+  $ diff -u before after
+  $
+
+Just silences this perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Jithu Joseph <jithu.joseph@intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/asm/msr-index.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
+index 82c6a4d350e09e6d..a7c06a46fb767d4a 100644
+--- a/tools/arch/x86/include/asm/msr-index.h
++++ b/tools/arch/x86/include/asm/msr-index.h
+@@ -247,6 +247,8 @@
+ #define MSR_INTEGRITY_CAPS_ARRAY_BIST          BIT(MSR_INTEGRITY_CAPS_ARRAY_BIST_BIT)
+ #define MSR_INTEGRITY_CAPS_PERIODIC_BIST_BIT	4
+ #define MSR_INTEGRITY_CAPS_PERIODIC_BIST	BIT(MSR_INTEGRITY_CAPS_PERIODIC_BIST_BIT)
++#define MSR_INTEGRITY_CAPS_SBAF_BIT		8
++#define MSR_INTEGRITY_CAPS_SBAF			BIT(MSR_INTEGRITY_CAPS_SBAF_BIT)
+ #define MSR_INTEGRITY_CAPS_SAF_GEN_MASK	GENMASK_ULL(10, 9)
+ 
+ #define MSR_LBR_NHM_FROM		0x00000680
+-- 
+2.46.0
 
 
