@@ -1,156 +1,119 @@
-Return-Path: <linux-kernel+bounces-344452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5826898A9C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:32:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2101C98A9CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019741F22783
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:32:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D98A92831CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E22192D66;
-	Mon, 30 Sep 2024 16:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="yKZpSc6n"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A975A193086;
+	Mon, 30 Sep 2024 16:33:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B282D3D0D5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49543BB24
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727713937; cv=none; b=saWowxM/Lb+Z+kuS/YTatZbIX2gO6jlGU7BN22jm84HdVree/eYV4OfC21hDJ6VbQLeyaUvtrotTljHB4+Lq6+y+HlTbmyPvFI6mJ92HA0rtOAsTUZgx9c2iZ3zJBxFKLm6r9fOhsADut3aLAmyEV6pG2kssBXReyJW7zTuAovE=
+	t=1727713986; cv=none; b=dgYOTFrqb/+UcHbYgNIpvtNs/+n+wdp1RBw9d/VzNLpjwmaNFlPvAEZU+0aMaRa69rGG8O4VhqixiEWA06tO51avlP/QBsKhn7C6Yi9kawDhhNGmNqHvDepUXZUIvGqmSdxo0BLo0r7wh90ZyB28PK8aoXLPaT3kGjl0P6QI2L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727713937; c=relaxed/simple;
-	bh=lCFhn7e2lzr6Ehzz90sWdxjVmd9zawC1JAwvJabCaDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ppn/QevBk4nxMV3d9Cp5PlsFgVzxVePMHRFcqSjoEccdZzEgJ0kGH6beGzuMSl+6DV5wkLrLFlWt++3SzX7WBkFbqM3YvxAy/G15KyB19GlBHeKr4MqnEf75xzMRwVbdAkkBV7wRkPxjxHMEDa8EUaK+/iL48n0qnx8xTfPyn18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=yKZpSc6n; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37cc5fb1e45so3043301f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:32:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727713933; x=1728318733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PEr/Oxw9Ncnfg46aBvWmutpmkGHYJGKBOjl+UUCZ+LY=;
-        b=yKZpSc6nrqA0ZB47Sl2gbCNZexZs4Bp6xcvq9o+Qg+uj+Oot7jl8PlIuHNcAiRywOQ
-         hCbXlWQi2jMfD//wQZ9bJdJpUVuq8SouUnM8bWJVDmpxjAbD0eZkKUJGwbIXzMnd2wMf
-         P/avZE0eUJaboUw/YfYQfFn7MmLTwue1bdUm5fF/VxYoEm5xdX127/htolo0TsvRX9IY
-         fd/2XW1isRtbaS4KssbVOc9doKQDOYBk8ZGN76qQIzxGELfgyManUxEVZoT+2+DxAaLG
-         GyCH/TMYVwYW6/BmDURoFL8Ko/x7K1XMXzhQvBmLTh1jl6XnyabCd/put3ypWvK2YY2W
-         lR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727713933; x=1728318733;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PEr/Oxw9Ncnfg46aBvWmutpmkGHYJGKBOjl+UUCZ+LY=;
-        b=c9OuM+G4aJflpigG8Iiwgp1RzIpN+zK1y9c6Cn9hO7EQJvb2T5o9YlagmVHZc3eCnd
-         RCG3TpWrAcguua6AagSEJgMDzeBJWI8rfgXMi+OOARwnbqY5j1s4GwDoMJsb9hZuxLCG
-         lQog3MbR+EflMwXo8vi+6F5y6kziFYvKV9YhrWw0tTOm3mvqhCXJUqUJVeRZcmzqL+70
-         d2rWD9+lmx0+7UbC42s8zuytJ3PYaLgeRhw0PQnFU3Qm0fzg3N1LRuJeh/plqDSKa5ny
-         PtKvCgZZPc6JyfJS8Tlbu+w/F+Pr1ry6Na8HvJmwJQq/I85k4NKVyiHVEN2jtdmqCjUa
-         goBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTpcZsfOgS4PznsN/4gX53ucjzj6f80xDEcXLZqXZdH3EPbRt+8q+px0DT7ZBplFrI9ytO85hq9y7nwUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/liB32VzmnhK+YqGfIF6W//987ug/JCR0kGRGDNjrKBFppVjF
-	f/M+kjCGdNgVovE6pQR7thP1jeHkJQP5wyOOWwpPiG0c55f0Kpj9dqOgD+4YAJA=
-X-Google-Smtp-Source: AGHT+IGU3mRXJ8Wgr/E9KRt1+fb+zai+1gkk+Suu394wxDlHmgFx+o7pfPkPBJ/DxZ1ZsNEHwcjd+Q==
-X-Received: by 2002:a05:6000:114a:b0:374:c8e5:d56a with SMTP id ffacd0b85a97d-37cd5b292a5mr7312883f8f.48.1727713932800;
-        Mon, 30 Sep 2024 09:32:12 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd572fbebsm9405893f8f.72.2024.09.30.09.32.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 09:32:12 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpio: aggregator: simplify aggr_parse() with scoped bitmap
-Date: Mon, 30 Sep 2024 18:32:07 +0200
-Message-ID: <20240930163207.80276-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727713986; c=relaxed/simple;
+	bh=/nANQ7PZ6apyV+R9KmQJXjLpL5eSQxMjcZum4vxGWU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ieKJv3mWqQptFGs4udwZu7XwV5Q7j2iDqe0bS1EHJA0Alal67cfVweZujdz9aN4zXLpYqHgS3LwIV49wvbRvvWJRhhU6TarsK8vadXr7ONyf/6r6lIgqeKuMJgR7EQXxiJ6TYQTrqZy3qTCjxghD8vMBMTUS2rF+RUkZ0HaWAkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1svJK3-0004om-H1; Mon, 30 Sep 2024 18:32:31 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1svJK1-002fmI-S5; Mon, 30 Sep 2024 18:32:29 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 71A61346DF7;
+	Mon, 30 Sep 2024 16:32:29 +0000 (UTC)
+Date: Mon, 30 Sep 2024 18:32:29 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: pierre-henry.moussay@microchip.com
+Cc: Linux4Microchip@microchip.com, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-riscv@lists.infradead.org, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [linux][PATCH v2 01/20] dt-bindings: can: mpfs: add PIC64GX CAN
+ compatibility
+Message-ID: <20240930-voracious-hypersonic-sambar-72a1c5-mkl@pengutronix.de>
+References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
+ <20240930095449.1813195-2-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="w3vfz4jn6utc6r4q"
+Content-Disposition: inline
+In-Reply-To: <20240930095449.1813195-2-pierre-henry.moussay@microchip.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-The bitmap allocated in aggr_parse() is always freed before the function
-returns so use __free(bitmap) to simplify it and drop the goto label.
+--w3vfz4jn6utc6r4q
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-aggregator.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+On 30.09.2024 10:54:30, pierre-henry.moussay@microchip.com wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+>=20
+> PIC64GX CAN is compatible with the MPFS CAN, only add a fallback
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-diff --git a/drivers/gpio/gpio-aggregator.c b/drivers/gpio/gpio-aggregator.c
-index 38e0fff9afe7..65f41cc3eafc 100644
---- a/drivers/gpio/gpio-aggregator.c
-+++ b/drivers/gpio/gpio-aggregator.c
-@@ -65,11 +65,11 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- {
- 	char *args = skip_spaces(aggr->args);
- 	char *name, *offsets, *p;
--	unsigned long *bitmap;
- 	unsigned int i, n = 0;
- 	int error = 0;
- 
--	bitmap = bitmap_alloc(AGGREGATOR_MAX_GPIOS, GFP_KERNEL);
-+	unsigned long *bitmap __free(bitmap) =
-+			bitmap_alloc(AGGREGATOR_MAX_GPIOS, GFP_KERNEL);
- 	if (!bitmap)
- 		return -ENOMEM;
- 
-@@ -82,7 +82,7 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- 			/* Named GPIO line */
- 			error = aggr_add_gpio(aggr, name, U16_MAX, &n);
- 			if (error)
--				goto free_bitmap;
-+				return error;
- 
- 			name = offsets;
- 			continue;
-@@ -92,13 +92,13 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- 		error = bitmap_parselist(offsets, bitmap, AGGREGATOR_MAX_GPIOS);
- 		if (error) {
- 			pr_err("Cannot parse %s: %d\n", offsets, error);
--			goto free_bitmap;
-+			return error;
- 		}
- 
- 		for_each_set_bit(i, bitmap, AGGREGATOR_MAX_GPIOS) {
- 			error = aggr_add_gpio(aggr, name, i, &n);
- 			if (error)
--				goto free_bitmap;
-+				return error;
- 		}
- 
- 		args = next_arg(args, &name, &p);
-@@ -106,12 +106,10 @@ static int aggr_parse(struct gpio_aggregator *aggr)
- 
- 	if (!n) {
- 		pr_err("No GPIOs specified\n");
--		error = -EINVAL;
-+		return -EINVAL;
- 	}
- 
--free_bitmap:
--	bitmap_free(bitmap);
--	return error;
-+	return 0;
- }
- 
- static ssize_t new_device_store(struct device_driver *driver, const char *buf,
--- 
-2.43.0
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
 
+Who is going to take this patch/series?
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--w3vfz4jn6utc6r4q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmb60poACgkQKDiiPnot
+vG8ztwf9FfTevY46BOb3reEY53hT0hxZT5Por2f2CeBT/2LT2pbj8Dv2by2HQJbW
+KMbHzms1wdCP80EEDhLWa8KRKDNGb5uEP/OpGNMFw8G189KidS0XIRIF2CilHESh
+muohcWHwDr5N1Te40j809WQRcGSnlporsoc+YHdOviE74d5TsW5fvsdL1TJa29nB
+xoPG8nmdIPOs0b/fYK30kIIQxSItwQMyT5eO+MwBoUqHGpwcQYLMzDr+CyMaUtb/
+dz0D/hcjEjqtUyFQCqZQ2wZs9OTyhxCMx6FpOVK/PIF9ZTZpSk8FZqdRij/m77hq
+vKGe3xjy+6GirBkzeBuBn8Lj1+binA==
+=RlVK
+-----END PGP SIGNATURE-----
+
+--w3vfz4jn6utc6r4q--
 
