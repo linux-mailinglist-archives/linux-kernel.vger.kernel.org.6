@@ -1,155 +1,149 @@
-Return-Path: <linux-kernel+bounces-344215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B915598A68B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED12498A68C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD9C2864BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACA21F2318E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933B618FDB2;
-	Mon, 30 Sep 2024 14:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F181917E7;
+	Mon, 30 Sep 2024 14:00:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Rt3Lqz4X"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQxk+AtD"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD9919306F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11749190075
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704811; cv=none; b=uCFXpxr3CyPsBlWoDt25uOy9I0y33QOfVFwAaKvy9MFoQo1JpY1RqwnGoEuEzzmc8WlZVjGQDx9i/lc+T4WEv64e2hRXS32mLVqprTf4wI2u7UPygUYgJbGf2ptKzP1RqX5EOEff+BW4VQ6ZA76ol9JUI92mHb+ZIjei/p8zxv0=
+	t=1727704856; cv=none; b=Wva+An3PCDSrNAy0nCzQIA3XmqCG/HbtZEYyxbJn+cEUYQgQXEC9juVKXwRJgHTUTChoI8+Qd0PKA5quOcSKvPrdSep7iFnTH1IpmthzpmF8jeeCOSEdUWpJmCDJDKQNUyrdZomD1xd0cKYQyFfoHIaihrmLV541KYMU61ZWvfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704811; c=relaxed/simple;
-	bh=3ijB4GlXO+25BXCSGu/vsofAjiikfjurTHWwB9A1V40=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ax+ny3aYLLbVSrq8U/JQo2lxlnBKRc9kVWYfVU9r3gnPTSTYBJuoovQiyOWpZJ9lU8YFCLU1g8yUGTf5a6xWWhfbEX+/r0PIaPj0VHZqcDSRcj7XNrNeetUGm2egl3EJ+imNTV7LxnZn3QnTe00KPWx297NO03ycLZ7KSQV9Ng8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=Rt3Lqz4X; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539885dd4bcso3190566e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:00:09 -0700 (PDT)
+	s=arc-20240116; t=1727704856; c=relaxed/simple;
+	bh=dPR/MK3GE8NMOYtuwtlYVjIQEgLz8dluF1iNQdnetFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r9OXF8ljA+HlcEd1idwfOOVBvgvwW0sFkBqGd8F/eZ6IjMWgAmEJJq4sW2RwVf3G7RFNChFfQ8woIuCgG69Fv0Xhb60OxHGuFR84lKMJxT48n07c1Y36SomQvffAT0ofAzTZt82ITcjJAZcdAdH+pk3Zlx3pRYlc+rhgrM6xC9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQxk+AtD; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d60e23b33so666168366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1727704808; x=1728309608; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=GUVJY0IXomTgT+0Kh65kRbP76txfvO137vhXRmIMRvY=;
-        b=Rt3Lqz4XgiL7D7bZ0SIfI8aBV6Eu8GO4FH52yelW3pR6okq/L/tK08af8uCtSp1+0E
-         74lFjpua28iIw8uN6EN4fhKfn1Ab5WahH6FiiFshnUNwCj9KaFh5ORDk4t1RMuj6J5zu
-         Ta3qKuFKLDApCpg7lq/M7n55oOdIXJFd/wdn4=
+        d=linaro.org; s=google; t=1727704853; x=1728309653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B9iC2N/12abllbC0V03F2t6+J5vMpvZXd0nYPLT3vBQ=;
+        b=GQxk+AtDRzVwE4BSso2inG1NN6dn7yuWJP4MGZ8T2Hr72INxz6r2wJsqB03HvZCLuA
+         sIUxsGRMofzr7hyMBOsERKCgsFNA2qu/L1hrPCo+SE8GcM18gzHpvoMzSpeNcbU0+ekM
+         ysityzc3HzLU97n1LsD4Z8J/e/1CSjG30V6rJsx4C1x59ykyrdF4SgnyGVFiL8mg7BKg
+         IujqOfstxZM/sD7wOa8l/LcOc9+GtR8/cfjKl1XBXJ/4MAYcxOgHig6cGWt9Dmlq/0qp
+         DZj8AU6KCXuBVg5aWrab2Awtq+rQDNfSZa8JFK+J+PPPcwcj4vBN1DDFXHBZJmtTRZID
+         YPgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727704808; x=1728309608;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1727704853; x=1728309653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GUVJY0IXomTgT+0Kh65kRbP76txfvO137vhXRmIMRvY=;
-        b=fNGBnz6xPtdptSTZpFFcfy8c9H3cZnnjQJdde/XGif5rBo3/Ux9gzTwwXF5d5CVejU
-         IjJNl2A9fvhqD8uX8iQlnlguVUnUDfzIJrOhDlgVlMpG4iQ75/mAWhfAcoYOvL8/0t67
-         t0pUxgZbgLSSR87NKEytIsw8+2IaXkWvf/Fobv6rWz4B1LRdbXfhL5EjeIvIe1tPi/EA
-         IDXB2RpqwFCSJlI/LEvtdViY/bwSwDL4g5/+MAI+aR+4IRHf0kNUtItzyW4tgrE55FhE
-         5Zx41alL3HbO4T5f9EZVOTKVazExQvIaTlE19ltPZBcLHPhD9wJSdQ3+e0J4uE1HtDRg
-         6owg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYHFYVvba7GgERCk8q4jogwO5FFnHnYgTs6CXQfV3d0Qwx5C49A7koz/x5i2gnD4SvYpyzUl0wE9BgrPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH0vii+HEfpMo9a6vekjwx+n4lwCNLvVQSeLCNfB6rVvYySlKD
-	eYQRcz2Eh4U5MAP4XOjmcNsyy72wRDfYAlLL6hV7BdLtO7sdvSdN6+5PYzc/kVw=
-X-Google-Smtp-Source: AGHT+IEKI7Weq7GjSrmgYABMSBw8sViHYEBtfUq5wTxEWLE74jtGdVLHWUX/PFqWZwy723EiPNA5iQ==
-X-Received: by 2002:a05:6512:398d:b0:530:daeb:c1d4 with SMTP id 2adb3069b0e04-5389fc35936mr5226141e87.12.1727704807805;
-        Mon, 30 Sep 2024 07:00:07 -0700 (PDT)
-Received: from localhost ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5df47sm1233224e87.78.2024.09.30.07.00.07
+        bh=B9iC2N/12abllbC0V03F2t6+J5vMpvZXd0nYPLT3vBQ=;
+        b=C9Yrq+eWRDFzCaDXunSwqoEpx/jCEcITS1n6lEanjGT9xH1W/tmoNZgVPUVuMHycr1
+         ABA8WLxhRn8NMySblryUN+ndJVQtxrkTySCoOhd46niaM4elh4fuwVmxnWoqffoj4bVI
+         lJeNoVuPFWS/ujMqJOnm5XrQVsIwYgw7rPi7vu2tggMlXrRNwH3yFBKavGOjDXL16Ggw
+         bjO6ph+yz1X0zO1XNwS9G5JwXfFmfq3qag8clDssntkdl+gHRg8ihSfBV6eR6FegPsxw
+         KyLTotYiEx1rYuyo7GP62+/dC5DGmTmLIEcGCRDbdXDJxTJugRQYPyHTKJSq647p+KV8
+         NZAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxdUUdmXkolUq6SgRveyA4Iz9yojnTKABfajmUbbcgB8vsn+DAfD2IYsJcaZMAOHC7rvE12wxHksXdkBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/F3CUDjaKh9fPIbRLqJvW/zVb4aHJ+h8y8D3qitO58usdjOuG
+	CIS3o/0UtXNs40RXtYEUZwznV30PSKZQp0N+i8TKuisR6nyZ98cH6e7bNKT3JXE=
+X-Google-Smtp-Source: AGHT+IHrW1k6OyoeAr7X2J4sCHCj9NzoUl8sq6E2Ub0OP+VdkpEDGrA+mzsk7GWeJcQA5FmXlP3tnw==
+X-Received: by 2002:a17:906:c104:b0:a86:b762:52ec with SMTP id a640c23a62f3a-a93c4adf8ebmr1289043666b.51.1727704853182;
+        Mon, 30 Sep 2024 07:00:53 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bceesm532099966b.187.2024.09.30.07.00.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:00:07 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,  Jens Axboe
- <axboe@kernel.dk>,  Jonathan Corbet <corbet@lwn.net>,  Ulf Hansson
- <ulf.hansson@linaro.org>,  Rob Herring <robh@kernel.org>,  Krzysztof
- Kozlowski <krzk+dt@kernel.org>,  Conor Dooley <conor+dt@kernel.org>,  Kees
- Cook <kees@kernel.org>,  Andy Shevchenko <andy@kernel.org>,  Daniel Golle
- <daniel@makrotopia.org>,  INAGAKI Hiroshi <musashino.open@gmail.com>,
-  Christian Brauner <brauner@kernel.org>,  Al Viro
- <viro@zeniv.linux.org.uk>,  Li Lingfeng <lilingfeng3@huawei.com>,  Ming
- Lei <ming.lei@redhat.com>,  Christian Heusel <christian@heusel.eu>,
-  linux-block@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-mmc@vger.kernel.org,
-  devicetree@vger.kernel.org,  linux-hardening@vger.kernel.org,  Miquel
- Raynal <miquel.raynal@bootlin.com>,  Lorenzo Bianconi
- <lorenzo@kernel.org>,  upstream@airoha.com
-Subject: Re: [PATCH v4 5/5] dt-bindings: mmc: Document support for partition
- table in mmc-card
-In-Reply-To: <66fa9810.050a0220.3b136f.bc29@mx.google.com> (Christian
-	Marangi's message of "Mon, 30 Sep 2024 14:22:32 +0200")
-References: <20240930113045.28616-1-ansuelsmth@gmail.com>
-	<20240930113045.28616-6-ansuelsmth@gmail.com>
-	<87y139jpx5.fsf@prevas.dk>
-	<66fa9810.050a0220.3b136f.bc29@mx.google.com>
-Date: Mon, 30 Sep 2024 16:00:10 +0200
-Message-ID: <87ikudjl79.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Mon, 30 Sep 2024 07:00:51 -0700 (PDT)
+Date: Mon, 30 Sep 2024 17:00:46 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Walls <awalls@md.metrocast.net>,
+	Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Ricardo Ribalda <ribalda@chromium.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andy Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>,
+	Olli Salonen <olli.salonen@iki.fi>,
+	Maxim Levitsky <maximlevitsky@gmail.com>,
+	Sean Young <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>,
+	Abylay Ospan <aospan@netup.ru>, Jemma Denson <jdenson@gmail.com>,
+	Patrick Boettcher <patrick.boettcher@posteo.de>,
+	Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Eddie James <eajames@linux.ibm.com>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Tim Harvey <tharvey@gateworks.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Jacopo Mondi <jacopo+renesas@jmondi.org>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, openbmc@lists.ozlabs.org,
+	linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH 00/45] media: Use string_choice helpers
+Message-ID: <f04f0057-626b-471f-b0a4-56ba30dbf8cf@stanley.mountain>
+References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
+ <20240930122157.GF31662@pendragon.ideasonboard.com>
+ <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
+ <7D358236-19F8-4F94-89A0-F379F193971F@md.metrocast.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7D358236-19F8-4F94-89A0-F379F193971F@md.metrocast.net>
 
-Christian Marangi <ansuelsmth@gmail.com> writes:
+On Mon, Sep 30, 2024 at 08:57:44AM -0400, Andy Walls wrote:
+> No human being really code reviews sweeping editorial change like these thoroughly.
 
-> On Mon, Sep 30, 2024 at 02:18:14PM +0200, Rasmus Villemoes wrote:
->> Christian Marangi <ansuelsmth@gmail.com> writes:
->> 
->> > Document support for defining a partition table in the mmc-card node.
->> >
->> > This is needed if the eMMC doesn't have a partition table written and
->> > the bootloader of the device load data by using absolute offset of the
->> > block device. This is common on embedded device that have eMMC installed
->> > to save space and have non removable block devices.
->> >
->> > If an OF partition table is detected, any partition table written in the
->> > eMMC will be ignored and won't be parsed.
->> >
->> > eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
->> > also provide two additional disk ("boot0" and "boot1") for special usage
->> > of boot operation where normally is stored the bootloader or boot info.
->> >
->> 
->> This looks quite useful.
->> 
->> Could this be extended to also be applicable to the four "general
->> purpose" hardware partitions, i.e. what is exposed as /dev/mmcblkXgpY ?
->> These would often also contain some fundamental boot data at various
->> offsets but also, as for the boot partitions, often without a regular
->> partition table.
->> 
->> The eMMC spec consistently refers to the boot partitions as "boot
->> partition 1" and "boot partition 2"; the boot0/boot1 naming is kind of a
->> linux'ism. Similarly, the general purpose partitions are _almost_
->> exclusively referred to as 1 through 4, except (at least in my copy),
->> the heading for 7.4.89 says GP_SIZE_MULT_GP0 - GP_SIZE_MULT_GP3, but
->> then goes on to describe GP_SIZE_MULT_1_y through GP_SIZE_MULT_4_y. So I
->> wonder if on the binding level one should use partitions-{boot1,boot2}
->> and, if implemented, partitions-{gp1,gp2,gp3,gp4} ?
->>
->
-> Just to make sure, they are exposed as disk or char device? This is the
-> case of rpmb.
->
+I wonder if there is some way to verify that people are actually running the
+Coccinelle script that they say they are without doing anything extra on the
+side.
 
-They are block devices, just as the so-called "user area" (the main
-mmcblkX) and the boot partitions.
+I use a script to filter out mechanical changes.
 
-> Adding support for this should be no-brainer as it's just a matter of
-> more case of the strends and more regex case on the binding.
+https://github.com/error27/rename_rev
 
-Yes, that's what I thought as well.
+It's kind of a pain in the butt to review something like this.  The command
+would be something like:
 
-> I also notice the conflicting names, to adapt to JEDEC naming I will rename
-> the property to boot1 and boot2.
+rename_rev.pl -e 's/(.*?,|^\W+)(.*) \? "enabled" : "disabled"/$1str_enabled_disabled($2)/' -e 's/(.*?,|^\W+)(.*) \? "enable" : "disable"/$1str_enable_disable($2)/' -e 's/(.*,|^\W+)(.*) \? "low" : "high"/$1str_low_high($2)/'  -e 's/(.*,|^\W+)(.*) \? "on" : "off"/$1str_on_off($2)/' -e 's/(.*,|^\W+)(.*) \? "true" : "false"/$1str_true_false($2)/'  -e 's/(.*,|^\W+)(.*) \? "high" : "low"/$1str_high_low($2)/' -e 's/(.*,|^\W+)(.*) \? "read" : "write"/$1str_read_write($2)/'
 
-Thanks,
-Rasmus
+For every email in the series there was another new str_foo_bar() function so
+the command line kept getting longer and longer.  It doesn't work perfectly, but
+it's often good enough so I can spot the interesting bits.
+
+regards,
+dan carpenter
+
 
