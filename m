@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-344332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D9598A867
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:24:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF61E98A874
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB60F1C22777
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F6B0B252C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CAE1925A0;
-	Mon, 30 Sep 2024 15:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C345F196C86;
+	Mon, 30 Sep 2024 15:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ajtIbr3c"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d/4s1HZ7"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2067.outbound.protection.outlook.com [40.107.93.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE44E191F8A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459281922FA
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727709841; cv=fail; b=Tg/YbmHdeWPyHIjUmoRjD9y3p+OElHbsdBcLsmczNU4y3dD6W4fRdB1D672N4yUS0k1D53YUYcEsW+DDyXi8Izg20D9vIyo2NGy2JliaQPIkKPpzsbgP0aMTCv8aNBU8+HccvP45Gdb2k4zzvoraEGNNkxn9zFjIoJL46wR8Dsk=
+	t=1727710081; cv=fail; b=oNqR4X7DzclJQhuHoPWj1M3yHS+4H+svSZF8uDArWzKv0nPaTjvHpeJfab7X7PXu3DeDdoxN5npsZaW2GVw3BWTe487cxQgvTPL/SDplOixuLcInFowcGayCLsysKGT2JsLcGZWl0Z/wB8R2aaTEe9D1gsCVLwh9+/187vJHIBI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727709841; c=relaxed/simple;
-	bh=3pyXhZkrHUYMBVyMGk3MKmHF1bvXksOyAMITxe8GiN8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H/hzx5C+Ku1M8khutDz9lofKc+zYMCkkMcluAU4UDXsPdi0vd5sC9xYl6Fl3QiZ9D0Gl3+E+4s8gCiFm4jcLT1FgoBi8kulfBES1e+yte9jFT3EMSKp9zwLw/qVXAZY3ChYVWkSUe/uxqaTPzQOugfwe3puFmuEeR5b2dwjz6Q0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ajtIbr3c; arc=fail smtp.client-ip=40.107.243.71
+	s=arc-20240116; t=1727710081; c=relaxed/simple;
+	bh=verHtiZf/iVNzl7U9hmkm2hjXL7PjOqURfJYRwP7070=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DUHXzGLqzVKzkLoZolY1t02ZsLpVrp2HHas6sDqx/fEoyZu6CQpv9KmIjP4vFNjzqGriNA5p4wqTxaaGTPsSpRXQj07HfnYjaez22xdo6raYM+Ee1hUuo3aR2jcy0JaOlYq1RoRDujokNANDY3Ds1Vqkem8WcLa7JQMOx2/B64g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d/4s1HZ7; arc=fail smtp.client-ip=40.107.93.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AQ4XmjMZQEhkzYJoVDL0F+T8F75u+qCgg3dVj4HbRgLLwEvYrtlprLqxFBnCmyvK5xA9l5Q6rIv4Fa+xwyMw6UzGKHiOYi8tTtduZuUODbXKAQWFiRI6kANrlPrzYlVcDSy55XofqkZxmMgRR7W7Anb5YsmlROiR8paBLXdXwComEv/FL8uViLugLqnDKUuMFN1+uaKkxLn3Fh5x8vg8RmG6h7SIZSBjMg8SMPiYIeq0YYkMT9Y60aDIC4+Z3EQFgUb+bozfTv5Il5jwtUm4l6is/+/GoTZ84nf/447PYwQu1SPHM3fPXvtR+Vf5D/zGigDlmSxLVgBxvp/rITzaUw==
+ b=T4ndVFhU4JMDATD2E7YjY93xe5W8KiDU1fa8gRmY1sdy4aiH8BN3/NRlywqJx872UfoTdY3jrr5FAaK7P1eSP8hRQsCB7SyTWOY46P7QioKGo0eZF561GCSEWCUxBYvSrsXjvyEk6laMuhJVhvHFmRxmWVPlzf7Z32mRBK3bzdg9G+uyQ1kqFdOHtGO9hyIBtSM/AwZ1nUqpXyLAMa41ym8cWvpX6DDdgR+kDAfBcUzlMmAhEd/shFh+ab9k02lrgevTobZxqt964ybnB6ixojUXz+UWfjVr5eyalWh1UDVVG91C8W9v/oRZsVvNEpdYUFiORSeMe38BbdftNns+VQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CrX2yVbwYXeCF+BTZ6JIfqugH6Rr2+d2b9XAcbfioek=;
- b=tkzCDXiBuHsMlKYw01NcuFZqdfVc5ok9QU5H2LTLx8uazM6semxgQkOlJYfHoMP1wpDPLOyZGkq7kadAvpvxAtB4IjiK7kNrrktXGjICLD0akUgOomacxLwZ8ZiPMEs8eHT1os61qlcoDLFNl2IbEA4TmWUZzhriagNydW5DHARFEZs81KYtS4o3/tExnLpZa+kVPyiIRcM8e5MR/C5OMGarn8nq2nknhBhOZXatNbYmnGuUjhWI2hkxLSqdN9Cr13coUMyJQLfkAhnkaGPnTFfUQEQarDVGkFYyFoTWcsj3fNsRc8qd90i/lGmUjtWlzzFs5c79C/Kvey5/ncOpwA==
+ bh=uTpESBTdoperuSFMsX12OBru3MYfjl7IITR/8JLUiiQ=;
+ b=pOEeJ87r0t7BEf6jpNRQwTbctMv8N65xzOtBpduXxWgX5Qso1RQABLpVt+H3EdkmO4NInFHyZBY9fyoEKnGHt3awCoU5AJ/+t6NL4MtGtgIrp2sEI+ubvGVFPYVS+JkOUeRDsgoNJPIYZ5GDkDiX8WTD9Mw/biPr8JpF2Gzej0SfUI2/LuFVnBTOkC4js6W7illKlJUoF5Ff2pcMCXTH+ehChL5zZld6/Sz4Ay4w1AEF2UrtsC+W+xLYztvE5ovU51rD2w7dZSoOcrq7GFnOZatXXYLTho75zq9yGgzweF26pCUfCmwt2sRhDYc/nHiiV6oNmBXm1scDdvISrhSmRw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CrX2yVbwYXeCF+BTZ6JIfqugH6Rr2+d2b9XAcbfioek=;
- b=ajtIbr3cVD8HhPqKDjKLD9OJPQAUihsmJ4IzEgF/xId2jQLk0WKJSTu+gjTDYHjbUpcXygXmuTzuSU8In2duslblBZAagPylQTjPY5nB7M2iMJiqYI5xMHImj0K4/ztljRF49eXnLb2IVH9vFsjS26Z3NqktsdSU0pM2HKf5oeo=
-Received: from BYAPR08CA0050.namprd08.prod.outlook.com (2603:10b6:a03:117::27)
- by SA1PR12MB7248.namprd12.prod.outlook.com (2603:10b6:806:2be::12) with
+ bh=uTpESBTdoperuSFMsX12OBru3MYfjl7IITR/8JLUiiQ=;
+ b=d/4s1HZ78mqG00fSPhBCniZBEwtYegvvvPUFccPAfoYNyNTj6sYEv7Lg37MsEz2hCB17ngK/VC9pvPn63UT900LWMXJhruT3Da6XF2epP5+unyWvnYpVG6YjRkfL6YSJQgPEQJlHr6WaDJKxRT7LWIjWe5Sj8PqLR09vyDOcevc=
+Received: from PH7P220CA0001.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:326::35)
+ by SN7PR12MB6689.namprd12.prod.outlook.com (2603:10b6:806:273::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Mon, 30 Sep
- 2024 15:23:52 +0000
-Received: from SJ5PEPF000001D4.namprd05.prod.outlook.com
- (2603:10b6:a03:117:cafe::a7) by BYAPR08CA0050.outlook.office365.com
- (2603:10b6:a03:117::27) with Microsoft SMTP Server (version=TLS1_2,
+ 2024 15:27:56 +0000
+Received: from CY4PEPF0000FCC5.namprd03.prod.outlook.com
+ (2603:10b6:510:326:cafe::1d) by PH7P220CA0001.outlook.office365.com
+ (2603:10b6:510:326::35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26 via Frontend
- Transport; Mon, 30 Sep 2024 15:23:52 +0000
+ Transport; Mon, 30 Sep 2024 15:27:56 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -61,22 +62,24 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D4.mail.protection.outlook.com (10.167.242.56) with Microsoft
+ CY4PEPF0000FCC5.mail.protection.outlook.com (10.167.242.107) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 15:23:51 +0000
+ 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 15:27:56 +0000
 Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Sep
- 2024 10:22:32 -0500
+ 2024 10:23:13 -0500
 From: Tom Lendacky <thomas.lendacky@amd.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
 	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>
-Subject: [PATCH v3 0/8] Provide support for RMPREAD and a segmented RMP
-Date: Mon, 30 Sep 2024 10:22:08 -0500
-Message-ID: <cover.1727709735.git.thomas.lendacky@amd.com>
+Subject: [PATCH v3 1/8] x86/sev: Prepare for using the RMPREAD instruction to access the RMP
+Date: Mon, 30 Sep 2024 10:22:09 -0500
+Message-ID: <4d62cc503d1e3278c3830f24462e3956233760ac.1727709735.git.thomas.lendacky@amd.com>
 X-Mailer: git-send-email 2.43.2
+In-Reply-To: <cover.1727709735.git.thomas.lendacky@amd.com>
+References: <cover.1727709735.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,158 +92,291 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D4:EE_|SA1PR12MB7248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 119e0fdb-c404-4bd4-1254-08dce163e36e
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC5:EE_|SN7PR12MB6689:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3665dbd7-ae68-42e4-ee28-08dce1647572
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?OAEWuGoS4apQw76SSqgS6HZXrTDyM9kw3qveBjiFthldZlxL8oyRpTJG4pHk?=
- =?us-ascii?Q?fqq0axbgza4aFOsj/9wM8GoJh5od/lQqh4d5lEWPQp+B37jqLmUtMF8tZ1+w?=
- =?us-ascii?Q?+VVukThJaSsCM4551GrZWM5uXcouszyo8SyvxRoTxUe4lCX4GVDIGOJZzQem?=
- =?us-ascii?Q?v2DcQnFYqwATtr5886Lg4atbbWjCFmaTZTBbiNZ9imlGlcmQc1nfbqmhNxdt?=
- =?us-ascii?Q?tkgv9Dfw7DMHp4gZj6GSH664OSeL4mshjB6vR4/hrdisyP9IDV84QDWl+MW6?=
- =?us-ascii?Q?oxqhQMZENfA9lJgtjNXOE8l/UA7+tteIABXcfhfQofTxhPCHsJ6vQtdiGodD?=
- =?us-ascii?Q?0/+j2trPJwYSjnIO3PzQFOpnBH7mdI9iVHOxhYgzIqjBIsoF+a5WR5tcz18X?=
- =?us-ascii?Q?bp1RqimL+trZGexwNn+yABbcUxd8TUjn253wJ7mibZ2/5apnthM/+ZbF3qtE?=
- =?us-ascii?Q?JRVsMrXB73Sv05bTJOE2CBNkziJwMgR0QM+57aiGov5S55VVAc/VbJRrWKdx?=
- =?us-ascii?Q?QlD9WhzVGpMgAc1gdetnKUdyb6MHCuEs5iKUMukfbgrhgDpOfuzxEytO3eq2?=
- =?us-ascii?Q?mRKy784CSaBZaETPzl6KlmJc8OPzQGFGjG4+pgJ6nbSsrBRQ4AC1PQiX/frT?=
- =?us-ascii?Q?pTDSqr/K/IcFor2miQWbSSOMpiYLZJygpBmSjA9blFSow/FrTGNI0+Scy40Z?=
- =?us-ascii?Q?VZnof/7eMMxpz8sAUwnrH5MmylaoC5EOsXIRwvFUh0WFCozYyKZIRwzuEgoE?=
- =?us-ascii?Q?0ex78NpL32FeM+63EieyDBUwkV8vVg3UyX8pwouyJhyYq84srVcx9d83zngG?=
- =?us-ascii?Q?X7Esw9pTj1I7oVTrtsqNSQBe56MIa57VOkbfcHM0TGSKGq3IREOwLdpNIAxR?=
- =?us-ascii?Q?6uwBs0jPk0K7IQhLvMnYNG5lwQ4hlzBGKThG+SZZ67cQftQE0OR1fMT9e0UG?=
- =?us-ascii?Q?58ou9s5p4c0iR8Kq+gbdZRkK5fVQBl8AVuJSQShF9MpU2N+GPIoUSMCeodV9?=
- =?us-ascii?Q?zhZlOrkHnPj+jgvfdamUt8JSjE4ofp3IpAD3eeTbYOOmz74x7eBwYOD1vd1J?=
- =?us-ascii?Q?Xa1qDizuENvCDFi63NCy3+tXOywEsFARM211jy9lD+iCJEN2hKZOxErvT/Pb?=
- =?us-ascii?Q?Q9kRwmRVkTylO+RamWkjio2sXoBMNLv5mav3MojSDMXb9Rwdh4q5KlNYJt0I?=
- =?us-ascii?Q?UOpKiuWFyTsmhzQ6JCBQ992IIijdzIrR8t4XG+1PZkewwFp9BlXoip2h+E79?=
- =?us-ascii?Q?mVRdaf21WsghUu6HzT7KnqBkruEXCwxNQhYTG1vYS6JBURjW8DkoFJftxCKN?=
- =?us-ascii?Q?ov03e6vSgQfPx2lJ7FBEhm2MzOm7Ns9L1PzWOC8YoKWt9gpvH/xwzTnwNOIJ?=
- =?us-ascii?Q?OBdaZ0taG2c5Bq8ygQp815YjcmTSB2RakXhdlWF4JDZ8x3SnjdFQpdwQRjFr?=
- =?us-ascii?Q?A7nm3sZVHjZB+MNtX5W2Z3pc9FJw8kuJ?=
+	=?us-ascii?Q?sa8KsZVG2uCj/EFn3ZxxpOOEaMjBDp0Pqyz3idgeh/R2YNYNUVASmpCb/xtk?=
+ =?us-ascii?Q?SoupkSLAzGt1bcpajoZJfDrQvylX1LUcIkMngd0S8KXfhIpUO/HbvzYdHLVa?=
+ =?us-ascii?Q?v0CUJ3lPNQFLkAlvszUx99l0CCHuiNTwwM8jDciJfwZvpYQjiJGR5hIpsuE7?=
+ =?us-ascii?Q?nMCyqZ+qwvwd05TG9yjJmDLV0xl0jEKX7bH87fS6S2oqRxAFnKk7jhr4RLA7?=
+ =?us-ascii?Q?5tsjhT/M0TnP3wkQ+DQG+2xEyBNLfJFtFt3XRfD9myazfIYASwLapvjMF7+7?=
+ =?us-ascii?Q?CoAljXjsM9PDUFjywnXtfSnlXUiEdWggdXz5I+yjAJVmY8NZ7eJcwbuo2sKY?=
+ =?us-ascii?Q?F2i2fuwyOfsl/vRXTuwDHGqTRLaQUQMzB4uaR1S6G1eOGrtPOn/1AHYHhaKH?=
+ =?us-ascii?Q?fRwSxZg2OLkrOXaVByBQSojuW8qjt0xii0jFV/HM4D4cweUB6ykwRb1fEmWs?=
+ =?us-ascii?Q?y7kIogxhDL4pYStaAk2f5T3fHJETr537vKEawDTTDuZQzxBUTMLVYRDRycae?=
+ =?us-ascii?Q?yqRsZ0kRqL+xoRQUoCIfH1p3XiElQZJVDMddKp2MTVZ8EuNG9sIlRPUqU3/c?=
+ =?us-ascii?Q?qAz5Z7Dxa3XnMcebJxJQESdkTAZeB6bB70URQeH3ygqFOCl13ouX5/N5oMqT?=
+ =?us-ascii?Q?WvO+bvvaxP1v6Hpx83tABc9bMU69OqOXwTEEYg4+OryMuz7LTfmRr4OKg1gZ?=
+ =?us-ascii?Q?KZjuAvDkfMAmrXzZSN19L8B344osPTNKFSGKmarsQxROVVJdCSRqc8a5a8ZU?=
+ =?us-ascii?Q?DckEF0lw0yQKf8/rrtXZ7Jj05B4cVkeR07hncrQAY3rRBrhVN04CmamG//+P?=
+ =?us-ascii?Q?hmPxezgkxHJNhDQ5MmmJy4Sah+BEt1pBu7yOZBTKr1Q63fCosTKDFTibCmJ9?=
+ =?us-ascii?Q?7wxfnFhZ+JrzO8l2G4SQBK25yYCtZsRgOG8vGbA3vkA3DdmcSCA3FQnoA3Sb?=
+ =?us-ascii?Q?HYfpx7nX2YmwECpAJCEhVCo8XNpC/iwgpllXezWkFN5colQwlVRGLZNGv8vS?=
+ =?us-ascii?Q?z9h8/KE00tN7b1URY72o/tArfTG7Ttn42zsPraaBSNyaAKNCURwuL+qMLHic?=
+ =?us-ascii?Q?KH/hliHtnPePFiEysT2jc9KWk7xREt4ZYDup7pJcVO2+rD8HQXuMd2RqGeOp?=
+ =?us-ascii?Q?yIi9opG/h9YEBaIwX6d4oTXNyguCdNNdxd6ZEkF4+ifyXkLwMA8S0IJrb/Uk?=
+ =?us-ascii?Q?halsOr1MUM01LD62b8fC7dFa02HxsFjL6ym+506/7P7KJx3ZEDAM2mCyeZ5G?=
+ =?us-ascii?Q?oRFf5jbyrvlCqQKXBlOqYwjFfcRkqNqQhVQgG/pc9xUL0/KW69YPjVTDyOb8?=
+ =?us-ascii?Q?Uz7auVNiPgMJ3Cm4b6E1b71LFceBnRaGZ9Psrk3UiOK7zdxQsVnSQ/RpMky0?=
+ =?us-ascii?Q?frPqa+PMpynEGEqOcUpeiWAfm3BQkxL1RIM28wX6j+2TlnubgykgCd5MY9a+?=
+ =?us-ascii?Q?y6jltPhQbj6KCYofLTRUenxwYSE+fAZR?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 15:23:51.1233
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 15:27:56.1338
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 119e0fdb-c404-4bd4-1254-08dce163e36e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3665dbd7-ae68-42e4-ee28-08dce1647572
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D4.namprd05.prod.outlook.com
+	CY4PEPF0000FCC5.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7248
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6689
 
-This series adds SEV-SNP support for a new instruction to read an RMP
-entry and for a segmented RMP table.
+The RMPREAD instruction returns an architecture defined format of an
+RMP entry. This is the preferred method for examining RMP entries.
 
-The RMPREAD instruction is used to return information related to an RMP
-entry in an architecturally defined format.
+In preparation for using the RMPREAD instruction, convert the existing
+code that directly accesses the RMP to map the raw RMP information into
+the architecture defined format.
 
-RMPREAD support is detected via CPUID 0x8000001f_EAX[21].
+RMPREAD output returns a status bit for the 2MB region status. If the
+input page address is 2MB aligned and any other pages within the 2MB
+region are assigned, then 2MB region status will be set to 1. Otherwise,
+the 2MB region status will be set to 0. For systems that do not support
+RMPREAD, calculating this value would require looping over all of the RMP
+table entries within that range until one is found with the assigned bit
+set. Since this bit is not defined in the current format, and so not used
+today, do not incur the overhead associated with calculating it.
 
-Segmented RMP support is a new way of representing the layout of an RMP
-table. Initial RMP table support required the RMP table to be contiguous
-in memory. RMP accesses from a NUMA node on which the RMP doesn't reside
-can take longer than accesses from a NUMA node on which the RMP resides.
-Segmented RMP support allows the RMP entries to be located on the same
-node as the memory the RMP is covering, potentially reducing latency
-associated with accessing an RMP entry associated with the memory. Each
-RMP segment covers a specific range of system physical addresses.
-
-Segmented RMP support is detected and established via CPUID and MSRs.
-
-CPUID:
-  - 0x8000001f_EAX[23]
-    - Indicates support for segmented RMP
-
-  - 0x80000025_EAX
-    - [5:0]   : Minimum supported RMP segment size
-    - [11:6]  : Maximum supported RMP segment size
-
-  - 0x80000025_EBX
-    - [9:0]   : Number of cacheable RMP segment definitions
-    - [10]    : Indicates if the number of cacheable RMP segments is
-                a hard limit
-
-MSR:
-  - 0xc0010132 (RMP_BASE)
-    - Is identical to current RMP support
-
-  - 0xc0010133 (RMP_END)
-    - Should be in reset state if segmented RMP support is active
-
-      For kernels that do not support segmented RMP, being in reset
-      state allows the kernel to disable SNP support if the non-segmented
-      RMP has not been allocated.
-
-  - 0xc0010136 (RMP_CFG)
-    - [0]    : Indicates if segmented RMP is enabled
-    - [13:8] : Contains the size of memory covered by an RMP segment
-               (expressed as a power of 2)
-
-The RMP segment size defined in the RMP_CFG MSR applies to all segments
-of the RMP. Therefore each RMP segment covers a specific range of system
-physical addresses. For example, if the RMP_CFG MSR value is 0x2401, then
-the RMP segment coverage value is 0x24 => 36, meaning the size of memory
-covered by an RMP segment is 64GB (1 << 36). So the first RMP segment
-covers physical addresses from 0 to 0xF_FFFF_FFFF, the second RMP segment
-covers physical addresses from 0x10_0000_0000 to 0x1F_FFFF_FFFF, etc.
-
-When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
-area as it does today (16K in size). However, instead of RMP entries
-beginning immediately after the bookkeeping area, there is a 4K RMP
-segment table. Each entry in the table is 8-bytes in size:
-
-  - [19:0]  : Mapped size (in GB)
-              The mapped size can be less than the defined segment size.
-              A value of zero, indicates that no RMP exists for the range
-              of system physical addresses associated with this segment.
-    [51:20] : Segment physical address
-              This address is left shift 20-bits (or just masked when
-              read) to form the physical address of the segment (1MB
-              alignment).
-
-The series is based off of and tested against the tip tree:
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-
-  5b0c5f05fb2f ("Merge branch into tip/master: 'x86/splitlock'")
-
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
+ arch/x86/virt/svm/sev.c | 141 ++++++++++++++++++++++++++++------------
+ 1 file changed, 98 insertions(+), 43 deletions(-)
 
-Changes in v3:
-- Added RMP documentation
-
-Changes in v2:
-- Remove the self-describing check. The SEV firmware will ensure that
-  all RMP segments are covered by RMP entries.
-- Do not include RMP segments above maximum detected RAM address (64-bit
-  MMIO) in the system RAM coverage check.
-- Adjust new CPUID feature entries to match the change to how they are
-  or are not presented to userspace.
-
-
-Tom Lendacky (8):
-  x86/sev: Prepare for using the RMPREAD instruction to access the RMP
-  x86/sev: Add support for the RMPREAD instruction
-  x86/sev: Require the RMPREAD instruction after Fam19h
-  x86/sev: Move the SNP probe routine out of the way
-  x86/sev: Map only the RMP table entries instead of the full RMP range
-  x86/sev: Treat the contiguous RMP table as a single RMP segment
-  x86/sev: Add full support for a segmented RMP table
-  x86/sev/docs: Document the SNP Reverse Map Table (RMP)
-
- .../arch/x86/amd-memory-encryption.rst        | 118 ++++
- arch/x86/include/asm/cpufeatures.h            |   2 +
- arch/x86/include/asm/msr-index.h              |   9 +-
- arch/x86/kernel/cpu/amd.c                     |   3 +-
- arch/x86/virt/svm/sev.c                       | 628 +++++++++++++++---
- 5 files changed, 662 insertions(+), 98 deletions(-)
-
+diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+index 0ce17766c0e5..103a2dd6e81d 100644
+--- a/arch/x86/virt/svm/sev.c
++++ b/arch/x86/virt/svm/sev.c
+@@ -30,11 +30,27 @@
+ #include <asm/cmdline.h>
+ #include <asm/iommu.h>
+ 
++/*
++ * The RMP entry format as returned by the RMPREAD instruction.
++ */
++struct rmpentry {
++	u64 gpa;
++	u8  assigned		:1,
++	    rsvd1		:7;
++	u8  pagesize		:1,
++	    hpage_region_status	:1,
++	    rsvd2		:6;
++	u8  immutable		:1,
++	    rsvd3		:7;
++	u8  rsvd4;
++	u32 asid;
++} __packed;
++
+ /*
+  * The RMP entry format is not architectural. The format is defined in PPR
+  * Family 19h Model 01h, Rev B1 processor.
+  */
+-struct rmpentry {
++struct rmpentry_raw {
+ 	union {
+ 		struct {
+ 			u64 assigned	: 1,
+@@ -62,7 +78,7 @@ struct rmpentry {
+ #define PFN_PMD_MASK	GENMASK_ULL(63, PMD_SHIFT - PAGE_SHIFT)
+ 
+ static u64 probed_rmp_base, probed_rmp_size;
+-static struct rmpentry *rmptable __ro_after_init;
++static struct rmpentry_raw *rmptable __ro_after_init;
+ static u64 rmptable_max_pfn __ro_after_init;
+ 
+ static LIST_HEAD(snp_leaked_pages_list);
+@@ -247,8 +263,8 @@ static int __init snp_rmptable_init(void)
+ 	rmptable_start += RMPTABLE_CPU_BOOKKEEPING_SZ;
+ 	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
+ 
+-	rmptable = (struct rmpentry *)rmptable_start;
+-	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry) - 1;
++	rmptable = (struct rmpentry_raw *)rmptable_start;
++	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry_raw) - 1;
+ 
+ 	cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "x86/rmptable_init:online", __snp_enable, NULL);
+ 
+@@ -270,48 +286,77 @@ static int __init snp_rmptable_init(void)
+  */
+ device_initcall(snp_rmptable_init);
+ 
+-static struct rmpentry *get_rmpentry(u64 pfn)
++static struct rmpentry_raw *__get_rmpentry(unsigned long pfn)
+ {
+-	if (WARN_ON_ONCE(pfn > rmptable_max_pfn))
+-		return ERR_PTR(-EFAULT);
+-
+-	return &rmptable[pfn];
+-}
+-
+-static struct rmpentry *__snp_lookup_rmpentry(u64 pfn, int *level)
+-{
+-	struct rmpentry *large_entry, *entry;
+-
+-	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
++	if (!rmptable)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	entry = get_rmpentry(pfn);
+-	if (IS_ERR(entry))
+-		return entry;
++	if (unlikely(pfn > rmptable_max_pfn))
++		return ERR_PTR(-EFAULT);
++
++	return rmptable + pfn;
++}
++
++static int get_rmpentry(u64 pfn, struct rmpentry *entry)
++{
++	struct rmpentry_raw *e;
++
++	e = __get_rmpentry(pfn);
++	if (IS_ERR(e))
++		return PTR_ERR(e);
++
++	/*
++	 * Map the RMP table entry onto the RMPREAD output format.
++	 * The 2MB region status indicator (hpage_region_status field) is not
++	 * calculated, since the overhead could be significant and the field
++	 * is not used.
++	 */
++	memset(entry, 0, sizeof(*entry));
++	entry->gpa       = e->gpa << PAGE_SHIFT;
++	entry->asid      = e->asid;
++	entry->assigned  = e->assigned;
++	entry->pagesize  = e->pagesize;
++	entry->immutable = e->immutable;
++
++	return 0;
++}
++
++static int __snp_lookup_rmpentry(u64 pfn, struct rmpentry *entry, int *level)
++{
++	struct rmpentry large_entry;
++	int ret;
++
++	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
++		return -ENODEV;
++
++	ret = get_rmpentry(pfn, entry);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * Find the authoritative RMP entry for a PFN. This can be either a 4K
+ 	 * RMP entry or a special large RMP entry that is authoritative for a
+ 	 * whole 2M area.
+ 	 */
+-	large_entry = get_rmpentry(pfn & PFN_PMD_MASK);
+-	if (IS_ERR(large_entry))
+-		return large_entry;
++	ret = get_rmpentry(pfn & PFN_PMD_MASK, &large_entry);
++	if (ret)
++		return ret;
+ 
+-	*level = RMP_TO_PG_LEVEL(large_entry->pagesize);
++	*level = RMP_TO_PG_LEVEL(large_entry.pagesize);
+ 
+-	return entry;
++	return 0;
+ }
+ 
+ int snp_lookup_rmpentry(u64 pfn, bool *assigned, int *level)
+ {
+-	struct rmpentry *e;
++	struct rmpentry e;
++	int ret;
+ 
+-	e = __snp_lookup_rmpentry(pfn, level);
+-	if (IS_ERR(e))
+-		return PTR_ERR(e);
++	ret = __snp_lookup_rmpentry(pfn, &e, level);
++	if (ret)
++		return ret;
+ 
+-	*assigned = !!e->assigned;
++	*assigned = !!e.assigned;
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(snp_lookup_rmpentry);
+@@ -324,20 +369,28 @@ EXPORT_SYMBOL_GPL(snp_lookup_rmpentry);
+  */
+ static void dump_rmpentry(u64 pfn)
+ {
++	struct rmpentry_raw *e_raw;
+ 	u64 pfn_i, pfn_end;
+-	struct rmpentry *e;
+-	int level;
++	struct rmpentry e;
++	int level, ret;
+ 
+-	e = __snp_lookup_rmpentry(pfn, &level);
+-	if (IS_ERR(e)) {
+-		pr_err("Failed to read RMP entry for PFN 0x%llx, error %ld\n",
+-		       pfn, PTR_ERR(e));
++	ret = __snp_lookup_rmpentry(pfn, &e, &level);
++	if (ret) {
++		pr_err("Failed to read RMP entry for PFN 0x%llx, error %d\n",
++		       pfn, ret);
+ 		return;
+ 	}
+ 
+-	if (e->assigned) {
++	if (e.assigned) {
++		e_raw = __get_rmpentry(pfn);
++		if (IS_ERR(e_raw)) {
++			pr_err("Failed to read RMP contents for PFN 0x%llx, error %ld\n",
++			       pfn, PTR_ERR(e_raw));
++			return;
++		}
++
+ 		pr_info("PFN 0x%llx, RMP entry: [0x%016llx - 0x%016llx]\n",
+-			pfn, e->lo, e->hi);
++			pfn, e_raw->lo, e_raw->hi);
+ 		return;
+ 	}
+ 
+@@ -356,16 +409,18 @@ static void dump_rmpentry(u64 pfn)
+ 		pfn, pfn_i, pfn_end);
+ 
+ 	while (pfn_i < pfn_end) {
+-		e = __snp_lookup_rmpentry(pfn_i, &level);
+-		if (IS_ERR(e)) {
+-			pr_err("Error %ld reading RMP entry for PFN 0x%llx\n",
+-			       PTR_ERR(e), pfn_i);
++		e_raw = __get_rmpentry(pfn_i);
++		if (IS_ERR(e_raw)) {
++			pr_err("Error %ld reading RMP contents for PFN 0x%llx\n",
++			       PTR_ERR(e_raw), pfn_i);
+ 			pfn_i++;
+ 			continue;
+ 		}
+ 
+-		if (e->lo || e->hi)
+-			pr_info("PFN: 0x%llx, [0x%016llx - 0x%016llx]\n", pfn_i, e->lo, e->hi);
++		if (e_raw->lo || e_raw->hi)
++			pr_info("PFN: 0x%llx, [0x%016llx - 0x%016llx]\n",
++				pfn_i, e_raw->lo, e_raw->hi);
++
+ 		pfn_i++;
+ 	}
+ }
 -- 
 2.43.2
 
