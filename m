@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-343438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07E9989AE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:02:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F4D989AEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:02:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B591F21853
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD2DB21E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8748A56742;
-	Mon, 30 Sep 2024 07:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AEB1547DE;
+	Mon, 30 Sep 2024 07:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU7mh7w9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJcV2AAI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3D629CE8;
-	Mon, 30 Sep 2024 07:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134C29CE8;
+	Mon, 30 Sep 2024 07:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727679715; cv=none; b=TMbNSPfvgL7sP0/ZEc/Z6DWit5AQgwydCQsdi9bi/6hHikL/uewvux+BY9vGJLpnwjwB7dCYoqhog+r9Yd1gB9IEKlBDvOKbhKP7YATLPiMVGecaJMQR4eLfMlwtxs8p+lZoRXHddgSyBmcO7nHjTDKRkOuoIC/cmTlSVDLOpw0=
+	t=1727679721; cv=none; b=P8vwdf4BKvMwtRGGvXC63JIy59FDbJY6+ZeFEfgwH2Wcz6d4z6UdgKNwu25w+IwFT/vDnZx90IJouj/lL+qbLoOjd3cbCqXmYuy+5n2dvkIDpSFE3a5kOwV+LHc9/cUoVQm+3JpbTc4MUnUJVvZQK6qyJBd/KZ8fmyBscEdAMFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727679715; c=relaxed/simple;
-	bh=vzlSPx7gNpoki8FPQD2L0+0UCwVIjFElVF3dKnbAN9I=;
+	s=arc-20240116; t=1727679721; c=relaxed/simple;
+	bh=6n9L0YXWQusPKz6NECqA/T9C7TGOjPEUN7og8vjWtFM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFL1tpojb+RIr/3uRlfmGWQ+Ngv9znZYUTyuICXsaIxKvJWoqfnymIT9auUanpKkhy0YAIPUwrEA38g9JwXLAu8S8f7AfYq+/xGJr6qa2lLMQOikS7tio+xBIVYqRKqGBgHT9sPiZsS7F/6VxJVsmQn4veWA0MS3rDfiVSEpPYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU7mh7w9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC61C4CECD;
-	Mon, 30 Sep 2024 07:01:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKXbwCKjpK8oB1M6UVv8XmtEYWbX91OAe5/HPsvEBC4OIn6DGVVmZVAlB5F6hpotXtE0zPxT4IZPdbMnqrgtL5lCuoTk8jFhliitjRp01ULI1n5USdIM8FWw0K5A4dCuo/ULsxsVachkR4k94hKiY+oFiPRDYR8d6PeUxYqNtNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJcV2AAI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AA9C4CEC7;
+	Mon, 30 Sep 2024 07:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727679714;
-	bh=vzlSPx7gNpoki8FPQD2L0+0UCwVIjFElVF3dKnbAN9I=;
+	s=k20201202; t=1727679721;
+	bh=6n9L0YXWQusPKz6NECqA/T9C7TGOjPEUN7og8vjWtFM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SU7mh7w95f+MELF6Bv8xThPxa2sJctpV+vUE5adaRTEFcbatpazxfME0Fc6w49WZZ
-	 u++Hby/Bapl/ntcxWt60qM3L9vxG+57PpKuEnrJ8bXTL8RYzXNmZL++YpFOVkrQ6Sy
-	 ZG+pCpckYkzVg40cVQ7d30MeB6XDZOJKkseJosbibRqFyLa7zAPdwPqlWXj0heOYnz
-	 6j7gwvJRpPTH+V3dhYYuPj0lN13RAet87CDanmVfTCVYaqLgpBypOjv0kuKcxYDLL0
-	 nJisjIws4rmUeRkmTo/XMkIfZT6PdpXYlbyHA030zhfHl02vsXOM3W22VHylHa3IFK
-	 S/x1mHmhK9qzw==
-Date: Mon, 30 Sep 2024 09:01:50 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 5/7] dt-bindings: iio: light: vishay,veml6075: add
- vishay,veml6070
-Message-ID: <xwjjlvdjtomxrxtqok7pkqwmqafwr7zkmikwuwnzusd6c4atxb@pcenm6wz2zfk>
-References: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
- <20240929-veml6070-cleanup-v1-5-a9350341a646@gmail.com>
+	b=OJcV2AAIFfkRyYEqQyuHPopdXmaaiJEDPW42vTQT5ddmhhEL/CsoN1QjOEfkf8v2+
+	 SC8e34+zHgTkTIs2PwxrpGzwRhn08+AaLKj2MebQ57HuZId2bcgAQA0NwdtLGGYqXx
+	 b3wApPV6JKqISdN/xRSXn5uWIB8CtmLn+Ov4QZbYAYOgztGt7CLAlVbPCkqO32xd5P
+	 PA4sGbK4C+3KWu+UxUmsIjAvzXfK3+/p7RQQuD4TS1m+RFwWuXUOOGnPJKl/2yE/cc
+	 t351w/lGCU+6pYuh9yXKwgTH21L4bs8RIhyGeibTvMvqppLqc0ckgCzafZEuS3FyxV
+	 OmwmdszOYNT7g==
+Date: Mon, 30 Sep 2024 09:01:58 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: dri-devel@lists.freedesktop.org, stable@vger.kernel.org, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Sean Paul <seanpaul@chromium.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
+ drm_plane_helper_funcs.atomic_update
+Message-ID: <htfplghwrowt4oihykcj53orgaeudo7a664ysyybint2oib3u5@lcyhfss3nyja>
+References: <20240927204616.697467-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="6jrx2cqnw65dpsgi"
 Content-Disposition: inline
-In-Reply-To: <20240929-veml6070-cleanup-v1-5-a9350341a646@gmail.com>
+In-Reply-To: <20240927204616.697467-1-lyude@redhat.com>
 
-On Sun, Sep 29, 2024 at 10:38:50PM +0200, Javier Carrasco wrote:
-> This UVA device with I2C has the same properties as the veml6075, and
-> the same dt-bindings can cover it too.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--6jrx2cqnw65dpsgi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+Hi,
 
+On Fri, Sep 27, 2024 at 04:46:16PM GMT, Lyude Paul wrote:
+> Something I discovered while writing rvkms since some versions of the
+> driver didn't have a filled out atomic_update function - we mention that
+> this callback is "optional", but we don't actually check whether it's NULL
+> or not before calling it. As a result, we'll segfault if it's not filled
+> in.
+>=20
+>   rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset =
+on [ENCODER:36:Virtual-36]
+>   BUG: kernel NULL pointer dereference, address: 0000000000000000
+>   PGD 0 P4D 0
+>   Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+>   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-=
+1.fc40 08/13/2024
+>   RIP: 0010:0x0
+>=20
+> So, let's fix that.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: <stable@vger.kernel.org> # v3.19+
+
+So we had kind of a similar argument with drm_connector_init early this
+year, but I do agree we shouldn't fault if we're missing a callback.
+
+I do wonder how we can implement a plane without atomic_update though?
+Do we have drivers in such a case?
+
+If not, a better solution would be to make it mandatory and check it
+when registering.
+
+Maxime
+
+--6jrx2cqnw65dpsgi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZvpM4AAKCRAnX84Zoj2+
+dqTlAYD4AtscFOtZMzUGk6+RMPPzgXq4zWG8oSD8cPPWsXpi5gVkTJUYfc7l9Jr4
+nyFWgXYBfiLiv68qoFP1mSgHPoh7oI7J9xfP/VZ5hIo8nOfGie/EctK0ARVasiu2
+kSU7UayY0Q==
+=CpsN
+-----END PGP SIGNATURE-----
+
+--6jrx2cqnw65dpsgi--
 
