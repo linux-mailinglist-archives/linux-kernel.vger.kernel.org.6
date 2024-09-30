@@ -1,184 +1,135 @@
-Return-Path: <linux-kernel+bounces-344006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D5098A274
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:30:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B6798A276
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E43280EA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:30:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304702812D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AFE18755C;
-	Mon, 30 Sep 2024 12:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEAE18E023;
+	Mon, 30 Sep 2024 12:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Mf/ya+3M"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZN8gntLQ"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914E6E2AE;
-	Mon, 30 Sep 2024 12:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3599B18DF9E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:31:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699450; cv=none; b=nE2WA8O6+a4OzN7X8GlPazRpVmqTUdk/imt4BhU+muqwlIhvv3vW84haiMkUHCyCU4YQHJvxfdEDZVKnlnJTI334x+tCSJcALZybpKd2wzqsNO1UwYKzs5HS2+uikIfn5qR6sDmaQ01/+t4k5XLbmxXdeaqETHECuRIl/FX/WOM=
+	t=1727699470; cv=none; b=t7PG/PaYpgIC51M4tzGH0rDIyLI9imwAQJm1XNhOl6HfCqnmp+9aFOaedppZnxWx7JluK79R6mLyMS9AFJArFRGdPbwaPEUkXwL3dcw498D7+JuXWkoQkV71IOyIXhCy5Vx2RwN3Comd+A30uDoTYWKmxyhgDlyrL79w9hKb1hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699450; c=relaxed/simple;
-	bh=lrwzHDxyr0IEWnziBhIgR6eOugPrQ9ZiwGcAgzChxLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUnrAX6OQjZQ1hnWuZ4yCgKyJGT8FqiVxU1ShfBXf1VAvb2E9RXWSNtWKn7dYLPsPRZhCmWVWSCQsCW7WoladpI0Up/q/xGie7ZjHGdaT9iWHu9QJ/uVhVRScExWVcLdkR02rL9wbVSMOpbAbTan9HDI2dQPhRZ7Mdu7lfPmFn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Mf/ya+3M; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UB5XqC032105;
-	Mon, 30 Sep 2024 12:30:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=j
-	PxGfsnpZeiFOfgHcppvK306lmyAbucIpGLnwRY0JMY=; b=Mf/ya+3MZBPD9XHkr
-	HcTMY4On+q4fZw8f4SVVTfhue83GZrJHlVaNuMsFo2TD9qp1+7ORwJ3tU9r6N2yv
-	kEypfRJ9UvisD5K5KtPiy+wc6um153TlsxSoIonCm9rm2M3/gAIWLGkmOuyoKBGu
-	anWdD7rth5s15JqerkDw6+1kmv6yNkoSvlYoOO0dtdwHPKdz8coTP1KWz8/wb/Kh
-	Z2GZw7+VLoEK52OvwNHt/g2UpkiUO07f1INz5bLk22/lpMILHiwGn26tpGo994Hn
-	lTyMHmKg0uI3/ik/iTEvs33DS8Zf7zDexg97ooacW1HUI74kgHeGXJaZsg488k8G
-	GccjQ==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9f81at6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 12:30:44 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48UAEPsu020407;
-	Mon, 30 Sep 2024 12:30:43 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4rxp8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 12:30:43 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48UCUdT836962576
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 12:30:39 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CD9B42004B;
-	Mon, 30 Sep 2024 12:30:39 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7498120040;
-	Mon, 30 Sep 2024 12:30:39 +0000 (GMT)
-Received: from [9.171.21.158] (unknown [9.171.21.158])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 30 Sep 2024 12:30:39 +0000 (GMT)
-Message-ID: <3b65e3cc-2a9f-4427-a327-7e920ec4d969@linux.ibm.com>
-Date: Mon, 30 Sep 2024 14:30:39 +0200
+	s=arc-20240116; t=1727699470; c=relaxed/simple;
+	bh=MRJIKxjY5fyLod+/9tQq0egZ9eZfCVxOGial3fiqCwM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6XbseirO7EDQHWG5VNZUFhtJBoTqhT450Gd4/nrg5z8vGJy48jm6Nu/i6990/XU89AgF+ilXUI7yVuUEncZWg2dfT68IdQ/oE7sSl77mazZubl6xAp+OHdzC9ZiX8xEin7zUYqXvPbXU/P+h2laQH074HzRzpqw9gmuuxShc9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZN8gntLQ; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 30 Sep 2024 08:31:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727699465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LEnSsHQSaJnFQRxIVTDpWYtDfTPI71zTPYoZV+vzeZU=;
+	b=ZN8gntLQdN71iIWUd8MRKqB83R1adTPt5ncch2HuZZREmp/BkWrgdHEGmpC4Wv4XBS2tTq
+	8/Lo00cKjBqwkfR31lZUFU2ctSW276XCFNZGpTnb0T9N8Y6GmaOHt/pzAF4QNzsoO32ak6
+	x5wG++SRA081UxJtmljvRs9CYkjDiB4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] bcachefs: rename version -> bversion for big endian
+ builds
+Message-ID: <fo6bvxt5o5veelshcig3zrqyktwvpxzxpvz4bb3n6gyk2vwejk@fx7opeolkbvj>
+References: <20240930003902.4127294-1-linux@roeck-us.net>
+ <CAMuHMdWcPpBgsK0r0U=k8NyjTjUTwBTLe6Bg_ORD2zmSNoRgJA@mail.gmail.com>
+ <obpogbufu5awsn2a6olh2ondrgwl7bgdowjcpv6jcpm2ey4s5h@obcml2w3csap>
+ <CAMuHMdXZ_N+uvXROpNvvSO3AZ7A-7hQTE4FxEa=1aMX-NC5rbA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/test: perf test 86 fails on s390 repo linux-next
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        sumanthk@linux.ibm.com, hca@linux.ibm.com
-References: <20240916125718.3024270-1-tmricht@linux.ibm.com>
- <ZvXjYOWoEIhakz-f@google.com>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <ZvXjYOWoEIhakz-f@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pS9wgU-MXH07a_UIc1O1TpP99g-Va-NT
-X-Proofpoint-ORIG-GUID: pS9wgU-MXH07a_UIc1O1TpP99g-Va-NT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_10,2024-09-27_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 adultscore=0 mlxscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300087
+In-Reply-To: <CAMuHMdXZ_N+uvXROpNvvSO3AZ7A-7hQTE4FxEa=1aMX-NC5rbA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 9/27/24 00:42, Namhyung Kim wrote:
-> Hello,
+On Mon, Sep 30, 2024 at 02:08:25PM GMT, Geert Uytterhoeven wrote:
+> Hi Kent,
 > 
-> On Mon, Sep 16, 2024 at 02:57:18PM +0200, Thomas Richter wrote:
->> Command perf test 86 fails on s390 using linux-next repository:
->>  # perf test -F 86
->>  ping 868299 [007] 28248.013596: probe_libc:inet_pton_1: (3ff95948020)
->>  3ff95948020 inet_pton+0x0 (inlined)
->>  3ff9595e6e7 text_to_binary_address+0x1007 (inlined)
->>  3ff9595e6e7 gaih_inet+0x1007 (inlined)
->>  FAIL: expected backtrace entry \
->> 	 "main\+0x[[:xdigit:]]+[[:space:]]\(.*/bin/ping.*\)$"
->> 	 got "3ff9595e6e7 gaih_inet+0x1007 (inlined)"
->>  86: probe libc's inet_pton & backtrace it with ping  : FAILED!
->>  #
->>
->> The root cause is a new stack layout, some functions have been added
->> as seen below. Add text_to_binary_address and friends to the
->> list of expected functions.
->>
->>  # perf script | tac | grep -m1 '^ping' -B9 | tac
->>  ping  866856 [007] 25979.494921: probe_libc:inet_pton: (3ff8ec48020)
->> 	     3ff8ec48020 inet_pton+0x0 (inlined)
->> 	     3ff8ec5e6e7 text_to_binary_address+0x1007 (inlined)
->> 	     3ff8ec5e6e7 gaih_inet+0x1007 (inlined)
->> 	     3ff8ec5e6e7 getaddrinfo+0x1007 (/usr/lib64/libc.so.6)
->> 	     2aa3fe04bf5 main+0xff5 (/usr/bin/ping)
->> 	     3ff8eb34a5b __libc_start_call_main+0x8b (/usr/lib64/libc.so.6)
->> 	     3ff8eb34b5d __libc_start_main@GLIBC_2.2+0xad (inlined)
->> 	     2aa3fe06a1f [unknown] (/usr/bin/ping)
+> On Mon, Sep 30, 2024 at 12:11 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> > On Mon, Sep 30, 2024 at 12:04:42PM GMT, Geert Uytterhoeven wrote:
+> > > On Mon, Sep 30, 2024 at 2:39 AM Guenter Roeck <linux@roeck-us.net> wrote:
+> > > > Builds on big endian systems fail as follows.
+> > > >
+> > > > fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+> > > > fs/bcachefs/bkey.h:557:41: error:
+> > > >         'const struct bkey' has no member named 'bversion'
+> > > >
+> > > > The original commit only renamed the variable for little endian builds.
+> > > > Rename it for big endian builds as well to fix the problem.
+> > > >
+> > > > Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
+> > >
+> > > Which is (again) not found on any mailing list, and has never been in
+> > > linux-next before it hit upstream...
+> > >
+> > > > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > > > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> > >
+> > > > --- a/fs/bcachefs/bcachefs_format.h
+> > > > +++ b/fs/bcachefs/bcachefs_format.h
+> > > > @@ -223,7 +223,7 @@ struct bkey {
+> > > >  #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+> > > >         struct bpos     p;
+> > > >         __u32           size;           /* extent size, in sectors */
+> > > > -       struct bversion version;
+> > > > +       struct bversion bversion;
+> > > >
+> > > >         __u8            pad[1];
+> > > >  #endif
+> > >
+> > > BTW, how does this work when accessing a non-native file system?
+> > > Didn't we stop doing bi-endian file systems in v2.1.10, when ext2 was
+> > > converted from a bi-endian to a little-endian file system?
+> >
+> > we byte swab if necessary
 > 
-> Is it because of a kernel change?  What about old kernels then?
+> So you have to test 4 combinations instead of 2 (which you don't do,
+> obviously ;-)
 > 
->>
->>  #
->>
->> Output after:
->>  # perf test -F 86
->>  86: probe libc's inet_pton & backtrace it with ping  : Ok
->>  #
->>
->> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
->> ---
->>  tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
->> index f38c8ead0b03..bc6e2fe1d999 100755
->> --- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
->> +++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
->> @@ -40,6 +40,8 @@ trace_libc_inet_pton_backtrace() {
->>  	case "$(uname -m)" in
->>  	s390x)
->>  		eventattr='call-graph=dwarf,max-stack=4'
->> +		echo "text_to_binary_address\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
->> +		echo "gaih_inet\+0x[[:xdigit:]]+[[:space:]]\($libc|inlined\)$" >> $expected
+> Ext2 was converted from a bi-endian to a little-endian file system
+> because it turned out the conditional byte-swapping was more
+> expensive than unconditional (not) byte-swapping. Given all the
+> bcache structures are already tagged with __packed anyway, I guess
+> this is even more true for bcachefs.
 > 
-> Is it possible to make it this part conditional and only have it for the
-> new kernels?
+> The proper way established +25y ago was to settle on one endianness
+> layout for all on-disk data. That way you do not have to duplicate
+> data and code for little vs. big endian, keep both paths in sync, and
+> you can annotate everything with __[bl]eXX attributes to let sparse
+> help you catch bugs.
 > 
-> Thanks,
-> Namhyung
-> 
-> 
->>
+> Which endianness to pick is up to you. Ext2 settled on little-endian,
+> XFS on big-endian.
 
-I think this is more related to glibc and has nothing to do with the kernel version.
-It happened after I did a dnf update.
+If you peruse that code even slightly, you'll see that what we're doing
+is treating the key as a multi word integer, so word order has to match
+machine byte order in order for various things in the btree lookup code
+to work.
 
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
-
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
-
+But sure, try and tell me there's something about filesystems I don't
+already know...
 
