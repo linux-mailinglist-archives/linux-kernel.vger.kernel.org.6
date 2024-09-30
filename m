@@ -1,227 +1,148 @@
-Return-Path: <linux-kernel+bounces-344738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDCC98ADA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:00:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E744398ADAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD797B21789
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:00:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E78731C2191F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34541A0B0E;
-	Mon, 30 Sep 2024 20:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCDE1A0BEB;
+	Mon, 30 Sep 2024 20:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyrytrju"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQ2YWLsX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B421A0BC1;
-	Mon, 30 Sep 2024 20:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58766168488;
+	Mon, 30 Sep 2024 20:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726433; cv=none; b=gWCMGBqmASZiLOkt+5yBXCWyArvlBtShy0hm7P36PFC4Lz0HkTO1OqWyqvXOKzaCJS1hf6srXPsMgTxp/paXSBrEY6cHisHQvD/LxZLH7yYtRLqALObnZetm8wpVVkSL0jrOuxivOthVPsZy9o09JtXO6KKdIsRkUTsu3A5mTB0=
+	t=1727726540; cv=none; b=JJlJzS3jt00wGbY7zcHv21dd1unu0X6P75rOtgHFDnMI53jmIe6fQnPJ+pwMvzHIOE/MYNYI3GcMSwftA7atEFsY6e/AJgEBJINlEfyLMBZBqHAT+X0BSLK1rBq3b+IGaiwuRMWCNsIxkB3xviIV3MzQitfvj7+ixM8shUt3mUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726433; c=relaxed/simple;
-	bh=bQQl0J7oigVoPltFmsFgOAdJhsDIryixqNATTTe4sgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q/j9dik8C/pSB4rSu0zj8yqkRzGusM8jcH5+i/sCQ/DJC18+XWhwOykn2JP1+YqypphxEDyWK5P4lLuLVUbVE7/AlKzvTwVw9GrQZzkU5+KrWISZX5AOMcbuD+1Ka7GKieAcB0TjMekEHc1nESsmbAB/Qvn/YiqVJclztmIq5Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyrytrju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6564DC4CEC7;
-	Mon, 30 Sep 2024 20:00:32 +0000 (UTC)
+	s=arc-20240116; t=1727726540; c=relaxed/simple;
+	bh=9QLOa/TQi7lR+XJ+LawxAWx/A8C/LVBvDC8G9OxcET8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iRj8syNE4KVPCfz91NzIwf5oTFW4KtsnoSEiqUNOdWYq9r/UWkrpRDiMn49f3qSE87DwOf0nYg4DafM/suyGmPhUS6Qcreen28aQS8mDTBymNsBCAqEpXH77Q89onIPQTU1ReYbqbYsZt/Z/32yttbsPqm+lF6RZ6gxMIFTfpnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQ2YWLsX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF62AC4CECD;
+	Mon, 30 Sep 2024 20:02:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727726432;
-	bh=bQQl0J7oigVoPltFmsFgOAdJhsDIryixqNATTTe4sgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fyrytrjurUXkg0kB2CCROqN88/OD7D7pU5gJ6YoaTcpWq8HGGE3PP8f4ZUeRSzETP
-	 5IlptH8RBe8raby+/4PvqNO7Ip9Zr+3bEf3eRdclq7BuO+1V/hg4g3yBlRGGs5Eayx
-	 1j3MHcdeRBWOwax7eaga9+gGJ6hPUqFro6wEp4LGpPQg4B/gjLxncWhCNy0sAS25Ne
-	 /PJnm7XnYw9X75Srxi05JZfk04KHDH1euHY/RO4w/zGtva/u6Ido1EczTtqXraCdMk
-	 ijusM+JmADyjQ6wArY1Zqjj59Xd2HLdMsBfQUiQLmqmO8PPlHrM17yrfpfRWfRivX9
-	 LIQjj+1vytLHQ==
-Received: by pali.im (Postfix)
-	id 2FB007D0; Mon, 30 Sep 2024 22:00:26 +0200 (CEST)
-Date: Mon, 30 Sep 2024 22:00:26 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] cifs: Validate content of native symlink
-Message-ID: <20240930200026.efjs2v6ssqridcqx@pali>
-References: <20240929185053.10554-1-pali@kernel.org>
- <20240929185053.10554-7-pali@kernel.org>
- <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
- <20240929221908.skkup4ds6ow2s77x@pali>
+	s=k20201202; t=1727726539;
+	bh=9QLOa/TQi7lR+XJ+LawxAWx/A8C/LVBvDC8G9OxcET8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=QQ2YWLsX3ueDajhEnXyMWoBBGAX23cIRKnhaTUGB1yHqVLXg/BLicPTYZp+muqT1y
+	 XSTfV6IuLURDetyTT2n0hhTbSCjEV9+av8PqJbz6KV6zAWzMuji/O4GeTjK7pMoA/i
+	 hGi8TAwQv6AL/l90pDrbv30sZwIUcaYSqqhQUXauAJ0BBiRlrxUmodTueOLixHQjNA
+	 um6CXzBsc0BQxznWInFhfJV17upuwhyd05Rr0RZ5H9sF4KVR0jJbuRYxwYroT4BWy+
+	 qyRDiTtY8NNPQ1aAoLYh7FA3aQBfn6JX39jNpDBDXDY0aw+kb2Y4XUpT7mJIpoEmi/
+	 lW1Q+hVqXLEOQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 30 Sep 2024 21:02:04 +0100
+Subject: [PATCH v4] KVM: arm64: Fix confusion in documentation for pKVM SME
+ assert
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="hy7expdtsjuxndfn"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240929221908.skkup4ds6ow2s77x@pali>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240930-kvm-arm64-sme-assert-v4-1-3c9df71db688@kernel.org>
+X-B4-Tracking: v=1; b=H4sIALsD+2YC/4XOQQ6CMBAF0KuQrq0p7RSKK+9hXBQ6QIOAaUmjI
+ dzdwkaNIS7/JP/9mYlHZ9GTUzITh8F6Ow4xwCEhVauHBqk1MRPOOLCMAe1CT7XrM6C+R6p97E9
+ UapNLaQCVzkis3h3W9rGxl2vMrfXT6J7bSkjX6x8wpDSl0hRKgDKM1ercoRvwdhxdQ1Yx8E9F7
+ ih8VUAUacmY4DX8KOKt5ILtKCIqKisKkICyKr9/WZblBbGLZ+NFAQAA
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2717; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=9QLOa/TQi7lR+XJ+LawxAWx/A8C/LVBvDC8G9OxcET8=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm+wPHrpL2ZXNqc4NnavNhLe4f/lNGtPo60qn5Z9gM
+ GpYr7+CJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvsDxwAKCRAk1otyXVSH0D/yB/
+ wNGk1Zcr4S98KVGltp4VROk5qXQlS19eOBb7ijfYZNcEfOkmheZpc1maxdJh+Y+f45R9r7JvTtdYsA
+ DH13NrRsDvjh/LGNISFR9EXst+La55VJOSpDSKVZ22ckOn3EYr8kh5ahPp6djQbeQONlPMDv0pTzKt
+ eFb27+s6icmzDJeb0SSiDDkv+KGqvVQLPW86qOZ5Ev/4NG4UxMxDk+67DAjyeT9ScPMAIpUZjwzbgz
+ oTkszWm/AP6vOLENMc/tOqAGjB3U+B/sQ9Vnd05SVm7Y8IPd4iFzSaQAM8wtz71vqNqR3GUnAuVxmQ
+ ClA5ag7kC5Ehp8sD9C79iTMZnfwcT/
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
+As raised in the review comments for the original patch the assert and
+comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+disabled in protected mode") are bogus. The comments says that we check
+that we do not have SME enabled for a pKVM guest but the assert actually
+checks to see if the host has anything set in SVCR which is unrelated to
+the guest features or state, regardless of if those guests are protected
+or not. This check is also made in the hypervisor, it will refuse to run
+a guest if the check fails, so it appears that the assert here is
+intended to improve diagnostics.
 
---hy7expdtsjuxndfn
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Update the comment to reflect the check in the code, and to clarify that
+we do actually enforce this in the hypervisor. While we're here also
+update to use a WARN_ON_ONCE() to avoid log spam if this triggers.
 
-Now I tested it. FSCTL_SET_REPARSE_POINT ioctl call on Windows accepts
-also symlink path with zero characters. In attachment I'm sending simple
-program which creates Windows relative symlink and accepts binary target
-path via \xFF sequence. You can compile it with gcc/mingw option -municode.
-So calling "set_reparse_symlink.exe symlink file\x00file" creates new
-symlink which points to target path "file<nul>file".
+Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+Reviewed-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+This has gone more than a kernel release with only positive review
+comments...
+---
+Changes in v4:
+- Rebase onto v6.12-rc1
+- Link to v3: https://lore.kernel.org/r/20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org
 
-On Monday 30 September 2024 00:19:08 Pali Rohár wrote:
-> I think that via pike it could be possible or via windows application
-> running locally (to create reparse point manually with prepared buffer
-> with such content). I will check it later.
-> 
-> Just a side note: Windows NT kernel allows for object names any
-> characters except backslash. For object names is not used nul-term
-> string, but rather string with explicit length. So even a null character
-> is a valid in a object name. NT NTFS driver has for file names more
-> restrictions and null is not valid. But it does not mean that somebody
-> can write own filesystem which allows null bytes in file names...
-> And this design of explicit lengths is also in SMB, so NT kernel may
-> export nul characters in symlink path buffers...
-> 
-> On Sunday 29 September 2024 16:48:46 Steve French wrote:
-> > Is there any easy way to create such a symlink (with null in it)?
-> > 
-> > On Sun, Sep 29, 2024 at 1:51 PM Pali Rohár <pali@kernel.org> wrote:
-> > >
-> > > Check that buffer does not contain UTF-16 null codepoint
-> > > because Linux cannot process symlink with null byte.
-> > >
-> > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > ---
-> > >  fs/smb/client/reparse.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > >
-> > > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-> > > index 5a738f65b190..ca4f96c43508 100644
-> > > --- a/fs/smb/client/reparse.c
-> > > +++ b/fs/smb/client/reparse.c
-> > > @@ -509,6 +509,16 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
-> > >         int rc;
-> > >         int i;
-> > >
-> > > +       /*
-> > > +        * Check that buffer does not contain UTF-16 null codepoint
-> > > +        * because Linux cannot process symlink with null byte.
-> > > +        */
-> > > +       if (unicode && UniStrnlen((wchar_t *)buf, len/2) != len/2) {
-> > > +               cifs_dbg(VFS, "srv returned null byte in native symlink target location\n");
-> > > +               rc = -EIO;
-> > > +               goto out;
-> > > +       }
-> > > +
-> > >         smb_target = cifs_strndup_from_utf16(buf, len, unicode, cifs_sb->local_nls);
-> > >         if (!smb_target) {
-> > >                 rc = -ENOMEM;
-> > > --
-> > > 2.20.1
-> > >
-> > >
-> > 
-> > 
-> > -- 
-> > Thanks,
-> > 
-> > Steve
+Changes in v3:
+- Rebase onto v6.11-rc1.
+- Link to v2: https://lore.kernel.org/r/20240605-kvm-arm64-sme-assert-v2-1-54391b0032f4@kernel.org
 
---hy7expdtsjuxndfn
-Content-Type: text/x-csrc; charset=us-ascii
-Content-Disposition: attachment; filename="set_reparse_symlink.c"
+Changes in v2:
+- Commit message tweaks.
+- Change the assert to WARN_ON_ONCE().
+- Link to v1: https://lore.kernel.org/r/20240604-kvm-arm64-sme-assert-v1-1-5d98348d00f8@kernel.org
+---
+ arch/arm64/kvm/fpsimd.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-#include <stdio.h>
-#include <windows.h>
-#include <ntdef.h>
+diff --git a/arch/arm64/kvm/fpsimd.c b/arch/arm64/kvm/fpsimd.c
+index ea5484ce1f3b..5fb9b3fc61ec 100644
+--- a/arch/arm64/kvm/fpsimd.c
++++ b/arch/arm64/kvm/fpsimd.c
+@@ -93,11 +93,14 @@ void kvm_arch_vcpu_load_fp(struct kvm_vcpu *vcpu)
+ 	}
+ 
+ 	/*
+-	 * If normal guests gain SME support, maintain this behavior for pKVM
+-	 * guests, which don't support SME.
++	 * The pKVM hypervisor does not yet understand how to save or
++	 * restore SME state for the host so double check that if we
++	 * are running with pKVM we have disabled SME.  The hypervisor
++	 * enforces this when the guest is run, this check is for
++	 * clearer diagnostics.
+ 	 */
+-	WARN_ON(is_protected_kvm_enabled() && system_supports_sme() &&
+-		read_sysreg_s(SYS_SVCR));
++	WARN_ON_ONCE(is_protected_kvm_enabled() && system_supports_sme() &&
++		     read_sysreg_s(SYS_SVCR));
+ }
+ 
+ /*
 
-int wmain(int argc, wchar_t *argv[]) {
-  static BYTE reparse_data_buffer[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
-  REPARSE_DATA_BUFFER *reparse_buffer = (REPARSE_DATA_BUFFER *)reparse_data_buffer;
-  DWORD reparse_buffer_length;
-  TOKEN_PRIVILEGES privileges;
-  DWORD target_length;
-  wchar_t *target;
-  HANDLE handle;
-  HANDLE token;
-  BOOL success;
-  DWORD i;
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240604-kvm-arm64-sme-assert-5ad755d4e8a6
 
-  if (argc != 3) {
-    printf("Usage: %ls new_file target\n", argv[0]);
-    return 1;
-  }
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
-  target = argv[2];
-  for (i = 0, target_length = 0; target[i]; i++, target_length++) {
-    if (target[i] == L'\\') {
-      if (target[i+1] == L'\\') {
-        target[target_length] = L'\\';
-        i++;
-        continue;
-      } else if (target[i+1] == L'x' && target[i+2] >= L'0' && target[i+2] <= L'9' && target[i+3] >= L'0' && target[i+3] <= L'9') {
-        target[target_length] = ((target[i+2]-L'0') << 4) | (target[i+3]-L'0');
-        i += 3;
-        continue;
-      }
-    }
-    target[target_length] = target[i];
-  }
-  target_length *= sizeof(target[0]);
-
-  reparse_buffer_length = FIELD_OFFSET(REPARSE_DATA_BUFFER, SymbolicLinkReparseBuffer.PathBuffer) + target_length*2;
-  if (reparse_buffer_length > MAXIMUM_REPARSE_DATA_BUFFER_SIZE) {
-    printf("Target path is too long\n");
-    return 1;
-  }
-
-  reparse_buffer->ReparseTag = IO_REPARSE_TAG_SYMLINK;
-  reparse_buffer->ReparseDataLength = reparse_buffer_length - REPARSE_DATA_BUFFER_HEADER_SIZE;
-  reparse_buffer->SymbolicLinkReparseBuffer.SubstituteNameOffset = 0;
-  reparse_buffer->SymbolicLinkReparseBuffer.SubstituteNameLength = target_length;
-  reparse_buffer->SymbolicLinkReparseBuffer.PrintNameOffset = target_length;
-  reparse_buffer->SymbolicLinkReparseBuffer.PrintNameLength = target_length;
-  reparse_buffer->SymbolicLinkReparseBuffer.Flags = SYMLINK_FLAG_RELATIVE;
-  memcpy(reparse_buffer->SymbolicLinkReparseBuffer.PathBuffer, target, target_length);
-  memcpy(((BYTE*)reparse_buffer->SymbolicLinkReparseBuffer.PathBuffer)+target_length, target, target_length);
-
-  if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) {
-    if (LookupPrivilegeValue(NULL, SE_CREATE_SYMBOLIC_LINK_NAME, &privileges.Privileges[0].Luid)) {
-      privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
-      privileges.PrivilegeCount = 1;
-      AdjustTokenPrivileges(token, FALSE, &privileges, sizeof(privileges), NULL, NULL);
-    }
-    CloseHandle(token);
-  }
-
-  handle = CreateFileW(argv[1], FILE_WRITE_DATA, FILE_SHARE_VALID_FLAGS, NULL, OPEN_ALWAYS, FILE_FLAG_OPEN_REPARSE_POINT, NULL);
-  if (handle == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED)
-    handle = CreateFileW(argv[1], FILE_WRITE_DATA, FILE_SHARE_VALID_FLAGS, NULL, OPEN_ALWAYS, FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, NULL);
-  if (handle == INVALID_HANDLE_VALUE) {
-    printf("CreateFileW failed: %lu\n", GetLastError());
-    return 1;
-  }
-
-  success = DeviceIoControl(handle, FSCTL_SET_REPARSE_POINT, reparse_buffer, reparse_buffer_length, NULL, 0, NULL, NULL);
-  CloseHandle(handle);
-  if (!success) {
-    printf("FSCTL_SET_REPARSE_POINT failed: %lu\n", GetLastError());
-    return 1;
-  }
-
-  return 0;
-}
-
---hy7expdtsjuxndfn--
 
