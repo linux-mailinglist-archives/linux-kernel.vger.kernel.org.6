@@ -1,54 +1,44 @@
-Return-Path: <linux-kernel+bounces-343624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB923989D77
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:58:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55EC989D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2D51F22872
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928F3285657
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D499D18455C;
-	Mon, 30 Sep 2024 08:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gxRsvhD0"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000A617F505;
+	Mon, 30 Sep 2024 08:58:17 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872BA18132A;
-	Mon, 30 Sep 2024 08:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EC2180A80;
+	Mon, 30 Sep 2024 08:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686625; cv=none; b=IZTcGow62tpbpWUbgjXEjR9u3z0BniAFJFGUGYYtgcg3LzGN3jdSy/IWz/y++TIA9prX3PhmOGs1Gz2Z80+7iVLzZDFy7PMnxN5joVcSe96Pid/PU0wYENBO/jK3ZCT9H+HmGQ+m92NHjnStQro39pU67VrmmRzNNa7ZpkOxg6c=
+	t=1727686697; cv=none; b=DvudLOkSm1XA43EVDKWYYFjOfDIyY0jP0WP7kGNYqrZBwWt7SVvEqdhPsCQYXQbtDmUVYqP2CFlK8yxBYlJ2HWCpO/8AWoz7f5Ovt+iBRPsPiGonp+rygojWiOtwEWCRHrT6yKjJTxLURo/NxO4cMnJGNYJO4GwJcqS7Fw8z48A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686625; c=relaxed/simple;
-	bh=RRK9Oszbh79YT4DewKwCNUO67et5+TBu6p5sJ2Au3kY=;
+	s=arc-20240116; t=1727686697; c=relaxed/simple;
+	bh=pK9BBmAz7pGForOQWbZmxWWr5mRMu1MTSBFFRLgbCTw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZlRBcPYmekLApbEJix80lwoNNJHybdCqtKTVWUPiV+CjP96Bpju35Yobs/dU4tf836lNekiAwF8o+epuG40VayE9qGnBMr66qlde3pa98xKNNtiT4UwRZA1xigHeA5ZHnSuG6aWZ+1dNomPyZurcX8tUTw+yHMy/69O2cBKtGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gxRsvhD0; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727686621;
-	bh=RRK9Oszbh79YT4DewKwCNUO67et5+TBu6p5sJ2Au3kY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gxRsvhD03S0cWwbUtL7sqBtCluUD69qqNc87WZkMBQGPx30E39voB4FbamMK0ME0l
-	 QooGgAyiKgNKuOrsa2A0aKNHFRs6mZKddKzivfHwhDPq8XVNzpGre0Zmb3rZy/DMam
-	 RBfad1caeHvQ7F9zUHMdnF4u9NLSUFzMO8wqwZG7LoJ4L1Ltrj4DYqhALQma+o09tk
-	 4SMffNO17Gx6AsfmISZSv5xL0wlxEhLJUinDkc409u6gyIA5B3MBWtt5bsyAEnC+Ae
-	 ux2d9sbFfYpmqbM/cpfPG7WKuCTF9Bzl1VsEV9cIXBvgKYIq6fICf2Zu4R1iVQxfNi
-	 41ZbPNd6CRjsQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 542DB17E0EB5;
-	Mon, 30 Sep 2024 10:57:01 +0200 (CEST)
-Message-ID: <b261e9b1-826a-456a-bf69-b15bf50c3fa8@collabora.com>
-Date: Mon, 30 Sep 2024 10:57:01 +0200
+	 In-Reply-To:Content-Type; b=VsK9JJWno8MUdM1v59lKeBdr/ycX7Ai5bXJwZHimikEXIPhC6MR6F7ap/wU35c8G0UpqcOlw8RHT8ptBp4sAI8+Xi6fgdFZ1lE1KrdCt8Im76QD3DYV6B2PhVl99Obry/LeDg7CE7vtF443EeIxO/CVd9L2QXo18GhLtEbBNEpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XHDpG46QJz9v7JV;
+	Mon, 30 Sep 2024 16:32:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id D7AF8140519;
+	Mon, 30 Sep 2024 16:57:56 +0800 (CST)
+Received: from [10.81.211.60] (unknown [10.81.211.60])
+	by APP2 (Coremail) with SMTP id GxC2BwCXRscEaPpmNIbwAQ--.5120S2;
+	Mon, 30 Sep 2024 09:57:56 +0100 (CET)
+Message-ID: <8d20cf79-9fa5-4ced-aa91-232ccd545b59@huaweicloud.com>
+Date: Mon, 30 Sep 2024 10:57:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,47 +46,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/3] regulator: Add of_regulator_get_optional() for
- pure DT regulator lookup
-To: Chen-Yu Tsai <wenst@chromium.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
- Johan Hovold <johan@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-References: <20240930044525.2043884-1-wenst@chromium.org>
- <20240930044525.2043884-2-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240930044525.2043884-2-wenst@chromium.org>
+Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
+ dependency
+To: Alan Huang <mmpgouride@gmail.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
+ John Stultz <jstultz@google.com>, Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>,
+ Josh Triplett <josh@joshtriplett.org>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
+ RCU <rcu@vger.kernel.org>, linux-mm@kvack.org, lkmm@lists.linux.dev
+References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
+ <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
+ <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
+ <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
+ <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
+ <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
+ <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
+From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
+In-Reply-To: <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwCXRscEaPpmNIbwAQ--.5120S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFyrGr4xCFykJF4Duw45KFg_yoW5AF4DpF
+	W7Ka17KF4kJF1akr90y348uFy5trn7tFyYv3Z5tr1xCws0gF1fZr43tFyYkasxCwn7t34j
+	vr1Yv3sIvasxAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIF
+	4iUUUUU
+X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
 
-Il 30/09/24 06:45, Chen-Yu Tsai ha scritto:
-> The to-be-introduced I2C component prober needs to enable regulator
-> supplies (and toggle GPIO pins) for the various components it intends
-> to probe. To support this, a new "pure DT lookup" method for getting
-> regulator supplies is needed, since the device normally requesting
-> the supply won't get created until after the component is probed to
-> be available.
-> 
-> Add a new of_regulator_get_optional() function for this. This mirrors
-> the existing regulator_get_optional() function, but is OF-specific.
-> The underlying code that supports the existing regulator_get*()
-> functions has been reworked in previous patches to support this
-> specific case.
-> 
-> Also convert an existing usage of "dev && dev->of_node" to
-> "dev_of_node(dev)".
-> 
-> Link: https://lore.kernel.org/all/20231220203537.83479-2-jernej.skrabec@gmail.com/ [1]
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
+Am 9/29/2024 um 12:26 AM schrieb Alan Huang:
+> 2024年9月28日 23:55，Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote：
+>>
+>> On 2024-09-28 17:49, Alan Stern wrote:
+>>> On Sat, Sep 28, 2024 at 11:32:18AM -0400, Mathieu Desnoyers wrote:
+>>>> On 2024-09-28 16:49, Alan Stern wrote:
+>>>>> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
+>>>>>> equality, which does not preserve address dependencies and allows the
+>>>>>> following misordering speculations:
+>>>>>>
+>>>>>> - If @b is a constant, the compiler can issue the loads which depend
+>>>>>>     on @a before loading @a.
+>>>>>> - If @b is a register populated by a prior load, weakly-ordered
+>>>>>>     CPUs can speculate loads which depend on @a before loading @a.
+>>>>>
+>>>>> It shouldn't matter whether @a and @b are constants, registers, or
+>>>>> anything else.  All that matters is that the compiler uses the wrong
+>>>>> one, which allows weakly ordered CPUs to speculate loads you wouldn't
+>>>>> expect it to, based on the source code alone.
+>>>>
+>>>> I only partially agree here.
+>>>>
+>>>> On weakly-ordered architectures, indeed we don't care whether the
+>>>> issue is caused by the compiler reordering the code (constant)
+>>>> or the CPU speculating the load (registers).
+>>>>
+>>>> However, on strongly-ordered architectures, AFAIU, only the constant
+>>>> case is problematic (compiler reordering the dependent load), because
+>>> I thought you were trying to prevent the compiler from using one pointer
+>>> instead of the other, not trying to prevent it from reordering anything.
+>>> Isn't this the point the documentation wants to get across when it says
+>>> that comparing pointers can be dangerous?
+>>
+>> The motivation for introducing ptr_eq() is indeed because the
+>> compiler barrier is not sufficient to prevent the compiler from
+>> using one pointer instead of the other.
+> 
+> barrier_data(&b) prevents that.
+
+I don't think one barrier_data can garantuee preventing this, because 
+right after doing the comparison, the compiler still could do b=a.
+
+In that case you would be guaranteed to use the value in b, but that 
+value is not the value loaded into b originally but rather the value 
+loaded into a, and hence your address dependency goes to the wrong load 
+still.
+
+However, doing
+
+barrier_data(&b);
+if (a == b) {
+    barrier();
+    foo(*b);
+}
+
+might maybe prevent it, because after the address of b is escaped, the 
+compiler might no longer be allowed to just do b=a;, but I'm not sure if 
+that is completely correct, since the compiler knows b==a and no other 
+thread can be concurrently modifying a or b. Therefore, given that the 
+compiler knows the hardware, it might know that assigning b=a would not 
+cause any  race-related issues even if another thread was reading b 
+concurrently.
+
+Finally, it may be only a combination of barrier_data and making b 
+volatile could be guaranteed to solve the issue, but the code will be 
+very obscure compared to using ptr_eq.
+
+   jonas
 
 
