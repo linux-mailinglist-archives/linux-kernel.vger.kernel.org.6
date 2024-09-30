@@ -1,77 +1,65 @@
-Return-Path: <linux-kernel+bounces-343635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C49B989D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:03:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC260989D8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEAB2879DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:03:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AB1C2145A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB136185B48;
-	Mon, 30 Sep 2024 09:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC56183CAA;
+	Mon, 30 Sep 2024 09:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFaLNtPi"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ed8HAkKp"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B946183CAA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108DB183CA9;
+	Mon, 30 Sep 2024 09:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686978; cv=none; b=FC5myQZ4KmiB0DJLYmqr5y9/A6HaSYQgCIbSankQ4afE4HX8yf1wTuI/l5mxHtz9ZEAhR3DJEySRMORN3KSy56vUXQWY0ztEPpB/D2e54YQpaOwQKKGIXMybvZLJKJ7F0qUQRa76TSx5azxl7P8hJOUuCOOzYHLVoj4sheCwSbI=
+	t=1727686923; cv=none; b=A1ReW2SqnylgwUBhMW5i8egZ3zmx0UNdWCTs2blbw6JAClPGx8N1YkSsbMtvl5Ls3ldmn1jdwcSJ7HAgFytk3tagTgpVhvmikqZtRxOZF5Eix64cCLr/50ag3Z4f1UWDaIIMKsY3Nb68LW6CFZb2j/YPcvk3x/veWsI6T7HTM8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686978; c=relaxed/simple;
-	bh=zcULoAs2qCaoHiJt9VBIp/j2zPAaBYobPJI4fj6+h48=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IGaAguDuviCINtaJ+G08PRkwh1rNwraJlBd4EpXOiiULi2vcWq2Y4E9PXoMUdhTAQxTpXCawkYCUDJgpOuC1LpgQYbdVnyY4IZoUJQdl6W8b2p9+Ya/KbrV6yI0VluRxCJ6Wmx5u0JeTTAMJXlh3zqbRF1zbiaIigiJB+/+IOlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFaLNtPi; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d2b4a5bf1so565507766b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:02:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727686975; x=1728291775; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=O4koKxXkPqyf3PTpI2r9SfRgcoCHSohiw3BXHU1GCzQ=;
-        b=MFaLNtPisYHQrL2hbW45bYn7VDeymDFtG4h1/zHGsKYtN8euroyLGDidBmXbOP+By2
-         bN8tG9zf5CzCFhLJ81/qyUQa4CfkDy+VfjuxFcOhDpwcIU4QKV4SU5BQy/yKwGP9CVvi
-         f5dwC0qdO/ZNmYWxlD9hoJRsbisB/+RgRNxSaxVqa+AJqUGoJnA/1fdZi7Cksd7N9v6W
-         DCDWhBzpM9P+yGI4Z5boINOvFr4JOqGNZkYtx+PPpkT/pC4h36N55/tp5YDrbsxkHn3t
-         dWwudWbQUsJDfP2jiBN9VK642beYmWt7wUC7/VajHaMJJDRo9QJL6hfxqXfQaFXrtjGr
-         hv5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727686975; x=1728291775;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O4koKxXkPqyf3PTpI2r9SfRgcoCHSohiw3BXHU1GCzQ=;
-        b=tlYkQ6ldKnKmp4mElUXfaKa36J/c52eRJGGnvYWULTEpsRHombajvEHfobRquBqu1X
-         hsNIb39fHODj42pOcUuEUOUML43l1pWiOvwQ7QGwnradg87KSJ3CEdGnLqkjuncV0H2C
-         yKJw6I0DDuxR9gQOHp6JdX6LZhdDXSH5SHomWx6qrkTqrO7rwRLXB0K3CZmjyEKoig69
-         7FP9PLT9hSWOQDYQrmyE2pagDmpGmK86rMQZ9wB8Ma1z75ZoPCdvyn/CuzBkROKHFkvl
-         kCALdO5uFZQAUpyy7N/IliqJAyNBqLBAO6AFXE5uwjaWMyEGGAt/XA6rS+IqiJ79xn3Q
-         hwYw==
-X-Gm-Message-State: AOJu0Yxbmx4UnDrUqKjoyykgclAc+6noiJUzdtUCECvRpcsFEHRs4zfb
-	+/Euigd3pWkSHU0cgA8A6zvVqVxlRDeQQcg52iErNXQ94TNobutG
-X-Google-Smtp-Source: AGHT+IFL+iAglPG3u8m7mGWjgGJAmGd2zc1ylorISr/PE4srt89U/Ata8UYC93xpt+7lvToJTSZCCg==
-X-Received: by 2002:a17:907:3fa2:b0:a8d:29b7:ecfd with SMTP id a640c23a62f3a-a93c4aab828mr1362714366b.54.1727686974524;
-        Mon, 30 Sep 2024 02:02:54 -0700 (PDT)
-Received: from akanner-r14.netis.cc ([62.4.55.159])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93cd958fabsm433495366b.22.2024.09.30.02.02.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 02:02:54 -0700 (PDT)
-From: Andrew Kanner <andrew.kanner@gmail.com>
-To: aivazian.tigran@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Andrew Kanner <andrew.kanner@gmail.com>,
-	syzbot+94891a5155abdf6821b7@syzkaller.appspotmail.com
-Subject: [PATCH] fs/bfs: fix possible NULL pointer dereference caused by empty i_op/i_fop
-Date: Mon, 30 Sep 2024 11:01:54 +0200
-Message-Id: <20240930090153.505-1-andrew.kanner@gmail.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1727686923; c=relaxed/simple;
+	bh=rMDQbP5iTbg0VsicK08jB1/II/2Q6c4i6sQerb2hk/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cPrRnZBDYCrEAVIirMv/lm0TQ3m34LGcB2+SjCGupVE93ZZ+g1azSI/W63Q2DXWT203zFCR0/QkJ76bWq62eqJ5uYzL8y8gXaE/jx9kLUteBlwyFpoUB7S/J7YOcBeoQf/6sCSalw4+V8iG3xgEw0EcrWX/AO7cnPabAdPi8B3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ed8HAkKp; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727686919;
+	bh=rMDQbP5iTbg0VsicK08jB1/II/2Q6c4i6sQerb2hk/U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ed8HAkKpFNF2T0XxspKs7CbT8mlDzbZUZLPXsQdbi7e7Uvpuk88JfeWA2mNXeobC4
+	 a/DJUNI9n15h3AMgmPp3keX7jPdZ3S/AKElZP4IBumWNXbSeANstR7p7GHtLAmUkTR
+	 HvY9cYpWumELAzyuIBYRO96bz0kIRHVEM/ApfBoVc2+7CltWl2YKRJRdhEEJ9Lw/Wb
+	 60m7pZWV7WO+rqRyhAHXyEWa1N1biowtqQuwKthXrSDQ3Rcc9CCdE/AHNoWGgWrqj9
+	 HGG3+SQc6A4zvCBrwCDDV+IO0w+oUBIqh4ZNWxqnYzgVk9za+mIWSjaKOK5aI92XKB
+	 AlwBmJy1BGC1Q==
+Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 12C4317E0EA8;
+	Mon, 30 Sep 2024 11:01:59 +0200 (CEST)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: chaotian.jing@mediatek.com
+Cc: ulf.hansson@linaro.org,
+	matthias.bgg@gmail.com,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel@collabora.com,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: [PATCH v2] mmc: mtk-sd: Implement Host Software Queue for eMMC and SD Card
+Date: Mon, 30 Sep 2024 11:01:56 +0200
+Message-ID: <20240930090156.33537-1-angelogioacchino.delregno@collabora.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,75 +68,195 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Syzkaller reported and reproduced the following issue:
+Add support for Host Software Queue (HSQ) and enable it when the
+controller instance does not have Command Queue Engine HW support.
 
-loop0: detected capacity change from 0 to 64
-overlayfs: fs on './file0' does not support file handles, \
-           falling back to index=off,nfs_export=off.
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-[...]
-Comm: syz-executor169 Not tainted 6.11.0-rc5-syzkaller-00176-g20371ba12063 #0
-[...]
-Call Trace:
- <TASK>
- __lookup_slow+0x28c/0x3f0 fs/namei.c:1718
- lookup_slow fs/namei.c:1735 [inline]
- lookup_one_unlocked+0x1a4/0x290 fs/namei.c:2898
- ovl_lookup_positive_unlocked fs/overlayfs/namei.c:210 [inline]
- ovl_lookup_single+0x200/0xbd0 fs/overlayfs/namei.c:240
- ovl_lookup_layer+0x417/0x510 fs/overlayfs/namei.c:333
- ovl_lookup+0xcf7/0x2a60 fs/overlayfs/namei.c:1124
- lookup_one_qstr_excl+0x11f/0x260 fs/namei.c:1633
- filename_create+0x297/0x540 fs/namei.c:3980
- do_mknodat+0x18b/0x5b0 fs/namei.c:4125
- __do_sys_mknod fs/namei.c:4171 [inline]
- __se_sys_mknod fs/namei.c:4169 [inline]
- __x64_sys_mknod+0x8c/0xa0 fs/namei.c:4169
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc4b42b2839
+It was chosen to enable HSQ only for eMMC and SD/MicroSD cards
+and not for SDIO as performance improvements are seen only for
+the former.
 
-However, the actual root cause is not related to overlayfs:
-  (gdb) p lower.dentry->d_inode->i_op
-  $6 = (const struct inode_operations *) 0xffffffff8242fcc0 <empty_iops>
-  (gdb) p lower.dentry->d_inode->i_op->lookup
-  $7 = (struct dentry *(*) \
-       (struct inode *, struct dentry *, unsigned int)) 0x0
+Performance was measured with a SanDisk Extreme Ultra A2 MicroSD
+card in a MediaTek MT8195T Acer Chromebook Spin 513 (CP513-2H),
+by running FIO (bs=4k) on an ArchLinux userspace.
 
-The inode, which is passed to ovl_lookup(), has an empty i_op,
-so the following __lookup_slow() hit NULL doing it's job:
-  old = inode->i_op->lookup(inode, dentry, flags);
+.... Summarizing ....
+Random read:     +24.28% IOPS, +24.29% BW
+Sequential read: +3.14%  IOPS, +3.49%  BW
+Random RW (avg): +50.53% IOPS, +50.68% BW
 
-bfs_fill_super()->bfs_iget() are skipping i_op/i_fop initialization
-if vnode type is not BFS_VDIR or BFS_VREG (e.g. corrupted fs).
-Adding extra error handling fixes the issue and syzkaller repro
-doesn't trigger anything bad anymore.
+Below, more data from the benchmarks.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Reported-by: syzbot+94891a5155abdf6821b7@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/0000000000003d5bc30617238b6d@google.com/T/
-Signed-off-by: Andrew Kanner <andrew.kanner@gmail.com>
+Before:
+ - Random read: IOPS=1643, BW=6574KiB/s
+   bw (  KiB/s): min= 4578, max= 7440, per=99.95%, avg=6571.55, stdev=74.16, samples=953
+   iops        : min= 1144, max= 1860, avg=1642.14, stdev=18.54, samples=953
+   lat (msec)  : 100=0.01%, 250=0.12%, 500=0.38%, 750=97.89%, 1000=1.44%, 2000=0.16%
+ - Sequential read: IOPS=19.1k, BW=74.4MiB/s
+   bw (  KiB/s): min=12288, max=118483, per=100.00%, avg=76293.38, stdev=1971.42, samples=956
+   iops        : min= 3072, max=29620, avg=19072.14, stdev=492.87, samples=956
+   lat (msec)  : 4=0.01%, 10=0.01%, 20=0.21%, 50=23.95%, 100=75.67%, 250=0.05%, 500=0.03%, 750=0.08%
+ - Random R/W: read: IOPS=282, BW=1129KiB/s (1156kB/s)  write: IOPS=284, BW=1136KiB/s
+   read bw (  KiB/s): min=   31, max= 3496, per=100.00%, avg=1703.67, stdev=155.42, samples=630
+   read iops        : min=    7, max=  873, avg=425.22, stdev=38.85, samples=630
+   wri  bw (  KiB/s): min=   31, max= 3443, per=100.00%, avg=1674.27, stdev=164.23, samples=644
+   wri  iops        : min=    7, max=  860, avg=417.87, stdev=41.03, samples=644
+   lat (msec)   : 250=0.13%, 500=0.44%, 750=0.84%, 1000=22.29%, 2000=74.01%, >=2000=2.30%
+
+After:
+ - Random read: IOPS=2042, BW=8171KiB/s
+   bw (  KiB/s): min= 4907, max= 9072, per=99.94%, avg=8166.80, stdev=93.77, samples=954
+   iops        : min= 1226, max= 2268, avg=2040.78, stdev=23.41, samples=954
+   lat (msec)   : 100=0.03%, 250=0.13%, 500=52.88%, 750=46.64%, 1000=0.32%
+ - Sequential read: IOPS=19.7k, BW=77.0MiB/s
+   bw (  KiB/s): min=67980, max=94248, per=100.00%, avg=78894.27, stdev=1475.07, samples=956
+   iops        : min=16994, max=23562, avg=19722.45, stdev=368.76, samples=956
+   lat (msec)   : 4=0.01%, 10=0.01%, 20=0.05%, 50=28.78%, 100=71.14%, 250=0.01%, 500=0.02%
+ - Random R/W: read: IOPS=424, BW=1699KiB/s  write: IOPS=428, BW=1714KiB/s
+   read bw (  KiB/s): min=  228, max= 2856, per=100.00%, avg=1796.60, stdev=112.59, samples=901
+   read iops        : min=   54, max=  712, avg=447.81, stdev=28.21, samples=901
+   wri  bw (  KiB/s): min=   28, max= 2904, per=100.00%, avg=1780.11, stdev=128.27, samples=916
+   wri  iops        : min=    4, max=  724, avg=443.69, stdev=32.14, samples=916
+
+Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- fs/bfs/inode.c | 4 ++++
- 1 file changed, 4 insertions(+)
 
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index db81570c9637..e590b231ad20 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -70,6 +70,10 @@ struct inode *bfs_iget(struct super_block *sb, unsigned long ino)
- 		inode->i_op = &bfs_file_inops;
- 		inode->i_fop = &bfs_file_operations;
- 		inode->i_mapping->a_ops = &bfs_aops;
-+	} else {
-+		pr_err("Bad i_vtype for inode %s:%08lx\n", inode->i_sb->s_id, ino);
-+		brelse(bh);
-+		goto error;
+Changes in v2:
+ - Added missing `select MMC_HSQ` for MMC_MTK Kconfig
+
+ drivers/mmc/host/Kconfig  |  1 +
+ drivers/mmc/host/mtk-sd.c | 49 +++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 48 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 7199cb0bd0b9..0ba5a9f769fb 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -1009,6 +1009,7 @@ config MMC_MTK
+ 	depends on COMMON_CLK
+ 	select REGULATOR
+ 	select MMC_CQHCI
++	select MMC_HSQ
+ 	help
+ 	  This selects the MediaTek(R) Secure digital and Multimedia card Interface.
+ 	  If you have a machine with a integrated SD/MMC card reader, say Y or M here.
+diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+index 5165a33bf74b..a9a554bd3f44 100644
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -33,6 +33,7 @@
+ #include <linux/mmc/slot-gpio.h>
+ 
+ #include "cqhci.h"
++#include "mmc_hsq.h"
+ 
+ #define MAX_BD_NUM          1024
+ #define MSDC_NR_CLOCKS      3
+@@ -473,6 +474,7 @@ struct msdc_host {
+ 	bool hs400_tuning;	/* hs400 mode online tuning */
+ 	bool internal_cd;	/* Use internal card-detect logic */
+ 	bool cqhci;		/* support eMMC hw cmdq */
++	bool hsq_en;		/* Host Software Queue is enabled */
+ 	struct msdc_save_para save_para; /* used when gate HCLK */
+ 	struct msdc_tune_para def_tune_para; /* default tune setting */
+ 	struct msdc_tune_para saved_tune_para; /* tune result of CMD21/CMD19 */
+@@ -1170,7 +1172,9 @@ static void msdc_track_cmd_data(struct msdc_host *host, struct mmc_command *cmd)
+ 
+ static void msdc_request_done(struct msdc_host *host, struct mmc_request *mrq)
+ {
++	struct mmc_host *mmc = mmc_from_priv(host);
+ 	unsigned long flags;
++	bool hsq_req_done;
+ 
+ 	/*
+ 	 * No need check the return value of cancel_delayed_work, as only ONE
+@@ -1178,6 +1182,27 @@ static void msdc_request_done(struct msdc_host *host, struct mmc_request *mrq)
+ 	 */
+ 	cancel_delayed_work(&host->req_timeout);
+ 
++	/*
++	 * If the request was handled from Host Software Queue, there's almost
++	 * nothing to do here, and we also don't need to reset mrq as any race
++	 * condition would not have any room to happen, since HSQ stores the
++	 * "scheduled" mrqs in an internal array of mrq slots anyway.
++	 * However, if the controller experienced an error, we still want to
++	 * reset it as soon as possible.
++	 *
++	 * Note that non-HSQ requests will still be happening at times, even
++	 * though it is enabled, and that's what is going to reset host->mrq.
++	 * Also, msdc_unprepare_data() is going to be called by HSQ when needed
++	 * as HSQ request finalization will eventually call the .post_req()
++	 * callback of this driver which, in turn, unprepares the data.
++	 */
++	hsq_req_done = host->hsq_en ? mmc_hsq_finalize_request(mmc, mrq) : false;
++	if (hsq_req_done) {
++		if (host->error)
++			msdc_reset_hw(host);
++		return;
++	}
++
+ 	spin_lock_irqsave(&host->lock, flags);
+ 	host->mrq = NULL;
+ 	spin_unlock_irqrestore(&host->lock, flags);
+@@ -1187,7 +1212,7 @@ static void msdc_request_done(struct msdc_host *host, struct mmc_request *mrq)
+ 		msdc_unprepare_data(host, mrq->data);
+ 	if (host->error)
+ 		msdc_reset_hw(host);
+-	mmc_request_done(mmc_from_priv(host), mrq);
++	mmc_request_done(mmc, mrq);
+ 	if (host->dev_comp->recheck_sdio_irq)
+ 		msdc_recheck_sdio_irq(host);
+ }
+@@ -1347,7 +1372,7 @@ static void msdc_ops_request(struct mmc_host *mmc, struct mmc_request *mrq)
+ 	struct msdc_host *host = mmc_priv(mmc);
+ 
+ 	host->error = 0;
+-	WARN_ON(host->mrq);
++	WARN_ON(!host->hsq_en && host->mrq);
+ 	host->mrq = mrq;
+ 
+ 	if (mrq->data)
+@@ -2916,6 +2941,19 @@ static int msdc_drv_probe(struct platform_device *pdev)
+ 		mmc->max_seg_size = 64 * 1024;
+ 		/* Reduce CIT to 0x40 that corresponds to 2.35us */
+ 		msdc_cqe_cit_cal(host, 2350);
++	} else if (mmc->caps2 & MMC_CAP2_NO_SDIO) {
++		/* Use HSQ on eMMC/SD (but not on SDIO) if HW CQE not supported */
++		struct mmc_hsq *hsq = devm_kzalloc(&pdev->dev, sizeof(*hsq), GFP_KERNEL);
++		if (!hsq) {
++			ret = -ENOMEM;
++			goto release;
++		}
++
++		ret = mmc_hsq_init(hsq, mmc);
++		if (ret)
++			goto release;
++
++		host->hsq_en = true;
  	}
  
- 	BFS_I(inode)->i_sblock =  le32_to_cpu(di->i_sblock);
+ 	ret = devm_request_irq(&pdev->dev, host->irq, msdc_irq,
+@@ -3043,6 +3081,9 @@ static int __maybe_unused msdc_runtime_suspend(struct device *dev)
+ 	struct mmc_host *mmc = dev_get_drvdata(dev);
+ 	struct msdc_host *host = mmc_priv(mmc);
+ 
++	if (host->hsq_en)
++		mmc_hsq_suspend(mmc);
++
+ 	msdc_save_reg(host);
+ 
+ 	if (sdio_irq_claimed(mmc)) {
+@@ -3073,6 +3114,10 @@ static int __maybe_unused msdc_runtime_resume(struct device *dev)
+ 		pinctrl_select_state(host->pinctrl, host->pins_uhs);
+ 		enable_irq(host->irq);
+ 	}
++
++	if (host->hsq_en)
++		mmc_hsq_resume(mmc);
++
+ 	return 0;
+ }
+ 
 -- 
-2.39.3
+2.46.1
 
 
