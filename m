@@ -1,162 +1,127 @@
-Return-Path: <linux-kernel+bounces-343258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADDDD9898A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB64E9898BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D40EB2167B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:47:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7A528522B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DD13C38;
-	Mon, 30 Sep 2024 00:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB2D4685;
+	Mon, 30 Sep 2024 00:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U40dk/Gw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="drYfvmq7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8454195
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DABF9DF;
+	Mon, 30 Sep 2024 00:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727657227; cv=none; b=jgB1JsfvLJFg1CxgAlWHIoFiXTMgIUMYFsPvwXGFbnd+ea4y8QUxWv/0AgSpaLdYNlBznQQNrPJDEqlyeNt1y1V2+8RCtLWIbuMYJ8Q4M8F6/lgGuYmACn3Rz9bhScUFjf6jlXSx9RGKAbYPc52Xowt9nSBtmsrdLmwwyf0YfOQ=
+	t=1727657803; cv=none; b=RLIAOP1Z2Qxe9+4Or9ibl5nYE1J/yIORa6zEFIAzBonsgVf4nk1aZUSCFGADkUBkUPfZQv7AuisYY/5E/X0xISeCvzYjyAtVYyvZ4PwpXXN3S8PHTEKsCPycbyrpMT5s0GOnub1gd2AZGKKasEpgp0+W8eZKMNyLr70fpbfZ6lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727657227; c=relaxed/simple;
-	bh=tkLECTB+l1Q6yRxTTrW2xT7OlIctPpTL1rDsIqZoMXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X+F26tvguNC+D5PS21y5pcQRDJLCDt6SXnjLzrSeO0SiTapq+csQIgMVjt5on76iJf4Vx+WlJQKGizHGzNM+09WC9mEx6lmr6YsaxIItYpiF/c+JZnS1Ll/1iov901YRkmHidl2Caq9cNeJPzSPtUNX2jz/gz8TiDdMu/aGUXqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U40dk/Gw; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727657803; c=relaxed/simple;
+	bh=OZoIIPzPzC9PONOLbEkOi98SbES+quudNHFDQQL7TQQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aQCjphCl22y+x51KvTXpYjZeozdZGKvHnbVuOatD8+l20VSIukllfIewYLRVjsFKrqxuNPFZYHz2bQG5I5ONAGdvytfzXwUTiybIvfLibfl8Hw0UD6mWI/t0ZftzAmbGdUBhYO4J3SNYPVqkrpy8+V6VCHf31xs1yaCBjZkgDFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=drYfvmq7; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727657226; x=1759193226;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=tkLECTB+l1Q6yRxTTrW2xT7OlIctPpTL1rDsIqZoMXM=;
-  b=U40dk/GwXkjyLSlFEXGdDM5ZtiFBT+OLCmHR44b+9yxm+O4RthHaZZf3
-   Dr85AW2S3UNQsREvrke45OQk8AoxIyB4BbBawo6STKUebQHlF8AI+rGQV
-   oryQsr8+/Vus52IPvkfn3vr59xUo2Co5SBGz6GzKaX/argYyi1ZYeHaaW
-   8tqN3Tg9kF9Qr0M3Z0p21Sa4tl67ZdAhJegvI02w/nzL7QaF4suS+n379
-   VF4jbn16dhBsdYs7bkb3TXdyyW2ChUJevijgCoSRIkoI8jWIfSoceYslv
-   9JcoYcYtcD/eV1IGCuzQgRk8QOsMWBj4QDh3nzorQWPaRiR6/LxbqCj1q
-   g==;
-X-CSE-ConnectionGUID: p4/W6899TWGHfIJ9GglehA==
-X-CSE-MsgGUID: qjX2OhCXQc6MAJQAsfnIgQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26237288"
+  t=1727657801; x=1759193801;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=OZoIIPzPzC9PONOLbEkOi98SbES+quudNHFDQQL7TQQ=;
+  b=drYfvmq7aIpI877JS+2a0ERFaQY3+dP+qROzrVthi45Ua3TDBjA4soey
+   PoOpm5zIERRpUOFzesnelv2xQYUc6eqCD+ak+TLcSUr7lBr9kydM8cYhK
+   bsh4432VYGAeIM4ikWGM08AqZZNe+BbFIJQyc99xEW9hxt6ZjM7xW8pOj
+   LBr7wV/dO+1sppMlcJTm3gnZNiQr87setwJi/D6VM2vwXRqE3KtwjtmuB
+   KhAMWuKZoDnJVlEoh1ElX2WDD2Ra0oWyAg7MZyDmNGaf89vdF+kpBZgrs
+   j2ALYVxmx19PbA4bHa82LpT+obhcLSwDuM7azDLaSjEp4uXB+YIU6rPJV
+   Q==;
+X-CSE-ConnectionGUID: SCQyzXDSQ76OAno+lBi3qg==
+X-CSE-MsgGUID: N9Pmy/oKSpmjScbCmWMbRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26606280"
 X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="26237288"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 17:47:05 -0700
-X-CSE-ConnectionGUID: gck1bmcAQiiXN2htoZ+DIw==
-X-CSE-MsgGUID: Bo96lJY5TSKfH9n6pHI06w==
+   d="scan'208";a="26606280"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 17:56:41 -0700
+X-CSE-ConnectionGUID: gBM+tIWLQZmfWCHEa3Vt4g==
+X-CSE-MsgGUID: HXKx1IP0TQ6m3A8jth5EeA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
-   d="scan'208";a="110610850"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by orviesa001.jf.intel.com with ESMTP; 29 Sep 2024 17:47:03 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH 1/1] iommu: Remove iommu_present()
-Date: Mon, 30 Sep 2024 08:42:35 +0800
-Message-ID: <20240930004235.69368-1-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
+   d="scan'208";a="73520402"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 17:56:37 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Kees Bakker <kees@ijzerbout.nl>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  Dan Williams
+ <dan.j.williams@intel.com>,  David Hildenbrand <david@redhat.com>,
+  Davidlohr Bueso <dave@stgolabs.net>,  Jonathan Cameron
+ <jonathan.cameron@huawei.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison
+ Schofield <alison.schofield@intel.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  Alistair
+ Popple <apopple@nvidia.com>,  Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
+  Baoquan He <bhe@redhat.com>
+Subject: Re: [PATCH -v3 3/3] resource, kunit: Add test case for
+ region_intersects()
+In-Reply-To: <9c9586ab-0426-46c1-bcc6-6ee2927b7a86@ijzerbout.nl> (Kees
+	Bakker's message of "Sun, 29 Sep 2024 21:45:46 +0200")
+References: <20240906030713.204292-1-ying.huang@intel.com>
+	<20240906030713.204292-4-ying.huang@intel.com>
+	<9c9586ab-0426-46c1-bcc6-6ee2927b7a86@ijzerbout.nl>
+Date: Mon, 30 Sep 2024 08:53:03 +0800
+Message-ID: <87ldzaotcg.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-The last callsite of iommu_present() is removed by commit <45c690aea8ee>
-("drm/tegra: Use iommu_paging_domain_alloc()"). Remove it to avoid dead
-code.
+Kees Bakker <kees@ijzerbout.nl> writes:
 
-Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
----
- include/linux/iommu.h |  6 ------
- drivers/iommu/iommu.c | 25 -------------------------
- 2 files changed, 31 deletions(-)
+> Op 06-09-2024 om 05:07 schreef Huang Ying:
+>> [...]
+>> +static void resource_test_insert_resource(struct kunit *test, struct resource *parent,
+>> +					  resource_size_t start, resource_size_t size,
+>> +					  const char *name, unsigned long flags)
+>> +{
+>> +	struct resource *res;
+>> +
+>> +	res = kzalloc(sizeof(*res), GFP_KERNEL);
+>> +	KUNIT_ASSERT_NOT_NULL(test, res);
+>> +
+>> +	res->name = name;
+>> +	res->start = start;
+>> +	res->end = start + size - 1;
+>> +	res->flags = flags;
+>> +	if (insert_resource(parent, res)) {
+>> +		kfree(res);
+>> +		KUNIT_FAIL_AND_ABORT(test, "Fail to insert resource %pR\n", res);
+> Isn't this a user-after-free?
 
-Change log:
-- Originally posted here
-  https://lore.kernel.org/r/20240610085555.88197-21-baolu.lu@linux.intel.com
-  After several patches in that series were merged, this patch is
-  targeted for 6.12-rc.
+Good catch!  Thanks for pointing this out.  I should be more careful for
+the error path.  
+>> +	}
+>> +
+>> +	kunit_add_action_or_reset(test, remove_free_resource, res);
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index bd722f473635..62d1b85c80d3 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -785,7 +785,6 @@ static inline void iommu_iotlb_gather_init(struct iommu_iotlb_gather *gather)
- }
- 
- extern int bus_iommu_probe(const struct bus_type *bus);
--extern bool iommu_present(const struct bus_type *bus);
- extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
- extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
- extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
-@@ -1081,11 +1080,6 @@ struct iommu_iotlb_gather {};
- struct iommu_dirty_bitmap {};
- struct iommu_dirty_ops {};
- 
--static inline bool iommu_present(const struct bus_type *bus)
--{
--	return false;
--}
--
- static inline bool device_iommu_capable(struct device *dev, enum iommu_cap cap)
- {
- 	return false;
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 83c8e617a2c5..7bfd2caaf33b 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1840,31 +1840,6 @@ int bus_iommu_probe(const struct bus_type *bus)
- 	return 0;
- }
- 
--/**
-- * iommu_present() - make platform-specific assumptions about an IOMMU
-- * @bus: bus to check
-- *
-- * Do not use this function. You want device_iommu_mapped() instead.
-- *
-- * Return: true if some IOMMU is present and aware of devices on the given bus;
-- * in general it may not be the only IOMMU, and it may not have anything to do
-- * with whatever device you are ultimately interested in.
-- */
--bool iommu_present(const struct bus_type *bus)
--{
--	bool ret = false;
--
--	for (int i = 0; i < ARRAY_SIZE(iommu_buses); i++) {
--		if (iommu_buses[i] == bus) {
--			spin_lock(&iommu_device_lock);
--			ret = !list_empty(&iommu_device_list);
--			spin_unlock(&iommu_device_lock);
--		}
--	}
--	return ret;
--}
--EXPORT_SYMBOL_GPL(iommu_present);
--
- /**
-  * device_iommu_capable() - check for a general IOMMU capability
-  * @dev: device to which the capability would be relevant, if available
--- 
-2.43.0
+This may cause use-after-free if failed to allocate memory for
+add_action.  Will fix this too.
 
+>> +}
+>>
+
+--
+Best Regards,
+Huang, Ying
 
