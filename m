@@ -1,45 +1,51 @@
-Return-Path: <linux-kernel+bounces-343266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB9C9898EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3AF9898F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E9EEB21CAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91D81C20FF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812744685;
-	Mon, 30 Sep 2024 01:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4406D8F45;
+	Mon, 30 Sep 2024 01:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="OJYj6KNr";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="na5HGljU"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B+lDR0rE"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2823BE
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9648C137E;
+	Mon, 30 Sep 2024 01:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727659132; cv=none; b=tLjb3JH5CVA00xFgQH70P+Dicks0PkWee8iqSc3IRkCJzQH+x5FGgTzxR0j8phoAhUHDNe3WuApCPGPL1yQamJx2P17cDpn7qoREfHdiqyvthLOq8QYqTaD++p5G0YLDjYs+xfsYxG4TpPJorM56KIXA7YaO6/mVkpiETNx+nRE=
+	t=1727659155; cv=none; b=KMwsc1190IWFRG1q/o0u3EibGGE/bUPa+6jt+z2RXl7uQZL1zwsqXru9jSARDMyhwBpstibSxNaVJjp3hSPiovVUoC+aJM/1yppa6k4/ZB0qI9Nc2W8uQt4YZcK68k3AMb2slqWRetT5ILExmvTa6esQpdhFCxKCdbc1QBxtWZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727659132; c=relaxed/simple;
-	bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P8b+JzLKEamoVsxJHfq6etYdDnlSTHKDs2V3ODLnvEQV+psXeQEVzxi824yo1v15V/JbAlALg99kzgLQXx5uRTfY/BYHEWUV+3HcqNZpBkP+N/lwtZk7lsKpDLEa9yc5EWpCuRiajfUl81O/H0oKXUeK71DFqBZDT2L/SkHlfzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=OJYj6KNr; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=na5HGljU; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-DKIM-Signature: a=rsa-sha256; b=OJYj6KNrugyBLKFx1+CjyhQ/sXMtv88UX1AMwVCKCm6JVd6ks+hoQR+r16CL1MfRBVORoMoO9RIF9Vd5ZDn4LGI69XMgvm7S7JXd2/cEuWh+bonHb0iXHcop/eNjt7BldE62A8PXaO3GH6OE5AsHzMUSRXKy6M6E/TfLU8ICp29cMsIrwoSb2AayHKrRkfIQqr3GESJCDXx5Fg0SLVko6FZkm8KK+tShM1k4aKGwQ7IM4jLfXTnU01lfVewjLA2ojYJjYygqSCt2TMk2xSPrNhdtSySr1VwZE/dv0SMic943My5HGi3hvlR41lpQ9N8LjcNwZckqtPjvYu6vDz6oxA==; s=purelymail1; d=lkcamp.dev; v=1; bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=na5HGljU8ildFIXXp5wa6hZWU/0ai5GaXobOBdKAgkdQ0tRPWQi3dJRcyOs/RReyFW4K7rg7zUiThqsV8cwMPTsS/YmrNKwpR/1x2n50CXyKzUi9A9/ZE6gPLu0XlvEZweipy76egrYLnywb7c8OuXhvuHVvSHJ80IeXFM6R/Pnl79XjzeyQ1AgmeEzrOD1StIDIBup3xcZPXtO0AOjinXKg1H67OVM+PU2d1Sxr0QlZGGunwR40Hi3WeCTF2W/hUCrTygW54WJmOreDGXvUTeHjRUNYDIjJN83aj09XPdNCjIsDJLh72slDIN4F4Q1KzlUSjUa59x/DXCB0Lab9Og==; s=purelymail1; d=purelymail.com; v=1; bh=UoGYMF3MIQIIbCmjHuxkNo9cQNcfEJ4+tK9H/0Ah4Qc=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -2015297320;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 30 Sep 2024 01:18:30 +0000 (UTC)
-Message-ID: <1ca713fc-2675-4154-ad46-a3fe11839148@lkcamp.dev>
-Date: Sun, 29 Sep 2024 22:18:26 -0300
+	s=arc-20240116; t=1727659155; c=relaxed/simple;
+	bh=tZQzrKVzETh1J2Qe2bPKOKRVYDkKpapUxu/uICsTvmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sLr8QYx6VuaikHeK7kMeOPphLWKQs+fxGHp/dhvVB/bJdEFVQWBIE9MNTZlBUJ5cYdXh0GTePfXBBZ0+q+go10MS6/kL9hlqI0V9iSN4IxdsmBVEJU4T37rkKua77QlxGpEr22kjlNKvQW216nhNxbq+4y+QJLh6ytBNc1zy3PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B+lDR0rE; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=XVccFwntIwGBot0bIyb243qoyiqLnKzfjEB3b3z4NJw=; b=B+lDR0rEjnDvDIseihIucVxlsM
+	bEOlRLaw/MYIdBG1rFqjC1LXN9V6Xkscg6BbMcQpVpKP73Zb3y7VK6rBFkW//1b0+TatIwrtPrjIK
+	MkSyz0UT1i2Oy6uKOf9KqfQBdqCRgseAtx1mbN1D8Lb6OOzyh5uHHxVzS9CnM0ZcQgEv3c0wnXPXg
+	DHocaofjI5FWT+Dy9/ag9LCN5N3WopnyfOZ5RyRYX6PzWGkU8tmwh/oYCw+nLjskHHSNgR4JL89Xr
+	fR1LfKBjI/sTgdluZTd9M4s32CEs8Ln5fWX4bUnBQnqx8do7sPAu37i9vozhB+dXEa+zwxB4NN3Fe
+	zt8+AbMQ==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sv53p-00000002jgO-43X8;
+	Mon, 30 Sep 2024 01:18:50 +0000
+Message-ID: <a604f707-83ba-49e0-b90a-db357f8d7cce@infradead.org>
+Date: Sun, 29 Sep 2024 18:18:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,104 +53,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-To: David Laight <David.Laight@ACULAB.COM>,
- Brendan Higgins <brendan.higgins@linux.dev>, David Gow
- <davidgow@google.com>, Rae Moar <rmoar@google.com>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "kunit-dev@googlegroups.com" <kunit-dev@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "~lkcamp/patches@lists.sr.ht" <~lkcamp/patches@lists.sr.ht>
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
- <51c4ba25f9284a749b451ca203fcc124@AcuMS.aculab.com>
+Subject: Re: [PATCH v2 1/6] math.h: Add macros for rounding to the closest
+ value
+To: Jiri Slaby <jirislaby@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
+ Devarsh Thakkar <devarsht@ti.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ sebastian.fricke@collabora.com, linux-doc@vger.kernel.org, praneeth@ti.com,
+ nm@ti.com, vigneshr@ti.com, s-jain1@ti.com, r-donadkar@ti.com,
+ b-brnich@ti.com, detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com,
+ andi.shyti@linux.intel.com, nicolas@ndufresne.ca, davidgow@google.com,
+ dlatypov@google.com, corbet@lwn.net, broonie@kernel.org,
+ nik.borisov@suse.com, Dave.Martin@arm.com
+References: <20240826150822.4057164-1-devarsht@ti.com>
+ <20240826150822.4057164-2-devarsht@ti.com>
+ <Zsy-8xXQ01-JhL0m@smile.fi.intel.com>
+ <9c41f6b7-6b06-cd5b-74bd-24873c4beaf7@ti.com> <87frqqyw9r.fsf@intel.com>
+ <0b06794b-34c5-ec0d-59c6-8412a8789eaf@ti.com> <878qwfy9cg.fsf@intel.com>
+ <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
 Content-Language: en-US
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-In-Reply-To: <51c4ba25f9284a749b451ca203fcc124@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <8bcddd10-6699-4e76-9eaf-8768f1c1ae66@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi David,
 
-On 9/25/24 08:26, David Laight wrote:
-> From: Vinicius Peixoto
->> Sent: 23 September 2024 00:27
->>
->> Hi all,
->>
->> This patch was developed during a hackathon organized by LKCAMP [1],
->> with the objective of writing KUnit tests, both to introduce people to
->> the kernel development process and to learn about different subsystems
->> (with the positive side effect of improving the kernel test coverage, of
->> course).
->>
->> We noticed there were tests for CRC32 in lib/crc32test.c and thought it
->> would be nice to have something similar for CRC16, since it seems to be
->> widely used in network drivers (as well as in some ext4 code).
->>
->> Although this patch turned out quite big, most of the LOCs come from
->> tables containing randomly-generated test data that we use to validate
->> the kernel's implementation of CRC-16.
->>
->> We would really appreciate any feedback/suggestions on how to improve
->> this. Thanks! :-)
-> 
-> Would is be better to use a trivial PRNG to generate repeatable 'random enough'
-> data, rather than having a large static array?
 
-That's fair, the big static arrays are indeed very unwieldy. I reworked 
-it to use next_pseudo_random32 (from include/linux/prandom.h) to fill 
-the tables with pseudorandom data before running the tests, and will 
-send a v2 soon.
-
-The LOC count is a lot smaller, although it is still using static tables 
-to store the data and the tests (I thought it would be simpler than 
-allocating them at runtime). Do you think this is acceptable?
-
-> As a matter of interest, how in crc16 implemented (I know I could look).
-> The code version:
-> 
-> uint32_t
-> crc_step(uint32_t crc, uint32_t byte_val)
-> {
->      uint32_t t = crc ^ (byte_val & 0xff);
->      t = (t ^ t << 4) & 0xff;
->      return crc >> 8 ^ t << 8 ^ t << 3 ^ t >> 4;
-> }
-> 
-> may well be faster than a lookup table version.
-> Especially on modern multi-issue cpu and/or for small buffers where the lookup
-> table won't necessarily be resident in the D-cache.
-
-lib/crc16.c does use a lookup table. I haven't had the time to run 
-benchmarks testing whether this version is faster, but I'm curious as 
-well, so I'll look into it.
-
-Thanks,
-Vinicius
-
-> 
-> It is slightly slower than the table lookup on the simple Nios-II cpu.
-> But we use a custom instruction to do it in one clock.
-> 
-> 	David
-> 
+On 8/29/24 2:54 AM, Jiri Slaby wrote:
+> On 29. 08. 24, 11:19, Jani Nikula wrote:
+>> The stupid thing here is, I still don't remember which one is the
+>> generic thing, rounddown() or round_down(). I have to look it up every
+>> single time to be sure. I refuse to believe I'd be the only one.
 >>
->> Vinicius Peixoto (1):
->>    lib/crc16_kunit.c: add KUnit tests for crc16
->>
->>   lib/Kconfig.debug |   8 +
->>   lib/Makefile      |   1 +
->>   lib/crc16_kunit.c | 715 ++++++++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 724 insertions(+)
->>   create mode 100644 lib/crc16_kunit.c
->>
->> --
->> 2.43.0
->>
+>> It's okay to accidentally use the generic version, no harm done. It's
+>> definitely not okay to accidentally use the special pow-2 version, so it
+>> should have a special name. I think _pow2() or _pow_2() is a fine
+>> suffix.
 > 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
+> Concur.
+> 
+
+Ack here also. I prefer _pow2().
 
 
