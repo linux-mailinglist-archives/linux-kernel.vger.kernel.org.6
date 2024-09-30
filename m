@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-344954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC4698B093
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:58:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD78D98B097
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7968C1C2136D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:58:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44BF0B22509
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15D5189525;
-	Mon, 30 Sep 2024 22:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D988188CA9;
+	Mon, 30 Sep 2024 23:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmK8S4jc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtrccJ8g"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DE421373;
-	Mon, 30 Sep 2024 22:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333B318754F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727737123; cv=none; b=lb0O8PM6pyXbScmUtxqZrqbEk82QGlrbEx0cKesCq7mbO3JS//8D0+reg7NaTqiBq4jW5WnMDN0xLnCLDjcJRjbQFMHsiFWxbeS5fG+rFZTh4vXyq1fLN/TA5zTeh8MWLYC9E37prCXaS1ZaIRvCWKk8KxFuAn2j663DtPaOkDo=
+	t=1727737206; cv=none; b=IVCbTPiwbXsfVEOr4WGwLkyBcG8WWAQLJ1BMIM3A+V5lKX04+U+trDZ7uVXg9Y9GremPZkYcqe0iwr+PNRhYmiHTkld6R3/txLjuUZI+f1nVruY+keVwBmayhYrZqAAOgMlHCCzMPcTos5qQu+mMFxDagS2YISWnLRWB+ei2XNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727737123; c=relaxed/simple;
-	bh=MFG/hKEGiIm7gD4UtzPR9o5FvknYmjbixdWJbVryyLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i2nBDvT0FcTtiCai7eLfDBrAzVS56Dlvnf5ba9laSvlJzs36PSSAPgMhmlmtn/lVxIYNTWfUsrqROcIDPSE6VOBpzdYAz/1i2QMW+qoisDsbGAx/HIOkToRSMW0yo3Ug4OTTVnUdzuLHSDiGMUKPAq0BUyXfMSNJ3DFtJYmiUA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmK8S4jc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946CFC4CEC7;
-	Mon, 30 Sep 2024 22:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727737122;
-	bh=MFG/hKEGiIm7gD4UtzPR9o5FvknYmjbixdWJbVryyLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AmK8S4jcmacgW3nxCQGf39B6DLurLzrRW2UoNTUquIt9BYul23uLhgSQF4pSjXlxV
-	 SqJfazNTX3FjcWVBLBds7K5/NA9xZGt7Dppv9Ure8AW6fPs70mhaKT9bvFM3M8iHks
-	 Ql/pAenPCrTGFr8Ptwhid1l5DT9b+QES/yVzszfJsyOOI1esnUCDooGmQmYUgy6U53
-	 2FrKs1em64GBX92a2ZcTDf7I2QJHWzgL/zpNMq8PtgQHcX2q9tz6raha/EtAbugzyv
-	 Zh68nAdAwsD4wKclyiyXCn1G3BRCwNSjc4Uqv1LmyzhZtOLNfWX88C5K+0of4z4M3a
-	 x8uOUhrp3hmqQ==
-Date: Mon, 30 Sep 2024 22:58:39 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	Theodore Ts'o <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>,
-	akpm@linux-foundation.org, Christian Brauner <brauner@kernel.org>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
-	cgroups@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
-	gost.dev@samsung.com, linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a
- folio
-Message-ID: <ZvstH7UHpdnnDxW6@google.com>
-References: <20240926140121.203821-1-kernel@pankajraghav.com>
- <ZvVrmBYTyNL3UDyR@casper.infradead.org>
+	s=arc-20240116; t=1727737206; c=relaxed/simple;
+	bh=dWCw161eoqkVuV7viOnfQRwVUca6IZkChfEd1pCOSUw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9yRA563YqWg7C4xsUMowjlFID/G/F6+q7+KWAg1qFVPrylFtQ+RkP50NCA8d+I8x1w7sPyHyXjAHYnqxqXGN4xV1NSZhnvVNSnLUaQ0i1cXfYuNKGNwFeDhXnF3yshzoRPu4F/dTa60rZEueB+O5Oi6unNSyPXp4zcr3cD3Wko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EtrccJ8g; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6cb2f272f8bso44790756d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:00:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727737203; x=1728342003; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dWCw161eoqkVuV7viOnfQRwVUca6IZkChfEd1pCOSUw=;
+        b=EtrccJ8gv6fd1zXU60c1dsvMy2aL1NYleDqgwzSzYI/6c8OgsFECwhJzAVaDrqcNcb
+         kvtTEyGF4n3PqR8ceNmLZBGZjfULjE7Zq/x878g1lR1FvnNze6UAzeSLNIrwj2OpHrPF
+         ttHHZEjO8OEj9Ne1HCetDGdUPmSDqcUrQudjbMNUw2Pj8XQa3Uw5LD/Pa1M+DOwBomme
+         A8H/fEvxpdA0xSqqAYI0aIVxkuLilY7cPAQjOULtSXcBAZFXYw7gkNZFJEthI0Huo5tg
+         3CeY+AgjxMtUd32GWqetmrW5IUdT7/40J55Sqewp+KqbVmoQiPYHhilk1LCIpTsl4BPM
+         cx9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727737203; x=1728342003;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dWCw161eoqkVuV7viOnfQRwVUca6IZkChfEd1pCOSUw=;
+        b=a3kWcjN7XqhWEsGwYUD0l+bZyZBhOi4XLesZ9gA4/J2SBZEmjOcPyq6t9Q2CoHJiiN
+         2lYIBZuufSJHPXbfJq8F01Le1C4vbJLMLX8jiZ/3b8kMn5PaOwKKM+dqylQ7OA2jyJqv
+         3hHNh+qGYIZNrn0XlDeIpXKRH19MOGQI/d7MVWbwczxrbfQOUlQJ4bdMCIAJiuQPj078
+         Hy2+o/9fIrlDj2slq2XyXGICDQtto/LUtChIAtvWJ85ckQUUqq8CVQpTSH9FWJPT4WHT
+         8B7+1G1uEFN16kK2fZGZ2tY+2ZJpbSCLZ2dVwAb2pqhEkc6Ch3ZWcJLtX1s3hTKnf1dd
+         3d2w==
+X-Gm-Message-State: AOJu0Yy4f79TWrn+eFoAfjfCwF2kvI+kk1DQjxB/yFwPoQ244aCrGQQk
+	DzPO3gWU+XBbeUI/P3cVZXrYveP90+KCr83EfC/p9e78k/44EaQA1sti9mBz4vY1/Bpyj1YiVB5
+	vI5rz7SlATIvpyLJnRFElNV4UvUo=
+X-Google-Smtp-Source: AGHT+IFZ9twSP35b/wVX61vJ7nPQkTmPmsJWc6ptIYcbPtWl0SJecJMaYU5WnYGVEbOPOcoSRij5rrrpKgXHlufrqZk=
+X-Received: by 2002:a05:6214:3b8a:b0:6cb:4e9f:13b1 with SMTP id
+ 6a1803df08f44-6cb4e9f153emr147643306d6.19.1727737203001; Mon, 30 Sep 2024
+ 16:00:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZvVrmBYTyNL3UDyR@casper.infradead.org>
+References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com> <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 30 Sep 2024 15:59:51 -0700
+Message-ID: <CAKEwX=NUHrPob9oxTyJO6a-gL8rn4KHZ30KkeNnH=752KPJbgg@mail.gmail.com>
+Subject: Re: [PATCH v9 4/7] mm: Change count_objcg_event() to
+ count_objcg_events() for batch event updates.
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com, 
+	21cnbao@gmail.com, akpm@linux-foundation.org, willy@infradead.org, 
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/26, Matthew Wilcox wrote:
-> On Thu, Sep 26, 2024 at 04:01:21PM +0200, Pankaj Raghav (Samsung) wrote:
-> > Convert wbc_account_cgroup_owner() to take a folio instead of a page,
-> > and convert all callers to pass a folio directly except f2fs.
-> > 
-> > Convert the page to folio for all the callers from f2fs as they were the
-> > only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
-> > already in the process of converting to folios, these call sites might
-> > also soon be calling wbc_account_cgroup_owner() with a folio directly in
-> > the future.
-> 
-> I was hoping for more from f2fs.  I still don't have an answer from them
-> whether they're going to support large folios.  There's all kinds of
-> crud already in these functions like:
-> 
->         f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
->                         page_folio(fio->page)->index, fio, GFP_NOIO);
-> 
-> and this patch is making it worse, not better.  A series of patches
-> which at least started to spread folios throughout f2fs would be better.
-> I think that struct f2fs_io_info should have its page converted to
-> a folio, for example.  Although maybe not; perhaps this structure can
-> carry data which doesn't belong to a folio that came from the page cache.
-> It's very hard to tell because f2fs is so mind-numbingly complex and
-> riddled with stupid abstraction layers.
+On Mon, Sep 30, 2024 at 3:12=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> With the introduction of zswap_store() swapping out large folios,
+> we need to efficiently update the objcg's memcg events once per
+> successfully stored folio. For instance, the 'ZSWPOUT' event needs
+> to be incremented by folio_nr_pages().
+>
+> To facilitate this, the existing count_objcg_event() API is modified
+> to be count_objcg_events() that additionally accepts a count parameter.
+> The only existing calls to count_objcg_event() are in zswap.c - these
+> have been modified to call count_objcg_events() with a count of 1.
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-Hah, I don't think it's too complex at all tho, there's a somewhat complexity to
-support file-based encryption, compression, and fsverity, which are useful
-for Android users. Well, I don't see any strong needs to support large folio,
-but some requests exist which was why we had to do some conversion.
+LGTM!
 
-> 
-> But I don't know what the f2fs maintainers have planned.  And they won't
-> tell me despite many times of asking.
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
