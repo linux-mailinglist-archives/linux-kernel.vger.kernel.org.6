@@ -1,84 +1,54 @@
-Return-Path: <linux-kernel+bounces-343285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB03E989922
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:14:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C998992A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AC3C1C21381
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:14:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F7A2838A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351D3D530;
-	Mon, 30 Sep 2024 02:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6704018EAD;
+	Mon, 30 Sep 2024 02:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ng3i+Pbp"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YuTRUl0B"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DC711CA9;
-	Mon, 30 Sep 2024 02:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B34C8E0
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727662481; cv=none; b=m15z9nudLwdTIjUYrlAohLmQ3Frl0Kl9EfJmDgBw4IYPQ0Ey04OBy21hXqUxCLSc0BR0Ewi5Y7m4vtff5Y8PC0a2wcILBgbwKEjG0sEhzZzzr04zWsZ+hWf5Z3nH9yvsQFxMOheJeQbByVr0dqabJRF3gnKP1Lu6hCTDn1Cui60=
+	t=1727662614; cv=none; b=hUicRsmgkHuqrAsOUrYyrMfyxUfy5lBPItw7p2plzyb2zD9ms3n6jxJ/NOG5I5sen4xLJf7tlehGOEatn5hXNyRPZIiPFL/y3KwvilfhGjGxll88dFDliFBohSQ2FrfisbPWgZjKQBDd3yjASJfWcVNw1mi2jR9VWTjMp7GIn3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727662481; c=relaxed/simple;
-	bh=gK1BBoZgChkfSZ7WANKhWWuEckpRI8D41X1S01uHoJQ=;
+	s=arc-20240116; t=1727662614; c=relaxed/simple;
+	bh=o3B0uOWls6xsGY9wVulMzDDE1YmV7y8MzwPjGyKBT48=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNQaeJiqguHRo2Mul18wN67jseXpTUyJLJM/ZKGGfI91zNFxIXrpnVR10uPBt+dMAab78ehpeaMaCuAMeM7BDT4XMHNfeDLlH5s+uT4s1a/x6GicskxiGvhD98uUnPBv7lYUwEl5ZWNV4YVULE8F+Diwf4Il9klmD42advI4cKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ng3i+Pbp; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71afb729f24so2906304b3a.0;
-        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727662479; x=1728267279; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ChLyKdnx+gSb/hCqQlfdYD8OWuUHcIg2ZmiHod0R/4w=;
-        b=ng3i+PbpemAJUj8egxoFY+amotFEHpDw+L/C21CCEBuu6rRZvjsdhXJ2A+brdRIBsi
-         gdvCzm8wz32xzK7RfD+o0yU6w5CJ11u00XKUH5ApBJeABSoxvj+PhbqS8VP6kNrAcTk9
-         fhzjrLIPYw6LkvmWJMH1XqqetNEEJ2/OxZ2n9gNAI6kKIBIeSCU1j0ZFEmBE/TBqEPcW
-         wD0gkPvj1kQHDT2kaKKAmQrK+jG/3myKiKWiqSmP1yGlcjKTG2HXIRQOxFeujqrscVs6
-         Dyv8w3a73gZ7jVNy6uS5pP2sNHSKtWrYwvOl12y+h/7hQeauxMM/rYO3Hew7TJVIWc3M
-         lHbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727662479; x=1728267279;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ChLyKdnx+gSb/hCqQlfdYD8OWuUHcIg2ZmiHod0R/4w=;
-        b=ImbrmZPng4o+2fNWnYZbaQY2Z5PpMe5BjxIG43gWmR10jNxcnvp/V9bb8qM8ekTk1X
-         FWu2NiQEOsaOx5eRLXXIer6OIetmU8PnORf+EIylTrM4eGZVf8Lmu9DQy3p4HL0O2Ksa
-         T2DCIpSeWosfGDM1P/jWxPFB4XiW0ZKwgs9ebzCnrACHgHEvIj5pVoa6czbdOM07W40q
-         SgyZjXxzpAl1DRLwGssE1cQ0hUhIb4PUHl74jyoOzlkLNWoB3Py1vce85CFQv0FrS5HK
-         wZ5WGsX0JeeN5utzKvqiLae+mS6kAW1BrpXvsLJYY0s/VINBCAur3KbTnFQZRrBnwKXA
-         4mwg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxlqXelPLk8XxgUPN6GwoRb4VWLtF1M9RoP9PMRSjTFBbd8J+L4t+0BA9q8FiWV9vO6nMLsdAWJdzHrVM=@vger.kernel.org, AJvYcCVb/cw3INCxFDbc0EAe/HlvmuMZmtnYtXZcqfzjFkEH05RJ79ptZac4vLszw0p7NptItzN9mVqTAHXI@vger.kernel.org, AJvYcCXCh2uPGaz4X/H55Oaz3KuLV8Llf00kiMmA/sLqzZbnZUFWsQBLm8s1+1o2mqb54TMOSnFOLDMJfXZY0+1a@vger.kernel.org, AJvYcCXdGkRy0XWqzXQFhA3Fc2T1WESdraWEIf3VhzxPBq2Gigrfv2XZNv/mLpd+GTWL2EzKIjiYmxdQt5H427zRM/Guh1mU7A==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoN3hWA2IELrPp8Joedj42EaMi8sYd0wCO7ufRNMpXfvl25Xbv
-	J2oPkl6yyrliEtbOAnGyG+4rN9JCF0q5SIz4WxoCnF86tBkS7/qGUWgEZQ==
-X-Google-Smtp-Source: AGHT+IGY+kaxk2R1ggPIcsAArEa6JtfWGotzUKErAP7X1L04ZVOHFs2rgvWf5e5YFRsSaQbdPc3ctA==
-X-Received: by 2002:a05:6a00:99e:b0:705:9a28:aa04 with SMTP id d2e1a72fcca58-71b260815d9mr15698970b3a.23.1727662479327;
-        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:671d:78af:f80f:975b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b263553c2sm5179734b3a.0.2024.09.29.19.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 19:14:39 -0700 (PDT)
-Date: Sun, 29 Sep 2024 19:14:36 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: joelselvaraj.oss@gmail.com
-Cc: Hans de Goede <hdegoede@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 0/3] novatek-nvt-ts: add support for NT36672A
- touchscreen
-Message-ID: <ZvoJjCY5kXfenXgE@google.com>
-References: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iB9ejf4/Uh9fB4zTN1U9YzV+aqK0WNwZ8VEaVO1uR/F1YFOLRKfo3K0f3oAXdXNXNbflTHGS6eq7tIa67mSVRHfKolexjpsH8S50i0Dj5nZRTttlvAzj1sW1ej+IkCzHYyua9mk85BHpyvQLrP/YARlMiUZ1ojL0M1iE/i5r2uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YuTRUl0B; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 29 Sep 2024 22:16:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727662610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VbEqWepXWG7Q45YXTdZt8bILPgK/debgqYwEOJCG6KI=;
+	b=YuTRUl0BDI1KZ8afE8kEV0BP/OFfYBJddiPcb+AZvR283yhPrUICBJaR0uc3+9cmHZ76sq
+	SLG4rkztCybSQcI7UkVjpR1omBcUN707P1Ui1hn0L/RZS0eOQIie4i+YXwBJJaP3QDZ6Al
+	OBm0W6ZPrRiq0/Ot9qjpaYWq9bS9hlk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] bcachefs: rename version -> bversion for big endian
+ builds
+Message-ID: <4aywuhjiqls4aosrvk5cfobognm7vgrgxdqq3fxow4geruhzyq@tlr46fz6gicw>
+References: <20240930003902.4127294-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,22 +57,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240601-nvt-ts-devicetree-regulator-support-v5-0-aa9bf986347d@gmail.com>
+In-Reply-To: <20240930003902.4127294-1-linux@roeck-us.net>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Jun 01, 2024 at 03:44:42PM -0500, Joel Selvaraj via B4 Relay wrote:
-> Extend the novatek touchscreen driver to support NT36672A chip which
-> is found in phones like qcom/sdm845-xiaomi-beryllium-tianma.dts.
-> Added devicetree support for the driver and used i2c chip data to handle
-> the variation in chip id and wake type. Also added vcc and iovcc
-> regulators which are used to power the touchscreen hardware.
+On Sun, Sep 29, 2024 at 05:39:02PM GMT, Guenter Roeck wrote:
+> Builds on big endian systems fail as follows.
 > 
-> Signed-off-by: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+> fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+> fs/bcachefs/bkey.h:557:41: error:
+> 	'const struct bkey' has no member named 'bversion'
+> 
+> The original commit only renamed the variable for little endian builds.
+> Rename it for big endian builds as well to fix the problem.
+> 
+> Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
 
-Applied the series, it will go in the next merge window. Sorry for the
-delay.
-
-Thanks.
-
--- 
-Dmitry
+Thanks, applied
 
