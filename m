@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-343540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAA2989C43
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCF3989C52
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF6D1C21003
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A19D1C21367
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B4017BB24;
-	Mon, 30 Sep 2024 08:11:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4231A170A0C
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5624317BB3E;
+	Mon, 30 Sep 2024 08:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Lzh8c/h4"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C02B17E918;
+	Mon, 30 Sep 2024 08:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727683865; cv=none; b=HeCbiza3yWGTSdec6Jlx3biy0yHZUAR7Eu55kGp7ab0VGJHVARBh3N8zGv01kaJOjlTYQgGaWO8RDUEj2vA9LLeOqMVD73mmr5Q7OpBcmdWT60cY/BhSQS3PmtKB7WKKmHTDX3lEqHB9j+E7yiuaj6UVPR0Hh23004w0pCsJi8E=
+	t=1727683938; cv=none; b=HN8rU01ztTmT8utFKY5qp5et9YYVGON+deBWDXFcDipuPg7JZwT7gtPNEAuJ/tKw3kVuE4N65yBIvH0TAAh8QCyg5FnDpuuNRNmZC7dLTpoouuYd1TAuOLEKdIdjXJkTrjcYRIRr+ORhNWmd9QJQvmhNBgD9IDATWU+tUvM5cf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727683865; c=relaxed/simple;
-	bh=xMwGTWrsEdKN7v+VjUj/BA/7EWhSzjGhkYUmcVEn1z0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sIDfaYJ2ZU+f4c5ov6kG8u1p0EQOVtFvFHkND6akJUFAzI570CgnML+adRDL/BZWOklVDOvMPaeebHrDxHtMgqFFOBFWCeCbbAvWA0+21nRaXZ1luSUQEi8rA+OEI0ugfZFA694OFhjOWS4ItjB/BpsmkFnjvbufiQazT/VHxhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a1a8a4174dso33245995ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727683863; x=1728288663;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BOMAlPPJQ0qmeXsSKqzswLvH+410QFkLvVhwq6MD400=;
-        b=L8VstrOJFRJ0vgMdONbuY22kskZsHVh88txZ0y3ncYNUQq0IkoWWSPuNX2bFnTTp6I
-         pSZWdeSVjtyREdXqdfT+fDQbjcxVuDtesPFb0grfhgNcb2DqOFk4dMVPbUBQ5M/+ExQZ
-         JaSdjphO5juCCUyVbmHrm3ZhCD2DzO7pylyNtE1NnifPICQeTNkldyDUeh2XpIBhGXYi
-         LcQoimthqRcVFAJ6AfsgZGrriKD+4h/wKuNr/uG0Umnqds4QBOGZY1qHMm4vkBdwgrLz
-         dFzSZ4S0ty4raHG6dCoN8Cy4cU0ggC0ubMLejdCaka7LUQfPxz5NeK08hAIJZzrdTzB1
-         BrfA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0vfOobmK8NNCFqkbI3WvaCdfgitP97l7LPbBSh1tLyk5Fk3hBG96L6d/432SnJ/66bk5lGR4epYtJ/h4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/IZwHX9eLN8VUVyZlaOTcJTKPJcpL9gGPUsBdipUQpPOyHjcg
-	mBK+weDxEmWv8w6eRkWKv4/pye8DuvM+XMpuDRI2JQbdE0OEgIKg68OS1Kr49+NiSZCugwLV6wD
-	dFhYgkmHuAAcIgwrrwxxrjNWxGtSvaOyYNyuOuyNvrBmt3KxkLuneg1k=
-X-Google-Smtp-Source: AGHT+IHY0/i2rXiRAAOi+a16WS4cosT8crvPPjYcMEv4V+HQydfF/vwvaQ0b8ka1WSmIq8B9qrBmKNHUa7fsat1ulSLbvS8+dlOB
+	s=arc-20240116; t=1727683938; c=relaxed/simple;
+	bh=k0inenRsQdLM8kjq3Vtb89hksJy4Iy07Cnuk6LFCDH4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ufjvljBA+7ehiRes86GGxooop+EAS72QUkbCY1MwgjgnkwkqsvVB1IGptccfbk5ZGUPaFar2oHwqzcoaqlSKlI+srQx6p2WQeDrRZ27yzfZFDGDJ9hCezqmvXdHi4QQofM0B6OTSPohYIe0OwrRh4jWcC2vSOfQbU0if5nT/ABo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Lzh8c/h4; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id A309620C8BDC; Mon, 30 Sep 2024 01:12:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A309620C8BDC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727683936;
+	bh=Uo3K65bEBS5TlGxxZy7heiLcFXhjzPHT12XW0+LyZ0Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Lzh8c/h4vo1mETkUnpofDZKY2W81d5W3M0vHZNE/Lj1zUr3LdWAQSuMdSVd6iRQVS
+	 EWmA0EyBpgXjAYoqVmdloZXBKfktWjtIBNgKTdPXqCTH3BJS7Fw3sy7cAJf7dpRqdi
+	 NyhtlniDpSIaeh6Pth72CDZzD1SGP9X+LhCwdpKg=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	dmitry.torokhov@gmail.com,
+	mikelley@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ernis@microsoft.com,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH v2 0/3] Disable Suspend-to-Idle in Hyper-V and Fix Hibernation Interruptions
+Date: Mon, 30 Sep 2024 01:11:54 -0700
+Message-Id: <1727683917-31485-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d92:b0:3a0:49da:8f6d with SMTP id
- e9e14a558f8ab-3a3452ba629mr73085005ab.22.1727683863311; Mon, 30 Sep 2024
- 01:11:03 -0700 (PDT)
-Date: Mon, 30 Sep 2024 01:11:03 -0700
-In-Reply-To: <CAG-BmofkSGc2Zq1GtJjoCgYwMrVhBP29Ohyhw1YfRH9pJWL3+w@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fa5d17.050a0220.6bad9.0033.GAE@google.com>
-Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbSplit (2)
-From: syzbot <syzbot+b5ca8a249162c4b9a7d0@syzkaller.appspotmail.com>
-To: ghanshyam1898@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+It has been reported that Hyper-V VM users can unintentionally abort
+hibernation by mouse or keyboard movements. To address this issue,
+we have decided to remove the wakeup events for the Hyper-V keyboard
+and mouse driver. However, this change introduces another problem: 
+Suspend-to-Idle brings the system down with no method to wake it back up.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Given that there are no real users of Suspend-to-Idle in Hyper-V,
+we have decided to disable this feature for VMBus. This results in:
 
-Reported-by: syzbot+b5ca8a249162c4b9a7d0@syzkaller.appspotmail.com
-Tested-by: syzbot+b5ca8a249162c4b9a7d0@syzkaller.appspotmail.com
+$echo freeze > /sys/power/state
+> bash: echo: write error: Operation not supported
 
-Tested on:
+The keyboard and mouse were previously registered as wakeup sources to
+interrupt the freeze operation in a VM. Since the freeze operation itself
+is no longer supported, we are disabling them as wakeup events.
 
-commit:         9852d85e Linux 6.12-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14153d07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=49ee0717ac2351cf
-dashboard link: https://syzkaller.appspot.com/bug?extid=b5ca8a249162c4b9a7d0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15793d07980000
+This patchset ensures that the system remains stable and prevents
+unintended interruptions during hibernation.
 
-Note: testing is done by a robot and is best-effort only.
+Erni Sri Satya Vennela (3):
+  Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
+  Revert "Input: hyperv-keyboard - register as a wakeup source"
+  Revert "HID: hyperv: register as a wakeup source"
+
+ drivers/hid/hid-hyperv.c              |  6 ------
+ drivers/hv/vmbus_drv.c                | 16 +++++++++++++++-
+ drivers/input/serio/hyperv-keyboard.c | 12 ------------
+ 3 files changed, 15 insertions(+), 19 deletions(-)
+
+-- 
+2.34.1
 
