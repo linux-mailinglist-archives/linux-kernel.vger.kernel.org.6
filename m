@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-344530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1250798AADB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC1798AAD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAD3D28975D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 563E21F22764
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986261990AD;
-	Mon, 30 Sep 2024 17:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OJWeNjGG"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED023195390;
+	Mon, 30 Sep 2024 17:13:32 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEB4197543
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DD419342B;
+	Mon, 30 Sep 2024 17:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716430; cv=none; b=IuOpoE3XvLAnGe8FIScUh+ERKm4jCSfKS2N6H2sdJJ88w9qm5Kz5L7I/vD+kZh/j1Ls7JP3tBzQa7rOucjl+eOvp04gB+NbY0R1IsAjMurzicWnSMKsUhNp+jJRVkM3zi9vOvc+rpvnASh1udRO3DiexSZQRTSaKXxxUYyw7sZs=
+	t=1727716412; cv=none; b=YYkMrxTC+fLzX8KSOBQw2BVC1iHzdQx3H7zLwqTCEXE1zCO70Go/sAaets1hMCJxB89OG7K6PiYeuYuRJphApQip8/dpNOfMIj8ARRGN1PYBOVatuYaoPcfs6CVVAISHjO6Cnr5/Q0W65zstgG9EQdcq3mSomO7zrjKi/+Hhs/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716430; c=relaxed/simple;
-	bh=2xa6XYG0SPNb7iMHOnnP26hIXHl778Eq6W2s/KPH+VA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ugkZ9WZOt+gl+7t2VDxHPGSiNxPV/UjLMzdlBJcGUM9+tXhRMI0j1EJF99WZ36/VTuroQLQR7SrOgfszKBBPKVxnBWJcehPKVfBdBjmMTo5UO3bc27OOh1WJr4iQGt4dDv6hNLgYDv5l/feCPMwP8SVwRqvhDIFiKZEqpmryT5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OJWeNjGG; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e137183587so826561a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:13:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727716427; x=1728321227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TJ1HUt9ENykPQZXpYaQgVfbtM27YTqGTHhgABDKn1/k=;
-        b=OJWeNjGGM3gnngAec4YIQqk4TRw2Y1ldLB84W4mPKkRRJli8kB4zfFxZWvAdl9Tzur
-         woHrmLa7GIFXAa0+d0OfmFfEDmYwBhoU1F8UoMfxcNNT6CRMSNv+TzbeyQAU2o7cUtaS
-         NJ3T01pF1cHIZkj4vfOFMr2OQQtIwb7KT6y9I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727716427; x=1728321227;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TJ1HUt9ENykPQZXpYaQgVfbtM27YTqGTHhgABDKn1/k=;
-        b=l8vFvmaRYY0aUheEBPWb4+wwGyAl+RAIhzYY8VDzgc53paJXMB+n2hajo97G2hSb2w
-         D0rpYcJtHCsVFJv+MC5Wicu5i+6B6j1oNARGjUHGH5ezbhWsNc0to48ShCNUYIypU3ph
-         UCyK5EEIja4/Jy93+UOauwD7bNrSeJ83I9dzrKiESFAAgD1zdI/IoAf+RB5O3+z4rg87
-         IfctGG6j6PFhaXOe3B/af5NyVkD97AcRSTcIMGT7AcR7U621RJXEGfscjXrmckVs6rSj
-         IIDHIk+aBaXwJT8ma/AUrExROu1zQLGkTy+0K3Wq9BnFdxLfhNn1QJURnjbw+74xPBZA
-         7S0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUT2DT7yLDM/wOzJkMVqzrd8brunJ7Ex6wV/vwJioyJB/NUa04n85QRRfgLQWTD/SQTrD2Eiemu1DBosGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtPbYsmxIiBRLAf6scFDPkVP2huMefm0WXHNEPrK/T+suw9tbL
-	hlnCXCMeqIfuET0U4lnh3fKz4g9HYsW8Sbk+4bOn8Y5POGVzHAutPLvwP4TDXNo=
-X-Google-Smtp-Source: AGHT+IGLGN5zg7ydYpQJLz1NT2ZzACaDI+w3M4axykF9rqv6YOBBltCrn9UGFtfPniilSXVjpTnvtA==
-X-Received: by 2002:a17:90a:3486:b0:2d8:89ad:a67e with SMTP id 98e67ed59e1d1-2e0b88903famr16567956a91.1.1727716427128;
-        Mon, 30 Sep 2024 10:13:47 -0700 (PDT)
-Received: from localhost.localdomain (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6e15976sm8188364a91.41.2024.09.30.10.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 10:13:46 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [net-next v3 2/2] e1000: Link NAPI instances to queues and IRQs
-Date: Mon, 30 Sep 2024 17:12:32 +0000
-Message-Id: <20240930171232.1668-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240930171232.1668-1-jdamato@fastly.com>
-References: <20240930171232.1668-1-jdamato@fastly.com>
+	s=arc-20240116; t=1727716412; c=relaxed/simple;
+	bh=Eew9bXlDuPZUSAxAdTkv17Hsuq5cqSvBcNnD9EMG2lE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tSqFUHsjXSpdBqzq+55VkPxZHGpsoOemAlPJZa2BNBpYeo2IWhAcHlW7mPgApEOW35XixgC43cL1UqCe25eLDF3TakbFwDOP9b+FU1jtsu09sDHxI9ZfLIL/rJB6bPMoFl1vfua2npvnIy4wUoBtBu2g8smsTIUBRwJtx3XmPm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F91C4CECE;
+	Mon, 30 Sep 2024 17:13:28 +0000 (UTC)
+Date: Mon, 30 Sep 2024 13:14:15 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML
+ <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mike Rapoport <mike.rapoport@gmail.com>, Kees Cook <keescook@chromium.org>,
+ Ard Biesheuvel <ardb@kernel.org>, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] Documentation/tracing: Mention that
+ RESET_ATTACK_MITIGATION can clear memory
+Message-ID: <20240930131415.1438c0b7@gandalf.local.home>
+In-Reply-To: <f8546c5d-fa2e-416f-8a1b-431025b4df4d@redhat.com>
+References: <20240926130159.19e6d0e2@rorschach.local.home>
+	<f8546c5d-fa2e-416f-8a1b-431025b4df4d@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add support for netdev-genl, allowing users to query IRQ, NAPI, and queue
-information.
+On Thu, 26 Sep 2024 19:54:48 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
 
-After this patch is applied, note the IRQ assigned to my NIC:
+> Hi,
+> 
+> On 26-Sep-24 7:01 PM, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
+> > about the persistent buffer to display traces from previous boots. He
+> > mentioned that UEFI can clear memory. In my own tests I have not seen
+> > this. He later informed me that it requires the config option:
+> > 
+> >  CONFIG_RESET_ATTACK_MITIGATION
+> > 
+> > It appears that setting this will allow the memory to be cleared on boot
+> > up, which will definitely clear out the trace of the previous boot.
+> > 
+> > Add this information under the trace_instance in kernel-parameters.txt
+> > to let people know that this can cause issues.
+> > 
+> > Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
+> > 
+> > Reported-by: Hans de Goede <hdegoede@redhat.com>
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-$ cat /proc/interrupts | grep enp0s8 | cut -f1 --delimiter=':'
- 18
+Thanks,
 
-Note the output from the cli:
+And I forgot to send this to the Documentation maintainers :-p
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump napi-get --json='{"ifindex": 2}'
-[{'id': 513, 'ifindex': 2, 'irq': 18}]
+Jon, could you take this? Do you need me to resend, or can you just pull it
+from lore?
 
-This device supports only 1 rx and 1 tx queue, so querying that:
+   https://lore.kernel.org/linux-trace-kernel/20240926130159.19e6d0e2@rorschach.local.home/
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
-[{'id': 0, 'ifindex': 2, 'napi-id': 513, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 513, 'type': 'tx'}]
+-- Steve
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index ab7ae418d294..4de9b156b2be 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -513,6 +513,8 @@ void e1000_down(struct e1000_adapter *adapter)
- 	 */
- 	netif_carrier_off(netdev);
- 
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, NULL);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, NULL);
- 	napi_disable(&adapter->napi);
- 
- 	e1000_irq_disable(adapter);
-@@ -1392,7 +1394,10 @@ int e1000_open(struct net_device *netdev)
- 	/* From here on the code is the same as e1000_up() */
- 	clear_bit(__E1000_DOWN, &adapter->flags);
- 
-+	netif_napi_set_irq(&adapter->napi, adapter->pdev->irq);
- 	napi_enable(&adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_RX, &adapter->napi);
-+	netif_queue_set_napi(netdev, 0, NETDEV_QUEUE_TYPE_TX, &adapter->napi);
- 
- 	e1000_irq_enable(adapter);
- 
--- 
-2.34.1
+> 
+> Regards,
+> 
+> Hans
+> 
+> 
+> 
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index bb48ae24ae69..f9b79294f84a 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -6850,6 +6850,9 @@
+> >  
+> >  				reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
+> >  
+> > +			Note, CONFIG_RESET_ATTACK_MITIGATION can force a memory reset on boot which
+> > +			will clear any trace that was stored.
+> > +
+> >  			See also Documentation/trace/debugging.rst
+> >  
+> >    
 
 
