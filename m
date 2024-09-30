@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-343850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237DF98A04E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:23:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862B798A051
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565C31C21145
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3222843F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7D519005D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D074319048A;
 	Mon, 30 Sep 2024 11:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="EpzwlheR"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Fc5IfMur"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D5E18EFC9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59118F2EA;
 	Mon, 30 Sep 2024 11:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695305; cv=none; b=iBALxZgYtj68GU3OKAED6+hZFMgccrHYcHIWaW9SaM2i5tkY8em+Zqe+MSFdHpYOj7Qw7bIyIG0+i7vHriThXS5TJC6IFmChxIgXBPVmvgfBTChDoa6Dvc2uG4by7A3ByDq3iHjSE5VVyh03MZQtYTLuGUFw68G79PPTN0Wp+YY=
+	t=1727695306; cv=none; b=PlPdTHU97JXk6+8VF+4GCbqjs3NDuYh+OU+H2rANFEo9CGWUw4/25lW47RrKfD3Vs+LKSGaMbfWpPmXQvHb3ZCVeIUw33APUftli5KDSI+C2ZKLs/DqM3lA++wUcEl66Nr+LspSKsAE8gNuCcbG9U/InSfeUYkM28X6TojROcOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695305; c=relaxed/simple;
-	bh=6AppmJrqLqVi8MlktWMYGrwHkgWVbAll1+ThMTOvQtw=;
+	s=arc-20240116; t=1727695306; c=relaxed/simple;
+	bh=8sci8DgtrJ9SNtSwVT8uZ5lxG7rdzvgJnKLtl5ZI80g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=e++WDEk3pZl5iI2J5txtD48KPrMA4KMFqPq5dkBSmJ9CueuHr5hv+q/aF6kVSNEa+JIGTZfEUE9mcusd6ZQ3AZ/SB3sb4GNmmBvJxuJT8XxVwGdPm+HGFjiNRQVfxKDBWrHXBZYLdKUvdAupbE/lTYxo4FpPzvMHT0XVG0Wj5fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=EpzwlheR; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=J8vRoMpqsPcMfXl+Em8qtOS5q7rn2luCa/xd9AMlOtOPOUMB/pBMWNKi6GwGXsHWbKT09T4jyMT4KLLBV1Frg3l9tIMlheupjLhTdfozBBnBRa5UflMmwoo8yNhSlY88k7voBVfdYMfsZBYPBdUt8UgJlpBpSyGf+gPWABieC4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Fc5IfMur; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=qnfJr2JifYt0TRzmtqO+mgXV4VxU/z0o+uWEZRVe07I=;
-  b=EpzwlheRhiWecFNoyf4rVuQwUD3eFfP0tw49DBuVU7xdPKz7pM7yTpfv
-   QcqFNss6kBEsv9MQ1+2JBrSruasZWFGcIZK2UD+8JZnRhw6nQ0hIkRaNE
-   2Z5IxEKmLZXwvlrNJkCVxzb7lwB2wXcHwPQFHJldmcVEk2Qb7LLr583B8
-   w=;
+  bh=++9PHiPPfcqRLOfbhEw3s4YqUtiMU25oIaxfRw6u7a8=;
+  b=Fc5IfMurwwhUFvMRrKgQ1ausRbTRfuX8kb0NaTkh6lRVW58kYb7SVKgg
+   EWhPcJqRshFmv4azriyQoLZUlGGEJ9o4Ln0sriIQO/DlpuTf8S1Ewrlmp
+   d0Rxau02ZprMoJSBw/i0/cFtgq3qD/o3EqXVOqleS/05/28b6d2a6zp2i
+   E=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956876"
+   d="scan'208";a="185956877"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:26 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Andrew Morton <akpm@linux-foundation.org>
+To: Pavel Machek <pavel@ucw.cz>
 Cc: kernel-janitors@vger.kernel.org,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	linux-kernel@vger.kernel.org,
-	drbd-dev@lists.linbit.com
-Subject: [PATCH 06/35] lru_cache: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:20:52 +0200
-Message-Id: <20240930112121.95324-7-Julia.Lawall@inria.fr>
+	Lee Jones <lee@kernel.org>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 07/35] leds: leds-gpio-register: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:20:53 +0200
+Message-Id: <20240930112121.95324-8-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -74,22 +72,22 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- lib/lru_cache.c |    2 +-
+ drivers/leds/leds-gpio-register.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/lru_cache.c b/lib/lru_cache.c
-index 9e0d469c7658..40f22213c3b3 100644
---- a/lib/lru_cache.c
-+++ b/lib/lru_cache.c
-@@ -576,8 +576,8 @@ struct lc_element *lc_element_by_index(struct lru_cache *lc, unsigned i)
+diff --git a/drivers/leds/leds-gpio-register.c b/drivers/leds/leds-gpio-register.c
+index de3f12c2b80d..ccc01fa72e6f 100644
+--- a/drivers/leds/leds-gpio-register.c
++++ b/drivers/leds/leds-gpio-register.c
+@@ -10,8 +10,8 @@
  
  /**
-  * lc_seq_dump_details - Dump a complete LRU cache to seq in textual form.
-- * @lc: the lru cache to operate on
-  * @seq: the &struct seq_file pointer to seq_printf into
-+ * @lc: the lru cache to operate on
-  * @utext: user supplied additional "heading" or other info
-  * @detail: function pointer the user may provide to dump further details
-  * of the object the lc_element is embedded in. May be NULL.
+  * gpio_led_register_device - register a gpio-led device
+- * @pdata: the platform data used for the new device
+  * @id: platform ID
++ * @pdata: the platform data used for the new device
+  *
+  * Makes a copy of pdata and pdata->leds and registers a new leds-gpio device
+  * with the result. This allows to have pdata and pdata-leds in .init.rodata
 
 
