@@ -1,610 +1,319 @@
-Return-Path: <linux-kernel+bounces-343332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C8A19899BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:20:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C3BF989A26
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFF891F217D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 04:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F49E1C21216
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA0D74421;
-	Mon, 30 Sep 2024 04:20:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD8413C9C4;
+	Mon, 30 Sep 2024 05:32:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="pDCIqVxY"
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55B7383A5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727670028; cv=none; b=T/Casr3uZ4XsMxQnQPK9EHRQTJGkRXKXs+abOQxy1huCb+w62dLzIdvdD69zDvF5e/Lo271aWTI9/JrawxRWkO9vusX2L1EWL8q7d7Z3H0WQvQ4Ynu/7kJV9Xa2Lp4kB0WAvp6JGN87TSAulWWw0DWUVN1sLiGI8qSk8fMrOXEA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727670028; c=relaxed/simple;
-	bh=sBnQxQ2Gtk2J3sFtJOpQYMQUmNBoBzya6rECTS4Eqa0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bVWFwO3iaqaa6pkCyXF/Iyq9OqLZyRADaAVAJyJGzyKu1fPtNCvpQ5XZ6/Pc7t1sEFOYK3w+1ZoZ1yAGDQlMF/YwZ3mByZtZETP1KlYU+ZT/nnrowM2LtEe7XoGBQN/Xyxaucn4pxv2V+nBIaljhWuzJ0Vruyn9rzJ4KfXUAtn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a34205e146so49119615ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 21:20:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727670025; x=1728274825;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k3yWMnkOjQBDB6EZkswPXLOPm5wSRMVRyL5GByvxsh0=;
-        b=lz/jCtBdRS29l7ZYZzWfVidUso2kCRgpqkQcY3SApN3L4QFqujRoFBbE2hS9AS7Jdo
-         IQSNDdgAKsICwA7rs0THSWiHIl5K6zFc77l91yQi2zpuH6MFekqpYvLFz1Xth578tgYB
-         v2sNbxniv3gbhOUJa05ZNl0YaRW8MGQrDeUQw3f6WNA9NISuWDIr5ivDmPYVZBTjIiyj
-         28f6q94Ug6LUnDhVovAr3gH0f9DDxSbZ3ld2AVU+1EksOI7e9QNSGkZvgAtkCUCUYs3d
-         WXXeOcN37ooThG2x0Kq4XSCU7n9Q7TK+qlEvXijoxl9JC7VNS2pGHnYFB3r/pfoytHwq
-         rG2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGzg1vo9oVxzg/aNt22VM8klNgMCY2Rk5NmGZ0pIbTLt5O9x7ULEd98WD94RO7xrywgmcscXBXQvdB2Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoqWog5n+cGQdRoeTRO+CTzQ/ADL8AzVA1n5FiDTgxnFdIlYcn
-	Bmt6+mJZwhQEZqqzIx5SKhKmidt1lrSxo/VqtF4lz9/C71wqVJezgZ2M51VFo3FFG7k0YG8+Sz1
-	GTuehx0Ho9c2jkI9PTHtKaqlZvGDBPufU7UVoziGhilpsea+IxQbQxC0=
-X-Google-Smtp-Source: AGHT+IExfr8r+9hDmL0LH94wFZZPTjnnDBmFRxy89DIAbrfxZRqQnFiSurPxR+GsnSHtRol8262Ad0ZcrEPgDNy5HMIbSWBw7i+p
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686C326AD9;
+	Mon, 30 Sep 2024 05:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727674340; cv=fail; b=HTOdVyu7VA1Rnyq492LlOwNCJuWA1h5rT2+joFTlDTnyqUarXutcuGZHehDBedGw9CLpR8fwTN+pDjFOURWcz5l8kUC9f2P7ZiyWrKHlLncVA+dp/n4e6hZsnAw3adWmFE98L9QM3uPh8ph4lFdoqVkds7EMOz9Qf+/UThkuOTA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727674340; c=relaxed/simple;
+	bh=wbEV1pbYtuG2h0Cw+W5WOFR//A4ZD25AeyoCbg9jWPQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=A3EA3XGKyrEbaZoW3u6/iwb6F1cEjRMneUbJLJ2QTm1oLevkSnnCg7JorqX/ewKSiw2+MTcorbHtL7ZDYq7lyA5Yc5GhNAyMEc6pzo48NL5NYb0oF9ukgOEqz/1DmdU/ihZv8YBWPagP9eFlE1li4d1pJuRR7JAkbAR5f+d0LmE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=pDCIqVxY; arc=fail smtp.client-ip=148.163.139.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375854.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48TNkuep007726;
+	Mon, 30 Sep 2024 00:28:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=wbEV1
+	pbYtuG2h0Cw+W5WOFR//A4ZD25AeyoCbg9jWPQ=; b=pDCIqVxY5nP6mEgK7+SmP
+	dmKTfA4AZZ/oWbZNRTgtoSoUGmDSgHVhQEDonkZIdD1ozGQfCj2JTuH4h3isLfe+
+	r0C0n9T6pRHRdP3MsuFp6s0UZ5W+jvTwgV85gb4pMd15R++PSlFcF4+VcQdO8Uo/
+	12SAVn17G1oJCMGb8oICZFiqFriZ5oK7jNcHYCnAu185a3UtXucTOJ6lYXww09SC
+	RczzIruIHdCcOendBbdTnnXSK97SCwzTrE2eQ0xK+MFDXxQC2ruRJt47dqp+CsWa
+	HsBi153Qnlt6/bFtRV6S1yP7JUNi+Y3t2SEElcbsoY+9xjHeFyHMweIWQBhJthGo
+	w==
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2175.outbound.protection.outlook.com [104.47.55.175])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 41y3uftjh6-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 00:28:12 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FbZGUCu7FW+CWkScgMqcImBtrdPyna1OXzo80uuFpi9bDZFayfOqejb6rtRrUMxWTFuLuZz/Xu4coJJBn8x0r1oBt7iSxfJsn8B0Bpz5Njp+7s8TAcVyvNGZiuM7ru6VrzPMYd9WbA5NKW1dRf6gqjfohjcO4QntDNpc1JIHDcG2igno6ousAci2M5NFhOeV5P6uX3Xx9hnkuRGRjC8iY3OdfAgekKyrxQG7yE8stiOpdbpSWWjJrEGkmlXssqiokGfFrLPYdPoNEVLtj+xhcsCkawxz4wK9K7pnX879mej8kdYe0A17A1DPNOqby6ctCef3/hw2Tw9Nhe0NqVLuqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wbEV1pbYtuG2h0Cw+W5WOFR//A4ZD25AeyoCbg9jWPQ=;
+ b=jpNwZ76YDKwMj74IwlX7Mi+OdqbZ9f3AIzoL2D5T2nXmpctO4Hmrrxxai4/jPzcwE06Ko4f0tf5xvwA+x5JFuH/tcQnEtNdYWWLAhMD0EnnqHqHQR8/ue1SQr7tLGk0fvjWmGw+BSASObubddI22m4A3pUV420HM1ub54ZuoND5W4P6G7X6hQc3tDfPUegFsBNvR/EerNPeBX6dZpg5q6NDpC4eTyeESYcJD12N7rf9Qwbt6+ydSx46ttYz/4u1sxQbm7EW4xdMpnLd12WYydcdzUX8rOSq0tECBAKbblPb0UVX8VnaiDqGcKRpnoglV1Vwy8gJnONnNJ390rJE6yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from SJ0PR03MB6224.namprd03.prod.outlook.com (2603:10b6:a03:303::18)
+ by CH7PR03MB7929.namprd03.prod.outlook.com (2603:10b6:610:24c::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 04:28:10 +0000
+Received: from SJ0PR03MB6224.namprd03.prod.outlook.com
+ ([fe80::1405:536e:190d:75e]) by SJ0PR03MB6224.namprd03.prod.outlook.com
+ ([fe80::1405:536e:190d:75e%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 04:28:09 +0000
+From: "Tinaco, Mariel" <Mariel.Tinaco@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>,
+        Christophe JAILLET
+	<christophe.jaillet@wanadoo.fr>
+CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lars-Peter
+ Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Marcelo Schmitt
+	<marcelo.schmitt1@gmail.com>,
+        Dimitri Fedrau <dima.fedrau@gmail.com>,
+        David
+ Lechner <dlechner@baylibre.com>,
+        =?utf-8?B?TnVubyBTw6E=?=
+	<noname.nuno@gmail.com>
+Subject: RE: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+Thread-Topic: [PATCH v4 2/2] iio: dac: support the ad8460 Waveform DAC
+Thread-Index: AQHbBtL64dQMY8uE30mRU9akCX0yb7JtVTcAgAJ42fA=
+Date: Mon, 30 Sep 2024 04:28:09 +0000
+Message-ID:
+ <SJ0PR03MB6224756A0B570A8CCAEF021091762@SJ0PR03MB6224.namprd03.prod.outlook.com>
+References: <20240912095435.18639-1-Mariel.Tinaco@analog.com>
+	<20240912095435.18639-3-Mariel.Tinaco@analog.com>
+	<8f869b3b-df3f-49a9-9b6e-640697aa91dd@wanadoo.fr>
+ <20240928151930.0c22e5e9@jic23-huawei>
+In-Reply-To: <20240928151930.0c22e5e9@jic23-huawei>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-ref:
+ =?utf-8?B?UEcxbGRHRStQR0YwSUdGcFBTSXdJaUJ1YlQwaVltOWtlUzUwZUhRaUlIQTlJ?=
+ =?utf-8?B?bU02WEhWelpYSnpYRzEwYVc1aFkyOWNZWEJ3WkdGMFlWeHliMkZ0YVc1blhE?=
+ =?utf-8?B?QTVaRGcwT1dJMkxUTXlaRE10TkdFME1DMDROV1ZsTFRaaU9EUmlZVEk1WlRN?=
+ =?utf-8?B?MVlseHRjMmR6WEcxelp5MDJNamswTVdVME5pMDNaV1UwTFRFeFpXWXRPR016?=
+ =?utf-8?B?T1MwM05EQTBaakUxTWpOalpUaGNZVzFsTFhSbGMzUmNOakk1TkRGbE5EZ3RO?=
+ =?utf-8?B?MlZsTkMweE1XVm1MVGhqTXprdE56UXdOR1l4TlRJelkyVTRZbTlrZVM1MGVI?=
+ =?utf-8?B?UWlJSE42UFNJM05EZzRJaUIwUFNJeE16TTNNakUwTkRBNE5qQTJOekUyTlRr?=
+ =?utf-8?B?aUlHZzlJblZUYjFkYVJXODRUV3BUYVN0U1RrbGxUMVZGVFU5WFVYbDFNRDBp?=
+ =?utf-8?B?SUdsa1BTSWlJR0pzUFNJd0lpQmliejBpTVNJZ1kyazlJbU5CUVVGQlJWSklW?=
+ =?utf-8?B?VEZTVTFKVlJrNURaMVZCUVVSblJFRkJRM0pxYkc5c09GSk1Za0ZqUjBvMlJr?=
+ =?utf-8?B?c3dObFIxV25kWmJtOVZjbFJ3VHpWclJFRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGSVFVRkJRVVJoUVZGQlFWTm5TVUZCVHpSQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZGUVVGUlFVSkJRVUZCTTB4b1UyWm5RVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlNqUkJRVUZDYUVGSFVVRmhVVUptUVVoTlFWcFJRbXBCU0ZWQlky?=
+ =?utf-8?B?ZENiRUZHT0VGalFVSjVRVWM0UVdGblFteEJSMDFCWkVGQ2VrRkdPRUZhWjBK?=
+ =?utf-8?B?b1FVZDNRV04zUW14QlJqaEJXbWRDZGtGSVRVRmhVVUl3UVVkclFXUm5RbXhC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlIwVkJXa0ZDY0VGR09FRmpkMEpz?=
+ =?utf-8?B?UVVkTlFXUlJRbmxCUjFWQldIZENkMEZJU1VGaWQwSnhRVWRWUVZsM1FqQkJT?=
+ =?utf-8?B?RTFCV0hkQ01FRkhhMEZhVVVKNVFVUkZRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRVmxSUW10QlIy?=
+ =?utf-8?B?dEJXSGRDZWtGSFZVRlpkMEl4UVVoSlFWcFJRbVpCU0VGQlkyZENka0ZIYjBG?=
+ =?utf-8?B?YVVVSnFRVWhSUVdOM1FtWkJTRkZCWVZGQ2JFRklTVUZOWjBGQlFVRkJRVUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
+ =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
+ =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
+ =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRlBORUZC?=
+ =?utf-8?B?UVVGQlFVRkJRVU5CUVVGQlFVRkJRVUZCU1VGQlFVRkJRVUZCUVVGblFVRkJR?=
+ =?utf-8?B?VUZCUVVGQmVtZEJRVUZCVFVGQlFVSlBRVUZCUVVGQlFVRkJSMFZCV2tGQ2NF?=
+ =?utf-8?Q?FGOEFj?=
+x-dg-rorf: true
+x-dg-refone:
+ d0JsQUdNQWRRQnlBR1VBWHdCd0FISUFid0JxQUdVQVl3QjBBSE1BWHdCbUFHRUFiQUJ6QUdVQVh3Qm1BRzhBY3dCcEFIUUFhUUIyQUdVQUFBQThBQUFBQUFBQUFHRUFaQUJwQUY4QWN3QmxBR01BZFFCeUFHVUFYd0J3QUhJQWJ3QnFBR1VBWXdCMEFITUFYd0IwQUdrQVpRQnlBREVBQUFBOEFBQUFBQUFBQUdFQVpBQnBBRjhBY3dCbEFHTUFkUUJ5QUdVQVh3QndBSElBYndCcUFHVUFZd0IwQUhNQVh3QjBBR2tBWlFCeUFESUFBQUE9Ii8+PC9tZXRhPg==
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR03MB6224:EE_|CH7PR03MB7929:EE_
+x-ms-office365-filtering-correlation-id: 7c59deee-ad60-4db0-f38a-08dce1084a19
+x-ld-processed: eaa689b4-8f87-40e0-9c6f-7228de4d754a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Y202RzNWZ000bkxUYjc5WUQxamtRT1FyUXMraEkzd0tpcEwyY2NwTUNpdkRm?=
+ =?utf-8?B?K0ZQNXpwRXcrZTVqZVVvU0gvaE0yUWdZUkxMY0VVblZCenA0WEVQSVgyT2Nu?=
+ =?utf-8?B?aUJvNmduWHF0QUFpc210SEpCMEtVT2dmdXVDUXpHTkNSOHhFYTF4RjlFdVVm?=
+ =?utf-8?B?QytMQzdiaDlSYWtRd1F4cVZJSFlEQ2xLWUU2MThjK0w5d3ZNWHEyQ29KTUNU?=
+ =?utf-8?B?RE5tdS9FUUtDQWcyaElmc29lQ3hVSkplNHhaemVvRWRyYzFPM0JFNklBRE9V?=
+ =?utf-8?B?WHpERHZaSUg0UzdrQ041bmVtNlhzRnY4UGdEMExhQUV5Q3NCb1k1UXR5a0pj?=
+ =?utf-8?B?RVJKZTNJU0pTaS9NR2FleDlZYlJ1RTJ0c1NHT3Q5aTg4TjNrWWxlbVNGMmJx?=
+ =?utf-8?B?NzJwWVJaTzN5Ull3M2FyMW5uUW8yUXI0NTk1Uy84MDhtamdCU1VjbXdpRkk3?=
+ =?utf-8?B?amtaczdxYjR2ZlZzSVVpV0pyVS9XNDhIWFJSZWx3NDloVHBlZ29lY2FZQVh6?=
+ =?utf-8?B?eXc4Q0lOdXc4RkJHcFg1RjBDRER4amVTN1lUcjJqSTFvR21hS01VcUoyVDBK?=
+ =?utf-8?B?akIxdXZMb0E0cVFKL1Y1R29IeW5Ib29uWHRTSS9aUmNJcDF0SWdMSG1BT3dn?=
+ =?utf-8?B?NnN0Ym9WY3lwWW5DTTF0MjNnaThkeFR4cXNNQURmUmVvd1A2c05KYU5EYUZM?=
+ =?utf-8?B?Y0hhTjd3VWJmQk01MHd2S0FWNHZjR1lISjVicjlCOVA0TUlXSWxPb1RQbkUx?=
+ =?utf-8?B?czRhYUJDS0NxNUJOamtnNDYxd1czSklORVZQN25yZ3Fiam5SRzhZeUkvWlg1?=
+ =?utf-8?B?bmZGYWdzYW5ScG1sVERwQ1FMRUZMSFZvNDVUVzM0TFFFdDl4OUpmckNHcHJD?=
+ =?utf-8?B?WVRoaUw1bS9hdW1VeTg0STF4VzR4Z0pLU3J0dmxJbFFxMDBJMFVsSm1Xckhq?=
+ =?utf-8?B?YWhCVnU4a1lmRnJmL2JuVmpXdFBrMlp5TGFXb3Z3SHJkbDVVNnRIOFFsNTdG?=
+ =?utf-8?B?SmRzNndjU1hiY1VrRG9tSHhuKzRjREtiSVJnSjMyd2tGa1pocUpOaUYwSjNL?=
+ =?utf-8?B?cHVyNFV2ci9jR3ZSODdMc1hKaC9zRnA0ZW5aNkNSUnFnQklQWTZKdkowK3Fh?=
+ =?utf-8?B?Y1RKMEhNRndKTC9lZWc0bVJwT0dwUThOSzZuOEVLRm0xUXgvaE1vUXpocWMy?=
+ =?utf-8?B?cnFmTDUyTUJ4U0ZVWjV6ZW1ZN3Q4bUVrcmxUM0psL3dXd1JzSlhvWE9YM1dv?=
+ =?utf-8?B?UUdEa1g2L3NrVnRQTThNL2R5eTNGcnBybUJTYk5qM2c5ZzNEUTYxSE5zSWFK?=
+ =?utf-8?B?Vkdna2lmWFZuMzBrZHVNbmlwMkk2a2FUOEIzQkZoU0U3eEREd0UrdlFDbElY?=
+ =?utf-8?B?ZFk1RHJ4S2RwYUZyYnU2eUphMHpGYVAvS0NFKyt0YnFlcWp5QUdCVnZiS0FN?=
+ =?utf-8?B?TGRSWnpLdmdMV1M4eFpIRXNBK2pEVUhlWHlYakpTSE9YZ0EyQ3ozTGNUV25W?=
+ =?utf-8?B?MGNwM09nRDNEVngzbElXVnBEY0RmLzl6aEVXeWt1ZHV5OEFPUU5ta0kxZjdB?=
+ =?utf-8?B?K3Rlano4OW93RlFHOTdEbDNqWGtsd3dYVHpvS0JFR1c3ODh0czNUYjdpelRZ?=
+ =?utf-8?B?RWNQODJQODltOXFyNW41NUFNWHd4clY2VHczUDc5K3NvTmlxMithVlZNc1Qy?=
+ =?utf-8?B?bFZpc1BxejhrZ3gyRWNrbUx3Q3lZNzlYdkNSMVRxNllSUmsxSUkzcm1TTHVI?=
+ =?utf-8?B?OS94OElJeUxQZHFkL2NodVRjdGkwVFovTy91QXRIRjF3U29hbzNuK1JYajUz?=
+ =?utf-8?B?UjFGbGd4SGVFY0JvMThPcHlmUDIwZ2VnbmJJREIybUpSNlhrSHlLdzZFeGo1?=
+ =?utf-8?B?b0ppV2c2amxkT1l6Y3VUUnBFMFRadE1UdTh6SGg4TDZVZlE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR03MB6224.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eUJ4cWNGQnV5Qm1VSTJqM0ZwQUUwQUtvVUc0R0Q3OFNUbFFpS3VUdUwrME9q?=
+ =?utf-8?B?RXY4RWEvMzdZUlR1OVZTbFo0NFE1WWtoNVRlS1FsbHVFdVo2WnFMNFEwR3c4?=
+ =?utf-8?B?Uk5Od21meU9rTDlwVkRCcTMzUXgwelNob240UlIveXFhR3ZLdTl3U1ViTEZJ?=
+ =?utf-8?B?TlE0bTd1U1F4S1NUM0prTDZhcWpicnVjK3JZYjVPYXlMUkE2MlBpVzRjdTN3?=
+ =?utf-8?B?QjdEUUxzQVAveTRxSFVXcmVKNnRVa1BFbVR3c0xVYVNxUkdPNnAwdit2QzFz?=
+ =?utf-8?B?eWcrMFdlU1BHQmU3RHJRbnlVVTAxR3cyQTlNRkt0dzZZbzdNd3prWTU2THVL?=
+ =?utf-8?B?Ym5OaWQycE5yODZKODFIYXQ3TndML1loRmN5dkI0N0hDMnRWUFU1aGRCb05G?=
+ =?utf-8?B?VXNldWh4bm8zRGlUUzNTK0ZoK1IrV1RnUUhlWlNPOXJZbEUwWVNnNmhPanEz?=
+ =?utf-8?B?WW9rSC9FMlcrVndTM0hMNm5XVE9QdThQYWJ5NzR2OVZrcndtSTlNd3hwaWNl?=
+ =?utf-8?B?dzYzWDZZTDhEUEFXcTF4YnhSakRtVHFiam1Kc29iUWVKenFMNWJVQUxsY2hr?=
+ =?utf-8?B?ZURQVnhUQ25hQWNsSTRwejVDVUdwWXdRS1E4TEUrYVkrS2VOVFloY09tcnNw?=
+ =?utf-8?B?cE9UcS9qblZWbUdzUndaZjlqeW1YS0ZYSlJFR3l6TE9HaXVmUWxHamJhbnZD?=
+ =?utf-8?B?V1FYRmF0WVpLUnFJVUlPV0ZnVmJWbC8zUHlYeGJ2RGhpMG9pS203Um5SZEdr?=
+ =?utf-8?B?Wjg4NWk1T3JMdnBhZmZRT2FMQUEzT2VoZWdNM3FjaGU5VUdmdnhVWGZVTEtF?=
+ =?utf-8?B?c2c1T2xWaWw3YVNKa2ZoSGNRa1dEeU5TVEtRQXRQRlVXWHRVRzJDR1VKczNz?=
+ =?utf-8?B?V0pRKzZmYWIxcGVIdzNIQWxWVUY0ak9aOENBZkdUMDFGckxxZ2lmQmxtK3k4?=
+ =?utf-8?B?KzF6Ulp0T0piSVoxWEYzNlhmWkhUM3d5d2xZTVI4cHEwNXNsNHR0Vnp6dlVE?=
+ =?utf-8?B?T0xpbTdPajlVT0ZIcXpMb2pUOUtGZlNTU3dCNlNBVW1PYTl6eGJlU1NGcE1B?=
+ =?utf-8?B?ZUJjb2tYeWlFNWVIY3hqMWNnWktxdHVObW1lWUd1U3p1bVcvWm81N0MxTWxU?=
+ =?utf-8?B?dlgrNFVUT3ZodzRvKzVSbDlmb1lFUm5LMzFKaWpqMkJkeVlYSHgwTlc5L1h3?=
+ =?utf-8?B?S1NtUnpQakpoRzJKK2VJbm5aQXBkWHc2b1ZvRktVS0szT1VIdzZLS3puZFlE?=
+ =?utf-8?B?VDNCOTFwNUQwZHljcHYzTGY1UXZYWVdhbVFiUkdKdnpMa1FlUkVFQlZXR2hh?=
+ =?utf-8?B?NUc0eTJJUEdyQ1VOUjlEYWwrQjNZeDEwMjh0dGxaZG1XVUtqdVRnWi9TbXFr?=
+ =?utf-8?B?UDkrZUNWbTM1WTJxYXJxc1UyODRwSVdSY1RjRVBkSHdsOVNDWVZ5MVFmanBr?=
+ =?utf-8?B?NEdsbUd2dnBoZHVlS0hTNDNvS25qNFVneStWNzd4V21pTjhCWGVUckxXTGxw?=
+ =?utf-8?B?cUl2Nk9HTUlLMzdzbDlMYVNWSFB1SXJYUTkxNDJuNElPV0pTWHN3Ym5NZTZF?=
+ =?utf-8?B?bHFibU8wcExuM1AzTVhjbS9RbGlCcGN0WmJRZGljaTZSSG4wTDBjMmNwNjVq?=
+ =?utf-8?B?OERURXhKUnZmSFNobnRUeng3aVErdnprb2FFUVpaZkF0SG1HUCt1RHFXeHYw?=
+ =?utf-8?B?ZlNaVlF4aE9UbWtWYlo4MThrUmlQYmJNK1dOYVYyR0FsbFhNd2dtaTdvT0Z1?=
+ =?utf-8?B?M2EvdHJtMVlSU0FSb3VLY1Y4K2V4MXdIZ1RBY08rV2ZhNDh4T21qKzNaSWE3?=
+ =?utf-8?B?SDBSbDg3U3JDNS8wNkovRVJWdlNHMWczU1ZoUGlSdGZSTk0waVR2SmxuTm43?=
+ =?utf-8?B?SFJwaDIxWElCZ0xlMWpJUHlCNTFsVHRCUCs4UFNGMnMvUlNLN1NuUDU5YlRF?=
+ =?utf-8?B?ZG8rVXhmeHk0MDQrbjhycVgrQ2d6VVd5S0l1WGo1NFRUS2p6WGpFOGxybWdN?=
+ =?utf-8?B?THBRQ25DWVF0YkFENWxTZm00OVpUd2x2NVlJR3hFbE4vbTVnbzU0WkpYSGRt?=
+ =?utf-8?B?UUVCTms2aHV3YlozNm9aQ1VDU1QxWTBtYnBsMGRyNERFMklaK0c5T2ZDUGpX?=
+ =?utf-8?Q?QMBoVCrJ+rTPJIqEV2s2fzefF?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4b:b0:3a0:bd91:3842 with SMTP id
- e9e14a558f8ab-3a3452b8bc8mr75375815ab.24.1727670025000; Sun, 29 Sep 2024
- 21:20:25 -0700 (PDT)
-Date: Sun, 29 Sep 2024 21:20:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fa2708.050a0220.aab67.0025.GAE@google.com>
-Subject: [syzbot] [wireguard?] INFO: task hung in wg_destruct (2)
-From: syzbot <syzbot+7da6c19dc528c2ebc612@syzkaller.appspotmail.com>
-To: Jason@zx2c4.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, wireguard@lists.zx2c4.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR03MB6224.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c59deee-ad60-4db0-f38a-08dce1084a19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 04:28:09.8578
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aCR7DUxhi3Rl+CriIaxXe1VUfYRK1rrLzBdKug0+gMV3J0e9I1esjLvmmmqapn6xa77DiwM7ukttnX90dKHMmmSZnm7KIgcLsrom5Nt8hC4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH7PR03MB7929
+X-Proofpoint-GUID: uPuugSL3FYEuICuG7-w_0hYYSM-OeOUd
+X-Proofpoint-ORIG-GUID: uPuugSL3FYEuICuG7-w_0hYYSM-OeOUd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 impostorscore=0 clxscore=1011 bulkscore=0
+ spamscore=0 mlxscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300029
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    3efc57369a0c Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17590ea9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a4fcb065287cdb84
-dashboard link: https://syzkaller.appspot.com/bug?extid=7da6c19dc528c2ebc612
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b5a4faec7a99/disk-3efc5736.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/971adf9a5295/vmlinux-3efc5736.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/49516da34e16/bzImage-3efc5736.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7da6c19dc528c2ebc612@syzkaller.appspotmail.com
-
-INFO: task kworker/u8:3:52 blocked for more than 143 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:3    state:D stack:20048 pid:52    tgid:52    ppid:2      flags:0x00004000
-Workqueue: netns cleanup_net
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- wg_destruct+0x25/0x2e0 drivers/net/wireguard/device.c:246
- netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10805
- default_device_exit_batch+0xa24/0xaa0 net/core/dev.c:11945
- ops_exit_list net/core/net_namespace.c:178 [inline]
- cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:626
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task dhcpcd:4897 blocked for more than 144 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:dhcpcd          state:D stack:23632 pid:4897  tgid:4897  ppid:1      flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- nl80211_pre_doit+0x5f/0x8b0 net/wireless/nl80211.c:16580
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1110 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xaaa/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:744
- ____sys_sendmsg+0x52a/0x7e0 net/socket.c:2602
- ___sys_sendmsg net/socket.c:2656 [inline]
- __sys_sendmsg+0x292/0x380 net/socket.c:2685
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcb51a89a4b
-RSP: 002b:00007ffd30a99618 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fcb51a89a4b
-RDX: 0000000000000000 RSI: 00007ffd30a99660 RDI: 0000000000000010
-RBP: 00007ffd30aadb28 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007ffd30aadd70 R11: 0000000000000246 R12: 0000000000000010
-R13: 00007ffd30a9d6c0 R14: 0000000000000000 R15: 000055706c260780
- </TASK>
-INFO: task kworker/u8:12:5817 blocked for more than 145 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:12   state:D stack:20048 pid:5817  tgid:5817  ppid:2      flags:0x00004000
-Workqueue: cfg80211 cfg80211_dfs_channels_update_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- cfg80211_dfs_channels_update_work+0xbf/0x610 net/wireless/mlme.c:1021
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task kworker/u8:13:5818 blocked for more than 145 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:13   state:D stack:20496 pid:5818  tgid:5818  ppid:2      flags:0x00004000
-Workqueue: events_unbound linkwatch_event
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- linkwatch_event+0xe/0x60 net/core/link_watch.c:276
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-INFO: task syz-executor:11463 blocked for more than 145 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:21728 pid:11463 tgid:11463 ppid:1      flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- rtnl_lock net/core/rtnetlink.c:79 [inline]
- rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:744
- __sys_sendto+0x39b/0x4f0 net/socket.c:2209
- __do_sys_sendto net/socket.c:2221 [inline]
- __se_sys_sendto net/socket.c:2217 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2217
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7a4d17fe8c
-RSP: 002b:00007f7a4d45f6b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f7a4de64620 RCX: 00007f7a4d17fe8c
-RDX: 000000000000003c RSI: 00007f7a4de64670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007f7a4d45f704 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007f7a4de64670 R15: 0000000000000000
- </TASK>
-INFO: task syz.2.1136:11518 blocked for more than 146 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.2.1136      state:D stack:23520 pid:11518 tgid:11512 ppid:10259  flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- tun_detach drivers/net/tun.c:698 [inline]
- tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
- __fput+0x23f/0x880 fs/file_table.c:431
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- get_signal+0x16a3/0x1740 kernel/signal.c:2917
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6d0817dff9
-RSP: 002b:00007f6d08fea038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: 0000000000000000 RBX: 00007f6d08336058 RCX: 00007f6d0817dff9
-RDX: 0000000020000040 RSI: 0000000000008983 RDI: 000000000000000b
-RBP: 00007f6d081f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f6d08336058 R15: 00007f6d0845fa28
- </TASK>
-INFO: task syz.4.1142:11533 blocked for more than 147 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.4.1142      state:D stack:22320 pid:11533 tgid:11532 ppid:10623  flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- tun_detach drivers/net/tun.c:698 [inline]
- tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
- __fput+0x23f/0x880 fs/file_table.c:431
- task_work_run+0x24f/0x310 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xa2f/0x28e0 kernel/exit.c:939
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- get_signal+0x16a3/0x1740 kernel/signal.c:2917
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fbf3577dff9
-RSP: 002b:00007fbf3659a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: 0000000000000024 RBX: 00007fbf35935f80 RCX: 00007fbf3577dff9
-RDX: 0000000000000024 RSI: 0000000020000000 RDI: 0000000000000009
-RBP: 00007fbf357f0296 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fbf35935f80 R15: 00007fbf35a5fa28
- </TASK>
-INFO: task syz-executor:11545 blocked for more than 147 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:26464 pid:11545 tgid:11545 ppid:1      flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- ip_tunnel_init_net+0x20e/0x720 net/ipv4/ip_tunnel.c:1159
- ops_init+0x31e/0x590 net/core/net_namespace.c:139
- setup_net+0x287/0x9e0 net/core/net_namespace.c:356
- copy_net_ns+0x33f/0x570 net/core/net_namespace.c:494
- create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
- unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
- ksys_unshare+0x619/0xc10 kernel/fork.c:3315
- __do_sys_unshare kernel/fork.c:3386 [inline]
- __se_sys_unshare kernel/fork.c:3384 [inline]
- __x64_sys_unshare+0x38/0x40 kernel/fork.c:3384
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2a6637f7f7
-RSP: 002b:00007f2a6665ffa8 EFLAGS: 00000206 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007f2a663f1a85 RCX: 00007f2a6637f7f7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
-RBP: 0000000000000000 R08: 00007f2a67067d60 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 000000000000000c
-R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:11548 blocked for more than 148 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:26016 pid:11548 tgid:11548 ppid:1      flags:0x00000004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- __tun_chr_ioctl+0x48c/0x2400 drivers/net/tun.c:3121
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff6c897dbfb
-RSP: 002b:00007ff6c8c5fe90 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ff6c89f1a85 RCX: 00007ff6c897dbfb
-RDX: 00007ff6c8c5ff10 RSI: 00000000400454ca RDI: 00000000000000c8
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000000000c
-R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
-INFO: task syz-executor:11554 blocked for more than 148 seconds.
-      Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor    state:D stack:24784 pid:11554 tgid:11554 ppid:1      flags:0x00004004
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6824
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
- register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
- ops_init+0x31e/0x590 net/core/net_namespace.c:139
- setup_net+0x287/0x9e0 net/core/net_namespace.c:356
- copy_net_ns+0x33f/0x570 net/core/net_namespace.c:494
- create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
- unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
- ksys_unshare+0x619/0xc10 kernel/fork.c:3315
- __do_sys_unshare kernel/fork.c:3386 [inline]
- __se_sys_unshare kernel/fork.c:3384 [inline]
- __x64_sys_unshare+0x38/0x40 kernel/fork.c:3384
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fb620b7f7f7
-RSP: 002b:00007fb620e5ffa8 EFLAGS: 00000206 ORIG_RAX: 0000000000000110
-RAX: ffffffffffffffda RBX: 00007fb620bf1a85 RCX: 00007fb620b7f7f7
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
-RBP: 0000000000000000 R08: 00007fb621867d60 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 000000000000000c
-R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000000
- </TASK>
-Future hung task reports are suppressed, see sysctl kernel.hung_task_warnings
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8e937da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6701
-2 locks held by kworker/u8:2/35:
- #0: ffff8880b863ea98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:593
- #1: ffff8880b8628948 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x441/0x770 kernel/sched/psi.c:989
-4 locks held by kworker/1:1/51:
-4 locks held by kworker/u8:3/52:
- #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801baed948 ((wq_completion)netns){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc90000bd7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc90000bd7d00 (net_cleanup_work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: cleanup_net+0x16a/0xcc0 net/core/net_namespace.c:580
- #3: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: wg_destruct+0x25/0x2e0 drivers/net/wireguard/device.c:246
-2 locks held by dhcpcd/4897:
- #0: ffffffff8fd37230 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: nl80211_pre_doit+0x5f/0x8b0 net/wireless/nl80211.c:16580
-2 locks held by getty/4986:
- #0: ffff888031b7a0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
-3 locks held by kworker/1:5/5283:
-3 locks held by kworker/u8:8/5692:
- #0: ffff88814c309148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88814c309148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000cf87d00 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000cf87d00 ((work_completion)(&(&net->ipv6.addr_chk_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: addrconf_verify_work+0x19/0x30 net/ipv6/addrconf.c:4736
-3 locks held by kworker/u8:12/5817:
- #0: ffff8881462a8948 ((wq_completion)cfg80211){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff8881462a8948 ((wq_completion)cfg80211){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000343fd00 ((work_completion)(&(&rdev->dfs_update_channels_wk)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000343fd00 ((work_completion)(&(&rdev->dfs_update_channels_wk)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: cfg80211_dfs_channels_update_work+0xbf/0x610 net/wireless/mlme.c:1021
-3 locks held by kworker/u8:13/5818:
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
- #0: ffff88801ac89148 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
- #1: ffffc9000342fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3205 [inline]
- #1: ffffc9000342fd00 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x976/0x1850 kernel/workqueue.c:3310
- #2: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:276
-1 lock held by syz-executor/11463:
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6643
-1 lock held by syz.2.1136/11518:
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
-1 lock held by syz.4.1142/11533:
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: tun_detach drivers/net/tun.c:698 [inline]
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: tun_chr_close+0x3b/0x1b0 drivers/net/tun.c:3517
-2 locks held by syz-executor/11540:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: setup_net+0x602/0x9e0 net/core/net_namespace.c:378
-2 locks held by syz-executor/11542:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: setup_net+0x602/0x9e0 net/core/net_namespace.c:378
-2 locks held by syz-executor/11545:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: ip_tunnel_init_net+0x20e/0x720 net/ipv4/ip_tunnel.c:1159
-1 lock held by syz-executor/11548:
- #0: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: __tun_chr_ioctl+0x48c/0x2400 drivers/net/tun.c:3121
-2 locks held by syz-executor/11554:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11558:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11564:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11566:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11569:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11574:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11581:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11586:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11588:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11595:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11600:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11605:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11611:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11613:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-2 locks held by syz-executor/11616:
- #0: ffffffff8fcc49d0 (pernet_ops_rwsem){++++}-{3:3}, at: copy_net_ns+0x328/0x570 net/core/net_namespace.c:490
- #1: ffffffff8fcd14c8 (rtnl_mutex){+.+.}-{3:3}, at: register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3885
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xff4/0x1040 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 51 Comm: kworker/1:1 Not tainted 6.11.0-syzkaller-11993-g3efc57369a0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: events_power_efficient neigh_periodic_work
-RIP: 0010:__lock_acquire+0xe9b/0x2050
-Code: 81 e3 00 60 00 00 09 c3 4c 89 f0 48 c1 e8 20 29 c3 89 c1 c1 c1 04 31 d9 44 01 f0 41 29 ce 89 ca c1 c2 06 44 31 f2 01 c1 29 d0 <89> d6 c1 c6 08 31 c6 01 ca 29 f1 89 f3 c1 c3 10 31 cb 01 d6 29 da
-RSP: 0018:ffffc90000a17430 EFLAGS: 00000087
-RAX: 00000000e98ab003 RBX: 000000006b5f6680 RCX: 000000003db26586
-RDX: 0000000032d4b8da RSI: 0000000000000008 RDI: dffffc0000000000
-RBP: ffff888020eac780 R08: ffffffff942757c7 R09: 1ffffffff284eaf8
-R10: dffffc0000000000 R11: fffffbfff284eaf9 R12: 0000000000000000
-R13: ffff888020eac6d8 R14: 00000000666b9292 R15: ffff888020eac7a0
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 000000000e734000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000004000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <IRQ>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- __skb_flow_dissect+0x50e/0x7d00 net/core/flow_dissector.c:1125
- __xfrm_decode_session+0xc2/0xf70 net/xfrm/xfrm_policy.c:3461
- xfrm_decode_session include/net/xfrm.h:1258 [inline]
- ip_route_me_harder+0xa5c/0x1300 net/ipv4/netfilter.c:66
- synproxy_send_tcp+0x356/0x6c0 net/netfilter/nf_synproxy_core.c:431
- synproxy_send_client_synack+0x8b8/0xf30 net/netfilter/nf_synproxy_core.c:484
- nft_synproxy_eval_v4+0x3ca/0x610 net/netfilter/nft_synproxy.c:59
- nft_synproxy_do_eval+0x362/0xa60 net/netfilter/nft_synproxy.c:141
- expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
- nft_do_chain+0x4ad/0x1da0 net/netfilter/nf_tables_core.c:288
- nft_do_chain_inet+0x418/0x6b0 net/netfilter/nft_chain_filter.c:161
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_slow+0xc3/0x220 net/netfilter/core.c:626
- nf_hook include/linux/netfilter.h:269 [inline]
- NF_HOOK+0x29e/0x450 include/linux/netfilter.h:312
- NF_HOOK+0x3a4/0x450 include/linux/netfilter.h:314
- __netif_receive_skb_one_core net/core/dev.c:5662 [inline]
- __netif_receive_skb+0x2bf/0x650 net/core/dev.c:5775
- process_backlog+0x662/0x15b0 net/core/dev.c:6107
- __napi_poll+0xcb/0x490 net/core/dev.c:6771
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- do_softirq+0x11b/0x1e0 kernel/softirq.c:455
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
- neigh_periodic_work+0xb35/0xd50 net/core/neighbour.c:1019
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSm9uYXRoYW4gQ2FtZXJv
+biA8amljMjNAa2VybmVsLm9yZz4NCj4gU2VudDogU2F0dXJkYXksIFNlcHRlbWJlciAyOCwgMjAy
+NCAxMDoyMCBQTQ0KPiBUbzogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRA
+d2FuYWRvby5mcj4NCj4gQ2M6IFRpbmFjbywgTWFyaWVsIDxNYXJpZWwuVGluYWNvQGFuYWxvZy5j
+b20+OyBsaW51eC1paW9Admdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgTGFycy1QZXRlciBDbGF1c2VuDQo+
+IDxsYXJzQG1ldGFmb28uZGU+OyBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPjsgS3J6eXN6
+dG9mIEtvemxvd3NraQ0KPiA8a3J6aytkdEBrZXJuZWwub3JnPjsgSGVubmVyaWNoLCBNaWNoYWVs
+DQo+IDxNaWNoYWVsLkhlbm5lcmljaEBhbmFsb2cuY29tPjsgQ29ub3IgRG9vbGV5IDxjb25vcitk
+dEBrZXJuZWwub3JnPjsNCj4gTWFyY2VsbyBTY2htaXR0IDxtYXJjZWxvLnNjaG1pdHQxQGdtYWls
+LmNvbT47IERpbWl0cmkgRmVkcmF1DQo+IDxkaW1hLmZlZHJhdUBnbWFpbC5jb20+OyBEYXZpZCBM
+ZWNobmVyIDxkbGVjaG5lckBiYXlsaWJyZS5jb20+OyBOdW5vIFPDoQ0KPiA8bm9uYW1lLm51bm9A
+Z21haWwuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0IDIvMl0gaWlvOiBkYWM6IHN1cHBv
+cnQgdGhlIGFkODQ2MCBXYXZlZm9ybSBEQUMNCj4gDQo+IFtFeHRlcm5hbF0NCj4gDQo+IE9uIFNh
+dCwgMTQgU2VwIDIwMjQgMjA6MjE6NTYgKzAyMDANCj4gQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJp
+c3RvcGhlLmphaWxsZXRAd2FuYWRvby5mcj4gd3JvdGU6DQo+IA0KPiA+IExlIDEyLzA5LzIwMjQg
+w6AgMTE6NTQsIE1hcmllbCBUaW5hY28gYSDDqWNyaXTCoDoNCj4gPiA+IFRoZSBBRDg0NjAgaXMg
+YSDigJxiaXRzIGluLCBwb3dlciBvdXTigJ0gaGlnaCB2b2x0YWdlLCBoaWdoLXBvd2VyLA0KPiA+
+ID4gaGlnaC1zcGVlZCBkcml2ZXIgb3B0aW1pemVkIGZvciBsYXJnZSBvdXRwdXQgY3VycmVudCAo
+dXAgdG8gwrExIEEpDQo+ID4gPiBhbmQgaGlnaCBzbGV3IHJhdGUgKHVwIHRvIMKxMTgwMCBWL868
+cykgYXQgaGlnaCB2b2x0YWdlICh1cCB0byDCsTQwIFYpDQo+ID4gPiBpbnRvIGNhcGFjaXRpdmUg
+bG9hZHMuDQo+ID4gPg0KPiA+ID4gQSBkaWdpdGFsIGVuZ2luZSBpbXBsZW1lbnRzIHVzZXItY29u
+ZmlndXJhYmxlIGZlYXR1cmVzOiBtb2RlcyBmb3INCj4gPiA+IGRpZ2l0YWwgaW5wdXQsIHByb2dy
+YW1tYWJsZSBzdXBwbHkgY3VycmVudCwgYW5kIGZhdWx0IG1vbml0b3JpbmcgYW5kDQo+ID4gPiBw
+cm9ncmFtbWFibGUgcHJvdGVjdGlvbiBzZXR0aW5ncyBmb3Igb3V0cHV0IGN1cnJlbnQsIG91dHB1
+dCB2b2x0YWdlLA0KPiA+ID4gYW5kIGp1bmN0aW9uIHRlbXBlcmF0dXJlLiBUaGUgQUQ4NDYwIG9w
+ZXJhdGVzIG9uIGhpZ2ggdm9sdGFnZSBkdWFsDQo+ID4gPiBzdXBwbGllcyB1cCB0byDCsTU1IFYg
+YW5kIGEgc2luZ2xlIGxvdyB2b2x0YWdlIHN1cHBseSBvZiA1IFYuDQo+ID4gPg0KPiA+ID4gU2ln
+bmVkLW9mZi1ieTogTWFyaWVsIFRpbmFjbw0KPiA+ID4gPE1hcmllbC5UaW5hY28tT3lMWHVPQ0s3
+b3JRVDBkWlIrQWxmQUBwdWJsaWMuZ21hbmUub3JnPg0KPiA+ID4gLS0tDQo+IA0KPiBSYXRoZXIg
+dGhhbiBnbyBhcm91bmQgYWdhaW4sIEkgZml4ZWQgdXAgYWxsIHRoZSBjb21tZW50cyBtYWRlIGFu
+ZCB0aGUNCj4gYXV0b2J1aWxkZXIgaXNzdWVzIHRoZW4gYXBwbGllZCB0aGlzLg0KPiANCj4gRGlm
+ZiBmb2xsb3dzLiBUaGUgb25seSBiaXQgSSdtIG5vdCAxMDAlIHN1cmUgb24gd2FzIHlvdXIgaW50
+ZW50IHdpdGggdGhlDQo+IHRlbXBlcmF0dXJlIGNoYW5uZWwuIEkndmUgbWFkZSBpdCBhbiBpbnB1
+dCBidXQgc2hvdXQgaWYgSSdtIG1pc3Npbmcgc29tZXRoaW5nLg0KPiANCj4gV2l0aCB0aGlzIGRp
+ZmYgYXBwbGllZCBvbiB0b3AsIGFwcGxpZWQgdG8gdGhlIHRvZ3JlZyBicmFuY2ggb2YgaWlvLmdp
+dCB3aGljaCBpcw0KPiBvbmx5IHB1c2hlZCBvdXQgYXMgdGVzdGluZyBmb3Igbm93IGFzIEknbGwg
+cmViYXNlIG9uIHJjMSBvbmNlIGF2YWlsYWJsZS4NCj4gDQo+IFRoYW5rcywNCj4gDQo+IEpvbmF0
+aGFuDQo+IA0KDQpIaSBKb25hdGhhbiwNCg0KVGhhbmsgeW91IGZvciBmaW5kaW5nIHRoZSB0aW1l
+IHRvIGZpeCB1cCB0aGUgaW5saW5lIGNvbW1lbnRzIGZyb20gdGhlDQpwcmV2aW91cyByb3VuZHMh
+IEkgaGF2ZSBjcmVhdGVkIGEgcGF0Y2ggZm9yIHRoYXQgYnV0IHdhcyB1bmFibGUgdG8gc2VuZCBp
+dA0KeWV0IGJlY2F1c2UgSSdtIHN0aWxsIGNsdWVsZXNzIGFib3V0IHRoZSB0ZW1wIGNoYW5uZWwu
+IEFwb2xvZ2llcyBhYm91dCB0aGF0DQoNCkFib3V0IHRoZSB0ZW1wZXJhdHVyZSBjaGFubmVsLCBp
+dCBkb2VzIG1ha2Ugc2Vuc2UgdG8gc2V0IGl0IGFzIGlucHV0IHNpbmNlIHRoZQ0KdmFsdWUgaXMg
+cmVhZC1vbmx5LiBBYm91dCB0aGUgaW1wbGVtZW50YXRpb24gb2YgdGhlIGNoYW5uZWwsIEknbSB3
+b25kZXJpbmcNCndoYXQgd291bGQgaGFwcGVuIGlmIHRoZSBjb25zdW1lci1nZXQtY2hhbm5lbCB3
+b3VsZCB0aHJvdyAtRVBST0JFX0RFRkVSDQpoYWxmIHRoZSB0aW1lPyBJcyBpdCBub3QgcG9zc2li
+bGUgdG8gc2tpcCBpdCBvdmVyIHNpbmNlIHRoZSBjaGFubmVsIGlzIG9wdGlvbmFsDQphbnl3YXk/
+IE9yIGRvZXMgdGhpcyBkZWZlciBlcnJvciBmcm9tIHRoZSBjb25zdW1lciBtZWFuIHRoYXQgdGhl
+IG90aGVyDQpjb25maWd1cmF0aW9ucyBmb3IgdGhlIHN1Y2NlZWRpbmcgYXR0cmlidXRlcyB3aWxs
+IGJlIGJsb2NrZWQsIHdoaWNoIGlzIHdoeSB3ZQ0KaGF2ZSB0byByZXR1cm4gcHJvYmUgaW5zdGFu
+dGx5Pw0KDQoJc3RhdGUtPnRtcF9hZGNfY2hhbm5lbCA9IGRldm1faWlvX2NoYW5uZWxfZ2V0KGRl
+diwgImFkODQ2MC10bXAiKTsNCglpZiAoSVNfRVJSKHN0YXRlLT50bXBfYWRjX2NoYW5uZWwpKSB7
+DQoJCXN0YXRlLT50bXBfYWRjX2NoYW5uZWwgPSBOVUxMOw0KCQlpbmRpb19kZXYtPmNoYW5uZWxz
+ID0gYWQ4NDYwX2NoYW5uZWxzOw0KCQlpbmRpb19kZXYtPm51bV9jaGFubmVscyA9IEFSUkFZX1NJ
+WkUoYWQ4NDYwX2NoYW5uZWxzKTsNCgl9IGVsc2Ugew0KCQlyZXQgPSBpaW9fZ2V0X2NoYW5uZWxf
+dHlwZShzdGF0ZS0+dG1wX2FkY19jaGFubmVsLCAmdGVtcCk7DQoJCWlmIChyZXQgPCAwKQ0KCQkJ
+cmV0dXJuIHJldDsNCg0KCQlpZiAodGVtcCAhPSBJSU9fVEVNUCkNCgkJCXJldHVybiBkZXZfZXJy
+X3Byb2JlKGRldiwgLUVJTlZBTCwNCgkJCQkJICAgICAiSW5jb21wYXRpYmxlIGNoYW5uZWwgdHlw
+ZSAlZFxuIiwgdGVtcCk7DQoNCgkJaW5kaW9fZGV2LT5jaGFubmVscyA9IGFkODQ2MF9jaGFubmVs
+c193aXRoX3RtcF9hZGM7DQoJCWluZGlvX2Rldi0+bnVtX2NoYW5uZWxzID0gQVJSQVlfU0laRShh
+ZDg0NjBfY2hhbm5lbHNfd2l0aF90bXBfYWRjKTsNCgl9DQoNCkkgYWxzbyBmb3VuZCBvdGhlciBp
+bXBsZW1lbnRhdGlvbnMgd2hlcmUgdGhlIHR5cGUgb2YgY2hhbm5lbCBpcyBjaGVja2VkLiBUaG91
+Z2h0DQpUaGF0IG1heWJlIGl0J3MgYSBnb29kIGFkZGl0aW9uIGZvciBzZWN1cml0eS4NCg0KVGhh
+bmtzLA0KDQpNYXJpZWwNCg==
 
