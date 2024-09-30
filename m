@@ -1,277 +1,650 @@
-Return-Path: <linux-kernel+bounces-343719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B4989EB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:48:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A6C989EB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A67028104F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:48:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 950FE1C215CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B38F18A6B1;
-	Mon, 30 Sep 2024 09:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016B718873F;
+	Mon, 30 Sep 2024 09:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="INJTnXIH"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SS9hym5N"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010056.outbound.protection.outlook.com [52.101.69.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB12188737;
-	Mon, 30 Sep 2024 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689706; cv=none; b=dbqFXGFl1ALmwpraC/+CBqQnIO/Irxx3y7X4BXjdrdj09H6qz/mJZ0UqhoBF3Z4X5AzlDcB+jSlrp/jvdf7v6WwiUCSdVkpirsK5+I7/6QmCiIJbJg4VOj0nWd7B6jC8yULExg2Rj8HmW5xcLKKQ2uoIs3oW7Eg0xIx+qdfxXJA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689706; c=relaxed/simple;
-	bh=+oYLK29pBCnI7HpCUD7fyHuSbzvZen8E+ynRa1oCOhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dyF/LENKlWu/WE+Fb6VrIkpYE/lfdD57/Tia+pxxZ6vA1g4yZP+6Bs4V/iOlLRXPRD8Q38Nk0liKMhrjl3aZT02x2xJvH3ApdKpBsbb5W1Uk5aP1ewXRUtCyx+y+DQxbwm0ks74pY60Pig0chFLdaY70h6OOee3pjnerHW1kQi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=INJTnXIH; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 14981E0004;
-	Mon, 30 Sep 2024 09:48:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727689702;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n215SOelrjAQex8JGT1YZxPlT2jrnGIMcR78iRv4FBo=;
-	b=INJTnXIHPoIHO/C/cAuduanCkWCV4FP6w9ATPH+SGu4Yk4gDqiDzbTLgsOTsaJL5z29Lne
-	yl/H/M3NuEmpPXMjeY1el1ldlHVGC8S0qOgrZLfXjR9LSBhb8C886tcP6QJXzMDKIDJ2Q9
-	BLrOc1QArgYT6bG08uxpzuODfIbdLW41LuqO6J05n8VEPkblYtXf9gVPvkUI4faJwJ+BrZ
-	/vrTADDKxVU9TdrqVJRO6xgxO3/4E8t615Z5j08zd2h8rrxDe5lcDRDe3traVb3UCUJ763
-	ivCg7YIh7xZjPse3xq+A6tsOgbmg5YEd+H3+AqojP9tbtX/SzVoeEB6kx6ZL1Q==
-Date: Mon, 30 Sep 2024 11:48:19 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Saravana Kannan
- <saravanak@google.com>, Florian Fainelli <f.fainelli@gmail.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, linux-mtd@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Bianconi
- <lorenzo@kernel.org>, upstream@airoha.com
-Subject: Re: [PATCH 2/3] dt-bindings: mtd: Add Documentation for Airoha
- fixed-partitions
-Message-ID: <20240930114819.609f9341@xps-13>
-In-Reply-To: <66f3fcb7.5d0a0220.3ca4c2.ba83@mx.google.com>
-References: <20240925101422.8373-1-ansuelsmth@gmail.com>
-	<20240925101422.8373-3-ansuelsmth@gmail.com>
-	<20240925133003.619c40c4@xps-13>
-	<66f3f58e.5d0a0220.5d655.b48a@mx.google.com>
-	<20240925135256.32d3a0f7@xps-13>
-	<66f3fcb7.5d0a0220.3ca4c2.ba83@mx.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D8629429;
+	Mon, 30 Sep 2024 09:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727689702; cv=fail; b=n7OkLIDRmqIytnrnXiDIP3JV7S7auo7bsSKma4MgOKMxh8CoAOx89kjAqoDQO0VvGfmHmj1F7e0p42O6MlQxZ/6N+Xyv+Vv35mhhTjIWw2WFEBwagIVvILhA89do1s1czZk2xdgJUN/KFzyLFDYdewnqgQeWygyjdrO1fMP6dHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727689702; c=relaxed/simple;
+	bh=1iTOSMSrcivQloKbEENz5zBN5YBB83bbyw5VRp7d+J8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fqUp1W1guuQkmrIcV1AXCgW+Ue7b1aRE0v2cV6NiX28uxLeNf4eL2kKKV55tfywI1OQeYsCxzeEnnGGYJJX6HsljbF3Yd61jcFkWqNFc+eNEoKnuD93n+PTaUbAxyL3Uey0Qu6DLQwlJo4UtjeijBhJXfBoJXJpi5ACDsalj69w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SS9hym5N; arc=fail smtp.client-ip=52.101.69.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ex7SAP+HOGLVT69C2b/0HufCZ/5HoAM7F2/pvm4D/u958szxDaiuCfplAe0JKAcvhN0odeGz/AwsELV3LJRzv16rGR3hxyekSbbIato4OntRB4SKRoKdZASfRBC8Wx33+syFqWfZJyzDVAFtrVaBihk9m+AQkns88Ffl9mk8cGm1mOzDWzr4jogsL9KTQAOFB28E6kEIqGIl8bC9UW7iQo9GK71TxTMMY0CjLpdX9dOZi06rR9/C+AZ5459g9qE+JKnbiOcmrst7aZqZxL8LLF9l3Lxl7287szhnba0fowgcKHoEV/0InVvNm1JS8rjtiLjtMblHzj/ohIW/iif0SA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=n9Xm10zBkU0KipWQta9kUyrasaz8C0Xj80kX0Xetvq4=;
+ b=pi8UQ6m3VXdNHS7U8A61Q0HaRoN/qqU5U8cyb0o9QjFojFlURyf4f460ImaO23BrsADZm6aXxHibXmOmiLzntACopYJkeHa2ZxmzrEni2ua9rLvc/wUeHMrGDpT4VyahgzxE9xE62IsMVlOXtVJTZlPnBWbf4xDaEL9VtKkaQE06wmuQrEAZsPznUIrfKa4OFcEKYNWgCdqkzJav0l60EEyHrntzW2evv26mfzFcSgLhyVmvTBmY64SMrsuUS7nGk2D4aPqjmXA7z4Zp7UtTMAY5AzgqswRV7zvEQg2S269LNLJ25SkEt0gZf13knwO3xSw6HOg1+Nj3snRxgm7VCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n9Xm10zBkU0KipWQta9kUyrasaz8C0Xj80kX0Xetvq4=;
+ b=SS9hym5NJ/RNCHndKfsi/n/hTRTZC9Tz0XgI0gmutCWg8JKAl9VVpnpOSvCWWbQUpmTNtBNkQPfeZj5cAgNvr06ZKudE+STg9AIz8VEWjC8kY7AV4Zl8hC3v5Fws8oWGxz86VSP3TGZd3UJbDrrZ3BAjtnSji8P7r0goSKVAZuqeBzQ3D1GVJo72cjwWCfTOpVxI7NbdXyubf6dJwNOAcuFBGliNQm4e5pOsQOzn618bBMlWot2gOPqGoWEFiUUtEJv26iXEeoGoL7A9BeAifs5L1qLCDbxEDParVKnbwIXTgqj30nBW8ev4cKbkuDxIn17QU9fBgzQYYeH0ltVEJQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB9399.eurprd04.prod.outlook.com (2603:10a6:102:2b3::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 09:48:16 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 09:48:16 +0000
+Message-ID: <a37ae7bd-24de-4397-86c1-94f542f5c7d9@nxp.com>
+Date: Mon, 30 Sep 2024 17:48:41 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] dt-bindings: display: bridge: Add ITE IT6263 LVDS to
+ HDMI converter
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
+ "y.moog@phytec.de" <y.moog@phytec.de>
+References: <20240930052903.168881-1-victor.liu@nxp.com>
+ <20240930052903.168881-6-victor.liu@nxp.com>
+ <TY3PR01MB11346CF2BE6F838A718E64F5586762@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <b5ad1ace-4a0e-4a17-91f3-6b374ef168c7@nxp.com>
+ <TYWPR01MB1134310A59DF5B26D97954FAC86762@TYWPR01MB11343.jpnprd01.prod.outlook.com>
+ <720548c9-bed8-4792-a323-90e472fd7404@nxp.com>
+ <TYWPR01MB113438FF29AB596E414D4D1E086762@TYWPR01MB11343.jpnprd01.prod.outlook.com>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <TYWPR01MB113438FF29AB596E414D4D1E086762@TYWPR01MB11343.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: SI2PR01CA0042.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::23) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB9399:EE_
+X-MS-Office365-Filtering-Correlation-Id: 979d6d15-e4d3-4b02-4f8d-08dce1350206
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?S2Q1Y3J2bW53UG4vZ24xZnRBU1BHbkowaUdlT0xsUlRiZWZVQk1yaWRmK1JF?=
+ =?utf-8?B?VW8zYlFhQnAwVVRpcWJSV29NajMrZFVJOTdvSktYMmJKYit4WTk3cVNDczdi?=
+ =?utf-8?B?ak0rKzJrV3Q5THZacFIvclZVZEYreE5tNy9IUzYwTnZtdzhqMlMyMnJUWnZ5?=
+ =?utf-8?B?Nzc1bjJ0T0ovVERjQUJtZWFmOWp6NjJTaWF6bVgzOTFIdE5NalNXQU01bmR5?=
+ =?utf-8?B?bDBSSEprSDhtRkNXbEVKSXJOWjdPdjlNb3JWUTdOT0lKNjE3SWF0dDRUZ0ln?=
+ =?utf-8?B?dXZacWgxcnh3Q2p0ZVRlMWRDaERRMDdINXhhODRvbHh1a0NjMXBKcVI4Ri9Q?=
+ =?utf-8?B?a3ZlRy96UHN3T1I3eFEzYlZqVW1ld1RteFJlRGM4NXFEZkltTGZmNkN2cjhz?=
+ =?utf-8?B?OTlhR2wvSitabXFiMjNXMXNyOHBIY042N0dMdElsVldUYklxNHJLOXNrQnVK?=
+ =?utf-8?B?MVplak9kZThTTWhoZHViQjVjcFk1VXhXQ2taRC9JM3Z2TWwvaXdsTC9oWjMv?=
+ =?utf-8?B?MWV4SXhtMmJFWDk5K01iYmxDU2R5TDBzb3hFbU9Zb3lldCtnRy9McGFxOUM3?=
+ =?utf-8?B?b0xydUhXVEY3bGNYcXRVdjhzdmI2SHZtaXcwVmJOSmd3Vjh5TEJqclFmOXVY?=
+ =?utf-8?B?Z2dGU0NyYlRoNTE5REVHYnpkeDNWeGltbWhyeVlvTnRqRm5XOGw0KzlobDJG?=
+ =?utf-8?B?czUrSEw3NjU0TEkwTU1pYTNMMUhId3JXV0hiYTNxVmFDZE1UNDZUN3J2ZmFY?=
+ =?utf-8?B?MDAxWG9SUTZ0UVNsNHRidkEvQmg4c1BGOG9Gc0pkWXljSDlRcEtDUnJLUVRu?=
+ =?utf-8?B?NlVvNGI2Tm5OUWF5QmQ2WnU4UlVDR2ZkUXRFSGJvM2QybGFaRHdGUlBMZ0pU?=
+ =?utf-8?B?cy93TmFEaThydjdvNWhmeTZkbVdEYkdISmJlaFcrQXpLVS9MZzZabU5oSTJF?=
+ =?utf-8?B?VE5oajRLVEZKMzhLYnZaUmgva0p1WllWY21PSW1hQkJFam9tVkZCZXZ6M2w3?=
+ =?utf-8?B?SUM2K0tzajl4UDNRclBqNitQVzU0K1o4NUdCNHZ6S0syNmhvZlRyNTBJZ01w?=
+ =?utf-8?B?Q0ZXejBJTGMxV0RJb1RCcVo5VzljcEd1cWsrVWNWeVF1L1pJTGhTcWRaS1Fh?=
+ =?utf-8?B?dEZURnlWR0tkeGZsWnVvQ0c4RG9ydVVWWGFVTFA2cGVrQVM0TGkydU5hUmlv?=
+ =?utf-8?B?Tmw3VG9JdGN0WHBWMUJMeE5Ba2ZTS3RSQWJadTU2azJJOXk3VFdVdG1haWt3?=
+ =?utf-8?B?Q25XNW15Y3FMZmU0Yy9qVkhiVjRMNDlWVmFjL3YyUDZRa0liM2VySlRsUGxW?=
+ =?utf-8?B?MXhVRGtNM0pmTFhPQ05Zd2dWSzI2RDU1M2Rwc0hnQXVpd1hVMndPTnpvZUlC?=
+ =?utf-8?B?Uk1tL2hET1g3VU5jd3NOTytqUFQ0aElrL1FibzIrMWVNa1BMYTRwMXpqZ0Jh?=
+ =?utf-8?B?cllQMjQ1VThBTmdTSGtLUkx0SzUwZE54bjFQdUFhQUtEMGRwdUc3U2NWQ3ZV?=
+ =?utf-8?B?RFMzTER4YWh6RmpTK2IzSGN2b01CSXFqaThDVEpISUZWck83b0tZeFptRVB3?=
+ =?utf-8?B?aEp4a0xKL0Z5NEovcDIraXozL3FqOS9DRGhYRzU4YnZ1a3hkM2tFdE1icjZ5?=
+ =?utf-8?B?UHRFVU5IMTlhWHZDd3ZUa3c4dExrUGVCU0l0dllCMUd2aStSSktxbW9WMjZ0?=
+ =?utf-8?B?c0lqRzVJanFHVC9aYndtcjZHTUM0TmczZ3BNTys3MS9TVW1TNTA1bVkzeGcz?=
+ =?utf-8?Q?SDHpSWWSYxcuVN0mI8=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VDZ4eThFbU1NT1VUM2VZVExrUldEd0hqcGIrcURPellxOGlsMFZHaUw2N2RZ?=
+ =?utf-8?B?cThXWEtoMWxLb05MUFcwV1lIdFdJK2lMNTBuZW1ROENrVmlFWi9SanVBVVBT?=
+ =?utf-8?B?eTdUWWg3eVUxYVpobk9TR0Z4amNFK2pRL1JkN0FlMkp5aHRuTS9ucUdXUmNo?=
+ =?utf-8?B?bzlRTFA3d2xRZXVzTm14MFBQSEtHM0psT0tyb05LdDhTTWQ0V2p2cGUzbGdh?=
+ =?utf-8?B?eldTc0ZyenRsajNsTzRFMG1ESVh6dXZncVk0NEsxTlJzbUV0SkRjOHJGL3Ju?=
+ =?utf-8?B?c1M1cFhFbHlZYkZtbEFISnYxenoxYWJOa3RVQk10LytUMUE0WlorbnRWSi9O?=
+ =?utf-8?B?c0VmTnpRL21Xa3ZoRmY1ZUlCQ2ZjWjQwM0EySFJ2b0sxNk5XaGdJcjdveDFh?=
+ =?utf-8?B?V3FVZEpkMmh2OGkwejU5Vk81U1lWMURzTERkWVJzei9uRDFlL0hQb0k0R2ZE?=
+ =?utf-8?B?a2lSc1hROTlzWFcxbWtjODdhOTl3bDBvRXRXSDRsYVVJbVJFZndyb3czclNN?=
+ =?utf-8?B?MU1xaVdSSjZrYVJvS0k4aEZnQWV2bE5yREFuakZEaUtVbXl1RzBkV1N5Q0Y4?=
+ =?utf-8?B?VFVINThUSms3YktRako3cG13dUtqSnpTMW83M29PYzhpejhrbExLU2IzdmFR?=
+ =?utf-8?B?U3FjVURHa3M1WHYwSE9aSkdQZDZqaFdZY05FN3ZoYlNpdkhEeXIvQzlyVlNy?=
+ =?utf-8?B?ZEJZd0xIYU1UMGF3TTBmWEFmazJDVHJkV0QzQTJENU5aWHJ3aXYwL1J0L0Vz?=
+ =?utf-8?B?RWRFdUNYb2ZjeldUVEVEeXRNVG5XMm5HUEpISkNYanFJblczeVVFNnpRYnRk?=
+ =?utf-8?B?OUlMR1k2YnRGTW5hcG1RdFdLNG92RnQvTDdNN2hMaERTTFlySlVNME11RWJh?=
+ =?utf-8?B?T3h2ak5Cb1J2MW40VEI1K3VkbWJwZ2NyVXBaR0xqQjByY2NkSTVLTFhxL3ZH?=
+ =?utf-8?B?WnVtNWlMVVl0T2Q3dXM4THNmNEVzbkkyR2RnQWdoVUZFZGwxRWF6QlF6MmRo?=
+ =?utf-8?B?d24xNitZV04zQTFncDU5NSt1UEtGbXEzcTVjVnI3eWo1a1lrRzZIWkkvSjNz?=
+ =?utf-8?B?bjZ3eWNtcDBaUDM5RUVBT1NYaVlXU0JTQWtheFJ1NDg0OVlMRUpaQWhrUDRO?=
+ =?utf-8?B?SUFsckpzRDhhWXVsMjAyMy9JSlk0VDJLNWRaTWZPN2RSZmZPcS9pdXdDbTFR?=
+ =?utf-8?B?UkJESEhZWVNSSUJHZ09PWGh6N1FHd2k5d1ZkZWoweDZnQjNPaFRjUDRzTUpZ?=
+ =?utf-8?B?azE1WVBBc0FBSE42bjk4L1NqTE44NnBWQi93OVh6L2xva3pYVFBVRU41QmZz?=
+ =?utf-8?B?V0JaVzRLb2ZYSzFnVlZoQ0xnWXlXZ0xrdnJNb01Fek5TMGxvVEdIcm9WSUZq?=
+ =?utf-8?B?a2ZXazJzTUZyYzBXQzFHS2c4U1NIVkhSTVRVQzJsRHJQcStvcWpvaERCQVB3?=
+ =?utf-8?B?cXFsMUNKMzAvWm8zME51LzZEaG1EczJDTUJzTFRKcjNqQVR5VWFSeVg2dTBX?=
+ =?utf-8?B?elFXMzIzbEpZOGVWR0U3bXFySHhTemFVY3MwQTFIS1BMTTUwRW94NzhKaWdN?=
+ =?utf-8?B?dGNkS2dIdys4Y0ZnbFlJU28zalFzWkJtZXBMWjhNS2t3Y2dvcmZ1enM4enYr?=
+ =?utf-8?B?Mlh3dmhEVEFjUzlIMnhsNEQzSkk1SjlVd09zdnUvY21IQXZRa1J4MlY1MUpI?=
+ =?utf-8?B?ek1pWXh1NVB1MmRYZk9nWUpsYWpJa0lUc0ZmOUxnemNSVGJ4Rlc5NzBmN2Nn?=
+ =?utf-8?B?bXRGZHdXS1BYNE9uYTBIMnlacEwyMHYyVWpJUVlFV01qbVM1eHVPWjRxTkdT?=
+ =?utf-8?B?MHhCSzFXWEVIZ0hjenRHVklqZFNlR2toMGxKTTQ2WVhFRUZLcUs1TDh3bkdC?=
+ =?utf-8?B?NXhqY2d6bTBDZXJVUnMwMHVubEhkbGN5REVRUVlkcnVRNHFURUV5QzdCWFFF?=
+ =?utf-8?B?SnJHOUZ3dkFUUjdid3gxODIyNCtQa2pZamVLK09ab1oyWEd1dCswNDRWTm9w?=
+ =?utf-8?B?Z0RDMVRwTGdYY2RoVitrRW1aSE9JMFhKd1F3K2p3dEF5cklUQzhUYXJyd01p?=
+ =?utf-8?B?czhleDMwQWlLRVVkZy9SUk9jWktqbi9nWVVoeEZzQ1gyQnh4UXMveFdRZks4?=
+ =?utf-8?Q?5P+rP6yrhjWs4n1iaGyD6Appv?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 979d6d15-e4d3-4b02-4f8d-08dce1350206
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 09:48:16.4634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Cs28+blse4poIg2ygojeY1D542bMTxkzPbcrB8oLpjsfAXktasSLMdwqzifItOTI7eI5BeuTHAGjMzEK+Htstg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9399
 
-Hi Christian,
+On 09/30/2024, Biju Das wrote:
+> Hi Liu,
 
-ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 14:06:11 +0200:
+Hi Biju,
 
-> On Wed, Sep 25, 2024 at 01:52:56PM +0200, Miquel Raynal wrote:
-> > Hi Christian,
-> >=20
-> > ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 13:35:38 +0200:
-> >  =20
-> > > On Wed, Sep 25, 2024 at 01:30:03PM +0200, Miquel Raynal wrote: =20
-> > > > Hi Christian,
-> > > >=20
-> > > > ansuelsmth@gmail.com wrote on Wed, 25 Sep 2024 12:13:58 +0200:
-> > > >    =20
-> > > > > Add Documentation for Airoha fixed-partitions compatibles.
-> > > > >=20
-> > > > > Airoha based SoC declare a dedicated partition at the end of the =
-flash to
-> > > > > store calibration and device specific data, in addition to fixed
-> > > > > partitions.
-> > > > >=20
-> > > > > The offset of this special partition is not well defined as a cus=
-tom bad
-> > > > > block management driver is used that reserve space at the end of =
-the flash.
-> > > > >=20
-> > > > > This binding allows defining all fixed partitions and marking the=
- last one
-> > > > > to detect the correct offset.
-> > > > >=20
-> > > > > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> > > > > ---
-> > > > >  .../partitions/airoha,fixed-partitions.yaml   | 80 +++++++++++++=
-++++++
-> > > > >  .../bindings/mtd/partitions/partitions.yaml   |  1 +
-> > > > >  2 files changed, 81 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/mtd/partiti=
-ons/airoha,fixed-partitions.yaml
-> > > > >=20
-> > > > > diff --git a/Documentation/devicetree/bindings/mtd/partitions/air=
-oha,fixed-partitions.yaml b/Documentation/devicetree/bindings/mtd/partition=
-s/airoha,fixed-partitions.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..a45df51065af
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/mtd/partitions/airoha,fix=
-ed-partitions.yaml
-> > > > > @@ -0,0 +1,80 @@
-> > > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/mtd/partitions/airoha,fixed-p=
-artitions.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Airoha SoC partitioning
-> > > > > +
-> > > > > +description: |
-> > > > > +  Airoha based SoC declare a dedicated partition at the end of t=
-he flash to
-> > > > > +  store calibration and device specific data, in addition to fix=
-ed partitions.
-> > > > > +
-> > > > > +  The offset of this special partition is not well defined as a =
-custom bad block
-> > > > > +  management driver is used that reserve space at the end of the=
- flash.
-> > > > > +
-> > > > > +  This binding allows defining all fixed partitions and marking =
-the last one to
-> > > > > +  detect the correct offset from the new end of the flash.
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Christian Marangi <ansuelsmth@gmail.com>
-> > > > > +
-> > > > > +select: false
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    const: airoha,fixed-partitions
-> > > > > +
-> > > > > +  "#address-cells":
-> > > > > +    enum: [ 1, 2 ]
-> > > > > +
-> > > > > +  "#size-cells":
-> > > > > +    enum: [ 1, 2 ]
-> > > > > +
-> > > > > +patternProperties:
-> > > > > +  "^partition@[0-9a-f]+$":
-> > > > > +    $ref: partition.yaml#
-> > > > > +    properties:
-> > > > > +      compatible:
-> > > > > +        const: airoha,dynamic-art
-> > > > > +    unevaluatedProperties: false
-> > > > > +
-> > > > > +required:
-> > > > > +  - "#address-cells"
-> > > > > +  - "#size-cells"
-> > > > > +
-> > > > > +additionalProperties: false
-> > > > > +
-> > > > > +examples:
-> > > > > +  - |
-> > > > > +    partitions {
-> > > > > +        compatible =3D "airoha,fixed-partitions";
-> > > > > +        #address-cells =3D <1>;
-> > > > > +        #size-cells =3D <1>;
-> > > > > +
-> > > > > +        partition@0 {
-> > > > > +          label =3D "bootloader";
-> > > > > +          reg =3D <0x00000000 0x00080000>;
-> > > > > +        };
-> > > > > +
-> > > > > +        partition@80000 {
-> > > > > +          label =3D "tclinux";
-> > > > > +          reg =3D <0x00080000 0x02800000>;
-> > > > > +        };
-> > > > > +
-> > > > > +        partition@2880000 {
-> > > > > +          label =3D "tclinux_slave";
-> > > > > +          reg =3D <0x02880000 0x02800000>;
-> > > > > +        };
-> > > > > +
-> > > > > +        partition@5080000 {
-> > > > > +          label =3D "rootfs_data";
-> > > > > +          reg =3D <0x5080000 0x00800000>;
-> > > > > +        };
-> > > > > +
-> > > > > +        partition@ffffffff {
-> > > > > +          compatible =3D "airoha,dynamic-art";
-> > > > > +          label =3D "art";
-> > > > > +          reg =3D <0xffffffff 0x00300000>;   =20
-> > > >=20
-> > > > I'm a little bit puzzled by this kind of information which is known=
- to
-> > > > be wrong. As the partition offset and size must be dynamically
-> > > > calculated, this reg property (as well as the size parameter of the
-> > > > previous one) are notably wrong. I guess we are not fully constrain=
-ed
-> > > > by the fixed-partitions schema here, so could we avoid the reg prop=
-erty
-> > > > in the airoha,dynamic-art partition? Maybe we also need a #define f=
-or a
-> > > > specific placeholder in the penultimate reg property too (for the s=
-ize).
-> > > >   =20
-> > >=20
-> > > Maybe instead of reg we can use a property like size?
-> > >=20
-> > > Can you better elaborate the suggestion about the #define?
-> > >=20
-> > > Do you mean for case where the last partition might overlap
-> > > with the penultimate? Honestly in such case I would error hard, that
-> > > case happen when too much space is reserved and that is a
-> > > misconfiguration of the system (developer error) =20
-> >=20
-> > That's not what I mean.
-> >=20
-> > In the above case you say partition "partition@5080000" is 0x800000
-> > bytes long. This is obviously wrong otherwise you would know where the
-> > art partition starts. And right after you're saying partition
-> > "partition@ffffffff" starts at 0xffffffff and is 0x300000 bytes long.
-> > This is also wrong because 0xffffffff is not a valid start address and
-> > IIUC 0x300000 is also unknown and dynamically derived.
-> >=20
-> > So for the art partition my advise if you know nothing about the
-> > start/length is to just skip the reg property. For the previous
-> > partition I'd maybe use a definition (whose name is to discuss) instead
-> > of the wrong size argument (the start offset being correct on his side).
-> > =20
->=20
-> Ok probably the description isn't clear enough. The missing info that
-> require this parser is the flash end.
->=20
-> Following the example we know the size of rootfs_data and start offset
-> AND we know the size of the ART partition.
->=20
-> There might be a space in the middle unused between the rootfs_data
-> partition and the art partition. What is derived is the starting offset
-> of the art partition that is flash end - art partition size.
-> (where flash end change and is not always the same due to how the special
-> bad block managament table reserved space is handled)
->=20
-> This is why 0xffffffff, used as a dummy offset to signal it will be parse=
-d at
-> runtime. On second tought tho maybe using this dummy offset is wrong and
-> I should just have something like
->=20
-> length =3D <0x300000>;
->=20
-> Is it clear now? Sorry for any confusion.
+> 
+>> -----Original Message-----
+>> From: Liu Ying <victor.liu@nxp.com>
+>> Sent: Monday, September 30, 2024 10:30 AM
+>> Subject: Re: [PATCH 5/8] dt-bindings: display: bridge: Add ITE IT6263 LVDS to HDMI converter
+>>
+>> On 09/30/2024, Biju Das wrote:
+>>> Hi Liu,
+>>
+>> Hi Biju,
+>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Liu Ying <victor.liu@nxp.com>
+>>>> Sent: Monday, September 30, 2024 10:16 AM
+>>>> Subject: Re: [PATCH 5/8] dt-bindings: display: bridge: Add ITE IT6263
+>>>> LVDS to HDMI converter
+>>>>
+>>>> On 09/30/2024, Biju Das wrote:
+>>>>> Hi Liu,
+>>>>
+>>>> Hi Biju,
+>>>>
+>>>>>
+>>>>> thanks for the patch.
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: linux-arm-kernel
+>>>>>> <linux-arm-kernel-bounces@lists.infradead.org>
+>>>>>> On Behalf Of Liu Ying
+>>>>>> Sent: Monday, September 30, 2024 6:29 AM
+>>>>>> Subject: [PATCH 5/8] dt-bindings: display: bridge: Add ITE IT6263
+>>>>>> LVDS to HDMI converter
+>>>>>>
+>>>>>> Document ITE IT6263 LVDS to HDMI converter.
+>>>>>>
+>>>>>> Product link:
+>>>>>> https://www.ite.com.tw/en/product/cate1/IT6263
+>>>>>>
+>>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>>>>> ---
+>>>>>>  .../bindings/display/bridge/ite,it6263.yaml   | 310 ++++++++++++++++++
+>>>>>>  1 file changed, 310 insertions(+)
+>>>>>>  create mode 100644
+>>>>>> Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>>>>>> b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..97fb81e5bc4a
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
+>>>>>> +++ am
+>>>>>> +++ l
+>>>>>> @@ -0,0 +1,310 @@
+>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML
+>>>>>> +1.2
+>>>>>> +---
+>>>>>> +$id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
+>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>>>> +
+>>>>>> +title: ITE IT6263 LVDS to HDMI converter
+>>>>>> +
+>>>>>> +maintainers:
+>>>>>> +  - Liu Ying <victor.liu@nxp.com>
+>>>>>> +
+>>>>>> +description: |
+>>>>>> +  The IT6263 is a high-performance single-chip De-SSC(De-Spread
+>>>>>> +Spectrum) LVDS
+>>>>>> +  to HDMI converter.  Combined with LVDS receiver and HDMI 1.4a
+>>>>>> +transmitter,
+>>>>>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
+>>>>>> +  The built-in LVDS receiver can support single-link and dual-link
+>>>>>> +LVDS inputs,
+>>>>>> +  and the built-in HDMI transmitter is fully compliant with HDMI
+>>>>>> +1.4a/3D, HDCP
+>>>>>> +  1.2 and backward compatible with DVI 1.0 specification.
+>>>>>> +
+>>>>>> +  The IT6263 also encodes and transmits up to 8 channels of I2S
+>>>>>> + digital audio,  with sampling rate up to 192KHz and sample size up to 24 bits.
+>>>>>> + In addition,  an S/PDIF input port takes in compressed audio of up to 192KHz frame rate.
+>>>>>> +
+>>>>>> +  The newly supported High-Bit Rate(HBR) audio by HDMI
+>>>>>> + specifications
+>>>>>> + v1.3 is  provided by the IT6263 in two interfaces: the four I2S
+>>>>>> + input ports or the  S/PDIF input port.  With both interfaces the
+>>>>>> + highest possible HBR frame rate  is supported at up to 768KHz.
+>>>>>> +
+>>>>>> +properties:
+>>>>>> +  compatible:
+>>>>>> +    const: ite,it6263
+>>>>>> +
+>>>>>> +  reg:
+>>>>>> +    maxItems: 1
+>>>>>> +
+>>>>>> +  clocks:
+>>>>>> +    maxItems: 1
+>>>>>> +    description: audio master clock
+>>>>>> +
+>>>>>> +  clock-names:
+>>>>>> +    const: mclk
+>>>>>> +
+>>>>>> +  reset-gpios:
+>>>>>> +    maxItems: 1
+>>>>>> +
+>>>>>> +  ivdd-supply:
+>>>>>> +    description: 1.8V digital logic power
+>>>>>> +
+>>>>>> +  ovdd-supply:
+>>>>>> +    description: 3.3V I/O pin power
+>>>>>> +
+>>>>>> +  txavcc18-supply:
+>>>>>> +    description: 1.8V HDMI analog frontend power
+>>>>>> +
+>>>>>> +  txavcc33-supply:
+>>>>>> +    description: 3.3V HDMI analog frontend power
+>>>>>> +
+>>>>>> +  pvcc1-supply:
+>>>>>> +    description: 1.8V HDMI frontend core PLL power
+>>>>>> +
+>>>>>> +  pvcc2-supply:
+>>>>>> +    description: 1.8V HDMI frontend filter PLL power
+>>>>>> +
+>>>>>> +  avcc-supply:
+>>>>>> +    description: 3.3V LVDS frontend power
+>>>>>> +
+>>>>>> +  anvdd-supply:
+>>>>>> +    description: 1.8V LVDS frontend analog power
+>>>>>> +
+>>>>>> +  apvdd-supply:
+>>>>>> +    description: 1.8V LVDS frontend PLL power
+>>>>>> +
+>>>>>> +  "#sound-dai-cells":
+>>>>>> +    const: 0
+>>>>>> +
+>>>>>> +  ite,i2s-audio-fifo-sources:
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>>>>> +    minItems: 1
+>>>>>> +    maxItems: 4
+>>>>>> +    items:
+>>>>>> +      enum: [0, 1, 2, 3]
+>>>>>> +    description:
+>>>>>> +      Each array element indicates the pin number of an I2S serial data input
+>>>>>> +      line which is connected to an audio FIFO, from audio FIFO0 to FIFO3.
+>>>>>> +
+>>>>>> +  ite,rl-channel-swap-audio-sources:
+>>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>>>>> +    minItems: 1
+>>>>>> +    maxItems: 4
+>>>>>> +    uniqueItems: true
+>>>>>> +    items:
+>>>>>> +      enum: [0, 1, 2, 3]
+>>>>>> +    description:
+>>>>>> +      Each array element indicates an audio source whose right channel and left
+>>>>>> +      channel are swapped by this converter. For I2S, the element is the pin
+>>>>>> +      number of an I2S serial data input line. For S/PDIF, the element is always
+>>>>>> +      0.
+>>>>>> +
+>>>>>> +  ports:
+>>>>>> +    $ref: /schemas/graph.yaml#/properties/ports
+>>>>>> +
+>>>>>> +    oneOf:
+>>>>>> +      - properties:
+>>>>>> +          port@0:
+>>>>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +            description: the first LVDS input link
+>>>>>> +
+>>>>>> +          port@1: false
+>>>>>> +
+>>>>>> +          port@2:
+>>>>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +            description: video port for the HDMI output
+>>>>>> +
+>>>>>> +          port@3:
+>>>>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +            description: sound input port
+>>>>>> +
+>>>>>> +        required:
+>>>>>> +          - port@0
+>>>>>> +          - port@2
+>>>>>> +
+>>>>>> +      - properties:
+>>>>>> +          port@0:
+>>>>>> +            $ref: /schemas/graph.yaml#/$defs/port-base
+>>>>>> +            unevaluatedProperties: false
+>>>>>> +            description: the first LVDS input link
+>>>>>> +
+>>>>>> +            properties:
+>>>>>> +              dual-lvds-odd-pixels:
+>>>>>> +                type: boolean
+>>>>>> +                description: the first sink port for odd pixels
+>>>>>> +
+>>>>>> +              dual-lvds-even-pixels:
+>>>>>> +                type: boolean
+>>>>>> +                description: the first sink port for even pixels
+>>>>>> +
+>>>>>> +            oneOf:
+>>>>>> +              - required: [dual-lvds-odd-pixels]
+>>>>>> +              - required: [dual-lvds-even-pixels]
+>>>>>> +
+>>>>>> +          port@1:
+>>>>>> +            $ref: /schemas/graph.yaml#/$defs/port-base
+>>>>>> +            unevaluatedProperties: false
+>>>>>> +            description: the second LVDS input link
+>>>>>> +
+>>>>>> +            properties:
+>>>>>> +              dual-lvds-even-pixels:
+>>>>>> +                type: boolean
+>>>>>> +                description: the second sink port for even pixels
+>>>>>> +
+>>>>>> +              dual-lvds-odd-pixels:
+>>>>>> +                type: boolean
+>>>>>> +                description: the second sink port for odd pixels
+>>>>>> +
+>>>>>> +            oneOf:
+>>>>>> +              - required: [dual-lvds-even-pixels]
+>>>>>> +              - required: [dual-lvds-odd-pixels]
+>>>>>
+>>>>>
+>>>>>> +
+>>>>>> +          port@2:
+>>>>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +            description: video port for the HDMI output
+>>>>>> +
+>>>>>> +          port@3:
+>>>>>> +            $ref: /schemas/graph.yaml#/properties/port
+>>>>>> +            description: sound input port
+>>>>>
+>>>>> What about single lvds as device support it?
+>>>>
+>>>> The single LVDS link has already been documented in this binding doc.
+>>>> Please find the "properties" above where only "port@0" and "port@2"
+>>>> are required.
+>>>
+>>> Maybe "the first LVDS input link"-->"Single LVDS input link" for single LVDS block??
+>>
+>> Nope.
+>>
+>> I tested single LVDS link with the second LVDS link.  It didn't work.
+>> The single LVDS link only works with the first LVDS link.
+> 
+> OK. That is the reason you made port@1 false.
 
-I'm sorry but not really. You know the end of the physical device and
-the size of the ART partition, so you must know its start as well?
+Yes.
 
-Thanks,
-Miqu=C3=A8l
+> 
+> Still port@0 is a single LVDS instance or first LVDS input link for the dual
+> LVDS configuration??
+
+"port@0" always represents the first LVDS link and "port@1" always
+represents the second LVDS link, no matter it's a single-link LVDS
+or a dual-link LVDS.
+
+Which one is the first/second LVDS link?  See "LVDS front-end
+interface pin" in IT6263 data sheet[1] where first/second are
+defined.
+
+[1] http://static6.arrow.com/aropdfconversion/a2ecd2a29274cf0bfb3f3c829ef224c5838fe144/it6263fn.pdf
+
+> 
+> Cheers,
+> Biju
+> 
+> 
+>>
+>>>
+>>>>
+>>>> imx8mp-evk-lvds0-imx-lvds-hdmi.dtso and
+>>>> imx8mp-evk-lvds1-imx-lvds-hdmi.dtso
+>>>> added in patch 7 support the NXP adapter card with single LVDS link.
+>>>>
+>>>>>
+>>>>> Cheers,
+>>>>> Biju
+>>>>>
+>>>>>> +
+>>>>>> +        required:
+>>>>>> +          - port@0
+>>>>>> +          - port@1
+>>>>>> +          - port@2
+>>>>>> +
+>>>>>> +        allOf:
+>>>>>> +          - if:
+>>>>>> +              properties:
+>>>>>> +                port@0:
+>>>>>> +                  required:
+>>>>>> +                    - dual-lvds-odd-pixels
+>>>>>> +            then:
+>>>>>> +              properties:
+>>>>>> +                port@1:
+>>>>>> +                  properties:
+>>>>>> +                    dual-lvds-odd-pixels: false
+>>>>>> +
+>>>>>> +          - if:
+>>>>>> +              properties:
+>>>>>> +                port@0:
+>>>>>> +                  required:
+>>>>>> +                    - dual-lvds-even-pixels
+>>>>>> +            then:
+>>>>>> +              properties:
+>>>>>> +                port@1:
+>>>>>> +                  properties:
+>>>>>> +                    dual-lvds-even-pixels: false
+>>>>>> +
+>>>>>> +required:
+>>>>>> +  - compatible
+>>>>>> +  - reg
+>>>>>> +  - ivdd-supply
+>>>>>> +  - ovdd-supply
+>>>>>> +  - txavcc18-supply
+>>>>>> +  - txavcc33-supply
+>>>>>> +  - pvcc1-supply
+>>>>>> +  - pvcc2-supply
+>>>>>> +  - avcc-supply
+>>>>>> +  - anvdd-supply
+>>>>>> +  - apvdd-supply
+>>>>>> +  - ports
+>>>>>> +
+>>>>>> +additionalProperties: false
+>>>>>> +
+>>>>>> +examples:
+>>>>>> +  - |
+>>>>>> +    /* single-link LVDS input */
+>>>>>> +    #include <dt-bindings/gpio/gpio.h>
+>>>>>> +
+>>>>>> +    i2c {
+>>>>>> +        #address-cells = <1>;
+>>>>>> +        #size-cells = <0>;
+>>>>>> +
+>>>>>> +        hdmi@4c {
+>>>>>> +            compatible = "ite,it6263";
+>>>>>> +            reg = <0x4c>;
+>>>>>> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+>>>>>> +            ivdd-supply = <&reg_buck5>;
+>>>>>> +            ovdd-supply = <&reg_vext_3v3>;
+>>>>>> +            txavcc18-supply = <&reg_buck5>;
+>>>>>> +            txavcc33-supply = <&reg_vext_3v3>;
+>>>>>> +            pvcc1-supply = <&reg_buck5>;
+>>>>>> +            pvcc2-supply = <&reg_buck5>;
+>>>>>> +            avcc-supply = <&reg_vext_3v3>;
+>>>>>> +            anvdd-supply = <&reg_buck5>;
+>>>>>> +            apvdd-supply = <&reg_buck5>;
+>>>>>> +
+>>>>>> +            ports {
+>>>>>> +                #address-cells = <1>;
+>>>>>> +                #size-cells = <0>;
+>>>>>> +
+>>>>>> +                port@0 {
+>>>>>> +                    reg = <0>;
+>>>>>> +
+>>>>>> +                    it6263_lvds_link1: endpoint {
+>>>>>> +                        remote-endpoint = <&ldb_lvds_ch0>;
+>>>>>> +                    };
+>>>>>> +                };
+>>>>>> +
+>>>>>> +                port@2 {
+>>>>>> +                    reg = <2>;
+>>>>>> +
+>>>>>> +                    it6263_out: endpoint {
+>>>>>> +                        remote-endpoint = <&hdmi_in>;
+>>>>>> +                    };
+>>>>>> +                };
+>>>>>> +            };
+>>>>>> +        };
+>>>>>> +    };
+>>>>>> +
+>>>>>> +  - |
+>>>>>> +    /* dual-link LVDS input */
+>>>>>> +    #include <dt-bindings/gpio/gpio.h>
+>>>>>> +
+>>>>>> +    i2c {
+>>>>>> +        #address-cells = <1>;
+>>>>>> +        #size-cells = <0>;
+>>>>>> +
+>>>>>> +        hdmi@4c {
+>>>>>> +            compatible = "ite,it6263";
+>>>>>> +            reg = <0x4c>;
+>>>>>> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+>>>>>> +            ivdd-supply = <&reg_buck5>;
+>>>>>> +            ovdd-supply = <&reg_vext_3v3>;
+>>>>>> +            txavcc18-supply = <&reg_buck5>;
+>>>>>> +            txavcc33-supply = <&reg_vext_3v3>;
+>>>>>> +            pvcc1-supply = <&reg_buck5>;
+>>>>>> +            pvcc2-supply = <&reg_buck5>;
+>>>>>> +            avcc-supply = <&reg_vext_3v3>;
+>>>>>> +            anvdd-supply = <&reg_buck5>;
+>>>>>> +            apvdd-supply = <&reg_buck5>;
+>>>>>> +
+>>>>>> +            ports {
+>>>>>> +                #address-cells = <1>;
+>>>>>> +                #size-cells = <0>;
+>>>>>> +
+>>>>>> +                port@0 {
+>>>>>> +                    reg = <0>;
+>>>>>> +                    dual-lvds-odd-pixels;
+>>>>>> +
+>>>>>> +                    it6263_lvds_link1_dual: endpoint {
+>>>>>> +                        remote-endpoint = <&ldb_lvds_ch0>;
+>>>>>> +                    };
+>>>>>> +                };
+>>>>>> +
+>>>>>> +                port@1 {
+>>>>>> +                    reg = <1>;
+>>>>>> +                    dual-lvds-even-pixels;
+>>>>>> +
+>>>>>> +                    it6263_lvds_link2_dual: endpoint {
+>>>>>> +                        remote-endpoint = <&ldb_lvds_ch1>;
+>>>>>> +                    };
+>>>>>> +                };
+>>>>>> +
+>>>>>> +                port@2 {
+>>>>>> +                    reg = <2>;
+>>>>>> +
+>>>>>> +                    it6263_out_dual: endpoint {
+>>>>>> +                        remote-endpoint = <&hdmi_in>;
+>>>>>> +                    };
+>>>>>> +                };
+>>>>>> +            };
+>>>>>> +        };
+>>>>>> +    };
+>>>>>> --
+>>>>>> 2.34.1
+>>>>>>
+>>>>>
+>>>>
+>>>> --
+>>>> Regards,
+>>>> Liu Ying
+>>>
+>>
+>> --
+>> Regards,
+>> Liu Ying
+> 
+
+-- 
+Regards,
+Liu Ying
+
 
