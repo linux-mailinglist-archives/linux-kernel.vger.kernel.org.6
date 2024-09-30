@@ -1,149 +1,151 @@
-Return-Path: <linux-kernel+bounces-344216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED12498A68C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:01:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB298A68E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACA21F2318E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:01:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF95B1F24842
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F181917E7;
-	Mon, 30 Sep 2024 14:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F16190068;
+	Mon, 30 Sep 2024 14:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQxk+AtD"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3ho+n9d";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eEO/mOn/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p3ho+n9d";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eEO/mOn/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11749190075
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E03848E;
+	Mon, 30 Sep 2024 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704856; cv=none; b=Wva+An3PCDSrNAy0nCzQIA3XmqCG/HbtZEYyxbJn+cEUYQgQXEC9juVKXwRJgHTUTChoI8+Qd0PKA5quOcSKvPrdSep7iFnTH1IpmthzpmF8jeeCOSEdUWpJmCDJDKQNUyrdZomD1xd0cKYQyFfoHIaihrmLV541KYMU61ZWvfw=
+	t=1727704920; cv=none; b=k4msPbp64HUYAvjnW4AzDgsxH1bNbJOGZdQflz1j/5pjgx4dLWPo2Zpr3jkEtKh4KEzWmovVGgGATRuN4TBh7psyuPWyJS2r90wzPObtLLD3o+5DHaqkVqjTIUF7Y2PdKbhoR6NiwbMNvPHifnqryG8FvS3mwZeFlRBG/fHuZbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704856; c=relaxed/simple;
-	bh=dPR/MK3GE8NMOYtuwtlYVjIQEgLz8dluF1iNQdnetFQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r9OXF8ljA+HlcEd1idwfOOVBvgvwW0sFkBqGd8F/eZ6IjMWgAmEJJq4sW2RwVf3G7RFNChFfQ8woIuCgG69Fv0Xhb60OxHGuFR84lKMJxT48n07c1Y36SomQvffAT0ofAzTZt82ITcjJAZcdAdH+pk3Zlx3pRYlc+rhgrM6xC9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GQxk+AtD; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8d60e23b33so666168366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727704853; x=1728309653; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=B9iC2N/12abllbC0V03F2t6+J5vMpvZXd0nYPLT3vBQ=;
-        b=GQxk+AtDRzVwE4BSso2inG1NN6dn7yuWJP4MGZ8T2Hr72INxz6r2wJsqB03HvZCLuA
-         sIUxsGRMofzr7hyMBOsERKCgsFNA2qu/L1hrPCo+SE8GcM18gzHpvoMzSpeNcbU0+ekM
-         ysityzc3HzLU97n1LsD4Z8J/e/1CSjG30V6rJsx4C1x59ykyrdF4SgnyGVFiL8mg7BKg
-         IujqOfstxZM/sD7wOa8l/LcOc9+GtR8/cfjKl1XBXJ/4MAYcxOgHig6cGWt9Dmlq/0qp
-         DZj8AU6KCXuBVg5aWrab2Awtq+rQDNfSZa8JFK+J+PPPcwcj4vBN1DDFXHBZJmtTRZID
-         YPgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727704853; x=1728309653;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B9iC2N/12abllbC0V03F2t6+J5vMpvZXd0nYPLT3vBQ=;
-        b=C9Yrq+eWRDFzCaDXunSwqoEpx/jCEcITS1n6lEanjGT9xH1W/tmoNZgVPUVuMHycr1
-         ABA8WLxhRn8NMySblryUN+ndJVQtxrkTySCoOhd46niaM4elh4fuwVmxnWoqffoj4bVI
-         lJeNoVuPFWS/ujMqJOnm5XrQVsIwYgw7rPi7vu2tggMlXrRNwH3yFBKavGOjDXL16Ggw
-         bjO6ph+yz1X0zO1XNwS9G5JwXfFmfq3qag8clDssntkdl+gHRg8ihSfBV6eR6FegPsxw
-         KyLTotYiEx1rYuyo7GP62+/dC5DGmTmLIEcGCRDbdXDJxTJugRQYPyHTKJSq647p+KV8
-         NZAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxdUUdmXkolUq6SgRveyA4Iz9yojnTKABfajmUbbcgB8vsn+DAfD2IYsJcaZMAOHC7rvE12wxHksXdkBY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/F3CUDjaKh9fPIbRLqJvW/zVb4aHJ+h8y8D3qitO58usdjOuG
-	CIS3o/0UtXNs40RXtYEUZwznV30PSKZQp0N+i8TKuisR6nyZ98cH6e7bNKT3JXE=
-X-Google-Smtp-Source: AGHT+IHrW1k6OyoeAr7X2J4sCHCj9NzoUl8sq6E2Ub0OP+VdkpEDGrA+mzsk7GWeJcQA5FmXlP3tnw==
-X-Received: by 2002:a17:906:c104:b0:a86:b762:52ec with SMTP id a640c23a62f3a-a93c4adf8ebmr1289043666b.51.1727704853182;
-        Mon, 30 Sep 2024 07:00:53 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bceesm532099966b.187.2024.09.30.07.00.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:00:51 -0700 (PDT)
-Date: Mon, 30 Sep 2024 17:00:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Walls <awalls@md.metrocast.net>,
-	Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andy Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>,
-	Olli Salonen <olli.salonen@iki.fi>,
-	Maxim Levitsky <maximlevitsky@gmail.com>,
-	Sean Young <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>,
-	Abylay Ospan <aospan@netup.ru>, Jemma Denson <jdenson@gmail.com>,
-	Patrick Boettcher <patrick.boettcher@posteo.de>,
-	Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>,
-	Michal Simek <michal.simek@amd.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Eddie James <eajames@linux.ibm.com>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Tim Harvey <tharvey@gateworks.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Jacopo Mondi <jacopo+renesas@jmondi.org>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, openbmc@lists.ozlabs.org,
-	linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH 00/45] media: Use string_choice helpers
-Message-ID: <f04f0057-626b-471f-b0a4-56ba30dbf8cf@stanley.mountain>
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
- <20240930122157.GF31662@pendragon.ideasonboard.com>
- <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
- <7D358236-19F8-4F94-89A0-F379F193971F@md.metrocast.net>
+	s=arc-20240116; t=1727704920; c=relaxed/simple;
+	bh=G6LzdqOokS23LP1VY338tGcBvZCN/ylAvCaZppvKVcg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ruPt9uIDyA5y+kM0cD90g0rJSX1qFY8A7n9YEkzt++aAz13PjISw8K+UI/jg/5lZM7gNCb7TzEOTEFGvY2F/IcwMhCynK88emV7k3F3Pev0F+N0dBAEQkqTK4bXKTqR2oCb+T4FNoDLsOnuhn/CAIfLqzATyGUShiRViUo8zR3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3ho+n9d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eEO/mOn/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p3ho+n9d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eEO/mOn/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ABFDA21A64;
+	Mon, 30 Sep 2024 14:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727704916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=p3ho+n9d13D5Br2KKpvA3EE7+DtUE9NO+R0DafHbl4xW1Al59cC8ZqBiPsBw5R4sZWS/yn
+	Q3Jx+mT6tG3XMQPOEmXjmSxPSe7O0tj6s7c0NIih5b+QprdlxOl35mdU+aVMRlHrk0RmZI
+	RaH0+GzznvF3ShIUKvu5W0tx+MiQwYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727704916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=eEO/mOn/QlUxT7GsQu87oQRKNZ9XwiDI9OjzZ40nZhhaQknq4oiDvPmyAa1LEvCLvAi9V4
+	WUmFj9dP1aeqSyAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=p3ho+n9d;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="eEO/mOn/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727704916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=p3ho+n9d13D5Br2KKpvA3EE7+DtUE9NO+R0DafHbl4xW1Al59cC8ZqBiPsBw5R4sZWS/yn
+	Q3Jx+mT6tG3XMQPOEmXjmSxPSe7O0tj6s7c0NIih5b+QprdlxOl35mdU+aVMRlHrk0RmZI
+	RaH0+GzznvF3ShIUKvu5W0tx+MiQwYI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727704916;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JBtmLH9COnq4AhxoZndZCXmFIPw/Tb/FqVdz+ETVuio=;
+	b=eEO/mOn/QlUxT7GsQu87oQRKNZ9XwiDI9OjzZ40nZhhaQknq4oiDvPmyAa1LEvCLvAi9V4
+	WUmFj9dP1aeqSyAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7AC7D13A8B;
+	Mon, 30 Sep 2024 14:01:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AbmXHFSv+mYYCQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 30 Sep 2024 14:01:56 +0000
+Date: Mon, 30 Sep 2024 16:02:49 +0200
+Message-ID: <87ed51grxy.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	kernel-janitors@vger.kernel.org,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 04/35] ALSA: Reorganize kerneldoc parameter names
+In-Reply-To: <20240930112121.95324-5-Julia.Lawall@inria.fr>
+References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
+	<20240930112121.95324-5-Julia.Lawall@inria.fr>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7D358236-19F8-4F94-89A0-F379F193971F@md.metrocast.net>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: ABFDA21A64
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[inria.fr:email,suse.de:mid,suse.de:dkim];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Sep 30, 2024 at 08:57:44AM -0400, Andy Walls wrote:
-> No human being really code reviews sweeping editorial change like these thoroughly.
+On Mon, 30 Sep 2024 13:20:50 +0200,
+Julia Lawall wrote:
+> 
+> Reorganize kerneldoc parameter names to match the parameter
+> order in the function header.
+> 
+> Problems identified using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
-I wonder if there is some way to verify that people are actually running the
-Coccinelle script that they say they are without doing anything extra on the
-side.
+Applied now.  Thanks.
 
-I use a script to filter out mechanical changes.
 
-https://github.com/error27/rename_rev
-
-It's kind of a pain in the butt to review something like this.  The command
-would be something like:
-
-rename_rev.pl -e 's/(.*?,|^\W+)(.*) \? "enabled" : "disabled"/$1str_enabled_disabled($2)/' -e 's/(.*?,|^\W+)(.*) \? "enable" : "disable"/$1str_enable_disable($2)/' -e 's/(.*,|^\W+)(.*) \? "low" : "high"/$1str_low_high($2)/'  -e 's/(.*,|^\W+)(.*) \? "on" : "off"/$1str_on_off($2)/' -e 's/(.*,|^\W+)(.*) \? "true" : "false"/$1str_true_false($2)/'  -e 's/(.*,|^\W+)(.*) \? "high" : "low"/$1str_high_low($2)/' -e 's/(.*,|^\W+)(.*) \? "read" : "write"/$1str_read_write($2)/'
-
-For every email in the series there was another new str_foo_bar() function so
-the command line kept getting longer and longer.  It doesn't work perfectly, but
-it's often good enough so I can spot the interesting bits.
-
-regards,
-dan carpenter
-
+Takashi
 
