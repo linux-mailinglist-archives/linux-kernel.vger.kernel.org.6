@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-344131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3B098A4DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:27:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E6298A566
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065BF1F214B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E66B1F246B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85C118FDBE;
-	Mon, 30 Sep 2024 13:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D0E18F2CF;
+	Mon, 30 Sep 2024 13:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dXFfvD0p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GBhyRlDn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CD6189902;
-	Mon, 30 Sep 2024 13:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9794318DF80
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702736; cv=none; b=IN5NwwZiIEUZECD30iagT6nlW22oamE2zNl5byG2XHTbJaJxSh3YlubAS5b9kt3uXDsu/mrAcIwoCUq3p6zP5zkL+b2uZe5Bc1url/Qj9TIMN9KfQCaM9RXEIdSez2l/kmRWCEhkGQgG4FTH+jSWthV4BfUFHSehaTKUJIHfKG0=
+	t=1727703305; cv=none; b=EzJaogEZB236mrJRRiU8ktLJe4R+NHIYQkjdEVi4ogFS/5k4t0hPlGLhSsAANVrNVMyTc2ob0UP2Y2pOR+FOrGiP9EJFPnpaOf3UZ1i58HsYW4Upxb31qYqvxOv2spVZxPKp+zO5t2Ww2BrZeMN3Y+CcyUt1ZZWbp7Mz7vhpmvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702736; c=relaxed/simple;
-	bh=rKeduMaBcHPLE6uLEyj4xQk5w+Q6ZbXl7XazbceKx6A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OlWSpjDRsg5Bw7hbJdsMXiGN+qsyWS9YLyvQBaNuUZ8Duvx6PUPI2QMBoFiBoPJ3xaWwpEUtVm5V3kzb5f4/PehUQgMIuznzx1qe/wsPxXVCRsIpMzVP+USPCKcz/fv21ckkXbAoXy/finVeMbT1+L0b6OavHQS4CmYYJ1NZMAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=dXFfvD0p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF3DC4CEC7;
-	Mon, 30 Sep 2024 13:25:27 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="dXFfvD0p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727702725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rKeduMaBcHPLE6uLEyj4xQk5w+Q6ZbXl7XazbceKx6A=;
-	b=dXFfvD0pzN/lc7Zyj6rLMq0x6DKjxy8OqAHBqn+qtJ43zHTATycrbS7rm22ctRbL6iikVl
-	TLAfIbXZbAkzbjmGL6uqyArqHOVwHEojNYXu45w+flpm8qXh+olQ+0Gr67gAA0PGRcLnK4
-	2Z6x5IK2u713cESvl9/DEH8CaEz3se8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c2513a7e (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 30 Sep 2024 13:25:25 +0000 (UTC)
-Date: Mon, 30 Sep 2024 15:25:17 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Eric Biggers <ebiggers@kernel.org>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Hannes Reinecke <hare@suse.de>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: Re: [PATCH v3 00/19] random: Resolve circular include dependency and
- include <linux/percpu.h>
-Message-ID: <ZvqmvZ2wopxPwYZt@zx2c4.com>
-References: <20240930123702.803617-1-ubizjak@gmail.com>
+	s=arc-20240116; t=1727703305; c=relaxed/simple;
+	bh=BiM2OmFLeUoR9r/EG0fb8PW9Wr23AnlatA3LWDsWNFI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gcAljb9838VaxFZ/IMtEsv7LlQsQYt48wDejL3xDPrTrCk/pYfKeVghWfODiwycDNZrHRzoGtWPFUP4Ot0bgjwg78uLQ8Yg/TzY/a2A3AmQ5g2lKhddXbSF2vTyT7FclS4JeLuWxE8/DdLVzgeGC4cK9Giv30SDkZbI5sLfxv+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GBhyRlDn; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727703304; x=1759239304;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BiM2OmFLeUoR9r/EG0fb8PW9Wr23AnlatA3LWDsWNFI=;
+  b=GBhyRlDnJ1eg7AOBRmVZMFhJltlQX7pMSK+v7WCAV6q42/LexrHaTrFQ
+   53KeuE+KN8jNxz5slorCFiX30c3ZD9utrf0aUuEj427+idPjs07uG+9eL
+   MqLVWm/5P9N5QvOJVcw52e9oX5Znb2JR5+iY459acdTmAw7IKZKGPtW7S
+   RAwHHAkAUz9SshYt+7XTioHsoWqg/gE272cXtJpTP8Ly31Szw08BfTPU1
+   wamVkhrMgo80m6xR5DZXTyXgib1OJwauNNkO/a4KP6dBLeS0dlOQKZlL/
+   UX6cJVgJ7uwNbETdWk803auuRgTkvsZTZcHS62qqNvw2uP3eDZ8jtZgVZ
+   Q==;
+X-CSE-ConnectionGUID: 2e3JZxbES+KRIZk962iTkA==
+X-CSE-MsgGUID: 5Obh7h05Teq2PI0Q1JtZjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26914931"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26914931"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:34:59 -0700
+X-CSE-ConnectionGUID: ifpph7yzQJONU1YfLdPsZA==
+X-CSE-MsgGUID: psEhO+49QUaT9nRUds31sA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="72980632"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2024 06:34:57 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id DC022321; Mon, 30 Sep 2024 16:34:55 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Robin van der Gracht <robin@protonic.nl>,
+	Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v1 1/1] auxdisplay: ht16k33: Make use of i2c_get_match_data()
+Date: Mon, 30 Sep 2024 16:26:42 +0300
+Message-ID: <20240930133453.3403318-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240930123702.803617-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Uros,
+Get matching data in one step by switching to use i2c_get_match_data().
+As a positive side effect the I²C ID table is in sync of OF one.
 
-Per your plan, I took this into random.git, and we'll now see if being
-in next unearths some problems over the next week or two.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-Jason
+I believe this is correct update. And here is why.
+
+1) The documentation of the I2C user space device instantiation does not
+mention a compatible string. it relies on the term 'name', which I believe
+has direct link to the field .name in the struct i2c_device_id.
+
+2) The above mentioned documentation says explicitly when user space
+instantiation should be used. And for this driver it seems the only last
+piece might be the case, i.e. prototyping / DIY configuration. For this
+we don't need to rely on vendor ID anyway as in new supported hardware
+the DT/ACPI emumeration is assumed.
+
+3) Moreover, the currently used i2c_of_match_device() seems never be
+considered to be used outside of i2c subsystem. Note, that it's being
+used for device matching and probe, meaning firmware tables and board
+info.
+
+Also note, that the other (yes, it's ONLY 2 drivers call this API)
+user of that API is going to be updated as well. Taking 3) into account
+I think soon we remove that API from bein exported to the modules.
+
+ drivers/auxdisplay/ht16k33.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/auxdisplay/ht16k33.c b/drivers/auxdisplay/ht16k33.c
+index b00012a556fb..96ad9e972bd7 100644
+--- a/drivers/auxdisplay/ht16k33.c
++++ b/drivers/auxdisplay/ht16bf3a36c62fd8k33.c
+@@ -657,7 +657,6 @@ static int ht16k33_seg_probe(struct device *dev, struct ht16k33_priv *priv,
+ static int ht16k33_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+-	const struct of_device_id *id;
+ 	struct ht16k33_priv *priv;
+ 	uint32_t dft_brightness;
+ 	int err;
+@@ -672,9 +671,8 @@ static int ht16k33_probe(struct i2c_client *client)
+ 		return -ENOMEM;
+ 
+ 	priv->client = client;
+-	id = i2c_of_match_device(dev->driver->of_match_table, client);
+-	if (id)
+-		priv->type = (uintptr_t)id->data;
++	priv->type = (uintptr_t)i2c_get_match_data(client);
++
+ 	i2c_set_clientdata(client, priv);
+ 
+ 	err = ht16k33_initialize(priv);
+@@ -747,7 +745,9 @@ static void ht16k33_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id ht16k33_i2c_match[] = {
+-	{ "ht16k33" },
++	{ "3108", DISP_QUAD_7SEG },
++	{ "3130", DISP_QUAD_14SEG },
++	{ "ht16k33", DISP_MATRIX },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, ht16k33_i2c_match);
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
