@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-343321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4E1989994
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2096798999A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B14301C211E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:44:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0F5E283021
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B57E4D8BC;
-	Mon, 30 Sep 2024 03:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D35C4F8BB;
+	Mon, 30 Sep 2024 03:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ozGwaJTN"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EDABE57;
-	Mon, 30 Sep 2024 03:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIWkq1ZU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA751878;
+	Mon, 30 Sep 2024 03:46:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727667886; cv=none; b=HRZwFsc4UHfIGmkSAybm8YcKHHxmuoSW6eKMWq4CyoidnbruRYISYa1eRKThI3KuMT/DIt4grnngLLigmSn6Bt8BrofgUDZxNqQYedVD8JK31sXqRztZTykIyN4yzAn+R9g+ApyvpE3cfysJLS+oQVSYb1kpW/+/pqMARrh7cZk=
+	t=1727668001; cv=none; b=MBQBIvzf6fB7NW4oXDgQ38HtFJTwr8h5jvKDVrWkCa8UT9pqg1TosOWodVx08UrsBwWOOCPbpFihfB8g6zFZl2VeUE1cTYjI0vnqZugeIyT4IZ+VU4az6iIQKqGwHUSkG0yh3RGAm0BlwK+wk2abVBhpmPqQqhRmTFTIG6ruUSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727667886; c=relaxed/simple;
-	bh=WUanhzUipgf9Xx58h9HGW7RxWIfMBupKERxcEE3dxn8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=qHCGuyp3w2NA3SmuEl6QNclAbImzm8SGK1DWPoIMXRa7Lm38NVH9hnY2vpHMDptXzk9jnoT9/ARBA+HxJWiQjy0Bh8Kf6NYGWYEZjuwOR/apoWxhHh6K1oOXCZrpVtbzODLUzdtdR8Q50ALQHRRpz3wXvB9rOrqllRF0b6wQiKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ozGwaJTN; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1134)
-	id 4068020C8BCA; Sun, 29 Sep 2024 20:44:38 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4068020C8BCA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1727667878;
-	bh=nTZTPPBLPVY/ck3Jvqe99y3y3QEEBrVsRAXs8TQJSF0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ozGwaJTNm/G+K4u7j3R+vd6UKIgdoGL0ATTFWoJvGDEe85cvg7A5b/4LEKjwnlxud
-	 liEpGJI0I1jY9rzIzJzzrBwIFvShvduMzaNQanQ6GGOTD6HLJ9EGD9OWuBCOf5kqvc
-	 4cQzSWROlPSMO+TEIXi4oY6P9VyMmZ79GXzwjZdU=
-From: Shradha Gupta <shradhagupta@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Cc: Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Long Li <longli@microsoft.com>,
-	Simon Horman <horms@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Shradha Gupta <shradhagupta@microsoft.com>
-Subject: [PATCH net-next RESEND] net: mana: Increase the DEF_RX_BUFFERS_PER_QUEUE to 1024
-Date: Sun, 29 Sep 2024 20:44:35 -0700
-Message-Id: <1727667875-29908-1-git-send-email-shradhagupta@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1727668001; c=relaxed/simple;
+	bh=3ZRQb9frZrN0U2tLqZABd0zVgfSMsnleCdXyG8mS+KE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhS01NF86MJGEhaRbK3mUB5iu4stczBEbd0dv69ZD6Pdd2zI1lFmr/Rays2Vm+QQ39Tz9/+nCXgV/apCBkp/uSXrQDbuHaENJ16wCULMaJzvHZFbEjDoSR4a53QThqq350dMlazzm2FQnr+3xZ1GPopdEJO2kBKnYizq5TAijsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIWkq1ZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDCAC4CEC4;
+	Mon, 30 Sep 2024 03:46:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727668000;
+	bh=3ZRQb9frZrN0U2tLqZABd0zVgfSMsnleCdXyG8mS+KE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SIWkq1ZUBe2fdkk+pYKC8athvpuJSOisu9in60smfN355pj3z6/O6qvR+CXJGz/0f
+	 lhp6yECMYO7TDKRLNV9hK9nwn0i63aC6xaqQnkEUMc6R8hoUmXAMtjm4qbORfC8k+X
+	 8DAduYsPQ57h59sWO/Ve5Jhjob+BCdUQc9m7Uc7MeSysREJZmrP+3USHp4HBIY28E4
+	 NFrNEypnmQbNU3DVqdBJiTBe9o6hxOoRFG1k5YOLUaz0W1VVHn6HxJl5nXOAwnYSUI
+	 c8hX9Aqzz+RU6hPdQU9LYCjuG1jra+1e/nx7lJ9xbTRay132Nrk7Z91lgNr9lU9N5l
+	 Z5MTkkt4WYLuQ==
+Date: Sun, 29 Sep 2024 22:46:37 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andi.shyti@kernel.org, 
+	linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, conor+dt@kernel.org, agross@kernel.org, 
+	devicetree@vger.kernel.org, vkoul@kernel.org, linux@treblig.org, dan.carpenter@linaro.org, 
+	Frank.Li@nxp.com, konradybcio@kernel.org, bryan.odonoghue@linaro.org, 
+	krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+Message-ID: <lmo4jylfwt3wingdqb6zc6ew2537kqksuckfyd7vwuu4ufg5cr@ic2j7bv2r6e4>
+References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+ <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
 
-Through some experiments, we found out that increasing the default
-RX buffers count from 512 to 1024, gives slightly better throughput
-and significantly reduces the no_wqe_rx errs on the receiver side.
-Along with these, other parameters like cpu usage, retrans seg etc
-also show some improvement with 1024 value.
+On Fri, Sep 27, 2024 at 12:01:08PM GMT, Mukesh Kumar Savaliya wrote:
+> Add support to share I2C SE by two Subsystems in a mutually exclusive way.
+> Use "qcom,shared-se" flag in a particular i2c instance node if the usecase
+> requires i2c controller to be shared.
+> 
 
-Following are some snippets from the experiments
+Please start your commit message by describing the problem your patch
+is solving.
 
-ntttcp tests with 512 Rx buffers
----------------------------------------
-connections|  throughput|  no_wqe errs|
----------------------------------------
-1          |  40.93Gbps | 123,211     |
-16         | 180.15Gbps | 190,120     |
-128        | 180.20Gbps | 173,508     |
-256        | 180.27Gbps | 189,884     |
+> Sharing of SE(Serial engine) is possible only for GSI mode as each
+> subsystem(SS) can queue transfers over its own GPII Channel. For non GSI
+> mode, we should force disable this feature even if set by user from DT by
+> mistake.
+> 
+> I2C driver just need to mark first_msg and last_msg flag to help indicate
+> GPI driver to take lock and unlock TRE there by protecting from concurrent
+> access from other EE or Subsystem.
+> 
+> gpi_create_i2c_tre() function at gpi.c will take care of adding Lock and
+> Unlock TRE for the respective transfer operations.
+> 
+> Since the GPIOs are also shared between two SS, do not unconfigure them
+> during runtime suspend. This will allow other SS to continue to transfer
+> the data without any disturbance over the IO lines.
+> 
 
-ntttcp tests with 1024 Rx buffers
----------------------------------------
-connections|  throughput|  no_wqe errs|
----------------------------------------
-1          |  44.22Gbps | 19,864      |
-16         | 180.19Gbps | 4,430       |
-128        | 180.21Gbps | 2,560       |
-256        | 180.29Gbps | 1,529       |
+This last paragraph describes patch 3, right?
 
-So, increasing the default RX buffers per queue count to 1024
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> ---
+>  drivers/i2c/busses/i2c-qcom-geni.c | 24 ++++++++++++++++++++----
+>  1 file changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index 212336f724a6..479fa8e1c33f 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>  
+>  #include <linux/acpi.h>
+>  #include <linux/clk.h>
+> @@ -602,6 +603,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  	peripheral.clk_div = itr->clk_div;
+>  	peripheral.set_config = 1;
+>  	peripheral.multi_msg = false;
+> +	peripheral.shared_se = gi2c->se.shared_geni_se;
+>  
+>  	for (i = 0; i < num; i++) {
+>  		gi2c->cur = &msgs[i];
+> @@ -612,6 +614,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  		if (i < num - 1)
+>  			peripheral.stretch = 1;
+>  
+> +		peripheral.first_msg = (i == 0);
+> +		peripheral.last_msg = (i == num - 1);
 
-Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- include/net/mana/mana.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+There are multiple error paths in this loop, which would result in us
+never issuing the unlock TRE - effectively blocking other subsystems
+from accessing the serial engine until we perform our next access
+(assuming that APSS issuing a lock TRE when APSS already has the channel
+locked isn't a problem?)
 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index f2a5200d8a0f..9b0faa24b758 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -43,7 +43,7 @@ enum TRI_STATE {
-  * size beyond this value gets rejected by __alloc_page() call.
-  */
- #define MAX_RX_BUFFERS_PER_QUEUE 8192
--#define DEF_RX_BUFFERS_PER_QUEUE 512
-+#define DEF_RX_BUFFERS_PER_QUEUE 1024
- #define MIN_RX_BUFFERS_PER_QUEUE 128
- 
- /* This max value for TX buffers is derived as the maximum allocatable
--- 
-2.34.1
+>  		peripheral.addr = msgs[i].addr;
+>  
+>  		ret =  geni_i2c_gpi(gi2c, &msgs[i], &config,
+> @@ -631,8 +635,11 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+>  		dma_async_issue_pending(gi2c->tx_c);
+>  
+>  		time_left = wait_for_completion_timeout(&gi2c->done, XFER_TIMEOUT);
+> -		if (!time_left)
+> +		if (!time_left) {
+> +			dev_dbg(gi2c->se.dev, "I2C timeout gpi flags:%d addr:0x%x\n",
+> +						gi2c->cur->flags, gi2c->cur->addr);
 
+This looks useful, but unrelated to this patch.
+
+>  			gi2c->err = -ETIMEDOUT;
+> +		}
+>  
+>  		if (gi2c->err) {
+>  			ret = gi2c->err;
+> @@ -800,6 +807,11 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  		gi2c->clk_freq_out = KHZ(100);
+>  	}
+>  
+> +	if (of_property_read_bool(pdev->dev.of_node, "qcom,shared-se")) {
+> +		gi2c->se.shared_geni_se = true;
+
+	gi2c->se.shared_geni_se = of_property_read_bool(dev->of_node, "qcom,shared-se");
+
+> +		dev_dbg(&pdev->dev, "I2C is shared between subsystems\n");
+> +	}
+> +
+>  	if (has_acpi_companion(dev))
+>  		ACPI_COMPANION_SET(&gi2c->adap.dev, ACPI_COMPANION(dev));
+>  
+> @@ -870,8 +882,10 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  	else
+>  		fifo_disable = readl_relaxed(gi2c->se.base + GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
+>  
+> -	if (fifo_disable) {
+> -		/* FIFO is disabled, so we can only use GPI DMA */
+> +	if (fifo_disable || gi2c->se.shared_geni_se) {
+> +		/* FIFO is disabled, so we can only use GPI DMA.
+> +		 * SE can be shared in GSI mode between subsystems, each SS owns a GPII.
+> +		 **/
+
+I think you're trying to document why we're entering the "GPI-only"
+branch. The addition you made was that if the user has requested
+"shared-se", then it's GPI-only.
+
+But I'm not able to wrap my head around your addition here. Why does it
+matter that each subsystem own a GPII? Is that a reason for choosing
+GPI-only mode?
+
+>  		gi2c->gpi_mode = true;
+>  		ret = setup_gpi_dma(gi2c);
+>  		if (ret) {
+> @@ -883,6 +897,9 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>  		dev_dbg(dev, "Using GPI DMA mode for I2C\n");
+>  	} else {
+>  		gi2c->gpi_mode = false;
+> +
+> +		/* Force disable shared SE case for non GSI mode */
+
+GSI or GPI mode?
+
+> +		gi2c->se.shared_geni_se = false;
+
+If shared_geni_se was true prior to this assignment, wouldn't we have
+entered the if (fifo_disable ...) branch?
+
+>  		tx_depth = geni_se_get_tx_fifo_depth(&gi2c->se);
+>  
+>  		/* I2C Master Hub Serial Elements doesn't have the HW_PARAM_0 register */
+> @@ -964,7 +981,6 @@ static int __maybe_unused geni_i2c_runtime_suspend(struct device *dev)
+>  	if (ret) {
+>  		enable_irq(gi2c->irq);
+>  		return ret;
+> -
+
+Please avoid such unrelated cleanups.
+
+Regards,
+Bjorn
+
+>  	} else {
+>  		gi2c->suspended = 1;
+>  	}
+> -- 
+> 2.25.1
+> 
 
