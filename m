@@ -1,224 +1,304 @@
-Return-Path: <linux-kernel+bounces-343807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 227F3989FC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 041E7989FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0191F20F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8642F1F22663
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3CC18CBF7;
-	Mon, 30 Sep 2024 10:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570C118CBEF;
+	Mon, 30 Sep 2024 10:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5feyn7w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qTmxBEg6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b6b+0by9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qTmxBEg6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="b6b+0by9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404818BB9E;
-	Mon, 30 Sep 2024 10:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C6218BB9E;
+	Mon, 30 Sep 2024 10:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693408; cv=none; b=dCDh32x3yj3vSDv4e5fFbNZVnW7Xu72aR19m3yWLd388AZBbuSkfBgCW377foWoNbzqsuWYHgxcFPkn7mjoZ0tSjEhPRlybN9zoErj9M1fMSGObqj++CtCq9x5AE0CXk8pnG0eOdj83xnl2d2FUOZ1Ptd7Nyg5S6xAIIaRhqtlE=
+	t=1727693354; cv=none; b=GWazwT4+vDkrmZZUkPy05m/FSzCY2NaZQfui/d1C2nLqiqqfzx0ugbfdaDd014dzPP9TRjxx5lSVMssZ4kf+m9NEz/pQf+4wEDrfmUqIZBuv/uRppSMbt+a9M2LFFlm0FjP77VRPFbu6sxDSfcUbm79PsFPBLqeQATYW8yREO3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693408; c=relaxed/simple;
-	bh=JuK/F2G0f9reVtS1XFQCexpKDja04762L2xBEQufO/w=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E1xBGr3GqmSDWvkR1pYj+SvUmK+neK6P9MT08Zezdy1UR0iJChhVjfqFP3bIQV86srSQK8V/zkeVZkkt7eVOxtdbMP2Wx+k25OyRNkWSt8aUr5pRWl2FA1jJ1xPNORu/YEgLQi7AXEKLixpYN7/cpZJqut3//nf4X/iEFTmp++s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5feyn7w; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727693407; x=1759229407;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=JuK/F2G0f9reVtS1XFQCexpKDja04762L2xBEQufO/w=;
-  b=h5feyn7wd9QKB7mT6OTh4TS+O5I/jC62ETJcwA1irKeWpdNT4gTj4+iP
-   m8qFLc6+30P3t1T2STA3EiEW3hAYdPD/KlPt1yM6UzyD6s6vCBEWD/co1
-   PotFrNenFC/Y3heGs3+MM/t7Er/2L8pf4z20fQeI9r4HQPuYf/acOV2iq
-   AYa/fCqLqOMJwehkel7bO3Ss6wz8vrv9rLEOIyFGHFUfuLqSQovqFJSAd
-   EXDWJRVEEbp3xI3L5W8HV5OgCK4e6D8fUhksOHC+KjzJDC3yvUMomqVMH
-   naVbuU9EZSe3EWSksAADS/sUYyXemsCDTfFi5oiIqsJBHGDRRT00Rwmng
-   w==;
-X-CSE-ConnectionGUID: 89CrAwmwT8qfwrmlH158Qw==
-X-CSE-MsgGUID: 6YesXnfLRICORtv6b0DCrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26283030"
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="26283030"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 03:50:06 -0700
-X-CSE-ConnectionGUID: VDux0oGzSsKF2yBuQDaxKA==
-X-CSE-MsgGUID: yZI44t+VTAS51i+sg4YOXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
-   d="scan'208";a="110743950"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 03:50:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 30 Sep 2024 13:49:59 +0300 (EEST)
-To: Jian-Hong Pan <jhp@endlessos.org>
-cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
-    David Box <david.e.box@linux.intel.com>, 
-    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-    Nirmal Patel <nirmal.patel@linux.intel.com>, 
-    Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
-Subject: Re: [PATCH v11 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
- both child and parent's L1SS configuration
-In-Reply-To: <20240930084953.13454-2-jhp@endlessos.org>
-Message-ID: <828d2fc0-e594-ad3e-b653-2c0acc1223b3@linux.intel.com>
-References: <20240930082530.12839-2-jhp@endlessos.org> <20240930084953.13454-2-jhp@endlessos.org>
+	s=arc-20240116; t=1727693354; c=relaxed/simple;
+	bh=FhlGhBiu1endbj4ATv2BZikqkhkOKulNPUKxXrSSLFg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PDGRoNW5Hc+d5vjc7WgxLHM7y6lkqva+CDml+GNHYEkP2qN+VFHuN3o0ZKAhmSaM5x+hTtHKaWrPNio+2vGYn9JW+6NVK5QJLqUCkXA8W/YpYKTg+qchN5ZWIid49TVxZUGAuOUPr+vZDWLcW/VOLnDQC/vIECpst/yljsTdLHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qTmxBEg6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b6b+0by9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qTmxBEg6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=b6b+0by9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DC12E1F7FC;
+	Mon, 30 Sep 2024 10:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727693350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FoYkvambTs+GOnmiclqfZWv/9RYyTntP9l8SSeJfySk=;
+	b=qTmxBEg6loCdKbDUtzuWPqKsy3N4B6YauShoL5f/MU+TPNsLLoswt0ZqJrbPKaUu9qEkwo
+	0B83zic+siZ/5PRvQbawUvoB/58O99QjmNN7f8naYeHIMey7Gw8HP2wUw0MZuFnGlYQ/FA
+	/99E1KHkF14mABAFluLHwjKZh+0l2wk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727693350;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FoYkvambTs+GOnmiclqfZWv/9RYyTntP9l8SSeJfySk=;
+	b=b6b+0by9z47bNAvdCk2Yl64zTlVm6SSr13Rz1/aAVjcoQRbPaqOwrdsrkFiut/4wVQPOsh
+	t+9IOSX72Edvn1AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727693350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FoYkvambTs+GOnmiclqfZWv/9RYyTntP9l8SSeJfySk=;
+	b=qTmxBEg6loCdKbDUtzuWPqKsy3N4B6YauShoL5f/MU+TPNsLLoswt0ZqJrbPKaUu9qEkwo
+	0B83zic+siZ/5PRvQbawUvoB/58O99QjmNN7f8naYeHIMey7Gw8HP2wUw0MZuFnGlYQ/FA
+	/99E1KHkF14mABAFluLHwjKZh+0l2wk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727693350;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FoYkvambTs+GOnmiclqfZWv/9RYyTntP9l8SSeJfySk=;
+	b=b6b+0by9z47bNAvdCk2Yl64zTlVm6SSr13Rz1/aAVjcoQRbPaqOwrdsrkFiut/4wVQPOsh
+	t+9IOSX72Edvn1AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5E68713A8B;
+	Mon, 30 Sep 2024 10:49:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Xa5WFSaC+mb8RwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 30 Sep 2024 10:49:10 +0000
+Date: Mon, 30 Sep 2024 12:50:03 +0200
+Message-ID: <877catiffo.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Maxim Mikityanskiy <maxtram95@gmail.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Chaitanya Kumar Borah <chaitanya.kumar.borah@intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Sui Jingfeng <suijingfeng@loongson.cn>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Peter Wu <peter@lekensteyn.nl>,
+	Lukas Wunner <lukas@wunner.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: intel: Fix Optimus when GPU has no sound
+In-Reply-To: <ZvpTRLxSkcqn03Fk@mail.gmail.com>
+References: <20240904203955.245085-1-maxtram95@gmail.com>
+	<871q1ygov9.wl-tiwai@suse.de>
+	<ZttEUjeYFzdznYKM@mail.gmail.com>
+	<87wmjndbha.wl-tiwai@suse.de>
+	<ZtxZBUjlF8TeIUKC@mail.gmail.com>
+	<87jzfncvm0.wl-tiwai@suse.de>
+	<ZtyMWSA0bg1SjFSU@mail.gmail.com>
+	<87ed5vcp23.wl-tiwai@suse.de>
+	<Zu5_faxUwoIl09fW@mail.gmail.com>
+	<87msjpk5el.wl-tiwai@suse.de>
+	<ZvpTRLxSkcqn03Fk@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-2081136472-1727693399=:938"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.de,perex.cz,suse.com,linux.intel.com,intel.com,gmail.com,loongson.cn,google.com,lekensteyn.nl,wunner.de,vger.kernel.org];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 30 Sep 2024 09:29:08 +0200,
+Maxim Mikityanskiy wrote:
+> 
+> On Mon, 30 Sep 2024 at 08:43:46 +0200, Takashi Iwai wrote:
+> > On Sat, 21 Sep 2024 10:10:37 +0200,
+> > Maxim Mikityanskiy wrote:
+> > > 
+> > > On Sat, 07 Sep 2024 at 20:10:44 +0200, Takashi Iwai wrote:
+> > > > On Sat, 07 Sep 2024 19:24:41 +0200,
+> > > > Maxim Mikityanskiy wrote:
+> > > > > 
+> > > > > On Sat, 07 Sep 2024 at 17:49:11 +0200, Takashi Iwai wrote:
+> > > > > > On Sat, 07 Sep 2024 15:45:41 +0200,
+> > > > > > Maxim Mikityanskiy wrote:
+> > > > > > > 
+> > > > > > > On Sat, 07 Sep 2024 at 12:06:25 +0200, Takashi Iwai wrote:
+> > > > > > > > On Fri, 06 Sep 2024 20:05:06 +0200,
+> > > > > > > > Maxim Mikityanskiy wrote:
+> > > > > > > > > 
+> > > > > > > > > On Thu, 05 Sep 2024 at 16:24:26 +0200, Takashi Iwai wrote:
+> > > > > > > > > > On Wed, 04 Sep 2024 22:39:55 +0200,
+> > > > > > > > > > Maxim Mikityanskiy wrote:
+> > > > > > > > > > > 
+> > > > > > > > > > > Lenovo IdeaPad Z570 with NVIDIA GeForce Ge 520M doesn't have sound on
+> > > > > > > > > 
+> > > > > > > > > Spotted a typo: s/520M/540M/
+> > > > > > > > > 
+> > > > > > > > > > > the discrete GPU. snd_hda_intel probes the device and schedules
+> > > > > > > > > > > azx_probe_continue(), which fails at azx_first_init(). The driver ends
+> > > > > > > > > > > up probed, but calls azx_free() and stops the chip. However, from the
+> > > > > > > > > > > runtime PM point of view, the device remains active, because the PCI
+> > > > > > > > > > > subsystem makes it active on probe, and it's still bound. It prevents
+> > > > > > > > > > > vga_switcheroo from turning off the DGPU (pci_create_device_link() syncs
+> > > > > > > > > > > power management for the video and audio devices).
+> > > > > > > > > > > 
+> > > > > > > > > > > Fix it by forcing the device to the suspended state in azx_free().
+> > > > > > > > > > > 
+> > > > > > > > > > > Fixes: 07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
+> > > > > > > > > > > Signed-off-by: Maxim Mikityanskiy <maxtram95@gmail.com>
+> > > > > > > > > > 
+> > > > > > > > > > What if this device probe is skipped (e.g. adding your device entry to
+> > > > > > > > > > driver_denylist[] in hda_intel.c)?  Is the device also in the
+> > > > > > > > > > runtime-suspended state?
+> > > > > > > > > 
+> > > > > > > > > I added the following:
+> > > > > > > > > 
+> > > > > > > > > { PCI_DEVICE_SUB(0x10de, 0x0bea, 0x0000, 0x0000) },
+> > > > > > > > > 
+> > > > > > > > > The probe was apparently skipped (the device is not attached to a
+> > > > > > > > > driver), runtime_status=suspended, runtime_usage=0, the GPU goes to
+> > > > > > > > > DynOff.
+> > > > > > > > 
+> > > > > > > > OK, that's good.
+> > > > > > > > 
+> > > > > > > > > However, I'm not sure whether it's a good idea to blacklist 540M
+> > > > > > > > > entirely, as there might be other laptops with this GPU that have sound,
+> > > > > > > > > and AFAIK there are variants of Lenovo Z570 with other NVIDIA GPUs.
+> > > > > > > > 
+> > > > > > > > You should specify the PCI SSID of your device instead of 0:0 in the
+> > > > > > > > above, so that it's picked up only for yours.
+> > > > > > > 
+> > > > > > > Where can I get it?
+> > > > > > > 
+> > > > > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_vendor
+> > > > > > > 0x0000
+> > > > > > > # cat /sys/bus/pci/devices/0000\:01\:00.1/subsystem_device
+> > > > > > > 0x0000
+> > > > > > 
+> > > > > > Ouch, Lenovo didn't set it right.
+> > > > > > Alternatively we may introduce a deny list based on DMI.  Hmm...
+> > > > > 
+> > > > > A DMI-based quirk sounds better than blocking any NVIDIA 540M, it would
+> > > > > also allow handling alternative GPUs on this laptop model.
+> > > > > 
+> > > > > But could you explain what's wrong with a generic approach that I
+> > > > > suggest (probe_continue failed => mark as suspended)? It doesn't require
+> > > > > any lists. Any drawbacks?
+> > > > 
+> > > > As you noticed, it will leave the device bound with driver, i.e. this
+> > > > looks as if it were operative.  It means that the sound driver is
+> > > > still responsible for suspend/resume or whatever action even though
+> > > > it's totally useless.  In that sense, it makes more sense to give it
+> > > > away at the early stage before actually binding it, and the deny list
+> > > > is exactly for that.
+> > > 
+> > > Thanks for your feedback!
+> > 
+> > Sorry for the late reply, as I've been off in the last weeks.
+> > 
+> > > Do you happen to know whether there is a way for a driver to unbind
+> > > itself after probe() returned success? I've never seen anything like
+> > > this, but it would be a perfect solution: no lists and no driver bound
+> > > after the delayed initialization fails.
+> > 
+> > I don't think it's possible for now (at least in a clean way).
+> > It should be a call of device_driver_detach(), but it's no exported
+> > API.
+> > 
+> > > > Apart from that, the suggested change itself can be applied
+> > > > independently from the deny list update, too.  It'd be good for other
+> > > > similar devices, too.
+> > > 
+> > > I was trying to avoid lists, because it's a maintainance nightmare (the
+> > > lists are never complete, there might be false positives, etc.), and
+> > > we'd need to add another type of a list for DMI quirks. Moreover, adding
+> > > both my change and a list entry has a drawback that similarly broken
+> > > devices will use different workaround code (i.e. less robust), and the
+> > > ones that use the generic fallback will never get on the list, because
+> > > no one will report it.
+> > > 
+> > > As a maintainer, what's your preferred approach?
+> > > 
+> > > 1. Unbind ourselves on failure in azx_probe_continue() (but I don't know
+> > > whether it's possible).
+> > 
+> > So it's no easy way.
+> > 
+> > > 2. Add a DMI deny list to hda_intel.
+> > > 
+> > > 3. Add a DMI check to quirk_nvidia_hda (i.e. don't enable a non-existent
+> > > HDA if it's not enabled by BIOS on this laptop model).
+> > 
+> > I'm afraid that it may break other systems; IIRC, the power up was
+> > needed explicitly even if it's disabled on BIOS.
+> 
+> I'm not suggesting full removal of quirk_nvidia_hda. If we add a DMI
+> check to disable quirk_nvidia_hda on this particular laptop model, it
+> can't break other systems, can it?
 
---8323328-2081136472-1727693399=:938
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Possibly, but if BIOS enables it, this quirk will just skip, no?
+My gut feeling is rather to leave it.  Who knows any side effect if we
+tweak there.  But, you can experiment it for judging whether it fits
+better, of course.
 
-On Mon, 30 Sep 2024, Jian-Hong Pan wrote:
+> Anyways, adding a DMI check to hda_intel or quirk_nvidia_hda seems the
+> same level of efforts, so I can proceed with the former. It's the same
+> power consumption either way, right?
 
-> PCI devices' parameters on the VMD bus have been programmed properly
-> originally. But, cleared after pci_reset_bus() and have not been restored
-> correctly. This leads the link's L1.2 between PCIe Root Port and child
-> device gets wrong configs.
->=20
-> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
-> bridge and NVMe device should have the same LTR1.2_Threshold value.
-> However, they are configured as different values in this case:
->=20
-> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processo=
-r PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
->   ...
->   Capabilities: [200 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Subst=
-ates+
->       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
->     L1SubCtl2: T_PwrOn=3D0us
->=20
-> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue=
- SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
->   ...
->   Capabilities: [900 v1] L1 PM Substates
->     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Subst=
-ates+
->       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
->     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
->       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
->     L1SubCtl2: T_PwrOn=3D50us
->=20
-> Here is VMD mapped PCI device tree:
->=20
-> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
->  | ...
->  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
->               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
->=20
-> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
-> restores NVMe's state before and after reset.
+I assume so, but you need to check in your side.
 
-> The bus [e1] has only one
-> NVMe device, so the NVMe's parent PCIe bridge is missed to be saved.
+> I'm also thinking of adding a module parameter to block probing of the
+> DGPU audio. Back in the days, there were plenty of similar Lenovo
+> laptops, which might also suffer from the same issue.
 
-This is still misleading because "only one NVMe device" is not the=20
-reason why the parent's state is not saved.
+That's an overkill.  We can apply a runtime-PM suspended change as
+your patch in addition to the deny list.  And this can give some info
+print to users to update the deny list, too.
 
-> However, when it restores the NVMe's state, ASPM code restores L1SS for
-> both the parent bridge and the NVMe in pci_restore_aspm_l1ss_state().
-> Although the NVMe's L1SS is restored correctly, the parent bridge's L1SS =
-is
-> restored with a wrong value 0x0. Because, the parent bridge's L1SS was no=
-t
 
-Again, please join these sentences.
+thanks,
 
-> saved by pci_save_aspm_l1ss_state() before reset.
->=20
-> So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
-> the parent's L1SS configuration, too. This is symmetric on
-> pci_restore_aspm_l1ss_state().
->=20
-> Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6Sd=
-S4eG9oGpEX1wmnMLkQ@mail.gmail.com/
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
-> Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspe=
-nd/resume")
-> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
-
-This tag should appear before signed-off-by.
-
-> ---
-> v9:
-> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
->=20
-> v10:
-> - Drop the v9 fix about drivers/pci/controller/vmd.c
-> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state(=
-)
->   and pci_restore_aspm_l1ss_state()
->=20
-> v11:
-> - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
->   which is same as the original pci_configure_aspm_l1ss
-> - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
->   both child and parent devices
-> - Smooth the commit message
->=20
->  drivers/pci/pcie/aspm.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-> index bd0a8a05647e..17cdf372f7e0 100644
-> --- a/drivers/pci/pcie/aspm.c
-> +++ b/drivers/pci/pcie/aspm.c
-> @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
->  =09=09=09ERR_PTR(rc));
->  }
-> =20
-> -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
->  {
->  =09struct pci_cap_saved_state *save_state;
->  =09u16 l1ss =3D pdev->l1ss;
-> @@ -101,6 +101,24 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
->  =09pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
->  }
-> =20
-> +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
-> +{
-> +=09struct pci_dev *parent;
-> +
-> +=09__pci_save_aspm_l1ss_state(pdev);
-> +
-> +=09/*
-> +=09 * To be symmetric on pci_restore_aspm_l1ss_state(), save parent's L1
-> +=09 * substate configuration, if the parent has not saved state.
-> +=09 */
-> +=09if (!pdev->bus || !pdev->bus->self)
-> +=09=09return;
-> +
-> +=09parent =3D pdev->bus->self;
-> +=09if (!parent->state_saved)
-> +=09=09__pci_save_aspm_l1ss_state(parent);
-> +}
-
-The code change looks good!
-
---=20
- i.
-
---8323328-2081136472-1727693399=:938--
+Takashi
 
