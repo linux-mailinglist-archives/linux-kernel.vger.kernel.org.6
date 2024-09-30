@@ -1,241 +1,112 @@
-Return-Path: <linux-kernel+bounces-344005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA8998A26A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:29:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464EC98A275
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433A91F20FE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9F191F2148F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CED118E047;
-	Mon, 30 Sep 2024 12:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3198118EFD8;
+	Mon, 30 Sep 2024 12:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="f5YOI577"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lL7cVKCN"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A6318E020
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4F818E74C;
+	Mon, 30 Sep 2024 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699329; cv=none; b=Dxg/dKD8JW9ZCu6/sXsYqEYgtpoKHTeJiiUwkngKcun5RC4kqkvekF8iASDyYmyPAszd7DIpY5+la7o8/yKTJ0Y9Qp/eSNBxAFKANi7P85FKfCl0bI6TS7Z9JpBO/C8v8+brA5rCzxf0BOfbwaNaFczdugVKpwzKgrSW/RGbpn4=
+	t=1727699453; cv=none; b=sOuzyyG49HD5IJvuFLFKbVP9pYSdspWFQQKehPFXdSGoT3tYfrUy7QGOMegQ8lznrpnEDBduyaMFUuykyXtKn6+miSZnK3Q0OtA3+txLPlk6ZIcwM4QFHj6OmpeAGsbv8iDubQA3YdzBBsFLF8z55G+4xsrRs4JlJz/flbiOHhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699329; c=relaxed/simple;
-	bh=Qs3Lx77ih1oGuQEQaE5Xr+rDDJ0+tfigyqRV7na0ym8=;
+	s=arc-20240116; t=1727699453; c=relaxed/simple;
+	bh=JHS1J2LCC4y1JvWfah/JnzV/iZbvXNQwG4RLNH7tV9s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IM3eDhW1xaJOkx2zyeGmbgOjC5eZ6M0rSnSc/i6+fNCWM1f2/NwUrQ9b752SoevhRbhWyUKbsWPdUBMP35v86QIup1xUQZf71ytRjhyyOXh77tiIyLA4u1eqSGfskoIn6Mx9Tvuk8Ezj+bG1LTwXSikhc74SVl6yjZ7/obSGIZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=f5YOI577; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 688C43F2E7
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:28:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727699324;
-	bh=ccmCiOQhZeUMRjWEGS0Si8fclp+XCrQMa0zBHhcdvp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=f5YOI577gZ6HZvksa/H/1/ASxUZEeZr4N8CgwRNQ/xiniLFdGdvwx3LbIY7GWBoyx
-	 olcRyVKyplpNrdkFdSbEhwOzgxdccXMoFYH4ZSqtnEAxiXn+U7OziLAmyOwWlDoh/3
-	 N5gtixddYSCKl1og5bHkY44PRLQOwBJq4/44Z8k5Qgz5dxQDP9aJfoHdk87mVoFB0t
-	 4sXLbPbhUy1LMl32LG4rXC7e9UJUgzYup7oOrYtBK9BCCvlgNIMlK5I3BfCcjfHvqH
-	 Qqz1879qVZ3GjGzUSXtFtnE5w3SYX/3NvUyDtqDGJO7KruTNoVCcc0WMvhu9K2LmIV
-	 cKaFrE56nWivg==
-Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-507874de4c5so554709e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:28:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=mgZOWLd7qM33KsTmE+47Ugt6CyqgPOl52POvfBOep8neemdxRHvS19hmfDFXLnlHFCpBmMAf3sTRPvr6IR4Vn3tdIvBhEmXOOuJeizlo01tBXT+/2rj1zteEXsMQlsWF5mD2zB+bHgpNdXlMfb8qyFet7QTJ3kQ5mOgAnHpZ3BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lL7cVKCN; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7db238d07b3so3640481a12.2;
+        Mon, 30 Sep 2024 05:30:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727699452; x=1728304252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JHS1J2LCC4y1JvWfah/JnzV/iZbvXNQwG4RLNH7tV9s=;
+        b=lL7cVKCN84+eGWaEtSjb8tKAXz6R4EtSyPktX+j4m41//++YrXQAXvYNov3gfCJ1cf
+         oRyXRiZT+MDpNwWx1g1oVDBTuR8efauvkUBS5U1hJEHOUI+mBz8SUI6vyNp2Ltpz52kj
+         RAYuORg6Z/LTmR4UJQzAHAuh+RCExbVFi8BHObgMHecHmLVZcD8CRClFChsJSAPZrMRa
+         1JNK1ebKR/5KofsPXIN/3IoUoX5jkaAgF6F47oAmaTsdv/pD4F9GVdosWOZ696t2fGah
+         57LptUv1BzpkWB2QaLonhW1ARThyneDFsVxO2G2/AyQQmzdEllU+edrEY53ykodjEYIV
+         Q0Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727699322; x=1728304122;
+        d=1e100.net; s=20230601; t=1727699452; x=1728304252;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ccmCiOQhZeUMRjWEGS0Si8fclp+XCrQMa0zBHhcdvp8=;
-        b=pqxdPLmGhsgVvLkiXu9UJ5yoUj+Fy9aNxucApHWX/K13Vjwt6IgETTijhtb5p1Zdyq
-         I3jT0MtK46x4KkK6fbHKJJ1MWit8GNishQCRzvV5KoOesJ3Vr5M16MLNmB8UJb+wkv+D
-         CIJy1cFyLqAmRVt56t59ubf76uk2nl7igYUCBTlMJyns+wW9RWB/ZaRa+I9V9C/VJnOR
-         fnYIiyObOsL3Qw+mc3sOhcp51hKZf50LYAS94aqibwN6huqSETqxPpIIJZEVzqQCWWp/
-         LUarJBH3Hbe4LDxlf14yBgIUGWliIcD56mPVAPkgAq47vewjEzD4HY2jiAT1SM051BBY
-         NGUw==
-X-Forwarded-Encrypted: i=1; AJvYcCXX0gWIXTr/rGyoiUGhmVR+lSkZY0Nkou1z7ZKoO9OoNn3GDpXA+J6eXUNGhZRrcHw5y3+d7Xk01Lwxu9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk5Irfuxv1yLKGpBbocyaaxVPnG86jSxylNX7Z3+ZVFLLL6Vk2
-	O8VQQcnGnBrYCrv4QQkZN6YfCxXn9YuN4CA0sNIO19x+MM9/zM3Xh3/da93XVwREDrbvH0L2Qk/
-	IczwlYer6c1xhcbo44YUuMHikkYVwogwOsW03rD8r5lRvvxUIAsRBPYmm43ttoZkmtAtfSa/TQL
-	RTKh12mNzT1g5RZ1ji4QQXknL7OUqcUVqy3F4oL+yX6Z4dVnh0IOov
-X-Received: by 2002:a05:6122:c9a:b0:50a:b7b5:30c6 with SMTP id 71dfb90a1353d-50ab7b5345dmr1653702e0c.8.1727699321588;
-        Mon, 30 Sep 2024 05:28:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9iHSL869qB63t3MhxKcid/7j2ONP/nctW+LPfFUOmGxo8rYFIokQ+0UJMT9guM5Zj73BaD99bYvbkHrBiTJA=
-X-Received: by 2002:a05:6122:c9a:b0:50a:b7b5:30c6 with SMTP id
- 71dfb90a1353d-50ab7b5345dmr1653680e0c.8.1727699321135; Mon, 30 Sep 2024
- 05:28:41 -0700 (PDT)
+        bh=JHS1J2LCC4y1JvWfah/JnzV/iZbvXNQwG4RLNH7tV9s=;
+        b=MJA4UElwCWRKigJSr6Tc/A5RMXaO/MjkEz+Q/z1UhchxGdpxZ/b/3g41z0pk/leBtU
+         JZv9bvI9zQfBjMb+8O8biVlVzFl5INlmetXKPj3k5GX1alFsbVFHsKKFWUsugU93jQX+
+         i7+/bw41OsqveEN1RTfSqE83uE/KzmLxnLSml2xzGpymfpwYzxxWu56HmqV2Qfqx66jZ
+         gEUR79GWGluhU9lF0R9LSR74vMi7l+dXfLkms3BktAooOl6SCY5YpJmzv7ihbCtoWUa8
+         7FRL6t/m3AtDRLbxHFnxLAvT2D+j8XcoG8qsB6f/1QNZctxqwiZ3GwhWNcAI0dIhBy2s
+         ARXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCpkI4/hMd6nRRIZv2QwSTTljEmCpiuk71svmjyAdxjVKtXYXwpHI9e0Zs9zQ783z6vWZf0T9uygjgjWC+@vger.kernel.org, AJvYcCVXQ6gtfhF/tBjeseGS+WMnGDUMF6C7yEcVIhNJJueNxhQQr/OPvDMt1+LG422m2wtBiMjxhiOFg5NTn/cECr8=@vger.kernel.org, AJvYcCVehKT/u43OgTR08t5jlq1yp3JVu5DrXebSPeFmAaJ7q3z3Hk2cvnj8NCPjU3mgwW8uLCcKnRDXatMXVq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH6tdDRegxRJNT6szjlO/gZJzfv0ZkNm/7YvzjHMdEHjUzlFfX
+	PR91hlxnEi4yHBm6lvCYgqghI0sDURPFiMc4HF5CyN/mhuXzrFuNQkKs9xTenpqy3fDtQ6W+xhM
+	DnZV1iYyefCr8poJxI/T0XxZt3CM=
+X-Google-Smtp-Source: AGHT+IHUatEutpRcdTkAANYnzh+h3ShdIBjwL9u2uMoKo5imHw2SUtanHSnopjgUdpJWKHsSxuP35P/ChAY2Ldo5lzw=
+X-Received: by 2002:a05:6a21:4d8a:b0:1cf:6ef0:c6b9 with SMTP id
+ adf61e73a8af0-1d4fa78b402mr17640884637.32.1727699451515; Mon, 30 Sep 2024
+ 05:30:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929182103.21882-1-aleksandr.mikhalitsyn@canonical.com> <20240929150147-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240929150147-mutt-send-email-mst@kernel.org>
-From: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date: Mon, 30 Sep 2024 14:28:30 +0200
-Message-ID: <CAEivzxcvokDUPWzj48aJX6a4RU_i+OdMOH=fyLQW+FObjKpZDQ@mail.gmail.com>
-Subject: Re: [PATCH v2] vhost/vsock: specify module version
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: stefanha@redhat.com, Stefano Garzarella <sgarzare@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	kvm@vger.kernel.org, virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <dbb63b5698aa507bbe3dec54b4458a3f151899d3.1727606659.git.hridesh699@gmail.com>
+ <bf6544faba2b53ce901b2e031f3d944babcc7018.1727606659.git.hridesh699@gmail.com>
+ <CALNs47vT=g2D7A_cDq_8F2xJRJTK-7KtQY4brFYfkopyCSjLTw@mail.gmail.com>
+ <67il2JOf-dSurc3O-294W5k5mS-kf1FtFxKzXlxHHykGmIvIkfPel_pPe2LGX04HSnTg85LwEdU4Zz2VCrfXgIl5KVItUm5vPhbtkThc3BM=@proton.me>
+ <CALiyAo=udy-P4ki1-_CAk7bHWfAjoioYEZ_ah+i6DJZ0MmmCQg@mail.gmail.com> <CANiq72nKBz1myZi5guA5uPCwwtUvjfF80dOx5saHvjMU-g6mpw@mail.gmail.com>
+In-Reply-To: <CANiq72nKBz1myZi5guA5uPCwwtUvjfF80dOx5saHvjMU-g6mpw@mail.gmail.com>
+From: Hridesh MG <hridesh699@gmail.com>
+Date: Mon, 30 Sep 2024 18:00:14 +0530
+Message-ID: <CALiyAokoDKLdZD5j-zjfheyQEz6Zy1bGyGhRFp-NmoKRGYUMmw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2 RESEND] checkpatch: warn on empty rust doc comments
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Patrick Miller <paddymills@proton.me>, Trevor Gross <tmgross@umich.edu>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, linux-newbie@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 29, 2024 at 9:03=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
+On Mon, Sep 30, 2024 at 4:14=E2=80=AFPM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+> The maintainers will usually figure it out (resolving the conflicts
+> when they apply them, applying them in the right order, etc.).
+> Otherwise, they can also ask for one of them to be resubmitted on top
+> of the other when it is too involved / subtle / large series.
 >
-> On Sun, Sep 29, 2024 at 08:21:03PM +0200, Alexander Mikhalitsyn wrote:
-> > Add an explicit MODULE_VERSION("0.0.1") specification for the vhost_vso=
-ck module.
-> >
-> > It is useful because it allows userspace to check if vhost_vsock is the=
-re when it is
-> > configured as a built-in.
-> >
-> > This is what we have *without* this change and when vhost_vsock is conf=
-igured
-> > as a module and loaded:
-> >
-> > $ ls -la /sys/module/vhost_vsock
-> > total 0
-> > drwxr-xr-x   5 root root    0 Sep 29 19:00 .
-> > drwxr-xr-x 337 root root    0 Sep 29 18:59 ..
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 coresize
-> > drwxr-xr-x   2 root root    0 Sep 29 20:05 holders
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 initsize
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 initstate
-> > drwxr-xr-x   2 root root    0 Sep 29 20:05 notes
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 refcnt
-> > drwxr-xr-x   2 root root    0 Sep 29 20:05 sections
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 srcversion
-> > -r--r--r--   1 root root 4096 Sep 29 20:05 taint
-> > --w-------   1 root root 4096 Sep 29 19:00 uevent
-> >
-> > When vhost_vsock is configured as a built-in there is *no* /sys/module/=
-vhost_vsock directory at all.
-> > And this looks like an inconsistency.
+> If you are aware that you need a patch to be put on top of another,
+> then you can rebase it yourself of course. Just please make it clear
+> in the cover letter (or after the `---` part) what the patches apply
+> against.
 >
-> And that's expected.
->
-> > With this change, when vhost_vsock is configured as a built-in we get:
-> > $ ls -la /sys/module/vhost_vsock/
-> > total 0
-> > drwxr-xr-x   2 root root    0 Sep 26 15:59 .
-> > drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
-> > --w-------   1 root root 4096 Sep 26 15:59 uevent
-> > -r--r--r--   1 root root 4096 Sep 26 15:59 version
->
+> Cheers,
+> Miguel
 
-Hi Michael,
-
-> Sorry, what I'd like to see is an explanation which userspace
-> is broken without this change, and whether this patch fixes is.
-
-Ok, let me try to write a proper commit message in this thread. I'll
-send a v3 once we agree on it (don't want to spam busy
-kvm developers with my one-liner fix in 10 different revisions :-) ).
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Add an explicit MODULE_VERSION("0.0.1") specification for the
-vhost_vsock module.
-
-It is useful because it allows userspace to check if vhost_vsock is
-there when it is
-configured as a built-in. We already have userspace consumers [1], [2]
-who rely on the
-assumption that if <any_linux_kernel_module> is loaded as a module OR confi=
-gured
-as a built-in then /sys/module/<any_linux_kernel_module> exists. While
-this assumption
-works well in most cases it is wrong in general. For a built-in module
-X you get a /sys/module/<X>
-only if the module declares MODULE_VERSION or if the module has any
-parameter(s) declared.
-
-Let's just declare MODULE_VERSION("0.0.1") for vhost_vsock to make
-/sys/module/vhost_vsock
-to exist in all possible configurations (loadable module or built-in).
-Version 0.0.1 is chosen to align
-with all other modules in drivers/vhost.
-
-This is what we have *without* this change and when vhost_vsock is configur=
-ed
-as a module and loaded:
-
-$ ls -la /sys/module/vhost_vsock
-total 0
-drwxr-xr-x   5 root root    0 Sep 29 19:00 .
-drwxr-xr-x 337 root root    0 Sep 29 18:59 ..
--r--r--r--   1 root root 4096 Sep 29 20:05 coresize
-drwxr-xr-x   2 root root    0 Sep 29 20:05 holders
--r--r--r--   1 root root 4096 Sep 29 20:05 initsize
--r--r--r--   1 root root 4096 Sep 29 20:05 initstate
-drwxr-xr-x   2 root root    0 Sep 29 20:05 notes
--r--r--r--   1 root root 4096 Sep 29 20:05 refcnt
-drwxr-xr-x   2 root root    0 Sep 29 20:05 sections
--r--r--r--   1 root root 4096 Sep 29 20:05 srcversion
--r--r--r--   1 root root 4096 Sep 29 20:05 taint
---w-------   1 root root 4096 Sep 29 19:00 uevent
-
-When vhost_vsock is configured as a built-in there is *no*
-/sys/module/vhost_vsock directory at all.
-And this looks like an inconsistency.
-
-With this change, when vhost_vsock is configured as a built-in we get:
-$ ls -la /sys/module/vhost_vsock/
-total 0
-drwxr-xr-x   2 root root    0 Sep 26 15:59 .
-drwxr-xr-x 100 root root    0 Sep 26 15:59 ..
---w-------   1 root root 4096 Sep 26 15:59 uevent
--r--r--r--   1 root root 4096 Sep 26 15:59 version
-
-Link: https://github.com/canonical/lxd/blob/ef33aea98aec9778499e96302f26058=
-82d8249d7/lxd/instance/drivers/driver_qemu.go#L8568
-[1]
-Link: https://github.com/lxc/incus/blob/cbebce1dcd5f15887967058c8f6fec27cf0=
-da2a2/internal/server/instance/drivers/driver_qemu.go#L8723
-[2]
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Does this sound fair enough?
-
-Kind regards,
-Alex
-
->
->
->
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
-> > ---
-> >  drivers/vhost/vsock.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-> > index 802153e23073..287ea8e480b5 100644
-> > --- a/drivers/vhost/vsock.c
-> > +++ b/drivers/vhost/vsock.c
-> > @@ -956,6 +956,7 @@ static void __exit vhost_vsock_exit(void)
-> >
-> >  module_init(vhost_vsock_init);
-> >  module_exit(vhost_vsock_exit);
-> > +MODULE_VERSION("0.0.1");
-> >  MODULE_LICENSE("GPL v2");
-> >  MODULE_AUTHOR("Asias He");
-> >  MODULE_DESCRIPTION("vhost transport for vsock ");
-> > --
-> > 2.34.1
->
+That makes sense. Thank you for the clarification, Miguel.
 
