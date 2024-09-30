@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-343820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0543E989FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:57:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1925F989FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9068CB25FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C929D281550
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDFC18E763;
-	Mon, 30 Sep 2024 10:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C5D18E353;
+	Mon, 30 Sep 2024 10:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="jmcndWAs"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NxdGBla8"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59B618E34A;
-	Mon, 30 Sep 2024 10:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E30018E05D;
+	Mon, 30 Sep 2024 10:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693764; cv=none; b=GBo6b+udY4s4U/qMqQW8HDEJ7cSNv6F94ZCfoxtMBzcgEtraduuOmPYL1yH1wpji3QGxjyFwi4bQhWeq+z+XZKU/Hk0/WFP4Z1uA03ZScNWCibs+7AKV2/2F9PxXeeiMjS1v45a8FWCtTP0a1QGmnfSoBFGJ0pQ/HvKiKWSODeU=
+	t=1727693762; cv=none; b=k1WwkBKJMTc5X6Q0S5ENTKQfAo8igtnfrcHCfv2OacbU1+bgmcNlqVvN1R6PlutWk5S4J392sX3IsiTxoE5/pEzTOqXY9pxMeKiUP7g3cICS4GmeCBPx1xwzK4mfH2v3aoDllXBfFDD9uOv3CNmEA8ZS9RHY1yt0fn540TuGJtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693764; c=relaxed/simple;
-	bh=enx0t/mMcyMvIh9x4raZftNDqWmtr6KXYWQb/rTWqC0=;
+	s=arc-20240116; t=1727693762; c=relaxed/simple;
+	bh=u5Ykq9x9Mw8GGmgm1BlyONs6IiKYykgeSBidBJgTKxE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YHqfl7noUnFg99kfhaBgdasd0oKVuIgxGgmlz/EGo83xILiwFgj2nQuiiWPt+NTRCq2pIhedcNpWJdsnsaXspPxNk1x1LBcJXps5tYvqce5hZC5FwD9BGBAMVa2ipKIS/E2iHq0jpMw/ZEgTWUyGnlICX922+PfWeB5t4yganF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=jmcndWAs; arc=none smtp.client-ip=185.11.138.130
+	 MIME-Version:Content-Type; b=BQFe96M5YipIV+Jaet79NTAktaeS0kIQzMyLudyhOj03atM1FT3H88du8C6qvg9Va7q7lBxAWyUuX4soFCjrKXJluWqiTDm7ah8MTJem+W6GJ7Cu8svJAJd6bYtaxA0aO93YLc1orVGFyUvC9FlRekTbyxDevZ2dqNVxUXyucGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NxdGBla8; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
@@ -36,41 +36,38 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
 	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
 	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=zwK4YryDqyIxlfaR0E3c8XedTcwBJ6x3UuNyckuRMrs=; b=jmcndWAssjcTggJ/+DNytsItBg
-	hixKQPx3jwzq8qsJMqJrXeNxqZpdGuCrU9kXfqEIqOH4PJ5LXo7wsqD9Z5i5+O9r6BLr9fcKVTdAJ
-	Vaax8WznebtZdiHBGR2kRMIXLd1tOQ/3i+ns2BefChBmV3Gf008ioac2DHRvHB7u9/QTGkgZoCBt/
-	O60cxMRUeRjuNHZvpM9wvn6vN+KiyU6rrv9Rv0AGDhW9i1evk8eEVriVTOjGgdT0YdXommdpIMwVq
-	iyMBrTLuoXxk8ACdvEvqD7c0kspPHBp1NblsmRlRy2We+B8IA4TNKwtBWJ4bSo9X37wawxFrU/vLJ
-	XZkuGhsg==;
+	bh=8xxzUhl6uSfkyw0tmHbtRGqCicUBU09EcQogAhvlRfk=; b=NxdGBla8ip1Oh2Af/hkPZ4zvzl
+	1l5gjwWK37/fewamnPXKeQfgR2oc7EGhEAUrMOk5NChIs5GxBHRSrzF4AlQoDIuWAiJdpyHhZxVH5
+	kBYCToJ+u1M7ZBtM9zHNE0bSZqkFDrJSsHhdemmcXbNL2TUd9zXW8hI/5NKhAGj4miXTN9T1cD1M9
+	nrYBjeSoKUZ/g+l4dCsoY1DheNpB+i25XQcsT3jzEkJ8rot6S6NIzybMRlhhiCxHw9sdLvKfK/C3j
+	4Dmqh4W3S5XQL9RWXPXXJer9eQ7biqNVOuSQr0NG/otaRSb7BVyBuaG5Js3QHWjZcdh4fblfoxQmz
+	nHYKtgmg==;
 Received: from i5e861925.versanet.de ([94.134.25.37] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1svE4F-0004Xd-2M; Mon, 30 Sep 2024 12:55:51 +0200
+	id 1svE4F-0004Xd-Lq; Mon, 30 Sep 2024 12:55:51 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jean Delvare <jdelvare@suse.com>,
-	Peter Rosin <peda@axentia.se>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	Conor Dooley <conor+dt@kernel.org>
+To: Florian Klink <flokli@flokli.de>
 Cc: Heiko Stuebner <heiko@sntech.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-i2c@vger.kernel.org,
+	Kever Yang <kever.yang@rock-chips.com>,
 	linux-kernel@vger.kernel.org,
+	Ondrej Jirman <megi@xff.cz>,
+	Dragan Simic <dsimic@manjaro.org>,
 	linux-rockchip@lists.infradead.org,
-	linux-hwmon@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v8 0/8] Add tsd,mule-i2c-mux support
-Date: Mon, 30 Sep 2024 12:55:37 +0200
-Message-ID: <172769365128.1880381.5478194496537421569.b4-ty@sntech.de>
+	FUKAUMI Naoki <naoki@radxa.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: rockchip: enable automatic fan control on Orange Pi 5+
+Date: Mon, 30 Sep 2024 12:55:38 +0200
+Message-ID: <172769365131.1880381.17228188074772344432.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
-References: <20240906-dev-mule-i2c-mux-v8-0-dbd28a150e41@cherry.de>
+In-Reply-To: <20240922145538.256235-2-flokli@flokli.de>
+References: <20240922145538.256235-2-flokli@flokli.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,27 +77,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 06 Sep 2024 17:54:11 +0200, Farouk Bouabid wrote:
-> Theobroma Systems Mule is an MCU that emulates a set of I2C devices which
-> are reachable through an I2C-mux.
+On Sun, 22 Sep 2024 17:55:29 +0300, Florian Klink wrote:
+> This links the PWM fan on Orange Pi 5+ as an active cooling device
+> managed automatically by the thermal subsystem, with a target SoC
+> temperature of 65C and a minimum-spin interval from 55C to 65C to
+> ensure airflow when the system gets warm.
 > 
-> The devices on the mux can be selected by writing the appropriate
-> device number to an I2C config register (0xff) that is not used by
-> amc6821 logic. This required us to add a new compatible to the amc6821
-> driver, from which, the new platform device "tsd,mule-i2c-mux" is probed.
+> This is pretty much the same as '4a152231b050 ("arm64: dts: rockchip:
+> enable automatic fan control on Rock 5B")', except for the Orange Pi
+> 5+ board.
 > 
 > [...]
 
 Applied, thanks!
 
-[5/8] arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3588-jaguar
-      commit: 08866412e325feb87ad70a6b19ff0d165f59b401
-[6/8] arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3399-puma
-      commit: 84a4e9bf4c1ebe5e71baa5a94b13e168f35e85f5
-[7/8] arm64: dts: rockchip: add tsd,mule-i2c-mux on rk3588-tiger
-      commit: 21b2e2365f1462d3dc8fddfd0703c2f675d55381
-[8/8] arm64: dts: rockchip: add tsd,mule-i2c-mux on px30-ringneck
-      commit: 157707e00085083079cdc9f5014ac31cc3319128
+[1/1] arm64: dts: rockchip: enable automatic fan control on Orange Pi 5+
+      commit: a804c849ef89462ae6f7446d2ec9b919a3fb509d
 
 Best regards,
 -- 
