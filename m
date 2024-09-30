@@ -1,231 +1,475 @@
-Return-Path: <linux-kernel+bounces-343797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB5C989F96
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:40:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3AD989F98
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8FBFB24143
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15AE1C21E29
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871C418C011;
-	Mon, 30 Sep 2024 10:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EhLtDEI9";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="MlunKAG0"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33BD18BC3F;
+	Mon, 30 Sep 2024 10:41:08 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B1417C9AC;
-	Mon, 30 Sep 2024 10:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692813; cv=fail; b=rjzlLlJJmgJ0+678OZLLct8P/qlOLoRfsYlEHY6j4Kg80QYrtxptGjiqie6cPGau2J/gBdhMIxVzLs9wX96OkRz4kBB8e0PGp/hbhv7RbiLC7Hmso828oTMzfY6mVa60UwUIHOxVjKIBJil7OKaVO2zEEYnYw9gzPWoonZd2SXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692813; c=relaxed/simple;
-	bh=GSNIMcwGrMaH9wwaDQdKmoCabj91FLfSZWczIbC3lnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=qZ4LyKfMjKL7wq8dUgANFGfLJ9OmBrOOZSwMGxwOuqc3DHoWbrES9QE02TvW8+e4A8gek7B+Wh3SxtXZRq/hxpf5rEfu0pzg3mePYZYWufa4ItsBDr3TRCW6CLK0TzPaWc9Cp2h0Jul/SSy7lWxEKMMqc1g64w7ejmR9c/z0ar0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EhLtDEI9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=MlunKAG0; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U2txwc015690;
-	Mon, 30 Sep 2024 10:39:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=4XRYZhx3WG9zUNe
-	WSC4AttJNadLrvFib072rBVqabZc=; b=EhLtDEI96BitawxSIezTH2yvaYiWAfo
-	Kpkh1ogTTBsY4Qi0KTXPyN3rvJRtytn9Izli46UZyp9g8Utu+t1b4nt0h1K+lcXP
-	gMBmxhUwJUZyOK9K8iTJkVqfBQTn5Wz1gATpzvO0QmF/0NbW5a2n/9k0qXQiLapB
-	shfRghjFk/WZk/NMTEtY8jDsyeC9G5arHxkIeEPK5L3BY25fj9hExyKhSSm8AqBM
-	OuIZuZ8ULbITPL+dhVWd+4z7b9yt/tknJ8idFWA+ca6JFq5JGb8GxdzGAG9yeru7
-	2iD07ikNPBnOgEn7LTHH4PxCd3aVNpIcY/mIHafYques/UJ5YrXuouw==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41x8d1ayju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 10:39:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48UA1fSb039273;
-	Mon, 30 Sep 2024 10:39:57 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2048.outbound.protection.outlook.com [104.47.70.48])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41x885vfkk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 10:39:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W+36bQALUpO5vKlSLa1rDLZSQ9z6KW6O9ca/nMvgUdLQlohbylPYc7Q95Zun+1+p09bV2+RY7IsSm46szOM+UUOddo53wiyqyFDn2P9/l6aQCFUMkhs3kL1tONKJAw6A2NuGIcha8kek1P6/KipgITt3IxE0lG9fqbWIWsh0fhpjLJZcRHcMOfwRO9gaife0QSA9UUWMGM6Ajppy/xp/s26gMxA3Hvhw54SGyUgUMGedi6dlducBm1P8FIonKdPJgSGzqUBz+RYdpARkKj6Mu2kPn26Hn3izwhxDah1F7cimk/p36EprQZK9SJ3+zhAkzUFdpXy/vz8II9193DAwGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4XRYZhx3WG9zUNeWSC4AttJNadLrvFib072rBVqabZc=;
- b=kcfaquZiaYTeei3VaQI4jHu2Pt7oBnKYxbqbAB+rIPGtnKQbDO/UHuySpjFBSoz7Y7USTSk1BsQx1G1B5TZ6aqZMSqsJqOHVdRSwXLSvrsI+PZEnzyCqcR7jNUd85kytpFtf1ebS5Hy8CD6Y32ZiCY57vNo/4dZTZbCf2wLcNSOeQFWg1/RCuLPhhkTWjMfbeXAbgeH3h00wV4DuaVrfStJg9vtZursea2Zfq5pAnAko1nhdQ3gJAGDGNr6CUehMH+2PTxYyYfrqVCS5cXJGrNZzUk5agjxHT/hekpnh/fddRuFW4rxPBCuqdm2QPfmcHU6skAYdyveLL9SYwmqC0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4XRYZhx3WG9zUNeWSC4AttJNadLrvFib072rBVqabZc=;
- b=MlunKAG0gtSte064HX5JqYEHRnnXjq67t24JoXUGxxy7mNWhTVui/FJagOxRC0WvavVv5Ltob67WqgDszIxXy3K3AowA8PeaPS1zdLGuYMMPPfGZ4mcRHJ2HbeX0f7pvWvVihyU4F00ngMlUqRItd8gYbD+ENRyLNpJPege4Y6k=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by SJ0PR10MB4608.namprd10.prod.outlook.com (2603:10b6:a03:2d4::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.14; Mon, 30 Sep
- 2024 10:39:55 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%5]) with mapi id 15.20.8026.014; Mon, 30 Sep 2024
- 10:39:53 +0000
-Date: Mon, 30 Sep 2024 11:39:49 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
-        linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] introduce PIDFD_SELF
-Message-ID: <42df57ac-d89c-4111-a04d-290dd2197573@lucifer.local>
-References: <cover.1727644404.git.lorenzo.stoakes@oracle.com>
- <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ttdxl9ch.fsf@oldenburg.str.redhat.com>
-X-ClientProxiedBy: LO4P123CA0690.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:37b::7) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170DB17C9AC;
+	Mon, 30 Sep 2024 10:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727692868; cv=none; b=nMF+GVel5kqOw1g71VSr+Q9hpmbVbUhVxfvkG8z+QsPhLl/ZUjUlfxmGb5ZbIIelv5o72sJEdIve2xBiLCrzVr3TO2SAxHKQYZRPZNGOMI5D+8A0WCRZDPb1fkXt5twlGeNlRjHv5E7s8IOXTPSFZJalDwKOhtyPOUIMAMvs23Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727692868; c=relaxed/simple;
+	bh=H3WBwLc1hlvmS9pdgN2P227T250DR7SMfZmYkpjG0PA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ZBw8KSQmAfZQ1rhdS75ZuEMGizDMlLpVMsaitdEBsZCD+CR6Hc6V0O9S+8+Dqapiy5yHX6ajfnnwld9z+W+CDsaaY4oWIvsGi2sQXll/6tGaZQmQlEzMQNXtcjh/Op8XF7taMrEu2M3advejACxtPhJ4MUdk0Ncz8/+hjQ3SogY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d3cde1103so586959866b.2;
+        Mon, 30 Sep 2024 03:41:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727692864; x=1728297664;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XFQ8p+Esk9WhZkKHx5ZnkqIc0hs9zhMjVvs93wbaocg=;
+        b=sapobMTJP0BC4Y0RbwfsxxyCNDo/X1orLB+nquPPf6c+NlReJAjGqE4hPoA/9a/n1r
+         2sWLEg/wtQWUP4ntevtG90smzseNLlBuTjqg9w8BgggCQIua9HMiAy/oqtRh7LBP1nc6
+         ERKde4MDslxw0W3d2Pbh++G/iBH9JHNHk4kMIqUX0RLnDvH3CCqXRSosoC8IeTYjkUPh
+         pyYL7W1Tn3HwSz2KhSmDE0kb1sXD+ZURTfwptSGDQ+Zic30wl0JDCr5dWpKgBphs9aJ9
+         snUmOMOHhLYX0UMTFKjB6vRkRGwh0NNNivN8IlTajw/6AfYwal0/7wZDE4aAlLAfOl1J
+         AgAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIQUsdLuHluz4ik8zJwcL95nwXVZHxriHvfnbQNhzVUnXVxTBemhsxfiRpez2SgX+e8HjGVKfjBuExEg==@vger.kernel.org, AJvYcCXUq7rc7war8XIVv/Ed2j6AGn3woekFmC7B3zVc1Z7v0fQHgAfqXAar621BfJ0AdIjy4eUIqQ0Y2zJqAkrF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCDLIVuCct0BJfeEbLjU1Vqw/c7IZEChVmqQahrnS216IWD9fz
+	OzwVgMBUt9IRr+vzQRpEDqSiadXiF7idyvEJlNCkYchnoddfj2KKMCz/jYs5
+X-Google-Smtp-Source: AGHT+IGfRVxfwyqeonUL6j74sFW+8g06xdKSjtEy310N6xQLdLu267W4+wcA/Izj/yN0m/w4fa/S8g==
+X-Received: by 2002:a17:906:fd89:b0:a86:7c5d:1856 with SMTP id a640c23a62f3a-a93c4a4dab3mr1374887066b.46.1727692864207;
+        Mon, 30 Sep 2024 03:41:04 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f71aeb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71a:eb00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27d293asm512479166b.88.2024.09.30.03.41.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 03:41:03 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	linux-kernel@vger.kernel.org (open list),
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM)
+Subject: [PATCH] btrfs: tests: add selftests for RAID stripe-tree
+Date: Mon, 30 Sep 2024 12:40:40 +0200
+Message-ID: <20240930104054.12290-1-jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|SJ0PR10MB4608:EE_
-X-MS-Office365-Filtering-Correlation-Id: 75418256-9f5d-48fe-e796-08dce13c3826
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WRv/zukiTEwxh7S+yK4xI1ufzFiKmuUG1m/DTNcczdk/kDYXFauBJAh74l2I?=
- =?us-ascii?Q?ZIlfKzlkY6XA8NqWjskwLX6iwJDnarXfKTUhTIO4dIWrMTZWNeUBauHN+oLb?=
- =?us-ascii?Q?RQqUv3rgP5e7i73pH1HnZPo37k9Bkq4F/fRTg1hJpeQ9Jt8aaaAzM/qQ6ykH?=
- =?us-ascii?Q?2jOyMvIgllDkRrKSJzknvvj4lLweDS3gSMYnStzsKsi+/C6CW7HWhMMglH6C?=
- =?us-ascii?Q?TxBlUncZAJwZOZrkGgpTOM5KtXozwuylPfyM0qTCKYDful06UAX4qRRj1lIy?=
- =?us-ascii?Q?M/C13wqmfRg0nh+HzlQpbXpF6tzHtun5cZ7MNIpI21Tw4TOXSOiK++4N06WZ?=
- =?us-ascii?Q?/mH2JHlEDUywz6vt2F8bb0TshjMN7zVNziqC5DRdtGRDX5tSh8Aqxn3u5GE4?=
- =?us-ascii?Q?+lujZ+xDUKQEwtWoiZ9h4kNloXdaqNzeeXb4DcfQKdamcTDh1eIx0apKdW/s?=
- =?us-ascii?Q?lsc3E5nT6WJx00yMokXNWXSxKIagDB/YlkTH8SNr3Kk+av6jlgifG4NmMfj4?=
- =?us-ascii?Q?MZEOnRPDRONAqvVKkPFzhq9FuHMA+HJdzojDTNGlD+/axY2VCJYljqrFUNfs?=
- =?us-ascii?Q?kGJKjC/BOVbQDwup5ncZvF2SW0jjjuTKUqjBungxUrXG2WgEDJrasvwtnwMG?=
- =?us-ascii?Q?OQJyU32O88B9uXlJ74z0LrlTd7WpAVmGmVsb3Hm9hgNbsd0PhXUIyHyWn0SG?=
- =?us-ascii?Q?nmFomJ5SDCDjSxbyltD3/MYsPhi5pcNjVlilntjYs0+I5f2y0leFYhb+1EBX?=
- =?us-ascii?Q?gDFBDX999n2W+eeHUVZYPXkPBX3xoxGISBQdr8GbzFxf8bviWJE37Wjv9ClH?=
- =?us-ascii?Q?YmFwNz2XU3Gh7Ghuh39IJwHHvOvkXkxTUQ0k15zxA2BpJZ9cgmVPu4P2xgrs?=
- =?us-ascii?Q?FpLWPodl3jNs6gD02heuulw8+y1ieTNNvr3NMEBs+IVgAK0NiMWTPTXUPZDi?=
- =?us-ascii?Q?i1QcjlkHiQwUEFbeefUfuzMim++UTOE/x4dT1CWamIM/akB7l/lY7VcBNigz?=
- =?us-ascii?Q?3/TprYPNRdYWElTO51zc8VRDSuW8n5m1afs9OR11F7UF+kGhDWjUqy+mipwO?=
- =?us-ascii?Q?ng/HIoHelLO3zb+0yde6O1HNOR0U8ouGpoNiGBlvFEnhoZGCdt3rL5o98rpy?=
- =?us-ascii?Q?jWFMt1yuH1HgN0UbANQfyXXFNyA1tERWgYbut3dDbKk+AtlribhAGyXZVgun?=
- =?us-ascii?Q?Sd73gW2RJ5l6oyqbSTVOQ42hRaFhrk15iB97sqd/a4OjCnX3dtfkMDhLS+OX?=
- =?us-ascii?Q?HIfJuWLfxiasB3wTrlEAMEQ+GhcjsMao1SoCe0fBsZ4UZYkHJUcmU4QLoIa3?=
- =?us-ascii?Q?v7Po2RY/g3cBW2PG8LsKQqh3YtKXSlFDYXQzBHozLYONbA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?gwHPH8SsPhJZ6a9Z9aFewm/4OSxGjuhUUchSTPSiqRb1WOtd7nlbitEyj6zn?=
- =?us-ascii?Q?SImz7++MUwbNiNbPlqkT0wkJQAkPuOifOY7N+Ml/BZ944VlLziaAoUl5ZKFJ?=
- =?us-ascii?Q?FWFNSbmj3kH0m3Kygnz1dbQ5bysDTIb1S1GaF5qXRpERwm395RZ/p2NANQhi?=
- =?us-ascii?Q?h0a5TjQ0QwD7ZG46iv3RZAzTYfn/aCOjhxZNd8LyN4vtEfdVztLJfe8tEBRb?=
- =?us-ascii?Q?g95959JEcQgsaHzw4ss49nvw5Ckf+60Vh6+jViCe3840zOvK0erlLVlR9n6+?=
- =?us-ascii?Q?EbYKv3uQIMQqJqzqKwTLiZIYMIgUCbMYkUaIF4BVvoKML79ddXcVOCqL2WOc?=
- =?us-ascii?Q?sur/o2cy0m3XGJoB4aVfWh6Pfr9kxWMNNt69RRkPaw8G5pdADk5e31mmy0Wf?=
- =?us-ascii?Q?6Kb0J8T4PFy2LIIOGoUnSJsLRewPsuguKDXe5hdgKmwrn5uVkymTYkiEY1xJ?=
- =?us-ascii?Q?Q1YcZ4Tk7r1N2CwZteu2lOIs1aLB4n7XHrWYEAbVy9Ig7lYk10+WYCfK0gL/?=
- =?us-ascii?Q?f5X1oKNIWGo9gQ4nU+5K8SHGHbp/Cm4W8R4SD274jTG9yhdlc8FDzeeUJ2+L?=
- =?us-ascii?Q?9azcNeYxwE18thdnTymL7nQwSZQbL4DrRi48QiJbJrawDL7V8JgrWk8KMeC5?=
- =?us-ascii?Q?nZj8YJ4wHVj/RB3n6r3YUkQeFLg8lSnw/Mc8aNxOO6DeXcczo9Fjw1tQx0Co?=
- =?us-ascii?Q?WTNp2tZIUvcGmNPvd7TcPjm41bARbY++pnqgZD4KZPoJskw/6ynfh5gd/TOP?=
- =?us-ascii?Q?cv1J6Luk2XIgIKnmjm3nP7wpsdkBRNG+rIAn5ViAO8R7LXoq6ghVlNqU46Ql?=
- =?us-ascii?Q?C6Fvw0huNk8Eb9us7JGvFLtvUYlHJv/ZgWt+T2AI+4QjxfdSnn2fg9wc63iR?=
- =?us-ascii?Q?1wcO1sOlwom7jq98RpvMlnlWA6Qiao5YT5RpM9MzWUTJhFrdeB62ebS+38uV?=
- =?us-ascii?Q?uKNqvVw2u8HJONEsaKM2oduRUmXhpDeznJpBgyPMSzibbykYEE3NJINzp6/n?=
- =?us-ascii?Q?uGSUM3OodNsCP1uNLf9huExpJHWLSU1QxLWggrnohE63xLW6Fy5jF4cYy9hr?=
- =?us-ascii?Q?6jgJVTADTbIotbt56DNPXydy0dNMwbmlbY7des839ay2fGaOB3iG62jX5N0B?=
- =?us-ascii?Q?fbI85Y8qNqudn84do47ipIoPk5bihlc479SW+QwSphrn5r41fZsEav9xzYSL?=
- =?us-ascii?Q?PfgLndDTqAc5FQMinh/fnXVMK/rne89TpLXQilMrLQ7FKKcDO2m+qfTc+OS5?=
- =?us-ascii?Q?kzZpdjja5b5XAr+ouieUZ7Goeh4RrrwiJcDqgInipKG3CHfnmRFnHQafNa8H?=
- =?us-ascii?Q?5atXZ34kpRJ6j0XAOr7EFYuWElI75vbCG+iyskc6N6XJFwkmsMbvITn6aZeV?=
- =?us-ascii?Q?PLNqagy4QRkCGklu7HBWNp2M8YEbA+yPQ+fJRVCnAESgPMFJHhSOIoZ3TytF?=
- =?us-ascii?Q?dW+QKArmeRpVRvKWpBCW+7oDKBXGPXm54ycIQphguWlmwN2w/yJkjUgnayrM?=
- =?us-ascii?Q?4XHf0n95ZugD6EEHnlj9/izkntjF11omgVVUfKen+EQUBCpLmPG1CkExGFrt?=
- =?us-ascii?Q?EG1NlShCp1+5rxX2hHwwHBGgnmznqHIXmiqVbza68qsmFN5fGQ2S9R+TxdL0?=
- =?us-ascii?Q?Lw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	b6m7kWTFQDxXdt3HwfUsXtfuigZLRSq6BdKKATxnM/srps6C8Ty3Uip7RAZwyAVc4PLisTSpAu8itKbP1OLowgv195zNZnP11sP5tRb2sBhvqX6aycjASwTI5mJ8fNMXXv/BjOpPlbqKhreOp3isHJFqJUKU7nM2lHX9Et2lfSrwan7u/p8djixjIdqmBW/1F2uzJriwHXjmpCXXSawhXGve+l1vW1o1ZHpuHifBm3y7eBv06M7NK9dnYSvQJ4IV2K46bk/GvTlVJF10sQcY/XbGeA49qrJ27eSbRB1UGYuBmFQi8gpPFKoJtKPOk1g1XB1DK1XFr0mNgDdYrnQOu+QMilqU/5cUAh9EEUPyVdasn1S7db7QVeplEvyCm1TvyF19heuE3UUGsOpgEkhTwJocioMNHYXreSX73YCPpJwX1C9Q5YKPDx9QPSQSVl8ON+ICSUTXQtCa0ZtBwlsgopF2851djTS5tv8OTodj8FdxnaXsU8SnvAHF+xC5cHJLQhpte/GiSzlhWAUqJtNbIjehR/aBhTwHuIcUFsywgIDsrwCT3B0M9u2xKk140FrnMGkV5RhSs1otk+4Ufx24Zt+w1gAcg/IDCUi8mmMs3YI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 75418256-9f5d-48fe-e796-08dce13c3826
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 10:39:53.7012
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4zfCe98ow8MRxt5qUz0Bar49Ug3OmKGimcVDKTI5EQ0j33qm+IqaeFx2CU1Y5ZCdtqUb3tRDnEH7ZB6pd+c2hMDW7qWqnb+MPglBOgt9CuI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4608
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_09,2024-09-27_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=947
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409300077
-X-Proofpoint-ORIG-GUID: Kxjz_3lM5x1QaAdCb6fL-uGk3PP4o8P6
-X-Proofpoint-GUID: Kxjz_3lM5x1QaAdCb6fL-uGk3PP4o8P6
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 12:33:18PM GMT, Florian Weimer wrote:
-> * Lorenzo Stoakes:
->
-> > If you wish to utilise a pidfd interface to refer to the current process
-> > (from the point of view of userland - from the kernel point of view - the
-> > thread group leader), it is rather cumbersome, requiring something like:
-> >
-> > 	int pidfd = pidfd_open(getpid(), 0);
-> >
-> > 	...
-> >
-> > 	close(pidfd);
-> >
-> > Or the equivalent call opening /proc/self. It is more convenient to use a
-> > sentinel value to indicate to an interface that accepts a pidfd that we
-> > simply wish to refer to the current process.
->
-> The descriptor will refer to the current thread, not process, right?
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-No it refers to the current process (i.e. thread group leader from kernel
-perspective). Unless you specify PIDFD_THREAD, this is the same if you did the above.
+Add first stash of very basic self tests for the RAID stripe-tree.
 
->
-> The distinction matters for pidfd_getfd if a process contains multiple
-> threads with different file descriptor tables, and probably for
-> pidfd_send_signal as well.
+More test cases will follow exercising the tree.
 
-You mean if you did a strange set of flags to clone()? Otherwise these are
-shared right?
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ fs/btrfs/Makefile                       |   3 +-
+ fs/btrfs/raid-stripe-tree.c             |   5 +-
+ fs/btrfs/raid-stripe-tree.h             |   5 +
+ fs/btrfs/tests/btrfs-tests.c            |   3 +
+ fs/btrfs/tests/btrfs-tests.h            |   1 +
+ fs/btrfs/tests/raid-stripe-tree-tests.c | 274 ++++++++++++++++++++++++
+ fs/btrfs/volumes.c                      |   6 +-
+ fs/btrfs/volumes.h                      |   5 +
+ 8 files changed, 296 insertions(+), 6 deletions(-)
+ create mode 100644 fs/btrfs/tests/raid-stripe-tree-tests.c
 
-Again, we are explicitly looking at process not thread from userland
-perspective. A PIDFD_SELF_THREAD might be possible, but this series doesn't try
-to implement that.
+diff --git a/fs/btrfs/Makefile b/fs/btrfs/Makefile
+index 87617f2968bc..3cfc440c636c 100644
+--- a/fs/btrfs/Makefile
++++ b/fs/btrfs/Makefile
+@@ -43,4 +43,5 @@ btrfs-$(CONFIG_FS_VERITY) += verity.o
+ btrfs-$(CONFIG_BTRFS_FS_RUN_SANITY_TESTS) += tests/free-space-tests.o \
+ 	tests/extent-buffer-tests.o tests/btrfs-tests.o \
+ 	tests/extent-io-tests.o tests/inode-tests.o tests/qgroup-tests.o \
+-	tests/free-space-tree-tests.o tests/extent-map-tests.o
++	tests/free-space-tree-tests.o tests/extent-map-tests.o \
++	tests/raid-stripe-tree-tests.o
+diff --git a/fs/btrfs/raid-stripe-tree.c b/fs/btrfs/raid-stripe-tree.c
+index 4c859b550f6c..b7787a8e4af2 100644
+--- a/fs/btrfs/raid-stripe-tree.c
++++ b/fs/btrfs/raid-stripe-tree.c
+@@ -108,8 +108,9 @@ static int update_raid_extent_item(struct btrfs_trans_handle *trans,
+ 	return ret;
+ }
+ 
+-static int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
+-					struct btrfs_io_context *bioc)
++EXPORT_FOR_TESTS
++int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
++				 struct btrfs_io_context *bioc)
+ {
+ 	struct btrfs_fs_info *fs_info = trans->fs_info;
+ 	struct btrfs_key stripe_key;
+diff --git a/fs/btrfs/raid-stripe-tree.h b/fs/btrfs/raid-stripe-tree.h
+index 1ac1c21aac2f..4908ddc1a7ea 100644
+--- a/fs/btrfs/raid-stripe-tree.h
++++ b/fs/btrfs/raid-stripe-tree.h
+@@ -28,6 +28,11 @@ int btrfs_get_raid_extent_offset(struct btrfs_fs_info *fs_info,
+ int btrfs_insert_raid_extent(struct btrfs_trans_handle *trans,
+ 			     struct btrfs_ordered_extent *ordered_extent);
+ 
++#if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
++int btrfs_insert_one_raid_extent(struct btrfs_trans_handle *trans,
++				 struct btrfs_io_context *bioc);
++#endif
++
+ static inline bool btrfs_need_stripe_tree_update(struct btrfs_fs_info *fs_info,
+ 						 u64 map_type)
+ {
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index ce50847e1e01..18e1ab4a0914 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -291,6 +291,9 @@ int btrfs_run_sanity_tests(void)
+ 			ret = btrfs_test_free_space_tree(sectorsize, nodesize);
+ 			if (ret)
+ 				goto out;
++			ret = btrfs_test_raid_stripe_tree(sectorsize, nodesize);
++			if (ret)
++				goto out;
+ 		}
+ 	}
+ 	ret = btrfs_test_extent_map();
+diff --git a/fs/btrfs/tests/btrfs-tests.h b/fs/btrfs/tests/btrfs-tests.h
+index dc2f2ab15fa5..61bcadaf2036 100644
+--- a/fs/btrfs/tests/btrfs-tests.h
++++ b/fs/btrfs/tests/btrfs-tests.h
+@@ -37,6 +37,7 @@ int btrfs_test_extent_io(u32 sectorsize, u32 nodesize);
+ int btrfs_test_inodes(u32 sectorsize, u32 nodesize);
+ int btrfs_test_qgroups(u32 sectorsize, u32 nodesize);
+ int btrfs_test_free_space_tree(u32 sectorsize, u32 nodesize);
++int btrfs_test_raid_stripe_tree(u32 sectorsize, u32 nodesize);
+ int btrfs_test_extent_map(void);
+ struct inode *btrfs_new_test_inode(void);
+ struct btrfs_fs_info *btrfs_alloc_dummy_fs_info(u32 nodesize, u32 sectorsize);
+diff --git a/fs/btrfs/tests/raid-stripe-tree-tests.c b/fs/btrfs/tests/raid-stripe-tree-tests.c
+new file mode 100644
+index 000000000000..3c1517ae3acf
+--- /dev/null
++++ b/fs/btrfs/tests/raid-stripe-tree-tests.c
+@@ -0,0 +1,274 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Western Digital Corporation or its affiliates.
++ */
++
++#include "../fs.h"
++#include "../disk-io.h"
++#include "../transaction.h"
++#include "../volumes.h"
++#include "../raid-stripe-tree.h"
++#include "btrfs-tests.h"
++
++#define RST_TEST_NUM_DEVICES	2
++#define RST_TEST_RAID1_TYPE	(BTRFS_BLOCK_GROUP_DATA | BTRFS_BLOCK_GROUP_RAID1)
++
++typedef int (*test_func_t)(struct btrfs_trans_handle *trans);
++
++static struct btrfs_device *btrfs_device_by_devid(struct btrfs_fs_devices *fs_devices,
++						  u64 devid)
++{
++	struct btrfs_device *dev;
++
++	list_for_each_entry(dev, &fs_devices->devices, dev_list) {
++		if (dev->devid == devid)
++			return dev;
++	}
++
++	return NULL;
++}
++
++static int test_create_update_delete(struct btrfs_trans_handle *trans)
++{
++	struct btrfs_fs_info *fs_info = trans->fs_info;
++	struct btrfs_io_context *bioc;
++	struct btrfs_io_stripe io_stripe = { };
++	u64 map_type = RST_TEST_RAID1_TYPE;
++	u64 logical = SZ_1M;
++	u64 len = SZ_64K;
++	int ret;
++
++	bioc = alloc_btrfs_io_context(fs_info, logical, RST_TEST_NUM_DEVICES);
++	if (!bioc) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	io_stripe.dev = btrfs_device_by_devid(fs_info->fs_devices, 0);
++
++	for (int i = 0; i < RST_TEST_NUM_DEVICES; i++) {
++		struct btrfs_io_stripe *stripe = &bioc->stripes[i];
++		struct btrfs_device *dev;
++
++		dev = btrfs_device_by_devid(fs_info->fs_devices, i);
++		if (!dev) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		stripe->dev = dev;
++		stripe->physical = logical + i * SZ_1G;
++	}
++
++	ret = btrfs_insert_one_raid_extent(trans, bioc);
++	if (ret)
++		goto out;
++
++	io_stripe.dev = btrfs_device_by_devid(fs_info->fs_devices, 0);
++	if (!io_stripe.dev) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = btrfs_get_raid_extent_offset(fs_info, logical, &len, map_type, 0,
++					   &io_stripe);
++	if (ret)
++		goto out;
++
++	if (io_stripe.physical != logical) {
++		test_err("invalid physical address, expected %llu, got %llu",
++			 logical, io_stripe.physical);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (len != SZ_64K) {
++		test_err("invalid stripe length, expected %llu, got %llu",
++			 (u64)SZ_64K, len);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	for (int i = 0; i < RST_TEST_NUM_DEVICES; i++) {
++		struct btrfs_io_stripe *stripe = &bioc->stripes[i];
++		struct btrfs_device *dev;
++
++		dev = btrfs_device_by_devid(fs_info->fs_devices, i);
++		if (!dev) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		stripe->dev = dev;
++		stripe->physical = SZ_1G + logical + i * SZ_1G;
++	}
++
++	ret = btrfs_insert_one_raid_extent(trans, bioc);
++	if (ret)
++		goto out;
++	if (io_stripe.physical != logical + SZ_1G) {
++		test_err("invalid physical address, expected %llu, got %llu",
++			 logical + SZ_1G, io_stripe.physical);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (len != SZ_64K) {
++		test_err("invalid stripe length, expected %llu, got %llu",
++			 (u64)SZ_64K, len);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = btrfs_delete_raid_extent(trans, logical, len);
++
++out:
++	btrfs_put_bioc(bioc);
++	return ret;
++}
++
++static int test_simple_create_delete(struct btrfs_trans_handle *trans)
++{
++	struct btrfs_fs_info *fs_info = trans->fs_info;
++	struct btrfs_io_context *bioc;
++	struct btrfs_io_stripe io_stripe = { };
++	u64 map_type = RST_TEST_RAID1_TYPE;
++	u64 logical = SZ_1M;
++	u64 len = SZ_64K;
++	int ret;
++
++	bioc = alloc_btrfs_io_context(fs_info, logical, RST_TEST_NUM_DEVICES);
++	if (!bioc) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	bioc->map_type = map_type;
++	bioc->size = SZ_64K;
++
++	for (int i = 0; i < RST_TEST_NUM_DEVICES; i++) {
++		struct btrfs_io_stripe *stripe = &bioc->stripes[i];
++		struct btrfs_device *dev;
++
++		dev = btrfs_device_by_devid(fs_info->fs_devices, i);
++		if (!dev) {
++			ret = -EINVAL;
++			goto out;
++		}
++
++		stripe->dev = dev;
++		stripe->physical = logical + i * SZ_1G;
++	}
++
++	ret = btrfs_insert_one_raid_extent(trans, bioc);
++	if (ret)
++		goto out;
++
++	io_stripe.dev = btrfs_device_by_devid(fs_info->fs_devices, 0);
++	if (!io_stripe.dev) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = btrfs_get_raid_extent_offset(fs_info, logical, &len, map_type, 0,
++					   &io_stripe);
++	if (ret)
++		goto out;
++
++	if (io_stripe.physical != logical) {
++		test_err("invalid physical address, expected %llu, got %llu",
++			 logical, io_stripe.physical);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	if (len != SZ_64K) {
++		test_err("invalid stripe length, expected %llu, got %llu",
++			 (u64)SZ_64K, len);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	ret = btrfs_delete_raid_extent(trans, logical, len);
++
++out:
++	btrfs_put_bioc(bioc);
++	return ret;
++}
++
++test_func_t tests[] = {
++	test_simple_create_delete,
++	test_create_update_delete,
++};
++
++static int run_test(test_func_t test, u32 sectorsize, u32 nodesize)
++{
++	struct btrfs_trans_handle trans;
++	struct btrfs_fs_info *fs_info;
++	struct btrfs_root *root = NULL;
++	int ret;
++
++	fs_info = btrfs_alloc_dummy_fs_info(sectorsize, nodesize);
++	if (!fs_info) {
++		test_std_err(TEST_ALLOC_FS_INFO);
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	root = btrfs_alloc_dummy_root(fs_info);
++	if (IS_ERR(root)) {
++		test_std_err(TEST_ALLOC_ROOT);
++		ret = PTR_ERR(root);
++		goto out;
++	}
++	btrfs_set_super_compat_ro_flags(root->fs_info->super_copy,
++		BTRFS_FEATURE_INCOMPAT_RAID_STRIPE_TREE);
++	root->root_key.objectid = BTRFS_RAID_STRIPE_TREE_OBJECTID;
++	root->root_key.type = BTRFS_ROOT_ITEM_KEY;
++	root->root_key.offset = 0;
++	fs_info->stripe_root = root;
++	root->fs_info->tree_root = root;
++
++	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
++	if (IS_ERR(root->node)) {
++		test_std_err(TEST_ALLOC_EXTENT_BUFFER);
++		ret = PTR_ERR(root->node);
++		goto out;
++	}
++	btrfs_set_header_level(root->node, 0);
++	btrfs_set_header_nritems(root->node, 0);
++	root->alloc_bytenr += 2 * nodesize;
++
++	for (int i = 0; i < RST_TEST_NUM_DEVICES; i++) {
++		struct btrfs_device *dev;
++
++		dev = btrfs_alloc_dummy_device(fs_info);
++		dev->devid = i;
++	}
++
++	btrfs_init_dummy_trans(&trans, root->fs_info);
++	ret = test(&trans);
++	if (ret)
++		goto out;
++
++out:
++	btrfs_free_dummy_root(root);
++	btrfs_free_dummy_fs_info(fs_info);
++
++	return ret;
++}
++
++int btrfs_test_raid_stripe_tree(u32 sectorsize, u32 nodesize)
++{
++	int ret = 0;
++
++	test_msg("running RAID stripe-tree tests");
++	for (int i = 0; i < ARRAY_SIZE(tests); i++) {
++		ret = run_test(tests[i], sectorsize, nodesize);
++		if (ret)
++			goto out;
++	}
++
++out:
++	return ret;
++}
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 668138451f7c..6ff64a30349f 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -6022,9 +6022,9 @@ static int find_live_mirror(struct btrfs_fs_info *fs_info,
+ 	return preferred_mirror;
+ }
+ 
+-static struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
+-						       u64 logical,
+-						       u16 total_stripes)
++EXPORT_FOR_TESTS
++struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
++						u64 logical, u16 total_stripes)
+ {
+ 	struct btrfs_io_context *bioc;
+ 
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 26e35fc1c8fd..318fedf7f9fd 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -840,4 +840,9 @@ bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
+ bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
+ const u8 *btrfs_sb_fsid_ptr(const struct btrfs_super_block *sb);
+ 
++#if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
++struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
++						u64 logical, u16 total_stripes);
++#endif
++
+ #endif
+-- 
+2.43.0
 
->
-> Thanks,
-> Florian
->
 
