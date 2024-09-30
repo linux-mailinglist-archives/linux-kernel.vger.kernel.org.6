@@ -1,124 +1,124 @@
-Return-Path: <linux-kernel+bounces-344287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D5098A7D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:54:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BA598A7D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B3F285F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D98B26DA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7D019258B;
-	Mon, 30 Sep 2024 14:53:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACCF192B73;
+	Mon, 30 Sep 2024 14:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ad7rn+Bg"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0CB191F7A;
-	Mon, 30 Sep 2024 14:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C579A191F81;
+	Mon, 30 Sep 2024 14:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707981; cv=none; b=o6YwX9csH4+JH6AGnHxl08KTPYaLmmFbPmqFSwisMSMmQqCoq9czILs8UZiYVcCh7zqut0yZU8bp92FZT+IQ3FtNzaHadITV1v6fWmXhtY0Bnz2Rx54s06GbQIT0vMU2B7wnZMliNMgiEnNW3zGLk7RzDcGrdWWwLi4DJrKWQIA=
+	t=1727707990; cv=none; b=Q2llzy2ruGrpCIQLehB2IqBF8NMvfbLHGrpNRecNQwnwgrMWSg1MpPrkIGZpSLmpOmfZbmQXhbWZIPEF5U5EJXyP4ueAco2JjZ4yl7CJ8UASGq0nKoDegxYZMQ3oK8cfTkoH8YMH6n+fhhHbvTxTU6F8A88qPIXqkSW20q8wmcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707981; c=relaxed/simple;
-	bh=xEfx68TKEKbrunn51KUOWGeLB8H7zXoKtykWGpU75XU=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RQGmvM/MmQS9KEDrch+4vK6HGK/L5sTDY1igtIELtSdTQR8hKLQ3GQDVrhkXG6LKEsVQw0qloaG1TP71SHUfik4+AuFN1JXa/Ut3dM4y9d1qcqKyXG/WgqPds0Shl22JpRLrnneE78otyiG5ljrfyNhZj0kE+i7ZN8fLceQ2IeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XHP8f1q97z6D9rT;
-	Mon, 30 Sep 2024 22:48:50 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5A16F140B30;
-	Mon, 30 Sep 2024 22:52:56 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 30 Sep
- 2024 16:52:55 +0200
-Date: Mon, 30 Sep 2024 15:52:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-CC: Angelo Dureghello <adureghello@baylibre.com>, Jonathan Cameron
-	<jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	<Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <dlechner@baylibre.com>, Mark Brown
-	<broonie@kernel.org>, <linux-spi@vger.kernel.org>
-Subject: Re: [PATCH v3 02/10] dt-bindings: iio: dac: axi-dac: add ad3552r
- axi variant
-Message-ID: <20240930155254.00004b8e@Huawei.com>
-In-Reply-To: <6ce76f0a7c503cc800b4795e682f91c8bfc0bb7a.camel@gmail.com>
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
-	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-2-a17b9b3d05d9@baylibre.com>
-	<20240929114606.7500ba7e@jic23-huawei>
-	<sowmuxfsedwdshyothf7jc6mcrbzqbs2vzw7x4p3tg3iqnlnjt@5qa3kazkce46>
-	<6ce76f0a7c503cc800b4795e682f91c8bfc0bb7a.camel@gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727707990; c=relaxed/simple;
+	bh=IEZyqI9p1dpM5X1TBW/EbjmZcituc+iGg9sknYVX4co=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KOBcdvTs4FllJ+SnkqsuzIwKEuX0g3c2C4b3+FYs7d/7lBzSmsDsxEzBReeegISR61rbceNhJ2t5Tt/ZzOEOmqJobXhEI16o2EYWy/2Kb57lzkRtXWenjuzjQjdnqBJB59MtNeD/RN0k4Kn6NSX6/8MR01BXU3po+YxuQXs8ivE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ad7rn+Bg; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e137183587so696390a91.3;
+        Mon, 30 Sep 2024 07:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727707988; x=1728312788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yzZUrPo7VwF9JRFW0jXLatknVBb1CHVP9jTUv/xcRtc=;
+        b=Ad7rn+BgSZXRRPT4z/0I4Vv+s6eCcUOSEmKAKY9yQuQWJBjcX/EkufKao6P+QiZzeP
+         s2/+bDgCnsyKqD34f4G3hTkBW9kYuvnTy+oJH/LV1OY0Nlf3ADwev0Onw+qrfYH3ohp+
+         OY1d/5UAo7skQSAbA2d2fA4/Yh+ayaNLA55LWsr2rxSaZXadCWAoKd9J/MjKB3DT+jHZ
+         Z6aFemtOo9hzfZIAhBpvQpHcsFn0KiAq4wtIc8C5EiyLwLGclTTlmsAoUxCb0PQdhAOy
+         A5Nm9AYr3rspUmzZK54hZo0KJzJUyDGsRf5vLKp6tMANOqEeDJlbZPcyTQpsOoMrDoe4
+         FRRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727707988; x=1728312788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yzZUrPo7VwF9JRFW0jXLatknVBb1CHVP9jTUv/xcRtc=;
+        b=qsJanICcH3YYK/5NeaprALVTpsJPRf68mReqgwvFFkS2o7zlJy/OViaeuHzhs1uMS+
+         1v/0wYkdtt3luqjOArEW6zpMyFZjakIRRGONu/10Nf9ThpPRRnj04+6vwPfCjn1M4AN4
+         J7V91tUfWBX4zmKqiyxn0Nh/CclpoqtbrjyDQJ3Gzg1owNL+VsRxkKvJB0euDMXp9Hzl
+         k6zoB1oe9AxJzuA/hLu1BVaXINcqH64JyedC+mYH/pVl7FFvYLvqpnO2A2AA6Yz7QnV5
+         eCn2brzN0cm2s67rHfd7sPTdjoQAzHg+pcbBEbeJ6U73S1xL8krUh7RTHN9lKCgp8GJv
+         q9MA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk9r07pk+l29RWLQPg6nHzhQ40uzySbEMGrYbu41y1x0y/RxIOK6TPkF6hMf2r6pEK9lGgRguBLF1tpf8=@vger.kernel.org, AJvYcCXLQAf8CqTEI6+rjZYnqGprA/8Q9PmtjsBl547nhRhEBUilwzCLIxcee02fO0ooPLR33tnOHDhUmrRwoxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0U8bwjg1d4wSNlMy0CxNkYA4+2QTdMcK8WTCBlwAKTBZRXV/E
+	twQ8wTLPKJ6aqjqGSgRqLvA3B8dsZHsxBndS0XuvfCJqXuHU/uTl
+X-Google-Smtp-Source: AGHT+IE76nvgMp3ss1EgYURcxr6slKLUutk2wg0KfFLhK9sMF9tqejGLNevkpTYdm/YhLLGA3ILB8w==
+X-Received: by 2002:a17:90a:9a83:b0:2e0:7e46:5ecb with SMTP id 98e67ed59e1d1-2e0b8e97ee9mr14496868a91.31.1727707987968;
+        Mon, 30 Sep 2024 07:53:07 -0700 (PDT)
+Received: from embed-PC.. ([2401:4900:1c26:3294:a303:135d:2d56:fd2e])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6ca63f9sm7966808a91.33.2024.09.30.07.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 07:53:07 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	josh@joshuagrisham.com,
+	foss@athaariq.my.id,
+	rf@opensource.cirrus.com,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ALSA: hda/realtek: Add a quirk for HP Pavilion 15z-ec200
+Date: Mon, 30 Sep 2024 20:23:00 +0530
+Message-Id: <20240930145300.4604-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
 
-On Mon, 30 Sep 2024 15:15:03 +0200
-Nuno S=E1 <noname.nuno@gmail.com> wrote:
+Add the quirk for HP Pavilion Gaming laptop 15z-ec200 for
+enabling the mute led. The fix apply the ALC285_FIXUP_HP_MUTE_LED
+quirk for this model.
 
-> On Mon, 2024-09-30 at 14:52 +0200, Angelo Dureghello wrote:
-> > On 29.09.2024 11:46, Jonathan Cameron wrote: =20
-> > > On Thu, 19 Sep 2024 11:19:58 +0200
-> > > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> > >  =20
-> > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > >=20
-> > > > Add a new compatible and related bindigns for the fpga-based
-> > > > "ad3552r" AXI IP core, a variant of the generic AXI DAC IP.
-> > > >=20
-> > > > The AXI "ad3552r" IP is a very similar HDL (fpga) variant of the
-> > > > generic AXI "DAC" IP, intended to control ad3552r and similar chips,
-> > > > mainly to reach high speed transfer rates using an additional QSPI =
-=20
-> > >=20
-> > > I'd drop the word additional as I assume it is an 'either/or' situati=
-on
-> > > for the interfaces.
-> > >=20
-> > > Do we have other devices using this same IP?=A0 I.e. does it make
-> > > sense to provide a more generic compatible as a fallback for this one
-> > > so that other devices would work without the need for explicit suppor=
-t?
-> > >=20
-> > >  =20
-> > no, actually ad3552r-axi is only interfacing to ad3552r.
-> > I could eventually set adi,axi-dac-9.1.b as a fallback, since it
-> > is the "gneric" AXI implementation. =20
->=20
-> Yes but the generic IP does not have this spi bus implementation so the d=
-evice
-> would be unusable (unless I'm missing something)
-Falling back to the generic IP doesn't make sense as they aren't compatible.
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219303
 
-I'd more expect some future device support that happens to need the same
-sort of bus support might be able to use this FPGA IP.  Anyhow, it is fine
-to fallback to this specific compatible anyway, so lets go with this rather
-than trying for a generic name.
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+Changes in v2:
+- Add the quirk entry in PCI SSID sort order.
+- Use lower letters for hex numbers.
+[v1]: https://lore.kernel.org/all/20240926155112.8079-1-abhishektamboli9@gmail.com/
 
-Jonathan
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->=20
-> - Nuno S=E1
->=20
->=20
->=20
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 4ca66234e561..b8e33e4a0baa 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10349,6 +10349,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8896, "HP EliteBook 855 G8 Notebook PC", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8898, "HP EliteBook 845 G8 Notebook PC", ALC285_FIXUP_HP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x103c, 0x88d0, "HP Pavilion 15-eh1xxx (mainboard 88D0)", ALC287_FIXUP_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x88dd, "HP Pavilion 15z-ec200", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8902, "HP OMEN 16", ALC285_FIXUP_HP_MUTE_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x890e, "HP 255 G8 Notebook PC", ALC236_FIXUP_HP_MUTE_LED_COEFBIT2),
+ 	SND_PCI_QUIRK(0x103c, 0x8919, "HP Pavilion Aero Laptop 13-be0xxx", ALC287_FIXUP_HP_GPIO_LED),
+--
+2.34.1
 
 
