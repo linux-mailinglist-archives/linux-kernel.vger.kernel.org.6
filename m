@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-343272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF929898FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867209898FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E352F283B2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6111F21B0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC60253AC;
-	Mon, 30 Sep 2024 01:33:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909FC6FC3;
-	Mon, 30 Sep 2024 01:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408CF79EA;
+	Mon, 30 Sep 2024 01:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IdhQP2pj"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F202CA2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727660038; cv=none; b=GJ9FzUqGhkfqSFQezRh5R6PZROSInrmaWVVliwlGQ7wrMjRQukO7JSk6f07q+rlSzEiZoTn4oIw1rRQFxWzFBSJS6XU85qf4nJeZkv1AUwdqq+6gvb07Fshl5aTLKDEghK+q1c3FwD5zCYaPIPahVzzfNqFRApTQawlyVS/P2Zc=
+	t=1727660376; cv=none; b=YCc87G6jG35jBTRwlezelWRyUw4OEDcH9xnRvV3gZifI2+GTbT7r39gYCjL6WQxi65ZkZtRMT8c4k7Kdhi6WldJqlRmBAilTWenh42yX0Nvz02mkmd7vR+yO3hHFBQkSxIsDHwLUbt9aeihu3OVhm0Jw1BoCz0mjqNuMK0ob2ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727660038; c=relaxed/simple;
-	bh=roVW00bT7xfGdc0pP8uGHYrUwIoTJyPIyEdTjtIb8DY=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=K+BynpTdd6+cRzuXJ7itNdFbYTAltgoa6gUj9U7OyQgntVXfo31klG1AaUElWGYyzAcujiIv2fYkH3hm1/3Cz+Djve0WtCR0th5503pgrWkqqM7ks4i2IfPY2sAnqta25O+lAFrPJaOLhW0KaLznAC6/baarM+YCLT+SWeTez48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxLOv4__lms1IEAA--.4221S3;
-	Mon, 30 Sep 2024 09:33:45 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front2 (Coremail) with SMTP id qciowMAxa8b2__lmisYYAA--.22840S3;
-	Mon, 30 Sep 2024 09:33:43 +0800 (CST)
-Subject: Re: Question about config UPROBES and UPROBE_EVENTS
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-References: <1a3567d5-e558-351a-c45d-73b2e5a8788c@loongson.cn>
- <20240930081529.f6f9161c20db9b95c9b46252@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <f639079e-bc1c-7f2a-4c3f-de1a6780da84@loongson.cn>
-Date: Mon, 30 Sep 2024 09:33:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1727660376; c=relaxed/simple;
+	bh=rg3+ZaIKPQIuaIo8I9fHK/6VgqiaSpXLidc/ska4nXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a/UZkYQVi4p3tpsN9KSUlTDmfN2ekzZdkfX2XOsNck676SujvYVdI7Ymr8KZyruUq3kQYKZ3eRqwsBYBE8CMgTTSFrXCM0o0UfN9St8VzIayTCE8Q04GDKhTWWgPiXnGpk7k6mKNIblyNfD+bNXwU0ZKDNiD+uK4eyRyHApw3Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IdhQP2pj; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e3688d85-5cab-41b9-a77f-d1229d9c3b5c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727660371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iAY7TPcfuJe9Y1D5+TkGWlwCmuxBEheRTYpfat8WovA=;
+	b=IdhQP2pjWP8TOwERDUGjnrxKVJWNNfrPpojiK4eEJq4rjXoYmtFy5cE3tkIF57hrN+GqhN
+	vtNtogk8G/cd35fbchHv4U5ESfEnflYTOjMUcV5K5/cFNBvFlG/gdLHFGI2kJnq2ULTuLS
+	KSVsDnzjpZRi9tK++A5d+bVva8vKB50=
+Date: Mon, 30 Sep 2024 09:39:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240930081529.f6f9161c20db9b95c9b46252@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qciowMAxa8b2__lmisYYAA--.22840S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7uF48uw47CFWfCr4rJw48Zrc_yoW8AFyfpF
-	s2ya9aqrs3GFZYyrZFyw4xCFW0qrZ5JrW3Gr1rGFyrAan5A3y8Ar1IgrWYyFy7uwnFqFWY
-	yFn7tFZrZay5AacCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx1l5I
-	8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AK
-	xVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzV
-	AYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r
-	4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1EksDUU
-	UUU==
+Subject: Re: [PATCH 1/2] amba: Add dev_is_amba() function and export it for
+ modules
+Content-Language: en-US
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Rob Herring <robh@kernel.org>
+Cc: saravanak@google.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20240923094249.80399-1-chentao@kylinos.cn>
+ <20240923094249.80399-2-chentao@kylinos.cn>
+ <20240924222857.GA404805-robh@kernel.org>
+ <ZvNAr0d5gYmuM+Zt@shell.armlinux.org.uk>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <ZvNAr0d5gYmuM+Zt@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 09/30/2024 07:15 AM, Masami Hiramatsu (Google) wrote:
-> On Wed, 11 Sep 2024 14:40:56 +0800
-> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+Thanks for the reply.
+
+On 2024/9/25 06:43, Russell King (Oracle) wrote:
+> On Tue, Sep 24, 2024 at 05:28:57PM -0500, Rob Herring wrote:
+>> On Mon, Sep 23, 2024 at 05:42:47PM +0800, Kunwu Chan wrote:
+>>> Add dev_is_amba() function to determine
+>>> whether the device is a AMBA device.
+>>>
+>>> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>>> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+>>> ---
+>>>   drivers/amba/bus.c       | 6 ++++++
+>>>   include/linux/amba/bus.h | 5 +++++
+>>>   2 files changed, 11 insertions(+)
+>> Russell, Can I get an ack for this to take it with patch #2.
+> Would be nice to discuss "how shall we merge this cross-subsystem
+> patch series" first, hmm?
 >
->> Hi Masami,
->>
->> I am a little confused about config UPROBES and UPROBE_EVENTS.
->> Uprobes is the user-space counterpart to kprobes, I want to do
->> some small changes:
->>
->> (1) since config KPROBES can be selectable, just make config UPROBES
->>      selectable too.
->>
->> (2) since config KPROBE_EVENTS depends on KPROBES rather than select
->>      KPROBES, just make config UPROBE_EVENTS depends on UPROBES rather
->>      than select UPROBES.
->>
->> Could you please let me know are you OK with the following changes?
->> If yes, I will send formal patches later.
+> The reason I didn't take patch 1 originally is because it was submitted
+> to me without any users, and the general principle is not to accept
+> patches without users. Too many times, I've merged code where there's
+> been a "promise" that it will be used, only to have the author go
+> silent and users never come along. So now, my rule is... any code that
+> adds something must also come with its user.
 >
-> Hm, I don't completely reject this idea,
+Just one user in drivers/of/platform.c right now.
 
-Thanks for your reply. I have almost dropped this idea due to my
-thoughtless after receiving the reply of Steven Rostedt [1].
+Actually, I don't know if dev_is_amba will use it more in the future.
 
-> but I'm not sure about the benefits
-> to users and keeping backward compatibility.
+So we keep the usage of  "dev->bus == &platform_bus_type " too?
+Although here come a wrapper function "dev_is_platform".
 
-Yes, I think so too.
-
-> Especially, the latter one
-> may hide uprobe_events by default.
-
-Yes.
-
-> As you can see, the CONFIG_KPROBES is
-> enabled by default, thus it does not hide the CONFIG_KPROBE_EVENTS.But
-
-Maybe I missed something, AFAICT, the CONFIG_KPROBES is disabled by
-default, it needs to enable manually by the users, and also we can
-not see the CONFIG_KPROBE_EVENTS menu if CONFIG_KPROBES is not set
-because CONFIG_KPROBE_EVENTS depends on CONFIG_KPROBES.
-
-> the CONFIG_UPROBES is disabled by default and make CONFIG_UPROBE_EVENTS
-> depending on it, the uprobe_events menu is hidden. I don't like this.
-
-This is somehow like the current status of CONFIG_KPROBES and
-CONFIG_KPROBE_EVENTS.
-
-
-[1] https://lore.kernel.org/all/20240911094317.4a28fc3b@gandalf.local.home/
-
+-- 
 Thanks,
-Tiezhu
+   Kunwu.Chan
 
 
