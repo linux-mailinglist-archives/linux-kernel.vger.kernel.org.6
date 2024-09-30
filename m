@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-344634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2FB98AC1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:34:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220AB98AC20
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 979EA284BD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:34:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5E928337B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8A9198E96;
-	Mon, 30 Sep 2024 18:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24003199259;
+	Mon, 30 Sep 2024 18:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="hzj4srso"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkQOw5kt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E030E43AD2;
-	Mon, 30 Sep 2024 18:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D8F192D82
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727721264; cv=none; b=eRXnoDkikcbWjAfPb7JqiLenXkCp3DcucCUFYjpUejHBICbIQJji/MIYdb0Y3tdtFtZmaV/og7j0GMXCVcEg7vocOSgKN7mcyn0N4CDl8fsBPtSU918nu3nusT9Mr/HOKFt9EsZJj9/ovyV4lCI3mDS9AVeRzT0gb5UEllR885w=
+	t=1727721320; cv=none; b=d9xUUQqa6EJmsLyR+t8EtFmkb89+SeupBjW5CFryHQwjwi0qdY7/Ikt7+JX9VRaaDdW+HIdjGJr3aHeG4eSx8codzT2BtUK1cIDU42aLU8dR/CKQuIMlKmpCBYzY0nH6BsKVwvIrT30uIlvQYHMOutqzr+dHxouF8gzt4mhP4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727721264; c=relaxed/simple;
-	bh=DKsTlu8wW/M9F55tjFU0JXFSEqFN4I8eOkv5bl8qe3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RZwgPgquRBMP+taiOTOB66p8UZAHBX/7yeieV5lPBqPeNgsx5BxvOSBTahYafqwvykVn0skIPOtMwk7si1GoWQ7Bp5oD8E475izHe64ElPAfXJTict9N4pEsZ1QDyRXMYRdkBKtS20iqNTXSyMbIQ8OrjNIDx8ZRdQlwYjyBt1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=hzj4srso; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1727721247; x=1728326047; i=wahrenst@gmx.net;
-	bh=DKsTlu8wW/M9F55tjFU0JXFSEqFN4I8eOkv5bl8qe3E=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=hzj4srso5jH8STcJYzgjVbEZclC9BfFrF/3Tbw14LeqHZquU2RRmqQ7fhrlWyY7L
-	 b8wppjaQK17+4WS+RUMQUjEz5ZWh+8SkuALVavea4ZT+1FLXOgOtar4HHCMUcC0uO
-	 mz5sHRtRBkhBvcx/nMmhkPKA9pBmxNap1aY2LyWhwP/nRFYSP+R6P7k37Ke+OWtsq
-	 K01rh4aJ0owUVIxmwfG9pTP2FMIm1LccAJw2xch5N9eyrb201I2ssKYIjpvPniWhJ
-	 oUWXfsZb0FRkSfEWivoSZfLQ9y7gQJ6nal/YwwZ0waQzIIhtRk99jJLg8chMI33r0
-	 eEkFnkCG0iCjZC70mg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ml6qC-1sC3md2fTI-00pf4S; Mon, 30
- Sep 2024 20:34:07 +0200
-Message-ID: <916d584f-6a9d-4eec-b6c4-319cfb298675@gmx.net>
-Date: Mon, 30 Sep 2024 20:34:06 +0200
+	s=arc-20240116; t=1727721320; c=relaxed/simple;
+	bh=u/r1gsK3d9HgHSLkwy9YD8P0OsrJDIi+1lCKi06YOU0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=EcrVn74+EGZE2scOx6xZcr7nze3qeGfYb44yyaJKHOTckiX8BWhOwarYD/ua8EnSHH3SaADRay//hULJr39rQoqEhfohd/3bUkM09huOUHQij1GaUQ0pbke5+zW6H/libCZxI/6euiwYMu3XJfVzWuaGQHUvnq8I4sp1mxfcjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkQOw5kt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727721318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7X8o4DowsqGONQ/4kasxk3OiTMOAJHVfF5+gN/kqpqg=;
+	b=WkQOw5kt70R/WrIEdj2b5mUT+hMkUkKd1zw3+SQlm684xmNjgEdlKh6YEnR1NcV+AAGQ5a
+	XxgkF0eCyqq9ff6s50XZKg9WFgamqjdUntt18PbzCzGFSJZ2Eztsi1vobHDwXhOfsPZObu
+	JqdLvxAGYhKaNQteBTmxuJ5T7UQoPBw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453--d_Kp97WPyK6rMA1zpyZig-1; Mon,
+ 30 Sep 2024 14:35:14 -0400
+X-MC-Unique: -d_Kp97WPyK6rMA1zpyZig-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59638196A10F;
+	Mon, 30 Sep 2024 18:35:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10E771944CF6;
+	Mon, 30 Sep 2024 18:35:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com>
+References: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com> <2968940.1727700270@warthog.procyon.org.uk> <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com> <2969660.1727700717@warthog.procyon.org.uk>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: dhowells@redhat.com, Leon Romanovsky <leon@kernel.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm: dts: broadcom: Add missing required fields
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
- Karan Sanghavi <karansanghvi98@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, kernel-list@raspberrypi.com
-Cc: devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>, Anup <anupnewsmail@gmail.com>
-References: <ZvQ27pvrnEYA8BB9@Emma>
- <3e296eed-5dbc-4098-ac3c-3c3125a352d8@gmx.net>
- <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <6723d91c-ac15-436e-878c-2d6fc1aac5e2@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oAXDcj/lVWQpMkkcSOhxmYT9B0o/dTtMDwVUMzWA1cWYIoZx7hG
- TaAvoPvrAhBHuTI+bI89gMw1cM9gPp/Co8mdxtPTXZ/r+0oqc+IjyqpTa8RZFngPZW/6412
- 1ob55Ist23cWSeTXj9mL1MeKpXU2Y/0vSguz3dvZXP/kLZxXsIlVi4N7k4RQW6DjNB9MwDM
- uWuMmDCch2IJu5abeut1g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wjxs5VoYkX0=;C6vrBoX9zTva/5XVl4gTQF4sqTe
- WMrPEN0OMn3jRI9zUdpA5VjykYecSknVwQ6oSXLkATd7YGjr9W+O+BjQoFCVbGl3aziUyQX0p
- ZUYYuTTcHU23h7dLPxrodl3It45U4ntGr7yyThc9j84venE9umahvWf6aWwDTsjJS/2B8rHEN
- 1tRfVllfuLTfE+9V6WFwlZgJBm+bzeB7LpVNUnPTojwCVoFrg2Ahmq+zvzz0lr4ZeJWUx1cSX
- qER8CB5Z5Nhxn4rvoxuJmu17qsKLszahl2qVtnCuCNUbjaLWbY1fTo0HLo3AmhTp6LIBTCYiD
- LnCvPrJRjhNGbx2VXZkMEeAYML+pu9cnrVaG8SMLmDc8+pE9bC4VjTu0nFgSn2AuOx193GD56
- 1EbpxXU3i7yOITa4t/dTnc7OxSWKXxj15ARV4xwH+8Vnsikih6saJJfr7amSHQ6VVo+v1bZKn
- /6TEo8e9kcI3e/YJ4iiSUI+XCCoTYq2TmsH4Mjgw70VQJzDFs+hF7m04gBwhYaDL1sn3dgXHp
- sWAinciqQlqub8cg/EkAd6XPanZfVJbJSDv6MzO2Ytkvsv6A3b02nVYXQS3Vd0cN4KJoj3pPA
- RQLw/JZIqGQkD3k5Mtwglmk5jmRxamqrLF7HMLUbEEholySIwP3YbeEInGBx9wed2F/9MXEn0
- d0YDbg0Dvshu9kEkKJjpvVjLEWvfuPQkaUyPl9AVDJv7z7Jj3Jf9dh+rzB7DLhQHhlP9ESOLL
- sT1CAul5Hu5RUufmL4qt4EqA3MK/KHATXaHJ3md/BqpFHK/E+iaFrJ4r5NbrsLYeBLixzsvk8
- HtjCtD75KfinXiK0eBw2CHtQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3007427.1727721302.1@warthog.procyon.org.uk>
+Date: Mon, 30 Sep 2024 19:35:02 +0100
+Message-ID: <3007428.1727721302@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Florian,
+Eduard Zingerman <eddyz87@gmail.com> wrote:
 
-Am 25.09.24 um 22:38 schrieb Florian Fainelli:
-> On 9/25/24 09:39, Stefan Wahren wrote:
->> Hi Karan,
->>
->> Am 25.09.24 um 18:14 schrieb Karan Sanghavi:
->>> Added below mentioned required fields
->>> =C2=A0=C2=A0 1. interrupt-controller
->>> =C2=A0=C2=A0 2. #interrupt-cells
->>> in the bcm2711.dtsi file for the
->>> interrupt-controller@40000000 block as defined in the
->>> bindings/interrupt-controller/brcm,bcm2836-l1-intc.yaml.
->>> This issue was noticed while compiling the dtb file
->>> for broadcom/bcm2711-rpi-4-b.dts file.
->>> After including the above fields in the dtsi file
->>> interrupt-conntroller error was resolved.
->> looks like you made the same mistake like me [1]. This change breaks
->> boot of Raspberry Pi 4 [2].
->>
->> There are a lot of DT schema warnings to fix, but this doesn't belong t=
-o
->> the trivial ones.
->
-> Including the #interrupt-cells would not have a functional impact
-> however, and we ought to be able to do that.
->
-> The 'interrupt-controller' property presence means that the controller
-> will be picked up by of_irq_init() and that is was causes problems for
-> people testing this. Stefan, do you know if the VPU firmware
-> removes/inserts that property to tell Linux which interrupt controller
-> (bcm2836-l1-intc or ARM GIC) to use or does it make use of the
-> "status" property which would be the canonical way about doing that?
-There is a config.txt parameter for this, which is called "enable_gic".
-But if i use this i couldn't see any difference to /proc/device-tree.
-Also i couldn't see any modifications by the firmware to the node in
-general:
+> Are there any hacks possible to printout tracelog before complete boot
+> somehow?
 
-interrupt-controller@40000000 {
- =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 compatible =3D "brcm,bcm2836-l1-int=
-c";
- =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 reg =3D <0x40000000 0x100>;
- =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 phandle =3D <0x8e>;
-};
+You could try setting CONFIG_NETFS_DEBUG=y.  That'll print some stuff to
+dmesg.
 
-Except of this i don't have any clue about the VPU firmware.
-
-Regards
->
-> Thanks!
+David
 
 
