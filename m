@@ -1,100 +1,88 @@
-Return-Path: <linux-kernel+bounces-343630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AD3989D85
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:01:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FAE989D86
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99721F21F95
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9332EB241D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E1FA1822E5;
-	Mon, 30 Sep 2024 09:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r36v9jij"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2F4186E4A;
+	Mon, 30 Sep 2024 09:01:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702A5183CA4;
-	Mon, 30 Sep 2024 09:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BFB7DA68
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686853; cv=none; b=V4bzWLW7UUv5Jt35G/5KLFFIyqkg2JYHQ7FPkaPfMuCmnEReVKMSe+Q4bX8UPxZNukXKHn7JnZLZPbE/5IzgXRnHgY3O9UWXHVo5DiCm/BV9uusMtfP91K2QFsxkpi5nWhizA6XTAijQk+sdCVHLnoSCyho69wstCNey7w3My+s=
+	t=1727686865; cv=none; b=E90o3HRsaLsShcdurLSeccI8U+r+ikZNXtExB51WX662DDmvM5hCymVpUkC5Vsmh3gFwznXsUcTYMr77c79TUTwPizAZ89rR5/a+dObZnLvwnhKfQYIbYEluvTsuxmhIs2TXBgsWuZYkBXo8PcnpGqCIvCmsvk3xIVJZAr1Haow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686853; c=relaxed/simple;
-	bh=R/G0ZXf1QhcUH/f5dLniyKLj7szWbspzo4CnQ0uKYZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X0Xj2T0zcf5d8S7HYXzketUZQQNq/gqvio5CTEMJYfrtF1pvKt6hj8WHQeLnISnY6WygGBIXBLeXOwX2g22pORBwMckdV2biTQKvnnUG7Anikj9/GWYqQrGygeoa8tsCALplSY+rRE162kRNlTk400BQi5dyzkVmRh/UqfMSIVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r36v9jij; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6E05C4CEC7;
-	Mon, 30 Sep 2024 09:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727686853;
-	bh=R/G0ZXf1QhcUH/f5dLniyKLj7szWbspzo4CnQ0uKYZ8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=r36v9jij4zIKQOmoLdOH5m5lxe0+Cz2i2DtaehQPg1TFq9th9kb1PEPXhN71i4V+W
-	 BRCLp3zyeCl6n+F4PFSlxqe80O4PlxkAwYaCP3jGgGd+I9vsvCf+hBoQdIHSKsTiMf
-	 +1Ft49biWU84e0ZEdcaw5//5VgxpKu2rdZqA0PN4pqWXwAyUuv6btUvw+kD5N/MJLm
-	 pApm4y0giBNk/8WaqQ8H5xZ2EPf/LMZdD6ZG2wGbcSjK3jH3YzFObIjM/5n/LEnvds
-	 a7R5XRdlX5hLr3tn67kCxiqnPhryWN08V5FkssRuDviL0a9UvSK9dtlUX3JTaTS3YR
-	 H4vQWGTbYuVBQ==
-Date: Mon, 30 Sep 2024 10:00:44 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 6/7] iio: light: veml6070: add devicetree support
-Message-ID: <20240930100044.5770bb94@jic23-huawei>
-In-Reply-To: <20240929-veml6070-cleanup-v1-6-a9350341a646@gmail.com>
-References: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
-	<20240929-veml6070-cleanup-v1-6-a9350341a646@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727686865; c=relaxed/simple;
+	bh=5Ak0nl1oh1TVATFd3rbp+OB6ZSkwyGA4360acYDknt4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YsB9LCgepzz7UwdxFxtxYhtO4b9a6g7YPvvyR7ZSGcxpR7NlnIZ0rC6Zv39Y+AkTrDroCcPxyVVD9+4y/H6+GBcbfbtUC4A/nXS0ZPxfpI5PKxYQCo3GWD1ybFBxoi29Bm5tYgfiRMK1xsuLU7AgYfa0qSJymgEdhiRYMMdyKPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82ad9fca5fcso378518239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 02:01:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727686863; x=1728291663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgcA2yLZcM4QLraGvCK4shGLtxy0kO6PZj5funVyOR0=;
+        b=QODFNSUDk3VozmaJD9fSJ1SBUZGl7eqARbQAh8ekA43xkbcmV+S4yd3wfu59ach81O
+         chMd6OXhWL/SlNO95NrieMikc0wypXbhdPvN67jZSWHIF9c4/Jqmjrb2MM21QJkUOmJ2
+         jyGaG/L4TnS2J67+CTmC+1OcJuZzSIqkc8CRyCTRSyZKnLWZ9JRrKl7N7q/K+kuINWlo
+         bYblVEULhPrXhloZpUrHEoKr/Ctwh+BbXWCXRnxNw9lKFVJoOjpsxW/XTCIjHXJJeScf
+         8oOuXqG5YICPZ5uScXZbFhUqZv/q1QUPoO2Ks/yHU+T4xFGkJZJ/6swwZ/D2ZKOAZgUK
+         AvFg==
+X-Gm-Message-State: AOJu0YyDgb5BvCPp4K3ZeQGzjr5jxRJ45+VLJyqsuZyZD+X7DDIbA853
+	hbtqEgqmHs5fk+bPyOZW45ESYmtqYawsbw83nT8jicNpgrO725STdIQo+ZcoUx8JqqrbAALQgfk
+	2w9sTuqLTTljhlvCugnCXBSlGROuIQDpNmU5vzRzrn5h0JgCAH8f7WjY=
+X-Google-Smtp-Source: AGHT+IHZ+biGjIAG6C6BY56/iTKYJLqTWat+LR2OKgPQP/PPkO6z5MDLoeT0uAFu2kIV+8qaW+craq89QadKHRazWp8iev6GGQG0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1e09:b0:3a1:a163:ba58 with SMTP id
+ e9e14a558f8ab-3a3452d502amr75487135ab.26.1727686863000; Mon, 30 Sep 2024
+ 02:01:03 -0700 (PDT)
+Date: Mon, 30 Sep 2024 02:01:02 -0700
+In-Reply-To: <a41b0dee-23b9-4687-a0cf-7409e030774c@studenti.polito.it>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fa68ce.050a0220.6bad9.0035.GAE@google.com>
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
+ dereference in read_cache_folio
+From: syzbot <syzbot+4089e577072948ac5531@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, s323713@studenti.polito.it, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 29 Sep 2024 22:38:51 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+Hello,
 
-> Register the compatible from the dt-bindings.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  drivers/iio/light/veml6070.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/iio/light/veml6070.c b/drivers/iio/light/veml6070.c
-> index faba04e1da98..8d02899028d8 100644
-> --- a/drivers/iio/light/veml6070.c
-> +++ b/drivers/iio/light/veml6070.c
-> @@ -192,9 +192,16 @@ static const struct i2c_device_id veml6070_id[] = {
->  };
->  MODULE_DEVICE_TABLE(i2c, veml6070_id);
->  
-> +static const struct of_device_id veml6070_of_match[] = {
-> +	{ .compatible = "vishay,veml6070" },
-> +	{}
-I tweaked this to { }
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> +};
-> +MODULE_DEVICE_TABLE(of, veml6070_of_match);
-> +
->  static struct i2c_driver veml6070_driver = {
->  	.driver = {
->  		.name   = VEML6070_DRV_NAME,
-> +		.of_match_table = veml6070_of_match,
->  	},
->  	.probe = veml6070_probe,
->  	.id_table = veml6070_id,
-> 
+Reported-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
+Tested-by: syzbot+4089e577072948ac5531@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         9852d85e Linux 6.12-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13636980580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=daa10535be443909
+dashboard link: https://syzkaller.appspot.com/bug?extid=4089e577072948ac5531
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15674ea9980000
+
+Note: testing is done by a robot and is best-effort only.
 
