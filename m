@@ -1,208 +1,130 @@
-Return-Path: <linux-kernel+bounces-343894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2CE98A0E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:35:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A172B98A0BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C751C2596E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:35:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BFD2B22493
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8F31925B9;
-	Mon, 30 Sep 2024 11:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B74618E038;
+	Mon, 30 Sep 2024 11:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKZo/KvB"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RnLbFZfO"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D65F18EFEC;
-	Mon, 30 Sep 2024 11:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862DD47A5C;
+	Mon, 30 Sep 2024 11:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695898; cv=none; b=G7RCb659i0pl6xONYYGn+vx2DK+6jUlSI1XzmJA74jivcqSMFWuEcpKnmjmVBgJlfb8Z45GdaYovP4BYhN1HKStHfCy51yHCrbxHufB53HwaM4omAK+Bz5XDThPKR+OjuVEoiayrHR4ETuVXfgEr5P1Md7JLAx/GoyWDMBADxkQ=
+	t=1727695846; cv=none; b=QI0i/CCsQvjNPnKuQbO0CCdldZy9uNOsoomA5DeKW6tSPDy0K/LolC67BoKtE2rpaw6tUlA+z5LGimZ8Ce2eaF23OpRhC5VsKppLyKH18HUE5N0kBNa1ehzJRqUZMNBXNPTsY3d0rwd9oJw/T+eFAOtJgPul35AtX5rAMHq5mS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695898; c=relaxed/simple;
-	bh=XY9CIJRo4kERP1f7gzDDtLEj6FCWJeCQbDTSD4GQKRc=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Adneu0dS6i6/mrWo/B5ymE35ZSBYlsStQ74p2nghr5yxFnPeo08FUjmBw/YuD2RxGZHcBbb6dhZ7umfQpnGHHZqsb5VWlDLC4BHbaqDHqVVfmZrXAqbQ7V2kout5WgxIyb9UzWE8bAEOsGVZVvjrlj6cMyYyebquiPahNbNRPr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKZo/KvB; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42e5e758093so33658845e9.1;
-        Mon, 30 Sep 2024 04:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727695895; x=1728300695; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xOC+2wly8ftj8TAYNwXd5GnLMEEgJdboLyIbx9/Qeyc=;
-        b=BKZo/KvB4pNksTAK45cGhy9kpW79zkZnUua0Np2Jn9Tu+gv2tpsBSgwezaZoDnWJL5
-         nblm/0f0P2TYXqNS84ILG5Cz9Iub/wWmEeS+UhYWA2YhGaoIrlxEmXZRu2fVqFi8iGK6
-         3JwMWuovZrxJt/JyItLQkBcKyQB3H/ioDHpNJkX+qbwgPITEsTJvr/Mme6Suo+tuV4z1
-         mJfcy+/tz+abOi3CqbuFGrgFZfpzgBjhnvprYeFrOAJ5vAwwPVgxeMm4HD0VYlmJkrlb
-         8C7hm4i0bMrUmHZFTLlSdLxmQSqYJLBHG9MVPdtM0b51tNHne24nezEAnzuLZqF2m1F7
-         KqUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727695895; x=1728300695;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xOC+2wly8ftj8TAYNwXd5GnLMEEgJdboLyIbx9/Qeyc=;
-        b=FL6SEbqFc/d2hP8QuZMDRb2gcBfrKpjWwrBm1gZX/WOEnWHsj50HI4A9wvAvd8mPoZ
-         4+jHxbSnj05YbM9IcP5TXKKDzucYrCoNl4w85BYGM/265zCRUUs3gE1cmXBmyKssCHa8
-         DCPXXhBrZtGiOQZrLyA8CQOX0bSEfpLVCjRFu4HZgJqalLSPpHk+GBn0BQVVzrgXoejD
-         XiQx0XBKRAMaxxgn69ttAt0nl4qTUHAdFdO17iwc41s02S0UXqXkqZJXyAbXs2UlFziC
-         TwjUItfBx25LqYc4IST5V0MvB9fSc20OY9SDoCfa6PA8UoTwPcSkk0W7k5rRdq9Qj9s5
-         6aew==
-X-Forwarded-Encrypted: i=1; AJvYcCUaiT8P0Mo2MnH1CwnSVvJOcNc5TDKqeNdWBcL0PEwg7wzcWte5+Ot9I3Jm7h5TT5q5CI4SfAnyVXFz+hY=@vger.kernel.org, AJvYcCVOV0KJpVK5fKe2gv+JIs2sphL45cY3EQuIMI4xOYHIkO7fUXvE1CE3OS2Sl4o51/JlVDUqwHmbgi906yoP21Yj@vger.kernel.org, AJvYcCVRrUVrjgzSNY2BXYtks94TXJ0Edo3BcCK2EQaeFBpDA/d0eMHvl5GNeFnM4XIAxfDWm4M4WC3cSRc0pfn8@vger.kernel.org, AJvYcCW3nzLEUdaEALIYV5iNTLqsZ0T3tuCyfC5mFc23GNx8aKGpp/hKktYOQMatkw2zEGnSo+eqzlSN3jPG@vger.kernel.org, AJvYcCWLXkgYuwviC3FpO9ALZka0s9qNuqM58NlZYCjhJCluMQyqusz6dGfAfPEkMJrdNq68H2BL43WVG31x@vger.kernel.org, AJvYcCWQxaSsXOJ1p0s0oI7W99G03f0sy1RajQWdlHa8XlJxNNBuTYUnNs8BxewNo+rVQtc8uncbhpvYrdVs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8jeQn228BUB9VUsAjiFJEtxvly2tqOEWbrvEenXv/ZoHSAxBd
-	BKbBQhp29Icw787i7ltHr8Phhs6XSq4MN8GzW0BCCWvLKpwocN0p
-X-Google-Smtp-Source: AGHT+IFdIkatQerk+zXAxINpq/NRTF+eJHagLd98gelH27PNmGtNgyRLnetKypXvOHMMq/uLAK/OKw==
-X-Received: by 2002:a5d:554e:0:b0:37c:d20d:447c with SMTP id ffacd0b85a97d-37cd5ab758emr6846761f8f.29.1727695894648;
-        Mon, 30 Sep 2024 04:31:34 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cd57427c6sm8889363f8f.96.2024.09.30.04.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 04:31:34 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Ming Lei <ming.lei@redhat.com>,
-	Christian Heusel <christian@heusel.eu>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: [PATCH v4 5/5] dt-bindings: mmc: Document support for partition table in mmc-card
-Date: Mon, 30 Sep 2024 13:30:12 +0200
-Message-ID: <20240930113045.28616-6-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240930113045.28616-1-ansuelsmth@gmail.com>
-References: <20240930113045.28616-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1727695846; c=relaxed/simple;
+	bh=Rnp3oAKnt7uQbKWYYpMvDD5p8/BQvPa2EK6O4FygSKE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=HI7Gzh5xW7wzNSzF90yW+YGXmjsuFzXhlbQ639cJIrSnhzIAPBMI1Vvo4aHI2R/Hk01pH81cATkCw0bqP92OX5gwHM29biqUcLpX3IxTcEzeLgyPtR+F4Z/oTwDT2n8Le/HTiPm66P6NL3B9ixoSAOjPzItbidqX8hLC9ZWd3dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RnLbFZfO; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727695821; x=1728300621; i=markus.elfring@web.de;
+	bh=d0XcTI11xyggZuAJX6mDg2btd5Go79CL4rZ3yZncCLA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=RnLbFZfOPGtjXVL2FZys7WrLyvVMsOAW6gZVFKGSn8x5+B5WMeyAStTN4pj2JdKk
+	 17ZmLWx7MbKyos00D30akxGp+5Gd2XC8LXrNgyXAewYL5GHFc7ZeUHVBCIXLDaupC
+	 1CDi90jxwOzgr7+pQyJKE365uWFAAvoZWCsxQUS4j2jyN1X95a9cbOXEo13arSlgt
+	 A7T1BHa1BVs/FuHQ8nmDyzbjvuYZ4NN4/vUBigOjpcq8VbyovcMAmlFpNA3XMPMtx
+	 Qa5wkrsvVDa9GsrbHCLsOLHZar+Rsd+VPDvG66pVMDOEyvqFtFKH7urzogddMZUvB
+	 uLUBDmcEumoemIIJ+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MdwNW-1sMS1D2Bcs-00fj54; Mon, 30
+ Sep 2024 13:30:21 +0200
+Message-ID: <21be0ed9-7b72-42fb-a2fb-b655a7ebc072@web.de>
+Date: Mon, 30 Sep 2024 13:30:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ kernel-janitors@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+ =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
+ <amadeuszx.slawinski@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Simon Horman <horms@kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>
+References: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
+Subject: Re: [RFC PATCH] cleanup: make scoped_guard() to be return-friendly
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240926134347.19371-1-przemyslaw.kitszel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xzvixUKgOXfBCXt699GIb0+mo0u9g1Dvr1cAFr3gmI/VDPsUyBJ
+ ZmN5hIryhXzOoDV3nzFt/bUkN1dqfHJNOAy7H+eJ//XMCfSxK3WT+iqYmc3KB+iyBiNaPpA
+ 9ypaq8r9UvtJ+cGQ/43MswXBwANsINZ3XzTjjWE0yAPZSoiMil0iviJvaRJ7RLW1R9LYyfE
+ WGj9dUpN1MpiotC3FdJGg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iPuPNAsv3as=;TenYwlrRc2lIEk5NSrZcVPiCITS
+ 3MKDynz/FL0WS64moCRGyYTQVwf5nbIFDxR/56/7EG5RABpMUDxdaUJ0RCJ3Qas52jf+aNyry
+ sMJHTkWq7ZAk5ELLW+cZSV+upXtbsCtNA+c36QG6wszjkiC4/3kqEuMOZrswkyBwFFUvGX9QT
+ CYY4DZF9FfhfeGbEBO9NHIxN/uE2rW7OWMVNPjEBxuZb7XfFqzFadrGjtq2N0sbFFxBHfEMUW
+ EBpu+NmR0bAUJmyMC44g8zZwq1Y/coFTydyv1v1ZFSa3wITK9cgBviDJexrDH1ERjxd7Lqyh+
+ NTNIzYcpxT+5e61HIcryj9kuUdDLxO6hbaEbr4a3pEc9N9JuogrxZkleZt+RJc0wAWYGBROHR
+ OOIUAunbcU9/Kc7gh+dNXc5EYcvRto8ARIz6pVdg3qwVTbHZLaH1o3u+5N02tgvcZD7IasXDc
+ nH91nIeLG9qJVjA+8OthmGnx7/z/ReWIg9ypQ5v5jJ6T0pUUiNLdIJQrYiDfUhjgYHgzfDkX0
+ s1+SbK7NHhLWfwxzshJlSmD5xL0Gc+WdB8qu75D6/8aYg2cU/YhutZLimfTHeOxv93DJ5S6oK
+ VV5epPeEgLuwS/kBd0iuW37NcFTiCGEPsYIo5zV269cgNWOSCZ6qJTraI3rEQ2ZZNOQxMMiHU
+ E6jXzYD1X4u2ZgvBbxC0AhSB4wJe9PnycFPCP+pyvflJABt4+SO11acOrgap6BK6IL6QKAF5C
+ IEuEoaYLUYptVWDXycu2DQse5k44wGP21UIK8Qy4RLf6qRjlUaljHOr7+O+Qy6tkpZQZi8QSN
+ dP4gTf7T50sK6HBY8FBZ0yGA==
 
-Document support for defining a partition table in the mmc-card node.
+=E2=80=A6
+> Current scoped_guard() implementation does not support that,
+> due to compiler complaining:
+=E2=80=A6
+> +++ b/include/linux/cleanup.h
+> @@ -168,9 +168,16 @@ static inline class_##_name##_t class_##_name##ext#=
+#_constructor(_init_args) \
+>
+>  #define __guard_ptr(_name) class_##_name##_lock_ptr
+>
+> -#define scoped_guard(_name, args...)					\
+> -	for (CLASS(_name, scope)(args),					\
+> -	     *done =3D NULL; __guard_ptr(_name)(&scope) && !done; done =3D (vo=
+id *)1)
+> +#define scoped_guard(_name, args...)	\
+> +	__scoped_guard_labeled(__UNIQUE_ID(label), _name, args)
+> +
+> +#define __scoped_guard_labeled(_label, _name, args...)	\
+> +	if (0)						\
+> +		_label: ;				\
+> +	else						\
+> +		for (CLASS(_name, scope)(args);		\
+> +		     __guard_ptr(_name)(&scope), 1;	\
+> +		     ({ goto _label; }))
+>
+>  #define scoped_cond_guard(_name, _fail, args...) \
+>  	for (CLASS(_name, scope)(args), \
 
-This is needed if the eMMC doesn't have a partition table written and
-the bootloader of the device load data by using absolute offset of the
-block device. This is common on embedded device that have eMMC installed
-to save space and have non removable block devices.
+* How do you think about to define such macros before their use?
 
-If an OF partition table is detected, any partition table written in the
-eMMC will be ignored and won't be parsed.
+* Would you ever like to avoid reserved identifiers in such source code?
+  https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or=
++define+a+reserved+identifier
 
-eMMC provide a generic disk for user data and if supported (JEDEC 4.4+)
-also provide two additional disk ("boot0" and "boot1") for special usage
-of boot operation where normally is stored the bootloader or boot info.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- .../devicetree/bindings/mmc/mmc-card.yaml     | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mmc/mmc-card.yaml b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-index fd347126449a..5f93bb77f246 100644
---- a/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-+++ b/Documentation/devicetree/bindings/mmc/mmc-card.yaml
-@@ -13,6 +13,10 @@ description: |
-   This documents describes the devicetree bindings for a mmc-host controller
-   child node describing a mmc-card / an eMMC.
- 
-+  It's possible to define a fixed partition table for an eMMC for the user
-+  partition and one of the 2 boot partition (boot0/boot1) if supported by the
-+  eMMC.
-+
- properties:
-   compatible:
-     const: mmc-card
-@@ -26,6 +30,24 @@ properties:
-       Use this to indicate that the mmc-card has a broken hpi
-       implementation, and that hpi should not be used.
- 
-+patternProperties:
-+  "^partitions(-boot[01])?$":
-+    $ref: /schemas/mtd/partitions/partitions.yaml
-+
-+    patternProperties:
-+      "^partition@[0-9a-f]+$":
-+        $ref: /schemas/mtd/partitions/partition.yaml
-+
-+        properties:
-+          reg:
-+            description: Must be multiple of 512 as it's converted
-+              internally from bytes to SECTOR_SIZE (512 bytes)
-+
-+        required:
-+          - reg
-+
-+        unevaluatedProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -42,6 +64,36 @@ examples:
-             compatible = "mmc-card";
-             reg = <0>;
-             broken-hpi;
-+
-+            partitions {
-+                compatible = "fixed-partitions";
-+
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "kernel"; /* Kernel */
-+                    reg = <0x0 0x2000000>; /* 32 MB */
-+                };
-+
-+                partition@2000000 {
-+                    label = "rootfs";
-+                    reg = <0x2000000 0x40000000>; /* 1GB */
-+                };
-+            };
-+
-+            partitions-boot0 {
-+                compatible = "fixed-partitions";
-+
-+                #address-cells = <1>;
-+                #size-cells = <1>;
-+
-+                partition@0 {
-+                    label = "bl";
-+                    reg = <0x0 0x2000000>; /* 32MB */
-+                    read-only;
-+                };
-+            };
-         };
-     };
- 
--- 
-2.45.2
-
+Regards,
+Markus
 
