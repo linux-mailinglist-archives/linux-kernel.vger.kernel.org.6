@@ -1,114 +1,163 @@
-Return-Path: <linux-kernel+bounces-344670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D4D98AC86
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:11:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8090C98AC89
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8971C21AD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A461C21E0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D999199254;
-	Mon, 30 Sep 2024 19:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R30OO+W6"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03596199928;
+	Mon, 30 Sep 2024 19:11:35 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8770178C60;
-	Mon, 30 Sep 2024 19:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707911991D3;
+	Mon, 30 Sep 2024 19:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723470; cv=none; b=JKRogjA8x/Gg68ZW1y40qvphbnf43B8Z3H6sllMmzpov8mtd1mLiGkLuAuz+/W1rpA1zSr89ZFRusZrhdr5gsN/XBHTYY202t/l5B49zOUTUF57cZrg+9vc9tvPGyDNEf0p/+A1PY68kf/quQhoqbqO4F1F8q8/Yigd7XjnchxU=
+	t=1727723494; cv=none; b=kg5+OqKwySpobOF6myYDrPUBoW8jyA0ez6LmGF17X4v8jpfY+20tpNyzvlWK5NTmt53j6889w8oARoEVcsu0FZP4YNG9wrCeA5uCWLv570VSQ64de8jPnJmXb4WGsQwkn11NtyZDyWFBA5v+ON0n63zV/As4K53n8wY6Rsg8sEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723470; c=relaxed/simple;
-	bh=qbmrI3OdRofUX7H4fimrZ7tT8NzWBs0d5LqBRpN/82g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qPNJbTqqf9CeOJH2WV681K618k2PXaupQXMg3QvICfVkAKdNZS+s8SLYe1b3/r/w6drXHgsZtiE2jSXMMVsM9w8HMaxvYOuIld0grR9IVvzAaa1x7v6RxoZSO1JfBbGCCfg4BoO87zMrd7V5ktXaTTH3OUIFbyQPzTkUQjCL4ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R30OO+W6; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b86298710so12715115ad.1;
-        Mon, 30 Sep 2024 12:11:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727723469; x=1728328269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aCTSpjE7HL0LhWw7HAwvpibvAomrawMsBzaMkMKPJCs=;
-        b=R30OO+W6kesb/yKI0s7YFwiGBm4kz4kzPW+9udxmeXhKPE9Oc9LMzoMHSXRKmTD9nP
-         ZNwKYySRZhfl2iY7htLNlvPml4bn7rhtc76q26uS5bNlKmAcRXH9AgivC57fIQGWFweO
-         xdhH6U3CoDhWazbbrexR/jLR08yvR2t8yYV320ycxJ9av2suWlVPTquiSVLGIi3ukPbD
-         kt2ofQO2gLbHygaE9sr2RArp7PsKfYhAIMqlEzXC6WohDTuMczpjiVgKHHifGhvQKkTT
-         5jGJmlCjGW1J4qtXm9AXYg6dIF83hUbS4EseMTbUVr+UDmnXbnIJbsvQFgtTayZ7X6IZ
-         Xw9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727723469; x=1728328269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aCTSpjE7HL0LhWw7HAwvpibvAomrawMsBzaMkMKPJCs=;
-        b=TjWfx32+q7XpBaz+W4SkDv34gbxF20ss+LuaEN492ckCx7VDZUMEy3zpj19Rx7STVd
-         oT1g0/wYQuxSyZWY/lAWWLpreQeMXfu6+ETeuMKBkFBYd4Tr4mpx46VjJeEI1qLTPjp7
-         Ii5z6aahjX5lqNtVGS/WfYWeLiXlVAc6FL23Vrt6HfGpum7Rby+5pKBpyWw0QAKmvovo
-         oynm0eIY3XAd8LdrqAoSCMsDryKqbIs8pLT6+HEtD2NYEq9odbNmNsmLv004esve0xIl
-         kjA21G26HmMDqzZjr12zd3s3B3I91VMQ4b+QrkL8l784gHAgsKeTQdW3KBJPrdzrdCKb
-         Fpmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzoFNG4fqZZD2L9RutRXwfzQpX2ECWiMt15jDUPqTLrBpWSzbcPyBXWzvlAf22cNkn40LiuovDxBAj1o=@vger.kernel.org, AJvYcCX8/11gWK33i4nWRSCKjUDqTqHGBrNX0OzghRQd0DWxA3UCPVpNMp8Ka2yYFvQxgjAs3AgR6c1tYbemYrk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytTTCTe8Hwj+UqpQs09UhiEITqX05ioQl45f8OzLnBuTh8W3mZ
-	hmbLfGz+ohbYPJ6Kazf8Y8fTpO0qWtZeEqJBDPbaK96n+SNJnTn8
-X-Google-Smtp-Source: AGHT+IGPKqgmSCwIUXXbGEMtmjlMHyUWhICIzjtK2cewowvU+9I7L/QxmmbWD2bHNlk1OGpGpmIQOQ==
-X-Received: by 2002:a17:902:e5cd:b0:20b:968e:2585 with SMTP id d9443c01a7336-20b968e285emr37146775ad.6.1727723468585;
-        Mon, 30 Sep 2024 12:11:08 -0700 (PDT)
-Received: from ubuntu.worldlink.com.np ([27.34.65.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5fd40sm57598175ad.266.2024.09.30.12.11.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 12:11:08 -0700 (PDT)
-From: Dipendra Khadka <kdipendra88@gmail.com>
-To: jckuo@nvidia.com,
-	vkoul@kernel.org,
-	kishon@kernel.org,
-	thierry.reding@gmail.com,
-	jonathanh@nvidia.com,
-	nkristam@nvidia.com
-Cc: Dipendra Khadka <kdipendra88@gmail.com>,
-	linux-phy@lists.infradead.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
-Date: Mon, 30 Sep 2024 19:11:00 +0000
-Message-ID: <20240930191101.13184-1-kdipendra88@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727723494; c=relaxed/simple;
+	bh=nlN3tNCZ6HWT3Bpw4JsI9Ww2HIUiOECQXGJjadRjQlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rkH5EMF74fSSs9zk0H9lJZIExe7NhCt71mHGPOi1MakZKR5BJ8BaxFJnlhjJxiRnmaeI1h3cvNcIXr4PPpOJ0LKQ1+HoqmD469WykEI2QVk+qedQST6YbwehJqsH1rnMPSv1KAALAgldm4vs/u9/xKKTU5c4NjnCKl0x1RIFYqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
+ 2024 22:11:17 +0300
+Message-ID: <b4707880-2be4-4132-a3e1-8b104b89828c@omp.ru>
+Date: Mon, 30 Sep 2024 22:11:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 05/11] net: ravb: Simplify types in RX csum
+ validation
+To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-6-paul@pbarker.dev>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20240930160845.8520-6-paul@pbarker.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 18:54:28
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
+ d90443ea3cdf6e421a9ef5a0a400f1251229ba23
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/30/2024 18:58:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Add error pointer check after tegra_xusb_find_lane().
+On 9/30/24 19:08, Paul Barker wrote:
 
-Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
-Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
----
- drivers/phy/tegra/xusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+> 
+> The HW checksum value is used as a 16-bit flag, it is zero when the
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index cfdb54b6070a..342f5ccf611d 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -699,6 +699,8 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
- 		return -ENOMEM;
- 
- 	lane = tegra_xusb_find_lane(port->padctl, "usb2", port->index);
-+	if (IS_ERR(lane))
-+		return PTR_ERR(lane);
- 
- 	/*
- 	 * Assign phy dev to usb-phy dev. Host/device drivers can use phy
--- 
-2.43.0
+   I think I prefer s/HW/hardware/ but there's no hard feelings... :-)
+
+> checksum has been validated and non-zero otherwise. Therefore we don't
+> need to treat this as an actual __wsum type or call csum_unfold(), we
+> can just use a u16 pointer.
+> 
+> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+[...]
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 1dd2152734b0..9350ca10ab22 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+[...]
+> @@ -762,23 +761,22 @@ static void ravb_rx_csum_gbeth(struct sk_buff *skb)
+>  	 * The last 2 bytes are the protocol checksum status which will be zero
+>  	 * if the checksum has been validated.
+>  	 */
+> -	if (unlikely(skb->len < sizeof(__sum16) * 2))
+> +	csum_len = sizeof(*hw_csum) * 2;
+
+   Could've been done by an initializer instead?
+
+> +	if (unlikely(skb->len < csum_len))
+>  		return;
+>  
+>  	if (skb_is_nonlinear(skb)) {
+> -		last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+> -		hw_csum = skb_frag_address(last_frag) +
+> -			  skb_frag_size(last_frag);
+> -		skb_frag_size_sub(last_frag, 2 * sizeof(__sum16));
+> +		skb_frag_t *last_frag = &shinfo->frags[shinfo->nr_frags - 1];
+
+   Could've been done in the previous patch...
+
+> +
+> +		hw_csum = (u16 *)(skb_frag_address(last_frag) +
+> +				  skb_frag_size(last_frag));
+> +		skb_frag_size_sub(last_frag, csum_len);
+>  	} else {
+> -		hw_csum = skb_tail_pointer(skb);
+> -		skb_trim(skb, skb->len - 2 * sizeof(__sum16));
+> +		hw_csum = (u16 *)skb_tail_pointer(skb);
+> +		skb_trim(skb, skb->len - csum_len);
+>  	}
+>  
+> -	hw_csum -= sizeof(__sum16);
+> -	csum_proto = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
+> -
+> -	if (!csum_proto)
+> +	if (!*--hw_csum)
+
+   Hm, you lost get_unaligned_le16() here. The checksum can be anywhere,
+unaligned too...
+
+[...]
+
+MBR, Sergey
 
 
