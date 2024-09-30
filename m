@@ -1,68 +1,64 @@
-Return-Path: <linux-kernel+bounces-344537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8496998AB03
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:21:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC0798AB06
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:22:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7791C232B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E55284BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD456197A7E;
-	Mon, 30 Sep 2024 17:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D9D196450;
+	Mon, 30 Sep 2024 17:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qnzVrDOb"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cUoErctk"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E750194096;
-	Mon, 30 Sep 2024 17:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD6C286A1;
+	Mon, 30 Sep 2024 17:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716857; cv=none; b=IXl0MJyOhSUzvqrWsnvbUJaXMWuALjX7lCN5TYxNGF9DFjozxzR6u9qP3S2LLqtHIcOF0Y8GDRxzQ8a8VJ9mC+wochGjZE8QuvIUBLSkpa8qz3Sx3fl3XdOCU7hRPqGFAJYXv6R3bQH/Odgy+qwAzNslqvK5psGlO6ZpOSlY9GI=
+	t=1727716916; cv=none; b=EZwk4I+/GUqrXUEGyoQtcbohIMJYrAlUcUqyXcErXgqwal01iqAswzl4jXxmR3JTHy+50rmTjQVGUkODxEx/KlWH0Awy9VqLlp9K304hQftOVJ++TxGfj4bII2Ll0PkYuRLzRVwMh/Krnft9CgmPzVmdo/RWec7a2pY8jENX4X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716857; c=relaxed/simple;
-	bh=gCGwduzLFKbfMo5sOtW9HBBlHG7VBpwpUBFvEKyrqp8=;
+	s=arc-20240116; t=1727716916; c=relaxed/simple;
+	bh=sQnJ2vYgT498XXCmOFGCfblCNnKtLSSWz9NtsiNU6CQ=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=giqfVRlP15HwcXtODpdZSGaftA1kD7NnmANzm6Mg9fOerOoCjhkuhyO9DKe3dZEhIpXxy0Iq7xV2MO1HOX9nOlTvbbeqP5Y3gi1I6s6vrOepC6t/uea5yCEcEa9yDaIu/GN3GI3yIJH9IF2weOJ60QmH9YY9y2UDIGMtYkXpbo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qnzVrDOb; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=ShwqzVVGxYmjNnyg5rOZosGZWBsZ9AlEzx3LAxg71ZUREYq3A1/m6QuH5yXossWlQHznopeyjsQpmhJvXErOxO3O8QrviwdLhf+R/JhCSoPt+vjRxCQ0PwlmxvV5syjzepx541VpkiK4egDJQyxdsJ5ne2ae4Nk68tnCcKe5fUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cUoErctk; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B511D42BFE
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 2A60F42BFE
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1727716852; bh=VTA67/hhIeEVZwR1EvSjGu05ItIa+ynNR72w32LLj5M=;
+	t=1727716914; bh=sQnJ2vYgT498XXCmOFGCfblCNnKtLSSWz9NtsiNU6CQ=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qnzVrDObJkf3RfxcfOH80UDiO0PIiouyZ01YuYEc8oKjfx8v9zeYDBD6WPn1JEfdU
-	 +f9KosDqMHbcV63VYHOgCDpEx1iDtbFPkG864ubyFTMB0mCUVcBIUjb6Lg6HN2p/zX
-	 6crT1BV0azMPnoWRgUkzpXbWJutJQEXuiTVWBpt7h+7w1wTTrh0JSkZdbkOXRER8Tv
-	 8SbdwfpTdG+MwwKzqKUGOPYSKyJvFbyuFxhFXmFsrsw2fiqu45jQbvg9UX61bPfnZl
-	 0gcAY8mtcpVMHfGmfTYMHQIQxfruMo1XSYqIGKbgsyp7lAsPtb8azOTXxL6KrmB5lu
-	 kk1Q4MIj1AzQQ==
+	b=cUoErctkcwoPXi21RUc/Oxl+yiqOZwiR2zeEcf5C70lMQkMhOARq8DBtQAPd2ydHq
+	 ZR8mhhKH7f6e7KgYTNztDh851DXhPOZepfHTU51PgQ8QI030k8tMPcb34XtggkS2Bb
+	 hgBU2hArwX9tcRjLIH5s0XCll5ptxDr9usajzxLTcJugoOc7MyOXP0wzTq7uD1dGOd
+	 AFX3D9Dqd5s6s6r4OQmPDbdgo8TvJiNPWSMeGt2RHpPBFkYrKpQVFaLhF2ROYFz8nl
+	 MX486gF0FQN3y6WJC2B9/X8x7Bw6L9IIKLIgS2+zxBSc7y8uRnm1K5DIptkUYIkt/4
+	 pjeBgYfle1LtQ==
 Received: from localhost (mdns.lwn.net [45.79.72.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B511D42BFE;
-	Mon, 30 Sep 2024 17:20:51 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPSA id 2A60F42BFE;
+	Mon, 30 Sep 2024 17:21:52 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mike Rapoport <mike.rapoport@gmail.com>, Kees Cook
- <keescook@chromium.org>, Ard Biesheuvel <ardb@kernel.org>,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH] Documentation/tracing: Mention that
- RESET_ATTACK_MITIGATION can clear memory
-In-Reply-To: <20240930131415.1438c0b7@gandalf.local.home>
-References: <20240926130159.19e6d0e2@rorschach.local.home>
- <f8546c5d-fa2e-416f-8a1b-431025b4df4d@redhat.com>
- <20240930131415.1438c0b7@gandalf.local.home>
-Date: Mon, 30 Sep 2024 11:20:48 -0600
-Message-ID: <87ikud9hxr.fsf@trenco.lwn.net>
+To: Daniel Thompson <daniel.thompson@linaro.org>, Changhuang Liang
+ <changhuang.liang@starfivetech.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>, Douglas Anderson
+ <dianders@chromium.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ kgdb-bugreport@lists.sourceforge.net, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] Documentation: kgdb: Correct parameter error
+In-Reply-To: <20240930092907.GD5584@aspen.lan>
+References: <20240925100742.1730576-1-changhuang.liang@starfivetech.com>
+ <20240930092907.GD5584@aspen.lan>
+Date: Mon, 30 Sep 2024 11:21:49 -0600
+Message-ID: <87ed519hw2.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,46 +67,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+Daniel Thompson <daniel.thompson@linaro.org> writes:
 
-> On Thu, 26 Sep 2024 19:54:48 +0200
-> Hans de Goede <hdegoede@redhat.com> wrote:
+> On Wed, Sep 25, 2024 at 03:07:42AM -0700, Changhuang Liang wrote:
+>> Module kgdb had been converted to debug_core since commit c433820971ff
+>> ("Move kernel/kgdb.c to kernel/debug/debug_core.c") be added, so let's
+>> correct the module parameter path.
+>>
+>> Fixes: c433820971ff ("Move kernel/kgdb.c to kernel/debug/debug_core.c")
+>> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+>> Reviewed-by: Douglas Anderson <dianders@chromium.org>
 >
->> Hi,
->> 
->> On 26-Sep-24 7:01 PM, Steven Rostedt wrote:
->> > From: Steven Rostedt <rostedt@goodmis.org>
->> > 
->> > At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
->> > about the persistent buffer to display traces from previous boots. He
->> > mentioned that UEFI can clear memory. In my own tests I have not seen
->> > this. He later informed me that it requires the config option:
->> > 
->> >  CONFIG_RESET_ATTACK_MITIGATION
->> > 
->> > It appears that setting this will allow the memory to be cleared on boot
->> > up, which will definitely clear out the trace of the previous boot.
->> > 
->> > Add this information under the trace_instance in kernel-parameters.txt
->> > to let people know that this can cause issues.
->> > 
->> > Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
->> > 
->> > Reported-by: Hans de Goede <hdegoede@redhat.com>
->> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
->> 
->> Thanks, patch looks good to me:
->> 
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 >
-> Thanks,
->
-> And I forgot to send this to the Documentation maintainers :-p
->
-> Jon, could you take this? Do you need me to resend, or can you just pull it
-> from lore?
+> @Jon: Do you want me to hoover this up or will you take it? If you are
+> happy to grab it then feel free to treat my Rb: as an Acked-by: too!
 
-I'll grab it in a bit.
+Sure, I can grab it in a bit.
+
+Thanks,
 
 jon
 
