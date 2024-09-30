@@ -1,208 +1,160 @@
-Return-Path: <linux-kernel+bounces-344116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE3C98A4EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB5E98A4A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:22:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04340B2AD99
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:22:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6B01F24EA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD326192B9A;
-	Mon, 30 Sep 2024 13:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A11191F8F;
+	Mon, 30 Sep 2024 13:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UQfwLfMa"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="avUwoIvy"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129EF1917FF;
-	Mon, 30 Sep 2024 13:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80A6191F84
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702361; cv=none; b=Z/QNpJhKE/vFkJvr6uX9MbRSVVluafxo9G/tNZTDzkP5F1QzZhfV+pPB5qGdeIw0Pcx4GoS2LdXhbjLFxelZgoUnQN6FxL0Whwr2cdi1ntfMMV53wUqWAdMBZkZQWRL8asxcfAltqKO6I9r0LIb50TktR1VIj0B07CjeHEbSprI=
+	t=1727702376; cv=none; b=ntCP4s2VKVQAg8CLmgV5MlG8gu3wZGBGhEKTeZbiMGHsQRPWV1KmU0EdGDpFgb17HmChhRhCnUKjVoXqvMRgcjCeYiYu1TBkOuQnRffYNH6xHleFnClW97Eq8Jze8dKQoLeFKc8Oa+EHC9R0slcvwm9Bg76fU+ln9njo/VCItjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702361; c=relaxed/simple;
-	bh=KWOJsgPOtI2ciHjeMG79gLaAlbobHPEj/SfBjWKepUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KYYlJ79eFCf/RvsJRCsZ6l3P/IHFJal74qBOHOFf9rdvOvj8iK9R4zD0qwMmk/SBvU0hU1NHCJfRBtylzjacT4PTBFZPrhqbwRWPQ8gUNofpyhWu6+cdSeAfsfQRpcVVdvGT3YwdmTDQvg6M29FBTgYaHGsPBivRLYLjdD2GyZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UQfwLfMa; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U2wHqS011669;
-	Mon, 30 Sep 2024 13:19:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=Nwu9/nluX9mVA
-	Ghnnfm3SdjttB8IG/ZrPr/MrXs5TpQ=; b=UQfwLfMa1O9e5RBoTaWPrHaAwUWxu
-	ik8QfFbJL2IFCFpY8nbwtpPd30Q60/4Wmp/e5PEbetXyYN16hbMiVITmGG79Gpkv
-	oo7RoWeQJXuR9jVpKzrbprn+EG6P0xGL+g6+CEPlLdILNiTUiewKTF2gMryz2Z55
-	ojOj+c0fPE2bThn9CYDI71cX9z+BwnZZ0ODvcwN83hODgjxAgn4Vbq1bnjYPzZQa
-	TfzFIlg/6X7tjl3ntgFwKr5HukxKa0mP96uHvqKfZNrvOerDCaOM2TRJuehIH8Y4
-	vfbNvfcaCrXfjl/A/TTmD5vR0YlLgUIYQiJIUIWg8q17XhsVZtdILq2RQ==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x9hb215s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 13:19:17 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48UAOVFr007947;
-	Mon, 30 Sep 2024 13:19:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxpu1s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 13:19:15 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48UDJCgM13369612
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 30 Sep 2024 13:19:12 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03E3920049;
-	Mon, 30 Sep 2024 13:19:12 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BD1B22005A;
-	Mon, 30 Sep 2024 13:19:11 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 30 Sep 2024 13:19:11 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-Subject: [PATCH v1 6/6] s390/uv: Retrieve UV secrets sysfs support
-Date: Mon, 30 Sep 2024 15:19:09 +0200
-Message-ID: <20240930131909.2079965-7-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240930131909.2079965-1-seiden@linux.ibm.com>
-References: <20240930131909.2079965-1-seiden@linux.ibm.com>
+	s=arc-20240116; t=1727702376; c=relaxed/simple;
+	bh=qkJkSWDqHo7jC7vv0hNOivOzsRpZFuaQI5nALrxjD08=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=htmvxVGHggA+Ol6m6qeM/ec2nmR/2NoBtZKgX4MANQU4dBEu01gCRI6ph0oGpOsEXkxaCPT5a8AppO7qS7Kt6XulZ+onMvidrgRNxjK6aM3ngXfFCo3Ju4b2n6j/Y2x2Pgl3lT9wZj8xYVXUWzMrFgMEjatrkCg2tnfNWolPbAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=avUwoIvy; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-690404fd230so70491117b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727702374; x=1728307174; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=doWAxVN5J/L0Ed7YaNwkI39cvWlpAx52VjVcfHJc7OQ=;
+        b=avUwoIvyUKhdinvDyXSbxUEwcvjLgEj83LPxgKXn56FWujSfu6sXCPcB9gqIqQkPkH
+         E1xn4ZSVa5YlDc4s6vLLqB9Gh4DXENlbCpXvYzr1Z9vHQmGc1awAeItzulpjY/wezbbX
+         BhnZ/TiH8Gq+T23UlR8jPjZbxwThXuUQhyHwcI1kHw9+jwAL7Swo6DyA8CWXlWTeF/nL
+         ns2+zCl1w3pUf5ko4roJabHnQB8lVu4qANkOfHlm/CJE33chBkDfhNCsndfN8SXJy8Hr
+         dK4B9eg8lAbMZUka60JJ7tCPfLU2afdFKDWwFmWacE84ZK5Odt8p8B2oVHb648Z73cpm
+         vDxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727702374; x=1728307174;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=doWAxVN5J/L0Ed7YaNwkI39cvWlpAx52VjVcfHJc7OQ=;
+        b=LLCs4wmA5Bh4lD+5mlLYD5tkB4jVnZHERFwV8HRP/iJYB/ToRrmprp6ZlZQU3I5uqo
+         p/2d6KUUA7WPoZtOvcyBoayMTGlmd3H1CFn43Yvj63C8FoDZdOBH5Zscf6VWiJ/NF2NI
+         G1GyTkHQ7o1wJDB1nNNthk4ULVkWcwuulo0oS67PEqgEm+7qsSPvXUD93bwtPvbRDJFo
+         zhdrF/eo327jYUcdpi1K70awUqrhE95pI/owApLYBXhrulCstxj85i/Hj7TbD4JM3Oon
+         yOeCfbqo1V3ljz2jM7TyKm/slzVLe1BoDYbykpj3+a6I6nSf4Mri9KjGIBzjG/0CSYpa
+         tQrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3nqBHM+ghzn1rQF8OpltUrMXj6kQNyPY/NmPuvGJUo4S0Kbm6Uwh51GOvxzDjIP0t40uvkXvWxopc8x8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVoEpiKjptSVEVvcqEkBWqIBwBlt6N0O+yeLZc7diN2XCmpHmE
+	3t1pK61ufakJx8HGOBrxiMIZLiQT/MQWUADzKG8GVkI8HFxZJxX8ECgzTrnZ+H4Qn8q48eSiNHk
+	TXtif5+1UpdouxQ==
+X-Google-Smtp-Source: AGHT+IGPdgpJibr1yfp0X0+jCemoXxyx7N8akB5Pv3w4awlEs6zaJwawSxTtkIdxIhQuk7RIRN/1nZ+2AQnkTIw=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:67c7:b0:6d4:d6de:3e35 with SMTP
+ id 00721157ae682-6e2475d39d8mr1073677b3.8.1727702373743; Mon, 30 Sep 2024
+ 06:19:33 -0700 (PDT)
+Date: Mon, 30 Sep 2024 13:19:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ubcraTtFtW-p1XJgA5NYWeyw-IalVPsC
-X-Proofpoint-ORIG-GUID: ubcraTtFtW-p1XJgA5NYWeyw-IalVPsC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-09-30_12,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 clxscore=1015 suspectscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=827 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300095
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2608; i=aliceryhl@google.com;
+ h=from:subject; bh=qkJkSWDqHo7jC7vv0hNOivOzsRpZFuaQI5nALrxjD08=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm+qTRv6lr2h6hJjTCYXUhWOzjlbFE2QW4rMqor
+ 4r+Yf4XSdCJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvqk0QAKCRAEWL7uWMY5
+ RgooD/4xXLmdo+ytpDkC6yKYeUiuk+LHKaEYur6l95hgEs9scy357uIsll0p5wkGJ6St1FXnjmr
+ zF8aR42eWfotFNK2URseQR/Z9SftbSXn3rn09iEM2E+hIM/uK+vjF8GvGXMmrzTPaXmrjcKCatR
+ /GhYfHCsoFegd8y/bHUABjkdIeUhBYoGGaqdJ7xycuRpYz+BUJ+2BydT8dZRv+ZuRB5zYK5Rm1b
+ H4GqbBJxtwkbh07wE2Xi3Y22c3MohQ+XWGsakBeMqQfvb2OXORSRR8HuDFf7y2a3wg9dQR4V6d5
+ XL9epWfyGAsG392Wiedd3b5IaKFNz1pLGsyzSFDdbqESXTTkMZxuPfYo9ZyR7VUnss3kGLOVEec
+ Pj+Q/xQLlRX23IFhsuz/j8icsK44bN9Y2td972HXSW23TPbWM9Ej+9t9OAaX8TdELvuwtNUPdF6
+ 2kuMW8+TIJP2Rdn2B6TURD5qOGV3Htpvuv/CgraUthXNppiTR21cLK50Oh86nUrsRBG9H4+TtXO
+ gXPRVGLXpxr9hKhFN10FM2mrRpjUkTRXyYWUlGsl8aIb4EEOel+ky5u2gGPJd+YU5UaX3hxdSAC
+ ivfSQMglALtu+gPTqk0qwJ7gvtocvqje/h4J++kJRVRISfosKeZMsXwxAVa6YL5+CIrz20liX/H e6RDoxBZ7t2hJKA==
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20240930131929.1424352-1-aliceryhl@google.com>
+Subject: [PATCH RESEND] xarray: document that xa_alloc uses the smallest index
+From: Alice Ryhl <aliceryhl@google.com>
+To: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Reflect the updated content in the query information UVC to the sysfs at
-/sys/firmware/query
+The deprecated IDR data structure was used to allocate *small* ids for
+things, and the property that the ids are small is often desireable for
+various reasons. However, the IDR interface is deprecated in favor of
+XArray.
 
-* new UV-query sysfs entry for the maximum number of retrievable
-  secrets the UV can store for one secure guest.
-* new UV-query sysfs entry for the maximum number of association
-  secrets the UV can store for one secure guest.
-* max_secrets contains the sum of max association and max retrievable
-  secrets.
+Clarify that when replacing IDR with XArray, you do not give up the
+guarantee that the generated ids are small, even if you use a very large
+range such as xa_limit_32b.
 
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- arch/s390/boot/uv.c        |  3 ++-
- arch/s390/include/asm/uv.h |  8 +++++---
- arch/s390/kernel/uv.c      | 24 +++++++++++++++++++++++-
- 3 files changed, 30 insertions(+), 5 deletions(-)
+Sent previously here:
+https://lore.kernel.org/all/20240201084739.1452854-1-aliceryhl@google.com/
 
-diff --git a/arch/s390/boot/uv.c b/arch/s390/boot/uv.c
-index 2a71e759dc42..4568e8f81dac 100644
---- a/arch/s390/boot/uv.c
-+++ b/arch/s390/boot/uv.c
-@@ -46,7 +46,8 @@ void uv_query_info(void)
- 		uv_info.supp_add_secret_req_ver = uvcb.supp_add_secret_req_ver;
- 		uv_info.supp_add_secret_pcf = uvcb.supp_add_secret_pcf;
- 		uv_info.supp_secret_types = uvcb.supp_secret_types;
--		uv_info.max_secrets = uvcb.max_secrets;
-+		uv_info.max_assoc_secrets = uvcb.max_assoc_secrets;
-+		uv_info.max_retr_secrets = uvcb.max_retr_secrets;
- 	}
- 
- 	if (test_bit_inv(BIT_UVC_CMD_SET_SHARED_ACCESS, (unsigned long *)uvcb.inst_calls_list) &&
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index 6838aa23e4e5..91631bea22d8 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -144,8 +144,9 @@ struct uv_cb_qui {
- 	u64 supp_add_secret_req_ver;		/* 0x00f8 */
- 	u64 supp_add_secret_pcf;		/* 0x0100 */
- 	u64 supp_secret_types;			/* 0x0180 */
--	u16 max_secrets;			/* 0x0110 */
--	u8 reserved112[0x120 - 0x112];		/* 0x0112 */
-+	u16 max_assoc_secrets;			/* 0x0110 */
-+	u16 max_retr_secrets;			/* 0x0112 */
-+	u8 reserved114[0x120 - 0x114];		/* 0x0114 */
- } __packed __aligned(8);
- 
- /* Initialize Ultravisor */
-@@ -528,7 +529,8 @@ struct uv_info {
- 	unsigned long supp_add_secret_req_ver;
- 	unsigned long supp_add_secret_pcf;
- 	unsigned long supp_secret_types;
--	unsigned short max_secrets;
-+	unsigned short max_assoc_secrets;
-+	unsigned short max_retr_secrets;
- };
- 
- extern struct uv_info uv_info;
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 090246efc1fa..cde4ff642f9b 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -695,12 +695,32 @@ static struct kobj_attribute uv_query_supp_secret_types_attr =
- static ssize_t uv_query_max_secrets(struct kobject *kobj,
- 				    struct kobj_attribute *attr, char *buf)
- {
--	return sysfs_emit(buf, "%d\n", uv_info.max_secrets);
-+	return sysfs_emit(buf, "%d\n",
-+			  uv_info.max_assoc_secrets + uv_info.max_retr_secrets);
- }
- 
- static struct kobj_attribute uv_query_max_secrets_attr =
- 	__ATTR(max_secrets, 0444, uv_query_max_secrets, NULL);
- 
-+static ssize_t uv_query_max_retr_secrets(struct kobject *kobj,
-+					 struct kobj_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_retr_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_retr_secrets_attr =
-+	__ATTR(max_retr_secrets, 0444, uv_query_max_retr_secrets, NULL);
-+
-+static ssize_t uv_query_max_assoc_secrets(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  char *buf)
-+{
-+	return sysfs_emit(buf, "%d\n", uv_info.max_assoc_secrets);
-+}
-+
-+static struct kobj_attribute uv_query_max_assoc_secrets_attr =
-+	__ATTR(max_assoc_secrets, 0444, uv_query_max_assoc_secrets, NULL);
-+
- static struct attribute *uv_query_attrs[] = {
- 	&uv_query_facilities_attr.attr,
- 	&uv_query_feature_indications_attr.attr,
-@@ -718,6 +738,8 @@ static struct attribute *uv_query_attrs[] = {
- 	&uv_query_supp_add_secret_pcf_attr.attr,
- 	&uv_query_supp_secret_types_attr.attr,
- 	&uv_query_max_secrets_attr.attr,
-+	&uv_query_max_assoc_secrets_attr.attr,
-+	&uv_query_max_retr_secrets_attr.attr,
- 	NULL,
- };
- 
+ include/linux/xarray.h | 6 ++++++
+ lib/xarray.c           | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0b618ec04115..b525113d8d47 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -860,6 +860,8 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+@@ -893,6 +895,8 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+@@ -926,6 +930,8 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 32d4bac8c94c..f0579aa37534 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1831,6 +1831,8 @@ EXPORT_SYMBOL(xa_get_order);
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
 -- 
-2.43.0
+2.46.1.824.gd892dcdcdd-goog
 
 
