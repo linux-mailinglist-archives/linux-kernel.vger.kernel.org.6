@@ -1,115 +1,146 @@
-Return-Path: <linux-kernel+bounces-343470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D73989B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:21:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00505989B4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7800F1C20404
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:21:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF4F1F24340
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE5CB154C00;
-	Mon, 30 Sep 2024 07:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7204B155312;
+	Mon, 30 Sep 2024 07:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tl8zES5m"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qwR2GjGD"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359D115445B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA45714A0AB;
+	Mon, 30 Sep 2024 07:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727680864; cv=none; b=mDIkYnNggF27kZ+EouwoY3CosTNLX2FkzlWn1jynERN6hLnPSbW1ZY0+KsbplG4RtGxPO3oeeP857qbmGz5Qx6XgNpBQ56jVVThiuHNf6pCSROEO/Oi/VxCuyGhk65zMgjE0FsDKjyr6AmSrneB8V3nxiFhTcx/aOV8RONkJYgo=
+	t=1727680918; cv=none; b=kX4EAd1AS1nq7bvbJvxktVddTs8GABqSlXzmyAbaRCwQdLgSgZSzOQ3ELLCbCr2KA3M+84OQzKwWkW54sguSKPZE+XDbG/fPW02ArLKjq4wl1QC56sEaADCYDuz7KHI0e763weS4sSrTf6zq+CQnEGRAaVvmkhwGdbj3NZJAw0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727680864; c=relaxed/simple;
-	bh=uC1bGFbEyGnI6peNkcbnxCX7JCDxAYzla0brkJrjWb4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WwxuoXJrIBRzQrFrKPGQJRCvRCeWBIaxYrgwQ77m3/LmLToIiEnHWQTiSATRJ6fqaEBojBdc/ZH09+nVDblNfN2K78xnzOn22FMNgk0PLu4S7NSRiUeI4yRUhB49GaqcEEmdQdX7skqJ1hx5ibMbXdgY/FSSEU3m42uzQDlkm4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tl8zES5m; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso1182384e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727680860; x=1728285660; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uC1bGFbEyGnI6peNkcbnxCX7JCDxAYzla0brkJrjWb4=;
-        b=tl8zES5m1tUmKIF/UezgVfAqn5GotsDOH9Uwg34ZLcBHbjMmvATPnrfp5pkZanPJNy
-         18JQt7uAT5nisIggVnvyEFMll7mP86RdMjeozldL0q0z1RTXBwrrGBZGeIJ7FDUTIzbY
-         iHzZxjf9MSCZizIOu9MbxG9aCwMNErvDesoAgxSq7LzBGUqvx36u9nJlvvcFroJ09GSa
-         uQLaicQIiAA74BOc2ZnOW8jEUa4lh6FW/RvCv7JcK2fMHbbYiuFUGvBev6UBgGnItnHq
-         RdmeukKSMoaXliGCwahO/f9aAEHXYz1ZbS60/bwv1GXTkHZ8n1bS205OB8IK4uoGZMg1
-         wzbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727680860; x=1728285660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uC1bGFbEyGnI6peNkcbnxCX7JCDxAYzla0brkJrjWb4=;
-        b=p8bqoSQUM1shY4y2a5XGyNoIPD2P8OxG9OQ6Ep04EjyD2/912krxwFTFjJtk6uh9tu
-         m/CPcS5qbb5B4D1Lb0TcuT667qg3TSaVbBunwOWpEy8GlESSXhRzdyh4GwWv/aziLRt6
-         LbwVFVNffRHvRRiFlnKVU5KfA+6Hk58LzhRI1j5qI+4HLwppxfzNndLKwE9a5uij14fH
-         J1ejC+QqrJio7NCfcfZ1YgipNG4Av0O+G6gjJLaWi/gNbeLbfj2ttnO8WstayaYe+2n0
-         Ta2OsgtvS6b26aa8K3u06K0pqJk+2EboJ+7CDMHYSAq+W+6Cn5RBjGI69FEIyypyrGLb
-         1a/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXd5S6cfRNkVJpqyKS2wmaPaE3O9MfbHbp2JgTH0sNX1/heUMXDfBc8hzz+e0GKMCDoVy8dXkf6pYZBwJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzOGdimE/98gt6xPse/SBQPsyaihDr/a+5Q60NrlSxplw0EMm+
-	8Uq0wxeMb854ja37yAp2HpLUbVjnaamw0nDJuF7mX5ht2kh0QXS6qSffoM9q/zX5y1E0aX/d05i
-	Wb6K0D/83tDlF/VyWfwb2eElmTPfSSYP/8wpzwiMJWVzzwe9IjfA=
-X-Google-Smtp-Source: AGHT+IFYFzyZZpqPm4CvKXnMmyZwmoxgOyu+OoTeGQ6Dn/BNHK2mrDp78kiFddScwnepG5KcZ+KBLeZop1D54hXqbns=
-X-Received: by 2002:a05:6512:1155:b0:533:4820:275a with SMTP id
- 2adb3069b0e04-5389fc6cb88mr5500517e87.52.1727680859993; Mon, 30 Sep 2024
- 00:20:59 -0700 (PDT)
+	s=arc-20240116; t=1727680918; c=relaxed/simple;
+	bh=cdcHOH4arkLm0zru6oCJ02VyxLBvcCTvbxkPC2+57Qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hFmpZfl2nfByYeJoHs7mGQWMH1i3BgLF5rxANDspy6Q+WYZ4Tfx60Bs7RYKUsz6C2lr0JdRXPvgGztpr0OnpE6af1fwNQ5S7uu8O4Fsaj8X2DXsjRycYVb1hRF1NQ6eUYBzgIS4dNrcjr+BJhGzHTaR2WgK7tfDGb/8N34JrSc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qwR2GjGD; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D8711A1A;
+	Mon, 30 Sep 2024 09:20:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1727680824;
+	bh=cdcHOH4arkLm0zru6oCJ02VyxLBvcCTvbxkPC2+57Qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qwR2GjGDisyXvS3FC5gFhsn8Ueel5CcCWd9dMIdd4Z5OwGc+5tqCLhshuX/tWtFAk
+	 Tf8imkuL+nW0Y1cESO+6Cco6Qb31JRD9mfCs510HYV7pFtEf3Ram9eMo+rvAPNiwMy
+	 NoR5qnivQxJsM/DvOQYUYCmGvXpGvdPt91A+9YSk=
+Date: Mon, 30 Sep 2024 10:21:51 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "G.N. Zhou (OSS)" <guoniu.zhou@oss.nxp.com>
+Cc: "rmfrfs@gmail.com" <rmfrfs@gmail.com>,
+	"martink@posteo.de" <martink@posteo.de>,
+	"kernel@puri.sm" <kernel@puri.sm>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/3] media: imx8mq-mipi-csi2: Simplify power management
+ handling
+Message-ID: <20240930072151.GC31662@pendragon.ideasonboard.com>
+References: <20240929134354.20735-1-laurent.pinchart@ideasonboard.com>
+ <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927074221.9985-1-brgl@bgdev.pl> <20240930010334.GA6286@rigel>
-In-Reply-To: <20240930010334.GA6286@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 30 Sep 2024 09:20:48 +0200
-Message-ID: <CAMRc=Mdt8+ATGVU19E+pRrMhKZTcO49HTPdboHLLeN_Omd6LoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] gpio: sysfs: make the sysfs export behavior consistent
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB9080211FC5A0FFCB255C3247FA762@AS8PR04MB9080.eurprd04.prod.outlook.com>
 
-On Mon, Sep 30, 2024 at 3:03=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
-wrote:
->
-> > I decided to write a sysfs-to-libgpiod compatibility layer based on
-> > FUSE. Since Rust is hard, I started prototyping the thing in python
-> > first to at least have the logic nailed down before I tackle the rust
-> > part.
-> >
->
-> Something along these lines[1]?
->
-> Cheers,
-> Kent.
->
-> [1]https://dev.to/krjakbrjak/simulating-gpio-sysfs-interface-with-fuse-an=
-d-c-30ga
->
+On Mon, Sep 30, 2024 at 07:08:09AM +0000, G.N. Zhou (OSS) wrote:
+> On Sunday, September 29, 2024 9:44 PM, Laurent Pinchart wrote:
+> > 
+> > Hello,
+> > 
+> > This small patch series is a reaction to "[PATCH] media: nxp:
+> > imx8mq-mipi-csi2: Fix CSI clocks always enabled issue" ([1]). Instead of making
+> > the PM handling more complex, I think it can be greatly simplified.
+> > 
+> > I have only compile-tested the patches. Guoniu, could you give this a try ?
+> 
+> After applying the patches and test both on iMX8ULP.
+> 
+> For iMX8ULP, it will cause kernel dump when access CSI registers and
+> system hang during do suspend/resume while streaming
+> Need to add system suspend/resume handlers and call
+> pm_runtime_force_suspend/resume in the handlers.
+> 
+> I tried to debug this issue and found pm runtime callback won't be
+> called when system resume. The state of power domain won't enabled.
 
-Well, this doesn't really do anything. I'm thinking about something
-consuming the libgpiod rust bindings to actually be a useful
-replacement for kernel sysfs.
+Thank you for testing.
 
-The master plan is: provide a drop-in user-space replacement for
-sysfs, make users convert to using it instead of the real thing,
-eventually remove sysfs from the kernel and then some time after
-remove the compatibility layer from existence forcing everybody to now
-move to pure libgpiod. :)
+I wonder if this could be caused by the CSI bridge being resumed from
+system sleep before the CSI-2 receiver. Could you check if that's the
+case ? If so, does the following change fix the issue ?
 
-Bart
+diff --git a/drivers/media/platform/nxp/imx7-media-csi.c b/drivers/media/platform/nxp/imx7-media-csi.c
+index 9566ff738818..c66b0621e395 100644
+--- a/drivers/media/platform/nxp/imx7-media-csi.c
++++ b/drivers/media/platform/nxp/imx7-media-csi.c
+@@ -2057,9 +2057,22 @@ static int imx7_csi_notify_bound(struct v4l2_async_notifier *notifier,
+ {
+ 	struct imx7_csi *csi = imx7_csi_notifier_to_dev(notifier);
+ 	struct media_pad *sink = &csi->sd.entity.pads[IMX7_CSI_PAD_SINK];
++	struct device_link *link;
+ 
+ 	csi->src_sd = sd;
+ 
++	/*
++	 * Enforce suspend/resume ordering between the source (supplier) and
++	 * the CSI (consumer). The source will be suspended before and resume
++	 * after the CSI.
++	 */
++	link = device_link_add(csi->dev, sd->dev, DL_FLAG_STATELESS);
++	if (!link) {
++		dev_err(csi->dev,
++			"Failed to create device link to source %s\n", sd->name);
++		return -EINVAL;
++	}
++
+ 	return v4l2_create_fwnode_links_to_pad(sd, sink, MEDIA_LNK_FL_ENABLED |
+ 					       MEDIA_LNK_FL_IMMUTABLE);
+ }
+
+> > [1] https://lore.kernel.org/r/20240929101635.1648234-1-guoniu.zhou@oss.nxp.com
+> > 
+> > Laurent Pinchart (3):
+> >   media: imx8mq-mipi-csi2: Drop stream stop/restart at suspend/resume
+> >     time
+> >   media: imx8mq-mipi-csi2: Drop ST_SUSPENDED guard
+> >   media: imx8mq-mipi-csi2: Drop system suspend/resume handlers
+> > 
+> >  drivers/media/platform/nxp/imx8mq-mipi-csi2.c | 113 ++----------------
+> >  1 file changed, 10 insertions(+), 103 deletions(-)
+> > 
+> > 
+> > base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+
+-- 
+Regards,
+
+Laurent Pinchart
 
