@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-344819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7595C98AE8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E9798AE8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43BB1C2156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CEA9F1C22340
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE221A2637;
-	Mon, 30 Sep 2024 20:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738271A0BC8;
+	Mon, 30 Sep 2024 20:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNV9Sq5+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaPya4Fr"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B51A2577;
-	Mon, 30 Sep 2024 20:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421DC15DBB3;
+	Mon, 30 Sep 2024 20:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727728659; cv=none; b=m0LdkutliwVGrW18Qnmj52uSGZ6diAazVheEMLojVvjOfjgrOdFbw/3Cds87PTADRKYcx3kDtSNx/NcZqMRY1A+5vfNevlMrShHDjS7V35DM8tnZGA78yu4LTq59EABHZZkGCpKEp6cAG03VO3LqMHxr/bbxWh3CrLTpGhPzE5M=
+	t=1727728718; cv=none; b=KedbSfEDvMbkTjMsHfYRnhFpEqFw8m9eOt3bglisCyEWx3vb2vEK3NDVLOD6IBmrnw69X/5PsJMQp5rmLbp0FrhtZSwGfKlSDlNlooJF1Gdr82jVyX5KeykobrBhmfMCzo33j9YdK3Ytj+YgRUsFXdBsZqSQkdAcspokG/UuD3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727728659; c=relaxed/simple;
-	bh=RWiC0OjVVQXZ4crBKb728tY3O18WhGqT6RVvtCqER4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5T2oHG/HZRR5JWVn8noiim+m8sExQyIvsaC9kTU1CtZGMwSJpEpK91pu0IBy2IoqFVIQtF3G7W80cXfJCi5aHIfmR6PIRNU/obabRE7QkSAG+jpoQQNOLXmMwN9LeVTJneYmKVXg0ZIqZF0N2iM8p7i8LBfM7GgVTUYIUurgOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNV9Sq5+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 638B6C4CEC7;
-	Mon, 30 Sep 2024 20:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727728659;
-	bh=RWiC0OjVVQXZ4crBKb728tY3O18WhGqT6RVvtCqER4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MNV9Sq5+bBw+BkqbAp5JTb8DJKoca1uB4zqjKqiuag7/HWScTUts7ZY29/+WS7vea
-	 QcZW4AC9LKuM0CuVoMzD47g1ybgZGcLZJMJ5NK+485OB4kmyIx4yg05ZsvhYExz2YB
-	 L0pb85nJZMgrITJJEIPCim4dyk9a7ZOhNHvLTAoLdt+i9pUbOogu/8TF0uY9R+0Y52
-	 tLG2t6rkd64kcpm863LFGELbXmr2bWe9bcpW9AhKm50Nj+BELNhF305sSHz7rUA2W5
-	 Vh7JimvMxIvxubh8haAZ5VtD3ARe2dYI09D7sLqXhoPL4L7F6fWx+7x6DmhvJ6atQl
-	 vQxqAlWqkWvPA==
-Date: Mon, 30 Sep 2024 13:37:37 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH 07/10] perf tools: Separate exclude_hv fallback
-Message-ID: <ZvsMEaZT9ESTWOxt@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-8-namhyung@kernel.org>
- <8b9d3cbb-99bd-4474-8daf-e9ab36e42a77@linux.intel.com>
+	s=arc-20240116; t=1727728718; c=relaxed/simple;
+	bh=POQpNhU4/oDxEdB/nOtrC/gDSaQtFuJdS8J19VrEI+c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RzXRlqCEwHFpUEoyvQx8ODogdNJMd+yIYnme0JTWaJrGMAr2VWs5hvtbFlFmBya9X3soJfU5rHABqqzaEyqHE6P6CBfYor+IAtvkMe+qfGpyrcOlRAs6YvwH0T4xzv64TMnxsvVeXkwpe3IgtsKxiPPZIcXmxim385OAVSBVZQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaPya4Fr; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a86e9db75b9so906235266b.1;
+        Mon, 30 Sep 2024 13:38:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727728715; x=1728333515; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RdVXsy7CY05Eox+5vtD1XhtKGCKw4Pn46XT8SlfYxTM=;
+        b=AaPya4FrG58sotY4Pv87PGBEI2oaWYkVCU9/aLLfCgRwQlaCQcavAvvwJlN6AE3O5l
+         VKVdq/n6T8iNVSzTHs1vtlpk1eP6hEmNzSspSoTp0816igVqbugrs97T8p31RJsJU9Se
+         9qeTtwaOpoMC+ZKxtqPQTjHA8o9niPSaOlsL1sGvgmUgdSOMbR97tUjrn3B/tTs+dZQM
+         WXKRwBuexqRnYDUDxozIRF9GdniKBccGZwxdDRIMq3Uc2gkyc9nuArM+9imxMhkN2vOd
+         V4ylbJaihcaEBIqtiib0u3R/5OqBNsyUKDHkoK0JFGmMwz+Qk8XI+mX4+5AakyLXfTQv
+         KRoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727728715; x=1728333515;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RdVXsy7CY05Eox+5vtD1XhtKGCKw4Pn46XT8SlfYxTM=;
+        b=TTTxlUgnbW16mvD7a54MQdE6JZ3BGSaj37BAJii5e3nS9QT9cr+0W/AUeKGf8fz+Bq
+         fMmDoaDa9tj5lSQ/c5bHFDIa3DddKDSxYTZc0yZa9SoI6S83OzcnFFoGNjtwRK3iGvjw
+         aXhqfRX1iaOZmRc2+Xmh6ZmsYSmlnLiIKThGOMZoPnOmj5oW4vkMqo7rqtAiBXiMDRov
+         3Mehw5sJgmVI9hvjAG+Xzkcw9YOk5nYVB7PaP/1WMsowPncfsouG55Ekeg64lgX/2CYc
+         gOiWOS51y3g95LUGcZwwZy+dPnGipxMzTzBF+6bMiEeLqaN72oKaN3q9r+X8sM21rRYZ
+         pmXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvutusum1kINmNr/nT97zz1TJUNtBq6M29zcXdrBAG93Dovx6Ojy/LHY/8QwsEce+TkGk+V0nqi2asNmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPPTyjBF1OiW7CaoxnGwyHtaEYOpRLEgdzO+QZLSwwBnuMNSPG
+	fXDlhicbLjaKU9q28VJOQcJklVthHBVfVhUCCSAJPQ2DqsXXzCP0
+X-Google-Smtp-Source: AGHT+IE5ATk1ll1mp8SR/D6n7QKnEKAmitZqrs4uP2pEz2ng2rIRiBrKXV6FMeS1kux53hhRTzRo1Q==
+X-Received: by 2002:a17:906:730f:b0:a86:aa57:57b8 with SMTP id a640c23a62f3a-a93c4ab17b0mr1574969466b.63.1727728715247;
+        Mon, 30 Sep 2024 13:38:35 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-91b0-e3db-0523-0d17.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:91b0:e3db:523:d17])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c7184sm581377566b.83.2024.09.30.13.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 13:38:34 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH net-next v2 0/2] net: switch to scoped
+ device_for_each_child_node()
+Date: Mon, 30 Sep 2024 22:38:24 +0200
+Message-Id: <20240930-net-device_for_each_child_node_scoped-v2-0-35f09333c1d7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8b9d3cbb-99bd-4474-8daf-e9ab36e42a77@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEAM+2YC/5WOUQqDMBBEr1L2uykxFa396j2KBM1uzIImkohYx
+ Ls39Qb9fMwwb3ZIFJkSPC87RFo5cfAZ1PUCxnV+IMGYGZRUpWzuUnhaBOaiIW1D1NQZp43jEbU
+ PSDqZMBMK6qlSti7Vo6whb82RLG+n5w2/CU/bAm1OHKclxM95YC3O/E/XWggp+h6xto3Fqmxew
+ 9TxeDNhgvY4ji8vhFMx5AAAAA==
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Yisen Zhuang <yisen.zhuang@huawei.com>, 
+ Salil Mehta <salil.mehta@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727728713; l=1728;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=POQpNhU4/oDxEdB/nOtrC/gDSaQtFuJdS8J19VrEI+c=;
+ b=PVJfsK/TyvY21Xk31eI8g1AtKX3+sYqWSVVxSvWLK8aUriyk+zO80749qyKLd2xcAUGNTDdXo
+ 81EaTiqVZMQBZ2imsHl/oRwzJC1CmZ9igapzdhgRHm3Dpex1rkjjXxU
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Fri, Sep 06, 2024 at 11:21:21AM -0400, Liang, Kan wrote:
-> 
-> 
-> On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
-> > The exclude_hv was added in the evsel__fallback() in the commit
-> > 4ec8d984895fef43a ("perf record: Fix priv level with branch sampling
-> > for paranoid=2") to address branch stack samples on Intel PMUs.
-> > As some other PMUs might not support that, let's separate the bit from
-> > exclude_kernel to make sure it can add the bit only if required.
-> > 
-> > Technically it should change the modifier string at the end of the
-> > event name.  ":u" is for exclude_kernel + exclude_hv, so it should be
-> > ":uh" if it has exclude_kernel only.  That means the default events for
-> > regular users will looks like "cycles:Puh" (for perf record) or
-> > "instructions:uh" (for perf stat).  But I'm not sure if it's worth the
-> > trouble so I didn't touch the name in this patch.
-> > 
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/evsel.c | 16 +++++++++++++---
-> >  1 file changed, 13 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> > index 1a4f52767942e5ad..c5df45bb74dfc1b5 100644
-> > --- a/tools/perf/util/evsel.c
-> > +++ b/tools/perf/util/evsel.c
-> > @@ -3389,10 +3389,20 @@ bool evsel__fallback(struct evsel *evsel, struct target *target, int err,
-> >  		free(evsel->name);
-> >  		evsel->name = new_name;
-> >  		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
-> > -			  "to fall back to excluding kernel and hypervisor "
-> > -			  " samples", paranoid);
-> > +			  "to fall back to excluding kernel samples", paranoid);
-> >  		evsel->core.attr.exclude_kernel = 1;
-> > -		evsel->core.attr.exclude_hv     = 1;
-> > +
-> > +		return true;
-> > +	} else if (err == EACCES && !evsel->core.attr.exclude_hv &&
-> > +		   (paranoid = perf_event_paranoid()) > 1) {
-> > +		/* If event has exclude user then don't exclude hv. */
-> > +		if (evsel->core.attr.exclude_user)
-> > +			return false;
-> > +
-> > +		/* Intel branch stack requires exclude_hv */
-> 
-> I don't think it's an requirement for Intel branch stack. The HV is
-> ignored for all X86.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/events/core.c#n542
-> 
-> I think it's a generic request for branch on all arch.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/events/core.c#n366
+This series switches from the device_for_each_child_node() macro to its
+scoped variant. This makes the code more robust if new early exits are
+added to the loops, because there is no need for explicit calls to
+fwnode_handle_put(), which also simplifies existing code.
 
-Ok, I'll update the comment.
+The non-scoped macros to walk over nodes turn error-prone as soon as
+the loop contains early exits (break, goto, return), and patches to
+fix them show up regularly, sometimes due to new error paths in an
+existing loop [1].
 
-Thanks,
-Namhyung
+Note that the child node is now declared in the macro, and therefore the
+explicit declaration is no longer required.
 
-> 
-> > +		scnprintf(msg, msgsize, "kernel.perf_event_paranoid=%d, trying "
-> > +			  "to fall back to excluding hypervisor samples", paranoid);
-> > +		evsel->core.attr.exclude_hv = 1;
-> >  
-> >  		return true;
-> >  	} else if (err == EOPNOTSUPP && !evsel->core.attr.exclude_guest &&
+The general functionality should not be affected by this modification.
+If functional changes are found, please report them back as errors.
+
+Link:
+https://lore.kernel.org/all/20240901160829.709296395@linuxfoundation.org/
+[1]
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v2:
+- Rebase onto net-next.
+- Fix commit messages (incomplete path, missing net-next prefix).
+- Link to v1: https://lore.kernel.org/r/20240930-net-device_for_each_child_node_scoped-v1-0-bbdd7f9fd649@gmail.com
+
+---
+Javier Carrasco (2):
+      net: mdio: thunder: switch to scoped device_for_each_child_node()
+      net: hns: hisilicon: hns_dsaf_mac: switch to scoped device_for_each_child_node()
+
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c | 10 +++-------
+ drivers/net/mdio/mdio-thunder.c                   |  4 +---
+ 2 files changed, 4 insertions(+), 10 deletions(-)
+---
+base-commit: c824deb1a89755f70156b5cdaf569fca80698719
+change-id: 20240930-net-device_for_each_child_node_scoped-ebe62f742847
+
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
+
 
