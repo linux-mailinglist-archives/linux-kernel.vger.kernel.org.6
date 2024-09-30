@@ -1,292 +1,264 @@
-Return-Path: <linux-kernel+bounces-343505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBDE989BD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:47:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6B0989BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94A361F21386
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:47:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2E31C213D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6FA15E5A6;
-	Mon, 30 Sep 2024 07:46:56 +0000 (UTC)
-Received: from out28-195.mail.aliyun.com (out28-195.mail.aliyun.com [115.124.28.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971651684A5;
+	Mon, 30 Sep 2024 07:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McsR8LKq"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC627158DB1
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53461158DB1
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682415; cv=none; b=ku4NkS1ppU5VWY+PqsB3kDQ0HzK5Rg2sJzxEqC3A8ACOOYqWBVqP47XeESWnFFqwkcebYntF6f43EGyBeJT2diGF3hpTYzJXpke54aqiBRPRHfrIFFPmkyj/ulx4Uyeo8JagwnI6O9fyURaipYHGaiSSejjTFq8hGpBiXHA2hiE=
+	t=1727682434; cv=none; b=kVY5MMGKtF9+3nQkdhnQXg5aacReMewHx8W2jlGJw3Xzh4Z60a2PHcG+EInpxS0k6Xe/i4Zgu20E6P/f5qmRme9KI+tNeOdeU4IhsMW5mz7L3S2gdqHDGELCclbJLErejoIKt1dMHaXTL2EOuxxqEv2glh6Xy/BcE+wpDibUMfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682415; c=relaxed/simple;
-	bh=neugdMN1kLJjnwTl9IGxuwSCixYDBXFfE01M8+IhC6Y=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=dMtIgRVonlILlVp+26KxdlYsPmUH82benOaJcTRRBXORJJ+lm9oOFgQmMXMS7EaUGRdjeG7mjOmzsVFO+enCDKxBWyQ7k++kFwHpQ/R60PkeY/OzLD0KkB0QHYnnXHuyAN5wqjrSYgcmGkgZ9oqq+XKuxYJ/TzX/qVXrrV/VdLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valiantsec.com; spf=pass smtp.mailfrom=valiantsec.com; arc=none smtp.client-ip=115.124.28.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valiantsec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valiantsec.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.1144091|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.00494433-0.00121652-0.993839;FP=4306105112895983819|0|0|0|16672671778625349232|0|0|0;HT=maildocker-contentspam033037136014;MF=bugreport@valiantsec.com;NM=1;PH=DW;RN=5;RT=5;SR=0;TI=W4_0.2.3_v5ForWebDing_21207F0D_1727682160322_o7001c48s;
-Received: from WS-web (bugreport@valiantsec.com[W4_0.2.3_v5ForWebDing_21207F0D_1727682160322_o7001c48s]) at Mon, 30 Sep 2024 15:46:44 +0800
-Date: Mon, 30 Sep 2024 15:46:44 +0800
-From: "Ubisectech Sirius" <bugreport@valiantsec.com>
-To: "linux-kernel" <linux-kernel@vger.kernel.org>
-Cc: "peterz" <peterz@infradead.org>,
-  "mingo" <mingo@redhat.com>,
-  "acme" <acme@kernel.org>,
-  "namhyung" <namhyung@kernel.org>
-Reply-To: "Ubisectech Sirius" <bugreport@valiantsec.com>
-Message-ID: <fdbb2d32-157f-4879-ab1c-a6f10f1b3286.bugreport@valiantsec.com>
-Subject: =?UTF-8?B?V0FSTklORyBpbiBpbnRlbF9wbXVfbGJyX2NvdW50ZXJzX3Jlb3JkZXI=?=
-X-Mailer: [Alimail-Mailagent revision 23][W4_0.2.3][v5ForWebDing][Chrome]
+	s=arc-20240116; t=1727682434; c=relaxed/simple;
+	bh=qTXCl7jkU7qj2qIV9gSYqUUPOQwXWOyMHjHHkE7sD3k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tE9Z3XytIBaFruS4ZqYAEMuhqE99GLKnpHscSodb0dpyMMBJe64GCcX5aHjfSSyarpwpI7chVMOy0mROulOJ8zJyjwbpl6IIETOR98hCDtLd7zXcSLctVozxcLZB/0TDOQGEXusPJ4xv8tCngG3VLxllbPa54f7sR8ow8BOGV5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McsR8LKq; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e042f4636dso2662912b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727682432; x=1728287232; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KVOqlKSKUGPN4TK8Dqm9vQi76XiRZyWkboZFUbk1UY4=;
+        b=McsR8LKqmqazPwdsMaJvCiLqVczaoLTKUCzKbBrndjqS94C5TSUZ1dTkdgUYqghsCj
+         3UW4PWsiw3/nxYb0JEmVIE3J7lWxpvVaBsMzFtJ7S8TX21WRgLrCQZyrLa/FJwVb9As2
+         lirKWqNf35MUj23DlggxLFjOXrTF5QiPZRIjuPGkuUJSrqXCZrj5OSq2LB798/20I0YH
+         Q9e4sFOHNaZIwUyS/uPwTZIW8QqjThVHCn2FCK5nHr6/IG4SZMaw6yYhsHsPi/DDRfTO
+         4Q3ax/VxzAuFIt3koxbFDpKiQtzreCu7TrbAC9nYTWZcy2fNqOtISOICijQkzz0Xl/5F
+         TE7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727682432; x=1728287232;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KVOqlKSKUGPN4TK8Dqm9vQi76XiRZyWkboZFUbk1UY4=;
+        b=xVXmEM36uSnJ2XG0MIrlKWqh9KQ02jdRbXxVwZLW0TOzsVoJOhg+ztFnjUlNO3rKZg
+         L/Hvvu3vTbbmGWbiCxWzMKVbCiWiWZFg420bkSrShicJqN+pXX76r8irXMZBkhq0TY/Z
+         /BohjdO8rbZxJeM75JbFe3I8VeXojM0Kcd9D+ic9vsks/lHE5Xh0937F/ClO6w7nkfeZ
+         4hpAAyG+MQ7G7lZ5MVCv0TmjIhR9tZgqyL2/4hu656dvosboUb4PeiRksuHaa/fX70PM
+         lOO45tU72eD0G7RTXDsXRZBTBMt0Gr/eEnMNFABnj5pcHZNPVuG0u/Hfxvz5H1SmJrKU
+         /ojg==
+X-Gm-Message-State: AOJu0YwxvMpeym8K5rOUhzCE9P3tTZibNyhUtJ7Zk47weI6aA15cIT3W
+	UUXJEX9IEt0rwUg3mPI0CMBqnMHJJ7DJBVJAN0U9n2Yf2eFQNN9W9t2Svzed
+X-Google-Smtp-Source: AGHT+IHWJ41COZoQ4hZQibBG9GESrm2+QaiU+OrzikP449ZW6otKwrzP34+2bkFZHzrJAZECpRnilg==
+X-Received: by 2002:a05:6808:210b:b0:3e0:48b2:3f40 with SMTP id 5614622812f47-3e3939e3127mr5808744b6e.45.1727682432140;
+        Mon, 30 Sep 2024 00:47:12 -0700 (PDT)
+Received: from rigel (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bb9f4sm5674377b3a.72.2024.09.30.00.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 00:47:11 -0700 (PDT)
+Date: Mon, 30 Sep 2024 15:47:07 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, Trevor Gamblin <tgamblin@baylibre.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Subject: Re: [PATCH v5 8/8] pwm: Add support for pwmchip devices for faster
+ and easier userspace access
+Message-ID: <20240930074707.GA57004@rigel>
+References: <cover.1726819463.git.u.kleine-koenig@baylibre.com>
+ <657876d1321467a2b23060ac15924aed8c423390.1726819463.git.u.kleine-koenig@baylibre.com>
+ <20240929044828.GA21440@rigel>
+ <hgoario7a2x6zoyjy5frbjmxla5vzkbucos55gsjycvxudue65@xqdta7kezomc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-x-aliyun-mail-creator: W4_0.2.3_v5ForWebDing_M3LTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEyOS4wLjAuMCBTYWZhcmkvNTM3LjM2vN
-Content-Type: multipart/mixed;
-  boundary="----=ALIBOUNDARY_1745_7f1eefe6a700_66fa5764_6fde00"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hgoario7a2x6zoyjy5frbjmxla5vzkbucos55gsjycvxudue65@xqdta7kezomc>
 
-This is a multi-part message in MIME format.
+On Mon, Sep 30, 2024 at 08:01:45AM +0200, Uwe Kleine-König wrote:
+> Hello Kent,
+>
+> On Sun, Sep 29, 2024 at 12:48:28PM +0800, Kent Gibson wrote:
+> > On Fri, Sep 20, 2024 at 10:58:04AM +0200, Uwe Kleine-König wrote:
+> > > +static int pwm_cdev_request(struct pwm_cdev_data *cdata, unsigned int hwpwm)
+> > > +{
+> > > +	struct pwm_chip *chip = cdata->chip;
+> > > +
+> > > +	if (hwpwm >= chip->npwm)
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (!cdata->pwm[hwpwm]) {
+> > > +		struct pwm_device *pwm = &chip->pwms[hwpwm];
+> > > +		int ret;
+> > > +
+> > > +		ret = pwm_device_request(pwm, "pwm-cdev");
+> > > +		if (ret < 0)
+> > > +			return ret;
+> > > +
+> > > +		cdata->pwm[hwpwm] = pwm;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> >
+> > Allow the user to specify the consumer label as part of the request rather
+> > than hard coding it to "pwm-cdev"?
+>
+> I considered using the process name, or pwm-cdev:$(pidof
+> userspace-program). And I'd like to have a possibility to specify names
+> in dt (that then could be used to lookup a PWM, too). I think these two
+> are better than having userspace provide a name. What do you think?
+>
 
-------=ALIBOUNDARY_1745_7f1eefe6a700_66fa5764_6fde00
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Are we talking the PWM device or the consumer?  Or both?
 
-CkhlbGxvLgpXZSBhcmUgVWJpc2VjdGVjaCBTaXJpdXMgVGVhbSwgdGhlIHZ1bG5lcmFiaWxpdHkg
-bGFiIG9mIENoaW5hIFZhbGlhbnRTZWMuIFJlY2VudGx5LCBvdXIgdGVhbSBoYXMgZGlzY292ZXJl
-ZCBhIGlzc3VlIGluIExpbnV4IGtlcm5lbCA2LjExLjAtcmMyLWc2YTBlMzgyNjQwMTIuIEF0dGFj
-aGVkIHRvIHRoZSBlbWFpbCB3ZXJlIGEgUG9DIGZpbGUgb2YgdGhlIGlzc3VlLgoKU3RhY2sgZHVt
-cDoKCi0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQpXQVJOSU5HOiBDUFU6IDAg
-UElEOiAxMzIyMiBhdCBhcmNoL3g4Ni9ldmVudHMvaW50ZWwvbGJyLmM6OTU3IGludGVsX3BtdV9s
-YnJfY291bnRlcnNfcmVvcmRlci5pc3JhLjArMHg2MWYvMHg3NTAgYXJjaC94ODYvZXZlbnRzL2lu
-dGVsL2xici5jOjk1NwpNb2R1bGVzIGxpbmtlZCBpbjoKQ1BVOiAwIFVJRDogMCBQSUQ6IDEzMjIy
-IENvbW06IHN5ei4zLjMzNSBOb3QgdGFpbnRlZCA2LjExLjAtcmMyLWc2YTBlMzgyNjQwMTIgIzQ5
-CkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJSVgsIDE5OTYpLCBC
-SU9TIDEuMTUuMC0xIDA0LzAxLzIwMTQKUklQOiAwMDEwOmludGVsX3BtdV9sYnJfY291bnRlcnNf
-cmVvcmRlci5pc3JhLjArMHg2MWYvMHg3NTAgYXJjaC94ODYvZXZlbnRzL2ludGVsL2xici5jOjk1
-NwpDb2RlOiAwMCA0OCA4ZCBiYiAyMCAwMSAwMCAwMCA0OCA4OSBmOCA0OCBjMSBlOCAwMyA0MiA4
-MCAzYyAyMCAwMCAwZiA4NCAyNiBmZiBmZiBmZiBlOCBhYyA5NiBkZiAwMCBlOSAxYyBmZiBmZiBm
-ZiBlOCAyMiBjZCA4MyAwMCA5MCA8MGY+IDBiIDkwIGU5IDgwIGZiIGZmIGZmIDQ4IGM3IGM3IDYw
-IDg3IDZjIDhkIGU4IDBkIGMwIDhlIDAzIGU5IDc5ClJTUDogMDAwMDpmZmZmYzkwMDAxZDc3OTEw
-IEVGTEFHUzogMDAwMTAwNDYKUkFYOiAwMDAwMDAwMDgwMTEwMDAwIFJCWDogZmZmZjg4ODAwMDE1
-NTA3MCBSQ1g6IGZmZmZmZmZmODEwNTQ4NmUKUkRYOiBmZmZmODg4MDQzNjkyNTAwIFJTSTogZmZm
-ZmZmZmY4MTA1NGNlZSBSREk6IDAwMDAwMDAwMDAwMDAwMDUKUkJQOiBmZmZmODg4MDAwMTU1MDcw
-IFIwODogMDAwMDAwMDAwMDAwMDAwNSBSMDk6IDAwMDAwMDAwMDAwMDAwMDAKUjEwOiAwMDAwMDAw
-MDAwMDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6IGRmZmZmYzAwMDAwMDAwMDAKUjEz
-OiAwMDAwMDAwMDAwMDAwMDAwIFIxNDogZmZmZjg4ODAyYzYyMmJiOCBSMTU6IDAwMDAwMDAwMDAw
-MDAwMDAKRlM6ICAwMDAwN2YzZjAxYmM4NjQwKDAwMDApIEdTOmZmZmY4ODgwMmM2MDAwMDAoMDAw
-MCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1Iw
-OiAwMDAwMDAwMDgwMDUwMDMzCkNSMjogMDAwMDAwMDAyMDAxZDAwMCBDUjM6IDAwMDAwMDAwNWM1
-NzIwMDAgQ1I0OiAwMDAwMDAwMDAwNzUwZWYwCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAw
-MDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwCkRSMzogMDAwMDAwMDAwMDAwMDAw
-MCBEUjY6IDAwMDAwMDAwZmZmZjBmZjAgRFI3OiAwMDAwMDAwMDAwMDAwNjAwClBLUlU6IDU1NTU1
-NTU0CkNhbGwgVHJhY2U6CiA8VEFTSz4KIGludGVsX3BtdV9sYnJfc2F2ZV9icnN0YWNrKzB4MWVm
-LzB4M2IwIGFyY2gveDg2L2V2ZW50cy9pbnRlbC9sYnIuYzo5NzYKIGhhbmRsZV9wbWlfY29tbW9u
-KzB4NzQ0LzB4YmQwIGFyY2gveDg2L2V2ZW50cy9pbnRlbC9jb3JlLmM6MzExOAogaW50ZWxfcG11
-X2hhbmRsZV9pcnErMHgyYjcvMHgxMGIwIGFyY2gveDg2L2V2ZW50cy9pbnRlbC9jb3JlLmM6MzE4
-MQogcGVyZl9ldmVudF9ubWlfaGFuZGxlciBhcmNoL3g4Ni9ldmVudHMvY29yZS5jOjE3NDcgW2lu
-bGluZV0KIHBlcmZfZXZlbnRfbm1pX2hhbmRsZXIrMHg0Yy8weDcwIGFyY2gveDg2L2V2ZW50cy9j
-b3JlLmM6MTczMwogbm1pX2hhbmRsZSsweDFhNi8weDViMCBhcmNoL3g4Ni9rZXJuZWwvbm1pLmM6
-MTUxCiBkZWZhdWx0X2RvX25taSsweDg4LzB4MjIwIGFyY2gveDg2L2tlcm5lbC9ubWkuYzozNTEK
-IGV4Y19ubWkrMHgyNjIvMHgzMTAgYXJjaC94ODYva2VybmVsL25taS5jOjU0NQogYXNtX2V4Y19u
-bWkrMHhiOC8weDEwMSBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjExOTIKUklQOiAwMDMzOjB4
-N2YzZjAwYzRhNTFhCkNvZGU6IDAwIDAwIDAwIGZmIDg5IDgxIDkwIDAwIDAwIDAwIDc1IDA0IDg1
-IGMwIDc0IDFjIDQ4IDYzIDQ0IDI0IDE4IDQ4IDhkIDE0IDgwIDQ4IDhkIDE0IDUwIDQ4IDhkIDA1
-IDZjIDE2IDI1IDAwIDQ4IDgzIDdjIGQwIDI4IDAwIDw3ND4gMGYgNDggOGIgNDQgMjQgMDggYzcg
-ODAgOTAgMDAgMDAgMDAgMTYgMDAgMDAgMDAgNDggOGIgNTQgMjQgMDgKUlNQOiAwMDJiOjAwMDA3
-ZjNmMDFiYzdmYzAgRUZMQUdTOiAwMDAwMDI0NgpSQVg6IDAwMDA3ZjNmMDBlOWJiODAgUkJYOiAw
-MDAwN2YzZjAwZjM1ZjgwIFJDWDogMDAwMDdmM2YwMGYzNWY4MApSRFg6IDAwMDAwMDAwMDAwMDdh
-ODEgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTogMDAwMDAwMDAyMDAwMDMwMApSQlA6IDAwMDA3
-ZjNmMDBlMWJkOGEgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMApS
-MTA6IDAwMDAwMDAwMDAwMDAwMDUgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAw
-MDAwMDAwMApSMTM6IDAwMDAwMDAwMDAwMDAwMDAgUjE0OiAwMDAwN2YzZjAwZjM1ZjgwIFIxNTog
-MDAwMDdmM2YwMWJhODAwMAogPC9UQVNLPgoKVGhhbmsgeW91IGZvciB0YWtpbmcgdGhlIHRpbWUg
-dG8gcmVhZCB0aGlzIGVtYWlsIGFuZCB3ZSBsb29rIGZvcndhcmQgdG8gd29ya2luZyB3aXRoIHlv
-dSBmdXJ0aGVyLgoKCgoK
-------=ALIBOUNDARY_1745_7f1eefe6a700_66fa5764_6fde00
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="=?UTF-8?B?cG9jLmM=?="
-Content-Transfer-Encoding: base64
+Wrt the consumer, For GPIO we don't provide a useful default, though perhaps
+we should. Instead we rely on the userspace library to provide one - if the
+user hasn't.
 
-Ly8gYXV0b2dlbmVyYXRlZCBieSBzeXprYWxsZXIgKGh0dHBzOi8vZ2l0aHViLmNvbS9nb29nbGUv
-c3l6a2FsbGVyKQoKI2RlZmluZSBfR05VX1NPVVJDRQoKI2luY2x1ZGUgPGRpcmVudC5oPgojaW5j
-bHVkZSA8ZW5kaWFuLmg+CiNpbmNsdWRlIDxlcnJuby5oPgojaW5jbHVkZSA8ZmNudGwuaD4KI2lu
-Y2x1ZGUgPHNpZ25hbC5oPgojaW5jbHVkZSA8c3RkYXJnLmg+CiNpbmNsdWRlIDxzdGRib29sLmg+
-CiNpbmNsdWRlIDxzdGRpbnQuaD4KI2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIu
-aD4KI2luY2x1ZGUgPHN0cmluZy5oPgojaW5jbHVkZSA8c3lzL3ByY3RsLmg+CiNpbmNsdWRlIDxz
-eXMvc3RhdC5oPgojaW5jbHVkZSA8c3lzL3N5c2NhbGwuaD4KI2luY2x1ZGUgPHN5cy90eXBlcy5o
-PgojaW5jbHVkZSA8c3lzL3dhaXQuaD4KI2luY2x1ZGUgPHRpbWUuaD4KI2luY2x1ZGUgPHVuaXN0
-ZC5oPgoKc3RhdGljIHZvaWQgc2xlZXBfbXModWludDY0X3QgbXMpCnsKICB1c2xlZXAobXMgKiAx
-MDAwKTsKfQoKc3RhdGljIHVpbnQ2NF90IGN1cnJlbnRfdGltZV9tcyh2b2lkKQp7CiAgc3RydWN0
-IHRpbWVzcGVjIHRzOwogIGlmIChjbG9ja19nZXR0aW1lKENMT0NLX01PTk9UT05JQywgJnRzKSkK
-ICAgIGV4aXQoMSk7CiAgcmV0dXJuICh1aW50NjRfdCl0cy50dl9zZWMgKiAxMDAwICsgKHVpbnQ2
-NF90KXRzLnR2X25zZWMgLyAxMDAwMDAwOwp9CgojZGVmaW5lIEJJVE1BU0soYmZfb2ZmLCBiZl9s
-ZW4pICgoKDF1bGwgPDwgKGJmX2xlbikpIC0gMSkgPDwgKGJmX29mZikpCiNkZWZpbmUgU1RPUkVf
-QllfQklUTUFTSyh0eXBlLCBodG9iZSwgYWRkciwgdmFsLCBiZl9vZmYsIGJmX2xlbikgICAgICAg
-ICAgICAgICBcCiAgKih0eXBlKikoYWRkcikgPSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAgIGh0b2JlKChodG9iZSgqKHR5
-cGUqKShhZGRyKSkgJiB+QklUTUFTSygoYmZfb2ZmKSwgKGJmX2xlbikpKSB8ICAgICAgICAgICBc
-CiAgICAgICAgICAgICgoKHR5cGUpKHZhbCkgPDwgKGJmX29mZikpICYgQklUTUFTSygoYmZfb2Zm
-KSwgKGJmX2xlbikpKSkKCnN0YXRpYyBib29sIHdyaXRlX2ZpbGUoY29uc3QgY2hhciogZmlsZSwg
-Y29uc3QgY2hhciogd2hhdCwgLi4uKQp7CiAgY2hhciBidWZbMTAyNF07CiAgdmFfbGlzdCBhcmdz
-OwogIHZhX3N0YXJ0KGFyZ3MsIHdoYXQpOwogIHZzbnByaW50ZihidWYsIHNpemVvZihidWYpLCB3
-aGF0LCBhcmdzKTsKICB2YV9lbmQoYXJncyk7CiAgYnVmW3NpemVvZihidWYpIC0gMV0gPSAwOwog
-IGludCBsZW4gPSBzdHJsZW4oYnVmKTsKICBpbnQgZmQgPSBvcGVuKGZpbGUsIE9fV1JPTkxZIHwg
-T19DTE9FWEVDKTsKICBpZiAoZmQgPT0gLTEpCiAgICByZXR1cm4gZmFsc2U7CiAgaWYgKHdyaXRl
-KGZkLCBidWYsIGxlbikgIT0gbGVuKSB7CiAgICBpbnQgZXJyID0gZXJybm87CiAgICBjbG9zZShm
-ZCk7CiAgICBlcnJubyA9IGVycjsKICAgIHJldHVybiBmYWxzZTsKICB9CiAgY2xvc2UoZmQpOwog
-IHJldHVybiB0cnVlOwp9CgpzdGF0aWMgdm9pZCBraWxsX2FuZF93YWl0KGludCBwaWQsIGludCog
-c3RhdHVzKQp7CiAga2lsbCgtcGlkLCBTSUdLSUxMKTsKICBraWxsKHBpZCwgU0lHS0lMTCk7CiAg
-Zm9yIChpbnQgaSA9IDA7IGkgPCAxMDA7IGkrKykgewogICAgaWYgKHdhaXRwaWQoLTEsIHN0YXR1
-cywgV05PSEFORyB8IF9fV0FMTCkgPT0gcGlkKQogICAgICByZXR1cm47CiAgICB1c2xlZXAoMTAw
-MCk7CiAgfQogIERJUiogZGlyID0gb3BlbmRpcigiL3N5cy9mcy9mdXNlL2Nvbm5lY3Rpb25zIik7
-CiAgaWYgKGRpcikgewogICAgZm9yICg7OykgewogICAgICBzdHJ1Y3QgZGlyZW50KiBlbnQgPSBy
-ZWFkZGlyKGRpcik7CiAgICAgIGlmICghZW50KQogICAgICAgIGJyZWFrOwogICAgICBpZiAoc3Ry
-Y21wKGVudC0+ZF9uYW1lLCAiLiIpID09IDAgfHwgc3RyY21wKGVudC0+ZF9uYW1lLCAiLi4iKSA9
-PSAwKQogICAgICAgIGNvbnRpbnVlOwogICAgICBjaGFyIGFib3J0WzMwMF07CiAgICAgIHNucHJp
-bnRmKGFib3J0LCBzaXplb2YoYWJvcnQpLCAiL3N5cy9mcy9mdXNlL2Nvbm5lY3Rpb25zLyVzL2Fi
-b3J0IiwKICAgICAgICAgICAgICAgZW50LT5kX25hbWUpOwogICAgICBpbnQgZmQgPSBvcGVuKGFi
-b3J0LCBPX1dST05MWSk7CiAgICAgIGlmIChmZCA9PSAtMSkgewogICAgICAgIGNvbnRpbnVlOwog
-ICAgICB9CiAgICAgIGlmICh3cml0ZShmZCwgYWJvcnQsIDEpIDwgMCkgewogICAgICB9CiAgICAg
-IGNsb3NlKGZkKTsKICAgIH0KICAgIGNsb3NlZGlyKGRpcik7CiAgfSBlbHNlIHsKICB9CiAgd2hp
-bGUgKHdhaXRwaWQoLTEsIHN0YXR1cywgX19XQUxMKSAhPSBwaWQpIHsKICB9Cn0KCnN0YXRpYyB2
-b2lkIHNldHVwX3Rlc3QoKQp7CiAgcHJjdGwoUFJfU0VUX1BERUFUSFNJRywgU0lHS0lMTCwgMCwg
-MCwgMCk7CiAgc2V0cGdycCgpOwogIHdyaXRlX2ZpbGUoIi9wcm9jL3NlbGYvb29tX3Njb3JlX2Fk
-aiIsICIxMDAwIik7Cn0KCnN0YXRpYyB2b2lkIGV4ZWN1dGVfb25lKHZvaWQpOwoKI2RlZmluZSBX
-QUlUX0ZMQUdTIF9fV0FMTAoKc3RhdGljIHZvaWQgbG9vcCh2b2lkKQp7CiAgaW50IGl0ZXIgPSAw
-OwogIGZvciAoOzsgaXRlcisrKSB7CiAgICBpbnQgcGlkID0gZm9yaygpOwogICAgaWYgKHBpZCA8
-IDApCiAgICAgIGV4aXQoMSk7CiAgICBpZiAocGlkID09IDApIHsKICAgICAgc2V0dXBfdGVzdCgp
-OwogICAgICBleGVjdXRlX29uZSgpOwogICAgICBleGl0KDApOwogICAgfQogICAgaW50IHN0YXR1
-cyA9IDA7CiAgICB1aW50NjRfdCBzdGFydCA9IGN1cnJlbnRfdGltZV9tcygpOwogICAgZm9yICg7
-OykgewogICAgICBzbGVlcF9tcygxMCk7CiAgICAgIGlmICh3YWl0cGlkKC0xLCAmc3RhdHVzLCBX
-Tk9IQU5HIHwgV0FJVF9GTEFHUykgPT0gcGlkKQogICAgICAgIGJyZWFrOwogICAgICBpZiAoY3Vy
-cmVudF90aW1lX21zKCkgLSBzdGFydCA8IDUwMDApCiAgICAgICAgY29udGludWU7CiAgICAgIGtp
-bGxfYW5kX3dhaXQocGlkLCAmc3RhdHVzKTsKICAgICAgYnJlYWs7CiAgICB9CiAgfQp9Cgp1aW50
-NjRfdCByWzFdID0gezB4ZmZmZmZmZmZmZmZmZmZmZn07Cgp2b2lkIGV4ZWN1dGVfb25lKHZvaWQp
-CnsKICBpbnRwdHJfdCByZXMgPSAwOwogIGlmICh3cml0ZSgxLCAiZXhlY3V0aW5nIHByb2dyYW1c
-biIsIHNpemVvZigiZXhlY3V0aW5nIHByb2dyYW1cbiIpIC0gMSkpIHsKICB9CiAgKih1aW50MzJf
-dCopMHgyMDAxZDAwMCA9IDE7CiAgKih1aW50MzJfdCopMHgyMDAxZDAwNCA9IDB4ODA7CiAgKih1
-aW50OF90KikweDIwMDFkMDA4ID0gMTsKICAqKHVpbnQ4X3QqKTB4MjAwMWQwMDkgPSAwOwogICoo
-dWludDhfdCopMHgyMDAxZDAwYSA9IDA7CiAgKih1aW50OF90KikweDIwMDFkMDBiID0gMDsKICAq
-KHVpbnQzMl90KikweDIwMDFkMDBjID0gMDsKICAqKHVpbnQ2NF90KikweDIwMDFkMDEwID0gMHg0
-MWMxOwogICoodWludDY0X3QqKTB4MjAwMWQwMTggPSAwOwogICoodWludDY0X3QqKTB4MjAwMWQw
-MjAgPSAwOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAxZDAyOCwgMCwgMCwg
-MSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAxLCAxKTsK
-ICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgsIDAsIDIsIDEpOwogIFNU
-T1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAxZDAyOCwgMCwgMywgMSk7CiAgU1RPUkVf
-QllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCA0LCAxKTsKICBTVE9SRV9CWV9C
-SVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgsIDEsIDUsIDEpOwogIFNUT1JFX0JZX0JJVE1B
-U0sodWludDY0X3QsICwgMHgyMDAxZDAyOCwgMCwgNiwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1
-aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCA3LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2
-NF90LCAsIDB4MjAwMWQwMjgsIDAsIDgsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3Qs
-ICwgMHgyMDAxZDAyOCwgMCwgOSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAw
-eDIwMDFkMDI4LCAwLCAxMCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIw
-MDFkMDI4LCAwLCAxMSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFk
-MDI4LCAwLCAxMiwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4
-LCAwLCAxMywgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAw
-LCAxNCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAx
-NSwgMik7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAxNywg
-MSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAxOCwgMSk7
-CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAxOSwgMSk7CiAg
-U1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyMCwgMSk7CiAgU1RP
-UkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyMSwgMSk7CiAgU1RPUkVf
-QllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyMiwgMSk7CiAgU1RPUkVfQllf
-QklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyMywgMSk7CiAgU1RPUkVfQllfQklU
-TUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyNCwgMSk7CiAgU1RPUkVfQllfQklUTUFT
-Syh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyNSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1
-aW50NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyNiwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50
-NjRfdCwgLCAweDIwMDFkMDI4LCAwLCAyNywgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRf
-dCwgLCAweDIwMDFkMDI4LCAwLCAyOCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwg
-LCAweDIwMDFkMDI4LCAwLCAyOSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAw
-eDIwMDFkMDI4LCAwLCAzMCwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIw
-MDFkMDI4LCAwLCAzMSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFk
-MDI4LCAwLCAzMiwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4
-LCAwLCAzMywgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDFkMDI4LCAw
-eDIwMDAsIDM0LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgs
-IDAsIDM1LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgsIDAs
-IDM2LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgsIDAsIDM3
-LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMWQwMjgsIDAsIDM4LCAy
-Nik7CiAgKih1aW50MzJfdCopMHgyMDAxZDAzMCA9IDA7CiAgKih1aW50MzJfdCopMHgyMDAxZDAz
-NCA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAxZDAzOCA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAx
-ZDA0MCA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAxZDA0OCA9IDA7CiAgKih1aW50NjRfdCopMHgy
-MDAxZDA1MCA9IDA7CiAgKih1aW50MzJfdCopMHgyMDAxZDA1OCA9IDA7CiAgKih1aW50MzJfdCop
-MHgyMDAxZDA1YyA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAxZDA2MCA9IDA7CiAgKih1aW50MzJf
-dCopMHgyMDAxZDA2OCA9IDA7CiAgKih1aW50MTZfdCopMHgyMDAxZDA2YyA9IDA7CiAgKih1aW50
-MTZfdCopMHgyMDAxZDA2ZSA9IDA7CiAgKih1aW50MzJfdCopMHgyMDAxZDA3MCA9IDA7CiAgKih1
-aW50MzJfdCopMHgyMDAxZDA3NCA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAxZDA3OCA9IDA7CiAg
-cmVzID0gc3lzY2FsbChfX05SX3BlcmZfZXZlbnRfb3BlbiwgLyphdHRyPSovMHgyMDAxZDAwMHVs
-LCAvKnBpZD0qLzAsCiAgICAgICAgICAgICAgICAvKmNwdT0qLy0xLCAvKmdyb3VwPSovLTEsIC8q
-ZmxhZ3M9Ki8wdWwpOwogIGlmIChyZXMgIT0gLTEpCiAgICByWzBdID0gcmVzOwogICoodWludDMy
-X3QqKTB4MjAwMDAzMDAgPSA0OwogICoodWludDMyX3QqKTB4MjAwMDAzMDQgPSAweDgwOwogICoo
-dWludDhfdCopMHgyMDAwMDMwOCA9IDB4NDM7CiAgKih1aW50OF90KikweDIwMDAwMzA5ID0gMHg4
-MTsKICAqKHVpbnQ4X3QqKTB4MjAwMDAzMGEgPSAwOwogICoodWludDhfdCopMHgyMDAwMDMwYiA9
-IDA7CiAgKih1aW50MzJfdCopMHgyMDAwMDMwYyA9IDA7CiAgKih1aW50NjRfdCopMHgyMDAwMDMx
-MCA9IDY7CiAgKih1aW50NjRfdCopMHgyMDAwMDMxOCA9IDB4YzFiMDY7CiAgKih1aW50NjRfdCop
-MHgyMDAwMDMyMCA9IDB4ZTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAz
-MjgsIDAsIDAsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwg
-MCwgMSwgMSk7CiAgU1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMzI4LCAwLCAy
-LCAxKTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAzMjgsIDAsIDMsIDEp
-OwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgNCwgMSk7CiAg
-U1RPUkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMzI4LCAweDEwMDAwMDAzLCA1LCAx
-KTsKICBTVE9SRV9CWV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAzMjgsIDAsIDYsIDEpOwog
-IFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgNywgMSk7CiAgU1RP
-UkVfQllfQklUTUFTSyh1aW50NjRfdCwgLCAweDIwMDAwMzI4LCAwLCA4LCAxKTsKICBTVE9SRV9C
-WV9CSVRNQVNLKHVpbnQ2NF90LCAsIDB4MjAwMDAzMjgsIDAsIDksIDEpOwogIFNUT1JFX0JZX0JJ
-VE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMTAsIDEpOwogIFNUT1JFX0JZX0JJVE1B
-U0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMTEsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0so
-dWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMTIsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWlu
-dDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMTMsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0
-X3QsICwgMHgyMDAwMDMyOCwgMCwgMTQsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3Qs
-ICwgMHgyMDAwMDMyOCwgMCwgMTUsIDIpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwg
-MHgyMDAwMDMyOCwgMCwgMTcsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgy
-MDAwMDMyOCwgMCwgMTgsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAw
-MDMyOCwgMCwgMTksIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMy
-OCwgMCwgMjAsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwg
-MCwgMjEsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwg
-MjIsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjMs
-IDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjQsIDEp
-OwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjUsIDEpOwog
-IFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjYsIDEpOwogIFNU
-T1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjcsIDEpOwogIFNUT1JF
-X0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjgsIDEpOwogIFNUT1JFX0JZ
-X0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMjksIDEpOwogIFNUT1JFX0JZX0JJ
-VE1BU0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMzAsIDEpOwogIFNUT1JFX0JZX0JJVE1B
-U0sodWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMzEsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0so
-dWludDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMzIsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWlu
-dDY0X3QsICwgMHgyMDAwMDMyOCwgMCwgMzMsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0
-X3QsICwgMHgyMDAwMDMyOCwgMCwgMzQsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3Qs
-ICwgMHgyMDAwMDMyOCwgMCwgMzUsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwg
-MHgyMDAwMDMyOCwgMCwgMzYsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgy
-MDAwMDMyOCwgMCwgMzcsIDEpOwogIFNUT1JFX0JZX0JJVE1BU0sodWludDY0X3QsICwgMHgyMDAw
-MDMyOCwgMCwgMzgsIDI2KTsKICAqKHVpbnQzMl90KikweDIwMDAwMzMwID0gMHg0MDAwMDA7CiAg
-Kih1aW50MzJfdCopMHgyMDAwMDMzNCA9IDQ7CiAgKih1aW50NjRfdCopMHgyMDAwMDMzOCA9IDA7
-CiAgKih1aW50NjRfdCopMHgyMDAwMDM0MCA9IDk7CiAgKih1aW50NjRfdCopMHgyMDAwMDM0OCA9
-IDB4MTAwNjI7CiAgKih1aW50NjRfdCopMHgyMDAwMDM1MCA9IDg7CiAgKih1aW50MzJfdCopMHgy
-MDAwMDM1OCA9IDB4ZDsKICAqKHVpbnQzMl90KikweDIwMDAwMzVjID0gMDsKICAqKHVpbnQ2NF90
-KikweDIwMDAwMzYwID0gOTsKICAqKHVpbnQzMl90KikweDIwMDAwMzY4ID0gNTsKICAqKHVpbnQx
-Nl90KikweDIwMDAwMzZjID0gMTsKICAqKHVpbnQxNl90KikweDIwMDAwMzZlID0gMDsKICAqKHVp
-bnQzMl90KikweDIwMDAwMzcwID0gMDsKICAqKHVpbnQzMl90KikweDIwMDAwMzc0ID0gMDsKICAq
-KHVpbnQ2NF90KikweDIwMDAwMzc4ID0gNTsKICBzeXNjYWxsKF9fTlJfcGVyZl9ldmVudF9vcGVu
-LCAvKmF0dHI9Ki8weDIwMDAwMzAwdWwsIC8qcGlkPSovMCwgLypjcHU9Ki8tMSwKICAgICAgICAg
-IC8qZ3JvdXA9Ki9yWzBdLCAvKmZsYWdzPSovMHVsKTsKfQppbnQgbWFpbih2b2lkKQp7CiAgc3lz
-Y2FsbChfX05SX21tYXAsIC8qYWRkcj0qLzB4MWZmZmYwMDB1bCwgLypsZW49Ki8weDEwMDB1bCwg
-Lypwcm90PSovMHVsLAogICAgICAgICAgLypmbGFncz1NQVBfRklYRUR8TUFQX0FOT05ZTU9VU3xN
-QVBfUFJJVkFURSovIDB4MzJ1bCwgLypmZD0qLy0xLAogICAgICAgICAgLypvZmZzZXQ9Ki8wdWwp
-OwogIHN5c2NhbGwoX19OUl9tbWFwLCAvKmFkZHI9Ki8weDIwMDAwMDAwdWwsIC8qbGVuPSovMHgx
-MDAwMDAwdWwsCiAgICAgICAgICAvKnByb3Q9UFJPVF9XUklURXxQUk9UX1JFQUR8UFJPVF9FWEVD
-Ki8gN3VsLAogICAgICAgICAgLypmbGFncz1NQVBfRklYRUR8TUFQX0FOT05ZTU9VU3xNQVBfUFJJ
-VkFURSovIDB4MzJ1bCwgLypmZD0qLy0xLAogICAgICAgICAgLypvZmZzZXQ9Ki8wdWwpOwogIHN5
-c2NhbGwoX19OUl9tbWFwLCAvKmFkZHI9Ki8weDIxMDAwMDAwdWwsIC8qbGVuPSovMHgxMDAwdWws
-IC8qcHJvdD0qLzB1bCwKICAgICAgICAgIC8qZmxhZ3M9TUFQX0ZJWEVEfE1BUF9BTk9OWU1PVVN8
-TUFQX1BSSVZBVEUqLyAweDMydWwsIC8qZmQ9Ki8tMSwKICAgICAgICAgIC8qb2Zmc2V0PSovMHVs
-KTsKICBjb25zdCBjaGFyKiByZWFzb247CiAgKHZvaWQpcmVhc29uOwogIGxvb3AoKTsKICByZXR1
-cm4gMDsKfQo=
+I'd go with the pid option - that is more unique than the process name.
 
-------=ALIBOUNDARY_1745_7f1eefe6a700_66fa5764_6fde00--
+It could still be useful for the user to be able to provide a label,
+especially if you are going to allow arbitrary labels via dt.  Though as
+often as not the user doesn't know what name to provide and fills it with
+something useless, so I don't think there is any clear winner here.
+
+> > > +static int pwm_cdev_free(struct pwm_cdev_data *cdata, unsigned int hwpwm)
+> > > +{
+> > > +	struct pwm_chip *chip = cdata->chip;
+> > > +
+> > > +	if (hwpwm >= chip->npwm)
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (cdata->pwm[hwpwm]) {
+> > > +		struct pwm_device *pwm = cdata->pwm[hwpwm];
+> > > +
+> > > +		__pwm_put(pwm);
+> > > +
+> > > +		cdata->pwm[hwpwm] = NULL;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static struct pwm_device *pwm_cdev_get_requested_pwm(struct pwm_cdev_data *cdata,
+> > > +						     u32 hwpwm)
+> > > +{
+> > > +	struct pwm_chip *chip = cdata->chip;
+> > > +
+> > > +	if (hwpwm >= chip->npwm)
+> > > +		return ERR_PTR(-EINVAL);
+> > > +
+> > > +	if (cdata->pwm[hwpwm])
+> > > +		return cdata->pwm[hwpwm];
+> > > +
+> > > +	return ERR_PTR(-EINVAL);
+> > > +}
+> > > +
+> > > +static long pwm_cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+> > > +{
+> > > +	int ret = 0;
+> > > +	struct pwm_cdev_data *cdata = file->private_data;
+> > > +	struct pwm_chip *chip = cdata->chip;
+> > > +
+> > > +	guard(mutex)(&pwm_lock);
+> > > +
+> >
+> > Coarse grain locking of the whole of pwm for the duration, where some
+> > calls my sleep, feels excessive. Is it really necessary for all of the
+> > ioctls?
+>
+> This might be improvable a bit indeed. I think we won't come around
+> holding the pwmchip lock, but that would already be nice. I'll invest
+> some brain cycles here.
+>
+
+That can always be a later refinement - better too much locking than
+too little.
+
+> > > +/**
+> > > + * struct pwmchip_waveform - Describe a PWM waveform for a pwm_chip's PWM channel
+> > > + * @hwpwm: per-chip relative index of the PWM device
+> > > + * @__pad: padding, must be zero
+> > > + * @period_length_ns: duration of the repeating period
+> > > + * @duty_length_ns: duration of the active part in each period
+> > > + * @duty_offset_ns: offset of the rising edge from a period's start
+> > > + */
+> >
+> > While you have added some documentation, this is still lacking compared
+> > to the corresponding in include/linux/pwm.h.  e.g. zeroing
+> > period_length_ns to disable a PWM...
+>
+> Ack.
+>
+> > > +struct pwmchip_waveform {
+> > > +	__u32 hwpwm;
+> > > +	__u32 __pad;
+> > > +	__u64 period_length_ns;
+> > > +	__u64 duty_length_ns;
+> > > +	__u64 duty_offset_ns;
+> > > +};
+> > > +
+> > > +#define PWM_IOCTL_REQUEST	_IO(0x75, 1)
+> > > +#define PWM_IOCTL_FREE		_IO(0x75, 2)
+> > > +#define PWM_IOCTL_ROUNDWF	_IOWR(0x75, 3, struct pwmchip_waveform)
+> > > +#define PWM_IOCTL_GETWF		_IOWR(0x75, 4, struct pwmchip_waveform)
+> > > +#define PWM_IOCTL_SETROUNDEDWF	_IOW(0x75, 5, struct pwmchip_waveform)
+> > > +#define PWM_IOCTL_SETEXACTWF	_IOW(0x75, 6, struct pwmchip_waveform)
+> > > +
+> >
+> > A brief description of the ioctls and their semantics would be handy,
+> > either here or as full blown documentation in
+> > linux/Documentation/userspace-api/pwm/...
+>
+> Ack.
+>
+> > PWMs are automatically released when the pwmchip file is closed?
+> > And the state of the PWM line after release (or _FREE) is indeterminate?
+> >
+> > Is it possible that the underlying PWM chip be removed while the user has
+> > the pwmchip open and/or has pwm devices requested?
+>
+> I guess these questions are hints about what to describe in the docs to
+> be written and not actual questions. I fully agree that the
+> documentation front isn't optimal yet.
+>
+
+Yup, and as per the locking, the documentation can always be a later
+refinement - so long as your intent is clear now before the ioctls get
+chiselled in stone.
+
+> > Provide some ioctls to aid discoverability, e.g. for pwm chips exposing the
+> > npwms, module name.  For pwm devices the label, if the PWM is requested and
+> > the consumer's label (similar to the GPIO chipinfo and lineinfo)?
+> > Unless that information otherwise exposed to userspace?
+>
+> Most of that is already in /sys/class/pwm. Duplicating that feels wrong.
+>
+
+Depends on whether you want the interface to be standalone or an
+addition to the sysfs - and that is your call.
+
+> Thanks a lot for your feedback
+
+No problem, and again sorry for not getting around to it earlier.
+
+Cheers,
+Kent.
 
 
