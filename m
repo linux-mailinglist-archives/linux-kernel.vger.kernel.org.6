@@ -1,318 +1,342 @@
-Return-Path: <linux-kernel+bounces-343430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75037989ACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A477989AD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C602CB224C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C306F1F21DCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437711547DB;
-	Mon, 30 Sep 2024 06:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C22915380B;
+	Mon, 30 Sep 2024 06:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLJAaAMu"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kw7lWz1B"
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B26116BE17;
-	Mon, 30 Sep 2024 06:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98A23BE
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 06:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727678570; cv=none; b=eaV9/UMGbs4iGJT9gKEdsDA9/2f95SA6E+fgukGy0EZbECfwHMXqaIlvZ4RPXAhpEZfieCwcuJFOBTUOvsSsL/1y8rBkFzqai6OlpcKyuHf5WXksA9m967u4oHG3Lnhg/USD2+ddYwokfG8gz2oojGqFkA22TSWKsc7N19H28O4=
+	t=1727678883; cv=none; b=OtHvrQITBylUN7Ukt3G8be55Hi5hox1/qDubffm+meXGfVmnHY8c6EbrwBXucHpYvRKTs415xeFnEpDUJnKEiofnt8yxzMAb0QAqVFEpeYgV8S5DFvZa7p2p5XtmW9vkGBk4SOIauCxNb+nbqiacyR6VJM7yNERkObwVXPa3vyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727678570; c=relaxed/simple;
-	bh=ZsVkNqE559yYAD0KbYrNq+q5m4LLmYjdu/xt9ojIPSA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=s0622Sayf01GLvBu5ybyE3qWRRqtdwhFh9VI1zrpTfX3WAO7oebB8oD1uxoqGIqTOU9y9d8FiP0/R3co44Dwb3T5CLk+Q7Vetvy6yYjjRnxib5DUtF8qsGBY0Qu3wMrC8JNGCZc+BW9zXLTf3AiHpunvldvkdpglT2OSXogFLWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLJAaAMu; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a93b2070e0cso486105366b.3;
-        Sun, 29 Sep 2024 23:42:48 -0700 (PDT)
+	s=arc-20240116; t=1727678883; c=relaxed/simple;
+	bh=/g7wcCRzbGOfKggOUpSf67kFofiDrk/MwfNEDFyqkIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RgGt7WMNz3V/z5Lb7Mhy1skz7z+NoG3ApR+xkxkcfjqUU+scPXFDObVVRNrKylby4jqJ4KUuBZkS52NvmmhUR51G4j75Al4nS9SNh4VZZx2zD4ueSlfRa72IggBdOwO2H+kJDp5cI0yr9+W0W19NMF7iK5HfkaN4pzFyXcJtRws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Kw7lWz1B; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-84e9893c457so1328911241.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 23:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727678567; x=1728283367; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZsVkNqE559yYAD0KbYrNq+q5m4LLmYjdu/xt9ojIPSA=;
-        b=ZLJAaAMu8DV605qMUnaaCSWHGUo5SmzrSeudSW/zAV9vY8YXTbPN1JDwbSJWEkYniS
-         /6csGxynsAUlihWTra6b714p15kHEX4JzBED0JO0i83ZWeI+1SEG25dVNMYKHzqLm75O
-         s0valQddnDIR6I3C1qyjovgTydf4AGdMLKIBeuWMDq8BXDtt+E5SuR6ZBgwxXlCCeg3s
-         v+l9iYr6OF01GRQvc0SALGgXq77Hz3YfvUQPAB0JB3VOeKj1kzYhCzwfp5rK1eT8aF45
-         +6+TNfi04UQsVDqMZCyd/BqlEfwGDOR8eSfr0QJ1NguCLNNzvkA47pgGreQe0Nq8S4w9
-         qwdg==
+        d=linaro.org; s=google; t=1727678880; x=1728283680; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/g7wcCRzbGOfKggOUpSf67kFofiDrk/MwfNEDFyqkIs=;
+        b=Kw7lWz1BcRHocG9XslUcnqTtpbQCNMS/08+10d7xHBFHOSPX2kqFMu8KgDERjNi5v9
+         7GPc0rn/VKCyoG06d7hYvfqSzEfKVnkOe73fh2pGMHaKdhrkaeC6mShj6T02smXFC+36
+         6B+7dRLoMthAXoJ+42WsTCN7P6nzPtXnYuxRAyi4IbmLxTNZjH7lrXZfOsnwPMKykee1
+         +cA6SRe11E6j94SNNfyjrvNqH0Lip4JT/YPloKF+7mJ3Tcc5niyWRRnKCpqfQ12uYGbq
+         gZJ/p9W5i2+ZIDWytHdD+JLRRzGODZ8AcMoucZ2LVP+7RRucE2QfqneX92snLaM+KHnc
+         BDrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727678567; x=1728283367;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsVkNqE559yYAD0KbYrNq+q5m4LLmYjdu/xt9ojIPSA=;
-        b=UeefaC1EFYILFCJJgzNHrna6txFN/neehKudHJoi3vZTZfDBGh1+cpjHZTmdHqD8Jv
-         dsZBqi8fz2nSSDf31zo5txrLWgpky8EQ6nQz7smZUlzue9mWuEo351btI5nVK+fEhd5A
-         R0EgCknjg/DmR16Gsfge0O5vzjMM+aQ/Mv55FbSsVlwMNqX9IIL5jXv1cmOepBgjFqOB
-         vkWubQLQSh2Ht+BQEuJYFG+afuzEw7/bWwrzA4UTqFKBa86T9JHWYSN3NZiT/3TdjRV1
-         y/vzVE28uIGgqJhLLqkudEAhSF7HKESLcwFBxUX/sdDasZWXPq2kdN+JvF9vbW0Wgof7
-         X9DA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNwB2KCVtt2RMmriF3T6s/bG0z97rYJjoYASQU3unTSCWJc+Az5ByKCc2X9dGK7voO3MlIeUlVeAdh@vger.kernel.org, AJvYcCVX2OEUuefkyQN+pYL/FnglnjSSQodFquJFvLh7BQMQKqUPPqkJU/XdA2ya8emw5C9sQbdiCUorjdGH@vger.kernel.org, AJvYcCVfKXIU6tm+RN83bwAJn8j0LIlgQGL0sxhjtYOAaz1zEZXZxVx9SGBo6w1zD1Wu/7tq15MyTi3Pk9RXESir@vger.kernel.org, AJvYcCWHoa2eZNJ90MaaQifWMnQyZ/UwCZwPHg1HcJxX0qO/53LlOIMORtR1twxIruxfZNSfx/BTBk0Ps5Wn@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPb0ExM5+YDLoj6TReqH++C55GrRcByiWmKLJvCJ1HWlEZhNuf
-	Q7cDbS/M55KJWqVcX4rZqHqJctVGllavzk36/AP21vOgy90JA5HI
-X-Google-Smtp-Source: AGHT+IF0hQAKZDwoxLd5tVspvsrveQH4KSYpSAjWHeVzaDavS1YefPjYEHkLfjEOx9XjvPjVE+kSUA==
-X-Received: by 2002:a17:907:3e99:b0:a86:ac91:a571 with SMTP id a640c23a62f3a-a93c4c256famr1140528266b.56.1727678566407;
-        Sun, 29 Sep 2024 23:42:46 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef02:2700:7684:3ff1:6790:3866? (p200300f6ef02270076843ff167903866.dip0.t-ipconnect.de. [2003:f6:ef02:2700:7684:3ff1:6790:3866])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2948029sm475568966b.127.2024.09.29.23.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 23:42:46 -0700 (PDT)
-Message-ID: <0c9945bb7e39371f467cdc5df206fab28e286642.camel@gmail.com>
-Subject: Re: [PATCH 1/7] iio: backend: add API for interface get
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus	
- <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nuno Sa	 <nuno.sa@analog.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
- <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt	
- <marcelo.schmitt@analog.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
-  AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,  =?ISO-8859-1?Q?Jo=E3o?= Paulo
- =?ISO-8859-1?Q?Gon=E7alves?=	 <joao.goncalves@toradex.com>, Marius Cristea
- <marius.cristea@microchip.com>,  Sergiu Cuciurean
- <sergiu.cuciurean@analog.com>, Dragos Bogdan <dragos.bogdan@analog.com>,
- linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-pwm@vger.kernel.org
-Date: Mon, 30 Sep 2024 08:46:58 +0200
-In-Reply-To: <20240928182302.767953f1@jic23-huawei>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
-		<20240923101206.3753-2-antoniu.miclaus@analog.com>
-		<CAMknhBHmtpnX-nXxReF-rUW1ks1=iw3m_BmiRUTkf5XckPsvPw@mail.gmail.com>
-		<83cf3c3eb1cc5fcc06ce72cab14cc0da3bd817b6.camel@gmail.com>
-	 <20240928182302.767953f1@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        d=1e100.net; s=20230601; t=1727678880; x=1728283680;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/g7wcCRzbGOfKggOUpSf67kFofiDrk/MwfNEDFyqkIs=;
+        b=cm+o2lfmZ2EY3YdGx7Ch5BkYhszIWh9szRX5KQ14Z6HqyzLaA0ubWUGMTD+llx5uf/
+         +5bFt80qvISHbGjDkabQW1KJSgx6kySZGfRsjHU1W4peTsgfDAI512ZK3Zn3oLQWNyWm
+         POu91LtD0JlidrqNzTBpcBjaS9UKCItZg6gFS7o5yfn7GRZurKJ4CHjfmAFnmsKndB7B
+         MmnNYZyrjPlOBfKY8ssDUGwbKMk89rd7AqYXPjEvpI6993oTofbzui3sXvZ4nGVAh6nS
+         WbNLTSqYiHCc4bzinbiPqmVk2ov/F6bvJLHr42Ahak8j+pKVH1pi1E9DDsgWCyBS8LTZ
+         LRLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbTaJUSmpYzhtouRZc+r+mAVjLGrEzt/z1CO3DT3W/slMQVtybJt8BhCkzfsM988INKNBUfvRA1C8A4qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrXLn/6wIbaFYVIrdPb97cK/eTjrMj187NE+T6V2A0xSoLH1Go
+	gebVWjWdWrVchNxHNfT7j1IEoEX6faoMurQFV05ALRAGl8LrQY12GFVxFMX9KlVJnquVeeV9LZk
+	ynos4igRlUcW7PG2rWKwHL8EWaMCTqebIdZMA8A==
+X-Google-Smtp-Source: AGHT+IENLg636fnVEFtXZnVhYI/GV41eTTwvpGWanS5Q2ZuCDFhgWVQXRcNuHd6kGYhdZRRAC+0Sh6m6yruVp+iycL0=
+X-Received: by 2002:a05:6102:2ac7:b0:493:f097:e5b7 with SMTP id
+ ada2fe7eead31-4a2cefd1c4bmr7333978137.1.1727678880054; Sun, 29 Sep 2024
+ 23:48:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240830070351.2855919-1-jens.wiklander@linaro.org>
+ <dhxvyshwi4qmcmwceokhqey2ww4azjcs6qrpnkgivdj7tv5cke@r36srvvbof6q>
+ <d8e0cb78-7cfb-42bf-b3a5-f765592e8dd4@ti.com> <mzur3odofwwrdqnystozjgf3qtvb73wqjm6g2vf5dfsqiehaxk@u67fcarhm6ge>
+ <e967e382-6cca-4dee-8333-39892d532f71@gmail.com> <lk7a2xuqrctyywuanjwseh5lkcz3soatc2zf3kn3uwc43pdyic@edm3hcd2koas>
+ <04caa788-19a6-4336-985c-4eb191c24438@amd.com> <2f9a4abe-b2fc-4bc7-9926-1da2d38f5080@linaro.org>
+ <CAFA6WYMd46quafJoGXjkCiPOKpYoDZdXwrNbG3QekyjB3_2FTA@mail.gmail.com> <7c9e3a1a6092f6574c17d7206767ece0bcefc81f.camel@ndufresne.ca>
+In-Reply-To: <7c9e3a1a6092f6574c17d7206767ece0bcefc81f.camel@ndufresne.ca>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Mon, 30 Sep 2024 12:17:47 +0530
+Message-ID: <CAFA6WYPtp3H5JhxzgH9=z2EvNL7Kdku3EmG1aDkTS-gjFtNZZA@mail.gmail.com>
+Subject: Re: [Linaro-mm-sig] Re: [RFC PATCH 0/4] Linaro restricted heap
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>, 
+	Andrew Davis <afd@ti.com>, Jens Wiklander <jens.wiklander@linaro.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, 
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+	John Stultz <jstultz@google.com>, "T . J . Mercier" <tjmercier@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2024-09-28 at 18:23 +0100, Jonathan Cameron wrote:
-> On Thu, 26 Sep 2024 12:52:39 +0200
-> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
->=20
-> > On Thu, 2024-09-26 at 10:40 +0200, David Lechner wrote:
-> > > On Mon, Sep 23, 2024 at 12:15=E2=80=AFPM Antoniu Miclaus
-> > > <antoniu.miclaus@analog.com> wrote:=C2=A0=20
-> > > >=20
-> > > > Add backend support for obtaining the interface type used.
-> > > >=20
-> > > > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > > > ---
-> > > > =C2=A0drivers/iio/industrialio-backend.c | 24 +++++++++++++++++++++=
-+++
-> > > > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 10 ++++++++++
-> > > > =C2=A02 files changed, 34 insertions(+)
-> > > >=20
-> > > > diff --git a/drivers/iio/industrialio-backend.c
-> > > > b/drivers/iio/industrialio-
-> > > > backend.c
-> > > > index efe05be284b6..53ab6bc86a50 100644
-> > > > --- a/drivers/iio/industrialio-backend.c
-> > > > +++ b/drivers/iio/industrialio-backend.c
-> > > > @@ -449,6 +449,30 @@ ssize_t iio_backend_ext_info_set(struct iio_de=
-v
-> > > > *indio_dev,
-> > > > uintptr_t private,
-> > > > =C2=A0}
-> > > > =C2=A0EXPORT_SYMBOL_NS_GPL(iio_backend_ext_info_set, IIO_BACKEND);
-> > > >=20
-> > > > +/**
-> > > > + * iio_backend_interface_type_get - get the interace type used.
-> > > > + * @back: Backend device
-> > > > + * @type: Interface type
-> > > > + *
-> > > > + * RETURNS:
-> > > > + * 0 on success, negative error number on failure.
-> > > > + */
-> > > > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_=
-interface_type
-> > > > *type)
-> > > > +{
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D iio_backend_op_call(b=
-ack, interface_type_get, type);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return ret;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (*type > IIO_BACKEND_INTER=
-FACE_CMOS)
-> Put a COUNT entry or similar on the end of the enum so this doesn't need
-> updating for more types.
->=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return -EINVAL;
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> > > > +}
-> > > > +EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, IIO_BACKEND);
-> > > > +
-> > > > =C2=A0/**
-> > > > =C2=A0 * iio_backend_extend_chan_spec - Extend an IIO channel
-> > > > =C2=A0 * @indio_dev: IIO device
-> > > > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backen=
-d.h
-> > > > index 8099759d7242..ba8ad30ac9ba 100644
-> > > > --- a/include/linux/iio/backend.h
-> > > > +++ b/include/linux/iio/backend.h
-> > > > @@ -63,6 +63,11 @@ enum iio_backend_sample_trigger {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_SAMPLE_TRIGG=
-ER_MAX
-> > > > =C2=A0};
-> > > >=20
-> > > > +enum iio_backend_interface_type {
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_LVDS,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_BACKEND_INTERFACE_CMOS
->=20
-> trailing comma.
->=20
-> This is going to get bigger!
->=20
-> > > > +};
-> > > > +
-> > > > =C2=A0/**
-> > > > =C2=A0 * struct iio_backend_ops - operations structure for an iio_b=
-ackend
-> > > > =C2=A0 * @enable: Enable backend.
-> > > > @@ -81,6 +86,7 @@ enum iio_backend_sample_trigger {
-> > > > =C2=A0 * @extend_chan_spec: Extend an IIO channel.
-> > > > =C2=A0 * @ext_info_set: Extended info setter.
-> > > > =C2=A0 * @ext_info_get: Extended info getter.
-> > > > + * @interface_type_get: Interface type.
-> > > > =C2=A0 **/
-> > > > =C2=A0struct iio_backend_ops {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*enable)(struct iio=
-_backend *back);
-> > > > @@ -113,6 +119,8 @@ struct iio_backend_ops {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 const char *buf, size_t len);
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*ext_info_get)(stru=
-ct iio_backend *back, uintptr_t private,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_spec *chan, char
-> > > > *buf);
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int (*interface_type_get)(str=
-uct iio_backend *back,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_interf=
-ace_type
-> > > > *type);
-> > > > =C2=A0};
-> > > >=20
-> > > > =C2=A0int iio_backend_chan_enable(struct iio_backend *back, unsigne=
-d int
-> > > > chan);
-> > > > @@ -142,6 +150,8 @@ ssize_t iio_backend_ext_info_set(struct iio_dev
-> > > > *indio_dev,
-> > > > uintptr_t private,
-> > > > =C2=A0ssize_t iio_backend_ext_info_get(struct iio_dev *indio_dev, u=
-intptr_t
-> > > > private,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct iio_chan_s=
-pec *chan, char
-> > > > *buf);
-> > > >=20
-> > > > +int iio_backend_interface_type_get(struct iio_backend *back,
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enum iio_backend_=
-interface_type
-> > > > *type);
-> > > > =C2=A0int iio_backend_extend_chan_spec(struct iio_dev *indio_dev,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_backend *bac=
-k,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_chan_spec *c=
-han);
-> > > > --
-> > > > 2.46.0
-> > > > =C2=A0=20
-> > >=20
-> > > This seems very specific to the AD485x chips and the AXI ADC backend.
-> > > Since it is describing how the chip is wired to the AXI DAC IP block,
-> > > I would be tempted to use the devicetree for this info instead of
-> > > adding a new backend function.=C2=A0=20
-> >=20
-> > Not sure If I'm following your point but I think this is the typical ca=
-se
-> > where the
-> > chip (being it a DAC or ADC) supports both CMOS and LVDS interfaces.
-> > Naturally you
-> > only use one on your system and this is a synthesis parameter on the FP=
-GA IP
-> > core.
-> > Therefore, it makes sense for the frontend to have way to ask for this
-> > information to
-> > the backend.
-> >=20
-> > That said, we could also have a DT parameter but, ideally, we would the=
-n
-> > need a way
-> > to match the parameter with the backend otherwise we could have DT stat=
-ing
-> > LVDS and
-> > the backend built with CMOS.
->=20
-> That would be a DTS bug that you should fix :)=C2=A0 For this to make sen=
-se you are
-> relying on an FPGA that also has pins flexible enough to support LVDS and=
- CMOS
-> so it's only a firmware thing. Been a while since I last messed with FPGA=
-s,
-> but that seems unlikely to be true in general.
->=20
+On Sat, 28 Sept 2024 at 01:20, Nicolas Dufresne <nicolas@ndufresne.ca> wrot=
+e:
+>
+> Le jeudi 26 septembre 2024 =C3=A0 19:22 +0530, Sumit Garg a =C3=A9crit :
+> > [Resend in plain text format as my earlier message was rejected by
+> > some mailing lists]
+> >
+> > On Thu, 26 Sept 2024 at 19:17, Sumit Garg <sumit.garg@linaro.org> wrote=
+:
+> > >
+> > > On 9/25/24 19:31, Christian K=C3=B6nig wrote:
+> > >
+> > > Am 25.09.24 um 14:51 schrieb Dmitry Baryshkov:
+> > >
+> > > On Wed, Sep 25, 2024 at 10:51:15AM GMT, Christian K=C3=B6nig wrote:
+> > >
+> > > Am 25.09.24 um 01:05 schrieb Dmitry Baryshkov:
+> > >
+> > > On Tue, Sep 24, 2024 at 01:13:18PM GMT, Andrew Davis wrote:
+> > >
+> > > On 9/23/24 1:33 AM, Dmitry Baryshkov wrote:
+> > >
+> > > Hi,
+> > >
+> > > On Fri, Aug 30, 2024 at 09:03:47AM GMT, Jens Wiklander wrote:
+> > >
+> > > Hi,
+> > >
+> > > This patch set is based on top of Yong Wu's restricted heap patch set=
+ [1].
+> > > It's also a continuation on Olivier's Add dma-buf secure-heap patch s=
+et [2].
+> > >
+> > > The Linaro restricted heap uses genalloc in the kernel to manage the =
+heap
+> > > carvout. This is a difference from the Mediatek restricted heap which
+> > > relies on the secure world to manage the carveout.
+> > >
+> > > I've tried to adress the comments on [2], but [1] introduces changes =
+so I'm
+> > > afraid I've had to skip some comments.
+> > >
+> > > I know I have raised the same question during LPC (in connection to
+> > > Qualcomm's dma-heap implementation). Is there any reason why we are
+> > > using generic heaps instead of allocating the dma-bufs on the device
+> > > side?
+> > >
+> > > In your case you already have TEE device, you can use it to allocate =
+and
+> > > export dma-bufs, which then get imported by the V4L and DRM drivers.
+> > >
+> > > This goes to the heart of why we have dma-heaps in the first place.
+> > > We don't want to burden userspace with having to figure out the right
+> > > place to get a dma-buf for a given use-case on a given hardware.
+> > > That would be very non-portable, and fail at the core purpose of
+> > > a kernel: to abstract hardware specifics away.
+> > >
+> > > Unfortunately all proposals to use dma-buf heaps were moving in the
+> > > described direction: let app select (somehow) from a platform- and
+> > > vendor- specific list of dma-buf heaps. In the kernel we at least kno=
+w
+> > > the platform on which the system is running. Userspace generally does=
+n't
+> > > (and shouldn't). As such, it seems better to me to keep the knowledge=
+ in
+> > > the kernel and allow userspace do its job by calling into existing
+> > > device drivers.
+> > >
+> > > The idea of letting the kernel fully abstract away the complexity of =
+inter
+> > > device data exchange is a completely failed design. There has been pl=
+enty of
+> > > evidence for that over the years.
+> > >
+> > > Because of this in DMA-buf it's an intentional design decision that
+> > > userspace and *not* the kernel decides where and what to allocate fro=
+m.
+> > >
+> > > Hmm, ok.
+> > >
+> > > What the kernel should provide are the necessary information what typ=
+e of
+> > > memory a device can work with and if certain memory is accessible or =
+not.
+> > > This is the part which is unfortunately still not well defined nor
+> > > implemented at the moment.
+> > >
+> > > Apart from that there are a whole bunch of intentional design decisio=
+n which
+> > > should prevent developers to move allocation decision inside the kern=
+el. For
+> > > example DMA-buf doesn't know what the content of the buffer is (excep=
+t for
+> > > it's total size) and which use cases a buffer will be used with.
+> > >
+> > > So the question if memory should be exposed through DMA-heaps or a dr=
+iver
+> > > specific allocator is not a question of abstraction, but rather one o=
+f the
+> > > physical location and accessibility of the memory.
+> > >
+> > > If the memory is attached to any physical device, e.g. local memory o=
+n a
+> > > dGPU, FPGA PCIe BAR, RDMA, camera internal memory etc, then expose th=
+e
+> > > memory as device specific allocator.
+> > >
+> > > So, for embedded systems with unified memory all buffers (maybe excep=
+t
+> > > PCIe BARs) should come from DMA-BUF heaps, correct?
+> > >
+> > >
+> > > From what I know that is correct, yes. Question is really if that wil=
+l stay this way.
+> > >
+> > > Neural accelerators look a lot stripped down FPGAs these days and the=
+ benefit of local memory for GPUs is known for decades.
+> > >
+> > > Could be that designs with local specialized memory see a revival any=
+ time, who knows.
+> > >
+> > > If the memory is not physically attached to any device, but rather ju=
+st
+> > > memory attached to the CPU or a system wide memory controller then ex=
+pose
+> > > the memory as DMA-heap with specific requirements (e.g. certain sized=
+ pages,
+> > > contiguous, restricted, encrypted, ...).
+> > >
+> > > Is encrypted / protected a part of the allocation contract or should =
+it
+> > > be enforced separately via a call to TEE / SCM / anything else?
+> > >
+> > >
+> > > Well that is a really good question I can't fully answer either. From=
+ what I know now I would say it depends on the design.
+> > >
+> >
+> > IMHO, I think Dmitry's proposal to rather allow the TEE device to be
+> > the allocator and exporter of DMA-bufs related to restricted memory
+> > makes sense to me. Since it's really the TEE implementation (OP-TEE,
+> > AMD-TEE, TS-TEE or future QTEE) which sets up the restrictions on a
+> > particular piece of allocated memory. AFAIK, that happens after the
+> > DMA-buf gets allocated and then user-space calls into TEE to set up
+> > which media pipeline is going to access that particular DMA-buf. It
+> > can also be a static contract depending on a particular platform
+> > design.
+>
+> When the memory get the protection is hardware specific. Otherwise the de=
+sign
+> would be really straightforward, allocate from the a heap or any random d=
+river
+> API and protect that memory through an call into the TEE. Clear seperatio=
+n would
+> be amazingly better, but this is not how hardware and firmware designer h=
+ave
+> seen it.
+>
+> In some implementation, there is a carving of memory that be protected be=
+fore
+> the kernel is booted. I believe (but I'm not affiliated with them) that M=
+TK has
+> hardware restriction making that design the only usable method.
 
-Sure, but if this is something the FPGA can give us as part of it's registe=
-r
-map, it makes sense to me to have an interface like this...
+Yeah I agree with that. The point I am making here is that the TEE
+subsystem can abstract all that platform/vendor specific methods for
+user-space to allocate restricted memory. We already have a similar
+infrastructure for shared memory among Linux and TEE implementation.
+The user-space only uses TEE_IOC_SHM_ALLOC [1] where underneath it can
+either allocate from static carveout of shared memory (as a reserved
+memory region) OR simply allocate from the kernel heap which is
+dynamically mapped into the TEE implementation. The choice here
+depends on the platform/TEE implementation capability.
 
-> So far I'm with David on this, feels like something we shouldn't be
-> discovering
-> at runtime though maybe that's a convenience that we do want to enable.
->=20
+[1] https://docs.kernel.org/userspace-api/tee.html
 
-To be clear, I'm not against a DT parameter as it indeed describes how the =
-HW is
-being used (even though we could get it done solely with the interface_get(=
-))
-and while I agree with you that having a mismatch in interface types would =
-be a
-DT bug, it's always better to be able to detect and catch it early on (and =
-fail
-early) then going against the wall until we realize the issue. So, I do see
-value in an interface like this even if only to match and validate against =
-a DT
-parameter.
+>
+> In general, the handling of secure memory is bound to the TEE application=
+ for
+> the specific platform, it has to be separated from the generic part of te=
+e
+> drivers anyway,
 
-- Nuno S=C3=A1
->=20
+It is really the TEE implementation core which has the privileges to
+mark a piece of memory as restricted/secure. The TEE application in
+MTK is likely a pseudo TA (a terminology similar to Linux kernel
+modules in the TEE world). So it is rather easier for TEE
+implementation drivers to abstract out the communication with the
+vendor specific TEE core implementation.
+
+> and dmabuf heaps is in my opinion the right API for the task.
+
+Do you really think it is better for user-space to deal with vendor
+specific dmabuf heaps?
+
+>
+> On MTK, if you have followed, when the SCP (their co-processor) is handli=
+ng
+> restricted video, you can't even call into it anymore directly. So to dri=
+ve the
+> CODECs, everything has to be routed through the TEE. Would you say that b=
+ecause
+> of that this should not be a V4L2 driver anymore ?
+
+I am not conversant with the MTK hardware/firmware implementation. But
+my point is the kernel shouldn't be exposing 10s of vendor specific
+DMAbuf heaps to the user-space to choose from which can rather be just
+a single TEE device IOCTL used to allocate restricted memory.
+
+>
+> >
+> > As Jens noted in the other thread, we already manage shared memory
+> > allocations (from a static carve-out or dynamically mapped) for
+> > communications among Linux and TEE that were based on DMA-bufs earlier
+> > but since we didn't required them to be shared with other devices, so
+> > we rather switched to anonymous memory.
+> >
+> > From user-space perspective, it's cleaner to use TEE device IOCTLs for
+> > DMA-buf allocations since it already knows which underlying TEE
+> > implementation it's communicating with rather than first figuring out
+> > which DMA heap to use for allocation and then communicating with TEE
+> > implementation.
+>
+> As a user-space developer in the majority of my time, adding common code =
+to
+> handle dma heaps is a lot easier and straight forward then having to glue=
+ all
+> the different allocators implement in various subsystems. Communicating w=
+hich
+> heap to work can be generic and simple.
+
+Yeah I agree with that notion but IMHO having ifdefry to select vendor
+specific DMA heaps isn't something user-space should be dealing with.
+
+-Sumit
+
+>
+> Nicolas
+>
 
