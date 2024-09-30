@@ -1,123 +1,126 @@
-Return-Path: <linux-kernel+bounces-344836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4B198AEC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:57:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0460B98AEC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581CB1F23EB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:57:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B44251F241F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A641A254E;
-	Mon, 30 Sep 2024 20:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEB71A0BD8;
+	Mon, 30 Sep 2024 20:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uQYqFNAu"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="To4/C4W9"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9BF17BB38;
-	Mon, 30 Sep 2024 20:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F196B19F42E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727729827; cv=none; b=K4UnTYAwYmTupqvsvIBhw+wClKofRkWFO8tv1wJl+dzcLLU2DgqHx9dNtWRMhMfE52YaOLOoF5lcDP9UyOfzvgj+KEEdtC2F+Aaf6PDyaBtpHjrIqzvJ9Y6dozaIQd6nRs+bTUYsGs3m5KQLjeHr1eW1B3JDfzQBtcqFJ2+kQvg=
+	t=1727729850; cv=none; b=gI/gwdJnllgf5/VZUhX/ocviD8XEsRVHJxyYOrC7zs2X911bKHMm2m/9aHjZUtGwULc2Ka+zG99VROYpEeaqV6/2B/lSYw+WId0EKVcG39OBDHmXj5+Z+sh4ClhBWLvhFwtcvSYfbRw1ATDl4g5k3r0p6+MOiQTMA5Ew42pC2d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727729827; c=relaxed/simple;
-	bh=oAnbrt3CNRO8/aNuu0f/1Al0yrakZS5BFEVOZbkrSsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M2Lve06OAyIzA1aACrNoc3HiTelf3RlqTmfvEsGPZLbyjhIYen9OxYzljdWAw/FfRAD27YvcuNj1ur8Y+s5c9sSqjoxmHZfR1FNVkIL33x4YQhN0LdSrv2Av8yckwF5ZFfvE5L7e9gcMUMALuic1vFe0eIf9+nzljre8ht7gUz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=uQYqFNAu; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=CYhZpytb38aFtb2OIz5EkmYbXp7wsTdiyaA1Hi7/lRY=; b=uQYqFNAujgk6D4yfw7K+xlhc+N
-	s9mPV+J3PpTfHxSccYhnB2FyKGUifVBubSYz7Si8lA2eiYw/FGZ8LfAzL05fap14UMYO3sv7k6mbS
-	uv+ctARlaq4JQPxDePMCfjp0vjG7Pn77oJ1/clzYyP+RHz3tAtwsTOKif9fTQC1egl2NpKr36By+4
-	1DW1ISu+xyM2W7451yQy8gv/Qlg8ZEr+HLZBYkZZIS/qTAdR1dW2P5ccEFuXRIjmJpeNTVyu7MQVk
-	HgjSuuL8i6l2Zocqb9+o/DmWZetyQhwRHCLiJj6bwravb8Qu4bsUmNdOnKPN5EMQcrNJi62vuVLKl
-	M4PVNnCQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svNRw-00000000cMU-3ST3;
-	Mon, 30 Sep 2024 20:56:56 +0000
-Date: Mon, 30 Sep 2024 21:56:56 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Theune <ct@flyingcircus.io>,
-	Dave Chinner <david@fromorbit.com>, Chris Mason <clm@meta.com>,
-	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev,
-	regressions@leemhuis.info
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-Message-ID: <ZvsQmJM2q7zMf69e@casper.infradead.org>
-References: <ZuuBs762OrOk58zQ@dread.disaster.area>
- <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
- <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
- <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
- <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
- <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
- <295BE120-8BF4-41AE-A506-3D6B10965F2B@flyingcircus.io>
- <CAHk-=wgF3LV2wuOYvd+gqri7=ZHfHjKpwLbdYjUnZpo49Hh4tA@mail.gmail.com>
+	s=arc-20240116; t=1727729850; c=relaxed/simple;
+	bh=DSHUum/B8b3jGdeFXxORM8MingRk2dWycd/+sDgEp48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHRyjcIRe3wKMYTPVTlh3gs4GQ/NSv0jaluYNaKfdO0JWhg2kkmDy9Wtnvwt0Fyme3jZo2zX3MHOP5f1S5Py4wEiJRpOzlWDqCfhIv4inIGs2xGZiWXt8N0tojqVhRbd8T29lnF17dXVoch87UsD6cSAnEVx9DAiE2IvRMD0T00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=To4/C4W9; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a33a5a3b5cso17115025ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727729848; x=1728334648; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AW12f3fV0hnyKGmmmTzPeXu+IfjPN42/qOVSHOfH93Y=;
+        b=To4/C4W9F5fCVeeE8Jzy/DgGTkxNOscGYGXrwH753pNJZt5EZtj2treow+A1wb5HYv
+         QOGkjMKa1sIbpXV4jUs+E9nTAMX5OIbIt/9bCEmZa/O94rNY0jC1RXG6ekQ+lHKbopfl
+         MOK3sLFmJMUJf8GeT0CIYo1WyH5ZYsyBqQthI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727729848; x=1728334648;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AW12f3fV0hnyKGmmmTzPeXu+IfjPN42/qOVSHOfH93Y=;
+        b=LQgRIIm/FAR+ahH/vGa/mLuPHFBFL/Ji7qiDJlQDwWXtQL/Nd5r/hv/smry0p7ZnHc
+         qxE7yDz7/iNb+QN6GzomElod5+YdxApXZWXsWgNVTjnkymJp4Y1pYtbS9MI1AkBWjVPH
+         QDKN7XHnNsMvJt4lIDA2YxAAoLOnjkcAuObxkAnBukYOMjYNodNaLZN3OK1AEJ4xzfan
+         SlKUj6+8Lky5bEjgZLL3aM43A2yIxvFf2zrsJc4H5yDS0JEpGI8+3qaNkHwb2hfsXTzn
+         X80TcJmXyolid2jZbAa2JlBQiOoOWEZYcz9E+hM6nFy8KDFp+qSmZbOHmKFNSqnpQx77
+         fLLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJlAApsn0e7FA4/emAe5SfwC4kuJjrQTuIkSQLxaOdTknVL3lYANOfBy5vYOqkEyV1wtAIuodrwtmpALc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzFkScephAOzoGWO9dcJb2fyN0hwZnZUtJz96XAFQ1tTdu27z3
+	XuxnVkOtpnQ5BehNqz2NNyuoUnuQEZYEzK6AMGgM80yaxegikUtWZHfqMyfIi8E=
+X-Google-Smtp-Source: AGHT+IH6+aml0RNiH7eTsWsGVqK93eOEN3UEu1k2nN3+MRDt4bFti+AQepgmBbNSpbK5JtsjZIb4sA==
+X-Received: by 2002:a92:ca0c:0:b0:3a2:aed1:12a6 with SMTP id e9e14a558f8ab-3a345166cd6mr105578745ab.6.1727729847981;
+        Mon, 30 Sep 2024 13:57:27 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a344df41a8sm26488915ab.88.2024.09.30.13.57.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 13:57:27 -0700 (PDT)
+Message-ID: <7910784d-18c2-4e72-9dd8-6b8bd1b9dd0b@linuxfoundation.org>
+Date: Mon, 30 Sep 2024 14:57:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgF3LV2wuOYvd+gqri7=ZHfHjKpwLbdYjUnZpo49Hh4tA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftest: hid: add missing run-hid-tools-tests.sh
+To: Benjamin Tissoires <bentiss@kernel.org>, Yun Lu <luyun@kylinos.cn>
+Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240929085549.3528293-1-luyun@kylinos.cn>
+ <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 01:12:37PM -0700, Linus Torvalds wrote:
-> It's basically been that way forever. The code has changed many times,
-> but we've basically always had that "wait on bit will wait not until
-> the next wakeup, but until it actually sees the bit being clear".
+On 9/30/24 02:38, Benjamin Tissoires wrote:
+> On Sep 29 2024, Yun Lu wrote:
+>> The HID test cases actually run tests using the run-hid-tools-tests.sh
+>> script. However, if installed with "make install", the run-hid-tools-tests.sh
+>> script will not be copied over, resulting in the following error message.
+>>
+>>    make -C tools/testing/selftests/ TARGETS=hid install \
+>>    	  INSTALL_PATH=$KSFT_INSTALL_PATH
+>>
+>>    cd $KSFT_INSTALL_PATH
+>>    ./run_kselftest.sh -c hid
+>>
+>> selftests: hid: hid-core.sh
+>> bash: ./run-hid-tools-tests.sh: No such file or directory
+>>
+>> So add the run-hid-tools-tests.sh script to the TEST_FILES in the Makefile.
+>>
 > 
-> And by "always" I mean "going back at least to before the git tree". I
-> didn't search further. It's not new.
+> I assume we probably also want:
 > 
-> The only reason I pointed at that (relatively recent) commit from 2021
-> is that when we rewrote the page bit waiting logic (for some unrelated
-> horrendous scalability issues with tens of thousands of pages on wait
-> queues), the rewritten code _tried_ to not do it, and instead go "we
-> were woken up by a bit clear op, so now we've waited enough".
+> Cc: stable@vger.kernel.org
 > 
-> And that then caused problems as explained in that commit c2407cf7d22d
-> ("mm: make wait_on_page_writeback() wait for multiple pending
-> writebacks") because the wakeups aren't atomic wrt the actual bit
-> setting/clearing/testing.
+>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
+> 
+> Not sure about the timing regarding our next PR to Linus, so in any cases:
+> 
+> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
 
-Could we break out if folio->mapping has changed?  Clearly if it has,
-we're no longer waiting for the folio we thought we were waiting for,
-but for a folio which now belongs to a different file.
+Thank you. This commit appears to be right one for Fixes tag?
 
-maybe this:
+Is this the right commit for Fixes tag:
 
-+void __folio_wait_writeback(struct address_space *mapping, struct folio *folio)
-+{
-+       while (folio_test_writeback(folio) && folio->mapping == mapping) {
-+               trace_folio_wait_writeback(folio, mapping);
-+               folio_wait_bit(folio, PG_writeback);
-+       }
-+}
+Fixes: commit ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
 
-[...]
+Will apply with this tag added to linux-kselftest fixes for next rc
+once I get conformation.
 
- void folio_wait_writeback(struct folio *folio)
- {
--       while (folio_test_writeback(folio)) {
--               trace_folio_wait_writeback(folio, folio_mapping(folio));
--               folio_wait_bit(folio, PG_writeback);
--       }
-+       __folio_wait_writeback(folio->mapping, folio);
- }
-
+thanks,
+-- Shuah
 
