@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-344496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F8F98AA6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:59:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F1D98AA6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8FCF1F236F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:59:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5E861F21641
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C0B194083;
-	Mon, 30 Sep 2024 16:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA2D190471;
+	Mon, 30 Sep 2024 17:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0iuG0Ka"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fkqg2yN1"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FF3824A3
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D864F5103F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715567; cv=none; b=Y6uD1wwL04bgaLfVQOF0KEub1N/QJjJYU0wi2xEe+LCaItC53Z9EQSFMh58Ypab80wvjy13Knw7+/uxZwGYZWwRc1Ywzz/WMkEW33shS+daKcxU4coSZ2c53aT2GbD9OaQGe1iXQ7R5EAutwtw1lKupp4EeugaDx8grakFSSTGk=
+	t=1727715659; cv=none; b=RX+nn2oKNJDh9o3FrlyRuDpeZC2rCBMe15lDHL7/J8eOguQmunCoabWvVNVpTeNubL4k141DCnJ6c17Kn2dis8M3vAiGEkHKCOQ0sNOkvoLT0t27nWGThnZWabVkBTC2PxQ9HPX+FQDu+cs6fJsTfzfbu/iq0nQV3qpThUYldUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715567; c=relaxed/simple;
-	bh=mpDyGUfvZ6cW6FC+/ooRi2/soKjiJ1QWLIJ1aDemLWE=;
+	s=arc-20240116; t=1727715659; c=relaxed/simple;
+	bh=H7ur/T7iO6R88OthARaE995lBV+/8aFowb8cMGfmGUg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ICDHROHrUw3+ApTeqZ+PSDKzcb1o6aSFPjAw2zyfQVtVq2KuXv/pDcWzgF7xcT16k2Cb2kPA8tdlGdJ7LxG+w6/ger8nrZKhE/dL6yNb4a5M405IuDLDq2x5LIhEVHPTSGQBtCsC9sRk1bFH4Y03OG3sh1VEBo31fcg2G+MU378=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h0iuG0Ka; arc=none smtp.client-ip=209.85.218.49
+	 To:Cc:Content-Type; b=ENIz1s/x1NqexpRQuWqQZkqkyQxTTlqSc6fA+AtRj1anAARs9/GjI0u1Bjjd8MB5+QX6KBTu1OcPGzSKRIwK9cRgweqsUmLNbrAYltglRSqHw34oCDAXdODR9mn11z2dsy0qdl1TM0mgP/4yEzJZecXgTdm09GrOxttGfRKNh0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fkqg2yN1; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a90349aa7e5so688830366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:59:25 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8d60e23b33so693239866b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:00:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727715564; x=1728320364; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727715655; x=1728320455; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2sPIh55xyEmHFruRAlgKDCIyzWUlAinLbg4WbuV5gsM=;
-        b=h0iuG0KajgMHD4k+UPsj2MfsC32V2iASCIViJp9YMICKDXGOEqA+1lto2kMJfa3BQd
-         70IjtqWtJvGsrNLOy1MlhaFiUs34cd9brdeWDtFk8L1MGJHxfcNrzgT+W7fXWhxpWyW6
-         AIU/QYDEW2kP4UQ+PI+2anE3MzIaRJ2W/QCDv/1aUwbK8Unfam1Y8WY9tsj5owAxXhj7
-         mbNjrQO2KGwIE/iUV6mPouUZ4uzO0Gt5tz9xt3NT3dWcAfyONkYae86LQOH8RxFJCd3w
-         xE+AmeWLYEP78Xf3FlM51WimOXdimD8UPadgnkYRZ4UnxDFpgPB6RHOT61LHVr0fdWo4
-         zI3g==
+        bh=Y3znAsBCdzS/c5Od2Q2Rl5tlqscdVmIevB90CYR5iKU=;
+        b=Fkqg2yN1ACI+U6Ebb8dlq3z8paQo59Ke4oklq4Dh5GqFpwOFYVIKiMoZlSygkYvo62
+         gvWsHKEgRYxrOfCNIn0ACdEZej0VP494kTBpLQJwPbmIq9oI/Igr4mMkGeD12/wOZIV9
+         gWVnjWKwUfYngCJZAxuZE5nkGp43XbUu4hBa1nq822+sZPaLy25PpOk+1UXPibTYx1Zf
+         pTA0mMTZ5EWDNr7Fy4ptRyRTD/Bp9FXUr0jpZtlhDoRcNQHRvMN8Ahn/qeUTYSGAPGYn
+         aT1Vftb70/jPxsh8/+K0ojehLJqQnS/dUAayQztM/rrXeHWO5d+9YZdKMGzfesw6mo38
+         Hjrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727715564; x=1728320364;
+        d=1e100.net; s=20230601; t=1727715655; x=1728320455;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2sPIh55xyEmHFruRAlgKDCIyzWUlAinLbg4WbuV5gsM=;
-        b=CZvjsvye3Tm+Q/pKplSy2TWVlcHemAtI+6LlXZaJZyMtrprovSV9eavTnmpcKNjyMg
-         yVv2iOMpIH8be3R055zILn/WFi45adCdI+MCCkbqRNzwqVxO8vEHV58FylxQ2TjXxmA6
-         YgcXu3JmD+2wxQ59djX9yPRmrhbp1IbvMDLj+HUd/3vgkHsj89tkY1VyrBF4LENL4nRf
-         b+b+h78Q4GoqhURMSxNoJHcrjUS+V30fEPmlKUQqe6vamjGpX6/jMf5eBziO0YTcZCir
-         F7VzIgs2zA0+rHIfY23MgyNxYBlogAHdWXh+WQkEn+ZvtrSq37G6dDhaaKECgH1Jpe6R
-         G49w==
-X-Forwarded-Encrypted: i=1; AJvYcCXkLK/9yPLAdCcHi6B9nvCWz8YOr6a0VUaA9EIS52xgHjqAzYY4znNpZGtW3zKb9EoK5i3AxEVJvpeG6S4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY+6q2TDBZZcnCsXinMKfckHadeq2F+qSf/Gaizf/lhV4vX1Va
-	DRtZkSDKosy+qdjYMq7CfE0teOxeNUa8PC9KylefnNWVx1A6G/nq8jyRpzMsSJSRKpCGYTOEVPo
-	o5HW6tpw0BDDDMkZPdDAy+4DCzwY=
-X-Google-Smtp-Source: AGHT+IGjxMu/1wY7FQTDw999OIOaX2fpsoxB8OBjSVxN1EeYPJiqVdsezEwHm+KFTC0wK04QwfCLrYnfP+d1qUVm0gs=
-X-Received: by 2002:a17:907:9488:b0:a8d:6073:2c13 with SMTP id
- a640c23a62f3a-a93c4946d42mr1309282466b.33.1727715563660; Mon, 30 Sep 2024
- 09:59:23 -0700 (PDT)
+        bh=Y3znAsBCdzS/c5Od2Q2Rl5tlqscdVmIevB90CYR5iKU=;
+        b=EE6KnbCPzjShKzljRAOaM3tCUFQVF3fS9c+ItXTUl5Hwnbo9h9yhaMIeew7P29gEeh
+         PO9m/5Q4iSHfIUZ/k2AR6X8Re7hMmq+/V0xMx5iTD83+1rdz7uaFLkCBAKe+bAXY0izp
+         2Mls18VpiAvGqdk5UrgZTOXFuRA0dpLqa/pkjN2LVPwtsNxqzunqDHW0v4OCNW1BhXyd
+         /y4rX+DLuHxJzy1zK2LnF8vOIGIQZ88zSKTuyRefqf6zBiJjn3hLrkVVhMMlt39eBCoi
+         ouNdg9cJ9dWw9ps58x0OYepMER+9c3wXzzUNgoBRkxD72b6D9z4d74M5MamY+qRjypTQ
+         yC8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVs+j+fjBWTP4p96z/WXr0hb4hRh4ez6Rdaom2XNTotRxo1YkE1mP34tM64nW0uqr1QgY68WaAUkVdyDcM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLAGXyMivHS28D9CuRjnZbMqNmibi6Kejl54FjVi1ibj6WzXp6
+	UjGs9k1tLrEwJ9vr0nD7TupxX4xk1PTFi9Fc1bGDHzKzQ6iMA5PbX6YEedBCKMfI5TJ/9mJEZbO
+	W1mXv4YEv0HwoKsYZPnl4Y22V4/U=
+X-Google-Smtp-Source: AGHT+IFIxp8IUZiIfR+LjL4xzRFDTGuCKnOuvq0lQfvlgXiPjOYm2d5npd8wBRxu4/ngy7CN79KkIf1s8oQrJCO+iyk=
+X-Received: by 2002:a17:906:4fc6:b0:a7a:8586:d36b with SMTP id
+ a640c23a62f3a-a93c48f6664mr1390078466b.3.1727715655000; Mon, 30 Sep 2024
+ 10:00:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927194856.096003183@infradead.org> <20240927194925.498161564@infradead.org>
- <CAADnVQKQED2pit_DcpDWPuueHH3RLXe4pB++tU888EU=8UrNpA@mail.gmail.com> <20240930082726.GF5594@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240930082726.GF5594@noisy.programming.kicks-ass.net>
+References: <20240927194856.096003183@infradead.org> <20240927194925.283644921@infradead.org>
+ <CAADnVQ+qDAzjyRuN6sdpw8RjB4XQ1EyyMJ_uYXeDspbW58fC3A@mail.gmail.com> <20240930082314.GE5594@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240930082314.GE5594@noisy.programming.kicks-ass.net>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 30 Sep 2024 09:59:11 -0700
-Message-ID: <CAADnVQK8s4N_W_BH5zPZ7V-NW9FRegK27Nk-67UqiJzCxrdtxQ@mail.gmail.com>
-Subject: Re: [PATCH 11/14] llvm: kCFI pointer stuff
+Date: Mon, 30 Sep 2024 10:00:44 -0700
+Message-ID: <CAADnVQ+26b2t9LSwsSZuhL3CppvJvaucqU3UvO=ioLNdC67cyQ@mail.gmail.com>
+Subject: Re: [PATCH 09/14] x86/ibt: Implement IBT+
 To: Peter Zijlstra <peterz@infradead.org>
 Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
 	alyssa.milburn@intel.com, scott.d.constable@intel.com, 
@@ -88,57 +88,65 @@ Cc: X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 1:27=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+On Mon, Sep 30, 2024 at 1:23=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
 g> wrote:
 >
-> On Sun, Sep 29, 2024 at 10:53:05AM -0700, Alexei Starovoitov wrote:
->
-> > > +  // Extend the kCFI meta-data with a byte that has a bit set for ea=
-ch argument
-> > > +  // register that contains a pointer. Specifically for x86_64, whic=
-h has 6
-> > > +  // argument registers:
-> > > +  //
-> > > +  //   bit0 - rdi
-> > > +  //   bit1 - rsi
-> > > +  //   bit2 - rdx
-> > > +  //   bit3 - rcx
-> > > +  //   bit4 - r8
-> > > +  //   bit5 - r9
-> > > +  //
-> > > +  // bit6 will denote any pointer on stack (%rsp), and all 7 bits se=
-t will
-> > > +  // indicate vararg or any other 'unknown' configuration. Leaving b=
-it7 for
-> > > +  // error states.
-> > > +  //
-> > > +  // XXX: should be conditional on some new x86_64 specific 'bhi' ar=
-gument.
-> > > +  EmitAndCountInstruction(MCInstBuilder(X86::MOV8ri)
-> > > +                 .addReg(X86::AL)
-> > > +                 .addImm(getKCFIPointerArgs(F)));
+> On Sun, Sep 29, 2024 at 10:38:58AM -0700, Alexei Starovoitov wrote:
+> > On Fri, Sep 27, 2024 at 12:50=E2=80=AFPM Peter Zijlstra <peterz@infrade=
+ad.org> wrote:
+> > >
+> > > --- a/arch/x86/net/bpf_jit_comp.c
+> > > +++ b/arch/x86/net/bpf_jit_comp.c
+> > > @@ -555,6 +555,8 @@ static int emit_patch(u8 **pprog, void *
+> > >
+> > >  static int emit_call(u8 **pprog, void *func, void *ip)
+> > >  {
+> > > +       if (is_endbr(func))
+> > > +               func +=3D ENDBR_INSN_SIZE;
+> > >         return emit_patch(pprog, func, ip, 0xE8);
+> > >  }
+> > >
+> > > @@ -562,11 +564,13 @@ static int emit_rsb_call(u8 **pprog, voi
+> > >  {
+> > >         OPTIMIZER_HIDE_VAR(func);
+> > >         ip +=3D x86_call_depth_emit_accounting(pprog, func, ip);
+> > > -       return emit_patch(pprog, func, ip, 0xE8);
+> > > +       return emit_call(pprog, func, ip);
+> > >  }
+> > >
+> > >  static int emit_jump(u8 **pprog, void *func, void *ip)
+> > >  {
+> > > +       if (is_endbr(func))
+> > > +               func +=3D ENDBR_INSN_SIZE;
+> > >         return emit_patch(pprog, func, ip, 0xE9);
+> > >  }
 > >
-> > If I'm reading this correctly it will be an 8-bit move which
-> > doesn't clear upper bits.
-> > If consumer is in assembly it's ok-ish,
-> > but it's an argument to __bhi_args_foo functions,
-> > so should be properly zero extended per call convention.
+> > Makes sense, but it feels like it's fixing the existing bug
+> > that we somehow didn't notice earlier?
 >
-> These kCFI 'instructions' are never executed. Their sole purpose is to
-> encode the immediates. They are instructions because they live in .text
-> and having them this way makes disassemly work nicely. As such, we've
-> taken to using the 1 byte move instruction to carry them with the least
-> amounts of bytes.
+> Before all this func()+0 was a valid call address -- as it's been
+> forever.
 >
-> The consumer is the kernel instruction decoder, we take the immediate
-> and use that.
+> While it is true that with the introduction of ENDBR some compilers will
+> do direct calls to func()+4 to avoid the ENDBR (less instructions, more
+> faster etc..) this was very much an optional thing.
+>
+> Notably, up until this point we would use a 4 byte NOP to seal(*)
+> functions, specifically so that anybody doing direct calls to func()+0
+> would continue to work.
+>
+> These patches however change all that by sealing with a 4 byte UD1
+> instruction, which makes direct calls to func()+0 fatal. As such, we
+> must guarantee all direct calls are to func()+4. So what used to be an
+> optimization is now a strict requirement.
+>
+> Indirect calls still go to func()+0 (or func()-16 for FineIBT) and will
+> go *bang* if !ENDBR or UD1 (depending on the hardware having CET/IBT
+> support).
+>
+> (*) with sealing we mean the explicit action of disallowing indirect
+> calls to a given function.
 
-I see... and after decoding imm bits in mov %al insn the kernel will
-insert a call to corresponding __bhi_args_* stub that will use
-cmovne on corresponding register(s) to sanitize the value?
-That was difficult to grasp.
-A design doc would have helped.
-
-I wonder whether this whole complexity is worth it vs
-always calling __bhi_args_all()
+I see. Thanks for explaining. I would copy paste the above details
+into the commit log.
 
