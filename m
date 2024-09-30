@@ -1,99 +1,110 @@
-Return-Path: <linux-kernel+bounces-344867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DEE98AF13
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1286998AF14
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE04282791
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD5A828277F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A4F1AF4D7;
-	Mon, 30 Sep 2024 21:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E95D1AFB00;
+	Mon, 30 Sep 2024 21:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z++vsUfR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH+5T4FM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5921AED56;
-	Mon, 30 Sep 2024 21:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECD31AF4E8;
+	Mon, 30 Sep 2024 21:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727731608; cv=none; b=KPGpddEsBVc8ghsUWSNyp0dqwEHmnux/sOdsAcFvKv65pWBHBH7ekNitNfNt89zkto+McbJDnRZV7xl1BFoioEBePZdwh/hU3I/bVqejRhBmdaJXBuGbU+hfj+aXK8awLwbcxjxJCly062t62xdzuKSKyRK6JN9NOT05JIxIv2w=
+	t=1727731609; cv=none; b=QxTk5N4jM+YOiB8kQDbP6VISNg2Iz6SiQdlczD+1Pstr2fZdnx8XZB08XYnL0gu3PM//avQbq6blQwLB2uYzB+eQo7Z8PlhIYBTe8VNCfRMfcmwaEcju3KBRJjwaP5JR1t7azJg1RMbuwjjQUNjHZEewmBSVaqq6k9coK/6edGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727731608; c=relaxed/simple;
-	bh=fy4TyZjrHxyyox+cwJRMsw2U4PWSehMZUZBuTrFsaE0=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kohcSX1wLeC+sc7mmWmaGVL6bLjWsJ3HskCKreA4hpe+QZeM4aHKjfS/s9xt1f7jdwdWANiudLVP6wuu386Jvix1qOh1x4y/2HGV6YtCpgOOBybe+3eR+xbEEkC/OyHQaURQgiuxU9R37tCQ/LLVTBic65SIfjA25/eeuWcK6Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z++vsUfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80241C4CEC7;
-	Mon, 30 Sep 2024 21:26:46 +0000 (UTC)
+	s=arc-20240116; t=1727731609; c=relaxed/simple;
+	bh=PDFMQnY7zW0c/c24/w5bzXFlbGk7N8QPC1yUMeTcXK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X11Za1J+JRXLjyq53+WCcTqWlodiJuMHS/a1ZXi6391/GiaOUS3ClJpBUWucjXdtjc7eix5gWAOQkB62TpDI47r7y+3h9vcYVLuKPKnHWeBu3VGeuUAY2ggOYosbvsh5W4S5nM2C61mNaUJFQ5DM/FygqVa3nEJYhwCZ5JmRVbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH+5T4FM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A607FC4CECD;
+	Mon, 30 Sep 2024 21:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727731608;
-	bh=fy4TyZjrHxyyox+cwJRMsw2U4PWSehMZUZBuTrFsaE0=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=Z++vsUfRaKfelK2EnUNl/GxwkUzw7+eMC0Gk4MgDxHPHsHLQEas/QlQlsV/bKScqK
-	 5K70wQZmllNKHsG81Xopur7RKc4aO9EPZsZ6syw04viKyfk90scndHE8hirVkp4jGg
-	 3Kyh8SZhxMLX538IJ19g8kYCs6Gzk/S1iyGGPh5pqmOQ4pF4Vu4hewAzOTsdObypDh
-	 va0TvULHwNQs0L1Fj7xMkmUzeQ9ZzTEyno+o8DuehELhucRVohHFDXXdlSdajXdE/+
-	 veKbLQf9KnsPH1NR3F4AFJSaG0+awZnqWehiXs3il7qo9dg7bsRboesIj6+ktWkkR0
-	 2B0Zfv+0SHboQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-In-Reply-To: <20240927205618.4093591-1-Frank.Li@nxp.com>
-References: <20240927205618.4093591-1-Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/1] ASoC: dt-bindings: fsl-esai: Add power-domains for
- fsl,imx8qm-esai
-Message-Id: <172773160630.2197048.10836164029932712084.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 22:26:46 +0100
+	s=k20201202; t=1727731609;
+	bh=PDFMQnY7zW0c/c24/w5bzXFlbGk7N8QPC1yUMeTcXK0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HH+5T4FMiWNvRpiExQ/EH4EtuDDvXEng4OV+WLdPd5SA3Ho08NFJ0fpu88Dx9pIDH
+	 wS6Ycu+PX0buUMjdN0pqufrFTqkZDKiHMDHpIGCXfaqToOgVjcpu7hw+r2UPNeDzsj
+	 Ae/PTmZSN49dXRKeJjZxtaG7x6z+kaZ+KyduYF2B5kfhgXpECg7UVR7C0EGyiNyh4p
+	 Vl+MDHyyl9h6YP2wrcgkSKgfk1NHvyREUjeK/T9xmK51H4PfCet0S56aKBQoXiH+XM
+	 IijSkYHJTmIAAVd4B6peCK/qIBrkTuT7JG9X1dRQqeR9Q6TlH+2AKohZZDYofCW+AI
+	 JTkURcRgcGusQ==
+Date: Mon, 30 Sep 2024 14:26:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Andi Kleen <ak@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+	Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>,
+	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
+Message-ID: <ZvsXl2g6kYDi6F9o@google.com>
+References: <20240918225418.166717-1-irogers@google.com>
+ <20240918225418.166717-2-irogers@google.com>
+ <Zut-iM3v9rJHehxJ@tassilo>
+ <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
 
-On Fri, 27 Sep 2024 16:56:18 -0400, Frank Li wrote:
-> i.MX8QM's esai require power-domains property. Keep the same restriction
-> for other compatible string.
+On Thu, Sep 19, 2024 at 06:45:23AM +0200, Ian Rogers wrote:
+> On Thu, Sep 19, 2024 at 3:29 AM Andi Kleen <ak@linux.intel.com> wrote:
+> >
+> > On Thu, Sep 19, 2024 at 12:54:17AM +0200, Ian Rogers wrote:
+> > > Python2 was deprecated 4 years ago, remove support and workarounds.
+> >
+> > Nacked-by: Andi Kleen
+> >
+> > I don't see any advantages of breaking perfectly fine existing setups
+> > for no benefits.
+
+Well, I think the benefit is in the maintenance.  The EOL of Python 2
+was 2020/1/1 [1] and we are targeting this release (v6.13) in 2025.  So
+I think it's reasonable to consider removing Python 2 support now.
+
 > 
-> 
+> The reason is that since moving to linking libraries rather than
+> building code we now have the ability to call functions like
+> parse_events - previously parse_events was stubbed out because there
+> was no way to build lex/yacc code. Calling parse_events is more
+> sensible than existing logic that does things like open a legacy
+> cycles event only on 1 PMU type. That is, the existing code doesn't
+> support hybrid. Practically there is no way to test python2 support
+> builds and works without having python2. We shouldn't be in the
+> business of installing python2 in 2024, my organization has removed
+> all support for over 3 years.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: dt-bindings: fsl-esai: Add power-domains for fsl,imx8qm-esai
-      commit: a2bd5a25c1b548609fb2f095c7356fcae8fabac2
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+I think the problem nowdays is the container images for old distro.  I'm
+not sure how long we need to support them but it should be cut out at
+some point.
 
 Thanks,
-Mark
+Namhyung
 
+
+[1] https://www.python.org/doc/sunset-python-2/
 
