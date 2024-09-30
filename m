@@ -1,99 +1,121 @@
-Return-Path: <linux-kernel+bounces-344264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6A998A79B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:48:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE52898A7C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C9C22839CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88CAB1F24719
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A888191F81;
-	Mon, 30 Sep 2024 14:47:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8795D193067;
+	Mon, 30 Sep 2024 14:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m1NTag+d"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5761922FD;
-	Mon, 30 Sep 2024 14:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887C4191F6B;
+	Mon, 30 Sep 2024 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707646; cv=none; b=eM0lOLYVumeXZ4oIzryQAr8eDAkWtFZNyGPpIKJya7nzkjTurBl2ARmhioHZIqYtLGdaLWB6NAsgMcB/HRI7fXusjTVsiPkrRidq+xthVD+UMuXcQSnEN5NF4umGc0pWdw390u816Wg/z+YLpGCM14WU9O47Dch2GaBqPSQVSDk=
+	t=1727707756; cv=none; b=ctbY2tuI4+qfv7ISQJ+DteYesaH2PP2oswzeSRHPnD4NVnttipbH6dmG7Iz2+Yr3gsZvu5VPK7+GxXj8WGtb1s0wyX/CTr8NcxweWjfWsVNfWUWCM0YXvVkovSm82a3k9emjTslUuDH8+bvVSSloUai5jVGEh2d6h7T/hrBgeQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707646; c=relaxed/simple;
-	bh=5LEXMHLy/zPciloPx8E+0Qf7vHYG4+hAB8nDlfvvYCI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PSKEfRC6w03/sKksWHQcPqsJmUXzVm1SupeLKjL3lp/+bePtyqJqwmMKdkuMm/iHpvPfoR7b6hLj0Jd40cs3YoSzC1wzm/xGvyoycKz7jyGvSAPRcZdsTmUahBZCdMJ/DxwoYKn3Y548cMSxXjtT+a0N3iCUq8mvBwvqDGWu5jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XHP2670yDz6D9cl;
-	Mon, 30 Sep 2024 22:43:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1766A1401DC;
-	Mon, 30 Sep 2024 22:47:17 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 30 Sep
- 2024 16:47:16 +0200
-Date: Mon, 30 Sep 2024 15:47:14 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Lars-Peter Clausen <lars@metafoo.de>
-CC: David Binderman <dcb314@hotmail.com>, "jagathjog1996@gmail.com"
-	<jagathjog1996@gmail.com>, "jic23@kernel.org" <jic23@kernel.org>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "Linux Kernel
- Mailing List" <linux-kernel@vger.kernel.org>
-Subject: Re: linux-6.12-rc1/drivers/iio/imu/bmi323/bmi323_core.c:133: Array
- contents defined but not used ?
-Message-ID: <20240930154714.00000f5c@Huawei.com>
-In-Reply-To: <14a21c87-22f9-4637-b663-bb0a28fe8e46@metafoo.de>
-References: <AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com>
-	<14a21c87-22f9-4637-b663-bb0a28fe8e46@metafoo.de>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1727707756; c=relaxed/simple;
+	bh=ysYUgCiujfaTybXqioFulPopZi37CP7a8Iadi2yWj3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l6/FJcFFSyXPRpCkN9gu3cM2n5l+50vmuxUyq21WWKWEg6QOnfba1tRDn7UYzrtox2Zj1Er/IWEX/aEBTcSogVe4aaEeZNZIFfSqv6BCoTq8Nnv61/6Bzg9BHlXdITNRez/JjgsD8e3EVPY6l0718cj/vjYpVOf0st3EWCkCYxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m1NTag+d; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727707756; x=1759243756;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ysYUgCiujfaTybXqioFulPopZi37CP7a8Iadi2yWj3I=;
+  b=m1NTag+dw7C5zD9rWhmJDKsHpwixddZR6pDI0y7PwpgVJVJqUPXJW+te
+   C6Oh3eaAxEKs0ph+0szthxLqna9klf1Bf631JK9FTmix+k6Tc4XmFU/xu
+   WxRmODnVdgz+755J8bt+8cBvWxmr2KgtGWZYC1IB2NWFsWfgy06j2xWnb
+   T6JxTEIRn5igtFKsY/xCHyjLBKxvlZ32XuFQhdpyfkFbHOEQbyrNWT8Mz
+   vPPathLrLJBVB38xGGbp4z94Q/dD2RYoLbFLwtrgiBteCtCaco4dw2fF9
+   82YS+V+aqd/1wN4D4INeoDb53cH0snOfvyUmsoBGnOJHYsGEm1vnyLiMF
+   Q==;
+X-CSE-ConnectionGUID: 1gwbUK3hQjeaUjOvsjG6+Q==
+X-CSE-MsgGUID: xG6j1KYKTxSevTcjxbHrXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26927397"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26927397"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:47:21 -0700
+X-CSE-ConnectionGUID: EnwmsgsFTeyVW+swLx6xEQ==
+X-CSE-MsgGUID: N9Hvlg4xScuJpY1Nu6Flvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="104128950"
+Received: from smkirkla-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.240])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:47:19 -0700
+Date: Mon, 30 Sep 2024 07:47:17 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v4 01/10] x86/cpu: Prepend 0x to the hex values in
+ cpu_debug_show()
+Message-ID: <20240930-add-cpu-type-v4-1-104892b7ab5f@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 
-On Mon, 30 Sep 2024 07:19:14 -0700
-Lars-Peter Clausen <lars@metafoo.de> wrote:
+The hex values in CPU debug interface are not prepended with 0x. This may
+cause misinterpretation of values. Fix it.
 
-> On 9/30/24 06:49, David Binderman wrote:
-> > Hello there,
-> >
-> > I just tried to build linux-6.12-rc1 with clang. It said:
-> >
-> > drivers/iio/imu/bmi323/bmi323_core.c:133:27: warning: variable 'bmi323_ext_reg_savestate' is not needed and will not be emitted [-Wunneeded-internal-declaration]
-> >
-> > A grep for the identifier shows the following strange results::
-> >
-> > inux-6.12-rc1 $ grep bmi323_ext_reg_savestate drivers/iio/imu/bmi323/bmi323_core.c
-> > static const unsigned int bmi323_ext_reg_savestate[] = {
-> > 	unsigned int ext_reg_settings[ARRAY_SIZE(bmi323_ext_reg_savestate)];
-> > 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
-> > 	for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
-> > linux-6.12-rc1 $
-> >
-> > I see no mention of bmi323_ext_reg_savestate[ i]. Is there a possible
-> > cut'n'paste error in one of the two for loops ?  
-> Yes. Do you want to send a fix?
-> 
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/kernel/cpu/debugfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Have a couple of fixes queued for this driver (including I Think this one).
+diff --git a/arch/x86/kernel/cpu/debugfs.c b/arch/x86/kernel/cpu/debugfs.c
+index 3baf3e435834..ca373b990c47 100644
+--- a/arch/x86/kernel/cpu/debugfs.c
++++ b/arch/x86/kernel/cpu/debugfs.c
+@@ -16,8 +16,8 @@ static int cpu_debug_show(struct seq_file *m, void *p)
+ 	if (!c->initialized)
+ 		return 0;
+ 
+-	seq_printf(m, "initial_apicid:      %x\n", c->topo.initial_apicid);
+-	seq_printf(m, "apicid:              %x\n", c->topo.apicid);
++	seq_printf(m, "initial_apicid:	  0x%x\n", c->topo.initial_apicid);
++	seq_printf(m, "apicid:		  0x%x\n", c->topo.apicid);
+ 	seq_printf(m, "pkg_id:              %u\n", c->topo.pkg_id);
+ 	seq_printf(m, "die_id:              %u\n", c->topo.die_id);
+ 	seq_printf(m, "cu_id:               %u\n", c->topo.cu_id);
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/commit/?h=fixes-togreg&id=506a1ac4c4464a61e4336e135841067dbc040aaa
+-- 
+2.34.1
 
-I'm just letting the fixes sit in next for a day or two to make sure nothing
-else shows up then I'll do a pull request.
 
-Jonathan
 
