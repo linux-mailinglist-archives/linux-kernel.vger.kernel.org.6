@@ -1,124 +1,173 @@
-Return-Path: <linux-kernel+bounces-344478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3627C98AA32
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:46:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 723F698AA30
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4A81C22C50
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FF7282B94
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A843195FD1;
-	Mon, 30 Sep 2024 16:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1611940B2;
+	Mon, 30 Sep 2024 16:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G4NDUMe0"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o4h7QNFk"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4205B824A3;
-	Mon, 30 Sep 2024 16:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1EA1925B8
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714740; cv=none; b=fzpD0UKxkUkqAAl52fY1tX/jaGfYo6lsLVKsomiFCFf2vGvvAorNwm6Ma9BlmSOhxmt4E0fZyuhAv7OGHYa2JORSR/NK7rbmw0Zzi1TzV9XhhtPGxjYjnSvVwjgUpgWIxjnsACSylpcmtlELYU7nqmagN1UUyWfkGozSypAUkbE=
+	t=1727714732; cv=none; b=lvgsA5LJ2QTKek4pq7naxksqg1pQIOPK+HC2UJcR5eu9a9su3KceXttgV7SfxmZQH+mKWxz+4DZEwPgiQCKKqEDqix4Wvsgm4o300bS5QJikihjXgQRYgnj492CuO77Q9rVZ28BVQU4n3hVeqZSIhbWzB9jZ8kdAnmezw+cjCHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714740; c=relaxed/simple;
-	bh=u1oMF3Vw6h9ZGmyJzapx+6eXhNhylQp8wZjT4qafY5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cwNB9fyJMQ+PAOB5kLRboOGA3IR4BuH5gwjYulGONIFV5dXGXFhcjB8rKkjrmzmxJ9ZH7tAfh7MKUXDbTDzsTpb/2KVfzCazVMAhwDQi/wbpZnj39frA9k7ED8D/Jh8t/+u2iEfKkAVfjgXBZdlBgfmFaA8a6pq/yhKL7N87qas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G4NDUMe0; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9ab721058so484896285a.1;
-        Mon, 30 Sep 2024 09:45:39 -0700 (PDT)
+	s=arc-20240116; t=1727714732; c=relaxed/simple;
+	bh=As4xlKeH8pzXDzf4olvO/gak593BaigkLPoloN50dV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4u0qsO/sfHIfCVkY2Kk5dzQnLCTa1I95ba06Ae6gbRrZIqK3AhqpnrgI9GtEe8/CPCvdrXtsJaeqZtj2EqXFcGZu4IYY8UO3QlSVUC8DdDDnXi8OEiEnOeDD+DRQuRfGGqH0k77/lyCF+OiuZb+2N1pFMdDQKt8inI6zLH893o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o4h7QNFk; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso3190109a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:45:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727714738; x=1728319538; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1oMF3Vw6h9ZGmyJzapx+6eXhNhylQp8wZjT4qafY5Y=;
-        b=G4NDUMe0j39jG0VC138DLWnu76J9mTwKjvwJgkc8F9VtatxIJXJ+OKFPLeG4prZFwd
-         oqu8BLEwF6h3QAhsHYK8lsirTOXGZqYj5ff1LbfcMDoMV/ro5rCzbXqQf5adMbEm6lQw
-         YXegxWUdsZCGpZ8gW06rbDYJqTVDEcLbUFpsmNKZwqxa3oi3OfCL5IlT6p3Aggwo7I9G
-         QeczrNVZA+zitiCV0Cv6N3X9TYBl497Hn4P6Hwju63+RPOAueGZJhX9DrVyfd0Nq2BDh
-         a2XpGvVXL6NsJSPliliQjcNxdkZ6lRQYiEo6mfHvbmucgdWUl4RKUL9WcqWEKegsY7oL
-         L35w==
+        d=linaro.org; s=google; t=1727714729; x=1728319529; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SvcxQTQeQJCxAAgL5ZNrVRQRYKFeNgf1iUtSk1J+SBQ=;
+        b=o4h7QNFkYYbFrYyv0R4IXHYUG/90ykN7mh4lrr1eEeCT70W94WyCqAO1wRZr9wAX2D
+         F9xu9ybZdZs1I5zgvKrPxmKGAsYwzhPEOjOQ5N/lqTa22w6XD6npn1YgrZRN/imTzzUg
+         5ATHy0zX9wq9VDuA1FJ2cy7UyWEOHqhC33mXQi5dUbv0s4+qmY6GpC99lhwzCZO7TPLU
+         vdiwc6HtIy1lOIchzrzj/jhChkCh28kfcON8pMhuqIYEW6lhBsFvl9BkMI2RtBK+yq8M
+         SQbc+7ClStHEQAxbP1QaovXk7AYZS9TjgprxqJClWC2EORMhfvOUNjCiuCfo7h1ewsnv
+         tqaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727714738; x=1728319538;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u1oMF3Vw6h9ZGmyJzapx+6eXhNhylQp8wZjT4qafY5Y=;
-        b=piLqxgB6I2KNsJmkTuyNXNo+JEBsx1OAhYUd4YJBn0WR/WoouylWcnEL/5pQjjNHMe
-         3qW1o5uPa5rRX09oorxlzlX+WZEs6cAxgZY8XPbOCnB9/merAC2tRS/xRRNO1girTkMM
-         67VrzRrZnDqqVWh18nESDh66JB/HtoXVuMbgicAGaZRiFz+c9mceAaHgei/KhFQRfcrG
-         zXI4sWRe+Ud5oTfyrlsqY69NJ01MF9r0r2oMzsYKpcpM8OnWy8eDeIlOR7iF1SGngz5m
-         t3zyCiui8bQVV9Terq8Y4HkfABwjGg2JMYzLSJkpw9xCGn//K+A+orggQQkBLbd5lcun
-         ZS7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVjHYBaPc23/pkiB0piGvauPvgo3IAQttNMfNqbXVN3TBENje/UrdXvQQw/fY3mCSv66Vxa7sRYIQQ3qBl8g6o=@vger.kernel.org, AJvYcCXMV011jOxR1HiSjnxcxZbs+y/jW8jMkm5K4z32cF0WGmLs55UWtRbjf9BIB48FYDeHwctYJNWHbLYrPNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqYDrwyvJ6ukj3XpC3J8gYO2y/dZj3rbx2S97tE+w2duBV/b3R
-	BBkU25cyuTOsEcHaDL47swDCtCHk/tn3Cf3YkMIA0udHJUKtVEV6acx9aoWdkH2va+QFVEIQ9Nh
-	4BeYxR1EMQ/Z/bn9nPauwRbvGyTw=
-X-Google-Smtp-Source: AGHT+IGG1E0coYyjQS8ct4GPgSOxgQwszDKSJcQS80gN110hyaWCLMGkvm5bIhI1U95Fpa30oEDFqB0vKJJsIY4PWsc=
-X-Received: by 2002:a05:620a:199d:b0:7ac:e157:e281 with SMTP id
- af79cd13be357-7ae5b85e0fdmr31942285a.32.1727714738073; Mon, 30 Sep 2024
- 09:45:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727714729; x=1728319529;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SvcxQTQeQJCxAAgL5ZNrVRQRYKFeNgf1iUtSk1J+SBQ=;
+        b=IQYOU42taKYgi8MSV7vsbw5TiMvPxa1WNp7oNdCxOuYxuZh6qC8C1HfY1VrHrvqAP8
+         ImsYZckMgYywgYpae1IWVBuhmCotSS53/4vz0ECV9AkaH8vSkgOwC1mFzNhXoO0QD5+S
+         I7cjVC5HmHTOgjk13f5WteIjsijg7mmE4dETSGtbs64LwUGbMye+Dd0sVMwkFYe2AXuA
+         nxBv3F1ZQLNEGkeJJFjccDLWVKAcf68q5I6RtZY8DHrM8FzLeALyj4hFQjrgREZ3iNfg
+         8NuH3z1caHL+CAF8qJufULRqDOjTbJ9WVtWcnkT59oNr2qsoRON5cTZ0WLyBvcbkfswB
+         nY8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXdmPAXhMQCkFRWoivFPtZ9Ywv6oJ5iJJf5zJNRGK8sBO4x8C1OiwcIs/nM6Zz5RT3cioB4z3I1lOwbF1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtsUdR/iWdWR2WysrpeSvBNYB/uEttBcRdoXYWgzPYr1Ir/oK6
+	cKeNSFuml2YCd8FRGBJb0eM4QPPP5nDwiOrvZgseuSRK/WY4ZpCHeSXh02v/MW8=
+X-Google-Smtp-Source: AGHT+IFZCWfdQrwy49Ce5W9jR5Wa05yMjvNskGuw5IOlhsx0iH8HMju8vYH03I+79lPN0n/TIp3wDQ==
+X-Received: by 2002:a05:6a20:3b19:b0:1cf:53ea:7fbc with SMTP id adf61e73a8af0-1d4fa6a1496mr13517438637.18.1727714729181;
+        Mon, 30 Sep 2024 09:45:29 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:6561:7ef:acea:822e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2649ae1fsm6412216b3a.8.2024.09.30.09.45.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 09:45:28 -0700 (PDT)
+Date: Mon, 30 Sep 2024 10:45:26 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-remoteproc@vger.kernel.org, Andrew Davis <afd@ti.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Suman Anna <s-anna@ti.com>, Wadim Egorov <w.egorov@phytec.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] remoteproc: k3: Call of_node_put(rmem_np) only once in
+ three functions
+Message-ID: <ZvrVppLgBjCB9FK+@p14s>
+References: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com> <2024093044-violator-voice-8d97@gregkh>
- <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com> <CAH5fLgjMGwBNYkOEbiSLzQ5+G0gTz+gbvsRSoRsRizAETLpLeQ@mail.gmail.com>
-In-Reply-To: <CAH5fLgjMGwBNYkOEbiSLzQ5+G0gTz+gbvsRSoRsRizAETLpLeQ@mail.gmail.com>
-From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
-Date: Mon, 30 Sep 2024 13:45:02 -0300
-Message-ID: <CAM_RzfbaAQT5cPhx7aB+uqgKcsHq-fnv_Jt63_p9CJ96rs6J9g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, mcgrof@kernel.org, 
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c46b06f9-72b1-420b-9dce-a392b982140e@web.de>
 
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Tue, Sep 24, 2024 at 02:43:40PM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 24 Sep 2024 14:28:35 +0200
+> 
+> An of_node_put(rmem_np) call was immediately used after a pointer check
+> for a of_reserved_mem_lookup() call in three function implementations.
+> Thus call such a function only once instead directly before the checks.
+> 
+> This issue was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/remoteproc/ti_k3_dsp_remoteproc.c | 6 ++----
+>  drivers/remoteproc/ti_k3_m4_remoteproc.c  | 6 ++----
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c  | 3 +--
+>  3 files changed, 5 insertions(+), 10 deletions(-)
 >
-> You can use one of my patches as an example. E.g.:
-> https://lore.kernel.org/all/20240930-static-mutex-v4-1-c59555413127@google.com/
->
-> Here, the commit message itself has:
-> 1. Motivation for why we should add global lock support. (To replace a
-> hack I had to use in the Binder driver.)
-> 2. Explanation for why I implemented it in a certain way. (Why
-> separate initialization step?)
->
-> Then, below the --- line and not part of the commit message, I have:
-> 1. Information about which patches it depends on.
-> 2. A changelog and links to previous versions.
->
-> Anything below the --- line will not be part of the commit history
-> when your change is merged. So you should think about what people
-> would want to see when they look at your patch in the commit history.
-> They care about why the change was made, and why it was implemented
-> that way. What other things need to be merged first are not relevant
-> to people who see the final version after it has been merged.
->
-> Similarly, the changelog is important for reviewers so they can
-> compare with the previous version, but for people who just see the
-> final version, they don't care about which bugs you had in previous
-> versions of the patch. Of course, if you change the implementation
-> approach, then they might care about why you chose that approach over
-> some other approach, but that explanation should be in the commit
-> message (and the changelog should just say you changed the approach).
->
-> Alice
 
-This really make sense. I will resend a v4 version of this patch,
-without 0/1.
+Applied.
 
-Tanks for this Mrs. Ryhl.
+Thanks,
+Mathieu
+
+> diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> index 8be3f631c192..d08a3a98ada1 100644
+> --- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+> @@ -576,11 +576,9 @@ static int k3_dsp_reserved_mem_init(struct k3_dsp_rproc *kproc)
+>  			return -EINVAL;
+> 
+>  		rmem = of_reserved_mem_lookup(rmem_np);
+> -		if (!rmem) {
+> -			of_node_put(rmem_np);
+> -			return -EINVAL;
+> -		}
+>  		of_node_put(rmem_np);
+> +		if (!rmem)
+> +			return -EINVAL;
+> 
+>  		kproc->rmem[i].bus_addr = rmem->base;
+>  		/* 64-bit address regions currently not supported */
+> diff --git a/drivers/remoteproc/ti_k3_m4_remoteproc.c b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> index 09f0484a90e1..a16fb165fced 100644
+> --- a/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_m4_remoteproc.c
+> @@ -433,11 +433,9 @@ static int k3_m4_reserved_mem_init(struct k3_m4_rproc *kproc)
+>  			return -EINVAL;
+> 
+>  		rmem = of_reserved_mem_lookup(rmem_np);
+> -		if (!rmem) {
+> -			of_node_put(rmem_np);
+> -			return -EINVAL;
+> -		}
+>  		of_node_put(rmem_np);
+> +		if (!rmem)
+> +			return -EINVAL;
+> 
+>  		kproc->rmem[i].bus_addr = rmem->base;
+>  		/* 64-bit address regions currently not supported */
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 747ee467da88..d0ebdd5cfa70 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -1001,12 +1001,11 @@ static int k3_r5_reserved_mem_init(struct k3_r5_rproc *kproc)
+>  		}
+> 
+>  		rmem = of_reserved_mem_lookup(rmem_np);
+> +		of_node_put(rmem_np);
+>  		if (!rmem) {
+> -			of_node_put(rmem_np);
+>  			ret = -EINVAL;
+>  			goto unmap_rmem;
+>  		}
+> -		of_node_put(rmem_np);
+> 
+>  		kproc->rmem[i].bus_addr = rmem->base;
+>  		/*
+> --
+> 2.46.1
+> 
 
