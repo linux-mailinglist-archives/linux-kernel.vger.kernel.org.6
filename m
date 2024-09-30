@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-344595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE3498ABC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565A698ABC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A0861C21AE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C4F28328B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50F7198E93;
-	Mon, 30 Sep 2024 18:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4841991B2;
+	Mon, 30 Sep 2024 18:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tm5pX5sx"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKsM05iy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972E0CA62
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979F3CA62;
+	Mon, 30 Sep 2024 18:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727720197; cv=none; b=iF2Bue8vxa6Py7Sfd5qhz/iysQHYOIRMbvjwnEPQb3RAuHxOnXSkPRyafbCO9sIFTxm7pZkc0/2ycyperZ7eoOoHYHrl1v9Cbr4afXOz1rIxx3U/HPqZuzf6HoXdaUsPd7nie1kdzvAp2W4MZjxVHStNq+3HTt4nNcrkTAd3ASM=
+	t=1727720148; cv=none; b=Pq07mfb+MghBUVngSoPLhCwxmtJg9yJZWcdpclJkJ5rGrHgGy0isH1pKmD3EzPKpMlSDQU/MdJ9W7eg5Ssc9dorTJWL9UXnGMwz6tS6qzopsoGh1kzRYVw0QnJyJCjJ6E8b/tL+elm/Cq/EGVJyNl7DzGVB3o4HEyDbwrZ2u89Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727720197; c=relaxed/simple;
-	bh=vT5HWEWDVSNQ6yqs6+L4wLyOHJcKx6Pb2mPJODDrf3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H5kSv2obK0Lua5oTUzUGjlGfWnfvLE5EBUftGwKQiWjdCcoss9fb1pq0bh6Q2VHaFz8TCExPev0fdNpxs9QFgE+iU9rZLujPdsZ4kip9PWqeV+HS0JvhgxlDUAWxbC8iyEYO1IhJUVKzf3udOsTVc5R5eRvfanS0LW9c0XGUU9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tm5pX5sx; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XHTmF24gkzlgMVl;
-	Mon, 30 Sep 2024 18:16:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1727720187; x=1730312188; bh=lLIQ5
-	C+bYk0x61ONWAtWsD3jfb+Sj3p3mOak9EpltxQ=; b=tm5pX5sxehM0xXFe/81ph
-	f3l0xVSf4hzRJzDGfgF1MS5U3EznuHbHyXa5ScfBnNRKxrO0UvW+FLm+Gt9EaKNu
-	ibIj51QYOv2g4F5jc+CThJkbe3k/B2pm+IAZUjZQFc+HVk2UgQ9D7mzNIbjpYIlA
-	lKkT8RXKyW0W/hbGNRerFML2umCNKWriOVt54F0Sgr1JNNj0JYmwBFSHqyhTrx7j
-	tmNBlAL+9JKfMDa/rmZBu7Y8kRw5MUUPZ1T+Odt19QdLsy6X6FljXw01clZN0o/9
-	weKPS2CPMClt/oy5E+Gdlb2IRIVUw8T/TLCdEUaZpQpHFM11+wVBqKvng5uUoqLt
-	Q==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id EVPUsGlPxsXH; Mon, 30 Sep 2024 18:16:27 +0000 (UTC)
-Received: from bvanassche.mtv.corp.google.com (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XHTmB6gMQzlgMVd;
-	Mon, 30 Sep 2024 18:16:26 +0000 (UTC)
-From: Bart Van Assche <bvanassche@acm.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH 01/21] genirq: Introduce number_of_interrupts() and set_number_of_interrupts()
-Date: Mon, 30 Sep 2024 11:15:40 -0700
-Message-ID: <20240930181600.1684198-2-bvanassche@acm.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20240930181600.1684198-1-bvanassche@acm.org>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
+	s=arc-20240116; t=1727720148; c=relaxed/simple;
+	bh=8w6aemunhl1GcKeGEbidxWOmKwoFjJ23FEHAaLFPSm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0cW0MfNzW4xr9UVk9msVOypGaBNKh+aMh2R2Dtfo4pR0fwjxaNh6+LUVixxe8EX47nFfprKuC4sYK52mzZCIW9gXDic3YPODo1FDpemtOlIVCN1rZ/Kl2ku6pdoFJyRndYr/47i4CweMcAtEeQDToeESj2GKGdmERHtCrsRo60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKsM05iy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41ED3C4CECE;
+	Mon, 30 Sep 2024 18:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727720148;
+	bh=8w6aemunhl1GcKeGEbidxWOmKwoFjJ23FEHAaLFPSm4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bKsM05iy6LwXedFlNA9P88AZMUa8dOWjBMdv3qLzB/+Rw5Z+Aupi82hzvRLTaRt/B
+	 DG+3+oeJ3b4ROVePYcFHva+uStHF60trz2IvYhwBKEtD5nvlKhBzTLOlu2OsLzmXNA
+	 10grlOx9xQAjiUasA+WXMOt2qp3xXYgkZPU9V+7yHkqoksTw13zbllDiMqwF0CtByG
+	 vhuEGN8988XyaU15kmXyEnRpIcYCBF628evstqoZpYrzLJjpR7FelIhhm+VYnWEsUw
+	 OKrdLqAkxbmYuHV1pOiIHVikIrFi35gPqz2yaRQdjFzMr0bGE/yHtLt2hDnisxetlh
+	 Ce/LBRw8bP7RQ==
+Date: Mon, 30 Sep 2024 19:15:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Aishwarya TCV <aishwarya.tcv@arm.com>, rick.p.edgecombe@intel.com,
+	kai.huang@intel.com, isaku.yamahata@intel.com, dmatlack@google.com,
+	sagis@google.com, erdemaktas@google.com, graf@amazon.com,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH v2 3/4] KVM: selftests: Allow slot modification stress
+ test with quirk disabled
+Message-ID: <0398a8b5-2d7b-4a85-8452-0e2f51a4fde4@sirena.org.uk>
+References: <20240703020921.13855-1-yan.y.zhao@intel.com>
+ <20240703021206.13923-1-yan.y.zhao@intel.com>
+ <b9367e1c-f339-46e1-8c44-d20f112a857a@arm.com>
+ <ZvNckKjlieCN56th@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="apOrv3T8X8gNzi94"
+Content-Disposition: inline
+In-Reply-To: <ZvNckKjlieCN56th@yzhao56-desk.sh.intel.com>
+X-Cookie: My EARS are GONE!!
+
+
+--apOrv3T8X8gNzi94
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-This patch prepares for changing 'nr_irqs' from an exported global variab=
-le
-into a variable with file scope.
+On Wed, Sep 25, 2024 at 08:42:56AM +0800, Yan Zhao wrote:
+> On Tue, Sep 24, 2024 at 01:26:20PM +0100, Aishwarya TCV wrote:
+> > On 03/07/2024 03:12, Yan Zhao wrote:
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- include/linux/irqnr.h |  2 ++
- kernel/irq/irqdesc.c  | 14 ++++++++++++++
- 2 files changed, 16 insertions(+)
+> > > Add a new user option to memslot_modification_stress_test to allow te=
+sting
+> > > with slot zap quirk KVM_X86_QUIRK_SLOT_ZAP_ALL disabled.
 
-diff --git a/include/linux/irqnr.h b/include/linux/irqnr.h
-index 3496baa0b07f..a8b2cb6146e8 100644
---- a/include/linux/irqnr.h
-+++ b/include/linux/irqnr.h
-@@ -6,6 +6,8 @@
-=20
-=20
- extern int nr_irqs;
-+int number_of_interrupts(void) __pure;
-+int set_number_of_interrupts(int nr);
- extern struct irq_desc *irq_to_desc(unsigned int irq);
- unsigned int irq_get_next_irq(unsigned int offset);
-=20
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 1dee88ba0ae4..8c6280843964 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -141,6 +141,20 @@ static void desc_set_defaults(unsigned int irq, stru=
-ct irq_desc *desc, int node,
- int nr_irqs =3D NR_IRQS;
- EXPORT_SYMBOL_GPL(nr_irqs);
-=20
-+int number_of_interrupts(void)
-+{
-+	return nr_irqs;
-+}
-+EXPORT_SYMBOL_GPL(number_of_interrupts);
-+
-+int set_number_of_interrupts(int nr)
-+{
-+	nr_irqs =3D nr;
-+
-+	return nr;
-+}
-+EXPORT_SYMBOL_GPL(set_number_of_interrupts);
-+
- static DEFINE_MUTEX(sparse_irq_lock);
- static struct maple_tree sparse_irqs =3D MTREE_INIT_EXT(sparse_irqs,
- 					MT_FLAGS_ALLOC_RANGE |
+> > > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+
+> > When building kselftest-kvm config against next-20240924 kernel with
+> > Arm64 an error "'KVM_X86_QUIRK_SLOT_ZAP_ALL' undeclared" is observed.
+
+> Ah, I forgot to hide =20
+
+>   "TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
+>                        KVM_X86_QUIRK_SLOT_ZAP_ALL)"
+> inside "#ifdef __x86_64__" when parsing opts though it's done in run_test=
+().
+
+This bug, which Aishwarya originally reported against -next, is now
+present in mainline:
+
+   https://storage.kernelci.org/mainline/master/v6.12-rc1/arm64/defconfig+k=
+selftest/gcc-12/logs/kselftest.log
+
+I couldn't find a fix being posted so I sent:
+
+   https://lore.kernel.org/r/20240930-kvm-build-breakage-v1-1-866fad3cc164@=
+kernel.org=20
+
+which also fixes the same issue in memslot_perf_test.c.
+
+--apOrv3T8X8gNzi94
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb66s0ACgkQJNaLcl1U
+h9Cpvwf9F6p+I5rne9eBrOGO2/lCR5D/LKNMoUdlgLWT4orWtOZtsAmnYqwVEiY1
+Rg4GN0Bw3C79CXNQN/+queNelSrK/60MMX7C3Rcsez6EAgyhEWg7SWiG+JoEOsF5
+gVzTA5kwHZwD6Q8Ld6v0QRnrEjRVqh5EbP7JvGF+XSBT90UjOifAP06yIbzokbZW
+W9v6EcAsKqgQ17YzmcUNJ4pSNc3xXt0J1zoVT43uG7NVX53eDefdxGbdZP9afPOy
+P/vL1ezzRJ3K3nxX1mDyPbxO6Y5XWOHtEMhvCBDXi3/oRSxkieQO/eloosHZLstC
+a+eu6WCs5IZ11Tk4fMoR5LSnU8qjog==
+=gwu6
+-----END PGP SIGNATURE-----
+
+--apOrv3T8X8gNzi94--
 
