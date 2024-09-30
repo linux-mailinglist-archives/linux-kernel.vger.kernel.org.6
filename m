@@ -1,70 +1,77 @@
-Return-Path: <linux-kernel+bounces-343751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3794989F09
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:01:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9371C989F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE551F22E5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:01:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DE9B21920
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98E618B480;
-	Mon, 30 Sep 2024 09:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wBY/ySmw"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D0C18DF75;
+	Mon, 30 Sep 2024 09:59:10 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF9F17C7A3
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45B718BC00;
+	Mon, 30 Sep 2024 09:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727690288; cv=none; b=nktpy0QJi63JhN2idWrDOIEqrX5DILybyUAQooyBVcSeEyiRv19nEqNFid9TWAcgkc65odhlDx/ucA1SwHRE0SnQwicNGUQ7UwVrsLDtKWiGGv5ZICXZdYEB/jg2P4ogyxE/LA3dlcEDfr563s1G2JvBkgrs9VllUK89ZCSxfnk=
+	t=1727690350; cv=none; b=oYF6SHQnuqhuDZZ61uJeuhD3/PIQBxRZtJNxHUzmqAXnNjzShVWZvvowlXxd/onmmdRAD1gyqEyIXxcFCo03qk0y/ATI+NmwKeZYwuQsRdVn0AX3JA2RYLgvstzFhY+5YaQt5zMT1pT9Va0rIVTbN5r80K34kmlvEaHWOOFTVA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727690288; c=relaxed/simple;
-	bh=Qv38yuKWozzKR3IQYCCJ6uXfKqJ7XBE++PsFLWSEaCg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=to5uTN8sp8srVL0PhEkJB2KJ0+x8eUpVt7IVvGtu7T/5evS5d0j+HfUbGicN+RVjkDNQkQuAPjqYJNNNRrh0/wMpRpkDNm8ZbRHDogtx/FEefTnDCN9d2fV8EUYk49nfo3z/1iG3CXnTL10M1Lk5DpfMlkgZDdAnubgN8gcGZP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=wBY/ySmw; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48U9voxU121553;
-	Mon, 30 Sep 2024 04:57:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727690270;
-	bh=5nAG3PH8pxe0mgQspWLXQZNK62tGR2jcUNgxhIfNm5Q=;
-	h=From:To:CC:Subject:Date;
-	b=wBY/ySmwTUmcJf/jg5bPUSMBIOAI8Qu6MwFvzynBnXAQ5UbsGvyh16bikoHvXwLp0
-	 LEPgawUalXm+8MPpXkAoWf9+VYZ1o35ksdSLauW3/92H9ynqB5xbhGiA2DPBFoIK6b
-	 fN1ikI917K/bP+1edE8QeING0nYOcmhckody/0tI=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48U9vo9j006811
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 30 Sep 2024 04:57:50 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 30
- Sep 2024 04:57:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 30 Sep 2024 04:57:50 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48U9vkLh069954;
-	Mon, 30 Sep 2024 04:57:46 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <thomas.richard@bootlin.com>,
-        <krzysztof.kozlowski@linaro.org>, <nichen@iscas.ac.cn>,
-        <rogerq@kernel.org>, <c-vankar@ti.com>, <t-patil@ti.com>
-CC: <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] phy: ti: phy-j721e-wiz: fix usxgmii configuration
-Date: Mon, 30 Sep 2024 15:27:45 +0530
-Message-ID: <20240930095745.3007057-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1727690350; c=relaxed/simple;
+	bh=RuOIFrHPmb6/uwq0jCfQWQUmMMFqbmacpWJpXv+x21Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJsuIXlb2TJ1oPC5+xaDlAmb2ocDASNQ7F1FdI+fko6h+oNdn698FC08Xo4B7lFoLNJlmFflDsd7ae09e9v06krpwN8SaVtCBOT2JWlN9tzp9y+ePQ5xtmoceWhOjMWZ0OHpCfsJAqIHR+Zc/Cg8kkYjJBIOB3y3UepifkZy0Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d0d0aea3cso645096166b.3;
+        Mon, 30 Sep 2024 02:59:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727690346; x=1728295146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qO+df0OBVgMIgNoBlXyBeG6a4YtOqRyUfk78PqMYEmw=;
+        b=iK+hPsVqwvC1zxbIe45Qla9VpqZdXMCG08kKy1F9ke94UnITGRdz2/qdPLKU+hO41E
+         +jlGqww3pz1hGqAlF3XY+Hl8YgNCwZsj9VBxd8did4lWcVdIPbF85hF8V9rpR4DQdNU3
+         tHjzo8BkUkGaHcIyNPCJvKuH0VFcPLpzuJcQHsfqCFh6iF4j+jnwCQ7FUO8AyfL7kmB9
+         qb+rSk+SrvIFlodCX8ZbcabguNo/L1pPBgQqZAKVivPZ8pr8yit0uLA1CuQGjjxUFXje
+         t7b+ljjmOHMN7i7Kl4DDn1rZ3P03L6dWodD+cXEDPNupb+ZDT9dsn3mN2egvlGAVX+JP
+         HmGg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/cBzNiHbzNm4PbJe3ZQ4DideX+8foHDeYCqbC8f+KZxhKMCiZlnm3naMZ3hV796Qpa0DGtK2nH+eWZ3E=@vger.kernel.org, AJvYcCVgWrTTf8jT1ykCOLATDUAMsrXPxc37t90/JYjTTF5KFMd/m9pKx+TSHoKUmAI2WIWwGazg/MKi@vger.kernel.org, AJvYcCXpsE8aXQikgxSV0G0w6w9YgJ4ajid9HBilWSpr9b2nQd87izjxL2cMxty7CFvI6mpBUg90v33yUfUp//zUlorY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwINQLz1UhKihXNvDM3ZzIyrNoC1A0qa42QwWUNHtq7tBUaaE8z
+	GAHtHqdiQrS8tO92yZELpDTjtblkeg+8aHO9TBqXz8XsFW3HhLJf
+X-Google-Smtp-Source: AGHT+IEyjhn+UsZ3JO+xfeIX3mmofoVPVMzwXKjd++w7dxcu51gwytlrH85yheivpcOz2zKjnZPt5A==
+X-Received: by 2002:a17:907:6d15:b0:a91:158c:8057 with SMTP id a640c23a62f3a-a93c4aeb8bbmr1264431866b.54.1727690345759;
+        Mon, 30 Sep 2024 02:59:05 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2996631sm501298966b.200.2024.09.30.02.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 02:59:05 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: fw@strlen.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	pablo@netfilter.org,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	David Ahern <dsahern@kernel.org>
+Cc: rbc@meta.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org (open list:NETFILTER),
+	bridge@lists.linux.dev (open list:ETHERNET BRIDGE)
+Subject: [PATCH nf-next v6] netfilter: Make legacy configs user selectable
+Date: Mon, 30 Sep 2024 02:58:54 -0700
+Message-ID: <20240930095855.453342-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,55 +79,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit b64a85fb8f53 ("phy: ti: phy-j721e-wiz.c: Add usxgmii support in
-wiz driver") added support for USXGMII mode. In doing so, P0_REFCLK_SEL
-was set to "pcs_mac_clk_divx1_ln_0" (0x3) and P0_STANDARD_MODE was set to
-LANE_MODE_GEN1, which results in a data rate of 5.15625 Gbps. However,
-since the USXGMII mode can support up to 10.3125 Gbps data rate, the
-aforementioned fields should be set to "pcs_mac_clk_divx0_ln_0" (0x2) and
-LANE_MODE_GEN2 respectively. Fix the configuration accordingly to truly
-support USXGMII up to 10G.
+This option makes legacy Netfilter Kconfig user selectable, giving users
+the option to configure iptables without enabling any other config.
 
-Fixes: b64a85fb8f53 ("phy: ti: phy-j721e-wiz.c: Add usxgmii support in wiz driver")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+Make the following KConfig entries user selectable:
+ * BRIDGE_NF_EBTABLES_LEGACY
+ * IP_NF_ARPTABLES
+ * IP_NF_IPTABLES_LEGACY
+ * IP6_NF_IPTABLES_LEGACY
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
+Changelog:
+v6:
+ * Expand it for BRIDGE_NF_EBTABLES_LEGACY and IP_NF_ARPTABLES (Pablo)
+ * Merge all changes in a single patch (Pablo)
 
-Hello,
+v5:
+ * Change the description of the legacy Kconfig (Pablo)
+ * https://lore.kernel.org/all/20240909084620.3155679-2-leitao@debian.org/
 
-This patch is based on commit
-9852d85ec9d4 Linux 6.12-rc1
-of mainline Linux.
+v4:
+ * Remove the "depends on" part, which may come later in a separate
+   change, given its intrusive on how to configure selftests
+ * https://lore.kernel.org/all/20240829161656.832208-1-leitao@debian.org/
+
+v3:
+ * Make sure that the generate from  tools/testing/selftests/net/config
+   look the same before and after. (Jakub)
+ * https://lore.kernel.org/all/20240827145242.3094777-1-leitao@debian.org/
+
+v2:
+ * Added the new configuration in the selftest configs (Jakub)
+ * Added this simple cover letter
+ * https://lore.kernel.org/all/20240823174855.3052334-1-leitao@debian.org/
 
 v1:
-https://lore.kernel.org/r/20240910091714.1082191-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased to Linux 6.12-rc1.
+ * https://lore.kernel.org/all/20240822175537.3626036-1-leitao@debian.org/
 
-Regards,
-Siddharth.
 
- drivers/phy/ti/phy-j721e-wiz.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/bridge/netfilter/Kconfig |  8 +++++++-
+ net/ipv4/netfilter/Kconfig   | 16 ++++++++++++++--
+ net/ipv6/netfilter/Kconfig   |  9 ++++++++-
+ 3 files changed, 29 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/ti/phy-j721e-wiz.c b/drivers/phy/ti/phy-j721e-wiz.c
-index a6c0c5607ffd..c6e846d385d2 100644
---- a/drivers/phy/ti/phy-j721e-wiz.c
-+++ b/drivers/phy/ti/phy-j721e-wiz.c
-@@ -450,8 +450,8 @@ static int wiz_mode_select(struct wiz *wiz)
- 		} else if (wiz->lane_phy_type[i] == PHY_TYPE_USXGMII) {
- 			ret = regmap_field_write(wiz->p0_mac_src_sel[i], 0x3);
- 			ret = regmap_field_write(wiz->p0_rxfclk_sel[i], 0x3);
--			ret = regmap_field_write(wiz->p0_refclk_sel[i], 0x3);
--			mode = LANE_MODE_GEN1;
-+			ret = regmap_field_write(wiz->p0_refclk_sel[i], 0x2);
-+			mode = LANE_MODE_GEN2;
- 		} else {
- 			continue;
- 		}
+diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
+index 104c0125e32e..f16bbbbb9481 100644
+--- a/net/bridge/netfilter/Kconfig
++++ b/net/bridge/netfilter/Kconfig
+@@ -41,7 +41,13 @@ config NF_CONNTRACK_BRIDGE
+ 
+ # old sockopt interface and eval loop
+ config BRIDGE_NF_EBTABLES_LEGACY
+-	tristate
++	tristate "Legacy EBTABLES support"
++	depends on BRIDGE && NETFILTER_XTABLES
++	default n
++	help
++	 Legacy ebtables packet/frame classifier.
++	 This is not needed if you are using ebtables over nftables
++	 (iptables-nft).
+ 
+ menuconfig BRIDGE_NF_EBTABLES
+ 	tristate "Ethernet Bridge tables (ebtables) support"
+diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
+index 1b991b889506..ef8009281da5 100644
+--- a/net/ipv4/netfilter/Kconfig
++++ b/net/ipv4/netfilter/Kconfig
+@@ -12,7 +12,13 @@ config NF_DEFRAG_IPV4
+ 
+ # old sockopt interface and eval loop
+ config IP_NF_IPTABLES_LEGACY
+-	tristate
++	tristate "Legacy IP tables support"
++	default	n
++	select NETFILTER_XTABLES
++	help
++	  iptables is a legacy packet classifier.
++	  This is not needed if you are using iptables over nftables
++	  (iptables-nft).
+ 
+ config NF_SOCKET_IPV4
+ 	tristate "IPv4 socket lookup support"
+@@ -318,7 +324,13 @@ endif # IP_NF_IPTABLES
+ 
+ # ARP tables
+ config IP_NF_ARPTABLES
+-	tristate
++	tristate "Legacy ARPTABLES support"
++	depends on NETFILTER_XTABLES
++	default n
++	help
++	  arptables is a legacy packet classifier.
++	  This is not needed if you are using arptables over nftables
++	  (iptables-nft).
+ 
+ config NFT_COMPAT_ARP
+ 	tristate
+diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
+index f3c8e2d918e1..e087a8e97ba7 100644
+--- a/net/ipv6/netfilter/Kconfig
++++ b/net/ipv6/netfilter/Kconfig
+@@ -8,7 +8,14 @@ menu "IPv6: Netfilter Configuration"
+ 
+ # old sockopt interface and eval loop
+ config IP6_NF_IPTABLES_LEGACY
+-	tristate
++	tristate "Legacy IP6 tables support"
++	depends on INET && IPV6
++	select NETFILTER_XTABLES
++	default n
++	help
++	  ip6tables is a legacy packet classifier.
++	  This is not needed if you are using iptables over nftables
++	  (iptables-nft).
+ 
+ config NF_SOCKET_IPV6
+ 	tristate "IPv6 socket lookup support"
 -- 
-2.40.1
+2.43.5
 
 
