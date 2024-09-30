@@ -1,70 +1,77 @@
-Return-Path: <linux-kernel+bounces-343722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBF9989EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:52:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688D5989EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7055F1F2174A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:52:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAE228124B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD8F18990E;
-	Mon, 30 Sep 2024 09:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD9118990E;
+	Mon, 30 Sep 2024 09:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XirWzPnN"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kRe5RniR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE417CA03;
-	Mon, 30 Sep 2024 09:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F82917CA03;
+	Mon, 30 Sep 2024 09:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689922; cv=none; b=BJ12j2pNX016uYEvBw2OilmqvyTx7pCY4wcLqtFzl7nwC0ZdidYl6yCjifBFYxZpfzP7DwnJhbHaPBe03B4zGlB2Udc5501DUubz6Zc48qmeDS9J95lxni0x67gkMQu5FKjVMZFpLWSG4zSKhs9jjP08wdVTFJTHST1CKo13zZk=
+	t=1727689992; cv=none; b=bntF3J/ku/wTimIfpgXgMSQ2qOOaBKJssOYwJEct1DHtEezDmJnekURgnFZQ94XBRlC6FbjCVTqP6hrwdchZtMEFO0UQ7vx1WsxZzF7bL8KrhMp2wMqRzlA5qHlAx5t07LPbYj9vQGMW0LQwkRjTKDuz+AdzC8i1Jv1jZCIp1Oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689922; c=relaxed/simple;
-	bh=oRlBfXRJJuP0y/ycSpQbeUMSQ4iHyDfEbLPz4DY3yNQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GlgGhRQZJVril6oqiaHcXXp5gc9C2mzy+Ea2RDk1e2s4B8ttDO/rXwlNAe6uTB0ZIPj/5tD6ENwz5CAGAj+MI1a0lzjQ6FjpNoT934fGxOpR9zwQc7wr6i6/3KbPSMhsoVSyjUE7GAwRRzwoCSEOSJ6jXG52TIQyLfQDH5mF4co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XirWzPnN; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48U9ppeU056451;
-	Mon, 30 Sep 2024 04:51:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727689911;
-	bh=FpjCUlqj/npY/3KoH9Yoyz6bWbmAqbUo8uX4w3FlqoY=;
-	h=From:To:CC:Subject:Date;
-	b=XirWzPnNML7Q5EMq5/2rLvm2QQtzFylDneewUWSr0i716snU7PsVizW0KS2MCF8Po
-	 T72pEDTXJg6PWPGdWY12qWtm5YwDFr1B+EVIBWEz23KsMqmTvf7l4fmKbrfLSeyCfI
-	 sTIEWvZHX/MaspsZU6V12gxWXwsWbt7IRBFP3lEo=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48U9ppoT018783;
-	Mon, 30 Sep 2024 04:51:51 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 30
- Sep 2024 04:51:51 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 30 Sep 2024 04:51:50 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48U9pkBw042299;
-	Mon, 30 Sep 2024 04:51:46 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <sjakhade@cadence.com>,
-        <yamonkar@cadence.com>
-CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <conor.dooley@microchip.com>, <nm@ti.com>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] dt-bindings: phy: cadence-sierra: Allow PHY types QSGMII and SGMII
-Date: Mon, 30 Sep 2024 15:21:45 +0530
-Message-ID: <20240930095145.3004053-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1727689992; c=relaxed/simple;
+	bh=xlQB+YRnWzPDGKcdRmDpIo+//kocNTxv1zsa8DtTEpI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m+q7UgF07z7TofsNUHsktlQeGsap83pZWsAYz9GuAHNk4dT9GiInmI6+Q/dBzz+DhhXE9jDqBuKBhp/yD5Ynv8Lzvnh8smEgoxRNYBFZcEq0v83xQVkmC2WySl8yguWh9axESGnHbLaqicFBABZ7a6qp+HXbqHH/qAymFXu6Srg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kRe5RniR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727689988;
+	bh=xlQB+YRnWzPDGKcdRmDpIo+//kocNTxv1zsa8DtTEpI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kRe5RniRKjhzyPUIS9aI2gdQY/3yfKtncMkphK8EzeLqmp1VuuBWod/AA66jPXaNd
+	 EKRfxBP86hBpWoINgH9hkEhh+lONXGBZUmjk20jMP43TLhVSYUzoeldgkgazVcPL8j
+	 v+YoK6UZ7SpvFTo6sS2UT166Ry/DaV7GyOQ6xhSqnDZfk2GxgmN7YU9/I9n9oYwheV
+	 StpzBoIns/k8gwxB+xso+IansWWxQUChjuk6E9n9YVfie/psblmf4Nc8Iqe5ZJF9z+
+	 Y/fkYSDfLJnwsCX4Wfx+JjgMUPo/W7g2Ggtl0tWUReRwX5zUgUpaokHfSY3/d3MVtD
+	 hcqp2lZxrEpfQ==
+Received: from localhost.localdomain (unknown [171.76.80.165])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AFD8F17E1147;
+	Mon, 30 Sep 2024 11:53:04 +0200 (CEST)
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: dri-devel@lists.freedesktop.org
+Cc: daniels@collabora.com,
+	helen.koike@collabora.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	robdclark@gmail.com,
+	guilherme.gallo@collabora.com,
+	sergi.blanch.torne@collabora.com,
+	deborah.brouwer@collabora.com,
+	dmitry.baryshkov@linaro.org,
+	mripard@kernel.org,
+	rodrigo.vivi@intel.com,
+	quic_abhinavk@quicinc.com,
+	linux-mediatek@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	amd-gfx@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] docs/gpu: ci: update flake tests requirements
+Date: Mon, 30 Sep 2024 15:22:47 +0530
+Message-ID: <20240930095255.2071586-1-vignesh.raman@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,47 +79,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The Sierra SERDES can be configured for QSGMII and SGMII protocols. Hence,
-update the bindings to treat "PHY_TYPE_QSGMII" and "PHY_TYPE_SGMII" as
-valid values for the "cdns,phy-type" property.
+Update the documentation to specify linking to a relevant GitLab
+issue or email report for each new flake entry. Added specific
+GitLab issue urls for amdgpu, i915, msm and xe driver.
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Acked-by: Maxime Ripard <mripard@kernel.org>
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> #intel and xe
+Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
+Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
 ---
 
-Hello,
+v2:
+- Add gitlab issue link for msm driver.
 
-This patch is based on linux-next tagged next-20240930.
+v3:
+- Update docs to specify we use email reporting or GitLab issues for flake entries.
 
-v1:
-https://lore.kernel.org/r/20240830105316.1824319-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased patch on next-20240930.
-- Collected Acked-by tag from Conor Dooley <conor.dooley@microchip.com>
+v4:
+- Add gitlab issue link for xe driver.
 
-Regards,
-Siddharth.
+---
+ Documentation/gpu/automated_testing.rst | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
- Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
-index 37f028f7a095..137ac5703853 100644
---- a/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
-+++ b/Documentation/devicetree/bindings/phy/phy-cadence-sierra.yaml
-@@ -96,7 +96,7 @@ patternProperties:
-           Specifies the type of PHY for which the group of PHY lanes is used.
-           Refer include/dt-bindings/phy/phy.h. Constants from the header should be used.
-         $ref: /schemas/types.yaml#/definitions/uint32
--        enum: [2, 4]
-+        enum: [2, 4, 8, 9]
+diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
+index 2d5a28866afe..6d7c6086034d 100644
+--- a/Documentation/gpu/automated_testing.rst
++++ b/Documentation/gpu/automated_testing.rst
+@@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
+ the result. They will still be run.
  
-       cdns,num-lanes:
-         description:
+ Each new flake entry must be associated with a link to the email reporting the
+-bug to the author of the affected driver, the board name or Device Tree name of
+-the board, the first kernel version affected, the IGT version used for tests,
+-and an approximation of the failure rate.
++bug to the author of the affected driver or the relevant GitLab issue. The entry
++must also include the board name or Device Tree name, the first kernel version
++affected, the IGT version used for tests, and an approximation of the failure rate.
+ 
+ They should be provided under the following format::
+ 
+-  # Bug Report: $LORE_OR_PATCHWORK_URL
++  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
+   # Board Name: broken-board.dtb
+   # Linux Version: 6.6-rc1
+   # IGT Version: 1.28-gd2af13d9f
+   # Failure Rate: 100
+   flaky-test
+ 
++Use the appropriate link below to create a GitLab issue:
++amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
++i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
++msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
++xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
++
+ drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
+ -----------------------------------------------------------
+ 
 -- 
-2.40.1
+2.43.0
 
 
