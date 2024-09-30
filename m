@@ -1,116 +1,145 @@
-Return-Path: <linux-kernel+bounces-344714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAAC98AD3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:48:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4D698AD44
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CECBB22EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:48:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 371B8B23999
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F9019DF4A;
-	Mon, 30 Sep 2024 19:48:35 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5EB19DF6A;
+	Mon, 30 Sep 2024 19:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="GK57HEqt"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F5419AA57;
-	Mon, 30 Sep 2024 19:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E57914F9D9
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727725715; cv=none; b=eOEJnI1SQI6KDDk2wyg+RwWSPke2Zb5/ZEOHJsbsmwvg9g18FeQKnDyCYM208zXcHSl+RGb+949px0K6qh/+s/bAr8WkeEAZi18M9ver8sgBbU7pYXUeOiw9PBu9RezKbGJ4Rp8ztasDBghKVQL5E2ZYf4DaODudcZlIFH5qLHU=
+	t=1727725870; cv=none; b=rKUYt3SC+xBMpYddegQLdhQCTb/JUIU6LsDU9Zkj7JHAn85pOKroIHe7SwftYyymp59ade8AYEKaLFHyl5qPubS/5cyy4VLQozYEhIRWJOZ1PeobtaAOisNZrWAzRjtroB7zYngOT/CXUTm7hXvuHp8+baDbT7AR9s4qB1uu6kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727725715; c=relaxed/simple;
-	bh=r5FyKux8zGz3zmiBX4vVHKn+OvvumLwKJ4ixmdiCFso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K48Av3YXpg+SEM4hme77YboQXiyaka9fXSPcL0XmjjsrmC/Sn6GaMfbQxD5nVj93Pzbk0K90YyHvdGfjYgEL1bi9ZmrW4Whxs0ywoT4GCmV30Qk7Iljdcmz92Dpip0U564dAe2VKkwaCcrYz9AnoOlchB9vNwf7lBF6lTBQbUXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
- 2024 22:48:23 +0300
-Message-ID: <0670959e-a46c-4d63-bd25-261df88f6872@omp.ru>
-Date: Mon, 30 Sep 2024 22:48:22 +0300
+	s=arc-20240116; t=1727725870; c=relaxed/simple;
+	bh=QrL/lV8ct5As4OXq5hfGZA+GKDxZYuXtwV7phco8Mg4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PaLnXaeksYWOlaXcQCKQ5p4LLV6XPhdX9lL7bV3mLSUg2O9tTiJwlWsy1cU+cGOvjG3NiKb6cPqokNMYy+vT8AWuS2fjTaNMGDwKZK+o593L9hpBifPmaBR9/qUHWGqMGq9BY3z5XiO5dQwk1o/gA9RV20ZqPmcSbYW/1G1Q1x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=GK57HEqt; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7191fb54147so3416615b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1727725868; x=1728330668; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yln5HQpd+jTguQQBAuIPN7v4ItFqnLr6QvDPCaJ0BvQ=;
+        b=GK57HEqtJjKsF9hkdhXZSOHIW4yVDk0h9qrsYdaaiOZQ6BLRUjRj78LLLJ3yA/PClq
+         LskVO4WbrdZn2MuTk3qsk/O6gwIGI7qCL1fXZBzYJC94ng5Rb5+uRCJ5mFqo8JAf5bCU
+         NuadGsoDAfi9kwGfRUSNtuCPAQaOvSKdwCXi2AMiDwR7OM3YdXak7NWl6FwhwRQbTBNt
+         kHq79BGz5yMD8Pzc3UUC5kn/jycBFxNMbyMsubJpVEZo/t3Y+AnOuUKiLXOeYzPMv2+L
+         pcy0dq1HUXtQrFhpmY52KyLTyQuMw43RIv6VkhqkXOnXqhpW12+MNE3ajoranK++yRHe
+         WUbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727725868; x=1728330668;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yln5HQpd+jTguQQBAuIPN7v4ItFqnLr6QvDPCaJ0BvQ=;
+        b=AHkeeKv7+C8w5lYUJQwfqBoDPGSemYRYOIMGmw4Ne55O/WKS/XqCkSVWhcd316ppe3
+         pbPWvaYD31mwvusIoK1PwYOQfN3VqbUy/PWd3b+LmPPhDDg50CoEtrr1c6I/lMiGXhvz
+         YoK56DwdJpfKEPT/UvebmwJ5GTLEDQF8ihprIhk7mvwbhIRN55IRTrUJLhVvIcDSNQuQ
+         5pwmA4uqpM/Y+fK2xVesOYIiJ2IJ4cXMTKJJkHibl0eoaIKyIe99z8uEOkvlynh37FOc
+         ju3C2Jvv4g0Wy+6JrqQHzhYVVt7ims++kCPxYmsIenO7vn6cMr9S28V4Ta8SmIsbgSeo
+         7fJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB0CT/Y/1c4SdSg6PtMaJMK1tCK5QfsN5rqrEkynvL32uuEda0TQ3a+2lqBtJ1jr5RZ36mev0UaRzGMQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwicEBKXNMGxMcaXNwfqh+LPK4b36EXnAQRO++fTco1qkyhBCG7
+	wSuMa5MRkloQjHwyxFKYM+d/mN9OCnnjylMJ3YuV9x9OsjIjL2GxOGaT+TQMs6w=
+X-Google-Smtp-Source: AGHT+IGjSiRDXQRXRfRw15I52J+IDAcx49BXevj+SDiQr0UdMIcFCaHqsd9DDGnyWkz+MxRQ5YxVJg==
+X-Received: by 2002:a05:6a21:e8a:b0:1d0:3a28:7589 with SMTP id adf61e73a8af0-1d4fa6c392bmr19195635637.24.1727725868006;
+        Mon, 30 Sep 2024 12:51:08 -0700 (PDT)
+Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d4bsm6630213b3a.158.2024.09.30.12.51.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 12:51:07 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Subject: [PATCH v3 0/8] pinctrl: Add T-Head TH1520 SoC pin controllers
+Date: Mon, 30 Sep 2024 12:50:50 -0700
+Message-Id: <20240930-th1520-pinctrl-v3-0-32cea2bdbecb@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 08/11] net: ravb: Support ICMP TX checksum
- offload for GbEth
-To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240930160845.8520-1-paul@pbarker.dev>
- <20240930160845.8520-9-paul@pbarker.dev>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240930160845.8520-9-paul@pbarker.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 19:30:17
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188103 [Sep 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
- d90443ea3cdf6e421a9ef5a0a400f1251229ba23
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.154.82 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2024 19:34:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-B4-Tracking: v=1; b=H4sIABoB+2YC/x3MQQqAIBBA0avErBN0tKCuEi1CpxwIE5UIpLsnL
+ d/i/wqZElOGuauQ6ObMV2jQfQfWb+Egwa4ZUKKRk5aieDWgFJGDLekUzqAaNW1olYIWxUQ7P/9
+ wWd/3Ax8jooVgAAAA
+To: Drew Fustini <drew@pdp7.com>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Drew Fustini <dfustini@tenstorrent.com>
+X-Mailer: b4 0.14.1
 
-On 9/30/24 19:08, Paul Barker wrote:
+This adds a pin control driver created by Emil for the T-Head TH1520
+RISC-V SoC used on the Lichee Pi 4A and BeagleV Ahead boards and updates
+the device trees to make use of it.
 
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
-> 
-> This aligns TX capabilities with RX capabilities.
+Changes in v3:
+ - Add Rb from Rob for the binding
+ - Rebase on 6.12-rc1 which enables AP_SUBSYS clock controller in dts
+ - Update dts to use AP_SUBSYS clock controller instead of fixed clocks
+ - Remove unneeded defines from the driver for dt unit addresses
+ - Link to v2: https://lore.kernel.org/linux-riscv/20240914-th1520-pinctrl-v2-0-3ba67dde882c@tenstorrent.com/
 
-   I suspect the ICMP TX checksums aren't offloaded anywway...
+Changes in v2:
+ - Add thead,pad-group device tree property
+ - Change driver to use the thead,pad-group property instead of the unit
+   address to identify the pad group of the pin controller being probed
+ - Return -EINVAL if no pin group can be determined during probe. In v1,
+   there was a bug that instead returned an unitialized variable
+ - Link to v1: https://lore.kernel.org/r/20240902-th1520-pinctrl-v1-0-639bf83ef50a@tenstorrent.com
 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+---
+Emil Renner Berthing (8):
+      dt-bindings: pinctrl: Add thead,th1520-pinctrl bindings
+      pinctrl: Add driver for the T-Head TH1520 SoC
+      riscv: dts: thead: Add TH1520 pin control nodes
+      riscv: dts: thead: Add TH1520 GPIO ranges
+      riscv: dts: thead: Adjust TH1520 GPIO labels
+      riscv: dts: thead: Add Lichee Pi 4M GPIO line names
+      riscv: dts: thead: Add TH1520 pinctrl settings for UART0
+      riscv: dtb: thead: Add BeagleV Ahead LEDs
 
-MBR, Sergey
+ .../bindings/pinctrl/thead,th1520-pinctrl.yaml     | 176 ++++
+ MAINTAINERS                                        |   2 +
+ arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts |  87 ++
+ .../boot/dts/thead/th1520-lichee-module-4a.dtsi    |  43 +
+ arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts  |  28 +
+ arch/riscv/boot/dts/thead/th1520.dtsi              |  65 +-
+ drivers/pinctrl/Kconfig                            |  13 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-th1520.c                   | 907 +++++++++++++++++++++
+ 9 files changed, 1306 insertions(+), 16 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240930-th1520-pinctrl-d42163ea2c11
+
+Best regards,
+-- 
+Drew Fustini <dfustini@tenstorrent.com>
 
 
