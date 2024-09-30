@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-344729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF1AC98AD8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D512D98AD96
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3B11F23DD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9753228245A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6635219EEC7;
-	Mon, 30 Sep 2024 19:56:00 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE03F19E82A;
+	Mon, 30 Sep 2024 19:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="RJyXOf+w"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0F519E7E0;
-	Mon, 30 Sep 2024 19:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C359119D89D
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726160; cv=none; b=IDfZyOHBjom6+Nu2Wr7EdrWAQEHCbdFdJRgg+dtQcXYtH6ATrUMKj0tp+XgPOrxEIabc7Xxqtyvo41gth7v4ZElMDxMNBnKWkxblT9BC3NyusEUMr8BR6EK4wP/qlh+uAz5hATLmZhbe3wSwy7pCZeDZDwZGeqOFnRVL6BwT03o=
+	t=1727726188; cv=none; b=lYyxvitLrT9rt6oWa0j4clnGFD86W2x9eg9i9XdcxJ/ZaiJKPXTnrEIyfKscYdl6HBmsbhHx81iDPfv9wiwdf6f6Fj87+cV80UtKfTWK5F7xN/moFTcN7lrxA7eOQbmsKJFF8O5xaiiI283DOOMjF4Gf2XYwa3vGSGyEnXWtjow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726160; c=relaxed/simple;
-	bh=ie6cl/q/A3EQT6+5sU7EdG9bPT1/+8EO7T3jtNBKxxg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mgM7MpwYaNos93o2PSD2Bi14yc8cGiYs7jQM0NbTnF9TEqZNbq5Ex9Lc5gacKXAOhKZNJD3gT3RJbhKjfbdSJGh60+t1DHC6/dK0tdxcEr7Ih8GD7MwMwTpA+IuNehjZg3tt4Hywy2x9yIvyadk874vgsfbNwFZEvZ4+FQyj020=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
- 2024 22:55:47 +0300
-Message-ID: <9b436888-5f59-4d18-a3f6-5fa283e32fd9@omp.ru>
-Date: Mon, 30 Sep 2024 22:55:47 +0300
+	s=arc-20240116; t=1727726188; c=relaxed/simple;
+	bh=nsUO0zUQmPXPPHgAa7TLcCDNB56tC1YTIiQbChsZvV8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mnPnv0ubudjUFbTU6xlajUcqWuPM3h0jrJa8zwuDqUyYksgVZt1sI97SGuOGygRjCqMCW+D6QO7xeFTGxOd/06bvY/asLBcs1pbzw6neiHVo/uRmUGzSMaau4dJTMJScuTnrmZ/25HKmgVzaIUDfJ8KzBaiock2jZgHJ56ogaiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=RJyXOf+w; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-719ba0654f9so3997582b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:56:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1727726186; x=1728330986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=04aIwQhVG9kkwqyptz1spBSbHv2X9I/9d0b2JatFAhQ=;
+        b=RJyXOf+wXACz9wnyeVNKgTGVV3fzalT+WhJa1AVnTxUyU4NWa8H8IeltV8esdbPxuE
+         UB2FDOb/e5Hoklbs7w+GYb2eafcZM9CRTC0pYq4gGoDaiuaefa/xJoy1+xzU9ZA9NZwy
+         3ptLPjRGfDf5ixwornc7Wxr8gl8Jd935m6mns=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727726186; x=1728330986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=04aIwQhVG9kkwqyptz1spBSbHv2X9I/9d0b2JatFAhQ=;
+        b=kIhWkxcTt8GEix3ipBdBJU6NQN+vjSWh5SQwb8EEAurTf+H61tuwqV4aGWeJq/9gRd
+         elomJnxpV1oU1UIv0GJe3sDyXsNE3gIypGP2RAvcAOat88Agyuz5T2f+KUcvf4AHMiAp
+         ljSBKS3ZwpxzIJIXel3xnWDsKN+FgHttDQHLoPShfcmPsgwI8nZRlDcd1AsZlQBJ9GRe
+         C32ddOTE9NQMO6nB0uPXs4E5i0t1Ai/y/yvD3QcF3KaRI4SQp6xlJSlFcpgttvGemCpw
+         v/ILWd6PJ3xrzx2qOJlDhG4MfMe+M6v9DGVW6cHx4mjYteTqYmRZ3eCdQ/UP1DYrEvMO
+         WSAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeuXx/16DpGQz29i6IsG3snfzx0xkp/Q5F0VLqQiW+0qPIBb474gSoWxNGdzCQfhDrXJqNoU0wCwxX+OQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsHD5Zmg3Cd/HXsFCQcs0sa5GZnIJTXZcS9i6296F0LSvMXujl
+	oPBDfvUOVpJ4P037D4lbQ1LfmM5pSimbJE9XZjmhHn29oMRlGQZqjtY5Aohbcgc=
+X-Google-Smtp-Source: AGHT+IGe90vkHUWOcUodfCwsCtj3m+WHIqgqWMT4BLw6euSWP2mWVdam1jgwx+7tGd2QFCKQcm2lxw==
+X-Received: by 2002:a05:6a00:198e:b0:714:3a4b:f78f with SMTP id d2e1a72fcca58-71b26057a41mr18282679b3a.20.1727726186115;
+        Mon, 30 Sep 2024 12:56:26 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2649a2cesm6604450b3a.43.2024.09.30.12.56.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 12:56:25 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	Arthur Kiyanovski <akiyano@amazon.com>,
+	David Arinzon <darinzon@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kamal Heib <kheib@redhat.com>,
+	linux-kernel@vger.kernel.org (open list),
+	Noam Dagan <ndagan@amazon.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Saeed Bishara <saeedb@amazon.com>,
+	Shay Agroskin <shayagr@amazon.com>
+Subject: [net-next 0/2] ena: Link IRQs, queues, and NAPI instances
+Date: Mon, 30 Sep 2024 19:56:11 +0000
+Message-Id: <20240930195617.37369-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 09/11] net: ravb: Enable IPv6 RX checksum
- offloading for GbEth
-To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240930160845.8520-1-paul@pbarker.dev>
- <20240930160845.8520-10-paul@pbarker.dev>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240930160845.8520-10-paul@pbarker.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 19:43:31
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188103 [Sep 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
- d90443ea3cdf6e421a9ef5a0a400f1251229ba23
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2024 19:46:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Transfer-Encoding: 8bit
 
-On 9/30/24 19:08, Paul Barker wrote:
+Greetings:
 
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
-> 
-> The GbEth IP supports offloading IPv6 TCP, UDP & ICMPv6 checksums.
-> 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
-[...]
+This series uses the netdev-genl API to link IRQs and queues to NAPI IDs
+so that this information is queryable by user apps. This is particularly
+useful for epoll-based busy polling apps which rely on having access to
+the NAPI ID.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+I've tested these commits on an EC2 instance with an ENA NIC configured
+and have included test output in the commit messages for each patch
+showing how to query the information.
 
-MBR, Sergey
+I noted in the implementation that the driver requests an IRQ for
+management purposes which does not have an associated NAPI. I tried to
+take this into account in patch 1, but would appreciate if ENA
+maintainers can verify I did this correctly.
+
+Thanks,
+Joe
+
+Joe Damato (2):
+  ena: Link IRQs to NAPI instances
+  ena: Link queues to NAPIs
+
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 38 +++++++++++++++++---
+ 1 file changed, 33 insertions(+), 5 deletions(-)
+
+-- 
+2.43.0
 
 
