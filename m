@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-344200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B54A98A649
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:56:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D8398A64F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6BF1C229C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:56:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0AD281AD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 992AF199234;
-	Mon, 30 Sep 2024 13:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940AB199E93;
+	Mon, 30 Sep 2024 13:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rE8l+AW/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ohj+Snd7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6BB1991B4;
-	Mon, 30 Sep 2024 13:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E81191F82;
+	Mon, 30 Sep 2024 13:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704388; cv=none; b=bn53/+730BY4q1C6LQhVTuF0JeFMwrF1DByWuxjFIJ0H9kiJiyitxg90Rh4LgiD+BRsXsx2fbF2RC80YS1yc0IVerJITvTqKNkYrt6YMBTPvp3dHxqjbaFmiI7xK2ACkRM26S95gAkAfunlNdotUSAQpkNTpgzQaFFscBFX04AI=
+	t=1727704405; cv=none; b=J7Y1PLwr1UptsnU05CASMckzvrO39PLdzJ5xrBINSuFnB7z9hEhYjte3flac5hLUQgPJa4NgTZxl9Yj1WlA5SmOWVdciHE6PuJRZU7vAEFA7xFQPFtzqJYIwSWhaPdMZEOsR2HTUiv8jspsBUse4MU8MCHzwCn64wOrRoR0FRrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704388; c=relaxed/simple;
-	bh=IVbbaE/GIT9RrXhfSo36FUKPNUq7GI5PpkcP9RyVysI=;
+	s=arc-20240116; t=1727704405; c=relaxed/simple;
+	bh=IXrxPdiDBBp6ssz1JCCfL9zRQWsqO1wwKVPBmaF6ZYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4GpRWPDsnrZgq6m6nkVhleV2Uw4f+DBOGJSo1easS0sw+7AM/NhvXLGEORg+XemT3GCBGJN1gYXhAR6HrI7J2ZEEWUYjzQv84XpoFNY/FeJugrqlLphzBDAR+GND1mpaGxsk/lsuiopNcNssTCZyNKC1yLyIu/ODArTn018fZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rE8l+AW/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9C2C4CECF;
-	Mon, 30 Sep 2024 13:53:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtk0E7jBcuz1vrb6Iv6o2+bCrQseoyfk3xsJoHSwUx8jPnpgZeyQSUXPLAlf9TD2znlHRPwkbOlE0H1d/Il9PbibtDw03xNdpg8H9oiTNV4KHnVgXHCAbSpP0KsqpSdLaCOP/B+pfUgBUFM+bJjKTXQ9QcS0n+s3Dzs/hJ4a8+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ohj+Snd7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B84C4CEC7;
+	Mon, 30 Sep 2024 13:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704387;
-	bh=IVbbaE/GIT9RrXhfSo36FUKPNUq7GI5PpkcP9RyVysI=;
+	s=k20201202; t=1727704404;
+	bh=IXrxPdiDBBp6ssz1JCCfL9zRQWsqO1wwKVPBmaF6ZYk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rE8l+AW/ev6vEpAHKR2WC4QEXYNs3hT6guF09tK8fUmPpr7f5MTgRhhgdEHQM5HNW
-	 uBOdna5ZPT3FbI12W63Xz76mxB7HGapWHhjgkP4mFIvSi+R9zODIcPRNBVlSpW2X34
-	 gr1BeEIUHZ+/FyWFz/Zjsg4goMxZXAr/UZwLMuI66WUsyOpEHKn+ahVp3nHF7hb2Ej
-	 VVnz0xpYa3L/VCc/ALl+XG6tceAQsCvR2NG+Nf/JZmiD4csPFWc/9tUqeTYkBj1/G7
-	 Z069eM3WBeuiOD5eSW6H0rzg+yQI+c987yuHlC6znSuN9UIqZh0244NU8fhcpDStm5
-	 QxDhvCSRUU5Ug==
-Date: Mon, 30 Sep 2024 14:53:02 +0100
-From: Mark Brown <broonie@kernel.org>
+	b=Ohj+Snd7h4yesSWd9wlTt/Mqpk0WSZ1nGIyIjq/7LguoF2Erz47ZFkzz2O4zkHBDm
+	 ndPwp1ekiyNhi13CulSGDZWEPscoHpqVY2GfZWdON+SWh1mG+n+k0ZKJFL8KRiQVah
+	 83+v4oQ79bv8/weV4yK3Me7MWU4DY9NFaTI+Rbxp/Im/C2QEwkFfFRPzKUIO6qv8le
+	 KukkphHA1iDVp6ycqXKeqzF2Qys491nURBPwfj1DpSZzTyQdyvMssvN4AisR4LW4kz
+	 sSUgT/gfm4pO9c3oji7OpbyfxexSWC97Zl4cO5b1Ze+V7HaoLhMX7XdVMX+aqzcQV3
+	 mgaj2p5uKEwPw==
+Date: Mon, 30 Sep 2024 14:53:20 +0100
+From: Conor Dooley <conor@kernel.org>
 To: pierre-henry.moussay@microchip.com
 Cc: Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lewis Hanly <lewis.hanly@microchip.com>, linux-rtc@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 04/20] dt-bindings: spi: add PIC64GX SPI/QSPI
- compatibility to MPFS SPI/QSPI bindings
-Message-ID: <fbad3270-b6c1-4b9b-8a08-a66be80e7156@sirena.org.uk>
+Subject: Re: [linux][PATCH v2 13/20] dt-bindings: rtc: mfps-rtc: Add PIC64GX
+ compatibility
+Message-ID: <20240930-doormat-lint-23d97075c3e7@spud>
 References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-5-pierre-henry.moussay@microchip.com>
+ <20240930095449.1813195-14-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="usUdwGt1tk5eoW0S"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="VxVqhbLE3N8gZUMS"
 Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-5-pierre-henry.moussay@microchip.com>
-X-Cookie: My EARS are GONE!!
+In-Reply-To: <20240930095449.1813195-14-pierre-henry.moussay@microchip.com>
 
 
---usUdwGt1tk5eoW0S
+--VxVqhbLE3N8gZUMS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 10:54:33AM +0100, pierre-henry.moussay@microchip.co=
+On Mon, Sep 30, 2024 at 10:54:42AM +0100, pierre-henry.moussay@microchip.co=
 m wrote:
 > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 >=20
-> PIC64GX SPI/QSPI are compatible with MPFS SPI/QSPI, just use
-> fallback mechanism
+> PIC64GX is compatible with mfps-rtc without any additional feature
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---usUdwGt1tk5eoW0S
+--VxVqhbLE3N8gZUMS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb6rT4ACgkQJNaLcl1U
-h9Cylgf/SeKuUdqmIkH+cHNwBAWWRYyTEeqpUfZwfyyjxHpdrGqUQjadvhIrxKD5
-+qrhBGBLCMXstynEo9BNUp0hcDk1nymSPYDQDzB/ZMSPheVHZE0EI6BpiY0/fYJO
-d5oKcrC3wWNqJCdl9Yp2bJh95Ivm/4BmqoYay3vcIHKweyfgEBRrEq3DM1vknzTJ
-9ou8L7M4+7syL7PMKeE8mCjhV/B2tW90OvK2m1J0Z1P5q2pDIVB6dQGz3y+6CDlg
-/9OLCYuDK7YwhE1uTbpkx0q8D0otd0kuUJRpbYun4mTcd8HhlloYEch7U2fSk+cP
-dw/45fsCzNOFyRmSspFhmkfgtfLvzA==
-=Fi9v
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqtUAAKCRB4tDGHoIJi
+0vmkAQD5kOHYrVx+KIekpSxC6wDdy4CTTShoRXIxaJTyVg3LlgEAgEE+BlD+GC+E
+4vYNjIRwh7JEqE2PkE/RatR6rmROVwM=
+=jsis
 -----END PGP SIGNATURE-----
 
---usUdwGt1tk5eoW0S--
+--VxVqhbLE3N8gZUMS--
 
