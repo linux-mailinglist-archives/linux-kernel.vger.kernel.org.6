@@ -1,237 +1,227 @@
-Return-Path: <linux-kernel+bounces-344687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E4298ACCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4C298ACEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401F41F225F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB751C21353
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D095199396;
-	Mon, 30 Sep 2024 19:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223D419A2A3;
+	Mon, 30 Sep 2024 19:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j27rHrwc"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AK0TAJUJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922BD1991B2
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B8B192D91;
+	Mon, 30 Sep 2024 19:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724363; cv=none; b=gYRtwQV1OHPcXlSec0nGyklBtxmxvW2IKnFDWsbR371+oLLkg11MuqwkHLk0wyOkmuuUncisDlsq1ax9l3ImYGOnN8y/LEr9U99dfOwJokTYkTcj5rpf7ONu7O3hRn5zwFBe01Cj7b5c3OTci+ZOqZFvRNW7MjR3kSLeybXVeVI=
+	t=1727724434; cv=none; b=K90MnHf0vFOgboOC4rMeoVkddNpWxid13MKEIdP2AsIUzoP6SNS/h1qIhZO8BeZaY4+CvL5u1ZKZ7yxb3ER00ijfbTDcBGXNEfM7UwzPq12Uk19Vp98/acxSr8oIwDRVJ24sTgMaw2sHbhS+XWu09IRnUBckFC9g5I9qgKthtIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724363; c=relaxed/simple;
-	bh=upXczX9xyZlgGn4PPLtbLvXxPzMauKCBcBofWs39sYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L5TwhTom/VqkIrEMjLaiiFcucByDePUQhrp1Wu4iPoj9Fh6CFyCDLZqO66GyfilaJUBv+IbLq4HJhyPSoSe/cON62quwOLGy1hHsA+HB4AemeEKEdEmF58yEnjMqefnE2l0jxuToj62QWAzLLcO+TIeGwcl29XMpu+d8y3Hbx+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j27rHrwc; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e0719668e8so2135806b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727724361; x=1728329161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nwBcs3gI4LkvtP1tfi1gw48Tjhc70X0W4lawVSHPYHQ=;
-        b=j27rHrwcH6sazDh70H48ubq8Fb34BeBLU2oXca+CzvLDtw9dPQNv7BJcIBk5dWPyJO
-         JEWOA8aRQo0iX3ZcFtDX/Ry5p2Fss6NfUFrfYrUegC+lRZ5juzzLnnIY936xv03U6DBE
-         NCg8BuE4KA33s8u2Xfixbpa91KZGgaAAEEm0YRZOMr1NKkXmad5KdBKKCYfRIQSqCHAY
-         4/8U20pQSX4ajCYmYaKOem2JtEg64Iw8TOOyqOCUrp478TW3mGrfB6MvXVmZxzJOmlNC
-         niemNKiuVFaRe5uP9SB2OZr6bjgtaP+6q1UEkXOnTwq4KcdPZtxQVnTQOp+tAUTMQL57
-         UCmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727724361; x=1728329161;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwBcs3gI4LkvtP1tfi1gw48Tjhc70X0W4lawVSHPYHQ=;
-        b=pX/91dzeAaPS86m3moyXmuOVmxtzAQPO611JKwKcvlguMwJ/Msfd5mo5biaBsmjZF/
-         GOkCJ1vUcoswdBqVd6cXNJD17I1+ns0dj/9JVOsmyGQKqXLqP26RyCebWArXHHrjvPVb
-         au06FcInwc2CmQzMTj7V4mZ5rNqNnglM5I/IYWQv+jV2A2ty4ZLbLkJKSg1Lt7dxgoxq
-         y5BKtNrO2mH05YyCWlbFuajbWK1cxk/o3X2lkKnAR1R6PN6Kk8SqNmaBOmY60ncauRFc
-         5pX7a0gwo+qBGdK2OAo+KPyIVYhEflGBywh6c9P2HeMS5vUC3gIMINwaiviy7dISYghx
-         EsJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWd7xWXn2S3K/wVYR4vofj4psh8qbJzBdESnl4UYcNzakxOjH2Ku6ZP/MkZ7KU7xwmOUh+cLJs5TF6+Dbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEc7rvbZiUrraH3GVc8nvo40SZi0NjJPXbYByerhDCAeJ2G4cs
-	k/lAbccTliUla3i4AS3+Q2eNDfCQUSzp5NWCmdNxwsBrhp/dfjfvHgCw5jIDmQE=
-X-Google-Smtp-Source: AGHT+IFUg9O4QQqYDWBYxWMhU88gXfp4i3F/4V8s8sFNruPO7jyvNsgoybkJIaGG2NjPdM9jhqqsLw==
-X-Received: by 2002:a05:6808:1b8c:b0:3e0:80ed:3f9b with SMTP id 5614622812f47-3e393984970mr8248308b6e.27.1727724360674;
-        Mon, 30 Sep 2024 12:26:00 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e39357a90dsm2650904b6e.10.2024.09.30.12.25.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Sep 2024 12:25:59 -0700 (PDT)
-Message-ID: <c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
-Date: Mon, 30 Sep 2024 14:25:55 -0500
+	s=arc-20240116; t=1727724434; c=relaxed/simple;
+	bh=/5wXr1oh9gufFfSYG1R2hwOhkyVnx3BomvZ9/lVLzIo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eSfTvdvdGTfuhrVzTn/gQ6oiHfyX3h8XB+Alf+E9sponCIOa/3Zu+WvDjs8v548zqj9aHJNdL/AKjQSZcuBHu837M+C/sn+aSEvprC1kLaHW8fxnq5axCYTHos5e4bxQ3y0ZyG5GfBqq1hbFmGLtdQI353B7ZJ8ZVKEgGWHytKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AK0TAJUJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB838C4CED4;
+	Mon, 30 Sep 2024 19:27:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727724433;
+	bh=/5wXr1oh9gufFfSYG1R2hwOhkyVnx3BomvZ9/lVLzIo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=AK0TAJUJM3Xv49IK6XGCyH92xhnwOY2zorCgMuKqi+LttdoItINQPDXlkzdwHxTTF
+	 CLLSCLIMEFRGMUXv9UYBGiBlmrL8MbgXPcxfP5IDpuguKrlrFxv1SKZ1fzRn5zOEY5
+	 6UlP24HTWIqyztmoECd5Z9pVkRSUdK/gSGRoPtvtJeHiyOkMQtsXkugqw001yq2Hmo
+	 1rtFHzZfZta+4ulA1KQzQCfkRIylvZQdE2xUJb1YDXeCpGvZO0Uo6E0HeHQhS2Ilg2
+	 IYLG8kBdyBQuhxHl8oP28QoJIK5BNZqQD+D8GxQ/64pdwvtLjigDbEsUJ+bSr2L1/B
+	 uYtSEDnDhz2pQ==
+Message-ID: <753938ef8e46e9f3d9ea7d977537cd8f5a6533b2.camel@kernel.org>
+Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
+ handling into timekeeper
+From: Jeff Layton <jlayton@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, John Stultz <jstultz@google.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
+ <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
+ Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
+ <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
+ <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,  Hugh Dickins
+ <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
+ <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-ext4@vger.kernel.org,  linux-btrfs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Date: Mon, 30 Sep 2024 15:27:09 -0400
+In-Reply-To: <87bk050xb9.ffs@tglx>
+References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
+	 <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87bk050xb9.ffs@tglx>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] iio: backend: extend features
-To: Jonathan Cameron <jic23@kernel.org>,
- Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
- <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
- <20240929120535.6b41c37e@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20240929120535.6b41c37e@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 9/29/24 6:05 AM, Jonathan Cameron wrote:
-> On Thu, 19 Sep 2024 11:20:01 +0200
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
->> From: Angelo Dureghello <adureghello@baylibre.com>
->>
->> Extend backend features with new calls needed later on this
->> patchset from axi version of ad3552r.
->>
->> The follwoing calls are added:
->>
->> iio_backend_ext_sync_enable
->> 	enable synchronize channels on external trigger
->> iio_backend_ext_sync_disable
->> 	disable synchronize channels on external trigger
->> iio_backend_ddr_enable
->> 	enable ddr bus transfer
->> iio_backend_ddr_disable
->> 	disable ddr bus transfer
->> iio_backend_set_bus_mode
->> 	select the type of bus, so that specific read / write
->> 	operations are performed accordingly
->> iio_backend_buffer_enable
->> 	enable buffer
->> iio_backend_buffer_disable
->> 	disable buffer
->> iio_backend_data_transfer_addr
->> 	define the target register address where the DAC sample
->> 	will be written.
->>
->> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> Hi Angelo,
-> A few trivial comments inline.
-> 
->> ---
->>  drivers/iio/industrialio-backend.c | 111 +++++++++++++++++++++++++++++++++++++
->>  include/linux/iio/backend.h        |  23 ++++++++
->>  2 files changed, 134 insertions(+)
->>
->> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
->> index 20b3b5212da7..f4802c422dbf 100644
->> --- a/drivers/iio/industrialio-backend.c
->> +++ b/drivers/iio/industrialio-backend.c
->> @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
-> ...
-> 
->> +/**
->> + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate) mode
->> + * @back: Backend device
->> + *
->> + * Disabling DDR data is generated byt the IP at rising or falling front
-> 
-> Spell check your comments.
-> 
->> + * of the interface clock signal (SDR, Single Data Rate).
->> + *
->> + * RETURNS:
->> + * 0 on success, negative error number on failure.
->> + */
->> +int iio_backend_ddr_disable(struct iio_backend *back)
->> +{
->> +	return iio_backend_op_call(back, ddr_disable);
->> +}
->> +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-> 				 struct fwnode_handle *fwnode)
->>  {
->> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
->> index 37d56914d485..41619b803cd6 100644
->> --- a/include/linux/iio/backend.h
->> +++ b/include/linux/iio/backend.h
->> @@ -14,12 +14,14 @@ struct iio_dev;
->>  enum iio_backend_data_type {
->>  	IIO_BACKEND_TWOS_COMPLEMENT,
->>  	IIO_BACKEND_OFFSET_BINARY,
->> +	IIO_BACKEND_DATA_UNSIGNED,
->>  	IIO_BACKEND_DATA_TYPE_MAX
->>  };
->>  
->>  enum iio_backend_data_source {
->>  	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
->>  	IIO_BACKEND_EXTERNAL,
->> +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
->>  	IIO_BACKEND_DATA_SOURCE_MAX
->>  };
->>  
->> @@ -89,6 +91,13 @@ enum iio_backend_sample_trigger {
->>   * @read_raw: Read a channel attribute from a backend device
->>   * @debugfs_print_chan_status: Print channel status into a buffer.
->>   * @debugfs_reg_access: Read or write register value of backend.
->> + * @ext_sync_enable: Enable external synchronization.
->> + * @ext_sync_disable: Disable external synchronization.
->> + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
->> + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
->> + * @buffer_enable: Enable data buffer.
->> + * @buffer_disable: Disable data buffer.
-> 
-> This needs more specific text. What buffer?  I think this came
-> up earlier but it needs to say something about the fact it's enabling
-> or disabling the actual capture of data into the DMA buffers that
-> userspace will read.
-> 
->> + * @data_transfer_addr: Set data address.
->>   **/
->>  struct iio_backend_ops {
->>  	int (*enable)(struct iio_backend *back);
->> @@ -129,6 +138,13 @@ struct iio_backend_ops {
->>  					 size_t len);
->>  	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
->>  				  unsigned int writeval, unsigned int *readval);
->> +	int (*ext_sync_enable)(struct iio_backend *back);
-> I know we've done it this way for existing items, but I wonder if we should
-> squish down the ops slightly and have new enable/disable pairs as
-> single functions.
-> 	int (*ext_sync_set_state)(struct iio_backend *back, bool enable);
-> etc.  If nothing else reduces how many things need documentation ;)
-> 
-> Nuno, what do you think? Worth squashing these pairs into single
-> callbacks?
+On Mon, 2024-09-30 at 21:13 +0200, Thomas Gleixner wrote:
+> On Sat, Sep 14 2024 at 13:07, Jeff Layton wrote:
+>=20
+> > For multigrain timestamps, we must keep track of the latest timestamp
+> > that has ever been handed out, and never hand out a coarse time below
+> > that value.
+>=20
+> How is that correct when the clock is off by an hour and then set back
+> to the correct value? Then you'd get the same stale timestamp for an
+> hour unless something invokes ktime_get_real_ts64_mg() which will set
+> the "latest" timestamp back to a time before the previous one.
+>
+> > Add a static singleton atomic64_t into timekeeper.c that we can use to
+> > keep track of the latest fine-grained time ever handed out. This is
+> > tracked as a monotonic ktime_t value to ensure that it isn't affected b=
+y
+> > clock jumps.
+>=20
+> That's just wishful thinking.
+>=20
+> ktime_get_real_ts64_mg(ts)
+>    ts =3D Tmono_1 + offset_1;   // TReal_1
+>    floor =3D Tmono_1;
+>=20
+>                                 // newtime < TReal_1                     =
+          =20
+>                                 clock_settime(REALTIME, newtime);
+>                                    xtime =3D newtime; // TReal_2
+>                                    offset_2 =3D offset_1 + Treal_2 - TRea=
+l(now);
+>                                    --> offset_2 < offset_1
+>=20
+> ktime_get_coarse_real_ts64_mg(ts)
+>     ts =3D tk_xtime();       // TReal_2
+>     offs =3D offset_2;
+>=20
+>     if (Tmono_1 + offset_2 > ts)
+>        ts =3D Tmono_1 + offset_2; // Not taken
+>=20
+> So this returns T_Real_2 because
+>=20
+>     offset_2 < offset_1
+>=20
+> and therefore
+>=20
+>     Tmono_1 + offset_2 < TReal_2
+>=20
+> so the returned time will jump backwards vs. TReal_1 as it should
+> because that's the actual time, no?
+>=20
+> So if that's the intended behaviour then the changelog is misleading at
+> best.
+>=20
+> If the intention is to never return a value < TReal_1 then this does not
+> work. You can make it work by using the Realtime timestamp as floor, but
+> that'd be more than questionable vs. clock_settime() making the clock go
+> backwards.
+>=20
 
-I'm not a fan of combining enable and disable functions into one function.
+That is the intended behavior and I'll plan to fix the changelog to
+clarify this point:
 
-The implementation will pretty much always be:
+If someone jumps the realtime clock backward by a large value, then the
+realtime timestamp _can_ appear to go backward. This is a problem today
+even without this patchset.
 
-if (enabled) {
-        /* so stuff */
-} else {
-        /* do other stuff */
-}
+If two files get stamped and a realtime clock jump backward happens in
+between them, all bets are off as to which one will appear to have been
+modified first. I don't think that is something we can reasonably
+prevent, since we must stamp files according to the realtime clock.
 
-Which just adds indent and makes code harder to read.
-
-> 
->> +	int (*ext_sync_disable)(struct iio_backend *back);
->> +	int (*ddr_enable)(struct iio_backend *back);
->> +	int (*ddr_disable)(struct iio_backend *back);
->> +	int (*buffer_enable)(struct iio_backend *back);
->> +	int (*buffer_disable)(struct iio_backend *back);
->> +	int (*data_transfer_addr)(struct iio_backend *back, u32 address);
->>  };
-
+The main thing I'm trying to prevent is the timestamps being misordered
+in the absence of such a clock jump. Without tracking the floor as I am
+here, that's a possibility.
+--=20
+Jeff Layton <jlayton@kernel.org>
 
