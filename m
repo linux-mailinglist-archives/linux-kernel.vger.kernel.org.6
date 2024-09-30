@@ -1,149 +1,98 @@
-Return-Path: <linux-kernel+bounces-344705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF67D98AD0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:39:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD0398AD0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3111F21AFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:39:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01DB3B237CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C745199E8E;
-	Mon, 30 Sep 2024 19:39:27 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E6F199E8B;
+	Mon, 30 Sep 2024 19:40:13 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446EB14F9D9;
-	Mon, 30 Sep 2024 19:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB5C15E97;
+	Mon, 30 Sep 2024 19:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727725166; cv=none; b=QUlv9DFdY6kBawHreSBknwyDXtby5mFoIatlebmcQlwWb4MKGRRzuP5Y+kzsax/7idyTkSOPCGaDgwC8S1rVidmgZO253FzgI/EMAVhwyda+AN4iMD1R6DFP10XWtLK752erhOTKvmEbPfXvNPEo4jjRwQ8UUUygW1PZFisFJME=
+	t=1727725212; cv=none; b=EsaHO8zl3f9bMPb2CNdKdeDvNFxqenrHDqQlqyyYjhSQ4Py8N2SuGYwZRy5LaMI9kxgOEecwVpf+HfSxCvaAQT5TrtZBSUTPzEF62+3oK0DocioiWV7wCEfdQ7fHedf6GqaN+ZAFWq1VJKD9qqG/D5pY7dIEbu5muoQQ8hqUvyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727725166; c=relaxed/simple;
-	bh=27szOiLQT71Gl3SyJZ5fwkkmSWNtmky6vqDpgZEOPeE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=njyz4hG7UyglVSQpaVWC3cMprMdYXaYP/2AbdytgrN1PyfE8aFkZ9F8HOBKPfLx0HH8i6BvBu5YabeZjEdfJXriGCzgELg+0YnyrdyOwrS7lF8yxp0T9EkEHljmxvuyiD94dXeznnyrXpaRbpFUkqQV1KoWmDDKa5mHmBrXiWss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.100] (213.87.154.82) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 30 Sep
- 2024 22:39:12 +0300
-Message-ID: <8fb6f818-e818-4ba2-b1a9-e4468d4496aa@omp.ru>
-Date: Mon, 30 Sep 2024 22:39:11 +0300
+	s=arc-20240116; t=1727725212; c=relaxed/simple;
+	bh=e39O9i8KNuQKU6yo245+NtHRI5zD3SznBknI0fyUa7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuL8PJzGvfsJQxlfA5PXXJPE0bcEIRPe25WquvfAMIplLEdrB/eXp+avRvFJSrI4hlzGypV7r2WqowmfD8ROyf1/CzJNJauOvJ+MvfAx6dzdYD10z/KSnYBJdhq79g0/+RZ6+urEKVL5/J70wm1EjQw80fqKxA2TJiVxXUZ4Kgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1svMFR-0000000050w-0VwY;
+	Mon, 30 Sep 2024 19:39:57 +0000
+Date: Mon, 30 Sep 2024 20:39:48 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Richard Weinberger <richard@nod.at>
+Cc: chengzhihao1 <chengzhihao1@huawei.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>, robh <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, John Crispin <john@phrozen.org>,
+	linux-mtd <linux-mtd@lists.infradead.org>,
+	devicetree <devicetree@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RFC 2/2] mtd: ubi: add support for protecting critical
+ volumes
+Message-ID: <Zvr-hOM2DfveaqeC@makrotopia.org>
+References: <e0936674dd1d6c98322e35831b8f0538a5cfa7a3.1727527457.git.daniel@makrotopia.org>
+ <b43a7155f80995c3986893951c092291caf3a5f4.1727527457.git.daniel@makrotopia.org>
+ <251386789.117942.1727612762462.JavaMail.zimbra@nod.at>
+ <ed98871a-b41a-9755-4eed-18ad9e00869c@huawei.com>
+ <364911897.123906.1727721820227.JavaMail.zimbra@nod.at>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 07/11] net: ravb: Simplify UDP TX checksum
- offload
-To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>
-CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
-	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
-	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
-	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
-	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240930160845.8520-1-paul@pbarker.dev>
- <20240930160845.8520-8-paul@pbarker.dev>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20240930160845.8520-8-paul@pbarker.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 19:25:52
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 188102 [Sep 30 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
- d90443ea3cdf6e421a9ef5a0a400f1251229ba23
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.154.82 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.154.82
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2024 19:29:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 3:37:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <364911897.123906.1727721820227.JavaMail.zimbra@nod.at>
 
-On 9/30/24 19:08, Paul Barker wrote:
-
-> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+On Mon, Sep 30, 2024 at 08:43:40PM +0200, Richard Weinberger wrote:
+> ----- Ursprüngliche Mail -----
+> > Von: "chengzhihao1" <chengzhihao1@huawei.com>
+> >>> Von: "Daniel Golle" <daniel@makrotopia.org>
+> >>> Allow the boot firmware to define volumes which are critical for the
+> >>> system to boot, such as the bootloader itself if stored inside a UBI
+> >>> volume. Protect critical volumes by preventing the user from removing,
+> >>> resizing or writing to them, and also prevent the UBI device from
+> >>> being detached if a critical volume is present.
+> >> 
+> >> I agree with the doubts raised in patch 1/2, if userspace is so hostile
+> >> to delete system partitions, there is little hope.
+> >> But I'm still open for discussion.
+> > 
+> > Yes, I agree that it is meaningful to prevent user from operating
+> > volumes accidently. How about doing that by some existing methods? Eg.
+> > selinux(Design sepolicy for ioctl cmd).
 > 
-> The GbEth IP will pass through a null UDP checksum without asserting any
-
-   s/null/zero/, perhaps?
-
-> error flags so we do not need to resort to software checksum calculation
-> in this case.
+> Another thought, do we really need to enforce this in kernel space?
+> Teaching ubi-tools to be super careful with some volumes is also an option.
 > 
-> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> like a ubirmvol ... --i-know-what-im-doing.
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+True, enforcement doesn't need to happen in kernel (though I think it's
+nicer, but really just a matter of taste, I guess). ubi-tools would still
+need to be able to recognize critical volumes somehow, and that could be
+done by checking if the 'volume-is-critical' property is present in
+/sys/class/ubi/ubi*_*/of_node/
 
-[...]
-
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index 9350ca10ab22..ae0268f2eb04 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2075,20 +2075,12 @@ static bool ravb_can_tx_csum_gbeth(struct sk_buff *skb)
->  
->  	switch (ip->protocol) {
->  	case IPPROTO_TCP:
-> -		break;
->  	case IPPROTO_UDP:
-> -		/* If the checksum value in the UDP header field is 0, TOE does
-> -		 * not calculate checksum for UDP part of this frame as it is
-> -		 * optional function as per standards.
-> -		 */
-> -		if (udp_hdr(skb)->check == 0)
-> -			return false;
-> -		break;
-> +		return true;
-> +
-
-   No need for an empty line here, it's not used elsewhere in the *switch*
-statements...
-
->  	default:
->  		return false;
->  	}
-
-[...]
-
-MBR, Sergey
-
+If you prefer going down that road instead I will work on patches for
+git.infradead.org/mtd-utils.git instead.
 
