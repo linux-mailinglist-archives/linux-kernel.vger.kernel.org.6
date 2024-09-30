@@ -1,104 +1,175 @@
-Return-Path: <linux-kernel+bounces-344462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DA698AA00
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:40:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD6498A9FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3103C1C22BE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:40:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 442011F230D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6771D194C86;
-	Mon, 30 Sep 2024 16:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBaQ7OLf"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7302319342A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8DF193416;
 	Mon, 30 Sep 2024 16:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F30tD1Xw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FD218F2D4;
+	Mon, 30 Sep 2024 16:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714422; cv=none; b=b19K9B3Qny3bAbKqvA2l9fv/NCH08nemOpvrsI4j2+jQ7g+X+ITf7gNrGWD9z3bux+i00GUdW/eIP4CnrQqv6mUYmIylqxEfwDCeqOKo2atkc+G8jFVReZMRZZHLXnhMX4MukNFK3DPFd4pWcQjwAC+GhE36fFEBhmMmFXZZuOQ=
+	t=1727714420; cv=none; b=ktdWYjuot+alKMVDAsN5HagHogEZ91hDPD8PGW/WYk3VClmGwbv0HvjAq3fVdV4Y0+NFyPEViaaPRe5ot7DDDh194N+Yg4JJep7p+IIid/ojdeaLFiz1v1EDWDlWvzCgbBPoSxXz4vRpVXD7q5EdcHbkXIxzAz8Eubo/TyuKUKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714422; c=relaxed/simple;
-	bh=UrGwORns5gnnZyGdSAE8132QzXkk3dNjhnwiGggVhaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lIUcQxscvGfo1lX0ye98FLh6rAHdCP2xoiiZQfzM5kPgNJbWUtSzoDisO2+B7yrC3tp62BWoMc2+kM7v9U2ucw4MrUk+VPWkPYEATSK/XPHWwLt/g/Fj2BoOEDC3ACzmvvc8oouf3OcqMZd47ZhEf/N9ggcPvssp6e9KSJUlaYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBaQ7OLf; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-45812fdcd0aso49606091cf.0;
-        Mon, 30 Sep 2024 09:40:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727714420; x=1728319220; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0zvel2rpoubHEtpZkC+XLFVe/88duPLHw+2mKVnKTJ4=;
-        b=IBaQ7OLfwO0zuagKdkWneXo8yZP0JoE/+zLTiq+c2xJv+/z5AeEEQ3jS7i7PM3XFEa
-         vFbjuT129zogrZL3GTk+5wZiAOXzP02TM3Tcsqdc5eKJlktFqQvp/HmPzykbdTNETz4f
-         jN1kLoy4wLIvzbTZ4EZKCBkNeOiSN4iAobFvnb8ds9jbqPzyasT20ITYcHXjwFeUR0Y4
-         9VTH7sJy2ODEdWbrRKXa8fJRcNnKuvyCUA/si8t9Antw4H4YVGqTQJgtWjnsvkZn02OF
-         HWytkqnwLlpJACcKpNjJrTzja6xLrnJfi6qDLhkbBytdCbq8KEFo9s6HxtQYmMP99OLj
-         xEsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727714420; x=1728319220;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0zvel2rpoubHEtpZkC+XLFVe/88duPLHw+2mKVnKTJ4=;
-        b=q+V/g8d6QIg4CV2tnUf4svlDsCmO9dUC/nQNLSgOMbHJyqstCDR1lZSre6rTKlZVia
-         /9DKAZg8tu1p+gAx6lSZIeIq2UDPQHV2Sfn1cYO81HROdL6BfXqyoe4N+wnlID3H49Mi
-         fQHid8uogtEV+vWPlYfErM7GaQYXBSGAkXJrbmPQaokmrkPBFNaKDdte46GJxoYON8ot
-         83Cx5GVIBv2VylqQHZDV69+VhDzTplJ+hdMdhj6HTI3RCpJCB3rHoBCyKGGNkDt3JKfX
-         Xl3Fl4tKGKxIHaBxNmIP6dO/zqHJ1kXyHopMqejFztTzCi+c0j1fdnTcOaN0ZlR8YT6v
-         WEJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVR6kv7aYG07RB+CkadeAKtKYOscseLl8PQQSgJJ4P9HV0mdkJRZOyfYCZlovVCDTZp3uvIx67wd9PSkuA=@vger.kernel.org, AJvYcCW/HZ4Yqq/8eJJw2glvxogXxoYn8ogpNZqM361tDQUqzmg0y9VTZ2UuV4rlSrFP/eFFWXWOUSDFa+Wk/pT6Zjo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVtue5dqBed8icn+6gZ4rfj5o5KSE4CXmv/5rX13QMVFoM9FAz
-	AA5nmQE2THYeGHqrytqgG53slNmqDMHr8Cu2xBHT36ql8VUzKvBnbvHqeXe8knKsP5GTizV/PHY
-	CYBCX34RKtz6NmbjRgVC1ysxKLhM=
-X-Google-Smtp-Source: AGHT+IGQMbM++h3zu8cTyJPCZMsG3ZLxFf5wA0K+gkQjoDy9G3EMSlf2EtoNnBC+E0VJJ6gB/kMWAEIylXV+dt0EHts=
-X-Received: by 2002:a05:622a:1908:b0:458:29ea:b3ba with SMTP id
- d75a77b69052e-45d73a862c0mr3393351cf.15.1727714420269; Mon, 30 Sep 2024
- 09:40:20 -0700 (PDT)
+	s=arc-20240116; t=1727714420; c=relaxed/simple;
+	bh=5PwBaEank1tzixFn/XIcqswYPlebnWChFxZ6KhinVnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LyIKLHdMDECi7VnL4sB05Lb7uEoib1NNE+OXle6a1rJp/uI6exM5Rv7DylbCxcKvf0fLP2QOb1tynmU2GAbA0NvGYs159Y9U+RFKu/UYBBw+xdSu9iv2l8sA2Zke/G3BzJWm06G1HeFi0FPqoorMMFQZY7ULwWjH6PPU8gHiv8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F30tD1Xw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4E10C4CEC7;
+	Mon, 30 Sep 2024 16:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727714420;
+	bh=5PwBaEank1tzixFn/XIcqswYPlebnWChFxZ6KhinVnk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F30tD1XwY4JQ2BUlBwbHHueL2mm7vjokzsvhTckIpEbgoYaUGaIwD7ruQoUdx4adz
+	 L1sFf7t+a9eqG3n89NwiT59cQurTRxBYrXxTfzDYX02R9mgNMWuEwX0cm8oHE7A7CF
+	 Qhb3P6hMc5+dBSk9/uJcDDGpjNNDZzrnp6tHXMv//dmwxMOUUa0sWb4QaOCwwgK9i0
+	 Y5Mu9jwlePV5eiLWFzZvI0MKRWMPrf+I6xfpnv/lDPo82LOb1fTDc0d8Rh/kg74IiF
+	 HMUKka7blvxp5LtkHawWYunZYRCHvqHmClsXQGiqPD7kDa3vUCnSj9lidpU1teX0pQ
+	 ZD+f/7DjbEfCg==
+Date: Mon, 30 Sep 2024 17:40:15 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	"broonie@kernel.org" <broonie@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>
+Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks & clock-names
+ properties
+Message-ID: <20240930-unbalance-wake-e1a6f07ea79d@spud>
+References: <20240923123242.2101562-1-amit.kumar-mahapatra@amd.com>
+ <20240924-impaired-starving-eef91b339f67@spud>
+ <IA0PR12MB76998D7BC3429606508E6202DC692@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <20240925-trapdoor-stunt-33516665fdc5@spud>
+ <IA0PR12MB76999B696A9BA0834644AC71DC6B2@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <03a1c7e7-c516-41ab-a668-7c6785ab1c4f@kernel.org>
+ <20240928-postcard-lively-c0c9bbe74d04@spud>
+ <IA0PR12MB7699EDFA3753D25C8126D901DC762@IA0PR12MB7699.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com> <2024093044-violator-voice-8d97@gregkh>
- <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com> <2024093007-safari-lego-45ab@gregkh>
-In-Reply-To: <2024093007-safari-lego-45ab@gregkh>
-From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
-Date: Mon, 30 Sep 2024 13:39:44 -0300
-Message-ID: <CAM_RzfakS8=Qr=vThJcW-eX8izBs5Xdjo+p8=Ji7Nf=_ozv0Aw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org, 
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tqjyBib7Ey0JSbiX"
+Content-Disposition: inline
+In-Reply-To: <IA0PR12MB7699EDFA3753D25C8126D901DC762@IA0PR12MB7699.namprd12.prod.outlook.com>
 
-Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> Was it in the 0/1 email?  I didn't see it there either.
->
-> And for patches where there is only one commit, you almost never need a
-> 0/1 email, just put the needed information in the single patch you send
-> out.
->
-> thanks,
->
-> greg k-h
 
-The 0/1 email is for explanation the motivations, attach a link for
-discussion or issue and too for explain how to test this.
+--tqjyBib7Ey0JSbiX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But if you think that is not necessary, I can send a v4 without 0/1
+On Mon, Sep 30, 2024 at 03:44:47PM +0000, Mahapatra, Amit Kumar wrote:
+> Hello Conor,
+>=20
+> > > >>>> Subject: Re: [PATCH] dt-bindings: spi: xilinx: Add clocks &
+> > > >>>> clock-names properties
+> > > >>>>
+> > > >>>> On Mon, Sep 23, 2024 at 06:02:42PM +0530, Amit Kumar Mahapatra w=
+rote:
+> > > >>>>> Include the 'clocks' and 'clock-names' properties in the AXI
+> > > >>>>> Quad-SPI bindings. When the AXI4-Lite interface is enabled, the
+> > > >>>>> core operates in legacy mode, maintaining backward compatibility
+> > > >>>>> with version 1.00, and uses 's_axi_aclk' and 'ext_spi_clk'. For
+> > > >>>>> the AXI interface, it uses 's_axi4_aclk' and 'ext_spi_clk'.
+> >=20
+> > > >>>>> +      properties:
+> > > >>>>> +        clock-names:
+> > > >>>>> +          items:
+> > > >>>>> +            - const: s_axi_aclk
+> > > >>>>> +            - const: ext_spi_clk
+> > > >>>>
+> > > >>>> These are all clocks, there should be no need to have "clk" in t=
+he names.
+> > > >>>
+> > > >>> These are the names exported by the IP and used by the DTG.
+> > > >>
+> > > >> So? This is a binding, not a verilog file.
+> > > >
+> > > > Axi Quad SPI is an FPGA-based IP, and the clock names are derived
+> > > > from the IP signal names as specified in the IP documentation [1].
+> > > > We chose these names to ensure alignment with the I/O signal names
+> > > > listed in Table 2-2 on page 19 of [1].
+> > > >
+> > > > [1]
+> > > > chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/https://www.amd.
+> > > > com/content/dam/xilinx/support/documents/ip_documentation/axi_quad_s
+> > > > pi/v3_2/pg153-axi-quad-spi.pdf
+> > >
+> > > So if hardware engineers call them "pink_pony_clk_aclk_really_clk" we
+> > > should follow...
+> > >
+> > >  - bus or axi
+> > >  - ext_spi or spi
+> > >
+> > > You have descriptions of each item to reference real signals. Conor's
+> > > comment is valid - do no make it verilog file.
+> > >
+> > > >
+> > > >>
+> > > >>>>> +
+> > > >>>>> +    else:
+> > > >>>>> +      properties:
+> > > >>>>> +        clock-names:
+> > > >>>>> +          items:
+> > > >>>>> +            - const: s_axi4_aclk
+> > > >>>>> +            - const: ext_spi_clk
+> > >
+> > > Nah, these are the same.
+> >=20
+> > They may be different, depending on whether or not the driver has to ha=
+ndle "axi4-
+> > lite" versus "axi" differently. That said, I find the commit message ki=
+nda odd in that it
+> > states that axi4-lite goes with the s_axi_aclk clock and axi goes with =
+s_axi4_aclk.
+>=20
+> Apologies for the typo. When the AXI4 interface is enabled, it uses s_axi=
+4_aclk, and=20
+> when the AXI4-Lite interface is enabled, it uses s_axi_aclk.
+>=20
+> In my next series I will update my commit message & change the clock-name=
+s=20
+> 's_axi4_aclk', 's_axi_aclk' & 'ext_spi_clk' to 'axi4', 'axi' & 'ref' resp=
+ectively
+
+There's no driver here, so it is hard to know (why isn't there?) - are you
+using the axi v axi4 to do some sort of differentiation in the driver?
+
+--tqjyBib7Ey0JSbiX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvrUbwAKCRB4tDGHoIJi
+0j/hAQCwvuqSKF8S9+PLpZoLbGbTmHGaUHXP4tl+HnV4U2PNIQEA+Fgo9g347OhL
+YYaxJ68oDkcMvD6mw6ZvyG1oVY+OUAA=
+=IkR5
+-----END PGP SIGNATURE-----
+
+--tqjyBib7Ey0JSbiX--
 
