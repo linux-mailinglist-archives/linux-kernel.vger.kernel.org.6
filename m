@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-343942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E598A1A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:11:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3DC698A1A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC211C214FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:11:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 227AB1C217CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55DF319A292;
-	Mon, 30 Sep 2024 12:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A1FB18EFC3;
+	Mon, 30 Sep 2024 12:04:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jHeah8oO"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AfeE7a3X"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3259A199FBB
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B3C19A281
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697894; cv=none; b=Kw6eFIzN4/BnHQO2U/IGJpSX/7Uqrhi25yLNnCGdySyaHpjoeM+hUaUMpx86uC9UhcitZa6bkhZ55/k+Eqh5vYSEMn2pvzYmEFFPC5bpEHpBSXj8WaILid9/B02t05Tv4FCPxaRguHlTe5aVShtFbSQEh17ep6wIgRGBfpBtKVQ=
+	t=1727697896; cv=none; b=fQqnaIHC866VaDfYYE1/2EOYC+8/xC6Xoa4JVHZuZpNzVYwgJTHTN0RjP57XWRbtT3sztSxeWT7vUCO+KkmnPWgiHmlN3v32cflBi+h21/iX36QU9+jmEv+hu2CQ/v0p2sO86GR18Ru//CEPfEpMmRs6aNotv50OWP3iIhg7zxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697894; c=relaxed/simple;
-	bh=gioH4bb8ZF2A2YJ3Gh5wVo7at/LilX8METihZcFwy7M=;
+	s=arc-20240116; t=1727697896; c=relaxed/simple;
+	bh=Wy7Skzwx1Of9aMKIpNRDdVVt/EfLoQQHwwrlTgvOSQs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PbcgfQAEjdeYH8751kRtT/J0ZNDPE7IokTTRDTpdTJ7shwY+DAQLTmzDjgYSelbKL0mJU7sK584BaLrf6SzHySfJSulBh+YBpqdngu8FIWCGDef9UEvLr4HO8YXJ6v9nmT8e5c2zssTZ1ILwlN2ptBeOL/NZWZziHcKknUx/lgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jHeah8oO; arc=none smtp.client-ip=209.85.219.47
+	 In-Reply-To:To:Cc; b=m21ze9/1JyE1xLdRhTa6605Qvhq0awWml0wH7gYbgnaU1WDjTsnWUonItRP0Rw3feUjMGL38OSW1/aL1atBAdK7mdKcnT3Wkl1wuLctzj1tDUZ1GESL1pno3zSJEJdSJVgdKEU3lbf/YjXYs3/vjEpZ2zz1M8RezrolAharNofI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AfeE7a3X; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cb2c5128d5so31324166d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:53 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cb2aac40faso38500626d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697892; x=1728302692; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1727697894; x=1728302694; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=fkGnsANo5NZRR329f/RKKIwKl1Ms+i/uz0ChSSNIXaI=;
-        b=jHeah8oO68kIPGWg7xm/cF1UGNNVFsKwXRjbczpMJTNy8LwDco56IQaLyiYBbYokda
-         v+FrMADNKDKvDfg3IM8SO94cteDSwU85YcWR2EJKNAWz7MQzP7DnmLiZJvmGdLUlEbf0
-         TIUPDYVv+CFvvXGz3zTB3sdMDsk7OxUj9w7FA=
+        bh=kc6yac9SyLlHs7WRhmQW1+HPAOFx8yEw2UfT0f5Qnn8=;
+        b=AfeE7a3XyFPb8Bz1cI5NNHGjjE6S8KKmgQUyp7nzBvDtpTjH0lydDc05M28du/KS4Y
+         EQvcedSccCsZ9hpKreCXtOiKxRaeQAeqv5vbB8TszPITXUNuUMxWDBdULcp+SuZTvOZW
+         4UIFCkb3esnlFkMwPtFzbTn80Lx3iQX3c+SMU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697892; x=1728302692;
+        d=1e100.net; s=20230601; t=1727697894; x=1728302694;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fkGnsANo5NZRR329f/RKKIwKl1Ms+i/uz0ChSSNIXaI=;
-        b=IRImTKKho5djJ2O17F/oMFnKap2bES34/T59qONy5QswncDOIjKv5Tq51eq7Wum8m7
-         P8n/wV96ULHcIZjkMOP+UvUXqN6zsC5vRRraYNAgdw4Upc5ppdCEzZ/nX6Jf9QknLkIn
-         g4v95f57ublTajgL+rB1jPk1LlPYxveYEKf4TKi9XUs5LLal2fANlHLX9AjFm4m2M2sQ
-         b2ty99c6jSmx//o59jWwIiQNLCfe2fl5SryJ/schUk+XswNhjq83/Kaun3iKmEl2QuLF
-         6g639tDKzkW1FOFhkrHeBgpg57X3Rt7ZvA9z+Uz33wX2Cm9hpEzhSJ3r0h2MXCUQFSLk
-         mdww==
-X-Forwarded-Encrypted: i=1; AJvYcCXNgQqzEcRilAXh5q6HcPg0j2s7YUVoXxsdMYeoiJu5n2QqzaaoVm2b8z2gkq3YHOR5yCrvt97czot1Ya0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzenKEuaLVHbot0WtmLJlJnSKtVlrjl+FFK8ykeL/m+x9/2bIZz
-	Ck70hoXuHUWvCCIXJx7rNv4Fo0QBd4oftX9US+QFpbnzEOovpgocxICOOkFarA==
-X-Google-Smtp-Source: AGHT+IHSrAGEQVH1G1zMvd/O9AA5MhvLH1UshVFh4gerMrNNX+7ODpeAcur/C3J29WO/FfgVZP2azA==
-X-Received: by 2002:a05:6214:33c5:b0:6cb:4def:4ce4 with SMTP id 6a1803df08f44-6cb4def4dd3mr121217066d6.32.1727697892043;
-        Mon, 30 Sep 2024 05:04:52 -0700 (PDT)
+        bh=kc6yac9SyLlHs7WRhmQW1+HPAOFx8yEw2UfT0f5Qnn8=;
+        b=KFlK51q+SO3TEJ+HD6F1i3SFYcSEcDfgL4JlUafrvdLuDWltORvtJN6cAvdjgLgUw0
+         w/oSob0wQ6nrxGONpEczX7iPQ6/EvmrMzZ2pTMt0dA5M/XHjlRaGUn+c3kp6fBEIykQ/
+         xbO1jA+WOyQcGlKtDO3SN4Adx/iSVdxA67OGIc2PHdh35jNNlomCKBr/KjLodYBZDpmL
+         nLnrqDwJQ2cKjo8Q6eScQPvw1NPmhjtA4V9Y0kv8yO6dCMpG7o3v/TulHZnDzHBPg6qZ
+         MBytEowTvGqjUknDQOHujfRzROokz0z5DlY7qaJmVIHO2UYEXp/FGANkUkJ3c8T1MH4+
+         EfyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxQ+9syU+WcQ/HaQHLNJU8WvnZVdeJGOiMKX/gUTiCT7vokcL5oA8KCx5/J4S2BwT99J1qU0RKUFzUOGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmSffFoTRnkFdzKKSDcl2aryQaF3fMyFchOmx0KHzDLZSUDQGf
+	vLBxctl3hXwcihYB3zL32ddy3yyLLHjxR932U6mci8fjg/uU74MnmL48KmRPTQ==
+X-Google-Smtp-Source: AGHT+IHvTtSCRFSBPeJou8A8lJWRExB8EwT4CA/+ss3rMSh3j0C8PX4s4DLpZYrCskrdUJWUEmVJfQ==
+X-Received: by 2002:a05:6214:489:b0:6cb:2de5:d7a1 with SMTP id 6a1803df08f44-6cb2f270becmr284661826d6.8.1727697893842;
+        Mon, 30 Sep 2024 05:04:53 -0700 (PDT)
 Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.49
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:50 -0700 (PDT)
+        Mon, 30 Sep 2024 05:04:52 -0700 (PDT)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:18 +0000
-Subject: [PATCH 23/45] media: ipu6: Use string_choices helpers
+Date: Mon, 30 Sep 2024 12:04:19 +0000
+Subject: [PATCH 24/45] media: cx18: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-23-81e137456ce0@chromium.org>
+Message-Id: <20240930-cocci-opportunity-v1-24-81e137456ce0@chromium.org>
 References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
 To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
@@ -113,27 +113,37 @@ Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
  linux-aspeed@lists.ozlabs.org, Ricardo Ribalda <ribalda@chromium.org>
 X-Mailer: b4 0.13.0
 
-The following cocci warning is fixed:
-drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c:247:51-57: opportunity for str_on_off(enable)
+The following cocci warnings are fixed:
+drivers/media/pci/cx18/cx18-av-core.c:1013:40-46: opportunity for str_enable_disable(enable)
+drivers/media/pci/cx18/cx18-av-core.c:1118:8-24: opportunity for str_yes_no(( mute_ctl & 0x2 ))
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/pci/cx18/cx18-av-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
-index 051898ce53f4..522dbf52c82b 100644
---- a/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c
-@@ -244,7 +244,7 @@ static int ipu6_isys_csi2_set_stream(struct v4l2_subdev *sd,
- 	u32 mask = 0;
- 	u32 i;
+diff --git a/drivers/media/pci/cx18/cx18-av-core.c b/drivers/media/pci/cx18/cx18-av-core.c
+index ee6e71157786..5701abdf9427 100644
+--- a/drivers/media/pci/cx18/cx18-av-core.c
++++ b/drivers/media/pci/cx18/cx18-av-core.c
+@@ -1010,7 +1010,7 @@ static int cx18_av_s_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct cx18 *cx = v4l2_get_subdevdata(sd);
  
--	dev_dbg(dev, "stream %s CSI2-%u with %u lanes\n", enable ? "on" : "off",
-+	dev_dbg(dev, "stream %s CSI2-%u with %u lanes\n", str_on_off(enable),
- 		csi2->port, nlanes);
+-	CX18_DEBUG_INFO_DEV(sd, "%s output\n", enable ? "enable" : "disable");
++	CX18_DEBUG_INFO_DEV(sd, "%s output\n", str_enable_disable(enable));
+ 	if (enable) {
+ 		cx18_av_write(cx, 0x115, 0x8c);
+ 		cx18_av_write(cx, 0x116, 0x07);
+@@ -1115,7 +1115,7 @@ static void log_audio_status(struct cx18 *cx)
+ 	}
+ 	CX18_INFO_DEV(sd, "Detected audio standard:   %s\n", p);
+ 	CX18_INFO_DEV(sd, "Audio muted:               %s\n",
+-		      (mute_ctl & 0x2) ? "yes" : "no");
++		      str_yes_no(mute_ctl & 0x2));
+ 	CX18_INFO_DEV(sd, "Audio microcontroller:     %s\n",
+ 		      (download_ctl & 0x10) ? "running" : "stopped");
  
- 	cfg.port = csi2->port;
 
 -- 
 2.46.1.824.gd892dcdcdd-goog
