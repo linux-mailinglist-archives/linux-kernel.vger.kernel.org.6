@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-343863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E88498A072
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:26:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C089E98A074
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE5B1F24519
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:26:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59565B262A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4818F196C86;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBD61974FA;
 	Mon, 30 Sep 2024 11:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="ieMF5X63"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="oaCkkQEp"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9491A192B85;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94967192D60;
 	Mon, 30 Sep 2024 11:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695313; cv=none; b=N/z5ovi5gL5uwgadtxpmdeEoe90l7dG+R8CqOG1JkZUU7K9KqADXvf+FBVrIcmt3ydo3alIgsluTjH6H7WBGxe1B7qsflGpaRhgX7EuUEFSYuFkXYK14NmxyMWRIEKMPsEs+qY7CUVKUfxVJ86lzgqgs/em9T4F4+n2kfkGrBKk=
+	t=1727695313; cv=none; b=UcXLUZ0xtdOUz55mjv0BszRNtDZZhtLwpXZd9vH1+huQOVDkX7gqlvs63KO1WJoxQFjSo00336PFig0wrpoPOUIZydKHW1PoDmSnWcPDZF1+CX6yACcQVehXyCRe65E1kYSAAyVJltouUAH2lst8RSCUSCg2B00hW0UErEcLuHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727695313; c=relaxed/simple;
-	bh=bZliJJbFo2IN3n4dVutGITp1Mh2I//yTpJhop+j2CoM=;
+	bh=pGqXg4P1o4zVinzAECzGnRRhDpcsu4G2IzB/n5Z103o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Kl8aOhd9yzc9mQnGP+WX3rzsV8Rx9OEDt3bVXjXR8+rLDdRUj5uqYQ91DUO3iIVAaMEXkV1ukhASVmhMcedPn2XbdxBcIKFl4p6QPVPPzpLo478uLN2HGX7y6gsk0pYaYJvEQvTJkdYomJOgmnuOSruxAISoFi+f6E08Cgcu+ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=ieMF5X63; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=NWymZqgtc3GHR5xvqtDIGZcVRHt4VgFxpc7+iwWrfvG1+ehfpdePsXMPXCPiGJRih6C0R9RxviHU/z2MxAHjEth8ySKDFZOQKbZ9h6DIRWEqfVDpgqI9EvxtKYdPj6OxLQqMqXQ9GG4m3uCfrEvYNZ0sV+1GGZ5JFctov24Tlj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=oaCkkQEp; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=DpNHPysHFcdW+st1pCs6FRvPCloR1wCmvNrlpVL8YWk=;
-  b=ieMF5X63x8wsel579EOpHZ4yMnFPF3OvgQ9rchZqSwalbrFvl3BnW2+1
-   o4B5hYIY4bSL4qkSUqtMw2XzU+t5/M3oVFfflkTN8YYSjOLBCssD1eHKW
-   NUpoh8Uq2fATv1f0ueRDKyOIurGLZos8szpsZHX5ABnyztNUSOo9652JJ
-   I=;
+  bh=BfS+oY30RPok/ll7+qBitmbLy1BCCA1+SqXnGd5VNCA=;
+  b=oaCkkQEp6qEJRTI8xwFOEEkn7VKdtUR/6X9m0eiEBI3a76dILDWCRgDR
+   z+GnCbQoaa8kYwaivCvIBGufXqfGsSevZUGq2bm7/QMPx8tN8294lOeNe
+   6RiOpv32I3mnUsp7KYpD5gBLH6RatxeF20MZpBpOZegumeAyv1r/VR99R
+   o=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956890"
+   d="scan'208";a="185956892"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:27 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Joerg Roedel <joro@8bytes.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Cc: kernel-janitors@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 19/35] iommu: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:05 +0200
-Message-Id: <20240930112121.95324-20-Julia.Lawall@inria.fr>
+Subject: [PATCH 20/35] drivers/gpu/drm: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:06 +0200
+Message-Id: <20240930112121.95324-21-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -73,22 +75,41 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/iommu/iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_gem_framebuffer_helper.c |    3 +--
+ drivers/gpu/drm/drm_gpuvm.c                  |    2 +-
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 83c8e617a2c5..ce72edd34f07 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2216,8 +2216,8 @@ EXPORT_SYMBOL_GPL(iommu_attach_group);
- 
- /**
-  * iommu_group_replace_domain - replace the domain that a group is attached to
-- * @new_domain: new IOMMU domain to replace with
-  * @group: IOMMU group that will be attached to the new domain
-+ * @new_domain: new IOMMU domain to replace with
+diff --git a/drivers/gpu/drm/drm_gem_framebuffer_helper.c b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+index 3bdb6ba37ff4..43a2440a0b05 100644
+--- a/drivers/gpu/drm/drm_gem_framebuffer_helper.c
++++ b/drivers/gpu/drm/drm_gem_framebuffer_helper.c
+@@ -581,9 +581,8 @@ static int drm_gem_afbc_min_size(struct drm_device *dev,
+  *			    struct drm_afbc_framebuffer members
   *
-  * This API allows the group to switch domains without being forced to go to
-  * the blocking domain in-between.
+  * @dev: DRM device
+- * @afbc_fb: afbc-specific framebuffer
+  * @mode_cmd: Metadata from the userspace framebuffer creation request
+- * @afbc_fb: afbc framebuffer
++ * @afbc_fb: afbc-specific framebuffer
+  *
+  * This function can be used by drivers which support afbc to complete
+  * the preparation of struct drm_afbc_framebuffer. It must be called after
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index f9eb56f24bef..1e4eb6f44c92 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2301,11 +2301,11 @@ __drm_gpuvm_sm_unmap(struct drm_gpuvm *gpuvm,
+ /**
+  * drm_gpuvm_sm_map() - creates the &drm_gpuva_op split/merge steps
+  * @gpuvm: the &drm_gpuvm representing the GPU VA space
++ * @priv: pointer to a driver private data structure
+  * @req_addr: the start address of the new mapping
+  * @req_range: the range of the new mapping
+  * @req_obj: the &drm_gem_object to map
+  * @req_offset: the offset within the &drm_gem_object
+- * @priv: pointer to a driver private data structure
+  *
+  * This function iterates the given range of the GPU VA space. It utilizes the
+  * &drm_gpuvm_ops to call back into the driver providing the split and merge
 
 
