@@ -1,172 +1,154 @@
-Return-Path: <linux-kernel+bounces-344746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A489C98ADBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:07:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D0D98ADBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68561C219C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1891F21464
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88121A0BCF;
-	Mon, 30 Sep 2024 20:07:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0082E1A0B0C;
+	Mon, 30 Sep 2024 20:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWSiBBql"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="adH4EL2x"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0663E131E2D;
-	Mon, 30 Sep 2024 20:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EE1131E2D;
+	Mon, 30 Sep 2024 20:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726823; cv=none; b=pc/xfqdf0Qb7Gy/u8ow+3oT9bRem+AtzqZzbnRaCkEMGBQULC0esP/L26FDXl6Jv49mz9rojKXQOSAR4mQgM6NtGDkyb1eBmRUarzo+GBBHEja5XYddvA0vJRZILWDnU4+TyL4g22YmWNRIimsv4ed+qp35TNj4S20dukdmFAcU=
+	t=1727726914; cv=none; b=Gnj+gi4tKBS8iYLPoyEN29ZlcOQO6pace3lPVDkSYQ3jmNVp/vdVXfrgsbfIXXel5UDKlkSjXkQYNMKtre7/KzfsdcbW61H8TppkTfpBB/yW6SQxafd3891s9bqMXCwb37M0SLDK/MY7kp7S7Lv6ZwAIrffQuQe4ST50RfBA9yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726823; c=relaxed/simple;
-	bh=u8i8etc6+eZRoqPdoiYunQbu/KLZyDOvHnDYGlaj/kQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIMnJR9R0GeuShiD+oYkh6+kyMn+6gw2Wc52EGrGovb0G2pYvo3oPJ2Pzkss0vv6AHN1cEQrnE1GdqRCS63mSD6uoFCGBeS0J7QNMWDau7qXYmZfUC8DZVHLGCKBq99G4uzxmbhrmToU7hYXEKchAOPRrSt6H3c/t+Go5kl4bTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWSiBBql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7165C4CEC7;
-	Mon, 30 Sep 2024 20:07:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727726822;
-	bh=u8i8etc6+eZRoqPdoiYunQbu/KLZyDOvHnDYGlaj/kQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bWSiBBqlVOKrwewjy/yBJ7J9w50uv4GaMOz4O8eU6kOGjl0B01zX+1joYgzhMDE57
-	 PzEUzzB532bvRGAD98kWFJSOc+ZuVlEscDRy7h+LStoyv1P9aYp1BQEMFAnJrbkg0g
-	 DqM50ucsiYU8hsQqFIUQZ6G9vFEbTzT3uCaAotlb/5yKI5255ZQFAqiHgGhp4j6HyY
-	 a8XyDFiTs0iS+jJQgke6pmG2vRelVA8lauHx7s+zSTHmXVYIbQ8RuQ7S3DPrACDUWo
-	 5U3ibZf4Qo/0i3gq2yqLkNXNzG1kYuijpzF6cPw2Vjmqye6Nh9HME01S21Fr+MrzDN
-	 0ENSVhHqFCOWg==
-Date: Mon, 30 Sep 2024 13:07:00 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: James Clark <james.clark@linaro.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH 04/10] perf stat: Add --exclude-guest option
-Message-ID: <ZvsE5IQtEkYooDA8@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-5-namhyung@kernel.org>
- <b1002dc7-78bf-40ed-83af-12a50622fb76@linux.intel.com>
- <c26e646d-5ebf-473e-91e2-db28fc01e35d@linaro.org>
- <ZvMfVe1VXwhCIOB9@google.com>
- <01c8dcaa-d557-407e-9ef3-babf90eb37d3@linux.intel.com>
+	s=arc-20240116; t=1727726914; c=relaxed/simple;
+	bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tUh7N0L4HbngApe/+NKuJ32DFxkiZKOP8AnmWuJWG/DjmVgh3PhxcsrvHim1R4WJVb5K7fuWNTwj5HNn0DEG7pCyaAV+Ni8s86pjVZhF+b/9K6vOgHiGyYA96p1St/6i40EJU7GrsR/sw/+yxk00aJTZVTE306FT6rTxduOcxN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=adH4EL2x; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b95359440so10425345ad.0;
+        Mon, 30 Sep 2024 13:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1727726912; x=1728331712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+        b=adH4EL2x+P1e1QGueyCXcWECeIgdbW96hoh+pnY5GrF/TWuV2phtyz1k/PgmGJP+Xk
+         /HvgdV3A6cn079/b5Ony960OxmdrIjBx0y/wPwCzUpQAd+fgiqYPHfV+sFveEuYrUQpL
+         SorpcJyn1eEorsc7Uui2Q3efjbqXyLKTjG+fUW0XGh4KD+t1OFj6uz7zPLw7dApb9DgY
+         0CjQ5z7R2qSA10Hm8vFkqD6HeehmT8rBfUhbU64jwo4DKg2JLqVB56m5o0Ip6XkL0FJR
+         H2wsu0OxNrqdYp5Ax32uRulz+y3IiMvCmPiBVbtMp/EaTISTe3Oox7bE63aXJE78YDDA
+         qszQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727726912; x=1728331712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pT1dL8lysN8vggO0eK3mScXgfCxlzNq4RmSSqIJ9kKA=;
+        b=BENLg3TSCRA+R4zmRuGvu13zJlwgLRASmv7/OfXALNWtVlZ0KFCt6PTfg6RCGJzdtp
+         p+tIm2/veb4zIMb3P5LbQuxQQLmGzOEGIPwVWJmwDi4WUQeL/rIRw2vpiMifqxYXLsHI
+         B33PQKKa8yPputUhm8wm5PUigLSZT4IBWA0vxfNukhqyEwpiSZAoWqg4DJ2ZXdBKMrxl
+         qtpCNZLu4xQ1BgfnlLY/wHDz1qIljjCjEE6gUNbXY7+/QfJRNiVmgvTJulGvukrcQguh
+         ssYphCM2SisIHvayMJLu8Hk2PFB42OW0gRkwF34EUUyMQijZ9XAap7bqnI85K2ql9naz
+         UONg==
+X-Forwarded-Encrypted: i=1; AJvYcCUG77TmCXfPpIoJ9j//SjN4l7hYpcDVSr72ijo+Il/Mlh4q17+WYccf3UzpQw+Jn0BaIpU8xOmFWD3FCM9g@vger.kernel.org, AJvYcCWndmPMQTMV8QAgGdnjWS/PTWqh6nsikrKdf4wneWcFuZ5/UdsRLrmY3oHd2xRBbaM2LY3S+l/TyVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyf7OZUnsl2AGYEY2pQA1SS4pdvMzui2LISgOes94YfpYB9M3V
+	W6iS/AdnGuI/91sxH7bBmll69a/+ryU6He8LszR97gb/BCo1dtysvVXr/lDX3MxEbhvvuNDPRC2
+	oGeidNvUNmIzedUuqRYggx/OuPMc=
+X-Google-Smtp-Source: AGHT+IEs2DmofWhzUH0ql6mNKV1LnAfUh+w0gmpzifWQCksoK4G24DGc3LF4HeEZB6BMBG7TMZ9Aw+33F5R9xGMlPBc=
+X-Received: by 2002:a17:903:2307:b0:20b:5046:35b with SMTP id
+ d9443c01a7336-20b5046080bmr160097295ad.57.1727726912048; Mon, 30 Sep 2024
+ 13:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <01c8dcaa-d557-407e-9ef3-babf90eb37d3@linux.intel.com>
+References: <20240929-fix_glitch_free-v1-0-22f9c36b7edf@amlogic.com> <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+In-Reply-To: <20240929-fix_glitch_free-v1-2-22f9c36b7edf@amlogic.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 30 Sep 2024 22:08:21 +0200
+Message-ID: <CAFBinCBd5-s6vaBoJNerXavQiHgsv4Fm3v0svUX7geL=kJvVYg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: meson: Fix glitch free mux related issues
+To: chuan.liu@amlogic.com
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 09:49:14AM -0400, Liang, Kan wrote:
-> 
-> 
-> On 2024-09-24 4:21 p.m., Namhyung Kim wrote:
-> > On Mon, Sep 23, 2024 at 09:47:17AM +0100, James Clark wrote:
-> >>
-> >> On 06/09/2024 3:33 pm, Liang, Kan wrote:
-> >>>
-> >>> On 2024-09-05 4:24 p.m., Namhyung Kim wrote:
-> >>>> This option is to support the old behavior of setting exclude_guest by
-> >>>> default.  Now it doesn't set the bit so users want the old behavior can
-> >>>> use this option.
-> >>>>
-> >>>>    $ perf stat true
-> >>>>
-> >>>>     Performance counter stats for 'true':
-> >>>>
-> >>>>                  0.86 msec task-clock:u                     #    0.443 CPUs utilized
-> >>>>                     0      context-switches:u               #    0.000 /sec
-> >>>>                     0      cpu-migrations:u                 #    0.000 /sec
-> >>>>                    49      page-faults:u                    #   56.889 K/sec
-> >>>>                   ...
-> >>>>
-> >>>>    $ perf stat --exclude-guest true
-> >>>>
-> >>>>     Performance counter stats for 'true':
-> >>>>
-> >>>>                  0.79 msec task-clock:Hu                    #    0.490 CPUs utilized
-> >>>>                     0      context-switches:Hu              #    0.000 /sec
-> >>>>                     0      cpu-migrations:Hu                #    0.000 /sec
-> >>>>                    49      page-faults:Hu                   #   62.078 K/sec
-> >>>>                   ...
-> >>>>
-> >>>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> >>>> ---
-> >>>>   tools/perf/Documentation/perf-stat.txt | 7 +++++++
-> >>>>   tools/perf/builtin-stat.c              | 2 ++
-> >>>>   2 files changed, 9 insertions(+)
-> >>>>
-> >>>> diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-> >>>> index 2bc06367248691dd..d28d8370a856598f 100644
-> >>>> --- a/tools/perf/Documentation/perf-stat.txt
-> >>>> +++ b/tools/perf/Documentation/perf-stat.txt
-> >>>> @@ -382,6 +382,13 @@ color the metric's computed value.
-> >>>>   Don't print output, warnings or messages. This is useful with perf stat
-> >>>>   record below to only write data to the perf.data file.
-> >>>> +--exclude-guest::
-> >>>> +Don't count event in the guest mode.  It was the old behavior but the
-> >>>> +default is changed to count guest events also.  Use this option if you
-> >>>> +want the old behavior (host only).  Note that this option needs to be
-> >>>> +before other events in case you added -e/--event option in the command
-> >>>> +line.
-> >>> I'm not sure if we really need this option. I think it may bring more
-> >>> trouble than what we get.
-> >>>
-> >>> The name of the "--exclude-guest" sounds like a replacement of the event
-> >>> modifier "H". But in fact, it's not. It should only affect the default.
-> >>> It doesn't set the "H" for any events.
-> > Well I think it's tricky but it'd set "H" modifier events after the
-> > option.  But I have to agree that it can bring more troubles.
-> 
-> I may have miss-read something before. After some simple tests, yes, the
-> "H" is applied with the option.
+Hello,
 
-Ok.
+On Sun, Sep 29, 2024 at 8:10=E2=80=AFAM Chuan Liu via B4 Relay
+<devnull+chuan.liu.amlogic.com@kernel.org> wrote:
+>
+> From: Chuan Liu <chuan.liu@amlogic.com>
+>
+> glitch free mux has two clock channels (channel 0 and channel 1) with
+> the same configuration. When the frequency needs to be changed, the two
+> channels ping-pong to ensure clock continuity and suppress glitch.
+You describe the solution to this below:
+> Add flag CLK_SET_RATE_GATE to channels 0 and 1 to implement Ping-Pong
+> switchover to suppress glitch.
+It would be great to have this change in a separate patch.
+The clocks to which you're adding CLK_SET_RATE_GATE aren't switched at
+runtime in mainline kernels (at least I think so).
 
-> 
-> Since there is a limit for the "--exclude-guest" option, can we print a
-> warning if the option becomes invalid because of the order?
+> Channel 0 of glitch free mux is not only the clock source for the mux,
+> but also the working clock for glitch free mux. Therefore, when glitch
+> free mux switches, it is necessary to ensure that channel 0 has a clock
+> input, otherwise glitch free mux will not work and cannot switch to the
+> target channel.
+[...]
+> glitch free mux Add flag CLK_OPS_PARENT_ENABLE to ensure that channel 0
+> has clock input when switching channels.
+This describes a second problem. I think it's best to have this in a
+separate commit/patch.
+Also you're updating some mali clocks (e.g. on G12 and GX) but not all
+of them (Meson8b for example is missing).
 
-Well.. I'm thinking of removing this option for now.
+I still have some questions to the CLK_OPS_PARENT_ENABLE approach -
+please share your findings on this.
 
-> 
-> > 
-> >>> Except for the perf kvm user, I don't think there are many users which
-> >>> care the exclude_guest. The behavior of the perf kvm is not changed. So
-> >>> the option seems not that important. If we really want an option to
-> >>> restore the old behavior, it's better to choose a better name and update
-> >>> the description.
-> > Personally I don't want to this option but just worried if there's a
-> > case where exclude_guest is preferred.
-> 
-> The only case I can imagine is that, with the new vPMU passthrough
-> introduced, some users may want to explicitly set the exclude_guest to
-> avoid the fallback. But I'm not sure how useful it is for them.
+There's multiple clocks involved in a glitch-free mux hierarchy:
+- a number of clock inputs (e.g. fclk, xtal, ...)
+- two muxes (one for every channel of the glitch-free mux)
+- two dividers (one for every channel of the glitch-free mux)
+- two gates (one for every channel of the glitch-free mux)
+- the glitch-free mux
 
-Because of overhead?  They'll get exclude_guest eventually, right?
+When switching from channel 0 (which is active and enabled) CCF
+(common clock framework) will:
+a) on channel 1:
+- find the best input clock
+- choose the best input clock in the mux
+- set the divider
+- enable the gate
+b) switch the glitch-free mux
+c) on channel 2:
+- disable the gate
 
-So I think I can drop this patch for now.  And consider this later when
-we can find a real usecase.
+To me it's not clear at which level the problem occurs (glitch-free
+mux, gate, divider, mux, input clock).
+Also I don't understand why enabling the clocks with
+CLK_OPS_PARENT_ENABLE solves any problem since CCF is doing things
+automatically for us.
+Can you please explain (preferably with an example) what problem is
+solved with this approach?
 
-Thanks,
-Namhyung
+Last but not least: if we're running into bugs when
+CLK_OPS_PARENT_ENABLE is missing then that patch should carry a Fixes
+tag.
 
+
+Best regards,
+Martin
 
