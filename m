@@ -1,418 +1,281 @@
-Return-Path: <linux-kernel+bounces-344313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FCA98A82B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:10:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3394998A82F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:10:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710C1283A42
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:10:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ECD41C23013
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0031922CC;
-	Mon, 30 Sep 2024 15:09:56 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD46192B66;
+	Mon, 30 Sep 2024 15:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="ZyHoUu3X"
+Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44741CFA9;
-	Mon, 30 Sep 2024 15:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708996; cv=none; b=V+fQbJ8il41qbXHNXIGMGFf73J8tDnLqoE6fAz5hgnRp/VahKCO7Fq/r2M3FVnvgQ++tmDCWyu69jQn/rk2k78zPxXAG4b3lCHPVgYbBf3/yAhx2XqCVdaL5H2mySgo/EFgdxjKd1qnfdvcEgGhpiMu27dkYcLP3OHDJfXsJyQw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708996; c=relaxed/simple;
-	bh=ffh4OGg7Wc0SJ9uI4dPwbwuIp4Hr2/WDElhdCAeFUuw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lKWbNhdRQqCj7Z4pAe5oyrrYTZxgQKr6zzDYLV1L9TC21YHgUi8zG7JQJ0UcFMQnfZDWHFQPugnVX31FjzUiX4cTNpoLRWOH0gXGVa2R6m5O2OZc3CEKhqu8Lw6M/s2Lz3k6V3jKkMStGBDPyEK6Ep45zmf9EfiZrXSchAwH1RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XHPbx0199z6K6Sh;
-	Mon, 30 Sep 2024 23:09:01 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id AC1861401DC;
-	Mon, 30 Sep 2024 23:09:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 30 Sep
- 2024 17:09:48 +0200
-Date: Mon, 30 Sep 2024 16:09:47 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Angelo Dureghello <adureghello@baylibre.com>
-CC: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>, Jonathan Cameron
-	<jic23@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, "Lars-Peter
- Clausen" <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Olivier
- Moysan <olivier.moysan@foss.st.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<dlechner@baylibre.com>
-Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
- support
-Message-ID: <20240930160947.00007c8a@Huawei.com>
-In-Reply-To: <h7ajn5c7f4d7xtjd6jwayen2v5go2vyciwfebikoxlnksodvd2@4dph5nxigi56>
-References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
-	<gojq6ardhvt6vcs2kawdhdn2cj6qbpzp4p5mjjgwsypuatm5eo@3u6k4q7le46s>
-	<418a8a9b-3bcf-4b8f-92a0-619a3bf26ab5@baylibre.com>
-	<e8af0f3f-a09c-42d7-b8ca-dd633539af73@kernel.org>
-	<0279203b6cd9f1312d9c03654c262c04ac12fbd9.camel@gmail.com>
-	<fa27dc74-7b1f-4ef5-81dc-cc434da4ff89@kernel.org>
-	<c721861809c17776c0fe89ead331b6e2e6b9d4b4.camel@gmail.com>
-	<28834db1-3e9e-47f4-b00e-a548589d77e9@kernel.org>
-	<20240929115919.0318034c@jic23-huawei>
-	<ae4cfdfb9880e0a833c105fcb9e9442ef04f461b.camel@gmail.com>
-	<h7ajn5c7f4d7xtjd6jwayen2v5go2vyciwfebikoxlnksodvd2@4dph5nxigi56>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869581922F5;
+	Mon, 30 Sep 2024 15:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=167.235.159.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727709000; cv=pass; b=rlVQ0ocd91JFG2TzuD/JiyxlDwQX9pG6CMbOCQchXBSrbGjCb/NiupupCT+JULGZIKfydbdsmZIUb/+CtUvrsXsDwtrhrKYiOq7WSA3Box7FtbVS+fturb44dMn8vvqbhWe+lHjLo9B0KZBWv5lptQf8TKy2eregluN1HXCCsHE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727709000; c=relaxed/simple;
+	bh=czuI3rcHCTtULeBUbn9GDnQbQnMGC1CyU8MT21kUJus=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 MIME-Version:Content-Type; b=JVluNfT2SG6AFqZH1kRYTitedYtKlvxwcyRNuSbXtaQO0lP4dS+sc4d9pm6jvP1STpF/4kNa2HiI6/EBNlhKeNRLmTUWaDXbOasVffIsniqEQPF+XYXFguWus2YysGY+W55tE+cC4K117urkRTIdZHkSsnNt+XweWS6QPLrp8xc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=ZyHoUu3X; arc=pass smtp.client-ip=167.235.159.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
+Message-ID: <76a3103261ea1be01a83acec8c0db2d4@manguebit.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1727708991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qmJR9P5BxNmpWt5xKfda4Fa6z6Vae67DaPuvzZ+YV9o=;
+	b=ZyHoUu3XwE9UMIed+poYJ22i6jEF/E+xDhOafElbrM17G2FXqPejaq+iXrujzNFe3gTQ7V
+	elNeZt+4QXDJVzlu74ORmwNxOX7uzy45H7aMKy2/eXElgWXAkUHBU88qt4WbdTq8WHQdwq
+	slkizO7e0TSe0paAxc5vndEzAEL0wzamzZklGNHaru7HbV0ZyupPrtR3xFSxnReJVOvUP3
+	nhdHsMiaASBtS59EkjAUKXPjRmnu4XLX13JCvldWLAIxFY78B6/16tLpAYr4pJcXCcQPaB
+	iF0Ld09ysZYRa/BNfxB55K3Zwj/lanagyPNX2IEtXnXJoFZ9uU31M7WuXYPUMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
+	s=dkim; t=1727708991; h=from:from:sender:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qmJR9P5BxNmpWt5xKfda4Fa6z6Vae67DaPuvzZ+YV9o=;
+	b=dQWKLNTDG7o1Tb55H0D1qHdd5RpeexVag0bHTjQqo5cIqCnwLiGNFkCL4MQG/4YngZrCmR
+	BIiZ6MBnJ4Qlni18KIlpE0cf7SCUiA+ij7MgZ2hF3nkExJPxVep44jT6FetNrNI3rnWhav
+	JgTsSbZPu/7oMJAGd3aH3y1KdoAVs0W//dYED1T74L/UDpPDo1dTFCQ12BPQ3RiTiH7HAu
+	vive94Ni/RvArLiYsIduoQ75PzlxFhdQkapsPen4M+LvbM7ddvg7nspsAUKXcfyRDnniHl
+	/JbnjtMzW6VZ7QJeRjexH8OTZoWGakLCBLsc3czUTpJ4isFQMOZwZhJjg219hA==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.mailfrom=pc@manguebit.com
+ARC-Seal: i=1; s=dkim; d=manguebit.com; t=1727708991; a=rsa-sha256;
+	cv=none;
+	b=V4jFQBJRjhEz8LCh/tLMnrmB9uNQPTzgWM7jQWvUyVl25tyNZNbFe2g+hui/oTVlR4vbys
+	GrJQBRg0e/s9e9Z3bc0RwFKftWdjaPmHRlGVZ7K+fUtJtvCVUtensGPb3u05P36EvuoI8B
+	5dNZdr5HnAnzYWciO7rINTUGsaDqlJ7PL/7RaxJhq89W5RnHi/WEIvW1kcRJArY+yvSMkG
+	4sTocYYmgDNEzVIkuIUwRWgKcgjBz1R3jHLSk/WXFdfLMm84Ivhy5pPKV7XGP1lsZNp+8M
+	w8UHf6W/NFWpnC+JHsgUrMroqoPV1GtaWCTWR7I26VvZ46J3kIcsnv2khg3n/A==
+From: Paulo Alcantara <pc@manguebit.com>
+To: Pali =?utf-8?Q?Roh=C3=A1r?= <pali@kernel.org>, Steve French
+ <sfrench@samba.org>, Ronnie
+ Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/7] cifs: Improve creating native symlinks pointing to
+ directory
+In-Reply-To: <20240929185053.10554-3-pali@kernel.org>
+References: <20240929185053.10554-1-pali@kernel.org>
+ <20240929185053.10554-3-pali@kernel.org>
+Date: Mon, 30 Sep 2024 12:09:48 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Mon, 30 Sep 2024 15:22:01 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
+Pali Roh=C3=A1r <pali@kernel.org> writes:
 
-> On 30.09.2024 09:20, Nuno S=E1 wrote:
-> > On Sun, 2024-09-29 at 11:59 +0100, Jonathan Cameron wrote: =20
-> > > On Sat, 28 Sep 2024 14:20:29 +0200
-> > > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > >  =20
-> > > > On 25/09/2024 13:55, Nuno S=E1 wrote: =20
-> > > > > On Wed, 2024-09-25 at 09:22 +0200, Krzysztof Kozlowski wrote:=A0 =
- =20
-> > > > > > On 24/09/2024 14:27, Nuno S=E1 wrote:=A0  =20
-> > > > > > > On Tue, 2024-09-24 at 10:02 +0200, Krzysztof Kozlowski wrote:=
-=A0  =20
-> > > > > > > > On 23/09/2024 17:50, Angelo Dureghello wrote:=A0  =20
-> > > > > > > > > Hi Krzysztof,
-> > > > > > > > >=20
-> > > > > > > > > On 22/09/24 23:02, Krzysztof Kozlowski wrote:=A0  =20
-> > > > > > > > > > On Thu, Sep 19, 2024 at 11:20:00AM +0200, Angelo Duregh=
-ello
-> > > > > > > > > > wrote:=A0  =20
-> > > > > > > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > > > > > > >=20
-> > > > > > > > > > > There is a version AXI DAC IP block (for FPGAs) that =
-provides
-> > > > > > > > > > > a physical bus for AD3552R and similar chips, and act=
-s as
-> > > > > > > > > > > an SPI controller.
-> > > > > > > > > > >=20
-> > > > > > > > > > > For this case, the binding is modified to include some
-> > > > > > > > > > > additional properties.
-> > > > > > > > > > >=20
-> > > > > > > > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibr=
-e.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > > =A0 .../devicetree/bindings/iio/dac/adi,ad3552r.yaml=
-=A0=A0 | 42
-> > > > > > > > > > > ++++++++++++++++++++++
-> > > > > > > > > > > =A0 1 file changed, 42 insertions(+)
-> > > > > > > > > > >=20
-> > > > > > > > > > > diff --git
-> > > > > > > > > > > a/Documentation/devicetree/bindings/iio/dac/adi,ad355=
-2r.yaml
-> > > > > > > > > > > b/Documentation/devicetree/bindings/iio/dac/adi,ad355=
-2r.yaml
-> > > > > > > > > > > index 41fe00034742..aca4a41c2633 100644
-> > > > > > > > > > > ---
-> > > > > > > > > > > a/Documentation/devicetree/bindings/iio/dac/adi,ad355=
-2r.yaml
-> > > > > > > > > > > +++
-> > > > > > > > > > > b/Documentation/devicetree/bindings/iio/dac/adi,ad355=
-2r.yaml
-> > > > > > > > > > > @@ -60,6 +60,18 @@ properties:
-> > > > > > > > > > > =A0=A0=A0=A0=A0 $ref: /schemas/types.yaml#/definition=
-s/uint32
-> > > > > > > > > > > =A0=A0=A0=A0=A0 enum: [0, 1, 2, 3]
-> > > > > > > > > > > =A0=20
-> > > > > > > > > > > +=A0 io-backends:
-> > > > > > > > > > > +=A0=A0=A0 description: The iio backend reference.
-> > > > > > > > > > > +=A0=A0=A0=A0=A0 An example backend can be found at
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0
-> > > > > > > > > > > https://analogdevicesinc.github.io/hdl/library/axi_ad=
-3552r/index.html
-> > > > > > > > > > > +=A0=A0=A0 maxItems: 1
-> > > > > > > > > > > +
-> > > > > > > > > > > +=A0 adi,synchronous-mode:
-> > > > > > > > > > > +=A0=A0=A0 description: Enable waiting for external s=
-ynchronization
-> > > > > > > > > > > signal.
-> > > > > > > > > > > +=A0=A0=A0=A0=A0 Some AXI IP configuration can implem=
-ent a dual-IP
-> > > > > > > > > > > layout,
-> > > > > > > > > > > with
-> > > > > > > > > > > internal
-> > > > > > > > > > > +=A0=A0=A0=A0=A0 wirings for streaming synchronizatio=
-n.
-> > > > > > > > > > > +=A0=A0=A0 type: boolean
-> > > > > > > > > > > +
-> > > > > > > > > > > =A0=A0=A0 '#address-cells':
-> > > > > > > > > > > =A0=A0=A0=A0=A0 const: 1
-> > > > > > > > > > > =A0=20
-> > > > > > > > > > > @@ -128,6 +140,7 @@ patternProperties:
-> > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - custom-output-ran=
-ge-config
-> > > > > > > > > > > =A0=20
-> > > > > > > > > > > =A0 allOf:
-> > > > > > > > > > > +=A0 - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > > > > > > > > > > =A0=A0=A0 - if:
-> > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0 properties:
-> > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible:
-> > > > > > > > > > > @@ -238,4 +251,33 @@ examples:
-> > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 };
-> > > > > > > > > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0 };
-> > > > > > > > > > > =A0=A0=A0=A0=A0 };
-> > > > > > > > > > > +
-> > > > > > > > > > > +=A0 - |
-> > > > > > > > > > > +=A0=A0=A0 axi_dac: spi@44a70000 {
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 compatible =3D "adi,axi-ad3552=
-r";=A0  =20
-> > > > > > > > > > That is either redundant or entire example should go to=
- the
-> > > > > > > > > > parent
-> > > > > > > > > > node,
-> > > > > > > > > > if this device is fixed child of complex device (IOW,
-> > > > > > > > > > adi,ad3552r
-> > > > > > > > > > cannot
-> > > > > > > > > > be used outside of adi,axi-ad3552r).=A0  =20
-> > > > > > > > >=20
-> > > > > > > > > ad3552r can still be used by a generic "classic" spi
-> > > > > > > > > controller (SCLK/CS/MISO) but at a slower samplerate, fpga
-> > > > > > > > > controller only (axi-ad3552r) can reach 33MUPS.=A0  =20
-> > > > > > > >=20
-> > > > > > > > OK, then this is just redundant. Drop the node. Parent exam=
-ple
-> > > > > > > > should
-> > > > > > > > contain the children, though.=A0  =20
-> > > > > > > > > =A0 =20
-> > > > > > > > > > =A0 =20
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x44a70000 0x1000>;
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 dmas =3D <&dac_tx_dma 0>;
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 dma-names =3D "tx";
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 #io-backend-cells =3D <0>;
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&ref_clk>;
-> > > > > > > > > > > +
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <1>;
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <0>;
-> > > > > > > > > > > +
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0 dac@0 {
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "ad=
-i,ad3552r";
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0>;
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reset-gpios =3D <&=
-gpio0 92 0>;=A0  =20
-> > > > > > > > > > Use standard defines for GPIO flags.=A0  =20
-> > > > > > > > >=20
-> > > > > > > > > fixed, thanks
-> > > > > > > > > =A0 =20
-> > > > > > > > > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 io-backends =3D <&=
-axi_dac>;=A0  =20
-> > > > > > > > > > Why do you need to point to the parent? How much couple=
-d are
-> > > > > > > > > > these
-> > > > > > > > > > devices? Child pointing to parent is not usually expect=
-ed,
-> > > > > > > > > > because
-> > > > > > > > > > that's obvious.=A0  =20
-> > > > > > > > >=20
-> > > > > > > > >=20
-> > > > > > > > > "io-backends" is actually the way to refer to the backend=
- module,
-> > > > > > > > > (used already for i.e. ad9739a),
-> > > > > > > > > it is needed because the backend is not only acting as sp=
-i-
-> > > > > > > > > controller,
-> > > > > > > > > but is also providing some APIs for synchronization and b=
-us setup
-> > > > > > > > > support.=A0  =20
-> > > > > > > >=20
-> > > > > > > >=20
-> > > > > > > > But if backend is the parent, then this is redundant. You c=
-an take
-> > > > > > > > it
-> > > > > > > > from the child-parent relationship. Is this pointing to oth=
-er
-> > > > > > > > devices
-> > > > > > > > (non-parent) in other ad3552r configurations?
-> > > > > > > > =A0 =20
-> > > > > > >=20
-> > > > > > > The backend is a provider-consumer type of API. On the consum=
-er side
-> > > > > > > (which
-> > > > > > > is the
-> > > > > > > driver the child node will probe on), we need to call
-> > > > > > > devm_iio_backend_get()
-> > > > > > > to get
-> > > > > > > the backend object (which obviously is the parent). For that,=
- 'io-
-> > > > > > > backends'
-> > > > > > > is being=A0  =20
-> > > > > >=20
-> > > > > > You described the driver, so how does it matter? Driver can call
-> > > > > > get_backend_from_parent(), right? Or get_backend_from_fwnode(pa=
-rent)?=A0  =20
-> > > > >=20
-> > > > > Well yes, just stating what the framework (also in terms of bindi=
-ngs) is
-> > > > > expecting. Of course that on the driver side we can paper around =
-it the
-> > > > > way we
-> > > > > want. But my main point was that we can only paper around it if w=
-e use
-> > > > > code that
-> > > > > is meant not to be used.
-> > > > >=20
-> > > > > And, FWIW, I was (trying) replying to your comment
-> > > > >=20
-> > > > > "You can take it from the child-parent relationship"
-> > > > >=20
-> > > > > Again, we can only do that by introducing new code or use code th=
-at's not
-> > > > > meant
-> > > > > to be used. The way we're supposed to reference backends is by ex=
-plicitly
-> > > > > using
-> > > > > the proper FW property.
-> > > > >=20
-> > > > > Put it in another way and a completely hypothetical case. If we h=
-ave a spi
-> > > > > controller which happens to export some clock and one of it's per=
-ipherals
-> > > > > ends
-> > > > > up using that clock, wouldn't we still use 'clocks' to reference =
-that
-> > > > > clock?=A0  =20
-> > > >=20
-> > > > I asked how coupled are these devices. Never got the answer and you=
- are
-> > > > reflecting with question. Depends. Please do not create hypothetica=
-l,
-> > > > generic scenarios and then apply them to your one particular opposi=
-te case. =20
-> > >=20
-> > > I'll throw a possible clarifying question in here.=A0 Could we use th=
-is
-> > > device with a multimaster SPI setup such that the control is on a con=
-ventional
-> > > SPI controller (maybe a qspi capable one), and the data plane only go=
-es
-> > > through
-> > > a specific purpose backend?=A0 If so, then they are not tightly coupl=
-ed and
-> > > the reference makes sense.=A0 Putting it another way, the difference =
-between
-> > > this case and all the prior iio-backend bindings is the control and d=
-ataplanes
-> > > use the same pins.=A0 Does that have to be the case at the host end?=
-=A0 If it
-> > > does,
-> > > then the reference isn't strictly needed and this becomes a bit like
-> > > registering a single device on an spi bus or an i2c bus depending on =
-who
-> > > does the registering (which is down to the parent in DT).
-> > >  =20
-> >=20
-> > So, we currently have two drivers (with a new one being added in this s=
-eries)
-> > for the same device:
-> >=20
-> > 1) A SPI one tied to a typical spi controller. This is the "low speed"
-> > implementation and does not use backends;
-> > 2) The new platform device that is connected like this to the backend.
-> >=20
-> > So yes, my understanding (but Angelo should know better :)) is that the=
-y are
-> > tightly coupled. Putting it in another way, the new platform device is =
-very much
-> > specific to this parent (and yeah, this is a very special usecase where=
- control
-> > and data planes are controlled by the IIO backend) and should not exist=
- with it. =20
->=20
-> ad3552r device can be coupled to the axi-ad3552r controller or to a gener=
-ic=20
-> spi controler.
->=20
-> We have actually 2 drivers, SPI and platform (for AXI controller, in this=
- patch).
->=20
-> Scenario 1 (SPI):
-> ad3522r can hypotetically work with whatever simple spi controller that c=
-an
-> read/write registers in raw mode. On simple SPI (CS, SCLK, MOSI), due to =
-ad3552r
-> chip limitation of 66Mhz clock, the maximum 33MUPS (16 bit samples) canno=
-t be
-> reached. Some QSPI DDR controller seems to be around, in that case, ad355=
-2r
-> may work extending the SPI driver.=20
->=20
-> Scenario 2 (AXI):
-> From an hardware-only point ov view axi-ad3552r IP acts as QSPI+DDR contr=
-oller
-> plus some additional features for stream synchronization.
-> From a sowftware point of view, really different from a spi controller dr=
-iver.
-> It's just a backend with APIes that can be called from the child driver.
+> SMB protocol for native symlinks distinguish between symlink to directory
+> and symlink to file. These two symlink types cannot be exchanged, which
+> means that symlink of file type pointing to directory cannot be resolved =
+at
+> all (and vice-versa).
+>
+> Windows follows this rule for local filesystems (NTFS) and also for SMB.
+>
+> Linux SMB client currenly creates all native symlinks of file type. Which
+> means that Windows (and some other SMB clients) cannot resolve symlinks
+> pointing to directory created by Linux SMB client.
+>
+> As Linux system does not distinguish between directory and file symlinks,
+> its API does not provide enough information for Linux SMB client during
+> creating of native symlinks.
+>
+> Add some heuristic into the Linux SMB client for choosing the correct
+> symlink type during symlink creation. Check if the symlink target location
+> ends with slash, or last path component is dot or dot dot, and check if t=
+he
+> target location on SMB share exists and is a directory. If at least one
+> condition is truth then create a new SMB symlink of directory type.
+> Otherwise create it as file type symlink.
+>
+> This change improves interoperability with Windows systems. Windows syste=
+ms
+> would be able to resolve more SMB symlinks created by Linux SMB client
+> which points to existing directory.
+>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> ---
+>  fs/smb/client/reparse.c   | 131 ++++++++++++++++++++++++++++++++++++--
+>  fs/smb/client/smb2inode.c |   3 +-
+>  fs/smb/client/smb2proto.h |   1 +
+>  3 files changed, 130 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> index 507e17244ed3..9390ab801696 100644
+> --- a/fs/smb/client/reparse.c
+> +++ b/fs/smb/client/reparse.c
+> @@ -24,13 +24,16 @@ int smb2_create_reparse_symlink(const unsigned int xi=
+d, struct inode *inode,
+>  	struct inode *new;
+>  	struct kvec iov;
+>  	__le16 *path;
+> +	bool directory =3D false;
+>  	char *sym, sep =3D CIFS_DIR_SEP(cifs_sb);
+>  	u16 len, plen;
+>  	int rc =3D 0;
+>=20=20
+> -	sym =3D kstrdup(symname, GFP_KERNEL);
+> +	len =3D strlen(symname)+1;
+> +	sym =3D kzalloc(len+1, GFP_KERNEL); /* +1 for possible directory slash =
+*/
+>  	if (!sym)
+>  		return -ENOMEM;
+> +	memcpy(sym, symname, len);
+>=20=20
+>  	data =3D (struct cifs_open_info_data) {
+>  		.reparse_point =3D true,
+> @@ -45,6 +48,125 @@ int smb2_create_reparse_symlink(const unsigned int xi=
+d, struct inode *inode,
+>  		goto out;
+>  	}
+>=20=20
+> +	/*
+> +	 * SMB distinguish between symlink to directory and symlink to file.
+> +	 * They cannot be exchanged (symlink of file type which points to
+> +	 * directory cannot be resolved and vice-versa). First do some simple
+> +	 * check, if the original Linux symlink target ends with slash, or
+> +	 * last path component is dot or dot dot then it is for sure symlink
+> +	 * to the directory.
+> +	 */
+> +	if (!directory) {
+> +		const char *basename =3D kbasename(symname);
+> +		int basename_len =3D strlen(basename);
+> +		if (basename_len =3D=3D 0 || /* symname ends with slash */
+> +		    (basename_len =3D=3D 1 && basename[0] =3D=3D '.') || /* last compo=
+nent is "." */
+> +		    (basename_len =3D=3D 2 && basename[0] =3D=3D '.' && basename[1] =
+=3D=3D '.')) /* last component is ".." */
+> +			directory =3D true;
+> +	}
+> +
+> +	/*
+> +	 * If it was not detected as directory yet and the symlink is relative
+> +	 * then try to resolve the path on the SMB server, check if the path
+> +	 * exists and determinate if it is a directory or not.
+> +	 */
+> +	if (!directory && symname[0] !=3D '/') {
+> +		__u32 oplock;
+> +		struct tcon_link *tlink;
+> +		struct cifs_tcon *tcon;
+> +		struct cifs_fid fid;
+> +		struct cifs_open_parms oparms;
+> +		char *resolved_path;
+> +		char *path_sep;
+> +		int open_rc;
+> +		int full_path_len =3D strlen(full_path);
+> +		int symname_len =3D strlen(symname);
+> +
+> +		tlink =3D cifs_sb_tlink(cifs_sb);
+> +		if (IS_ERR(tlink)) {
+> +			rc =3D PTR_ERR(tlink);
+> +			goto out;
+> +		}
+> +
+> +		resolved_path =3D kzalloc(full_path_len + symname_len + 1, GFP_KERNEL);
+> +		if (!resolved_path) {
+> +			rc =3D -ENOMEM;
+> +			goto out;
+> +		}
 
-Potential? scenario 3 is the one that interested me.
+If !@resolved_path, then you will end up leaking @tlink.
 
-ad3552 double wired to a normal SPI controller (so like option 1) and
-to a an offload engine (so like option 2).  With a few pull up resistors
-(cs and clk?) and some care it should electrically work I think.
-In that case we'd need the io-backend reference because the parent
-would be the option 1 like SPI bus and the io-backend would not be
-the parent.
+> +
+> +		/*
+> +		 * Compose the resolved SMB symlink path from the SMB full path
+> +		 * and Linux target symlink path.
+> +		 */
+> +		memcpy(resolved_path, full_path, full_path_len+1);
+> +		path_sep =3D strrchr(resolved_path, sep);
+> +		if (path_sep)
+> +			path_sep++;
+> +		else
+> +			path_sep =3D resolved_path;
+> +		memcpy(path_sep, symname, symname_len+1);
+> +		if (sep =3D=3D '\\')
+> +			convert_delimiter(path_sep, sep);
+> +
+> +		tcon =3D tlink_tcon(tlink);
+> +
+> +		oparms =3D (struct cifs_open_parms) {
+> +			.tcon =3D tcon,
+> +			.cifs_sb =3D cifs_sb,
+> +			.desired_access =3D FILE_READ_ATTRIBUTES,
+> +			.disposition =3D FILE_OPEN,
+> +			.path =3D resolved_path,
+> +			.fid =3D &fid,
+> +		};
 
-_______________________
-Host       SPI MOSI    |-------------------\
-hard       SPI MISO 0-3|----------------\  |
-QSPI       SPI CLK     |--------------\  | |
-           SPI CS      |----------\    | | |
-                       |           |   | | |
-FPGA                   |           |   | | |   |
-Soft       SPI MOSI    |-----------|---|-|-x---|
-QSPI       SPI MISO 0-3|-----------|---|-x-----|  DAC
-Offload    SPI CLK     |-----------|---x-------|
-with DDR   SPI CS      |-----------x-----------|
-_______________________|
+Please use CIFS_OPARMS().
 
-Makes all sorts of assumptions about the SPI controllers being designed
-for multi controllers on the same SPI buses but I'm not aware of a reason
-you can't do that.
+> +
+> +		/* Try to open as NOT_FILE */
+> +		oplock =3D 0;
+> +		oparms.create_options =3D cifs_create_options(cifs_sb, CREATE_NOT_FILE=
+);
+> +		open_rc =3D tcon->ses->server->ops->open(xid, &oparms, &oplock, NULL);
+> +		if (open_rc =3D=3D 0) {
+> +			/* Successful open means that the target path is definitely a directo=
+ry. */
+> +			directory =3D true;
+> +			tcon->ses->server->ops->close(xid, tcon, &fid);
+> +		} else if (open_rc !=3D -ENOTDIR) {
+> +			/* Try to open as NOT_DIR */
+> +			oplock =3D 0;
+> +			oparms.create_options =3D cifs_create_options(cifs_sb, CREATE_NOT_DIR=
+);
+> +			open_rc =3D tcon->ses->server->ops->open(xid, &oparms, &oplock, NULL);
+> +			if (open_rc =3D=3D 0) {
+> +				tcon->ses->server->ops->close(xid, tcon, &fid);
+> +			} else if (open_rc =3D=3D -EISDIR) {
+> +				/* -EISDIR means that the target path is definitely a directory. */
+> +				directory =3D true;
+> +			} else {
+> +				cifs_dbg(FYI,
+> +					 "%s: cannot determinate if the symlink target path '%s' "
+> +					 "is directory or not, creating '%s' as file symlink\n",
+> +					 __func__, symname, full_path);
+> +			}
+> +		}
+> +
+> +		kfree(resolved_path);
+> +		cifs_put_tlink(tlink);
+> +	}
+> +
+> +	/*
+> +	 * For absolute symlinks it is not possible to determinate
+> +	 * if it should point to directory or file.
+> +	 */
+> +	if (!directory && symname[0] =3D=3D '/')
+> +		cifs_dbg(FYI,
+> +			 "%s: cannot determinate if the symlink target path '%s' "
+> +			 "is directory or not, creating '%s' as file symlink\n",
+> +			 __func__, symname, full_path);
+> +
 
-As the only control message that would need to go over the offload engine
-would be the exit DDR (I think) that might be hard coded into a slightly
-simpler soft IP along with the bulk data transfer stuff.
-
-You could even avoid ever disabling DDR by just resetting the device
-whenever the configuration changes.  That there is only one message
-sent which is the streaming DAC updates.
-
-Point being that it may be tightly couple for your current backend
-but I'm not sure it has to be or indeed that all implementers will do it
-that way and we need a binding that caters for reasonable configurations.
-The question is, is the above reasonable?
-
-Jonathan
-
->=20
->=20
-> >=20
-> > - Nuno S=E1
-> >  =20
->=20
-> Regards,
-> Angelo
->=20
-
+Create a helper with all of this and then call it in
+smb2_create_reparse_symlink() to determine whether symlink target is a
+directory or file.
 
