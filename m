@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-343396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BDA5989A7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:26:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD55989A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:27:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843DE1F21856
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF6F1C212D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:27:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD565149C61;
-	Mon, 30 Sep 2024 06:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3516014A0AB;
+	Mon, 30 Sep 2024 06:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2EHjwY7i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xLf702AT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2EHjwY7i";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xLf702AT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TGkWrueg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625D523BE;
-	Mon, 30 Sep 2024 06:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A4923BE;
+	Mon, 30 Sep 2024 06:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727677583; cv=none; b=PJ/jFeVfHXcZaUlUq5ETXq2crRti7Ae8puhElgNO4Egr0sRgb/Y4EagYlrQGnMRUGoxZLoqm8XIcrYsJf40lAZ60WI/sA0sQIYxn3+zrCmt7aBmpeHMRiXapndtxub/PKZkz908ieZpNkjE+4uYYAwhv1ahne8J/OZWI2ZlLJPE=
+	t=1727677629; cv=none; b=Ln2qOYEr97IuAXQpZ8n+7Ye3bTQij1UQuQW60z+JAdfnpVS9FLZcm+sI952BtOhaEkAaICGgZkw6Duk35CJRUwjMHVXyW5iRt+VK6E8ZhdN3ujxas0ExKgNiVVPnqqAtcBl5bIIMY/l6yt+3hDxmP1qzQcZQaYmmwuZqDrnPVM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727677583; c=relaxed/simple;
-	bh=2OEVznq956jPtNEIkG0h3wVv4T1s5GhUAIC6pmH8u9o=;
+	s=arc-20240116; t=1727677629; c=relaxed/simple;
+	bh=yQOweRVaYNfNYWgexaG2VGR9sTCWRGsLJdnZAFq8ToA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=auo3F7yNZIWEK1uz1WrVSyjldy23KDVGObhV+o1VoP1ZGNLWNzHXawNV+ivRZWt9XXYlExbSBImOeenYzn3nPu+0V9KxA1MFvma2eP7UjI6fJmfuTAq1vZWpzIpBQ88/5d2UWma47N3QU7+5SceMPrNwjkrABU/WEtwBBw+BLRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2EHjwY7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xLf702AT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2EHjwY7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xLf702AT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 87259219C9;
-	Mon, 30 Sep 2024 06:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727677579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
-	b=2EHjwY7iZnTSWvsuxQHyF9ji2f7SwzoZE519MbSRMxQVUF6ZxsbPHkiAmQqo2ZIQRxD6Oe
-	uh0l7l7JeoI0cOmZTBpcQQTMbxOFB2JiShxM8TTk/NKuAooYmatBCXKMwGqHUzWEOCkqLa
-	rc9186QQNe8IP95u90X5d2TbW+tZ7wg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727677579;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
-	b=xLf702ATdt+b1dXY5pWU6lLYk3LrJgb975oBZHigNnFZnQe5Wg4lmQR7gVaJ6dihOOBxfb
-	Q5xpdQF2SE/NoUCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1727677579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
-	b=2EHjwY7iZnTSWvsuxQHyF9ji2f7SwzoZE519MbSRMxQVUF6ZxsbPHkiAmQqo2ZIQRxD6Oe
-	uh0l7l7JeoI0cOmZTBpcQQTMbxOFB2JiShxM8TTk/NKuAooYmatBCXKMwGqHUzWEOCkqLa
-	rc9186QQNe8IP95u90X5d2TbW+tZ7wg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1727677579;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
-	b=xLf702ATdt+b1dXY5pWU6lLYk3LrJgb975oBZHigNnFZnQe5Wg4lmQR7gVaJ6dihOOBxfb
-	Q5xpdQF2SE/NoUCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4593513A8B;
-	Mon, 30 Sep 2024 06:26:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tW+uD4tE+mZkcAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 30 Sep 2024 06:26:19 +0000
-Message-ID: <4dc5d357-ffdc-4e91-9519-b23c735c077e@suse.de>
-Date: Mon, 30 Sep 2024 08:26:18 +0200
+	 In-Reply-To:Content-Type; b=nBSGuvVuH1Tx+EevaFWrd9mR2oojYY5mQq/XhmTd7V+X/ID/5hYLpjgpgcbOfBRqWxdHEWTqazmvcV2TfjfeP8vjPWgb1NRd0uKDJLBcJDgoSKYS8BMb5DonCxdA+grgv3ca6yxEFoa+9hRWJwTzKS2k7qfDUAgmQt9bxWa4Kbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TGkWrueg; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727677627; x=1759213627;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=yQOweRVaYNfNYWgexaG2VGR9sTCWRGsLJdnZAFq8ToA=;
+  b=TGkWruegjOn2cPvHM54rugneS9bI4c9A0D6z5BtcumRIwg+lZSNOunJR
+   HIPTYM37zqr2Wb3KR4D1XwepOuoqHR9eLws/x2Oyc/9d/xr9ntKhLu0vH
+   qfghftCiWOyQxzzPvXMxzCcIDVU0UnLQBHQXOKKamOKbQJ+HAhVhA1lCe
+   7XdvSjYWUw97pKf7Q+y3di9fyjgA/hePBnntAXZUf0QLkH0CuBTquaZO6
+   tqNrNsCG+zUA0QsU/y26KozTx1oH2snsUDHSE/Y+TDKxKeKDmA94PRuVo
+   3hJqS1aAhFl3dlRGne6H2d3vJT8wKplJjUgG1zM90BBYKly728P7bAhPY
+   g==;
+X-CSE-ConnectionGUID: 0YK+WyY3RjeVi0EAH+D5+w==
+X-CSE-MsgGUID: jRARiV0rQM+RIH7vCec5wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26922120"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26922120"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 23:27:04 -0700
+X-CSE-ConnectionGUID: rFDso0gnRoCDL7zyP0o9BA==
+X-CSE-MsgGUID: cTVqMaKATbS+cgKsIiquVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="73240050"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.247.52]) ([10.125.247.52])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 23:26:59 -0700
+Message-ID: <08478bf1-e927-4034-b598-c0cb1ac8249a@intel.com>
+Date: Mon, 30 Sep 2024 14:26:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,132 +66,269 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
- drm_plane_helper_funcs.atomic_update
-To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: stable@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Sean Paul <seanpaul@chromium.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240927204616.697467-1-lyude@redhat.com>
+Subject: Re: [PATCH 21/25] KVM: x86: Introduce KVM_TDX_GET_CPUID
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-22-rick.p.edgecombe@intel.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240927204616.697467-1-lyude@redhat.com>
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240812224820.34826-22-rick.p.edgecombe@intel.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,linux.intel.com,kernel.org,gmail.com,ffwll.ch,chromium.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
+On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
+> From: Xiaoyao Li <xiaoyao.li@intel.com>
+> 
+> Implement an IOCTL to allow userspace to read the CPUID bit values for a
+> configured TD.
+> 
+> The TDX module doesn't provide the ability to set all CPUID bits. Instead
+> some are configured indirectly, or have fixed values. But it does allow
+> for the final resulting CPUID bits to be read. This information will be
+> useful for userspace to understand the configuration of the TD, and set
+> KVM's copy via KVM_SET_CPUID2.
+> 
+> To prevent userspace from starting to use features that might not have KVM
+> support yet, filter the reported values by KVM's support CPUID bits.
 
+This patch lacks the documentation of KVM_TDX_GET_CPUID to describe what 
+it returns and how the returned data is used or expected to be used by 
+userspace.
 
-Am 27.09.24 um 22:46 schrieb Lyude Paul:
-> Something I discovered while writing rvkms since some versions of the
-> driver didn't have a filled out atomic_update function - we mention that
-> this callback is "optional", but we don't actually check whether it's NULL
-> or not before calling it. As a result, we'll segfault if it's not filled
-> in.
->
->    rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset on [ENCODER:36:Virtual-36]
->    BUG: kernel NULL pointer dereference, address: 0000000000000000
->    PGD 0 P4D 0
->    Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
->    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-1.fc40 08/13/2024
->    RIP: 0010:0x0
->
-> So, let's fix that.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: <stable@vger.kernel.org> # v3.19+
+Set aside the filtering of KVM's support CPUID bits, KVM_TDX_GET_CPUID 
+only returns the CPUID leaves that can be readable by TDX module (in 
+tdx_mask_cpuid()). So what about the leaves that aren't readable? e.g., 
+CPUID leaf 6,9,0xc,etc, and leaf 0x40000000 and 0x40000001.
 
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Should userspace to intercept it as the leaves that aren't covered by 
+KVM_TDX_GET_CPUID are totally controlled by userspace itself and it's 
+userspace's responsibility to set a sane and valid value?
 
+> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 > ---
->   drivers/gpu/drm/drm_atomic_helper.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-> index 43cdf39019a44..b3c507040c6d6 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -2797,7 +2797,8 @@ void drm_atomic_helper_commit_planes(struct drm_device *dev,
+> uAPI breakout v1:
+>   - New patch
+> ---
+>   arch/x86/include/uapi/asm/kvm.h |   1 +
+>   arch/x86/kvm/vmx/tdx.c          | 131 ++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/tdx.h          |   5 ++
+>   arch/x86/kvm/vmx/tdx_arch.h     |   5 ++
+>   arch/x86/kvm/vmx/tdx_errno.h    |   1 +
+>   5 files changed, 143 insertions(+)
+> 
+> diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+> index b4f12997052d..39636be5c891 100644
+> --- a/arch/x86/include/uapi/asm/kvm.h
+> +++ b/arch/x86/include/uapi/asm/kvm.h
+> @@ -931,6 +931,7 @@ enum kvm_tdx_cmd_id {
+>   	KVM_TDX_CAPABILITIES = 0,
+>   	KVM_TDX_INIT_VM,
+>   	KVM_TDX_INIT_VCPU,
+> +	KVM_TDX_GET_CPUID,
 >   
->   			funcs->atomic_disable(plane, old_state);
->   		} else if (new_plane_state->crtc || disabling) {
-> -			funcs->atomic_update(plane, old_state);
-> +			if (funcs->atomic_update)
-> +				funcs->atomic_update(plane, old_state);
+>   	KVM_TDX_CMD_NR_MAX,
+>   };
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index b2ed031ac0d6..fe2bbc2ced41 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -813,6 +813,76 @@ static int __tdx_td_init(struct kvm *kvm, struct td_params *td_params,
+>   	return ret;
+>   }
 >   
->   			if (!disabling && funcs->atomic_enable) {
->   				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
-> @@ -2889,7 +2890,8 @@ drm_atomic_helper_commit_planes_on_crtc(struct drm_crtc_state *old_crtc_state)
->   		if (disabling && plane_funcs->atomic_disable) {
->   			plane_funcs->atomic_disable(plane, old_state);
->   		} else if (new_plane_state->crtc || disabling) {
-> -			plane_funcs->atomic_update(plane, old_state);
-> +			if (plane_funcs->atomic_update)
-> +				plane_funcs->atomic_update(plane, old_state);
+> +static u64 tdx_td_metadata_field_read(struct kvm_tdx *tdx, u64 field_id,
+> +				      u64 *data)
+> +{
+> +	u64 err;
+> +
+> +	err = tdh_mng_rd(tdx, field_id, data);
+> +
+> +	return err;
+> +}
+> +
+> +#define TDX_MD_UNREADABLE_LEAF_MASK	GENMASK(30, 7)
+> +#define TDX_MD_UNREADABLE_SUBLEAF_MASK	GENMASK(31, 7)
+> +
+> +static int tdx_mask_cpuid(struct kvm_tdx *tdx, struct kvm_cpuid_entry2 *entry)
+> +{
+> +	u64 field_id = TD_MD_FIELD_ID_CPUID_VALUES;
+> +	u64 ebx_eax, edx_ecx;
+> +	u64 err = 0;
+> +
+> +	if (entry->function & TDX_MD_UNREADABLE_LEAF_MASK ||
+> +	    entry->index & TDX_MD_UNREADABLE_SUBLEAF_MASK)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * bit 23:17, REVSERVED: reserved, must be 0;
+> +	 * bit 16,    LEAF_31: leaf number bit 31;
+> +	 * bit 15:9,  LEAF_6_0: leaf number bits 6:0, leaf bits 30:7 are
+> +	 *                      implicitly 0;
+> +	 * bit 8,     SUBLEAF_NA: sub-leaf not applicable flag;
+> +	 * bit 7:1,   SUBLEAF_6_0: sub-leaf number bits 6:0. If SUBLEAF_NA is 1,
+> +	 *                         the SUBLEAF_6_0 is all-1.
+> +	 *                         sub-leaf bits 31:7 are implicitly 0;
+> +	 * bit 0,     ELEMENT_I: Element index within field;
+> +	 */
+> +	field_id |= ((entry->function & 0x80000000) ? 1 : 0) << 16;
+> +	field_id |= (entry->function & 0x7f) << 9;
+> +	if (entry->flags & KVM_CPUID_FLAG_SIGNIFCANT_INDEX)
+> +		field_id |= (entry->index & 0x7f) << 1;
+> +	else
+> +		field_id |= 0x1fe;
+> +
+> +	err = tdx_td_metadata_field_read(tdx, field_id, &ebx_eax);
+> +	if (err) //TODO check for specific errors
+> +		goto err_out;
+> +
+> +	entry->eax &= (u32) ebx_eax;
+> +	entry->ebx &= (u32) (ebx_eax >> 32);
+> +
+> +	field_id++;
+> +	err = tdx_td_metadata_field_read(tdx, field_id, &edx_ecx);
+> +	/*
+> +	 * It's weird that reading edx_ecx fails while reading ebx_eax
+> +	 * succeeded.
+> +	 */
+> +	if (WARN_ON_ONCE(err))
+> +		goto err_out;
+> +
+> +	entry->ecx &= (u32) edx_ecx;
+> +	entry->edx &= (u32) (edx_ecx >> 32);
+> +	return 0;
+> +
+> +err_out:
+> +	entry->eax = 0;
+> +	entry->ebx = 0;
+> +	entry->ecx = 0;
+> +	entry->edx = 0;
+> +
+> +	return -EIO;
+> +}
+> +
+>   static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+>   {
+>   	struct kvm_tdx *kvm_tdx = to_kvm_tdx(kvm);
+> @@ -1038,6 +1108,64 @@ static int __maybe_unused tdx_get_kvm_supported_cpuid(struct kvm_cpuid2 **cpuid)
+>   	return r;
+>   }
 >   
->   			if (!disabling && plane_funcs->atomic_enable) {
->   				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
->
-> base-commit: 22512c3ee0f47faab5def71c4453638923c62522
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+> +static int tdx_vcpu_get_cpuid(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
+> +{
+> +	struct kvm_cpuid2 __user *output, *td_cpuid;
+> +	struct kvm_tdx *kvm_tdx = to_kvm_tdx(vcpu->kvm);
+> +	struct kvm_cpuid2 *supported_cpuid;
+> +	int r = 0, i, j = 0;
+> +
+> +	output = u64_to_user_ptr(cmd->data);
+> +	td_cpuid = kzalloc(sizeof(*td_cpuid) +
+> +			sizeof(output->entries[0]) * KVM_MAX_CPUID_ENTRIES,
+> +			GFP_KERNEL);
+> +	if (!td_cpuid)
+> +		return -ENOMEM;
+> +
+> +	r = tdx_get_kvm_supported_cpuid(&supported_cpuid);
+> +	if (r)
+> +		goto out;
+> +
+> +	for (i = 0; i < supported_cpuid->nent; i++) {
+> +		struct kvm_cpuid_entry2 *supported = &supported_cpuid->entries[i];
+> +		struct kvm_cpuid_entry2 *output_e = &td_cpuid->entries[j];
+> +
+> +		*output_e = *supported;
+> +
+> +		/* Only allow values of bits that KVM's supports to be exposed */
+> +		if (tdx_mask_cpuid(kvm_tdx, output_e))
+> +			continue;
+> +
+> +		/*
+> +		 * Work around missing support on old TDX modules, fetch
+> +		 * guest maxpa from gfn_direct_bits.
+> +		 */
+> +		if (output_e->function == 0x80000008) {
+> +			gpa_t gpa_bits = gfn_to_gpa(kvm_gfn_direct_bits(vcpu->kvm));
+> +			unsigned int g_maxpa = __ffs(gpa_bits) + 1;
+> +
+> +			output_e->eax &= ~0x00ff0000;
+> +			output_e->eax |= g_maxpa << 16;
+> +		}
+> +
+> +		j++;
+> +	}
+> +	td_cpuid->nent = j;
+> +
+> +	if (copy_to_user(output, td_cpuid, sizeof(*output))) {
+> +		r = -EFAULT;
+> +		goto out;
+> +	}
+> +	if (copy_to_user(output->entries, td_cpuid->entries,
+> +			 td_cpuid->nent * sizeof(struct kvm_cpuid_entry2)))
+> +		r = -EFAULT;
+> +
+> +out:
+> +	kfree(td_cpuid);
+> +	kfree(supported_cpuid);
+> +	return r;
+> +}
+> +
+>   static int tdx_vcpu_init(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
+>   {
+>   	struct msr_data apic_base_msr;
+> @@ -1089,6 +1217,9 @@ int tdx_vcpu_ioctl(struct kvm_vcpu *vcpu, void __user *argp)
+>   	case KVM_TDX_INIT_VCPU:
+>   		ret = tdx_vcpu_init(vcpu, &cmd);
+>   		break;
+> +	case KVM_TDX_GET_CPUID:
+> +		ret = tdx_vcpu_get_cpuid(vcpu, &cmd);
+> +		break;
+>   	default:
+>   		ret = -EINVAL;
+>   		break;
+> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+> index 8349b542836e..7eeb54fbcae1 100644
+> --- a/arch/x86/kvm/vmx/tdx.h
+> +++ b/arch/x86/kvm/vmx/tdx.h
+> @@ -25,6 +25,11 @@ struct kvm_tdx {
+>   	bool finalized;
+>   
+>   	u64 tsc_offset;
+> +
+> +	/* For KVM_MAP_MEMORY and KVM_TDX_INIT_MEM_REGION. */
+> +	atomic64_t nr_premapped;
+> +
+> +	struct kvm_cpuid2 *cpuid;
+>   };
+>   
+>   struct vcpu_tdx {
+> diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+> index d2d7f9cab740..815e74408a34 100644
+> --- a/arch/x86/kvm/vmx/tdx_arch.h
+> +++ b/arch/x86/kvm/vmx/tdx_arch.h
+> @@ -157,4 +157,9 @@ struct td_params {
+>   
+>   #define MD_FIELD_ID_FEATURES0_TOPOLOGY_ENUM	BIT_ULL(20)
+>   
+> +/*
+> + * TD scope metadata field ID.
+> + */
+> +#define TD_MD_FIELD_ID_CPUID_VALUES		0x9410000300000000ULL
+> +
+>   #endif /* __KVM_X86_TDX_ARCH_H */
+> diff --git a/arch/x86/kvm/vmx/tdx_errno.h b/arch/x86/kvm/vmx/tdx_errno.h
+> index dc3fa2a58c2c..f9dbb3a065cc 100644
+> --- a/arch/x86/kvm/vmx/tdx_errno.h
+> +++ b/arch/x86/kvm/vmx/tdx_errno.h
+> @@ -23,6 +23,7 @@
+>   #define TDX_FLUSHVP_NOT_DONE			0x8000082400000000ULL
+>   #define TDX_EPT_WALK_FAILED			0xC0000B0000000000ULL
+>   #define TDX_EPT_ENTRY_STATE_INCORRECT		0xC0000B0D00000000ULL
+> +#define TDX_METADATA_FIELD_NOT_READABLE		0xC0000C0200000000ULL
+>   
+>   /*
+>    * TDX module operand ID, appears in 31:0 part of error code as
 
 
