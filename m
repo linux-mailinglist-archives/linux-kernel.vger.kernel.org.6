@@ -1,258 +1,166 @@
-Return-Path: <linux-kernel+bounces-343436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797C4989AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:51:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8B24989B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728B11C20B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9051F24346
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFF214B972;
-	Mon, 30 Sep 2024 06:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C857A156C7B;
+	Mon, 30 Sep 2024 07:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MX1m3ZrM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="tnJNQ0YZ"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A5F23BE;
-	Mon, 30 Sep 2024 06:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77437155398;
+	Mon, 30 Sep 2024 07:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727679096; cv=none; b=tmh7wTqULYRZgRp13sX4KqP9i1Sx9squYM6f7T839QgB8vThz9RtCZIptR21Z4aKDj6563uXtwOBks5bzlUHzzyu666NxXq4zvXnGiQjy01Cf8ndUi4XLF8QHUuMO8kJ9/JBz9SCnkfIg09qcdx2MnqFavbTgLcZleQ6aFGrif0=
+	t=1727681051; cv=none; b=go3l19jhxhyMBbkzC0xygdLja3udPCK+BI1bDzIC3tvKhMBX+JABzfAxlCQwOXJ/khQe3VXUpIxKnr8SCZW/eaFwMFR1/l0VHPYmbXIVkz8AlfjzMHkSftFwABDiY7/GZ4VHEBe+laHYjVU4M00yELPSpoDYIc86hVsOO8lafMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727679096; c=relaxed/simple;
-	bh=yfMk8PBDC7C+uQXb/zeM0yaQzGPLDxEAMH0A/10Ar4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gV3VkPLELGZ9cG14BLvCzsiFNiRwYPMwy+mMyHFmIP9hOXew6Bs3t70T4BHE7ZlBB/4kmofX+GblCuxgVGebwtq4YCeZ/kQ/x1dMNZPadV/VT5W58eI2thEYG5Vgkw97WkR9IBO77uFPRSorAVjcSqv90u0fMi9FCHu9GH+KeWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MX1m3ZrM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E172FC4CEC7;
-	Mon, 30 Sep 2024 06:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727679095;
-	bh=yfMk8PBDC7C+uQXb/zeM0yaQzGPLDxEAMH0A/10Ar4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MX1m3ZrMYsifdSaKXGYKSkF5CSNS0vDTa9w3LUqdLD5VvwbjfZBlcC09lB2wHnozS
-	 Kf9c5hjrMikDma3iSJ++qP3umIDJKNI3BaIJJmckMs9e9DFw1l1Rmml2DpN5Mla7bV
-	 RaqX5cew/wjPBCEyQXNtA3NXj/M5tGWiSAnNw3hzGZeRmUxPLXUJUTd+Lk0YVTVaxl
-	 zyEKubqOMV1QzsRA4BBLzlxEQ3ns2mBLG+hbQZGmnDd1z3WuuO5DG4HT6DK/zbIhdS
-	 FKkNeOZ9EDEZ2S2Hkm/+AwAytnDjxjVMXZlPnHdxN+KwQB8LsmMqVL+1Ui5d1sGjOV
-	 oTFTgf/IxkU6w==
-Date: Sun, 29 Sep 2024 23:51:33 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 7/8] perf record --off-cpu: Parse BPF output embedded
- data
-Message-ID: <ZvpKdWjGqP87-3ng@google.com>
-References: <20240927202736.767941-1-howardchu95@gmail.com>
- <20240927202736.767941-8-howardchu95@gmail.com>
+	s=arc-20240116; t=1727681051; c=relaxed/simple;
+	bh=KPkdZJR4jn1ve9SjvvpCS5e1jcq1I2+AXyH4rJBjMZg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CWQxe3FOlvr+eMPM2gnJS/b1jK6HEWsFqMRP27VB2isbnP5i5Z2jotGyoZtpXpe+yUMTc9+6GZxx+BxMLa+IEOPUYAnI8XcqPRScY6rV57UWmbSteO8HB8biXipbc7C8zQ1OyYV2DQ85JE/WjQt7CbOaFPuUnDaS5EOX+MnpgbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=tnJNQ0YZ; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U65xMf003251;
+	Mon, 30 Sep 2024 08:54:11 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=TupV0Brvfq7wiAHvg+5/zM
+	piO80TJ5UsN6TLmJdrXA4=; b=tnJNQ0YZlzt0H+nEMtYXomrJyE4l2AeAnTyE3f
+	Txqdeg+XtakWIQR9blEQ4Y6cswEXvlErW5vHanVlJDPFmen3FZS/d0mTh9aRYVJR
+	nGYcW/96A6XughTYkzk2RS28MuJgDxepvZpay5oaDQ4ZP4HrVeDS2slYiAx39m1b
+	SSeRNqHX68N8e5QW6Skjbtmog3YXs1V/v4cL7KK770vRuYlhUf9JY6CdGpYXoaJg
+	ziagQ9CEc9EPHbRP8emJ91hMT2e3k5I9p2dPDhxRQyGdLoZTvm1wJHacoq6wrtMP
+	E5qAFp2mqOD/eSCkhuPaTtv4jxLDxK5WpTbgPgbA4GK7Qrdg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41x8pc6g8d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 08:54:11 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B1B4840057;
+	Mon, 30 Sep 2024 08:53:14 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0431424BCB1;
+	Mon, 30 Sep 2024 08:51:43 +0200 (CEST)
+Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 30 Sep
+ 2024 08:51:42 +0200
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Alain Volmat <alain.volmat@foss.st.com>,
+        Sakari Ailus
+	<sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: i2c: gc2145: introduce enable/disable_streams ops
+Date: Mon, 30 Sep 2024 08:51:38 +0200
+Message-ID: <20240930065139.1490217-1-alain.volmat@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240927202736.767941-8-howardchu95@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri, Sep 27, 2024 at 01:27:35PM -0700, Howard Chu wrote:
-> Move evsel__is_offcpu_event() to evsel.h
-> 
-> Add a sample_type_embed member to the struct evsel, along with a couple
-> of helper functions.
-> 
-> In session.c, we parse BPF output embedded samples in a two-step
-> process.
-> 
-> Initial Parsing: Treat the sample as a regular BPF-output event.
-> 
-> Secondary Parsing: Extract data from raw_data and parse it according to
-> the sample_type_embed specification. Since the second step relies on the
-> raw_data obtained in the first step, we must avoid zero-initializing the
-> sample data after the first step.
-> 
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Suggested-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/builtin-script.c |  4 ++--
->  tools/perf/util/evsel.c     | 39 +++++++++++++++++++++++--------------
->  tools/perf/util/evsel.h     |  6 ++++++
->  tools/perf/util/session.c   | 12 +++++++++++-
->  4 files changed, 43 insertions(+), 18 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index a644787fa9e1..9719ffae45d5 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -662,7 +662,7 @@ static int perf_session__check_output_opt(struct perf_session *session)
->  
->  		evlist__for_each_entry(session->evlist, evsel) {
->  			not_pipe = true;
-> -			if (evsel__has_callchain(evsel)) {
-> +			if (evsel__has_callchain(evsel) || evsel__is_offcpu_event(evsel)) {
->  				use_callchain = true;
->  				break;
->  			}
-> @@ -2352,7 +2352,7 @@ static void process_event(struct perf_script *script,
->  	else if (PRINT_FIELD(BRSTACKOFF))
->  		perf_sample__fprintf_brstackoff(sample, thread, attr, fp);
->  
-> -	if (evsel__is_bpf_output(evsel) && PRINT_FIELD(BPF_OUTPUT))
-> +	if (evsel__is_bpf_output(evsel) && !evsel__is_offcpu_event(evsel) && PRINT_FIELD(BPF_OUTPUT))
->  		perf_sample__fprintf_bpf_output(sample, fp);
->  	perf_sample__fprintf_insn(sample, evsel, attr, thread, machine, fp, al);
->  
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 32196e4f0637..4199a1e409f7 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -1105,11 +1105,6 @@ static void evsel__set_default_freq_period(struct record_opts *opts,
->  	}
->  }
->  
-> -static bool evsel__is_offcpu_event(struct evsel *evsel)
-> -{
-> -	return evsel__is_bpf_output(evsel) && evsel__name_is(evsel, OFFCPU_EVENT);
-> -}
-> -
->  /*
->   * The enable_on_exec/disabled value strategy:
->   *
-> @@ -2677,6 +2672,7 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  	u16 max_size = event->header.size;
->  	const void *endp = (void *)event + max_size;
->  	u64 sz;
-> +	bool ip_in_callchain = false;
->  
->  	/*
->  	 * used for cross-endian analysis. See git commit 65014ab3
-> @@ -2684,14 +2680,25 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  	 */
->  	union u64_swap u;
->  
-> -	memset(data, 0, sizeof(*data));
-> -	data->cpu = data->pid = data->tid = -1;
-> -	data->stream_id = data->id = data->time = -1ULL;
-> -	data->period = evsel->core.attr.sample_period;
-> -	data->cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
-> -	data->misc    = event->header.misc;
-> -	data->data_src = PERF_MEM_DATA_SRC_NONE;
-> -	data->vcpu = -1;
-> +	/*
-> +	 * For sample data embedded in BPF output, don't clear the sample we read in the first pass,
-> +	 * and read the embedded data from raw_data in the second pass.
-> +	 */
+Introduce enable_streams and disable_streams pad ops and
+replace s_stream with the v4l2_subdev_s_stream_helper
+function.
 
-I found this two-pass sample parsing is confusing.  I think you can just
-use the existing parsing code and only update relevant fields when you
-parse the raw data.  IIUC the only subtle part is CGROUP as it come
-later than RAW in the sample format.  Maybe you can save it somewhere
-and update at the end.
+Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+---
+ drivers/media/i2c/gc2145.c | 31 +++++++++++--------------------
+ 1 file changed, 11 insertions(+), 20 deletions(-)
 
-Thanks,
-Namhyung
+diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
+index 667bb756d056..ab3c086c3ad6 100644
+--- a/drivers/media/i2c/gc2145.c
++++ b/drivers/media/i2c/gc2145.c
+@@ -899,9 +899,11 @@ static int gc2145_config_mipi_mode(struct gc2145 *gc2145,
+ 	return ret;
+ }
+ 
+-static int gc2145_start_streaming(struct gc2145 *gc2145,
+-				  struct v4l2_subdev_state *state)
++static int gc2145_enable_streams(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_state *state, u32 pad,
++				 u64 streams_mask)
+ {
++	struct gc2145 *gc2145 = to_gc2145(sd);
+ 	struct i2c_client *client = v4l2_get_subdevdata(&gc2145->sd);
+ 	const struct gc2145_format *gc2145_format;
+ 	struct v4l2_mbus_framefmt *fmt;
+@@ -967,8 +969,11 @@ static int gc2145_start_streaming(struct gc2145 *gc2145,
+ 	return ret;
+ }
+ 
+-static void gc2145_stop_streaming(struct gc2145 *gc2145)
++static int gc2145_disable_streams(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_state *state, u32 pad,
++				  u64 streams_mask)
+ {
++	struct gc2145 *gc2145 = to_gc2145(sd);
+ 	struct i2c_client *client = v4l2_get_subdevdata(&gc2145->sd);
+ 	int ret = 0;
+ 
+@@ -983,22 +988,6 @@ static void gc2145_stop_streaming(struct gc2145 *gc2145)
+ 
+ 	pm_runtime_mark_last_busy(&client->dev);
+ 	pm_runtime_put_autosuspend(&client->dev);
+-}
+-
+-static int gc2145_set_stream(struct v4l2_subdev *sd, int enable)
+-{
+-	struct gc2145 *gc2145 = to_gc2145(sd);
+-	struct v4l2_subdev_state *state;
+-	int ret = 0;
+-
+-	state = v4l2_subdev_lock_and_get_active_state(sd);
+-
+-	if (enable)
+-		ret = gc2145_start_streaming(gc2145, state);
+-	else
+-		gc2145_stop_streaming(gc2145);
+-
+-	v4l2_subdev_unlock_state(state);
+ 
+ 	return ret;
+ }
+@@ -1129,7 +1118,7 @@ static const struct v4l2_subdev_core_ops gc2145_core_ops = {
+ };
+ 
+ static const struct v4l2_subdev_video_ops gc2145_video_ops = {
+-	.s_stream = gc2145_set_stream,
++	.s_stream = v4l2_subdev_s_stream_helper,
+ };
+ 
+ static const struct v4l2_subdev_pad_ops gc2145_pad_ops = {
+@@ -1138,6 +1127,8 @@ static const struct v4l2_subdev_pad_ops gc2145_pad_ops = {
+ 	.set_fmt = gc2145_set_pad_format,
+ 	.get_selection = gc2145_get_selection,
+ 	.enum_frame_size = gc2145_enum_frame_size,
++	.enable_streams = gc2145_enable_streams,
++	.disable_streams = gc2145_disable_streams,
+ };
+ 
+ static const struct v4l2_subdev_ops gc2145_subdev_ops = {
+-- 
+2.25.1
 
-
-> +	if (evsel__is_offcpu_event(evsel) && data->raw_data) {
-> +		type = OFFCPU_EMBEDDED_SAMPLE_TYPES;
-> +		array = data->raw_data;
-> +		ip_in_callchain = true;
-> +	} else { /* for normal samples, clear to zero before reading */
-> +		array = event->sample.array;
-> +		memset(data, 0, sizeof(*data));
-> +		data->cpu = data->pid = data->tid = -1;
-> +		data->stream_id = data->id = data->time = -1ULL;
-> +		data->period = evsel->core.attr.sample_period;
-> +		data->cpumode = event->header.misc & PERF_RECORD_MISC_CPUMODE_MASK;
-> +		data->misc    = event->header.misc;
-> +		data->data_src = PERF_MEM_DATA_SRC_NONE;
-> +		data->vcpu = -1;
-> +	}
->  
->  	if (event->header.type != PERF_RECORD_SAMPLE) {
->  		if (!evsel->core.attr.sample_id_all)
-> @@ -2699,8 +2706,6 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  		return perf_evsel__parse_id_sample(evsel, event, data);
->  	}
->  
-> -	array = event->sample.array;
-> -
->  	if (perf_event__check_size(event, evsel->sample_size))
->  		return -EFAULT;
->  
-> @@ -2822,6 +2827,10 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  		data->callchain = (struct ip_callchain *)array++;
->  		if (data->callchain->nr > max_callchain_nr)
->  			return -EFAULT;
-> +
-> +		if (ip_in_callchain && data->callchain->nr > 1)
-> +			data->ip = data->callchain->ips[1];
-> +
->  		sz = data->callchain->nr * sizeof(u64);
->  		OVERFLOW_CHECK(array, sz, max_size);
->  		array = (void *)array + sz;
-> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-> index 3e751ea769ac..6fbf5d4219d1 100644
-> --- a/tools/perf/util/evsel.h
-> +++ b/tools/perf/util/evsel.h
-> @@ -11,6 +11,7 @@
->  #include <perf/evsel.h>
->  #include "symbol_conf.h"
->  #include "pmus.h"
-> +#include "off_cpu.h"
->  
->  struct bpf_object;
->  struct cgroup;
-> @@ -580,4 +581,9 @@ u64 evsel__bitfield_swap_branch_flags(u64 value);
->  void evsel__set_config_if_unset(struct perf_pmu *pmu, struct evsel *evsel,
->  				const char *config_name, u64 val);
->  
-> +static inline bool evsel__is_offcpu_event(struct evsel *evsel)
-> +{
-> +	return evsel__is_bpf_output(evsel) && evsel__name_is(evsel, OFFCPU_EVENT);
-> +}
-> +
->  #endif /* __PERF_EVSEL_H */
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index dbaf07bf6c5f..d481bc466131 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -1229,6 +1229,16 @@ static int evlist__deliver_sample(struct evlist *evlist, const struct perf_tool
->  	u64 sample_type = evsel->core.attr.sample_type;
->  	u64 read_format = evsel->core.attr.read_format;
->  
-> +	/* parse sample the second time to get embedded data from raw_data */
-> +	if (evsel__is_offcpu_event(evsel) && sample->raw_data) {
-> +		int err = evsel__parse_sample(evsel, event, sample);
-> +
-> +		if (err) {
-> +			pr_err("Failed to parse BPF ouput embedded data, err = %d\n", err);
-> +			return err;
-> +		}
-> +	}
-> +
->  	/* Standard sample delivery. */
->  	if (!(sample_type & PERF_SAMPLE_READ))
->  		return tool->sample(tool, event, sample, evsel, machine);
-> @@ -1339,7 +1349,7 @@ static int perf_session__deliver_event(struct perf_session *session,
->  				       u64 file_offset,
->  				       const char *file_path)
->  {
-> -	struct perf_sample sample;
-> +	struct perf_sample sample = { .raw_data = NULL }; /* avoid accidental read of embedded data */
->  	int ret = evlist__parse_sample(session->evlist, event, &sample);
->  
->  	if (ret) {
-> -- 
-> 2.43.0
-> 
 
