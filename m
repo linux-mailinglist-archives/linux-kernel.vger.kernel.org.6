@@ -1,155 +1,108 @@
-Return-Path: <linux-kernel+bounces-343777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF23989F55
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B332989F5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:30:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA4B1F220AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B11321F220DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3771918A6C9;
-	Mon, 30 Sep 2024 10:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCQWRtVH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0ED26AEC;
-	Mon, 30 Sep 2024 10:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50C518A6CD;
+	Mon, 30 Sep 2024 10:29:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1640126AEC;
+	Mon, 30 Sep 2024 10:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727692125; cv=none; b=Ta+TtWm4dgvs/8tWf6zLXqeM5XH2vvjuQJXSC/0gyPzeRjG0RQoPy0qvIdwL3nLtWaChRlM346RxUVx6tZl2lGJn7+7gFbJoJC3BgfS7i0rOXFRNXENvbk3QXFdSgihN1NtgAI9+pAiKwAkGHx+y1fJ1aeJkzctOiGvEHlsTsqE=
+	t=1727692196; cv=none; b=Oho8QnplqhDc2h6ewkCpZTgt3QfZTNzeuX0bJ/XzVDtk/eHmmpgHmrTYNBkD4bjIE6vf9rbga6JJ3RtQjaHY9Si5ZCSor4Y0CklrqW8ywCHD5YXRrulAEHm90jK8E0C7SqhFdftvxkCQEzny6gDgMd1VI2mj26g0u3ciGun6qHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727692125; c=relaxed/simple;
-	bh=ehA/GE+fSfAbucHpXnsgQhs0omrlFYS3F9fhpgRCfxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lvv4KtaHYGjisu5ylPtDeOwZjYRoWPPPDeeZHXAw2xSUG6mEfhjlcZqL+zRD5uoKpWYcidZRE7aYQPFQO9iTnqHBKqAQFKcCsykKKXnKLztR/6zB/2eKsg8U1VGonsLdnVRXDR7A6DH5IpVtyY3MWJdhQ2Zjb5uJksW+kZX/1NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCQWRtVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D992AC4CEC7;
-	Mon, 30 Sep 2024 10:28:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727692125;
-	bh=ehA/GE+fSfAbucHpXnsgQhs0omrlFYS3F9fhpgRCfxs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iCQWRtVHvE6CImzRENtho7otETVc9XaQFJINf6MwTH2/p7WCf/uiGZrHZF5+tesnv
-	 onJDUTBPU9RQg7fDdUbkTuYD/8Vy7Hq0gyyt5J/0l+nRtolbDyITiaaa8lQkSpjx17
-	 aMs0axjp+vhbFp2eO485952TY2gzPP1EpwhvxVkvh2pDsurwsAJmROZ4sG/MKhWc4y
-	 sV3pJ9+mhS2dhpgFJWkKKCktRpkaRUfXHjlq29kJJE8umbQfzoNVBmZTygZ2BnT2Zz
-	 XZDoRmSEceEuPD9e67DFpDdL3TyEJ2828CZxrxi4tCKQCmM7cgTyNH8tOlBsZW4JxY
-	 jvTv6cvdYCqlQ==
-Message-ID: <2064ea03-a396-418c-a6c3-1c0f1b12d2f3@kernel.org>
-Date: Mon, 30 Sep 2024 12:28:40 +0200
+	s=arc-20240116; t=1727692196; c=relaxed/simple;
+	bh=bVUnemnRJlAkNfmj4POjrlh67Wjw48pMhrhhoQHlkyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RbI4tmzs643KZBKYXzMy81UlCQ/8sPUqzASprfy501ZWaUgrxLypyRxEU9QMKYC2r3i9DZvyd/tfxzYlmEDv4ZIAFlu5TpsWupualPmT4heTpjVygIGzD2M4YVyKUUG1w5nllwvHiswsXzBjYQag9Vq+Cx6q515K2y1N1MALNY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F2CEDA7;
+	Mon, 30 Sep 2024 03:30:22 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F412E3F587;
+	Mon, 30 Sep 2024 03:29:50 -0700 (PDT)
+Date: Mon, 30 Sep 2024 11:29:45 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	sunyeal.hong@samsung.com, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: samsung: Fix out-of-bound access of of_match_node()
+Message-ID: <Zvp9mWLKveSz5Xdo@J2N7QTR9R3>
+References: <20240927102104.3268790-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the origin tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20240930133813.3c8157df@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240930133813.3c8157df@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240927102104.3268790-1-ruanjinjie@huawei.com>
 
-On 30/09/2024 05:38, Stephen Rothwell wrote:
-> Hi all,
+On Fri, Sep 27, 2024 at 06:21:04PM +0800, Jinjie Ruan wrote:
+> Currently, there is no terminator entry for exynosautov920_cmu_of_match,
+> hence facing below KASAN warning,
 > 
-> After merging the origin tree, today's linux-next build (s390 defconfig)
-> failed like this:
+> 	==================================================================
+> 	BUG: KASAN: global-out-of-bounds in of_match_node+0x120/0x13c
+> 	Read of size 1 at addr ffffffe31cc9e628 by task swapper/0/1
+
+> 	The buggy address belongs to the variable:
+> 	 exynosautov920_cmu_of_match+0xc8/0x2c80
+
+> Add a dummy terminator entry at the end to assist
+> of_match_node() in traversing up to the terminator entry
+> without accessing an out-of-boundary index.
 > 
-> In file included from fs/bcachefs/bset.h:9,
->                  from fs/bcachefs/btree_iter.h:5,
->                  from fs/bcachefs/str_hash.h:5,
->                  from fs/bcachefs/xattr.h:5,
->                  from fs/bcachefs/acl.c:6:
-> fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
-> fs/bcachefs/bkey.h:557:41: error: 'const struct bkey' has no member named 'bversion'; did you mean 'version'?
->   557 |         x(BKEY_FIELD_VERSION_HI,        bversion.hi)                    \
->       |                                         ^~~~~~~~
+> Fixes: 485e13fe2fb6 ("clk: samsung: add top clock support for ExynosAuto v920 SoC")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 
+FWIW, I'm hitting this while testing on v6.12-rc1, and my local fix was
+essentially the same (adding a '{ /* sentintel */ }' entry), so FWIW,
+with one minor nit below:
 
-Also reported earlier here:
-https://lore.kernel.org/all/202409272048.MZvBm569-lkp@intel.com/
-https://lore.kernel.org/all/202409271712.EZRpO2Z1-lkp@intel.com/
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-But the true problem is here:
+> ---
+>  drivers/clk/samsung/clk-exynosautov920.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynosautov920.c b/drivers/clk/samsung/clk-exynosautov920.c
+> index 7ba9748c0526..a3634003b29b 100644
+> --- a/drivers/clk/samsung/clk-exynosautov920.c
+> +++ b/drivers/clk/samsung/clk-exynosautov920.c
+> @@ -1155,6 +1155,7 @@ static const struct of_device_id exynosautov920_cmu_of_match[] = {
+>  		.compatible = "samsung,exynosautov920-cmu-peric0",
+>  		.data = &peric0_cmu_info,
+>  	},
+> +	{ },
 
-commit cf49f8a8c277f9f2b78e2a56189a741a508a9820
-Author:     Kent Overstreet <kent.overstreet@linux.dev>
-AuthorDate: Thu Sep 26 15:49:17 2024 -0400
-                    ^^^^^^^^^^^
-Commit:     Kent Overstreet <kent.overstreet@linux.dev>
-CommitDate: Fri Sep 27 21:46:35 2024 -0400
-                    ^^^^^^^^^^^ one day difference!
+Nit: the sentinal entry is meant to be the last entry, so it shouldn't
+have a trailing comma.
 
-Last minute commits usually won't receive wide build coverage, at least
-not instantaneously.
+Regardless of that, it'd be nice to have this fix in -rc2, since anyone
+trying to test with KASAN is going to hit this at boot time.
 
-And if you go through the history, I see around 40 commits with authored
-date ~20-26 September and committed on Sep 27. Plus another ~40 authored
-earlier but committed on September 21, which is middle of merge window.
+Mark.
 
-Why such commits for RC1 are sent at the end of merge window or
-committed during merge window?
-
-Best regards,
-Krzysztof
-
-Best regards,
-Krzysztof
-
+>  };
+>  
+>  static struct platform_driver exynosautov920_cmu_driver __refdata = {
+> -- 
+> 2.34.1
+> 
 
