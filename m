@@ -1,161 +1,241 @@
-Return-Path: <linux-kernel+bounces-344308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380C098A81A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:06:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 548C798A820
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE131C23865
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8001B1C22D18
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600EC1922E3;
-	Mon, 30 Sep 2024 15:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB37B1925B4;
+	Mon, 30 Sep 2024 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPnuoTkA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbsO7g4P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C631CFA9;
-	Mon, 30 Sep 2024 15:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F31922E5;
+	Mon, 30 Sep 2024 15:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708775; cv=none; b=hkbSrfGM4ERETF6ipFxqiPfKA9SR7q0GH148P8owfwV3TrfJ1TyhvIv1wAZFTdBvy6ZNQfZ7iKaEcT5oA5S8NnvvOgPWEqOzhj/DBcd6s6x+y4VA5Ke+/xm/fPkud2eEeHHGK3iZ3DoPQD1R47xPPR7Hb2C/GIRB1Kxg7/u9aAE=
+	t=1727708837; cv=none; b=eg4yfm7JFTbtE2iOU6sCFQ3655o5gHWB0aHscdZrs1JlgJ41CqcZud3SuDZtEa1D1ghmmXU8ip5xFf1IP05LgjjcDgLS5Qh7wKsr44ryTsD+2tXxRI/5AbS7PvwvjBj0h2MYMpYjqcZRgW3UIW6R97KMfDLIm8r3UPIx1KFjZlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708775; c=relaxed/simple;
-	bh=ngCu/hMHjH84wDb0iV2Bzjsfq89LHQRH4viM11PNXYo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YD+cmAJlUynjpnNl1uSONRbiKrhdKqwvB4lxQM8MhirdKioAVrCbCGQjByNHuaUPnIpHdaTfbUgsrZgVi/F62UkZwAqPO1aWayaVJXvPFywvhiKluokOb5NerTYlXNPfh1Vnl2R73Oa8eSbQADjB6zvQR7mqgbtHBLQFrFc56KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPnuoTkA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271CCC4AF09;
-	Mon, 30 Sep 2024 15:06:15 +0000 (UTC)
+	s=arc-20240116; t=1727708837; c=relaxed/simple;
+	bh=1mdFYVUyk9PvCk+d9I1dqxT4nmATsY89D3M/XmBH7uI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E2tZxQ3Vyn6qiG3+FUqphICKbfl+kuhsr6deZaG+FTL3P1FUZILjhtwxvL9r3YyTAl15/82RADKmsdKn+l0ApfWUfWP5Ce0zArcq/vExZokqaXm47/hCnuTUNJddlhXfDULwmYvEmTF0EmGijAxNv8uiuYY8HWg95xJVNCJD0aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SbsO7g4P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9C0C4CEC7;
+	Mon, 30 Sep 2024 15:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727708775;
-	bh=ngCu/hMHjH84wDb0iV2Bzjsfq89LHQRH4viM11PNXYo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BPnuoTkAce+HKTSoE8Qp66fgPmktDejNE4T3tbLfm7TfARmdTwqETAJusVUY84CRl
-	 AgpYBe2bWwq6xxOfyrarjllBWu9xrjK3B8vWhdvB8Gs+9xkpckQTZIhNQbyJvbclwu
-	 yDwK/jMFl5tvNSwRpwZEqbo12IgmYIFhAQqGiafyvb4jFQ262K2Mjqnk+bEA/qSiKf
-	 bC6lvFBj5fbirWrZAq5lBMTUnaVhilwvEO76YtRLGS8aB9DT8jVjkzFWf2oLTDfE5o
-	 pqOBYgMufHFLI67iRLMvFxcpC4qAUtP62n/EjPPmJ8aHPgIzMu9Bzdr1BmAbjJYDU5
-	 Gs69Q6O4lf4bQ==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e03c736466so2857419b6e.1;
-        Mon, 30 Sep 2024 08:06:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8CGaicK8vdI0s0c4xABVTqGIGqNGrkWu1h4DgFO7mF6nUP1sFafKG+pl8oh3+HK016O7IFqsbpA==@vger.kernel.org, AJvYcCVAuf9uk15VrANfxzzaztSWutluOih75962c9STEzU9MqAlKOjx0gKPdeLk4X1ISncpYPT0gkWL2YcQLMho@vger.kernel.org, AJvYcCXifemE0chBDjVLecReFcHl8Y3i7RnQa6wRgV+hi9OSNrOSN1BYebLaCGRFHZapUSSoTyV+I48ONwz1o/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYwOroSoJtVupTojvwqsuWyY1+Wu+LLIxg+PSlHuAnj0GxEK2G
-	T/Cz+Mx/sLkSzwlPmTnheVlq71k4poN6T1GWt2E1pYuexUoPifmJD6GlhT87ufdzMHEtkylz3/O
-	V5ezYwx8ukiWeTMd68AZNdYKA18w=
-X-Google-Smtp-Source: AGHT+IHN/VxcDlbpcWnreYOVCjZ9Xx5U1zGFEV2WvRfWn65plcCQgbQL8OEGiHdwBwPyv3sdav6QuUSzbbrUsT/gLLQ=
-X-Received: by 2002:a05:6871:e491:b0:277:e6f6:b383 with SMTP id
- 586e51a60fabf-28710aad143mr7769921fac.24.1727708774441; Mon, 30 Sep 2024
- 08:06:14 -0700 (PDT)
+	s=k20201202; t=1727708836;
+	bh=1mdFYVUyk9PvCk+d9I1dqxT4nmATsY89D3M/XmBH7uI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SbsO7g4P6V1MhXPMCtd91iXqb8ha/RVg8lmgjLW925cTpYbI3mpRZ84Xz0/MohUsX
+	 Ld1gGAeJfc+LkO75un+qB7jmW2XXDRTMsu6htxU2QuRyN1MfaA4rp5R2GYmkz4+zW0
+	 2Sv+Nwbd+Wi2h5qtWAuNYA5CaH51HMxWfdDQdEg7s+X663VTrlBEu8j0nOnU8YFCrH
+	 Z88RdWG3GdBTXJNziXCDExlsn/pxYu9moA5v8mHQ//q0ODO57Bf/2ctSXY4qkpUoqQ
+	 1oQBJyXrWwgEFiV1KZf3ZsMcS01zYgyLT7Wq238czM+Oir3uMlutX77iL4migCeWHN
+	 xUE5W2RWnGrRw==
+Date: Mon, 30 Sep 2024 16:07:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: gpio: add support for NXP
+ S32G2/S32G3 SoCs
+Message-ID: <20240930-bamboo-curliness-eb4787b81ea3@spud>
+References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com>
+ <20240926143122.1385658-3-andrei.stefanescu@oss.nxp.com>
+ <20240926-apricot-unfasten-5577c54a3e2f@spud>
+ <c2d8f121-903d-4722-825f-c00604ef3991@oss.nxp.com>
+ <20240930-shortness-unedited-650f7996e912@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905092645.2885200-1-christian.loehle@arm.com> <20240905092645.2885200-3-christian.loehle@arm.com>
-In-Reply-To: <20240905092645.2885200-3-christian.loehle@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 30 Sep 2024 17:06:03 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gKeHsvB_Jfja=yYLijhe9_dWSjCaMDtE2isOuJa6dy8w@mail.gmail.com>
-Message-ID: <CAJZ5v0gKeHsvB_Jfja=yYLijhe9_dWSjCaMDtE2isOuJa6dy8w@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/8] cpuidle: Prefer teo over menu governor
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
-	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com, 
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io, 
-	dsmythies@telus.net, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rI5CiW6I9ZSnzML4"
+Content-Disposition: inline
+In-Reply-To: <20240930-shortness-unedited-650f7996e912@spud>
+
+
+--rI5CiW6I9ZSnzML4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 5, 2024 at 11:27=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> Since menu no longer has the interactivity boost teo works better
-> overall, so make it the default.
->
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+On Mon, Sep 30, 2024 at 04:00:57PM +0100, Conor Dooley wrote:
+> On Fri, Sep 27, 2024 at 10:13:54AM +0300, Andrei Stefanescu wrote:
+> > Hi Conor,
+> >=20
+> > Thank you very much for the prompt review!
+> >=20
+> > On 26/09/2024 18:38, Conor Dooley wrote:
+> > > On Thu, Sep 26, 2024 at 05:31:19PM +0300, Andrei Stefanescu wrote:
+> > >> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
+> > >>
+> > >> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> > >> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > >> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > >> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> > >=20
+> > > What's up with this SoB chain? You're the author what did
+> > > the other 3 people do? Are they missing co-developed-by tags?
+> >=20
+> > Yes, thank you for suggesting it! I will also add Co-developed-by tags
+> > for them. In the end it should look like this:
+> >=20
+> > Co-developed-by: Phu Luu An <phu.luuan@nxp.com>
+> > Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
+> > Co-developed-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
+> > Co-developed-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
+> > Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> >=20
+> > >> +
+> > >> +examples:
+> > >> +  - |
+> > >> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > >> +    #include <dt-bindings/interrupt-controller/irq.h>
+> > >> +
+> > >> +    gpio@4009d700 {
+> > >> +        compatible =3D "nxp,s32g2-siul2-gpio";
+> > >> +        reg =3D <0x4009d700 0x10>,
+> > >> +              <0x44011700 0x18>,
+> > >> +              <0x4009d740 0x10>,
+> > >> +              <0x44011740 0x18>,
+> > >> +              <0x44010010 0xb4>,
+> > >> +              <0x44011078 0x80>;
+> > >=20
+> > > Huh, I only noticed this now. Are you sure that this is a correct
+> > > representation of this device, and it is not really part of some sysc=
+on?
+> > > The "random" nature of the addresses  and the tiny sizes of the
+> > > reservations make it seem that way. What other devices are in these
+> > > regions?
+>=20
+> Thanks for your answer to my second question, but I think you missed this
+> part here ^^^
 
-I know that this isn't strictly related to the use of iowait in menu,
-but I'd rather wait with this one until the previous change in menu
-settles down.
+Reading it again, I think you might have answered my first question,
+though not explicitly. The regions in question do both pinctrl and gpio,
+but you have chosen to represent it has lots of mini register regions,
+rather than as a simple-mfd type device - which I think would be the
+correct representation. .
 
-Also it would be good to provide some numbers to support the "teo
-works better overall" claim above.
+Cheers,
+Conor.
 
-> ---
->  drivers/cpuidle/Kconfig          | 5 +----
->  drivers/cpuidle/governors/menu.c | 2 +-
->  drivers/cpuidle/governors/teo.c  | 2 +-
->  3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/cpuidle/Kconfig b/drivers/cpuidle/Kconfig
-> index cac5997dca50..ae67a464025a 100644
-> --- a/drivers/cpuidle/Kconfig
-> +++ b/drivers/cpuidle/Kconfig
-> @@ -5,7 +5,7 @@ config CPU_IDLE
->         bool "CPU idle PM support"
->         default y if ACPI || PPC_PSERIES
->         select CPU_IDLE_GOV_LADDER if (!NO_HZ && !NO_HZ_IDLE)
-> -       select CPU_IDLE_GOV_MENU if (NO_HZ || NO_HZ_IDLE) && !CPU_IDLE_GO=
-V_TEO
-> +       select CPU_IDLE_GOV_TEO if (NO_HZ || NO_HZ_IDLE) && !CPU_IDLE_GOV=
-_MENU
->         help
->           CPU idle is a generic framework for supporting software-control=
-led
->           idle processor power management.  It includes modular cross-pla=
-tform
-> @@ -30,9 +30,6 @@ config CPU_IDLE_GOV_TEO
->           This governor implements a simplified idle state selection meth=
-od
->           focused on timer events and does not do any interactivity boost=
-ing.
->
-> -         Some workloads benefit from using it and it generally should be=
- safe
-> -         to use.  Say Y here if you are not happy with the alternatives.
-> -
->  config CPU_IDLE_GOV_HALTPOLL
->         bool "Haltpoll governor (for virtualized systems)"
->         depends on KVM_GUEST
-> diff --git a/drivers/cpuidle/governors/menu.c b/drivers/cpuidle/governors=
-/menu.c
-> index 28363bfa3e4c..c0ae5e98d6f1 100644
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -508,7 +508,7 @@ static int menu_enable_device(struct cpuidle_driver *=
-drv,
->
->  static struct cpuidle_governor menu_governor =3D {
->         .name =3D         "menu",
-> -       .rating =3D       20,
-> +       .rating =3D       19,
->         .enable =3D       menu_enable_device,
->         .select =3D       menu_select,
->         .reflect =3D      menu_reflect,
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/=
-teo.c
-> index f2992f92d8db..6c3cc39f285d 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -537,7 +537,7 @@ static int teo_enable_device(struct cpuidle_driver *d=
-rv,
->
->  static struct cpuidle_governor teo_governor =3D {
->         .name =3D         "teo",
-> -       .rating =3D       19,
-> +       .rating =3D       20,
->         .enable =3D       teo_enable_device,
->         .select =3D       teo_select,
->         .reflect =3D      teo_reflect,
-> --
-> 2.34.1
->
+>=20
+> > >=20
+> > > Additionally, it looks like "opads0" and "ipads0" are in a different
+> > > region to their "1" equivalents. Should this really be represented as
+> > > two disctint GPIO controllers?
+> >=20
+> > I will add a bit more context regarding the hardware.
+> >=20
+> > The hardware module which implements pinctrl & GPIO is called SIUL2.
+> > For both S32G2 and S32G3 we have the same version of the module and=20
+> > it is integrated in the same way. Each SoC has two SIUL2 instances which
+> > mostly have the same register types and only differ in the number
+> > of pads associated to them:
+> >=20
+> > - SIUL2_0 mapped at address 0x4009c000, handling pins 0 - 101
+> > - SIUL2_1 mapped at address 0x44010000, handling pins 112 - 190
+> >=20
+> > There are multiple registers for the SIUL2 modules which are important
+> > for pinctrl & GPIO:
+> >=20
+> > - MSCR (Multiplexed Signal Configuration Register)
+> >   It configures the function of a pin and some
+> >   pinconf properties:
+> >     - input buffer
+> >     - output buffer
+> >     - open-drain
+> >     - pull-up/pull-down
+> >     - slew rate
+> >   Function 0 means the pin is to be used as a GPIO.
+> >=20
+> > - IMCR (Input Multiplexed Signal and Configuration Register)
+> >   If the signal on this pad is to be read by another hardware
+> >   module, this register is similar to a multiplexer, its value
+> >   configures which pad the hardware will link to the module.
+> >   As an example let's consider the I2C0 SDA line. It has one
+> >   IMCR associated to it. Below are its possible pins and
+> >   corresponding IMCR values:
+> >     pin 16 <- 2
+> >     pin 24 <- 7
+> >     pin 31 <- 3
+> >     pin 122 <- 4=20
+> >       (Note that MSCR122 is part of SIUL2_1 but the IMCR for
+> >        I2C0_SDA is part of SIUL2_0)
+> >     pin 153 <- 5
+> >     pin 161 <- 6
+> >   The IMCR values should be aligned with the function bits in the
+> >   MSCR bits. If we want to use pin 122 for I2C0_SDA we will configure
+> >   the function bits in MSCR122 and write the value 4 to the I2C0_SDA
+> >   IMCR.=20
+> >=20
+> > - PGPDO/PGPDI Parallel GPIO Pad Data Out/In
+> >   16 bit registers where each bit(besides some gaps) represents
+> >   a GPIO's output/input value
+> >=20
+> > - DISR0, DIRER0, IREER0, IFEER0
+> >   These registers are used for: status, enable, rising/falling edge
+> >   configuration for interrupts. We have 32 interrupts called EIRQ and
+> >   each interrupt has one or more pads associated with it (controlled
+> >   by an IMCR register per EIRQ).
+> >=20
+> >   However, one important thing to note is that even though there are
+> >   EIRQs for SIUL2_0 pads, all the interrupt registers mentioned above
+> >   are only present in SIUL2_1.
+> >=20
+> > Because of mixed pins (I2C0_SDA in the example above with the MSCR
+> > in SIUL2_1 for pad 122 and the IMCR in SIUL2_0) and the interrupt
+> > configuration registers in SIUL2_1 we decided to have a single
+> > driver instance.
+> >=20
+> > >=20
+> > >=20
+> > > Cheers,
+> > > Conor.
+> > >=20
+> >=20
+> > Best regards,
+> > Andrei
+> >=20
+
+
+
+--rI5CiW6I9ZSnzML4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvq+nAAKCRB4tDGHoIJi
+0iQdAQDpVmzuFtiWSE3Ed5Pn+Tzm5lXzptDhPwqs5ffBQtwd3wEAt7HQn7QqknYP
+n+uLRcALZudJ6e7jYxDU3DZjIF3ueAM=
+=Wd+D
+-----END PGP SIGNATURE-----
+
+--rI5CiW6I9ZSnzML4--
 
