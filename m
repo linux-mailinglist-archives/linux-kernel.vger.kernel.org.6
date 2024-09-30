@@ -1,198 +1,70 @@
-Return-Path: <linux-kernel+bounces-344879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217EA98AF31
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:33:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E971198AF33
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542871C22C59
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:33:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91433281361
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7C617BB0C;
-	Mon, 30 Sep 2024 21:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813AF184520;
+	Mon, 30 Sep 2024 21:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TId3sVP5"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZB+GR19z"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1D0EDE;
-	Mon, 30 Sep 2024 21:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C827EDE;
+	Mon, 30 Sep 2024 21:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727732005; cv=none; b=EZgtdXtkyC/n77C7cgQIv9u8Y6xSKX3MINfyRoPIsV2/oUVu9m7ajdA/V48Qgs8h8Z/Bvn/pWVPcM/KxAkUzFws9hQwsDjIM5o01sSBfiuHKKt9ZqgFsrxIG5jSrDmF7jg9ttgCy+bGzsLlSUGSzwaRRFkTQb6ukvhDZuyS91PM=
+	t=1727732017; cv=none; b=KNwXWiVM3Hp+gwCk2q5t0EHLRhqgLY2G/96xR+jyfj9ob6oFq+Ly0tmg+af5OyTlfxWJm6jsfGemYnedCKtkSKmxywbGA65oZSCZggtrJgydL3kZstAW+PWbf8GbQ6JhgmjD1jljFHRXfP5vg/Q3LKS4frgE7MjHebbTHIfMJF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727732005; c=relaxed/simple;
-	bh=18lpUTB0CF/mhpWU0xQeVTTOD8GAgMqG6a8GmvcEVXU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JTb6+6imqi0Ov0NHL84/PisbtaxjzcXvVFOHmc9RUc/q8cQUJGGR3YtItiy0X40mRl2ChMI8fvTrVEiHrtmped3O+rLCdsm9amJVgoe8oU7ebYBCd2RVqtnQAdv4LhiMcitNSzK1r3isa7of8baPI8YSMxXTtpLTkrWuowZak6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TId3sVP5; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-537a399e06dso5616239e87.1;
-        Mon, 30 Sep 2024 14:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727732001; x=1728336801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ag5VhbnQShpIryOjSzBOtWYz1Q5qSqu8Fn5OY1wETi0=;
-        b=TId3sVP5ZFyIAhfbWZj1qC7M2IG7EI2xqODuphRXSvW7pEdWfFwLHitVjfRh0eX6gB
-         ktikg8wQH4RxmEFFnGNtdRNhX0b1ibHWA0W2czKUuWPJbO9QkiUAN+Pn3sNme8MdrQLj
-         xHP5OXmaD+zcYAvjKFb2OOVJs3YPNJ3Md/NliZFil8CAjWLpKY3nbdz2WbhhFC0t5pDh
-         1DE4RMzwaXE974U5JC80dMdvI+F3PCfMbS6mMc0H+A72stpRcsJsDQFBT7+t/b913nBv
-         YeH1dj7JEk5NwElRo0Cv0LI631YwrpXVQVqtas8fa0nCsMG4qZ/uP8QF70LV1JddQYBu
-         eUrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727732001; x=1728336801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ag5VhbnQShpIryOjSzBOtWYz1Q5qSqu8Fn5OY1wETi0=;
-        b=sBWDbyXPM0QhUlRl72skzr79xE+vyzTQqOrKCeuPwNyjbiGXFtQjFcjy6ZenJ71HyO
-         /WBa817eq3I2EfSEutlbUhmm5ayBs/zu4GNx9oE/IPmvVXF8x9PCcptrOtawqBwDSmDd
-         7u3YJKViVWSHV6A3mQzQIgC6oLRPbpLgPOXbyKjY0yAOFqYTdHMMFEqW7g64j3tUMcQX
-         JogtBQi6liLHAqE/cKDDWdkcA+LDWiFCoGSE60DbTxlWe9DMLzDB/k7JJbb+1HUeNwuk
-         sDuRaFVwID5kvpxTfKxN0Hcmh964syK6TgbjsHa3dnfNQ+2iml7Q/dJr7D7XXf42wwJF
-         o8Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdpwxpXxKyClrIcfe4xiGwfzNcR/vWERPvl9/Jn+Y2DCnB2YxvbjRSUzHCgB6UmCh07noeSevOQ6ty@vger.kernel.org, AJvYcCXTPRhfN34yR91gxzl+R4F5HdvmJo09PDOOzBC2WjwGvTSe4+seLyd4fhiAjg0egZKnE933Tu9naQ8hx49V@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXX1kcMRarlSedj+TiE5OnCeqGqHPoBtUYeO1CymB5SmIq9jD/
-	6/srwaqeaMZJuFyTNZmQWOYiKDtBWzfzHCF9FffCUj3j/3POsidRPXlvYvH0dJx89dQd9VpbkVP
-	gRHlq/mVpHWuXSNW9YvLCxlDVO0g=
-X-Google-Smtp-Source: AGHT+IEFLnKYTXFERxHv+RTe8z+BjoJWs1ezwBtE1WSeXEVM+qPAcIgV8yJsNLAv1mWUxaaLwnmNVTScMOeZHEk923c=
-X-Received: by 2002:a05:6512:1054:b0:535:6795:301a with SMTP id
- 2adb3069b0e04-5389fc642a8mr6346203e87.47.1727732001020; Mon, 30 Sep 2024
- 14:33:21 -0700 (PDT)
+	s=arc-20240116; t=1727732017; c=relaxed/simple;
+	bh=/SRb6Jaylu4nikGcNmpwMw1bw3/7CwlBvKRUqbu/Ye4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuFR43glBah1/EDya7KiNQ0OmscVDsMO/0yOvb9zY4RwDTt63JKstQfdidRzRtYGqDJnSp+sChy4J3aTfjvV1/xdbhWBPlD3MBMI6irENVpo4CsI8J0zYw87N2TjWpWyZQ1k8XdJbJJ8jY9JV7aLThfDdnNKV9GIUyLP0YJ/J5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ZB+GR19z; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tMoXWmbk6w2tetKwiah6k8IcqLtsrPCKf4dOWdpPRDU=; b=ZB+GR19zZEGaHm7Dxy6pqEpghx
+	K0fE2ZiZZjS5oGfggtkaGpn48/Vkit/qePPbvtHMz0hsprwhicEGg1rq9mF+ooi1yOSqM7eKCYqo8
+	DlSqAYMfjBxcLtxJ1my1aCjKqbPb3s+pCH6tM7mONIAkPbBPnjF7rpnEX5QWuivyfNF4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svO1B-008fY1-Br; Mon, 30 Sep 2024 23:33:21 +0200
+Date: Mon, 30 Sep 2024 23:33:21 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	tobias@waldekranz.com, anna-maria@linutronix.de
+Subject: Re: [PATCH net-next] net: marvell: mvmdio: use clk_get_optional
+Message-ID: <d4ad72ed-9826-4524-8c4c-0fddc97a8670@lunn.ch>
+References: <20240930211628.330703-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928215948.4494-3-pali@kernel.org> <20240930202510.23187-1-pali@kernel.org>
-In-Reply-To: <20240930202510.23187-1-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 30 Sep 2024 16:33:11 -0500
-Message-ID: <CAH2r5mvgWzAA_z_448Y3=GivuLu=M9FsNemjyGrwUMVVF_4H0Q@mail.gmail.com>
-Subject: Re: [PATCH v3] cifs: Remove intermediate object of failed create
- reparse call
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930211628.330703-1-rosenp@gmail.com>
 
-tentatively merged into cifs-2.6.git pending review and testing
+On Mon, Sep 30, 2024 at 02:16:28PM -0700, Rosen Penev wrote:
+> The code seems to be handling EPROBE_DEFER explicitly and if there's no
+> error, enables the clock. clk_get_optional exists for that.
 
-On Mon, Sep 30, 2024 at 3:28=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-> intermediate object created by CREATE. Otherwise empty object stay on the
-> server when reparse call failed.
->
-> This ensures that if the creating of special files is unsupported by the
-> server then no empty file stay on the server as a result of unsupported
-> operation.
->
-> Fixes: 102466f303ff ("smb: client: allow creating special files via repar=
-se points")
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
-> Changes in v3:
-> * Check if iov_base and out_buftype are valid before derefrencing iov_bas=
-e
-> Changes in v2:
-> * Increase out_buftype[] and out_iov[] members from 2 to 4 as required by=
- smb2_compound_op
-> * Call free_rsp_buf() for all members of out_buftype[]/out_iov[]
-> ---
->  fs/smb/client/smb2inode.c | 24 ++++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> index 11a1c53c64e0..a6dab60e2c01 100644
-> --- a/fs/smb/client/smb2inode.c
-> +++ b/fs/smb/client/smb2inode.c
-> @@ -1205,9 +1205,12 @@ struct inode *smb2_get_reparse_inode(struct cifs_o=
-pen_info_data *data,
->         struct cifs_sb_info *cifs_sb =3D CIFS_SB(sb);
->         struct cifsFileInfo *cfile;
->         struct inode *new =3D NULL;
-> +       int out_buftype[4] =3D {};
-> +       struct kvec out_iov[4] =3D {};
->         struct kvec in_iov[2];
->         int cmds[2];
->         int rc;
-> +       int i;
->
->         oparms =3D CIFS_OPARMS(cifs_sb, tcon, full_path,
->                              SYNCHRONIZE | DELETE |
-> @@ -1228,7 +1231,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_op=
-en_info_data *data,
->                 cmds[1] =3D SMB2_OP_POSIX_QUERY_INFO;
->                 cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfi=
-le);
->                 rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &o=
-parms,
-> -                                     in_iov, cmds, 2, cfile, NULL, NULL,=
- NULL);
-> +                                     in_iov, cmds, 2, cfile, out_iov, ou=
-t_buftype, NULL);
->                 if (!rc) {
->                         rc =3D smb311_posix_get_inode_info(&new, full_pat=
-h,
->                                                          data, sb, xid);
-> @@ -1237,12 +1240,29 @@ struct inode *smb2_get_reparse_inode(struct cifs_=
-open_info_data *data,
->                 cmds[1] =3D SMB2_OP_QUERY_INFO;
->                 cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfi=
-le);
->                 rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path, &o=
-parms,
-> -                                     in_iov, cmds, 2, cfile, NULL, NULL,=
- NULL);
-> +                                     in_iov, cmds, 2, cfile, out_iov, ou=
-t_buftype, NULL);
->                 if (!rc) {
->                         rc =3D cifs_get_inode_info(&new, full_path,
->                                                  data, sb, xid, NULL);
->                 }
->         }
-> +
-> +
-> +       /*
-> +        * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
-> +        * remove the intermediate object created by CREATE. Otherwise
-> +        * empty object stay on the server when reparse call failed.
-> +        */
-> +       if (rc &&
-> +           out_iov[0].iov_base !=3D NULL && out_buftype[0] !=3D CIFS_NO_=
-BUFFER &&
-> +           ((struct smb2_hdr *)out_iov[0].iov_base)->Status =3D=3D STATU=
-S_SUCCESS &&
-> +           (out_iov[1].iov_base =3D=3D NULL || out_buftype[1] =3D=3D CIF=
-S_NO_BUFFER ||
-> +            ((struct smb2_hdr *)out_iov[1].iov_base)->Status !=3D STATUS=
-_SUCCESS))
-> +               smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(out_buftype); i++)
-> +               free_rsp_buf(out_buftype[i], out_iov[i].iov_base);
-> +
->         return rc ? ERR_PTR(rc) : new;
->  }
->
-> --
-> 2.20.1
->
->
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-
---=20
-Thanks,
-
-Steve
+    Andrew
 
