@@ -1,180 +1,248 @@
-Return-Path: <linux-kernel+bounces-344258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF77998A78A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:45:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DBF898A78E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:46:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74A601F218C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:45:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 721681C22C77
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF2718E755;
-	Mon, 30 Sep 2024 14:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6007A191F6B;
+	Mon, 30 Sep 2024 14:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d14X/7Xp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="dMHXayG2"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2081.outbound.protection.outlook.com [40.107.247.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3417B2032A;
-	Mon, 30 Sep 2024 14:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707537; cv=none; b=A3ajj6E1M147YkC/5Gq2BwRD/eifbZOgwi9KmvfxktgJbDoFrJYiPaVeXVVSlz6AIEiSV364QWkBZM/MrF/aKeoljohO+CvYTreXc7gCXEQFVd68anrN11yoiDsm4og2dxkZ74FDXfHRk4RTHd7K3owE+M+YT+zCAEHeFKfVWZI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707537; c=relaxed/simple;
-	bh=3HetSWB8pauIgHnpbc+Jan/OHiAVA1t62OSsi/uUbGY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=Qi9hJjPkcvdtrinbWgcobNsNFAWiJXodAnwewbWD/+sQDYeAQ3KKtzrmZ70z+GrJJf3hRYmr6W9eCpT1LC0r5DmHj9KRKd1/7faRTNxhDyTofGvARx3KRIY5ntfOOov9/e1yZPaYtV0AWfHyuMiOG/skyOoDl5eJ1nofp4QQ+lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d14X/7Xp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U6RwRZ014784;
-	Mon, 30 Sep 2024 14:45:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WSQC+/onyBzDMrxeEgdTEe7kX3EdK1p7LxLmFcRXzx0=; b=d14X/7XpXp4WxhcQ
-	PcFCmvG1+VHoUhEyH08tHdwj5VwkiE/XNKfaHzRXaGNy4jj8kCFomdwSYxXvLfRR
-	odX4oFSoMOcP5SZBssmC3EKRnnkPOUxmy+dA48e7tf2XGOH2Dzk/UhLyjfwmJR5V
-	65JwDqL3lqG1hMrgr+jMX4sX++7sUM/Y42GazC2LkpnX02+pFxyFxh/FvUCcHqA5
-	6z2q1Q67xfkhTWbfA8roK/fQ0hWv0hJ8piOiJidVoEt4cOIjNySZYeI+Ji8DWK39
-	ng7J3mQV/PZimJPTSBgekt3eEdzBDIC41GuO+Fguo0huyB2hnhRsfNMcaf3mJkvb
-	a+s/Ag==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41yprah8fd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 14:45:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48UEjVUI025992
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 30 Sep 2024 14:45:31 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
- 2024 07:45:28 -0700
-Message-ID: <0e38cd39-ba91-48f8-a4ee-c90bf95acdfe@quicinc.com>
-Date: Mon, 30 Sep 2024 20:15:24 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1FA19005B;
+	Mon, 30 Sep 2024 14:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727707579; cv=fail; b=M+q0yRaTvrvyEVHM1UdwvcqEs4TE6Q2BQg7UOrJtOXF7NNSMmowYH1VLjWDQxgwTUlE3QJKITdqTtVHng57IJ1UxvooH4m/pHhOB61jWLYaX3tjR5U9rlueaN3sZflvssKYm2LMZaG/YS0lC0TZ3phqDUKFR9CMWIOw6QQBoj1A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727707579; c=relaxed/simple;
+	bh=U7sbIfTq9tlu463BZeqW3dJYQqaxHrsiCvE9K+dzPOg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kKlIBSITB1XyBvTuZ4bmX4+tC2sdoS1o62IiTDxZ592ti2C4jjv5DE7tt490bB0cd8OBttHrKBtcRZcNXoei8fnLjVnUBTkf9+Mpx8YFf4SnHiGIiHl8HfoN2QqKls2lg85EP8WpG4+f0Jtsx5NfiSgf7ZfUgojSLjL5+mH8RWs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=dMHXayG2; arc=fail smtp.client-ip=40.107.247.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pLTmckMQlLfIS4QIeyxgzeQ4nrMVk2Y/vHALG4Xw7Y1Ey2Ae1vsr9N1JP+zM7syhouUTCw2iIpe0Kt8jKcJtnLguhIYsIE5i1qLv6IGhlltNOKfhri7GHKREnyodh8s6Di+blUb3NeqK4xNBGL38EGs3n5PKceSfWXa+6zexsT4/Z1yv4feZ9ZjjVJyo9E0v9LE0C1Li9kaM+Ydj5ZbqAm/gt6ZkVD3+dK+Logp1xa0F5MNGSIMhnHb95iROBRWT8P5eX6BAaB1hBpmCh+IYd3+fCTRYfKP/ulu7K+OxQlBatZ2fMFO96HFlHZZAkf6gi6wdfUN+pCgQJ54Hs6B9zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JSasoMBksPgaoFoi4RosKNDGj0TsWhtJob6em/Go4tE=;
+ b=lz/XdeFlLJt9rFey6IbK79uMHPqayrECbj/wiE0SIaiUD6/VaboIJ3FoqHuSmB5tki0AGDSedOkvJHR4NrtuJwj+t8XXmczfEEgEL0bbgF6PKAwetLlgYuzwzPlWs+FTCPXmhKjpjv5d1xQWO7Wz9S9H0wR4C4uASyYAfjuB2IIAh/Rt1ghEwymV7Rl5oUvOyNz9acB82JF/AWTt+0KRF4q7wd3m0Ul3s1L6lIvIBPAgcQh6G293aPg4DdeWp00FDzibk60fGZjRTSD+Ymm0vglFoVEnnSbQV2Y7PE1q84y1ddfcJuJ0U2P2UWZ1Hlspqu7eMHPDPeOlvYJf5eTRAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JSasoMBksPgaoFoi4RosKNDGj0TsWhtJob6em/Go4tE=;
+ b=dMHXayG264Ce4rFTlcJWSrcDwPO7qTtwZzuQel6pHYsz9gJGsOzeRSz/vjbQp48aY0FZSS+X7T2vhUASxr1AnOwRUzo8wnPZuCVtXtlPo82h1NbDSKStxVo+9QDvM37Dr2qFHHe8y4IPsek4P6eYmPlcsQYZkT0X8GKJBIez/ioJ0Y0weOjAj6Kk0tc9Yut9rPVraEETTPjNgtf9axTBdhUsMODvTK5FT5y6rUfvsxHdFiafgn86lAVObyzG7UIDusS+L9bOiWOlKQRIhOxCDuVD2YYypu7IgWVs6ryUyqfBfGqi02nr7RWkQTsZ8Pd7vne3Cjwm2XdzKANytY9WAw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by PAWPR04MB9838.eurprd04.prod.outlook.com (2603:10a6:102:380::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 14:46:13 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.022; Mon, 30 Sep 2024
+ 14:46:13 +0000
+Message-ID: <431dd907-026b-4215-96ef-28fdeb2b43a2@oss.nxp.com>
+Date: Mon, 30 Sep 2024 17:46:09 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: pinctrl: add S32G3 compatible for the
+ SIUL2 driver
+To: Krzysztof Kozlowski <krzk@kernel.org>, Dong Aisheng
+ <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>,
+ Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Ghennadi Procopciuc
+ <Ghennadi.Procopciuc@oss.nxp.com>, Chester Lin <chester62515@gmail.com>,
+ Matthias Brugger <mbrugger@suse.com>, Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ imx@lists.linux.dev, NXP S32 Linux Team <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>
+References: <20240930132344.3001876-1-andrei.stefanescu@oss.nxp.com>
+ <20240930132344.3001876-3-andrei.stefanescu@oss.nxp.com>
+ <7080c117-199a-425a-9053-891a7f331f6a@kernel.org>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <7080c117-199a-425a-9053-891a7f331f6a@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0048.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:92::19) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] i2c: qcom-geni: Support systems with 32MHz serial
- engine clock
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20240926034304.3565278-1-quic_mmanikan@quicinc.com>
- <def1c338-8e41-4622-83d5-7a377d780d76@linaro.org>
- <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <2de5f3e7-1fd6-4368-94bc-4eecc8fc6752@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NqkfyRA8fxHIJ_Gw0wCPyI82Bhw_ngIA
-X-Proofpoint-ORIG-GUID: NqkfyRA8fxHIJ_Gw0wCPyI82Bhw_ngIA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 mlxscore=0 phishscore=0 impostorscore=0
- clxscore=1015 adultscore=0 mlxlogscore=999 bulkscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409300107
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|PAWPR04MB9838:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d22d757-8b4d-4995-7666-08dce15ea185
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NUlJMkhOTTcyNXlybEZJNVNyY1ZDU3gzaGkrY1Q5ZFhweEVDNC9TbGtJdmhj?=
+ =?utf-8?B?VlRMSVNRR05MYW9RTVpjM2xzT3F3aDE5N3ExZHd6RjhvQUZxTWZCYi94aTdY?=
+ =?utf-8?B?YU1vckZZa2IxdUpvWkV6TXg1YzAwR0NtdXUwbGQ4cVhWeEpzT1JWZVExUng2?=
+ =?utf-8?B?VFozZVRxVG1nT2U1aXlkd3Jab2pBUjBBd3lhODdLSzJ2S1V0emJCV3NyazJ6?=
+ =?utf-8?B?dU1jNmRBVVhLU1lJMkFoZlZ0VXFHTXNuMDRXdm4xR3lhcEVaWkMvMTVvOHV2?=
+ =?utf-8?B?RFB3UFI0ODZOT0VIN2lMMDFkRElDYTBVc1g4aUdLNG9PRUZScFpvVmVjV3d0?=
+ =?utf-8?B?K1dOUVkvZ1pPNjU4RlFnK2xRNldTb1ErVmxZekUvQWJMeVFodEswNkF3eml2?=
+ =?utf-8?B?Z0VGdm54SnFaSVBQMUd1WlcvZlF2VmpLenN3U0xEMmpScVc0ckRrU1M2YjYv?=
+ =?utf-8?B?VGpKd3FmOEZUWFpxTFZzdXBaMjQ5ZWVneityd3B2SFd0bkhidEVxWjh4OEdS?=
+ =?utf-8?B?Z1pkVGMvWEk4cGdCbnZ6TXlzeEhpbnRvRFM1SWlFTkVXSGVZOXB4Tm40Z2tI?=
+ =?utf-8?B?L0s2cUxMSWMrUy9pSGtaOXFKR0ZnenFVMmN6blByRldseVE0cEVodUlZVWZC?=
+ =?utf-8?B?WC9WaHhWbGpWa0diSm1SMURxVlBnSS9ETVVQblBueFVINmVxeDlTMEFmRlY5?=
+ =?utf-8?B?M2l4WGV1bTFsajJjOVcwL2ZjRm5HOFZEM3FJNUhXR05XMkNwYnlhMDRyZXJZ?=
+ =?utf-8?B?Wnd0aGY2cVVmdStRa0R6dFZVZm9mV2o0Q3RwZncyMmU4WjB4OXUvNmMrOXpD?=
+ =?utf-8?B?TGpScERVTnl0UFBoZU92Qk1EOXM0MzcvMUh3eDFqYk5ZZjlBa2lFVmxuZW1m?=
+ =?utf-8?B?MHh2RVIxcC9HUjFkaDg2TXV4ZzM0TW5YaDdtK0RDS1pDUG05Nm9xVzNMUm5T?=
+ =?utf-8?B?MUlLc0VFbnJ2VDA4N3Z0Y3RVSnVNMWZhdUVlODcyWHhXU0p3R3FKTDFoMzE4?=
+ =?utf-8?B?TFcrbEhqdFk4cUR5RzNKaGpxMnN5WDhWMlpkeE9EOG1wV0xpM3Z5SVg4b0x6?=
+ =?utf-8?B?U0xZK3lSR0daTGJ0Qk04Q1cvM1VtbzZ5bThwQ29sWk1HdzFRT1YvQlJzemdw?=
+ =?utf-8?B?U25sTlY0bFJDSmRGYjgzZU8yWkFxUngyR1ZYemlKSllRQjI5RFNDQ2FrOXha?=
+ =?utf-8?B?cEVBekJMbmdtTHRJOEltV09YWmc0bG94eWRsajhZUDQ1cjM2OWpwclBkRlV0?=
+ =?utf-8?B?VWxxWG4rTzh3L3lGbitud0JabTlwZmdIVEg1ckd4UjFmK2UvbElHZ3NOUWNP?=
+ =?utf-8?B?aWRyTGVxMlF3aElkWFZnVHJHZktUcitRYm9xcHdENGJjclFEaWRvNjhaOFh1?=
+ =?utf-8?B?cEluSkRtcVBmQ1NPSzFmTnQvWk5sZlhaNTExZjc0Rk1VV1g0WW9CMG5yUTgy?=
+ =?utf-8?B?QjBqM0l1QkVEZk5xbk9US2dDRjk2UmtIL0ZwZ1psVmhnejh2U3RwUTRxWmpU?=
+ =?utf-8?B?WWZYZ1NGRTJ3TlRtNHJnWUxBY0NueUR0Z2ZyTE1LdEc5NmV5bEVkL2ZPYWx1?=
+ =?utf-8?B?b0UzOEpBNDQ2cE95R1I3T1pHUG5wRlNzQjZvSFB4MkExT2xPb1o2QzZpOWN0?=
+ =?utf-8?B?WXVWTXVsaHpJNE5aSlkraGYvYzNzZlI5K0VTWkorQUFkZGVnbS9FaTJBS3Ru?=
+ =?utf-8?B?U2Q4RW9Xcjh3enJmVE9ibnR6Y1E2QzRvZ0ZORmwvaDJsbFpBdEorRFFqUTZ1?=
+ =?utf-8?B?MmgrTFNHZ3g2djhLWXdPeXRDaHZKUEJ2WHBURFp6eVBZZVZrYSt0Y0dLM1Fn?=
+ =?utf-8?B?S3BQZUZKLy9Qc0h0NHZVZjRPdTZFRDRaTFlkbG0wYkZETW9PV2RacDdlT0tF?=
+ =?utf-8?Q?gCwzQH6YmABUQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OURWOElLRnh5Ylc4bSswdDhXeHpHcmF4cGhob3R6SzRON1M1eEh3ZXM3Tkdt?=
+ =?utf-8?B?RllJYnJoR2M4U1NwR3EvOGlPdWVJQnQyUHA3a3cvTWFYNi8vZG5ibXR6Ym01?=
+ =?utf-8?B?bmw4UTBCSFRCRDljMWRUWnNHL3ZPUHBBN2srRHNVcEN1VzFRNnMwSkplK1dz?=
+ =?utf-8?B?VXRCVHc3SWdqTENKWlMrVVdwWE1VbTR0V0tLYW5taFRnOE1LOStOajJvUEx6?=
+ =?utf-8?B?OGR6VmNoVnhmd0F3S1VOMm5yRGh2U2tIYTVyZmYvNHAySUtNM0w1RFljdEpE?=
+ =?utf-8?B?NzlzMWdoYkNFcEhwbEx0RTUya2E2R0hRbmlXZnE3cURlTFZEVUtoL3F3VlBB?=
+ =?utf-8?B?MlBzM0Q5NVJ1dFcwL2hqN1UxdW9tNU9xUkoxdjBqNm5ZY1pHQVFZTWZta24y?=
+ =?utf-8?B?THgxWkpUcTMvMWpWZEJ6TDVIZlZwaHJqVDB1eWVnV0FMcFpua29sSWMwT0tw?=
+ =?utf-8?B?NzVsN3BFQUhtc2t2WXBlenZiUU1GdXlQcGxlOTJrK0ljNGhydG5uNU0yVTZ6?=
+ =?utf-8?B?djhOYXVpaVgrUHBXQU95V3pXU0ltRnRzTnNVejlVMkRzc3VhbkZKZkNpbk9G?=
+ =?utf-8?B?MzZYeXRSci8wcjNJM1hGcGlFQ3dzbmxqbm5mdG8rMjJxOFBUQUR1MDZ2bHNm?=
+ =?utf-8?B?Ymo2b3B3TGdaZmJMN3BBY3loQ2lHQy9mTmRNTWtjMHlEOG9aUS94KzJMa1ZU?=
+ =?utf-8?B?eEdMRlhjbEVDd0R4ZEs5ck5LZ2JtNXk2cVlMSlRkWW53NktwVldlc1ZzN1Rr?=
+ =?utf-8?B?Ly9FQUoycTRabFdUbjh5ZGZneXFzVkpWdzB6aHEvRWxMbTI0QUtQMm1OUGlw?=
+ =?utf-8?B?TVNvZHhRQVBsNFc3bHR5eUZjM29tYzdJVkhVRnpKcnJ1b2o2bUNqLzJWWjFI?=
+ =?utf-8?B?S1pZQlZiSHMrZjNwcjMvZW5yNENsMFJNRDF6Ym9wb0dCZGVTaHdHV3NkZWtO?=
+ =?utf-8?B?SkR0aktIaDZqSCtRcjdvbHdpdnFmL3U1RDZscmhZUEZCdkdUZ1ZJMzhzVWFT?=
+ =?utf-8?B?aTdnUGtTRENCKzk4eWU1NnE1UDc0OGFPVTdDR0c3NGxTUzdnZitRbGJ4Zk9t?=
+ =?utf-8?B?amJiODhrVU9tZHdSOUxJSW0ydHEyQWpvenV3djBxRURzK01yWmsxZmQ1ZFo3?=
+ =?utf-8?B?MnFhNS80SzlxaCtkb0JCOTM1MXRmbnpCM1dXaVBhSFl4d09BN212SUlZWTJm?=
+ =?utf-8?B?K1VRNWFUUWFMZWhZL044aWJwQktsT2NqWmpaQXZvMVpCeWN6ZEVjcmFKQllM?=
+ =?utf-8?B?S0hJdi90MEpOa1BKZ0J6Z28yQi9vYldueEp6SW1waHloQjBYaUgzKzUzZGpT?=
+ =?utf-8?B?eHdQQkpwSTNYc3V6SG0wZ0RpbHRwVXlsRFdWTWZmMUw0NzA0cGkrNXdhQ0M2?=
+ =?utf-8?B?S2N3R1FFV0JicUgyZjYvWEFMcGhkSndiUGEya1dLUmw4RGRGeHQzOCsyNGVY?=
+ =?utf-8?B?cjZrNllTQm00WkRiT3RZZWVyNHE5TWFkVTU2Mm44a2I3R1RXemNZZ2RRL2NY?=
+ =?utf-8?B?RlNBZWpERERyZy93dW9PRkxTckg2YzE0ZnN6L3YyWFVZeGh6UVFuUWNKOWlt?=
+ =?utf-8?B?QVBEZUw4enh4M2FlaXpxQjgySUNUMk9uYWFTZm1vVk9DVExPZW4zR2NoWU85?=
+ =?utf-8?B?QWxDZ0t3S3RpK244U2oyMmMxWjVOTG5VUDZqdVI4azF0dmROUjd5UWtDU292?=
+ =?utf-8?B?TFNIeWp1b3JwVUdPNllINEFEWHVXQXZNQmd0YW5tUnVSeHo4UUVodzBWbFhS?=
+ =?utf-8?B?azllSFZFWFF1ZHhiaVFIcmpoeVRzUmlHdW5JZkdVeDB6enphOTFuV0lBVU13?=
+ =?utf-8?B?S2VpMlNneDFtcndSeGZXRmFOU3FVejBTTlNHYWUwcHpGdWx6MEFSMDJOMWlR?=
+ =?utf-8?B?WUhrMjc2OCt5V3k2MWNkRVI2OWt6U2F2bHRtMDJXOWZWanBaUG1lYjNHRTIr?=
+ =?utf-8?B?c3NCditzYUhqS2xxNWgwR002WkJWTGFjMWNlWmdlaVpqcTBPVUFrcVJhQzFk?=
+ =?utf-8?B?Y3p4bDdFZ0FLMVI2SnJxbnNzamxHUkhMR1VuS3dJZVlSL2t3T1duU1M4V1pM?=
+ =?utf-8?B?cmNKUkdRa25RZjNRSFVkM1R1Nlg4NXVJUU50T09XM3NjaitVOW1Xc0lLUUg2?=
+ =?utf-8?B?b2R1NERrTjcwYlMvQktlaTJHOENJclFMWkJSWFpVUnd3bGsveFREOVN6enV0?=
+ =?utf-8?B?YVE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d22d757-8b4d-4995-7666-08dce15ea185
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 14:46:13.6007
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: bKix4nnDgVds5Me4nPPH3T7pUhxg4kksTp3Fz6oCvDua3+DCsXpXK9KytNS8g4q5xxvodNPy1djGR+NuSHx6Af2CkZSbDqGZka9g97x4d8M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9838
 
+Hi Krzysztof,
 
+Thank you for the quick review!
 
-On 9/29/2024 12:06 PM, Manikanta Mylavarapu wrote:
-> 
-> 
-> On 9/26/2024 3:58 PM, Vladimir Zapolskiy wrote:
->> Hello Manikanta.
+On 30/09/2024 16:40, Krzysztof Kozlowski wrote:
+> On 30/09/2024 15:23, Andrei Stefanescu wrote:
+>> The SIUL2 hardware module is also integrated into the S32G3 SoC. Add
+>> another compatible for it.
 >>
->> On 9/26/24 06:43, Manikanta Mylavarapu wrote:
->>> In existing socs, I2C serial engine is sourced from XO (19.2MHz).
->>> Where as in IPQ5424, I2C serial engine is sourced from GPLL0 (32MHz).
->>>
->>> The existing map table is based on 19.2MHz. This patch incorporate
->>> the clock map table to derive the SCL clock from the 32MHz source
->>> clock frequency.
->>>
->>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->>> ---
->>> Changes in v2:
->>>     - Dropped IPQ5424 from the commit title
->>>     - Added else part to assign geni_i2c_clk_map_19p2mhz to itr
->>>     - Dropped MHZ macro and used HZ_PER_MHZ macro
->>>     - Expanded SE to serial engine
->>>     - Added the reason for 32MHz clock in commit message
->>>
->>>   drivers/i2c/busses/i2c-qcom-geni.c | 19 ++++++++++++++++---
->>>   1 file changed, 16 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
->>> index 212336f724a6..22f2a0d83641 100644
->>> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->>> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->>> @@ -16,6 +16,7 @@
->>>   #include <linux/pm_runtime.h>
->>>   #include <linux/soc/qcom/geni-se.h>
->>>   #include <linux/spinlock.h>
->>> +#include <linux/units.h>
->>>     #define SE_I2C_TX_TRANS_LEN        0x26c
->>>   #define SE_I2C_RX_TRANS_LEN        0x270
->>> @@ -146,18 +147,30 @@ struct geni_i2c_clk_fld {
->>>    * clk_freq_out = t / t_cycle
->>>    * source_clock = 19.2 MHz
->>>    */
->>> -static const struct geni_i2c_clk_fld geni_i2c_clk_map[] = {
->>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_19p2mhz[] = {
->>>       {KHZ(100), 7, 10, 11, 26},
->>>       {KHZ(400), 2,  5, 12, 24},
->>>       {KHZ(1000), 1, 3,  9, 18},
->>>   };
->>>   +/* source_clock = 32 MHz */
->>> +static const struct geni_i2c_clk_fld geni_i2c_clk_map_32mhz[] = {
->>> +    {KHZ(100), 7, 14, 18, 40},
->>> +    {KHZ(400), 4,  3, 11, 20},
->>> +    {KHZ(1000), 4, 3,  6, 15},
->>> +};
+>> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+>> ---
+>>  .../bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml      | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
 >>
->> Please double check the values.
->>
->> This is what I get:
->> * for 100KHz: 32000000 / (40 * 7) ~ 114286, apparently 32000000 / (40 * 8) would
->> be a better fit, however it's unclear what would be proper t_high / t_low values,
->> * for 400KHz: it seems good,
->> * for 1000KHz: 32000000 / (15 * 4) ~ 533333, which is almost 1/2 of the wanted
->> bus frequency, so this one looks very wrong.
->>
->> Do you have any ideas how to get better bus frequency settings?
->>
+>> diff --git a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> index a24286e4def6..454773e7aa07 100644
+>> --- a/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> +++ b/Documentation/devicetree/bindings/pinctrl/nxp,s32g2-siul2-pinctrl.yaml
+>> @@ -25,8 +25,14 @@ description: |
+>>  
+>>  properties:
+>>    compatible:
+>> -    enum:
+>> -      - nxp,s32g2-siul2-pinctrl
+>> +    oneOf:
+>> +      - description: for S32G2 SoCs
 > 
-> Thanks for pointing this out.
+> Drop
 > 
-> I will double check and get back with the proper data.
+>> +        items:
 > 
-> Thanks & Regards,
-> Manikanta.
+> That's jus tenum
+> 
+>> +          - const: nxp,s32g2-siul2-pinctrl
+> 
+> Drop
+> 
+>> +      - description: for S32G3 SoCs
+>> +        items:
+
+Just to make sure I understood correctly, it should
+look something like this, right?
+
+    oneOf:
+      - enum:
+          - const: nxp,s32g2-siul2-pinctrl
+      - items:
+          - const: nxp,s32g3-siul2-pinctrl
+          - const: nxp,s32g2-siul2-pinctrl
+
+
+> Best regards,
+> Krzysztof
 > 
 
-Based on Qualcomm's internal hardware programming guide, below values need to be used for 100K & 1000K.
-{KHZ(100), 8, 14, 18, 40}
-{KHZ(1000), 2, 3,  6, 15}
+Best regards,
+Andrei
 
-I will update these values in next version.
-
-Thanks & Regards,
-Manikanta.
 
