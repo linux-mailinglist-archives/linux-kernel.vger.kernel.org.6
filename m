@@ -1,226 +1,130 @@
-Return-Path: <linux-kernel+bounces-344584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DC3C98AB9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:05:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C2198AB99
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:04:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC9CB24F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:04:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434DB1F24012
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81929199E80;
-	Mon, 30 Sep 2024 18:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoKpjvYg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF9D1991B2;
+	Mon, 30 Sep 2024 18:03:56 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B250919922D;
-	Mon, 30 Sep 2024 18:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C81198A22
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727719438; cv=none; b=DVrDzfaleIhp7UkOmejkqqY0ebqv4T4pn5o1hbvfz35WgInPogmEo5Vmy9sOT+O+4CWM3T+XO0lGH3Zp/uYcJ0Yrd7r1def3SL0Oil4q15xmJ1DBGSJvPtTfmzqeTQnr5hAxqFmMRipeTUzODIogIoyK/lJwg3sFkv55GhyGNoU=
+	t=1727719435; cv=none; b=mGnFq2pkoEPI+2D8WNasdty24OxJjboyUt13+YXl+2sLjTN2r4T9CHR8tIKYm86WPWxma04d0zcI4gRr5hSqVk+JItJuRHkDn8EJ/X3UrZuT9ibCbfAt+IrFDHFik/YenV2D6Fr9pB+M2kSxEwcK+3K3ZomC/cFjnUoJuPuRUQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727719438; c=relaxed/simple;
-	bh=ZEOnbltI4OSiFpvW76m8lvrTI7x6MCWSM6rlKozq8Zs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C5C5Ae6yPrpOA9Keh5r9Yi3nidecu/oLbaCdUE+BfeRkGPej1Fa/MQoC4XSZNhVFC3qOqiEZBDtWsodHYQDrjo4jjA9BGsN8ohkjLCVWKR/3l23+Gj4g+27/inYIKxu+uSNUKQ8l3Fr+1bpFGBi0zZKajdzS/K9hUAwxwks1AcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoKpjvYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F1A5C4CECF;
-	Mon, 30 Sep 2024 18:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727719438;
-	bh=ZEOnbltI4OSiFpvW76m8lvrTI7x6MCWSM6rlKozq8Zs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eoKpjvYghAEVM9YD+8Xz0Bci8m8jaRwZzktRuto5oIVxe6FvP18hhbptJwiFUpvLg
-	 UkZIswBW3/m4RmNIJq1FS+Uw75OiKEGRxUgUtChe9wv4Tfyd8KhzuHFTCfLcGKKbHp
-	 99eUFzOS/2x6xSRjIH7LGm2DTVonU03I31YsS+pcwHFRnLnIZi7IeDBu1b/QRHNJ2v
-	 dgFycosVrLhgHjG3cQ0+6+YKPoAFzZoL4Bka+x2rbMwqDrU2fWLYu0v9zXpN0LkxZQ
-	 pvLfbSlwPqV3W+Y2x+D2b099OHs+kP4tzkKOdeNe0n9zKpxx7tyP3skblYNH9cjVBO
-	 Ni1e7m7y99uJg==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5e57b7cac4fso2768771eaf.1;
-        Mon, 30 Sep 2024 11:03:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4funPCt2EuWOOHSjIySrSz5bD8p3OQ23tl2j7uF5uIVAVMAf7jtDQ1LcPkqe+Nw/vxXvU7hgSJH1wQpo=@vger.kernel.org, AJvYcCUqOTBgN+IwNmcj8CcPUKb05NoEQz5WyKvghZxyAyHfEmHxDxpYvduNlu6JVuBSOJYefw8oeYtXVP32E6vT@vger.kernel.org, AJvYcCWYp1iSqhvOAxhC/x6iNhxNpzfGvFKhQ/dorZ3J41bltwIRt1cx5D0jWS9D2D94QQplv3t5HgQaFg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMMlkLV0qy4WH29bxvh+pY2KuJ3QMqwrR2SHJarzXj5XoJjsy9
-	EJT0PkUdDeqWMRw7PZTQK4M3RLFDGPmCRMTD68hJQtexsUiaf0a5kCSHEvvMwFveUJnbdHAyQN5
-	iML2HyiOMbxArDSBX3DDokrXBkBk=
-X-Google-Smtp-Source: AGHT+IG3ujjyRdCEUsPatj+no7TnwxN27pJHjwq1ZLvHYOHrgYDrLwHqMQ2l/ksLAGCgBBvDMYnZEP24XZVr/DcuPnI=
-X-Received: by 2002:a05:6820:2208:b0:5e5:7086:ebe8 with SMTP id
- 006d021491bc7-5e77244736emr7313486eaf.0.1727719437428; Mon, 30 Sep 2024
- 11:03:57 -0700 (PDT)
+	s=arc-20240116; t=1727719435; c=relaxed/simple;
+	bh=bHrj5XU1WNzRAcUZhM6zhztuPGa/+td5l0FMRUYbbrg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qC+u8TrhQzdwywzIvjqlL3ZcLhdsTwOBXyzt2ObjLZJFlNKluXCmQuMBRKw6asO4lEY56+Vg/w7BqOrAeBRiWg0mnCPxd0cPvOkZIyrqhOUlGx7pfas3Hs5K0mopPs4jgqPORLTWiwBjzTG/Qq1y5Sa9gRf77fkS1o10esytHDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1svKkS-0000Fn-I4
+	for linux-kernel@vger.kernel.org; Mon, 30 Sep 2024 20:03:52 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1svKkS-002gbF-3P
+	for linux-kernel@vger.kernel.org; Mon, 30 Sep 2024 20:03:52 +0200
+Received: from dspam.blackshift.org (localhost [127.0.0.1])
+	by bjornoya.blackshift.org (Postfix) with SMTP id C6EAB346EEC
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:03:51 +0000 (UTC)
+Received: from hardanger.blackshift.org (unknown [172.20.34.65])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bjornoya.blackshift.org (Postfix) with ESMTPS id 6D796346EE2;
+	Mon, 30 Sep 2024 18:03:49 +0000 (UTC)
+Received: from [172.20.34.65] (localhost [::1])
+	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id ba283306;
+	Mon, 30 Sep 2024 18:03:48 +0000 (UTC)
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+Date: Mon, 30 Sep 2024 20:03:46 +0200
+Subject: [PATCH can-next] can: mcan: m_can_open(): simplify condition to
+ call free_irq()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240905092645.2885200-1-christian.loehle@arm.com> <20240905092645.2885200-7-christian.loehle@arm.com>
-In-Reply-To: <20240905092645.2885200-7-christian.loehle@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 30 Sep 2024 20:03:45 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
-Message-ID: <CAJZ5v0i3ULQ-Mzu=6yzo4whnWne0g1sxcgPL_u828Jyy1Qu1Zg@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/8] cpufreq: intel_pstate: Remove iowait boost
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org, 
-	peterz@infradead.org, juri.lelli@redhat.com, mingo@redhat.com, 
-	dietmar.eggemann@arm.com, vschneid@redhat.com, vincent.guittot@linaro.org, 
-	Johannes.Thumshirn@wdc.com, adrian.hunter@intel.com, ulf.hansson@linaro.org, 
-	bvanassche@acm.org, andres@anarazel.de, asml.silence@gmail.com, 
-	linux-block@vger.kernel.org, io-uring@vger.kernel.org, qyousef@layalina.io, 
-	dsmythies@telus.net, axboe@kernel.dk, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240930-m_can-simplify-v1-1-43312571c028@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAAHo+mYC/x2M7QpAMBRAX0X3t9X1uXgVScwdtxhtEi3vbvw8d
+ c7x4MgyOagjD5ZOdryZAEkcgZp7M5HgMTCkmOZYZSjWTvVGOF73hfUtdIGyRCkLnQ0Qot2S5us
+ fNvCZhq4D2ud5AUj4UShqAAAA
+X-Change-ID: 20240930-m_can-simplify-f50760775f3b
+To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>, kernel@pengutronix.de, 
+ linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1054; i=mkl@pengutronix.de;
+ h=from:subject:message-id; bh=bHrj5XU1WNzRAcUZhM6zhztuPGa/+td5l0FMRUYbbrg=;
+ b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm+ugCHKCkPGOqDDsaOfFGV/0XKrT13Nx/vade6
+ GF/kd5k2umJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZvroAgAKCRAoOKI+ei28
+ b8ykB/9BzThpl4+t7d0D6bw9vO4GHbbbxC8najj8MZm/ds8yS1e9clrD98uoi1jpoDQoRw1przq
+ NKqDJU4nArMumTxcWR59gPiDz5FV4zKNcfXNspwRu9WHLIdn6QYanjkiXS4An0jqo4MRN/aLrnw
+ 00PYP/gI0EUqh94uBxKRXjszUICRFti9z4bs7zny1rYZb/qgtyrBMQTFKgy5Es3zMD1AGTVi7m+
+ T7oG9OJ/lMAtZM4tLP+1xo71R4OE7iR3kueUMnQ8JaSxnapa5sKuBMqBSp41K8YRzSeq561N2eQ
+ 0napL+AgSu5z0SbiTQhU5P3q6uDdj/2K2KLqY5oY5W+LVJuT
+X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
+ fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-+Srinivas who can say more about the reasons why iowait boosting makes
-a difference for intel_pstate than I do.
+The condition to call free_irq() in the error cleanup path of
+m_can_open() can be simplified. The "is_peripheral" case also has a
+"dev->irq != 0".
 
-On Thu, Sep 5, 2024 at 11:27=E2=80=AFAM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> Analogous to schedutil, remove iowait boost for the same reasons.
+Simplify the condition, call free_irq() if "dev->irq != 0", i.e. the
+device has an interrupt.
 
-Well, first of all, iowait boosting was added to intel_pstate to help
-some workloads that otherwise were underperforming.  I'm not sure if
-you can simply remove it without introducing performance regressions
-in those workloads.
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ drivers/net/can/m_can/m_can.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While you can argue that it is not useful in schedutil any more due to
-the improved scheduler input for it, you can hardly extend that
-argument to intel_pstate because it doesn't use all of the scheduler
-input used by schedutil.
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index a978b960f1f1e1e8273216ff330ab789d0fd6d51..66a8673e51eab8c901434de16c640045f7d0dd70 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -2070,7 +2070,7 @@ static int m_can_open(struct net_device *dev)
+ 	return 0;
+ 
+ exit_start_fail:
+-	if (cdev->is_peripheral || dev->irq)
++	if (dev->irq)
+ 		free_irq(dev->irq, dev);
+ exit_irq_fail:
+ 	if (cdev->is_peripheral)
 
-Also, the EAS and UCLAMP_MAX arguments are not applicable to
-intel_pstate because it doesn't support any of them.
+---
+base-commit: c824deb1a89755f70156b5cdaf569fca80698719
+change-id: 20240930-m_can-simplify-f50760775f3b
 
-This applies to the ondemand cpufreq governor either.
+Best regards,
+-- 
+Marc Kleine-Budde <mkl@pengutronix.de>
 
 
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> ---
->  drivers/cpufreq/intel_pstate.c | 50 ++--------------------------------
->  1 file changed, 3 insertions(+), 47 deletions(-)
->
-> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
-e.c
-> index c0278d023cfc..7f30b2569bb3 100644
-> --- a/drivers/cpufreq/intel_pstate.c
-> +++ b/drivers/cpufreq/intel_pstate.c
-> @@ -191,7 +191,6 @@ struct global_params {
->   * @policy:            CPUFreq policy value
->   * @update_util:       CPUFreq utility callback information
->   * @update_util_set:   CPUFreq utility callback is set
-> - * @iowait_boost:      iowait-related boost fraction
->   * @last_update:       Time of the last update.
->   * @pstate:            Stores P state limits for this CPU
->   * @vid:               Stores VID limits for this CPU
-> @@ -245,7 +244,6 @@ struct cpudata {
->         struct acpi_processor_performance acpi_perf_data;
->         bool valid_pss_table;
->  #endif
-> -       unsigned int iowait_boost;
->         s16 epp_powersave;
->         s16 epp_policy;
->         s16 epp_default;
-> @@ -2136,28 +2134,7 @@ static inline void intel_pstate_update_util_hwp_lo=
-cal(struct cpudata *cpu,
->  {
->         cpu->sample.time =3D time;
->
-> -       if (cpu->sched_flags & SCHED_CPUFREQ_IOWAIT) {
-> -               bool do_io =3D false;
-> -
-> -               cpu->sched_flags =3D 0;
-> -               /*
-> -                * Set iowait_boost flag and update time. Since IO WAIT f=
-lag
-> -                * is set all the time, we can't just conclude that there=
- is
-> -                * some IO bound activity is scheduled on this CPU with j=
-ust
-> -                * one occurrence. If we receive at least two in two
-> -                * consecutive ticks, then we treat as boost candidate.
-> -                */
-> -               if (time_before64(time, cpu->last_io_update + 2 * TICK_NS=
-EC))
-> -                       do_io =3D true;
-> -
-> -               cpu->last_io_update =3D time;
-> -
-> -               if (do_io)
-> -                       intel_pstate_hwp_boost_up(cpu);
-> -
-> -       } else {
-> -               intel_pstate_hwp_boost_down(cpu);
-> -       }
-> +       intel_pstate_hwp_boost_down(cpu);
->  }
->
->  static inline void intel_pstate_update_util_hwp(struct update_util_data =
-*data,
-> @@ -2240,9 +2217,6 @@ static inline int32_t get_target_pstate(struct cpud=
-ata *cpu)
->         busy_frac =3D div_fp(sample->mperf << cpu->aperf_mperf_shift,
->                            sample->tsc);
->
-> -       if (busy_frac < cpu->iowait_boost)
-> -               busy_frac =3D cpu->iowait_boost;
-> -
->         sample->busy_scaled =3D busy_frac * 100;
->
->         target =3D READ_ONCE(global.no_turbo) ?
-> @@ -2303,7 +2277,7 @@ static void intel_pstate_adjust_pstate(struct cpuda=
-ta *cpu)
->                 sample->aperf,
->                 sample->tsc,
->                 get_avg_frequency(cpu),
-> -               fp_toint(cpu->iowait_boost * 100));
-> +               0);
->  }
->
->  static void intel_pstate_update_util(struct update_util_data *data, u64 =
-time,
-> @@ -2317,24 +2291,6 @@ static void intel_pstate_update_util(struct update=
-_util_data *data, u64 time,
->                 return;
->
->         delta_ns =3D time - cpu->last_update;
-> -       if (flags & SCHED_CPUFREQ_IOWAIT) {
-> -               /* Start over if the CPU may have been idle. */
-> -               if (delta_ns > TICK_NSEC) {
-> -                       cpu->iowait_boost =3D ONE_EIGHTH_FP;
-> -               } else if (cpu->iowait_boost >=3D ONE_EIGHTH_FP) {
-> -                       cpu->iowait_boost <<=3D 1;
-> -                       if (cpu->iowait_boost > int_tofp(1))
-> -                               cpu->iowait_boost =3D int_tofp(1);
-> -               } else {
-> -                       cpu->iowait_boost =3D ONE_EIGHTH_FP;
-> -               }
-> -       } else if (cpu->iowait_boost) {
-> -               /* Clear iowait_boost if the CPU may have been idle. */
-> -               if (delta_ns > TICK_NSEC)
-> -                       cpu->iowait_boost =3D 0;
-> -               else
-> -                       cpu->iowait_boost >>=3D 1;
-> -       }
->         cpu->last_update =3D time;
->         delta_ns =3D time - cpu->sample.time;
->         if ((s64)delta_ns < INTEL_PSTATE_SAMPLING_INTERVAL)
-> @@ -2832,7 +2788,7 @@ static void intel_cpufreq_trace(struct cpudata *cpu=
-, unsigned int trace_type, in
->                 sample->aperf,
->                 sample->tsc,
->                 get_avg_frequency(cpu),
-> -               fp_toint(cpu->iowait_boost * 100));
-> +               0);
->  }
->
->  static void intel_cpufreq_hwp_update(struct cpudata *cpu, u32 min, u32 m=
-ax,
-> --
-> 2.34.1
->
 
