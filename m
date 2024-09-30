@@ -1,60 +1,84 @@
-Return-Path: <linux-kernel+bounces-344278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5EB98A7BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:51:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530F198A7B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147E61F2459D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:51:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DEAA1C23498
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D721991A5;
-	Mon, 30 Sep 2024 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF60192B86;
+	Mon, 30 Sep 2024 14:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jrtg7e6B"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nghQakj5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BF01993B5
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9413519258D;
+	Mon, 30 Sep 2024 14:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707700; cv=none; b=OUAGBTKjVDjRe4f8Eb6BQq9v8CQC43EsCNr5qJaFgJa83jjVBoUvg9H1Lzd5Pz/hrpuLIBgHQnpUOFODySylDfndYWnNkQcOCXzD8k6IlA75J52705ix0HMUVBl9aQyPFHQZXGgxDoQ6cQ6uEeFJeUHDLrIUnvJVFsPg8yY3ZUA=
+	t=1727707693; cv=none; b=NqbrV1zsb38cl31fZzgGxLmzUrmr1LN7pHbiqQHSYioyS149xQTdGQaEhcxoUh/k0hVvKRt+dV2HRP3YdC5QowH25uphCWEnbzT+zV1slsyzD+/FD+E2rz636fZJjBNCcSivo5r5YIECBJZSlHIGwJvMRaQldqmHdptY1W/Ynes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707700; c=relaxed/simple;
-	bh=PEeD4LINg/XZ4cAE4RGQB/SrHIE7OPTCvNFW7JgNZmw=;
+	s=arc-20240116; t=1727707693; c=relaxed/simple;
+	bh=r3Cq3T8h20K4RfKNWRSrXezrzW/2J5IwhygS9pghReI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jycbePG8HMnT+oyGvZj55mEujY4JuHCRGFXCkDAeDp9yksv2JBhTHmoSU0c9XcuPQ4bBI2Yhbg2p8IvkyhEp0jD0AdPBooAApEAFN5+dZGVllU08HrLv76wYkxl9xxbKfYKYEtk/roj8jiGt+UU0NmIgit4JMUDDBEGJFFli4c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jrtg7e6B; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Qzpc0SHfXpAqzDDZmUPeIvD78KrlcYRHYwb8zg1frxA=; b=Jrtg7e6BbLi4HJYJhsMlC3CaxA
-	5CoHtn3ukPGP0jq+OH3cpgfaHiRaI6KJa2PmOeykPQ/5aCswCrcSbtiiMc1jozZD49wlvf6ph3KXf
-	jCFTxIXWtmDGuLRwDjYadKN7zBL0q74xvKlhzogWljMl1o/3TFWqZcTFszfnHX9nmt9cM5zK86h60
-	DNGqlUpXsJXO1xnnZDe8JFgnEJ3sXwT6eHHmm47rVy603MVGx4Knpfa+L3fo3dSylQxpflce/6vVo
-	mrHR6LmkZ6BrzJr9RUPBkNiZM4RT7OxZuawlVPFXIw9x9xEQ4vzcRWaImI+Ox7JF07TXzl1AkyeT0
-	e4Ioi/vg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1svHh3-00000002qan-2Kn7;
-	Mon, 30 Sep 2024 14:48:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 34123300754; Mon, 30 Sep 2024 16:48:09 +0200 (CEST)
-Date: Mon, 30 Sep 2024 16:48:09 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: 6.12-rc1: general protection fault at pick_task_fair()
-Message-ID: <20240930144809.GI5594@noisy.programming.kicks-ass.net>
-References: <20240930-mysterious-meek-goldfish-2f851f@leitao>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pVPz84vboUN2kqr8BiE926x5GP8GYwwiSVDZTy7D3SAhHU8Yy2s503SS3D7OeiOfD+elQRhBTnZqqfM36d3NA+E+nKagzoGNhLILA8+QuWNfT+CzCc8b14ZCZLD56R1536J7TG7dCPWuXi0RQ4F/LqI0mT0Vp0h3A8S6fKyzjpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nghQakj5; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727707691; x=1759243691;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r3Cq3T8h20K4RfKNWRSrXezrzW/2J5IwhygS9pghReI=;
+  b=nghQakj51EzwAVZvV8Bx5Gpjxrm5YQu1+Kq5ZhMQnQb2rbIrARzS4px6
+   eN/xgpaUF46YI3Me9XbVfrcntCfdjFGFjh2tJ2lNbHl9yt9swEmI1KVrq
+   OTbz6n0lhLtakRKScb2t2Qq0iD5MQBec8RQSyaO+on+DyRd4DNMuBT6OH
+   J76rgYwr+gmDitBlNiczKYz9y3FMsHWweSlDpaAVErEYySmw2bxT/rtho
+   kKhgroklhJtlx1HJgAONZ0gkQoEhiYovv7Bh8sWYTaq+/uZu3m4BNBv6D
+   b1QPzgh8U8ZrS672yv8Z7CErOvpNUuktH21CsNmFQDJON6mcTK8iPYH2x
+   Q==;
+X-CSE-ConnectionGUID: RxFPoJlpTmqDKrDHqpYoDQ==
+X-CSE-MsgGUID: 0oQvhNK6Rt+BHAfL71bR4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44262314"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="44262314"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:11 -0700
+X-CSE-ConnectionGUID: 3e2jhm63T1WfVxaCLO7lNw==
+X-CSE-MsgGUID: 2xdWKCiVS2iMqIhac+sXog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="73455178"
+Received: from smkirkla-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.240])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:10 -0700
+Date: Mon, 30 Sep 2024 07:48:09 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v4 09/10] x86/bugs: Declutter vulnerable CPU list
+Message-ID: <20240930-add-cpu-type-v4-9-104892b7ab5f@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,106 +87,222 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930-mysterious-meek-goldfish-2f851f@leitao>
+In-Reply-To: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 
-On Mon, Sep 30, 2024 at 05:52:49AM -0700, Breno Leitao wrote:
-> Hello,
-> 
-> I've been testing v6.12-rc1 and I got some crashes that I would like to
-> share, since I haven't seen anything in the mailing list yet.
-> 
-> This kernel was compiled with some debug options, against 11a299a7933e
-> ("Merge tag 'for-6.12/block-20240925' of git://git.kernel.dk/linux").
-> 
-> 
->    [146800.130180] Oops: general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC KASAN
->    [146800.156067] KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
->    [146800.200109] Tainted: [S]=CPU_OUT_OF_SPEC, [W]=WARN, [E]=UNSIGNED_MODULE, [L]=SOFTLOCKUP, [N]=TEST
->    [146800.218119] Hardware name: Quanta Delta Lake MP 29F0EMA00E0/Delta Lake-Class1, BIOS F0E_3A19 04/27/2023
->    [146800.237177] Workqueue:  0x0 (events)
->    [146800.244615] RIP: 0010:pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
->    [146800.253955] Code: 74 08 48 89 df e8 3d 78 01 00 e9 29 01 00 00 0f 1f 44 00 00 48 89 df e8 5b ef 01 00 49 89 c6 48 8d 68 51 48 89 eb 48 c1 eb 03 <42> 0f b6 04 3b 84 c0 0f 85 98 00 00 00 80 7d 00 00 0f 84 3a 03 00
->    All code
->    ========
->       0:	74 08                	je     0xa
->       2:	48 89 df             	mov    %rbx,%rdi
->       5:	e8 3d 78 01 00       	call   0x17847
->       a:	e9 29 01 00 00       	jmp    0x138
->       f:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->      14:	48 89 df             	mov    %rbx,%rdi
->      17:	e8 5b ef 01 00       	call   0x1ef77
->      1c:	49 89 c6             	mov    %rax,%r14
->      1f:	48 8d 68 51          	lea    0x51(%rax),%rbp
->      23:	48 89 eb             	mov    %rbp,%rbx
->      26:	48 c1 eb 03          	shr    $0x3,%rbx
->      2a:*	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax		<-- trapping instruction
->      2f:	84 c0                	test   %al,%al
->      31:	0f 85 98 00 00 00    	jne    0xcf
->      37:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
->      3b:	0f                   	.byte 0xf
->      3c:	84 3a                	test   %bh,(%rdx)
->      3e:	03 00                	add    (%rax),%eax
->    
->    Code starting with the faulting instruction
->    ===========================================
->       0:	42 0f b6 04 3b       	movzbl (%rbx,%r15,1),%eax
->       5:	84 c0                	test   %al,%al
->       7:	0f 85 98 00 00 00    	jne    0xa5
->       d:	80 7d 00 00          	cmpb   $0x0,0x0(%rbp)
->      11:	0f                   	.byte 0xf
->      12:	84 3a                	test   %bh,(%rdx)
->      14:	03 00                	add    (%rax),%eax
->    [146800.291790] RSP: 0018:ffff8889ae3dfbc0 EFLAGS: 00010006
->    [146800.302506] RAX: 0000000000000000 RBX: 000000000000000a RCX: dffffc0000000000
->    [146800.317040] RDX: ffff8889ae3dfd30 RSI: ffff8889af5bca00 RDI: ffff888e38546380
->    [146800.331573] RBP: 0000000000000051 R08: ffffffff86ddef37 R09: 1ffffffff0dbbde6
->    [146800.346109] R10: dffffc0000000000 R11: fffffbfff0dbbde7 R12: 1ffff111c70a8c6a
->    [146800.360642] R13: 1ffff111c70a8c71 R14: 0000000000000000 R15: dffffc0000000000
->    [146800.375175] FS:  0000000000000000(0000) GS:ffff888e38500000(0000) knlGS:0000000000000000
->    [146800.391619] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->    [146800.403369] CR2: 0000559372540094 CR3: 0000000017c8c001 CR4: 00000000007706f0
->    [146800.417906] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->    [146800.432437] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->    [146800.446969] PKRU: 55555554
->    [146800.452638] Call Trace:
->    [146800.457784]  <TASK>
->    [146800.462238] ? __die_body (arch/x86/kernel/dumpstack.c:421) 
->    [146800.469479] ? die_addr (arch/x86/kernel/dumpstack.c:?) 
->    [146800.476373] ? exc_general_protection (arch/x86/kernel/traps.c:? arch/x86/kernel/traps.c:693) 
->    [146800.486078] ? asm_exc_general_protection (./arch/x86/include/asm/idtentry.h:617) 
->    [146800.496111] ? pick_task_fair (kernel/sched/fair.c:5626 kernel/sched/fair.c:8856) 
->    [146800.504219] ? rcu_is_watching (./include/linux/context_tracking.h:128 kernel/rcu/tree.c:737) 
->    [146800.512321] ? util_est_update (./include/trace/events/sched.h:814 kernel/sched/fair.c:5054) 
->    [146800.520777] pick_next_task_fair (kernel/sched/fair.c:8877) 
->    [146800.529408] __schedule (kernel/sched/core.c:5956 kernel/sched/core.c:6477 kernel/sched/core.c:6629) 
->    [146800.536841] ? sched_submit_work (kernel/sched/core.c:6708) 
->    [146800.545472] schedule (kernel/sched/core.c:6753 kernel/sched/core.c:6767) 
->    [146800.552189] worker_thread (kernel/workqueue.c:3344) 
->    [146800.559983] kthread (kernel/kthread.c:390) 
->    [146800.566696] ? pr_cont_work (kernel/workqueue.c:3337) 
->    [146800.574623] ? kthread_blkcg (kernel/kthread.c:342) 
->    [146800.582379] ret_from_fork (arch/x86/kernel/process.c:153) 
->    [146800.589784] ? kthread_blkcg (kernel/kthread.c:342) 
->    [146800.597537] ret_from_fork_asm (arch/x86/entry/entry_64.S:257) 
->    [146800.605664]  </TASK>
-> 
-> Important to say that I am also seeing the following warning before the
-> crash:
-> 
->  workqueue: drain_vmap_area_work hogged CPU for >20000us 4 times, consider switching to WQ_UNBOUND
->  ------------[ cut here ]------------
->            !se->on_rq
->            WARNING: CPU: 24 PID: 17 at kernel/sched/fair.c:704 dequeue_entity+0xd21/0x17c0
-> 
-> Is this helpful?
-> 
-> Thanks
-> --breno
+The affected processor table has a lot of repetition and redundant
+information that can be omitted. For example:
 
-This looks to be the same issue as reported here:
+  VULNBL_INTEL_STEPPINGS(INTEL_IVYBRIDGE,		X86_STEPPING_ANY,		SRBDS),
 
-  https://lkml.kernel.org/r/20240930144157.GH5594@noisy.programming.kicks-ass.net
+can easily be simplified to:
 
-Is there anything you can share about your setup / workload that manages
-to trigger this?
+  VULNBL_INTEL(IVYBRIDGE,	SRBDS),
+
+Apply this to all the entries in the affected processor table.
+
+No functional change.
+
+Disassembly of cpu_vuln_blacklist:
+
+  objdump -j .init.data --disassemble=cpu_vuln_blacklist vmlinux
+
+doesn't show any difference before and after the change.
+
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/kernel/cpu/common.c | 143 ++++++++++++++++++++++---------------------
+ 1 file changed, 73 insertions(+), 70 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 07a34d723505..66f691db5ec6 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1128,7 +1128,7 @@ static void identify_cpu_without_cpuid(struct cpuinfo_x86 *c)
+ 	X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, whitelist)
+ 
+ #define VULNWL_INTEL(vfm, whitelist)		\
+-	X86_MATCH_VFM(vfm, whitelist)
++	X86_MATCH_VFM(INTEL_##vfm, whitelist)
+ 
+ #define VULNWL_AMD(family, whitelist)		\
+ 	VULNWL(AMD, family, X86_MODEL_ANY, whitelist)
+@@ -1145,32 +1145,32 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 	VULNWL(VORTEX,	6, X86_MODEL_ANY,	NO_SPECULATION),
+ 
+ 	/* Intel Family 6 */
+-	VULNWL_INTEL(INTEL_TIGERLAKE,		NO_MMIO),
+-	VULNWL_INTEL(INTEL_TIGERLAKE_L,		NO_MMIO),
+-	VULNWL_INTEL(INTEL_ALDERLAKE,		NO_MMIO),
+-	VULNWL_INTEL(INTEL_ALDERLAKE_L,		NO_MMIO),
++	VULNWL_INTEL(TIGERLAKE,			NO_MMIO),
++	VULNWL_INTEL(TIGERLAKE_L,		NO_MMIO),
++	VULNWL_INTEL(ALDERLAKE,			NO_MMIO),
++	VULNWL_INTEL(ALDERLAKE_L,		NO_MMIO),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_SALTWELL,	NO_SPECULATION | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_SALTWELL_TABLET, NO_SPECULATION | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_SALTWELL_MID,	NO_SPECULATION | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_BONNELL,	NO_SPECULATION | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_BONNELL_MID,	NO_SPECULATION | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SALTWELL,		NO_SPECULATION | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SALTWELL_TABLET,	NO_SPECULATION | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SALTWELL_MID,		NO_SPECULATION | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_BONNELL,		NO_SPECULATION | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_BONNELL_MID,		NO_SPECULATION | NO_ITLB_MULTIHIT),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_SILVERMONT,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_SILVERMONT_D,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_XEON_PHI_KNL,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+-	VULNWL_INTEL(INTEL_XEON_PHI_KNM,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SILVERMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SILVERMONT_D,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_SILVERMONT_MID,	NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_AIRMONT,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(XEON_PHI_KNL,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(XEON_PHI_KNM,		NO_SSB | NO_L1TF | MSBDS_ONLY | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+-	VULNWL_INTEL(INTEL_CORE_YONAH,		NO_SSB),
++	VULNWL_INTEL(CORE_YONAH,		NO_SSB),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_MID,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
+-	VULNWL_INTEL(INTEL_ATOM_AIRMONT_NP,	NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
++	VULNWL_INTEL(ATOM_AIRMONT_MID,		NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | MSBDS_ONLY),
++	VULNWL_INTEL(ATOM_AIRMONT_NP,		NO_SSB | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT),
+ 
+-	VULNWL_INTEL(INTEL_ATOM_GOLDMONT,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+-	VULNWL_INTEL(INTEL_ATOM_GOLDMONT_D,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
+-	VULNWL_INTEL(INTEL_ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_EIBRS_PBRSB),
++	VULNWL_INTEL(ATOM_GOLDMONT,		NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
++	VULNWL_INTEL(ATOM_GOLDMONT_D,		NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO),
++	VULNWL_INTEL(ATOM_GOLDMONT_PLUS,	NO_MDS | NO_L1TF | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_EIBRS_PBRSB),
+ 
+ 	/*
+ 	 * Technically, swapgs isn't serializing on AMD (despite it previously
+@@ -1180,9 +1180,9 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ 	 * good enough for our purposes.
+ 	 */
+ 
+-	VULNWL_INTEL(INTEL_ATOM_TREMONT,	NO_EIBRS_PBRSB),
+-	VULNWL_INTEL(INTEL_ATOM_TREMONT_L,	NO_EIBRS_PBRSB),
+-	VULNWL_INTEL(INTEL_ATOM_TREMONT_D,	NO_ITLB_MULTIHIT | NO_EIBRS_PBRSB),
++	VULNWL_INTEL(ATOM_TREMONT,	NO_EIBRS_PBRSB),
++	VULNWL_INTEL(ATOM_TREMONT_L,	NO_EIBRS_PBRSB),
++	VULNWL_INTEL(ATOM_TREMONT_D,	NO_ITLB_MULTIHIT | NO_EIBRS_PBRSB),
+ 
+ 	/* AMD Family 0xf - 0x12 */
+ 	VULNWL_AMD(0x0f,	NO_MELTDOWN | NO_SSB | NO_L1TF | NO_MDS | NO_SWAPGS | NO_ITLB_MULTIHIT | NO_MMIO | NO_BHI),
+@@ -1203,8 +1203,11 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ #define VULNBL(vendor, family, model, blacklist)	\
+ 	X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, blacklist)
+ 
+-#define VULNBL_INTEL_STEPPINGS(vfm, steppings, issues)		   \
+-	X86_MATCH_VFM_STEPPINGS(vfm, steppings, issues)
++#define VULNBL_INTEL(vfm, issues)			\
++	X86_MATCH_VFM(INTEL_##vfm, issues)
++
++#define VULNBL_INTEL_STEPPINGS(vfm, steppings, issues)	\
++	X86_MATCH_VFM_STEPPINGS(INTEL_##vfm, steppings, issues)
+ 
+ #define VULNBL_AMD(family, blacklist)		\
+ 	VULNBL(AMD, family, X86_MODEL_ANY, blacklist)
+@@ -1229,49 +1232,49 @@ static const __initconst struct x86_cpu_id cpu_vuln_whitelist[] = {
+ #define RFDS		BIT(7)
+ 
+ static const struct x86_cpu_id cpu_vuln_blacklist[] __initconst = {
+-	VULNBL_INTEL_STEPPINGS(INTEL_IVYBRIDGE,		X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL,		X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_L,		X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_G,		X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_HASWELL_X,		X86_STEPPING_ANY,		MMIO),
+-	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_D,	X86_STEPPING_ANY,		MMIO),
+-	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_G,	X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL_X,	X86_STEPPING_ANY,		MMIO),
+-	VULNBL_INTEL_STEPPINGS(INTEL_BROADWELL,		X86_STEPPING_ANY,		SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE_X,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE_L,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_SKYLAKE,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_KABYLAKE_L,	X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_KABYLAKE,		X86_STEPPING_ANY,		MMIO | RETBLEED | GDS | SRBDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_CANNONLAKE_L,	X86_STEPPING_ANY,		RETBLEED),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_L,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_D,		X86_STEPPING_ANY,		MMIO | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ICELAKE_X,		X86_STEPPING_ANY,		MMIO | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0),	MMIO | RETBLEED),
+-	VULNBL_INTEL_STEPPINGS(INTEL_COMETLAKE_L,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_TIGERLAKE_L,	X86_STEPPING_ANY,		GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_TIGERLAKE,		X86_STEPPING_ANY,		GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_LAKEFIELD,		X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RETBLEED),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ROCKETLAKE,	X86_STEPPING_ANY,		MMIO | RETBLEED | GDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ALDERLAKE,		X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ALDERLAKE_L,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE_P,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_RAPTORLAKE_S,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GRACEMONT,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT_D,	X86_STEPPING_ANY,		MMIO | RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_TREMONT_L,	X86_STEPPING_ANY,		MMIO | MMIO_SBDS | RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT_D,	X86_STEPPING_ANY,		RFDS),
+-	VULNBL_INTEL_STEPPINGS(INTEL_ATOM_GOLDMONT_PLUS, X86_STEPPING_ANY,		RFDS),
+-
+-	VULNBL_AMD(0x15, RETBLEED),
+-	VULNBL_AMD(0x16, RETBLEED),
+-	VULNBL_AMD(0x17, RETBLEED | SMT_RSB | SRSO),
+-	VULNBL_HYGON(0x18, RETBLEED | SMT_RSB | SRSO),
+-	VULNBL_AMD(0x19, SRSO),
++	VULNBL_INTEL(		IVYBRIDGE,		SRBDS),
++	VULNBL_INTEL(		HASWELL,		SRBDS),
++	VULNBL_INTEL(		HASWELL_L,		SRBDS),
++	VULNBL_INTEL(		HASWELL_G,		SRBDS),
++	VULNBL_INTEL(		HASWELL_X,		MMIO),
++	VULNBL_INTEL(		BROADWELL_D,		MMIO),
++	VULNBL_INTEL(		BROADWELL_G,		SRBDS),
++	VULNBL_INTEL(		BROADWELL_X,		MMIO),
++	VULNBL_INTEL(		BROADWELL,		SRBDS),
++	VULNBL_INTEL(		SKYLAKE_X,		MMIO | RETBLEED | GDS),
++	VULNBL_INTEL(		SKYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
++	VULNBL_INTEL(		SKYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
++	VULNBL_INTEL(		KABYLAKE_L,		MMIO | RETBLEED | GDS | SRBDS),
++	VULNBL_INTEL(		KABYLAKE,		MMIO | RETBLEED | GDS | SRBDS),
++	VULNBL_INTEL(		CANNONLAKE_L,		RETBLEED),
++	VULNBL_INTEL(		ICELAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
++	VULNBL_INTEL(		ICELAKE_D,		MMIO | GDS),
++	VULNBL_INTEL(		ICELAKE_X,		MMIO | GDS),
++	VULNBL_INTEL(		COMETLAKE,		MMIO | MMIO_SBDS | RETBLEED | GDS),
++	VULNBL_INTEL_STEPPINGS(	COMETLAKE_L,	X86_STEPPINGS(0x0, 0x0), MMIO | RETBLEED),
++	VULNBL_INTEL(		COMETLAKE_L,		MMIO | MMIO_SBDS | RETBLEED | GDS),
++	VULNBL_INTEL(		TIGERLAKE_L,		GDS),
++	VULNBL_INTEL(		TIGERLAKE,		GDS),
++	VULNBL_INTEL(		LAKEFIELD,		MMIO | MMIO_SBDS | RETBLEED),
++	VULNBL_INTEL(		ROCKETLAKE,		MMIO | RETBLEED | GDS),
++	VULNBL_INTEL(		ALDERLAKE,		RFDS),
++	VULNBL_INTEL(		ALDERLAKE_L,		RFDS),
++	VULNBL_INTEL(		RAPTORLAKE,		RFDS),
++	VULNBL_INTEL(		RAPTORLAKE_P,		RFDS),
++	VULNBL_INTEL(		RAPTORLAKE_S,		RFDS),
++	VULNBL_INTEL(		ATOM_GRACEMONT,		RFDS),
++	VULNBL_INTEL(		ATOM_TREMONT,		MMIO | MMIO_SBDS | RFDS),
++	VULNBL_INTEL(		ATOM_TREMONT_D,		MMIO | RFDS),
++	VULNBL_INTEL(		ATOM_TREMONT_L,		MMIO | MMIO_SBDS | RFDS),
++	VULNBL_INTEL(		ATOM_GOLDMONT,		RFDS),
++	VULNBL_INTEL(		ATOM_GOLDMONT_D,	RFDS),
++	VULNBL_INTEL(		ATOM_GOLDMONT_PLUS,	RFDS),
++
++	VULNBL_AMD(		0x15,			RETBLEED),
++	VULNBL_AMD(		0x16,			RETBLEED),
++	VULNBL_AMD(		0x17,			RETBLEED | SMT_RSB | SRSO),
++	VULNBL_HYGON(		0x18,			RETBLEED | SMT_RSB | SRSO),
++	VULNBL_AMD(		0x19,			SRSO),
+ 	{}
+ };
+ 
+
+-- 
+2.34.1
+
+
 
