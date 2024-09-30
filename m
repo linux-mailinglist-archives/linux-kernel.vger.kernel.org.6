@@ -1,110 +1,148 @@
-Return-Path: <linux-kernel+bounces-344868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1286998AF14
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2E498AF16
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD5A828277F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:30:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CA931C2128C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E95D1AFB00;
-	Mon, 30 Sep 2024 21:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15E71A287B;
+	Mon, 30 Sep 2024 21:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH+5T4FM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U5OfyoMz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECD31AF4E8;
-	Mon, 30 Sep 2024 21:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688481A2559;
+	Mon, 30 Sep 2024 21:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727731609; cv=none; b=QxTk5N4jM+YOiB8kQDbP6VISNg2Iz6SiQdlczD+1Pstr2fZdnx8XZB08XYnL0gu3PM//avQbq6blQwLB2uYzB+eQo7Z8PlhIYBTe8VNCfRMfcmwaEcju3KBRJjwaP5JR1t7azJg1RMbuwjjQUNjHZEewmBSVaqq6k9coK/6edGM=
+	t=1727731722; cv=none; b=Xq9ZIVnAyCT6oNnoSYGnb6wTWdN2uvFTBNug3BaatSZ7IOAI6P9efuWdWYruNbhENGqn19tn+T9sOvV6LYK8t119uRnxjh9SSLy1Lfz95mElc3g9bjftvrCRie1eTxal2xyqKccsn1pEvHEwuQ2R84dwhWb7z/9APDNzXQg+jrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727731609; c=relaxed/simple;
-	bh=PDFMQnY7zW0c/c24/w5bzXFlbGk7N8QPC1yUMeTcXK0=;
+	s=arc-20240116; t=1727731722; c=relaxed/simple;
+	bh=9E17lymEk6KtKuJ59Yq30OasH/9iFmcmwiud63nlNWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X11Za1J+JRXLjyq53+WCcTqWlodiJuMHS/a1ZXi6391/GiaOUS3ClJpBUWucjXdtjc7eix5gWAOQkB62TpDI47r7y+3h9vcYVLuKPKnHWeBu3VGeuUAY2ggOYosbvsh5W4S5nM2C61mNaUJFQ5DM/FygqVa3nEJYhwCZ5JmRVbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH+5T4FM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A607FC4CECD;
-	Mon, 30 Sep 2024 21:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727731609;
-	bh=PDFMQnY7zW0c/c24/w5bzXFlbGk7N8QPC1yUMeTcXK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HH+5T4FMiWNvRpiExQ/EH4EtuDDvXEng4OV+WLdPd5SA3Ho08NFJ0fpu88Dx9pIDH
-	 wS6Ycu+PX0buUMjdN0pqufrFTqkZDKiHMDHpIGCXfaqToOgVjcpu7hw+r2UPNeDzsj
-	 Ae/PTmZSN49dXRKeJjZxtaG7x6z+kaZ+KyduYF2B5kfhgXpECg7UVR7C0EGyiNyh4p
-	 Vl+MDHyyl9h6YP2wrcgkSKgfk1NHvyREUjeK/T9xmK51H4PfCet0S56aKBQoXiH+XM
-	 IijSkYHJTmIAAVd4B6peCK/qIBrkTuT7JG9X1dRQqeR9Q6TlH+2AKohZZDYofCW+AI
-	 JTkURcRgcGusQ==
-Date: Mon, 30 Sep 2024 14:26:47 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Andi Kleen <ak@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
-	Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>,
-	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
-Message-ID: <ZvsXl2g6kYDi6F9o@google.com>
-References: <20240918225418.166717-1-irogers@google.com>
- <20240918225418.166717-2-irogers@google.com>
- <Zut-iM3v9rJHehxJ@tassilo>
- <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S59bfLtcaWYr8q2KO4grTR23Gnayxh5mYAzoSJsmOPQoUGFVdOok9NYEUmZURqC5KTwXmbupzi+Dw4mW6qBLaSA31KJSFxNiyrHXZm/oIgL4/mdCcXjhAxbftMzRdGZijU4G0u0jFfzLHJMTmOAb4/Kn7DEIt6c3/097xSiSRCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U5OfyoMz; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727731720; x=1759267720;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9E17lymEk6KtKuJ59Yq30OasH/9iFmcmwiud63nlNWQ=;
+  b=U5OfyoMzT90+V9qy1D5g4QAMeli/3rCS3aBKgRhKYCwB9Lr0YYecsSMb
+   y4vEWtQAXilBYvPiSR1kZuPaLeliLC1pjTpeHVDV6D8nktwMcR1mfoMHL
+   AJas2QpvpafebltIARp0FAvMxCwsdoiOgaALy/76rsFH7+SNVFMqKydXt
+   ns9kuqH4zG2g8LaJKahkD98S1yJ+eQvZi/ASibVICyIU+b8Bf6tamxaav
+   Qmix5t7goo8Jcn+yXkCHP/STevNwU3rXpKFtfdnOdyIqOUVVi34iTNJ+H
+   u6v5pDfuzx1hIjl8GcUdOVnNIiy7SzCVgTsKxfUSq10mNyp2iAqJv33sK
+   w==;
+X-CSE-ConnectionGUID: Jbf4/gMfSrGz5ySSmnduPg==
+X-CSE-MsgGUID: 9Hx3VsOnRRCF/89bAI513w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37517005"
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="37517005"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 14:28:39 -0700
+X-CSE-ConnectionGUID: mRsnRJanT9+iRBBLZund2Q==
+X-CSE-MsgGUID: +ZB6XlJmRjmbvWEkNgwzeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="73846662"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 30 Sep 2024 14:28:36 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svNwX-000Puf-2r;
+	Mon, 30 Sep 2024 21:28:33 +0000
+Date: Tue, 1 Oct 2024 05:27:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Thumshirn <jth@kernel.org>,
+	Chris Mason <chris.mason@fusionio.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Filipe Manana <fdmanana@suse.com>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH] btrfs: tests: add selftests for RAID stripe-tree
+Message-ID: <202410010421.NzGgvE6Y-lkp@intel.com>
+References: <20240930104054.12290-1-jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
+In-Reply-To: <20240930104054.12290-1-jth@kernel.org>
 
-On Thu, Sep 19, 2024 at 06:45:23AM +0200, Ian Rogers wrote:
-> On Thu, Sep 19, 2024 at 3:29 AM Andi Kleen <ak@linux.intel.com> wrote:
-> >
-> > On Thu, Sep 19, 2024 at 12:54:17AM +0200, Ian Rogers wrote:
-> > > Python2 was deprecated 4 years ago, remove support and workarounds.
-> >
-> > Nacked-by: Andi Kleen
-> >
-> > I don't see any advantages of breaking perfectly fine existing setups
-> > for no benefits.
+Hi Johannes,
 
-Well, I think the benefit is in the maintenance.  The EOL of Python 2
-was 2020/1/1 [1] and we are targeting this release (v6.13) in 2025.  So
-I think it's reasonable to consider removing Python 2 support now.
+kernel test robot noticed the following build warnings:
 
-> 
-> The reason is that since moving to linking libraries rather than
-> building code we now have the ability to call functions like
-> parse_events - previously parse_events was stubbed out because there
-> was no way to build lex/yacc code. Calling parse_events is more
-> sensible than existing logic that does things like open a legacy
-> cycles event only on 1 PMU type. That is, the existing code doesn't
-> support hybrid. Practically there is no way to test python2 support
-> builds and works without having python2. We shouldn't be in the
-> business of installing python2 in 2024, my organization has removed
-> all support for over 3 years.
+[auto build test WARNING on kdave/for-next]
+[also build test WARNING on linus/master v6.12-rc1 next-20240930]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think the problem nowdays is the container images for old distro.  I'm
-not sure how long we need to support them but it should be cut out at
-some point.
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Thumshirn/btrfs-tests-add-selftests-for-RAID-stripe-tree/20240930-184234
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240930104054.12290-1-jth%40kernel.org
+patch subject: [PATCH] btrfs: tests: add selftests for RAID stripe-tree
+config: i386-buildonly-randconfig-004-20241001 (https://download.01.org/0day-ci/archive/20241001/202410010421.NzGgvE6Y-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410010421.NzGgvE6Y-lkp@intel.com/reproduce)
 
-Thanks,
-Namhyung
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410010421.NzGgvE6Y-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/btrfs/ioctl.c:37:
+>> fs/btrfs/volumes.h:837:5: warning: "CONFIG_BTRFS_FS_RUN_SANITY_TESTS" is not defined, evaluates to 0 [-Wundef]
+     837 | #if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   In file included from fs/btrfs/relocation.c:16:
+>> fs/btrfs/volumes.h:837:5: warning: "CONFIG_BTRFS_FS_RUN_SANITY_TESTS" is not defined, evaluates to 0 [-Wundef]
+     837 | #if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from fs/btrfs/relocation.c:39:
+>> fs/btrfs/raid-stripe-tree.h:31:5: warning: "CONFIG_BTRFS_FS_RUN_SANITY_TESTS" is not defined, evaluates to 0 [-Wundef]
+      31 | #if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--
+   In file included from fs/btrfs/raid-stripe-tree.c:12:
+>> fs/btrfs/raid-stripe-tree.h:31:5: warning: "CONFIG_BTRFS_FS_RUN_SANITY_TESTS" is not defined, evaluates to 0 [-Wundef]
+      31 | #if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from fs/btrfs/raid-stripe-tree.c:13:
+>> fs/btrfs/volumes.h:837:5: warning: "CONFIG_BTRFS_FS_RUN_SANITY_TESTS" is not defined, evaluates to 0 [-Wundef]
+     837 | #if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-[1] https://www.python.org/doc/sunset-python-2/
+vim +/CONFIG_BTRFS_FS_RUN_SANITY_TESTS +837 fs/btrfs/volumes.h
+
+   836	
+ > 837	#if CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+   838	struct btrfs_io_context *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
+   839							u64 logical, u16 total_stripes);
+   840	#endif
+   841	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
