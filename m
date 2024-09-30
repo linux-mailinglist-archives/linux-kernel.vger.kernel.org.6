@@ -1,127 +1,169 @@
-Return-Path: <linux-kernel+bounces-345024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A60A898B136
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2A998B139
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9FC281EE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3DBC1F24E02
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE08D185B62;
-	Mon, 30 Sep 2024 23:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CC5185B54;
+	Mon, 30 Sep 2024 23:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK56poLr"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ajUDsE11"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55AA2C1B4
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C87183CD6
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727740365; cv=none; b=C6IFRlgjsIfa3RDMDcKDwRoBs/V4zv0ItrzitPmmirZ1nZKvL0ZAyJCkMTfGur+I6CPkZ+Ly0heyod8iIo2/cuAPdJSh1Bka8Ej+yDZQlsSqNACJ9ZVINkLHy+x5wc+QXT2Ax9PDv7XbDEj1+pgPlbCODj35jdqEmljrEd4LeFA=
+	t=1727740409; cv=none; b=uefWhLVNa78GpdX0wzyEU9C2FH4WXL3lqcBGDihScmhxI4Y3VZQt4qvXh83RDVpjabMgEYJ09Wi5AxuC92hAOlmUMJXUnc5zy3JF0ol7RxNe6emFL1z/3S08r5Q6rc15UyTXbA5yhnfytzaNdM7urb7aa1d5uKO9NFAZG/v8Ycw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727740365; c=relaxed/simple;
-	bh=OqEc7OwtPB32ect8efeDSUqWViMU9jUnSjwFT6sbJs8=;
+	s=arc-20240116; t=1727740409; c=relaxed/simple;
+	bh=jqmfhlo6Nq51O9MWU++JmBpPZJAwV8doQ3e17gImTUE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiB5NlgLe0WWD6SLMlv5lceZ0j/pPt8Ub/uXIdCmOM3XE4P4kQqNk16DQA8sTAYBN8ow8T9GVy3ssCX8860r3suYpSJIiAvrm51RBZgx+HM1IWMWIms6QXYcRuOSLTrbGe3YqIlawYKAHt9YALRQg78fyl8hdk8/qOfZbAuuJQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KK56poLr; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5389fbb28f3so3552860e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:52:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=TAeKro3qSQ5bNCfaYE+0TmBguHlElxzVoGYfc0zurLstysnlkqZF8sQVAhw+6Dxv4yRBX8qUyZxuNNg+1kvhGRqIMzM+0cbdhALOCY3wf93yjgN2kj/fE9KWJSmvTeEi10nLc930uI9QO6dDMOgHsZSdDFmPh3AWyLF2gox9ujU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ajUDsE11; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so1017580066b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:53:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727740362; x=1728345162; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ekER+BlavVK8e8lSCl9Lzc6p/rOexUYi5x/FegHKg2c=;
-        b=KK56poLrH3aVJdYIrCSwbIH9eS29+Er5oTA264ZNNtVSYByZ7wTdRkjsktghl9gZ37
-         Ne8kuhbbIOHaoAzXupweF9idZG9pnMHMz9qC3C0YUxtzK9M9GxAmAhH4+J1Q7YOruedV
-         VfOsiN3GTuvyvCNESj+o9nRsmpYJR/PcW0HZAPBJ4IGJvuSuGhbTCsJo13y9/mqzEBtD
-         zn1C7KQYJ90zG7SFpyAC6gZKwhLyFxO9LKZ9g6JxfHYGTplSV1sBeU26GJcWr//C5qNh
-         7pvBkgS6xx08a2t6yOpF31oLR/13pKrVJIhRCKMT7CY4wSi/Rlvnk2joC9/Moh8ZLUDm
-         MHgw==
+        d=linux-foundation.org; s=google; t=1727740405; x=1728345205; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6S4zxOawKjAaveDpwT3Z661D+kmHQpHbS1yW1IiFsM=;
+        b=ajUDsE11WI1Vq55/BJx/W1mDMt3Yjffus4198B9oxyfK9xgJ2DMoKGrnbgyJyVhuwE
+         yuHr22S46R/D+7yyf9LwFQoS/FJJGJjKoJob7naBHr/4fCXG4Qd4bbbrCgRn9morzWUU
+         x0K24QYqXETNwJkYMIHp6CxPRQHI5LnnlFax0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727740362; x=1728345162;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ekER+BlavVK8e8lSCl9Lzc6p/rOexUYi5x/FegHKg2c=;
-        b=bKlgpZXBx4nMe26uuQ2vwjp8rnDdCTsCqmQJYYIAl9MEv6RE+CPZq+CNIV/py9NBlZ
-         XDqeafo3WpuXN12w9/2xBnDomr3JjwsC1o+zO3LRweoAlaWJ0mmlzotKxU3+y+RL07bF
-         ZiwoyFKQ0nXDfMuKc1Zi7VZDjgQhp/iN3CZI0HSfhuHvOC1fnx+RVSaQdtr6N1AXS+YT
-         kHRtMYgCFMn07LNS+N3ghWDe6ueVZp5e0S31B5rPAduCTCRWTr+v72FNfGJ/0/0GQlhY
-         mewXEU/V5Tgi1kNQIZES2YAmRmWBQts/EYWGbcSn+b/14uaXPr/VRQwUFH/VmBx4EvFa
-         8eRA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7pFryPXU/vDu8Y4mGOH/+iLNa76c5FmRwSuqsgo7ISAHJlySkt/GbiQ5CMey0RoZFMhHD3h1xuwRy6iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFdhd8eYH71vNVjed1KYcQLReXccqoVXZALVueTKCfBMPma6ZE
-	z/lQWP7/biAxdsipjl4zfO5ABHd6MSXd5AwpSmcy1+h1hgncP55iaFN6gdHrR5/nxi16DrfHz7E
-	YBelwDCERZeSeHHENA9gR48iaOzo=
-X-Google-Smtp-Source: AGHT+IGYS01WINA5gr1bRtsyxPngVbeEaeTYygCIoc+XhMsXVkXE2hkSm3g+SgpdWpx1vLyRpRargUgPtLBuk2FDJOY=
-X-Received: by 2002:a05:6512:6c4:b0:52e:fa78:63c0 with SMTP id
- 2adb3069b0e04-5399a24ff2dmr379518e87.13.1727740361446; Mon, 30 Sep 2024
- 16:52:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727740405; x=1728345205;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N6S4zxOawKjAaveDpwT3Z661D+kmHQpHbS1yW1IiFsM=;
+        b=NQNGYCuSOTpRn8LXPwQtwAcq6Bv9ySoH+qhfEcFUh0TKZhjyki1VMYF6yTDCGKOTzd
+         ZJexTUgHfbNG0R8v/73/i7pmwWhocMaFV3iCL7CydCSsVhR8UsjEeUFEQCkIXzE6zCJO
+         GRXQBSxF0tbPgrlJXAqRCjY6cqLxVL0giDGYTb9WQu79xJHguXnfY7v0Dg0P8OeQlKgW
+         NvPfXAwqzF+Qmmbp7e89UeCirrrTDwowaxw9/3Oem9nJm5DHPD1k7BXM2FhIlL3BL48T
+         Sawa4g6oeWDQPT90rliAS3+0hjdmJ/JyKTQnAc7cz0sJKnR13aiOj37fBhCFa+Lftj4n
+         GcFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjyXO40jt+fm0qDmpcXy6EkZamGTE8dxqvecR3r0y1Yyc4JEdqfAMP9TgX+/bdLMrt4yncCoMaTdWKPtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYG8zYm4UMyUsf6lTg4iF4CV9hmnBOT7bqWE4WWi4QTPWJVWBF
+	wYX94rV/1DpFEGU+bITA8UrynpJ4APTWujiwROjtm3FBzEaewewNXoo+o3jW9yc1CR+K7RTiWqv
+	GQq1VLQ==
+X-Google-Smtp-Source: AGHT+IFYGJnHkCYR006vFhXjVf/LzvzniZuJtqjGbeEAigTRCTlb59RVBgPMVFB1nWwpmFNHBzlfBQ==
+X-Received: by 2002:a17:907:6e9e:b0:a6f:996f:23ea with SMTP id a640c23a62f3a-a967bf67b2amr138853566b.15.1727740405155;
+        Mon, 30 Sep 2024 16:53:25 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2775995sm602505566b.41.2024.09.30.16.53.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 16:53:23 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c87ab540b3so7449466a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:53:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTB+C7YxkwIaHqLbQz67keNFdnt0F2fzC+u3eM6P0oQd6y4eadFu74AGV6w6jglomPOb3hPCVOgoZYLLE=@vger.kernel.org
+X-Received: by 2002:a17:907:7294:b0:a8d:5f69:c839 with SMTP id
+ a640c23a62f3a-a967bf527c8mr104147566b.15.1727740402409; Mon, 30 Sep 2024
+ 16:53:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b3a0.050a0220.46d20.0038.GAE@google.com> <66fa4a57.050a0220.aab67.0027.GAE@google.com>
-In-Reply-To: <66fa4a57.050a0220.aab67.0027.GAE@google.com>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Tue, 1 Oct 2024 07:52:27 +0800
-Message-ID: <CAHQche8jUaarbLbMcQ10NXQrqAZSz6ibghML38c2fkXALpEoug@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] possible deadlock in shmem_file_write_iter
-To: syzbot <syzbot+288aa6838b3263f52e7e@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, hughd@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, paul@paul-moore.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com
+References: <ZuuBs762OrOk58zQ@dread.disaster.area> <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io> <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io> <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+ <295BE120-8BF4-41AE-A506-3D6B10965F2B@flyingcircus.io> <CAHk-=wgF3LV2wuOYvd+gqri7=ZHfHjKpwLbdYjUnZpo49Hh4tA@mail.gmail.com>
+ <ZvsQmJM2q7zMf69e@casper.infradead.org>
+In-Reply-To: <ZvsQmJM2q7zMf69e@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 30 Sep 2024 16:53:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wire4EQTQAwggte-MJPC1Wy-RB8egx8wjxi7dApGaiGFw@mail.gmail.com>
+Message-ID: <CAHk-=wire4EQTQAwggte-MJPC1Wy-RB8egx8wjxi7dApGaiGFw@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christian Theune <ct@flyingcircus.io>, Dave Chinner <david@fromorbit.com>, Chris Mason <clm@meta.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-It seems to be the same as [1].
-Link: https://lore.kernel.org/lkml/20240928065620.7abadb2d8552f03d785c77c9@=
-linux-foundation.org/
-[1]
+On Mon, 30 Sept 2024 at 13:57, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> Could we break out if folio->mapping has changed?  Clearly if it has,
+> we're no longer waiting for the folio we thought we were waiting for,
+> but for a folio which now belongs to a different file.
 
-syzbot <syzbot+288aa6838b3263f52e7e@syzkaller.appspotmail.com>
-=E4=BA=8E2024=E5=B9=B49=E6=9C=8830=E6=97=A5=E5=91=A8=E4=B8=80 14:51=E5=86=
-=99=E9=81=93=EF=BC=9A
->
-> syzbot has bisected this issue to:
->
-> commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2
-> Author: Shu Han <ebpqwerty472123@gmail.com>
-> Date:   Tue Sep 17 09:41:04 2024 +0000
->
->     mm: call the security_mmap_file() LSM hook in remap_file_pages()
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D110d4ea998=
-0000
-> start commit:   3efc57369a0c Merge tag 'for-linus' of git://git.kernel.or=
-g..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D130d4ea998=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D150d4ea998000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da4fcb065287cd=
-b84
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D288aa6838b3263f=
-52e7e
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17af2980580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11607d9f98000=
-0
->
-> Reported-by: syzbot+288aa6838b3263f52e7e@syzkaller.appspotmail.com
-> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
-_file_pages()")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+Sounds like a sane check to me, but it's also not clear that this
+would make any difference.
+
+The most likely reason for starvation I can see is a slow thread
+(possibly due to cgroup throttling like Christian alluded to) would
+simply be continually unlucky, because every time it gets woken up,
+some other thread has already dirtied the data and caused writeback
+again.
+
+I would think that kind of behavior (perhaps some DB transaction
+header kind of folio) would be more likely than the mapping changing
+(and then remaining under writeback for some other mapping).
+
+But I really don't know.
+
+I would much prefer to limit the folio_wait_bit() loop based on something else.
+
+For example, the basic reason for that loop (unless there is some
+other hidden one) is that the folio writeback bit is not atomic wrt
+the wakeup. Maybe we could *make* it atomic, by simply taking the
+folio waitqueue lock before clearing the bit?
+
+(Only if it has the "waiters" bit set, of course!)
+
+Handwavy.
+
+Anyway, this writeback handling is nasty. folio_end_writeback() has a
+big comment about the subtle folio reference issue too, and ignoring
+that we also have this:
+
+        if (__folio_end_writeback(folio))
+                folio_wake_bit(folio, PG_writeback);
+
+(which is the cause of the non-atomicity: __folio_end_writeback() will
+clear the bit, and return the "did we have waiters", and then
+folio_wake_bit() will get the waitqueue lock and wake people up).
+
+And notice how __folio_end_writeback() clears the bit with
+
+                ret = folio_xor_flags_has_waiters(folio, 1 << PG_writeback);
+
+which does that "clear bit and look it it had waiters" atomically. But
+that function then has a comment that says
+
+ * This must only be used for flags which are changed with the folio
+ * lock held.  For example, it is unsafe to use for PG_dirty as that
+ * can be set without the folio lock held.  [...]
+
+but the code that uses it here does *NOT* hold the folio lock.
+
+I think the comment is wrong, and the code is fine (the important
+point is that the folio lock _serialized_ the writers, and while
+clearing doesn't hold the folio lock, you can't clear it without
+setting it, and setting the writeback flag *does* hold the folio
+lock).
+
+So my point is not that this code is wrong, but that this code is all
+kinds of subtle and complex. I think it would be good to change the
+rules so that we serialize with waiters, but being complex and subtle
+means it sounds all kinds of nasty.
+
+            Linus
 
