@@ -1,102 +1,144 @@
-Return-Path: <linux-kernel+bounces-343758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAE3989F1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:12:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF79F989F25
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03A91F21EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:12:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359E61F23266
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C904188737;
-	Mon, 30 Sep 2024 10:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD85189918;
+	Mon, 30 Sep 2024 10:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kxn1lB80"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzRVfWC2"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC86183098
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 10:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E59D418858E;
+	Mon, 30 Sep 2024 10:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727691123; cv=none; b=hkOs0JLIZknauo3lXnUFwbZMW/PtJ0PDF1cKuuPwRC9cKqynsZMF69kObFLK793aUhoYNVwRIPuAPOhxaU2dDnK76IpacXOvaMEnpqbp8qpY6nIqdYuTnTdwOEucdYSiZ2LWfT4w1OoMjtkukvSanq2iRe/u6BYKaYOrSAJV1mM=
+	t=1727691153; cv=none; b=hZ0YQVbNDgjoPa5tz81/9Csp/B06TMBILNXpArFS9sHZMqcryRNfZi5hw7PtN5FjAqR+RfvPLFkOdrZCAF5XPZBORFRsLWSxf9YXQjPPKC0T7/3BBJFPWiBYF/0Wiz0lellCiuFzYFmPZp9nU9YOqExg5TurogInioLVDhI1s00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727691123; c=relaxed/simple;
-	bh=mvMp1cfrgRErkBTHgkQd06z417VNMxn4Pp6PsZR9Ink=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHsOsh4Sch4P6LZY3erytTsGK7l9uBtpoWHV3o5PddExMdMxYXNXgIbeoEkCAennrd6AiVeDMe4VEahhNPnJSjTqrI6Klw2vVh+o/L8/+v+PobD4M/uwk/TkC+czpXiO38gEOUQU8OzHknqyHOvvF1ZrAvA6m9CwKkU2/49xY5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kxn1lB80; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 30 Sep 2024 06:11:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727691117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lwjQXfaoEArCHX8Me75J2cpE/c/nfg9+6nxbmi9kJJM=;
-	b=kxn1lB80JmZyc2+0HcxV6lVI2djPnTAeVTmVem3WJcr1kc3jlF9qEj7uBPk6i/M/M3nJIx
-	uKaa2Jt30LjNGP39C3Q62A3UG6spoRoIdAOhxbSkuuVhiDP496X3X8mq5iSfxczHKJwRWf
-	KFJd9L43/Oz30EX2e1ukLknHe3e7qq0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] bcachefs: rename version -> bversion for big endian
- builds
-Message-ID: <obpogbufu5awsn2a6olh2ondrgwl7bgdowjcpv6jcpm2ey4s5h@obcml2w3csap>
-References: <20240930003902.4127294-1-linux@roeck-us.net>
- <CAMuHMdWcPpBgsK0r0U=k8NyjTjUTwBTLe6Bg_ORD2zmSNoRgJA@mail.gmail.com>
+	s=arc-20240116; t=1727691153; c=relaxed/simple;
+	bh=AWRGwNAR8HQF5vgW2X9+dExB7v1O+jkA3G5ve2Rc66k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lrsoplaW8Z1fJZDXZuWY3QFpY7Sp5XS1KR6KrCWnlDeAqDQ7mhLcRMSju4nj7+9/a/JPXP1uFi2rmDmsPan5/0NSlQOk9EdwAcQ0Wy825OIJ+s7MLkDys38o+8pCYnLHHLDEtf0djvXUvHJyrpAktn78KL2L0UGiUYKWHFFkMKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gzRVfWC2; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20b9b35c7c7so1809235ad.1;
+        Mon, 30 Sep 2024 03:12:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727691151; x=1728295951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUsTgMCDlYF8NCO+DUyGQXMRDmDOC3gw5dVi9Tj9wRw=;
+        b=gzRVfWC2ePcjjx2zcuxNiAjrUAqqGUIeMvJUg3Pmv+O9eMX8ADlDnPTSaYn4mWrl82
+         Sb5JZrOXUw7a2js8m3GD+oV26KiPT8f5RIhOZSujGhN7YZaHyFwsIS9YHVSHO1x6M2HW
+         XDvkm1eqZNJ1WhJsQ7dIyVv5Bd8yrRjJzWRyXJZh8GYGFSJIM35C4MZGrYFYcmeMkor5
+         MEdJ7yXjEUFjMU2Pnm79aRnuBmB12chLABUlucSgP4Ca9RKdpogUf9GWkTBKuAlRQ/6h
+         +Varl3hFwsQwdsAr2reMD4rfAmNRDdcSt+vxAHp39OOiKTH5tqy+8FugfGSZsBuvuXHJ
+         X57A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727691151; x=1728295951;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IUsTgMCDlYF8NCO+DUyGQXMRDmDOC3gw5dVi9Tj9wRw=;
+        b=xSPOLrF9D1eXnDwsxsQSmaWcm+jLKzobr/D/sV79+ZOK1fOmEt1c65Dyzzehk0xhFN
+         Kzwc967k3u+m2C/wtuPqrGwsjkeZ1Szb25DndH4yY/RelT64VUNjHlvaqQwg6ypS1NNo
+         qdrG8SHX+tk+dFUZ2Z/vC8qRuCvIYmnfnddcyOjdb/6TZHj2tWmmm1o9HduYA95kTdck
+         K0IzoQeNNVhaVjJl5Ocf4g+X+vi/pwoaPNGD6qMnqBIOszsut54PoOIW2PxQG4PSWV0/
+         NgxD0BFkPKI/SaISLG0bQXeO9PdVromEQy9DeWC/rzwhBR2Izkdi12Jcu///Ppozaujc
+         f8mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoYGrA8Ff4ug/ooX+rHFhemPcl5/OzxKPclwa0/yKq/LHm97HEDcmSGxGIt09VtpjPh1Ap4KZG@vger.kernel.org, AJvYcCWo/7rIxJ974gSmap2nXPqgHEnybpCil0fMH5tuLr1EeYoNU3VqmTEeYm6H/lvBlrsC34XfF0dpcSSrmfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRKUkj9HD84OIWcX10ElgPpWzRIlGysT/peGGbAhPt/nDCHwDr
+	aZLZQtVZIPHVXhmDrwU6OUTOP4QNNvJqE19otJ1vNzVsOUU9CEz6
+X-Google-Smtp-Source: AGHT+IE+XkNU1MrrwGIggtxA53BM40AFHc4Ez/pr2u8o6EBbjl9eIRtRRkKENw2ss5jQQykE7/l9Hg==
+X-Received: by 2002:a17:902:c40f:b0:205:76f3:fc2c with SMTP id d9443c01a7336-20b367ddf1dmr156177005ad.16.1727691151036;
+        Mon, 30 Sep 2024 03:12:31 -0700 (PDT)
+Received: from tom-QiTianM540-A739.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e61b00sm51584855ad.275.2024.09.30.03.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 03:12:30 -0700 (PDT)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: support.opensource@diasemi.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: Fix atomicity violation in snd_soc_component_get_drvdata()
+Date: Mon, 30 Sep 2024 18:12:16 +0800
+Message-Id: <20240930101216.23723-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdWcPpBgsK0r0U=k8NyjTjUTwBTLe6Bg_ORD2zmSNoRgJA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 30, 2024 at 12:04:42PM GMT, Geert Uytterhoeven wrote:
-> On Mon, Sep 30, 2024 at 2:39 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> > Builds on big endian systems fail as follows.
-> >
-> > fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
-> > fs/bcachefs/bkey.h:557:41: error:
-> >         'const struct bkey' has no member named 'bversion'
-> >
-> > The original commit only renamed the variable for little endian builds.
-> > Rename it for big endian builds as well to fix the problem.
-> >
-> > Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
-> 
-> Which is (again) not found on any mailing list, and has never been in
-> linux-next before it hit upstream...
-> 
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> > --- a/fs/bcachefs/bcachefs_format.h
-> > +++ b/fs/bcachefs/bcachefs_format.h
-> > @@ -223,7 +223,7 @@ struct bkey {
-> >  #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-> >         struct bpos     p;
-> >         __u32           size;           /* extent size, in sectors */
-> > -       struct bversion version;
-> > +       struct bversion bversion;
-> >
-> >         __u8            pad[1];
-> >  #endif
-> 
-> BTW, how does this work when accessing a non-native file system?
-> Didn't we stop doing bi-endian file systems in v2.1.10, when ext2 was
-> converted from a bi-endian to a little-endian file system?
+An atomicity violation occurs when the validity of the variables 
+da7219->clk_src and da7219->mclk_rate is being assessed. Since the entire 
+assessment is not protected by a lock, the da7219 variable might still be 
+in flux during the assessment, rendering this check invalid.
 
-we byte swab if necessary
+To fix this issue, we recommend adding a lock before the block 
+if ((da7219->clk_src == clk_id) && (da7219->mclk_rate == freq)) so that 
+the legitimacy check for da7219->clk_src and da7219->mclk_rate is 
+protected by the lock, ensuring the validity of the check.
+
+This possible bug is found by an experimental static analysis tool
+developed by our team. This tool analyzes the locking APIs
+to extract function pairs that can be concurrently executed, and then
+analyzes the instructions in the paired functions to identify possible
+concurrency bugs including data races and atomicity violations.
+
+Fixes: 6d817c0e9fd7 ("ASoC: codecs: Add da7219 codec driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+ sound/soc/codecs/da7219.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index 311ea7918b31..e2da3e317b5a 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -1167,17 +1167,20 @@ static int da7219_set_dai_sysclk(struct snd_soc_dai *codec_dai,
+ 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
+ 	int ret = 0;
+ 
+-	if ((da7219->clk_src == clk_id) && (da7219->mclk_rate == freq))
++	mutex_lock(&da7219->pll_lock);
++
++	if ((da7219->clk_src == clk_id) && (da7219->mclk_rate == freq)) {
++		mutex_unlock(&da7219->pll_lock);
+ 		return 0;
++	}
+ 
+ 	if ((freq < 2000000) || (freq > 54000000)) {
++		mutex_unlock(&da7219->pll_lock);
+ 		dev_err(codec_dai->dev, "Unsupported MCLK value %d\n",
+ 			freq);
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&da7219->pll_lock);
+-
+ 	switch (clk_id) {
+ 	case DA7219_CLKSRC_MCLK_SQR:
+ 		snd_soc_component_update_bits(component, DA7219_PLL_CTRL,
+-- 
+2.34.1
+
 
