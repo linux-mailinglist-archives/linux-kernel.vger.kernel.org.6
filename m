@@ -1,208 +1,301 @@
-Return-Path: <linux-kernel+bounces-343380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B08989A4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6349989A4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A97C2822B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:51:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733C2282346
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A762149E00;
-	Mon, 30 Sep 2024 05:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45362D7B8;
+	Mon, 30 Sep 2024 05:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hSyeDSvd"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WOlEI/kR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B245F2D7B8;
-	Mon, 30 Sep 2024 05:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727675505; cv=fail; b=FPw9AtCtS+GBvKBLXEgDUGevyPyzd5WoRuG+LQIw+6hsm8PNrsXGZEzJbqHABysDzPLhR3+hmcyWIYkpLHXyAlhRHjcT66Q1EwpwubCO4e5DpkXww5UmZfvtoe3F9RsaVhP5QKyeew1K+heyoqkzxZmRBDqCSiF/EWuyh0oh0Gk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727675505; c=relaxed/simple;
-	bh=ebRI2CfcmGvxA+kJ9GNE3pUNIIMBn0WXkNGX95zgXlA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sL7eeQNhdRludYSajLYLSmB/trl5OZD8b6rkDEIykQRgwA5DBisLbwTXt03/xrfEGPA74PidD+6oHnDDOSaDTUDD+GpYqIfLegvmTUi0vg7MK4upv6Ixtw4UNWf1iKnKWlcdjQNHy3gL2Tmn70bRrryF/J5nFRGQ/23tgJcMbho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hSyeDSvd; arc=fail smtp.client-ip=40.107.244.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qjcm/2bJB1bSGaZKbk7rcYgdU3BvOKjQtYoFBBQVXVtZEiCH3Y7gjVDNHrVMC/BlBRWtduCFi7yNeHYpY8RnuZMjTNhcgUXLHoblwrSX3pQtxgz0r3TxhzDEpYKoYR8flify9Wmq3C100lkF2nTDAVCm4QmKkCyZMkguGBa06Jd4FO9wkZ+RTJl8Z9hrqURHU5+i2Wdyj4RIElgm9XSNih+pHWgDGxB6iMYovyx+hKxkzFuertS3Vm417+h5eO42EiucLH9kWyqyzQWRuJFWo96Oz4UJ9J2vfMjCRjCESOhTK3FN0kJxULIe2PvHg8WczllF6UmQxOPNPm66bBHd2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qs46or+RWY0H641ytAqfmyEdFPGIr/umifWyuHQT/Tk=;
- b=H9C8TOI5G8YhmfeprGZQmaP7ldrSdIPGWTsjOJpZHJxOnBvkSxYz46JiykvYFjGN9g5ptxImWJw8XoXG1TI1p7FaTCV05VpYujIEN3vkXIpy+rteBCrLyVBYMWGF/a9HqTCuRtDSrHGkCFtuBCty+aRjRnOtnBCBkC6Y4sYeoj7rFYMQ4xOxbyCDAmgC8rbCYGvtjrWbNICIlOxajhN58Q38/tYd0xxBO//X0G4rFTbYVrn3JOSpnjRU3mbvhn7Ri3nmRNDzdxnyuzXaxbJ+5VVxAkvZEjoUSPMngtvpFxY49X3KdHUFay8E/CgoeT71QdvYTn2rXshHsspCuP8PPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qs46or+RWY0H641ytAqfmyEdFPGIr/umifWyuHQT/Tk=;
- b=hSyeDSvdiHcPp5zK/gwHfb+ab8Q9Kye5C66+P61wMUs+mEMwVk8kn+X0CF89s8LQZI4atALX0uEyjfYjRqKTAo7ID0XPWQlytqBLP3eIhNs5cw2/RGzFRLOxCWeo01nITQmAIDUnrMF93JISIY9WGOJmLZ20EeVZ5HM52eheCqM=
-Received: from SN6PR04CA0105.namprd04.prod.outlook.com (2603:10b6:805:f2::46)
- by SJ0PR12MB8116.namprd12.prod.outlook.com (2603:10b6:a03:4ec::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
- 2024 05:51:40 +0000
-Received: from SA2PEPF00003AE4.namprd02.prod.outlook.com
- (2603:10b6:805:f2:cafe::9e) by SN6PR04CA0105.outlook.office365.com
- (2603:10b6:805:f2::46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26 via Frontend
- Transport; Mon, 30 Sep 2024 05:51:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00003AE4.mail.protection.outlook.com (10.167.248.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 05:51:39 +0000
-Received: from volcano-62e7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Sep
- 2024 00:51:11 -0500
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>, <david.kaplan@amd.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH] KVM: SVM: Disable AVIC on SNP-enabled system without HvInUseWrAllowed feature
-Date: Mon, 30 Sep 2024 05:50:35 +0000
-Message-ID: <20240930055035.31412-1-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC75B1509AF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727675511; cv=none; b=IzwSlQUbYE1Q8a7Zw3O3ro1h+JHyq8ZijFYLlxvihh0CfijzoQONaIr43RurAydHSpMOmTuo++0scZQ89nZ4gUWcPcD8P7roMyghbbUnWbeZEL8r2+1bixU7StEsqRE8SnhkImJ/yujwPr1V3BBOYavEUbYG2vrZPAufWbS6rLw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727675511; c=relaxed/simple;
+	bh=D7qgt/re79b94z4qKj4/hVxF8hx2+DoYj0YpC+nDoLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uiN+MHxFuISnd+bpGKBSBi71SE+veJ9SMcIgKka2/wzV/tN3h4aYhjfp3p601mulUaP93n2cQb8pbYTAcrsM9fn0yfJWryxfbMY/SkbK3rwfvxJo2UoCDj6xtJ84Ni/zWkYfp/Injc8O2NPT6UuIi6hsyaOSzaVSbGcLN8ijzGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WOlEI/kR; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727675510; x=1759211510;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=D7qgt/re79b94z4qKj4/hVxF8hx2+DoYj0YpC+nDoLk=;
+  b=WOlEI/kRlOQgDxz7q7lf4qJIZ2UuaxJSYKrgOVzf/Pc+sW/xrgkrFBxo
+   Y0i4sLlxFbDp38PgsA4ElZqIigGcN6L8APULhKt184AXMTPUxnCElol78
+   8Rcj1LE1y8+ffGqLVMxQfcZgwAmn7N3+2C991B7Mbc6m51704K9acoyQx
+   W8KHUKDOTsiQwtsv06jjyKS5cU+auyVl3+rMuqqjXq3B0mgDmrJKwvLGw
+   p9jDssGn/6eXd0qb/qDRGM1c4eymiU4E/vFS1w9/HOexJP+xN37dXoXwv
+   LGrIMuYgrv9rCP1Ha66sj2zsmh3o2V8RGFhZA+o7QUunF2Eqs52Bs3dps
+   w==;
+X-CSE-ConnectionGUID: +8KhM+oRR2GpH1frMAjWlw==
+X-CSE-MsgGUID: AinE83IGQn6EExmAdkCWWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26698447"
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="26698447"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 22:51:49 -0700
+X-CSE-ConnectionGUID: 5zR1OpmOSyywRCtLL0caCQ==
+X-CSE-MsgGUID: fDaLogJbR0WCZoFMTV148w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="73497045"
+Received: from lhan1x-mobl.ccr.corp.intel.com (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.124.238.64])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 22:51:45 -0700
+From: Huang Ying <ying.huang@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: x86@kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oscar Salvador <osalvador@suse.de>,
+	linux-coco@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Huang Ying <ying.huang@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] tdx, memory hotplug: Check whole hot-adding memory range for TDX
+Date: Mon, 30 Sep 2024 13:51:12 +0800
+Message-Id: <20240930055112.344206-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003AE4:EE_|SJ0PR12MB8116:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae88b105-5f4a-4941-0773-08dce113f3e0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VEQvWTNqTCtPUEF1N0FzY05ZL244VzdNVmhsTVA4R0pYcm9xQ2doM0lneG9S?=
- =?utf-8?B?VHNzQUh6MHhlanJyeFBQRDUwVjlreXZVZElIMjdXTXhwcmhRZnB0N09sTFA0?=
- =?utf-8?B?eWpaeGNwYmRva09LamxISFk2cDdUczRETjZWTVpJcGRjZkdQNnlpWk01Snp5?=
- =?utf-8?B?MmxuSnhTeURQWXg1Ri93Q0tiTjdjM1U4dlBNMi9RanBOWExpNTBrY1E2emh6?=
- =?utf-8?B?ZDNmSmR6b2xzWmVLR09aWUVzUzdka3RwMmJLWWFFN21BZWFnNHFlaUswUzBw?=
- =?utf-8?B?Q0RWUTlJZE13WUZYb2N5TEtGeHhkYWdPVlNGS2N2dndrSHlLNllPTkZOUWgz?=
- =?utf-8?B?MTdDRHBGK1o1N2czdnhCN1pSeUMveTlmMiswdWpHRlVGR0laaGxMckJadVhJ?=
- =?utf-8?B?TU1Tc2lsZlY0Vjhicnp0L0d4cXFLbVFlZkszS2xLZE9vN1dEdnhGcVJYYXdL?=
- =?utf-8?B?cU42bEIwYlhWSW9MTVd6OTZESjFlMFRXSjU2dHMwY0p4VFg1U1lFbWZ0WU9T?=
- =?utf-8?B?ZkxLbGo4dll1VXRhek51cW0xcXpLUlVxTWE0Y21NcnRGWTBleWU2REw5eDNU?=
- =?utf-8?B?V2h0OWNSSmJSdkZXUnJCZEhId2xMMXdEV3IzMEtkUG5UQ28ya2J3Q09OUUE2?=
- =?utf-8?B?djFXSWYwQS9yaVF5ekEwTVFoQ2QvS3lMbVNTOVpaTmpnM0M4VjJoanNzN1Nm?=
- =?utf-8?B?M2FIeEdlcWhMNXJBQ09xUEZPa3VUQW9YUC9lcW91bWlDRW9RWUJLMURwaDda?=
- =?utf-8?B?NGNMamFiWHlFV0ZZZXdObVArY2xobWI4RWFlZjEvUEpiSGNJMlBjZlc4c28x?=
- =?utf-8?B?blBmQXl5S0lTNWlxODJYM2orN1ZFTE9JZ1piKy8xeEhPWVhQQ2pUa2NBWU9I?=
- =?utf-8?B?ZVFWWUVhWVRtWkVORGcxeUhFM3Erc0xmKzkydFNEUHRrMThrb2RqOGNFNWJZ?=
- =?utf-8?B?aXEyVVVnUGVpT1hrd1I3SkVTSERuSXZodmtycjRhMmk0akxUaXZncjRYdHV4?=
- =?utf-8?B?NlljQnBhc3ZFSEFZSUNFQzRYSDlsbUhONE54NnRYWHVpdHBwMmlFRWFWUDBN?=
- =?utf-8?B?cGt3ZGQza0RpdGtMa292dE1NZUFOZkQ4bDBXUjMwMjZUckxOb24yY2NIYnE1?=
- =?utf-8?B?bjl5aFA2d202bE1wTWY4RVBUNjNORTVraGY3TUpaTXp3Q09OMU5uRS9wZUty?=
- =?utf-8?B?bmltT2ZZSXlBTHlKRU9hRmFwQkFWUVNoWEp6U2lQWnEybzB6UEh5K2xKQ0xm?=
- =?utf-8?B?WUpoaENDYmQ1eWxlY3E3alJZZGRBMVRPSTIyZjYvWXJ0MmNPRDNHSUtJOXpV?=
- =?utf-8?B?czJ5SER1eC9sSHdCMnpjdU5zaGNjVkhMdDVKOG5JUEV6eE5GZklHdVQ5bXlH?=
- =?utf-8?B?bkJxWjNHcnZlYm81WEtjRDV4UTJzZnB5bHlIY1VWYVMzNHJoWFJjWjlFMFNX?=
- =?utf-8?B?MkxpeDNnMzNxMXZ1Rm92cHZiQndiNUViZk5aVnVkc3JiS3JEK0NNaWVWS1lx?=
- =?utf-8?B?eFdKQTROYVQ0ZURWbHFNNFZSSDVoaFYvZXBBZWFBcXp3NFZrdkd2Qm9CRTAz?=
- =?utf-8?B?R21MV2ZiZzlZZ0c1VW5XR2E3Z2ZTeXI5cjJsdFNWS2xtNmJ2L0VoS25xVHZ5?=
- =?utf-8?B?V3ZTM3I0Nis2dENSYmlMRWkrU0lsTDU4YnhNWkFXV3V1ZXJOOVJ3RnRiVk9k?=
- =?utf-8?B?T0N4NW1JUm9hT25Qa3FxYmFCdHZtVE9xbW16V015RTF4VXI1aTdSTElrcVQ4?=
- =?utf-8?B?T1d2ZWRwdEt2MmZsaW1FQWRkWm9jU083UzRCVDJqV1N4ZFFlMGlXV294SFJP?=
- =?utf-8?B?OTBWOGFLakJReEhqS2tLVy9lVDhRUFl6L3o4ZFBBVU9zYW1oMDdZVHVxNnlG?=
- =?utf-8?B?RVlJSzd0MFhFMm1MQ1V6a0ZlMEF1YXFyam5YUXREWUNZV1RLbTNDNTZZaHp1?=
- =?utf-8?Q?lqjRHP3YYdsfqvjiP8hp4cLqRra3wL8e?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 05:51:39.1160
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae88b105-5f4a-4941-0773-08dce113f3e0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003AE4.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8116
 
-On SNP-enabled system, VMRUN marks AVIC Backing Page as in-use while
-the guest is running for both secure and non-secure guest. This causes
-any attempts to modify the RMP entries for the backing page to result in
-FAIL_INUSE response. This is to ensure that the AVIC backing page is not
-maliciously assigned to an SNP guest while the unencrypted guest is active.
+On systems with TDX (Trust Domain eXtensions) enabled, memory ranges
+hot-added must be checked for compatibility by TDX.  This is currently
+implemented through memory hotplug notifiers for each memory_block.
+If a memory range which isn't TDX compatible is hot-added, for
+example, some CXL memory, the command line as follows,
 
-Currently, an attempt to run AVIC guest would result in the following error:
+  $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
 
-    BUG: unable to handle page fault for address: ff3a442e549cc270
-    #PF: supervisor write access in kernel mode
-    #PF: error_code(0x80000003) - RMP violation
-    PGD b6ee01067 P4D b6ee02067 PUD 10096d063 PMD 11c540063 PTE 80000001149cc163
-    SEV-SNP: PFN 0x1149cc unassigned, dumping non-zero entries in 2M PFN region: [0x114800 - 0x114a00]
-    ...
+will report something like,
 
-Newer AMD system is enhanced to allow hypervisor to modify RMP entries of
-the backing page for non-secure guest on SNP-enabled system. This
-enhancement is available when the CPUID Fn8000_001F_EAX bit 30 is set
-(HvInUseWrAllowed) See the AMD64 Architecture Programmer’s Manual (APM)
-Volume 2 for detail. (https://www.amd.com/content/dam/amd/en/documents/
-processor-tech-docs/programmer-references/40332.pdf)
+  bash: echo: write error: Operation not permitted
 
-Therefore, add logic to check the new CPUID bit before enabling AVIC
-on SNP-enabled system.
+If pr_debug() is enabled, the error message like below will be shown
+in the kernel log,
 
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+  online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
+
+Both are too general to root cause the problem.  This will confuse
+users.  One solution is to print some error messages in the TDX memory
+hotplug notifier.  However, memory hotplug notifiers are called for
+each memory block, so this may lead to a large volume of messages in
+the kernel log if a large number of memory blocks are onlined with a
+script or automatically.  For example, the typical size of memory
+block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
+will be logged.
+
+Therefore, in this patch, the whole hot-adding memory range is checked
+for TDX compatibility through a newly added architecture specific
+function (arch_check_hotplug_memory_range()).  If rejected, the memory
+hot-adding will be aborted with a proper kernel log message.  Which
+looks like something as below,
+
+  virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
+
+The target use case is to support CXL memory on TDX enabled systems.
+If the CXL memory isn't compatible with TDX, the whole CXL memory
+range hot-adding will be rejected.  While the CXL memory can still be
+used via devdax interface.
+
+This also makes the original TDX memory hotplug notifier useless, so
+delete it.
+
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: Kai Huang <kai.huang@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- arch/x86/kvm/svm/avic.c            | 6 ++++++
- 2 files changed, 7 insertions(+)
+ arch/x86/include/asm/tdx.h     |  2 ++
+ arch/x86/mm/init_64.c          |  6 ++++++
+ arch/x86/virt/vmx/tdx/tdx.c    | 35 ++++++++++++----------------------
+ include/linux/memory_hotplug.h |  3 +++
+ mm/memory_hotplug.c            |  7 ++++++-
+ 5 files changed, 29 insertions(+), 24 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index dd4682857c12..921b6de80e24 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -448,6 +448,7 @@
- #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
- #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES full debug state swap support */
- #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
-+#define X86_FEATURE_HV_INUSE_WR_ALLOWED	(19*32+30) /* Write to in-use hypervisor-owned pages allowed */
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index eba178996d84..6db5da34e4ba 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -116,11 +116,13 @@ static inline u64 sc_retry(sc_func_t func, u64 fn,
+ int tdx_cpu_enable(void);
+ int tdx_enable(void);
+ const char *tdx_dump_mce_info(struct mce *m);
++int tdx_check_hotplug_memory_range(u64 start, u64 size);
+ #else
+ static inline void tdx_init(void) { }
+ static inline int tdx_cpu_enable(void) { return -ENODEV; }
+ static inline int tdx_enable(void)  { return -ENODEV; }
+ static inline const char *tdx_dump_mce_info(struct mce *m) { return NULL; }
++static inline int tdx_check_hotplug_memory_range(u64 start, u64 size) { return 0; }
+ #endif	/* CONFIG_INTEL_TDX_HOST */
  
- /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), word 20 */
- #define X86_FEATURE_NO_NESTED_DATA_BP	(20*32+ 0) /* No Nested Data Breakpoints */
-diff --git a/arch/x86/kvm/svm/avic.c b/arch/x86/kvm/svm/avic.c
-index 4b74ea91f4e6..42f2caf17d6a 100644
---- a/arch/x86/kvm/svm/avic.c
-+++ b/arch/x86/kvm/svm/avic.c
-@@ -1199,6 +1199,12 @@ bool avic_hardware_setup(void)
- 		return false;
+ #endif /* !__ASSEMBLY__ */
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index ff253648706f..30a4ad4272ce 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -55,6 +55,7 @@
+ #include <asm/uv/uv.h>
+ #include <asm/setup.h>
+ #include <asm/ftrace.h>
++#include <asm/tdx.h>
+ 
+ #include "mm_internal.h"
+ 
+@@ -974,6 +975,11 @@ int add_pages(int nid, unsigned long start_pfn, unsigned long nr_pages,
+ 	return ret;
+ }
+ 
++int arch_check_hotplug_memory_range(u64 start, u64 size)
++{
++	return tdx_check_hotplug_memory_range(start, size);
++}
++
+ int arch_add_memory(int nid, u64 start, u64 size,
+ 		    struct mhp_params *params)
+ {
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 4e2b2e2ac9f9..c477b04c5548 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1388,36 +1388,32 @@ static bool is_tdx_memory(unsigned long start_pfn, unsigned long end_pfn)
+ 	return false;
+ }
+ 
+-static int tdx_memory_notifier(struct notifier_block *nb, unsigned long action,
+-			       void *v)
++int tdx_check_hotplug_memory_range(u64 start, u64 size)
+ {
+-	struct memory_notify *mn = v;
+-
+-	if (action != MEM_GOING_ONLINE)
+-		return NOTIFY_OK;
++	u64 start_pfn = PHYS_PFN(start);
++	u64 end_pfn = PHYS_PFN(start + size);
+ 
+ 	/*
+ 	 * Empty list means TDX isn't enabled.  Allow any memory
+-	 * to go online.
++	 * to be hot-added.
+ 	 */
+ 	if (list_empty(&tdx_memlist))
+-		return NOTIFY_OK;
++		return 0;
+ 
+ 	/*
+ 	 * The TDX memory configuration is static and can not be
+-	 * changed.  Reject onlining any memory which is outside of
++	 * changed.  Reject hot-adding any memory which is outside of
+ 	 * the static configuration whether it supports TDX or not.
+ 	 */
+-	if (is_tdx_memory(mn->start_pfn, mn->start_pfn + mn->nr_pages))
+-		return NOTIFY_OK;
++	if (is_tdx_memory(start_pfn, end_pfn))
++		return 0;
+ 
+-	return NOTIFY_BAD;
++	pr_info("Reject hot-adding memory range: %#llx-%#llx for TDX compatibility.\n",
++		start, start + size);
++
++	return -EINVAL;
+ }
+ 
+-static struct notifier_block tdx_memory_nb = {
+-	.notifier_call = tdx_memory_notifier,
+-};
+-
+ static void __init check_tdx_erratum(void)
+ {
+ 	/*
+@@ -1465,13 +1461,6 @@ void __init tdx_init(void)
+ 		return;
  	}
  
-+	if (cc_platform_has(CC_ATTR_HOST_SEV_SNP) &&
-+	    !boot_cpu_has(X86_FEATURE_HV_INUSE_WR_ALLOWED)) {
-+		pr_warn("AVIC disabled: missing HvInUseWrAllowed on SNP-enabled system");
-+		return false;
-+	}
+-	err = register_memory_notifier(&tdx_memory_nb);
+-	if (err) {
+-		pr_err("initialization failed: register_memory_notifier() failed (%d)\n",
+-				err);
+-		return;
+-	}
+-
+ #if defined(CONFIG_ACPI) && defined(CONFIG_SUSPEND)
+ 	pr_info("Disable ACPI S3. Turn off TDX in the BIOS to use ACPI S3.\n");
+ 	acpi_suspend_lowlevel = NULL;
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index b27ddce5d324..c5ba7b909bb4 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -140,6 +140,9 @@ extern int try_online_node(int nid);
+ 
+ extern int arch_add_memory(int nid, u64 start, u64 size,
+ 			   struct mhp_params *params);
 +
- 	if (boot_cpu_has(X86_FEATURE_AVIC)) {
- 		pr_info("AVIC enabled\n");
- 	} else if (force_avic) {
++extern int arch_check_hotplug_memory_range(u64 start, u64 size);
++
+ extern u64 max_mem_size;
+ 
+ extern int mhp_online_type_from_str(const char *str);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 621ae1015106..c4769f24b1e2 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1305,6 +1305,11 @@ int try_online_node(int nid)
+ 	return ret;
+ }
+ 
++int __weak arch_check_hotplug_memory_range(u64 start, u64 size)
++{
++	return 0;
++}
++
+ static int check_hotplug_memory_range(u64 start, u64 size)
+ {
+ 	/* memory range must be block size aligned */
+@@ -1315,7 +1320,7 @@ static int check_hotplug_memory_range(u64 start, u64 size)
+ 		return -EINVAL;
+ 	}
+ 
+-	return 0;
++	return arch_check_hotplug_memory_range(start, size);
+ }
+ 
+ static int online_memory_block(struct memory_block *mem, void *arg)
 -- 
-2.34.1
+2.39.2
 
 
