@@ -1,151 +1,225 @@
-Return-Path: <linux-kernel+bounces-344178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C301498A5DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F36098A5DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEA528256E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B491C2264F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA89118FDD8;
-	Mon, 30 Sep 2024 13:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AEA19006F;
+	Mon, 30 Sep 2024 13:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="DqLeMazQ"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2021.outbound.protection.outlook.com [40.92.90.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YQqtYTlo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638B918FC89;
-	Mon, 30 Sep 2024 13:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704172; cv=fail; b=P/Foehyr2IinimJI3HGbicJTHIQXHDzdus8miEiX68qy9PNfQG+fM/oTAX4iSmsTP7oxLJNq+iQt6awmJDK3/HA4Ui7GEDJtBVuHxPzwF8Lmdq/dVpv1EgQhfG2+sM4ZSXyDw5HCueNMQEqAjgA8C8VPHDlPmpqsYMRpnSyh7t0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704172; c=relaxed/simple;
-	bh=Y3VF2F9vDBNiQW9T34PNuViNeBF6IInbAAvMfRENS8M=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=nBlCeYZWFKqDI6ztZRX3vl8lfcmno6M5fyKwPqsUgvDRE9wdpBno1nwQJ63SYkqzUK6BI1f7n/3+FKkpQjUrq9n4VnnWy1uRKUkMKBtvopx9KKcS0/mgazUEZBTSN7LyiGtkKZvQutavgs5Vvb38dybZUBNPWrfaprYEis6HIWA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=DqLeMazQ; arc=fail smtp.client-ip=40.92.90.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HzYQhbNMGcABFJUXAnxYZ6VjEYp0dKi7mglE63mBXpKkIjV60SjDFmjd2bqW94MqutV6kMZgcDo7RVovtQKII7DSOd1WC9jF1xdNOhIJ3Aa40YHyZtttX827sV3MtbnNbvAK3Boofse7sBVy6mQN7FnOxEpdB/L3aa1Xs9yHTUKExPeP+ZypwbamcNQ93jbl6Ed4WnONJWa3o9pOR1c9Bh6eRC5NY4k/gqZ9Ojv+kcrUmVs4pMvqTgJi7BudG2NorPZoAf0BEf5kbC/hsxROHz+QbTjVJxVRRwRTpSTbWqqgK9MQr5fgw1pvWB67ls6WCZxV/ya49h6juIlK7RjNJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RUu8nPoH8wKjvWpQJDNizd9kRmpEDtWKRXia6WEu6LA=;
- b=cahV3lbWuCqANFXGknRpsfvJjW6tpV2tS/y/skUY6TCUyJQlIpgRcg4GrnNFHICQgxdXbtmEsBGzcRfumVWFoemlJ5yuQOx6d4skI3nyP/zqq8fUvrFOvEr/sN08SkZPTeErqVYTG2f7/Cvw7sX2FGushPV46v+J2hDex0D5/2g8G9cA8UbMzJhvGlMYe07W/s2BErTOean6GVx/VreIdPDNY5O4hxtNlqcLHb4HwP3ssMIGgHz0HIzmtop8no5gSWZQKuQ16UnUFCWu+8zfjzIYnJns/nnLgxp761QvryABVgbpWfeGmfMIDkbFyTb6OKqYwc3KykwBoXdZWJ6FZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RUu8nPoH8wKjvWpQJDNizd9kRmpEDtWKRXia6WEu6LA=;
- b=DqLeMazQBFPyKKCz49xPaWFgjICk3p7Mt1N601BqvTSt3mfauaRNr87zEIPyiUoe/M2w4HEnabXS1/tnPgWtimiSvJJLZc2mdStTlcY6ixUwj04aeQA+LiRlz9c/3Xg2aUV9mwwPJFTgLR0jXbISG+fRghrG+YjfQChIg/DUNrq5NSMOT+2d+STKFypGoCXJVO6ZUr9CxLUwZIdvjWuETe/SLoZ3P+OEsgaoUNF+rlOSCiLA4Mry345hOarxiFBqPjfsfGAkxAO355OwvuHXHKVLRIx37USDiN4DD6plAYN2S5sAZ1xxF1GTro1I9+dJBPRa5mhUCDL4tMcMv8RmnA==
-Received: from AS8PR02MB10217.eurprd02.prod.outlook.com
- (2603:10a6:20b:63e::17) by GV2PR02MB8893.eurprd02.prod.outlook.com
- (2603:10a6:150:bd::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
- 2024 13:49:28 +0000
-Received: from AS8PR02MB10217.eurprd02.prod.outlook.com
- ([fe80::58c3:9b65:a6fb:b655]) by AS8PR02MB10217.eurprd02.prod.outlook.com
- ([fe80::58c3:9b65:a6fb:b655%3]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
- 13:49:27 +0000
-From: David Binderman <dcb314@hotmail.com>
-To: "jagathjog1996@gmail.com" <jagathjog1996@gmail.com>, "jic23@kernel.org"
-	<jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>
-Subject: linux-6.12-rc1/drivers/iio/imu/bmi323/bmi323_core.c:133: Array
- contents defined but not used ?
-Thread-Topic: linux-6.12-rc1/drivers/iio/imu/bmi323/bmi323_core.c:133: Array
- contents defined but not used ?
-Thread-Index: AQHbEz5DpI11X2LptU2CBQ9iEjJSmA==
-Date: Mon, 30 Sep 2024 13:49:27 +0000
-Message-ID:
- <AS8PR02MB10217F8B5827B69E6438488679C762@AS8PR02MB10217.eurprd02.prod.outlook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR02MB10217:EE_|GV2PR02MB8893:EE_
-x-ms-office365-filtering-correlation-id: 0c0b849f-9cd8-465f-2503-08dce156b3c0
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|461199028|8062599003|15030799003|15080799006|8060799006|7092599003|3412199025|440099028|102099032|21999032;
-x-microsoft-antispam-message-info:
- JBRVSjjKuE/slZUakSckL6xXvKmMq3gGsRGwuUxqdTWxd2K5E82qaVhbYKTwmJzoQG2VMf2FIusZictu4OWwYGg8qWgyCUfGDGO6SGfJ+kP4faEUxPjxh5qnvs4Ty67QHjShM7d4FhDj8miM9EpvyIjURk9ed3jIJ55M+w1k/uGs1RmO7zSKLUL43ROVn7l+uPs35h1BzmV+zC8L8YS7ljKNKGg6322eg77SsSsOeaYKrleDfiqwk496ahLpsZmbZ8YNsoVv7LCsu2CMa5QK4N11gY9YkBxHhXiZ5Ay5T6A9UpAX9eWB0b9oCCe+nLCqjMFAXdsayjvTGr66G9LDYUBcMjB+4t0u4/0VHlAWeMSg2BmpxHS23THYnvBIAy/roxEonB2pvL659AVQ05E57rcmU6eHE1SU+TXxlfDHkixxZyDuitALfjH+Ozj/cSCWs6kXlZdl9XXcIGvfuhLJ7Etv9QCPhdoubUSgUtJ1tbA0zEz4CeJXAMHBQvbQitXIRvkpvXf8+6NNwssHVmQ0lNbvU+FjATiOjA2/yH0bEIZuckDsO7Ee3VbEaHGHHnRLd6yh+Y6ZcFoYh7ftvlVjoKOJQXw6vDNwq9ONqXcO5tcBrJCi7wx5jSP364oYNx180bM6hEPfQAUTNxcrI2qhiX0BSzyRO9gc697JEWaZBvRe/v+Upxp+RsaKfNNnfY0obO4TwKOhcmx0Ono56JhtRsIEVWNzrcFkaj1aNRJTE1IDik8npAlHJb959wE563DKO6bdMpCUM0iGRKQPjljaHw==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?3O1f5NSxTsGiDbmL3qXOva0k7glCBGiO5yMY+eybLsFnZKGOEaL7Te/d2g?=
- =?iso-8859-1?Q?aZVIs475h/3F7pFSR4XABFK3PdZaWaIWvmLmBSTagC8vKGqEXvcKhcrT7C?=
- =?iso-8859-1?Q?seOsmo4M5tih/3C7LqEkge/gD7a4g67y34/MOsRUbekTiuCjFUxQI4nUX+?=
- =?iso-8859-1?Q?1SxFs/hSl3wFEIWqknqGDShxBwNmye5bfdz2OmSqScohvjTjW5AR6HFAfa?=
- =?iso-8859-1?Q?yr1kWrJnZO8pdKAwtHK8x5z/jJhjGMgKudS3svxJUiQulZEiw3wgk6H0Oj?=
- =?iso-8859-1?Q?fL5bme9s4IPsD9AyQN2dE8a0xjjXXDzrs7vvk6kQQWQirbV0QFISZlIS5R?=
- =?iso-8859-1?Q?CFu7+wlFX+lYJ7BUtbB1u6oGsVXm60JunityFllplaU/RLtwJ9xglG+eJE?=
- =?iso-8859-1?Q?W4E/18IroDysmBd7WwwfLqaKdinRCCvR4QJG4wgJg6WDsj1TWr0h19O30g?=
- =?iso-8859-1?Q?rPWaeLxQP8Yd81vLs8MJgdZBa0jVg0mtsS+JJaJZFGji/w/dDLzUsvXaVO?=
- =?iso-8859-1?Q?h01Hx1EMYd4fbDcoqGVdp+YIqffPfmt9AcEABom05vG0bfmXH7+muPXw/T?=
- =?iso-8859-1?Q?pQtIsDtXTvOFKjSeFe7Fm1QPZQzPBVQcDbbyS5RYTqBF8NzQvigSknrWk4?=
- =?iso-8859-1?Q?L9P69Q4IO7q3Of3KkZbX73WYZ582VVvMBwaNq5MelanCey7qPDhJv/Y7oX?=
- =?iso-8859-1?Q?GqY15bGcTBEhj9v5lGVXjNsQufW8Vxyvs1L8pt6bEr/NLTovKmgwrW7eGR?=
- =?iso-8859-1?Q?/jo5KHP3UcxoBXUD+K2+WJpHv0A145qB6hBn77Y7euAoqLIjIRf74JaH0d?=
- =?iso-8859-1?Q?kZDZ69xPJLVNxI9twBT7xrZ5AfTW++0QV2T1IpWzrTZbo6oW1R1TsM/cNb?=
- =?iso-8859-1?Q?zOaIN/Z0hezmcfJrrjMRDcdhpSKTqucMHCY8kQ9QVTsQfFdFSRcHANtVGK?=
- =?iso-8859-1?Q?HKcsy+RPf70SQNg15UzqmeFyiQ0le940zTeRXezGWxrEJBM+j1Ni9bpscD?=
- =?iso-8859-1?Q?OF/QKeLS3JjQ8JcI7lshcM3ifAtKyA4r4/7CIvzViX73jKQlnz2PmxwKvd?=
- =?iso-8859-1?Q?sEORdJShrXZ50PUlM+nnTkPQ5sr5NKCHH+V1mU/HR7caPIcdXIEsNw/Pe/?=
- =?iso-8859-1?Q?LwRq1HzKrclyRn0SVqcJXimzs3bUzQF2J5uwnvx7nE3ZwgAWA9x4MVRkwc?=
- =?iso-8859-1?Q?WwJM1kR2lpgecSAr7tsEn4U07y6Gpv4G1JYGGlj1SoP2ubzpobdHmbVLYt?=
- =?iso-8859-1?Q?IaIuDtjxgD55zzYn+hKQ=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF7B18F2CF;
+	Mon, 30 Sep 2024 13:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727704188; cv=none; b=Dudg5I+zLohaM1uq1OhMy1VpsSr/SPTVR0VkpAdYvJqeduitv1kCIiCnOes5EhpowbrnKI3/rQNdz9t/1Zl0nBxr+dNnH9+UmbPwWKXDeq2TUj2OsP2OMJKQbFRfaNibTALhlhS2QhRuX3O8RqvsEjzXZHsGcBReG3XhiqFWm1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727704188; c=relaxed/simple;
+	bh=CMRtgHOyVoHjwQIEEvabYPyGlC1aDfVrMwNWnFIZg1E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hetJzQoLw0G5x6SKO7i8hgP8/rugXX4u1sST70M6CrArrIH72LM3mt7AwnK0mhAcLGrfOgWU8nf+X7GkT0gWD6dAPWExaG+1QbzLq+GkNM2UTQRCxf6flFV+tHU+vb7eamOx+HlL3lp72xR4MGBdMtHNJiiPf82neTvWeqhc7rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YQqtYTlo; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727704187; x=1759240187;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=CMRtgHOyVoHjwQIEEvabYPyGlC1aDfVrMwNWnFIZg1E=;
+  b=YQqtYTlo+Tje2AMlYHq50cjxOC8s+FB3sA7/0LeXLsDtjyrRUM4pP9y/
+   IIdcg4CMdvDtYLzzXuzymnfrtUQ8BA3Xkody216O+BfqhiGSKrChxLNgR
+   DxKUzQ1P28lfkZpfH74opwIzyqPTPVNBjZuM/ZZlYWFHEZfLIpf8ELaGh
+   bPJH07y00wBqoTrh3On0s/pqeIpRbXeGTDqqbuIau8tEJBrAREEvQnesv
+   z1NNZWceAdZ1827smCEQzBUElVBAbTFCqT+49QbCjN4QxC4AR0g7Wt4W7
+   HDPjn6ywKYrb8nlIa/aJaNNVHYDWwXLKG8jyzUiKToBZwme8vZ/SefI/m
+   A==;
+X-CSE-ConnectionGUID: 1duwETtOQH2khmf7lHN+CQ==
+X-CSE-MsgGUID: lyI+DQKaS8OlgyduPQnrAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="14417844"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="14417844"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:49:46 -0700
+X-CSE-ConnectionGUID: xV2u+7xNSK62NVSHZL/5nw==
+X-CSE-MsgGUID: a2MBGPZjQX2cXpNoodiRJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="73177741"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:49:43 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Sep 2024 16:49:39 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 06/13] selftests/resctrl: Remove "once" parameter
+ required to be false
+In-Reply-To: <1f5ad02dc424bfc3cca705ed9a322df8f35f2ff4.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <f692fe7c-e81d-2086-fc1d-f3af436580c1@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <1f5ad02dc424bfc3cca705ed9a322df8f35f2ff4.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7828-19-msonline-outlook-12d23.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB10217.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c0b849f-9cd8-465f-2503-08dce156b3c0
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 13:49:27.8795
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR02MB8893
+Content-Type: multipart/mixed; boundary="8323328-2035177807-1727704179=:938"
 
-Hello there,=0A=
-=0A=
-I just tried to build linux-6.12-rc1 with clang. It said:=0A=
-=0A=
-drivers/iio/imu/bmi323/bmi323_core.c:133:27: warning: variable 'bmi323_ext_=
-reg_savestate' is not needed and will not be emitted [-Wunneeded-internal-d=
-eclaration]=0A=
-=0A=
-A grep for the identifier shows the following strange results::=0A=
-=0A=
-inux-6.12-rc1 $ grep bmi323_ext_reg_savestate drivers/iio/imu/bmi323/bmi323=
-_core.c=0A=
-static const unsigned int bmi323_ext_reg_savestate[] =3D {=0A=
-	unsigned int ext_reg_settings[ARRAY_SIZE(bmi323_ext_reg_savestate)];=0A=
-	for (unsigned int i =3D 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) =
-{=0A=
-	for (unsigned int i =3D 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) =
-{=0A=
-linux-6.12-rc1 $ =0A=
-=0A=
-I see no mention of bmi323_ext_reg_savestate[ i]. Is there a possible=0A=
-cut'n'paste error in one of the two for loops ?=0A=
-=0A=
-Regards=0A=
-=0A=
-David Binderman=
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-2035177807-1727704179=:938
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
+
+> The CMT, MBM, and MBA tests rely on a benchmark that runs while
+> the test makes changes to needed configuration (for example memory
+> bandwidth allocation) and takes needed measurements. By default
+> the "fill_buf" benchmark is used and by default (via its
+> "once =3D false" setting) "fill_buf" is configured to run until
+> terminated after the test completes.
+>=20
+> An unintended consequence of enabling the user to override the
+> benchmark also enables the user to change parameters to the
+> "fill_buf" benchmark. This enables the user to set "fill_buf" to
+> only cycle through the buffer once (by setting "once =3D true")
+> and thus breaking the CMT, MBA, and MBM tests that expect
+> workload/interference to be reflected by their measurements.
+>=20
+> Prevent user space from changing the "once" parameter and ensure
+> that it is always false for the CMT, MBA, and MBM tests.
+>=20
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V1:
+> - New patch
+> ---
+>  tools/testing/selftests/resctrl/fill_buf.c      |  7 ++++---
+>  tools/testing/selftests/resctrl/resctrl.h       |  2 +-
+>  tools/testing/selftests/resctrl/resctrl_tests.c |  8 +++++++-
+>  tools/testing/selftests/resctrl/resctrl_val.c   | 11 +----------
+>  4 files changed, 13 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/s=
+elftests/resctrl/fill_buf.c
+> index 34e5df721430..854f0108d8e6 100644
+> --- a/tools/testing/selftests/resctrl/fill_buf.c
+> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+> @@ -151,7 +151,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memf=
+lush)
+>  =09return buf;
+>  }
+> =20
+> -int run_fill_buf(size_t buf_size, int memflush, int op, bool once)
+> +int run_fill_buf(size_t buf_size, int memflush, int op)
+>  {
+>  =09unsigned char *buf;
+> =20
+> @@ -160,9 +160,10 @@ int run_fill_buf(size_t buf_size, int memflush, int =
+op, bool once)
+>  =09=09return -1;
+> =20
+>  =09if (op =3D=3D 0)
+> -=09=09fill_cache_read(buf, buf_size, once);
+> +=09=09fill_cache_read(buf, buf_size, false);
+>  =09else
+> -=09=09fill_cache_write(buf, buf_size, once);
+> +=09=09fill_cache_write(buf, buf_size, false);
+> +
+>  =09free(buf);
+> =20
+>  =09return 0;
+> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/se=
+lftests/resctrl/resctrl.h
+> index 2dda56084588..51f5f4b25e06 100644
+> --- a/tools/testing/selftests/resctrl/resctrl.h
+> +++ b/tools/testing/selftests/resctrl/resctrl.h
+> @@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event,=
+ pid_t pid, int cpu,
+>  unsigned char *alloc_buffer(size_t buf_size, int memflush);
+>  void mem_flush(unsigned char *buf, size_t buf_size);
+>  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
+> -int run_fill_buf(size_t buf_size, int memflush, int op, bool once);
+> +int run_fill_buf(size_t buf_size, int memflush, int op);
+>  int initialize_mem_bw_imc(void);
+>  int measure_mem_bw(const struct user_params *uparams,
+>  =09=09   struct resctrl_val_param *param, pid_t bm_pid,
+> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/test=
+ing/selftests/resctrl/resctrl_tests.c
+> index ecbb7605a981..bee4123a5a9b 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+> @@ -266,7 +266,13 @@ int main(int argc, char **argv)
+>  =09=09uparams.benchmark_cmd[1] =3D span_str;
+>  =09=09uparams.benchmark_cmd[2] =3D "1";
+>  =09=09uparams.benchmark_cmd[3] =3D "0";
+> -=09=09uparams.benchmark_cmd[4] =3D "false";
+> +=09=09/*
+> +=09=09 * Fourth parameter was previously used to indicate
+> +=09=09 * how long "fill_buf" should run for, with "false"
+> +=09=09 * ("fill_buf" will keep running until terminated)
+> +=09=09 * the only option that works.
+> +=09=09 */
+> +=09=09uparams.benchmark_cmd[4] =3D NULL;
+>  =09=09uparams.benchmark_cmd[5] =3D NULL;
+
+Why is the [5] assignment kept around? Is something depending on this=20
+double NULL termination? This patch removed the access to [4] so I=20
+don't see anything beyong [3] accessed explicitly.
+
+--=20
+ i.
+
+>  =09}
+> =20
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testin=
+g/selftests/resctrl/resctrl_val.c
+> index e88d5ca30517..5331354aaf64 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -625,7 +625,6 @@ static void run_benchmark(int signum, siginfo_t *info=
+, void *ucontext)
+>  =09int operation, ret, memflush;
+>  =09char **benchmark_cmd;
+>  =09size_t span;
+> -=09bool once;
+>  =09FILE *fp;
+> =20
+>  =09benchmark_cmd =3D info->si_ptr;
+> @@ -645,16 +644,8 @@ static void run_benchmark(int signum, siginfo_t *inf=
+o, void *ucontext)
+>  =09=09span =3D strtoul(benchmark_cmd[1], NULL, 10);
+>  =09=09memflush =3D  atoi(benchmark_cmd[2]);
+>  =09=09operation =3D atoi(benchmark_cmd[3]);
+> -=09=09if (!strcmp(benchmark_cmd[4], "true")) {
+> -=09=09=09once =3D true;
+> -=09=09} else if (!strcmp(benchmark_cmd[4], "false")) {
+> -=09=09=09once =3D false;
+> -=09=09} else {
+> -=09=09=09ksft_print_msg("Invalid once parameter\n");
+> -=09=09=09parent_exit(ppid);
+> -=09=09}
+> =20
+> -=09=09if (run_fill_buf(span, memflush, operation, once))
+> +=09=09if (run_fill_buf(span, memflush, operation))
+>  =09=09=09fprintf(stderr, "Error in running fill buffer\n");
+>  =09} else {
+>  =09=09/* Execute specified benchmark */
+>=20
+--8323328-2035177807-1727704179=:938--
 
