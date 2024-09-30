@@ -1,248 +1,133 @@
-Return-Path: <linux-kernel+bounces-344964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF81898B0AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:18:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C780A98B0B1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BA5282C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:18:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85B2C282CFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7B3188CB6;
-	Mon, 30 Sep 2024 23:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/KblZQ6"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A5D188A17;
+	Mon, 30 Sep 2024 23:18:25 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DF917798F;
-	Mon, 30 Sep 2024 23:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E925F5339F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727738272; cv=none; b=iszhC44W2RMK16kMfPr+R6Ci57DVijYdpjhz0oWeOGTw5d3SYCdz3YEenEHr601mbTbDcf/0QwQwMMBE7YwNsBvAMCqoOg4WmFxDsTyebfxhjXU1+eZ8ioTbI/s6ylt4+LS2aaiJ6d7nLBZC1Ajj66HO7ydr5JV8PJhg3PfNhdg=
+	t=1727738305; cv=none; b=c/XUqmXSKK7z+DEfF8P8J1Fs/7Mb80nKjPux4HZDHv4y06W9vSTEcP13GasF4CZgpNLjKiOwy7gWUlWSKzcDt5tKDG3hiNlN/LtJWhn2kEQZL9QTkGyaG2PzvKsq8EhlFBTO5F1hAYYMsVVFcUjXPPTz7kei6Or6yibcwi2l8pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727738272; c=relaxed/simple;
-	bh=Y2N2gMrrP3gdldRLITILmhvAkRtYTdhz+PTlF5q6Ry4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B/zEF59fdnwusbClID7M9Wnx/2CJNFwzuLd8cAp4mPQ7hCaDQfRjenwFAxwAJb2EKBuIckWlNPgbd+BiPqgJ+1TecZ8pPIOfKQUhNj/ssjG0Mo7++RuszRERTHX1olKIZusBcbm6N0ZyUfpSNXNSVNoW8VJANmpxWg78CTApATI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/KblZQ6; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b64584fd4so16349895ad.1;
-        Mon, 30 Sep 2024 16:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727738270; x=1728343070; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51cWZof8LQF3H3bDFgOCRd/ObmUG7m4ZND6e3BBb31Y=;
-        b=W/KblZQ60QLFW8IPzG93DgTyLrcyZMGnJawjFg2DZjjecl168m9SXhuZ9xM1QlFyej
-         K43kUjLDqFvXetB3TTPp3eJusQOpx3vUK7V4X8eLLm0gyXLb0qKXVy13WdCcBOD1m8Ak
-         7WmiYuh+j5ryy3EoeMDhGC7Bkbm77XvXAGIS/EULz/uWARwb/qwM3hWl9JFTR1RScKZV
-         as6o1PMCe2vyAgAXVbBKp+WjX/vEtaVaqiaVEvYXsZIcp6FWIuIYRp9tgNRDqNgIZtqz
-         pJdW1qUwKsqcd2PueWO3JoUd5ZYp2oL4nMYcnB0e9j+DyCZX/b+H5KjGCHbZdNHeo3yZ
-         WmGQ==
+	s=arc-20240116; t=1727738305; c=relaxed/simple;
+	bh=lYSfcOeL+V1cwr3k3udletdUznko80vLkvqxOKfeSVM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ak9OYzWKIap4CD7krFLS1mwc1ShQlD8od1bHi9k5nqHZCEuB4z7h5+ur7atLl1d7ssutV2EfUHoEWI7yKeN0jCHMxRoddOX5rd+6iyaVQDu5T8Ot0ny8qaJiTMS4n8wog33AqUaRZ/XOmUEQtTZSnKZ88g2zFH8IeOdLlkVQDIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3496b480dso34839465ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:18:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727738270; x=1728343070;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=51cWZof8LQF3H3bDFgOCRd/ObmUG7m4ZND6e3BBb31Y=;
-        b=wptGsFGvM3bJHtQXuDzg56968AACsajkildtoJllxkVYOkdoIvNDGBW0QDCDzc5v+E
-         m95m4Mmb6MyUrfg63hNp0lSzKMnEaTbxEHN69YZoJDEMyv9ET1TPcxPGbdMKgHje8sMc
-         D+FEWR1RrGklHpdvpTqa2QXTBVwmTQmviLZZclCCzOG2PRQTE7QiH+nn52fvGzRPfCNF
-         FiWcCAsitkj6YIyiCHMv7gDtJW+rHB8d7QNAxxJyEi5A6Yxfl9IZuAY0CMc3ondHFDpL
-         yltygbUOSGBOVaGnPwrfJ4AhUzdyGaEDCaRRW6K28lAaoxzDKfiIcAjBMGhWTghbc9KF
-         thLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBIg4UzhpOvRKJXcxar8qoQulfJrXVD1LoFwclkaonVJ64kZZow72ab4A/4LKhBkIsW4U=@vger.kernel.org, AJvYcCWmI4h6R1g4e4XL74Ie+0Dn0JaquK1CWOYmXFF1wSaqf8u1eaCPNW4GqgtUB2/OVyFd9xKWw25BHdh9aAHh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCTOEYz7+bSX7jfRd1QLKtcvo8Z74vPtJv24AAqK0Luske0IPq
-	XPDD84vmmSF5mjS+Ug/Ti1kri6rsq0pF+uCdfvnodDzjAcqMlIfTcPvVOIHh0QSIxCaAXNgWbot
-	JTixW2GcnOXqDLUCO0oaB49GUf+E=
-X-Google-Smtp-Source: AGHT+IGcWS0XZYCX/k8q1Dti6cK0hUtuZOdWz41n1PPDqIExuIP6VxSZxLmhoXWwHJ+Wt+SkuqJdjnL6STw3eoPzrqE=
-X-Received: by 2002:a17:903:230f:b0:20b:6d47:a3b1 with SMTP id
- d9443c01a7336-20b6d47a97emr101618135ad.21.1727738270415; Mon, 30 Sep 2024
- 16:17:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727738303; x=1728343103;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BL/akqr0deBZImvpvkuvpugvj/LkMhDf8lCR1uhO034=;
+        b=Gjfb9sTnu8e6TE//ovG1xm+dRZ9v+MnMF1SwxiGhMI4bTxLuC3I2iCLNQDU/CxHPfg
+         VOuMWU2ZA7Hlj5NTJGFtcJEbZHXmiK2uaS4YUOt7EjkX51Ie6gQhZ8aLePhwsGBeZbxd
+         NZixepT/o1n/VDofyorYbyuUUwluUvaJL9VlgEcp5N8UJiRSHp9lfELawyBAgLcbXsnY
+         1Z+QFCrajM3rIRiE645r7Le6bjZnDZtr7TrbV8LevlIBY3tYe8xrdT50FhNt8du4Lgu3
+         hriAitnrIAgT27I0RDj9KIxOQXvtjy383ptYfpH9ImCUx0GJXqLjZ6Tq+FisKACWPTng
+         5NJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Att1B6NQfwqTrVboC8FhQ5oVlnY5phyK2nOouFOvFzPqs+YVOgyCxxkKRqifRVrhd3okIPfqJAioiLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKR4+fGjZJU6mBfGP52ZxBGCVLxKht7jlHJ+V/mn6Owi0oIryg
+	qL8ItrGqJZ22LXrJnU0GuVZNbmXgF3yr7l/qRg2pbyws2K56RLJ50PCqjsTdVaEDsJ1AgnN2Kpy
+	vhhCGqI90UahJHCKLzVcvKtEXv0VmFWZbT5sgJaDGNjH/j062ykcxzXk=
+X-Google-Smtp-Source: AGHT+IHgEXVmXvg4us0DXFmOfew5JJbOY+h0PbiM3uJT/6VBbaQbvbtJ8yPaDNMFxjaBy/4tMNvqm9xfZyskmnXv2I5XbKfzlplv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202409261116.risxWG3M-lkp@intel.com> <20240926072755.2007-1-eric.yan@oppo.com>
- <CAADnVQJ5xCsBg057gKOQOYA1+9pD-X86bjYJVrTbpRNstvW=DQ@mail.gmail.com> <TY0PR02MB5408EE044112DE9640CB06FFF0762@TY0PR02MB5408.apcprd02.prod.outlook.com>
-In-Reply-To: <TY0PR02MB5408EE044112DE9640CB06FFF0762@TY0PR02MB5408.apcprd02.prod.outlook.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 30 Sep 2024 16:17:37 -0700
-Message-ID: <CAEf4BzZ1uFeY1YgL1t5Rcp60a_gXZ0ap3_8=ZOaP9G98_CXfow@mail.gmail.com>
-Subject: Re: [PATCH v2] Add BPF Kernel Function bpf_ptrace_vprintk
-To: =?UTF-8?B?54eV6Z2S5rSyKEVyaWMgWWFuKQ==?= <eric.yan@oppo.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, kbuild test robot <lkp@intel.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, 
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>
+X-Received: by 2002:a05:6e02:1a82:b0:3a0:a3f0:ff57 with SMTP id
+ e9e14a558f8ab-3a34517c867mr119944885ab.15.1727738303045; Mon, 30 Sep 2024
+ 16:18:23 -0700 (PDT)
+Date: Mon, 30 Sep 2024 16:18:23 -0700
+In-Reply-To: <00000000000094071d061e9d0f66@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fb31bf.050a0220.6bad9.0044.GAE@google.com>
+Subject: Re: [syzbot] [dri?] WARNING in drm_wait_one_vblank (2)
+From: syzbot <syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com>
+To: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, simona@ffwll.ch, syzkaller-bugs@googlegroups.com, 
+	tzimmermann@suse.de
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 1:29=E2=80=AFAM =E7=87=95=E9=9D=92=E6=B4=B2(Eric Ya=
-n) <eric.yan@oppo.com> wrote:
->
-> This patch is mainly considered based on the Android Perfetto (A powerful=
- trace collection and analysis tool, support ftrace data source).
-> The output of bpf_trace_printk and bpf_vtrace_printk in ftrace is like:
->   app-12345 [001] d... 654321.1970001: bpf_trace_printk: blabla..
->
-> FUNCTION field of this kind of message is 'bpf_trace_printk', and there's=
- no standard syntax format for it.
-> Currently, Perfetto doesn't collect 'bpf_trace/bpf_trace_printk' trace ev=
-ent by default, but does support
-> 'tracing_mark_write' function style by default, such as:
-> app-3151    [000] d.h1.  6059.904239: tracing_mark_write: B|2491|BPRF-315=
-1|TracingFunc
-> app-3151    [000] d.h1.  6059.904239: tracing_mark_write: E|2491
->
-> Therefore, it's considered to add this kfunc to output formatted BPF mess=
-ages to ftrace like trace_marker,
-> allowing perfetto to collect and parse 'tracing_mark_write' events by def=
-ault and eventually visualize them in the perfetto UI.
+syzbot has found a reproducer for the following issue on:
 
-This does seem like a bit of an overkill to add a new kfunc just to
-have "tracing_mark_write" instead of "bpf_trace_printk". Is there any
-chance that perfetto can be changed to also track bpf_trace_printk,
-perhaps with some pre-agreed upon prefix or something? E.g,
+HEAD commit:    9852d85ec9d4 Linux 6.12-rc1
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=131f5dd0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=286b31f2cf1c36b5
+dashboard link: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ae7d07980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124e1980580000
 
-app-3151    [000] d.h1.  6059.904239: bpf_trace_printk:
-!B|2491|BPRF-3151|TracingFunc
-app-3151    [000] d.h1.  6059.904239: bpf_trace_printk: !E|2491
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/da91d5641713/disk-9852d85e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5fc1f1ed3252/vmlinux-9852d85e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5affad2001eb/bzImage-9852d85e.xz
 
-Generally speaking, bpf_trace_printk() shouldn't be used in production
-setup (much), so perhaps parsing everything from bpf_trace_printk() is
-OK (assuming it follows this vertical bar syntax)?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
 
->
-> -----=E9=82=AE=E4=BB=B6=E5=8E=9F=E4=BB=B6-----
-> =E5=8F=91=E4=BB=B6=E4=BA=BA: Alexei Starovoitov <alexei.starovoitov@gmail=
-.com>
-> =E5=8F=91=E9=80=81=E6=97=B6=E9=97=B4: 2024=E5=B9=B49=E6=9C=8830=E6=97=A5 =
-1:10
-> =E6=94=B6=E4=BB=B6=E4=BA=BA: =E7=87=95=E9=9D=92=E6=B4=B2(Eric Yan) <eric.=
-yan@oppo.com>
-> =E6=8A=84=E9=80=81: kbuild test robot <lkp@intel.com>; Andrii Nakryiko <a=
-ndrii@kernel.org>; Alexei Starovoitov <ast@kernel.org>; bpf <bpf@vger.kerne=
-l.org>; Daniel Borkmann <daniel@iogearbox.net>; Hao Luo <haoluo@google.com>=
-; John Fastabend <john.fastabend@gmail.com>; Jiri Olsa <jolsa@kernel.org>; =
-KP Singh <kpsingh@kernel.org>; LKML <linux-kernel@vger.kernel.org>; Martin =
-KaFai Lau <martin.lau@linux.dev>; oe-kbuild-all@lists.linux.dev; Stanislav =
-Fomichev <sdf@fomichev.me>; Song Liu <song@kernel.org>; Yonghong Song <yong=
-hong.song@linux.dev>
-> =E4=B8=BB=E9=A2=98: Re: [PATCH v2] Add BPF Kernel Function bpf_ptrace_vpr=
-intk
->
-> On Thu, Sep 26, 2024 at 12:28=E2=80=AFAM Eric Yan <eric.yan@oppo.com> wro=
-te:
-> >
-> > add a kfunc 'bpf_ptrace_vprintk' printing bpf msg with trace_marker
-> > format requirement so that these msgs can be retrieved by android
-> > perfetto by default and well represented in perfetto UI.
-> >
-> > [testing prog]
-> > const volatile bool ptrace_enabled =3D true; extern int
-> > bpf_ptrace_vprintk(char *fmt, u32 fmt_size, const void *args, u32
-> > args__sz) __ksym;
-> >
-> > ({                                    \
-> >     if (!ptrace_enabled) { \
-> >         bpf_printk(fmt, __VA_ARGS__);     \
-> >     } else {                              \
-> >         char __fmt[] =3D fmt;               \
-> >         _Pragma("GCC diagnostic push")    \
-> >         _Pragma("GCC diagnostic ignored \"-Wint-conversion\"")  \
-> >         u64 __params[] =3D { __VA_ARGS__ }; \
-> >         _Pragma("GCC diagnostic pop")     \
-> >         bpf_ptrace_vprintk(__fmt, sizeof(__fmt), __params, sizeof(__par=
-ams)); \
-> >     }                                  \
-> > })
-> >
-> > SEC("perf_event")
-> > int do_sample(struct bpf_perf_event_data *ctx) {
-> >         u64 ip =3D PT_REGS_IP(&ctx->regs);
-> >         u64 id =3D bpf_get_current_pid_tgid();
-> >         s32 pid =3D id >> 32;
-> >         s32 tid =3D id;
-> >         debug_printk("N|%d|BPRF-%d|BPRF:%llx", pid, tid, ip);
-> >         return 0;
-> > }
-> >
-> > [output]:
-> >        app-3151    [000] d.h1.  6059.904239: tracing_mark_write: N|2491=
-|BPRF-3151|BPRF:58750d0eec
-> >
-> > Signed-off-by: Eric Yan <eric.yan@oppo.com>
-> > ---
-> >  kernel/bpf/helpers.c | 34 ++++++++++++++++++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c index
-> > 1a43d06eab28..1e37dae74ca6 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -2521,6 +2521,39 @@ __bpf_kfunc struct task_struct *bpf_task_from_pi=
-d(s32 pid)
-> >         return p;
-> >  }
-> >
-> > +static noinline void tracing_mark_write(char *buf) {
-> > +       trace_printk(buf);
-> > +}
-> > +
-> > +/* same as bpf_trace_vprintk, only with a trace_marker format
-> > +requirement
-> > + * @fmt: Format string, e.g. <B|E|C|N>|<%d:pid>|<%s:TAG>...
-> > + */
-> > +__bpf_kfunc int bpf_ptrace_vprintk(char *fmt, u32 fmt_size, const
-> > +void *args, u32 args__sz) {
-> > +       struct bpf_bprintf_data data =3D {
-> > +               .get_bin_args   =3D true,
-> > +               .get_buf        =3D true,
-> > +       };
-> > +       int ret, num_args;
-> > +
-> > +       if (args__sz & 7 || args__sz > MAX_BPRINTF_VARARGS * 8 || (args=
-__sz && !args))
-> > +               return -EINVAL;
-> > +       num_args =3D args__sz / 8;
-> > +
-> > +       ret =3D bpf_bprintf_prepare(fmt, fmt_size, args, num_args, &dat=
-a);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       ret =3D bstr_printf(data.buf, MAX_BPRINTF_BUF, fmt,
-> > + data.bin_args);
-> > +
-> > +       tracing_mark_write(data.buf);
-> > +
-> > +       bpf_bprintf_cleanup(&data);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> >  /**
-> >   * bpf_dynptr_slice() - Obtain a read-only pointer to the dynptr data.
-> >   * @p: The dynptr whose data slice to retrieve @@ -3090,6 +3123,7 @@
-> > BTF_ID_FLAGS(func, bpf_iter_bits_new, KF_ITER_NEW)  BTF_ID_FLAGS(func,
-> > bpf_iter_bits_next, KF_ITER_NEXT | KF_RET_NULL)  BTF_ID_FLAGS(func,
-> > bpf_iter_bits_destroy, KF_ITER_DESTROY)  BTF_ID_FLAGS(func,
-> > bpf_copy_from_user_str, KF_SLEEPABLE)
-> > +BTF_ID_FLAGS(func, bpf_ptrace_vprintk)
-> >  BTF_KFUNCS_END(common_btf_ids)
->
-> Why new kfunc?
-> Use bpf_snprintf() and follow with bpf_trace_printk() ?
+platform vkms: [drm] vblank wait timed out on crtc 0
+WARNING: CPU: 1 PID: 5311 at drivers/gpu/drm/drm_vblank.c:1307 drm_wait_one_vblank+0x97c/0xa00 drivers/gpu/drm/drm_vblank.c:1307
+Modules linked in:
+CPU: 1 UID: 0 PID: 5311 Comm: syz-executor171 Not tainted 6.12.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:drm_wait_one_vblank+0x97c/0xa00 drivers/gpu/drm/drm_vblank.c:1307
+Code: 80 3c 08 00 74 08 4c 89 ff e8 c0 51 94 fc 49 8b 1f 48 c7 c7 40 96 73 8c 4c 89 f6 48 89 da 8b 5c 24 0c 89 d9 e8 c5 9c eb fb 90 <0f> 0b 90 90 49 be 00 00 00 00 00 fc ff df e9 68 fb ff ff 44 89 e9
+RSP: 0018:ffffc900037cfac0 EFLAGS: 00010246
+RAX: 080b7da53130ae00 RBX: 0000000000000000 RCX: ffff88804f0bda00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffffc900037cfc00 R08: ffffffff8155daa2 R09: fffffbfff1cf9fd8
+R10: dffffc0000000000 R11: fffffbfff1cf9fd8 R12: 1ffff920006f9f64
+R13: 0000000000000ed5 R14: ffffffff8c86d500 R15: ffff888025074010
+FS:  00007faa906a96c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007faa9075a366 CR3: 000000004f7a8000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ drm_fb_helper_ioctl+0x114/0x140 drivers/gpu/drm/drm_fb_helper.c:1093
+ do_fb_ioctl+0x40a/0x7b0 drivers/video/fbdev/core/fb_chrdev.c:155
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faa906f6109
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faa906a9208 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007faa907783e8 RCX: 00007faa906f6109
+RDX: 0000000000000000 RSI: 0000000040044620 RDI: 0000000000000003
+RBP: 00007faa907783e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffb0
+R13: 0000000000000000 R14: 3062662f7665642f R15: 6d6f692f7665642f
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
