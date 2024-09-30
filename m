@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-344848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B220C98AEE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:16:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFB098AEEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE4283C2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:16:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30571C21155
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BF81A2555;
-	Mon, 30 Sep 2024 21:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08D51A2576;
+	Mon, 30 Sep 2024 21:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AOR+313s"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JC/rlRHf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38DBEDE;
-	Mon, 30 Sep 2024 21:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CE217C7B6;
+	Mon, 30 Sep 2024 21:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727730994; cv=none; b=baSCJC++GzDumVgOmUtTr4arGHXby9J7gwMWXT7WnhbneW0uCiDmRZ173xKZY8KclUbkWFRKjNZnEZtDClod/rPGV6PMHBnU6MHR11R/H6RovEuBgoZ7ZWbjlssAxDvmDJKkQXiYuT/Hbic4gwFyzuZQHLG+qmKeebTbaS1o5+M=
+	t=1727731072; cv=none; b=cpfWUm0h9Tio6mjmZ4/sOy+Nv6Kl+IicFjCn8VjvJ+KdVK0F5SefemiELjb6X5G0N8/zMAcoI/QwmGJswIBQqcSjzkLbZ5bfyjv/NYKvIzScYuxQxHO1sLTlsZQk4SJrv6NoOTUn3Jwu1PsUlZExw0MZBkQgl6GB6S4hvxzu0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727730994; c=relaxed/simple;
-	bh=0iT2muv6N8GB59/rnCdOQR9MS9PuQ2IA4RdBJY841+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tEe+ZHcz4xnwqM4+eIkqIOr5S+iXGTdWFrxZ+56O6k1VnbfDlp3uU8OLdbEBHdyCimZRbL/6t7aoUgWuyiRR7QcNuPFM70qyLHIe37qs/C6AeEjCKO/eZJkg5I0H5Y32OvUIHOOaolZZiGCeEp9cf7u5iEseq9T1g25qnzLpX3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AOR+313s; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7198cb6bb02so3519244b3a.3;
-        Mon, 30 Sep 2024 14:16:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727730991; x=1728335791; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gxqgnSClXAm5hKOjKA4L3emBAnz+dj8s/AGR4GTblOk=;
-        b=AOR+313suW3LvGkT3ElzRgAhLz+7IywGlRUY6gfRBvtt9pwAETimQ0zKmwQjTu0blx
-         CxmOTZ5C4pMjhYbThrUDqlmhERss1yOz5ogeTt0g8RwBu0udMHwlYODTM6NV/VKZTvvC
-         wK4+Y0r77Cbg9FpLBnWkuvLPAyYKTTyG/sM7h/SKgyO3AYS5Ye2lU4kyJLI+omHCbOko
-         eS4gCg/G7O2LYBBZuNPWfSrGAsaREQqqoFGbGfh6tPJcf01bVyAKBL7s2WuYwR+dtM9P
-         SyMXGpAs4j8AZELwr7vtF7kC16fRgiLwkxUEfqTP8NedOZwpjhfH87K3gWawfEhs4/PI
-         hvxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727730991; x=1728335791;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gxqgnSClXAm5hKOjKA4L3emBAnz+dj8s/AGR4GTblOk=;
-        b=Bg5mgpt+c64p+C8MqpsIvoex+AGY03i952W6afARcxhEt8Znox7AEm4mdEnz+PyeWx
-         qXd3aQahp5mB2zoO/YOIb1eVY47W4saOM3YAaHBfLPHMpQerapS5JkcYh5U2E9HtEzIv
-         vwJkZOXg2y4rfz7TwMyGnSdSK2WUv3k8qv0ECJ8yz5bextPg851EQnxGc2vty20LP0K4
-         vJcuVL0H0YZ4V9u1qCXZq6crdXEpHFDwBY0EiE7gCNnKBJ78AnDNBfBp5K4sZLsihbQT
-         sDzo044j+hYvbkakmhGCfnrfQXUcjsLVs1dnoNuK0iY60cBt7SHlR+9DBipXEFkwUXnK
-         k4gw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6di0ehYdbfhobSbfdc0dkfR+VdTgEmiYSJ9krIo7wG4jbOmgYYSUCkz7sthvbKGrTw4e5GfuYOMYStHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRj2xWCnIlJTOAcZeMbokbL8trqW3gbZW5zy6LqJbOX+jtcI+x
-	LVdWNAW+AhPGhtGB8C1LoWZ0w44YA2BWWnptCW1HW3PZXYJ6969+lW+CR9wP
-X-Google-Smtp-Source: AGHT+IEadElrdky6O1NFT1uokCFwG4qLH9ZPPD4Tz1X1yTy3jL8r57HyQBpG4vxkl2gimna6LNi5LQ==
-X-Received: by 2002:a05:6a00:2d9b:b0:718:e51e:bd25 with SMTP id d2e1a72fcca58-71b26083144mr18939445b3a.25.1727730990826;
-        Mon, 30 Sep 2024 14:16:30 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b265371dbsm6681387b3a.207.2024.09.30.14.16.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 14:16:30 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	tobias@waldekranz.com,
-	anna-maria@linutronix.de
-Subject: [PATCH net-next] net: marvell: mvmdio: use clk_get_optional
-Date: Mon, 30 Sep 2024 14:16:28 -0700
-Message-ID: <20240930211628.330703-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727731072; c=relaxed/simple;
+	bh=WrSj9ZX1B9V/JIXDijhV3zCe+pdwc5wf2BlVfULS1Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ss8aFZxlsltDbm5sP6fw3s0mcYp8seL8LpMm7b/DUAT+NSkN02bqg6DpLxK3m9oZoVLBxI44VD/FE/XIpTec502RxXWXlTh++5rz3aM9HCc4fimqxlGK6gGnalrT4kp5CDI77BHtNRDVlQIsp2y2S5yw8XpoSAJnwsPItf/hOzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JC/rlRHf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55D75C4CEC7;
+	Mon, 30 Sep 2024 21:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727731071;
+	bh=WrSj9ZX1B9V/JIXDijhV3zCe+pdwc5wf2BlVfULS1Pk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JC/rlRHfg1dx2NVHc3sB43rF+KNlK58NjQoGSF8Meg87Sty/HLR2CC/UPffukU47F
+	 fuMmtxsO0deqroK2QQNfxus1waaXd7FK+b/U/j8N85R2oDksfSabmB5GDty2vmyY5C
+	 TvAtpfV3Cv7vJdgvJDtOn1fFGfH86GI8+ZE9v2YjVxpJegQD6unJGh5TYmZD+vmhnb
+	 rNWtdqTM6oITJUqjSZGe6q4wCluFz8HZXsFQJt+Bql/n5nnQj9zBvFZKct5Q/CnBsv
+	 zaupxRDPFDQ6T9vwG70PCTrxOELjIDtEUxEScK/p6DLNf8QAifgYSnOBvpDFY37SVx
+	 dyo9g9lSdg7Tg==
+Date: Mon, 30 Sep 2024 22:17:49 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v9 0/3] Add of_regulator_get_optional() and Fix MTK Power
+ Domain Driver
+Message-ID: <ZvsVfQ1fuSVZpF6A@finisterre.sirena.org.uk>
+References: <20240930044525.2043884-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Fps6D/pTHz3w7/40"
+Content-Disposition: inline
+In-Reply-To: <20240930044525.2043884-1-wenst@chromium.org>
+X-Cookie: Editing is a rewording activity.
 
-The code seems to be handling EPROBE_DEFER explicitly and if there's no
-error, enables the clock. clk_get_optional exists for that.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/marvell/mvmdio.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+--Fps6D/pTHz3w7/40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/net/ethernet/marvell/mvmdio.c b/drivers/net/ethernet/marvell/mvmdio.c
-index e1d003fdbc2e..67378e9f538a 100644
---- a/drivers/net/ethernet/marvell/mvmdio.c
-+++ b/drivers/net/ethernet/marvell/mvmdio.c
-@@ -348,13 +348,12 @@ static int orion_mdio_probe(struct platform_device *pdev)
- 		if (type == BUS_TYPE_XSMI)
- 			orion_mdio_xsmi_set_mdc_freq(bus);
- 	} else {
--		dev->clk[0] = clk_get(&pdev->dev, NULL);
--		if (PTR_ERR(dev->clk[0]) == -EPROBE_DEFER) {
--			ret = -EPROBE_DEFER;
-+		dev->clk[0] = clk_get_optional(&pdev->dev, NULL);
-+		if (IS_ERR(dev->clk[0])) {
-+			ret = PTR_ERR(dev->clk[0]);
- 			goto out_clk;
- 		}
--		if (!IS_ERR(dev->clk[0]))
--			clk_prepare_enable(dev->clk[0]);
-+		clk_prepare_enable(dev->clk[0]);
- 	}
- 
- 
-@@ -422,8 +421,6 @@ static void orion_mdio_remove(struct platform_device *pdev)
- 	mdiobus_unregister(bus);
- 
- 	for (i = 0; i < ARRAY_SIZE(dev->clk); i++) {
--		if (IS_ERR(dev->clk[i]))
--			break;
- 		clk_disable_unprepare(dev->clk[i]);
- 		clk_put(dev->clk[i]);
- 	}
--- 
-2.46.2
+On Mon, Sep 30, 2024 at 12:45:20PM +0800, Chen-Yu Tsai wrote:
 
+> Patch 1 adds a new of_regulator_get_optional() function to look up
+> regulator supplies using device tree nodes.
+
+> Patch 2 adds a devres version of the aforementioned function at
+> Sebastian's request for the two power domain drivers.
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-of-get-optional
+
+for you to fetch changes up to 36ec3f437227470568e5f460997f367f5446a34d:
+
+  regulator: Add devres version of of_regulator_get_optional() (2024-09-30 01:11:41 +0200)
+
+----------------------------------------------------------------
+regulator: Add of_regulator_get_optional() APIs
+
+Add of_regulator_get_optional() APIs, which can be used by generic code
+to improve integration of regulator management helpers for their users.
+
+----------------------------------------------------------------
+Chen-Yu Tsai (2):
+      regulator: Add of_regulator_get_optional() for pure DT regulator lookup
+      regulator: Add devres version of of_regulator_get_optional()
+
+ drivers/regulator/core.c           |  4 +--
+ drivers/regulator/devres.c         | 39 +++++++++++++++++++++++++++++
+ drivers/regulator/internal.h       | 18 +++++++++-----
+ drivers/regulator/of_regulator.c   | 51 +++++++++++++++++++++++++++++++++-----
+ include/linux/regulator/consumer.h | 37 +++++++++++++++++++++++++++
+ 5 files changed, 135 insertions(+), 14 deletions(-)
+
+--Fps6D/pTHz3w7/40
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb7FXwACgkQJNaLcl1U
+h9DV0gf+PbBLTWiI3UueE2aB67kwX91wx/qmPQxjrWVV++hT8uZ9AnmUou6nd9xd
+yRV87qVjzGK+5Qgrwku1B3I1lqkRwD//fkO9vs7bm32+JhQkhVc+nFe9DknkdZCy
+vNHtjaiLQBA6d0ylVnVhGVZxi3OTfAgv++OABCc+o9GfIerkYE7zvg0xmi4ixcxz
+DSdLDcpMcoW6L757WEZbuCEX4JPShLiO/MSo0z3ccGE2O73Lp/PqsyQaZhDmKDPA
+dd8DsTJ+ciIUYoiYAcFi+YJ3MqAbLAPTf674zHXsWpF3wdvWieif/dXRic+K3cFG
+sx/kycHc3xptypkZwFtZDCVgt/IJTQ==
+=4qpn
+-----END PGP SIGNATURE-----
+
+--Fps6D/pTHz3w7/40--
 
