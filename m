@@ -1,144 +1,116 @@
-Return-Path: <linux-kernel+bounces-343723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 688D5989EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:53:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B217D989EC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAE228124B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63A531F21E6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD9118990E;
-	Mon, 30 Sep 2024 09:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FD3189BAC;
+	Mon, 30 Sep 2024 09:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kRe5RniR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jk35nnik"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F82917CA03;
-	Mon, 30 Sep 2024 09:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D0417CA03;
+	Mon, 30 Sep 2024 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689992; cv=none; b=bntF3J/ku/wTimIfpgXgMSQ2qOOaBKJssOYwJEct1DHtEezDmJnekURgnFZQ94XBRlC6FbjCVTqP6hrwdchZtMEFO0UQ7vx1WsxZzF7bL8KrhMp2wMqRzlA5qHlAx5t07LPbYj9vQGMW0LQwkRjTKDuz+AdzC8i1Jv1jZCIp1Oo=
+	t=1727690005; cv=none; b=acg+6/cp2vcwxwwe6BXlaIYgDXHP0su3qtluv1pavlUqKwq/cfGTMDL+sehDXdS3WmnRkHLI9/Di6tviFcDbfeN6LOaDeTRY5/3LPh3mlL8dC3FPkRa10eTNLz2007WeTVk9bVy2Y6Q3CY4a3MFc3UXbxOCVxNi87cfunYGI/t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689992; c=relaxed/simple;
-	bh=xlQB+YRnWzPDGKcdRmDpIo+//kocNTxv1zsa8DtTEpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m+q7UgF07z7TofsNUHsktlQeGsap83pZWsAYz9GuAHNk4dT9GiInmI6+Q/dBzz+DhhXE9jDqBuKBhp/yD5Ynv8Lzvnh8smEgoxRNYBFZcEq0v83xQVkmC2WySl8yguWh9axESGnHbLaqicFBABZ7a6qp+HXbqHH/qAymFXu6Srg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kRe5RniR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727689988;
-	bh=xlQB+YRnWzPDGKcdRmDpIo+//kocNTxv1zsa8DtTEpI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kRe5RniRKjhzyPUIS9aI2gdQY/3yfKtncMkphK8EzeLqmp1VuuBWod/AA66jPXaNd
-	 EKRfxBP86hBpWoINgH9hkEhh+lONXGBZUmjk20jMP43TLhVSYUzoeldgkgazVcPL8j
-	 v+YoK6UZ7SpvFTo6sS2UT166Ry/DaV7GyOQ6xhSqnDZfk2GxgmN7YU9/I9n9oYwheV
-	 StpzBoIns/k8gwxB+xso+IansWWxQUChjuk6E9n9YVfie/psblmf4Nc8Iqe5ZJF9z+
-	 Y/fkYSDfLJnwsCX4Wfx+JjgMUPo/W7g2Ggtl0tWUReRwX5zUgUpaokHfSY3/d3MVtD
-	 hcqp2lZxrEpfQ==
-Received: from localhost.localdomain (unknown [171.76.80.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AFD8F17E1147;
-	Mon, 30 Sep 2024 11:53:04 +0200 (CEST)
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: dri-devel@lists.freedesktop.org
-Cc: daniels@collabora.com,
-	helen.koike@collabora.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	robdclark@gmail.com,
-	guilherme.gallo@collabora.com,
-	sergi.blanch.torne@collabora.com,
-	deborah.brouwer@collabora.com,
-	dmitry.baryshkov@linaro.org,
-	mripard@kernel.org,
-	rodrigo.vivi@intel.com,
-	quic_abhinavk@quicinc.com,
-	linux-mediatek@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	amd-gfx@lists.freedesktop.org,
-	linux-arm-msm@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] docs/gpu: ci: update flake tests requirements
-Date: Mon, 30 Sep 2024 15:22:47 +0530
-Message-ID: <20240930095255.2071586-1-vignesh.raman@collabora.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1727690005; c=relaxed/simple;
+	bh=WwryNFNTrADMEFUUK+4XYSIziZV7c2lL0fLFpgjvOeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6C8DN08CiJHYYa+gXtftNNTcavcgoTaircHjGx5AYn4wT2smZ0EC12Ga+QaTVCgNP+twA2DDI7qCfP2ylyUKdzFxVit6S3NBqPW68bPD1hFOI2lLn3V00+S5rqkcX29KUUvwjSBtqY4fc/OHFNnSQh8RvWCAle8D4gOMK8k0II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jk35nnik; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso684245266b.3;
+        Mon, 30 Sep 2024 02:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727690002; x=1728294802; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WwryNFNTrADMEFUUK+4XYSIziZV7c2lL0fLFpgjvOeM=;
+        b=Jk35nnikQOn+d8kDnV+dvj8HTj+ngfjmToiEJVAEVz6UUVAVjJWpH1BKmPriearFwm
+         sVCSAqPTehMjBA+tsasw5QNfUIMB3rS+xmznoM59yhzNA7KADoBCAGnemwF+X/rsy6Zs
+         dVmFIIMfsQDalz+5VmdcAWUJ0dPYCOaaIDUKHNi96miaN0w7l0y4U9pCQkEMUdZ+2syv
+         XscW/Qds17iKA+bQKJuEpRVkWBxuW9dIjsQ7sGpmq10xj26Si68kw5paAmiphd531BAb
+         qaI6ANJDcmJytGvZfdl6SyRRkBgNUzBZhGz0yVte/03GV7MIWEbZI9+6jZwWC2r1mDVn
+         U2FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727690002; x=1728294802;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WwryNFNTrADMEFUUK+4XYSIziZV7c2lL0fLFpgjvOeM=;
+        b=qthdeg8EBEJFIlHs8RrIqIVxuniu5o/faHJ7LDcBtm/qZlzqLpQTYLIXd9A1u0NTUF
+         eC2fyJ2Lh9faLWGQNKoEi6I8FFT7E08s1lqqz3KYf62x9r4vjyMcdGLTqbfaWFF3uU7i
+         AY3oaKtI8qhrPtajnis3D/94EQ9alCoUCq3qGojLEfQU0oi8R9XwjkaTf8w8BxQLHm8/
+         XyyWDzYQ5LN7dTHnjqIltuXaE1/5TJ9OOXzbWRyFf1x6KdhwRsdgUYT74FBTXf/6Vft8
+         upk/hvQencSGXY3RP4DeG7NuDLgKFF438hFdRsQRb3NIQubtQfi719b1ajaVEBGHIUQw
+         NAFg==
+X-Forwarded-Encrypted: i=1; AJvYcCU4cxkoekSJpkMZ5T03BpiFEfRXWrbZmlnK/Nk1JkcHtlmxQ3v1FaimyHRJprS0o8pSTZDaexIL@vger.kernel.org, AJvYcCVjlhoB+1cZw9qkWxE/2snfx43lMkh1MGogj53Q1Je841OYvavBZt7UPqmr61G9f9qvHLx7BTEFzt5sp4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlPzoDnC0oMP/eEMQHGdxG35hEGldqq8TBjqRE63KPRnRxApoY
+	nXoV7CAHeTeuKUOllCSBnkIhwwn3q+G/QU1ZOhnEubM+JwBbSJ+HmRIZ3OhxCmqBZaBbLkzxSgf
+	G8DxrHlrPysv+ks0sia26ZjWk53o=
+X-Google-Smtp-Source: AGHT+IFesu17FMSgHtqPjFAqDx+2j9HupmLvPFbzuG/osg6DHX7YGrWz9BBrfdV/IaFOEJ6v1+i2n+tRLAeTNs09GKc=
+X-Received: by 2002:a17:907:7e85:b0:a8d:1284:6de5 with SMTP id
+ a640c23a62f3a-a93c49042e6mr1187463066b.14.1727690000776; Mon, 30 Sep 2024
+ 02:53:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240927084145.7236-1-chenqiuji666@gmail.com>
+In-Reply-To: <20240927084145.7236-1-chenqiuji666@gmail.com>
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+Date: Mon, 30 Sep 2024 17:53:09 +0800
+Message-ID: <CANgpojVi8q9kaUsOY9-GGGbKbUe9H_eghqPbDEH1=U=ZZGkfwg@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: Fix atomicity violation in devfreq_update_interval()
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Update the documentation to specify linking to a relevant GitLab
-issue or email report for each new flake entry. Added specific
-GitLab issue urls for amdgpu, i915, msm and xe driver.
+Hi MyungJoo Ham,
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
-Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> #intel and xe
-Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
-Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
----
+Based on our understanding of the code, the variable cur_delay stores
+the old value of devfreq->profile->polling_ms. We also agree that
+reading from *delay does not need to be protected by the lock. The
+reason we moved both definitions inside the lock is to maintain the
+original order of the code. We apologize for the misunderstanding this
+may have caused.
 
-v2:
-- Add gitlab issue link for msm driver.
+If the read of devfreq->profile->polling_ms is not protected by the
+lock, the cur_delay that enters the critical section would not store
+the actual old value of devfreq->profile->polling_ms, which would
+affect the subsequent checks like if (!cur_delay) and if (cur_delay >
+new_delay), potentially causing the driver to perform incorrect
+operations.
 
-v3:
-- Update docs to specify we use email reporting or GitLab issues for flake entries.
+We believe that moving the read of devfreq->profile->polling_ms inside
+the lock is beneficial as it ensures that cur_delay stores the true
+old value of devfreq->profile->polling_ms, ensuring the correctness of
+the later checks.
 
-v4:
-- Add gitlab issue link for xe driver.
+As for acquiring the lock in the caller, we believe that this is not
+suitable in this case because it may require introducing a new lock.
+Furthermore, the function takes a struct devfreq *devfreq as a
+parameter and accesses devfreq->profile->polling_ms, so holding
+devfreq->lock prevents devfreq->profile->polling_ms from being
+modified. Protecting the read operation with devfreq->lock seems
+natural and ensures that the retrieved value is the real old value of
+devfreq->profile->polling_ms, which we believe is effective.
 
----
- Documentation/gpu/automated_testing.rst | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+Thank you for your response, and we welcome further discussion.
 
-diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
-index 2d5a28866afe..6d7c6086034d 100644
---- a/Documentation/gpu/automated_testing.rst
-+++ b/Documentation/gpu/automated_testing.rst
-@@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
- the result. They will still be run.
- 
- Each new flake entry must be associated with a link to the email reporting the
--bug to the author of the affected driver, the board name or Device Tree name of
--the board, the first kernel version affected, the IGT version used for tests,
--and an approximation of the failure rate.
-+bug to the author of the affected driver or the relevant GitLab issue. The entry
-+must also include the board name or Device Tree name, the first kernel version
-+affected, the IGT version used for tests, and an approximation of the failure rate.
- 
- They should be provided under the following format::
- 
--  # Bug Report: $LORE_OR_PATCHWORK_URL
-+  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
-   # Board Name: broken-board.dtb
-   # Linux Version: 6.6-rc1
-   # IGT Version: 1.28-gd2af13d9f
-   # Failure Rate: 100
-   flaky-test
- 
-+Use the appropriate link below to create a GitLab issue:
-+amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
-+i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
-+msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
-+xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
-+
- drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
- -----------------------------------------------------------
- 
--- 
-2.43.0
-
+Qiu-ji Chen
 
