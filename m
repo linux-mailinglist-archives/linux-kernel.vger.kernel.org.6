@@ -1,167 +1,307 @@
-Return-Path: <linux-kernel+bounces-344510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0848098AA9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D92E98AAA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F8B1C21673
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7D91F234F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462EB193418;
-	Mon, 30 Sep 2024 17:05:44 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0449194C90;
+	Mon, 30 Sep 2024 17:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jOITih7Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B00254765;
-	Mon, 30 Sep 2024 17:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE348193070;
+	Mon, 30 Sep 2024 17:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715943; cv=none; b=qM9Sw0hJQRxlnYQqTE2fBfcGPmKrVTWN/Ah6wPAXzVWbx5RG+2suEgCBGlqgkQztt15IiqjpgeSIsdSBcQ74sCJ2DsJa40IGMaWCsbL7wi7SkQ++Wgn0o3soB8m1L5ByyB7UYsk6A8OUVcsejbxFTUEptc0qOPGXOd4vUVs1VMo=
+	t=1727715968; cv=none; b=OvS+HQ8h4flqvVrZ3jK91IVrPGDTY0jSm1nDR1tFcW9wN7ElpoiHFoqweqKkKU+vlDPIGAlcO4jJNQ85oUzYVsR3GgJyjotgNqBD8UWE3BySDXzCS6U0HaAA41bmF8KUC2aorEeYAMhaA4RoeZYX6lbJd3IuY95ksFZVbWjyXnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715943; c=relaxed/simple;
-	bh=RILc8DXqlujmScmAB8dI/uIvf3KRk+SNjPvRDlWDEdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D91DZo62ytlyI25N+zMl8NyAG0Yos8NowzpJ1IE+G7e+fJ39A0fznW4d3SHXCmEtC5KMnJs8xDSkJxk14Lef2xb+XouAYuw+Y0tN0r+Lp/KnUrR+Ct40jQEUMtfeWar/Iu/Edx6IiT5gn0vQ9eI6FituTtw0yEocEMeonixHy8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XHRch6Q2Pz9v7JN;
-	Tue,  1 Oct 2024 00:39:48 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 201F7140B63;
-	Tue,  1 Oct 2024 01:05:27 +0800 (CST)
-Received: from [10.81.209.28] (unknown [10.81.209.28])
-	by APP1 (Coremail) with SMTP id LxC2BwAnuC9G2vpmEMjxAQ--.62409S2;
-	Mon, 30 Sep 2024 18:05:26 +0100 (CET)
-Message-ID: <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
-Date: Mon, 30 Sep 2024 19:05:06 +0200
+	s=arc-20240116; t=1727715968; c=relaxed/simple;
+	bh=Kna7G4U1dFMIvfYYwE0BrL1c4Ee48HMbDye3sAKQnBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k53nU1qXy8JZ7kWMIVp/Kci1pi6LWga2J0CxU1Ht/XGsShulhKbSXaS123WlFVXHVf0jgQSoEl4yqRTg1dS4439D5E0cHEndU/gRRjHF9W3SFIP2ftziTtXJeVAb7dVw1hd+s3UOu9FmlUqmv+IE7zyKu8nveuWaeog4dCUbTvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jOITih7Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4802FC4CECE;
+	Mon, 30 Sep 2024 17:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727715967;
+	bh=Kna7G4U1dFMIvfYYwE0BrL1c4Ee48HMbDye3sAKQnBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jOITih7YON5wGTCbgIJsULmuDTZb2LotSsOvQs/LbL/NzUMckpXpGAm5tjO1Vcp1t
+	 63/BOoIqOSLL3T6xZCArnB6lcF4WUOr4vUQL+ccN9dMWnsZNzrkO0l2Cxe/BpkBMaH
+	 wnZOfAFXJ7BZVL7RST72Qy1QJTyNkHdtIppb8P/53nVk5FvLfxvIJtkYr2Aiczyl2J
+	 LhCwFzEJTEtemtKURlIetM9SRRfm1CD6+gNm3/9MQM2zFzJB7AzzSOIUmk5hVV77rV
+	 l8RPcw4PEAgspmG/Ahf0io12naFwam+hyI2aOcOK+E3oHpIwWymi/9b+jQpGyCnpm4
+	 Nv2FX8dA65QmQ==
+Date: Mon, 30 Sep 2024 19:06:01 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
+	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
+	platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ZvcdNXQJmc8cjifw@amd.ucw.cz>
+ <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
+ <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
+ <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
+ <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
+ <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+ <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
+ <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwAnuC9G2vpmEMjxAQ--.62409S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF4xJr1fCF4kCF1fKr17Jrb_yoW8Zryfpr
-	Z8ta15KF4kGw13Crs0yw15ZFWa9an3KFy5Wrn7XrW0kan09FyfKF47KFy5uF9xZ34fJrWj
-	y3yUurWfuFy3JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jxCztUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
 
-
-
-Am 9/30/2024 um 6:43 PM schrieb Alan Stern:
-> On Mon, Sep 30, 2024 at 01:26:53PM +0200, Jonas Oberhauser wrote:
->>
->>
->> Am 9/28/2024 um 4:49 PM schrieb Alan Stern:
->>> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
->>>> Compiler CSE and SSA GVN optimizations can cause the address dependency
->>>> of addresses returned by rcu_dereference to be lost when comparing those
->>>> pointers with either constants or previously loaded pointers.
->>>>
->>>> Introduce ptr_eq() to compare two addresses while preserving the address
->>>> dependencies for later use of the address. It should be used when
->>>> comparing an address returned by rcu_dereference().
->>>>
->>>> This is needed to prevent the compiler CSE and SSA GVN optimizations
->>>> from replacing the registers holding @a or @b based on their
->>>
->>> "Replacing" isn't the right word.  What the compiler does is use one
->>> rather than the other.  Furthermore, the compiler can play these games
->>> even with values that aren't in registers.
->>>
->>> You should just say: "... from using @a (or @b) in places where the
->>> source refers to @b (or @a) (based on the fact that after the
->>> comparison, the two are known to be equal), which does not ..."
->>
->> I should also point out that it is not enough to prevent the compiler from
->> using @a instead of @b.
->>
->> It must also be prevented from assigning @b=@a, which it is often allowed to
->> do after finding @a==@b.
+On Sep 30 2024, Werner Sembach wrote:
+> Hi,
 > 
-> Wouldn't that be a bug? 
+> Am 30.09.24 um 18:15 schrieb Benjamin Tissoires:
+> > On Sep 30 2024, Werner Sembach wrote:
+> > > Am 28.09.24 um 12:05 schrieb Benjamin Tissoires:
+> > > > On Sep 28 2024, Werner Sembach wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > Am 28.09.24 um 09:27 schrieb Benjamin Tissoires:
+> > > > > > On Sep 28 2024, Armin Wolf wrote:
+> > > > > > > Am 27.09.24 um 23:01 schrieb Pavel Machek:
+> > > > > > > 
+> > > > > > > > Hi!
+> > > > > > > > 
+> > > > > > > > > The TUXEDO Sirius 16 Gen1 and TUXEDO Sirius 16 Gen2 devices have a per-key
+> > > > > > > > > controllable RGB keyboard backlight. The firmware API for it is implemented
+> > > > > > > > > via WMI.
+> > > > > > > > Ok.
+> > > > > > > > 
+> > > > > > > > > To make the backlight userspace configurable this driver emulates a
+> > > > > > > > > LampArray HID device and translates the input from hidraw to the
+> > > > > > > > > corresponding WMI calls. This is a new approach as the leds subsystem lacks
+> > > > > > > > > a suitable UAPI for per-key keyboard backlights, and like this no new UAPI
+> > > > > > > > > needs to be established.
+> > > > > > > > Please don't.
+> > > > > > > > 
+> > > > > > > > a) I don't believe emulating crazy HID interface si right thing to
+> > > > > > > > do. (Ton of magic constants. IIRC it stores key positions with
+> > > > > > > > micrometer accuracy or something that crazy. How is userland going to
+> > > > > > > > use this? Will we update micrometers for every single machine?)
+> > > > > > This is exactly why I suggest to make use of HID-BPF. The machine
+> > > > > > specifics is going to be controlled by userspace, leaving out the crazy
+> > > > > > bits out of the kernel.
+> > > > >   From just a quick look at
+> > > > > https://www.kernel.org/doc/html/latest/hid/hid-bpf.html HID-BPF is some kind
+> > > > > HID remapping?
+> > > > Yes. HID-BPF allows to customize a HID device by changing the report
+> > > > descriptor and/or the events, and the requests made from hidraw.
+> > > > 
+> > > > It's a HID -> HID conversion, but controlled by userspace.
+> > > > 
+> > > > See [0] for a tutorial.
+> > > > 
+> > > > > But the device in question nativly does not have a hid interface for the
+> > > > > backlight. It is controlled via WMI calls.
+> > > > > 
+> > > > > Afaik userspace on linux has no access to WMI? How could HID-BPF implement
+> > > > > the WMI calls?
+> > > > You'll need a thin WMI to HID wrapper, but without LampArray.
+> > > > Then you load the HID-BPF program from userspace, that program knows
+> > > > about the specifics of the device, and can do the LampArray transform.
+> > > > 
+> > > > Which means that once the wmi-to-hid driver specific to this device is
+> > > > built in the kernel, you can adjust your LampArray implementation (the
+> > > > device specifics micrometers and what not) from usersapce.
+> > > > 
+> > > > > > > > Even if it is,
+> > > > > > > > 
+> > > > > > > > b) The emulation should go to generic layer, it is not specific to
+> > > > > > > > your hardware.
+> > > > > > Well, there is not so much about an emulation here. It's a different way
+> > > > > > of presenting the information.
+> > > > > > But given that HID LampArray is a HID standard, userspace is able to
+> > > > > > implement it once for all the operating systems, which is why this is so
+> > > > > > appealing for them. For reference, we have the same issue with SDL and
+> > > > > > Steam regarding advanced game controller: they very much prefer to
+> > > > > > directly use HID(raw) to talk to the device instead of having a Linux
+> > > > > > specific interface.
+> > > > > > 
+> > > > > > Also, starting with v6.12, systemd (logind) will be able to provide
+> > > > > > hidraw node access to non root applications (in the same way you can
+> > > > > > request an input evdev node). So HID LampArray makes a lot of sense IMO.
+> > > > > > 
+> > > > > > > Maybe introducing a misc-device which provides an ioctl-based API similar
+> > > > > > > to the HID LampArray would be a solution?
+> > > > > > > 
+> > > > > > > Basically we would need:
+> > > > > > > - ioctl for querying the supported LEDs and their properties
+> > > > > > > - ioctl for enabling/disabling autonomous mode
+> > > > > > > - ioctl for updating a range of LEDs
+> > > > > > > - ioctl for updating multiple LEDs at once
+> > > > > > You'll definitely get the API wrong at first, then you'll need to adapt
+> > > > > > for a new device, extend it, etc... But then, you'll depend on one
+> > > > > > userspace application that can talk to your custom ioctls, because cross
+> > > > > > platform applications will have to implement LampArray, and they'ĺl
+> > > > > > probably skip your custom ioctls. And once that userspace application is
+> > > > > > gone, you'll still have to maintain this forever.
+> > > > > > 
+> > > > > > Also, the application needs to have root access to that misc device, or
+> > > > > > you need to add extra support for it in systemd...
+> > > > > > 
+> > > > > > > If we implement this as a separate subsystem ("illumination subsystem"), then different
+> > > > > > > drivers could use this. This would also allow us to add additional ioctl calls later
+> > > > > > > for more features.
+> > > > > > Again, I strongly advise against this.
+> > > > > > 
+> > > > > > I'll just reiterate what makes the more sense to me:
+> > > > > > - provide a thin wmi-to-hid layer that creates a normal regular HID
+> > > > > >      device from your device (could be using vendor collections)
+> > > > > This is what this driver tries to be.
+> > > > Except that your current implementation also does the LampArray
+> > > > conversion. I think it'll make more sense to provide an almost raw
+> > > > access to the underlying protocol (think of it like your own Tuxedo
+> > > > vendor collection in HID), and handle the LampArray weirdeness in bpf:
+> > > > definition of the device physicals, conversion from HID LampArray
+> > > > commands into Tuxedo specifics.
+> > > > 
+> > > > > > - deal with the LampArray bits in the HID stack, that we can reuse for
+> > > > > >      other devices (I was planing on getting there for my Corsair and
+> > > > > >      Logitech keyboads).
+> > > > > If a greater efford in the hid stack is planed here i would be all for it.
+> > > > That's what makes more sense to me at least. Other operating systems
+> > > > export the HID nodes directly, so userspace prefers to talk to the
+> > > > device directly. So I'd rather rely on a standard than trying to fit the
+> > > > current use case in a new interface that will probably fail.
+> > > > 
+> > > > > On my todolist i would try to integrate the leds subsystem with the
+> > > > > LampArray interface next, just a simple implementation treating the whole
+> > > > > keyboard as a single led.
+> > > > That could be done in HID-core as well. Making it part of HID-core also
+> > > > means that once we get an actual LampArray device, we'll get support for
+> > > > it from day one.
+> > > > 
+> > > > > > - Meanwhile, while prototyping the LampArray support in userspace and
+> > > > > >      kernelspace, make use of HID-BPF to transform your vendor protocol
+> > > > > >      into LampArray. This will allow to fix things without having to
+> > > > > >      support them forever. This is why HID-BPF exists: so we can create
+> > > > > >      crazy but safe kernel interfaces, without having to support them
+> > > > > >      forever.
+> > > > > I guess i have to do some readup xD.
+> > > > > 
+> > > > Please have a look at the tutorial[0]. That tutorial is missing the
+> > > > couple of new hooks you'll need to change the requests emitted from
+> > > > hidraw as LampArray into Tuxedo, but I can also give you a help into
+> > > > making it happening.
+> > > > 
+> > > > Basically, you also need to define a .hid_hw_request callback in your
+> > > > HID_BPF_OPS and extract all of the code you have here into that bpf
+> > > > program (which is roughly C code).
+> > > > 
+> > > > Cheers,
+> > > > Benjamin
+> > > > 
+> > > > 
+> > > > [0] https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
+> > > > 
+> > > 2 question left on my side:
+> > > 
+> > > - Does the BPF approach have performance/latency impact?
+> > Not anything you'll notice. BPF is used in network on much more
+> > demanding latency purposes. And IIRC, jumping into BPF is almost a no-op
+> > nowadays. From what I can tell from the BPF maintainer in his ALPSS
+> > presentation last week:
+> > "
+> > BPF C code is compiled into BPF ISA with BPF calling convention,
+> > JIT translate BPF ISA into native ISA,
+> > One to one mapping of BPF registers to x86 registers.
+> > "
+> Ok
+> > 
+> > > - Does it work during boot? (e.g. early control via the leds subsystem to
+> > > stop firmware induced rainbow puke)
+> > > 
+> > Nope. It gets loaded once udev enumerates the device, so unless you
+> > craft a special intird with both the loader and the bpf object it is
+> > not.
+> > 
+> > However, if that rainbow is bothering you, you can "initialize" the
+> > keyboard to a sane state with your WMI-to-HID driver before exposing the
+> > device to HID.
+> Thinking about it, maybe it's not to bad that it only changes once udev is
+> ready, like this udev could decide if leds should be used or if it should
+> directly be passed to OpenRGB for example, giving at least some consistency
+> only changing once: i.e. firmware -> OpenRGB setting and not firmware->leds
+> setting->OpenRGB setting.
 
-That's why I said that it is often allowed to do it. In your case it 
-wouldn't, but it is often possible when a and b are non-atomic & 
-non-volatile (and haven't escaped, and I believe sometimes even then).
+That would work if OpenRGB gets to ship the LampArray bpf object (not
+saying that it should). Because if OpenRGB is not installed, you'll get
+a led class device, and if/when OpenRGB is installed, full LampArray
+would be presented.
 
-It happens for example here with GCC 14.1.0 -O3:
+But anyway, BPF allows to dynamically change the behaviour of the
+device, so that's IMO one bonus point of it.
 
-int fct_hide(void)
-{
-     int *a, *b;
+> > 
+> > FWIW, the use of BPF only allows you to not corner yourself. If you
+> > failed at your LampArray implementation, you'll have to deal with it
+> > forever-ish. So it's perfectly sensible to use BPF as an intermediate step
+> > where you develop both userspace and kernel space and then convert back
+> > the BPF into a proper HID driver.
+> 
+> I don't really see this point: The LampArray API is defined by the HID Usage
+> Table and the report descriptor, so there is not API to mess up and
+> everything else has to be parsed dynamically by userspace anyway, so it can
+> easily be changed and userspace just adopts automatically.
+> 
+> And for this case the proper HID driver is already ready.
 
-     do {
-         a = READ_ONCE(p);
-         asm volatile ("" : : : "memory");
-         b = READ_ONCE(p);
-     } while (a != b);
-     OPTIMIZER_HIDE_VAR(b);
-     return *b;
-}
+Yeah, except we don't have the fallback LED class. If you are confident
+enough with your implementation, then maybe yes we can include it as a
+driver from day one, but that looks like looking for troubles from my
+point of view.
 
+After a second look at the LampArray code here... Aren't you forgetting
+the to/from CPU conversions in case you are on a little endian system?
 
+> 
+> So the only point for me currently is: Is it ok to have key position/usage
+> description tables in the kernel driver or not?
 
-         ldr     r1, [r2]
-         ldr     r3, [r2]
-         cmp     r1, r3
-         bne     .L6
-         mov     r3, r1   // nay...
-         ldr     r0, [r3] // yay!
-         bx      lr
+good question :)
 
+I would say, probably not in the WMI driver itself. I would rather have
+a hid-tuxedo.c HID driver that does that. But even there, we already had
+Linus complaining once regarding the report descriptors we sometimes
+insert in drivers, which are looking like opaque blobs. So it might not be
+the best either.
 
-Have fun,
+Sorry I don't have a clear yes/no answer.
 
-    jonas
+Cheers,
+Benjamin
 
+> 
+> > 
+> > Being able to develop a kernel driver without having to reboot and
+> > being sure you won't crash your kernel is a game changer ;)
+> > 
+> > Cheers,
+> > Benjamin
 
