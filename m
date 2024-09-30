@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-344817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9498298AE87
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:37:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D2198AE89
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA8A28394A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:37:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D6A283307
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548A1A0BF4;
-	Mon, 30 Sep 2024 20:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE091A2578;
+	Mon, 30 Sep 2024 20:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdMLkfMd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsuYYobj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960E51A0BC8;
-	Mon, 30 Sep 2024 20:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB7881A255F;
+	Mon, 30 Sep 2024 20:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727728657; cv=none; b=H4Pw92jp0Y5XFm4rYEJMHnkVjFjoFiZW8tUmL4LF4D2iWa2UI94shSQjiryORLlKuAa1jeHj6ObmSwveVC8fBL0U6V1xaWhtoClby4en+tuNvniNs9jM4STxHTt9hpCzDu8IwHQLptnY/qdJ+dvXx3fIwBSqRiUtNAu7bubdwBU=
+	t=1727728658; cv=none; b=PcDVc0cAqjzPnjDGw6btxUGcWtSR2H4WKMTtoVQ5+R5yNO8urJtuvWbAguOYy6UTur4xcXsRjcLNo7Sy6nSdRkm0WIFriyuWh27vxwH9C6o0HqvFWdYCw2CodEvS3S7/KDjo0pJqHy5BrImUbD+FnaBY2e67X/4fj7t6TFzKB1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727728657; c=relaxed/simple;
-	bh=pcP3hBEi9y72cQ2R4EzM7rzibaYlvtHs7R5GrRv3yyY=;
+	s=arc-20240116; t=1727728658; c=relaxed/simple;
+	bh=yZEDogMovAy8OcspPW/wXi+jAkY68ZCI6FD5u4YtdL0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ixQg08lKvqtjHmp17ejdTvqGUXvBgQsH7+MaIiDsZU+KwW2cDbYHnMpM+hUpcViEPp/PWxYUvlsz1BSdwUhejneG40pVh7mxVZzy2b1gGpY1xsDbuNtcYkHE6Rj20zlknJCP2soJM6z1vtS1pLVR3eAf+cHPTerky2zzy3Aim/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdMLkfMd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21FDBC4CEC7;
-	Mon, 30 Sep 2024 20:37:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aiSjKQ3fMjwr0K0S367lE7D6WoX1284rp4wsIaiAEEhVwuxjARL4l7MYFRDVa5rcEF+zy+W0B+m5WKM0X2jGKoFu89kIW9Jbj1Yue/aGeOHHf3fs7mXt33eMgbw42urkv1EzGN3WhEhc5hFRqiw4llxGhXBRdydJir5ir+yp2Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsuYYobj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8780BC4CED3;
+	Mon, 30 Sep 2024 20:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727728657;
-	bh=pcP3hBEi9y72cQ2R4EzM7rzibaYlvtHs7R5GrRv3yyY=;
+	s=k20201202; t=1727728658;
+	bh=yZEDogMovAy8OcspPW/wXi+jAkY68ZCI6FD5u4YtdL0=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hdMLkfMd64fraj/gBVbB+CU+RJeCZIwilSevMEmP+tPzG2kVmrSqAzV2+0b7ew/wM
-	 H9+xaY1reYeWehepiAkXsWlnTvnP5g8aF86yJtZJVOlgkU6jPYK1PI214h0vWscqZh
-	 Z6RjAeSX+LEmU/1+gUaFc+EiDCgHZxk5N+EVy1izWaWSI+7irHr/W703ij0+Whmqv7
-	 2otrkdzodZKHUtMBDpKO1MzviG7Pr/7IAE32tZyrr0+SNIANPDaKVV1O7hpzLujwEu
-	 CJs1VYI/NUTEcadumqK9lq+BiJjzJKaG4BJSyQe8m2hWPDfTBq7MtOpXO6jnNyObrE
-	 Mt3j/QuMj097w==
+	b=hsuYYobjq+De0sKXlMhUfX00qWYUvNa30uYYfU6mvlAimpOlId7YZIuOzwOOjlnsB
+	 d4rldw4oXU2eyT+eJZnixz57w9kdUIYismeX6kJnjgfUmASXqZC9qMjSGPoXP5Db1A
+	 1Me9WVRqSweVNk1dk8Yf616Yjnbjq+rSEXpVyQ2toh9W2FDHbVHnKXMBtPhfBtxKGv
+	 DSnUExxf4VGPQ6udx9j+WO1O6Z1OQ6YOp1Jucr0Vetd4KvvAdLiBpvsNOzqf16hpzy
+	 bKKGdNjbVvnJPD9QA7uTVHNvzAdLzH01JgACLxavH6lGkxjySVsBcFCSBEmzlaTxWp
+	 Hg1HMDbx2dujw==
 From: Mark Brown <broonie@kernel.org>
-To: kernel-janitors@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
-References: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
-Subject: Re: [PATCH] regulator: Call of_node_put() only once in
- rzg2l_usb_vbus_regulator_probe()
-Message-Id: <172772865592.2147169.15364434698443632490.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 21:37:35 +0100
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Min-Hua Chen <minhuadotchen@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240926231038.31916-1-minhuadotchen@gmail.com>
+References: <20240926231038.31916-1-minhuadotchen@gmail.com>
+Subject: Re: [PATCH] regulator: qcom-smd: make smd_vreg_rpm static
+Message-Id: <172772865733.2147169.16731345779366535012.b4-ty@kernel.org>
+Date: Mon, 30 Sep 2024 21:37:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,13 +60,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Tue, 24 Sep 2024 13:34:45 +0200, Markus Elfring wrote:
-> An of_node_put(config.of_node) call was immediately used after a pointer
-> check for a devm_regulator_register() call in this function implementation.
-> Thus call such a function only once instead directly before the check.
+On Fri, 27 Sep 2024 07:10:36 +0800, Min-Hua Chen wrote:
+> Since smd_vreg_rpm is used only in
+> drivers/regulator/qcom_smd-regulator.c, make it static and fix the
+> following sparse warning:
 > 
-> This issue was transformed by using the Coccinelle software.
-> 
+> drivers/regulator/qcom_smd-regulator.c:14:21: sparse: warning:
+> symbol 'smd_vreg_rpm' was not declared. Should it be static?
 > 
 > [...]
 
@@ -77,8 +76,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: Call of_node_put() only once in rzg2l_usb_vbus_regulator_probe()
-      commit: 7368e9f4e25bea507895bf194bd1c72d693840b2
+[1/1] regulator: qcom-smd: make smd_vreg_rpm static
+      commit: 18be43aca2c0ec475037923a8086d0a29fcc9d16
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
