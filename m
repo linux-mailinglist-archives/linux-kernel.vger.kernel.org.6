@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-344206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C5A98A66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:59:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D3898A673
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B12A283447
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:59:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528571C22B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0C6194C95;
-	Mon, 30 Sep 2024 13:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88F119A2B7;
+	Mon, 30 Sep 2024 13:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E12aNqjc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RsTXPcUR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247C71946AA;
-	Mon, 30 Sep 2024 13:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB96198A25;
+	Mon, 30 Sep 2024 13:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704540; cv=none; b=h7sL1NWtdrGnbucwKj/aYcQEgW7j5tHWGGQ/zg3mySzzWtK0j803OrepPvZlGN6lGY4Ji9c+h+WWpVU6aXWtYLGFwh6i99UZks5+3mJXYzWLrMWBi41YDUknnHh/s3ail8Egrp6474JlCWVKVicy4MwWenIf1R5SxoLGIFEr500=
+	t=1727704567; cv=none; b=gN62VTItJvq1MRMMiDT14gI56tHRmRLUUjb+sIRd7wjpivGYxgD1xhR26fJoEkVLge9go2A7CGzSd3jW2yRZf2+blb+jwKDdkOZYnyE2oTS4psRTziG3Qs1AQ59FDWmGFfx5iOv0cinAMqCWUT4zR3fym8iLqI5n4sdE+w9+AaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704540; c=relaxed/simple;
-	bh=ptvZUoo0MgvQ1nTdeXK5Y63HZLuZe59ZXon7TP2l7Eo=;
+	s=arc-20240116; t=1727704567; c=relaxed/simple;
+	bh=vY2/ZJaIITkqinrDuxkwQ8SQ7pATOYMl7NM5kwz/bcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dwtBRPzUfzDplApKAcjEm6Obt7j84tojH0elT5KmVo+Or10krAiiWcvxUklpso6KEdHeyvT3PquZBlJg1ryGhpJBFy+wxVlj4C6GHNvIb2+pstS1kuYhBru8Ks1ySbwElQStQ4uxWnFYEu3mJV1lupEbS5GR9PaEo5Q8P44rY7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E12aNqjc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7B61C4CECE;
-	Mon, 30 Sep 2024 13:55:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPFnCq25jxVksmqNYzDKZIvXkhlS05DhNiSxzFbaIkgoswzUrDLtzoiR2huZDmlXClYv5T1fiVXbc0bh+s8L8ZEBOldO+6F025lI0JmQkAOs/0N+KPe4G4+06mtN+Rf4Gmq59/mffkdCHQJ4mNnOFW07RhY5wZwK6xlcw3NDDWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RsTXPcUR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E66E8C4CECE;
+	Mon, 30 Sep 2024 13:56:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704540;
-	bh=ptvZUoo0MgvQ1nTdeXK5Y63HZLuZe59ZXon7TP2l7Eo=;
+	s=k20201202; t=1727704566;
+	bh=vY2/ZJaIITkqinrDuxkwQ8SQ7pATOYMl7NM5kwz/bcQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E12aNqjcGXGEqGtu70phFW23PXMtikHIp/VbHVu6wHFiiEbXVgs9SyWa2getrm9km
-	 uFbsr2lHuatpMybul5LblXdlPW+eN1NYvAt+Ab3jHKByzaRa2SjChPJ/Ux+e1+CgI0
-	 1Rm4TVZIX1Uc721vnfNs/UqI3PVavTgLrtTd9GVO7E/62jvAjng0MJK7TAh8kxhmLV
-	 pxplUZgozK7A4J3KBXQZEccM6iu1ULZfrTOEzmWHNH1ED8FiO3puc2ZllIlutiD+ga
-	 e4upgx13tvcPFTOEED8fBdeK4t73UBSzh08o5gowuusDm73irlPFu55VP3hlwwNTPy
-	 c5aJaNcdtKYVQ==
-Date: Mon, 30 Sep 2024 14:55:35 +0100
+	b=RsTXPcURHj4NGESNY8Wovdg8I5ZV8AH5sbtqv6xZKgGQszSQ8O7Bj4fjf5s3ZK2Se
+	 eNLlsZz3kEcKf22SdFmJmsadpfrSRUEyCfIkkJJ97vt9KC7/t+eBp7ZeWWbHKuWFHz
+	 dMiI34gf6GsmiFPTF7tVGX1bX/AdDYLA0xFtSQs725DSccw29UHHm0G/XPmrBm4Td6
+	 kalOy9Zo8mx01gloAKIoJCjUyuUtaNWiy9xPKfWsltAfwKrLSWfzInE5Qu21UTriHd
+	 23UOjHeJDaAxWw76HWcSRiyLBJ0Wfdgkvub1CU9tnSNHPj3V9WMc54PNJbBMRFP9FR
+	 8zHUOII/gp1GA==
+Date: Mon, 30 Sep 2024 14:56:01 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: pierre-henry.moussay@microchip.com, Linux4Microchip@microchip.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Rob Herring <robh@kernel.org>,
+To: pierre-henry.moussay@microchip.com
+Cc: Linux4Microchip@microchip.com,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 04/20] dt-bindings: spi: add PIC64GX SPI/QSPI
- compatibility to MPFS SPI/QSPI bindings
-Message-ID: <20240930-safeguard-shiftless-c10dc8fbd99b@spud>
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Anup Patel <anup@brainfault.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [linux][PATCH v2 17/20] dt-bindings: timer: sifive,clint: add
+ PIC64GX compatibility
+Message-ID: <20240930-snoring-unrivaled-e38467343b3d@spud>
 References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-5-pierre-henry.moussay@microchip.com>
- <1f54805f-f06d-4732-a124-270a36dbff4f@sirena.org.uk>
+ <20240930095449.1813195-18-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,47 +65,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6OmhXQ4y09svNlZJ"
+	protocol="application/pgp-signature"; boundary="dSbwHpb80TnozwLx"
 Content-Disposition: inline
-In-Reply-To: <1f54805f-f06d-4732-a124-270a36dbff4f@sirena.org.uk>
+In-Reply-To: <20240930095449.1813195-18-pierre-henry.moussay@microchip.com>
 
 
---6OmhXQ4y09svNlZJ
+--dSbwHpb80TnozwLx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024 at 02:52:42PM +0100, Mark Brown wrote:
-> On Mon, Sep 30, 2024 at 10:54:33AM +0100, pierre-henry.moussay@microchip.=
-com wrote:
-> > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
-> >=20
-> > PIC64GX SPI/QSPI are compatible with MPFS SPI/QSPI, just use
-> > fallback mechanism
+On Mon, Sep 30, 2024 at 10:54:46AM +0100, pierre-henry.moussay@microchip.co=
+m wrote:
+> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 >=20
-> You've not copied me on the rest of the series so I don't know what's
-> going on with dependencies.  When sending a patch series it is important
-> to ensure that all the various maintainers understand what the
-> relationship between the patches as the expecation is that there will be
-> interdependencies.  Either copy everyone on the whole series or at least
-> copy them on the cover letter and explain what's going on.  If there are
-> no strong interdependencies then it's generally simplest to just send
-> the patches separately to avoid any possible confusion.
+> As mention in sifive,clint.yaml, a specific compatible should be used
+> for PIC64GX, so here it is.
+>=20
+> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-FWIW, you should be okay to take this, there's nothing that depends on
-this patch other than dts files and nothing that this patch depends on
-in turn.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---6OmhXQ4y09svNlZJ
+--dSbwHpb80TnozwLx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqt1wAKCRB4tDGHoIJi
-0kscAQCZswxskpBaL15Yd5hzVUiS9tA3udzdql+Afls0sLewlwEApcpfrwV2F7tu
-PyJvxazlLMCl2+a+nJ1o1mnanRGHmgA=
-=/i8D
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqt8QAKCRB4tDGHoIJi
+0rCvAP4vzWvnhiMvF2ZY727kJEZwoxR525N4pnNj7KNgJPIvzwEApJcgXaWQguqJ
+CMrkpDxQgZiPsoJKHJFePVHjEYbcPQg=
+=6F/K
 -----END PGP SIGNATURE-----
 
---6OmhXQ4y09svNlZJ--
+--dSbwHpb80TnozwLx--
 
