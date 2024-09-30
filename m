@@ -1,136 +1,471 @@
-Return-Path: <linux-kernel+bounces-343713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEB8989E9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BE1989EA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7A111F22189
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC2F1B251F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA305189BAC;
-	Mon, 30 Sep 2024 09:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CE818873F;
+	Mon, 30 Sep 2024 09:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P35XlTt8"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dSYm9uxq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59231188735;
-	Mon, 30 Sep 2024 09:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AC2189903
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689219; cv=none; b=Q68RrwNPdlFHIwF/nOIqq35dfKmo5po8ijpwI1q7DiSFwg3YAb5aRUmNCI9KDAngOO/P29orOcWPGm9Ts6Fugw877mGXFnAZlwQRB+cBmxUMdNYVG/jaz4MmZCsP20g8zKwppWJQ3pTKVp29DPRnL11c2JI6GY9PiBbbB9mNlb4=
+	t=1727689248; cv=none; b=pt9PPlasAk7qvbsuuii4n8mZQHD2vK4YQyTovBbuP8UyxzT/28keRODFr1fP3WGifuSJ460vd6KDzz0uPXLb6PI3D4ToCXgo+3ALCiqhawEi41t8SqKdBt0DZnghDiu7uyZA8huLkD6Y/5U71iYFzjB9rwPaTGyQWZ6ZYVTOLeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689219; c=relaxed/simple;
-	bh=morSWfr1TfMGPO5UKWsSeeHNUs1wlUZiPwNAmlEjidI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sxFQE2+e/BQorkl8vw+DcBd6FOKiDVZ2vbUCKY10Pc9Mnsmwa99SVfQnYs1styHnsrVmQuT2xDG4dIZ4aWaZEqP2R5lWZKqYexQp9K9COSnkY4MLMN9AVxjMQ2pRHpAfwuJNUOjXWT/7mXBixEYFET0m7QgpsgfTHO4+IMi70Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P35XlTt8; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727689215;
-	bh=morSWfr1TfMGPO5UKWsSeeHNUs1wlUZiPwNAmlEjidI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=P35XlTt8282gqz35vELPtYBH1CIQb6tu8A/3DFY3CFYLIZCt8SG/ZNoF6ognQgeMV
-	 ROkoNt3eYANU2fdZTnfRgglV8tSMCdjr6WKa8+QlDu+edUgaOwOZJelzG/KfBysOTQ
-	 Ud50YWLIo0cGkpcqRIy/LWRwSkOksnQYiXmZOVlLF2qKe53ZBrnPsPV9DXiw5eUaq7
-	 01B8TdAu5nNAMkxVQceUYFj8gySaNzgfQJPmYKeAFoiWMm2LWOwTkQi+iAabUY0KOF
-	 RS68jgOvfuih9hfuiHO0eK8HdWqM2uCEviCLzNiUrjvvkVsqETSKeZrvLGOmi2Cfj4
-	 jT26RjK6NiQKA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=arc-20240116; t=1727689248; c=relaxed/simple;
+	bh=cvR51nrfsAexTy67HhXjj6ohzaXX0/38qIkbN+szIoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cb5OvVDDc8urN2TChNL4uImuvaaf1kNLx2oFS5VgalPqByAwWzqRUCi30u54JrbOW9H8C8zxJ9aHPatMZM6rt2DmwaZ8nqUmS9wcMK21Yg8tliU+GyPjYLrlSzXXSIonHA0uhdL/o72+V8Ki0zqTB5GY01EByF2Ib6DlnYrUzi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dSYm9uxq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727689244;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v0E+qKNNngUa/s7lIUGOnbui4nnSmqw78cj0HvRaCzg=;
+	b=dSYm9uxqFso3aQIbmjejzJ4fOSYhedixNmUM06d9ugEh9eBidkFai/KC03DbK1uDhKnXQX
+	S6mL7ARFuhSnuGUcFXsk7T6/5NOdCIz1PZ8PV8+jmlNPMATMVMFf4M+mJKUNigLKzJIIL9
+	8Yls30gThjh0JOpnn+XjQX9M9W4bvpI=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-HttAFN4iNH-QDBGEmmn92w-1; Mon,
+ 30 Sep 2024 05:40:38 -0400
+X-MC-Unique: HttAFN4iNH-QDBGEmmn92w-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3879B17E10C2;
-	Mon, 30 Sep 2024 11:40:15 +0200 (CEST)
-Message-ID: <57dfe684-c9a1-4cb3-8c87-9d2fef09aed7@collabora.com>
-Date: Mon, 30 Sep 2024 11:40:14 +0200
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E7CC19030B9;
+	Mon, 30 Sep 2024 09:40:36 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.88])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E8354195419F;
+	Mon, 30 Sep 2024 09:40:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 30 Sep 2024 11:40:22 +0200 (CEST)
+Date: Mon, 30 Sep 2024 11:40:15 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv5 bpf-next 02/13] uprobe: Add support for session consumer
+Message-ID: <20240930094014.GB18499@redhat.com>
+References: <20240929205717.3813648-1-jolsa@kernel.org>
+ <20240929205717.3813648-3-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] nvmem: mtk-efuse: Enable postprocess for mt8188
- GPU speed binning
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org
-References: <20240927103005.17605-1-pablo.sun@mediatek.com>
- <20240927103005.17605-4-pablo.sun@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240927103005.17605-4-pablo.sun@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929205717.3813648-3-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Il 27/09/24 12:30, Pablo Sun ha scritto:
-> Similar to mt8186, the efuse data for mt8188's GPU speed binning
-> requires post-process to convert the bit field format expected
-> by the OPP table.
+Jiri,
+
+LGTM. But I'm afraid you need to send v6, sorry ;)
+
+This change has some (trivial) conflicts in prepare_uretprobe() with the
+cleanups I sent yesterday, and Peter is going to queue them.
+
+See https://lore.kernel.org/all/20240929144201.GA9429@redhat.com/
+
+Oleg.
+
+On 09/29, Jiri Olsa wrote:
+>
+> This change allows the uprobe consumer to behave as session which
+> means that 'handler' and 'ret_handler' callbacks are connected in
+> a way that allows to:
 > 
-> Since mt8188 efuse is not compatible to mt8186, add a new compatible
-> entry for mt8188 and enable postprocess.
+>   - control execution of 'ret_handler' from 'handler' callback
+>   - share data between 'handler' and 'ret_handler' callbacks
 > 
-> Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
-
-I know I told you to just reuse the pdata from 8186, but there's something else
-that came to mind, here...
-
-...actually, the efuse block from 8188 is indeed compatible with 8186, meaning
-that the register r/w, etc, are all the same (bar the addresses, yes)
-
-So, I wonder if it's not just a better idea to not even add mt8188-efuse in this
-driver's of_device_id array, and just add that to the binding so that we permit
-using
-		efuse: efuse@11f20000 {
-			compatible = "mediatek,mt8188-efuse",
-				     "mediatek,mt8186-efuse", "mediatek,efuse";
-			[etc]
-		}
-
-Means that in mediatek,efuse.yaml you'll have to add...
-
-       - items:
-           - enum:
-               - mediatek,mt8188-efuse
-           - const: mediatek,mt8186-efuse
-           - const: mediatek,efuse <---- or without this, even.
-
-In the end, the "mediatek,efuse" property is somewhat deprecated, so that'd
-also be a good time to start the dropping process, as I imagine that future SoCs
-would also need the same speedbin transformations - which means that they'll all
-be compatible with 8186....
-
-Cheers,
-Angelo
-
+> The session concept fits to our common use case where we do filtering
+> on entry uprobe and based on the result we decide to run the return
+> uprobe (or not).
+> 
+> It's also convenient to share the data between session callbacks.
+> 
+> To achive this we are adding new return value the uprobe consumer
+> can return from 'handler' callback:
+> 
+>   UPROBE_HANDLER_IGNORE
+>   - Ignore 'ret_handler' callback for this consumer.
+> 
+> And store cookie and pass it to 'ret_handler' when consumer has both
+> 'handler' and 'ret_handler' callbacks defined.
+> 
+> We store shared data in the return_consumer object array as part of
+> the return_instance object. This way the handle_uretprobe_chain can
+> find related return_consumer and its shared data.
+> 
+> We also store entry handler return value, for cases when there are
+> multiple consumers on single uprobe and some of them are ignored and
+> some of them not, in which case the return probe gets installed and
+> we need to have a way to find out which consumer needs to be ignored.
+> 
+> The tricky part is when consumer is registered 'after' the uprobe
+> entry handler is hit. In such case this consumer's 'ret_handler' gets
+> executed as well, but it won't have the proper data pointer set,
+> so we can filter it out.
+> 
+> Suggested-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 > ---
->   drivers/nvmem/mtk-efuse.c | 1 +
->   1 file changed, 1 insertion(+)
+>  include/linux/uprobes.h |  21 +++++-
+>  kernel/events/uprobes.c | 148 +++++++++++++++++++++++++++++++---------
+>  2 files changed, 137 insertions(+), 32 deletions(-)
 > 
-> diff --git a/drivers/nvmem/mtk-efuse.c b/drivers/nvmem/mtk-efuse.c
-> index 9caf04667341..38d26e5c097a 100644
-> --- a/drivers/nvmem/mtk-efuse.c
-> +++ b/drivers/nvmem/mtk-efuse.c
-> @@ -112,6 +112,7 @@ static const struct mtk_efuse_pdata mtk_efuse_pdata = {
->   static const struct of_device_id mtk_efuse_of_match[] = {
->   	{ .compatible = "mediatek,mt8173-efuse", .data = &mtk_efuse_pdata },
->   	{ .compatible = "mediatek,mt8186-efuse", .data = &mtk_mt8186_efuse_pdata },
-> +	{ .compatible = "mediatek,mt8188-efuse", .data = &mtk_mt8186_efuse_pdata },
->   	{ .compatible = "mediatek,efuse", .data = &mtk_efuse_pdata },
->   	{/* sentinel */},
->   };
-
+> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> index bb265a632b91..dbaf04189548 100644
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -23,8 +23,17 @@ struct inode;
+>  struct notifier_block;
+>  struct page;
+>  
+> +/*
+> + * Allowed return values from uprobe consumer's handler callback
+> + * with following meaning:
+> + *
+> + * UPROBE_HANDLER_REMOVE
+> + * - Remove the uprobe breakpoint from current->mm.
+> + * UPROBE_HANDLER_IGNORE
+> + * - Ignore ret_handler callback for this consumer.
+> + */
+>  #define UPROBE_HANDLER_REMOVE		1
+> -#define UPROBE_HANDLER_MASK		1
+> +#define UPROBE_HANDLER_IGNORE		2
+>  
+>  #define MAX_URETPROBE_DEPTH		64
+>  
+> @@ -44,6 +53,8 @@ struct uprobe_consumer {
+>  	bool (*filter)(struct uprobe_consumer *self, struct mm_struct *mm);
+>  
+>  	struct list_head cons_node;
+> +
+> +	__u64 id;	/* set when uprobe_consumer is registered */
+>  };
+>  
+>  #ifdef CONFIG_UPROBES
+> @@ -83,14 +94,22 @@ struct uprobe_task {
+>  	unsigned int			depth;
+>  };
+>  
+> +struct return_consumer {
+> +	__u64	cookie;
+> +	__u64	id;
+> +};
+> +
+>  struct return_instance {
+>  	struct uprobe		*uprobe;
+>  	unsigned long		func;
+>  	unsigned long		stack;		/* stack pointer */
+>  	unsigned long		orig_ret_vaddr; /* original return address */
+>  	bool			chained;	/* true, if instance is nested */
+> +	int			consumers_cnt;
+>  
+>  	struct return_instance	*next;		/* keep as stack */
+> +
+> +	struct return_consumer	consumers[] __counted_by(consumers_cnt);
+>  };
+>  
+>  enum rp_check {
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 2ba93f8a31aa..76fe535c9b3c 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -65,7 +65,7 @@ struct uprobe {
+>  	struct rcu_head		rcu;
+>  	loff_t			offset;
+>  	loff_t			ref_ctr_offset;
+> -	unsigned long		flags;
+> +	unsigned long		flags;		/* "unsigned long" so bitops work */
+>  
+>  	/*
+>  	 * The generic code assumes that it has two members of unknown type
+> @@ -825,8 +825,11 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset,
+>  
+>  static void consumer_add(struct uprobe *uprobe, struct uprobe_consumer *uc)
+>  {
+> +	static atomic64_t id;
+> +
+>  	down_write(&uprobe->consumer_rwsem);
+>  	list_add_rcu(&uc->cons_node, &uprobe->consumers);
+> +	uc->id = (__u64) atomic64_inc_return(&id);
+>  	up_write(&uprobe->consumer_rwsem);
+>  }
+>  
+> @@ -1797,6 +1800,34 @@ static struct uprobe_task *get_utask(void)
+>  	return current->utask;
+>  }
+>  
+> +static size_t ri_size(int consumers_cnt)
+> +{
+> +	struct return_instance *ri;
+> +
+> +	return sizeof(*ri) + sizeof(ri->consumers[0]) * consumers_cnt;
+> +}
+> +
+> +#define DEF_CNT 4
+> +
+> +static struct return_instance *alloc_return_instance(void)
+> +{
+> +	struct return_instance *ri;
+> +
+> +	ri = kzalloc(ri_size(DEF_CNT), GFP_KERNEL);
+> +	if (!ri)
+> +		return ZERO_SIZE_PTR;
+> +
+> +	ri->consumers_cnt = DEF_CNT;
+> +	return ri;
+> +}
+> +
+> +static struct return_instance *dup_return_instance(struct return_instance *old)
+> +{
+> +	size_t size = ri_size(old->consumers_cnt);
+> +
+> +	return kmemdup(old, size, GFP_KERNEL);
+> +}
+> +
+>  static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+>  {
+>  	struct uprobe_task *n_utask;
+> @@ -1809,11 +1840,10 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+>  
+>  	p = &n_utask->return_instances;
+>  	for (o = o_utask->return_instances; o; o = o->next) {
+> -		n = kmalloc(sizeof(struct return_instance), GFP_KERNEL);
+> +		n = dup_return_instance(o);
+>  		if (!n)
+>  			return -ENOMEM;
+>  
+> -		*n = *o;
+>  		/*
+>  		 * uprobe's refcnt has to be positive at this point, kept by
+>  		 * utask->return_instances items; return_instances can't be
+> @@ -1906,39 +1936,35 @@ static void cleanup_return_instances(struct uprobe_task *utask, bool chained,
+>  	utask->return_instances = ri;
+>  }
+>  
+> -static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+> +static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs,
+> +			      struct return_instance *ri)
+>  {
+> -	struct return_instance *ri;
+>  	struct uprobe_task *utask;
+>  	unsigned long orig_ret_vaddr, trampoline_vaddr;
+>  	bool chained;
+>  
+>  	if (!get_xol_area())
+> -		return;
+> +		goto free;
+>  
+>  	utask = get_utask();
+>  	if (!utask)
+> -		return;
+> +		goto free;
+>  
+>  	if (utask->depth >= MAX_URETPROBE_DEPTH) {
+>  		printk_ratelimited(KERN_INFO "uprobe: omit uretprobe due to"
+>  				" nestedness limit pid/tgid=%d/%d\n",
+>  				current->pid, current->tgid);
+> -		return;
+> +		goto free;
+>  	}
+>  
+>  	/* we need to bump refcount to store uprobe in utask */
+>  	if (!try_get_uprobe(uprobe))
+> -		return;
+> -
+> -	ri = kmalloc(sizeof(struct return_instance), GFP_KERNEL);
+> -	if (!ri)
+> -		goto fail;
+> +		goto free;
+>  
+>  	trampoline_vaddr = uprobe_get_trampoline_vaddr();
+>  	orig_ret_vaddr = arch_uretprobe_hijack_return_addr(trampoline_vaddr, regs);
+>  	if (orig_ret_vaddr == -1)
+> -		goto fail;
+> +		goto put;
+>  
+>  	/* drop the entries invalidated by longjmp() */
+>  	chained = (orig_ret_vaddr == trampoline_vaddr);
+> @@ -1956,7 +1982,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+>  			 * attack from user-space.
+>  			 */
+>  			uprobe_warn(current, "handle tail call");
+> -			goto fail;
+> +			goto put;
+>  		}
+>  		orig_ret_vaddr = utask->return_instances->orig_ret_vaddr;
+>  	}
+> @@ -1971,9 +1997,10 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+>  	utask->return_instances = ri;
+>  
+>  	return;
+> -fail:
+> -	kfree(ri);
+> +put:
+>  	put_uprobe(uprobe);
+> +free:
+> +	kfree(ri);
+>  }
+>  
+>  /* Prepare to single-step probed instruction out of line. */
+> @@ -2125,35 +2152,91 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
+>  	return uprobe;
+>  }
+>  
+> +static struct return_instance*
+> +push_consumer(struct return_instance *ri, int idx, __u64 id, __u64 cookie)
+> +{
+> +	if (unlikely(ri == ZERO_SIZE_PTR))
+> +		return ri;
+> +
+> +	if (unlikely(idx >= ri->consumers_cnt)) {
+> +		struct return_instance *old_ri = ri;
+> +
+> +		ri->consumers_cnt += DEF_CNT;
+> +		ri = krealloc(old_ri, ri_size(old_ri->consumers_cnt), GFP_KERNEL);
+> +		if (!ri) {
+> +			kfree(old_ri);
+> +			return ZERO_SIZE_PTR;
+> +		}
+> +	}
+> +
+> +	ri->consumers[idx].id = id;
+> +	ri->consumers[idx].cookie = cookie;
+> +	return ri;
+> +}
+> +
+> +static struct return_consumer *
+> +return_consumer_find(struct return_instance *ri, int *iter, int id)
+> +{
+> +	struct return_consumer *ric;
+> +	int idx = *iter;
+> +
+> +	for (ric = &ri->consumers[idx]; idx < ri->consumers_cnt; idx++, ric++) {
+> +		if (ric->id == id) {
+> +			*iter = idx + 1;
+> +			return ric;
+> +		}
+> +	}
+> +	return NULL;
+> +}
+> +
+> +static bool ignore_ret_handler(int rc)
+> +{
+> +	return rc == UPROBE_HANDLER_REMOVE || rc == UPROBE_HANDLER_IGNORE;
+> +}
+> +
+>  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+>  {
+>  	struct uprobe_consumer *uc;
+> -	int remove = UPROBE_HANDLER_REMOVE;
+> -	bool need_prep = false; /* prepare return uprobe, when needed */
+> -	bool has_consumers = false;
+> +	bool has_consumers = false, remove = true;
+> +	struct return_instance *ri = NULL;
+> +	int push_idx = 0;
+>  
+>  	current->utask->auprobe = &uprobe->arch;
+>  
+>  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+>  				 srcu_read_lock_held(&uprobes_srcu)) {
+> +		bool session = uc->handler && uc->ret_handler;
+> +		__u64 cookie = 0;
+>  		int rc = 0;
+>  
+>  		if (uc->handler) {
+> -			rc = uc->handler(uc, regs, NULL);
+> -			WARN(rc & ~UPROBE_HANDLER_MASK,
+> +			rc = uc->handler(uc, regs, &cookie);
+> +			WARN(rc < 0 || rc > 2,
+>  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
+>  		}
+>  
+> -		if (uc->ret_handler)
+> -			need_prep = true;
+> -
+> -		remove &= rc;
+> +		remove &= rc == UPROBE_HANDLER_REMOVE;
+>  		has_consumers = true;
+> +
+> +		if (!uc->ret_handler || ignore_ret_handler(rc))
+> +			continue;
+> +
+> +		if (!ri)
+> +			ri = alloc_return_instance();
+> +
+> +		if (session)
+> +			ri = push_consumer(ri, push_idx++, uc->id, cookie);
+>  	}
+>  	current->utask->auprobe = NULL;
+>  
+> -	if (need_prep && !remove)
+> -		prepare_uretprobe(uprobe, regs); /* put bp at return */
+> +	if (!ZERO_OR_NULL_PTR(ri)) {
+> +		/*
+> +		 * The push_idx value has the final number of return consumers,
+> +		 * and ri->consumers_cnt has number of allocated consumers.
+> +		 */
+> +		ri->consumers_cnt = push_idx;
+> +		prepare_uretprobe(uprobe, regs, ri);
+> +	}
+>  
+>  	if (remove && has_consumers) {
+>  		down_read(&uprobe->register_rwsem);
+> @@ -2172,14 +2255,17 @@ static void
+>  handle_uretprobe_chain(struct return_instance *ri, struct pt_regs *regs)
+>  {
+>  	struct uprobe *uprobe = ri->uprobe;
+> +	struct return_consumer *ric;
+>  	struct uprobe_consumer *uc;
+> -	int srcu_idx;
+> +	int srcu_idx, ric_idx = 0;
+>  
+>  	srcu_idx = srcu_read_lock(&uprobes_srcu);
+>  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+>  				 srcu_read_lock_held(&uprobes_srcu)) {
+> -		if (uc->ret_handler)
+> -			uc->ret_handler(uc, ri->func, regs, NULL);
+> +		if (uc->ret_handler) {
+> +			ric = return_consumer_find(ri, &ric_idx, uc->id);
+> +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
+> +		}
+>  	}
+>  	srcu_read_unlock(&uprobes_srcu, srcu_idx);
+>  }
+> -- 
+> 2.46.1
+> 
 
 
