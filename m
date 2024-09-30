@@ -1,178 +1,223 @@
-Return-Path: <linux-kernel+bounces-344410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B00498A93B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7A298A93A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79E91F21999
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD713281EEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF60B1940B2;
-	Mon, 30 Sep 2024 15:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFEA193412;
+	Mon, 30 Sep 2024 15:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DnWkkvkK"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bjU1I9+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BD1194C86
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A071919047D;
+	Mon, 30 Sep 2024 15:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727711727; cv=none; b=MeCCFfP0QOMvrP0mnzFjNByMDtJRcOdIlPTtqoAuEWdjBwHxSdPrn7Y847D5eZWuPNhQRe7qaubeaHPOupZowCNdzueiEX485OVeF0kFL2hWbKScQTIHdNm2B70ZuuZDldvxGTSEu+Sr0gy3D4rM8HDLt2b9Qnmg38JsM3k9xhU=
+	t=1727711721; cv=none; b=Miy/ksDTnr65zTUkh0ARmYa+fEIS451Dl8Bt8gpq8NWpu5F8nDJymXwjXBAOs7Ajn8IyymrzS0MyMTbjrmsGFF22pbOmeqY1AhpalIbeq6kb3iTYhxtLBa8u+hZExDfdfE67KsYSOcVFveO3LqqM38FstxanHvlMiPOfbwcbG6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727711727; c=relaxed/simple;
-	bh=XtVyC1hr0DtWNi4Nuac6rbXEXeymJVGjtZRrIAKO+mY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=snINo8rcDwpUlJHU2poQfyUzwDUwhuJ3rqU7hybwFKIjkF1aefgPH1e12XSQuKdQ1Tw8uQ4eVHEwyyhEFcJcFB8JE5qokcTEtoRtLF4Ws7HJBWllQN6++qShOglYNgMihlFosDTSsAPN2HQLroZwkhz01umHAGb3WuYhTCBhBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DnWkkvkK; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb5b3c57eso41549735e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727711724; x=1728316524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XNK1EtvrtSuJZNw3V4pGuR2ZltFiSb+JZRUloyhSBAM=;
-        b=DnWkkvkKeeF3KOdLGbhymraX5pB1qJIFb4ExFL70aVD0ycuWWnBcJxiU2NUDWZJqIz
-         pO5Qa7fADTKnMuktCVxHn/ashZPUJHoC2cr20SShiuS+AGKMttCMj43QvRf5O4td17hE
-         4Y6gYUbjTQegpR1HDAcWrwhIBDBU68fA36LYEhEaEmemRvrGoGbG3+JqYzwEdqlF2E37
-         0QvEDw6RwZs2nxe7Gbcaf64Aorr6efdGeKuBrHmzczVMYiBElJRNkGhzRZwjeyZV4YQw
-         mQhe08n3kMZtI315tzk635vMngKQPfVsewfh4Yn3wScFptJuWlrJZ0WOQeig2TJWOZzv
-         RXWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727711724; x=1728316524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XNK1EtvrtSuJZNw3V4pGuR2ZltFiSb+JZRUloyhSBAM=;
-        b=efKHzpkwyC6dlOvmW8iG9MdV6BF0yr7W2qOH12A/1lzPr+ATrAghtYjBQJVuciyiIZ
-         LNSOcDso0g0Iz2KldSta5PKhkfSmequaE64g5b34NeYbhKvDHIKt9JdiWEa5cDN2t95Y
-         rmNZen2w4VreDBmAjHQ7dWIJhL8BqtbFF/uRyLS1viNd51+VUQ8NLlqRzRbm+rR1vJum
-         9m2nyV25YkhZNfRT4BujLi7BuClsw+4JJ0xfgXjzi+wnwUPmmvZAjnYGUipYa+tlr/+D
-         w8wPSViWyA+kcWVJagJZQnm+ikkWJYyNhNZVBEKcpUoMiQmV0LZ5XPIbUJ2r7AO8P2vJ
-         NOkA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4W5CR8uaxSd0rM3X3uPUwqQ94xJMl/74J7CnGiFZ6J15m8k1LdHIoVs8zXV/YnIcbluqNQU2QQUkSlx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDdv2lM1kY4HnIbj4hIsacXHbs4gWpD1KQFzmDHGa+yNowweZy
-	odcTR2KjJ7nAvPNn0lZfv7qbrxmDnpRHEp0nLAhO5/VcChqKvB0EM+UuT0QV9fCWHyQ5g9WmaDF
-	3AZsjPaKOtvJwag6O/49WP5N/L5MKOjdyLFhZ
-X-Google-Smtp-Source: AGHT+IFb7z0xdg6BY2AALOSh4J0RUQARy5JDY1gnkDZORwK5i5EF0tMyCsYhRRUNu3IzoyETf8svRp9h0k8sb7MnNRQ=
-X-Received: by 2002:a05:600c:3513:b0:42c:c4c8:7090 with SMTP id
- 5b1f17b1804b1-42f584335d8mr91991565e9.9.1727711723399; Mon, 30 Sep 2024
- 08:55:23 -0700 (PDT)
+	s=arc-20240116; t=1727711721; c=relaxed/simple;
+	bh=mGAviq9lJYc+MOYHPo9IYVaqS8V8iDe5erw2ZUSak64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xtq47mFUJZMQbPAoa6zu0IqfK79wwqOlQVGdUjVzjfb6NwXkrJO8vggLqepx+GZft4AGFgUSdbENp3JHpgrYEAMLrup/b1NiuVRIDCPl6gNNJDDeEDeXEnE4eT2edsFZVtBVuGi9VthLNK59suad5ufjK8Kx0mnaM+omciQ8/So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bjU1I9+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193D2C4CECF;
+	Mon, 30 Sep 2024 15:55:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727711721;
+	bh=mGAviq9lJYc+MOYHPo9IYVaqS8V8iDe5erw2ZUSak64=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bjU1I9+imGGtceFBhpenmYqvQS2L/9hPWauneuIJgQfsnjOjtkwUVyTFZKXfG+4iU
+	 RioNMEoAhqTahTr0r+L6IvxycMaMdOcCitg+luYAlB6KHd76i4UWKCyTy/AhxSW7xk
+	 PX2oFrNmRDfr43HjN+4UpNQmqWeTlzGiH+N9zDuitT55fEWIIcvATPwISM1hk6MOKk
+	 rbFnf1g9fbY8njk18tvGTmGdSOm8dwdq4DRpnU784KOftV5LJVvogXe5qDkXvQNGHF
+	 3KxVKlddILW5JQwPiVIGdsVOdwmBh1C5RVsOWUKu94+0pOjEYvG13wxqxDh21Lil2m
+	 my2ISbfCA80nQ==
+Date: Mon, 30 Sep 2024 08:55:20 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, martin.petersen@oracle.com,
+	catherine.hoang@oracle.com, mcgrof@kernel.org,
+	ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v6 3/7] fs: iomap: Atomic write support
+Message-ID: <20240930155520.GM21853@frogsfrogsfrogs>
+References: <20240930125438.2501050-1-john.g.garry@oracle.com>
+ <20240930125438.2501050-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930144328.51098-1-trintaeoitogc@gmail.com>
- <20240930144328.51098-2-trintaeoitogc@gmail.com> <2024093044-violator-voice-8d97@gregkh>
- <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
-In-Reply-To: <CAM_RzfbJ5qsHKfNxV1EzhYEDdCmXP0THH=g1MX1yHiRP=9tYFA@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 30 Sep 2024 17:55:10 +0200
-Message-ID: <CAH5fLgjMGwBNYkOEbiSLzQ5+G0gTz+gbvsRSoRsRizAETLpLeQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] rust: device: rename "Device::from_raw()"
-To: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, rafael@kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, mcgrof@kernel.org, 
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930125438.2501050-4-john.g.garry@oracle.com>
 
-On Mon, Sep 30, 2024 at 4:58=E2=80=AFPM Guilherme Gi=C3=A1como Sim=C3=B5es
-<trintaeoitogc@gmail.com> wrote:
->
-> Greg KH <gregkh@linuxfoundation.org> writes:
-> >
-> > On Mon, Sep 30, 2024 at 11:43:27AM -0300, Guilherme Giacomo Simoes wrot=
-e:
-> > > This function increments the refcount by a call to
-> > > "bindings::get_device(ptr)". This can be confused because, the functi=
-on
-> > > Arch::from_raw() from standard library, don't increments the refcount=
-.
-> > > Hence, rename "Device::from_raw()" to avoid confusion with other
-> > > "from_raw" semantics.
-> > >
-> > > Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-> > > ---
-> > >  rust/kernel/device.rs   | 2 +-
-> > >  rust/kernel/firmware.rs | 2 +-
-> > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > >
-> >
-> > Hi,
-> >
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent hi=
-m
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> >
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> >
-> > - This looks like a new version of a previously submitted patch, but yo=
-u
-> >   did not list below the --- line any changes from the previous version=
-.
-> >   Please read the section entitled "The canonical patch format" in the
-> >   kernel file, Documentation/process/submitting-patches.rst for what
-> >   needs to be done here to properly describe this.
-> >
-> > If you wish to discuss this problem further, or you have questions abou=
-t
-> > how to resolve this issue, please feel free to respond to this email an=
-d
-> > Greg will reply once he has dug out from the pending patches received
-> > from other developers.
-> >
-> > thanks,
-> >
-> > greg k-h's patch email bot
->
-> Yeah, I was think that only in 0/1 I should explain the changes ..
-> I'm was wrong.   I'll put the changelog in 1/1 too.
+On Mon, Sep 30, 2024 at 12:54:34PM +0000, John Garry wrote:
+> Support direct I/O atomic writes by producing a single bio with REQ_ATOMIC
+> flag set.
+> 
+> Initially FSes (XFS) should only support writing a single FS block
+> atomically.
+> 
+> As with any atomic write, we should produce a single bio which covers the
+> complete write length.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+> Maybe we should also enforce that a mapping is in written state, as it
+> avoids issues later with forcealign and writing mappings which cover
+> multiple extents in different written/unwritten state.
+> 
+>  fs/iomap/direct-io.c  | 26 +++++++++++++++++++++++---
+>  fs/iomap/trace.h      |  3 ++-
+>  include/linux/iomap.h |  1 +
+>  3 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index f637aa0706a3..9401c05cd2c0 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua)
+> +		const struct iomap *iomap, bool use_fua, bool atomic)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,6 +283,8 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> +	if (atomic)
+> +		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+>  }
+> @@ -293,7 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> -	loff_t length = iomap_length(iter);
+> +	const loff_t length = iomap_length(iter);
+> +	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -303,6 +306,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> +	if (atomic && (length != fs_block_size))
+> +		return -EINVAL;
+> +
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+>  	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+>  		return -EINVAL;
+> @@ -382,7 +388,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	 * can set up the page vector appropriately for a ZONE_APPEND
+>  	 * operation.
+>  	 */
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua);
+> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+>  
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+> @@ -415,6 +421,17 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> +		if (atomic && n != length) {
+> +			/*
+> +			 * This bio should have covered the complete length,
+> +			 * which it doesn't, so error. We may need to zero out
+> +			 * the tail (complete FS block), similar to when
+> +			 * bio_iov_iter_get_pages() returns an error, above.
+> +			 */
+> +			ret = -EINVAL;
+> +			bio_put(bio);
+> +			goto zero_tail;
+> +		}
+>  		if (dio->flags & IOMAP_DIO_WRITE) {
+>  			task_io_account_write(n);
+>  		} else {
+> @@ -598,6 +615,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> +	if (iocb->ki_flags & IOCB_ATOMIC)
+> +		iomi.flags |= IOMAP_ATOMIC;
+> +
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 0a991c4ce87d..4118a42cdab0 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -98,7 +98,8 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_REPORT,		"REPORT" }, \
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+> -	{ IOMAP_NOWAIT,		"NOWAIT" }
+> +	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> +	{ IOMAP_ATOMIC,		"ATOMIC" }
+>  
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 4ad12a3c8bae..c7644bdcfca3 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -178,6 +178,7 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> +#define IOMAP_ATOMIC		(1 << 9)
 
-You can use one of my patches as an example. E.g.:
-https://lore.kernel.org/all/20240930-static-mutex-v4-1-c59555413127@google.=
-com/
+This new flag needs a documentation update.  What do you think of this?
 
-Here, the commit message itself has:
-1. Motivation for why we should add global lock support. (To replace a
-hack I had to use in the Binder driver.)
-2. Explanation for why I implemented it in a certain way. (Why
-separate initialization step?)
+diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+index 8e6c721d23301..279db993be7fa 100644
+--- a/Documentation/filesystems/iomap/operations.rst
++++ b/Documentation/filesystems/iomap/operations.rst
+@@ -513,6 +513,16 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+    if the mapping is unwritten and the filesystem cannot handle zeroing
+    the unaligned regions without exposing stale contents.
+ 
++ * ``IOMAP_ATOMIC``: This write must be persisted in its entirety or
++   not at all.
++   The write must not be split into multiple I/O requests.
++   The file range to write must be aligned to satisfy the requirements
++   of both the filesystem and the underlying block device's atomic
++   commit capabilities.
++   If filesystem metadata updates are required (e.g. unwritten extent
++   conversion or copy on write), all updates for the entire file range
++   must be committed atomically as well.
++
+ Callers commonly hold ``i_rwsem`` in shared or exclusive mode before
+ calling this function.
+ 
+--D
 
-Then, below the --- line and not part of the commit message, I have:
-1. Information about which patches it depends on.
-2. A changelog and links to previous versions.
-
-Anything below the --- line will not be part of the commit history
-when your change is merged. So you should think about what people
-would want to see when they look at your patch in the commit history.
-They care about why the change was made, and why it was implemented
-that way. What other things need to be merged first are not relevant
-to people who see the final version after it has been merged.
-
-Similarly, the changelog is important for reviewers so they can
-compare with the previous version, but for people who just see the
-final version, they don't care about which bugs you had in previous
-versions of the patch. Of course, if you change the implementation
-approach, then they might care about why you chose that approach over
-some other approach, but that explanation should be in the commit
-message (and the changelog should just say you changed the approach).
-
-Alice
+>  
+>  struct iomap_ops {
+>  	/*
+> -- 
+> 2.31.1
+> 
+> 
 
