@@ -1,154 +1,129 @@
-Return-Path: <linux-kernel+bounces-343711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F955989E99
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:38:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA8A989E97
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BAC21F213BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03761C20FF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC79189520;
-	Mon, 30 Sep 2024 09:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55C318A6B9;
+	Mon, 30 Sep 2024 09:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fUe0vnYA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OE6WleaI"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZPvIDbUC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B7C188734;
-	Mon, 30 Sep 2024 09:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8541898EA;
+	Mon, 30 Sep 2024 09:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727689116; cv=none; b=ZkgGfnm8RfBuZf/Ad1VIf3Os0MOsa6Fq3XBcBmRBZp3y9O2u8BYwJECCQ2lB4pvErfxRPZ2vBv4YOConCjw/7cARiG2WaeJp/SVxYN5oCTm8IdLsUS7TieEVCZoMu7pMlSanFuxBz98emsPqnwuOb9kfFbSgrGCAR+lqWGFSmM0=
+	t=1727689105; cv=none; b=oaQLyyupk2Q1+mFPJ4TeEt/dYPs6IuwcKnCeRlbk1L/U3XmZDNg2bMT9V8807rWJjVBEGa1swIUfqzWQVd5SzkWj1ToT0w9wtkoKuFbyUg1egc8brUE7oibGQARQqyo33BMTkzcOAiMkT7HfDFzCblEbsYAUcuNUtw11AylUr6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727689116; c=relaxed/simple;
-	bh=AjjCBDd0nsipeu208WcIdXj8TEg91EpXaEoTrHSRxPg=;
-	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=W4l3u0b27fn6pmdY5Cn12ONdf3qjKh0yfk4lDrYSNC54NeEwBFcbHJ8PF5D2puChk6UPUQ1R5L/meGeR0JDMc94XdLs4lQhA58Ara49Drp6ISWsXmMGpCC00wXgbq/vgqpVF7R0X9rv0senFLrqfxF62cLUnmbECwx2r/n4F7eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fUe0vnYA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OE6WleaI; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 6DA971140234;
-	Mon, 30 Sep 2024 05:38:33 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 30 Sep 2024 05:38:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:content-transfer-encoding:content-type:content-type:date:date
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1727689113;
-	 x=1727775513; bh=0pZwVNr1lAKNsIqugDiiFsNfmcaJup7h9klMs9lcUZ8=; b=
-	fUe0vnYAhQAVX7ZNTsyJ0LiJqUjgrnkHcVkAgQJY61z1h8fCgOdXHwrzeRec5xr0
-	b+1wxwhcjUeyjUY5Xjc4JspDyd0NjaxzlcZoTVawAbmhGc+9iSsUTHZA6XzHNlWe
-	YrM527UYYuyE9tXb5eOkZj64HycUvh1Xdpla9CVFc/HOE43Oc9WIlxs8s6bRL9id
-	bke5jD9PZuxkW3j58m7uG95lMb/WxfKqAA54QkB3fm7YcnE7cLp8KxU79IfK3gNg
-	RBS8gMV0JwsgegazIsJFWuC6XNYpxiUGL/vYpnBU49Ys4kFhV9/8+6m6GmV7gEci
-	sLLJ9s2ZrPd7SS3PPhR94Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1727689113; x=
-	1727775513; bh=0pZwVNr1lAKNsIqugDiiFsNfmcaJup7h9klMs9lcUZ8=; b=O
-	E6WleaIJgBqwfkjwV+6/vVUBwh7werM+AQ1gW2m40RYwJyCSEuXz05nUR3i9Q3MZ
-	EEczDZN3dmVoRKhgyYHFLtFhk4QWR8migVDXIBkFZJQmAHI8K5efV6pNQN84tjE5
-	Rs3cN7bw2KkKxj7PYFp2vvbx8F+xMe+Wr89MiiDnHazsgCiwQoMGA6nIL4yivIQ/
-	iSp/8bQt4d+Nevk1OXfsUGnG0Jug9NS+8rKx0j2e6jD5vTbLib/Jtj9n5mbqe/aL
-	gV0CR73Y6DZ48J0kkD8kdY1c2FV+iYhNSNXFVs+8neZTIS1raS1rzDXNOuLtzLsb
-	xVpWX7dvUF/JQc8UHI2Mw==
-X-ME-Sender: <xms:l3H6Zlpna80A-aKemYDNwdcd2e4ZLSMjLsRNi64f_TbfN1x0bYgzzQ>
-    <xme:l3H6Znr5g5BNjNUhj8kZ-2fuq6AZyuuIUH9Oh6qs64BSOtB0ETbODok8tIk1ljv31
-    PquAlfYgzvhuW-amZ8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduhedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvffkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpefhkeeltdfffefhgffhteetheeuhffgteeghfdtueef
-    udeuleetgfehtdejieffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhofihinhgthhgvnhhmihesghhmrg
-    hilhdrtghomhdprhgtphhtthhopeifihhmsehlihhnuhigqdifrghttghhughoghdrohhr
-    ghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfh
-    hrrgguvggrugdrohhrghdprhgtphhtthhopegrshgrhhhisehlihhsthhsrdhlihhnuhig
-    rdguvghvpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshhtpdhrtghpthhtoh
-    eplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpthhtoheprghlhihsshgrsehr
-    ohhsvghniiifvghighdrihhopdhrtghpthhtohepshhvvghnsehsvhgvnhhpvghtvghrrd
-    guvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:mHH6ZiMtLdqnPrQxJ7N8hs5M2UJv2rqES9sZHNrpAUJY51VSRpGhQg>
-    <xmx:mHH6Zg4W8bZpFUssjQgmUA3sCCR3lb5Ox7kWFnLi2Wi21A_3p5jNMQ>
-    <xmx:mHH6Zk68ojMiiGCi1YTrvJmjiOFrVBXnw3AjDnBwfKpKHNgh2MLp5A>
-    <xmx:mHH6ZojdRu7BOFJ1iw9wsNTktLKoj4X-iaMx6y9Yl5A6Mh-8RwwyWw>
-    <xmx:mXH6ZlHWz7A46fVRwwW6BU2rXaXuOtfZfNaoZRdEV51xPwSR5u61xSvv>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D9D9C2220072; Mon, 30 Sep 2024 05:38:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1727689105; c=relaxed/simple;
+	bh=30jQ/dJisRhLGwyg+rYwjG/FnRoF2YgwaCn/M78cOaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W4HIfeYwuKtzHmlC7XQr/OswMHs9M2pOJg/TL0OFGxmrC1S/y5d3HpOPECgbENgViFqztk/P7e6YGtBMHqnTQ4zl1Bwx21FKkuZfNaaexypA4hTjK+bgYdvn+Qhd4MQOEWtJ4q8R7J4hnJnr16E8yQGM/RpzC5K7pkIaYNe0e+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZPvIDbUC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U0en1H006167;
+	Mon, 30 Sep 2024 09:38:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MaBnQW5Nyhj6nkEK3+o7NmZQzP88S3q+sk+cYabsaOE=; b=ZPvIDbUCQTz/9a02
+	O1qQN6E/j4jLnjNK/0wsJMiMm/9mar0vMUPYNOP57aFL/PfdGzzR6k+uzwuMAEyX
+	nmBVZjJ+7nUIzOHuvvXd03f8QVrtuIG4BjZEI0CGEJYfxy49fwPRcKm33oQJ60n7
+	q0zePQJ0OyPJawq7ehQcGKZQ1qMNSHOO57nburDdRDb9x2dSkR0XV+SOQ1Ua8fRd
+	FjsU1cYfJclYXdUxhZO9ThFiNiNVeOpYWA7KA5RYYa3s3FgFBif/YIcgGheL797B
+	rEekUIPAj3A+czyFeBrUmtC+EEuMRrd0IoFJ95g+RvZ7IkNgcyfsJFXyBJmD5ynr
+	SrEEOQ==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xa67489e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 09:38:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48U9cHTQ003038
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 30 Sep 2024 09:38:17 GMT
+Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 30 Sep
+ 2024 02:38:11 -0700
+Message-ID: <689649de-0969-43ae-a48f-4efcde6a9d96@quicinc.com>
+Date: Mon, 30 Sep 2024 17:38:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 30 Sep 2024 09:37:53 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nick Chan" <towinchenmi@gmail.com>, "Hector Martin" <marcan@marcan.st>,
- "Sven Peter" <sven@svenpeter.dev>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>,
- "Guenter Roeck" <linux@roeck-us.net>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <6775f288-9278-412e-957b-b341b1a75ae8@app.fastmail.com>
-In-Reply-To: <20240930060653.4024-1-towinchenmi@gmail.com>
-References: <20240930060653.4024-1-towinchenmi@gmail.com>
-Subject: Re: [PATCH RESEND] watchdog: apple: Increase reset delay to 150ms
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/13] media: qcom: camss: Add CSID Gen3 support for
+ sm8550
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-13-quic_depengs@quicinc.com>
+ <83b46dcc-c69e-430b-946e-ce9d299a27c8@linaro.org>
+Content-Language: en-US
+From: Depeng Shao <quic_depengs@quicinc.com>
+In-Reply-To: <83b46dcc-c69e-430b-946e-ce9d299a27c8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QOxc0whiX2pP2QkjDEl0ehoTUkSsG9az
+X-Proofpoint-ORIG-GUID: QOxc0whiX2pP2QkjDEl0ehoTUkSsG9az
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 malwarescore=0 mlxscore=0
+ priorityscore=1501 bulkscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409300069
 
-On Mon, Sep 30, 2024, at 06:06, Nick Chan wrote:
-> The Apple A8X SoC seems to be slowest at resetting, taking up to around
-> 125ms to reset. Wait 150ms to be safe here.
->
-> Reviewed-by: Sven Peter <sven@svenpeter.dev>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  drivers/watchdog/apple_wdt.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
-> index d4f739932f0b..353ecf0b04dc 100644
-> --- a/drivers/watchdog/apple_wdt.c
-> +++ b/drivers/watchdog/apple_wdt.c
-> @@ -127,11 +127,11 @@ static int apple_wdt_restart(struct 
-> watchdog_device *wdd, unsigned long mode,
->  	/*
->  	 * Flush writes and then wait for the SoC to reset. Even though the
->  	 * reset is queued almost immediately experiments have shown that it
-> -	 * can take up to ~20-25ms until the SoC is actually reset. Just wait
-> -	 * 50ms here to be safe.
-> +	 * can take up to ~120-125ms until the SoC is actually reset. Just
-> +	 * wait 150ms here to be safe.
->  	 */
->  	(void)readl_relaxed(wdt->regs + APPLE_WDT_WD1_CUR_TIME);
-> -	mdelay(50);
-> +	mdelay(150);
+Hi Vladimir,
 
-I think you also need to insert a barrier before the mdelay(),
-or turn the readl_relaxed() into a readl(), it will otherwise
-be bypassed by the delay.
+On 9/30/2024 5:23 PM, Vladimir Zapolskiy wrote:
 
-The comment is a bit confusing here as it suggests that the
-MMIO read is meant to serialize between the restart and the
-mdelay(), but the _relaxed() annotation on the readl()
-explicitly skips that serialization, so one of the two is
-wrong here.
+>> @@ -1049,7 +1050,10 @@ static int csid_set_test_pattern(struct 
+>> csid_device *csid, s32 value)
+>>       tg->enabled = !!value;
+>> -    return csid->res->hw_ops->configure_testgen_pattern(csid, value);
+>> +    if (hw_ops->configure_testgen_pattern)
+>> +        return -EOPNOTSUPP;
+>> +    else
+>> +        return hw_ops->configure_testgen_pattern(csid, value);
+>>   }
+>>   /*
+> 
+> Here you accedentally break the TPG on all platforms and introduce a NULL
+> pointer dereference, please fix it.
+> 
+> Any generic/non-sm8550 support related changes like the part of this
+> one shall be split into a stand-alone generic change aside of the added
+> SM8550 platform support, it will simplify patch reviews and hunting bugs
+> like the one above.
+> 
 
-       Arnd
+Thanks for catching this. This is indeed a bug which is introduced by 
+this patch. And I will follow your suggestion to use a stand-alone 
+generic change for the TPG part.
+
+Thanks,
+Depeng
 
