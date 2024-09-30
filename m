@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-344951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D236698B080
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:50:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E6698B085
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E8E21F21B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20DB8283ABC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61D71A2555;
-	Mon, 30 Sep 2024 22:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AF6189525;
+	Mon, 30 Sep 2024 22:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nV/n1isp"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pvm5oWhw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD565199250;
-	Mon, 30 Sep 2024 22:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E18C188A3E;
+	Mon, 30 Sep 2024 22:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727736568; cv=none; b=VKKtwlt+/ER12MZPpINDOANN0sbR3BnXvXw5AOWfdQZZ9i6tfE1HgmymVcQJ39GFwQXpTGv0AzRLCWkXk54h6NgjO5PoqVmc3KdYCYuts8sucCggMXilySlSH4l5kzPAuC8kgUclpO6rPSQwuVtV4wp9cZZbfQBG9ag2AGSSV7M=
+	t=1727736586; cv=none; b=hPdWOYDbEytJYC8OE7E2imyUyu/13Cwen0aZBik2N8C48JTiXWcNDiWPStJBLEY/1i4w2DgQSBzY4U51HPfuTuYY1RSPD2glYvnDBLkHXFV/z9fOq0BY1iut60kY3qgrozcdkXaN9txxJJWzLm/YJZ/E9dz9VOpAbnq/EwLJv7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727736568; c=relaxed/simple;
-	bh=Gq0meupMf4uNZynkIrN+2DXwDY4YMP79KPdl4VGKl7Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=keHqxyrrlZi9WI4ktRp6OLe3L239uH1YMRlE9ePmSpoR8z6UUik53pcYkjXTe7mPueXK9mFgalqrhNxlpyVRVTaNQWBzGhXLVQPQVzS3UORDKI/C788lNI89IyOSL1558OoQ1PKeCZW+yKiaS/oV7g4ZS0bHt0N9z1aHOkzWEhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nV/n1isp; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7198de684a7so3373203b3a.2;
-        Mon, 30 Sep 2024 15:49:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727736566; x=1728341366; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n+VM5TZSFztMjLb3KAfFJRsMesVIdyYR2yr/sMtsQkw=;
-        b=nV/n1ispH4SQ1Gomn/sodYQ5cNtz/IhRyYoe8yW/iIaZXHxl6UWJYg3PWiYPCdfznB
-         nR+yQg+uSE0ZwYuuV/B3oOzyPLBYpW4NiP7sDJ1MiaReAF1E9bMQ6d/Vtxchfx5Q9rjM
-         xaAO+JvGOzcETxXfI834bnLIstGTBB9NmmdmATuHJGh7ksvGCeVSC/o3pNbIuZvgF3zH
-         cPgmSxWWTNrjKLQhqsPJ2pLaWnsEY3S+5VrHVTQWOvpOPsp5Tvf/3GT1SLPYJ6HeyPcs
-         +SSMpvjIM4kKaXxQfrTKXZnp5/de1yodaVEtpmAZkGsCk4VTQCFppI+em+F7brzHtG6x
-         zihg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727736566; x=1728341366;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n+VM5TZSFztMjLb3KAfFJRsMesVIdyYR2yr/sMtsQkw=;
-        b=L6ElCdHz2xXd2RAxrcuDWa96mbT8dPewZnGZrWT2hbypoULeqLi6g32oMxDfvfnBNj
-         gfngAna2Cq1yPfnf8ep1RXg2KYm/OLaEI+r8Fnjlheve55xwF5GEMheHAp6mqcQugvL/
-         UyvlOScbyyx12lfWZAUlB1QItdOSTrO7ddzFC5Qw1Sj7m6NWG3DvzGPQkbeRiyfURooP
-         so2qnvgj0lN0lyL9ofx6DZRxiYqdyGk2lLsRjMJlA6q77iWaqX2iMyuOErgU2Iz+Pc/v
-         eOzdA3CTwGC478Munanq/3LUfhphBDAQrLBJOoMkAcI9eyKudT1977rchx7feMj0AVjn
-         RXFw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9KRlHOXFgFzjehJfyjedfPvLWrB0xbNW1lClqKt0yVu4W4P/CApQwISjFQEnI1TBXaDFARxU7l2Dd/So=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxITHNkyxUZINOCI/4TqSrboAu9ZE7VlgHGXZZS7KqSJpK8IbUN
-	RcAKwy2MSvyJTTA4kyu8RzdkYOnLxEgZnxtZxGFMRzP8wgIBneQAxphwWGoS
-X-Google-Smtp-Source: AGHT+IHB+v9R3OPGcEtIwwUWx+aIIBEO/ORAGhDYlWynhw4/iVHFD/CvPXAdYHoa+7TwSGXOYGMmSQ==
-X-Received: by 2002:a05:6300:4041:b0:1cf:3a0a:ae45 with SMTP id adf61e73a8af0-1d4fa7ae36emr22105311637.35.1727736566076;
-        Mon, 30 Sep 2024 15:49:26 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b391bsm7029528a12.22.2024.09.30.15.49.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 15:49:25 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-mmc@vger.kernel.org
-Cc: Chaotian Jing <chaotian.jing@mediatek.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCH 3/3] mmc: mtk-sd: fix devm_clk_get_optional usage
-Date: Mon, 30 Sep 2024 15:49:19 -0700
-Message-ID: <20240930224919.355359-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930224919.355359-1-rosenp@gmail.com>
-References: <20240930224919.355359-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727736586; c=relaxed/simple;
+	bh=zPoLRt30bJVlKVAVXOnZ6LB2fb7tqlZvHqVSPN3qN5c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxcN8NUfF4HW+d/t1h+wOpXHeLclB1V6gz6+qJ3D4dqDbWtVAy5CJFhHTrbhX/jK59tjefeWMOIIPeUDwuWCz1sqsbhdBCIHXndbc1L/dXmdjc0NvE1ru7HPe4Z9qiXg57vaChSzpUjTKWEmITCrj+rGvwP76N2at0VESWCdImI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pvm5oWhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35696C4CEC7;
+	Mon, 30 Sep 2024 22:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727736585;
+	bh=zPoLRt30bJVlKVAVXOnZ6LB2fb7tqlZvHqVSPN3qN5c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pvm5oWhwhPBJ9hBKrGu8RZermgl7Exe0AntaSLL131DwlrBb+LoCYsW4wBuq93RlJ
+	 0TtbJ1S/I4hXSV6nbGAZFv2/48JahA/DaAiiDqJ33FTurG8DBtXzqk70f/i1MBh0f8
+	 AGB4oiTjRxI6kS/t4czj++14/PuAdB5wPyQzkbw1lV0GZ7dUvmN/S2X2rv3QgC1JUb
+	 jEmXRQAk+kCDu5/pIp+mUuXjdX1rNGk7hElIHm85aConWIF0bZuLY5RYedv855xwer
+	 bJO44JjAvsLFTCnBYXiIewsDpU/AHDmbJ4LkNyMKSwu/2+EeF9GIwhx9w3+zaV84Kb
+	 txw4AP6ZMD4pw==
+Date: Mon, 30 Sep 2024 15:49:42 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	David Li <davidxl@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	John Moon <john@jmoon.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Rafael Aquini <aquini@redhat.com>, Petr Pavlu <petr.pavlu@suse.com>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Breno Leitao <leitao@debian.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>, Juergen Gross <jgross@suse.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Kees Cook <kees@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Xiao Wang <xiao.w.wang@intel.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 6/6] Add Propeller configuration for kernel build.
+Message-ID: <20240930224942.puecrr63o6q2pe3o@treble>
+References: <20240728203001.2551083-1-xur@google.com>
+ <20240728203001.2551083-7-xur@google.com>
+ <CAK7LNAQ0Z38a1Nt=_XKT3i-UpauiO9RaZAye6LXGCFzvg2R8Bg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQ0Z38a1Nt=_XKT3i-UpauiO9RaZAye6LXGCFzvg2R8Bg@mail.gmail.com>
 
-This already returns NULL when not found. However, it can return
-EPROBE_DEFER and should thus return here.
+On Sun, Sep 29, 2024 at 08:08:43PM +0900, Masahiro Yamada wrote:
+> > +++ b/Makefile
+> > @@ -1025,6 +1025,7 @@ include-$(CONFIG_KCOV)            += scripts/Makefile.kcov
+> >  include-$(CONFIG_RANDSTRUCT)   += scripts/Makefile.randstruct
+> >  include-$(CONFIG_GCC_PLUGINS)  += scripts/Makefile.gcc-plugins
+> >  include-$(CONFIG_AUTOFDO_CLANG)        += scripts/Makefile.autofdo
+> > +include-$(CONFIG_PROPELLER_CLANG)      += scripts/Makefile.propeller
+> 
+> 
+> 
+> Please do not ignore this comment:
+> 
+> https://github.com/torvalds/linux/blob/v6.11/Makefile#L1016
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/mmc/host/mtk-sd.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+That comment is well hidden, it really belongs right before the
+gcc-plugins line.
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 4be13b9c2d71..b02cbae96e89 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -2769,9 +2769,8 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	if (!(mmc->caps2 & MMC_CAP2_NO_MMC)) {
- 		host->crypto_clk = devm_clk_get_optional(&pdev->dev, "crypto");
- 		if (IS_ERR(host->crypto_clk))
--			host->crypto_clk = NULL;
--		else
--			mmc->caps2 |= MMC_CAP2_CRYPTO;
-+			return PTR_ERR(host->crypto_clk);
-+		mmc->caps2 |= MMC_CAP2_CRYPTO;
- 	}
- 
- 	host->irq = platform_get_irq(pdev, 0);
 -- 
-2.46.2
-
+Josh
 
