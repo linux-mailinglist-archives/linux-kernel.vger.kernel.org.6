@@ -1,134 +1,135 @@
-Return-Path: <linux-kernel+bounces-344674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95AB98AC96
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:15:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8616D98AC97
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1678B1C2031E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:15:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279AA1F210B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192F819992C;
-	Mon, 30 Sep 2024 19:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ABB11F947;
+	Mon, 30 Sep 2024 19:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jqWvpOiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsTsPjyG"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75998194C92;
-	Mon, 30 Sep 2024 19:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FF5199EA6
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723695; cv=none; b=nmm8w0i7UeNIo/OOo5sMVgsftoIVOyh9qs/Ec4E39fde7iTcaMMy/hCN6ys/el2adFuyNDK5hohgGZyydvjDm3Yx9ecYQQrOmUMBbvTnsvnK0a9Bv3P0iWvw3o9ZErM/zuCRBYG54iBEIOWIc6MsaEQ9PZfHlIyV/wQhkvHJF1I=
+	t=1727723704; cv=none; b=o3JI8UtdurZ0gjcQKyqrREk8P3G0m179QgjHxKtx4AIPTCdWeqlyJAsqpfeSUtBzFLxt9meQ2v5/Tb66nO1zdJHR0WyP5GGLhx6PJo05Fi5bh/+RS3bE38nLs4W+e+xouEYshbmTI2S56fZBSxdcbqLNT6GGwm4uefo1fH1A6to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723695; c=relaxed/simple;
-	bh=yPPWd8LSLMPsco9pid8gUD9uR0sV8t8Iz+vJoaDxXpQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AQ2oWkCC5DUBZlDyUq2tEmlti8zZ09eWgcr7dvPiGBSo5qZg4JUmVjLTD+gJ602/wkk8e57xExphFgBgbvRTcNEfH/d6BbzwiS1lPKtNycgixfYbMaBwTZw/XLP0HYrhCiwIUGEE8CnLPKJDWwQ/unmBveZd9letIQPDcYdKS/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jqWvpOiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03108C4CEC7;
-	Mon, 30 Sep 2024 19:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727723695;
-	bh=yPPWd8LSLMPsco9pid8gUD9uR0sV8t8Iz+vJoaDxXpQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jqWvpOiLHHYA8d2epXFWjWXbZbJZV40SDaFwKv+tRZjpZNJlkX7BdQNdlbQGxUtK+
-	 1+Cye02uzLaVUM38omXZqQQo6QzqdTKoKwTFI0+YhnVoO0c7NKMDPoYAwGoEIY5frg
-	 RY7KrbmuZMjYg3JJqcVPOY3rM2zPdqM61xvPNEPuIvEMmiXjIxpm4Yp9xdB2UdlAOj
-	 DJlJNCFrRxhNH8cqFJWZaAKRRZM0R7K3SY3JSP0NHa07yBs0nt93s+owvnCe4WmYqH
-	 TMN2TBk0M7AVu3fM72tojiGZKf+Z5vEu61d1Esic8jn8pBY0MJCq+k/LMUJqL8otGi
-	 dOEiQy6STUyYQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1svLrA-00GXWp-SB;
-	Mon, 30 Sep 2024 20:14:52 +0100
-Date: Mon, 30 Sep 2024 20:14:52 +0100
-Message-ID: <86frph6jir.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-	Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	"linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
-In-Reply-To: <TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
-	<87ldz9uomz.wl-maz@kernel.org>
-	<TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1727723704; c=relaxed/simple;
+	bh=UEF2Fwjpx5P37OsRngoBdF6N/EpKrrdBSykNEd4BzCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ToyBec8oeLd68Ketl69p9y/raytDVxaYpCTaK3EUNQADQ0eSkYo4WHMhk134bprleO+DZKKD00WCVro8/t3c1bfWSVpaRbeGtK6N8Oe3nmPIBTHcn2bP6apCevcukQALIMp5pyUZzSPXVK6TWQcBVNm3DTCQWyY47PRyRoszsQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsTsPjyG; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-82ceab75c27so294019839f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:15:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727723702; x=1728328502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6DVqxGfSg8iHnTTZ+Ngu7bvZYhFVLN+hPZgrG3l79BI=;
+        b=RsTsPjyGtiJ5mJin0eJSCf8TmFuprRlYItaIaeBHiRX8KE8Hfba72pLyJuE/LTLPtd
+         Fnqq5puVHYmi2MXJLigLvZUkjwlafQR8tjmdKB0H2Sc2dNZSF7l/gcxq432jg0bmJJEB
+         HcdNxlClGSlLPR1TvEvqEflVJck51V2urm+ebzK7Gmqbq90GxQBSCKQ8IrFuuxV0V7TP
+         AjWoCn5xHuuAIXP9ANGsOIuOr6hJ1b/8G5itiszlnFT3eSo48e6ciq+VjVeJYZQM7nAs
+         Y+0GfxU11lrMgOw4iyZociqhdQarrj4t2kVEt6/c+GToi7/cz8ey11NcPsxHZKjWCtng
+         PJ7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727723702; x=1728328502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6DVqxGfSg8iHnTTZ+Ngu7bvZYhFVLN+hPZgrG3l79BI=;
+        b=M3ixLKlko7Y/VPMgqsRXT/dyip9Xl67hOj8xBwP4EwJvCsf6E3zT7C8CRtpwLeZBd+
+         0QaxRvFm9O4bKL4dkZ5YoEYFQ+E5nAAO+Ft5BXJkEptSaCNJt7ZqOv7Ca/tIBMGBpQ2t
+         BU4ExLKGKWM9xFPNbpR/T5WHX0hfFAE7twPvQRgEEpcVyILjGi5ik/5xGZFVgc+3/jZr
+         mk/4Azyf35qVH0dyWVkv4v26RAz6lN1k7mrh3WvgzNj9ukcRyITzzKo8c47u3FgwqKMo
+         ToZ59dRz0rp2xm68Nncb44+qZsKeGweDQV0kLztdKLeMObxhHry7nhHR2+sBMu+88xaO
+         ZJ4A==
+X-Gm-Message-State: AOJu0Yz+PTT/Qq7Gp9IiGQwzEELVtyc64FO+16zyT2WUU9P3UVOPfdqr
+	06YzzMxmuv7JY+AeYC78SsBoWZxOUQrjsr1j7SpRe5ldsELhIR+xIPnoZ25R
+X-Google-Smtp-Source: AGHT+IH5m6Nd9+kBOtVNKFXC6bx9Soal0bxA82c2viow5fjiCs5H41KOcAEsusQOAUZok0e0MueKyQ==
+X-Received: by 2002:a05:6e02:20c5:b0:3a0:9b0c:6b2c with SMTP id e9e14a558f8ab-3a3451aadcfmr107503685ab.18.1727723702070;
+        Mon, 30 Sep 2024 12:15:02 -0700 (PDT)
+Received: from localhost ([216.228.127.129])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b2f67sm6824204a12.24.2024.09.30.12.15.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 12:15:01 -0700 (PDT)
+Date: Mon, 30 Sep 2024 12:14:59 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Chen Yu <yu.c.chen@intel.com>, Leonardo Bras <leobras@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v3 0/3] sched/topology: optimize topology_span_sane()
+Message-ID: <Zvr4s9ErpD9F81YH@yury-ThinkPad>
+References: <20240902183609.1683756-1-yury.norov@gmail.com>
+ <ZuW_0fMfPSix4qqX@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: fabrizio.castro.jz@renesas.com, tglx@linutronix.de, geert+renesas@glider.be, prabhakar.mahadev-lad.rj@bp.renesas.com, linux-kernel@vger.kernel.org, Chris.Paterson2@renesas.com, biju.das.jz@bp.renesas.com, linux-renesas-soc@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuW_0fMfPSix4qqX@yury-ThinkPad>
 
-On Mon, 30 Sep 2024 17:36:20 +0100,
-Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
+Ping again?
+
+On Sat, Sep 14, 2024 at 09:54:43AM -0700, Yury Norov wrote:
+> Ping?
 > 
-> Hi Marc,
-> 
-> Thanks for your feedback.
-> 
-> > From: Marc Zyngier <maz@kernel.org>
-> > Sent: Monday, September 30, 2024 4:50 PM
-> > To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+> On Mon, Sep 02, 2024 at 11:36:04AM -0700, Yury Norov wrote:
+> > The function may call cpumask_equal with tl->mask(cpu) == tl->mask(i),
+> > even when cpu != i. In such case, cpumask_equal() would always return
+> > true, and we can proceed to the next iteration immediately.
 > > 
-> > On Mon, 30 Sep 2024 15:55:39 +0100,
-> > Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
-> > >
-> > > rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> > > corresponding put_device call is missing.
-> > >
-> > > Make sure we call put_device both when failing and when succeeding.
+> > Valentin Schneider shares on it:
 > > 
-> > What sort of lifetime are you trying to enforce?
-> 
-> Function rzg2l_irqc_common_init uses pdev->dev until its very end.
-> My understanding is that we should decrement the reference counter
-> once we are fully done with it. Is my understanding correct?
-
-"done with it" is what scares me. Specially when I see code like this:
-
-	rzg2l_irqc_data = devm_kzalloc(&pdev->dev, sizeof(*rzg2l_irqc_data), GFP_KERNEL);
-	if (!rzg2l_irqc_data)
-		return -ENOMEM;
-
-	rzg2l_irqc_data->irqchip = irq_chip;
-
-	rzg2l_irqc_data->base = devm_of_iomap(&pdev->dev, pdev->dev.of_node, 0, NULL);
-	if (IS_ERR(rzg2l_irqc_data->base))
-		return PTR_ERR(rzg2l_irqc_data->base);
-
-If you drop the reference on the device, you are allowing it to be
-removed, and everything the driver cares about to disappear behind its
-back.
-
-I can't really see how this is safe, because in general, removing an
-interrupt controller driver from the system is a pretty bad idea, and
-I'm worried that's you are implicitly enabling.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> >   PKG can potentially hit that condition, and so can any
+> >   sched_domain_mask_f that relies on the node masks...
+> > 
+> >   I'm thinking ideally we should have checks in place to
+> >   ensure all node_to_cpumask_map[] masks are disjoint,
+> >   then we could entirely skip the levels that use these
+> >   masks in topology_span_sane(), but there's unfortunately
+> >   no nice way to flag them... Also there would be cases
+> >   where there's no real difference between PKG and NODE
+> >   other than NODE is still based on a per-cpu cpumask and
+> >   PKG isn't, so I don't see a nicer way to go about this.
+> > 
+> > v1: https://lore.kernel.org/lkml/ZrJk00cmVaUIAr4G@yury-ThinkPad/T/
+> > v2: https://lkml.org/lkml/2024/8/7/1299
+> > v3:
+> >  - add topology_cpumask_equal() helper in #3;
+> >  - re-use 'cpu' as an iterator int the for_each_cpu() loop;
+> >  - add proper versioning for all patches.
+> > 
+> > Yury Norov (3):
+> >   sched/topology: pre-compute topology_span_sane() loop params
+> >   sched/topology: optimize topology_span_sane()
+> >   sched/topology: reorganize topology_span_sane() checking order
+> > 
+> >  kernel/sched/topology.c | 29 +++++++++++++++++++++++++----
+> >  1 file changed, 25 insertions(+), 4 deletions(-)
+> > 
+> > -- 
+> > 2.43.0
 
