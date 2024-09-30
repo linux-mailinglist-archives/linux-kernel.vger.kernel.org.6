@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-343909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD5898A123
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E029F98A127
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2285281628
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4A11F25CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D96218DF8A;
-	Mon, 30 Sep 2024 11:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CA518E35E;
+	Mon, 30 Sep 2024 11:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qowd6vvh"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mbndByvv"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9A514389F
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D3618E035
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697087; cv=none; b=qDx2lPwk4gpuKUHq72JG7dpdxzYkBqseFS1vzlr3Xf6KsFFX1nXLBGE0PTGic+fGaj0SjdaL6PdVXlo+x/Hsph6KxLqnj4rHIz444FlZpUpIq4cc+lfAJR5611SiameuwPDLwhR8gtB2zdaGNY6/LJJTWn0iTm98pI0QM5IDSOU=
+	t=1727697090; cv=none; b=FPAMX4C+OvNpJt1WRS0+H8g2moH7QypWvRHm3TXpaF8hTe7lBBwpT9buN9lwcAJ9ap6UmNgwhnqE0rT4ubWXnrzdimMFrXoy176Q2EL6tZp2uWThd5UPAepOXoHaP+sGjVp54PH4J0/iBNRRAZLGG6jzyiDVQv4FPVHI4U/45Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697087; c=relaxed/simple;
-	bh=08fE7fYBrd9zzYFvSZGijl+vlzjHnu0p+at/BJfSCRw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SRGgSq8TJ8q1ryVu12loEjxn/5hakBpnOli7LMEMWvjZFTxZo41FNj+cC7woIKmXFN2EyTGf89PGeD3EDegkRy5+eu0QBVhE81lpSV0UK3c7bKrUvPUfNt/7CGhjEeHXBlaJkOyxcphgS3EZ0ba5KGRw8NrKbD8h6p4tUpfllrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qowd6vvh; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1727697090; c=relaxed/simple;
+	bh=dQ/Vi4cHXl2yvWqLk+N4RzlEOGVtJ+RrNcB+AD6QQ8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YVqvt29mzXAZhl1Zo3jYfaboWK0ojQ2aAKgzqENFxxpmCbENcC/NwzQqGNsFaTT65S3+v4QDv+IqnKk+AHsb2YlBdTanoRDmIS3vI7mS5i0NWhDaMjKjCREqyLpJzmgHC/p206jO43ObhGXM+IV43ug8l+/p+j4VUevFnJ31f48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mbndByvv; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37cd6ece97cso1528752f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:51:24 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so37746285e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 04:51:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727697083; x=1728301883; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cnhN28xiUyoIoByfTbaiA2O0cDcMJ2MqwIpLUCd9bBI=;
-        b=qowd6vvhpW+QgPrXQvnCTJrPC3k1QOGfY7SOLDCDIXKrrOu5ofKXS4KB8QsyRBRtsB
-         aDLTkQeHYigkj1TG8cWEfNjh6Ez4o1NfjupZEmQvdmtX308dEvA5LvzZhG0XMGJZOTkJ
-         RguE5AJDOhgMuxIlM2xJ1Xh8utjLLsJApY+I0Np2ezANJ8fbSnU0SCwUV2TKdL7b5oqp
-         LlWzT1gNb3VrL2xFR+z7jy/o6fkvN3RCFtvvnbLhFRWl4qo99rcRgsRLBGQ52RZ6z+NV
-         WnGgowHXp/QD+ZZlDwRZtknxH4QL3gXaJH8hPtxeucNiODYzn4Cltc/bDkdkiC8O3EqW
-         0M9Q==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727697087; x=1728301887; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UYoBCuP+mvVzk4humYn6KWXiRwGqVrTlm9KNEy+e/ao=;
+        b=mbndByvv7oOnBpvzd2rNE8T9QdWMeTN0WJUVyRyQFKOItRmAox54YZUltHSm2KJtl5
+         qdHXeDJ2jmY5vmgnPd/Y4G6Dn29FD5n1nJpXATXfb1/kkP8fAcwksKTISqZ8c399X4mc
+         2xRYWb+my+aAZQ60MrfA9H8AT1csLEqr582krqiIFMXo/t4D1/uyeytOIkoRbamf6JLl
+         Nkgcp9xG1V7LRR6Fo/rs7Ju7dVHCAJW8RjVEM/VUoW0JD58CaBrBQINJ/yOeIUVAvaT9
+         nei/UJa1PVD17izI300KeMiPYP5qAwstb4ZEFqSN8EePenH68fKOtfJKugkSOYAR3uFR
+         0fJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697083; x=1728301883;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cnhN28xiUyoIoByfTbaiA2O0cDcMJ2MqwIpLUCd9bBI=;
-        b=hOccAEG8ipRr8baUIx7bHhkQu4HArBmkTGNsqCqUJDEQP8vM9VT6hi3b8AfXsH0N82
-         PjTLrU+G6GWSoeWPJU5zdn3c76hSa6adCqThZrGB4FCmfWGl4ni4Pqtt1Idyg5XiSlRu
-         VbCkD4RtfsZp/LPh9d5yOemhTEaXZPbRE9Y0JfYg/deQmEdkASvG9msJAKSotvOrf9EW
-         1CzvE9WreUrl0ACZ6PwP0Iv+PNgAPtIfoetTIduJDcXvi69XJfktlCQAiOILDzAYBlsY
-         OAsp526QTPFz8x+9EvUUwyuPa7o6R6Ta5N+X/dZhuOyQU3Pcqv+nCn5tlmNg4EwbylpX
-         Mm/w==
-X-Gm-Message-State: AOJu0Yx8zrkjtdA+99hDiwP6fT3I8DYmf9HGAl40PzVN8vKRr3oe9Yss
-	1AouWEzokuW4ca+VcYE3t5DQlpxz0HoNMTGcWuEwmNwDdccVLb+to5oiSipPGeU=
-X-Google-Smtp-Source: AGHT+IF/MGS3gPBd6+OZGEUxxfHt2P526pBHts9h9Ayu/AEOFTFndhTAJWIXTMj2X7G41ltMrPoZyQ==
-X-Received: by 2002:a5d:45c8:0:b0:374:c847:83a with SMTP id ffacd0b85a97d-37cd5a6b581mr6341799f8f.8.1727697083178;
-        Mon, 30 Sep 2024 04:51:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727697087; x=1728301887;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UYoBCuP+mvVzk4humYn6KWXiRwGqVrTlm9KNEy+e/ao=;
+        b=Ep9ptEpDZvSNtU0Xh9DX4SIpbmyIMuTd2G2M9L6+Y28u/baO0X4ZzWZwPAGGMewgnr
+         vP+ZijRX32tzEPE+vYyJLW/jEAh6s9R5DQpMm8A7qYa0GJpu6DuLH5JIallnUWZvLKDt
+         sXOGB/F2mKeAUu4oNUgCnVsfBXp9qSgM/T0+1HC5FBvgljMirvAOLIzqEVSNewtGydKx
+         WzVGa4ooTKQ/v719fowcA0uBJRo+sF6O1nsOo0q87TDyGuVmUdBLaTorHcE7Y3oio58O
+         JROSU9Nx4uYvyjDvbpwP7rmWi4bM1CfM2lHWcm0Nmumd6ZqTucqRm3gik47pYS4SA78Z
+         GqfA==
+X-Gm-Message-State: AOJu0Yz52cSHlF83PZ/4bwIkd9T6a/Lj/PQJJ0iU0DFp8MKDNcRyjv5B
+	J9xjpYE6m3qqX21SSot2QSiUxV20gCoRrv/+qgV8UTKQtebYbxstwUdjf4T3QYo=
+X-Google-Smtp-Source: AGHT+IEeabxpUXLLQRsKW/SYumVuBoRcy4rw+6U/N/ZkXarZiGAnx9sFHUz8XjmmFzkoSf9R/A95AQ==
+X-Received: by 2002:a05:600c:693:b0:42c:b5f1:4508 with SMTP id 5b1f17b1804b1-42f5b906465mr69070565e9.23.1727697087155;
+        Mon, 30 Sep 2024 04:51:27 -0700 (PDT)
 Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a362bcsm148996985e9.36.2024.09.30.04.51.21
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a362bcsm148996985e9.36.2024.09.30.04.51.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 04:51:21 -0700 (PDT)
+        Mon, 30 Sep 2024 04:51:24 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
 To: Keerthy <j-keerthy@ti.com>,
 	Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 1/2] gpio: davinci: allow building the module with COMPILE_TEST=y
-Date: Mon, 30 Sep 2024 13:51:15 +0200
-Message-ID: <20240930115116.54626-1-brgl@bgdev.pl>
+Subject: [PATCH 2/2] gpio: davinci: use generic device properties
+Date: Mon, 30 Sep 2024 13:51:16 +0200
+Message-ID: <20240930115116.54626-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240930115116.54626-1-brgl@bgdev.pl>
+References: <20240930115116.54626-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,26 +87,52 @@ Content-Transfer-Encoding: 8bit
 
 From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Make it possible to build the module when COMPILE_TEST is enabled for
-better build coverage.
+OF-specific routines should not be used unless necessary. Generic device
+properties are preferred so switch to using them in the driver code.
 
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpio/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpio/gpio-davinci.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 643747da4475..746f2a8f3106 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -243,7 +243,7 @@ config GPIO_CLPS711X
- config GPIO_DAVINCI
- 	tristate "TI Davinci/Keystone GPIO support"
- 	default y if ARCH_DAVINCI
--	depends on (ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)
-+	depends on ((ARM || ARM64) && (ARCH_DAVINCI || ARCH_KEYSTONE || ARCH_K3)) || COMPILE_TEST
- 	help
- 	  Say yes here to enable GPIO support for TI Davinci/Keystone SoCs.
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index b54fef6b1e12..603893816b32 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -15,7 +15,6 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/module.h>
+-#include <linux/of.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+@@ -159,14 +158,13 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	unsigned int ngpio, nbank, nirq, gpio_unbanked;
+ 	struct davinci_gpio_controller *chips;
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *dn = dev_of_node(dev);
+ 
+ 	/*
+ 	 * The gpio banks conceptually expose a segmented bitmap,
+ 	 * and "ngpio" is one more than the largest zero-based
+ 	 * bit index that's valid.
+ 	 */
+-	ret = of_property_read_u32(dn, "ti,ngpio", &ngpio);
++	ret = device_property_read_u32(dev, "ti,ngpio", &ngpio);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get the number of GPIOs\n");
+ 	if (ngpio == 0)
+@@ -177,8 +175,8 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	 * interrupts is equal to number of gpios else all are banked so
+ 	 * number of interrupts is equal to number of banks(each with 16 gpios)
+ 	 */
+-	ret = of_property_read_u32(dn, "ti,davinci-gpio-unbanked",
+-				   &gpio_unbanked);
++	ret = device_property_read_u32(dev, "ti,davinci-gpio-unbanked",
++				       &gpio_unbanked);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to get the unbanked GPIOs property\n");
  
 -- 
 2.43.0
