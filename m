@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-343870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090CE98A084
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:27:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A796E98A08A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A462885F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98B81C24ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60022199928;
-	Mon, 30 Sep 2024 11:21:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83130199FBB;
+	Mon, 30 Sep 2024 11:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Xc96Y5lr"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="hKCq+v+D"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B99198831;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A76B198A1B;
 	Mon, 30 Sep 2024 11:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695316; cv=none; b=svfa/L4eHiMNheK8mHwNEn8dxdwLMKrCWBGx5kAb5ad3sqkHQCjeLgo9cN8n7YGteIFb7mcQ7zkVVY0O7u3nKJGTDOlJydvVf7ivZeHE8jRu6RNmBYW94JjNbb0Fkr0p/ExFvV+m9Vq1DjkcQRnFcN7Os51NIMBfZERTzC1uck8=
+	t=1727695317; cv=none; b=HME3rtDWd45Dva6F2P6YU7tGpHVKhrTJAGhNcWG+MYvAyhCwJUqjUoeD3VHXDzLwGKYUh6LbveHoLPw5e3PtBRhqNRWwslz/H8PxSOLnlYAGj5MWK67L317kSZ83ZDasYNqWf7ajRkWPi73zksCCSSzXlVV7+CapTeAWsklekX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695316; c=relaxed/simple;
-	bh=RKhXo7gwoSvm/h+GCE3zjWKAjxwR+4OpoUTuRzq5ogg=;
+	s=arc-20240116; t=1727695317; c=relaxed/simple;
+	bh=wlSJzOFwNkVwK6xhV9kGwcyLBVel4D1ySXl/FG5utrs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oB2ytLjCYc6M60VGHuUoXq2WK+MY9/uqpuyY8rF6BRORsw1ecWF0CGyx0A+I2/mfIJtNf0yspKEvmfl3rgB/ZcezcwWUAQEexy3t1EquHTv2xFwN41X3MCrLMHJOWkLXdmlz21+ASVSdGbyr6vCT+UPPEwIcW/MLdUecjrEGAZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Xc96Y5lr; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=N2qPbZB6jAjifC0FNaGQmxGl1HTiQvLznuXmP9JHkych/AfBghv4QRI6A9hUwa83lWb/pIhaYCEz5bmgbX/0jNJMwERf55llT7t1I3C/CbVd2sq9rcguAn+682netKHebTZoN4mxRAo7uvBpCJHCB3JTkMCahjyrze546RvpqL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=hKCq+v+D; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=a2euXW05XazmTU/NrAk/BHORkeFwAmWJXM2dW22jHcA=;
-  b=Xc96Y5lreXvWElAgS3wkZQj8SZ1imKL43+1QmajbloaYwmRU24cQym5R
-   zEfYyyQI2xm/xhqkdpsc1e9rehThl0yYSM5h8khhUF6BF2Zj5/+Z7VhPv
-   SQyWOtRRFLQYS+Bx4yVnOYQM9iuZJrfu2Butz25a7hGFg9AAhgDdQf6o7
-   s=;
+  bh=TN+wnXyWailQ6qfE02yp7w4g8GHrjDQVwQg6y7qPRjc=;
+  b=hKCq+v+DH0RjVxpepkxEilNpVdaZZAlhESNrzRtL8fd78LMFK/FXsSOk
+   MDBBdu9Ss5UfB8xZSIdqnm2JdLiRAnr9Jb3K6shFP0CAKmikUW4Z8hZeq
+   x54ZKx8iZbAbnOLRSh1NGjbiLfQ1iF1vVvUoFxNJnBRj0nYigBLLWuide
+   Y=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956904"
+   d="scan'208";a="185956906"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:28 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Luis Chamberlain <mcgrof@kernel.org>
+To: Johannes Berg <johannes@sipsolutions.net>
 Cc: kernel-janitors@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 26/35] firmware_loader: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:12 +0200
-Message-Id: <20240930112121.95324-27-Julia.Lawall@inria.fr>
+Subject: [PATCH 27/35] mac80211: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:13 +0200
+Message-Id: <20240930112121.95324-28-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -74,22 +76,101 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/base/firmware_loader/main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/mesh_hwmp.c    |    6 +++---
+ net/mac80211/mesh_pathtbl.c |   10 +++++-----
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 324a9a3c087a..bb368193d969 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -1075,8 +1075,8 @@ EXPORT_SYMBOL_GPL(firmware_request_platform);
+diff --git a/net/mac80211/mesh_hwmp.c b/net/mac80211/mesh_hwmp.c
+index 024f48db6b05..0b13a6648e08 100644
+--- a/net/mac80211/mesh_hwmp.c
++++ b/net/mac80211/mesh_hwmp.c
+@@ -220,12 +220,12 @@ static void prepare_frame_for_deferred_tx(struct ieee80211_sub_if_data *sdata,
+ /**
+  * mesh_path_error_tx - Sends a PERR mesh management frame
+  *
++ * @sdata: local mesh subif
+  * @ttl: allowed remaining hops
+  * @target: broken destination
+  * @target_sn: SN of the broken destination
+  * @target_rcode: reason code for this PERR
+  * @ra: node this frame is addressed to
+- * @sdata: local mesh subif
+  *
+  * Note: This function may be called with driver locks taken that the driver
+  * also acquires in the TX path.  To avoid a deadlock we don't transmit the
+@@ -1137,8 +1137,8 @@ void mesh_path_start_discovery(struct ieee80211_sub_if_data *sdata)
+ /**
+  * mesh_nexthop_resolve - lookup next hop; conditionally start path discovery
+  *
+- * @skb: 802.11 frame to be sent
+  * @sdata: network subif the frame will be sent through
++ * @skb: 802.11 frame to be sent
+  *
+  * Lookup next hop for given skb and start path discovery if no
+  * forwarding information is found.
+@@ -1245,8 +1245,8 @@ void mesh_path_refresh(struct ieee80211_sub_if_data *sdata,
+  * this function is considered "using" the associated mpath, so preempt a path
+  * refresh if this mpath expires soon.
+  *
+- * @skb: 802.11 frame to be sent
+  * @sdata: network subif the frame will be sent through
++ * @skb: 802.11 frame to be sent
+  *
+  * Returns: 0 if the next hop was found. Nonzero otherwise.
+  */
+diff --git a/net/mac80211/mesh_pathtbl.c b/net/mac80211/mesh_pathtbl.c
+index 30c0d89203af..9f9cb5af0a97 100644
+--- a/net/mac80211/mesh_pathtbl.c
++++ b/net/mac80211/mesh_pathtbl.c
+@@ -300,8 +300,8 @@ __mesh_path_lookup_by_idx(struct mesh_table *tbl, int idx)
  
  /**
-  * firmware_request_cache() - cache firmware for suspend so resume can use it
-- * @name: name of firmware file
-  * @device: device for which firmware should be cached for
-+ * @name: name of firmware file
+  * mesh_path_lookup_by_idx - look up a path in the mesh path table by its index
+- * @idx: index
+  * @sdata: local subif, or NULL for all entries
++ * @idx: index
   *
-  * There are some devices with an optimization that enables the device to not
-  * require loading firmware on system reboot. This optimization may still
+  * Returns: pointer to the mesh path structure, or NULL if not found.
+  *
+@@ -315,8 +315,8 @@ mesh_path_lookup_by_idx(struct ieee80211_sub_if_data *sdata, int idx)
+ 
+ /**
+  * mpp_path_lookup_by_idx - look up a path in the proxy path table by its index
+- * @idx: index
+  * @sdata: local subif, or NULL for all entries
++ * @idx: index
+  *
+  * Returns: pointer to the proxy path structure, or NULL if not found.
+  *
+@@ -670,8 +670,8 @@ void mesh_fast_tx_flush_addr(struct ieee80211_sub_if_data *sdata,
+ 
+ /**
+  * mesh_path_add - allocate and add a new path to the mesh path table
+- * @dst: destination address of the path (ETH_ALEN length)
+  * @sdata: local subif
++ * @dst: destination address of the path (ETH_ALEN length)
+  *
+  * Returns: 0 on success
+  *
+@@ -916,8 +916,8 @@ static int table_path_del(struct mesh_table *tbl,
+ /**
+  * mesh_path_del - delete a mesh path from the table
+  *
+- * @addr: dst address (ETH_ALEN length)
+  * @sdata: local subif
++ * @addr: dst address (ETH_ALEN length)
+  *
+  * Returns: 0 if successful
+  */
+@@ -996,8 +996,8 @@ int mesh_path_send_to_gates(struct mesh_path *mpath)
+ /**
+  * mesh_path_discard_frame - discard a frame whose path could not be resolved
+  *
+- * @skb: frame to discard
+  * @sdata: network subif the frame was to be sent through
++ * @skb: frame to discard
+  *
+  * Locking: the function must me called within a rcu_read_lock region
+  */
 
 
