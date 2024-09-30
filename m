@@ -1,187 +1,459 @@
-Return-Path: <linux-kernel+bounces-344340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C4898A878
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:31:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEC298A8C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8F01F231A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:31:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FE25B28ABB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42B31991BA;
-	Mon, 30 Sep 2024 15:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE1919259E;
+	Mon, 30 Sep 2024 15:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ec9HNwXx"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="X3+s/iQz"
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1091990C6;
-	Mon, 30 Sep 2024 15:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B231922DA
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710116; cv=none; b=V4Fuz24kkYgcoeBP5UEh2XgqmzdyExsiOfDGAMLYyVmqlO4qP+stcTVzaRMTsnqd6B4ZU/q/vpaq1lyZ3Ky3w2+4rIeuGHkX4CO5mpMTvUYC5gguWogjN/0iV8UaTZRwEcLMPhxRCU2g+0cAuZAhg5fk1frRHD4EE65pFOEguGQ=
+	t=1727710511; cv=none; b=H8yt7N89fKldbLhqJxjaa+UD37cEgVDCpWCJq9ghuhmOt0nqTV3MifuTdPlafmFWGFOhDqREp89getPs59p4Qn9gy5RA+RzD6jiujc2D0JXqYrUfaJBb4NZuGpQnOjwgskTaiFUbddS+LcxBNaC/XqQ7/y//IKdwf7dySZvZOoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710116; c=relaxed/simple;
-	bh=zPMycqcaQFSH5qmCiQibqp0JXKgtnY3HstC3yy+e+SM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UEdwg2HLt4VMtQpVcfqx3Lh2Z9ztqSKq90EaL3Jf3RxljXczVLSJ8qxcuaIphPgF4kZt1uZD4wv6fSOvnkmLjFtut5PbmkToVo1Rmeyp+SgTWEgcXRTJd/sCTjn4rH9n2UhCtPodlPBMsG8Y9tRjtWt08wTOj5KafrTf7tB59Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ec9HNwXx; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727710113; x=1759246113;
-  h=from:to:subject:date:message-id:mime-version;
-  bh=zPMycqcaQFSH5qmCiQibqp0JXKgtnY3HstC3yy+e+SM=;
-  b=ec9HNwXxsO7uhUYe6hjgB7RhPh0NyCluqGKDWLqADmyDRwg7AQPwYgHi
-   l8EaDHwP33OaybB7RAHHYDwD8RA5SA2y82+s4yyIJx+V0OQP6H20eKYgG
-   HFGShSn/pp7V/vHJDFl8w/wcutU4uhIOZhotMOEKfvrxmQXEnCvGRpK26
-   v6HKQh01B+zeM709Q80B0ByO13zQKk/QWvvYip/5BeF03vrBumGyr0ox+
-   a8YB11Xu/j7OTKttiq2NAhyxD5wlBeOv9BIYVO5ulOsC5z6D84TFE9uRz
-   E3VEK4M+sMGgKyENDbkuaLRDc+1fRO20OUU3WtK/aoSfLlCrWvFOW/A+S
-   A==;
-X-CSE-ConnectionGUID: hMfDavZxTaa5IPYiElDNIw==
-X-CSE-MsgGUID: GaIvNzJrRKiok6NmfF/qvA==
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="32263931"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Sep 2024 08:28:30 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 30 Sep 2024 08:28:23 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 30 Sep 2024 08:28:19 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: phy: microchip_t1: Interrupt support for lan887x
-Date: Mon, 30 Sep 2024 21:04:23 +0530
-Message-ID: <20240930153423.16893-1-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1727710511; c=relaxed/simple;
+	bh=0XJpAdHnjMSi0vjMY45hVoBPZADVUp0uIsFIR0QVyeg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HGr/HBqy0fBqi6ub5kVH8jamwl1lCmZTsi2H37/ZPE8Kmi95Gm3jMrRx4FvCQvtSmm5qULEFlSTmgWGa11Tfwy8FA+9e8qti94NME06iWeZrGCCY/QQOmN1qp+x+VXnOg/ZJnSINwu29Z8ifZo/pmGNPzf4fANpMnaVbfzHwcCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=X3+s/iQz; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a626d73efso163159739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727710508; x=1728315308; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QZc5l7HwmrBo73UWrdHZ1JVPdCSgRTelmWziJOuNMk4=;
+        b=X3+s/iQzVwTNjXxVDzrjOS/cJr8rc2YJ8jNdvpLQEbvF7W3qMJ5JZM2ap0+r4zQ90A
+         /Gb7HKJUlqH4XNNpc/c8j9VR+ktaFeyLOvQj1YCSdGAHyPpKnw/3Rt9vEm7xd0NRuuaV
+         Wpbhlm+Cl5en94snBONcwJE/jLuogGw9RbSSc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727710508; x=1728315308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QZc5l7HwmrBo73UWrdHZ1JVPdCSgRTelmWziJOuNMk4=;
+        b=rKRlw9LRuk/5wEm4F0asYSdN5gUdl/ZDEr4WrCl+AyzMKd8Ofr7y+ycp95B9AHrLqs
+         3++BbHvidNyfA3D7MaDATiey8JnM9XdFDNmD605csMi5rA9j1/BE/xc89szfedGyuUCL
+         gCxTxZBDVsXBKAtopd0vNuWcYtpF8iUDqIQjB3wwikQzXVgP3jaLSk1oIqsvoQPQwaJ0
+         ToPJYC8+92rW2o0fO1pa/mqUKRuNcYZPGJURlV+BU9afZKMiFQYwo4xlVQXoHsuw8PCj
+         ZZrwI/rX1g9PPDvn6rNqhSsrZMSpN3R031kzJ520SY5QVElndieltvWqm/qQRIOq/BSZ
+         rjRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkJZgWv/KnQtqIKoOZnNguGVpXjc+2EvgQSoRD4r/Ng+4B3FJcawMoE31JD7Xg2t3Layc36fOhUqdcWEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaMl2a+gf0MdJwvmDpGEYgOley8F66FGL8tWcMr7a9R7WOk1Wx
+	AqkU5XeYFzzzTRTerUCRT3FCj3C5HVSXgztUsFAzjczT7Tk8NIeDgKQbaWYSUhD8PPUOa0hyrLQ
+	7V9Nm
+X-Google-Smtp-Source: AGHT+IGr9gIzffeCWaobKd5nUUeLWrptU1hxQc9a44u10RIktGivtZlWrMR7eNnMC/gZtoYANUPXJw==
+X-Received: by 2002:a05:6602:2d8a:b0:82d:9b0:ecb7 with SMTP id ca18e2360f4ac-8349318ae5dmr974870139f.3.1727710507740;
+        Mon, 30 Sep 2024 08:35:07 -0700 (PDT)
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com. [209.85.166.177])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888849fbesm2150318173.63.2024.09.30.08.35.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 08:35:07 -0700 (PDT)
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso1027865ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:35:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUafHAtpnvsRLUyX2pVB6nkCQqVcXcxd7uRaO5PhK4u34peNLuKVT6kL1kltRiqPM2WTPi5B2UoeEOPzRM=@vger.kernel.org
+X-Received: by 2002:a05:6e02:1383:b0:39e:68d8:2891 with SMTP id
+ e9e14a558f8ab-3a35e53e6a9mr350535ab.6.1727710505990; Mon, 30 Sep 2024
+ 08:35:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
+ <20240930122157.GF31662@pendragon.ideasonboard.com> <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
+In-Reply-To: <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
+From: Tomasz Figa <tfiga@chromium.org>
+Date: Tue, 1 Oct 2024 00:34:44 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5AZhdZkaM=mVqmKY-uTuGrVUnpaTWTvOqUyOKLDS6LSKg@mail.gmail.com>
+Message-ID: <CAAFQd5AZhdZkaM=mVqmKY-uTuGrVUnpaTWTvOqUyOKLDS6LSKg@mail.gmail.com>
+Subject: Re: [PATCH 00/45] media: Use string_choice helpers
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Ricardo Ribalda <ribalda@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, Mike Isely <isely@pobox.com>, 
+	Olli Salonen <olli.salonen@iki.fi>, Maxim Levitsky <maximlevitsky@gmail.com>, 
+	Sean Young <sean@mess.org>, Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
+	Jemma Denson <jdenson@gmail.com>, Patrick Boettcher <patrick.boettcher@posteo.de>, 
+	Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
+	Andy Walls <awalls@md.metrocast.net>, Michal Simek <michal.simek@amd.com>, 
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Eddie James <eajames@linux.ibm.com>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Tim Harvey <tharvey@gateworks.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, Jacopo Mondi <jacopo+renesas@jmondi.org>, 
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+	=?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+	linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	imx@lists.linux.dev, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for link up and link down interrupts in lan887x.
+On Mon, Sep 30, 2024 at 9:38=E2=80=AFPM Hans Verkuil <hverkuil@xs4all.nl> w=
+rote:
+>
+> On 30/09/2024 14:21, Laurent Pinchart wrote:
+> > Hi Ricardo,
+> >
+> > On Mon, Sep 30, 2024 at 12:03:55PM +0000, Ricardo Ribalda wrote:
+> >> include/linux/string_choices.h contains a set of helpers that can be
+> >> used instead of hard coding some strings.
+> >>
+> >> Cocci has located some places where the helpers can be used. This
+> >> patchset uses the diff generated by cocci, plus these changes:
+> >
+> > Personally I think most of those helpers just hinder readability for no=
+t
+> > much added gain. String de-duplication is done by the linker already.
+> > The only value I see in the helpers is ensuring that the strings are
+> > consistently written, and I think we can do so through other means.
+>
+> Just my opinion: I'm OK with these new helpers, but I am not too keen to =
+apply
+> all this to existing source code. I.e., for new code it is fine, but if w=
+e have
+> to update all drivers every time a new cocci test is added, then that wil=
+l not
+> scale.
 
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
- drivers/net/phy/microchip_t1.c | 63 ++++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
++1 for avoiding applying this to existing code. It will just make it
+more difficult to backport changes to stable kernels because of
+meaningless conflicts.
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index a5ef8fe50704..383050a5b0ed 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -226,6 +226,18 @@
- #define MICROCHIP_CABLE_MAX_TIME_DIFF	\
- 	(MICROCHIP_CABLE_MIN_TIME_DIFF + MICROCHIP_CABLE_TIME_MARGIN)
- 
-+#define LAN887X_INT_STS				0xf000
-+#define LAN887X_INT_MSK				0xf001
-+#define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
-+#define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
-+#define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
-+
-+#define LAN887X_MX_CHIP_TOP_LINK_MSK	(LAN887X_INT_MSK_LINK_UP_MSK |\
-+					 LAN887X_INT_MSK_LINK_DOWN_MSK)
-+
-+#define LAN887X_MX_CHIP_TOP_ALL_MSK	(LAN887X_INT_MSK_T1_PHY_INT_MSK |\
-+					 LAN887X_MX_CHIP_TOP_LINK_MSK)
-+
- #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
- #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
- 
-@@ -1474,6 +1486,7 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 		ethtool_puts(&data, lan887x_hw_stats[i].string);
- }
- 
-+static int lan887x_config_intr(struct phy_device *phydev);
- static int lan887x_cd_reset(struct phy_device *phydev,
- 			    enum cable_diag_state cd_done)
- {
-@@ -1504,6 +1517,10 @@ static int lan887x_cd_reset(struct phy_device *phydev,
- 		if (rc < 0)
- 			return rc;
- 
-+		rc = lan887x_config_intr(phydev);
-+		if (rc < 0)
-+			return rc;
-+
- 		rc = lan887x_phy_reconfig(phydev);
- 		if (rc < 0)
- 			return rc;
-@@ -1830,6 +1847,50 @@ static int lan887x_cable_test_get_status(struct phy_device *phydev,
- 	return lan887x_cable_test_report(phydev);
- }
- 
-+static int lan887x_config_intr(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-+		/* Clear the interrupt status before enabling interrupts */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Unmask for enabling interrupt */
-+		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_MSK,
-+				    (u16)~LAN887X_MX_CHIP_TOP_ALL_MSK);
-+	} else {
-+		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_MSK,
-+				    GENMASK(15, 0));
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-+	}
-+
-+	return ret < 0 ? ret : 0;
-+}
-+
-+static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
-+{
-+	int ret = IRQ_NONE;
-+	int irq_status;
-+
-+	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-+	if (irq_status < 0) {
-+		phy_error(phydev);
-+		return IRQ_NONE;
-+	}
-+
-+	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
-+		phy_trigger_machine(phydev);
-+		ret = IRQ_HANDLED;
-+	}
-+
-+	return ret;
-+}
-+
- static struct phy_driver microchip_t1_phy_driver[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
-@@ -1881,6 +1942,8 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.read_status	= genphy_c45_read_status,
- 		.cable_test_start = lan887x_cable_test_start,
- 		.cable_test_get_status = lan887x_cable_test_get_status,
-+		.config_intr    = lan887x_config_intr,
-+		.handle_interrupt = lan887x_handle_interrupt,
- 	}
- };
- 
--- 
-2.17.1
+Best,
+Tomasz
 
+>
+> Note that I never ran cocci in my build scripts, so this is a new check t=
+hat
+> we haven't set rules for or have much experience with.
+>
+> checkpatch just checks the patches, it doesn't force you to fix existing =
+code.
+>
+> Some of the cocci tests are clearly checking for incorrect code, but othe=
+rs are
+> for code improvements (i.e. the code was correct, it can just be done sli=
+ghtly
+> better). It's the second category were I think that should only apply to =
+new code,
+> and not existing code.
+>
+> Regards,
+>
+>         Hans
+>
+> >
+> >> diff --git a/drivers/media/dvb-frontends/ascot2e.c b/drivers/media/dvb=
+-frontends/ascot2e.c
+> >> index 8c3eb5d69dda..ec7a718428fc 100644
+> >> --- a/drivers/media/dvb-frontends/ascot2e.c
+> >> +++ b/drivers/media/dvb-frontends/ascot2e.c
+> >> @@ -104,7 +104,7 @@ static void ascot2e_i2c_debug(struct ascot2e_priv =
+*priv,
+> >>                               u8 reg, u8 write, const u8 *data, u32 le=
+n)
+> >>  {
+> >>         dev_dbg(&priv->i2c->dev, "ascot2e: I2C %s reg 0x%02x size %d\n=
+",
+> >> -               str_read_write(write =3D=3D 0), reg, len);
+> >> +               str_write_read(write), reg, len);
+> >>         print_hex_dump_bytes("ascot2e: I2C data: ",
+> >>                 DUMP_PREFIX_OFFSET, data, len);
+> >>  }
+> >> diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/d=
+vb-frontends/cxd2841er.c
+> >> index db684f314b47..d1b84cd9c510 100644
+> >> --- a/drivers/media/dvb-frontends/cxd2841er.c
+> >> +++ b/drivers/media/dvb-frontends/cxd2841er.c
+> >> @@ -206,7 +206,7 @@ static void cxd2841er_i2c_debug(struct cxd2841er_p=
+riv *priv,
+> >>  {
+> >>         dev_dbg(&priv->i2c->dev,
+> >>                 "cxd2841er: I2C %s addr %02x reg 0x%02x size %d data %=
+*ph\n",
+> >> -               str_read_write(write =3D=3D 0), addr, reg, len, len, d=
+ata);
+> >> +               str_write_read(write), addr, reg, len, len, data);
+> >>  }
+> >>
+> >>  static int cxd2841er_write_regs(struct cxd2841er_priv *priv,
+> >> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-=
+frontends/helene.c
+> >> index 52198cb49dba..b4527c141d9c 100644
+> >> --- a/drivers/media/dvb-frontends/helene.c
+> >> +++ b/drivers/media/dvb-frontends/helene.c
+> >> @@ -279,7 +279,7 @@ static void helene_i2c_debug(struct helene_priv *p=
+riv,
+> >>                 u8 reg, u8 write, const u8 *data, u32 len)
+> >>  {
+> >>         dev_dbg(&priv->i2c->dev, "helene: I2C %s reg 0x%02x size %d\n"=
+,
+> >> -                       str_read_write(write =3D=3D 0), reg, len);
+> >> +                       str_write_read(write), reg, len);
+> >>         print_hex_dump_bytes("helene: I2C data: ",
+> >>                         DUMP_PREFIX_OFFSET, data, len);
+> >>  }
+> >> diff --git a/drivers/media/dvb-frontends/horus3a.c b/drivers/media/dvb=
+-frontends/horus3a.c
+> >> index 84385079918c..10300ebf3ca0 100644
+> >> --- a/drivers/media/dvb-frontends/horus3a.c
+> >> +++ b/drivers/media/dvb-frontends/horus3a.c
+> >> @@ -38,7 +38,7 @@ static void horus3a_i2c_debug(struct horus3a_priv *p=
+riv,
+> >>                               u8 reg, u8 write, const u8 *data, u32 le=
+n)
+> >>  {
+> >>         dev_dbg(&priv->i2c->dev, "horus3a: I2C %s reg 0x%02x size %d\n=
+",
+> >> -               str_read_write(write =3D=3D 0), reg, len);
+> >> +               str_write_read(write), reg, len);
+> >>         print_hex_dump_bytes("horus3a: I2C data: ",
+> >>                 DUMP_PREFIX_OFFSET, data, len);
+> >>  }
+> >> diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+> >> index ba174aa45afa..a43479c3ff03 100644
+> >> --- a/drivers/media/i2c/adv7842.c
+> >> +++ b/drivers/media/i2c/adv7842.c
+> >> @@ -2763,7 +2763,7 @@ static int adv7842_cp_log_status(struct v4l2_sub=
+dev *sd)
+> >>                           str_true_false(io_read(sd, 0x6a) & 0x10));
+> >>         }
+> >>         v4l2_info(sd, "CP free run: %s\n",
+> >> -                 str_on_off(!!(cp_read(sd, 0xff) & 0x10)));
+> >> +                 str_on_off(cp_read(sd, 0xff) & 0x10));
+> >>         v4l2_info(sd, "Prim-mode =3D 0x%x, video std =3D 0x%x, v_freq =
+=3D 0x%x\n",
+> >>                   io_read(sd, 0x01) & 0x0f, io_read(sd, 0x00) & 0x3f,
+> >>                   (io_read(sd, 0x01) & 0x70) >> 4);
+> >> diff --git a/drivers/media/pci/saa7134/saa7134-cards.c b/drivers/media=
+/pci/saa7134/saa7134-cards.c
+> >> index 301b89e799d8..79cd61fb0205 100644
+> >> --- a/drivers/media/pci/saa7134/saa7134-cards.c
+> >> +++ b/drivers/media/pci/saa7134/saa7134-cards.c
+> >> @@ -7981,7 +7981,7 @@ int saa7134_board_init2(struct saa7134_dev *dev)
+> >>                         rc =3D i2c_transfer(&dev->i2c_adap, &msg, 1);
+> >>                         pr_info("%s: probe IR chip @ i2c 0x%02x: %s\n"=
+,
+> >>                                    dev->name, msg.addr,
+> >> -                                  str_yes_no(1 =3D=3D rc));
+> >> +                                  str_yes_no(rc =3D=3D 1));
+> >>                         if (rc =3D=3D 1)
+> >>                                 dev->has_remote =3D SAA7134_REMOTE_I2C=
+;
+> >>                 }
+> >> diff --git a/drivers/media/pci/saa7134/saa7134-input.c b/drivers/media=
+/pci/saa7134/saa7134-input.c
+> >> index 90837ec6e70f..239f0b9d080a 100644
+> >> --- a/drivers/media/pci/saa7134/saa7134-input.c
+> >> +++ b/drivers/media/pci/saa7134/saa7134-input.c
+> >> @@ -895,7 +895,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
+> >>                 rc =3D i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
+> >>                 input_dbg("probe 0x%02x @ %s: %s\n",
+> >>                         msg_msi.addr, dev->i2c_adap.name,
+> >> -                       str_yes_no(1 =3D=3D rc));
+> >> +                       str_yes_no(rc =3D=3D 1));
+> >>                 break;
+> >>         case SAA7134_BOARD_SNAZIO_TVPVR_PRO:
+> >>                 dev->init_data.name =3D "SnaZio* TVPVR PRO";
+> >> @@ -931,7 +931,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
+> >>                 rc =3D i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
+> >>                 input_dbg("probe 0x%02x @ %s: %s\n",
+> >>                         msg_msi.addr, dev->i2c_adap.name,
+> >> -                       str_yes_no(1 =3D=3D rc));
+> >> +                       str_yes_no(rc =3D=3D 1));
+> >>                 break;
+> >>         case SAA7134_BOARD_HAUPPAUGE_HVR1110:
+> >>                 dev->init_data.name =3D saa7134_boards[dev->board].nam=
+e;
+> >> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c b/drivers/media/=
+usb/pvrusb2/pvrusb2-ctrl.c
+> >> index 448c40caf363..b6c9bda214c8 100644
+> >> --- a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
+> >> +++ b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
+> >> @@ -521,7 +521,7 @@ int pvr2_ctrl_value_to_sym_internal(struct pvr2_ct=
+rl *cptr,
+> >>                 *len =3D scnprintf(buf,maxlen,"%d",val);
+> >>                 ret =3D 0;
+> >>         } else if (cptr->info->type =3D=3D pvr2_ctl_bool) {
+> >> -               *len =3D scnprintf(buf,maxlen,"%s",str_true_false(val)=
+);
+> >> +               *len =3D scnprintf(buf, maxlen, "%s", str_true_false(v=
+al));
+> >>                 ret =3D 0;
+> >>         } else if (cptr->info->type =3D=3D pvr2_ctl_enum) {
+> >>                 const char * const *names;
+> >> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/u=
+sb/pvrusb2/pvrusb2-hdw.c
+> >> index 96d3a0045fac..761d718478ca 100644
+> >> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+> >> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
+> >> @@ -338,7 +338,7 @@ static void trace_stbit(const char *name,int val)
+> >>  {
+> >>         pvr2_trace(PVR2_TRACE_STBITS,
+> >>                    "State bit %s <-- %s",
+> >> -                  name,str_true_false(val));
+> >> +                  name, str_true_false(val));
+> >>  }
+> >>
+> >> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >> ---
+> >> Ricardo Ribalda (45):
+> >>       media: staging: ipu3: Use string_choices helpers
+> >>       media: staging: atomisp: Use string_choices helpers
+> >>       media: core: Use string_choices helpers
+> >>       media: pwc-ctl: Use string_choices helpers
+> >>       media: pvrusb2:Use string_choices helpers
+> >>       media: em28xx: Use string_choices helpers
+> >>       media: dvb-usb: Use string_choices helpers
+> >>       media: dvb-usb-v2: Use string_choices helpers
+> >>       media: cx231xx: Use string_choices helpers
+> >>       media: tuners: Use string_choices helpers
+> >>       media: rc: Use string_choices helpers
+> >>       media: dvb-frontends: Use string_choices helpers
+> >>       media: pci: cx23885: Use string_choices helpers
+> >>       media: saa7134: Use string_choices helpers
+> >>       media: amphion: Use string_choices helpers
+> >>       media: pci: ivtv: Use string_choices helpers
+> >>       media: bttv: Use string_choices helpers
+> >>       media: xilinx: Use string_choices helpers
+> >>       media: platform: ti: Use string_choices helpers
+> >>       media: st: Use string_choices helpers
+> >>       media: coda: Use string_choices helpers
+> >>       media: aspeed: Use string_choices helpers
+> >>       media: ipu6: Use string_choices helpers
+> >>       media: cx18: Use string_choices helpers
+> >>       media: cobalt: Use string_choices helpers
+> >>       media: videobuf2: Use string_choices helpers
+> >>       media: cec: Use string_choices helpers
+> >>       media: b2c2: Use string_choices helpers
+> >>       media: siano: Use string_choices helpers
+> >>       media: i2c: cx25840: Use string_choices helpers
+> >>       media: i2c: vpx3220: Use string_choices helpers
+> >>       media: i2c: tvp7002: Use string_choices helpers
+> >>       media: i2c: ths8200: Use string_choices helpers
+> >>       media: i2c: tda1997x: Use string_choices helpers
+> >>       media: i2c: tc358743: Use string_choices helpers
+> >>       media: i2c: st-mipid02: Use string_choices helpers
+> >>       media: i2c: msp3400: Use string_choices helpers
+> >>       media: i2c: max9286: Use string_choices helpers
+> >>       media: i2c: saa717x: Use string_choices helpers
+> >>       media: i2c: saa7127: Use string_choices helpers
+> >>       media: i2c: saa7115: Use string_choices helpers
+> >>       media: i2c: saa7110: Use string_choices helpers
+> >>       media: i2c: adv7842: Use string_choices helpers
+> >>       media: i2c: adv76xx: Use string_choices helpers
+> >>       media: i2c: adv7511: Use string_choices helpers
+> >>
+> >>  drivers/media/cec/platform/cec-gpio/cec-gpio.c     |  4 +-
+> >>  drivers/media/cec/usb/pulse8/pulse8-cec.c          |  4 +-
+> >>  drivers/media/common/b2c2/flexcop-hw-filter.c      |  4 +-
+> >>  drivers/media/common/siano/sms-cards.c             |  3 +-
+> >>  drivers/media/common/videobuf2/videobuf2-core.c    |  5 ++-
+> >>  drivers/media/dvb-frontends/ascot2e.c              |  2 +-
+> >>  drivers/media/dvb-frontends/cx24120.c              |  4 +-
+> >>  drivers/media/dvb-frontends/cxd2841er.c            |  2 +-
+> >>  drivers/media/dvb-frontends/drxk_hard.c            |  4 +-
+> >>  drivers/media/dvb-frontends/helene.c               |  2 +-
+> >>  drivers/media/dvb-frontends/horus3a.c              |  2 +-
+> >>  drivers/media/dvb-frontends/sp2.c                  |  2 +-
+> >>  drivers/media/i2c/adv7511-v4l2.c                   | 11 +++---
+> >>  drivers/media/i2c/adv7604.c                        | 25 ++++++------
+> >>  drivers/media/i2c/adv7842.c                        | 40 ++++++++++---=
+-------
+> >>  drivers/media/i2c/cx25840/cx25840-core.c           |  4 +-
+> >>  drivers/media/i2c/cx25840/cx25840-ir.c             | 34 ++++++++-----=
+----
+> >>  drivers/media/i2c/max9286.c                        |  2 +-
+> >>  drivers/media/i2c/msp3400-driver.c                 |  4 +-
+> >>  drivers/media/i2c/saa7110.c                        |  2 +-
+> >>  drivers/media/i2c/saa7115.c                        |  2 +-
+> >>  drivers/media/i2c/saa7127.c                        | 15 +++++---
+> >>  drivers/media/i2c/saa717x.c                        |  2 +-
+> >>  drivers/media/i2c/st-mipid02.c                     |  2 +-
+> >>  drivers/media/i2c/tc358743.c                       | 44 ++++++++++---=
+---------
+> >>  drivers/media/i2c/tda1997x.c                       |  6 +--
+> >>  drivers/media/i2c/ths8200.c                        |  4 +-
+> >>  drivers/media/i2c/tvp7002.c                        |  2 +-
+> >>  drivers/media/i2c/vpx3220.c                        |  2 +-
+> >>  drivers/media/pci/bt8xx/bttv-cards.c               | 16 ++++----
+> >>  drivers/media/pci/bt8xx/bttv-driver.c              |  6 +--
+> >>  drivers/media/pci/cobalt/cobalt-driver.c           |  2 +-
+> >>  drivers/media/pci/cx18/cx18-av-core.c              |  4 +-
+> >>  drivers/media/pci/cx23885/altera-ci.c              |  2 +-
+> >>  drivers/media/pci/cx23885/cimax2.c                 |  2 +-
+> >>  drivers/media/pci/cx23885/cx23888-ir.c             | 36 +++++++++----=
+-----
+> >>  drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c      |  2 +-
+> >>  drivers/media/pci/ivtv/ivtvfb.c                    |  4 +-
+> >>  drivers/media/pci/saa7134/saa7134-cards.c          |  2 +-
+> >>  drivers/media/pci/saa7134/saa7134-dvb.c            |  2 +-
+> >>  drivers/media/pci/saa7134/saa7134-input.c          |  6 +--
+> >>  drivers/media/pci/saa7134/saa7134-video.c          |  2 +-
+> >>  drivers/media/platform/amphion/venc.c              |  2 +-
+> >>  drivers/media/platform/amphion/vpu_dbg.c           |  2 +-
+> >>  drivers/media/platform/aspeed/aspeed-video.c       |  4 +-
+> >>  drivers/media/platform/chips-media/coda/imx-vdoa.c |  3 +-
+> >>  drivers/media/platform/st/sti/hva/hva-debugfs.c    |  6 +--
+> >>  drivers/media/platform/ti/omap3isp/ispstat.c       |  2 +-
+> >>  drivers/media/platform/xilinx/xilinx-csi2rxss.c    | 18 ++++-----
+> >>  drivers/media/rc/ene_ir.c                          |  3 +-
+> >>  drivers/media/rc/mceusb.c                          |  3 +-
+> >>  drivers/media/rc/serial_ir.c                       |  5 ++-
+> >>  drivers/media/tuners/tda18250.c                    |  2 +-
+> >>  drivers/media/tuners/tda9887.c                     | 10 ++---
+> >>  drivers/media/usb/cx231xx/cx231xx-i2c.c            |  4 +-
+> >>  drivers/media/usb/cx231xx/cx231xx-video.c          |  2 +-
+> >>  drivers/media/usb/dvb-usb-v2/az6007.c              |  4 +-
+> >>  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c        |  4 +-
+> >>  drivers/media/usb/dvb-usb/af9005-fe.c              |  4 +-
+> >>  drivers/media/usb/dvb-usb/dvb-usb-dvb.c            |  6 +--
+> >>  drivers/media/usb/dvb-usb/opera1.c                 |  8 ++--
+> >>  drivers/media/usb/em28xx/em28xx-i2c.c              |  4 +-
+> >>  drivers/media/usb/em28xx/em28xx-video.c            |  2 +-
+> >>  drivers/media/usb/pvrusb2/pvrusb2-ctrl.c           |  2 +-
+> >>  drivers/media/usb/pvrusb2/pvrusb2-debugifc.c       |  3 +-
+> >>  drivers/media/usb/pvrusb2/pvrusb2-encoder.c        |  5 +--
+> >>  drivers/media/usb/pvrusb2/pvrusb2-hdw.c            |  6 +--
+> >>  drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c       |  3 +-
+> >>  drivers/media/usb/pwc/pwc-ctrl.c                   |  2 +-
+> >>  drivers/media/v4l2-core/v4l2-ctrls-core.c          |  3 +-
+> >>  drivers/media/v4l2-core/v4l2-fwnode.c              | 12 +++---
+> >>  .../media/atomisp/pci/atomisp_compat_css20.c       |  2 +-
+> >>  .../media/atomisp/pci/atomisp_csi2_bridge.c        |  2 +-
+> >>  .../media/atomisp/pci/atomisp_gmin_platform.c      |  4 +-
+> >>  drivers/staging/media/atomisp/pci/atomisp_v4l2.c   |  4 +-
+> >>  .../media/atomisp/pci/runtime/binary/src/binary.c  |  2 +-
+> >>  drivers/staging/media/atomisp/pci/sh_css.c         |  2 +-
+> >>  drivers/staging/media/ipu3/ipu3-v4l2.c             |  4 +-
+> >>  78 files changed, 240 insertions(+), 239 deletions(-)
+> >> ---
+> >> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> >> change-id: 20240930-cocci-opportunity-40bca6a17c42
+> >
+>
 
