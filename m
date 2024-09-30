@@ -1,229 +1,306 @@
-Return-Path: <linux-kernel+bounces-344437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9199998A996
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:18:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F30898A999
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561B428366A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:18:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2E61F24A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CF3192D82;
-	Mon, 30 Sep 2024 16:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55506192D94;
+	Mon, 30 Sep 2024 16:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcOpPqcA"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="N/qOJ0qz"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7263BB24;
-	Mon, 30 Sep 2024 16:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A789D3BB24
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:18:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727713109; cv=none; b=m7WL63aOEPLyiu8zk6pwU/tZGcDmf/xiZikm+wKR4e3+o3KdFzP8qAk+dsySAiO2NeNK3XP/imh0gZVrF3+lCpi/Tyk/z3/vGrM7oeBfLEItksJq0cAjlf44T+EcqYDdc0PDX6K98L5QUqF/M/K++wYRXwD7OrGtEPUBojlsDys=
+	t=1727713129; cv=none; b=QfsSqlADFzyMDFrsGQ7qlGAtWn3Lxio4uYwKc6nFtC2F8+WWSE19zk6+CLTb+l/SkLCoF5wlBcJl6LFcTexH/AAMHWG2lc3GqFXUWstbyWHz6cY6SMMtUraOrd9Cb19uiGF23oT1BMnT+pNNdzbunpI6UDyWL4AceYRJ04nsrJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727713109; c=relaxed/simple;
-	bh=rmRrtaTPc18YV058qlVA4OVTYgYrgme9pPRozC80Cp8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/06Zhkggh2ryV5SyvswDvBhjUW8MSfTSQvgXUhKGMQ6cC4N1/0iVhmuNebO3ncaUde3CY/rD+jXRuEKnZ17OOZ2UlXst8/5y8DyezQAxQ1AlasFjKQ/vOKYGsUiiPgwDl+qT/wKr6bBBZsuOqsVanxcV6O3wdGLfAZaXa1S6vI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcOpPqcA; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e1d4368ad91so4489241276.0;
-        Mon, 30 Sep 2024 09:18:27 -0700 (PDT)
+	s=arc-20240116; t=1727713129; c=relaxed/simple;
+	bh=ijQEFirnAN0nF2r4md2QaY8li8oKoKXVx9gOpBLyuwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T6e2pg/itmtKOYAxLXnGm6rPmhHWLnou5Ny826mmlXt9213kMJD1ai8zeDs3EwGvfC1XwRFXCx8H6ZXngHdrUTucNXfGMcpns5NTxqOSdV118BBf7eLz0YZlCYuYDdxuwbIUlmOoKNdBBhMmdHQpJz2wXeyF56pEGbu5vSO6sOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=N/qOJ0qz; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53997328633so1499260e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727713107; x=1728317907; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2l5r1LZwEKOpEY2ktEbhSxXVhypzkb5WeDgzsoyHkvo=;
-        b=RcOpPqcANreT0pWFuLpYbFlHc2WhE+6sx/3wg0DpTHVr//hBmJFOSjhaySz81A66SZ
-         nh0Fokg0HFUBVq22MD6rKsgsTjsMSXhN7RC9eU1A6JOVgWuvpLulqtVbOsO2a5wH9lEZ
-         7/V0EkYcfNrf6uReMiSHzY2g/zcaJBR7wk1jH/UUXER5yumBsCzMhRlESdgZovsp1lmH
-         7S6wt70/d7Np1FvXXyqvAON6yKi1ItteOKNqiDrCSkWz6Fk3YfyPzXoYlltVwhml7vIP
-         ZHC0ZjF3dIOmIIF4x5PQHktUvpqaTwRDdsu1A1lbOI0Y/q8SZqXjJPGPRiZl7BxINmT3
-         lF+Q==
+        d=broadcom.com; s=google; t=1727713126; x=1728317926; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=156DfDfDCatPJXgUAvqsr3KgZO9bhp0/+7Obm5njOCo=;
+        b=N/qOJ0qzeUPlRV8TIaB6/LlS7fez3QtshzrhbA4E9LpuztA/VvlwvJ4GFoaLTSkJ55
+         UNfDy/yfwhY+2akbXym8rk5JGtDPkLT3tBHsZfpMKQmreXG0jX+KHwyAgQ3/cWiTZ7G2
+         hn3nRhZ8+b2nLZnZZeRfhOJbpWc1PnprhrJCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727713107; x=1728317907;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2l5r1LZwEKOpEY2ktEbhSxXVhypzkb5WeDgzsoyHkvo=;
-        b=MPOY+NejYDphGIcDuRGUjTmojFNToRHSWRsIBcsm+El5hh74rRodKTwcrrO2SyVF6C
-         vF10sFJsivx3nbqk0OmL+p2O7p99GvPPZ9KzJHywj7Nzo8eUxAjZ3zjj1AiDUWyxxbsB
-         oB3Marfd61L68vFr0Lo6q6FsKSJL1U/9MsLpsRbj0dPmnQP3aQjzUOjnxrnDRtuK9toB
-         SwL9J1iI8qfLn80Jm4tRBllQ4Sdkex0b1YH+9ETznFWsm0YcHUepBnB1/cHonKlSZoIH
-         msv3D/dGXLqdPvI2I5ucOjKEEK7Z6h4cC0dH7Tq3/bzIkrnBG169cC1QUiuhQMsb2XTP
-         qb4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfWZ+kpvXF8icWf8U2VKjGk3RIxCCStXo3uL45pdXxjyqiD401KQ1C3SIudGxle+Dc9ZpZFsP5NWnZ@vger.kernel.org, AJvYcCW7PLWUrWrPYUz2U1fzi6Pw6H0Mm+k/hdBn/sfVLDd3x7Y561cr57OhvNhtcS7cg3cheY5QJs4FVGKlJzZ6@vger.kernel.org, AJvYcCWku46X2DKtpTyLZueHOF5bUayfh240Z8Aptf7dthqhOCrTQYduQp0BcIiMy+oZmwCM6WLLAjHgerg+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2RCsdke6ICcW8dbi84rdX+vUSfoFKMONrCkhzBPLPtwPXyP6s
-	5gheOnn5V91YxmaqiG8w9IomcCDgs5UwKxHle0YI8pV66AwGsddu
-X-Google-Smtp-Source: AGHT+IFl5Gjgwu84SmuI/bp1yeHjyf2HoU9EbS4VxR8UrDamisJDdtS97rTLsocKl2LAstlAiPJnCQ==
-X-Received: by 2002:a05:6902:e89:b0:e1d:91d4:3ddb with SMTP id 3f1490d57ef6-e262c06c4f1mr167736276.20.1727713104683;
-        Mon, 30 Sep 2024 09:18:24 -0700 (PDT)
-Received: from fan ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e25e42207b9sm2419546276.33.2024.09.30.09.18.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 09:18:24 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Mon, 30 Sep 2024 09:17:55 -0700
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
-	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
-	dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com, jgroves@micron.com,
-	vsalve@micron.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v12 08/17] cxl/mbox: Add GET_FEATURE mailbox command
-Message-ID: <ZvrPM-NVQVwuNCHJ@fan>
-References: <20240911090447.751-1-shiju.jose@huawei.com>
- <20240911090447.751-9-shiju.jose@huawei.com>
+        d=1e100.net; s=20230601; t=1727713126; x=1728317926;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=156DfDfDCatPJXgUAvqsr3KgZO9bhp0/+7Obm5njOCo=;
+        b=e/TUkbaWH29+X3PAt8uW+7b6kg2GAiw2CE9RddfZHHCJ4izX5OXtbZ+PO4QwOAYPCJ
+         vTe1K1orVVGstmrQo+eCHb4WN6e6Wh1KwfhG3tOhv7RL6/nbwBdZObWn46gIKM0D6fGM
+         rkN7fnYSvlri1uXY1joYKFki7LxudBiqK78BvuBuLNL5YevkYXFfIKY8KNtPMP3G7gJQ
+         bOEyzSIaCk2EsoqPObi/2DJy2PjbrVaWwkS1/QERhvgizmNMoLY9CbeozoUvvDJdzV1W
+         03RMBEToijVS6KL8XbBqHNg4I5d6NIPZmTRgGLNaWogS9v0y119Lt0WLH73ls8TPOMe9
+         OEog==
+X-Forwarded-Encrypted: i=1; AJvYcCUMj85PthQpUB39tZAOFyHghhAPzBqjmPLxlqC+Ksk9a5h4OFnTzkk+KjCMPOvx3Bav3OGS5NrR6jjiEhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjkzodIJTCMIfVrOYuUhE6s7jieXIjWRV67iSA/TIeu+fHt0tA
+	BJS3bV5+9CHK7v+tm4fdJiuKj3SSJWJkIgp2d+dFllfviNxaWzU0b//s8OFEYCICe8lLvLc/k2y
+	vkr+w+oqrXEOnCWX0Wy0eQfIp0Vttp8xgOFC2
+X-Google-Smtp-Source: AGHT+IGigRT0yCkmtZ8InOp2tbjuf/SkpFtdf3UAEvBv/nqkw3gHS1Lf4fsBJZTC5sJdykycN+ilm4KARu7hOB8iGs4=
+X-Received: by 2002:a05:6512:39c6:b0:539:94f5:bf with SMTP id
+ 2adb3069b0e04-53994f50221mr3264089e87.59.1727713125661; Mon, 30 Sep 2024
+ 09:18:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911090447.751-9-shiju.jose@huawei.com>
+References: <20240930153423.16893-1-divya.koppera@microchip.com>
+In-Reply-To: <20240930153423.16893-1-divya.koppera@microchip.com>
+From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
+Date: Mon, 30 Sep 2024 21:48:32 +0530
+Message-ID: <CAH-L+nMy5k7fvypd_7SczKs=5ZkpOZb2B3RwTz4sCHmrjdX7+A@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Interrupt support for lan887x
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com, andrew@lunn.ch, 
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000287c990623588f03"
 
-On Wed, Sep 11, 2024 at 10:04:37AM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add support for GET_FEATURE mailbox command.
-> 
-> CXL spec 3.1 section 8.2.9.6 describes optional device specific features.
-> The settings of a feature can be retrieved using Get Feature command.
-> CXL spec 3.1 section 8.2.9.6.2 describes Get Feature command.
-> 
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+--000000000000287c990623588f03
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Sep 30, 2024 at 9:02=E2=80=AFPM Divya Koppera
+<divya.koppera@microchip.com> wrote:
+>
+> Add support for link up and link down interrupts in lan887x.
+>
+> Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 > ---
-
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
-
->  drivers/cxl/core/mbox.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxlmem.h    | 26 ++++++++++++++++++++++++++
->  2 files changed, 67 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index fe965ec5802f..3dfe411c6556 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -965,6 +965,47 @@ int cxl_get_supported_feature_entry(struct cxl_dev_state *cxlds, const uuid_t *f
+>  drivers/net/phy/microchip_t1.c | 63 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 63 insertions(+)
+>
+> diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t=
+1.c
+> index a5ef8fe50704..383050a5b0ed 100644
+> --- a/drivers/net/phy/microchip_t1.c
+> +++ b/drivers/net/phy/microchip_t1.c
+> @@ -226,6 +226,18 @@
+>  #define MICROCHIP_CABLE_MAX_TIME_DIFF  \
+>         (MICROCHIP_CABLE_MIN_TIME_DIFF + MICROCHIP_CABLE_TIME_MARGIN)
+>
+> +#define LAN887X_INT_STS                                0xf000
+> +#define LAN887X_INT_MSK                                0xf001
+> +#define LAN887X_INT_MSK_T1_PHY_INT_MSK         BIT(2)
+> +#define LAN887X_INT_MSK_LINK_UP_MSK            BIT(1)
+> +#define LAN887X_INT_MSK_LINK_DOWN_MSK          BIT(0)
+> +
+> +#define LAN887X_MX_CHIP_TOP_LINK_MSK   (LAN887X_INT_MSK_LINK_UP_MSK |\
+> +                                        LAN887X_INT_MSK_LINK_DOWN_MSK)
+> +
+> +#define LAN887X_MX_CHIP_TOP_ALL_MSK    (LAN887X_INT_MSK_T1_PHY_INT_MSK |=
+\
+> +                                        LAN887X_MX_CHIP_TOP_LINK_MSK)
+> +
+>  #define DRIVER_AUTHOR  "Nisar Sayed <nisar.sayed@microchip.com>"
+>  #define DRIVER_DESC    "Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
+>
+> @@ -1474,6 +1486,7 @@ static void lan887x_get_strings(struct phy_device *=
+phydev, u8 *data)
+>                 ethtool_puts(&data, lan887x_hw_stats[i].string);
 >  }
->  EXPORT_SYMBOL_NS_GPL(cxl_get_supported_feature_entry, CXL);
->  
-> +size_t cxl_get_feature(struct cxl_dev_state *cxlds, const uuid_t feat_uuid,
-> +		       enum cxl_get_feat_selection selection,
-> +		       void *feat_out, size_t feat_out_size)
-> +{
-> +	struct cxl_mailbox *cxl_mbox = &cxlds->cxl_mbox;
-> +	size_t data_to_rd_size, size_out;
-> +	struct cxl_mbox_get_feat_in pi;
-> +	struct cxl_mbox_cmd mbox_cmd;
-> +	size_t data_rcvd_size = 0;
-> +	int rc;
-> +
-> +	if (!feat_out || !feat_out_size)
-> +		return 0;
-> +
-> +	size_out = min(feat_out_size, cxl_mbox->payload_size);
-> +	pi.uuid = feat_uuid;
-> +	pi.selection = selection;
-> +	do {
-> +		data_to_rd_size = min(feat_out_size - data_rcvd_size,
-> +				      cxl_mbox->payload_size);
-> +		pi.offset = cpu_to_le16(data_rcvd_size);
-> +		pi.count = cpu_to_le16(data_to_rd_size);
-> +
-> +		mbox_cmd = (struct cxl_mbox_cmd) {
-> +			.opcode = CXL_MBOX_OP_GET_FEATURE,
-> +			.size_in = sizeof(pi),
-> +			.payload_in = &pi,
-> +			.size_out = size_out,
-> +			.payload_out = feat_out + data_rcvd_size,
-> +			.min_out = data_to_rd_size,
-> +		};
-> +		rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> +		if (rc < 0 || !mbox_cmd.size_out)
-> +			return 0;
-> +		data_rcvd_size += mbox_cmd.size_out;
-> +	} while (data_rcvd_size < feat_out_size);
-> +
-> +	return data_rcvd_size;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_get_feature, CXL);
-> +
->  /**
->   * cxl_enumerate_cmds() - Enumerate commands for a device.
->   * @mds: The driver data for the operation
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index 5d149e64c247..57c9294bb7f3 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -487,6 +487,7 @@ enum cxl_opcode {
->  	CXL_MBOX_OP_CLEAR_LOG           = 0x0403,
->  	CXL_MBOX_OP_GET_SUP_LOG_SUBLIST = 0x0405,
->  	CXL_MBOX_OP_GET_SUPPORTED_FEATURES	= 0x0500,
-> +	CXL_MBOX_OP_GET_FEATURE		= 0x0501,
->  	CXL_MBOX_OP_IDENTIFY		= 0x4000,
->  	CXL_MBOX_OP_GET_PARTITION_INFO	= 0x4100,
->  	CXL_MBOX_OP_SET_PARTITION_INFO	= 0x4101,
-> @@ -812,6 +813,28 @@ struct cxl_mbox_get_sup_feats_out {
->  	struct cxl_feat_entry ents[] __counted_by(le32_to_cpu(supported_feats));
->  } __packed;
->  
-> +/*
-> + * Get Feature CXL 3.1 Spec 8.2.9.6.2
-> + */
-> +
-> +/*
-> + * Get Feature input payload
-> + * CXL rev 3.1 section 8.2.9.6.2 Table 8-99
-> + */
-> +enum cxl_get_feat_selection {
-> +	CXL_GET_FEAT_SEL_CURRENT_VALUE,
-> +	CXL_GET_FEAT_SEL_DEFAULT_VALUE,
-> +	CXL_GET_FEAT_SEL_SAVED_VALUE,
-> +	CXL_GET_FEAT_SEL_MAX
-> +};
-> +
-> +struct cxl_mbox_get_feat_in {
-> +	uuid_t uuid;
-> +	__le16 offset;
-> +	__le16 count;
-> +	u8 selection;
-> +}  __packed;
-> +
->  int cxl_internal_send_cmd(struct cxl_mailbox *cxl_mbox,
->  			  struct cxl_mbox_cmd *cmd);
->  int cxl_dev_state_identify(struct cxl_memdev_state *mds);
-> @@ -875,4 +898,7 @@ void cxl_dpa_debug(struct seq_file *file, struct cxl_dev_state *cxlds);
->  int cxl_get_supported_features(struct cxl_dev_state *cxlds);
->  int cxl_get_supported_feature_entry(struct cxl_dev_state *cxlds, const uuid_t *feat_uuid,
->  				    struct cxl_feat_entry *feat_entry_out);
-> +size_t cxl_get_feature(struct cxl_dev_state *cxlds, const uuid_t feat_uuid,
-> +		       enum cxl_get_feat_selection selection,
-> +		       void *feat_out, size_t feat_out_size);
->  #endif /* __CXL_MEM_H__ */
-> -- 
-> 2.34.1
-> 
+>
+> +static int lan887x_config_intr(struct phy_device *phydev);
+[Kalesh] I would suggest you to avoid this forward declaration by
+moving the function definition here.
 
--- 
-Fan Ni
+>  static int lan887x_cd_reset(struct phy_device *phydev,
+>                             enum cable_diag_state cd_done)
+>  {
+> @@ -1504,6 +1517,10 @@ static int lan887x_cd_reset(struct phy_device *phy=
+dev,
+>                 if (rc < 0)
+>                         return rc;
+>
+> +               rc =3D lan887x_config_intr(phydev);
+> +               if (rc < 0)
+> +                       return rc;
+> +
+>                 rc =3D lan887x_phy_reconfig(phydev);
+>                 if (rc < 0)
+>                         return rc;
+> @@ -1830,6 +1847,50 @@ static int lan887x_cable_test_get_status(struct ph=
+y_device *phydev,
+>         return lan887x_cable_test_report(phydev);
+>  }
+>
+> +static int lan887x_config_intr(struct phy_device *phydev)
+> +{
+> +       int ret;
+> +
+> +       if (phydev->interrupts =3D=3D PHY_INTERRUPT_ENABLED) {
+> +               /* Clear the interrupt status before enabling interrupts =
+*/
+> +               ret =3D phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_=
+STS);
+> +               if (ret < 0)
+> +                       return ret;
+> +
+> +               /* Unmask for enabling interrupt */
+> +               ret =3D phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT=
+_MSK,
+> +                                   (u16)~LAN887X_MX_CHIP_TOP_ALL_MSK);
+> +       } else {
+> +               ret =3D phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT=
+_MSK,
+> +                                   GENMASK(15, 0));
+> +               if (ret < 0)
+> +                       return ret;
+> +
+> +               ret =3D phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_=
+STS);
+> +       }
+> +
+> +       return ret < 0 ? ret : 0;
+> +}
+> +
+> +static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
+> +{
+> +       int ret =3D IRQ_NONE;
+> +       int irq_status;
+> +
+> +       irq_status =3D phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_S=
+TS);
+> +       if (irq_status < 0) {
+> +               phy_error(phydev);
+> +               return IRQ_NONE;
+> +       }
+> +
+> +       if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
+> +               phy_trigger_machine(phydev);
+> +               ret =3D IRQ_HANDLED;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+>  static struct phy_driver microchip_t1_phy_driver[] =3D {
+>         {
+>                 PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
+> @@ -1881,6 +1942,8 @@ static struct phy_driver microchip_t1_phy_driver[] =
+=3D {
+>                 .read_status    =3D genphy_c45_read_status,
+>                 .cable_test_start =3D lan887x_cable_test_start,
+>                 .cable_test_get_status =3D lan887x_cable_test_get_status,
+> +               .config_intr    =3D lan887x_config_intr,
+> +               .handle_interrupt =3D lan887x_handle_interrupt,
+>         }
+>  };
+>
+> --
+> 2.17.1
+>
+>
+
+
+--=20
+Regards,
+Kalesh A P
+
+--000000000000287c990623588f03
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
+BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
+JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
+aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
+FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
+T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
+o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
+aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
+YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
+cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
+ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
+HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
+Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
+LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
+zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
+4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
+cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
+u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
+a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
+x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
+VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
+bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
+AQkEMSIEIMpPrqUQ3ywfOEj9b0iKJHYg13bAaNi2pcRRYG/v9IevMBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDkzMDE2MTg0NlowaQYJKoZIhvcNAQkPMVwwWjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCMAZkXfVbc
+49JQeoyJ67xQcSqYtghhwuvxCaauGk53DN9YGMzBi326WQ3N6IfghKyFiPmbJGRyd5q62gvZjjEL
+7hk9h6Xqu96M31Z7AVnfJ+Ug3Shx0X5Y+RyWGSBqEpNOMRFiamB0QMsTv1z3cuMRoZBJ4S9L2GWE
+qm+b7bmctbW8O7EX+R4av+6cJ2JjNumpzeua7HjLdX2cCLamuld8iFMe6MnY79uX4C+c5H3y/kgq
+UL8MpfQCMp7zRb0CN3lKTupmIeIMww74qSQBRzxanTdlYECKQxBN5DfcX7DjtfHs+QTYKcN9c5hv
+rKAh2LQ+61pP790WzFjeGPpxevWE
+--000000000000287c990623588f03--
 
