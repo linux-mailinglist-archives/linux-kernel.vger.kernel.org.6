@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-344373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79ED398A8D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D481598A8D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D4451C22AE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 117931C22689
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2761922DC;
-	Mon, 30 Sep 2024 15:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VCkay0Ig"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C7E14D6F9
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24494192D78;
+	Mon, 30 Sep 2024 15:40:30 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6788D192B9E
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710816; cv=none; b=fp5ITn/QNg8Nov0Yzy/Vp2fQQKJBpEXZ5e4gVl2OmqCjhx3EbVO+93ffYWrRMT0qjbqVwarMW86ccDLIh1ESuaCrVNu/ySSIxBlx05DxpYeDtdDyLaJkz4jT/7LkswT7df7Gzmqp0oJEqWeQpXGRldWmfFi4ubKSC2n57GyrIzc=
+	t=1727710829; cv=none; b=t+vOycJ4yANqJoVCAO9WPt0G2hilz/9guzbrhbGiKl7eAL8nL2cQzWaW/0ZxNBOcpMHGm9rLyaxOXzngdiV0UojjMRenz066hltZFKDm4xjvYKiie5SzLdPyqE3QrGBC0hEwAZ5kKQfTN53b1RO8Q4ORNKS0VKUd7KgGlxKJ2uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710816; c=relaxed/simple;
-	bh=2ayb/aRy9s7UAywgsgl5kMfQtRv+G4n8lNByX7Z98og=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WqQAGaK9ddqcYcIVBdgmTFr0u+IMlRgunnP/XGQSUC8/4mcW9jvlocuUza6PuAvhY82uKH/Y8uWJ2xeRTVZ+lEXyEyOgJN2fhzI40XSVNgrmppoygWAuFWn4LJvdiYlGjSAmw/G1HhtXn2oc5Oa6NCkign1wBdRdDr8rl9iKszE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VCkay0Ig; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727710813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=b8c6Yzc2x/r/1MD6EJdj0wxYaOvsWglAbfqX6bif82g=;
-	b=VCkay0Ig/C9lBrfjiXuIWC/ZuoPlsZhBjc4fY1ELvuhxAKhtzzENkVMXuoaVDFnLguoR4w
-	El91CaWKeu7Gj66Wuls0WSM/Pod5p3o3grb9ruf1WsrUJI/9nA+RPQeqP2JcmPoNBXfOjl
-	i93XFZI9rXpSjSn/kuR7uPwFTW3b+VE=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Brett Creeley <bcreeley@amd.com>,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH net] doc: net: napi: Update documentation for napi_schedule_irqoff
-Date: Mon, 30 Sep 2024 11:39:54 -0400
-Message-Id: <20240930153955.971657-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1727710829; c=relaxed/simple;
+	bh=pnqknXO9IJu8xTFekZlGtw3rThcC71VWxLS91NdgUlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UUwMy9YQ9dV/xk5jBoXG6bryTJN/D3y6IiSCe98Ym90chx59Yxs17+ax9Gy4QE0h1q8KYGgJ2RNinoeBYqtuY3e9Y3PQOMeZgtXgaDvXykumKrW5cODTkAQvUVCQBDDLV1qU/CTXLTqIJTqpNhbaE1T3a/im+q1c8Hk7j9mkS4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by mail.home.local (8.17.1/8.17.1/Submit) id 48UFeNb9006225;
+	Mon, 30 Sep 2024 17:40:23 +0200
+Date: Mon, 30 Sep 2024 17:40:23 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: David Laight <David.Laight@ACULAB.COM>
+Cc: "'Thomas =?iso-8859-1?Q?Wei=DFschuh'?=" <linux@weissschuh.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/nolibc: compiler: add macro __nolibc_fallthrough
+Message-ID: <ZvrGZ78XvvKrs/0Q@1wt.eu>
+References: <20240930-nolibc-fallthrough-v2-1-2e8d10fe3430@weissschuh.net>
+ <61eb467389f24216b77aaedb85006153@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <61eb467389f24216b77aaedb85006153@AcuMS.aculab.com>
 
-Since commit 8380c81d5c4f ("net: Treat __napi_schedule_irqoff() as
-__napi_schedule() on PREEMPT_RT"), napi_schedule_irqoff will do the
-right thing if IRQs are threaded. Therefore, there is no need to use
-IRQF_NO_THREAD.
+Hi David,
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
-https://lore.kernel.org/netdev/20240913150954.2287196-1-sean.anderson@linux.dev/
+On Mon, Sep 30, 2024 at 03:29:26PM +0000, David Laight wrote:
+> From: Thomas Weiﬂschuh
+> > Sent: 30 September 2024 06:35
+> > 
+> > Recent version of GCC and clang gained -Wimplicit-fallthrough,
+> > warning about implicit fall-through between switch labels.
+> > As nolibc does not control the compilation flags, this can trigger
+> > warnings for when built by the user.
+> > Make use of the "fallthrough" attribute to explicitly annotate the
+> > expected fall-throughs and silence the warning.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> > ---
+> > Changes in v2:
+> > - Add a do-while loop to improve compiler compatibility
+> > - Link to v1: https://lore.kernel.org/r/20240929-nolibc-fallthrough-v1-1-5ee07ea9a683@weissschuh.net
+> ...
+> > 
+> > +#if __nolibc_has_attribute(fallthrough)
+> > +#  define __nolibc_fallthrough do { } while (0); __attribute__((fallthrough))
+> > +#else
+> > +#  define __nolibc_fallthrough do { } while (0)
+> > +#endif /* __nolibc_has_attribute(fallthrough) */
+> > +
+> >  #endif /* _NOLIBC_COMPILER_H */
+> > diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
+> > index c968dbbc4ef8137e237b859bf18a6d2970230cbf..3892034198dd566d21a5cc0a9f67cf097d428393 100644
+> > --- a/tools/include/nolibc/stdio.h
+> > +++ b/tools/include/nolibc/stdio.h
+> > @@ -15,6 +15,7 @@
+> >  #include "stdarg.h"
+> >  #include "stdlib.h"
+> >  #include "string.h"
+> > +#include "compiler.h"
+> > 
+> >  #ifndef EOF
+> >  #define EOF (-1)
+> > @@ -264,7 +265,7 @@ int vfprintf(FILE *stream, const char *fmt, va_list args)
+> >  				case 'p':
+> >  					*(out++) = '0';
+> >  					*(out++) = 'x';
+> > -					/* fall through */
+> > +					__nolibc_fallthrough;
+> >  				default: /* 'x' and 'p' above */
+> 
+> Doesn't this break any old tools that would have parsed the /* fall though */
+> comment (or any of its variants)?
 
- Documentation/networking/napi.rst | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Apparently not, I had rechecked with gcc-6.5 which is the one that
+used to expect comments, and it's apparently fine as well with the
+macro, probably due to its name which contains "fallthrough" in it.
+Anyway that one was broken when running cpp separately from cc1, so
+those at risk of seeing any warning already see it in their programs.
 
-diff --git a/Documentation/networking/napi.rst b/Documentation/networking/napi.rst
-index 7bf7b95c4f7a..dfa5d549be9c 100644
---- a/Documentation/networking/napi.rst
-+++ b/Documentation/networking/napi.rst
-@@ -144,9 +144,8 @@ IRQ should only be unmasked after a successful call to napi_complete_done():
- 
- napi_schedule_irqoff() is a variant of napi_schedule() which takes advantage
- of guarantees given by being invoked in IRQ context (no need to
--mask interrupts). Note that PREEMPT_RT forces all interrupts
--to be threaded so the interrupt may need to be marked ``IRQF_NO_THREAD``
--to avoid issues on real-time kernel configurations.
-+mask interrupts). napi_schedule_irqoff() will fall back to napi_schedule() if
-+IRQs are threaded (such as if ``PREEMPT_RT`` is enabled).
- 
- Instance to queue mapping
- -------------------------
--- 
-2.35.1.1320.gc452695387.dirty
+> If you move the ; into the define the 'old' definition can be empty.
+> And then it is possible that:
+> 				case x:
+> 					xxxxx;
+> 					/* fall though */
+> 					__nolibc_fallthough
+> 				case y:
+> 
+> will be processed correctly be all tools.
 
+Missing trailing commas is a real PITA, which can even cause indent
+issues with editors, better not do that, frankly.
+
+> I know I had to lower the warning level for one of our kernel drivers.
+> But I've forgotten why - that code has to go through a lot of
+> compilers - including Microsofts.
+
+Probably a case like I mentioned above: pre-processing being run as
+a first step, making the compiler not see the comment and complain.
+
+Cheers,
+Willy
 
