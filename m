@@ -1,110 +1,154 @@
-Return-Path: <linux-kernel+bounces-344149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81E198A581
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D302B98A59E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A2F3B27299
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:36:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E1CDB24B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 633BE18FC79;
-	Mon, 30 Sep 2024 13:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C216218FDB2;
+	Mon, 30 Sep 2024 13:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="geDgJNFo"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZED7bdn5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B500157A5C;
-	Mon, 30 Sep 2024 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2F118F2FD;
+	Mon, 30 Sep 2024 13:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727703400; cv=none; b=r4LEuIDKHNM3FRDeI3GxLJPhsFGUu+gAge14H/o0nr6FT7cemllqa5dyJwOXjFaI+4l2eUS+i2IsAgMkQaJjTmavPmjM/GJM5zx7Oj7P8huI2pkkQ/Ymu/GajOhfG9K3DxjmH6HcMQwG3g1wtyEipkR516k+FBazSSG7dyOuaUw=
+	t=1727703545; cv=none; b=GIKPrsugeyE1jVk9tNAyQWoz8gvZADL6EY+IE2cs2geGwXSZw0574cu2tOZLUutRhrtOiRQPQOr83UXbNzZQ29nrYpEnU0JDe++GtDxn6uZL9UG2dpjMGlzbNBODZNGPHviSJJvKuILwLrK3h2YGf8dTbypZGu+pQKzDEkURGAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727703400; c=relaxed/simple;
-	bh=9Jod10R4RtzEoR4Uzv7lhmO0qX6B/HcFytO0MOVHoAU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NIvmjBkJoGD6xyzBeuM0aeSoUN+c6KEWmdn7/apPtUAL7XEmSX0rEa9KniOk++LGBPT/Qz45BzNyorC64Ox5slqNoR3eCgZzDPHkZqwq0XqARCfQiRaum9Ph3e91VW74hYFRQKia9wZWkfhc8nRiCUphPRjiN1xB64u7vTCyPX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=geDgJNFo; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1727703396;
-	bh=VoQFTK/chG5VYPCklOHOHrA7ZyeKJw67fZSy41PgLso=;
-	h=Date:From:To:Cc:Subject:From;
-	b=geDgJNFo8hGahupx8+N5tp0A9M9n8sJX8TMU9/qY8bIezzJG5LLFjcvOhKpUzRbm9
-	 3lwQqwWIwE+gZlwqKi32BJiYUG6NwAvyG6f3W6weaEq8QaL4Ucey8+bph6ERKfSGHE
-	 8K7nbbgxNEFaAg7ELoc872h34Dl6CAgE2Xx7zSQF1qo8aLDpFen2VazKJ52dGyxqD8
-	 752TcR7TGruYLqRlBxInb+HgijNN4RzqTDa7uwTLSenXwkE9YGyH06l4fD6VBHA3Fe
-	 Yam56FREBzRKNe7NO06s3mp9fYzz6Vixaj1s46oDVlH+mfksrgFbT2uIIrYxCdRE2w
-	 xXzBNIc9m1iNQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XHMYJ07Zxz4wbv;
-	Mon, 30 Sep 2024 23:36:35 +1000 (AEST)
-Date: Mon, 30 Sep 2024 23:36:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Sam Edwards <cfsworks@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the rockchip tree
-Message-ID: <20240930233634.3af1daa9@canb.auug.org.au>
+	s=arc-20240116; t=1727703545; c=relaxed/simple;
+	bh=amz7lzdIctZaiT18tOT05jELSOgRlg/OpvFf3N9t3uM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L1be6M8l0ZrlDISoyUtZrfnclHYdn9xLuS59IoVQRZ7k3rnT97wxfDX5dWYCQjH7ye08QAKsyHsNDALcp53sN89ipfPPDMqxjHSdRsYHciJfnZfWum53oJRDwt/cGQLVabaSymJGkMvDgUWiLVWnaiYzJ47ivB2N2H5l4oPEMV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZED7bdn5; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727703543; x=1759239543;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=amz7lzdIctZaiT18tOT05jELSOgRlg/OpvFf3N9t3uM=;
+  b=ZED7bdn5954IXWUTpmEI+JVd6btPajrZMpHR82FXh4AazO+T34XC9q44
+   0GHkUFxe11NZhfP5PMpFm/+rxOINxyNvIiwalJ70Mt2SppXPUN+3n9WOM
+   5tM5n/37pcb68qC2f2u26EP3sOfjZzz4cILLJbUPLdT2uQa16eMljzjgF
+   PFyYKoKFOETPbKnJGftxEgvNF55Ior8B9DiURu2g0lN9gmeVwelSzFPRX
+   Cy4uf9qCuRUG+gEQv+VnrE0YObUWDKvMqFebBdih93oDkL/3K4Dh3C4AT
+   Yec9NFlq0OgOV7JJx526U4M/HREKhzgpKHwgNDVpiqGbQCpIyPe015I7F
+   w==;
+X-CSE-ConnectionGUID: NWV3QJC1RC+3v9NK1tMvsA==
+X-CSE-MsgGUID: BHoXRoV5Tz+XiWwigejVbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44312393"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="44312393"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:39:03 -0700
+X-CSE-ConnectionGUID: 18py0tMcTP6VRr0dm1/nUA==
+X-CSE-MsgGUID: xIfpSmwzRrqWXwIQ8gEyAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="77831808"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa004.fm.intel.com with ESMTP; 30 Sep 2024 06:38:59 -0700
+Received: from vecna.igk.intel.com (vecna.igk.intel.com [10.123.220.17])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 5E5D328169;
+	Mon, 30 Sep 2024 14:38:58 +0100 (IST)
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: intel-wired-lan@lists.osuosl.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Cc: netdev@vger.kernel.org,
+	Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Jiri Pirko <jiri@resnulli.us>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: [PATCH 0/7] ice: add support for devlink health events
+Date: Mon, 30 Sep 2024 15:37:17 +0200
+Message-Id: <20240930133724.610512-1-przemyslaw.kitszel@intel.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BPMoywLiDuDvRz9ONJJK6=G";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/BPMoywLiDuDvRz9ONJJK6=G
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Reports for two kinds of events are implemented, Malicious Driver
+Detection (MDD) and Tx hang.
 
-Hi all,
+Patches 1, 2, 3: core improvements (checkpatch.pl, devlink extension)
+Patch 4: rename current ice devlink/ files
+Patches 5, 6, 7: ice devlink health infra + reporters
 
-In commits
+Mateusz did good job caring for this series, and hardening the code.
+---
+v4:
+    - rebase, added patch 4 that renames curent devlink_port files
 
-  ab3cf1ab3fdb ("arm64: dts: rockchip: Designate Turing RK1's system power =
-controller")
-  ed1b30c33bb9 ("arm64: dts: rockchip: Fix Turing RK1 PCIe3 hang")
+v3: - extracted devlink_fmsg_dump_skb(), and thus removed ugly copy-pasta
+      present in v2 (Jakub);
+    - tx hang reported is now called from service_task, to resolve calling
+      it from atomic (watchog) context - patch 4
+https://lore.kernel.org/netdev/20240821133714.61417-5-przemyslaw.kitszel@intel.com
 
-Fixes tag
+v2: patch 3 (patch 4 in v3)
+    - added additional cast to long in ice_tx_hang_reporter_dump()
+    - removed size_mul() in devlink_fmsg_binary_pair_put() call
+https://lore.kernel.org/netdev/20240712093251.18683-1-mateusz.polchlopek@intel.com
 
-  Fixes: 2806a69f3f ("arm64: dts: rockchip: Add Turing RK1 SoM support")
+v1:
+https://lore.kernel.org/netdev/20240703125922.5625-1-mateusz.polchlopek@intel.com
+---
 
-has these problem(s):
+Ben Shelton (1):
+  ice: Add MDD logging via devlink health
 
-  - SHA1 should be at least 12 digits long
+Mateusz Polchlopek (1):
+  devlink: add devlink_fmsg_dump_skb() function
 
-    This can be fixed for the future by setting core.abbrev to 12 (or
-    more) or (for git v2.11 or later) just making sure it is not set
-    (or set to "auto").
+Przemek Kitszel (5):
+  checkpatch: don't complain on _Generic() use
+  devlink: add devlink_fmsg_put() macro
+  ice: rename devlink_port.[ch] to port.[ch]
+  ice: add Tx hang devlink health reporter
+  ice: dump ethtool stats and skb by Tx hang devlink health reporter
 
---=20
-Cheers,
-Stephen Rothwell
+ drivers/net/ethernet/intel/ice/Makefile       |   3 +-
+ scripts/checkpatch.pl                         |   2 +
+ .../net/ethernet/intel/ice/devlink/health.h   |  59 ++++
+ .../ice/devlink/{devlink_port.h => port.h}    |   0
+ drivers/net/ethernet/intel/ice/ice.h          |   2 +
+ drivers/net/ethernet/intel/ice/ice_eswitch.h  |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool.h  |   2 +
+ .../ethernet/intel/ice/ice_ethtool_common.h   |  19 ++
+ include/net/devlink.h                         |  13 +
+ .../net/ethernet/intel/ice/devlink/devlink.c  |   2 +-
+ .../net/ethernet/intel/ice/devlink/health.c   | 302 ++++++++++++++++++
+ .../ice/devlink/{devlink_port.c => port.c}    |   2 +-
+ drivers/net/ethernet/intel/ice/ice_ethtool.c  |  10 +-
+ drivers/net/ethernet/intel/ice/ice_main.c     |  26 +-
+ drivers/net/ethernet/intel/ice/ice_repr.c     |   2 +-
+ drivers/net/ethernet/intel/ice/ice_sf_eth.c   |   2 +-
+ net/devlink/health.c                          |  67 ++++
+ 17 files changed, 498 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/net/ethernet/intel/ice/devlink/health.h
+ rename drivers/net/ethernet/intel/ice/devlink/{devlink_port.h => port.h} (100%)
+ create mode 100644 drivers/net/ethernet/intel/ice/ice_ethtool_common.h
+ create mode 100644 drivers/net/ethernet/intel/ice/devlink/health.c
+ rename drivers/net/ethernet/intel/ice/devlink/{devlink_port.c => port.c} (99%)
 
---Sig_/BPMoywLiDuDvRz9ONJJK6=G
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+-- 
+2.39.3
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmb6qWIACgkQAVBC80lX
-0GzGYQgAkm5Rjdw8XHfOyLwkOisAROtrBsl9usjh7Q9TNVqZ7V9tPdE98bY/fMNS
-CfW3jCA7+5FdvvlntMRPPHIHah6GlZ1d1kQdMdorZBga2o1hkkY0ZRJRdvK0Hb22
-sNfb77CqVqjhCSq9vt0CU5Ts6tw/ccW/IAXHTwsj13aZ9KLZXvs6/jUkdz8QqsHG
-3pCZfK10ugyRgyh1wnDevmxOl+sXXmYB4L37GwAJTblp3P0tjYtFbZhenjPMOxqI
-gKYTc2x4f/UurjBlPH22WnN/iolnRRiSVeab7xDAWDxDZttjp2vR9Tv9udY0sjRb
-NRVYOd3FhB8F0ovVEmzT697XMpj9cg==
-=Xoo8
------END PGP SIGNATURE-----
-
---Sig_/BPMoywLiDuDvRz9ONJJK6=G--
 
