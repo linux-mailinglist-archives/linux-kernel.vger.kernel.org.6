@@ -1,125 +1,202 @@
-Return-Path: <linux-kernel+bounces-344624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEA598ABF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7957E98AC08
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212E0282D37
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3647F28425F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4794E1A00CF;
-	Mon, 30 Sep 2024 18:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16DC19308C;
+	Mon, 30 Sep 2024 18:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mc36TKCe"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cOKBEWmg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307419B5B8;
-	Mon, 30 Sep 2024 18:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4976197A7A;
+	Mon, 30 Sep 2024 18:23:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727720315; cv=none; b=jbK7sWi26AyHcc3XQ7E522g5HVw18MxPHuIofEwwqBWc+fF1A0k+hSlzUctT+e8ROwH0juAUViQ7b5vfELU166/JSkujOGC3aJgGGXw2pXTqybs+G9HKL2V+E+Xblg+KztEPUDjV0N2Uk7FPKZlaYJ3aREqelGlBoWbRWwRWg4k=
+	t=1727720616; cv=none; b=iIu50GcOmZ5mCsGNDT0yJ55E8WoBjE7RIWCmWmyUkOzKM5reJzBwQd/16v6wQTkA40bPg1DXUo4Lfxw1fDWiSQ7h1UnyUsJBmN2idYtObrqPfECO5o4fcLHdGZ+GbtzbpolGyu6L1PIkam2RrSi8HYbtU/6W0fRB8CcMf5r4gaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727720315; c=relaxed/simple;
-	bh=GwHU+XsAiYxMZdaaMiGMyEwVRRgDrPlyJrnPNW0Klsc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cyVd3a86/tY+vNro1aB70vY+xayUioRGMHJoUHhkeK45c8ya7NupoESr+mHNPt98bYf94K0rBKfH3C6yzTsxuFi2Aw2wZmOKtU02UUEVTGjgcZzycWMKss27OfqXzudjbI4DbVlpHV1xesAYrPim/0B1iHywwFWRyyZz4bS3ig8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mc36TKCe; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b49ee353cso30028995ad.2;
-        Mon, 30 Sep 2024 11:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727720313; x=1728325113; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4DAUKH2ZXJLhuZ+tX0oV+9biDNj8096e3CTTAZ5iFsE=;
-        b=mc36TKCetb60aPzMfqD6cAx9CLEI/OpMjofxRA6OaP5R43O5jRh0Un0ctLbvcILyai
-         yKxNO7g0bQImQe9pM1T0HM/PtvyeM/Gur+yDR2ThvEvF2QKwRoPKekKtT0iSqWJ6hIjc
-         sPyVJRE/EoBqdswP7y1veqGgxGKXOiTXucaJQDadcZnda1mC3EyaY4LdVTQ8GYhQbhyX
-         oMkPpxzetwV356zab+DDLFI8f7m55Tfo2Auy6h8HLfQ613vhojSct8xUKHgqkoVEuqCO
-         jGV0ljD9INd8ClfimTOkhGXc21DvkaEqVSd9rUVs/knm9nUSo7rjVtx4bWLvxN2ppGIR
-         AqmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727720313; x=1728325113;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4DAUKH2ZXJLhuZ+tX0oV+9biDNj8096e3CTTAZ5iFsE=;
-        b=ggABeLHLXSrPBIjx2KC5OsBjaNFOxgq9eqhdkkrV6jm63iX7fznVDLoAvgQZjCPD0Q
-         sPfHCY2gCektqU2Vv87vbmQN7fKf0cNCXmvbDylQRby2Kla7fuJxxeryFtAonx/UEaH3
-         1LRAZlWsNwzfMDna+BX70h9ibQGZUiPXuLzO+0Cja3MMV6zVfgzUDoha+a/76MPMZ6Aq
-         5ovWVQUC4oIlaD+ad8rGgrznB/jZNQb53mcfsi2xpp/BZh7sKjZaUNtraKITalK0bYmq
-         +QM/W/W63eIQm0iCN5LQac6mJsEX/1zo6SReRipyWz/Sv+P3RkX/EmOu3hgfSkbSXNo4
-         mD8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBGDfKt7yTxaWKwDvlsMpePNqymeqCg+AKy9cEKKoDYJoM105x3TyIaZqzfGzjcfPGkfIUZ/hcmUCYQoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5k4c8tRYdRUVCxl7Y2lFIvOXUEN8PYtDvVa5ddFJZ+dw9g4lw
-	18iVk/R8YYps9OugfkuKuT6OH296FT32grEcxYddYxMuWKVGpjuu/0wMKqhp
-X-Google-Smtp-Source: AGHT+IHRyoXm2w1i4wRSyxqf/mX3BHtcGkAhICsB2tppE65ITKEBjN6tq6zcq3o93oysyKUAWKBQXQ==
-X-Received: by 2002:a17:903:1c7:b0:206:bdb7:7637 with SMTP id d9443c01a7336-20b37b9b923mr228502125ad.48.1727720313367;
-        Mon, 30 Sep 2024 11:18:33 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37db029csm57444365ad.106.2024.09.30.11.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 11:18:32 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	p.zabel@pengutronix.de
-Subject: [PATCH net-next 5/5] net: ag71xx: move assignment into main loop
-Date: Mon, 30 Sep 2024 11:18:23 -0700
-Message-ID: <20240930181823.288892-6-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930181823.288892-1-rosenp@gmail.com>
-References: <20240930181823.288892-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727720616; c=relaxed/simple;
+	bh=AjfZgRFK+gan3yhclRwu2EpSePfJfBr1TD+A3MeIVKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET4c/Acils7CQuy3l7c8OEcjRpHV1btR0TNA3hHsfqP0YJOVVv0SaLM+ksG9wlNrVMs/J5fDPhrIZ+KNVPywTZAHa5BHPrUAHPbppSP57phjl/3bb+tqU/BxN51dPqwmDxbiS9TFJ571v5Ep5ofG7nSBuCaTHiuG9GDGUGKX7Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cOKBEWmg; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727720614; x=1759256614;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AjfZgRFK+gan3yhclRwu2EpSePfJfBr1TD+A3MeIVKA=;
+  b=cOKBEWmghxbfI+MwW3du4wkhn0dV/fIoktDTDu6bkjJaFirYMT/G7NuV
+   IkdbSgKPXoSO9Cdh0rLso9di/CbMHK+Q7rXMpmo7LsZgk6FvTggEr3fV0
+   1yiTLhLwpqcsNAYKdpUxHXkU1K8HjZIcJtOG8G10Hr5gwFAczzjJCYeQf
+   i7Qki0sm6jOhECwz5QaAPjfsrUwd7BZh/fiTklORlxZcE6VcJCrUrJGvr
+   AZsb9oeZWti8tIyKMUxRWcP1FPECxD7jEtS74F3AWDedSTUucS1rqWHsB
+   XPXazbu1P7+q2hMVSiXrfKePQ7MPFoSCFzh9T7np/wK4AEf36jBw2YWre
+   A==;
+X-CSE-ConnectionGUID: BetwVeqqTtGWv1v/Zgl0Gw==
+X-CSE-MsgGUID: 5/YiuCJxS3WPhREbUr2N5g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44350136"
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="44350136"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 11:23:33 -0700
+X-CSE-ConnectionGUID: m0/ZsrjRRn+FWjhMN0hoKQ==
+X-CSE-MsgGUID: MzcCrOFATmSkFoPRsfI2zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="73515852"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 30 Sep 2024 11:23:29 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svL3P-000Plb-1b;
+	Mon, 30 Sep 2024 18:23:27 +0000
+Date: Tue, 1 Oct 2024 02:22:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zheng Zengkai <zhengzengkai@huawei.com>, lpieralisi@kernel.org,
+	guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com,
+	maz@kernel.org, rafael@kernel.org, lenb@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	daniel.lezcano@linaro.org, tglx@linutronix.de,
+	linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, zhengzengkai@huawei.com
+Subject: Re: [PATCH] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+Message-ID: <202410010101.2oPkEaoP-lkp@intel.com>
+References: <20240930030716.179992-1-zhengzengkai@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930030716.179992-1-zhengzengkai@huawei.com>
 
-Effectively what's going on here is there's a main loop and an identical
-one below with a single assignment. Simpler to move it up.
+Hi Zheng,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/atheros/ag71xx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 067a012a5799..3d4c3d8698e2 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1646,6 +1646,7 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
- 
- 		skb->dev = ndev;
- 		skb->ip_summed = CHECKSUM_NONE;
-+		skb->protocol = eth_type_trans(skb, ndev);
- 		list_add_tail(&skb->list, &rx_list);
- 
- next:
-@@ -1657,8 +1658,6 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
- 
- 	ag71xx_ring_rx_refill(ag);
- 
--	list_for_each_entry(skb, &rx_list, list)
--		skb->protocol = eth_type_trans(skb, ndev);
- 	netif_receive_skb_list(&rx_list);
- 
- 	netif_dbg(ag, rx_status, ndev, "rx finish, curr=%u, dirty=%u, done=%d\n",
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge tip/timers/core linus/master v6.12-rc1 next-20240930]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Zheng-Zengkai/ACPI-GTDT-simplify-acpi_gtdt_init-implementation/20240930-105041
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240930030716.179992-1-zhengzengkai%40huawei.com
+patch subject: [PATCH] ACPI: GTDT: simplify acpi_gtdt_init() implementation
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241001/202410010101.2oPkEaoP-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410010101.2oPkEaoP-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410010101.2oPkEaoP-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/acpi/arm64/gtdt.c:11:
+   In file included from include/linux/acpi.h:39:
+   In file included from include/acpi/acpi_io.h:7:
+   In file included from arch/arm64/include/asm/acpi.h:14:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2236:
+   include/linux/vmstat.h:503:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     503 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     504 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:510:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     510 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     511 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:517:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     517 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:523:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     523 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     524 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/acpi/arm64/gtdt.c:383:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     383 |         if (!timer_count)
+         |             ^~~~~~~~~~~~
+   drivers/acpi/arm64/gtdt.c:400:9: note: uninitialized use occurs here
+     400 |         return ret;
+         |                ^~~
+   drivers/acpi/arm64/gtdt.c:383:2: note: remove the 'if' if its condition is always false
+     383 |         if (!timer_count)
+         |         ^~~~~~~~~~~~~~~~~
+     384 |                 goto out_put_gtdt;
+         |                 ~~~~~~~~~~~~~~~~~
+   drivers/acpi/arm64/gtdt.c:365:9: note: initialize the variable 'ret' to silence this warning
+     365 |         int ret, timer_count = 0, gwdt_count = 0;
+         |                ^
+         |                 = 0
+   5 warnings generated.
+
+
+vim +383 drivers/acpi/arm64/gtdt.c
+
+   360	
+   361	static int __init gtdt_sbsa_gwdt_init(void)
+   362	{
+   363		void *platform_timer;
+   364		struct acpi_table_header *table;
+   365		int ret, timer_count = 0, gwdt_count = 0;
+   366	
+   367		if (acpi_disabled)
+   368			return 0;
+   369	
+   370		if (ACPI_FAILURE(acpi_get_table(ACPI_SIG_GTDT, 0, &table)))
+   371			return -EINVAL;
+   372	
+   373		/*
+   374		 * Note: Even though the global variable acpi_gtdt_desc has been
+   375		 * initialized by acpi_gtdt_init() while initializing the arch timers,
+   376		 * when we call this function to get SBSA watchdogs info from GTDT, the
+   377		 * pointers stashed in it are stale (since they are early temporary
+   378		 * mappings carried out before acpi_permanent_mmap is set) and we need
+   379		 * to re-initialize them with permanent mapped pointer values to let the
+   380		 * GTDT parsing possible.
+   381		 */
+   382		acpi_gtdt_init(table, &timer_count);
+ > 383		if (!timer_count)
+   384			goto out_put_gtdt;
+   385	
+   386		for_each_platform_timer(platform_timer) {
+   387			if (is_non_secure_watchdog(platform_timer)) {
+   388				ret = gtdt_import_sbsa_gwdt(platform_timer, gwdt_count);
+   389				if (ret)
+   390					break;
+   391				gwdt_count++;
+   392			}
+   393		}
+   394	
+   395		if (gwdt_count)
+   396			pr_info("found %d SBSA generic Watchdog(s).\n", gwdt_count);
+   397	
+   398	out_put_gtdt:
+   399		acpi_put_table(table);
+   400		return ret;
+   401	}
+   402	
+
 -- 
-2.46.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
