@@ -1,44 +1,39 @@
-Return-Path: <linux-kernel+bounces-343884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E08798A0B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:32:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E20C98A0B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E19EE1F271CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91024B28B60
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9F218DF8B;
-	Mon, 30 Sep 2024 11:27:18 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABAE18D627;
-	Mon, 30 Sep 2024 11:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F12018FDD5;
+	Mon, 30 Sep 2024 11:28:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910FF18E03C;
+	Mon, 30 Sep 2024 11:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695638; cv=none; b=DBY0hpZ0Mbsboo0/IVRdyk7ZzHjbaHn3HnsSrTMMNy9une2Ag+kTgpMmSKf9B7If7U0VQh6TOzj6HGEM/WxZPDZKH7ntuf5sbQeJwQGPMcuyhSRrrr0zRZzWe/M7PxXAypgTQ/B20df1hWGpU7kMOK+rKSTgAuAlGmASOPmKf40=
+	t=1727695714; cv=none; b=TK6HLT1EaVnHM1N0RjoOmstVD3ZYyHavKF+JW1cUbdwEWsq5zG1KWHbKmW+RqDCJysYby+JdcHoOAm0kGpZW3UpFO+f/TqBeOrICXgJwBfqAYi6Is6MA7IgJGbGnBeeCVLfhlmtESJdfdhbJZGMNynwGH5peMztN92u0UNyHHJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695638; c=relaxed/simple;
-	bh=NIZX28DVSgDfPF4lH5sHlmAAMkBD2Ixjj0SerFVEEw4=;
+	s=arc-20240116; t=1727695714; c=relaxed/simple;
+	bh=i93qFv47msjB3dJ7ItEWeVxAXtW9br2+mD4Dfu9f3yg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKZcSDcPzOP9fU0OklPaU2vixueSuZ5OMB5Sc1/hd6xWLUfVujd096/RrBkwf37dmeReeT1d28pbGoP6/uui+E65IuBO3JSM/OHBC71GgawdkYkDFHEAz5WyDZjVnre6GKcDlmTp7VwHVOr3Q5SIwjGTGj6WcLiRyGlWPNfIhjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XHJ6J3dBRz9v7JT;
-	Mon, 30 Sep 2024 19:01:28 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id D9ACD1402A4;
-	Mon, 30 Sep 2024 19:27:12 +0800 (CST)
-Received: from [10.81.209.28] (unknown [10.81.209.28])
-	by APP2 (Coremail) with SMTP id GxC2BwBHqckAi_pm3EXyAQ--.6296S2;
-	Mon, 30 Sep 2024 12:27:12 +0100 (CET)
-Message-ID: <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
-Date: Mon, 30 Sep 2024 13:26:53 +0200
+	 In-Reply-To:Content-Type; b=SZ2cJT9LGhpUUawZ37iWw5vnjYBSFEwQGV/lGe2Ckd4cj+0TsSelUix3G8UZoceMmM4p6ntA8VQbNmoke02mWkm1DBsEZva/Vzrd125CJy9nErUKhgx/0djyseGZ2UNoTPw/JhBZp2gobmDnguUGAvi4W1ejWuHaMDHelcdDkhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67F22DA7;
+	Mon, 30 Sep 2024 04:29:01 -0700 (PDT)
+Received: from [10.57.76.28] (unknown [10.57.76.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E3C73F58B;
+	Mon, 30 Sep 2024 04:28:28 -0700 (PDT)
+Message-ID: <43d92e28-1fef-4408-b4a4-efede6bed263@arm.com>
+Date: Mon, 30 Sep 2024 12:28:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,83 +41,278 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-To: Alan Stern <stern@rowland.harvard.edu>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
- rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
-From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-In-Reply-To: <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwBHqckAi_pm3EXyAQ--.6296S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrZF15GFW7Kr4UAr4fAF48Crg_yoW8JF4rpr
-	Z8ta1rKF4kG395CrZ0yw18ZFW7uF4ftFy5Grn2qr48urs8uFyfuF47KFyYvasIyw4rXrWj
-	vr45ury3CFy3JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	jxCztUUUUU=
-X-CM-SenderInfo: 5mrqt2oorev25kdx2v3u6k3tpzhluzxrxghudrp/
+Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
+ accounting
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org
+References: <5c4d1008-261f-4c47-ab73-c527675484a4@arm.com>
+ <bq6lctwgpsxvrdaajmjo3xdjt32srmsxvjhtzyebdj6izjzoaw@6duby4axg3pf>
+ <ef799587-f7c2-472a-8550-9c40a395eccb@arm.com>
+ <jgdknf77n6vqanh4jv2yixe4n4hsbhqqhth4beued4topggwgz@wx7bumhrbpje>
+ <033f8885-9c0e-4c5a-a272-baf48807dc5d@arm.com>
+ <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <gxtbgvg6dihcbcwm7sihnfl7cqnfx72ekr7mgvgykeukpltwak@b3pdwok2n5p6>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-Am 9/28/2024 um 4:49 PM schrieb Alan Stern:
-> On Sat, Sep 28, 2024 at 09:51:27AM -0400, Mathieu Desnoyers wrote:
->> Compiler CSE and SSA GVN optimizations can cause the address dependency
->> of addresses returned by rcu_dereference to be lost when comparing those
->> pointers with either constants or previously loaded pointers.
+On 27/09/2024 15:53, Adrián Larumbe wrote:
+> On 25.09.2024 10:56, Steven Price wrote:
+>> On 23/09/2024 21:43, Adrián Larumbe wrote:
+>>> Hi Steve,
+>>>
+>>> On 23.09.2024 09:55, Steven Price wrote:
+>>>> On 20/09/2024 23:36, Adrián Larumbe wrote:
+>>>>> Hi Steve, thanks for the review.
+>>>>
+>>>> Hi Adrián,
+>>>>
+>>>>> I've applied all of your suggestions for the next patch series revision, so I'll
+>>>>> only be answering to your question about the calc_profiling_ringbuf_num_slots
+>>>>> function further down below.
+>>>>>
+>>>>
+>>>> [...]
+>>>>
+>>>>>>> @@ -3003,6 +3190,34 @@ static const struct drm_sched_backend_ops panthor_queue_sched_ops = {
+>>>>>>>  	.free_job = queue_free_job,
+>>>>>>>  };
+>>>>>>>  
+>>>>>>> +static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>>>>>>> +				       u32 cs_ringbuf_size)
+>>>>>>> +{
+>>>>>>> +	u32 min_profiled_job_instrs = U32_MAX;
+>>>>>>> +	u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
+>>>>>>> +
+>>>>>>> +	/*
+>>>>>>> +	 * We want to calculate the minimum size of a profiled job's CS,
+>>>>>>> +	 * because since they need additional instructions for the sampling
+>>>>>>> +	 * of performance metrics, they might take up further slots in
+>>>>>>> +	 * the queue's ringbuffer. This means we might not need as many job
+>>>>>>> +	 * slots for keeping track of their profiling information. What we
+>>>>>>> +	 * need is the maximum number of slots we should allocate to this end,
+>>>>>>> +	 * which matches the maximum number of profiled jobs we can place
+>>>>>>> +	 * simultaneously in the queue's ring buffer.
+>>>>>>> +	 * That has to be calculated separately for every single job profiling
+>>>>>>> +	 * flag, but not in the case job profiling is disabled, since unprofiled
+>>>>>>> +	 * jobs don't need to keep track of this at all.
+>>>>>>> +	 */
+>>>>>>> +	for (u32 i = 0; i < last_flag; i++) {
+>>>>>>> +		if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
+>>>>>>> +			min_profiled_job_instrs =
+>>>>>>> +				min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+>>>>>>> +}
+>>>>>>
+>>>>>> I may be missing something, but is there a situation where this is
+>>>>>> different to calc_job_credits(0)? AFAICT the infrastructure you've added
+>>>>>> can only add extra instructions to the no-flags case - whereas this
+>>>>>> implies you're thinking that instructions may also be removed (or replaced).
+>>>>>>
+>>>>>> Steve
+>>>>>
+>>>>> Since we create a separate kernel BO to hold the profiling information slot, we
+>>>>> need one that would be able to accomodate as many slots as the maximum number of
+>>>>> profiled jobs we can insert simultaneously into the queue's ring buffer. Because
+>>>>> profiled jobs always take more instructions than unprofiled ones, then we would
+>>>>> usually need fewer slots than the number of unprofiled jobs we could insert at
+>>>>> once in the ring buffer.
+>>>>>
+>>>>> Because we represent profiling metrics with a bit mask, then we need to test the
+>>>>> size of the CS for every single metric enabled in isolation, since enabling more
+>>>>> than one will always mean a bigger CS, and therefore fewer jobs tracked at once
+>>>>> in the queue's ring buffer.
+>>>>>
+>>>>> In our case, calling calc_job_credits(0) would simply tell us the number of
+>>>>> instructions we need for a normal job with no profiled features enabled, which
+>>>>> would always requiere less instructions than profiled ones, and therefore more
+>>>>> slots in the profiling info kernel BO. But we don't need to keep track of
+>>>>> profiling numbers for unprofiled jobs, so there's no point in calculating this
+>>>>> number.
+>>>>>
+>>>>> At first I was simply allocating a profiling info kernel BO as big as the number
+>>>>> of simultaneous unprofiled job slots in the ring queue, but Boris pointed out
+>>>>> that since queue ringbuffers can be as big as 2GiB, a lot of this memory would
+>>>>> be wasted, since profiled jobs always require more slots because they hold more
+>>>>> instructions, so fewer profiling slots in said kernel BO.
+>>>>>
+>>>>> The value of this approach will eventually manifest if we decided to keep track of
+>>>>> more profiling metrics, since this code won't have to change at all, other than
+>>>>> adding new profiling flags in the panthor_device_profiling_flags enum.
+>>>>
+>>>> Thanks for the detailed explanation. I think what I was missing is that
+>>>> the loop is checking each bit flag independently and *not* checking
+>>>> calc_job_credits(0).
+>>>>
+>>>> The check for (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL) is probably what
+>>>> confused me - that should be completely redundant. Or at least we need
+>>>> something more intelligent if we have profiling bits which are not
+>>>> mutually compatible.
+>>>
+>>> I thought of an alternative that would only test bits that are actually part of
+>>> the mask:
+>>>
+>>> static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
+>>> 				       u32 cs_ringbuf_size)
+>>> {
+>>> 	u32 min_profiled_job_instrs = U32_MAX;
+>>> 	u32 profiling_mask = PANTHOR_DEVICE_PROFILING_ALL;
+>>>
+>>> 	while (profiling_mask) {
+>>> 		u32 i = ffs(profiling_mask) - 1;
+>>> 		profiling_mask &= ~BIT(i);
+>>> 		min_profiled_job_instrs =
+>>> 			min(min_profiled_job_instrs, calc_job_credits(BIT(i)));
+>>> 	}
+>>>
+>>> 	return DIV_ROUND_UP(cs_ringbuf_size, min_profiled_job_instrs * sizeof(u64));
+>>> }
+>>>
+>>> However, I don't think this would be more efficient, because ffs() is probably
+>>> fetching the first set bit by performing register shifts, and I guess this would
+>>> take somewhat longer than iterating over every single bit from the last one,
+>>> even if also matching them against the whole mask, just in case in future
+>>> additions of performance metrics we decide to leave some of the lower
+>>> significance bits untouched.
 >>
->> Introduce ptr_eq() to compare two addresses while preserving the address
->> dependencies for later use of the address. It should be used when
->> comparing an address returned by rcu_dereference().
+>> Efficiency isn't very important here - we're not on a fast path, so it's
+>> more about ensuring the code is readable. I don't think the above is
+>> more readable then the original for loop.
 >>
->> This is needed to prevent the compiler CSE and SSA GVN optimizations
->> from replacing the registers holding @a or @b based on their
+>>> Regarding your question about mutual compatibility, I don't think that is an
+>>> issue here, because we're testing bits in isolation. If in the future we find
+>>> out that some of the values we're profiling cannot be sampled at once, we can
+>>> add that logic to the sysfs knob handler, to make sure UM cannot set forbidden
+>>> profiling masks.
+>>
+>> My comment about compatibility is because in the original above you were
+>> calculating the top bit of PANTHOR_DEVICE_PROFILING_ALL:
+>>
+>>> u32 last_flag = fls(PANTHOR_DEVICE_PROFILING_ALL);
+>>
+>> then looping between 0 and that bit:
+>>
+>>> for (u32 i = 0; i < last_flag; i++) {
+>>
+>> So the test:
+>>
+>>> if (BIT(i) & PANTHOR_DEVICE_PROFILING_ALL)
+>>
+>> would only fail if PANTHOR_DEVICE_PROFILING_ALL had gaps in the bits
+>> that it set. The only reason I can think for that to be true in the
+>> future is if there is some sort of incompatibility - e.g. maybe there's
+>> an old and new way of doing some form of profiling with the old way
+>> being kept for backwards compatibility. But I suspect if/when that is
+>> required we'll need to revisit this function anyway. So that 'if'
+>> statement seems completely redundant (it's trivially always true).
 > 
-> "Replacing" isn't the right word.  What the compiler does is use one
-> rather than the other.  Furthermore, the compiler can play these games
-> even with values that aren't in registers.
-> 
-> You should just say: "... from using @a (or @b) in places where the
-> source refers to @b (or @a) (based on the fact that after the
-> comparison, the two are known to be equal), which does not ..."
+> I think you're right about this. Would you be fine with the rest of the patch
+> as it is in revision 8 if I also deleted this bitmask check?
 
-I should also point out that it is not enough to prevent the compiler 
-from using @a instead of @b.
+Yes the rest of it looks fine.
 
-It must also be prevented from assigning @b=@a, which it is often 
-allowed to do after finding @a==@b.
+Thanks,
+Steve
 
-Best wishes,
-   jonas
+>> Steve
+>>
+>>>> I'm also not entirely sure that the amount of RAM saved is significant,
+>>>> but you've already written the code so we might as well have the saving ;)
+>>>
+>>> I think this was more evident before Boris suggested we reduce the basic slot
+>>> size to that of a single cache line, because then the minimum profiled job
+>>> might've taken twice as many ringbuffer slots as a nonprofiled one. In that
+>>> case, we would need a half as big BO for holding the sampled data (in case the
+>>> least size profiled job CS would extend over the 16 instruction boundary).
+>>> I still think this is a good idea so that in the future we don't need to worry
+>>> about adjusting the code that deals with preparing the right boilerplate CS,
+>>> since it'll only be a matter of adding new instructions inside prepare_job_instrs().
+>>>
+>>>> Thanks,
+>>>> Steve
+>>>>
+>>>>> Regards,
+>>>>> Adrian
+>>>>>
+>>>>>>> +
+>>>>>>>  static struct panthor_queue *
+>>>>>>>  group_create_queue(struct panthor_group *group,
+>>>>>>>  		   const struct drm_panthor_queue_create *args)
+>>>>>>> @@ -3056,9 +3271,35 @@ group_create_queue(struct panthor_group *group,
+>>>>>>>  		goto err_free_queue;
+>>>>>>>  	}
+>>>>>>>  
+>>>>>>> +	queue->profiling.slot_count =
+>>>>>>> +		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
+>>>>>>> +
+>>>>>>> +	queue->profiling.slots =
+>>>>>>> +		panthor_kernel_bo_create(group->ptdev, group->vm,
+>>>>>>> +					 queue->profiling.slot_count *
+>>>>>>> +					 sizeof(struct panthor_job_profiling_data),
+>>>>>>> +					 DRM_PANTHOR_BO_NO_MMAP,
+>>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC |
+>>>>>>> +					 DRM_PANTHOR_VM_BIND_OP_MAP_UNCACHED,
+>>>>>>> +					 PANTHOR_VM_KERNEL_AUTO_VA);
+>>>>>>> +
+>>>>>>> +	if (IS_ERR(queue->profiling.slots)) {
+>>>>>>> +		ret = PTR_ERR(queue->profiling.slots);
+>>>>>>> +		goto err_free_queue;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	ret = panthor_kernel_bo_vmap(queue->profiling.slots);
+>>>>>>> +	if (ret)
+>>>>>>> +		goto err_free_queue;
+>>>>>>> +
+>>>>>>> +	/*
+>>>>>>> +	 * Credit limit argument tells us the total number of instructions
+>>>>>>> +	 * across all CS slots in the ringbuffer, with some jobs requiring
+>>>>>>> +	 * twice as many as others, depending on their profiling status.
+>>>>>>> +	 */
+>>>>>>>  	ret = drm_sched_init(&queue->scheduler, &panthor_queue_sched_ops,
+>>>>>>>  			     group->ptdev->scheduler->wq, 1,
+>>>>>>> -			     args->ringbuf_size / (NUM_INSTRS_PER_SLOT * sizeof(u64)),
+>>>>>>> +			     args->ringbuf_size / sizeof(u64),
+>>>>>>>  			     0, msecs_to_jiffies(JOB_TIMEOUT_MS),
+>>>>>>>  			     group->ptdev->reset.wq,
+>>>>>>>  			     NULL, "panthor-queue", group->ptdev->base.dev);
+>>>>>>> @@ -3354,6 +3595,7 @@ panthor_job_create(struct panthor_file *pfile,
+>>>>>>>  {
+>>>>>>>  	struct panthor_group_pool *gpool = pfile->groups;
+>>>>>>>  	struct panthor_job *job;
+>>>>>>> +	u32 credits;
+>>>>>>>  	int ret;
+>>>>>>>  
+>>>>>>>  	if (qsubmit->pad)
+>>>>>>> @@ -3407,9 +3649,16 @@ panthor_job_create(struct panthor_file *pfile,
+>>>>>>>  		}
+>>>>>>>  	}
+>>>>>>>  
+>>>>>>> +	job->profiling.mask = pfile->ptdev->profile_mask;
+>>>>>>> +	credits = calc_job_credits(job->profiling.mask);
+>>>>>>> +	if (credits == 0) {
+>>>>>>> +		ret = -EINVAL;
+>>>>>>> +		goto err_put_job;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>>  	ret = drm_sched_job_init(&job->base,
+>>>>>>>  				 &job->group->queues[job->queue_idx]->entity,
+>>>>>>> -				 1, job->group);
+>>>>>>> +				 credits, job->group);
+>>>>>>>  	if (ret)
+>>>>>>>  		goto err_put_job;
+>>>>>>>  
+>>>>>
 
 
