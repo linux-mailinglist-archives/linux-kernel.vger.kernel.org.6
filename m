@@ -1,112 +1,224 @@
-Return-Path: <linux-kernel+bounces-343808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0F5989FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:50:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227F3989FC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43FE9B25AC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:50:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B0191F20F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6515818CBEF;
-	Mon, 30 Sep 2024 10:50:17 +0000 (UTC)
-Received: from mx.astralinux.ru (mx.astralinux.ru [89.232.161.68])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3CC18CBF7;
+	Mon, 30 Sep 2024 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h5feyn7w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5313918BB9E;
-	Mon, 30 Sep 2024 10:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.232.161.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404818BB9E;
+	Mon, 30 Sep 2024 10:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727693417; cv=none; b=fMrqRiYu7WbHrrH2QcSg2UsEFe4ZhmYTvJpH6pZWyJvWEh12fb2vFjakm60oPwW207S89He5frC8LfM8j4+hA0iI7GgpCTjDpc4FiC2X2w7pAyRt7CACK5VLbaRjANIWwFVgDZHEs+dzJuKlMQG7BgSj43UwX69rFrhQQ81Beeg=
+	t=1727693408; cv=none; b=dCDh32x3yj3vSDv4e5fFbNZVnW7Xu72aR19m3yWLd388AZBbuSkfBgCW377foWoNbzqsuWYHgxcFPkn7mjoZ0tSjEhPRlybN9zoErj9M1fMSGObqj++CtCq9x5AE0CXk8pnG0eOdj83xnl2d2FUOZ1Ptd7Nyg5S6xAIIaRhqtlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727693417; c=relaxed/simple;
-	bh=w4J45orhsf8tZYcUUE666E7eYUVbtcrj8y83qf8plJw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qm7oHFUrG7hc+k3RuePLaJRx5enI16tMS29vSUFDURDY6J0kD/LPDk9zHvmRxyF008+UFYHGQTZQeWCyrW41VAKm4OU3iFXa2qBT0DAqqdg1/dQ+cNaeOIAoCJ7NuMC0OoXyrTP8iW3KDgfJKridbOD3gM8DexgAHbSacifqtqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=89.232.161.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from [10.177.185.108] (helo=new-mail.astralinux.ru)
-	by mx.astralinux.ru with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <adiupina@astralinux.ru>)
-	id 1svDwx-00Fdfn-N7; Mon, 30 Sep 2024 13:48:19 +0300
-Received: from rbta-msk-lt-302690.astralinux.ru (unknown [10.198.42.81])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4XHHrt5xRnz1gwkc;
-	Mon, 30 Sep 2024 13:49:50 +0300 (MSK)
-From: Alexandra Diupina <adiupina@astralinux.ru>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alexandra Diupina <adiupina@astralinux.ru>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v4] clk: mvebu: Prevent division by zero in clk_double_div_recalc_rate()
-Date: Mon, 30 Sep 2024 13:49:34 +0300
-Message-Id: <20240930104934.4342-1-adiupina@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1727693408; c=relaxed/simple;
+	bh=JuK/F2G0f9reVtS1XFQCexpKDja04762L2xBEQufO/w=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=E1xBGr3GqmSDWvkR1pYj+SvUmK+neK6P9MT08Zezdy1UR0iJChhVjfqFP3bIQV86srSQK8V/zkeVZkkt7eVOxtdbMP2Wx+k25OyRNkWSt8aUr5pRWl2FA1jJ1xPNORu/YEgLQi7AXEKLixpYN7/cpZJqut3//nf4X/iEFTmp++s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h5feyn7w; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727693407; x=1759229407;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=JuK/F2G0f9reVtS1XFQCexpKDja04762L2xBEQufO/w=;
+  b=h5feyn7wd9QKB7mT6OTh4TS+O5I/jC62ETJcwA1irKeWpdNT4gTj4+iP
+   m8qFLc6+30P3t1T2STA3EiEW3hAYdPD/KlPt1yM6UzyD6s6vCBEWD/co1
+   PotFrNenFC/Y3heGs3+MM/t7Er/2L8pf4z20fQeI9r4HQPuYf/acOV2iq
+   AYa/fCqLqOMJwehkel7bO3Ss6wz8vrv9rLEOIyFGHFUfuLqSQovqFJSAd
+   EXDWJRVEEbp3xI3L5W8HV5OgCK4e6D8fUhksOHC+KjzJDC3yvUMomqVMH
+   naVbuU9EZSe3EWSksAADS/sUYyXemsCDTfFi5oiIqsJBHGDRRT00Rwmng
+   w==;
+X-CSE-ConnectionGUID: 89CrAwmwT8qfwrmlH158Qw==
+X-CSE-MsgGUID: 6YesXnfLRICORtv6b0DCrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="26283030"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26283030"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 03:50:06 -0700
+X-CSE-ConnectionGUID: VDux0oGzSsKF2yBuQDaxKA==
+X-CSE-MsgGUID: yZI44t+VTAS51i+sg4YOXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="110743950"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 03:50:03 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Sep 2024 13:49:59 +0300 (EEST)
+To: Jian-Hong Pan <jhp@endlessos.org>
+cc: Bjorn Helgaas <helgaas@kernel.org>, Johan Hovold <johan@kernel.org>, 
+    David Box <david.e.box@linux.intel.com>, 
+    Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+    Nirmal Patel <nirmal.patel@linux.intel.com>, 
+    Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux@endlessos.org
+Subject: Re: [PATCH v11 3/3] PCI/ASPM: Make pci_save_aspm_l1ss_state save
+ both child and parent's L1SS configuration
+In-Reply-To: <20240930084953.13454-2-jhp@endlessos.org>
+Message-ID: <828d2fc0-e594-ad3e-b653-2c0acc1223b3@linux.intel.com>
+References: <20240930082530.12839-2-jhp@endlessos.org> <20240930084953.13454-2-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-DrWeb-SpamScore: 0
-X-DrWeb-SpamState: legit
-X-DrWeb-SpamDetail: gggruggvucftvghtrhhoucdtuddrgedvfedrvdehuddgtddvucetufdoteggodetrfcurfhrohhfihhlvgemucfftfghgfeunecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhgvgigrnhgurhgrucffihhuphhinhgruceorgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhuqeenucggtffrrghtthgvrhhnpeduleetfeehffekueeuffektefgudfgffeutdefudfghedvieffheehleeuieehteenucffohhmrghinheplhhinhhugihtvghsthhinhhgrdhorhhgnecukfhppedutddrudelkedrgedvrdekudenucfrrghrrghmpehhvghloheprhgsthgrqdhmshhkqdhlthdqfedtvdeiledtrdgrshhtrhgrlhhinhhugidrrhhupdhinhgvthepuddtrdduleekrdegvddrkedumeegtdeludeipdhmrghilhhfrhhomheprgguihhuphhinhgrsegrshhtrhgrlhhinhhugidrrhhupdhnsggprhgtphhtthhopedutddprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegrughiuhhpihhnrgesrghsthhrrghlihhnuhigrdhruhdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmhgvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepshgvsggrshhtihgrnhdrhhgvshhsvghlsggrrhhthhesghhmrghilhdrtghomhdprhgtphhtthhope
- hmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvhgtqdhprhhojhgvtghtsehlihhnuhigthgvshhtihhnghdrohhrghenucffrhdrhggvsgcutehnthhishhprghmmecunecuvfgrghhsme
-X-DrWeb-SpamVersion: Dr.Web Antispam 1.0.7.202406240#1727684630#02
-X-AntiVirus: Checked by Dr.Web [MailD: 11.1.19.2307031128, SE: 11.1.12.2210241838, Core engine: 7.00.65.05230, Virus records: 12190301, Updated: 2024-Sep-30 09:34:50 UTC]
+Content-Type: multipart/mixed; boundary="8323328-2081136472-1727693399=:938"
 
-get_div() may return zero, so it is necessary to check
-before calling DIV_ROUND_UP_ULL().
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Return value of get_div() depends on reg1, reg2, shift1, shift2
-fields of clk_double_div structure which are filled using the
-PERIPH_DOUBLEDIV macro. This macro is called from the
-PERIPH_CLK_FULL_DD and PERIPH_CLK_MUX_DD macros (the last 4 arguments).
+--8323328-2081136472-1727693399=:938
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-It is not known exactly what values can be contained in the registers
-at the addresses DIV_SEL0, DIV_SEL1, DIV_SEL2, so the final value of
-div can be zero. Print an error message and return 0 in this case.
+On Mon, 30 Sep 2024, Jian-Hong Pan wrote:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> PCI devices' parameters on the VMD bus have been programmed properly
+> originally. But, cleared after pci_reset_bus() and have not been restored
+> correctly. This leads the link's L1.2 between PCIe Root Port and child
+> device gets wrong configs.
+>=20
+> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
+> bridge and NVMe device should have the same LTR1.2_Threshold value.
+> However, they are configured as different values in this case:
+>=20
+> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processo=
+r PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+>   ...
+>   Capabilities: [200 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Subst=
+ates+
+>       PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D50us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
+>     L1SubCtl2: T_PwrOn=3D0us
+>=20
+> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue=
+ SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+>   ...
+>   Capabilities: [900 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Subst=
+ates+
+>       PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D10us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=3D0us LTR1.2_Threshold=3D101376ns
+>     L1SubCtl2: T_PwrOn=3D50us
+>=20
+> Here is VMD mapped PCI device tree:
+>=20
+> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+>  | ...
+>  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+>               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+>=20
+> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
+> restores NVMe's state before and after reset.
 
-Fixes: 8ca4746a78ab ("clk: mvebu: Add the peripheral clock driver for Armada 3700")
-Signed-off-by: Alexandra Diupina <adiupina@astralinux.ru>
----
-v4: replace hw->init->name with clk_hw_get_name(hw)
-v3: fix indentation
-v2: added explanations to the commit message and printing 
-of an error message when div==0
- drivers/clk/mvebu/armada-37xx-periph.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+> The bus [e1] has only one
+> NVMe device, so the NVMe's parent PCIe bridge is missed to be saved.
 
-diff --git a/drivers/clk/mvebu/armada-37xx-periph.c b/drivers/clk/mvebu/armada-37xx-periph.c
-index 13906e31bef8..2f0145a76f22 100644
---- a/drivers/clk/mvebu/armada-37xx-periph.c
-+++ b/drivers/clk/mvebu/armada-37xx-periph.c
-@@ -343,7 +343,12 @@ static unsigned long clk_double_div_recalc_rate(struct clk_hw *hw,
- 	div = get_div(double_div->reg1, double_div->shift1);
- 	div *= get_div(double_div->reg2, double_div->shift2);
- 
--	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	if (!div) {
-+		pr_err("Can't recalculate the rate of clock %s\n", clk_hw_get_name(hw));
-+		return 0;
-+	} else {
-+		return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+	}
- }
- 
- static const struct clk_ops clk_double_div_ops = {
--- 
-2.30.2
+This is still misleading because "only one NVMe device" is not the=20
+reason why the parent's state is not saved.
 
+> However, when it restores the NVMe's state, ASPM code restores L1SS for
+> both the parent bridge and the NVMe in pci_restore_aspm_l1ss_state().
+> Although the NVMe's L1SS is restored correctly, the parent bridge's L1SS =
+is
+> restored with a wrong value 0x0. Because, the parent bridge's L1SS was no=
+t
+
+Again, please join these sentences.
+
+> saved by pci_save_aspm_l1ss_state() before reset.
+>=20
+> So, if the PCI device has a parent, make pci_save_aspm_l1ss_state() save
+> the parent's L1SS configuration, too. This is symmetric on
+> pci_restore_aspm_l1ss_state().
+>=20
+> Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6Sd=
+S4eG9oGpEX1wmnMLkQ@mail.gmail.com/
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218394
+> Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspe=
+nd/resume")
+> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> Suggested-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+This tag should appear before signed-off-by.
+
+> ---
+> v9:
+> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
+>=20
+> v10:
+> - Drop the v9 fix about drivers/pci/controller/vmd.c
+> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state(=
+)
+>   and pci_restore_aspm_l1ss_state()
+>=20
+> v11:
+> - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
+>   which is same as the original pci_configure_aspm_l1ss
+> - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
+>   both child and parent devices
+> - Smooth the commit message
+>=20
+>  drivers/pci/pcie/aspm.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index bd0a8a05647e..17cdf372f7e0 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
+>  =09=09=09ERR_PTR(rc));
+>  }
+> =20
+> -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+>  =09struct pci_cap_saved_state *save_state;
+>  =09u16 l1ss =3D pdev->l1ss;
+> @@ -101,6 +101,24 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  =09pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+>  }
+> =20
+> +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +{
+> +=09struct pci_dev *parent;
+> +
+> +=09__pci_save_aspm_l1ss_state(pdev);
+> +
+> +=09/*
+> +=09 * To be symmetric on pci_restore_aspm_l1ss_state(), save parent's L1
+> +=09 * substate configuration, if the parent has not saved state.
+> +=09 */
+> +=09if (!pdev->bus || !pdev->bus->self)
+> +=09=09return;
+> +
+> +=09parent =3D pdev->bus->self;
+> +=09if (!parent->state_saved)
+> +=09=09__pci_save_aspm_l1ss_state(parent);
+> +}
+
+The code change looks good!
+
+--=20
+ i.
+
+--8323328-2081136472-1727693399=:938--
 
