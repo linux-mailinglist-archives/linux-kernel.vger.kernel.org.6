@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-344536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B45A98AB01
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8496998AB03
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C301F232E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:20:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7791C232B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA1E196450;
-	Mon, 30 Sep 2024 17:20:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD456197A7E;
+	Mon, 30 Sep 2024 17:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a5xOfX3u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="qnzVrDOb"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0813841C6A;
-	Mon, 30 Sep 2024 17:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E750194096;
+	Mon, 30 Sep 2024 17:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716834; cv=none; b=uy6iExTarkmIJXOnENxYeNFYH/sKiG32m3/rgSfFenShrBNI+9GVL1o92AFt1GlExffH3tIY3fWvbCxjMJF074b2zu+Kw75LH8bFgjGvP2wQwggYjf++rbPwZYU/M4jANESSRM7H3ZIcjaWd1dNPd0WmU2qH9ydp1wVdYYkWP1U=
+	t=1727716857; cv=none; b=IXl0MJyOhSUzvqrWsnvbUJaXMWuALjX7lCN5TYxNGF9DFjozxzR6u9qP3S2LLqtHIcOF0Y8GDRxzQ8a8VJ9mC+wochGjZE8QuvIUBLSkpa8qz3Sx3fl3XdOCU7hRPqGFAJYXv6R3bQH/Odgy+qwAzNslqvK5psGlO6ZpOSlY9GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716834; c=relaxed/simple;
-	bh=JI4/YEqKLWDif6ESadf2wfzAw0CxyVpEezu9rHiCHQU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLNCG7cFzSTs4BCi38MihvPDm4RyE52nP6WhLQO3mo9uhJo4SsRs8T5YTCRhxSYRqN/ENAnQ/ykh2YaT2e944i/h9eFxBtORnODaVu57IBfo7GN2sXdEJZ08pnYXETz1MvHnIrBMA8BAdQIcCHwL9gDA/UtPRhDoNwSN8ywCrIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a5xOfX3u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B4BC4CEC7;
-	Mon, 30 Sep 2024 17:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727716833;
-	bh=JI4/YEqKLWDif6ESadf2wfzAw0CxyVpEezu9rHiCHQU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a5xOfX3uVyCOUz21b/hAWclrVwN09wZsBbXmSJNFrXgJtWBDnVKSXV+Pg9CiOObr8
-	 I/cGRvHY6I/AQiYdhAC4t5cCDaNbQMDreYwaPBSa4KpK377pTAqJLEXZiX5OwCNSnq
-	 iP08TRGvI6TjWDNbBBaiok5r+pBgc9mYtPbE1huKNj6FjmRbkuSOgysaacjDZI9kdd
-	 bnZgzAjrZccDX9ioZw0iXyJ4LqRGTR+gpPr3u2ky+8+w1f9XknD1CiOX1jgbrZhP8O
-	 TBYWXAGMNN/S6y1OULLvSQ2VmB32FEf3j5yLjoVhuHilJnqRqDyr+qsHyLr0SU8ijx
-	 b8HWRarKfQ0KA==
-Received: by pali.im (Postfix)
-	id E2CC87D0; Mon, 30 Sep 2024 19:20:27 +0200 (CEST)
-Date: Mon, 30 Sep 2024 19:20:27 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: Steve French <sfrench@samba.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] cifs: Remove intermediate object of failed create
- reparse call
-Message-ID: <20240930172027.yt6qijriln4sv5hc@pali>
-References: <20240928215948.4494-1-pali@kernel.org>
- <20240928215948.4494-3-pali@kernel.org>
- <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
+	s=arc-20240116; t=1727716857; c=relaxed/simple;
+	bh=gCGwduzLFKbfMo5sOtW9HBBlHG7VBpwpUBFvEKyrqp8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=giqfVRlP15HwcXtODpdZSGaftA1kD7NnmANzm6Mg9fOerOoCjhkuhyO9DKe3dZEhIpXxy0Iq7xV2MO1HOX9nOlTvbbeqP5Y3gi1I6s6vrOepC6t/uea5yCEcEa9yDaIu/GN3GI3yIJH9IF2weOJ60QmH9YY9y2UDIGMtYkXpbo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=qnzVrDOb; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B511D42BFE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1727716852; bh=VTA67/hhIeEVZwR1EvSjGu05ItIa+ynNR72w32LLj5M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=qnzVrDObJkf3RfxcfOH80UDiO0PIiouyZ01YuYEc8oKjfx8v9zeYDBD6WPn1JEfdU
+	 +f9KosDqMHbcV63VYHOgCDpEx1iDtbFPkG864ubyFTMB0mCUVcBIUjb6Lg6HN2p/zX
+	 6crT1BV0azMPnoWRgUkzpXbWJutJQEXuiTVWBpt7h+7w1wTTrh0JSkZdbkOXRER8Tv
+	 8SbdwfpTdG+MwwKzqKUGOPYSKyJvFbyuFxhFXmFsrsw2fiqu45jQbvg9UX61bPfnZl
+	 0gcAY8mtcpVMHfGmfTYMHQIQxfruMo1XSYqIGKbgsyp7lAsPtb8azOTXxL6KrmB5lu
+	 kk1Q4MIj1AzQQ==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id B511D42BFE;
+	Mon, 30 Sep 2024 17:20:51 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, LKML
+ <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mike Rapoport <mike.rapoport@gmail.com>, Kees Cook
+ <keescook@chromium.org>, Ard Biesheuvel <ardb@kernel.org>,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH] Documentation/tracing: Mention that
+ RESET_ATTACK_MITIGATION can clear memory
+In-Reply-To: <20240930131415.1438c0b7@gandalf.local.home>
+References: <20240926130159.19e6d0e2@rorschach.local.home>
+ <f8546c5d-fa2e-416f-8a1b-431025b4df4d@redhat.com>
+ <20240930131415.1438c0b7@gandalf.local.home>
+Date: Mon, 30 Sep 2024 11:20:48 -0600
+Message-ID: <87ikud9hxr.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5914322d267a2ef8ae1f712a293b258@manguebit.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 
-On Monday 30 September 2024 12:25:27 Paulo Alcantara wrote:
-> Pali Rohár <pali@kernel.org> writes:
-> 
-> > If CREATE was successful but SMB2_OP_SET_REPARSE failed then remove the
-> > intermediate object created by CREATE. Otherwise empty object stay on the
-> > server when reparse call failed.
-> >
-> > This ensures that if the creating of special files is unsupported by the
-> > server then no empty file stay on the server as a result of unsupported
-> > operation.
-> >
-> > Fixes: 102466f303ff ("smb: client: allow creating special files via reparse points")
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/smb/client/smb2inode.c | 21 +++++++++++++++++++--
-> >  1 file changed, 19 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> > index 11a1c53c64e0..af42f44bdcf4 100644
-> > --- a/fs/smb/client/smb2inode.c
-> > +++ b/fs/smb/client/smb2inode.c
-> > @@ -1205,6 +1205,8 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
-> >  	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
-> >  	struct cifsFileInfo *cfile;
-> >  	struct inode *new = NULL;
-> > +	int out_buftype[2] = {};
-> > +	struct kvec out_iov[2];
-> >  	struct kvec in_iov[2];
-> >  	int cmds[2];
-> >  	int rc;
-> > @@ -1228,7 +1230,7 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
-> >  		cmds[1] = SMB2_OP_POSIX_QUERY_INFO;
-> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
-> >  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
-> >  		if (!rc) {
-> >  			rc = smb311_posix_get_inode_info(&new, full_path,
-> >  							 data, sb, xid);
-> > @@ -1237,12 +1239,27 @@ struct inode *smb2_get_reparse_inode(struct cifs_open_info_data *data,
-> >  		cmds[1] = SMB2_OP_QUERY_INFO;
-> >  		cifs_get_writable_path(tcon, full_path, FIND_WR_ANY, &cfile);
-> >  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path, &oparms,
-> > -				      in_iov, cmds, 2, cfile, NULL, NULL, NULL);
-> > +				      in_iov, cmds, 2, cfile, out_iov, out_buftype, NULL);
-> >  		if (!rc) {
-> >  			rc = cifs_get_inode_info(&new, full_path,
-> >  						 data, sb, xid, NULL);
-> >  		}
-> >  	}
-> > +
-> > +	if (rc) {
-> > +		/*
-> > +		 * If CREATE was successful but SMB2_OP_SET_REPARSE failed then
-> > +		 * remove the intermediate object created by CREATE. Otherwise
-> > +		 * empty object stay on the server when reparse call failed.
-> > +		 */
-> > +		if (((struct smb2_hdr *)out_iov[0].iov_base)->Status == STATUS_SUCCESS &&
-> > +		    ((struct smb2_hdr *)out_iov[1].iov_base)->Status != STATUS_SUCCESS)
-> > +			smb2_unlink(xid, tcon, full_path, cifs_sb, NULL);
-> > +	}
-> 
-> You should handle the case where ->iov_base is NULL or out_buftype ==
-> CIFS_NO_BUFFER, otherwise you'll end up with a NULL ptr deref.
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-Ok, thanks for info! I will send v3 with those checks.
+> On Thu, 26 Sep 2024 19:54:48 +0200
+> Hans de Goede <hdegoede@redhat.com> wrote:
+>
+>> Hi,
+>> 
+>> On 26-Sep-24 7:01 PM, Steven Rostedt wrote:
+>> > From: Steven Rostedt <rostedt@goodmis.org>
+>> > 
+>> > At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
+>> > about the persistent buffer to display traces from previous boots. He
+>> > mentioned that UEFI can clear memory. In my own tests I have not seen
+>> > this. He later informed me that it requires the config option:
+>> > 
+>> >  CONFIG_RESET_ATTACK_MITIGATION
+>> > 
+>> > It appears that setting this will allow the memory to be cleared on boot
+>> > up, which will definitely clear out the trace of the previous boot.
+>> > 
+>> > Add this information under the trace_instance in kernel-parameters.txt
+>> > to let people know that this can cause issues.
+>> > 
+>> > Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
+>> > 
+>> > Reported-by: Hans de Goede <hdegoede@redhat.com>
+>> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+>> 
+>> Thanks, patch looks good to me:
+>> 
+>> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+>
+> Thanks,
+>
+> And I forgot to send this to the Documentation maintainers :-p
+>
+> Jon, could you take this? Do you need me to resend, or can you just pull it
+> from lore?
 
-Anyway, what does it mean if iov_base stay NULL or out_buftype is
-CIFS_NO_BUFFER? Does it mean that the server has not returned reply for
-that command?
+I'll grab it in a bit.
 
-I guess that it should be treated as unsuccessful result.
+jon
 
