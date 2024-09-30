@@ -1,169 +1,236 @@
-Return-Path: <linux-kernel+bounces-343990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A82B98A271
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEF8F98A185
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFE6CB2C597
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:24:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFCBB28440
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8785819A2B7;
-	Mon, 30 Sep 2024 12:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF4018F2D5;
+	Mon, 30 Sep 2024 12:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gNwuM+EX"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OzWacppw"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9371917C9
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C77218E758
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727698747; cv=none; b=M6ZUuswuQG8R14MgKFSJwbmDBbBET80Cwg12EpAj5D+6yBQmn43jUn1pqfl0nOI4bjsnKnGN4iu0yQSuC9ltmgmtofUkE7a6tzz22KIyxLCKqBTwrjdOtNxqcQNI24x8qqpfPo9phzK8tLwOg4jsTk6W1OfasqqFKEgnzbx36i4=
+	t=1727697850; cv=none; b=N44//iqa/K+SQfODqhrpq7FImsh53oKba6KeqTsqWUyJ0P7g7AOuaYNyZ/vMhxGko0oSEiqShs8pM69OkrrSqEXTT/Qi9qtKW37VKyOS8pUNo9k45nyIc1ryMNaLlvt+81MRK9XZxAJWVhJFN+liJA5GrZeZZtdJZduoD9yOq+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727698747; c=relaxed/simple;
-	bh=vBy7OFug84v0/K0Vd+HlF324zw+uJF9x+kHFONfOVqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:Content-Type:
-	 References; b=jQ5PCHevkPn1O2aUsAz6s4tfSj4xvYztbixB1PBhu90iSO/m8AmpT4ZIIQcSzYEQDLqe8AF9/vl9WXUdUcxegQg8aBnubfk7+fgBH7jZfrtvjHEjOjnAf3dRxaMva9UW6edrTk/LcoGsKIsCFcnkedHpXuB6tEy6PL1KU1rFwR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gNwuM+EX; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240930121858epoutp028ba3be14d02921ff642edb67f06787bb~6BNlPdT0Y0133501335epoutp02y
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:18:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240930121858epoutp028ba3be14d02921ff642edb67f06787bb~6BNlPdT0Y0133501335epoutp02y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727698738;
-	bh=sfSiZshNltBPyKbM7f8L8Q015QrPMyWEOljZ3sJgHEM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gNwuM+EXvEKRw5E4bJrNQIYsztG+15o5EW5y3q+nBkcQGJNnLF5S3B4TPsJGw4fNO
-	 yfryurxmgs72FwPgugXUI10kJf/PGqq60zvmUdNLDeWmH99V0/C02Jcd5E/D3U6dt7
-	 Tm67ty/70hYKxlmXElaWG7WyjveTo8A+8CO3D/cA=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240930121857epcas5p49237819634a1a4c2495b41604a0a0916~6BNkuReZ30681106811epcas5p49;
-	Mon, 30 Sep 2024 12:18:57 +0000 (GMT)
-Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XHKqh4z6pz4x9Q2; Mon, 30 Sep
-	2024 12:18:56 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	63.7D.18935.0379AF66; Mon, 30 Sep 2024 21:18:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67~6AbeqYbyM2495924959epcas5p2O;
-	Mon, 30 Sep 2024 11:21:35 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240930112135epsmtrp1743da13a16b4401159e1c7a8d98ca372~6AbepoOGR2631226312epsmtrp1W;
-	Mon, 30 Sep 2024 11:21:35 +0000 (GMT)
-X-AuditID: b6c32a50-cb1f8700000049f7-2c-66fa973031bb
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F8.57.08227.FB98AF66; Mon, 30 Sep 2024 20:21:35 +0900 (KST)
-Received: from cheetah.sa.corp.samsungelectronics.net (unknown
-	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240930112133epsmtip2aabb8e0f2086f34c47bdb457a284a90e~6AbcoJIpt3034630346epsmtip2V;
-	Mon, 30 Sep 2024 11:21:33 +0000 (GMT)
-From: Varada Pavani <v.pavani@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
-	gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used on
- FSD platfom
-Date: Mon, 30 Sep 2024 16:48:59 +0530
-Message-Id: <20240930111859.22264-3-v.pavani@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240930111859.22264-1-v.pavani@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdlhTQ9dg+q80g+V9ahYP5m1jszi0eSu7
-	xfUvz1ktbh7YyWRx/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVqsWjrF3aLw2/aWS3+
-	XdvIYrFg4yNGiw29r9gd+D3e32hl99i0qpPNY/OSeo++LasYPT5vkgtgjcq2yUhNTEktUkjN
-	S85PycxLt1XyDo53jjc1MzDUNbS0MFdSyEvMTbVVcvEJ0HXLzAE6VkmhLDGnFCgUkFhcrKRv
-	Z1OUX1qSqpCRX1xiq5RakJJTYFKgV5yYW1yal66Xl1piZWhgYGQKVJiQnfHl8SK2gs2cFc8v
-	9rM1MD5i72Lk5JAQMJG4ePIPWxcjF4eQwB5GidP/rrBAOJ8YJVauW8kI4XxjlOjY9ZQVpmXl
-	hEusEIm9jBKvn02HamllkpjXsh2sik1AS2L11OVgVSICfUwSd09MYAJxmAX6GCVa2p6DrRcW
-	iJDo6n4BZrMIqErcWXWADcTmFbCUuHnjNdSJ8hKrNxxgBrE5BawkLs35ww4ySEKgkUNi/vZX
-	UEe5SOw8fJkRwhaWeHV8C1SzlMTL/jYgmwPITpZo/8QNEc6RuLR7FROEbS9x4MocFpASZgFN
-	ifW79CHCshJTT60DK2EW4JPo/f0EqpxXYsc8GFtJYueOCVC2hMTT1WvYIGwPiXmT9kCDqJdR
-	YuGP1UwTGOVmIaxYwMi4ilEqtaA4Nz012bTAUDcvtRweccn5uZsYwWlSK2AH4+oNf/UOMTJx
-	MB5ilOBgVhLhvXfoZ5oQb0piZVVqUX58UWlOavEhRlNgAE5klhJNzgcm6rySeEMTSwMTMzMz
-	E0tjM0Mlcd7XrXNThATSE0tSs1NTC1KLYPqYODilGpgqn71W/OJoHKh6prdgXdsdPUHrZcnM
-	M49wse0orBYJyautMjpXq2bxtOSIq0/ytk1ybSz+OXK/xAqnlKtUrLrxKMcl/tvxo5tyLjiL
-	f533K3TuEnXLO/WfXJanaUef+bAysnPb4tc5F6b21VitvXFLoOq5wdnbb1Suv5i84tMPy7SX
-	qmkGTkECvvOfGTzZde/N88kVP5xPlR2f/eNlite8huz7XX+WtKkvmGE6Vfuw0+uD168zr+uK
-	X7t1DXPJhznFmj8rDnzcs0NCf9mMbQfeH5v9sT5+vQPf0gUXpmk2KK8+nxy3ryiFSeSoyFe/
-	O0e6LuWeFtyrYe0m1pf1pndjcmp50Ow9DwJK77rn+LHFKLEUZyQaajEXFScCAI7CFkccBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSvO7+zl9pBg9nCFg8mLeNzeLQ5q3s
-	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WCjY8YLTb0vmJ34Pd4f6OV3WPTqk42j81L6j36tqxi9Pi8SS6ANYrLJiU1J7MstUjf
-	LoEr48vjRWwFmzkrnl/sZ2tgfMTexcjJISFgIrFywiXWLkYuDiGB3YwS3y98YYVISEjs/NbK
-	DGELS6z895wdoqiZSeLi9xVg3WwCWhKrpy4H6xYRmMUkMXfJBxYQh1lgEqPEuj/ngao4OIQF
-	wiRWv+cCaWARUJW4s+oAG4jNK2ApcfPGa6gz5CVWbzgAto1TwEri0pw/YK1CIDUvsyYw8i1g
-	ZFjFKJlaUJybnltsWGCUl1quV5yYW1yal66XnJ+7iREcwlpaOxj3rPqgd4iRiYPxEKMEB7OS
-	CO+9Qz/ThHhTEiurUovy44tKc1KLDzFKc7AoifN+e92bIiSQnliSmp2aWpBaBJNl4uCUamBS
-	CC6Yv2LqRpX8CfOMj/xPnmEw+3/K383BnQYelh8+3ur5u2DOnc9xlRLLZia73e/xMerSO3A1
-	zXfK9pmTfwSmTe279iT+BWPWbS99XeE7hfGLfpw1S+3WniedrTbtzrmOCq0vezdzS3FKCKre
-	2mLd+r9Qc7mZ1wTT+sVfrl+t4dGZutlmb4rVkbdvl99LTPlqq8Kw5rl95cyKYyKvuc8sXPuq
-	fF1CBedU8X9b3S96d04Sbnu5TubdgctbVr7R7oze7fak54fli9cBLydf14/4o7y5ztbXMv58
-	4iSPyyFvdcpWc5wxmLWqdgdbaJTSBPsjq5V1CqMLnHJuTp+x2qpVqfEyY83yW/KBPdN7Vq9p
-	VWIpzkg01GIuKk4EAKHIgknQAgAA
-X-CMS-MailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-References: <20240930111859.22264-1-v.pavani@samsung.com>
-	<CGME20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67@epcas5p2.samsung.com>
+	s=arc-20240116; t=1727697850; c=relaxed/simple;
+	bh=6tsZ1NoeAxhaSKOEEQHt8kXuaM/4oPbiO7sTIQQ1WIA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hZ7oDR/zxfwNgAJTXBetHeXBMIXMAUWD/g+XJeA6nnMnkox4IT1AS5W+bb3nhAYZMgbKNLkzdYvI2uzeK3fMsfACyjOmlgbKSn/zFAGXkjF3wN/sY1WRbWKgp1eZn2CIWbnrKo97PvRxVxMpGm3v00/KjZelDyMft/dB1B1YYSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OzWacppw; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cb3bbb9cf5so31769026d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1727697846; x=1728302646; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RMPmE5TkHFd80YgqTri0+sfyqDiwarpX0eHsAVhj80Q=;
+        b=OzWacppwg9JT9kQFKNhN+mWJNPDgo2MEKjWRpLyP3Kd+2QQS3qpdHgZMgo1+EBrQKr
+         Oq0/z45lGXityqeOUc5YyeL71aqoqNeeTVkb72mbmZ8jnuXXE1pYne1xvkNci37kGrm8
+         R3MGiLBvIFlyRilX3p9cQ8nCWsovmZLqK98+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727697846; x=1728302646;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RMPmE5TkHFd80YgqTri0+sfyqDiwarpX0eHsAVhj80Q=;
+        b=DNNa3lVv63PWevXcZeqfEMYQxOFIjOyRTuxIHS4AaCo0ZoSQG9Iu1c1GS2n8mswb2p
+         DtuC6WHtBcDYrA87+3rKb/Z8Yp0SiK5XxQxOFH3RhhozkuXgYSMvqxxGb4sO74iq6fJG
+         X4nqKXSnPcJwN8Oo/QRsir6ff9+2cn2erLzKrHdoBrTaiNeMNjiROA6IUeGID7HnyxTW
+         tVTAEqOfFs+wQM5YeKrFPgAnfD6vDIXv9r6lGWnq02rWGMVDAB2Fnz497Sogxlbv1Ewe
+         eX44DH3KNsBQmKm3uAnKKg8q/M6hBlP9i71dTUqvRZ/Bzq/+yuVzqjTRZd16CBfkcaeo
+         651Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXYmF54n/mXG2+Y44ra1PmsP++/wNluooOJSvQvlIwiVugJA2sHYLorbaub6hmidHyplafUgLwzQAhKUqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQoJsOX/cvwbos+lO3eEsE3/kjAtyaaBsHBhXmUzC8gsp7k1Sl
+	zoBPX5cXcmeAfArNxWHRZ1nZyyxEPix9fIMv3tqEuvTm4W5Yh9jKETk3Pixmpg==
+X-Google-Smtp-Source: AGHT+IH6/D/fn5XLACymMtvSYJn9uYVBCFXPJs1Z5DofbyQa884ygogtE2Qn3wPmK1ZC7+LIXRRj0g==
+X-Received: by 2002:a05:6214:4905:b0:6cb:4ee5:8a80 with SMTP id 6a1803df08f44-6cb4ee58e92mr128655486d6.34.1727697846439;
+        Mon, 30 Sep 2024 05:04:06 -0700 (PDT)
+Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:04:05 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 30 Sep 2024 12:03:57 +0000
+Subject: [PATCH 02/45] media: staging: atomisp: Use string_choices helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240930-cocci-opportunity-v1-2-81e137456ce0@chromium.org>
+References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
+In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
+ Hans Verkuil <hverkuil@xs4all.nl>, Mike Isely <isely@pobox.com>, 
+ Olli Salonen <olli.salonen@iki.fi>, 
+ Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young <sean@mess.org>, 
+ Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
+ Jemma Denson <jdenson@gmail.com>, 
+ Patrick Boettcher <patrick.boettcher@posteo.de>, 
+ Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
+ Andy Walls <awalls@md.metrocast.net>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>, 
+ Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>, 
+ Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Tim Harvey <tharvey@gateworks.com>, 
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+ Jacopo Mondi <jacopo+renesas@jmondi.org>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ imx@lists.linux.dev, openbmc@lists.ozlabs.org, 
+ linux-aspeed@lists.ozlabs.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-Add PLL locktime for PLL142XX controller.
+The following cocci warnings are fixed:
+drivers/staging/media/atomisp/pci/sh_css.c:1490:16-19: opportunity for str_true_false(map)
+drivers/staging/media/atomisp/pci/atomisp_compat_css20.c:855:2-8: opportunity for str_enable_disable(enable)
+drivers/staging/media/atomisp/pci/atomisp_v4l2.c:542:40-46: opportunity for str_on_off(enable)
+drivers/staging/media/atomisp/pci/atomisp_v4l2.c:584:48-54: opportunity for str_on_off(enable)
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:1006:2-4: opportunity for str_on_off(on)
+drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c:1019:3-5: opportunity for str_on_off(on)
+drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c:394:9-19: opportunity for str_low_high(active_low)
+drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c:1253:3-35: opportunity for str_true_false(xcandidate -> sp . enable . continuous)
 
-Fixes: 4f346005aaed ("clk: samsung: fsd: Add initial clock support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Varada Pavani <v.pavani@samsung.com>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/clk/samsung/clk-pll.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/staging/media/atomisp/pci/atomisp_compat_css20.c      | 2 +-
+ drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c       | 2 +-
+ drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c     | 4 ++--
+ drivers/staging/media/atomisp/pci/atomisp_v4l2.c              | 4 ++--
+ drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c | 2 +-
+ drivers/staging/media/atomisp/pci/sh_css.c                    | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 4be879ab917e..d4c5ae20de4f 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -206,6 +206,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
-  */
- /* Maximum lock time can be 270 * PDIV cycles */
- #define PLL35XX_LOCK_FACTOR	(270)
-+#define PLL142XX_LOCK_FACTOR	(150)
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+index a62a5c0b3c00..34e68ea1b1f4 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_compat_css20.c
+@@ -852,7 +852,7 @@ int atomisp_css_irq_enable(struct atomisp_device *isp,
+ {
+ 	dev_dbg(isp->dev, "%s: css irq info 0x%08x: %s (%d).\n",
+ 		__func__, info,
+-		enable ? "enable" : "disable", enable);
++		str_enable_disable(enable), enable);
+ 	if (ia_css_irq_enable(info, enable)) {
+ 		dev_warn(isp->dev, "%s:Invalid irq info: 0x%08x when %s.\n",
+ 			 __func__, info,
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
+index 6abda358a72f..7d1905791b9a 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_csi2_bridge.c
+@@ -391,7 +391,7 @@ static int atomisp_csi2_handle_acpi_gpio_res(struct acpi_resource *ares, void *_
+ 	acpi_handle_info(data->adev->handle, "%s: %s crs %d %s pin %u active-%s\n",
+ 			 dev_name(&data->adev->dev), name,
+ 			 data->res_count - 1, agpio->resource_source.string_ptr,
+-			 pin, active_low ? "low" : "high");
++			 pin, str_low_high(active_low));
  
- #define PLL35XX_MDIV_MASK       (0x3FF)
- #define PLL35XX_PDIV_MASK       (0x3F)
-@@ -272,7 +273,11 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
- 	}
+ 	return 1;
+ }
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+index e176483df301..85e7d14ef394 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_gmin_platform.c
+@@ -1003,7 +1003,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
+ 		return 0;
  
- 	/* Set PLL lock time. */
--	writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
-+	if (pll->type == pll_142xx)
-+		writel_relaxed(rate->pdiv * PLL142XX_LOCK_FACTOR,
-+			pll->lock_reg);
-+	else
-+		writel_relaxed(rate->pdiv * PLL35XX_LOCK_FACTOR,
- 			pll->lock_reg);
+ 	dev_dbg(subdev->dev, "Setting power state to %s\n",
+-		on ? "on" : "off");
++		str_on_off(on));
  
- 	/* Change PLL PMS values */
+ 	if (on)
+ 		ret = acpi_device_set_power(adev,
+@@ -1016,7 +1016,7 @@ static int gmin_acpi_pm_ctrl(struct v4l2_subdev *subdev, int on)
+ 		gs->clock_on = on;
+ 	else
+ 		dev_err(subdev->dev, "Couldn't set power state to %s\n",
+-			on ? "on" : "off");
++			str_on_off(on));
+ 
+ 	return ret;
+ }
+diff --git a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
+index c9984f1557b0..6fd18217df1e 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
++++ b/drivers/staging/media/atomisp/pci/atomisp_v4l2.c
+@@ -539,7 +539,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
+ 	u32 val = enable ? MRFLD_ISPSSPM0_IUNIT_POWER_ON :
+ 			   MRFLD_ISPSSPM0_IUNIT_POWER_OFF;
+ 
+-	dev_dbg(isp->dev, "IUNIT power-%s.\n", enable ? "on" : "off");
++	dev_dbg(isp->dev, "IUNIT power-%s.\n", str_on_off(enable));
+ 
+ 	/* WA for P-Unit, if DVFS enabled, ISP timeout observed */
+ 	if (IS_CHT && enable && !isp->pm_only) {
+@@ -581,7 +581,7 @@ static int atomisp_mrfld_power(struct atomisp_device *isp, bool enable)
+ 		usleep_range(100, 150);
+ 	} while (1);
+ 
+-	dev_err(isp->dev, "IUNIT power-%s timeout.\n", enable ? "on" : "off");
++	dev_err(isp->dev, "IUNIT power-%s timeout.\n", str_on_off(enable));
+ 	return -EBUSY;
+ }
+ 
+diff --git a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+index 7ce2b2d6da11..7e295bc83464 100644
+--- a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
++++ b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+@@ -1250,7 +1250,7 @@ int ia_css_binary_find(struct ia_css_binary_descr *descr, struct ia_css_binary *
+ 		dev_dbg(atomisp_dev, "Using binary %s (id %d), type %d, mode %d, continuous %s\n",
+ 			xcandidate->blob->name, xcandidate->sp.id, xcandidate->type,
+ 			xcandidate->sp.pipeline.mode,
+-			xcandidate->sp.enable.continuous ? "true" : "false");
++			str_true_false(xcandidate->sp.enable.continuous));
+ 
+ 	if (err)
+ 		dev_err(atomisp_dev, "Failed to find a firmware binary matching the pipeline parameters\n");
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index ca97ea082cf4..89a694453e6f 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -1487,7 +1487,7 @@ map_sp_threads(struct ia_css_stream *stream, bool map)
+ 	enum ia_css_pipe_id pipe_id;
+ 
+ 	IA_CSS_ENTER_PRIVATE("stream = %p, map = %s",
+-			     stream, map ? "true" : "false");
++			     stream, str_true_false(map));
+ 
+ 	if (!stream) {
+ 		IA_CSS_LEAVE_ERR_PRIVATE(-EINVAL);
+
 -- 
-2.17.1
+2.46.1.824.gd892dcdcdd-goog
 
 
