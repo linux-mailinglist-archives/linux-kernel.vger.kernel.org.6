@@ -1,309 +1,227 @@
-Return-Path: <linux-kernel+bounces-344739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC4B98ADAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:00:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDCC98ADA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04AA51F2220E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:00:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD797B21789
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09AA1A0BE0;
-	Mon, 30 Sep 2024 20:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34541A0B0E;
+	Mon, 30 Sep 2024 20:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="B9v0/0Uu"
-Received: from forward203d.mail.yandex.net (forward203d.mail.yandex.net [178.154.239.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyrytrju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1470C1A0BD0;
-	Mon, 30 Sep 2024 20:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B421A0BC1;
+	Mon, 30 Sep 2024 20:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726440; cv=none; b=u5a+tYNB7xPwYqjT0XtHADu+cj9mM+XjC2RLTiZQNT4w8fEAp+V0yDwy+JzrvGZK/OFT9fJLUfKo40OB8sjLsrPiGObK8ZfCOC5SapQ+RFQrWIJXvYZBr07J6rB0dQLeODErL5wlQDkEi7ODJ5/pcvuqGQN9tBA49gFZYG9+lK4=
+	t=1727726433; cv=none; b=gWCMGBqmASZiLOkt+5yBXCWyArvlBtShy0hm7P36PFC4Lz0HkTO1OqWyqvXOKzaCJS1hf6srXPsMgTxp/paXSBrEY6cHisHQvD/LxZLH7yYtRLqALObnZetm8wpVVkSL0jrOuxivOthVPsZy9o09JtXO6KKdIsRkUTsu3A5mTB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726440; c=relaxed/simple;
-	bh=w9uvcZE5mcbjgGmYIEqYtWTL8H0GZMPoaVKhO2oXCEA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZCWOuqmILRSVC7aiwymYcn7JdI7ZnqiFsIUbgXjhnj0sK+1+6HEC8Q4ACdJlqp965gLysRadnR9jNJ9uTzNLiiIp644/qfD/I2BphF3HtDeBIgd9O//g1uDUWGa4SDcvreMLfqpFxmAQAYqRYrW36K4+zTuaoAUcoYSZWQweNUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=B9v0/0Uu; arc=none smtp.client-ip=178.154.239.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from forward101d.mail.yandex.net (forward101d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d101])
-	by forward203d.mail.yandex.net (Yandex) with ESMTPS id D290662558;
-	Mon, 30 Sep 2024 23:00:33 +0300 (MSK)
-Received: from mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4d88:0:640:9e9c:0])
-	by forward101d.mail.yandex.net (Yandex) with ESMTPS id D0208608E6;
-	Mon, 30 Sep 2024 23:00:25 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id K0gWmKNoH4Y0-u38gcQv7;
-	Mon, 30 Sep 2024 23:00:24 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1727726424; bh=M/lZekCrXOZDQLDGsBQ2C3hOG4b/tj06kr33g7FdOS0=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=B9v0/0UucwYb09EmqMYogGfdXIme5/PXF+UGQSCr5dmWisfype6C5itHJ2yyQmsXF
-	 t8HXkRA/dNfRFCLZVEYb8xUsWcki1jKAPsgVg8JlfG4cqL0dn2XiynfS1B1pDQUA+d
-	 bCs+MZjdoV2cVxsY2VXdCb5LWNo15+v87pozmlaI=
-Authentication-Results: mail-nwsmtp-smtp-production-main-29.myt.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Stas Sergeev <stsp2@yandex.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Stas Sergeev <stsp2@yandex.ru>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Florent Revest <revest@chromium.org>,
-	Kees Cook <kees@kernel.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Helge Deller <deller@gmx.de>,
-	Zev Weiss <zev@bewilderbeest.net>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-fsdevel@vger.kernel.org,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>
-Subject: [PATCH v3] add group restriction bitmap
-Date: Mon, 30 Sep 2024 22:59:58 +0300
-Message-ID: <20240930195958.389922-1-stsp2@yandex.ru>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727726433; c=relaxed/simple;
+	bh=bQQl0J7oigVoPltFmsFgOAdJhsDIryixqNATTTe4sgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q/j9dik8C/pSB4rSu0zj8yqkRzGusM8jcH5+i/sCQ/DJC18+XWhwOykn2JP1+YqypphxEDyWK5P4lLuLVUbVE7/AlKzvTwVw9GrQZzkU5+KrWISZX5AOMcbuD+1Ka7GKieAcB0TjMekEHc1nESsmbAB/Qvn/YiqVJclztmIq5Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyrytrju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6564DC4CEC7;
+	Mon, 30 Sep 2024 20:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727726432;
+	bh=bQQl0J7oigVoPltFmsFgOAdJhsDIryixqNATTTe4sgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fyrytrjurUXkg0kB2CCROqN88/OD7D7pU5gJ6YoaTcpWq8HGGE3PP8f4ZUeRSzETP
+	 5IlptH8RBe8raby+/4PvqNO7Ip9Zr+3bEf3eRdclq7BuO+1V/hg4g3yBlRGGs5Eayx
+	 1j3MHcdeRBWOwax7eaga9+gGJ6hPUqFro6wEp4LGpPQg4B/gjLxncWhCNy0sAS25Ne
+	 /PJnm7XnYw9X75Srxi05JZfk04KHDH1euHY/RO4w/zGtva/u6Ido1EczTtqXraCdMk
+	 ijusM+JmADyjQ6wArY1Zqjj59Xd2HLdMsBfQUiQLmqmO8PPlHrM17yrfpfRWfRivX9
+	 LIQjj+1vytLHQ==
+Received: by pali.im (Postfix)
+	id 2FB007D0; Mon, 30 Sep 2024 22:00:26 +0200 (CEST)
+Date: Mon, 30 Sep 2024 22:00:26 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] cifs: Validate content of native symlink
+Message-ID: <20240930200026.efjs2v6ssqridcqx@pali>
+References: <20240929185053.10554-1-pali@kernel.org>
+ <20240929185053.10554-7-pali@kernel.org>
+ <CAH2r5mtRN04+X-J7C__qHL6S+VzFbWoRGdb=cBDQfDVLGgWwew@mail.gmail.com>
+ <20240929221908.skkup4ds6ow2s77x@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="hy7expdtsjuxndfn"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Yandex-Filter: 1
+In-Reply-To: <20240929221908.skkup4ds6ow2s77x@pali>
+User-Agent: NeoMutt/20180716
 
-This patch adds the group restriction bitmap.
-This bitmap is normally 0 (all bits clear), which means the normal
-handling of the group permission check. When either bit is set, the
-corresponding entry in supplementary group list is treated differently:
-- if group access denied, then deny, as before
-- if group access allowed, then proceed to checking Other perms.
 
-Added 3 prctl calls: PR_GET_GRBITMAP, PR_SET_GRBITMAP and PR_CLR_GRBITMAP
-to manipulate the bitmap. This implementation only allows to manipulate
-31 bits. PR_CLR_GRBITMAP needs CAP_SETGID, meaning that the user can
-only set the restriction bits but never clear (unless capable).
+--hy7expdtsjuxndfn
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Q: Why is this needed?
-A: When you want to lower the privs of your process, you may use
-suid/sgid bits to switch to some home-less (no home dir) unprivileged
-user that can't touch any files of the original user. But the
-supplementary group list ruins that possibility, and you can't drop it.
+Now I tested it. FSCTL_SET_REPARSE_POINT ioctl call on Windows accepts
+also symlink path with zero characters. In attachment I'm sending simple
+program which creates Windows relative symlink and accepts binary target
+path via \xFF sequence. You can compile it with gcc/mingw option -municode.
+So calling "set_reparse_symlink.exe symlink file\x00file" creates new
+symlink which points to target path "file<nul>file".
 
-The ability to drop the group list was proposed by Josh Tripplett:
-https://lore.kernel.org/all/0895c1f268bc0b01cc6c8ed4607d7c3953f49728.1416041823.git.josh@joshtriplett.org/
+On Monday 30 September 2024 00:19:08 Pali Rohár wrote:
+> I think that via pike it could be possible or via windows application
+> running locally (to create reparse point manually with prepared buffer
+> with such content). I will check it later.
+> 
+> Just a side note: Windows NT kernel allows for object names any
+> characters except backslash. For object names is not used nul-term
+> string, but rather string with explicit length. So even a null character
+> is a valid in a object name. NT NTFS driver has for file names more
+> restrictions and null is not valid. But it does not mean that somebody
+> can write own filesystem which allows null bytes in file names...
+> And this design of explicit lengths is also in SMB, so NT kernel may
+> export nul characters in symlink path buffers...
+> 
+> On Sunday 29 September 2024 16:48:46 Steve French wrote:
+> > Is there any easy way to create such a symlink (with null in it)?
+> > 
+> > On Sun, Sep 29, 2024 at 1:51 PM Pali Rohár <pali@kernel.org> wrote:
+> > >
+> > > Check that buffer does not contain UTF-16 null codepoint
+> > > because Linux cannot process symlink with null byte.
+> > >
+> > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > > ---
+> > >  fs/smb/client/reparse.c | 10 ++++++++++
+> > >  1 file changed, 10 insertions(+)
+> > >
+> > > diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> > > index 5a738f65b190..ca4f96c43508 100644
+> > > --- a/fs/smb/client/reparse.c
+> > > +++ b/fs/smb/client/reparse.c
+> > > @@ -509,6 +509,16 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
+> > >         int rc;
+> > >         int i;
+> > >
+> > > +       /*
+> > > +        * Check that buffer does not contain UTF-16 null codepoint
+> > > +        * because Linux cannot process symlink with null byte.
+> > > +        */
+> > > +       if (unicode && UniStrnlen((wchar_t *)buf, len/2) != len/2) {
+> > > +               cifs_dbg(VFS, "srv returned null byte in native symlink target location\n");
+> > > +               rc = -EIO;
+> > > +               goto out;
+> > > +       }
+> > > +
+> > >         smb_target = cifs_strndup_from_utf16(buf, len, unicode, cifs_sb->local_nls);
+> > >         if (!smb_target) {
+> > >                 rc = -ENOMEM;
+> > > --
+> > > 2.20.1
+> > >
+> > >
+> > 
+> > 
+> > -- 
+> > Thanks,
+> > 
+> > Steve
 
-But it wasn't considered secure enough because the group may restrict
-an access, not only allow. My solution avoids that problem, as when you
-set a bit in the restriction bitmap, the group restriction still
-applies - only the permission is withdrawn. Another advantage is that
-you can selectively restrict groups from the list, rather than to drop
-them all at once.
+--hy7expdtsjuxndfn
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="set_reparse_symlink.c"
 
-Changes in v3: add may_setgroups() for !CONFIG_MULTIUSER
-  (fixes test bot problem)
-Changes in v2: add PR_CLR_GRBITMAP and make the bits otherwise unclearable.
+#include <stdio.h>
+#include <windows.h>
+#include <ntdef.h>
 
-Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+int wmain(int argc, wchar_t *argv[]) {
+  static BYTE reparse_data_buffer[MAXIMUM_REPARSE_DATA_BUFFER_SIZE];
+  REPARSE_DATA_BUFFER *reparse_buffer = (REPARSE_DATA_BUFFER *)reparse_data_buffer;
+  DWORD reparse_buffer_length;
+  TOKEN_PRIVILEGES privileges;
+  DWORD target_length;
+  wchar_t *target;
+  HANDLE handle;
+  HANDLE token;
+  BOOL success;
+  DWORD i;
 
-CC: Alexander Viro <viro@zeniv.linux.org.uk>
-CC: Christian Brauner <brauner@kernel.org>
-CC: Jan Kara <jack@suse.cz>
-CC: Jens Axboe <axboe@kernel.dk>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Florent Revest <revest@chromium.org>
-CC: Kees Cook <kees@kernel.org>
-CC: Palmer Dabbelt <palmer@rivosinc.com>
-CC: Charlie Jenkins <charlie@rivosinc.com>
-CC: Benjamin Gray <bgray@linux.ibm.com>
-CC: Oleg Nesterov <oleg@redhat.com>
-CC: Helge Deller <deller@gmx.de>
-CC: Zev Weiss <zev@bewilderbeest.net> (commit_signer:1/12=8%)
-CC: Samuel Holland <samuel.holland@sifive.com>
-CC: linux-fsdevel@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
-CC: Eric Biederman <ebiederm@xmission.com>
-CC: Andy Lutomirski <luto@kernel.org>
-CC: Josh Triplett <josh@joshtriplett.org>
----
- fs/namei.c                 | 15 +++++++++++++--
- include/linux/cred.h       |  5 +++++
- include/uapi/linux/prctl.h |  4 ++++
- kernel/groups.c            | 23 ++++++++++++++++++-----
- kernel/sys.c               | 18 ++++++++++++++++++
- 5 files changed, 58 insertions(+), 7 deletions(-)
+  if (argc != 3) {
+    printf("Usage: %ls new_file target\n", argv[0]);
+    return 1;
+  }
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 4a4a22a08ac2..44f5571d8f2c 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -373,8 +373,19 @@ static int acl_permission_check(struct mnt_idmap *idmap,
- 	 */
- 	if (mask & (mode ^ (mode >> 3))) {
- 		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
--		if (vfsgid_in_group_p(vfsgid))
--			mode >>= 3;
-+		int idx = vfsgid_in_group_p(vfsgid);
-+
-+		if (idx) {
-+			unsigned int mode_grp = mode >> 3;
-+
-+			if (mask & ~mode_grp)
-+				return -EACCES;
-+			idx -= 2;
-+			if (idx < 0 || idx >= 32 || !((1U << idx) &
-+					current_cred()->group_info->restrict_bitmap))
-+				return 0;
-+			/* If we hit restrict_bitmap, then check Others. */
-+		}
- 	}
- 
- 	/* Bits in 'mode' clear that we require? */
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 2976f534a7a3..97fc0a2105dc 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -25,6 +25,7 @@ struct inode;
-  */
- struct group_info {
- 	refcount_t	usage;
-+	unsigned int	restrict_bitmap;
- 	int		ngroups;
- 	kgid_t		gid[];
- } __randomize_layout;
-@@ -83,6 +84,10 @@ static inline int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	return 1;
- }
-+static inline bool may_setgroups(void)
-+{
-+	return 1;
-+}
- #endif
- 
- /*
-diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-index 35791791a879..2a9f3e0c9845 100644
---- a/include/uapi/linux/prctl.h
-+++ b/include/uapi/linux/prctl.h
-@@ -328,4 +328,8 @@ struct prctl_mm_map {
- # define PR_PPC_DEXCR_CTRL_CLEAR_ONEXEC	0x10 /* Clear the aspect on exec */
- # define PR_PPC_DEXCR_CTRL_MASK		0x1f
- 
-+#define PR_GET_GRBITMAP			74
-+#define PR_SET_GRBITMAP			75
-+#define PR_CLR_GRBITMAP			76
-+
- #endif /* _LINUX_PRCTL_H */
-diff --git a/kernel/groups.c b/kernel/groups.c
-index 9b43da22647d..b7dfd96826e5 100644
---- a/kernel/groups.c
-+++ b/kernel/groups.c
-@@ -20,6 +20,7 @@ struct group_info *groups_alloc(int gidsetsize)
- 		return NULL;
- 
- 	refcount_set(&gi->usage, 1);
-+	gi->restrict_bitmap = 0;
- 	gi->ngroups = gidsetsize;
- 	return gi;
- }
-@@ -88,7 +89,9 @@ void groups_sort(struct group_info *group_info)
- }
- EXPORT_SYMBOL(groups_sort);
- 
--/* a simple bsearch */
-+/* a simple bsearch
-+ * Return: 1-based index of the matched entry, or 0 if not found,
-+ */
- int groups_search(const struct group_info *group_info, kgid_t grp)
- {
- 	unsigned int left, right;
-@@ -105,7 +108,7 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
- 		else if (gid_lt(grp, group_info->gid[mid]))
- 			right = mid;
- 		else
--			return 1;
-+			return mid + 1;
- 	}
- 	return 0;
- }
-@@ -222,15 +225,21 @@ SYSCALL_DEFINE2(setgroups, int, gidsetsize, gid_t __user *, grouplist)
- }
- 
- /*
-- * Check whether we're fsgid/egid or in the supplemental group..
-+ * Check whether we're fsgid/egid or in the supplemental group.
-+ * Return: 1-based index of the matched entry, where 1 means fsgid,
-+ * 2..N means 2-based index in group_info.
-  */
- int in_group_p(kgid_t grp)
- {
- 	const struct cred *cred = current_cred();
- 	int retval = 1;
- 
--	if (!gid_eq(grp, cred->fsgid))
-+	if (!gid_eq(grp, cred->fsgid)) {
- 		retval = groups_search(cred->group_info, grp);
-+		/* Make it start from 2. */
-+		if (retval)
-+			retval++;
-+	}
- 	return retval;
- }
- 
-@@ -241,8 +250,12 @@ int in_egroup_p(kgid_t grp)
- 	const struct cred *cred = current_cred();
- 	int retval = 1;
- 
--	if (!gid_eq(grp, cred->egid))
-+	if (!gid_eq(grp, cred->egid)) {
- 		retval = groups_search(cred->group_info, grp);
-+		/* Make it start from 2. */
-+		if (retval)
-+			retval++;
-+	}
- 	return retval;
- }
- 
-diff --git a/kernel/sys.c b/kernel/sys.c
-index 4da31f28fda8..ed12ac6f5a8a 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2784,6 +2784,24 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 	case PR_RISCV_SET_ICACHE_FLUSH_CTX:
- 		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
- 		break;
-+	case PR_GET_GRBITMAP:
-+		if (arg2 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		error = current_cred()->group_info->restrict_bitmap;
-+		break;
-+	case PR_SET_GRBITMAP:
-+		/* Allow 31 bits to avoid setting sign bit. */
-+		if (arg2 > (1U << 31) - 1 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		current_cred()->group_info->restrict_bitmap |= arg2;
-+		break;
-+	case PR_CLR_GRBITMAP:
-+		if (arg2 || arg3 || arg4 || arg5)
-+			return -EINVAL;
-+		if (!may_setgroups())
-+			return -EPERM;
-+		current_cred()->group_info->restrict_bitmap = 0;
-+		break;
- 	default:
- 		error = -EINVAL;
- 		break;
--- 
-2.46.2
+  target = argv[2];
+  for (i = 0, target_length = 0; target[i]; i++, target_length++) {
+    if (target[i] == L'\\') {
+      if (target[i+1] == L'\\') {
+        target[target_length] = L'\\';
+        i++;
+        continue;
+      } else if (target[i+1] == L'x' && target[i+2] >= L'0' && target[i+2] <= L'9' && target[i+3] >= L'0' && target[i+3] <= L'9') {
+        target[target_length] = ((target[i+2]-L'0') << 4) | (target[i+3]-L'0');
+        i += 3;
+        continue;
+      }
+    }
+    target[target_length] = target[i];
+  }
+  target_length *= sizeof(target[0]);
 
+  reparse_buffer_length = FIELD_OFFSET(REPARSE_DATA_BUFFER, SymbolicLinkReparseBuffer.PathBuffer) + target_length*2;
+  if (reparse_buffer_length > MAXIMUM_REPARSE_DATA_BUFFER_SIZE) {
+    printf("Target path is too long\n");
+    return 1;
+  }
+
+  reparse_buffer->ReparseTag = IO_REPARSE_TAG_SYMLINK;
+  reparse_buffer->ReparseDataLength = reparse_buffer_length - REPARSE_DATA_BUFFER_HEADER_SIZE;
+  reparse_buffer->SymbolicLinkReparseBuffer.SubstituteNameOffset = 0;
+  reparse_buffer->SymbolicLinkReparseBuffer.SubstituteNameLength = target_length;
+  reparse_buffer->SymbolicLinkReparseBuffer.PrintNameOffset = target_length;
+  reparse_buffer->SymbolicLinkReparseBuffer.PrintNameLength = target_length;
+  reparse_buffer->SymbolicLinkReparseBuffer.Flags = SYMLINK_FLAG_RELATIVE;
+  memcpy(reparse_buffer->SymbolicLinkReparseBuffer.PathBuffer, target, target_length);
+  memcpy(((BYTE*)reparse_buffer->SymbolicLinkReparseBuffer.PathBuffer)+target_length, target, target_length);
+
+  if (OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) {
+    if (LookupPrivilegeValue(NULL, SE_CREATE_SYMBOLIC_LINK_NAME, &privileges.Privileges[0].Luid)) {
+      privileges.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+      privileges.PrivilegeCount = 1;
+      AdjustTokenPrivileges(token, FALSE, &privileges, sizeof(privileges), NULL, NULL);
+    }
+    CloseHandle(token);
+  }
+
+  handle = CreateFileW(argv[1], FILE_WRITE_DATA, FILE_SHARE_VALID_FLAGS, NULL, OPEN_ALWAYS, FILE_FLAG_OPEN_REPARSE_POINT, NULL);
+  if (handle == INVALID_HANDLE_VALUE && GetLastError() == ERROR_ACCESS_DENIED)
+    handle = CreateFileW(argv[1], FILE_WRITE_DATA, FILE_SHARE_VALID_FLAGS, NULL, OPEN_ALWAYS, FILE_FLAG_OPEN_REPARSE_POINT | FILE_FLAG_BACKUP_SEMANTICS, NULL);
+  if (handle == INVALID_HANDLE_VALUE) {
+    printf("CreateFileW failed: %lu\n", GetLastError());
+    return 1;
+  }
+
+  success = DeviceIoControl(handle, FSCTL_SET_REPARSE_POINT, reparse_buffer, reparse_buffer_length, NULL, 0, NULL, NULL);
+  CloseHandle(handle);
+  if (!success) {
+    printf("FSCTL_SET_REPARSE_POINT failed: %lu\n", GetLastError());
+    return 1;
+  }
+
+  return 0;
+}
+
+--hy7expdtsjuxndfn--
 
