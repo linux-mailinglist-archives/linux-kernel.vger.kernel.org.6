@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-344928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8328698AFD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:29:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C1B98AFDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E67FB22643
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A3A28300B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECF3188A3B;
-	Mon, 30 Sep 2024 22:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5nCh1Zi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C87E188A05;
+	Mon, 30 Sep 2024 22:32:54 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49B818891C;
-	Mon, 30 Sep 2024 22:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5A321373;
+	Mon, 30 Sep 2024 22:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727735354; cv=none; b=nmQlSeuqUjjax31Pg5V4xN1dnYQ1M6gWApSYqHCTYEcFAssx78Au7wnt/brwykMTgtuSCYRE0R9FuNCOZmd60d8b8GATlXt7eCzc7K03M/o6N7z3jWkPkb6484uUKLu0EW3rQhvyGmXZpkgSR9NU9NHiL/kr8+ukUExhEAMkVzY=
+	t=1727735573; cv=none; b=TAS0qKlKT5KAxBEH9ECrd+4r+HWhqT3x4EEtHW3U/0do6pDKURfgGWtb0ApNZSkB2mauMIL1MUopcS4E53yTQa7m3uyIptG07SRlWKqvh9oXPy6eQbPT4U2roJB7mMFxG4CGSBB2suD7WmvpkoxK1R5LwN/n1r9elhkcyezfoBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727735354; c=relaxed/simple;
-	bh=nmH9qaJNjqw7Qc6T/lqnT06KkF7d1uYIKI94EUB9NQo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=IGxfE56WH/doCVM/kd+d4hLsupahi9sZ3FbrRc0U8ShkW5rPzN8nSEzd6oXLQx3hQ7i4xECfvUbmH1p8Vqv4PcO8MC++nE0BnAYnRUIpiErqaXPakkwBLY4j41YCoEeELVg6h+/1iof+q5rdJVjX9A7r76NUIc3VdiFsFo1BCoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G5nCh1Zi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFA9C4CEC7;
-	Mon, 30 Sep 2024 22:29:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727735353;
-	bh=nmH9qaJNjqw7Qc6T/lqnT06KkF7d1uYIKI94EUB9NQo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=G5nCh1ZiP3M2UW5GbdgHysar+gLAEjEEkOJytKfAdtloFD65yi5i3gG4tLErO+JzU
-	 hAJR8PT3AVA1pnSLgwap4qkue4K0uMlq3QoI+tbFtc6UQwLmDpdZs7YYHMAXUc/8R8
-	 WBJNflBns8NYeysbjveMVRGvKUMTaOT42kacTBj9ZpHjeA25nNEctIpGi8BM0lGf3x
-	 PBUhCeJZuWGIlYNek6dLxAEdjsEMDsi9bP2AD3WmQ7k5CnzZb6vKd3Oah4wjscvcEO
-	 NTefxofKdZUbjv1p4bdXDfDbS3PBSJmHH2H83nFLJ4LPONS78kw4bSd3FS5zt0vkrA
-	 IPUdekfh1iGIQ==
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
- Johan Hovold <johan@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Pablo Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-In-Reply-To: <20240925093807.1026949-1-wenst@chromium.org>
-References: <20240925093807.1026949-1-wenst@chromium.org>
-Subject: Re: (subset) [PATCH v8 0/3] Add of_regulator_get_optional() and
- Fix MTK Power Domain Driver
-Message-Id: <172773535067.2224406.9733965694288102381.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 23:29:10 +0100
+	s=arc-20240116; t=1727735573; c=relaxed/simple;
+	bh=yB8t28v0rVVG8l1ITb+2azCXJ2SY+9Yr+Bcj/YPUWsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=TATI2wR6JkLMxXY1S07aVH5Ow/zvfbxPAxqJLeqkP71QvBb/QtgKieMjZnOdgyadoa6iDs43K+Bjov5Usj3zero6z7kP6vHrk4/fK/1Pj6XJvjvbuw3/x8syLAUFThOd8uOirzGDisKP8MiFOb8Y3ccy3rR5gHlAYuNodkZAMhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.100] (213.87.144.249) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Tue, 1 Oct
+ 2024 01:32:40 +0300
+Message-ID: <2664c044-bb38-44f0-821e-28d813589d15@omp.ru>
+Date: Tue, 1 Oct 2024 01:32:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next PATCH 11/11] net: ravb: Add VLAN checksum support
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+To: Paul Barker <paul@pbarker.dev>, "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>
+CC: Paul Barker <paul.barker.ct@bp.renesas.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund+renesas@ragnatech.se>, Biju Das
+	<biju.das.jz@bp.renesas.com>, Claudiu Beznea
+	<claudiu.beznea.uj@bp.renesas.com>, <netdev@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240930160845.8520-1-paul@pbarker.dev>
+ <20240930160845.8520-12-paul@pbarker.dev>
+ <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+Content-Language: en-US
+Organization: Open Mobile Platform
+In-Reply-To: <ab7482f9-6833-416f-8adf-5e1347628dec@omp.ru>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 09/30/2024 22:19:07
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 188103 [Sep 30 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 35 0.3.35
+ d90443ea3cdf6e421a9ef5a0a400f1251229ba23
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.144.249 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.144.249
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/30/2024 22:22:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/30/2024 9:25:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, 25 Sep 2024 17:38:03 +0800, Chen-Yu Tsai wrote:
-> This series is split off from my "DT hardware prober" series [1].
+On 9/30/24 23:36, Sergey Shtylyov wrote:
+[...]
+
+>> From: Paul Barker <paul.barker.ct@bp.renesas.com>
+>>
+>> The GbEth IP supports offloading checksum calculation for VLAN-tagged
+>> packets, provided that the EtherType is 0x8100 and only one VLAN tag is
+>> present.
+>>
+>> Signed-off-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> [...]
 > 
-> Changes since v7:
-> - Added stub versions for of_regulator_get_optional() for !CONFIG_OF
->   and !CONFIG_REGULATOR
-> - Added new patches for devres version and converting MTK pmdomain
->   driver
+>> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+>> index 832132d44fb4..eb7499d42a9b 100644
+>> --- a/drivers/net/ethernet/renesas/ravb_main.c
+>> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+>> @@ -2063,11 +2063,30 @@ static void ravb_tx_timeout_work(struct work_struct *work)
+[...]
+>> -	switch (ntohs(skb->protocol)) {
+>> +	if (net_protocol == ETH_P_8021Q) {
+>> +		struct vlan_hdr vhdr, *vh;
+>> +
+>> +		vh = skb_header_pointer(skb, ETH_HLEN, sizeof(vhdr), &vhdr);
 > 
+>    Hm, I thought the VLAN header starts at ETH_HLEN - 2, not at ETH_HLEN...
+
+    Wikipedia indeed says that the VLAN header begins with TPID word (0x8100)
+and then the TCI word follows -- while in Linux, *struct* vlan_hgr starts with
+the TCI word -- hence my confusion... :-)
+
 > [...]
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-
-Thanks!
-
-[1/3] regulator: Add of_regulator_get_optional() for pure DT regulator lookup
-      commit: 5441b6975adc26aeaca316b9075e04a98238b1b3
-[2/3] regulator: Add devres version of of_regulator_get_optional()
-      commit: 36ec3f437227470568e5f460997f367f5446a34d
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+MBR, Sergey
 
 
