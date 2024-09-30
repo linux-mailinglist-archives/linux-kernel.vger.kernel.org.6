@@ -1,85 +1,146 @@
-Return-Path: <linux-kernel+bounces-344521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCE698AAC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:12:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9354598AACF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DACA1F22460
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:12:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CFF28711C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22072197A98;
-	Mon, 30 Sep 2024 17:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C60198E71;
+	Mon, 30 Sep 2024 17:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOK28VA4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsBcdVE6"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B5A194C85;
-	Mon, 30 Sep 2024 17:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8D9198A0D;
+	Mon, 30 Sep 2024 17:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727716305; cv=none; b=QSiWNShYGNobI/vfxNGGbWxpat7apl3q+u4cbMTu+F9PNvffj4ULzl5QzktdZnSQNh7A6ZtpGMj756d9N9aIe08ZXZJ2lxZhGM60sxmJ7Slgn4K/F/YJMANpZNflMyex+9RD1Z1bADnehtOrx2EYxrZHX9pkYXSlAxRssWpPH9w=
+	t=1727716369; cv=none; b=uqD5+v3t9UNkdgaPzlQGgxdaWLOL1b8p659QY1MYM+Ks36BRlnGEBhwK0CIiUAKg6QkscylMqHFACCLLm+8RYW6CYGxVA/3GnngSjah7VJURvweOoF+ZpgQoSETc2QuB0PdpIl+Frln0hxjRiNxuUhjcDn0BQiXqt1OmM1w0teI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727716305; c=relaxed/simple;
-	bh=o1K5k91qZFtJQYCTb40/SpUrr1tTX/a1xr5upzEJtqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QTTSPjdBsuAbGWL9F7hSNhvfyg421u7J7+beh7t0BS31Cl+tviiNpEs0B6g6ALdc0vghJvg5xK0x9vsrfCVrB8I2iMD4MsiDUbGdvqvD/YU6sWBWegm/nYyz7D9vYuAJ5x2bNzNXOLDGqtZ77ohjJ55XS2v7z7s/7wS1WK1oDyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOK28VA4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00FF4C4CEC7;
-	Mon, 30 Sep 2024 17:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727716305;
-	bh=o1K5k91qZFtJQYCTb40/SpUrr1tTX/a1xr5upzEJtqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GOK28VA42BH/9l2Mzkt+edgDzkh6uVrog9wYVsopfRRVbkfwtJWfC86r6AObas7G/
-	 X7uRmDPJgy6yElqw4vny6Y41Hnz9hH5maV9JkMPsYBlW0sljV7Vtif9L1XC+TFQOew
-	 zpQHmZqsZUBknmVA/DNvYQSlXowhFSTJdXlQ1zZJ0R6w3P1r7+J37IMfjcbuzfHbIE
-	 BacLyk6zEaM6NNjOJSJIdA3nkAeBOFmZZUY1sk+OSNSQZ0zGxEjCwmKAEhW0N/D6Em
-	 TkEWrtUXngL09fL8K9soegSbM5+VmeOwg6k1XVcxx1JfCiaqegTpfni2eA55Kz9Ky1
-	 1jh7t1wS8CEcw==
-Date: Mon, 30 Sep 2024 07:11:44 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, josef@toxicpanda.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 1/5] blk-cgroup: add a new helper blkg_print_dev_name()
-Message-ID: <Zvrb0DXhtVHT2lfa@slm.duckdns.org>
-References: <20240930085302.1558217-1-yukuai1@huaweicloud.com>
- <20240930085302.1558217-2-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1727716369; c=relaxed/simple;
+	bh=YEzdSQNhrdBnEv5ZnZ7OwOy1E0VsRh5p70r2rRyYh8I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fFaaU/4sd/Fy+9NzqelY72oy6MR5Jw+hU93fmHSy0bUfq65qki/e0dbLhrVEun0Y8BHb60OXECX7IRsTz6SkOf7dtkrETW1YnEYxQ2Yr+P1g/1M/XRbc3hOJR3opW7lvOEqahBN5XR7OPdj5BwJmz2ninHpMdLXFgpkheBWYJDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsBcdVE6; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-50ab5e0c482so372043e0c.1;
+        Mon, 30 Sep 2024 10:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727716367; x=1728321167; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V7i2nP7oIqIXZg+ExE2suICLJsXwuJoLSOBktdlrWHo=;
+        b=RsBcdVE6r7ZLoXtdlKldSq+hYHFtLO4oI/0bAvGxFG11nCP1hfUE/PBJAHwOZvuKWi
+         31ldxWYD4AVS6o+XEOOptvZr/8RTguZSGTsJcqtQAQveinMiCjja7ds0HOc1ijptibOr
+         P4mO9kZnSLWYvf7ud8b+AOil2tBMSVI9CxhbSnuDkhxbfBTAQWGcg3Loee6h4FSwhBk3
+         9vHXegXMCKLm9gvQOwFGRrhG5Y/BnF/9N/2YtBe98XugO3VRk9E58FH47//qeRtyd6mT
+         5YTo7jrfiSkkYy4L3JZyYzYplaR8X7YFJO0dkBDqvE4HfKRMDgFdjVINbQUcQCWPooFa
+         crsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727716367; x=1728321167;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V7i2nP7oIqIXZg+ExE2suICLJsXwuJoLSOBktdlrWHo=;
+        b=C7E+2sriWXAlyJwBX6oNaEmqzSG31o/N814ITgAsFgZC5CadEbHmYqek3P3RqOv/Ex
+         XSjg76NuRbopZzoL0FNNXMYX20bLs+e1v469tu71IXCwyvQgnomgzyVrqXXSVydGTF2B
+         jCDbq1FW1QSIAn3JfEebPQ/qtV02iZb2tnnl/hpmjkwdqpKHGYdSg2M1zMcgFcPQjcJs
+         g5HE01o1VnkDcI82LoXdvokrNF+y8Cjmkk6aojrR9++QJd6C/N8kmJWSQfGv7FMlB/9f
+         HOwbiHG5hy6nBrMOUV4besSu//MqgNVXES4DDRzx8gDSjcPVOoHq+NziO0jNYaF4v6Q8
+         G0gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBZk0xutHNrceZ63biwvrfrSpvJ7ECK0NjxuekeGqD+LA9BNYKoOYUgcaCTDWjV2UKR+UOXP6v+dM7okU=@vger.kernel.org, AJvYcCUqkSPMFfTSU9ydXxCC5M4MsgMCJL9cKr7b7++JYQLMQSSEoHa1wczM1p5sNwzfKZsYwWuC3BFTUG+65AU=@vger.kernel.org, AJvYcCWGRF32WWPJgukeoLwOGquXViANXzKt4iRRPPTJKmjEDOdSfyrJJutvGGaZTUVUWk018lufoJEZa6P12/i0L8EGGsw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5y/oW/cR3zuc235RSPYZYtwZDfbAQtqZjr+FLRX/YhWvEYc2v
+	cO1CAWVSHKKUpiVexiT954jC7rqHUnCpnBDri0PKMgJ68rKe1pRlDomMOpeGE47Hp8/q62WXpo6
+	Dei9Y8lxEiD9XiBkv+ZZ4X4p1HmA=
+X-Google-Smtp-Source: AGHT+IGsSI301dsuHnczzrL0W10qgO3yHWun+13wXZ1nYAnktHmRQHbNE9X0zyHz9auG7pkPAKGQ5fSwVbGbf4b2V3U=
+X-Received: by 2002:a05:6122:2210:b0:4f5:23e4:b7c with SMTP id
+ 71dfb90a1353d-50781517913mr8056506e0c.0.1727716366878; Mon, 30 Sep 2024
+ 10:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930085302.1558217-2-yukuai1@huaweicloud.com>
+References: <20240910175357.229075-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240910175357.229075-14-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240927230909.GM12322@pendragon.ideasonboard.com>
+In-Reply-To: <20240927230909.GM12322@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 30 Sep 2024 18:12:20 +0100
+Message-ID: <CA+V-a8sB2DuB8TOsoAmzNgY2c8qBbgGtumGzcCbzxj38wnGqbg@mail.gmail.com>
+Subject: Re: [PATCH v2 13/16] media: platform: rzg2l-cru: rzg2l-video: Use
+ rzg2l_cru_ip_code_to_fmt() to validate format
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Laurent,
 
-On Mon, Sep 30, 2024 at 04:52:58PM +0800, Yu Kuai wrote:
-> +static inline bool blkg_print_dev_name(struct seq_file *sf,
-> +				       struct blkcg_gq *blkg)
-> +{
-> +	struct gendisk *disk = blkg->q->disk;
-> +
-> +	if (!disk)
-> +		return false;
-> +
-> +	seq_printf(sf, "%u:%u", disk->major, disk->first_minor);
-> +	return true;
-> +}
-> +
+Thank you for the review.
 
-I wonder whether we just should add a name field to disk.
+On Sat, Sep 28, 2024 at 12:09=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thank you for the patch.
+>
+> On Tue, Sep 10, 2024 at 06:53:54PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Utilize `rzg2l_cru_ip_code_to_fmt()` in `rzg2l_cru_mc_validate_format()=
+`
+> > to validate whether the format is supported. This change removes the ne=
+ed
+> > to manually add new entries when a new format is added to the CRU drive=
+r,
+> > simplifying the validation process.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 6 +-----
+> >  1 file changed, 1 insertion(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/d=
+rivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > index 014c0ff2721b..c32608c557a3 100644
+> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> > @@ -201,12 +201,8 @@ static int rzg2l_cru_mc_validate_format(struct rzg=
+2l_cru_dev *cru,
+> >       if (v4l2_subdev_call_state_active(sd, pad, get_fmt, &fmt))
+> >               return -EPIPE;
+> >
+> > -     switch (fmt.format.code) {
+> > -     case MEDIA_BUS_FMT_UYVY8_1X16:
+> > -             break;
+> > -     default:
+> > +     if (!rzg2l_cru_ip_code_to_fmt(fmt.format.code))
+> >               return -EPIPE;
+> > -     }
+>
+> This looks fine, but I think you should take it one step further and
+> perform format validation in .link_validate(). See
+> https://lore.kernel.org/all/20240826124106.3823-8-laurent.pinchart+renesa=
+s@ideasonboard.com/
+>
+OK, I'll implement link_validate() and do format checking in there and
+get rid of rzg2l_cru_mc_validate_format(). Thanks for the pointer.
 
-Thanks.
-
--- 
-tejun
+Cheers,
+Prabhakar
 
