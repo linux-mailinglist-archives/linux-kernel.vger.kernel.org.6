@@ -1,121 +1,89 @@
-Return-Path: <linux-kernel+bounces-344678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756C198ACA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:16:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4389798ACA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E4F1C2156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:16:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0295B24344
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01432199EA6;
-	Mon, 30 Sep 2024 19:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFBD183CC5;
+	Mon, 30 Sep 2024 19:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k15weHyo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LzSX6w1K"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Fzs1rj5+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7015E97;
-	Mon, 30 Sep 2024 19:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EB615E97
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723772; cv=none; b=GtMMYZBvEC1SgCXR1ptCoqaqutmuoIOD/LJy9MzzGtK5SMs29GKjVMLGGX0Mx6dMaNNIK/mEs8znq69wUywuY2y2IhzGxnMSESjOWSUuPsrbv9YywrYjk9ZzJIq8easu/uImBJqir8eyKGioSUtz0YauFLGp9dlYs6/i9PnPM7Q=
+	t=1727723836; cv=none; b=GtsVzSaIHKhAezsXiwFfv+fD9s6i8x0bZVIGChy9nBFZVG1wq/EcpW4rgppjXzc3Bgrd1U9c+zgOB7LYfmWI6b+p2XFIOYiLuA/e80U36IvXrCCNmk6Qxl/ocwAcrCeBgIWZiaa2dbwPwbr3rMEw5brAMxuQ2XU2/0cqtSXV2hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723772; c=relaxed/simple;
-	bh=mbPkm7okFjtQ2jT5AxFJj8n1vkGBMmVePJJNRPRtVno=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SYB5Jb+ILjv9fLDB5aWBsRhvMIxD09DgHSY3khBtoldZTIZ6zAwmId3E155hy2yaN+iceizbUz3QuVoKEu1qgDDQznDVGTg/DbWzQG5snbcwqKs8TRbfkNDTOjjn1WVG31LPK0m0+HnEqseBQp3hTQDta/g1PlaWf8H1EbTojRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k15weHyo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LzSX6w1K; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727723768;
+	s=arc-20240116; t=1727723836; c=relaxed/simple;
+	bh=EKXQ/NkOUG68FLhVF4/nLkkGEyfRy7q4ka5FDA/CAuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZA2JB+bJRh7RD7JAC/ldBPrwg7Kj307lnlnyP331ZiuiMbMwsc+0z2fjXdmBeTXdDrUjClEM+HL3mCNhjYrrpLipQtyUunRreAqxFyiw1tziCeznd/75w9XSWoa3MkRg3L8tYUxD2Ua3GrNshYyQXrAzVmqrMG3gM6AuIkhVtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Fzs1rj5+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF939C4CEC7;
+	Mon, 30 Sep 2024 19:17:14 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Fzs1rj5+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1727723832;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iCvcoZK/1u84ANwEMkWcEIyXDRG96pAVEQ+ONN9fVq4=;
-	b=k15weHyo206AD3mAwvey/aNEbq7AsI86ZKn2w2uPvLQHKUfl8PURomKwotvHQfopogWV78
-	4/u/SUbDveNrg/WjTDPr2Wdd1MiAggTT9wKElFbifsDpJP2tV3R7ae+EKq4Q6/QzlqeNxn
-	WZqPyEX1GyKTSWT3ZiaDR+Utg16zM0UCH2/hOEwUOdq8LR2/Z0iYzDB86sKictH7HFnNfP
-	hHoMMn1gQculKdiwekmOWTHzLxzji3XFQRAOSbjC6FhSOS3CI7LV1EhvTP5hp0AZ6dyKV4
-	+Bkuk94NckRLi+lb/354Mx6/uxWCTq6ZMh1JcutjbVnDauYAmc63ARXa793j4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727723768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iCvcoZK/1u84ANwEMkWcEIyXDRG96pAVEQ+ONN9fVq4=;
-	b=LzSX6w1KCMyStlPEYZz2PdVadv24ltBggYWSH7NJOFSXKkHbhvWBDpTDR7J0PNWEX23gko
-	9a03sH2Ia9XjYBBQ==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-In-Reply-To: <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
- <874j6f99dg.ffs@tglx>
- <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
-Date: Mon, 30 Sep 2024 21:16:07 +0200
-Message-ID: <878qv90x6w.ffs@tglx>
+	bh=ZXhqapFBo+75hVKPH5GgFx2LdKbyngn/VfVLQxKR/Ms=;
+	b=Fzs1rj5+BBskyJzw19syl1VxJS3+wVCvV8ZCfMPQcVkA1fhg9se2wsCqV4OsEEGfjzN8HG
+	rny8d8iOkVGvpHVUS1rhplsgmHHg5zSsC65+Ws88P0g4BqTQtXOEHtF+4zhVxJAfjyPtcV
+	+FlQ1E9O4OwhjHFJuGDVi05sy9NBPaA=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3ab1cbd9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 30 Sep 2024 19:17:11 +0000 (UTC)
+Date: Mon, 30 Sep 2024 21:17:09 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.12-rc1
+Message-ID: <Zvr5NRtqxsIwmfeK@zx2c4.com>
+References: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
+ <ZvqkfSM_8sxTSzz_@zx2c4.com>
+ <CAHk-=wjm1jLqnMnLar9XRDAwDTHcG7e9+cFhq2bgz4Q+5yysKg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjm1jLqnMnLar9XRDAwDTHcG7e9+cFhq2bgz4Q+5yysKg@mail.gmail.com>
 
-On Mon, Sep 16 2024 at 06:57, Jeff Layton wrote:
-> On Mon, 2024-09-16 at 12:32 +0200, Thomas Gleixner wrote:
->> > 'Something has changed' is a truly understandable technical
->> > explanation.
->> 
->>      old = mg_floor
->>                                 mono = T1;
->>                                 mg_floor = mono
->> preemption
->> 
->>      do {
->>         mono = T2;
->>      }
->> 
->>      cmpxchg fails and the function returns a value based on T1
->> 
->> No?
->> 
->> 
->
-> Packing for LPC, so I can't respond to all of these just now, but I
-> will later. You're correct, but either outcome is OK.
->
-> The requirement is that we don't hand out any values that were below
-> the floor at the time that the task entered the kernel. Since the time
-> changed while the task was already inside the kernel, either T1 or T2
-> would be valid timestamps.
+On Mon, Sep 30, 2024 at 10:22:28AM -0700, Linus Torvalds wrote:
+> On Mon, 30 Sept 2024 at 06:15, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > Pushed 5.12-rc1 too? Odd.
+> 
+> It's an old tag that was renamed to v5.12-rc1-dontuse when it was
+> found to have some particularly nasty problems:
+> 
+>   https://lore.kernel.org/all/CAHk-=wjnzdLSP3oDxhf9eMTYo7GF-QjaNLBUH1Zk3c4A7X75YA@mail.gmail.com/
+> 
+> For random reasons (read: I had an old repo) it re-materialized under
+> its old name, and because it was *so* co-incidental in naming (getting
+> pushed out at the same time as 6.12-rc1), I felt it was too good to
+> fix up again.
+> 
+> And if somebody goes and randomly starts using v5.12-rc1 (from
+> February 2021) and hits the swap problem, I can only go "why did you
+> do that?"
 
-That really needs to be documented. A similar scenario exists
-vs. ktime_get_coarse_real_ts64_mg().
+Ah, I remember that ordeal. I suppose you've been testing out rc1 on
+some different hardware and so old repos are found hither and thither.
 
-Thanks,
-
-        tglx
+Jason
 
