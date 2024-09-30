@@ -1,127 +1,143 @@
-Return-Path: <linux-kernel+bounces-344335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776C298A871
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:30:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C186C98A873
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBBF1F213AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BCF28501C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA73B194120;
-	Mon, 30 Sep 2024 15:27:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6D194C9E;
+	Mon, 30 Sep 2024 15:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0bgZlu5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B690B1922FA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6671922FA
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710024; cv=none; b=BUE4sl3duh8/+W9+7NwvZ82rcpqpP05XNU3vPafALqRfyRHrOeRSkPEFZlwpMP7FJKPYg1SE5y4pDI93+4a2lKZRpHrqTQa2cch/37ORPsFMGhOLW3aRptcv3R0gpGFVnJMY1+RLVNR+Dx23IXYuF+1cMqAptiIdOUnwrlag1HU=
+	t=1727710030; cv=none; b=k4Dn0I+QnnI6Tc7KR0qEVylvUNrhveY754Gfz9defvkfFnaSYzsJrZPvwrZGvSBX2kuXoBbI88Fxb+bO6S7o5GWsN9Wd88yGMlXPYsyvVp5skLMjU7/KlDObCa5mNnuHPCLImCmbX170GkSUkH4P9QB0idhatxgLpH3pXditSRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710024; c=relaxed/simple;
-	bh=uaCv37xmX/Ty+Ewl3LTIpNSRFKq50QIRpf8eVC1h8fs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MGbQYwlGEjEZmd9TBvTBt2gLV4erVTzg7ZMj+zW5yVNsRoqNevUfGyKcWNS2Ju8+ivf2tt9YLnBVnn0tl/IQknhNgi6iTt9cOuiuFoSr+AFKwRbi+bPOqhOBpy+DCr17STYDJaCKmy4eBLzykKgQ9qapJ4/Qbt3traCMGV1w4E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIId-0002aI-IW; Mon, 30 Sep 2024 17:26:59 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIIc-002f72-Vp; Mon, 30 Sep 2024 17:26:58 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1svIIc-000DNW-2y;
-	Mon, 30 Sep 2024 17:26:58 +0200
-Message-ID: <9ebdbbdd938ceaa4e58d4cc26e2187fecf5856b8.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: Further simplify locking with guard()
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Markus Elfring <Markus.Elfring@web.de>, kernel@pengutronix.de, 
-	linux-arm-kernel@lists.infradead.org, Krzysztof Kozlowski
-	 <krzysztof.kozlowski@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Date: Mon, 30 Sep 2024 17:26:58 +0200
-In-Reply-To: <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
-	 <b050730e-ac7d-401b-8210-82453d05b0e5@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1727710030; c=relaxed/simple;
+	bh=3miv1F1A4Z9ag8W8Ix9bhPQcIbViWenNhqk5fc3VAQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ho+GI2spVN5yCJrkrog083YbO5h5VytobPGLsa9/vIelhyAlG9/FS/7DvcLDi/bv7zddlKvhYWveRFiFzAs+w1emxUqM8us/taQ+hJYY3LHK0SK+eGpa1PFNQV+EtZvjlseaiwY2CW/KZCbwfepK32cfYiB8XDv9j1WDeUECOrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0bgZlu5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0C1C4CEC7;
+	Mon, 30 Sep 2024 15:27:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727710029;
+	bh=3miv1F1A4Z9ag8W8Ix9bhPQcIbViWenNhqk5fc3VAQc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=J0bgZlu58lfG/qPZxD+x0AbJIuqgTNO9kUA0z6s1o4sjK5OysREnLMbSG3CWvkksS
+	 nXrFri9KIO20p7PHBG0LWBw82HmkwIdCZUv2Zdaic0dUTRRxltv+k2QVQYS0dcXRys
+	 QEvtrUQeqg2KCb1B8g+P6XeFatPUDXgC0Dp2XIYajTZOiV21+ogf/eiKnlmD50pLHK
+	 7Eux7QQFyTNTvem/srDSZG1RM4Qi9sBsVF5aAfOToYLDmwxiukGJtoB2uyb0+JW+YQ
+	 yCE3GfMMJGvD3jCWvjkHKumB4LrzS2r6fzv3cao5xEY4UoTseVkfU2eBj89WNE9Oim
+	 a1OtzpVuvkveA==
+Date: Mon, 30 Sep 2024 12:27:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
+Subject: [PATCH 1/1 fyi] tools include UAPI: Sync linux/sched.h copy with the
+ kernel sources
+Message-ID: <ZvrDShNVXotZpiwk@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On So, 2024-09-29 at 12:45 +0200, Markus Elfring wrote:
-> > Use guard(mutex) to automatically unlock mutexes when going out of
-> > scope. Simplify error paths by removing a goto and manual mutex
-> > unlocking in multiple places.
-> =E2=80=A6
-> > +++ b/drivers/reset/core.c
-> =E2=80=A6
-> @@ -1041,29 +1036,27 @@ __of_reset_control_get(struct device_node
-> *node, const char *id, int index,
-> =C2=A0		}
-> =C2=A0	}
->=20
-> -	mutex_lock(&reset_list_mutex);
-> +	guard(mutex)(&reset_list_mutex);
-> =C2=A0	rcdev =3D __reset_find_rcdev(&args, gpio_fallback);
-> =E2=80=A6
-> =C2=A0	rstc =3D __reset_control_get_internal(rcdev, rstc_id, shared,
-> acquired);
->=20
-> -out_unlock:
-> -	mutex_unlock(&reset_list_mutex);
-> =C2=A0out_put:
-> =C2=A0	of_node_put(args.np);
-> =E2=80=A6
->=20
-> Would you like to preserve the same lock scope (which ended before
-> this function call)?
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-Thank you for pointing this out. Yes, and this should have alerted me
-to the issue with goto out_put from before the locked region.
+Full explanation:
 
-> @@ -1098,7 +1091,7 @@ __reset_control_get_from_lookup(struct device
-> *dev, const char *con_id,
-> =C2=A0	const char *dev_id =3D dev_name(dev);
-> =C2=A0	struct reset_control *rstc =3D NULL;
->=20
-> -	mutex_lock(&reset_lookup_mutex);
-> +	guard(mutex)(&reset_lookup_mutex);
->=20
-> =C2=A0	list_for_each_entry(lookup, &reset_lookup_list, list) {
-> =E2=80=A6
-> =C2=A0			break;
-> =C2=A0		}
-> =C2=A0	}
->=20
-> -	mutex_unlock(&reset_lookup_mutex);
-> -
-> =C2=A0	if (!rstc)
-> =C2=A0		return optional ? NULL : ERR_PTR(-ENOENT);
-> =E2=80=A6
->=20
-> Would you really like to increase the lock scope here?
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-I don't think this would have been a problem.
+The way these headers are used in perf are not restricted to just
+including them to compile something.
 
-regards
-Philipp
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+Picking the changes from:
+
+  f0e1a0643a59bf1f ("sched_ext: Implement BPF extensible scheduler class")
+
+The inclusion of the SCHED_EXT define doesn't cause any change in
+behaviour in tools/perf.
+
+This just silences this perf tools build warning:
+
+  diff -u tools/perf/trace/beauty/include/uapi/sound/asound.h include/uapi/sound/asound.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Link: https://lore.kernel.org/lkml/
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/include/uapi/linux/sched.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/sched.h b/tools/perf/trace/beauty/include/uapi/linux/sched.h
+index 3bac0a8ceab26ee7..359a14cc76a4038a 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/sched.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/sched.h
+@@ -118,6 +118,7 @@ struct clone_args {
+ /* SCHED_ISO: reserved but not implemented yet */
+ #define SCHED_IDLE		5
+ #define SCHED_DEADLINE		6
++#define SCHED_EXT		7
+ 
+ /* Can be ORed in to make sure the process is reverted back to SCHED_NORMAL on fork */
+ #define SCHED_RESET_ON_FORK     0x40000000
+-- 
+2.46.0
+
 
