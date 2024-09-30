@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-343523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDAEA989C02
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:56:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B523989C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:57:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A30F1C21668
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAB661F21E0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2C916F0DC;
-	Mon, 30 Sep 2024 07:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF6B174EE4;
+	Mon, 30 Sep 2024 07:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsqyNcuZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="tMwRr1KI"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C5C208D0;
-	Mon, 30 Sep 2024 07:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7872415C15E;
+	Mon, 30 Sep 2024 07:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727682950; cv=none; b=EKaT2hXUB6s3qX43BSdt0kTyMWCnRwxQqayARoQ3jjinrWZu0xZEu07DukAzxnwN6RYE50u3Rh6t9+zZUlSTtohulPmIxeNbFNnRQ8XRmorgTfYjFZstaFGRyBoySfgbhXMypLb6PbBI9IKsHIW8b8h0dGn9w29R/XjROW5FdiM=
+	t=1727683045; cv=none; b=lPzJYq9qy5GrKD8+6DWulehAtii5YkguislSdDQ4OOJxleDI8ewgWLEZRlhi/Gc2HXkOaWEU2VZGADbK+/ERu/onV1CbQsyfRBr9vV36w/S+g0Fcbi0q6HOZ6wkf2i2qmyjnQX45r48qL6NZmI3c7cJZBwowvhDh4/px4XEN6pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727682950; c=relaxed/simple;
-	bh=WqiiMn3TOK8qkHGyl30poW6uvLfsNKOs+I8IDx0MaPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iCGqODT7iTTEODxF3QNPrkY+js39dsV7mPKf17Mcwxotz8NM3QRzLqQPe98wftwkkgeUrIWXzIC1sgKCSUNUYFRRfOj/0sf5oak/P7PYd3GFPlwz4bNum7ESePPMt9bg+hEagOkK41nrxYSXCvg2kO/TdSYK0bVOGQZxh4Nh6TQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nsqyNcuZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b01da232aso28473525ad.1;
-        Mon, 30 Sep 2024 00:55:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727682948; x=1728287748; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Zii7toS4u8fqK8e7iEXrwK+8PuQ8KNxa6JHJJXvxdRs=;
-        b=nsqyNcuZDs/qx3iJBz9iCv0FXeWuLJuA2Whkh7FpJ6/64lBHRPHRpL+R8MC1w5RkgI
-         HufMAJmyZlmSpSQNnWAgfwXukGv5jv941rBXGWaqKf3dlZH2HgCgTfeIUtViJ2QK4XM+
-         gqXoMGFU4a1jL+DzRjv2vyW6tdMKjVyOnKQMWoYNSPxuKCjMpbtmvs9p5ztmtHSYaesF
-         hWrqOIXiNQQPssDcJ5Gzoxlvc3hGc80MXMTp/DwslECW4yn5CBBvdzGKxSNWaDFBz7jR
-         WbXppE7G7/s8aunzubQIiYeF3f305AJq1hePFuYCaN0llZC7w3k8+0eXT+yne70Lltvz
-         L+Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727682948; x=1728287748;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zii7toS4u8fqK8e7iEXrwK+8PuQ8KNxa6JHJJXvxdRs=;
-        b=Y/aFLxdKwqwuDi+FyBWlm/LY1Kj0eaeaIVR+oeArosHEEC/ZZuEFdUSLgrj3lkTOes
-         VUe2WGzd34yg3cyoNPcmfcwzj8i4eY6moe+L0BnYRArVuiEgATab+K9ipEzq4zz92zHK
-         Cw+dO8uCUpoq/n6mxMGGx+gW1m/eczuppahuNXejdczjdj4+DnutgROcMIDpboGdfuKS
-         Cyt1RxdOCH717MC6aHI5YhtgWBBZju0U8sagXbyQq8R2/LF+SJRc7vncoiil49JXPE/3
-         gd3HFxTG7wlfUq6WQRC4XMtRLYwRsQbMepwp8aCk+e0oKY5+TmbprNpMuys3JfovcRAb
-         x6Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCViinI9SwXhfzoXhpMotBQfG4BYUtGC1HKf/IVmb5LAhCj1kPuBAbS+RTGLpSiVvJTVsc9NxPzRREB13v0I@vger.kernel.org, AJvYcCWrq/bd11k49HCXLMqP4z7WDgBx+UE08rBcfPUUs3Ny2tAWidsPF0l4dpk4UYyVZkbOZF38lxsOlnZi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLRR9bZhoKchiowKw1SGdR5exj8Lu/XDF+03QrFV/xBGaZp830
-	pypX+JJxTwD6EJJyYiUh6jQBvrdbtqKvYDD7qm8EE4zZ62xE48E8
-X-Google-Smtp-Source: AGHT+IFxOMc0d4tCPAQmw7OpnEdG5eybS/WJhfQZ4V9BtWh7rZBQN7P2cPW6Jv34yoG6Xb9/KU8emw==
-X-Received: by 2002:a17:902:c40f:b0:205:7998:3deb with SMTP id d9443c01a7336-20b19c9af59mr221231995ad.19.1727682948163;
-        Mon, 30 Sep 2024 00:55:48 -0700 (PDT)
-Received: from rigel (14-202-6-222.static.tpgi.com.au. [14.202.6.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d519sm49524575ad.172.2024.09.30.00.55.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 00:55:47 -0700 (PDT)
-Date: Mon, 30 Sep 2024 15:55:43 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [RFC PATCH] gpio: sysfs: make the sysfs export behavior
- consistent
-Message-ID: <20240930075543.GB57004@rigel>
-References: <20240927074221.9985-1-brgl@bgdev.pl>
- <20240930010334.GA6286@rigel>
- <CAMRc=Mdt8+ATGVU19E+pRrMhKZTcO49HTPdboHLLeN_Omd6LoQ@mail.gmail.com>
+	s=arc-20240116; t=1727683045; c=relaxed/simple;
+	bh=BFhSVfrePAJI5gNJFgIjaJrtixX24iPbQQ0d8FSWhxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MrFoogKKHEhwHPWTrQRqivKOMJ23mY8TVkG06sZDyRP5hUuNvgpmb68qDb2eyXDiQ8iDjNPZVrNEpR7uCTZPQM7WdpfsR49A1uBmp72Ym2nNszVRVvfguIsN75RA/Ocwc1H0RFd6ba45N9PYDCN3iT0QTlOaTfj7qUkxAQhUNBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=tMwRr1KI; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727682958; x=1728287758; i=markus.elfring@web.de;
+	bh=BFhSVfrePAJI5gNJFgIjaJrtixX24iPbQQ0d8FSWhxs=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=tMwRr1KIHHyh601Gc839na9nhq9Dm2GgNPNeTu9qU1b2BKLRy5pnp+NE3g5kt+UX
+	 n549nii8w4GKPAL+/AGQJ6ceEAc/+fTQW4nfHkC1LdPgiDST1dHaVfuEJ9UgKklVQ
+	 +AJoX5mXtBDNoPMjN/e/xbufG/p6X0kigI3SpIhdjkfAjOEl4sA+k/qI1lkB6sKhj
+	 B/hhfEU2k/7Ocjhbz9ZkUwaVYOqgzgs1zs3H4imEjmeFPdq2m3F402mgeQLQqhVAB
+	 iek/jx9kpvdXWy9pacVWcJP3i6j5JtNlJbALBLZP4SXqDuIBOJH0QJNXx+1JhqrtC
+	 r7OanPlaaWmZkFMvsA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mf3qK-1sEwku1p7a-00eq9a; Mon, 30
+ Sep 2024 09:55:58 +0200
+Message-ID: <4eb3dbbb-d3fd-43f4-b90d-9ecc222a87f6@web.de>
+Date: Mon, 30 Sep 2024 09:55:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mdt8+ATGVU19E+pRrMhKZTcO49HTPdboHLLeN_Omd6LoQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 6/6] i2c: Add driver for the RTL9300 I2C controller
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
+ linux-i2c@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+ Andi Shyti <andi.shyti@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+ =?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+ kernel-janitors@vger.kernel.org,
+ Javier Carrasco Cruz <javier.carrasco.cruz@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
+ <096aebcd-778c-4160-b478-bb26025f3940@web.de>
+ <0c94d0fc-dc0c-4e35-a6c1-2d7e01a3eb43@alliedtelesis.co.nz>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <0c94d0fc-dc0c-4e35-a6c1-2d7e01a3eb43@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ya5KDFxRxA4bmUC2mDm7LFw51IhhhVCjIMPrxa02CAdV2bVYjo0
+ ADOHdv2LHge1wrhdGmG4Mnl8ocWKIM6IS2ZZQyadK+njoJA2WZydqr61MmXQz0gazXoxW1K
+ GqTetFglpKU1fUI0KFGo+TEBoX0rv8Zal6KMl1LFm5pIq481yfR4KExoC/Jc+uFntwBv7oa
+ mG1ZTZ5Dghy6fPD0Y6O0g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PFk3D6ULmM0=;jd3RGWDVmFA/pHKwxeiCNfYAaZn
+ 682Ys3A+JzDSwa2F1ZtPL7qmyDgHkc8haoy7DkSf4wh5PGeCk0AGF28hlkzvuKaS9NWocqahK
+ 6DkHQX80fNRTWpRmwnQO7mRY9/gJIsVMn7KZqPz4CrqLErvhZkHOpHzAUzuXeNIIXoiPWcssl
+ l/iJLMyVdcJXPTq2DinBWpeWmlAqlaqNBQ/4ZPbSG/xa+Wkb7hw3I5DonAGDBfuU1mc+xUwEp
+ SJFh7Vy+bfrRToQlJhoaRbxAjsXX4Td/rHv3jTZnDkwRWE/IMCAXy/WjJqkN+iN6BtCRB6yBq
+ RmaGFBICaWx2VfAzd/ytG0S0rHtiq2y3YZ1vlb2e8ESV3DW27H0Y7QMfqcwlyMh4yRoCSTWvi
+ JWZ57Evg+q+6xNUhrEe/litBqxgZI3/0y9i368ooqL5g0ZQfynQxkZKKdpN2daqepLiAbm4ks
+ YCs7QM8wjzWN0D+Q9pQGJGSp5ktpBnfKHWOvLYgQ6CgGhbzYtdkXvNtfwjaEeKbPkhHoLcYde
+ gLRJg7NpIvGlzWSuj6Q7w+hkaKU6KYkoV/41nfqcpr717cHeRU+Ds4W+ICm7AoWx6G7cfaFGi
+ y+N0OxZM0ytmDAIYm0gKK6QNUzq1dkbsGt1DL6OGqvEN4Z0HHmIXI0SKGRChGiKvVQTWUSDd/
+ 6poKEQVmDUujV7quD0tQ4WdDWVrLZkMJ5zJe9EiCQkt2B5Udeq3NSeiSrHfJEziFGLN0Il26V
+ TcFZ1HcQv2AvhCIiFJIyWNCTHoBhCqigmXqbFq2OSHMR3Ymj36J2gA+YZbVG3yjRVPWkcwCmU
+ xpZ0AgMI9U/D5hbKK7Nah2yw==
 
-On Mon, Sep 30, 2024 at 09:20:48AM +0200, Bartosz Golaszewski wrote:
-> On Mon, Sep 30, 2024 at 3:03 AM Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > > I decided to write a sysfs-to-libgpiod compatibility layer based on
-> > > FUSE. Since Rust is hard, I started prototyping the thing in python
-> > > first to at least have the logic nailed down before I tackle the rust
-> > > part.
-> > >
-> >
-> > Something along these lines[1]?
-> >
-> > Cheers,
-> > Kent.
-> >
-> > [1]https://dev.to/krjakbrjak/simulating-gpio-sysfs-interface-with-fuse-and-c-30ga
-> >
+>> =E2=80=A6
+>>> +++ b/drivers/i2c/busses/i2c-rtl9300.c
+>>> @@ -0,0 +1,422 @@
+>> =E2=80=A6
+>>> +static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr,=
+ unsigned short flags,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 char read_write, u8 command, int size,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 union i2c_smbus_data *data)
+>>> +{
+>> =E2=80=A6
+>>> +=C2=A0=C2=A0=C2=A0 mutex_lock(&i2c->lock);
+>>> +=C2=A0=C2=A0=C2=A0 if (chan->sda_pin !=3D i2c->sda_pin) {
+>> =E2=80=A6
+>>> +out_unlock:
+>>> +=C2=A0=C2=A0=C2=A0 mutex_unlock(&i2c->lock);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 return ret;
+>>> +}
+>> =E2=80=A6
+>>
+>> Under which circumstances would you become interested to apply a statem=
+ent
+>> like =E2=80=9Cguard(mutex)(&i2c->lock);=E2=80=9D?
+>> https://elixir.bootlin.com/linux/v6.11/source/include/linux/mutex.h#L19=
+6
 >
-> Well, this doesn't really do anything. I'm thinking about something
-> consuming the libgpiod rust bindings to actually be a useful
-> replacement for kernel sysfs.
+> At this stage I don't what to change unless Andi insists that I do.
 >
+> I can't find much mention of using guard() on https://www.kernel.org/doc=
+/html/latest/
 
-I haven't actually looked at that - but when you mentioned a sysfs fuse
-interface that rang a bell.
+Do you find any other information sources more encouraging?
 
-> The master plan is: provide a drop-in user-space replacement for
-> sysfs, make users convert to using it instead of the real thing,
-> eventually remove sysfs from the kernel and then some time after
-> remove the compatibility layer from existence forcing everybody to now
-> move to pure libgpiod. :)
->
 
-Ironically a lot of users would probably be happier with that than with
-the D-bus daemon.  And for that reason I don't think that last step will
-ever happen.  But that is ok too - as long as we can finally remove the
-sysfs interface from the kernel.
+> but I can see enough examples (although notably none in drivers/i2c) tha=
+t I _think_ I can see how I could use it.
 
-Cheers,
-Kent.
+See also (for example):
+Article =E2=80=9CLinux Kernel Development - Automatic Cleanup=E2=80=9D
+by Javier Carrasco Cruz
+2024-06-17
+https://javiercarrascocruz.github.io/kernel-auto-cleanup-2#2-automatic-mut=
+ex-handling
 
+Regards,
+Markus
 
