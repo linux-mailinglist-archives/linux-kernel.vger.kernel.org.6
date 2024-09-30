@@ -1,280 +1,199 @@
-Return-Path: <linux-kernel+bounces-344456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB8398A9EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D7498A9EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2CB1C22B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0EF81F21798
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19447194083;
-	Mon, 30 Sep 2024 16:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDFA19309E;
+	Mon, 30 Sep 2024 16:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="T7YK7oIl"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="ARbiLN0Z"
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011066.outbound.protection.outlook.com [40.107.74.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720AD19259E;
-	Mon, 30 Sep 2024 16:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714125; cv=none; b=m+uuMvcm8WOPb571pASUW2Uy3+yss5j5wcrsPK9IAgCFpftJuYhUhR92nq9sXPly4LsLWOeg8mwt21cesfzclA4fRhScMZQVgej/XPFo9XL/w+IvNqAX1Vo8YQipZsQa3yUnS6i1wB/pLl+TwoNzAPQQ4gq6LkAFfNpXZ/HmFjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714125; c=relaxed/simple;
-	bh=vjEHM9j5YoWJcqeVe6mJMZ40VBXEjdU8i2Vb/ork5v0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OSGc7aZyy0FLKv5GteSCbYckdbNo2Zd7xxt3S/jHAjONjDfiJhhxQhp74w9XrGBc1Y5xIgJ6OswpDZzyFyeizc68krzFYsm3rvIW52l8aOLx6PskR0C7bzmHiRLUL3n18u7DYckHZeNKUQP6npnOZCv/HUWN6pePspzzbkYylWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=T7YK7oIl; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (pd9e59da1.dip0.t-ipconnect.de [217.229.157.161])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 110DF2FC0050;
-	Mon, 30 Sep 2024 18:35:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1727714118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wtqXajSzFWYkGXr4Sq7VpqGPbBBt6dnMSBjNk5xPnbY=;
-	b=T7YK7oIlro+agp9c+EiOP09ZspxlSxAYe3HqLtd30XPrBpkBgYS9faFl1lO1BpTwr50oBr
-	5KxfGdeqnnxBxpymwqusbXi9G4As7h7MgSbgwJ8gbWDqbFsY5CfB/yjl4rw2esgm3xNp3V
-	BpomUizorrYa0L26JNpCkbfnB+RhI1s=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
-Date: Mon, 30 Sep 2024 18:35:17 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3530819259E;
+	Mon, 30 Sep 2024 16:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.74.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727714186; cv=fail; b=XDdFmOGyVgj3pJWZMevVb749+FoUhcx3i4G7W0/Oky+o0yWrx3TR+VUXrgB45ZmdP05RN+XaiKbXYCmwlSogp46fmM+tvf6g4zi8A0IsWjVmxLYWNIYUJFHkHQgaeMyFwM9hZXlmY3NpgNVMQx1mO6rPBc8GwwIB8y8N76sD4NM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727714186; c=relaxed/simple;
+	bh=OCvHEYTakMAvheiaMRLBJVw0mYZmNrhLZQzfn0wr7k8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QJgbGHyD8vltvFGYHWWhEk0ZAN7sfnm9ypMIY/kmhzZdypmRxgATjvSwVbPPAXLFWCNQt3mI7iT6RAKr1KyNChVNHno0UyxU/OfmrAp/BYgK27txjHb0AfUnGWqDzwi0r5LHkL4C+J5ThA27PloEmQQisGD/qDS2HCh5qbtqYAA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=ARbiLN0Z; arc=fail smtp.client-ip=40.107.74.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A3RkuJ18yqg5Z8G5H0vbo6o2q+eB6dWGK73kIClvOQA5186mxQtmyErAM3dG53uWbZHufjmslkWnss2+mWa2ozKLsF/D/nY4xn9i01+ru/YHo1ImAsV2Su6pawcpofmLB765L4HfiZaPL4Dnyom2rXUy4Se/5mez5Zzbe1VhHwkcZwNeLKlbwfpt2RViqJ1i2UXjj0nSwUtPEF+5X+hvpPz78QiZPeR3dCTu4pI3TxzvqMO6VPEXt8Qm21JaETiIz5v+ErUcdp9ct88aW4GMJJrl1f+px6Rm7V07YuVfG1jzGR/+A2HT5aVRRqbt9Py2r6kzOXNHLN/aH7/E3XWlZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HWeRQh/cXzRhb3Jkz1CjcJKySrgbnmgtnoOawXjMCGA=;
+ b=pv2uijmdKHd6GiZRAXdd3ApYP5wW/xBnRN7G5F81pvRSddkfRJaEwA2qjXumTjjWoA8TbCOWO32vtY4K0yxv0aLbnO4/V0XEAJSpIoH9F6r+7RFP4vJa0NTeEKFYwYf+xDaVCpBXTkg+ljImW3sTDtlI6geREp77wilcQM1HQ8a7xFNNWJCrGArGueZhT8B8eWBsnT7BskVpyZAaW6GibjKc638XLkfWn3t1VL6kZAeQz4n22yHyGCQr7inwiv8DKFTmJ2barGjEWOCZ23KUv6oUTrGgHd2Tpr+3p0attlKoBNgvdNCVdeLYR0Uj/45YVAKEOLKqIjUjW660isrQmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HWeRQh/cXzRhb3Jkz1CjcJKySrgbnmgtnoOawXjMCGA=;
+ b=ARbiLN0ZP677UQ2YZDP7kR6b5/GJ0BGWMgteR4x0Xj7RBCi99YwsknmEv/COMrORKNtL/N8N6Wy3rxLisMHmtU1wdK6YJtpeGqTjlNeFy6RLp9B154XUATlT7DgYlII/jn8xoewXQqZ2yu1TiX04JFS/Um6kBXd5hGayhY+hm88=
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
+ by OS0PR01MB5620.jpnprd01.prod.outlook.com (2603:1096:604:bd::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27; Mon, 30 Sep
+ 2024 16:36:20 +0000
+Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
+ ([fe80::439:42dd:2bf:a430%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 16:36:20 +0000
+From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>, "linux-renesas-soc@vger.kernel.org"
+	<linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+Thread-Topic: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+Thread-Index: AQHbE0jeZ5rsQ++rgUGVV3Ok4wTdk7Jwel8AgAALTzA=
+Date: Mon, 30 Sep 2024 16:36:20 +0000
+Message-ID:
+ <TYCPR01MB12093A2984117267AC18D679CC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
+References: <20240930145539.357573-1-fabrizio.castro.jz@renesas.com>
+ <87ldz9uomz.wl-maz@kernel.org>
+In-Reply-To: <87ldz9uomz.wl-maz@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|OS0PR01MB5620:EE_
+x-ms-office365-filtering-correlation-id: 0e40af28-9a92-4ca9-0b41-08dce16e03ef
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?gYqKgJ9R9c/iKS4UqP+5BA3ecck8lu83wHs07nDZNIlBrDiFcDXm8mPsBJYy?=
+ =?us-ascii?Q?6fgNFww/H1Sygvv2APOuqXXsNteJYu+7yzahd0Sm0B2/nRPCuVLmCjFmWHyF?=
+ =?us-ascii?Q?tef206ShBon7WhXAmjhYsJZGvlKx4Yuh+Lo25KONBRyJShELXtu44PMD0FCN?=
+ =?us-ascii?Q?6CCagN3Kxh9Srv9U+NYEG1TkZ+dJ9Ccui6cXnnb3tIs96HHwEp19EkaEr7pC?=
+ =?us-ascii?Q?AarZ88ZqcE48PkIxsRGbw17w9G2Vm20TnzcV3EAufFR675s1rUav5lWHYFxq?=
+ =?us-ascii?Q?yN436hLhO/p0eg69g71c1bo6HK1llz+dkVOGHACISZJ2JeftqUJBWXd+sa5K?=
+ =?us-ascii?Q?0Wqb1e88uUKzFpXuLiwf6KmkDNKj37+SoXFXsS3tP2XAiQvMBY5WeHPbD66d?=
+ =?us-ascii?Q?ZafbZu6GDI77L7hUFQgARn6gyH3qkX93uLRiwlpUzyeS2HfjMhqcyPOouDy/?=
+ =?us-ascii?Q?gPl+A917FB3H1r7SIhMEjiq7dHSBPiiCs+j0FrFqZ8qJsZJizpg31v8mXhx7?=
+ =?us-ascii?Q?/p/uNpVT8bjB3ai55yiBXETC/0HTziQzm4JlLBKtco4XlS5T5/zX8PtYvnT8?=
+ =?us-ascii?Q?yhehGmyunc6t92FtpFffCvj2S6nHp+1yocFMmW8+VmHHbQLzsN391kLg+Key?=
+ =?us-ascii?Q?zKaGm1FQ2jGHU07/KdbD5T5N8L/eTNE6YMQIjIropQzFiTYsOM60hLQ2U2MK?=
+ =?us-ascii?Q?2MZpXMV0zHQQkPLE4Ej6wK5polZFvVhc9DdOp5Y0r7/q1zynaz/tJvfco6Lk?=
+ =?us-ascii?Q?h02oYDojQPXNOe0BkKeOlzPRNYx6H9VyD3miLrrakXkBWAp4hiXXUUj39DIq?=
+ =?us-ascii?Q?EVFh4pjGPVx2xRwauV12UCrNuqVDvrr7/5CzuEtFtjj8Zs5Eq61+jCaJAA/+?=
+ =?us-ascii?Q?nLQVeIoY6eWVr2AuleygbCukZCIJbMwv+LX0oiWie+E+Tgkwqz2ze21rfaRx?=
+ =?us-ascii?Q?M6TjTm2RPMwS2PaVVRnfvJwGFQRVdGN+uaLwVR0+MFKbFdkzJuZnrr924wX6?=
+ =?us-ascii?Q?dyFOvctLJq3ZeP/IPk7NiqgMLcc5K5ock0/oul7bN5Ts3P4q75to+nvmMlQu?=
+ =?us-ascii?Q?8Me1HfMX/zI2+rNiT2eM+ORsRSsUXS86VlmqD9GdEjq7lbUar8fD9EBS8OCR?=
+ =?us-ascii?Q?5Zl3pfr0CukLMu9xAzaF1vbV46l10rBy4q0lZAhV7Iqxj+GkhYtjpQ/c1QNb?=
+ =?us-ascii?Q?7kZj3GoDNl/ZguroxgHGKwGFA7p6JEZmnE5LE4pDpPWtWU1PlpJ7izqB93bp?=
+ =?us-ascii?Q?sLbkXni/YqsooeV4rRE8tVgWGaY/KYKzhHObPRtfOBdGjJf1UfDHkTCan1Z8?=
+ =?us-ascii?Q?iwrEE3lPfE7eqJSTqfQmd+oLPup6y16TS8MjQck0CrfKlA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?O0OMY9O8Etl6/rXjaUWXpHcKHx13MwMizVEHkC+As8dBywbXuKhSY98phYsm?=
+ =?us-ascii?Q?KgS7/6d2OlRTsxJj4Sjzeh1+gOthpjGUlLfkIG4XmLHxqMpmvd0Ci5VKBbF3?=
+ =?us-ascii?Q?IYWwy2jCyk+OC2Yuvb0N7pFHuHzjrbAy1VicpQ8xKiTUUe/nISaeXr9XmYsI?=
+ =?us-ascii?Q?lJOp68EEylG4URWJjO8cEpiCf7E6zDDIuLbe17mMd4y1EmdKH9pcgd1I3qcU?=
+ =?us-ascii?Q?wxlfAzxil2mVDQOzZSsRD0rw5edYFZCgEqwrt+zt3KcY0Wc6+kVFYVpcCAVN?=
+ =?us-ascii?Q?NnEtvhRLi59AvTrmJXznnMWdRKT6MKciK68tc81fihE+FWVEzNwWlrIEnSmi?=
+ =?us-ascii?Q?RzNczxLlBESdnUe795Cv+ruv0AR3zXAHHWnK8ccmMzhB4v8QaYuMdMogCvYW?=
+ =?us-ascii?Q?JH06Dt1W0g7PDg2VdWCgExcHHGNqfykORcVPNys4PWok140LTdQFtVOlEc6u?=
+ =?us-ascii?Q?TdnMkE/Voy3Z3ET78Bn2YjBOAM2mz1Sx+KICdm4XEJkQCxfBUtxmQ9C2v4M2?=
+ =?us-ascii?Q?UzgLGpXNJyjptMhGjay/nFezGNaYtlbzVTgRO+mqR8IFp9EyCEPIrOkwGN+h?=
+ =?us-ascii?Q?FuaXxQRHgWD9XgE/py3/XzBy9E71FER3nZOW59wJmLphXtBQ7UlYrJAVvg2m?=
+ =?us-ascii?Q?KB+7Of954aQqtWZHd0JIFut+l8UZL+2K8nQV5sasuLX6ch8wpk+hiu1Lp0xJ?=
+ =?us-ascii?Q?hD+GwGpuJxm0D39wSh6JFBWgaVfmV+BQ1VLMG7qLukMRcSbNcMHE985LWde/?=
+ =?us-ascii?Q?MKSP8GPur8O9A4qyiuIWMMzMGxLlFH7bcxKYyV633DGcGiUevPGBteS2o0jI?=
+ =?us-ascii?Q?vRzQ2qvg+W9t6UJ0yLkWS1qEF8X/vCvcHSDasi/4JeueKQiYM9Ep/iczTtYk?=
+ =?us-ascii?Q?ok4tYJcHNmxSN+f94EWwbfBMmlVkKNMNo9H1BcrMC4AdCCVn7QlmJSsIgJtd?=
+ =?us-ascii?Q?/i1VVdULk9ZziPQH0IIu0MJuQAfcEein2UNppXPYaiKTTZP6BNlKZvpRFBAj?=
+ =?us-ascii?Q?0fe1/zckUpvXcq6vbgOCUXhM7GY9I38TVjoB+xFS8tv2JjTa95vdlxbZNlta?=
+ =?us-ascii?Q?51iML6EPDvjyHDz9xlTZUNbmNkkfPfCG81Yan86RLB8vGVEWjm3Jj8QK+ASo?=
+ =?us-ascii?Q?/C+jVv2JkhJi6c1YJZFh77LcpDDU6CfDRYLQBfoT8j1pzOK9jJtkNf8+jYGV?=
+ =?us-ascii?Q?w3qLzvwdS6hdLjjEatRtyKOFkSFxrKMiTJTIgPO5a0bfVxOrEkL/wfvJ2dyo?=
+ =?us-ascii?Q?7bx93hQrgWma6n82Jew0+gXk9GPpEvnRYI74jNTfcZuoH9U0q6zvdzl/uxmy?=
+ =?us-ascii?Q?AetbK9Ubk+gcFFCt55BGXMOT97vr1IqhL60yDiRrwoPs7t8HT5iO0SUDXSUg?=
+ =?us-ascii?Q?R+2oD+Z24EuSA9I0JvkvcpdnsCwUtKPDJETgenv7uGfw4fV2nwOrPH47bxwB?=
+ =?us-ascii?Q?DwV42YN5/aqXWmv2E/mD7PgdJj83LCuBIrxVnFjjz4a8ba0c/ioNN+BMD0dL?=
+ =?us-ascii?Q?0T44DCFXDCWTfOG8K/GEPEb0MfkRWtN2ssFSh+j9/iXRCIC6+NRBoQFyoqFU?=
+ =?us-ascii?Q?1+v+1YZrp24zaBb7gijBRqrKUM8PBCPEzLEH3yp8+QfI8kR1SrsWuvyLfYzI?=
+ =?us-ascii?Q?3A=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <20240926174405.110748-1-wse@tuxedocomputers.com>
- <20240926174405.110748-2-wse@tuxedocomputers.com>
- <ZvcdNXQJmc8cjifw@amd.ucw.cz> <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
- <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
- <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
- <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
- <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
- <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e40af28-9a92-4ca9-0b41-08dce16e03ef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 16:36:20.7887
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vNAtWHJgZLy9MZ4/B/702EjXpuaTZl1VONdLBrt3HkcYzXzknV1NC+HBlVKu4a5rlrxHhkzNxxKDy4gYGuark9ySDBqNqU+9LvP+/JrrcFc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5620
 
-Hi,
+Hi Marc,
 
-Am 30.09.24 um 18:15 schrieb Benjamin Tissoires:
-> On Sep 30 2024, Werner Sembach wrote:
->> Am 28.09.24 um 12:05 schrieb Benjamin Tissoires:
->>> On Sep 28 2024, Werner Sembach wrote:
->>>> Hi,
->>>>
->>>> Am 28.09.24 um 09:27 schrieb Benjamin Tissoires:
->>>>> On Sep 28 2024, Armin Wolf wrote:
->>>>>> Am 27.09.24 um 23:01 schrieb Pavel Machek:
->>>>>>
->>>>>>> Hi!
->>>>>>>
->>>>>>>> The TUXEDO Sirius 16 Gen1 and TUXEDO Sirius 16 Gen2 devices have a per-key
->>>>>>>> controllable RGB keyboard backlight. The firmware API for it is implemented
->>>>>>>> via WMI.
->>>>>>> Ok.
->>>>>>>
->>>>>>>> To make the backlight userspace configurable this driver emulates a
->>>>>>>> LampArray HID device and translates the input from hidraw to the
->>>>>>>> corresponding WMI calls. This is a new approach as the leds subsystem lacks
->>>>>>>> a suitable UAPI for per-key keyboard backlights, and like this no new UAPI
->>>>>>>> needs to be established.
->>>>>>> Please don't.
->>>>>>>
->>>>>>> a) I don't believe emulating crazy HID interface si right thing to
->>>>>>> do. (Ton of magic constants. IIRC it stores key positions with
->>>>>>> micrometer accuracy or something that crazy. How is userland going to
->>>>>>> use this? Will we update micrometers for every single machine?)
->>>>> This is exactly why I suggest to make use of HID-BPF. The machine
->>>>> specifics is going to be controlled by userspace, leaving out the crazy
->>>>> bits out of the kernel.
->>>>   From just a quick look at
->>>> https://www.kernel.org/doc/html/latest/hid/hid-bpf.html HID-BPF is some kind
->>>> HID remapping?
->>> Yes. HID-BPF allows to customize a HID device by changing the report
->>> descriptor and/or the events, and the requests made from hidraw.
->>>
->>> It's a HID -> HID conversion, but controlled by userspace.
->>>
->>> See [0] for a tutorial.
->>>
->>>> But the device in question nativly does not have a hid interface for the
->>>> backlight. It is controlled via WMI calls.
->>>>
->>>> Afaik userspace on linux has no access to WMI? How could HID-BPF implement
->>>> the WMI calls?
->>> You'll need a thin WMI to HID wrapper, but without LampArray.
->>> Then you load the HID-BPF program from userspace, that program knows
->>> about the specifics of the device, and can do the LampArray transform.
->>>
->>> Which means that once the wmi-to-hid driver specific to this device is
->>> built in the kernel, you can adjust your LampArray implementation (the
->>> device specifics micrometers and what not) from usersapce.
->>>
->>>>>>> Even if it is,
->>>>>>>
->>>>>>> b) The emulation should go to generic layer, it is not specific to
->>>>>>> your hardware.
->>>>> Well, there is not so much about an emulation here. It's a different way
->>>>> of presenting the information.
->>>>> But given that HID LampArray is a HID standard, userspace is able to
->>>>> implement it once for all the operating systems, which is why this is so
->>>>> appealing for them. For reference, we have the same issue with SDL and
->>>>> Steam regarding advanced game controller: they very much prefer to
->>>>> directly use HID(raw) to talk to the device instead of having a Linux
->>>>> specific interface.
->>>>>
->>>>> Also, starting with v6.12, systemd (logind) will be able to provide
->>>>> hidraw node access to non root applications (in the same way you can
->>>>> request an input evdev node). So HID LampArray makes a lot of sense IMO.
->>>>>
->>>>>> Maybe introducing a misc-device which provides an ioctl-based API similar
->>>>>> to the HID LampArray would be a solution?
->>>>>>
->>>>>> Basically we would need:
->>>>>> - ioctl for querying the supported LEDs and their properties
->>>>>> - ioctl for enabling/disabling autonomous mode
->>>>>> - ioctl for updating a range of LEDs
->>>>>> - ioctl for updating multiple LEDs at once
->>>>> You'll definitely get the API wrong at first, then you'll need to adapt
->>>>> for a new device, extend it, etc... But then, you'll depend on one
->>>>> userspace application that can talk to your custom ioctls, because cross
->>>>> platform applications will have to implement LampArray, and they'ĺl
->>>>> probably skip your custom ioctls. And once that userspace application is
->>>>> gone, you'll still have to maintain this forever.
->>>>>
->>>>> Also, the application needs to have root access to that misc device, or
->>>>> you need to add extra support for it in systemd...
->>>>>
->>>>>> If we implement this as a separate subsystem ("illumination subsystem"), then different
->>>>>> drivers could use this. This would also allow us to add additional ioctl calls later
->>>>>> for more features.
->>>>> Again, I strongly advise against this.
->>>>>
->>>>> I'll just reiterate what makes the more sense to me:
->>>>> - provide a thin wmi-to-hid layer that creates a normal regular HID
->>>>>      device from your device (could be using vendor collections)
->>>> This is what this driver tries to be.
->>> Except that your current implementation also does the LampArray
->>> conversion. I think it'll make more sense to provide an almost raw
->>> access to the underlying protocol (think of it like your own Tuxedo
->>> vendor collection in HID), and handle the LampArray weirdeness in bpf:
->>> definition of the device physicals, conversion from HID LampArray
->>> commands into Tuxedo specifics.
->>>
->>>>> - deal with the LampArray bits in the HID stack, that we can reuse for
->>>>>      other devices (I was planing on getting there for my Corsair and
->>>>>      Logitech keyboads).
->>>> If a greater efford in the hid stack is planed here i would be all for it.
->>> That's what makes more sense to me at least. Other operating systems
->>> export the HID nodes directly, so userspace prefers to talk to the
->>> device directly. So I'd rather rely on a standard than trying to fit the
->>> current use case in a new interface that will probably fail.
->>>
->>>> On my todolist i would try to integrate the leds subsystem with the
->>>> LampArray interface next, just a simple implementation treating the whole
->>>> keyboard as a single led.
->>> That could be done in HID-core as well. Making it part of HID-core also
->>> means that once we get an actual LampArray device, we'll get support for
->>> it from day one.
->>>
->>>>> - Meanwhile, while prototyping the LampArray support in userspace and
->>>>>      kernelspace, make use of HID-BPF to transform your vendor protocol
->>>>>      into LampArray. This will allow to fix things without having to
->>>>>      support them forever. This is why HID-BPF exists: so we can create
->>>>>      crazy but safe kernel interfaces, without having to support them
->>>>>      forever.
->>>> I guess i have to do some readup xD.
->>>>
->>> Please have a look at the tutorial[0]. That tutorial is missing the
->>> couple of new hooks you'll need to change the requests emitted from
->>> hidraw as LampArray into Tuxedo, but I can also give you a help into
->>> making it happening.
->>>
->>> Basically, you also need to define a .hid_hw_request callback in your
->>> HID_BPF_OPS and extract all of the code you have here into that bpf
->>> program (which is roughly C code).
->>>
->>> Cheers,
->>> Benjamin
->>>
->>>
->>> [0] https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
->>>
->> 2 question left on my side:
->>
->> - Does the BPF approach have performance/latency impact?
-> Not anything you'll notice. BPF is used in network on much more
-> demanding latency purposes. And IIRC, jumping into BPF is almost a no-op
-> nowadays. From what I can tell from the BPF maintainer in his ALPSS
-> presentation last week:
-> "
-> BPF C code is compiled into BPF ISA with BPF calling convention,
-> JIT translate BPF ISA into native ISA,
-> One to one mapping of BPF registers to x86 registers.
-> "
-Ok
->
->> - Does it work during boot? (e.g. early control via the leds subsystem to
->> stop firmware induced rainbow puke)
->>
-> Nope. It gets loaded once udev enumerates the device, so unless you
-> craft a special intird with both the loader and the bpf object it is
-> not.
->
-> However, if that rainbow is bothering you, you can "initialize" the
-> keyboard to a sane state with your WMI-to-HID driver before exposing the
-> device to HID.
-Thinking about it, maybe it's not to bad that it only changes once udev is 
-ready, like this udev could decide if leds should be used or if it should 
-directly be passed to OpenRGB for example, giving at least some consistency only 
-changing once: i.e. firmware -> OpenRGB setting and not firmware->leds 
-setting->OpenRGB setting.
->
-> FWIW, the use of BPF only allows you to not corner yourself. If you
-> failed at your LampArray implementation, you'll have to deal with it
-> forever-ish. So it's perfectly sensible to use BPF as an intermediate step
-> where you develop both userspace and kernel space and then convert back
-> the BPF into a proper HID driver.
+Thanks for your feedback.
 
-I don't really see this point: The LampArray API is defined by the HID Usage 
-Table and the report descriptor, so there is not API to mess up and everything 
-else has to be parsed dynamically by userspace anyway, so it can easily be 
-changed and userspace just adopts automatically.
+> From: Marc Zyngier <maz@kernel.org>
+> Sent: Monday, September 30, 2024 4:50 PM
+> To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> Subject: Re: [PATCH] irqchip/renesas-rzg2l: Fix missing put_device
+>=20
+> On Mon, 30 Sep 2024 15:55:39 +0100,
+> Fabrizio Castro <fabrizio.castro.jz@renesas.com> wrote:
+> >
+> > rzg2l_irqc_common_init calls of_find_device_by_node, but the
+> > corresponding put_device call is missing.
+> >
+> > Make sure we call put_device both when failing and when succeeding.
+>=20
+> What sort of lifetime are you trying to enforce?
 
-And for this case the proper HID driver is already ready.
+Function rzg2l_irqc_common_init uses pdev->dev until its very end.
+My understanding is that we should decrement the reference counter
+once we are fully done with it. Is my understanding correct?
 
-So the only point for me currently is: Is it ok to have key position/usage 
-description tables in the kernel driver or not?
+Thanks,
+Fab
 
->
-> Being able to develop a kernel driver without having to reboot and
-> being sure you won't crash your kernel is a game changer ;)
->
-> Cheers,
-> Benjamin
+>=20
+> It looks to me that you'd be better off doing *one* device_put() right af=
+ter you have found the parent
+> domain, but that completely depends on the above.
+>=20
+> Thanks,
+>=20
+> 	M.
+>=20
+> --
+> Without deviation from the norm, progress is not possible.
 
