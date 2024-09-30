@@ -1,166 +1,142 @@
-Return-Path: <linux-kernel+bounces-343924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D485298A16D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:06:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 066A798A237
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B297280DAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:06:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391061C2261F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE17190051;
-	Mon, 30 Sep 2024 12:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC707190671;
+	Mon, 30 Sep 2024 12:18:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LHWSx42g"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rBzLsPEb"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372D18FDDF
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721E518E36D
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727697858; cv=none; b=YS3EFNtS8XSuON4EwGNAYoFT1lumwibUbTmPElGVpC8ec+z76StMPhoILDZX/+OpqwuToFdMkU8UvLc3EwhHkYBLfgBj/1LJvNo3i1K4xwkz1EcHr2nPUaIdA6t79IxH+Wn09P8btLanvgUyMUCiq1XDWTf0Ko8ggERhuKoUdIc=
+	t=1727698739; cv=none; b=OXshGWYyuszd5mJ/OcPUVhsu86q902ITGJM2FOw3DOzzJJwS+17VVu0/WyMjBALa+1n/zYLy6YSfBrFTWGzrO0OSKYXCnPO2lld131G6AMsbFVnL0euMMmjGNmRxRsvgeIAIMzCMc6U0xBbFVgQ7zCmThOQ1LHUamEfJHrND3vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727697858; c=relaxed/simple;
-	bh=8MgT7dP1g3olMOrBUhOPMpyuDlnQim8dCackH8O66yY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Cu5CG5uUPW/Fap+N5j+GpfbPvajankZTPtVBvnaoqfGDYV0zfoLJMZ3cp3Vu661G2OOU0Uc3Az8h/zJjJM1NUlYiI/3pO4c5OoSfiRUq88MotohzD2dTK4XBZIgi7mvN39uOOYa+4HjCrT8XDxQg8jQi+wFvV/IIbSw9XqXSyHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LHWSx42g; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9ab8e5f96so363333085a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 05:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1727697855; x=1728302655; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qsuMyrkoVqVku50v1nfIbGtDSp7S7nG6aU9K9Rp04Bk=;
-        b=LHWSx42gHLyIoNq1Nq4L0T5kCtrw0pSICn0ZBXx8RVumloDR6XiFiWuz95phtw/bZ8
-         k9h2WyNsmAZdkvIvNcwG22zjtxc8tBIxeJlTgskfef66cP1dnRuCgIfQeOerwWMqYMPg
-         3r08jmYD7mv9jYUZir9NRaSGfR89IJ+LSmaAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727697855; x=1728302655;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qsuMyrkoVqVku50v1nfIbGtDSp7S7nG6aU9K9Rp04Bk=;
-        b=Gt4UyHtPlVbG7Lem6Xy9ItKqiZXBqePYRsrU5RXaA9F4KHrNIignzewgB9/9sjb27h
-         oOa3gcc7B6upqKLf3vRInrVFwZ8BKfu6KLJ4IurZjJgEo4MzOYaX3s4zLlBM7L2DW8qQ
-         218DWzHOuQ7NxzzVJUBj974PJxZHbdTRGGuX5q/bSvJzN4xh6IE1I2ESNzoISGdHzFhY
-         bcq4pMrm9m+xQTHsb9CnFmHTSDhsOZAx2oXEEKQcvZyJ40PqyY1RSnpV3dKmPd+psPRz
-         8DeHIqz7IWkEbU79RpGGmNtnyzp6Kk9+Xjcpm2EIsQkaL2rszC/+Fi3ys+afe7DdswAw
-         AOYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsC1Aptvlqeuc07N+hBSKYwQrMUTijxjqFtjGmZla2S+v+ihYbfnYVm0owlVDc8f64ct2YQcclFZbFsfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzc/KDiTfpm9SzfJQCcieR+ENTVxkdr71RbQjFB2tgwxJzfWcr
-	2AJSTkjMBufYaDxLf1lMpHEvn10M71Wf/qZPT/86Cjc4+5o1efGsuukltgrKEw==
-X-Google-Smtp-Source: AGHT+IGbIk2oHMQ7FRb0GeJel1Jh9P6FVq0oOGmExjq89yc9rCz3p632i5Dvmp6LRIkRrX30gKUAOQ==
-X-Received: by 2002:a05:6214:5990:b0:6cb:3925:ec95 with SMTP id 6a1803df08f44-6cb3b66d1a1mr155459916d6.53.1727697855060;
-        Mon, 30 Sep 2024 05:04:15 -0700 (PDT)
-Received: from denia.c.googlers.com (76.224.245.35.bc.googleusercontent.com. [35.245.224.76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b694369sm38822536d6.144.2024.09.30.05.04.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 05:04:13 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 30 Sep 2024 12:04:01 +0000
-Subject: [PATCH 06/45] media: em28xx: Use string_choices helpers
+	s=arc-20240116; t=1727698739; c=relaxed/simple;
+	bh=q0erioaXg88v53Q4OKmZcUhEkvzMwWV/s8tsNmoC9fU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=O+hgx+NFHKJxG2QDMm9pOYeDTx06zK7NYAmeJ4w2w1/PynPz8b1DXo3esmQUOlLZPcpCzaqLT9i00EEfoe81AS5YDgZ4r6F7Bb6y8JcBjHeQyJ5fW7xlxqSaJXAwMXB+XSLZcIr8yBp7IgWtP/Kn9guNEJTzZxRmdykXpgUNcVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rBzLsPEb; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240930121850epoutp047e5b90e968e137ce3815e31d09061592~6BNeFqKVL2070520705epoutp04e
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:18:50 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240930121850epoutp047e5b90e968e137ce3815e31d09061592~6BNeFqKVL2070520705epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727698730;
+	bh=R0AaCgttQPZ19ZWT/7WHWzx8+T3Toxh3xV02Ynep2lo=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=rBzLsPEb5RsCCExuHYXWWDmEjEDRN/BztDEijzpMcLdLBrenM9565REk5a12yOSvA
+	 qP6xa6Dd203ld0HbdgLP/wDoQ9pUXCX4ElId0wQ9GPY1ha5FxwRhwZuF2JeZoSlhYH
+	 sOy7ZsiVf0EXNEfWBG87phZp5uQitsr03V4fjPE8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240930121850epcas5p3c90a8f038b80cf20dd2f8764260e3dbd~6BNdlW7570223602236epcas5p35;
+	Mon, 30 Sep 2024 12:18:50 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XHKqX3TQdz4x9Pv; Mon, 30 Sep
+	2024 12:18:48 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4C.5F.08574.8279AF66; Mon, 30 Sep 2024 21:18:48 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240930112127epcas5p2622025d70a7db472b636a97b0fbd7cf2~6AbW_-3d11300313003epcas5p2Q;
+	Mon, 30 Sep 2024 11:21:27 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240930112127epsmtrp244c127c05fa64c16009c4e7e663323f2~6AbW_U2Zk0864508645epsmtrp2Y;
+	Mon, 30 Sep 2024 11:21:27 +0000 (GMT)
+X-AuditID: b6c32a44-6dbff7000000217e-4e-66fa97284227
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	79.F7.18937.7B98AF66; Mon, 30 Sep 2024 20:21:27 +0900 (KST)
+Received: from cheetah.sa.corp.samsungelectronics.net (unknown
+	[107.109.115.53]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240930112125epsmtip2d92704f7e7d124dabecbf6191b2dff32~6AbVE7Ink3089230892epsmtip2a;
+	Mon, 30 Sep 2024 11:21:24 +0000 (GMT)
+From: Varada Pavani <v.pavani@samsung.com>
+To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+	gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH 0/2] clk: samsung: Update PLL locktime and samsung function
+Date: Mon, 30 Sep 2024 16:48:57 +0530
+Message-Id: <20240930111859.22264-1-v.pavani@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsWy7bCmhq7G9F9pBpvahC0ezNvGZnFo81Z2
+	i+tfnrNa3Dywk8ni/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrVYtHWL+wWh9+0s1r8
+	u7aRxWJD7yt2Bz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
+	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
+	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGd8u/CEtWAza8WcfXuZGxgP
+	sHQxcnJICJhI9G95x9zFyMUhJLCbUWLWqbesEM4nRolXbxcwwTkt/TPYYVomTNrDApHYyShx
+	9PhkNginlUli+ZfZYIPZBLQkVk9dDjZLRKCPSeLuiQlMIAlmgRKJ/59es4LYwgLeEtf3HwKy
+	OThYBFQlVh3lBQnzClhKvJzVxwSxTV5i9YYDzBD2LXaJ63ssIWwXiYP7VkDVCEu8Or4F6jop
+	ic/v9rKBjJQQSJZo/8QNEc6RuLR7FVS5vcSBK3NYQEqYBTQl1u/ShwjLSkw9tQ7qSD6J3t9P
+	oMp5JXbMg7GVJHbumABlS0g8Xb2GDcL2kPjR3sAMMlJIIFZi4jGvCYyysxAWLGBkXMUomVpQ
+	nJuemmxaYJiXWg6PpuT83E2M4MSn5bKD8cb8f3qHGJk4GA8xSnAwK4nw3jv0M02INyWxsiq1
+	KD++qDQntfgQoykwvCYyS4km5wNTb15JvKGJpYGJmZmZiaWxmaGSOO/r1rkpQgLpiSWp2amp
+	BalFMH1MHJxSDUwrGI6e2/7GhX3S8sdHGC47atQEWT7Qcjm+u+tQbgtXrZPYnHBV/dLKPQpc
+	TJmWU/881PiTa+pRdP+fk0WXZ94kGzGNPbdluAI9Dq6aJej88Ri3yzxXk4Srz1QmBm6UlV57
+	M+vCexfbNE6JEIGLVsUp7oFdsqueP9yc1dGxrevDxh+FHXL9Mvt9b9Rc/uy7d8ov7T0qCxWM
+	p3aKRph5+Hlc0m83mK3jtY0181080wNt63VzMkVvnbr2dsO2j+d4n+afday4qzi7942419Hn
+	Hl4K+ss0Uv3TjH/ujO74HtKhzlop3VsxwcCdxba+JHBTzKy/u2tuTrm35/gR5/yDzKUS+fvW
+	/UgznJ6UWMaUpcRSnJFoqMVcVJwIAKTMhvgFBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsWy7bCSvO72zl9pBl+fMFs8mLeNzeLQ5q3s
+	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
+	d20ji8WG3lfsDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZXy7
+	8IS1YDNrxZx9e5kbGA+wdDFyckgImEhMmLQHyObiEBLYzihx9/JORoiEhMTOb63MELawxMp/
+	z9khipqZJDpvv2AFSbAJaEmsnrqcFSQhIjCLSWLukg9Aozg4mAUqJOb8NwapERbwlri+/xAr
+	SJhFQFVi1VFekDCvgKXEy1l9TBDz5SVWbzjAPIGRZwEjwypG0dSC4tz03OQCQ73ixNzi0rx0
+	veT83E2M4PDTCtrBuGz9X71DjEwcjIcYJTiYlUR47x36mSbEm5JYWZValB9fVJqTWnyIUZqD
+	RUmcVzmnM0VIID2xJDU7NbUgtQgmy8TBKdXAZNG4zeBa/6eWG3FRK51bghha4pv+JV/itdj2
+	LGFpa1fd0hzWKb3JUen8mZ+EHDs3Cs68Y5uo/tg9SU/07lxBgbgYX6bH62at9+O4rWn1rrPy
+	8JJy/gNXHntWtj1aOclgRWbw49d99pk/lysm7ezkXfCc2zCp86frt8vNLNqZq16rbeRaxx22
+	2kaCi3+37uqTBnIM54WCG7N2p/v/uR486yCjPs+sZKflE1Q7Tp9QvbFf5aOfxQOLH5HPiu1e
+	OurOLZPWSZgWsCKz8KPw6xeBu3X+vVmdsei5l3P7r+lvjXhP7+nbp1vxnkdgrqGnNLdte2Zr
+	2R6lm9ujW6/Ern/TrTVL27xyI5vNs3lcbT+UWIozEg21mIuKEwGhbs+prgIAAA==
+X-CMS-MailID: 20240930112127epcas5p2622025d70a7db472b636a97b0fbd7cf2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240930112127epcas5p2622025d70a7db472b636a97b0fbd7cf2
+References: <CGME20240930112127epcas5p2622025d70a7db472b636a97b0fbd7cf2@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-cocci-opportunity-v1-6-81e137456ce0@chromium.org>
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
-In-Reply-To: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, Mike Isely <isely@pobox.com>, 
- Olli Salonen <olli.salonen@iki.fi>, 
- Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young <sean@mess.org>, 
- Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>, 
- Jemma Denson <jdenson@gmail.com>, 
- Patrick Boettcher <patrick.boettcher@posteo.de>, 
- Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>, 
- Andy Walls <awalls@md.metrocast.net>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Michal Simek <michal.simek@amd.com>, 
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>, 
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Tim Harvey <tharvey@gateworks.com>, 
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
- Sylvain Petinot <sylvain.petinot@foss.st.com>, 
- Jacopo Mondi <jacopo+renesas@jmondi.org>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-media@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- imx@lists.linux.dev, openbmc@lists.ozlabs.org, 
- linux-aspeed@lists.ozlabs.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
 
-The following cocci warnings are fixed:
-drivers/media/usb/em28xx/em28xx-i2c.c:579:3-29: opportunity for str_read_write(( msgs [ i ] . flags & I2C_M_RD ))
-drivers/media/usb/em28xx/em28xx-i2c.c:590:2-28: opportunity for str_read_write(( msgs [ i ] . flags & I2C_M_RD ))
-drivers/media/usb/em28xx/em28xx-video.c:941:4-9: opportunity for str_enabled_disabled(flags)
+This patch series updates samsung clock driver with common samsung
+CCF function and defines locktime value for PLL142XX controller.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/em28xx/em28xx-i2c.c   | 4 ++--
- drivers/media/usb/em28xx/em28xx-video.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Varada Pavani (2):
+  clk: samsung: Use samsung CCF common function
+	This patch is missed in this series https://patchwork.kernel.org/project/linux-clk/cover/20240926144513.71349-1-v.pavani@samsung.com/ hence posting again.
+  clk: samsung: Fixes PLL locktime for PLL142XX used on FSD platfom
+	Got review comment in this patch will address in next patch series.
 
-diff --git a/drivers/media/usb/em28xx/em28xx-i2c.c b/drivers/media/usb/em28xx/em28xx-i2c.c
-index a7eb11f7fb34..62fe49876a32 100644
---- a/drivers/media/usb/em28xx/em28xx-i2c.c
-+++ b/drivers/media/usb/em28xx/em28xx-i2c.c
-@@ -576,7 +576,7 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
- 			goto error;
- 
- 		dprintk(2, "%s %s addr=%02x len=%d: %*ph\n",
--			(msgs[i].flags & I2C_M_RD) ? "read" : "write",
-+			str_read_write(msgs[i].flags & I2C_M_RD),
- 			i == num - 1 ? "stop" : "nonstop",
- 			addr, msgs[i].len,
- 			msgs[i].len, msgs[i].buf);
-@@ -587,7 +587,7 @@ static int em28xx_i2c_xfer(struct i2c_adapter *i2c_adap,
- 
- error:
- 	dprintk(2, "%s %s addr=%02x len=%d: %sERROR: %i\n",
--		(msgs[i].flags & I2C_M_RD) ? "read" : "write",
-+		str_read_write(msgs[i].flags & I2C_M_RD),
- 		i == num - 1 ? "stop" : "nonstop",
- 		addr, msgs[i].len,
- 		(rc == -ENODEV) ? "no device " : "",
-diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
-index 4aef584e21da..ff017c187aff 100644
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -938,7 +938,7 @@ static int em28xx_enable_analog_tuner(struct em28xx *dev)
- 			dev_err(&dev->intf->dev,
- 				"Couldn't change link %s->%s to %s. Error %d\n",
- 				source->name, sink->name,
--				flags ? "enabled" : "disabled",
-+				str_enabled_disabled(flags),
- 				ret);
- 			return ret;
- 		}
+ drivers/clk/samsung/clk-exynos4.c | 78 +++++++++++++++++--------------
+ drivers/clk/samsung/clk-pll.c     |  7 ++-
+ 2 files changed, 50 insertions(+), 35 deletions(-)
 
 -- 
-2.46.1.824.gd892dcdcdd-goog
+2.17.1
 
 
