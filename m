@@ -1,200 +1,299 @@
-Return-Path: <linux-kernel+bounces-343765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B3E3989F26
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B0C2989F2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:13:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAF312845BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:13:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42AA0B21498
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA8118B472;
-	Mon, 30 Sep 2024 10:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50BF189918;
+	Mon, 30 Sep 2024 10:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LaCgK4TO"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R1+Yilfn"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DDC18858E;
-	Mon, 30 Sep 2024 10:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C5A189F35;
+	Mon, 30 Sep 2024 10:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727691177; cv=none; b=qHPWsZKUj9fBd9A/crxE6Br+hJPfFtIHAqMOoTwosyPl+xM86C+VQ6/JXJC42GnGPVIi+tRxNeBEb4IpYOPEN9KaJ1GzSm4OsAhV67oaBCFnDbqNaiiFFE6BYWusxFR1FidULgZTvQUu5Fm9kagAmIxtemQR7sDUtcjjHGezQvo=
+	t=1727691194; cv=none; b=bMFBOnWcMZ4K9T3mUPa8nW3F+TqJrcmj6oPkEYln9+UxhyyC8h3cLRq6ZLo1HpN2ynPgo3BxLWhnL88NlRMyP6xXnhCW3WQraG2XiMeS1v9Ww6sXtyAZL+PaKuSVTXaojIhp2KX1NlTLFDJajD+Hnrk1DMDgS0XiJKWLGwQ7lS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727691177; c=relaxed/simple;
-	bh=Iz6FpqvkzvFBZrnexnvWzVFW8uhmotoxGGp3oXUlCk4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=BExAmMZVY9k4QKJSum261H9uUABeipr33j2G4wPIx9QwJgTpUDbtNkgF0t/QRgFLy/9YMHFmdd3NGbmS3tcD/a3dbIxhtml7tRcMSWCMN57UaDhLCxoZX0wLLke7KjJFox63U+QdH/3/95VEbJBOYjSvQ4Xt0VDiilQQWXB2ctE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LaCgK4TO; arc=none smtp.client-ip=209.85.210.174
+	s=arc-20240116; t=1727691194; c=relaxed/simple;
+	bh=PlMn12m/YDLJX6CGIA4X7g5ySMWRXwywQnMxGBadu6A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=jyWvZX+ldyW0WUWngQIXPkFqFbyI26aqhbZ9cLeWwjGVeLv9dsMtGSvqpul29QtzgfABW3U23btZX71b6S6NL2IENmOLLkfWXfVPCVs55+VQJs4fOQNdJNY3t9a6MsQEwfWsnZxRnqzC1NKhZRc87IhfQVOFJXm6Hir38P7fVtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R1+Yilfn; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71c63a43146so1662985b3a.3;
-        Mon, 30 Sep 2024 03:12:55 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7b1c2f2bso697653166b.0;
+        Mon, 30 Sep 2024 03:13:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727691174; x=1728295974; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kg9QbxXqBJRz1Y4pX/no4eFBUpG3N+9Vg2SGSZ259dc=;
-        b=LaCgK4TOzqMdH0Mug0or0PIiQhpwg/4PWDEQjerWou0xiaINlphJpiI0hVSNUouNti
-         2ZXyKTlQu6bnVJuOj1jTjP4vw9oAIQbumkH2WoA3jD2Rj1PO+EwwXVOPEgpL2WIK5mEt
-         wDx1IJ0gBHu4ebWOZCVA0LhYwbwawyPw6Fm9Neyl7YiHXndgecggxS5BUFTSkBSPrp2b
-         hB3ixFyPKJN7OQ9qnDCU+e9B7f48/P/GVYK4cIzdKTIOjyXsdZkpuc/Ua2Vey9Gl1OSW
-         e8TEs5J324WZBAYyFA0EnVky8UsbmYT2BXBzwuxGdwWkfEXzu3cVYviIl2frNg4RKHuD
-         vAjw==
+        d=gmail.com; s=20230601; t=1727691191; x=1728295991; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=R6pcZYDGpExPDliSOuce9JHJM/oFY8zuqaXv7LJ0SI8=;
+        b=R1+Yilfn/l0imQzAjL84mbEOmM8afdYk8gTWMwaQ8Li8GFisXFyVua5be4UuDz9Ghf
+         T1jqHhEAUUtRKGUbhhk/z4BoKeBBjj7EjJWDrlBleS4wBt2aejWZy16F+oWBTrdS9T+x
+         WlaX887sN9cLOEPa2fEY+AQs6YD1YV94nmcj7ihQ7YkvceUwFCZQP5FFxyVd8ABDPH3C
+         xZRF/Wz/yCkoSPi0wpxQJo5gS11SOvrVnn2pyADG0RnAC1GAfcJcXfTi9iS9OCuHVbp1
+         QWb+dTEZmdhB2y90ibENO8VZ293ni5Y0BN5O5J4KTDhDPC/D93Ku2cUDNWpx2O2i+UjP
+         sLjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727691174; x=1728295974;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kg9QbxXqBJRz1Y4pX/no4eFBUpG3N+9Vg2SGSZ259dc=;
-        b=gDT4qTNs7WKDpjwYHMDAokIEEaOfNDOrHRT30uX2Ke7SFia35R7pyRnBjOs228kj/M
-         KDpi8KeLUiApBiVLnF6WN8qi3n90Oq7uWXtlswZFGWp5+j8d4VqmKudvL66yKb3ozQMN
-         trQuQYsR/vi6h2Bj8HMiy9pOa+swwnKHPMp3yOabAfDhWrNHot4ocWKtfI3G7Q9ekN3e
-         gDlVAWMsx1tmwI6NMp0SGfOVlVO5cMEGPH4WXPmAZ5getIEDCx+Q5mPayQusfacxnBdR
-         71BhrUpiB7C2doT315X0gaPjbNZTx90GydeArnQN/BVfi6bICuBFn6wJKSOrc0qcd6Ln
-         qwpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtRMsAbuP6XV03Xr3BLZTY/z1RV7SPZeAyOjoVw3ibcUGoG+A2TyvvdVDNOgZzkRFQGHt6378z2/b/kA8=@vger.kernel.org, AJvYcCX7I8YOaSBI48jOD9FVdrkObJSd5+3RbjgVBuLpq+HhiTKigGgPFPBHNaN1zTYXvPlGmqwO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6+23ObKLkMf7q8ambSwRLhQDFLUI/LnodwXWsy51NT8Jm1IvR
-	8qCgpvEQ02KnROmhwD6I24lSihoF72OvY4Rw7koNyjSfnpiVdD0R
-X-Google-Smtp-Source: AGHT+IHd9c7eDxtsDCp4q9aECEurM4CPotCQiS+DrDI11euKt8CbXa3cbC6GEHE9tpc+7Py5J44F5Q==
-X-Received: by 2002:a05:6a00:1304:b0:70d:2e24:af75 with SMTP id d2e1a72fcca58-71b26072fc3mr18591297b3a.24.1727691174483;
-        Mon, 30 Sep 2024 03:12:54 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b265181f9sm5877779b3a.133.2024.09.30.03.12.45
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Sep 2024 03:12:54 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+        d=1e100.net; s=20230601; t=1727691191; x=1728295991;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R6pcZYDGpExPDliSOuce9JHJM/oFY8zuqaXv7LJ0SI8=;
+        b=ro5naOV+v4gvU5E9b8S4Vw8PKrm36rqslKvUIP5Wlnna9g1EbAiHiuUnncuYWHAyhJ
+         onjfTLJIyDgIGE69fmWS1q6WF9zcW/GUnfJYCt3soCZO5Ils1LVvA/vpQoHzwe+JwA8j
+         EpPMAR5IpLtWpNG0/9bQCleEzM5p/u65mJwmm7Hf2kkV5kYUIYLqbkMh42F70FRmSKez
+         7j6AgOQuKhqaVzkJKMVS0Cc0gJLmjt8jkMjhdIZpBfZ5ZzHdWteYbWlFzykxfXZPeX1y
+         dJnOLLTmJEGVbZnBEIYObVAEIS24DBwox3I1TQc56Sic6uHOWiHzdTY+8ZZAdXZKzpQo
+         mKcA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2HG7dsO/iuN2+lKWTn/tK5bX8BIkxWd1YDzX0IV9eLsKmN+oqj4Btt5BzcSTV54MWPhqEGW8GDBOa1yU=@vger.kernel.org, AJvYcCVVMNcCI1B7agyDM0CvUzXIpwuVT2ZXj4scs/+xUmyHv2RRIbmQAeHCz/V/MJaGn5jRzqg+x9RN6Yc=@vger.kernel.org, AJvYcCW+HBzXFtVGL8gkEvaD0t1dzo1jxqGbycIlfv20yZAi7nzjs91SNaX7nIXd5K++nHp4gFvgqvoyXpl+lwlkeg==@vger.kernel.org, AJvYcCW4NQNCbUB3j6YvYE9+TBqhOjjwr+3ma8FeMRaspjkl4r0ikltuhW+rBf/ItIbeXbYhKEKI0OGni0Ocsh3Y@vger.kernel.org, AJvYcCXwjQb/ZfkbJ4Y+TfHrbHUErVAPVyzJTzsdI31V4DTPnmMa1cJ3ayRp7qexrriBcIeRZiU7K8+9tZF2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6PzqGPf2NQLY6KKustX5N1Jb4t6dAzqdLx8cCNdujYIwEA8u4
+	PVKbHHlEiSwbTmA/pkB/qIAjqBB4kCnqnhK844vuSu+KAkunhvcR
+X-Google-Smtp-Source: AGHT+IHiDwmAlbvA79BbqZfqJufqIEN+i8Zje5kiLK8A6GTms4OXnpuYCdwY1SEiJAsZMYFJeszZ0g==
+X-Received: by 2002:a17:907:a41:b0:a80:f358:5d55 with SMTP id a640c23a62f3a-a93c492a705mr1432068366b.33.1727691190323;
+        Mon, 30 Sep 2024 03:13:10 -0700 (PDT)
+Received: from [10.34.18.39] ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c277723esm510060566b.7.2024.09.30.03.13.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 03:13:09 -0700 (PDT)
+Message-ID: <692e70b4-d4c1-4b14-94f9-e612a23c43e7@gmail.com>
+Date: Mon, 30 Sep 2024 13:13:04 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <c2e5b1ee-eeee-4614-9b42-d6bbf7a67162@huaweicloud.com>
-Date: Mon, 30 Sep 2024 18:12:31 +0800
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Alan Stern <stern@rowland.harvard.edu>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- John Stultz <jstultz@google.com>,
- Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>,
- Ingo Molnar <mingo@redhat.com>,
- Waiman Long <longman@redhat.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>,
- maged.michael@gmail.com,
- Mateusz Guzik <mjguzik@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- RCU <rcu@vger.kernel.org>,
- linux-mm@kvack.org,
- lkmm@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AF8BEE57-2F7A-4BD5-B062-F4C268E8494B@gmail.com>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <2091628c-2d96-4492-99d9-0f6a61b08d1d@efficios.com>
- <d2c87672-af75-4210-bd96-d7f38f2f63ac@rowland.harvard.edu>
- <d49f5d9f-559d-449b-b330-9e5a57d9b438@efficios.com>
- <D31AF4E7-B9D5-4D2F-A4B9-1E12B5E69549@gmail.com>
- <8d20cf79-9fa5-4ced-aa91-232ccd545b59@huaweicloud.com>
- <EEAE4623-DCD7-4BBE-8E06-7F6FF6E3070B@gmail.com>
- <E2551572-494D-46A0-A1D5-DF91DDB8B9F9@gmail.com>
- <c2e5b1ee-eeee-4614-9b42-d6bbf7a67162@huaweicloud.com>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: power: supply: Add DT schema for
+ Qualcomm SMBCHG
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Andy Gross <agross@kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+ Alejandro Tafalla <atafalla@dnyon.com>,
+ Konrad Dybcio <konrad.dybcio@somainline.org>, linux-pm@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ phone-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220808073459.396278-1-y.oudjana@protonmail.com>
+ <20220808073459.396278-2-y.oudjana@protonmail.com>
+ <9412f6ff-1fd7-31b5-56a7-12bda174f7f6@linaro.org>
+Content-Language: en-US
+In-Reply-To: <9412f6ff-1fd7-31b5-56a7-12bda174f7f6@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sep 30, 2024, at 17:33, Jonas Oberhauser =
-<jonas.oberhauser@huaweicloud.com> wrote:
->=20
->=20
->=20
-> Am 9/30/2024 um 11:27 AM schrieb Alan Huang:
->> 2024=E5=B9=B49=E6=9C=8830=E6=97=A5 17:15=EF=BC=8CAlan Huang =
-<mmpgouride@gmail.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->>> 2024=E5=B9=B49=E6=9C=8830=E6=97=A5 16:57=EF=BC=8CJonas Oberhauser =
-<jonas.oberhauser@huaweicloud.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>>=20
->>>>=20
->>>>=20
->>>> Am 9/29/2024 um 12:26 AM schrieb Alan Huang:
->>>>> 2024=E5=B9=B49=E6=9C=8828=E6=97=A5 23:55=EF=BC=8CMathieu Desnoyers =
-<mathieu.desnoyers@efficios.com> wrote=EF=BC=9A
->>>>>>=20
->>>>>> The motivation for introducing ptr_eq() is indeed because the
->>>>>> compiler barrier is not sufficient to prevent the compiler from
->>>>>> using one pointer instead of the other.
->>>>> barrier_data(&b) prevents that.
->>>>=20
->>>> I don't think one barrier_data can garantuee preventing this, =
-because right after doing the comparison, the compiler still could do =
-b=3Da.
->>>>=20
->>>> In that case you would be guaranteed to use the value in b, but =
-that value is not the value loaded into b originally but rather the =
-value loaded into a, and hence your address dependency goes to the wrong =
-load still.
->>>=20
->>> After barrier_data(&b), *b will be loaded from memory, you mean even =
-if *b is loaded from memory, the address dependency goes to the wrong =
-load still?
->> Sorry, *b should b.
->=20
-> That's exactly what I meant to say. In my understanding, it can happen =
-like this:
->=20
-> a =3D READ_ONCE(*p);
-> ...
-> b =3D READ_ONCE(*p);
-> if (a =3D=3D b) {
->   b =3D a; // inserted by compiler
->=20
->   barrier_data(&b);
->=20
->   foo(*b); // compiler definitely use the current value in b
-> }
->=20
->=20
->=20
-> In the end, the address dependency is from the first load, and the CPU =
-can speculatively (with register renaming, forwarding etc) execute
->=20
-> a =3D READ_ONCE(*p);
-> b2 =3D a; // speculatively
-> tmp =3D load *b2 // speculatively
-> b1 =3D READ_ONCE(*p);
-> if (a =3D=3D b1) { // confirmed
->   foo(tmp);
-> }
+Coming back to this patch series after putting it on hold for too long.
 
-I get it now, thanks for the explanation.
+On 30/11/2022 7:24 pm, Krzysztof Kozlowski wrote:
+> On 08/08/2022 09:34, Yassine Oudjana wrote:
+>> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>>
+> 
+> 
+>> +      See Documentation/devicetree/bindings/power/supply/battery.yaml
+>> +
+>> +  interrupts:
+>> +    items:
+>> +      - description: Charger error
+>> +      - description: Charger inhibited
+>> +      - description: Charger precharge safety timer timeout
+>> +      - description: Charger charge safety timer timeout
+>> +      - description: Charger pre to fast charging switch threshold reached
+>> +      - description: Charger recharge threshold reached
+>> +      - description: Charger taper threshold reached
+> 
+> After discussing with Dmitry, it's current design of the PMIC (parent
+> device) so it's fine. We would need to make bigger refactoring of
+> drivers and bindings to change it to match other typical MFD PMICs. In
+> current state it's the only way to express device interrupts.
+> 
+> Two more comments below.
+> 
+>> +      - description: Charger charge termination threshold reached
+>> +      - description: Battery hot
+>> +      - description: Battery warm
+>> +      - description: Battery cold
+>> +      - description: Battery cool
+>> +      - description: Battery overvoltage
+>> +      - description: Battery low
+>> +      - description: Battery missing
+>> +      - description: Battery thermistor missing # unconfirmed
+>> +      - description: USB input undervolt
+>> +      - description: USB input overvolt
+>> +      - description: USB input source detected
+>> +      - description: OTG regulator failure
+>> +      - description: OTG regulator overcurrent
+>> +      - description: Automatic input current limiting done
+>> +      - description: USB ID pin changed
+>> +      - description: DC input undervolt
+>> +      - description: DC input overvolt
+>> +      - description: Power OK
+>> +      - description: Temperature shutdown
+>> +      - description: Watchdog timeout
+>> +      - description: Flash failure
+>> +      - description: OTST2 # unknown
+>> +      - description: OTST3 # unknown
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: chg-error
+>> +      - const: chg-inhibit
+>> +      - const: chg-prechg-sft
+>> +      - const: chg-complete-chg-sft
+>> +      - const: chg-p2f-thr
+>> +      - const: chg-rechg-thr
+>> +      - const: chg-taper-thr
+>> +      - const: chg-tcc-thr
+>> +      - const: batt-hot
+>> +      - const: batt-warm
+>> +      - const: batt-cold
+>> +      - const: batt-cool
+>> +      - const: batt-ov
+>> +      - const: batt-low
+>> +      - const: batt-missing
+>> +      - const: batt-term-missing
+>> +      - const: usbin-uv
+>> +      - const: usbin-ov
+>> +      - const: usbin-src-det
+>> +      - const: otg-fail
+>> +      - const: otg-oc
+>> +      - const: aicl-done
+>> +      - const: usbid-change
+>> +      - const: dcin-uv
+>> +      - const: dcin-ov
+>> +      - const: power-ok
+>> +      - const: temp-shutdown
+>> +      - const: wdog-timeout
+>> +      - const: flash-fail
+>> +      - const: otst2
+>> +      - const: otst3
+>> +
+>> +  otg-vbus:
+>> +    type: object
+> 
+> I think I did not comment about this one - this looks like regulator.yaml.
 
->=20
->=20
-> best wishes,
->  jonas
->=20
+Correct. Will add reference.
 
+> 
+>> +
+>> +    description:
+>> +      OTG regulator subnode.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - monitored-battery
+>> +  - interrupts
+>> +  - interrupt-names
+>> +  - otg-vbus
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    battery: battery {
+>> +        compatible = "simple-battery";
+>> +
+>> +        charge-full-design-microamp-hours = <4070000>;
+>> +        charge-term-current-microamp = <100000>;
+>> +        voltage-min-design-microvolt = <3400000>;
+>> +        voltage-max-design-microvolt = <4400000>;
+>> +    };
+>> +
+>> +    pmic {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        charger@1000 {
+>> +            compatible = "qcom,pmi8996-smbchg";
+>> +            reg = <0x1000>;
+>> +
+>> +            interrupts = <0x2 0x10 0x0 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x1 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x2 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x3 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x4 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x5 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x10 0x6 IRQ_TYPE_EDGE_RISING>,
+>> +                         <0x2 0x10 0x7 IRQ_TYPE_EDGE_RISING>,
+>> +                         <0x2 0x12 0x0 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x1 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x2 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x3 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x4 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x5 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x6 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x12 0x7 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x13 0x0 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x13 0x1 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x13 0x2 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x13 0x3 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x13 0x4 IRQ_TYPE_EDGE_RISING>,
+>> +                         <0x2 0x13 0x5 IRQ_TYPE_EDGE_RISING>,
+>> +                         <0x2 0x13 0x6 IRQ_TYPE_EDGE_FALLING>,
+>> +                         <0x2 0x14 0x0 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x14 0x1 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x0 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x1 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x2 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x3 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x4 IRQ_TYPE_EDGE_BOTH>,
+>> +                         <0x2 0x16 0x5 IRQ_TYPE_EDGE_BOTH>;
+>> +            interrupt-names = "chg-error",
+>> +                              "chg-inhibit",
+>> +                              "chg-prechg-sft",
+>> +                              "chg-complete-chg-sft",
+>> +                              "chg-p2f-thr",
+>> +                              "chg-rechg-thr",
+>> +                              "chg-taper-thr",
+>> +                              "chg-tcc-thr",
+>> +                              "batt-hot",
+>> +                              "batt-warm",
+>> +                              "batt-cold",
+>> +                              "batt-cool",
+>> +                              "batt-ov",
+>> +                              "batt-low",
+>> +                              "batt-missing",
+>> +                              "batt-term-missing",
+>> +                              "usbin-uv",
+>> +                              "usbin-ov",
+>> +                              "usbin-src-det",
+>> +                              "otg-fail",
+>> +                              "otg-oc",
+>> +                              "aicl-done",
+>> +                              "usbid-change",
+>> +                              "dcin-uv",
+>> +                              "dcin-ov",
+>> +                              "power-ok",
+>> +                              "temp-shutdown",
+>> +                              "wdog-timeout",
+>> +                              "flash-fail",
+>> +                              "otst2",
+>> +                              "otst3";
+>> +
+>> +            monitored-battery = <&battery>;
+>> +
+>> +            otg-vbus { };
+> 
+> Why empty?
+
+I was following similar bindings (see qcom,pm8941-charger and bq24190. 
+What properties would I add here? There is nothing configurable with 
+this regulator, only way it can be controlled is by enabling/disabling it.
 
