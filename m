@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-344890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6EEC98AF4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF6498AF53
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:42:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56D84B23744
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:42:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50314282AA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5356187347;
-	Mon, 30 Sep 2024 21:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED74418859F;
+	Mon, 30 Sep 2024 21:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rln9JFxX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLub11w1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42300186E38;
-	Mon, 30 Sep 2024 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CAF18455C;
+	Mon, 30 Sep 2024 21:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727732523; cv=none; b=aDCKcUGwUOe4SIspX6ENBU5UVN2t78k83FTScQbrQK8STNSpKUo1gqs7fBqWhdh+vKSB81KiMW2KZae/OoG3WmvwsE/JWLvqoMMkjQW+dRHIl4WzArkm/qUafXih1LwyZq4mPFPzvbl7Ynv8LQpR8wgFHqkWut5LwxtW7dgQMUc=
+	t=1727732527; cv=none; b=AW3W8OymJ5a+3/hrfzNlRZz9Vlp4e1cI2T9PPtW/jjo9GEX/qW1Q3SRVCS9qAI6Mqatn+HswtEZbULrec0D9UTugPuulXFtxLPMWwWtKcb3TpRao/XJkY+a1yJ3t5MM00HypOyNjDzXRraTsDqneSo8wGy8lEWNecMqlgfbOIOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727732523; c=relaxed/simple;
-	bh=E99hk/TucNLQUc9m3YOwaKiY6UUbxeZjmcah/1Epxec=;
+	s=arc-20240116; t=1727732527; c=relaxed/simple;
+	bh=McD0PPLjiwQhNMLldB9C6lK8T6YObT0WHb3qn6BQztw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ronfYVjMv/gsNuQhVBzyiIcU9EAOEcqigifK43CJBEBmvToZ8aI9knZ2sftkA8O+DtFdEMOd/mtbNNcvn/2RjfNpxmit/K6XmrssQg9qqhFw9IX7RofIBVyEgIvOh32fc3c+zEXNHNpm2t7JkSoCHTc/P6me6+TLKb7Ma7sm8cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rln9JFxX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5458C4CED0;
-	Mon, 30 Sep 2024 21:42:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=sG0L9pOUMoiKsQIlCVwd3s7flg978uY9mQQBpGUipWt1YElQ5nZ/VY72v+fu0VB+TQ04fhBcc+149d7SmMdO2ruwm1OtiHT9iX1Cy58xAMNnu6RCpKiQZrDkWpqBNvoaTKDWJUJaNbY0pkNoo3Y5FrURei1CbRWihBxBk/Vbt7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLub11w1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5F5C4CEC7;
+	Mon, 30 Sep 2024 21:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727732522;
-	bh=E99hk/TucNLQUc9m3YOwaKiY6UUbxeZjmcah/1Epxec=;
+	s=k20201202; t=1727732526;
+	bh=McD0PPLjiwQhNMLldB9C6lK8T6YObT0WHb3qn6BQztw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=rln9JFxXShSjK5x46Ih4DdzRvBOhBx8kvnq0JJ2379GDxKREo6LN/rkbhUWrqmrtT
-	 C1FcD0M6UakIlk8/cucNtLpzDx5hm4OgH0Y6PvrNJ+GRhareddDRFV59qv4yoXruFj
-	 0As88IV4CGLbtzPy6B7zwNSB6ufNkWm2zHh1On0M4ojgyyQdqOxa7hKvVtuxaAU2Td
-	 POh2ts9USyGWnyHazH8UHIUl3i0EobKP3drHhFtf3+k/+XVxve4m8VGiyHy415c/Hx
-	 cONqBfD3qJJqGsTzxV0Ph7WNcRK8hOmEir+9bzhUKDGOPsQfBAQ9e9+XWotfx9Mj8Z
-	 XEF36VUgg/xjw==
+	b=BLub11w1YJApgAOCcsuxt+wvn7pjKhEUo0lDZtXNOGx209M1pRP5Ru3jLIVNUkbG7
+	 UICIWUIL52R01MfweJKsFG2IjmFFeOm6j3i1vzh2PUekcGoD3IghZiYXbIPfBpXw9o
+	 8rFqKp5QibHIJsUu1NJoD4mYkUptuCg6U9DjPi7w5vmbkmr6pC1s/gJvRNPKe43TYj
+	 9ITBM2MXY1xhFJGQfZbna/Xv13JkL6QNBzGuYJE33ZJt1ix/UmEW+vFwspM8YcaxJC
+	 feikt7ZOzJTD8Yi25HaahXyYVtr6KZ6gWvxFDNa5fP4jJY4v7I62jVvNkkhTbdahd6
+	 /sqmHrZMGXX1g==
 From: Mark Brown <broonie@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, linux-spi@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240918082744.379610-1-ada@thorsis.com>
-References: <20240918082744.379610-1-ada@thorsis.com>
-Subject: Re: (subset) [PATCH 0/2] spi: atmel-quadspi: Fix and add full CS
- delay support
-Message-Id: <172773252165.2210210.10772394857607229655.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 22:42:01 +0100
+To: linux-mediatek@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org, 
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Leilk Liu <leilk.liu@mediatek.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+In-Reply-To: <9e736d33-b07f-40a0-8fb6-8c3212593b77@web.de>
+References: <9e736d33-b07f-40a0-8fb6-8c3212593b77@web.de>
+Subject: Re: [PATCH] spi: slave-mt27xx: Call clk_disable_unprepare() only
+ once in mtk_spi_slave_probe()
+Message-Id: <172773252496.2210210.475643542831503313.b4-ty@kernel.org>
+Date: Mon, 30 Sep 2024 22:42:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,13 +64,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Wed, 18 Sep 2024 10:27:42 +0200, Alexander Dahl wrote:
-> when testing on a SAM9X60 based board with an FPGA implementing a custom
-> SPI-MEM protocol, we found the need to fully control the delay settings
-> the atmel/microchip QSPI controller offers.
+On Tue, 24 Sep 2024 20:56:08 +0200, Markus Elfring wrote:
+> A clk_disable_unprepare(mdata->spi_clk) call was immediately used
+> after a return value check for a devm_spi_register_controller() call
+> in this function implementation.
+> Thus call such a function only once instead directly before the check.
 > 
-> Greets
-> Alex
+> This issue was transformed by using the Coccinelle software.
 > 
 > [...]
 
@@ -76,8 +80,8 @@ Applied to
 
 Thanks!
 
-[2/2] spi: atmel-quadspi: Add cs_hold and cs_inactive setting support
-      commit: 625de1881b5aee6a42a3130004e47dbd632429f8
+[1/1] spi: slave-mt27xx: Call clk_disable_unprepare() only once in mtk_spi_slave_probe()
+      commit: 610442f85c12ff662e3dec50c53d92f7a8e5a783
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
