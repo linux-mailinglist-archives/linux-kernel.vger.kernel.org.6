@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-343354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B0F989A00
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:23:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F624989A03
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 07:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA4728223A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:23:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5434B1C209BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B8513A265;
-	Mon, 30 Sep 2024 05:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A149913BC26;
+	Mon, 30 Sep 2024 05:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="SWqWfhBo"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZE2pX3D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3439B5B05E;
-	Mon, 30 Sep 2024 05:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DE9383A5;
+	Mon, 30 Sep 2024 05:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727673827; cv=none; b=VNMQFO7gCsRgyhQuW+vfRiJrcC+8AwGELRXqv2EC4mVz7Bhmvm1sPd6vsAlOvpgoKoguhOxTvZYGfcUo66iiTpBcY0ao1lqbm2nDYZapuXHzJQVLh9xOIzEmAWIxj09CcS02y3hWvy6Wvzgk+3S+EY6tf1O2pOnRRMEjyu4y6DY=
+	t=1727673922; cv=none; b=Nls/T2KH2So54A4LT74Wl+25RZIbJgN0LV1ZjiM75ElYoyy01m7ZoQpEvVrJnnR4jUl2hmzY9Aq1VRzOnkUXnMdqQC8qfF89hsu49VG9uCTPckAWxnwyzQL807oFJX4jZ7lcAMwdPtGdRZpMgwRlX1ePEKwiiEPFAQyEtjZ1CLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727673827; c=relaxed/simple;
-	bh=1PeDEsITlfGpEyTKDtomgnXfFPtDuRy0oGtchmuHklY=;
+	s=arc-20240116; t=1727673922; c=relaxed/simple;
+	bh=imzARbgxmAoMCo8ItlsHwAYnltYA+M0UizbbP29H5XE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFb2LOHamiJVWK+uEp+Gt04TqtHf6A9ruD6jyVqP/AA/SzLCL3CkbqSCGiKXk64jGC2z6dME1D0pmOtywLkdMhPmqKELhQC0tNwANut6CPE7OWhYblMKz6AEN3YBSdlrCJLQno8qQbTH1p2omLUosvub9abLpqoSSfSySf1RvSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=SWqWfhBo; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1727673819;
-	bh=1PeDEsITlfGpEyTKDtomgnXfFPtDuRy0oGtchmuHklY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAI1E04R/nc+aGgAQmwvhJQeG7+CUpQ6aVQ02eiw923mP2/OUhX9ArulO9POaPLzS/M4P9t91yTBSGUe9I6ZRtmkvAHqM4xxfkQV6KPjG4Rf+2RoM2gyYON0EbXncQLfOnaqDG8dgOxwgqemoOdjpASbojZjH9ULpVlzH5pBqx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZE2pX3D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE63C4CECE;
+	Mon, 30 Sep 2024 05:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727673921;
+	bh=imzARbgxmAoMCo8ItlsHwAYnltYA+M0UizbbP29H5XE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SWqWfhBoa/PSXQp6dF2/KjaUipTpdhehUoNzPH3h7d1RZe3cFj0IpLTPoFm4bsMRT
-	 sWz6fCyLmXoByF7zqUHV4obYBN17HAwCdlc2xUnYMT3BGhylpgZOioEajSUGrppzMr
-	 E9As2+yc7YLpy59ZqI6N60femfckok1rUDqePUKs=
-Date: Mon, 30 Sep 2024 07:23:39 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Guo Ren <guoren@kernel.org>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 4/5] tools/nolibc: add csky support
-Message-ID: <2f4a244d-e88c-4378-8b1b-71204964dab6@t-8ch.de>
-References: <20240929-nolibc-csky-v1-0-bb28031a73b0@weissschuh.net>
- <20240929-nolibc-csky-v1-4-bb28031a73b0@weissschuh.net>
- <20240930034946.GB13730@1wt.eu>
+	b=iZE2pX3Dl8+tCS2t83tZqqXWK6ycAAVI0pbYmZuAEOeKhkNIg3sFhkJDRppyfR/h4
+	 Ypo4KAz2nbZQrYEkO7gq7LJ7RQn69pydOwWeUhoGNGtlf84Rbta3n74He5vLUbNb5F
+	 IOf6+VuOaJqR7Kr5C0A8BQqObrEPwDpywVMajMCqaT11KP07Ei9CHraMyVCDSF+hGB
+	 eQ64dnq/W0UlGxk/IhijO0C95AeTyDFXQ4Ua39UqDeCHnU21+hvJAT0lpbewSqLU4h
+	 0s83IWGbz1hZdauVsySOWlgcB/UgOJ2nubzxHkTiEm7aFMaduea2oRGJscJwqtz1jP
+	 zzKcyV2+6X7rw==
+Date: Sun, 29 Sep 2024 22:25:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: linux@treblig.org
+Cc: irogers@google.com, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, jolsa@kernel.org, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH] perf: Remove unused add_perf_probe_events
+Message-ID: <Zvo2PxCFp5M1JTND@google.com>
+References: <20240929010659.430208-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,61 +58,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240930034946.GB13730@1wt.eu>
+In-Reply-To: <20240929010659.430208-1-linux@treblig.org>
 
-Hi Willy,
+Adding Masami to CC.
 
-On 2024-09-30 05:49:46+0000, Willy Tarreau wrote:
-> On Sun, Sep 29, 2024 at 11:47:39PM +0200, Thomas Weißschuh wrote:
-> > Add support for the C-SKY architecture, which is very similar to
-> > LoongArch.
-> > Only v2 ABI is supported.
-> > Optimizations are disabled as the compiler[0] seems to misoptimize the
-> > code, especially the r4 register gets clobbered.
-> > Compile the initramfs directly into the kernel, as qemu does not support
-> > passing the initrd via OF.
-> > 
-> > There is no qemu mainline support for qemu.
-> > Testing was done with commit 1f172a2c7cd5c2e7 of the downstream csky qemu [1].
-> > Some tiny changes were necessary on top [2].
-> > 
-> > [0] gcc 13.2.0 and 14.2.0 from kernel.org crosstools
-> > [1] https://github.com/XUANTIE-RV/qemu/
-> > [2]
+On Sun, Sep 29, 2024 at 02:06:59AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> I think you wanted to place a link or something above for [2].
-
-[2] was supposed to be inline patches for QEMU, I'll try to make that a
-bit clearer.
-
-> > diff --git a/target/csky/cpu-param.h b/target/csky/cpu-param.h
-> > index 80554cc0fc03..9181b602a26f 100644
-> > --- a/target/csky/cpu-param.h
-> > +++ b/target/csky/cpu-param.h
-> (...)
-> > diff --git a/target/csky/op_vdsp2.c b/target/csky/op_vdsp2.c
-> > index a9985a03be33..d953f5ea94fe 100644
-> > --- a/target/csky/op_vdsp2.c
-> > +++ b/target/csky/op_vdsp2.c
+> add_perf_probe_events has been unused since 2015's commit
+> b02137cc6550 ("perf probe: Move print logic into cmd_probe()")
+> which confusingly now uses perf_add_probe_events.
 > 
-> Also, the first two patches look like fixes for the arch itself, they
-> should really go outside of the nolibc development tree, at least
-> because they might have to be backported to some stable branches,
-> or later fixed/reverted in case they wouldn't be optimal.
-
-As mentioned above, these are patches for qemu, not Linux.
-I don't know enough about QEMU or C-SKY to know if these are the
-generally correct fixes. But they seem to work well enough for nolibc.
-
-Guo, if these QEMU patches look reasonable to you I can also submit them.
-
-> Aside this, it's been a long time since we last added an architecture
-> and it's pleasant to see how easy it has become over time, even when
-> requiring specific settings ;-)
-
-Agreed!
-
-
-Thomas
+> Remove it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  tools/perf/util/probe-event.c | 18 ------------------
+>  tools/perf/util/probe-event.h |  1 -
+>  2 files changed, 19 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index a17c9b8a7a79..698a92875374 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -3705,24 +3705,6 @@ void cleanup_perf_probe_events(struct perf_probe_event *pevs, int npevs)
+>  	}
+>  }
+>  
+> -int add_perf_probe_events(struct perf_probe_event *pevs, int npevs)
+> -{
+> -	int ret;
+> -
+> -	ret = init_probe_symbol_maps(pevs->uprobes);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	ret = convert_perf_probe_events(pevs, npevs);
+> -	if (ret == 0)
+> -		ret = apply_perf_probe_events(pevs, npevs);
+> -
+> -	cleanup_perf_probe_events(pevs, npevs);
+> -
+> -	exit_probe_symbol_maps();
+> -	return ret;
+> -}
+> -
+>  int del_perf_probe_events(struct strfilter *filter)
+>  {
+>  	int ret, ret2, ufd = -1, kfd = -1;
+> diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+> index 7e3b6c3d1f74..4850e52f274e 100644
+> --- a/tools/perf/util/probe-event.h
+> +++ b/tools/perf/util/probe-event.h
+> @@ -159,7 +159,6 @@ void line_range__clear(struct line_range *lr);
+>  /* Initialize line range */
+>  int line_range__init(struct line_range *lr);
+>  
+> -int add_perf_probe_events(struct perf_probe_event *pevs, int npevs);
+>  int convert_perf_probe_events(struct perf_probe_event *pevs, int npevs);
+>  int apply_perf_probe_events(struct perf_probe_event *pevs, int npevs);
+>  int show_probe_trace_events(struct perf_probe_event *pevs, int npevs);
+> -- 
+> 2.46.2
+> 
 
