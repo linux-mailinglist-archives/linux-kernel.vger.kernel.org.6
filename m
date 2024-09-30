@@ -1,130 +1,182 @@
-Return-Path: <linux-kernel+bounces-344945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5B398B027
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:43:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD2E198B0C8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3521A1F23230
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939E8282ACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0B81A38DD;
-	Mon, 30 Sep 2024 22:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CC218BC00;
+	Mon, 30 Sep 2024 23:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R63iPdU4"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="TUY3biKg"
+Received: from antelope.elm.relay.mailchannels.net (antelope.elm.relay.mailchannels.net [23.83.212.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7803B1A304F;
-	Mon, 30 Sep 2024 22:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727736072; cv=none; b=rH35qG3URFhO09Z8ybKOwqwnrI7us0HWK97c77ESRmtcyKPQyDx+3GLM+TNZTf+iKDIRFLCDA6wA6u92lqkFFS+MhCuXEsRZP1yb4T9FhJ+3RfFhVas7zr32r9Xioup1AH4xMyqWAr8BGQkf2+en/cRG36YxjcTwZ9bZnXh36iE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727736072; c=relaxed/simple;
-	bh=kloClghRgz+Yqeil0HFI/EHrorEwG4+kDSUa4p4zY/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IdaRDKTu8I4iIpoX/4s4/PAPLY1qLQuXCGlFgx9usMI/TU2kvSG30EQX6Ed3obvY/gm5s2gcnvLeFMkaQGKPROZX/ItBoM+Kk51GzKJxHej31SSs/5sjhdp1VUQskZ1Ym4w8AszVW/eR/z3f2/PuQG5jHbQVWbsV4R17kVWaPn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R63iPdU4; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-719b17b2da1so3517674b3a.0;
-        Mon, 30 Sep 2024 15:41:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727736071; x=1728340871; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hpOdTbaCej9dLM1JEzTBAYpYctEsql9gZez+rqFBwS0=;
-        b=R63iPdU4KV4f4dKfQcSmxSOLfbDD47EAM0XxdqHbp8G8qa2mxx7CSqFgqLsATAXVIA
-         RHcjC0VGoImzruTgr6bGXN4jw4m0UtZHIr6dr2UJCeXnPbrN0pkU2CnGlN1+5gnm1FFz
-         F5jkZXxTzIa+10IyS/VedXh7ACqhWyqzwFsP9hC0ZqzDEy6nE6BsOchlk+pHXJnviihm
-         Bhb2N/kgFO3jjADP95SBfK8dBoQjtbEKfaAtlCzeAuAiOp2KT+hhhQGwaQV24mUog2JZ
-         twKvbQdSlLGHGLdDygvUYtioX6SRvJ1Cd7348q8zcbFEom75RIhzWsZnddwshEFrSLMo
-         e0jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727736071; x=1728340871;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hpOdTbaCej9dLM1JEzTBAYpYctEsql9gZez+rqFBwS0=;
-        b=e85OTSJO/J1CJ5LQtzkTIsVNuXDMwvdGvjO+pgFeU3INIf0Ih71eAPAkANkF+23MRe
-         BnOPv3A+Oo9a45pGT0N15+B+YyoMo9wiUIvYU6leAkiAIWVHB+q1nXBu0NJhRuJBOXcg
-         jIpy19omphSEx0hovm6BadydKHAXwNHXD+1HQq4vskwkAlG2wo7jVsz6Btv/9T4uc01r
-         kTyqu+vv8LMdZZbm+FckUdURCCtQ5OCkW5r0u1DEXQrswf/s+Es9/oGubU5M6alICeyJ
-         97HWk2EYcspaal6vcHzm+62jql0xGMR2mcEqvja3yi6uAgMYUxCqgFMN4yEkrdYwqSVu
-         YUpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2ZgwWxqQZW44raU7u8ouGzOx/GewP+WaTrfZ1ehMode1gz7lfSHsDb/52rOg1T/xciPFq4Mb0/7GbMRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7ecRDS8URwVrvK/pKclKg5ZKO58OMfnFzIY3lGbFKgb/EFo2D
-	C3xOr1+7uQIcnXH/hdUa/APiQ/xsjpJd7eJbU+GMemhfc/QC5j8JXgyLYfh7
-X-Google-Smtp-Source: AGHT+IGDNsseyz1NhKJkcvNgjuZUoTKGam+hAXNLhx84epEyi19FBd+9ylY3cTL9JejjC2Q2M9WKug==
-X-Received: by 2002:a05:6a00:2191:b0:717:88eb:824d with SMTP id d2e1a72fcca58-71b25f356a3mr21158304b3a.7.1727736070534;
-        Mon, 30 Sep 2024 15:41:10 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26515e40sm6786921b3a.117.2024.09.30.15.41.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 15:41:10 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	steve.glendinning@shawell.net
-Subject: [PATCH net-next 8/8] net: smsc911x: remove pointless NULL checks
-Date: Mon, 30 Sep 2024 15:40:56 -0700
-Message-ID: <20240930224056.354349-9-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20240930224056.354349-1-rosenp@gmail.com>
-References: <20240930224056.354349-1-rosenp@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A832F17332B;
+	Mon, 30 Sep 2024 23:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727738580; cv=pass; b=Cj3ZxzLL7j1pi9QcBDY02bo6p6GOOTn3FMwX9/0kYMYbE5f1Y5VbPBvNOnJtUk8WRf9CkrgSC8Z+vyxFrdgBn9dvzqi2ilErOjzx0C2zt4Xk1THMOr3sbIxFeerivNRlg69oDCHnGGPwmjX+pureXSon5tUsFZfGnBnfaFxPKL0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727738580; c=relaxed/simple;
+	bh=KuWYaVWKp7Y+khtrf4Tw07FIwkFQfxcX5Lty0r61JlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUW0KE+2OhvS/nzYOaH/Zp8d6681bMvaFZwKeteTwZobhI2peKyKjg+jhDOBhUQzOYfq2dWLNggqITc0g2YaUXrTLP1Y+aKPn9UFWrt6FqNxByjkATTUNggzMgWxWRGoME+riHeertAkXJkHABVXPXGsjHKfPJ12L5c+mx7SP6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=TUY3biKg; arc=pass smtp.client-ip=23.83.212.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 40EB4321942;
+	Mon, 30 Sep 2024 22:43:55 +0000 (UTC)
+Received: from pdx1-sub0-mail-a315.dreamhost.com (100-96-89-39.trex-nlb.outbound.svc.cluster.local [100.96.89.39])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id BD29532194D;
+	Mon, 30 Sep 2024 22:43:54 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1727736234; a=rsa-sha256;
+	cv=none;
+	b=muQHMFRXN3C/adqoY/sPI2MLe8tqrQwN5k2w5ZtV2LnBnnjJ8E38rhJlQiFINKlJkLVSaC
+	WvsC5qoErzOk6ITHgIHgKR673/I1zaGqMxox++4xl6it+wy59Zau6+wa3j29QHL9AInRD9
+	gdk4W/g7i8zSfLydhhLxvQWAec4Ee9WQKDhFEdPDZ5S7JMH7/XUQEmf9bnm4MWRrPMXhKp
+	09WyxQX4uvchZpJSgEycZeFfLLU8XHB5AKDuE1TkYKFdyLjUzBQub1vbBVj9dvBNO7f5HA
+	rz4xlC6er/GLdbdlhIhQ/qeOhok69kuG7IBkAXJx1vaefj5FpBSun+tixlK8uA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1727736234;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=1w0tpQyukzCFtuLGpM8ycIFWg9JzhAhfgoalyyzoLVQ=;
+	b=21bMOOT4abstJs3g5nIsvv+BuknM78ZWGyuiLobft8Mvt5qPFavzq7Cvz1KitpV8zXOvng
+	w32pD4fCXl4HjssB5JN+nPE6CEdi1ztFP2h///upLIiDErmc35Lm9i27OhetpUnyReWaMH
+	72s2hVPwXCA29Uwz1jQ6uFRv2KMSnUlBOAQbVhcs6hpdjMkTXtaVjxN7LyTIDEhWzeToaC
+	OreXqQ+fJqKE5bnW94NM0+EDtiE2nsSfZfjaJSvQ2QAPe2iOPq2PHmiy5oaOFjrCSr1t2r
+	2htvUmHxptI3bpIbojTgf99U/JxOFnq6+gHlW5tBkAd5apvdxski8Qsbgzpqjg==
+ARC-Authentication-Results: i=1;
+	rspamd-9d66c6866-nmtlj;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Harbor-Broad: 517ec72679099906_1727736235078_1270078056
+X-MC-Loop-Signature: 1727736235078:327392066
+X-MC-Ingress-Time: 1727736235078
+Received: from pdx1-sub0-mail-a315.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.89.39 (trex/7.0.2);
+	Mon, 30 Sep 2024 22:43:55 +0000
+Received: from offworld (unknown [104.36.31.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a315.dreamhost.com (Postfix) with ESMTPSA id 4XHbhn6DJ5z2J;
+	Mon, 30 Sep 2024 15:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1727736234;
+	bh=1w0tpQyukzCFtuLGpM8ycIFWg9JzhAhfgoalyyzoLVQ=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=TUY3biKgg42trn3IoLk0/DZp2IMqhEGNxyKNE8+dITdU6gb/z0LzTA5wCGsXwiIfg
+	 o18/ad/GiSsE+qskJJwAyXTz9PzBLhasu02jhlAuwL3i9F24o7JmotOiAIpx9SNxiN
+	 Ah+5s7XE+m+2mNSuN0A1RfCqr8WK3KiYICuLfIO/8UczWqVju/2azj789TR7luiWda
+	 5SVUsBSBi9kgMYPdgsRqhEBkAy/SKTIgBFqQ4qJqgV0YgA+5BsrnQsNfT7DyyO8v1R
+	 MD20KPs2k5x9WwbAz0aZhx4LHOKauxLQ9xcKragDPZhCG3arRKVLd0zGO9pYI9bMql
+	 OT1JFYSJTdnEA==
+Date: Mon, 30 Sep 2024 15:42:27 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Christian Theune <ct@flyingcircus.io>, Dave Chinner <david@fromorbit.com>, Chris Mason <clm@meta.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Dao <dqminh@cloudflare.com>, regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <cldkpg3wtz2ovbyh53verlcauhqla7x2bi5ru4qo3kf4ehbiwz@ou56y3qjr5cv>
+Mail-Followup-To: Matthew Wilcox <willy@infradead.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Theune <ct@flyingcircus.io>, 
+	Dave Chinner <david@fromorbit.com>, Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>, 
+	linux-mm@kvack.org, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+References: <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+ <295BE120-8BF4-41AE-A506-3D6B10965F2B@flyingcircus.io>
+ <CAHk-=wgF3LV2wuOYvd+gqri7=ZHfHjKpwLbdYjUnZpo49Hh4tA@mail.gmail.com>
+ <ZvsQmJM2q7zMf69e@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZvsQmJM2q7zMf69e@casper.infradead.org>
+User-Agent: NeoMutt/20240425
 
-ioaddr can never be NULL. Probe aborts in such a case.
+On Mon, 30 Sep 2024, Matthew Wilcox wrote:\n
+>On Mon, Sep 30, 2024 at 01:12:37PM -0700, Linus Torvalds wrote:
+>> It's basically been that way forever. The code has changed many times,
+>> but we've basically always had that "wait on bit will wait not until
+>> the next wakeup, but until it actually sees the bit being clear".
+>>
+>> And by "always" I mean "going back at least to before the git tree". I
+>> didn't search further. It's not new.
+>>
+>> The only reason I pointed at that (relatively recent) commit from 2021
+>> is that when we rewrote the page bit waiting logic (for some unrelated
+>> horrendous scalability issues with tens of thousands of pages on wait
+>> queues), the rewritten code _tried_ to not do it, and instead go "we
+>> were woken up by a bit clear op, so now we've waited enough".
+>>
+>> And that then caused problems as explained in that commit c2407cf7d22d
+>> ("mm: make wait_on_page_writeback() wait for multiple pending
+>> writebacks") because the wakeups aren't atomic wrt the actual bit
+>> setting/clearing/testing.
+>
+>Could we break out if folio->mapping has changed?  Clearly if it has,
+>we're no longer waiting for the folio we thought we were waiting for,
+>but for a folio which now belongs to a different file.
+>
+>maybe this:
+>
+>+void __folio_wait_writeback(struct address_space *mapping, struct folio *folio)
+>+{
+>+       while (folio_test_writeback(folio) && folio->mapping == mapping) {
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/smsc/smsc911x.c | 10 ----------
- 1 file changed, 10 deletions(-)
+READ_ONCE(folio->mapping)?
 
-diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-index 5eea873db853..a74c3f9f7110 100644
---- a/drivers/net/ethernet/smsc/smsc911x.c
-+++ b/drivers/net/ethernet/smsc/smsc911x.c
-@@ -2105,11 +2105,6 @@ static int smsc911x_init(struct net_device *dev)
- 	spin_lock_init(&pdata->dev_lock);
- 	spin_lock_init(&pdata->mac_lock);
- 
--	if (pdata->ioaddr == NULL) {
--		SMSC_WARN(pdata, probe, "pdata->ioaddr: 0x00000000");
--		return -ENODEV;
--	}
--
- 	/*
- 	 * poll the READY bit in PMT_CTRL. Any other access to the device is
- 	 * forbidden while this bit isn't set. Try for 100ms
-@@ -2334,11 +2329,6 @@ static int smsc911x_drv_probe(struct platform_device *pdev)
- 	if (retval)
- 		return retval;
- 
--	if (pdata->ioaddr == NULL) {
--		SMSC_WARN(pdata, probe, "Error smsc911x base address invalid");
--		return -ENOMEM;
--	}
--
- 	retval = smsc911x_probe_config(&pdata->config, &pdev->dev);
- 	if (retval && config) {
- 		/* copy config parameters across to pdata */
--- 
-2.46.2
+>+               trace_folio_wait_writeback(folio, mapping);
+>+               folio_wait_bit(folio, PG_writeback);
+>+       }
+>+}
+>
+>[...]
+>
+> void folio_wait_writeback(struct folio *folio)
+> {
+>-       while (folio_test_writeback(folio)) {
+>-               trace_folio_wait_writeback(folio, folio_mapping(folio));
+>-               folio_wait_bit(folio, PG_writeback);
+>-       }
+>+       __folio_wait_writeback(folio->mapping, folio);
+> }
 
+Also, the last sentence in the description would need to be dropped.
+
+Thanks,
+Davidlohr
 
