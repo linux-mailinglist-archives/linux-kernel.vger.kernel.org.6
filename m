@@ -1,94 +1,95 @@
-Return-Path: <linux-kernel+bounces-343591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C77989D04
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:41:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B8D989D07
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 10:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A371F236FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:41:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40AC31C21CA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352F617C7CC;
-	Mon, 30 Sep 2024 08:41:39 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EB73FB0E;
-	Mon, 30 Sep 2024 08:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC7417C7CC;
+	Mon, 30 Sep 2024 08:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WQ7N/4gy"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DB517BB34;
+	Mon, 30 Sep 2024 08:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727685698; cv=none; b=MxLpLZF+vRmazbIXHHVSR4z0uszNfaP33KK5LHzhSb3BHA+PK0C94hMxQUqnUsQtgPlR8WBOTHsrtyV4JbBxxrCnFfFyuzZpkfuo4OYyB47Jdw3ZEdPmr9+gtm/yAiklJ1kusM/gFOFiFF/7nRtZdtxj+1jxOYCquhUXJraLnh4=
+	t=1727685711; cv=none; b=U8wG1lsGAoKiG493Q+MHTePV+GbMsFziXVix1xqvIZ7UQw34aLx+RE/FO/xhOJ7Sj5+KR5BazrhK33FbDbs8rJot+GBC1TGC+H+dsnHHou1LH/s1etb2UjhbUbiMLBFRisZ1ZIkLQzN4erJIAq9rzZtriR6vXSgM3qyNafxxrCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727685698; c=relaxed/simple;
-	bh=I1OyjibLq9x+XnvGzq74awCAETdc9xD5TNs85H7oChw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ah+I3pAWq718XhcfLkKUvF8+uZiToouqtHkq0bLe8P0qRhLcKYSW6glNyJhGRmAiClH4qeg8tRO2XgC1ubglTEtd2YN+86uE/4MwvsPdUe6MQE99OWYxcFu7ervxDcQk1oGFmqarn/QkDWiuh9nAFuMDFz96/xhykwt+gwrT78o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id E77211C00A9; Mon, 30 Sep 2024 10:41:34 +0200 (CEST)
-Date: Mon, 30 Sep 2024 10:41:34 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/73] 6.1.112-rc1 review
-Message-ID: <ZvpkPg0bGzbl4ICW@duo.ucw.cz>
-References: <20240927121719.897851549@linuxfoundation.org>
+	s=arc-20240116; t=1727685711; c=relaxed/simple;
+	bh=k0inenRsQdLM8kjq3Vtb89hksJy4Iy07Cnuk6LFCDH4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=NKBRQ5NzonTHPI9Bt9uY4Ycmk8KV0ebfcPo9nzSEF+aPzlKURZWEGcMCV+BDwE7aNHX5xo/ksXeiTUOv2CRJFwB4+cBGAUzQ2KhJmaHJH7sdKxf57lqtF+4jTnlOXrppdI1J0abEvgOJg4tkSAXvmnKf4iwZhSN41A06f2127v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WQ7N/4gy; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id 826A320C8BD6; Mon, 30 Sep 2024 01:41:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 826A320C8BD6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1727685709;
+	bh=Uo3K65bEBS5TlGxxZy7heiLcFXhjzPHT12XW0+LyZ0Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WQ7N/4gyoMscG232xbIFkPUfAGBtoEmm7ntXs9JJ09fsrnaTrsCk6nuS+wA+TaiON
+	 sDHbjI56mkD2WkxFXGu2xYXp3xrOLNv3yhOrnDPFu553RgNgcW6twE4joWs6kDX1fH
+	 UcHTnkJ5FPGu4CRSfRVn5mWu4wzbUh2GL5WyGs44=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	dmitry.torokhov@gmail.com,
+	mikelley@microsoft.com,
+	linux-hyperv@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ernis@microsoft.com,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Subject: [PATCH v3 0/3] Disable Suspend-to-Idle in Hyper-V and Fix Hibernation Interruptions
+Date: Mon, 30 Sep 2024 01:41:45 -0700
+Message-Id: <1727685708-3524-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QB9q8GTrqzcZ66Q5"
-Content-Disposition: inline
-In-Reply-To: <20240927121719.897851549@linuxfoundation.org>
 
+It has been reported that Hyper-V VM users can unintentionally abort
+hibernation by mouse or keyboard movements. To address this issue,
+we have decided to remove the wakeup events for the Hyper-V keyboard
+and mouse driver. However, this change introduces another problem: 
+Suspend-to-Idle brings the system down with no method to wake it back up.
 
---QB9q8GTrqzcZ66Q5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Given that there are no real users of Suspend-to-Idle in Hyper-V,
+we have decided to disable this feature for VMBus. This results in:
 
-Hi!
+$echo freeze > /sys/power/state
+> bash: echo: write error: Operation not supported
 
-> This is the start of the stable review cycle for the 6.1.112 release.
-> There are 73 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+The keyboard and mouse were previously registered as wakeup sources to
+interrupt the freeze operation in a VM. Since the freeze operation itself
+is no longer supported, we are disabling them as wakeup events.
 
-CIP testing did not find any problems here:
+This patchset ensures that the system remains stable and prevents
+unintended interruptions during hibernation.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
+Erni Sri Satya Vennela (3):
+  Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
+  Revert "Input: hyperv-keyboard - register as a wakeup source"
+  Revert "HID: hyperv: register as a wakeup source"
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+ drivers/hid/hid-hyperv.c              |  6 ------
+ drivers/hv/vmbus_drv.c                | 16 +++++++++++++++-
+ drivers/input/serio/hyperv-keyboard.c | 12 ------------
+ 3 files changed, 15 insertions(+), 19 deletions(-)
 
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---QB9q8GTrqzcZ66Q5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvpkPgAKCRAw5/Bqldv6
-8nL3AJ9LpMNxurEoBMShVWnI5QkT/A2ohACeMN2uRLRCjgXCDLZiVXrPFwbj6RQ=
-=8v7l
------END PGP SIGNATURE-----
-
---QB9q8GTrqzcZ66Q5--
+-- 
+2.34.1
 
