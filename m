@@ -1,89 +1,114 @@
-Return-Path: <linux-kernel+bounces-344669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD91D98AC84
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3D4D98AC86
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19AEE2823B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8971C21AD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D575A199250;
-	Mon, 30 Sep 2024 19:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D999199254;
+	Mon, 30 Sep 2024 19:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bLu1R5Te"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R30OO+W6"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3853E196450
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8770178C60;
+	Mon, 30 Sep 2024 19:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723361; cv=none; b=T05thn57v1F15LDzLncLgVUTAJzAv0X34I4zD37phe4W+SibCaDwcxqttIFfbB+amrmtpcxo0Y8qJBOAw17ArpQvXnrH5FWhLo0fRk2Mz1D5a0brt5g9er/66gKC48NfvZ4L3hm+UIHmr3bOqE95HTg9MXZ2Ns6B7KGyeaWli6I=
+	t=1727723470; cv=none; b=JKRogjA8x/Gg68ZW1y40qvphbnf43B8Z3H6sllMmzpov8mtd1mLiGkLuAuz+/W1rpA1zSr89ZFRusZrhdr5gsN/XBHTYY202t/l5B49zOUTUF57cZrg+9vc9tvPGyDNEf0p/+A1PY68kf/quQhoqbqO4F1F8q8/Yigd7XjnchxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723361; c=relaxed/simple;
-	bh=dHZcIL/ZoSvEkAWVdttRyG1ztXLb4a7HYVwTD3OaqvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jb2GI7IJ6IiRuguZBD+2PgnXKJvDb2fczD4l/FKOy0cnAqWZNDJlmkbxOCYFbrWT39Htblk9gFIly1JVNRqS0esGvcx0R5jLkBPvxZZBDqJtGKThLDHnYkCxPtq1xdK4v9dqYVNbSgn6XhH4WYuG5eheX55qkOKeWRKIGxykA/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bLu1R5Te; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F694C4CEC7;
-	Mon, 30 Sep 2024 19:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727723360;
-	bh=dHZcIL/ZoSvEkAWVdttRyG1ztXLb4a7HYVwTD3OaqvE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bLu1R5TewlE+E7F4i5dRxsqEr9Llx2ZNQX1rYmUk2KXTulfSj6oK+azptWPgFuboP
-	 L1ofQqw85rSioWblto3D4Y9vBjOvWuDu8CL9cugt6OHOxkrMcaKDzjw4bfv1UCIDA2
-	 g4e8rlOXSsDBOU8YXSTUXrnuLCFpIdOO+zwlDeRo=
-Date: Mon, 30 Sep 2024 21:09:18 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	Tom Chung <chiahsuan.chung@amd.com>,
-	Hersen Wu <hersenxs.wu@amd.com>
-Subject: Re: CVE-2024-46808: drm/amd/display: Add missing NULL pointer check
- within dpcd_extend_address_range
-Message-ID: <2024093053-womanly-groom-a59b@gregkh>
-References: <2024092709-CVE-2024-46808-8886@gregkh>
- <khg5rxxfvmdfjze2tpdamrnhsry7jd4eptxfdkht5nnpjacpy3@rhlk7omy3ulc>
+	s=arc-20240116; t=1727723470; c=relaxed/simple;
+	bh=qbmrI3OdRofUX7H4fimrZ7tT8NzWBs0d5LqBRpN/82g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qPNJbTqqf9CeOJH2WV681K618k2PXaupQXMg3QvICfVkAKdNZS+s8SLYe1b3/r/w6drXHgsZtiE2jSXMMVsM9w8HMaxvYOuIld0grR9IVvzAaa1x7v6RxoZSO1JfBbGCCfg4BoO87zMrd7V5ktXaTTH3OUIFbyQPzTkUQjCL4ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R30OO+W6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b86298710so12715115ad.1;
+        Mon, 30 Sep 2024 12:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727723469; x=1728328269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCTSpjE7HL0LhWw7HAwvpibvAomrawMsBzaMkMKPJCs=;
+        b=R30OO+W6kesb/yKI0s7YFwiGBm4kz4kzPW+9udxmeXhKPE9Oc9LMzoMHSXRKmTD9nP
+         ZNwKYySRZhfl2iY7htLNlvPml4bn7rhtc76q26uS5bNlKmAcRXH9AgivC57fIQGWFweO
+         xdhH6U3CoDhWazbbrexR/jLR08yvR2t8yYV320ycxJ9av2suWlVPTquiSVLGIi3ukPbD
+         kt2ofQO2gLbHygaE9sr2RArp7PsKfYhAIMqlEzXC6WohDTuMczpjiVgKHHifGhvQKkTT
+         5jGJmlCjGW1J4qtXm9AXYg6dIF83hUbS4EseMTbUVr+UDmnXbnIJbsvQFgtTayZ7X6IZ
+         Xw9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727723469; x=1728328269;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aCTSpjE7HL0LhWw7HAwvpibvAomrawMsBzaMkMKPJCs=;
+        b=TjWfx32+q7XpBaz+W4SkDv34gbxF20ss+LuaEN492ckCx7VDZUMEy3zpj19Rx7STVd
+         oT1g0/wYQuxSyZWY/lAWWLpreQeMXfu6+ETeuMKBkFBYd4Tr4mpx46VjJeEI1qLTPjp7
+         Ii5z6aahjX5lqNtVGS/WfYWeLiXlVAc6FL23Vrt6HfGpum7Rby+5pKBpyWw0QAKmvovo
+         oynm0eIY3XAd8LdrqAoSCMsDryKqbIs8pLT6+HEtD2NYEq9odbNmNsmLv004esve0xIl
+         kjA21G26HmMDqzZjr12zd3s3B3I91VMQ4b+QrkL8l784gHAgsKeTQdW3KBJPrdzrdCKb
+         Fpmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFzoFNG4fqZZD2L9RutRXwfzQpX2ECWiMt15jDUPqTLrBpWSzbcPyBXWzvlAf22cNkn40LiuovDxBAj1o=@vger.kernel.org, AJvYcCX8/11gWK33i4nWRSCKjUDqTqHGBrNX0OzghRQd0DWxA3UCPVpNMp8Ka2yYFvQxgjAs3AgR6c1tYbemYrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytTTCTe8Hwj+UqpQs09UhiEITqX05ioQl45f8OzLnBuTh8W3mZ
+	hmbLfGz+ohbYPJ6Kazf8Y8fTpO0qWtZeEqJBDPbaK96n+SNJnTn8
+X-Google-Smtp-Source: AGHT+IGPKqgmSCwIUXXbGEMtmjlMHyUWhICIzjtK2cewowvU+9I7L/QxmmbWD2bHNlk1OGpGpmIQOQ==
+X-Received: by 2002:a17:902:e5cd:b0:20b:968e:2585 with SMTP id d9443c01a7336-20b968e285emr37146775ad.6.1727723468585;
+        Mon, 30 Sep 2024 12:11:08 -0700 (PDT)
+Received: from ubuntu.worldlink.com.np ([27.34.65.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5fd40sm57598175ad.266.2024.09.30.12.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 12:11:08 -0700 (PDT)
+From: Dipendra Khadka <kdipendra88@gmail.com>
+To: jckuo@nvidia.com,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	nkristam@nvidia.com
+Cc: Dipendra Khadka <kdipendra88@gmail.com>,
+	linux-phy@lists.infradead.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: tegra: xusb: Add error pointer check in xusb.c
+Date: Mon, 30 Sep 2024 19:11:00 +0000
+Message-ID: <20240930191101.13184-1-kdipendra88@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <khg5rxxfvmdfjze2tpdamrnhsry7jd4eptxfdkht5nnpjacpy3@rhlk7omy3ulc>
 
-On Mon, Sep 30, 2024 at 08:58:41PM +0200, Michal Koutný wrote:
-> Hello.
-> 
-> On Fri, Sep 27, 2024 at 02:36:13PM GMT, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > In the Linux kernel, the following vulnerability has been resolved:
-> > 
-> > drm/amd/display: Add missing NULL pointer check within dpcd_extend_address_range
-> > 
-> > [Why & How]
-> > ASSERT if return NULL from kcalloc.
-> > 
-> > The Linux kernel CVE team has assigned CVE-2024-46808 to this issue.
-> 
-> This is not a good CVE fix since it'd bring the system down for users
-> with panic_on_warn=1 anyway. (I wasn't able to `make
-> drivers/gpu/drm/amd/display/dc/link/protocols/link_dpcd.i` but I assume
-> the ASSERTs expand to one of the WARN_ONs, feel free to correct me.)
+Add error pointer check after tegra_xusb_find_lane().
 
-It's a good fix for those without that option enabled :)
+Fixes: e8f7d2f409a1 ("phy: tegra: xusb: Add usb-phy support")
+Signed-off-by: Dipendra Khadka <kdipendra88@gmail.com>
+---
+ drivers/phy/tegra/xusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> It'd need graceful handling of the kcalloc failure.
+diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+index cfdb54b6070a..342f5ccf611d 100644
+--- a/drivers/phy/tegra/xusb.c
++++ b/drivers/phy/tegra/xusb.c
+@@ -699,6 +699,8 @@ static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+ 		return -ENOMEM;
+ 
+ 	lane = tegra_xusb_find_lane(port->padctl, "usb2", port->index);
++	if (IS_ERR(lane))
++		return PTR_ERR(lane);
+ 
+ 	/*
+ 	 * Assign phy dev to usb-phy dev. Host/device drivers can use phy
+-- 
+2.43.0
 
-Agreed, it could be fixed better.
-
-thanks,
-
-greg k-h
 
