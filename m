@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-343663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EBD7989DE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:18:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5656C989DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:20:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267ED1F233D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6BC21F21D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18741865F1;
-	Mon, 30 Sep 2024 09:17:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AE615F3F9
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA79E1865F1;
+	Mon, 30 Sep 2024 09:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="anWrLSmY"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C034917C8B
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727687830; cv=none; b=Qj5EF5jKuKJPeqwfoNlAHTTuJYGS+5EQIECivQSg7uZA67YFhh4XxNPwgexdtHm2OhKcZoBhlEClEjU71o5if/GTLPOGAp7nuhJie6758Flx9GBl3DHuc63NjLY4Bdr1RlgCzqim4HRGrQJnGI7mX4XzP7dAkwhktCVBBPU0IoA=
+	t=1727688014; cv=none; b=qZcdxTi1hAj46yRx+k5JsNb2de6/HMxBJu0Hq9Z+cUkPsLzOUOJ44h/UhhYUYlWHf9NcTlG4KH/rkmira6bHPQwf8BSoRTYaVAnl8A5+c0uEV19f//zVSJdlkpZike/fYNLnjJPkfuFT3MPtXMPuaU+rxyoUw72PrKxUc9neJCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727687830; c=relaxed/simple;
-	bh=fv3P//tYxLBjWUgxef3YEpOIIsmKMNGy4KoBSNM0dPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J7iWLanCtPsblVs5RvV1AEh8sHRQFQRQlwPCmdpjVc7uYyhTPoAxHKknXl881BNder4jJYZEtoq6Ex6NxA7qs/TJVds7Y+XMd4BkqYTiEyIhXi43xLMig/wPsZbSTVmy8LMuIrNgtwxa56n4YtVN5ev3SsqJVlWaUG+syHLj2JE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74A66DA7;
-	Mon, 30 Sep 2024 02:17:36 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE0043F587;
-	Mon, 30 Sep 2024 02:17:05 -0700 (PDT)
-Date: Mon, 30 Sep 2024 10:16:58 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	Borislav Petkov <bp@alien8.de>, Yury Norov <yury.norov@gmail.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Question about num_possible_cpus() and cpu_possible_mask
-Message-ID: <ZvpsikythXnvZ7V_@J2N7QTR9R3>
-References: <SN6PR02MB4157210CC36B2593F8572E5ED4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1727688014; c=relaxed/simple;
+	bh=QelLbTLdCudyximR1S6fw8n49Gc/+5+QBYGqTzebg+g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P+1bn2mv9NVd034pxzcIP5Q+EgiDztiIZui7msbL9ZLGqvf29suYovkOYUGhx59lC1VDnCxTTSskf+BLfRBuXyKyh+Q8xJ/kbXp3rHMSZodLhYA+C/xtcsOqbgj5kEzan3YiM76qElwZLTzWxMk7mqIeGHdp4AJkxq01NxUTehQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=anWrLSmY; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 2d8216447f0d11efb66947d174671e26-20240930
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=yqgHKnptu5bK43gGLrnEqqpfwTrlY1ULN7Za2e2rfGM=;
+	b=anWrLSmYD1+3k4rZ20foGTgJzeg6I44Xk67A341xP3ORVfqRKoi8pGVGkxWaURuSVjuekGi6Z0EUyNn+KXIZ09mhSpR63EfBAJBf+rKr5nKi7Uezx0YUJx62hqUNx5SWlNo4OsuGdOrcbe1LkOn3n3qydIk+UcIm7JxT08CJIHo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:6053cd2a-f12a-4a58-bf0f-ddf7d4b8cc71,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:53617918-b42d-49a6-94d2-a75fa0df01d2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 2d8216447f0d11efb66947d174671e26-20240930
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 412980901; Mon, 30 Sep 2024 17:20:04 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 30 Sep 2024 17:20:03 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 30 Sep 2024 17:20:02 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <msp@baylibre.com>,
+	<rex-bc.chen@mediatek.com>, <dmitry.osipenko@collabora.com>,
+	<ck.hu@mediatek.com>, <jitao.shi@mediatek.com>, <mac.shen@mediatek.com>,
+	<peng.liu@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v1 1/1] drm/mediatek: Add return value check when reading DPCD
+Date: Mon, 30 Sep 2024 17:17:41 +0800
+Message-ID: <20240930092000.5385-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157210CC36B2593F8572E5ED4692@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On Wed, Sep 25, 2024 at 04:04:33AM +0000, Michael Kelley wrote:
-> Question:  Is there any intention to guarantee that the cpu_possible_mask is
-> "dense", in that all bit positions 0 thru (nr_cpu_ids - 1) are set, with no
-> "holes"? If that were true, then num_possible_cpus() would be equal to
-> nr_cpu_ids.
-> 
-> x86 always sets up cpu_possible_mask as dense, as does ARM64 with ACPI.
-> But it appears there are errors cases on ARM64 with DeviceTree where this
-> is not the case. I haven't looked at other architectures.
-> 
-> There's evidence both ways:
-> 1) A somewhat recent report[1] on SPARC where cpu_possible_mask
->    isn't dense, and there's code assuming that it is dense. This report
->    got me thinking about the question.
->   
-> 2) setup_nr_cpu_ids() in kernel/smp.c is coded to *not* assume it is dense
-> 
-> 3) But there are several places throughout the kernel that do something like
->    the following, which assumes they are dense:
-> 
-> 	array = kcalloc(num_possible_cpus(), sizeof(<some struct>), GFP_KERNEL);
-> 	....
-> 	index into "array" with smp_processor_id()
-> 
-> On balance, I'm assuming that there's no requirement for cpu_possible_mask
-> to be dense, and code like #3 above is technically wrong. It should be
-> using nr_cpu_ids instead of num_possible_cpus(), which is also faster.
-> We get away with it 99.99% of the time because all (or almost all?)
-> architectures populate cpu_possible_mask as dense.
-> 
-> There are 6 places in Hyper-V specific code that do #3. And it works because
-> Hyper-V code only runs on x86 and ARM64 where cpu_possible_mask is
-> always dense.
+Returns the number of bytes transferred (1) on success.
+Check the return value to confirm that AUX communication is successful.
 
-Maybe that happens be be true under Hyper-V, but in general
-cpu_possible_mask is not always dense on arm64, and we've had the change
-core code to handle that in the past, e.g.
+Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort driver")
 
-  bc75e99983df1efd ("rcu: Correctly handle sparse possible cpu")
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-> But in the interest of correctness and robustness against
-> future changes, I'm planning to fix the Hyper-V code.
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index d8796a904eca..3cab65345d1e 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -2018,6 +2018,7 @@ static enum drm_connector_status mtk_dp_bdg_detect(struct drm_bridge *bridge)
+ 	enum drm_connector_status ret = connector_status_disconnected;
+ 	bool enabled = mtk_dp->enabled;
+ 	u8 sink_count = 0;
++	size_t value;
+ 
+ 	if (!mtk_dp->train_info.cable_plugged_in)
+ 		return ret;
+@@ -2032,7 +2033,12 @@ static enum drm_connector_status mtk_dp_bdg_detect(struct drm_bridge *bridge)
+ 	 * function, we just need to check the HPD connection to check
+ 	 * whether we connect to a sink device.
+ 	 */
+-	drm_dp_dpcd_readb(&mtk_dp->aux, DP_SINK_COUNT, &sink_count);
++	value = drm_dp_dpcd_readb(&mtk_dp->aux, DP_SINK_COUNT, &sink_count);
++	if (value < 0) {
++		drm_err(mtk_dp->drm_dev, "Failed to read DP Sink Count: %zd\n", value);
++		return ret;
++	}
++
+ 	if (DP_GET_SINK_COUNT(sink_count))
+ 		ret = connector_status_connected;
+ 
+-- 
+2.45.2
 
-To me, that sounds like the right thing to do.
-
-Mark.
 
