@@ -1,416 +1,279 @@
-Return-Path: <linux-kernel+bounces-344037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE04598A356
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:47:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7945B98A348
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:45:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DC00B2989A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:45:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C261C22AE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA10518F2FE;
-	Mon, 30 Sep 2024 12:38:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA5418FDBC;
+	Mon, 30 Sep 2024 12:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dXBH1ioG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B8118990E;
-	Mon, 30 Sep 2024 12:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699913; cv=none; b=XrnaiMTFInRt8eEVAY5H/uXIv5+OjmaN0GxLoM4AsOZskk+YtWLASczdRgqiu5LooLHk8q4lrHnIc1nO8kABMDg21SBu4OOxapTMVcAhnjhXDeK888MBqDjuX5gLx4tngVKhhN1duvC5ISTOlqj7fRIirh3dR9Tjmb1Ua+Q9q0A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699913; c=relaxed/simple;
-	bh=XFQ9OVTqP3D6F8J3U6uH1e+g/YNKZ+EyCOXMNO/fmlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hYBKxLS4L8xZoWtMKNASYU/V/zrB1qV7geYh4hGTqyHge4WvZtnpImrll7REzogDMXbPglRPwGKRhpp7J2TMdr/Avgg+aNnailPZXWf2HCk3M4w/eyAGADf8zV537JrkaIiBNBdvEAad4c7NvOBdkyQ6/BGtlcz1l/bpusbQaRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA3DDC4CEC7;
-	Mon, 30 Sep 2024 12:38:24 +0000 (UTC)
-Message-ID: <4873f3a0-bd82-4ace-a783-10ea137284d6@xs4all.nl>
-Date: Mon, 30 Sep 2024 14:38:22 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2238818E764;
+	Mon, 30 Sep 2024 12:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727699952; cv=fail; b=tUCUb3+UtCff7uxHLNMw7W+7VdVBo6BAgHuREisV7rG8cOiIk+t5zTI9v9ZDoXkW46gFgSe1YdBk0q8Hpb24h4d1rytbOVHREvtP5JfdeFv3ptZtHhWzdjldFnBvf92UyYYASHHmTRz1YVm89Y5RPZt+IIt3tAAbwi1qVirHJps=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727699952; c=relaxed/simple;
+	bh=gjwbnnFuYe7GOtD7YbiQA8ugzX0Qp69Y9XHyKdPoXT4=;
+	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LSulG7KdTDQeaIHE0vOEVvyOVoKmX70tOY7BRFHUnXgacwyQkxvUFnAzJHv8SFC3lHHGPCDtTum4YtRED4oypCzDtujZdCiEXqCmTfQF2YFS8xtXpL9VREbUCBUUlZ1obdH4MTQeD+HXMzItO9q/rvzYnC/DhvWgzQjY4VjoLF8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dXBH1ioG; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727699952; x=1759235952;
+  h=message-id:date:subject:from:to:cc:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gjwbnnFuYe7GOtD7YbiQA8ugzX0Qp69Y9XHyKdPoXT4=;
+  b=dXBH1ioGzVI3B3d36QOhXXzlSWg++8+/Vsnrc3YexNzOhVH6/WrZE4OZ
+   PUmBVlvLeIp2UjaWd5nuDFcgyJpNBlVGj21VpRPW9IQzU3T9N5EYJHDz0
+   AITQBJhnc97+v1bLvOZwmacJ7LtQTeGeGx+hj985A/vMhqD1fI0bjMYIL
+   cIeKSMMWtej+lcdnLKXBvex5uyFAeZmZNqfoMFm7KFqBoJA2tmsJcnagq
+   EYSK4z/SoJRffpNgBl6Ihc1Mk045GhV4V8LAXMVQurm0YQ8j/eU2tpOY6
+   WmnQKiKurIx+Q9iZDQ9fnM17vo/NfJZiy2nq7qyYKWuQ1lHS4KIMJ0WmI
+   g==;
+X-CSE-ConnectionGUID: ISJPXJTOSly8KMfHjbTU5Q==
+X-CSE-MsgGUID: 7X+DhfIERqi3+CgLE7/Pew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="37347258"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="37347258"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 05:39:07 -0700
+X-CSE-ConnectionGUID: eVr+2uIqRluu/CfmT3gRag==
+X-CSE-MsgGUID: sxvnb1ynQNqcGhPXZyuBPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="77673751"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Sep 2024 05:39:06 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 30 Sep 2024 05:39:06 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 30 Sep 2024 05:39:05 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 30 Sep 2024 05:39:05 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.48) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 30 Sep 2024 05:39:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UwoMFNMum/6XT6+eoGL0xD/WPvFS79NKHqWuNHVTpyVTdIRqUAPGlrHFZGsbokJ01C5rNORXTkx0ZIF8zqO+Pqf2AhDVvyk+/ZObSxOjEQ4YKXt92KEli47gZrcnl4zshsGw83uTXpxaeyMEJeVT6/semFMzDiXUIfeYSSxZWCoEuobLjqsVVwRkiXcgYbFTQf6SulsB1PyGMcNU1Ge4R9AXcTbnWca8ZDW+WqIaWavUA7sLIxJ9i5FDIUTiwc2GWU+KSSWSJ1YPrRJ5fHXRaBEBt2io3t2gIjNV9xqXFGw5B3owKGXn9X7YiSVEbkujYalTLWWuoCRT09yGpta6Dg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E/eKdtbcNkSOedc5LFK9dDRZet7G9VB8kYew0w+Tn70=;
+ b=hRI/hbMUmjtq6y+8zcLhLBtoBCqQSsl5IWAOVFGg9uozzBEQdSCe70xpu2AZHj9RFP910wEzwXAiWjh7pZcowj/awow66CeG7nrCpa8ly6RNGEGIRef/dUVHsyMlI9ajiSXVX66aOZLaqO7HF/rH8bMoA3fNaufFobsRPfwgQf110S+ym2oeEpIHm9ERWBzfZMDcQ06sv4BgBIsE/XtwFD57U7w3Tv2qVajKF+3vIS0tE0tWuvreJ2CfpFq/tMaSNNQUfrIgfZbMApdwaKb0LLLKjPCkwwOJWrfMFEM98EUeiwrkqsG614AxWhmLqQqY+qokZ7tbOlGP+2ZPOqyXoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com (2603:10b6:8:1b9::20)
+ by LV3PR11MB8674.namprd11.prod.outlook.com (2603:10b6:408:217::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 12:39:02 +0000
+Received: from DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808]) by DS0PR11MB8718.namprd11.prod.outlook.com
+ ([fe80::4b3b:9dbe:f68c:d808%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
+ 12:39:01 +0000
+Message-ID: <c32620a8-2497-432a-8958-b9b59b769498@intel.com>
+Date: Mon, 30 Sep 2024 14:38:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC net-next 1/1] idpf: Don't hard code napi_struct size
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: Joe Damato <jdamato@fastly.com>
+CC: <netdev@vger.kernel.org>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "moderated list:INTEL
+ ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>, open list
+	<linux-kernel@vger.kernel.org>
+References: <20240925180017.82891-1-jdamato@fastly.com>
+ <20240925180017.82891-2-jdamato@fastly.com>
+ <6a440baa-fd9b-4d00-a15e-1cdbfce52168@intel.com>
+Content-Language: en-US
+In-Reply-To: <6a440baa-fd9b-4d00-a15e-1cdbfce52168@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0049.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:1d::18) To DS0PR11MB8718.namprd11.prod.outlook.com
+ (2603:10b6:8:1b9::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/45] media: Use string_choice helpers
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Ricardo Ribalda <ribalda@chromium.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>,
- Mike Isely <isely@pobox.com>, Olli Salonen <olli.salonen@iki.fi>,
- Maxim Levitsky <maximlevitsky@gmail.com>, Sean Young <sean@mess.org>,
- Sergey Kozlov <serjk@netup.ru>, Abylay Ospan <aospan@netup.ru>,
- Jemma Denson <jdenson@gmail.com>,
- Patrick Boettcher <patrick.boettcher@posteo.de>,
- Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>,
- Andy Walls <awalls@md.metrocast.net>, Michal Simek <michal.simek@amd.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Eddie James <eajames@linux.ibm.com>,
- Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Tim Harvey <tharvey@gateworks.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Jacopo Mondi <jacopo+renesas@jmondi.org>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- imx@lists.linux.dev, openbmc@lists.ozlabs.org, linux-aspeed@lists.ozlabs.org
-References: <20240930-cocci-opportunity-v1-0-81e137456ce0@chromium.org>
- <20240930122157.GF31662@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20240930122157.GF31662@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB8718:EE_|LV3PR11MB8674:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65d085d6-5e2b-467c-1d49-08dce14cdccc
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Wmx3RFA2dDJ5RytJeWs2amdKaTA2VVhSTkRKY09LSVpZcTZ6citVTThmRG1i?=
+ =?utf-8?B?dDJiWmhySWc1RkRWcGN1eXJiR3RpemdJcEJIOXNvU2s0UnBhWFU4akg5Y3Jy?=
+ =?utf-8?B?VDRHQ2x1YVIxRWdnbitJK0JmVlRBM3lIODJvRmUwODZHYlZpSDk0ZlEyaUMw?=
+ =?utf-8?B?dWZvNzNNK0tQa2tWTFNzYmdIaG4wNnlNVVZPVFg2aWM2eURwbUJITWlSL29w?=
+ =?utf-8?B?aHoxZGxOZFhkU1dXUFhxTEFhbmtyN3NJVTUyKzRrcHNESi9OdjhxTm9EU1h1?=
+ =?utf-8?B?U0VJM1lseW10R1RiaDEyNWVmejJaTmNlVjc3WVZ4UnlPQXJFOVVzWjZtQ0px?=
+ =?utf-8?B?VGM3eTJwRWZLdi9teEV1SzlxTlZhWDk1bmp3NnlubjFWUy9LdCt2QndqV2x1?=
+ =?utf-8?B?ZnVNS0RDSnBqR2Vya1gwdEh3Tmh2UStRL3lVMUQ1Q3RZczQ0WmZvZ1VZdCtE?=
+ =?utf-8?B?WkpvejdISUlaNU5DRVh1ZkJpWXBQSnVmeC9XUFFUL2kxWHpvUVdOczY5bENk?=
+ =?utf-8?B?dm1LVEF0VUpSL2VZUDVKcmNReGQzbExBNlJ6WFBaUTFWYmZUaVByTHhXYktv?=
+ =?utf-8?B?eVhSV1g5aWhZTXppQis4eWd5R05MdzBIZ0NBbnVkc0tpdzE5NWNuZ0JCbUNj?=
+ =?utf-8?B?K1JidVZ3V0NpYVFTdHI0cTBrRURzREFENjRZamJTUC8wMzc0cFdJVlQ5QnBT?=
+ =?utf-8?B?bmZXRGlhTmxFS21BRFVWUUxDSERVWGo4bEtvbFpncE04cDZmZHltb2NUTWpQ?=
+ =?utf-8?B?djVCSE9IYStRcmRXV1pZRTNOU2VBZkl3UzUxYnJoME9SVjBad0dKZ3VOTzZD?=
+ =?utf-8?B?bXNhcnBKV0RnU3JiSWV4bUtZRzQ2Q2V2SmU2L2FKdDhWa09Zb3ZaMmg4bUxq?=
+ =?utf-8?B?c3B6UDk2TjI1cjR3UlFma3VkYTByNjJ3Mk1pVk1lTEp5em5GSEZVU25WK0NI?=
+ =?utf-8?B?d0NvYXVoZDlxUDNtTS95dXl5VmdVYThqZTdIMXhnQXJ0RUhRZHZJYk1jRUFy?=
+ =?utf-8?B?bnJRakk5RDJ1UnRTL0gwYmVjclgvY1NqdEo0am9ITkxXbnBvQ0hheC9hM0Uw?=
+ =?utf-8?B?R2FWZVd2OXcxQkdXYXhyWXVkWUNnelBGeE5nc3hUc1RpUERCNXZqZk9wNHkv?=
+ =?utf-8?B?aDdQOXhOazZQNEZwUEZjWkp0azlCSE53cXNxY2FydGJTeE4xVGVQdy9VMHk0?=
+ =?utf-8?B?dmRCYWJPMlJ2MFlxb1REUTN6N3ZzVnpHMElramZ2ZVpVTTBWMlUzQm5tZ0VD?=
+ =?utf-8?B?SDNOL002YjcvcWhvMndqUTZ1Ny9GZUpaY3RMNThGNXpVd3NNc0VGUTllSFBK?=
+ =?utf-8?B?eVJST2swWjhndGJKbjkwbCsvNDlDWWlwa2R4bHhSRFdESnMrb3VDKzZiL3Vo?=
+ =?utf-8?B?TFFVZ21UdXVVL2x6ZkFHKzc0dU5KRGZLUmJMRFM0b05MUjQ1ckNselM4em13?=
+ =?utf-8?B?MjVLWmdOcVVLdVA5emlLWS9aeE5PQ0d3eHhPMGNwM0E0U3dwZVlPWUF3a2pM?=
+ =?utf-8?B?MEM4L3F6bHV5U2o5Y0RhWnZEa1RjUnBFa0hPTEp5Sm5OdXNpT2tKdEQzNG0w?=
+ =?utf-8?B?M2d3cGxESkNVamVGL1JvQW5EeE92NWNUWVlpdlR6Wm05L1VtbFN4NU1XMTg4?=
+ =?utf-8?B?dkZPdktVOXBWTFY0MGpLU2k2TFpFTWJLY0gyT1VyL3grWk9tYlNURmJJQTJn?=
+ =?utf-8?B?OWtWY0tyQTJvcmF3S3hBYmJncEl3UFQwN0puQUlBVHFlSU9tbVBhSGVBPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB8718.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NEV2MDdnMzF5b3dDVGl6dENGTndHd3BoalhLM3plTGFiNW9mN0lHZ3RNM3B3?=
+ =?utf-8?B?a1J5azlLQ0ZmMHNsdmNlbEI0akVnOFFwUHNFSFYrTEU3Sm9DYlJLSHZuNjhW?=
+ =?utf-8?B?ZmNSamZtUkZmaUhSWlZrZ01kWFZJcjYwU3V6ZGgyZ1E3K2dOejA3TkR2TklE?=
+ =?utf-8?B?ZVdXeEg4enZoNlAxaFhJR3lXYk9iRlplOVAwaWtZTjY3TXA1eHdtZklBem1h?=
+ =?utf-8?B?MGIyVWVlSGV0UmVLYXlycnNmYTQrQ1RqQ21WeVFPeFQyTytRY0tCMTdqS1VI?=
+ =?utf-8?B?ZGtmNnU0S1JOdFBMc2VGMmpyTkgxelZjYk00Q3NyTzk2ZTdWN3ZDOG01OUdZ?=
+ =?utf-8?B?ZlVjZWg3bm9Eek8xSU1vTVhDWnNRL3dVRGxpcXFZd212QW8yMWVuZzVoeDhQ?=
+ =?utf-8?B?dms1T3U0RU4zQW83dHFnZXdUVGhDSzVPREdETEdEZDczSTlCcnBCdGNzdUFU?=
+ =?utf-8?B?Y1MvU2pkUGlvUzhxYkhZNzBzdlhwd0V4OC85cEFESmtzM0ZhSGgrUmRIeG5j?=
+ =?utf-8?B?MWlNU2xYS2M3WGV1RGlwOTgwZmRpSVo2NVNpdlF0MmQ3dmRnZWU1OFgxbS9y?=
+ =?utf-8?B?REE4dnhPK05oQ2lTSWlrOXNRSjY3d2FuWU01b0s0UkRzeXdkRUoxMUFFSHJa?=
+ =?utf-8?B?bDlvUUZ2QVRIZFp4NEpKQnV2SDRCdmlRdkZtQjNmWmJ5MTdCdzVCMXJqcXFl?=
+ =?utf-8?B?c0FMODFUTEk4UGtMQ25BNzFGWllVRVdNWDRnV0RTU1daZGVOSGJQWVRxSDRz?=
+ =?utf-8?B?UE5SNlBvNnByR2JRbnUvOFAzZk9wUkVycjBSTjRTcGNIZWNwVmQvWVNRbEUr?=
+ =?utf-8?B?ajltdnpMMHQrMEF5N0ZtcDNndlhCNzBJTjI0QTVBd3RtbjRiYTNNMHBRWGh1?=
+ =?utf-8?B?aUJkUGZrQ0xWdUsvcVNLWmJKZ0IvRk1DT21pYVNGYXE1K3lRbnlJZGV3cW84?=
+ =?utf-8?B?S1ZRVjE1RGV1Z3JSSjFZVllFRVlFSHpxNWIxejNHb2JRamhPNTVYRjRvRXlP?=
+ =?utf-8?B?bkZ2U0hMNUdFeFA2RUZGUDZkSEsxZDN2RDBGRjExSmV2U1JSS2ZEdzlPcWFF?=
+ =?utf-8?B?TUhVSEZ0eXlDUklsM25iUkl1Yi9wWEtJVjA0aHhUbXF6akxvcDBOQTRTbVBD?=
+ =?utf-8?B?Z2ZydkFWbUxkc1lFSjRIaGdFK1lURS9sa3J2Sy9sbXp1bndvb203ek95TUFZ?=
+ =?utf-8?B?VDNNUWdtQlNxelZLdGhoRjg4UklFZmcvbUFMUTJNOUJGb1JRQjJCaXpNTDlm?=
+ =?utf-8?B?SjNpMW85dEMyaVJ3ZXJXaG9SRDd3MEFBWUVqcHhxbjByTGtJTjRlZmswV25R?=
+ =?utf-8?B?TDZrV2tzTGdIK3Y2QkQ5R0hUV25DRVFqSEgrTGp2WTNpR01pSEpGTHJoaU54?=
+ =?utf-8?B?TUdlZklDc2RVMFJoZFpZZXJjQkExWlFUejBvUys1b3hsMjkzY0VYYjBaeXNP?=
+ =?utf-8?B?OWx1VzVBYzMyWU9CMnhQQmpIb21JK0YrbGM4MWd0YzFWZEVJMUIxcGVOOEll?=
+ =?utf-8?B?K3RyeTAzUzVDb0dnNGxDQkoxTkJaa0hYSnBweGFYT3llWkFVeGducFduK2J3?=
+ =?utf-8?B?NTQ1M2pTMHRQZWhyM0Vyam1RbGt3b3F5WFpqaXptMHBSM3V3Y3lpZGZ2dzc1?=
+ =?utf-8?B?MmV6MG9OY1dYT0I5TmpoeGcvSityb0tWK2RDYUp1cW92T2N4QzF6K3Q1MzJJ?=
+ =?utf-8?B?QU5PZFVqZCs2eGZRM1JhUTExT2NxeWdSUDc1UE91RHlSN3orREJNc01rbnZR?=
+ =?utf-8?B?Z1Y5SllJemlBN3ZCVnlXeDZlS3E3bGdTcndDcGl6VFFORTJZc1hKbHNZMzhV?=
+ =?utf-8?B?MTIyT2tGeWMvanVRWDBnWlRCSVN3N1YrZUh2ZkR1WElqS2ZmT2NUMU1RTWN6?=
+ =?utf-8?B?WGJaMjZWVW9KeXhhOXBId2xzaHh1MWEzVXFOZ2hROEc2YVJBdE1RVkNWdUV5?=
+ =?utf-8?B?VU1CSHBKdXY0WEowenQzNUh1WXZSeThjdFFaUk5KYVVWQ0E5ZjhyVi85cUFG?=
+ =?utf-8?B?T2lhdE1kRkM4Q3o4VzVoeUwvR2FGb3N1eGMwY2UyTnNmSU4yLzc0dlZyNURn?=
+ =?utf-8?B?VHBMdzlRbk1LekE2TXRJWGRkNE1nUDFaQ2lIaG1FR0hEVmFQd0Rwcms3cjZN?=
+ =?utf-8?B?NFRWb1BndkF3ZkpzUWVuZUl4L0JDaFZlMUhoNTRMSXY5dWU2VkdWNFFRVS9R?=
+ =?utf-8?B?TkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65d085d6-5e2b-467c-1d49-08dce14cdccc
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB8718.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 12:39:01.9231
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aUEDk9ZBFwdjUnmGxgUEGD0MypjSt/ZfOoF36cQvQ4aiMxUrnJ/BZe6umesIiuFanTmff7inSw8ozVpyDy6AjU28391X/NK8OjI8Za6eVh8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8674
+X-OriginatorOrg: intel.com
 
-On 30/09/2024 14:21, Laurent Pinchart wrote:
-> Hi Ricardo,
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+Date: Mon, 30 Sep 2024 14:33:45 +0200
+
+> From: Joe Damato <jdamato@fastly.com>
+> Date: Wed, 25 Sep 2024 18:00:17 +0000
 > 
-> On Mon, Sep 30, 2024 at 12:03:55PM +0000, Ricardo Ribalda wrote:
->> include/linux/string_choices.h contains a set of helpers that can be
->> used instead of hard coding some strings.
+>> The sizeof(struct napi_struct) can change. Don't hardcode the size to
+>> 400 bytes and instead use "sizeof(struct napi_struct)".
+> 
+> Just change this hardcode here when you submit your series.
+> I use sizeof() here only for structures which size can change depending
+> on .config, like ones containing spinlocks etc.
+> If you just add one field, it's easy to adjust the size here.
+> 
+> Otherwise, these assertions lose their sense. They're used to make sure
+> the structures are of *certain* *known* size, hardcoded inside them.
+> sizeof()s mean nothing, they don't give you the idea of how the
+> cachelines are organized after some code change.
+
+struct dim depends on spinlock debug settings, lockdep etc., plenty of
+different .config options which can change its size unpredictably.
+cpumask_var_t directly depends on CONFIG_NR_CPUS, but it can also be a
+pointer if CONFIG_CPUMASK_OFFSTACK. IOW its size can vary from 4 bytes
+to several Kbs.
+
+struct napi_struct doesn't have any such fields and doesn't depend on
+the kernel configuration, that's why it's hardcoded.
+Please don't change that, just adjust the hardcoded values when needed.
+Otherwise, if anyone have objections with strong arguments, I'd just
+remove these assertions completely.
+It's a common thing that if we change some generic structure in the
+kernel, we need to adjust some driver code.
+
+> 
 >>
->> Cocci has located some places where the helpers can be used. This
->> patchset uses the diff generated by cocci, plus these changes:
-> 
-> Personally I think most of those helpers just hinder readability for not
-> much added gain. String de-duplication is done by the linker already.
-> The only value I see in the helpers is ensuring that the strings are
-> consistently written, and I think we can do so through other means.
-
-Just my opinion: I'm OK with these new helpers, but I am not too keen to apply
-all this to existing source code. I.e., for new code it is fine, but if we have
-to update all drivers every time a new cocci test is added, then that will not
-scale.
-
-Note that I never ran cocci in my build scripts, so this is a new check that
-we haven't set rules for or have much experience with.
-
-checkpatch just checks the patches, it doesn't force you to fix existing code.
-
-Some of the cocci tests are clearly checking for incorrect code, but others are
-for code improvements (i.e. the code was correct, it can just be done slightly
-better). It's the second category were I think that should only apply to new code,
-and not existing code.
-
-Regards,
-
-	Hans
-
-> 
->> diff --git a/drivers/media/dvb-frontends/ascot2e.c b/drivers/media/dvb-frontends/ascot2e.c
->> index 8c3eb5d69dda..ec7a718428fc 100644
->> --- a/drivers/media/dvb-frontends/ascot2e.c
->> +++ b/drivers/media/dvb-frontends/ascot2e.c
->> @@ -104,7 +104,7 @@ static void ascot2e_i2c_debug(struct ascot2e_priv *priv,
->>                               u8 reg, u8 write, const u8 *data, u32 len)
->>  {
->>         dev_dbg(&priv->i2c->dev, "ascot2e: I2C %s reg 0x%02x size %d\n",
->> -               str_read_write(write == 0), reg, len);
->> +               str_write_read(write), reg, len);
->>         print_hex_dump_bytes("ascot2e: I2C data: ",
->>                 DUMP_PREFIX_OFFSET, data, len);
->>  }
->> diff --git a/drivers/media/dvb-frontends/cxd2841er.c b/drivers/media/dvb-frontends/cxd2841er.c
->> index db684f314b47..d1b84cd9c510 100644
->> --- a/drivers/media/dvb-frontends/cxd2841er.c
->> +++ b/drivers/media/dvb-frontends/cxd2841er.c
->> @@ -206,7 +206,7 @@ static void cxd2841er_i2c_debug(struct cxd2841er_priv *priv,
->>  {
->>         dev_dbg(&priv->i2c->dev,
->>                 "cxd2841er: I2C %s addr %02x reg 0x%02x size %d data %*ph\n",
->> -               str_read_write(write == 0), addr, reg, len, len, data);
->> +               str_write_read(write), addr, reg, len, len, data);
->>  }
+>> While fixing this, also move other calculations into compile time
+>> defines.
+>>
+>> Signed-off-by: Joe Damato <jdamato@fastly.com>
+>> ---
+>>  drivers/net/ethernet/intel/idpf/idpf_txrx.h | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+>> index f0537826f840..d5e904ddcb6e 100644
+>> --- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+>> +++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
+>> @@ -437,9 +437,13 @@ struct idpf_q_vector {
+>>  	cpumask_var_t affinity_mask;
+>>  	__cacheline_group_end_aligned(cold);
+>>  };
+>> -libeth_cacheline_set_assert(struct idpf_q_vector, 112,
+>> -			    424 + 2 * sizeof(struct dim),
+>> -			    8 + sizeof(cpumask_var_t));
+>> +
+>> +#define IDPF_Q_VECTOR_RO_SZ (112)
+>> +#define IDPF_Q_VECTOR_RW_SZ (sizeof(struct napi_struct) + 24 + \
+>> +			     2 * sizeof(struct dim))
+>> +#define IDPF_Q_VECTOR_COLD_SZ (8 + sizeof(cpumask_var_t))
+>> +libeth_cacheline_set_assert(struct idpf_q_vector, IDPF_Q_VECTOR_RO_SZ,
+>> +			    IDPF_Q_VECTOR_RW_SZ, IDPF_Q_VECTOR_COLD_SZ);
 >>  
->>  static int cxd2841er_write_regs(struct cxd2841er_priv *priv,
->> diff --git a/drivers/media/dvb-frontends/helene.c b/drivers/media/dvb-frontends/helene.c
->> index 52198cb49dba..b4527c141d9c 100644
->> --- a/drivers/media/dvb-frontends/helene.c
->> +++ b/drivers/media/dvb-frontends/helene.c
->> @@ -279,7 +279,7 @@ static void helene_i2c_debug(struct helene_priv *priv,
->>                 u8 reg, u8 write, const u8 *data, u32 len)
->>  {
->>         dev_dbg(&priv->i2c->dev, "helene: I2C %s reg 0x%02x size %d\n",
->> -                       str_read_write(write == 0), reg, len);
->> +                       str_write_read(write), reg, len);
->>         print_hex_dump_bytes("helene: I2C data: ",
->>                         DUMP_PREFIX_OFFSET, data, len);
->>  }
->> diff --git a/drivers/media/dvb-frontends/horus3a.c b/drivers/media/dvb-frontends/horus3a.c
->> index 84385079918c..10300ebf3ca0 100644
->> --- a/drivers/media/dvb-frontends/horus3a.c
->> +++ b/drivers/media/dvb-frontends/horus3a.c
->> @@ -38,7 +38,7 @@ static void horus3a_i2c_debug(struct horus3a_priv *priv,
->>                               u8 reg, u8 write, const u8 *data, u32 len)
->>  {
->>         dev_dbg(&priv->i2c->dev, "horus3a: I2C %s reg 0x%02x size %d\n",
->> -               str_read_write(write == 0), reg, len);
->> +               str_write_read(write), reg, len);
->>         print_hex_dump_bytes("horus3a: I2C data: ",
->>                 DUMP_PREFIX_OFFSET, data, len);
->>  }
->> diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
->> index ba174aa45afa..a43479c3ff03 100644
->> --- a/drivers/media/i2c/adv7842.c
->> +++ b/drivers/media/i2c/adv7842.c
->> @@ -2763,7 +2763,7 @@ static int adv7842_cp_log_status(struct v4l2_subdev *sd)
->>                           str_true_false(io_read(sd, 0x6a) & 0x10));
->>         }
->>         v4l2_info(sd, "CP free run: %s\n",
->> -                 str_on_off(!!(cp_read(sd, 0xff) & 0x10)));
->> +                 str_on_off(cp_read(sd, 0xff) & 0x10));
->>         v4l2_info(sd, "Prim-mode = 0x%x, video std = 0x%x, v_freq = 0x%x\n",
->>                   io_read(sd, 0x01) & 0x0f, io_read(sd, 0x00) & 0x3f,
->>                   (io_read(sd, 0x01) & 0x70) >> 4);
->> diff --git a/drivers/media/pci/saa7134/saa7134-cards.c b/drivers/media/pci/saa7134/saa7134-cards.c
->> index 301b89e799d8..79cd61fb0205 100644
->> --- a/drivers/media/pci/saa7134/saa7134-cards.c
->> +++ b/drivers/media/pci/saa7134/saa7134-cards.c
->> @@ -7981,7 +7981,7 @@ int saa7134_board_init2(struct saa7134_dev *dev)
->>                         rc = i2c_transfer(&dev->i2c_adap, &msg, 1);
->>                         pr_info("%s: probe IR chip @ i2c 0x%02x: %s\n",
->>                                    dev->name, msg.addr,
->> -                                  str_yes_no(1 == rc));
->> +                                  str_yes_no(rc == 1));
->>                         if (rc == 1)
->>                                 dev->has_remote = SAA7134_REMOTE_I2C;
->>                 }
->> diff --git a/drivers/media/pci/saa7134/saa7134-input.c b/drivers/media/pci/saa7134/saa7134-input.c
->> index 90837ec6e70f..239f0b9d080a 100644
->> --- a/drivers/media/pci/saa7134/saa7134-input.c
->> +++ b/drivers/media/pci/saa7134/saa7134-input.c
->> @@ -895,7 +895,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
->>                 rc = i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
->>                 input_dbg("probe 0x%02x @ %s: %s\n",
->>                         msg_msi.addr, dev->i2c_adap.name,
->> -                       str_yes_no(1 == rc));
->> +                       str_yes_no(rc == 1));
->>                 break;
->>         case SAA7134_BOARD_SNAZIO_TVPVR_PRO:
->>                 dev->init_data.name = "SnaZio* TVPVR PRO";
->> @@ -931,7 +931,7 @@ void saa7134_probe_i2c_ir(struct saa7134_dev *dev)
->>                 rc = i2c_transfer(&dev->i2c_adap, &msg_msi, 1);
->>                 input_dbg("probe 0x%02x @ %s: %s\n",
->>                         msg_msi.addr, dev->i2c_adap.name,
->> -                       str_yes_no(1 == rc));
->> +                       str_yes_no(rc == 1));
->>                 break;
->>         case SAA7134_BOARD_HAUPPAUGE_HVR1110:
->>                 dev->init_data.name = saa7134_boards[dev->board].name;
->> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
->> index 448c40caf363..b6c9bda214c8 100644
->> --- a/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
->> +++ b/drivers/media/usb/pvrusb2/pvrusb2-ctrl.c
->> @@ -521,7 +521,7 @@ int pvr2_ctrl_value_to_sym_internal(struct pvr2_ctrl *cptr,
->>                 *len = scnprintf(buf,maxlen,"%d",val);
->>                 ret = 0;
->>         } else if (cptr->info->type == pvr2_ctl_bool) {
->> -               *len = scnprintf(buf,maxlen,"%s",str_true_false(val));
->> +               *len = scnprintf(buf, maxlen, "%s", str_true_false(val));
->>                 ret = 0;
->>         } else if (cptr->info->type == pvr2_ctl_enum) {
->>                 const char * const *names;
->> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
->> index 96d3a0045fac..761d718478ca 100644
->> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
->> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
->> @@ -338,7 +338,7 @@ static void trace_stbit(const char *name,int val)
->>  {
->>         pvr2_trace(PVR2_TRACE_STBITS,
->>                    "State bit %s <-- %s",
->> -                  name,str_true_false(val));
->> +                  name, str_true_false(val));
->>  }
->>
->> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->> ---
->> Ricardo Ribalda (45):
->>       media: staging: ipu3: Use string_choices helpers
->>       media: staging: atomisp: Use string_choices helpers
->>       media: core: Use string_choices helpers
->>       media: pwc-ctl: Use string_choices helpers
->>       media: pvrusb2:Use string_choices helpers
->>       media: em28xx: Use string_choices helpers
->>       media: dvb-usb: Use string_choices helpers
->>       media: dvb-usb-v2: Use string_choices helpers
->>       media: cx231xx: Use string_choices helpers
->>       media: tuners: Use string_choices helpers
->>       media: rc: Use string_choices helpers
->>       media: dvb-frontends: Use string_choices helpers
->>       media: pci: cx23885: Use string_choices helpers
->>       media: saa7134: Use string_choices helpers
->>       media: amphion: Use string_choices helpers
->>       media: pci: ivtv: Use string_choices helpers
->>       media: bttv: Use string_choices helpers
->>       media: xilinx: Use string_choices helpers
->>       media: platform: ti: Use string_choices helpers
->>       media: st: Use string_choices helpers
->>       media: coda: Use string_choices helpers
->>       media: aspeed: Use string_choices helpers
->>       media: ipu6: Use string_choices helpers
->>       media: cx18: Use string_choices helpers
->>       media: cobalt: Use string_choices helpers
->>       media: videobuf2: Use string_choices helpers
->>       media: cec: Use string_choices helpers
->>       media: b2c2: Use string_choices helpers
->>       media: siano: Use string_choices helpers
->>       media: i2c: cx25840: Use string_choices helpers
->>       media: i2c: vpx3220: Use string_choices helpers
->>       media: i2c: tvp7002: Use string_choices helpers
->>       media: i2c: ths8200: Use string_choices helpers
->>       media: i2c: tda1997x: Use string_choices helpers
->>       media: i2c: tc358743: Use string_choices helpers
->>       media: i2c: st-mipid02: Use string_choices helpers
->>       media: i2c: msp3400: Use string_choices helpers
->>       media: i2c: max9286: Use string_choices helpers
->>       media: i2c: saa717x: Use string_choices helpers
->>       media: i2c: saa7127: Use string_choices helpers
->>       media: i2c: saa7115: Use string_choices helpers
->>       media: i2c: saa7110: Use string_choices helpers
->>       media: i2c: adv7842: Use string_choices helpers
->>       media: i2c: adv76xx: Use string_choices helpers
->>       media: i2c: adv7511: Use string_choices helpers
->>
->>  drivers/media/cec/platform/cec-gpio/cec-gpio.c     |  4 +-
->>  drivers/media/cec/usb/pulse8/pulse8-cec.c          |  4 +-
->>  drivers/media/common/b2c2/flexcop-hw-filter.c      |  4 +-
->>  drivers/media/common/siano/sms-cards.c             |  3 +-
->>  drivers/media/common/videobuf2/videobuf2-core.c    |  5 ++-
->>  drivers/media/dvb-frontends/ascot2e.c              |  2 +-
->>  drivers/media/dvb-frontends/cx24120.c              |  4 +-
->>  drivers/media/dvb-frontends/cxd2841er.c            |  2 +-
->>  drivers/media/dvb-frontends/drxk_hard.c            |  4 +-
->>  drivers/media/dvb-frontends/helene.c               |  2 +-
->>  drivers/media/dvb-frontends/horus3a.c              |  2 +-
->>  drivers/media/dvb-frontends/sp2.c                  |  2 +-
->>  drivers/media/i2c/adv7511-v4l2.c                   | 11 +++---
->>  drivers/media/i2c/adv7604.c                        | 25 ++++++------
->>  drivers/media/i2c/adv7842.c                        | 40 ++++++++++----------
->>  drivers/media/i2c/cx25840/cx25840-core.c           |  4 +-
->>  drivers/media/i2c/cx25840/cx25840-ir.c             | 34 ++++++++---------
->>  drivers/media/i2c/max9286.c                        |  2 +-
->>  drivers/media/i2c/msp3400-driver.c                 |  4 +-
->>  drivers/media/i2c/saa7110.c                        |  2 +-
->>  drivers/media/i2c/saa7115.c                        |  2 +-
->>  drivers/media/i2c/saa7127.c                        | 15 +++++---
->>  drivers/media/i2c/saa717x.c                        |  2 +-
->>  drivers/media/i2c/st-mipid02.c                     |  2 +-
->>  drivers/media/i2c/tc358743.c                       | 44 ++++++++++------------
->>  drivers/media/i2c/tda1997x.c                       |  6 +--
->>  drivers/media/i2c/ths8200.c                        |  4 +-
->>  drivers/media/i2c/tvp7002.c                        |  2 +-
->>  drivers/media/i2c/vpx3220.c                        |  2 +-
->>  drivers/media/pci/bt8xx/bttv-cards.c               | 16 ++++----
->>  drivers/media/pci/bt8xx/bttv-driver.c              |  6 +--
->>  drivers/media/pci/cobalt/cobalt-driver.c           |  2 +-
->>  drivers/media/pci/cx18/cx18-av-core.c              |  4 +-
->>  drivers/media/pci/cx23885/altera-ci.c              |  2 +-
->>  drivers/media/pci/cx23885/cimax2.c                 |  2 +-
->>  drivers/media/pci/cx23885/cx23888-ir.c             | 36 +++++++++---------
->>  drivers/media/pci/intel/ipu6/ipu6-isys-csi2.c      |  2 +-
->>  drivers/media/pci/ivtv/ivtvfb.c                    |  4 +-
->>  drivers/media/pci/saa7134/saa7134-cards.c          |  2 +-
->>  drivers/media/pci/saa7134/saa7134-dvb.c            |  2 +-
->>  drivers/media/pci/saa7134/saa7134-input.c          |  6 +--
->>  drivers/media/pci/saa7134/saa7134-video.c          |  2 +-
->>  drivers/media/platform/amphion/venc.c              |  2 +-
->>  drivers/media/platform/amphion/vpu_dbg.c           |  2 +-
->>  drivers/media/platform/aspeed/aspeed-video.c       |  4 +-
->>  drivers/media/platform/chips-media/coda/imx-vdoa.c |  3 +-
->>  drivers/media/platform/st/sti/hva/hva-debugfs.c    |  6 +--
->>  drivers/media/platform/ti/omap3isp/ispstat.c       |  2 +-
->>  drivers/media/platform/xilinx/xilinx-csi2rxss.c    | 18 ++++-----
->>  drivers/media/rc/ene_ir.c                          |  3 +-
->>  drivers/media/rc/mceusb.c                          |  3 +-
->>  drivers/media/rc/serial_ir.c                       |  5 ++-
->>  drivers/media/tuners/tda18250.c                    |  2 +-
->>  drivers/media/tuners/tda9887.c                     | 10 ++---
->>  drivers/media/usb/cx231xx/cx231xx-i2c.c            |  4 +-
->>  drivers/media/usb/cx231xx/cx231xx-video.c          |  2 +-
->>  drivers/media/usb/dvb-usb-v2/az6007.c              |  4 +-
->>  drivers/media/usb/dvb-usb-v2/dvb_usb_core.c        |  4 +-
->>  drivers/media/usb/dvb-usb/af9005-fe.c              |  4 +-
->>  drivers/media/usb/dvb-usb/dvb-usb-dvb.c            |  6 +--
->>  drivers/media/usb/dvb-usb/opera1.c                 |  8 ++--
->>  drivers/media/usb/em28xx/em28xx-i2c.c              |  4 +-
->>  drivers/media/usb/em28xx/em28xx-video.c            |  2 +-
->>  drivers/media/usb/pvrusb2/pvrusb2-ctrl.c           |  2 +-
->>  drivers/media/usb/pvrusb2/pvrusb2-debugifc.c       |  3 +-
->>  drivers/media/usb/pvrusb2/pvrusb2-encoder.c        |  5 +--
->>  drivers/media/usb/pvrusb2/pvrusb2-hdw.c            |  6 +--
->>  drivers/media/usb/pvrusb2/pvrusb2-i2c-core.c       |  3 +-
->>  drivers/media/usb/pwc/pwc-ctrl.c                   |  2 +-
->>  drivers/media/v4l2-core/v4l2-ctrls-core.c          |  3 +-
->>  drivers/media/v4l2-core/v4l2-fwnode.c              | 12 +++---
->>  .../media/atomisp/pci/atomisp_compat_css20.c       |  2 +-
->>  .../media/atomisp/pci/atomisp_csi2_bridge.c        |  2 +-
->>  .../media/atomisp/pci/atomisp_gmin_platform.c      |  4 +-
->>  drivers/staging/media/atomisp/pci/atomisp_v4l2.c   |  4 +-
->>  .../media/atomisp/pci/runtime/binary/src/binary.c  |  2 +-
->>  drivers/staging/media/atomisp/pci/sh_css.c         |  2 +-
->>  drivers/staging/media/ipu3/ipu3-v4l2.c             |  4 +-
->>  78 files changed, 240 insertions(+), 239 deletions(-)
->> ---
->> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
->> change-id: 20240930-cocci-opportunity-40bca6a17c42
-> 
+>>  struct idpf_rx_queue_stats {
+>>  	u64_stats_t packets;
 
+Thanks,
+Olek
 
