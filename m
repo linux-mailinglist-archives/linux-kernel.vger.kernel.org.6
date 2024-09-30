@@ -1,177 +1,164 @@
-Return-Path: <linux-kernel+bounces-344386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A31B98A8F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:45:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A659A98A91A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BCAE28408C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8539B2A5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB037192D94;
-	Mon, 30 Sep 2024 15:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E20C71925AF;
+	Mon, 30 Sep 2024 15:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZeARaNrO"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="YvivWYIQ"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81999192B66
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D612319258C
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727711027; cv=none; b=OVJxqVWgHZdPNe/RPtEyIukUAmsWSCfgjtts3XORRO9bA5hHKOBCT+pov6VPneAZiYV97ka435FrUsqIXl3eXaN8HCoypYXrvLUqY1AYIKfSO47RsipYVH2lCvkhIaaFz6Yg8pHpCnPEXI3ylK5jL+8iwvXIbQwtfAyJNp5m9bs=
+	t=1727711060; cv=none; b=eSq+z57rZpQ7JJWT+xRRKhcQWeYaxnICp0GksZIv+V8AlVhwEPQxHGnnMmj6IGlqpTq8se8AbAqcskT5rWIohJPlBaD6VNv88j61yQcrEx89PhcCys/Hij/iqlhAb6B72GG7v566iairhqyLj9aD2EJfLziQ87r53ND49VRrB34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727711027; c=relaxed/simple;
-	bh=cAsqa3qYXqhnj1agKTZPtloe67eD9YBRbldk75Q8XdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GU9VuNbwZjhJL1Nhk27f1l4VgS2CtvQQ1Jwx9w85WDJlVA5uaCNS3R5mUCtSa+36DZ9+wbsoOEohlMwWk/GqMmYJfc//gfKmU3MnztL1IudWlKn7wL+GZ9oqvCoQPVarLcQGuHWqBTx+xbJWaRilKi/+6zwwn18AtIRJmDxrpX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZeARaNrO; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7db1f13b14aso3828480a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:43:45 -0700 (PDT)
+	s=arc-20240116; t=1727711060; c=relaxed/simple;
+	bh=FYniBTHnRswEhFv8p+aWwUFDa0x+f3zLNmbIy+u4VDc=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=LzNmUTd1s7vgGjj5X7LPbxlqNK/YVWdpQ2wxzgUIrFgDZdAjf8gU6U+XN8COZIR7DFQWapnY10ck6jBwiUsyAvRoQrlFLzepRe+uvyuYyriaptRvsdwFgBsoopzX9WXRpZ2TQakCtEJci77Xev9jId6IjQQpTRDQ/sgYhTo9j68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=YvivWYIQ; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727711025; x=1728315825; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fNZ4BRKI4heUuNuygwTDPDgSoVqXEGdj+M0ZAo01Wgw=;
-        b=ZeARaNrOSp1o2mVfxWfRRBjHRE0mi+k8ASAskTBtp7s1WMBfucukn7nGWvYzTKDDzI
-         CaPuFq5TO0zznh4sIU+ytGY+wvnkWU8Fbvs6/XSaqaXgDGNWSGdGG9DEBbh1BXTB0zs0
-         LbQAaepT5e3QIgGNnR1xbI9TStHijRecWQkeudtjzIaF6R4OwyrsUDq/RV2whyiUIHaD
-         fCHNUaw+TmajciAgHm4CfuUkBx99gFeljipdtm69Zn6jgGKOmfXe2bU4YE1HC8A82S5u
-         va/1D2oShAOIW0XBO0wMcpISmD2G9lGByBTMUffV2B77LwvP/b1xsgO0F95Vs1Y2/RKC
-         gH+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727711025; x=1728315825;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fNZ4BRKI4heUuNuygwTDPDgSoVqXEGdj+M0ZAo01Wgw=;
-        b=Uexf8+3Sipi2LqTCLfwO5a2XVENKg7wqJcNyXXOGc3WTn/Py0tF44XOl+re5IYWSJY
-         CxO6GP4vXdHJT+FcA4y8kIPAkmWHqTgiREIaxoeIOJ9w7LzUaKk1seCj92b5hFbMcQ3Y
-         2Mz7Qqi8Tni/J8RMuqpg2lIY6ky36KtQ5g67Nqn8YxY3wZfIxeSRXw5irfV3gY8hf1AX
-         7HPDbB5yoPMKD6JLhQdARc4ksM270onavjIpfUQnCXJTE4TOIJeJbQR80z7du3WFFrvY
-         La23BZdsTw5FteTYUx5F42dJCqy2pXaqZQIlpxiLILF+P5J3on4YiNM34I9AsVPkeVJH
-         V5qw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcQDlYYMxh7XwVd/2mPBqmO/2FGQOSeRhb8WgM+Hg6A2oYBPl+M6VkX7TstB+tcgpJ2Rlqj4dzQcxHf9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk9329Ia16HNCAvqsn9lzQJf5+BfZzC6/OghgWv/CUQtbQC1VM
-	i9vOieA0A8EDCFyDee2o2s0WW+9DNJW2UGDsEeqWQXSN6a9FUlapFzo0tIC00w==
-X-Google-Smtp-Source: AGHT+IHHaRFu3mDRiM3/orLs2TA6CzeY6SJU7xXYhg2AH/bZOv0apPv2H6UgsN+fwa3K1V3zM5MW1A==
-X-Received: by 2002:a05:6a21:3414:b0:1d2:e504:52ba with SMTP id adf61e73a8af0-1d4fa78b7a0mr20068809637.38.1727711024765;
-        Mon, 30 Sep 2024 08:43:44 -0700 (PDT)
-Received: from thinkpad ([36.255.17.150])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2649ca2dsm6369843b3a.41.2024.09.30.08.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 08:43:44 -0700 (PDT)
-Date: Mon, 30 Sep 2024 21:13:37 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Manish Pandey <quic_mapa@quicinc.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
-	quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com,
-	quic_rampraka@quicinc.com, quic_cang@quicinc.com,
-	quic_nguyenb@quicinc.com
-Subject: Re: [PATCH V3] scsi: ufs: ufs-qcom: add fixup_dev_quirks vops
-Message-ID: <20240930154337.r65qk2bps5jsgbnm@thinkpad>
-References: <20240903131546.1141-1-quic_mapa@quicinc.com>
+  d=inria.fr; s=dc;
+  h=date:from:to:subject:message-id:mime-version;
+  bh=bY/0f3CNjhpx/FyFd42O0wfTb7Is37oQ67w3+Wwi7iU=;
+  b=YvivWYIQCmF94LId8xDFQ8JVfrhXCx/PQUi5hsc2ZBq7FddXXSOBOsNl
+   eKKErMOGASlbpTmqLFFKl3XokQgZU+IyVzX7uxoTLDUz9Ly94TlARVdV2
+   rVABHdCYl9L164fFMMAVnQsK6u+iqOwsBeW769wd9ATHPv4/nSYK50wxN
+   A=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,166,1725314400"; 
+   d="scan'208";a="186033570"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 17:44:15 +0200
+Date: Mon, 30 Sep 2024 17:44:15 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Boris Brezillon <bbrezillon@kernel.org>, 
+    Steven Price <steven.price@arm.com>, linux-kernel@vger.kernel.org, 
+    oe-kbuild-all@lists.linux.dev
+Subject: drivers/gpu/drm/panthor/panthor_sched.c:2024:15-20: ERROR: invalid
+ reference to the index variable of the iterator on line 1997 (fwd)
+Message-ID: <e872f55b-ca2a-df9d-1f63-8b9b1612d67@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240903131546.1141-1-quic_mapa@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Sep 03, 2024 at 06:45:46PM +0530, Manish Pandey wrote:
-> Add fixup_dev_quirk vops in QCOM UFS platforms and provide an initial
-> vendor-specific device quirk table to add UFS device specific quirks
-> which are enabled only for specified UFS devices.
-> 
-> - Add DELAY_BEFORE_LPM quirk for Skhynix UFS devices to introduce a
->   delay before VCC is powered off in QCOM platforms.
-> - Add DELAY_AFTER_LPM quirk for Toshiba UFS devices to introduce a
->   delay after the VCC power rail is turned off in QCOM platforms.
-> - Move UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE quirk from
->   ufs_qcom_apply_dev_quirks to ufs_qcom_dev_fixups.
-> 
-> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+The use of group on line 2024 does not look right to me.  It's not
+pointing to a meaningful value at this point.
 
-I'd still like to have these quirks in the core driver if they apply to other
-platforms as well. But I'll leave it up to you to check with respective device
-manufacturers.
+julia
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---------- Forwarded message ----------
+Date: Mon, 30 Sep 2024 23:39:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: oe-kbuild@lists.linux.dev
+Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
+Subject: drivers/gpu/drm/panthor/panthor_sched.c:2024:15-20: ERROR: invalid
+    reference to the index variable of the iterator on line 1997
 
-- Mani
+BCC: lkp@intel.com
+CC: oe-kbuild-all@lists.linux.dev
+CC: linux-kernel@vger.kernel.org
+TO: Boris Brezillon <bbrezillon@kernel.org>
+CC: Steven Price <steven.price@arm.com>
 
-> ---
-> 
-> Changes from v2:
-> - Addressed Mani's comments.
-> - Moved quirk for WDC to ufs_qcom_dev_fixups.
-> 
-> Changes from v2:
-> - Integrated Bart’s feedback and consolidated the patches into one.
-> ---
->  drivers/ufs/host/ufs-qcom.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index c87fdc849c62..6a715373d81c 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -828,12 +828,28 @@ static int ufs_qcom_apply_dev_quirks(struct ufs_hba *hba)
->  	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME)
->  		err = ufs_qcom_quirk_host_pa_saveconfigtime(hba);
->  
-> -	if (hba->dev_info.wmanufacturerid == UFS_VENDOR_WDC)
-> -		hba->dev_quirks |= UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE;
-> -
->  	return err;
->  }
->  
-> +/* UFS device-specific quirks */
-> +static struct ufs_dev_quirk ufs_qcom_dev_fixups[] = {
-> +	{ .wmanufacturerid = UFS_VENDOR_SKHYNIX,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_BEFORE_LPM },
-> +	{ .wmanufacturerid = UFS_VENDOR_TOSHIBA,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_DELAY_AFTER_LPM },
-> +	{ .wmanufacturerid = UFS_VENDOR_WDC,
-> +	  .model = UFS_ANY_MODEL,
-> +	  .quirk = UFS_DEVICE_QUIRK_HOST_PA_TACTIVATE },
-> +	{}
-> +};
-> +
-> +static void ufs_qcom_fixup_dev_quirks(struct ufs_hba *hba)
-> +{
-> +	ufshcd_fixup_dev_quirks(hba, ufs_qcom_dev_fixups);
-> +}
-> +
->  static u32 ufs_qcom_get_ufs_hci_version(struct ufs_hba *hba)
->  {
->  	return ufshci_version(2, 0);
-> @@ -1801,6 +1817,7 @@ static const struct ufs_hba_variant_ops ufs_hba_qcom_vops = {
->  	.link_startup_notify    = ufs_qcom_link_startup_notify,
->  	.pwr_change_notify	= ufs_qcom_pwr_change_notify,
->  	.apply_dev_quirks	= ufs_qcom_apply_dev_quirks,
-> +	.fixup_dev_quirks       = ufs_qcom_fixup_dev_quirks,
->  	.suspend		= ufs_qcom_suspend,
->  	.resume			= ufs_qcom_resume,
->  	.dbg_register_dump	= ufs_qcom_dump_dbg_regs,
-> -- 
-> 2.17.1
-> 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9852d85ec9d492ebef56dc5f229416c925758edc
+commit: d72f049087d4f973f6332b599c92177e718107de drm/panthor: Allow driver compilation
+date:   7 months ago
+:::::: branch date: 18 hours ago
+:::::: commit date: 7 months ago
+config: sparc-randconfig-r064-20240930 (https://download.01.org/0day-ci/archive/20240930/202409302306.UDikqa03-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Julia Lawall <julia.lawall@inria.fr>
+| Closes: https://lore.kernel.org/r/202409302306.UDikqa03-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/panthor/panthor_sched.c:2024:15-20: ERROR: invalid reference to the index variable of the iterator on line 1997
+   drivers/gpu/drm/panthor/panthor_sched.c:2024:15-20: ERROR: invalid reference to the index variable of the iterator on line 2027
+
+vim +2024 drivers/gpu/drm/panthor/panthor_sched.c
+
+de85488138247d Boris Brezillon 2024-02-29  1988
+de85488138247d Boris Brezillon 2024-02-29  1989  static void
+de85488138247d Boris Brezillon 2024-02-29  1990  tick_ctx_cleanup(struct panthor_scheduler *sched,
+de85488138247d Boris Brezillon 2024-02-29  1991  		 struct panthor_sched_tick_ctx *ctx)
+de85488138247d Boris Brezillon 2024-02-29  1992  {
+de85488138247d Boris Brezillon 2024-02-29  1993  	struct panthor_group *group, *tmp;
+de85488138247d Boris Brezillon 2024-02-29  1994  	u32 i;
+de85488138247d Boris Brezillon 2024-02-29  1995
+de85488138247d Boris Brezillon 2024-02-29  1996  	for (i = 0; i < ARRAY_SIZE(ctx->old_groups); i++) {
+de85488138247d Boris Brezillon 2024-02-29 @1997  		list_for_each_entry_safe(group, tmp, &ctx->old_groups[i], run_node) {
+de85488138247d Boris Brezillon 2024-02-29  1998  			/* If everything went fine, we should only have groups
+de85488138247d Boris Brezillon 2024-02-29  1999  			 * to be terminated in the old_groups lists.
+de85488138247d Boris Brezillon 2024-02-29  2000  			 */
+de85488138247d Boris Brezillon 2024-02-29  2001  			drm_WARN_ON(&group->ptdev->base, !ctx->csg_upd_failed_mask &&
+de85488138247d Boris Brezillon 2024-02-29  2002  				    group_can_run(group));
+de85488138247d Boris Brezillon 2024-02-29  2003
+de85488138247d Boris Brezillon 2024-02-29  2004  			if (!group_can_run(group)) {
+de85488138247d Boris Brezillon 2024-02-29  2005  				list_del_init(&group->run_node);
+de85488138247d Boris Brezillon 2024-02-29  2006  				list_del_init(&group->wait_node);
+de85488138247d Boris Brezillon 2024-02-29  2007  				group_queue_work(group, term);
+de85488138247d Boris Brezillon 2024-02-29  2008  			} else if (group->csg_id >= 0) {
+de85488138247d Boris Brezillon 2024-02-29  2009  				list_del_init(&group->run_node);
+de85488138247d Boris Brezillon 2024-02-29  2010  			} else {
+de85488138247d Boris Brezillon 2024-02-29  2011  				list_move(&group->run_node,
+de85488138247d Boris Brezillon 2024-02-29  2012  					  group_is_idle(group) ?
+de85488138247d Boris Brezillon 2024-02-29  2013  					  &sched->groups.idle[group->priority] :
+de85488138247d Boris Brezillon 2024-02-29  2014  					  &sched->groups.runnable[group->priority]);
+de85488138247d Boris Brezillon 2024-02-29  2015  			}
+de85488138247d Boris Brezillon 2024-02-29  2016  			group_put(group);
+de85488138247d Boris Brezillon 2024-02-29  2017  		}
+de85488138247d Boris Brezillon 2024-02-29  2018  	}
+de85488138247d Boris Brezillon 2024-02-29  2019
+de85488138247d Boris Brezillon 2024-02-29  2020  	for (i = 0; i < ARRAY_SIZE(ctx->groups); i++) {
+de85488138247d Boris Brezillon 2024-02-29  2021  		/* If everything went fine, the groups to schedule lists should
+de85488138247d Boris Brezillon 2024-02-29  2022  		 * be empty.
+de85488138247d Boris Brezillon 2024-02-29  2023  		 */
+de85488138247d Boris Brezillon 2024-02-29 @2024  		drm_WARN_ON(&group->ptdev->base,
+de85488138247d Boris Brezillon 2024-02-29  2025  			    !ctx->csg_upd_failed_mask && !list_empty(&ctx->groups[i]));
+de85488138247d Boris Brezillon 2024-02-29  2026
+de85488138247d Boris Brezillon 2024-02-29  2027  		list_for_each_entry_safe(group, tmp, &ctx->groups[i], run_node) {
+de85488138247d Boris Brezillon 2024-02-29  2028  			if (group->csg_id >= 0) {
+de85488138247d Boris Brezillon 2024-02-29  2029  				list_del_init(&group->run_node);
+de85488138247d Boris Brezillon 2024-02-29  2030  			} else {
+de85488138247d Boris Brezillon 2024-02-29  2031  				list_move(&group->run_node,
+de85488138247d Boris Brezillon 2024-02-29  2032  					  group_is_idle(group) ?
+de85488138247d Boris Brezillon 2024-02-29  2033  					  &sched->groups.idle[group->priority] :
+de85488138247d Boris Brezillon 2024-02-29  2034  					  &sched->groups.runnable[group->priority]);
+de85488138247d Boris Brezillon 2024-02-29  2035  			}
+de85488138247d Boris Brezillon 2024-02-29  2036  			group_put(group);
+de85488138247d Boris Brezillon 2024-02-29  2037  		}
+de85488138247d Boris Brezillon 2024-02-29  2038  	}
+de85488138247d Boris Brezillon 2024-02-29  2039  }
+de85488138247d Boris Brezillon 2024-02-29  2040
+
+:::::: The code at line 2024 was first introduced by commit
+:::::: de85488138247d034eb3241840424a54d660926b drm/panthor: Add the scheduler logical block
+
+:::::: TO: Boris Brezillon <boris.brezillon@collabora.com>
+:::::: CC: Boris Brezillon <boris.brezillon@collabora.com>
 
 -- 
-மணிவண்ணன் சதாசிவம்
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
