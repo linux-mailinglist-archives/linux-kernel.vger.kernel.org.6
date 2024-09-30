@@ -1,126 +1,245 @@
-Return-Path: <linux-kernel+bounces-344181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCCA98A5E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A7898A5E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 041491F241B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:52:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89D601F24229
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7D5190067;
-	Mon, 30 Sep 2024 13:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5369718FDD8;
+	Mon, 30 Sep 2024 13:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pkmEAuNS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TsO7ae9L"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4137A4D9FE;
-	Mon, 30 Sep 2024 13:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D654D9FE;
+	Mon, 30 Sep 2024 13:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704332; cv=none; b=b6ZevhylbBuFQEVR0Trm1kKGypNGPRxfJABDWQNW7Uq9K6YFZxcWvIeIc3mx6L5lB3dGh9dkAhWhwOspZ588mqtxwQZZyypewx+YE+yH+My7Z+/bMwjoDXnirn2hO/ebrfRivSQBjpfas4TQqKw8quMbR8sG/Ur3HOqiW6cWHiY=
+	t=1727704340; cv=none; b=fvAeakSS6mW0gt9A/t+JBt9tTC48pn4ZZ58EYWFXP3tNVCIGwgs0bDb5jDiAz58Gmzt/++gyHU+xVa3kKG1Gr8qO1i451yNLJ6j3e6kKd2jDZT3CGewnIOhuYTjSxTr0QZxTJqi2jnvZFOaV7mDE58JyxhONHn/IKxVFQl8wrMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704332; c=relaxed/simple;
-	bh=gRyrUqnsVTZ04DmjZlOcDqqFW1akJcUB1uvMMHzWt/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HA/865aRlkxqkVQOi2H0PPrIsOEgYyg7Iz/x1+rwlUe1omIcXkvNwFLEpiVUrf1iOAOvZUnS5f6OFz5I9UCuTBT0S0i0n4BY4/3fSPQ5vD40MMQGOx1xrAhpPixK31cSt1e1eebhRE4QkkO3rMZjP8kEY2WdvAKFElNDGzPYdJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pkmEAuNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E424EC4CEC7;
-	Mon, 30 Sep 2024 13:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727704331;
-	bh=gRyrUqnsVTZ04DmjZlOcDqqFW1akJcUB1uvMMHzWt/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pkmEAuNSoHxHqmL+ZHpv1567Q5bOr3gONzre5aoFoX1ZHarVqStk5kAtUZMLtmdeE
-	 1U24YHV/DmKJ16BasnQGdBitG+8xfp+DnQZuUbbTPKpYQgFEH1/ajaaygtBUlIRKYb
-	 PLJnNJ528IYlIiY4OIPJGSdW+TnLROp8sbWZqx2zeIQx10YpHBRqe4AuBvJOVOmfn6
-	 wDG0IeVgmOC6yed1zJlrJDa0pAKbItWpbE/UoxJdz+GEldR7PzW3wNfzBtQOKCqDb+
-	 SlQG6tsBwp/vc/2jolqwjzZig1wWcsg8v9RXXTKWU1G++ZT6msaqjRrWr2UuPB56Kx
-	 1Ns8/9EzdGsvw==
-Date: Mon, 30 Sep 2024 14:52:06 +0100
-From: Conor Dooley <conor@kernel.org>
-To: pierre-henry.moussay@microchip.com
-Cc: Linux4Microchip@microchip.com, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [linux][PATCH v2 12/20] dt-bindings: net: cdns,macb: Add PIC64GX
- compatibility
-Message-ID: <20240930-unify-scratch-bbc8adf4e39d@spud>
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-13-pierre-henry.moussay@microchip.com>
+	s=arc-20240116; t=1727704340; c=relaxed/simple;
+	bh=LoRGxtWYz5q0JftDlHdTeNxriMQmKKzgzfPx3HFoHVQ=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=dZ0Alh92rPfuMYTlUHZi8Awzokogz8yEmptud12bYqgCQmNb3Hds3xP+sD+MXDepzVOslWLNRGyE575dAtpbMl2AWO1rAVSvnZgjZGOCEkHYOiCpIJQHFND/jub0LTDmapPCnSPnyvawM5yk7KmTirIdTMrCMzXtN3gH3eOyu0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TsO7ae9L; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727704339; x=1759240339;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=LoRGxtWYz5q0JftDlHdTeNxriMQmKKzgzfPx3HFoHVQ=;
+  b=TsO7ae9Lk9P/g/c984exndYftv/KCem7o0GCpuFg+PjQqKmHyPdvxOHW
+   F/6i+aqSOVT8wHBKDD6N4uXSo6U4EKD1RpxxauwVSQEvSZiWBluBMAWhq
+   roI4hqA8LIe5Yt+QK78DhUpYE9y3EU4cmDFyhyBwBcHzrwMrATNKnYvTP
+   czjjCcV1b/FrBCfuIOPwIa4ayLtW2i7jl7uYdyd/ftm1rq72MoSav0fFa
+   GklNP2ICIDu2rS92mlQ0ro2ewRYKBLYEdVRL6Wpc/osIyVLurufuPedt3
+   XBDZQ2gu/MQWS7CZh+SmxzjusDmY9ER6BFbWTsPY8Btr4AHz0ErTFLYli
+   A==;
+X-CSE-ConnectionGUID: jcyONqgsTfmtIVkW0Pakhw==
+X-CSE-MsgGUID: uQt33fqqT22h1qgdfMGfuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="52207941"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="52207941"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:52:16 -0700
+X-CSE-ConnectionGUID: N8oAuKZRQ2WeEDi/dUVtqg==
+X-CSE-MsgGUID: 6PheTJ2dSHm2TGCkq4mtew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="96639867"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:52:14 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Sep 2024 16:52:09 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 07/13] selftests/resctrl: Only support measured read
+ operation
+In-Reply-To: <491d5a951751dd74ccb84e175f6dd457dbed5c31.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <f18e1956-0eda-2674-2948-72059489c21b@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <491d5a951751dd74ccb84e175f6dd457dbed5c31.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="OLuPF48/Wq3esOBj"
-Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-13-pierre-henry.moussay@microchip.com>
+Content-Type: text/plain; charset=US-ASCII
 
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
 
---OLuPF48/Wq3esOBj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 30, 2024 at 10:54:41AM +0100, pierre-henry.moussay@microchip.co=
-m wrote:
-> From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
->=20
-> PIC64GX uses cdns,macb IP, without additional vendor features
-
-That's not really true. There's a mpfs specific match data structure in
-the driver which the pic64gx also needs to use.
-
->=20
-> Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+> The CMT, MBM, and MBA tests rely on a benchmark to generate
+> memory traffic. By default this is the "fill_buf" benchmark that
+> can be replaced via the "-b" command line argument.
+> 
+> The original intent of the "-b" command line parameter was
+> to replace the default "fill_buf" benchmark, but the implementation
+> also exposes an alternative use case where the "fill_buf" parameters
+> itself can be modified. One of the parameters to "fill_buf" is the
+> "operation" that can be either "read" or "write" and indicates
+> whether the "fill_buf" should use "read" or "write" operations on the
+> allocated buffer.
+> 
+> While replacing "fill_buf" default parameters is technically possible,
+> replacing the default "read" parameter with "write" is not supported
+> because the MBA and MBM tests only measure "read" operations. The
+> "read" operation is also most appropriate for the CMT test that aims
+> to use the benchmark to allocate into the cache.
+> 
+> Avoid any potential inconsistencies between test and measurement by
+> removing code for unsupported "write" operations to the buffer.
+> Ignore any attempt from user space to enable this unsupported test
+> configuration, instead always use read operations.
+> 
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
 > ---
->  Documentation/devicetree/bindings/net/cdns,macb.yaml | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/cdns,macb.yaml b/Docum=
-entation/devicetree/bindings/net/cdns,macb.yaml
-> index 3c30dd23cd4e..25ca7f5a7357 100644
-> --- a/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> +++ b/Documentation/devicetree/bindings/net/cdns,macb.yaml
-> @@ -38,7 +38,10 @@ properties:
->                - cdns,sam9x60-macb     # Microchip sam9x60 SoC
->                - microchip,mpfs-macb   # Microchip PolarFire SoC
->            - const: cdns,macb          # Generic
+> Changes since V1:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/fill_buf.c    | 28 ++-----------------
+>  tools/testing/selftests/resctrl/resctrl.h     |  2 +-
+>  .../testing/selftests/resctrl/resctrl_tests.c |  5 +++-
+>  tools/testing/selftests/resctrl/resctrl_val.c |  5 ++--
+>  4 files changed, 9 insertions(+), 31 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+> index 854f0108d8e6..e4f1cea317f1 100644
+> --- a/tools/testing/selftests/resctrl/fill_buf.c
+> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+> @@ -88,18 +88,6 @@ static int fill_one_span_read(unsigned char *buf, size_t buf_size)
+>  	return sum;
+>  }
+>  
+> -static void fill_one_span_write(unsigned char *buf, size_t buf_size)
+> -{
+> -	unsigned char *end_ptr = buf + buf_size;
+> -	unsigned char *p;
 > -
-> +      - items:
-> +          - const: microchip,pic64gx-macb # Microchip PIC64GX SoC
-> +          - const: microchip,mpfs-macb    # Microchip PolarFire SoC
-> +          - const: cdns,macb              # Generic
->        - items:
->            - enum:
->                - atmel,sama5d3-macb    # 10/100Mbit IP on Atmel sama5d3 S=
-oCs
-> --=20
-> 2.30.2
->=20
+> -	p = buf;
+> -	while (p < end_ptr) {
+> -		*p = '1';
+> -		p += (CL_SIZE / 2);
+> -	}
+> -}
+> -
+>  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
+>  {
+>  	int ret = 0;
+> @@ -114,15 +102,6 @@ void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
+>  	*value_sink = ret;
+>  }
+>  
+> -static void fill_cache_write(unsigned char *buf, size_t buf_size, bool once)
+> -{
+> -	while (1) {
+> -		fill_one_span_write(buf, buf_size);
+> -		if (once)
+> -			break;
+> -	}
+> -}
+> -
+>  unsigned char *alloc_buffer(size_t buf_size, int memflush)
+>  {
+>  	void *buf = NULL;
+> @@ -151,7 +130,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memflush)
+>  	return buf;
+>  }
+>  
+> -int run_fill_buf(size_t buf_size, int memflush, int op)
+> +int run_fill_buf(size_t buf_size, int memflush)
+>  {
+>  	unsigned char *buf;
+>  
+> @@ -159,10 +138,7 @@ int run_fill_buf(size_t buf_size, int memflush, int op)
+>  	if (!buf)
+>  		return -1;
+>  
+> -	if (op == 0)
+> -		fill_cache_read(buf, buf_size, false);
+> -	else
+> -		fill_cache_write(buf, buf_size, false);
+> +	fill_cache_read(buf, buf_size, false);
+>  
+>  	free(buf);
+>  
+> diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
+> index 51f5f4b25e06..ba1ce1b35699 100644
+> --- a/tools/testing/selftests/resctrl/resctrl.h
+> +++ b/tools/testing/selftests/resctrl/resctrl.h
+> @@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
+>  unsigned char *alloc_buffer(size_t buf_size, int memflush);
+>  void mem_flush(unsigned char *buf, size_t buf_size);
+>  void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
+> -int run_fill_buf(size_t buf_size, int memflush, int op);
+> +int run_fill_buf(size_t buf_size, int memflush);
+>  int initialize_mem_bw_imc(void);
+>  int measure_mem_bw(const struct user_params *uparams,
+>  		   struct resctrl_val_param *param, pid_t bm_pid,
+> diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
+> index bee4123a5a9b..60627dbae20a 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_tests.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+> @@ -265,13 +265,16 @@ int main(int argc, char **argv)
+>  			ksft_exit_fail_msg("Out of memory!\n");
+>  		uparams.benchmark_cmd[1] = span_str;
+>  		uparams.benchmark_cmd[2] = "1";
+> -		uparams.benchmark_cmd[3] = "0";
+>  		/*
+> +		 * Third parameter was previously used for "operation"
+> +		 * (read/write) of which only (now default) "read"/"0"
+> +		 * works.
+>  		 * Fourth parameter was previously used to indicate
+>  		 * how long "fill_buf" should run for, with "false"
+>  		 * ("fill_buf" will keep running until terminated)
+>  		 * the only option that works.
+>  		 */
+> +		uparams.benchmark_cmd[3] = NULL;
+>  		uparams.benchmark_cmd[4] = NULL;
+>  		uparams.benchmark_cmd[5] = NULL;
 
---OLuPF48/Wq3esOBj
-Content-Type: application/pgp-signature; name="signature.asc"
+The same question as with the previous patch, why is [4] = NULL kept 
+around?
 
------BEGIN PGP SIGNATURE-----
+-- 
+ i.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvqtBgAKCRB4tDGHoIJi
-0pmRAP453ZWh5pXP53sHIW3HHT4o23sKukkC4I3CZSzhXf54OAD+ImfTrAvyCU9x
-gfrLa0Li1So6ci+g92nO/ujiDMopngw=
-=BmjB
------END PGP SIGNATURE-----
+>  	}
+> diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
+> index 5331354aaf64..8b5973c5e934 100644
+> --- a/tools/testing/selftests/resctrl/resctrl_val.c
+> +++ b/tools/testing/selftests/resctrl/resctrl_val.c
+> @@ -622,8 +622,8 @@ int measure_mem_bw(const struct user_params *uparams,
+>   */
+>  static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
+>  {
+> -	int operation, ret, memflush;
+>  	char **benchmark_cmd;
+> +	int ret, memflush;
+>  	size_t span;
+>  	FILE *fp;
+>  
+> @@ -643,9 +643,8 @@ static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
+>  		/* Execute default fill_buf benchmark */
+>  		span = strtoul(benchmark_cmd[1], NULL, 10);
+>  		memflush =  atoi(benchmark_cmd[2]);
+> -		operation = atoi(benchmark_cmd[3]);
+>  
+> -		if (run_fill_buf(span, memflush, operation))
+> +		if (run_fill_buf(span, memflush))
+>  			fprintf(stderr, "Error in running fill buffer\n");
+>  	} else {
+>  		/* Execute specified benchmark */
+> 
 
---OLuPF48/Wq3esOBj--
 
