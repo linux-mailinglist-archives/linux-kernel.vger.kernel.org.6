@@ -1,409 +1,235 @@
-Return-Path: <linux-kernel+bounces-344283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42EA98A7C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:52:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD6C98A7CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2713B2179B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 492511C2373E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACEFA192B72;
-	Mon, 30 Sep 2024 14:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0B195805;
+	Mon, 30 Sep 2024 14:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="chjhJ4GU"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011058.outbound.protection.outlook.com [52.101.125.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XD1FXrU3"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A80192B6D;
-	Mon, 30 Sep 2024 14:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707824; cv=fail; b=TnHuCAolJijeBmhLL1ZPOneXMIeeLmuyQ066QrQ+08zyZAhzTuBfJ+v5O7UYajpzE4cEQ/Ki3irZpIMqj6Qj+zGt47mOxsV7JiGluD0I1DHQQObDStbzZ5+uBYDcVHM9piUSYobxlQe5DdE8f8iQa2ogHMJa8a53nTF0tMO48wg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707824; c=relaxed/simple;
-	bh=FK3EJ3QRK9O/3gIiGOvZqCWABMX/ZJkRIjjjaVBdHsI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=adQ895Nfl6/ngdcrKa/gK+LodYitF+yZsxKzcn6NFAqLV+S8YLicHbKGwpK42ZbbQBnz0bkm2Q85x3PnHVCQsKeF4gG88la7cm/0HbRhXL3nb9k1bNzVRPbScToz4e9Vx7MHlPrMivxahTsBA9MLzYCD0hi81w/pziIddVDplaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=chjhJ4GU; arc=fail smtp.client-ip=52.101.125.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tYO4UGng0pY0PSrhaRsKx8VxNBxaOr5itiBrwW70KXlwx8lzpUAcbuaIozzGTBN8fcTBp0wLwZPLWRPqmirSZfQOJ64nG2PEoXp5tmf/rocavobaWmYHTufq5/WNH5yDpmJa2Qm0EvuqxiMAo9cfxh1D0cTaBUa9zAz3I2NbQ3fHAtDReX1lmcjj3En/Dxt4RTvdkcyN97DnVm9B07E6eiWkSNlR9Z9JtxgBhFcg3SbKuLLb7N8OC6Uult+YTfm3NFexo39uYMfaltaOS4HKDuxDoCDuqZg3f5vSMcPAI2wXLbE8LHpps0VMAMKSdoogjDOlAP0ZGrAoaEujS+Yk0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gOnWG8yEhfzQP4X+uOPaIRcxKqwC8I0PfsgwQpsvHlw=;
- b=Ja74zRhuh5KYJxAFETa/tOd1sWfAy8gW918zUH/KbWomi6bi1T+G7/eV83BM4/y3+TJlYQ3BLgkBqeU2b+1nyU6Yu9O6ndf8mNf6sISOMiIS0fz0C+eFgdVHpMQ6gUI10MaJFvFqvee28AzMSt8MmXOtp7fqWSGMdHloH2bjnJzr4pRBPGXzuX0RU/0rfY+OattsWs0ll66U6oTh+pEtnktts5uZtw0zXtdhBFNEynp7v2Qi7yx+moF6OU+xCR+slQprkIa0nBk2DcbOw37IxHWI7FRyL7HFvAHlO4Zu9WSaE8r6HvZFyNWDs/8t5tMwtQFhzjcIFA3BGssdPlNyIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gOnWG8yEhfzQP4X+uOPaIRcxKqwC8I0PfsgwQpsvHlw=;
- b=chjhJ4GUQBv1BgVT8PhTcfGrW6OpRzRq5Mr1B/G8Q8Hsbob86PZn0W4w6xr6FtmVwFCh6B9xg9TztgGLVBWCiJM124AquC3zPELtQbhIELGwrYrsRZ6B8tNZi76u8FfwGd3H2J15c17v4RFAE83HdOORrhiv3cO8EOjv8InHT+U=
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com (2603:1096:400:448::7)
- by OS9PR01MB13160.jpnprd01.prod.outlook.com (2603:1096:604:30e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
- 2024 14:50:17 +0000
-Received: from TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430]) by TYCPR01MB12093.jpnprd01.prod.outlook.com
- ([fe80::439:42dd:2bf:a430%4]) with mapi id 15.20.8005.024; Mon, 30 Sep 2024
- 14:50:16 +0000
-From: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To: Julia Lawall <julia.lawall@inria.fr>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Geert
- Uytterhoeven <geert+renesas@glider.be>
-CC: Magnus Damm <magnus.damm@gmail.com>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Chris Paterson <Chris.Paterson2@renesas.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU)
- driver (fwd)
-Thread-Topic: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (ICU)
- driver (fwd)
-Thread-Index: AQHbDGYur/noZWuR8Ey6UuMzhLeAW7JwdycA
-Date: Mon, 30 Sep 2024 14:50:16 +0000
-Message-ID:
- <TYCPR01MB12093C0555C3C4B9D6B4E8FCCC2762@TYCPR01MB12093.jpnprd01.prod.outlook.com>
-References: <alpine.DEB.2.22.394.2409212234080.3471@hadrien>
-In-Reply-To: <alpine.DEB.2.22.394.2409212234080.3471@hadrien>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYCPR01MB12093:EE_|OS9PR01MB13160:EE_
-x-ms-office365-filtering-correlation-id: e60b3ffd-389a-48f7-3fd3-08dce15f328f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?O8+PUPWnmMKedzYdmLCICqzK4MNhSMgjfAHwJVzYojBzSeHcXOhLfAySsn4p?=
- =?us-ascii?Q?LPuE4CWP6DszVtdUKi00j6JEpVfgcZ0mzsh4y90gbjHmywq64AwqAXK9hLX/?=
- =?us-ascii?Q?BNYhQX3Mz/TanBebJdmLVg8aUIB3OsFNxqdKDmuMFkqE2Eo7ElZCWC8Rz0DG?=
- =?us-ascii?Q?obFzNB5O25eQZkawSvW5pPVOYqaTvxqv7wftn2JPVhChd3oXcqP9ZdVKiv1L?=
- =?us-ascii?Q?usIk8ovED9j8x1dbS+svyBT9rGXPhBRYgEzZVSamcYHgT/YmLcL0MjcKDDRv?=
- =?us-ascii?Q?TbJhChdZ4Xe56np3l95tHXePY3LJWq/jkyZR0nz0SRohI6xcgNR7a6Zy/bpx?=
- =?us-ascii?Q?Zqky9zA+GFkZa72UHOCO1G9tYqYFZt3Kebs2hhykndTmgTHTP8QAKl4Hpqse?=
- =?us-ascii?Q?TIEKJrYxFouUNudC8IUZThxehSPcvwX5J1RaYPlChhm5fucijc6PbeCo+aBW?=
- =?us-ascii?Q?LGBBjhxQaGZY0W/nMWxs/ynN4D80p5vuleMrloluGNUMj23Cj8ZXKXa5Cpb/?=
- =?us-ascii?Q?ONYukbHqU3VPdIsKT20OHv0NV830uIL9+DUjCn62iU0TF8ZlM1L+u6OnAie/?=
- =?us-ascii?Q?7u0Aj+WRWi5WuZR9jbFd2Zq5ZZs5p+dfwZOaA8i7/JJwf6e5wyBTXNQJ9KqE?=
- =?us-ascii?Q?wreyENCOIlgxGbO9qjxxyPCpuXOLxAhyzm0Do5EoRhtU/fy9XFlfVdeim56s?=
- =?us-ascii?Q?TwmF3dhqtGC8zp9SOUQ9S0Q91ZgRCPV1x+6kw/3FbPyhfRdpA6o2r0uO94w0?=
- =?us-ascii?Q?Ad7BeLzXcQPX2qZ94FwTDuqKUiRHGQqerKfvIEUr33nm/VcfFUAIrN/I9DQ4?=
- =?us-ascii?Q?nIVAK1DZX5DzaeMkkBNIBqrDsWis0FxDSzAGHyJlskvvGgxm5MLPtdW3B20H?=
- =?us-ascii?Q?XDqJPrLsB0hibVbbSamd1KQqwLnURNR/t73gQNHejrTiAlZNapstFnC8P4yY?=
- =?us-ascii?Q?jjSz5vQ1pgMBxjQrMQUrR8QZSgXJYcf4Gyke0Dy9jXWRhfQ4v25DLP2zQmkw?=
- =?us-ascii?Q?j/PfyDLFXdhxMN9jzfpulEKaeTb98q1INjL4+XM3gNUqisZ4TKEJOucnPn/w?=
- =?us-ascii?Q?Cp3rQ72wfozLsQAEV7G7+iRQvECpaL5Gvn/WTu+/LW3QaWlwTZdykn9uR3UD?=
- =?us-ascii?Q?PcZRPStuV8+Q0FXI8C4T5fSRRiMlBmTFHD0zioetOgsIPNkO8DcYW9cdvFCO?=
- =?us-ascii?Q?27BN7i+v6uq15CiKsZCruqqgRjhYgeUkONYNVyJ5ynnipchNnipNl8YC44G+?=
- =?us-ascii?Q?9ZGksJDyGqURSpxSsIIC43gPeoFki5ytDb9okh/JRlXbWCgGujU/yLJqxgX8?=
- =?us-ascii?Q?YB4R3k9xA7971zqP8uGELfq2VfpuD0Jyel1dfUzfZU4G5W0ms9TyRwEnYRzT?=
- =?us-ascii?Q?mSelXwY=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB12093.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?t2jGVydxZ4VfsqKxwTovwAXMwR4NUF1iw6A7NIScr/C2mdnr8Iil//qPy/B0?=
- =?us-ascii?Q?W3Ov616YrLiifpnWfmy5bdBbDOZRN6x/mJw3ARMNZZ9dp9IltcSh1st9ojtW?=
- =?us-ascii?Q?mO61/eCj33O59UWjLiICzfQ3ElVbv1eG3E7xTTVtDCXjSYFwalXtq2+9Fb/R?=
- =?us-ascii?Q?1JMqN7K8QeH/35K3cdzCZUDdrLpiMKnNtegoS1cray1bu2O9Vb5KckI6ly2K?=
- =?us-ascii?Q?ESmfjeI30iPdHNTXh+UyQkJ7m/UpvW0LNBu71v8O5oXfke7rkmiWkv3I78eL?=
- =?us-ascii?Q?eCMiTzho9W7FvAYj1gMyELCJHo3vbziVv3apoWUvtjceAzyavRqRnPEzD6Ax?=
- =?us-ascii?Q?gGUyzARKn3mtNN9ErOF3Z5Xan7eejzSqELq6PilFMypouQnV3dZ4griOvQvG?=
- =?us-ascii?Q?sYPrTygD9CM+2BxBjNwvNLtZ4seY81E/3QFihx9U/QGy2MUDqRmoDn+FWjjc?=
- =?us-ascii?Q?iiNAzftC/Y6XtleWOKAniVUxl8CXXe+ILwO5r+cmjFuWqGfvEW9xkZYCLDmb?=
- =?us-ascii?Q?nhURLPDpCtwDjC1ZQCqYeRRc0nwLxZwwz0Pso9pwL2K+Nnv9ZZPzESiyooaa?=
- =?us-ascii?Q?4nL0XwLbMc1EhO3++LSymphw4aOssdVskF60x2dfRbK6rgd4q7CGxwbKTQVS?=
- =?us-ascii?Q?E7g075vhC8ic7rOF6y7QMEHlL5i2SblBQbcmxrP9a7J9y1/9K7zfjVuQnCmy?=
- =?us-ascii?Q?mCR8fdX+A1PxfkfQxEgswe1x5oEZNq9wim1WrXHhuLbLeEaZ7YbbxWS6XY5L?=
- =?us-ascii?Q?Vk7XwcEToA+ZweLDzcWVbhlxNFBNgv5Gh3U3lVrJQOr5ApC5FR1R1rjrnJue?=
- =?us-ascii?Q?/4ahuacpHxz8v1bKUnav/fEWzusy2QjawK6pSbig85razNGc2hRRVz5SPNQd?=
- =?us-ascii?Q?A/2Ad2dF9S87KXoLQMLq7nyDiPgc0RuccXETgaWKJ0NkN7PeHNlAVvqXWM1j?=
- =?us-ascii?Q?lkfw/neu0legoi+LkSyqSgzMd9/wMclwFhSMnp26MAZwgPfTF12xFfXP1mYS?=
- =?us-ascii?Q?3LrIx5tW7kV6XRb6a0AS9Wpa0O7kRocZE8Ap643amBAuUnQOIcMvR83T/qwZ?=
- =?us-ascii?Q?VhUIOh55iyzuC3H6UWsUulYn51Nw+1Cetd8Lm6Htb2wOFTzZLzQho9026zoZ?=
- =?us-ascii?Q?HxXEATlzM7wVYz2q3GKLqlr4bEXjNMGKrmSpfgK9JEbhx+2vZmxq5GjUU+7Z?=
- =?us-ascii?Q?rBUIXD2pnlw2VeMIu5btAKRvNZa7BwoVE+TMVlEsRWc5GnUMEP/QJF4ZJwMn?=
- =?us-ascii?Q?VbEch126HDJ1OtODdtwgyMR6hZxy6QGNMZ+cYVWNSocgavwHR+RkQGeK96pv?=
- =?us-ascii?Q?WoVUvGxw2jgZIBMxkE+nlxuJVVy/RraCSpeiEEreeH+6uofMx7DSkpg3t6ee?=
- =?us-ascii?Q?Nz1lCTk8Oimia9nF9cXM+14vaef6AvXSr1SJUrKtlRrA5Qz1PqvM8e6Yr+8c?=
- =?us-ascii?Q?tk3jzioRK5TPctbXX7z008ndJ5yIjFLfL1Fqn+PPyjPt+nAeRD8ofkVPNELK?=
- =?us-ascii?Q?Xq053iVNwXfLjGL+tRZI8CMeJDV78bJVgj7UCyPhM5E8urvsuuod4LiOZqEh?=
- =?us-ascii?Q?kZiPr5Q0lCl6EXU/tqTa7W0OpDmsXR8MYE2DGxWxV2+qnG9MfXG8P7u8LP4s?=
- =?us-ascii?Q?wQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F331F194C9D;
+	Mon, 30 Sep 2024 14:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727707873; cv=none; b=PNGeN0fJ1hhzWY8qLlNI5VESNspS3Rp7MDtQ4faarH3XbQsl0y1nzEzvpw8M+BC4x3AhJ+iGj7sGmXGb71GB6EtQiZ7j2qnpE6bUaoXRcEiklKBEoI3aWN6oVuN4YFTAopyLY+nBiaIw0XncZ20ptKl2XNtsKq4EQ+ZLpI3kiM4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727707873; c=relaxed/simple;
+	bh=W/15mwfsMOdUMZCEAQnTUhSMq33MkRfFX+u8/LzbOpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GfdrUFqqYYigrOMV1Gww1AcdeEHBM6bBOchReUqmfSu1JyLQdPcGPmz/NNtUwkc8jMYrz5hj6T3r/6pATJDtO/mJL0r6oQCyNYVojqNOUBB0xegC5DWB1jJGLX2wcfjTmSDhfWnd6iOQqfkEquAkgEFlvu4K78LiuwfiKbMB9Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XD1FXrU3; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2db85775c43so3280834a91.0;
+        Mon, 30 Sep 2024 07:51:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727707871; x=1728312671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=ei8R9qgMGBNjxfWPS/m3HODUQUOhNth41iRV0XmScp8=;
+        b=XD1FXrU3joG37mIzpbYMjMTLk79BJSVVGy6MZVqggS1q9svPfe1KPZBHDwm0wm/Saz
+         h2u/86nnMEd0/YuI8hkTGrqgBUZnR1RKYU8vp6INuqNzeqJSouqQtahItvkEyBWXJIFy
+         DoUULZqUowwVI7NTyhp05xwAl9Kx3BJpIC1EfkYhFb1Pr5cxfzI2npO9D3XAItlemyxk
+         mcvBJt88oJMrx1KuSXEctSzahparNbzqDHKq6z8+GrhIve9mBSxpzV/dh9j6K1wOQdV8
+         xeGdBqAkulW7DouvDQ1zJd1qsVU/3bqQNJXkORaxuVsSgvgYZZAcd1sodavvIXx/IH/u
+         QFOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727707871; x=1728312671;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ei8R9qgMGBNjxfWPS/m3HODUQUOhNth41iRV0XmScp8=;
+        b=AgmmPoQx8F/J+tIj9tPHJvs002CWYFPuGqyqiXb8oJCi3hR7uL1jhlTy1txsUMf3B/
+         N3wrCiU8nqmzfAH/MgC89niQBU53opAj9fnJ6kvyDgmpTwRfJIkyVt9FcnwX5d4HT7Zx
+         jvjFmpc6BOKOVJsBFxwnpA5DfdxsUCcUBSufq0oFQCKv3AYSv2BRBwSzxz/ywu1tISVH
+         m/xGX+FxlMw7Htv1jOqqtqrHCa2T0MaaNoN+6RkbsImcXiyHARPauTYNadEPC9yL4M7+
+         ljxn9sVIQx3FrgQj/RMOQ/cLLgGqyqRBp2rP7lqzCP8Kxd7FKgDNFledekqBneGwm2yO
+         bqYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUcbbkH9oKRjq+aPWvoZyzv7KVIQxdOf8JWokUfBA1vp5+AP26WUOphHylGrzOsqEr2bDhfpVuDckGjCMixF5IemXM=@vger.kernel.org, AJvYcCVnlFeAHSOQO6ek5RaH5DwH++RPwboJ9a10mIZ74PmwoDUbbwe21U1ZSdGPP8nZyB00eaLT1Q3LD1pe@vger.kernel.org, AJvYcCXsVeJZecHyxdq6NcjsDsLaZ3opbUzVW4IVqr84fT72EU1ALKxkEH8pYXr8IFIG4ZqBd5AExeRCFhFFPGrA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7J7/+1nQ37dOHCwVgZtI/Q7b+9jBjE0qHS1xB2P/UmQSSzvbs
+	bKy+0PjwR1ri+wM+P4V72DOAChHArOti6b7++WpPzHKwZh3gFh4J
+X-Google-Smtp-Source: AGHT+IESj6q0YIuvcr+nnx/mRmuhZjN9eqqic59z9EEnxqUyoXh6hE3HWGSs0IU8MORXMDQo+0yGiw==
+X-Received: by 2002:a17:90a:8a8f:b0:2e0:8780:ecb with SMTP id 98e67ed59e1d1-2e0b71d09ebmr19199298a91.12.1727707871194;
+        Mon, 30 Sep 2024 07:51:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6ca6563sm7986887a91.34.2024.09.30.07.51.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 07:51:06 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <3eaec6e3-c99b-4efb-9456-c157eb484ff3@roeck-us.net>
+Date: Mon, 30 Sep 2024 07:51:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB12093.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e60b3ffd-389a-48f7-3fd3-08dce15f328f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2024 14:50:16.5618
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Xfi/qDkTbo2UVk8ofzqqiq3uJYue1UVBmFhNeWDBeg3099Hi73kXINHFUygOYFpSIcVKnbbMDpo5+Cv/t//YuKPM6Aql3R8rUyT5Nd0kpPM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB13160
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] watchdog: s3c2410_wdt: add support for exynosautov920
+ SoC
+To: Taewan Kim <trunixs.kim@samsung.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>
+References: <20240913080325.3676181-1-trunixs.kim@samsung.com>
+ <CGME20240913080347epcas2p4b5694797cff88a22fd815a9de989d20b@epcas2p4.samsung.com>
+ <20240913080325.3676181-3-trunixs.kim@samsung.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240913080325.3676181-3-trunixs.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Julia,
+On 9/13/24 01:03, Taewan Kim wrote:
+> From: Byoungtae Cho <bt.cho@samsung.com>
+> 
+> Adds the compatibles and drvdata for the ExynosAuto V920 SoC. This SoC
+> is almost similar to ExynosAutoV9, but some CPU configurations are quite
+> different, so it should be added. Plus it also support DBGACK like as
+> GS101 SoC.
+> 
+> Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
+> Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
 
-Thanks for this. I'll send a new version soon to address this.
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Kind regards,
-Fab
+> ---
+>   drivers/watchdog/s3c2410_wdt.c | 37 +++++++++++++++++++++++++++++++++-
+>   1 file changed, 36 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> index 686cf544d0ae..c25133348f0e 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -63,6 +63,10 @@
+>   #define EXYNOS850_CLUSTER1_NONCPU_INT_EN	0x1644
+>   #define EXYNOSAUTOV9_CLUSTER1_NONCPU_OUT	0x1520
+>   #define EXYNOSAUTOV9_CLUSTER1_NONCPU_INT_EN	0x1544
+> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT	0x1420
+> +#define EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN	0x1444
+> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT	0x1720
+> +#define EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN	0x1744
+>   
+>   #define EXYNOS850_CLUSTER0_WDTRESET_BIT		24
+>   #define EXYNOS850_CLUSTER1_WDTRESET_BIT		23
+> @@ -303,6 +307,32 @@ static const struct s3c2410_wdt_variant drv_data_gs101_cl1 = {
+>   		  QUIRK_HAS_DBGACK_BIT,
+>   };
+>   
+> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl0 = {
+> +	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_INT_EN,
+> +	.mask_bit = 2,
+> +	.mask_reset_inv = true,
+> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER0_WDTRESET_BIT,
+> +	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER0_NONCPU_OUT,
+> +	.cnt_en_bit = 7,
+> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> +		  QUIRK_HAS_DBGACK_BIT,
+> +};
+> +
+> +static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 = {
+> +	.mask_reset_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_INT_EN,
+> +	.mask_bit = 2,
+> +	.mask_reset_inv = true,
+> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
+> +	.rst_stat_bit = EXYNOSAUTOV9_CLUSTER1_WDTRESET_BIT,
+> +	.cnt_en_reg = EXYNOSAUTOV920_CLUSTER1_NONCPU_OUT,
+> +	.cnt_en_bit = 7,
+> +	.quirks = QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+> +		  QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> +		  QUIRK_HAS_DBGACK_BIT,
+> +};
+> +
+>   static const struct of_device_id s3c2410_wdt_match[] = {
+>   	{ .compatible = "google,gs101-wdt",
+>   	  .data = &drv_data_gs101_cl0 },
+> @@ -320,6 +350,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+>   	  .data = &drv_data_exynos850_cl0 },
+>   	{ .compatible = "samsung,exynosautov9-wdt",
+>   	  .data = &drv_data_exynosautov9_cl0 },
+> +	{ .compatible = "samsung,exynosautov920-wdt",
+> +	  .data = &drv_data_exynosautov920_cl0},
+>   	{},
+>   };
+>   MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+> @@ -643,7 +675,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+>   	/* Choose Exynos850/ExynosAutov9 driver data w.r.t. cluster index */
+>   	if (variant == &drv_data_exynos850_cl0 ||
+>   	    variant == &drv_data_exynosautov9_cl0 ||
+> -	    variant == &drv_data_gs101_cl0) {
+> +	    variant == &drv_data_gs101_cl0 ||
+> +	    variant == &drv_data_exynosautov920_cl0) {
+>   		u32 index;
+>   		int err;
+>   
+> @@ -662,6 +695,8 @@ s3c2410_get_wdt_drv_data(struct platform_device *pdev, struct s3c2410_wdt *wdt)
+>   				variant = &drv_data_exynosautov9_cl1;
+>   			else if (variant == &drv_data_gs101_cl0)
+>   				variant = &drv_data_gs101_cl1;
+> +			else if (variant == &drv_data_exynosautov920_cl1)
+> +				variant = &drv_data_exynosautov920_cl1;
+>   			break;
+>   		default:
+>   			return dev_err_probe(dev, -EINVAL, "wrong cluster index: %u\n", index);
 
-> -----Original Message-----
-> From: Julia Lawall <julia.lawall@inria.fr>
-> Sent: Saturday, September 21, 2024 9:38 PM
-> To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>; Philipp Zabel <p.za=
-bel@pengutronix.de>; Thomas
-> Gleixner <tglx@linutronix.de>; Geert Uytterhoeven <geert+renesas@glider.b=
-e>
-> Cc: Magnus Damm <magnus.damm@gmail.com>; linux-renesas-soc@vger.kernel.or=
-g; linux-
-> kernel@vger.kernel.org; Chris Paterson <Chris.Paterson2@renesas.com>; Bij=
-u Das
-> <biju.das.jz@bp.renesas.com>; Prabhakar Mahadev Lad <prabhakar.mahadev-la=
-d.rj@bp.renesas.com>
-> Subject: Re: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (I=
-CU) driver (fwd)
->=20
-> The various returns need a put_device.
->=20
-> julia
->=20
-> ---------- Forwarded message ----------
-> Date: Sun, 22 Sep 2024 04:23:01 +0800
-> From: kernel test robot <lkp@intel.com>
-> To: oe-kbuild@lists.linux.dev
-> Cc: lkp@intel.com, Julia Lawall <julia.lawall@inria.fr>
-> Subject: Re: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit (I=
-CU)
->     driver
->=20
-> BCC: lkp@intel.com
-> CC: oe-kbuild-all@lists.linux.dev
-> In-Reply-To: <20240917173249.158920-6-fabrizio.castro.jz@renesas.com>
-> References: <20240917173249.158920-6-fabrizio.castro.jz@renesas.com>
-> TO: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> TO: Thomas Gleixner <tglx@linutronix.de>
-> TO: Philipp Zabel <p.zabel@pengutronix.de>
-> TO: Geert Uytterhoeven <geert+renesas@glider.be>
-> CC: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> CC: Magnus Damm <magnus.damm@gmail.com>
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-renesas-soc@vger.kernel.org
-> CC: Chris Paterson <Chris.Paterson2@renesas.com>
-> CC: Biju Das <biju.das.jz@bp.renesas.com>
-> CC: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Hi Fabrizio,
->=20
-> kernel test robot noticed the following build warnings:
->=20
-> [auto build test WARNING on next-20240917] [cannot apply to tip/irq/core =
-robh/for-next geert-renesas-
-> drivers/renesas-pinctrl geert-renesas-devel/next linus/master v6.11 v6.11=
--rc7 v6.11-rc6 v6.11] [If your
-> patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in ht=
-tps://git-scm.com/docs/git-
-> format-patch#_base_tree_information]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Fabrizio-Castro/dt=
--bindings-pinctrl-renesas-
-> rzg2l-pinctrl-Add-interrupt-parent/20240918-013929
-> base:   next-20240917
-> patch link:    https://lore.kernel.org/r/20240917173249.158920-6-fabrizio=
-.castro.jz%40renesas.com
-> patch subject: [PATCH 5/6] irqchip: Add RZ/V2H(P) Interrupt Control Unit =
-(ICU) driver
-> :::::: branch date: 4 days ago
-> :::::: commit date: 4 days ago
-> config: nios2-randconfig-r064-20240922 (https://download.01.org/0day-
-> ci/archive/20240922/202409220454.AW3A9lUC-lkp@intel.com/config)
-> compiler: nios2-linux-gcc (GCC) 14.1.0
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of the same patch/commit),
-> kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> | Closes: https://lore.kernel.org/r/202409220454.AW3A9lUC-lkp@intel.com/
->=20
-> cocci warnings: (new ones prefixed by >>)
-> >> drivers/irqchip/irq-renesas-rzv2h.c:452:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:458:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:465:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:470:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:475:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:480:2-8: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:502:1-7: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->    drivers/irqchip/irq-renesas-rzv2h.c:510:1-7: ERROR: missing put_device=
-; call of_find_device_by_node
-> on line 445, but without a corresponding object release within this funct=
-ion.
->=20
-> vim +452 drivers/irqchip/irq-renesas-rzv2h.c
->=20
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  435
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  436  static int rzv2h_icu_init=
-(struct device_node *node,
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  437  				 struct device_node *=
-parent)
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  438  {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  439  	struct irq_domain *irq_d=
-omain, *parent_domain;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  440  	struct rzv2h_icu_priv *r=
-zv2h_icu_data;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  441  	struct platform_device *=
-pdev;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  442  	struct reset_control *re=
-setn;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  443  	int ret;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  444
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17 @445  	pdev =3D of_find_device_=
-by_node(node);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  446  	if (!pdev)
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  447  		return -ENODEV;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  448
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  449  	parent_domain =3D irq_fi=
-nd_host(parent);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  450  	if (!parent_domain) {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  451  		dev_err(&pdev->dev, "ca=
-nnot find parent
-> domain\n");
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17 @452  		return -ENODEV;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  453  	}
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  454
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  455  	rzv2h_icu_data =3D devm_=
-kzalloc(&pdev->dev,
-> sizeof(*rzv2h_icu_data),
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  456  				       GFP_KERNEL);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  457  	if (!rzv2h_icu_data)
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  458  		return -ENOMEM;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  459
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  460  	rzv2h_icu_data->irqchip =
-=3D &rzv2h_icu_chip;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  461
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  462  	rzv2h_icu_data->base =3D=
- devm_of_iomap(&pdev->dev, pdev-
-> >dev.of_node, 0,
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  463  					      NULL);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  464  	if (IS_ERR(rzv2h_icu_dat=
-a->base))
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  465  		return PTR_ERR(rzv2h_ic=
-u_data->base);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  466
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  467  	ret =3D rzv2h_icu_parse_=
-interrupts(rzv2h_icu_data,
-> node);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  468  	if (ret) {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  469  		dev_err(&pdev->dev, "ca=
-nnot parse interrupts:
-> %d\n", ret);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  470  		return ret;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  471  	}
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  472
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  473  	resetn =3D devm_reset_co=
-ntrol_get_exclusive(&pdev->dev,
-> NULL);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  474  	if (IS_ERR(resetn))
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  475  		return PTR_ERR(resetn);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  476
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  477  	ret =3D reset_control_de=
-assert(resetn);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  478  	if (ret) {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  479  		dev_err(&pdev->dev, "fa=
-iled to deassert resetn
-> pin, %d\n", ret);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  480  		return ret;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  481  	}
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  482
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  483  	pm_runtime_enable(&pdev-=
->dev);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  484  	ret =3D pm_runtime_resum=
-e_and_get(&pdev->dev);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  485  	if (ret < 0) {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  486  		dev_err(&pdev->dev, "pm=
-_runtime_resume_and_get
-> failed: %d\n",
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  487  			ret);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  488  		goto pm_disable;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  489  	}
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  490
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  491  	raw_spin_lock_init(&rzv2=
-h_icu_data->lock);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  492
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  493  	irq_domain =3D irq_domai=
-n_add_hierarchy(parent_domain,
-> 0, ICU_NUM_IRQ,
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  494  					      node,
-> &rzv2h_icu_domain_ops,
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  495  					      rzv2h_icu_data=
-);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  496  	if (!irq_domain) {
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  497  		dev_err(&pdev->dev, "fa=
-iled to add irq
-> domain\n");
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  498  		ret =3D -ENOMEM;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  499  		goto pm_put;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  500  	}
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  501
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  502  	return 0;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  503
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  504  pm_put:
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  505  	pm_runtime_put(&pdev->de=
-v);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  506  pm_disable:
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  507  	pm_runtime_disable(&pdev=
-->dev);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  508  	reset_control_assert(res=
-etn);
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  509
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  510  	return ret;
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  511  }
-> 34d38ea429c8e6 Fabrizio Castro 2024-09-17  512
->=20
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
 
