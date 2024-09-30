@@ -1,69 +1,136 @@
-Return-Path: <linux-kernel+bounces-344104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB3198A49E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:21:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9D698A4A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD393B22F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:18:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F9BB2A7B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03018FDAB;
-	Mon, 30 Sep 2024 13:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579F7191F82;
+	Mon, 30 Sep 2024 13:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="a8TovYRU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EPJRYZK1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E14A17C22B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ADF18F2FD;
+	Mon, 30 Sep 2024 13:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727702147; cv=none; b=VCeajD+Ww8caEBOcqKHwZQja0ko/eQ/E9Umh76uFyvuJnlArmKHfSEg4Di7R4m49W0Jf25WlAdzoLUsOwBcZdAWUMY8OVvmG7utfKhckFGpfszmsIcNrLzVXZbNbIcw680dL8t/oUaYYgy88liM3s+MQlVou5el+nk5fxLH9fGc=
+	t=1727702219; cv=none; b=dJ07AzMiw9kmMxyaBjRAGRYmCujnJHBAmSZAoxjcYZlsEV0D3A0HLwd2SVH/IkIPRJiN3erRC6Nm6GBwrWtAXzD8W5qpAj1lLJykmZ0SotXGIlkR7ixqrmNzwuJM425vrhtKwSNfkxE7q+fEtLzgtKSOvLB2eEZ2am5c8bw5Kh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727702147; c=relaxed/simple;
-	bh=+EFJD6BkD6P7Mswfba9DytaeaQI1X7EjmdrFVAKTcVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RArFSLjH2RsMqbORe8ft2bp8BE2tMevJwiHn8vJhHNGuSlofeTyn4H9hwhur5G/yA7diB3OsKKsBCzoAQKDJXZyr3TIMM5A/R2+U5BKYro7g7YhVxmw/lybJcpW/gImaiJH9GqUDQ/7AwOs8Zqr9rVslKqnPGGTV88rFUE0DkUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=a8TovYRU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5833CC4CEC7;
-	Mon, 30 Sep 2024 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="a8TovYRU"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727702144;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fs0KbTBraqXQQimGP3ss9Uukt5oyyTGBgvHqQ+F0wJU=;
-	b=a8TovYRUCNIOt2bQ8UEhvDlDJKHQwdkfp03tfUNy9sSS0ml27OeQTAhxN69hrMxdMcudH9
-	pjZ6DqGp88Sfc3AISOBVtQackbl37Y7p/BVd0To6ekk67x1zHymCqd76t6IJblgsBtCnGZ
-	JKRADBYepsk/FMmYoN+bAAqFnUrsEbs=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 46897bba (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 30 Sep 2024 13:15:43 +0000 (UTC)
-Date: Mon, 30 Sep 2024 15:15:41 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 6.12-rc1
-Message-ID: <ZvqkfSM_8sxTSzz_@zx2c4.com>
-References: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
+	s=arc-20240116; t=1727702219; c=relaxed/simple;
+	bh=drE6XgIHzCTCn+Vge1plxZ0J6vENXke7Ncli0nUf6Ok=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=IdzppLkLLbWf/uHLAqg0Uy+vg0RIyjnpo5ayYw4w6ynBCdDI++yx0DsU5BL1f/eZf5TN8RzQ7HAqNp88mvYUuRabBHmE51MvQrIuhMcxTzc0ROfDVKeM7Tkq6WGl42E+JXwN5kUdQEU+778D6FjYqMcoNk3YpMeCwXlSN/J2tGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EPJRYZK1; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727702218; x=1759238218;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=drE6XgIHzCTCn+Vge1plxZ0J6vENXke7Ncli0nUf6Ok=;
+  b=EPJRYZK1+fbctVlJr69H9yaeo8p0T5qRjBhVj/uCbepwPIYouOt5vkRD
+   EhVDdMm5eZ2Wau6H5GOWNuSoU4Y0NtcC5rt2uTid3ki3gSbNYGuX8GZEo
+   yKtHsOqcKYqFQOcNvJHcx7JnlHC6aWPTcQoGqzVt895Y2RrFy3grC7N3L
+   bRuqBmpB2clxYOp2IKPnnSCTy4eIQ+cR3bDiOn7HAWVNrtsuc9qWvtKdX
+   +jSOhJviMu6h3l7ha0QqnA8XpJO2152rL5jaTZuBhF8/LVaIytk/h7FVg
+   TMnlZ3AgWgDv57wGSjCX34oXHSFZghivUwdKN8+24kJLvQKtcdtQdFw5B
+   w==;
+X-CSE-ConnectionGUID: /F209wi3QEC8U7Xq0T25Fg==
+X-CSE-MsgGUID: EX6mfxIfRke+POx8Vu8yDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26887882"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="26887882"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:16:57 -0700
+X-CSE-ConnectionGUID: NljYa0HoT9OAWPRVZ5bDNg==
+X-CSE-MsgGUID: PAyp+iLgQZWjUXBQTP3s5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="72891864"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.26])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 06:16:54 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 30 Sep 2024 16:16:50 +0300 (EEST)
+To: Reinette Chatre <reinette.chatre@intel.com>
+cc: fenghua.yu@intel.com, shuah@kernel.org, tony.luck@intel.com, 
+    peternewman@google.com, babu.moger@amd.com, 
+    =?ISO-8859-15?Q?Maciej_Wiecz=F3r-Retman?= <maciej.wieczor-retman@intel.com>, 
+    linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 03/13] selftests/resctrl: Fix memory overflow due to
+ unhandled wraparound
+In-Reply-To: <dc99091aeadca217f297c4cc0d4015bcb80443ad.1726164080.git.reinette.chatre@intel.com>
+Message-ID: <33062b69-466c-8419-5bde-a39d6438abfc@linux.intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com> <dc99091aeadca217f297c4cc0d4015bcb80443ad.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
+Content-Type: multipart/mixed; boundary="8323328-1378347176-1727702210=:938"
 
-Pushed 5.12-rc1 too? Odd.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-+ git fetch linus                                                                       remote: Enumerating objects: 54527, done.                                               remote: Counting objects: 100% (24190/24190), done.                                     remote: Compressing objects: 100% (314/314), done.
-remote: Total 54527 (delta 24053), reused 23963 (delta 23876), pack-reused 30337        Receiving objects: 100% (54527/54527), 34.39 MiB | 2.53 MiB/s, done.                    Resolving deltas: 100% (44154/44154), completed with 9484 local objects.                From ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/torvalds/linux                     4a39ac5b7d62..9852d85ec9d4  master     -> linus/master
- * [new tag]                   v5.12-rc1  -> v5.12-rc1                                   * [new tag]                   v6.12-rc1  -> v6.12-rc1
+--8323328-1378347176-1727702210=:938
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Thu, 12 Sep 2024, Reinette Chatre wrote:
+
+> alloc_buffer() allocates and initializes (with random data) a
+> buffer of requested size. The initialization starts from the beginning
+> of the allocated buffer and incrementally assigns sizeof(uint64_t) random
+> data to each cache line. The initialization uses the size of the
+> buffer to control the initialization flow, decrementing the amount of
+> buffer needing to be initialized after each iteration.
+>=20
+> The size of the buffer is stored in an unsigned (size_t) variable s64
+> and the test "s64 > 0" is used to decide if initialization is complete.
+> The problem is that decrementing the buffer size may wrap around
+> if the buffer size is not divisible by "CL_SIZE / sizeof(uint64_t)"
+> resulting in the "s64 > 0" test being true and memory beyond the buffer
+> "initialized".
+>=20
+> Use a signed value for the buffer size to support all buffer sizes.
+>=20
+> Fixes: a2561b12fe39 ("selftests/resctrl: Add built in benchmark")
+> Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+> ---
+> Changes since V1:
+> - New patch.
+> ---
+>  tools/testing/selftests/resctrl/fill_buf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/s=
+elftests/resctrl/fill_buf.c
+> index ae120f1735c0..34e5df721430 100644
+> --- a/tools/testing/selftests/resctrl/fill_buf.c
+> +++ b/tools/testing/selftests/resctrl/fill_buf.c
+> @@ -127,7 +127,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memf=
+lush)
+>  {
+>  =09void *buf =3D NULL;
+>  =09uint64_t *p64;
+> -=09size_t s64;
+> +=09ssize_t s64;
+>  =09int ret;
+> =20
+>  =09ret =3D posix_memalign(&buf, PAGE_SIZE, buf_size);
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1378347176-1727702210=:938--
 
