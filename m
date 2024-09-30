@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-344816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C084598AE85
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:37:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9498298AE87
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C520B22360
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:37:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA8A28394A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CB017B50A;
-	Mon, 30 Sep 2024 20:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548A1A0BF4;
+	Mon, 30 Sep 2024 20:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJkAMC3E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdMLkfMd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F191E152E1C
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960E51A0BC8;
+	Mon, 30 Sep 2024 20:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727728656; cv=none; b=Exe2XmjzpzrLIZJ5HzfR6sYHvQAXew1kwAaJevZE1FYd7eUyNZeyPEhCTfJ6lfOOKCw/BLlS4afxx7Qd4yUKYqMGa+5RS9zwHQafyE0Rgb1qoNmentR2zkTI08zlurf3tBxHU4dib25+BfeZ6SsmRpuLSucRk+DWU8xXRtc0fdU=
+	t=1727728657; cv=none; b=H4Pw92jp0Y5XFm4rYEJMHnkVjFjoFiZW8tUmL4LF4D2iWa2UI94shSQjiryORLlKuAa1jeHj6ObmSwveVC8fBL0U6V1xaWhtoClby4en+tuNvniNs9jM4STxHTt9hpCzDu8IwHQLptnY/qdJ+dvXx3fIwBSqRiUtNAu7bubdwBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727728656; c=relaxed/simple;
-	bh=2MuPBMsuaPsMd86DsStni/MKPDlfs2/SmEj3oUwVOuI=;
+	s=arc-20240116; t=1727728657; c=relaxed/simple;
+	bh=pcP3hBEi9y72cQ2R4EzM7rzibaYlvtHs7R5GrRv3yyY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=p5ylE6rXgOGOIMxBSByAecVzy2YdQhUUa+uxLJiqFksEaIcUlhw2j+VaUQAMek/fme1TZjN+bg4PVfzNk+h2mvyckAJstkw5HzjaJlvS97xZnxTUuia98tSFbbjzvzC6CnMetMVHswWLf8RTdrdJVIzER6g1RLM5c7KmMAQYXXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJkAMC3E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 265C5C4CED1;
-	Mon, 30 Sep 2024 20:37:34 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ixQg08lKvqtjHmp17ejdTvqGUXvBgQsH7+MaIiDsZU+KwW2cDbYHnMpM+hUpcViEPp/PWxYUvlsz1BSdwUhejneG40pVh7mxVZzy2b1gGpY1xsDbuNtcYkHE6Rj20zlknJCP2soJM6z1vtS1pLVR3eAf+cHPTerky2zzy3Aim/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdMLkfMd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21FDBC4CEC7;
+	Mon, 30 Sep 2024 20:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727728655;
-	bh=2MuPBMsuaPsMd86DsStni/MKPDlfs2/SmEj3oUwVOuI=;
+	s=k20201202; t=1727728657;
+	bh=pcP3hBEi9y72cQ2R4EzM7rzibaYlvtHs7R5GrRv3yyY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=OJkAMC3EUaPUl0vdl3c6UWEdim/SNyUUyuwKRegQGb9e3OADyVxQTMj9CvaNkOX2I
-	 hOoaVMQwrzMc3+2HyOc7kpEguX27F6/pFIpLYJHV5pIuoY/VcHDlsNzbfb3i/T9TH+
-	 6Vy1xu6293UuSM/p9T9Pf/RwFBzpPSEU9KLwcCs/t2hhjWRHewUVd5U5HYJDFjHuiA
-	 ljFtuvM4iuLnr7XEDweejvUevDRUSrj/dksNm7hCZyBU7HWSux1m6U28gH4jqFzenk
-	 fy0q9Pb7NrxDZh5h0JRKSgiX/ttkH2WvK++7PK9BGFnff6ITagXWyIOo2QSj3u1LEj
-	 HwX8j1Cb9mRbA==
+	b=hdMLkfMd64fraj/gBVbB+CU+RJeCZIwilSevMEmP+tPzG2kVmrSqAzV2+0b7ew/wM
+	 H9+xaY1reYeWehepiAkXsWlnTvnP5g8aF86yJtZJVOlgkU6jPYK1PI214h0vWscqZh
+	 Z6RjAeSX+LEmU/1+gUaFc+EiDCgHZxk5N+EVy1izWaWSI+7irHr/W703ij0+Whmqv7
+	 2otrkdzodZKHUtMBDpKO1MzviG7Pr/7IAE32tZyrr0+SNIANPDaKVV1O7hpzLujwEu
+	 CJs1VYI/NUTEcadumqK9lq+BiJjzJKaG4BJSyQe8m2hWPDfTBq7MtOpXO6jnNyObrE
+	 Mt3j/QuMj097w==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20240920153430.503212-14-u.kleine-koenig@baylibre.com>
-References: <20240920153430.503212-14-u.kleine-koenig@baylibre.com>
-Subject: Re: [PATCH] regulator: isl6271a: Drop explicit initialization of
- struct i2c_device_id::driver_data to 0
-Message-Id: <172772865477.2147169.11243573301530962890.b4-ty@kernel.org>
-Date: Mon, 30 Sep 2024 21:37:34 +0100
+To: kernel-janitors@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
+References: <f9d7a026-a67a-4164-80f4-578b1fbf71ac@web.de>
+Subject: Re: [PATCH] regulator: Call of_node_put() only once in
+ rzg2l_usb_vbus_regulator_probe()
+Message-Id: <172772865592.2147169.15364434698443632490.b4-ty@kernel.org>
+Date: Mon, 30 Sep 2024 21:37:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,16 +58,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-99b12
 
-On Fri, 20 Sep 2024 17:34:32 +0200, Uwe Kleine-König wrote:
-> These drivers don't use the driver_data member of struct i2c_device_id,
-> so don't explicitly initialize this member.
+On Tue, 24 Sep 2024 13:34:45 +0200, Markus Elfring wrote:
+> An of_node_put(config.of_node) call was immediately used after a pointer
+> check for a devm_regulator_register() call in this function implementation.
+> Thus call such a function only once instead directly before the check.
 > 
-> This prepares putting driver_data in an anonymous union which requires
-> either no initialization or named designators. But it's also a nice
-> cleanup on its own.
+> This issue was transformed by using the Coccinelle software.
+> 
 > 
 > [...]
 
@@ -76,8 +77,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: isl6271a: Drop explicit initialization of struct i2c_device_id::driver_data to 0
-      commit: f4e06afb0b47eb8ef6aa42eb8df2adb73b397bf7
+[1/1] regulator: Call of_node_put() only once in rzg2l_usb_vbus_regulator_probe()
+      commit: 7368e9f4e25bea507895bf194bd1c72d693840b2
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
