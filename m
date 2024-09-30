@@ -1,255 +1,98 @@
-Return-Path: <linux-kernel+bounces-344434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4808D98A98B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:15:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E6698A98E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3551C23AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37212838F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C5B192D68;
-	Mon, 30 Sep 2024 16:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FB5192B99;
+	Mon, 30 Sep 2024 16:16:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZNeFWm3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CIh6xCNC"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CEA3BB24;
-	Mon, 30 Sep 2024 16:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6871922F4
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727712928; cv=none; b=SQaNLc+seVrVK4GB075V1wKXpz9oHUr4YczlHP9OBJzzlV0P2s1foRSByCIsZ9jsAsHCEXy678bZZI+lNNF8F2JikiwEAxp9WMkfKgk07n6qMdrBCwz8SFlITXsgSBnubg+g2v1FHyNppscnu1p5pxT7828dauI+tQ2HOGerHUA=
+	t=1727713010; cv=none; b=TY8at9nqHLBEtk+xjULWxugbYS/frYzorfItgkiPGQ9eDT9plGpbEGNcfy5tbEDIEPgsYUYL9/2x/vVSXWa2V3gWwMnNCjpN3S6vZzGJqvFqVfquciRDWmF1q4gi4D937BAmUsHl3R4uaVSHZny3ylK6bnhOg/ltm4xiehNT+BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727712928; c=relaxed/simple;
-	bh=pVNOoRY/aMZ6MKX8Dx9c7ZdMoC/RjNg8xQCC8ehl39E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bD9mFGPRPkbemtr+w5vlylhG4sKcZQLrij4Nz0NM5gLU0NrV8yfZ2nb59nvS0JCQR3tA5wTF94Yls4LYC6OBVcO3KvNDsSZDthyldbSW5W9jv7a4OUBfK8AHvvwNjYHSDugCahDHTqdOup+GDUSjm1T2QwtDlMLlN3ggXqraBrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZNeFWm3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15009C4CEC7;
-	Mon, 30 Sep 2024 16:15:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727712928;
-	bh=pVNOoRY/aMZ6MKX8Dx9c7ZdMoC/RjNg8xQCC8ehl39E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qZNeFWm30bgJ9ThaVLWeh2uKeKMmSZKpU/hZR22WHtlFAQmA/0VTR2m1oVTupGqSB
-	 sintiNT/vm4dGPICc/5aanrWT84sH/plpNbCC1Pgib9fgwr/Mo/ikpkBHfJSTWfbE/
-	 ZoItrOmDGkrtHjwPsQKVrZDiKyyJxEnukby1RipNX399ELK8awhTeA/CUrHLBw/2Sv
-	 JOfAGK5sno6tpTySR0FgjzuYMMK9KfH9ucJymuiRjDJ7mKq50uvQTxgZ7kmq4+bPKL
-	 Yf1+C3j1TCH6aZLdP2Nl3HddoOArO+6CSYl8kTszH+WcCPogJnRbAS8I40sNBo7Hul
-	 lOPZeLDE98J5g==
-Date: Mon, 30 Sep 2024 18:15:22 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org, lee@kernel.org, 
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org, onitake@gmail.com, 
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <5th4pisccud5s7dbia42glsnu7e5u3q7jszty6o3mjdedsd2bg@7nsvp6t2krnf>
-References: <20240926174405.110748-1-wse@tuxedocomputers.com>
- <20240926174405.110748-2-wse@tuxedocomputers.com>
- <ZvcdNXQJmc8cjifw@amd.ucw.cz>
- <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
- <7r3zg4tcmp5ozjwyiusstgv7g4dha4wuh4kwssxpk3tkurpgo3@36laqab7lsxp>
- <58cf1777-222f-4156-9079-bcbba4a32c96@tuxedocomputers.com>
- <45qkbpaxhrv2r32hghjqoexkenktymzyjgpx2xnnxt6dmfawjt@44lrhgcnozh3>
- <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+	s=arc-20240116; t=1727713010; c=relaxed/simple;
+	bh=COSEK+4dv7wY2pDAKZRF+dlcGiahU2sfuueUYyuf4es=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=FRKWtWaaIbj3J0lktuvWsi+Y8X54d0aL7dCH/0FoHN2FAldWw75Mf5yK07YHxbpHXwMZCaX16XQRc9WuqIkepNH2BJuZj9i0N4uiUPm2MsIBIgbi2HSxnMRW8c65EoteeIfxETJ8GUJESNa+OQpLT5+6T4RO99UseYZImK0tbNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CIh6xCNC; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 60D6540E0198;
+	Mon, 30 Sep 2024 16:16:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 7QFSNGHRKQ3j; Mon, 30 Sep 2024 16:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1727712998; bh=yoQF9HTv7kdfmn9L4fH2ohJUwEDAAzNVzVNbJEYhRZs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=CIh6xCNCdlw94vtB33cHZfKGl/3gNjPPtebyWHj/n3e9g5XSfTMsFDSCgzN0STZWu
+	 FC89PoUWESGXfrM1n4q0gBkV/vdiSr6I+EFTfiNW+oJTCxT8jPYLDrE+nwrVVeauS0
+	 roJmQ6ZtECnYfXvodoN148vqHoAp1212m3Aedieb4D3wMABubKyQGM6efDNHF+9vqs
+	 t1qsACwMG8A9rJHIsTelE9lyusb+AoIVpP7++tW9r9CqYDuBCoxv9XU1kEYiujMPjN
+	 rzfGciG0mS28cUdeAwxOkKaymD70BBerpMAk8Q83GrfJrCiUeuoXxyPnrk8HNsvj8Z
+	 ftbayxaU+hr8F6aI6AuvbRKFdohOW7vEiIJXVLtZmOBD5r1uCKxlG6K/alkrhp4MLX
+	 3EH1NNpxig8+8oyCIpdxBSqqfqU5i0dSK4xHgUBDJjR+UVZKM6/zB+dsa1QVBi2dCi
+	 qzi1Cbujvwa/1dYTMKxfkvrujU0y61+cpsa/HcykADpW6eZjGURqCbt1ztCnY11spY
+	 /PcYGycU8KxhWxsEUflnDrYXWKsDBEBskgzmFrT4RoCQ8cyz8otclXsL4XRtXNSeBb
+	 Cn6Vs8LgAu1eGgwJdICX4keXNiuXjlS8C/nUWCdtip/YDxK2cKlhmCh5x4lMP+4qIf
+	 zj8AHojJhACDmfT4ZNIamR4k=
+Received: from [127.0.0.1] (82.red-81-42-199.staticip.rima-tde.net [81.42.199.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2F2F540E0169;
+	Mon, 30 Sep 2024 16:16:33 +0000 (UTC)
+Date: Mon, 30 Sep 2024 18:16:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Jens Axboe <axboe@kernel.dk>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: AMD zen microcode updates breaks boot
+User-Agent: K-9 Mail for Android
+In-Reply-To: <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
+References: <91194406-3fdf-4e38-9838-d334af538f74@kernel.dk> <20240928061038.GAZved3hMSU3XahWrJ@fat_crate.local> <5fe1e264-c285-4988-b1e3-46771d07172b@kernel.dk> <20240930044313.GAZvosYZF5mHi2OZbC@fat_crate.local> <d7aff674-ad92-4a36-9ebf-8d3c42774723@kernel.dk>
+Message-ID: <CC418B80-5ED9-4F64-917F-BA6F94130F83@alien8.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <586a1c41-bbe0-4912-b7c7-1716d886c198@tuxedocomputers.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sep 30 2024, Werner Sembach wrote:
-> Am 28.09.24 um 12:05 schrieb Benjamin Tissoires:
-> > On Sep 28 2024, Werner Sembach wrote:
-> > > Hi,
-> > > 
-> > > Am 28.09.24 um 09:27 schrieb Benjamin Tissoires:
-> > > > On Sep 28 2024, Armin Wolf wrote:
-> > > > > Am 27.09.24 um 23:01 schrieb Pavel Machek:
-> > > > > 
-> > > > > > Hi!
-> > > > > > 
-> > > > > > > The TUXEDO Sirius 16 Gen1 and TUXEDO Sirius 16 Gen2 devices have a per-key
-> > > > > > > controllable RGB keyboard backlight. The firmware API for it is implemented
-> > > > > > > via WMI.
-> > > > > > Ok.
-> > > > > > 
-> > > > > > > To make the backlight userspace configurable this driver emulates a
-> > > > > > > LampArray HID device and translates the input from hidraw to the
-> > > > > > > corresponding WMI calls. This is a new approach as the leds subsystem lacks
-> > > > > > > a suitable UAPI for per-key keyboard backlights, and like this no new UAPI
-> > > > > > > needs to be established.
-> > > > > > Please don't.
-> > > > > > 
-> > > > > > a) I don't believe emulating crazy HID interface si right thing to
-> > > > > > do. (Ton of magic constants. IIRC it stores key positions with
-> > > > > > micrometer accuracy or something that crazy. How is userland going to
-> > > > > > use this? Will we update micrometers for every single machine?)
-> > > > This is exactly why I suggest to make use of HID-BPF. The machine
-> > > > specifics is going to be controlled by userspace, leaving out the crazy
-> > > > bits out of the kernel.
-> > >  From just a quick look at
-> > > https://www.kernel.org/doc/html/latest/hid/hid-bpf.html HID-BPF is some kind
-> > > HID remapping?
-> > Yes. HID-BPF allows to customize a HID device by changing the report
-> > descriptor and/or the events, and the requests made from hidraw.
-> > 
-> > It's a HID -> HID conversion, but controlled by userspace.
-> > 
-> > See [0] for a tutorial.
-> > 
-> > > But the device in question nativly does not have a hid interface for the
-> > > backlight. It is controlled via WMI calls.
-> > > 
-> > > Afaik userspace on linux has no access to WMI? How could HID-BPF implement
-> > > the WMI calls?
-> > You'll need a thin WMI to HID wrapper, but without LampArray.
-> > Then you load the HID-BPF program from userspace, that program knows
-> > about the specifics of the device, and can do the LampArray transform.
-> > 
-> > Which means that once the wmi-to-hid driver specific to this device is
-> > built in the kernel, you can adjust your LampArray implementation (the
-> > device specifics micrometers and what not) from usersapce.
-> > 
-> > > > > > Even if it is,
-> > > > > > 
-> > > > > > b) The emulation should go to generic layer, it is not specific to
-> > > > > > your hardware.
-> > > > Well, there is not so much about an emulation here. It's a different way
-> > > > of presenting the information.
-> > > > But given that HID LampArray is a HID standard, userspace is able to
-> > > > implement it once for all the operating systems, which is why this is so
-> > > > appealing for them. For reference, we have the same issue with SDL and
-> > > > Steam regarding advanced game controller: they very much prefer to
-> > > > directly use HID(raw) to talk to the device instead of having a Linux
-> > > > specific interface.
-> > > > 
-> > > > Also, starting with v6.12, systemd (logind) will be able to provide
-> > > > hidraw node access to non root applications (in the same way you can
-> > > > request an input evdev node). So HID LampArray makes a lot of sense IMO.
-> > > > 
-> > > > > Maybe introducing a misc-device which provides an ioctl-based API similar
-> > > > > to the HID LampArray would be a solution?
-> > > > > 
-> > > > > Basically we would need:
-> > > > > - ioctl for querying the supported LEDs and their properties
-> > > > > - ioctl for enabling/disabling autonomous mode
-> > > > > - ioctl for updating a range of LEDs
-> > > > > - ioctl for updating multiple LEDs at once
-> > > > You'll definitely get the API wrong at first, then you'll need to adapt
-> > > > for a new device, extend it, etc... But then, you'll depend on one
-> > > > userspace application that can talk to your custom ioctls, because cross
-> > > > platform applications will have to implement LampArray, and they'ĺl
-> > > > probably skip your custom ioctls. And once that userspace application is
-> > > > gone, you'll still have to maintain this forever.
-> > > > 
-> > > > Also, the application needs to have root access to that misc device, or
-> > > > you need to add extra support for it in systemd...
-> > > > 
-> > > > > If we implement this as a separate subsystem ("illumination subsystem"), then different
-> > > > > drivers could use this. This would also allow us to add additional ioctl calls later
-> > > > > for more features.
-> > > > Again, I strongly advise against this.
-> > > > 
-> > > > I'll just reiterate what makes the more sense to me:
-> > > > - provide a thin wmi-to-hid layer that creates a normal regular HID
-> > > >     device from your device (could be using vendor collections)
-> > > This is what this driver tries to be.
-> > Except that your current implementation also does the LampArray
-> > conversion. I think it'll make more sense to provide an almost raw
-> > access to the underlying protocol (think of it like your own Tuxedo
-> > vendor collection in HID), and handle the LampArray weirdeness in bpf:
-> > definition of the device physicals, conversion from HID LampArray
-> > commands into Tuxedo specifics.
-> > 
-> > > > - deal with the LampArray bits in the HID stack, that we can reuse for
-> > > >     other devices (I was planing on getting there for my Corsair and
-> > > >     Logitech keyboads).
-> > > If a greater efford in the hid stack is planed here i would be all for it.
-> > That's what makes more sense to me at least. Other operating systems
-> > export the HID nodes directly, so userspace prefers to talk to the
-> > device directly. So I'd rather rely on a standard than trying to fit the
-> > current use case in a new interface that will probably fail.
-> > 
-> > > On my todolist i would try to integrate the leds subsystem with the
-> > > LampArray interface next, just a simple implementation treating the whole
-> > > keyboard as a single led.
-> > That could be done in HID-core as well. Making it part of HID-core also
-> > means that once we get an actual LampArray device, we'll get support for
-> > it from day one.
-> > 
-> > > > - Meanwhile, while prototyping the LampArray support in userspace and
-> > > >     kernelspace, make use of HID-BPF to transform your vendor protocol
-> > > >     into LampArray. This will allow to fix things without having to
-> > > >     support them forever. This is why HID-BPF exists: so we can create
-> > > >     crazy but safe kernel interfaces, without having to support them
-> > > >     forever.
-> > > I guess i have to do some readup xD.
-> > > 
-> > Please have a look at the tutorial[0]. That tutorial is missing the
-> > couple of new hooks you'll need to change the requests emitted from
-> > hidraw as LampArray into Tuxedo, but I can also give you a help into
-> > making it happening.
-> > 
-> > Basically, you also need to define a .hid_hw_request callback in your
-> > HID_BPF_OPS and extract all of the code you have here into that bpf
-> > program (which is roughly C code).
-> > 
-> > Cheers,
-> > Benjamin
-> > 
-> > 
-> > [0] https://libevdev.pages.freedesktop.org/udev-hid-bpf/tutorial.html
-> > 
-> 2 question left on my side:
-> 
-> - Does the BPF approach have performance/latency impact?
+On September 30, 2024 2:27:03 PM GMT+02:00, Jens Axboe <axboe@kernel=2Edk> =
+wrote:
+>Would it perhaps be an idea to revert the cleanup until then? I can't
+>be the only one hit by this=2E We obviously missed -rc1 now, but=2E=2E=2E
 
-Not anything you'll notice. BPF is used in network on much more
-demanding latency purposes. And IIRC, jumping into BPF is almost a no-op
-nowadays. From what I can tell from the BPF maintainer in his ALPSS
-presentation last week:
-"
-BPF C code is compiled into BPF ISA with BPF calling convention,
-JIT translate BPF ISA into native ISA,
-One to one mapping of BPF registers to x86 registers.
-"
+You're the first one I'm hearing about=2E Either your configuration is wei=
+rd or something else is amiss=2E I've tested this patch on all AMD families=
+=2E But sure, feel free to send a properly explained revert and I'll ack it=
+=2E
 
-> 
-> - Does it work during boot? (e.g. early control via the leds subsystem to
-> stop firmware induced rainbow puke)
-> 
+Thx=2E
 
-Nope. It gets loaded once udev enumerates the device, so unless you
-craft a special intird with both the loader and the bpf object it is
-not.
-
-However, if that rainbow is bothering you, you can "initialize" the
-keyboard to a sane state with your WMI-to-HID driver before exposing the
-device to HID.
-
-FWIW, the use of BPF only allows you to not corner yourself. If you
-failed at your LampArray implementation, you'll have to deal with it
-forever-ish. So it's perfectly sensible to use BPF as an intermediate step
-where you develop both userspace and kernel space and then convert back
-the BPF into a proper HID driver.
-
-Being able to develop a kernel driver without having to reboot and
-being sure you won't crash your kernel is a game changer ;)
-
-Cheers,
-Benjamin
+--=20
+Sent from a small device: formatting sucks and brevity is inevitable=2E 
 
