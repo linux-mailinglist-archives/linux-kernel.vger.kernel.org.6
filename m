@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-344560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F7598AB57
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:46:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B65C98AB68
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CE521F23A00
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9977B252EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D199F198A0D;
-	Mon, 30 Sep 2024 17:46:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA105198E65;
+	Mon, 30 Sep 2024 17:51:42 +0000 (UTC)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37BFD18C31
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFA818C31;
+	Mon, 30 Sep 2024 17:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727718375; cv=none; b=ufsFkDPn4WL1NHxlvu+fFVbcCV93R7v7/3n533EvM1pQUBqCCp+SUvGUvvD049SUaS0cdtn7W0+AJxLlCVJhcJkXX/RihDGKmdS9+wSGc+sdWyb0OrUjME9ht8SfxIksv1XEvy0Rt1K9e8siDt4ugoBku0+N4At9SaLrJoqpkzk=
+	t=1727718702; cv=none; b=p5SPQp3lxUAEgb2nliLjt6waF4Xt1n7e70iJ7oPDUziP4U+Jnyxmi/zSFwADsbr1nIVHHZO08LGauUKmWDkSjmyqpTUwQ7++rbgFdXmTJ7M+qEOsUUdJ7SOr7cM0p3ZSG1HRmuMjX5BCd3JCK3qZhPmQH229W5Vjthh9WTj/8LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727718375; c=relaxed/simple;
-	bh=ruyZ4LuCnuC4KtiwQ2V7atvLO/E534PBCUflofb8yQs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QNZPp98eevDBxrP21vakVuIfiiE1OTHjKFbKklD7ZjmnFu/ega6ivKvjF4wSNDafaaOD5JC9QsjTDaV14xPDhI7o9YrpuL8sg6kg1UWaBoYOJTCAeE0di9LLYsH8ZR89K+po4OD8qe4E4SqUtSTduSULNkVA79T0fprQHCbbRSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1svKTL-0003tW-9E
-	for linux-kernel@vger.kernel.org; Mon, 30 Sep 2024 19:46:11 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1svKTK-002gVJ-Sl
-	for linux-kernel@vger.kernel.org; Mon, 30 Sep 2024 19:46:10 +0200
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 8D2FE346EB0
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:46:10 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id AF24D346EA4;
-	Mon, 30 Sep 2024 17:46:07 +0000 (UTC)
-Received: from [172.20.34.65] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id f0b49870;
-	Mon, 30 Sep 2024 17:46:06 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Mon, 30 Sep 2024 19:45:57 +0200
-Subject: [PATCH] can: m_can: m_can_close(): don't call free_irq() for
- IRQ-less devices
+	s=arc-20240116; t=1727718702; c=relaxed/simple;
+	bh=PQ2VgHYe0Ngojxr8nNlQI/+nPbwGo4g+HQCTJc64GP8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CDh0bt9QIXwTqywyh9FOZzhpYeosZ+35wVVUcVKTyA0zwvCH6A7t2DjFK4q7c8Kgl4ujNDHdCCvBbEn/uo1FTgSuoevHsTgy+V/ntqM3ZatolbBXtVaitUx2s5i2iwb2uIt/ITOdALe0PIUxYnNkD3PjOUtYkOg+PKgQ++uldcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a99eee4a5bso417475885a.0;
+        Mon, 30 Sep 2024 10:51:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727718697; x=1728323497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZoyzlnnLRNj4i2u5Dgn44nDbhn4MB5fS72eP0TVQdtc=;
+        b=O81Ppus9t8REbPpGcEtyXeb8y/xbWZk2CkPsqqsCGawxWH7Ddj6P0SSMdxjlOXh1N/
+         RM3sUSnRqz/LwJgxjUMlwYjLXE7COf+ogR9qXFnzdO+MGQCy9Xofm/2p8p3f+/Z046Ev
+         xCKy1Re+SXo17ZnX75KkEPzpBfsyOENXQTtJnf3XxWrBw6Jr8SG1mkX/5twuypZ5/Ncy
+         3kA6CBVzf39W0v5XlPgcRE5ABzkQx94UPu5bvM1cofCEYqVBpizX+InR3dN2IU4T5g2g
+         S23avZIP1DYaaONer6e0S0YhmAPLIizZlYDYRQ4tcsRPjxPaBh/1sg7176PJFdIjVwRs
+         ouoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFs9Ik8AEiQB0iL4H5nmNncPPA+kd/F3NV3G6Co0gc++oOPNVBA78O1ZgJy3HxXcdnvojZY9xRYT36jQ==@vger.kernel.org, AJvYcCUiRdmrNtNGrTFZ4+SQae7Ig9CNQkvu42USZNLBkbiJ1cSWNJNDvhYgi99WdlZYjb8For2/Sgfgw0xJAQ==@vger.kernel.org, AJvYcCVr0iKjeZ7ujCr47hGQjEVR32yVBCjzR9/Y3pTQjDtxyaXAPTPeOOzzXjQVfiQ5H83qJufSggnyoxu+uOpA@vger.kernel.org, AJvYcCWXB+uM2TZkNG5Tot0CcREWJJfNZlTRkKe9+2D1UTCryH71Xx//oO+FK116SjCCtBayrxGL/s/KWgc=@vger.kernel.org, AJvYcCWb3mTL4edSQhE11aOrgEBCRNxxdJzfXKAYdqSjfKtPs7vrL7mWOsdoSLQcBwFAjT/xDDQiH/gLxNSaW2vX@vger.kernel.org, AJvYcCWr9ZafmlfD8tlXIHKaVFxBweKKNmqxrR4Br0Xw4cjeWXn884plcPwe58sQd8cecVcTtXxxHCGFnvuooA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6R3eRsYOufpOaO+ySb0WTWagO+wJschVEwRxjJbhdzC9CVAYq
+	Sh0gNP+SEbQWvvmZOQGyBnx4AeetEVbdeoQ4YNHth625e/wOD5cdCrp/EboQ
+X-Google-Smtp-Source: AGHT+IFrQXnUt9rGHYGl09CM7yMs469aVfJQ+cgoyxYWZ1x7U+9n59mLCbQBoUAY1g6J7P9AmAqIOQ==
+X-Received: by 2002:a05:620a:28c5:b0:7ac:9c44:dde1 with SMTP id af79cd13be357-7ae3785615bmr2009444585a.28.1727718697333;
+        Mon, 30 Sep 2024 10:51:37 -0700 (PDT)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f2e0cfasm38500391cf.43.2024.09.30.10.51.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 10:51:37 -0700 (PDT)
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a99eee4a5bso417474485a.0;
+        Mon, 30 Sep 2024 10:51:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUEVLRRqha2O1w1YOdq5YuGCYiw90qa3lUMoCIcGWOsmEZ9LnTrsNcsfVnKOEhNmgntrbJdgGJpqn+N0Wt/@vger.kernel.org, AJvYcCV3dEN6g+yN82R2wRAH9whin4y6QpEm5NRugt9uOvB4qKI/LYoyFBwIAq0/j3vi8CY8Zm7dvKG1eDjiOw==@vger.kernel.org, AJvYcCVIiD9Gvhpmg69fciM0PrBLv1KFPqV+fFUGmWVUAGZJW8qu5AkdaFm37Qf/ZBV8zdCtml49h7BTAT0=@vger.kernel.org, AJvYcCVmUrGeFtSlHc7FxMKS+Z/fOgUmBjXx5YEKkU4mVbBij9F82D/09gm1UkeUuFh2RWKCMkqD8n2wWVGDUQ==@vger.kernel.org, AJvYcCVw50OSr+HSXw7eSZMyzB+52cVEmWxyopjM90WUlOa3T03n/7+tsVdjGGxlIxwedAEnSOc9/DAUprPojQ==@vger.kernel.org, AJvYcCXYyWgfX86i/saQCZwASwKX+Om/zPtd/3ajAIsvTYnCkfolcUDMVGUCi2Oy83k+3DCQb163xiqBL8fj2uda@vger.kernel.org
+X-Received: by 2002:a05:690c:60c3:b0:6dd:bbb4:bcc7 with SMTP id
+ 00721157ae682-6e2476334f2mr105898897b3.44.1727718393293; Mon, 30 Sep 2024
+ 10:46:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-m_can-cleanups-v1-1-001c579cdee4@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIANTj+mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS2MD3dz45MQ83eSc1MS80oJiXVPj5FQTI3OzNMMkQyWgpoKi1LTMCrC
- B0bG1tQDKS5JDYAAAAA==
-X-Change-ID: 20240930-m_can-cleanups-53ce4276f1b1
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Tony Lindgren <tony@atomide.com>, Judith Mendez <jm@ti.com>, 
- Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel@pengutronix.de, 
- Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-88a27
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1306; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=ruyZ4LuCnuC4KtiwQ2V7atvLO/E534PBCUflofb8yQs=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBm+uPWW9RUq9xQO8h+UMwWfPID7oaGvrrEEVtUu
- 3p4ZiuGs+qJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZvrj1gAKCRAoOKI+ei28
- b5M9CACdGlc/3EY7u77MqG7RlQoabWZOoa/MUV0QRcwFXblkYcRWIR3oAs+SSMifsPGzb0FL+I5
- lKcjat0ki8j5dLGqxe/+q/j7cUXzSvICWshHCXbIYHvTXGh0fctzhGKfedyM87iuVXeyl761MI3
- luiInIavXqJQx+ukolMZIHZNW1tRqqEj69NANY3Kln7SsXYBBaNgX35v/4kAIYv2IMDneTDGL9a
- BUPdtAmNLpojaIFPOklHyI18IsUGyF1A/z4iufiapdMCDW+6hYusNccOc2gKhOqzwC9pF/fqlMs
- 96NmXVXJIdwttGwUNkoyl1XHjnSMgVmO68GEk09dalLaUIlw
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240930132321.2785718-1-jvetter@kalrayinc.com> <20240930132321.2785718-6-jvetter@kalrayinc.com>
+In-Reply-To: <20240930132321.2785718-6-jvetter@kalrayinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 30 Sep 2024 19:46:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVnb-fo2MP7ERwSj-sPNU3-QyikNinfhvgVa2DnR9jJrQ@mail.gmail.com>
+Message-ID: <CAMuHMdVnb-fo2MP7ERwSj-sPNU3-QyikNinfhvgVa2DnR9jJrQ@mail.gmail.com>
+Subject: Re: [PATCH v7 05/10] m68k: Align prototypes of IO memcpy/memset
+To: Julian Vetter <jvetter@kalrayinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, 
+	Yann Sionneau <ysionneau@kalrayinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In commit b382380c0d2d ("can: m_can: Add hrtimer to generate software
-interrupt") support for IRQ-less devices was added. Instead of an
-interrupt, the interrupt routine is called by a hrtimer-based polling
-loop.
+On Mon, Sep 30, 2024 at 3:25=E2=80=AFPM Julian Vetter <jvetter@kalrayinc.co=
+m> wrote:
+> Align the prototypes of the memcpy_{from,to}io and memset_io functions
+> with the new ones from iomap_copy.c.
+>
+> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+> ---
+> Changes for v7:
+> - New patch
 
-That patch forgot to change free_irq() to be only called for devices
-with IRQs. Fix this, by calling free_irq() conditionally only if an
-IRQ is available for the device (and thus has been requested
-previously).
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-Fixes: b382380c0d2d ("can: m_can: Add hrtimer to generate software interrupt")
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/m_can/m_can.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-index a978b960f1f1e1e8273216ff330ab789d0fd6d51..16e9e7d7527d9762d73a7ec47940c73c0976e05d 100644
---- a/drivers/net/can/m_can/m_can.c
-+++ b/drivers/net/can/m_can/m_can.c
-@@ -1765,7 +1765,8 @@ static int m_can_close(struct net_device *dev)
- 	netif_stop_queue(dev);
- 
- 	m_can_stop(dev);
--	free_irq(dev->irq, dev);
-+	if (dev->irq)
-+		free_irq(dev->irq, dev);
- 
- 	m_can_clean(dev);
- 
+                        Geert
 
----
-base-commit: d505d3593b52b6c43507f119572409087416ba28
-change-id: 20240930-m_can-cleanups-53ce4276f1b1
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Best regards,
--- 
-Marc Kleine-Budde <mkl@pengutronix.de>
-
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
