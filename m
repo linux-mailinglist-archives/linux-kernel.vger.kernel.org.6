@@ -1,79 +1,244 @@
-Return-Path: <linux-kernel+bounces-344187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E69B98A614
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:53:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B262298A5F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80D411C2276C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F07C283B92
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86F01922DD;
-	Mon, 30 Sep 2024 13:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53062190075;
+	Mon, 30 Sep 2024 13:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JTeQJBeB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJjW0FiL"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883AE19047A
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 13:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDEE14F8BB;
+	Mon, 30 Sep 2024 13:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727704368; cv=none; b=pfPy6rO8/Vs44TOTHPak2tWksmQGARatI2eG6JIkgLAlhpqCVmvw8PqlihmeYaKRCk1ee9oFmhhC5HvRicZBgS8Dm9CYyAB/uIGEHtaUNP2WwO54EnpvvCIvQlb2HBisJ/B+pzLsfIT4tMKXXCRMVNO69Mm+9wpORK/er24Dn9g=
+	t=1727704364; cv=none; b=LqWcYP8efZ6bmvEJwCxEwZaalnN82SVQSVdcwntVuxWqazksqL/OBJjv+TP7QmnSyj0z9G00r3TJXPLsp6jCCC/Vp2y+an50l7qwWkfB3iMSOGddBUOkc6eSy+EHeVdXy+MF345xuavqhjbFAObuZqiFSopVewJB5YsxXgCb4hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727704368; c=relaxed/simple;
-	bh=3DXpXuP6j6ZbLiklT+hfeQtKg1Z2FaE0rxToJn7T9aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ej3iJglVbAW15Nyti+BlFbPWs2XjcE+TyRcTSHYcecOA7vtlaa2e6FyvXneEhp094pTwFybdmIXk2rx+p6ndyg+ppkGHcybifcsCpmRz9PPJAvFbpmhrlMMfLuoync52bZR2oSSYN3E4Idb3gYhMZxtsmJ4xuHA6h4Zla4li31U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JTeQJBeB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=adKwxB+XL/whCVJICS2Ax2apZpGEL4/bZDV6/yBURV0=; b=JTeQJBeBvfLLWPmcPuSO5cJqOo
-	3dLBsNgI+2TjZl7eRTPhEGZXFkUn4cId4nVtcKcyvZobbUFoNVc5n1T/Gi01n2wik/hb2tbZhmpqH
-	6+UPpr9V90UGRiyiCZRMrpmiOVaMLOlF5YEWU6RBm+1RjTOHpoKKe8LpYipF5rcbdGtpQddglv6v/
-	fW6rm6AcpblyRljHfdgoas40DhcLA5Inva59qc3CN6riREAKxQktmEWvI7X+dSTIpuIIiK5Cqi4HJ
-	6zIq3dym5giRY4E/6PkYw/UHcYtRJREDtr0WXMPlkNAqzVKDV7Zoi9SlZhwCVOq6IByv+mx3t9oYT
-	AJDdNCWg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1svGpG-0000000HPFb-2qfD;
-	Mon, 30 Sep 2024 13:52:34 +0000
-Date: Mon, 30 Sep 2024 14:52:34 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: syzbot <syzbot+ec4b7d82bb051330f15a@syzkaller.appspotmail.com>
-Cc: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com,
-	hdanton@sina.com, hughd@google.com, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com,
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-	vivek.kasireddy@intel.com
-Subject: Re: [syzbot] [mm?] BUG: Bad page map (8)
-Message-ID: <ZvqtIn-9PZRWkMDa@casper.infradead.org>
-References: <000000000000341f5f061d8d6bcb@google.com>
- <66f9ea7a.050a0220.aab67.0023.GAE@google.com>
+	s=arc-20240116; t=1727704364; c=relaxed/simple;
+	bh=C9HvIpNjNeaznQ0MpKwwi8H/OpfNyuIbOnAsOMiC53c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=H9TEoOTqN2U2L8M5KmvpSh4sWgCR+KlOQTsqkPb6Rf/YSTptvL7WXq3QTU0Gt0O++6kyT+odqZczmo24FOLveMUqt+YSWLEeesmicXh4E/bdv51wgUsTpX00vJsDdd1ISj2ZH8VHx5sqmz2x37+uSukbbMhPQx3pAjsprEvS0g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJjW0FiL; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b4e0so1960983a12.3;
+        Mon, 30 Sep 2024 06:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727704360; x=1728309160; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m1Yaj1emHXeiVt+escUx1dJSR3jSAkcCaxo+65UzPS0=;
+        b=TJjW0FiLX3qDuPbH9r8dEP4sp/6114PjKQq4yYqkNpzfBNxbC4nMRzsS714JZw8S5i
+         XmjYK2M/G8nKghpfUggXq3Yyt+jCrngSQqe8NlUGqzYGBnvlu/1t1BnhbVBQHzVfmypc
+         tMuTMXFyphuFU0MsRVL0U00AKHVK3Qy5zFT4w2/wPTBCdko42Upg70atkXxFRdgHpOQB
+         BFhSYpS8l16tMhaoMQZC8oOTZ62tsvMMDl7rY48crBEAwQxY79zLSt5G50GLrlt7QNw6
+         LHFuzyBIylL4qaEpCYefBsRrWaBv0v3PXHksKnMNVlCmxzsyBp46C2MNBemSXFPUozAa
+         DlhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727704360; x=1728309160;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m1Yaj1emHXeiVt+escUx1dJSR3jSAkcCaxo+65UzPS0=;
+        b=tge30D3GcTJf6wYRbVUKRW1SWLKxkTeaz7/xniSb9mbMGJmf6qFm0CsI2CGOIEtRbg
+         JJzyBFxOxPKLq++C/AZAXUndE7LXjXd+fe/XvM/5jXGOxfwc2nDODMdEjDMP6QTOZh5S
+         T3HX5D3mDm5BjRyaIdA2ocZIAIiee89BK1+8xhV5o4BoHFgKE112S3Eexo/X9jq9BlLK
+         WLy01uZmmCUVMLN3tn5KuLDlzUuglNc0budTw5ySREAdZW3G/PSpNzzIfgkZuvGtFFnQ
+         houoz2l9KjsSBP10n40zOQvRwIBU0k9DMMLcFFcQymX6OTJGh/2ZBK7ZUYBfuSsNOzi+
+         RjEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXT6CcqmPR7quuA47/vWoVXQb9m90vSkQir2HMWRsvs5ophYKiBfSipBbCPNaHHOrLm+nV+W3wBDE=@vger.kernel.org, AJvYcCWWt7tIXxXzFKHW4X1a6ANB9TlDglsaS+pS9w2tKblalszisM5M0MIgs9Ud9AhIqMGDuRGKP8E1o+q/XJMp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/yhSa1ZTn16fqTt7QkuNoaOnwFtSt6QNsHCwTfFO/gCql6i/b
+	pMshk8bT/QoN+xw0BgVOtGC37t7ohRtpYThm2otpXfe/qjQpgVfW
+X-Google-Smtp-Source: AGHT+IHphhp0QM/xcUftLTNQsVQV0LaSqp1tKGukf2qQrSbPCSCdTcjXgoNlLh56IND7C1V2YuWpag==
+X-Received: by 2002:a05:6402:34c4:b0:5c8:8381:c1bf with SMTP id 4fb4d7f45d1cf-5c88381c226mr8679919a12.3.1727704359537;
+        Mon, 30 Sep 2024 06:52:39 -0700 (PDT)
+Received: from [192.168.1.17] (host-95-250-55-22.retail.telecomitalia.it. [95.250.55.22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245ea57sm4507540a12.55.2024.09.30.06.52.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 06:52:39 -0700 (PDT)
+From: Antonino Maniscalco <antomani103@gmail.com>
+Subject: [PATCH v7 00/12] Preemption support for A7XX
+Date: Mon, 30 Sep 2024 15:52:35 +0200
+Message-Id: <20240930-preemption-a750-t-v7-0-47803c7a5a64@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66f9ea7a.050a0220.aab67.0023.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACOt+mYC/33QzWrDMAwH8FcpPs9D/rZ32nuMHvwht4alKUkIK
+ yXvPjeXmdbs+BfST0J3MuNUcCYfhzuZcC1zGS81mLcDiWd/OSEtqWbCgUuwTNHrhDhcl9pGvVF
+ AF5ojovNWyiAcqXO1I5ef3fw61nwu8zJOt33Fyh7V/7SVUaAmJM91FBKE+TwNvny/x3EgD23lj
+ SCgJ/AqWO0RfeIxWXgWxJ/goHuDqEJOThrtXDYhPguyEZjpCbIKTiVpgXEE/yKoRuCyJ6gqQEA
+ esmWR2Zc/6FbQPUHvn9TIMAstbW6Fbdt+ASjaYy78AQAA
+X-Change-ID: 20240815-preemption-a750-t-fcee9a844b39
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Antonino Maniscalco <antomani103@gmail.com>, 
+ Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Sharat Masetty <smasetty@codeaurora.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727704357; l=6010;
+ i=antomani103@gmail.com; s=20240815; h=from:subject:message-id;
+ bh=C9HvIpNjNeaznQ0MpKwwi8H/OpfNyuIbOnAsOMiC53c=;
+ b=6dOUv5VIPtbiaHxFmr6UvOkF+bC2pXfM2L4ibF1oJqJcAs9mDfMkLgmp57EVwHHH4mz7fCOFs
+ GbQU7RY5k6xA8yxEUND4ItTe7YysPwO+UkiLk2UBpcN6z3w0CLbNViX
+X-Developer-Key: i=antomani103@gmail.com; a=ed25519;
+ pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
-On Sun, Sep 29, 2024 at 05:02:02PM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit f8d112a4e657c65c888e6b8a8435ef61a66e4ab8
-> Author: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Date:   Fri Aug 30 04:00:54 2024 +0000
-> 
->     mm/mmap: avoid zeroing vma tree in mmap_region()
+This series implements preemption for A7XX targets, which allows the GPU to
+switch to an higher priority ring when work is pushed to it, reducing latency
+for high priority submissions.
 
-This is almost certainly a bogus bisection.  See
-https://lore.kernel.org/all/00000000000020f6f8061da86023@google.com/
+This series enables L1 preemption with skip_save_restore which requires
+the following userspace patches to function:
+
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/30544
+
+A flag is added to `msm_submitqueue_create` to only allow submissions
+from compatible userspace to be preempted, therefore maintaining
+compatibility.
+
+Preemption is currently only enabled by default on A750, it can be
+enabled on other targets through the `enable_preemption` module
+parameter. This is because more testing is required on other targets.
+
+For testing on other HW it is sufficient to set that parameter to a
+value of 1, then using the branch of mesa linked above, `TU_DEBUG=hiprio`
+allows to run any application as high priority therefore preempting
+submissions from other applications.
+
+The `msm_gpu_preemption_trigger` and `msm_gpu_preemption_irq` traces
+added in this series can be used to observe preemption's behavior as
+well as measuring preemption latency.
+
+Some commits from this series are based on a previous series to enable
+preemption on A6XX targets:
+
+https://lkml.kernel.org/1520489185-21828-1-git-send-email-smasetty@codeaurora.org
+
+Signed-off-by: Antonino Maniscalco <antomani103@gmail.com>
+---
+Changes in v7:
+- Enable preemption on more targets
+- Move pwrup reglist to a6xx_catalog and get rid of ifpc list
+- Split out smmu_info from preemption record in separate GPU_RO
+  allocation
+- Make postmable buffer GPU_RO
+- Link to v6: https://lore.kernel.org/r/20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com
+
+Changes in v6:
+- Fixed commit message prefix (A6XX->a6xx)
+- Allow preemption to be disabled at run time
+- Link to v5: https://lore.kernel.org/r/20240924-preemption-a750-t-v5-0-0be2bf81c187@gmail.com
+
+Changes in v5:
+- Made preemption documentation more detailed
+- Added ring ID to preempt_record BO name
+- Added Neil's Tested-By tags
+- Added Akhil's Reviewed-By tags
+- Added Rob's Tested-By tags
+- Moved preemption module params to adreno_device.c
+- Link to v4: https://lore.kernel.org/r/20240917-preemption-a750-t-v4-0-95d48012e0ac@gmail.com
+
+Changes in v4:
+- Added missing register in pwrup list 
+- Removed and rearrange barriers
+- Renamed `skip_inline_wptr` to `restore_wptr`
+- Track ctx seqno per ring
+- Removed secure preempt context
+- NOP out postamble to disable it instantly
+- Only emit pwrup reglist once
+- Document bv_rptr_addr
+- Removed unused A6XX_PREEMPT_USER_RECORD_SIZE
+- Set name on preempt record buffer
+- Link to v3: https://lore.kernel.org/r/20240905-preemption-a750-t-v3-0-fd947699f7bc@gmail.com
+
+Changes in v3:
+- Added documentation about preemption
+- Use quirks to determine which target supports preemption
+- Add a module parameter to force disabling or enabling preemption
+- Clear postamble when profiling
+- Define A6XX_CP_CONTEXT_SWITCH_CNTL_LEVEL fields in a6xx.xml
+- Make preemption records MAP_PRIV
+- Removed user ctx record (NON_PRIV) and patch 2/9 as it's not needed
+  anymore
+- Link to v2: https://lore.kernel.org/r/20240830-preemption-a750-t-v2-0-86aeead2cd80@gmail.com
+
+Changes in v2:
+- Added preept_record_size for X185 in PATCH 3/7
+- Added patches to reset perf counters
+- Dropped unused defines
+- Dropped unused variable (fixes warning)
+- Only enable preemption on a750
+- Reject MSM_SUBMITQUEUE_ALLOW_PREEMPT for unsupported targets
+- Added Akhil's Reviewed-By tags to patches 1/9,2/9,3/9
+- Added Neil's Tested-By tags
+- Added explanation for UAPI changes in commit message
+- Link to v1: https://lore.kernel.org/r/20240815-preemption-a750-t-v1-0-7bda26c34037@gmail.com
+
+---
+Antonino Maniscalco (12):
+      drm/msm: Fix bv_fence being used as bv_rptr
+      drm/msm/a6xx: Track current_ctx_seqno per ring
+      drm/msm: Add a `preempt_record_size` field
+      drm/msm: Add CONTEXT_SWITCH_CNTL bitfields
+      drm/msm/a6xx: Add a pwrup_list field to a6xx_info
+      drm/msm/a6xx: Implement preemption for a7xx targets
+      drm/msm/a6xx: Sync relevant adreno_pm4.xml changes
+      drm/msm/a6xx: Use posamble to reset counters on preemption
+      drm/msm/a6xx: Add traces for preemption
+      drm/msm/a6xx: Add a flag to allow preemption to submitqueue_create
+      drm/msm/a6xx: Enable preemption for a750
+      Documentation: document adreno preemption
+
+ Documentation/gpu/msm-preemption.rst               |  99 +++++
+ drivers/gpu/drm/msm/Makefile                       |   1 +
+ drivers/gpu/drm/msm/adreno/a2xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c              |   2 +-
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c              |   6 +-
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c          |  42 +-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c              | 235 ++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h              | 170 ++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c          | 457 +++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/adreno_device.c         |   4 +
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h            |  22 +-
+ drivers/gpu/drm/msm/msm_gpu.c                      |   2 +-
+ drivers/gpu/drm/msm/msm_gpu.h                      |  11 -
+ drivers/gpu/drm/msm/msm_gpu_trace.h                |  28 ++
+ drivers/gpu/drm/msm/msm_ringbuffer.h               |  18 +
+ drivers/gpu/drm/msm/msm_submitqueue.c              |   7 +
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml      |   7 +-
+ .../gpu/drm/msm/registers/adreno/adreno_pm4.xml    |  39 +-
+ include/uapi/drm/msm_drm.h                         |   5 +-
+ 20 files changed, 1090 insertions(+), 69 deletions(-)
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240815-preemption-a750-t-fcee9a844b39
+
+Best regards,
+-- 
+Antonino Maniscalco <antomani103@gmail.com>
+
 
