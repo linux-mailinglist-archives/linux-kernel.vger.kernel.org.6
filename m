@@ -1,136 +1,223 @@
-Return-Path: <linux-kernel+bounces-344753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46FDE98ADD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FF198ADDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398F11C22099
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EECEC1F2156B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1090F1A0BC9;
-	Mon, 30 Sep 2024 20:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88DD11A0BE0;
+	Mon, 30 Sep 2024 20:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/bpC/wi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L2vkU33j"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6771A2547;
-	Mon, 30 Sep 2024 20:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B621A0B0F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727727187; cv=none; b=R4iiiXdvnz76nBQHmmN6eWYjrJrBBhKxcnqrNdAI2ci/b724XPoBJTm6dbYpXHZy9LOlHREuQcyzaOQPU1DAuwK9QT5aQBnCTcmOnFjMbpp56BuldytfocqgB6k+8flMHbyGH6KbrheGSspQF7wHjAojwgLEin68sIlnuzSYmEQ=
+	t=1727727253; cv=none; b=GaymjBL+b6TwEdIBcNw5+gilCJwcyW4W0eQO5VHcg1WDMDP3V3ZsQh5GNjGFvT7d/F35oFctU/IxB8JXpBNc7blbdx2trP+wl1YPj1d1PGu5Cuys50tk/wOc4c8V4hrXtReCuejrbRiBOsWonQuH8AWfbTr0GfTTZAyXBO034pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727727187; c=relaxed/simple;
-	bh=JCF93E5FpNjDRjMTjqxLE22Kd9lWvfg4sMj0alvns8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHh4T1WHkoi3eqxbHP2EewRhIZXqiJGgESU4MjguSaGIA1EIYt6IkFP6o7YQfjfFTPYl3iuKuqop3R7jEiGxcfzIIRnJP1tNTbbQ+njkpfd+0B2KOPeWQcCIauymE/bHczbjLCVJYMrqeZ3vl+xoitxEJOiCFBzQYu2SDL9taQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/bpC/wi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FAFC4CEC7;
-	Mon, 30 Sep 2024 20:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727727187;
-	bh=JCF93E5FpNjDRjMTjqxLE22Kd9lWvfg4sMj0alvns8Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E/bpC/wiVQdJiQnI9wKuU8cgsyg+9zEy50Oe9pPtorob0/Wk2riPskJoJq5a5Y1p1
-	 JgZqr1i2HzfQwt+ajm6O8YZGVJB7kjqnxS/5Nsbrgb86IOu2y1ukWGM8HKPZrsqRyr
-	 fTqc/HYwrstngDt99c2zl2uFdIsQY+nxPCMKaV1wqskAnLaqGqW71K0/Q+FI5yQ/5l
-	 7OrmEOjOEhIQIUFZYqzNI0KrzV8xG5/u4pjv5IqdeqOnzreuuKoPl6OXwVC8R3yJKE
-	 6Lee2Gh34RxjmV1XPEFDkIZm6JGE/s6FW2NWTPGE70oopekiYZoJaOrPwvTAqmbbNd
-	 m0dX47trzjGkA==
-Date: Mon, 30 Sep 2024 13:13:05 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCH 04/10] perf stat: Add --exclude-guest option
-Message-ID: <ZvsGUbo19pQ4Vtf9@google.com>
-References: <20240905202426.2690105-1-namhyung@kernel.org>
- <20240905202426.2690105-5-namhyung@kernel.org>
- <b1002dc7-78bf-40ed-83af-12a50622fb76@linux.intel.com>
- <c26e646d-5ebf-473e-91e2-db28fc01e35d@linaro.org>
- <ZvMfVe1VXwhCIOB9@google.com>
- <f436dc23-bcaf-493b-93a9-699b63a18d46@linaro.org>
+	s=arc-20240116; t=1727727253; c=relaxed/simple;
+	bh=Dl98yQSaJt7Lo8GSCpWs+NSnjuYZ3QakkNLz4aaqQd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kTrc177M9aAYkRAtvi1WCioeioQgOuMiaY30p2YtgW7FL/uuXhzJmgpjkC3PTL7cjbYeSYEDVpxJNiUqgNfWdvSc32KG32G32NYeYsY9T88wLCjkYAFy/ZYXc86toOYbFD5cATa/toSCfoXwrGGrI4nF0ajSARDVNAshlxDtibU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L2vkU33j; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727727251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=F9G29mhnObs+xsbD9UFjgj7PmnL5CbB/d5ihcQWmydI=;
+	b=L2vkU33jnGRmDeiudY3jppEWid3ZEEnwnl+T/CADPVLTD4G52nD5GUfwzHgKfMpaRdfZrb
+	RpbB/nXMbyzaJDoTkChPXWFpy3z+bC5p3YDtVgSJfn5PTzUk7gzh6cTORXFEfR1cobOGhh
+	1bTEA7eaYfIwh9/ah3kIWdxY435UFgY=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-214--MA1yQvBPPevx7c2V0WgWg-1; Mon,
+ 30 Sep 2024 16:14:08 -0400
+X-MC-Unique: -MA1yQvBPPevx7c2V0WgWg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F0EB1196A111;
+	Mon, 30 Sep 2024 20:14:05 +0000 (UTC)
+Received: from fs-i40c-03.mgmt.fast.eng.rdu2.dc.redhat.com (unknown [10.6.24.150])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 00C881955DC7;
+	Mon, 30 Sep 2024 20:14:01 +0000 (UTC)
+From: Alexander Aring <aahringo@redhat.com>
+To: teigland@redhat.com
+Cc: gfs2@lists.linux.dev,
+	song@kernel.org,
+	yukuai3@huawei.com,
+	agruenba@redhat.com,
+	mark@fasheh.com,
+	jlbec@evilplan.org,
+	joseph.qi@linux.alibaba.com,
+	gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	netdev@vger.kernel.org,
+	vvidic@valentin-vidic.from.hr,
+	heming.zhao@suse.com,
+	lucien.xin@gmail.com,
+	donald.hunter@gmail.com,
+	aahringo@redhat.com
+Subject: [PATCHv2 dlm/next 00/12] dlm: net-namespace functionality
+Date: Mon, 30 Sep 2024 16:13:46 -0400
+Message-ID: <20240930201358.2638665-1-aahringo@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f436dc23-bcaf-493b-93a9-699b63a18d46@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Sep 25, 2024 at 09:36:15AM +0100, James Clark wrote:
-> 
-> 
-> On 24/09/2024 9:21 pm, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Mon, Sep 23, 2024 at 09:47:17AM +0100, James Clark wrote:
-> > > For Coresight tracing and SPE we would want to keep exclude_guest, otherwise
-> > > you generate a load of extra trace that you can't make use of. Say you were
-> > > doing PGO on your host you wouldn't be recompiling anything the guests were
-> > > running.
-> > 
-> > For the specific use case, I think we can guide users to add "H"
-> > modifier (I guess it's not the default event for perf record).
-> > Maybe we can consider per-PMU default attributes.
-> > 
-> 
-> Yeah I was thinking about adding it as a default when the Coresight and SPE
-> events are configured, but I think it's too much to expect for people to
-> know all the edge cases about what the per PMU defaults will be. Having one
-> default for all PMUs makes more sense to me.
-> 
-> I suppose asking Coresight users to add :H when they need it might be a less
-> bad thing than this change to clean up the fragmentation in the defaults.
-> 
-> I expect most of the time if :H is not added things continue to work, just
-> that more data will be recorded. One real concern is that in some
-> configurations there is a limited buffer size and once it's filled you don't
-> get any more data. If that buffer is filled by guest trace then maybe some
-> Auto FDO flow could break. But it's kind of an edge case of an edge case and
-> adding :H isn't really the end of the world.
+Hi,
 
-Ok, let's go with simple then.
+this patch-series is huge but brings a lot of basic "fun" net-namespace
+functionality to DLM. Currently you need a couple of Linux kernel
+instances running in e.g. Virtual Machines. With this patch-series I
+want to break out of this virtual machine world dealing with multiple
+kernels need to boot them all individually, etc. Now you can use DLM in
+only one Linux kernel instance and each "node" (previously represented
+by a virtual machine) is separate by a net-namespace. Why
+net-namespaces? It just fits to the DLM design for now, you need to have
+them anyway because the internal DLM socket handling on a per node
+basis. What we do additionally is to separate the DLM lockspaces (the
+lockspace that is being registered) by net-namespaces as this represents
+a "network entity" (node). There might be reasons to introduce a
+complete new kind of namespaces (locking namespace?) but I don't want to
+do this step now and as I said net-namespaces are required anyway for
+the DLM sockets.
 
-> 
-> > > 
-> > > If we do change the defaults isn't ':H' already enough to go back to the old
-> > > behavior? I'm wondering why we need an argument when all the other exclude
-> > > rules are done with the letter modifiers?
-> > 
-> > I'm not sure I follow this.  But maybe we don't need this option at all.
-> > We can add ":H" for every event but I'm too lazy to add them to all the
-> > default events in perf data. :)
-> > 
-> > Thanks,
-> > Namhyung
-> 
-> Oh I see yes, the argument is a shortcut to adding H on all events and/or
-> the default ones. I wasn't sure if was added because it couldn't be done
-> with :H, but I see it's an alternative instead. So adding it makes sense.
- 
-Yeah, but the current behavior is somewhat misleading so I'll drop it
-now.  If it turns out that we need something like this, I think we can
-add more explicit options like --all-host and --all-guest later.
+You need some new user space tooling as a new netlink net-namespace
+aware UAPI is introduced (but can co-exist with configfs that operates
+on init_net only). See [0] for more steps, there is a copr repo for the
+new tooling and can be enabled by:
 
-Thanks,
-Namhyung
+$ dnf copr enable aring/nldlm
+$ dnf install nldlm
+
+or compile it yourself.
+
+Then there is currently a very simple script [1] to show a 3 nodes cluster
+using gfs2 on a multiple loop block devices on a shared loop block device
+image (sounds weird but I do something like that). There are currently
+some user space synchronization issues that I solve by simple sleeps,
+but they are only user space problems.
+
+To test it I recommend some virtual machine "but only one" and run the
+[1] script. Afterwards you have in your executed net-namespace the 3
+mountpoints /cluster/node1, /cluster/node2/ and /cluster/node3. Any vfs
+operations on those mountpoints acts as a per node entity operation.
+
+We can use it for testing, development and also scale testing to have a
+large number of nodes joining a lockspace (which seems to be a problem
+right now). Instead of running 1000 vms, we can run 1000 net-namespaces
+in a more resource limited environment. For me it seems gfs2 can handle
+several mounts and still separate the resource according their global
+variables. Their data structures e.g. glock hash seems to have in their
+key a separation for that (fsid?). However this is still an experimental
+feature we might run into issues that requires more separation related
+to net-namespaces. However basic testing seems to run just fine.
+
+Limitations
+
+I disable any functionality for the DLM character device that allow
+plock handling or do DLM locking from user space. Just don't use any
+plock locking in gfs2 for now. But basic vfs operations should work. You
+can even sniff DLM traffic on the created "dlmsw" virtual bridge.
+
+- Alex
+
+[0] https://gitlab.com/netcoder/nldlm
+[1] https://gitlab.com/netcoder/gfs2ns-examples/-/blob/main/three_nodes
+
+changes since v2:
+ - move to ynl and introduce and use netlink yaml spec
+ - put the nldlm.h DLM netlink header under UAPI directory
+ - fix build issues building with CONFIG_NET disabled
+ - fix possible nullpointer deference if lookup of lockspace failed
+
+Alexander Aring (12):
+  dlm: introduce dlm_find_lockspace_name()
+  dlm: disallow different configs nodeid storages
+  dlm: add struct net to dlm_new_lockspace()
+  dlm: handle port as __be16 network byte order
+  dlm: use dlm_config as only cluster configuration
+  dlm: dlm_config_info config fields to unsigned int
+  dlm: rename config to configfs
+  kobject: add kset_type_create_and_add() helper
+  kobject: export generic helper ops
+  dlm: separate dlm lockspaces per net-namespace
+  dlm: add nldlm net-namespace aware UAPI
+  gfs2: separate mount context by net-namespaces
+
+ Documentation/netlink/specs/nldlm.yaml |  438 ++++++++
+ drivers/md/md-cluster.c                |    3 +-
+ fs/dlm/Makefile                        |    3 +
+ fs/dlm/config.c                        | 1291 +++++++++--------------
+ fs/dlm/config.h                        |  215 +++-
+ fs/dlm/configfs.c                      |  882 ++++++++++++++++
+ fs/dlm/configfs.h                      |   19 +
+ fs/dlm/debug_fs.c                      |   24 +-
+ fs/dlm/dir.c                           |    4 +-
+ fs/dlm/dlm_internal.h                  |   24 +-
+ fs/dlm/lock.c                          |   64 +-
+ fs/dlm/lock.h                          |    3 +-
+ fs/dlm/lockspace.c                     |  220 ++--
+ fs/dlm/lockspace.h                     |   12 +-
+ fs/dlm/lowcomms.c                      |  525 +++++-----
+ fs/dlm/lowcomms.h                      |   29 +-
+ fs/dlm/main.c                          |    5 -
+ fs/dlm/member.c                        |   36 +-
+ fs/dlm/midcomms.c                      |  287 ++---
+ fs/dlm/midcomms.h                      |   31 +-
+ fs/dlm/netlink2.c                      | 1330 ++++++++++++++++++++++++
+ fs/dlm/nldlm-kernel.c                  |  290 ++++++
+ fs/dlm/nldlm-kernel.h                  |   50 +
+ fs/dlm/nldlm.c                         |  847 +++++++++++++++
+ fs/dlm/plock.c                         |    2 +-
+ fs/dlm/rcom.c                          |   16 +-
+ fs/dlm/rcom.h                          |    3 +-
+ fs/dlm/recover.c                       |   17 +-
+ fs/dlm/user.c                          |   63 +-
+ fs/dlm/user.h                          |    2 +-
+ fs/gfs2/glock.c                        |    8 +
+ fs/gfs2/incore.h                       |    2 +
+ fs/gfs2/lock_dlm.c                     |    6 +-
+ fs/gfs2/ops_fstype.c                   |    5 +
+ fs/gfs2/sys.c                          |   35 +-
+ fs/ocfs2/stack_user.c                  |    2 +-
+ include/linux/dlm.h                    |    9 +-
+ include/linux/kobject.h                |   10 +-
+ include/uapi/linux/nldlm.h             |  153 +++
+ lib/kobject.c                          |   65 +-
+ 40 files changed, 5566 insertions(+), 1464 deletions(-)
+ create mode 100644 Documentation/netlink/specs/nldlm.yaml
+ create mode 100644 fs/dlm/configfs.c
+ create mode 100644 fs/dlm/configfs.h
+ create mode 100644 fs/dlm/netlink2.c
+ create mode 100644 fs/dlm/nldlm-kernel.c
+ create mode 100644 fs/dlm/nldlm-kernel.h
+ create mode 100644 fs/dlm/nldlm.c
+ create mode 100644 include/uapi/linux/nldlm.h
+
+-- 
+2.43.0
 
 
