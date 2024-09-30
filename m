@@ -1,115 +1,225 @@
-Return-Path: <linux-kernel+bounces-343261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CBF9898BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:58:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09CD9898BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92CC32840E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64A321F2184D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 01:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68028A957;
-	Mon, 30 Sep 2024 00:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115D4C85;
+	Mon, 30 Sep 2024 01:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b="h80VGuTo";
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="pjU241CP"
-Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fBNDdlBe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F558489
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE38F10E4
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 01:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727657913; cv=none; b=aYNCoiF9v0wGw2DC8AhjPg2CWjMFFpLj+s+ujrxSFAgUDVrJ1ToBEBLZ0g9FX3scn5Tmw6HFOJUwiyYejt3QBLIGBCrnozJisjN/xiCYFrLEL8fSN/I5pw5RkwOVjPvhssQeoNdU/Met01/jSfaMThwDI7NC/p0jad2Yd4FCxrM=
+	t=1727658039; cv=none; b=mzH/q/s/SDzV0OiDqwrMwt5N2U4WtlOiMy7viSTi40sT63Sp2+QWiVgaSLJxmRy9ACmh/R9ILP/1hB6RJPJAah3vzRAi1v49+pGUeoCoyBowl6Ba6OEZslQSBfmAs2RsTjf6faQYy36RnPnJmSYJxz2TY5FdForKrlQTzh5gSpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727657913; c=relaxed/simple;
-	bh=RZ2+hM4JWTT7vSVgHINHTT3hEK1s/2ZkTFw4nXl266Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RCVx/9a4bmS91iIXp4cJVhgQ7faF78oed0Ts+yK5ZBDURc4CXUqM5xcR2S2r+oj1CgNrzwlt7l1zJSP5C6DHsfQ3vnjQu5IhlBg8aNC5rW1d7BvaiDztsCi8ObXWaDiUNPg+1cUO+NdpWSTMywH2OdyMXJx8EH7o2ctKgFqovN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev; spf=pass smtp.mailfrom=lkcamp.dev; dkim=pass (2048-bit key) header.d=lkcamp.dev header.i=@lkcamp.dev header.b=h80VGuTo; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=pjU241CP; arc=none smtp.client-ip=34.202.193.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lkcamp.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lkcamp.dev
-DKIM-Signature: a=rsa-sha256; b=h80VGuTo0MfIOBRETQGEISWzMqVnsE08XhM6rqwmykCPYZFya/dj3nElbICgvQcu1N8iz38PEdCtXcAHdN0SCoEhhG6dSdPI4PwUMeDXqqDjkx+eXmykTqTcH0OV0QpM5PK1BIk/741KSuJ+TmslJk7p7G5UWMP133J3vxJnCkZDbCMkES7VnVD7QynYfd8RmWUVRcYaBJPLz0nCcWGLLu9jEV2lWrwCeWDZdpbZE9fdeL3d+IYFAROi4jYMigNn2KhSLLve2yY4M4FzJqjjk3oqSk2M7IH6WNHMP0XrasRySJlUsweOerjXHOmc2JC+TMvpb297QcmYyTsaow8JHw==; s=purelymail1; d=lkcamp.dev; v=1; bh=RZ2+hM4JWTT7vSVgHINHTT3hEK1s/2ZkTFw4nXl266Y=; h=Received:Date:Subject:To:From;
-DKIM-Signature: a=rsa-sha256; b=pjU241CP7pD84It60WJ2bK/UkGSwpQ+3vF5OcB513BtANWpWL1O4HWbu9a/N0sP1SND8+lupB9CUYu5uQ/LMRwX21UoIQLXhtQNcf3//g5MSl6I1k9jtIYV/iCPsYbfeK62OoEdQ8Xq2iLXp9p6uWfp8JOB4bUnS94O+vW5Lqo2MMeMEHKI7Kog0/5GeZSmS2hTrpVLffJ/3QHcUxLENUuWSIw48hrZcRtbtOcvp2zAYMFhcvEu5TTJxrt1RskgYGw91td5ce1SNrd+urlHKna0rok+rqaXXKbIQ4V637+UhiNcEaoepKgI+sooX+cDiY7kwm2Y5OQuC1KWvlzbwMQ==; s=purelymail1; d=purelymail.com; v=1; bh=RZ2+hM4JWTT7vSVgHINHTT3hEK1s/2ZkTFw4nXl266Y=; h=Feedback-ID:Received:Date:Subject:To:From;
-Feedback-ID: 40580:7130:null:purelymail
-X-Pm-Original-To: linux-kernel@vger.kernel.org
-Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1761403759;
-          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 30 Sep 2024 00:57:50 +0000 (UTC)
-Message-ID: <7d2ad97c-6a0e-4113-9f30-c30b5db7a028@lkcamp.dev>
-Date: Sun, 29 Sep 2024 21:57:45 -0300
+	s=arc-20240116; t=1727658039; c=relaxed/simple;
+	bh=y4Xr5e5pES7Llfc8h1Ih3ugWCreLhotvnuYOiirpS4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CsQWT1oOrdZ+iGJy09bYZCDZX/d2tE5vYMoFB6eMUiA3vX4/rKvIPdKFvcbRDyi9MLNdx7dSGlEsw0goofGbEdARuf4nP84eT/IzKAc+iERUOkCGt1CoDx0FM7MHwuIrv+QMDVir/bbJSb7KSEQ/Bz/Rr752YA4UYUMTBSbo/rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fBNDdlBe; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727658038; x=1759194038;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=y4Xr5e5pES7Llfc8h1Ih3ugWCreLhotvnuYOiirpS4g=;
+  b=fBNDdlBe3jPTeX5spmfDWsXEfzmRU3kS+6xnLSrakiVpEZA1swJxtJIi
+   yI4cI62QBQnAicu3Xv4hLv6/6uHIgMR+J+2K9HzzSBTprJ5Q0QqZgFVjN
+   L/E4Q/wUS1saJQ+ERYsXWWdK5JMSLUzvhT2RflNimMcd6VQ1lTasM9qZs
+   uf1BZM4xKlUSB6xBwYv3f3E2r2bRV/5nWm6qvJFNCUm1XzrxcQrSAwKVH
+   XtmV4K4GMMPosiUGwCobi55d3CqgJnvKTiIgwYwG2W9v9Rl5pU1x2K5db
+   HZS4+W5BGKnuZnWPX25EtR1kUz1Qp4KgZ8uwA1vY2yV4qYTUbAsoZS18P
+   Q==;
+X-CSE-ConnectionGUID: SbyjaJ4AR/m7NU38pP22tg==
+X-CSE-MsgGUID: 2QOVSSIBSR+onpXF9KJ3sg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11210"; a="44191541"
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="44191541"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2024 18:00:37 -0700
+X-CSE-ConnectionGUID: 6ffkm2LSSTW+IuuaMCbWWQ==
+X-CSE-MsgGUID: +ijqhO3FTciTFh1cfUz6uw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,164,1725346800"; 
+   d="scan'208";a="73408514"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 29 Sep 2024 18:00:36 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sv4m9-000OrD-1s;
+	Mon, 30 Sep 2024 01:00:33 +0000
+Date: Mon, 30 Sep 2024 09:00:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: arch/parisc/include/asm/page.h:7:25: error: 'CONFIG_PAGE_SHIFT'
+ undeclared; did you mean 'CONFIG_HAVE_PCI'?
+Message-ID: <202409300823.1WT06W20-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/1] Add KUnit tests for lib/crc16.c
-To: David Laight <David.Laight@ACULAB.COM>,
- =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@riseup.net>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
- "~lkcamp/patches@lists.sr.ht" <~lkcamp/patches@lists.sr.ht>,
- Rae Moar <rmoar@google.com>, David Gow <davidgow@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "kunit-dev@googlegroups.com" <kunit-dev@googlegroups.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-References: <20240922232643.535329-1-vpeixoto@lkcamp.dev>
- <8291c6eb-750a-4ab2-8904-65d723d034dd@riseup.net>
- <6d3025ed-e00d-4f8a-bab7-256cf78774af@lkcamp.dev>
- <7f67ae7f15524e4eab6b15cdfd750a04@AcuMS.aculab.com>
-Content-Language: en-US
-From: Vinicius Peixoto <vpeixoto@lkcamp.dev>
-In-Reply-To: <7f67ae7f15524e4eab6b15cdfd750a04@AcuMS.aculab.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi David,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   9852d85ec9d492ebef56dc5f229416c925758edc
+commit: d3e5bab923d35f73c74f6dbbb761988d4f58f878 arch: simplify architecture specific page size configuration
+date:   7 months ago
+config: parisc-randconfig-002-20231201 (https://download.01.org/0day-ci/archive/20240930/202409300823.1WT06W20-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240930/202409300823.1WT06W20-lkp@intel.com/reproduce)
 
-On 9/26/24 13:21, David Laight wrote:
-> ...
->> The checksums for the randomly-generated test cases were calculated
->> using a reference implementation [1] and this test compares them against
->> the values yielded by the kernel's implementation.
->=20
-> I'd just use a na=C3=AFve implementation - doesn't really matter
-> if it is a bit slow.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409300823.1WT06W20-lkp@intel.com/
 
-Thanks for the feedback. I agree that it makes more sense to use a naive=20
-implementation to validate the results from the kernel's crc16 instead=20
-of having a table of pre-computed results. I will include in v2 a=20
-bog-standard implementation of crc16 similar to yours (using a loop=20
-instead of a lookup table) to validate the results.
+All errors (new ones prefixed by >>):
 
-Thanks,
-Vinicius
+   In file included from arch/parisc/include/uapi/asm/byteorder.h:5,
+                    from arch/parisc/include/asm/bitops.h:11,
+                    from include/linux/bitops.h:68,
+                    from include/linux/kernel.h:23,
+                    from arch/parisc/include/asm/bug.h:5,
+                    from include/linux/bug.h:5,
+                    from include/linux/page-flags.h:10,
+                    from kernel/bounds.c:10:
+   include/linux/byteorder/big_endian.h:8:2: warning: #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN [-Wcpp]
+       8 | #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN
+         |  ^~~~~~~
+   In file included from arch/parisc/include/asm/bitops.h:201:
+   include/asm-generic/bitops/__fls.h: In function '__fls':
+   include/asm-generic/bitops/__fls.h:18:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      18 |         if (!(word & (~0ul << 32))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:20:22: warning: left shift count >= width of type [-Wshift-count-overflow]
+      20 |                 word <<= 32;
+         |                      ^~~
+   include/asm-generic/bitops/__fls.h:23:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      23 |         if (!(word & (~0ul << (BITS_PER_LONG-16)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:27:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      27 |         if (!(word & (~0ul << (BITS_PER_LONG-8)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:31:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      31 |         if (!(word & (~0ul << (BITS_PER_LONG-4)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:35:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      35 |         if (!(word & (~0ul << (BITS_PER_LONG-2)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:39:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      39 |         if (!(word & (~0ul << (BITS_PER_LONG-1))))
+         |                            ^~
+   In file included from arch/parisc/include/asm/processor.h:19,
+                    from include/linux/sched.h:13,
+                    from arch/parisc/kernel/asm-offsets.c:18:
+   arch/parisc/include/asm/pdc.h:75:24: warning: 'struct pdc_memory_table' declared inside parameter list will not be visible outside of this definition or declaration
+      75 |                 struct pdc_memory_table *tbl, unsigned long entries);
+         |                        ^~~~~~~~~~~~~~~~
+   arch/parisc/include/asm/pdc.h:74:30: warning: 'struct pdc_memory_table_raddr' declared inside parameter list will not be visible outside of this definition or declaration
+      74 | int pdc_mem_mem_table(struct pdc_memory_table_raddr *r_addr,
+         |                              ^~~~~~~~~~~~~~~~~~~~~~
+   In file included from arch/parisc/include/uapi/asm/byteorder.h:5,
+                    from arch/parisc/include/asm/bitops.h:11,
+                    from include/linux/bitops.h:68,
+                    from include/linux/kernel.h:23,
+                    from arch/parisc/include/asm/bug.h:5,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/linux/sched.h:14:
+   include/linux/byteorder/big_endian.h:8:2: warning: #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN [-Wcpp]
+       8 | #warning inconsistent configuration, needs CONFIG_CPU_BIG_ENDIAN
+         |  ^~~~~~~
+   In file included from arch/parisc/include/asm/bitops.h:201:
+   include/asm-generic/bitops/__fls.h: In function '__fls':
+   include/asm-generic/bitops/__fls.h:18:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      18 |         if (!(word & (~0ul << 32))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:20:22: warning: left shift count >= width of type [-Wshift-count-overflow]
+      20 |                 word <<= 32;
+         |                      ^~~
+   include/asm-generic/bitops/__fls.h:23:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      23 |         if (!(word & (~0ul << (BITS_PER_LONG-16)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:27:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      27 |         if (!(word & (~0ul << (BITS_PER_LONG-8)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:31:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      31 |         if (!(word & (~0ul << (BITS_PER_LONG-4)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:35:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      35 |         if (!(word & (~0ul << (BITS_PER_LONG-2)))) {
+         |                            ^~
+   include/asm-generic/bitops/__fls.h:39:28: warning: left shift count >= width of type [-Wshift-count-overflow]
+      39 |         if (!(word & (~0ul << (BITS_PER_LONG-1))))
+         |                            ^~
+   In file included from include/linux/cpumask.h:12,
+                    from include/linux/sched.h:16:
+   include/linux/cpumask.h: In function 'cpumask_setall':
+   include/linux/bitmap.h:215:44: warning: right shift count >= width of type [-Wshift-count-overflow]
+     215 | #define BITMAP_LAST_WORD_MASK(nbits) (~0UL >> (-(nbits) & (BITS_PER_LONG - 1)))
+         |                                            ^~
+   include/linux/cpumask.h:542:41: note: in expansion of macro 'BITMAP_LAST_WORD_MASK'
+     542 |                 cpumask_bits(dstp)[0] = BITMAP_LAST_WORD_MASK(nr_cpumask_bits);
+         |                                         ^~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/shm.h:6,
+                    from include/linux/sched.h:23:
+   include/asm-generic/getorder.h: In function 'get_order':
+>> arch/parisc/include/asm/page.h:7:25: error: 'CONFIG_PAGE_SHIFT' undeclared (first use in this function); did you mean 'CONFIG_HAVE_PCI'?
+       7 | #define PAGE_SHIFT      CONFIG_PAGE_SHIFT
+         |                         ^~~~~~~~~~~~~~~~~
+   include/asm-generic/getorder.h:33:48: note: in expansion of macro 'PAGE_SHIFT'
+      33 |                         return BITS_PER_LONG - PAGE_SHIFT;
+         |                                                ^~~~~~~~~~
+   arch/parisc/include/asm/page.h:7:25: note: each undeclared identifier is reported only once for each function it appears in
+       7 | #define PAGE_SHIFT      CONFIG_PAGE_SHIFT
+         |                         ^~~~~~~~~~~~~~~~~
+   include/asm-generic/getorder.h:33:48: note: in expansion of macro 'PAGE_SHIFT'
+      33 |                         return BITS_PER_LONG - PAGE_SHIFT;
+         |                                                ^~~~~~~~~~
+   In file included from include/linux/sched.h:38:
+   include/linux/mm_types_task.h: At top level:
+   include/linux/mm_types_task.h:16:10: fatal error: asm/tlbbatch.h: No such file or directory
+      16 | #include <asm/tlbbatch.h>
+         |          ^~~~~~~~~~~~~~~~
+   compilation terminated.
+   make[3]: *** [scripts/Makefile.build:116: arch/parisc/kernel/asm-offsets.s] Error 1
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1199: prepare0] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:240: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:240: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
->=20
-> Slow is relative - this code only takes 35ms to crc-64 over 5MB of data.
->=20
-> {
->      volatile const uint32_t *r =3D (const void *)buf;
->      for (crc =3D 0; r < (const uint32_t *)buf_end; r++) {
->          uint64_t val =3D le32toh(*r);
->          crc ^=3D bswap64(val);
->          for (i =3D 0; i < 32; i++) {
->              if (crc & (1ull << 63))
->                  crc =3D (crc << 1) ^ 0x42f0e1eba9ea3693ull;
->              else
->                  crc =3D crc << 1;
->          }
->      }
-> }
->=20
-> =09David
->=20
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
- 1PT, UK
-> Registration No: 1397386 (Wales)
 
+vim +7 arch/parisc/include/asm/page.h
+
+     6	
+   > 7	#define PAGE_SHIFT	CONFIG_PAGE_SHIFT
+     8	#define PAGE_SIZE	(_AC(1,UL) << PAGE_SHIFT)
+     9	#define PAGE_MASK	(~(PAGE_SIZE-1))
+    10	
+    11	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
