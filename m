@@ -1,249 +1,132 @@
-Return-Path: <linux-kernel+bounces-344487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07C098AA54
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:53:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21BF98AA57
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C161F23D33
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86CF8282945
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB7D194C79;
-	Mon, 30 Sep 2024 16:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76A519342B;
+	Mon, 30 Sep 2024 16:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u6BxRKVf"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJXgSy4q"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB6A193426
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACCD7DA79;
+	Mon, 30 Sep 2024 16:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715185; cv=none; b=TguRFqnzA8fOn+29+AE5bMesZL47B/L9VMxQMorHcmt89gl8WfXt7gM7y0W8FSjtXwGvOFuSljLaJtkZMQn98azjOii5FCj2Pg+kwhIedPoCy9PikC5tGcWWY4EenudGeBPBbqL3f+oaoIJkWg5icUXPuHbKRxDYCGPbQ8J4atk=
+	t=1727715239; cv=none; b=MV9OocNV80hiillPsTJXeP0dQUXUTZp/e8fOZjgqydCoYOUmo//07l7l07JZgY43/mIE5aR7S1jWnZr0EOYdzaWRMYiwfBGUjGyIVJC9P48By6nBKuClTINLRF6HOOeuhqrb6FQhT0x4tiK5VqEDTYHJLnpcsQ7RD9qpqBTZnFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715185; c=relaxed/simple;
-	bh=/Vjl/ZJLHSij4d9eWY+B4SNisMmOORAdCrjxxFVqiA0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=AzSuc/8EJiwYUWuVd456GJRQzT2T+5uGSMnX7bhUwkB1aWU0Sbon33+3oxePjJmCMeTQqJD9NcVaID63A//XZDWiVfMKRstDkPbQDv4RLTV3iMpdnyYMECsxYRGC4KbNsqzm+mYHR4nDT9jfyUJv/pAQDp1q53MvjJcTsRf5hjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u6BxRKVf; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2e08517d5afso4429858a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 09:53:03 -0700 (PDT)
+	s=arc-20240116; t=1727715239; c=relaxed/simple;
+	bh=0jEjwOj39v8AX1z62M0s8y45t+nJq9agM39PaCwLVNk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OOz4Go7F5n5byB4EULDJrj+8RDN8Q+bdMj4Cp03pN62yVHk4FIfCmqhB+YwYG7Dsr2PCnpQuQfXSCnKh2ijkag0lFkn0uVW9M1ADrKiICL1/dLQzsonaSWWW/sCDzHumxcIryTdoxXcGOfA/YdoJp4SkZJX0nr68ct32LK3LMN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJXgSy4q; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5e56759e6d7so2708962eaf.3;
+        Mon, 30 Sep 2024 09:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727715183; x=1728319983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oEwQEY6QLu2ZxCHrJG6gmvFcLB+g6ofk2SqEEjVaHwA=;
-        b=u6BxRKVfKtR2qejJJA2U0iCWjXtKeTnerPHJ2Y7WfVpzciYjsc/MGIb0ja/xo2E5rG
-         CY3jvgBW23zKabCoHnwVUqbthDcsMrbOUgD3Rzd2b1ywMwLMQ9SS8sxIQzuOQm+Wck9T
-         RNMvT8K/a7C7yv7QeA6ERTI0z9haAi6XOPYMD5bGaS3yh0VGl6UMq1Nhx2OkRgI6ppJX
-         klF5kwWl2VHzso8Hof6IlNqUAhazU0mPIrBDdiKgv0LwLRafZ+fcpF8+/Iv3Ej8HcCO7
-         Cp/EhF6qzIZAYsBA15l+lVz/2qu2av8fPRnUwUgb5A0yWZGei/x10vL+EpbslILUGod6
-         jNwQ==
+        d=gmail.com; s=20230601; t=1727715237; x=1728320037; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zupUM8OlcgcmKdKkm9w6ez3z3K6N/QOFr4MtKpE12t8=;
+        b=JJXgSy4q7SgONuqL+4rFAd1dMKQZYgUxEO5eSxHJ3NJD45noxGOAdW4PBrJfF3WQRI
+         Igs5dEQ6bsQX77dQpCX6uuuQH3CPVsWDAE0992/dI1tsbxiY+HUa4IPzdNLacu9nLfXs
+         eS6i+jUH2aJmIuaoVri9Jn6RCu0b/3USdbGDu6WficrPOcKs97iIstcs3IQa80PUtCTW
+         uJz6KtMmBzW88/JEiYvLYi2f71uTJgLLoNyUjErQKs0bGlnUIaKokYBdPzVMENCMp4yO
+         b4ZdI2oLXBiEZYNeawWxfmBimkgtP53qPZs4YR/gPfu0W6pcWDRlvjCke8QAnpKSjAX5
+         c+Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727715183; x=1728319983;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oEwQEY6QLu2ZxCHrJG6gmvFcLB+g6ofk2SqEEjVaHwA=;
-        b=ASN6iRi2M8SW5KCPidTeOAW+VDOd7NwXpPTFpl+5qHMkwtC20TvBQCABx6sv4xGWJN
-         dre1pP31PYZVr41HQNwZMGgC6iY0ur3JHgq2avi11AL2iPXbFKQf7zk7qjtNVoDSpeJG
-         0lM9kTPqaFIyLoU4g/IwQ3A4PGFOj07GcwwiPrHH9FLuQgCSvFJeFS59AnGoG5SupMEG
-         Y2szovvdruFvWRD2iX0taMlIP9V97stYUxBelDQ/J0NijP7AOyPO6bXOMKXP0tguAaBH
-         EYXKiVnABn5uz6Vum+vFxXbBxB7GSfb48Wfgz65L+FMt+71Hhjk9fT10JVAa1RhOc+ku
-         s9Og==
-X-Forwarded-Encrypted: i=1; AJvYcCWwX3buKGH/eRGLD1NNY/xR+cAtJxL34zIq0fLNHsiW7C2DDdJ4CAE9xuzjrajf+GMsigasKTuEEmpqP0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+YFJzbfKZj/zp7U8NlfIv3i+Ex/C858Vp6TTJ33AA1NSvvNq0
-	IDowvGUYITodFwmoI0GyZg4Emvp6WT9ZXkFl+TUDfiwdmmWRbTgcE6LGJUjQBNL1RMtV3+xhBTk
-	Qaw==
-X-Google-Smtp-Source: AGHT+IENEpbjiPuFVUxbg28yfnUOvGYGhS5DjWHlgtklGL/S8Zda/DNWAcGsWoAHYkdhQO6qxgpJK5aavAI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:dd8f:b0:2d8:817b:a22b with SMTP id
- 98e67ed59e1d1-2e15a35b0e3mr361a91.3.1727715182847; Mon, 30 Sep 2024 09:53:02
- -0700 (PDT)
-Date: Mon, 30 Sep 2024 09:53:01 -0700
-In-Reply-To: <a402dec0-c8f5-4f10-be5d-8d7263789ba1@redhat.com>
+        d=1e100.net; s=20230601; t=1727715237; x=1728320037;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zupUM8OlcgcmKdKkm9w6ez3z3K6N/QOFr4MtKpE12t8=;
+        b=RVj2fdyj/nmlvBE/tusvv5IKUpY1kuGfbGUQT1VqmlNJ+78KtaCQryrUqS7ZJyXiiY
+         2r05f1sLEi36F7iL0WjYQo4+vKw7fwI3gXtUbMUbznksMg4x9gjpzoOrnnjvqu4vPhp6
+         ju0vWAZdzbBWBUJrufHRMZ1mGFgVvKRa80SgCGgEAHTE34M804fvo/7ZLK5rUdSGOiZG
+         aLEPdp/BDsHHMLNMvuTCaxEf0vL6gPj886FiwVFjGr/9sR/pDUByJKA3350H9tAcElXQ
+         iEPmNR35sVF9u2DxXiSSeGtQkesZ7CO5qv0XKoZzcetd1Ou57JH9FFwVBWPUz7VUhK7q
+         bUbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAhFi6xUZEOpV+HGsxEHSiYMO0FEwpzdQuwtFO2o73Qu36iBv1JNAPWqFDusIMW6mD0cx7ATkuJlJLXwuqwN4=@vger.kernel.org, AJvYcCXwVDX8pbVnfZMpHOmD0XmCiii/G9PR8C5w7olHRm9yhnsHusRq3OCUF/prRIOKXdC38LGw7sHKqn+tfdA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwALXfBULwHsmAJoLo4nSxq/w+xghjgB7vhET6rowgTW8rhe0Fe
+	9AkjCrF3JYk3OCtRMurucOpUO7WNtDLDETiKCvOdtKZt2+uM8Px18Euq7RcWnkVYarmMYhQS8gx
+	mYEY3mXwXZTWRO3lrCEBe9HJSVCE=
+X-Google-Smtp-Source: AGHT+IET3vIzd6yKV2seaWJneHCfLlfg2Qk/op/xMpkFfaPUxIq0mhmLcm+mCRHwYBgisR/B9zrW2wqmpUG41ZxBd74=
+X-Received: by 2002:a05:6358:8aa:b0:1bc:57cf:40bd with SMTP id
+ e5c5f4694b2df-1becba07c62mr524382955d.0.1727715236749; Mon, 30 Sep 2024
+ 09:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240928153302.92406-1-pbonzini@redhat.com> <CAHk-=wiQ2m+zkBUhb1m=m6S-H1syAgWmCHzit9=5y7XsriKFvw@mail.gmail.com>
- <a402dec0-c8f5-4f10-be5d-8d7263789ba1@redhat.com>
-Message-ID: <ZvrXbRLzAThvpoj4@google.com>
-Subject: Re: [GIT PULL] KVM/x86 changes for Linux 6.12
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kai Huang <kai.huang@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Farrah Chen <farrah.chen@intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240930123957.49181-1-trintaeoitogc@gmail.com>
+ <20240930123957.49181-2-trintaeoitogc@gmail.com> <ZvqkAuxWZIMZshN_@pollux>
+ <CAM_RzfYXWJ1ePZk7-DFR4P--F1pyzWg8bnC40mbLWaHpx_aNJA@mail.gmail.com> <Zvq9OqEu0yN1Ahgq@pollux>
+In-Reply-To: <Zvq9OqEu0yN1Ahgq@pollux>
+From: =?UTF-8?Q?Guilherme_Gi=C3=A1como_Sim=C3=B5es?= <trintaeoitogc@gmail.com>
+Date: Mon, 30 Sep 2024 13:53:20 -0300
+Message-ID: <CAM_RzfZhMey0u75+M1-hcek6QutS6H9kctpChQ+6g3juSJy5Tg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] device: rust: change the name function
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, aliceryhl@google.com, 
+	mcgrof@kernel.org, russ.weight@linux.dev, dakr@redhat.com, 
+	a.hindborg@kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 30, 2024, Paolo Bonzini wrote:
-> On Sun, Sep 29, 2024 at 7:36=E2=80=AFPM Linus Torvalds <torvalds@linux-fo=
-undation.org> wrote:
-> > The culprit is commit 590b09b1d88e ("KVM: x86: Register "emergency
-> > disable" callbacks when virt is enabled"), and the reason seems to be
-> > this:
-> >=20
-> >   #if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
-> >   void cpu_emergency_register_virt_callback(cpu_emergency_virt_cb *call=
-back);
-> >   ...
-> >=20
-> > ie if you have a config with KVM enabled, but neither KVM_INTEL nor
-> > KVM_AMD set, you don't get that callback thing.
-> >=20
-> > The fix may be something like the attached.
->=20
-> Yeah, there was an attempt in commit 6d55a94222db ("x86/reboot:
-> Unconditionally define cpu_emergency_virt_cb typedef") but that only
-> covers the headers and the !CONFIG_KVM case; not the !CONFIG_KVM_INTEL
-> && !CONFIG_KVM_AMD one that you stumbled upon.
->=20
-> Your fix is not wrong, but there's no point in compiling kvm.ko if
-> nobody is using it.
->=20
-> This is what I'll test more and submit:
->=20
-> ------------------ 8< ------------------
-> From: Paolo Bonzini <pbonzini@redhat.com>
-> Subject: [PATCH] KVM: x86: leave kvm.ko out of the build if no vendor mod=
-ule is requested
-> kvm.ko is nothing but library code shared by kvm-intel.ko and kvm-amd.ko.
-> It provides no functionality on its own and it is unnecessary unless one
-> of the vendor-specific module is compiled.  In particular, /dev/kvm is
-> not created until one of kvm-intel.ko or kvm-amd.ko is loaded.
-> Use CONFIG_KVM to decide if it is built-in or a module, but use the
-> vendor-specific modules for the actual decision on whether to build it.
-> This also fixes a build failure when CONFIG_KVM_INTEL and CONFIG_KVM_AMD
-> are both disabled.  The cpu_emergency_register_virt_callback() function
-> is called from kvm.ko, but it is only defined if at least one of
-> CONFIG_KVM_INTEL and CONFIG_KVM_AMD is provided.
->=20
-> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->=20
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 4287a8071a3a..aee054a91031 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -17,8 +17,8 @@ menuconfig VIRTUALIZATION
->  if VIRTUALIZATION
-> -config KVM
-> -	tristate "Kernel-based Virtual Machine (KVM) support"
-> +config KVM_X86_COMMON
-> +	def_tristate KVM if KVM_INTEL || KVM_AMD
->  	depends on HIGH_RES_TIMERS
->  	depends on X86_LOCAL_APIC
->  	select KVM_COMMON
-> @@ -46,6 +47,9 @@ config KVM
->  	select KVM_GENERIC_HARDWARE_ENABLING
->  	select KVM_GENERIC_PRE_FAULT_MEMORY
->  	select KVM_WERROR if WERROR
-> +
-> +config KVM
-> +	tristate "Kernel-based Virtual Machine (KVM) support"
+Danilo Krummrich <dakr@kernel.org> wrote:
+>
+> On Mon, Sep 30, 2024 at 10:52:27AM -0300, Guilherme Gi=C3=A1como Sim=C3=
+=B5es wrote:
+> > Danilo Krummrich <dakr@kernel.org> writes:
+> > > > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> > > > index 851018eef885..ecffaff041e0 100644
+> > > > --- a/rust/kernel/device.rs
+> > > > +++ b/rust/kernel/device.rs
+> > > > @@ -51,7 +51,7 @@ impl Device {
+> > > >      ///
+> > > >      /// It must also be ensured that `bindings::device::release` c=
+an be called from any thread.
+> > > >      /// While not officially documented, this should be the case f=
+or any `struct device`.
+> > > > -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Sel=
+f> {
+> > > > +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<S=
+elf> {
+> > >
+> > > As a follow-up, it probably makes sense to also change the function b=
+ody to
+> > > just: `unsafe { Self::as_ref(ptr) }.into()`.
+> >
+> > But if we change the function body that is suggested for you, the
+> > function will not have your own refcount. If I don't wrong, the
+> > Device::as_ref() expects the caller to have its own reference counter.
+> > And if we change the behavior of function, your name don't need to be
+> > changed, because your behavior will be equal the from_raw() from
+> > standard library.
+>
+> I think you missed the `into()` above. This will convert `&'a Device` int=
+o
+> `ARef<Device>`, and also call `inc_ref` from the `AlwaysRefCounted` trait
+> implemented for `Device`, and hence increase the reference count.
 
-I like the idea, but allowing users to select KVM=3Dm|y but not building an=
-y parts
-of KVM seems like it will lead to confusion.  What if we hide KVM entirely,=
- and
-autoselect m/y/n based on the vendor modules?  AFAICT, this behaves as expe=
-cted.
+Okay, I understand now that the .into() call, also call `inc_ref` that I
+was don't have knowing. This body change of the get_device() really make
+sense, and I will send a v4 patch.
 
-Not having documentation for kvm.ko is unfortunate, but explaining how kvm.=
-ko
-interacts with kvm-{amd,intel}.ko probably belongs in Documentation/virt/kv=
-m/?
-anyways.
-
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 730c2f34d347..4350b83b63d8 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -18,7 +18,7 @@ menuconfig VIRTUALIZATION
- if VIRTUALIZATION
-=20
- config KVM
--       tristate "Kernel-based Virtual Machine (KVM) support"
-+       def_tristate m if KVM_INTEL=3Dm || KVM_AMD=3Dm
-        depends on X86_LOCAL_APIC
-        select KVM_COMMON
-        select KVM_GENERIC_MMU_NOTIFIER
-@@ -45,19 +45,6 @@ config KVM
-        select KVM_GENERIC_HARDWARE_ENABLING
-        select KVM_GENERIC_PRE_FAULT_MEMORY
-        select KVM_WERROR if WERROR
--       help
--         Support hosting fully virtualized guest machines using hardware
--         virtualization extensions.  You will need a fairly recent
--         processor equipped with virtualization extensions. You will also
--         need to select one or more of the processor modules below.
--
--         This module provides access to the hardware capabilities through
--         a character device node named /dev/kvm.
--
--         To compile this as a module, choose M here: the module
--         will be called kvm.
--
--         If unsure, say N.
-=20
- config KVM_WERROR
-        bool "Compile KVM with -Werror"
-@@ -88,7 +75,8 @@ config KVM_SW_PROTECTED_VM
-=20
- config KVM_INTEL
-        tristate "KVM for Intel (and compatible) processors support"
--       depends on KVM && IA32_FEAT_CTL
-+       depends on IA32_FEAT_CTL
-+       select KVM if KVM_INTEL=3Dy
-        help
-          Provides support for KVM on processors equipped with Intel's VT
-          extensions, a.k.a. Virtual Machine Extensions (VMX).
-@@ -125,7 +113,8 @@ config X86_SGX_KVM
-=20
- config KVM_AMD
-        tristate "KVM for AMD processors support"
--       depends on KVM && (CPU_SUP_AMD || CPU_SUP_HYGON)
-+       depends on CPU_SUP_AMD || CPU_SUP_HYGON
-+       select KVM if KVM_AMD=3Dy
-        help
-          Provides support for KVM on AMD processors equipped with the AMD-=
-V
-          (SVM) extensions.
-
-
->  	help
->  	  Support hosting fully virtualized guest machines using hardware
->  	  virtualization extensions.  You will need a fairly recent
-> diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-> index 5494669a055a..4304c89d6b64 100644
-> --- a/arch/x86/kvm/Makefile
-> +++ b/arch/x86/kvm/Makefile
-> @@ -32,7 +32,7 @@ kvm-intel-y		+=3D vmx/vmx_onhyperv.o vmx/hyperv_evmcs.o
->  kvm-amd-y		+=3D svm/svm_onhyperv.o
->  endif
-> -obj-$(CONFIG_KVM)	+=3D kvm.o
-> +obj-$(CONFIG_KVM_X86_COMMON) +=3D kvm.o
->  obj-$(CONFIG_KVM_INTEL)	+=3D kvm-intel.o
->  obj-$(CONFIG_KVM_AMD)	+=3D kvm-amd.o
-> ------------------ 8< ------------------
->=20
-> On top of this, the CONFIG_KVM #ifdefs could be changed to either
-> CONFIG_KVM_X86_COMMON or (most of them) to CONFIG_KVM_INTEL; I started
-> cleaning up the Kconfigs a few months ago and it's time to finish it
-> off for 6.13.
-
-If you haven't already, can you also kill off KVM_COMMON?  The only usage i=
-s in
-scripts/gdb/linux/constants.py.in, to print Intel's posted interrupt IRQs i=
-n
-scripts/gdb/linux/interrupts.py, which is quite ridiculous.
+Thanks for this Mr. Krummrich.
 
