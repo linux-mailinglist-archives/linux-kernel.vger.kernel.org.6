@@ -1,175 +1,127 @@
-Return-Path: <linux-kernel+bounces-344656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814C098AC67
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:53:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03E798AC6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8291F21AB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF668B228E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFB31991D3;
-	Mon, 30 Sep 2024 18:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7A0199250;
+	Mon, 30 Sep 2024 18:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="tXZRIjYo"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="cO2Y8auM"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92E05466B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 18:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C4198E93;
+	Mon, 30 Sep 2024 18:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727722389; cv=none; b=BVIjxd8j6i+s3PQvvlZuOOrlC1igqeGxAJS3y3jkDniDHYofo7uiddhihLvnmzl5Q/QQYyuo3f8hs2hQY1mvo9aCXobqM7u5s0F8T5G8wJBMxVchJRtV5MoQoMafXPdY5ivDZrKHPbWS/rlM21Abg1gAzOhvgDoKKwQIgsA+tq8=
+	t=1727722423; cv=none; b=KatejFoyuZGZtMASL46wLwmhbYos++CJ4Oy8loXjooSD+UAxIDARHHj4NVVMD16t6R7ehUSt/1NrAUwKJW5M+t8FY25xQj+DQZNvVcTqyI57FUli/S55J03CgGRXkTCXM6/+vRG0B7WVB/q/tDgqY/ejBzn/BUoEj5ZA8qgLEgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727722389; c=relaxed/simple;
-	bh=OhFYS2zLBVylMlhXJpUaVCRzSOpOEfPox/eu3c+3Bu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0euPA5b6WRDl3CDJ79kHLXUE8DbLSvahNQ47xeCvveLJjZoc97sM8yTzDOzva7oKQjCVw7zGUwP4I2mWjCxJ8gncf16Tz2Gl1Bzn9WWCDJxyjinAzNp0af2+xqOZ39gVb1wzYTQc6Xox3JsVnA5a6jJjqEISBX5JhnoWxxqB/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=tXZRIjYo; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9ab721058so495953885a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 11:53:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1727722387; x=1728327187; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q3nc/E6veIr73qBv2y/aevoRhI95QWm1Rj9HOPT08sU=;
-        b=tXZRIjYodbInhNwEcananmB99saYh+SygRVMm4o+NnPlYjJMM0kFPaBygG0Tss11eI
-         +fgrdi3Q+YHIcq+Sz7fBDkfSjidgiQt788i3ite0m2haZ57VOOVIQmPOpzadUl+zRNX3
-         04VD6uwEsmym3SJQ05eGTLzNvSc36jQt/lQk3a/upFjBLLxWG3o/fry2/9urNYQBNNi7
-         kiqLWbYPz24Qs7TbIlrtB8zr8I1I50PjA5fQwbcDSK15/ldp3IokjZESyTzF+8OkCljQ
-         iZlcXmDU9inPHqDyvGifr+FMYC3zlflf69ec3xOzcJSVCHjytnH+ND8F424PHtE9qjmq
-         t37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727722387; x=1728327187;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q3nc/E6veIr73qBv2y/aevoRhI95QWm1Rj9HOPT08sU=;
-        b=f+OZ5+0bSrsfnZGoF0NT3+Di3owX1cAfWzrUHMNzQ7YIM9e0FEG7gCc8ighUkemVtr
-         NuoTpBp7ICi9+TBhI+qA/HAzjxtoo2w71LJK2C8Xs0LoOrRXvqDLYC/etpMR+N72JPp4
-         cW6sabswseHnKBLdRDy+H4gMUxU5G25Hh4Pg3cBc4xkaaIJhf5/k+eGqaMi+UTKS5lWI
-         UNvrPinJrBH3le/mIPkR0PEJgr9WqHqnDL8Lg/PafBk6UzlLTqZ09EUH0o7TS5jjFki3
-         F/XjyT+quGGJnVKHQ/enKZm45fGuxANepnjAAalC+LxVqNlVu5x7rfBbelWTOM+UrCVq
-         za3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXStoyJvkZYCl1ysEajxuzEWmNs7PY+zRK/Rw4HuyUedhmu9jMHquaKXp4IZXOAiMKI5tAtZrV1sSZs8c4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz86rZ/ndbIH6vxfI1egvI3dVoTgVEU0/Pz1Y+q6bKDbbrDyKvM
-	ic4F7Q9pV6uIBDsldW6X5Inb5YHHuqJqndWTmOku+WCSKzbivHdFFtnJ/gNM3A==
-X-Google-Smtp-Source: AGHT+IGKwCrS47yaTQ0BeOhoXQcBFlAYv3nhqHOPGUF2suoHUqsJsO84VsCTi/F+Qxr0yXZrYyaBIQ==
-X-Received: by 2002:a05:6214:2d13:b0:6cb:3be9:1816 with SMTP id 6a1803df08f44-6cb729e7801mr8703456d6.24.1727722386910;
-        Mon, 30 Sep 2024 11:53:06 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::5638])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b67f247sm41724056d6.107.2024.09.30.11.53.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 11:53:06 -0700 (PDT)
-Date: Mon, 30 Sep 2024 14:53:02 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>, John Stultz <jstultz@google.com>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, Ingo Molnar <mingo@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vlastimil Babka <vbabka@suse.cz>, maged.michael@gmail.com,
-	Mateusz Guzik <mjguzik@gmail.com>, Gary Guo <gary@garyguo.net>,
-	rcu@vger.kernel.org, linux-mm@kvack.org, lkmm@lists.linux.dev
-Subject: Re: [PATCH 1/2] compiler.h: Introduce ptr_eq() to preserve address
- dependency
-Message-ID: <82e97ad5-17ad-418d-8791-22297acc7af4@rowland.harvard.edu>
-References: <20240928135128.991110-1-mathieu.desnoyers@efficios.com>
- <20240928135128.991110-2-mathieu.desnoyers@efficios.com>
- <02c63e79-ec8c-4d6a-9fcf-75f0e67ea242@rowland.harvard.edu>
- <9539c551-5c91-42db-8ac1-cff1d6d7c293@huaweicloud.com>
- <2cdda043-1ad9-40cf-a157-0c16a0ffb046@rowland.harvard.edu>
- <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+	s=arc-20240116; t=1727722423; c=relaxed/simple;
+	bh=ppReR8GcGyVCEegWkUwP4oz7BDNDQnUjnv0dlUVwO1Q=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=D5lrDfrYc/JWTnDo7lsC4hKZs1XQDczmlAIigxg2FzEGixjGCbSzhcJ2uFdU0puTubm8G+PEx+pSDYJ8vC1bBH6o83tAF3/xykqzi4G3/xAGex6d3chs2bAtdPiJIhfuFC6yhy/q6+tCVWHi7Ldtojy9NWSN5gfwHtrVrIrD3LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=cO2Y8auM; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1727722401; x=1728327201; i=w_armin@gmx.de;
+	bh=qyNnKDWNIRzY7n2r+FhUqUDgrRdnczD0CqYqMHYr4jQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=cO2Y8auMeEy30LUbMwUCfy0CC0uvp4boY2j7s6vIzVV0fwEzmelaA/YeJP7/4o/L
+	 qdtWFIfRAhBPly9wFtLZdSDcQ4camxtGhEkevuNsQ1QUR7H+3V7iLJy16SsoNZCcS
+	 J3Ngjx+2BV9rReR/e6ZK80mZ+0Gfn1gvBBWv7NdxvvHR2kzd3eUGziD+BJ4K3n9yy
+	 EgHtf8PQWD4vQF+CUSG5mT1Rp+ny1vO/bPY4GVYGF0v9p0cPNjW21X6BqY7amAuqH
+	 NyOnfyc89CICzMsrJ7d0YNCksTHMb87ApuN8huSuhu5UgNkw6Vk7ynlr3sjs5boUm
+	 KGEW3B1HvTJvDU6Pjw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMofW-1sembl3Ck8-00Nuf8; Mon, 30
+ Sep 2024 20:53:21 +0200
+Message-ID: <92b62046-d225-4dd8-a894-30f051267f29@gmx.de>
+Date: Mon, 30 Sep 2024 20:53:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5d7d8a59-57f5-4125-95bb-fda9c193b9cf@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] platform/x86: dell-laptop: Battery hook fixes
+From: Armin Wolf <W_Armin@gmx.de>
+To: mjg59@srcf.ucam.org, pali@kernel.org, dilinger@queued.net
+Cc: rafael@kernel.org, lenb@kernel.org, hdegoede@redhat.com,
+ ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240922064026.496422-1-W_Armin@gmx.de>
+Content-Language: en-US
+In-Reply-To: <20240922064026.496422-1-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:bIvUH7micSPGPrZ9NXnFSmxVbu4ulZKux1Y2QH7fAX/LYAdN2j1
+ itCxWE+ZdMFImPWCJ7be7TULPssKW/5adqrkE/wRPsyevChu2FuWDwY4XhPo0mCzH0SxPA5
+ MNHakeUfiilwN8MJ/q5LUPy29ZK3LFUllp/DVo6aGF6usYSJk1q7JZQTHm1NWdmyMeZaglj
+ Tv76BJsxsP1ApLe4DWFMQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Cziecr+DTkk=;AOniTTCBKVeGrews7r6KXJ5sZLb
+ pzK3m4HMFhcpItGlGHpAgRDirpwtFAOKmTIjIGz5xZCAcQU9bEGBP1dL6c41e4FJLfHGro6w8
+ BtCcPcDjQkXNuuNHm8M6VgZ5ooaY8Zit8tRvUHMLssV7rdRGCZBTdVVVKcFdV1IaB/lvkke5C
+ 27F3Z5TftQq/9UBDi0cXzjheVmRFq4aHLihk+PqTPxaLYlmfApTwcJSOy8LIvQgd1SwqGrC7N
+ 8WSQ2EHUX2fS37qY0nyGdSDW7qb9cnmtxttICp4e+4NHYl2lYwMZFj5itlRFmNh50yG1MDOsf
+ k8qJMAKNmbWCO3yGXPST80VwGSnqP2AdCRzHQ9xB9Sdxdn0k8rBBaJTgxXBBusIMxD2biCiM/
+ LhZ2oor2Kf8y1gmQffIQhpaadpMra1p2XFSL2G0JHl8Y2IPpiAtD5X1LIIRmW4kfwEFVETj0H
+ LSKQyb2xxc1VSWMmsL9ArL1uHUqyfxrBkWKYmPDxYIJO7w3R9Iw8lbASTnIXQMFT/H2fkVePH
+ QCkMN6JE0pz+PZvScni2pVKhcvHBRZ/5H0HxsHVlFnersm4RFMeklAwmhbCXBpWSgFoctcsDN
+ weHA5cik1WB8SHiEeotJbNtBOvvLXLBqgr5iRtdwOD61QR2153124zAO6ui1XLpOZLHCC5j8G
+ EbV2fNQ06raEfyWQdruBx+VuBRgZKWFM4K3Is/qYUw7Io2ZYhytYjHSz1bZ81wnT37KdXfeaX
+ 0HMeHhMtJe/+jTQuWYXINwOigZ4ySx0UjE0P88VMW+kCBWVKWIgYPtJ8XVB5zfZiZuyYFIsRk
+ AbD+/ABehy4FFXV5gJMBtEF+s7zAmrMjDTFWwbSzJDDZI=
 
-On Mon, Sep 30, 2024 at 07:05:06PM +0200, Jonas Oberhauser wrote:
-> 
-> 
-> Am 9/30/2024 um 6:43 PM schrieb Alan Stern:
-> > On Mon, Sep 30, 2024 at 01:26:53PM +0200, Jonas Oberhauser wrote:
-> > > 
-> > > 
-> > > Am 9/28/2024 um 4:49 PM schrieb Alan Stern:
-> > > 
-> > > I should also point out that it is not enough to prevent the compiler from
-> > > using @a instead of @b.
-> > > 
-> > > It must also be prevented from assigning @b=@a, which it is often allowed to
-> > > do after finding @a==@b.
-> > 
-> > Wouldn't that be a bug?
-> 
-> That's why I said that it is often allowed to do it. In your case it
-> wouldn't, but it is often possible when a and b are non-atomic &
-> non-volatile (and haven't escaped, and I believe sometimes even then).
-> 
-> It happens for example here with GCC 14.1.0 -O3:
-> 
-> int fct_hide(void)
-> {
->     int *a, *b;
-> 
->     do {
->         a = READ_ONCE(p);
->         asm volatile ("" : : : "memory");
->         b = READ_ONCE(p);
->     } while (a != b);
->     OPTIMIZER_HIDE_VAR(b);
->     return *b;
-> }
-> 
-> 
-> 
->         ldr     r1, [r2]
->         ldr     r3, [r2]
->         cmp     r1, r3
->         bne     .L6
->         mov     r3, r1   // nay...
+Am 22.09.24 um 08:40 schrieb Armin Wolf:
 
-A totally unnecessary instruction, which accomplishes nothing other than 
-to waste time, space, and energy.  But nonetheless, allowed -- I agree.
+> This patch series fixes some issues around the battery hook handling
+> inside the ACPI battery driver and the dell-laptop driver.
+>
+> The first patch simplifies the locking during battery hook removal as
+> a preparation for the second patch which fixes a possible crash when
+> unregistering a battery hook.
+>
+> The third patch allows the dell-laptop driver to handle systems with
+> multiple batteries.
+>
+> All patches where tested on a Dell Inspiron 3505 and appear to work.
 
-The people in charge of GCC's optimizer might like to hear about this, 
-if they're not already aware of it...
+Any thoughts from the ACPI maintainers?
 
->         ldr     r0, [r3] // yay!
->         bx      lr
+Thanks,
+Armin Wolf
 
-One could argue that in this example the compiler _has_ used *a instead 
-of *b.  However, such an argument would have more force if we had 
-described what we are talking about more precisely.
-
-Yes, we do want to prevent compilers from doing this.  I'm not sure that 
-it really needs to be mentioned in the comments or commit description, 
-though.
-
-Alan
+> Changes since v1:
+> - fix the underlying issue inside the ACPI battery driver
+> - reword patch for dell-laptop
+>
+> Armin Wolf (3):
+>    ACPI: battery: Simplify battery hook locking
+>    ACPI: battery: Fix possible crash when unregistering a battery hook
+>    platform/x86: dell-laptop: Do not fail when encountering unsupported
+>      batteries
+>
+>   drivers/acpi/battery.c                  | 27 ++++++++++++++++---------
+>   drivers/platform/x86/dell/dell-laptop.c | 15 +++++++++++---
+>   include/acpi/battery.h                  |  1 +
+>   3 files changed, 31 insertions(+), 12 deletions(-)
+>
+> --
+> 2.39.5
+>
+>
 
