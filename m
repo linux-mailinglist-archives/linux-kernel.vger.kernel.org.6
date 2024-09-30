@@ -1,143 +1,96 @@
-Return-Path: <linux-kernel+bounces-344336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C186C98A873
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:31:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6BF98A875
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BCF28501C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:30:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E34DB253DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6D194C9E;
-	Mon, 30 Sep 2024 15:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C30E198A0D;
+	Mon, 30 Sep 2024 15:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0bgZlu5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pz624xMO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6671922FA
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB7F1922FA;
+	Mon, 30 Sep 2024 15:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727710030; cv=none; b=k4Dn0I+QnnI6Tc7KR0qEVylvUNrhveY754Gfz9defvkfFnaSYzsJrZPvwrZGvSBX2kuXoBbI88Fxb+bO6S7o5GWsN9Wd88yGMlXPYsyvVp5skLMjU7/KlDObCa5mNnuHPCLImCmbX170GkSUkH4P9QB0idhatxgLpH3pXditSRo=
+	t=1727710098; cv=none; b=WiwgvNalzemgdkp0wAM5qfOXwIeQnxOHhYmptOyYf5CfApY+YOXSZtT/bfLFXJtHZQIcurPE+2NUzwRVYjkhxpIthnHmyqkO2fBlK5DtizG3Ot8yO23bOhFOhR8ov6BlB8pq2xml3uDFH/z9hnYCBdnXHudvP6uaUujBdyQBlqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727710030; c=relaxed/simple;
-	bh=3miv1F1A4Z9ag8W8Ix9bhPQcIbViWenNhqk5fc3VAQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ho+GI2spVN5yCJrkrog083YbO5h5VytobPGLsa9/vIelhyAlG9/FS/7DvcLDi/bv7zddlKvhYWveRFiFzAs+w1emxUqM8us/taQ+hJYY3LHK0SK+eGpa1PFNQV+EtZvjlseaiwY2CW/KZCbwfepK32cfYiB8XDv9j1WDeUECOrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0bgZlu5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A0C1C4CEC7;
-	Mon, 30 Sep 2024 15:27:09 +0000 (UTC)
+	s=arc-20240116; t=1727710098; c=relaxed/simple;
+	bh=eQtbKlab/bjzIBfgSHVGCGy6nQGMVGQqzzDAVlBPocU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Ldyms5V6F2PBOegiUNHLemV0DU5r1H6UE6Zj0vUiUigcLaEP+pxWg4tc7TapvbHP4sNyLGTRn6I3QcxhoxOgZQkz7rWICrRWho/Et3oBjr9xVEqUyFuzHybiF2rrFlw6guzNtCA4YoRF9xmJRSNKq6vqV3FNOS1USRsjQkKRSew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pz624xMO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C638CC4CEC7;
+	Mon, 30 Sep 2024 15:28:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727710029;
-	bh=3miv1F1A4Z9ag8W8Ix9bhPQcIbViWenNhqk5fc3VAQc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=J0bgZlu58lfG/qPZxD+x0AbJIuqgTNO9kUA0z6s1o4sjK5OysREnLMbSG3CWvkksS
-	 nXrFri9KIO20p7PHBG0LWBw82HmkwIdCZUv2Zdaic0dUTRRxltv+k2QVQYS0dcXRys
-	 QEvtrUQeqg2KCb1B8g+P6XeFatPUDXgC0Dp2XIYajTZOiV21+ogf/eiKnlmD50pLHK
-	 7Eux7QQFyTNTvem/srDSZG1RM4Qi9sBsVF5aAfOToYLDmwxiukGJtoB2uyb0+JW+YQ
-	 yCE3GfMMJGvD3jCWvjkHKumB4LrzS2r6fzv3cao5xEY4UoTseVkfU2eBj89WNE9Oim
-	 a1OtzpVuvkveA==
-Date: Mon, 30 Sep 2024 12:27:06 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH 1/1 fyi] tools include UAPI: Sync linux/sched.h copy with the
- kernel sources
-Message-ID: <ZvrDShNVXotZpiwk@x1>
+	s=k20201202; t=1727710097;
+	bh=eQtbKlab/bjzIBfgSHVGCGy6nQGMVGQqzzDAVlBPocU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Pz624xMOZ6Oai8DI3Lo3SjH7OPg2F3Hb3nP2qGesJv6VO6eQHmGgiPMb2JWhn73Hr
+	 4++YDlvTdlpAAKdhkwUqoJtHb6df6G7Mmas0PTT467m1zhfsGj9Oyxj6rcsi40TXO3
+	 YMKhNH/XroAZsPSpgyiy9If1hOx6UB+P5+Ds3y0Bo2DkbVkkRmDDwtV9qBcqfPfJ7Z
+	 44ECSWhEX9BtH+DS99WwKIgJGTRQQLodzuoOS0XhWXw+L0hbZcyde6J+4f0BoBhZ60
+	 9+YadP4i3ajHMJdD/1DpApKBn6yS/P5f++OPXQ7mrYGsCO5Z22nQtvBOVZ7/0fm8/H
+	 O4qsaGuA2RvQA==
+Date: Tue, 1 Oct 2024 00:28:13 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, "Masami Hiramatsu (Google)"
+ <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: Question about config UPROBES and UPROBE_EVENTS
+Message-Id: <20241001002813.6012587b5e52737a576f1d0b@kernel.org>
+In-Reply-To: <20240930100630.7894c442@gandalf.local.home>
+References: <1a3567d5-e558-351a-c45d-73b2e5a8788c@loongson.cn>
+	<20240930081529.f6f9161c20db9b95c9b46252@kernel.org>
+	<f639079e-bc1c-7f2a-4c3f-de1a6780da84@loongson.cn>
+	<20240930100630.7894c442@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+On Mon, 30 Sep 2024 10:06:30 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Full explanation:
+> On Mon, 30 Sep 2024 09:33:42 +0800
+> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+> 
+> > > the CONFIG_UPROBES is disabled by default and make CONFIG_UPROBE_EVENTS
+> > > depending on it, the uprobe_events menu is hidden. I don't like this.  
+> > 
+> > This is somehow like the current status of CONFIG_KPROBES and
+> > CONFIG_KPROBE_EVENTS.
+> 
+> The question is, can uprobes be used without uprobe_events? With the
+> current BPF work that I haven't been following, it may be possible now.
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+uprobe_register/unregister APIs are exposed to the kernel modules,
+since systemtap had been introduced this feature.
 
-The way these headers are used in perf are not restricted to just
-including them to compile something.
+Thank you,
 
-There are sometimes used in scripts that convert defines into string
-tables, etc, so some change may break one of these scripts, or new MSRs
-may use some different #define pattern, etc.
+> 
+> If uprobes can be used without uprobe events, like kprobes can be used
+> without kprobe events, then I can see having uprobes as a separate config
+> menu option. If not, then no, it shouldn't be.
+> 
+> -- Steve
 
-E.g.:
 
-  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
-  tools/perf/trace/beauty/arch_errno_names.sh
-  tools/perf/trace/beauty/drm_ioctl.sh
-  tools/perf/trace/beauty/fadvise.sh
-  tools/perf/trace/beauty/fsconfig.sh
-  tools/perf/trace/beauty/fsmount.sh
-  $
-  $ tools/perf/trace/beauty/fadvise.sh
-  static const char *fadvise_advices[] = {
-        [0] = "NORMAL",
-        [1] = "RANDOM",
-        [2] = "SEQUENTIAL",
-        [3] = "WILLNEED",
-        [4] = "DONTNEED",
-        [5] = "NOREUSE",
-  };
-  $
-
-The tools/perf/check-headers.sh script, part of the tools/ build
-process, points out changes in the original files.
-
-So its important not to touch the copies in tools/ when doing changes in
-the original kernel headers, that will be done later, when
-check-headers.sh inform about the change to the perf tools hackers.
-
-Picking the changes from:
-
-  f0e1a0643a59bf1f ("sched_ext: Implement BPF extensible scheduler class")
-
-The inclusion of the SCHED_EXT define doesn't cause any change in
-behaviour in tools/perf.
-
-This just silences this perf tools build warning:
-
-  diff -u tools/perf/trace/beauty/include/uapi/sound/asound.h include/uapi/sound/asound.h
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Link: https://lore.kernel.org/lkml/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/include/uapi/linux/sched.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/sched.h b/tools/perf/trace/beauty/include/uapi/linux/sched.h
-index 3bac0a8ceab26ee7..359a14cc76a4038a 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/sched.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/sched.h
-@@ -118,6 +118,7 @@ struct clone_args {
- /* SCHED_ISO: reserved but not implemented yet */
- #define SCHED_IDLE		5
- #define SCHED_DEADLINE		6
-+#define SCHED_EXT		7
- 
- /* Can be ORed in to make sure the process is reverted back to SCHED_NORMAL on fork */
- #define SCHED_RESET_ON_FORK     0x40000000
 -- 
-2.46.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
