@@ -1,118 +1,118 @@
-Return-Path: <linux-kernel+bounces-343256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723779898A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:38:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB349898A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 02:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77FB01C20E1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 662581F2206E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 00:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3AC3209;
-	Mon, 30 Sep 2024 00:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BCB2F46;
+	Mon, 30 Sep 2024 00:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAx8VJne"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GHNnMiPJ"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F2A137E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 00:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87ED4A03;
+	Mon, 30 Sep 2024 00:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727656687; cv=none; b=DmNnDXqqU8exo8foiWS1VwzDB3uMOwZwUwYOte0NvOvrdzq6CjO9oOevEVqj/nURRwGfbzArh+iiTyeEI+9cqdaby7j/xu0+GpqM1oPc7oqQUE+Bx1wwaY47OBE316znnfuJnW3kFGmuPvGf9T6MRON4o+EIFyasvBXzUdBH6VQ=
+	t=1727656746; cv=none; b=Cm1eFzyekXxubk4vPsOGMR+DziaN8hyr/n2BA7rJFc9/GLH5+oel7rjGa7seaBtjxs31day2xCpkQa94NSrpVwhZz47FyiH0cX9iSku5QoSoYmBJYtL0AULCU3+o2sI0RN5cWr+QdRMzBiEOIV5d37p+fH1roM2YieTq7vdqJPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727656687; c=relaxed/simple;
-	bh=JaNGBaq+xeJOrFttrliu+e72cbPEjFu+j7ZRrWvmtCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=giW8ClYtREK6Mk3p3RzYoAQZirzT5BpGb5aar/d6SjfOQxXtnQdkM/njfdNYN/8n0bMUHe9DMjS0M3ZnQj1JPyK253KWIGqIKtpQ4YUyr3taqPm7tZxMIZuT+oOkBczjFcvvlKYDA81MxFTXUytKwILt+RlcTRxiTiw74OBAM2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAx8VJne; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1727656746; c=relaxed/simple;
+	bh=HCtkeCyZu35xdj0Vp2vqTQ3vFnF/BRpdgDnwcEOfwM4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rgCvHCzJ6r9KV+q1iegc7aas+iKFjtVHb+VUrPiPF6CwicLSzLnmtKeEZmCn9kOzS8lGa7myATHaYR6s6wGWjsnfF2K/c9QWLI2neoHf/ETP4KmleVvMg2iZ+9t+A64BVElMxccKYtPWFwSWy778MHheWYoOFulJuZI95mYIOl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GHNnMiPJ; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b833f9b35so3104685ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Sep 2024 17:38:05 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b6458ee37so12381925ad.1;
+        Sun, 29 Sep 2024 17:39:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727656685; x=1728261485; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7twIidJie4fmS/Eu4BMmjKcW5YdUcCgt6s+OdNS8q24=;
-        b=VAx8VJneP52hcOHOVsP1drEd0uMNf7uW+iF8TSQr2JKEcXWmfBWMrr1E3V7Jy3b2I3
-         XMDFxoBCkUC3VpMavTljHP/snRKGvWWoT8odclMUg7GOJKXosTGhoFl2NyC97GMR16RX
-         xJCQbleC5MX+zHYSlFpIIsDTsJhmEMOaWNOMdOemCp/+z/ta8JJAYS4jZS2GqAdD1p+G
-         FpG3oF61D1wRmP0TPRUpjvE9KUNtPtqMTAq5IdOan2i7BGJa5Y1Dme5hCHnNTs0Bw0iX
-         wFZPb1Yas5UiAutlS/GTNJhhOBqewOYIH7UTFVjQlfVFD34NsEE0/gstNErm5okbfFIJ
-         jS4A==
+        d=gmail.com; s=20230601; t=1727656744; x=1728261544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=AC6q3cn/ZfdsrxB8Q4a4Ps0lEMfVIUKSK6OJM8TJvSE=;
+        b=GHNnMiPJ/j56CdPcpI5mFYFgp1Ep538USbPFydSKxDH2sBfGbvMEl2iaUQr9RkguPH
+         f3aRlycqZaFzSynOTtlDrresFYBnUo3gQsQNaGDxnjqGT9gj5O4CKIa3N/GADEUTP1Rq
+         6GMLr3URqnYr0+sv5ONbTO2bYsU75m7KSgQ80Bp9y32Q/Eicv/lMn2a5MxuJ9RNDWbtl
+         E2Ss5oy7nYb9+6hLP3LlcqKFVI/PWHKGp75GbEFQISMRxW+i0g5owNKH3v2BV+/o/V6J
+         H4457wBXWCPBvs8ZTRb5giEIrQV7/UYaUgt3eVKTZMwXRgh++9Po6AzYOz6bcWmMS8iS
+         DVyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727656685; x=1728261485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7twIidJie4fmS/Eu4BMmjKcW5YdUcCgt6s+OdNS8q24=;
-        b=Kr1VpkqYahyBLBwhtSUBkRyyNt83VFGzpZxhpV/TfQF3NOhiclMTluTEewwvHJF6hi
-         xwoaAPapg+xXLddFy0YDS1ggzRGKPZydFgJquttinkW+ZCyTEjnF29U8mXJOWN3i2yAq
-         WtesiTS+SlhMzHySTWghVn05iWA3KbMEZGiVJXREqI8AFWHDFfJffw8Wr/JCVm9bPkgz
-         YeWsfTtN+Q+mU89VFs2I34BEU7InU/G2uvLwDqWBs+sct3KBsj40FjW9/TB/QbT4fN31
-         TFNaTnPkvO2ZLTmUsxVJ2pTFc1O8aFSdF/UEgso4IhAyIPu3SyjEQZ0pE7GRPopwxitq
-         KIPA==
-X-Gm-Message-State: AOJu0Yw42CtFKVjTRSQbjOizrkKWkNHvRK/hgsFoXdv2tonf2zvn7lZR
-	5twh2CtIn0Mf3k6mXZp7dZiTMYWUPrsGvxpx7mJap+fWmJzGK9qV0kS62Q==
-X-Google-Smtp-Source: AGHT+IHsvGvvU9XRDnXTt6uxZzc9tPFpyr1MqC1IbVLxWC73DOvK1yAnSvkGbvrrZXfvZetk72sgQA==
-X-Received: by 2002:a17:902:ec8e:b0:20b:b21:10a with SMTP id d9443c01a7336-20b3739439amr144175765ad.32.1727656684621;
-        Sun, 29 Sep 2024 17:38:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727656744; x=1728261544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AC6q3cn/ZfdsrxB8Q4a4Ps0lEMfVIUKSK6OJM8TJvSE=;
+        b=BuoH5r87wYTkJNcAdLQM3H8v+FyGsrQXPfJZvik1coN8sIfIVKZ1D4UuVgSUkaNPiM
+         HH1aZcTCiUvxEKp5GkJabRC/biBh03fSZ981ZyTmlha+GY8nySfpRXzNwsiTDt7mOb1d
+         4WJ3nq7Ip3NP0N98SW3TRyK2H8DzcE+4aJ3zAwVisn7BStJxlzBwD3AmH5ynTb7zCNqZ
+         mOAqS4uDOkCZ/RCq6PDgUaLURYHyCfUHnxsSvoGgB3V7e0+qjCf0IP/xTa1gUGalPwAq
+         oePIOuokD+nrZwKgZmot0DnaTfXNJIYSgke+lxCLFh0va0IPCacq74iOAcOpRIUyebsD
+         fR2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnOqDqicUZUne5i6Md+GQ9d0ek3r664RtJjjm53H+EFh0YwJywNBOcIl+NV5gRQr9uaqEpBzzyftKAw5U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzT3R9mje9GHW838kSoZf5Oa8cT6Lg4WJszLpfyWT8Qbrfybqf
+	+4lRxDZ9WeRX+YMBhdiTidEbGagE5gSpdch5yS+O98O35//hw3mqK393Xg==
+X-Google-Smtp-Source: AGHT+IF0uTDFwNsitqmA7OTJe0SwlHDLkv2Dw+SdEfHjUa/jVlhqE3Cm0lqyjhKyd+Ylenqo644OGA==
+X-Received: by 2002:a17:903:1ca:b0:20b:4d9b:e4fe with SMTP id d9443c01a7336-20b4d9beaa6mr129532975ad.45.1727656744136;
+        Sun, 29 Sep 2024 17:39:04 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e200f7sm44733285ad.167.2024.09.29.17.38.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e51dfesm44639395ad.260.2024.09.29.17.39.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Sep 2024 17:38:03 -0700 (PDT)
+        Sun, 29 Sep 2024 17:39:03 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 29 Sep 2024 17:38:02 -0700
 From: Guenter Roeck <linux@roeck-us.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 6.12-rc1
-Message-ID: <d75c8f9d-8b3f-4d3e-996c-bbb9a6c240c0@roeck-us.net>
-References: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH] bcachefs: rename version -> bversion for big endian builds
+Date: Sun, 29 Sep 2024 17:39:02 -0700
+Message-ID: <20240930003902.4127294-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 29, 2024 at 03:51:43PM -0700, Linus Torvalds wrote:
-> So two weeks have passed, and rc1 is out - the merge window is closed.
-> 
-> Despite conference travel (both for me and several maintainers),
-> things seemed to go mostly fairly normally. There's a couple of
-> notable new features in here: For one thing, PREEMPT_RT is now
-> mainlined and enabled as a config option (you do need to enable
-> "EXPERT" to get the question). For another, sched_ext also got merged.
-> 
-> That said, the bulk is - as always - all the plain old regular
-> updates, and that obviously means drivers dominate. We've got about
-> 55% of the patch being drivers (and another 5% if you count the dts
-> files). Add in 5% doc updates, and 10% tooling (mostly perf and
-> selftests).
-> 
-> That leaves about a quarter of the overall changes as core kernel
-> code, split between arch updates, filesystems (yes, bcachefs, but also
-> btrfs, smb sever and client, netfs updates, xfs and finally core VFS
-> updates mostly in the form of 'struct fd' re-organisational cleanups).
-> And MM, core networking, Rust, security layer updates etc.
-> 
-> A little bit of everything, in other words. And nothing really looks
-> all that strange. As always, the summary below is just the log of my
-> merges, there's too much to list individually (some stats: 11k+
-> regular commits,  850+ merges, 1700+ different authors).
-> 
-> Let's get the testing and calming down period started, ok?
-> 
+Builds on big endian systems fail as follows.
 
-Fails to build on big endian systems. I'll send a patch in a minute.
+fs/bcachefs/bkey.h: In function 'bch2_bkey_format_add_key':
+fs/bcachefs/bkey.h:557:41: error:
+	'const struct bkey' has no member named 'bversion'
 
-Guenter
+The original commit only renamed the variable for little endian builds.
+Rename it for big endian builds as well to fix the problem.
+
+Fixes: cf49f8a8c277 ("bcachefs: rename version -> bversion")
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ fs/bcachefs/bcachefs_format.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index 203ee627cab5..84832c2d4df9 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -223,7 +223,7 @@ struct bkey {
+ #elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+ 	struct bpos	p;
+ 	__u32		size;		/* extent size, in sectors */
+-	struct bversion	version;
++	struct bversion	bversion;
+ 
+ 	__u8		pad[1];
+ #endif
+-- 
+2.45.2
+
 
