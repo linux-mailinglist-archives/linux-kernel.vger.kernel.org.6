@@ -1,335 +1,227 @@
-Return-Path: <linux-kernel+bounces-343395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C3989A7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BDA5989A7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 08:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0AEE282915
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:23:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843DE1F21856
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 06:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D08D14A611;
-	Mon, 30 Sep 2024 06:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD565149C61;
+	Mon, 30 Sep 2024 06:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhwIfoHG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2EHjwY7i";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xLf702AT";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2EHjwY7i";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xLf702AT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947EB71747;
-	Mon, 30 Sep 2024 06:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625D523BE;
+	Mon, 30 Sep 2024 06:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727677434; cv=none; b=i5y/rqm+Siw9z/515XU4UcfOh/CijvIH+i0Tnuz8RKhCSoCAPPcohC6vM6auTssQRPsqBRWvD8qKkL+pbeyCYEvT88ys8ubZ0/cEKJpsF3DTDO5BgyOXTvFAAT7hHzMQD1o4B0L5qEvmKNESgz5XMpCyZQBkhh1Awkp7JGkwrbA=
+	t=1727677583; cv=none; b=PJ/jFeVfHXcZaUlUq5ETXq2crRti7Ae8puhElgNO4Egr0sRgb/Y4EagYlrQGnMRUGoxZLoqm8XIcrYsJf40lAZ60WI/sA0sQIYxn3+zrCmt7aBmpeHMRiXapndtxub/PKZkz908ieZpNkjE+4uYYAwhv1ahne8J/OZWI2ZlLJPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727677434; c=relaxed/simple;
-	bh=HepOIOMCDgsvZHZcKlC0KyGiSdabdUGtmcbqQPcBFS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k+WlHKx4JKNJYoP4X5yV24Ewm1ZtEkkB45xKJjEzkMep8iEu8UKvXELVq6w1yMSH8U48r5mVhfIVsqgoENqt92Z9InVe2PpVlu4R+3Y5XGRZ7Or5PmvDMo9+GNhMcbFDDo1m0VvYv40s0xdqxJLdjk0kR6pbWHa/Q3YVQk13Fu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhwIfoHG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A18AC4CECE;
-	Mon, 30 Sep 2024 06:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727677434;
-	bh=HepOIOMCDgsvZHZcKlC0KyGiSdabdUGtmcbqQPcBFS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IhwIfoHG3FRI1yyFqpH3B9Y1r3dnAmKH2u75fE0TNLpbX9zLJiFaAiEauhdF07kQy
-	 TkG65COpbIaY0KXMUbyhoU4DXjfIAyLLsC/sDKsPTtfnvoSvee9mWB3t+X3g0+fopS
-	 HqRSgFo1wqrDRWHn111XYj5hvHcBoEjYrD5mOUsZn173SU3oY1Qzd5iPTvRRGXgC36
-	 9GIJ5MfVStshkSSv0hquwv7iHfTMp5NvpfR+tqdEoi8K3gJ4PBrJDMLGxCCz5D8QZH
-	 zjMHxuWexkPZHrrkNAmim6msoK3ktcVD1E0UF606Mst9y36EIuaOmkRyOobBsB8NQQ
-	 qzD4yIC4FsFLw==
-Date: Sun, 29 Sep 2024 23:23:52 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 4/8] perf record off-cpu: Dump direct off-cpu samples
- in BPF
-Message-ID: <ZvpD-PiP0wKdBL0C@google.com>
-References: <20240927202736.767941-1-howardchu95@gmail.com>
- <20240927202736.767941-5-howardchu95@gmail.com>
+	s=arc-20240116; t=1727677583; c=relaxed/simple;
+	bh=2OEVznq956jPtNEIkG0h3wVv4T1s5GhUAIC6pmH8u9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=auo3F7yNZIWEK1uz1WrVSyjldy23KDVGObhV+o1VoP1ZGNLWNzHXawNV+ivRZWt9XXYlExbSBImOeenYzn3nPu+0V9KxA1MFvma2eP7UjI6fJmfuTAq1vZWpzIpBQ88/5d2UWma47N3QU7+5SceMPrNwjkrABU/WEtwBBw+BLRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2EHjwY7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xLf702AT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2EHjwY7i; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xLf702AT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 87259219C9;
+	Mon, 30 Sep 2024 06:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727677579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
+	b=2EHjwY7iZnTSWvsuxQHyF9ji2f7SwzoZE519MbSRMxQVUF6ZxsbPHkiAmQqo2ZIQRxD6Oe
+	uh0l7l7JeoI0cOmZTBpcQQTMbxOFB2JiShxM8TTk/NKuAooYmatBCXKMwGqHUzWEOCkqLa
+	rc9186QQNe8IP95u90X5d2TbW+tZ7wg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727677579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
+	b=xLf702ATdt+b1dXY5pWU6lLYk3LrJgb975oBZHigNnFZnQe5Wg4lmQR7gVaJ6dihOOBxfb
+	Q5xpdQF2SE/NoUCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1727677579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
+	b=2EHjwY7iZnTSWvsuxQHyF9ji2f7SwzoZE519MbSRMxQVUF6ZxsbPHkiAmQqo2ZIQRxD6Oe
+	uh0l7l7JeoI0cOmZTBpcQQTMbxOFB2JiShxM8TTk/NKuAooYmatBCXKMwGqHUzWEOCkqLa
+	rc9186QQNe8IP95u90X5d2TbW+tZ7wg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1727677579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UaNuG6Q0hq80keF3xxM8HYwJK7sRZEgk1g48NLNcKgk=;
+	b=xLf702ATdt+b1dXY5pWU6lLYk3LrJgb975oBZHigNnFZnQe5Wg4lmQR7gVaJ6dihOOBxfb
+	Q5xpdQF2SE/NoUCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4593513A8B;
+	Mon, 30 Sep 2024 06:26:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tW+uD4tE+mZkcAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 30 Sep 2024 06:26:19 +0000
+Message-ID: <4dc5d357-ffdc-4e91-9519-b23c735c077e@suse.de>
+Date: Mon, 30 Sep 2024 08:26:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240927202736.767941-5-howardchu95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/atomic_helper: Add missing NULL check for
+ drm_plane_helper_funcs.atomic_update
+To: Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org
+Cc: stable@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Sean Paul <seanpaul@chromium.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240927204616.697467-1-lyude@redhat.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240927204616.697467-1-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,linux.intel.com,kernel.org,gmail.com,ffwll.ch,chromium.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Sep 27, 2024 at 01:27:32PM -0700, Howard Chu wrote:
-> Add perf_event_array map for dumping direct off-cpu samples, but keep
-> the at-the-end approach.
-> 
-> Tons of checking before access, to pass the BPF verifier.
-> 
-> If off-cpu time (represented as delta) exceeds the off-cpu threshold, do
-> output.
-> 
-> Output PERF_SAMPLE_TID, PERF_SAMPLE_PERIOD, PERF_SAMPLE_CALLCHAIN, and
-> PERF_SAMPLE_CGROUP in bpf_perf_event_output().
-> 
-> Ideally, we should only output
-> PERF_SAMPLE_PERIOD (off-cpu time) and PERF_SAMPLE_CALLCHAIN (sched_in
-> process's callchain). One only needs to set PERF_SAMPLE_TID and
-> PERF_SAMPLE_CGROUP, and perf_event will do everything for us.
-> 
-> But in reality, that's not the case. Setting PERF_SAMPLE_TID will mostly
-> give us TID of 0. We might get the correct TID for offcpu-time event
-> from time to time, but it is really rare.
->          swapper       0 [000] offcpu-time:  /
->         :1321819 1321819 [002] offcpu-time:  /user.slice/user-1000.slice/session-2.scope
->          swapper       0 [001] offcpu-time:  /
->          swapper       0 [003] offcpu-time:  /
-> 
-> And setting PERF_SAMPLE_CGROUP doesn't work properly either.
->     tmux: server    3701 [003] offcpu-time:  /
->     blueman-tray    1064 [001] offcpu-time:  /
->             bash 1350867 [001] offcpu-time:  /
->             bash 1350844 [000] offcpu-time:  /
-> 
-> We need to retrieve PERF_SAMPLE_TID, PERF_SAMPLE_PERIOD,
-> PERF_SAMPLE_CALLCHAIN, and PERF_SAMPLE_CGROUP using BPF and output these
-> four fields.
-> 
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+
+
+Am 27.09.24 um 22:46 schrieb Lyude Paul:
+> Something I discovered while writing rvkms since some versions of the
+> driver didn't have a filled out atomic_update function - we mention that
+> this callback is "optional", but we don't actually check whether it's NULL
+> or not before calling it. As a result, we'll segfault if it's not filled
+> in.
+>
+>    rvkms rvkms.0: [drm:drm_atomic_helper_commit_modeset_disables] modeset on [ENCODER:36:Virtual-36]
+>    BUG: kernel NULL pointer dereference, address: 0000000000000000
+>    PGD 0 P4D 0
+>    Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+>    Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS edk2-20240813-1.fc40 08/13/2024
+>    RIP: 0010:0x0
+>
+> So, let's fix that.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: c2fcd274bce5 ("drm: Add atomic/plane helpers")
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: <stable@vger.kernel.org> # v3.19+
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
 > ---
->  tools/perf/util/bpf_skel/off_cpu.bpf.c | 112 +++++++++++++++++++++++++
->  tools/perf/util/off_cpu.h              |   8 +-
->  2 files changed, 119 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/bpf_skel/off_cpu.bpf.c b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> index e2a887228fd9..c42d0e2d91d8 100644
-> --- a/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> +++ b/tools/perf/util/bpf_skel/off_cpu.bpf.c
-> @@ -19,6 +19,7 @@
->  #define MAX_ENTRIES  102400
->  
->  #define MAX_CPUS  4096
-> +#define MAX_OFFCPU_LEN 128
+>   drivers/gpu/drm/drm_atomic_helper.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 43cdf39019a44..b3c507040c6d6 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -2797,7 +2797,8 @@ void drm_atomic_helper_commit_planes(struct drm_device *dev,
+>   
+>   			funcs->atomic_disable(plane, old_state);
+>   		} else if (new_plane_state->crtc || disabling) {
+> -			funcs->atomic_update(plane, old_state);
+> +			if (funcs->atomic_update)
+> +				funcs->atomic_update(plane, old_state);
+>   
+>   			if (!disabling && funcs->atomic_enable) {
+>   				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
+> @@ -2889,7 +2890,8 @@ drm_atomic_helper_commit_planes_on_crtc(struct drm_crtc_state *old_crtc_state)
+>   		if (disabling && plane_funcs->atomic_disable) {
+>   			plane_funcs->atomic_disable(plane, old_state);
+>   		} else if (new_plane_state->crtc || disabling) {
+> -			plane_funcs->atomic_update(plane, old_state);
+> +			if (plane_funcs->atomic_update)
+> +				plane_funcs->atomic_update(plane, old_state);
+>   
+>   			if (!disabling && plane_funcs->atomic_enable) {
+>   				if (drm_atomic_plane_enabling(old_plane_state, new_plane_state))
+>
+> base-commit: 22512c3ee0f47faab5def71c4453638923c62522
 
-I guess it's too big as you only collect stack and a few more data.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
->  
->  struct tstamp_data {
->  	__u32 stack_id;
-> @@ -34,6 +35,7 @@ struct offcpu_key {
->  	__u64 cgroup_id;
->  };
->  
-> +/* for dumping at the end */
->  struct {
->  	__uint(type, BPF_MAP_TYPE_STACK_TRACE);
->  	__uint(key_size, sizeof(__u32));
-> @@ -41,6 +43,14 @@ struct {
->  	__uint(max_entries, MAX_ENTRIES);
->  } stacks SEC(".maps");
->  
-> +struct offcpu_data {
-> +	u64 array[MAX_OFFCPU_LEN];
-> +};
-> +
-> +struct stack_data {
-> +	u64 array[MAX_STACKS];
-> +};
-> +
->  struct {
->  	__uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
->  	__uint(key_size, sizeof(__u32));
-> @@ -48,6 +58,22 @@ struct {
->  	__uint(max_entries, MAX_CPUS);
->  } offcpu_output SEC(".maps");
->  
-> +/* temporary offcpu sample */
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-> +	__uint(key_size, sizeof(__u32));
-> +	__uint(value_size, sizeof(struct offcpu_data));
-> +	__uint(max_entries, 1);
-> +} offcpu_payload SEC(".maps");
-> +
-> +/* cached stack per task storage */
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
-> +	__uint(map_flags, BPF_F_NO_PREALLOC);
-> +	__type(key, int);
-> +	__type(value, struct stack_data);
-> +} stack_cache SEC(".maps");
-> +
->  struct {
->  	__uint(type, BPF_MAP_TYPE_TASK_STORAGE);
->  	__uint(map_flags, BPF_F_NO_PREALLOC);
-> @@ -194,12 +220,75 @@ static inline int can_record(struct task_struct *t, int state)
->  	return 1;
->  }
->  
-> +static inline bool check_bounds(int index)
-> +{
-> +	if (index < 0 || index >= MAX_OFFCPU_LEN)
-> +		return false;
-> +
-> +	return true;
-> +}
-
-Likewise, we may get rid of the bound check entirely as it's always
-guaranteed.
-
-> +
-> +static inline int copy_stack(struct stack_data *from,
-> +			     struct offcpu_data *to, int n)
-> +{
-> +	int max_stacks = MAX_STACKS, len = 0;
-> +
-> +	if (!from)
-> +		return len;
-> +
-> +	for (int i = 0; i < max_stacks && from->array[i]; ++i) {
-> +		if (check_bounds(n + 2 + i)) {
-> +			to->array[n + 2 + i] = from->array[i];
-> +			++len;
-> +		}
-> +	}
-> +	return len;
-> +}
-> +
-> +static int off_cpu_dump(void *ctx, struct offcpu_data *data, struct offcpu_key *key,
-> +			struct stack_data *stack_p, __u64 delta, __u64 timestamp)
-> +{
-> +	int size, n = 0, ip_pos = -1, len = 0;
-> +
-> +	if (sample_type & PERF_SAMPLE_TID && check_bounds(n))
-
-You didn't set the sample_type yet.  Is it intentional?
-
-
-> +		data->array[n++] = (u64)key->tgid << 32 | key->pid;
-> +	if (sample_type & PERF_SAMPLE_PERIOD && check_bounds(n))
-> +		data->array[n++] = delta;
-> +	if (sample_type & PERF_SAMPLE_CALLCHAIN && check_bounds(n + 2)) {
-> +		/* data->array[n] is callchain->nr (updated later) */
-> +		data->array[n + 1] = PERF_CONTEXT_USER;
-> +		data->array[n + 2] = 0;
-> +
-> +		len = copy_stack(stack_p, data, n);
-> +
-> +		/* update length of callchain */
-> +		data->array[n] = len + 1;
-> +
-> +		/* update sample ip with the first callchain entry */
-> +		if (ip_pos >= 0)
-
-You don't set the ip_pos, just remove this part and let userspace handle
-it later.
-
-
-> +			data->array[ip_pos] = data->array[n + 2];
-> +
-> +		/* calculate sample callchain data->array length */
-> +		n += len + 2;
-> +	}
-> +	if (sample_type & PERF_SAMPLE_CGROUP && check_bounds(n))
-> +		data->array[n++] = key->cgroup_id;
-> +
-> +	size = n * sizeof(u64);
-> +	if (size >= 0 && size <= MAX_OFFCPU_LEN * sizeof(u64))
-> +		bpf_perf_event_output(ctx, &offcpu_output, BPF_F_CURRENT_CPU, data, size);
-> +
-> +	return 0;
-> +}
-> +
->  static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  			struct task_struct *next, int state)
->  {
->  	__u64 ts;
->  	__u32 stack_id;
->  	struct tstamp_data *pelem;
-> +	struct stack_data *stack_p;
-> +	int zero = 0;
->  
->  	ts = bpf_ktime_get_ns();
->  
-> @@ -209,6 +298,21 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  	stack_id = bpf_get_stackid(ctx, &stacks,
->  				   BPF_F_FAST_STACK_CMP | BPF_F_USER_STACK);
->  
-> +	/*
-> +	 * if stacks are successfully collected, cache them to task_storage, they are then
-> +	 * dumped if the off-cpu time hits the threshold.
-> +	 */
-> +	if (stack_id > 0) {
-> +		stack_p = bpf_task_storage_get(&stack_cache, prev, NULL,
-> +					       BPF_LOCAL_STORAGE_GET_F_CREATE);
-
-Can you just add a new field in the tstamp map instead?
-
-
-> +		if (stack_p) {
-> +			/* to pass the clang result unused warning */
-> +			int __attribute__((unused)) len;
-> +			len = bpf_get_stack(ctx, stack_p->array, MAX_STACKS * sizeof(u64),
-> +					    BPF_F_USER_STACK) / sizeof(u64);
-
-I think you can move to the next task if it failed to get the stack
-trace.
-
-
-> +		}
-> +	}
-> +
->  	pelem = bpf_task_storage_get(&tstamp, prev, NULL,
->  				     BPF_LOCAL_STORAGE_GET_F_CREATE);
->  	if (!pelem)
-> @@ -238,6 +342,14 @@ static int off_cpu_stat(u64 *ctx, struct task_struct *prev,
->  		else
->  			bpf_map_update_elem(&off_cpu, &key, &delta, BPF_ANY);
->  
-> +		if (delta >= offcpu_thresh) {
-> +			struct offcpu_data *data = bpf_map_lookup_elem(&offcpu_payload, &zero);
-> +
-> +			stack_p = bpf_task_storage_get(&stack_cache, next, NULL, 0);
-> +			if (data && stack_p)
-> +				off_cpu_dump(ctx, data, &key, stack_p, delta, pelem->timestamp);
-> +		}
-
-I think you should either dump the data directly or save it in the
-off_cpu map.  Otherwise the time is accounted twice.
-
-Thanks,
-Namhyung
-
-> +
->  		/* prevent to reuse the timestamp later */
->  		pelem->timestamp = 0;
->  	}
-> diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
-> index 357231cb1c38..eaf7be92472d 100644
-> --- a/tools/perf/util/off_cpu.h
-> +++ b/tools/perf/util/off_cpu.h
-> @@ -15,9 +15,15 @@ struct record_opts;
->  #define OFFCPU_SAMPLE_TYPES  (PERF_SAMPLE_IDENTIFIER | PERF_SAMPLE_IP | \
->  			      PERF_SAMPLE_TID | PERF_SAMPLE_TIME | \
->  			      PERF_SAMPLE_ID | PERF_SAMPLE_CPU | \
-> -			      PERF_SAMPLE_PERIOD | PERF_SAMPLE_CALLCHAIN | \
-> +			      PERF_SAMPLE_PERIOD | PERF_SAMPLE_RAW | \
->  			      PERF_SAMPLE_CGROUP)
->  
-> +/*
-> + * for embedded data to overwrite the original sample, duplicated sample types
-> + * must be set in the original OFFCPU_SAMPLE_TYPES, except for callchain.
-> + */
-> +#define OFFCPU_EMBEDDED_SAMPLE_TYPES  (PERF_SAMPLE_TID | PERF_SAMPLE_PERIOD | \
-> +				       PERF_SAMPLE_CALLCHAIN | PERF_SAMPLE_CGROUP)
->  
->  #ifdef HAVE_BPF_SKEL
->  int off_cpu_prepare(struct evlist *evlist, struct target *target,
-> -- 
-> 2.43.0
-> 
 
