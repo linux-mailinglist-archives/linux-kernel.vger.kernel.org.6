@@ -1,922 +1,181 @@
-Return-Path: <linux-kernel+bounces-345016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0175398B128
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:46:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10E898B0A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61268B237E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 508FD283480
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586EC1A2C04;
-	Mon, 30 Sep 2024 23:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AFC18756E;
+	Mon, 30 Sep 2024 23:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EuxIswug"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lvBgTQms"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2056.outbound.protection.outlook.com [40.107.236.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9DE318952B
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727739739; cv=none; b=n6fGETz2K58/1CSMKq5rj4vLcsAV/YSP2m6+h/Fvk35upYl65f1Bg93Pawf3KFB7i/0hebjLtgO9B25g89dn4okOocGf233JWRaMZ4ZLZvIuES5X1SjaxwIOG6/j6KrCiVRS7qcvCpTQfbpjCmM+YgAgzebSEh7i7DnvIbMImIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727739739; c=relaxed/simple;
-	bh=mPfTkmhJVBwYw8I1D3KYs+8DYcEyjqQq37ulkF2XCeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2Y7oD3DW3tFMoOEB5cPjYO9c7A6CrDCLdus1DWmIdY+f1/jiGMgEbYGURbftqDjfk9M8lB2acb8uZbq9tj1qmTPXs/ZR4D780jLfp2yehFak+rgFBEmNa0Xrqr/jBuX21aunnZLGejr/PcQ7p8ANTsifgfsGJNa3wlSkRq+yfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EuxIswug; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727739735;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8RNAHaATLEjnd+TmtggNdwyEYacgXK5CVqJ+rc7+KF8=;
-	b=EuxIswugvS0hQoIdwpHhOAHuCPFP01kWUZmCWpqC5BqZv07TonSNbb+K+4bmtvMzreWmlD
-	wMeLj8sGwo+g4kPfHtDFkD7f/HNcBfCnXIY1SxQzg/r9hVbQJS6xWuLzaSfVjb9QDs3B9Y
-	2i15xChQEvpe4eRA9yKzszXJMr2LjQ8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-567-7PQZjkj7OLaZ95TSrO84_A-1; Mon,
- 30 Sep 2024 19:42:12 -0400
-X-MC-Unique: 7PQZjkj7OLaZ95TSrO84_A-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AD179196C429;
-	Mon, 30 Sep 2024 23:42:09 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.32.36])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 96C673003DEC;
-	Mon, 30 Sep 2024 23:42:04 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Cc: Asahi Lina <lina@asahilina.net>,
-	Danilo Krummrich <dakr@kernel.org>,
-	mcanal@igalia.com,
-	airlied@redhat.com,
-	zhiw@nvidia.com,
-	cjia@nvidia.com,
-	jhubbard@nvidia.com,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [WIP RFC v2 35/35] WIP: drm: Introduce RVKMS!
-Date: Mon, 30 Sep 2024 19:10:18 -0400
-Message-ID: <20240930233257.1189730-36-lyude@redhat.com>
-In-Reply-To: <20240930233257.1189730-1-lyude@redhat.com>
-References: <20240930233257.1189730-1-lyude@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD46183CA4;
+	Mon, 30 Sep 2024 23:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727737876; cv=fail; b=kma0pTjoBlAW+dqKOE5zyW4Z9CxIlUZqBuOXGqol/6KYnzSeRdko1IEuveWA0Sqyq5sM7/pn0j/gEEKI0xMwgCXcLUlL8OoLqhJN8wWSs9qnTMYiWTWmNSmHmXorxy+Sb5H+Lt8/kLz1NPJ9xfiOYhjmeCSrMZnK4hMB59Iqsbs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727737876; c=relaxed/simple;
+	bh=fbQ80J68rXmT5YIASRBYNlZc/Xz+hgMejPSzpeemUeA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aI7zsIt8LbY3RoEn4KCOhDsIRvFAVOP/ezrAWN8dEZ+nB2NeF+gV2aTbF/0refMY1NWJpEzSZ0zWmW+a+88F5rRDvWkKDLKR2me2MhRHIWwMppBdh8TaNUyiocOgjDUvbGaZJCdZctDX71OLk0F8IgiYVbvkriIRM9xha0leov4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lvBgTQms; arc=fail smtp.client-ip=40.107.236.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yRRTjr5op2CQwaW0apIaC8IfdW+zeqRnH4MVEEAnIPV8YgzBdpnQnb9f4zkNRZwEXEVhXBAPJrG7jSuhgjW/ur+ifLuAq1nsRBXdixhAkqAMAhTp1mkImcKYzyqT5pdntu5es17fWz6ePXpBhOoAQtp2kQH0+GCdX/keLG0xlmynQQT+pKo0eiC9hypS/WBX9jF9qZi2g1NV0fO2uhyLRGitNRtx4+u/ZfPFngXGRYDUyFH/mqU45/cjKmCGHejUnGj2C1wVH4120+e4BEUieQf2sHvSRTUV0P5da/5tom8sAv55+p3/WXiq63x2upAB45Dzl8LlRab+Hqbc0jN/LQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DtMjDKgBrf13RBTJM7nUo6XD7+COGt9BkUSD5fPcMZk=;
+ b=ag5sU7dgTC51muXFRoF/W7Jvs+3TqNMzVCtanQ7NjxLMdZKLqXYwt8CKEH3i9sgy6YNBOq/iBZAU7IeqXXv61EWhQOzaQyIBBNY52lU0gATMlPSlIfBZQlTS9IPzHaBbuQmhGvrtJewM/n2jSEjLmYnQDL+ueRd4h3JANXujZVAS6dszgvVtbekOGhwbcZhA2hN+c3YCIAEc42jK5aD+qeO67zoSt7pkYSRrePp44oCoStk3CwK/AaQdiAJxPQ6nR1RRoEelwVkNiZvH1bm6OeSkf5dvpC5PUI3+wBHqV1QdWdsWhvnjJLoGT4WK0JcigEbPHolJgzOifY2pmmcajQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DtMjDKgBrf13RBTJM7nUo6XD7+COGt9BkUSD5fPcMZk=;
+ b=lvBgTQmsWG2USvKyhQuEpNdA98YYClS94HyhFYQ4oA2c4Qt0UxrPmgqZCTLL2ecRebEjrKwpEjmt5I9VbE2AbO7Ugt0z+WkniY0dMkEirWzIpOxzOupa3zJz1UpzqhOklIXw+o9CXv+TVs7qf7hC9bcRtOq17VgBZwcC9iKmzyM=
+Received: from CH2PR07CA0026.namprd07.prod.outlook.com (2603:10b6:610:20::39)
+ by IA1PR12MB7662.namprd12.prod.outlook.com (2603:10b6:208:425::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Mon, 30 Sep
+ 2024 23:11:11 +0000
+Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
+ (2603:10b6:610:20:cafe::96) by CH2PR07CA0026.outlook.office365.com
+ (2603:10b6:610:20::39) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.27 via Frontend
+ Transport; Mon, 30 Sep 2024 23:11:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8026.11 via Frontend Transport; Mon, 30 Sep 2024 23:11:10 +0000
+Received: from ethanolx16dchost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 30 Sep
+ 2024 18:11:09 -0500
+From: Pavan Kumar Paluri <papaluri@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-doc@vger.kernel.org>, Borislav Petkov <bp@alien8.de>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Dave Hansen
+	<dave.hansen@linux.intel.com>, Eric Van Tassell <Eric.VanTassell@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+	Michael Roth <michael.roth@amd.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	"Peter Zijlstra" <peterz@infradead.org>, Pavan Kumar Paluri
+	<papaluri@amd.com>
+Subject: [PATCH v5 0/2] nosnp sev command line support
+Date: Mon, 30 Sep 2024 18:11:00 -0500
+Message-ID: <20240930231102.123403-1-papaluri@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|IA1PR12MB7662:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41444f19-1781-4220-cd13-08dce1a52c5a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?33M6DxegdKdWvINeiQTpxrtoUIJs+SaFGd5V4PrwR2nIQcrs25wlmOPHtY+/?=
+ =?us-ascii?Q?prOPTxMYU/02BCGsShpCGgxp2QbrWgJs7ZSK1+uJxGmzmgVKVXg12EMuSjlR?=
+ =?us-ascii?Q?zuEjjwzRA/H5DaTlnhslOO7bLko2AAEO/nhflHlw/NN/98aB/rA0T0L67WPj?=
+ =?us-ascii?Q?ug2et78BrllD0NX0/bVWRaqouqpVnx0RsXb2wS6dtpyyi77wB+5qRFjRUY/l?=
+ =?us-ascii?Q?U1LihzzZ0p0BMOXdOpCkd7uTrdMALvpnqhueEOVtOJ2E8rtjxZGTBMBxvqld?=
+ =?us-ascii?Q?R1ruv2mMf17DYuHospRXdmva06cP/W/4p+UAQR9ey5CkEC1y+5mcX15pWpqN?=
+ =?us-ascii?Q?SxtuKi1jSGKSfegRfriwW1aMvibkaEccAfmpxDVrBb8/8raVsrv+qmSLurfd?=
+ =?us-ascii?Q?k/aOPXQLIvIM4cGYgGyc8RoEaCVr+GUbK+9tGIxQYtXZpKIkeKawdipXgBAM?=
+ =?us-ascii?Q?A5XosBPRxVD8hlZ6TdVxsMS5jLYbGik946vum6YlUgyXJr407LWS5d+24Idk?=
+ =?us-ascii?Q?17RUNreaV2DMSDcOeP/DUXfDoLOJF39nmA6YyqkatLVtyQqPRMLzpU68VaKx?=
+ =?us-ascii?Q?LjAHLr+KH/GFE/thXQb4fGM/pP+o2789E/BUvCuC6qW8OSkEINPz4jM++G3s?=
+ =?us-ascii?Q?ZXtXAVHly4G+JjOHKmdg01wws/P3Xkaac06dTEKR/k4HkjtgSpgO4rPT6+AF?=
+ =?us-ascii?Q?JMRtV24npRsrAW+O61hDefvt/uPyjAY25NPW4u/zCik3CdvZ5uvRWYtlwO/E?=
+ =?us-ascii?Q?Uq1cVc0jDYu9EQ2Bs17yTkVs2DCMKw8jIHY7R+y6ggolqvY8budJXhSDAgia?=
+ =?us-ascii?Q?u2j3X/VyCCqJyvpUcUbkhwzceI5JxMUl28nmSczsQxnvhWfru3K2Rqs3w+Cp?=
+ =?us-ascii?Q?urkz5e8gBA9HNPxEzu7ewxixQ/0WpD4h11cL6ovfC9Gn95coJvNMnkpl+uPZ?=
+ =?us-ascii?Q?9QGOMS6s+Ts8VGjGZG+mpPrmu5e9EV+xGotFfdeg063tAVy0PNrc2w3mBpco?=
+ =?us-ascii?Q?s8NrSo5xdc1/cBc9UR3I+eT/4EpuJzkjZdWCN3hGIERLEJdECuOxf1vCV59F?=
+ =?us-ascii?Q?HjxdUeFvLD0qO0LOB3d/VNICeSyse4gA5L0tqwuI8VfuC4pl6QZnmKk9jjLI?=
+ =?us-ascii?Q?3R1rroHckwV1dowjPNsF4OY+QhpQ9aiWzoiQhn4GlRQtnzlX27I/NMLC/f1R?=
+ =?us-ascii?Q?k7vMQ+HQqGyM6Q1dEowMMFQtobj2CVVSif9Suhvz6LQcgZ2bGVlQFbHYQHP2?=
+ =?us-ascii?Q?+nZ03unR/EHVxM6PngASViHgbYXSc/c6if2zyHGUvVMspp8wjLIx50aa36aA?=
+ =?us-ascii?Q?wSykgHhbpVwnpxP200glja7upHSy8QPJEo2O7+nUavm2mwzAJNA/cobVQdFn?=
+ =?us-ascii?Q?5LjEvocM06tyoD2TT+U721R7sG5N7p6Tyaa2Pq/jDzCr2w9OFpLNafYmUEqL?=
+ =?us-ascii?Q?jYRyguxnxH2KQPHBCF1ue2XejX/GwIZjZ9+1gFEhqsuCCztiUjqjIA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2024 23:11:10.8832
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41444f19-1781-4220-cd13-08dce1a52c5a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A348.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7662
 
-Now that we've added all of the bits that we need for the KMS API, it's
-time to introduce rvkms! This is a port of the VKMS driver to rust, with
-the intent of acting as an example usecase of the KMS bindings that we've
-come up with so far in preparation for writing a display driver for nova.
+Provide "nosnp" boot option via "sev=nosnp" kernel command line to
+prevent SEV-SNP[1] capable host kernel from enabling SEV-SNP and
+initializing Reverse Map Table (RMP) [1].
 
-Currently RVKMS is an extremely bear bones driver - it only registers a
-device and emulates vblanking, but it exercises a good portion of the API
-that we've introduced so far! Eventually I hope to introduce CRC generation
-and maybe writeback connectors like.
+On providing sev=nosnp via kernel command line:
+cat /sys/module/kvm_amd/parameters/sev_snp should be "N".
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/Kconfig            |   2 +
- drivers/gpu/drm/Makefile           |   1 +
- drivers/gpu/drm/rvkms/Kconfig      |   3 +
- drivers/gpu/drm/rvkms/Makefile     |   1 +
- drivers/gpu/drm/rvkms/connector.rs |  53 ++++++
- drivers/gpu/drm/rvkms/crtc.rs      | 253 +++++++++++++++++++++++++++++
- drivers/gpu/drm/rvkms/encoder.rs   |  33 ++++
- drivers/gpu/drm/rvkms/file.rs      |  22 +++
- drivers/gpu/drm/rvkms/gem.rs       |  30 ++++
- drivers/gpu/drm/rvkms/output.rs    |  55 +++++++
- drivers/gpu/drm/rvkms/plane.rs     |  81 +++++++++
- drivers/gpu/drm/rvkms/rvkms.rs     | 168 +++++++++++++++++++
- 12 files changed, 702 insertions(+)
- create mode 100644 drivers/gpu/drm/rvkms/Kconfig
- create mode 100644 drivers/gpu/drm/rvkms/Makefile
- create mode 100644 drivers/gpu/drm/rvkms/connector.rs
- create mode 100644 drivers/gpu/drm/rvkms/crtc.rs
- create mode 100644 drivers/gpu/drm/rvkms/encoder.rs
- create mode 100644 drivers/gpu/drm/rvkms/file.rs
- create mode 100644 drivers/gpu/drm/rvkms/gem.rs
- create mode 100644 drivers/gpu/drm/rvkms/output.rs
- create mode 100644 drivers/gpu/drm/rvkms/plane.rs
- create mode 100644 drivers/gpu/drm/rvkms/rvkms.rs
+This patchset is based on tip/master.
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 6b2c6b91f9625..525e2e1615ca2 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -323,6 +323,8 @@ source "drivers/gpu/drm/amd/amdgpu/Kconfig"
- 
- source "drivers/gpu/drm/nouveau/Kconfig"
- 
-+source "drivers/gpu/drm/rvkms/Kconfig"
-+
- source "drivers/gpu/drm/i915/Kconfig"
- 
- source "drivers/gpu/drm/xe/Kconfig"
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 68cc9258ffc4b..ebedcab4dece0 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -172,6 +172,7 @@ obj-$(CONFIG_DRM_VMWGFX)+= vmwgfx/
- obj-$(CONFIG_DRM_VGEM)	+= vgem/
- obj-$(CONFIG_DRM_VKMS)	+= vkms/
- obj-$(CONFIG_DRM_NOUVEAU) +=nouveau/
-+obj-$(CONFIG_DRM_RVKMS) += rvkms/
- obj-$(CONFIG_DRM_EXYNOS) +=exynos/
- obj-$(CONFIG_DRM_ROCKCHIP) +=rockchip/
- obj-$(CONFIG_DRM_GMA500) += gma500/
-diff --git a/drivers/gpu/drm/rvkms/Kconfig b/drivers/gpu/drm/rvkms/Kconfig
-new file mode 100644
-index 0000000000000..551422803b9a6
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/Kconfig
-@@ -0,0 +1,3 @@
-+config DRM_RVKMS
-+        tristate "Rust VKMS PoC driver (EXPERIMENTAL)"
-+        depends on RUST && DRM && DRM_GEM_SHMEM_HELPER=y
-diff --git a/drivers/gpu/drm/rvkms/Makefile b/drivers/gpu/drm/rvkms/Makefile
-new file mode 100644
-index 0000000000000..18e06fc3343c6
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_DRM_RVKMS) += rvkms.o
-diff --git a/drivers/gpu/drm/rvkms/connector.rs b/drivers/gpu/drm/rvkms/connector.rs
-new file mode 100644
-index 0000000000000..97b94054fbe1f
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/connector.rs
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0
-+use super::{Rvkms, RvkmsDevice, MAX_RES, DEFAULT_RES};
-+use kernel::{
-+    prelude::*,
-+    drm::{
-+        device::Device,
-+        kms::{
-+            connector::{self, ConnectorGuard, DriverConnectorOps},
-+            ModeConfigGuard
-+        }
-+    },
-+    prelude::*
-+};
-+use core::marker::PhantomPinned;
-+
-+#[pin_data]
-+pub(crate) struct DriverConnector {
-+    #[pin]
-+    _p: PhantomPinned
-+}
-+
-+pub(crate) type Connector = connector::Connector<DriverConnector>;
-+
-+#[vtable]
-+impl connector::DriverConnector for DriverConnector {
-+    #[unique]
-+    const OPS: &'static DriverConnectorOps;
-+
-+    type State = ConnectorState;
-+    type Driver = Rvkms;
-+    type Args = ();
-+
-+    fn new(dev: &Device<Self::Driver>, args: Self::Args) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self { _p: PhantomPinned })
-+    }
-+
-+    fn get_modes(
-+        connector: ConnectorGuard<'_, Self>,
-+        _guard: &ModeConfigGuard<'_, Self::Driver>
-+    ) -> i32 {
-+        let count = connector.add_modes_noedid(MAX_RES);
-+
-+        connector.set_preferred_mode(DEFAULT_RES);
-+        count
-+    }
-+}
-+
-+#[derive(Clone, Default)]
-+pub(crate) struct ConnectorState;
-+
-+impl connector::DriverConnectorState for ConnectorState {
-+    type Connector = DriverConnector;
-+}
-diff --git a/drivers/gpu/drm/rvkms/crtc.rs b/drivers/gpu/drm/rvkms/crtc.rs
-new file mode 100644
-index 0000000000000..c3a90c76e4a5e
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/crtc.rs
-@@ -0,0 +1,253 @@
-+// TODO: License and stuff
-+// Contain's rvkms's drm_crtc implementation
-+use core::marker::*;
-+use super::{Rvkms, plane::*};
-+use kernel::{
-+    prelude::*,
-+    drm::{
-+        device::Device,
-+        kms::{
-+            atomic::*,
-+            crtc::{self, RawCrtcState, DriverCrtcOps},
-+            ModeObject,
-+            KmsRef,
-+            vblank::*,
-+        }
-+    },
-+    sync::{
-+        lock::Guard,
-+        SpinLockIrq,
-+        LockedBy,
-+    },
-+    hrtimer::*,
-+    time::*,
-+    irq::*,
-+    sync::Arc,
-+    new_spinlock_irq,
-+    impl_has_timer
-+};
-+
-+pub(crate) type Crtc = crtc::Crtc<RvkmsCrtc>;
-+pub(crate) type CrtcState = crtc::CrtcState<RvkmsCrtcState>;
-+
-+#[derive(Default)]
-+pub(crate) struct VblankState {
-+    /// A reference to the current VblankTimer
-+    timer: Option<Arc<VblankTimer>>,
-+
-+    /// A reference to a handle for the current VblankTimer
-+    handle: Option<ArcTimerHandle<VblankTimer>>,
-+
-+    /// The current frame duration in ns
-+    ///
-+    /// Stored separately here so it can be read safely without the vblank lock
-+    period_ns: i32,
-+}
-+
-+#[pin_data]
-+pub(crate) struct RvkmsCrtc {
-+    /// The current vblank emulation state
-+    ///
-+    /// This is uninitalized when the CRTC is disabled to prevent circular references
-+    #[pin]
-+    vblank_state: SpinLockIrq<VblankState>
-+}
-+
-+#[vtable]
-+impl crtc::DriverCrtc for RvkmsCrtc {
-+    #[unique]
-+    const OPS: &'static DriverCrtcOps;
-+
-+    type Args = ();
-+    type State = RvkmsCrtcState;
-+    type Driver = Rvkms;
-+    type VblankImpl = Self;
-+
-+    fn new(device: &Device<Self::Driver>, args: &Self::Args) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            vblank_state <- new_spinlock_irq!(VblankState::default(), "vblank_handle_lock")
-+        })
-+    }
-+
-+    fn atomic_check(
-+        crtc: &Crtc,
-+        old_state: &CrtcState,
-+        mut new_state: crtc::BorrowedCrtcState<'_, CrtcState>,
-+        state: &AtomicStateComposer<Self::Driver>
-+    ) -> Result {
-+        state.add_affected_planes(crtc)?;
-+
-+        // Create a vblank timer when enabling a CRTC, and destroy said timer when disabling to
-+        // resolve the circular reference to CRTC it creates
-+        if old_state.active() != new_state.active() {
-+            new_state.vblank_timer = if new_state.active() {
-+                Some(VblankTimer::new(crtc)?)
-+            } else {
-+                None
-+            };
-+        }
-+
-+        Ok(())
-+    }
-+
-+    fn atomic_flush(
-+        crtc: &Crtc,
-+        _old_state: &CrtcState,
-+        mut new_state: crtc::BorrowedCrtcState<'_, CrtcState>,
-+        _state: &AtomicStateMutator<Self::Driver>
-+    ) {
-+        if let Some(event) = new_state.get_pending_vblank_event() {
-+            if let Ok(vbl_ref) = crtc.vblank_get() {
-+                event.arm(vbl_ref);
-+            } else {
-+                event.send();
-+            }
-+        }
-+    }
-+
-+    fn atomic_enable(
-+        crtc: &Crtc,
-+        old_state: &CrtcState,
-+        new_state: crtc::BorrowedCrtcState<'_, CrtcState>,
-+        _state: &AtomicStateMutator<Self::Driver>
-+    ) {
-+        with_irqs_disabled(|irq| {
-+            // Store a reference to the newly created vblank timer for this CRTC
-+            crtc.vblank_state.lock_with(irq).timer = new_state.vblank_timer.clone()
-+        });
-+
-+        crtc.vblank_on();
-+    }
-+
-+    fn atomic_disable(
-+        crtc: &Crtc,
-+        _old_state: &CrtcState,
-+        _new_state: crtc::BorrowedCrtcState<'_, CrtcState>,
-+        _state: &AtomicStateMutator<Self::Driver>
-+    ) {
-+        crtc.vblank_off();
-+
-+        // Since we just explicitly disabled vblanks, destroy the vblank state to resolve circular
-+        // reference to this CRTC that it holds. Note that dropping the handle will cause us to wait
-+        // for the timer to finish, so we return it from with_irqs_disabled so that it is only
-+        // dropped once the vblank_state lock has been released
-+        drop(with_irqs_disabled(|irq| {
-+            let mut state = crtc.vblank_state.lock_with(irq);
-+
-+            (state.timer.take(), state.handle.take())
-+        }));
-+    }
-+}
-+
-+impl VblankSupport for RvkmsCrtc {
-+    type Crtc = Self;
-+
-+    fn enable_vblank(
-+        crtc: &Crtc,
-+        vblank: &VblankGuard<'_, Self::Crtc>,
-+        irq: IrqDisabled<'_>,
-+    ) -> Result {
-+        let period_ns = vblank.frame_duration();
-+        let mut vbl_state = crtc.vblank_state.lock_with(irq);
-+
-+        if let Some(timer) = vbl_state.timer.clone() {
-+            vbl_state.period_ns = period_ns;
-+            vbl_state.handle = Some(timer.schedule(period_ns as _));
-+        }
-+
-+        Ok(())
-+    }
-+
-+    fn disable_vblank(crtc: &Crtc, _vbl_guard: &VblankGuard<'_, Self::Crtc>, irq: IrqDisabled<'_>) {
-+        let handle = crtc.vblank_state.lock_with(irq).handle.take();
-+
-+        // Now that we're outside of the vblank lock, we can safely drop the handle
-+        drop(handle);
-+    }
-+
-+    fn get_vblank_timestamp(crtc: &Crtc, _handling_vblank_irq: bool) -> Option<VblankTimestamp> {
-+        let time = with_irqs_disabled(|irq| {
-+            let vbl_state = crtc.vblank_state.lock_with(irq);
-+
-+            // Return the expiration of our vblank timer if we have one (if not, vblanks are
-+            // disabled)
-+            vbl_state.timer.as_ref().map(|t| {
-+                // To prevent races, we roll the hrtimer forward before we do any interrupt
-+                // processing - this is how real hw works (the interrupt is only generated after all
-+                // the vblank registers are updated) and what the vblank core expects. Therefore we
-+                // need to always correct the timestamps by one frame.
-+                t.timer.expires() - Ktime::from_ns(vbl_state.period_ns)
-+            })
-+        });
-+
-+        Some(VblankTimestamp {
-+            // …otherwise, just use the current time
-+            time: time.unwrap_or_else(|| Ktime::ktime_get()),
-+            max_error: 0
-+        })
-+    }
-+}
-+
-+#[derive(Clone, Default)]
-+pub(crate) struct RvkmsCrtcState {
-+    vblank_timer: Option<Arc<VblankTimer>>
-+}
-+
-+impl crtc::DriverCrtcState for RvkmsCrtcState {
-+    type Crtc = RvkmsCrtc;
-+}
-+
-+/// The main hrtimer structure for emulating vblanks.
-+#[pin_data]
-+pub(crate) struct VblankTimer {
-+    /// The actual hrtimer used for sending out vblanks
-+    #[pin]
-+    timer: Timer<Self>,
-+
-+    /// An owned reference to the CRTC that this [`VblankTimer`] belongs to
-+    crtc: KmsRef<Crtc>,
-+}
-+
-+impl_has_timer! {
-+    impl HasTimer<Self> for VblankTimer { self.timer }
-+}
-+
-+impl VblankTimer {
-+    pub(crate) fn new(crtc: &Crtc) -> Result<Arc<Self>> {
-+        Arc::pin_init(
-+            pin_init!(Self {
-+                timer <- Timer::<Self>::new::<Arc<Self>>(),
-+                crtc: crtc.into(),
-+            }),
-+            GFP_KERNEL
-+        )
-+    }
-+}
-+
-+impl TimerCallback for VblankTimer {
-+    type CallbackTarget<'a> = Arc<Self>;
-+
-+    fn run(
-+        this: Self::CallbackTarget<'_>,
-+        context: TimerCallbackContext<'_, Self>
-+    ) -> TimerRestart
-+    where
-+        Self: Sized
-+    {
-+        with_irqs_disabled(|irq| {
-+            let period_ns = this.crtc.vblank_state.lock_with(irq).period_ns;
-+
-+            let overrun = context.forward_now(Ktime::from_ns(period_ns));
-+            if overrun != 1 {
-+                dev_warn!(
-+                    this.crtc.drm_dev().as_ref(),
-+                    "vblank timer overrun (expected 1, got {overrun})\n"
-+                );
-+            }
-+
-+            this.crtc.handle_vblank();
-+        });
-+
-+        TimerRestart::Restart
-+    }
-+}
-diff --git a/drivers/gpu/drm/rvkms/encoder.rs b/drivers/gpu/drm/rvkms/encoder.rs
-new file mode 100644
-index 0000000000000..f426ef10bcd7e
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/encoder.rs
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+use core::marker::PhantomPinned;
-+use kernel::{
-+    drm::{device::Device, kms::encoder},
-+    prelude::*,
-+    types::ARef,
-+};
-+use crate::{Rvkms, connector::Connector};
-+
-+#[pin_data]
-+pub(crate) struct DriverEncoder {
-+    connector: ARef<Connector>,
-+    #[pin]
-+    _p: PhantomPinned,
-+}
-+
-+pub(crate) type Encoder = encoder::Encoder<DriverEncoder>;
-+
-+#[vtable]
-+impl encoder::DriverEncoder for DriverEncoder {
-+    #[unique]
-+    const OPS: &'static encoder::DriverEncoderOps;
-+
-+    type Driver = Rvkms;
-+    type Args = ARef<Connector>;
-+
-+    fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self {
-+            connector: args,
-+            _p: PhantomPinned
-+        })
-+    }
-+}
-diff --git a/drivers/gpu/drm/rvkms/file.rs b/drivers/gpu/drm/rvkms/file.rs
-new file mode 100644
-index 0000000000000..baa9297673ecc
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/file.rs
-@@ -0,0 +1,22 @@
-+use super::Rvkms;
-+
-+use kernel::{
-+    drm::{
-+        self,
-+        device::Device as DrmDevice
-+    },
-+    prelude::*,
-+};
-+use core::option::*;
-+
-+pub(crate) struct File;
-+
-+impl drm::file::DriverFile for File {
-+    type Driver = Rvkms;
-+
-+    fn open(device: &DrmDevice<Self::Driver>) -> Result<Pin<Box<Self>>> {
-+        pr_info!("Someone opened a file! But I do not yet know which one...\n");
-+
-+        Box::pin_init(init!(File { }), GFP_KERNEL)
-+    }
-+}
-diff --git a/drivers/gpu/drm/rvkms/gem.rs b/drivers/gpu/drm/rvkms/gem.rs
-new file mode 100644
-index 0000000000000..950ef33758657
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/gem.rs
-@@ -0,0 +1,30 @@
-+use crate::{Rvkms, RvkmsDevice};
-+use core::sync::atomic::{AtomicU64, Ordering};
-+use kernel::{
-+    drm::{self, gem},
-+    prelude::*,
-+};
-+
-+static GEM_ID: AtomicU64 = AtomicU64::new(0);
-+
-+/// GEM Object implementation
-+#[pin_data]
-+pub(crate) struct DriverObject {
-+    /// ID for debugging
-+    id: u64,
-+}
-+
-+pub(crate) type Object = gem::shmem::Object<DriverObject>;
-+
-+impl gem::BaseDriverObject<Object> for DriverObject {
-+    fn new(dev: &RvkmsDevice, size: usize) -> impl PinInit<Self, Error> {
-+        let id = GEM_ID.fetch_add(1, Ordering::Relaxed);
-+
-+        pr_debug!("DriverObject::new id={id}\n");
-+        DriverObject { id }
-+    }
-+}
-+
-+impl gem::shmem::DriverObject for DriverObject {
-+    type Driver = Rvkms;
-+}
-diff --git a/drivers/gpu/drm/rvkms/output.rs b/drivers/gpu/drm/rvkms/output.rs
-new file mode 100644
-index 0000000000000..b110e2d5d8a8b
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/output.rs
-@@ -0,0 +1,55 @@
-+// SPDX-License-Identifier: GPL-2.0
-+use crate::{
-+    crtc::Crtc,
-+    plane::Plane,
-+    connector::Connector,
-+    encoder::Encoder,
-+    RvkmsDevice,
-+    Rvkms
-+};
-+use kernel::{
-+    drm::{
-+        fourcc::*,
-+        kms::{
-+            connector::DRM_MODE_CONNECTOR_VIRTUAL,
-+            encoder::DRM_MODE_ENCODER_VIRTUAL,
-+            plane::{self, PlaneType},
-+            framebuffer::*,
-+            UnregisteredKmsDevice,
-+        },
-+    },
-+    sync::Arc,
-+    prelude::*,
-+    types::ARef,
-+};
-+
-+const FORMATS: FormatList<1> = FormatList::new([XRGB888]);
-+
-+pub(crate) fn create_output(dev: &UnregisteredKmsDevice<'_, Rvkms>, index: u8) -> Result {
-+    let possible_crtcs = 1 << index;
-+
-+    let primary = Plane::new(
-+        dev,
-+        possible_crtcs,
-+        &FORMATS,
-+        Option::<&ModifierList<0>>::None,
-+        PlaneType::PRIMARY,
-+        None,
-+        ()
-+    )?;
-+
-+    let crtc = Crtc::new(dev, primary, Option::<&Plane>::None, None, ())?;
-+
-+    let connector = Connector::new(dev, DRM_MODE_CONNECTOR_VIRTUAL, ())?;
-+
-+    let encoder = Encoder::new(
-+        dev,
-+        DRM_MODE_ENCODER_VIRTUAL,
-+        possible_crtcs,
-+        0,
-+        None,
-+        connector.clone()
-+    )?;
-+
-+    connector.attach_encoder(encoder)
-+}
-diff --git a/drivers/gpu/drm/rvkms/plane.rs b/drivers/gpu/drm/rvkms/plane.rs
-new file mode 100644
-index 0000000000000..2722845a32e9a
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/plane.rs
-@@ -0,0 +1,81 @@
-+// SPDX-License-Identifier: GPL-2.0
-+use core::marker::PhantomPinned;
-+use super::{Rvkms, crtc::{RvkmsCrtc, Crtc}};
-+use kernel::{
-+    prelude::*,
-+    drm::{
-+        device::Device,
-+        kms::{
-+            atomic::*,
-+            plane::{
-+                self,
-+                AsRawPlaneState,
-+                FromRawPlaneState,
-+                DriverPlaneState,
-+                RawPlane,
-+                RawPlaneState,
-+                BorrowedPlaneState,
-+                DriverPlaneOps,
-+            },
-+            ModeObject
-+        }
-+    },
-+};
-+
-+#[pin_data]
-+pub(crate) struct RvkmsPlane {
-+    #[pin]
-+    _p: PhantomPinned,
-+}
-+
-+pub(crate) type Plane = plane::Plane<RvkmsPlane>;
-+pub(crate) type PlaneState = plane::PlaneState<RvkmsPlaneState>;
-+
-+#[vtable]
-+impl plane::DriverPlane for RvkmsPlane {
-+    #[unique]
-+    const OPS: &'static DriverPlaneOps;
-+
-+    type State = RvkmsPlaneState;
-+    type Driver = Rvkms;
-+    type Args = ();
-+
-+    fn new(device: &Device<Self::Driver>, args: Self::Args) -> impl PinInit<Self, Error> {
-+        try_pin_init!(Self { _p: PhantomPinned })
-+    }
-+
-+    fn atomic_check(
-+        plane: &Plane,
-+        mut new_state: BorrowedPlaneState<'_, PlaneState>,
-+        _old_state: &PlaneState,
-+        state: &AtomicStateComposer<Self::Driver>
-+    ) -> Result {
-+        if new_state.framebuffer().is_none() {
-+            return Ok(());
-+        }
-+
-+        if let Some(crtc) = new_state.crtc() {
-+            let crtc_state = state.add_crtc_state(crtc)?;
-+            new_state.atomic_helper_check(&crtc_state, true, true)
-+        } else {
-+            // TODO: We should be printing a warning here if we have no CRTC but do have an fb
-+            return Ok(());
-+        }
-+    }
-+
-+    fn atomic_update(
-+        _plane: &Plane,
-+        _new_state: BorrowedPlaneState<'_, PlaneState>,
-+        _old_state: &PlaneState,
-+        _state: &AtomicStateMutator<Self::Driver>,
-+    ) {
-+        // TODO, no-op for now
-+    }
-+}
-+
-+#[derive(Clone, Default)]
-+pub(crate) struct RvkmsPlaneState;
-+
-+impl DriverPlaneState for RvkmsPlaneState {
-+    type Plane = RvkmsPlane;
-+}
-diff --git a/drivers/gpu/drm/rvkms/rvkms.rs b/drivers/gpu/drm/rvkms/rvkms.rs
-new file mode 100644
-index 0000000000000..2c72c0ec6989d
---- /dev/null
-+++ b/drivers/gpu/drm/rvkms/rvkms.rs
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0
-+mod connector;
-+mod crtc;
-+mod file;
-+mod gem;
-+mod plane;
-+mod output;
-+mod encoder;
-+
-+use alloc::boxed::Box;
-+
-+use core::{option::*, marker::*};
-+
-+use kernel::{
-+    c_str,
-+    str::CStr,
-+    device,
-+    driver,
-+    drm::{
-+        self,
-+        drv,
-+        kms::{
-+            Kms,
-+            ModeConfigInfo,
-+            UnregisteredKmsDevice,
-+            atomic::*,
-+            fbdev::*,
-+        },
-+    },
-+    platform,
-+    prelude::*,
-+    sync::Arc,
-+};
-+
-+/// Convienence type alias for the DRM device type for this driver
-+pub(crate) type RvkmsDevice = drm::device::Device<Rvkms>;
-+
-+/// The name of the driver
-+const NAME: &'static CStr = c_str!("rvkms");
-+
-+/// Driver metadata
-+const INFO: drv::DriverInfo = drv::DriverInfo {
-+    major: 0,
-+    minor: 0,
-+    patchlevel: 0,
-+    name: &NAME,
-+    desc: c_str!("Rust VKMS PoC"),
-+    date: c_str!("20240115"),
-+};
-+
-+/// The minimum supported resolution
-+const MIN_RES: (i32, i32) = (10, 10);
-+
-+/// The maximum supported resolution
-+const MAX_RES: (i32, i32) = (8192, 8192);
-+
-+/// The "preferred" resolution
-+const DEFAULT_RES: (i32, i32) = (1024, 768);
-+
-+pub(crate) struct Data {
-+}
-+
-+/// DRM Driver implementation for `RvkmsDriver`
-+#[vtable]
-+impl drv::Driver for Rvkms {
-+    type Data = Arc<Data>;
-+    type Object = gem::Object;
-+    type File = file::File;
-+    type Kms = Self;
-+
-+    const INFO: drv::DriverInfo = INFO;
-+    const FEATURES:u32 = drv::FEAT_GEM | drv::FEAT_MODESET | drv::FEAT_ATOMIC;
-+
-+    kernel::declare_drm_ioctls! {}
-+}
-+
-+#[vtable]
-+impl Kms for Rvkms {
-+    type Driver = Self;
-+    type Fbdev = FbdevShmem<Self>;
-+
-+    fn mode_config_info(
-+        _dev: &device::Device,
-+        _drm_data: <<Self::Driver as drv::Driver>::Data as kernel::types::ForeignOwnable>::Borrowed<'_>,
-+    ) -> Result<ModeConfigInfo> {
-+        Ok(MODE_CONFIG_INFO)
-+    }
-+
-+    fn create_objects(drm: &UnregisteredKmsDevice<'_, Self::Driver>) -> Result {
-+        output::create_output(drm, 0)
-+    }
-+
-+    fn atomic_commit_tail<'a>(
-+        mut state: AtomicCommitTail<'a, Self::Driver>,
-+        modeset_token: ModesetsReadyToken<'_>,
-+        plane_update_token: PlaneUpdatesReadyToken<'_>,
-+    ) -> CommittedAtomicState<'a, Self::Driver> {
-+        let modeset_token = state.commit_modeset_disables(modeset_token);
-+
-+        let plane_update_token = state.commit_planes(plane_update_token, Default::default());
-+
-+        let modeset_token = state.commit_modeset_enables(modeset_token);
-+
-+        state.fake_vblank();
-+
-+        let state = state.commit_hw_done(modeset_token, plane_update_token);
-+
-+        state.wait_for_flip_done();
-+
-+        state
-+    }
-+}
-+
-+impl platform::Driver for Rvkms {
-+    type Data = Arc<Data>;
-+    type IdInfo = ();
-+
-+    fn probe(pdev: &mut platform::Device, id_info: Option<&Self::IdInfo>) -> Result<Self::Data> {
-+        // XXX: do not fret, the mutable reference here is temporary (poke dakr if it isn't)
-+        let dev: &device::Device = pdev.as_ref();
-+        dev.pr_info(format_args!("RVKMS probing\n"));
-+
-+        let data = Arc::new(Data { }, GFP_KERNEL)?;
-+        let drm = drv::Registration::<Rvkms>::new_foreign_owned(dev, data.clone(), 0)?;
-+
-+        Ok(data)
-+    }
-+}
-+
-+pub(crate) struct Rvkms {
-+    drv_reg: Pin<Box<platform::Registration<Self>>>,
-+    pdev: platform::Device,
-+}
-+
-+const MODE_CONFIG_INFO: ModeConfigInfo = ModeConfigInfo {
-+    min_resolution: MIN_RES,
-+    max_resolution: MAX_RES,
-+    max_cursor: (512, 512),
-+    preferred_depth: 0,
-+};
-+
-+impl kernel::Module for Rvkms {
-+    fn init(name: &'static CStr, module: &'static ThisModule) -> kernel::error::Result<Self> {
-+        pr_info!("RVKMS module loaded\n");
-+
-+        // Register the driver (FIXME: this should be static
-+        let drv_reg = Box::try_pin_init(
-+            platform::Registration::<Self>::new(name, module),
-+            GFP_KERNEL
-+        )?;
-+
-+        let pdev = platform::Device::create_simple(&NAME, 0)?;
-+        let dev: &device::Device = pdev.as_ref();
-+
-+        Ok(Self {
-+            drv_reg,
-+            pdev,
-+        })
-+    }
-+}
-+
-+module! {
-+    type: Rvkms,
-+    name: "rvkms",
-+    author: "Lyude Paul",
-+    description: "Rust VKMS Proof of Concept driver",
-+    license: "GPL v2",
-+}
+Reference:
+[1] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf
+
+Changelog:
+=========
+v4->v5:
+  * Move __read_mostly attribute to place where sev_cfg is declared (Tom)
+
+v3->v4:
+  * Remove an irrelevant header (Boris)
+  * Rebase on latest tip/master
+  * Link: https://lore.kernel.org/all/20240922033626.29038-1-papaluri@amd.com/
+
+Pavan Kumar Paluri (2):
+  x86, KVM:SVM: Move sev specific parsing into arch/x86/virt/svm
+  x86 KVM:SVM: Provide "nosnp" boot option for sev kernel command line
+
+ .../arch/x86/x86_64/boot-options.rst          |  3 ++
+ arch/x86/coco/sev/core.c                      | 44 -------------------
+ arch/x86/include/asm/sev-common.h             | 29 ++++++++++++
+ arch/x86/virt/svm/Makefile                    |  1 +
+ arch/x86/virt/svm/cmdline.c                   | 39 ++++++++++++++++
+ 5 files changed, 72 insertions(+), 44 deletions(-)
+ create mode 100644 arch/x86/virt/svm/cmdline.c
+
+
+base-commit: d1b8f40d000887720e0c123c382d75e7fbb75cb6
 -- 
-2.46.1
+2.34.1
 
 
