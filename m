@@ -1,398 +1,345 @@
-Return-Path: <linux-kernel+bounces-343310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE112989970
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69F2989972
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 05:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32EF8B2240D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D761F21592
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 03:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D321383A5;
-	Mon, 30 Sep 2024 03:25:05 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FED438396;
-	Mon, 30 Sep 2024 03:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68FEE53804;
+	Mon, 30 Sep 2024 03:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bS0spes9"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D5C43C466;
+	Mon, 30 Sep 2024 03:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727666704; cv=none; b=eJ60PdMjJ/anM1u08Pkrw5+lYcqhd9UFHVrlu7890Xtz43G3ekZ6ow08hIkdtP9+5jL8xJC3NATb/xeFE6oFhwOJVbQmQLWmJbRmqu9BO/1NhXeRXCx++sCrT69foOzuE9ZSb8lXFYdiP8q/lPLPZvPOotz1NzsT0qy5VooCiUc=
+	t=1727666708; cv=none; b=irbJFAE+YjwNeXCnOgkso3G7ozJE9dAU5vfBuVlc4LSALPMPUvfVdBw11gwx7hO5JN4IHBTxkt8A8SHGOQHCc3pVq8cuzxtZftpeLVDbSt2Cm5nuc6iD4XU2v269XSu64F+piNnSCs6w4mLZ6VrPeEfhdEqvFez+Xd+iWL57y7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727666704; c=relaxed/simple;
-	bh=L74EFNmBJ+BoRuTlV9M9pl97yZnpubHkwY2PpjTKtvo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PwpCCooCfSavKspt+sCxQbt2DaAUE7kn5zOZ0IPVAkoAjGL0C8YqiKYQP8fTjTht1NLx6bS3BnI9bvzzzpMHGEykXm95DOZhJVYQoZnVo2w80N8B31A05TDbGk/Y0/tyIfYtyrztgUG7vbMou7hgximVrFy7w0Nj4iJg5LGQgdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.164])
-	by gateway (Coremail) with SMTP id _____8DxxrAJGvpmDl8EAA--.4294S3;
-	Mon, 30 Sep 2024 11:24:57 +0800 (CST)
-Received: from [10.20.42.164] (unknown [10.20.42.164])
-	by front2 (Coremail) with SMTP id qciowMBxOsYGGvpmLtcYAA--.22697S2;
-	Mon, 30 Sep 2024 11:24:54 +0800 (CST)
-Subject: Re: [PATCH v5 2/2] Loongarch: EDAC driver for loongson memory
- controller
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- chenhuacai@kernel.org, bp@alien8.de, tony.luck@intel.com,
- linux-edac@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@xen0n.name, james.morse@arm.com,
- mchehab@kernel.org, rric@kernel.org, loongarch@lists.linux.dev
-References: <20240925024038.9844-1-zhaoqunqin@loongson.cn>
- <20240925024038.9844-3-zhaoqunqin@loongson.cn>
- <20240925101331.00000e63@Huawei.com>
-From: Zhao Qunqin <zhaoqunqin@loongson.cn>
-Message-ID: <2b8b6384-4c6b-b49d-b88e-93c1390017e4@loongson.cn>
-Date: Mon, 30 Sep 2024 11:24:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1727666708; c=relaxed/simple;
+	bh=NJUlv1zpEIP1vA6lSu7qXConEljs/5Q0eKYJDcu+7LQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UTDfgNjjcoBhxN3V/kDGT63W577R419/MjdUsbHnrfWYROr/7PGiiytG3ShIoLM+rZKIgh/Y1kAz2FTFMX5YiukmrNl2IDDj+CsigxB/ZrxJ7IC3ocC6wyJ9KDEqQVFJubjbkKWBu3IP97M1Zp471D8At8I4HbcVCJ86lrMwwmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bS0spes9; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398a26b64fso2012213e87.3;
+        Sun, 29 Sep 2024 20:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727666704; x=1728271504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xptrEtzFtFOhGhhDu38fIaDiqDAME1wxUs6nvetbUTk=;
+        b=bS0spes9dHFqDT60R+/WjXvVfeAuDXxP2GO0P8aMpP8zaYZsv45HqVDg6x0x5iM4Mv
+         FJ0sAaMHNKrC/sSQaI9/yTLFxXIxtvxph884RCHY0wkrAwKjCGGJWXwIbYbcDfwYI8vh
+         cWOoXU9MkeIl6R/bnf4clFnN2+t6sFclSAwLNecId3qudQw+/ZCUIAyYvVayIo8uPRVx
+         51E+KfE23ti1zX3MNQBpX3st/3Y242ldWAu7voQ+e/mMb3oXlJwyHQ846bX3cqT73bv8
+         32nQu+ttUWUmCkEdSUdC+rabuFW/qiOxZg55paFn9ZzLVC5ZvVgQvtsDIEuqPmMATPg+
+         jWbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727666704; x=1728271504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xptrEtzFtFOhGhhDu38fIaDiqDAME1wxUs6nvetbUTk=;
+        b=klH+MT01Jfa+adNJIagkJ7HyM0gNyXGqne6V/wldKGJMVE60O3WrrvNwuTm23LQe3O
+         68ds4DRLTfooxGjVNdHFabgMG4uUoeq1399ezQ9h7Jvu/BPwFcUMZZoC4EwWwH0SXCz4
+         zfmSm2Rg7MZfNFdlEQb0QXXaT0lTCJBrCC+4ufwbGdlK7WzxGrCpIE/iqqBsp3lzDeNK
+         rACVfDEdGHh6O9QlPzEFlP6TKQYeMdyOIqYwtxeN97nxKSDTsPXhBxaHQQlmpAvAW2IC
+         g3VFPmUwuloHODXEVloxYCurCmLAscDYV2cCpFE6z1earrt63ChXynvjKuRQdlv7dOGH
+         SR9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhZ8e363tlm+ngPvTuaMG6ZH0HyqfSBeLxq3N5q066dheekZd7cqyxPVPCuRa85Z0aIwKxVDTihp6+bIKq@vger.kernel.org, AJvYcCXxvrSJymNDQ1PJi2hKjD+iIzqhg+b3mi+LC0q7z+R4JXK6G5fivVxJvOTJIKaeqIfevTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzZ9NEd/cKT6OxSsoFVOfK05mKKy4gTw/lnwseyYbF61IT6oPK
+	Htftt7fngenNgFsvfQ5BCvwehIB633hF2G1XHsDJ3DFTgszIMNPJ/t9R+hbtVN8A9kvB/Thvf+D
+	EtgJ3SZZKME0F9Z4Wl2WuQeKM0IA=
+X-Google-Smtp-Source: AGHT+IELe+2NOBUdZEI+ghESbtr3V11lcC/22EdAwVAOqSICs5O2qdB8ektR+NGrKCr9D9/eubpAvuLCvbIyLZsdyYU=
+X-Received: by 2002:a05:6512:1047:b0:537:a855:7d6f with SMTP id
+ 2adb3069b0e04-5389fc4bc4fmr4472211e87.34.1727666704290; Sun, 29 Sep 2024
+ 20:25:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240925101331.00000e63@Huawei.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:qciowMBxOsYGGvpmLtcYAA--.22697S2
-X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoW3AryrCF1kWF48Xry7ZFykXrc_yoWfAF43pF
-	98Aa15Cr48tr17AwsYvryUuF1Yvws7KF12k3y3tay29r9Fyrykur9Yqry2kFn7CryDGrW0
-	va4rKwsruF4YkrgCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1ln4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
-	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r12
-	6r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr4
-	1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j0mhrUUU
-	UU=
+References: <20240927184133.968283-1-namhyung@kernel.org> <20240927184133.968283-4-namhyung@kernel.org>
+ <ZvjwEH3QXkjUCu8Z@google.com> <CAB=+i9Sm4UEhGy-jzsZEs1Q6KQCVdbnu_eAiRzXz=sRC-3H6Uw@mail.gmail.com>
+ <ZvoKYFEx9_h_6zyf@google.com>
+In-Reply-To: <ZvoKYFEx9_h_6zyf@google.com>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Mon, 30 Sep 2024 12:24:52 +0900
+Message-ID: <CAB=+i9TQGnKdt+5Cdg4kjE1AqHgo3MiSvDmr_TarLHw6xGZGog@mail.gmail.com>
+Subject: Re: [RFC/PATCH bpf-next 3/3] selftests/bpf: Add a test for kmem_cache_iter
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 30, 2024 at 11:18=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hello Hyeonggon,
+>
+> On Sun, Sep 29, 2024 at 11:27:25PM +0900, Hyeonggon Yoo wrote:
+> > On Sun, Sep 29, 2024 at 3:13=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > On Fri, Sep 27, 2024 at 11:41:33AM -0700, Namhyung Kim wrote:
+> > > > The test traverses all slab caches using the kmem_cache_iter and ch=
+eck
+> > > > if current task's pointer is from "task_struct" slab cache.
+> > > >
+> > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > > ---
+> > > >  .../bpf/prog_tests/kmem_cache_iter.c          | 64 +++++++++++++++=
++++
+> > > >  tools/testing/selftests/bpf/progs/bpf_iter.h  |  7 ++
+> > > >  .../selftests/bpf/progs/kmem_cache_iter.c     | 66 +++++++++++++++=
+++++
+> > > >  3 files changed, 137 insertions(+)
+> > > >  create mode 100644 tools/testing/selftests/bpf/prog_tests/kmem_cac=
+he_iter.c
+> > > >  create mode 100644 tools/testing/selftests/bpf/progs/kmem_cache_it=
+er.c
+> > > >
+> > > > diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter=
+.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+> > > > new file mode 100644
+> > > > index 0000000000000000..814bcc453e9f3ccd
+> > > > --- /dev/null
+> > > > +++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
+> > > > @@ -0,0 +1,64 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/* Copyright (c) 2024 Google */
+> > > > +
+> > > > +#include <test_progs.h>
+> > > > +#include <bpf/libbpf.h>
+> > > > +#include <bpf/btf.h>
+> > > > +#include "kmem_cache_iter.skel.h"
+> > > > +
+> > > > +static void test_kmem_cache_iter_check_task(struct kmem_cache_iter=
+ *skel)
+> > > > +{
+> > > > +     LIBBPF_OPTS(bpf_test_run_opts, opts,
+> > > > +             .flags =3D BPF_F_TEST_RUN_ON_CPU,
+> > > > +     );
+> > > > +     int prog_fd =3D bpf_program__fd(skel->progs.check_task_struct=
+);
+> > > > +
+> > > > +     /* get task_struct and check it if's from a slab cache */
+> > > > +     bpf_prog_test_run_opts(prog_fd, &opts);
+> > > > +
+> > > > +     /* the BPF program should set 'found' variable */
+> > > > +     ASSERT_EQ(skel->bss->found, 1, "found task_struct");
+> > >
+> > > Hmm.. I'm seeing a failure with found being -1, which means ...
+> > >
+> > > > +}
+> > > > +
+> > > > +void test_kmem_cache_iter(void)
+> > > > +{
+> > > > +     DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
+> > > > +     struct kmem_cache_iter *skel =3D NULL;
+> > > > +     union bpf_iter_link_info linfo =3D {};
+> > > > +     struct bpf_link *link;
+> > > > +     char buf[1024];
+> > > > +     int iter_fd;
+> > > > +
+> > > > +     skel =3D kmem_cache_iter__open_and_load();
+> > > > +     if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
+> > > > +             return;
+> > > > +
+> > > > +     opts.link_info =3D &linfo;
+> > > > +     opts.link_info_len =3D sizeof(linfo);
+> > > > +
+> > > > +     link =3D bpf_program__attach_iter(skel->progs.slab_info_colle=
+ctor, &opts);
+> > > > +     if (!ASSERT_OK_PTR(link, "attach_iter"))
+> > > > +             goto destroy;
+> > > > +
+> > > > +     iter_fd =3D bpf_iter_create(bpf_link__fd(link));
+> > > > +     if (!ASSERT_GE(iter_fd, 0, "iter_create"))
+> > > > +             goto free_link;
+> > > > +
+> > > > +     memset(buf, 0, sizeof(buf));
+> > > > +     while (read(iter_fd, buf, sizeof(buf) > 0)) {
+> > > > +             /* read out all contents */
+> > > > +             printf("%s", buf);
+> > > > +     }
+> > > > +
+> > > > +     /* next reads should return 0 */
+> > > > +     ASSERT_EQ(read(iter_fd, buf, sizeof(buf)), 0, "read");
+> > > > +
+> > > > +     test_kmem_cache_iter_check_task(skel);
+> > > > +
+> > > > +     close(iter_fd);
+> > > > +
+> > > > +free_link:
+> > > > +     bpf_link__destroy(link);
+> > > > +destroy:
+> > > > +     kmem_cache_iter__destroy(skel);
+> > > > +}
+> > > > diff --git a/tools/testing/selftests/bpf/progs/bpf_iter.h b/tools/t=
+esting/selftests/bpf/progs/bpf_iter.h
+> > > > index c41ee80533ca219a..3305dc3a74b32481 100644
+> > > > --- a/tools/testing/selftests/bpf/progs/bpf_iter.h
+> > > > +++ b/tools/testing/selftests/bpf/progs/bpf_iter.h
+> > > > @@ -24,6 +24,7 @@
+> > > >  #define BTF_F_PTR_RAW BTF_F_PTR_RAW___not_used
+> > > >  #define BTF_F_ZERO BTF_F_ZERO___not_used
+> > > >  #define bpf_iter__ksym bpf_iter__ksym___not_used
+> > > > +#define bpf_iter__kmem_cache bpf_iter__kmem_cache___not_used
+> > > >  #include "vmlinux.h"
+> > > >  #undef bpf_iter_meta
+> > > >  #undef bpf_iter__bpf_map
+> > > > @@ -48,6 +49,7 @@
+> > > >  #undef BTF_F_PTR_RAW
+> > > >  #undef BTF_F_ZERO
+> > > >  #undef bpf_iter__ksym
+> > > > +#undef bpf_iter__kmem_cache
+> > > >
+> > > >  struct bpf_iter_meta {
+> > > >       struct seq_file *seq;
+> > > > @@ -165,3 +167,8 @@ struct bpf_iter__ksym {
+> > > >       struct bpf_iter_meta *meta;
+> > > >       struct kallsym_iter *ksym;
+> > > >  };
+> > > > +
+> > > > +struct bpf_iter__kmem_cache {
+> > > > +     struct bpf_iter_meta *meta;
+> > > > +     struct kmem_cache *s;
+> > > > +} __attribute__((preserve_access_index));
+> > > > diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/=
+tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+> > > > new file mode 100644
+> > > > index 0000000000000000..3f6ec15a1bf6344c
+> > > > --- /dev/null
+> > > > +++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
+> > > > @@ -0,0 +1,66 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > +/* Copyright (c) 2024 Google */
+> > > > +
+> > > > +#include "bpf_iter.h"
+> > > > +#include <bpf/bpf_helpers.h>
+> > > > +#include <bpf/bpf_tracing.h>
+> > > > +
+> > > > +char _license[] SEC("license") =3D "GPL";
+> > > > +
+> > > > +#define SLAB_NAME_MAX  256
+> > > > +
+> > > > +struct {
+> > > > +     __uint(type, BPF_MAP_TYPE_HASH);
+> > > > +     __uint(key_size, sizeof(void *));
+> > > > +     __uint(value_size, SLAB_NAME_MAX);
+> > > > +     __uint(max_entries, 1024);
+> > > > +} slab_hash SEC(".maps");
+> > > > +
+> > > > +extern struct kmem_cache *bpf_get_kmem_cache(__u64 addr) __ksym;
+> > > > +
+> > > > +/* result, will be checked by userspace */
+> > > > +int found;
+> > > > +
+> > > > +SEC("iter/kmem_cache")
+> > > > +int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
+> > > > +{
+> > > > +     struct seq_file *seq =3D ctx->meta->seq;
+> > > > +     struct kmem_cache *s =3D ctx->s;
+> > > > +
+> > > > +     if (s) {
+> > > > +             char name[SLAB_NAME_MAX];
+> > > > +
+> > > > +             /*
+> > > > +              * To make sure if the slab_iter implements the seq i=
+nterface
+> > > > +              * properly and it's also useful for debugging.
+> > > > +              */
+> > > > +             BPF_SEQ_PRINTF(seq, "%s: %u\n", s->name, s->object_si=
+ze);
+> > > > +
+> > > > +             bpf_probe_read_kernel_str(name, sizeof(name), s->name=
+);
+> > > > +             bpf_map_update_elem(&slab_hash, &s, name, BPF_NOEXIST=
+);
+> > > > +     }
+> > > > +
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +SEC("raw_tp/bpf_test_finish")
+> > > > +int BPF_PROG(check_task_struct)
+> > > > +{
+> > > > +     __u64 curr =3D bpf_get_current_task();
+> > > > +     struct kmem_cache *s;
+> > > > +     char *name;
+> > > > +
+> > > > +     s =3D bpf_get_kmem_cache(curr);
+> > > > +     if (s =3D=3D NULL) {
+> > > > +             found =3D -1;
+> > > > +             return 0;
+> > >
+> > > ... it cannot find a kmem_cache for the current task.  This program i=
+s
+> > > run by bpf_prog_test_run_opts() with BPF_F_TEST_RUN_ON_CPU.  So I thi=
+nk
+> > > the curr should point a task_struct in a slab cache.
+> > >
+> > > Am I missing something?
+> >
+> > Hi Namhyung,
+> >
+> > Out of curiosity I've been investigating this issue on my machine and
+> > running some experiments.
+>
+> Thanks a lot for looking at this!
+>
+> >
+> > When the test fails, calling dump_page() for the page the task_struct
+> > belongs to,
+> > shows that the page does not have the PGTY_slab flag set which is why
+> > virt_to_slab(current) returns NULL.
+> >
+> > Does the test always fails on your environment? On my machine, the
+> > test passed sometimes but failed some times.
+>
+> I'm using vmtest.sh but it succeeded mostly.  I thought I couldn't
+> reproduce it locally, but I also see the failure sometimes.  I'll take a
+> deeper look.
+>
+> >
+> > Maybe sometimes the value returned by 'current' macro belongs to a
+> > slab, but sometimes it does not.
+> > But that doesn't really make sense to me as IIUC task_struct
+> > descriptors are allocated from slab.
+>
+> AFAIK the notable exception is the init_task which lives in the kernel
+> data.  I'm not sure the if the test is running by PID 1.
 
-ÔÚ 2024/9/25 ÏÂÎç5:13, Jonathan Cameron Ð´µÀ:
-> On Wed, 25 Sep 2024 10:40:38 +0800
-> Zhao Qunqin <zhaoqunqin@loongson.cn> wrote:
->
->> Reports single bit errors (CE) only.
->>
->> Signed-off-by: Zhao Qunqin <zhaoqunqin@loongson.cn>
-> Hi. A few quick comments inline
->
-> Jonathan
->
->> ---
->> Changes in v5:
->> 	- Drop the loongson_ prefix from all static functions.
->> 	- Align function arguments on the opening brace.
->> 	- Drop useless comments and useless wrapper. Drop side comments.
->> 	- Reorder variable declarations.
->>
->> Changes in v4:
->> 	- None
->>
->> Changes in v3:
->> 	- Addressed review comments raised by Krzysztof and Huacai
->>
->> Changes in v2:
->> 	- Addressed review comments raised by Krzysztof
->>
->>   MAINTAINERS                  |   1 +
->>   arch/loongarch/Kconfig       |   1 +
->>   drivers/edac/Kconfig         |   8 ++
->>   drivers/edac/Makefile        |   1 +
->>   drivers/edac/loongson_edac.c | 168 +++++++++++++++++++++++++++++++++++
->>   5 files changed, 179 insertions(+)
->>   create mode 100644 drivers/edac/loongson_edac.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 6cc8cfc8f..5b4526638 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -13242,6 +13242,7 @@ M:	Zhao Qunqin <zhaoqunqin@loongson.cn>
->>   L:	linux-edac@vger.kernel.org
->>   S:	Maintained
->>   F:	Documentation/devicetree/bindings/edac/loongson,ls3a5000-mc-edac.yaml
->> +F:	drivers/edac/loongson_edac.c
->>   
->>   LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)
->>   M:	Sathya Prakash <sathya.prakash@broadcom.com>
->> diff --git a/arch/loongarch/Kconfig b/arch/loongarch/Kconfig
->> index 70f169210..9c135f1a2 100644
->> --- a/arch/loongarch/Kconfig
->> +++ b/arch/loongarch/Kconfig
->> @@ -181,6 +181,7 @@ config LOONGARCH
->>   	select PCI_MSI_ARCH_FALLBACKS
->>   	select PCI_QUIRKS
->>   	select PERF_USE_VMALLOC
->> +	select EDAC_SUPPORT
->>   	select RTC_LIB
->>   	select SPARSE_IRQ
->>   	select SYSCTL_ARCH_UNALIGN_ALLOW
->> diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
->> index 81af6c344..719bb6ca7 100644
->> --- a/drivers/edac/Kconfig
->> +++ b/drivers/edac/Kconfig
->> @@ -564,5 +564,13 @@ config EDAC_VERSAL
->>   	  Support injecting both correctable and uncorrectable errors
->>   	  for debugging purposes.
->>   
->> +config EDAC_LOONGSON3
->> +	tristate "Loongson-3 Memory Controller"
->> +	depends on LOONGARCH || COMPILE_TEST
->> +	help
->> +	  Support for error detection and correction on the Loongson-3
->> +	  family memory controller. This driver reports single bit
->> +	  errors (CE) only. Loongson-3A5000/3C5000/3D5000/3C5000L/3A6000/3C6000
->> +	  are compatible.
->>   
->>   endif # EDAC
->> diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
->> index faf310eec..e72ca1be4 100644
->> --- a/drivers/edac/Makefile
->> +++ b/drivers/edac/Makefile
->> @@ -88,3 +88,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
->>   obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
->>   obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
->>   obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
->> +obj-$(CONFIG_EDAC_LOONGSON3)		+= loongson_edac.o
->> diff --git a/drivers/edac/loongson_edac.c b/drivers/edac/loongson_edac.c
->> new file mode 100644
->> index 000000000..2721dfba5
->> --- /dev/null
->> +++ b/drivers/edac/loongson_edac.c
->> @@ -0,0 +1,168 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2024 Loongson Technology Corporation Limited.
->> + */
->> +
->> +#include <linux/edac.h>
->> +#include <linux/module.h>
->> +#include <linux/init.h>
->> +#include <linux/platform_device.h>
->> +
->> +#include "edac_module.h"
->> +
->> +enum ecc_index {
->> +	ECC_SET = 0,
->> +	ECC_RESERVED,
->> +	ECC_COUNT,
->> +	ECC_CS_COUNT,
->> +	ECC_CODE,
->> +	ECC_ADDR,
->> +	ECC_DATA0,
->> +	ECC_DATA1,
->> +	ECC_DATA2,
->> +	ECC_DATA3,
->> +};
->> +
->> +struct loongson_edac_pvt {
->> +	u64 *ecc_base;
->> +	int last_ce_count;
->> +};
->> +
->> +static int read_ecc(struct mem_ctl_info *mci)
->> +{
->> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +	u64 ecc;
->> +	int cs;
->> +
->> +	if (!pvt->ecc_base)
->> +		return pvt->last_ce_count;
->> +
->> +	ecc = pvt->ecc_base[ECC_CS_COUNT];
->> +	/* cs0 -- cs3 */
->> +	cs = ecc & 0xff;
->> +	cs += (ecc >> 8) & 0xff;
->> +	cs += (ecc >> 16) & 0xff;
->> +	cs += (ecc >> 24) & 0xff;
-> This smells like an endian swap.
-> swab32() or is this fixing a wrong endian register?
-> In which case b32_to_cpu()
-Not an endian swap. Just add up the values of the lowest four bytes.
->
->> +
->> +	return cs;
->> +}
->> +
->> +static void edac_check(struct mem_ctl_info *mci)
->> +{
->> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +	int new, add;
->> +
->> +	new = read_ecc(mci);
->> +	add = new - pvt->last_ce_count;
->> +	pvt->last_ce_count = new;
->> +	if (add <= 0)
-> This has be a little confused. Either this counter can
-> wrap in which case why drop out here, or it can't in which case
-> does < occur?
-The ce count of loongson memory controller should only increase.
->
->> +		return;
->> +
->> +	edac_mc_handle_error(HW_EVENT_ERR_CORRECTED, mci, add,
->> +			     0, 0, 0, 0, 0, -1, "error", "");
->> +	edac_mc_printk(mci, KERN_INFO, "add: %d", add);
->> +}
->> +
->> +static int get_dimm_config(struct mem_ctl_info *mci)
->> +{
->> +	struct dimm_info *dimm;
->> +	u32 size, npages;
->> +
->> +	/* size not used */
->> +	size = -1;
->> +	npages = MiB_TO_PAGES(size);
->> +
->> +	dimm = edac_get_dimm(mci, 0, 0, 0);
->> +	dimm->nr_pages = npages;
->> +	snprintf(dimm->label, sizeof(dimm->label),
->> +		 "MC#%uChannel#%u_DIMM#%u", mci->mc_idx, 0, 0);
->> +	dimm->grain = 8;
->> +
->> +	return 0;
->> +}
->> +
->> +static void pvt_init(struct mem_ctl_info *mci, u64 *vbase)
->> +{
->> +	struct loongson_edac_pvt *pvt = mci->pvt_info;
->> +
->> +	pvt->ecc_base = vbase;
->> +	pvt->last_ce_count = read_ecc(mci);
->> +}
->> +
->> +static int edac_probe(struct platform_device *pdev)
->> +{
->> +	struct edac_mc_layer layers[2];
->> +	struct loongson_edac_pvt *pvt;
->> +	struct mem_ctl_info *mci;
->> +	u64 *vbase;
->> +	int ret;
->> +
->> +	vbase = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(vbase))
->> +		return PTR_ERR(vbase);
->> +
->> +	/* allocate a new MC control structure */
->> +	layers[0].type = EDAC_MC_LAYER_CHANNEL;
->> +	layers[0].size = 1;
->> +	layers[0].is_virt_csrow = false;
->> +	layers[1].type = EDAC_MC_LAYER_SLOT;
->> +	layers[1].size = 1;
->> +	layers[1].is_virt_csrow = true;
-> Could move this to a c99 style
->
-> 	struct edac_mc_layer layers[2] = {
-> 		{
-> 			.type = EDAC_MC_LAYER_CHANNEL,
-> 			.size = 1,
-> 			.is_virt_csrow = false,
-> 		}, {
-> 			.type = EDAC_MC_LAYER_SLOT,
-> 			.size = 1,
-> 			is_virt_csrow = true,
-> 		}
-> 	};
-> Not particularly important though.
->
->> +	mci = edac_mc_alloc(0, ARRAY_SIZE(layers), layers, sizeof(*pvt));
->> +	if (mci == NULL)
-> Probably !mci is sufficient but I'm not sure on local edac style.
->
->> +		return -ENOMEM;
->> +
->> +	mci->mc_idx = edac_device_alloc_index();
->> +	mci->mtype_cap = MEM_FLAG_RDDR4;
->> +	mci->edac_ctl_cap = EDAC_FLAG_NONE;
->> +	mci->edac_cap = EDAC_FLAG_NONE;
->> +	mci->mod_name = "loongson_edac.c";
->> +	mci->ctl_name = "loongson_edac_ctl";
->> +	mci->dev_name = "loongson_edac_dev";
->> +	mci->ctl_page_to_phys = NULL;
->> +	mci->pdev = &pdev->dev;
->> +	mci->error_desc.grain = 8;
->> +	/* Set the function pointer to an actual operation function */
->> +	mci->edac_check = edac_check;
-> Similar to above, can initialize this structure more cleanly
-> using
->
-> 	*mci = (struct mem_ctl_info) {
-> 		.mc_idx = edac_device_alloc_index,
-> 	...
-> 	};
->> +
->> +	pvt_init(mci, vbase);
->> +	get_dimm_config(mci);
->> +
->> +	ret = edac_mc_add_mc(mci);
-> I'd be tempted to use devm_add_action_or_cleanup() for this and the
-> alloc above, but not common in edac but it is done in al_mc_edac.c if
-> you want an example.
-Your idea is great, but I don't think it's necessary to make things so 
-complicated
->> +	if (ret) {
->> +		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
->> +		edac_mc_free(mci);
->> +		return ret;
->> +	}
->> +	edac_op_state = EDAC_OPSTATE_POLL;
->> +
->> +	return 0;
->> +}
->> +
->> +static void edac_remove(struct platform_device *pdev)
->> +{
->> +	struct mem_ctl_info *mci = edac_mc_del_mc(&pdev->dev);
->> +
->> +	if (mci)
->> +		edac_mc_free(mci);
-> Very odd if you got to remove and edac_mc_del_mc() failed.
-> Do we need this check?  At least some drivers (I checked a few
-> at random) don't check this.
+I checked that the test is running under PID 0 (swapper) when it fails and
+non-0 PID when it succeeds. This makes sense as the task_struct for PID 0
+should be in the kernel image area, not in a slab.
 
-Yes, odd if edac_mc_del_mc() failed. Dose it better to add a check just 
-in case
+Phew, fortunately, it's not a bug! :)
 
-edac_mc_del_mc() failed ?
+Any plans on how to adjust the test program?
 
-
-Thanks,
-
-Zhao Qunqin
-
->
->> +}
->> +
->> +static const struct of_device_id loongson_edac_of_match[] = {
->> +	{ .compatible = "loongson,ls3a5000-mc-edac", },
->> +	{}
->> +};
->> +MODULE_DEVICE_TABLE(of, loongson_edac_of_match);
->> +
->> +static struct platform_driver loongson_edac_driver = {
->> +	.probe		= edac_probe,
->> +	.remove		= edac_remove,
->> +	.driver		= {
->> +		.name	= "loongson-mc-edac",
->> +		.of_match_table = loongson_edac_of_match,
->> +	},
->> +};
->> +module_platform_driver(loongson_edac_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_AUTHOR("Zhao Qunqin <zhaoqunqin@loongson.cn>");
->> +MODULE_DESCRIPTION("EDAC driver for loongson memory controller");
-
+Best,
+Hyeonggon
 
