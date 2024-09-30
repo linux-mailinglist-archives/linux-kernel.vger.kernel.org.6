@@ -1,75 +1,70 @@
-Return-Path: <linux-kernel+bounces-344744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D80A98ADB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:04:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D6498ADB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42FBD1C219C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAE11F22137
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AC11A256E;
-	Mon, 30 Sep 2024 20:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69DE1A0B12;
+	Mon, 30 Sep 2024 20:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h5vLZMUC"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kn1gIw0k"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D531A2541;
-	Mon, 30 Sep 2024 20:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BCD1991D2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 20:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727726622; cv=none; b=mdSyP2B85M13+nE3v8VYw3w9hp18HrDH5HMeRtLkMNVNtgSEzmBiiR0Otg8usJ1iNpeGG6lkWvGdq4AB4SnpT0ZT5PQ+GVXT5qB8/fvRHMLH2jcPK9VIqP/xYGHseqg3K8JsMf/NZbf3Rur9AAyYgSjZ6LugZ95B9OuYkrGhHjA=
+	t=1727726718; cv=none; b=dULH/u+KEmyLa2n2zzs3UP4is9Gy752GDgtm014D11EGmkjmzQ7Bf/kGNH1/CF1fPn0X7+VwYdEtdUbczTKcRTgByXZjFa+D/KTkg5FzhDAQT6aH/cEp2Ex9Oc3WelZnIF2f/lVJ4mBSD/HXA52zSIBIvBOrl/bB/tFwZTB49KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727726622; c=relaxed/simple;
-	bh=lhqM/tDLilNDAvkZ6CHklg9+gI1AjLbN06Lfvf4DrMk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dTeWEn9ge2YJFRR8uFCi9dP51YYQwsFJAFW4xI2wjix/qIVli+iQoE4YJUQtzMAGqQDoNmH8taph9Qj1g7+Xx7DPo+T/QeF2s/isz6DRy/5Plq/GVYpZ4vfFjuDks9SNAgXXszHXQHdkffmMiPB61jxvAk6EbKbLqFnWKGBeXm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h5vLZMUC; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so46087025e9.0;
-        Mon, 30 Sep 2024 13:03:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727726619; x=1728331419; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JWhma+jLayTPmmZHGcFdQytW18t1cDxz6kIrXu2ao2w=;
-        b=h5vLZMUC+WmrSOn86mSr74dz42o+tSBxTPswz+9O+XOLFRIRxGoAKdV1lsb4Ss7PBD
-         sDhiS1l8U8+1OssknTuFDoGfTKdtA2XJZOhXUvrhvNSYmRhG1TA3+RnzRQUPbvgZ1sfc
-         AogVHo0bgRn5MT/SgQCVZ24VIKi7LZmq04BfZJ0LCfon8NFSO2ifK9PWT0Q36nL372bR
-         RYV3VvZgrc+3j+YBQikfmq7ujDfpRvUFia1p1jdXOi5grw8Xjou328S7Mj3nDXcQ9Rj1
-         +SWmFPgKgyotvVQ2284/h+Vz8Tj0/QcKUHYG4nkntQeeZGMoM5NlQ8leJrkE/CAESlBy
-         a9Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727726619; x=1728331419;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JWhma+jLayTPmmZHGcFdQytW18t1cDxz6kIrXu2ao2w=;
-        b=WBHzpRx09FvTpKam3vRzd5THb7pL2OeyCksiLdc/SN4u9QLjp0IlbUu5y0EQocLXsv
-         v4P7BIM/Q6HvMr+EaAjXG938GG5o4qTVxnM0TU9K1oSSPfX5d8WaWcIOanYOUDfdvRq5
-         EPyaHlKNqfyVOgqzfnTFVN0ygoO275Wz2Fme7aIff2hX/EDFlfYLsI6DGg+46N+EwxRp
-         ciTz7tEgGpXVR5srglVI6CJYhX2vRCcz+zkoQ9m8diK3h6lY3waJ0SmcrjmxOGp2Ex1c
-         Y88fUoLBRd9xK4JPqrcBbEKatW7ctTBhBXbUybiNOJxftCZowe+a5yjILZWo+FDyfO0+
-         YeVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEbTo4EAqXmtsnZc+fKzs+7CNJjzRVevKfi52qJ+XYX/SmaQW7k1VPRr6vukW8KQkKuWX9cxaxjY6jgws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2e38DxUB27e/a4Gm1pEW4+c71l9/pBmuA9ZLCt2NWT9KMx52B
-	T/dub5E1ALg5NSj3Jg1ZVB29D3htyYePYyWnbJj2RYF82BRoAruj
-X-Google-Smtp-Source: AGHT+IEqUNBMAM3S1zFrByHB/nKIWJkUcqU5zIeZF7O146DmV4ScmkcieTQGp1+z4zKu48Fsgo7Inw==
-X-Received: by 2002:a05:600c:45ce:b0:42e:d4a2:ce67 with SMTP id 5b1f17b1804b1-42f5844ab22mr99664855e9.17.1727726619321;
-        Mon, 30 Sep 2024 13:03:39 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-91b0-e3db-0523-0d17.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:91b0:e3db:523:d17])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36760sm162591215e9.30.2024.09.30.13.03.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 13:03:37 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 30 Sep 2024 22:03:30 +0200
-Subject: [PATCH 2/2] net: hns: switch to scoped
- device_for_each_child_node()
+	s=arc-20240116; t=1727726718; c=relaxed/simple;
+	bh=dKfDvl4EA/voPo0rHK84DoHeFvMWHo7JZFGw5Is0vpw=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=kXzHsCgSvd/XlvJeByP2xApRM2TvE3XL8pM8XPU04KlR2ISqNYkFNScTZe5/f81dgxNSa2KYP7lUILMRMH3OKTDOkgvF1h0zS4pmek0zW4EoS2s6YDPcCr/R9k6esOpCCT5oHgJUAbpTPNViqyLHag7JY/nEFYgABCD3jjFTwfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kn1gIw0k; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727726716; x=1759262716;
+  h=subject:from:to:cc:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dKfDvl4EA/voPo0rHK84DoHeFvMWHo7JZFGw5Is0vpw=;
+  b=kn1gIw0kvUxBbgS7B82K2EBN3lDZ4BcRwsFt06LNCh2xMvQK9mmRBhwk
+   iVIuDZwifPcbl2wW6gbnVmded+49SoNLgufFP75IT8FFmPth5HpAYWGmV
+   JusgpWQKVuBoiFbjvjCpKZKwh5SUnd9UkLmDR9uVYCBpmbGoSxHfQMjkb
+   TM7BlZed4WF+7gGeLrVBpWI5Kx6+vXqAmon8ngKEmPiUgtQsRT9cuAM96
+   ByyxRLfcNuIi/ubQG55lPCOz1S2o62S2kp0ngX/U0ljuhNmfwIjWQtx+6
+   VrdazgPqZ4a/Cr7QVwsoK3/57BGej4WQy5BqDYgraEm/lyP9WZMiULNFl
+   A==;
+X-CSE-ConnectionGUID: US3TCp+KTkuLeTmMzFO4iA==
+X-CSE-MsgGUID: eIvqMGZRQxCrPmoFVCq8Qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26346945"
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="26346945"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:05:15 -0700
+X-CSE-ConnectionGUID: +GLt9lSUTXWHcjdQOu3CEg==
+X-CSE-MsgGUID: avD6ikjZQbCMhpvmpT0IHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
+   d="scan'208";a="73680182"
+Received: from eamartin-mobl1.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.125.108.184])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:05:15 -0700
+Subject: [PATCH] driver core: Fix userspace expectations of uevent_show() as
+ a probe barrier
+From: Dan Williams <dan.j.williams@intel.com>
+To: gregkh@linuxfoundation.org
+Cc: rafael.j.wysocki@intel.com, tj@kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev
+Date: Mon, 30 Sep 2024 13:05:13 -0700
+Message-ID: <172772671177.1003633.7355063154793624707.stgit@dwillia2-xfh.jf.intel.com>
+User-Agent: StGit/0.18-3-g996c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,73 +73,306 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240930-net-device_for_each_child_node_scoped-v1-2-bbdd7f9fd649@gmail.com>
-References: <20240930-net-device_for_each_child_node_scoped-v1-0-bbdd7f9fd649@gmail.com>
-In-Reply-To: <20240930-net-device_for_each_child_node_scoped-v1-0-bbdd7f9fd649@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Yisen Zhuang <yisen.zhuang@huawei.com>, 
- Salil Mehta <salil.mehta@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1727726610; l=1663;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=lhqM/tDLilNDAvkZ6CHklg9+gI1AjLbN06Lfvf4DrMk=;
- b=XK7yYIBeqRmZgZ24U7zhUudEoYaOhqyYZ/954XABAmgrtJE0aSA9NZu5MXlngRSSOMCalfeXj
- 76ua2dduXuNCLezFXqOuqykMLSaJGE1wS5fx3F6Sxj/wGpId1E66ne0
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-Use device_for_each_child_node_scoped() to simplify the code by removing
-the need for explicit calls to fwnode_handle_put() in every error path.
-This approach also accounts for any error path that could be added.
+Commit "driver core: Fix uevent_show() vs driver detach race" [1]
+attempted to fix a lockdep report in uevent_show() by making the lookup
+of driver information for a given device lockless. It turns out that
+userspace likely depends on the side-effect of uevent_show() flushing
+device probing, as evidenced by the removal of the lock causing a
+regression initializing USB devices [2].
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Introduce a new "locked" type for sysfs attributes that arranges for the
+attribute to be called under the device-lock, but without setting up a
+reverse locking order dependency with the kernfs_get_active() lock.
+
+This new facility holds a reference on a device while any locked-sysfs
+attribute of that device is open. It then takes the lock around sysfs
+read/write operations in the following order:
+
+    of->mutex
+    of->op_mutex <= device_lock()
+    kernfs_get_active()
+    <operation>
+
+Compare that to problematic locking order of:
+
+    of->mutex
+    kernfs_get_active()
+    <operation>
+        device_lock()
+
+...which causes potential deadlocks with kernfs_drain() that may be
+called while the device_lock() is held.
+
+Note that the synchronize_rcu() in module_remove_driver(), introduced in
+the precedubg fix, likely needs to remain since dev_uevent() is not
+always called with the device_lock held. Userspace can potentially
+trigger use after free by racing module removal against kernel
+invocations of kobject_uevent().
+
+Note2, this change effectively allows userspace to test for
+CONFIG_DEBUG_KOBJECT_RELEASE-style driver bugs as the lifetime of open
+file descriptors on the @uevent attribute keeps the device reference
+count elevated indefinitely.
+
+Reported-by: brmails+k
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219244 [2]
+Tested-by: brmails+k
+Fixes: 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race") [1]
+Cc: stable@vger.kernel.org
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/base/core.c    |    2 +-
+ fs/kernfs/file.c       |   24 +++++++++++++++++++-----
+ fs/sysfs/file.c        |   47 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/sysfs/group.c       |    4 ++--
+ include/linux/device.h |    4 ++++
+ include/linux/kernfs.h |    1 +
+ include/linux/sysfs.h  |   17 +++++++++++++++++
+ 7 files changed, 91 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-index 58baac7103b3..5fa9b2eeb929 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-@@ -1090,28 +1090,24 @@ int hns_mac_init(struct dsaf_device *dsaf_dev)
- 	u32 port_id;
- 	int max_port_num = hns_mac_get_max_port_num(dsaf_dev);
- 	struct hns_mac_cb *mac_cb;
--	struct fwnode_handle *child;
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 8c0733d3aad8..1fd5a18cbb62 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2772,7 +2772,7 @@ static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
  
--	device_for_each_child_node(dsaf_dev->dev, child) {
-+	device_for_each_child_node_scoped(dsaf_dev->dev, child) {
- 		ret = fwnode_property_read_u32(child, "reg", &port_id);
- 		if (ret) {
--			fwnode_handle_put(child);
- 			dev_err(dsaf_dev->dev,
- 				"get reg fail, ret=%d!\n", ret);
- 			return ret;
- 		}
- 		if (port_id >= max_port_num) {
--			fwnode_handle_put(child);
- 			dev_err(dsaf_dev->dev,
- 				"reg(%u) out of range!\n", port_id);
- 			return -EINVAL;
- 		}
- 		mac_cb = devm_kzalloc(dsaf_dev->dev, sizeof(*mac_cb),
- 				      GFP_KERNEL);
--		if (!mac_cb) {
--			fwnode_handle_put(child);
-+		if (!mac_cb)
- 			return -ENOMEM;
--		}
+ 	return count;
+ }
+-static DEVICE_ATTR_RW(uevent);
++static DEVICE_ATTR_LOCKED_RW(uevent);
+ 
+ static ssize_t online_show(struct device *dev, struct device_attribute *attr,
+ 			   char *buf)
+diff --git a/fs/kernfs/file.c b/fs/kernfs/file.c
+index 8502ef68459b..eb5c2167beb9 100644
+--- a/fs/kernfs/file.c
++++ b/fs/kernfs/file.c
+@@ -142,6 +142,20 @@ static void kernfs_seq_stop_active(struct seq_file *sf, void *v)
+ 	kernfs_put_active(of->kn);
+ }
+ 
++static void kernfs_open_file_lock(struct kernfs_open_file *of)
++{
++	mutex_lock(&of->mutex);
++	if (of->op_mutex)
++		mutex_lock(of->op_mutex);
++}
 +
- 		mac_cb->fw_port = child;
- 		mac_cb->mac_id = (u8)port_id;
- 		dsaf_dev->mac_cb[port_id] = mac_cb;
-
--- 
-2.43.0
++static void kernfs_open_file_unlock(struct kernfs_open_file *of)
++{
++	if (of->op_mutex)
++		mutex_unlock(of->op_mutex);
++	mutex_unlock(&of->mutex);
++}
++
+ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
+ {
+ 	struct kernfs_open_file *of = sf->private;
+@@ -151,7 +165,7 @@ static void *kernfs_seq_start(struct seq_file *sf, loff_t *ppos)
+ 	 * @of->mutex nests outside active ref and is primarily to ensure that
+ 	 * the ops aren't called concurrently for the same open file.
+ 	 */
+-	mutex_lock(&of->mutex);
++	kernfs_open_file_lock(of);
+ 	if (!kernfs_get_active(of->kn))
+ 		return ERR_PTR(-ENODEV);
+ 
+@@ -193,7 +207,7 @@ static void kernfs_seq_stop(struct seq_file *sf, void *v)
+ 
+ 	if (v != ERR_PTR(-ENODEV))
+ 		kernfs_seq_stop_active(sf, v);
+-	mutex_unlock(&of->mutex);
++	kernfs_open_file_unlock(of);
+ }
+ 
+ static int kernfs_seq_show(struct seq_file *sf, void *v)
+@@ -322,9 +336,9 @@ static ssize_t kernfs_fop_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	 * @of->mutex nests outside active ref and is used both to ensure that
+ 	 * the ops aren't called concurrently for the same open file.
+ 	 */
+-	mutex_lock(&of->mutex);
++	kernfs_open_file_lock(of);
+ 	if (!kernfs_get_active(of->kn)) {
+-		mutex_unlock(&of->mutex);
++		kernfs_open_file_unlock(of);
+ 		len = -ENODEV;
+ 		goto out_free;
+ 	}
+@@ -336,7 +350,7 @@ static ssize_t kernfs_fop_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 		len = -EINVAL;
+ 
+ 	kernfs_put_active(of->kn);
+-	mutex_unlock(&of->mutex);
++	kernfs_open_file_unlock(of);
+ 
+ 	if (len > 0)
+ 		iocb->ki_pos += len;
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index d1995e2d6c94..1bb878efcf00 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -15,6 +15,7 @@
+ #include <linux/list.h>
+ #include <linux/mutex.h>
+ #include <linux/seq_file.h>
++#include <linux/device.h>
+ #include <linux/mm.h>
+ 
+ #include "sysfs.h"
+@@ -189,6 +190,26 @@ static int sysfs_kf_bin_open(struct kernfs_open_file *of)
+ 	return 0;
+ }
+ 
++/* locked attributes are always device attributes */
++static int sysfs_kf_setup_lock(struct kernfs_open_file *of)
++{
++	struct kobject *kobj = of->kn->parent->priv;
++	struct device *dev = kobj_to_dev(kobj);
++
++	get_device(dev);
++	of->op_mutex = &dev->mutex;
++
++	return 0;
++}
++
++static void sysfs_kf_free_lock(struct kernfs_open_file *of)
++{
++	struct kobject *kobj = of->kn->parent->priv;
++	struct device *dev = kobj_to_dev(kobj);
++
++	put_device(dev);
++}
++
+ void sysfs_notify(struct kobject *kobj, const char *dir, const char *attr)
+ {
+ 	struct kernfs_node *kn = kobj->sd, *tmp;
+@@ -227,6 +248,25 @@ static const struct kernfs_ops sysfs_file_kfops_rw = {
+ 	.write		= sysfs_kf_write,
+ };
+ 
++static const struct kernfs_ops sysfs_locked_kfops_ro = {
++	.seq_show	= sysfs_kf_seq_show,
++	.open		= sysfs_kf_setup_lock,
++	.release	= sysfs_kf_free_lock,
++};
++
++static const struct kernfs_ops sysfs_locked_kfops_wo = {
++	.write		= sysfs_kf_write,
++	.open		= sysfs_kf_setup_lock,
++	.release	= sysfs_kf_free_lock,
++};
++
++static const struct kernfs_ops sysfs_locked_kfops_rw = {
++	.seq_show	= sysfs_kf_seq_show,
++	.write		= sysfs_kf_write,
++	.open		= sysfs_kf_setup_lock,
++	.release	= sysfs_kf_free_lock,
++};
++
+ static const struct kernfs_ops sysfs_prealloc_kfops_ro = {
+ 	.read		= sysfs_kf_read,
+ 	.prealloc	= true,
+@@ -287,6 +327,13 @@ int sysfs_add_file_mode_ns(struct kernfs_node *parent,
+ 			ops = &sysfs_prealloc_kfops_ro;
+ 		else if (sysfs_ops->store)
+ 			ops = &sysfs_prealloc_kfops_wo;
++	} else if (mode & SYSFS_LOCKED) {
++		if (sysfs_ops->show && sysfs_ops->store)
++			ops = &sysfs_locked_kfops_rw;
++		else if (sysfs_ops->show)
++			ops = &sysfs_locked_kfops_ro;
++		else if (sysfs_ops->store)
++			ops = &sysfs_locked_kfops_wo;
+ 	} else {
+ 		if (sysfs_ops->show && sysfs_ops->store)
+ 			ops = &sysfs_file_kfops_rw;
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index d22ad67a0f32..0158367866be 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -68,11 +68,11 @@ static int create_files(struct kernfs_node *parent, struct kobject *kobj,
+ 					continue;
+ 			}
+ 
+-			WARN(mode & ~(SYSFS_PREALLOC | 0664),
++			WARN(mode & ~(SYSFS_PREALLOC | SYSFS_LOCKED | 0664),
+ 			     "Attribute %s: Invalid permissions 0%o\n",
+ 			     (*attr)->name, mode);
+ 
+-			mode &= SYSFS_PREALLOC | 0664;
++			mode &= SYSFS_PREALLOC | SYSFS_LOCKED | 0664;
+ 			error = sysfs_add_file_mode_ns(parent, *attr, mode, uid,
+ 						       gid, NULL);
+ 			if (unlikely(error))
+diff --git a/include/linux/device.h b/include/linux/device.h
+index 34eb20f5966f..25e936aa324d 100644
+--- a/include/linux/device.h
++++ b/include/linux/device.h
+@@ -180,6 +180,10 @@ ssize_t device_show_string(struct device *dev, struct device_attribute *attr,
+ #define DEVICE_ATTR_RW(_name) \
+ 	struct device_attribute dev_attr_##_name = __ATTR_RW(_name)
+ 
++/* Consider using device_driver.dev_groups instead of this */
++#define DEVICE_ATTR_LOCKED_RW(_name) \
++	struct device_attribute dev_attr_##_name = __ATTR_LOCKED_RW(_name)
++
+ /**
+  * DEVICE_ATTR_ADMIN_RW - Define an admin-only read-write device attribute.
+  * @_name: Attribute name.
+diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
+index 87c79d076d6d..df6828a7cd3e 100644
+--- a/include/linux/kernfs.h
++++ b/include/linux/kernfs.h
+@@ -257,6 +257,7 @@ struct kernfs_open_file {
+ 
+ 	/* private fields, do not use outside kernfs proper */
+ 	struct mutex		mutex;
++	struct mutex		*op_mutex;
+ 	struct mutex		prealloc_mutex;
+ 	int			event;
+ 	struct list_head	list;
+diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+index c4e64dc11206..4c6a0a87247d 100644
+--- a/include/linux/sysfs.h
++++ b/include/linux/sysfs.h
+@@ -103,6 +103,7 @@ struct attribute_group {
+ 
+ #define SYSFS_PREALLOC		010000
+ #define SYSFS_GROUP_INVISIBLE	020000
++#define SYSFS_LOCKED		040000
+ 
+ /*
+  * DEFINE_SYSFS_GROUP_VISIBLE(name):
+@@ -230,6 +231,20 @@ struct attribute_group {
+ 	.store	= _store,						\
+ }
+ 
++/*
++ * uevent_show() needs this due to userspace expectations of reading
++ * that attribute flushing device probing, it is not intended to be a
++ * general semantic for other device sysfs attributes. It is broken to
++ * use this with non-device / pure-kobject sysfs attributes, see
++ * sysfs_kf_setup_lock().
++ */
++#define __ATTR_LOCKED(_name, _mode, _show, _store) {			\
++	.attr = {.name = __stringify(_name),				\
++		 .mode = SYSFS_LOCKED | VERIFY_OCTAL_PERMISSIONS(_mode) },\
++	.show	= _show,						\
++	.store	= _store,						\
++}
++
+ #define __ATTR_RO(_name) {						\
+ 	.attr	= { .name = __stringify(_name), .mode = 0444 },		\
+ 	.show	= _name##_show,						\
+@@ -255,6 +270,8 @@ struct attribute_group {
+ 
+ #define __ATTR_RW(_name) __ATTR(_name, 0644, _name##_show, _name##_store)
+ 
++#define __ATTR_LOCKED_RW(_name) __ATTR_LOCKED(_name, 0644, _name##_show, _name##_store)
++
+ #define __ATTR_NULL { .attr = { .name = NULL } }
+ 
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
 
 
