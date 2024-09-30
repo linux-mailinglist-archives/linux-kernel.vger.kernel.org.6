@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-343872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FA498A092
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:28:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 442AF98A095
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 13:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90D528905C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0572028917B
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879C719ABCD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC83818E04B;
 	Mon, 30 Sep 2024 11:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="P5wlDW5v"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="Hsrz8pTW"
 Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF241991B1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E248D1991DD;
 	Mon, 30 Sep 2024 11:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727695318; cv=none; b=Kf+dHq65Wjidys5W+KMk0B1y8Hgrog0gL7+Dh2L9EOCWbtm8caHaRi1CbWfc4A4/Tzi1F0KC8BWCeYoEAHGtchR8uKhY+10hXf0FVZFesTETtrgry4GaVyRqSZwwUJUOgcc/dHOwear3artYWr4hn35Av9LZbp4h6+jQKiWh44c=
+	t=1727695319; cv=none; b=H7JeF+I7+abZQFwamz4gIQ+75os9lh39UulihGhT+qYykguL114ETNhCLGYWnMMVHzyyAkC2KpU9MOwJkDniZ/YDRklVJdlHzB8u0PzmHLU3SeXeZXjFFoMZE8mr8O5C/PLzpbRZAmw9VtAVtWZZNNvWkuuOygM2+glQ+vRMhJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727695318; c=relaxed/simple;
-	bh=TB4U6VouMk23UP8h1yZrrlqjVbjR7lKpBYDP//HWIAM=;
+	s=arc-20240116; t=1727695319; c=relaxed/simple;
+	bh=EHU2iMOgANqGUPZJ3Ro5pssOmIbIe3s/GjjnRdeP9x4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kr9yabfrW/TA4kfFgWdC1m8gT+/GmEL0J94IAwvHhlr6Z9wFoMOsAFSoohy0DFdEaEK3M298NaumzrhyuJq22eMB9SFSGjAcS/Chqod1Q0c5v2grRPcNeOVnDStAmasfstrIJC/1MLkq16DRvxZhV/g/ziKb/SeLka8UP0IN1FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=P5wlDW5v; arc=none smtp.client-ip=192.134.164.83
+	 MIME-Version; b=kLpIqPoxk9CdH2ASTAKMNZL5j3qJMvQlK99qIiYMa8MBdr+J6fmXmFlN3UpvwAPivSxyJLwEwNYO2Yvc4M93NQe0JliJRwfIjkyYT5WiR1YAomoWFn4EFxiTEEn39goiHYzTwwd3/TCrLjIbJbNLYWlg6le9cbuivVsM3TqbT3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=Hsrz8pTW; arc=none smtp.client-ip=192.134.164.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=u3pl9BpxHhH1BKJ7NLax2viqoTtgY3yczEwlj2/GIFI=;
-  b=P5wlDW5vOrd0xdik/YegYucRtAqG+zqLtWfu0YlUeXGptVCDZ9pJJgKx
-   IoB+9Nkrs7MUkWmRMNt7krJu3boRmrLFF4agfyctT/hjApw/sT0zuqN5M
-   21CfIZyj2FtT25R2IZyDaIl79Qxpp3IptTYAY5SKNgeZBT3gfuzL9AvYP
-   U=;
+  bh=5wdreZebx+hIO6b8UfY5M+z6lqJsf400rN74nypioAc=;
+  b=Hsrz8pTWfcdNzv0+3GMzM3AMEtjhgim/041sggmI8xlBA9h5Ax8l1xOv
+   9XzgANw4gEAMNoZ1eaUCUgxLU3y2wB37FPzbI0VOFRwDV8V2ehYRiu2OR
+   WjVmNHTF+diHPu0LQ/3qcOkEmR6o3Q7vF3j0XmzxV343BjTn5bi1Kza4i
+   Q=;
 Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,165,1725314400"; 
-   d="scan'208";a="185956908"
+   d="scan'208";a="185956909"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 13:21:28 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Richard Weinberger <richard@nod.at>
+To: Alex Deucher <alexander.deucher@amd.com>
 Cc: kernel-janitors@vger.kernel.org,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 28/35] UBI: Reorganize kerneldoc parameter names
-Date: Mon, 30 Sep 2024 13:21:14 +0200
-Message-Id: <20240930112121.95324-29-Julia.Lawall@inria.fr>
+Subject: [PATCH 29/35] drivers/gpu/drm: Reorganize kerneldoc parameter names
+Date: Mon, 30 Sep 2024 13:21:15 +0200
+Message-Id: <20240930112121.95324-30-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20240930112121.95324-1-Julia.Lawall@inria.fr>
 References: <20240930112121.95324-1-Julia.Lawall@inria.fr>
@@ -74,22 +76,40 @@ Problems identified using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- drivers/mtd/ubi/eba.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c |    2 +-
+ drivers/gpu/drm/radeon/radeon_ib.c     |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mtd/ubi/eba.c b/drivers/mtd/ubi/eba.c
-index c7ba7a15c9f7..efce5bf41ef6 100644
---- a/drivers/mtd/ubi/eba.c
-+++ b/drivers/mtd/ubi/eba.c
-@@ -731,8 +731,8 @@ int ubi_eba_read_leb(struct ubi_device *ubi, struct ubi_volume *vol, int lnum,
-  * ubi_eba_read_leb_sg - read data into a scatter gather list.
-  * @ubi: UBI device description object
-  * @vol: volume description object
-- * @lnum: logical eraseblock number
-  * @sgl: UBI scatter gather list to store the read data
-+ * @lnum: logical eraseblock number
-  * @offset: offset from where to read
-  * @len: how many bytes to read
-  * @check: data CRC check flag
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+index 6005280f5f38..ad4fdd4d4d82 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+@@ -2773,11 +2773,11 @@ int amdgpu_vm_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
+  * amdgpu_vm_handle_fault - graceful handling of VM faults.
+  * @adev: amdgpu device pointer
+  * @pasid: PASID of the VM
+- * @ts: Timestamp of the fault
+  * @vmid: VMID, only used for GFX 9.4.3.
+  * @node_id: Node_id received in IH cookie. Only applicable for
+  *           GFX 9.4.3.
+  * @addr: Address of the fault
++ * @ts: Timestamp of the fault
+  * @write_fault: true is write fault, false is read fault
+  *
+  * Try to gracefully handle a VM fault. Return true if the fault was handled and
+diff --git a/drivers/gpu/drm/radeon/radeon_ib.c b/drivers/gpu/drm/radeon/radeon_ib.c
+index 1aa41cc3f991..8611a27dfb3d 100644
+--- a/drivers/gpu/drm/radeon/radeon_ib.c
++++ b/drivers/gpu/drm/radeon/radeon_ib.c
+@@ -49,8 +49,8 @@ static void radeon_debugfs_sa_init(struct radeon_device *rdev);
+  *
+  * @rdev: radeon_device pointer
+  * @ring: ring index the IB is associated with
+- * @vm: requested vm
+  * @ib: IB object returned
++ * @vm: requested vm
+  * @size: requested IB size
+  *
+  * Request an IB (all asics).  IBs are allocated using the
 
 
