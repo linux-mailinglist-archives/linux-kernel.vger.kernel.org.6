@@ -1,119 +1,171 @@
-Return-Path: <linux-kernel+bounces-344587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C7498ABAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:09:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5647498ABAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 20:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE0251C2145D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:09:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A161F21887
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F101990D7;
-	Mon, 30 Sep 2024 18:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBC81991B1;
+	Mon, 30 Sep 2024 18:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl2aoY1Q"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYiS4Yb1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F192D7F;
-	Mon, 30 Sep 2024 18:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18FA22B9A5;
+	Mon, 30 Sep 2024 18:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727719760; cv=none; b=cAr28Hq05NcETnPhWYQPh6cG9hh9mS+gVuVJipGY8OFF1s9Az74C2d4Pt1Z9mZJ2i0YORupBUlOOViVfIM4WnMNS83di/posllsydUr26FrGn7r+NRpvkHLOAyP29Na+3hel+iR5Q6cPK+7AMqSOsOXWh6qepG9BhAkptjadxrk=
+	t=1727719842; cv=none; b=BTkd6gpLB5r2CWQl1xvVAfLNJ4dQ5tkjP8VX99rrA2DLeV6FjxNfIvZyQKRBeMnbnZ2CQrwR3HRjkxSv+18BrdvkrXfFcLRydj4Gxn8vMsOdCUu7eo66PRkFGqyfIQABQhWrkfQPqBuIs9sKfazs6oQSGlOFHD4EukJgV6L/m/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727719760; c=relaxed/simple;
-	bh=iDVMlPhvSyC8aDz+QP9lfgkSrj0TyoQwJsbyx9OLZG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaqCAC1qBl8OzMHejS3IdhOcVUPOSSFOiUAKMXQK3gZXOSC1PS310Wyqv+J7Tbw64sqkzn/PvAXZlAB6pHZ3B6qtsjJjKwxHzSxd0IjvDkyVDNSl5EJbDpwApYhf1uTLMdHIK+P9b0TItbX8CuONxd3fLak5P5oQCnoTNm9LtGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl2aoY1Q; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e03a5ed4d7so2444570b6e.1;
-        Mon, 30 Sep 2024 11:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727719758; x=1728324558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
-        b=kl2aoY1Q5gqrRCZfeOpWBc1nOj4XPiph+/5+/z+xP+8ag2W/GYf0xd5Kw3KRtvJxCL
-         C9Tbsx0Qgc897ycZPogd34fau1nx98lHzQWd7WyIB708b5I72UyP7WAVBZWtRFnkB3rK
-         PWeH0Xb0vFlu/kOpDYpa1pGY4qEhtYggON1Wz2p9kIB+8Rag29O+kAPpOSAg8uWuaGWr
-         Wu/Thy6+SJzBrtqUY/yM+fRct9SqepoSCvHIM7Qa95IMSRq75kKhqFbe25IVUnfl/BDQ
-         qkshyQaRxxpDaE1/kqQBFWWDLnBa5Puja0UYigDz0B9IsMqt4NdLfhGJusmaf11WAIae
-         xBrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727719758; x=1728324558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
-        b=BPvPHIz9XuLIeWXiKRiczQWDjOZi1ABKKTEOf9ns/+pOU/hg/ccO7Yd7TwSz89XJx9
-         duZhAFjMCX52EKBWFn0ip19uoNG4+BpmRjIj9oQQmjxOoBd2STir5qdFMI7aJkcX8yzI
-         IIBvniznqbxq8Y1ow2HPJXrQ6rh8xyuMRbyWAszgNdJEb7NXocVazFBEN/4evW009UP0
-         LnUXket3yEqagdn6GiODmvJ0MZUWWlR+zk5m7CXsQ+Cr+E83TlVWJInEpvXL/JgAR+oP
-         xWEo58FJ7tmcB0v7bIMxrjqwksA3JZnkneAc3LQqouEq9QWzdKSOaJNhBJ99EY5zsGv0
-         H5ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfMrU4skXX8O2HAK8QQuoJnaijike8SpCNFlStZVO1NuCgQ/kX5epV1yofXLCgHDIClWZyeXavpaM@vger.kernel.org, AJvYcCVXjKojHodKjHUUqtdKNoja3yqliY6qPe+UQNPHZWta9ouP+1snnzMze/59y/sx6e/jgumD+sOkhx/FZ/Pf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywncf1v9hsX1DM8MQpjvbLgx5PSIGXCjXqYCB+4XXi5pmn2JBQK
-	V88jWK6QK4/nl3ffgcjK9klbakrSxxxLdoD9FbPJypgvqYcOv05Bj0pTHVnpN8lAh8c6DCV1p3V
-	qpp2sMKEj8pMXfdJUDwitHPV+L/I=
-X-Google-Smtp-Source: AGHT+IFK+sgS7rJjHT4JmP4KrvFnACsWw4V1/xwvMVkBRq6nQAEM2hOEAGp7ta7mwf+TKwuP5NCyZaOR07eNe/KBZ/Y=
-X-Received: by 2002:a05:6870:5b88:b0:261:1f7d:cf6e with SMTP id
- 586e51a60fabf-28710c45c43mr7339001fac.41.1727719758592; Mon, 30 Sep 2024
- 11:09:18 -0700 (PDT)
+	s=arc-20240116; t=1727719842; c=relaxed/simple;
+	bh=p+4eAbKdm/M8VlSF2gSqSAFLMDWbjTItNCInUwxMqGw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Trcop4hdelnOfjx1lG20Hmvj0ZxVa6kUg7Wthcn40BcT/ycMo5CAcYAOfb/3OODjm2HEYQ8PeDcjqeZGU+sthubGDq0GYroe+Syh1sDJS2X2S37LHDpGdxNQsWdxCPWqcdgrZ5vNDGU2v7ZBoYvltG7gt9GwUhbNsxAcnP491wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYiS4Yb1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F19F9C4CEC7;
+	Mon, 30 Sep 2024 18:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727719841;
+	bh=p+4eAbKdm/M8VlSF2gSqSAFLMDWbjTItNCInUwxMqGw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=lYiS4Yb1vCHuIAsCaQcTurAgVqrd3o1pN7jYZ5wSdF+fxhFopn8+QirlCd+aza+KS
+	 jn+y4x3yErrHJuxoRqj/mrHgdMPkhQghEUQ9rPCt8x9Tmxh0sbCRG5kIDr0kv+KBJ8
+	 p+M+SdKs8tdfelhfKKwXerdKIb3BGS2vKNiye0eIT0onJ4ONB7jPM7zkNL8NHeHKTb
+	 u/uljz3u9M4zj3OUdqFoxM/GqtM4TWTEB2Rz/DpbeoDfYTiMKIjXkmV3QIC1hOMDr8
+	 fbfLnEA5C0vQLkqMMG1C1+6r2xfhJNqjSMYBYZU01x9B0Sb0OfOVvcY06oV+32Lm7L
+	 f9Rg0BaIpkpLQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 30 Sep 2024 19:10:33 +0100
+Subject: [PATCH] KVM: selftests: Fix build on architectures other than
+ x86_64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912153924.78724-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240912153924.78724-1-thorsten.blum@toblux.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 30 Sep 2024 20:09:06 +0200
-Message-ID: <CAOi1vP_1jRDmkQBH4BaxicTyYXtTJVjLXQb9T_XCmvUm7qTf0A@mail.gmail.com>
-Subject: Re: [PATCH] ceph: Use struct_size() helper
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240930-kvm-build-breakage-v1-1-866fad3cc164@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAJnp+mYC/x2MWwqAIBAArxL7nWBmz6tEH5ZrLfZCSQLp7kmfA
+ zMTwaMj9NBnERwG8nQeCYo8g3lVx4KMdGIQXEjelZzZsLPppk2zyaGyKhmqksLIWjet6SCFl0N
+ Dzz8dxvf9AN36tLNkAAAA
+To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Yan Zhao <yan.y.zhao@intel.com>
+Cc: Aishwarya TCV <aishwarya.tcv@arm.com>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, kvm@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3597; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=p+4eAbKdm/M8VlSF2gSqSAFLMDWbjTItNCInUwxMqGw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm+umeiXL+eBh5K8EcsK4TkH6siaEAZW1gBwAN0rXH
+ 66pWKBmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvrpngAKCRAk1otyXVSH0NQCCA
+ CFHs6avAhs/x2OVh92gsETEmnBwAymAqp9QZlyOU/JWZmPGxk/vEPxmoMKdTs7oFjpZY3N5bRY2Okr
+ ALJcKqLzISnAt3XOKme7zK2ydzUL7oXLWMLDXmCP0AwDWOkT+xUYq2bl87NhRhxInzWYWoM1ovoyqs
+ Ms0L2FOG4AY3B/x6iiYKs9zkrUWdbHJAYUJ+/u5mp5MN/wHiZRgCbMa096xObhEvPa/AC96CoaKZ3g
+ zLzVkmjgHSFIj9z7JJqlhoQqHHU0clTKlc9jEgwhGFt/tDsBNnXe5UsEBSf2ZsRn5jXBgXKd6CsIdn
+ E4RSa6Hw6j0GVWwR74bYYKQsiRUlMA
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu, Sep 12, 2024 at 5:39=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
-.com> wrote:
->
-> Use struct_size() to calculate the number of bytes to be allocated.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index c4744a02db75..ab494f250d80 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_i=
-nfo *ci,
->         }
->
->         pool_ns_len =3D pool_ns ? pool_ns->len : 0;
-> -       perm =3D kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
-> +       perm =3D kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP=
-_NOFS);
->         if (!perm) {
->                 err =3D -ENOMEM;
->                 goto out_unlock;
-> --
-> 2.46.0
->
+The recent addition of support for testing with the x86 specific quirk
+KVM_X86_QUIRK_SLOT_ZAP_ALL disabled in the generic memslot tests broke the
+build of the KVM selftests for all other architectures:
 
-Applied.
+In file included from include/kvm_util.h:8,
+                 from include/memstress.h:13,
+                 from memslot_modification_stress_test.c:21:
+memslot_modification_stress_test.c: In function ‘main’:
+memslot_modification_stress_test.c:176:38: error: ‘KVM_X86_QUIRK_SLOT_ZAP_ALL’ undeclared (first use in this function)
+  176 |                                      KVM_X86_QUIRK_SLOT_ZAP_ALL);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Thanks,
+Add __x86_64__ guard defines to avoid building the relevant code on other
+architectures.
 
-                Ilya
+Fixes: 61de4c34b51c ("KVM: selftests: Test memslot move in memslot_perf_test with quirk disabled")
+Fixes: 218f6415004a ("KVM: selftests: Allow slot modification stress test with quirk disabled")
+Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+This is obviously disruptive for testing of KVM changes on non-x86
+architectures.
+---
+ tools/testing/selftests/kvm/memslot_modification_stress_test.c | 2 ++
+ tools/testing/selftests/kvm/memslot_perf_test.c                | 6 ++++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/tools/testing/selftests/kvm/memslot_modification_stress_test.c b/tools/testing/selftests/kvm/memslot_modification_stress_test.c
+index e3343f0df9e1..c81a84990eab 100644
+--- a/tools/testing/selftests/kvm/memslot_modification_stress_test.c
++++ b/tools/testing/selftests/kvm/memslot_modification_stress_test.c
+@@ -169,12 +169,14 @@ int main(int argc, char *argv[])
+ 		case 'i':
+ 			p.nr_iterations = atoi_positive("Number of iterations", optarg);
+ 			break;
++#ifdef __x86_64__
+ 		case 'q':
+ 			p.disable_slot_zap_quirk = true;
+ 
+ 			TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
+ 				     KVM_X86_QUIRK_SLOT_ZAP_ALL);
+ 			break;
++#endif
+ 		case 'h':
+ 		default:
+ 			help(argv[0]);
+diff --git a/tools/testing/selftests/kvm/memslot_perf_test.c b/tools/testing/selftests/kvm/memslot_perf_test.c
+index 893366982f77..989ffe0d047f 100644
+--- a/tools/testing/selftests/kvm/memslot_perf_test.c
++++ b/tools/testing/selftests/kvm/memslot_perf_test.c
+@@ -113,7 +113,9 @@ static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic bool is not lockless");
+ static sem_t vcpu_ready;
+ 
+ static bool map_unmap_verify;
++#ifdef __x86_64__
+ static bool disable_slot_zap_quirk;
++#endif
+ 
+ static bool verbose;
+ #define pr_info_v(...)				\
+@@ -579,8 +581,10 @@ static bool test_memslot_move_prepare(struct vm_data *data,
+ 	uint32_t guest_page_size = data->vm->page_size;
+ 	uint64_t movesrcgpa, movetestgpa;
+ 
++#ifdef __x86_64__
+ 	if (disable_slot_zap_quirk)
+ 		vm_enable_cap(data->vm, KVM_CAP_DISABLE_QUIRKS2, KVM_X86_QUIRK_SLOT_ZAP_ALL);
++#endif
+ 
+ 	movesrcgpa = vm_slot2gpa(data, data->nslots - 1);
+ 
+@@ -971,11 +975,13 @@ static bool parse_args(int argc, char *argv[],
+ 		case 'd':
+ 			map_unmap_verify = true;
+ 			break;
++#ifdef __x86_64__
+ 		case 'q':
+ 			disable_slot_zap_quirk = true;
+ 			TEST_REQUIRE(kvm_check_cap(KVM_CAP_DISABLE_QUIRKS2) &
+ 				     KVM_X86_QUIRK_SLOT_ZAP_ALL);
+ 			break;
++#endif
+ 		case 's':
+ 			targs->nslots = atoi_paranoid(optarg);
+ 			if (targs->nslots <= 1 && targs->nslots != -1) {
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240930-kvm-build-breakage-a542f46d78f9
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
