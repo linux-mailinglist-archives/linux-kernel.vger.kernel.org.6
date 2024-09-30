@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-344010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E107398A28D
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:33:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C11298A2E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994441F237C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4FF1C22A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 12:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4B518E041;
-	Mon, 30 Sep 2024 12:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595A01925A2;
+	Mon, 30 Sep 2024 12:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kHSYaaeu"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWdkt70D"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828561367
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 12:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BFB191F6B;
+	Mon, 30 Sep 2024 12:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727699612; cv=none; b=DHS8lrfMKTwlPMujTSqo/yjOH/newBJBgCK4aSfE56mOarFGimx9TXyeR1KLw5Vq6BW22GeHep3JQn/z77tVZrUBrvoXCwmSkS943iMnqcoZjjIV1X9z/NC4sECniakTu+EWz6x0s6SDU1R0FUNtlqx2fFp5YqEFwEocX4M2eKw=
+	t=1727699840; cv=none; b=kwG9nLiEkZnlLSzuLsgYX6fvqCE7cPzszd7/EmEtbdXUBIVohlOCfogPVA97H5k/xUIrhZG+VgQ7PXZCWFqjFwCgiDDn87f2QYRFhvOrWuV87e62UuIyJE0DAkrNy5WAI8Gj/TgnQovBtKxS03sld4wlwajP9JoEL8l1pxxYfiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727699612; c=relaxed/simple;
-	bh=hsn6qIHCV8EE898kuj1+46bwDUw4E/pbekYed91CyDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+g+UcrR6A2pU/zi6IC2/9EYTLxdRrfJ3QuHnYOF/yQNZpSIAA7/UFrECoxjTv+iixk0zsU+QhDZ5nIKS1H5D7RbtFHpPBNQSHvNONakAyUAPh69vBcI7MeU+iK8rpeJDAcSZeo0/U6P4i7HR+uxysChzqwPAxHyemwdOs7Mhkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kHSYaaeu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=bsjyQJc6rlUDtp6Ad1gt+O9AIpQT/zdHP7sLmtwCgpU=; b=kHSYaaeuva5nyyvn
-	+yCz0THwMO7NK/fB7hVCdEe3bgxrKKLYQ9lEAfve2q2AHPhPqR4UizKaMQlqy9Q8A1Y5YtOlrc0i0
-	Xp6+2m4FzoQ+Ljktg22Dif53UwoUHV/QCXhIuNmkO73X92kyYhxQkzZgDdEbB08VneHyXahe2WqzZ
-	JvOgM9M9e1Twxioe/v77e8LDKfLmlj4hb2Ga0sJBBCI/wHj2U0xucDRvRUkSHnt6mDQccajXmyzPl
-	1e0tR5G64wp8OongOAW+zSiZflKfWhWQ6Nsxa9FCdfQ10Pz1ICARHKO9LBF8XxQMZBlMD8pYWOBek
-	MepbaiAZVIa14yHBSg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1svFaX-007xkK-23;
-	Mon, 30 Sep 2024 12:33:17 +0000
-Date: Mon, 30 Sep 2024 12:33:17 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Aradhya Bhatia <aradhya.bhatia@intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Intel XE List <intel-xe@lists.freedesktop.org>,
-	DRI Devel List <dri-devel@lists.freedesktop.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Matt Roper <matthew.d.roper@intel.com>,
-	Tejas Upadhyay <tejas.upadhyay@intel.com>,
-	Himal Prasad Ghimiray <himal.prasad.ghimiray@intel.com>,
-	Gustavo Sousa <gustavo.sousa@intel.com>
-Subject: Re: [PATCH] drm/xe/xe2lpg: Add WA 15016589081
-Message-ID: <ZvqajY_bLH_eULv5@gallifrey>
-References: <20240930120602.1720218-1-aradhya.bhatia@intel.com>
+	s=arc-20240116; t=1727699840; c=relaxed/simple;
+	bh=zHx47Ff5tAh1Vtn9s4O1B4HA00IlaG+siCqRs3o4IB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lUMXMXaRJGJA2gZPayO8QVbffs8MCRAmQcYVijbfJZCbL5ycjsQHVLt5XUEQV44H3I+hXH8QvyzOdQkfL0WRr4wJet0IMHhx0G6wBC5YZ03TInCUy/aWVKmRBFDubA+f5eibBpQgbf7n7mX1icg5Qh8PwFCCim/NfXwUYKwTtrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWdkt70D; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cc8782869so39888685e9.2;
+        Mon, 30 Sep 2024 05:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727699837; x=1728304637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TTtABT1rYfIzK3Apk8cuoRmJAsuypkLox4BN8k8T5lM=;
+        b=XWdkt70Dhha/stlNBVPBLvJ2RjcJmOEbXg0tkmuZb6N/iBw9LtpDTh9Epu66AE+ymN
+         CdxKAt3KmtfanbNgagvak03rBH/E0Vt6Qu1pwGgsQqnjScUN04jYco3QEe/YJBPF+i2L
+         aMvzUzgNJQfynwRbcBLx5rJQRdDLVUkdSGDFN7tpF+1X9HxbEcwB4l9xg9258L7p/tzA
+         5WhYk+tulNcs5vNPehdo7FHTUm3e6itadk75PemopMb1FrXQiogR+rkQ5EmvB55FrDvw
+         tDbHriQJVQmt8qqlp4DwoM81a8vYO5KMDNnHH/21HGfGRcmNPHsm+LAncjhlBAk3sgeA
+         XPdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727699837; x=1728304637;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TTtABT1rYfIzK3Apk8cuoRmJAsuypkLox4BN8k8T5lM=;
+        b=wPUTcVj/wlPfZzpLOjnw+UiequaH5uAu4VDXlUyTFJIVdC5WSMapehfwXhK/fvuIj4
+         mbj1sFI7jgNNJXrDLYBDb4PIyQEwUP4IvTbJri+hBiIVVAPZwG77+mDTmOj78ZKAxc3+
+         hldt7d7G8sWjm/4/QxJfXaNy261cYlcEN3H8XpcOZMBv9lbOPbqDwnP6jrQgCMiR+ExK
+         vPJe5DHCj4DVGN9H7utQMwmS1nZ9YBqQiKdiibXgYX6aL4YrBTh9MQ77e5enDRToKQc6
+         B61It7hwpSEW3iu3zLN9ImIuXl6jeXsLRT+uYwlHWhHxxSrt2IxaDndmYmphT9J5xMLC
+         i/ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeMf9uaJW3LI/a+nW1I6xwt2di+2Lzc94A2ifKvI2Y046RU/dUYkyF457YxyZRmocFAKTLFeFBdT0dmX25@vger.kernel.org, AJvYcCV1SxW3BlGpSckhplftQ6WqPy+IPuaK9K4RWqv7IrqZn14jW/ZfI+8pEzkYxkKLuHBs+IH18q4QwYaT/Q==@vger.kernel.org, AJvYcCVodsU5ovrVBlb4tGoVPOcgEyRkCJDfOdo+gYb8zmn2/Rk6c/SKM3cucFKaKbcupZ4C+bt5Aa3KhK4jIbESZWN+@vger.kernel.org, AJvYcCVu8utInfpFnxToLtj47itZghWgNTc755Su9fL0Hlsm7msuQiHeMy1tyvbYFSBU2L7EheIwhp9EZAeowqBr@vger.kernel.org, AJvYcCW6xWf1O8Q3HPryo608SIi04TNgGEiFhBpaWPGuOCj1zbcD7StBG53yJP0ucB5dWBiymfaWDmsFbexOOBmpUA==@vger.kernel.org, AJvYcCWBO/ZCD7FK3Y3bsUOhF7cHSJYP8ZLf2oqSkoedCDdG+4/W5jm5dZmT5wwsbxaQ/I/Z+EAfBS1xzl6IaxY=@vger.kernel.org, AJvYcCWF2NHYxrSpqdbqJdwIdOtUxe7OQRTXc10rlHGar1PTbAvV8CAZ6a7z5wJTOh2Ii63rJXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSgiLDrOFoO31aGx/3AWV/wGluESMVw26a3PYfJZyfqF7UDurC
+	AEXRqsE6n+Yphjob51SZyYFIXIGAPbCFRqlpHBuihr9HW9Vetfgb
+X-Google-Smtp-Source: AGHT+IHBiyuHQnT3ULO5RBx3Lp6OpesRYqemaXFPJxpMx4yYeqmrbcmToiuf+tr1+RXNDEzbJ1b58w==
+X-Received: by 2002:a05:600c:4f86:b0:42c:bae0:f066 with SMTP id 5b1f17b1804b1-42f58434768mr79576095e9.13.1727699837034;
+        Mon, 30 Sep 2024 05:37:17 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a52308sm149011355e9.43.2024.09.30.05.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 05:37:16 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-crypto@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH v3 06/19] mtd: tests: Include <linux/prandom.h> instead of <linux/random.h>
+Date: Mon, 30 Sep 2024 14:33:17 +0200
+Message-ID: <20240930123702.803617-7-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20240930123702.803617-1-ubizjak@gmail.com>
+References: <20240930123702.803617-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240930120602.1720218-1-aradhya.bhatia@intel.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 12:31:20 up 144 days, 23:45,  1 user,  load average: 0.01, 0.04,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 
-* Aradhya Bhatia (aradhya.bhatia@intel.com) wrote:
-> Add workaround (wa) 15016589081 which applies to Xe2_v3_LPG_MD.
+Substitute the inclusion of <linux/random.h> header with
+<linux/prandom.h> to allow the removal of legacy inclusion
+of <linux/prandom.h> from <linux/random.h>.
 
-It would be great in this type of patch if you could
-briefly say what symptom it fixes;  Some people might not know what
-WA 15016589081  does.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+---
+ drivers/mtd/tests/oobtest.c     | 2 +-
+ drivers/mtd/tests/pagetest.c    | 2 +-
+ drivers/mtd/tests/subpagetest.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Dave
-
-> Xe2_v3_LPG_MD is a Lunar Lake platform with GFX version: 20.04.
-> This wa is type: permanent, and hence is applicable on all steppings.
-> 
-> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@intel.com>
-> ---
->  drivers/gpu/drm/xe/xe_wa.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/xe/xe_wa.c b/drivers/gpu/drm/xe/xe_wa.c
-> index 22c148b1e996..2f9cde4b7d45 100644
-> --- a/drivers/gpu/drm/xe/xe_wa.c
-> +++ b/drivers/gpu/drm/xe/xe_wa.c
-> @@ -710,6 +710,10 @@ static const struct xe_rtp_entry_sr lrc_was[] = {
->  			     DIS_PARTIAL_AUTOSTRIP |
->  			     DIS_AUTOSTRIP))
->  	},
-> +	{ XE_RTP_NAME("15016589081"),
-> +	  XE_RTP_RULES(GRAPHICS_VERSION(2004), ENGINE_CLASS(RENDER)),
-> +	  XE_RTP_ACTIONS(SET(CHICKEN_RASTER_1, DIS_CLIP_NEGATIVE_BOUNDING_BOX))
-> +	},
->  
->  	/* Xe2_HPG */
->  	{ XE_RTP_NAME("15010599737"),
-> 
-> base-commit: 0c8650b09a365f4a31fca1d1d1e9d99c56071128
-> -- 
-> 2.34.1
-> 
-> 
+diff --git a/drivers/mtd/tests/oobtest.c b/drivers/mtd/tests/oobtest.c
+index 13fed398937e..e1ee68f8b8f8 100644
+--- a/drivers/mtd/tests/oobtest.c
++++ b/drivers/mtd/tests/oobtest.c
+@@ -17,7 +17,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+-#include <linux/random.h>
++#include <linux/prandom.h>
+ 
+ #include "mtd_test.h"
+ 
+diff --git a/drivers/mtd/tests/pagetest.c b/drivers/mtd/tests/pagetest.c
+index 8eb40b6e6dfa..6878700d2fc0 100644
+--- a/drivers/mtd/tests/pagetest.c
++++ b/drivers/mtd/tests/pagetest.c
+@@ -17,7 +17,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+-#include <linux/random.h>
++#include <linux/prandom.h>
+ 
+ #include "mtd_test.h"
+ 
+diff --git a/drivers/mtd/tests/subpagetest.c b/drivers/mtd/tests/subpagetest.c
+index 05250a080139..f34bbf033c4d 100644
+--- a/drivers/mtd/tests/subpagetest.c
++++ b/drivers/mtd/tests/subpagetest.c
+@@ -15,7 +15,7 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/slab.h>
+ #include <linux/sched.h>
+-#include <linux/random.h>
++#include <linux/prandom.h>
+ 
+ #include "mtd_test.h"
+ 
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+2.46.2
+
 
