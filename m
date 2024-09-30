@@ -1,192 +1,162 @@
-Return-Path: <linux-kernel+bounces-344918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D068698AFAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:13:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACE798AFB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D988B23DF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:13:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6314D1C218F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 22:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB2D199E9E;
-	Mon, 30 Sep 2024 22:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB61B18891C;
+	Mon, 30 Sep 2024 22:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwgW9i/m"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IctUzN5x"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BD1188A3E
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3631A2643
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727734350; cv=none; b=bvxCjttqFd89sU1UW8ytSiAjImLOD4gIQimcdEiD6UbumqDP+TEB4HffpdDXYqJgob/lb21PKw7dKfXmGW1/aQ05aJsGxeqZs1dH11xD1mhozKQ68vXeVXr5DTVYKE1n8p7LyHKKV6vgDgYlSulXVv56eMl27XsOC1z2licsL6Y=
+	t=1727734366; cv=none; b=EJNd4EkR093M1sveqauq0yoYd+MGeuInCd97UaTh/zHuy0TYukmFBY8xuooaomoIBQL/j9mJkxWY8KV+eotW5iIYzwFEkwmDs3VRIksZ+4dCH76pq2NIfiW5qJmIJRn6TFjPaCt0jGVCsHiGQ/TdtBiLYxYDcYqCUJmK1tX24NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727734350; c=relaxed/simple;
-	bh=9WsgnlbaWxDYzoSeOHrRpgB8xi3C6kSbFeaymu5ESD4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S/JAYT91BK+Mp1Lb54LAD7w5lT9K9U+Xkt9a03G+CnMs98e/SF7LGKOYAGeHQMlbpUHogJvorJIEyQUTpU+Zv5zmtNt/uLL53DhpBV27/Fn7O9VQho9/IIFsaofjYDnzj+oAZlRCR/Cz07hlJIygLgSJOrAFS0xb60wm/82XsQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwgW9i/m; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727734349; x=1759270349;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9WsgnlbaWxDYzoSeOHrRpgB8xi3C6kSbFeaymu5ESD4=;
-  b=SwgW9i/mUz+hDh47jNP654MdTXpQuEcto7P4MupxnmFaJFU7EsRN+Rdk
-   hRJ8dtv/LqO6NRrviYxjyyOrwoiQrO8yj3Tmv0tW/+b0FKyQE8brvLwPw
-   2gv8ZR+DmHRjjTubhRYQa7uKrqMGhmwkj8TmlUBvx1JP2GBr7hx4mKdBx
-   cAt3fjYPVSafPAoUdCaoZ/lwNoI5cxWrvl09POhbTMX7NmIMFnGKUY6pr
-   taZH6b5fiJVhOaXJayiqmIzlEcKINR9CC4XEUdYOXoqfnvM60zpDn9dSe
-   KlFuamPx6qmDzvPP4e773A4bCqE5HqKXxi+ZhoeTKD6pFzungVPzNZ3wb
-   g==;
-X-CSE-ConnectionGUID: 7VJ9BGmrQ02/mu9W16CUJQ==
-X-CSE-MsgGUID: wbnJIcjvTT+7YuanNUZ8Zw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="49368457"
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="49368457"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 15:12:25 -0700
-X-CSE-ConnectionGUID: T9yraZJRTZCRQZahtHf09g==
-X-CSE-MsgGUID: prXEZfqVSHWeMdbJj+LIig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,166,1725346800"; 
-   d="scan'208";a="77985597"
-Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa004.fm.intel.com with ESMTP; 30 Sep 2024 15:12:24 -0700
-From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	nphamcs@gmail.com,
-	chengming.zhou@linux.dev,
-	usamaarif642@gmail.com,
-	shakeel.butt@linux.dev,
-	ryan.roberts@arm.com,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: nanhai.zou@intel.com,
-	wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com,
-	kanchana.p.sridhar@intel.com
-Subject: [PATCH v9 7/7] mm: swap: Count successful large folio zswap stores in hugepage zswpout stats.
-Date: Mon, 30 Sep 2024 15:12:21 -0700
-Message-Id: <20240930221221.6981-8-kanchana.p.sridhar@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20240930221221.6981-1-kanchana.p.sridhar@intel.com>
-References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com>
+	s=arc-20240116; t=1727734366; c=relaxed/simple;
+	bh=OuJ6HD0YhG6sS3DJ/fC5Ctolj9yx6iOFSJvVEhOfNiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RA2e1XG12ZgiTwXAfpFEZJMOUiZ5yeJeexpCFjtMbFz5EKpij5/iuHhiFpiYDZCTEmTOCnbhWeqaE8YorV9t2XoA2e4QsICKQKf9GWJwrdkjLbOb7YYy7nCvtvhnTTWh34d8wy4djYEJ8Cn/v6C8Cc0dxmNeYf5ifwvGc79znl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IctUzN5x; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8323b555a6aso427150539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1727734363; x=1728339163; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CvzJHLSjGnSyKfVHRJCVIJ5T2wLxEa5cRWvlQ80yiGo=;
+        b=IctUzN5x9hnBsObW7waCuhOhsPyso2kNQALdAsaYpPaoEY6HY/SpacLGJsHY5fRiBc
+         /gdfSbycbRN/IPpeFPNJ1xSiLqPth2kMs9jP0monlgOXS9v/5du6vOhgb5xM7wiQJYu4
+         8LRe/2UaxGGMwGngkQKislc5dmLRApB3WaNck=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727734363; x=1728339163;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CvzJHLSjGnSyKfVHRJCVIJ5T2wLxEa5cRWvlQ80yiGo=;
+        b=UIYr7MZ6CkUYqnhE/lJTFh0oPYmHx3vutkYIxiTE+F33PPrT8lSv1vD5Y5BgY1pQ+M
+         R3d0WXRAJCxEk3tJkALJ/pVKhSwF+6jrfd0LRsDGNvLfL43EurP8IoP+e87dk+uciQQf
+         lcAIq4GZ1FbtBHMV35pnSFGuMLi7yRnCQpEUJLIYnvAqdf/+AFJVtQCfA8vXpsuSvREg
+         j+DGGjetSix8Vk43VEWJa83rCvNrvUFdXL76xVvto5+mJ6TcHRcs1JVWL6NJrmrLNAr8
+         zh8XsDusLQwVU/VwAThLZRX7afTCGfXuUgreKIRZupaCYfQhiSHnHcVDX+HyAopgipsz
+         VfMQ==
+X-Gm-Message-State: AOJu0YyyrujDHelPfUJYtXH6X4OnY+bi8zOd/wLitezTWeFfB3mGzMh2
+	XDfd11lM+Z1HSnxwD7nN6DQ4tfamTO4wwi2P0+1SqGTDLn+8pcXo+V1lHKQJJUg=
+X-Google-Smtp-Source: AGHT+IEPmKeco7rzyBVd0zeENJ0CL2Q3z1EggoqbGYYGZCwqCddSrVdRG9W5FTk8lXGyJA23GdxGTQ==
+X-Received: by 2002:a05:6e02:170e:b0:3a0:a71b:75ee with SMTP id e9e14a558f8ab-3a3451bc0b1mr124460455ab.19.1727734362055;
+        Mon, 30 Sep 2024 15:12:42 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d888835130sm2316262173.13.2024.09.30.15.12.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Sep 2024 15:12:41 -0700 (PDT)
+Message-ID: <7dcaa550-4c12-4c2e-9ae2-794c87048ea9@linuxfoundation.org>
+Date: Mon, 30 Sep 2024 16:12:41 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Update core.c
+To: Okan Tumuklu <okantumukluu@gmail.com>, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240930220649.6954-1-okantumukluu@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240930220649.6954-1-okantumukluu@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Added a new MTHP_STAT_ZSWPOUT entry to the sysfs transparent_hugepage
-stats so that successful large folio zswap stores can be accounted under
-the per-order sysfs "zswpout" stats:
+On 9/30/24 16:06, Okan Tumuklu wrote:
+> From: Okan Tümüklü <117488504+Okan-tumuklu@users.noreply.github.com>
+> 
+> 1:The control flow was simplified by using else if statements instead of goto structure.
+> 
+> 2:Error conditions are handled more clearly.
+> 
+> 3:The device_unlock call at the end of the function is guaranteed in all cases.
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/zswpout
+Write a paragraph - don't use bullet lists.
 
-Other non-zswap swap device swap-out events will be counted under
-the existing sysfs "swpout" stats:
+Please refer to submitting patches for details on how to
+write shortlogs and change logs.
 
-/sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/swpout
+"Update core.c" with what? Write a better short log.
 
-Also, added documentation for the newly added sysfs per-order hugepage
-"zswpout" stats. The documentation clarifies that only non-zswap swapouts
-will be accounted in the existing "swpout" stats.
+Why do you this 117488504+Okan-tumuklu@users.noreply.github.com
+in the list? It will complain every time someone responds
+to this thread. This is not how patches are sent. Refer to
+documents in the kernel repo on how to send patches.
 
-Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Reviewed-by: Nhat Pham <nphamcs@gmail.com>
----
- Documentation/admin-guide/mm/transhuge.rst | 8 ++++++--
- include/linux/huge_mm.h                    | 1 +
- mm/huge_memory.c                           | 3 +++
- mm/page_io.c                               | 1 +
- 4 files changed, 11 insertions(+), 2 deletions(-)
+You are missing net maintainers and mailing lists.
 
-diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-index cfdd16a52e39..2a171ed5206e 100644
---- a/Documentation/admin-guide/mm/transhuge.rst
-+++ b/Documentation/admin-guide/mm/transhuge.rst
-@@ -530,10 +530,14 @@ anon_fault_fallback_charge
- 	instead falls back to using huge pages with lower orders or
- 	small pages even though the allocation was successful.
- 
--swpout
--	is incremented every time a huge page is swapped out in one
-+zswpout
-+	is incremented every time a huge page is swapped out to zswap in one
- 	piece without splitting.
- 
-+swpout
-+	is incremented every time a huge page is swapped out to a non-zswap
-+	swap device in one piece without splitting.
-+
- swpout_fallback
- 	is incremented if a huge page has to be split before swapout.
- 	Usually because failed to allocate some continuous swap space
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5eb4b0376c7d..3eca60f3d512 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -119,6 +119,7 @@ enum mthp_stat_item {
- 	MTHP_STAT_ANON_FAULT_ALLOC,
- 	MTHP_STAT_ANON_FAULT_FALLBACK,
- 	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
-+	MTHP_STAT_ZSWPOUT,
- 	MTHP_STAT_SWPOUT,
- 	MTHP_STAT_SWPOUT_FALLBACK,
- 	MTHP_STAT_SHMEM_ALLOC,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 13bf59b84075..f596f57a3a90 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -611,6 +611,7 @@ static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
- DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
- DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
-+DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
- DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
- #ifdef CONFIG_SHMEM
-@@ -629,6 +630,7 @@ static struct attribute *anon_stats_attrs[] = {
- 	&anon_fault_fallback_attr.attr,
- 	&anon_fault_fallback_charge_attr.attr,
- #ifndef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-@@ -659,6 +661,7 @@ static struct attribute_group file_stats_attr_grp = {
- 
- static struct attribute *any_stats_attrs[] = {
- #ifdef CONFIG_SHMEM
-+	&zswpout_attr.attr,
- 	&swpout_attr.attr,
- 	&swpout_fallback_attr.attr,
- #endif
-diff --git a/mm/page_io.c b/mm/page_io.c
-index bc1183299a7d..4aa34862676f 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -269,6 +269,7 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
- 		swap_zeromap_folio_clear(folio);
- 	}
- 	if (zswap_store(folio)) {
-+		count_mthp_stat(folio_order(folio), MTHP_STAT_ZSWPOUT);
- 		folio_unlock(folio);
- 		return 0;
- 	}
--- 
-2.27.0
+Include all reviewers - run get_maintainers.pl
 
+> ---
+>   net/nfc/core.c | 28 ++++++++++------------------
+>   1 file changed, 10 insertions(+), 18 deletions(-)
+> 
+> diff --git a/net/nfc/core.c b/net/nfc/core.c
+> index e58dc6405054..4e8f01145c37 100644
+> --- a/net/nfc/core.c
+> +++ b/net/nfc/core.c
+> @@ -40,27 +40,19 @@ int nfc_fw_download(struct nfc_dev *dev, const char *firmware_name)
+>   
+>   	if (dev->shutting_down) {
+>   		rc = -ENODEV;
+> -		goto error;
+> -	}
+> -
+> -	if (dev->dev_up) {
+> +	}else if (dev->dev_up) {
+>   		rc = -EBUSY;
+> -		goto error;
+> -	}
+
+Did you run checkpack script on this patch? There are a few
+coding style errors.
+
+> -
+> -	if (!dev->ops->fw_download) {
+> +	}else if (!dev->ops->fw_download) {
+>   		rc = -EOPNOTSUPP;
+> -		goto error;
+> -	}
+> -
+> -	dev->fw_download_in_progress = true;
+> -	rc = dev->ops->fw_download(dev, firmware_name);
+> -	if (rc)
+> -		dev->fw_download_in_progress = false;
+> +	}else{
+> +		dev->fw_download_in_progress = true;
+> +		rc = dev->ops->fw_download(dev, firmware_name);
+> +		if (rc)
+> +			dev->fw_download_in_progress = false;
+> +		}
+>   
+> -error:
+> -	device_unlock(&dev->dev);
+> -	return rc;
+> +		device_unlock(&dev->dev);
+> +		return rc;
+>   }
+>   
+>   /**
+
+thanks,
+-- Shuah
 
