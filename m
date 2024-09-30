@@ -1,158 +1,119 @@
-Return-Path: <linux-kernel+bounces-344329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5E898A85F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:22:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95D3098A860
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 17:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B06141F24251
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:22:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C777D1C229CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 15:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE8D1922F8;
-	Mon, 30 Sep 2024 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NwbnM0L3"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055881922CC;
+	Mon, 30 Sep 2024 15:22:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D0418E758
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3D320B0F
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 15:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727709745; cv=none; b=GG2/OoaZpcdDOrOyt6Z/V37bJDPLGlz70THlsP6n2wfxsWv2HpcwxOgXrmjVrnq7cobhQyjMJDEG+DjTvWMNMhxrOpM+269N7n2QyB4c/eAO5bf822RbGEA2H0vG6eLhIEJzCPeuMVEj1eC35IrXpvAyxct4SuTAKOlthEFaLQw=
+	t=1727709759; cv=none; b=jSUFCYdXhBEahs61sQqgGsKfy2y8FOFHps+lHRvIWe1ODMNhj11hYltfmYzwNoZkAECjs6+wciqd01a75l/SzeeMgXwafBu8Er4tcOFfDgFGi/IYto1AEmd74KEJYmBktVIlAJFvCoJiX91fLJuVJeqdwjR3fQ9/5oNmhucvGys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727709745; c=relaxed/simple;
-	bh=Jpsi6XfXMSfXSnaPz1xwqznOlaE2QGeKuMig8ThwdsQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E6yxk/G5yKL506Rwa1ocdWT1K1QUSbdFsdKroKgFPKjtAVYQolepURpLxENXJrkKZnsdikOZ+zb3oGcSQDtS67+uCJoatLHxDfUAKGkUM1SCVzZoBYE18vU1gMHGSvwkeLcWRsgB2LvDasUb2gsWilPlNpGH4nVIms8027T0+Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NwbnM0L3; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad75b46a3so3420431fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 08:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727709742; x=1728314542; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=R8XhM/SVrfi8Z4HLnJdUMQS7Li3/arNhnHXWrKzEAUM=;
-        b=NwbnM0L3INjsyjvcNz4tEIEIlPD6uHXcnO5cDkUmgjxbaSayM+4jUfUVYv+v872JLP
-         /gx/X9NtzJ/c5FTGMCDRI8+tAmKSpUR4TPd/057mQW0mIy4hG/PNndTgFbsKADwuWp2h
-         cEhQu2QtKKaFPEJ5ZOi4/Ah+8fUX16wcXuYEOhzTcCrIazDoH7HGvkmO5ApVEmw1e+lG
-         0nEld/fVLf266EMJvP7cKwRQQ8x3WFd485NJrw32JwoC28ioLWXoWLlmzzCS95yjQ6B7
-         qQ0IE1buxgvqhD93mZONg5e+2r33VK1GOwNFUZHGJIb6jeDw+stcsfnLrlZptqYugyVk
-         e6jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727709742; x=1728314542;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R8XhM/SVrfi8Z4HLnJdUMQS7Li3/arNhnHXWrKzEAUM=;
-        b=g1ffpuKxVQPLs61YuajsqHy33ITRkvowAEgbLNnRuznvJhHU62+6C0Eog2UQmvx3V9
-         6GccG9w4w0P4AwH/E8Lc1izqRt6s/Kczk++5xj65Q0zag1reaBznz3CjF1CX9UG0mbfC
-         Hf5NKQSuC56EBZnKusRqe65ykkiMyKKhbsDREm1ruSrUFqzT8UKgUx/PtaSD1Qc/eHe0
-         7uIoJdvnMOonKDxAe6ry6x+/H4k5/3r2ydm11WwJWJJ1GF2stpmQKPkyRCxl6a/pbQ0I
-         665BtPapr5LE6zzxk/2e4yOEKA+CMJWceyFuxC5fQrB50F9uV1vVwSy1CH9Gvvcv9zJE
-         /oxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJQmUjbYYEaiOR5QtHMAXccwjLokicgoOGKu3kPV+JtIcLwfiTJgvcu+Pa6gXJiD9VbE7O6liIEHkhy9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAq2kS+cug0iHHcxzoJkEZ29jnhxLdDzYNjX7g1sO87yCRk1+1
-	ukYX6vf2nABT3Jy2gXN3xUnFK6swZlHqnuOiJD/+Kff3gSmCiaJ1
-X-Google-Smtp-Source: AGHT+IEF2tMeyV2lmrHGKZUDmwUvk0j2fXTyq8LuUAZzHjRsUzJyQAyKwfaqwb6CHCU/AhJkYC9r4g==
-X-Received: by 2002:a05:6512:eaa:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-5389fc6d4d5mr6096930e87.49.1727709741703;
-        Mon, 30 Sep 2024 08:22:21 -0700 (PDT)
-Received: from pc636 (host-95-193-102-146.mobileonline.telia.com. [95.193.102.146])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5389fd5f5d1sm1255598e87.114.2024.09.30.08.22.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 08:22:21 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 30 Sep 2024 17:22:18 +0200
-To: Huang Adrian <adrianhuang0701@gmail.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Adrian Huang <ahuang12@lenovo.com>
-Subject: Re: [PATCH 1/1] kasan, vmalloc: avoid lock contention when
- depopulating vmalloc
-Message-ID: <ZvrCKmsDy9UiEYcr@pc636>
-References: <20240925134732.24431-1-ahuang12@lenovo.com>
- <20240925134706.2a0c2717a41a338d938581ff@linux-foundation.org>
- <CAHKZfL0D6UXvhuiq_GQgCwdKZAQ7CEkajJPpZJ40_e+ZfvHvcw@mail.gmail.com>
- <ZvWI9bnTgxrxw0Dk@pc636>
- <CAHKZfL1jUs1Nh=aqnUrLLMiwb-F15kPc-fqC6i0hRaw0HbtMLw@mail.gmail.com>
+	s=arc-20240116; t=1727709759; c=relaxed/simple;
+	bh=gdKdPQVR+zErnF1sINtww0CbgMypAMuhdx7dBmMRb74=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tWsxu8QPVEYsSY5LE4U5lzzF1WlPxZSgm+IwqHdl00uWkrfyvOmFSaOKpVVS+ZcstcpvcTPi5nbS9YaRgxZsgNcLhUevONjatdIkK2lTlOJ4M5g9wDYMcH+dLCLmD+r8SKqHZ0VJb7Gyj1EJlSuEojbkqn1Ba7x9gCjYMYKcZOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIEE-00080z-3Q; Mon, 30 Sep 2024 17:22:26 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIED-002f6a-AE; Mon, 30 Sep 2024 17:22:25 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svIED-000DI0-0o;
+	Mon, 30 Sep 2024 17:22:25 +0200
+Message-ID: <b4d9fb99dbd2e2a6a6ce39744e2e640d35ea97c7.camel@pengutronix.de>
+Subject: Re: [heads-up] Re: [PATCH] reset: Further simplify locking with
+ guard()
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Al Viro
+	 <viro@zeniv.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Date: Mon, 30 Sep 2024 17:22:25 +0200
+In-Reply-To: <97b2b218-b46e-41a8-9379-09b76569f3f1@linaro.org>
+References: <20240927-reset-guard-v1-1-293bf1302210@pengutronix.de>
+	 <20240928222702.GX3550746@ZenIV>
+	 <97b2b218-b46e-41a8-9379-09b76569f3f1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHKZfL1jUs1Nh=aqnUrLLMiwb-F15kPc-fqC6i0hRaw0HbtMLw@mail.gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello, Adrian!
+On So, 2024-09-29 at 20:48 +0200, Krzysztof Kozlowski wrote:
+> On 29/09/2024 00:27, Al Viro wrote:
+> > On Fri, Sep 27, 2024 at 04:02:32PM +0200, Philipp Zabel wrote:
+> > > Use guard(mutex) to automatically unlock mutexes when going out of
+> > > scope. Simplify error paths by removing a goto and manual mutex
+> > > unlocking in multiple places.
+> >=20
+> > And that, folks, is a live example of the reasons why guard() is an
+> > attractive nuisance.  We really need a very loud warning on
+> > cleanup.h stuff - otherwise such patches from well-meaning folks
+> > will keep coming.
 
-> Hello Uladzislau,
-> 
-> On Fri, Sep 27, 2024 at 12:16 AM Uladzislau Rezki <urezki@gmail.com> wrote:
-> >
-> > Hello, Adrian!
-> >
-> > > > >
-> > > > > From: Adrian Huang <ahuang12@lenovo.com>
-> > > > > After re-visiting code path about setting the kasan ptep (pte pointer),
-> > > > > it's unlikely that a kasan ptep is set and cleared simultaneously by
-> > > > > different CPUs. So, use ptep_get_and_clear() to get rid of the spinlock
-> > > > > operation.
-> > > >
-> > > > "unlikely" isn't particularly comforting.  We'd prefer to never corrupt
-> > > > pte's!
-> > > >
-> > > > I'm suspecting we need a more thorough solution here.
-> > > >
-> > > > btw, for a lame fix, did you try moving the spin_lock() into
-> > > > kasan_release_vmalloc(), around the apply_to_existing_page_range()
-> > > > call?  That would at least reduce locking frequency a lot.  Some
-> > > > mitigation might be needed to avoid excessive hold times.
-> > >
-> > > I did try it before. That didn't help. In this case, each iteration in
-> > > kasan_release_vmalloc_node() only needs to clear one pte. However,
-> > > vn->purge_list is the long list under the heavy load: 128 cores (128
-> > > vmap_nodes) execute kasan_release_vmalloc_node() to clear the corresponding
-> > > pte(s) while other cores allocate vmalloc space (populate the page table
-> > > of the vmalloc address) and populate vmalloc shadow page table. Lots of
-> > > cores contend init_mm.page_table_lock.
-> > >
-> > > For a lame fix, adding cond_resched() in the loop of
-> > > kasan_release_vmalloc_node() is an option.
-> > >
-> > > Any suggestions and comments about this issue?
-> > >
-> > One question. Do you think that running a KASAN kernel and stressing
-> > the vmalloc allocator is an issue here? It is a debug kernel, which
-> > implies it is slow. Also, please note, the synthetic stress test is
-> > not a real workload, it is tighten in a hard loop to stress it as much
-> > as we can.
-> 
-> Totally agree.
-> 
-> > Can you trigger such splat using a real workload. For example running
-> > stress-ng --fork XXX or any different workload?
-> 
-> No, the issue could not be reproduced with stress-ng (over-weekend stress).
-> 
-> So, please ignore it. Sorry for the noise.
-> 
-No problem. This is a regular workflow what is normal, IMO :)
+Thank you for the analysis. It think I'll drop this entirely.
 
---
-Uladzislau Rezki
+[...]
+> >=20
+> > Guess what happens if you take goto out_put prior to the entire thing,
+> > in
+> >                 ret =3D __reset_add_reset_gpio_device(&args);
+> > 		if (ret) {
+> > 			rstc =3D ERR_PTR(ret);
+> > 			goto out_put;
+> > 		}
+> > That patch adds implicit mutex_unlock() at the points where we leave
+> > the scope.  Which extends to the end of function.  In other words, ther=
+e is
+> > one downstream of out_put, turning any goto out_put upstream of guard()=
+ into
+> > a bug.
+> >=20
+>=20
+> cleanup.h also mentions that one should do not mix cleanup with existing
+> goto, because of possibility of above issue.
+
+Yes, d5934e76316e ("cleanup: Add usage and style documentation"), last
+paragraph.
+
+> But except careful review, this patch should have been simply compile
+> tested which would point to the issue above. Any guard/scope works must
+> be checked with clang W=3D1, which reports jumps over init.
+
+Thank you, I was missing a CC=3Dclang W=3D1 build in my pre-flight checks.
+That's fixed now.
+
+regards
+Philipp
 
