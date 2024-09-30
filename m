@@ -1,165 +1,86 @@
-Return-Path: <linux-kernel+bounces-343639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069A9989D9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9F7989DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35AE11C2186B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2FF1F222DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD62018755C;
-	Mon, 30 Sep 2024 09:04:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9451E187870;
+	Mon, 30 Sep 2024 09:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oopwFy97"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="o1D4ipIB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WyiywLFg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5294C1865F1;
-	Mon, 30 Sep 2024 09:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BF118755C;
+	Mon, 30 Sep 2024 09:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727687065; cv=none; b=aEFroq8T5VuF5+oPNSzPurLlosJNHkPC/YAsGJZrG/d5SwNhj7+0eZ7doSAjTVZfgZJd0kX0x7Nu2unGgT+K1TE9lA8/upwERUxdIY3Nhbvx6ukoBMxGi0CSJ7JwLn/dsJ+GZLe8HEyNu8H6oUZDffFdFZkkJePc4FycdkKT0EM=
+	t=1727687084; cv=none; b=VvR5rbU6JlOaBIcaHylXR8H6jkHdbc9oPwgG3XtJkq59WUIOUCorjpz3n6cQYqSupkyAgb1venOi4Kftaozx1KyRHgPtheTCUIWWaCuZ7gD76R2xm8rrusHIulVQ62SVDASUpDqk0lckK6fVRdI1dOJiZ5/Zwbm5WSQa7hQWjLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727687065; c=relaxed/simple;
-	bh=5vfmCoWhJfN9myIJ8um04DTZKKRCmBeNbBVzguOQXMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aCNwgE0FS6DbFsWJ1FGN4fh0G4BEsJmFtD4dmFGKbg8oaV1PHGhG1giVc6ILImtI57jZBrjRYML5VglV8xAH5iuvSeVFCP3jhSvIL76ZpZK7wNDExRV1m041O3H1WWPYKtKyt692OmEk2oJ1Kq2B5/hVOul8pYDeGtEijnYGgu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oopwFy97; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 29C2D40009;
-	Mon, 30 Sep 2024 09:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727687053;
+	s=arc-20240116; t=1727687084; c=relaxed/simple;
+	bh=XrYPmYYT5XhC0wJNwhAXZC0DqK+5e+QiHm3ftF5vz5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tj3bVDr14GBOT8QgE8Gk7Rwr0mGsw+NYCugRGQpW58s4JWzxBwG3hQe7WoeHJpal1nJSrJdy/4MfXxrQgH/NfHA6PZusZpcdrcGgpjtb8gDQc1DowpkeqQ9J5mRybM00k08g7EFZuSr/lG968xmnkzQECkAT33QSCbOEqLSFd/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=o1D4ipIB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WyiywLFg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 30 Sep 2024 11:04:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1727687080;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=I/Yd74SXWwnJNHzkH+B1zGDPYPSWPzutmB3r6NlN8+k=;
-	b=oopwFy97Xs7m4K3UfEGC1hiSSNHKTDyWZt9dJs73tB3PhVekjYUwWjFTpXxO9rhGuwRcmO
-	7EY460BtJoyBI+PszIgN0UqnD7FmeuGdO66U/wzlSL49YKAnVFWxzKZQqg5GViNphID+YS
-	GoW6P4MpEYAGoSwerOwunKoJeKsq5S7j+qpOV5xD/FKvGAzX4OMK2gx61LXZ8CWjDIOEXS
-	+7H8X+m6td/vhZ38an6ytEtNTgQNe8GqLcq3hxsAfAS0En8/N59vH5/z446z+0K/TdOA5Y
-	riEwwRZm+c++1OUJ0NH0ycTAbZzXXGCnsAHUqCs6sQ6pgE8FYRgGMxIkB8Voig==
-Date: Mon, 30 Sep 2024 11:04:08 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "michael@walle.cc"
- <michael@walle.cc>, "broonie@kernel.org" <broonie@kernel.org>,
- "pratyush@kernel.org" <pratyush@kernel.org>, "richard@nod.at"
- <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>, Rob Herring
- <robh@kernel.org>, "cornor+dt@kernel.org" <cornor+dt@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "linux-spi@vger.kernel.org"
- <linux-spi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org"
- <linux-mtd@lists.infradead.org>, "nicolas.ferre@microchip.com"
- <nicolas.ferre@microchip.com>, "alexandre.belloni@bootlin.com"
- <alexandre.belloni@bootlin.com>, "claudiu.beznea@tuxon.dev"
- <claudiu.beznea@tuxon.dev>, "Simek, Michal" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
- <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, Conor Dooley
- <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
-Subject: Re: Add stacked and parallel memories support in spi-nor
-Message-ID: <20240930110408.6ec43e97@xps-13>
-In-Reply-To: <IA0PR12MB7699B360C7CF59E0A3D095F9DC8D2@IA0PR12MB7699.namprd12.prod.outlook.com>
-References: <IA0PR12MB7699B360C7CF59E0A3D095F9DC8D2@IA0PR12MB7699.namprd12.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	bh=ATbSZtloF6YXdAPUbDS3opKGPNzhV52ixLqKEGFxHo4=;
+	b=o1D4ipIBwhYJ+g4OEeMm6+1jHREwaJP8pMldEPXbKrjRsiVTDjQPDaCNMlrGT6GZfaPNXb
+	EZRCo0BkajBc2WI4r8gxLeU9goTop4aejdFK23drMXG8vyYPy7nnh7CLhjnCcvwZDzoYoi
+	qwofgJBOTz4j+4xykkaC8V241GhYCmn9ldLPVC0QegnzJlcXti3ei5M7z094h/C06gMcGk
+	5UZ4QAZwhgbVfmp0hYEK8eEnq7LCUEJChgn2nt5XNTOyGYKKY72jbvMGsM8N5e8fAZbzmk
+	gYGoiAK0cqz60aqrnWnG2gy7atIiTLnWvR+QhgLLb4MX9vJMas/y2fWE0MLd2A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1727687080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ATbSZtloF6YXdAPUbDS3opKGPNzhV52ixLqKEGFxHo4=;
+	b=WyiywLFgaqeTDA/z9qhm+isxE6Irgu8pDDYLgft+JCH/jb67Z/mxO9VNuwFtoVk25JvTyK
+	/HlhidouTPyq5kAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [bug report] perf: Fix event leak upon exec and file release
+Message-ID: <20240930090439.3IgzQVzB@linutronix.de>
+References: <5cc313bc-c44d-4f6c-80ee-5a9fe9356f43@stanley.mountain>
+ <ZtYyXG4fYbUdoBpk@pavilion.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZtYyXG4fYbUdoBpk@pavilion.home>
 
-Hi Amit,
+On 2024-09-02 23:47:08 [+0200], Frederic Weisbecker wrote:
+> Ah right.
+> 
+> So one possible fix is to possibly let the task work do the last reference
+> decrement. This would mean that freeing children events can't be always assumed
+> by the parent.
+> 
+> The below (only built tested) would do it?
 
-> For implementing this the current DT binding[1] [2] [3] need to be update=
-d as follows.
->=20
->=20
->=20
-> stacked-memories DT changes:
->=20
-> - Flash size information can be retrieved directly from the flash, so it =
-has been removed from the DT binding.
->=20
-> - Each stacked flash will have its own flash node. This approach allows f=
-lashes of different makes and sizes to be stacked together, as each flash w=
-ill be probed individually.
->=20
-> -  Each of the flash node will have its own "reg" property that will cont=
-ain its physical CS.
+This looks nice based on diffstat. I didn't look closed nor did any
+testing so far. Do we like it and wait for Dan here or?
 
-These three first points are just describing the existing bindings for
-non-concatenated situations.
-
-> - The stacked-memories DT bindings will contain the phandles of the flash=
- nodes connected in stacked mode.
->=20
-> - The first flash node will contain the mtd partition that would have the=
- cross over memory staring at a memory location in the first flash and endi=
-ng at some memory location of the 2nd flash
-
-I don't like that much. Describing partitions past the actual device
-sounds wrong. If you look into [1] there is a suggestion from Rob to
-handle this case using a property that tells us there is a
-continuation, so from a software perspective we can easily make the
-link, but on the hardware description side the information are correct.
-
-If this description is accepted, then fine, you can deprecate the=20
-"stacked-memories" property.
-
->  - The new layer will update the mtd->size and other mtd_info parameters =
-after both the flashes are probed and will call mtd_device_register with th=
-e combined information.
-
-Okay, this is back to the mtd-concat thing I initially proposed, but I
-believe it can work.
-
-[...]
-
-> parallel-memories DT changes:
->=20
-> - Flash size information can be retrieved directly from the flash, so it =
-has been removed from the DT binding.
-
-It's not really about the size but more about the fact that two
-memories are in use. If the stacked situation does not require anything
-specific besides the partitions trick, then you can assume that double
-reg flashes are just two flashes and this can be your way to
-discriminate the data organization. But I don't like much this shortcut
-because it is not future proof, and instead I'd keep the stacked-memory
-property. If you don't like the size, I don't really care, just use it
-as a boolean. But I believe we need some naming to tell the OS that the
-data is spread in a specific way inside the memory devices.
-
-> - Each flash connected in parallel mode should be identical and will have=
- one flash node for both the flash devices.
-
-This is already the case.
-
-> - The "reg" prop will contain the physical CS number for both the connect=
-ed flashes.
-
-This is already the case.
-
-> - The new layer will double the mtd-> size and register it with the mtd l=
-ayer.
-
-This is not a DT change.
-
-
-Thanks,
-Miqu=C3=A8l
+Sebastian
 
