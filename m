@@ -1,58 +1,65 @@
-Return-Path: <linux-kernel+bounces-344679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4389798ACA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:17:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF96A98ACAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0295B24344
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07C531C20C74
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFBD183CC5;
-	Mon, 30 Sep 2024 19:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627A719993A;
+	Mon, 30 Sep 2024 19:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Fzs1rj5+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nNPgnn0T"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EB615E97
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C4415E97;
+	Mon, 30 Sep 2024 19:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727723836; cv=none; b=GtsVzSaIHKhAezsXiwFfv+fD9s6i8x0bZVIGChy9nBFZVG1wq/EcpW4rgppjXzc3Bgrd1U9c+zgOB7LYfmWI6b+p2XFIOYiLuA/e80U36IvXrCCNmk6Qxl/ocwAcrCeBgIWZiaa2dbwPwbr3rMEw5brAMxuQ2XU2/0cqtSXV2hI=
+	t=1727723885; cv=none; b=QEgCkfhzmohEOHA7uZu9sUO5i9NWr/17EAXLMieEZYGxB4QV0sBmOjFOC/QeB8q3n+B2NdPNMGnCxmn+Oswy66gRsRBlXYc/ux73ICVPV3EuRxyv/03hBvt2kjt/VYp90AoCKYfHJOs4cPP1gKk6aUThjHFmZ/tjDYobFmWajDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727723836; c=relaxed/simple;
-	bh=EKXQ/NkOUG68FLhVF4/nLkkGEyfRy7q4ka5FDA/CAuk=;
+	s=arc-20240116; t=1727723885; c=relaxed/simple;
+	bh=ukhf8G9BYIQqBAXdD/uKYiwph8lfzGIQAREJxwy2jbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZA2JB+bJRh7RD7JAC/ldBPrwg7Kj307lnlnyP331ZiuiMbMwsc+0z2fjXdmBeTXdDrUjClEM+HL3mCNhjYrrpLipQtyUunRreAqxFyiw1tziCeznd/75w9XSWoa3MkRg3L8tYUxD2Ua3GrNshYyQXrAzVmqrMG3gM6AuIkhVtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Fzs1rj5+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF939C4CEC7;
-	Mon, 30 Sep 2024 19:17:14 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Fzs1rj5+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1727723832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZXhqapFBo+75hVKPH5GgFx2LdKbyngn/VfVLQxKR/Ms=;
-	b=Fzs1rj5+BBskyJzw19syl1VxJS3+wVCvV8ZCfMPQcVkA1fhg9se2wsCqV4OsEEGfjzN8HG
-	rny8d8iOkVGvpHVUS1rhplsgmHHg5zSsC65+Ws88P0g4BqTQtXOEHtF+4zhVxJAfjyPtcV
-	+FlQ1E9O4OwhjHFJuGDVi05sy9NBPaA=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3ab1cbd9 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Mon, 30 Sep 2024 19:17:11 +0000 (UTC)
-Date: Mon, 30 Sep 2024 21:17:09 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Linux 6.12-rc1
-Message-ID: <Zvr5NRtqxsIwmfeK@zx2c4.com>
-References: <CAHk-=wiwVOCZsC6a4dLdb1UjL2fS_CnLNjrPL0XGFbDd9C26Cg@mail.gmail.com>
- <ZvqkfSM_8sxTSzz_@zx2c4.com>
- <CAHk-=wjm1jLqnMnLar9XRDAwDTHcG7e9+cFhq2bgz4Q+5yysKg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=blkTif4rX/ZLtx6wIne5XJNx0EeNUdgoZ5KyQlD0XLNVHgMDZfLbz2//buXxnr7Xpj8ezk3/1exjk/1IOYq8KIqsSE/i8tQl2H1/azPEtdygJZ1ynBsNVAfa68LPvNN6Ec1sFJ0Onv1KaC4bcvdzGiRsUzH7GCS3mGtNG3trmwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nNPgnn0T; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=qWKbZygsjr2RtwDX9i0gKQDPrH5sR1FZSuwO6Sb/yHg=; b=nN
+	Pgnn0T2J6vaMpt3LVADX2ibEAgbSWUP92VRtTwiNb88MiU/nH3G/GW1wKD1Ff3MGcwu1El2EOjc40
+	3O9c3kwVDGDkhWy8IVAnartJoavH1AwXBTtTqkT3DunEMyVjZ/EombOb+NiXY03KmrZcYdpxBu0L3
+	SoYbrAseQGz1Si0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svLtx-008ekj-TD; Mon, 30 Sep 2024 21:17:45 +0200
+Date: Mon, 30 Sep 2024 21:17:45 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vitalii Mordan <mordan@ispras.ru>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org, Fedor Pchelkin <pchelkin@ispras.ru>,
+	Alexey Khoroshilov <khoroshilov@ispras.ru>,
+	Vadim Mutilin <mutilin@ispras.ru>
+Subject: Re: [PATCH net-next] stmmac: dwmac-intel-plat: remove redundant
+ check dwmac->data in probe
+Message-ID: <ea008e5e-be22-4a59-9243-682be313fea2@lunn.ch>
+References: <20240930183926.2112546-1-mordan@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,29 +68,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjm1jLqnMnLar9XRDAwDTHcG7e9+cFhq2bgz4Q+5yysKg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240930183926.2112546-1-mordan@ispras.ru>
 
-On Mon, Sep 30, 2024 at 10:22:28AM -0700, Linus Torvalds wrote:
-> On Mon, 30 Sept 2024 at 06:15, Jason A. Donenfeld <Jason@zx2c4.com> wrote:
-> >
-> > Pushed 5.12-rc1 too? Odd.
-> 
-> It's an old tag that was renamed to v5.12-rc1-dontuse when it was
-> found to have some particularly nasty problems:
-> 
->   https://lore.kernel.org/all/CAHk-=wjnzdLSP3oDxhf9eMTYo7GF-QjaNLBUH1Zk3c4A7X75YA@mail.gmail.com/
-> 
-> For random reasons (read: I had an old repo) it re-materialized under
-> its old name, and because it was *so* co-incidental in naming (getting
-> pushed out at the same time as 6.12-rc1), I felt it was too good to
-> fix up again.
-> 
-> And if somebody goes and randomly starts using v5.12-rc1 (from
-> February 2021) and hits the swap problem, I can only go "why did you
-> do that?"
+On Mon, Sep 30, 2024 at 09:39:26PM +0300, Vitalii Mordan wrote:
+> The driver’s compatibility with devices is confirmed earlier in
+> platform_match(). Since reaching probe means the device is valid,
+> the extra check can be removed to simplify the code.
+>  
+>  	dwmac->data = device_get_match_data(&pdev->dev);
+> -	if (dwmac->data) {
 
-Ah, I remember that ordeal. I suppose you've been testing out rc1 on
-some different hardware and so old repos are found hither and thither.
+You say this cannot fail, but my guess is, there are static code
+analysers which cannot determine it cannot fail. As a result, those
+developers blindly following bots are going to want to test the return
+value from device_get_match_data().
 
-Jason
+You might want to prevent such patches by adding a comment:
+
+/* This cannot fail because....
+
+   Andrew
 
