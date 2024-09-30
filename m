@@ -1,142 +1,146 @@
-Return-Path: <linux-kernel+bounces-344292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D4498A7E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:55:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EAD98A7E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D279E1C237BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EAB1C23775
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D73194C9E;
-	Mon, 30 Sep 2024 14:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C90A31922D7;
+	Mon, 30 Sep 2024 14:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYrk5QmY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7FizeEN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C35194ACB;
-	Mon, 30 Sep 2024 14:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9911917F2
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727708017; cv=none; b=Txv1CMPJ76WYiSTrL9X+TUzSFaq1N604l8alLJ7TV1y78Jn+efvW3jip0g86AAmmX4yyqjNkOhmVpp820Frc4dadrXHxIEXk1VQa4BqtxtRyn+8oZblEwEb2jBMcfbdbR1jWiKs3z6Fskx458PO0zmRbK3GcQV/1lxu4uz23y9M=
+	t=1727708072; cv=none; b=OvQ+TngqFzzRBNtB5/eJGdzdXR8oM5jjRfTgpaChwCE226upYc2GXCNTK2BVQx96WZOyaN2v+ysFPC0zBpbXr/rDNj69rb7g3qlPorU4aqVsOuwxjaK+72kc5PsYPi+VMfgeDiHhgxp7lB9CcU3gGN855RceKfXzSVC7gWPzUvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727708017; c=relaxed/simple;
-	bh=H5EV1RRodrsbm5ea8UJTy16lJkA2S9iZk7mZhOSIW6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eS1/hgtJZkrKRHGziEqpWTsfkdpjFz39X0qEQzQTGMOJnESNXvbA9p7KBHC0l+PvNlNudgBY1lMWl1LcsAWIV6ESng+q1u+Pj1F8Nza3OEgH9qI+4n4KawsKg+IPlyxWRtuRyPhMTMKh/wm4fYfMVxIBB/L13BJ/yEGeDAoxSt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rYrk5QmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6125DC4CEC7;
-	Mon, 30 Sep 2024 14:53:31 +0000 (UTC)
+	s=arc-20240116; t=1727708072; c=relaxed/simple;
+	bh=/JWk2c3RJLiKkNr4uJaQal5/fmki64lMPPToa0iog7E=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=R2UoY3bAGOXLEEjH/NlWOW6bPKEfyJf551I8zQ5X/Hg7tsUuvlwuaam1e4exhj8XH8/WEAnC5Xr0bKw2byR7Ogmqt73KgAo4m+69ItydSGZ+mVZH+CMnQJi9IIuQvniu4OuBqgpHtt3sZETfM8GSg1AaSzU43N20Wjnl/DEL5TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7FizeEN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3935C4CECF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727708016;
-	bh=H5EV1RRodrsbm5ea8UJTy16lJkA2S9iZk7mZhOSIW6c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rYrk5QmYKX+nqa2DOTziaQLHU1l3FYbC+Gm6UhuDJc2L/qbKfCagYtQCo1nvqnCIW
-	 HYb7iCyDTwGSHQlhehyoUClmn4xYvkFVQvWndELKO8Qq+DLn5g0cKGD0SbVvnzDNdH
-	 zjhjFHhty2JNVl5PXDQnSX5QjB4PxjjJ3fuJtB0Evn7njpZfEYX1TqJizIpR2cp8dX
-	 6gwkYuV1bn84Rg7RgiSBibektX8xbfWyAfSN0J5n7hjvkRpJ1sN/4rgmVSA5dpcwYk
-	 bUmFeDjHugx51UhhkxPdGo+h5/NC5h/t8v5OBef7ABGcLad9vS5AJHiibwBsphpZdp
-	 fnrah/znakWnw==
-Date: Mon, 30 Sep 2024 15:53:29 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Aoba K <nExp_0x17@outlook.com>
-Cc: "charlie@rivosinc.com" <charlie@rivosinc.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>,
-	"andy.chiu@sifive.com" <andy.chiu@sifive.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"conor.dooley@microchip.com" <conor.dooley@microchip.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"evan@rivosinc.com" <evan@rivosinc.com>,
-	"guoren@kernel.org" <guoren@kernel.org>,
-	"heiko@sntech.de" <heiko@sntech.de>,
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
-	"jrtc27@jrtc27.com" <jrtc27@jrtc27.com>,
-	"jszhang@kernel.org" <jszhang@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"samuel.holland@sifive.com" <samuel.holland@sifive.com>,
-	"samuel@sholland.org" <samuel@sholland.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"wens@csie.org" <wens@csie.org>
-Subject: Re: [PATCH v10 00/14] riscv: Add support for xtheadvector
-Message-ID: <20240930-reenact-stratus-9d42d7439df4@spud>
-References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
- <a1f41f92-6bd0-48b6-a931-e7ad7aba18cc@outlook.com>
+	s=k20201202; t=1727708071;
+	bh=/JWk2c3RJLiKkNr4uJaQal5/fmki64lMPPToa0iog7E=;
+	h=From:Date:Subject:To:Cc:From;
+	b=b7FizeENg77MKbom+2zTJGU4IpbLDyRzueqz1pgn11Erca+an93XR6UMqbg2hXPlZ
+	 j0esz+ZmB/8TGmA5iy2uWPppf6EooooreE9qFvYxdz8zBu9PJPEhtcDrklPRD0yizi
+	 1K55z5c38G5J+v5DHSSeQ02nMehByrHdTh79CLJFLOgvioQthmDjuj9dPkHvHQkqHr
+	 WhlXzvfSjmBWC5GNYgCApK6AjkqmXS/WtY2ItGap7lcxk3bxIYQgwX/M1JYdcUsGDZ
+	 /9GgOnVUrt2BZtw4RPS3EuckC31dSuKYFIZfFfZEWgBYP0KihLD2aeFibHwTi2Ho0Z
+	 koTKf/908iLww==
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cb37b34a87so31948246d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:54:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXwHt18VQmUgy6dOW1y1HSVGEEk27gMW4JZ0+fEkBpR/9MC8OXtjBuZ9mXs8t6ABhLZ0V9puW2wkhR2b1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWAuxLFc9BOxnqBOdLL8M3C20wq0nh7PtU93xcXK+nHrSmd1+8
+	XF6SP406iTLMju3+y30J2MwGDZV2iLabF419vncOmL+/nCP3Oz5Wo1NQDut+EXwAieC5t10idOl
+	VE//g8/4qcILSIzuTdaNUYdC1t1E=
+X-Google-Smtp-Source: AGHT+IH/4DZQp0uzTsMI40zAn+1n2UViUSzRuwG37vCHfnoR2MSpWkb0k5JZSIt5ebWGcwB4s3FMVmIQSsDEap60QEA=
+X-Received: by 2002:a05:6214:4519:b0:6cb:5f8a:4fda with SMTP id
+ 6a1803df08f44-6cb5f8a54e0mr66594666d6.6.1727708070837; Mon, 30 Sep 2024
+ 07:54:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Hamb1NyozR0uOSVn"
-Content-Disposition: inline
-In-Reply-To: <a1f41f92-6bd0-48b6-a931-e7ad7aba18cc@outlook.com>
-
-
---Hamb1NyozR0uOSVn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Date: Mon, 30 Sep 2024 16:54:19 +0200
+X-Gmail-Original-Message-ID: <CAJ+HfNjwqMhAFUvKRsWEAD1BZNC19ouYmJ9XMNP2HrcyKo6Ltg@mail.gmail.com>
+Message-ID: <CAJ+HfNjwqMhAFUvKRsWEAD1BZNC19ouYmJ9XMNP2HrcyKo6Ltg@mail.gmail.com>
+Subject: Github RISC-V CI (BoF follow-up)
+To: Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	linux-riscv <linux-riscv@lists.infradead.org>
+Cc: Charlie Jenkins <charlie@rivosinc.com>, Conor Dooley <conor@kernel.org>, 
+	Samuel Holland <samuel.holland@sifive.com>, 
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Drew Fustini <dfustini@tenstorrent.com>, Arnd Bergmann <arnd@arndb.de>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Sep 29, 2024 at 12:44:07PM +0000, Aoba K wrote:
-> Hello Charlie,
->=20
-> I've been working on bringing up the Sipeed Lichee RV Dock
-> (which also uses the D1 SoC) with the kernel patches you provided.
-> The patches applied cleanly to Palmer's for-next branch,
-> but I've encountered a couple of issues:
->=20
-> 1. Skiffos Compilation Error during the compilation process of `cgo`:
-> `unknown relocation type 17; compiled without -fpic?`
-> Unfortunately, I closed the terminal before saving the full log,
-> so I don't have the complete details, but the result should be reproducib=
-le.
-> While this should be a SkiffOS issue, mention it in case SkiffOS is the m=
-ethod
-> that you mentioned for bringing up the device.
->=20
-> 2. Image Building with sehraf/riscv-arch-image-builder:
-> After building the image, the device failed to start at an early stage.
-> I suspect this may be related to incorrect RAM size detection,
-> as the board only has 512MB of RAM.
-> Interestingly, the vendor image reports 1GB, and the Sipeed website also =
-states
-> that the Dock has 1GB, despite there being no extra memory bank present.
->=20
-> You can find the boot log here: https://fars.ee/bdYk.log
->=20
-> Any help would be appreciated, and big thanks to your work
-> to make the efficient part of this board to work (again)!
+Hi,
 
-The log you posted at https://fars.ee/XFzR appears to be using the
-devicetree of a Nezha not the Lichee RV Dock. Why are you doing that,
-when the Lichee RV Dock is supported in the kernel already?
+Following up on the discussion around CI that came up during Plumbers
+RISC-V BoF.
 
-Cheers,
-Conor.
+TL;DR: There's a CI running builds/and tests for RISC-V. Check out [4],
+if you're a nice person, try to fix what's broken.
 
---Hamb1NyozR0uOSVn
-Content-Type: application/pgp-signature; name="signature.asc"
+Long version: As most of you know there are a number of Linux kernel
+CIs out there, that build/test some areas of RISC-V. kernelci does
+some, and Linaro LKFT some.
 
------BEGIN PGP SIGNATURE-----
+Yet another CI runs in parallel to the RISC-V Patchwork CI on Github,
+running on the RISE sponsored runners [1].
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvq7aQAKCRB4tDGHoIJi
-0iYzAP42CtXDZpcWhRrFXf/pP66arAHe2Q5uoLqijR0QtCN9HQEApur4oRSzITjL
-SgCrOuckDuHJRCTBo9J9wNnIVrJC/AQ=
-=iwxp
------END PGP SIGNATURE-----
+A major piece missing is a summary/dashboard page. That's still in the
+planning phase. I'll be looking into what the kernel CI folks are
+offering in that space (KCIDB).
 
---Hamb1NyozR0uOSVn--
+The CI pulls in a couple of branches, e.g. Linus' master, Palmer's
+staging branches, and more. All branches are listed via the PRs here
+[4].
+
+There are two workflows ci-series (build and boot), and for bpf,
+bpf-next, and Linus' master ci-kselftest is running as an experiment.
+I'll be adding kselftest to the other branches, and a couple of other
+suites once we get more build machines, and the tests are somewhat
+more stable. ;-)
+
+All the builds are cross compiled, and the tests are performed on
+qemu. It's all run in a Docker container [3], that can be pulled with:
+
+  $ docker pull ghcr.io/linux-riscv/pw-builder:latest
+
+The Github CI scripts (again, shared with Patchwork) reside here [2].
+
+Each time a tree moves, a new build is performed. Sometimes, the tree
+moves before the job is done. In that case it's cancelled, and re-run
+on the new head.
+
+Build/boot: A 6.12-rc1 run is here [6]. The log artifacts are at the bottom=
+.
+Click "build-series", and expand "Run checks" for more details (or
+checkout the logs).
+
+Kselftest: A 6.12-rc1 run is here [5]. The kernel configuration is
+defconfig+kselftest-merge (plus some additional bandaid patches that
+haven't made it to mainline [7]. The test suites include everything
+that's explicitly in TARGETS (top kselftest Makefile), and that has
+cross compile support (e.g. NOT sched_ext yet ;-)).
+
+Download the logs from [5], and then:
+
+  $ egrep -a '^TEST|^not|Kernel panic' *__kselftest{,-bpf,-net,-ftrace}.log
+
+to view the failed tests. On 6.12-rc1 the ftrace suite panics! :-P
+
+It's far from perfect, and we're still not running enough (AFAIK) tests on
+real HW, but it's something that's available now. Patches are *welcome*
+X-D.
+
+
+Bj=C3=B6rn
+
+[1] https://github.com/linux-riscv/linux-riscv
+[2] https://github.com/linux-riscv/github-ci/
+[3] https://github.com/linux-riscv/docker
+[4] https://github.com/linux-riscv/linux-riscv/pulls?q=3Dis%3Apr+is%3Aopen+=
+test%5D
+[5] https://github.com/linux-riscv/linux-riscv/actions/runs/11096387863
+[6] https://github.com/linux-riscv/linux-riscv/actions/runs/11096387858
+[7] https://github.com/linux-riscv/github-ci/tree/main/.github/scripts/seri=
+es/patches
 
