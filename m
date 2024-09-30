@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-344489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6276498AA5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:55:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1A198AA60
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 18:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCF05283EED
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:55:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF5B21C216D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8841D194096;
-	Mon, 30 Sep 2024 16:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQwjoA9e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C92193418;
+	Mon, 30 Sep 2024 16:56:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78D154765;
-	Mon, 30 Sep 2024 16:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F33192B73
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 16:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727715322; cv=none; b=WBbv2OB1IpIAMCQLOr+9lTe4b853c6kD7WE30a0mjPhasMgOKUHThelH5DJgUOju2sRaiaapSEmNMgCoLEkn1kmF/6J8McwmdmsWNVz7cPpFL8BTSDA0TpOtqugeVXSQEk+C+K6CmDbgNjnySN9w0a8Yvmhodozsi3KLSS3Cczk=
+	t=1727715364; cv=none; b=uRLN82ijuFp2PS7zb2cK4KOjzz13VZhlmbf8Uzxk53wXUXw7qRw6xaKicXSid7crCrRQs+ZVVX4N5jolhdMKsJ0/E2s6yuvOeQ59GTr8BX6wu5EVw9G2PH/SNbTUrazGTrRy2deae2+okTkEINSHUTjrtmchr6Zx/TAupXXWrSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727715322; c=relaxed/simple;
-	bh=lKkKQadWVPapLPl0MlMu2HzP7Z4Ceg67nGL1ywiXY7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=alS/r1ZHwUz8oBVtvIcgYPZ0p98XwzfZkvMRX2ZDmm7I8kTLsCvgRC5ufZeHriAuH8bnAQMZZYPuFkrs6QyqZ+3bGfeobMst71U+1S0LAbq16FvJ6B6R3wvY9DctW9ypBFQZdBEXCrtYogM7jIOUjOCJ1AUusYxkCf8BGkdI9CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQwjoA9e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA4BC4CEC7;
-	Mon, 30 Sep 2024 16:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727715321;
-	bh=lKkKQadWVPapLPl0MlMu2HzP7Z4Ceg67nGL1ywiXY7M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=dQwjoA9eeHBE3fmrsULX3e0egQ8Z/eh4DApr3uilts5DfJ2tZbzQybk/XJfFz+qrc
-	 UIV+G18V2t7XJTbV12A9S/ioPDi62oJK09x0GFfmtEambwbMvSnuG7p2D5ACWnsdWx
-	 c5ui1j8kXaDHHTsAa3UwqyBnhXnRrfZYgwz7eiVszrMH4H+/pBIcUAjNBH0uUMorKf
-	 E8M7C9wYKJQ8/R6dQ4P9A58NqUQ7QNcoB5fGUfa6w2NQ2fOQFpO0Z8NTbpMx+Pk0pJ
-	 HWIhA2qZtSl0unrrEk8Y8ssbsMkImp7bZ+Wme+IfQCNqMH8sxZzux0d8/VT/qF2WdO
-	 4pJOW370UTatg==
-Date: Mon, 30 Sep 2024 11:55:19 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com, lukas@wunner.de, paul.e.luse@intel.com,
-	jing2.liu@intel.com
-Subject: Re: [PATCH V6 0/5] PCIe TPH and cache direct injection support
-Message-ID: <20240930165519.GA179473@bhelgaas>
+	s=arc-20240116; t=1727715364; c=relaxed/simple;
+	bh=FdzFe29bVnueT1SvFySU4LKKY79uu+PoKdU0aZp2hME=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Y9LaPLpHy81CeC2z1j+eUyIl8hXDOf9NEUJdFPcDkFVoPvXlFNXZvs3ZPuIUUYmONmI0jkhzTDQcdOjUAFN0sP6MGv1lz4SC3jRKrwXQYIFkFGMhNpEC94dncW/irXHfu/eNKGazGNp6hYr/+heRKYIdSiebVg+UqAUJoMM8Tbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svJgk-0003Lj-HV; Mon, 30 Sep 2024 18:55:58 +0200
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Date: Mon, 30 Sep 2024 18:55:56 +0200
+Subject: [PATCH] reset: amlogic: Fix small whitespace issue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240927215653.1552411-1-wei.huang2@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240930-reset-align-amlogic-v1-1-f64ed5c4efc1@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIABvY+mYC/x3MQQqAIBBA0avErBtQk6KuEi3EJhswDY0IwrsnL
+ d/i/xcyJaYMU/NCopszx1Ah2wbsboIj5LUalFBajJ3ARJkuNJ5dQHP46NiiXbUYeiu1kgS1PBN
+ t/PzXeSnlAwv2GFZlAAAA
+X-Change-ID: 20240930-reset-align-amlogic-cd4076c1421e
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+X-Mailer: b4 0.15-dev-dedf8
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::54
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Sep 27, 2024 at 04:56:48PM -0500, Wei Huang wrote:
-> Hi All,
-> 
-> TPH (TLP Processing Hints) is a PCIe feature that allows endpoint
-> devices to provide optimization hints for requests that target memory
-> space. These hints, in a format called steering tag (ST), are provided
-> in the requester's TLP headers and allow the system hardware, including
-> the Root Complex, to optimize the utilization of platform resources
-> for the requests.
-> 
-> Upcoming AMD hardware implement a new Cache Injection feature that
-> leverages TPH. Cache Injection allows PCIe endpoints to inject I/O
-> Coherent DMA writes directly into an L2 within the CCX (core complex)
-> closest to the CPU core that will consume it. This technology is aimed
-> at applications requiring high performance and low latency, such as
-> networking and storage applications.
-> 
-> This series introduces generic TPH support in Linux, allowing STs to be
-> retrieved and used by PCIe endpoint drivers as needed. As a
-> demonstration, it includes an example usage in the Broadcom BNXT driver.
-> When running on Broadcom NICs with the appropriate firmware, it shows
-> substantial memory bandwidth savings and better network bandwidth using
-> real-world benchmarks. This solution is vendor-neutral and implemented
-> based on industry standards (PCIe Spec and PCI FW Spec).
-> 
-> V5->V6:
->  * Rebase on top of pci/main (tag: pci-v6.12-changes)
->  * Fix spellings and FIELD_PREP/bnxt.c compilation errors (Simon)
->  * Move tph.c to drivers/pci directory (Lukas)
->  * Remove CONFIG_ACPI dependency (Lukas)
->  * Slightly re-arrange save/restore sequence (Lukas)
+Fix a checkpatch --strict issue:
 
-Thanks, I'll wait for the kernel test robot warnings to be resolved.
+  CHECK: Alignment should match open parenthesis
+  #48: FILE: drivers/reset/amlogic/reset-meson-common.c:48:
+  +static int meson_reset_level(struct reset_controller_dev *rcdev,
+  +			    unsigned long id, bool assert)
 
-In patch 2/5, reword commit logs as imperative mood, e.g.,
-s/X() is added/Add X()/, as you've already done for 1/5 and 3/5.
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ drivers/reset/amlogic/reset-meson-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe specify the ACPI _DSM name?  This would help users know whether
-their system can use this, or help them request that a vendor
-implement the _DSM.
+diff --git a/drivers/reset/amlogic/reset-meson-common.c b/drivers/reset/amlogic/reset-meson-common.c
+index a7b1b250a64dbf94530d06138f4270fff8f56d7a..38a767c06fc71b6dd8a998958b20592499db3c8a 100644
+--- a/drivers/reset/amlogic/reset-meson-common.c
++++ b/drivers/reset/amlogic/reset-meson-common.c
+@@ -45,7 +45,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+ }
+ 
+ static int meson_reset_level(struct reset_controller_dev *rcdev,
+-			    unsigned long id, bool assert)
++			     unsigned long id, bool assert)
+ {
+ 	struct meson_reset *data =
+ 		container_of(rcdev, struct meson_reset, rcdev);
 
-In patch 4/5, s/sustancial/substantial/.  I guess the firmware you
-refer to here means the system firmware that would provide the _DSM
-required for this to work, i.e., not firmware on the NIC itself?
-Would be helpful for users to have a hint as to how to tell whether to
-expect a benefit on their system.
+---
+base-commit: 5b93105afcdcdb94d654f253850c5432555b283e
+change-id: 20240930-reset-align-amlogic-cd4076c1421e
 
-The 5/5 commit log could say what the patch *does*, not what *could*
-be done (the subject does say what the patch does, but it's nice if
-it's in the commit log as well so it's complete by itself).  Also, a
-hint that using the steering tag helps direct DMA writes to a cache
-close to the CPU expected to consume it might be helpful to motivate
-the patch.
+Best regards,
+-- 
+Philipp Zabel <p.zabel@pengutronix.de>
 
-Bjorn
 
