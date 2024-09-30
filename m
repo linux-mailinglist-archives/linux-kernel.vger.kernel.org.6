@@ -1,121 +1,146 @@
-Return-Path: <linux-kernel+bounces-344695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A449898ACE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7390598ACC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 21:25:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FA9E1F22689
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:28:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A57A31C210A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 19:25:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94A719D082;
-	Mon, 30 Sep 2024 19:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBA7199E88;
+	Mon, 30 Sep 2024 19:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="WVM635kA"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="pl7GyzWA"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CC619ABC3;
-	Mon, 30 Sep 2024 19:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DDB183CC5;
+	Mon, 30 Sep 2024 19:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727724396; cv=none; b=VWhVdT+a1uTDtA//WDmjDXvvkccaKD0lIV4rbCBy8oByAl2I6wbZ79ppOKuPvW7vxmgZ1fd8oczK96tvtrveSpjTEqBGIjA1GnHKyPmATkqBtwIxkbW8T8TuZBKRKCE503NnsXG8k8ozgbigAMAwOaiFbfiq48s8l3t/a/0nmDs=
+	t=1727724350; cv=none; b=NqdZ/ynnlTXGa677tX+ukkg7u6MoW2rBIE40dFWZetGNoOpXwmpf+Pto7TRrI1V73ssjXm95o7/6k5TFq3ErcDXwp7uKdG2cuC1ANp4EmmGGnc1SNYPgTdhYrw3gqCefFb66tb2Q/vZK9P95SEvToDwZZ0PCJ9+Z5+fgyD4HEyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727724396; c=relaxed/simple;
-	bh=iV8BNOEUAlVnHaxKIKuldZvcuyZQrIw4r05iL6v8clg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yco9UsUSmEu5qLJL7cyKjbQOVbId1QWX+exMYEndyghxMUsYtFCBnCEoJxC5vnWem0DhaEn8m0nUSnRhNsjFGt+deDnWZfiRwms19R12X/03E61ph3vZZy/+YPMA4Rv1NG3IHxawbzKOLbczXcAN0fw9vFZ6C3PQf1WcYO8l8Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=WVM635kA; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1727724393;
-	bh=iV8BNOEUAlVnHaxKIKuldZvcuyZQrIw4r05iL6v8clg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WVM635kA5GrnUEYPnE4b4+Us/P2YAOSfJs6BF99O+udp2iUMhyhxH8lDaujuFxjwZ
-	 MdYoMDnDhSjHKgmMTnFIk54h0LoGPuyfVhBbg3wSWBqc2Pn2hKfHO7QQwGgRvAcai3
-	 vUOe80mFpG4PZLH3pORXkvQ00Gqe5RkuOToRLmgEo/mbY+D2xTklpXOBHym/yvsiaa
-	 dCM1WCWQLJSlBj9aLPK6DT1do1+zVI9qJbWfIay5kWNOQKiVpyy9wBebBZJtJ/Pj5D
-	 76OWvxNyynMQfPOGhgL5s+IBL374uTAiSXD5DzibxwlC4xJJLbrG+TOMRvjQWN/fIF
-	 Zugd00u+k6NZg==
-Received: from thinkos.internal.efficios.com (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XHWK52jRwzQgJ;
-	Mon, 30 Sep 2024 15:26:33 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Yonghong Song <yhs@fb.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	bpf@vger.kernel.org,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Michael Jeanson <mjeanson@efficios.com>
-Subject: [PATCH resend 8/8] tracing/bpf: Add might_fault check to syscall probes
-Date: Mon, 30 Sep 2024 15:23:57 -0400
-Message-Id: <20240930192357.1154417-9-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240930192357.1154417-1-mathieu.desnoyers@efficios.com>
-References: <20240930192357.1154417-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1727724350; c=relaxed/simple;
+	bh=m2InjGm6QM5pyYnJxFHj7qzzzbLfudPdQ2oG3fwdpAI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=lyXqwRjYsX2Sq14UxI1UpOgm3PymCuJd7BqVcdDB8sTASkLw0HwUR9QlstvL9qzGYsAlGMcxcpgj84GRcvfZiXCifVXC//VipkHrD0pFnxlfeFTMOJuBjmiLGbWma3zCUrJJI/EB9mwLWINLOWRBkdo9irYEheWWDrZSaNRfMCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=pl7GyzWA; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1727724344;
+	bh=/oqYHO23CtlMs38L/l795oaos4aeK2PzyY47DMjMR0g=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=pl7GyzWA3rCcYvPx25TKfcekTSb/0hWU288mSYTsN0c4t6kbB4raN4nCg69qC6Q+K
+	 FtYSNwSGnaBefcatTqxZdPQrmZoE9LdVprrzZ44yv9MipNZ7w5ULsiFRDzasOHmQn2
+	 TpljjdeQIHBXsN8it8IH2fsPeiuUC3PRDpvpbPt8=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+Date: Mon, 30 Sep 2024 21:25:22 +0200
+Cc: Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Chris Mason <clm@meta.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <295BE120-8BF4-41AE-A506-3D6B10965F2B@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <Zud1EhTnoWIRFPa/@dread.disaster.area>
+ <CAHk-=wgY-PVaVRBHem2qGnzpAQJheDOWKpqsteQxbRop6ey+fQ@mail.gmail.com>
+ <74cceb67-2e71-455f-a4d4-6c5185ef775b@meta.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <CAHk-=wj6YRm2fpYHjZxNfKCC_N+X=T=ay+69g7tJ2cnziYT8=g@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 
-Add a might_fault() check to validate that the bpf sys_enter/sys_exit
-probe callbacks are indeed called from a context where page faults can
-be handled.
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Tested-by: Andrii Nakryiko <andrii@kernel.org> # BPF parts
-Cc: Michael Jeanson <mjeanson@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Paul E. McKenney <paulmck@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org
-Cc: Joel Fernandes <joel@joelfernandes.org>
----
- include/trace/bpf_probe.h | 1 +
- 1 file changed, 1 insertion(+)
+> On 30. Sep 2024, at 20:46, Linus Torvalds =
+<torvalds@linux-foundation.org> wrote:
+>=20
+> On Mon, 30 Sept 2024 at 10:35, Christian Theune <ct@flyingcircus.io> =
+wrote:
+>>=20
+>> Sep 27 00:51:20 <redactedhostname>13 kernel:  =
+folio_wait_bit_common+0x13f/0x340
+>> Sep 27 00:51:20 <redactedhostname>13 kernel:  =
+folio_wait_writeback+0x2b/0x80
+>=20
+> Gaah. Every single case you point to is that folio_wait_writeback() =
+case.
+>=20
+> And this might be an old old annoyance.
 
-diff --git a/include/trace/bpf_probe.h b/include/trace/bpf_probe.h
-index 211b98d45fc6..099df5c3e38a 100644
---- a/include/trace/bpf_probe.h
-+++ b/include/trace/bpf_probe.h
-@@ -57,6 +57,7 @@ __bpf_trace_##call(void *__data, proto)					\
- static notrace void							\
- __bpf_trace_##call(void *__data, proto)					\
- {									\
-+	might_fault();							\
- 	guard(preempt_notrace)();					\
- 	CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));	\
- }
--- 
-2.39.2
+I=E2=80=99m being told that I=E2=80=99m somewhat of a truffle pig for =
+dirty code =E2=80=A6 how long ago does =E2=80=9Cold old=E2=80=9D refer =
+to, btw?
+
+> [=E2=80=A6]
+> IOW, this code is known-broken and might have extreme unfairness
+> issues (although I had blissfully forgotten about it), because while
+> the actual writeback *bit* itself is set and cleared atomically, the
+> wakeup for the bit is asynchronous and can be delayed almost
+> arbitrarily, so you can get basically spurious wakeups that were from
+> a previous bit clear.
+
+I wonder whether the extreme unfairness gets exacerbated when in a =
+cgroup throttled context =E2=80=A6 It=E2=80=99s a limited number of =
+workloads we=20
+have seen this with, some of which are parallelized and others aren=E2=80=99=
+t. (and I guess non-parallelized code shouldn=E2=80=99t suffer much from =
+this?)
+
+Maybe I can reproduce this more easily and  ...
+
+> So the code here is questionable, and might cause some issues, but the
+> starvation of folio_wait_writeback() can't explain _all_ the cases you
+> see.
+
+=E2=80=A6 also get you more data and dig for maybe more cases more =
+systematically.
+Anything particular you=E2=80=99d like me to look for? Any specific =
+additional data
+points that would help?
+
+We=E2=80=99re going to keep with 6.11 in staging and avoid rolling it =
+out to the production machines for now.
+
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
 
