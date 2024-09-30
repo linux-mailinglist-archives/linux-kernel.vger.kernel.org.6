@@ -1,208 +1,120 @@
-Return-Path: <linux-kernel+bounces-344972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FD298B0CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158E198B0CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD70E1C2121F
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0EB21A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8F188CCF;
-	Mon, 30 Sep 2024 23:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE0B191F6B;
+	Mon, 30 Sep 2024 23:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATpgOP26"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWvbYtwE"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CF35339F;
-	Mon, 30 Sep 2024 23:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83359189525;
+	Mon, 30 Sep 2024 23:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727738599; cv=none; b=CV9zSg2ZHZUhXarxJ6dp/ycY4ceMg2qTZWS0E96xG3+m2bqIbqUkwJl3T/3vYacsYz7NIcT1TQ0PsdLGxaDahvWyJeqWCIYb8kN9Dobt64yBg/5Ai4iYZL/yZr8U4uK5GlUlyLW3EUU4yDU0+wbuq0lBViLNRtd/81MQUktRTMA=
+	t=1727738730; cv=none; b=dOVsTGRaM5Vz+Jh6/3Bf4crK/PyrTAizR3RlTQsa0iMurNhFK7nc1GxzmWl1futgagD+Ys0lqAXwPTRaF9WvLV1MA1lCiRegG1Om8divSRsTkXPAVJ/ob6XXxDmmxCCs2qIZP7IyhZGhrZZ+2IgChuUKzcsTxfSFe3UcOkMEVc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727738599; c=relaxed/simple;
-	bh=Vr89rIgJwhdKHBCHavWBPOdILEWOov+Fgj6ueA64TzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdiUanUo6IDrlIhBdadJfU/9lPUKPzfT1YxBfnpmOZVt4+1rzCBfbzDMh52jPymVsv5bsetZ9Ko3khFmR4+zh8BlT74IRD3CEWeET+akIEH9if+tfpjDAvyhYc5BcjG2UttHWfixD328sXaYUoAmy9oBSo1+hbhAKdHysHYRk9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATpgOP26; arc=none smtp.client-ip=209.85.160.173
+	s=arc-20240116; t=1727738730; c=relaxed/simple;
+	bh=vdadp3w0ZndLd/AU8pPOP+RMAlcwpwoNKHgB1DPUHVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=THCYxZ3VKt9PMEUX/ZL347cr7vzqYuinK8e45XZRGf6N2MuCWkvRhHgPh8UVaSufpirLf+8HjT8nShxmQ199e3keQjvOjVcuKfkS8qQwTdrXrxMaWvPTMqx6Jtd8359uHH5wgkqBzDWGRL89QrY9LvwTe75IMkgNc8j2lomlkHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWvbYtwE; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4582fb3822eso37031491cf.1;
-        Mon, 30 Sep 2024 16:23:17 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b0b5cdb57so38976405ad.1;
+        Mon, 30 Sep 2024 16:25:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727738596; x=1728343396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727738728; x=1728343528; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8UVGSWITSIR95/PDO4OF2+68R+Stktvi6UpDwVl2BVg=;
-        b=ATpgOP26+UGCwnyLdeQKP8agBpc5IPv48Mhyg7Ihw6uIM/s8Tm4DurasQeGX2gePNN
-         B/jVwU7U2gYkb4Wp53oY/2Wa1AbQeZDK4heZCSfekx8f9+icJqrIfzQDjVfI8+rx67KP
-         hvRjYFB0i+1GaDMJpDHVI0P6iB2/eIBwSLI64V6GylDwulaiPhheR8YGJi6m65Amq0rc
-         Ztxy97+Ter0TsxaDiCXNZRF0so1FcYKpFOSvNjIFmMn7CMGGnd6hN5r3sS6KzhT1OyoE
-         fv/9PVsdmN5OReIKX7xpQBeCKCodvw6eYzmkTd9yFToyZ3J0ZTGVJ32QznUKbCZuuqHs
-         6afw==
+        bh=b2l/INc1G6hGl42jJZMjqWTMmdh1MqpMdLpE6m9LxGY=;
+        b=GWvbYtwEJBIQeT4wEXgNxOYPQjFu205rybFTA5o7bdFlZuqhh8YN1SflGGSe+u+9il
+         5IpqpHdoKnA72M8eJkmlpKhi2SP62LIaXAJlLG9JQuEX35RY2mfC62LhGpVH1WH9RooZ
+         DjqQr56aMhcbEb5M0ex/hKNVKf1t3kaG6Pg5dYzW3JNFSrq4LSDshqxSA8ILNRDBkYpm
+         djjRn9QLUvm60qFzFVRDpyctMPax0tBpq2Oj/nxjyKWyoA+41hr4lzyjGf5gh3XD4GeZ
+         1dETVysiIjCcXjV7WgxDxsXHQe2iow08oCBw9Y1q0TsVnTYf/WjVqmKJ3iO5bB15mi51
+         njlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727738596; x=1728343396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1727738728; x=1728343528;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8UVGSWITSIR95/PDO4OF2+68R+Stktvi6UpDwVl2BVg=;
-        b=ESFDqOQcW/L30DctHETMo8Q+WpXknok9mntF8qoiEAA6SN5p8GuaQUbwLce77z0vCR
-         dt9qyfYxRegrzGNoXA7odPzNKE1uoXECf/sZMoiAUZFM211j8LZYsykZAOl9O1ga6j5H
-         kDLgI2mbhH9Jll/eDrmbqWedFU3hNtq1ZlHu/rMMMjN6I2v2G4UkVUP5sl/IAzW7MyrJ
-         +Ts5YBYHXtrm/xt3aYmpSkW9zQ5oZ1OBB8Rdm7Xyz/hEq/VNnbJ/qnFlLQpIw7nzuH35
-         LAsgloC/Q10/DQLLyeLXdrgaeJHw831ZfykxOnOmuQAUq90nnqa9t6de+LUDvESHyBZo
-         rIKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVu0mVBXpSVtNvwEDOfwzjPEnYIK3+ppyyT7UqnCLTMi/oZPtMc5SY02BBs/3psU+2G9FsQDmhOgcI/r+A=@vger.kernel.org, AJvYcCX5qVGTIK2kPbU53glF/amviy+HMDa8OW3+gWL9NK4mA4XMiMy9j7NHNQ4WtjswBUEYUDvS9Pztjur1TsO8u9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj21Rc+1dAY91tQmKyt+yaxqsdwnAvS3LumCDFdn62bNNpQA/f
-	mGLbvJSVFlshL/Jw34RmTedqhbkzXChazGG2NzF34bjI705mz+J/
-X-Google-Smtp-Source: AGHT+IHLk9u/prpDcCx7RCUfwqcUYKVvZtDiVF2GMtDDfKQKb7imRlJ5dbjw38FVItxhO0xmmnnElQ==
-X-Received: by 2002:a05:622a:199a:b0:458:25ac:cf57 with SMTP id d75a77b69052e-45c9f245076mr196983981cf.33.1727738596150;
-        Mon, 30 Sep 2024 16:23:16 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f2f6e2asm40242521cf.58.2024.09.30.16.23.15
+        bh=b2l/INc1G6hGl42jJZMjqWTMmdh1MqpMdLpE6m9LxGY=;
+        b=r1CjlLwwq3ttXj5pU5kQIthq/PBxf2Cx6QoK9/BJ6NMaPE4vtfA4JGkJbVHwJ/wZCZ
+         M4jFwosmY8Q2ygHUwqYnfUqiJxQjTXXLtKoFX77UfDp2DhdLioD1WNnnRcZMjPC4uoOu
+         r7+2yQjb7ZPqL2RuzjdDmZ/4BDuKQF65zWZ3Ft4LcTATCFdnUuSeCdgNSp6EbZT4/x//
+         yAzllx94kjIQJnbO8RhLOIBT1yNYdbE3pNBL5t76SWkNpmVdL1OModzxCUmIOpAAZzAX
+         4GUA+4bUDJknF1YYpXohewA1rUfQHlzjpbJCqTZ22GFm7zwfFqqnkuTG7eOE9hP1lGSr
+         MFjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQerbanHoU25kvhAWN3T4g0f3bbpG9CknvBo0g+tLd+0pmMM21f/8t999MCoQqAs9FZNecvCm2i/4kwu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOMqbmNU9bqN73veqRz/YpzZg0yiglzR4/yx/1g5Yf6EHdsi9p
+	fwRRr/+x8dFALCQt8K7cChTvUUjnRnY9z23PvL2/4C+D8wdMSW14
+X-Google-Smtp-Source: AGHT+IFxQCnTkI/10QO/SwLIHejO9Ai2n1epW19WOKy3mNuQBfLgXAzzRkOLwniFyBlRx0KPlhl02g==
+X-Received: by 2002:a17:902:c403:b0:207:1845:bc48 with SMTP id d9443c01a7336-20ba9f3023emr15528665ad.30.1727738728377;
+        Mon, 30 Sep 2024 16:25:28 -0700 (PDT)
+Received: from localhost.localdomain (n203-164-232-111.bla21.nsw.optusnet.com.au. [203.164.232.111])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b50423894sm46892245ad.207.2024.09.30.16.25.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 16:23:15 -0700 (PDT)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E63FE1200043;
-	Mon, 30 Sep 2024 19:23:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 30 Sep 2024 19:23:14 -0400
-X-ME-Sender: <xms:4jL7ZgilE5IRyq8QulXO85wJoEFob8Ozk_TRswCaRBRwl4p6gbt8Pw>
-    <xme:4jL7ZpCQ-DNrDS1_b12rVLU9148q1iXp15r6N2KSgXCFswGpjrSdWEENEsmSG--17
-    RajHnIS9hk7GRMqmA>
-X-ME-Received: <xmr:4jL7ZoFF145MdMbDiZsnWrtpPtHfiAbMRgnli8rUhETD9l1Q0Qbex5JFc6E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdduiedgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvve
-    fukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegs
-    ohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnhepjeetff
-    dtgfeuhefghfektddttdegtedvueekteeugefghfehffefueeludeifeevnecuffhomhgr
-    ihhnpeiiuhhlihhptghhrghtrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhrihhnthgrvghoihhtohhgtgesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehgrhgvghhkhheslhhinhhugihfohhunhgurght
-    ihhonhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhg
-    rgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuoh
-    drnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtgho
-    mhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtph
-    htthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:4jL7ZhTq6W9Ja2mXgGHImV5N2Vx1VeoAYQwwCId3ffTrN1m19EUW5Q>
-    <xmx:4jL7Ztxmmi2-6V2cKJB4uK6WnpOY81LQt6D2QnkntOMAveiyRPWA_Q>
-    <xmx:4jL7Zv4P3j5dLv7B5gxISeTKgIpIcfreEAWREzKRFww8FKm26CfZsg>
-    <xmx:4jL7ZqyUsLtuDoYyYTzv5Py7ZFmAlsq8Eo1sDzdIKMyIbF-ulS1gyg>
-    <xmx:4jL7ZhiiAs-bHJvBoZzeHTrVJUvd4D8WxAb-QxcG_1YoXTOW5u9Cl93q>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 30 Sep 2024 19:23:14 -0400 (EDT)
-Date: Mon, 30 Sep 2024 16:22:15 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org,
-	alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
-	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: device: change the from_raw() function
-Message-ID: <Zvsypwsxi4hMAfOT@boqun-archlinux>
-References: <20240930194637.98260-1-trintaeoitogc@gmail.com>
+        Mon, 30 Sep 2024 16:25:28 -0700 (PDT)
+From: Rohan Barar <rohan.barar@gmail.com>
+To: mchehab@kernel.org,
+	hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Rohan Barar <rohan.barar@gmail.com>
+Subject: [PATCH v2] media: cx231xx: Add support for a new 'Dexatek' device (USB ID: 1d19:6108)
+Date: Tue,  1 Oct 2024 09:25:01 +1000
+Message-ID: <20240930232500.1700330-2-rohan.barar@gmail.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20240926235048.283608-2-rohan.barar@gmail.com>
+References: <20240926235048.283608-2-rohan.barar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930194637.98260-1-trintaeoitogc@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 04:46:34PM -0300, Guilherme Giacomo Simoes wrote:
-> The function Device::from_raw() increments a refcount by a call to
-> bindings::get_device(ptr). This can be confused because usually
-> from_raw() functions don't increment a refcount.
-> Hence, rename Device::from_raw() to avoid confuion with other "from_raw"
-> semantics.
-> 
-> The new name of function should be "get_device" to be consistent with
-> the function get_device() already exist in .c files.
-> 
-> This function body also changed, because the `into()` will convert the
-> `&'a Device` into `ARef<Device>` and also call `inc_ref` from the
-> `AlwaysRefCounted` trait implemented for Device.
-> 
-> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+This patch adds support for a Dexatek Technology Ltd Video Grabber (USB ID: 1d19:6108) to the `cx231xx` driver.
 
-This looks really good right now, thanks!
+This device, sold under the name "BAUHN DVD Maker (DK8723)" by ALDI in Australia, is similar to the device with USB ID `1d19:6109`.
 
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+The latter is already supported in the `cx231xx` driver.
 
-> ---
+Both video and audio capture have been tested and confirmed to work after compiling, signing, and loading the patched driver.
 
-^^^ note that this is the '---' that Alice mentioned, next time you
-could put information that is helpful but you don't want to include in
-the commit log here.
+For evidence of the device functioning correctly, refer to: https://github.com/KernelGhost/TapeShift
 
-Regards,
-Boqun
+Signed-off-by: Rohan Barar <rohan.barar@gmail.com>
 
->  rust/kernel/device.rs   | 15 +++------------
->  rust/kernel/firmware.rs |  2 +-
->  2 files changed, 4 insertions(+), 13 deletions(-)
-> 
-> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-> index 851018eef885..c8199ee079ef 100644
-> --- a/rust/kernel/device.rs
-> +++ b/rust/kernel/device.rs
-> @@ -51,18 +51,9 @@ impl Device {
->      ///
->      /// It must also be ensured that `bindings::device::release` can be called from any thread.
->      /// While not officially documented, this should be the case for any `struct device`.
-> -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
-> -        // SAFETY: By the safety requirements, ptr is valid.
-> -        // Initially increase the reference count by one to compensate for the final decrement once
-> -        // this newly created `ARef<Device>` instance is dropped.
-> -        unsafe { bindings::get_device(ptr) };
-> -
-> -        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
-> -        let ptr = ptr.cast::<Self>();
-> -
-> -        // SAFETY: `ptr` is valid by the safety requirements of this function. By the above call to
-> -        // `bindings::get_device` we also own a reference to the underlying `struct device`.
-> -        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
-> +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
-> +        // SAFETY: By the safety requirements ptr is valid
-> +        unsafe { Self::as_ref(ptr) }.into()
->      }
->  
->      /// Obtain the raw `struct device *`.
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index dee5b4b18aec..13a374a5cdb7 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
->  ///
->  /// # fn no_run() -> Result<(), Error> {
->  /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
-> -/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
-> +/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
->  ///
->  /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
->  /// let blob = fw.data();
-> -- 
-> 
-> The motivation from this change was will discussion in:
-> https://rust-for-linux.zulipchat.com/#narrow/stream/291566-Library/topic/Inconsistency.20of.20.60from_raw.60.2E
-> 
-> I would like to thanks for Greg <gregkh@linuxfoundation.org>, Danilo
-> <dakr@kernel.org> and Alice <aliceryhl@google.com> for help me with this
-> patch.
-> 
-> 2.46.2
-> 
+---
+ drivers/media/usb/cx231xx/cx231xx-cards.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/media/usb/cx231xx/cx231xx-cards.c b/drivers/media/usb/cx231xx/cx231xx-cards.c
+index 92efe6c1f..bda729b42 100644
+--- a/drivers/media/usb/cx231xx/cx231xx-cards.c
++++ b/drivers/media/usb/cx231xx/cx231xx-cards.c
+@@ -994,6 +994,8 @@ const unsigned int cx231xx_bcount = ARRAY_SIZE(cx231xx_boards);
+
+ /* table of devices that work with this driver */
+ struct usb_device_id cx231xx_id_table[] = {
++	{USB_DEVICE(0x1D19, 0x6108),
++	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
+ 	{USB_DEVICE(0x1D19, 0x6109),
+ 	.driver_info = CX231XX_BOARD_PV_XCAPTURE_USB},
+ 	{USB_DEVICE(0x0572, 0x5A3C),
+--
+2.46.1
 
