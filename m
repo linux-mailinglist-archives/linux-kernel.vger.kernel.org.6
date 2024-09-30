@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-344994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3479998B105
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:40:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72D098B108
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74E6EB22B87
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31303B23198
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 23:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977661A2633;
-	Mon, 30 Sep 2024 23:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D44451A2560;
+	Mon, 30 Sep 2024 23:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QNSInKTd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPgS2KWI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222881A38C0
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5311A38DF
+	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727739559; cv=none; b=ZyiRjGpxEGCx+3ZvtmR/5A3cQCl66f0gOFJ2k1C0yMpmn7aLLZE3nRiRQRP1X3du3zktNVQASN00ITA8qhBCUed8RsQ2wyzVstJYtICZC9T1kszfAh+UkGaRZAaaWDHC93E+alG8fekXW/e0ILcPFR54YKKNO4CiaEMk2YU0H6c=
+	t=1727739565; cv=none; b=IOn8AzHXuk95wqME7Pdm75ELOVLbw/z/rtAOkrgxSp+wN6gANimINP3+feN3Gcon7wEqhFoQoQf9qX+ceLPPLsqG0Nnt5UrpveCM9Fvu43A7/kdzWCLkjsORWBBRn/1Mz5/GLq5KPk5GQQTvS5A/bQx6eB9Qt6RybOFQTj9jCyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727739559; c=relaxed/simple;
-	bh=pXRKPH27oL3fN6sCROrkZY024F0uvNyQlYCXbl83dIc=;
+	s=arc-20240116; t=1727739565; c=relaxed/simple;
+	bh=I0obSSRkGvNi4rcCDvMtLslcL/UTp1Q3TyltqWPYEis=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hkuGCyfxSpweH4q0VGHAOnr4nLU78/Pk7ZLAsf7xwe3mIdTONpEQuOHkr0+PQPWQOD2vL5ST6ukmUFCg/PNgweL8XBfrk15i/1HMmGuWoNf/p4RwrGPBEYOgfYpeHijsObLKQvIVQgwRWL/WL2w3sAX8qtUeZLXsvoaFb/uEpwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QNSInKTd; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=BglnPOfNrJCnPVNJJUBK1q9pD06mC2xRvVKpo6avtsiqzs3hH4q0m/fuyekhj91POrDdTLoQ79ivhPkrb43gRXJ2DxoP1bLAKyRhnUh47d3JBXL7yt/3aUwQJAdLZ61SOJte5hBJ5eAjuyHhC24QCethjy4XiqZEsKT0bLaBoUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPgS2KWI; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727739557;
+	s=mimecast20190719; t=1727739562;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rNcosQLumm6LvLMU8qHzc4TOTdZH/IRXYAw7EHjI1/s=;
-	b=QNSInKTdPN8tuecboe1Vn31S9+1eBVRvQocCiCeYlhSV1nVq4H82rd8LgiGqfa19uYsPQ/
-	+8ZsBFWjn0ZzR5tGZ1t8d5DbJCofZ0g0ZQxji+NMUrW9E8RZIrvhQNsQxsgti6khFzH3Yy
-	lZfYsbWjnwZbnYdhEWmJnW+TrblMDJQ=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+	bh=ZR+Oy8+dZBZO6+3VRxhqxljsi2SG5GmfYhJRwKT9SBE=;
+	b=cPgS2KWIpuYjMogBGaG2rLjIGYGv3Gt5DxluI1vU7B1e8CqVlkRKptgkz7b1zJo0LXXY+4
+	AeMWusaZyor5FQv+Lg7KzbUkh53U3t/PG90Y8bVPByAbank5wU1Gfnhpv7bMCrprGb7+Eu
+	DS/ld4vr1Bp3czRL9/Hb8EaQ3G1mG6A=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-653--VkizbrXMPaIfd66sLcc4w-1; Mon,
- 30 Sep 2024 19:39:12 -0400
-X-MC-Unique: -VkizbrXMPaIfd66sLcc4w-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-rkaPSSVnPBibG5lQR8OeMA-1; Mon,
+ 30 Sep 2024 19:39:19 -0400
+X-MC-Unique: rkaPSSVnPBibG5lQR8OeMA-1
 Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A33B019560B7;
-	Mon, 30 Sep 2024 23:39:09 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BD146192DE39;
+	Mon, 30 Sep 2024 23:39:16 +0000 (UTC)
 Received: from chopper.redhat.com (unknown [10.22.32.36])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DBBEE3003DEC;
-	Mon, 30 Sep 2024 23:39:05 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A94FB3003DEC;
+	Mon, 30 Sep 2024 23:39:12 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: dri-devel@lists.freedesktop.org,
 	rust-for-linux@vger.kernel.org
@@ -76,9 +76,9 @@ Cc: Asahi Lina <lina@asahilina.net>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [WIP RFC v2 14/35] WIP: rust: drm/kms: Add OpaqueCrtc and OpaqueCrtcState
-Date: Mon, 30 Sep 2024 19:09:57 -0400
-Message-ID: <20240930233257.1189730-15-lyude@redhat.com>
+Subject: [WIP RFC v2 15/35] WIP: rust: drm/kms: Add OpaquePlane and OpaquePlaneState
+Date: Mon, 30 Sep 2024 19:09:58 -0400
+Message-ID: <20240930233257.1189730-16-lyude@redhat.com>
 In-Reply-To: <20240930233257.1189730-1-lyude@redhat.com>
 References: <20240930233257.1189730-1-lyude@redhat.com>
 Precedence: bulk
@@ -90,176 +90,187 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-This is the same thing as OpaqueConnector and OpaqueConnectorState, but for
-CRTCs now.
+Same thing as OpaqueCrtc and OpaqueCrtcState, but for plane states now.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 
 ---
 
 TODO:
-* Add upcast functions
+* Finish adding upcast functions.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- rust/kernel/drm/kms/crtc.rs | 131 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
+ rust/kernel/drm/kms/plane.rs | 143 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 143 insertions(+)
 
-diff --git a/rust/kernel/drm/kms/crtc.rs b/rust/kernel/drm/kms/crtc.rs
-index d84db49948380..1a3c9c448afcc 100644
---- a/rust/kernel/drm/kms/crtc.rs
-+++ b/rust/kernel/drm/kms/crtc.rs
-@@ -234,6 +234,41 @@ pub fn new<'a, 'b: 'a, P, C>(
+diff --git a/rust/kernel/drm/kms/plane.rs b/rust/kernel/drm/kms/plane.rs
+index 3040c4546b121..3ace487316d46 100644
+--- a/rust/kernel/drm/kms/plane.rs
++++ b/rust/kernel/drm/kms/plane.rs
+@@ -217,6 +217,43 @@ pub fn new<'a, 'b: 'a, const FMT_COUNT: usize, const MOD_COUNT: usize>(
          // SAFETY: We don't move anything
          Ok(unsafe { &*Box::into_raw(Pin::into_inner_unchecked(this)) })
      }
 +
-+    /// Attempt to convert an [`OpaqueCrtc`] into a fully qualified [`Crtc`].
++    /// Attempt to convert an [`OpaquePlane`] into a fully qualified [`Plane`].
 +    ///
-+    /// This checks if the given [`OpaqueCrtc`] uses the same [`DriverCrtc`] implementation, and
-+    /// returns the [`OpaqueCrtc`] as a [`Crtc`] object if so.
-+    pub fn try_from_opaque<'a, D>(opaque: &'a OpaqueCrtc<D>) -> Option<&'a Self>
++    /// This checks if the given [`OpaquePlane`] uses the same [`DriverPlane`] implementation, and
++    /// returns the [`OpaquePlane`] as a [`Plane`] object if so.
++    pub fn try_from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> Option<&'a Self>
 +    where
 +        D: KmsDriver,
-+        T: DriverCrtc<Driver = D>
++        T: DriverPlane<Driver = D>
 +    {
-+        // SAFETY: The vtables for a `Crtc` are initialized throughout the lifetime of the object
-+        let funcs = unsafe { (*opaque.crtc.get()).funcs };
++        // SAFETY: The vtables for a `Plane` are initialized by the time that we expose `Plane`
++        // objects to users, and their values are invariant throughout the lifetime of the device.
++        let funcs = unsafe { (*opaque.plane.get()).funcs };
 +
-+        // SAFETY: We only perform this transmutation if the opaque CRTC shares our vtable pointers,
-+        // so the underlying `Crtc` must share our data layout.
++        // SAFETY: We just guaranteed that the opaque plane shares our vtable pointers, which means
++        // it must belong to our `DriverPlane` implementation. As well, all `Plane<DriverPlane>`
++        // objects start with an identical data layout to `OpaquePlane`
 +        ptr::eq(funcs, &T::OPS.funcs).then(|| unsafe { mem::transmute(opaque) })
 +    }
 +
-+    /// Convert a [`OpaqueCrtc`] into its fully qualified [`Crtc`].
++    /// Convert a [`OpaquePlane`] into its fully qualified [`Plane`].
 +    ///
 +    /// This is an infallible version of [`Self::try_from_opaque`]. This function is mainly useful
-+    /// for drivers where only a single [`DriverCrtc`] implementation exists.
++    /// for drivers where only a single [`DriverPlane`] implementation exists.
 +    ///
 +    /// # Panics
 +    ///
-+    /// This function will panic if the underlying CRTC in the provided [`OpaqueCrtc`] does not
-+    /// belong to the same [`DriverCrtc`] implementation.
-+    pub fn from_opaque<'a, D>(opaque: &'a OpaqueCrtc<D>) -> &'a Self
++    /// This function will panic if the underlying [`Plane`] which contains the provided
++    /// [`OpaquePlane`] does not belong to the same [`DriverPlane`] implementation.
++    pub fn from_opaque<'a, D>(opaque: &'a OpaquePlane<D>) -> &'a Self
 +    where
 +        D: KmsDriver,
-+        T: DriverCrtc<Driver = D>
++        T: DriverPlane<Driver = D>
 +    {
 +        Self::try_from_opaque(opaque)
-+            .expect("Passed OpaqueCrtc does not share this DriverCrtc implementation")
++            .expect("Passed OpaquePlane does not share this DriverPlane implementation")
 +    }
  }
  
- /// A trait implemented by any type that acts as a [`struct drm_crtc`] interface.
-@@ -267,6 +302,66 @@ unsafe fn from_raw<'a>(ptr: *mut bindings::drm_crtc) -> &'a Self {
-     }
- }
+ /// A trait implemented by any type that acts as a [`struct drm_plane`] interface.
+@@ -275,6 +312,63 @@ unsafe impl<T: DriverPlane> Send for Plane<T> {}
+ // SAFETY: Our interface is thread-safe.
+ unsafe impl<T: DriverPlane> Sync for Plane<T> {}
  
-+/// A [`struct drm_crtc`] without a known [`DriverCrtc`] implementation.
++/// A [`struct drm_plane`] without a known [`DriverPlane`] implementation.
 +///
-+/// This is mainly for situations where our bindings can't infer the [`DriverCrtc`] implementation
-+/// for a [`struct drm_crtc`] automatically. It is identical to [`Crtc`], except that it does not
++/// This is mainly for situations where our bindings can't infer the [`DriverPlane`] implementation
++/// for a [`struct drm_plane`] automatically. It is identical to [`Plane`], except that it does not
 +/// provide access to the driver's private data.
 +///
-+/// It may be upcasted to a full [`Crtc`] using [`Crtc::from_opaque`] or
-+/// [`Crtc::try_from_opaque`].
++/// It may be upcasted to a full [`Plane`] using [`Plane::from_opaque`] or
++/// [`Plane::try_from_opaque`].
 +///
 +/// # Invariants
 +///
-+/// - `crtc` is initialized for as long as this object is made available to users.
-+/// - The data layout of this structure is equivalent to [`struct drm_crtc`].
++/// - `plane` is initialized for as long as this object is made available to users.
++/// - The data layout of this structure is equivalent to [`struct drm_plane`].
 +///
-+/// [`struct drm_crtc`]: srctree/include/drm/drm_crtc.h
++/// [`struct drm_plane`]: srctree/include/drm/drm_plane.h
 +#[repr(transparent)]
-+pub struct OpaqueCrtc<T: KmsDriver> {
-+    crtc: Opaque<bindings::drm_crtc>,
-+    _p: PhantomData<T>
++pub struct OpaquePlane<T: KmsDriver> {
++    plane: Opaque<bindings::drm_plane>,
++    _p: PhantomData<T>,
 +}
 +
-+impl<T: KmsDriver> Sealed for OpaqueCrtc<T> {}
++impl<T: KmsDriver> Sealed for OpaquePlane<T> {}
 +
-+impl<T: KmsDriver> AsRawCrtc for OpaqueCrtc<T> {
-+    type State = OpaqueCrtcState<T>;
++impl<T: KmsDriver> AsRawPlane for OpaquePlane<T> {
++    type State = OpaquePlaneState<T>;
 +
-+    fn as_raw(&self) -> *mut bindings::drm_crtc {
-+        self.crtc.get()
++    fn as_raw(&self) -> *mut bindings::drm_plane {
++        self.plane.get()
 +    }
 +
-+    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_crtc) -> &'a Self {
-+        // SAFETY: Our data layout starts with `bindings::drm_crtc`
++    unsafe fn from_raw<'a>(ptr: *mut bindings::drm_plane) -> &'a Self {
++        // SAFETY: Our data layout is identical to `bindings::drm_plane`
 +        unsafe { &*ptr.cast() }
 +    }
 +}
 +
-+impl<T: KmsDriver> ModeObject for OpaqueCrtc<T> {
++impl<T: KmsDriver> ModeObject for OpaquePlane<T> {
 +    type Driver = T;
 +
 +    fn drm_dev(&self) -> &Device<Self::Driver> {
-+        // SAFETY: The parent device for a DRM connector will never outlive the connector, and this
-+        // pointer is invariant through the lifetime of the connector
++        // SAFETY: DRM planes exist for as long as the device does, so this pointer is always valid
 +        unsafe { Device::borrow((*self.as_raw()).dev) }
 +    }
 +
 +    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object {
-+        // SAFETY: We don't expose DRM connectors to users before `base` is initialized
-+        unsafe { addr_of_mut!((*self.as_raw()).base) }
++        // SAFETY: We don't expose DRM planes to users before `base` is initialized
++        unsafe { &mut ((*self.as_raw()).base) }
 +    }
 +}
 +
-+// SAFETY: CRTCs are non-refcounted modesetting objects
-+unsafe impl<T: KmsDriver> StaticModeObject for OpaqueCrtc<T> {}
++// SAFETY: Planes do not have a refcount
++unsafe impl<T: KmsDriver> StaticModeObject for OpaquePlane<T> {}
 +
-+// SAFETY: Our CRTC interface is guaranteed to be thread-safe
-+unsafe impl<T: KmsDriver> Send for OpaqueCrtc<T> {}
++// SAFETY: Our plane interfaces are guaranteed to be thread-safe
++unsafe impl<T: KmsDriver> Send for OpaquePlane<T> {}
++unsafe impl<T: KmsDriver> Sync for OpaquePlane<T> {}
 +
-+// SAFETY: Our CRTC interface is guaranteed to be thread-safe
-+unsafe impl<T: KmsDriver> Sync for OpaqueCrtc<T> {}
-+
- unsafe impl Zeroable for bindings::drm_crtc_state { }
- 
- impl<T: DriverCrtcState> Sealed for CrtcState<T> {}
-@@ -400,6 +495,42 @@ unsafe fn from_raw<'a>(ptr: *const bindings::drm_crtc_state) -> &'a Self {
+ /// A trait implemented by any type which can produce a reference to a [`struct drm_plane_state`].
+ ///
+ /// This is implemented internally by DRM.
+@@ -419,6 +513,55 @@ fn deref_mut(&mut self) -> &mut Self::Target {
      }
  }
  
-+/// A [`struct drm_crtc_state`] without a known [`DriverCrtcState`] implementation.
++/// A [`struct drm_plane_state`] without a known [`DriverPlaneState`] implementation.
 +///
-+/// This is mainly for situations where our bindings can't infer the [`DriverCrtcState`]
-+/// implementation for a [`struct drm_crtc_state`] automatically. It is identical to [`Crtc`],
++/// This is mainly for situations where our bindings can't infer the [`DriverPlaneState`]
++/// implementation for a [`struct drm_plane_state`] automatically. It is identical to [`Plane`],
 +/// except that it does not provide access to the driver's private data.
 +///
 +/// TODO: Add upcast functions
 +///
 +/// # Invariants
 +///
++/// - The DRM C API and our interface guarantees that only the user has mutable access to `state`,
++///   up until [`drm_atomic_helper_commit_hw_done`] is called. Therefore, `plane` follows rust's
++///   data aliasing rules and does not need to be behind an [`Opaque`] type.
 +/// - `state` is initialized for as long as this object is exposed to users.
-+/// - The data layout of this type is identical to [`struct drm_crtc_state`].
++/// - The data layout of this structure is identical to [`struct drm_plane_state`].
 +///
-+/// [`struct drm_crtc_state`]: srctree/include/drm/drm_crtc.h
++/// [`struct drm_plane_state`]: srctree/include/drm/drm_plane.h
++/// [`drm_atomic_helper_commit_hw_done`]: srctree/include/drm/drm_atomic_helper.h
 +#[repr(transparent)]
-+pub struct OpaqueCrtcState<T: KmsDriver> {
-+    state: Opaque<bindings::drm_crtc_state>,
-+    _p: PhantomData<T>
++pub struct OpaquePlaneState<T: KmsDriver> {
++    state: bindings::drm_plane_state,
++    _p: PhantomData<T>,
 +}
 +
-+impl<T: KmsDriver> AsRawCrtcState for OpaqueCrtcState<T> {
-+    type Crtc = OpaqueCrtc<T>;
++impl<T: KmsDriver> AsRawPlaneState for OpaquePlaneState<T> {
++    type Plane = OpaquePlane<T>;
 +}
 +
-+impl<T: KmsDriver> private::AsRawCrtcState for OpaqueCrtcState<T> {
-+    fn as_raw(&self) -> *mut bindings::drm_crtc_state {
-+        self.state.get()
++impl<T: KmsDriver> private::AsRawPlaneState for OpaquePlaneState<T> {
++    fn as_raw(&self) -> &bindings::drm_plane_state {
++        &self.state
++    }
++
++    unsafe fn as_raw_mut(&mut self) -> &mut bindings::drm_plane_state {
++        &mut self.state
 +    }
 +}
 +
-+impl<T: KmsDriver> FromRawCrtcState for OpaqueCrtcState<T> {
-+    unsafe fn from_raw<'a>(ptr: *const bindings::drm_crtc_state) -> &'a Self {
-+        // SAFETY: Our data layout is identical to `bindings::drm_crtc_state`
-+        unsafe { &*(ptr.cast()) }
++impl<T: KmsDriver> FromRawPlaneState for OpaquePlaneState<T> {
++    unsafe fn from_raw<'a>(ptr: *const bindings::drm_plane_state) -> &'a Self {
++        // SAFETY: Our data layout is identical to `ptr`
++        unsafe { &*ptr.cast() }
++    }
++
++    unsafe fn from_raw_mut<'a>(ptr: *mut bindings::drm_plane_state) -> &'a mut Self {
++        // SAFETY: Our data layout is identical to `ptr`
++        unsafe { &mut *ptr.cast() }
 +    }
 +}
- unsafe extern "C" fn crtc_destroy_callback<T: DriverCrtc>(
-     crtc: *mut bindings::drm_crtc
+ unsafe extern "C" fn plane_destroy_callback<T: DriverPlane>(
+     plane: *mut bindings::drm_plane
  ) {
 -- 
 2.46.1
