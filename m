@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-343726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98E92989EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD25989ED0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E18A28130A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:53:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811E928181A
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BF718A6D0;
-	Mon, 30 Sep 2024 09:53:48 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22B3C18B465;
+	Mon, 30 Sep 2024 09:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="owHRAHHC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1B2189BAC;
-	Mon, 30 Sep 2024 09:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520FD17CA03;
+	Mon, 30 Sep 2024 09:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727690028; cv=none; b=gEFKHZPeuwmXJSD6IriGYOYuSB4iszHe++ixNS9cR3fvbbTOOo1W2I16lkch2xTLA86kt+VPZ1g+LPkZ7p8vZWupkkMbZdJ2KmzLobaQaS/5XvBMGKx5uicDnekA2SW5OLLJml9F1USm11mXJ/sr4RtX/CNjXhX+YKALv8egsi8=
+	t=1727690133; cv=none; b=q0Tt4fCk/88cabdVW3uBxNbPrfXoNssrEA7ukxAAg+a7dSRm7aIjmJZVu6VuOJHwbLqjAG/755Yfwoxc6HV90Eg2QdNTfG93DnUbOUWzsEAAalBAGYqi6wysQvLC8MxytacGDym11UuW+P2y8ycYZ5kQTLXELdKIeAscIh4rQj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727690028; c=relaxed/simple;
-	bh=RmgnHYxboZxokVh2pEqYY1w2qrz1HXqLTNCsYRXejHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:CC:From:
-	 In-Reply-To:Content-Type; b=l/BggMCApHVvwJJMf0VMIbjHxAGLw7l2oDEE0f/ZXv6bkW8yPVl9SomI53tdtes4ouoj6ZvXyGfbVY6rGm1dPPevwgMjD///mRxc/6Rrs80wZbB6TMqFurPzL+yVzc57cZNhcGYTubZyZXl1tSu3V4tB0+v8SjUgcxU9Bq2LYlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XHGb55qGWz2Dd5j;
-	Mon, 30 Sep 2024 17:52:49 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8667214013B;
-	Mon, 30 Sep 2024 17:53:43 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 30 Sep 2024 17:53:42 +0800
-Message-ID: <6436838e-8b2d-4727-b207-e6c3168960e5@huawei.com>
-Date: Mon, 30 Sep 2024 17:53:42 +0800
+	s=arc-20240116; t=1727690133; c=relaxed/simple;
+	bh=TpKt6MhMi2zuIrSRA+D1aGCZIk1dlQh2zU8a7MH4I+0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IjJBjHgVvt2PMsgQ/0jmU+790WVrDXqPPEpKn3I47OFIuTB6uXyUTKA1+3833yjUqqg7bikTASbJh1xPn7RvTnoTwngGdHEGsJlIw7JR3IIujcYruXEL/BBvL88kA1CZYbYcRJ7aZPuTTXvflu0d8KlAc0XGNWr2MqJbokF+Dt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=owHRAHHC; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727690131; x=1759226131;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=TpKt6MhMi2zuIrSRA+D1aGCZIk1dlQh2zU8a7MH4I+0=;
+  b=owHRAHHCjQHe9BNTqEI8/6nEdxxHK3fYqo8tycsOVSr9rGHZXD7ooM90
+   nxaqPbQ4N0IeO2XEKUhoLao0+ZCfsbCBHG+U36coHw8ntDADEUEv/+j09
+   D/BueQkfIj0t9tzDyzQAF4ws/2d8bJlyx03Y77uFk99JN0HHF/Sgu5jpm
+   1alUDTG8k6aO0vtLVD3foB7rMmiL1ZY13QRbBTEr8IE1ZlT8FoPtd77Gu
+   PhgLEYuH5JENDbEeM6xWoyGR+TwLLgl5OKLnKbLC05+3R7dOR0IWeFvHq
+   GK8NUKxD6uw5vfwzm8sKg2+gqIqbgNl1Klw2YGP7gf9t4tOYo7utIgmcn
+   w==;
+X-CSE-ConnectionGUID: XiGZNwQLQnOpHGCFR5gKFQ==
+X-CSE-MsgGUID: GvNnk9AqTkGOIs5Qegvh4Q==
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="32248829"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Sep 2024 02:55:23 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 30 Sep 2024 02:54:59 -0700
+Received: from ph-emdalo.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 30 Sep 2024 02:54:56 -0700
+From: <pierre-henry.moussay@microchip.com>
+To: <Linux4Microchip@microchip.com>, Conor Dooley
+	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>,
+	<linux-riscv@lists.infradead.org>, <linux-can@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [linux][PATCH v2 01/20] dt-bindings: can: mpfs: add PIC64GX CAN compatibility
+Date: Mon, 30 Sep 2024 10:54:30 +0100
+Message-ID: <20240930095449.1813195-2-pierre-henry.moussay@microchip.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
+References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pmdomain: qcom: cpr: Fix possible uninitialized value
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-References: <20240930094456.2593136-1-ruanjinjie@huawei.com>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>,
-	<ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <20240930094456.2593136-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf500003.china.huawei.com (7.202.181.241)
+Content-Type: text/plain
 
-Hi, Jinjie
+From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 
-I have sent a patch with the same modification before:
+PIC64GX CAN is compatible with the MPFS CAN, only add a fallback
 
-https://lore.kernel.org/linux-pm/20240926134211.45394-1-zhangzekun11@huawei.com/
+Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
+---
+ .../devicetree/bindings/net/can/microchip,mpfs-can.yaml     | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Best Regards,
-Zekun
+diff --git a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+index 01e4d4a54df6..1219c5cb601f 100644
+--- a/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
++++ b/Documentation/devicetree/bindings/net/can/microchip,mpfs-can.yaml
+@@ -15,7 +15,11 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: microchip,mpfs-can
++    oneOf:
++      - items:
++          - const: microchip,pic64gx-can
++          - const: microchip,mpfs-can
++      - const: microchip,mpfs-can
+ 
+   reg:
+     maxItems: 1
+-- 
+2.30.2
 
-在 2024/9/30 17:44, Jinjie Ruan 写道:
-> of_property_read_u64() can fail and left "rate" uninitialized,
-> and the zero check in cpr_corner_init() for cpr_get_opp_hz_for_req()
-> can not prevent it and it will assign cdata[level - 1].freq to random
-> value, so init it to fix it.
-> 
-> Cc: stable@vger.kernel.org # v6.12
-> Fixes: 181c8148556a ("pmdomain: qcom-cpr: Use scope based of_node_put() to simplify code.")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->   drivers/pmdomain/qcom/cpr.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pmdomain/qcom/cpr.c b/drivers/pmdomain/qcom/cpr.c
-> index e1fca65b80be..26a60a101e42 100644
-> --- a/drivers/pmdomain/qcom/cpr.c
-> +++ b/drivers/pmdomain/qcom/cpr.c
-> @@ -1052,7 +1052,7 @@ static unsigned long cpr_get_opp_hz_for_req(struct dev_pm_opp *ref,
->   			of_parse_phandle(child_np, "required-opps", 0);
->   
->   		if (child_req_np == ref_np) {
-> -			u64 rate;
-> +			u64 rate = 0;
->   
->   			of_property_read_u64(child_np, "opp-hz", &rate);
->   			return (unsigned long) rate;
 
