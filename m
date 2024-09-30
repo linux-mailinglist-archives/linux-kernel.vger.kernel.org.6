@@ -1,203 +1,178 @@
-Return-Path: <linux-kernel+bounces-344275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-344273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C667598A7B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1B798A7B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 16:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C05284CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D59284B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 14:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120891991DD;
-	Mon, 30 Sep 2024 14:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23385198E7B;
+	Mon, 30 Sep 2024 14:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TJ+LHRQT"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nN/f4tuW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F381991A3
-	for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 14:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210CC19258D;
+	Mon, 30 Sep 2024 14:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727707696; cv=none; b=FWkjdfpeybtJP3yl3eP1EgFsjjl+ofllGkXscElLDdWvxtCrWcEBEXBAobZSj3ai1d6rUKn6xT4fs0twZ6Dx1K/1Fk2obFwz0FOpuw4ZIzY0xNy35ouL79D2eHZnbq+/CSwWU3nSwyC7DfJHbtRkYces1gDfYiy4kysvyPm2V2A=
+	t=1727707686; cv=none; b=QuXbcD2eqyVCwb+2B3m0qJjhWg7qSnPo6sFVj2KBFygb0twTyhteWzWlnftDAfFkLYLQf5bBWJmDEuB/M7YyjxJrTy2PsKcByTcj5lSM6SWJ9Q5CrpGz9VUzgSYUMfGIZHo6j5Ujz/xdmDhbHhof9RDSVO7SPZvK0mf2fz6OiL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727707696; c=relaxed/simple;
-	bh=EY3F+m5wtnL1iuaa2UQuujSwU3tmQznVQ28Ti6ey858=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a9EYnZ6eFTvDvlwha6ONKZfE/rJyChS8p4p251LGGDuC0JPT5jR2DbNyEeVRSqrqUIRg98iDQnRLk0qJH0TbJBbpkE/qKTckb2sGj16qP0JJ8Ys0YbiBCVhyi9QJrcRKroJww4XVPzBezjYvbdhUSB8W9BnUx2d26eKcs0n0t6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TJ+LHRQT; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ccfba5df5so2917475f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 07:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727707692; x=1728312492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TKBnQ9A5YYf2FUXo4R11RKTG90nbTdsrzyW+p16FTYQ=;
-        b=TJ+LHRQT19Db/FZNlZ1Y4CoU31ZjS2xDoqps69TSvyun/i1hTHGirAnJ4s7sKlw4h8
-         Ci7mkOsGpmRwwGvqspvuNj25cqjDLlken8vlVoFvJlAnA+/ElXE5iLKk2MRg1mw4+5KN
-         rCcV0qw7gReIkoP9+34swToZHZgFA+dABMo0+9kSAFEG4h/Il7zrMX7u+Z/rACOW+8HV
-         wRQdvNojK9G9x2P4QEx1AJdEqxElNTVJcGq6C2wy6sreq2krQb/za9J9H9+J9cATa1Ch
-         mn9GxDQk83/85Em5DA1nvACr+DKTqwwQDJHySThhnP+6Hk6TcQZMwCkl7/+C/tByWUtd
-         NMbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727707692; x=1728312492;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TKBnQ9A5YYf2FUXo4R11RKTG90nbTdsrzyW+p16FTYQ=;
-        b=fDsPnSbO25x6u+acUhFSUAAXTWwIAwCJnwc8a7KN+u2HaYshTkYS3qdeZGR0Sl94Pg
-         dYjnY9SFm6nAjQDJ8aiL/bb9JIDdCgTwwawumr/PWGg07bak9FcmbFjmg0EsqLE3lzMj
-         m+0OTQQ8eYq5N8kdFjaiEzyAVDih+tJTgxZlPKn8q8aC6UOSIsbAasbVhXhVRbw1S3ku
-         in++nKtY0t8N0QGY1wWvNyelqvzM4hYZuM1ZzmoOOZD6fOyJAIu9N287QZGZ/yCa6Ian
-         EAK9lnK3VVAP/SwzdWPIypBZ7swxoRS+K/DATh8Aw87Xw8RP7W/j47zL8b93S64FEF3W
-         IW8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVLCQYsinEXpXzKn9thH+p4SQ2lFE6zNiwh3v8jJPPwwZ0/2wZr6Iv93k29a4CO7cUQQRpl6r78urEjBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdF3Fg296si/2pCwjsdpwGbJ9fshJyfZjuMmRWCi0hB5TCcLAF
-	oam7wE4Q5ZUhSDWqaqglIns54MqSvKd5RYMaubpCjqW7u4zShOXaLqMUzK+9rps=
-X-Google-Smtp-Source: AGHT+IH4juMB4VpfWquIbAxYYFepSx6InHOYaJpHPC7iDAq1R8QsT1e8M8xtsnfnrYxRu0Q9od2aPg==
-X-Received: by 2002:a05:6000:d46:b0:374:c64d:5379 with SMTP id ffacd0b85a97d-37cd5acbd4cmr7667839f8f.27.1727707692023;
-        Mon, 30 Sep 2024 07:48:12 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:8791:e3e5:a9ca:31a6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm9241505f8f.45.2024.09.30.07.48.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 07:48:11 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Srinivas Neeli <srinivas.neeli@amd.com>,
-	Michal Simek <michal.simek@amd.com>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH 2/3] gpio: xilinx: use helper variable to store the address of pdev->dev
-Date: Mon, 30 Sep 2024 16:48:03 +0200
-Message-ID: <20240930144804.75068-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240930144804.75068-1-brgl@bgdev.pl>
-References: <20240930144804.75068-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1727707686; c=relaxed/simple;
+	bh=xh6tIBAiefMUKKnq7Fug8Rp1DBToya0xZhE5aVNLtIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPqLV7DYzRkDpNMfZcJHUAIf15yBlFGYOkXP/dIWrWWGefn5cQGpjTfU+SOGMDiyms5hASLoNWrYDtLIrHD9wAwPdMZbuAv6yFRV0bs6z2mMiUGS7fR8ko2F61an0EDdHMYx43rvJbMUWC/RRPEmh5cTnhWDRhEhkNPwKuRcu94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nN/f4tuW; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727707685; x=1759243685;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xh6tIBAiefMUKKnq7Fug8Rp1DBToya0xZhE5aVNLtIE=;
+  b=nN/f4tuWsnjwqiJdlrqIoWn1NrKECH36oE57nxONNSe19fvb+0/EksmI
+   9pdkQOpuoAWXwpfDXNshv1ds+9B0g/+G7EGl9TRAhc5M7D9JaAOU0Um8v
+   PqOFNCnBLDwXvOAIVhr4kd+Unrdf7yuRgKUJruEVkK6fzVs7ipJzJtzhY
+   XbPjRmuPDmkRql5IBy+v60xd1ucJL8x6v+l3GJKEBzvIjAgIhnKKYrsfv
+   wDWVdZ/qnpJb1LoWkbBxszkpC91ZOxN6Ph2y0WP1ZwciRAVkluW2oLxSM
+   7VWUgg9WuCTm2rQ53R0kLHaDJu/PcXNtKiwJo/s1y/dVr6L2ZY4DG+1yd
+   w==;
+X-CSE-ConnectionGUID: mGRGdVB9Tv28lZD8vKuy8w==
+X-CSE-MsgGUID: xSY6zQNiS1aZYh4PnNsyHg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="44262294"
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="44262294"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:04 -0700
+X-CSE-ConnectionGUID: qSCly8R3RjqKXRdUFqlC8Q==
+X-CSE-MsgGUID: SH6ywn9bR2qHfpQ7KZvKdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,165,1725346800"; 
+   d="scan'208";a="110804511"
+Received: from smkirkla-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.240])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 07:48:05 -0700
+Date: Mon, 30 Sep 2024 07:48:04 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Brice Goglin <brice.goglin@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <Perry.Yuan@amd.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH v4 08/10] x86/cpu: Update x86_match_cpu() to also use cpu-type
+Message-ID: <20240930-add-cpu-type-v4-8-104892b7ab5f@linux.intel.com>
+X-Mailer: b4 0.14.1
+References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Non-hybrid CPU variants that share the same Family/Model could be
+differentiated by their cpu-type. x86_match_cpu() currently does not use
+cpu-type for CPU matching.
 
-For better readability don't repeatedly dereference pdev->dev but
-instead store the address of the embedded struct device in a local
-variable in probe().
+Dave Hansen suggested to use below conditions to match CPU-type:
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+  1. If CPU_TYPE_ANY (the wildcard), then matched
+  2. If hybrid, then matched
+  3. If !hybrid, look at the boot CPU and compare the cpu-type to determine
+     if it is a match.
+
+  This special case for hybrid systems allows more compact vulnerability
+  list.  Imagine that "Haswell" CPUs might or might not be hybrid and that
+  only Atom cores are vulnerable to Meltdown.  That means there are three
+  possibilities:
+
+  	1. P-core only
+  	2. Atom only
+  	3. Atom + P-core (aka. hybrid)
+
+  One might be tempted to code up the vulnerability list like this:
+
+  	MATCH(     HASWELL, X86_FEATURE_HYBRID, MELTDOWN)
+  	MATCH_TYPE(HASWELL, ATOM,               MELTDOWN)
+
+  Logically, this matches #2 and #3. But that's a little silly. You would
+  only ask for the "ATOM" match in cases where there *WERE* hybrid cores in
+  play. You shouldn't have to _also_ ask for hybrid cores explicitly.
+
+  In short, assume that processors that enumerate Hybrid==1 have a
+  vulnerable core type.
+
+Update x86_match_cpu() to also match cpu-type. Also treat hybrid systems as
+special, and match them to any cpu-type.
+
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 ---
- drivers/gpio/gpio-xilinx.c | 34 +++++++++++++++++-----------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ arch/x86/kernel/cpu/match.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index afcf432a1573..d99824d42c77 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -561,9 +561,10 @@ static const struct irq_chip xgpio_irq_chip = {
-  */
- static int xgpio_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct xgpio_instance *chip;
- 	int status = 0;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = dev->of_node;
- 	u32 is_dual = 0;
- 	u32 width[2];
- 	u32 state[2];
-@@ -571,7 +572,7 @@ static int xgpio_probe(struct platform_device *pdev)
- 	struct gpio_irq_chip *girq;
- 	u32 temp;
+diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+index 8e7de733320a..351b583cb9b5 100644
+--- a/arch/x86/kernel/cpu/match.c
++++ b/arch/x86/kernel/cpu/match.c
+@@ -5,6 +5,26 @@
+ #include <linux/export.h>
+ #include <linux/slab.h>
  
--	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
- 
-@@ -624,7 +625,7 @@ static int xgpio_probe(struct platform_device *pdev)
- 
- 	chip->gc.base = -1;
- 	chip->gc.ngpio = bitmap_weight(chip->hw_map, 64);
--	chip->gc.parent = &pdev->dev;
-+	chip->gc.parent = dev;
- 	chip->gc.direction_input = xgpio_dir_in;
- 	chip->gc.direction_output = xgpio_dir_out;
- 	chip->gc.get = xgpio_get;
-@@ -633,21 +634,21 @@ static int xgpio_probe(struct platform_device *pdev)
- 	chip->gc.free = xgpio_free;
- 	chip->gc.set_multiple = xgpio_set_multiple;
- 
--	chip->gc.label = dev_name(&pdev->dev);
-+	chip->gc.label = dev_name(dev);
- 
- 	chip->regs = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(chip->regs)) {
--		dev_err(&pdev->dev, "failed to ioremap memory resource\n");
-+		dev_err(dev, "failed to ioremap memory resource\n");
- 		return PTR_ERR(chip->regs);
++/**
++ * x86_match_hw_cpu_type - helper function to match the hardware defined
++ *                         cpu-type for a single entry in the x86_cpu_id table.
++ * @c: Pointer to the cpuinfo_x86 structure of the CPU to match.
++ * @m: Pointer to the x86_cpu_id entry to match against.
++ *
++ * Return: true if the cpu-type matches, false otherwise.
++ */
++static bool x86_match_hw_cpu_type(struct cpuinfo_x86 *c, const struct x86_cpu_id *m)
++{
++	if (m->cpu_type == X86_CPU_TYPE_ANY)
++		return true;
++
++	/* Hybrid CPUs are special, they are assumed to match all cpu-types */
++	if (boot_cpu_has(X86_FEATURE_HYBRID_CPU))
++		return true;
++
++	return m->cpu_type == topology_hw_cpu_type(c);
++}
++
+ /**
+  * x86_match_cpu - match current CPU again an array of x86_cpu_ids
+  * @match: Pointer to array of x86_cpu_ids. Last entry terminated with
+@@ -50,6 +70,8 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+ 			continue;
+ 		if (m->feature != X86_FEATURE_ANY && !cpu_has(c, m->feature))
+ 			continue;
++		if (!x86_match_hw_cpu_type(c, m))
++			continue;
+ 		return m;
  	}
- 
--	chip->clk = devm_clk_get_optional_enabled(&pdev->dev, NULL);
-+	chip->clk = devm_clk_get_optional_enabled(dev, NULL);
- 	if (IS_ERR(chip->clk))
--		return dev_err_probe(&pdev->dev, PTR_ERR(chip->clk), "input clock not found.\n");
-+		return dev_err_probe(dev, PTR_ERR(chip->clk), "input clock not found.\n");
- 
--	pm_runtime_get_noresume(&pdev->dev);
--	pm_runtime_set_active(&pdev->dev);
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_get_noresume(dev);
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
- 
- 	xgpio_save_regs(chip);
- 
-@@ -667,8 +668,7 @@ static int xgpio_probe(struct platform_device *pdev)
- 	gpio_irq_chip_set_chip(girq, &xgpio_irq_chip);
- 	girq->parent_handler = xgpio_irqhandler;
- 	girq->num_parents = 1;
--	girq->parents = devm_kcalloc(&pdev->dev, 1,
--				     sizeof(*girq->parents),
-+	girq->parents = devm_kcalloc(dev, 1, sizeof(*girq->parents),
- 				     GFP_KERNEL);
- 	if (!girq->parents) {
- 		status = -ENOMEM;
-@@ -679,18 +679,18 @@ static int xgpio_probe(struct platform_device *pdev)
- 	girq->handler = handle_bad_irq;
- 
- skip_irq:
--	status = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
-+	status = devm_gpiochip_add_data(dev, &chip->gc, chip);
- 	if (status) {
--		dev_err(&pdev->dev, "failed to add GPIO chip\n");
-+		dev_err(dev, "failed to add GPIO chip\n");
- 		goto err_pm_put;
- 	}
- 
--	pm_runtime_put(&pdev->dev);
-+	pm_runtime_put(dev);
- 	return 0;
- 
- err_pm_put:
--	pm_runtime_disable(&pdev->dev);
--	pm_runtime_put_noidle(&pdev->dev);
-+	pm_runtime_disable(dev);
-+	pm_runtime_put_noidle(dev);
- 	return status;
- }
- 
+ 	return NULL;
+
 -- 
-2.43.0
+2.34.1
+
 
 
