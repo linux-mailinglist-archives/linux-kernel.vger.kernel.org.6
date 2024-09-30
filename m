@@ -1,99 +1,108 @@
-Return-Path: <linux-kernel+bounces-343629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-343628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC591989D82
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:00:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA1A989D80
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 11:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6EC31C21FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:00:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06272B20BE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Sep 2024 09:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE3191822F8;
-	Mon, 30 Sep 2024 09:00:45 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A67C1822F8;
+	Mon, 30 Sep 2024 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+dEl9Wn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63EC2FE33;
-	Mon, 30 Sep 2024 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F08A2FE33;
+	Mon, 30 Sep 2024 09:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727686845; cv=none; b=PN6YrPms19zrU1rVoCd7QEDgONuiVm4gfBP6SskWHB+OMBiUiNS3KW4We0uNGlw3d2yzbUTaXP5Oe6AzRVpKI4w4ltTDxB4+AiYctQcmG/0mf943GY+rz0KBB2tF6aHqM9KxwqsJJx0QAeHcpIcvxlaPRL27iJPhewQLLO+0J8E=
+	t=1727686832; cv=none; b=ZEprOTi249JglpynI7bSvXn2+fYoVD4UiX0OQd1tVeXHes2wTVti9234hkX89OFRI2qdOD0dFoFSx5kMIWX02faM1Uu04QmX6F91AfvK0ifoYXRN7btJogCPcrG67sxPCvr0YEZDze+iWp1mMcimZGL605gRsje8wo4SqM42T/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727686845; c=relaxed/simple;
-	bh=HO+P8Flt/ewYD4N75KI72j298jEuexJbVH/p+lQ+3fk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SAeYZvuIM79WZCLJlmn7iZ+pyxDYWqZommxAID0V/m/yEYVE4EAuyQP9NVsM7Z0jXm/1Kl2ETgUBW97/tQXWk7KAFl2ERErjxjsaUldAeakQSuTxRLx3Slc97dBJnWKtzT3d+1A4Cev5Ci7nT27P4+Ja+FsCks0T2Y91XTmbTUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48U6ArIS011865;
-	Mon, 30 Sep 2024 02:00:14 -0700
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 41xhakhkup-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 30 Sep 2024 02:00:13 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 30 Sep 2024 02:00:13 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Mon, 30 Sep 2024 02:00:10 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+96ee12698391289383dd@syzkaller.appspotmail.com>
-CC: <jack@suse.com>, <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
-        <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mark@fasheh.com>, <ocfs2-devel@lists.linux.dev>,
-        <syzkaller-bugs@googlegroups.com>, <tytso@mit.edu>
-Subject: Re: [ext4?] [ocfs2?] WARNING in jbd2_journal_update_sb_log_tail
-Date: Mon, 30 Sep 2024 17:00:09 +0800
-Message-ID: <20240930090009.174420-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <66f98a80.050a0220.6bad9.0021.GAE@google.com>
-References: <66f98a80.050a0220.6bad9.0021.GAE@google.com>
+	s=arc-20240116; t=1727686832; c=relaxed/simple;
+	bh=oquogEt/lJMT938jn9FtjKjoSmX99x/hqCmt2JjytyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OYtNbd/5YRb6F+3XXjKvzrK05K8rhxKkDtIuM5hhG43qbMEmysux3uY+2xDpj4Pu6bQqrX4ii4Z45LxWbSwulabNdpeMQ55q8XT5hyZbaFNKZkQU1iwGIhx7eE2jeQVKx2dso8OaG3/ts1CTUFWWc5mZFWenRNKRAM0MNwSRMDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+dEl9Wn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06D8C4CEC7;
+	Mon, 30 Sep 2024 09:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727686831;
+	bh=oquogEt/lJMT938jn9FtjKjoSmX99x/hqCmt2JjytyU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h+dEl9WndJgNcVi7Duxu1pyFQeaThi05Z9X7fKkY3oMQwj+6BflV08E3Bjf656wO2
+	 zas7z9WK1Xa3nsF0llQC0jgiPi0pEusVMLKkYKUtgWwJgIuizsJ4u63XuMMbd4+/7u
+	 cXnuYE5ciCXUJE7Um8QKl0/JvbpSmLWoeJSAIMK3/+dat5TFL5hUCavNmzJKpwheLn
+	 6iM9Eu6mnsm3fmHTNkxlvJZZGUHpL8YXRvH+ALqd8u+umNRmaMyKSvXePSLHBJD3tM
+	 aJrmnI93D8k0yDTv/WM8k90lcKHN9tCqH7c2WB606thGMyJsa4T3UzH3QYpO7IH8ry
+	 JJQRNvolQdHvA==
+Date: Mon, 30 Sep 2024 10:00:22 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/7] iio: light: veml6070: update code to current IIO
+ best practices
+Message-ID: <20240930100022.1c9bfe2e@jic23-huawei>
+In-Reply-To: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
+References: <20240929-veml6070-cleanup-v1-0-a9350341a646@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=YOLNygGx c=1 sm=1 tr=0 ts=66fa689d cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=EaEq8P2WXUwA:10 a=f1uxmiMR-l0qOoKR0IgA:9 a=fVKOHcENdpsA:10
-X-Proofpoint-GUID: Od2NVnKJ6JabaWOuGtqvZ81pZMEa2bLi
-X-Proofpoint-ORIG-GUID: Od2NVnKJ6JabaWOuGtqvZ81pZMEa2bLi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-30_08,2024-09-27_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=776 clxscore=1011 suspectscore=0 priorityscore=1501
- spamscore=0 bulkscore=0 malwarescore=0 adultscore=0 phishscore=0
- impostorscore=0 mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2408220000 definitions=main-2409300064
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The s_sequence value of journal superblock loaded from disk is 4294967295,
-is it too large?
+On Sun, 29 Sep 2024 22:38:45 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-#syz test
+> This series updates the driver in preparation to add new features. The
+> cleanup consists of:
+> 
+> 1. Device-managed registering for:
+> - iio device
+> - action (unregister i2c device)
+> - regulator
+> 
+> 2. Code update to use a guard for the mutex handling and
+>    dev_err_probe in the probe function.
+> 
+> 3. Devicetree support (document the device bindings and register the
+> compatible in the driver).
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Nice.  Applied to the togreg branch of iio.git and pushed out as testing.
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index 97f487c3d8fc..563c4af533ac 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1397,6 +1397,12 @@ static int journal_check_superblock(journal_t *journal)
- 		}
- 	}
- 
-+	if (sb->s_sequence == U32_MAX) {
-+		pr_err("JBD2: Load a too big s_sequence: %u, %s\n", 
-+			sb->s_sequence, __func__);
-+		return err;
-+	}
-+
- 	return 0;
- }
- 
+thanks,
+
+Jonathan
+
+> ---
+> Javier Carrasco (7):
+>       iio: light: veml6070: add action for i2c_unregister_device
+>       iio: light: veml6070: use guard to handle mutex
+>       iio: light: veml6070: use device managed iio_device_register
+>       iio: light: veml6070: add support for a regulator
+>       dt-bindings: iio: light: vishay,veml6075: add vishay,veml6070
+>       iio: light: veml6070: add devicetree support
+>       iio: light: veml6070: use dev_err_probe in probe function
+> 
+>  .../bindings/iio/light/vishay,veml6075.yaml        |  3 +-
+>  drivers/iio/light/veml6070.c                       | 63 +++++++++++-----------
+>  2 files changed, 35 insertions(+), 31 deletions(-)
+> ---
+> base-commit: 4057951fb272efda718dca665f6607c348d5785b
+> change-id: 20240929-veml6070-cleanup-70b609bb1f0f
+> 
+> Best regards,
+
 
