@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-345556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C28CD98B76D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:48:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE87D98B771
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FD77B24110
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5EA31F2517C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1B819C565;
-	Tue,  1 Oct 2024 08:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cDO8HnzX"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5AD1C1757;
+	Tue,  1 Oct 2024 08:43:09 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0737E19D09C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9014319B587;
+	Tue,  1 Oct 2024 08:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727772185; cv=none; b=bZAku7NegQIWySukTI1bwZlk7vZv9DFVioHBtgLPeOdo9H9SS810PxmP66jUOubNgAvwApj3G1qesIlQlMvIsB4oTfPZEdJ9BlXmsrVDiTnuov/WWygOZW+c5cqDyfH1tGSh7ScMZGcsyGHpJgoZhpQ4MsE9D5JOGDnRHBHCHPg=
+	t=1727772189; cv=none; b=qvKHXQ382OX62swoKxgdSOE6dOBNhGsssIZEVxFAZDavddeHrIQ+35iLrGI61Rdmn3OT0D1gHkJ6zTlv1yb4R3atu86IQlytD2Xn7oYMveDpxlP5kzPkFjfhd/MHXKRwACtovycLTYXHNA8S1UDFGfk6gsKjuoEz/Wq15Dijs0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727772185; c=relaxed/simple;
-	bh=mG2qgOVsOu3l/TH/gOoJ69QuttE7so3WY6EXyy/Og58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K+KJjpMvV41DU8m51W0/KKXJZi1fHD51Ugn4QuKQ/4Hsy2WrvhSXn7hABZ38CzVxivfN0Q9pf/2EKAt0QAZOayYq5Z9u/3Tbaj5jfU/pjxvbQs2xDzpXiO0cPKDBBxTZnCY12s9rEJ/wJ/F5LCy4+6dqJQQ1ZHrZ2zOrKR7nXoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cDO8HnzX; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac187eef2so30380781fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1727772182; x=1728376982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mG2qgOVsOu3l/TH/gOoJ69QuttE7so3WY6EXyy/Og58=;
-        b=cDO8HnzXMjjVpWiBOFl1SPQQzMRBxVW/iPSNQe4J9Wyf+cXufa/AkWNopVrAcvWwYh
-         zOea0Mr4MbXJmXHMy6tnJKJqkvD1ZDk2cQmldfxjkbH5HvasT0RJBDHDqdd7XSonqMb+
-         UVIO4Ah69aGej8sxkTdR+Dx6PDml787pZ9cusdOR/szfzckFebTduGTq282KPF2QcDtS
-         Hg5KyOaPCMUiDg0RfQK3Xgy/G1VXRNXXGMKb6VrCsWnT7uZL9cmJDEcn9J+FeoFEBFlP
-         tLPusxi12/j4xUcFX+J1tSnXuhmnA9EQV8HAlYdnGgmNk+Gau/87qoHo8IpBEblhZaMS
-         0l8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727772182; x=1728376982;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mG2qgOVsOu3l/TH/gOoJ69QuttE7so3WY6EXyy/Og58=;
-        b=J+m5MFo1y89SU6ABELR7IYrIZ+rO1mH2xXSvAoareDYe1qVn8haGvJjQ+4mArhZfjR
-         JQF/LSpREV0s5BqzuQPDKzWhfJrSkLZGvi7x/G4jiTF3GujAT9PhcYqZ9r+7TVeY7JsU
-         wLqSW3OAfR0osRZTGzVvh118hmQ01yvVvlH/Ld5/6c4dd0tgNYsQJQ93U1/WtnKHwZGM
-         134WgvNxMic9rw6mK3Y+V6TK6eDkpnDyX41RaOIz72/JGaInrcV29cEdI2Uito/8Hkz3
-         uvTF3dxMYUTx5zy/+nO7u7fwSymZapELlvHNbrTE4pqjC20VV6TucXXDuxEXwRzC+g7w
-         a9DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFCYXsGQfVWuNJ5yTIWoLH2gonOI5seLmcbifP/ZT52BcLT/kRPX3F4QZdflAiaonGNlsnSJxq3bBdWbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHa+HB8vBxCXTDk/QE1jr+Bn6KtQwFBm9tSrqv9rUjStbx5r/s
-	7/EPk8g40YmnZR5QEN6NIMxC2HrzrdY2DwTMVLLsmddy97U3aKiP4Q4+QF17n0DRat4VviRkKxO
-	sEDqXj8WR//yJwgzdEzgFbHG2TuViSjrw6xy+hQ==
-X-Google-Smtp-Source: AGHT+IHbp2+bB3R7Rq7jfIRrG97PGq9THZvfkK88fAHLlE+mcDau9g91m+e6W53xgNJnxJ+LY8l1/aGqeYZc1eWOv7Q=
-X-Received: by 2002:a05:651c:211a:b0:2fa:cf5b:1e8e with SMTP id
- 38308e7fff4ca-2facf5b22a7mr34314891fa.2.1727772181942; Tue, 01 Oct 2024
- 01:43:01 -0700 (PDT)
+	s=arc-20240116; t=1727772189; c=relaxed/simple;
+	bh=47m0NuQueB2uxpcTSyYqVnsgzJVO7bg0RTDz2umFsAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4dM7S88C965e3Jfy9CfkZ+jJf9aeGY1lLvA3nFVoQEVMsYDrJH1L+PM36RhhyugQnC2yhgDBTZjRsCrLHlph044DkXsZnhIDwtlH8YINk53Lup/H4F4BVop9Yswo07LzKNQefGXKKIHghzk42NsOHIz/Jj6gf/uBPz8WQ8QY4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 0CBED227AAE; Tue,  1 Oct 2024 10:43:03 +0200 (CEST)
+Date: Tue, 1 Oct 2024 10:43:02 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
+	brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	dchinner@redhat.com, hch@lst.de, cem@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	hare@suse.de, martin.petersen@oracle.com,
+	catherine.hoang@oracle.com, mcgrof@kernel.org,
+	ritesh.list@gmail.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH v6 5/7] xfs: Support atomic write for statx
+Message-ID: <20241001084302.GD20648@lst.de>
+References: <20240930125438.2501050-1-john.g.garry@oracle.com> <20240930125438.2501050-6-john.g.garry@oracle.com> <20240930163716.GO21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930091111.32010-1-brgl@bgdev.pl> <20240930091111.32010-2-brgl@bgdev.pl>
- <u7o3fq6b2rlq6e6wwk3axxxpljx5u7o2mc35skg63houf3mhyn@h27t3uubopqo>
-In-Reply-To: <u7o3fq6b2rlq6e6wwk3axxxpljx5u7o2mc35skg63houf3mhyn@h27t3uubopqo>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 1 Oct 2024 10:42:50 +0200
-Message-ID: <CAMRc=MfK3+piaz1d7UiJmwwfvC=f_FLWdp07gN34varvJo-8NA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: mvebu: use generic device properties
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930163716.GO21853@frogsfrogsfrogs>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 1, 2024 at 9:34=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@baylibre.com> wrote:
->
-> I didn't look closely, but I wonder if GPIO_MVEBU depending on OF_GPIO
-> can be softened with this change?!
->
+On Mon, Sep 30, 2024 at 09:37:16AM -0700, Darrick J. Wong wrote:
+> Ok, so we're only supporting untorn writes if they're exactly the fs
+> blocksize, and 1 fsblock is between awu_min/max.  That simplifies a lot
+> of things. :)
+> 
+> Not supporting sub-fsblock atomic writes means that we'll never hit the
+> directio COW fallback code, which uses the pagecache.
+> 
+> Not supporting multi-fsblock atomic writes means that you don't have to
+> figure out how to ensure that we always do cow on forcealign
+> granularity.  Though as I pointed out elsewhere in this thread, that's a
+> forcealign problem.
 
-Yes, this can be done in a follow-up patch.
-
-Bart
+It does simplify things a lot, and is probably a good idea for
+the initial version.  But I suspect support for atomic writes
+smaller than the block size will be really useful and we should
+eventually support them, but maybe now on reflinked files or
+alwayscow.
 
