@@ -1,120 +1,86 @@
-Return-Path: <linux-kernel+bounces-345285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4AF98B418
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:06:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4082698B41B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBB2D283054
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2E21C22BCB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA29C1BBBE2;
-	Tue,  1 Oct 2024 06:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtrdDxZ+"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66571B141D;
+	Tue,  1 Oct 2024 06:15:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC403201
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339E31BBBF1
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762767; cv=none; b=C6i3XliJSjpfFzO4YTiDNnUsvxcAkkHB4p7ejigufmdubhem7c3y6U89eb/lRMRDDSofmAG/otzzVEgFnIUAzjK1MmJEeUoQf7rKtkppoyHBEadqnN1uOia93M36mhS/bT9EF5LDgIUf/VP3cHThJ5akf8CnnCnES1mr13cyUVI=
+	t=1727763304; cv=none; b=e5EpBroWUStORVdT4gUqNH5216vvGaZ8ii9owP/Q2CpdwviyQr38Cmr4Z7VhziHzCmUIDBiGg/RsBbctdmx3pLHKgmuN2VKC67/Vmz9jS2Vs6BYnz4an+DnVldoo2pH4W2sTDuxNlm/E6OOicrBgJwZVzYyJYIXJ29TS6Cbbvuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762767; c=relaxed/simple;
-	bh=xBnSAWMwOG7gxrp85jGbAeVXXQtp7LtuPhe1hy8Gu4Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HLgTZJltC1RC4yreZBF75OsgEN7o/5luZkCMtw98MNhudUmYV5F+9i9U0FBo7ByELkCVmv5vKNcfIeTbU8vAm/uQmwCpR2rUaCuG3vk4i0dGiAzLbGIgWSG33Y+vjbEWTc5IafHg3UT6UUcObriKb2pLRqkzfmTNb22B/VJpEzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CtrdDxZ+; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-717934728adso3958047b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727762765; x=1728367565; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=S3JnPQ592saNCClwG2EAIaq+vjHVmf3dkbYasmw5RK0=;
-        b=CtrdDxZ+IbKTiMPS5QyFmU5cVYAGYqI6ihmj7QAAyLvF7hjAhpf54+z1k2j4uyk9KM
-         eXTYkuh4He5O69uOQap+BPhb7zt29/Skk99tQgGLDFlHJDRDwvhRhtLKHnTWqlDXrj/i
-         OzZ2+uv5TMEwqVl4Y3ZVqXNyzxLjxYFz9HejQWQVMQbB86XyR+AmmJIXn97Jt5srD4vy
-         OjGJL2Eioc30lmE14/TTK3hDwJtAPQRvZmkBykTz+RMt0h54M/vzOfnyx8Ji8tvPe/F/
-         KsFWVKzhLR13eyR24z8DAaHHdsl+1Ymk8IvG2FpDCPFk53BYHJrUwdzgjd/jUuMsAcHm
-         Za6w==
+	s=arc-20240116; t=1727763304; c=relaxed/simple;
+	bh=D0Ie4Ogh5R5Uh7TzF39J2tmOW+tWhLcRijkif235W78=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MaygiO4hD5c0Gs8zAWbLTQpiN8PCJCC2JPadsvZdC49Gd1BAoDrPXh6POVKFgntYSTZS6hrrGckOHIc7s3houPBzJaMAYkGgVgaFhcXTA6maqpv9q6A9E+8NKowyfDmsYMjz6ZgLM2wOrjWvxzJriWkJPWSo5T2LoaW4crkBnyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aad3fa5edso498021139f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:15:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727762765; x=1728367565;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S3JnPQ592saNCClwG2EAIaq+vjHVmf3dkbYasmw5RK0=;
-        b=iqXjwUC6OhiNt0H+kOKyEsydJfrX0hYAxJVg0iKn6yAsV+oHMSQSmmD3SkwtSQWkmd
-         bUiAhAuY2biyvY0devzhCNxbz8HTABZgnsFnNPsB3n5C5YjFCet1YJjFPZYEJyWfS3uv
-         sy+80QixesjaOu6MKSDTZsOkWKDs/uLVYfVECANgmIerhqlKiABltSdBy2qgfgqlh9z1
-         pQ5xyxfyec2RBj5NH3NHFM7xKf6wtBJGySSv/Mg65e3Un58GNt727Q0sO6OFePv4fMm0
-         N7D9yw/Zvh/ebTB4XBkx4Up7+opPDjOy0xBtJmaqv6Lv0mF6Lxm+qV1GmeMQFEcH64rq
-         x5BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaklU/k4/wUwI1yZvd9AXl0r+wCIskBCrGGNhxFhAG6zO2JdGCm8BQZ72E093VhcZGVTvm6+QGs+araUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuvb9m+u/DrJNCL1HO8vuWIBYibs7hDKz7pfpo5r/G6g+sYd0Z
-	ir5pXyhQ85NScysM0N3JFDfPiqtHKB7oxzRVGN6PixPahqzFQzZjnBxySu9gXJOOng==
-X-Google-Smtp-Source: AGHT+IFzh2uSZT0RhPv2Tnh/OMQvJbm6z27RebTeTUBWaAplciMMLoSvwWnHda+XCtUlhuYcyU1eow==
-X-Received: by 2002:a05:6a21:164a:b0:1d3:d40:2060 with SMTP id adf61e73a8af0-1d4fa64d7ebmr20122127637.5.1727762765014;
-        Mon, 30 Sep 2024 23:06:05 -0700 (PDT)
-Received: from dell-xps.. ([2405:201:3036:a902:b102:83da:252:ac85])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e421f0sm62963435ad.212.2024.09.30.23.06.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 23:06:04 -0700 (PDT)
-From: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
-To: shaggy@kernel.org,
-	eadavis@qq.com,
-	osmtendev@gmail.com,
-	ghandatmanas@gmail.com
-Cc: Ghanshyam Agrawal <ghanshyam1898@gmail.com>,
-	jfs-discussion@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com
-Subject: [PATCH] jfs: fix array-index-out-of-bounds in jfs_readdir
-Date: Tue,  1 Oct 2024 11:35:47 +0530
-Message-Id: <20241001060548.3090738-1-ghanshyam1898@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1727763302; x=1728368102;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pw2+s3n1CIe4lFrjRuTpjJv2gcXAJP8p2Hq5YeL1u9g=;
+        b=tqwogX2LwWPE9HXaDNmJNBmXGvuP/yYRC2ae8UyKUItnFLYZy/jxoi1MjHxL9wd9of
+         TBK1YxtmKM49zliHvkd0jkGudvwzcbePw2P4SAL8WscW3gkP8ob9ogaaq6UOH0emXebQ
+         xWawQezbZ9lnodUTFX8jzkoy+cc9x/4A11PhhskDn0ffhPb9POsETQ8WlCIpMYtVEKAz
+         aab3aH3+7Gvas3ls3qwFQW/iZi6buiEwsU9RSdK8s29no6dJ08Rqmp0K6bbZjaCjyQL7
+         /H0OT/HqMYnfFvZGZuNViRJTXWPJ3NvsvHUBAn1wp98HC8xSH3Ca86RbFdhIe55Crfn+
+         HRTQ==
+X-Gm-Message-State: AOJu0YwxEbuawcyAxvFurjSaoPPAzRl3EXhs/VsEOhTn/2GROVi6F2sm
+	jHxS5DxyfG9yQrciWc4A1Cf/G59mDF3phsmydYHdIjOEftlaVBrOMAamthIe4nTrTkkvTVPZR6C
+	4VKfjB/GXZDuV9xE2FAxAHmeg2ZAfZ3SVPYJLpehHK7c+fqvVyC7Oe/M=
+X-Google-Smtp-Source: AGHT+IEFQ1xOjHOMNJRkrEgcRq4njvx2UFSQXLpSuMTVEocbxXh1rGUqki8/g0CuUo7f2cDKqvO+I865cdQ40z4/5dhPUJ5meqYe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12ee:b0:3a0:9244:1916 with SMTP id
+ e9e14a558f8ab-3a3451794a8mr138704655ab.11.1727763302272; Mon, 30 Sep 2024
+ 23:15:02 -0700 (PDT)
+Date: Mon, 30 Sep 2024 23:15:02 -0700
+In-Reply-To: <ZvuMuLlgLz54KUlw@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fb9366.050a0220.6bad9.004f.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] KMSAN: uninit-value in netfs_clear_buffer
+From: syzbot <syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, marcus.yu.56@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The stbl might contain some invalid values. Added a check to
-return error code in that case.
+Hello,
 
-Reported-by: syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0315f8fe99120601ba88
-Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
----
- fs/jfs/jfs_dtree.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-index 5d3127ca68a4..c8f6e51ac047 100644
---- a/fs/jfs/jfs_dtree.c
-+++ b/fs/jfs/jfs_dtree.c
-@@ -2891,6 +2891,14 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
- 		stbl = DT_GETSTBL(p);
- 
- 		for (i = index; i < p->header.nextindex; i++) {
-+			if (stbl[i] < 0 || stbl[i] > 127) {
-+				DT_PUTPAGE(mp);
-+				free_page(dirent_buf);
-+				jfs_err("JFS: Invalid stbl[%d] = %d for inode %ld, block = %lld",
-+				i, stbl[i], (long)ip->i_ino, (long long)bn);
-+				return -EIO;
-+			}
-+
- 			d = (struct ldtentry *) & p->slot[stbl[i]];
- 
- 			if (((long) jfs_dirent + d->namlen + 1) >
--- 
-2.34.1
+Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
+Tested-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         e32cde8d Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12200927980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1fd45f2013d812f
+dashboard link: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=178c9980580000
+
+Note: testing is done by a robot and is best-effort only.
 
