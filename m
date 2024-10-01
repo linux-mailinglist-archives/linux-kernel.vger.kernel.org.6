@@ -1,98 +1,74 @@
-Return-Path: <linux-kernel+bounces-346474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A482C98C517
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:07:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A911398C51B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FB8F1F241A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:07:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65ACB28464E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1541CCB45;
-	Tue,  1 Oct 2024 18:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658311CC8B5;
+	Tue,  1 Oct 2024 18:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="KU6+UDb0"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hcWo7q1s"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7C21CCB3A
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 18:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6B81CC882
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 18:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727806046; cv=none; b=Y6y47DMlB/UyJ6FFoPQTHNLF28fXT2t94Z/lRSz3u7KVVGf0ayKLeuuSgphsYF4S0zRGCBJeqICLJ53dZd8jzopV1YgTKJhajbNRIuBb5PZkr78tG+lRY/aLx9QN+UA+lJsIG/TOFV/mxrHCb7n9tPVZbDbG/RwCftLFEFjCiC8=
+	t=1727806177; cv=none; b=YRUjf3zzgrhEhjJjgc4r3bYkB9fUMT1Qz9jv/ZWxzYl8Wt5G9bJ1g2KS5HUAa3KUAc8+kWWkpW1QA5U8Zedbp+GQGj+emXUm/q7iOChIsSwhjW74DfKtRE+d0VUje5pH4Yn+OPE7SOWjLNUibB5r8Rv7szX/JmahVeAsa0zE89I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727806046; c=relaxed/simple;
-	bh=lKv1oPd1u6ZafX752GT6OJMf43JnT/5BtZuMMtd4hGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P681KEDuyJdYPZzmSoaFc9AB1cJnkqnoLA2yjJ3zAiinwTBztn3JDxoqNXj4TE+chtmpo9DD5ELpaa8ahUnzcnUPVJxhOErDayrNSW2HNBMCAaSBK/X0bg4JT2m2beAi0s2AOtP+08Qhzr+vCvBrkA5HGd4H9OlzHltNAoH2B7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=KU6+UDb0; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so3914879a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 11:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727806044; x=1728410844; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IlfIDLL8X+h1iXFwaqyKKzJo5oDK37QI3Hy/+CpBMIs=;
-        b=KU6+UDb0TiUTtvTfVjNGiyYeXwPmSSOklNtUgnpjM5eCU+fT3BtGqVdSIyruahg7s0
-         fS/Jtm0G9S/Z92LOwmap7GiSXE2O4ztwL2P+RsnQDZv7HI+jFXtlAbgAWYdToE9UUNlG
-         AmUYWOBw2IRF73OiPDMHxGq2denCd7mayOkSs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727806044; x=1728410844;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlfIDLL8X+h1iXFwaqyKKzJo5oDK37QI3Hy/+CpBMIs=;
-        b=I0AgB8BzvzQtqT8ljiT/5VjEd1eENY6u5y9LFmmsZpnVx2FDqKgyekuXw0fxgybIVA
-         SRCam4GoPNf5WuaOap5u99t/SP7b5R24ST4WFNXoF+pghidK5VR8yzuQBnfAQveCf+aK
-         aGm6PV0GZHxi0NqaVkRDuJxQ3uSfktFmGxkBfgi98NBYx8pQSxb2OYkaZ+r+FZdmefPu
-         YcjftsZAWIW9biT8eWyqYOX9qOIi/63Rwl30Tak9yU7lU57r0ye8sZO708SKFmubJOLb
-         up3rIaqqfd2LmXDAAG+am2BzSwzbSRMbXJHc5h/ujha4KgX7VgXNxvUU95/iiFh6lXLY
-         Fl6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXbQ4nX6etLFbU8eVPXuUNI5+J5Ntffakz2INyDB2+09YYEIkDcE6vaq9aMbDxJ25NTvwewqMvkKVrd5ik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkUQVcnD25OYNewE4p1VFoYOdwqK/g2Zl22IQpiF5dKiCFXnNC
-	RcDU3z16KjmkvXY+74HoDz6BUjwtK/6Sv7UNvp7905DXnTxWlU2522+ULWRhtuI=
-X-Google-Smtp-Source: AGHT+IGzb38o63/1Jf14hRPcELRzrT96vMV7+jxQmAG1DD4+K4rabFqw4JMpN8Rh//7ySnQXE6tHUw==
-X-Received: by 2002:a05:6a20:d503:b0:1cf:2aaa:9199 with SMTP id adf61e73a8af0-1d5db22de58mr822622637.15.1727806044197;
-        Tue, 01 Oct 2024 11:07:24 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26536645sm8343990b3a.188.2024.10.01.11.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 11:07:23 -0700 (PDT)
-Date: Tue, 1 Oct 2024 11:07:20 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: "Arinzon, David" <darinzon@amazon.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"Agroskin, Shay" <shayagr@amazon.com>,
-	"Kiyanovski, Arthur" <akiyano@amazon.com>,
-	"Dagan, Noam" <ndagan@amazon.com>,
-	"Bshara, Saeed" <saeedb@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kamal Heib <kheib@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"Bernstein, Amit" <amitbern@amazon.com>
-Subject: Re: [net-next 2/2] ena: Link queues to NAPIs
-Message-ID: <Zvw6WIbaRKzNMVF_@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	"Arinzon, David" <darinzon@amazon.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"Agroskin, Shay" <shayagr@amazon.com>,
-	"Kiyanovski, Arthur" <akiyano@amazon.com>,
-	"Dagan, Noam" <ndagan@amazon.com>,
-	"Bshara, Saeed" <saeedb@amazon.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Kamal Heib <kheib@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"Bernstein, Amit" <amitbern@amazon.com>
-References: <d631f97559534c058fbd5c95afcb807a@amazon.com>
+	s=arc-20240116; t=1727806177; c=relaxed/simple;
+	bh=zlvfxo2qEOrFbWbhqWeJjndEEma3s30KJa0Jkwvhvns=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mhoz9NvRs07EzV574/Vlv9xJ6BVTbvyaxy/fAeU+5mwAaZ0+4QFdTGhbUg6znQgxt47BA4BNYObTtt4bse0hnvxg2fNx3NzVfxF+oWIglTqeyR+39etqyyIPelk0+ME0XRXQB7dOdachAavvfhNDm1rmFchApjjSG2seabvgY2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hcWo7q1s; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727806175; x=1759342175;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=zlvfxo2qEOrFbWbhqWeJjndEEma3s30KJa0Jkwvhvns=;
+  b=hcWo7q1swaPh8wPMYjCkBwNEY0D+Nx6svYs7RsUt0PmVUisufCbgcl4J
+   7Yen10jJUTZYxkKd/XkcD5fR/j+8UTvosdMs68Ov7aIc/nTk+caiUzyWU
+   cr9GSlzZvzQ0qryYfsl8B2atR2EtkBhYt8Ch/t/soV5I0zQBg8af8g2SP
+   wKNB51Pfk84pEzqA5sKr4P3HgwQt06w5W4vX+jkfv07IAgm9DxoRinkuB
+   hONzfAqPa4yv8ROYzC7I+muxn62a3/IWJZbg4R8jJQY7rTtV6Br52X/Bu
+   Mv4TnvYIfy6Zk4FcQcjOdBDzrbGX7Gv4xjBHrY3eeRLJdTv24505COJnh
+   A==;
+X-CSE-ConnectionGUID: tBUIAKLnS5CD5m1r3cskWw==
+X-CSE-MsgGUID: xbhmj38MR4GJQ/CW2i4uoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="38088750"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="38088750"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 11:09:35 -0700
+X-CSE-ConnectionGUID: Wno2GgUeRhi4Bjfjg5qdhA==
+X-CSE-MsgGUID: cQFj+qV+SpGCdcj4wba3Mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="73633196"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 01 Oct 2024 11:09:33 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svhJS-000R21-2X;
+	Tue, 01 Oct 2024 18:09:30 +0000
+Date: Wed, 2 Oct 2024 02:09:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/damon/reclaim.c:252:15: error: implicit declaration of function
+ 'damon_commit_ctx'
+Message-ID: <202410020227.oOh0SBIj-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,89 +77,189 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d631f97559534c058fbd5c95afcb807a@amazon.com>
 
-On Tue, Oct 01, 2024 at 04:40:32PM +0000, Arinzon, David wrote:
-> > > > >
-> > > > > Thank you for uploading this patch.
-> > > >
-> > > > Can you please let me know (explicitly) if you want me to send a
-> > > > second revision (when net-next allows for it) to remove the 'struct
-> > > > napi_struct' and add a comment as described above?
-> > >
-> > > Yes, I would appreciate that.
-> > > I guess the `struct napi_struct` is OK, this way both functions will look the
-> > same.
-> > > Regarding the comment, yes please, something like /* This API is
-> > supported for non-XDP queues only */ in both places.
-> > > I also added a small request to preserve reverse christmas tree order on
-> > patch 1/2 in the series.
-> > 
-> > Thanks for mentioning the nit about reverse christmas tree order; I missed
-> > that.
-> > 
-> > I will:
-> >   - Fix the ordering of the variables in 1/2
-> >   - Add 2 comments in 2/2
-> > 
-> > I'll have to wait the ~48hr timeout before I can post the v2, but I'll be sure to
-> > CC you on the next revision.
-> 
-> It's not at least a 24hr timeout?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-netdev.rst#n394
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+commit: 11ddcfc257a3e8d7b13b42148ee7e783f4876da4 mm/damon/reclaim: use damon_commit_ctx()
+date:   3 months ago
+config: x86_64-randconfig-001-20231120 (https://download.01.org/0day-ci/archive/20241002/202410020227.oOh0SBIj-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020227.oOh0SBIj-lkp@intel.com/reproduce)
 
-Ah, looks like you are right. For some reason I had 48hr in my head;
-I think I usually wait a bit longer for larger / more complicated
-stuff, but in this case 24hr seems OK.
- 
-> > 
-> > > Thank you again for the patches in the driver.
-> > 
-> > No worries, thanks for the review.
-> > 
-> > BTW: Since neither of the changes you've asked me to make are functional
-> > changes, would you mind testing the driver changes on your side just to
-> > make sure? I tested them myself on an ec2 instance with an ENA driver, but I
-> > am not an expert on ENA :)
-> > 
-> > - Joe
-> 
-> I picked up the patch and got to the same results that you did when running on an EC2 instance.
-> Thank you for sharing the commands in the commit messages, it was really helpful.
-> Correct me if I'm wrong, but there's no functional impact to these changes except the ability to
-> view the mappings through netlink.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410020227.oOh0SBIj-lkp@intel.com/
 
-This doesn't change anything about how the driver processes packets
-or handles data or anything. It's a "control plane" sort of change;
-it allows the mapping of IRQs queues and NAPI IDs to be exposed via
-netlink from core networking code (see also: net/core/netdev-genl.c
-and net/core/netdev-genl-gen.c).
+All errors (new ones prefixed by >>):
 
-This can be useful if an app uses, for example,
-SO_INCOMING_NAPI_ID (typically used for busy polling, but not
-required to busy poll).
+   In file included from include/linux/sched.h:38,
+                    from include/linux/cgroup.h:12,
+                    from include/linux/memcontrol.h:13,
+                    from include/linux/damon.h:11,
+                    from mm/damon/reclaim.c:10:
+   include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+      19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm.h:2890:5: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+    2890 | #if USE_SPLIT_PTE_PTLOCKS
+         |     ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm_types_task.h:19:45: warning: "CONFIG_SPLIT_PTLOCK_CPUS" is not defined, evaluates to 0 [-Wundef]
+      19 | #define USE_SPLIT_PTE_PTLOCKS   (NR_CPUS >= CONFIG_SPLIT_PTLOCK_CPUS)
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm_types_task.h:20:34: note: in expansion of macro 'USE_SPLIT_PTE_PTLOCKS'
+      20 | #define USE_SPLIT_PMD_PTLOCKS   (USE_SPLIT_PTE_PTLOCKS && \
+         |                                  ^~~~~~~~~~~~~~~~~~~~~
+   include/linux/mm.h:3012:5: note: in expansion of macro 'USE_SPLIT_PMD_PTLOCKS'
+    3012 | #if USE_SPLIT_PMD_PTLOCKS
+         |     ^~~~~~~~~~~~~~~~~~~~~
+   mm/damon/reclaim.c: In function 'damon_reclaim_new_scheme':
+   mm/damon/reclaim.c:171:16: error: implicit declaration of function 'damon_new_scheme'; did you mean 'damon_for_each_scheme'? [-Werror=implicit-function-declaration]
+     171 |         return damon_new_scheme(
+         |                ^~~~~~~~~~~~~~~~
+         |                damon_for_each_scheme
+   mm/damon/reclaim.c:171:16: warning: returning 'int' from a function with return type 'struct damos *' makes pointer from integer without a cast [-Wint-conversion]
+     171 |         return damon_new_scheme(
+         |                ^~~~~~~~~~~~~~~~~
+     172 |                         &pattern,
+         |                         ~~~~~~~~~
+     173 |                         /* page out those, as soon as found */
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     174 |                         DAMOS_PAGEOUT,
+         |                         ~~~~~~~~~~~~~~
+     175 |                         /* for each aggregation interval */
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     176 |                         0,
+         |                         ~~
+     177 |                         /* under the quota. */
+         |                         ~~~~~~~~~~~~~~~~~~~~~~
+     178 |                         &damon_reclaim_quota,
+         |                         ~~~~~~~~~~~~~~~~~~~~~
+     179 |                         /* (De)activate this according to the watermarks. */
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     180 |                         &damon_reclaim_wmarks,
+         |                         ~~~~~~~~~~~~~~~~~~~~~~
+     181 |                         NUMA_NO_NODE);
+         |                         ~~~~~~~~~~~~~
+   mm/damon/reclaim.c: In function 'damon_reclaim_apply_parameters':
+   mm/damon/reclaim.c:209:15: error: implicit declaration of function 'damon_set_attrs' [-Werror=implicit-function-declaration]
+     209 |         err = damon_set_attrs(ctx, &damon_reclaim_mon_attrs);
+         |               ^~~~~~~~~~~~~~~
+   mm/damon/reclaim.c:222:9: error: implicit declaration of function 'damon_set_schemes' [-Werror=implicit-function-declaration]
+     222 |         damon_set_schemes(ctx, &scheme, 1);
+         |         ^~~~~~~~~~~~~~~~~
+   mm/damon/reclaim.c:225:24: error: implicit declaration of function 'damos_new_quota_goal'; did you mean 'damos_for_each_quota_goal'? [-Werror=implicit-function-declaration]
+     225 |                 goal = damos_new_quota_goal(DAMOS_QUOTA_SOME_MEM_PSI_US,
+         |                        ^~~~~~~~~~~~~~~~~~~~
+         |                        damos_for_each_quota_goal
+   mm/damon/reclaim.c:225:22: warning: assignment to 'struct damos_quota_goal *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     225 |                 goal = damos_new_quota_goal(DAMOS_QUOTA_SOME_MEM_PSI_US,
+         |                      ^
+   mm/damon/reclaim.c:229:17: error: implicit declaration of function 'damos_add_quota_goal'; did you mean 'damos_for_each_quota_goal'? [-Werror=implicit-function-declaration]
+     229 |                 damos_add_quota_goal(&scheme->quota, goal);
+         |                 ^~~~~~~~~~~~~~~~~~~~
+         |                 damos_for_each_quota_goal
+   mm/damon/reclaim.c:233:22: warning: assignment to 'struct damos_quota_goal *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     233 |                 goal = damos_new_quota_goal(DAMOS_QUOTA_USER_INPUT, 10000);
+         |                      ^
+   mm/damon/reclaim.c:241:26: error: implicit declaration of function 'damos_new_filter'; did you mean 'damos_for_each_filter'? [-Werror=implicit-function-declaration]
+     241 |                 filter = damos_new_filter(DAMOS_FILTER_TYPE_ANON, true);
+         |                          ^~~~~~~~~~~~~~~~
+         |                          damos_for_each_filter
+   mm/damon/reclaim.c:241:24: warning: assignment to 'struct damos_filter *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     241 |                 filter = damos_new_filter(DAMOS_FILTER_TYPE_ANON, true);
+         |                        ^
+   mm/damon/reclaim.c:244:17: error: implicit declaration of function 'damos_add_filter'; did you mean 'damos_for_each_filter'? [-Werror=implicit-function-declaration]
+     244 |                 damos_add_filter(scheme, filter);
+         |                 ^~~~~~~~~~~~~~~~
+         |                 damos_for_each_filter
+   mm/damon/reclaim.c:247:15: error: implicit declaration of function 'damon_set_region_biggest_system_ram_default' [-Werror=implicit-function-declaration]
+     247 |         err = damon_set_region_biggest_system_ram_default(param_target,
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> mm/damon/reclaim.c:252:15: error: implicit declaration of function 'damon_commit_ctx' [-Werror=implicit-function-declaration]
+     252 |         err = damon_commit_ctx(ctx, param_ctx);
+         |               ^~~~~~~~~~~~~~~~
+>> mm/damon/reclaim.c:254:9: error: implicit declaration of function 'damon_destroy_ctx'; did you mean 'mm_destroy_cid'? [-Werror=implicit-function-declaration]
+     254 |         damon_destroy_ctx(param_ctx);
+         |         ^~~~~~~~~~~~~~~~~
+         |         mm_destroy_cid
+   mm/damon/reclaim.c: In function 'damon_reclaim_turn':
+   mm/damon/reclaim.c:263:23: error: implicit declaration of function 'damon_stop' [-Werror=implicit-function-declaration]
+     263 |                 err = damon_stop(&ctx, 1);
+         |                       ^~~~~~~~~~
+   mm/damon/reclaim.c:273:15: error: implicit declaration of function 'damon_start' [-Werror=implicit-function-declaration]
+     273 |         err = damon_start(&ctx, 1, true);
+         |               ^~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
-A user app might design some logic like (just making this up as an
-example):
 
-  New fd from accept() has NAPI_ID 123 which corresponds to ifindex
-  3 and so thread number X should handle the connection, because it
-  is pinned to a CPU that is most optimal for ifindex 3 (e.g. NUMA
-  local or softIRQ local or whatever the user app wants).
+vim +/damon_commit_ctx +252 mm/damon/reclaim.c
 
-Without this change, user apps can get the NAPI id of an FD but have
-no way to know which ifindex or queue it is associated with.
+   195	
+   196	static int damon_reclaim_apply_parameters(void)
+   197	{
+   198		struct damon_ctx *param_ctx;
+   199		struct damon_target *param_target;
+   200		struct damos *scheme, *old_scheme;
+   201		struct damos_quota_goal *goal;
+   202		struct damos_filter *filter;
+   203		int err;
+   204	
+   205		err = damon_modules_new_paddr_ctx_target(&param_ctx, &param_target);
+   206		if (err)
+   207			return err;
+   208	
+   209		err = damon_set_attrs(ctx, &damon_reclaim_mon_attrs);
+   210		if (err)
+   211			goto out;
+   212	
+   213		err = -ENOMEM;
+   214		scheme = damon_reclaim_new_scheme();
+   215		if (!scheme)
+   216			goto out;
+   217		if (!list_empty(&ctx->schemes)) {
+   218			damon_for_each_scheme(old_scheme, ctx)
+   219				damon_reclaim_copy_quota_status(&scheme->quota,
+   220						&old_scheme->quota);
+   221		}
+   222		damon_set_schemes(ctx, &scheme, 1);
+   223	
+   224		if (quota_mem_pressure_us) {
+   225			goal = damos_new_quota_goal(DAMOS_QUOTA_SOME_MEM_PSI_US,
+   226					quota_mem_pressure_us);
+   227			if (!goal)
+   228				goto out;
+   229			damos_add_quota_goal(&scheme->quota, goal);
+   230		}
+   231	
+   232		if (quota_autotune_feedback) {
+   233			goal = damos_new_quota_goal(DAMOS_QUOTA_USER_INPUT, 10000);
+   234			if (!goal)
+   235				goto out;
+   236			goal->current_value = quota_autotune_feedback;
+   237			damos_add_quota_goal(&scheme->quota, goal);
+   238		}
+   239	
+   240		if (skip_anon) {
+   241			filter = damos_new_filter(DAMOS_FILTER_TYPE_ANON, true);
+   242			if (!filter)
+   243				goto out;
+   244			damos_add_filter(scheme, filter);
+   245		}
+   246	
+   247		err = damon_set_region_biggest_system_ram_default(param_target,
+   248						&monitor_region_start,
+   249						&monitor_region_end);
+   250		if (err)
+   251			goto out;
+ > 252		err = damon_commit_ctx(ctx, param_ctx);
+   253	out:
+ > 254		damon_destroy_ctx(param_ctx);
+   255		return err;
+   256	}
+   257	
 
-It also allows user apps to more easily determine which IRQ maps to
-which queue (without having to parse, say /proc/interrupts).
-
-This can be used for monitoring/alerting/observability purposes by
-user apps trying to track down the source of hardware IRQ
-generation. Say you are using RSS to direct specific types of flows
-to specific queues, knowing which queues are associated with which
-IRQs (via their NAPI ID) can help narrow down where IRQ generation
-is coming from.
-
-Overall: there's a lot of use cases where exposing this mapping to
-userland can be very helpful.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
