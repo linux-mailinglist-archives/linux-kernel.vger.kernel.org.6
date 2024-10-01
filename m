@@ -1,152 +1,188 @@
-Return-Path: <linux-kernel+bounces-346366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C42598C3D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FF5398C251
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BA31F2243F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B4D284F04
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D669D1C9EDE;
-	Tue,  1 Oct 2024 16:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651D71CB339;
+	Tue,  1 Oct 2024 16:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rnQSHS86"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="L+gTsnYC"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B17127448;
-	Tue,  1 Oct 2024 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246461CB527
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727801216; cv=none; b=TtMpe++vJG49as3ijZ4uWSxBgOlx2svJRS7J3feVHth/GLfj3Oqen/f+Gv2TCj132uiQkOoQxi6mDoZltQLU3Pztb4Emdbv3Xb/IoJhDHtaP/o/BU4FoFwvbzfROLGx96coAdiPkFeUpjwVS+0jRGoI/AaDMEehErVXzt9N/yac=
+	t=1727798823; cv=none; b=WLM0j9uhOh1TNg2pqvTMdg7OHRCXYcX2QdNOVnomA287PCzESpu1XJRVFGILMcW38WTK4DIO7zHxY4Nn9ZecWTV8iRXxH2BOs4dc/wSG9kUxN82XKB25a4ElT0cyT0e8fWH+W9P9Lp90vop13jYqZCW7sdqLko5NPipwPohfpc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727801216; c=relaxed/simple;
-	bh=HiG9GtWMswAaZDbUlsntDaoJGjdyT7+LdcqwzUNVv9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pqW8kslWKlYG9fEvobB/2/tTlRP2p/LU/WL/h/fkiNOSYBnWYXONx23A9FaaSYfqHgltpgKnJ/iXNfZPYUhedz42ThGMyN/MvrA5gk/00QZnb9Wvh5rFcVUVFWIWv2ZFD+AhHiRdYqikQwXyeF/A5KxpGnMlK8YEwFfc4afS4NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rnQSHS86; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491GLP9U028064;
-	Tue, 1 Oct 2024 16:46:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:in-reply-to:references
-	:mime-version:content-type:content-transfer-encoding; s=pp1; bh=
-	Wry+BMAdVz/iliK0KP6oFMh+89WY2VRMT2TvxGPIZQ0=; b=rnQSHS867nqPic//
-	SSlBNN0YT6G5/wLp8kssJSW+Pax7/zS5HQk54pn1il6n0BN5C/gmTmDXGn7ZW3wb
-	zrUvThXcDmXBLNOoS+43zeuddev7/WMnFoP9t/YSm6Etc3DSTJG9eyxHtrePvYF3
-	rva9RGQWSKq/Z9sTbeXfi4DfKuUaseFfib0JvRLpq8l/cAQ7avZFvmrOqHZnaXqU
-	J60Hn34hlLLNUFg++1/gR8K/YWDRNVBMXydRqafGCaDFsYSfnSIa/Qv/FxPTLkuw
-	bu7YluKdWQ6mwl6x0BoZHS3ts6XRKiiRtF4vuWuq+yvQVUqMtkDkdid5ylcy/ZQp
-	WjzUAA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420mhc04eg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 16:46:52 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491Eiue3008050;
-	Tue, 1 Oct 2024 16:46:51 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxwqhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 16:46:51 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491Gkl4758327462
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 16:46:47 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A34BD20043;
-	Tue,  1 Oct 2024 16:46:47 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7AFFF20040;
-	Tue,  1 Oct 2024 16:46:47 +0000 (GMT)
-Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 16:46:47 +0000 (GMT)
-Date: Tue, 1 Oct 2024 14:10:27 +0200
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Steffen Eiden <seiden@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        Ingo Franzki
- <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Janosch Frank
- <frankja@linux.ibm.com>
-Subject: Re: [PATCH v1 1/6] s390/boot/uv.c: Use a constant for more-data rc
-Message-ID: <20241001141027.2063bf9d@p-imbrenda.boeblingen.de.ibm.com>
-In-Reply-To: <20240930131909.2079965-2-seiden@linux.ibm.com>
-References: <20240930131909.2079965-1-seiden@linux.ibm.com>
-	<20240930131909.2079965-2-seiden@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1727798823; c=relaxed/simple;
+	bh=UyWMIIBCmwkbjPM0A+FmTU87MU0ZGnNGDXu/rgKEGp8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=UUtZY8bqJw2+KIeQQq1QZGYhabqhDSKh/7/fgDrD/iLWXPvY1x5aR/GZvvs0dpU5n5cD7GUzGr9+Uc0f7qXWSomkXhBIGID1CcVOUmChi5gwGepBQ7lQ3xIAYPEQwsbEx8ra1hC/rIg1p6rP41T9dZdwqYyVoQUtTKBP8g5qOgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=L+gTsnYC; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20bc506347dso905015ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:07:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727798821; x=1728403621; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pcb1JUl7nxyzCR2L+K51gN2ROJJ8XrFInAPZeivTlr8=;
+        b=L+gTsnYCu9stnnO17H/zQAfCHigLou3l1RHCrbc7E2KQD5cNhnEhRGGe0SZtfrTCUP
+         4BM95mXYobeV3JJuyfXkdWjMaf1N7hgiZPiiIz3xWas7d8lVB8CYdun2yg0XLLm2pU+Y
+         SMCi2X4msSYvpuBtPFBEdSI4WGkvJYFL0aEiCRyWXZF9N9tcJVCKIHNeVV9L59LmgSWw
+         f3AbHV5WlGRMrNhuLcEgCvXzIW3320P6RoZgO6edfpI5w6BiqIfrp4OAF9Q1DaIT/CKs
+         SpwElHcYOMmK6tr/V6PYRlIGtN7JOrog8mS93mVucZReZ6L8Kws1NXocJz2LmpIDauTW
+         dXBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727798821; x=1728403621;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pcb1JUl7nxyzCR2L+K51gN2ROJJ8XrFInAPZeivTlr8=;
+        b=sg3q5j2hJJPFsKDWTf6dxZ9RwPhnIvGCnwodmUTKH633GT6lbKMosSJGmF0vlOJjka
+         tI2hiIu/Eo33HNORaRI1CZIHibUTcaysE8dVpf+SaylUhNwZq3JxlaTS8nbtFIBzSnFC
+         S4ercH+txoINYcJi27TI2VofNtou0VKHF/6fGBC97qxla9URa4b054kRPM27AZ0fFqof
+         2qkyiKtWi8I9nlmqnHT39YB4q7GaOzgv9djjfDdBqiKlVIU5m83sxit5nmqhAoYEpv6Q
+         JL7ox97qBeeWETXbydJo8b6kikX400IlHlcJHoXONkk1t08nxGUHTdetRi2AbcaxX67G
+         EvMg==
+X-Gm-Message-State: AOJu0YwgqhY1/ApVE3fqrjCDR6qsc+O6fbTikLXs2PMaFI3XCnBsZ2bg
+	cYVLAC6AoEzngYi1p35KqZihGxIzR1SqEppRde/ze/Q/DVpcdDayDAWlWGHFiQQ=
+X-Google-Smtp-Source: AGHT+IG/9AhOFkVlsb1ZH2XMKlQ6f717lLd7IRjhRM+ZTMobdV3S8kdqvcOsBq5NGgSC9+zelAG6Ow==
+X-Received: by 2002:a17:90a:650c:b0:2cc:ff56:5be1 with SMTP id 98e67ed59e1d1-2e184526f71mr233618a91.7.1727798821325;
+        Tue, 01 Oct 2024 09:07:01 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1d7d47sm13843973a91.28.2024.10.01.09.06.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 09:07:00 -0700 (PDT)
+From: Deepak Gupta <debug@rivosinc.com>
+Date: Tue, 01 Oct 2024 09:06:06 -0700
+Subject: [PATCH 01/33] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: hymnsFrrPdbuqE1g5EvMykud4eoqu9ZL
-X-Proofpoint-ORIG-GUID: hymnsFrrPdbuqE1g5EvMykud4eoqu9ZL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_13,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=728
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010106
+Message-Id: <20241001-v5_user_cfi_series-v1-1-3ba65b6e550f@rivosinc.com>
+References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+In-Reply-To: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+ Vlastimil Babka <vbabka@suse.cz>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Christian Brauner <brauner@kernel.org>, 
+ Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
+ Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-mm@kvack.org, linux-riscv@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ alistair.francis@wdc.com, richard.henderson@linaro.org, jim.shu@sifive.com, 
+ andybnac@gmail.com, kito.cheng@sifive.com, charlie@rivosinc.com, 
+ atishp@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com, 
+ alexghiti@rivosinc.com, samitolvanen@google.com, broonie@kernel.org, 
+ rick.p.edgecombe@intel.com, Deepak Gupta <debug@rivosinc.com>, 
+ David Hildenbrand <david@redhat.com>, 
+ Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+X-Mailer: b4 0.14.0
 
-On Mon, 30 Sep 2024 15:19:04 +0200
-Steffen Eiden <seiden@linux.ibm.com> wrote:
+From: Mark Brown <broonie@kernel.org>
 
-> Add a define for the UVC rc 0x0100 that indicates that a UV-call was
-> successful but may serve more data if called with a larger buffer
-> again.
-> 
-> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+Since multiple architectures have support for shadow stacks and we need to
+select support for this feature in several places in the generic code
+provide a generic config option that the architectures can select.
 
-Reviewed-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+---
+ arch/x86/Kconfig   | 1 +
+ fs/proc/task_mmu.c | 2 +-
+ include/linux/mm.h | 2 +-
+ mm/Kconfig         | 6 ++++++
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
-> ---
->  arch/s390/boot/uv.c        | 4 ++--
->  arch/s390/include/asm/uv.h | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/s390/boot/uv.c b/arch/s390/boot/uv.c
-> index 318e6ba95bfd..2a71e759dc42 100644
-> --- a/arch/s390/boot/uv.c
-> +++ b/arch/s390/boot/uv.c
-> @@ -22,8 +22,8 @@ void uv_query_info(void)
->  	if (!test_facility(158))
->  		return;
->  
-> -	/* rc==0x100 means that there is additional data we do not process */
-> -	if (uv_call(0, (uint64_t)&uvcb) && uvcb.header.rc != 0x100)
-> +	/* Ignore that there might be more data we do not process */
-> +	if (uv_call(0, (uint64_t)&uvcb) && uvcb.header.rc != UVC_RC_MORE_DATA)
->  		return;
->  
->  	if (IS_ENABLED(CONFIG_KVM)) {
-> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-> index 153d93468b77..94ff58336e8e 100644
-> --- a/arch/s390/include/asm/uv.h
-> +++ b/arch/s390/include/asm/uv.h
-> @@ -28,6 +28,7 @@
->  #define UVC_RC_INV_STATE	0x0003
->  #define UVC_RC_INV_LEN		0x0005
->  #define UVC_RC_NO_RESUME	0x0007
-> +#define UVC_RC_MORE_DATA	0x0100
->  #define UVC_RC_NEED_DESTROY	0x8000
->  
->  #define UVC_CMD_QUI			0x0001
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2852fcd82cbd..8ccae77d40f7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1954,6 +1954,7 @@ config X86_USER_SHADOW_STACK
+ 	depends on AS_WRUSS
+ 	depends on X86_64
+ 	select ARCH_USES_HIGH_VMA_FLAGS
++	select ARCH_HAS_USER_SHADOW_STACK
+ 	select X86_CET
+ 	help
+ 	  Shadow stack protection is a hardware feature that detects function
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 72f14fd59c2d..23f875e78eae 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -971,7 +971,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+ 		[ilog2(VM_UFFD_MINOR)]	= "ui",
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+-#ifdef CONFIG_X86_USER_SHADOW_STACK
++#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+ 		[ilog2(VM_SHADOW_STACK)] = "ss",
+ #endif
+ #if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..57533b9cae95 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -354,7 +354,7 @@ extern unsigned int kobjsize(const void *objp);
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
+ 
+-#ifdef CONFIG_X86_USER_SHADOW_STACK
++#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+ /*
+  * VM_SHADOW_STACK should not be set with VM_SHARED because of lack of
+  * support core mm.
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 4c9f5ea13271..4b2a1ef9a161 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1296,6 +1296,12 @@ config NUMA_EMU
+ 	  into virtual nodes when booted with "numa=fake=N", where N is the
+ 	  number of nodes. This is only useful for debugging.
+ 
++config ARCH_HAS_USER_SHADOW_STACK
++	bool
++	help
++	  The architecture has hardware support for userspace shadow call
++          stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
++
+ source "mm/damon/Kconfig"
+ 
+ endmenu
+
+-- 
+2.45.0
 
 
