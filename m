@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-345265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F89398B3E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:46:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0091D98B3E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E06D828312F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332FB1C228A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DB81BB6B9;
-	Tue,  1 Oct 2024 05:46:40 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E971A1BBBC1;
+	Tue,  1 Oct 2024 05:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ExA+R8vS"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC1636AF8
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92A06088F;
+	Tue,  1 Oct 2024 05:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727761599; cv=none; b=Zip+1lc5D5PVF5DLhHCSVCo66Q8WA637paqbeDJ2Whbr6jgS7/QjElNN2zvNeKlmOnfrXEE2pGWOi9j8nz1U6AWvld0v94tHY9liX5/uB6BF3esizvQZOXbTrHQA/jl+jUj8Nel1UzqEu0NWVJ1k108mRIFfVCgtiGcg17dY1+U=
+	t=1727761632; cv=none; b=kdC3GUHHyWn+LBBwUhvwbukZ1qmD7Rp9N2KuL3PZraLBsNOBDGBuo2HpR+Jq1Uh7X7VZ37EoGK2bYlqgUGDfrIqn9MlsrcM2YMw4EGrY5MKOe6PMj1MYkPAjh4IU9qPiux6VK4Z/iYxUx7t11AaCJtWBMvfJesU+NCXJEX9gKto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727761599; c=relaxed/simple;
-	bh=Q5KEKQqCsjBp+oa2L0VcLE8Oq4y5l51PJxEkomhJvvk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jAc5nJKQ16lXGst/eY0o91LjTGm/7qqXw8U3mSjrigg3jIZbyDKedX63rLbj6HT0bM4JNuL0iFOvs2c7BtLRLK8Rcry+vjkjCb5WAfMATweco/YgrXv1Ht6zsS6FkWYOOyLG9fWvER/LtK+Kn+qPO0//J2ynJzPlC3s08TBdCpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a0ce8cf657so73845015ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:46:37 -0700 (PDT)
+	s=arc-20240116; t=1727761632; c=relaxed/simple;
+	bh=2YoZKnvnQ588Ub4cfcKD9Xrsj8C9PwE+WXBjFCfb8Ks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RdID4Wt2SXCtFy3xKpwuCVGgGNH9J9wuhpIU/nKA8uw2P8e5EzVi2yNQVr8jhmq2mKhcMkv2rm6g69N4nWWFN4973C0nUAnJVt3Je3mUTOEV7mupUYXDV7VHkgiBUyDdjD5jF/VmyQxewUSLcmY7FwfvBWuJKujt5qVVgrFhyZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ExA+R8vS; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e084dc44bcso858486a91.0;
+        Mon, 30 Sep 2024 22:47:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727761630; x=1728366430; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CBeIZnK2JQRXMlN+7jx211J8595pxvr+CsQntYwwTAI=;
+        b=ExA+R8vSPFnwA0Of3SvOwmSfRjHVgsuZuaP1bqGP/34wpstsLVFzgHd9DZSwGQlp3F
+         G/ksDjQ0ATc7FjXCx/6eFGIYaNBXqGxr5cZCcbWQo4Z7/qsdoJ5yRhdSGNDBCAgItn+j
+         SlfKdiGZQ1cPVl+y0wH2OiXqlJCPHxKaMIUjhaKjabrE7OnmhvogXdCQvljp0q3/QM7g
+         8x3M46ZjlUWe/4uanYO71QzVrpYf0QbnIhX0rc/anx5ql71vjj5WLCfNckXUSEtW9AG2
+         IJDJA8rk//rZdPIb2xVT0Xt5+mNKHFuRICX1PvPdaW6baf5E6byIZ3km8mcoONNppqxp
+         h1pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727761597; x=1728366397;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MFTt3IUEayUJbS81bjxcptmT7GeK8/AEn5VO30B+WRU=;
-        b=xRRYdbZEKooyf1LcK4HkiIHqNQMMm5Cbs5nxSzXBVaIL50cXYNpXotQY8Qz2R3uijk
-         eYPQeUDnX6DtDVjHX+CEvVYfJfvG9QRZjSkK4H13Gb0w6eNLndn7AKfP9n/X/gOi2lYR
-         enSnUw9r+jGah3U8OmJZv20I8C/n/b9XXVtw+ny1iWZY6jbGSd833dyoXb/qWkZ21xML
-         bN/7ivubkviTTMYdK5xGwXpfhto1k3B0ko4sKCqNioVW/2ld8XzERcodYEJODoJKKXOu
-         o4aC7HtGOQvGTmZWXyLprFspIbnOmSfPXhYe/3zwn9HPD88ej9QTOWlZtegvC/elgwUr
-         VPMA==
-X-Gm-Message-State: AOJu0YzCI9XzmpcMT9oGFa7rLiI/MFJX50eOCaRPXbdkk5g6k5iDUwb4
-	litGN3AOwti4JIIi11CcexMZuhQOA8YlkiB1VzrRbBAKFQQ6fjM5yK3TYnwHtQ6tC6ZcVXVX5mg
-	QF2OFiQb26opG12PA/bzoSts2ftmaSm/ZldVMxuM33jgtVkpNkdu96/M=
-X-Google-Smtp-Source: AGHT+IEPGciNtVaxwZmhvPpvkHsnGZ6VLR5p6H9Pgd807wnNmWX6Akb+gX68gAqPVXmKadNbLsm8ILI2viij2AD9eQ/6vapCK2Ox
+        d=1e100.net; s=20230601; t=1727761630; x=1728366430;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CBeIZnK2JQRXMlN+7jx211J8595pxvr+CsQntYwwTAI=;
+        b=vznNFyy6ByEiWeVQo9MUpHV4l+ijijTXNszHt371Zw2L2lQo4hlTnL+qIhG6CY9EsI
+         Zp5qpdP67RjoOT+zIQ8X0fZ1jby8mfxQDSGVmOjE/vSc+hRzthP4JYfu9Z9IpAaZy2FL
+         kASIfL8GLPOopp6H9yvEEVqO/TC/2dMtdTaHNCUaHFGoUDHdo1PI/YY1HnNZb1PawgDn
+         VhYA+4dwYARIDEFSbydpLphmM8AZTuql2/nY2j35BH1+TuHbdkMaaIk5Amtb6pmGk8if
+         7xs8/9CoKbgp97lJmvXa34hgJiiUvbNLPVYRm9K6/WJQ4YY4Xod9l2a32QOKHwyCQW3j
+         zQ5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUKlLGKNIp5EY+Y243VcHzEprO9p4GHJsjQWQwkeacTngGyQPaYMaDs0jT7jdLlXG+w46SMTuqV1SP65Q==@vger.kernel.org, AJvYcCXTqrzMDHvuQPKPgruKINAMlzWvGE9ghh2/b/QqQiXz/oS05MWGFPRabTzvNDoMgpcEI9kRHf/bfucrV4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3R2UZPp8tIcBO+UYSbcnENngWPob+U3QfY+GDXgGPxML7dbJf
+	ZEo+9m8K21PoecDM9Yd7SEDHhuT+Wk9ZHSg6767zX4jcLnbXiUxeV1ORHLSS5gD9Ds8T0K0v0mt
+	1fMafiZqXJS9EuHd6XGHQd7sypro=
+X-Google-Smtp-Source: AGHT+IEHcSYvIZs92iua2ICHC/3thnRry71zX+LuM9P1WqNmiBEJdo02XLGq0CVxCpRzoZTApToR3ljtxekfqocmieA=
+X-Received: by 2002:a05:6a20:3946:b0:1cf:37d4:c4f6 with SMTP id
+ adf61e73a8af0-1d509b25e12mr7490247637.4.1727761630050; Mon, 30 Sep 2024
+ 22:47:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:3a3:40f0:cb8c with SMTP id
- e9e14a558f8ab-3a3451bb951mr124339675ab.17.1727761597190; Mon, 30 Sep 2024
- 22:46:37 -0700 (PDT)
-Date: Mon, 30 Sep 2024 22:46:37 -0700
-In-Reply-To: <66edaa30.050a0220.25340c.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fb8cbd.050a0220.6bad9.004e.GAE@google.com>
-Subject: Re: [syzbot] [PATCH v2] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-From: syzbot <syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20241001102839.77211fb8@canb.auug.org.au>
+In-Reply-To: <20241001102839.77211fb8@canb.auug.org.au>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 1 Oct 2024 07:46:58 +0200
+Message-ID: <CANiq72kqGRJdXmSaeHeJL3XiPJyAOV-4CTVwvhTrXQXuYaXzJg@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the
+ rust-fixes tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Tue, Oct 1, 2024 at 2:28=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>
+> Today's linux-next merge of the fs-next tree got a conflict in:
+>
+>   rust/kernel/lib.rs
 
-***
+Looks good to me -- thanks!
 
-Subject: [PATCH v2] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
-Author: marcus.yu.56@gmail.com
-
-#syz test
-
-Use folioq_count instead of folioq_nr_slots to fix a KMSAN uninit-value
-error in netfs_clear_buffer
-
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
-Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=921873345a95f4dae7e9
-Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator instead of xarray iter")
----
-Changes since v2:
-  - Use folioq_count when putting pointers. This avoids touching
-    uninitialized pointer and is a deeper fix than just using
-    kzalloc.
-
-
- fs/netfs/misc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 63280791de3b..78fe5796b2b2 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -102,7 +102,7 @@ void netfs_clear_buffer(struct netfs_io_request *rreq)
- 
- 	while ((p = rreq->buffer)) {
- 		rreq->buffer = p->next;
--		for (int slot = 0; slot < folioq_nr_slots(p); slot++) {
-+		for (int slot = 0; slot < folioq_count(p); slot++) {
- 			struct folio *folio = folioq_folio(p, slot);
- 			if (!folio)
- 				continue;
--- 
-2.46.2
-
+Cheers,
+Miguel
 
