@@ -1,126 +1,174 @@
-Return-Path: <linux-kernel+bounces-345060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF7C98B187
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:40:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC7098B18A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE5FB1C219CC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:40:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 296821C218EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203444A15;
-	Tue,  1 Oct 2024 00:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C579B664;
+	Tue,  1 Oct 2024 00:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Gtm6+k01"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAEnwC08"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DF8A5F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 00:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775EE79CF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 00:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727743199; cv=none; b=s4/LmGQxqsG8r8e/igYnTgdfocjI2XmTqkkYpSU22m6+MfzzU1OppaWKtnqXyzIqjVMDTgvsZBOHh28a4o3W9zLICepc/6E2TG08WeFXNabED21WkHKYJ1ZW8HdhgdA+MNP3niNHM3HzlAKNuKF48bRWoJtydTr5H3XqgEl1n1A=
+	t=1727743423; cv=none; b=jtiZJy0p8N5d7Mv0g6sGtg/m2LYsY4bGiXYnnvKUDkKO5aSe+EfngTA35HR+25tcu+BgjzF3mzTIshr521xWCal6X3U25ONjY+Hb+TNR7N+WSnWGK4uCAcRSWkJ8wF/7DMH9zWc54U1GF0gOImKCo2Fa4fGftBh6nf8KjMQTNDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727743199; c=relaxed/simple;
-	bh=vlezRcrXaSrGCIETKeo6A0+BoSNIAKThiHjFRmqAJvo=;
-	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YKdXNfy+lrFCexLP+0LLmEGMmp7/TgvKk3FyDoa6ykSSVmUq/reBK5527F1RX25POJKIjkqJJ1gDIEBQ5iLyIl1YOfNTHgGFH6122IS8E7t5EHbcvfTMFH7jdhu2fxNB354NNWKaUM2OJRxcSuW1G+1XUTpfqj5Ze8p5CZobEDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Gtm6+k01; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727743198; x=1759279198;
-  h=message-id:date:mime-version:to:cc:references:subject:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vlezRcrXaSrGCIETKeo6A0+BoSNIAKThiHjFRmqAJvo=;
-  b=Gtm6+k015RjhixToBBnsNhtf9St9+1t/jgrGKJbSGolGEffu9PtSdy7x
-   mSUJ9noBzbHXfpy0SY9KsJ0P7nzI7W6k7jKMRLzDsVNQ2gLBTRjUxp2dv
-   bXiQXSrUULxju9cm3J5GW/7heeFjvqnqGgywW+cJobTwD09ZSDMJtMbXy
-   w=;
-X-IronPort-AV: E=Sophos;i="6.11,166,1725321600"; 
-   d="scan'208";a="132714498"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 00:39:57 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:1292]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.53.199:2525] with esmtp (Farcaster)
- id a3a05c75-bebd-434a-84d1-971a80553568; Tue, 1 Oct 2024 00:39:57 +0000 (UTC)
-X-Farcaster-Flow-ID: a3a05c75-bebd-434a-84d1-971a80553568
-Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 00:39:57 +0000
-Received: from [192.168.21.242] (10.187.170.9) by
- EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
- Tue, 1 Oct 2024 00:39:56 +0000
-Message-ID: <9de4f491-eb64-4a1e-a375-7bc2d382fe5e@amazon.com>
-Date: Mon, 30 Sep 2024 17:39:55 -0700
+	s=arc-20240116; t=1727743423; c=relaxed/simple;
+	bh=P5bzN8Fyi+yrdR6oa6emyFTB918asqqrUurgbmkOUIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZhW6kc4mVYHbKCnQ2jqPUb0Hd0hbnWE6qGljP6uTfc6sTmt3HY9Tx2BoJCBMgSLN6ATpMNGSfre59UN6oxZ+5ybZgby+Ab2Ya/BPQhJUUY1FxYdjVNwvH1ks/S1FSpt+LdWthA0K0zfw6of0mUqZepzrNj3ZPDlLguIsyA7dkOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nAEnwC08; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F08FC4CEC7;
+	Tue,  1 Oct 2024 00:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727743423;
+	bh=P5bzN8Fyi+yrdR6oa6emyFTB918asqqrUurgbmkOUIs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nAEnwC08jnInKVjFgpzGCt6yQCJXSubmdZ4C1zMeE3/BfjfOnKLCfCA51P73Oad32
+	 Th1Gow09Krprl3fCQNLM78Mz3M64LyCZg0nk/ARzMmVAuaH/ivv2WFKAJdMArpy1Uv
+	 0U7Yz3I3uZvyz4Kom8D0hNuEaSy4j5GQiTMPyGuafa6BINc2AywJTNMIq/yl7U7Miw
+	 E3kNYZc+VbF2Z8gXoQ9vEosZaGNOdORRDpqPOfCQZu4OqwfkiqEpw5mLcumh1cGGYl
+	 xfmhIe/mHc2Vhu80SzsteW06gelRaaAnxiQbfFASt5dUxlVzSsX2mGxkIt75RqDs33
+	 3wF/BOOV/xmQg==
+Date: Mon, 30 Sep 2024 21:43:39 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>, Will Deacon <will@kernel.org>
+Subject: [PATCH 1/1 fyi] tools headers arm64: Sync arm64's cputype.h with the
+ kernel sources
+Message-ID: <ZvtFu7J-Awy2zuEJ@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: <david.kaplan@amd.com>
-CC: <bp@alien8.de>, <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <jpoimboe@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<mingo@redhat.com>, <pawan.kumar.gupta@linux.intel.com>,
-	<peterz@infradead.org>, <tglx@linutronix.de>, <x86@kernel.org>
-References: <LV3PR12MB926575E4BB94AE51EA662A3694642@LV3PR12MB9265.namprd12.prod.outlook.com>
-Subject: RE: [RFC PATCH 27/34] x86/bugs: Add attack vector controls for
- spectre_v1
-Content-Language: en-US
-From: "Manwaring, Derek" <derekmn@amazon.com>
-In-Reply-To: <LV3PR12MB926575E4BB94AE51EA662A3694642@LV3PR12MB9265.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D037UWB003.ant.amazon.com (10.13.138.115) To
- EX19D003UWC002.ant.amazon.com (10.13.138.169)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024-09-12 21:15+0000 David Kaplan wrote:
-> On 2024-09-12 13:16-0700 Dave Hansen wrote:
-> > On 9/12/24 12:57, Kaplan, David wrote:
-> > > And to be clear, I was trying to continue to support both.  But the
-> > > attack-vector style is also more future-proof because when new issues
-> > > arise, they would get added to the appropriate vectors and users
-> > > wouldn't have to do anything ideally.
-> >
-> > That's a good point.  Do you have any inkling about how static folks'
-> > vector selection would have been over time?
-> >
-> > For instance, if someone cared about CPU_MITIGATE_GUEST_HOST at the
-> > original spectre_v2 time, did that carry forward to L1TF and all the way into
-> > 2024?
-> >
-> > Or would they have had to shift their vector selection over time?
->
-> In my view, the attack vector selection is a function of how the system
-> is being used.  A system that runs untrusted guests and cared about
-> spectre_v2 I would think also cares about L1TF, Retbleed, etc. They're
-> all attacks that can leak the same kind of data, although the mechanisms
-> of exploit are different.  In what I've personally seen, if you care
-> about one attack along a certain attack vector, you tend to care about
-> all of them.
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-This makes sense, but I'm not sure it is a meaningful simplification for
-users. I think it'd be helpful if we had a few samples of how users
-normally configure their systems. My hunch would be there are three main
-camps:
-  1) default for everything
-  2) mitigations=off
-  3) specify at least one mitigation individually.
+Full explanation:
 
-I think you're saying group (3) is helped most because now they don't
-have to understand each individual mitigation. But (3) is perhaps
-already a very small group of users? Maybe it would help (1) as well
-because they would get performance gains, but I'm skeptical of how many
-would feel safe switching from defaults to a vector specification. If
-they do feel comfortable doing that, they're probably closer to (3). Is
-that fair?
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-Derek
+The way these headers are used in perf are not restricted to just
+including them to compile something.
+
+There are sometimes used in scripts that convert defines into string
+tables, etc, so some change may break one of these scripts, or new MSRs
+may use some different #define pattern, etc.
+
+E.g.:
+
+  $ ls -1 tools/perf/trace/beauty/*.sh | head -5
+  tools/perf/trace/beauty/arch_errno_names.sh
+  tools/perf/trace/beauty/drm_ioctl.sh
+  tools/perf/trace/beauty/fadvise.sh
+  tools/perf/trace/beauty/fsconfig.sh
+  tools/perf/trace/beauty/fsmount.sh
+  $
+  $ tools/perf/trace/beauty/fadvise.sh
+  static const char *fadvise_advices[] = {
+        [0] = "NORMAL",
+        [1] = "RANDOM",
+        [2] = "SEQUENTIAL",
+        [3] = "WILLNEED",
+        [4] = "DONTNEED",
+        [5] = "NOREUSE",
+  };
+  $
+
+The tools/perf/check-headers.sh script, part of the tools/ build
+process, points out changes in the original files.
+
+So its important not to touch the copies in tools/ when doing changes in
+the original kernel headers, that will be done later, when
+check-headers.sh inform about the change to the perf tools hackers.
+
+To get the changes in:
+
+  db0d8a84348b876d ("arm64: errata: Enable the AC03_CPU_38 workaround for ampere1a")
+
+That makes this perf source code to be rebuilt:
+
+  CC      /tmp/build/perf-tools/util/arm-spe.o
+
+The changes in the above patch add MIDR_AMPERE1A, used in arm-spe.c, so
+probably we need to add it to that array?  Or maybe we need to leave
+this for later when this is all tested on those machines?
+
+  static const struct midr_range neoverse_spe[] = {
+          MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+          MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
+          MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
+          {},
+  };
+
+Mark Rutland recommended about arm-spe.c in a previous update to this
+file:
+
+"I would not touch this for now -- someone would have to go audit the
+TRMs to check that those other cores have the same encoding, and I think
+it'd be better to do that as a follow-up."
+
+That addresses this perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/arm64/include/asm/cputype.h arch/arm64/include/asm/cputype.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: D Scott Phillips <scott@os.amperecomputing.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/arm64/include/asm/cputype.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/arch/arm64/include/asm/cputype.h b/tools/arch/arm64/include/asm/cputype.h
+index 5fd7caea44193624..5a7dfeb8e8eb55da 100644
+--- a/tools/arch/arm64/include/asm/cputype.h
++++ b/tools/arch/arm64/include/asm/cputype.h
+@@ -143,6 +143,7 @@
+ #define APPLE_CPU_PART_M2_AVALANCHE_MAX	0x039
+ 
+ #define AMPERE_CPU_PART_AMPERE1		0xAC3
++#define AMPERE_CPU_PART_AMPERE1A	0xAC4
+ 
+ #define MICROSOFT_CPU_PART_AZURE_COBALT_100	0xD49 /* Based on r0p0 of ARM Neoverse N2 */
+ 
+@@ -212,6 +213,7 @@
+ #define MIDR_APPLE_M2_BLIZZARD_MAX MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M2_BLIZZARD_MAX)
+ #define MIDR_APPLE_M2_AVALANCHE_MAX MIDR_CPU_MODEL(ARM_CPU_IMP_APPLE, APPLE_CPU_PART_M2_AVALANCHE_MAX)
+ #define MIDR_AMPERE1 MIDR_CPU_MODEL(ARM_CPU_IMP_AMPERE, AMPERE_CPU_PART_AMPERE1)
++#define MIDR_AMPERE1A MIDR_CPU_MODEL(ARM_CPU_IMP_AMPERE, AMPERE_CPU_PART_AMPERE1A)
+ #define MIDR_MICROSOFT_AZURE_COBALT_100 MIDR_CPU_MODEL(ARM_CPU_IMP_MICROSOFT, MICROSOFT_CPU_PART_AZURE_COBALT_100)
+ 
+ /* Fujitsu Erratum 010001 affects A64FX 1.0 and 1.1, (v0r0 and v1r0) */
+-- 
+2.46.0
+
 
