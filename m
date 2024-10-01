@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-346510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB0F98C569
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:32:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C55C98C56C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46ABE1F256B1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7641C2576B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BD61CF5EF;
-	Tue,  1 Oct 2024 18:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE981CCB3D;
+	Tue,  1 Oct 2024 18:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqpwcmN0"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQKkEate"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1C71CF5CE;
-	Tue,  1 Oct 2024 18:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091C4194083;
+	Tue,  1 Oct 2024 18:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727807373; cv=none; b=gz5e/tYAcu8OBcuV/xAHUDx7bXdChXcVBEcJJDt+muBuiMbWDYpCFaZ8vv9s2amlDOAWegfEuTCy9aLV3VrH8AiVdmRHb57W00O1RQTLabSp6YBTdBlytk4L4lHs2AchE35Tx6u7PgMfP7hJhaiZiE5TIj/YZaPgrjGRJh1B4eo=
+	t=1727807482; cv=none; b=j5U14i+f4XU+E5J7f+ZkEFdu6JtnA53rtqjuSy6zOzZwxNvyfb6llFDAYY5YMOHMFzWibPzbIDJH/Xy5gOF7sgYrlxZ1P4tvDXpjXo1KQrYM9hjp9cUvGnFguWf6OxdbhBLcUddUUcNCkhe6R1hm3mUseWS8quz46Fc9btOtN6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727807373; c=relaxed/simple;
-	bh=R7pMI3RlR/Q1QL96R7slexlvSamq12LC67dyRYJ+w0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uxxicCy0aADCVcurysC0WZgLxktl811DpRueNKNoKU6RawiEYVsuNAAE3XXbG/1kSmmqsRSfQB9zll/g9eUmxHEUH5BIvwcjaL0Fjl9sePEe6f+1GaFFkDxaU/phQI/jEdWYpcx8gxMKoj/NigpnWjCniAPZvyTHNMvsJ0deqhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqpwcmN0; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-719ba0654f9so4969010b3a.3;
-        Tue, 01 Oct 2024 11:29:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727807370; x=1728412170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iw8VwDOz5fOX4AAGu9NDF1NRWlAj+unYZmC2Pjfirnw=;
-        b=HqpwcmN0ZP4pNZJ3uMUJefGtR9ORi1B3GzbGyVg1Wt4fKToln02ErhndgqgKUmG1QG
-         juRWD8RuciLk50zA33/0Oxw+6usVQvUC+lYbPZFEVdOBSbXztddYV9UyXIDzZB6IWZjp
-         OzAYV0p+TRVSmR7C7xD940N6VNbzAdmQu/Ejw7u8W/3oAnmh2cVyaXVachQM84KyDpND
-         jOg1eBj+zPBemH3U+YbK+9YmiKA273hlvBCoiICkLwqisZsyrGtBEuWK4XOCYl7g+k67
-         ZShhpA09KSJDB0uv9kXgBM/eARZ9nLxsQMAL9F+rhmcx2vc4wRevGeNsbeZeQAsoLvuA
-         TeSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727807370; x=1728412170;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iw8VwDOz5fOX4AAGu9NDF1NRWlAj+unYZmC2Pjfirnw=;
-        b=u/khBob631kB8uBlpkU7cTvTKEjHxErn1hknC1MpsW3QM9zPll0QyXinBfV10OZVM4
-         mw+D659UwqbwEadIrvZoDKnjyNC2HQSBa/V5amEHmDPPUjuv9FV7sIugREu00iGnIX6V
-         gK/idoA+DSbZ0KfoSxQw6llVbO42+NMGo9c3ygdvYyQ5Z6x2r9hsXz1DDJ+Y1/Mf/DKE
-         jU//O5+GZkjNmcVxb5NmP9Kn/+agf8LeW/7+tQVilm/x3+sHroTDqzx1Rv8C7397vJmR
-         P9IIZ3UWnKHYJojC3xi/GYqHUmO8s1FV+xuxePyuApasWDiXOyXq9afGfSPRRHZYutgn
-         zkOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSM7Od3Jsrjw9tk7sbSjEczlKJ1zGQUZIrsUBHzubq4h8lr/qEt7El/nOdgPPdjsHDL7CLyLJiUCqdVd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvB44t5A3ZdQzzDyrL0doa/ziKNYEcmy5VKlDHMKKjW/6Ol9VL
-	QyxVC8Tdgpwyf1IVzFK81ra5HtCA3+iRuzqDFxJLs/ri9DsALW47hGmaG9fB
-X-Google-Smtp-Source: AGHT+IG9I4dbXDNY9oRlsmnlCgX5xW4nOY/g+16GVSiYV6shXVFS2IczH6pnRmiYXt5yP3NJwt3cwA==
-X-Received: by 2002:a05:6a21:e92:b0:1cc:da34:585e with SMTP id adf61e73a8af0-1d5e2dd9f6dmr801905637.46.1727807370485;
-        Tue, 01 Oct 2024 11:29:30 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26529d56sm8649467b3a.170.2024.10.01.11.29.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 11:29:29 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: andrew@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	steve.glendinning@shawell.net
-Subject: [PATCHv2 net-next 9/9] net: smsc911x: move reset_gpio member down
-Date: Tue,  1 Oct 2024 11:29:16 -0700
-Message-ID: <20241001182916.122259-10-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001182916.122259-1-rosenp@gmail.com>
-References: <20241001182916.122259-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727807482; c=relaxed/simple;
+	bh=2tk1PpL1DZ09dcBp6tnCEGsXYDa9FLALHb+6UNzOzgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IeS142DIH/Y4HI/D2pW03Pikw+7yGMbbujTRJrNm23WZCgRaEoEb8gthDjIfrX6KJJIQ0gfk7yZOhs9Iy7RDIJYRGu0N/l2CaUcT8PrCCzwaS4I03KUdgdH4MkMxJI24Mq1vyQDBJnbvOQuZXsS6IVYXgJLP6hKg/wgkdRjsp/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQKkEate; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 850BBC4CEC6;
+	Tue,  1 Oct 2024 18:31:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727807481;
+	bh=2tk1PpL1DZ09dcBp6tnCEGsXYDa9FLALHb+6UNzOzgc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BQKkEate0N5vja8cnlVKCkyZGcDsOadL/GrC5VOCMAsKaJlX5Dfj6vTRhUgatearA
+	 ABiX4Y93rq1vRH2kufQygARWvkE0y7ih9gcIjAqAUhbyd7akTfursAGlnaK5LruEft
+	 bnweoqCkFVlfF6UAXzscUgHI/lbJjqhGxkUr+YBS17OAkb/eJJlpEZ1NtBUO/5FaXd
+	 JSBlHEFoidWgRs4Mn/rIwURmnHRUEHMoAZn2vEWT+MiqSmt6/Sa/XCxfrGcx79t9/8
+	 rQpaXrlZMPSnVsL8BCRXRAixyABQdb+mPN4c55bBaf5cj6M2SaIyFoLUsYktkclpvU
+	 TAXkurPi5XXIA==
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e20de1d302so2835125eaf.0;
+        Tue, 01 Oct 2024 11:31:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVX5lhjAUrsUVnbPeeSkl/McReMD7u8QYEQUuFgFB1bwrKc5RL22Z9wWcczRarC5TdF+Wblj+RjN+NO8Js=@vger.kernel.org, AJvYcCXRQeniD0GrK/lw07PNBaF1OdSRlIyP9wokI75Bk3sEwPo2FLXsFP0/L8NaZHSIsiPuP0hIHNI77IE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDk+XtljrVYxSJa+UCj7DkJ91PM8aYVYa3qDLozt1GVueMrM8x
+	mMuIesoP2zS59fOhBMUV2LQRfTqRmGjIzT5fi/GTeHY3E24tczPwBWyUVIcA4cH7/CQzdw/QWIN
+	odCjsLw78w548U4Mh4U9t9OF4b8M=
+X-Google-Smtp-Source: AGHT+IE2fKou/vy3MQNwqhzWobPpz2dXeNFsWUlf6kqsQzfiaJnKTG+dCtuITQruIeDcjUr5Zz9ZgzlsfmwvD2dyJjg=
+X-Received: by 2002:a05:6820:80d:b0:5e5:b745:f73b with SMTP id
+ 006d021491bc7-5e7b1ccbe0dmr726796eaf.1.1727807480907; Tue, 01 Oct 2024
+ 11:31:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
+In-Reply-To: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 1 Oct 2024 20:31:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
+Subject: Re: [PATCHv2] cpufreq/schedutil: Only bind threads if needed
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Qais Yousef <qyousef@layalina.io>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Not needed in struct. It seems to be unused actually.
+On Fri, Sep 27, 2024 at 10:59=E2=80=AFAM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> Remove the unconditional binding of sugov kthreads to the affected CPUs
+> if the cpufreq driver indicates that updates can happen from any CPU.
+> This allows userspace to set affinities to either save power (waking up
+> bigger CPUs on HMP can be expensive) or increasing performance (by
+> letting the utilized CPUs run without preemption of the sugov kthread).
+>
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 
-Add error handling to avoid unused variable errors and to handle
--EPROBE_DEFER, if applicable.
+Acked-by: Rafael J. Wysocki <rafael@kernel.org>
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/smsc/smsc911x.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+and I'm assuming that this will go in via tip.
 
-diff --git a/drivers/net/ethernet/smsc/smsc911x.c b/drivers/net/ethernet/smsc/smsc911x.c
-index 77a5b766751c..3b2388c1c939 100644
---- a/drivers/net/ethernet/smsc/smsc911x.c
-+++ b/drivers/net/ethernet/smsc/smsc911x.c
-@@ -131,9 +131,6 @@ struct smsc911x_data {
- 
- 	/* register access functions */
- 	const struct smsc911x_ops *ops;
--
--	/* Reset GPIO */
--	struct gpio_desc *reset_gpiod;
- };
- 
- /* Easy access to information */
-@@ -369,14 +366,15 @@ smsc911x_rx_readfifo_shift(struct smsc911x_data *pdata, unsigned int *buf,
- static int smsc911x_request_resources(struct platform_device *pdev)
- {
- 	static const char *const supplies[] = { "vdd33a", "vddvario" };
--	struct net_device *ndev = platform_get_drvdata(pdev);
--	struct smsc911x_data *pdata = netdev_priv(ndev);
-+	struct gpio_desc *reset_gpiod;
- 	struct clk *clk;
- 
- 	/* Request optional RESET GPIO */
--	pdata->reset_gpiod = devm_gpiod_get_optional(&pdev->dev,
--						     "reset",
--						     GPIOD_OUT_LOW);
-+	reset_gpiod =
-+		devm_gpiod_get_optional(&pdev->dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(reset_gpiod))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(reset_gpiod),
-+				     "GPIO device not found");
- 
- 	/* Request clock */
- 	clk = devm_clk_get_optional(&pdev->dev, NULL);
--- 
-2.46.2
-
+> ---
+> - v2: Add comment for the dl_task_check_affinity return (Juri)
+> v1: https://lore.kernel.org/lkml/480f2140-ea59-4e1d-a68d-18cbcec10941@arm=
+.com/
+>
+>  kernel/sched/cpufreq_schedutil.c | 6 +++++-
+>  kernel/sched/syscalls.c          | 7 +++++++
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
+dutil.c
+> index c6ba15388ea7..10faab849a3e 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -691,7 +691,11 @@ static int sugov_kthread_create(struct sugov_policy =
+*sg_policy)
+>         }
+>
+>         sg_policy->thread =3D thread;
+> -       kthread_bind_mask(thread, policy->related_cpus);
+> +       if (policy->dvfs_possible_from_any_cpu)
+> +               set_cpus_allowed_ptr(thread, policy->related_cpus);
+> +       else
+> +               kthread_bind_mask(thread, policy->related_cpus);
+> +
+>         init_irq_work(&sg_policy->irq_work, sugov_irq_work);
+>         mutex_init(&sg_policy->work_lock);
+>
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index aa70beee9895..2ef1cb8626bc 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1172,6 +1172,13 @@ int dl_task_check_affinity(struct task_struct *p, =
+const struct cpumask *mask)
+>         if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+>                 return 0;
+>
+> +       /*
+> +        * The special/sugov task isn't part of regular bandwidth/admissi=
+on
+> +        * control so let userspace change affinities.
+> +        */
+> +       if (dl_entity_is_special(&p->dl))
+> +               return 0;
+> +
+>         /*
+>          * Since bandwidth control happens on root_domain basis,
+>          * if admission test is enabled, we only admit -deadline
+> --
+> 2.34.1
 
