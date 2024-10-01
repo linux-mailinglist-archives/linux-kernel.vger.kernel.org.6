@@ -1,148 +1,146 @@
-Return-Path: <linux-kernel+bounces-345164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E1C98B297
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:53:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C87798B29C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A99AB26DE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:53:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD0481C219AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FAB78B4E;
-	Tue,  1 Oct 2024 02:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B0F2F860;
+	Tue,  1 Oct 2024 03:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNs3XmJ3"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="QQEcbd8Y"
+Received: from antelope.elm.relay.mailchannels.net (antelope.elm.relay.mailchannels.net [23.83.212.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC2F3F9EC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727751070; cv=none; b=E6T6z5oD34t/tcY/UEVamGoLxAiW7nqB5vUDeYrZ8QHFpKTuxsFDFwImtjH5GNlOsr+hXwATo8ZiVDM1bmzqYpYCV6Fc2gfB+TDrLDAF6xJ1o35Lopq6lr5YVjMSQYw7ExNPkzB8CuuG6Veda55El24TKTN44Os+QDWcSEKzGNg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727751070; c=relaxed/simple;
-	bh=21feO5ASMrbHPTE8t6IaMLzP3I+HTER+pHbTEeBY/GY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IvEg8ypJo4rIT6rBT6SP2JHvQjvn7UZfDIJBWOXc/SIHd9k1dOT1AE3I9hhJQFhVbLhzZ4U+ZtIjKEd4GMbuB8BL/5axW7o5RRmnbfwcKv2pZvQ/JQKl2pwa0juI6VkCrdoR9I3skadtZ8QE3hFpashtYizqI2pMqsl4JV2SD9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNs3XmJ3; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dbc5db8a31so38985807b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:51:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727751067; x=1728355867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kw9bjEOH7sJi84d8amI0HlgnwlcLtdrC8YTmlPpTOEM=;
-        b=hNs3XmJ3lWEPLmlWPCQDfiE/XJ3j2VKIO+VjSR0oIqIalkOitvdbrHIljFHGv093PC
-         OMNxha8vBgIDDQM8y9Gbp6+YO8LC2nhijTjw7yxYqUJR5WxfjfgUq3X6JW7OLuUrKfVe
-         qU1brwxHtMKRPQ3ODTbIKiWi+hABFzzdCRYvc3tQm7tuOTt9yTDXEmeBQTxcgOSvxA0J
-         OyQ6lpFab4dHbuNN6aLfbRqNx+P1UFEk0VnQnEZraqCphKlmuOCNuZHmusXsKWejTBla
-         iKxf6bIDttmshQDqt9UCjtgIQ2qr/naEr8/iBv910stsQ036Gz9ycR+pwuj6G7Hq8wyF
-         ekXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727751067; x=1728355867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kw9bjEOH7sJi84d8amI0HlgnwlcLtdrC8YTmlPpTOEM=;
-        b=DyCZyfBMB/TE6PS7Zsw4m6bi3gWMknubTdClB3F/NwF+qP7qpgXnX9L8fDq+iSgQHz
-         dH9y/N/695Uh4qL+pefLO+aYiIlUePvU0IHtaTHUzUYn/5X6gcgFvXbXAIPltlfjsDCO
-         us3v/JG3eumkh4aENu//nAHDFtTC82shZQzoMYJ5M1rbLKnN7dSBp0rOEczfe33Lpy5E
-         QB1JvLYADKxxLtqS1QZr7ioXleoZneC5OHiwOxleOt0F4yd76NyZRRyHWtvS3yrkKPAP
-         hsqd+L2vMcsVmESwDLi8WVO2ExiEaJtasmaJ1TlTHR4ma+HY23/JcslEYkNLtRsQBuNU
-         ohUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVGTFr+F9+Uq9QQ8gqIxq2akLhtd5IzzKWF3Rm4lo3lkaQHwg39QC9HKDYW+BvDdL+98/ZFPQ6dMPCdJRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybEY5x5VrObu5Ta4WPTINBkxPrSWtAx3qPG7o4Wzog/biDPQGG
-	frXK/rrmy35vFIIcJDOoG3Dawv5dwo6TAQ0QTMKglxDbfI6xwvC95dtdHg+u8yUbBDWOYpMZnYy
-	BtZRsnhePleuqp3wh9y0C6DQdoS0=
-X-Google-Smtp-Source: AGHT+IGQINgk6UFRmYO8tunNkTiP270bh8X4zMWuNZL3LkkgBCDhQvD0PPhdvlOM615bdaVtI6XZxFr066qhAEmfszQ=
-X-Received: by 2002:a05:690c:6703:b0:6db:e1e0:bf6a with SMTP id
- 00721157ae682-6e290dce418mr17591927b3.7.1727751067387; Mon, 30 Sep 2024
- 19:51:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E3EFC08;
+	Tue,  1 Oct 2024 03:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727751722; cv=pass; b=B/9CdRZIfo77+p2dYvPJLdKFNts9aUA8hE7/PIcSGRXrUzCiV5jtC+SPwS+taa7OexUxQoLLRQ8459dB/QamQOzos14Z247knvKdnUXvQI+K4j/xBwyLLEbEpAWqxZVsLJmCvhJxS3nUzWiY1w6hn17G15jnvWjJ0jWVZDZnlZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727751722; c=relaxed/simple;
+	bh=OlWlubkBamZ7PsOW1yG15T48PRXZDL5gJptZl6ol6y4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+VfNAJAK5s3Q76EqrVQ+xc90OdUVjttWIk8hlc6W1pS166hO4BSl3swke+S+kULBpDyPXVsldGHthSAlVcRa8+yPa46IbuQtF126CSUVEvveuQ2x73g5JhxJkOCVGPvE0/7h6TfXg9sZRMYUQ0yVpszUgu+a1kDxV88mlBrpXs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=QQEcbd8Y; arc=pass smtp.client-ip=23.83.212.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 441B91C2CD5;
+	Tue,  1 Oct 2024 03:02:00 +0000 (UTC)
+Received: from pdx1-sub0-mail-a311.dreamhost.com (100-96-88-243.trex-nlb.outbound.svc.cluster.local [100.96.88.243])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id BF5F21C2D0D;
+	Tue,  1 Oct 2024 03:01:59 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1727751719; a=rsa-sha256;
+	cv=none;
+	b=ck5HMXeJ0T8rdxwT1fW6aUDaUMBcsvhPK6HzIKiCYd1kLOXpibu3JtjCa9lum3zRPE4kcr
+	S0G3lvNlvE/Gu0V9pow4ZwDUzQvYQ2IanYOCTfWf2ZiJ5JBwU8EWWNtB8Cq30qyXUv1fWZ
+	OpigV5pGJKk3RbCjjSndkllgrlzqki+gUIUTALQ21GSvBmdOLvZ9VAd9A7zhTcQJ1R6uN/
+	LC3Ugn8MFGYN25YWqerxolW/DLVVahHuyRhqrvQSFgrYd7KDkYIU3YqwQwe5C9QJSdd1/K
+	2Qc4dmpI9r7FuPV1t0GAT6roHYAPwWXafXGEw8TVsdWjdqPJWHSXH1bOBkP9+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1727751719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=9Yzk8zoPL5ckI+vdpIQ0q5JxBXeFmDJGjArET0wyiWg=;
+	b=eHb1KG5sqOt+hyYM/xcQtufphuG7JgM0gV/4HqWcOpPqL4A8x/mbSOURdsLk7/jO1eJkiJ
+	KAYWBCdxJGlXJyQzu6AjANXf7qdPxz528zrkMA2fDc6zch8sqPtzwa6Zl/VFNPqJkA/tJI
+	+XaE0aOh+pf0vqmvM63dIO8vCrwPFXKADmM2tHxbBpND4V6wpBvJooKgNc502th4YqqnLr
+	A+5uA8Av04SAixq4XjV8CG51X7cCPf4kmH0S7+l7eijxfT5feeSm6B+ZJCjeo5S+7NtQOM
+	tWS+rZit1yQ7nHKMeOtOEpL7Q8TZH3PvOIfkxf22TudDduGorzZ3GTbupikr7A==
+ARC-Authentication-Results: i=1;
+	rspamd-9d66c6866-pdnpv;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Descriptive-Cure: 4589b1a7419e0fc1_1727751720066_1675553827
+X-MC-Loop-Signature: 1727751720066:1626573576
+X-MC-Ingress-Time: 1727751720066
+Received: from pdx1-sub0-mail-a311.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.96.88.243 (trex/7.0.2);
+	Tue, 01 Oct 2024 03:02:00 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a311.dreamhost.com (Postfix) with ESMTPSA id 4XHjQb05y7zGP;
+	Mon, 30 Sep 2024 20:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1727751719;
+	bh=9Yzk8zoPL5ckI+vdpIQ0q5JxBXeFmDJGjArET0wyiWg=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=QQEcbd8YQji5X2lZBUerc+TJ9m6TrtvTWQgWH75d50ZylCQetetbCJDEArOtNtyCu
+	 cshHN111CUOwIWvzUgFoZiLrIA84G1aED2RZ8ltjEQ56FTNFwxcpL7XARsmRQADnpp
+	 zTZI23KVOg2h/gB1IwVCqRE92utWyja1N96tJmw23uiLwTx2RcZqnno6GedcrSR/9x
+	 KhTUrzsIptKgENntfKslgXY+4fOzPYivRzgnRPIbQMqvuwKbhIIJKiziJ/XeZ4dmzi
+	 iWh0in5Yp1akQgOhnNUQBo4NeXdbTa9Tcj/uPEGXQgz4PHDGtE7dD3dwPrYq3ijOTx
+	 NlfU3DhUPklqg==
+Date: Mon, 30 Sep 2024 20:01:56 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: Re: [RFC 2/5] cxl: Rename CXL_DECODER_HOSTONLYMEM/DEVMEM
+Message-ID: <20241001030156.yflpw3a2cwdgdyqt@offworld>
+References: <20240925024647.46735-1-ying.huang@intel.com>
+ <20240925024647.46735-3-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930215934.349238-1-rosenp@gmail.com> <e729da5b-3964-4cdc-bdf4-2352be5b093e@lunn.ch>
-In-Reply-To: <e729da5b-3964-4cdc-bdf4-2352be5b093e@lunn.ch>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Mon, 30 Sep 2024 19:50:56 -0700
-Message-ID: <CAKxU2N9sBOnTGDhtxGVvyrSw=_WuJH29tgZXfmK-RD2RRY=ZSQ@mail.gmail.com>
-Subject: Re: [PATCH] arch: arm: kirkwood: support nvmem mac address
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com, 
-	sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240925024647.46735-3-ying.huang@intel.com>
+User-Agent: NeoMutt/20220429
 
-On Mon, Sep 30, 2024 at 6:53=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> On Mon, Sep 30, 2024 at 02:59:34PM -0700, Rosen Penev wrote:
-> > of_get_ethdev_address gets called too early for nvmem. If EPROBE_DEFER
-> > gets called, skip so that the ethernet driver can adjust the MAC addres=
-s
-> > through nvmem.
->
-> Is this from code analysis or do you have a board with real issues? Do
-> we want to add a Fixed: so it gets back ported in stable?
-Working with a guy that does. This device has not been upstreamed, so
-not quite valid.
->
-> >
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  arch/arm/mach-mvebu/kirkwood.c | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkw=
-ood.c
-> > index 73b2a86d6489..da347f66900b 100644
-> > --- a/arch/arm/mach-mvebu/kirkwood.c
-> > +++ b/arch/arm/mach-mvebu/kirkwood.c
-> > @@ -86,13 +86,18 @@ static void __init kirkwood_dt_eth_fixup(void)
-> >               void __iomem *io;
-> >               u8 *macaddr;
-> >               u32 reg;
-> > +             int err;
-> >
-> >               if (!pnp)
-> >                       continue;
-> >
-> > -             /* skip disabled nodes or nodes with valid MAC address*/
-> > -             if (!of_device_is_available(pnp) ||
-> > -                 !of_get_mac_address(np, tmpmac))
-> > +             /* skip disabled nodes */
-> > +             if (!of_device_is_available(pnp))
-> > +                     goto eth_fixup_skip;
-> > +
-> > +             /* skip nodes with valid MAC address*/
-> > +             err =3D of_get_mac_address(np, tmpmac);
-> > +             if (err =3D=3D -EPROBE_DEFER || !err)
-> >                       goto eth_fixup_skip;
->
-> I'm wondering about ordering here. What exactly does EPROBE_DEFER
-> mean? Does it mean we know there is a MAC address in nvmem, but the
-> nvmem has not probed yet? Or can it mean, the nvmem has not probed
-> yet, and maybe there is a MAC address in it, maybe not?
-It only means NVMEM has not loaded. NVMEM loads after MTD, meaning quite la=
-te.
->
-> In the maybe not case, we should still be trying to read the MAC from
-> the hardware and storing it way safe for later use.
-Not sure how to go about that. OTOH it's not very common to have
-CONFIG_NVMEM where not needed.
+On Wed, 25 Sep 2024, Huang Ying wrote:
 
-Actually I have no idea what this whole function even does. For these
-devices, uboot usually reads the ethaddr variable and passes it to the
-kernel. Something like that can be handled entirely by nvmem.
+>Previously, CXL type3 devices (memory expanders) use hostonly
+>coherence (HDM-H), while CXL type2 devices (accelerators) use dev
+>coherence (HDM-D).  So the target device type of a cxl decoder is
+>named as CXL_DECODER_HOSTONLYMEM for type3 devices and
+>CXL_DECODER_DEVMEM for type2 devices.  However, this isn't true
+>anymore.  CXL type3 devices can use dev coherence + back
+>invalidation (HDM-DB) too.
 >
->         Andrew
+>To avoid confusing between the device type and coherence, in this
+>patch, CXL_DECODER_HOSTONLYMEM/DEVMEM is renamed to
+>CXL_DECODER_EXPANDER/ACCEL.
+>
+>No functionality change is expected in this patch.
+
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+
+>Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>Cc: Dan Williams <dan.j.williams@intel.com>
+>Cc: Davidlohr Bueso <dave@stgolabs.net>
+>Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>Cc: Dave Jiang <dave.jiang@intel.com>
+>Cc: Alison Schofield <alison.schofield@intel.com>
+>Cc: Vishal Verma <vishal.l.verma@intel.com>
+>Cc: Ira Weiny <ira.weiny@intel.com>
+>Cc: Alejandro Lucero <alucerop@amd.com>
 
