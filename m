@@ -1,192 +1,119 @@
-Return-Path: <linux-kernel+bounces-345961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913E298BD72
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:27:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6AD98BD80
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 514D1282649
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CC741C21435
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8669D1C3F0A;
-	Tue,  1 Oct 2024 13:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5FC1C460F;
+	Tue,  1 Oct 2024 13:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbOfpWzr"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b="cwbf7se4"
+Received: from smtp1.tecnico.ulisboa.pt (smtp1.tecnico.ulisboa.pt [193.136.128.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780E8C2E3;
-	Tue,  1 Oct 2024 13:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C1C2E3;
+	Tue,  1 Oct 2024 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.136.128.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727789221; cv=none; b=mKUiYWFq/fMuwBcwr9ymhI1uXiK2hgBZA/X2M88NPyIV+qIMt7DL3B8CiYVtqtL4eFDBK7MkOSQlasx/asFG4vhJf+et7e3A/6PcziME8Mae63tFXcXsvTGBaf23Fu4pFIM9Jko+6NAtJCYcZorazadbuVD26ODN2f5gBnLsDGU=
+	t=1727789255; cv=none; b=gsQ3Qytjv6ekIN0QZCh3bf4Aw/0AdYugwwH1rn2LD8jB8UwR6QpUeOGflj/JdRqvhQVIrN4zsAJddbkpOz97QXf2A5hSHDXEKvDmqsDGTuN8DCNAch03l/CpT9ZDu50a0Gw5Z20eAinVYjPtL8pQKz0xIZ3gKf5kB1IwSRCk4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727789221; c=relaxed/simple;
-	bh=1nyYkxfzo++NroL8S6yTzCJSX+2NT1qKVjcM69Zn1bU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=uIjrd0bgjrwhColFzH5h+NLKI/Kvwk0g+Sd8waPvCNlt0tKgqYs8/6JieE6VU3uDcd/a4MzXerKKlFRk3jz5QNtLGmoLlwkOGSyGSAqSzjaWFsWZ9vQoe+CVGHALyozdgQ9azyGMdWcVBpZGJwpfhJWi0sOYZEkarEpJChRviPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZbOfpWzr; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718816be6cbso4683406b3a.1;
-        Tue, 01 Oct 2024 06:27:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727789220; x=1728394020; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HZdMUcxz4oj2z0u1JSSvYfdywXFuRlc1wU8q0+uI+ys=;
-        b=ZbOfpWzreo9dqB+d7AzwuKZYhtcw3bPrUVc3POTs2r4nD4tc4VZS+c46/W9OGpQkXP
-         U/JC1G14cDCh/uLrb1d0WmOWkNd5AcO8Bv70LAeQdWrl2CdSwXUytkAHqFhptPDg59sB
-         5PYd41Teoxgh3eXNj/QilWidXrFVr4RGaV0H17uimxZL2haA7eugc1ONvq2UOvvvb69u
-         wRiTXnjhZH86d1G442qh01RGEGSRemDYslsMEpmTCuUqqmRcbNCvbBT3pRGZvikNdz2K
-         dp6reWCi3rPXBWTbnWxP3wLGoc6xfPiqn89CVpkSN1kGgMx4JehlILFvdimsT0jb5KqQ
-         /U8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727789220; x=1728394020;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZdMUcxz4oj2z0u1JSSvYfdywXFuRlc1wU8q0+uI+ys=;
-        b=beP2YXqdchupczHA9rzAhdcyIflI1NI1zl9bWxCk1TcUehtib1ApsECnzmybRM03IU
-         Ft+8mdKhsoBd6eoH30tCiJrqB+ANpC3Qvtd/q+/OUqfl9tRH28UIHzOcP5lRbYq4MWMM
-         424B6/AuZOPUtq8CatzfO7q9Q01uyKGf3OGaFZiySnkfUkhOsRulj/L2FJDgs4n7jan4
-         rV4QAH1wwqKKp//uZdmJsuEILMPxCDl5bNlMNjZ4oj7EjOUXMwYE99HYaURNfwauHOc8
-         5HtEGdlpf0vMAxQqUpk5BhW5+Fu18//eNyX8Uh0YjAH5j44rkVuYN+FQkgtUYv6cGLNe
-         7fTw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+hooSEfRhErkvcRIxsmwF7/pgiycjppNjNlWnnqAu0twDNGLnft60kSVud4LFZdT++L2yz2MT8s/LiO2cPAOiOuxi@vger.kernel.org, AJvYcCW6qJr1Bm0JVPG/awvnBylSX2ZoXWphID1kYMLZaASBjGXRbWlBHWI7TWjWoyIDZR/dqXvZReajAVZ3gEU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJF2T51Z/hvK7kuAbivA1MVMejQ2SPkDWFfO5DEDKdYjz+bygw
-	SjBNZDD8PChHUF40NcCyPtnetPY7WcNEGqEy+eU5NIrb9UW0e5Zd0DwwAM3w
-X-Google-Smtp-Source: AGHT+IH24fZeYDJ6tid2b5dW24cXNAJV9ayHG7xtYE56jRxuSNdt+NBTgWcBgB1JjsOs+tp+sk9j5g==
-X-Received: by 2002:a05:6a00:23d2:b0:717:86ea:d010 with SMTP id d2e1a72fcca58-71b2605987dmr21416718b3a.21.1727789219768;
-        Tue, 01 Oct 2024 06:26:59 -0700 (PDT)
-Received: from ?IPV6:240d:1a:13a:f00:4b94:68e0:2d8b:3983? ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b265371dbsm7974117b3a.207.2024.10.01.06.26.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 06:26:59 -0700 (PDT)
-Message-ID: <509829ab-98b5-4429-ba59-e1fc7b300682@gmail.com>
-Date: Tue, 1 Oct 2024 22:27:03 +0900
+	s=arc-20240116; t=1727789255; c=relaxed/simple;
+	bh=itkEClIvbFHoUH/WzE9jOrv/kI7nEJtauerltDzC/Xk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=VizFMNIZiPOHAgAeR2zAyUSIz3DhKPrOeGQjnL0Q+O0LwunKOkGd9qgXRqJ4R6fj6dIZc3a6omYcH/DzEqZm3VG8kZrrEsuW2PQS4JU3ig8wYuF6YBcIhHW7MDpVVNgIqJ1fqeEN9dBx9L9GgyOwhFfjup5zJkNphGI7++0sV2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt; spf=pass smtp.mailfrom=tecnico.ulisboa.pt; dkim=pass (1024-bit key) header.d=tecnico.ulisboa.pt header.i=@tecnico.ulisboa.pt header.b=cwbf7se4; arc=none smtp.client-ip=193.136.128.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tecnico.ulisboa.pt
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tecnico.ulisboa.pt
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTP id 01F1B6003003;
+	Tue,  1 Oct 2024 14:27:22 +0100 (WEST)
+X-Virus-Scanned: by amavis-2.13.0 (20230106) (Debian) at tecnico.ulisboa.pt
+Received: from smtp1.tecnico.ulisboa.pt ([127.0.0.1])
+ by localhost (smtp1.tecnico.ulisboa.pt [127.0.0.1]) (amavis, port 10025)
+ with LMTP id Y8LhZEt_3TgZ; Tue,  1 Oct 2024 14:27:19 +0100 (WEST)
+Received: from mail1.tecnico.ulisboa.pt (mail1.ist.utl.pt [193.136.128.10])
+	by smtp1.tecnico.ulisboa.pt (Postfix) with ESMTPS id B08C76003000;
+	Tue,  1 Oct 2024 14:27:19 +0100 (WEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tecnico.ulisboa.pt;
+	s=mail; t=1727789239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1jO/1inbmzumzQbTK/sg4fZKbEKejBxIlpeswmP8VvE=;
+	b=cwbf7se4aufcl4bhgAPgz3DFeSZ5MYaOB0XesR5Ug00llRRLaesL9HEnKeGwfBCWHcsYaf
+	AAroQapRDh5r9zbOlfMiX2HjTl+O0q66p20cFaCXsZdx9nxcmkvj38N+CCsVlUvsQT1s7c
+	fvY9uP1sy5cW7T7id08k3WXhMBQqbrE=
+Received: from [192.168.1.150] (unknown [IPv6:2001:8a0:6a67:5600:f598:c056:b30e:1a92])
+	(Authenticated sender: ist187313)
+	by mail1.tecnico.ulisboa.pt (Postfix) with ESMTPSA id 6D3BB360161;
+	Tue,  1 Oct 2024 14:27:19 +0100 (WEST)
+From: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+Date: Tue, 01 Oct 2024 14:27:07 +0100
+Subject: [PATCH] arm64: tegra: smaug: declare cros-ec extcon
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: ts <tatsuya.s2862@gmail.com>
-Subject: Re: [PATCH v2] ftrace: Hide a extra entry in stack trace
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20240926061311.25625-1-tatsuya.s2862@gmail.com>
- <20240930085139.5d34f28236a67ef1e9143655@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20240930085139.5d34f28236a67ef1e9143655@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241001-cros_ec_extcon-v1-1-1e212a1a4bbc@tecnico.ulisboa.pt>
+X-B4-Tracking: v=1; b=H4sIAKr4+2YC/x3MQQqAIBBA0avErBMcCaGuEiExjTUbDY0QxLsnL
+ d/i/wqZk3CGZaiQ+JUsMXTgOABdezhZydENRpsJtUZFKWbH5Lg8FIPi2VpC1N6Shx7dib2Uf7h
+ urX2ORZzMYAAAAA==
+X-Change-ID: 20241001-cros_ec_extcon-e966c110f6cf
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727789239; l=986;
+ i=diogo.ivo@tecnico.ulisboa.pt; s=20240529; h=from:subject:message-id;
+ bh=itkEClIvbFHoUH/WzE9jOrv/kI7nEJtauerltDzC/Xk=;
+ b=awjg5CzkdwGS26YTDvX2s//0/OSxc0bcURNm82C5m7LF7ix8u3JJI/k3YDJMXhPqTuTnfhfE2
+ moH006phdfnC71LN67VOM/U15E3zJqMy5uQdYWB4C+gp2X2zjB+9gXW
+X-Developer-Key: i=diogo.ivo@tecnico.ulisboa.pt; a=ed25519;
+ pk=BRGXhMh1q5KDlZ9y2B8SodFFY8FGupal+NMtJPwRpUQ=
 
+Leverage the Chrome OS EC in the Pixel C to convey information about the
+state of the USB-C port via the extcon class.
 
-On 9/30/24 8:51 AM, Masami Hiramatsu (Google) wrote:
-> On Thu, 26 Sep 2024 15:13:07 +0900
-> Tatsuya S<tatsuya.s2862@gmail.com> wrote:
->
->> A extra entry is shown on stack trace(CONFIG_UNWINDER_ORC=y).
->>
->>      [003] .....   110.171589: vfs_write <-__x64_sys_write
->>      [003] .....   110.171600: <stack trace>
->>   => XXXXXXXXX (Wrong function name)
->>   => vfs_write
->>   => __x64_sys_write
->>   => do_syscall_64
->>   => entry_SYSCALL_64_after_hwframe
-> OK, I confirmed it;
->
-> ------
-> echo 1 > options/func_stack_trace
-> echo "vfs_write" >> set_ftrace_filter
-> echo "function" > current_tracer
-> echo > /dev/null
-> cat trace
->                sh-136     [005] .....   266.884180: vfs_write <-ksys_write
->                sh-136     [005] .....   266.884188: <stack trace>
->   => 0xffffffffa0004099
->   => vfs_write
->   => ksys_write
->   => do_syscall_64
->   => entry_SYSCALL_64_after_hwframe
-> ------
->
->> To resolve this, increment skip in __ftrace_trace_stack().
->> The reason why skip is incremented in __ftrace_trace_stack()
->> is because __ftrace_trace_stack() in stack trace is the only function
->> that wasn't skipped from anywhere.
->>
->> Signed-off-by: Tatsuya S<tatsuya.s2862@gmail.com>
->> ---
->>   kernel/trace/trace.c | 4 +---
->>   1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->> index c3b2c7dfadef..0f2e255f563c 100644
->> --- a/kernel/trace/trace.c
->> +++ b/kernel/trace/trace.c
->> @@ -2916,10 +2916,8 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
->>   	 * Add one, for this function and the call to save_stack_trace()
->>   	 * If regs is set, then these functions will not be in the way.
->>   	 */
-> Hmm, with this change, the above comment should also be updated.
->
->
->> -#ifndef CONFIG_UNWINDER_ORC
->> -	if (!regs)
->> +	if (IS_ENABLED(CONFIG_UNWINDER_ORC) || !regs)
->>   		skip++;
->> -#endif
-> Also, this solves just one pattern (only enable function tracer) but if
-> there are fprobes (or kprobes) on the same function, it introduces another issue.
-> e.g. (with this fix)
->
-> ------
-> echo 1 > options/func_stack_trace
-> echo 1 > options/stacktrace
-> echo "vfs_write" >> set_ftrace_filter
-> echo "function" > current_tracer
-> echo "f:myevent vfs_write" > dynamic_events
-> echo 1 > events/fprobes/myevent/enable
-> echo > /dev/null
-> cat trace
-> ...
->                sh-140     [001] ...1.    18.352601: myevent: (vfs_write+0x4/0x560)
->                sh-140     [001] ...1.    18.352602: <stack trace>
->   => ksys_write
->   => do_syscall_64
->   => entry_SYSCALL_64_after_hwframe
->                sh-140     [001] ...1.    18.352602: vfs_write <-ksys_write
->                sh-140     [001] ...1.    18.352604: <stack trace>
->   => ftrace_regs_call
->   => vfs_write
->   => ksys_write
->   => do_syscall_64
->   => entry_SYSCALL_64_after_hwframe
-> ------
-> As you can see, myevent skips "vfs_write".
-> (and function tracer still have ftrace_regs_call() )
+Signed-off-by: Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks for the other tests. This issue may be function_trace_call() 
-specific problem.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 581bcc19a753640b3ced9e81c457d642a8c8a27d..1e4cbeeb4a6172e3d8c39c3b871c97fb302e3099 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1398,6 +1398,11 @@ battery: bq27742@55 {
+ 					reg = <0x55>;
+ 				};
+ 			};
++
++			usbc_extcon0: extcon0 {
++				compatible = "google,extcon-usbc-cros-ec";
++				google,usb-port-id = <0>;
++			};
+ 		};
+ 	};
+ 
 
-So I will change the place to increment skip number.
+---
+base-commit: 841703741c19a65310b81ddfa43725fbc66afcc4
+change-id: 20241001-cros_ec_extcon-e966c110f6cf
 
-> Thank you,
->
->>   
->>   	preempt_disable_notrace();
->>   
->> -- 
->> 2.46.1
->>
-Thank you,
+Best regards,
+-- 
+Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
+
 
