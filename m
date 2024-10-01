@@ -1,106 +1,153 @@
-Return-Path: <linux-kernel+bounces-345315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0051A98B498
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:39:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323B198B4AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 337A31C23419
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D66F11F218E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9841BC074;
-	Tue,  1 Oct 2024 06:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCBB1BD000;
+	Tue,  1 Oct 2024 06:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hHZGgVZi"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhOmqNeG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AE81BBBC4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33A11BBBC4;
+	Tue,  1 Oct 2024 06:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727764764; cv=none; b=livMY1BY8T8fSWsyFjfY+fkJ5rh0es8ECQa6QIqEWhqCb9IgxsbGMlplr3HmgkXtS5KjFXJYJvofg8b5iPbImT8PQeZSPZb+yqfMlwZxTdqD9StSRbaBYk0pK7Nidl8/Zu/kZyO4ns4ySznwHgv6CF7OTXqSikz9zmRD7mrfYUM=
+	t=1727764924; cv=none; b=uMVY4Li9s1QKoVvuF86G3dWw1ubRVOMlFXhHrKoOxopXwZMirAtqdyehuKdRChm5vxzFHQF8YQMZAakpgqCw3EQzf6RtKBz7wWA2mLjB3mIz15H42q21OLi36fubjdM8tu2wDNYzLseYVxCQ+rHgTzNpD0GONnDAYby/KZ3AIGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727764764; c=relaxed/simple;
-	bh=/8g2XKzJ7WqJdunmQNLOFhxbd7lyRBKMdd90F+97gug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJGjCQwiFPkf/o2XQnpRmCg90MrKC/2OXx0bc6iIx8FyYMyU1a2vZbwbRPzqamb/nbhvP+Owg4PfHOQ6PZVF2U5WHlLbnlxTQ8ZCQBjR4l3g1hoI4DREf0ZLikTR/6TfZUu7uM2wsm5qr2v/qeDnKRnt3MnOX4zu0PzaWbN9RRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hHZGgVZi; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b8bdea19aso15064375ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:39:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727764762; x=1728369562; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZZ9vGNAt5u/4C0MxsgZzleHQqz1x9Kb0YcmVd2T7II=;
-        b=hHZGgVZiMrjUfITYD11LkPioz8ZzMHvRFWZYvru3+ruc4B5SO3y9JrtAGC6/u5V+Np
-         Tukkkq7GIBIglfFiTgHbH8o3fRSW0iYOpSLkh+GshctbykwKqYhn/W/YW5kpRBp6y8na
-         d+0TGP+GisaYfAkuhkxNwoyg2gG0EHOTcK5lXPzAvTomxgtecbPia/R+VxS7VMgW6gim
-         tL/mWUpkPtHdqNY/EexUEcW1MLF/HQOdjCB3QycCX6VTNjWzEKT9oU4A3IlRXnWpV3WT
-         gistaJ/nWkwgnCbknIXVbWk41iGKqOch7c4+nfasi/G9n1H/eYHlrMvReVDr2jecCc6l
-         Qhzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727764762; x=1728369562;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SZZ9vGNAt5u/4C0MxsgZzleHQqz1x9Kb0YcmVd2T7II=;
-        b=RWcYUnWj8dm8nfi4RKcBZQdaqNQmWCkUGGZ+p0mc/dNt3HSZOqsQXzH9SGdroHoY/W
-         XFqlJIkwyP5kTjifBv0HEMAcOHoWBcuAH9F/rJ4eeq/VsboGi9nAKOjTLJBxIe4kp0VE
-         1U6cmZ85znxhoiYdw3wbPHwShhh2xZbUreMnV44E91i/gxyxWWRcgSUzMkufukvv1EJy
-         yZtKx08Sn/8Lz8DESPp3cQCpoWn5ayiC3P7nsZP0dbHjGKByz8ILKO1T/Za5/l9pV+tp
-         pbT5J4RN3UJAskGzTuMGchZ9U6k5hC2Fyb6jyjTN0cH60VkWbD2Xhdch5UbLTxiqzM0Z
-         eWEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBzZ7ZxfXWAOXVPdHXXuXzNZk4usxmLT85ME6mS8iZuxCEYPBSfIDsmH2om933psL1xi/o9HEN3A0bTfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqjg3qcKYZ+FOTQVIr9PSA2Tw1sAGSLNQ2NcZs2e684b7jlGiK
-	ncX6aHU8fhNRD8CjdbykBh2ugOqqleeRTnz88QRNhVnnJQJwi3mXIoUSeMBYjm8=
-X-Google-Smtp-Source: AGHT+IEOWqZzG8Ei19f42OBORnd3BwYUOQNDduKM+xXWWDwe/VJfk5IdBqLsuddvXismy7R+pVb62A==
-X-Received: by 2002:a17:903:2445:b0:20b:6624:70a7 with SMTP id d9443c01a7336-20b66247298mr134389545ad.21.1727764761891;
-        Mon, 30 Sep 2024 23:39:21 -0700 (PDT)
-Received: from localhost ([122.172.83.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e4d67esm63482095ad.229.2024.09.30.23.39.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 23:39:21 -0700 (PDT)
-Date: Tue, 1 Oct 2024 12:09:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Mark Tseng <chun-jen.tseng@mediatek.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v1 1/2] PM / devfreq: mediatek: protect oop in critical
- session
-Message-ID: <20241001063919.ekqfd4epcefh5eci@vireshk-i7>
-References: <20240913103933.30895-1-chun-jen.tseng@mediatek.com>
- <20240913103933.30895-2-chun-jen.tseng@mediatek.com>
+	s=arc-20240116; t=1727764924; c=relaxed/simple;
+	bh=RFBfeiQ3kImiTf9iCh1nA3uLTEXECoQ/rL+Pil+RxJ4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=gBDqYbo59ixlfYp5ERy1nOigG4I9Fvl5EkvGOgSPD91OxTT8HeKKX+iW8FYwh+lgg17wfa7w38XfwIdVGJ/TYWcjjNhkkTfHd2EVMp9If+yxj6w3luj2fQ6q3ZttI27JDQFboGLqbKVPKZCELbGPoqgjVK/3iMhGlXe4+AA1K9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhOmqNeG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6B1B0C4CEC6;
+	Tue,  1 Oct 2024 06:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727764924;
+	bh=RFBfeiQ3kImiTf9iCh1nA3uLTEXECoQ/rL+Pil+RxJ4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=KhOmqNeGbIgspQXtvwN5PzW3TXgAKYmIvJjuiO1q7FF0QH1Z54WFynZjWWYedttCM
+	 sh23yol9tc2T+NienYPUTr4/CuvdnUn7OXhLkC2g9ykIm/ez6jHAAd51uVl/5fNGjO
+	 nBTN9YpRKWLS9G6hPl8XQPTWWdyiJ8xROB9cnQkjqdGbF01JRMmW+vgeBe+kWrDOep
+	 DxulkHZZMPG/hO4PKcIOo/S+viS1MK+ul01GBa7NMjhPCM/Xk+syE+tvUI9X8SVYWL
+	 6YLuRZa4FaVpmKJvaqJ8u6s5WjAS4TyWfasNPa3wdvoam8+INGmHSJ0HoZxUG632mJ
+	 OeyGGkvM6wt3A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D417CEB2E8;
+	Tue,  1 Oct 2024 06:42:04 +0000 (UTC)
+From: Mahadevan via B4 Relay <devnull+quic_mahap.quicinc.com@kernel.org>
+Subject: [PATCH v3 0/5] Display enablement changes for Qualcomm SA8775P
+ platform
+Date: Tue, 01 Oct 2024 12:11:35 +0530
+Message-Id: <20241001-patchv3_1-v3-0-d23284f45977@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913103933.30895-2-chun-jen.tseng@mediatek.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ+Z+2YC/03Myw6CMBCF4Vchs7ZkpgUEV76HMaSOg50FFwsSE
+ 8K7W125O19y8m8wS1SZ4ZRtEGXVWcchwR0y4OCHhxi9J4NFW2Dj0Ex+4bC6lkyFyDemsmikhvS
+ fonT6/rUu1+Qujr1ZQhT/V7AVEZI75tYiUlkbMs+Xctv74Kfzd+rAOY897PsH/jV1np0AAAA=
+X-Change-ID: 20240930-patchv3_1-600cbc1549e8
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Mahadevan <quic_mahap@quicinc.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Kalyan Thota <quic_kalyant@quicinc.com>, 
+ Jayaprakash Madisetty <quic_jmadiset@quicinc.com>, 
+ linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1727764922; l=2620;
+ i=quic_mahap@quicinc.com; s=20241001; h=from:subject:message-id;
+ bh=RFBfeiQ3kImiTf9iCh1nA3uLTEXECoQ/rL+Pil+RxJ4=;
+ b=fKnZ5k6CWZ0PFBIPrYz4dqhEIPGH3wp8wZeAzyc0OGoAcdqef6TraNEIwSEfmKZwkFpmqMHzs
+ MZnQg9eND9eA7Bvp+uMIHt3HyFMvYwGE+Vz7VullWX2aU/kiEqTfgtx
+X-Developer-Key: i=quic_mahap@quicinc.com; a=ed25519;
+ pk=Xc9CA438o9mZKp4uZ8vZMclALnJ8XtlKn/n3Y42mMBI=
+X-Endpoint-Received: by B4 Relay for quic_mahap@quicinc.com/20241001 with
+ auth_id=236
+X-Original-From: Mahadevan <quic_mahap@quicinc.com>
+Reply-To: quic_mahap@quicinc.com
 
-On 13-09-24, 18:39, Mark Tseng wrote:
-> mtk_ccifreq_target() & mtk_ccifreq_opp_notifier() is re-enter funtion
-> when cpufreq governor is more than one. It should add global mutex to
-> protect OPP , avoid get wrong frequency & voltage.
+This series introduces support to enable the Mobile Display Subsystem (MDSS)
+and Display Processing Unit (DPU) for the Qualcomm SA8775P target. It
+includes the addition of the hardware catalog, compatible string,
+relevant device tree changes, and their YAML bindings.
 
-I am not sure I understood the problem well. Can you explain clearly
-why the current locking doesn't work with details call chain ?
+---
+In this series PATCH 5: "arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU"
+depends on the clock enablement change:
+https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
 
+---
+
+[v3]
+-Edited copyright for catalog changes. [Dmitry]
+-Fix dt_binding_check tool errors(update reg address as address-cells and
+ size-cells of root node one and maintain the same for child nodes of mdss,
+ added additionalProperties in schema).
+ [Rob, Bjorn, Krzysztof]
+-Add QCOM_ICC_TAG_ACTIVE_ONLY interconnect path tag to mdp0-mem and mdp1-mem
+ path in devicetree. [Dmitry]
+-Update commit subject and message for DT change. [Dmitry]
+-Remove interconnect path tags from dt bindings. (ref sm8450-mdss yaml)
+
+[v2]
+- Updated cover letter subject and message. [Dmitry]
+- Use fake DISPCC nodes to avoid clock dependencies in dt-bindings. [Dmitry]
+- Update bindings by fixing dt_binding_check tool errors (update includes in example),
+  adding proper spacing and indentation in the binding example, droping unused labels,
+  droping status disable, adding reset node. [Dmitry, Rob, Krzysztof]
+- Reorder compatible string of MDSS and DPU based on alphabetical order.[Dmitry]
+- add reg_bus_bw in msm_mdss_data. [Dmitry]
+- Fix indentation in the devicetree. [Dmitry]
+
+--
+2.34.1
+
+---
+Mahadevan (5):
+      dt-bindings: display/msm: Document MDSS on SA8775P
+      dt-bindings: display/msm: Document the DPU for SA8775P
+      drm/msm: mdss: Add SA8775P support
+      drm/msm/dpu: Add SA8775P support
+      arm64: dts: qcom: sa8775p: add display dt nodes for MDSS0 and DPU
+
+ .../bindings/display/msm/qcom,sa8775p-dpu.yaml     | 122 ++++++
+ .../bindings/display/msm/qcom,sa8775p-mdss.yaml    | 241 ++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |  89 ++++
+ .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    | 485 +++++++++++++++++++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h     |   1 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   1 +
+ drivers/gpu/drm/msm/msm_mdss.c                     |  11 +
+ 8 files changed, 951 insertions(+)
+---
+base-commit: e390603cfa79c860ed35e073f5fe77805b067a8e
+change-id: 20240930-patchv3_1-600cbc1549e8
+
+Best regards,
 -- 
-viresh
+Mahadevan <quic_mahap@quicinc.com>
+
+
 
