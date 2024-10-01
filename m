@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-345611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE1598B80D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F55C98B810
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954131F23273
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14931C22D8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC06319D887;
-	Tue,  1 Oct 2024 09:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAF19D8A2;
+	Tue,  1 Oct 2024 09:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BsKBmYJ3"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWpspQiS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A8919D096
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4048119D884
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773981; cv=none; b=F6fQ9Z+Wqw4lH810+staRW2OpHznYXqAxVUEtpL7Rud8ZStnhi1q7BUQj6drc1aOFgmou2tr03kD5csazKmOE1efncoi3fIZquSAnNdE63e1Yhd9QkgUOt3EhdOTQj/aBk7yGA+jKZI5YQsQEs0pQZ9cJhVTSXTSsKfKXr4uzCA=
+	t=1727773997; cv=none; b=D371hYBgFscT3OWyNVjGRND2BK6LDei4deZidhM6ln1R9VU01w0+xbR8AbphOyGG8LLK3rYEOp+WIky/T0v5q8BuEJJaCGE4AjYiMpIEGryxxNHOHYr+Q7mFI+ofWF+p9gyjsds7Tkwpy0RcBcAqvxSbjJMjoMD/sPTGKL9CUk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773981; c=relaxed/simple;
-	bh=lh7tuqnpE+5987m2jcyvLL2zRI/d/0fJ/Jge6e+YT6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SeomrPQ7C8yNU8ESW1JfOI6f1eS+IGEzjyYr3/izxiKr/BOIKbEINZfmiTGshbyFsYqhMuQlAf6nm+KqY6qTX7JAkUOgiLUPcUkH6+w1hwDsQs2hH7W33hNBdxRWq1CM23VB41orG+qBRatThXjZZIAGfkKOiHRsh1E16jupnko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BsKBmYJ3; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DB4071BF205;
-	Tue,  1 Oct 2024 09:12:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1727773975;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wn4FBOVtHOoxAtUICQyZujz1f15qkDm2lLUyaK/WqGk=;
-	b=BsKBmYJ3IAN4SuRjTFNUfEwnvmTqwxiYMP2mlNx7HNBHVM80w/cCjWCFwRutyQEbvpwaIC
-	D2hpIseVuxJsq7UPz6pTbA2aceak78mLDsOK2AucjiVEsWsBvvZKOoZCudf0npf7/btGpY
-	ljEu1JyLLJ3mlTLCwSlXNeQSGVhz46RG57uNkROETI1iea7KNbRsdea4Qp+85BT8tHERvG
-	0DRkTQhh7B2MG9v3ktXNd5v1zOMvBZ60Q+SyaoP6dSQgiT0DFn0BCcDUZrPOS3hubXQPAc
-	JuPxPFkcLdL7zUzE58RUkscI+YF/pvXqNQc8UitQN15hJ83/GqsNRcI8FDEzWQ==
-Date: Tue, 1 Oct 2024 11:12:49 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Martin Kurbanov <mmkurbanov@salutedevices.com>
-Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
- <vigneshr@ti.com>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- Michael Walle <michael@walle.cc>, "Mark Brown" <broonie@kernel.org>,
- Chia-Lin Kao <acelan.kao@canonical.com>, "Md Sadre Alam"
- <quic_mdalam@quicinc.com>, Ezra Buehler <ezra.buehler@husqvarnagroup.com>,
- Sridharan S N <quic_sridsn@quicinc.com>, Frieder Schrempf
- <frieder.schrempf@kontron.de>, Alexey Romanov
- <avromanov@salutedevices.com>, <linux-kernel@vger.kernel.org>,
- <linux-mtd@lists.infradead.org>, <kernel@salutedevices.com>
-Subject: Re: [PATCH v2 1/5] mtd: spinand: make spinand_{read,write}_page
- global
-Message-ID: <20241001111249.43d20f5d@xps-13>
-In-Reply-To: <20240827174920.316756-2-mmkurbanov@salutedevices.com>
-References: <20240827174920.316756-1-mmkurbanov@salutedevices.com>
-	<20240827174920.316756-2-mmkurbanov@salutedevices.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727773997; c=relaxed/simple;
+	bh=icegb0pL2qbdDUASsVDPbVE5YcWxzi60TMK9YewrNjo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QXG6kQ/gh7Tc1Pym0AqXFjslKrgG4yVk8xrNvR5MtxO22Tmv5eMyfPHBMv0YnUo6mhnUmg8iqXBXXtUqqv2Kh5TOfZh+9viA/6eb1JKFwctdXXpDfTfpDgDETxCmpvZrGAhAL7ACVYrewMG6j0aopxU8si8fJ0NjMeurpP8hQFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PWpspQiS; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37cdbcb139cso2734739f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:13:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727773993; x=1728378793; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y9fBdWWDj6fOst+uTdJOT76rvj+EDLa+s01mSNdgJp0=;
+        b=PWpspQiSRg50gToc6umua05afvlx/n2ly/LH0bGA9bIoFb6MycaV6jLBwb92sDIHVi
+         fZGyPZtpKy87T4Mx7wVv17eRXfneAq4V6cemXbTuHBShcoeRkyH5E0pBQKPn3JprMk1s
+         tCPwYfNyKd8SBOX8hDGIAF2yZ8M+SawF6eS41H3Jbnp29ieBG3nUPWFS5l09V+2RAMzf
+         K3Nt2GX4OUbZdbp8BDbet6UjsdXb5/XbwD/Rkaq540C+rgBa4G58j2T9MqxojGgKNdaQ
+         WdM4QWuuqT2eGnD2Gi2n0n5uyBLaUWSaYMlGA5o+DM30BctIvN9N8hn7kPcSBeYtsGWq
+         VNmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727773993; x=1728378793;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y9fBdWWDj6fOst+uTdJOT76rvj+EDLa+s01mSNdgJp0=;
+        b=efJ4z1MsZydvLhLnEk5EY/u/kxzVJWdDMSWp1iuYseq1OjGaHPk0RzYsz6/VtCBno7
+         aJBWOr2sawCLkIZMkMkZr5s4aKhBsx4f08FIgOmlYnUK0STcciX8O4wP2YIwCe4U2lHh
+         yiiBnfX9nDBtaFRbM6r1Gy99pB86om89OS+YQI19+Qk3gsJ/eg84DWNmwq/j80CHJSWq
+         HQ+zO2ty/TufxXQ/hWl+9opb3aK2RWiBvD0Bp+v9gwmDveUIEbWWXgHoseR6UoQsUd24
+         eu4Kw5Uowh6u3DI75xV6jc2CAdBkCk9Roeya0DE+hPgg5fXiaY5Hg2eXDabO2981t/uf
+         +CNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDBjUoO5rp5kzHRpUuAYEUNZzRQuDJj6cLKgORd7ih21g7KQl9ROOrsV2qZUdixUchf+IcOIvCVuTRV0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNspQIm/MiQQf/Gt5HEbqyeCyfsTwou52VU5T1PjnMots18+Co
+	oWmiO1Muzbw3HiCP7aOmJWiS7fmmauPFWXiXrOFPf1w9UUgwEZiSb2d7sgRh9HGXWzLI9OFiO5j
+	h/t4o3wqA6Ca5bSgm2SUkc4gBoL3ExUDAvZFQ
+X-Google-Smtp-Source: AGHT+IFgU7zCWKFIxKy1DfT3m8rNSOqxhergloVQ6Xgu0kb9+slgAkmLbC7op6hq7zmCb+3at5j3LcLeTtFhS60Ms4E=
+X-Received: by 2002:adf:f08c:0:b0:374:c1d6:f57f with SMTP id
+ ffacd0b85a97d-37cd5a606a0mr7144966f8f.7.1727773993290; Tue, 01 Oct 2024
+ 02:13:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
+ <20241001-b4-miscdevice-v2-2-330d760041fa@google.com> <755a5049-d6ca-41de-ba49-16bda7822fe7@de.bosch.com>
+In-Reply-To: <755a5049-d6ca-41de-ba49-16bda7822fe7@de.bosch.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Oct 2024 11:13:01 +0200
+Message-ID: <CAH5fLgj+KtgZWx8XxCLPCera4VaqfdyUucpj9HthFViq6_Df9g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Martin,
+On Tue, Oct 1, 2024 at 10:54=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
+> wrote:
+>
+> On 01.10.2024 10:22, Alice Ryhl wrote:
+> ....
+> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > new file mode 100644
+> > index 000000000000..cbd5249b5b45
+> > --- /dev/null
+> > +++ b/rust/kernel/miscdevice.rs
+> ...
+> > +/// Trait implemented by the private data of an open misc device.
+> > +#[vtable]
+> > +pub trait MiscDevice {
+> > +    /// What kind of pointer should `Self` be wrapped in.
+> > +    type Ptr: ForeignOwnable + Send + Sync;
+> > +
+> > +    /// Called when the misc device is opened.
+> > +    ///
+> > +    /// The returned pointer will be stored as the private data for th=
+e file.
+> > +    fn open() -> Result<Self::Ptr>;
+> > +
+> > +    /// Called when the misc device is released.
+> > +    fn release(device: Self::Ptr) {
+> > +        drop(device);
+> > +    }
+> > +
+> > +    /// Handler for ioctls.
+> > +    ///
+> > +    /// The `cmd` argument is usually manipulated using the utilties i=
+n [`kernel::ioctl`].
+>
+> Nit: utilties -> utilities
 
-mmkurbanov@salutedevices.com wrote on Tue, 27 Aug 2024 20:48:59 +0300:
+Thanks!
 
-> Change these functions from static to global so that to use them later
-> in OTP operations. Since reading OTP pages is no different from reading
-> pages from the main area.
->=20
-> Signed-off-by: Martin Kurbanov <mmkurbanov@salutedevices.com>
-> ---
->  drivers/mtd/nand/spi/core.c | 24 ++++++++++++++++++++----
->  include/linux/mtd/spinand.h |  6 ++++++
->  2 files changed, 26 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> index e0b6715e5dfed..807c24b0c7c4f 100644
-> --- a/drivers/mtd/nand/spi/core.c
-> +++ b/drivers/mtd/nand/spi/core.c
-> @@ -566,8 +566,16 @@ static int spinand_lock_block(struct spinand_device =
-*spinand, u8 lock)
->  	return spinand_write_reg_op(spinand, REG_BLOCK_LOCK, lock);
->  }
-> =20
-> -static int spinand_read_page(struct spinand_device *spinand,
-> -			     const struct nand_page_io_req *req)
-> +/**
-> + * spinand_read_page() - Read the page
-
-				 a page? (same below)
-
-> + * @spinand: the spinand device
-> + * @req: the I/O request
-> + *
-> + * Return: 0 or a positive number of bitflips corrected on success.
-> + * A negative error code otherwise.
-> + */
-> +int spinand_read_page(struct spinand_device *spinand,
-> +		      const struct nand_page_io_req *req)
->  {
->  	struct nand_device *nand =3D spinand_to_nand(spinand);
->  	u8 status;
-> @@ -597,8 +605,16 @@ static int spinand_read_page(struct spinand_device *=
-spinand,
->  	return nand_ecc_finish_io_req(nand, (struct nand_page_io_req *)req);
->  }
-> =20
-> -static int spinand_write_page(struct spinand_device *spinand,
-> -			      const struct nand_page_io_req *req)
-> +/**
-> + * spinand_write_page() - Write the page
-> + * @spinand: the spinand device
-> + * @req: the I/O request
-> + *
-> + * Return: 0 or a positive number of bitflips corrected on success.
-> + * A negative error code otherwise.
-> + */
-> +int spinand_write_page(struct spinand_device *spinand,
-> +		       const struct nand_page_io_req *req)
->  {
->  	struct nand_device *nand =3D spinand_to_nand(spinand);
->  	u8 status;
-> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-> index 5c19ead604996..555846517faf6 100644
-> --- a/include/linux/mtd/spinand.h
-> +++ b/include/linux/mtd/spinand.h
-> @@ -519,4 +519,10 @@ int spinand_match_and_init(struct spinand_device *sp=
-inand,
->  int spinand_upd_cfg(struct spinand_device *spinand, u8 mask, u8 val);
->  int spinand_select_target(struct spinand_device *spinand, unsigned int t=
-arget);
-> =20
-> +int spinand_read_page(struct spinand_device *spinand,
-> +		      const struct nand_page_io_req *req);
-> +
-> +int spinand_write_page(struct spinand_device *spinand,
-> +		       const struct nand_page_io_req *req);
-> +
->  #endif /* __LINUX_MTD_SPINAND_H */
-
-
-Thanks,
-Miqu=C3=A8l
+Alice
 
