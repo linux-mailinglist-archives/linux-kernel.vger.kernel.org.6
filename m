@@ -1,132 +1,153 @@
-Return-Path: <linux-kernel+bounces-346712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6FD98C7C4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:46:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD01C98C7C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 158BA286AF1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:46:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FE08B214BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4EF1CEAD9;
-	Tue,  1 Oct 2024 21:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D19A1CEAAD;
+	Tue,  1 Oct 2024 21:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="S2K2WldV"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l9weqt/R"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9301BDABB
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A14B199FCE;
+	Tue,  1 Oct 2024 21:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727819205; cv=none; b=ghCW0X0FVgXdEOvXkCBMDZLl1Ot4bzvR1ZW27CbiLw5eSSmKLoxmFrKjpFokhS4hbgSJ05/qqhcduDXxi0d0L1rlwO9ilioW1RZr5xVHylSQU9vCOQ6dPzaTw2xQzRcS8FhEWdcZCaYjTunvxsxtrLPo430YGcnutxrQEeB9qLY=
+	t=1727819296; cv=none; b=VeQoCbVshKH+fTwTsmA+rdS+bGdGWkc3j5Kt20iT0Uz9vZ8lW5Kv5H+fGEdsn+mHKvHo9nPQ3/V0osP1yEZ1M9mtQbrcqN+CJcOf0Rdu4qlt4nai2YR0Ih/PEocTTC/FPBKsCTT00XOKsTf+I5ZzWaE1u0P7oT60XTFWADYw+LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727819205; c=relaxed/simple;
-	bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
+	s=arc-20240116; t=1727819296; c=relaxed/simple;
+	bh=mMUExZQ+EvnU7XLWDsD1aa5LRPKUL7dBR3emnkPwhDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZtU5tgULyxta+i579t20grCgy8FAgHw29LaCdyGZrneThbU/7ASSZOYmtTYEpehvj760ziuhBpv/3LtzceSJQYQfe7CTeGP4SxeaYWs2M4EcTH/0FfubsP/aJaJr/Bp2nsNGIs4WxsaTLmfkt0Fg1zp7yAWQ8kvcAuBUkuRhSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=S2K2WldV; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-207115e3056so53433455ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 14:46:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727819203; x=1728424003; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
-        b=S2K2WldV/2rdo2FVApspxAietHKRorS5wt505eSfc5CKZU9aCRhGC4cm0ILVinpbuR
-         DowrIM4BkIk5B3syO4isXBuMeVkbMjqeQNfE7aKt5CQQgchNWVqd6CD2Sp/HsnkYfHQH
-         3ldcMBBgwvaOZnfcNsq46hRhmxQ743dqB0J1c2kIQDGan7B7l/OTLoSHp5K1ikS+KyoD
-         Fmt+av5uXOMnOJU5+rBh4HV32QqgIbGsEflb7voMfTtexVt4vQzpfTXx7+cKlpnUnPyQ
-         yvBmf8pseDCX7H7w5RCm83pPev1svT2Szbdns1rQhgMtubqUKEWHUiQf3ZY0wdUy/FQG
-         eDYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727819203; x=1728424003;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NI7gIZ6lXNALBDXx17GTUYrDqDSXsA596QRPsZyrdEQ=;
-        b=I+AYrbPOKmJmfWBYs9nhx9olYMa2U6eO7DnERP+vpY2zUpfP5Y8dVEQYtisMFP/pZB
-         ZY0a6KkAIZDtwQ3QPNp3vPeAJe2zlewHSF4zWXiya7adnIday2gRTecZX8SUMJ484+l4
-         2xorXKmxoOM+LfH+lYEWTbB/0ZZ4DwJVtxcVXhfajX/zxzfkdXgcn/A/F09nlLPt4KP4
-         bkUmY/hPsnWt1DNsbciXA68uVxF3lr/5Vi1zauoyU2PJtwyMjyJzMSIFMqHLSfk25hRT
-         Q8VC2W6sMhoIzd6/hLRybITO3NS6BhQXJW+UQ0ViFkej2yaUj6kEqikXgiU9iRisUHS+
-         7CBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUO4sPKIxIrT4qBw8ioBNhmw35YB438dhUIAF3uPoS20kjXT9++3bqHJVmFq214AyVL6sg9WKrLR3vvyM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9PDjQ+YZNY7hLr6T/74AhpjhZNF9CGCpiFYfY/WfD6P6V7S7v
-	xBjO0KpEqqKvoxjNOCTz/IY+DiaDosN+tYa2IccF6QTAZmIXalnEnDxPwY5oU8I=
-X-Google-Smtp-Source: AGHT+IHZV3IXCvzX283Z6okxtWKNux4YPD3i7IwxnTn7aGOH5zQYuUZMEM+naOwP+vJ3UKzd1e3dgQ==
-X-Received: by 2002:a17:902:e743:b0:20b:7ed8:3990 with SMTP id d9443c01a7336-20bc59bc4cbmr14154355ad.12.1727819203103;
-        Tue, 01 Oct 2024 14:46:43 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e61c4csm74275315ad.274.2024.10.01.14.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 14:46:42 -0700 (PDT)
-Date: Tue, 1 Oct 2024 14:46:39 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppNZFCZkp+762i44xosNGmfoFWq1LFp5QZ4cW89xxsH3B0ZKY/dwa4+ODHciDDX+fNmu/EwemvJuiPLQlLL6RLQIqyH7MIw7veccN/HPxZDHIir3HmdmvSjh7dwTHaV28tLTfdQx+P2yN7cdtcA1k4aKibGlMwEfu1J62+Rf8QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l9weqt/R; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727819295; x=1759355295;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mMUExZQ+EvnU7XLWDsD1aa5LRPKUL7dBR3emnkPwhDE=;
+  b=l9weqt/Rl7Fr/uirgRGXXlURxJQQ8lvryO5rAlFhc+o9PGyFzHIQRLOr
+   jJZtnIifLnmXw6KPgt4PMCHrZszc28xWDWriURGlqcWv5G8fSZSjuUaIE
+   ghzrj2oGV0fgSTHsshg4hyEZfty8OuLQlcbTbERrHHdTeffTP9URvrOdC
+   gLrrScYBMMq0Gbr6G6eMLUA2IQeemHRwMNGGhaMF3f4f7zMfK3wQoShmk
+   mwjDJLIE55xin1wIeSK+CKs6upOz3ze/s950QQntG9kTzpwLiX5N9PYwK
+   zgw29M5fogThr+dLhMfRgxwHmECDe6bBc9ESinzIowpZoigDSFjjSqKjl
+   A==;
+X-CSE-ConnectionGUID: 7MdkgM5qSv6XBwVBhQOmqA==
+X-CSE-MsgGUID: HtHeXpiWSFa7DMe620vrUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37536479"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="37536479"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 14:48:14 -0700
+X-CSE-ConnectionGUID: y2fAfsQlTzuDYDQiHGjUJA==
+X-CSE-MsgGUID: Zj22m4xJSb+txgUc2smUsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="78671028"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 01 Oct 2024 14:48:08 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svkiz-000RDN-23;
+	Tue, 01 Oct 2024 21:48:05 +0000
+Date: Wed, 2 Oct 2024 05:47:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>, Jens Axboe <axboe@kernel.dk>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	INAGAKI Hiroshi <musashino.open@gmail.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Subject: Re: [PATCH 17/33] prctl: arch-agnostic prctl for shadow stack
-Message-ID: <ZvxtvxMwFvjgengs@debug.ba.rivosinc.com>
-References: <20241001-v5_user_cfi_series-v1-0-3ba65b6e550f@rivosinc.com>
- <20241001-v5_user_cfi_series-v1-17-3ba65b6e550f@rivosinc.com>
- <e7c48ad8-5fe2-46d8-b137-e04046b7c572@sirena.org.uk>
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Li Lingfeng <lilingfeng3@huawei.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	Christian Heusel <christian@heusel.eu>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>, upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: [PATCH v4 3/5] string: add strends() helper to check if a string
+ ends with a suffix
+Message-ID: <202410020546.DL6BnsOs-lkp@intel.com>
+References: <20240930113045.28616-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7c48ad8-5fe2-46d8-b137-e04046b7c572@sirena.org.uk>
+In-Reply-To: <20240930113045.28616-4-ansuelsmth@gmail.com>
 
-On Tue, Oct 01, 2024 at 05:15:08PM +0100, Mark Brown wrote:
->On Tue, Oct 01, 2024 at 09:06:22AM -0700, Deepak Gupta wrote:
->> From: Mark Brown <broonie@kernel.org>
->
->> This is based on a patch originally written by Deepak Gupta but later
->> modified by Mark Brown for arm's GCS patch series.
->>
->> Signed-off-by: Mark Brown <broonie@kernel.org>
->> Co-developed-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->
->You need to add your own signoff to this when reposting, see
->submitting-patches.rst.
+Hi Christian,
 
-Thanks. Will do that.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on axboe-block/for-next]
+[also build test ERROR on kees/for-next/hardening robh/for-next lwn/docs-next linus/master v6.12-rc1 next-20241001]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/block-add-support-for-defining-read-only-partitions/20240930-193609
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git for-next
+patch link:    https://lore.kernel.org/r/20240930113045.28616-4-ansuelsmth%40gmail.com
+patch subject: [PATCH v4 3/5] string: add strends() helper to check if a string ends with a suffix
+config: s390-randconfig-r061-20241001 (https://download.01.org/0day-ci/archive/20241002/202410020546.DL6BnsOs-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 7773243d9916f98ba0ffce0c3a960e4aa9f03e81)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241002/202410020546.DL6BnsOs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410020546.DL6BnsOs-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from arch/s390/purgatory/string.c:3:
+   In file included from arch/s390/purgatory/../lib/string.c:16:
+>> include/linux/string.h:366:20: error: call to undeclared function 'memcmp'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     366 |         return n >= m && !memcmp(str + n - m, suffix, m);
+         |                           ^
+   1 error generated.
 
 
+vim +/memcmp +366 include/linux/string.h
 
+   355	
+   356	/**
+   357	 * strends - does @str end with @suffix?
+   358	 * @str: string to examine
+   359	 * @suffix: suffix to look for.
+   360	 */
+   361	static inline bool strends(const char *str, const char *suffix)
+   362	{
+   363		size_t n = strlen(str);
+   364		size_t m = strlen(suffix);
+   365	
+ > 366		return n >= m && !memcmp(str + n - m, suffix, m);
+   367	}
+   368	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
