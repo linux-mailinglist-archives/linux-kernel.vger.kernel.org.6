@@ -1,100 +1,105 @@
-Return-Path: <linux-kernel+bounces-345048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C996798B167
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:22:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E805698B169
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:22:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE59282D1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA26282DA8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:22:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBE34AEF4;
-	Tue,  1 Oct 2024 00:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09F528F1;
+	Tue,  1 Oct 2024 00:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4ASG11v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="b0LQpM3N"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5307044374;
-	Tue,  1 Oct 2024 00:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05D4A06
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 00:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727742036; cv=none; b=l3ZouqBwAc53IUzjKb1RgpFe00RAeKbsSTjBMOpY6Mj55UIXVZxH44ZR+ONlFY3/8RGBLJ6+XC9dTkcWQ45AZYyX5hXTGOja2ODNFa30Yr5QBbpUNO8fYnDMT4YrkXpDnoaMA3NBtqS5D1HFX45ZNYXfGP9usvW5dyB1QKUc8BY=
+	t=1727742134; cv=none; b=LbAdhLII8+J3YcgJctM5dsoZnnvMSzZDREMyo2+ypmBDA2InNrf1vSxACNX/muM32qyGAoz76siveZRllL6aNUrfM0dbJYc5/dVUQnRpLpzEIufM4xT8Z7PycmyauD++BLgRPu8bmQIfJ3Auw18YRe2cxy5qkMn1q6eSC+5v7MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727742036; c=relaxed/simple;
-	bh=7aieh78om/yhYCq16DdxzBsiyA5Y6XfHwyZ+r8siS3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fKn0nba5pTJFZsHDR1sy8aoIz/QhnPi+o3DSMBbyINzNin3HIZgfabtUDiMhMxJXSzQTv3sa772awqDlKypD4+NKiAqOF25gYDCfkE4p87TuZEQzrfLfKcLBuVfGtpvMHyK69v+UMQpjsIivHOsEdapoFf+sIqYHjCVlig9SEHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4ASG11v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A001C4AF0D;
-	Tue,  1 Oct 2024 00:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727742035;
-	bh=7aieh78om/yhYCq16DdxzBsiyA5Y6XfHwyZ+r8siS3A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h4ASG11vHtUugMFKHmoZPmRXX/4xL+wgrP/D0u/ky/8O1QhDtd9GCOW6qo6Exp1IM
-	 jn81qmPho3LdqxET20EVBVITHedVOTakiwm31T/lUbyCppIh7q1OGgltm4lC7w7UZm
-	 c5vC4nZWR/daUuBctL9Ul/6Av0qL5t50u2A8TLjGgW987l+X3M45lgFydfyqJ/C45L
-	 kiHcZ8oyUpJ9meQIxSNa1d89u6brvoSiZQ+iXvBGZAVVFF9o67TvNDJiw9gPjpQB8f
-	 V34D3/xcirZJhb9Ntptp3qT5YHnfwgsiiF0MoOEV0ZnQ6Hdpom8VsbQ4HJK9sD7FUF
-	 xY6W9y7GIPgxQ==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: [PATCH 8/8] perf record: Just use "cycles:P" as the default event
-Date: Mon, 30 Sep 2024 17:20:27 -0700
-Message-ID: <20241001002027.1272889-9-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-In-Reply-To: <20241001002027.1272889-1-namhyung@kernel.org>
-References: <20241001002027.1272889-1-namhyung@kernel.org>
+	s=arc-20240116; t=1727742134; c=relaxed/simple;
+	bh=i6qtBHJubMxW+MCswOYEVYPKlwtQLyoLSqKWdIqtOj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BCIi3fxPF713x2mILhrPllergUxP0uECtY+W2OpcNgbgknQnyuEVl4DQavn+h8jmSAtrTYhMsqTaFBdD7ZOvCdBx9ay1zoeXyldY8pNxcGmWpo/NG817FJRXr73PJv2giHoiDXMtOgyjhWiduMbKRKXuRUu/5fdld6Sb4dHOWH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=b0LQpM3N; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7ac83a98e5eso431569285a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:22:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727742130; x=1728346930; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vmEMUmiLlB6m/T/P5xBRLncvNWoi4hp4LZTs+dQITMo=;
+        b=b0LQpM3NXsxmmRoAIDKUmGJm/SzgoFkkzOQbNj1VxxQb69IJ3/Yf00sk+kXXhbDkg2
+         HOlBd1KbjYvEO7xa7P4Y+3ogeGBogvWAg6vz5CgX1qj6lytVcX01EVKl9I3rihGeMt9E
+         S0/Sx7riPWmlxjq9z0vCWr8IiPH1tb8BkjvydKHsO9Hms73K0gxu63QHh0rfxe6ktRmn
+         QBsyxYfj4jgj6A/OPx4fU6B0yGVXdHoDvOgW65HhuwHIQWDPDcVrkkwrDziFy1dukaFO
+         kCxvq7i1AhFCkjpgFxFwEoMugYIgzkCwjFWGjseYIgaR3UHc12OKX/xQl/4VOPnF+hn7
+         D+Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727742130; x=1728346930;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vmEMUmiLlB6m/T/P5xBRLncvNWoi4hp4LZTs+dQITMo=;
+        b=rad8n2MaNVUKJVmnVVvkkoFsa05R5q4yuRovllxOdaB/TyA7qzCkpVbnhZs1hyg/cT
+         O2otatSYPw40W/fhhZ9hWoyG0Vkfoc1jAI5VI8AYMxfCPMFEA7wHP0fkvznHQ/mpSsNO
+         tjG4kJ8T9LSdN4Hujr6QOB6Cj2d0KvKFldKSdt7yhwr5CJcPNmj7B0+DEzphjRrjUZrI
+         /FdigEK/o4OsTfATkMMXItJb9e3Xq/aFNRnFZPVbwhU249kcSlMpXGqOidEL7pgXnNNF
+         x4GkBQrMB8rrXvtgSo7F62ajdbEzV8JxpQr7LKg5BMqn4FAyBiirmiOjcni4vdcidoSf
+         /bYA==
+X-Gm-Message-State: AOJu0Yyjr2cUK7urGx/1sYicsH4ID6Nbh2Wp4TQYOBIIqkXj0IU1h1WX
+	dKigZ5a+XpaTVnYrKaFSCgZj2U6etmgx/jxTa/TgfGrmInZVBWntniopxS9VALc=
+X-Google-Smtp-Source: AGHT+IH00sGjApfw8Q08fLdU6Khjgn27dLqCwr8RPVTJIvXjW9eQUAC/pBFTI7E7vu7z7LywpcOfWA==
+X-Received: by 2002:a05:620a:25d0:b0:7a9:c0f3:6425 with SMTP id af79cd13be357-7ae5b7f92acmr294180285a.3.1727742129803;
+        Mon, 30 Sep 2024 17:22:09 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:97cf:7b55:44af:acd6])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377d8699sm455524285a.40.2024.09.30.17.22.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 17:22:08 -0700 (PDT)
+Date: Mon, 30 Sep 2024 20:22:07 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+	21cnbao@gmail.com, akpm@linux-foundation.org, willy@infradead.org,
+	nanhai.zou@intel.com, wajdi.k.feghali@intel.com,
+	vinodh.gopal@intel.com
+Subject: Re: [PATCH v9 4/7] mm: Change count_objcg_event() to
+ count_objcg_events() for batch event updates.
+Message-ID: <20241001002207.GA1349@cmpxchg.org>
+References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com>
+ <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
 
-The fallback logic can add ":u" modifier if needed.
+On Mon, Sep 30, 2024 at 03:12:18PM -0700, Kanchana P Sridhar wrote:
+> With the introduction of zswap_store() swapping out large folios,
+> we need to efficiently update the objcg's memcg events once per
+> successfully stored folio. For instance, the 'ZSWPOUT' event needs
+> to be incremented by folio_nr_pages().
+> 
+> To facilitate this, the existing count_objcg_event() API is modified
+> to be count_objcg_events() that additionally accepts a count parameter.
+> The only existing calls to count_objcg_event() are in zswap.c - these
+> have been modified to call count_objcg_events() with a count of 1.
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/builtin-record.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index adbaf80b398c1f4c..f8325247292112d7 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -4157,9 +4157,7 @@ int cmd_record(int argc, const char **argv)
- 		record.opts.tail_synthesize = true;
- 
- 	if (rec->evlist->core.nr_entries == 0) {
--		bool can_profile_kernel = perf_event_paranoid_check(1);
--
--		err = parse_event(rec->evlist, can_profile_kernel ? "cycles:P" : "cycles:Pu");
-+		err = parse_event(rec->evlist, "cycles:P");
- 		if (err)
- 			goto out;
- 	}
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
