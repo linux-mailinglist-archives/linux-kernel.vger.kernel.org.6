@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-345575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AE998B7A7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9A198B7AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06CF81C228A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF9C1C228AD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003A419D069;
-	Tue,  1 Oct 2024 08:55:41 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989F719C568;
+	Tue,  1 Oct 2024 08:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="I0KfW6Hp"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942F55589B;
-	Tue,  1 Oct 2024 08:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D331E19CC01
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727772940; cv=none; b=jm/OwrPVlrE8dLgh16eFVVJ4fGGWszzWA+Yv+ARLs/gbA0W+vbAhXJhS289uHTqohoRH/hVw85jBXr8ntiAF9FILIfa1zeTD2nS4WuCfRa9Mm1MTz/3m/MRMRaa7+mR/0x+PrJUP1Fb2NHUCxf5/T3064UcOMczWPzVfL+SvgWg=
+	t=1727772972; cv=none; b=oTyWQNfJKV/lws4aF7gZL5gFzReqrmRQCW8Kwg5QAgqwSR5+Q2b1WX2QOZfaafiwSE12RpzOLV8tqfLSbB6dmAqtih4rJgpLjqcEQXp5dx7l8fvDMcgtNyShXZLiVCjQwye8211S5iQp6snSX1upXFDV97rrPTprMOm9NOl+Mdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727772940; c=relaxed/simple;
-	bh=Q9IWqw0jPvOLwMDbSkL/6NzXAa1aunw7reKWoBqQDLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EHA0E90bUzV4T00+MQ9XrFRyLXcydKCZO6F/Wl9W8wR5lDvlo48CLk0f6HXl1DJXwdR8pzemdE+nHz9/EjKkYQO7KeRopsozxN9LO19hew6mK+aPGM1KMFmjCOqjm5oX6sNHJCxbsQzU3w6J6krSxJVKmk3NlTY5CLcWQb82Wdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C84C4CEC6;
-	Tue,  1 Oct 2024 08:55:37 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>
-Cc: Bibo Mao <maobibo@loongson.cn>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	stable@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH 6.10.y] Revert "LoongArch: KVM: Invalidate guest steal time address on vCPU reset"
-Date: Tue,  1 Oct 2024 16:55:21 +0800
-Message-ID: <20241001085521.102817-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <CAAhV-H4WLByJ53oqQgEnVjy4bT0pS77fT5BA4NaCp8AOn+cyJw@mail.gmail.com>
-References: <CAAhV-H4WLByJ53oqQgEnVjy4bT0pS77fT5BA4NaCp8AOn+cyJw@mail.gmail.com>
+	s=arc-20240116; t=1727772972; c=relaxed/simple;
+	bh=tVv2ClH1fRs9RHxNXTRsm3ta+zB688zvoqlYfxP9EjE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GqP/NOOOBIRR6jyCsrzTODkQjeuDH9XsKwvISGPYVO6fNA8BRpCWUVIpUYJb5kxBLrMRZVzR2Ne6FW2tgLefn3bIPeBumfsq3LzGAmCQOHVQijJe05tem/HZu2aTq5Nj82WA6hlfLKIVAgq/VGFQPP53sq9Qin6FjVz5eQ4aLG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=I0KfW6Hp; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727772953; x=1728377753; i=spasswolf@web.de;
+	bh=IQ8aAOXVvPG2w6pGbPO+lHRFmDxKvrde6ZxtX3udcag=;
+	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
+	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=I0KfW6Hp6n6aiimTqR0dMUE8OzBh7wMhHxIINcDJEo3OUDtYVwfYfI/zC3jVlMa3
+	 flRT88iM7TQo1YG9I8sVRZFyBke1oQIBbC5TaQKhz5DW+deqcJLF6GV5z/kjHTT+i
+	 +k7lZ5imSt7Jcsab5ocsro67ZzzpbtN+JVVQETn8SR6OQyMRHxnfA1+K4arK0rI3H
+	 hNwnWMa7PDPSuxr9i5FMTtjEnpMoZW1+SEftr/8ZdGLGQPQPAwoPHge+ZBeYbsMCk
+	 5PhQXCdtKWl1m7NN7wUpKcx6IihMKxWL3b7qrup4uWop/dSWj4qcN7qvGLO7E59+T
+	 u+oCh44JZhLf5yYLkg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Melax-1sN3Ge0IY1-00dJOI; Tue, 01
+ Oct 2024 10:55:53 +0200
+Message-ID: <9a97af91ba1925629d5c7fa1f1aec34f92123a15.camel@web.de>
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in
+ mmap_region()
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Andrew Morton	
+ <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, 	spasswolf@web.de
+Date: Tue, 01 Oct 2024 10:55:50 +0200
+In-Reply-To: <2f1a5621-1c3b-4c2e-97c4-86e36bc47788@lucifer.local>
+References: <20241001023402.3374-1-spasswolf@web.de>
+	 <5ec8665e-2f51-4b06-b68a-c878a969fb06@lucifer.local>
+	 <cdbf216338d40b0aa768f93b0fe5aff1994ebd9c.camel@web.de>
+	 <2f1a5621-1c3b-4c2e-97c4-86e36bc47788@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.54.0-1+b1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:TyPoOD1ixR1UtfwWhB/aWiK41JgsCtNfNB4l3EHMZSfqUbs7fT8
+ tfLHg5SCgYvfbtuXGesW2uWwQkYjOyxNzBShZv43YZmfQGW7cbkktJUXYCeZXkro07FnsG5
+ EZa9pSccAqg30+ZUAFD4iFdlJoJ36Wqu8UDEi5cLwCgOLIQ6QVDBN2ZgTnQ2vJF2zbxPuWo
+ sDrTGZr9Fljy5mQ5ViChw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fi1c9mVIolM=;+B4n6D1kUiMk+q9Thqa9/7/ZkfF
+ hSRFyUewHeMl/6SKQ2CzLa94n4yR7FGmkXwpnGbL+GL1o/FUpZcr6ekc36wLwPZc/evfHAU80
+ F8gImp4XWKEhkrD5Q/Fm89Af3AR7IwXFaBTbEqfIqYU5K4vuwJUrBwEf1ZZMtRr+1FrYNenjp
+ XDTNu3AGHs2ysQi4dSeskJS4ygW8tqJ2qCiMS5Vp3cuI/X5ZMuyx7a0qTy7/FV2K5fto1bIVp
+ HBsjsIxYMu5lqOXOr4LE6kUM5nOSXvNcpNymsaC0164uX74+04jFERiB1EZUZwspC9bV+pGN8
+ GO6nCtb7W7hAvn/gha/PL7Rxdw+f5jdFdvAvbMQMyFTRsGaHqGCJClKkkcySW8vwihjhPcZzM
+ XdQk0kbEnKB2cil8gS0nYMfZDSR/lBf6vmnPPGknkGwDBd5Uv7LB1gWkjvQiDyd45q2sJTwNd
+ 2vchW+Vi6j8z0Y8ms/wLmsvW3/WaCBzLQKVgv3dqSUP3WDUp7NARPyTlvM2r4HBCIOYCvfHUr
+ vUwnodD6aul8FCiB22+1A5I5TaB9NbVp4sIYYYH+o/1jmykEjewCBkSkLx94y3aJC44EOmwPM
+ LFJWN9KItwiE4R7s43CUZW537LNJ6czwMPKTLj/iGtUt2GvEycCaiwY2tQXnanULBffS6MefG
+ TE31/hizPJDxMBLiI3mZJtskxNV5cmEwHuea31aVYSugW3yjOcorU8MjBMrwiqvbs4MPQo6Ji
+ IwDRkKg6A4y/kaPXknlsK7fEVxFsMcKdg2ApHLxVGRLdqPPK5el7UOC2iL8RPkWuduhugTKM1
+ tasljKfE/JfP7dTHerMyQe0w==
 
-This reverts commit 05969a6944713f159e8f28be2388500174521818.
+Am Dienstag, dem 01.10.2024 um 09:49 +0100 schrieb Lorenzo Stoakes:
+> On Tue, Oct 01, 2024 at 10:38:35AM GMT, Bert Karwatzki wrote:
+> > Am Dienstag, dem 01.10.2024 um 09:02 +0100 schrieb Lorenzo Stoakes:
+> > > On Tue, Oct 01, 2024 at 04:34:00AM GMT, Bert Karwatzki wrote:
+> > > > I just noticed (via a bisect between v6.11 and v6.12-rc1) that thi=
+s patch
+> > > > (commit f8d112a4e657 in linux-next tree) leads to a severe memory =
+corruption
+> > > > error under these (rather rare) circumstances:
+> > > > 1. Start a 32bit windows game via steam (which uses proton, steam'=
+s version of wine)
+> > > > 2. When starting the game you the proton version used has to be up=
+dated
+> > >
+> > > Yikes. Thanks for the report, very very much appreciated. Will look =
+into
+> > > this as Liam is out until next week.
+> > >
+> > > How repro is this? Is it consistent?
+> >
+> > Reproducability is 100%, only the method is weird, you have to switch =
+to an
+> > older version of proton in the steam settings of the game, start the g=
+ame and
+> > then switch back to the new version and start the game again.
+> >  It might also be possible using standard wine and repeatedly upgradin=
+g and
+> > downgrading wine and (I have not tried this, yet ...)
+> >
+>
+> OK that's good.
+>
+> Actually a quick one if you have a sec - could you try the same thing wi=
+th tip
+> of Linus's tree?
+>
+> This will help eliminate any other possible cause.
+>
+> Thanks!
+>
+> >
+I first noticed the bug unsing linux-next-20240926, it's also present in v=
+6.12-
+rc1 (hence the bisection), but I can try linux-next or linux-torvald maste=
+r,
+too.
 
-LoongArch's PV steal time support is add after 6.10, so 6.10.y doesn't
-need this fix.
-
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/include/asm/kvm_vcpu.h | 1 +
- arch/loongarch/kvm/timer.c            | 7 +++++++
- arch/loongarch/kvm/vcpu.c             | 2 +-
- 3 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/include/asm/kvm_vcpu.h b/arch/loongarch/include/asm/kvm_vcpu.h
-index d7e8f7d50ee0..f468450b24ab 100644
---- a/arch/loongarch/include/asm/kvm_vcpu.h
-+++ b/arch/loongarch/include/asm/kvm_vcpu.h
-@@ -82,6 +82,7 @@ static inline int kvm_own_lbt(struct kvm_vcpu *vcpu) { return -EINVAL; }
- #endif
- 
- void kvm_init_timer(struct kvm_vcpu *vcpu, unsigned long hz);
-+void kvm_reset_timer(struct kvm_vcpu *vcpu);
- void kvm_save_timer(struct kvm_vcpu *vcpu);
- void kvm_restore_timer(struct kvm_vcpu *vcpu);
- 
-diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
-index 74a4b5c272d6..bcc6b6d063d9 100644
---- a/arch/loongarch/kvm/timer.c
-+++ b/arch/loongarch/kvm/timer.c
-@@ -188,3 +188,10 @@ void kvm_save_timer(struct kvm_vcpu *vcpu)
- 	kvm_save_hw_gcsr(csr, LOONGARCH_CSR_ESTAT);
- 	preempt_enable();
- }
-+
-+void kvm_reset_timer(struct kvm_vcpu *vcpu)
-+{
-+	write_gcsr_timercfg(0);
-+	kvm_write_sw_gcsr(vcpu->arch.csr, LOONGARCH_CSR_TCFG, 0);
-+	hrtimer_cancel(&vcpu->arch.swtimer);
-+}
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 0697b1064251..16ad19a09660 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -869,7 +869,7 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
- 				vcpu->kvm->arch.time_offset = (signed long)(v - drdtime());
- 			break;
- 		case KVM_REG_LOONGARCH_VCPU_RESET:
--			vcpu->arch.st.guest_addr = 0;
-+			kvm_reset_timer(vcpu);
- 			memset(&vcpu->arch.irq_pending, 0, sizeof(vcpu->arch.irq_pending));
- 			memset(&vcpu->arch.irq_clear, 0, sizeof(vcpu->arch.irq_clear));
- 			break;
--- 
-2.43.5
-
+Bert Karwatzki
 
