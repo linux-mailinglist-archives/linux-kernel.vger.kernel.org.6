@@ -1,89 +1,71 @@
-Return-Path: <linux-kernel+bounces-345871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55A0398BC32
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFBE98BC38
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB9F1C22453
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB8C285F31
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826371C2442;
-	Tue,  1 Oct 2024 12:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34DB1C244D;
+	Tue,  1 Oct 2024 12:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RHfalpA3"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PmSuntD5"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565FF1BE86E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51BE919AD8C;
+	Tue,  1 Oct 2024 12:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786215; cv=none; b=LCaqq70KV4rfuSqWmU2kMABeqrsEScsHEJLJhwN6+bCkE1WAb+eSDvvYgJTSQcMqVwNCjges0medOAUCgP5m5x3VB2u6/MEa/KOmQDcd3QxYQ/qVCUcEeZTEZlGXAoeHzmaTiQFUpBsLlsqn3hJS+WZnbnFR8NScK513bSUU5kM=
+	t=1727786277; cv=none; b=dM1ocKqKhK5hoYekCTyryMB8J+QI6GTk4bjQsebnnXZD8jCERV99YaTxahcN2uZ1xsLXumP9p5ZOmK7TrjR/x/Ul73zpS56HwpZ+ZnH1mMhDkG6LMycNuLcCMH17+l8sBYdLEw/tVZjYckfLEiYyo5yfByQwvR1XIcpgvlDb8zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786215; c=relaxed/simple;
-	bh=eybNQXdLpYW5i4NVQlaeatFpoVaiFm2ZnZvyrdS1kq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f+1wWml5pF1bKkmW52vQlsKr7JHSCfqJY1iuTq/MDMgIn5FMNC37zHD/vf1xKDcNOjbyciixre7t5ikHKY1/5Q08jvi3KcAO2r7Rwt4cglNSVZDIuM9kKYxFh2e1xAPMXdSRRuEM2SZfY+Ig5ZOEWwSALwIIRxBie1Pj4TZagVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RHfalpA3; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42e5e1e6d37so49883495e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727786212; x=1728391012; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x8XQ29Ev1z3ZNIlBXEVIBzyegIpbEqZs9xlXmgo7XMs=;
-        b=RHfalpA3Xzj4Dm6mrIyb3MUhS1cFuW1kNn8jzrhbu+v+pL1ZZmZOuJNTehcymDlg5I
-         o0Y1nJ9WFAzgXu/fS02bXezt30pSChNM+kMQtXiNnE9lbLHniOyUkLvKNSr3u+ZXDmY/
-         uOhSWlY89Sld7m92HIJ8Ns1efbhfhpYGz9ULPbC9HZ/AYPaQ7NWasTOaYCA9h0UMuxkK
-         AdwGtG7B99JqAr3LLZ4lJg9s+B9GxcPJC2odbCgLu8ztGrjhWKS9xADvfoBuFXCPhcaM
-         yGhlBGqN6g1OHt5qFm3jeZKWtVvfCUuiJ/QzVfmXF5cXCTfrX6xidj6tgJsCSjP2JvNR
-         ClhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727786212; x=1728391012;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x8XQ29Ev1z3ZNIlBXEVIBzyegIpbEqZs9xlXmgo7XMs=;
-        b=N1g6kijvBdarpMUCf3gXQ0xPRpg1M+KxKwEghAx2XfUxukCjCE/xanaPWz8Fn4W7Bq
-         Pj4+Vi/OyVoXmMjSU3rJq4E+gN2lffRGmQPfnTDaf8DXowCF2PLzKyYYSPloQKO2HY4e
-         GmAsuU04kWgP8ygbQjhlSvDrQHdjwJ6H07/PhG7R4MLSgBBFHgTWSd1tZCBzo4ZfPHat
-         EEoYk94zrkYApidwVU6Br3AkClVE76+WUDOmpSYFHH++3tGmHh2DLwhMznvbpdMkjzOg
-         0IJIODkriDBxtodufDRWvXX3Dr1VMVjxmpeH67281JdeESO7SLEvOXAuT4ARLha4ncPr
-         cLGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgbdbczmLn6gqL6CNlhMGifa13z5e5sfNT+sq8mSHJRklGYAEKvTT2RL+qtD8AVPx2UD4Btan47j/FzC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycCBVXpN2KnJ+mk8X3L4IXeeQ6pgHfgpjxFxMeClCC6josVbOF
-	ZqWPxdNfspbQ+DJYPF3ifJcA2koRxlg7e53UdZrPuDTdaVEc9d2GYIpfyBT1jUo=
-X-Google-Smtp-Source: AGHT+IFG7IXfEGF5ftViJBmZVAZL2Iklu38AJ+yFgyVeDQsg/kv1idzpQVLYVhL5YhLAcAFb2dd9KA==
-X-Received: by 2002:a05:600c:a02:b0:42b:af52:2525 with SMTP id 5b1f17b1804b1-42f5844b396mr131572065e9.16.1727786212508;
-        Tue, 01 Oct 2024 05:36:52 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e96a36244sm180942325e9.38.2024.10.01.05.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 05:36:51 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: linux-perf-users@vger.kernel.org,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: James Clark <james.clark@linaro.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] perf dwarf-aux: Fix build with !HAVE_DWARF_GETLOCATIONS_SUPPORT
-Date: Tue,  1 Oct 2024 13:36:25 +0100
-Message-Id: <20241001123625.1063153-1-james.clark@linaro.org>
+	s=arc-20240116; t=1727786277; c=relaxed/simple;
+	bh=aLAuXO5v8SKGDgJl25SQO7yyv06k5wTjx6Hn7p9wHoA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TMCM4Ll7k2lUgMv795/LQhxrHj6GmoSeTzyFvVeja67hqZ+pgPsmmhczGCPDeCjonkfTzxincJCJPh1gHWYiVhu753BHUpyNNIBIPJ7wOTUs3B3nCVAn6inorA0NFkaRhZ7sSlTUKVPPe6LPk34ScH6lc+p2F3P7+7NHVs3DDnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=PmSuntD5; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727786275; x=1759322275;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aLAuXO5v8SKGDgJl25SQO7yyv06k5wTjx6Hn7p9wHoA=;
+  b=PmSuntD5I7y6JA5zpHGJ//LIj5x+qV1QRCFSsilsr7iKFPSTHP4uW7R0
+   VRw11bh0aZlv6MOJ6wt/DPu4zqyELyX/swqlJ7rnRSjQdHwgOw5QwMGtk
+   oxeqne+NZEMY5xLvUqfMoS88fgc0VCwDdA/P9uf9OIiturQC3RAWDBoUV
+   xSRddD2z2T0b3E7Riqz95ODoNJOgG9NTzm05zqqmUvEU86cXwdFjtjTuZ
+   lynob0e2//jdP6DvII1PYCeUOCgIqZPcJsyE6QBZPviAPeM37i3zQqEZh
+   5raY5IHmTUL0iFZv9RTD21ezi/RlSQdtZl/ThTbu6BQ73kZ5lt9/pvKeB
+   g==;
+X-CSE-ConnectionGUID: 1P5ioHTFSIe6+Bx3qmhD8Q==
+X-CSE-MsgGUID: 2ief3kCGT4W2ak1kqZ+3yg==
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="35717386"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 05:37:48 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 1 Oct 2024 05:37:45 -0700
+Received: from che-ll-i17164.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 05:37:41 -0700
+From: Parthiban Veerasooran <parthiban.veerasooran@microchip.com>
+To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<parthiban.veerasooran@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<Thorsten.Kummermehr@microchip.com>
+Subject: [PATCH net-next v3 0/7] microchip_t1s: Update on Microchip 10BASE-T1S PHY driver
+Date: Tue, 1 Oct 2024 18:07:27 +0530
+Message-ID: <20241001123734.1667581-1-parthiban.veerasooran@microchip.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,38 +74,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The linked fixes commit added an #include "dwarf-aux.h" to disasm.h
-which gets picked up in a lot of places. Without
-HAVE_DWARF_GETLOCATIONS_SUPPORT the stubs return an errno, so include
-errno.h to fix the following build error:
+This patch series contain the below updates:
+- Restructured lan865x_write_cfg_params() and lan865x_read_cfg_params()
+  functions arguments to more generic.
+- Updated new/improved initial settings of LAN865X Rev.B0 from latest
+  AN1760.
+- Added support for LAN865X Rev.B1 from latest AN1760.
+- Moved LAN867X reset handling to a new function for flexibility.
+- Added support for LAN867X Rev.C1/C2 from latest AN1699.
+- Disabled/enabled collision detection based on PLCA setting.
 
-  In file included from util/disasm.h:8,
-                 from util/annotate.h:16,
-                 from builtin-top.c:23:
-  util/dwarf-aux.h: In function 'die_get_var_range':
-  util/dwarf-aux.h:183:10: error: 'ENOTSUP' undeclared (first use in this function)
-    183 |  return -ENOTSUP;
-        |          ^~~~~~~
+v2:
+- Fixed indexing issue in the configuration parameter setup.
 
-Fixes: 782959ac248a ("perf annotate: Add "update_insn_state" callback function to handle arch specific instruction tracking")
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- tools/perf/util/dwarf-aux.h | 1 +
- 1 file changed, 1 insertion(+)
+v3:
+- Replaced 0x1F with GENMASK(4, 0).
+- Corrected typo.
+- Cover letter updated with proper details.
+- All the patches commit messages changed to imperative mode.
 
-diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
-index 336a3a183a78..bd7505812569 100644
---- a/tools/perf/util/dwarf-aux.h
-+++ b/tools/perf/util/dwarf-aux.h
-@@ -9,6 +9,7 @@
- #include <elfutils/libdw.h>
- #include <elfutils/libdwfl.h>
- #include <elfutils/version.h>
-+#include <errno.h>
- 
- struct strbuf;
- 
+Parthiban Veerasooran (7):
+  net: phy: microchip_t1s: restructure cfg read/write functions
+    arguments
+  net: phy: microchip_t1s: update new initial settings for LAN865X
+    Rev.B0
+  net: phy: microchip_t1s: add support for Microchip's LAN865X Rev.B1
+  net: phy: microchip_t1s: move LAN867X reset handling to a new function
+  net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C1
+  net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C2
+  net: phy: microchip_t1s: configure collision detection based on PLCA
+    mode
+
+ drivers/net/phy/Kconfig         |   4 +-
+ drivers/net/phy/microchip_t1s.c | 299 +++++++++++++++++++++++++-------
+ 2 files changed, 239 insertions(+), 64 deletions(-)
+
+
+base-commit: c824deb1a89755f70156b5cdaf569fca80698719
 -- 
 2.34.1
 
