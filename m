@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-345204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA2898B316
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:37:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A760598B31A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E748281D1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:37:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DD1E283EF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF01E1B86E4;
-	Tue,  1 Oct 2024 04:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8721B9840;
+	Tue,  1 Oct 2024 04:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UW+ebHyM"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="hL9qMI7X"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D281B81D1;
-	Tue,  1 Oct 2024 04:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACECC1B1D6B;
+	Tue,  1 Oct 2024 04:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727757452; cv=none; b=X3fhlokNXp6BNI90WE62xKO2LLmoAPa34Ue0ijoWHaqVgT0Bi16LfxATFjyJk24n9c2mL8ljgpkTrzUgX10w7qSOi+cMrK28Ldne6cm8/AV9dj7dyzBoFTYN0GoxzKJfeCWKD9DFWJd/zZ7QczQwN2i4pqAC1+vFBCMU81fRcug=
+	t=1727757582; cv=none; b=Xx0GMmjxycsXlTYGQ/kUByNuqJf0vuRjsMe3hRiqAGI/vZqaio2C1zfK0ITzfpN1FTuNa5p6YBeN2MwCTLPeGM4j0HeGPdfNqnV4D49MctaMY7txHp726YuwDU95McJBMqhWvXqTAmICuAtW84Lgi3wgaAhuM455/1vOpEZ27ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727757452; c=relaxed/simple;
-	bh=LZ5PMqQLlj+hCXJWg51KyuSJnp4YjqkIXXC/3j+wyAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JOGpwNqGJJXtz8B/SiYmHsgnWjvsk1RMX7rFyisr4Q18nHSvKBZL3C3YYBm8h3rH3ZJpzS/3iqihO8yFQp6U3L6iw4JDAZ0Hs41lYmMyRg3egm1JM2L7opMBNvOSRITolkDaZBjJfYzxGfbBw4mjNd/WXJHQdBPr6fn2IpeyP2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UW+ebHyM; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-84eb1deaf03so1081360241.3;
-        Mon, 30 Sep 2024 21:37:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727757449; x=1728362249; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LZ5PMqQLlj+hCXJWg51KyuSJnp4YjqkIXXC/3j+wyAI=;
-        b=UW+ebHyMmianBqOl6Mm0JHDNDI10ClUg5f5P4xoxeb8cyw0gjP/SO2WZoistww236C
-         Rlzfr4/1NM0L9UKJKzJRGgajxOPOrGRTIU9solyaZ5rj2nw4QMOKIMPKobEMVfG0xH5j
-         PxOedCBUj74H06vKoytvcSC+CF8m4XTx3jC6Y7BbU3SnNMcvXcUV+KqqcXPIv7zfimHW
-         8/jwi+35zmuXPxpGNKcV0witWI8NBeWMvP0HnaLb7GC3O4kGDOoJI/fa5u4iodRnMFvn
-         Su7CFLoJsCspA+RagxeiVFjuf5lv7QP9vxY+2eHFajwFFHmadjj5tJBqGyk/nhWjTdTT
-         +D9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727757449; x=1728362249;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LZ5PMqQLlj+hCXJWg51KyuSJnp4YjqkIXXC/3j+wyAI=;
-        b=WNY3GbXs9gEs0eajd91YvfrvAblpv567CQJFc6Ua3zYHgbweMN6O3mewYWzkieK415
-         ij5ETJRCd547n3o1I3iyWpmf8pogczBX/KZ7cstrSexwRGsO9x9jGdndQAGAOZ8ITvJA
-         Camt34fp8zdsF/ZPO8Ck7Mw1Q37LENIszt6GzWU4XCOdeAhP3hxpjsJk/T3Mf1ztXg7t
-         LnCLaXG1/dXB+fAXmlVvBxauhTZqG3mrfJqZrbKgQrNEddkmEIxjBTMqUWnRcoC71/28
-         7WtsVgE31A5NV/ByARVO2OJ13DkdTi+1DIN9HVQmawMWFxt8NkyaD4iv7TpixrsLcFA5
-         la3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVpac+F8CurcyMLi+vWu1laBJuWaors7OOI6ysP99bdlUh7y94JmtD9cf3GeAFuNWqvlgXA1HC7bfrn70c=@vger.kernel.org, AJvYcCXRccDyuUy0+q+SvqWbLTKs3KKujI/31tBIMD37vXwV4sLcxVabp2MtnVrVoJ6X6BUbMCcO2PkD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2VGgGXzRw2UIJoXZ1xqRBtPnniB24bKXFSw13/D4HbtfKxoLt
-	WfeJy9Syx+CT/MIxrlTLp+2YF/RdzPUAh6S3iB+M3+oBMYM/aZusmqOBI1fqmNCccsk7qIuWTe5
-	XzaMXWDKuErpDvLcxPsH+zeE1i6M=
-X-Google-Smtp-Source: AGHT+IFNtWBr18OXyho9rBy13vllspx0N2cLNm0fW635niXQrBQe6lJbJVEeDFy1D6jM1e32W26/QFaKxUJl9fUltLU=
-X-Received: by 2002:a05:6122:1313:b0:50a:76c9:1b0 with SMTP id
- 71dfb90a1353d-50a76d84983mr4237622e0c.11.1727757449623; Mon, 30 Sep 2024
- 21:37:29 -0700 (PDT)
+	s=arc-20240116; t=1727757582; c=relaxed/simple;
+	bh=qRlFYk4dROIAZ51SrQ+l7xbvXRsYyx2thqhkXohUYrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q145NkuqV1HbDt+E2+3Ar79aCaFJb2hDo3WRh+IBG3MPpFUtPMm8wAIHIpii4p/fd81hVs2zYEoLfT8XvELmOOGRD+p5RdSNQtprQnL65pKxIYNuZezUwtcumd17nQ/QIneHs4gkbpVT5UhrTt2BWjUd4+UaWZEFioeOJ5L9iro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=hL9qMI7X; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 0A9D523D6A;
+	Tue,  1 Oct 2024 06:39:39 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id XM4t5ca97D9N; Tue,  1 Oct 2024 06:39:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1727757578; bh=qRlFYk4dROIAZ51SrQ+l7xbvXRsYyx2thqhkXohUYrI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=hL9qMI7XWchMhs1+8uYVqMVSg699F4yDlTU6/3vuzX0dDJ19Hatnpd3yjIuyZnjBt
+	 4YcH2Le5bk26lvbLqhWl0g85Np2rU1WxpGg9O103SJLn3i+MOowRVYkDMV5pLYmmSb
+	 gW7lGAYiUxaqBLt0yGludSzeFe0lpdyYCmOWaaJyeiutI3nS7/+cek+Q7LxqQvRFPO
+	 myiJxiZLZZomiWRz7WZP9IUxfV1YZ1Bg0uj3fhCdJYca6ZKkUtrIjq8MMR2nWH86vu
+	 k0XSj8xCaygNj+DiNnUTNu/5Ldar3YBDJPPpGeiMneBGr5VZjZvJfTEwCrWdQRCbhc
+	 6SVq7M+0Y1ozg==
+From: Yao Zi <ziyao@disroot.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Celeste Liu <CoelacanthusHex@gmail.com>,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH 7/8] arm64: dts: rockchip: Add clock generators for RK3528 SoC
+Date: Tue,  1 Oct 2024 04:38:37 +0000
+Message-ID: <20241001043838.31963-1-ziyao@disroot.org>
+In-Reply-To: <20241001042401.31903-2-ziyao@disroot.org>
+References: <20241001042401.31903-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926160513.7252-1-kdipendra88@gmail.com> <20240927110236.GK4029621@kernel.org>
- <20240927112958.46unqo3adnxin2in@skbuf> <20240927120037.ji2wlqeagwohlb5d@skbuf>
- <CAEKBCKP2pGoy=CWpzn+NGq8r4biu=XVnszXQ=7Ruuan8rfxM1Q@mail.gmail.com> <20240930203224.v7h6d353umttbqu5@skbuf>
-In-Reply-To: <20240930203224.v7h6d353umttbqu5@skbuf>
-From: Dipendra Khadka <kdipendra88@gmail.com>
-Date: Tue, 1 Oct 2024 10:22:18 +0545
-Message-ID: <CAEKBCKNgG1VK9=q8XhNkhpUA+nKvFfO4AOAqQX=NubqsDu75nA@mail.gmail.com>
-Subject: Re: [PATCH net v5] net: systemport: Add error pointer checks in
- bcm_sysport_map_queues() and bcm_sysport_unmap_queues()
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Simon Horman <horms@kernel.org>, florian.fainelli@broadcom.com, 
-	bcm-kernel-feedback-list@broadcom.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	maxime.chevallier@bootlin.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
-On Tue, 1 Oct 2024 at 02:17, Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
->
-> On Mon, Sep 30, 2024 at 11:52:45PM +0545, Dipendra Khadka wrote:
-> > > And why is the author of the blamed patch even CCed only at v5?!
-> >
-> > Sorry to know this, I ran the script and there I did not find your name.
-> >
-> > ./scripts/get_maintainer.pl drivers/net/ethernet/broadcom/bcmsysport.c
-> > Florian Fainelli <florian.fainelli@broadcom.com> (supporter:BROADCOM SYSTEMPORT ETHERNET DRIVER)
-> > Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com> (reviewer:BROADCOM SYSTEMPORT ETHERNET DRIVER)
-> > "David S. Miller" <davem@davemloft.net> (maintainer:NETWORKING DRIVERS)
-> > Eric Dumazet <edumazet@google.com> (maintainer:NETWORKING DRIVERS)
-> > Jakub Kicinski <kuba@kernel.org> (maintainer:NETWORKING DRIVERS)
-> > Paolo Abeni <pabeni@redhat.com> (maintainer:NETWORKING DRIVERS)
-> > netdev@vger.kernel.org (open list:BROADCOM SYSTEMPORT ETHERNET DRIVER)
-> > linux-kernel@vger.kernel.org (open list)
->
-> It's in the question you ask. Am I a maintainer of bcmsysport? No, and
-> I haven't made significant contributions on it either. But if you run
-> get_maintainer.pl on the _patch_ file that you will run through git
-> send-email, my name will be listed (the "--fixes" option defaults to 1).
->
+Add dt node for RK3528 clock and reset unit. Clock "phy_50m_out" is
+generated by internal Ethernet phy, a fixed clock node is added as a
+placeholder to avoid orphans.
 
-Oh, thank you for this. I only used to run get_maintainers.pl on the
-file which got changed. I will run on the patch file as well from now.
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 49 ++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-> The netdev CI also runs get_maintainers.pl on the actual patch, and that
-> triggers one of its red flags: "1 blamed authors not CCed: vladimir.oltean@nxp.com"
-> https://patchwork.kernel.org/project/netdevbpf/patch/20240926160513.7252-1-kdipendra88@gmail.com/
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+index e58faa985aa4..c0552ff7cd31 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+@@ -6,6 +6,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/clock/rockchip,rk3528-cru.h>
+ 
+ / {
+ 	compatible = "rockchip,rk3528";
+@@ -95,6 +96,13 @@ xin24m: clock-xin24m {
+ 		#clock-cells = <0>;
+ 	};
+ 
++	phy50m_clk: clock-phy50m {
++		compatible = "fixed-clock";
++		clock-frequency = <50000000>;
++		clock-output-names = "phy_50m_out";
++		#clock-cells = <0>;
++	};
++
+ 	soc {
+ 		compatible = "simple-bus";
+ 		ranges = <0x0 0xfe000000 0x0 0xfe000000 0x0 0x2000000>;
+@@ -114,6 +122,47 @@ gic: interrupt-controller@fed01000 {
+ 			#interrupt-cells = <3>;
+ 		};
+ 
++		cru: clock-controller@ff4a0000 {
++			compatible = "rockchip,rk3528-cru";
++			reg = <0x0 0xff4a0000 0x0 0x30000>;
++			assigned-clocks =
++				<&cru XIN_OSC0_DIV>, <&cru PLL_GPLL>,
++				<&cru PLL_PPLL>, <&cru PLL_CPLL>,
++				<&cru ARMCLK>, <&cru CLK_MATRIX_250M_SRC>,
++				<&cru CLK_MATRIX_500M_SRC>,
++				<&cru CLK_MATRIX_50M_SRC>,
++				<&cru CLK_MATRIX_100M_SRC>,
++				<&cru CLK_MATRIX_150M_SRC>,
++				<&cru CLK_MATRIX_200M_SRC>,
++				<&cru CLK_MATRIX_300M_SRC>,
++				<&cru CLK_MATRIX_339M_SRC>,
++				<&cru CLK_MATRIX_400M_SRC>,
++				<&cru CLK_MATRIX_600M_SRC>,
++				<&cru CLK_PPLL_50M_MATRIX>,
++				<&cru CLK_PPLL_100M_MATRIX>,
++				<&cru CLK_PPLL_125M_MATRIX>,
++				<&cru ACLK_BUS_VOPGL_ROOT>;
++			assigned-clock-rates =
++				<32768>, <1188000000>,
++				<1000000000>, <996000000>,
++				<408000000>, <250000000>,
++				<500000000>,
++				<50000000>,
++				<100000000>,
++				<150000000>,
++				<200000000>,
++				<300000000>,
++				<340000000>,
++				<400000000>,
++				<600000000>,
++				<50000000>,
++				<100000000>,
++				<125000000>,
++				<500000000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++		};
++
+ 		uart0: serial@ff9f0000 {
+ 			compatible = "rockchip,rk3528-uart", "snps,dw-apb-uart";
+ 			reg = <0x0 0xff9f0000 0x0 0x100>;
+-- 
+2.46.0
 
-Best regards,
-Dipendra Khadka
 
