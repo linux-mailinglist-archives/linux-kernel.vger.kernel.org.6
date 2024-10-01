@@ -1,190 +1,161 @@
-Return-Path: <linux-kernel+bounces-345788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A46398BB1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:32:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5139F98BB0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B46D61C21F41
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:32:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED85B22E6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20F101C2DBE;
-	Tue,  1 Oct 2024 11:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5167A1C172F;
+	Tue,  1 Oct 2024 11:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev0zcnej"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="hOqxm6iV"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029E1C2DA3;
-	Tue,  1 Oct 2024 11:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29F01C0DE1;
+	Tue,  1 Oct 2024 11:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782284; cv=none; b=U69XjM+iu/kFHd/Rq86FVl0JIQ2B/9PLuC7d4WLvqGvTunGJwUJL9609NvuwlYqG5Plft7bruzL7gWAquOfTEcKk6HDlCIgRfFDI1p0x92zcj3glVpxtgIXy+ZDpffc0Kw+wpbeaUgFS4MM4iFFcPV7pahzkMrWuE01ykf+eNT4=
+	t=1727782155; cv=none; b=WeH+bbPeRSIZPJPMxbwjem1AdCpodzCrxPMYHGt3Cr1pgrAbfyj6LDN7Nb5p24G46YwaHFGSgM7dqsN/71LZYaPEIlDFolII1A5H3QIsEtJBSnWfocQbo7YPolIUxhEISSmxjGE6rMLnNKFKOxqm8EogsISpl1UymJlITosvjQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782284; c=relaxed/simple;
-	bh=3H3rN27/T4dSvW1Uedlxa4dx04M+fhPbfJn2xQeiUto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Gs8UwUZASqBmtOKCunf4TWzehwN6URiI6qG7dxUN0ytxQNaqPiBlpbMVPLcackwwCkWMPaXkCs/e6TRvcph9sW/KfZvK4A3Zqp39zZq4e3omi+y8N6L84v/y1MvxdLV2z7LZRSqleowj/4k2DIBMx5gpxABpoHMGYlhvenPPSjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ev0zcnej; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065F8C4CECD;
-	Tue,  1 Oct 2024 11:31:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727782284;
-	bh=3H3rN27/T4dSvW1Uedlxa4dx04M+fhPbfJn2xQeiUto=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ev0zcnejLlg4untSFDKPs0uu9yRjLpeF29NXm6Fyn2yh3/+5F6eKQ+i/efPs3+p7m
-	 Ms97pZVloGyzj0h7PgGqWHkpDCdU2MDWFiWnNyBAlGYlbBbgkT8of9E3yp0dHCzQjc
-	 FG49kMw6VnsY+KD8+Bu2FZAUZQFnS/gitVh92IdizoZi2bkwMrboc7ogwwjzfbrFq/
-	 itKBJbxfIL3lh2wVsGkt/RfR3TrVW5P6/hfsI6PJHU46H27qv9ZFa4NUTB/rCpWR1l
-	 qJewLv3219nczc442IMtmEliB4fnOxgEqrFnASQNOgAQaA24w9cHZVlGiF76UuT7fU
-	 RsaaVHjOy2elA==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 01 Oct 2024 12:29:09 +0100
-Subject: [PATCH v7 4/4] KVM: arm64: Avoid underallocating storage for host
- SVE state
+	s=arc-20240116; t=1727782155; c=relaxed/simple;
+	bh=a8WHZ7W3EhQ9PtI7lCDoDsTRkyAHfHKrzoPIXZXeYg8=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=dX7EH9Q3xifIgTEL4tvV8l38HLrzmtPuVnw5bq7ag0K0+/wGC4u8Gx/Qct0fJe4jkoTWDs0sjEyyFyettZf9mjZ6kxjQFObwlMJMCJBFVrfqUqaT6R18TYxtFle/DLSVprcVM8sghRiBu7t0pB2SaQ+waattwqZe32HM0hhp2Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=hOqxm6iV; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
+	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=zF9uz8JVM3HISwS+6MEo57XAsK6xXE3AG8qaHZeixt4=; t=1727782153;
+	x=1728214153; b=hOqxm6iVo+ojbWG2adXOLDJ0wDk6JQwzE1u9fIzVD8t3wJiVw71ol3u90rAMo
+	dlleOVwRhEmNTVb8Zmq147RNb0bE7XOoyyraW/tTHYO5lYAVf1nCzVX1LC5B2bo0Qr3SMym2r8Aii
+	Owh3q44AYeqFINNVIm6RzwgfJaEgCtyzS0u+M1EUtA0lYnIQkIOIQQexnExgNcagzY/jYwKmJQNky
+	x5KH0mHs0DruFeAjm7PSM33JxcSYar+VcfzLi605pz/NPCFBad0yLYH8vVCRvcp33EoU9U2fpPkO/
+	6wzPpULLKsiJImAd9L+hNM4pkF0RPwLcTk4uJb75+0ixvfHA/w==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svb42-00089I-8P; Tue, 01 Oct 2024 13:29:10 +0200
+Message-ID: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+Date: Tue, 1 Oct 2024 13:29:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-kvm-arm64-fix-pkvm-sve-vl-v7-4-7b0171a36695@kernel.org>
-References: <20241001-kvm-arm64-fix-pkvm-sve-vl-v7-0-7b0171a36695@kernel.org>
-In-Reply-To: <20241001-kvm-arm64-fix-pkvm-sve-vl-v7-0-7b0171a36695@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, Fuad Tabba <tabba@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kvmarm@lists.linux.dev, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4775; i=broonie@kernel.org;
- h=from:subject:message-id; bh=3H3rN27/T4dSvW1Uedlxa4dx04M+fhPbfJn2xQeiUto=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm+91+bqwK4f/pJu2CGuxMaixni9UrdS9SNp0K0H+g
- BdW8tDmJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZvvdfgAKCRAk1otyXVSH0O8MB/
- 9PffATY1K7tJ1hlmtmShlhAHdohSC3qAnH0uEWLq5dujSFDSuS8JMjvRLtBWwAApYUjohwazjqUMGr
- S6MQmMdtfoV58SR9WNsybgfttZz3/uUpVu8hWjJLRHIKm7drRnIjuhK2oerBmf4UaS6EmeiZ816hvb
- qV4L4r53Jp/fm1zDfziPzD8Vu5vCb5UwJ7HOmd7vAhyehJ4jkNnLG/kF63IHnl/hDaw2po5EjH/fCp
- oNaK0u1sYxpx592tHvJj/Orl/hKz2D7Wtuu6M199308Qhe+CKvn4rLBNdxudXs0uEG5R1ot344mBT2
- y5b51UB7U5839ImBX7zF9B/CbsLJlo
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+To: yangerkun <yangerkun@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>, =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?=
+ <varqox@gmail.com>
+Subject: [regression] getdents() does not list entries created after opening
+ the directory
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727782153;5e5fb709;
+X-HE-SMSGID: 1svb42-00089I-8P
 
-We size the allocation for the host SVE state using the maximum VL
-shared by all CPUs in the host.  As observed during review on an
-asymmetric system this may be less than the maximum VL supported on some
-of the CPUs.  Since the pKVM hypervisor saves and restores the host
-state using the maximum VL for the current CPU this may lead to buffer
-overflows, fix this by changing pKVM to use the maximum VL for any CPU
-to size allocations and limit host configurations.
+Hi, Thorsten here, the Linux kernel's regression tracker.
 
-Fixes: 66d5b53e20a6 ("KVM: arm64: Allocate memory mapped at hyp for host sve state in pKVM")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- arch/arm64/include/asm/kvm_host.h  | 2 +-
- arch/arm64/include/asm/kvm_hyp.h   | 2 +-
- arch/arm64/include/asm/kvm_pkvm.h  | 2 +-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c | 4 ++--
- arch/arm64/kvm/hyp/nvhe/pkvm.c     | 2 +-
- arch/arm64/kvm/reset.c             | 6 +++---
- 6 files changed, 9 insertions(+), 9 deletions(-)
+yangerkun, I noticed a report about a regression in bugzilla.kernel.org
+that appears to be caused by the following change of yours:
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 329619c6fa96..612a5adc2dbf 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -76,7 +76,7 @@ static inline enum kvm_mode kvm_get_mode(void) { return KVM_MODE_NONE; };
- DECLARE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
- 
- extern unsigned int __ro_after_init kvm_sve_max_vl;
--extern unsigned int __ro_after_init kvm_host_sve_max_vl;
-+extern unsigned int __ro_after_init kvm_host_sve_max_cpu_vl;
- int __init kvm_arm_init_sve(void);
- 
- u32 __attribute_const__ kvm_target_cpu(void);
-diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kvm_hyp.h
-index 6b074f4d48b2..19f3ae9f05a9 100644
---- a/arch/arm64/include/asm/kvm_hyp.h
-+++ b/arch/arm64/include/asm/kvm_hyp.h
-@@ -144,6 +144,6 @@ extern u64 kvm_nvhe_sym(id_aa64smfr0_el1_sys_val);
- 
- extern unsigned long kvm_nvhe_sym(__icache_flags);
- extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
--extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
-+extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_cpu_vl);
- 
- #endif /* __ARM64_KVM_HYP_H__ */
-diff --git a/arch/arm64/include/asm/kvm_pkvm.h b/arch/arm64/include/asm/kvm_pkvm.h
-index cd56acd9a842..6fc0cf42fca3 100644
---- a/arch/arm64/include/asm/kvm_pkvm.h
-+++ b/arch/arm64/include/asm/kvm_pkvm.h
-@@ -134,7 +134,7 @@ static inline size_t pkvm_host_sve_state_size(void)
- 		return 0;
- 
- 	return size_add(sizeof(struct cpu_sve_state),
--			SVE_SIG_REGS_SIZE(sve_vq_from_vl(kvm_host_sve_max_vl)));
-+			SVE_SIG_REGS_SIZE(sve_vq_from_vl(kvm_host_sve_max_cpu_vl)));
- }
- 
- #endif	/* __ARM64_KVM_PKVM_H__ */
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index 48adcd005079..234372bef85c 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -99,8 +99,8 @@ static void flush_hyp_vcpu(struct pkvm_hyp_vcpu *hyp_vcpu)
- 	hyp_vcpu->vcpu.arch.ctxt	= host_vcpu->arch.ctxt;
- 
- 	hyp_vcpu->vcpu.arch.sve_state	= kern_hyp_va(host_vcpu->arch.sve_state);
--	/* Limit guest vector length to the maximum supported by the host.  */
--	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_vl);
-+	/* Limit guest vector length to the maximum supported by any CPU.  */
-+	hyp_vcpu->vcpu.arch.sve_max_vl	= min(host_vcpu->arch.sve_max_vl, kvm_host_sve_max_cpu_vl);
- 
- 	hyp_vcpu->vcpu.arch.hw_mmu	= host_vcpu->arch.hw_mmu;
- 
-diff --git a/arch/arm64/kvm/hyp/nvhe/pkvm.c b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-index 187a5f4d56c0..770d66491b76 100644
---- a/arch/arm64/kvm/hyp/nvhe/pkvm.c
-+++ b/arch/arm64/kvm/hyp/nvhe/pkvm.c
-@@ -18,7 +18,7 @@ unsigned long __icache_flags;
- /* Used by kvm_get_vttbr(). */
- unsigned int kvm_arm_vmid_bits;
- 
--unsigned int kvm_host_sve_max_vl;
-+unsigned int kvm_host_sve_max_cpu_vl;
- 
- /*
-  * Set trap register values based on features in ID_AA64PFR0.
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index 0b0ae5ae7bc2..6c87d01514ff 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -32,7 +32,7 @@
- 
- /* Maximum phys_shift supported for any VM on this host */
- static u32 __ro_after_init kvm_ipa_limit;
--unsigned int __ro_after_init kvm_host_sve_max_vl;
-+unsigned int __ro_after_init kvm_host_sve_max_cpu_vl;
- 
- /*
-  * ARMv8 Reset Values
-@@ -52,8 +52,8 @@ int __init kvm_arm_init_sve(void)
- {
- 	if (system_supports_sve()) {
- 		kvm_sve_max_vl = sve_max_virtualisable_vl();
--		kvm_host_sve_max_vl = sve_max_vl();
--		kvm_nvhe_sym(kvm_host_sve_max_vl) = kvm_host_sve_max_vl;
-+		kvm_host_sve_max_cpu_vl = sve_max_cpu_vl();
-+		kvm_nvhe_sym(kvm_host_sve_max_cpu_vl) = kvm_host_sve_max_cpu_vl;
- 
- 		/*
- 		 * The get_sve_reg()/set_sve_reg() ioctl interface will need
+64a7ce76fb901b ("libfs: fix infinite directory reads for offset dir")
+[merged via: "Merge tag 'vfs-6.11-rc4.fixes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs"; v6.11-rc4]
 
--- 
-2.39.2
+As many (most?) kernel developers don't keep an eye on the bug tracker,
+I decided to write this mail. To quote from
+https://bugzilla.kernel.org/show_bug.cgi?id=219285:
 
+> below program illustrates the problem. Expected output should include line "entry: after", actual output does not:
+> ```
+> entry: .
+> entry: ..
+> entry: before
+> ```
+> Program:
+> 
+> ```c
+> #include <unistd.h>
+> #include <dirent.h>
+> #include <stdlib.h>
+> #include <sys/stat.h>
+> #include <stdio.h>
+> #include <fcntl.h>
+> 
+> int main() {
+> 	system("rm -rf /tmp/dirent-problems-test-dir");
+> 	if (mkdir("/tmp/dirent-problems-test-dir", 0755)) {
+> 		abort();
+> 	}
+> 
+> 	int fd = creat("/tmp/dirent-problems-test-dir/before", 0644);
+> 	if (fd < 0) {
+> 		abort();
+> 	}
+> 	close(fd);
+> 
+> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
+> 
+> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
+> 	if (fd < 0) {
+> 		abort();
+> 	}
+> 	close(fd);
+> 
+> 	struct dirent* entry;
+> 	while ((entry = readdir(dir))) {
+> 		printf("entry: %s\n", entry->d_name);
+> 	}
+> 
+> 	closedir(dir);
+> 	return 0;
+> }
+> ```
+> 
+> Affected kernel version: 6.10.10.
+> Filesystem: ext4.
+> Distribution: Arch Linux.
+
+> On Linux 6.6.51 it works as expected.
+
+> Regression first appeared in 6.10.7, 6.10.6 was good. I will further
+> bisect tomorrow.
+
+> 6.11 is still affected.
+
+See the ticket for more details. Reporter ist CCed. I made no judgement
+if the code provided is sane, I'm just assumed forwarding the issue was
+a good idea.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
+
+P.S.: let me use this mail to also add the report to the list of tracked
+regressions to ensure it's doesn't fall through the cracks:
+
+#regzbot introduced: 64a7ce76fb901bf9f9c36cf5d681328fc0fd4b5a
+#regzbot title: libfs: getdents() does not list entries created after
+opening the directory
+#regzbot from: Krzysztof Małysa <varqox@gmail.com>
+#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219285
+#regzbot ignore-activity
 
