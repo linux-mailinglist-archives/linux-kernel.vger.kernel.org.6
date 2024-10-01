@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-345936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F48F98BD22
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AE298BD20
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 683551C2319F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578D61C22196
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03DA1C3F1D;
-	Tue,  1 Oct 2024 13:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA751C330C;
+	Tue,  1 Oct 2024 13:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OB9HmBnj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PxpYomJt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D086B1C3F15
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AEC1C2330;
+	Tue,  1 Oct 2024 13:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788397; cv=none; b=VgWu+r7hYxSecVbydpyK7FwulCl+O6N/Ag+EdevBxUzL6RUcBqa4ItIRk6z0IvYpFTH4tTNkGSFXE2WeTKqxtSg8od5PEG7f/2CV+Vk8CxD7hCBMvOuWCrDoNKXTchg/HHKmAtQCj2rJUPKH1FmW25z0WY4ZHWdDo9BB6Wjz+v8=
+	t=1727788393; cv=none; b=m8ibiAVRwwaftviJpqnNmL/Ed0FcVOro7ZAvFqQ/EqBcGg8U/hZYw2eU0eeYncddVGLNCFbNUxpdw8YWRpOic+MbojEbMHwdyzjX1tjxBHCf45xahmUey0irrqLbI3JTsCqU9vpLRaljRqH/BkJyQcENHXRphhzYxBW5tMrXuy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788397; c=relaxed/simple;
-	bh=UfrnhUQVyo2wO32SN5NdiKROG9kqZ27TtBQLwg/THz0=;
+	s=arc-20240116; t=1727788393; c=relaxed/simple;
+	bh=W8ghwVwmar4eOYUmX5B9j0WuQw2VG2mdttchaRv44xU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qqmSRYnUewwqh6blHyiewvSf95ac6SBHr1AbdDOnUp0vJn5UOhaCvpcid1O8vdW+PApXz0PGvSsYOVFGuwMq+ZBji2pS4F1cx9e9kVi5Zz+uUgFcS0gvhL2bPXB6aVw58d3Cw9lDac07AgzFwUk/HS8wkZe7ZzHHMdahhyE+vFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OB9HmBnj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727788394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gTnDU1z73Rnbhrtpq9+SGsnBXv3PyIWuZLF800URvx4=;
-	b=OB9HmBnjFx8zTuUHsLwKriKT2X7gA33uP6uBVWv87gqU9C8hsNi1QzI9j9sMz01Odtouzl
-	mQTco16EPDZBaTdXPjc+GyM624FeUSxWHRPpFMtVhYr/D8LvJjizSOiHtqHF6XMC2iUKm4
-	Ba7odaZXjSrrRmMMici7rkriwO3HgIU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-50-ojQUk-KmNpy977lAffUnuw-1; Tue, 01 Oct 2024 09:13:13 -0400
-X-MC-Unique: ojQUk-KmNpy977lAffUnuw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb830ea86so36311605e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:13:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727788392; x=1728393192;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gTnDU1z73Rnbhrtpq9+SGsnBXv3PyIWuZLF800URvx4=;
-        b=TdJrbpNoaVh3j3Cy4Qu/aI0eA4dmkjHbNDPj0Ckf2lFr7iVjlJKcMKc+T2NzIYCgFT
-         mdP1uKU6c7gq1Qt3aNpPemHtLJbIRqmUTIafyk0ig2xOYUgQBjMZY6b/LV9TZGB7kF1l
-         ILHEFIG5u2+FrSguDTTL4lCiiB5zc8ITYMz4E3K22VJEjmta8y1gORMW3D5o2BXD96/z
-         npaozDPnlEOZ81mMBAvprro61uZmF7Oq8h6nDwnqNoP2S8dW6EVT9tEsVo0xw9gcCrFJ
-         rKMSp5Y9VHZU+endokO6QMdDQTQwmdJLDk9McYQ3iRpJczPpXCD2iTYiwFgCY75zQX99
-         f96A==
-X-Forwarded-Encrypted: i=1; AJvYcCVy5EDxmyXRuPIH2z6GqeBl1iCxMcZsIYmNkH1Fd9Ij91tJVExLJatA2nG8xUMTQFzvBMPMYyvQabrjwRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOieGRKWx3WBaG7M8I/PdpqNDxx4fW6eSFnR2qFFvj+mZKzTVb
-	FKcuVENC9PRBAigFknJMR1BDuk/bK/JFlwbq5rpaP5ZcT+HURiX/f7XZMS3dxxSAPNea6wWtr8g
-	aWB7f7NhOHm5ujqZe4/U4yWLahmMjKdv9hHehijXLNkWldA96KkQ4BCq1nlgMiQ==
-X-Received: by 2002:a05:600c:1c04:b0:42c:b9dd:93ee with SMTP id 5b1f17b1804b1-42f5849763amr112922325e9.34.1727788391961;
-        Tue, 01 Oct 2024 06:13:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjWlB5VW/hUIu1yHmQgUpe0gbO0NGbAXuFYpqN1EaUiaOZRTPE0VVZwWGKTs7IiJ4sqC9Z4w==
-X-Received: by 2002:a05:600c:1c04:b0:42c:b9dd:93ee with SMTP id 5b1f17b1804b1-42f5849763amr112922085e9.34.1727788391480;
-        Tue, 01 Oct 2024 06:13:11 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:55e:42b2:2c3a:bdd9:126e:d43a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57dec1c7sm132352525e9.27.2024.10.01.06.13.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 06:13:10 -0700 (PDT)
-Date: Tue, 1 Oct 2024 09:13:07 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Wenyu Huang <huangwenyu1998@gmail.com>
-Cc: jasowang@redhat.com, linux-kernel@vger.kernel.org,
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Subject: Re: Re: [PATCH] virtio: Make vring_new_virtqueue support for packed
- vring
-Message-ID: <20241001091259-mutt-send-email-mst@kernel.org>
-References: <CACGkMEvieuDTp-DfhQ58EGbeFCvNmn4fUNmUdPHzex6pOetbdw@mail.gmail.com>
- <20241001093051.42703-1-huangwenyuu@outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PyMTkI6xweGIq12E5LMMKSUIiJTOtLVcyzvLbeDEefn5mmw47QjQl3i4l1Th+4ngi/WXtAvs61IQHe9Y1uGlvyP+VS62QqwPhoq825btkmB9jVNSlyzuF5JecBffCa6iP0BWLsNndWMb/tjHFj87mzeqPOOrsPIRUyzk5jutlwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PxpYomJt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7127BC4CEC6;
+	Tue,  1 Oct 2024 13:13:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727788392;
+	bh=W8ghwVwmar4eOYUmX5B9j0WuQw2VG2mdttchaRv44xU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PxpYomJtpwFkooPJYd7Fo0Lp9iPFH52dAgKNq9dZqG1cZA0yozuf8Oo4dWMVVF15V
+	 ytb/19KCDZtrHFJjKlJh+nh1YtMcn6r/nYKOmJoS1ZH4BvaElLf8smTA776xMwUYtr
+	 91iAcC9xzSmpaU6NBF06Dc6/fm8HOdzlP1ikx7Ra8H5jGT6Yc1gwrkJpg+wyI8XlHh
+	 9T0LyCcpgY3Bkq9ubCbehhT1eZbv328o9VJc9W0yeJXCaG9pkhkSYlIOqcTS7lJHa8
+	 wMJS1zh0N0SibhckRZY+NrOgOwIpTfWUrUabQET2kdcrmvuApxAxXPKk72zMI/Aq84
+	 vQDiwb2Ay06yw==
+Date: Tue, 1 Oct 2024 14:13:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] Input: elan_i2c - Wait for initialization after enabling
+ regulator supply
+Message-ID: <6626b1f3-7c3a-4531-b006-9e29155025f0@sirena.org.uk>
+References: <20241001093815.2481899-1-wenst@chromium.org>
+ <ZvvHdlD6E5bzsWwV@google.com>
+ <ZvvX5KcKaVBLedD1@finisterre.sirena.org.uk>
+ <ZvvyEux8f2ylRQOn@google.com>
+ <7db1299f-f925-4689-806f-f1ea4191fd4c@sirena.org.uk>
+ <Zvv1FuXBZpjDefb8@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h3gsj/MN+E0Fcf3v"
+Content-Disposition: inline
+In-Reply-To: <Zvv1FuXBZpjDefb8@google.com>
+X-Cookie: Even a hawk is an eagle among crows.
+
+
+--h3gsj/MN+E0Fcf3v
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001093051.42703-1-huangwenyuu@outlook.com>
 
-On Tue, Oct 01, 2024 at 05:30:51PM +0800, Wenyu Huang wrote:
-> It used for testing in tools/virtio/vringh_test.c. 
-> If vring_new_virtqueue supports packed vring, we can add support for 
-> packed vring to vringh and test it.
+On Tue, Oct 01, 2024 at 06:11:50AM -0700, Dmitry Torokhov wrote:
+> On Tue, Oct 01, 2024 at 02:06:19PM +0100, Mark Brown wrote:
 
-Pls say this in the commit log.
+> > Yeah, but that's got to get washed through the individual system
+> > firmwares to get deployed and my confidence in vendors is not high.
 
+> I think native Elan is only used in Chromebooks where firmware is
+> decent, the rest are I2C-HID.
+
+Ah, OK - in that case I agree there should be no problems with ACPI.
+
+--h3gsj/MN+E0Fcf3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmb79WQACgkQJNaLcl1U
+h9C0gAf/UvWgb06F4oVn6jHF+ko908f4HFveFOTbNiT6raI8r4DoVrYGq9fTi17E
+ukCv2sW9PCBsw8jRiKgKMnCagMiBcPV1gbJbKqv3k48LMGp7pRK7st4IVApVaW8G
+kK7HoOjYCKRtH/MRujrUrEXLUD2UM1AH2pP0ZmDki3nKe31iKCgZA+0A4vbiFV3h
+SWjX0oT9cLS+wN0jrZ29bZ33UfTMNBoZPSJS1f2pURn331VLiHslp8FvRhThRB7A
+rp/18eqr0fclvuxaCxI6LFwjpd2h3HppbrrrSj+bDgwNvP7uul6py40MPjwjriMT
+jSPXKK09gDwGMau1Ya3ErIslX4NofA==
+=n6ix
+-----END PGP SIGNATURE-----
+
+--h3gsj/MN+E0Fcf3v--
 
