@@ -1,116 +1,372 @@
-Return-Path: <linux-kernel+bounces-346103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73D4398BF9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:19:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C277098BF89
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24A89285728
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:19:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316C4B2489A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 637B11CCEDD;
-	Tue,  1 Oct 2024 14:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="DnLsGguM"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6F51CB53F;
+	Tue,  1 Oct 2024 14:13:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099161CC15B;
-	Tue,  1 Oct 2024 14:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526371C6F67;
+	Tue,  1 Oct 2024 14:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792055; cv=none; b=VAeIBmkU5ytLBoZrorlWxe7LP75J9M2+iC7xANQw5XXnQdOXtg8Bv1whFDQZhrJktfNTRaK0XRjNKsNfe7S2vCkW9I/SaX5qInKloAjEZTKXXfrYl2YCCA8AYtscTfhavZDGLxDK0YPw0wKh0id4AZKVLlqMvAsUs5EX8Seqz3s=
+	t=1727792001; cv=none; b=WyMXZNPM72KVQ8y3YqqW3gu3R0SS/pkDFtD3B9c7EOCMXPSzVgPbzHX9eRt6ZcADwDQ3eRH9ykZK3+J0G8uXq44QZy/CM+KlF4GRSgheNALH/vUjwxwjVcvW1v3tvM1V/YH+sfA7WC3ZqGTp4LpR9yxW7qrPP8P7JCg+TZQnJxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792055; c=relaxed/simple;
-	bh=r1+h9F+0nljOqtAM17gvDCWiuo0mM2xCuiBLzFztBfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gyOjzerXJTHa3/BisksKq9/cLtuvB0md7OblJtE4dDPvoRNng+1e/9aDtmlzMKoNDtf2EuBJkxxF/3vM/qtUn0VhAA3dMYSsCQsTuwAhdAFkcuBkn6689tF1p5ccupRpxd4+p3U1NGnAybxIkrbU3kGyTKsgkI1UG7VjxPWutWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=DnLsGguM; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=lQUontFP3CUZ8cF4WWET7oGIXBLufTRmifkMvmYnvv4=; b=DnLsGguMemVQ06FR
-	6ArdnvTGlELGdvnbQ/vw+RT2BCZw7s+8Aq2Zpxwv/+Ky99yyvsRKQqlX76eIjPF0PfDsT11TzObiQ
-	RgjMwKEHf1xiVwrtZlbDhWJe/qhj57i8vZvrVMjAxZcGEeVEGq6wY81HPKusTGp4cuYXfLRUIMk0y
-	mEsE9NQpL50odUZ4LkRdQJ9dRxb//y8dhrI5PYUksqnCpc0/SZL7B2V1JllECQN6mJXAAKGo0NCPu
-	OIjVfldpX/zgnl58VooDzYJTNgmiVVCwglu/brepiFub0BtD4KyMK2GenNVRdAkooxilZQT++JrGa
-	qkSh/2jAsCgwv1mxKQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1svdda-008FA4-3D;
-	Tue, 01 Oct 2024 14:14:03 +0000
-From: linux@treblig.org
-To: pbonzini@redhat.com
-Cc: seanjc@google.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 2/2] KVM: Remove unused kvm_vcpu_gfn_to_pfn_atomic
-Date: Tue,  1 Oct 2024 15:13:54 +0100
-Message-ID: <20241001141354.18009-3-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001141354.18009-1-linux@treblig.org>
-References: <20241001141354.18009-1-linux@treblig.org>
+	s=arc-20240116; t=1727792001; c=relaxed/simple;
+	bh=3igbjCvuJ0YDGAR0DQ9ZtPlULJXsd8VFMK0uyZUChfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FZ5jTugGZD4gL1GJ3BmLy450hKeG3zEAOsx5NJ8cyLJMJplif7z9CrW3mdYMMwx+jNoFzOQ9G0FJqAFqAi4nHk9AwvP188IRSubHjErNAlqk+5LCU4NwFfM0m1RSCpLGi0E52w52W2KdvvC7szQgQS0BEa2y+XsCFZsf/YvwbQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6668DC4CECD;
+	Tue,  1 Oct 2024 14:13:15 +0000 (UTC)
+Date: Tue, 1 Oct 2024 10:14:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
+ Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
+ =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
+ <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
+ <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
+ <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-arm-kernel@lists.infradead.org, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
+ <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
+ Dooley <conor.dooley@microchip.com>, Samuel Holland
+ <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
+ <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
+ <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
+ <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ loongarch@lists.linux.dev
+Subject: Re: [PATCH v9 4/5] jump_label: adjust inline asm to be consistent
+Message-ID: <20241001101404.29388dd0@gandalf.local.home>
+In-Reply-To: <20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
+References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
+	<20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The last use of kvm_vcpu_gfn_to_pfn_atomic was removed by commit
-1bbc60d0c7e5 ("KVM: x86/mmu: Remove MMU auditing")
+Can I get some more acks from the arch maintainers? So far there's only one
+ack from Peter Zijlstra for x86. But this touches arm, arm64, loongarch and
+riscv too.
 
-Remove it.
+-- Steve
 
-Note, I've not removed the example in,
-  Documentation/virt/kvm/locking.rst
-which I guess needs reworking; or maybe it's a reason to hold onto
-this.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/kvm_host.h | 1 -
- virt/kvm/kvm_main.c      | 6 ------
- 2 files changed, 7 deletions(-)
+On Tue, 01 Oct 2024 13:30:01 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index b9b2e42e3fa7..45be36e5285f 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1313,7 +1313,6 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
- 
- struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
- struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn_t gfn);
--kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn);
- int kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *map);
- void kvm_vcpu_unmap(struct kvm_vcpu *vcpu, struct kvm_host_map *map, bool dirty);
- unsigned long kvm_vcpu_gfn_to_hva(struct kvm_vcpu *vcpu, gfn_t gfn);
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index f82131e7978b..141db5b79cd4 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -3035,12 +3035,6 @@ kvm_pfn_t gfn_to_pfn_memslot_atomic(const struct kvm_memory_slot *slot, gfn_t gf
- }
- EXPORT_SYMBOL_GPL(gfn_to_pfn_memslot_atomic);
- 
--kvm_pfn_t kvm_vcpu_gfn_to_pfn_atomic(struct kvm_vcpu *vcpu, gfn_t gfn)
--{
--	return gfn_to_pfn_memslot_atomic(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn);
--}
--EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_pfn_atomic);
--
- kvm_pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn)
- {
- 	return gfn_to_pfn_memslot(gfn_to_memslot(kvm, gfn), gfn);
--- 
-2.46.2
+> To avoid duplication of inline asm between C and Rust, we need to
+> import the inline asm from the relevant `jump_label.h` header into Rust.
+> To make that easier, this patch updates the header files to expose the
+> inline asm via a new ARCH_STATIC_BRANCH_ASM macro.
+> 
+> The header files are all updated to define a ARCH_STATIC_BRANCH_ASM that
+> takes the same arguments in a consistent order so that Rust can use the
+> same logic for every architecture.
+> 
+> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  arch/arm/include/asm/jump_label.h       | 14 +++++----
+>  arch/arm64/include/asm/jump_label.h     | 20 ++++++++-----
+>  arch/loongarch/include/asm/jump_label.h | 16 +++++++----
+>  arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++++++++---------------
+>  arch/x86/include/asm/jump_label.h       | 38 ++++++++++---------------
+>  5 files changed, 75 insertions(+), 63 deletions(-)
+> 
+> diff --git a/arch/arm/include/asm/jump_label.h b/arch/arm/include/asm/jump_label.h
+> index e4eb54f6cd9f..a35aba7f548c 100644
+> --- a/arch/arm/include/asm/jump_label.h
+> +++ b/arch/arm/include/asm/jump_label.h
+> @@ -9,13 +9,17 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE 4
+>  
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:\n\t"					\
+> +	WASM(nop) "\n\t"				\
+> +	".pushsection __jump_table,  \"aw\"\n\t"	\
+> +	".word 1b, " label ", " key "\n\t"		\
+> +	".popsection\n\t"				\
+> +
+>  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+>  {
+> -	asm goto("1:\n\t"
+> -		 WASM(nop) "\n\t"
+> -		 ".pushsection __jump_table,  \"aw\"\n\t"
+> -		 ".word 1b, %l[l_yes], %c0\n\t"
+> -		 ".popsection\n\t"
+> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
+>  		 : :  "i" (&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
+> index a0a5bbae7229..424ed421cd97 100644
+> --- a/arch/arm64/include/asm/jump_label.h
+> +++ b/arch/arm64/include/asm/jump_label.h
+> @@ -19,10 +19,14 @@
+>  #define JUMP_TABLE_ENTRY(key, label)			\
+>  	".pushsection	__jump_table, \"aw\"\n\t"	\
+>  	".align		3\n\t"				\
+> -	".long		1b - ., %l["#label"] - .\n\t"	\
+> -	".quad		%c0 - .\n\t"			\
+> -	".popsection\n\t"				\
+> -	:  :  "i"(key) :  : label
+> +	".long		1b - ., " label " - .\n\t"	\
+> +	".quad		" key " - .\n\t"		\
+> +	".popsection\n\t"
+> +
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:	nop\n\t"				\
+> +	JUMP_TABLE_ENTRY(key, label)
+>  
+>  static __always_inline bool arch_static_branch(struct static_key * const key,
+>  					       const bool branch)
+> @@ -30,8 +34,8 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
+>  	char *k = &((char *)key)[branch];
+>  
+>  	asm goto(
+> -		"1:	nop					\n\t"
+> -		JUMP_TABLE_ENTRY(k, l_yes)
+> +		ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
+> +		:  :  "i"(k) :  : l_yes
+>  		);
+>  
+>  	return false;
+> @@ -43,9 +47,11 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
+>  						    const bool branch)
+>  {
+>  	char *k = &((char *)key)[branch];
+> +
+>  	asm goto(
+>  		"1:	b		%l[l_yes]		\n\t"
+> -		JUMP_TABLE_ENTRY(k, l_yes)
+> +		JUMP_TABLE_ENTRY("%c0", "%l[l_yes]")
+> +		:  :  "i"(k) :  : l_yes
+>  		);
+>  	return false;
+>  l_yes:
+> diff --git a/arch/loongarch/include/asm/jump_label.h b/arch/loongarch/include/asm/jump_label.h
+> index 29acfe3de3fa..8a924bd69d19 100644
+> --- a/arch/loongarch/include/asm/jump_label.h
+> +++ b/arch/loongarch/include/asm/jump_label.h
+> @@ -13,18 +13,22 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE	4
+>  
+> -#define JUMP_TABLE_ENTRY				\
+> +/* This macro is also expanded on the Rust side. */
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+>  	 ".pushsection	__jump_table, \"aw\"	\n\t"	\
+>  	 ".align	3			\n\t"	\
+> -	 ".long		1b - ., %l[l_yes] - .	\n\t"	\
+> -	 ".quad		%0 - .			\n\t"	\
+> +	 ".long		1b - ., " label " - .	\n\t"	\
+> +	 ".quad		" key " - .		\n\t"	\
+>  	 ".popsection				\n\t"
+>  
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1:	nop				\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
+>  {
+>  	asm goto(
+> -		"1:	nop			\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> @@ -37,7 +41,7 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
+>  {
+>  	asm goto(
+>  		"1:	b	%l[l_yes]	\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		JUMP_TABLE_ENTRY("%0", "%l[l_yes]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
+>  
+>  	return false;
+> diff --git a/arch/riscv/include/asm/jump_label.h b/arch/riscv/include/asm/jump_label.h
+> index 1c768d02bd0c..87a71cc6d146 100644
+> --- a/arch/riscv/include/asm/jump_label.h
+> +++ b/arch/riscv/include/asm/jump_label.h
+> @@ -16,21 +16,28 @@
+>  
+>  #define JUMP_LABEL_NOP_SIZE 4
+>  
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
+> +	".align		" RISCV_LGPTR "		\n\t"	\
+> +	".long		1b - ., " label " - .	\n\t"	\
+> +	"" RISCV_PTR "	" key " - .		\n\t"	\
+> +	".popsection				\n\t"
+> +
+> +/* This macro is also expanded on the Rust side. */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	nop				\n\t"	\
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch(struct static_key * const key,
+>  					       const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	nop					\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>  
+>  	return false;
+> @@ -38,21 +45,20 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
+>  	return true;
+>  }
+>  
+> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
+> +	"	.align		2		\n\t"	\
+> +	"	.option push			\n\t"	\
+> +	"	.option norelax			\n\t"	\
+> +	"	.option norvc			\n\t"	\
+> +	"1:	j	" label "		\n\t" \
+> +	"	.option pop			\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +
+>  static __always_inline bool arch_static_branch_jump(struct static_key * const key,
+>  						    const bool branch)
+>  {
+>  	asm goto(
+> -		"	.align		2			\n\t"
+> -		"	.option push				\n\t"
+> -		"	.option norelax				\n\t"
+> -		"	.option norvc				\n\t"
+> -		"1:	j		%l[label]		\n\t"
+> -		"	.option pop				\n\t"
+> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
+> -		"	.align		" RISCV_LGPTR "		\n\t"
+> -		"	.long		1b - ., %l[label] - .	\n\t"
+> -		"	" RISCV_PTR "	%0 - .			\n\t"
+> -		"	.popsection				\n\t"
+> +		ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[label]")
+>  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>  
+>  	return false;
+> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+> index cbbef32517f0..fb79fa1cf70a 100644
+> --- a/arch/x86/include/asm/jump_label.h
+> +++ b/arch/x86/include/asm/jump_label.h
+> @@ -12,49 +12,41 @@
+>  #include <linux/stringify.h>
+>  #include <linux/types.h>
+>  
+> -#define JUMP_TABLE_ENTRY				\
+> +#define JUMP_TABLE_ENTRY(key, label)			\
+>  	".pushsection __jump_table,  \"aw\" \n\t"	\
+>  	_ASM_ALIGN "\n\t"				\
+>  	".long 1b - . \n\t"				\
+> -	".long %l[l_yes] - . \n\t"			\
+> -	_ASM_PTR "%c0 + %c1 - .\n\t"			\
+> +	".long " label " - . \n\t"			\
+> +	_ASM_PTR " " key " - . \n\t"			\
+>  	".popsection \n\t"
+>  
+> +/* This macro is also expanded on the Rust side. */
+>  #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
+> -
+> -static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+> -{
+> -	asm goto("1:"
+> -		"jmp %l[l_yes] # objtool NOPs this \n\t"
+> -		JUMP_TABLE_ENTRY
+> -		: :  "i" (key), "i" (2 | branch) : : l_yes);
+> -
+> -	return false;
+> -l_yes:
+> -	return true;
+> -}
+> -
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1: jmp " label " # objtool NOPs this \n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+>  #else /* !CONFIG_HAVE_JUMP_LABEL_HACK */
+> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
+> +	"1: .byte " __stringify(BYTES_NOP5) "\n\t"	\
+> +	JUMP_TABLE_ENTRY(key, label)
+> +#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
+>  
+>  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
+>  {
+> -	asm goto("1:"
+> -		".byte " __stringify(BYTES_NOP5) "\n\t"
+> -		JUMP_TABLE_ENTRY
+> -		: :  "i" (key), "i" (branch) : : l_yes);
+> +	int hack_bit = IS_ENABLED(CONFIG_HAVE_JUMP_LABEL_HACK) ? 2 : 0;
+> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0 + %c1", "%l[l_yes]")
+> +		: :  "i" (key), "i" (hack_bit | branch) : : l_yes);
+>  
+>  	return false;
+>  l_yes:
+>  	return true;
+>  }
+>  
+> -#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
+> -
+>  static __always_inline bool arch_static_branch_jump(struct static_key * const key, const bool branch)
+>  {
+>  	asm goto("1:"
+>  		"jmp %l[l_yes]\n\t"
+> -		JUMP_TABLE_ENTRY
+> +		JUMP_TABLE_ENTRY("%c0 + %c1", "%l[l_yes]")
+>  		: :  "i" (key), "i" (branch) : : l_yes);
+>  
+>  	return false;
+> 
 
 
