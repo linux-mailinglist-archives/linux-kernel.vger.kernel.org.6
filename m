@@ -1,264 +1,224 @@
-Return-Path: <linux-kernel+bounces-345430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A1D98B63E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8758598B63F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E902E1C21ED1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 212401F22759
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8832E1BDAA4;
-	Tue,  1 Oct 2024 07:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB51BDAB7;
+	Tue,  1 Oct 2024 07:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OkMWs9zp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qkwl/YS6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C881E4AF;
-	Tue,  1 Oct 2024 07:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769396; cv=fail; b=M5hTDF6cNJzz412IbM9asd3Vho0Uk0W0RBygk2ad8erRMM5ZpzremkThwBy/9crmP31z2lZuJvVp0UN5EY61P0FieMPCJr3rNtNgE3xZhZIuPDLaqKq+cuhq1MYKITc7Na11KFmJ0fDntzOoxHCQvvALWx+jZs7ZSMBUlfpj3qQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769396; c=relaxed/simple;
-	bh=kR9l6Xq/nPsF2xX84AqFQ4NjIUcvOs9gU6DCRdR9va8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=NPtbbQZg58jZryIOptSE/3rKAG5GYU4GfvHHJuTUIuyc1yisrRpHm8q7w0FuewdUiqyro6OqPpg5TebDTQ3dTUrKgkLhltABq90Wb7/taaBiJGWw8BsVZh5eDLSUgMrol4TaA5S80T/wjKxVDDxjyO9dDi+y1mga6Wzs5DuSkjY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OkMWs9zp; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727769395; x=1759305395;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=kR9l6Xq/nPsF2xX84AqFQ4NjIUcvOs9gU6DCRdR9va8=;
-  b=OkMWs9zpDS/Wj+PsI3SieYkVXM+hhGhiMtPlG9AFhV5gaPnakXZxofpK
-   a2/aemQMxoJM2DL0Dc6gPGZMsOJ0hpDi95/eeJqRg7BQKBtbnva8KgHOj
-   hATeZ4WRJPKhCaAHQeeiR5HPJtcreMLkM1WRxZcanaE8qHXdGhUYnZV/M
-   OxCc0SFW6L5+KDig9OHvHDKKSF6NQzgbe7A/Mupwp3ZpYhS1a4OkywDK5
-   uvyugLCo0B4IYyVYJpQC52Xn1/bFaCyohFPWAgrU+DKeSse/kg+z43V1T
-   q7kEDhatDnaVEhp48Rdbl5iTuZa4FgNxxVhtGlDu1sCe626v7pkJ8th7J
-   Q==;
-X-CSE-ConnectionGUID: BBtdMNTVT6qaPKvlD9c8Bw==
-X-CSE-MsgGUID: 3WbreRr9S32dTEvWCQIIHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37562460"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="37562460"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 00:56:34 -0700
-X-CSE-ConnectionGUID: ih8Yx9wfTFWYeqCJ3CmQhA==
-X-CSE-MsgGUID: saCB/gBlQ9OnMJe8nJ60Fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="78310726"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 00:56:34 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 00:56:33 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 00:56:33 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.169)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 00:56:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M6QXastznUN2xozRga7UhHrVKVecoeMLHsrMjRr1r7sBHQ4nvH0rWHS0uoQFIIPrGTmwjbWmpVeNfHTqPq9kQyAnnRjJfydwCd41kw7nWAi2/EeNktx5K/O785KbNiHIMIOFl/+spemVcXs4NgmfM/SiXevMMY2CAQO4d9V7eu848Y12RMm1Jw8DIsZMeoJcTbLnzVnUiA7D4Afb2p+rNcOpt06D9U3C3prqhEWpZsPsDvvZHfPlIDFFdsIhFHE1OwSdazuD8ufZJ39HGLXr7LXzvIAzICA1RqEd7XsAvWldJq6hUP/Bpsv39QD5FfvNOGhrExCiY85fF1buwz3YkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4/+ZJWSLMSeBTYwlc7aptXGi1n/e4I5VA6fZzIlnaaQ=;
- b=Tfg63S3DzQXHs8xJ4FCgCiPqzIvfAH8sKAOPtk4dAOMpRnzin+2ixcV/OJIZY+XGC+ESCoK8/E7LZaX+RGMxzby3sl5YZwG7pm/hBE/IBpNIQD7fjeVIvzdKMUBRbN8fGKJ24B7VnSaltTqbO5FG30B2e24Fy8YCtRFRqlC4HM1BI0Bf4O9jndZ83/hoMI7daUR6x08g5Bh1i/2168wFQqJg65jfI8GpHsCX0LGFvAvB6fXYvwedKgDUHEA0hnbYXfm8Vgtyq5Xsw7DbEKgi9NCMmFZIE+BjQsGuJjOh90VZDNlpQPI6baH2bKmrPaZlTMd7A5O5QyMSRDZ2PerxQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by LV3PR11MB8695.namprd11.prod.outlook.com (2603:10b6:408:211::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.25; Tue, 1 Oct
- 2024 07:56:30 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8005.024; Tue, 1 Oct 2024
- 07:56:30 +0000
-Date: Tue, 1 Oct 2024 00:56:27 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: "Huang, Kai" <kai.huang@intel.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "kirill.shutemov@linux.intel.com"
-	<kirill.shutemov@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org" <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"Williams, Dan J" <dan.j.williams@intel.com>, "seanjc@google.com"
-	<seanjc@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "Yamahata, Isaku"
-	<isaku.yamahata@intel.com>, "Hunter, Adrian" <adrian.hunter@intel.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>
-Subject: Re: [PATCH v4 3/8] x86/virt/tdx: Prepare to support reading other
- global metadata fields
-Message-ID: <66fbab2b73591_964fe29434@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.1727173372.git.kai.huang@intel.com>
- <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
- <408dee3f-a466-4746-92d3-adf54d35ec7c@intel.com>
- <62ca1338-2d10-4299-ab7e-361a811bd667@intel.com>
- <a03f740b-6b0c-4a64-9ff1-7eba3ac7a583@intel.com>
- <1b14e28b-972e-4277-898f-8e2dcb77e144@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1b14e28b-972e-4277-898f-8e2dcb77e144@intel.com>
-X-ClientProxiedBy: MW4PR04CA0167.namprd04.prod.outlook.com
- (2603:10b6:303:85::22) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2251BDA98
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 07:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727769397; cv=none; b=ZrMj/qVqm5JUZ3oP0EuoR/UNyZVhtJZxdsE3+62FuhuoZ8S02w9EJ0Dt2eCuCRfCCirzvC6UopBP0lTjZ3HTXGKNF1+dfVESc8ue+EpMwedFZrxgD+g/5ROS+oRt/SB5QIoUNfmTRDHYAFiI7u1LqXPHRqDidFQkDj7dz5nUyn0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727769397; c=relaxed/simple;
+	bh=Ua1+B8Tp8YLtkN1MN/+mYFNVPWPWimun8c+D3yIAJuo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JfIeU53WV7CZ5yivLbJFek2jdSah/JkGth+go1/vVMkZ+jsQqHLZAYm4kUj7aFfOGxAMOl5K+YjToqrrQ2kR1gWWNpr3od4XYzzSuMh+k86XzQ6GesxfagPq256NhnsDGtQCZxKV7nanOxJD0eemnMuM1w/eHfNYMP75AaPz/ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qkwl/YS6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727769394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cbH8XpzflwSTa9FMVre7AgUkuPu4oSVgTfzk1ypDcwE=;
+	b=Qkwl/YS6OJAlP+EhVm9lC4e78mHA7VvPveGzfgsfrsErI49CiLFWEDyFi45vIDXXxy/7jf
+	6oUEFTTvgUqgvad8pmHR9/4/zoEsZuQZBUllqa/tuNGlNJEBqEKn0dR2SdKUg3cAX2dtlo
+	pmQiitOmlJ/TQwdT8QMbSHOSWrr3ows=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633-sLyYgVjpNX6D_fm8-J4KJA-1; Tue, 01 Oct 2024 03:56:33 -0400
+X-MC-Unique: sLyYgVjpNX6D_fm8-J4KJA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cbcf60722so41048035e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 00:56:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727769392; x=1728374192;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cbH8XpzflwSTa9FMVre7AgUkuPu4oSVgTfzk1ypDcwE=;
+        b=OUTgqVuyHltgi2DGAz/9TVXWPK7loDZ8q++SEORbAB4eD6l+fJOFPxhwhgVTVTMwuQ
+         I3lppDmeb+8ZYEhm+5QaUyExG/BTUndWGJWJq9P3yzHn6q6xKjADAjkMKIdS8UF/rw02
+         2+oKNJPrne8gZAY6/bR1JPe3O/M3zgdYcS7BAP15OqziwUk0kyNVmq666ffkPeNazsHF
+         yjzgDCLNSAX/yMeIdW7Yol9qUfZd1T9AuGoJ4O+6wPvT29rKlG0XkPtWtbWDyHK7yNqf
+         wRQfHdxxSvx+NSPaPljlTOItX64BUuQeMJC0/6KPj6MxfUUl9Fo/Iv2F5TSGENXX5+f6
+         mgBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbrBHBhZfY/JFNFQp0163dp8Ydr0P64KEyrcNQhNONyOLLvpVEONaQ7zdIRkOhTG0g9Kqznpf+xSqcJ9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytDSBG23cWJATsUe0Nr8Uju1pOVTZmzjmFdWLZcsYcsy7Kwi1n
+	4MudCspfbKO/iK832WFLsy7L+j10ufgW+jB0QJa9sYUxw5431Or6fr6gZFPRFTR0M4fTf3klyH4
+	mlNmtldQRF20isfVRGYQ+x5OpcZ6z3M4dQjsqS4EAkmYyYeNZcAv0vt3tzLyE3w==
+X-Received: by 2002:a05:600c:5254:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-42f584347a3mr116624805e9.14.1727769392452;
+        Tue, 01 Oct 2024 00:56:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQhqmU2cWYjY+tEC5W3ihB5hcxwnPWrPcZ+Vwc2MHQ3nR+ln898OKJE10BR5q9novtPOP9GQ==
+X-Received: by 2002:a05:600c:5254:b0:42e:93af:61c5 with SMTP id 5b1f17b1804b1-42f584347a3mr116624545e9.14.1727769391966;
+        Tue, 01 Oct 2024 00:56:31 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c733:a800:ea78:e754:1995:5390? (p200300cbc733a800ea78e75419955390.dip0.t-ipconnect.de. [2003:cb:c733:a800:ea78:e754:1995:5390])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffb11sm173758395e9.21.2024.10.01.00.56.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 00:56:30 -0700 (PDT)
+Message-ID: <c9dcdc44-7031-4541-96a2-70a071accb61@redhat.com>
+Date: Tue, 1 Oct 2024 09:56:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|LV3PR11MB8695:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5355ac73-28bd-4870-f8ae-08dce1ee8f4f
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?irBNyy6j4GpWh2MeDymeSzDqv9jUi6iFi9rg4RssE7UyPtr8qANJNphlVs8o?=
- =?us-ascii?Q?b06BDPi4a1XiwF87Z6Ht0rHeKUbv08h7xpXYFL0LU76kTCRLhchQ1cQj8Cza?=
- =?us-ascii?Q?auqsUpCHa8LKmmPZJ0UAswDIXCtUYOT5Uy9VVj3sQ8KOoEdivjjha2TFIpJs?=
- =?us-ascii?Q?QTMD4jp+zZCwzxnZju12R22xH2q2rf1F5GRWOoKQiKL6Lb/G/c3+dUGcWB+8?=
- =?us-ascii?Q?TGhAEV4k9hpVzsiQSbIULp1v8TVzaQLJZm4GZ0lVMCui+6BqO9QP6eOGg7ci?=
- =?us-ascii?Q?sEzZHoLpEZ12RKDSuRMHwgDbZlijXkLmeMCWLaQOGltXgf6QveCriW98xSu2?=
- =?us-ascii?Q?i4KvrEjJYV7z0AoH6eQ4BGoFbGF813ylqssVxd0I0s3DQ+EPsNnEbITJ+ojs?=
- =?us-ascii?Q?iz+NTUydPRGWWk6lFyfOrD/RfKj7Wofdq4YvypkkidhUBwgX7U33lwTDA/XU?=
- =?us-ascii?Q?fFqePaVJYlVksfMsrCbHFz1Faz1hfnUWYwoHtVd3WDEDB3wlcv4pM1MyLUtx?=
- =?us-ascii?Q?FdlX56YWECBnEFXU4Gn55YW3p/AHVVmoqAjbCptyhKmkzJMDgwohXCJweAtL?=
- =?us-ascii?Q?ttITso8OjuIM7JSpugxr3dgrvTNFz+KHJFsnICm2IjvpV2hRcNia4qG2u454?=
- =?us-ascii?Q?NyABBWUBfjjMU0Lot8V9tXfCVu3sO5qfPI9xCyPe77yXKga84BgfLsBT9zGX?=
- =?us-ascii?Q?9CnP+vhlY2CNkH2vjHe5PCff8qUAerCUMpJM7IWND7YKohF+8KOa/PVxKYg6?=
- =?us-ascii?Q?CzLEutcX1k+/K0KJROyrgSE+7OHSMVaRqwuli33y/lsJdNGK4LWJdDeKL/Ik?=
- =?us-ascii?Q?E73+QdoPxBgqISS5uTZOfSEoJkiOiPNQFX+1SkGmYTXkjhQdqN6B9elG+kqC?=
- =?us-ascii?Q?kT3eaHrLkBS2v6fJXs+vjv+Tb0kZSw27HWlmbfyW6kMF4rkvY/ZCPU40jz4f?=
- =?us-ascii?Q?xiSOmw3NObk/+xvZ1P0scHP0Q/YJwhV3CHdlvIAdFODo9tmAnS6CQSE1Awto?=
- =?us-ascii?Q?U5T21QTtxcc3Lke3NHXTP+4lWpT9wzkJt1CpT0ydCsPOFWc0Dr0GTfADA6GU?=
- =?us-ascii?Q?YE2JK+TpQtzy2hzRr1tgZGPszRZwtYRQ5g/rqxYvQ23j2KI+Fvh5gIkBXNcX?=
- =?us-ascii?Q?Yo1vsMLJTDlOCu0r6mvin9gtNBKzA9bSLZRkVRY9O7yfs9xPl0datDs3yyZ/?=
- =?us-ascii?Q?boDwAECyAktmEVvDkdY4mfSBrNbH4BpDR+6Y95D3ruSDfd8hlnOL/25AwX8S?=
- =?us-ascii?Q?n/fZlNH0GRLnWEXwxAl68yskoIU0ZFrcbyLbmXOEws3IwN3Eo/8BrSGkg92w?=
- =?us-ascii?Q?ufPuXMCBhAN1ygTVCvq3RuDf?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dNtn44oKhYxkWlMC6WihpNrQI3urLg2hHjkVrPcDGYpVpzow2xoyko2irykT?=
- =?us-ascii?Q?CMOkMWnMzawFMS1JVJQ/OpbdPJyKfwvhQ6Z52hh4osqcZFIGqo4pBB+7gjG2?=
- =?us-ascii?Q?rxicewr03810ybuLkramicWsivMCmXr0dsZC/R58kb3oME5B3kRHeQHCrVUd?=
- =?us-ascii?Q?TJpAV+Cf5GZOuYCMeKdsPEhKE/sklZr5wXWEjroQXWrtXCWCPCTCuIVInAq1?=
- =?us-ascii?Q?Kgpo4lyZXvoPeJRHLFVQ5AXoOyd1BmmswTpKtMGXrbGh/jrLdUnuAx0fQgDr?=
- =?us-ascii?Q?S7edQitW1yfpOsJXUZyjEmruGWuSTKXb2OBMulY/fou73M0wtbARGNPwNiCK?=
- =?us-ascii?Q?AnqbObMXEDr5kMwm2UfD9NH1k6hRZAjwV+dE2cnF/l4GSnhyhfQF/qzDUkWV?=
- =?us-ascii?Q?79T9nymgEPxHVtPIRHU2TzqgMhLUN69Wo9P4f1m9pRhom9STtGCX9ZIzx0aC?=
- =?us-ascii?Q?hdWhS4tgNW+H6YwZp8glFmODjM2KWiITvNlxFG+kAyg0kje3SfE5998UDkuN?=
- =?us-ascii?Q?cGDo7TUZxn8GFU8Ct5k0AaZmEplpbCsLMFTp+Dy8HH0rvQotu61HjHXkXMoB?=
- =?us-ascii?Q?ydzmwxIu4d+Il/7SQKnIEo94S3kQVRNcTfm8hAq8n+4FoiXqeENJldGoo41E?=
- =?us-ascii?Q?EDkpt94ZbQFXC5Vjt32PvUNJRJ3ChfGLt6poGo6eaSLBoxz80K1h86BBIkj/?=
- =?us-ascii?Q?gLjyxDz6aLsxSLrXYjP7mw7tHp2j9ecNaVZEmcapc+DwHLk9rCR2PfjGLUE7?=
- =?us-ascii?Q?7JzUuztSHvPf6LfIR6Xhd5rAp0YMMK87EfEW0dJ7ZysRIPftsgcpS3RpsLEQ?=
- =?us-ascii?Q?Qtn+/01/coqNK4IxcKB1cmkQhk7+ROP6AvvA8bvbYWTvOYYv82WiQfL9+9go?=
- =?us-ascii?Q?+CfQP7IpvAT61SH4w+i2u5uX/3HLuJoPGtWa70GmBFDog66rFKL1mGcGADQs?=
- =?us-ascii?Q?bwq4MIPHGBKrQuX0cOH+YvRfAEdw+CshBO0TVTsr4w0hLsfG2fnAYC8Tv02F?=
- =?us-ascii?Q?HcF1T2bxVTlB5M0Tlyx6k5O2bjvKSzHwU860NrfXMgoeXOyFqwu3kPIKRSRm?=
- =?us-ascii?Q?0Mt2IjW5ZAmWT7JMVqSS6rgSUS92mRATANKSbhvpQ/Cs4kIU3XY+LPGIBUZ/?=
- =?us-ascii?Q?30HWKF8ya7cNSKyEDIeU8dOrDAo80K02Qbd0twvqjnpYyXLyQkjiqzIBr7rK?=
- =?us-ascii?Q?oWm8eOcYpqECA7T8KYWeeg0Nfvjx3o8zE0+Y4vuERSOHCw03x2B4G7rKa3Rk?=
- =?us-ascii?Q?3GdDpw3g8vtRxDyykWkR7I5fmGIdBMEe9navG4v9siOJQD3ffoZFyXZ5S0Ur?=
- =?us-ascii?Q?iSfPkh5mOcU2PlLp1gJUWPKI1lgiQ3iyEqxx8J6yVG2oYRabH9rXcbwa0hn7?=
- =?us-ascii?Q?Z2YZu1GXGw6jVTHSJOoJjUwdJr2HZSHI2O6RTrxJ6peL0GkAMRAkgAASsMfx?=
- =?us-ascii?Q?5MnPwhwdzZIHgbnLir4VWtKx3UnA0/Zs89hVMTSNxzXIAW0VLYW9stLE1GZP?=
- =?us-ascii?Q?icN1k1kF3fp8EijogLtxu0qIqebHeYKLrurt31CSDNHDOiFn+E/N3FkiTSmA?=
- =?us-ascii?Q?jiiP4RMap9t73DO7V6jNQwxJbk9R/eDz4z2YbqmbsAb8WMghLegClbdIs69J?=
- =?us-ascii?Q?xQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5355ac73-28bd-4870-f8ae-08dce1ee8f4f
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 07:56:30.3797
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z9EM0Cw+cVPENea+HkZOXBWdMB48CloEUdUPK4VoVUp17giFd6ZL+WMh8x+fyHgMVPVaCfhV2naJDxf77R+e2aNin9a5vCVKJcu0dJlgQvU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8695
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tdx, memory hotplug: Check whole hot-adding memory range
+ for TDX
+To: Dan Williams <dan.j.williams@intel.com>, Huang Ying
+ <ying.huang@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: x86@kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, linux-coco@lists.linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Kai Huang <kai.huang@intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>
+References: <20240930055112.344206-1-ying.huang@intel.com>
+ <cf4a3ae4-deae-4224-88e3-308a55492085@redhat.com>
+ <66fb9a89dd814_964fe294ed@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <66fb9a89dd814_964fe294ed@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Huang, Kai wrote:
+On 01.10.24 08:45, Dan Williams wrote:
+> David Hildenbrand wrote:
+>> On 30.09.24 07:51, Huang Ying wrote:
+>>> On systems with TDX (Trust Domain eXtensions) enabled, memory ranges
+>>> hot-added must be checked for compatibility by TDX.  This is currently
+>>> implemented through memory hotplug notifiers for each memory_block.
+>>> If a memory range which isn't TDX compatible is hot-added, for
+>>> example, some CXL memory, the command line as follows,
+>>>
+>>>     $ echo 1 > /sys/devices/system/node/nodeX/memoryY/online
+>>>
+>>> will report something like,
+>>>
+>>>     bash: echo: write error: Operation not permitted
+>>>
+>>> If pr_debug() is enabled, the error message like below will be shown
+>>> in the kernel log,
+>>>
+>>>     online_pages [mem 0xXXXXXXXXXX-0xXXXXXXXXXX] failed
+>>>
+>>> Both are too general to root cause the problem.  This will confuse
+>>> users.  One solution is to print some error messages in the TDX memory
+>>> hotplug notifier.  However, memory hotplug notifiers are called for
+>>> each memory block, so this may lead to a large volume of messages in
+>>> the kernel log if a large number of memory blocks are onlined with a
+>>> script or automatically.  For example, the typical size of memory
+>>> block is 128MB on x86_64, when online 64GB CXL memory, 512 messages
+>>> will be logged.
+>>
+>> ratelimiting would likely help here a lot, but I agree that it is
+>> suboptimal.
+>>
+>>>
+>>> Therefore, in this patch, the whole hot-adding memory range is checked
+>>> for TDX compatibility through a newly added architecture specific
+>>> function (arch_check_hotplug_memory_range()).  If rejected, the memory
+>>> hot-adding will be aborted with a proper kernel log message.  Which
+>>> looks like something as below,
+>>>
+>>>     virt/tdx: Reject hot-adding memory range: 0xXXXXXXXX-0xXXXXXXXX for TDX compatibility.
+>>   > > The target use case is to support CXL memory on TDX enabled systems.
+>>> If the CXL memory isn't compatible with TDX, the whole CXL memory
+>>> range hot-adding will be rejected.  While the CXL memory can still be
+>>> used via devdax interface.
+>>
+>> I'm curious, why can that memory be used through devdax but not through
+>> the buddy? I'm probably missing something important :)
 > 
+> TDX requires memory that supports integrity and encryption. Until
+> platforms and expanders with a technology called CXL TSP arrives, CXL
+> memory is not able to join the TCB.
 > 
-> On 27/09/2024 10:26 am, Hansen, Dave wrote:
-> > On 9/26/24 15:22, Huang, Kai wrote:
-> >> But Dan commented using typeless 'void *' and 'size' is kinda a step
-> >> backwards and we should do something similar to build_mmio_read():
-> > 
-> > Well, void* is typeless, but at least it knows the size in this case.
-> > It's not completely aimless.  I was thinking of how things like
-> > get_user() work.
-> 
-> get_user(x,ptr) only works with simple types:
-> 
->   * @ptr must have pointer-to-simple-variable type, and the result of
->   * dereferencing @ptr must be assignable to @x without a cast.
-> 
-> The compiler knows the type of both @x and @(*ptr), so it knows 
-> type-safety and size to copy.
-> 
-> I think we can eliminate the __read_sys_metadata_field() by implementing 
-> it as a macro directly and get rid of 'void *' and 'size':
-> 
-> static int tdh_sys_rd(u64 field_id, u64 *val) {}
-> 
-> /* @_valptr must be pointer to u8/u16/u32/u64 */
-> #define read_sys_metadata_field(_field_id, _valptr)	\
-> ({							\
-> 	u64 ___tmp;					\
-> 	int ___ret;					\
-> 							\
-> 	BUILD_BUG_ON(MD_FIELD_ELE_SIZE(_field_id) !=	\
-> 		sizeof(*_valptr));			\
-> 							\
-> 	___ret = tdh_sys_rd(_field_id, &___tmp);	\
-> 							\
-> 	*_valptr = ___tmp;				\
-> 	___ret;
-> })
-> 
-> It sets *_valptr unconditionally but we can also only do it when ___ret 
-> is 0.
-> 
-> The caller will need to do:
-> 
-> static int get_tdx_metadata_X_which_is_32bit(...)
-> {
-> 	u32 metadata_X;
-> 	int ret;
-> 
-> 	ret = read_sys_metadata_field(MD_FIELD_ID_X, &metadata_X);
-> 
-> 	return ret;
-> }
-> 
-> I haven't compiled and tested but it seems feasible.
-> 
-> Any comments?
+> The TDX code for simplicity assumes that only memory present at boot
+> might be capable of TDX and that everything else is not.
 
-If it works this approach addresses all the concerns I had with getting
-the compiler to validate field sizes.
+So is there ever a chance where add_memory() would actually work now 
+with TDX? Or can we just simplify and unconditionally reject 
+add_memory() if TDX is enabled?
 
-Should be straightforward to put this in a shared location so that it
-can optionally use tdg_sys_rd internally.
+> 
+> Confidential VMs use guest_mem_fd to allocate memory, and that only
+> pulls from the page allocator as a backend.
+> 
+> This ability to use devdax in an offline mode is a hack to not
+
+Thanks, I was missing the "hack" of it, and somehow (once again) assumed 
+that we would be hotplugging memory into confidential VMs.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
