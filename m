@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-346847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9C398C9A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:54:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94EB98C9A7
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DFEF1C2260E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 481421F21FB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54511E0093;
-	Tue,  1 Oct 2024 23:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333881E1327;
+	Tue,  1 Oct 2024 23:53:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="dtOOPy3a"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="t+8yrxtO"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E80A1E0098
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077D61E00A2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727826827; cv=none; b=CnFdadaHTFLXvUE/lP67fdriLtsRZvduIBpVGp0iANJ9royCgjS27EPoM1Ui4fA/pVkXLTKGvBoBd7reG0k7B1awZKPTBeiK+ngLblUy2UNrSirEpvvkIcOMnTxGPFGamP0MHhKCY00Z2RgO/sli+CWaJvdmd8SssuyCNl3gIMM=
+	t=1727826833; cv=none; b=fJSXwlIH/xyd/XHjy5W4/hnZZggflsk2RuNT3llaUmxxkSHH+Q+5Bk0vf6YzwsiOfQLa1sItNkZrwLpHWqtCjDRfdlsMhl7zKxEANZu8cZt8qCen2wbOIsb4yGbITisC7lbvkPSHmGpYxoA0zxjvhS2v25LXhxP5nxj4HoOvOIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727826827; c=relaxed/simple;
-	bh=QaU3GRuNJYHoKKjvrelHYx5nDgWJ2NGSPgRMJp/+Dww=;
+	s=arc-20240116; t=1727826833; c=relaxed/simple;
+	bh=A4ctw+2b8yq0sCbFcjdY3SVzbWEsxT2TUGSyUg6wK0s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pfnF8ikdztY8eRYQV0pEC1hYmKcOqBayqiiRJ2rkujSy43IU8REnDLXfFo/0fuKqfZcOjIsRTG9LUvy8xG6X6L2DFvLVPpZNnNdHBzwXEJkFeh16sZtg9i5dw9g2QKd5XG+iyq+C6I35ghpnZtnrN/UUVXOa689U1igIvgVBkEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=dtOOPy3a; arc=none smtp.client-ip=209.85.215.182
+	 MIME-Version; b=RNEy+WG6VM9i1wb8YihS8jbLZgkIQTpLx8GqMzJsf6n8846ROb48an8IchxoFQsY6gHcGuegKgjP8BR8xDharCERze5zGBEiIFgldvpDWuEQVmcov5VTL4YmdBmS0aYI6EMt0bGLGd53J3CCTM1e9KnNE6xVXpQOIhhtObRQyl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=t+8yrxtO; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so221708a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:53:46 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso4607265a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:53:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727826826; x=1728431626; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1727826830; x=1728431630; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8jeH1LephSM3GFjcVzcycSI9hrM1DyHIRSwagoq7Cvo=;
-        b=dtOOPy3a5lzDSM3+S12qUgKyEVsNTvNWX4WReuz/JGy+8zcNycbnYvCzlax4/L5IAl
-         pIzM8xJsknx9bM94QpPzMWS6yRM0GQezr/v0lk1ZZhFIt+jhQRELeC3ACJRRG8DTAWbQ
-         9mCw2nCTK0x4mv9hupbLNjy9DUq4z8qWjBFMM=
+        bh=KQII9ub/bVtxy0ntEn1HGx1uSFXeUqoutb/T7bvVeMk=;
+        b=t+8yrxtO5Y8sW0RctPlO9mtJZCzMt8sLCn93CwLonDirnK/LcLh0yewHcD32G4/20s
+         UHIc1iOguDL8aU7jso/NpAc7q7JRoF5gySmeAX+zZrICQA03tySjU4xNWdTZuevRceF3
+         VVFrLuP7rexiDWxJFJyFFPI6ybijM2u/uWxiM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727826826; x=1728431626;
+        d=1e100.net; s=20230601; t=1727826830; x=1728431630;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8jeH1LephSM3GFjcVzcycSI9hrM1DyHIRSwagoq7Cvo=;
-        b=fRGPJRGSSiq3i6Z/0ayjoo9I9vC8z1XaynTDsJ0o/3nUCp/Hjl3fsmre6JlN4ajdVD
-         mtNhA1vnOKy0jsb7ipYeE01a02fG5rmGxh8XzCh01cxrjTL7DMYw7qzWA1t9624yL5lb
-         crJLandAYNM6PBoYtxUHNOI7uLUP64CkLteLksFu98F8WQYyfIGTvEopeV4X3W4Eg//q
-         tNu6URbOfC/RfpM0KlDyoVcR6j+z6IYOpa134MKjoz0tH7/AzbVf23GtHUu+w/vDsbem
-         WfRkSoEfglm+Uvz8tbfCqlap2wqS7GF6RUWtsjNTHrHuld+WEDry2JSdn1j6EaVCEx0s
-         04DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWG+agJFCZgHnOA1pFLzwKeI5ZRJD6RTbS5kMX2DCnUihNSMwCHJ1FkqQu01GNtgD0yC18HzPxN3vPJeoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQRNdIyRbUIi2URz0l5Ah29xMdUAWZAxdk6ZwpAG2W7WZzh9X8
-	93Hw/r/1G/r77679Whp8YCjPVfWZe1cV1ypyPVC59abFy171IykGl8svu6OXAfI=
-X-Google-Smtp-Source: AGHT+IHnD47ZafzdaY5Hlr1/2gXXQgmcG0+t+WA3Vp+OIdQfqS4Lc5McbW2j0MHbRJNSn6aoWeQjew==
-X-Received: by 2002:a17:90a:f484:b0:2da:8b9f:5b74 with SMTP id 98e67ed59e1d1-2e1853e76femr1920261a91.13.1727826825726;
-        Tue, 01 Oct 2024 16:53:45 -0700 (PDT)
+        bh=KQII9ub/bVtxy0ntEn1HGx1uSFXeUqoutb/T7bvVeMk=;
+        b=RGJ+si9xdLOpHVfUqAUq4SUEFZVt1ifXZVCKuju+H+cdOA2j9PAicG3VUHvj3bVqpL
+         /8i1qPHS+jnbBUPFphaIu2i19Ak1CE24sVuJLn6FT5tDU6qQJwUCiy7zka+zYNbVx5KY
+         nRQyz85kKfNaRGnun18gDRbWSjLnWHNYwIwbrv/GR9EwOWEAiLEeeMO69XXfNpxOkHhh
+         xGP6QOdu1+bu1Koz9lXcbY0oaCmqJJ4nzF6QbvIeA52FsP/4zTc2idltjTXJAKNE/Jj/
+         TnoumgTBZ2ya89a3iey0kQh4BVy3PMQvU3moOzk4hsd+LSwEP/raLo+XtUoMMGbAXviZ
+         YBqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUALbIrVCotx/N8Uv2A3b1xu5+/9u6fGrdLLCIZOwxvctW1VrVVSg9P0v2fDzVf31K9STVoW1W6eXQGoSI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6o+K0UFMywQuJEdCJF6IXyFm2Gm8P/0FmmF+tZvMXgRXo1BjW
+	O3K4BQRGsfbon4UFKVKsMoMYANZZ3aLeWtnJrcfXHBMzDi3SHNgZy3dBrgNdsDI=
+X-Google-Smtp-Source: AGHT+IH6y8TLEoNcS3CIY1eRqDcl6J9ZIkBmPCtlp4ki4860wF8VxL5+YVU+aQ3guijKYC2ciYrGKQ==
+X-Received: by 2002:a17:90a:f192:b0:2e0:59af:b998 with SMTP id 98e67ed59e1d1-2e184943fdfmr1601328a91.39.1727826830385;
+        Tue, 01 Oct 2024 16:53:50 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f89e973sm213130a91.29.2024.10.01.16.53.43
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f89e973sm213130a91.29.2024.10.01.16.53.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 16:53:45 -0700 (PDT)
+        Tue, 01 Oct 2024 16:53:50 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: mkarsten@uwaterloo.ca,
@@ -73,27 +73,19 @@ Cc: mkarsten@uwaterloo.ca,
 	sridhar.samudrala@intel.com,
 	willemdebruijn.kernel@gmail.com,
 	Joe Damato <jdamato@fastly.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
-	linux-kernel@vger.kernel.org (open list),
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS)
-Subject: [RFC net-next v4 3/9] net: napi: Make gro_flush_timeout per-NAPI
-Date: Tue,  1 Oct 2024 23:52:34 +0000
-Message-Id: <20241001235302.57609-4-jdamato@fastly.com>
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC net-next v4 4/9] netdev-genl: Dump gro_flush_timeout
+Date: Tue,  1 Oct 2024 23:52:35 +0000
+Message-Id: <20241001235302.57609-5-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241001235302.57609-1-jdamato@fastly.com>
 References: <20241001235302.57609-1-jdamato@fastly.com>
@@ -105,217 +97,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow per-NAPI gro_flush_timeout setting.
-
-The existing sysfs parameter is respected; writes to sysfs will write to
-all NAPI structs for the device and the net_device gro_flush_timeout
-field. Reads from sysfs will read from the net_device field.
-
-The ability to set gro_flush_timeout on specific NAPI instances will be
-added in a later commit, via netdev-genl.
-
-Note that idpf has embedded napi_struct in its internals and has
-established some series of asserts that involve the size of napi
-structure. Since this change increases the napi_struct size from 400 to
-416 (according to pahole on my system), I've increased the assertion in
-idpf by 16 bytes. No attention whatsoever was paid to the cacheline
-placement of idpf internals as a result of this change.
+Support dumping gro_flush_timeout for a NAPI ID.
 
 Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- .../networking/net_cachelines/net_device.rst  |  2 +-
- drivers/net/ethernet/intel/idpf/idpf_txrx.h   |  2 +-
- include/linux/netdevice.h                     |  3 +-
- net/core/dev.c                                | 12 +++---
- net/core/dev.h                                | 40 +++++++++++++++++++
- net/core/net-sysfs.c                          |  2 +-
- 6 files changed, 51 insertions(+), 10 deletions(-)
+ Documentation/netlink/specs/netdev.yaml | 6 ++++++
+ include/uapi/linux/netdev.h             | 1 +
+ net/core/netdev-genl.c                  | 6 ++++++
+ tools/include/uapi/linux/netdev.h       | 1 +
+ 4 files changed, 14 insertions(+)
 
-diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
-index eeeb7c925ec5..3d02ae79c850 100644
---- a/Documentation/networking/net_cachelines/net_device.rst
-+++ b/Documentation/networking/net_cachelines/net_device.rst
-@@ -98,7 +98,6 @@ struct_netdev_queue*                _rx                     read_mostly
- unsigned_int                        num_rx_queues                                                   
- unsigned_int                        real_num_rx_queues      -                   read_mostly         get_rps_cpu
- struct_bpf_prog*                    xdp_prog                -                   read_mostly         netif_elide_gro()
--unsigned_long                       gro_flush_timeout       -                   read_mostly         napi_complete_done
- unsigned_int                        gro_max_size            -                   read_mostly         skb_gro_receive
- unsigned_int                        gro_ipv4_max_size       -                   read_mostly         skb_gro_receive
- rx_handler_func_t*                  rx_handler              read_mostly         -                   __netif_receive_skb_core
-@@ -182,4 +181,5 @@ struct_devlink_port*                devlink_port
- struct_dpll_pin*                    dpll_pin                                                        
- struct hlist_head                   page_pools
- struct dim_irq_moder*               irq_moder
-+unsigned_long                       gro_flush_timeout
- u32                                 napi_defer_hard_irqs
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.h b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-index f0537826f840..fcdf73486d46 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-+++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.h
-@@ -438,7 +438,7 @@ struct idpf_q_vector {
- 	__cacheline_group_end_aligned(cold);
- };
- libeth_cacheline_set_assert(struct idpf_q_vector, 112,
--			    424 + 2 * sizeof(struct dim),
-+			    440 + 2 * sizeof(struct dim),
- 			    8 + sizeof(cpumask_var_t));
+diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
+index 585e87ec3c16..bf13613eaa0d 100644
+--- a/Documentation/netlink/specs/netdev.yaml
++++ b/Documentation/netlink/specs/netdev.yaml
+@@ -255,6 +255,11 @@ attribute-sets:
+         type: u32
+         checks:
+           max: s32-max
++      -
++        name: gro-flush-timeout
++        doc: The timeout, in nanoseconds, of when to trigger the NAPI
++             watchdog timer and schedule NAPI processing.
++        type: uint
+   -
+     name: queue
+     attributes:
+@@ -644,6 +649,7 @@ operations:
+             - irq
+             - pid
+             - defer-hard-irqs
++            - gro-flush-timeout
+       dump:
+         request:
+           attributes:
+diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+index 13dc0b027e86..cacd33359c76 100644
+--- a/include/uapi/linux/netdev.h
++++ b/include/uapi/linux/netdev.h
+@@ -123,6 +123,7 @@ enum {
+ 	NETDEV_A_NAPI_IRQ,
+ 	NETDEV_A_NAPI_PID,
+ 	NETDEV_A_NAPI_DEFER_HARD_IRQS,
++	NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT,
  
- struct idpf_rx_queue_stats {
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 55764efc5c93..33897edd16c8 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -377,6 +377,7 @@ struct napi_struct {
- 	struct list_head	dev_list;
- 	struct hlist_node	napi_hash_node;
- 	int			irq;
-+	unsigned long		gro_flush_timeout;
- 	u32			defer_hard_irqs;
- };
- 
-@@ -2075,7 +2076,6 @@ struct net_device {
- 	int			ifindex;
- 	unsigned int		real_num_rx_queues;
- 	struct netdev_rx_queue	*_rx;
--	unsigned long		gro_flush_timeout;
- 	unsigned int		gro_max_size;
- 	unsigned int		gro_ipv4_max_size;
- 	rx_handler_func_t __rcu	*rx_handler;
-@@ -2398,6 +2398,7 @@ struct net_device {
- 
- 	/** @irq_moder: dim parameters used if IS_ENABLED(CONFIG_DIMLIB). */
- 	struct dim_irq_moder	*irq_moder;
-+	unsigned long		gro_flush_timeout;
- 	u32			napi_defer_hard_irqs;
- 
- 	u8			priv[] ____cacheline_aligned
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 748739958d2a..056ed44f766f 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -6226,12 +6226,12 @@ bool napi_complete_done(struct napi_struct *n, int work_done)
- 
- 	if (work_done) {
- 		if (n->gro_bitmask)
--			timeout = READ_ONCE(n->dev->gro_flush_timeout);
-+			timeout = napi_get_gro_flush_timeout(n);
- 		n->defer_hard_irqs_count = napi_get_defer_hard_irqs(n);
- 	}
- 	if (n->defer_hard_irqs_count > 0) {
- 		n->defer_hard_irqs_count--;
--		timeout = READ_ONCE(n->dev->gro_flush_timeout);
-+		timeout = napi_get_gro_flush_timeout(n);
- 		if (timeout)
- 			ret = false;
- 	}
-@@ -6366,7 +6366,7 @@ static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
- 
- 	if (flags & NAPI_F_PREFER_BUSY_POLL) {
- 		napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
--		timeout = READ_ONCE(napi->dev->gro_flush_timeout);
-+		timeout = napi_get_gro_flush_timeout(napi);
- 		if (napi->defer_hard_irqs_count && timeout) {
- 			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
- 			skip_schedule = true;
-@@ -6648,6 +6648,7 @@ void netif_napi_add_weight(struct net_device *dev, struct napi_struct *napi,
- 	hrtimer_init(&napi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
- 	napi->timer.function = napi_watchdog;
- 	napi_set_defer_hard_irqs(napi, READ_ONCE(dev->napi_defer_hard_irqs));
-+	napi_set_gro_flush_timeout(napi, READ_ONCE(dev->gro_flush_timeout));
- 	init_gro_hash(napi);
- 	napi->skb = NULL;
- 	INIT_LIST_HEAD(&napi->rx_list);
-@@ -11053,7 +11054,7 @@ void netdev_sw_irq_coalesce_default_on(struct net_device *dev)
- 	WARN_ON(dev->reg_state == NETREG_REGISTERED);
- 
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
--		dev->gro_flush_timeout = 20000;
-+		netdev_set_gro_flush_timeout(dev, 20000);
- 		netdev_set_defer_hard_irqs(dev, 1);
- 	}
- }
-@@ -11991,7 +11992,6 @@ static void __init net_dev_struct_check(void)
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, ifindex);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, real_num_rx_queues);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, _rx);
--	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_flush_timeout);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_ipv4_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, rx_handler);
-@@ -12003,7 +12003,7 @@ static void __init net_dev_struct_check(void)
- #ifdef CONFIG_NET_XGRESS
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, tcx_ingress);
- #endif
--	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 100);
-+	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 92);
- }
- 
- /*
-diff --git a/net/core/dev.h b/net/core/dev.h
-index b3792219879b..26e598aa56c3 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -174,6 +174,46 @@ static inline void netdev_set_defer_hard_irqs(struct net_device *netdev,
- 		napi_set_defer_hard_irqs(napi, defer);
- }
- 
-+/**
-+ * napi_get_gro_flush_timeout - get the gro_flush_timeout
-+ * @n: napi struct to get the gro_flush_timeout from
-+ *
-+ * Return: the per-NAPI value of the gro_flush_timeout field.
-+ */
-+static inline unsigned long
-+napi_get_gro_flush_timeout(const struct napi_struct *n)
-+{
-+	return READ_ONCE(n->gro_flush_timeout);
-+}
-+
-+/**
-+ * napi_set_gro_flush_timeout - set the gro_flush_timeout for a napi
-+ * @n: napi struct to set the gro_flush_timeout
-+ * @timeout: timeout value to set
-+ *
-+ * napi_set_gro_flush_timeout sets the per-NAPI gro_flush_timeout
-+ */
-+static inline void napi_set_gro_flush_timeout(struct napi_struct *n,
-+					      unsigned long timeout)
-+{
-+	WRITE_ONCE(n->gro_flush_timeout, timeout);
-+}
-+
-+/**
-+ * netdev_set_gro_flush_timeout - set gro_flush_timeout of a netdev's NAPIs
-+ * @netdev: the net_device for which all NAPIs will have gro_flush_timeout set
-+ * @timeout: the timeout value to set
-+ */
-+static inline void netdev_set_gro_flush_timeout(struct net_device *netdev,
-+						unsigned long timeout)
-+{
-+	struct napi_struct *napi;
-+
-+	WRITE_ONCE(netdev->gro_flush_timeout, timeout);
-+	list_for_each_entry(napi, &netdev->napi_list, dev_list)
-+		napi_set_gro_flush_timeout(napi, timeout);
-+}
-+
- int rps_cpumask_housekeeping(struct cpumask *mask);
- 
- #if defined(CONFIG_DEBUG_NET) && defined(CONFIG_BPF_SYSCALL)
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 25125f356a15..2d9afc6e2161 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -409,7 +409,7 @@ NETDEVICE_SHOW_RW(tx_queue_len, fmt_dec);
- 
- static int change_gro_flush_timeout(struct net_device *dev, unsigned long val)
+ 	__NETDEV_A_NAPI_MAX,
+ 	NETDEV_A_NAPI_MAX = (__NETDEV_A_NAPI_MAX - 1)
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index de9bd76f43f8..64e5e4cee60d 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -161,6 +161,7 @@ static int
+ netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+ 			const struct genl_info *info)
  {
--	WRITE_ONCE(dev->gro_flush_timeout, val);
-+	netdev_set_gro_flush_timeout(dev, val);
- 	return 0;
- }
++	unsigned long gro_flush_timeout;
+ 	u32 napi_defer_hard_irqs;
+ 	void *hdr;
+ 	pid_t pid;
+@@ -195,6 +196,11 @@ netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+ 			napi_defer_hard_irqs))
+ 		goto nla_put_failure;
  
++	gro_flush_timeout = napi_get_gro_flush_timeout(napi);
++	if (nla_put_uint(rsp, NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT,
++			 gro_flush_timeout))
++		goto nla_put_failure;
++
+ 	genlmsg_end(rsp, hdr);
+ 
+ 	return 0;
+diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
+index 13dc0b027e86..cacd33359c76 100644
+--- a/tools/include/uapi/linux/netdev.h
++++ b/tools/include/uapi/linux/netdev.h
+@@ -123,6 +123,7 @@ enum {
+ 	NETDEV_A_NAPI_IRQ,
+ 	NETDEV_A_NAPI_PID,
+ 	NETDEV_A_NAPI_DEFER_HARD_IRQS,
++	NETDEV_A_NAPI_GRO_FLUSH_TIMEOUT,
+ 
+ 	__NETDEV_A_NAPI_MAX,
+ 	NETDEV_A_NAPI_MAX = (__NETDEV_A_NAPI_MAX - 1)
 -- 
 2.25.1
 
