@@ -1,267 +1,182 @@
-Return-Path: <linux-kernel+bounces-346570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B46F98C604
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EB598C60B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548212840E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:28:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D1E51C23E12
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688621CCEF8;
-	Tue,  1 Oct 2024 19:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7585E1CCB3F;
+	Tue,  1 Oct 2024 19:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2CVzeZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ew1EKz2w"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2048.outbound.protection.outlook.com [40.107.94.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC481B5820;
-	Tue,  1 Oct 2024 19:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727810889; cv=none; b=RKpAjq6Gq3jA0PmuzN+rC004IRCfSlWQbR0nFGreFC5lKNZJ/awPYrRyD8QUhlL9V0Zkpiow0HgdiYscV1/7u1HPL+uDzaQTCg0UvqTJaEqKDX66xClFrIiwkceQmBCUrqHsGpi0Lnvrw9YQhg3gq1ZQX+EAn2y2+vdO59jNDT8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727810889; c=relaxed/simple;
-	bh=o/HXJS2ilbTcUF8Q0y1amV1xf+TNoQP5GmSuaGnEVy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lPD7VGkKDT2Ytg3Wtmy3ThdmG00IquGf5SgYZu1bBXy7IYNZ/KcGiY5wv9qBKOtvznZEMNT/iQ3DK+jUXt0G8izddd/1cmr3W+D3blQ9ocFPkS/yftrOFQVqtSwG3sJ4/kadHg6Wzzhs039+S+MgyP1sqomekE7OkKTOq55N+bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2CVzeZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A698C4CEC6;
-	Tue,  1 Oct 2024 19:28:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727810889;
-	bh=o/HXJS2ilbTcUF8Q0y1amV1xf+TNoQP5GmSuaGnEVy0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f2CVzeZQ9mGMwPxu7w2Zh8Z7UIyOyrjb4pxRGdTfvI96l0i2CksdzfWyY/eDmjTOJ
-	 6z2aUe6Hus1tadSF6nWMx+bByJN7sRiBwppZu9n1p8KnIE8EpfVUJI37QyO1BjUus2
-	 gz1gIc2faoUjM5JwZWHJ/CQfUG8H1QH2WkieneKG1mLQhSOb3GbYR+hQVYzfUyU1lq
-	 HjS9g01150CzE+LVpq0fpigdYrsGTNNL3X2JV3C5yjiOBtX4vRgs/SxSmFDfRzG/KH
-	 w1vpch4/3ZoM/s3yBcRtYd4IzgYkE4VFdUMSaNKhnegdN7e2ejfxq3XhAmAdt54f6R
-	 5A3A4xaDewuqg==
-Date: Tue, 1 Oct 2024 20:28:02 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: pac1921: remove unnecessary explicit casts
-Message-ID: <20241001202802.65cf41eb@jic23-huawei>
-In-Reply-To: <20240930-iio-pac1921-nocast-v2-1-cc349e137f75@gmail.com>
-References: <20240930-iio-pac1921-nocast-v2-1-cc349e137f75@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D421CDA11
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727811007; cv=fail; b=VYz/LpOEcFR4bIvPLaNox1d1xcHJ3FeZzX4VDVTUCP8/DTYtHBmXdVDkOl1cSaUfKrBi9VStj4fNNsf6YtZQp8gl92Bxp9bIgly005CB5UFVaMTcslzt8Qv3GL3FOE3w3/aOcwagYnVuE53nSOALaoNOW7Ke9vSDULmS1j5fe14=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727811007; c=relaxed/simple;
+	bh=y8PiW//6IbjFbRHtQad0+nmE95N/zh7ihL7x9/ru8z8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GojmCjnbwz8N5lHEPLTFF3pTWq3g5P9PYIVoLRn2rt6fzEBxrpDfDA/t/PTCwMeYsWorz96PkGaDofP/1/Vmhqz8pw37T39VK9WtHolEgXiy9/ajQgxlc4gNXfZ65/0ExemZxuIPlelC4vO6PVXmaaH5k1N84nIOGVrGvBy5Zxo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ew1EKz2w; arc=fail smtp.client-ip=40.107.94.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NUVf/Fj8UQBElBY1KtBXK8isI7gcicYE4hIGMsk3MSICJQfaYBDfsHpjUZrSKbBx9KrEZa375kqee87QmrgXkDOgStxFt/UpLtDBA96lKVcATRHlI8MO5PB20kOMQgfvGvpZKDdtotakLEnFnj/7tsC0EThHhadhIjpw77EgzjGiAHl5YJOPCkBDz75k9lTWTts2BsK3Ewb/4BIEv+YHwzQDdJqKZ5hy6sHygNof0IWchn0S2Rj+BO3rrZSkawHe2xIUESZsk5Z1/LAePmdvhTkGgxWfsA2QwjWtXetqelNlIuXIkQD3zOmqSAIa7G2fhI3SQJ3vs3akU7mWEt9bbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+rnDQjSRjsjVBwmxoz/Qa0PWFc84V4qisyEse57pM2s=;
+ b=waH5Rluf/KUqqjS2xPRk7g7VFOceypGAYgZBgBcJVZ9Z4pcnv/zN9ABBpYh0F3csezNuXva5BwR1AqPBoWaKWmQIDQ7Pgz5jjo8PUtmwKOfgU3tzNGDmLXO+lJgoHLKujG1qu8Llll9sWMkN2EQH4feuFiclbzBRqoWRuNbvYdCLOIlEgI5M7bLpvwr/Ez390QUNGa5hTo7qy2GcQRpkTj/WNW/HFSSQqZlcvVXYLumeCOwhivdxhfcvJz+QBPl0lbYJlTmHqInX6XHIwYiNKrKYa4Pa5lQ+p8rR5t3f8k1kYxy5lNDTxzY9znW7KmZ1xAVBwNO9vshAGl2GGWz/aA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=os.amperecomputing.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+rnDQjSRjsjVBwmxoz/Qa0PWFc84V4qisyEse57pM2s=;
+ b=ew1EKz2wU/xzHIVHHiZxUSSQMNxco0SlVk3AzmPgXrtBp5hXp65j5WKlFW6gKYL8iYEjSNFIfWm5yJqYkJp2z0WQAd6Z/zwbnp/BQI3Lwm0PqDotVVT9rOH6tvC5r4ciFGhN7fgnt7PyoVUJCvCZiUovRojlHH8Abbj8XKgGGSBEka1PtZgksAY7zcXxrO7DV3bu6uMB1/xkl35LO5ShnNJcfM87776zdwEzhUaQYgU4BDJ61b7r7a53U6pT8ybVCuC8O3HY91V1kHAMapvqqqnLtLOb24hK13/ApZycaQniQlCzr42nLPR8Kz27S5cP6PZ+S2hujv/C+WNmkivUQw==
+Received: from SJ0PR13CA0177.namprd13.prod.outlook.com (2603:10b6:a03:2c7::32)
+ by CH3PR12MB9429.namprd12.prod.outlook.com (2603:10b6:610:1c9::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
+ 2024 19:29:59 +0000
+Received: from BN2PEPF000055E0.namprd21.prod.outlook.com
+ (2603:10b6:a03:2c7:cafe::d0) by SJ0PR13CA0177.outlook.office365.com
+ (2603:10b6:a03:2c7::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15 via Frontend
+ Transport; Tue, 1 Oct 2024 19:29:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ BN2PEPF000055E0.mail.protection.outlook.com (10.167.245.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.1 via Frontend Transport; Tue, 1 Oct 2024 19:29:58 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 1 Oct 2024
+ 12:29:42 -0700
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 1 Oct 2024 12:29:41 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Tue, 1 Oct 2024 12:29:41 -0700
+Date: Tue, 1 Oct 2024 12:29:39 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+CC: <jgg@ziepe.ca>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
+ for AmpereOne
+Message-ID: <ZvxNo8ZWeyBOBU8b@Asurada-Nvidia>
+References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
+ <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
+ <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000055E0:EE_|CH3PR12MB9429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58975810-edf9-46ae-0898-08dce24f6fee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ZwkorAwDy1zF+hj3UnM8zlcpk9w82FOCzNWpGETR29vzqmLLpiadqCAWzEcJ?=
+ =?us-ascii?Q?Sv3G6EZWzOSxE5hD7o/RedLnTKCbb+3/8EL7i3/cvVa8ORIcyPvq+jfj33gv?=
+ =?us-ascii?Q?XZZNgLWEXaREV5TTVN1i/e8tIVhWq1X6qFWNC4Pa133DQHlu4sWP7hQbFr4l?=
+ =?us-ascii?Q?S66QLmLLSPXreV1FgVE2l7HYZFRKzdf2HH5WSwJGO64mYdoVSj1Nmw1FKp40?=
+ =?us-ascii?Q?96vZheS1/11wGlsB9AgW1I73fM7QfbncxaJ2tNEWo88mF/9eFsNE4gBhhtKX?=
+ =?us-ascii?Q?sr+Z0lqU3ao/i3G602ydwyA7FGkJogfU4vjE7G3EiR1khXnBsMGqikGinXRW?=
+ =?us-ascii?Q?8oH1RUepN9YnAJhKbwKNbY54y5RBuDBfi/5WgBNzrIr5gOtLD9EmcYv/UI6u?=
+ =?us-ascii?Q?rikqTJjZjj/bY2xFi5zz3v0ZIGzuvOWc/RDKUeY5csTi2XIiya9sC7eaGXDX?=
+ =?us-ascii?Q?Aapdek/vqf98CFY5ZgQ2WLkLaI0XFaYa48LjuV46fn8OBX77UhatvE64YbsF?=
+ =?us-ascii?Q?IoYVktnuuUnhfMtRfz6WeXaGlXYZZxxmcaXI6dHXJKtAms15Ydw2qtRVDxIL?=
+ =?us-ascii?Q?OMPqK3vssiw2wSvZMiLeFVoL8eI+I7LfKcgTjXBtophIM7zTTQidLnCbV90H?=
+ =?us-ascii?Q?caoZf8zx5jnPeFlZx6Ja2ECV4Tp/n4b/rsLNmjo1ULqnnwziTtHovFjKDxYz?=
+ =?us-ascii?Q?uYhBgmQqvGSH6R5AmaaiwNXEudUgdX0B8yqCcKcHftr5QZXnYJPlDSypct8m?=
+ =?us-ascii?Q?RW0MRmev59W4dV7xcV7abvsa3EVBM7HpjW8g3mSFOanDAcrGQPBhbCNXW8BH?=
+ =?us-ascii?Q?0ku0BBa7waiYCb7Z0ua+CDeSRkU98RiNf+83fKM9RAWrZwtDeGOlKZUExcgD?=
+ =?us-ascii?Q?FCRZZFCyTBxZU/UOk2xlsjePhJLFuhrQDdIjcO2pPi61LiwHuMiDBxKgSnqN?=
+ =?us-ascii?Q?ffYa8GAxltcKCvzb9zsh2OxSvQ431OXktjUqNEcXWIETIu/eQilZ0xOmCchp?=
+ =?us-ascii?Q?FRI4AuOgGiNg6DGpv1tr2y1CeWr86UtZLmyVmsotXj4UJ+FZqhX6prIsorGj?=
+ =?us-ascii?Q?qzjU5xoVyU9MsEwpAzmO6wccbKiGGOSnhpxuHbSZ2lxyMZrkZF0qAPvMqNvi?=
+ =?us-ascii?Q?E/+q5Q+pp8VuUMcsCa12m5Dm/tv/RzjDVw3pHG05OVrJwv5kGpeBGoyDRNT0?=
+ =?us-ascii?Q?wnXdCZe6tc8P62FtONHsNUhw7unFxlI9prKeFJuxqxhegsnRfU7E0IEeqIU8?=
+ =?us-ascii?Q?0rEqw3s6t+SgTy442M07DpB0U7i2NGSCenMpO+TU9bRS27+CxVp6Hh0uecPD?=
+ =?us-ascii?Q?KxqzDV+j0uUNc0Nygs1/VzQDGtLXza8IoRS8nzWtGDWa5Q4LCslYz84Sy4dv?=
+ =?us-ascii?Q?xjlkmkGwx8lvIHhD0kGmbsJh9ZSTF4hLZl+dhPKEGp6Kj0akRNHvQfzGY86o?=
+ =?us-ascii?Q?K2nVumSkQWV4jxlKeMFDKQYh0nsp5djR?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 19:29:58.6057
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58975810-edf9-46ae-0898-08dce24f6fee
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000055E0.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9429
 
-On Mon, 30 Sep 2024 11:49:01 +0200
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
-
-> Many explicit casts were introduced to address Wconversion and
-> Wsign-compare warnings. Remove them to improve readability.
+On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
+> On 10/1/24 11:27 AM, Nicolin Chen wrote:
+> > On Tue, Oct 01, 2024 at 11:03:46AM -0700, Yang Shi wrote:
+> > > Using 64 bit immediate when doing shift can solve the problem.  The
+> > > disssembly after the fix looks like:
+> > [...]
+> > 
+> > >          unsigned int last_sid_idx =
+> > > -               arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
+> > > +               arm_smmu_strtab_l1_idx((1UL << smmu->sid_bits) - 1);
+> > Could a 32-bit build be a corner case where UL is no longer a
+> > "64 bit" stated in the commit message?
 > 
-> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> ---
-> Link: https://lore.kernel.org/linux-iio/1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain/
-Looks good to me.
-I kept this link in the tags block as it's useful background on why
-this patch exists
-
-Applied to the togreg branch of iio.git and pushed out as testing
-for now.
-
-Thanks,
-
-Jonathan
-
-> ---
-> Changes in v2:
-> - Reintroduce two necessary explicit casts that avoid 32-bit int overflow.
-> - Link to v1: https://lore.kernel.org/r/20240916-iio-pac1921-nocast-v1-1-a0f96d321eee@gmail.com
-> ---
->  drivers/iio/adc/pac1921.c | 39 +++++++++++++++++++--------------------
->  1 file changed, 19 insertions(+), 20 deletions(-)
+> It shouldn't. Because smmu v3 depends on ARM64.
 > 
-> diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-> index 4c2a1c07bc399028f0334885fc9cd4552d5892b1..a10b87b409c0149c88d7a5ad6e98e7b273c59a1f 100644
-> --- a/drivers/iio/adc/pac1921.c
-> +++ b/drivers/iio/adc/pac1921.c
-> @@ -241,7 +241,7 @@ static inline void pac1921_calc_scale(int dividend, int divisor, int *val,
->  	s64 tmp;
->  
->  	tmp = div_s64(dividend * (s64)NANO, divisor);
-> -	*val = (int)div_s64_rem(tmp, NANO, val2);
-> +	*val = div_s64_rem(tmp, NANO, val2);
->  }
->  
->  /*
-> @@ -260,7 +260,7 @@ static void pac1921_calc_current_scales(struct pac1921_priv *priv)
->  		int max = (PAC1921_MAX_VSENSE_MV * MICRO) >> i;
->  		int vsense_lsb = DIV_ROUND_CLOSEST(max, PAC1921_RES_RESOLUTION);
->  
-> -		pac1921_calc_scale(vsense_lsb, (int)priv->rshunt_uohm,
-> +		pac1921_calc_scale(vsense_lsb, priv->rshunt_uohm,
->  				   &priv->current_scales[i][0],
->  				   &priv->current_scales[i][1]);
->  	}
-> @@ -314,7 +314,7 @@ static int pac1921_check_push_overflow(struct iio_dev *indio_dev, s64 timestamp)
->  			       timestamp);
->  	}
->  
-> -	priv->prev_ovf_flags = (u8)flags;
-> +	priv->prev_ovf_flags = flags;
->  
->  	return 0;
->  }
-> @@ -329,8 +329,7 @@ static int pac1921_check_push_overflow(struct iio_dev *indio_dev, s64 timestamp)
->  static int pac1921_read_res(struct pac1921_priv *priv, unsigned long reg,
->  			    u16 *val)
->  {
-> -	int ret = regmap_bulk_read(priv->regmap, (unsigned int)reg, val,
-> -				   sizeof(*val));
-> +	int ret = regmap_bulk_read(priv->regmap, reg, val, sizeof(*val));
->  	if (ret)
->  		return ret;
->  
-> @@ -366,7 +365,7 @@ static int pac1921_read_raw(struct iio_dev *indio_dev,
->  		if (ret)
->  			return ret;
->  
-> -		*val = (int)res_val;
-> +		*val = res_val;
->  
->  		return IIO_VAL_INT;
->  	}
-> @@ -400,10 +399,10 @@ static int pac1921_read_raw(struct iio_dev *indio_dev,
->  			s64 tmp = curr_scale[0] * (s64)NANO + curr_scale[1];
->  
->  			/* Multiply by max_vbus (V) / dv_gain */
-> -			tmp *= PAC1921_MAX_VBUS_V >> (int)priv->dv_gain;
-> +			tmp *= PAC1921_MAX_VBUS_V >> priv->dv_gain;
->  
->  			/* Convert back to INT_PLUS_NANO */
-> -			*val = (int)div_s64_rem(tmp, NANO, val2);
-> +			*val = div_s64_rem(tmp, NANO, val2);
->  
->  			return IIO_VAL_INT_PLUS_NANO;
->  		}
-> @@ -426,7 +425,7 @@ static int pac1921_read_raw(struct iio_dev *indio_dev,
->  		 * 1/(integr_period_usecs/MICRO) = MICRO/integr_period_usecs
->  		 */
->  		*val = MICRO;
-> -		*val2 = (int)priv->integr_period_usecs;
-> +		*val2 = priv->integr_period_usecs;
->  		return IIO_VAL_FRACTIONAL;
->  
->  	default:
-> @@ -503,7 +502,7 @@ static int pac1921_lookup_scale(const int (*const scales_tbl)[2], size_t size,
->  	for (unsigned int i = 0; i < size; i++)
->  		if (scales_tbl[i][0] == scale_val &&
->  		    scales_tbl[i][1] == scale_val2)
-> -			return (int)i;
-> +			return i;
->  
->  	return -EINVAL;
->  }
-> @@ -553,7 +552,7 @@ static int pac1921_update_gain_from_scale(struct pac1921_priv *priv,
->  		if (ret < 0)
->  			return ret;
->  
-> -		return pac1921_update_gain(priv, &priv->dv_gain, (u8)ret,
-> +		return pac1921_update_gain(priv, &priv->dv_gain, ret,
->  					   PAC1921_GAIN_DV_GAIN_MASK);
->  	case PAC1921_CHAN_VSENSE:
->  		ret = pac1921_lookup_scale(pac1921_vsense_scales,
-> @@ -562,7 +561,7 @@ static int pac1921_update_gain_from_scale(struct pac1921_priv *priv,
->  		if (ret < 0)
->  			return ret;
->  
-> -		return pac1921_update_gain(priv, &priv->di_gain, (u8)ret,
-> +		return pac1921_update_gain(priv, &priv->di_gain, ret,
->  					   PAC1921_GAIN_DI_GAIN_MASK);
->  	case PAC1921_CHAN_CURRENT:
->  		ret = pac1921_lookup_scale(priv->current_scales,
-> @@ -571,7 +570,7 @@ static int pac1921_update_gain_from_scale(struct pac1921_priv *priv,
->  		if (ret < 0)
->  			return ret;
->  
-> -		return pac1921_update_gain(priv, &priv->di_gain, (u8)ret,
-> +		return pac1921_update_gain(priv, &priv->di_gain, ret,
->  					   PAC1921_GAIN_DI_GAIN_MASK);
->  	default:
->  		return -EINVAL;
-> @@ -586,7 +585,7 @@ static int pac1921_lookup_int_num_samples(int num_samples)
->  {
->  	for (unsigned int i = 0; i < ARRAY_SIZE(pac1921_int_num_samples); i++)
->  		if (pac1921_int_num_samples[i] == num_samples)
-> -			return (int)i;
-> +			return i;
->  
->  	return -EINVAL;
->  }
-> @@ -607,7 +606,7 @@ static int pac1921_update_int_num_samples(struct pac1921_priv *priv,
->  	if (ret < 0)
->  		return ret;
->  
-> -	n_samples = (u8)ret;
-> +	n_samples = ret;
->  
->  	if (priv->n_samples == n_samples)
->  		return 0;
-> @@ -770,7 +769,7 @@ static ssize_t pac1921_read_shunt_resistor(struct iio_dev *indio_dev,
->  
->  	guard(mutex)(&priv->lock);
->  
-> -	vals[0] = (int)priv->rshunt_uohm;
-> +	vals[0] = priv->rshunt_uohm;
->  	vals[1] = MICRO;
->  
->  	return iio_format_value(buf, IIO_VAL_FRACTIONAL, 1, vals);
-> @@ -793,13 +792,13 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
->  	if (ret)
->  		return ret;
->  
-> -	rshunt_uohm = (u32)val * MICRO + (u32)val_fract;
-> +	rshunt_uohm = val * MICRO + val_fract;
->  	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
->  		return -EINVAL;
->  
->  	guard(mutex)(&priv->lock);
->  
-> -	priv->rshunt_uohm = (u32)rshunt_uohm;
-> +	priv->rshunt_uohm = rshunt_uohm;
->  
->  	pac1921_calc_current_scales(priv);
->  
-> @@ -1168,7 +1167,7 @@ static int pac1921_probe(struct i2c_client *client)
->  
->  	priv->regmap = devm_regmap_init_i2c(client, &pac1921_regmap_config);
->  	if (IS_ERR(priv->regmap))
-> -		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
-> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
->  				     "Cannot initialize register map\n");
->  
->  	devm_mutex_init(dev, &priv->lock);
-> @@ -1191,7 +1190,7 @@ static int pac1921_probe(struct i2c_client *client)
->  
->  	priv->vdd = devm_regulator_get(dev, "vdd");
->  	if (IS_ERR(priv->vdd))
-> -		return dev_err_probe(dev, (int)PTR_ERR(priv->vdd),
-> +		return dev_err_probe(dev, PTR_ERR(priv->vdd),
->  				     "Cannot get vdd regulator\n");
->  
->  	ret = regulator_enable(priv->vdd);
-> 
-> ---
-> base-commit: fec496684388685647652ab4213454fbabdab099
-> change-id: 20240911-iio-pac1921-nocast-5c98cdeec059
-> 
-> Best regards,
+> config ARM_SMMU_V3
+>         tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+>         depends on ARM64
 
+ARM64 can have aarch32 support. I am not sure if ARM64 running a
+32-bit OS can be a case though, (and not confined to AmpereOne).
+
+> > Then, can ssid_bits/s1cdmax be a concern similarly?
+> 
+> IIUC, ssid_bits is determined by IDR1_SSIDSIZE. It is GENMASK(10, 6). So
+> it shouldn't be 32. IDR1_SIDSIZE is GENMASK(5, 0).
+
+Rechecked the RM. Yea, max sid can be 32 but max ssid is 20 at
+this moment, so we should be safe.
+
+Thanks
+Nicolin
 
