@@ -1,186 +1,136 @@
-Return-Path: <linux-kernel+bounces-346021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A648898BE75
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:52:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A8798BE6A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1851C23C46
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:52:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFDE1F2421A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1B01C6F65;
-	Tue,  1 Oct 2024 13:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3051C68B2;
+	Tue,  1 Oct 2024 13:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DwERKRSb"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GnuMn/Lg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73061C57AF;
-	Tue,  1 Oct 2024 13:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824EB1C3F32;
+	Tue,  1 Oct 2024 13:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790690; cv=none; b=prUYjjX7DLFUAteHJFQp23cSPcw2AUnTHkD8AKCjIQdVqHtLRNwdxGXR77BShX57Z87eP8oxNjmhu8UxAx3dmnN+OFBfcvTtE/AnE04YKnAp1W0JlGcGdnty8cgL5sQWnoqDzzk8D/LFJaDQSElqG3Yq+uZFX/l5D2y3QFLF8Fo=
+	t=1727790651; cv=none; b=ohkzphgUgVoHAYwEbXWdInK9iLyQxIpW/wP7RdCh/3/atMmGVW6jfNtQe9D94v5yOSRBssLtdwYZ5gDn1arXKJV9qpC1ySquuIvVFIGsG2U0leW5Pvrl+J23ivzJzh7OIq9B3QmQYXwQotlmF0zdAEPtkp2W/yUsGEC9Sx/Ej30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790690; c=relaxed/simple;
-	bh=GW0CkmxZUMAJyz2lueB7K5XdnpbRBVCw7BP5D2Sd928=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=XS+ANMZhq4IyLaTv2JmTLkaNkDSDy22RCBSXiucIWqatxP6twaav3ifc4mOXc/zN23gv9dPnEcxXPDjVJ5AVcU+w0GJoU5R980ZW3XMKpzKA34Z/BbfDkw9tr9JGzMlr46fmcChwNM65iHD9tjPHS3jNV1FH6u++1uYbNAA1YAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DwERKRSb; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727790688; x=1759326688;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=GW0CkmxZUMAJyz2lueB7K5XdnpbRBVCw7BP5D2Sd928=;
-  b=DwERKRSbDpTGsujxW+guR8rn1fTMiye53WMft8UfATiYVO6N/mBKFeEH
-   iNZIOpiLWLqcP8GUsQA2Lbq9JK/C7MDV15mLj1PRStrwauwh0v8r6ZN78
-   hJobnnz4mx1QwQ8LGgoKdA8aQsmDuX/BQ3TikTtxQSEM6m/xS2LZTqvO+
-   9rw/17JnRYHZ5WMYJ1W4bydQCJZ9gH3gAxHjlmPPjBh0z95j9C6rTcRaY
-   BEkn7ssO1stzxZB6o9MMDV2GGljpXocvGDzkcFIV8nfOwfDC5leK0FKqR
-   CXepeOO4nDihM1IrypXePuITsg6VwBy4VCXnYmiVegib7XWU7Ff2f+PZ6
-   Q==;
-X-CSE-ConnectionGUID: +oQdX0lcTd+VPfROt+JSQg==
-X-CSE-MsgGUID: BaVOSJnYTMCJaOZJSeNurg==
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="33057484"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 06:51:24 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 1 Oct 2024 06:51:19 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 06:51:16 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Tue, 1 Oct 2024 15:50:36 +0200
-Subject: [PATCH net-next 06/15] net: sparx5: add constants to match data
+	s=arc-20240116; t=1727790651; c=relaxed/simple;
+	bh=ya6s4OjLzDBKkaqKYGPBmAej5LeuqLuwewX2rXjZYJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZOmt2H1q9Nwl447MNSDKIVbt9mZ83XBrNPm206DYZI7ZJnq2FXNeDDYn/e2eZgjchpnZC2ubIjBQVUNIzDpMU2E7UnJWwmR7iAGutAwdxYpyYqYzmVFZsCkG5/kLbu0BYAJCaDcA37Eamn4ChLQEoWBDuCLCWhHPmW6ZPDZyqxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GnuMn/Lg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4919L1xt008272;
+	Tue, 1 Oct 2024 13:50:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9VLqU+1fU/5jRjetzCchLu2MxMyXC5eBuEI49ITUIwU=; b=GnuMn/LgYS5WJzeo
+	vxSR4oJlHXGYnPLXJIB6IJh5IFsygVUPXf492+3OsH5Dw8iwuqyaPUtolT/ZW3BL
+	B3xC8+n7+lIN1MtunB0gfIDWjOuBX4D1Ww8ccIiAMvRHUo5tjd7DPCU+Ms8BdERl
+	zFN/JCdvbkU+Jy0YeRp0L8yeVIMl/lBUvdjjFLNfD+2NT02t5jMMsChTHjUy5tTt
+	UNtJU5PcA5+zRucXJUQQmBH8HVXJ4ksrKa11yS/PWqcp0aW/f5VDCL53mntZ/I7D
+	zs4ENaL2firkQEFF3AZClkyXoML/xNfCA/I6c67UOl+VZJz4ijBWpp5Nsf/26ZF0
+	yYO+MA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9vu8dra-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 13:50:44 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 491DohWH000842
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 13:50:43 GMT
+Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 1 Oct 2024
+ 06:50:40 -0700
+Message-ID: <b7c9b01a-3bf7-44f2-be8d-24ef5f3fce74@quicinc.com>
+Date: Tue, 1 Oct 2024 19:20:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] serial: qcom-geni: fix premature receiver enable
+To: Johan Hovold <johan+linaro@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: Jiri Slaby <jirislaby@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Douglas Anderson
+	<dianders@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <stable@vger.kernel.org>,
+        Aniket Randive <quic_arandive@quicinc.com>
+References: <20241001125033.10625-1-johan+linaro@kernel.org>
+ <20241001125033.10625-2-johan+linaro@kernel.org>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20241001125033.10625-2-johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241001-b4-sparx5-lan969x-switch-driver-v1-6-8c6896fdce66@microchip.com>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
-	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	Richard Cochran <richardcochran@gmail.com>, <horms@kernel.org>,
-	<justinstitt@google.com>, <gal@nvidia.com>, <aakash.r.menon@gmail.com>,
-	<jacob.e.keller@intel.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14-dev
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W0LmDSeJrm03zOcYsJ9sRXydL859rAfW
+X-Proofpoint-ORIG-GUID: W0LmDSeJrm03zOcYsJ9sRXydL859rAfW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 clxscore=1011 spamscore=0 suspectscore=0 phishscore=0
+ priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010089
 
-Add new struct sparx5_consts, containing all the chip constants that are
-known to be different for Sparx5 and lan969x. Also add a macro to access
-the constants.
+Thanks Johan for the fixes.
 
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
----
- .../net/ethernet/microchip/sparx5/sparx5_main.c    | 21 ++++++++++++++++++++
- .../net/ethernet/microchip/sparx5/sparx5_main.h    | 23 ++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
-
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-index 9a8d2e8c02a5..5f3690a59ac1 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-@@ -953,11 +953,32 @@ static const struct sparx5_regs sparx5_regs = {
- 	.fsize = sparx5_fsize,
- };
- 
-+static const struct sparx5_consts sparx5_consts = {
-+	.n_ports             = 65,
-+	.n_ports_all         = 70,
-+	.n_hsch_l1_elems     = 64,
-+	.n_hsch_queues       = 8,
-+	.n_lb_groups         = 10,
-+	.n_pgids             = 2113, /* (2048 + n_ports) */
-+	.n_sio_clks          = 3,
-+	.n_own_upsids        = 3,
-+	.n_auto_cals         = 7,
-+	.n_filters           = 1024,
-+	.n_gates             = 1024,
-+	.n_sdlbs             = 4096,
-+	.n_dsm_cal_taxis     = 8,
-+	.buf_size            = 4194280,
-+	.qres_max_prio_idx   = 630,
-+	.qres_max_colour_idx = 638,
-+	.tod_pin             = 4,
-+};
-+
- static const struct sparx5_match_data sparx5_desc = {
- 	.iomap = sparx5_main_iomap,
- 	.iomap_size = ARRAY_SIZE(sparx5_main_iomap),
- 	.ioranges = 3,
- 	.regs = &sparx5_regs,
-+	.consts = &sparx5_consts,
- };
- 
- static const struct of_device_id mchp_sparx5_match[] = {
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-index 738b86999fd8..91f5a3be829e 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-@@ -51,6 +51,8 @@ enum sparx5_vlan_port_type {
- 	SPX5_VLAN_PORT_TYPE_S_CUSTOM /* S-port using custom type */
- };
- 
-+#define SPX5_CONST(const) sparx5->data->consts->const
-+
- #define SPX5_PORTS             65
- #define SPX5_PORTS_ALL         70 /* Total number of ports */
- 
-@@ -238,6 +240,26 @@ struct sparx5_regs {
- 	const unsigned int *fsize;
- };
- 
-+struct sparx5_consts {
-+	u32 n_ports;             /* Number of front ports */
-+	u32 n_ports_all;         /* Number of front ports + internal ports */
-+	u32 n_hsch_l1_elems;     /* Number of HSCH layer 1 elements */
-+	u32 n_hsch_queues;       /* Number of HSCH queues */
-+	u32 n_lb_groups;         /* Number of leacky bucket groupd */
-+	u32 n_pgids;             /* Number of PGID's */
-+	u32 n_sio_clks;          /* Number of serial IO clocks */
-+	u32 n_own_upsids;        /* Number of own UPSID's */
-+	u32 n_auto_cals;         /* Number of auto calendars */
-+	u32 n_filters;           /* Number of PSFP filters */
-+	u32 n_gates;             /* Number of PSFP gates */
-+	u32 n_sdlbs;             /* Number of service dual leaky buckets */
-+	u32 n_dsm_cal_taxis;     /* Number of DSM calendar taxis */
-+	u32 buf_size;            /* Amount of QLIM watermark memory */
-+	u32 qres_max_prio_idx;   /* Maximum QRES prio index */
-+	u32 qres_max_colour_idx; /* Maximum QRES colour index */
-+	u32 tod_pin;             /* PTP TOD pin */
-+};
-+
- struct sparx5_main_io_resource {
- 	enum sparx5_target id;
- 	phys_addr_t offset;
-@@ -246,6 +268,7 @@ struct sparx5_main_io_resource {
- 
- struct sparx5_match_data {
- 	const struct sparx5_regs *regs;
-+	const struct sparx5_consts *consts;
- 	const struct sparx5_main_io_resource *iomap;
- 	int ioranges;
- 	int iomap_size;
-
--- 
-2.34.1
-
+On 10/1/2024 6:20 PM, Johan Hovold wrote:
+> The receiver should not be enabled until the port is opened so drop the
+> bogus call to start rx from the setup code which is shared with the
+> console implementation.
+> 
+> This was added for some confused implementation of hibernation support,
+> but the receiver must not be started unconditionally as the port may not
+> have been open when hibernating the system.
+> 
+> Fixes: 35781d8356a2 ("tty: serial: qcom-geni-serial: Add support for Hibernation feature")
+> Cc:stable@vger.kernel.org	# 6.2
+> Cc: Aniket Randive<quic_arandive@quicinc.com>
+> Signed-off-by: Johan Hovold<johan+linaro@kernel.org>
+> ---
+>   drivers/tty/serial/qcom_geni_serial.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+> index 6f0db310cf69..9ea6bd09e665 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -1152,7 +1152,6 @@ static int qcom_geni_serial_port_setup(struct uart_port *uport)
+>   			       false, true, true);
+>   	geni_se_init(&port->se, UART_RX_WM, port->rx_fifo_depth - 2);
+>   	geni_se_select_mode(&port->se, port->dev_data->mode);
+> -	qcom_geni_serial_start_rx(uport);
+Does it mean hibernation will break now ? Not sure if its tested with 
+hibernation. I can see this call was added to port_setup specifically 
+for hibernation but now after removing it, where is it getting fixed ?
+I think RX will not be initialized after hibernation.
+>   	port->setup = true;
+>   
+>   	return 0;
+> -- 2.45.2
 
