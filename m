@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-345887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861A898BC86
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:45:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71F198BC8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336141F22954
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4590AB21A54
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 500FB1C32E0;
-	Tue,  1 Oct 2024 12:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193B51C331D;
+	Tue,  1 Oct 2024 12:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qa86wiHY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J5x8Q9UD"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+9qW4Ah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137F0188A01;
-	Tue,  1 Oct 2024 12:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79678188A01;
+	Tue,  1 Oct 2024 12:45:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786721; cv=none; b=R+XuNA1f94QrDT391vex4Uo4Y7enu3SNOsOGRjflMsZhwGZysIXtMMtEDvEsDXWC0Q/guxbPnt+jfRm8mNkOInMIK1PZT3GPtV3AenfEe7p+ubSh6WviYRoOEnxVtTUUEVSefZDrzUfJ2Z2ffGUDVZOAnHgy7MSRFBMCJObA9MA=
+	t=1727786725; cv=none; b=mKE7BIe4aMByUxJO9IU2Vtj3+rGIBHblCM7xfGNw4oZkVyb5TmeW2VAQuYqAX5C+BTruy9wFs3ocsxpsV4oW4naUKXhVEOWLf1VQ+PdMOMB4uWLoK7evYDAMDquhbCirjkrYGQvEQKxrsfHfeXewgYILNl5HDTuVe31qZrARubA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786721; c=relaxed/simple;
-	bh=yv21nIoxt2G1+TKHhwI6It6b6JK37ExoWIj1knINT+M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WYFhtiDYIwSgqFfGwxCnIqNc7nzgRn3a0E3bRtrRDFyctWu7V5AGDGx1e+iJrHMdqUZmQE9Bfa8WKP2M/Z66Q+bglvgHeGdw0gaSyLUlqvVJ7ibwoNSLvnAxMnCFdwjXyXHHGQ7zUTUpM4qHp2WKVqO7gfhKJxygFV/nUdwkeTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qa86wiHY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J5x8Q9UD; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727786717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wloN27YoSxiWKp6fQGqBt4c8axyymw0Hk/QN5VGPdHc=;
-	b=Qa86wiHY5udGbTL/4RbGP4MQElJwzeGrubSygjC1tQRy4zfMQXolM4/rdSgHW4aJ4pa7Sx
-	Q+O/4+vGx/sNJTbKYXMz5OLOImXaYf16vuEWJGfu9jGd7Pe8Oe4wko1CKa3r1Wmo/BxmpV
-	KBm+5T4xozujbGHa6wPPK8WpyQM15uWJnEuiRgimTY2zeOcCwWdlezQwO0yXiEQRFdxwXO
-	F81jdaerQPF+4+x4zENY5l572B4SqKZGduMGTwWUtFj5dqgYuIRy2piVLxTiUZMzRYeEAt
-	Ilm2DMAemuc8XGtm4muAJ2r/8epa7DzGpWnwN3YdoRfheVaCCRI+1tin3061Yg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727786717;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wloN27YoSxiWKp6fQGqBt4c8axyymw0Hk/QN5VGPdHc=;
-	b=J5x8Q9UDN+URvo6b7cPp4+Jh2nNorxNY4jIijs4dArCgLFGPkpanNKVIjGpOrcWyCk6yoJ
-	fNP1c9ZTZ+79dgBA==
-To: Jeff Layton <jlayton@kernel.org>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v8 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-In-Reply-To: <4aa41dcb6f4be736355506dd500c4d255e008764.camel@kernel.org>
-References: <20240914-mgtime-v8-0-5bd872330bed@kernel.org>
- <20240914-mgtime-v8-1-5bd872330bed@kernel.org> <87a5g79aag.ffs@tglx>
- <874j6f99dg.ffs@tglx>
- <b300fec8b6f611662195e0339f290d473a41607c.camel@kernel.org>
- <878qv90x6w.ffs@tglx>
- <4933075b1023f466edb516e86608e0938de28c1d.camel@kernel.org>
- <87y138zyfu.ffs@tglx>
- <79a32ab9308d6e63e066aa17c5c2492b51b55850.camel@kernel.org>
- <87plokzuy6.ffs@tglx>
- <4aa41dcb6f4be736355506dd500c4d255e008764.camel@kernel.org>
-Date: Tue, 01 Oct 2024 14:45:17 +0200
-Message-ID: <8734lgyote.ffs@tglx>
+	s=arc-20240116; t=1727786725; c=relaxed/simple;
+	bh=rONTlDGlNdXQq4N23uXg7INy1byH9RVPf6wtNX7kOsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L3uAlger/uETJM+OoODhvgR3g26YSiKFe4M8WRgx1/NCoZZQpdNo4XUwTqvLqUzhECdBLmOCM5dapxgnneMMSLW0CEubIA+sHapu//nQ9YPAG8XSyz+Yr9sRA1eoDi6GSqrKqAPYMNQdDa4uO0YIv/tt2OXIraMA0xI8IVXgcfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+9qW4Ah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94F82C4CECD;
+	Tue,  1 Oct 2024 12:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727786725;
+	bh=rONTlDGlNdXQq4N23uXg7INy1byH9RVPf6wtNX7kOsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F+9qW4Ah6RG9jaJPY69xMACkjV8odYd8avjGEF+NDBQxaecQYRr6qBUOjf3hYE/x/
+	 IbCr6e9php/IMMHi5NHprwIgyRHETMTzb0RskPYOoeFTvPTPw9jEG4dpbgg4t5Q+Ix
+	 chJWVPj3ToIyoCcmDllM3DavLj0L/Lzt0FyYd1mA5zfbBp4gk4AdEsSjdKBepdBDPT
+	 iCgsdW3X+127UdYRvJ9df0pzbrDBbtqGhLS5e7je9MdXPR4baNnLasCe7VeiWDtc0O
+	 Uz85IVdzJywFl41sMWFhs39kixW6emJVJgsqE4KgPkIwpmNZvRekuMN3uYXVSXHKP2
+	 3b5AbwfrxzvIw==
+Date: Tue, 1 Oct 2024 14:45:20 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+	Daire McNamara <daire.mcnamara@microchip.com>, Wolfram Sang <wsa@kernel.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
+Message-ID: <jzkzcnd5rdprxpw734ppcr5ti23qkppfxs55nse36wcqxff7e3@4ea2lyl7feoo>
+References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930-uneasy-dorsal-1acda9227b0d@spud>
 
-On Tue, Oct 01 2024 at 05:45, Jeff Layton wrote:
-> On Mon, 2024-09-30 at 23:35 +0200, Thomas Gleixner wrote:
->> > I certainly wouldn't rule out a workqueue job calling that function,
->> > but this is something we do while dirtying an inode, and that's not
->> > typically done in interrupt context.
->> 
->> The reason I'm asking is that if it's always syscall context,
->> i.e. write() or io_uring()/RPC request etc., then you can avoid the
->> whole global floor value dance and make it strictly per thread, which
->> simplifies the exercise significantly.
->> 
->
-> I'm not sure I follow what you're proposing here.
->
-> Consider two threads doing writes serially to different files. IOW, the
-> second thread enters the write() syscall after the first thread returns
-> from its write(). In that situation, the second timestamp mustn't
-> appear to be earlier than the first (assuming no backward clock jump,
-> of course).
->
-> How would we ensure that with only per-thread structures?
+Hi Conor,
 
-Bah. Right. Ignore my sleep deprived rambling.
+On Mon, Sep 30, 2024 at 02:38:27PM GMT, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+> 
+> At present, where repeated sends are intended to be used, the
+> i2c-microchip-core driver sends a stop followed by a start. Lots of i2c
+> devices must not malfunction in the face of this behaviour, because the
+> driver has operated like this for years! Try to keep track of whether or
+> not a repeated send is required, and suppress sending a stop in these
+> cases.
+> 
+> Fixes: 64a6f1c4987e ("i2c: add support for microchip fpga i2c controllers")
+
+I don't think the Fixes tag is needed here if everything worked
+until now, unless you got some other device that requires this
+change and you need to explain it.
+
+If this is more an improvement (because it has worked), then we
+shouldn't add the Fixes tag.
+
+In any case, when patches are going to stable, we need to Cc
+stable too.
+
+Cc: <stable@vger.kernel.org> # v6.0+
+
+(This is specified in the
+Documentation/process/stable-kernel-rules.rst and I'm starting to
+enforce it here).
+
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+...
+
+> +	/*
+> +	 * If there's been an error, the isr needs to return control
+> +	 * to the "main" part of the driver, so as not to keep sending
+> +	 * messages once it completes and clears the SI bit.
+> +	 */
+> +	if (idev->msg_err) {
+> +		complete(&idev->msg_complete);
+> +		return;
+> +	}
+> +
+> +	this_msg = (idev->msg_queue)++;
+
+do we need parenthesis here?
+
+...
+
+> +	/*
+> +	 * The isr controls the flow of a transfer, this info needs to be saved
+> +	 * to a location that it can access the queue information from.
+> +	 */
+> +	idev->restart_needed = false;
+> +	idev->msg_queue = msgs;
+> +	idev->total_num = num;
+> +	idev->current_num = 0;
+> +
+> +	/*
+> +	 * But the first entry to the isr is triggered by the start in this
+> +	 * function, so the first message needs to be "dequeued".
+> +	 */
+> +	idev->addr = i2c_8bit_addr_from_msg(this_msg);
+> +	idev->msg_len = this_msg->len;
+> +	idev->buf = this_msg->buf;
+> +	idev->msg_err = 0;
+> +
+> +	if (idev->total_num > 1) {
+> +		struct i2c_msg *next_msg = msgs + 1;
+> +
+> +		idev->restart_needed = next_msg->flags & I2C_M_RD;
+> +	}
+> +
+> +	idev->current_num++;
+> +	idev->msg_queue++;
+
+Can we initialize only once? This part is just adding extra code.
+
+The rest looks good. I just need to know if Wolfram has some more
+observations here.
+
+Thanks,
+Andi
 
