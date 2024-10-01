@@ -1,67 +1,57 @@
-Return-Path: <linux-kernel+bounces-346768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20F7698C874
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:54:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDCA98C876
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89462858A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:54:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E492528637D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888FB1CF283;
-	Tue,  1 Oct 2024 22:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA2C1CF28A;
+	Tue,  1 Oct 2024 22:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EgQeuwJT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LPUnuC+C"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q2b4tLjX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66E51CCEF5;
-	Tue,  1 Oct 2024 22:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FA71BDABD;
+	Tue,  1 Oct 2024 22:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727823277; cv=none; b=Lua2n8x6EmliJXLkkP7tTJ22ZySMr2uDer1Ousxw4KUvDNLAzYOJQ7pbEfXSiJcHpNlzPmUFsd26lP/g/spk9JiDjiNn2Mfcl8nljZqwqlLhSQn+ZESQNEghL3xXjnFQQ81yp1D5tY17e/dkEI+13LqmK7gWw0ah8kixmeo7bH4=
+	t=1727823372; cv=none; b=tIEDr8N5fbe1U7BLf3yR7nq8mihlc6SAiprmjb7+4/sWyBKe3yeu7cwTqt+mJH/9jrvtbTLqOXuu3CLO9JCNhsiGHYGGFsyIMSQA/wjfB7EEPzLIYAyUJ+zEZPLYzoU79CNxnuaaquxzgkRLT9S0Ug7FYa6Q6zhUhuFXP/2oJL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727823277; c=relaxed/simple;
-	bh=UpfF7AB51gMACdFfukqmKWR7ALWtGeBabwO0eiGZLiQ=;
+	s=arc-20240116; t=1727823372; c=relaxed/simple;
+	bh=eTF7zrfREL1a4RvlKpkEP6yiI8+3aVYv88/9Gaul87I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkvBbHB3BHAWpJ5zjs600W/4YqSuDyL4mODoUzOBETnMLIUg2/fKnA15EgTEjTAbF71TwFJGxoBJNl9EVrRuX6g9+K67Vw/NbYjUdgx2VWAu6LhRxZc4bmy7sWRmvyDvm7TLt2VDkoqtHJccuDczfFGrUWjJgVYlU1smylnRODo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EgQeuwJT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LPUnuC+C; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 2 Oct 2024 00:54:26 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727823272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MkWIackqZUxS3tr2YwCMU+zBvBxG5iwmTKZOZDqpBfM=;
-	b=EgQeuwJT7fdDS9dSeJ0RXdh8Wne8x3dk02CX5jWNxGYiUSE4374n84mJAdsDil1Wrjpa4h
-	xukSAcFEzct4HCt5UesGe5PsNMi0P600K6/1KQdgLeP65SKm+UjDa6JOkPKIjnN1iPO01c
-	voO7t+B5E8GUL2elt3DuiovzE7HX58c2kwewWdkZeT2TO4dgcys4GRydNYJtAPMRl4dQrz
-	Mtmc27pF5xqgBuCNPg+JWNMpqy8+WCnyn0JrcgIqaiYY4rb7FlcVUpMxVpw3VEyokpz/m8
-	uaFMQKsJPgkCdS9cdLlusIBozUTOLlxKAmmLE8vQc/hzh9P3VaR8a81GbxqPgg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727823272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MkWIackqZUxS3tr2YwCMU+zBvBxG5iwmTKZOZDqpBfM=;
-	b=LPUnuC+Cl1qWPL1NsgH8eUXrIWTFf62Yu2HC0+q69K9aHAuShOuEEcRnMlxs0aDTsakLj0
-	Y5iQoT8GOCCUf4Cw==
-From: Nam Cao <namcao@linutronix.de>
-To: Tudor Gheorghiu <tudor.reda@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: iio: frequency: rename macros
-Message-ID: <20241001225426.wUBOFdMi@linutronix.de>
-References: <20241001202430.15874-2-tudor.reda@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYarDkq5LaeSHCe/5WUIHQX4IBVZox0qLH/kMNe4ulkPvhSjf5mM5jh5T6JHx5HiSEGLH26IuO4wrFTdSW1FKxctDmhU944YgqkMSvOIcdchbgg2vZ6hnxIzfrjqMl7mwGp8xyAmAC1QCjXK1oUDVg/COxcEC1os8bleY8vVgiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Q2b4tLjX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hWBU2Eg+tFjoVyOuxmqCvEXo14EoTrxkd+OkDmGaY0k=; b=Q2b4tLjXAnFjO3sQeyJfNaxEJ8
+	zIQx9Yc/BvazNDCx4zJRZr5WbUAi42o61Ps5M5CtLuGl6usQGzMw2DjSG+m656rKR7YLsi7w+a5fd
+	H5DMt+DY0tbW3SY33AtOk//ku9XOwvPy64l2K8+UjAX6X0k+TC651G+pblIUphMjWDm8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svlmk-008mfV-C5; Wed, 02 Oct 2024 00:56:02 +0200
+Date: Wed, 2 Oct 2024 00:56:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	olek2@wp.pl, shannon.nelson@amd.com
+Subject: Re: [PATCHv2 net-next 05/10] net: lantiq_etop: move phy_disconnect
+ to stop
+Message-ID: <6ebf08e6-07fd-4aa2-a02d-e56190a58285@lunn.ch>
+References: <20241001184607.193461-1-rosenp@gmail.com>
+ <20241001184607.193461-6-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,53 +60,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001202430.15874-2-tudor.reda@gmail.com>
+In-Reply-To: <20241001184607.193461-6-rosenp@gmail.com>
 
-On Tue, Oct 01, 2024 at 11:24:30PM +0300, Tudor Gheorghiu wrote:
-> The frequency iio drivers use custom defined macros (inside dds.h) in
-> order to define sysfs attributes more easily.
-> 
-> However, due to their naming choice and the fact that in some of them the
-> first and/or second arguments are decimal, checkpatch will throw errors
-> in the source files they are used in (ad9832.c and ad9834.c).
-> This is because it thinks the argument is _mode, therefore
-> it expects octal notation, even if the argument itself
-> does not represent file permissions. Example:
-> 
-> ERROR: Use 4 digit octal (0777) not decimal permissions
-> +static IIO_DEV_ATTR_PHASESYMBOL(0, 0200, NULL, ad9834_write, AD9834_PSEL);
+On Tue, Oct 01, 2024 at 11:46:02AM -0700, Rosen Penev wrote:
+> phy is initialized in start, not in probe. Move to stop instead of
+> remove to disconnect it earlier.
 
-You probably want to elaborate what you mean by "their naming choice" (i.e.
-how does the naming choice causes this false warning?)
+This commit message does not make any sense.
 
-I got curious and digged into checkpatch.pl. This script expects macros
-whose names match "IIO_DEV_ATTR_[A-Z_]+" to have the first integer argument
-to be octal. And this driver defines macros which "luckily" match that
-pattern.
 
-There is only IIO_DEV_ATTR_SAMP_FREQ which matches the pattern, and accepts
-umode_t as its first argument.
+    Andrew
 
-Instead of changing code just to make checkpatch.pl happy, perhaps it's
-better to fix the checkpatch script? Maybe something like the untested
-patch below?
+---
+pw-bot: cr
 
-Or since checkpatch is wrong, maybe just ignore it.
-
-Best regards,
-Nam
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 4427572b2477..2fb4549fede2 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -817,7 +817,7 @@ our @mode_permission_funcs = (
- 	["debugfs_create_(?:file|u8|u16|u32|u64|x8|x16|x32|x64|size_t|atomic_t|bool|blob|regset32|u32_array)", 2],
- 	["proc_create(?:_data|)", 2],
- 	["(?:CLASS|DEVICE|SENSOR|SENSOR_DEVICE|IIO_DEVICE)_ATTR", 2],
--	["IIO_DEV_ATTR_[A-Z_]+", 1],
-+	["IIO_DEV_ATTR_SAMP_FREQ", 1],
- 	["SENSOR_(?:DEVICE_|)ATTR_2", 2],
- 	["SENSOR_TEMPLATE(?:_2|)", 3],
- 	["__ATTR", 2],
 
