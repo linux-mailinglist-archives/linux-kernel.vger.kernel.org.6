@@ -1,57 +1,67 @@
-Return-Path: <linux-kernel+bounces-345732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CB898BA8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 004A598BA8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FF4CB239C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 325631C231DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41301BE87D;
-	Tue,  1 Oct 2024 11:02:56 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24A11BF338;
+	Tue,  1 Oct 2024 11:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i4Q7P/T0"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1271885A4;
-	Tue,  1 Oct 2024 11:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3881BF337
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780576; cv=none; b=LyHWiJ6kdhPZVtyJq9gjqIVllh1QH3gRdnGwudfnUkSWubbYW1Dy5NtiXSksIkSUkU2wO9hXw1pG9olfs1R3hjGE5N0tMh7dIN5sB23spwlENadr9BwjZhsuUITizXzsBLFzSk2Y1Lz6deXRxRMZ3xnOfhZTLpFR4Aas6ukaCwE=
+	t=1727780607; cv=none; b=gmbeCAuLPC+cxwW8D9wbDgqHX6crES3Z1092XAOkX3IvaM07jnrj6u7arExJ6SG5YsnfQDAX53p56qekQQFW05to13CUI7Yi7maA5UHZZ+7bWF7YCFUaDDiViN0cn7Gf8k/p2sKMytwu7dZnzQVVVkKkruaOnBakUmhxwKW3RgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780576; c=relaxed/simple;
-	bh=U8G0GaWCxBo32O5qvT2qm7PwwTvKoSsH0VDCHUaOYMk=;
+	s=arc-20240116; t=1727780607; c=relaxed/simple;
+	bh=N17mucv/C6Kv+u+zER+VAPZtZMJSTluTxzJt3GWfBSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OvvpsYl7c/UgyJNZMw16HLAY6Y3ZQNVw0sOlRpnWSzdGLbfBciU5TVz2gGzBcbhO0o8wGkmmOkGme+EHA6NupUGYumUQw9FvheXKGpGNe1KP3HNry/Pvz5ha0UXz6aDrYiNZh1V+lMnCx25dIwScmHBUV69pacoZiVIbwa1ugxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 35A07100DA1D3;
-	Tue,  1 Oct 2024 13:02:46 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 0DE47208266; Tue,  1 Oct 2024 13:02:46 +0200 (CEST)
-Date: Tue, 1 Oct 2024 13:02:46 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: AceLan Kao <acelan.kao@canonical.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
- during suspend
-Message-ID: <ZvvW1ua2UjwHIOEN@wunner.de>
-References: <20240926125909.2362244-1-acelan.kao@canonical.com>
- <ZvVgTGVSco0Kg7H5@wunner.de>
- <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
- <ZvZ61srt3QAca2AI@wunner.de>
- <Zvf7xYEA32VgLRJ6@wunner.de>
- <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTW0hm0aPVDDpff1IpItt88rANRiq2TTy9UeVVEvk67gOOc0gLDEoo7s2rgbKmDern/MfdvvmqFuqQcJn6UMDRrlOdiuYrQ2cqF5gvI2cPyYgjOYrwvVbyEEAl9aX0pC0sSwfF7cp0CmpCNl439ZkA6+lAFM0WHGI2KWJPiucUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i4Q7P/T0; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nJNEOALcHIiGx1Sn7Q8nUuHQjmsy2GLe0tScvgkmPX0=; b=i4Q7P/T0d5cQIDeNrznYMk4e7e
+	m4Nf9O4OGGLzP8Hob66efrrzy008lKrquC1pifwtlW08V0zqqMHcH5wWCZrgFMbxz4LkFe4LAnbDC
+	+RCMEaSB+X3lJFbnaOMr9mDvDWuKzfMx1aIsfBdMOBPw83+c5n7te9u84YdZkzL9r1MFXxahLCnsk
+	LuvAciqKHDVFhmaRMDXI4bj/ARfhm4IY2fiOZvcWxjbbinIERq+kXtWxsZ3ROBkBV0a04pnH90IHf
+	M5MUvKdhdmzcP08WMYoFRIxoGsAWDymXGnTB5Bj01W2WPPA9tDyBh26XrWTatPeLbAGmQs7lMrhSe
+	p3aLsHVQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1svaes-00000002D7q-3nE2;
+	Tue, 01 Oct 2024 11:03:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 866F530057A; Tue,  1 Oct 2024 13:03:10 +0200 (CEST)
+Date: Tue, 1 Oct 2024 13:03:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
+	ojeda@kernel.org, kees@kernel.org, alexei.starovoitov@gmail.com
+Subject: Re: [PATCH 13/14] x86: BHI stubs
+Message-ID: <20241001110310.GM5594@noisy.programming.kicks-ass.net>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194925.707462984@infradead.org>
+ <20240930213030.ixbsyzziy6frh62f@treble>
+ <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
+ <20240930223848.ulipiky3uw52ej56@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,56 +70,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
+In-Reply-To: <20240930223848.ulipiky3uw52ej56@treble>
 
-On Mon, Sep 30, 2024 at 09:31:53AM +0800, AceLan Kao wrote:
-> Lukas Wunner <lukas@wunner.de> 2024 9 28 8:51:
-> > -       if (pci_get_dsn(pdev) != ctrl->dsn)
-> > +       dsn = pci_get_dsn(pdev);
-> > +       if (!PCI_POSSIBLE_ERROR(dsn) &&
-> > +           dsn != ctrl->dsn)
-> >                 return true;
+On Mon, Sep 30, 2024 at 03:38:48PM -0700, Josh Poimboeuf wrote:
+> On Mon, Sep 30, 2024 at 11:23:38PM +0100, Andrew Cooper wrote:
+> > On 30/09/2024 10:30 pm, Josh Poimboeuf wrote:
+> > > On Fri, Sep 27, 2024 at 09:49:09PM +0200, Peter Zijlstra wrote:
+> > >> +SYM_INNER_LABEL(__bhi_args_0, SYM_L_LOCAL)
+> > >> +	UNWIND_HINT_FUNC
+> > >> +	cmovne %r10, %rdi
+> > > IIUC, this works because if the "jz" in the CFI preamble mispredicts to
+> > > the __bhi_args_* code, "cmovne" will zero out the speculative value of
+> > > rdi.
+> > >
+> > > Why use %r10 instead of a literal $0?  Also how do you know %r10 is 0?
+> > 
+> > There's no encoding for CMOVcc which takes an $imm.
 > 
-> In my case, the pciehp_device_replaced() returns true from this final check.
-> And these are the values I got
-> dsn = 0x00000000, ctrl->dsn = 0x7800AA00
-> dsn = 0x00000000, ctrl->dsn = 0x21B7D000
-
-Ah because pci_get_dsn() returns 0 if the device is gone.
-Below is a modified patch which returns false in that case.
-
-I've only changed:
--	dsn = pci_get_dsn(pdev);
--	if (!PCI_POSSIBLE_ERROR(dsn) &&
-+	if ((dsn = pci_get_dsn(pdev)) &&
-+	    !PCI_POSSIBLE_ERROR(dsn) &&
-
-
-> Did some other test
-> TBT HDD -> TBT dock -> laptop
->    suspend
-> TBT HDD -> laptop(replace TBT dock with the TBT HDD)
->    resume
-> Got the same result as above, looks like it didn't detect the TBT dock
-> has been replaced by TBT HDD.
+> Ah.
 > 
-> In the origin call trace, unplug TBT dock or replace it with TBT HDD,
-> it returns true by the below check
->         if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
->            reg != (pdev->vendor | (pdev->device << 16)) ||
->            pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
->            reg != (pdev->revision | (pdev->class << 8)))
->                return true;
+> > %r10 is guaranteed zero after the FineIBT prologue
+> 
+> If the "jz" in the FineIBT prologue mispredicts, isn't %r10 non-zero by
+> definition?
 
-Hm, that's odd.  Why is that?  Is reg == 0xffffffff in one of those cases?
+Since I just wrote the comment...
 
-I guess that could happen if the Thunderbolt tunnels are not yet
-established at that point (i.e. in the ->resume_noirq phase),
-but normally they should be.  Does this system use ICM-controlled
-tunnel management or kernel-native (software-controlled) tunnel
-management?
+ * FineIBT-BHI:
+ *
+ * __cfi_foo:
+ *   endbr64
+ *   subl 0x12345678, %r10d
+ *   jz   foo-1
+ *   ud2
+ * foo-1:
+ *   call __bhi_args_XXX
+ * foo+4:
+ *   ... code here ...
+ *   ret
+ *
+ * direct caller:
+ *   call foo+4
+ *
+ * indirect caller:
+ *   lea foo(%rip), %r11
+ *   ...
+ *   movl $0x12345678, %r10d
+ *   subl $16, %r11
+ *   nop4
+ *   call *%r11
 
-Thanks,
+And lets take a random bhi function:
 
-Lukas
++       .align 16
++SYM_INNER_LABEL(__bhi_args_0_1, SYM_L_LOCAL)
++       UNWIND_HINT_FUNC
++       cmovne %r10, %rdi
++       cmovne %r10, %rsi
++       ANNOTATE_UNRET_SAFE
++       ret
++       int3
+
+So the case you worry about is SUBL does *not* result in 0, but we
+speculate JZ true and end up in CALL, and do CMOVne.
+
+Since we speculated Z, we must then also not do the CMOV, so the value
+of R10 is irrelevant, it will not be used. The thing however is that
+CMOV will unconditionally put a store dependency on the target register
+(RDI, RSI in the above sequence) and as such any further speculative
+code trying to use those registers will stall.
+
+> > , but I don't see
+> > anything in patch 11 which makes this true in the !FineIBT case.
+> 
+> I thought this code is only used by FineIBT?
+
+Right, so I do have me a patch that adds it to regular KCFI as well, but
+I dropped it for now, since I don't have a strong rationale for it and
+it requires yet more compiler tinkering.
 
