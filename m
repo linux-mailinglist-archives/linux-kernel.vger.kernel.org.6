@@ -1,125 +1,135 @@
-Return-Path: <linux-kernel+bounces-345737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 827C298BA92
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:05:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D85DF98BA2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49F61C235A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158031C235D6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA7B1BF324;
-	Tue,  1 Oct 2024 11:05:08 +0000 (UTC)
-Received: from tretyak2.mcst.ru (tretyak2.mcst.ru [212.5.119.215])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43201BF333;
+	Tue,  1 Oct 2024 10:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="efNyB8Z+"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309931A08B2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.5.119.215
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755011BE871
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780708; cv=none; b=Hk9TUFYkjPcz6icbCoU1AqpfmeVR99wJYaAX0VcifuCsjkv1WxX1wpNjBiyx6vraB5onVd+Oq1/zLYB7evJb/+R9t4EXsOUkqwOjrNJDcHD4AMhCz3APP5J7Mk631f88S/4UzAeehxYHlHJIqtJm7jlF7bIMixhZjlKku5ds1EQ=
+	t=1727780284; cv=none; b=W++PXW8cwoc5KoRlQSckEoUZf56Wna8WAMqZ0qVzZZD7vJje/xZ4d0NZi0PIrnpU9wVx67trDP4F20Wzs7l8BJyXOi78T/ZvZEUHP8dKspyLzc4azyf+878W28AjPsF+v065MDEG6YQCEGaaBOEg5i6rd+9eeDNGX0XVhTYD9hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780708; c=relaxed/simple;
-	bh=+rHmXUJz9yFvw6S5U3VrCkjI9zxfOHt3F8VTxWbRo1s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4rn6kASqcOQorDRED4Sym8iWCBxJTBWNKOMNLvF1ivhgRVRSPOKA0/wOx+LRydU2bb9646h917dmRjsfzGq2cqfctsE8VT9LmkyCACMVofQIlOP2Jy2NZTXmPhSU3brXlORF3C4fORgC/80dWzT09FOoK9G8SDbQsrkyTY5VBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru; spf=pass smtp.mailfrom=mcst.ru; arc=none smtp.client-ip=212.5.119.215
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcst.ru
-Received: from tretyak2.mcst.ru (localhost [127.0.0.1])
-	by tretyak2.mcst.ru (Postfix) with ESMTP id F3FF5102392;
-	Tue,  1 Oct 2024 14:05:00 +0300 (MSK)
-Received: from frog.lab.sun.mcst.ru (frog.lab.sun.mcst.ru [176.16.4.50])
-	by tretyak2.mcst.ru (Postfix) with ESMTP id EAC41101765;
-	Tue,  1 Oct 2024 14:04:10 +0300 (MSK)
-Received: from artemiev-i.lab.sun.mcst.ru (avior-1 [192.168.63.223])
-	by frog.lab.sun.mcst.ru (8.13.4/8.12.11) with ESMTP id 491B4AwQ005662;
-	Tue, 1 Oct 2024 14:04:10 +0300
-From: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
-To: Alex Deucher <alexander.deucher@amd.com>
-Cc: Igor Artemiev <Igor.A.Artemiev@mcst.ru>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
-        Kenneth Feng <kenneth.feng@amd.com>, Simona Vetter <simona@ffwll.ch>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: [PATCH] drm/amd/pm: check return value of amdgpu_irq_add_id()
-Date: Tue,  1 Oct 2024 13:57:27 +0300
-Message-Id: <20241001105727.1582368-1-Igor.A.Artemiev@mcst.ru>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1727780284; c=relaxed/simple;
+	bh=60EhXKAteHv2MPzzdgUAD7FikabFpPaPZwrLroTEnQg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lgOZihmKYWqS3RffREb7TvYgCXRDIr5KVRsL9E1drVJ4yPUr0MejqSlQd0hrkgCQBZHH+Tsrf3VOXasln1aHzPBx7h3WoeEFqbu3bxvMG/Xym2KHGLfAy/7DlifMkaqF+s92o72iKnlVeI9IOmg7b5TegJqeVhnCxRN1ROoCvlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=efNyB8Z+; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cd8972738so2601892f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:58:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727780281; x=1728385081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a1/SnEV7GpnCmA2f8SClpEwW0fcraNKH9MQf0vKkPjQ=;
+        b=efNyB8Z+AvCwCkWkdL4h24U/TWX5Xmp4VJ2RIHSU9QUZq10Id9xKOA+YeAxKOonZW3
+         N4rMc0/lYeVT6M95i6G5Yt1SfO3gBVE/ICwXCEkuhh0GmFyYLCNGTErEGPHWhr3Nkej4
+         sK5r1Q9W/6vRsdu9BUXDIXvweyGRDHbczIK96DFbtJyvDuNTU1fdqd0nChksFaqqqA37
+         0UgaQbZce0AD9LJX/4VZk1SYcJUgGAo5T9t7wFA8ijFvVvAfnJa5l/HknFFT5lzb5mZA
+         1d87CEOFJwW2P7GDILhzwWM1tS9tIksUCAQnSNM++s1mGlXcpxE9gb87k1qzreuE1zfo
+         kzJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727780281; x=1728385081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a1/SnEV7GpnCmA2f8SClpEwW0fcraNKH9MQf0vKkPjQ=;
+        b=omyW81q3BCvw+GzgAiPNT0ypmOq97fwLzR8IUd8LW4/xDSZSfcSaAbMYjOgrAURk5Q
+         nODhFOtemqJcEou3K79QUwL/hQk6evJPHBzQy6omSn881vXK3UyZqSuhEfQwt6ZFP3Ar
+         vVF+vxOFtLXLIY8sUFVTtsOHOyJTE9L5ZQYgVP6jFA3repCvYKHO/yLh00yA3Jtpw3kb
+         k9LWo8ZiS2vdhSYzJj75NqViRe+AewceW1VWvaBQRwOe/H6l/1FJY9+xOzUAlDai/HzG
+         yDpW0zEsxRsKJY7XFoEL7OjbN9HkZSEOr30LdnefyN5MB1IIFodyKQ9E7FbUMmbhKj5Y
+         TIdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZHzyncCEKf/g45FWVvtIFM42uZrv1SDd3pu8Q3Iq77f7VWXCiVdOpI8E9Adc66wuwHB3+DfqCpIMbEZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSk4HzqSn4ZhMLA9k/y2eej5eNU5mXNrf+GOK0RSv82NJ1XHWI
+	YHRVDHwNerduoVlW7T51SQWa4PAGVQwl3iykERUQusjBMvRA4P6f81QaQF0hJQCcAkBDV0Xy80n
+	SH1FSuPzy0WRPsU7kzC0gJOXjtw2/itZauov4
+X-Google-Smtp-Source: AGHT+IG/OuMrpizTXMK9ykXj5tQizpl0H0yQsEL9StHtl8bSdqhVYJ82YEbwzDkAtDBmCQuH6QaI4BhD+/admbTQT6g=
+X-Received: by 2002:a5d:4a92:0:b0:37c:d21a:3d61 with SMTP id
+ ffacd0b85a97d-37cd5b319b6mr9097510f8f.39.1727780280536; Tue, 01 Oct 2024
+ 03:58:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Anti-Virus: Kaspersky Anti-Virus for Linux Mail Server 5.6.39/RELEASE,
-	 bases: 20111107 #2745587, check: 20241001 notchecked
-X-AV-Checked: ClamAV using ClamSMTP
+References: <20240913210031.20802-1-aliceryhl@google.com> <CALNs47sMJzeZ0yEF9sc-VO_QEu4=jc3QBa1_fhnhX9gdETYaNA@mail.gmail.com>
+In-Reply-To: <CALNs47sMJzeZ0yEF9sc-VO_QEu4=jc3QBa1_fhnhX9gdETYaNA@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 1 Oct 2024 12:57:47 +0200
+Message-ID: <CAH5fLgi4YNsLHFoKw7UsGbmpEaqeG4o5yMQAodZ1KwfExAPL3w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: harden index manipulation using ownership
+To: Trevor Gross <tmgross@umich.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kees Cook <kees@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Carlos Llamas <cmllamas@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-amdgpu_irq_ad_id() may fail and the irq handlers will not be registered.
-This patch adds error code check.
+On Mon, Sep 30, 2024 at 1:16=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
+ote:
+>
+> On Fri, Sep 13, 2024 at 5:01=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
+ wrote:
+>
+> > +//! Utilities for working with ranges of indices.
+> > +
+> > +/// A range of indices.
+> > +///
+> > +/// This utility is useful for ensuring that no index in the range is =
+used more than once.
+> > +#[derive(Debug)]
+> > +pub struct Range {
+> > +    offset: usize,
+> > +    length: usize,
+> > +}
+>
+> Would a name like "DataRange" or "CheckedRange" be better here, to
+> avoid confusion with core::ops::Range?
 
-Found by Linux Verification Center (linuxtesting.org) with static
-analysis tool SVACE.
+Probably a good idea. I've had collisions on those types.
 
-Signed-off-by: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
----
- .../drm/amd/pm/powerplay/hwmgr/smu_helper.c   | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+> > +    /// Use this range of indices.
+> > +    ///
+> > +    /// This destroys the `Range` object, so these indices cannot be u=
+sed again after this call.
+> > +    pub fn use_range(self) -> UsedRange {
+>
+> Maybe just `.use()`?
 
-diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-index 79a566f3564a..109df1039d5c 100644
---- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-+++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
-@@ -647,28 +647,41 @@ int smu9_register_irq_handlers(struct pp_hwmgr *hwmgr)
- {
- 	struct amdgpu_irq_src *source =
- 		kzalloc(sizeof(struct amdgpu_irq_src), GFP_KERNEL);
-+	int ret;
- 
- 	if (!source)
- 		return -ENOMEM;
- 
- 	source->funcs = &smu9_irq_funcs;
- 
--	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-+	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
- 			SOC15_IH_CLIENTID_THM,
- 			THM_9_0__SRCID__THM_DIG_THERM_L2H,
- 			source);
--	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-+	if (ret)
-+		goto err;
-+
-+	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
- 			SOC15_IH_CLIENTID_THM,
- 			THM_9_0__SRCID__THM_DIG_THERM_H2L,
- 			source);
-+	if (ret)
-+		goto err;
- 
- 	/* Register CTF(GPIO_19) interrupt */
--	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
-+	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
- 			SOC15_IH_CLIENTID_ROM_SMUIO,
- 			SMUIO_9_0__SRCID__SMUIO_GPIO19,
- 			source);
-+	if (ret)
-+		goto err;
- 
- 	return 0;
-+
-+err:
-+	kfree(source);
-+
-+	return ret;
- }
- 
- void *smu_atom_get_data_table(void *dev, uint32_t table, uint16_t *size,
--- 
-2.39.2
+Makes sense to me.
 
+> > +    /// Assert that this range is aligned properly.
+> > +    pub fn assert_aligned(&self, alignment: usize) -> Result<(), Range=
+Error> {
+>
+> It would probably be good to warn that this alignment is relative to
+> the offset, i.e. if you split a range at an unaligned point then this
+> may not be useful.
+>
+> This is a pretty cool API idea.
+
+Thanks!
+
+Alice
 
