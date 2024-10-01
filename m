@@ -1,51 +1,73 @@
-Return-Path: <linux-kernel+bounces-345899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538F598BCAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:50:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA1998BCAA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C421C235BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15FE41C233DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02F1C3F1A;
-	Tue,  1 Oct 2024 12:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54791C331B;
+	Tue,  1 Oct 2024 12:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="xwg3lWQB"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtmwPqCs"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A60A1C2DB1;
-	Tue,  1 Oct 2024 12:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA941C331A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787004; cv=none; b=AYMVZcTmKeZZkushNrqXsfitO3kjZOeorwwVlqmJA2npA3MwnOCBaO0hmnAXxPNBrtRSYmcu42DQ8yvpnubgcfsSYErsNE8ILIcbNcuvY8olEtl6tSROcZp9OZwFomIn6eIv3xV1so2SzHuGfKmF7xUEkoUEWnAhbNcu+cG/vFg=
+	t=1727787002; cv=none; b=tf7RQOXQf8mw+y8otx5hICPt+uDwKIGCshSpylxFuYNMvZbw/VXUl+mTqYg/fEm4kvlm9bEaT1kbmRoOsX4DFnCNviJYYlb30UTDXxK69n3Y9gZJVY+W7hhuAWePTT/4q8+U6Y3ftfT1mOZ5jwtka8xJ9IWE+T+MkmY7Q/6nZ18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787004; c=relaxed/simple;
-	bh=xns8hsxhIdD6+hI7mmFB5qJiP3BTBo67OOjHhk9I9Tk=;
+	s=arc-20240116; t=1727787002; c=relaxed/simple;
+	bh=dMWgDxinhyELd+my5lxRfhxyKCtnWT4+UUHhJErQs9c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FMt9AAM6cAUOyd2IjFOHsxbQ7diJOvsmD0O2/2NFB6B2si9ZTtbjkNiz/6ChKLAdARtYIT6Y5YhhEbzSd/fSEIn03mlqaQLrzhaZfSgv2WkkpBJZ2P4dR+cDtw4Ni6gBWAIW/gfo5c2MQj008GkKUodrl0vcp5Y61u3ubmxwOfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=xwg3lWQB; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=v2VbEpiu02sSfttNZ1FIT6I0JoTTAy8v78m159FGc9c=;
-	t=1727787002; x=1728219002; b=xwg3lWQB2SmD+yEeHiW8rBym9RlQ2WCxPnDPO2olVqsxE13
-	jJHmqltEGeumQUO5txmJhdzRFnctVI2o+4SEN7AvhpvjQMOqDPxrY86mwP3nBhPX+1qjUp43+XyF7
-	Dj0D2jpinEj/rn63KKSeP+lVWShf3465Ulxrk9pmwa83AL6kWZyzc7zBd1y2xUvXTSd3PTNKCDjbB
-	aEi2Eb7zvhA5yLpXAonvY5MBom5TB7rX+RDlKCwQU1hVqo2FPy8T/NeZA44s4jSTgdfRgQY93674C
-	xTUaIXKSbxILnnn2JoxyORyUb1TwEERdYFGI9tBMclBOpGn2YXjrdVtxZd1cYyDg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1svcK7-00079U-U7; Tue, 01 Oct 2024 14:49:52 +0200
-Message-ID: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
-Date: Tue, 1 Oct 2024 14:49:51 +0200
+	 In-Reply-To:Content-Type; b=KohlzSq0vdt5BIf44WyGVC9snMK+MDVlHLiRLn3s3vaPW+EvEiPorzAvlYw6qXo9+JALBE9zZmUEQ4s+EQ+96HqpXXiov1SjY2iujko+NH71dX8Re2X00IVsgbAL0mO5OQe/98zJiyCWyay8Em89GVJI9GB8aKIicIfhPBLFj2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtmwPqCs; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso835851566b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:50:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727786999; x=1728391799; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WLoYvgWCVL1X9kwUefO+SBEoQ3L03bwKiyOMzcp/QeM=;
+        b=LtmwPqCs4KBME24qEo5zH5LqRz/vIKEbt/NCk5GGF8gpXiDJpQEd0WSgo919kCsG7h
+         BZe3TY/RnofiaXxn7jqR0hw5mp8Au1uplgQ2f0bHt3me2khLxi3M5qI48+xFl6OBCBXy
+         lw3fsPkX9sAeBZRhCp+gGUKekc2nKuDcmVAcm/RuyLMn+Ws3mi7SOGH1hNnWSa0iusXN
+         JJS3kPNI1ASUU/AWD/mKyosC4VUFfDOqxJKgQQN2SIDBNrueVcaRniBBJr8B5WEgFplV
+         M6hsvK1FtEhlErPwcIdIZomesDR18NUpIeaZmNdm8AySzXflJQK2s4UBYdMIjgxc6SgY
+         kd1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727786999; x=1728391799;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WLoYvgWCVL1X9kwUefO+SBEoQ3L03bwKiyOMzcp/QeM=;
+        b=tTDHGNBLUKCaDOHqK3MXZX4d2e/eJtjO16Fl0LhKKPy226tqb9XY4EnM3kj+/IvfEY
+         cRRzKCxXLF/V5+ahhoimaZO8Y0Hc2swebf8nTwzmC/UME4XYfZJeP6SAX4w/jLz7GhQv
+         GBow4RuIBfR43i3oPH3DcAe/Ic3k69wZpC7T6siMUGsK7UXBTkfUxwyiydOfr0qb/7dE
+         aCOuDu7IueyTxA+HVD+36W+dXbSqdJvs9rIIfrWLNLXCNImJDsO68dPUod41Bx409w9q
+         CDrFajQJ+iP4JaHTAVo4yeZaz3Dyd+4BVx8yQ/1iM5RNoUmJFxSuHA2d9wmemMWTEttO
+         LtYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWducJi0p94fMsqCNjePuiKU+dmNXY5xT2wgMuQ+0OD6ru4KPB5eYpzLWXpL9YCe0IETdC8CaMBqWfVjXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuPGT+dfgQBSQ3KxEgKd6m8rR4ArrRLF9NN7I8w7LCqESDVGGG
+	+L15j9DqfnMS9jO68t78LIdbNuBgJKSTc5G4EsecXCvSRQHyzIiNmUuDakeMw5s=
+X-Google-Smtp-Source: AGHT+IHl2oBqaAwBRV4qjD7Nc+oA3RpJI+cBeVu715RW9PQz4RtQVLl03U98vCDU5j6Md/SPQfafeg==
+X-Received: by 2002:a17:907:74d:b0:a90:1904:9a87 with SMTP id a640c23a62f3a-a93c4ac93b6mr1534746266b.60.1727786999018;
+        Tue, 01 Oct 2024 05:49:59 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297a357sm709920066b.151.2024.10.01.05.49.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 05:49:58 -0700 (PDT)
+Message-ID: <d0b29526-1a4a-4bb3-9cfd-9097f8ba7ef7@linaro.org>
+Date: Tue, 1 Oct 2024 13:49:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,50 +75,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] getdents() does not list entries created after
- opening the directory
-To: =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?= <varqox@gmail.com>
-Cc: yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
- <ZvvonHPqrAqSHhgV@casper.infradead.org>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Language: en-US, de-DE
-In-Reply-To: <ZvvonHPqrAqSHhgV@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727787002;408a80b2;
-X-HE-SMSGID: 1svcK7-00079U-U7
+Subject: Re: [PATCH v1 1/2] perf python: Remove python 2 scripting support
+To: Andi Kleen <ak@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+ Zixian Cai <fzczx123@gmail.com>, Paran Lee <p4ranlee@gmail.com>,
+ Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240918225418.166717-1-irogers@google.com>
+ <20240918225418.166717-2-irogers@google.com> <Zut-iM3v9rJHehxJ@tassilo>
+ <CAP-5=fWS-xOPurApZpMA=Zzukt5PQDYjF_7otCPTAL33PYmXAQ@mail.gmail.com>
+ <ZvsXl2g6kYDi6F9o@google.com> <ZvvbiY1NjTZxWvG7@tassilo>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <ZvvbiY1NjTZxWvG7@tassilo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 01.10.24 14:18, Matthew Wilcox wrote:
-> On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
->>> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
->>>
->>> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
+
+
+On 01/10/2024 12:22 pm, Andi Kleen wrote:
+> On Mon, Sep 30, 2024 at 02:26:47PM -0700, Namhyung Kim wrote:
+>> On Thu, Sep 19, 2024 at 06:45:23AM +0200, Ian Rogers wrote:
+>>> On Thu, Sep 19, 2024 at 3:29 AM Andi Kleen <ak@linux.intel.com> wrote:
+>>>>
+>>>> On Thu, Sep 19, 2024 at 12:54:17AM +0200, Ian Rogers wrote:
+>>>>> Python2 was deprecated 4 years ago, remove support and workarounds.
+>>>>
+>>>> Nacked-by: Andi Kleen
+>>>>
+>>>> I don't see any advantages of breaking perfectly fine existing setups
+>>>> for no benefits.
+>>
+>> Well, I think the benefit is in the maintenance.  The EOL of Python 2
+>> was 2020/1/1 [1] and we are targeting this release (v6.13) in 2025.  So
 > 
-> "If a file is removed from or added to the directory after the most
-> recent call to opendir() or rewinddir(), whether a subsequent call to
-> readdir() returns an entry for that file is unspecified."
+> AFAIK it's still widely used, and supported by third parties. And even
+> if not it's not that the python usage in perf needs any external support.
 > 
-> https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+> In Linux deprecation is generally tied to nobody using something
+> anymore, and that is clearly not the case here.
 > 
-> That said, if there's an easy fix here, it'd be a nice improvement to
-> QoI to do it, but the test-case as written is incorrect.
+>> I think it's reasonable to consider removing Python 2 support now.
+> 
+> That's code that practically never changes, so I don't see any
+> maintenance benefit. I mean it needs to be compile tested / perf tested,
+> but Arnaldo's container collection will do that practically
+> for free.
+> 
+> -Andi
+> 
 
-Many thx Willy!
+630af16 was quite painful to do and was related to supporting both 
+python versions, so there is some ongoing cost. If we do this removal we 
+could remove that one too. Plus Arnaldo could drop the python2 
+containers and get a faster iteration time.
 
-Which leads to a question:
+I think I'm neutral to in favor of removing python2 support. People on 
+ancient systems would more likely be using an old branch anyway.
 
-Krzysztof, how did you find the problem? Was there a practical use case
-(some software or workload) with this behavior that broke and made your
-write that test-case? Or is that a test-program older and part of your
-CI tests or something like that?
-
-Ciao, Thorsten
+James
 
 
 
