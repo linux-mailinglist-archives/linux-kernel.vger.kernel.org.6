@@ -1,154 +1,110 @@
-Return-Path: <linux-kernel+bounces-346820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B706498C95D
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF0498C960
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF181F24BDA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43FF11C212E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0991CF28B;
-	Tue,  1 Oct 2024 23:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC1E1CF2B7;
+	Tue,  1 Oct 2024 23:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GcyukvSY"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Z7Sy0FX4"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617201CEEA7
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248BC2207A;
+	Tue,  1 Oct 2024 23:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727824402; cv=none; b=WDqmDtZIxmS4K6/Huax09w3cCgNvn4dIIgtVzDmYhBb8grnhLcRg+p1i6l7Kr+pmRZCoE/ThJ4AKIy1bxYyZI8Z4+XIMGxx3CsKezeWqX/9XtJB/KZ6KZzq4M6FcSDLrdHKD4wW2s5B/YYlRUzxtZSNIJffYh7U50UtIyY5uNNY=
+	t=1727824460; cv=none; b=WyhgSwrF2fxx69e/FCCU4nKkrIjqI5urLahBzoc4vseo7t2cLAs0kRFzJ++JdLwpZk5/vhbANjfptK3NalOkwMo0rbotXA5q2uX4AyW3L3c5SakIYUXMTnhmcyeXut7KDSFQqyuqNuYWUGVKqx3HhHkGtKiZo8ZbZfJRAcnskdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727824402; c=relaxed/simple;
-	bh=w++7hzLDS/8dZ/VoZ2hephh+rP/dNT8s02ewb/5KE7A=;
+	s=arc-20240116; t=1727824460; c=relaxed/simple;
+	bh=oDJtK4cNxYxq5AYlpI9jhDIlyab8ODOkgx+r0yGpxa0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIgVLG8fsB4KtQ20Q9laRG16PIk4N7mw5bc+77SqXuMIt4x7DYOQ2Jf/zHi4tBxBpUkIQx5yPZyF0M2bkYMYLqb12KbLLiO/+XIgQB2V4htnGjI7OUQQy0Ng+58XyAGfiNZ93+qUt6uAOMEA86d1schaJdmzrwOxHZff7qzKwq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GcyukvSY; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b8be13cb1so28459015ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:13:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727824399; x=1728429199; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vF28sAx//tve6z0mOEzHepFQAlUB74FiXmJYm/deJzs=;
-        b=GcyukvSYLinJqnphUXMrjaJUwm3u35ziqIER7RQ/qgNEzgXW/HhZXUR/Jj+zoQkY7d
-         8GSgaHCC/Xy1hUAAgCoTG1grcZDs7mYt1DukhFCzv1O0hYcN7OYJigRphI3/ijptB6hj
-         ywOmY82HQDSR43u3ptquJLfDD+arQtjeBLBWNc06ciyWe0ApQC5Hr5Wl+6jPgwUZoCML
-         vll6lbiFkDfF2UF0WptnfXHPB6N1fIWsDOikSM0kOCL2AmFIQKL7w1NSB3FQw7mYbdLA
-         3B5VhmYowPVERbNyKSAKHQq3Zn9S7rW+akA2cPKf5y3pOvNIjITyQmTZstykGHWKe1Ff
-         Ncng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727824399; x=1728429199;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vF28sAx//tve6z0mOEzHepFQAlUB74FiXmJYm/deJzs=;
-        b=VfTsEGh8cZ+XtcLEg5xRZY4h0yj+/puxFAVT7tWavchJ/yluXdI23sY+6ZCLs/CbaM
-         0FlGSrjr2TG+DpisnpTuh8fq651ud7W2ax6yLYcgRp/pvfbwJetU9NhJUqjkA0UKRLkb
-         a3/TBKxPcU7OAdTv4CIHySge/P/haqgs47oKtfBkQ4NOqmsz0NAvU5+t8D9bv9O2/9FQ
-         JZEj2CnuUYeO7eV3lCBIKB2KZNIwEH6PJN95HA1JbYQR6v+F+bANfMcNZdatO2Eimx3H
-         oEO8KaVpZtwxfBPAgOO55g48MihMJlAIdInyOEHRxXUzOXsFgiJjViAZVjaHLAMfxc93
-         jyQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXdH1vIV9Mo9Y79x3HBxyn7Lmv6r86TBC1m9M/3cKjioP7aV3sr3bkdUocAUUT1VNoeWaLZCRao5uEMiYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrqm34uW7vcMCkQFesT+VXJrLXXgWIqfQTlvP7ickr+HJxg90q
-	juLNAht0FNzCw8jAjR/bZ/TDkVRWTzEZPD4isFapW/f9DLBvvqVnPxncJTT7sGo=
-X-Google-Smtp-Source: AGHT+IEIrzHYfjGFMSAlwPPGGJUrbwH3BDEgMMmzhiHFcldc7QLYwSfdGVw09IGHWqEtu37pmMpU7g==
-X-Received: by 2002:a17:903:41c4:b0:20b:a431:8f17 with SMTP id d9443c01a7336-20bc5a887b7mr17332045ad.58.1727824398654;
-        Tue, 01 Oct 2024 16:13:18 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e37225sm74521465ad.197.2024.10.01.16.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 16:13:18 -0700 (PDT)
-Date: Tue, 1 Oct 2024 16:13:15 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	Ross Burton <ross.burton@arm.com>,
-	David Spickett <david.spickett@arm.com>,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v13 04/40] prctl: arch-agnostic prctl for shadow stack
-Message-ID: <ZvyCC7tJT7QoKO+D@debug.ba.rivosinc.com>
-References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
- <20241001-arm64-gcs-v13-4-222b78d87eee@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nI9G4r6tsKN4oKWZ57El7CO9R0DQFPjB3w690fPQ5TBojlLIfeZhCuJuCE4TpSCTdND/dRm1XcsLheExETdFnVrdARx46rkf1Teczx95y0LFmhOANpesZA/uJ7yDweoUIacA4kx0vUNofLWr5jKTXpSIO4Njay7JJQw7Lfetmhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Z7Sy0FX4; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SvmHdDNFN6b59tuW6qBvsEXIyWd5sLKDZWcPZWw7ZPo=; b=Z7Sy0FX4cUkFI8YXYQyqiN8xwP
+	TL8WDMn+iKp/ZhwKYj6vy6/HsO4H/4oTCKvCKth6lL5SPoSJcXyWsbu3Me+5N5SujDl+KmH2xHIr3
+	XAAczyjPdoSdG19IayDqLrbIkDb7rzr6n0G6R+6sBjGlCStGqFmfeWj85ypCzH7I4CHIpCaA8ouqc
+	25709dabQFXEjnGkkM1nMxS/9MdjHJ5gfRaJprKl/AA3OylkE7bKcXRMGVUxQRLJw+DOpCTpXuzXL
+	N/D6hC8X8sUn6VEuuDD8gWHMuozRWGKqW2CUk/25ur/xkRrRGFezkQKm/KzIf6eUk7WAbo3fMpN/G
+	A3/g+duw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59900)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1svm4D-0006Zi-1B;
+	Wed, 02 Oct 2024 00:14:05 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1svm45-0005LU-2n;
+	Wed, 02 Oct 2024 00:13:57 +0100
+Date: Wed, 2 Oct 2024 00:13:57 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Brad Griffis <bgriffis@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, kernel@quicinc.com
+Subject: Re: [PATCH net v6 0/2] Fix AQR PMA capabilities
+Message-ID: <ZvyCNfDqwbwnjb0X@shell.armlinux.org.uk>
+References: <20241001224626.2400222-1-quic_abchauha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001-arm64-gcs-v13-4-222b78d87eee@kernel.org>
+In-Reply-To: <20241001224626.2400222-1-quic_abchauha@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Oct 01, 2024 at 11:58:43PM +0100, Mark Brown wrote:
->Three architectures (x86, aarch64, riscv) have announced support for
->shadow stacks with fairly similar functionality.  While x86 is using
->arch_prctl() to control the functionality neither arm64 nor riscv uses
->that interface so this patch adds arch-agnostic prctl() support to
->get and set status of shadow stacks and lock the current configuation to
->prevent further changes, with support for turning on and off individual
->subfeatures so applications can limit their exposure to features that
->they do not need.  The features are:
->
->  - PR_SHADOW_STACK_ENABLE: Tracking and enforcement of shadow stacks,
->    including allocation of a shadow stack if one is not already
->    allocated.
->  - PR_SHADOW_STACK_WRITE: Writes to specific addresses in the shadow
->    stack.
->  - PR_SHADOW_STACK_PUSH: Push additional values onto the shadow stack.
->
->These features are expected to be inherited by new threads and cleared
->on exec(), unknown features should be rejected for enable but accepted
->for locking (in order to allow for future proofing).
->
->This is based on a patch originally written by Deepak Gupta but modified
->fairly heavily, support for indirect landing pads is removed, additional
->modes added and the locking interface reworked.  The set status prctl()
->is also reworked to just set flags, if setting/reading the shadow stack
->pointer is required this could be a separate prctl.
->
->Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
->Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
->Acked-by: Yury Khrustalev <yury.khrustalev@arm.com>
->Signed-off-by: Mark Brown <broonie@kernel.org>
->---
-> include/linux/mm.h         |  4 ++++
-> include/uapi/linux/prctl.h | 22 ++++++++++++++++++++++
-> kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
-> 3 files changed, 56 insertions(+)
+On Tue, Oct 01, 2024 at 03:46:24PM -0700, Abhishek Chauhan wrote:
+> Patch 1:- 
+> AQR115c reports incorrect PMA capabilities which includes
+> 10G/5G and also incorrectly disables capabilities like autoneg
+> and 10Mbps support.
+> 
+> AQR115c as per the Marvell databook supports speeds up to 2.5Gbps
+> with autonegotiation.
+> 
+> Patch 2:- 
+> Remove the use of phy_set_max_speed in phy driver as the
+> function is mainly used in MAC driver to set the max
+> speed.
+> 
+> Instead use get_features to fix up Phy PMA capabilities for
+> AQR111, AQR111B0, AQR114C and AQCS109
 
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+For both patches:
 
->
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
