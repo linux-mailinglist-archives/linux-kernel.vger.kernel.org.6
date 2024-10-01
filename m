@@ -1,122 +1,145 @@
-Return-Path: <linux-kernel+bounces-346019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5BDA98BE6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1798BE66
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6137C1F244CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:51:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7D0CB24D53
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718101C57A1;
-	Tue,  1 Oct 2024 13:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36701C57A4;
+	Tue,  1 Oct 2024 13:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Fo9ql/jW"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YKqD4Ys/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418C91C5783;
-	Tue,  1 Oct 2024 13:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96781C4624;
+	Tue,  1 Oct 2024 13:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790687; cv=none; b=mDu0FXmi5bd3RmO1Amybckbh6/lx/oT97OD4H3/ubBcUf4lTij5bDrM+hs8mV6ItrGgajWeBQVnr4FMXQWXZ1onbikYaxHI3C6vVYTj0LhEO/aN726URJkYZeb3INSX8MQnIyVRb0aFCYQBsQoQu+AhA//nITc2c6j3u4O21b3U=
+	t=1727790650; cv=none; b=cppJe0aGaMY16zvYvtAoNLXRumbO5NgHtffSZm7q6SXJCUJhfovzbtJoHcsc+Ejg878mSSWjB8PO4qsq+0uhNOlMGMXQL8PL4AF7ETAnz7wCaVcmrqBihv0+X58lIisRA8Heg2stWBjuwUTc9Qh6CxyjdhhU3cQcrmxOQCe6tOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790687; c=relaxed/simple;
-	bh=xfk6sO9sDW2Ddsv8scWV99zq1MGaAerIsbhg1d4kARA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=UaHL8HgksUzY08cadOzsJqGg2y5HSk/96p5UnxHHbm8YAZZdaIRTb0td2hBWbIb/SAOLXjBM9Uz4sFmGKVBoxfdPoy0hDrL5Mx+By9uwL4vshCaZC40lBlUHBg3n2OPHcKjCD3OipkIc0M84gurryMMWcyXgt2AEIxNu7iiAEhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Fo9ql/jW; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727790685; x=1759326685;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=xfk6sO9sDW2Ddsv8scWV99zq1MGaAerIsbhg1d4kARA=;
-  b=Fo9ql/jWOykpUxLqi90VNL2Cy91uS/XRZsRlwvp6c04qnOR8PgQYm5PB
-   HdaNuhWJhj3ddyIok2iWEQDm9JOBAxY5+uF9/rzW6ABZQ8dnn60sHwgjF
-   CAKs/ij9IHyL/creW3aa8LXusXuFeAFomyQ3wWSncG3CLKIjcQ4KxxyUN
-   ekydsMMce/21rIvShO8VF63UVinui5VNL3sWhQkdxV9Q+WC0meyqLvrvD
-   9rnz0FEcsOQkHAm8T9whm0V9gFqDn6a+VE7sX2RRNPyfCZPIVP9Nqel0w
-   A6qNHSKyBtorQste2hdDTct1RslMmlbuzXpb30p+2eKN8VNUuth5un98y
-   Q==;
-X-CSE-ConnectionGUID: +oQdX0lcTd+VPfROt+JSQg==
-X-CSE-MsgGUID: Z7fujs2dQPqAvcR6B7HZfg==
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="33057480"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 06:51:24 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 1 Oct 2024 06:51:13 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 06:51:10 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Tue, 1 Oct 2024 15:50:34 +0200
-Subject: [PATCH net-next 04/15] net: sparx5: modify SPX5_PORTS_ALL macro
+	s=arc-20240116; t=1727790650; c=relaxed/simple;
+	bh=Wrdy0e1dz6T5uwCE6i2Zj6+AsBKQNypB0lnUzsj5xCI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QswNP8V/zr/KlzChTo5U6IPHyLa/XDw85cdKpbkoPj90nMt+5Ek1H/Eg4JCr0FZu5xFrGzneogH9oFqnPTh0tSEx4AzPaL1AkVu31JbusPnXz3IXwidQ+w2c2szb92zadZRzmQhm3YjkffzFU/mUBZ2oxAPa1ph2jfqJWC883Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YKqD4Ys/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727790644;
+	bh=Wrdy0e1dz6T5uwCE6i2Zj6+AsBKQNypB0lnUzsj5xCI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=YKqD4Ys/oGurqoWIOyx7Wn0hRTWDfyPPhsxJBv4liLaL79RWNITs6yYigoa9t0bYR
+	 apYOKXRQwcu6+xBYSMhtRzZYX8riNbY3jwGgx54B/mqtnC6ECCMjvF74G/KjKZbgVO
+	 RJzRdFANc0GPw4iUWTjgPb0VclImiN7kwj4rnOBg0+pqJjlWEITVsXj59SE2r7LUoj
+	 5BPDH1RBCLKq/QZ/2cqqNz0kemyYFg31AZl1ypfI77sHEXKV+OTQMPdPXhzsDquLmV
+	 MCPct2nkHj5eYZYOGgoLbN+JW1S3vLWHHoQv7M/X9CrsLunLU6HnxNWpHM5ZiXsYda
+	 Riy6fn3Jf9ZCg==
+Received: from [192.168.50.250] (unknown [171.76.80.165])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: vignesh)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6F28B17E0FC0;
+	Tue,  1 Oct 2024 15:50:39 +0200 (CEST)
+Message-ID: <87fea8ea-fe9d-4114-b03c-7ec50a4be874@collabora.com>
+Date: Tue, 1 Oct 2024 19:20:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] docs/gpu: ci: update flake tests requirements
+From: Vignesh Raman <vignesh.raman@collabora.com>
+To: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
+ amd-gfx@lists.freedesktop.org
+Cc: daniels@collabora.com, helen.koike@collabora.com, airlied@gmail.com,
+ daniel@ffwll.ch, robdclark@gmail.com, guilherme.gallo@collabora.com,
+ sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com,
+ dmitry.baryshkov@linaro.org, mripard@kernel.org, rodrigo.vivi@intel.com,
+ quic_abhinavk@quicinc.com, linux-mediatek@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20240930095255.2071586-1-vignesh.raman@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240930095255.2071586-1-vignesh.raman@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241001-b4-sparx5-lan969x-switch-driver-v1-4-8c6896fdce66@microchip.com>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
-	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	Richard Cochran <richardcochran@gmail.com>, <horms@kernel.org>,
-	<justinstitt@google.com>, <gal@nvidia.com>, <aakash.r.menon@gmail.com>,
-	<jacob.e.keller@intel.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14-dev
 
-In preparation for lan969x, we need to define the SPX5_PORTS_ALL macro
-as 70 (65 front ports + 5 internal ports). This is required as the
-SPX5_PORT_CPU will be redefined as a non-constant in a subsequent patch.
-And as SPX5_PORTS_ALL is used as an array size troughout the code, we
-have to make sure that it stays a constant.
+Hi amdgpu Maintainers,
 
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
----
- drivers/net/ethernet/microchip/sparx5/sparx5_main.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 30/09/24 15:22, Vignesh Raman wrote:
+> Update the documentation to specify linking to a relevant GitLab
+> issue or email report for each new flake entry. Added specific
+> GitLab issue urls for amdgpu, i915, msm and xe driver.
+> 
+> Acked-by: Maxime Ripard <mripard@kernel.org>
+> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> #intel and xe
+> Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
+> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
+> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
+> ---
+> 
+> v2:
+> - Add gitlab issue link for msm driver.
+> 
+> v3:
+> - Update docs to specify we use email reporting or GitLab issues for flake entries.
+> 
+> v4:
+> - Add gitlab issue link for xe driver.
+> 
+> ---
+>   Documentation/gpu/automated_testing.rst | 14 ++++++++++----
+>   1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
+> index 2d5a28866afe..6d7c6086034d 100644
+> --- a/Documentation/gpu/automated_testing.rst
+> +++ b/Documentation/gpu/automated_testing.rst
+> @@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
+>   the result. They will still be run.
+>   
+>   Each new flake entry must be associated with a link to the email reporting the
+> -bug to the author of the affected driver, the board name or Device Tree name of
+> -the board, the first kernel version affected, the IGT version used for tests,
+> -and an approximation of the failure rate.
+> +bug to the author of the affected driver or the relevant GitLab issue. The entry
+> +must also include the board name or Device Tree name, the first kernel version
+> +affected, the IGT version used for tests, and an approximation of the failure rate.
+>   
+>   They should be provided under the following format::
+>   
+> -  # Bug Report: $LORE_OR_PATCHWORK_URL
+> +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
+>     # Board Name: broken-board.dtb
+>     # Linux Version: 6.6-rc1
+>     # IGT Version: 1.28-gd2af13d9f
+>     # Failure Rate: 100
+>     flaky-test
+>   
+> +Use the appropriate link below to create a GitLab issue:
+> +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
 
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-index fdff83537418..824849869f61 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-@@ -52,13 +52,14 @@ enum sparx5_vlan_port_type {
- };
- 
- #define SPX5_PORTS             65
-+#define SPX5_PORTS_ALL         70 /* Total number of ports */
-+
- #define SPX5_PORT_CPU          (SPX5_PORTS)  /* Next port is CPU port */
- #define SPX5_PORT_CPU_0        (SPX5_PORT_CPU + 0) /* CPU Port 65 */
- #define SPX5_PORT_CPU_1        (SPX5_PORT_CPU + 1) /* CPU Port 66 */
- #define SPX5_PORT_VD0          (SPX5_PORT_CPU + 2) /* VD0/Port 67 used for IPMC */
- #define SPX5_PORT_VD1          (SPX5_PORT_CPU + 3) /* VD1/Port 68 used for AFI/OAM */
- #define SPX5_PORT_VD2          (SPX5_PORT_CPU + 4) /* VD2/Port 69 used for IPinIP*/
--#define SPX5_PORTS_ALL         (SPX5_PORT_CPU + 5) /* Total number of ports */
- 
- #define PGID_BASE              SPX5_PORTS /* Starts after port PGIDs */
- #define PGID_UC_FLOOD          (PGID_BASE + 0)
+Please could you ack this patch. Thanks.
 
--- 
-2.34.1
+> +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
+> +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
+> +xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
+> +
+>   drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
+>   -----------------------------------------------------------
+>   
 
+Regards,
+Vignesh
 
