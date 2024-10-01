@@ -1,145 +1,339 @@
-Return-Path: <linux-kernel+bounces-345912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2577B98BCCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7BB98BCD1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3121C2317E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF9351C21ECE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357BD1C2DC2;
-	Tue,  1 Oct 2024 12:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE031C244E;
+	Tue,  1 Oct 2024 12:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bdig4z91"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PShiBcAJ"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850601C244E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AE51C3F2C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787167; cv=none; b=BrOXcxmIQWLyPWabOGTk4Glidt+e6JqYPaArjKmdZVLc1j4JLPn6OA511p5ZlgoHdZg8sb6+Knb63NQZUNXVMwePJTho3w33oYRIP240+0sOUh3IMGTOHrku7WVx4ZN5uImzOW9w6Q7wtgGnQxopUk3NaTeKyo9PPGO6Zs+r92I=
+	t=1727787170; cv=none; b=glEnPfZiFulWlB53iuO0qRY6w+xHRaKmU8y7Jr7mOwiGbjTFTOc3InTHBKkr1lU8oG3cMGh48RMyHQ7mJ/nM2FamBnn82iEeQ3go7yFPyKy+bHaNXuGLMHRRYb1qVsawC32oviqCb51MRPgnUTU9z1V9fA0TKfDvz8BTYeATwkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787167; c=relaxed/simple;
-	bh=3A6vNta9SvTLyYbuZA6Y9cFT4NVEjyyhoIMiYJsbc60=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kB+0eugvgf628Cotybkb+6JLO73EWKmOHVk297oCmDDNWAMXzYy/aDA8F2mQL17KJryT+pEBmZ39wo+eBaDKu4QK+4ffM5bXe57IetT3Uqd75SOEe6ZsYAHiVFhkRC2sElk/sDDvOt/4s2lovZenOAPjoa8IwtqXmH8T9j4Wj3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bdig4z91; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727787164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GEPx7v6OMKseDg9pVfYwY8ZmnNisp90m0mp2T3pN8ko=;
-	b=bdig4z914fiPP2mvFkf50LnABKedV+zjztirgt93VnRKMsAhDQCUqRoyNQSdke7k0IIAV1
-	IvWRAliceCd38ecaO2WUEztvo+A1J0zCrCxbcRXLJEW0qvNUqf7ljJ4aV3N3/a0hq6Anew
-	9rm2WjnUrPyGFOpCASNrJ0rg7TH+R34=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-9dZ3LAmcNsafF__AmqlxsQ-1; Tue, 01 Oct 2024 08:52:43 -0400
-X-MC-Unique: 9dZ3LAmcNsafF__AmqlxsQ-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a9a6251df5so1223120585a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:52:43 -0700 (PDT)
+	s=arc-20240116; t=1727787170; c=relaxed/simple;
+	bh=ETWbFL7P9mKDhnyvqRFa2P4dBmzjjbMZd/BAbyRinDk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=B36urZ+GF74zIhvthI2XpRxAQDOi8Gaqqlm+4w8a2eKDfNCENMnr580Fr9Ra5A7umksKa6QrDzMR44U1quOsdG7VlV7WJfNrS0Sfyc91nNcTXvuIydSsFsi1sGtGDP+6zgKqA0UuhvO2vsEUmF9Nod3I25id0OCplZI+gxlf2cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PShiBcAJ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37cdbdbbb1cso1897862f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727787166; x=1728391966; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=D77oab8ksLoAnmqxINtp3jlUWlLbi0Qd5k/MQLHxmcA=;
+        b=PShiBcAJXxYvd+JiEiHlsm5pV0OE9R1wBj1AbvQa0e+R0O9Yk0/4+VuKjfsGlsO3k/
+         XhbBAjb1E/p/9yWpydUCcc/8s5MpPcCBcVF43UXRkj0ilm8Zesuhn37sN2sunXrnDRgL
+         Rw/MavbbxBdWf4+J90Ald3NRmAhr+dunOipmZRk5czTxOUIhgYQaakBhGJzhlFYAbw2E
+         0QizAhR7D0GWFrA2JaGSiQWvLjrS1mfHiURfAvgXYt8ZY+xXhO5Ujsei18qrbopN8T70
+         GO50pgl/yRtaukhJfqaeJGpCRQHmz4E9yGYo+hXVJONW6GhbyqbeO9lfkmfTyZ8NI2G0
+         T0nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727787163; x=1728391963;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GEPx7v6OMKseDg9pVfYwY8ZmnNisp90m0mp2T3pN8ko=;
-        b=TgW6TXigSbZsmuwAJjl7zEJHgObZKPcLDIN/5wCqWib40t84kiaiD3Prr5rrpH7nnD
-         6qm9v6+iaTt+Z/3FGyHscJN0XFOLtxFOw4QhEx9/uKKMcPD2sR3m6yspaKAy5phelYxs
-         0iD5E6AYFNYwx1CMUIlrAcjF8zA9oXUpTCztE2g9rfUKqW/kVVvQ7bveaMQzDHODLW+w
-         raoRySKe171Lk1O5X691YJ6jaYR4HB4pggwWXqJ7FzK1vdfQvmFRXuyNjLBC4EhkD0im
-         D1NSLoCsWLeKnMLAZNRbsJMpupT1/OKv3IxCjauGVvLcoHniKYY2aaYtzGOBExBNN3vu
-         p6Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIJBzpsiJ4b4XSa1CL251eevAZ9lt3Zzx+/g2pfsSr/D4GpWpPIPXc2paCITu8CQP9cOcw1ISukOlaGRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3LzcXICTRuAo/Ndb83s8QBsGz4GDMBkjxgHzqFh/gW4tv/NJt
-	dtiGSfRMRyyrYbstSUGwzcAHlQy/A2z2Mq1pAxR7pvNl1BUPAoRqbYBWG7wdf9BVy+074ZZnrZi
-	0PJmuoS7kbmWQJkqethzPewS/+6nWeZIqw86Kec1fj1nwPhwB7ceAmf1BzGT6Qg==
-X-Received: by 2002:a05:620a:2946:b0:7ac:e931:f158 with SMTP id af79cd13be357-7ae378dbba3mr2612318285a.53.1727787162861;
-        Tue, 01 Oct 2024 05:52:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGc2vx2t9dX9fiRJfJxGZjbq1Mw82t9tHhJSNRuUJgNwVDEGGHA3aFaYZ0NFxy4voUaTAhpag==
-X-Received: by 2002:a05:620a:2946:b0:7ac:e931:f158 with SMTP id af79cd13be357-7ae378dbba3mr2612314985a.53.1727787162455;
-        Tue, 01 Oct 2024 05:52:42 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae3782b961sm499235085a.75.2024.10.01.05.52.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 05:52:40 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: paulmck@kernel.org
-Cc: Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, sfr@canb.auug.org.au,
- linux-next@vger.kernel.org, kernel-team@meta.com, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [BUG almost bisected] Splat in dequeue_rt_stack() and build error
-In-Reply-To: <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
-References: <8094db32-5c81-4537-8809-ddfe92a0ac6c@paulmck-laptop>
- <4b93e5cf-c71e-4c64-9369-4ab3f43d9693@paulmck-laptop>
- <xhsmh1q27o2us.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <cc537207-68a3-4dda-a8ec-6dda2fc1985d@paulmck-laptop>
- <250cde11-650f-4689-9c36-816406f1b9b8@paulmck-laptop>
- <182ef9c6-63a4-4608-98de-22ef4d35be07@paulmck-laptop>
- <xhsmh34m38pdl.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ac93f995-09bc-4d2c-8159-6afbfbac0598@paulmck-laptop>
- <43d513c5-7620-481b-ab7e-30e76babbc80@paulmck-laptop>
- <xhsmhed50vplj.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <d6033378-d716-4848-b7a5-dcf1a6b14669@paulmck-laptop>
-Date: Tue, 01 Oct 2024 14:52:37 +0200
-Message-ID: <xhsmhbk04ugru.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        d=1e100.net; s=20230601; t=1727787166; x=1728391966;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D77oab8ksLoAnmqxINtp3jlUWlLbi0Qd5k/MQLHxmcA=;
+        b=xJHn/ZQRNubLDDzR2omLv43cNXdvEo+7rign0NJZ1dZ96mXyIMBnwsYdU4sjc79eH9
+         pRKkhPjBZWseD9L2NS7TtKKwUPZYWLDqac6ZKmtLWazXnDKYj38xLWR8CiFHexnfni6R
+         UhrFwz2ZUyj9IZlnqHdjcQu3id3v0q4JKKwAPJnUeLRrJMoH1uwEoKC/RU6X3o3CRrcX
+         FYzWFma0ePw13ZPZwxL4HUDCMuLUMRRXYWn1pymwLTi+2hi+CYZHr5qv8i3iL38tCJoI
+         OItBebVARG9A9vAm94ZT/vlGS8ribG+Ok3rsz8eh/pKIr/Y0n3Y7INzGqTsH1lcgJqVR
+         kToA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd/JCNZxeY3/uQLdu43DEgSaZNiUgg2ER2f+y/KNsw7IvtZYnLVqWJrz/5Aw7CiZMokeX8COxOUHQynY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7GzoaAF1dwaMeCKo6+3Ksf4dJbSS3NEbLLfQ+ew2cKTACvCtx
+	ZEVXj7b3/HDrJDMsj19zxZQajtslzcRNXKxiHNop5c9hd+wn2V5ghzDploO4UUs=
+X-Google-Smtp-Source: AGHT+IFMeMdaNuiUyAJXpNRDOm3mNQFjc6pxWIoClyytjs7X7vyNrmpeK6Y3DMKJh1eE+zv6rFOP2w==
+X-Received: by 2002:adf:fd12:0:b0:37c:d53d:cb63 with SMTP id ffacd0b85a97d-37cd5a9d8eamr8472276f8f.28.1727787166275;
+        Tue, 01 Oct 2024 05:52:46 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd564d0a3sm11960259f8f.15.2024.10.01.05.52.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 05:52:45 -0700 (PDT)
+Message-ID: <3820e6b6-5bda-4ab1-82fe-1b8001d2b810@linaro.org>
+Date: Tue, 1 Oct 2024 13:52:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] perf python: Constify variables and parameters
+To: Ian Rogers <irogers@google.com>
+References: <20240918225418.166717-1-irogers@google.com>
+ <20240918225418.166717-3-irogers@google.com>
+Content-Language: en-US
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Xu Yang <xu.yang_2@nxp.com>,
+ Andi Kleen <ak@linux.intel.com>, Zixian Cai <fzczx123@gmail.com>,
+ Paran Lee <p4ranlee@gmail.com>, Ben Gainey <ben.gainey@arm.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240918225418.166717-3-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 01/10/24 03:10, Paul E. McKenney wrote:
-> On Mon, Sep 30, 2024 at 10:44:24PM +0200, Valentin Schneider wrote:
->> On 30/09/24 12:09, Paul E. McKenney wrote:
->> >
->> > And Peter asked that I send along a reproducer, which I am finally getting
->> > around to doing:
->> >
->> >       tools/testing/selftests/rcutorture/bin/kvm.sh --allcpus --duration 12h --configs "100*TREE03" --trust-make
->> >
->>
->> FYI Tomas (on Cc) has been working on getting pretty much this to run on
->> our infra, no hit so far.
->>
->> How much of a pain would it be to record an ftrace trace while this runs?
->> I'm thinking sched_switch, sched_wakeup and function-tracing
->> dl_server_start() and dl_server_stop() would be a start.
->>
->> AIUI this is running under QEMU so we'd need to record the trace within
->> that, I'm guessing we can (ab)use --bootargs to feed it tracing arguments,
->> but how do we get the trace out?
->
-> Me, I would change those warnings to dump the trace buffer to the
-> console when triggered.  Let me see if I can come up with something
-> better over breakfast.  And yes, there is the concern that adding tracing
-> will suppress this issue.
->
-> So is there some state that I could manually dump upon triggering either
-> of these two warnings?  That approach would minimize the probability of
-> suppressing the problem.
->
 
-Usually enabling panic_on_warn and getting a kdump is ideal, but here this
-is with QEMU - I know we can get a vmcore out via dump-guest-memory in the
-QEMU monitor, but I don't have an immediate solution to do that on a
-warn/panic.
 
-Also I'd say here we're mostly interested in the sequence of events leading
-us to the warn (dl_server_start() when the DL entity is somehow still
-enqueued) rather than the state of things when the warn is hit, and for
-that dumping the ftrace buffer to the console sounds good enough to me.
+On 18/09/2024 11:54 pm, Ian Rogers wrote:
+> Opportunistically constify variables and parameters when possible.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
->                                                       Thanx, Paul
+Reviewed-by: James Clark <james.clark@linaro.org>
+
+> ---
+>   tools/perf/util/python.c | 55 +++++++++++++++++++++-------------------
+>   1 file changed, 29 insertions(+), 26 deletions(-)
+> 
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 02279ab4967c..13dad27169a0 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -62,7 +62,7 @@ struct pyrf_event {
+>   	sample_member_def(sample_period, period, T_ULONGLONG, "event period"),		 \
+>   	sample_member_def(sample_cpu, cpu, T_UINT, "event cpu"),
+>   
+> -static char pyrf_mmap_event__doc[] = PyDoc_STR("perf mmap event object.");
+> +static const char pyrf_mmap_event__doc[] = PyDoc_STR("perf mmap event object.");
+>   
+>   static PyMemberDef pyrf_mmap_event__members[] = {
+>   	sample_members
+> @@ -77,7 +77,7 @@ static PyMemberDef pyrf_mmap_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_mmap_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_mmap_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	PyObject *ret;
+>   	char *s;
+> @@ -106,7 +106,7 @@ static PyTypeObject pyrf_mmap_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_mmap_event__repr,
+>   };
+>   
+> -static char pyrf_task_event__doc[] = PyDoc_STR("perf task (fork/exit) event object.");
+> +static const char pyrf_task_event__doc[] = PyDoc_STR("perf task (fork/exit) event object.");
+>   
+>   static PyMemberDef pyrf_task_event__members[] = {
+>   	sample_members
+> @@ -119,7 +119,7 @@ static PyMemberDef pyrf_task_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_task_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_task_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	return PyUnicode_FromFormat("{ type: %s, pid: %u, ppid: %u, tid: %u, "
+>   				   "ptid: %u, time: %" PRI_lu64 "}",
+> @@ -141,7 +141,7 @@ static PyTypeObject pyrf_task_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_task_event__repr,
+>   };
+>   
+> -static char pyrf_comm_event__doc[] = PyDoc_STR("perf comm event object.");
+> +static const char pyrf_comm_event__doc[] = PyDoc_STR("perf comm event object.");
+>   
+>   static PyMemberDef pyrf_comm_event__members[] = {
+>   	sample_members
+> @@ -152,7 +152,7 @@ static PyMemberDef pyrf_comm_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_comm_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_comm_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	return PyUnicode_FromFormat("{ type: comm, pid: %u, tid: %u, comm: %s }",
+>   				   pevent->event.comm.pid,
+> @@ -170,7 +170,7 @@ static PyTypeObject pyrf_comm_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_comm_event__repr,
+>   };
+>   
+> -static char pyrf_throttle_event__doc[] = PyDoc_STR("perf throttle event object.");
+> +static const char pyrf_throttle_event__doc[] = PyDoc_STR("perf throttle event object.");
+>   
+>   static PyMemberDef pyrf_throttle_event__members[] = {
+>   	sample_members
+> @@ -181,9 +181,10 @@ static PyMemberDef pyrf_throttle_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_throttle_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_throttle_event__repr(const struct pyrf_event *pevent)
+>   {
+> -	struct perf_record_throttle *te = (struct perf_record_throttle *)(&pevent->event.header + 1);
+> +	const struct perf_record_throttle *te = (const struct perf_record_throttle *)
+> +		(&pevent->event.header + 1);
+>   
+>   	return PyUnicode_FromFormat("{ type: %sthrottle, time: %" PRI_lu64 ", id: %" PRI_lu64
+>   				   ", stream_id: %" PRI_lu64 " }",
+> @@ -201,7 +202,7 @@ static PyTypeObject pyrf_throttle_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_throttle_event__repr,
+>   };
+>   
+> -static char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
+> +static const char pyrf_lost_event__doc[] = PyDoc_STR("perf lost event object.");
+>   
+>   static PyMemberDef pyrf_lost_event__members[] = {
+>   	sample_members
+> @@ -210,7 +211,7 @@ static PyMemberDef pyrf_lost_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_lost_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_lost_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	PyObject *ret;
+>   	char *s;
+> @@ -236,7 +237,7 @@ static PyTypeObject pyrf_lost_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_lost_event__repr,
+>   };
+>   
+> -static char pyrf_read_event__doc[] = PyDoc_STR("perf read event object.");
+> +static const char pyrf_read_event__doc[] = PyDoc_STR("perf read event object.");
+>   
+>   static PyMemberDef pyrf_read_event__members[] = {
+>   	sample_members
+> @@ -245,7 +246,7 @@ static PyMemberDef pyrf_read_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_read_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_read_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	return PyUnicode_FromFormat("{ type: read, pid: %u, tid: %u }",
+>   				   pevent->event.read.pid,
+> @@ -266,7 +267,7 @@ static PyTypeObject pyrf_read_event__type = {
+>   	.tp_repr	= (reprfunc)pyrf_read_event__repr,
+>   };
+>   
+> -static char pyrf_sample_event__doc[] = PyDoc_STR("perf sample event object.");
+> +static const char pyrf_sample_event__doc[] = PyDoc_STR("perf sample event object.");
+>   
+>   static PyMemberDef pyrf_sample_event__members[] = {
+>   	sample_members
+> @@ -274,7 +275,7 @@ static PyMemberDef pyrf_sample_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_sample_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_sample_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	PyObject *ret;
+>   	char *s;
+> @@ -289,13 +290,13 @@ static PyObject *pyrf_sample_event__repr(struct pyrf_event *pevent)
+>   }
+>   
+>   #ifdef HAVE_LIBTRACEEVENT
+> -static bool is_tracepoint(struct pyrf_event *pevent)
+> +static bool is_tracepoint(const struct pyrf_event *pevent)
+>   {
+>   	return pevent->evsel->core.attr.type == PERF_TYPE_TRACEPOINT;
+>   }
+>   
+>   static PyObject*
+> -tracepoint_field(struct pyrf_event *pe, struct tep_format_field *field)
+> +tracepoint_field(const struct pyrf_event *pe, struct tep_format_field *field)
+>   {
+>   	struct tep_handle *pevent = field->event->tep;
+>   	void *data = pe->sample.raw_data;
+> @@ -384,7 +385,7 @@ static PyTypeObject pyrf_sample_event__type = {
+>   	.tp_getattro	= (getattrofunc) pyrf_sample_event__getattro,
+>   };
+>   
+> -static char pyrf_context_switch_event__doc[] = PyDoc_STR("perf context_switch event object.");
+> +static const char pyrf_context_switch_event__doc[] = PyDoc_STR("perf context_switch event object.");
+>   
+>   static PyMemberDef pyrf_context_switch_event__members[] = {
+>   	sample_members
+> @@ -394,7 +395,7 @@ static PyMemberDef pyrf_context_switch_event__members[] = {
+>   	{ .name = NULL, },
+>   };
+>   
+> -static PyObject *pyrf_context_switch_event__repr(struct pyrf_event *pevent)
+> +static PyObject *pyrf_context_switch_event__repr(const struct pyrf_event *pevent)
+>   {
+>   	PyObject *ret;
+>   	char *s;
+> @@ -474,7 +475,7 @@ static PyTypeObject *pyrf_event__type[] = {
+>   	[PERF_RECORD_SWITCH_CPU_WIDE]  = &pyrf_context_switch_event__type,
+>   };
+>   
+> -static PyObject *pyrf_event__new(union perf_event *event)
+> +static PyObject *pyrf_event__new(const union perf_event *event)
+>   {
+>   	struct pyrf_event *pevent;
+>   	PyTypeObject *ptype;
+> @@ -542,7 +543,7 @@ static PySequenceMethods pyrf_cpu_map__sequence_methods = {
+>   	.sq_item   = pyrf_cpu_map__item,
+>   };
+>   
+> -static char pyrf_cpu_map__doc[] = PyDoc_STR("cpu map object.");
+> +static const char pyrf_cpu_map__doc[] = PyDoc_STR("cpu map object.");
+>   
+>   static PyTypeObject pyrf_cpu_map__type = {
+>   	PyVarObject_HEAD_INIT(NULL, 0)
+> @@ -611,7 +612,7 @@ static PySequenceMethods pyrf_thread_map__sequence_methods = {
+>   	.sq_item   = pyrf_thread_map__item,
+>   };
+>   
+> -static char pyrf_thread_map__doc[] = PyDoc_STR("thread map object.");
+> +static const char pyrf_thread_map__doc[] = PyDoc_STR("thread map object.");
+>   
+>   static PyTypeObject pyrf_thread_map__type = {
+>   	PyVarObject_HEAD_INIT(NULL, 0)
+> @@ -795,7 +796,7 @@ static PyMethodDef pyrf_evsel__methods[] = {
+>   	{ .ml_name = NULL, }
+>   };
+>   
+> -static char pyrf_evsel__doc[] = PyDoc_STR("perf event selector list object.");
+> +static const char pyrf_evsel__doc[] = PyDoc_STR("perf event selector list object.");
+>   
+>   static PyTypeObject pyrf_evsel__type = {
+>   	PyVarObject_HEAD_INIT(NULL, 0)
+> @@ -1078,7 +1079,7 @@ static PySequenceMethods pyrf_evlist__sequence_methods = {
+>   	.sq_item   = pyrf_evlist__item,
+>   };
+>   
+> -static char pyrf_evlist__doc[] = PyDoc_STR("perf event selector list object.");
+> +static const char pyrf_evlist__doc[] = PyDoc_STR("perf event selector list object.");
+>   
+>   static PyTypeObject pyrf_evlist__type = {
+>   	PyVarObject_HEAD_INIT(NULL, 0)
+> @@ -1100,10 +1101,12 @@ static int pyrf_evlist__setup_types(void)
+>   
+>   #define PERF_CONST(name) { #name, PERF_##name }
+>   
+> -static struct {
+> +struct perf_constant {
+>   	const char *name;
+>   	int	    value;
+> -} perf__constants[] = {
+> +};
+> +
+> +static const struct perf_constant perf__constants[] = {
+>   	PERF_CONST(TYPE_HARDWARE),
+>   	PERF_CONST(TYPE_SOFTWARE),
+>   	PERF_CONST(TYPE_TRACEPOINT),
 
 
