@@ -1,132 +1,166 @@
-Return-Path: <linux-kernel+bounces-346234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEFF98C187
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:25:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69DD298C17F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16FA628588C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91F91F228EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1AD41C9DF9;
-	Tue,  1 Oct 2024 15:24:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521D91C8FB2;
+	Tue,  1 Oct 2024 15:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WrT7u8ys"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="wdt9lXqO"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733581CB31D;
-	Tue,  1 Oct 2024 15:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D47645
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727796287; cv=none; b=B44D30X4p3k+WdrmYSKz77I6OS0zVQzzCrj6Yca02RrUpOJnJksIh0qrI+R5h/Qv1tiwIDAs+ee4zBoaDdSFVtgwd3pCXAaAVxWSxo/gmBi6JDkYDvTWoIMumK8l0NIgRXyO5wq0yCIx/ERblxnmz18fWa0bIHB9ie6XQqazXKI=
+	t=1727796276; cv=none; b=TOFyC+XVe5+ya/NsdijNjHKklJ75QXBczw6tuaWq8sVccLcnL2m9PT5F0pI7p00sE9AI/5+pbpbSUnvUoi0WLCApafl8vMDFopqhqzHMbSti/8yyMPIzFbOJjbkwZ7yZqEqB0r7VE2D0kAV5gE9Ma62Sbky1Lps1AvE3oEwzcBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727796287; c=relaxed/simple;
-	bh=jBFCuKXqIo6gd5R46Ijk43ctP8kU2hUIGzImwN4euSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8e5l0WL/KEDdmUFqLb0s2e3Xs3Ya2cvqeZ5yIvzibshvYGgs8HxCNoHN5Q563KAUjuXuMywiE+8fx2fwewpDnKttnfX+F4mJE93G8UeabgdTxq75C1BYH22sO5T5VoLwpckIiyW/Hg9AqIRc8cQt4ojN05+XG62MesYRkj/4Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WrT7u8ys; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cafda818aso54479795e9.2;
-        Tue, 01 Oct 2024 08:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727796284; x=1728401084; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ts8opjQWqr5XRKIeCryo93gnWbs/EAFRANxC/IOWkRI=;
-        b=WrT7u8ysN/16k1Xyxw+3Ay2EAc5eXL7CiMvGWn605rie/CYZ99M0CPLHFsnqafM9tF
-         4ZHlZ26rpwGVzRuIv+J9NPpnJJrdgSWwERGx3iotW2Ea+gxlSYAcDrS7J2VkenJEKF+7
-         QWG/B3etY7kevYC/pCDh3VUqKdOLfwkTe1DyF/+8LKT1UoiB960r1SfOWk9B0bG/c7z2
-         492ViPSrlMPRvfqjebeJ5/rLtT7VOly4tZxlm/BImVEHWK+Msu277bbu7vELOp0pcOJC
-         TS4Wuxe10rA8kfs0801oi1Q26tMQZsdFcdIcZ2XqXPaPxRUg0stgrx+bLGryCfDijxgS
-         SHIw==
+	s=arc-20240116; t=1727796276; c=relaxed/simple;
+	bh=niSGvh9NK28TTMNw+oIdMqrrpOCq9aq3rPkpfjc4Kxg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lZ5eDVtErUG8iH+i9mCcZwQSKsW2IkZFfVLQHCqXDulICkQzbhfpv1asRG6vai4aMmnnsZxMY3VgGSGRrZBQtl+mJHKWn88y9civSMDAYWRjoeoXP6OS3lAoxNUY+gY7pNX4IUKWov1p4gafgbM2hCIz8vDHZqh0OPiErmKiuEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=wdt9lXqO; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BB34E3F690
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1727796264;
+	bh=IfyD3J08rpFUiSXRGVfyNTQZMlD+U8b9QEj2MDOV6RI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=wdt9lXqOJTT3WqCBVHdUXIfCN2P6GRcRZm99rSmrSL3DcAAuEE7bfkYR2lv3IC1jC
+	 LMXztOlajxgslunrQ07nPkdKHGi5PyFB1IZTacyRUkcspFqlmbPy9O7DsyyyblPI4T
+	 HrgM8C/wUx1kFyyVhVRY4HhmDtyCHZCxciAHLVhMWtIhvilJqqUjj/+N3u0VGkpRxd
+	 hOMwCksO124Ob8W0wSr4rhR2FUlLRbPAL511XinNcfkakV8SIs0U+11fCLEb8tXVWY
+	 lE99RLIGv4On99DZBlAwmVUDvvcjBMyq4Yypp9CI8Z4gn9Qwx4F7rWo7hzC6KG6HPu
+	 a8m33PbKF920Q==
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cb08ed3a6so32842905e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:24:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727796284; x=1728401084;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ts8opjQWqr5XRKIeCryo93gnWbs/EAFRANxC/IOWkRI=;
-        b=Z4ShjIHlzjeKfSe5mskSo9d9BXTWg7A1gQerNqbEt6WyQXO9FwI1ET/1SIbXKaAS88
-         QyfCgMBrFCoDTpagt8+rKkNxqKMGq1Kf2vMms8I0OiA/1dzy/hFxC0cCZ11ksKtNA8Gj
-         Ck58w1DGJZeKgbGGIu2J0SHODuWx+k1j85Id1ygd4s3Il5HR9XR0ZKcc0Eb0RrWYsDGj
-         49W+A+u6zYZuaqUm3btM6+SBZk+SDf0ify1FJWVYO/pY//+oY8BJ2fubFKpJGk4YsdkJ
-         YgJUWaOuEI7doRmG1/WO5J9O89LJdo6F/IwSO5XY+Vmm2Hu+/0EtT622sEQTUOYYKtPC
-         3m7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUQb/mobCtRx4sDPGlmj/zmEYgl0JT3Jc3fX/6UZJ9/b/ZNJKSuDX8h2k5SvC3PymbYXYvwvpIwqRpK@vger.kernel.org, AJvYcCUghirIuP/GEn9NrRMu8ql1T/IiwsKxMGmaoWNE+SIgHfFQoqili/aj1TTZXRsycG2zYdE4id3PUqha2w==@vger.kernel.org, AJvYcCWz5QXZcICIfVh0uFQjnBlfzRTupmENaafFJ5z/08OoWqwqJXLgtIFiLl17z8sWyRNSaqa24gF5Sx4mFihX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2cVeGiGfKiZC/GsWg7W/tmFSkvdgJh4/Jk/YtTXnK1CxiYKoi
-	N7WexpqEsiNK79ozdhGb/SgbL+KHMw87efhAKVufePCftH5Y2HAx
-X-Google-Smtp-Source: AGHT+IH8rynOwUzsnyM6pEQ3H3r4yYZ51LGcYvrVKy2Wys8WA15Znq1t0LUWkWvuT4Rgwp/wfMpPrQ==
-X-Received: by 2002:a05:600c:4453:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-42f58490733mr104259445e9.23.1727796283392;
-        Tue, 01 Oct 2024 08:24:43 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42e96a56fd1sm179988115e9.48.2024.10.01.08.24.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 08:24:42 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] mips: bmips: bcm6358/6368: define required brcm,bmips-cbr-reg
-Date: Tue,  1 Oct 2024 17:23:59 +0200
-Message-ID: <20241001152404.15830-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1727796264; x=1728401064;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IfyD3J08rpFUiSXRGVfyNTQZMlD+U8b9QEj2MDOV6RI=;
+        b=VIN1QU66hTrDdQDqsHTh1QdovIRqt6PONoUB+v3u0KgGs2jRBQBeB9U356zJIr5pis
+         1UBhDGqOr3kA/iJnNZd8igqtZLVa29Qgt62WlEAcwq0RMZSTMYtdy/OiEQSq0HTjpJ36
+         6zSFUGlhqha/sLA3lcSDJjsS3+xiUyaPl2/Juh3C9T9FqZ7s2nAohPE3S5ZspoPug4ZU
+         DZemUtGHRxJSSYxBVnUBMc90QjLbuPYc/LxFF1A1MTq8qEfA3o4DO4mZaWT9jazVX+8a
+         MAkksEmaXOZCxXDG97vLMzn9TLUAxnQVtETi1D2p1UCjIZfR56VbV615GjLy+gHlAosv
+         u+2w==
+X-Forwarded-Encrypted: i=1; AJvYcCWbvegEtnzaLGS66ma09bldTSaKhXzYg1EvGBmrV7ULH9pRSP866IzOAS1GhjP69EHt6RmWda//lOOhGqE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3WwjMnwC3LuRgp5XUA/ceTWcY9qUP/45kTPIuuN+pUTYGpanU
+	H6za6VOvc+YlsuoIVadGuHBwEGdALvKewJX0/L1TI44MACjqMqFsV+Oa0T/ZtRcT/IQ4WmgglNv
+	1adz+lvMXbKfiLJMe2q8sl95s6nbQvQaQnsmIR64fh2+9SKZNaMfonG21KPmZCCNcfqjNBcFAtZ
+	z2aA==
+X-Received: by 2002:a05:600c:4686:b0:42f:6878:a68c with SMTP id 5b1f17b1804b1-42f7136168cmr23360665e9.13.1727796264173;
+        Tue, 01 Oct 2024 08:24:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGyHrSnHUcpAuWIVTs8rbNU+pK4oUSWrI04JLpfK1vnvT+GLbyBxh3h1bUViQwuHwGkJjXDwg==
+X-Received: by 2002:a05:600c:4686:b0:42f:6878:a68c with SMTP id 5b1f17b1804b1-42f7136168cmr23360415e9.13.1727796263594;
+        Tue, 01 Oct 2024 08:24:23 -0700 (PDT)
+Received: from [192.168.103.101] (ip-005-147-080-091.um06.pools.vodafone-ip.de. [5.147.80.91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cdddd86c7sm9461654f8f.26.2024.10.01.08.24.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 08:24:23 -0700 (PDT)
+Message-ID: <811ea10e-3bf1-45a5-a407-c09ec5756b48@canonical.com>
+Date: Tue, 1 Oct 2024 17:24:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
+ <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
+Content-Language: en-US
+From: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+In-Reply-To: <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-For the bcm6358/6368 SoC the brcm,bmips-cbr-reg due to bootloader
-misconfiguration or HW bug from running the system from TP1.
+On 01.10.24 15:51, Alexandre Ghiti wrote:
+> Hi Heinrich,
+> 
+> On 29/09/2024 16:02, Heinrich Schuchardt wrote:
+>> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
+>> EFI binary does not rely on pages that are both executable and
+>> writable.
+>>
+>> The flag is used by some distro versions of GRUB to decide if the EFI
+>> binary may be executed.
+>>
+>> As the Linux kernel neither has RWX sections nor needs RWX pages for
+>> relocation we should set the flag.
+>>
+>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+>> ---
+>>   arch/riscv/kernel/efi-header.S | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi- 
+>> header.S
+>> index 515b2dfbca75..c5f17c2710b5 100644
+>> --- a/arch/riscv/kernel/efi-header.S
+>> +++ b/arch/riscv/kernel/efi-header.S
+>> @@ -64,7 +64,7 @@ extra_header_fields:
+>>       .long    efi_header_end - _start            // SizeOfHeaders
+>>       .long    0                    // CheckSum
+>>       .short    IMAGE_SUBSYSTEM_EFI_APPLICATION        // Subsystem
+>> -    .short    0                    // DllCharacteristics
+>> +    .short    IMAGE_DLL_CHARACTERISTICS_NX_COMPAT    // 
+>> DllCharacteristics
+>>       .quad    0                    // SizeOfStackReserve
+>>       .quad    0                    // SizeOfStackCommit
+>>       .quad    0                    // SizeOfHeapReserve
+> 
+> 
+> I don't understand if this fixes something or not: what could go wrong 
+> if we don't do this?
+> 
+> Thanks,
+> 
+> Alex
+> 
 
-A workaround is now present to handle broken system that suffer from
-this bug hence add the now required property.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202409251520.pE12GzHd-lkp@intel.com/
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/mips/boot/dts/brcm/bcm6358.dtsi | 1 +
- arch/mips/boot/dts/brcm/bcm6368.dtsi | 1 +
- 2 files changed, 2 insertions(+)
+Hello Alexandre,
 
-diff --git a/arch/mips/boot/dts/brcm/bcm6358.dtsi b/arch/mips/boot/dts/brcm/bcm6358.dtsi
-index 777c4379ed03..5e487f66c343 100644
---- a/arch/mips/boot/dts/brcm/bcm6358.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm6358.dtsi
-@@ -13,6 +13,7 @@ cpus {
- 		#size-cells = <0>;
- 
- 		mips-hpt-frequency = <150000000>;
-+		brcm,bmips-cbr-reg = <0xff400000>;
- 
- 		cpu@0 {
- 			compatible = "brcm,bmips4350";
-diff --git a/arch/mips/boot/dts/brcm/bcm6368.dtsi b/arch/mips/boot/dts/brcm/bcm6368.dtsi
-index fc15e200877d..087f3295a14b 100644
---- a/arch/mips/boot/dts/brcm/bcm6368.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm6368.dtsi
-@@ -13,6 +13,7 @@ cpus {
- 		#size-cells = <0>;
- 
- 		mips-hpt-frequency = <200000000>;
-+		brcm,bmips-cbr-reg = <0xff400000>;
- 
- 		cpu@0 {
- 			compatible = "brcm,bmips4350";
--- 
-2.45.2
+https://learn.microsoft.com/en-us/windows-hardware/drivers/bringup/uefi-ca-memory-mitigation-requirements
+describes Microsoft's effort to improve security by avoiding memory 
+pages that are both executable and writable.
 
+IMAGE_DLL_CHARACTERISTICS_NX_COMPAT is an assertion by the EFI binary 
+that it does not use RWX pages. It may use the 
+EFI_MEMORY_ATTRIBUTE_PROTOCOL to set whether a page is writable or 
+executable (but not both).
+
+When using secure boot, compliant firmware will not allow loading a 
+binary if the flag is not set.
+
+Best regards
+
+Heinrich
 
