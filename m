@@ -1,133 +1,119 @@
-Return-Path: <linux-kernel+bounces-345946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF7598BD43
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:17:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC33598BD46
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:17:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91A831C220E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:17:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A3721C2278B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCE219B586;
-	Tue,  1 Oct 2024 13:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCF31EA87;
+	Tue,  1 Oct 2024 13:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uJzsN71R"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iErwiz0e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9E636C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956AFC121;
+	Tue,  1 Oct 2024 13:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788579; cv=none; b=qiL1fRcxtl3oZnTVpmyWrDWVlgIsjnNfPPAD8HQCjQ0fZQjvUclhoeIkuYKCanCPHKrQNBXc4X4xC1BgQ86MxsSzRjH42ROLIun3Pjqtr3sU+V8SosCm91LWNRdaHLX9vUNIGeRNaAFTcz6zlWw9ehlB5ZnyZL6MqrWNFn33XuA=
+	t=1727788654; cv=none; b=idfgwabdnYw2+Mk4Wy3WSYXgXg6snhROH7tEh7zMeHLkaPew897UWmept2sk5lbRORlNS8Nidd28DGNi2joRr/bX/ANb9NoVgKzOoxOaPI64z8KiRrTj7shSTbUdtNMokon+Fs+Kiz5ZnYRdtVKdxQjCycGtaHcQQ6EbR57w5i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788579; c=relaxed/simple;
-	bh=SphjmvuLEZ6VwxhylU6m9PzzW6ctLAYwq0OeKfZwkn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UJ+HVRZdkXuEBsq6iWXn/AJU9CpsLuKHHjf/F0MawJBw0c3ohggVo5NBMg/2eeGOxkmHAfTMBmIyZr/q+S5dDt6kR4O4F4qWEYcUCLKawqWMWSsAwGCBg2RdZlIMd4WEefkCO46W28AItrdpGseAM3zEC9kN0G6SXZrBu01t+GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uJzsN71R; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42cc8782869so50931665e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727788576; x=1728393376; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PCUKSO7TqyiJ1z3fgZLfVcDRg4l4+3m0QHEoxBrdiKc=;
-        b=uJzsN71RLk+hRNE1DChsljgAvYO1l6ymgxDQ6EKKyUBO3uU5vp/mxinl/5FbMPvWWg
-         n5rv2WPLrSVLS3xRqGkN0oJUWKsKeSeYJqbhI5wGpOLNZGoTnLHKzrHSt0LA86e4NNjj
-         ReudZG28bogvTwyVECGlYockdPMgWkw9hu02mjxVrXnY6H8Qg49lqEj64ElZNRjF9lsC
-         Wbcs1lGkullpywVFQCKfyfPoWzDnn3wqELmgCJwXJkPYDcZn3XoZlWooOk2/PiT2+N0A
-         OeDZbpl0Aea32tW79lUzSStT3/mGK4q/u1snF+KX+hJDsRjG1bZNaBNweArKWd6Nyt8t
-         TRow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727788576; x=1728393376;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PCUKSO7TqyiJ1z3fgZLfVcDRg4l4+3m0QHEoxBrdiKc=;
-        b=NX2ot4ciJQz/A+pqoLXC2mnV7fCWV786WcwFTo8psd8WPqZJRU6xdQQhNPUKlc5Nmt
-         b7wbyUHFYwQmyUpSIcvkhlsskXkDVVVPrNHPq/YYJtuSCBlJdWu52THvysL3bytXnsgb
-         HxeQ+uvw+TtwhPWbFFgMFtqFFkJqA6hQ/nk7Pf06w4jNlfB6sf9MUod9sbdturLdkDuu
-         Wvj+mb4idC/tpILRz008qXo2ka64wVbgz8AX9054sOWTv3zhxIF/HiAAz4xGcVt55zYE
-         qDnl7AXwkZ9Wr+JWJrc0rw9WedsylEyR9DgrZTa98eT8e0GZWz/3e2ofksUBMJY/Sk81
-         FIyg==
-X-Gm-Message-State: AOJu0Yw1PJb0U29910QGG+IOw9dSwSFXBBDTzfTZ4fcJPZuxIUmhIo73
-	QeV6PP4MiHbnfYDkYTHmXVHxh+iyJWYySEuo06xGfUPmHhgur4vniza60RxeRh4=
-X-Google-Smtp-Source: AGHT+IFYFLL73ccrBwBibPxyfq744YkCywyxiQlshKzXuKY6LgkOPSz6tl/XMMSWjgKaxCz9n+sJoA==
-X-Received: by 2002:a05:600c:3b85:b0:42c:acb0:dda5 with SMTP id 5b1f17b1804b1-42f5840e782mr124390675e9.1.1727788576251;
-        Tue, 01 Oct 2024 06:16:16 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7001:d575:d71f:f3b? ([2a01:e0a:982:cbb0:7001:d575:d71f:f3b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ddfc9sm180792055e9.5.2024.10.01.06.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 06:16:15 -0700 (PDT)
-Message-ID: <8f61f1e1-6b41-4b1b-b00f-249901df320a@linaro.org>
-Date: Tue, 1 Oct 2024 15:16:14 +0200
+	s=arc-20240116; t=1727788654; c=relaxed/simple;
+	bh=x+BV+/OtENujiFENVoIMCzWcgjltFgWnxAGqn4HcKus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fsm3ewQHyC0L2JDYxdEHngZn4E+xg6iQKhjWrCjXmNEVCjIlgJqBfshfm93p18txGQjQYvKw3yXz2610o4rCc1BJBh+zRWqfTyCuc3bRD9md9h8Y3c62Z6nJsCMrjNoaSOnfwaF2FqheLNMufjJ5bWdYZS9FK3ck/YkmIkIrHSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iErwiz0e; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727788653; x=1759324653;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=x+BV+/OtENujiFENVoIMCzWcgjltFgWnxAGqn4HcKus=;
+  b=iErwiz0eTLX+tMREZdyKxFdeob31/mxCPJNhFjE+rMswjcQ8icnEgl4N
+   q5vL+Vh+sXsJcuDCE8TDCfBoGvZ/2mWDeWpy4qu7WR27aPbe7vJCtmvmT
+   TQfVW+bxlR/a1h+AiR9tpLh+geU2/UC0pk4biTHBPk/XO7pQaawWxux4U
+   kASu1eBksKqFEKb187fGt0Qb/oP/uPCjCSuv7B9+5FPb35rcdDi2I/0//
+   FN9HsbCeMnmOVEjRLBm+4AHqakVy7Zi10oWNVzU2BgMWpA8+HqEU8h4yv
+   C6J6WP9HXt9WD1Ir5rdwKe6PTYR4vt+FDh9ZTU1f0tVb+Z4VaZjCmz/U/
+   A==;
+X-CSE-ConnectionGUID: u162hCACQqGw3OEN04qCnA==
+X-CSE-MsgGUID: uGeO0cXGQ6ScquOjuGSAYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26381199"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="26381199"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:17:31 -0700
+X-CSE-ConnectionGUID: MDvbuMW5SnyhzmydfW3hDQ==
+X-CSE-MsgGUID: aGYAp03ERaKdgfKmJ5E+1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="73985678"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 06:17:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1svckm-0000000FCd8-0lao;
+	Tue, 01 Oct 2024 16:17:24 +0300
+Date: Tue, 1 Oct 2024 16:17:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/6] i2c: npcm: Modify the client address assignment
+Message-ID: <Zvv2Y10hJqGnUDvW@smile.fi.intel.com>
+References: <20241001062855.6928-1-kfting@nuvoton.com>
+ <20241001062855.6928-5-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spmi: pmic-arb: fix return path in
- for_each_available_child_of_node()
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241001-spmi-pmic-arb-scoped-v1-1-5872bab34ed6@gmail.com>
-Content-Language: en-GB
-From: Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <20241001-spmi-pmic-arb-scoped-v1-1-5872bab34ed6@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001062855.6928-5-kfting@nuvoton.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Le 01/10/2024 à 14:55, Javier Carrasco a écrit :
-> This loop requires explicit calls to of_node_put() upon early exits
-> (break, goto, return) to decrement the child refcounter and avoid memory
-> leaks if the child is not required out of the loop.
+On Tue, Oct 01, 2024 at 02:28:53PM +0800, Tyrone Ting wrote:
+> From: Tyrone Ting <kfting@nuvoton.com>
 > 
-> A more robust solution is using the scoped variant of the macro, which
-> automatically calls of_node_put() when the child goes out of scope.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 979987371739 ("spmi: pmic-arb: Add multi bus support")
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->   drivers/spmi/spmi-pmic-arb.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
-> index 9ba9495fcc4b..ea843159b745 100644
-> --- a/drivers/spmi/spmi-pmic-arb.c
-> +++ b/drivers/spmi/spmi-pmic-arb.c
-> @@ -1763,14 +1763,13 @@ static int spmi_pmic_arb_register_buses(struct spmi_pmic_arb *pmic_arb,
->   {
->   	struct device *dev = &pdev->dev;
->   	struct device_node *node = dev->of_node;
-> -	struct device_node *child;
->   	int ret;
->   
->   	/* legacy mode doesn't provide child node for the bus */
->   	if (of_device_is_compatible(node, "qcom,spmi-pmic-arb"))
->   		return spmi_pmic_arb_bus_init(pdev, node, pmic_arb);
->   
-> -	for_each_available_child_of_node(node, child) {
-> +	for_each_available_child_of_node_scoped(node, child) {
->   		if (of_node_name_eq(child, "spmi")) {
->   			ret = spmi_pmic_arb_bus_init(pdev, child, pmic_arb);
->   			if (ret)
-> 
-> ---
-> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-> change-id: 20241001-spmi-pmic-arb-scoped-a4b90179edef
-> 
-> Best regards,
+> Store the client address earlier since it might get called in
+> the i2c_recover_bus() logic flow at the early stage of
+> npcm_i2c_master_xfer().
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+...
+
+> +	/*
+> +	 * Previously, the address was stored w/o left-shift by one bit and
+> +	 * with that shift in the following call to npcm_i2c_master_start_xmit().
+> +	 *
+> +	 * Since there are cases that the i2c_recover_bus() gets called at the
+> +	 * early stage of npcm_i2c_master_xfer(), the address is stored with
+> +	 * the shift and used in the i2c_recover_bus().
+> +	 *
+> +	 * The address is stored from bit 1 to bit 7 in the register for
+> +	 * sending the i2c address later so it's left-shifted by 1 bit.
+> +	 */
+> +	bus->dest_addr = slave_addr << 1;
+
+I'm wondering if it's better to use i2c_8bit_addr_from_msg() here?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
