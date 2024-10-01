@@ -1,333 +1,205 @@
-Return-Path: <linux-kernel+bounces-346431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A598498C4B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:41:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4B598C4B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0671C237E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:41:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81CF21F25742
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45E11CC15D;
-	Tue,  1 Oct 2024 17:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2393F1CBE88;
+	Tue,  1 Oct 2024 17:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeRbtqoY"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uet9Q78X"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E8A1CB312;
-	Tue,  1 Oct 2024 17:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095671CBE96
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727804509; cv=none; b=cnfO/tNfuBShLgNIgM8BCstTAK/geqtwbIvVAHEch1C30YCSp3dmXF6peHUphWt/6HDRkBh0nmwIcswEnI3efDyo1p6lM7TJVgDAKlhc/sP+96b3bPJgEzcw0n6dr3ThlfGsq3meNdx74o4bQvziMQHtZS2saZ3vqauVn6P/sJo=
+	t=1727804531; cv=none; b=U7XjJXDyovJFDlaYgesYe2hw1b7kSwrdgnEBytAeskOSPgW25qFn8ePOepzsU8Wa52a5y0y+b1KbyJR3OUAvz7cJVZOIOCi96A5s23uI0wI72Blgabz3H2nInfSfIWZeK6mGhgHPTF9EgsWjSRsfOjDXpqUZEQr2Qm6KxGPpid8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727804509; c=relaxed/simple;
-	bh=LOC0bFakV8X8LMSei2yZtBKCG9MitAs/kdj4g3baMsY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0HAcC6021D8qo6BGo2PUou5BMVtrQO1KVmwDalugMfWzN8Si+/CKWUIm7gxjkz5Hpg8cIjBZqQCOgPP22jLZqTpZTqfyeOhessBBhqrgKcT2W7PnbLq3ek+T7hUMFPH3PFLS3Txm0z0k7lc24CZWrsJep8i3wenSvLrGgJHL9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeRbtqoY; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e0894f1b14so4374953a91.1;
-        Tue, 01 Oct 2024 10:41:47 -0700 (PDT)
+	s=arc-20240116; t=1727804531; c=relaxed/simple;
+	bh=zW5KV8ZRwmjfWWswWoMCjQ0afxU/ksOKQ/4mdv7ZxL4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l/QdA5tziCYBdF43vVWl5ZHUXw8EMit5zzVebMYPD/Bo6B4I33/AdvZEuDV7p+iF6tBl6fCeYsVB5O4+p2Z6ZVjY97a3O+PFUzVB+Lqt3owFFqecX9fwZXvU6ARfERH8WBnbYs/jOz/BRuFIgedlkHtaGiu8GVfgJhZOyO6ZYHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Uet9Q78X; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b061b7299so13135ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727804507; x=1728409307; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1l+2UE4lLIqZawFA+83hjv4rfdjxJdPZSh1jfmLlOxo=;
-        b=UeRbtqoYSij86qekgdACJU4Iw2a8zGc/8PGD1Nn5JZ5xrD6OR7tVPBv/cryFLQ3OIQ
-         +unrjvSqfOIFPm0vd5WI6NOTxY0jw7DyG83cfJD1eDbv4QDeYPyrSy5bV+C3SF9//suD
-         X0HIX3UFxYy7/ws7k2XV35O5CJn8SP6H4Cn6FDk5SimmZNZNV1wne7poHRTPrXIEhC4/
-         K9eGR45+UP1S0nETqGcgH5OcipCwwVeekbYpBr2ANONG9N0YazMBQdlT52yJi43I0V4h
-         HX09/0hshdEbEChAP2LhCBZEYY86P6ixByWrSsQWj/Wgyj8ifysA8LXojtGhV3pEBoy6
-         ojuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727804507; x=1728409307;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1727804529; x=1728409329; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1l+2UE4lLIqZawFA+83hjv4rfdjxJdPZSh1jfmLlOxo=;
-        b=AkIqRccxkBd2IhvF4J7h9354jxWXTo2TVbGT/NuZxHC59aDMW34nfUrZfSfGXTeLeP
-         acc+QPBXmJ++/8V74tWctm4rBYu6M1zrwZdXf06f0QZX5rmB8XFO1O4ObFklxWqdhjiD
-         5SaSvuQl8G9N+wDkAI2iPDmG5QZnxJJJgkMRopQD88H0omr3OqExzV5FCCDp1p+LaGuK
-         E+XabaiTgduRGX83T9UfRy8Zo3nDQppmrCJjVGZ8ZChm34Sc3UYYbrQBsNr3CO60PcN5
-         Rwwq5yFB8Hs686NM9/fhRpL9etZRkzCQ5DZ+S4FmDm/I68aZ5upvDCOmrRBz46hhxSol
-         iNKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKZGwkqdooXylr93EJV9coT25sjop4Gg6+kxCcrJsByjN6iSUq00LPCChDIunPe+n++V8tyyQ6CG0=@vger.kernel.org, AJvYcCV+6QXOiwakkfcJLYRgc9UsJCldnLM8PP93PEynCeY1meJ0Y5NFiJf8own1+FUCf7m7IGk4rT37m9u/XoGW@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx3Gj4v3EloTmQVxLhcAbVSVMSBluMsWj8qzcioNio5zc+pqVp
-	+1km0335p5DPMDxYCDy02BnT9bDaevK2uPJoOK0JFlngJfKfT3Bq
-X-Google-Smtp-Source: AGHT+IGOkQ9PzM4pulpEZePjxRxN82y8aoFWPRcbE1/tcaVtRNuCyOUYItKeWCosIlBw0FfypZBj6Q==
-X-Received: by 2002:a17:90b:4a92:b0:2d3:cf20:80bd with SMTP id 98e67ed59e1d1-2e1846bea1bmr568466a91.17.1727804506671;
-        Tue, 01 Oct 2024 10:41:46 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:7dd:d82b:9686:b02a])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c7729fsm10611216a91.22.2024.10.01.10.41.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 10:41:46 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Tue, 1 Oct 2024 10:41:30 -0700
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Bowman Terry <terry.bowman@amd.com>
-Subject: Re: [PATCH v2 3/4] acpi/ghes, efi/cper: Recognize and process CXL
- Protocol Errors.
-Message-ID: <Zvw0SnS40Rf_jWbB@fan>
-References: <20241001005234.61409-1-Smita.KoralahalliChannabasappa@amd.com>
- <20241001005234.61409-4-Smita.KoralahalliChannabasappa@amd.com>
+        bh=4Jj30EJtZ5WxgXrHQ/WJ4/hPDyRIandsUeefNdO7SQM=;
+        b=Uet9Q78XH6uwA4otzfbP8/+fyrfNFQ8uR9x3HFR5PpEPnplH5yNmJIs3Ni5zD1MI3X
+         mYbNf4mfNj5qxo9Rc4yyo0MA1kXVho2qwbUok9W9vpcJSjnbyTQvT268Z1HsOS5D4HhC
+         KKFOtpE/yh8uwSwwJlY8G30vWO0X1Z+XO6X5GjgS1tO0WaiQPNM2rsVgEXme+eT8eWdh
+         M0OFhaH5WiocQoHG9JLJmo9JIZ7mDYi/kxJ+hOUqwbuXU9qPpOHHKXMgtkSjcxmJvlLv
+         P8zGVEs0TBPS1iISKyMMP8cPZ+DvcjYbLEaSKxt6C3PrNmNhXz+F7jLc93b9CUvCtrx+
+         xCRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727804529; x=1728409329;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Jj30EJtZ5WxgXrHQ/WJ4/hPDyRIandsUeefNdO7SQM=;
+        b=ITUVciVhtzE7LpiwDWGSx6DK39X1hlzzvZzcoZJfRKezhOyR+Ulf+6YvZTcVAvdQqw
+         MIX8y0MsCAF9wzNXL9XjZPvi6tEgXS3a3N4GL9ayFlcHgND7QJXbSnGvgJIVEaV/Iegi
+         pUSCe63nPXd5R1AP8kivP240uA/X64yrfHyyFVHXkUg9+5GeQEE4wr1X8sVIGsRx+lDw
+         YQSdyYImkEJTG/Dt2+ob0b/XSMLB0D2sTBcwpz3tI8JVrn2OvJYx49Zjx8/j2HvbFvX5
+         7cutBc6ARdAHQlVERPpYqVa83PZJiLZfgDAuuAjkG1yrZNdkSCkC5eKUBsL9843PJR5K
+         XZ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWMreEXXjuJ7x+lLtj1Jw3IgCAj2ZyiO82+RBBxolTRNvZFQrfavyh9nRCDs+Ui6IYXwa4GWIXITX1WBP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUy12OMnol/pasl0eRn6l/d7Xc1zPgwlvuNauRFIvNMmZJxJTN
+	N4jAuZx4kQiy8PcKP5v6hI68IvCey3Q5aZ/2cmw4fykN1FQhD6wePVvZGI5ZZY1LE8ndH6FxuvO
+	6sBv3BlmdaBHJTO9Eth2zs6OlsfjWiPo7XqCQ
+X-Google-Smtp-Source: AGHT+IG5ORqB0lYAZbuxHAuQKXbl7IkWQxu+L+QOqPVZTLw7LHJWx3rPs3pXlvXyhp4JfYFYA3h2SoddLOPJm+tCf+Q=
+X-Received: by 2002:a17:903:120d:b0:20b:81bb:4a81 with SMTP id
+ d9443c01a7336-20bb07eb0d9mr2916195ad.7.1727804528347; Tue, 01 Oct 2024
+ 10:42:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001005234.61409-4-Smita.KoralahalliChannabasappa@amd.com>
+References: <20241001002027.1272889-1-namhyung@kernel.org> <20241001002027.1272889-2-namhyung@kernel.org>
+In-Reply-To: <20241001002027.1272889-2-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 10:41:54 -0700
+Message-ID: <CAP-5=fXiaHAEGc4GsBXQBPjKsQnj4iT5eod6nY1_Qw1gHMhi4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/8] perf tools: Add fallback for exclude_guest
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>, 
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>, 
+	James Clark <james.clark@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2024 at 12:52:33AM +0000, Smita Koralahalli wrote:
-> UEFI v2.10 section N.2.13 defines a CPER record for CXL Protocol errors.
-> 
-> Add GHES support to detect CXL CPER Protocol Error Record and Cache Error
-> Severity, Device ID, Device Serial number and CXL RAS capability struct in
-> struct cxl_cper_prot_err. Include this struct as a member of struct
-> cxl_cper_work_data.
-> 
-> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+On Mon, Sep 30, 2024 at 5:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Commit 7b100989b4f6bce70 ("perf evlist: Remove __evlist__add_default")
+> changed to parse "cycles:P" event instead of creating a new cycles
+> event for perf record.  But it also changed the way how modifiers are
+> handled so it doesn't set the exclude_guest bit by default.
+>
+> It seems Apple M1 PMU requires exclude_guest set and returns EOPNOTSUPP
+> if not.  Let's add a fallback so that it can work with default events.
+>
+> Fixes: 7b100989b4f6bce70 ("perf evlist: Remove __evlist__add_default")
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
+Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+Ian
+
 > ---
-> v2:
-> 	Defined array of structures for Device ID and Serial number
-> 	comparison.
-> 	p_err -> rec/p_rec.
-> ---
->  drivers/acpi/apei/ghes.c        |  10 +++
->  drivers/firmware/efi/cper_cxl.c | 115 ++++++++++++++++++++++++++++++++
->  include/cxl/event.h             |  26 ++++++++
->  3 files changed, 151 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index ada93cfde9ba..9dcf0f78458f 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -717,6 +717,14 @@ static void cxl_cper_post_event(enum cxl_event_type event_type,
->  	schedule_work(cxl_cper_work);
->  }
->  
-> +static void cxl_cper_handle_prot_err(struct acpi_hest_generic_data *gdata)
-> +{
-> +	struct cxl_cper_work_data wd;
+>  tools/perf/builtin-stat.c | 18 +++++++++++++++---
+>  tools/perf/util/evsel.c   | 21 +++++++++++++++++++++
+>  2 files changed, 36 insertions(+), 3 deletions(-)
+>
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 1521b6df26065ccf..fd9ea15f6b1c0809 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -639,8 +639,7 @@ static enum counter_recovery stat_handle_error(struct=
+ evsel *counter)
+>          * (behavior changed with commit b0a873e).
+>          */
+>         if (errno =3D=3D EINVAL || errno =3D=3D ENOSYS ||
+> -           errno =3D=3D ENOENT || errno =3D=3D EOPNOTSUPP ||
+> -           errno =3D=3D ENXIO) {
+> +           errno =3D=3D ENOENT || errno =3D=3D ENXIO) {
+>                 if (verbose > 0)
+>                         ui__warning("%s event is not supported by the ker=
+nel.\n",
+>                                     evsel__name(counter));
+> @@ -658,7 +657,7 @@ static enum counter_recovery stat_handle_error(struct=
+ evsel *counter)
+>                 if (verbose > 0)
+>                         ui__warning("%s\n", msg);
+>                 return COUNTER_RETRY;
+> -       } else if (target__has_per_thread(&target) &&
+> +       } else if (target__has_per_thread(&target) && errno !=3D EOPNOTSU=
+PP &&
+>                    evsel_list->core.threads &&
+>                    evsel_list->core.threads->err_thread !=3D -1) {
+>                 /*
+> @@ -679,6 +678,19 @@ static enum counter_recovery stat_handle_error(struc=
+t evsel *counter)
+>                 return COUNTER_SKIP;
+>         }
+>
+> +       if (errno =3D=3D EOPNOTSUPP) {
+> +               if (verbose > 0) {
+> +                       ui__warning("%s event is not supported by the ker=
+nel.\n",
+> +                                   evsel__name(counter));
+> +               }
+> +               counter->supported =3D false;
+> +               counter->errored =3D true;
 > +
-> +	if (cxl_cper_handle_prot_err_info(gdata, &wd.p_rec))
-> +		return;
-> +}
-
-Why we need a if here? It seems the function will return anyway.
-
-Fan
+> +               if ((evsel__leader(counter) !=3D counter) ||
+> +                   !(counter->core.leader->nr_members > 1))
+> +                       return COUNTER_SKIP;
+> +       }
 > +
->  int cxl_cper_register_work(struct work_struct *work)
->  {
->  	if (cxl_cper_work)
-> @@ -791,6 +799,8 @@ static bool ghes_do_proc(struct ghes *ghes,
->  			struct cxl_cper_event_rec *rec = acpi_hest_get_payload(gdata);
->  
->  			cxl_cper_post_event(CXL_CPER_EVENT_MEM_MODULE, rec);
-> +		} else if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR)) {
-> +			cxl_cper_handle_prot_err(gdata);
->  		} else {
->  			void *err = acpi_hest_get_payload(gdata);
->  
-> diff --git a/drivers/firmware/efi/cper_cxl.c b/drivers/firmware/efi/cper_cxl.c
-> index 4fd8d783993e..08da7764c066 100644
-> --- a/drivers/firmware/efi/cper_cxl.c
-> +++ b/drivers/firmware/efi/cper_cxl.c
-> @@ -8,6 +8,7 @@
->   */
->  
->  #include <linux/cper.h>
-> +#include <acpi/ghes.h>
->  #include "cper_cxl.h"
->  
->  #define PROT_ERR_VALID_AGENT_TYPE		BIT_ULL(0)
-> @@ -44,6 +45,66 @@ enum {
->  	USP,	/* CXL Upstream Switch Port */
->  };
->  
-> +struct agent_info {
-> +	const char *string;
-> +	bool req_sn;
-> +	bool req_sbdf;
-> +};
+>         evsel__open_strerror(counter, &target, errno, msg, sizeof(msg));
+>         ui__error("%s\n", msg);
+>
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index da0bada62140d9b0..0ddd77c139e89a2e 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -3259,6 +3259,27 @@ bool evsel__fallback(struct evsel *evsel, struct t=
+arget *target, int err,
+>                 evsel->core.attr.exclude_kernel =3D 1;
+>                 evsel->core.attr.exclude_hv     =3D 1;
+>
+> +               return true;
+> +       } else if (err =3D=3D EOPNOTSUPP && !evsel->core.attr.exclude_gue=
+st &&
+> +                  !evsel->exclude_GH) {
+> +               const char *name =3D evsel__name(evsel);
+> +               char *new_name;
+> +               const char *sep =3D ":";
 > +
-> +static const struct agent_info agent_info[] = {
-> +	[RCD] = {
-> +		.string = "Restricted CXL Device",
-> +		.req_sbdf = true,
-> +		.req_sn = true,
-> +	},
-> +	[RCH_DP] = {
-> +		.string = "Restricted CXL Host Downstream Port",
-> +		.req_sbdf = false,
-> +		.req_sn = false,
-> +	},
-> +	[DEVICE] = {
-> +		.string = "CXL Device",
-> +		.req_sbdf = true,
-> +		.req_sn = true,
-> +	},
-> +	[LD] = {
-> +		.string = "CXL Logical Device",
-> +		.req_sbdf = true,
-> +		.req_sn = true,
-> +	},
-> +	[FMLD] = {
-> +		.string = "CXL Fabric Manager managed Logical Device",
-> +		.req_sbdf = true,
-> +		.req_sn = true,
-> +	},
-> +	[RP] = {
-> +		.string = "CXL Root Port",
-> +		.req_sbdf = true,
-> +		.req_sn = false,
-> +	},
-> +	[DSP] = {
-> +		.string = "CXL Downstream Switch Port",
-> +		.req_sbdf = true,
-> +		.req_sn = false,
-> +	},
-> +	[USP] = {
-> +		.string = "CXL Upstream Switch Port",
-> +		.req_sbdf = true,
-> +		.req_sn = false,
-> +	},
-> +};
+> +               /* Is there already the separator in the name. */
+> +               if (strchr(name, '/') ||
+> +                   (strchr(name, ':') && !evsel->is_libpfm_event))
+> +                       sep =3D "";
 > +
-> +static enum cxl_aer_err_type cper_severity_cxl_aer(int cper_severity)
-> +{
-> +	switch (cper_severity) {
-> +	case CPER_SEV_RECOVERABLE:
-> +	case CPER_SEV_FATAL:
-> +		return CXL_AER_UNCORRECTABLE;
-> +	default:
-> +		return CXL_AER_CORRECTABLE;
-> +	}
-> +}
+> +               if (asprintf(&new_name, "%s%sH", name, sep) < 0)
+> +                       return false;
 > +
->  void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_err)
->  {
->  	if (prot_err->valid_bits & PROT_ERR_VALID_AGENT_TYPE)
-> @@ -176,3 +237,57 @@ void cper_print_prot_err(const char *pfx, const struct cper_sec_prot_err *prot_e
->  			       sizeof(cxl_ras->header_log), 0);
->  	}
->  }
+> +               free(evsel->name);
+> +               evsel->name =3D new_name;
+> +               /* Apple M1 requires exclude_guest */
+> +               scnprintf(msg, msgsize, "trying to fall back to excluding=
+ guest samples");
+> +               evsel->core.attr.exclude_guest =3D 1;
 > +
-> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
-> +				  struct cxl_cper_prot_err *rec)
-> +{
-> +	struct cper_sec_prot_err *prot_err = acpi_hest_get_payload(gdata);
-> +	u8 *dvsec_start, *cap_start;
-> +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_DEVICE_ID)) {
-> +		pr_err(FW_WARN "No Device ID\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/*
-> +	 * The device ID or agent address is required for CXL RCD, CXL
-> +	 * SLD, CXL LD, CXL Fabric Manager Managed LD, CXL Root Port,
-> +	 * CXL Downstream Switch Port and CXL Upstream Switch Port.
-> +	 */
-> +	if (!(agent_info[prot_err->agent_type].req_sbdf)) {
-> +		pr_err(FW_WARN "Invalid agent type\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rec->segment = prot_err->agent_addr.segment;
-> +	rec->bus = prot_err->agent_addr.bus;
-> +	rec->device = prot_err->agent_addr.device;
-> +	rec->function = prot_err->agent_addr.function;
-> +
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_ERROR_LOG)) {
-> +		pr_err(FW_WARN "Invalid Protocol Error log\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	dvsec_start = (u8 *)(prot_err + 1);
-> +	cap_start = dvsec_start + prot_err->dvsec_len;
-> +	rec->cxl_ras = *(struct cxl_ras_capability_regs *)cap_start;
-> +
-> +	/*
-> +	 * Set device serial number unconditionally.
-> +	 *
-> +	 * Print a warning message if it is not valid. The device serial
-> +	 * number is required for CXL RCD, CXL SLD, CXL LD and CXL Fabric
-> +	 * Manager Managed LD.
-> +	 */
-> +	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER) ||
-> +	    !(agent_info[prot_err->agent_type].req_sn))
-> +		pr_warn(FW_WARN "No Device Serial number\n");
-> +
-> +	rec->lower_dw = prot_err->dev_serial_num.lower_dw;
-> +	rec->upper_dw = prot_err->dev_serial_num.upper_dw;
-> +
-> +	rec->severity = cper_severity_cxl_aer(gdata->error_severity);
-> +
-> +	return 0;
-> +}
-> diff --git a/include/cxl/event.h b/include/cxl/event.h
-> index 57b4630568f6..5b316150556a 100644
-> --- a/include/cxl/event.h
-> +++ b/include/cxl/event.h
-> @@ -158,11 +158,37 @@ struct cxl_ras_capability_regs {
->  	u32 header_log[16];
->  };
->  
-> +enum cxl_aer_err_type {
-> +	CXL_AER_UNCORRECTABLE,
-> +	CXL_AER_CORRECTABLE,
-> +};
-> +
-> +struct cxl_cper_prot_err {
-> +	struct cxl_ras_capability_regs cxl_ras;
-> +
-> +	/* Device ID */
-> +	u8 function;
-> +	u8 device;
-> +	u8 bus;
-> +	u16 segment;
-> +
-> +	/* Device Serial Number */
-> +	u32 lower_dw;
-> +	u32 upper_dw;
-> +
-> +	int severity;
-> +};
-> +
->  struct cxl_cper_work_data {
->  	enum cxl_event_type event_type;
->  	struct cxl_cper_event_rec rec;
-> +	struct cxl_cper_prot_err p_rec;
->  };
->  
-> +struct acpi_hest_generic_data;
-> +int cxl_cper_handle_prot_err_info(struct acpi_hest_generic_data *gdata,
-> +				  struct cxl_cper_prot_err *rec);
-> +
->  #ifdef CONFIG_ACPI_APEI_GHES
->  int cxl_cper_register_work(struct work_struct *work);
->  int cxl_cper_unregister_work(struct work_struct *work);
-> -- 
-> 2.17.1
-> 
-
--- 
-Fan Ni
+>                 return true;
+>         }
+>
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
