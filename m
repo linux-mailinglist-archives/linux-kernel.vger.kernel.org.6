@@ -1,246 +1,1038 @@
-Return-Path: <linux-kernel+bounces-346633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2265998C6F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:47:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0479998C6F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 720D0B236F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B591C22B9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFC01C9DFD;
-	Tue,  1 Oct 2024 20:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947C51BDAB3;
+	Tue,  1 Oct 2024 20:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="ZBYLI9U7"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11020139.outbound.protection.outlook.com [52.101.193.139])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="BLP5r3bM"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB232194A43
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727815655; cv=fail; b=GtapGqEiVK0rEYwRlwgsh/zZZ7t8TO1RMEb3OLwOvWfa9DveF7nXFxH3Z9Nif0AYsLe4QUd1of3M5AwE0igVmI4//8wQwyLTefmpIHv7R0IUOA3EFRkv4IyMMHN228Cvxupf/P3YOvm1a4/eQWl8ZIUHjCrouKkGz3qMVcxNU7w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727815655; c=relaxed/simple;
-	bh=mbFKZwcFIh+/gIH5F4ifdDuzU1CnQWnHmKU1MW0CZYo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EZv/f9LSmTf/qhgjXlU+uSoD/Aq0h+GoaD+mKWI3exvMcWfeuQ9e5R9F8//NRQR9j0nGGVnzKAnb4qflsOWn6Mn6e1WgMb0fSSiBA8kFfkTUHEgFUdVUFXLQBvoTa4ZKanAbAwrB70M0mYkT+4h76MM2oeleBu4w7N1e26ehKis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=ZBYLI9U7; arc=fail smtp.client-ip=52.101.193.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KiC7vqvveWJsKfcBuxCm+TJ2AmuG02SzfwGaGov0Q2KJTLF4SJiz6jKq1jM4HC6Wpi3i21IMnxIc4eDj4EyO4s0RmlVRYk50d2FmO5BtnBjezqj5h2h5VyeJZKWkK/I2rfCIVqoo+5FFP3xoLUpcypbC8j3CsiCdQfgZuM3im/phQbBfrm7nLYjCPgLIDnc0KbjwVg25yqw1i4zzT3WYo6GDsmMGn6f171e9SQzMM/NqypJ4j9+KvkNA9FlIWBhYdJj6Jqdrc8Qswdw9rSw7KI0CutOLuaR8TMRhWs8f/83C7AGjvW62rEaeSK16FXbw0vL0brDbXT2Y7IToi6ZxIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j2P65OrHgLPC1fWIezxEF5kArVFG4yBPyIOICgZtd/w=;
- b=fTE7Kk33C8H4J8MRoFFSb1qgg/65rDMvq/E3tQ9a6BvgAucSqEMKl/yDEC27oQthe3UrOw9vh2J8Zilj2ARxj8Ai/+MMorPV+VzfW+wWdsnQjfPwexgzIPKGRxIXY76CWQeaimN+ba3/IB9fuAG5IuXAJIRKqqxtCyg+e5xQmyDKjfEcQU7FeiWpo/NKYTwmSoMKWrlAaIHn+4yjbct781DMk17J3VDVCyvy9urlFUBq94Rs0wM4/dk28iPXka9U0cprvF9N3YLGRB6QkpCLV5wGkDOXVpprmsOdLXSz3bGLPzhxe1ReBufxuhl8AxsxXbJYIDgKcv2MCvPQaU9YIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j2P65OrHgLPC1fWIezxEF5kArVFG4yBPyIOICgZtd/w=;
- b=ZBYLI9U7HPNX02n57iTn4SbcUQWt2Dox39NHuWh05CoN60WDYAmG7jCvZ/xKzZ3gNnfIAhMGMmEk0wb+3qqKLL/D8DcwrviaVBQK+bZ1iTs+77+wkc5T+ZZtCorYF6BslYzklIebynV0dECKWckbfxkbIKO1Yekwqyuj0TRms18=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- LV3PR01MB8511.prod.exchangelabs.com (2603:10b6:408:1a0::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.27; Tue, 1 Oct 2024 20:47:29 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Tue, 1 Oct 2024
- 20:47:28 +0000
-Message-ID: <e374e8ec-29db-48a2-95d7-6fc9ac6317d9@os.amperecomputing.com>
-Date: Tue, 1 Oct 2024 13:47:24 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
- for AmpereOne
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Nicolin Chen <nicolinc@nvidia.com>, will@kernel.org,
- robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
- <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
- <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
- <20241001191800.GA1369530@ziepe.ca>
- <0e84f3c0-09d6-4485-ac76-ca296d1ee07e@os.amperecomputing.com>
- <20241001194620.GB1369530@ziepe.ca>
-Content-Language: en-US
-From: Yang Shi <yang@os.amperecomputing.com>
-In-Reply-To: <20241001194620.GB1369530@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: CH0P221CA0008.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:610:11c::9) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658511C578C;
+	Tue,  1 Oct 2024 20:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727815660; cv=none; b=HpneHnmnhCBZ9S4gbU7I2biKq7OvJlkGL6KEqyKX4FOEQevCN9XwKIYQ8JDSGaDcYqo50+mnpf7YksSd04661rCOjh31LLrpS2eEL7Qk6WNlWsvomnhuNmT23EKkH3sEu0OqV6CyONhi7Am5Ff5bonVvx0AbGmy3vgIVbTSPb4U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727815660; c=relaxed/simple;
+	bh=ZH8mWXIdMs0qsa5RaxVIoy83qguLRN6FI94nReIj8bM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWoGf/OkQEHtdGUnjdbpn7bdZjmL5G3+T+c0ImhnBCJlLXwwTrE1V9awiisPQqlk8ENoKCDkiiZMoY/i764y+N1YKX25Gz2c4IhSsn6EqwPZLw3H4XCjIGVe+y2Rw0Ec3Ql1LlabPIrICivqZhC9TIzBskzI/iogKIEpEsJIkjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=BLP5r3bM; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id EE7381C00AB; Tue,  1 Oct 2024 22:47:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1727815647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bHF528fpNldDQrxopArlhUx3eucZvMESB10bSjcTH3Y=;
+	b=BLP5r3bMpFtZvJ5SWJ2ussSwlVC42GAsk0EA5y1BWadlJs9uvCxQdh51Uf0+nFGxm1n8pB
+	QWoc1wF2VfIofxh/6UB0lDgW68d18NI9xHuqp0ZMbrIyGf5T7UmJhM7+YW2j9Q60ZRN1Mn
+	rG0fiNWfpZSujGW3cEwWRxY8nojKJ10=
+Date: Tue, 1 Oct 2024 22:47:27 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	bentiss@kernel.org, dri-devel@lists.freedesktop.org, jelle@vdwaa.nl,
+	jikos@kernel.org, lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <Zvxf325Dmy6aabcv@duo.ucw.cz>
+References: <20240926174405.110748-1-wse@tuxedocomputers.com>
+ <20240926174405.110748-2-wse@tuxedocomputers.com>
+ <ZvcdNXQJmc8cjifw@amd.ucw.cz>
+ <bea39077-6104-4b59-8757-9cbe0e703e5c@gmx.de>
+ <140536e2-28bd-429f-a439-04e6a7ae3e58@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|LV3PR01MB8511:EE_
-X-MS-Office365-Filtering-Correlation-Id: c06101da-24f2-4cda-d3a0-08dce25a4314
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R3RXcWxRZEtSMzJlZG0yUW9iYjYrR0dOYzZzTzJSTExXWnZsdjhLZzh4M1Y0?=
- =?utf-8?B?SW4vL0xPanQ5US9RSXZYTXlSWExVNmc5cUQxVUdjMmc0MmV6b2hmZ1h6QjRi?=
- =?utf-8?B?ZFhML0h4RG1YbVpWZ1ZwaEFmbzBNT3M1dmxTMDk1ME1NMWxCRkkxcVQ3S2Rw?=
- =?utf-8?B?YzBZUHJvOG42Q2J2VDhMY0J2cXFrci9oa2I3VnVyaEVXUGxzV3g4WXkxL21R?=
- =?utf-8?B?aXBXU1dUZnNBOWRza0FWVWI0WXl4YTAxeEJhZnl2L08wMHJXb3lPMGFZL20x?=
- =?utf-8?B?UUpUNjVEMW90QkJ4Z2xlTzlyVTBON25KdmNpb2tvQXpqZ1U4UFMzdENnNmtj?=
- =?utf-8?B?UnhObVdrS0dIaFNVUDVlKzRoK0NKelJZMEE5TWZxMVA3Vm1EeENlcWJLYjI5?=
- =?utf-8?B?SFJDcTdtdkFWckVLdUp5aUZHT201UExCWHBaU055Ujl2ak1IaWJzWkNxTCtG?=
- =?utf-8?B?RFRoRWEwZHVPTTJWcnEwb2h5ZTFnRWprQnl1ZHU0NEVQQzdHWjY3U1VPSlI2?=
- =?utf-8?B?amNlck1ZcFFhMjZtdGw0ZjY1bkxYTEdRd1hmZ09FdlA3N2dTMzIxTVVNZ0hK?=
- =?utf-8?B?cm1hWkJCRVpWaWZQbWFpcUFxaFFhRnFYVjN3ZnNSczMwRkx2Y2pNRXhONWl6?=
- =?utf-8?B?VGFwVDNIamh6N3RuUGpsdW5xalBYUTVwZjhVWDVyZkdicE1hanlTSjlnNWRE?=
- =?utf-8?B?eW9EYmVmWXA2ZWhCaHJMM0pJaWdjRkNQTlNoWXNydmN3ZUxpTVUxNXNjZ0ZP?=
- =?utf-8?B?QjJEWE15NFc0QVltcHFub0Y0VS9qdVhjS3lSU09jWlZpQ0dGVzNVcTRZUkxT?=
- =?utf-8?B?cDE5UVpDZ1hzVWVaeTJWU3drY2o3TkJseE1qYy82WFE4aWhJOVhxdkdNMWYr?=
- =?utf-8?B?L0NXMG1qUFZyS2ZKclByUWVocmlRUnZuaDlhWGtHQVVrODFQcm9sZ2RXNFdC?=
- =?utf-8?B?ZWtvWS9CcGF0TU43YjBJMnoxand6WXUzbXljSDV6T1J2NDNCUitidjFDRnhl?=
- =?utf-8?B?Z3Jkd3hjcTJXUkE0REJTbm9oYXRMNlAyS3UwTXFmekxNU2V3cnRCMkg2NkZu?=
- =?utf-8?B?OVZQUTkzWWdEMy9mSVV5WExXdnROS3BLSmFBVklUWmVTblA5ZzBTVkMwc1V2?=
- =?utf-8?B?OGFsQ2V2cnU3NEhnM2FEUzdvb0x2UnlRNnRQbnpVVVpnbWY4T2RDNjVIS0hQ?=
- =?utf-8?B?SG5kQzk0NTZRSldocFZoUFpZeWpKMWo3eXhuZ0pDbW5DUHlxTzdJQmpocDRH?=
- =?utf-8?B?REREbk9pT09nZVBZWE1GZ0swS2pWbFpXNU8zRk9GL2l3ZmZ3RVRqYmNkKzNU?=
- =?utf-8?B?d0tqU3VMeVNCM04xMmZrWGhUWml3MUtIakdNdVlYYk5BODduc1ltQVRVSCsv?=
- =?utf-8?B?Q1FpNTlFNnA1Q0YxSWJWaEVGcC9DWlVJMWtSME8vcm1xMVJBNVduVVpxc2ht?=
- =?utf-8?B?YWJCR3ZOQzRwMXYvSGpvYjMxbDZObHFHMjl6Um5oSlJDRjhMTnMvYjBBSlEv?=
- =?utf-8?B?eElnc1RzM0lZRXZlNHpuOEkwM1RSa2pNTHYyS0J4dEFnbFh2S2dpV3QvUGFU?=
- =?utf-8?B?cFpocDRBN1hJZkJNNTdBM1hGWmx3RFFJdnF1NnJ6eXlZL2Q5SEs5dkNPWklq?=
- =?utf-8?B?cGRNeENZYWRXODIydWFIUVhEdytobXBNR1FmclBOT3lCcXcwc2NndkI3MVhh?=
- =?utf-8?B?b2sxZUJpZjZKeFhlUVBISVZZdmk2dHpTTm9hZHJrVWtESTduWlo2MXgxcWlN?=
- =?utf-8?B?UmRsZ1ZOcE16ZmNOTy95eXJrY1h1RFdhVmhiVTZSN2s4UFJrWDBBNzRoTGNj?=
- =?utf-8?B?NU5yK2o3Ynl0ZXZCSStiZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QkMwbmhzb0NxUFYrc3A3MHcyV3NnMEwwNUYyL0xPajlXNE1yYXFtWjBlRWJP?=
- =?utf-8?B?WXF4WlhqVEJNdWNTdEk5SUwvdGVNRVdGZ1U5T0E5VTJHTEpaWmlVeVVuWmxh?=
- =?utf-8?B?bUpCN3IrdGZ4M0g0Z0hpUzF4S1FITzYrWW1BcHdTSHdGS0dEcU9rK1ZjZCtL?=
- =?utf-8?B?RmI1a2FjbTlwb2Zqd2dqeW16azdTMkpPci9ETjBOQ2hERzRWUHhBRjgxVitD?=
- =?utf-8?B?cEx0NFA1Y2J0d09LSjhOdDFEWlZ0U2NaSit3Z3pkRHRFSTcxbXNhZVo0Nm9w?=
- =?utf-8?B?Z3lyTjNId1BpbFhLZWl5YmNSNXM4OTdCbjRqbnVoK2JrWS9OSjQ1WGx5NmQ2?=
- =?utf-8?B?dGE3eWxjVU96VGFkVFlVWWRCUGRtVWFwSnI5TVo5d2dCY0lKanFaR2oyRWoy?=
- =?utf-8?B?Y2g1c3pwbnlkRmNlZ0Z0NGUvaTgvT2labzI1V29BMyt3ZHR0YUx0RFdqRmNx?=
- =?utf-8?B?enJIY1pGWlZhWFByazlHdGZJZTBkWFlpc3Y3OU1tcXA0djhPUmRIajF3T3hh?=
- =?utf-8?B?S3M0dkhBSGh5aEpOWDVhMUEvOHlNNy84U0xvelFuVC9RVjZUMzZiOVB4am9o?=
- =?utf-8?B?eXlWV1hJMHJTQ3ZEeDVxSHZlZEliVWFDYmV4Qk9SYTR4Z1l6Zy9FUmFiSUxa?=
- =?utf-8?B?M2lJdVh2SlMwOHIvY25Nb1BFTjBENndwUGpiem1Ec2FqeDdEN1ZJWStuUGtm?=
- =?utf-8?B?NERIYWE4Y2FESDRUTkQ3WUxhWW9KUTdydjlZZlNLOHpzUXNQcHJlbjFZZXpn?=
- =?utf-8?B?blkvQ2xabWtkWlVaUkRpYmNmVWJaTjZRZWtaTW1OVVYwZkJEb3I3cjVmdEZq?=
- =?utf-8?B?MTNPa1dOcnRJeDY2VWl1VU04ekQ1Yy9Pbm1UT2hwYzBvM3FIQUZ2T3plYkF1?=
- =?utf-8?B?UHJoYm5vVGdLNnpoejJ3bXVjTGhiTGQ0alFXa3VDWkh2dGcxVlhFUVQ0WE4y?=
- =?utf-8?B?bjVyRFZJUTk0TlhxS2VVVmlVZnl1NGk0VzlLY01qNEVlQkcyTE5DS3lVdGky?=
- =?utf-8?B?YUUrNStDbFZqRkNmRkY4eFdXeW12VkdBVHJuMWFYM2pRQ2hkZUkzUWNYNmts?=
- =?utf-8?B?dFRpNXNaaHVMMXhucUZSQXJnM09hQ2NQVmpTNktDL2ExZ2dYclQ0M0tOa3Rq?=
- =?utf-8?B?OFpxL1M3UjFXTm9CbTNkMWxFdHlUMHhDZUxkVHFhSSthSG1GLytxeFNpMXNi?=
- =?utf-8?B?VlJnUCtMVGRqRmljMnR4UE5lMVVpSEoxQ3Ura2ZOdjVJYVV1N0xGakpwYkFw?=
- =?utf-8?B?TmdxK3p1dFFvNnFjRUtoaVF5eGNVOVg4R3JTUCtZTjNhNWFORTFqMWl1Wkpa?=
- =?utf-8?B?eXk2YWhTZkJBT3Q5ajRacVQyWHRaMTkvQ2FmZmlqbCtmeWFBYmx6bWFxTVpK?=
- =?utf-8?B?RGJVWGFzRUpuZGkvczAzR1U4L0JaZEZyWUdzWHJONXRMRTNoR1RwMjZkUjBm?=
- =?utf-8?B?b1gzZFVxWmdmdVl2WGlZdmlOdVRqTUY2bjk2aGVuT0lHUjQzQWg1RG1ZSkJw?=
- =?utf-8?B?ZUZSOUY4aUxwVEQwN1BnQk5wVUhRbkNDOFZLZDl5WjV5VWlDYzZ3SUVYbnIr?=
- =?utf-8?B?dGxmcm9wMXJkcldadjA2dGJQNFh2QUNZdFY1bDBEaFdHYkt3ZTRQbFgwZGNt?=
- =?utf-8?B?RWc4N09QTno3dVZUNzc0bjkrSjErdXRKMExRbVhOU3FNUEc2NzZ6YnhwSEVC?=
- =?utf-8?B?SnBkdFJ1bGdJUHRYSjZpdjBjbmFRQm80aU8vOTFTaUozZjJsYTY2R0pBWWsx?=
- =?utf-8?B?cW4vSnVDbEVveS9lK25QV2pndTRkTWZkeWpnTlFHTmkycG4yV0QzUlVPU1NF?=
- =?utf-8?B?ZjFZTjFIejcxZVNDamRaU2Fnc3VNeWprR1N2aHRKV1VuMytDcUVvd0tqbE1o?=
- =?utf-8?B?SWRJMFdXVlJxRnpkekwyd2tKQTFPbVJBSjdCb24vOE55d1kwaDNONjVxb2pI?=
- =?utf-8?B?SlVLZEtkQ3dzbXNNTjc1cDd4MndUdk5IVVRDcUJCb2FhT250NFBNNXZRU3ZW?=
- =?utf-8?B?RFBMNFZZNlZISHpFaXROZ3d1bk5rVmFYYnZjTFBiRXF4b1c2Qmc0bXlxTVRH?=
- =?utf-8?B?L2JLU0tnNjNjQjFvNzdvc2V0UEhNZHczM1E3VE5ERE9QRzBUMTJ2QU5Dc0lw?=
- =?utf-8?B?TEttckZTUXpRRVUxZWRHTjB1M1o0R2tVcy92d1FFK0oxM3RaOHl3V0poMnVu?=
- =?utf-8?Q?5uAgjeWaiI1Ju5CQzkdZrDI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c06101da-24f2-4cda-d3a0-08dce25a4314
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 20:47:28.1199
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: riOj4YvA0lhGYgeoHToWUnx7mdHpXT+GoJX0xtLz+ouG3dBWsFTUbfodOq7U3ZM2pAFKs0G5fI6hadD8xvoj2CsvdMh5hqrgkjQB1RApTrQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR01MB8511
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="jpGYNOKCYXHzf8bq"
+Content-Disposition: inline
+In-Reply-To: <140536e2-28bd-429f-a439-04e6a7ae3e58@tuxedocomputers.com>
 
 
+--jpGYNOKCYXHzf8bq
+Content-Type: multipart/mixed; boundary="yvVlx55uPS6aOSGu"
+Content-Disposition: inline
 
-On 10/1/24 12:46 PM, Jason Gunthorpe wrote:
-> On Tue, Oct 01, 2024 at 12:38:56PM -0700, Yang Shi wrote:
->>
->> On 10/1/24 12:18 PM, Jason Gunthorpe wrote:
->>> On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
->>>>> Also, there are other places doing "1 << smmu->sid_bits", e.g.
->>>>> arm_smmu_init_strtab_linear().
->>>> The disassembly shows it uses "sbfiz x21, x20, 6, 32" instead of lsl. 1UL
->>>> should be used if we want to take extra caution and don't prefer rely on
->>>> compiler.
->>> Still, we should be fixing them all if sid_bits == 32, all those
->>> shifts should be throwing a UBSAN error. It would be crazy to have a
->> OK, will cover this is v2.
-> Maybe just make a little inline function to do this math and remove
-> the repated open coding? Then the types can be right, etc.
 
-Something like this?
+--yvVlx55uPS6aOSGu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c 
-b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 01a2faee04bc..0f3aa7962117 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3624,8 +3624,9 @@ static int arm_smmu_init_strtab_2lvl(struct 
-arm_smmu_device *smmu)
-  {
-         u32 l1size;
-         struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-+       unsigned int max_sid = arm_smmu_strtab_max_sid(smmu->sid_bits);
-         unsigned int last_sid_idx =
--               arm_smmu_strtab_l1_idx((1UL << smmu->sid_bits) - 1);
-+               arm_smmu_strtab_l1_idx(max_sid - 1);
+Hi!
 
-         /* Calculate the L1 size, capped to the SIDSIZE. */
-         cfg->l2.num_l1_ents = min(last_sid_idx + 1, STRTAB_MAX_L1_ENTRIES);
-@@ -3657,8 +3658,9 @@ static int arm_smmu_init_strtab_linear(struct 
-arm_smmu_device *smmu)
-  {
-         u32 size;
-         struct arm_smmu_strtab_cfg *cfg = &smmu->strtab_cfg;
-+       unsigned int max_sid = arm_smmu_strtab_max_sid(smmu->sid_bits);
+> > > > LampArray HID device and translates the input from hidraw to the
+> > > > corresponding WMI calls. This is a new approach as the leds
+> > > > subsystem lacks
+> > > > a suitable UAPI for per-key keyboard backlights, and like this
+> > > > no new UAPI
+> > > > needs to be established.
+> > > Please don't.
+> > >=20
+> > > a) I don't believe emulating crazy HID interface si right thing to
+> > > do. (Ton of magic constants. IIRC it stores key positions with
+> > > micrometer accuracy or something that crazy. How is userland going to
+> > > use this? Will we update micrometers for every single machine?)
+> > >=20
+> > > Even if it is,
+> > >=20
+> > > b) The emulation should go to generic layer, it is not specific to
+> > > your hardware.
+> > >=20
+> > Maybe introducing a misc-device which provides an ioctl-based API simil=
+ar
+> > to the HID LampArray would be a solution?
+> >=20
+> > Basically we would need:
+> > - ioctl for querying the supported LEDs and their properties
+> > - ioctl for enabling/disabling autonomous mode
+> > - ioctl for updating a range of LEDs
+> > - ioctl for updating multiple LEDs at once
+> >=20
+> > If we implement this as a separate subsystem ("illumination subsystem"),
+> > then different
+> > drivers could use this. This would also allow us to add additional ioctl
+> > calls later
+> > for more features.
+>=20
+> We went over this in the past discussion, the conclusion was iirc that we
+> are just wraping hidraw ioctls in other ioctls with no added benefit.
 
--       size = (1 << smmu->sid_bits) * sizeof(struct arm_smmu_ste);
-+       size = max_sid * sizeof(struct arm_smmu_ste);
-         cfg->linear.table = dmam_alloc_coherent(smmu->dev, size,
-&cfg->linear.ste_dma,
-                                                 GFP_KERNEL);
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h 
-b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-index 1e9952ca989f..de9f14293485 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
-@@ -235,6 +235,11 @@ static inline u32 arm_smmu_strtab_l2_idx(u32 sid)
-         return sid % STRTAB_NUM_L2_STES;
-  }
+I don't believe that conclusion was widely accepted.
 
-+static inline unsigned int arm_smmu_strtab_max_sid(unsigned int sid_bits)
-+{
-+       return (1UL << sid_bits);
-+}
-+
+Benefit of doing reasonable interface is ... that kernel would have
+reasonable interface. We would get rid of binary tables in the driver,
+and long term, we could get something more reasonable than OpenRGB.
 
->
-> Jason
+> For reference
+> https://lore.kernel.org/all/20231011190017.1230898-1-wse@tuxedocomputers.=
+com/
+>=20
+> I don't know the exact message anymore, but if relevant I can dig for it
+> (it's a over 5 month long e-mail thread).
+>=20
+> And we would need to write code to apply this wrapper to devices
+> implementing LampArray in firmware.
 
+Yes, that would be long term plan.
+
+I bought gaming keyboard to play with rgb leds. I don't really want to
+do crazy arrays in the driver as you did below. And I'd really like to
+have 100-line application in userland, talking to kernel, not full
+OpenRGB which is huge and depends on QT IIRC.
+
+(Work-in-progress version is attached. Note it is smaller than tables
+for the fake-HID implementation).
+
+Best regards,
+								Pavel
+
+
+> > > > +
+> > > > +static const uint8_t sirius_16_ansii_kbl_mapping[] =3D {
+> > > > +=A0=A0=A0 0x29, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x=
+42,
+> > > > +=A0=A0=A0 0x43, 0x44, 0x45, 0xf1, 0x46, 0x4c,=A0=A0 0x4a, 0x4d, 0x=
+4b, 0x4e,
+> > > > +=A0=A0=A0 0x35, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x=
+26,
+> > > > +=A0=A0=A0 0x27, 0x2d, 0x2e, 0x2a,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 0x53, 0x55, 0x54, 0x56,
+> > > > +=A0=A0=A0 0x2b, 0x14, 0x1a, 0x08, 0x15, 0x17, 0x1c, 0x18, 0x0c, 0x=
+12,
+> > > > +=A0=A0=A0 0x13, 0x2f, 0x30, 0x31,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 0x5f, 0x60, 0x61,
+> > > > +=A0=A0=A0 0x39, 0x04, 0x16, 0x07, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x=
+0f,
+> > > > +=A0=A0=A0 0x33, 0x34, 0x28,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 0x5c, 0x5d, 0x5e, 0x57,
+> > > > +=A0=A0=A0 0xe1, 0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x36, 0x=
+37,
+> > > > +=A0=A0=A0 0x38, 0xe5, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 0x59, 0x5a, 0x5b,
+> > > > +=A0=A0=A0 0xe0, 0xfe, 0xe3, 0xe2, 0x2c, 0xe6, 0x65, 0xe4, 0x50, 0x=
+51,
+> > > > +=A0=A0=A0 0x4f,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0x62, 0x63, 0x58
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_x[] =3D {
+> > > > +=A0=A0=A0=A0 25000,=A0 41700,=A0 58400,=A0 75100,=A0 91800, 108500=
+, 125200,
+> > > > 141900, 158600, 175300,
+> > > > +=A0=A0=A0 192000, 208700, 225400, 242100, 258800, 275500,=A0=A0 29=
+4500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 24500,=A0 42500,=A0 61000,=A0 79500,=A0 98000, 116500=
+, 135000,
+> > > > 153500, 172000, 190500,
+> > > > +=A0=A0=A0 209000, 227500, 246000, 269500,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 31000,=A0 51500,=A0 70000,=A0 88500, 107000, 125500, =
+144000,
+> > > > 162500, 181000, 199500,
+> > > > +=A0=A0=A0 218000, 236500, 255000, 273500,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900,
+> > > > +=A0=A0=A0=A0 33000,=A0 57000,=A0 75500,=A0 94000, 112500, 131000, =
+149500,
+> > > > 168000, 186500, 205000,
+> > > > +=A0=A0=A0 223500, 242000, 267500,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 37000,=A0 66000,=A0 84500, 103000, 121500, 140000, 15=
+8500,
+> > > > 177000, 195500, 214000,
+> > > > +=A0=A0=A0 232500, 251500, 273500,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900,
+> > > > +=A0=A0=A0=A0 28000,=A0 47500,=A0 66000,=A0 84500, 140000, 195500, =
+214000,
+> > > > 234000, 255000, 273500,
+> > > > +=A0=A0=A0 292000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 311200,
+> > > > 327900, 344600
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_y[] =3D {
+> > > > +=A0=A0=A0=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 530=
+00,=A0 53000,
+> > > > 53000,=A0 53000,=A0 53000,
+> > > > +=A0=A0=A0=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 530=
+00, 53000,=A0
+> > > > 53000,=A0 53000,=A0 53000,
+> > > > +=A0=A0=A0=A0 67500,=A0 67500,=A0 67500,=A0 67500,=A0 67500,=A0 675=
+00,=A0 67500,
+> > > > 67500,=A0 67500,=A0 67500,
+> > > > +=A0=A0=A0=A0 67500,=A0 67500,=A0 67500,=A0 67500, 67500,=A0 67500,=
+=A0 67500,=A0 67500,
+> > > > +=A0=A0=A0=A0 85500,=A0 85500,=A0 85500,=A0 85500,=A0 85500,=A0 855=
+00,=A0 85500,
+> > > > 85500,=A0 85500,=A0 85500,
+> > > > +=A0=A0=A0=A0 85500,=A0 85500,=A0 85500,=A0 85500, 85500,=A0 85500,=
+=A0 85500,
+> > > > +=A0=A0=A0 103500, 103500, 103500, 103500, 103500, 103500, 103500,
+> > > > 103500, 103500, 103500,
+> > > > +=A0=A0=A0 103500, 103500, 103500,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 103500,
+> > > > 103500, 103500,=A0 94500,
+> > > > +=A0=A0=A0 121500, 121500, 121500, 121500, 121500, 121500, 121500,
+> > > > 121500, 121500, 121500,
+> > > > +=A0=A0=A0 121500, 121500, 129000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 121500,
+> > > > 121500, 121500,
+> > > > +=A0=A0=A0 139500, 139500, 139500, 139500, 139500, 139500, 139500,
+> > > > 139500, 147000, 147000,
+> > > > +=A0=A0=A0 147000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 139500,
+> > > > 139500, 130500
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_ansii_kbl_mapping_pos_z[] =3D {
+> > > > +=A0=A0=A0=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 50=
+00,=A0=A0 5000,=A0=A0 5000,
+> > > > 5000,=A0=A0 5000,=A0=A0 5000,
+> > > > +=A0=A0=A0=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 50=
+00,=A0=A0 5000, 5000,=A0=A0
+> > > > 5000,=A0=A0 5000,=A0=A0 5000,
+> > > > +=A0=A0=A0=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 52=
+50,=A0=A0 5250,=A0=A0 5250,
+> > > > 5250,=A0=A0 5250,=A0=A0 5250,
+> > > > +=A0=A0=A0=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 5250, 5250,=A0=
+=A0 5250,=A0=A0 5250,=A0=A0 5250,
+> > > > +=A0=A0=A0=A0=A0 5500,=A0=A0 5500,=A0=A0 5500,=A0=A0 5500,=A0=A0 55=
+00,=A0=A0 5500,=A0=A0 5500,
+> > > > 5500,=A0=A0 5500,=A0=A0 5500,
+> > > > +=A0=A0=A0=A0=A0 5500,=A0=A0 5500,=A0=A0 5500,=A0=A0 5500, 5500,=A0=
+=A0 5500,=A0=A0 5500,
+> > > > +=A0=A0=A0=A0=A0 5750,=A0=A0 5750,=A0=A0 5750,=A0=A0 5750,=A0=A0 57=
+50,=A0=A0 5750,=A0=A0 5750,
+> > > > 5750,=A0=A0 5750,=A0=A0 5750,
+> > > > +=A0=A0=A0=A0=A0 5750,=A0=A0 5750,=A0=A0 5750, 5750,=A0=A0 5750,=A0=
+=A0 5750,=A0=A0 5625,
+> > > > +=A0=A0=A0=A0=A0 6000,=A0=A0 6000,=A0=A0 6000,=A0=A0 6000,=A0=A0 60=
+00,=A0=A0 6000,=A0=A0 6000,
+> > > > 6000,=A0=A0 6000,=A0=A0 6000,
+> > > > +=A0=A0=A0=A0=A0 6000,=A0=A0 6000,=A0=A0 6125, 6000,=A0=A0 6000,=A0=
+=A0 6000,
+> > > > +=A0=A0=A0=A0=A0 6250,=A0=A0 6250,=A0=A0 6250,=A0=A0 6250,=A0=A0 62=
+50,=A0=A0 6250,=A0=A0 6250,
+> > > > 6250,=A0=A0 6375,=A0=A0 6375,
+> > > > +=A0=A0=A0=A0=A0 6375, 6250,=A0=A0 6250,=A0=A0 6125
+> > > > +};
+> > > > +
+> > > > +static const uint8_t sirius_16_iso_kbl_mapping[] =3D {
+> > > > +=A0=A0=A0 0x29, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41, 0x=
+42,
+> > > > +=A0=A0=A0 0x43, 0x44, 0x45, 0xf1, 0x46, 0x4c,=A0=A0 0x4a, 0x4d, 0x=
+4b, 0x4e,
+> > > > +=A0=A0=A0 0x35, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x=
+26,
+> > > > +=A0=A0=A0 0x27, 0x2d, 0x2e, 0x2a,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 0x53, 0x55, 0x54, 0x56,
+> > > > +=A0=A0=A0 0x2b, 0x14, 0x1a, 0x08, 0x15, 0x17, 0x1c, 0x18, 0x0c, 0x=
+12,
+> > > > +=A0=A0=A0 0x13, 0x2f, 0x30,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0 0x5f, 0x60, 0x61,
+> > > > +=A0=A0=A0 0x39, 0x04, 0x16, 0x07, 0x09, 0x0a, 0x0b, 0x0d, 0x0e, 0x=
+0f,
+> > > > +=A0=A0=A0 0x33, 0x34, 0x32, 0x28,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 0x5c, 0x5d, 0x5e, 0x57,
+> > > > +=A0=A0=A0 0xe1, 0x64, 0x1d, 0x1b, 0x06, 0x19, 0x05, 0x11, 0x10, 0x=
+36,
+> > > > +=A0=A0=A0 0x37, 0x38, 0xe5, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0 0x59, 0x5a, 0x5b,
+> > > > +=A0=A0=A0 0xe0, 0xfe, 0xe3, 0xe2, 0x2c, 0xe6, 0x65, 0xe4, 0x50, 0x=
+51,
+> > > > +=A0=A0=A0 0x4f,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 0x62, 0x63, 0x58
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_x[] =3D {
+> > > > +=A0=A0=A0=A0 25000,=A0 41700,=A0 58400,=A0 75100,=A0 91800, 108500=
+, 125200,
+> > > > 141900, 158600, 175300,
+> > > > +=A0=A0=A0 192000, 208700, 225400, 242100, 258800, 275500,=A0=A0 29=
+4500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 24500,=A0 42500,=A0 61000,=A0 79500,=A0 98000, 116500=
+, 135000,
+> > > > 153500, 172000, 190500,
+> > > > +=A0=A0=A0 209000, 227500, 246000, 269500,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 31000,=A0 51500,=A0 70000,=A0 88500, 107000, 125500, =
+144000,
+> > > > 162500, 181000, 199500,
+> > > > +=A0=A0=A0 218000, 234500, 251000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900,
+> > > > +=A0=A0=A0=A0 33000,=A0 57000,=A0 75500,=A0 94000, 112500, 131000, =
+149500,
+> > > > 168000, 186500, 205000,
+> > > > +=A0=A0=A0 223500, 240000, 256500, 271500,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900, 344600,
+> > > > +=A0=A0=A0=A0 28000,=A0 47500,=A0 66000,=A0 84500, 103000, 121500, =
+140000,
+> > > > 158500, 177000, 195500,
+> > > > +=A0=A0=A0 214000, 232500, 251500, 273500,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 294500,
+> > > > 311200, 327900,
+> > > > +=A0=A0=A0=A0 28000,=A0 47500,=A0 66000,=A0 84500, 140000, 195500, =
+214000,
+> > > > 234000, 255000, 273500,
+> > > > +=A0=A0=A0 292000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 311200,
+> > > > 327900, 344600
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_y[] =3D {
+> > > > +=A0=A0=A0=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 530=
+00,=A0 53000,
+> > > > 53000,=A0 53000,=A0 53000,
+> > > > +=A0=A0=A0=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 53000,=A0 530=
+00, 53000,=A0
+> > > > 53000,=A0 53000,=A0 53000,
+> > > > +=A0=A0=A0=A0 67500,=A0 67500,=A0 67500,=A0 67500,=A0 67500,=A0 675=
+00,=A0 67500,
+> > > > 67500,=A0 67500,=A0 67500,
+> > > > +=A0=A0=A0=A0 67500,=A0 67500,=A0 67500,=A0 67500, 67500,=A0 67500,=
+=A0 67500,=A0 67500,
+> > > > +=A0=A0=A0=A0 85500,=A0 85500,=A0 85500,=A0 85500,=A0 85500,=A0 855=
+00,=A0 85500,
+> > > > 85500,=A0 85500,=A0 85500,
+> > > > +=A0=A0=A0=A0 85500,=A0 85500,=A0 85500, 85500,=A0 85500,=A0 85500,
+> > > > +=A0=A0=A0 103500, 103500, 103500, 103500, 103500, 103500, 103500,
+> > > > 103500, 103500, 103500,
+> > > > +=A0=A0=A0 103500, 103500, 103500,=A0 94500,=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 103500,
+> > > > 103500, 103500,=A0 94500,
+> > > > +=A0=A0=A0 121500, 121500, 121500, 121500, 121500, 121500, 121500,
+> > > > 121500, 121500, 121500,
+> > > > +=A0=A0=A0 121500, 121500, 121500, 129000,=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 121500,
+> > > > 121500, 121500,
+> > > > +=A0=A0=A0 139500, 139500, 139500, 139500, 139500, 139500, 139500,
+> > > > 139500, 147000, 147000,
+> > > > +=A0=A0=A0 147000,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0 139500,
+> > > > 139500, 130500
+> > > > +};
+> > > > +
+> > > > +static const uint32_t sirius_16_iso_kbl_mapping_pos_z[] =3D {
+> > > > +=A0=A0=A0=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 50=
+00,=A0=A0 5000,=A0=A0 5000,
+> > > > 5000,=A0=A0 5000,=A0=A0 5000,
+> > > > +=A0=A0=A0=A0=A0 5000,=A0=A0 5000,=A0=A0 5000,=A0=A0 5000, 5000, 50=
+00, 5000,=A0=A0 5000,=A0=A0
+> > > > 5000,=A0=A0 5000,
+> > > > +=A0=A0=A0=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 52=
+50,=A0=A0 5250,=A0=A0 5250,
+> > > > 5250,=A0=A0 5250,=A0=A0 5250,
+> > > > +=A0=A0=A0=A0=A0 5250,=A0=A0 5250,=A0=A0 5250,=A0=A0 5250, 5250,=A0=
+=A0 5250,=A0=A0 5250,=A0=A0 5250,
+> > > > +=A0=A0=A0=A0=A0 5500,=A0=A0 5500,=A0=A0 5500,=A0=A0 5500,=A0=A0 55=
+00,=A0=A0 5500,=A0=A0 5500,
+> > > > 5500,=A0=A0 5500,=A0=A0 5500,
+> > > > +=A0=A0=A0=A0=A0 5500,=A0=A0 5500,=A0=A0 5500, 5500,=A0=A0 5500,=A0=
+=A0 5500,
+> > > > +=A0=A0=A0=A0=A0 5750,=A0=A0 5750,=A0=A0 5750,=A0=A0 5750,=A0=A0 57=
+50,=A0=A0 5750,=A0=A0 5750,
+> > > > 5750,=A0=A0 5750,=A0=A0 5750,
+> > > > +=A0=A0=A0=A0=A0 5750,=A0=A0 5750,=A0=A0 5750,=A0=A0 5750, 5750,=A0=
+=A0 5750,=A0=A0 5750,=A0=A0 5625,
+> > > > +=A0=A0=A0=A0=A0 6000,=A0=A0 6000,=A0=A0 6000,=A0=A0 6000,=A0=A0 60=
+00,=A0=A0 6000,=A0=A0 6000,
+> > > > 6000,=A0=A0 6000,=A0=A0 6000,
+> > > > +=A0=A0=A0=A0=A0 6000,=A0=A0 6000,=A0=A0 6000,=A0=A0 6125, 6000,=A0=
+=A0 6000,=A0=A0 6000,
+> > > > +=A0=A0=A0=A0=A0 6250,=A0=A0 6250,=A0=A0 6250,=A0=A0 6250,=A0=A0 62=
+50,=A0=A0 6250,=A0=A0 6250,
+> > > > 6250,=A0=A0 6375,=A0=A0 6375,
+> > > > +=A0=A0=A0=A0=A0 6375, 6250,=A0=A0 6250,=A0=A0 6125
+> > > > +};
+> > > ...
+> > > > +
+> > > > +static uint8_t report_descriptor[327] =3D {
+> > > > +=A0=A0=A0 0x05, 0x59,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 // Usage Pa=
+ge (Lighting and Illumination)
+> > > > +=A0=A0=A0 0x09, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 // Usage (L=
+amp Array)
+> > > > +=A0=A0=A0 0xa1, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 // Collecti=
+on (Application)
+> > > > +=A0=A0=A0 0x85, LAMP_ARRAY_ATTRIBUTES_REPORT_ID, //=A0 Report ID (=
+1)
+> > > > +=A0=A0=A0 0x09, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Array Attributes Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x03,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Count)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0x00, 0x00,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (65535)
+> > > > +=A0=A0=A0 0x75, 0x10,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (16)
+> > > > +=A0=A0=A0 0x95, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (1)
+> > > > +=A0=A0=A0 0xb1, 0x03,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Cnst,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x04,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Bounding Box Width In
+> > > > Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x05,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Bounding Box Height In
+> > > > Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x06,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Bounding Box Depth In
+> > > > Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x07,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Array Kind)
+> > > > +=A0=A0=A0 0x09, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Min Update Interval In
+> > > > Microseconds)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0xff, 0x7f,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (2147483647)
+> > > > +=A0=A0=A0 0x75, 0x20,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (32)
+> > > > +=A0=A0=A0 0x95, 0x05,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (5)
+> > > > +=A0=A0=A0 0xb1, 0x03,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Cnst,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0x85, LAMP_ATTRIBUTES_REQUEST_REPORT_ID, //=A0 Report ID=
+ (2)
+> > > > +=A0=A0=A0 0x09, 0x20,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Attributes Request Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x21,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Id)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0x00, 0x00,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (65535)
+> > > > +=A0=A0=A0 0x75, 0x10,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (16)
+> > > > +=A0=A0=A0 0x95, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (1)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0x85, LAMP_ATTRIBUTES_RESPONSE_REPORT_ID, //=A0 Report I=
+D (3)
+> > > > +=A0=A0=A0 0x09, 0x22,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Attributes Response Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x21,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Id)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0x00, 0x00,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (65535)
+> > > > +=A0=A0=A0 0x75, 0x10,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (16)
+> > > > +=A0=A0=A0 0x95, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (1)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x23,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Position X In Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x24,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Position Y In Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x25,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Position Z In Micrometers)
+> > > > +=A0=A0=A0 0x09, 0x27,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Update Latency In Microseconds)
+> > > > +=A0=A0=A0 0x09, 0x26,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Purposes)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0xff, 0x7f,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (2147483647)
+> > > > +=A0=A0=A0 0x75, 0x20,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (32)
+> > > > +=A0=A0=A0 0x95, 0x05,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (5)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x28,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Level Count)
+> > > > +=A0=A0=A0 0x09, 0x29,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Level Count)
+> > > > +=A0=A0=A0 0x09, 0x2a,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Level Count)
+> > > > +=A0=A0=A0 0x09, 0x2b,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Level Count)
+> > > > +=A0=A0=A0 0x09, 0x2c,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Is Programmable)
+> > > > +=A0=A0=A0 0x09, 0x2d,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Input Binding)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x26, 0xff, 0x00,=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Logical =
+Maximum (255)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x06,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (6)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0x85, LAMP_MULTI_UPDATE_REPORT_ID, //=A0 Report ID (4)
+> > > > +=A0=A0=A0 0x09, 0x50,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Multi Update Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x03,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Count)
+> > > > +=A0=A0=A0 0x09, 0x55,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Update Flags)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x25, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Maximum (8)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (2)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x21,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Id)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0x00, 0x00,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (65535)
+> > > > +=A0=A0=A0 0x75, 0x10,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (16)
+> > > > +=A0=A0=A0 0x95, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (8)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x26, 0xff, 0x00,=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Logical =
+Maximum (255)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x20,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (32)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0x85, LAMP_RANGE_UPDATE_REPORT_ID, //=A0 Report ID (5)
+> > > > +=A0=A0=A0 0x09, 0x60,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Range Update Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x55,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Update Flags)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x25, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Maximum (8)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (1)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x61,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Id Start)
+> > > > +=A0=A0=A0 0x09, 0x62,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Lamp Id End)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x27, 0xff, 0xff, 0x00, 0x00,=A0=A0=A0 //=A0=A0 Logical =
+Maximum (65535)
+> > > > +=A0=A0=A0 0x75, 0x10,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (16)
+> > > > +=A0=A0=A0 0x95, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (2)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0x09, 0x51,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Red Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x52,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Green Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x53,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Blue Update Channel)
+> > > > +=A0=A0=A0 0x09, 0x54,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Intensity Update Channel)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x26, 0xff, 0x00,=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Logical =
+Maximum (255)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x04,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (4)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0x85, LAMP_ARRAY_CONTROL_REPORT_ID, //=A0 Report ID (6)
+> > > > +=A0=A0=A0 0x09, 0x70,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Usage=
+ (Lamp Array Control Report)
+> > > > +=A0=A0=A0 0xa1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0 Colle=
+ction (Logical)
+> > > > +=A0=A0=A0 0x09, 0x71,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Us=
+age (Autonomous Mode)
+> > > > +=A0=A0=A0 0x15, 0x00,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Minimum (0)
+> > > > +=A0=A0=A0 0x25, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Lo=
+gical Maximum (1)
+> > > > +=A0=A0=A0 0x75, 0x08,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Size (8)
+> > > > +=A0=A0=A0 0x95, 0x01,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Re=
+port Count (1)
+> > > > +=A0=A0=A0 0xb1, 0x02,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=A0 Fe=
+ature (Data,Var,Abs)
+> > > > +=A0=A0=A0 0xc0,=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 //=A0=
+ End Collection
+> > > > +=A0=A0=A0 0xc0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 // End=
+ Collection
+> > > > +};
+> > > > +
+
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--yvVlx55uPS6aOSGu
+Content-Type: text/x-csrc; charset=us-ascii
+Content-Disposition: attachment; filename="kbd_hx.c"
+Content-Transfer-Encoding: quoted-printable
+
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ */
+
+#include <linux/device.h>
+#include <linux/input.h>
+#include <linux/hid.h>
+#include <linux/module.h>
+#include <linux/slab.h>
+#include <linux/hid-roccat.h>
+#include <linux/usb.h>
+
+struct hx_device {};
+
+static unsigned char keys[] =3D {
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x=
+14,
+	0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x20, 0x21, 0x=
+22,
+	0x23, 0x24, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x=
+30,
+	0x31, 0x32, 0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3E, 0x3F, 0x=
+41,
+	0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x51, 0x54, 0x=
+55,
+	0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5E, 0x5F, 0x61, 0x64, 0x65, 0x68, 0x69, 0x=
+6A,
+	0x6B, 0x6C, 0x6E, 0x6F, 0x74, 0x75, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x=
+7E,
+	0x7F, 0x81, 0x84, 0x85, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x=
+91,
+	0x94, 0x95 };
+
+struct hid_device *one_hdev;
+
+static int set_direct_color(struct hid_device *hdev, int color, int val)
+{
+	const int s =3D 264;
+	unsigned char *buf =3D kmalloc(s, GFP_KERNEL);
+	int i, ret;
+
+	/* Zero out buffer */
+	memset(buf, 0x00, s);
+
+	/* Set up Direct packet */
+	for (i =3D 0; i < sizeof(keys)/sizeof(keys[0]); i++) {
+		buf[keys[i]] =3D val;
+	}
+
+	buf[0x00] =3D 0x07;
+	buf[0x01] =3D 0x16; // HYPERX_ALLOY_ELITE_PACKET_ID_DIRECT
+	buf[0x02] =3D color; // HYPERX_ALLOY_ELITE_COLOR_CHANNEL_GREEN
+	buf[0x03] =3D 0xA0;
+
+	ret =3D hid_hw_power(hdev, PM_HINT_FULLON);
+	if (ret) {
+		hid_err(hdev, "Failed to power on HID device\n");
+		return ret;
+	}
+
+	// ioctl(3, HIDIOCSFEATURE(264), 0xbfce5974) =3D 264
+	// -> hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
+	//
+	printk(KERN_INFO "Set feature report -- direct\n");
+	i =3D hid_hw_raw_request(hdev, buf[0], buf, s, HID_FEATURE_REPORT, HID_REQ=
+_SET_REPORT);
+	printk("raw: %d, einval %d, eagain %d\n", i, -EINVAL, -EAGAIN);
+	msleep(100);
+	return 0;
+}
+
+#define SIZE 128
+const int real_size =3D SIZE;
+
+static ssize_t hx_sysfs_read(struct file *fp, struct kobject *kobj,
+			       struct bin_attribute * b,
+			      char *buf, loff_t off, size_t count)
+{
+	struct device *dev =3D kobj_to_dev(kobj);
+	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
+	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
+	int retval;
+
+	if (off >=3D real_size)
+		return 0;
+
+	if (off !=3D 0 || count !=3D real_size)
+		return -EINVAL;
+=09
+	printk("read\n");
+	set_direct_color(one_hdev, 2, 0xff);
+
+	return retval ? retval : real_size;
+}
+
+static ssize_t hx_sysfs_write(struct file *fp, struct kobject *kobj,
+			       struct bin_attribute * b,
+		void const *buf, loff_t off, size_t count)
+{
+	struct device *dev =3D kobj_to_dev(kobj);
+	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
+	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
+	int retval;
+
+	if (off !=3D 0 || count !=3D real_size)
+		return -EINVAL;
+
+	printk("Write\n");
+
+	return retval ? retval : real_size;
+}
+
+static struct bin_attribute hx_control_attr =3D { \
+  .attr =3D { .name =3D "thingy", .mode =3D 0660 },		\
+	.size =3D SIZE, \
+	.read =3D hx_sysfs_read, \
+};
+
+static int hx_create_sysfs_attributes(struct usb_interface *intf)
+{
+  return sysfs_create_bin_file(&intf->dev.kobj, &hx_control_attr);
+}
+
+static void hx_remove_sysfs_attributes(struct usb_interface *intf)
+{
+  sysfs_remove_bin_file(&intf->dev.kobj, &hx_control_attr);
+}
+
+static int hx_init_hx_device_struct(struct usb_device *usb_dev,
+		struct hx_device *hx)
+{
+	//mutex_init(&hx->hx_lock);
+	return 0;
+}
+
+static int hx_init_specials(struct hid_device *hdev)
+{
+	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
+	struct usb_device *usb_dev =3D interface_to_usbdev(intf);
+	struct hx_device *hx;
+	int retval;
+
+	hx =3D kzalloc(sizeof(*hx), GFP_KERNEL);
+	if (!hx) {
+		hid_err(hdev, "can't alloc device descriptor\n");
+		return -ENOMEM;
+	}
+	hid_set_drvdata(hdev, hx);
+
+	retval =3D hx_create_sysfs_attributes(intf);
+	if (retval) {
+		hid_err(hdev, "cannot create sysfs files\n");
+		goto exit;
+	}
+
+	return 0;
+exit:
+	kfree(hx);
+	return retval;
+}
+
+static void hx_remove_specials(struct hid_device *hdev)
+{
+	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
+	struct hx_device *hx;
+
+	hx_remove_sysfs_attributes(intf);
+
+	hx =3D hid_get_drvdata(hdev);
+	kfree(hx);
+}
+
+static int num;
+
+static int hx_probe(struct hid_device *hdev,
+		const struct hid_device_id *id)
+{
+	int retval;
+
+	if (!hid_is_usb(hdev))
+		return -EINVAL;
+
+	if (++num !=3D 2)
+		return -EINVAL;
+
+	retval =3D hid_parse(hdev);
+	if (retval) {
+		hid_err(hdev, "parse failed\n");
+		goto exit;
+	}
+
+	retval =3D hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+	if (retval) {
+		hid_err(hdev, "hw start failed\n");
+		goto exit;
+	}
+
+	printk("Have device.\n");
+
+	if (!hid_is_usb(hdev)) {
+		printk("Not an usb?\n");
+	}
+
+	{
+		struct usb_interface *interface =3D to_usb_interface(hdev->dev.parent);
+		struct usb_device *dev =3D interface_to_usbdev(interface);
+		struct usb_host_interface *iface_desc;
+		struct usb_endpoint_descriptor *endpoint;
+		char manufacturer[128];
+		char product[128];
+
+		// Retrieve manufacturer string
+		retval =3D usb_string(dev, dev->descriptor.iManufacturer, manufacturer, s=
+izeof(manufacturer));
+		if (retval > 0)
+			printk(KERN_INFO "Manufacturer: %s\n", manufacturer);
+		else
+			printk(KERN_ERR "Failed to get manufacturer string\n");
+
+		// Retrieve product string
+		retval =3D usb_string(dev, dev->descriptor.iProduct, product, sizeof(prod=
+uct));
+		if (retval > 0)
+			printk(KERN_INFO "Product: %s\n", product);
+		else
+			printk(KERN_ERR "Failed to get product string\n");
+
+	}
+
+	retval =3D hx_init_specials(hdev);
+	if (retval) {
+		hid_err(hdev, "couldn't install mouse\n");
+		goto exit_stop;
+	}
+
+	// Example call to set_direct_color function
+	for (int i=3D0; i<20; i++) {
+		set_direct_color(hdev, 0x01, 0); // Example values
+		set_direct_color(hdev, 0x02, 0); // Example values
+		set_direct_color(hdev, 0x03, 0); // Example values
+		set_direct_color(hdev, 0x01, 0xFF); // Example values
+		set_direct_color(hdev, 0x02, 0xFF); // Example values
+		set_direct_color(hdev, 0x03, 0xFF); // Example values
+	}
+	one_hdev =3D hdev;
+	return 0;
+
+exit_stop:
+	hid_hw_stop(hdev);
+exit:
+	return retval;
+}
+
+static void hx_remove(struct hid_device *hdev)
+{
+	hx_remove_specials(hdev);
+	hid_hw_stop(hdev);
+}
+
+static const struct hid_device_id hx_devices[] =3D {
+	{ HID_USB_DEVICE(0x0951, 0x16be) },
+	{ }
+};
+
+MODULE_DEVICE_TABLE(hid, hx_devices);
+
+static struct hid_driver hx_driver =3D {
+	.name =3D "hx",
+	.id_table =3D hx_devices,
+	.probe =3D hx_probe,
+	.remove =3D hx_remove
+};
+module_hid_driver(hx_driver);
+
+MODULE_AUTHOR("Pavel Machek");
+MODULE_DESCRIPTION("USB HyperX elite backlight driver");
+MODULE_LICENSE("GPL v2");
+
+--yvVlx55uPS6aOSGu--
+
+--jpGYNOKCYXHzf8bq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZvxf3wAKCRAw5/Bqldv6
+8kliAJ9QgLT4nPcovdZp6MQmF/JTXfM6cACgkmo1srKyVCKBHfOxnvxa30ILud0=
+=se0Y
+-----END PGP SIGNATURE-----
+
+--jpGYNOKCYXHzf8bq--
 
