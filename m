@@ -1,282 +1,129 @@
-Return-Path: <linux-kernel+bounces-345859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08BD398BC09
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:26:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0853798BC0D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AADF7284761
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:26:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993761F22A78
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD761C2439;
-	Tue,  1 Oct 2024 12:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA91C2422;
+	Tue,  1 Oct 2024 12:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlFzBzby"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JleF9r8C"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F321BE23E;
-	Tue,  1 Oct 2024 12:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5DF1BE23E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727785606; cv=none; b=lv0+iANhT2MFGy3Id5ysl0Q2Ikzisj5ZCso43LGfzH92Zz+8xcYFy2PcdrZ5pC7Ffuh095gX3/4Yz5xSr7B64JolafFpIUNmHL7u69b9YS40fCg6pVKNq6QNjb2SZ6MiSGVoceK/nrlH5qQam3tQtbx1a/11JQ+J743hgZx/kHs=
+	t=1727785659; cv=none; b=NewayuYPDUYjOXE3kA8GC9unDdNTZAWAySJAJqxOFgCAnzEOaJGdABGPnQy3ywYzuQDq/4Fk5IfMiedV5r6MJZIDW+t5G8sg2tMk8+QHkvdd62YUa/jlOzTS9cIhwuQRHV7OreLRwnoA6Aft9x4wnNg/FosF8rlw/04mW9duBUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727785606; c=relaxed/simple;
-	bh=AGPCgGoPK0o7ImVCFMIR6f4YdZ5vqlo0qXoFD3Py+sA=;
+	s=arc-20240116; t=1727785659; c=relaxed/simple;
+	bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WspJFaFf673Owtztxs2WifJjPItSUxTfQFQGmWFJsRuJud5nJbwyY/9HW5sFBaW1HhAP2zupSfNF6BAQCRb4Wsiv25gjRR7swHqXgHexkuD4q6POblSA+oYSELrE2i2QA7BqVgfvYDOsPfONdp+oQ6MHprKSDPWcyoZcjvMXRIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlFzBzby; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso4209835a12.2;
-        Tue, 01 Oct 2024 05:26:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=J72DZU0raEVlSEB61a495kDdJUoC3oWjWzdU4RxWYozBEMsCCp4sKaGZ8Qgz2scz5wawNfNJP+3dfquhQRdI7NMvlnuNDqyWu2A9nz4uZjisNTuvVk2Y+E1c5LZWwomrQxKeNbdZOolTgdjY6Eow1VuHhGZ/6vnXZDDHw5lpn9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JleF9r8C; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53993c115cfso2601557e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727785604; x=1728390404; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hRzKZIrwY6F9e/sw1cQ+5sS/xRxVwVb7Ja72YV9Dmp0=;
-        b=hlFzBzbyOv10cztOKQOuOAaPztczrWyS83cJNKCGZPKbwxUva70JxosbYt87G3DGMq
-         9GBv8Kwv1awahtmRVYo/NBDwrV81FVNoR5bKpqzU8ftsA9ZEz+AJQgN0vv8X0qRSrUlO
-         mC7OjZ5TkrJfSExq3tFSPhyvcSl5GESiATFW2dGlVdu2rotf0LIocliuD7xBiwqAD6g4
-         k7iiVRn2kt12L4anH9qJ+wOI17Xd0WgsirByQ2xb+tW/Agr7K0ZZo38yR9t/qiOeV7ue
-         XmUs3oSnGetV/PrdfFxuiMqL2ndQgBhDEXl4EPX13r/52oFrMykKou4iyJfRNJXDqB3e
-         rFdA==
+        d=linaro.org; s=google; t=1727785656; x=1728390456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
+        b=JleF9r8Cgi9SbBqVu55NMMmAoISmLTy0hHRyDrs6xJgV+eVRDowmb0NJmyMZQyxW+N
+         CZI14fImA0403beZLe8mdGEAdZ3UV8JjR51ywik9gPK+N2V9blYDdnMl+DUQ51PD7diZ
+         +pwARflZ8+DC6UNJqGdb821COFI3wNKtJHoEOANmTIfX9XdbHvRPLWRcvujcSrQkFQas
+         arkNUQq+pzqX8BU04co41pNJUhxkAb0qjvXwAEcHpPoj/1/3/JRun5OKwgjDXCep1YdU
+         //TyyJaKEDVSBvj7+yuZq8YlF5repxzxKGMvaQaWL9CAptFaNBq4xhN/e4gfNaBJcvHz
+         NyHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727785604; x=1728390404;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hRzKZIrwY6F9e/sw1cQ+5sS/xRxVwVb7Ja72YV9Dmp0=;
-        b=JBagdcNbdNPPO4j5BXP44RvVFi31qIIjCXUFy4zNoPIqAJhDbg+V/v39s55X/tG5na
-         LP/ly+sBYqaGZYHg4P+YTmFXCGjaBB0u4XlAhIZLJ55/jo58ZUAXFgo2QQGu9PTUbadL
-         M2FZaN66zHnNdOyK0c8by2c4MQEogHcJkbdciL9gFSmgF/rEb7qbk6WcgZjZtApMR60C
-         yWMbx/O5vXU3JIpXNLKyo9R9TLUVXGNbcl0eVlO1rFDPXtFDDBUb4b2CSl2E1WJ8pd29
-         x/l29BLpLUj0lZos4k8HLrcePC7XG24eCiY/uE61jE2ZWnL5hzM+bB/xn31hV9Md4ImC
-         ufDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Oh1Gw1kzRt+RvqxEgK5SsWrYmfPfSTGrg53skXzbePef5NUBM2MwVvMqNm0Ppjt7bAImWq9EqeUo9e0F@vger.kernel.org, AJvYcCXH8UqFE4do+XuQN+Mnto38+9evhUe13l8a17y7oxatyXUBQ7/0e0lGP1Z8Ob7xuj70dy6OVJEa7qyQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzXQAkooQ44/WO9fJ3VCbR431t9Z5544SuKeJ1xNcL86Lt0sD8
-	wAVOa69mOrUxS7XYvkr5Ck87uQv66L7862cLlmSLHmIQNFT0mS29KYlrs0V5OxtTMd1Y1M++r6Y
-	OrwL9lmpummII0A4QsyMCoGunuK4=
-X-Google-Smtp-Source: AGHT+IEwQbSQ9LoiduXFTA+CUH43wANHBCWgxsjU8ItWClAd+cmKuW97/b+uJv9z8j5ppoJtoNx1i2gj2p0SzQ213eU=
-X-Received: by 2002:a05:6a20:9c8e:b0:1c0:ef24:4125 with SMTP id
- adf61e73a8af0-1d4fa6feaa8mr20228804637.26.1727785603815; Tue, 01 Oct 2024
- 05:26:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727785656; x=1728390456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SoCurHIkleGhUTp4khwR0zEhKLpu15VK4lI1dWVteZ0=;
+        b=M7k7TXez6WLUIH7VOqpuvU85VU5xRsHOmWVK5mJyNd78+aOMu9LezhluwF/P7QvLqZ
+         aiL7Ts9a6nLVDHNDCAVzXhcM3lU1w+Se2fV6KeB8EDp7LQWSfYH5iiS47Z2cW1PWTZoI
+         VQ/NS1kHQF5Sl6MmozZnq7ka9gMPgAchDa3tr6LKzHBkHX+Tz/PdwPau1PYmcxRDnTKT
+         RqmpShhHKyVwnltH5eLV6KikJrnTkYowSZr4KyJSkF+2zRYxW9kMNPbrX044ovE/w9Pc
+         vZ3K8E5aNxyvQ6RVHQ7A35T7BHrnHCob6AVWjW9FmJKYbx1Im/8wSdyjJPlAhBRHoolv
+         ZXYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmo9bmFDfNFIBefdzkg6FbcZaQ90hDVC3bRJb+kPjqrWJtlCJY4f87rTTG3PVkGmb6i9dCjl+Jfm5Czmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI+lLNGXyDU9SK0proecbVaFlir/Uikj7GKLFl5MdRjSBad80m
+	kdGLf6wqEiQvU3ihcms7RlN3QqwklrqChdr86ss8BEmQOxITKWyWcgLzP/EZQFVE3MZzwydewh4
+	63AaGu0JPmX6sd8R/7cdMk0a+FlxkGJ/EVq75og==
+X-Google-Smtp-Source: AGHT+IG8TzlpP6uZVriUb03XpH7zYmc6S6jIBvK4noZhBbrXE9sWhgUKi4i+nF2zm0Fpa+WkCA4CyjTFVSaUXh1u58w=
+X-Received: by 2002:a05:6512:3ba0:b0:52c:d6a1:5734 with SMTP id
+ 2adb3069b0e04-5389fc3ad9bmr8742854e87.14.1727785656074; Tue, 01 Oct 2024
+ 05:27:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920150013.2447-1-aha310510@gmail.com> <C833DBDC-CBEE-4A98-A42E-E39CE2333037@dilger.ca>
-In-Reply-To: <C833DBDC-CBEE-4A98-A42E-E39CE2333037@dilger.ca>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Tue, 1 Oct 2024 21:26:32 +0900
-Message-ID: <CAO9qdTGwLoZGokr+RpTu2z6FVbB_UGM_tgE7qAr8k8Pr9Sx17Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ext4: prevent data-race that occur when read/write
- ext4_group_desc structure members
-To: Andreas Dilger <adilger@dilger.ca>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, akpm@osdl.org, 
-	Ext4 Developers List <linux-ext4@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
+In-Reply-To: <20240926-k230-pinctrl-v2-0-a9a36fba4b34@163.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 1 Oct 2024 14:27:25 +0200
+Message-ID: <CACRpkdYk9aCp7mdWJJTT-1cwNZC4RN_eB6v5rducDY5MGJ_dbg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Add initial support for Canaan Kendryte K230 pinctrl
+To: Ze Huang <18771902331@163.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Andreas Dilger <adilger@dilger.ca> wrote:
->
-> On Sep 20, 2024, at 9:00 AM, Jeongjun Park <aha310510@gmail.com> wrote:
-> >
-> > Currently, data-race like [1] occur in fs/ext4/ialloc.c
-> >
-> > find_group_other() and find_group_orlov() read multiple ext4_groups but
-> > do not protect them with locks, which causes data-race. I think it would
-> > be appropriate to add ext4_lock_group() at an appropriate location to solve
-> > this.
-> >
-> > [1]
-> >
-> > ==================================================================
-> > BUG: KCSAN: data-race in ext4_free_inodes_count / ext4_free_inodes_set
-> >
-> > write to 0xffff88810404300e of 2 bytes by task 6254 on cpu 1:
-> > ext4_free_inodes_set+0x1f/0x80 fs/ext4/super.c:405
-> > __ext4_new_inode+0x15ca/0x2200 fs/ext4/ialloc.c:1216
-> > ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
-> > vfs_symlink+0xca/0x1d0 fs/namei.c:4615
-> > do_symlinkat+0xe3/0x340 fs/namei.c:4641
-> > __do_sys_symlinkat fs/namei.c:4657 [inline]
-> > __se_sys_symlinkat fs/namei.c:4654 [inline]
-> > __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
-> > x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
-> > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
-> > entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> >
-> > read to 0xffff88810404300e of 2 bytes by task 6257 on cpu 0:
-> > ext4_free_inodes_count+0x1c/0x80 fs/ext4/super.c:349
-> > find_group_other fs/ext4/ialloc.c:594 [inline]
-> > __ext4_new_inode+0x6ec/0x2200 fs/ext4/ialloc.c:1017
-> > ext4_symlink+0x242/0x5a0 fs/ext4/namei.c:3391
-> > vfs_symlink+0xca/0x1d0 fs/namei.c:4615
-> > do_symlinkat+0xe3/0x340 fs/namei.c:4641
-> > __do_sys_symlinkat fs/namei.c:4657 [inline]
-> > __se_sys_symlinkat fs/namei.c:4654 [inline]
-> > __x64_sys_symlinkat+0x5e/0x70 fs/namei.c:4654
-> > x64_sys_call+0x1dda/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:267
-> > do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> > do_syscall_64+0x54/0x120 arch/x86/entry/common.c:83
-> > entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> >
-> > value changed: 0x185c -> 0x185b
->
-> I see now after you sent this patch that all of these cases are for
-> read-only access to the free inodes count, which doesn't really
-> matter if the value is racy.  These values are only used in heuristics
-> for block group selection, and if the value is wrong then creating a
-> new subdirectory may be in a different group, but that doesn't make
-> much difference.
->
-> It looks like the write side of all these accesses are already under
-> ext4_group_lock(), so the code is actually correct and not in danger
-> of two threads updating bg_free_inodes_count_lo/hi inconsistently.
->
-> We probably *do not* want locking in the read case, as it will cause
-> unnecessary lock contention scanning groups for subdirectory allocation.
->
-> My suggestion at this point would be to go back to using READ_ONCE() and
-> WRITE_ONCE() in ext4_free_inodes_count()/ext4_free_inodes_set() like in
-> your original patch. but *only* for functions used by find_group_*(). We
-> want to be warned by KASAN if any of the other fields are accessed without
-> a proper ext4_group_lock(), since READ_ONCE()/WRITE_ONCE() does not fix
-> _lo/_hi tearing.
->
-> It probably also makes sense to add comments to all of these functions
-> that they should hold ext4_group_lock() for access/updates, *except*
-> ext4_free_inodes_count() can be called to read the inode count without it
-> if the result does not need to be totally accurate.
+On Thu, Sep 26, 2024 at 5:58=E2=80=AFPM Ze Huang <18771902331@163.com> wrot=
+e:
 
-Thanks for the comment! Then it seems appropriate to annotate
-ext4_free_inodes_count() called in find_group_* so that KCSAN does
-not report it. I will write a v3 patch that implements this and send it to
-you right away.
+> This patch series introduces support for the pinctrl driver of the Canaan
+> K230 SoC. The K230 SoC features 64 IO pins, each of which can be configur=
+ed
+> for up to five different functions.
+>
+> The controller manages the entire pin configuration and multiplexing
+> through a single register, which control features such as schmitt trigger=
+,
+> drive strength, bias pull-up/down, input/output enable, power source, and
+> mux mode.
+>
+> The changes have been tested on CanMV-K230-V1.1 board.
+>
+> The pin function definition can be found here [1], and most of the DTS da=
+ta
+> was converted from the vendor's code [2].
 
-Regards,
-Jeongjun Park
+Bindings ACKed and patches look good to I applied patch
+1 & 2 to the pin control tree.
 
->
-> Cheers, Andreas
->
-> > Fixes: ac27a0ec112a ("[PATCH] ext4: initial copy of files from ext3")
-> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > ---
-> > fs/ext4/ialloc.c | 27 ++++++++++++++++++++++++---
-> > 1 file changed, 24 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-> > index 9dfd768ed9f8..5cae247ff21f 100644
-> > --- a/fs/ext4/ialloc.c
-> > +++ b/fs/ext4/ialloc.c
-> > @@ -500,11 +500,14 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
-> >               for (i = 0; i < flex_size; i++) {
-> >                       if (grp+i >= real_ngroups)
-> >                               break;
-> > +                     ext4_lock_group(sb, grp+i);
-> >                       desc = ext4_get_group_desc(sb, grp+i, NULL);
-> >                       if (desc && ext4_free_inodes_count(sb, desc)) {
-> >                               *group = grp+i;
-> > +                             ext4_unlock_group(sb, grp+i);
-> >                               return 0;
-> >                       }
-> > +                     ext4_unlock_group(sb, grp+i);
-> >               }
-> >               goto fallback;
-> >       }
-> > @@ -544,14 +547,17 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
-> >       parent_group = EXT4_I(parent)->i_block_group;
-> >       for (i = 0; i < ngroups; i++) {
-> >               grp = (parent_group + i) % ngroups;
-> > +             ext4_lock_group(sb, grp);
-> >               desc = ext4_get_group_desc(sb, grp, NULL);
-> >               if (desc) {
-> >                       grp_free = ext4_free_inodes_count(sb, desc);
-> >                       if (grp_free && grp_free >= avefreei) {
-> >                               *group = grp;
-> > +                             ext4_unlock_group(sb, grp);
-> >                               return 0;
-> >                       }
-> >               }
-> > +             ext4_unlock_group(sb, grp);
-> >       }
-> >
-> >       if (avefreei) {
-> > @@ -590,11 +596,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
-> >               if (last > ngroups)
-> >                       last = ngroups;
-> >               for  (i = parent_group; i < last; i++) {
-> > +                     ext4_lock_group(sb, i);
-> >                       desc = ext4_get_group_desc(sb, i, NULL);
-> >                       if (desc && ext4_free_inodes_count(sb, desc)) {
-> >                               *group = i;
-> > +                             ext4_unlock_group(sb, i);
-> >                               return 0;
-> >                       }
-> > +                     ext4_unlock_group(sb, i);
-> >               }
-> >               if (!retry && EXT4_I(parent)->i_last_alloc_group != ~0) {
-> >                       retry = 1;
-> > @@ -616,10 +625,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
-> >        * Try to place the inode in its parent directory
-> >        */
-> >       *group = parent_group;
-> > +     ext4_lock_group(sb, *group);
-> >       desc = ext4_get_group_desc(sb, *group, NULL);
-> >       if (desc && ext4_free_inodes_count(sb, desc) &&
-> > -         ext4_free_group_clusters(sb, desc))
-> > +         ext4_free_group_clusters(sb, desc)) {
-> > +             ext4_unlock_group(sb, *group);
-> >               return 0;
-> > +     }
-> > +     ext4_unlock_group(sb, *group);
-> >
-> >       /*
-> >        * We're going to place this inode in a different blockgroup from its
-> > @@ -640,10 +653,14 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
-> >               *group += i;
-> >               if (*group >= ngroups)
-> >                       *group -= ngroups;
-> > +             ext4_lock_group(sb, *group);
-> >               desc = ext4_get_group_desc(sb, *group, NULL);
-> >               if (desc && ext4_free_inodes_count(sb, desc) &&
-> > -                 ext4_free_group_clusters(sb, desc))
-> > +                 ext4_free_group_clusters(sb, desc)) {
-> > +                     ext4_unlock_group(sb, *group);
-> >                       return 0;
-> > +             }
-> > +             ext4_unlock_group(sb, *group);
-> >       }
-> >
-> >       /*
-> > @@ -654,9 +671,13 @@ static int find_group_other(struct super_block *sb, struct inode *parent,
-> >       for (i = 0; i < ngroups; i++) {
-> >               if (++*group >= ngroups)
-> >                       *group = 0;
-> > +             ext4_lock_group(sb, *group);
-> >               desc = ext4_get_group_desc(sb, *group, NULL);
-> > -             if (desc && ext4_free_inodes_count(sb, desc))
-> > +             if (desc && ext4_free_inodes_count(sb, desc)) {
-> > +                     ext4_unlock_group(sb, *group);
-> >                       return 0;
-> > +             }
-> > +             ext4_unlock_group(sb, *group);
-> >       }
-> >
-> >       return -1;
-> > --
->
->
-> Cheers, Andreas
->
->
->
->
->
+Please funnel patch 3 through the SoC tree.
+
+> prerequisite-message-id: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq=
+.com>
+> prerequisite-patch-id: 704efc6e76814e1877748959d7319d558c8386c1
+> prerequisite-patch-id: c2144cf468c57b856830a61615ba6ba501e8ec58
+> prerequisite-patch-id: ced4a01ccd8ddab2fd308d543ddf47bd1641518a
+> prerequisite-patch-id: f8b983b301d0c14f1448b9e4c321262a509e061e
+> prerequisite-patch-id: 834b65b6a2b037daed5cffc6a41963622568dc9c
+> prerequisite-patch-id: 2401703b57448c9ea2c3dc7650b4502491a28944
+
+I don't know about all this stuff but neither bindings or code seems
+to contain anything that won't compile so I just assume that any of these
+dependencies are purely for patch 3/3 and I nothing blocks me
+merging patches 1 & 2 so I just went ahead with that.
+
+Yours,
+Linus Walleij
 
