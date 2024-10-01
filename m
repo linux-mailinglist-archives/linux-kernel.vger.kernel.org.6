@@ -1,161 +1,117 @@
-Return-Path: <linux-kernel+bounces-346397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D559F98C43F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:11:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5B7698C440
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFF271C21799
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:11:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F671C2161D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6661CBE8B;
-	Tue,  1 Oct 2024 17:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261111CBE96;
+	Tue,  1 Oct 2024 17:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBuCx0CH"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yko3GG+I"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E801C6F7B;
-	Tue,  1 Oct 2024 17:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCEE1C6F7B;
+	Tue,  1 Oct 2024 17:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727802686; cv=none; b=h+IYMPfzDFL6bEtUnEo4FabL66dIBSKGD7aksiTvrGG8185Ii/SfVwAdI4bht6vUOl5WWNm/lx+LZsMyRVe5rJNIFGx5VzzhBes2PQETwrq61iCBmSJFay36jsexCyN2rDHw3zVr9AD/Yy/8rTZ1rmkdlI9G4gxlQ968zsqnPmk=
+	t=1727802724; cv=none; b=qp+Vx/KriM99jRT53oyDqcfpM9jnXMmegD+VJdrJWlcWkDaZg+diixtQII24qcnWJ4BzIG6XzH1EoMRfaWP6tKw46HotfoUiqBEEIvXPd+3j6dAQKyuNVbyK3YVWDk6rSCxgu0uY7mssY/NKi4BE6L4jsUyyziEED8WLf13aQWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727802686; c=relaxed/simple;
-	bh=0sSh3ZCHBJPpJ28ZMI5T70fcWwIV9M4FjxM0fbpj6iw=;
+	s=arc-20240116; t=1727802724; c=relaxed/simple;
+	bh=sC39jjPhAHkzIyKoYVlvv9pTOoSBbDLMVZDLzFNZwoo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFjaaS+n9WXGI1KdBBXK/3+39UtRXNnsXQLri0Qt4BYzimOLpAfH87QbHceGrZnvDOGdXoSOua0akbVon87/6FKqrgNxWKe70bfrdsMj6ISJc4UAD31kZXYg74WWwUvjZ8DWEjvh4ppjtseByn762aRcllQc1CA8Bpyd+czC5oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBuCx0CH; arc=none smtp.client-ip=209.85.215.181
+	 To:Cc:Content-Type; b=qrTclCmzEOFRlQdkzHaa828osUBfkZgnpUwU/Ctu7vD42G41thDcIYTzGre5swy57N+hbof2Kx3gXHyiYytx96/fhLYZvVlB0rD2uzR/eMu+HVClVFf77HRksw2BaTNzvsTav8T0Qf1JguAJNPJZ6gD/jCrswaTddNC4yrZ3xyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yko3GG+I; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e6ba3f93fdso3672096a12.1;
-        Tue, 01 Oct 2024 10:11:25 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad48f6f9aso883541fa.2;
+        Tue, 01 Oct 2024 10:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727802685; x=1728407485; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1727802721; x=1728407521; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yYiVgO3mv9eTxEti/PW66LLKYQU9HIPqaaS7/jCRmIU=;
-        b=XBuCx0CHp8U1WKtg5VnulszI00lzMjoYTkldaaqo79YUEpssnQ5uFR4ubCmHAE/aVB
-         qoX5Kg69S/AOXM2JruD09hsG2RXT4NVy9lviPUCtjTMTOT7w7JnJQTL2LGkYItKYKte/
-         mF26Ejqm8DxFbApY2q2+goDT6x7l9irhQ6vNVUShl1ioHWoq6QwkDBqsKzPCUmmxdT1I
-         gt/Dd+WT9q/hdpeL+QDtZ0DV/UfXVLwbtgtQnumFdWzGODJg5r+DeFgsnNCkAHRaMmUJ
-         FbU2FLudtz28rRqtvWw3X0Hp/T4DHmNNSMmuWr4MHbCfHKvFT9QEE+LaoDcGjVBxpFqW
-         UIMw==
+        bh=sC39jjPhAHkzIyKoYVlvv9pTOoSBbDLMVZDLzFNZwoo=;
+        b=Yko3GG+IqyIZ83+IpsdIgpuGT4EGGf1V9mCoctLzKxvtx0wKjHL6r9fZPxYaDxdbvS
+         qGHpy/E+09DlTu3Y9wAqlWaKJQDvwn79zwrPTX1sxjDqDAzQbyEE8S6/pxguvsRcSGUa
+         TvLDoR9hLt9FAvAlnczP3LgRrpB9w88ESUy+6974qWMTppCnxDpJvAJAvYsXlMssDCQD
+         80B9fvcEdkPXCGaA7enhn+cZDg5SSKc/YoSaEjd6dULcSS2jifHcRJSdXoH9xARMdeEM
+         tNX+fnYtGkXFgeSUUevnzlWim/ZmiX3G2YAYDAKi0ua7og2wiQI+9FIbg1C6gWNWsBDA
+         a3Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727802685; x=1728407485;
+        d=1e100.net; s=20230601; t=1727802721; x=1728407521;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yYiVgO3mv9eTxEti/PW66LLKYQU9HIPqaaS7/jCRmIU=;
-        b=OSe71bJ3NLmmRd1k6fF6sAVFKag7Y+z4QZdpHYyYgsikih/HkZf3TOrvVauH3A/nB2
-         x0ot2mZfSLjw8haPcXBLciDlV+hhGyMcQlE6p+Bj38IQz8N/J0D8qVHxtXOxsm2ADmYk
-         827CP7/jd7AT8PcHd8NKqTmaKzqlPaYYDZpOZ/EQk8UM+aqT7aHi21O2BMifQ4oTq795
-         Hdn2GAsxVnpIGtRIkmKVlF61Gtip6N8dtRBppVsmvETBYkC9P+f1i3EMZOcvsOXEZ9Cu
-         8/gorQqcaX57OmRz6L3vuJYnuK6ITyUIM5poSQN+Agc8NMr8H9bCzYA/xHNAa7/KxGsl
-         rizQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7eeeMrVa1j3i7HN9KXkB4v//MbNIW5LR3Wna2UAMewGOCOz7g6YJgHLCatt/uB5rkbTV6oIBuqrQuCpHM@vger.kernel.org, AJvYcCVeiwp0dtdqJiwHk12Wlcxle+t1dloXROo0h7be52ribi3uHxURby1jInGjZBh8otqZNNboIZEH9+MqnJy8q4T9xW4C@vger.kernel.org, AJvYcCVnkuJHvBSkiu73QT7seSZqKtYyyt0EEBqG+MUhClq+cdGXn6sYJWlOvCuAlIYImM2UzoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdxhf2cydiGezFlMInQOXG7g5YgC7BwofW4FaE05gpfKmPWYS8
-	IsuSy4l0fmt9FkkUwa5zy5BbVPVfC2qKv1p+1MG+7ZnqdzwWeTIFGnHk7DI7vMlIfMJUQ0Rzmx2
-	dTk2a+qum6rVrqu+oH8NptAYoHec=
-X-Google-Smtp-Source: AGHT+IFbWZu/Op5q1u1++KWxKhxXOCSmOqj/rf3NlKpN4maBxpEa9f3ipFc/ib5YDm7xhueuTWGYXhMA0NtOiUzD3Vs=
-X-Received: by 2002:a17:90a:ae0a:b0:2e0:8c5e:14a0 with SMTP id
- 98e67ed59e1d1-2e182c994f2mr523996a91.0.1727802684899; Tue, 01 Oct 2024
- 10:11:24 -0700 (PDT)
+        bh=sC39jjPhAHkzIyKoYVlvv9pTOoSBbDLMVZDLzFNZwoo=;
+        b=Nh/PTHezRl40zQ3U6vmv8IMItbb2MSLXMqW1hy8AHJg75y98821bQ9NWAydMrJPTqz
+         9XtuluQqrXcbXaMnAM7vQSC+AGqjdyzrkgdjWVpa6dvzo5+KscU9THg0wDu2dDHHG425
+         DGgemHS44i049RIt00yitnILFvd+BT8Ze0ZiZdIQYHEd/j0/pVDhfTeXXWtIdHsfnlx9
+         cAOi/FYZY4EDRzJWgYGjI7p4EDsYOj1qJrnlPF4955n4kt0svxQ3xPDhnGSZ8hBMnedl
+         ik5y62DPmQewB3DBEasD63U3nTRKFHD5lVfcDzDxoaVVX9dzQi6zywCF/yoCDkHjG6/N
+         Ij1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUyaV+tXuRtDs4nsjbL5chHR2nfVAs5LfZ3uomZEwfUI8XluT3KSkyIM1jCumyM71WAUNrfGJILx8EKP6Q=@vger.kernel.org, AJvYcCXKAgKB5Xm8xdSO2x7brlBm4/judocRVz32dgjS50p5kY0+RK7rOaUn/ugMnsOx6cx9QFuJhf4OC1v+TrLwIvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykLhbjfvGfyGDOSkSQdMsMXmfesc2nT8xvY71iUl/10p9piVm1
+	msOE+hdnOsMOQ4DWohjBJL2eQTR9X4CLDwLtJpLShNE2CF4wXZNICVExR1FRScSy+Cafx2jdI/P
+	dvOMrWpNZY8ihO3UDRqWWSWknc98=
+X-Google-Smtp-Source: AGHT+IHKHRku2EkBhzAUSqu18scL+pCkpv1wbY1i5srIBY1ciu173sLzEq6cGISO9u9P0jB3frWmDXmFZMHcBbV3S2w=
+X-Received: by 2002:a05:651c:501:b0:2fa:c4b0:a0eb with SMTP id
+ 38308e7fff4ca-2fae1020a1fmr1101491fa.5.1727802720878; Tue, 01 Oct 2024
+ 10:12:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929205717.3813648-1-jolsa@kernel.org> <20240929205717.3813648-4-jolsa@kernel.org>
- <CAEf4BzZfy1H2O-uY3x9X7ScsJTXHgqjZkcP7A0tMmhmvubF-nw@mail.gmail.com> <Zvv2gciCj-0mAnat@krava>
-In-Reply-To: <Zvv2gciCj-0mAnat@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 1 Oct 2024 10:11:13 -0700
-Message-ID: <CAEf4BzaRrg_=scWTt1X7fvB+4wxUiiQUOCPvvtWgL4_rwr+2CQ@mail.gmail.com>
-Subject: Re: [PATCHv5 bpf-next 03/13] bpf: Add support for uprobe multi
- session attach
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
+References: <20240904204347.168520-1-ojeda@kernel.org> <20240904204347.168520-19-ojeda@kernel.org>
+ <CALNs47vPzH7CSjRh=jW0xNTh9=oajUs4SAkTE2OHLd5M2e065A@mail.gmail.com>
+In-Reply-To: <CALNs47vPzH7CSjRh=jW0xNTh9=oajUs4SAkTE2OHLd5M2e065A@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 1 Oct 2024 19:11:45 +0200
+Message-ID: <CANiq72k21-kke0XFNf0iQ5gpECjAtEPg00tm-JwpNjff34n5+g@mail.gmail.com>
+Subject: Re: [PATCH 18/19] Documentation: rust: discuss `#[expect(...)]` in
+ the guidelines
+To: Trevor Gross <tmgross@umich.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 1, 2024 at 6:17=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
-:
+On Sun, Sep 29, 2024 at 7:11=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
+ote:
 >
-> On Mon, Sep 30, 2024 at 02:36:08PM -0700, Andrii Nakryiko wrote:
->
-> SNIP
->
-> > >  struct bpf_uprobe_multi_link {
-> > > @@ -3248,9 +3260,13 @@ uprobe_multi_link_handler(struct uprobe_consum=
-er *con, struct pt_regs *regs,
-> > >                           __u64 *data)
-> > >  {
-> > >         struct bpf_uprobe *uprobe;
-> > > +       int ret;
-> > >
-> > >         uprobe =3D container_of(con, struct bpf_uprobe, consumer);
-> > > -       return uprobe_prog_run(uprobe, instruction_pointer(regs), reg=
-s);
-> > > +       ret =3D uprobe_prog_run(uprobe, instruction_pointer(regs), re=
-gs);
-> > > +       if (uprobe->session)
-> > > +               return ret ? UPROBE_HANDLER_IGNORE : 0;
-> > > +       return ret;
-> >
-> > isn't this a bug that BPF program can return arbitrary value here and,
-> > e.g., request uprobe unregistration?
-> >
-> > Let's return 0, unless uprobe->session? (it would be good to move that
-> > into a separate patch with Fixes)
->
-> yea there's no use case for uprobe multi user, so let's return
-> 0 as you suggest
->
-> >
-> > >  }
-> > >
-> > >  static int
-> > > @@ -3260,6 +3276,12 @@ uprobe_multi_link_ret_handler(struct uprobe_co=
-nsumer *con, unsigned long func, s
-> > >         struct bpf_uprobe *uprobe;
-> > >
-> > >         uprobe =3D container_of(con, struct bpf_uprobe, consumer);
-> > > +       /*
-> > > +        * There's chance we could get called with NULL data if we re=
-gistered uprobe
-> > > +        * after it hit entry but before it hit return probe, just ig=
-nore it.
-> > > +        */
-> > > +       if (uprobe->session && !data)
-> > > +               return 0;
-> >
-> > why can't handle_uretprobe_chain() do this check instead? We know when
-> > we are dealing with session uprobe/uretprobe, so we can filter out
-> > these spurious calls, no?
->
-> right, now that we decide session based on presence of both callbacks
-> we have that info in here handle_uretprobe_chain.. but let's still check
-> it for sanity and warn? like
->
->         if (WARN_ON_ONCE(uprobe->session && !data))
+> Would it be good to mention that a reason can be specified with
+> `reason =3D "..."`? I don't think we use this anywhere yet.
 
-You mean to check this *additionally* in uprobe_multi_link_handler(),
-after core uprobe code already filtered that condition out? It won't
-hurt, but I'm not sure I see the point?
+I mainly wanted to introduce things "slowly" :)
 
->                 return 0;
->
-> jirka
+But I would be happy if we consistently use `reason`, I think it is a
+good idea to document those, and perhaps we can get to the point where
+we go for `clippy::allow_attributes_without_reason` too.
+
+Relatedly, I also thought about `clippy::allow_attributes`, but due to
+conditional compilation and the other reasons mentioned in the docs
+added in the series, it is likely not something we can easily do.
+
+Another tangent: I find the `reason` syntax a bit too "busy". I think
+in some cases we may just want to write things as if they were "normal
+comments" (and multiline and so on). Highlighting in particular ways
+could help perhaps. It would have been nice to have something like `//
+ALLOW` on top of the attribute, similar to `// SAFETY`, and have the
+compiler understand that directly like Clippy nowadays does for `//
+SAFETY`, but I guess there are downsides.
+
+Cheers,
+Miguel
 
