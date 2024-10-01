@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-346832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9ECF98C979
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCD798C97A
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E8761F23E0C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:27:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DFEF1F23D64
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BBC1CF7B0;
-	Tue,  1 Oct 2024 23:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0563C1CF5D8;
+	Tue,  1 Oct 2024 23:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9rxST40"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rm5cBieP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F241CFEC2;
-	Tue,  1 Oct 2024 23:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B991CEAD7;
+	Tue,  1 Oct 2024 23:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727825158; cv=none; b=NFpjLSOLhKj5QYZ8M8HLemOOFr89P8lpbk0Y0RaHH2wNAgFW0w2u94ZXA2wofFkHSdKTt2n1XrrO1jlCFWdaf+zL3n0X/iyy8RC8MtRbpSSEdvCjlPnXMg8ljfJrRurID41xQWEVvRuEhYtJ5yTRN5ZB9dQzqlDWZvG50psUoiI=
+	t=1727825182; cv=none; b=TN2GpN714ir89rLLSVGbH0Gg+Y5GAK2Zj/qWhQVCk9QlAJg0d1VCARx+q9LTvqQT4Z9TmgjjZmizKIFpQ3Fo/c9WN1XMTAgEUBp1mSaMjTl5i/mYmLiIhZaPbs/nf1YY5FivZ2PgCjNVgDxhHq1r8EcjrXzLkHwMXtRe1zMNCfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727825158; c=relaxed/simple;
-	bh=FfyDs1TC5dH9vKpYzlHY/EKwJnCmVg4259BQUa5YcYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JsiiTtAUuSgciOB026aJqV+uGKcWOAX2YhKxWGsFlK9w10AgZWA2zWgoU9bncKZfsPNofvaAZiA2xQot7NBlDPZ5Z5YrbyRFabebg8RcR2gM/4PipgPXJycrmkEJ9Ko4jA2//zovrgJvKVuFz6NXBIGB9pC6X3N/G5AEUUHo3N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9rxST40; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso4154123a12.3;
-        Tue, 01 Oct 2024 16:25:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727825156; x=1728429956; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d7A11XDgxNYin/VkwABPFnYDQbab1NvKclWfdZ0MPzI=;
-        b=W9rxST40BZnjeZrQ0GNwxdRa1UYL+tCrNvVCDUhMl6pxNgbG7fdVEOrlJCDiF6Oita
-         V+hRjCtIrKaytql4iv3p5liOWluzJMKpW1vu1KwCkGzedOJxmTGnRP4VnSTiTPe2jkR2
-         Lx8gF0dD54w+uVt+ppgxuHGM4A4gjFh/uBDvCsLAhjSLAly/Ke2auS9PkcnLLMAayeY7
-         vmWxfnj0hUzyT+WbGQKSd/GpAUCEaS4BSQ5whOrwfvYURYjyxUABb/HxiuaB6oP/jrw2
-         gUTem7ts4Rlp+EnIqzpdNPFIDoUc80CQW48KqvFu/K3Sig6qvb6taj5D/nKJPruBvkl1
-         RztA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727825156; x=1728429956;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d7A11XDgxNYin/VkwABPFnYDQbab1NvKclWfdZ0MPzI=;
-        b=gMPMDV/SwomSWd3kMpJlLPyM+TVcwETVMXANDKwfjrNKeGpQzJ3l6u1pR/S0yhX5Y9
-         Q59TG5ud7zbenfXCQYWJKUuERFXLwtxvstK6sDQpKvMeLfa41NsxYdJt3F5SjM+aRX3N
-         XGczibYotWBBjO+kN4MX55ghWKeS60rt5KOOYVf9UYpSmouBcz1ZOHXFade2CNBLOFzr
-         slXUNDvPOqKSLGSMBwXD7Kq62J1HbaakUwqyaLr3aUdQ47yvZLmw1L+YT+5qqDfxA5wM
-         PSIQJBWAbpxov75emEuf2D9c1U1oUJ9JcaS86QSfWxyZfHcdTqUYhT2k8E/O388OYt2h
-         m4FA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGx0hoEiJ0BYoS4f+vwOXoqV37yyK/7rijLZ/Lo2+aBCIUsSTrfaYeH/dO/nunCvBDLurxtSUjhtOXpE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx10WROi/Tp6JU5RhuAXbjf8CACpXUhEhfyTiNTVYnguDi+3kiM
-	8SzYB+FY0vfW87f4lQbaFZK4Cj0vcXCbGSHgc9FsR9pAWXOrkCgBfwmJUZp5
-X-Google-Smtp-Source: AGHT+IFZHRTl5EAhvQKFyHclozxa+8AxkxZSFrzbQ+m5Ud6J0wQJEYd435ynTrzb90hJnJQ/RJIx5g==
-X-Received: by 2002:a05:6a20:c6ce:b0:1d2:e888:3982 with SMTP id adf61e73a8af0-1d5db13e781mr2037818637.19.1727825155866;
-        Tue, 01 Oct 2024 16:25:55 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26539c5asm8628143b3a.210.2024.10.01.16.25.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 16:25:55 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: linux-crypto@vger.kernel.org
-Cc: Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rosen Penev <rosenp@gmail.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 5/5] crypto: use devm_platform_get_and_ioremap_resource
-Date: Tue,  1 Oct 2024 16:25:47 -0700
-Message-ID: <20241001232547.355947-6-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001232547.355947-1-rosenp@gmail.com>
-References: <20241001232547.355947-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727825182; c=relaxed/simple;
+	bh=YG/qa9jzP2BgsMhKT8ybaJ73W1pJe3SjqzugQP9q1BI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ffDcrIDq+6mCuXLcqKYQW26i8HgQQM37gIEp4AhvjG5/oYMSwsospqpi7UIC3XBJxmyMCR+/dcMnm1tL6uXicuWl3OJcLYMRBRR/V0m/lAcn8Z+wNhlKc8XEZeq9CpNv0u7BxUsDW0nla7RJsq9TSnKJeDrbo0CJDB4+YtTob/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rm5cBieP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B996CC4CEC6;
+	Tue,  1 Oct 2024 23:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727825181;
+	bh=YG/qa9jzP2BgsMhKT8ybaJ73W1pJe3SjqzugQP9q1BI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rm5cBiePWcg8iYf7bE4lqRquENW9eLl4sXQipIJaPPycW/zicBqKK7djvdjFZ+aMu
+	 rERUvcSwfksEaGznesvvVNl3/ibF3sL4kOM4rfIQlqNzbb9+3kdM7rvM8C3TX/9fHO
+	 dm2NDzgidKvXlv31t6Z75N8C3b6d1UcZRCBbmsBSkW0vv8pGc1hFvLa6MOWNd+pC0e
+	 Myi9eWsSRJmD+ckUv3whYzTIebDotlmH2U3EmANzmDabAY4Iasn5UVmqKrChOhvw7Q
+	 VhR2rv+fxvV43NTkEfL1npva7Oxi3zXyCp320N9KkQKZmpzmJaAJK4GrHSNadShPVH
+	 Jj18bJHjk2uxg==
+Date: Wed, 2 Oct 2024 08:26:16 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v14 08/19] tracing: Add ftrace_partial_regs() for
+ converting ftrace_regs to pt_regs
+Message-Id: <20241002082616.e02d3f92968291fad7533b70@kernel.org>
+In-Reply-To: <20240917101454.GC27384@willie-the-truck>
+References: <172615368656.133222.2336770908714920670.stgit@devnote2>
+	<172615377576.133222.5911358383330497277.stgit@devnote2>
+	<20240915052204.3dff1f75@rorschach.local.home>
+	<20240917101454.GC27384@willie-the-truck>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Removes separate steps. Requires index instead of name.
+On Tue, 17 Sep 2024 11:14:54 +0100
+Will Deacon <will@kernel.org> wrote:
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/crypto/marvell/cesa/cesa.c | 15 +--------------
- 1 file changed, 1 insertion(+), 14 deletions(-)
+> On Sun, Sep 15, 2024 at 05:22:04AM -0400, Steven Rostedt wrote:
+> > On Fri, 13 Sep 2024 00:09:35 +0900
+> > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
+> > 
+> > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > 
+> > > Add ftrace_partial_regs() which converts the ftrace_regs to pt_regs.
+> > > This is for the eBPF which needs this to keep the same pt_regs interface
+> > > to access registers.
+> > > Thus when replacing the pt_regs with ftrace_regs in fprobes (which is
+> > > used by kprobe_multi eBPF event), this will be used.
+> > > 
+> > > If the architecture defines its own ftrace_regs, this copies partial
+> > > registers to pt_regs and returns it. If not, ftrace_regs is the same as
+> > > pt_regs and ftrace_partial_regs() will return ftrace_regs::regs.
+> > > 
+> > > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > > Acked-by: Florent Revest <revest@chromium.org>
+> > > ---
+> > >  Changes in v14:
+> > >   - Add riscv change.
+> > >  Changes in v8:
+> > >   - Add the reason why this required in changelog.
+> > >  Changes from previous series: NOTHING, just forward ported.
+> > > ---
+> > >  arch/arm64/include/asm/ftrace.h |   11 +++++++++++
+> > >  arch/riscv/include/asm/ftrace.h |   12 ++++++++++++
+> > >  include/linux/ftrace.h          |   17 +++++++++++++++++
+> > >  3 files changed, 40 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+> > > index dffaab3dd1f1..5cd587afab6d 100644
+> > > --- a/arch/arm64/include/asm/ftrace.h
+> > > +++ b/arch/arm64/include/asm/ftrace.h
+> > > @@ -132,6 +132,17 @@ ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
+> > >  	return fregs->fp;
+> > >  }
+> > >  
+> > > +static __always_inline struct pt_regs *
+> > > +ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
+> > > +{
+> > > +	memcpy(regs->regs, fregs->regs, sizeof(u64) * 9);
+> > > +	regs->sp = fregs->sp;
+> > > +	regs->pc = fregs->pc;
+> > > +	regs->regs[29] = fregs->fp;
+> > > +	regs->regs[30] = fregs->lr;
+> > > +	return regs;
+> > > +}
+> 
+> Ah, I guess this is where we pick up the lr that was set in patch 5.
 
-diff --git a/drivers/crypto/marvell/cesa/cesa.c b/drivers/crypto/marvell/cesa/cesa.c
-index 3dc74d1a8514..e2d31b9c35d9 100644
---- a/drivers/crypto/marvell/cesa/cesa.c
-+++ b/drivers/crypto/marvell/cesa/cesa.c
-@@ -375,7 +375,6 @@ static int mv_cesa_get_sram(struct platform_device *pdev, int idx)
- {
- 	struct mv_cesa_dev *cesa = platform_get_drvdata(pdev);
- 	struct mv_cesa_engine *engine = &cesa->engines[idx];
--	const char *res_name = "sram";
- 	struct resource *res;
- 
- 	engine->pool = of_gen_pool_get(cesa->dev->of_node,
-@@ -391,19 +390,7 @@ static int mv_cesa_get_sram(struct platform_device *pdev, int idx)
- 		return -ENOMEM;
- 	}
- 
--	if (cesa->caps->nengines > 1) {
--		if (!idx)
--			res_name = "sram0";
--		else
--			res_name = "sram1";
--	}
--
--	res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
--					   res_name);
--	if (!res || resource_size(res) < cesa->sram_size)
--		return -EINVAL;
--
--	engine->sram = devm_ioremap_resource(cesa->dev, res);
-+	engine->sram = devm_platform_get_and_ioremap_resource(pdev, idx, &res);
- 	if (IS_ERR(engine->sram))
- 		return PTR_ERR(engine->sram);
- 
+Yeah, this one also copies the fregs->pc to regs->pc, mainly for bpf.
+
+> 
+> Acked-by: Will Deacon <will@kernel.org>
+
+Thank you!
+
+> 
+> Will
+
+
 -- 
-2.46.2
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
