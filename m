@@ -1,355 +1,125 @@
-Return-Path: <linux-kernel+bounces-345460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57EF298B690
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D341098B68F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEEE6B21920
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A3828333F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AD21BE242;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2E71BE226;
 	Tue,  1 Oct 2024 08:09:31 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECDE71BD514
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BAB1BDAA3
 	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770170; cv=none; b=IPbveMVxrEAF5MvrgNB55E/tC8qyRdRXzPKZ0gr0zA7kHu+zaHHCHm6zWlLfwklix1AXVnWgeLo0yJ/AVtojT8Yo6F7kb83T/0yd2bFWIT1NmVZleR/uL7mVRF87//r5MuOF8yCedNHS9YIR/LjOBJO8d1T1iYabKzrjmILbrOM=
+	t=1727770170; cv=none; b=s1IZm0V36LolEK0jpWLqbmng8m3buUMomTL/2zZ5kcgCqVTyPu5NskKPStT8vfMZCmNXCtWPI/s5H/QCfCSOZ0KG7WLxszO56sv1syRAyoyr84lYPMvmqkxaJBWUvPku2DmA5P1Tx5BFLrzlwPJowgRAS6VkzNGmu/6Wftm0Prs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727770170; c=relaxed/simple;
-	bh=xtmyZuBqCBC0i0tR8oZQDnXcWxqMqU3l/173ehpquCU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AKYOqoroKzepfAF77sFvQyEoOYMJphHB86GhjAsSZNuNyxtkh+mNnnQpY/JJEtV1Sv9nW5F9h8gbtej6DXW3K2l5axxBfLQqYUlBBKj4f3o6fZVWOoiSHbxJLrX0WvscZcjWTAnQBiPd7abE9nOLXY5aS2IWap9Xo9l6aSdd+9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	bh=EbGBpRHnvl6IvzXCA9jp3xcrqQjFWk+0/sKdxxv7f5A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qtzWkT9zKF1kTKKqN4CfeCmZqsQf1YP4UViUAnE4PMqW444VcUkxcUIVYA44Jcchaj+LMy1woB84oozxqyA4FFcVvmAhz4peJlfd0+0eSU6IOX3G5p3J/wqIB+5GFOhlp1dw0Af1KvYTfSjlp/oIe5hYNWN84XsIercyIGN4P/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a34988d6b4so61383095ab.2
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8324396d0abso477852539f.0
         for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:09:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1727770168; x=1728374968;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wBdcj9v/sV0syPuosSLvrG9+cUJAQ/PDg0I/A2H+IA4=;
-        b=iK5r5usjXM137rIkuveqs+rMvPFUZhtLnP8Pn9kMgQG29CSorUBU4kuQkuh6T7/ml7
-         /ui3gg1SpMumVUvLE/g4wguy/5J4QXvBqMDlk091rXSZBE9l/645MP3iiS/ywX6DXZvC
-         hcwepY1xGH6ns4tH3S2Nx8yXCAyrCvc5Aw3rffiEXEhs17F0o1p3YxxdSV30qD3QsgaQ
-         2OcpAOTAxtyzr8PjP6g0DH49eiwGLVN1rzCogpzWqpatpFsmkfYTlN+aO9i5w/k/ZVVj
-         YYzOrrYujkk7AStJF0CVNUPX950inxR2gH0Dg6oz08F3rRBPigSM7IEh6oGMm6LAVWC1
-         NOwA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7qiK4dnTIsnZc/gYPdIvpNerD3vDlEB6lxnNohgkiNW3RIBiM/VlURyTYML8G8K9vqg+EyUkEgCpnhBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDRxTaHOkgyNeRbx6OGygBj1bKAs5W7VFISbosIwmgvX2AV4oT
-	tHplmNZm3FHFlpF6pDM2Rh8/G7XDk0ksbnWr3Dh4q5NEycROkUiDzoDJtIMIobkFKewrY2gtMly
-	FpfOKjAd117AQv5CFqvzrSh/2PV1higzy1eKnlDUfBXc8ZwmaQsh+1sQ=
-X-Google-Smtp-Source: AGHT+IE2pqJax/4KVuqFmQkRFyFSPSc4sYLo2FQh5arDbRxTZwfg9/C9coDN2RnCseXMkxRGL8pYzUsfRuZQqIB+pLRVa1cxd/iG
+        bh=C7V6fRL7UjAsnDR6dRn4CiYM7Ws9Jq2H2tMuf/ISe00=;
+        b=NzF4Y/KPCM7TeEM/Cima9IQJgpYwPDzEfwj3XOC/pyGlxksxW67TABLbjJ/JW/HI+b
+         ttgqqfq5AA4SbQkhH14XqpabB6x/sc1YSaeorzL8UpVdGDbtV2UVBEjGstixGt7F7lW9
+         vbEDgAQw/XUjJ04ibwMBzc8xX2/gUL43rLXrCTLvuoPdU6Le6jq9hynHRnt2b69IMBzB
+         oxBwOGoDvo1cCb/OirpSw3nzDzMRyXgGw8SKld1ZMnIBKIkHdYLN3w5wbEYJweePfENf
+         siE32WO7xjPGWst5gL92BxFUMuvJq0oyqJ4xPAA/RXfVQeWUwd7NrPtMg7GM8c3mAZwO
+         MhbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWMoL0TPWQsc3czpWO4oQ+QujfA/9j6g3tqQmMBcpbF+tZDU0f8iPedTzSyB3SSQQlpz+ayGIMuat39+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWO44jRM1Zafl5vQhymlRZAicpLSTc9DYxRr2Tu75oPzKEeNGy
+	GATVXL0HQBeYcsZxF5u87bHpN2/1M18W0Ixaipb/+PJz+YHGPpkAhZf0hUukgLOFGF9dExPeYP4
+	iuZ0bDRfhAGAd5gv4L21FFoqfcxdRZy/ETrfsud1slQsdyCLH+fMbvaU=
+X-Google-Smtp-Source: AGHT+IHvwPpOTbWnjjgHECUbOyyXGi3Q2t54HQTs8Eu3KoRGFooAKRrP2mQnEePL+pKAldgpmK4DT0+7ZaCkcLIxFzgM/a4dIHLp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:188e:b0:3a0:91e7:67cc with SMTP id
- e9e14a558f8ab-3a345174631mr125437615ab.13.1727770168004; Tue, 01 Oct 2024
+X-Received: by 2002:a05:6e02:184d:b0:39f:53b3:ca63 with SMTP id
+ e9e14a558f8ab-3a345155676mr109902515ab.3.1727770168249; Tue, 01 Oct 2024
  01:09:28 -0700 (PDT)
-Date: Tue, 01 Oct 2024 01:09:27 -0700
+Date: Tue, 01 Oct 2024 01:09:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fbae37.050a0220.6bad9.0050.GAE@google.com>
-Subject: [syzbot] [ext4?] [ocfs2?] possible deadlock in dqget
-From: syzbot <syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com>
-To: jack@suse.com, jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Message-ID: <66fbae38.050a0220.6bad9.0051.GAE@google.com>
+Subject: [syzbot] [fuse?] WARNING in fuse_write_file_get (2)
+From: syzbot <syzbot+f69287fa1bf99c7c3321@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=104a559f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e493c165d26d6fcbf72
+HEAD commit:    cea5425829f7 Add linux-next specific files for 20240930
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=161c439f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41a28720ed564c6a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f69287fa1bf99c7c3321
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d3de27980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f786a9980000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/23ae94668485/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/942e4e36cd02/mount_2.gz
+disk image: https://storage.googleapis.com/syzbot-assets/566995596f19/disk-cea54258.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e7c506c1c71d/vmlinux-cea54258.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7fcb4468b8c0/bzImage-cea54258.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6e493c165d26d6fcbf72@syzkaller.appspotmail.com
+Reported-by: syzbot+f69287fa1bf99c7c3321@syzkaller.appspotmail.com
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc7-syzkaller-g5f5673607153 #0 Not tainted
-------------------------------------------------------
-syz-executor334/6555 is trying to acquire lock:
-ffff0000e436e0a8 (&dquot->dq_lock){+.+.}-{3:3}, at: wait_on_dquot fs/quota/dquot.c:356 [inline]
-ffff0000e436e0a8 (&dquot->dq_lock){+.+.}-{3:3}, at: dqget+0x5f0/0xcec fs/quota/dquot.c:972
-
-but task is already holding lock:
-ffff0000dcbec690 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_lock_xattr fs/ext4/xattr.h:155 [inline]
-ffff0000dcbec690 (&ei->xattr_sem){++++}-{3:3}, at: ext4_xattr_set_handle+0x1dc/0x12d0 fs/ext4/xattr.c:2373
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #5 (&ei->xattr_sem){++++}-{3:3}:
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1579
-       ext4_write_lock_xattr fs/ext4/xattr.h:155 [inline]
-       ext4_xattr_set_handle+0x1dc/0x12d0 fs/ext4/xattr.c:2373
-       ext4_initxattrs+0xa4/0x11c fs/ext4/xattr_security.c:44
-       security_inode_init_security+0x210/0x3fc security/security.c:1744
-       ext4_init_security+0x44/0x58 fs/ext4/xattr_security.c:58
-       __ext4_new_inode+0x2a80/0x376c fs/ext4/ialloc.c:1326
-       ext4_create+0x234/0x480 fs/ext4/namei.c:2832
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #4 (jbd2_handle){++++}-{0:0}:
-       start_this_handle+0xf34/0x11c4 fs/jbd2/transaction.c:448
-       jbd2__journal_start+0x298/0x544 fs/jbd2/transaction.c:505
-       jbd2_journal_start+0x3c/0x4c fs/jbd2/transaction.c:544
-       ocfs2_start_trans+0x3d0/0x71c fs/ocfs2/journal.c:352
-       ocfs2_modify_bh+0xe4/0x484 fs/ocfs2/quota_local.c:101
-       ocfs2_local_read_info+0xec8/0x1550 fs/ocfs2/quota_local.c:769
-       dquot_load_quota_sb+0x700/0xb48 fs/quota/dquot.c:2460
-       dquot_load_quota_inode+0x280/0x4f4 fs/quota/dquot.c:2497
-       ocfs2_enable_quotas+0x17c/0x3cc fs/ocfs2/super.c:926
-       ocfs2_fill_super+0x3c80/0x4740 fs/ocfs2/super.c:1141
-       mount_bdev+0x1d4/0x2a0 fs/super.c:1679
-       ocfs2_mount+0x44/0x58 fs/ocfs2/super.c:1188
-       legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
-       vfs_get_tree+0x90/0x28c fs/super.c:1800
-       do_new_mount+0x278/0x900 fs/namespace.c:3472
-       path_mount+0x590/0xe04 fs/namespace.c:3799
-       do_mount fs/namespace.c:3812 [inline]
-       __do_sys_mount fs/namespace.c:4020 [inline]
-       __se_sys_mount fs/namespace.c:3997 [inline]
-       __arm64_sys_mount+0x45c/0x5a8 fs/namespace.c:3997
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #3 (&journal->j_trans_barrier){.+.+}-{3:3}:
-       down_read+0x58/0x2fc kernel/locking/rwsem.c:1526
-       ocfs2_start_trans+0x3c4/0x71c fs/ocfs2/journal.c:350
-       ocfs2_modify_bh+0xe4/0x484 fs/ocfs2/quota_local.c:101
-       ocfs2_local_read_info+0xec8/0x1550 fs/ocfs2/quota_local.c:769
-       dquot_load_quota_sb+0x700/0xb48 fs/quota/dquot.c:2460
-       dquot_load_quota_inode+0x280/0x4f4 fs/quota/dquot.c:2497
-       ocfs2_enable_quotas+0x17c/0x3cc fs/ocfs2/super.c:926
-       ocfs2_fill_super+0x3c80/0x4740 fs/ocfs2/super.c:1141
-       mount_bdev+0x1d4/0x2a0 fs/super.c:1679
-       ocfs2_mount+0x44/0x58 fs/ocfs2/super.c:1188
-       legacy_get_tree+0xd4/0x16c fs/fs_context.c:662
-       vfs_get_tree+0x90/0x28c fs/super.c:1800
-       do_new_mount+0x278/0x900 fs/namespace.c:3472
-       path_mount+0x590/0xe04 fs/namespace.c:3799
-       do_mount fs/namespace.c:3812 [inline]
-       __do_sys_mount fs/namespace.c:4020 [inline]
-       __se_sys_mount fs/namespace.c:3997 [inline]
-       __arm64_sys_mount+0x45c/0x5a8 fs/namespace.c:3997
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #2 (sb_internal#2){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1676 [inline]
-       sb_start_intwrite include/linux/fs.h:1859 [inline]
-       ocfs2_start_trans+0x244/0x71c fs/ocfs2/journal.c:348
-       ocfs2_acquire_dquot+0x3c4/0xa8c fs/ocfs2/quota_global.c:852
-       dqget+0x660/0xcec fs/quota/dquot.c:977
-       __dquot_initialize+0x344/0xc04 fs/quota/dquot.c:1505
-       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1567
-       ocfs2_get_init_inode+0x14c/0x1b8 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0x878/0x243c fs/ocfs2/namei.c:308
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #1 (&ocfs2_quota_ip_alloc_sem_key){++++}-{3:3}:
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1579
-       ocfs2_create_local_dquot+0x1a0/0x1778 fs/ocfs2/quota_local.c:1227
-       ocfs2_acquire_dquot+0x6fc/0xa8c fs/ocfs2/quota_global.c:875
-       dqget+0x660/0xcec fs/quota/dquot.c:977
-       __dquot_initialize+0x344/0xc04 fs/quota/dquot.c:1505
-       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1567
-       ocfs2_get_init_inode+0x14c/0x1b8 fs/ocfs2/namei.c:202
-       ocfs2_mknod+0x878/0x243c fs/ocfs2/namei.c:308
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #0 (&dquot->dq_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
-       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       wait_on_dquot fs/quota/dquot.c:356 [inline]
-       dqget+0x5f0/0xcec fs/quota/dquot.c:972
-       __dquot_initialize+0x344/0xc04 fs/quota/dquot.c:1505
-       dquot_initialize+0x24/0x34 fs/quota/dquot.c:1567
-       __ext4_new_inode+0x664/0x376c fs/ext4/ialloc.c:991
-       ext4_xattr_inode_create fs/ext4/xattr.c:1486 [inline]
-       ext4_xattr_inode_lookup_create+0x9a4/0x19e4 fs/ext4/xattr.c:1596
-       ext4_xattr_block_set+0x224/0x2e08 fs/ext4/xattr.c:1916
-       ext4_xattr_set_handle+0xc68/0x12d0 fs/ext4/xattr.c:2458
-       ext4_xattr_set+0x1e0/0x354 fs/ext4/xattr.c:2560
-       ext4_xattr_trusted_set+0x4c/0x64 fs/ext4/xattr_trusted.c:38
-       __vfs_setxattr+0x3d8/0x400 fs/xattr.c:200
-       __vfs_setxattr_noperm+0x110/0x578 fs/xattr.c:234
-       __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
-       vfs_setxattr+0x1a8/0x344 fs/xattr.c:321
-       do_setxattr fs/xattr.c:629 [inline]
-       path_setxattr+0x30c/0x428 fs/xattr.c:658
-       __do_sys_setxattr fs/xattr.c:676 [inline]
-       __se_sys_setxattr fs/xattr.c:672 [inline]
-       __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:672
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
-Chain exists of:
-  &dquot->dq_lock --> jbd2_handle --> &ei->xattr_sem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ei->xattr_sem);
-                               lock(jbd2_handle);
-                               lock(&ei->xattr_sem);
-  lock(&dquot->dq_lock);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor334/6555:
- #0: ffff0000d7c00420 (sb_writers#3){.+.+}-{0:0}, at: mnt_want_write+0x44/0x9c fs/namespace.c:515
- #1: ffff0000dcbec9c0 (&type->i_mutex_dir_key#3){++++}-{3:3}, at: inode_lock include/linux/fs.h:800 [inline]
- #1: ffff0000dcbec9c0 (&type->i_mutex_dir_key#3){++++}-{3:3}, at: vfs_setxattr+0x17c/0x344 fs/xattr.c:320
- #2: ffff0000dcbec690 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_lock_xattr fs/ext4/xattr.h:155 [inline]
- #2: ffff0000dcbec690 (&ei->xattr_sem){++++}-{3:3}, at: ext4_xattr_set_handle+0x1dc/0x12d0 fs/ext4/xattr.c:2373
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 6555 Comm: syz-executor334 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
- __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
- __mutex_lock kernel/locking/mutex.c:752 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
- wait_on_dquot fs/quota/dquot.c:356 [inline]
- dqget+0x5f0/0xcec fs/quota/dquot.c:972
- __dquot_initialize+0x344/0xc04 fs/quota/dquot.c:1505
- dquot_initialize+0x24/0x34 fs/quota/dquot.c:1567
- __ext4_new_inode+0x664/0x376c fs/ext4/ialloc.c:991
- ext4_xattr_inode_create fs/ext4/xattr.c:1486 [inline]
- ext4_xattr_inode_lookup_create+0x9a4/0x19e4 fs/ext4/xattr.c:1596
- ext4_xattr_block_set+0x224/0x2e08 fs/ext4/xattr.c:1916
- ext4_xattr_set_handle+0xc68/0x12d0 fs/ext4/xattr.c:2458
- ext4_xattr_set+0x1e0/0x354 fs/ext4/xattr.c:2560
- ext4_xattr_trusted_set+0x4c/0x64 fs/ext4/xattr_trusted.c:38
- __vfs_setxattr+0x3d8/0x400 fs/xattr.c:200
- __vfs_setxattr_noperm+0x110/0x578 fs/xattr.c:234
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x1a8/0x344 fs/xattr.c:321
- do_setxattr fs/xattr.c:629 [inline]
- path_setxattr+0x30c/0x428 fs/xattr.c:658
- __do_sys_setxattr fs/xattr.c:676 [inline]
- __se_sys_setxattr fs/xattr.c:672 [inline]
- __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:672
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 12 at fs/fuse/file.c:1989 fuse_write_file_get+0xb8/0xf0 fs/fuse/file.c:1989
+Modules linked in:
+CPU: 1 UID: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.12.0-rc1-next-20240930-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: writeback wb_workfn (flush-0:57)
+RIP: 0010:fuse_write_file_get+0xb8/0xf0 fs/fuse/file.c:1989
+Code: ff ff ff ff e8 29 d2 7b fe 09 dd 78 3c e8 e0 cd 7b fe 4c 89 f7 e8 78 79 b8 08 eb 11 e8 d1 cd 7b fe 4c 89 f7 e8 69 79 b8 08 90 <0f> 0b 90 4c 89 e0 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 b0 cd
+RSP: 0018:ffffc900001170d0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88805dbe4610 RCX: 0000000000000001
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000001
+RBP: ffffc90000117210 R08: ffff88805dbe477b R09: 1ffff1100bb7c8ef
+R10: dffffc0000000000 R11: ffffed100bb7c8f0 R12: 0000000000000000
+R13: 1ffff92000022e28 R14: ffff88805dbe4778 R15: ffff88805dbe4140
+FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000110c302213 CR3: 0000000067444000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fuse_writepages+0x259/0x4f0 fs/fuse/file.c:2368
+ do_writepages+0x35d/0x870 mm/page-writeback.c:2683
+ __writeback_single_inode+0x14f/0x10d0 fs/fs-writeback.c:1658
+ writeback_sb_inodes+0x80c/0x1370 fs/fs-writeback.c:1954
+ wb_writeback+0x41b/0xbd0 fs/fs-writeback.c:2134
+ wb_do_writeback fs/fs-writeback.c:2281 [inline]
+ wb_workfn+0x410/0x1090 fs/fs-writeback.c:2321
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
 ---
@@ -362,10 +132,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
