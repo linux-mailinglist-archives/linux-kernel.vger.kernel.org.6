@@ -1,167 +1,98 @@
-Return-Path: <linux-kernel+bounces-345485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A3998B6DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A3798B6DE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9910B283328
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D10A1F22254
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6D819ABBF;
-	Tue,  1 Oct 2024 08:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C253019B3D7;
+	Tue,  1 Oct 2024 08:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMoaTJ9J"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="k7HGkDJN"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77B119AA68;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD14019AA75;
 	Tue,  1 Oct 2024 08:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771107; cv=none; b=aPARmixNbldVqAj5926VEBwBVsf6ETuHoWIirAqM7svJ196jehzWsi6b29UvWUZhTbvAS6Zu6AhgjLPYjiXWd/pxpwue5Qm/ZCdelIKzXul1gFf9aYglw4t/zZ8oXgKDD7ucp0uPqXdR8VM7ErR57KzVQRqZtMVaw6TGC58+4MY=
+	t=1727771109; cv=none; b=tsuY38GsOniKh8YO1snaYfaHEZGX3LHtdZjbM8BwZ6bnQB1DEqkCmtWmKF2K/6Nl4YXbrppHBoQGOtmZcnyfhTNL1KCvBVaT/E/r0DfzB70jnYQ+ENV3tRqEGiH3SLRsqnEA7Yv1c6q4T5ILtoth5AfhJukYfRI2WLz/dbNfmwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771107; c=relaxed/simple;
-	bh=b+AcDnEGb8LdEXd0c2T2qtZIELfJ7T27ILtRG0/kCLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u7hnjRJUgfQrEAQ+bcTqEkPtvezmGRX2KX1mu7QT+IkMiyU2HtYOr1FrAjMei/g771yke4Zu3DiLKEEnPmUSGs1gZKKprtzdD19u8shf2z4lP6/tQNccBEp89oCOOhIQ1GfJjm6yW0Xm3jVuCygmd0cjueTMpCTdl/PQe0OHZW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMoaTJ9J; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727771106; x=1759307106;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=b+AcDnEGb8LdEXd0c2T2qtZIELfJ7T27ILtRG0/kCLY=;
-  b=QMoaTJ9J78MjSyZeDfQHUaoU7gY01h88x2c6hSjJNZ1rnkUf8bG7aF0t
-   /YepkoZIBGpcAH2FuWY/w01ZqEzQ/wTJUDk501SsXnOJwn0+ICk94q4FV
-   vIdfR4hkzMrXezvBIIRa4TPNfpSjDVX8K6BJP068mtkdLEyiBkZbagRYt
-   bj2DXbcykCwz1uPjhU2Yi97ofsicuJmgFZ5lLeyU1r/OoMHc1v6DDwWLf
-   +2vLqBTSBo0yzcPVAPFT+/jvvIA3FLRHfoYA36ZmXG0eaIXaLzUNpFLIo
-   Fb9AI9kxbg7qj6DENuKQpRPfxmor0HrVi3ky1tMlQ+uwBMA+DbElP3oc/
-   g==;
-X-CSE-ConnectionGUID: xIE4NqRjR3abZgNJtUlMfg==
-X-CSE-MsgGUID: kdDjTUy6T0WCNeZhJ5MlJA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26346000"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="26346000"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 01:25:05 -0700
-X-CSE-ConnectionGUID: CmIVYcjpRQS3nt0Myd2/yQ==
-X-CSE-MsgGUID: wnSj9acpSn64b1C21OAnCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73995499"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 01 Oct 2024 01:25:02 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svYBn-000QQd-1b;
-	Tue, 01 Oct 2024 08:24:59 +0000
-Date: Tue, 1 Oct 2024 16:24:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, jacob.e.keller@intel.com,
-	horms@kernel.org, sd@queasysnail.net, chunkeey@gmail.com
-Subject: Re: [PATCH net-next 09/13] net: ibm: emac: rgmii:
- devm_platform_get_resource
-Message-ID: <202410011636.QtBtiUKi-lkp@intel.com>
-References: <20240930180036.87598-10-rosenp@gmail.com>
+	s=arc-20240116; t=1727771109; c=relaxed/simple;
+	bh=DDHzI7kb/2RcBFYnrDawxQR2TuGUGxI67S6MLCbIVwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YnKGTZ8uU069wtqsR2Jo7+Dnuse5uQvfdFQgkAmo0RXsyIQwpLUGB9Ege8vUOag8stgmZZe9ZtG0htHtTyk3nI4v5u2lWi4GV8mkpEK+3X2+IIp9hDpIkNc0jpfLqPQ5Y/KtXSigNu4SyM8Hrr5/myWN3ckyyyIC5xo1kqXzdQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=k7HGkDJN; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1727771086; x=1728375886; i=markus.elfring@web.de;
+	bh=DDHzI7kb/2RcBFYnrDawxQR2TuGUGxI67S6MLCbIVwM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=k7HGkDJNQpCX0vQp92qZjBp5JFmM5wszBrcE1MaNSE/sU2OpJSqFHsacaAKt8eKL
+	 eGZ31Ks18sFg/nRa3i1pM/BHG/G8zCpatmjt6SCIdm5Rn4l2EVGU6hT11xqtgfqq/
+	 +i5W4CxvvHJ8GWLyy/vIrVbGB5d0NGwiQ4N2hIoocQPCLFjt2+xpJLisTQYtLWAVt
+	 3BxMO61KIkhI5I01bx30pD9mGLGbkglrv2/7caTNa7fc8lggQLLoaC6Frk5Tnm4ji
+	 wSpp0G2ztkzlOKn7pRu+y74/yq9bwEILqxagT2LwEF4le13/WHYTEzlsyV+J6e+T1
+	 LX7Fuku30KLe9f5jfA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.81.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNwfU-1sXPb40ITA-00PsoT; Tue, 01
+ Oct 2024 10:24:46 +0200
+Message-ID: <15f48370-318c-48d0-8eeb-956f0efb0142@web.de>
+Date: Tue, 1 Oct 2024 10:24:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930180036.87598-10-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] NFSv4: Prevent NULL-pointer dereference in
+ nfs42_complete_copies()
+To: Yanjun Zhang <zhangyanjun@cestc.cn>, linux-nfs@vger.kernel.org,
+ Anna Schumaker <anna@kernel.org>, Trond Myklebust <trondmy@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ Trond Myklebust <trond.myklebust@hammerspace.com>
+References: <20241001080806.3874-1-zhangyanjun@cestc.cn>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241001080806.3874-1-zhangyanjun@cestc.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gGOnuFyy5Z4F8PwVhe3We7pBMCWb5UCP7UzlO7wEXVai/7PcmTu
+ tOHwfjGlxahNt6psajsdfsOnrd+0FZ7OZ9O28O31AcVUIptEUPPb6dtonA9EHqm/11GjoNH
+ 9AEjS91OHCNqyPEpH1DciRfsGcReluDbXHZ/FA/Hm71NLhu+CT2W+AAfB4UL0SC8U07eO7O
+ MFAPEv1w4ctRV2izRK5vg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:RTmdvTOBiHk=;YF3fyHS+USjm5MBW+86YGEhtx64
+ vypu++VpB/6NUBIR9n2l1zDhv8HaX27LcUvTxdK37OtWo1qob+YEOUcxz+BAJGioGniULGagR
+ bdiRD6Ab43iY7ykQ//czWq0wudPeGwvnF2TEuDrxq5bC0s8hHc9I30KonKZ7qUmYnoNOQceEC
+ rzsCyL+2fVaLsb4udXfJ3dUvccFJBjd4s4PYeqF08RBPGH3tZbDcH+4P3mEOTlmD1HdYxkkEr
+ wkexH5hr00jRQkk7ThE61ycHYqYMpFnTvYTU/8b1PIVm6as3Y0xpfaApZY6cA76NAhgS9GlIu
+ sW2yjyWJFEbHlkD1fqtAF/Fi4OTGzPvtXdtcnZHJfg/hYu7DSakone638mfrDRLoT1l9FbzTr
+ nGFSbuPF07EiYU4ZT276FYFk5hrSx1XUYm+Yk7vsxD886MLVqZvmx+GTqviurf7OiHFg1ZEr/
+ gjawBHTWJB0vqLFbZbWsFKZ6Ky8TRMFEX7uMBHkZwvOhGAp/0JMGdgPBRLCTxTphrw881VMOo
+ hQElxYOU15VXVT0e1LnuRN58TGsDS3V2OG9okd14S2SFIwfxfjQiAPwQi3+vO3DdtulkZfTjN
+ LMq+jFCOTNJHvjjaQ/LGOVDRh9hFN29MBNjEyxEU1icYGP/5MzBR7k0klcFLgxeSuRFSGQ8M9
+ A1OJJcNCi6na5p54zosDgl9U/GfRsY1/i6whD2XaBh2efTBCZPe0NQywcnGDbaWbLGpMZPAQV
+ HHH5nKys3h40fy8s55JiR00qndrbIUGsNXFSq6J02oUzXuAVWDZHYCE3a/jS2IU8l6bZpHB13
+ MBI0/2nXZ4XsrLBSobpGkb5w==
 
-Hi Rosen,
+> On the node of an NFS client, some files saved in the mountpoint of the
+> NFS server were copying data within the same server. =E2=80=A6
 
-kernel test robot noticed the following build errors:
+Are data copied for selected files?
 
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-ibm-emac-remove-custom-init-exit-functions/20241001-020553
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20240930180036.87598-10-rosenp%40gmail.com
-patch subject: [PATCH net-next 09/13] net: ibm: emac: rgmii: devm_platform_get_resource
-config: powerpc-fsp2_defconfig (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/config)
-compiler: powerpc-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410011636.QtBtiUKi-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/net/ethernet/ibm/emac/rgmii.c: In function 'rgmii_probe':
->> drivers/net/ethernet/ibm/emac/rgmii.c:229:21: error: implicit declaration of function 'devm_platform_get_resource'; did you mean 'platform_get_resource'? [-Wimplicit-function-declaration]
-     229 |         dev->base = devm_platform_get_resource(ofdev, 0);
-         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                     platform_get_resource
->> drivers/net/ethernet/ibm/emac/rgmii.c:229:19: error: assignment to 'struct rgmii_regs *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     229 |         dev->base = devm_platform_get_resource(ofdev, 0);
-         |                   ^
-
-
-vim +229 drivers/net/ethernet/ibm/emac/rgmii.c
-
-   215	
-   216	
-   217	static int rgmii_probe(struct platform_device *ofdev)
-   218	{
-   219		struct rgmii_instance *dev;
-   220	
-   221		dev = devm_kzalloc(&ofdev->dev, sizeof(struct rgmii_instance),
-   222				   GFP_KERNEL);
-   223		if (!dev)
-   224			return -ENOMEM;
-   225	
-   226		mutex_init(&dev->lock);
-   227		dev->ofdev = ofdev;
-   228	
- > 229		dev->base = devm_platform_get_resource(ofdev, 0);
-   230		if (IS_ERR(dev->base)) {
-   231			dev_err(&ofdev->dev, "can't map device registers");
-   232			return PTR_ERR(dev->base);
-   233		}
-   234	
-   235		/* Check for RGMII flags */
-   236		if (of_property_read_bool(ofdev->dev.of_node, "has-mdio"))
-   237			dev->flags |= EMAC_RGMII_FLAG_HAS_MDIO;
-   238	
-   239		/* CAB lacks the right properties, fix this up */
-   240		if (of_device_is_compatible(ofdev->dev.of_node, "ibm,rgmii-axon"))
-   241			dev->flags |= EMAC_RGMII_FLAG_HAS_MDIO;
-   242	
-   243		DBG2(dev, " Boot FER = 0x%08x, SSR = 0x%08x\n",
-   244		     in_be32(&dev->base->fer), in_be32(&dev->base->ssr));
-   245	
-   246		/* Disable all inputs by default */
-   247		out_be32(&dev->base->fer, 0);
-   248	
-   249		printk(KERN_INFO
-   250		       "RGMII %pOF initialized with%s MDIO support\n",
-   251		       ofdev->dev.of_node,
-   252		       (dev->flags & EMAC_RGMII_FLAG_HAS_MDIO) ? "" : "out");
-   253	
-   254		wmb();
-   255		platform_set_drvdata(ofdev, dev);
-   256	
-   257		return 0;
-   258	}
-   259	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Markus
 
