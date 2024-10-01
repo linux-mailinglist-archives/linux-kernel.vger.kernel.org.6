@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-346819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5D798C958
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B706498C95D
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525E81F2362C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EF181F24BDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAAB1CF7D8;
-	Tue,  1 Oct 2024 23:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0991CF28B;
+	Tue,  1 Oct 2024 23:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxbyntyu"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GcyukvSY"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B0A1CF5C4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617201CEEA7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727824353; cv=none; b=GJm1npCGKHx0rLon3r/lznfN4rW1iOiYjK4Ji+ugnQM4kNgc9B5LK4k6Sf2b3ll5kBm2QnvNomLyqAu1eqmLQOzDtAHpi8DMucfoWf7POzuuJW+m38eRAONL2pDhlSrjcqIPbXancBljwthmRd0ov3xjZbr96auRXT8B4iXkqQU=
+	t=1727824402; cv=none; b=WDqmDtZIxmS4K6/Huax09w3cCgNvn4dIIgtVzDmYhBb8grnhLcRg+p1i6l7Kr+pmRZCoE/ThJ4AKIy1bxYyZI8Z4+XIMGxx3CsKezeWqX/9XtJB/KZ6KZzq4M6FcSDLrdHKD4wW2s5B/YYlRUzxtZSNIJffYh7U50UtIyY5uNNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727824353; c=relaxed/simple;
-	bh=UJEo7ZbVngp//T9WAn3g+kIQ8hS525iGbt6hspN/biQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t1+gxie8TrRD28wButJgodmADRNKbBxV0TGZm1V6m5AquWp1X5yl+fRLoIKmGdX7nfzhaRe1S9t5AUVsZDpmd71Tgdzbde8RfEDkelC1XKrgybhuyhn3RmQHPHvqUeUBNXyPGNCDFQN3vhumXPO9l1AeD3Fy25MCrCDCmEbmlns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tkjos.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxbyntyu; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tkjos.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20afe0063e0so59549355ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:12:30 -0700 (PDT)
+	s=arc-20240116; t=1727824402; c=relaxed/simple;
+	bh=w++7hzLDS/8dZ/VoZ2hephh+rP/dNT8s02ewb/5KE7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TIgVLG8fsB4KtQ20Q9laRG16PIk4N7mw5bc+77SqXuMIt4x7DYOQ2Jf/zHi4tBxBpUkIQx5yPZyF0M2bkYMYLqb12KbLLiO/+XIgQB2V4htnGjI7OUQQy0Ng+58XyAGfiNZ93+qUt6uAOMEA86d1schaJdmzrwOxHZff7qzKwq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GcyukvSY; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20b8be13cb1so28459015ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:13:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727824350; x=1728429150; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yfKsYMpaU7VvuhLl70RiS1jJf8XNvJoYo4Hby8DN+CU=;
-        b=fxbyntyuQ0rm7BLDzlyhZnTYzekqbZ3ujfeORgKNPJRBlKqKWMv+gwCTbJVSUf3ceQ
-         t0h2ITk5INCXIqNg2w5EoYWx7jNQ46Dna1c6ZI/CKKZ92V1KNjfZaDfRmTJuKdrNUxmY
-         XivHRZmEy/1fwJk3xUBoHg/j+wB5DWnwj0WSns5J6/kmzvHQJdFm5aVgqUbuNFvf2eUO
-         oLwwONBaDPIwfTh0bHJJv6diJQWRZFaoLau6AjFMKJq/G+AppVGhnJ7+0NHbEH04hVOP
-         Nafz5bTyyPcTK3OUdP+ZK0jteuxUyjAQD2o4OZbECRgyO+wIOghUxmFN1/3lSqtYQujw
-         5mmg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1727824399; x=1728429199; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vF28sAx//tve6z0mOEzHepFQAlUB74FiXmJYm/deJzs=;
+        b=GcyukvSYLinJqnphUXMrjaJUwm3u35ziqIER7RQ/qgNEzgXW/HhZXUR/Jj+zoQkY7d
+         8GSgaHCC/Xy1hUAAgCoTG1grcZDs7mYt1DukhFCzv1O0hYcN7OYJigRphI3/ijptB6hj
+         ywOmY82HQDSR43u3ptquJLfDD+arQtjeBLBWNc06ciyWe0ApQC5Hr5Wl+6jPgwUZoCML
+         vll6lbiFkDfF2UF0WptnfXHPB6N1fIWsDOikSM0kOCL2AmFIQKL7w1NSB3FQw7mYbdLA
+         3B5VhmYowPVERbNyKSAKHQq3Zn9S7rW+akA2cPKf5y3pOvNIjITyQmTZstykGHWKe1Ff
+         Ncng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727824350; x=1728429150;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yfKsYMpaU7VvuhLl70RiS1jJf8XNvJoYo4Hby8DN+CU=;
-        b=u8BH6sp7DI1I/4h8IktEjB37rr+z4iaBYGk9qmYVThtexWmqJ3JGg+24K5GXaeV74U
-         tdSujsYtfEd+pBWy8yff4pvbgJ0JGqiEQgvo7ooVLPATAL/DS+zereKTXqcfTDluRvHU
-         H+k7tJyOzniT1XJKVsGH+lKK8EZ0ROfOj/mKcUJF/AL0lBcVf47NjXfyCDzcxP2GmxY5
-         VDa0VFW1IiYnLsfPBGSoxK+yJ6NBAXLIJfjWXShWm/ANOYw3GmZHk8l00OkuGzLzsjKP
-         PYM8AtSvJdGGAWUN1LCx+UbsEmAoV+Fx/8Z86H+hxl1hr+KGD3t3vopnyhp4w41n1rth
-         IVNw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0KtXeaLBMq17Wzk4XIHcWZuynAKWrrmwPI+jiStIKptutWYSReBLHef2CtKf0fsDYrXo7eidEQmINi38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwShzqriOF7n3+PaJ58LYaKoS9Hzwh4qcJq+hSxmhgc4I8+wAIl
-	Q22kvL2Lmvx2y4ngNVRvMbNaUwn5Viv4ZWrLZ37yzlLOghDhaYQluPuAElOhdi+HRjiX3O3zug=
-	=
-X-Google-Smtp-Source: AGHT+IFYlrcOGsDvZLY/eGYCzs70AYjmWagZL0Cjjfxx6fUGcCl923aS8j/xVPRRR+iJEaJLcWnUjAtpBg==
-X-Received: from avak.c.googlers.com ([fda3:e722:ac3:cc00:ef:85c8:ac13:4199])
- (user=tkjos job=sendgmr) by 2002:a17:903:41c9:b0:20b:bc4b:2bc4 with SMTP id
- d9443c01a7336-20bc5a599f2mr78285ad.10.1727824349757; Tue, 01 Oct 2024
- 16:12:29 -0700 (PDT)
-Date: Tue,  1 Oct 2024 23:11:47 +0000
+        d=1e100.net; s=20230601; t=1727824399; x=1728429199;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vF28sAx//tve6z0mOEzHepFQAlUB74FiXmJYm/deJzs=;
+        b=VfTsEGh8cZ+XtcLEg5xRZY4h0yj+/puxFAVT7tWavchJ/yluXdI23sY+6ZCLs/CbaM
+         0FlGSrjr2TG+DpisnpTuh8fq651ud7W2ax6yLYcgRp/pvfbwJetU9NhJUqjkA0UKRLkb
+         a3/TBKxPcU7OAdTv4CIHySge/P/haqgs47oKtfBkQ4NOqmsz0NAvU5+t8D9bv9O2/9FQ
+         JZEj2CnuUYeO7eV3lCBIKB2KZNIwEH6PJN95HA1JbYQR6v+F+bANfMcNZdatO2Eimx3H
+         oEO8KaVpZtwxfBPAgOO55g48MihMJlAIdInyOEHRxXUzOXsFgiJjViAZVjaHLAMfxc93
+         jyQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdH1vIV9Mo9Y79x3HBxyn7Lmv6r86TBC1m9M/3cKjioP7aV3sr3bkdUocAUUT1VNoeWaLZCRao5uEMiYM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywrqm34uW7vcMCkQFesT+VXJrLXXgWIqfQTlvP7ickr+HJxg90q
+	juLNAht0FNzCw8jAjR/bZ/TDkVRWTzEZPD4isFapW/f9DLBvvqVnPxncJTT7sGo=
+X-Google-Smtp-Source: AGHT+IEIrzHYfjGFMSAlwPPGGJUrbwH3BDEgMMmzhiHFcldc7QLYwSfdGVw09IGHWqEtu37pmMpU7g==
+X-Received: by 2002:a17:903:41c4:b0:20b:a431:8f17 with SMTP id d9443c01a7336-20bc5a887b7mr17332045ad.58.1727824398654;
+        Tue, 01 Oct 2024 16:13:18 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e37225sm74521465ad.197.2024.10.01.16.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 16:13:18 -0700 (PDT)
+Date: Tue, 1 Oct 2024 16:13:15 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Ross Burton <ross.burton@arm.com>,
+	David Spickett <david.spickett@arm.com>,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v13 04/40] prctl: arch-agnostic prctl for shadow stack
+Message-ID: <ZvyCC7tJT7QoKO+D@debug.ba.rivosinc.com>
+References: <20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org>
+ <20241001-arm64-gcs-v13-4-222b78d87eee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Message-ID: <20241001231147.3583649-1-tkjos@google.com>
-Subject: [PATCH] PCI: fix memory leak in reset_method_store()
-From: Todd Kjos <tkjos@google.com>
-To: kernel-team@android.com, bhelgaas@google.com, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Cc: Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241001-arm64-gcs-v13-4-222b78d87eee@kernel.org>
 
-In reset_method_store(), a string is allocated via kstrndup()
-and assigned to the local "options". options is then used
-in with strsep() to find spaces:
+On Tue, Oct 01, 2024 at 11:58:43PM +0100, Mark Brown wrote:
+>Three architectures (x86, aarch64, riscv) have announced support for
+>shadow stacks with fairly similar functionality.  While x86 is using
+>arch_prctl() to control the functionality neither arm64 nor riscv uses
+>that interface so this patch adds arch-agnostic prctl() support to
+>get and set status of shadow stacks and lock the current configuation to
+>prevent further changes, with support for turning on and off individual
+>subfeatures so applications can limit their exposure to features that
+>they do not need.  The features are:
+>
+>  - PR_SHADOW_STACK_ENABLE: Tracking and enforcement of shadow stacks,
+>    including allocation of a shadow stack if one is not already
+>    allocated.
+>  - PR_SHADOW_STACK_WRITE: Writes to specific addresses in the shadow
+>    stack.
+>  - PR_SHADOW_STACK_PUSH: Push additional values onto the shadow stack.
+>
+>These features are expected to be inherited by new threads and cleared
+>on exec(), unknown features should be rejected for enable but accepted
+>for locking (in order to allow for future proofing).
+>
+>This is based on a patch originally written by Deepak Gupta but modified
+>fairly heavily, support for indirect landing pads is removed, additional
+>modes added and the locking interface reworked.  The set status prctl()
+>is also reworked to just set flags, if setting/reading the shadow stack
+>pointer is required this could be a separate prctl.
+>
+>Reviewed-by: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+>Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+>Acked-by: Yury Khrustalev <yury.khrustalev@arm.com>
+>Signed-off-by: Mark Brown <broonie@kernel.org>
+>---
+> include/linux/mm.h         |  4 ++++
+> include/uapi/linux/prctl.h | 22 ++++++++++++++++++++++
+> kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
+> 3 files changed, 56 insertions(+)
 
-  while ((name = strsep(&options, " ")) != NULL) {
+Reviewed-by: Deepak Gupta <debug@rivosinc.com>
 
-If there are no remaining spaces, then options is set to NULL
-by strsep(), so the subsequent kfree(options) doesn't free the
-memory allocated via kstrndup().
-
-Fix by using a separate tmp_options to iterate with
-strsep() so options is preserved.
-
-Fixes: d88f521da3ef ("PCI: Allow userspace to query and set device reset mechanism")
-Signed-off-by: Todd Kjos <tkjos@google.com>
----
- drivers/pci/pci.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 7d85c04fbba2..0e6562ff3dcf 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -5244,7 +5244,7 @@ static ssize_t reset_method_store(struct device *dev,
- 				  const char *buf, size_t count)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
--	char *options, *name;
-+	char *options, *tmp_options, *name;
- 	int m, n;
- 	u8 reset_methods[PCI_NUM_RESET_METHODS] = { 0 };
- 
-@@ -5264,7 +5264,8 @@ static ssize_t reset_method_store(struct device *dev,
- 		return -ENOMEM;
- 
- 	n = 0;
--	while ((name = strsep(&options, " ")) != NULL) {
-+	tmp_options = options;
-+	while ((name = strsep(&tmp_options, " ")) != NULL) {
- 		if (sysfs_streq(name, ""))
- 			continue;
- 
--- 
-2.46.1.824.gd892dcdcdd-goog
-
+>
 
