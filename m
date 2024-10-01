@@ -1,269 +1,289 @@
-Return-Path: <linux-kernel+bounces-345521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D52498B738
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:40:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4990A98B726
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B35F5B24404
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:40:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 866E0B23299
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6202B19CC00;
-	Tue,  1 Oct 2024 08:39:39 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69AD019CC01;
-	Tue,  1 Oct 2024 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE16119DFAE;
+	Tue,  1 Oct 2024 08:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/vywLpT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IqibOtaW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/vywLpT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IqibOtaW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7D619AD5C;
+	Tue,  1 Oct 2024 08:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771978; cv=none; b=IbihIZCRwJDwmKp7dS7znbEaBaDYWj6k7STYEwL52f+73mfsHSS0UE6uuFmo178IoUWJbgAtpquhy0KAefoQRp0dGKr+VQiVpyfBDV7kSFb+wXaT8o5y51l/iBqjTMQ04TvEQDMvpy5tgHeIPjsDcZDdu6ADE4NucO6F7fmyr5Y=
+	t=1727771836; cv=none; b=WVUOOQvXgmVtq1c5OroefHu4alzbeLCvvdOBxnwo9LfEuELoCvJ+c1YW79BHaFZtcq7kjSrEnGxHSaFSHLzGP5BcADm8GyNUzQrp8QLVujVwob6Sneqr4FuzukNLu65W8amvJw5MoC/P++Usovj70+iGZoFsUj0c6O/JgPruyNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771978; c=relaxed/simple;
-	bh=zHM+W4s9A6oJwA2GU3etawg+o43qnScIh5mZpZYVt20=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QtVed/jIpNoLVu1DDgiTyGUSPkrHXXr75JNxpSCbWUZHH89BWeR2xeemDg+Zgf5y/bGhPeRAZsNeUuytKutVUm6hV72yIMru38ltCiqop5c+ogERbAF0DTA9CyfdjNuqzsll9TsBXMp8QGMtd66VAVbIhRpUKdq+hHk4nf8Rat8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 4E4DF7C0112;
-	Tue,  1 Oct 2024 16:39:32 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain.localdomain (unknown [115.193.80.205])
-	by smtp.cecloud.com (postfix) whith ESMTP id P880592T281472074117488S1727771971456888_;
-	Tue, 01 Oct 2024 16:39:32 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:zhangyanjun@cestc.cn
-X-SENDER:zhangyanjun@cestc.cn
-X-LOGIN-NAME:zhangyanjun@cestc.cn
-X-FST-TO:trondmy@kernel.org
-X-RCPT-COUNT:7
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:115.193.80.205
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<99d6e27a6069553bb23252b767ea8fb7>
-X-System-Flag:0
-From: zhangyanjun@cestc.cn
-To: trondmy@kernel.org,
-	anna@kernel.org,
-	Markus.Elfring@web.de
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yanjun Zhang <zhangyanjun@cestc.cn>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH v6] NFSv4: Prevent NULL-pointer dereference in nfs42_complete_copies()
-Date: Tue,  1 Oct 2024 16:39:30 +0800
-Message-Id: <20241001083930.4043-1-zhangyanjun@cestc.cn>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1727771836; c=relaxed/simple;
+	bh=8a1k4nvuJee1xWuk2wirbRH2ovNTmhsw4NtFJTBefGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AIl6vWvUW3fE/Dhc3tE3uQqx/82FCl6GAmRzpC4fpA20qvbYuXPrMKYhzQZJsOPMz8mIabOCJtzApF+v9JJ1XhZMD7/Ledlh1Z7nhCQCJnrbcMxzCOHIv8QEx5vx23iHhxpxdPKaGG0IZs6CGz7seRN77VRjskIAyzvbOofobVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/vywLpT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IqibOtaW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/vywLpT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IqibOtaW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 910BB21AFE;
+	Tue,  1 Oct 2024 08:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727771826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz6iF7VA/XvwkekcIHafjhP+48pOMPmGqg5ohl9g+/c=;
+	b=C/vywLpTeb8iVDIjG5slIvToARzmWXiYCXaqVwADoLhuFj09D0a1X/VUGGI59jnJxTJDWH
+	rKSM4I7+lZRvtZOZy0VGvHKbfsGIdMk/RD+iAbDamLtMflSLPQmm8FZr8aJ2PnA7Oimb4a
+	eszHU8HWWyCZKmmDqNgaD2ztK7qvuvQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727771826;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz6iF7VA/XvwkekcIHafjhP+48pOMPmGqg5ohl9g+/c=;
+	b=IqibOtaW835sOiirqnRMWp3ZL/xLWkEV4m1N7vFcusweGOjSkGYMAKBJ8ZEEbu9LFlKMS2
+	PK1d/shX7dY2wyBA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727771826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz6iF7VA/XvwkekcIHafjhP+48pOMPmGqg5ohl9g+/c=;
+	b=C/vywLpTeb8iVDIjG5slIvToARzmWXiYCXaqVwADoLhuFj09D0a1X/VUGGI59jnJxTJDWH
+	rKSM4I7+lZRvtZOZy0VGvHKbfsGIdMk/RD+iAbDamLtMflSLPQmm8FZr8aJ2PnA7Oimb4a
+	eszHU8HWWyCZKmmDqNgaD2ztK7qvuvQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727771826;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wz6iF7VA/XvwkekcIHafjhP+48pOMPmGqg5ohl9g+/c=;
+	b=IqibOtaW835sOiirqnRMWp3ZL/xLWkEV4m1N7vFcusweGOjSkGYMAKBJ8ZEEbu9LFlKMS2
+	PK1d/shX7dY2wyBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4347913A6E;
+	Tue,  1 Oct 2024 08:37:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VBOhD7K0+2bgLwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 01 Oct 2024 08:37:06 +0000
+Message-ID: <5ccae4ec-0b98-4f84-89be-9ba49f75e85e@suse.cz>
+Date: Tue, 1 Oct 2024 10:39:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH slab hotfixes 2/2] kunit: move call to
+ kunit_run_all_tests() after rcu_end_inkernel_boot()
+To: Guenter Roeck <linux@roeck-us.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>,
+ David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+ rcu@vger.kernel.org, David Gow <davidgow@google.com>,
+ Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, Brendan Higgins <brendan.higgins@linux.dev>
+References: <20240930-b4-slub-kunit-fix-v1-0-32ca9dbbbc11@suse.cz>
+ <20240930-b4-slub-kunit-fix-v1-2-32ca9dbbbc11@suse.cz>
+ <9dd56c26-12db-4b69-af0e-fdea33bb8208@roeck-us.net>
+ <ee52f8af-ef1a-4382-ab9a-f9781157d1be@roeck-us.net>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+In-Reply-To: <ee52f8af-ef1a-4382-ab9a-f9781157d1be@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[roeck-us.net,linux-foundation.org,linux.com,google.com,linux.dev,gmail.com,vger.kernel.org,kvack.org];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org,google.com,googlegroups.com,linux.dev];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Yanjun Zhang <zhangyanjun@cestc.cn>
+On 10/1/24 1:55 AM, Guenter Roeck wrote:
+> On 9/30/24 11:50, Guenter Roeck wrote:
+>> On 9/30/24 01:37, Vlastimil Babka wrote:
+>>> Guenter Roeck reports that the new slub kunit tests added by commit
+>>> 4e1c44b3db79 ("kunit, slub: add test_kfree_rcu() and
+>>> test_leak_destroy()") cause a lockup on boot on several architectures
+>>> when the kunit tests are configured to be built-in and not modules.
+>>>
+>>> These tests invoke kfree_rcu() and kvfree_rcu_barrier() and boot
+>>> sequence inspection showed the runner for built-in kunit tests
+>>> kunit_run_all_tests() is called before setting system_state to
+>>> SYSTEM_RUNNING and calling rcu_end_inkernel_boot(), so this seems like a
+>>> likely cause. So while I was unable to reproduce the problem myself,
+>>> moving the call to kunit_run_all_tests() a bit later in the boot seems
+>>> to have fixed the lockup problem according to Guenter's limited testing.
+>>>
+>>> No kunit tests should be broken by calling the built-in executor a bit
+>>> later, as when compiled as modules, they are still executed even later
+>>> than this.
+>>>
+> 
+> Actually, that is wrong.
+> 
+> Turns out kunit_iov_iter (and other kunit tests) are marked __init.
+> That means those unit tests have to run before the init code is released,
+> and it actually _is_ harmful to run the tests after rcu_end_inkernel_boot()
+> because at that time free_initmem() has already been called.
 
-On the node of an NFS client, some files saved in the mountpoint of the
-NFS server were copied to another location of the same NFS server.
-Accidentally, the nfs42_complete_copies() got a NULL-pointer dereference=20
-crash with the following syslog:
+Oh, guess that explains why the kunit_run_all_tests() executor is called
+so suspiciously early. Of course when built as modules, __init has a
+different lifetime.
 
-[232064.838881] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232064.839360] NFSv4: state recovery failed for open file nfs/pvc-12b5200d=
--cd0f-46a3-b9f0-af8f4fe0ef64.qcow2, error =3D -116
-[232066.588183] Unable to handle kernel NULL pointer dereference at virtual=
- address 0000000000000058
-[232066.588586] Mem abort info:
-[232066.588701]   ESR =3D 0x0000000096000007
-[232066.588862]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[232066.589084]   SET =3D 0, FnV =3D 0
-[232066.589216]   EA =3D 0, S1PTW =3D 0
-[232066.589340]   FSC =3D 0x07: level 3 translation fault
-[232066.589559] Data abort info:
-[232066.589683]   ISV =3D 0, ISS =3D 0x00000007
-[232066.589842]   CM =3D 0, WnR =3D 0
-[232066.589967] user pgtable: 64k pages, 48-bit VAs, pgdp=3D00002000956ff400
-[232066.590231] [0000000000000058] pgd=3D08001100ae100003, p4d=3D08001100ae=
-100003, pud=3D08001100ae100003, pmd=3D08001100b3c00003, pte=3D0000000000000=
-000
-[232066.590757] Internal error: Oops: 96000007 [#1] SMP
-[232066.590958] Modules linked in: rpcsec_gss_krb5 auth_rpcgss nfsv4 dns_re=
-solver nfs lockd grace fscache netfs ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm=
- vhost_net vhost vhost_iotlb tap tun ipt_rpfilter xt_multiport ip_set_hash_=
-ip ip_set_hash_net xfrm_interface xfrm6_tunnel tunnel4 tunnel6 esp4 ah4 wir=
-eguard libcurve25519_generic veth xt_addrtype xt_set nf_conntrack_netlink i=
-p_set_hash_ipportnet ip_set_hash_ipportip ip_set_bitmap_port ip_set_hash_ip=
-port dummy ip_set ip_vs_sh ip_vs_wrr ip_vs_rr ip_vs iptable_filter sch_ingr=
-ess nfnetlink_cttimeout vport_gre ip_gre ip_tunnel gre vport_geneve geneve =
-vport_vxlan vxlan ip6_udp_tunnel udp_tunnel openvswitch nf_conncount dm_rou=
-nd_robin dm_service_time dm_multipath xt_nat xt_MASQUERADE nft_chain_nat nf=
-_nat xt_mark xt_conntrack xt_comment nft_compat nft_counter nf_tables nfnet=
-link ocfs2 ocfs2_nodemanager ocfs2_stackglue iscsi_tcp libiscsi_tcp libiscs=
-i scsi_transport_iscsi ipmi_ssif nbd overlay 8021q garp mrp bonding tls rfk=
-ill sunrpc ext4 mbcache jbd2
-[232066.591052]  vfat fat cas_cache cas_disk ses enclosure scsi_transport_s=
-as sg acpi_ipmi ipmi_si ipmi_devintf ipmi_msghandler ip_tables vfio_pci vfi=
-o_pci_core vfio_virqfd vfio_iommu_type1 vfio dm_mirror dm_region_hash dm_lo=
-g dm_mod nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 br_netfilter bridge stp=
- llc fuse xfs libcrc32c ast drm_vram_helper qla2xxx drm_kms_helper syscopya=
-rea crct10dif_ce sysfillrect ghash_ce sysimgblt sha2_ce fb_sys_fops cec sha=
-256_arm64 sha1_ce drm_ttm_helper ttm nvme_fc igb sbsa_gwdt nvme_fabrics drm=
- nvme_core i2c_algo_bit i40e scsi_transport_fc megaraid_sas aes_neon_bs
-[232066.596953] CPU: 6 PID: 4124696 Comm: 10.253.166.125- Kdump: loaded Not=
- tainted 5.15.131-9.cl9_ocfs2.aarch64 #1
-[232066.597356] Hardware name: Great Wall .\x93\x8e...RF6260 V5/GWMSSE2GL1T=
-, BIOS T656FBE_V3.0.18 2024-01-06
-[232066.597721] pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[232066.598034] pc : nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.598327] lr : nfs4_reclaim_open_state+0x12c/0x800 [nfsv4]
-[232066.598595] sp : ffff8000f568fc70
-[232066.598731] x29: ffff8000f568fc70 x28: 0000000000001000 x27: ffff21003d=
-b33000
-[232066.599030] x26: ffff800005521ae0 x25: ffff0100f98fa3f0 x24: 0000000000=
-000001
-[232066.599319] x23: ffff800009920008 x22: ffff21003db33040 x21: ffff21003d=
-b33050
-[232066.599628] x20: ffff410172fe9e40 x19: ffff410172fe9e00 x18: 0000000000=
-000000
-[232066.599914] x17: 0000000000000000 x16: 0000000000000004 x15: 0000000000=
-000000
-[232066.600195] x14: 0000000000000000 x13: ffff800008e685a8 x12: 00000000ea=
-c0c6e6
-[232066.600498] x11: 0000000000000000 x10: 0000000000000008 x9 : ffff800005=
-4e5828
-[232066.600784] x8 : 00000000ffffffbf x7 : 0000000000000001 x6 : 000000000a=
-9eb14a
-[232066.601062] x5 : 0000000000000000 x4 : ffff70ff8a14a800 x3 : 0000000000=
-000058
-[232066.601348] x2 : 0000000000000001 x1 : 54dce46366daa6c6 x0 : 0000000000=
-000000
-[232066.601636] Call trace:
-[232066.601749]  nfs4_reclaim_open_state+0x220/0x800 [nfsv4]
-[232066.601998]  nfs4_do_reclaim+0x1b8/0x28c [nfsv4]
-[232066.602218]  nfs4_state_manager+0x928/0x10f0 [nfsv4]
-[232066.602455]  nfs4_run_state_manager+0x78/0x1b0 [nfsv4]
-[232066.602690]  kthread+0x110/0x114
-[232066.602830]  ret_from_fork+0x10/0x20
-[232066.602985] Code: 1400000d f9403f20 f9402e61 91016003 (f9402c00)
-[232066.603284] SMP: stopping secondary CPUs
-[232066.606936] Starting crashdump kernel...
-[232066.607146] Bye!
+Guess I will just skip the two new tests using kfree_rcu() when the slub
+kunit is built-in then. Thanks for testing.
 
-Analysing the vmcore, we know that nfs4_copy_state listed by destination
-nfs_server->ss_copies was added by the field copies in handle_async_copy(),
-and we found a waiting copy process with the stack as:
-PID: 3511963  TASK: ffff710028b47e00  CPU: 0   COMMAND: "cp"
- #0 [ffff8001116ef740] __switch_to at ffff8000081b92f4
- #1 [ffff8001116ef760] __schedule at ffff800008dd0650
- #2 [ffff8001116ef7c0] schedule at ffff800008dd0a00
- #3 [ffff8001116ef7e0] schedule_timeout at ffff800008dd6aa0
- #4 [ffff8001116ef860] __wait_for_common at ffff800008dd166c
- #5 [ffff8001116ef8e0] wait_for_completion_interruptible at ffff800008dd1898
- #6 [ffff8001116ef8f0] handle_async_copy at ffff8000055142f4 [nfsv4]
- #7 [ffff8001116ef970] _nfs42_proc_copy at ffff8000055147c8 [nfsv4]
- #8 [ffff8001116efa80] nfs42_proc_copy at ffff800005514cf0 [nfsv4]
- #9 [ffff8001116efc50] __nfs4_copy_file_range.constprop.0 at ffff8000054ed6=
-94 [nfsv4]
-
-The NULL-pointer dereference was due to nfs42_complete_copies() listed
-the nfs_server->ss_copies by the field ss_copies of nfs4_copy_state.
-So the nfs4_copy_state address ffff0100f98fa3f0 was offset by 0x10 and
-the data accessed through this pointer was also incorrect. Generally,
-the ordered list nfs4_state_owner->so_states indicate open(O_RDWR) or
-open(O_WRITE) states are reclaimed firstly by nfs4_reclaim_open_state().
-When destination state reclaim is failed with NFS_STATE_RECOVERY_FAILED
-and copies are not deleted in nfs_server->ss_copies, the source state
-may be passed to the nfs42_complete_copies() process earlier, resulting
-in this crash scene finally. To solve this issue, we add a list_head
-nfs_server->ss_src_copies for a server-to-server copy specially.
-
-Fixes: 0e65a32c8a56 ("NFS: handle source server reboot")
-Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
----
-v2:
-- add an initialiser for the new list in nfs_alloc_server().
-- change the new list name from ds_copies to ss_src_copies.
-v3:
-- correct the commit ID of Fixes tags.
-- append parentheses to any function names.
-- modify the title and text to get smaller line lengths.
-v4:
-- add Reviewed-by tags and patch changelogs.
-- adjust the patch description more accurately.
-v5:
-- modify the title and correct spelling errors.
-v6:
-- modify the patch description.
-
- fs/nfs/client.c           | 1 +
- fs/nfs/nfs42proc.c        | 2 +-
- fs/nfs/nfs4state.c        | 2 +-
- include/linux/nfs_fs_sb.h | 1 +
- 4 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 8286edd60..c49d5cce5 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -983,6 +983,7 @@ struct nfs_server *nfs_alloc_server(void)
- 	INIT_LIST_HEAD(&server->layouts);
- 	INIT_LIST_HEAD(&server->state_owners_lru);
- 	INIT_LIST_HEAD(&server->ss_copies);
-+	INIT_LIST_HEAD(&server->ss_src_copies);
-=20
- 	atomic_set(&server->active, 0);
-=20
-diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-index 28704f924..531c9c20e 100644
---- a/fs/nfs/nfs42proc.c
-+++ b/fs/nfs/nfs42proc.c
-@@ -218,7 +218,7 @@ static int handle_async_copy(struct nfs42_copy_res *res,
-=20
- 	if (dst_server !=3D src_server) {
- 		spin_lock(&src_server->nfs_client->cl_lock);
--		list_add_tail(&copy->src_copies, &src_server->ss_copies);
-+		list_add_tail(&copy->src_copies, &src_server->ss_src_copies);
- 		spin_unlock(&src_server->nfs_client->cl_lock);
- 	}
-=20
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 877f682b4..00516982b 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1596,7 +1596,7 @@ static void nfs42_complete_copies(struct nfs4_state_o=
-wner *sp, struct nfs4_state
- 			complete(&copy->completion);
- 		}
- 	}
--	list_for_each_entry(copy, &sp->so_server->ss_copies, src_copies) {
-+	list_for_each_entry(copy, &sp->so_server->ss_src_copies, src_copies) {
- 		if ((test_bit(NFS_CLNT_SRC_SSC_COPY_STATE, &state->flags) &&
- 				!nfs4_stateid_match_other(&state->stateid,
- 				&copy->parent_src_state->stateid)))
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index 1df86ab98..793a4a610 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -240,6 +240,7 @@ struct nfs_server {
- 	struct list_head	layouts;
- 	struct list_head	delegations;
- 	struct list_head	ss_copies;
-+	struct list_head	ss_src_copies;
-=20
- 	unsigned long		delegation_gen;
- 	unsigned long		mig_gen;
---=20
-2.31.1
-
-
-
+> Guenter
+> 
+>>> Fixes: 4e1c44b3db79 ("kunit, slub: add test_kfree_rcu() and
+>>> test_leak_destroy()")
+>>> Reported-by: Guenter Roeck <linux@roeck-us.net>
+>>> Closes:
+>>> https://lore.kernel.org/all/6fcb1252-7990-4f0d-8027-5e83f0fb9409@roeck-us.net/
+>>> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+>>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>>> Cc: Uladzislau Rezki <urezki@gmail.com>
+>>> Cc: rcu@vger.kernel.org
+>>> Cc: Brendan Higgins <brendanhiggins@google.com>
+>>> Cc: David Gow <davidgow@google.com>
+>>> Cc: Rae Moar <rmoar@google.com>
+>>> Cc: linux-kselftest@vger.kernel.org
+>>> Cc: kunit-dev@googlegroups.com
+>>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>>> ---
+>>>   init/main.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/init/main.c b/init/main.c
+>>> index
+>>> c4778edae7972f512d5eefe8400075ac35a70d1c..7890ebb00e84b8bd7bac28923fb1fe571b3e9ee2 100644
+>>> --- a/init/main.c
+>>> +++ b/init/main.c
+>>> @@ -1489,6 +1489,8 @@ static int __ref kernel_init(void *unused)
+>>>       rcu_end_inkernel_boot();
+>>> +    kunit_run_all_tests();
+>>> +
+>>>       do_sysctl_args();
+>>>       if (ramdisk_execute_command) {
+>>> @@ -1579,8 +1581,6 @@ static noinline void __init
+>>> kernel_init_freeable(void)
+>>>       do_basic_setup();
+>>> -    kunit_run_all_tests();
+>>> -
+>>>       wait_for_initramfs();
+>>>       console_on_rootfs();
+>>>
+>> Unfortunately it doesn't work. With this patch applied, I get many
+>> backtraces
+>> similar to the following, and ultimately the image crashes. This is
+>> with arm64.
+>> I do not see the problem if I drop this patch.
+>>
+>> Guenter
+>>
+>> ---
+>> [    9.465871]     KTAP version 1
+>> [    9.465964]     # Subtest: iov_iter
+>> [    9.466056]     # module: kunit_iov_iter
+>> [    9.466115]     1..12
+>> [    9.467000] Unable to handle kernel paging request at virtual
+>> address ffffc37db5c9f26c
+>> [    9.467244] Mem abort info:
+>> [    9.467332]   ESR = 0x0000000086000007
+>> [    9.467454]   EC = 0x21: IABT (current EL), IL = 32 bits
+>> [    9.467576]   SET = 0, FnV = 0
+>> [    9.467667]   EA = 0, S1PTW = 0
+>> [    9.467762]   FSC = 0x07: level 3 translation fault
+>> [    9.467912] swapper pgtable: 4k pages, 48-bit VAs,
+>> pgdp=0000000042a59000
+>> [    9.468055] [ffffc37db5c9f26c] pgd=0000000000000000,
+>> p4d=1000000044b36003, pud=1000000044b37003, pmd=1000000044b3a003,
+>> pte=0000000000000000
+>> [    9.469430] Internal error: Oops: 0000000086000007 [#1] PREEMPT SMP
+>> [    9.469687] Modules linked in:
+>> [    9.470035] CPU: 0 UID: 0 PID: 550 Comm: kunit_try_catch Tainted:
+>> G                 N 6.12.0-rc1-00005-ga65e3eb58cdb #1
+>> [    9.470290] Tainted: [N]=TEST
+>> [    9.470356] Hardware name: linux,dummy-virt (DT)
+>> [    9.470530] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS
+>> BTYPE=--)
+>> [    9.470656] pc : iov_kunit_copy_to_kvec+0x0/0x334
+>> [    9.471055] lr : kunit_try_run_case+0x6c/0x15c
+>> [    9.471145] sp : ffff800080883de0
+>> [    9.471210] x29: ffff800080883e20 x28: 0000000000000000 x27:
+>> 0000000000000000
+>> [    9.471376] x26: 0000000000000000 x25: 0000000000000000 x24:
+>> ffff80008000bb68
+>> [    9.471501] x23: ffffc37db3f7093c x22: ffff80008000b940 x21:
+>> ffff545847af4c00
+>> [    9.471622] x20: ffff545847cd3940 x19: ffff80008000bb50 x18:
+>> 0000000000000006
+>> [    9.471742] x17: 6c61746f7420303a x16: 70696b7320303a6c x15:
+>> 0000000000000172
+>> [    9.471863] x14: 0000000000020000 x13: 0000000000000000 x12:
+>> ffffc37db6a600c8
+>> [    9.471983] x11: 0000000000000043 x10: 0000000000000043 x9 :
+>> 1fffffffffffffff
+>> [    9.472122] x8 : 00000000ffffffff x7 : 000000001040d4fd x6 :
+>> ffffc37db70c3810
+>> [    9.472243] x5 : 0000000000000000 x4 : ffffffffc4653600 x3 :
+>> 000000003b9ac9ff
+>> [    9.472363] x2 : 0000000000000001 x1 : ffffc37db5c9f26c x0 :
+>> ffff80008000bb50
+>> [    9.472572] Call trace:
+>> [    9.472636]  iov_kunit_copy_to_kvec+0x0/0x334
+>> [    9.472740]  kunit_generic_run_threadfn_adapter+0x28/0x4c
+>> [    9.472835]  kthread+0x11c/0x120
+>> [    9.472903]  ret_from_fork+0x10/0x20
+>> [    9.473146] Code: ???????? ???????? ???????? ???????? (????????)
+>> [    9.473505] ---[ end trace 0000000000000000 ]---
+>>
+> 
 
