@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-345612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F55C98B810
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D1498B813
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C14931C22D8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E761B1F23284
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAF19D8A2;
-	Tue,  1 Oct 2024 09:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2D819D884;
+	Tue,  1 Oct 2024 09:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWpspQiS"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WqNMcchn"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4048119D884
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678C64594C;
+	Tue,  1 Oct 2024 09:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773997; cv=none; b=D371hYBgFscT3OWyNVjGRND2BK6LDei4deZidhM6ln1R9VU01w0+xbR8AbphOyGG8LLK3rYEOp+WIky/T0v5q8BuEJJaCGE4AjYiMpIEGryxxNHOHYr+Q7mFI+ofWF+p9gyjsds7Tkwpy0RcBcAqvxSbjJMjoMD/sPTGKL9CUk8=
+	t=1727774033; cv=none; b=DxMRIguCDvOXCRZGeKiWfunPpmBZm1lINALd13rr5SyMYeMp4mv4ZO6Pqji+iDTgsHGgJUCjWMREuqthGA6c9LumHwCEedtsk7/vazjneVR4pzUqEyDjmMgEeyENN2XP0xOcJoyTMsChGgOQYU4e+y25n0d0StcRODTawIfEsYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773997; c=relaxed/simple;
-	bh=icegb0pL2qbdDUASsVDPbVE5YcWxzi60TMK9YewrNjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QXG6kQ/gh7Tc1Pym0AqXFjslKrgG4yVk8xrNvR5MtxO22Tmv5eMyfPHBMv0YnUo6mhnUmg8iqXBXXtUqqv2Kh5TOfZh+9viA/6eb1JKFwctdXXpDfTfpDgDETxCmpvZrGAhAL7ACVYrewMG6j0aopxU8si8fJ0NjMeurpP8hQFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PWpspQiS; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37cdbcb139cso2734739f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:13:15 -0700 (PDT)
+	s=arc-20240116; t=1727774033; c=relaxed/simple;
+	bh=SiC4rx0Uaxb3sCsy8e0UVnitmu9e8ZlW8c9ynEs8+yc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PUe2uv3hDRqNMJuAQvOXDHe7gWukw1HKs3qfcfxflbwVhuzvZMlqvPYoje7MpOlMALXNDMsA8kOomNXA2qhJGbcGG1yauAJ4Baxr947oJdbB+7jvxdglKjsur0Kd2YwbdI5UGBJt9gMsx6WBnJLfJHwe4SWrbSZj++vpXh6M+VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WqNMcchn; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cd74c0d16so48742025e9.1;
+        Tue, 01 Oct 2024 02:13:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727773993; x=1728378793; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y9fBdWWDj6fOst+uTdJOT76rvj+EDLa+s01mSNdgJp0=;
-        b=PWpspQiSRg50gToc6umua05afvlx/n2ly/LH0bGA9bIoFb6MycaV6jLBwb92sDIHVi
-         fZGyPZtpKy87T4Mx7wVv17eRXfneAq4V6cemXbTuHBShcoeRkyH5E0pBQKPn3JprMk1s
-         tCPwYfNyKd8SBOX8hDGIAF2yZ8M+SawF6eS41H3Jbnp29ieBG3nUPWFS5l09V+2RAMzf
-         K3Nt2GX4OUbZdbp8BDbet6UjsdXb5/XbwD/Rkaq540C+rgBa4G58j2T9MqxojGgKNdaQ
-         WdM4QWuuqT2eGnD2Gi2n0n5uyBLaUWSaYMlGA5o+DM30BctIvN9N8hn7kPcSBeYtsGWq
-         VNmQ==
+        d=gmail.com; s=20230601; t=1727774030; x=1728378830; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nZ8VMiXu6gGmVrp93Vd0jleOW/f3dpveonWUZYL14c0=;
+        b=WqNMcchn6exF8JmTB87Wy6gEHIfueVh1VPRdGy6oK4bAE0yGsH7RA5bVD9Ix5YGZ0I
+         NLg4ESljUPitp8uHwYyxMZzyIvjFhU8c4XwdaQnl10Yels8SyneopV6cW+UdU/optm8z
+         9Nf5MT8ZTudVXC8+Z0aztYxUcyQr1Z71/Elp8b61NhKxbvOEKmoCEvZ7gFH0vWAjICfZ
+         U16RKI1nk9iqjU6cFMX41rlVMwZ094fCd9hpUMUuQRu81t00fgGwBf8AcEodMb04/DSH
+         /PSgr+dX2BQoArYXctSDODYjriT+SVUb+J82xRjKadEo7ZLt5ra0c/qwJW3gxWDmcjlR
+         uNEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727773993; x=1728378793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y9fBdWWDj6fOst+uTdJOT76rvj+EDLa+s01mSNdgJp0=;
-        b=efJ4z1MsZydvLhLnEk5EY/u/kxzVJWdDMSWp1iuYseq1OjGaHPk0RzYsz6/VtCBno7
-         aJBWOr2sawCLkIZMkMkZr5s4aKhBsx4f08FIgOmlYnUK0STcciX8O4wP2YIwCe4U2lHh
-         yiiBnfX9nDBtaFRbM6r1Gy99pB86om89OS+YQI19+Qk3gsJ/eg84DWNmwq/j80CHJSWq
-         HQ+zO2ty/TufxXQ/hWl+9opb3aK2RWiBvD0Bp+v9gwmDveUIEbWWXgHoseR6UoQsUd24
-         eu4Kw5Uowh6u3DI75xV6jc2CAdBkCk9Roeya0DE+hPgg5fXiaY5Hg2eXDabO2981t/uf
-         +CNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDBjUoO5rp5kzHRpUuAYEUNZzRQuDJj6cLKgORd7ih21g7KQl9ROOrsV2qZUdixUchf+IcOIvCVuTRV0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNspQIm/MiQQf/Gt5HEbqyeCyfsTwou52VU5T1PjnMots18+Co
-	oWmiO1Muzbw3HiCP7aOmJWiS7fmmauPFWXiXrOFPf1w9UUgwEZiSb2d7sgRh9HGXWzLI9OFiO5j
-	h/t4o3wqA6Ca5bSgm2SUkc4gBoL3ExUDAvZFQ
-X-Google-Smtp-Source: AGHT+IFgU7zCWKFIxKy1DfT3m8rNSOqxhergloVQ6Xgu0kb9+slgAkmLbC7op6hq7zmCb+3at5j3LcLeTtFhS60Ms4E=
-X-Received: by 2002:adf:f08c:0:b0:374:c1d6:f57f with SMTP id
- ffacd0b85a97d-37cd5a606a0mr7144966f8f.7.1727773993290; Tue, 01 Oct 2024
- 02:13:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727774030; x=1728378830;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nZ8VMiXu6gGmVrp93Vd0jleOW/f3dpveonWUZYL14c0=;
+        b=sJlr7quBFIcGwIxJFOxjPbgfChFBdAcYc3gyHI2nw9dANirMuDXiIWi7JyK9Z1c1pF
+         O1I1iK775bl548m/O/+c7nm/TBFCgIdGgkm4/QmD7zCuYq8K/BtBdts0gMnDWruyXySw
+         xY6jlPHQSwoH0UyL+ENNGYHWcBMXdfxTGAeKYP86OK7C8HlXH60AwcDOvSiNUaTsKZLQ
+         j5wwk91zv6KvOzJdIUd/FTChd/syoooUsRE37+C3zBVyfC1PZdoqohVMxFDzlQRPxkTh
+         ZwteyQoDarMU6G7mXM6dSt0A2iuNe3W7XZ4Rf0HwHgzNWMLVK/TABuRDXmA1iIAvqrNz
+         zcBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUncSQC3ZEZWIGlcZr230UAf/B4xCsFEfk3XCApdH2fVOVZ+DfKG9LMrs1OOUknQX2gNlmw6sWwsNvR2nk=@vger.kernel.org, AJvYcCX/2Pfj336l4upojDhem3uYXeQbgd+75YW0HKsOtSfy5/7gqyUYEBCccI3QZo8uaUGqHDITuwUezv/nix1P5P8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb79FQ51k7rKdNPmZlYxmLNktWa4G/V0pJO+5eSgmu0lE5P/R6
+	plSvBY5bJLwZm/IgRZGrY73TQhdsVJla6HabZB8LL4dvC+LKxpai
+X-Google-Smtp-Source: AGHT+IEHo6FjFSSwdArKH11zWRailghYO5HUV6hEY46lvJVjNHGNbQl9JqV/M4Mr5RhWT9PkAJ9XYg==
+X-Received: by 2002:a05:600c:1f91:b0:42c:e0da:f155 with SMTP id 5b1f17b1804b1-42f584349a4mr101548295e9.11.1727774029290;
+        Tue, 01 Oct 2024 02:13:49 -0700 (PDT)
+Received: from alessandro-pc.station (net-2-44-101-4.cust.vodafonedsl.it. [2.44.101.4])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e969ffc56sm174792905e9.22.2024.10.01.02.13.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 02:13:48 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: pkshih@realtek.com,
+	kvalo@kernel.org
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com
+Subject: [PATCH] wifi: rtw89: wow: Add unlock mutex before to return
+Date: Tue,  1 Oct 2024 11:13:16 +0200
+Message-ID: <20241001091320.38687-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com>
- <20241001-b4-miscdevice-v2-2-330d760041fa@google.com> <755a5049-d6ca-41de-ba49-16bda7822fe7@de.bosch.com>
-In-Reply-To: <755a5049-d6ca-41de-ba49-16bda7822fe7@de.bosch.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 1 Oct 2024 11:13:01 +0200
-Message-ID: <CAH5fLgj+KtgZWx8XxCLPCera4VaqfdyUucpj9HthFViq6_Df9g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: add base miscdevice abstraction
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 1, 2024 at 10:54=E2=80=AFAM Dirk Behme <dirk.behme@de.bosch.com=
-> wrote:
->
-> On 01.10.2024 10:22, Alice Ryhl wrote:
-> ....
-> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > new file mode 100644
-> > index 000000000000..cbd5249b5b45
-> > --- /dev/null
-> > +++ b/rust/kernel/miscdevice.rs
-> ...
-> > +/// Trait implemented by the private data of an open misc device.
-> > +#[vtable]
-> > +pub trait MiscDevice {
-> > +    /// What kind of pointer should `Self` be wrapped in.
-> > +    type Ptr: ForeignOwnable + Send + Sync;
-> > +
-> > +    /// Called when the misc device is opened.
-> > +    ///
-> > +    /// The returned pointer will be stored as the private data for th=
-e file.
-> > +    fn open() -> Result<Self::Ptr>;
-> > +
-> > +    /// Called when the misc device is released.
-> > +    fn release(device: Self::Ptr) {
-> > +        drop(device);
-> > +    }
-> > +
-> > +    /// Handler for ioctls.
-> > +    ///
-> > +    /// The `cmd` argument is usually manipulated using the utilties i=
-n [`kernel::ioctl`].
->
-> Nit: utilties -> utilities
+In error handling code for "ieee80211_gtk_rekey_add failed", release
+the mutex before to return.
 
-Thanks!
+Found with Coccinelle static analisys tool,
+script: https://coccinelle.gitlabpages.inria.fr/website/rules/mut.cocci
 
-Alice
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ drivers/net/wireless/realtek/rtw89/wow.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/realtek/rtw89/wow.c b/drivers/net/wireless/realtek/rtw89/wow.c
+index 86e24e07780d..8045acb27cf9 100644
+--- a/drivers/net/wireless/realtek/rtw89/wow.c
++++ b/drivers/net/wireless/realtek/rtw89/wow.c
+@@ -624,6 +624,7 @@ static struct ieee80211_key_conf *rtw89_wow_gtk_rekey(struct rtw89_dev *rtwdev,
+ 	kfree(rekey_conf);
+ 	if (IS_ERR(key)) {
+ 		rtw89_err(rtwdev, "ieee80211_gtk_rekey_add failed\n");
++		mutex_unlock(&rtwdev->mutex);
+ 		return NULL;
+ 	}
+ 
+-- 
+2.43.0
+
 
