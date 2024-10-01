@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-345245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F60598B395
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30B998B396
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8C041F25C45
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8DB281697
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ECCE1BC078;
-	Tue,  1 Oct 2024 05:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FEB1BC07E;
+	Tue,  1 Oct 2024 05:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SMnMk1sm"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NyXNjkRF"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3395C1BBBF4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA45E1BC084
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727760219; cv=none; b=k0vEC8QKll1n3yPtP3kgKqCfPnBEfo/rwQZVDXbMzSkX/9jb8GGQWgltCeWJaBCium35EQb7hrWKq/U2Sa8gC27i57RHe5/PWvhegvSXCwjvFqImQ4vpS4+Lj4vWXh+IDiUaDh48bS24WFO0MP7gDYP5PPvKrAW7f3u1koDketU=
+	t=1727760222; cv=none; b=RVEf+/U2eyTjU9ANJ1fuecRbZVUnUjZIYKzkd+hHH2xhz1nQo0BlJKK7N/tDSZhKzgW3Rxjffqej1QG5ILlKLyHVvFUPpo1dnd5JyuiC2VKUP/elbsLg09QcFvRN1Np0ZQYFoog1+qcq4sQF7XW3+tDc+9mTnZ5Kkee/s3L7OqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727760219; c=relaxed/simple;
-	bh=3sJTix9+hVyh80kzwiZoBEnIVXZyPC2rJ0LryrXs4fY=;
+	s=arc-20240116; t=1727760222; c=relaxed/simple;
+	bh=Ok+FhDXN/bUiz9+kds8fM6XMayPQjAdr+t4YJVsFhlo=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=Xv+FemG7wrt74zb1vkNv+ezRUiXelC8kOymI1dN2PMm9+tuyIjBymWjpGFxTRWEb52KLxToX/+2McDJytzhapDXUhVEX8+7kcbXHS4xZRI0i+4ZdGQk6pzTdgNDzd7MAZhbza/P945irnCRdX+BLt96sl2CCGfzZTporBqkdQlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SMnMk1sm; arc=none smtp.client-ip=209.85.219.201
+	 To:Content-Type; b=Gzkc+Aq3m/nIjdfuvpgQcEuMwlW4K4sXiv7l24eqM6uiCGW4q2Nt/kxQeQHSoj8NbNAYNiM9oMCYeGRRriuweavdoHw630saV77EOfu2SlriABJpGqH3VAMK73pbDi9UVKFbhJN+LZHB1PS9S71scSOIp5HZ49ywfePIkNdDBAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NyXNjkRF; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2608234531so5603326276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:23:37 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e294f38bddso5508197b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 22:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727760217; x=1728365017; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1727760220; x=1728365020; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EQMGtk6GwbaXhFywRtPjz9CEeNpxRP/qdOj8Kk4AmBM=;
-        b=SMnMk1smLogyOYM242/SVzs2VobsyNZJTEKFsFqkG8gFtf2SnfiGSBSAozec8RYtre
-         5YfvnsBUDpHfohldhl0l+tFBsyKYeDpVqnc38zoNrkgp2a83Re3pRmp/OMrHK/YRalTW
-         WbsaiICN+ZrGfEiREx2zdMlw1WwmWlSShyab/xbVET2HcXhhPbGF4vhlZ9x5QnrIgHVv
-         d29Sy3H+djfQvwU3dUyHiLIy6kUkkN5xuRIKLq04LecoIFkJu+/+xs1gyzjAo5O8o8+f
-         lF7Wgu4NHytUTlRfH76hAmOSLdaiczcmgRDeOSXu2J9TlVf3EbsVNpneSr299rfqtzyP
-         3IzQ==
+        bh=ta5YpSmga+h02rO1c/RFOYlnk/Em15j2RCfsC0qW0X4=;
+        b=NyXNjkRFn40amU8m5lpohCQynDaXqE3wAP96/xxMPiYwHptLu6i+8P/rIKHhMjD74B
+         oPlqs9j3uZFo8/Eb8M6pu22zmPpOjiHZbo8uItV0YSmwC71zoYvt5ayuAJQJm4BaEIgy
+         C20laGkYM827qqiidGv+yi7m/kWa/5w3QZiiarkSBY1rW8QtDlu5WzGDPshO6AplKsf+
+         1dYEKnqDcz77dw+5LjgKQFk2w46QxwZ8/TkPpQW66HTeKON+kYhSLBjXIDBVDGegZ24E
+         mOCxtDlCPYXph/rEfRbNa3wp6Le0wV2rY/YfFXf5EPYnU+pj8Ylyxtxmw7ZR56CaI0Dc
+         D3cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727760217; x=1728365017;
+        d=1e100.net; s=20230601; t=1727760220; x=1728365020;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EQMGtk6GwbaXhFywRtPjz9CEeNpxRP/qdOj8Kk4AmBM=;
-        b=fL9jmZLo/0ggWp1WUJte/8Jg0phGGqbTPCSiosNimdCjGshXkWhCdfBLH7gZvzmY/v
-         YObFssYZo4NRc/jQKj2kDDJLNYsD1H3Vox3B7+3q0XhZpIk92qnMbX1s2gr2zO7mpOi+
-         UyxiMAUvcwhV/zOUqtIbL46oH6H21mnA6MD7ERyth0PDKSiZw5R+7lphWktT8ZmXc8rk
-         t3sbRxveIv1yKQNmGW6SnmAFkGQOLu33qIwvrtsNhT2UJRKQHguFEjV61tq4vkulw/i7
-         heF9FsA6vRQz64NXpEGibgs5CelPTfwnck4I0zAPyAJM+Ai+kUuUm2L9jS7AJGMIelXd
-         3tsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBhQDdyYF0nFLFBephg9gqwGYrbPY9iFNCQZsVhom1FwKeBSZyiuUZvlApSYoM3Z9LFVHkmqLcmT261uQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+L0WgiuDuIOl+3/5o1htKX2ouxWO0gDl/uYPNAmCwK7JAho1N
-	flhowYGAp4/aDdma7Kew4w95EwoyrgqqEZtt+TOAeYA9e5sz7g3WKpf17e8WK57S8eI1qv2fjDu
-	7y48sAg==
-X-Google-Smtp-Source: AGHT+IEtJ5iHDU4WG7YqVYSBmkd2+4f6hQoz49uFn7BXq4j2kS3RcFmOmtpe5Dixo6yM80mfjOYYyRnT+UeT
+        bh=ta5YpSmga+h02rO1c/RFOYlnk/Em15j2RCfsC0qW0X4=;
+        b=mn5bm3ns4Lr//JhThjKCl+9eoOCC3bBHvrpGegRgTWR0CWjQh12JNOAZprV1eXTseN
+         lmSqHqdgWrz5D6uct0DZ81LkxP3/IxV45mlK7hkcQq6gAMg1usk2yTIDn9dSvYDF0s92
+         F4eoJHT9an6/13k84kPgQIs16/k6XeScZQS6k2F6ZY46mGWuVxsb+YlI10+q8oc0eRBX
+         +UAr6DC3DXrQpOBGy3YyVZ7jzTgMD9MPVeLoVpnNOsflxfw3ni1xJuUigcXeb3cbJpNY
+         Gh11RPyv6gZXi7Qi2OYXk+eonzKyBWd/Cx129OjTunp26GqWsytrN7Bv9X8l0GoqbskW
+         TpTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwZq4owwqtkr+hQNjfBN4C/uncC0PMCtitnZ1B35resSPGJOM3bDNpbD3hC93txqxPhqYcsSX8EYaKXB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbt/UtTd+mWsnYceT8NwzPTfcUMJcE3XL9NLiwin/HVKegqq5D
+	+C5x2DIfeeL3ju6tFb7dnxmFQN7SVK0g5xIPFzHUTil9GHffQ6YGvohCOG9aYMkIpTRNvNJtf1F
+	5DChQrw==
+X-Google-Smtp-Source: AGHT+IE9nO+iqokkfm82bAK4mbVT5Uil7PWvBrDlRgIQGKqFunhB43WFpJO35+IDQx+/3jg5ffcPAKWvZ3vt
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:f420:67c7:1eea:bb12])
- (user=irogers job=sendgmr) by 2002:a5b:f0e:0:b0:e11:5f87:1e3c with SMTP id
- 3f1490d57ef6-e2604c8b9d5mr55878276.11.1727760217150; Mon, 30 Sep 2024
- 22:23:37 -0700 (PDT)
-Date: Mon, 30 Sep 2024 22:23:25 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:2c11:b0:6dd:dcf5:28ad with SMTP
+ id 00721157ae682-6e247399192mr840327b3.0.1727760219780; Mon, 30 Sep 2024
+ 22:23:39 -0700 (PDT)
+Date: Mon, 30 Sep 2024 22:23:26 -0700
 In-Reply-To: <20241001052327.7052-1-irogers@google.com>
-Message-Id: <20241001052327.7052-3-irogers@google.com>
+Message-Id: <20241001052327.7052-4-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241001052327.7052-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
-Subject: [PATCH v2 2/4] perf test: Fix memory leaks on event-times error paths
+Subject: [PATCH v2 3/4] perf test: Skip not fail tp fields test when
+ insufficient permissions
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -85,54 +86,102 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-These error paths occur without sufficient permissions. Fix the memory
-leaks to make leak sanitizer happier.
+Clean up return value to be TEST_* rather than unspecific integer. Add
+test case skip reason. Skip test if EACCES comes back from
+evsel__newtp.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/event-times.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ tools/perf/tests/evsel-tp-sched.c | 40 +++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/tests/event-times.c b/tools/perf/tests/event-times.c
-index e155f0e0e04d..deefe5003bfc 100644
---- a/tools/perf/tests/event-times.c
-+++ b/tools/perf/tests/event-times.c
-@@ -126,6 +126,7 @@ static int attach__cpu_disabled(struct evlist *evlist)
- 	evsel->core.attr.disabled = 1;
+diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
+index cf4da3d748c2..3da6a76eac38 100644
+--- a/tools/perf/tests/evsel-tp-sched.c
++++ b/tools/perf/tests/evsel-tp-sched.c
+@@ -36,33 +36,33 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
+ 					   int subtest __maybe_unused)
+ {
+ 	struct evsel *evsel = evsel__newtp("sched", "sched_switch");
+-	int ret = 0;
++	int ret = TEST_OK;
  
- 	err = evsel__open_per_cpu(evsel, cpus, -1);
-+	perf_cpu_map__put(cpus);
- 	if (err) {
- 		if (err == -EACCES)
- 			return TEST_SKIP;
-@@ -134,7 +135,6 @@ static int attach__cpu_disabled(struct evlist *evlist)
- 		return err;
+ 	if (IS_ERR(evsel)) {
+ 		pr_debug("evsel__newtp failed with %ld\n", PTR_ERR(evsel));
+-		return -1;
++		return PTR_ERR(evsel) == -EACCES ? TEST_SKIP : TEST_FAIL;
  	}
  
--	perf_cpu_map__put(cpus);
- 	return evsel__enable(evsel);
+ 	if (evsel__test_field(evsel, "prev_comm", 16, false))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "prev_pid", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "prev_prio", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "prev_state", sizeof(long), true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "next_comm", 16, false))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "next_pid", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "next_prio", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	evsel__delete(evsel);
+ 
+@@ -70,23 +70,33 @@ static int test__perf_evsel__tp_sched_test(struct test_suite *test __maybe_unuse
+ 
+ 	if (IS_ERR(evsel)) {
+ 		pr_debug("evsel__newtp failed with %ld\n", PTR_ERR(evsel));
+-		return -1;
++		return TEST_FAIL;
+ 	}
+ 
+ 	if (evsel__test_field(evsel, "comm", 16, false))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "pid", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "prio", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	if (evsel__test_field(evsel, "target_cpu", 4, true))
+-		ret = -1;
++		ret = TEST_FAIL;
+ 
+ 	evsel__delete(evsel);
+ 	return ret;
  }
  
-@@ -153,10 +153,10 @@ static int attach__cpu_enabled(struct evlist *evlist)
- 	}
- 
- 	err = evsel__open_per_cpu(evsel, cpus, -1);
-+	perf_cpu_map__put(cpus);
- 	if (err == -EACCES)
- 		return TEST_SKIP;
- 
--	perf_cpu_map__put(cpus);
- 	return err ? TEST_FAIL : TEST_OK;
- }
- 
-@@ -188,6 +188,7 @@ static int test_times(int (attach)(struct evlist *),
- 	err = attach(evlist);
- 	if (err == TEST_SKIP) {
- 		pr_debug("  SKIP  : not enough rights\n");
-+		evlist__delete(evlist);
- 		return err;
- 	}
- 
+-DEFINE_SUITE("Parse sched tracepoints fields", perf_evsel__tp_sched_test);
++static struct test_case tests__perf_evsel__tp_sched_test[] = {
++	TEST_CASE_REASON("Parse sched tracepoints fields",
++			 perf_evsel__tp_sched_test,
++			 "permissions"),
++	{	.name = NULL, }
++};
++
++struct test_suite suite__perf_evsel__tp_sched_test = {
++	.desc = "Parse sched tracepoints fields",
++	.test_cases = tests__perf_evsel__tp_sched_test,
++};
 -- 
 2.46.1.824.gd892dcdcdd-goog
 
