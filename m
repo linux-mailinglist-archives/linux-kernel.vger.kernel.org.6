@@ -1,372 +1,361 @@
-Return-Path: <linux-kernel+bounces-346095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C277098BF89
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:17:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2208898BFAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 316C4B2489A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:17:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AEFB28290
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6F51CB53F;
-	Tue,  1 Oct 2024 14:13:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E62D1C8FCE;
+	Tue,  1 Oct 2024 14:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ux7DY547"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526371C6F67;
-	Tue,  1 Oct 2024 14:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300781C6893
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792001; cv=none; b=WyMXZNPM72KVQ8y3YqqW3gu3R0SS/pkDFtD3B9c7EOCMXPSzVgPbzHX9eRt6ZcADwDQ3eRH9ykZK3+J0G8uXq44QZy/CM+KlF4GRSgheNALH/vUjwxwjVcvW1v3tvM1V/YH+sfA7WC3ZqGTp4LpR9yxW7qrPP8P7JCg+TZQnJxE=
+	t=1727792194; cv=none; b=u8blW18Qv1hgQs01e6gLElFvP9RuU8X4qLdWgWTTRJtpYgnlJKYbV2hG5wNZRnTGVL2K1Z+qRDt4h0snNn03im/n0ZWsjle1b7g5SS0UBGrXRauZ2Ku64yktSGFaO/cIrnsaTdTtZMWkvqFTvIa7HcGayiwrLMBq+DOSfS6DwvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792001; c=relaxed/simple;
-	bh=3igbjCvuJ0YDGAR0DQ9ZtPlULJXsd8VFMK0uyZUChfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FZ5jTugGZD4gL1GJ3BmLy450hKeG3zEAOsx5NJ8cyLJMJplif7z9CrW3mdYMMwx+jNoFzOQ9G0FJqAFqAi4nHk9AwvP188IRSubHjErNAlqk+5LCU4NwFfM0m1RSCpLGi0E52w52W2KdvvC7szQgQS0BEa2y+XsCFZsf/YvwbQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6668DC4CECD;
-	Tue,  1 Oct 2024 14:13:15 +0000 (UTC)
-Date: Tue, 1 Oct 2024 10:14:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard
- Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
- Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?UTF-8?B?Qmo=?=
- =?UTF-8?B?w7Zybg==?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>,
- linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak
- <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton
- <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-arm-kernel@lists.infradead.org, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones
- <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, Conor
- Dooley <conor.dooley@microchip.com>, Samuel Holland
- <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao
- <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton
- <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- loongarch@lists.linux.dev
-Subject: Re: [PATCH v9 4/5] jump_label: adjust inline asm to be consistent
-Message-ID: <20241001101404.29388dd0@gandalf.local.home>
-In-Reply-To: <20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
-References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
-	<20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727792194; c=relaxed/simple;
+	bh=KZ6gxq2XwRcWtv8D5rnzb8GbirDDkQOi0Cssa0mv4jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jblWBbMzP0f1wGj7Wp6opYES+E8CGE/eWcwWvOOmfl27yyGESaJ4mUEyuJsYVeH/G1F/jWIc/X7vY4QI+idVg5xQHZVX2r34ttWpCsExzUjcnGNtJ8ufB1DYdysxQ+TA+RkggdVSsla/lkaLZL6JCQLMkg33SaLAt5ezRepkW+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ux7DY547; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398b589032so4960577e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1727792190; x=1728396990; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1y1eDJ+lKiKTVFnuA1FG1rr27+98ONVA3jJSEumLGkM=;
+        b=Ux7DY547cRRiPvPq5LwdAb4+zcqqRbj63AE2h0qTsNC2ZYxUX9t4gG9VqjRmB6x6ec
+         VmFdHYqkSuyzr+fbiofgv5kktWDmJg1Cvgn+YAgkqhlM7ti3xFagWELKopk05QH2T9Ns
+         W9DhKYVb9gHc7y8/6vsL9dle9DwKwXql0peIaBtOfZgrAwqsS806ue8hvsRE5keJ9qIu
+         4xDkpZqUYh7Gk4InAjyWv0mNwLcf0eIh1sdwGuASqZ4EOkAicXxwGDmid97ff15nrtOt
+         LZwg/HS2zWaQ/iE60Qv8rsQ6xclVOrlyActcil3AEpCBqG0lee5klonUNMOInun/w6TE
+         L6Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727792190; x=1728396990;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1y1eDJ+lKiKTVFnuA1FG1rr27+98ONVA3jJSEumLGkM=;
+        b=vJuMCylZ9V7rIpTkoifpnPdsJgCQTqnXDX1ttgZWB10TBspFq6udJ9beOqf86aoq6L
+         nxNpBj38uMcESuMDXuzQzVCddLadDW0OuPnGZY63M2Lsd5LobLQCFJSbusdFyaCk0viw
+         TvPTbjhR2aENnBsvxaIQmzKsXdt/hOsjduyLrzVABPZLX2/PjdHtFXzTr8TWSoWv/xBs
+         cWAlSTEYPiqTB0xmc+Bg/ra5OoQS0svPROfFuDuAEkw1nnTmPYeBbxHGnhEl2ViZuKL+
+         p/sU61cnqyZCcFsG/WEFx2UVM3Q2/6Rcu5mgI41aLBHZE22g59NPTcIihmOcLGMv3+3U
+         2EuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUX9+hDhM43SZA0MslCeTy7aU7O+gFbenN4nySnVp10kuC7XCafYE812QOecBCm4oUH3M2N6QWCGnTeKHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv4Co5q6CxXzeMeHEyvk32nxfTU92NTa0gNJVAmol1KMBOB4HY
+	HDqFkCMuzIIDgbDZWrgK1J38F1EvlnvxNQ01e6rVDLyIR8x59n3uHbPUBUMmZgs=
+X-Google-Smtp-Source: AGHT+IEzx34F6+yE7XgQFu9qIVSJy8ZDXJAMsrzTVer9/GuJ3EjuwlRAW1LXhB1QTpJqjxs6itlZSg==
+X-Received: by 2002:a05:6512:6618:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53989a86942mr9581897e87.23.1727792190265;
+        Tue, 01 Oct 2024 07:16:30 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c70d3sm717663766b.78.2024.10.01.07.16.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 07:16:29 -0700 (PDT)
+Message-ID: <f0eee8a9-766a-463c-bc36-676e49efe950@suse.com>
+Date: Tue, 1 Oct 2024 16:16:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/20] gendwarfksyms: Expand structure types
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
+ Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
+ Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240923181846.549877-22-samitolvanen@google.com>
+ <20240923181846.549877-32-samitolvanen@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20240923181846.549877-32-samitolvanen@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-Can I get some more acks from the arch maintainers? So far there's only one
-ack from Peter Zijlstra for x86. But this touches arm, arm64, loongarch and
-riscv too.
-
--- Steve
-
-
-On Tue, 01 Oct 2024 13:30:01 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
-
-> To avoid duplication of inline asm between C and Rust, we need to
-> import the inline asm from the relevant `jump_label.h` header into Rust.
-> To make that easier, this patch updates the header files to expose the
-> inline asm via a new ARCH_STATIC_BRANCH_ASM macro.
+On 9/23/24 20:18, Sami Tolvanen wrote:
+> Recursively expand DWARF structure types, i.e. structs, unions, and
+> enums. Also include relevant DWARF attributes in type strings to
+> encode structure layout, for example.
 > 
-> The header files are all updated to define a ARCH_STATIC_BRANCH_ASM that
-> takes the same arguments in a consistent order so that Rust can use the
-> same logic for every architecture.
+> Example output with --dump-dies:
 > 
-> Suggested-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>   subprogram (
+>     formal_parameter structure_type &str {
+>       member pointer_type {
+>         base_type u8 byte_size(1) encoding(7)
+>       } data_ptr data_member_location(0) ,
+>       member base_type usize byte_size(8) encoding(7) length data_member_location(8)
+>     } byte_size(16) alignment(8) msg
+>   )
+>   -> base_type void
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 > ---
->  arch/arm/include/asm/jump_label.h       | 14 +++++----
->  arch/arm64/include/asm/jump_label.h     | 20 ++++++++-----
->  arch/loongarch/include/asm/jump_label.h | 16 +++++++----
->  arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++++++++---------------
->  arch/x86/include/asm/jump_label.h       | 38 ++++++++++---------------
->  5 files changed, 75 insertions(+), 63 deletions(-)
+>  scripts/gendwarfksyms/dwarf.c         | 137 +++++++++++++++++++++++++-
+>  scripts/gendwarfksyms/gendwarfksyms.h |   5 +
+>  2 files changed, 140 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/include/asm/jump_label.h b/arch/arm/include/asm/jump_label.h
-> index e4eb54f6cd9f..a35aba7f548c 100644
-> --- a/arch/arm/include/asm/jump_label.h
-> +++ b/arch/arm/include/asm/jump_label.h
-> @@ -9,13 +9,17 @@
+> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
+> index caf25da0a9b9..b7f1dc29cb9c 100644
+> --- a/scripts/gendwarfksyms/dwarf.c
+> +++ b/scripts/gendwarfksyms/dwarf.c
+> @@ -205,9 +205,13 @@ static void process_fqn(struct die *cache, Dwarf_Die *die)
+>  				    value);                                \
+>  	}
 >  
->  #define JUMP_LABEL_NOP_SIZE 4
+> +DEFINE_PROCESS_UDATA_ATTRIBUTE(accessibility)
+>  DEFINE_PROCESS_UDATA_ATTRIBUTE(alignment)
+> +DEFINE_PROCESS_UDATA_ATTRIBUTE(bit_size)
+>  DEFINE_PROCESS_UDATA_ATTRIBUTE(byte_size)
+>  DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
+> +DEFINE_PROCESS_UDATA_ATTRIBUTE(data_bit_offset)
+> +DEFINE_PROCESS_UDATA_ATTRIBUTE(data_member_location)
 >  
-> +/* This macro is also expanded on the Rust side. */
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1:\n\t"					\
-> +	WASM(nop) "\n\t"				\
-> +	".pushsection __jump_table,  \"aw\"\n\t"	\
-> +	".word 1b, " label ", " key "\n\t"		\
-> +	".popsection\n\t"				\
-> +
->  static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+>  /* Match functions -- die_match_callback_t */
+>  #define DEFINE_MATCH(type)                                     \
+> @@ -216,8 +220,11 @@ DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
+>  		return dwarf_tag(die) == DW_TAG_##type##_type; \
+>  	}
+>  
+> +DEFINE_MATCH(enumerator)
+>  DEFINE_MATCH(formal_parameter)
+> +DEFINE_MATCH(member)
+>  DEFINE_MATCH(subrange)
+> +DEFINE_MATCH(variant)
+>  
+>  bool match_all(Dwarf_Die *die)
 >  {
-> -	asm goto("1:\n\t"
-> -		 WASM(nop) "\n\t"
-> -		 ".pushsection __jump_table,  \"aw\"\n\t"
-> -		 ".word 1b, %l[l_yes], %c0\n\t"
-> -		 ".popsection\n\t"
-> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
->  		 : :  "i" (&((char *)key)[branch]) :  : l_yes);
->  
->  	return false;
-> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
-> index a0a5bbae7229..424ed421cd97 100644
-> --- a/arch/arm64/include/asm/jump_label.h
-> +++ b/arch/arm64/include/asm/jump_label.h
-> @@ -19,10 +19,14 @@
->  #define JUMP_TABLE_ENTRY(key, label)			\
->  	".pushsection	__jump_table, \"aw\"\n\t"	\
->  	".align		3\n\t"				\
-> -	".long		1b - ., %l["#label"] - .\n\t"	\
-> -	".quad		%c0 - .\n\t"			\
-> -	".popsection\n\t"				\
-> -	:  :  "i"(key) :  : label
-> +	".long		1b - ., " label " - .\n\t"	\
-> +	".quad		" key " - .\n\t"		\
-> +	".popsection\n\t"
-> +
-> +/* This macro is also expanded on the Rust side. */
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1:	nop\n\t"				\
-> +	JUMP_TABLE_ENTRY(key, label)
->  
->  static __always_inline bool arch_static_branch(struct static_key * const key,
->  					       const bool branch)
-> @@ -30,8 +34,8 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
->  	char *k = &((char *)key)[branch];
->  
->  	asm goto(
-> -		"1:	nop					\n\t"
-> -		JUMP_TABLE_ENTRY(k, l_yes)
-> +		ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
-> +		:  :  "i"(k) :  : l_yes
->  		);
->  
->  	return false;
-> @@ -43,9 +47,11 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
->  						    const bool branch)
->  {
->  	char *k = &((char *)key)[branch];
-> +
->  	asm goto(
->  		"1:	b		%l[l_yes]		\n\t"
-> -		JUMP_TABLE_ENTRY(k, l_yes)
-> +		JUMP_TABLE_ENTRY("%c0", "%l[l_yes]")
-> +		:  :  "i"(k) :  : l_yes
->  		);
->  	return false;
->  l_yes:
-> diff --git a/arch/loongarch/include/asm/jump_label.h b/arch/loongarch/include/asm/jump_label.h
-> index 29acfe3de3fa..8a924bd69d19 100644
-> --- a/arch/loongarch/include/asm/jump_label.h
-> +++ b/arch/loongarch/include/asm/jump_label.h
-> @@ -13,18 +13,22 @@
->  
->  #define JUMP_LABEL_NOP_SIZE	4
->  
-> -#define JUMP_TABLE_ENTRY				\
-> +/* This macro is also expanded on the Rust side. */
-> +#define JUMP_TABLE_ENTRY(key, label)			\
->  	 ".pushsection	__jump_table, \"aw\"	\n\t"	\
->  	 ".align	3			\n\t"	\
-> -	 ".long		1b - ., %l[l_yes] - .	\n\t"	\
-> -	 ".quad		%0 - .			\n\t"	\
-> +	 ".long		1b - ., " label " - .	\n\t"	\
-> +	 ".quad		" key " - .		\n\t"	\
->  	 ".popsection				\n\t"
->  
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1:	nop				\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +
->  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
->  {
->  	asm goto(
-> -		"1:	nop			\n\t"
-> -		JUMP_TABLE_ENTRY
-> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[l_yes]")
->  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
->  
->  	return false;
-> @@ -37,7 +41,7 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
->  {
->  	asm goto(
->  		"1:	b	%l[l_yes]	\n\t"
-> -		JUMP_TABLE_ENTRY
-> +		JUMP_TABLE_ENTRY("%0", "%l[l_yes]")
->  		:  :  "i"(&((char *)key)[branch]) :  : l_yes);
->  
->  	return false;
-> diff --git a/arch/riscv/include/asm/jump_label.h b/arch/riscv/include/asm/jump_label.h
-> index 1c768d02bd0c..87a71cc6d146 100644
-> --- a/arch/riscv/include/asm/jump_label.h
-> +++ b/arch/riscv/include/asm/jump_label.h
-> @@ -16,21 +16,28 @@
->  
->  #define JUMP_LABEL_NOP_SIZE 4
->  
-> +#define JUMP_TABLE_ENTRY(key, label)			\
-> +	".pushsection	__jump_table, \"aw\"	\n\t"	\
-> +	".align		" RISCV_LGPTR "		\n\t"	\
-> +	".long		1b - ., " label " - .	\n\t"	\
-> +	"" RISCV_PTR "	" key " - .		\n\t"	\
-> +	".popsection				\n\t"
-> +
-> +/* This macro is also expanded on the Rust side. */
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"	.align		2		\n\t"	\
-> +	"	.option push			\n\t"	\
-> +	"	.option norelax			\n\t"	\
-> +	"	.option norvc			\n\t"	\
-> +	"1:	nop				\n\t"	\
-> +	"	.option pop			\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +
->  static __always_inline bool arch_static_branch(struct static_key * const key,
->  					       const bool branch)
->  {
->  	asm goto(
-> -		"	.align		2			\n\t"
-> -		"	.option push				\n\t"
-> -		"	.option norelax				\n\t"
-> -		"	.option norvc				\n\t"
-> -		"1:	nop					\n\t"
-> -		"	.option pop				\n\t"
-> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
-> -		"	.align		" RISCV_LGPTR "		\n\t"
-> -		"	.long		1b - ., %l[label] - .	\n\t"
-> -		"	" RISCV_PTR "	%0 - .			\n\t"
-> -		"	.popsection				\n\t"
-> +		ARCH_STATIC_BRANCH_ASM("%0", "%l[label]")
->  		:  :  "i"(&((char *)key)[branch]) :  : label);
->  
->  	return false;
-> @@ -38,21 +45,20 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
->  	return true;
+> @@ -295,6 +302,10 @@ static void __process_list_type(struct state *state, struct die *cache,
+>  		process(cache, " ");
+>  		process(cache, name);
+>  	}
+> +	process_accessibility_attr(cache, die);
+> +	process_bit_size_attr(cache, die);
+> +	process_data_bit_offset_attr(cache, die);
+> +	process_data_member_location_attr(cache, die);
 >  }
 >  
-> +#define ARCH_STATIC_BRANCH_JUMP_ASM(key, label)		\
-> +	"	.align		2		\n\t"	\
-> +	"	.option push			\n\t"	\
-> +	"	.option norelax			\n\t"	\
-> +	"	.option norvc			\n\t"	\
-> +	"1:	j	" label "		\n\t" \
-> +	"	.option pop			\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +
->  static __always_inline bool arch_static_branch_jump(struct static_key * const key,
->  						    const bool branch)
->  {
->  	asm goto(
-> -		"	.align		2			\n\t"
-> -		"	.option push				\n\t"
-> -		"	.option norelax				\n\t"
-> -		"	.option norvc				\n\t"
-> -		"1:	j		%l[label]		\n\t"
-> -		"	.option pop				\n\t"
-> -		"	.pushsection	__jump_table, \"aw\"	\n\t"
-> -		"	.align		" RISCV_LGPTR "		\n\t"
-> -		"	.long		1b - ., %l[label] - .	\n\t"
-> -		"	" RISCV_PTR "	%0 - .			\n\t"
-> -		"	.popsection				\n\t"
-> +		ARCH_STATIC_BRANCH_JUMP_ASM("%0", "%l[label]")
->  		:  :  "i"(&((char *)key)[branch]) :  : label);
+>  #define DEFINE_PROCESS_LIST_TYPE(type)                                       \
+> @@ -305,6 +316,7 @@ static void __process_list_type(struct state *state, struct die *cache,
+>  	}
 >  
->  	return false;
-> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-> index cbbef32517f0..fb79fa1cf70a 100644
-> --- a/arch/x86/include/asm/jump_label.h
-> +++ b/arch/x86/include/asm/jump_label.h
-> @@ -12,49 +12,41 @@
->  #include <linux/stringify.h>
->  #include <linux/types.h>
+>  DEFINE_PROCESS_LIST_TYPE(formal_parameter)
+> +DEFINE_PROCESS_LIST_TYPE(member)
 >  
-> -#define JUMP_TABLE_ENTRY				\
-> +#define JUMP_TABLE_ENTRY(key, label)			\
->  	".pushsection __jump_table,  \"aw\" \n\t"	\
->  	_ASM_ALIGN "\n\t"				\
->  	".long 1b - . \n\t"				\
-> -	".long %l[l_yes] - . \n\t"			\
-> -	_ASM_PTR "%c0 + %c1 - .\n\t"			\
-> +	".long " label " - . \n\t"			\
-> +	_ASM_PTR " " key " - . \n\t"			\
->  	".popsection \n\t"
+>  /* Container types with DW_AT_type */
+>  static void __process_type(struct state *state, struct die *cache,
+> @@ -337,6 +349,7 @@ DEFINE_PROCESS_TYPE(reference)
+>  DEFINE_PROCESS_TYPE(restrict)
+>  DEFINE_PROCESS_TYPE(rvalue_reference)
+>  DEFINE_PROCESS_TYPE(shared)
+> +DEFINE_PROCESS_TYPE(template_type_parameter)
+>  DEFINE_PROCESS_TYPE(volatile)
+>  DEFINE_PROCESS_TYPE(typedef)
 >  
-> +/* This macro is also expanded on the Rust side. */
->  #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
-> -
-> -static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
-> -{
-> -	asm goto("1:"
-> -		"jmp %l[l_yes] # objtool NOPs this \n\t"
-> -		JUMP_TABLE_ENTRY
-> -		: :  "i" (key), "i" (2 | branch) : : l_yes);
-> -
-> -	return false;
-> -l_yes:
-> -	return true;
-> -}
-> -
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1: jmp " label " # objtool NOPs this \n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
->  #else /* !CONFIG_HAVE_JUMP_LABEL_HACK */
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1: .byte " __stringify(BYTES_NOP5) "\n\t"	\
-> +	JUMP_TABLE_ENTRY(key, label)
-> +#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
->  
->  static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
->  {
-> -	asm goto("1:"
-> -		".byte " __stringify(BYTES_NOP5) "\n\t"
-> -		JUMP_TABLE_ENTRY
-> -		: :  "i" (key), "i" (branch) : : l_yes);
-> +	int hack_bit = IS_ENABLED(CONFIG_HAVE_JUMP_LABEL_HACK) ? 2 : 0;
-> +	asm goto(ARCH_STATIC_BRANCH_ASM("%c0 + %c1", "%l[l_yes]")
-> +		: :  "i" (key), "i" (hack_bit | branch) : : l_yes);
->  
->  	return false;
->  l_yes:
->  	return true;
+> @@ -390,6 +403,106 @@ static void process_subroutine_type(struct state *state, struct die *cache,
+>  	__process_subroutine_type(state, cache, die, "subroutine_type");
 >  }
 >  
-> -#endif /* CONFIG_HAVE_JUMP_LABEL_HACK */
-> -
->  static __always_inline bool arch_static_branch_jump(struct static_key * const key, const bool branch)
->  {
->  	asm goto("1:"
->  		"jmp %l[l_yes]\n\t"
-> -		JUMP_TABLE_ENTRY
-> +		JUMP_TABLE_ENTRY("%c0 + %c1", "%l[l_yes]")
->  		: :  "i" (key), "i" (branch) : : l_yes);
->  
->  	return false;
-> 
+> +static void process_variant_type(struct state *state, struct die *cache,
+> +				 Dwarf_Die *die)
+> +{
+> +	process_list_comma(state, cache);
+> +	process(cache, "variant {");
+> +	process_linebreak(cache, 1);
+> +	check(process_die_container(state, cache, die, process_type,
+> +				    match_member_type));
+> +	process_linebreak(cache, -1);
+> +	process(cache, "}");
+> +}
+> +
+> +static void process_variant_part_type(struct state *state, struct die *cache,
+> +				      Dwarf_Die *die)
+> +{
+> +	process_list_comma(state, cache);
+> +	process(cache, "variant_part {");
+> +	process_linebreak(cache, 1);
+> +	check(process_die_container(state, cache, die, process_type,
+> +				    match_variant_type));
+> +	process_linebreak(cache, -1);
+> +	process(cache, "}");
+> +}
 
+For variant types, should the tool worry also about DW_AT_discr and
+DW_AT_discr_value?
+
+> +
+> +static int ___process_structure_type(struct state *state, struct die *cache,
+> +				     Dwarf_Die *die)
+> +{
+> +	switch (dwarf_tag(die)) {
+> +	case DW_TAG_member:
+> +	case DW_TAG_variant_part:
+> +		return check(process_type(state, cache, die));
+> +	case DW_TAG_class_type:
+> +	case DW_TAG_enumeration_type:
+> +	case DW_TAG_structure_type:
+> +	case DW_TAG_template_type_parameter:
+> +	case DW_TAG_union_type:
+> +	case DW_TAG_subprogram:
+> +		/* Skip non-member types, including member functions */
+> +		return 0;
+> +	default:
+> +		error("unexpected structure_type child: %x", dwarf_tag(die));
+> +	}
+> +}
+> +
+> +static void __process_structure_type(struct state *state, struct die *cache,
+> +				     Dwarf_Die *die, const char *type,
+> +				     die_callback_t process_func,
+> +				     die_match_callback_t match_func)
+> +{
+> +	process(cache, type);
+> +	process_fqn(cache, die);
+> +	process(cache, " {");
+> +	process_linebreak(cache, 1);
+> +
+> +	check(process_die_container(state, cache, die, process_func,
+> +				    match_func));
+> +
+> +	process_linebreak(cache, -1);
+> +	process(cache, "}");
+> +
+> +	process_byte_size_attr(cache, die);
+> +	process_alignment_attr(cache, die);
+> +}
+> +
+> +#define DEFINE_PROCESS_STRUCTURE_TYPE(structure)                        \
+> +	static void process_##structure##_type(                         \
+> +		struct state *state, struct die *cache, Dwarf_Die *die) \
+> +	{                                                               \
+> +		__process_structure_type(state, cache, die,             \
+> +					 #structure "_type",            \
+> +					 ___process_structure_type,     \
+> +					 match_all);                    \
+> +	}
+> +
+> +DEFINE_PROCESS_STRUCTURE_TYPE(class)
+> +DEFINE_PROCESS_STRUCTURE_TYPE(structure)
+> +DEFINE_PROCESS_STRUCTURE_TYPE(union)
+> +
+> +static void process_enumerator_type(struct state *state, struct die *cache,
+> +				    Dwarf_Die *die)
+> +{
+> +	Dwarf_Word value;
+> +
+> +	process_list_comma(state, cache);
+> +	process(cache, "enumerator");
+> +	process_fqn(cache, die);
+> +
+> +	if (get_udata_attr(die, DW_AT_const_value, &value)) {
+> +		process(cache, " = ");
+> +		process_fmt(cache, "%" PRIu64, value);
+> +	}
+> +}
+> +
+> +static void process_enumeration_type(struct state *state, struct die *cache,
+> +				     Dwarf_Die *die)
+> +{
+> +	__process_structure_type(state, cache, die, "enumeration_type",
+> +				 process_type, match_enumerator_type);
+> +}
+> +
+>  static void process_base_type(struct state *state, struct die *cache,
+>  			      Dwarf_Die *die)
+>  {
+> @@ -400,6 +513,16 @@ static void process_base_type(struct state *state, struct die *cache,
+>  	process_alignment_attr(cache, die);
+>  }
+>  
+> +static void process_unspecified_type(struct state *state, struct die *cache,
+> +				     Dwarf_Die *die)
+> +{
+> +	/*
+> +	 * These can be emitted for stand-elone assembly code, which means we
+> +	 * might run into them in vmlinux.o.
+> +	 */
+
+Nit: stand-elone -> stand-alone.
+
+> +	process(cache, "unspecified_type");
+> +}
+> +
+>  static void process_cached(struct state *state, struct die *cache,
+>  			   Dwarf_Die *die)
+>  {
+> @@ -460,17 +583,27 @@ static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
+>  	PROCESS_TYPE(rvalue_reference)
+>  	PROCESS_TYPE(shared)
+>  	PROCESS_TYPE(volatile)
+> +	/* Container types */
+> +	PROCESS_TYPE(class)
+> +	PROCESS_TYPE(structure)
+> +	PROCESS_TYPE(union)
+> +	PROCESS_TYPE(enumeration)
+>  	/* Subtypes */
+> +	PROCESS_TYPE(enumerator)
+>  	PROCESS_TYPE(formal_parameter)
+> +	PROCESS_TYPE(member)
+>  	PROCESS_TYPE(subrange)
+> +	PROCESS_TYPE(template_type_parameter)
+> +	PROCESS_TYPE(variant)
+> +	PROCESS_TYPE(variant_part)
+>  	/* Other types */
+>  	PROCESS_TYPE(array)
+>  	PROCESS_TYPE(base)
+>  	PROCESS_TYPE(subroutine)
+>  	PROCESS_TYPE(typedef)
+> +	PROCESS_TYPE(unspecified)
+>  	default:
+> -		debug("unimplemented type: %x", tag);
+> -		break;
+> +		error("unexpected type: %x", tag);
+>  	}
+>  
+>  	/* Update cache state and append to the parent (if any) */
+> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
+> index d5186472f705..ad50e35e3351 100644
+> --- a/scripts/gendwarfksyms/gendwarfksyms.h
+> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
+> @@ -63,8 +63,13 @@ extern int dump_dies;
+>  #define checkp(expr) __check(expr, __res < 0)
+>  
+>  /* Consistent aliases (DW_TAG_<type>_type) for DWARF tags */
+> +#define DW_TAG_enumerator_type DW_TAG_enumerator
+>  #define DW_TAG_formal_parameter_type DW_TAG_formal_parameter
+> +#define DW_TAG_member_type DW_TAG_member
+> +#define DW_TAG_template_type_parameter_type DW_TAG_template_type_parameter
+>  #define DW_TAG_typedef_type DW_TAG_typedef
+> +#define DW_TAG_variant_part_type DW_TAG_variant_part
+> +#define DW_TAG_variant_type DW_TAG_variant
+>  
+>  /*
+>   * symbols.c
+
+-- 
+Thanks,
+Petr
 
