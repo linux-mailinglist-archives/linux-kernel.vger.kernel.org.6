@@ -1,53 +1,87 @@
-Return-Path: <linux-kernel+bounces-346207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CE298C11F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A862F98C127
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36BB9281394
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4251C22F0A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBEB1CF5C3;
-	Tue,  1 Oct 2024 15:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020CC1CB32C;
+	Tue,  1 Oct 2024 15:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efPru58A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fTmmk6/c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244731CF2B7;
-	Tue,  1 Oct 2024 15:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDEA1C9EA6
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794977; cv=none; b=cWVvpEVvTUF6RnVweFrxrelx3buF+XqWnZ60PYQmK7/e4xEyXqNb/59elYGiYZnTzVw4t84+SOIdPom0DaQOURAeTd1c6JUC2bxjrEC2HcW7YQO0sTGQXORJHUEFd0wOCxLLWkHdg1k3Gid+r/WHAlPFaTXOl3iWTTCTcXONlV4=
+	t=1727795066; cv=none; b=o6OPRe/nhfljymcuAeXPPUohTTKkbqWdk23duQC3B9hJlae9g5H3PGS/eozeEv3U3lfOK7e3/VNzP5t0lDJBAA1PgtP1xwFuLy6jS8Cac500ugY+Bu8z+ARNeAdQKWiM0BCa+8kE/56biQRC8oOYhO7EW8EgMic1XE6ABn/gJY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794977; c=relaxed/simple;
-	bh=XsMZY3pc/vg+/x1k0lQTUXSC5AqXsrwwKZxZ8pCceoc=;
+	s=arc-20240116; t=1727795066; c=relaxed/simple;
+	bh=gF6r8WnrQH2b+Vt7tiA980NrtXF93+h0MtPYmhpJL0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OSKZNWqgd5KDwzBpdbCJwKyblHeIORmUxM2Tl3RSMG8dg2Eu5D5C54/lG/7dIh9bbB2TycuzVun9vz+pkf1G7wBiaeuirpIuEUtLRy/LTUJw7TNY39+nfZlpccVOKQw2OoXumyxgNBK0Y0z8hPf34OKxXnrw3mirMPA+YOzh/W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efPru58A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE2B8C4CECD;
-	Tue,  1 Oct 2024 15:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727794976;
-	bh=XsMZY3pc/vg+/x1k0lQTUXSC5AqXsrwwKZxZ8pCceoc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=efPru58A1wFOI1VnQW+3jOZfpaEoOWXsZZuxmDLQ6/HvAXw961A6O+jKwZBPV7T04
-	 tfUzNDuBj7e7ofHbb4MQgirm8Hacsqvp3ViVW1840i3Obidu8IJO1nUOVJyenKdgQA
-	 u0oAWYY3XqLAmI/BPnJCmEY9D8yqKpKfGQ24Z3qtfEva6dIc9r/MGde7Jq6JkcSkfg
-	 e34uBifbuW/bhozB1SS13zZhwt8ekFalS9zVGGaj9JMgYjJScBOKwl6H7HZM+KkFIU
-	 eC5l1YqFMx3wzlM1ttG8uIaF9l8Y4BC1a73CLROgDq4ZCHpbDsyskfyuml1MoUc8SE
-	 kjSMVv8TJrevg==
-Date: Tue, 1 Oct 2024 17:02:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Howells <dhowells@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of Linus' tree
-Message-ID: <20241001-sprung-befeuern-b3daeaeec154@brauner>
-References: <20241001134729.3f65ae78@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IuAuInl9EMgm9RIj47PFOKQJUD6tehmpNJeLffx7tdadG+OeCm0QyADq9gEfSC7C8BWD8SEpv5FBbtfv4rvxVQQp/WsxtIEzHvZi7xeqo10xyzE51zNGVtVK4QI/6oLDbwGXLMEbEvmamrQZs6XfclHSEf3SyuHr5LcyKxXSOXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fTmmk6/c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727795063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PHLSGGnWvPoqO0ClIGivuffMh5vVjCKIDhDPct8AAM4=;
+	b=fTmmk6/c2W8ocOa4OAYPRr4ChHd/+bGKv1lcQc742wSZEwEXSCH6Yieqb//CiPm5NF7zex
+	uBoe52EOURkFu4qgASokTM1kFTj8rADNnXkb1ZLSjSjcFr918kaIybNFSRcvTt5NFS2KHn
+	1iF7BxW1tVzjo7NR45+HPx5ENbJAQts=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-101-MbWWXFUKPAeACwjOonTi1Q-1; Tue,
+ 01 Oct 2024 11:04:18 -0400
+X-MC-Unique: MbWWXFUKPAeACwjOonTi1Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02C2F19776A1;
+	Tue,  1 Oct 2024 15:04:15 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.88])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A366D1848B73;
+	Tue,  1 Oct 2024 15:03:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  1 Oct 2024 17:03:07 +0200 (CEST)
+Date: Tue, 1 Oct 2024 17:02:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: stsp <stsp2@yandex.ru>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Florent Revest <revest@chromium.org>, Kees Cook <kees@kernel.org>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Benjamin Gray <bgray@linux.ibm.com>, Helge Deller <deller@gmx.de>,
+	Zev Weiss <zev@bewilderbeest.net>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-fsdevel@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>
+Subject: Re: [PATCH v3] add group restriction bitmap
+Message-ID: <20241001150258.GD23907@redhat.com>
+References: <20240930195958.389922-1-stsp2@yandex.ru>
+ <20241001111516.GA23907@redhat.com>
+ <02ae38f6-698c-496f-9e96-1376ef9f1332@yandex.ru>
+ <20241001130236.GB23907@redhat.com>
+ <62362149-c550-490f-bd7a-0fd7a5cd22bc@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,19 +90,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241001134729.3f65ae78@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <62362149-c550-490f-bd7a-0fd7a5cd22bc@yandex.ru>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Oct 01, 2024 at 01:47:29PM GMT, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging Linus' tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> include/linux/folio_queue.h:91: warning: expecting prototype for folioq_count(). Prototype was for folioq_full() instead
-> 
-> Introduced by commit
-> 
->   28e8c5c095ec ("netfs: Add folio_queue API documentation")
+We can't understand each other. I guess I missed something...
 
-Added a commit to fix this. Thanks!
+On 10/01, stsp wrote:
+>
+> 01.10.2024 16:02, Oleg Nesterov пишет:
+> >On 10/01, stsp wrote:
+> >>01.10.2024 14:15, Oleg Nesterov пишет:
+> >>>Suppose we change groups_search()
+> >>>
+> >>>	--- a/kernel/groups.c
+> >>>	+++ b/kernel/groups.c
+> >>>	@@ -104,8 +104,11 @@ int groups_search(const struct group_info *group_info, kgid_t grp)
+> >>>				left = mid + 1;
+> >>>			else if (gid_lt(grp, group_info->gid[mid]))
+> >>>				right = mid;
+> >>>	-		else
+> >>>	-			return 1;
+> >>>	+		else {
+> >>>	+			bool r = mid < BITS_PER_LONG &&
+> >>>	+				 test_bit(mid, &group_info->restrict_bitmap);
+> >>>	+			return r ? -1 : 1;
+> >>>	+		}
+> >>>		}
+> >>>		return 0;
+> >>>	 }
+> >>>
+> >>>so that it returns, say, -1 if the found grp is restricted.
+> >>>
+> >>>Then everything else can be greatly simplified, afaics...
+> >>This will mean updating all callers
+> >>of groups_search(), in_group_p(),
+> >>in_egroup_p(), vfsxx_in_group_p()
+> >Why? I think with this change you do not need to touch in_group_p/etc at all.
+> >
+> >>if in_group_p() returns -1 for not found
+> >>and 0 for gid,
+> >With the the change above in_group_p() returns 0 if not found, !0 otherwise.
+> >It returns -1 if grp != cred->fsgid and the found grp is restricted.
+>
+> in_group_p() doesn't check if the
+> group is restricted or not.
+
+And it shouldn't. It returns the result of groups_search() if this
+grp is supplementary or "not found".
+
+> acl_permission_check() does, but
+> in your example it doesn't as well.
+
+But it does??? see below...
+
+> I think you mean to move the
+> restrict_bitmap check upwards to
+> in_group_p()?
+
+No, I meant to move the restrict_bitmap check to groups_search(), see the patch
+above.
+
+> Anyway, suppose you don't mean that.
+> In this case:
+> 1. in_group_p() and in_egroup_p()
+>   should be changed:
+> -  int retval = 1;
+> + int retval = -1;
+
+Why? -1 means that the grp is supplementary and restricted.
+
+> There are also the callers of groups_search()
+> in kernel/auditsc.c and they should
+> be updated.
+
+Why? I don't think so. audit_filter_rules() uses the result of groups_search()
+as a boolean.
+
+> >So acl_permission_check() can simply do
+> >
+> >	if (mask & (mode ^ (mode >> 3))) {
+> >		vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+> >		int xxx = vfsgid_in_group_p(vfsgid);
+> >
+> >		if (xxx) {
+> >			if (mask & ~(mode >> 3))
+> >				return -EACCES;
+> >			if (xxx > 0)
+> >				return 0;
+> >			/* If we hit restrict_bitmap, then check Others. */
+> >		}
+> >	}
+>
+> Well, in my impl it should check
+> the bitmap right here, but you removed
+> that.
+
+No, I didn't remove the check, this code relies on the change in
+groups_search(). Note the "xxx > 0" check.
+
+I must have missed something :/
+
+Oleg.
+
 
