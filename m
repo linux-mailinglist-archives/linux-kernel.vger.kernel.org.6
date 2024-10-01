@@ -1,335 +1,129 @@
-Return-Path: <linux-kernel+bounces-345689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAB298B9C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D15FA98B9C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3861C2348C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DF9E1C2304B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D101A08C5;
-	Tue,  1 Oct 2024 10:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFFA19D887;
+	Tue,  1 Oct 2024 10:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/vakxwD"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cZAaqWlj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C44B19CC08
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB5E1862BD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:32:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727778671; cv=none; b=YOeX7JkL5GVw+jQnSvS9Bqyt88zR1AhOscWA+7yk001CUJVSbH1oEFSP4tH+/miHXzsRzck96kM8RXqucvf8ahiSRWkTNslH+K4hZOM2E5MbSc3mKGJ39NwRaxAZF8lnC7eP9H+hbzdrAFrB1WXtdRr+VuZP4Ffy7eU63tTzKfY=
+	t=1727778722; cv=none; b=KEkZr61hFsNE6vZKuv2V58U1Dy272pkHtyVyqkxNDuMbbAS7I7yBp7v6yFmQWniO6JWk3q5pzfxwOPktkM37jgC/lkx0HCBHxPXqei8mtgRKqoX2UZr3d4EBE/k8NmaSNMDGzJ5uhKASQVoO7rDVCsOMhF0sJDo1JMQdpOoXgUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727778671; c=relaxed/simple;
-	bh=yAGmCdd75QeGH57D0Rkzl9n6Wfz8ZCLvGKoFlHP6kwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jycpAwJHenLiEjOHvO89J/ZEyJTfl14nj3IkxDRCgKtmqDsQHp5i0XC0nHRmQIe2mDxcAoC9ES34YsHSbsZr10sIeFeTCA1+4dg0ZSzQ/BLxgvTjBwMIhtkr9SAPXaVJmbLFQHjuFUbVgkpXnX3vWRVFga+u5//awRB+wQwvyGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H/vakxwD; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20bb610be6aso4170265ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727778669; x=1728383469; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4Dw4l+G9an39KsWSxDP94YiTolCS89KFp0iqjxw1BCE=;
-        b=H/vakxwD1bog1BTb3X0nLZ/k3Kp6E+krMYILAJVyphCBQM1N7yCLUAu/qXciOHb5f2
-         NU7uvFZmI28dEBj1e0J8GCOMc6Ml9/K1G8BrK0H7mutT1mwPD3b+eLj5bBGIatOomBbP
-         mj95kDCmPfxK8moaG6S62ZspywmeM/33Xdcd1uXoCc+hZJUaO/SBsSYe/LyM6YDFxHsR
-         fHnmyuivJFHE3seXbiXMGjTGK7MCaGm0WiD8VQ7w4gwwkdXbDMpmx0sL8YxdicL1OUwH
-         84rKHkmMayv9WRmJqSmQfgNODc1IHi+boDleybrfe/2UodIsiDW2yWk7t8o3NZB640lx
-         z7HQ==
+	s=arc-20240116; t=1727778722; c=relaxed/simple;
+	bh=BHxBdN0+0XFc2gscEzhmEBjFXgbgPMlgA7qFw8/FInY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TxM52aIzcWBQz5J6SG6XNi7s2iheKzMHiTOpWdD0geLk6aYXO7Pt2/dqJt/ggy4EVLbVef9v6lUlXgr9N3KsIA402zpAO91tJqg8ITeNoYsE4QdA5crOKL6QAGoSTZHA2B8s1XVbTpoZGufdw0vZuXVubLh1HPOpayklgisdZkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cZAaqWlj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727778719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KFX2w5y/1YTkg4M3sx1+O7IJ/a9wNfaFRAayvFDPj2U=;
+	b=cZAaqWlj8Ny3WGpOWfMkis8r3K1BeGuIxCdY0nOUVXoJ3zSbQtizdrljhMTZc+8MjFnCFl
+	Ue8SsifMRyf8DrSRQ9E1TJqU6B1kazniTeUbpfIw/GgZKu+iqpTlbbefl+AOQBqOgvfokK
+	MU91dZba9zS84fbqpPlL3E0rlePhVu4=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-342-06VVDiZIPOuNRGszvORPTA-1; Tue, 01 Oct 2024 06:31:58 -0400
+X-MC-Unique: 06VVDiZIPOuNRGszvORPTA-1
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2fac0c2d49fso21903231fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:31:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727778669; x=1728383469;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Dw4l+G9an39KsWSxDP94YiTolCS89KFp0iqjxw1BCE=;
-        b=t4ecjisOcfWBG4+UwSmLnKDYEGivSuT9bV6d8eE4EcuiAUfRqbLhgWgC4B9sVwuO10
-         9v0i7OMUEN+IUl53nxjbeB7v/xRr4a5Z22rlAp+mCul4jbS95jscerotOUWuNAw3dGh5
-         tFHdy3k7zip1z1+jQ1/x8ciAWZEfKd7nvb46w5sHZouYl+QuCNW3AuVsk13pis593LkT
-         3jLgZ/V2L7F48mjsmoyK/OesIO8XGlbqV5hWg87YkdKW33l6U/nyQoxN+zWndBoIk2tH
-         NDBGh6t8hfBS1jEDYB9eWhy5NmDvclfq3QGx40yjohua5tSa9x+vOMDkLASTbhMGCv09
-         QBZA==
-X-Forwarded-Encrypted: i=1; AJvYcCULPf6KGzlJsfihKXXYF9cripW90SLUE4d7Q8XyHozzGPsVKTt/XiMqoRnrN0XVYpJ6L4iurlgsV0/GPww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLnYEV4MgYtZ4gvJ1xrcny4DZ5CJ3ARtAk/UyaBPdC02trqbFV
-	0j04LL97YKiliBTC2W53EAE9jzKCxktzzMtzfk4d7KoGGO3uCKUyH+7EjkPgeA==
-X-Google-Smtp-Source: AGHT+IHqO9KzY9cSNcbXgmO/4uNrXciRkUPaBdjGBGmaPpdZ66MJOhRQSux7SW0iEBiaCBGsg5MTmQ==
-X-Received: by 2002:a17:902:ecc7:b0:20b:5fb1:ea52 with SMTP id d9443c01a7336-20b5fb1ee30mr173097865ad.21.1727778668557;
-        Tue, 01 Oct 2024 03:31:08 -0700 (PDT)
-Received: from thinkpad ([36.255.17.150])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e629acsm66932665ad.270.2024.10.01.03.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:31:08 -0700 (PDT)
-Date: Tue, 1 Oct 2024 16:01:00 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-	quic_parass@quicinc.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Mayank Rana <quic_mrana@quicinc.com>,
-	Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v4] PCI: Enable runtime pm of the host bridge
-Message-ID: <20241001103100.ewzgmq3apmxtrsr7@thinkpad>
-References: <20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com>
- <20240816204539.GA73302@bhelgaas>
- <CAJZ5v0j0ck2yKPzisggkdKTFz-AVKG7q+6WnBiiT_43VT4Fbvg@mail.gmail.com>
- <b0d8e51d-cf53-dc75-0e57-4e2e85a14827@quicinc.com>
- <CAJZ5v0jMSrkH7jCk0Ayb21vdXjCnYHHiSqdbifNFwq2OucEMtQ@mail.gmail.com>
- <bfdc6c20-926e-533b-a8e3-0d5a3ef8be8c@quicinc.com>
- <CAJZ5v0gHw=BUGn7MkRaLnAQ9ki-YDOL3SpNxd0X9YmTVG-ofzw@mail.gmail.com>
- <0506433c-62c5-e7c0-8c8a-55744a5e87d6@quicinc.com>
+        d=1e100.net; s=20230601; t=1727778712; x=1728383512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KFX2w5y/1YTkg4M3sx1+O7IJ/a9wNfaFRAayvFDPj2U=;
+        b=KvtgpdAPKgRQWV/374oSRxskibUfqlZRh5SpqLcSqOl7WY77u7LzRHQFis44cjHEz6
+         QmVX0+nO3+WeR426BgupEY154wRtpjp7LkcDe9xKcBpB2veb+tHunAoL2+bJNGmAdZiO
+         4sy7BifV5PG5DyC5tiKU34g7buDMiwLm68GGIgUyLlh0qIPffM9dUP8XhphlgnG4vWFq
+         6jciXn3NyYpw0toq1sMwzZUXgiDiVJ2S3HQr+v8L8WeEulLQtNeT/0cjJd4StH61PLXu
+         NdTtqZm40GRSaA85t/mTJbpSJqMM0Jn8JvADseXqDglqRbQgvo4hIokYB7+1ho3CpMoC
+         7I4w==
+X-Gm-Message-State: AOJu0Yzpj8klPfiWL1BTyYy5ASRQds/pXOqMhw238EYc8BGypTa9Pko4
+	7mq+DVAutP1KcI661lk8quIhiQbi80O1bFDNEbisHrkY4C3OrIXWHe+i0pn5x8nj5NIjFcxGxIT
+	+qAeVhwHZ566aFnX98gqq3EwVKY3Yp3ovpvpmYZkF4Ob1I82yQw3QG3Fv7bpSX1siqsYK/G/Kfk
+	HEbePdsdSgClChT6/wD3xa9t0NWVAYgWO/DR/N1Vt+ED/zn6Y=
+X-Received: by 2002:a2e:b889:0:b0:2fa:d6cf:28f6 with SMTP id 38308e7fff4ca-2fad6cf2c81mr22444701fa.3.1727778712380;
+        Tue, 01 Oct 2024 03:31:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEigpLyS7jOvPPrdCyLrpJ7l3ogwdCk5nU+Sx78wFqjh8XJSsDghWBrZl9qdNcLnsLV29Ppj+o544CxVwWSQzE=
+X-Received: by 2002:a2e:b889:0:b0:2fa:d6cf:28f6 with SMTP id
+ 38308e7fff4ca-2fad6cf2c81mr22444471fa.3.1727778711910; Tue, 01 Oct 2024
+ 03:31:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0506433c-62c5-e7c0-8c8a-55744a5e87d6@quicinc.com>
+References: <20240926152044.2205129-1-david@redhat.com>
+In-Reply-To: <20240926152044.2205129-1-david@redhat.com>
+From: Mario Casquero <mcasquer@redhat.com>
+Date: Tue, 1 Oct 2024 12:31:33 +0200
+Message-ID: <CAMXpfWtjE9tKhrvRmnCC_PeneV6LAB3XSqAUBzCMGAjvH6oxJA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] selftests/mm: hugetlb_fault_after_madv improvements
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Breno Leitao <leitao@debian.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 09:26:51AM +0530, Krishna Chaitanya Chundru wrote:
-> Hi Bjorn,
-> 
-> when you get time can you look into this.
-> if there are no further concerns I will respin this patch.
-> 
+This series has been successfully tested. Now when executing the
+hugetlb_fault_after_madv selftest the benefits of both patches could
+be observed.
+# ./hugetlb_fault_after_madv
+TAP version 13
+1..1
+# [INFO] detected default hugetlb page size: 1024 KiB
+ok 1 SIGBUS behavior
+# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Please do not top post.
+Tested-by: Mario Casquero <mcasquer@redhat.com>
 
-FWIW, suggestions from Rafael makes sense to me. Thanks Rafael!
 
-- Mani
+On Thu, Sep 26, 2024 at 5:20=E2=80=AFPM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> Mario brought to my attention that the hugetlb_fault_after_madv test
+> is currently always skipped on s390x.
+>
+> Let's adjust the test to be independent of the default hugetlb page size
+> and while at it, also improve the test output.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Mario Casquero <mcasquer@redhat.com>
+> Cc: Breno Leitao <leitao@debian.org>
+>
+> David Hildenbrand (2):
+>   selftests/mm: hugetlb_fault_after_madv: use default hguetlb page size
+>   selftests/mm: hugetlb_fault_after_madv: improve test output
+>
+>  .../selftests/mm/hugetlb_fault_after_madv.c   | 48 ++++++++++++++++---
+>  1 file changed, 42 insertions(+), 6 deletions(-)
+>
+> --
+> 2.46.1
+>
 
-> - Krishna Chaitanya.
-> 
-> On 9/12/2024 9:00 PM, Rafael J. Wysocki wrote:
-> > On Thu, Sep 12, 2024 at 2:13 PM Krishna Chaitanya Chundru
-> > <quic_krichai@quicinc.com> wrote:
-> > > 
-> > > 
-> > > 
-> > > On 9/12/2024 5:27 PM, Rafael J. Wysocki wrote:
-> > > > On Thu, Sep 12, 2024 at 1:52 PM Krishna Chaitanya Chundru
-> > > > <quic_krichai@quicinc.com> wrote:
-> > > > > 
-> > > > > 
-> > > > > 
-> > > > > On 9/12/2024 5:12 PM, Rafael J. Wysocki wrote:
-> > > > > > On Fri, Aug 16, 2024 at 10:45 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > > > > > 
-> > > > > > > [+cc Rafael, Mayank, Markus (when people have commented on previous
-> > > > > > > versions, please cc them on new versions).  I'm still hoping Rafael
-> > > > > > > will have a chance to chime in]
-> > > > > > > 
-> > > > > > > On Mon, Jul 08, 2024 at 10:19:40AM +0530, Krishna chaitanya chundru wrote:
-> > > > > > > > The Controller driver is the parent device of the PCIe host bridge,
-> > > > > > > > PCI-PCI bridge and PCIe endpoint as shown below.
-> > > > > > > > 
-> > > > > > > >            PCIe controller(Top level parent & parent of host bridge)
-> > > > > > > >                            |
-> > > > > > > >                            v
-> > > > > > > >            PCIe Host bridge(Parent of PCI-PCI bridge)
-> > > > > > > >                            |
-> > > > > > > >                            v
-> > > > > > > >            PCI-PCI bridge(Parent of endpoint driver)
-> > > > > > > >                            |
-> > > > > > > >                            v
-> > > > > > > >                    PCIe endpoint driver
-> > > > > > > > 
-> > > > > > > > Now, when the controller device goes to runtime suspend, PM framework
-> > > > > > > > will check the runtime PM state of the child device (host bridge) and
-> > > > > > > > will find it to be disabled.
-> > > > > > > 
-> > > > > > > I guess "will find it to be disabled"  means the child (host bridge)
-> > > > > > > has runtime PM disabled, not that the child device is disabled, right?
-> > > > > > > 
-> > > > > > > > So it will allow the parent (controller
-> > > > > > > > device) to go to runtime suspend. Only if the child device's state was
-> > > > > > > > 'active' it will prevent the parent to get suspended.
-> > > > > > > 
-> > > > > > > Can we include a hint like the name of the function where the PM
-> > > > > > > framework decides this?  Maybe this is rpm_check_suspend_allowed()?
-> > > > > > > 
-> > > > > > > rpm_check_suspend_allowed()  checks ".ignore_children", which sounds
-> > > > > > > like it could be related, and AFAICS .ignore_children == false here,
-> > > > > > > so .child_count should be relevant.
-> > > > > > > 
-> > > > > > > But I'm still confused about why we can runtime suspend a bridge that
-> > > > > > > leads to devices that are not suspended.
-> > > > > > 
-> > > > > > That should only be possible if runtime PM is disabled for those devices.
-> > > > > > 
-> > > > > > > > Since runtime PM is disabled for host bridge, the state of the child
-> > > > > > > > devices under the host bridge is not taken into account by PM framework
-> > > > > > > > for the top level parent, PCIe controller. So PM framework, allows
-> > > > > > > > the controller driver to enter runtime PM irrespective of the state
-> > > > > > > > of the devices under the host bridge. And this causes the topology
-> > > > > > > > breakage and also possible PM issues like controller driver goes to
-> > > > > > > > runtime suspend while endpoint driver is doing some transfers.
-> > > > > > 
-> > > > > > Why is it a good idea to enable runtime PM for a PCIe controller?
-> > > > > > 
-> > > > > PCIe controller can do certain actions like keeping low power state,
-> > > > > remove bandwidth votes etc as part of runtime suspend as when we know
-> > > > > the client drivers already runtime suspended.
-> > > > 
-> > > > Surely they can, but enabling runtime PM for devices that have
-> > > > children with runtime PM disabled and where those children have
-> > > > children with runtime PM enabled is a bug.
-> > > > 
-> > > we are trying to enable the runtime PM of host bridge here, so that we
-> > > can enable runtime PM of the controller.
-> > 
-> > So this is a preliminary step.  That was unclear to me.
-> > 
-> > > If this change got accepted the child here(host bridge) runtime pm will
-> > > be enabled then i think there will no issue in enabling the runtime pm
-> > > of the controller then.
-> > > > > > > What does "topology breakage" mean?  Do you mean something other than
-> > > > > > > the fact that an endpoint DMA might fail if the controller is
-> > > > > > > suspended?
-> > > > > > > 
-> > > > > > > > So enable runtime PM for the host bridge, so that controller driver
-> > > > > > > > goes to suspend only when all child devices goes to runtime suspend.
-> > > > > > 
-> > > > > > This by itself makes sense to me.
-> > > > > > 
-> > > > > > > IIUC, the one-sentence description here is that previously, the PCI
-> > > > > > > host controller could be runtime suspended even while an endpoint was
-> > > > > > > active, which caused DMA failures.  And this patch changes that so the
-> > > > > > > host controller is only runtime suspended after the entire hierarchy
-> > > > > > > below it is runtime suspended?  Is that right?
-> > > > > > > 
-> > > > > > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > > > > > > > ---
-> > > > > > > > Changes in v4:
-> > > > > > > 
-> > > > > > > (Note: v4 applies cleanly to v6.10-rc1 and to v6.11-rc1 with a small
-> > > > > > > offset).
-> > > > > > > 
-> > > > > > > > - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
-> > > > > > > > - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
-> > > > > > > > Changes in v3:
-> > > > > > > > - Moved the runtime API call's from the dwc driver to PCI framework
-> > > > > > > >      as it is applicable for all (suggested by mani)
-> > > > > > > > - Updated the commit message.
-> > > > > > > > - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
-> > > > > > > > Changes in v2:
-> > > > > > > > - Updated commit message as suggested by mani.
-> > > > > > > > - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
-> > > > > > > > ---
-> > > > > > > > 
-> > > > > > > > ---
-> > > > > > > >     drivers/pci/probe.c | 4 ++++
-> > > > > > > >     1 file changed, 4 insertions(+)
-> > > > > > > > 
-> > > > > > > > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > > > > > > > index 8e696e547565..fd49563a44d9 100644
-> > > > > > > > --- a/drivers/pci/probe.c
-> > > > > > > > +++ b/drivers/pci/probe.c
-> > > > > > > > @@ -3096,6 +3096,10 @@ int pci_host_probe(struct pci_host_bridge *bridge)
-> > > > > > > >          }
-> > > > > > > > 
-> > > > > > > >          pci_bus_add_devices(bus);
-> > > > > > > > +
-> > > > > > > > +     pm_runtime_set_active(&bridge->dev);
-> > > > > > > > +     devm_pm_runtime_enable(&bridge->dev);
-> > > > > > > > +
-> > > > > > > >          return 0;
-> > > > > > > >     }
-> > > > > > > >     EXPORT_SYMBOL_GPL(pci_host_probe);
-> > > > > > 
-> > > > > > This will effectively prevent the host bridge from being
-> > > > > > runtime-suspended at all IIUC, so the PCIe controller will never
-> > > > > > suspend too after this change.
-> > > > > > 
-> > > > > No we are having a different observations here.
-> > > > > Without this change the PCIe controller driver can go to runtime suspend
-> > > > > without considering the state of the client drivers i.e even when the
-> > > > > client drivers are active.
-> > > > > After adding this change we see the pcie controller is getting runtime
-> > > > > suspended only after the client drivers are runtime suspended which is
-> > > > > the expected behaviour.
-> > > > 
-> > > > OK, but then when and how is it going to be resumed?
-> > > 
-> > > sorry I am not expert of the pm framework here, what we observed is when
-> > > client drivers are trying to resume using runtime_get we see the
-> > > controller driver is also getting resume properly with this change.
-> > > let me dig in and see in code on how this is happening.
-> > > 
-> > > Bjorn has this view on this change in previous v2 version[1]
-> > > "My expectation is that adding new functionality should only require
-> > > changes in drivers that want to take advantage of it.  For example, if
-> > > we add runtime PM support in the controller driver, the result should
-> > > be functionally correct even if we don't update drivers for downstream
-> > > devices.
-> > > 
-> > > If that's not the way it works, I suggest that would be a problem in
-> > > the PM framework.
-> > 
-> > You can say so, but that's how it goes.
-> > 
-> > If there are any devices with runtime PM disabled in a dependency
-> > chain, the runtime PM framework cannot follow that chain as a whole.
-> > If enabling runtime PM for a device leads to this situation, it is not
-> > correct.
-> > 
-> > > The host bridge might be a special case because we don't have a
-> > > separate "host bridge" driver; that code is kind of integrated with
-> > > the controller drivers.  So maybe it's OK to do controller + host
-> > > bridge runtime PM support at the same time, as long as any time we add
-> > > runtime PM to a controller, we sure it's also set up for the host
-> > > bridge"
-> > 
-> > I think that you can enable runtime PM for host bridge devices in
-> > general, as long as they don't need to be resumed without resuming any
-> > of their children.
-> > 
-> > If that's the case, resuming one of its children will also cause the
-> > host bridge to resume and all should be fine, although you also need
-> > to ensure that system-wide suspend handling is in agreement with this.
-> > 
-> > I would suggest calling pm_runtime_no_callbacks() for the host bridge device.
-> > 
-> > > [1] https://lore.kernel.org/all/20240307215505.GA632869@bhelgaas/
-> > 
-> > And this is the information to put into your patch changelog:
-> > 
-> > 1. It is a property of the runtime PM framework that it can only
-> > follow continuous dependency chains.  That is, if there is a device
-> > with runtime PM disabled in a dependency chain, runtime PM cannot be
-> > enabled for devices below it and above it in that chain both at the
-> > same time.
-> > 
-> > 2. Because of the above, in order to enable runtime PM for a PCIe
-> > controller device, one needs to ensure that runtime PM is enabled for
-> > all devices in every dependency chain between it and any PCIe endpoint
-> > (as runtime PM is enabled for PCIe endpoints).
-> > 
-> > 3. This means that runtime PM needs to be enabled for the host bridge
-> > device, which is present in all of these dependency chains.
-> > 
-> > 4. After this change, the host bridge device will be runtime-suspended
-> > by the runtime PM framework automatically after suspending its last
-> > child and it will be runtime-resumed automatically before resuming its
-> > first child which will allow the runtime PM framework to track
-> > dependencies between the host bridge device and all of its
-> > descendants.
-> > 
-> > Thanks!
-
--- 
-மணிவண்ணன் சதாசிவம்
 
