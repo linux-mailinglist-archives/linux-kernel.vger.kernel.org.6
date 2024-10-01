@@ -1,115 +1,168 @@
-Return-Path: <linux-kernel+bounces-346167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75E098C0B8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:52:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6218C98C0D0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:54:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5872AB229EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:52:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85CC91C23FA2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7681C8FAE;
-	Tue,  1 Oct 2024 14:51:53 +0000 (UTC)
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789C51C9B74;
+	Tue,  1 Oct 2024 14:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIoF4RLA"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09D8282F7;
-	Tue,  1 Oct 2024 14:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288B61C6F73;
+	Tue,  1 Oct 2024 14:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794313; cv=none; b=CoDol/cazka104FRwV/QrloYuIDxnKsPR/3+67s3TLU59uiFFIfYZ1S6DOGumo4uhUYfED3wVYQTs2m+zrwIrOLQ87w4HNj/0F9m/Xn8M9oplL7fAI15u1rsK3SvADlDf/4TZCDBQxHKmUiPH9Z8AweUVCc3Jirjrf7e51drXi4=
+	t=1727794436; cv=none; b=CkFCLLZ15QMb9rMBX8w5lpMywDjbUOmtCqqeFJ6AvSsXjQr5PLWyZoZ+e/KEbL1v40YCmiiR/j/nbxBrvbqNV4P7Gvguf2G77HnlgGa9CWghFJh4xjB3HUXXjeYLnb5ryK5jN80baazPezTBvYQJn7ZaYz3AC4kg3rBdCd0oOFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794313; c=relaxed/simple;
-	bh=DX0t+v7hvE+aAD2YbuWKEGmvmwhdywdlL/zZzrB1iA8=;
+	s=arc-20240116; t=1727794436; c=relaxed/simple;
+	bh=NiNTmNONqUG6rArLU6+DW/koYHBP+PdkO5eQL5qKW5E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1HH5EoO6H1os8KoErEFegfsE02I7mEMsTtSvDia+8FTrWSe86n61HViWsq9OQgtuUrMGSK3JKNCym1nviKpAqwPiMQBVUN8C3jdoM7n3eA/n1kjaNCYDmVEN1FUhJc8M7CSpq8Y3chR2/RWK442GGqpeTtloYv782gwTgqi7b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=bGzE361Ky27XXrz9vSHdhAxkCdsKL2mXIVHzUyFQp91Ljmkj6rPXQ78SXE6dEsHMDkFdWksdoXXT6IEpVGdfM6MKPASQg5wHYKoOy4/HT6DW8XAXwICYAQcT8nbot719qTvcLI11G7/BFHQbHtFHyTA1NQPGxHZ1C+2PdU9RAuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cIoF4RLA; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6dbb24ee2ebso51555907b3.1;
-        Tue, 01 Oct 2024 07:51:50 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cdb6ebc1cso2160624f8f.1;
+        Tue, 01 Oct 2024 07:53:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727794433; x=1728399233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FSTnPU9v6H2GxBsNTOAiZzPo6DZqtIPh6ogHLJkD69Y=;
+        b=cIoF4RLAJ5CKomWNW2LZn2p/in6XaxaKLzxMj/AfmU4vVPEI5fcbc2uQ6734WwsH/D
+         VbW2Gz1vseKhOclIVlLJeMUow+KlnVlmh6GgAO0PQJgEIHqEUdGlaYEsUB5GZ0yoLMIt
+         rJjW40tlq7OXis+Trc603C1pUbCe5aDN2hAnBGRYkXYN9AWJjezLEf+0wlnC37R0eedr
+         IaTkcu6M+xvzuOPNCnZANxhuWK7+tuhoUrJ8tc+LZ/9n5zsQYtBrZutqLHjuLicYy8Ad
+         GvpgVNxzB2sn/slp14qP0aJX7yUjVBvppzhsBel3en5EYzRcdf+VTz5ypepb7nRYgunc
+         dg/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727794309; x=1728399109;
+        d=1e100.net; s=20230601; t=1727794433; x=1728399233;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SNruZBGCuXHJI2C/Fv8WrfBhkuB98dRgPlwbcD0yhng=;
-        b=Tpd4gexzKtxitfos9jNyxsPfRUbk3Wzj1ZClY0b3EFumRBGAbF8jcuNnLIlSfmuTl1
-         Y3X8Ijb9zYJJbN/4YzTfvXuFdGvI17c/G3MoeXG+mzNCr+xa3wk46JDlIhaZduAQe7mG
-         gb+FIhkERa/w02QXsGkk1ESW4CRQ1tGQjBSs4mdouQeS8pNDYfzu822kv15zdpLtmyGv
-         h/2xye+RuSor/zzAZFsxPbrywn4/pQ1lwJ8pRbDcMyhkMzQ+MrQa8x0HoBqxFGOVYY6J
-         UFqstt6OpbLezj6HBdZQiQN+LO6RpsF3jRVbjgO6jsNsnEuo3mRrB9b8x7CZ9/IbqF0L
-         cVZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUP1DXTum+dQGxokETYgYsy/cznLMLYhuk90Lj8g1QTctFKvq6aWKW/gAQxOc8jUsQJdfTQMPZo/4yLUs=@vger.kernel.org, AJvYcCXb4idLVfOIfq9Qg1PkLY4q9PxCqb4qM4TvoBgVuatmgDeS0ixk5VYBga2UCeeSl4sVuwjNKuTNulX3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjJ4oHQyMXt3NTkTWxvY7Ch/Pzrtvmu5DjVYJ3cJsQaU/Y5LuI
-	lXPYji14RMsJErkdCWXcNrJpF4Mp402zOyMWjPDeujw7PKSq8LqaLiYmigMs
-X-Google-Smtp-Source: AGHT+IGlkvhxje+V3kN7Fvw61w+LusQp3KxZXM4+b21WcZqtrbbJStte5ANBOiIEXMRcW/BdCSDOvg==
-X-Received: by 2002:a05:690c:680e:b0:6e2:63e:f087 with SMTP id 00721157ae682-6e28b54ca50mr45326597b3.42.1727794309440;
-        Tue, 01 Oct 2024 07:51:49 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e245395f09sm19578847b3.114.2024.10.01.07.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:51:48 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6da395fb97aso40906457b3.0;
-        Tue, 01 Oct 2024 07:51:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVBUPbgPuR9AO0GezFL+m6FWlY7bv8ofVzH2CReOT5Lmdb6c8B9ndVguz2fosUF+yFXZ4BrQ8Mg2dcpWBs=@vger.kernel.org, AJvYcCVU8gd9QVLWlwz4n9AnHfx/uI4ES2I+jTRgJKNVE71mMr9YtwRWUPUXMZhksdkDlnrDWwvlHDzV42HE@vger.kernel.org
-X-Received: by 2002:a05:690c:112:b0:6e2:985:f4df with SMTP id
- 00721157ae682-6e24dc9c710mr105345037b3.44.1727794308335; Tue, 01 Oct 2024
- 07:51:48 -0700 (PDT)
+        bh=FSTnPU9v6H2GxBsNTOAiZzPo6DZqtIPh6ogHLJkD69Y=;
+        b=XyFl9/KMIw/xKQfRv6h6rhqXWgVORH/6hlm4QFr2A5zl+TMcxj+59s34ybfzlUeSv1
+         XBzFi2PV3e3DHxQrnCCB+xj276qORjQnKDIHP8Xujo1Eu9pPQjf+KqiEM843Wh+gXI2c
+         llXuBDDHEtasi1buwLcvL5y/zWD7XaydR32OnUPoTWSQWAubbZUiW5um4MImBpVWO/Pf
+         RBhzN0OXwfFQ+Sgxs8H7vHUo2Qb8a4aUW/7qPXi1kxZzsUQ0gA07xc8cYZJHNsH0dsZo
+         eNbh4+qJQ/K/wXK3m4HiUGsncV2Vil8JbKhm0hGC3bkaKBC1x66xo9/pJkvJixj/QFIw
+         Gggg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlydnOAlaU0RhrN493vW3f4XIs4uaslbMQ/EI+905H4aOyxHxZ5ezVl5I0GPf7c1kopr1WEPEeaWDV+ZBl@vger.kernel.org, AJvYcCVZfto3bu0yMVvLB5sMqg0Gb4BU6AWLdFnA7HvMA+42qCOQoU3naMSJwhu8DP9HM/H+0Xo=@vger.kernel.org, AJvYcCW01P2UxcSlPZTG4Q4y0IDMCjvC0HEw9R0vtLm5UMgRGb7BcGyqBTZ4I0m88Z2u26DTn4/gK9WQo2On+04+M9lQVjEu@vger.kernel.org, AJvYcCWL4OUHcvGfPxT7i4gg8kepsPWnMkPRvfw01jAV1PPHMy7BGKTVgbwY/ky68Y/bhRtJVZQV/IfzXg4sPuy5@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlrv6C5gmesX2OGkjCL8Nm31H1QYkSfQ6dQpFJJGnaM6CGrgHp
+	55IlLIhrCM06Glu1QRpES7Gkh2DAaUcagUzCoj5BO7/L5XwUpR0qAZ4KoyyeR/J9ZWICpXMnEs+
+	+BaTI/5gwKhx9AEhbiEH/FigrfGXNvvPp
+X-Google-Smtp-Source: AGHT+IEm8GKzd4fqUPp6LAzM4CsjfnUSOgffnLlYkAgZo42PyQhxjWYeeN/iWESnCrPx+63wt9+U+2OjWQ/iO36f9Zg=
+X-Received: by 2002:a05:6000:e42:b0:37c:d2d2:7f5a with SMTP id
+ ffacd0b85a97d-37cd5aef979mr6359211f8f.32.1727794433399; Tue, 01 Oct 2024
+ 07:53:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240924210123.2288529-1-linux@roeck-us.net>
-In-Reply-To: <20240924210123.2288529-1-linux@roeck-us.net>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 1 Oct 2024 16:51:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXQEAwVHDzsqypisOB_n4PcXMD+4UHgxjZMwvdKfWutAQ@mail.gmail.com>
-Message-ID: <CAMuHMdXQEAwVHDzsqypisOB_n4PcXMD+4UHgxjZMwvdKfWutAQ@mail.gmail.com>
-Subject: Re: [PATCH] mmc: core: Only set maximum DMA segment size if DMA is supported
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
+References: <20240915205648.830121-1-hbathini@linux.ibm.com>
+ <20240915205648.830121-18-hbathini@linux.ibm.com> <CAADnVQL60XXW95tgwKn3kVgSQAN7gr1STy=APuO1xQD7mz-aXA@mail.gmail.com>
+ <32249e74-633d-4757-8931-742b682a63d3@linux.ibm.com> <CAADnVQKfSH_zkP0-TwOB_BLxCBH9efot9mk03uRuooCTMmWnWA@mail.gmail.com>
+ <7afc9cc7-95cd-45c7-b748-28040206d9a0@linux.ibm.com>
+In-Reply-To: <7afc9cc7-95cd-45c7-b748-28040206d9a0@linux.ibm.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 1 Oct 2024 07:53:42 -0700
+Message-ID: <CAADnVQJjqnSVqq2n70-uqfrYRHH3n=5s9=t3D2AMooxxAHYfJQ@mail.gmail.com>
+Subject: Re: [PATCH v5 17/17] powerpc64/bpf: Add support for bpf trampolines
+To: Hari Bathini <hbathini@linux.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf <bpf@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"Naveen N. Rao" <naveen@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicholas Piggin <npiggin@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Vishal Chourasia <vishalc@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 11:01=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
- wrote:
-> Since upstream commit 334304ac2bac ("dma-mapping: don't return errors
-> from dma_set_max_seg_size") calling dma_set_max_seg_size() on a device
-> not supporting DMA results in a warning traceback. This is seen when
-> booting the sifive_u machine from SD. The underlying SPI controller
-> (sifive,spi0 compatible) explicitly sets dma_mask to NULL.
-
-Thanks, seeing the same with mmc_spi on SiPeed MAIX BiT.
-
-> Avoid the backtrace by only calling dma_set_max_seg_size() if DMA is
-> supported.
+On Tue, Oct 1, 2024 at 12:18=E2=80=AFAM Hari Bathini <hbathini@linux.ibm.co=
+m> wrote:
 >
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Robin Murphy <robin.murphy@arm.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+>
+>
+> On 30/09/24 6:25 pm, Alexei Starovoitov wrote:
+> > On Sun, Sep 29, 2024 at 10:33=E2=80=AFPM Hari Bathini <hbathini@linux.i=
+bm.com> wrote:
+> >>
+> >>
+> >>
+> >> On 17/09/24 1:20 pm, Alexei Starovoitov wrote:
+> >>> On Sun, Sep 15, 2024 at 10:58=E2=80=AFPM Hari Bathini <hbathini@linux=
+.ibm.com> wrote:
+> >>>>
+> >>>> +
+> >>>> +       /*
+> >>>> +        * Generated stack layout:
+> >>>> +        *
+> >>>> +        * func prev back chain         [ back chain        ]
+> >>>> +        *                              [                   ]
+> >>>> +        * bpf prog redzone/tailcallcnt [ ...               ] 64 byt=
+es (64-bit powerpc)
+> >>>> +        *                              [                   ] --
+> >>> ...
+> >>>> +
+> >>>> +       /* Dummy frame size for proper unwind - includes 64-bytes re=
+d zone for 64-bit powerpc */
+> >>>> +       bpf_dummy_frame_size =3D STACK_FRAME_MIN_SIZE + 64;
+> >>>
+> >>> What is the goal of such a large "red zone" ?
+> >>> The kernel stack is a limited resource.
+> >>> Why reserve 64 bytes ?
+> >>> tail call cnt can probably be optional as well.
+> >>
+> >> Hi Alexei, thanks for reviewing.
+> >> FWIW, the redzone on ppc64 is 288 bytes. BPF JIT for ppc64 was using
+> >> a redzone of 80 bytes since tailcall support was introduced [1].
+> >> It came down to 64 bytes thanks to [2]. The red zone is being used
+> >> to save NVRs and tail call count when a stack is not setup. I do
+> >> agree that we should look at optimizing it further. Do you think
+> >> the optimization should go as part of PPC64 trampoline enablement
+> >> being done here or should that be taken up as a separate item, maybe?
+> >
+> > The follow up is fine.
+> > It just odd to me that we currently have:
+> >
+> > [   unused red zone ] 208 bytes protected
+> >
+> > I simply don't understand why we need to waste this much stack space.
+> > Why can't it be zero today ?
+> >
+>
+> The ABI for ppc64 has a redzone of 288 bytes below the current
+> stack pointer that can be used as a scratch area until a new
+> stack frame is created. So, no wastage of stack space as such.
+> It is just red zone that can be used before a new stack frame
+> is created. The comment there is only to show how redzone is
+> being used in ppc64 BPF JIT. I think the confusion is with the
+> mention of "208 bytes" as protected. As not all of that scratch
+> area is used, it mentions the remaining as unused. Essentially
+> 288 bytes below current stack pointer is protected from debuggers
+> and interrupt code (red zone). Note that it should be 224 bytes
+> of unused red zone instead of 208 bytes as red zone usage in
+> ppc64 BPF JIT come down from 80 bytes to 64 bytes since [2].
+> Hope that clears the misunderstanding..
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I see. That makes sense. So it's similar to amd64 red zone,
+but there we have an issue with irqs, hence the kernel is
+compiled with -mno-red-zone.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I guess ppc always has a different interrupt stack and
+it's not an issue?
 
