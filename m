@@ -1,89 +1,108 @@
-Return-Path: <linux-kernel+bounces-346354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FBD998C380
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:33:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C631898C385
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021BD28211A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D80284179
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5539A1CB522;
-	Tue,  1 Oct 2024 16:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34FD1CB521;
+	Tue,  1 Oct 2024 16:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzFW1AOp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Es6ZktY+"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B038C1C6889;
-	Tue,  1 Oct 2024 16:33:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33771C9DCD
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727800400; cv=none; b=OKjlyOdfGWmYeGqiyvpnWYa9I7hUUIZCHEruM9ndQUhM2yL1L2o4k3XXJPRuM4FsZRhxL5vOfvFSrah+dr8U0Zl2PZ2NOun592JoiFTsr+VFNwf5WFigbaYH8/qsLDsOTEZvpYIBBt/50GjdMgR/jboCFtBxJx0PaMzaDuQf0WA=
+	t=1727800598; cv=none; b=oHmU0RxyKqEH6JBPnSg8RR5JBF6150b8ugrY+rujGhcG46bucVRHdSnlTdyIKWKv5aD0ZT8ziPi3zgOlGcP7EGe+tNJVw7308ucFBQAYCpwqbocd+1AqN4nFOUSKMoQ03Eofyw73l2c+7k42WtacQZIylyraoBsYGpD+8onlZOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727800400; c=relaxed/simple;
-	bh=X0lJq5RdgPEACT/WdHb/x2NfIY4RhprJCqlbygUaMaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DWKoANLHAj1V64wkuXYnPEktzWhlpOHALf2Rpwqkgq6p71Ax5XB3QUMRcvH7rvBES1+DCUOG9tucO04isJofLmYD13wu7J/sjAJu7dhFrvI9tb2S7ECdLqrWptJ/Dg25b6DV/aQOCtwV02y6tDyfypwAjGkmEfiWu9UdM4rvj+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzFW1AOp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E02DC4CEC6;
-	Tue,  1 Oct 2024 16:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727800400;
-	bh=X0lJq5RdgPEACT/WdHb/x2NfIY4RhprJCqlbygUaMaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YzFW1AOpy469RKawKUfXdJ6L/eRuZbdzob5SrZp+C580YNUs9a42kgHjA4u93T0Sg
-	 QWMZY+KY+g0K9Z0a7McI76dsOC8d1++btsAVr4dtQE5TeLPEOSCTiosCcrdGT30QOX
-	 zvd198xB1swEzKWUj/FcPtZ0uwwSDqeJMN9FQnKDjALf5rDOXGR941hVzd8Z+avPLm
-	 1y7MC5uVf+iSChH6BQfpcrLR8jKpuyWgtsLiWgzEDX7bJG7Ug/dXFBwBpws3ycfsLI
-	 G33BjGm+InXft043BymQQh/2jDEyee5euEBUJ6Vxt97G7sGDnZSwILunmHwT9HXA+D
-	 wcvMWQ1HbbPtg==
-Date: Tue, 1 Oct 2024 17:33:16 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: regulator: vctrl-regulator: convert to YAML
-Message-ID: <20241001-purplish-extrude-4e4e74361ec8@spud>
-References: <20240930210424.1994047-1-heiko@sntech.de>
+	s=arc-20240116; t=1727800598; c=relaxed/simple;
+	bh=0sM+nrVfacbvTFodxDj9UKhTC/YS1eRFcVZP+fkLohQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=biPbSFKgyxGi0GsTDya1boknRMaMJS38PA8vihV9S8XSyY2KLyVXrOXfuBzf/9dXrKlJ6nKqfiX4gxDepPVVq+OR+Z5VRC8mf2kZMhp7zHS2uDFJSQ+6PU9k2z+rR9nCrjb5/Baq3+EEDJov7u+ueyj76xCXW/KhEKJGFr8qxhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Es6ZktY+; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8ce5db8668so993649266b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:36:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1727800594; x=1728405394; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BxJ6pGYTMNRfHwEGgEc2uVDA4qU911HW1i7xc0Dagg0=;
+        b=Es6ZktY+qX3Nn6aLkLWM9JTp/YM8yyQXmq/c+tdkMrPXumWuDnBey2FPP1lQFyRoa0
+         tepvrQNxlO8zaC1b88qzyS2veiJt7e79AOutq+Y7g9PP0BStJI4z2I9MefN9V3YDqaaU
+         V2vGicKQUZybd4QMbPKv9VVnczfBz7lLFpHd8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727800594; x=1728405394;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BxJ6pGYTMNRfHwEGgEc2uVDA4qU911HW1i7xc0Dagg0=;
+        b=El0zCCaDezE9s97U69tfSXi3z7rOiJ1oK2+AnwPM9KpE8tPxGHfRmxQGp6VnSHtReD
+         BRy+/NegR6VR3qJZxB7g3dsmfqoQ3g6CWVxIHSvnqPqJ9vXTLmw283L//Y/wsht6rpZ0
+         5wtFZSTIqS+e7XcZM67h0koBlv7UEcJLK5gnfQ5IPY8Rc0njBBNLXO2ZMw9m2gK1EANS
+         ViLW/d3PO7GdZEpXl6xX8HOogPwxqbn7Pbr9U5fw6SeW8N+ZcbhSWJ1GZvVud9bzwd5C
+         wKzelQKRtH8vf5Ifkn+0Z1McXD6KaDXFzONDKh+K54tvB4uPbldIAYUgFFSdIB5qYZUU
+         dzsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQc7jzZipfRENTTz/A6o6TTErNw/myZ5e4262HcXkU8nSpX6kUeT8Mv9EKjN/ClE5dZ5rWW4I47hQ5fCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOe02VXcq2S/HNNOCi96khGjM0vmBQeFcoiWV13Enxa8f0IMFF
+	PnsG5/FlGzIzS75L2Hygmh9wjkOs+6eKODhoOqHmngtyJFTdc06rMyEJQWAQ5jljt8w6fJwHxze
+	ihNhlOg==
+X-Google-Smtp-Source: AGHT+IGCCR4aSxAHPTW+2RXsPQt/TcnNtwnj/msd8F85rfzXYDQNbjUoUmlJARl6TVCjHDVVGdpckQ==
+X-Received: by 2002:a17:907:3e87:b0:a90:c411:24fd with SMTP id a640c23a62f3a-a98f8207aaemr18986766b.10.1727800593961;
+        Tue, 01 Oct 2024 09:36:33 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c297bb40sm730707766b.181.2024.10.01.09.36.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 09:36:33 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8ce5db8668so993643366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:36:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWs6k7lF1fRm/cm1oK+ZtJh/zTVde0jfBCG9mIXfrkIzn6sMCBRRru/Nx1CwZHTikrmalg6x6tcpxrIIMc=@vger.kernel.org
+X-Received: by 2002:a17:907:96a1:b0:a86:96f5:fa81 with SMTP id
+ a640c23a62f3a-a98f8261ab5mr17931866b.32.1727800592814; Tue, 01 Oct 2024
+ 09:36:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GbHUkAU+w4x7KlLL"
-Content-Disposition: inline
-In-Reply-To: <20240930210424.1994047-1-heiko@sntech.de>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+In-Reply-To: <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 1 Oct 2024 09:36:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+Message-ID: <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Paul Moore <paul@paul-moore.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+>
+> Linus, it's unclear if you're still following this thread after the
+> pull, but can you provide a little insight on your thoughts here?
 
---GbHUkAU+w4x7KlLL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I absolutely hate the whole "security people keep arguing", and I
+cannot personally find it in myself to care about tomoyo.  I don't
+even know where it is used - certainly not in Fedora, which is the
+only distro I can check quickly.
 
-On Mon, Sep 30, 2024 at 11:04:24PM +0200, Heiko Stuebner wrote:
-> Convert the vctrl-regulator bindings to DT schema.
-> This resolves a dtbs check warning for the rk3399-gru devices.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+If the consensus is that we should revert, I'll happily revert. This
+was all inside of the tomoyo subdirectory, so I didn't see it as some
+kind of sidestepping, and treated the pull request as a regular
+"another odd security subsystem update".
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-
---GbHUkAU+w4x7KlLL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvwkTAAKCRB4tDGHoIJi
-0nQRAQCNRlqFTWXfbpQ2K+hdGQ3hM0+FtNiHTWqxVRCGjQf/fAD/aU8P1g8bx7V/
-KBXaKK664muw9qBwrekuaNtQjg7rjgA=
-=N7sW
------END PGP SIGNATURE-----
-
---GbHUkAU+w4x7KlLL--
+                  Linus
 
