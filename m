@@ -1,147 +1,142 @@
-Return-Path: <linux-kernel+bounces-346382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA8998C41D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:02:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A08D98C41C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A4141C20F58
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3737E1F25B3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6431CB50B;
-	Tue,  1 Oct 2024 17:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7110A1CBE96;
+	Tue,  1 Oct 2024 17:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4mT85kSF"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eSPifnfK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F318CC0B
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D511A3A80;
+	Tue,  1 Oct 2024 17:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727802128; cv=none; b=difdE0SGTIkLLLJEPN/YFha/udNmRaAwMXRi+D9a9Zj0+MWrN2XWdMTnae1lAJDp6BvID2o4+G3u/3pI0lJ1E6GhC88Fqm9MQxgOFBrF0E7Div849jbARk97EAMllCvEcl7EmD715QqO/ATKHOHW3SH4QGJeIUuYpKo4xxECyDM=
+	t=1727802100; cv=none; b=PE8rIES66WO0LTWeu8IRwi3Y8E6fiYaXhp/8M5b4v5Gy3G8Z108l/w8JbRvfUtp+PeNLmPGQhJR35VW65zxb+X9SxVgqVMmqbgsDWZm+SCnA6ZLo6Grhovhj8UrZ7q3X1VdsjSUqpIrNdJyWTVHUpnD2nSTDE5ABf7ASs4A8/sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727802128; c=relaxed/simple;
-	bh=f6WC1XY5pUQdYKEzXtyNU6wOmRcFQu8VJUxwoxSfoMQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CaVwfDgaUh9gGyCEPhPH+5AKSpNrGA43r/GIXj3Gv7lV1y2XOGt2GpBZSqbFA6tKnSq073CMt6GovL6819rCG/pkDWFp/gdegu/ZsRQ1JOQZdFEJLjfgc2kavwPnJ0MGJZEmJsX49dooKKVDueH/9uXdIT8Wc+MBWWadQ0necyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4mT85kSF; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d56155f51so739248966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:02:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727802125; x=1728406925; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5bV3UhRWZD4cI+GXzuTGXGMA1zPWWKRAb8b1c9r2ox4=;
-        b=4mT85kSF0z2yRmwDCigYB8pNI5tiTg9sLrKCKfnaT57gCRKPLNFPbVRjuSslq5Itfh
-         tCfm5P25CKT0ib88x2Mc4EGqDfs7RvjbReNLMqvdT31Rpeb6gNwiQV69SEX9CM2hr8Cw
-         hoUR8q2FyOXB325/T/CRSKkT3fhx9llEmhNGmFLNoxMO55G5RLLTIbDXOBOQnCfBKlOt
-         sbYBsRhITJfLiToRsylt+L4Ydl9zMOXJTLt+MGvTuIomT7iOSvTD/Ure6DHh4ZPfhYSX
-         0FHw7As/O8GCa3rO2AIyk0l9uoWzXFX0030MiUEOcKjC5ghEo8cSftcHXIzA9RAAmNWX
-         1HDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727802125; x=1728406925;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5bV3UhRWZD4cI+GXzuTGXGMA1zPWWKRAb8b1c9r2ox4=;
-        b=gFAUEGpelz8v4q7mWTMvzL3KKG1SN9UTTSfl+0ypZ9Hm37hPATWHvcvfUsHy7oTC36
-         sGfYXFE1uWiDnolDefeV9+5GzYuEo6TmvMDcayPFnKCz4KD2dW7/W8pwJlhdTjXGlNkC
-         8vrbfQU30ShjgluNOjEGVGZQv6BQHAV1pZA23ca0NbTK4LlZ02Cl//IjBBzQTyiRUCe0
-         n+ov1KqR6XakCTjCz7ctbsM8EVuPgEJl5ancSB+qWoOzxhGICwzVx7T6gvCkfTQZeKh1
-         o7WCbJSJjvFaCu6nEeVdMWQrKQ78q1BZ3PjK2uh9zdT80tVjTTFAU+IMya7ehPyBG0dM
-         RbSw==
-X-Gm-Message-State: AOJu0YzPCYEMweTNHYZHDio/Ud+vTeq+8d4eDhsxcbCxHADevtyZbkqX
-	UdT5z/UClNjTKICH8AomOvrZyGbwiQJ1PkzfPmQsPLiESut1EzhIZzOCm1KU3cNVAuaem3/Mmhf
-	ivKvN93KfREC0xEOnnX1Q8iQncWLePRkJgj7F
-X-Google-Smtp-Source: AGHT+IH8ThQ51HBLCX/kr6qw8fgHXecD6CswhF1p1ZtPySqavrPgiaXJQWg177FX8jIJod+dIFiSBY0G6QeGBiyidDU=
-X-Received: by 2002:a17:907:98c:b0:a93:d181:b7fc with SMTP id
- a640c23a62f3a-a98f836eeaamr21140766b.51.1727802124770; Tue, 01 Oct 2024
- 10:02:04 -0700 (PDT)
+	s=arc-20240116; t=1727802100; c=relaxed/simple;
+	bh=teSRd6Ope2DM1P70Vhor8hV4zEZunc3MBpZztCPf6/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SZ4UE6QEZsm/Uqjkf+tD/HbyG1TZJkMfsglKSxG+8IAjl9Uwnl+rilSGdpmTuzQYmLX6j+J5r9BzUMH0VKTzqxn+o6MwQ6fGBCSK6mN5ojgvNNcuwjKnJk0O4uLG50szPtrJ6oGPH2YZ6EFLgm8EFlgqkeQf8ZH24Ln5THxv9uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eSPifnfK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3552C4CEC7;
+	Tue,  1 Oct 2024 17:01:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1727802100;
+	bh=teSRd6Ope2DM1P70Vhor8hV4zEZunc3MBpZztCPf6/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eSPifnfKeiEM9VuZQsBfEGNVmWslyQGIsKySPeluxkX7A6zJ6oGrmibGVLIEhr9I8
+	 t2NQRTLMU5WIZHlXADkAm8RL3Q4oZIh8Xd8Ik/qa45wTO6NMZMliujIAJ5HaCv2Hhb
+	 qdQssS4RdQgTS+C57bSoHnQ2cVCvaDpCjNez3MeM=
+Date: Tue, 1 Oct 2024 19:01:32 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, aliceryhl@google.com, mcgrof@kernel.org,
+	russ.weight@linux.dev, dakr@redhat.com, a.hindborg@kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: device: change the from_raw() function
+Message-ID: <2024100150-panther-human-0a46@gregkh>
+References: <20241001164355.104918-1-trintaeoitogc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com>
- <20240930221221.6981-7-kanchana.p.sridhar@intel.com> <CAJD7tkZh6ufHQef5HjXf_F5b5LC1EATexgseD=4WvrO+a6Ni6w@mail.gmail.com>
- <SJ0PR11MB567830D47190C55F14CE75AAC9772@SJ0PR11MB5678.namprd11.prod.outlook.com>
- <CAJD7tkYF+Q2+f-=OK64C1dUqbnMVLLmWU1RDVrfJ9+rjBgqEbg@mail.gmail.com> <SJ0PR11MB567885FD8899DA83FB95DE61C9772@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB567885FD8899DA83FB95DE61C9772@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 1 Oct 2024 10:01:26 -0700
-Message-ID: <CAJD7tkZk=9Su3vtdFcghD0R+GqSchn5b1L91SgTvxcX79rmdOA@mail.gmail.com>
-Subject: Re: [PATCH v9 6/7] mm: zswap: Support large folios in zswap_store().
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "shakeel.butt@linux.dev" <shakeel.butt@linux.dev>, 
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	"21cnbao@gmail.com" <21cnbao@gmail.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"willy@infradead.org" <willy@infradead.org>, "Zou, Nanhai" <nanhai.zou@intel.com>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001164355.104918-1-trintaeoitogc@gmail.com>
 
-On Tue, Oct 1, 2024 at 9:58=E2=80=AFAM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
->
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Monday, September 30, 2024 11:00 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; shakeel.butt@linux.dev; ryan.roberts@arm.com;
-> > Huang, Ying <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-
-> > foundation.org; willy@infradead.org; Zou, Nanhai <nanhai.zou@intel.com>=
-;
-> > Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal, Vinodh
-> > <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v9 6/7] mm: zswap: Support large folios in zswap_st=
-ore().
-> >
-> > [..]
-> > > > >  store_failed:
-> > > > >         zpool_free(entry->pool->zpool, entry->handle);
-> > > > > -put_pool:
-> > > > > -       zswap_pool_put(entry->pool);
-> > > > > -freepage:
-> > > > > +put_pool_objcg:
-> > > > > +       zswap_pool_put(pool);
-> > > > > +       obj_cgroup_put(objcg);
-> > > >
-> > > > I think if we reorder the function we can drop these calls, make th=
-e
-> > > > comments positioned a bit better, and centralize the entry
-> > > > initializations. I am also not a fan of passing a semi-initialized
-> > > > entry to zswap_compress() to get the pool pointer.
-> > > >
-> > > > Does the following diff improve things or did I miss something?
-> > >
-> > > We shouldn=E2=80=99t be adding the entry to the xarray before initial=
-izing its pool
-> > > and objcg, right? Please let me know if I am misunderstanding what yo=
-u're
-> > > proposing in the diff.
-> >
-> > It should be safe. We already initialize entry->lru after we insert
-> > the entry in the tree. See the comment above the call to
-> > zswap_lru_add(). Basically we are protected against concurrent
-> > stores/loads through the folio lock, and are protected against
-> > writeback because the entry is not on the LRU yet.
->
-> Thanks for the clarification, Yosry. Since this is a change in the entry
-> initialization wrt the mainline, is it Ok if this is done in a follow-up =
-patch?
+On Tue, Oct 01, 2024 at 01:43:38PM -0300, Guilherme Giacomo Simoes wrote:
+> The function Device::from_raw() increments a refcount by a call to
+> bindings::get_device(ptr). This can be confused because usually
+> from_raw() functions don't increment a refcount.
+> Hence, rename Device::from_raw() to avoid confuion with other "from_raw"
+> semantics.
+> 
+> The new name of function should be "get_device" to be consistent with
+> the function get_device() already exist in .c files.
+> 
+> This function body also changed, because the `into()` will convert the
+> `&'a Device` into `ARef<Device>` and also call `inc_ref` from the
+> `AlwaysRefCounted` trait implemented for Device.
+> 
+> Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+> ---
+>  rust/kernel/device.rs   | 15 +++------------
+>  rust/kernel/firmware.rs |  2 +-
+>  2 files changed, 4 insertions(+), 13 deletions(-)
+> 
+> diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> index 851018eef885..c8199ee079ef 100644
+> --- a/rust/kernel/device.rs
+> +++ b/rust/kernel/device.rs
+> @@ -51,18 +51,9 @@ impl Device {
+>      ///
+>      /// It must also be ensured that `bindings::device::release` can be called from any thread.
+>      /// While not officially documented, this should be the case for any `struct device`.
+> -    pub unsafe fn from_raw(ptr: *mut bindings::device) -> ARef<Self> {
+> -        // SAFETY: By the safety requirements, ptr is valid.
+> -        // Initially increase the reference count by one to compensate for the final decrement once
+> -        // this newly created `ARef<Device>` instance is dropped.
+> -        unsafe { bindings::get_device(ptr) };
+> -
+> -        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::device`.
+> -        let ptr = ptr.cast::<Self>();
+> -
+> -        // SAFETY: `ptr` is valid by the safety requirements of this function. By the above call to
+> -        // `bindings::get_device` we also own a reference to the underlying `struct device`.
+> -        unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr)) }
+> +    pub unsafe fn get_device(ptr: *mut bindings::device) -> ARef<Self> {
+> +        // SAFETY: By the safety requirements ptr is valid
+> +        unsafe { Self::as_ref(ptr) }.into()
+>      }
+>  
+>      /// Obtain the raw `struct device *`.
+> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> index dee5b4b18aec..13a374a5cdb7 100644
+> --- a/rust/kernel/firmware.rs
+> +++ b/rust/kernel/firmware.rs
+> @@ -44,7 +44,7 @@ fn request_nowarn() -> Self {
+>  ///
+>  /// # fn no_run() -> Result<(), Error> {
+>  /// # // SAFETY: *NOT* safe, just for the example to get an `ARef<Device>` instance
+> -/// # let dev = unsafe { Device::from_raw(core::ptr::null_mut()) };
+> +/// # let dev = unsafe { Device::get_device(core::ptr::null_mut()) };
+>  ///
+>  /// let fw = Firmware::request(c_str!("path/to/firmware.bin"), &dev)?;
+>  /// let blob = fw.data();
+> -- 
+> 
+> differences from v1:
+> - this version don't have 0/1 patch anymore.
+> - this version contains a refactor get_device() function
+> 
+> The motivation from this change was will discussion in:
+> https://rust-for-linux.zulipchat.com/#narrow/stream/291566-Library/topic/Inconsistency.20of.20.60from_raw.60.2E
+> 
+> I would like to thanks for Greg <gregkh@linuxfoundation.org>, Danilo
+> <dakr@kernel.org> and Alice <aliceryhl@google.com> for help me with this
+> patch.
 
-Sure. We can discuss it separately. Do you want me to send a patch or
-do you intend to?
+This information goes below the _first_ --- line, not down here at the
+bottom of the patch.  The documentation should explain all of this, you
+did read that, right?  :)
+
+v3 please?
+
+thanks,
+
+greg k-h
 
