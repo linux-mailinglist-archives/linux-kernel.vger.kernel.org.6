@@ -1,106 +1,106 @@
-Return-Path: <linux-kernel+bounces-345914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B544298BCD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D55798BCDC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59531C236A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65E51C2365D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7D01C330B;
-	Tue,  1 Oct 2024 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ntJCOUuK"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1528E1C1758;
+	Tue,  1 Oct 2024 12:54:16 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9C719D88D;
-	Tue,  1 Oct 2024 12:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239C81A0733;
+	Tue,  1 Oct 2024 12:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787234; cv=none; b=N6xVzAm8DmmhzwTPdjyJGV/C61stmSY0Aa4AWy8TK9fVqConscwGF5V6FojrOcnG4Wi+G0wprLxgUtyeDQrrA+I+h0v/7Gww+8GKxnjwBzrDKeMiqr/p9QrhOqFYlCbpqtyakJexmNFlEhJ0pOWBE1BhZjDMUEIiQ9HfF9V8rzQ=
+	t=1727787255; cv=none; b=bKylHrmJBxwn7VNcAsffLPzxG09a1TdVLMzZvWail7weYJQdPKACEAek7XKDNw+lyfiN6sl9rTmIha8t1L9TaCRmRVtC/LkKyvdMWUd1iDlxE39FDzNgQ1PRY6xq+8TL/f8z4tCv+sTg650oH8fmDgIuVRUrkIf1UIWKGgNhogs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787234; c=relaxed/simple;
-	bh=wVmIzLHrlB9vbqZZ4IHk4yXT9OkBR1Nuo7JXvIjOmAQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fZiYatGgHUFBgktib31jQFARudtbm4DgqL7jyDS0YUqpF5U2jKm9Hh5l2mmp4o4cRYeWO4wQYHxBC2zGTMVNCpJOmLA5LZ+CCBqmipClU3nKIZWdA3d5VuOOnrhTIRwyWgsBmi3JGpIHDkSLn9FkK/nbrtSLh+7cCD2S+BxqM6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ntJCOUuK; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=wVmIzLHrlB9vbqZZ4IHk4yXT9OkBR1Nuo7JXvIjOmAQ=;
-	t=1727787232; x=1728996832; b=ntJCOUuK3sDdtk53DJ4WarNW5pHlX5uKG+pdjf+EajFeF9I
-	u2W/S4tYfNcwDYrV5sd5BTB9Y1CswC/V4PTq2aChKbJZGgoqVHvsdfzj453Ri7vD5zXsDSy5DBP2h
-	Mb432pJleTOxhScrcvMc6sXwq+oqbsw3VdOBtO0o7aLA82FDip44DrHAoTJukCGRJP873el8drwB1
-	292xlW/jyd66G2/xq7piPEXnPYv3h2/HnLreNuez8SUuY8JPke2Q5W/9lCcJz08QXJ+uDEcNzQCwA
-	BkgIfWdJdaC4BC3/GTRjBcxuDWKNSvPMV/D1Y9ZHOXqiB5cRS0hweGU0kf6M6TUw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1svcNg-0000000Elbd-23z1;
-	Tue, 01 Oct 2024 14:53:32 +0200
-Message-ID: <168acf1cc03e2a7f4a918210ab2a05ee845ce247.camel@sipsolutions.net>
-Subject: Re: [PATCH v7 09/10] um: Add dummy implementation for IO
- memcpy/memset
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>, 
- Russell King <linux@armlinux.org.uk>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,  Guo Ren
- <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>,  Andrew Morton <akpm@linux-foundation.org>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Richard Henderson
- <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-  Matt Turner <mattst88@gmail.com>, "James E . J . Bottomley"
- <James.Bottomley@hansenpartnership.com>,  Helge Deller <deller@gmx.de>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,  Richard
- Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, Yann Sionneau
-	 <ysionneau@kalrayinc.com>
-Date: Tue, 01 Oct 2024 14:53:31 +0200
-In-Reply-To: <20240930132321.2785718-10-jvetter@kalrayinc.com>
-References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
-	 <20240930132321.2785718-10-jvetter@kalrayinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1727787255; c=relaxed/simple;
+	bh=ZXXbUqt1MI3dgRFUEtXUCu3+/KWfXxEGNPo9YGuAnkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IP0V7vtINaEm6ubsAFd2/NwBhDLhSN5lK/PNYh/OeRVYp6//2e6ps5kZ4UwxWdF95qkFNvNfBA2RoO6/xcb+2RuSNqf4Jz8Roh4AcXDAtG6r9G6fmfmD/x2j7k9NfMJy86onqNHOUVC5bH2GTqVyJNj8Gj0WMTQyUl58rlm9FYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 2I/ocrZrQIK7HrCml6Ve/g==
+X-CSE-MsgGUID: rNXRqZxwTrCP2K/c2jzIsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27058876"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="27058876"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 05:54:14 -0700
+X-CSE-ConnectionGUID: 4R8C4JUETC+XwIOofpirMw==
+X-CSE-MsgGUID: f5DcL2aTTcS+80fNN6H4xA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="73905649"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 05:54:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1svcOD-0000000FCEh-1PCQ;
+	Tue, 01 Oct 2024 15:54:05 +0300
+Date: Tue, 1 Oct 2024 15:54:05 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
+	"Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
+Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
+Message-ID: <Zvvw7ah4wGsl2vjw@smile.fi.intel.com>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+ <20240923101206.3753-7-antoniu.miclaus@analog.com>
+ <20240928184722.314b329b@jic23-huawei>
+ <CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 2024-09-30 at 15:23 +0200, Julian Vetter wrote:
-> The um arch is the only architecture that sets the config 'NO_IOMEM',
-> yet drivers that use IO memory can be selected. In order to make these
-> drivers happy we add a dummy implementation for memcpy_{from,to}io and
-> memset_io functions.
+On Tue, Oct 01, 2024 at 11:53:18AM +0000, Miclaus, Antoniu wrote:
 
-Maybe I'm just not understanding this series, but how does this work
-with lib/logic_iomem.c?
+> Regarding the bulk writes/reads, the msb/mid/lsb registers need to be
+> read/write in a specific order and the addresses are not incremental,
 
-You're adding these inlines unconditionally, so if this included
-logic_io.h, you should get symbol conflicts?
+We have _noinc() variants of regmap accessors.
 
-Also not sure these functions should/need to do anything at all, there's
-no IO memory on ARCH=3Dum in case of not having logic_io.h. Maybe even
-BUG_ON() or something? It can't be reachable (under correct drivers)
-since ioremap() always returns NULL (without logic_iomem).
+> so I am not sure how the bulk functions fit. On this matter, we will need
+> unsigned int (not u8) to store the values read via regmap_read, and in this
+> case we will need extra casts and assignments to use get_unaligned.
 
-I think Arnd also said that other architectures might want to use
-logic_iomem, though I don't see any now.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-johannes
+
 
