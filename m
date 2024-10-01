@@ -1,204 +1,129 @@
-Return-Path: <linux-kernel+bounces-346595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9894D98C678
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEE398C687
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5491F25269
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C9A1F2512F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ABF1CDFD7;
-	Tue,  1 Oct 2024 20:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9021A1CEAB4;
+	Tue,  1 Oct 2024 20:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sPrrp6Oe"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHCaeVgY"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC381CBE98;
-	Tue,  1 Oct 2024 20:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232821CDFBE;
+	Tue,  1 Oct 2024 20:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813256; cv=none; b=f7KvBADwjzXNBIfuWmlF/VjDOhOtX4WDY3lVeIWHLzClvYakDcad7qk0uS128hLUP1pKphVvhnsaQPdRg4/6AiYmOVXFBq95YJIzci1ZfA2p0NhQ7ef9RJA9DteXzE6VnHoyOWLO6aWbk6EXNm5HomWWo24mag2DvPBsC/Svhko=
+	t=1727813440; cv=none; b=aGq5C/dFeAoZl65G/aDgZzcLKSNryIA1aB51NN4MQbiaTq/sMnYDWmnN70YZa/wGOpTo6LeEAxlrbzHWiHqV9ock2zVCqbOuaWuy+VZ7b6/BwOMH8VHDs9JKP2bWUO1uuGFQAlZNfaCCWYxjLj0bC7dPVQcdyqDussWVSl5mazA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813256; c=relaxed/simple;
-	bh=RwlNbHbEggXjoUOJqdOh2JuBuCr/584bhOnSF2T317M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4uBInIRA/FieUxM8iPWrMA/luD5upfq8djkjGt17HYAX1chZvzK0koM2hkjlxp9bngfDUvTOb9mY95PPGXWPqkOyudxpSn/hHyhgUIPMQrJP109Gnlaan4YZyh9hPodMHkLLFL485qzAtdAoCr95zAQ+sHo4a+nE1KzR2zJfYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sPrrp6Oe; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=aaXdue1ZA7Ch185TFMrVveuH4KfcXYm2oKa4uAKPZV8=; b=sPrrp6OefCaCsCtsBGAyER+oCN
-	MZLPVM8LiVivw5EbzY7Dbeeq/mtCncrngNoyVL5tPMxNK+gtziwzvn8QziwgRxkVczo7xHN+8Y4W0
-	of1WUoiliHl9FvPJz6lvxYvqcX5TFGEM9RE3hDfQ14le9sZGtwhV/lNGZmEa8+v5kj+A=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1svj9U-008lmx-Qm; Tue, 01 Oct 2024 22:07:20 +0200
-Date: Tue, 1 Oct 2024 22:07:20 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Serge Semin <fancer.lancer@gmail.com>, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT] of: property: fw_devlink: Add support for the
- "phy-handle" binding
-Message-ID: <5bded0f6-a49b-4606-b990-dc5aad360bf8@lunn.ch>
-References: <20240930-phy-handle-fw-devlink-v1-1-4ea46acfcc12@redhat.com>
- <CAGETcx-z+Evd95QzhPePOf3=fZ7QUpWC2spA=q_ASyAfVHJD1A@mail.gmail.com>
- <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
+	s=arc-20240116; t=1727813440; c=relaxed/simple;
+	bh=kYoy/bMd8xJK/HDyrM7sBCBrw1B9vPKyP8cEGp8fmI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qcwF0yDNSQXjQ+egASUJ3uUg25x+X+54MoTjOAi+C/KHSNM/fzqzCmptpgtPSgeq8nDnWV6xlJFxrlupVTFnjbh2i7TJAUvHiUtL3vh6TYjt1cazAQHwrUGds2lWtmqLnkg6q3J2K1YsHEjCNBUwT/2eimt+osUKhbTFcaFcj0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHCaeVgY; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71797e61d43so284454b3a.2;
+        Tue, 01 Oct 2024 13:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727813437; x=1728418237; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kGVulOrDpVkAQcbZN4VP65YN6nxFMIm3dGc0Up0BqtM=;
+        b=iHCaeVgYQupMJxnHh7ug9MM7h2J35MOWc9ET6SJ9vwhiolDET0SIwjM1mtL8j7dhBQ
+         AUJOM4HQqpwY4Oxlms52s7s8AFaLAcIKxME25jK1wZAs6WT2+sodWut2vhLGzymYPe4/
+         lg5dPGwlqENAhHiJFoBq0MJjVJzv6TrYu6YiQQNHBEpZDAWiEko/La7bjnNkBgQ8ZpNZ
+         U7I+w+c/K3gTKdawsZ22/cV8JoB8lQyrTS/JhQ72y/r9Zfhv2PY8BW5oAd6tR8blW8NH
+         durErRYC1i/tZLOMT8Dq6aQT1+vnfl8dlpecAaxGIXyuVHx3GApIiLS9/Y5Ghg/7IwFk
+         NQxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727813437; x=1728418237;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kGVulOrDpVkAQcbZN4VP65YN6nxFMIm3dGc0Up0BqtM=;
+        b=PYnRsSQjBkpNy9gEWSsA4ElGlLjsHO/1dFQyxagHYF/i9hiQuL5UMGDykLHpXZc9YU
+         KXKUbxfj3G5adNWBN7UW0w7Nsd11qMpFVhSK0qxyMG6TJZbaTMEdYYiubdGkTYStjiRP
+         +Q93cMhQ/tqR2JEqN3xafFZJrkubapRDDcSCYkXf9Sxbi6OtyINSuwfV/zVhCKfp4oAh
+         RBE/I/pWKK+ptOwNN3I6vPbsJhqC9+DEmUY3FhU5ggm4lc5iCDWwgpMQjw0i5BZdITbD
+         g5Ccxj49Al5BJxB1mOwnqExRAsDkT/852V5pVWMjsidFxf8ZFE3bI4dLdA/oPEtSh4S3
+         KYIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX3/ELl1qS/RSuJP29MTykJDKZuTNxCFglkHi3lUeLBrfwg3SWkYiD7K6LLUnm7KnD0Fdlpc+8F+d6hk98@vger.kernel.org, AJvYcCUXASWaQ/ez2w7FVM/IFNDwntvnzAqU9wo6GfSeXF06nkx3LDYUrj7pE5CKlC+9PRz2k6t3hs6ZRrk=@vger.kernel.org, AJvYcCXGuwyHOJ9HSFHT53OPTyrkDwXXd9E5SaeqsIxXtJpOHsLn2936QzB/B5GToSi+mmhRKCOBeV8uoDSXzee+lDw=@vger.kernel.org, AJvYcCXvBk8wVFmht94svDNQvZc0BfNNM1dHF1yQgY8eGpMpVRJbAMSW+9QTtud6cJqP45AVkvJkYQZnuaoP@vger.kernel.org
+X-Gm-Message-State: AOJu0YySda31UVHswO+LZasiAJFn79SYt8EsxQ+RbgBSMqs+k3P4ev0J
+	1yYQZtC2Et5jq66KK7u2nN/yltgsTF7CRxCUbtp7fOdn95vNTAeVVbsqSBEur4YUB8LzEP7AmRr
+	ZZmr/d4AT+3c7SbRxaGApTMEWiSo=
+X-Google-Smtp-Source: AGHT+IHe4cKDdHANdRNDm2TbpCihzt1NUCN01E7a+72PsxqWx9wAfuXjuHQOo7cfvTqVtYQhjg9c3FrJ6b7M6dZiStE=
+X-Received: by 2002:a05:6a20:7483:b0:1cf:4dc7:e4fc with SMTP id
+ adf61e73a8af0-1d5db121f1amr761477637.2.1727813437289; Tue, 01 Oct 2024
+ 13:10:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
+References: <20240922160411.274949-1-carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <20240922160411.274949-1-carlos.bilbao.osdev@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 1 Oct 2024 22:10:24 +0200
+Message-ID: <CANiq72=MnCfj_y_dSPZ4Mwyxq1WnuPmw-FQ0H8THLS6kZ8fNOA@mail.gmail.com>
+Subject: Re: [PATCH v3] kernel-docs: Add new section for Rust learning materials
+To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Cc: corbet@lwn.net, ojeda@kernel.org, dirk.behme@de.bosch.com, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, aliceryhl@google.com, 
+	workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, bilbao@vt.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Let me see if I can hack something up on this board (which has a decent
-> dependency tree for testing this stuff) to use the generic phy driver
-> instead of the marvell one that it needs and see how that goes. It won't
-> *actually* work from a phy perspective, but it will at least test out
-> the driver core bits here I think.
-> 
-> > 
-> > But like you said, it's been a while and fw_devlink has improved since
-> > then (I think). So please go ahead and give this a shot. If you can
-> > help fix any issues this highlights, I'd really appreciate it and I'd
-> > be happy to guide you through what I think needs to happen. But I
-> > don't think I have the time to fix it myself.
-> 
-> Sure, I tend to agree. Let me check the generic phy driver path for any
-> issues and if that test seems to go okay I too am of the opinion that
-> without any solid reasoning against this we enable it and battle through
-> (revert and fix after the fact if necessary) any newly identified issues
-> that prevent phy-handle and fw_devlink have with each other.
+On Sun, Sep 22, 2024 at 6:04=E2=80=AFPM Carlos Bilbao
+<carlos.bilbao.osdev@gmail.com> wrote:
+>
+> +   * Title: **Experiment: Improving the Rust Book**
+> +
+> +      :Author: Cognitive Engineering Lab at Brown University
+> +      :URL: https://rust-book.cs.brown.edu/
+> +      :Date: Accessed Sep 22 2024
+> +      :Keywords: rust, blog.
+> +      :Description: From the website: "The goal of this experiment is to
+> +        evaluate and improve the content of the Rust Book to help people
+> +        learn Rust more effectively.".
 
-Here is one for you to look at:
+Perhaps this could go closer to the Rust book entry since it is a variant o=
+f it.
 
-https://elixir.bootlin.com/linux/v6.11.1/source/drivers/net/ethernet/freescale/fec_main.c#L2481
+Or are these sorted in a particular way?
 
-I don't know if there is a real issue here, but if the order of the
-probe gets swapped, i think the usage of mii_cnt will break.
+> +   * Title: **Opsem-team** (repository)
+> +
+> +      :Author: Operational semantics team
+> +      :URL: https://github.com/rust-lang/opsem-team/tree/main
 
-I don't remember what broke last time, and i'm currently too lazy to
-go look. But maybe take a look at devices like this:
+Nit: I think you can remove the `/tree/main` part of the URL to simplify.
 
-arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts
+> +      :Date: Accessed Sep 22 2024
 
-       mdio-mux {
-                compatible = "mdio-mux-gpio";
-                pinctrl-0 = <&pinctrl_mdio_mux>;
-                pinctrl-names = "default";
-                gpios = <&gpio0 8  GPIO_ACTIVE_HIGH
-                         &gpio0 9  GPIO_ACTIVE_HIGH
-                         &gpio0 24 GPIO_ACTIVE_HIGH
-                         &gpio0 25 GPIO_ACTIVE_HIGH>;
-                mdio-parent-bus = <&mdio1>;
-                #address-cells = <1>;
-                #size-cells = <0>;
+Since these are repositories, and elsewhere you say "rolling version",
+should that one have a concrete date, or should some of these ones
+have a rolling date too?
 
-                mdio_mux_1: mdio@1 {
-                        reg = <1>;
-                        #address-cells = <1>;
-                        #size-cells = <0>;
+One more that I remembered and that we could have here if we have
+other videos/podcasts/... is Crust of Rust (and probably the book from
+the same author).
 
-                        switch0: switch@0 {
-                                compatible = "marvell,mv88e6085";
-                                pinctrl-0 = <&pinctrl_gpio_switch0>;
-                                pinctrl-names = "default";
-                                reg = <0>;
-                                dsa,member = <0 0>;
-                                interrupt-parent = <&gpio0>;
-                                interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-                                interrupt-controller;
-                                #interrupt-cells = <2>;
-                                eeprom-length = <512>;
+In any case, I think it looks good, thanks!
 
-                                ports {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
-                                        port@0 {
-                                                reg = <0>;
-                                                label = "lan0";
-                                                phy-handle = <&switch0phy0>;
-                                        };
-
-                                        port@1 {
-                                                reg = <1>;
-                                                label = "lan1";
-                                                phy-handle = <&switch0phy1>;
-                                        };
-
-                                        port@2 {
-                                                reg = <2>;
-                                                label = "lan2";
-                                                phy-handle = <&switch0phy2>;
-                                        };
-
-                                        switch0port5: port@5 {
-                                                reg = <5>;
-                                                label = "dsa";
-                                                phy-mode = "rgmii-txid";
-                                                link = <&switch1port6
-                                                        &switch2port9>;
-                                                fixed-link {
-                                                        speed = <1000>;
-                                                        full-duplex;
-                                                };
-                                        };
-
-                                        port@6 {
-                                                reg = <6>;
-                                                phy-mode = "rmii";
-                                                ethernet = <&fec1>;
-
-                                                fixed-link {
-                                                        speed = <100>;
-                                                        full-duplex;
-                                                };
-                                        };
-                                };
-                                mdio {
-                                        #address-cells = <1>;
-                                        #size-cells = <0>;
-                                        switch0phy0: switch0phy0@0 {
-                                                reg = <0>;
-                                                interrupt-parent = <&switch0>;
-                                                interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-                                        };
-                                        switch0phy1: switch1phy0@1 {
-                                                reg = <1>;
-                                                interrupt-parent = <&switch0>;
-                                                interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-                                        };
-                                        switch0phy2: switch1phy0@2 {
-                                                reg = <2>;
-                                                interrupt-parent = <&switch0>;
-                                                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-                                        };
-                                };
-                        };
-                };
-
-
-This would be an example of circular dependencies, with the interrupt
-properties closing the loop.
-
-switch -> mdio -> phy
- ^                |
- |----------------+
-
-	Andrew
+Cheers,
+Miguel
 
