@@ -1,185 +1,139 @@
-Return-Path: <linux-kernel+bounces-345818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A70998BB79
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB4298BB7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC661C23659
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD8F1C236C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACDC1C1725;
-	Tue,  1 Oct 2024 11:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FDE1BFE07;
+	Tue,  1 Oct 2024 11:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SY4DzbBC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvYI6DVn"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24011BF804
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CCA3209
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783074; cv=none; b=lGf4c/HoMz8GMuNt22NPeggVgWeROysPKnoeDVrwdhb4GONVJSoQv4Mc4k76CfGo3GHUvDuCm/4mh2pYSECP/ItBgUudjUKayIdzFAu0h2iPgONaP3y42C740jX1mhr2ClRTmArjFJFHWX4N8ueOMe4nOJ3P7WFJdYQH0F4d9Kc=
+	t=1727783184; cv=none; b=Wox0e9kQ2mehD3CWL0iWxRa5aMKHbcmR5fNHX0j5UNUEesMhOFj5djn56e7MGtHfYSt3VJW8reiP7YwAIQ+g6wZHgMtt/aqFBc8RdaxibGa+y5tgydgsi2jBJgdRsjs9BzTHU/4lUu+USnkn1xiHxxcS35uX4iu9Db+IIt1JdTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783074; c=relaxed/simple;
-	bh=UfCZ5OSllqSeXGlaYqhvmmSzhNtxhix8wAxk4b0oSdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M9EvKVZ3JKAc88bRNu/7LE4Te2ql6l0WqmOy57mlMrWgcLaWmv58fPLLfuPVnJ/+xjyD4nULj519qKnSEttBWweonY+lbwNEJY6Wo3yIm6TzuGOml8L+D0eM+0vGuPmegvKWG9UDeWApEFotALwaWeCIrW4P8WoBYMKq+CxVOls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SY4DzbBC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42ca5447142so7447005e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:44:30 -0700 (PDT)
+	s=arc-20240116; t=1727783184; c=relaxed/simple;
+	bh=6XAJetPE5odAFJnlpEz8QN5/rOna8OaSwBnmgM6gRJk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kn6ar3UyzwMDq3xI1XkJBbvtrW74O9KV4LBYgd0DCXFe7129Z933XVbhQTHiuZ/3lSgJjUxZF8JUeto2ntJoX4lV+kbq7/HZfkoqzNqfQivth5oGBzV1fCH/hdt5uOSSz4As0fTpu3yL5dr7zOTRqlDttGaeqQoVFPmQw1CSa+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HvYI6DVn; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42cbbb1727eso47982205e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:46:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727783069; x=1728387869; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=u0xt74XDtLYLrzwMux2kzWqyPPKPQra8xynuSJjZWCI=;
-        b=SY4DzbBCW8JE3dzrcEMqZP9Y+o0QKwbxZkgpCpzZVnRo8gGE/v6a1iyUgISuLoCZ6v
-         mVZLdVQR8N3lA13jlgak1JGXZs++fQsJmcKQC9Zo6wP2kptjspVUlHTIKxKr/4CYYrSB
-         3o26IsMp3BOVwTf0C5QfqlOidM2oxpfBk65X67/p+bqCeYx/youfj2bsiLnit/8QCQyH
-         d01VcUnggT8dcJqbA4VerWoARm2yFSHss3C1HUMj/CMvLKO3qDzPHaZq9OuI+8O1kbN5
-         HRa+kUsYsKRFQh+ahKewCLIpWzP2trWw/vwTyI8QnZojdhvs+2h3EPI2nvF2NW69UK1W
-         GWmQ==
+        d=gmail.com; s=20230601; t=1727783181; x=1728387981; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pp4OoMJE260sGCJG2dLTQy0ixyNPfcVKJzV9b5k6Axw=;
+        b=HvYI6DVnYlI0qSOqyj0LX5DGUDxsE0vx6NuTedsx3vx3iIaAjaQmTC3hIF/HBUtz1l
+         PyY5kJTthinWq2k6AfV5l7xeO1Gm11U/lAXVQO5YqGEavJ5xoFJY2v3pOJlPqnNs7dzX
+         jykBX3CqEjug5m0valuviA2TwcyAJhsgdwRObtlCb39ONAV0BJoiD9VprASuPoiuUzVT
+         FoKFZaS5Tszos3UmpYNThkLNw1/WBSQPWjQD6N5jIH/9Ys038lGJL79ROMrwhUNRh4ap
+         Wo1th6xiAtkxOHPuUWrcPvx4AdHPEi7Lusj4+bXAyYX5kD2cE/YTrMFOm4adLTUhgOlA
+         oTnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727783069; x=1728387869;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1727783181; x=1728387981;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=u0xt74XDtLYLrzwMux2kzWqyPPKPQra8xynuSJjZWCI=;
-        b=m1oWLiiv1DWW2gGNyVKn0mVvmIKJ7TsLQZrEBRWfZ3DvPmPjQDKGoBIIgmoUvMdGIK
-         QxDvyRbROeDr0jMuqRX5+BOWuA5wgfkqHjLSVV5lbh6ePbe2hN+kG6CnQ+xJYPjre5yr
-         T6qtJtvVFmcsMaDiVnN1He+sFewkVg8XAI6aZYa4ibYham88TOHS4SZbB/gm7g3pk+LN
-         Dp7+mr/jgtTDO24XA14UpCuKsM6ydm85yo39icoPclSIlelNJbWzqgApmdcENJDXfU31
-         CVjy+WnIa5euF+qVvRJYORShxHR70VM+Ztzp2rvqZZpTt8twU7bNO4jVSdOOOE475HPb
-         ozPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXc2q0B4I0XU6Cj0YbJC/Guzme59ta+eCQjHik0Ca1JEnouB0CB+RPSMZxZYYfvoBPGNSJQFuKevGeftAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXrIp+wpe/MHngKxqfWC+dbdq2PUxxiloB9uGCRtmVSzxtIBiY
-	1Y2EfrXhNyIre+Axc7dqV3F81yOvFq21jTwyNmJghL6g/Wb0OYby/wrpHwog2/A=
-X-Google-Smtp-Source: AGHT+IHtoLqojStvAJOJ7nyS7a/BdZb7ENOyCHLj5dQfWmE97We1en6aMHdLyrXhGV7uqMLcNZscrg==
-X-Received: by 2002:a05:600c:350f:b0:42c:ba61:d20b with SMTP id 5b1f17b1804b1-42f58416273mr51174925e9.3.1727783068944;
-        Tue, 01 Oct 2024 04:44:28 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd57427fbsm11535366f8f.100.2024.10.01.04.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 04:44:28 -0700 (PDT)
-Message-ID: <e009fba7-7881-433a-9e33-f4c5f9d0fd86@linaro.org>
-Date: Tue, 1 Oct 2024 13:44:26 +0200
+        bh=pp4OoMJE260sGCJG2dLTQy0ixyNPfcVKJzV9b5k6Axw=;
+        b=uU1XVXGbPsGiFyTjrGpQx6j2dsh31I6SCvzQ1QU87ElZgaGme4pdJpJ7wIYY74JJ3C
+         7t2luP33EkIt5QGXOqJcAFzrXVQmBkeWIRT+h/y8WYZHPWFgPy374Rh0rKK8+c4iobeb
+         bYwcjm3vMzBUFGv01sVlGVcKlpHj8FdxVkUBxNmvQW83Bm8XL4+e8J934IR2a9TDKNXO
+         G17SV4ag36ioDQaCv/ug2RoApge1cCwcO7W3Z5ZWnkF/5ZTQrq6CwT5PXIEsuQCDX6Pg
+         PIBE0gmp2KcwcaS91ZhJDbAsLc0LyZEaJptPHUuW8DjC5zwaCM5DXJOZno9r2uqB0Or8
+         yZkA==
+X-Gm-Message-State: AOJu0YzVMXx265Tpk8eAxB/dmMJSuDOc9QhcEjENdKUQz2NJmZmDQCYl
+	3OdUPMhfzWCwlhfFJe09Lsoud0YjKveR8288ybrKi8RYojZqURsypShpTa8OOiE=
+X-Google-Smtp-Source: AGHT+IHOqmNJYykIVf20X3n6aw1kM58lGG52U6As1fH2UOfnsS8qwotzf8UH3vcVaf3p9uEYo1z7kA==
+X-Received: by 2002:a05:600c:a02:b0:42c:c003:edd8 with SMTP id 5b1f17b1804b1-42f5840a6d1mr113363675e9.6.1727783180564;
+        Tue, 01 Oct 2024 04:46:20 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e1394fsm133260455e9.33.2024.10.01.04.46.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 04:46:20 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: [PATCH] locking/osq_lock: Use atomic_try_cmpxchg_release() in osq_unlock()
+Date: Tue,  1 Oct 2024 13:45:57 +0200
+Message-ID: <20241001114606.820277-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sam9x7: Add missing usart-mode
- property
-To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, claudiu.beznea@tuxon.dev,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240930202639.37606-1-jihed.chaibi.dev@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240930202639.37606-1-jihed.chaibi.dev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 30/09/2024 22:26, Jihed Chaibi wrote:
-> Add the atmel,usart-mode property to UART nodes in Microchip SAM9X75
-> boards' device trees (boards which inherit sam9x7.dtsi). This ensures
-> compliance with the atmel at91-usart.yaml schema and resolves errors
-> that occur during DT validation, such as:
+Replace this pattern in osq_unlock():
 
-That's redundant statement.
+    atomic_cmpxchg(*ptr, old, new) == old
 
-> 
-> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: serial@200:
-> serial@200' does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
-> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
-> 
-> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
-> serial@200: atmel,use-dma-rx: False schema does not allow True
-> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
-> 
-> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
-> serial@200: atmel,fifo-size: False schema does not allow 16
-> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
+... with the simpler and faster:
 
-And why is this a property of SoC? Does not look right, at least nothing
-here explains this.
+    atomic_try_cmpxchg(*ptr, &old, new)
 
-Trim the commit msg to relevant logs and statements. You do not have to
-explain everyone what dtbs_check is.
+The x86 CMPXCHG instruction returns success in the ZF flag,
+so this change saves a compare after the CMPXCHG.  The code
+in the fast path of osq_unlock() improves from:
 
-> 
-> 
-> By adding "atmel,usart-mode = <AT91_USART_MODE_SERIAL>" to UART nodes
-> 0 up until 12, these errors are resolved, ensuring proper DTB validation.
+ 11b:	31 c9                	xor    %ecx,%ecx
+ 11d:	8d 50 01             	lea    0x1(%rax),%edx
+ 120:	89 d0                	mov    %edx,%eax
+ 122:	f0 0f b1 0f          	lock cmpxchg %ecx,(%rdi)
+ 126:	39 c2                	cmp    %eax,%edx
+ 128:	75 05                	jne    12f <...>
 
-But in the same time you entirely skipped relevant information: why is
-this a correct fix for the issue.
+to:
 
-> 
-> This issue has been tested on the sam9x75 (sam9x75eb & sam9x75_curiosity)
-> boards, both of which inherit the sam9x7.dtsi file.
-> 
-> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+ 12b:	31 d2                	xor    %edx,%edx
+ 12d:	83 c0 01             	add    $0x1,%eax
+ 130:	f0 0f b1 17          	lock cmpxchg %edx,(%rdi)
+ 134:	75 05                	jne    13b <...>
 
-I think you work on some really old Linux kernel, judging by CC list.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+---
+ kernel/locking/osq_lock.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Please rebase on latest next or mainline kernel.
-
-Best regards,
-Krzysztof
+diff --git a/kernel/locking/osq_lock.c b/kernel/locking/osq_lock.c
+index 75a6f6133866..b4233dc2c2b0 100644
+--- a/kernel/locking/osq_lock.c
++++ b/kernel/locking/osq_lock.c
+@@ -215,8 +215,7 @@ void osq_unlock(struct optimistic_spin_queue *lock)
+ 	/*
+ 	 * Fast path for the uncontended case.
+ 	 */
+-	if (likely(atomic_cmpxchg_release(&lock->tail, curr,
+-					  OSQ_UNLOCKED_VAL) == curr))
++	if (atomic_try_cmpxchg_release(&lock->tail, &curr, OSQ_UNLOCKED_VAL))
+ 		return;
+ 
+ 	/*
+-- 
+2.46.2
 
 
