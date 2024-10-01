@@ -1,307 +1,149 @@
-Return-Path: <linux-kernel+bounces-346483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC3B98C536
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:18:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 488D798C539
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B9611C21051
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:18:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26C92845A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743051CCB25;
-	Tue,  1 Oct 2024 18:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577401CCB3B;
+	Tue,  1 Oct 2024 18:18:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OkVE05Xy"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiQE001l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFB81CC8B0;
-	Tue,  1 Oct 2024 18:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727806651; cv=fail; b=uVE3SCZ4DEKS+Z2R5u98QaIUvjiS5HrAZMqsz00zGv/aSWsNSsjq0iAV9vznHf0pis9kVC+cfaDwcAN6jheTlK/8QwjOLidAYfC5ElOhDolKg5O1+yXq7b2eUa0LaUlBAvNPVdqUuwIWGYe2ae5XNlW4HarPsb7vnSm9xnPMUFs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727806651; c=relaxed/simple;
-	bh=TpSviuczBvYTXO1QbOn7f8lKit40jMVgUfDE1L3xfpM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tefG2NpxOfkU49B9+/CeqUgq4JNIv5JwimRBpckfUBlABx6RtFUNnFa+vssokh4PmSWNTUaZ/++KIWnsbPEny1nYzZuHrLhTnhXPvKUay+zFtV3Fg+W9XPsGY3mAcooJnv56nZCUJjY84BDDmNApx5S7dm2CS1APGRl0xtMjLzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OkVE05Xy; arc=fail smtp.client-ip=40.107.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e2LjtSWQN/B5VoHu58wkjiR6Tv5SKQUWuJj8r67dGdAuwY3iuKI53T61gkxdxYnYrjXYKj7snBj0zCn41r7LRwl1031QY3C0UcC0jJGRnA4Wf00Ubhkc05XUkw72Ef+me1o+/HJBPOtra1FnQCRCvQjvZFaxRVGqqVsZ/8IZmzgey/2e0o6ZnTyTJAl9IQskpz6RyE1OljsOFcHmNKT8+q9gF58v2gPbCNnG88hQ67rzfASYm+5v0IlZHI2d4PJGWH154Dnb//7DXAPXE5xGkNdL1LgOPLv+ndhIWvLLnAlyeUtbymxaKXE8/IQ47J0eepcQyd1EW0c/ZT/8tB3KdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JHWz9JuWWYaFTmZ6SsL3bOWKUkgVWzmIDtqiFB3p32E=;
- b=gtjgl77+evrR83pQ38pzVD55T7rAHnrFSVFo0OZ5ABCt2ljw8GJobTKqpjh2uL3MxQxIUegQyXqJb7G0fryNayH3WkfOtoTApFEJQfCiRCdFki+HzSDMoPaGf4xJDecb6DeAqVkzpKfJ+UMmMvgGphM/Cy81dWkdw/bQVx33x5vPvP3G66u9fpPLmbZ5Xl39T8rokKgTAtTDFZsgWXvcAteIyYdCyWtxqwQsTepTvyX6VJJ7os8CntSq0+TMevi+/+Tr9/c36qA/pt1DT+0Q0ocfrdxLEKfIew+v3p8bAdGy36wQgYftuQrJJ6dCHfqa2TNUt8jnNmn9EPK3v3DpGQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JHWz9JuWWYaFTmZ6SsL3bOWKUkgVWzmIDtqiFB3p32E=;
- b=OkVE05Xy3Z6aO6fZfit3Og1wGP1ojCuXVMfv2sfNI/aTYrnHghXhVsG388T12jdunx71Oeo7Et675O20TLEQVi8KZ6sJo6PgJYoZsrHTePpGSEHXWFtTjvfm16qGPy1Uq5WkCNGLNQ3KjNrIlnkmd9EEjBSCpZgvJm++0Khf04E=
-Received: from BL1PR13CA0310.namprd13.prod.outlook.com (2603:10b6:208:2c1::15)
- by DS0PR12MB8272.namprd12.prod.outlook.com (2603:10b6:8:fc::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8026.15; Tue, 1 Oct 2024 18:17:23 +0000
-Received: from BN2PEPF000044A7.namprd04.prod.outlook.com
- (2603:10b6:208:2c1:cafe::1b) by BL1PR13CA0310.outlook.office365.com
- (2603:10b6:208:2c1::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15 via Frontend
- Transport; Tue, 1 Oct 2024 18:17:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000044A7.mail.protection.outlook.com (10.167.243.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8026.11 via Frontend Transport; Tue, 1 Oct 2024 18:17:22 +0000
-Received: from titanite-d354host.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 13:17:21 -0500
-From: Avadhut Naik <avadhut.naik@amd.com>
-To: <x86@kernel.org>, <linux-edac@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<rostedt@goodmis.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<james.morse@arm.com>, <airlied@gmail.com>, <yazen.ghannam@amd.com>,
-	<john.allen@amd.com>, <avadnaik@amd.com>
-Subject: [PATCH v5 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
-Date: Tue, 1 Oct 2024 18:12:29 +0000
-Message-ID: <20241001181617.604573-6-avadhut.naik@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241001181617.604573-1-avadhut.naik@amd.com>
-References: <20241001181617.604573-1-avadhut.naik@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F7920DF4;
+	Tue,  1 Oct 2024 18:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727806731; cv=none; b=Vm3i/aAgyuzYFW5sHWdhSrrt0sxffpOAiKN7lZ3RA4BYSki/eheKm4n4u8GMDdCx+qcBik6U/mM5gCvNtAQekh/iEj3a3L63OPK0K5IKA0kgM3imQoobgzPWJPiL3iGAs3OCRQ2/BeRtU7IFrHj6RFU7ZIHkDtmIttaG2zg63ws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727806731; c=relaxed/simple;
+	bh=UsD2Igj0C6+tIYNil8bqOHRhukpeQXoFTqsHjpg19Jg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V5qscf+GWr1WMsp27jky+tyU+y1/VJsDgdoL5FZfAwhKdj0rkaPNJlEq3DVAwgPPweN2rfb8TgDI0tgKUQjIwuh6T5AUZIDnb6rTKAVWWh/fpuwSnDni5PMyRzRYzoSiwb7A1WFQMtT96TpWF98EJzAc8yJnJ3C7TsoqSzaPs18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiQE001l; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727806730; x=1759342730;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UsD2Igj0C6+tIYNil8bqOHRhukpeQXoFTqsHjpg19Jg=;
+  b=OiQE001lD5Gu2phGvFM5fRoRilXVlJQG0HBjRGtZW5getrRN8zPZdHsm
+   44CQlAXlktyaqtPOTCfs94I1ErSBFOmKOjeOrAV8keiEYv2KSkWKP7xkc
+   RiEc1VHiPZRFRmtKJBsngcgJ1ekd1n1vGDfXEiUH37LoYvkhRmTODDVNK
+   APcqqLvCOThHQoVy97OJ/KpBF0xnpAcO3zOob4TB3GwDZl5CcZm9603H0
+   bdpmdfEV/D9KRtubkHBeebrcDNuyxELJzXObp7irmQJHuief/HFTQ1BTH
+   6ofsPozA7GaqlsVt7JRImYAux9Zevsk0Axsk5OIiafFzAQgU22B6AF6sJ
+   Q==;
+X-CSE-ConnectionGUID: 3kUi3tY5SdCS6zg6HEZZsw==
+X-CSE-MsgGUID: otqXaKadRTuyk1ik1/rnWg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="26841325"
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="26841325"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 11:18:49 -0700
+X-CSE-ConnectionGUID: KZGO2+rfTCO8CWeYz9n4mQ==
+X-CSE-MsgGUID: FoHp1YdnTKCKKZMYwZoCCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
+   d="scan'208";a="78724021"
+Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.124.220.47]) ([10.124.220.47])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 11:18:48 -0700
+Message-ID: <086b90a9-7e85-4c38-91d1-e70db2ee8355@intel.com>
+Date: Tue, 1 Oct 2024 11:18:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/27] x86/cea: Export per CPU variable
+ cea_exception_stacks
+To: Xin Li <xin@zytor.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Cc: seanjc@google.com, pbonzini@redhat.com, corbet@lwn.net,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+ peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-7-xin@zytor.com>
+ <93b3d510-f21b-4f89-ae53-0fa50f03a42d@intel.com>
+ <a2b43c7d-659a-46c2-8428-e02e0cd649b6@zytor.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <a2b43c7d-659a-46c2-8428-e02e0cd649b6@zytor.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A7:EE_|DS0PR12MB8272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d8c53e6-e37f-4c73-abff-08dce2454b88
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?DulD4nzlYJJIkqjpEXNE9q7MPKLThUS2lyfZKDfwn2n8g4ZtBDvnl8F2FoAi?=
- =?us-ascii?Q?fO8GHTsHUseOyp4W4CASDnhAheP+GVcdV/Sshr2TJqYIagjxKPH48BJeXMne?=
- =?us-ascii?Q?ILomscT+aPOUrjX4hVQ2TeYF+r2Zqt8CfGJI3UxRwRfcrTOO5AYIGJuW6xKw?=
- =?us-ascii?Q?bDn3BNdEzq4aK5V1xMF45zEn2OtF2b7RxxGe4p8S0ZFhUf94ixQxQ0MG1d5X?=
- =?us-ascii?Q?H833P2idov+LqEIl3XkMmV1bkevXUeULQhgc89MeGGSvKcqQQq2pKJyYZgKy?=
- =?us-ascii?Q?1qJL6xaMVp2rH3MP9Z0KmHp/Hje03mp2t39ionkyYVCdihVE2ftM98QjaRRB?=
- =?us-ascii?Q?AaUZb2ru6gfFFjR4nL81+4WMPGshbpwf0iGAT0PBAVeG+BIQwLjPK32Niihz?=
- =?us-ascii?Q?MjS5tq/O8QOa0zZPkz1texJc5l4r9jH9JcUiltN+pKcRHOs8eobZboqeuB+M?=
- =?us-ascii?Q?VR2FI01iPkq4t/4L1MP6dPJwFdHs3yT+XMHjxLpqiV7iy4s4WAFk6WKaGZtx?=
- =?us-ascii?Q?rTcX2zBJjLTtMVV+V91vRHPrIQ3bBnOl0FTfs35oGzgZFKdu9cWxJPSE5OLU?=
- =?us-ascii?Q?xNSHx3NPgWaNYfTVtYDGsW2fWBUJSyIBCGjJ0rjLe1OB6pyZPVf8d3N/ic0X?=
- =?us-ascii?Q?40pnXfFnNYQI6YZSjZv1g3xfQROC6y+ri+AQfV8FyhUaaDuxgG1QFKQJaOe1?=
- =?us-ascii?Q?wZzasqhFy7imyt3QkaDt0ZWfDwwMGX2InCULSNTdRmpUwU4okLaAbNhDYcsK?=
- =?us-ascii?Q?Gi6HN21eOAdV78+6q8++f7AfJKqRQTQvuRMmp23YoSYaCLtGzN4CICmsfFtf?=
- =?us-ascii?Q?5qOWk0yBrmeSIAWR6iU8Uw0Qag+EfP1ydHbo9yROBlHsG6geis9iaCwCempb?=
- =?us-ascii?Q?6sQSZQ/+47ZzwvmB/SfBb0+9bk2+Fts07pzwQ67YzoFK/KXt2RCYS2fkH0X7?=
- =?us-ascii?Q?nGXh8yww50NzWvn51mRDAYBKOnhowehtohSQvafZl4OKYe66crAOoWkWeP0R?=
- =?us-ascii?Q?nSDPjD5wl49qPquck2QgMCjDpnW7WhY7udgrqbO3JwTxIL5GFwNqr8r8iUAf?=
- =?us-ascii?Q?u7868palrRTGMdUWpzYD9J6U+PnRb9vVLHc7/y9tfgZduiT7gWKIPXtdl/ln?=
- =?us-ascii?Q?8eQibWN0tL068WsFjTBelLQJidjroLPLs94F1vqYvjZvG5RvrDXcdDH/xoyF?=
- =?us-ascii?Q?kS2d6Pfr4lU+dFTFxaPlmhds9RehVh7A0TzL862RRqmz0WjhxkNJ5iS0CYvA?=
- =?us-ascii?Q?Irnyf9MHN8qUzwm4Qytl1KKrqxkzdmQ77sZnBM3jTBd/aomERHWYwSWeci/Q?=
- =?us-ascii?Q?8GldLLbK2D9Z1CSL3UfL6DiIKx+9fznf3otDFHQObfS3gBOXtJ2wieIUrEaj?=
- =?us-ascii?Q?k3AoPb6Vp7l3YWHLeEPZq9nVkvIn?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 18:17:22.6855
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d8c53e6-e37f-4c73-abff-08dce2454b88
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8272
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On 10/1/24 10:51, Xin Li wrote:
+...>> Also, what's the purpose of clearing GUEST_IA32_FRED_RSP[123] at
+>> init_vmcs() time?  I would have thought that those values wouldn't
+>> matter until the VMCS gets loaded at vmx_vcpu_load_vmcs() when they are
+>> overwritten anyway.  Or, I could be just totally misunderstanding how
+>> KVM consumes the VMCS. 🙂
+> 
+> I don't see any misunderstanding.  However we just do what the SDM
+> claims, even it seems that it's not a must *logically*.
+> 
+> FRED spec says:
+> The RESET state of each of the new MSRs is zero. INIT does not change
+> the value of the new MSRs
 
-A new "FRU Text in MCA" feature is defined where the Field Replaceable
-Unit (FRU) Text for a device is represented by a string in the new
-MCA_SYND1 and MCA_SYND2 registers. This feature is supported per MCA
-bank, and it is advertised by the McaFruTextInMca bit (MCA_CONFIG[9]).
+Oh, sorry.  I was misreading the "HOST_" and "GUEST_" MSR prefixes.  I
+thought the same VMCS field was being written at VMCS load *and* init
+time (which it isn't).  Sorry for the noise.
 
-The FRU Text is populated dynamically for each individual error state
-(MCA_STATUS, MCA_ADDR, et al.). This handles the case where an MCA bank
-covers multiple devices, for example, a Unified Memory Controller (UMC)
-bank that manages two DIMMs.
-
-Since MCA_CONFIG[9] is instrumental in decoding FRU Text, it has to be
-exported through the mce_record tracepoint so that userspace tools like
-the rasdaemon can determine if FRU Text has been reported through the
-MCA_SYND1 and MCA_SYND2 registers and output it.
-
-[Yazen: Add Avadhut as co-developer for wrapper changes.]
-
-Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
----
-Changes in v2:
-[1] https://lore.kernel.org/linux-edac/20240521125434.1555845-1-yazen.ghannam@amd.com/
-[2] https://lore.kernel.org/linux-edac/20240523155641.2805411-1-yazen.ghannam@amd.com/
-
-1. Drop dependencies on sets [1] and [2] above and rebase on top of
-tip/master.
-
-Changes in v3:
-1. Modify commit message per feedback provided.
-2. Remove call to memset() for the string frutext. Instead, just ensure
-that it is NULL terminated.
-2. Fix SoB chain to properly reflect the patch path.
-
-Changes in v4:
-1. Rebase on top of tip/master to avoid merge conflicts.
-
-Changes in v5:
-1. No changes except rebasing on top of tip/master.
----
- arch/x86/include/asm/mce.h     |  2 ++
- arch/x86/kernel/cpu/mce/amd.c  |  1 +
- arch/x86/kernel/cpu/mce/apei.c |  2 ++
- arch/x86/kernel/cpu/mce/core.c |  3 +++
- drivers/edac/mce_amd.c         | 21 ++++++++++++++-------
- 5 files changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index a977c10875a0..7d7e673de74e 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -61,6 +61,7 @@
-  *  - TCC bit is present in MCx_STATUS.
-  */
- #define MCI_CONFIG_MCAX		0x1
-+#define MCI_CONFIG_FRUTEXT	BIT_ULL(9)
- #define MCI_IPID_MCATYPE	0xFFFF0000
- #define MCI_IPID_HWID		0xFFF
- 
-@@ -213,6 +214,7 @@ struct mce_hw_err {
- 		struct {
- 			u64 synd1;		/* MCA_SYND1 MSR */
- 			u64 synd2;		/* MCA_SYND2 MSR */
-+			u64 config;		/* MCA_CONFIG MSR */
- 		} amd;
- 	} vendor;
- };
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 6ca80fff1fea..65ace034af08 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -796,6 +796,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- 
- 	if (mce_flags.smca) {
- 		rdmsrl(MSR_AMD64_SMCA_MCx_IPID(bank), m->ipid);
-+		rdmsrl(MSR_AMD64_SMCA_MCx_CONFIG(bank), err.vendor.amd.config);
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			rdmsrl(MSR_AMD64_SMCA_MCx_SYND(bank), m->synd);
-diff --git a/arch/x86/kernel/cpu/mce/apei.c b/arch/x86/kernel/cpu/mce/apei.c
-index 0a89947e47bc..19a1c72fc2bf 100644
---- a/arch/x86/kernel/cpu/mce/apei.c
-+++ b/arch/x86/kernel/cpu/mce/apei.c
-@@ -155,6 +155,8 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
- 		fallthrough;
- 	/* MCA_CONFIG */
- 	case 4:
-+		err.vendor.amd.config = *(i_mce + 3);
-+		fallthrough;
- 	/* MCA_MISC0 */
- 	case 3:
- 		m->misc = *(i_mce + 2);
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 280d538dc13b..5a5dce540677 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -208,6 +208,8 @@ static void __print_mce(struct mce_hw_err *err)
- 			pr_cont("SYND2 %llx ", err->vendor.amd.synd2);
- 		if (m->ipid)
- 			pr_cont("IPID %llx ", m->ipid);
-+		if (err->vendor.amd.config)
-+			pr_cont("CONFIG %llx ", err->vendor.amd.config);
- 	}
- 
- 	pr_cont("\n");
-@@ -682,6 +684,7 @@ static noinstr void mce_read_aux(struct mce_hw_err *err, int i)
- 
- 	if (mce_flags.smca) {
- 		m->ipid = mce_rdmsrl(MSR_AMD64_SMCA_MCx_IPID(i));
-+		err->vendor.amd.config = mce_rdmsrl(MSR_AMD64_SMCA_MCx_CONFIG(i));
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			m->synd = mce_rdmsrl(MSR_AMD64_SMCA_MCx_SYND(i));
-diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index aea68999c849..b32dfe329d7e 100644
---- a/drivers/edac/mce_amd.c
-+++ b/drivers/edac/mce_amd.c
-@@ -795,6 +795,7 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 	struct mce_hw_err *err = (struct mce_hw_err *)data;
- 	struct mce *m = &err->m;
- 	unsigned int fam = x86_family(m->cpuid);
-+	u64 mca_config = err->vendor.amd.config;
- 	int ecc;
- 
- 	if (m->kflags & MCE_HANDLED_CEC)
-@@ -814,11 +815,7 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 		((m->status & MCI_STATUS_PCC)	? "PCC"	  : "-"));
- 
- 	if (boot_cpu_has(X86_FEATURE_SMCA)) {
--		u32 low, high;
--		u32 addr = MSR_AMD64_SMCA_MCx_CONFIG(m->bank);
--
--		if (!rdmsr_safe(addr, &low, &high) &&
--		    (low & MCI_CONFIG_MCAX))
-+		if (mca_config & MCI_CONFIG_MCAX)
- 			pr_cont("|%s", ((m->status & MCI_STATUS_TCC) ? "TCC" : "-"));
- 
- 		pr_cont("|%s", ((m->status & MCI_STATUS_SYNDV) ? "SyndV" : "-"));
-@@ -853,8 +850,18 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
- 
- 		if (m->status & MCI_STATUS_SYNDV) {
- 			pr_cont(", Syndrome: 0x%016llx\n", m->synd);
--			pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
--				 err->vendor.amd.synd1, err->vendor.amd.synd2);
-+			if (mca_config & MCI_CONFIG_FRUTEXT) {
-+				char frutext[17];
-+
-+				frutext[16] = '\0';
-+				memcpy(&frutext[0], &err->vendor.amd.synd1, 8);
-+				memcpy(&frutext[8], &err->vendor.amd.synd2, 8);
-+
-+				pr_emerg(HW_ERR "FRU Text: %s", frutext);
-+			} else {
-+				pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-+					 err->vendor.amd.synd1, err->vendor.amd.synd2);
-+			}
- 		}
- 
- 		pr_cont("\n");
--- 
-2.43.0
 
 
