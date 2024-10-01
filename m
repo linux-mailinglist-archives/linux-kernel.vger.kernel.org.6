@@ -1,244 +1,108 @@
-Return-Path: <linux-kernel+bounces-345886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A85198BC7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:45:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FB598BC8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDD01C231F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:44:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 188E51F230AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898C21C2DAB;
-	Tue,  1 Oct 2024 12:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3F1C1C2DB1;
+	Tue,  1 Oct 2024 12:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLMCacNG"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fa1DQgCS"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30921C2DAA
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241DE188A01;
+	Tue,  1 Oct 2024 12:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786693; cv=none; b=S3Aeg5fjLqDp4oh6Q0vXfGf3VZARzV2VMeP02MAt3YiG5ePrpAzFdfLvWzA45lYVv5vQYw8uM7Y23x9LjmXDEszVAlstBdtiAPZV/NoHMG8L1HVuAqT50K4MqrhQzgxc42Sqr1QgPs/8fS5PkaAbbiVXpwwFqvMbqXHBfCKhqLs=
+	t=1727786734; cv=none; b=JfcnSH+tX8+OHNrCpLcPZ8L8yMIeGzqYVvxGNiKmOioWKS8rT/44Hw3p3YtmCBgQMhOONpHeq5QRluePDg4sn7ezSadG/ede4uAZsok+E2UUTluKNh169MeO0OcWsnrxwvn4ba+IwV1ZG9dKqihr38M53kLAyQ2cIRSAvAQfLp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786693; c=relaxed/simple;
-	bh=rMWaD774gg0hu/gWCIVWwnbAb1bXuoiTiGBgOQS7Zec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ulwadmxx8N92NnpCEpqvBdxdBpuoVYR6pF5LNijNqo+2EFolcS7yDDmLEXY+R97yZe8P3qkYX8DQS561h3f63zySML/ZUA8p3pLl7Twp61mvETaPvgvxaU6Ri+lxSWcE7nW4hCIW1ybNux3kZTpaH+MN6nDlG46R9ccT578cjK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLMCacNG; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5389fbb28f3so4061695e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:44:51 -0700 (PDT)
+	s=arc-20240116; t=1727786734; c=relaxed/simple;
+	bh=vZ3+CMDw1EvumqOoU7sILf5b8Z/DmzRjPDWTg7aufTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=UqtmlMayXHjp9EKu7RbmRjqBJgh8tOH6gTEMwnUP3ToyTB1uLqn6o47SEHdn66Wn1MeWvbXuMf8C2smWsKAeLHSNt51lIfq27XRciXTSxzraN4ikou1JIUbg18yee2gw8sxbSdC7KgyFppfd91yY1eP7koPIK9rxWQAE8OGX7pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fa1DQgCS; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e0c7eaf159so3551682a91.1;
+        Tue, 01 Oct 2024 05:45:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727786690; x=1728391490; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qJdk49FPom1vhJW6KLrc9xb2N9g+9cOy2pAI61oaoAo=;
-        b=lLMCacNGmO60AITwTaB13ldfWdq+1sky6i7FU2wmf2qG/on1zDzzggLVvXjI/o0OQg
-         tRK5IapCTws78bIjG0KxOcJ/dGR0Mb4cE2Uo36ScJ2pX9+Vd/g9zu0pUAQwerRUASB0l
-         9bCo3p9+bwMDDh8K6GGhiaG9yo551TYkEdQyrWH5jFqXB7RSA2jFl3QR5ts3F/1viKWw
-         s2tALVPX436idsZewMhiez3Dh/F5Fg+6ZPJg9SE3Oreij6POLZOXyZYLb2xwDGBPpM4c
-         l9o2jYswicZm4yLXQyI46fVDcWoiGQrPEXhbw+ih3cg0sHroKYjDma2sGbSisePl1XNe
-         Nxbg==
+        d=gmail.com; s=20230601; t=1727786732; x=1728391532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3hg7gGeL9N4ekrc2dLXOxIsLr5323K9FY89aAbEnDGQ=;
+        b=fa1DQgCSpemi5FwFfdizzo5Tzj8YhqGfWB0xnHVAKtD4jxAh78j3Q5NN7bf4iV++ef
+         Hy6vcU4vAVkbSA90/7fhEIKMKKwiNnD35HGICGin9KsSXoMEP5QkqlhRV77x9v/nYb14
+         jsdSXhUG4nNI4e/ayaXF7MmqYMnM2VIatrk16cucwsA7fE4HThOGBgq14zYqxo3k5DRK
+         WlBtSEgIoKglS56W40OEkjCMnAh1ytUzSgB4Elw0ir0y/3SAG5gwx/WzvpKYN3Q2Ysp+
+         R4kWQfQ6Nfj/523hI+g+W8z7AXwDMPWzvNYeZ7pFejByHKTWpRiVNr0+Vc9y6AVIuOX7
+         IbPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727786690; x=1728391490;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qJdk49FPom1vhJW6KLrc9xb2N9g+9cOy2pAI61oaoAo=;
-        b=Ygtbw57olq7nPYiND7UNTshWgPgcgl4quXPNx/cCRLPw6UznMaB3d0/zwtZVfM+KJa
-         qQedQy/yGxFCTkwVxC3FOqR48WsSmpZCW7C7QkaGiOXvzj8Bh/aVdNhekKvAokVS8aDr
-         wKKS4Ts+Vvd1ElL1FRaNIs8OB4OAiWazSlH2TI4PTIVtKwpLnXYvnvbWid1v8KzbDDnL
-         A5DSCIEyxWrqT/GvbjhV26Gll3WZkmqjzLTAq3ACPmmsXBD5Q6w8sVG84n/VxQts5lwU
-         HAeznmNY8dbXZhEr6TUF8QBmKJrYJfTZRc1o7bHWyQfdAdyKwjQI0AcFBONjJT7v3kE6
-         yl1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXpF749qEBOGCsuQpFo/QeJ4HPkQQQNg4/R0iIvXN3phXgL0YpoRXcQTJXWdvWkNM+gnWMUMyZKfqiovb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRPIa+EbCxDuCwaD2tUr08Gd9hsUWSmYQISGXL8WKg72hQPq2q
-	i9VNAlsPx5WI+s7X3iHE1K+0yFZs8zTqsNlDNNeWqi6C8Rh6ZKzHfMayEk82I+fx0j9MzZEGhgn
-	Pyc//hWoO1N8xrye1HQuNtvmVVBlkgwgSrgLm0g==
-X-Google-Smtp-Source: AGHT+IFpLEVSrtSEfceUFr1y/mkuGvz43bOehtQ1kSTprLlq+kFdHRQGWxpV7X7Wx0HYBHJpzMV+133mIhupsz3X9bs=
-X-Received: by 2002:a05:6512:6c6:b0:52f:30d:526c with SMTP id
- 2adb3069b0e04-5399a23f44cmr1103973e87.5.1727786689856; Tue, 01 Oct 2024
- 05:44:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727786732; x=1728391532;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3hg7gGeL9N4ekrc2dLXOxIsLr5323K9FY89aAbEnDGQ=;
+        b=vEBI7cK9xfXf22+GK18c2vmr36rYCRw3hmU2NP0uz8RJUKJ9KqnZSDAIpCg3zXzZeY
+         1/J/kZ4SaYoqySp8Gk8Phf30y2C2PeVwVpixgD6Pb7kel9mA7hU3ZG4GPa+lU2SnbhKA
+         tEFM+48a7sV83u4wDF9sNSg+5AZz099St9ygd2a0mD5MOagvAFm9KGmPG7CJs2dT1Ues
+         KVA4ZNnPYu3SymBHhw9+WrAnt0RVSlDhFAI04kHelY0DIG8rUqLUfoF3u5jOJXnOVzJN
+         J+4T4QmijIxyHfv+Icro8p6acsdY2T0UQqSjtNKyA60g+QcmQ8wZGNU3bB6+JxLE4SzB
+         vUkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4IFTI14jEP7JWMHGtYTQOTP75rYJ6MN0JhhrC0X0K3DEID9Y9Q4nH3P9lggp4ZhqjXLG573MljWYOuSoM@vger.kernel.org, AJvYcCXRKx56sNQLDGbb0/ZIiF9qDFcbFyigwI4D2CCf1pLqxnUs8qTXfQjG9pbI4T7vHaSvQ9rLPLQGczsg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFVieUXUpEOMX0WkmA11ZLWCUB64UWikcQ/GesZeiwYhWtBJL9
+	lP2EPoyS7zraFJ8cNcjFrkMxzXiRX9tbUub3MswNvOdiNJiDoa7ClVPlfapu
+X-Google-Smtp-Source: AGHT+IH/SAm0KdyL1ow9WB9rN2zIwlZz+oqrDSyo3TYfpxV6u0L5k2aW13Vn2k7GTlVkaxXpezGbRA==
+X-Received: by 2002:a17:90a:4b86:b0:2e0:b741:cdbe with SMTP id 98e67ed59e1d1-2e0b8ebe8d1mr18202134a91.26.1727786732344;
+        Tue, 01 Oct 2024 05:45:32 -0700 (PDT)
+Received: from joaog-nb.corp.toradex.com ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e1704bdsm13629171a91.5.2024.10.01.05.45.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 05:45:31 -0700 (PDT)
+From: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/2] arm64: freescale: verdin: Update tla2024 adc compatible
+Date: Tue,  1 Oct 2024 09:45:02 -0300
+Message-Id: <20241001124505.73857-1-jpaulo.silvagoncalves@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com> <20240912-test-v1-9-458fa57c8ccf@analog.com>
-In-Reply-To: <20240912-test-v1-9-458fa57c8ccf@analog.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 14:44:39 +0200
-Message-ID: <CACRpkdZb6AhxB7XEtOsxV5_oa=c1h2+ZApLFsTS_MQs-cjLmsg@mail.gmail.com>
-Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
-To: arturs.artamonovs@analog.com
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Greg Malysa <greg.malysa@timesys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Utsav Agarwal <Utsav.Agarwal@analog.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andi Shyti <andi.shyti@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, soc@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-serial@vger.kernel.org, adsp-linux@analog.com, 
-	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Arturs,
+From: João Paulo Gonçalves <joao.goncalves@toradex.com>
 
-thanks for your patch!
+This patch series updates the compatible string to the correct one for
+the TLA2024 ADC found on the Toradex Verdin iMX8MM and iMX8MP devices.
 
-On Thu, Sep 12, 2024 at 8:20=E2=80=AFPM Arturs Artamonovs via B4 Relay
-<devnull+arturs.artamonovs.analog.com@kernel.org> wrote:
+João Paulo Gonçalves (2):
+  arm64: dts: imx8mp-verdin: Update tla2024 adc compatible
+  arm64: dts: imx8mm-verdin: Update tla2024 adc compatible
 
-> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
->
-> Add ADSP-SC5xx GPIO driver.
-> - Support all GPIO ports
-> - Each gpio support seperate PINT interrupt controller
->
-> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
-> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
-> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
+ arch/arm64/boot/dts/freescale/imx8mm-verdin.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/imx8mp-verdin.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-(...)
-
-> +config GPIO_ADI_ADSP_PORT
-> +       bool "ADI ADSP PORT GPIO driver"
-> +       depends on OF_GPIO
-> +       select GPIO_GENERIC
-
-If you select this then you need to use it in the idiomatic way.
-
-+#include <linux/soc/adi/adsp-gpio-port.h>
-
-Drop this, just bring the contents into this file all register defines
-etc.
-
-+#include "gpiolib.h"
-
-No way, do this:
-#include <linux/gpio/driver.h>
-
-> +static int adsp_gpio_direction_input(struct gpio_chip *chip, unsigned in=
-t offset)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
-> +
-> +       __adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_DIR_CLEAR);
-
-Ah these __adsp_gpio_writew/readw things are too idiomatic. Just
-use the base and common writew() please.
-
-> +       __adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_INEN_SET);
-
-Interrupt enable in the direction function? No thanks, poke the
-interrupt registers in your irqchip if you make one (you currently
-do not) in this case I'd say just disable all interrupts in probe()
-using something like writew(base + ADSP_PORT_REG_INEN_SET, 0xffff)
-and be done with it.
-
-> +static int adsp_gpio_get_value(struct gpio_chip *chip, unsigned int offs=
-et)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
-> +
-> +       return !!(__adsp_gpio_readw(port, ADSP_PORT_REG_DATA) & BIT(offse=
-t));
-> +}
-
-This becomes a reimplemenation of generic GPIO.
-
-> +static int adsp_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +       struct adsp_gpio_port *port =3D to_adsp_gpio_port(chip);
-> +       irq_hw_number_t irq =3D offset + port->irq_offset;
-> +       int map =3D irq_find_mapping(port->irq_domain, irq);
-> +
-> +       if (map)
-> +               return map;
-> +
-> +       return irq_create_mapping(port->irq_domain, irq);
-> +}
-
-This irqdomain in the "port" looks weird.
-
-Implement the irqchip in the GPIO driver instead.
-
-If the domain *has* to be external to the GPIO driver then
-you need to use hierarchical irqdomains.
-
-> +static int adsp_gpio_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct adsp_gpio_port *gpio;
-> +       int ret;
-> +
-> +       gpio =3D devm_kzalloc(dev, sizeof(*gpio), GFP_KERNEL);
-> +       if (!gpio)
-> +               return -ENOMEM;
-> +
-> +       gpio->regs =3D devm_platform_ioremap_resource(pdev, 0);
-> +       if (IS_ERR(gpio->regs))
-> +               return PTR_ERR(gpio->regs);
-
-So you have gpio->regs which is the base.
-
-> +       gpio->dev =3D dev;
-> +
-> +       ret =3D adsp_attach_pint_to_gpio(gpio);
-> +       if  (ret)
-> +               dev_err_probe(gpio->dev, ret, "error attaching interupt t=
-o gpio pin\n");
-> +
-> +       spin_lock_init(&gpio->lock);
-> +
-> +       gpio->gpio.label =3D "adsp-gpio";
-> +       gpio->gpio.direction_input =3D adsp_gpio_direction_input;
-> +       gpio->gpio.direction_output =3D adsp_gpio_direction_output;
-> +       gpio->gpio.get =3D adsp_gpio_get_value;
-> +       gpio->gpio.set =3D adsp_gpio_set_value;
-> +       gpio->gpio.to_irq =3D adsp_gpio_to_irq;
-> +       gpio->gpio.request =3D gpiochip_generic_request;
-> +       gpio->gpio.free =3D gpiochip_generic_free;
-> +       gpio->gpio.ngpio =3D ADSP_PORT_NGPIO;
-> +       gpio->gpio.parent =3D dev;
-> +       gpio->gpio.base =3D -1;
-> +       return devm_gpiochip_add_data(dev, &gpio->gpio, gpio);
-
-Look in e.g. drivers/gpio/gpio-ftgpio010.c for an example of
-how to use generic GPIO (with an irqchip!). It will be something like:
-
-        ret =3D bgpio_init(&g->gc, dev, 2,
-                         gpio->regs + ADSP_PORT_REG_DATA,
-                         gpio->regs + ADSP_PORT_REG_DATA_SET,
-                         gpio->regs + ADSP_PORT_REG_DATA_CLEAR,
-                         gpio->regs + ADSP_PORT_REG_DIR_SET,
-                         gpio->regs + ADSP_PORT_REG_DIR_CLEAR,
-                         0);
-        if (ret) {
-                dev_err(dev, "unable to init generic GPIO\n");
-                goto dis_clk;
-        }
-        g->gc.label =3D dev_name(dev);
-        g->gc.base =3D -1;
-        g->gc.parent =3D dev;
-        g->gc.owner =3D THIS_MODULE;
-        /* ngpio is set by bgpio_init() */
-
-You can augment the generic driver instance with an extra config function
-to set the special open drain bits.
-
-Yours,
-Linus Walleij
+--
+2.34.1
 
