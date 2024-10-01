@@ -1,100 +1,178 @@
-Return-Path: <linux-kernel+bounces-346026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 488F398BE81
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF58198BE9F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3DA1F2450D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:53:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93904287426
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C22E1C8FD4;
-	Tue,  1 Oct 2024 13:51:36 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6A61CC158;
+	Tue,  1 Oct 2024 13:52:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037041C7B85;
-	Tue,  1 Oct 2024 13:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44271CBE90
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790695; cv=none; b=oR0PEgSmn+wSycMFod3GyXZaYX9+QQtW2YkCssMr7ZT3P2WnopM6puPoFZIQjDehGBPiozXwhcpgyVPfCkSPTKG89p1QJnNTp/rIIfuFJROim931nnprhbXwoa8IUXN2lg1m0WHvvNaAJJXJG1u/vSuWStmYLIvR/yl2AeYq18A=
+	t=1727790723; cv=none; b=E6xN8xUi8dzxC8lCzA0qhgw8l2wWIs7SwewGX0Le3InCjj2IMYrAIw7Tuxey9kM2DQRxtzCn62k7/O0Q3oZxRhfqMw5+AXMo+eukrLO3j3Eb44mjBrbfOCay2d6tbUqAybSQgcOaCojwiSQwfBVcDmyj3o1MzQ/n2AfVSTbqClo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790695; c=relaxed/simple;
-	bh=2fo/+5TzW8Lnvu8C8hpVTe4rIXImdrGxixvdBsg4FDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G2ThD88O86/F9r5Xtqkm3BmB7Z/YFmwLHUNZjw7T6SXlVZrDLWGzFkfp1OQnJU+Tk8trVfEMEby630NfyzjjcHKdvw4N1eTceWyQQK8OuNSNw0fmxqwmtBxXE+1tsouwJjumg6j1kTGqXqZKjXF1sR0iPfgx0LujkOzphH9oeFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9BD2FC0003;
-	Tue,  1 Oct 2024 13:51:27 +0000 (UTC)
-Message-ID: <3c2ff70d-a580-4bba-b6e2-1b66b0a98c5d@ghiti.fr>
-Date: Tue, 1 Oct 2024 15:51:27 +0200
+	s=arc-20240116; t=1727790723; c=relaxed/simple;
+	bh=OFbZ43A3ubL2ASRArjWjRb9ZoQjZPVm8DauPsKFCEaw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XeW/UOp9Ct2i5hjpH/bBGIieL5IV6Om4V8P5I1eHFKoATMJhC/vTyj448TKyheT9fsJJyWRHxhC8n5G0fYrP6KogHe7rge3NdqP2+pfiAaGPwONwULo2Tr44DBdG50djyXNP2lLbGiY5dCh4Qp06obriGLhNU69Ew8fveLIVGzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1svdID-0005Al-Mh; Tue, 01 Oct 2024 15:51:57 +0200
+Message-ID: <663c5f6f0610b7d3b47b115a51320f0eac7c4c06.camel@pengutronix.de>
+Subject: Re: [PATCH v15 05/19] drm/etnaviv: Add contructor and destructor
+ for etnaviv_gem_get_mapping structure
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 15:51:57 +0200
+In-Reply-To: <20240908094357.291862-6-sui.jingfeng@linux.dev>
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+	 <20240908094357.291862-6-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] riscv: efi: Set NX compat flag in PE/COFF header
-Content-Language: en-US
-To: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240929140233.211800-1-heinrich.schuchardt@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Heinrich,
-
-On 29/09/2024 16:02, Heinrich Schuchardt wrote:
-> The IMAGE_DLLCHARACTERISTICS_NX_COMPAT informs the firmware that the
-> EFI binary does not rely on pages that are both executable and
-> writable.
->
-> The flag is used by some distro versions of GRUB to decide if the EFI
-> binary may be executed.
->
-> As the Linux kernel neither has RWX sections nor needs RWX pages for
-> relocation we should set the flag.
->
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+> Because this make the code more easier to understand, When GPU access the
+> VRAM, it will allocate a new mapping to use if there don't have one.
+>=20
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 > ---
->   arch/riscv/kernel/efi-header.S | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/efi-header.S b/arch/riscv/kernel/efi-header.S
-> index 515b2dfbca75..c5f17c2710b5 100644
-> --- a/arch/riscv/kernel/efi-header.S
-> +++ b/arch/riscv/kernel/efi-header.S
-> @@ -64,7 +64,7 @@ extra_header_fields:
->   	.long	efi_header_end - _start			// SizeOfHeaders
->   	.long	0					// CheckSum
->   	.short	IMAGE_SUBSYSTEM_EFI_APPLICATION		// Subsystem
-> -	.short	0					// DllCharacteristics
-> +	.short	IMAGE_DLL_CHARACTERISTICS_NX_COMPAT	// DllCharacteristics
->   	.quad	0					// SizeOfStackReserve
->   	.quad	0					// SizeOfStackCommit
->   	.quad	0					// SizeOfHeapReserve
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.c | 40 +++++++++++++++++++--------
+>  drivers/gpu/drm/etnaviv/etnaviv_gem.h |  6 ++++
+>  2 files changed, 34 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.c
+> index 85d4e7c87a6a..55004fa9fabd 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+> @@ -227,6 +227,30 @@ etnaviv_gem_get_vram_mapping(struct etnaviv_gem_obje=
+ct *obj,
+>  	return NULL;
+>  }
+> =20
+> +static struct etnaviv_vram_mapping *
+> +etnaviv_gem_vram_mapping_new(struct etnaviv_gem_object *etnaviv_obj)
+> +{
+> +	struct etnaviv_vram_mapping *mapping;
+> +
+> +	mapping =3D kzalloc(sizeof(*mapping), GFP_KERNEL);
+> +	if (!mapping)
+> +		return NULL;
+> +
+> +	INIT_LIST_HEAD(&mapping->scan_node);
+> +	mapping->object =3D etnaviv_obj;
+> +	mapping->use =3D 1;
+> +
+> +	list_add_tail(&mapping->obj_node, &etnaviv_obj->vram_list);
+> +
+> +	return mapping;
+> +}
+> +
+> +static void etnaviv_gem_vram_mapping_destroy(struct etnaviv_vram_mapping=
+ *mapping)
+> +{
+> +	list_del(&mapping->obj_node);
+> +	kfree(mapping);
+> +}
+> +
+>  void etnaviv_gem_mapping_unreference(struct etnaviv_vram_mapping *mappin=
+g)
+>  {
+>  	struct etnaviv_gem_object *etnaviv_obj =3D mapping->object;
+> @@ -289,27 +313,20 @@ struct etnaviv_vram_mapping *etnaviv_gem_mapping_ge=
+t(
+>  	 */
+>  	mapping =3D etnaviv_gem_get_vram_mapping(etnaviv_obj, NULL);
+>  	if (!mapping) {
+> -		mapping =3D kzalloc(sizeof(*mapping), GFP_KERNEL);
+> +		mapping =3D etnaviv_gem_vram_mapping_new(etnaviv_obj);
+>  		if (!mapping) {
+>  			ret =3D -ENOMEM;
+>  			goto out;
+>  		}
+> -
+> -		INIT_LIST_HEAD(&mapping->scan_node);
+> -		mapping->object =3D etnaviv_obj;
+>  	} else {
+> -		list_del(&mapping->obj_node);
+> +		mapping->use =3D 1;
+>  	}
+> =20
+> -	mapping->use =3D 1;
+> -
+>  	ret =3D etnaviv_iommu_map_gem(mmu_context, etnaviv_obj,
+>  				    mmu_context->global->memory_base,
+>  				    mapping, va);
+>  	if (ret < 0)
+> -		kfree(mapping);
+> -	else
+> -		list_add_tail(&mapping->obj_node, &etnaviv_obj->vram_list);
+> +		etnaviv_gem_vram_mapping_destroy(mapping);
+> =20
+>  out:
+>  	mutex_unlock(&etnaviv_obj->lock);
+> @@ -544,8 +561,7 @@ void etnaviv_gem_free_object(struct drm_gem_object *o=
+bj)
+>  		if (context)
+>  			etnaviv_iommu_unmap_gem(context, mapping);
+> =20
+> -		list_del(&mapping->obj_node);
+> -		kfree(mapping);
+> +		etnaviv_gem_vram_mapping_destroy(mapping);
+>  	}
+> =20
+>  	etnaviv_obj->ops->vunmap(etnaviv_obj);
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.h b/drivers/gpu/drm/etna=
+viv/etnaviv_gem.h
+> index d4965de3007c..f2ac64d8e90b 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.h
+> @@ -31,6 +31,12 @@ struct etnaviv_vram_mapping {
+>  	u32 iova;
+>  };
+> =20
+> +static inline struct etnaviv_vram_mapping *
+> +to_etnaviv_vram_mapping(struct drm_mm_node *vram)
+> +{
+> +	return container_of(vram, struct etnaviv_vram_mapping, vram_node);
+> +}
+> +
+This hunk looks unrelated to this patch. Otherwise patch looks good.
 
+Regards,
+Lucas
 
-I don't understand if this fixes something or not: what could go wrong 
-if we don't do this?
-
-Thanks,
-
-Alex
+>  struct etnaviv_gem_object {
+>  	struct drm_gem_object base;
+>  	const struct etnaviv_gem_ops *ops;
 
 
