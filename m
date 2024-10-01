@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-345256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13E498B3B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:37:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D61C98B3B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83CC3B2144D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:37:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5909B1C210CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEC31BC06C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BCAE1BC065;
 	Tue,  1 Oct 2024 05:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Be1+Yeju"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YjkEP2gv"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD711B9B50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C291BB6BF
 	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727761031; cv=none; b=NpUVCZvctFk1CA/RgfNzb44dObFuOy9V1o6B8Qwqqjhown400sOinWhvzPxY1rkeDxqxVZJcXILwAY3G9F+8bKqgHNrsqZt9iYiJiDzg6jc3eQ359lTTXUVEcK0UT3xbD3xrseiNjfCvBkWs9ztkaRjOI8j9QMmBIuI35+oQ8Fc=
+	t=1727761031; cv=none; b=HwWDuA9GyDbr5vVCkGlstWyaZsu+8Fwp41yYe7In+RvVfymj+84+Iw3TN/mCjfcHqN/znrGmxQ1X2O+jB09CTzy/LHHtuss9dV5qPlzE0UK93yWE3ODEKUsXOtvDZRgOgrRgj3st22AuC+VKdc15MtDtdvslNTETW+o4gdljVXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727761031; c=relaxed/simple;
-	bh=RXFigHVvqX66h0CgnEPMdbPUVdZNL13x+vDE/BJrhj8=;
+	bh=lB+hvyf3yxepm5Kmd6XwZLQVvnN7/oVBqCxfq4eIzGU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FNEwB8iq34nHrDVZrMZIHJ6McR5+0u/Mj45yTyfgGOKLqJFiiCRAVq3SNldUI1KUTSf6XT357RsU9if9TU5XCPVP5VuIloYzw1DRaY0y4AbxmiS3qwsstk8PFcAk6Gg8m2ysKXaJ1vce0IiFIKEwZcw0t3nM8CURUtUjSxDSki8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Be1+Yeju; arc=none smtp.client-ip=192.198.163.11
+	 MIME-Version; b=Gsgd2Fr25a5B9/hDbhN47XVJv7nWBq+WyqMfkp0d96VoPX2TSjpCO/pvQKnQFz9r2TmVMFgGkeAbUPpGOdHoXuEO1cLqWVZK6eeCy1LVvYpyGAqwp/Zz1lDMeNkpTBGTAZecX9SrkGcC75gPdXDdQMU7+NOUFFxq6kZUafNY7as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YjkEP2gv; arc=none smtp.client-ip=192.198.163.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1727761030; x=1759297030;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=RXFigHVvqX66h0CgnEPMdbPUVdZNL13x+vDE/BJrhj8=;
-  b=Be1+YejuQ6+pSY8wua0nZOPkZXH7Q1djpHUlVH/AsBhssl5zQ7a+CRCx
-   fWEgSotZ3orib/LX5jK/0C42L011Ja009txFCqXksCr2UuJ7l/wA4S7Ag
-   wxyl+s840haFz2WQFjv/qV94cUQHCVFOJbRJT+40hKTBXg/LjKclckteY
-   i4S+2g71AJAyj6B7UlVbQzHaTGfuETDx0JAn3uDdPIvNi4w8WqpiFPV8q
-   ali21ggtn71pEJQM21aIL3whLfz2w0mRjpRBupwgmrLHgBsfkjPjw5BKw
-   aC3Kke2GnehHoiP/V6dpxgFhDPIDZ9NqZBaZxIbmuXZmPv1ujCHFrV23H
-   g==;
-X-CSE-ConnectionGUID: JdQ0KIhgRNG+KRSRbiNzRQ==
-X-CSE-MsgGUID: fGE4abNsTkiBx0lM+fPkfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37465092"
+  bh=lB+hvyf3yxepm5Kmd6XwZLQVvnN7/oVBqCxfq4eIzGU=;
+  b=YjkEP2gvbNTPZZMJBJGZgXVgzTu5b4GyYSwBJJmumeUYA88EWEfJ7qNv
+   5BSVXNbn78D0hT4HRxOi+w6vKrO9q76nkyBbAbD0ruFMn11kqP8bvZuFb
+   b13WAZ57TKPqXnpJwwO77gdFMlm2P95x75+89Ovhb17fsilash+RTRR/1
+   /XHtFp42zajeL6EEmnP7cr4TDfNq9ix9HupwR3Pj+A5F7sXJNgwkg2Jp+
+   JaA326zxupv7ZQ8QqXoityeNCLxybUL2Ud6dIDiYU3V5LBFnOg8yh8SiE
+   REyAOO0W0ZpqVIPG0xcu1ACRFykYk++t2uX1eydRiIgY3TwmIW4ps5Rb1
+   w==;
+X-CSE-ConnectionGUID: k8QomehVSZCltBO6DX9u6Q==
+X-CSE-MsgGUID: ck6UqRWFSGuaGlhOcnZBNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="37465103"
 X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="37465092"
+   d="scan'208";a="37465103"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
   by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 22:32:25 -0700
-X-CSE-ConnectionGUID: 8AwPM96ESfa4/3bCeF/HBQ==
-X-CSE-MsgGUID: +JTWy565Q2O8jcvuOpSgUA==
+X-CSE-ConnectionGUID: PKBxrDh5Qx2Gv53SQPU5uQ==
+X-CSE-MsgGUID: wtC/7FAEQlSZaTIPojmcow==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73205801"
+   d="scan'208";a="73205804"
 Received: from jf5300-b11a338t.jf.intel.com ([10.242.51.6])
-  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2024 22:32:24 -0700
+  by fmviesa007.fm.intel.com with ESMTP; 30 Sep 2024 22:32:25 -0700
 From: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -75,9 +75,9 @@ Cc: nanhai.zou@intel.com,
 	wajdi.k.feghali@intel.com,
 	vinodh.gopal@intel.com,
 	kanchana.p.sridhar@intel.com
-Subject: [PATCH v10 3/7] mm: zswap: Rename zswap_pool_get() to zswap_pool_tryget().
-Date: Mon, 30 Sep 2024 22:32:18 -0700
-Message-Id: <20241001053222.6944-4-kanchana.p.sridhar@intel.com>
+Subject: [PATCH v10 4/7] mm: Change count_objcg_event() to count_objcg_events() for batch event updates.
+Date: Mon, 30 Sep 2024 22:32:19 -0700
+Message-Id: <20241001053222.6944-5-kanchana.p.sridhar@intel.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20241001053222.6944-1-kanchana.p.sridhar@intel.com>
 References: <20241001053222.6944-1-kanchana.p.sridhar@intel.com>
@@ -89,59 +89,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Modify the name of the existing zswap_pool_get() to zswap_pool_tryget()
-to be representative of the call it makes to percpu_ref_tryget().
-A subsequent patch will introduce a new zswap_pool_get() that calls
-percpu_ref_get().
+With the introduction of zswap_store() swapping out large folios,
+we need to efficiently update the objcg's memcg events once per
+successfully stored folio. For instance, the 'ZSWPOUT' event needs
+to be incremented by folio_nr_pages().
 
-The intent behind this change is for higher level zswap API such as
-zswap_store() to call zswap_pool_tryget() to check upfront if the pool's
-refcount is "0" (which means it could be getting destroyed) and to handle
-this as an error condition. zswap_store() would proceed only if
-zswap_pool_tryget() returns success, and any additional pool refcounts that
-need to be obtained for compressing sub-pages in a large folio could simply
-call zswap_pool_get().
+To facilitate this, the existing count_objcg_event() API is modified
+to be count_objcg_events() that additionally accepts a count parameter.
+The only existing calls to count_objcg_event() are in zswap.c - these
+have been modified to call count_objcg_events() with a count of 1.
 
 Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
 Acked-by: Yosry Ahmed <yosryahmed@google.com>
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- mm/zswap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/memcontrol.h | 12 +++++++-----
+ mm/zswap.c                 |  6 +++---
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index fd7a8c14457a..0f281e50a034 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -403,7 +403,7 @@ static void __zswap_pool_empty(struct percpu_ref *ref)
- 	spin_unlock_bh(&zswap_pools_lock);
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 15c2716f9aa3..524006313b0d 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1764,8 +1764,9 @@ static inline int memcg_kmem_id(struct mem_cgroup *memcg)
+ 
+ struct mem_cgroup *mem_cgroup_from_slab_obj(void *p);
+ 
+-static inline void count_objcg_event(struct obj_cgroup *objcg,
+-				     enum vm_event_item idx)
++static inline void count_objcg_events(struct obj_cgroup *objcg,
++				      enum vm_event_item idx,
++				      unsigned long count)
+ {
+ 	struct mem_cgroup *memcg;
+ 
+@@ -1774,7 +1775,7 @@ static inline void count_objcg_event(struct obj_cgroup *objcg,
+ 
+ 	rcu_read_lock();
+ 	memcg = obj_cgroup_memcg(objcg);
+-	count_memcg_events(memcg, idx, 1);
++	count_memcg_events(memcg, idx, count);
+ 	rcu_read_unlock();
  }
  
--static int __must_check zswap_pool_get(struct zswap_pool *pool)
-+static int __must_check zswap_pool_tryget(struct zswap_pool *pool)
+@@ -1829,8 +1830,9 @@ static inline struct mem_cgroup *mem_cgroup_from_slab_obj(void *p)
+ 	return NULL;
+ }
+ 
+-static inline void count_objcg_event(struct obj_cgroup *objcg,
+-				     enum vm_event_item idx)
++static inline void count_objcg_events(struct obj_cgroup *objcg,
++				      enum vm_event_item idx,
++				      unsigned long count)
  {
- 	if (!pool)
- 		return 0;
-@@ -441,7 +441,7 @@ static struct zswap_pool *zswap_pool_current_get(void)
- 	rcu_read_lock();
+ }
  
- 	pool = __zswap_pool_current();
--	if (!zswap_pool_get(pool))
-+	if (!zswap_pool_tryget(pool))
- 		pool = NULL;
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 0f281e50a034..69b9c025fd47 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -1053,7 +1053,7 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
  
- 	rcu_read_unlock();
-@@ -462,7 +462,7 @@ static struct zswap_pool *zswap_pool_find_get(char *type, char *compressor)
- 		if (strcmp(zpool_get_type(pool->zpool), type))
- 			continue;
- 		/* if we can't get it, it's about to be destroyed */
--		if (!zswap_pool_get(pool))
-+		if (!zswap_pool_tryget(pool))
- 			continue;
- 		return pool;
+ 	count_vm_event(ZSWPWB);
+ 	if (entry->objcg)
+-		count_objcg_event(entry->objcg, ZSWPWB);
++		count_objcg_events(entry->objcg, ZSWPWB, 1);
+ 
+ 	zswap_entry_free(entry);
+ 
+@@ -1482,7 +1482,7 @@ bool zswap_store(struct folio *folio)
+ 
+ 	if (objcg) {
+ 		obj_cgroup_charge_zswap(objcg, entry->length);
+-		count_objcg_event(objcg, ZSWPOUT);
++		count_objcg_events(objcg, ZSWPOUT, 1);
  	}
+ 
+ 	/*
+@@ -1576,7 +1576,7 @@ bool zswap_load(struct folio *folio)
+ 
+ 	count_vm_event(ZSWPIN);
+ 	if (entry->objcg)
+-		count_objcg_event(entry->objcg, ZSWPIN);
++		count_objcg_events(entry->objcg, ZSWPIN, 1);
+ 
+ 	if (swapcache) {
+ 		zswap_entry_free(entry);
 -- 
 2.27.0
 
