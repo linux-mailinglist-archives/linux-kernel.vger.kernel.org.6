@@ -1,196 +1,144 @@
-Return-Path: <linux-kernel+bounces-346730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FC098C81A
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:21:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15CF98C805
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868BE285C9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:21:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A209C285C4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBE81CF7AF;
-	Tue,  1 Oct 2024 22:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259DE1CB32B;
+	Tue,  1 Oct 2024 22:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm1WOQ9S"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Obn4DVEj"
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21C51CF5DD;
-	Tue,  1 Oct 2024 22:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119ED199FCF
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 22:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727821245; cv=none; b=OutVdappPiFsAXVo7iKmk6+6lmsOfzAgQWBZtGWh0AehNenF7EbLz5sb6j+9jlvxCMNQKcahi8oKYxeUxNh+riHBMNuepYHFTVuZv95ZpidhyJVgW4YzGfNATdDmUpqvo7FI3tHG6VFfidO+i5hAwtL8xjTwnzeIlNe5BkThopk=
+	t=1727821141; cv=none; b=Bl11VgeCdrjqTruE5h7RTSRWNb8WCOm6fZLBSLNy4JIn3HfUiGdlqXtqIlSAFEfGx3Rl2S1UDInzU1WJcSiTCV5YVbvfOeWP8fKO5iIbwLQQFtlhjFU+e7dz37zqhYwYXC9BYqDTRjTBO01epHGkgbEu+PQ5XGNH3JRlZOagdaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727821245; c=relaxed/simple;
-	bh=uFj2dvFYNBFuFJirSb+yihT/EV1akv6TTLSHucJpP6E=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gg1FnhugrBfr0LGgVw9qvxYmr+cVJNR4GJq/BPjH04/7qbJf4vM1nLUlVEPfWpCJx4C5ee+62bzwn8R1/1g0Y37UcVEJBljrIz0Mqt9OV7HK6P5A47ldE0v/zFZi1OEUQuoTCXpxssI0e93s7Tv7Wr4YqmH63d2pUBmNyMp9RDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm1WOQ9S; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37cc810ce73so3503705f8f.1;
-        Tue, 01 Oct 2024 15:20:43 -0700 (PDT)
+	s=arc-20240116; t=1727821141; c=relaxed/simple;
+	bh=aTyIBE7VObwDbhSM0v69AgMy0/ueq6ZyBFCJKV46X60=;
+	h=Message-ID:Date:MIME-Version:To:CC:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Bg06nPVxL7exdaJ0OcGKQ4JxnoF+D+TXSnPth4NvEl68QNjHoXMe9UACQ+xR80HMhcY+cJ6OtrFzuzCVadguAYMSc7K9XyAFPOWrg4Yyk7YpvCq+Mry0ihHt4vSLQQlOdiT/YYNTE3wTOFjQUXtqmla9FE8jmy+TSvFBhEg7yqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Obn4DVEj; arc=none smtp.client-ip=72.21.196.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727821242; x=1728426042; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UvkeCfAFF2+TrOZNYfnjZ9TAqZKaKEt38PpwPlqvY1M=;
-        b=Nm1WOQ9SgslqM8QNzwdi1DjVJkoHlE0e9LmeKdRHfjts3+fs1Z8I5eeUQkdHdDzaXy
-         6VRUqzMUsORpb9BMyk2+TZRdmry+EA26oakcK64t0CsLq+85Kjj1NpgS192PbhMrclXH
-         rqd443zFwG8SJI2iCP0LZRK0/+r9z2vFdWXeAQWd0+SvNXjfM3tvUq8tNELMVL4IPt7X
-         ZKTXqx3rGhEmb9PdExJCeuKE12KvQRubKtPWReRTQJnwtq8SmLAl/MBTa+5wLWgtOT/z
-         tuRk2FfRHFsDx8dv4ZTUDDskIkIkfFD9pI8ImN9RPVNNXQZBXBPwg06uI8M2tEulIYXV
-         DgAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727821242; x=1728426042;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UvkeCfAFF2+TrOZNYfnjZ9TAqZKaKEt38PpwPlqvY1M=;
-        b=ulIxoi4rfTiLK/l0DQO7f0UGLVqmS/AmxD/UQj1Ao2tBisWfr5iZJxog2xfUrbZaSv
-         GjNhcCaouym+qkQsli7/tesc4HrYL7MLMtQQ3lTnjyBE3Z7n1fmiAOF2OYTBO4cYd1vE
-         fronrp2yF4H+IYT1OOFsBdRSF4DhhnzKx/3TUVSPY2MmfEiMAvcF/mmVKCaLsiV5Rtu9
-         tB13yX+ux8X2EisyPRTjZUimnyYYqbsWRtNXe5wssJWyS3JxG6lXIi38M5VXADvf654S
-         b9ykxC8My5JGsrctQu+aUHSFfBuyjf8ybtAvkFj33GGoWlXG4L9m0klitPbgyGzKZoZ9
-         nHGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9UvND8BtfQJnbkChv9Xfk1cVzwBscRHHhO23ku08oXgGHI0tLQnE5AW9bydwPwh/pBYBt1a6YhQiH@vger.kernel.org, AJvYcCVsZmUnT3nwNpfyFGwW7gva99UzaRDln35rtLuW0PnUJb2CiSQvj5Cua43d1z4xLzgs/8dTynr58OY+@vger.kernel.org, AJvYcCWhODZzERSnSQxjL3BG4fKzLpm8UhrOu+IvOe166WWwQHGp3OMPGQeavMQ7Odu6IedjfM7wtlPhuBiAGz0=@vger.kernel.org, AJvYcCX+LDbE2D0esO68aKNlSLo2P6+iYb/3N67RpzURIPRCs0qULxFZ90V1+tS9Fh06qox/+XWrs5Q6P1s+QLWW@vger.kernel.org, AJvYcCXeaXKvz+edRlz0/EUAFh0y4+6LKSTSQuKTGaVd6F8/3DDyTbIxnLKBxSyc6JdUOjbYU5AKUU2UJviT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPV/9+RM3bZ9OL6saLMXFSqbpU0NbJPz1D80bXU5+Xfx6qyOlu
-	F/IKOhFsdd5n71e/GEJAyPelOCs74Amh/NiJ5hDI2osa0YuyD16S
-X-Google-Smtp-Source: AGHT+IGdzj7eGjtzUH2e4oHAiqm3ikbyp7r4ZRQP5cTIPq03W/eHfzzj9TqfTqlU00uAZm44bq5y4A==
-X-Received: by 2002:adf:f98f:0:b0:371:8688:1660 with SMTP id ffacd0b85a97d-37cfba08fd6mr566868f8f.51.1727821241723;
-        Tue, 01 Oct 2024 15:20:41 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37cd57427fbsm12677089f8f.100.2024.10.01.15.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 15:20:41 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	INAGAKI Hiroshi <musashino.open@gmail.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ming Lei <ming.lei@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	Li Lingfeng <lilingfeng3@huawei.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Riyan Dhiman <riyandhiman14@gmail.com>,
-	Jorge Ramirez-Ortiz <jorge@foundries.io>,
-	Dominique Martinet <dominique.martinet@atmark-techno.com>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Li Zhijian <lizhijian@fujitsu.com>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	upstream@airoha.com
-Subject: [PATCH v5 3/6] block: introduce device_add_of_disk()
-Date: Wed,  2 Oct 2024 00:18:55 +0200
-Message-ID: <20241001221931.9309-4-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241001221931.9309-1-ansuelsmth@gmail.com>
-References: <20241001221931.9309-1-ansuelsmth@gmail.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1727821141; x=1759357141;
+  h=message-id:date:mime-version:to:cc:references:subject:
+   from:in-reply-to:content-transfer-encoding;
+  bh=aTyIBE7VObwDbhSM0v69AgMy0/ueq6ZyBFCJKV46X60=;
+  b=Obn4DVEjZP/hGyYHWnpyWg14IUru5lk8teJ8pghvmea4wQu3fgn5NjN/
+   M6PRQIHURHYRwtMSE5THHjIQueBJ1tEeJnCCIzy98dFAFiNhRONf10YCB
+   tBQWo1rNqFCfLlXyocVkJNUyxXhq26R1gn7IU8HYn4hbVkWlEER1DhQNr
+   U=;
+X-IronPort-AV: E=Sophos;i="6.11,169,1725321600"; 
+   d="scan'208";a="431826276"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 22:18:59 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:4043]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.57.100:2525] with esmtp (Farcaster)
+ id 181aac30-157c-48ae-b571-10ac90363603; Tue, 1 Oct 2024 22:18:57 +0000 (UTC)
+X-Farcaster-Flow-ID: 181aac30-157c-48ae-b571-10ac90363603
+Received: from EX19D003UWC002.ant.amazon.com (10.13.138.169) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 22:18:57 +0000
+Received: from [192.168.12.162] (10.187.170.38) by
+ EX19D003UWC002.ant.amazon.com (10.13.138.169) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Tue, 1 Oct 2024 22:18:56 +0000
+Message-ID: <5793efb7-358f-4796-bdf4-985c41f80ae5@amazon.com>
+Date: Tue, 1 Oct 2024 15:18:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: <david.kaplan@amd.com>
+CC: <bp@alien8.de>, <dave.hansen@intel.com>, <dave.hansen@linux.intel.com>,
+	<derekmn@amazon.com>, <hpa@zytor.com>, <jpoimboe@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <mingo@redhat.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <peterz@infradead.org>,
+	<tglx@linutronix.de>, <x86@kernel.org>
+References: <LV3PR12MB926589C779479C836DA4E51D94772@LV3PR12MB9265.namprd12.prod.outlook.com>
+Subject: RE: [RFC PATCH 27/34] x86/bugs: Add attack vector controls for
+ spectre_v1
+Content-Language: en-US
+From: "Manwaring, Derek" <derekmn@amazon.com>
+In-Reply-To: <LV3PR12MB926589C779479C836DA4E51D94772@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D042UWA004.ant.amazon.com (10.13.139.16) To
+ EX19D003UWC002.ant.amazon.com (10.13.138.169)
 
-Introduce device_add_of_disk() as a variant of device_add_disk() that
-permits to pass and attach a fwnode to disk dev.
+On 2024-10-01 01:45+0000 David Kaplan wrote:
+> On 2024-09-30 17:39-0700 Derek Manwaring wrote:
+> > On 2024-09-12 21:15+0000 David Kaplan wrote:
+> > > On 2024-09-12 13:16-0700 Dave Hansen wrote:
+> > > > On 9/12/24 12:57, Kaplan, David wrote:
+> > > > > And to be clear, I was trying to continue to support both.  But
+> > > > > the attack-vector style is also more future-proof because when new
+> > > > > issues arise, they would get added to the appropriate vectors and
+> > > > > users wouldn't have to do anything ideally.
+> > > >
+> > > > That's a good point.  Do you have any inkling about how static folks'
+> > > > vector selection would have been over time?
+> > > >
+> > > > For instance, if someone cared about CPU_MITIGATE_GUEST_HOST at the
+> > > > original spectre_v2 time, did that carry forward to L1TF and all the
+> > > > way into 2024?
+> > > >
+> > > > Or would they have had to shift their vector selection over time?
+> > >
+> > > In my view, the attack vector selection is a function of how the
+> > > system is being used.  A system that runs untrusted guests and cared
+> > > about
+> > > spectre_v2 I would think also cares about L1TF, Retbleed, etc. They're
+> > > all attacks that can leak the same kind of data, although the
+> > > mechanisms of exploit are different.  In what I've personally seen, if
+> > > you care about one attack along a certain attack vector, you tend to
+> > > care about all of them.
+> >
+> > This makes sense, but I'm not sure it is a meaningful simplification for users. I
+> > think it'd be helpful if we had a few samples of how users normally configure
+> > their systems. My hunch would be there are three main
+> > camps:
+> >   1) default for everything
+> >   2) mitigations=off
+> >   3) specify at least one mitigation individually.
+> >
+> > I think you're saying group (3) is helped most because now they don't have to
+> > understand each individual mitigation. But (3) is perhaps already a very small
+> > group of users? Maybe it would help (1) as well because they would get
+> > performance gains, but I'm skeptical of how many would feel safe switching
+> > from defaults to a vector specification. If they do feel comfortable doing that,
+> > they're probably closer to (3). Is that fair?
+>
+> I think these attack vector controls make it easier to configure say a
+> system where userspace is trusted by VMs are not (such as with a cloud
+> node).  Or a shared system where userspace is untrusted but only trusted
+> users are allowed to run VMs, so the VMs are trusted.  I see those as
+> potentially being more likely vs specifying mitigations individually
+> (which I suspect very few people do).
 
-This variant can be useful for eMMC that might have the partition table
-for the disk defined in DT. A parser can later make use of the attached
-fwnode to parse the related table and init the hardcoded partition for
-the disk.
+Ok I see the potential for those cases. I still wonder whether the extra
+complexity for everyone is worth the benefits to those users.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- block/genhd.c          | 21 +++++++++++++++++++--
- include/linux/blkdev.h |  3 +++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+> If it was helpful, I could perhaps include these as examples in the
+> documentation file.
 
-diff --git a/block/genhd.c b/block/genhd.c
-index 1c05dd4c6980..0fc595895f1d 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -391,8 +391,9 @@ int disk_scan_partitions(struct gendisk *disk, blk_mode_t mode)
-  * This function registers the partitioning information in @disk
-  * with the kernel.
-  */
--int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
--				 const struct attribute_group **groups)
-+static int __device_add_disk(struct device *parent, struct gendisk *disk,
-+			     const struct attribute_group **groups,
-+			     struct fwnode_handle *fwnode)
- 
- {
- 	struct device *ddev = disk_to_dev(disk);
-@@ -452,6 +453,8 @@ int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
- 	ddev->parent = parent;
- 	ddev->groups = groups;
- 	dev_set_name(ddev, "%s", disk->disk_name);
-+	if (fwnode)
-+		device_set_node(ddev, fwnode);
- 	if (!(disk->flags & GENHD_FL_HIDDEN))
- 		ddev->devt = MKDEV(disk->major, disk->first_minor);
- 	ret = device_add(ddev);
-@@ -553,8 +556,22 @@ int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
- 		elevator_exit(disk->queue);
- 	return ret;
- }
-+
-+int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
-+				 const struct attribute_group **groups)
-+{
-+	return __device_add_disk(parent, disk, groups, NULL);
-+}
- EXPORT_SYMBOL(device_add_disk);
- 
-+int __must_check device_add_of_disk(struct device *parent, struct gendisk *disk,
-+				    const struct attribute_group **groups,
-+				    struct fwnode_handle *fwnode)
-+{
-+	return __device_add_disk(parent, disk, groups, fwnode);
-+}
-+EXPORT_SYMBOL(device_add_of_disk);
-+
- static void blk_report_disk_dead(struct gendisk *disk, bool surprise)
- {
- 	struct block_device *bdev;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bf1aa951fda2..7d41f35f1065 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -725,6 +725,9 @@ static inline unsigned int blk_queue_depth(struct request_queue *q)
- #define for_each_bio(_bio)		\
- 	for (; _bio; _bio = _bio->bi_next)
- 
-+int __must_check device_add_of_disk(struct device *parent, struct gendisk *disk,
-+				    const struct attribute_group **groups,
-+				    struct fwnode_handle *fwnode);
- int __must_check device_add_disk(struct device *parent, struct gendisk *disk,
- 				 const struct attribute_group **groups);
- static inline int __must_check add_disk(struct gendisk *disk)
--- 
-2.45.2
+I think the examples would help, yeah.
 
+Derek
 
