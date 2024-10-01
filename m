@@ -1,125 +1,115 @@
-Return-Path: <linux-kernel+bounces-345731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A2B98BA87
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CB898BA8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C4B71C23155
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FF4CB239C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4E01C7B68;
-	Tue,  1 Oct 2024 10:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqhWoLr2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41301BE87D;
+	Tue,  1 Oct 2024 11:02:56 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1261C6F67;
-	Tue,  1 Oct 2024 10:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1271885A4;
+	Tue,  1 Oct 2024 11:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780384; cv=none; b=m+P57GVxJiFloHxOHVYSQ1ZLjE/EM7aJqLSZpSYqztZDoidSCS95Zq002Rq0nEzbMz1Yb5g0wpcTNNV2JFaTS63p6eqqd/zpsMBEWKpcfKXyK65uAiHcU3yIOuYYJo0/3UaDDHQPKruAxrC44j/ydlyZme69201ooG3jqPZoRRU=
+	t=1727780576; cv=none; b=LyHWiJ6kdhPZVtyJq9gjqIVllh1QH3gRdnGwudfnUkSWubbYW1Dy5NtiXSksIkSUkU2wO9hXw1pG9olfs1R3hjGE5N0tMh7dIN5sB23spwlENadr9BwjZhsuUITizXzsBLFzSk2Y1Lz6deXRxRMZ3xnOfhZTLpFR4Aas6ukaCwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780384; c=relaxed/simple;
-	bh=vfABgeY7uP8db917PbV1dpj3MLFQbmpQZkOBbve6x6s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DPH6kTSvf8NXNPmlagRC+plNrs0Msnr7RRSPv1ogFMuUDKfIcunSdMeqb+tCx//3J7N0oe4plvBfFnmqqXhWujG2lYTBYz7071JZ96PgOPbUZMK/elm/oxtIgXcifuJYW5BdDvpRYc5NyPmrBbBHIDOvePyMmLp3SGCidwo5e2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqhWoLr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 428E1C4CECD;
-	Tue,  1 Oct 2024 10:59:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727780383;
-	bh=vfABgeY7uP8db917PbV1dpj3MLFQbmpQZkOBbve6x6s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NqhWoLr2qLRQdOkLcMCIBUNS616yE7Wsn2Do3FYKCPxTNAtUhlMY/8vPDqL9CORJ8
-	 gawIrH/IWI+r3aob9UJ951bTu/BMDqZyz55vv0Dwt75DKG3XVFJh+t15nLMHHgmMbn
-	 96Izn6X94VrbCOjG3imdMEt1RCnZa7cVICavqgsbX/cY5RAUpWFPvAf367i7Z/eUkH
-	 fV3g68UZZQ5YPZXcLa396R8kWtFuPbB7nD86sjo58JBtkRSEyAc54RJQT5xRH6ebl3
-	 h/caq+ZGm7/fH6u2XMHwCQ3JTm55c66IdUVEDyJC+VNQhN/gDSUWfHmV3q+IsazEps
-	 HUQADV0X3MASA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 01 Oct 2024 06:59:06 -0400
-Subject: [PATCH v8 12/12] tmpfs: add support for multigrain timestamps
+	s=arc-20240116; t=1727780576; c=relaxed/simple;
+	bh=U8G0GaWCxBo32O5qvT2qm7PwwTvKoSsH0VDCHUaOYMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvvpsYl7c/UgyJNZMw16HLAY6Y3ZQNVw0sOlRpnWSzdGLbfBciU5TVz2gGzBcbhO0o8wGkmmOkGme+EHA6NupUGYumUQw9FvheXKGpGNe1KP3HNry/Pvz5ha0UXz6aDrYiNZh1V+lMnCx25dIwScmHBUV69pacoZiVIbwa1ugxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 35A07100DA1D3;
+	Tue,  1 Oct 2024 13:02:46 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 0DE47208266; Tue,  1 Oct 2024 13:02:46 +0200 (CEST)
+Date: Tue, 1 Oct 2024 13:02:46 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: AceLan Kao <acelan.kao@canonical.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: pciehp: Fix system hang on resume after hot-unplug
+ during suspend
+Message-ID: <ZvvW1ua2UjwHIOEN@wunner.de>
+References: <20240926125909.2362244-1-acelan.kao@canonical.com>
+ <ZvVgTGVSco0Kg7H5@wunner.de>
+ <CAFv23Q=5KdqDHYxf9PVO=kq=VqP0LwRaHQ-KnY2taDEkZ9Fueg@mail.gmail.com>
+ <ZvZ61srt3QAca2AI@wunner.de>
+ <Zvf7xYEA32VgLRJ6@wunner.de>
+ <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241001-mgtime-v8-12-903343d91bc3@kernel.org>
-References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
-In-Reply-To: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
-To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
- Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
- Chandan Babu R <chandan.babu@oracle.com>, 
- "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
- Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
- Chuck Lever <chuck.lever@oracle.com>, 
- Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=932; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=vfABgeY7uP8db917PbV1dpj3MLFQbmpQZkOBbve6x6s=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm+9X7QDV7gFcbV+IsKkmQpXurd3+vww+OClJdZ
- SSWm3r5Cg2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZvvV+wAKCRAADmhBGVaC
- FV6PEACdz7xhqHbN+F1/z0hQRO4/mNdSl1k7n8dBoxQIuT87EzYxjm+op9ZONXBq7Wi9B7zpVO4
- +yg18nLaWlVJ/wyVOFlsN9AyY3M3qJ0E1xVqYGkg+D0siO/CKOYvUIi6DTP6n5rxvjrgB96B6be
- 3qVtF/YPIEC6ZXkd5pBa1nyA5B8NYkHJNp1mM1DLxDSyui4SfSdOR42NDEYGBB7AYXZHL8I+fGu
- VN+hVOpC0sW/rp4dEYSNd0rYKNGEc43bN+N6wG8SurCZMFMQYaGXkcTCti3PhldmzKH1WfFX9TG
- MqF0eshQ5RDGJP7c94SJeYoZrHOoDAV0ad9MDFseXziUXUbJewSI/WdpUbQbcPDdCRw58Qy1gDG
- VkD2HVjbK9ty8Rpe5GtkhmudPY3sb7BLC9DRg2W++B4uXM5qJO4GPZwHSJ9buzL9grC/6q28BRo
- lGEJN8oAh0jMElH6cjMSnFA9Kw4waaK2pCj0337UyhmARAFHrE1yXon1oqS6j9XmT68wrXeLw4m
- bQhXGdsxvFGNn91k35C9P60R3dKONLg5/DcccX8F8HSwGDDH65KbRzt65ICP7217BznAXCP8VQY
- ywjpwBUVXttEZ9/AGCiJLXq/xZnoaRs6Ss+0JHgEbIbzV4eeXQ5bfTjomIrl9R4boIUCfbf0/k3
- JXXFUvScYgNP0ng==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFv23QkwxmT7qrnbfEpJNN+mnevNAor6Dk7efvYNOdjR9tGyrw@mail.gmail.com>
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+On Mon, Sep 30, 2024 at 09:31:53AM +0800, AceLan Kao wrote:
+> Lukas Wunner <lukas@wunner.de> 2024 9 28 8:51:
+> > -       if (pci_get_dsn(pdev) != ctrl->dsn)
+> > +       dsn = pci_get_dsn(pdev);
+> > +       if (!PCI_POSSIBLE_ERROR(dsn) &&
+> > +           dsn != ctrl->dsn)
+> >                 return true;
+> 
+> In my case, the pciehp_device_replaced() returns true from this final check.
+> And these are the values I got
+> dsn = 0x00000000, ctrl->dsn = 0x7800AA00
+> dsn = 0x00000000, ctrl->dsn = 0x21B7D000
 
-tmpfs only requires the FS_MGTIME flag.
+Ah because pci_get_dsn() returns 0 if the device is gone.
+Below is a modified patch which returns false in that case.
 
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- mm/shmem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I've only changed:
+-	dsn = pci_get_dsn(pdev);
+-	if (!PCI_POSSIBLE_ERROR(dsn) &&
++	if ((dsn = pci_get_dsn(pdev)) &&
++	    !PCI_POSSIBLE_ERROR(dsn) &&
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4f11b5506363..3444efc275b1 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4951,7 +4951,7 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
--	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
- void __init shmem_init(void)
 
--- 
-2.46.2
+> Did some other test
+> TBT HDD -> TBT dock -> laptop
+>    suspend
+> TBT HDD -> laptop(replace TBT dock with the TBT HDD)
+>    resume
+> Got the same result as above, looks like it didn't detect the TBT dock
+> has been replaced by TBT HDD.
+> 
+> In the origin call trace, unplug TBT dock or replace it with TBT HDD,
+> it returns true by the below check
+>         if (pci_read_config_dword(pdev, PCI_VENDOR_ID, &reg) ||
+>            reg != (pdev->vendor | (pdev->device << 16)) ||
+>            pci_read_config_dword(pdev, PCI_CLASS_REVISION, &reg) ||
+>            reg != (pdev->revision | (pdev->class << 8)))
+>                return true;
 
+Hm, that's odd.  Why is that?  Is reg == 0xffffffff in one of those cases?
+
+I guess that could happen if the Thunderbolt tunnels are not yet
+established at that point (i.e. in the ->resume_noirq phase),
+but normally they should be.  Does this system use ICM-controlled
+tunnel management or kernel-native (software-controlled) tunnel
+management?
+
+Thanks,
+
+Lukas
 
