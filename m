@@ -1,123 +1,148 @@
-Return-Path: <linux-kernel+bounces-346688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3829698C78D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:24:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722A598C78F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DADE0B23C4E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CFA91C242F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968131CEAC3;
-	Tue,  1 Oct 2024 21:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD921CDFAF;
+	Tue,  1 Oct 2024 21:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="UmNH48Ce"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhYS1JLP"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC8D322E;
-	Tue,  1 Oct 2024 21:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517D41CCED0
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817797; cv=none; b=jzdQDanDRTjNzHeDik7rBkX35VtdTjwk8x081nLlgfY1bfdXkFxk6KZExpPiD5VeMzFTbmWXnAiLjXfQE++pRoFHZLOnVqddU32ip/CHmFJyqK2NI/7Bomlmqg/7keStqtQYLcIOuKhTPSKVQ9TJ/PJGKf+nPBUZ8abuwMgjqrY=
+	t=1727817859; cv=none; b=O1XdjOucII21YR7QFwUs8kudoBlw71FdwLXvFZe64091L8AS8JrW9CZ9rS+ms/dFvtSzpv0r/QgB1iW3pG/7ieDSfZZrnM7vNEIl9DS26WP2jPd019E7PKEHH2oYP/xUgH3UEvpYHza0xnWlySlGwZN7MNybQRaGqCNhfz37Z4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817797; c=relaxed/simple;
-	bh=gwl+UvEUYaPrGT3SbXPzo2anqaI06j0D0CplQ+iTjnU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=bvZTTM2o6AVAQRUjLk0qcSkwbCi6n0lml+fJu1AXbsluuiTI/HN9aBzAdUflGF29JFYCWGtwtksgiAYzbPnG3sVvWto0zOoH0W8+998vstiYbjgs/3I0el9ca28ofHJ7lBllPqePEFWEc7bviAxN7KextWIs+h6bwwu6NHQTVeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=UmNH48Ce; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1727817781; x=1728422581; i=w_armin@gmx.de;
-	bh=VP1+d+v/jCsIcaZX1wY8WEBaidTspygfYgGc1OtdNlA=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=UmNH48Ce9SHuPdtGTv7EfvwISOqMnMyK2j0AQ8wL56FofkDssCmdxez0I6Bm0GLt
-	 aOxYcMCXXDeYvt9U/XL4K5GyAa5Vki3hTqA9E3IPHIvgM1c0xUwSDOn3vMMzEiqmM
-	 pmrdDdxohYf0x1vrThuYo3o1+KTq27JanErEPoqjNVAxqa0EadXi3/z5CCPDM7/Zv
-	 +dNqZOabrzSkvIsPSlN66dsN5q51yzDKVTXAEk/IFyJb01ar6rkSgYWPvlW1WSvDv
-	 mAyE1QiLaJFbB2q+0KcsFdWs/ichjppOKwSbRGriYhAnO449QwWB74VyE5FncgeQ3
-	 08g1zlnUq43AOO24KA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MOzOw-1sWONt2Hfw-00Msyq; Tue, 01 Oct 2024 23:23:01 +0200
-From: Armin Wolf <W_Armin@gmx.de>
-To: mjg59@srcf.ucam.org,
-	pali@kernel.org,
-	dilinger@queued.net
-Cc: rafael@kernel.org,
-	lenb@kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/3] platform/x86: dell-laptop: Battery hook fixes
-Date: Tue,  1 Oct 2024 23:22:54 +0200
-Message-Id: <20241001212257.341398-1-W_Armin@gmx.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1727817859; c=relaxed/simple;
+	bh=dtlV1lVWGHqIusGVP1xa6CPYy2ICFiVnSl9BJ6RA+lU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qO671FJURySyF7dyTOCPFpBlIfVLI0RyuwM4Zx53eaxFhV/NLnmQ9wh9XQnjxwFSeA6U5lyYVepktLZ0CmOKKCQo6LzQCILvLPQTyVKzh/KhBUx6ujQwjk3KOH6dxwPL66WexjcmMrhbRjUxn83gYTmrsToMq9LdBVYjr4XvVfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FhYS1JLP; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-45b4e638a9aso34631cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 14:24:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727817857; x=1728422657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Mt3Is1RFmYLd5Na8zkD+A3g9HRH0C7v0jg6OTqp/amI=;
+        b=FhYS1JLPHYXlz5pibzyc9ExOxaQ/7f/IfwGGTsjbcKnYhV/nmq4dge63kS7xaClhsP
+         +jfcxBFtdL4EEjytQ4R9ZekK0W8SpmPLxfBuvguVouoRgZlCs45re4tcZdH0vJ8gqA70
+         uiXz0goK4vyrZboFqwMWJZrDEwB6d+L+ewlq+SopiWfEurRcYfayxxqXy+wti1CFRwZP
+         iomONP4bhdv4AEU3I5pIeKiraAgBsNeTjzoo6ejTJ6PdL5FglcS6nNCSFsxjQ2hn/gpx
+         n5Z7vCIlkTKwde+3iLp0YtIGFhGPToZWPf+5NHlb1XFq3HNpzfCYJFVyHjDcMTJCF03z
+         62cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727817857; x=1728422657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mt3Is1RFmYLd5Na8zkD+A3g9HRH0C7v0jg6OTqp/amI=;
+        b=HbrOmVOC4m4lm+Fpca2jovacSb5rkCVeVKRWWxTjUrB2Sf6CyXaqSjM+WT3giBkwBj
+         D5d8Fxm3Wc2aXVFlvgwT/DZbOGVSs2upJyP1/CtXxCsAd4g+Z+EpibpleOA1jHo4VdQe
+         9FtesuE+4Ct3KWPV0QJ+icMA8MKPd/9I9UH4dOW2jLQXEduTXP7Kb10i76qQshfcFlyy
+         hiHRLPJVxe1KDAmFJR/fgk44xRe29nlKtuUfK9hqcgL5C1GxgxEHvW7lzCS6F/pQQ6yA
+         zN/Oilaqi/8TmwRFj3iDqBglhU6di1jwImuZ4sl1gtXVw5yLbw5CHGbbBWg47UqCne6R
+         +Q8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXwDbaC/NJeOfkourDzbH9hf6NqomTv3wyW1DRB7K5UidH8G4Z9JMWJfpBogt23Py5k8Hu+XLT0fn3pkds=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHKTrVzjg455m0kDTJwbwi1TgxziS6FYq4oIi+Ij9pRhSY0xyx
+	IjKiyCjCWmZP6dDZ66Tcv0uZ9/wp2r5bbSrjjyKuRyX5WyFcaeRle2HmEhDUGiFeQ9S/Jb+X1U0
+	pna9RqBoh/Y9JYOWSP9K5WZGGN/9Qu1aLPtGF
+X-Google-Smtp-Source: AGHT+IEb/LrlGiLV25l7MI+5b+nV38eUfZtAIem1Ibw7evfeTyXOlxSzC1S9UXoNTcPhVVESXBGpaUCGkw/4Vut/mp0=
+X-Received: by 2002:a05:622a:500e:b0:453:5f2f:d5d2 with SMTP id
+ d75a77b69052e-45d8323ab96mr258141cf.1.1727817856653; Tue, 01 Oct 2024
+ 14:24:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241001175057.27172-1-quic_pintu@quicinc.com>
+In-Reply-To: <20241001175057.27172-1-quic_pintu@quicinc.com>
+From: "T.J. Mercier" <tjmercier@google.com>
+Date: Tue, 1 Oct 2024 23:24:03 +0200
+Message-ID: <CABdmKX2xEn8QjObqR3VNb=RqMZVNBiNtkfYWm8h_3Xc8KMkdag@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dma-buf/heaps: replace kmap_atomic with kmap_local_page
+To: Pintu Kumar <quic_pintu@quicinc.com>
+Cc: sumit.semwal@linaro.org, benjamin.gaignard@collabora.com, 
+	Brian.Starkey@arm.com, jstultz@google.com, christian.koenig@amd.com, 
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org, joe@perches.com, 
+	skhan@linuxfoundation.org, pintu.ping@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lDb3s/zMx0Pia/LniwlLF6hwfgcH3ErRT7WSt2OKGbSH1KLqOiM
- IQnk65HWl5o30iURKaDWzpr6MpzWmQ7nkbvfXPfKnrYnExF/ins0KTzeHJe7NcSGVLjIxLy
- KB0OKtjyD7ioow5zaq1CnRj1/8yUdUMktwqU7xxgZZ3ZOA7Hv3HWLClUqq/8tZm5rKc78yO
- Ka3tV/XFKG/mj4YJP0FMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:TNB0YZtx3Fw=;EpNy8Wag747tPiSjmMUUW7z3SCP
- iZNUv6j7FEYEIGgUVFCbtREyWkqetBvpfRkMy2Nkj4W/q4V4JPQxF4+V0bL1XG1vf14GnG3EV
- JOD9qG9L/B+O7cX33PHH1ZvUzH8oY67e94pD6XSDkmxeAlg8cKwi31uCL3Eh3752wM9t2lMTi
- IcNyRbGxf19u8mLuzyy+VBrkno1McyZXTGY76aIwwTXEHyCSF6Q5C2H21Vo7c7SdCTYX45RuL
- qUxjH2/sYzgb0Cu9VjXZkG95cdXK8Fh7h/YBlyCY5XBPjgNnkzSTmm0ZwUX3wMLx0fnQ1141c
- 5CSteuMfTCBcVxAuHuG2XEEbsC/yy/h+HzdYwn3hByzRe5kZZHVSWhuoc7eZPVTwBxRuxCfZw
- raI5rhFhPLeSNpcvD+M/47GNsGMcEWaIgNi5iI882nLCEwWLFg54QhU2BE+PwNULgJg+yAqHZ
- 199eucZ3K2Zw6EoCdHuIlJqLKouGdfkJxekrQAmjbPp78/3PMtmfSj092iscDtAnPml0Ih8Ez
- jKCGPlL/9IfUDumqs+kUVfXUyRPa/oJXaCpUb/bGBu3DFpvwSZJ1TGlAAjGuTJQvk+LAFUl0q
- +1ewZ3dkGqLyABA6CMVsEJqLm4PSN37SP3Q32EQbhK2ti9jrXJrYlXXEbbdJMqPRf9Bm7Scdh
- Xy7+v6Bh3TDuN0CJIZT1jO0Q+l0JPUyFux6KuOzrfVD8fKZCzaEwm63tYDk6hsEKQOTXvJu+E
- jBbQbQ8FHyOejsi6TYO5cSvlzmlGg2dtcP8lHuc5P+XIhx9m42PJZmTatdvlfn9VPYMyDDogE
- T4poEgJvxxt3NwiAddeHNeqzAe1huawnERoAapmidvkhg=
 
-This patch series fixes some issues around the battery hook handling
-inside the ACPI battery driver and the dell-laptop driver.
+On Tue, Oct 1, 2024 at 7:51=E2=80=AFPM Pintu Kumar <quic_pintu@quicinc.com>=
+ wrote:
+>
+> Use of kmap_atomic/kunmap_atomic is deprecated, use
+> kmap_local_page/kunmap_local instead.
+>
+> This is reported by checkpatch.
+> Also fix repeated word issue.
+>
+> WARNING: Deprecated use of 'kmap_atomic', prefer 'kmap_local_page' instea=
+d
+> +                       void *vaddr =3D kmap_atomic(page);
+>
+> WARNING: Deprecated use of 'kunmap_atomic', prefer 'kunmap_local' instead
+> +                       kunmap_atomic(vaddr);
+>
+> WARNING: Possible repeated word: 'by'
+> +                        * has been killed by by SIGKILL
+>
+> total: 0 errors, 3 warnings, 405 lines checked
+>
+> Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
 
-The first patch simplifies the locking during battery hook removal as
-a preparation for the second patch which fixes a possible crash when
-unregistering a battery hook.
+Reviewed-by: T.J. Mercier <tjmercier@google.com>
 
-The third patch allows the dell-laptop driver to handle systems with
-multiple batteries.
+The Android kernels have been doing this for over a year, so should be
+pretty well tested at this point:
+https://r.android.com/c/kernel/common/+/2500840
 
-All patches where tested on a Dell Inspiron 3505 and appear to work.
-
-Changes since v2:
-- drop boolean flag and use list head instead in patch 2
-
-Changes since v1:
-- fix the underlying issue inside the ACPI battery driver
-- reword patch for dell-laptop
-
-Armin Wolf (3):
-  ACPI: battery: Simplify battery hook locking
-  ACPI: battery: Fix possible crash when unregistering a battery hook
-  platform/x86: dell-laptop: Do not fail when encountering unsupported
-    batteries
-
- drivers/acpi/battery.c                  | 28 +++++++++++++++----------
- drivers/platform/x86/dell/dell-laptop.c | 15 ++++++++++---
- 2 files changed, 29 insertions(+), 14 deletions(-)
-
-=2D-
-2.39.5
-
+> ---
+>  drivers/dma-buf/heaps/cma_heap.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/dma-buf/heaps/cma_heap.c b/drivers/dma-buf/heaps/cma=
+_heap.c
+> index 93be88b805fe..8c55431cc16c 100644
+> --- a/drivers/dma-buf/heaps/cma_heap.c
+> +++ b/drivers/dma-buf/heaps/cma_heap.c
+> @@ -309,13 +309,13 @@ static struct dma_buf *cma_heap_allocate(struct dma=
+_heap *heap,
+>                 struct page *page =3D cma_pages;
+>
+>                 while (nr_clear_pages > 0) {
+> -                       void *vaddr =3D kmap_atomic(page);
+> +                       void *vaddr =3D kmap_local_page(page);
+>
+>                         memset(vaddr, 0, PAGE_SIZE);
+> -                       kunmap_atomic(vaddr);
+> +                       kunmap_local(vaddr);
+>                         /*
+>                          * Avoid wasting time zeroing memory if the proce=
+ss
+> -                        * has been killed by by SIGKILL
+> +                        * has been killed by SIGKILL.
+>                          */
+>                         if (fatal_signal_pending(current))
+>                                 goto free_cma;
+> --
+> 2.17.1
+>
 
