@@ -1,148 +1,186 @@
-Return-Path: <linux-kernel+bounces-346226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D027A98C16E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:20:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36F698C178
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93A13281CF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B431F24501
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1429E1C9B76;
-	Tue,  1 Oct 2024 15:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1811C9B76;
+	Tue,  1 Oct 2024 15:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUW+LRDx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="j1xXWvFH"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8051373;
-	Tue,  1 Oct 2024 15:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63BD1C68AC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727795999; cv=none; b=DmCQrclCOGpLwpEJsecjduAN3R/1Z07Bpt1dIlDAmFWrnwpgyy26O0/MUdTLB0VFDvRgTQjSQ6OGsPmVwQpEGa6aM6cWJ2Krp1ZYreksRZlQ2v69UFJrJ1cEcIZEz7aX4gyt9f17bqHAi27jq2XBETggYIoGDv18m7io7Rzn9zo=
+	t=1727796043; cv=none; b=oNW5jYljNt2cTe7NQ51i3mwZSXublp5mF47WADv64lCPIE/ePP818EkNRvM7OFw8CgUM5VDxjrITz9n9nVz2OHb739t850m3QrUKzhg/Jb3huOcVfmgRe+CaG20wriFEPFlF6pRQu358pB/G11Ah2FcLMg46mI1DDb6NrIbP97U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727795999; c=relaxed/simple;
-	bh=nHbKolTeOQNBd6SGwOVKGHzRUKmMnPxGz14Cstj/uD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qfk/Rc6Ld1gOXFA6jx0AK4HjDEzmc4f1IFAH37Nv8WICiiE8IVMFm815kqVsZEO68RiH5DjrBYcak+XWc7ZmT+msRXnzdT7UCI0dP7rGT3Cn/ZFelIYiBLPSLaru3EibKT8HXNINpxuTCZG2/TZULThvjAyM1C1phcZ4iAN6nrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUW+LRDx; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727795997; x=1759331997;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nHbKolTeOQNBd6SGwOVKGHzRUKmMnPxGz14Cstj/uD4=;
-  b=PUW+LRDxP5jNaTvZj7Nj6PkqpyQcGBiBAAQFVzYVC2ViDjzxglCIoRm5
-   LeYBEx9kf/afopYNgEZ/zFdM9f6+avTsHYawzukUiG2LafxMoqBfkJBHW
-   F1424QFioj/fRXD/WeHOrwXipN8Tqe1rSYtXnsAQbmmHGsWrndRaISbb5
-   RjrTFO9pdgfm68HqxJbLiKhd53V/Lmx2m1coxl/OhztHWvdJ5Pg5S5Dkg
-   290lTx29HeLARWtCxuRov/0IL9Jn2ysb8aJuuYbG4YTfG7EqJINCMoEVJ
-   U1EZa292eF+G5+BHN+ghynFBUklEsGAxdGOb2ux176w2gguFzsKwh1XaM
-   A==;
-X-CSE-ConnectionGUID: aqYz0dAIQt2e3L9qKW1GhA==
-X-CSE-MsgGUID: P7vPvYNfSO2S/LINPlSnRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27076191"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="27076191"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 08:19:57 -0700
-X-CSE-ConnectionGUID: ECuk/tBbTaWlEFZdF6rnhQ==
-X-CSE-MsgGUID: PtC4BFXmStqsZaskDzxDJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="77736857"
-Received: from daliomra-mobl3.amr.corp.intel.com (HELO [10.124.220.1]) ([10.124.220.1])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 08:19:56 -0700
-Message-ID: <9514d5b8-73ba-47c8-93a9-baee56471503@intel.com>
-Date: Tue, 1 Oct 2024 08:19:55 -0700
+	s=arc-20240116; t=1727796043; c=relaxed/simple;
+	bh=ZU+Z/WlZcaTh47xXgjL+D5zyETNn+avD/Kj0arLV7NM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfZ4QDVwkO1vTJGCARLKhMae1gxEVDUtnNHgdW43RAsbDMooblEhQBv/XbfG0dtZ2FnUXdsCDFLsFGlFXiN6ajjGlon8gMXPB8ZydVlYsG1Sw4uLP80waA3zwCRTOf2yddGsmMgmT9FZoi3/A/LdVp4qfZVX7Vi/mhHRpGFYtb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=j1xXWvFH; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cb4c013b78so28343396d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1727796041; x=1728400841; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=os7ciG24pZLduUL01Uf3DEB98OBQt4RnR5S6qFgUTGk=;
+        b=j1xXWvFHdB9HepYC6ePIdZAd2TU2cL1uUGr2LjU3Jc/qZa3GIjsN5vjiHdCiwQax5G
+         XzbB07Yc44ubAAIaMtiVQamly1rhZUAinjnqj1/mWKjDwdvhJsdEaSFKquZlZ4s4J5kn
+         HTp7CddHuzFILkiWQDcPBKysfoKJv5zXg+VBrcOwwvgHNM+N2tTANtrntG3ESKRD48ZG
+         azx/V+sDIOSLa5jYcqaoQJge3B2qEUIYhsy3//dGzDI4jQL5op8cuiQHX5uQmiBfqWI5
+         C1yIgYOuxPpmt+bIl0EknVXKdHrOqP8Sb6SxZ/BDRWLQ4qc7gJXzODtCFBZnKzgL0zfa
+         Xi+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727796041; x=1728400841;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=os7ciG24pZLduUL01Uf3DEB98OBQt4RnR5S6qFgUTGk=;
+        b=oFx9uYBhgDKO8JYTFBegCXRGi2qelp25asYxofyX+WapKJfSIj/TjQ9ZCX0dwgCXul
+         izR5xzDAlXiLJ1BgfAjo8imjf0fACkU38AiOTsB8B4/j75bHYIl2mfBPK9a9HIq/F7Xf
+         0DkylVJ+oE0mzIRkeW2KuC/bY3lK0P42DsFyVZFdQaRApluTnVGtOKC2459jaalZCfZu
+         AwjJ40YiaTIwu2v1IIxl1phWP8Tl/M216WwCwSuWFZ+lDhh8Dik67igy3y544IdUxSNg
+         DPvMQOWzz+RYrZ6/4uptMNZvyojN80NycJ1gQpkcq7Le7H33C1n+Lb/X5rwmrwm+/aVh
+         N5lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUDbUbaJcO6Z/9CYcCZccrSYgzKQjqswi2IXt1yenzIL9qisMiS0Kg5ZGta9DGC1QWOEzZ49Zkfk+8fKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf5Q6S1VTbJNiWF8Sw+XKAcnHaahaA1VAOBxmX6enHuswFOlSl
+	1EJgLDFsD/xAH+yakKgJAwEB7dvlTD+9gDMrBuTjsSr++PzuVny8eluHrVZSZYA=
+X-Google-Smtp-Source: AGHT+IEfkdwBIWEZzpIx/ashe6rDUHbFbG5kJrCq2hePig1GgZbqm2JF4/GnUYx4iA8UiMuXCbaUtQ==
+X-Received: by 2002:a05:6214:3207:b0:6c5:7446:4fdf with SMTP id 6a1803df08f44-6cb3b5e283dmr258721556d6.24.1727796040646;
+        Tue, 01 Oct 2024 08:20:40 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66b5a8sm50944436d6.79.2024.10.01.08.20.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 08:20:39 -0700 (PDT)
+Date: Tue, 1 Oct 2024 11:20:11 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, rrichter@amd.com,
+	terry.bowman@amd.com
+Subject: Re: [PATCH] cxl/core/port: defer probe when memdev fails to find
+ correct port
+Message-ID: <ZvwTKxTc9yDypmkG@PC2K9PVX.TheFacebook.com>
+References: <20240913183234.17302-1-gourry@gourry.net>
+ <66e511eff0c0d_ae212945a@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <ZurAiwt7t2WWVrJM@PC2K9PVX.TheFacebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] x86/virt/tdx: Prepare to support reading other
- global metadata fields
-To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
- <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "peterz@infradead.org" <peterz@infradead.org>, "hpa@zytor.com"
- <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "tglx@linutronix.de" <tglx@linutronix.de>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>,
- "Hunter, Adrian" <adrian.hunter@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "x86@kernel.org" <x86@kernel.org>, "Yamahata, Isaku"
- <isaku.yamahata@intel.com>
-References: <cover.1727173372.git.kai.huang@intel.com>
- <101f6f252db860ad7a7433596006da0d210dd5cb.1727173372.git.kai.huang@intel.com>
- <408dee3f-a466-4746-92d3-adf54d35ec7c@intel.com>
- <62ca1338-2d10-4299-ab7e-361a811bd667@intel.com>
- <a03f740b-6b0c-4a64-9ff1-7eba3ac7a583@intel.com>
- <1b14e28b-972e-4277-898f-8e2dcb77e144@intel.com>
- <66fbab2b73591_964fe29434@dwillia2-xfh.jf.intel.com.notmuch>
- <d3fa4260c50c8d4101f8476c1cc4d6474b5800ce.camel@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <d3fa4260c50c8d4101f8476c1cc4d6474b5800ce.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZurAiwt7t2WWVrJM@PC2K9PVX.TheFacebook.com>
 
-On 10/1/24 03:44, Huang, Kai wrote:
-> Please let me know if you have any concern?  Otherwise I will go with
-> this route.
-I still see some long unwieldy #defines in the mail thread.  That's my
-biggest worry.
+On Wed, Sep 18, 2024 at 01:59:07PM +0200, Gregory Price wrote:
+> On Fri, Sep 13, 2024 at 09:32:48PM -0700, Dan Williams wrote:
+> > Gregory Price wrote:
+> > > Depending on device/hierarchy readiness, it can be possible for the
+> > > async probe process to attempt to register an endpoint before the
+> > > entire port hierarchy is ready.  This currently fails with -ENXIO.
+> > > 
+> > > Return -EPROBE_DEFER to try again later automatically (which is
+> > > what the local comments already say we should do anyway).
+> > 
+> > I want to make sure this is not papering over some other issue. Can you
+> > post the final topology when this works (cxl list -BPET)? My working
+> > theory is that you have 2 devices that share an intermediate port.
+> > Otherwise, I am having a hard time understanding why the
+> > cxl_bus_rescan() in cxl_acpi_probe() does not obviate the explicit
+> > EPROBE_DEFER.
+> >
+
+just reporting back with a fully functional layout - they do not appear to
+share an intermediate port, unless you consider the root a shared port.
+
+I see your concern about this papering over another issue, but it's not
+clear what to look for or how to look for it at this point.
+
+For what it's worth - another group observed the same issue with different
+hardware and produced the same patch.
+
+    "ports:root0":[
+      {
+        "port":"port1",
+        "host":"pci0000:e0",
+        "depth":1,
+        "decoders_committed":1,
+        "nr_dports":4,
+        "dports":[
+          {
+            "dport":"0000:e0:07.2",
+            "alias":"device:16",
+            "id":114
+          },
+          {
+            "dport":"0000:e0:01.1",
+            "alias":"device:02",
+            "id":0
+          },
+          {
+            "dport":"0000:e0:01.3",
+            "alias":"device:05",
+            "id":2
+          },
+          {
+            "dport":"0000:e0:07.1",
+            "alias":"device:0d",
+            "id":113
+          }
+        ],
+        "endpoints:port1":[
+          {
+            "endpoint":"endpoint5",
+            "host":"mem0",
+            "parent_dport":"0000:e0:01.1",
+            "depth":2,
+            "decoders_committed":1
+          }
+        ]
+      },
+      {
+        "port":"port3",
+        "host":"pci0000:c0",
+        "depth":1,
+        "decoders_committed":2,
+        "nr_dports":1,
+        "dports":[
+          {
+            "dport":"0000:c0:01.1",
+            "alias":"device:c3",
+            "id":0
+          }
+        ],
+        "endpoints:port3":[
+          {
+            "endpoint":"endpoint6",
+            "host":"mem1",
+            "parent_dport":"0000:c0:01.1",
+            "depth":2,
+            "decoders_committed":2
+          }
+        ]
+      },
+    ]
+
+> > So, devA is dependendent on devB to create a common port, but devA loses
+> > that race after cxl_bus_rescan() has already run. Then EBPROBE_DEFER is
+> > the right answer to trigger devA to try again.
 
