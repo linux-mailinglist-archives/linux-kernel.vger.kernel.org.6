@@ -1,78 +1,61 @@
-Return-Path: <linux-kernel+bounces-345110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E3B98B21F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9528D98B254
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBE6280BD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCA4C1C2209A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A2F2D60C;
-	Tue,  1 Oct 2024 02:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93223CF58;
+	Tue,  1 Oct 2024 02:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YgixeEvQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXvIEiUl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7727FC08;
-	Tue,  1 Oct 2024 02:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272B2FC08;
+	Tue,  1 Oct 2024 02:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750153; cv=none; b=qQUaHmd+EA+OVKe8pg+vby44EZe/typLvVxmdFZuczSduQ/t4wL2e8ld+ZCb6DpTnOE/JZgfDQW8ifJQ/C8uYtU9E0rLtZa9h6bv7lrUrMV7vyOHoBUifKq7wUUXTkaAnkum5WmqJqs6yGNtqS2tTNfo3rdH5nG6IIJWg0t6Q7k=
+	t=1727750381; cv=none; b=PRsYDLpr4UU0pdvsRgZOv6T5L+Kh2Az3gx8Mk+eRr9ZqJYVcN0MPnpCJ4T1XlFFpKNy3+yY+q2sqXBhaHtKUJxCDRXGjvYaPivgA6p4DJ466GvftVaxgqSe1CVji/4HvzUzhdMzQDZkOjNmxmsutQo7eZiPN20hFQgAl9FeaEE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750153; c=relaxed/simple;
-	bh=RtJ2LUYDveE16kLBxegqIk2BXswKibMLQ6kAAiChATo=;
+	s=arc-20240116; t=1727750381; c=relaxed/simple;
+	bh=cbiZIGp8Fe7TqrapbtTHE1aVZkZFl1EXlstBACj0Xgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3Tzu079oKg9UpNPGQ1eUWdkf9p2EZEl7OAsueUIM5Be2PV07GIv24Gj2SLwJbzUvs8u1Mex8n9lTHxTPnGmN7TqfM7PjvmOobV1RZncO4zd+yrvpmGF7xutUlD+LP1g5U8Pz7GFQfxJdmIP96IoBnT5HCscXPFeUfeTr4aDeCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YgixeEvQ; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727750152; x=1759286152;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RtJ2LUYDveE16kLBxegqIk2BXswKibMLQ6kAAiChATo=;
-  b=YgixeEvQTbV4c9l0l8QvKTQ8lOH0wq3y3pdXa0AyjcRDQkheQjU5G9m5
-   8yF3l4PEktq3q5VIVvnNOzSmjENZ5pHe773PLUduf0MO/Ma6ddSXyoYEj
-   WoeXeyQ5zeDhCNBbc76KgEHDcape1oYn7e/oxZfsYov7P+UgezV7ZM/Yl
-   jrBKb1KYPBWjU2k6UK/BMwi/VdUeLxDgm/HvTGSFHMt0mwjGD45izyqW0
-   hi7uh7RjWeM5zlpMF5BsTpIvddi98YoVpNin2UVPCfBdUdmsWiq6EgQvl
-   ZlXoRgascx+eAwHDn70IqFD9NOgzJfcnAPFi/4jyvxb7bzCY2D8G7iC68
-   w==;
-X-CSE-ConnectionGUID: dXd3Aq0XS+yYOmgGLfhdcg==
-X-CSE-MsgGUID: yjGqRmuNSPasS/Y8eksqsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26672382"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="26672382"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2024 19:35:51 -0700
-X-CSE-ConnectionGUID: xCBQprlRT/6uykyqPWuqYA==
-X-CSE-MsgGUID: b2AkoAOPSRuNjiEmrj0hUg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73920500"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 30 Sep 2024 19:35:49 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1svSjq-000QAJ-0i;
-	Tue, 01 Oct 2024 02:35:46 +0000
-Date: Tue, 1 Oct 2024 10:34:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_rampraka@quicinc.com,
-	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
-Subject: Re: [PATCH] qcom: ice: Remove ice probe
-Message-ID: <202410011021.Lr5B1w7F-lkp@intel.com>
-References: <20240928050456.27577-1-quic_spuppala@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECM/twuaNRILJOi2Bp18NVzu5vj1tb0VdgJOgnQMzg494etSrwh0yhBHrnxFiaGoZNPW8XQ2CvrLaIYe5O3BB/ji6Z+UnW/NmM31rMnKKYMQ2/fxCr8zRQZKKteEySeFF19S+FbIen2GhQF80+7NqNvgGIg60CsN0TWiz83RHqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXvIEiUl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E8BC4CEC7;
+	Tue,  1 Oct 2024 02:39:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727750380;
+	bh=cbiZIGp8Fe7TqrapbtTHE1aVZkZFl1EXlstBACj0Xgo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qXvIEiUl0Mz5VdMuPNvZxf3nlQ4iFEDprNhDtjpwrtm49TFnopemsvm4xv34CbMKA
+	 vvY+ky/Tu9Ob21Xx8NrbuyXJ5yxi4cqzYEwOKBFQ0sOgM8qPN70qbh31/eHcxNsUbP
+	 S9CeTYYHw9nawZXcqHeXV9ziQhEh6U/n5eeFXEZaKQMclqdZAjdq+EyItBmVn9z6LP
+	 /7qzINduC+YSArKb8mfWMUul1Uu0pVZNJx7qislRyITGIHHyHZZBie6nLpV4xsdKkC
+	 FTEcG0C/8p0OU2TMy49rCOavji+iP895AsYPnX5G/eoIGTKYuXWmCXlzzeZvq4a0d1
+	 awm85rl2gN16g==
+Date: Mon, 30 Sep 2024 21:39:36 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, 
+	konrad.dybcio@linaro.org, andi.shyti@kernel.org, linux-arm-msm@vger.kernel.org, 
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	conor+dt@kernel.org, agross@kernel.org, devicetree@vger.kernel.org, vkoul@kernel.org, 
+	linux@treblig.org, Frank.Li@nxp.com, konradybcio@kernel.org, 
+	bryan.odonoghue@linaro.org, krzk+dt@kernel.org, robh@kernel.org
+Subject: Re: [PATCH v3 4/4] i2c: i2c-qcom-geni: Enable i2c controller sharing
+ between two subsystems
+Message-ID: <7eg2g2ykqccc74l6chkwlq54wcobzevqlzngkr3lnegv36pcsb@t3asip2mbmew>
+References: <20240927063108.2773304-1-quic_msavaliy@quicinc.com>
+ <20240927063108.2773304-5-quic_msavaliy@quicinc.com>
+ <lmo4jylfwt3wingdqb6zc6ew2537kqksuckfyd7vwuu4ufg5cr@ic2j7bv2r6e4>
+ <42e0622d-0bb6-4850-bf5a-629996c702db@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,131 +64,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240928050456.27577-1-quic_spuppala@quicinc.com>
+In-Reply-To: <42e0622d-0bb6-4850-bf5a-629996c702db@stanley.mountain>
 
-Hi Seshu,
+On Mon, Sep 30, 2024 at 11:21:23AM GMT, Dan Carpenter wrote:
+> On Sun, Sep 29, 2024 at 10:46:37PM -0500, Bjorn Andersson wrote:
+> > > @@ -602,6 +603,7 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+> > >  	peripheral.clk_div = itr->clk_div;
+> > >  	peripheral.set_config = 1;
+> > >  	peripheral.multi_msg = false;
+> > > +	peripheral.shared_se = gi2c->se.shared_geni_se;
+> > >  
+> > >  	for (i = 0; i < num; i++) {
+> > >  		gi2c->cur = &msgs[i];
+> > > @@ -612,6 +614,8 @@ static int geni_i2c_gpi_xfer(struct geni_i2c_dev *gi2c, struct i2c_msg msgs[], i
+> > >  		if (i < num - 1)
+> > >  			peripheral.stretch = 1;
+> > >  
+> > > +		peripheral.first_msg = (i == 0);
+> > > +		peripheral.last_msg = (i == num - 1);
+> > 
+> > There are multiple error paths in this loop, which would result in us
+> > never issuing the unlock TRE - effectively blocking other subsystems
+> > from accessing the serial engine until we perform our next access
+> > (assuming that APSS issuing a lock TRE when APSS already has the channel
+> > locked isn't a problem?)
+> > 
+> 
+> Hi Bjorn,
+> 
+> I saw the words "error paths" and "unlock" and I thought there was maybe
+> something we could do here with static analysis.
 
-kernel test robot noticed the following build warnings:
+Appreciate you picking up on those topics :)
 
-[auto build test WARNING on v6.11]
-[also build test WARNING on next-20240930]
-[cannot apply to linus/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> But I don't know what TRE or APSS mean.
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Seshu-Madhavi-Puppala/qcom-ice-Remove-ice-probe/20240928-130818
-base:   v6.11
-patch link:    https://lore.kernel.org/r/20240928050456.27577-1-quic_spuppala%40quicinc.com
-patch subject: [PATCH] qcom: ice: Remove ice probe
-config: arc-randconfig-r122-20241001 (https://download.01.org/0day-ci/archive/20241001/202410011021.Lr5B1w7F-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241001/202410011021.Lr5B1w7F-lkp@intel.com/reproduce)
+The "APSS" is "the application processor sub system", which is where
+we typically find Linux running. TRE is, if I understand correctly, a
+request on the DMA engine queue.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410011021.Lr5B1w7F-lkp@intel.com/
+> The one thing I do see is that this uses "one err" style error handling where
+> there is one err label and it calls dmaengine_terminate_sync(gi2c->rx_c)
+> regardless of whether or not geni_i2c_gpi() was called or failed/succeeded.
+> 
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/soc/qcom/ice.c:309:31: sparse: sparse: incorrect type in return expression (different base types) @@     expected struct qcom_ice * @@     got long @@
-   drivers/soc/qcom/ice.c:309:31: sparse:     expected struct qcom_ice *
-   drivers/soc/qcom/ice.c:309:31: sparse:     got long
-   drivers/soc/qcom/ice.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
+The scheme presented in this series injects a "LOCK" request before the
+DMA request marked first_msg, and an "UNLOCK" after the ones marked
+last_msg. This is needed because the controller is also concurrently by
+some DSP (or similar), so the LOCK/UNLOCK scheme forms mutual exclusion
+of the operations between the Linux and DSP systems.
 
-vim +309 drivers/soc/qcom/ice.c
+I'm not sure if it's possible to tie the unlock operation to
+dmaengine_terminate_sync() in some way.
 
-   250	
-   251	/**
-   252	 * of_qcom_ice_get() - get an ICE instance from a DT node
-   253	 * @dev: device pointer for the consumer device
-   254	 *
-   255	 * This function will provide an ICE instance either by creating one for the
-   256	 * consumer device if its DT node provides the 'ice' reg range and the 'ice'
-   257	 * clock (for legacy DT style). On the other hand, if consumer provides a
-   258	 * phandle via 'qcom,ice' property to an ICE DT, the ICE instance will already
-   259	 * be created and so this function will return that instead.
-   260	 *
-   261	 * Return: ICE pointer on success, NULL if there is no ICE data provided by the
-   262	 * consumer or ERR_PTR() on error.
-   263	 */
-   264	struct qcom_ice *of_qcom_ice_get(struct device *dev)
-   265	{
-   266		struct platform_device *pdev = to_platform_device(dev);
-   267		struct qcom_ice *ice;
-   268		struct device_node *node;
-   269		struct resource *res;
-   270		void __iomem *base;
-   271	
-   272		if (!dev || !dev->of_node)
-   273			return ERR_PTR(-ENODEV);
-   274	
-   275		/*
-   276		 * In order to support legacy style devicetree bindings, we need
-   277		 * to create the ICE instance using the consumer device and the reg
-   278		 * range called 'ice' it provides.
-   279		 */
-   280		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ice");
-   281		if (res) {
-   282			base = devm_ioremap_resource(&pdev->dev, res);
-   283			if (IS_ERR(base))
-   284				return ERR_CAST(base);
-   285	
-   286			/* create ICE instance using consumer dev */
-   287			return qcom_ice_create(&pdev->dev, base);
-   288		}
-   289	
-   290		/*
-   291		 * If the consumer node does not provider an 'ice' reg range
-   292		 * (legacy DT binding), then it must at least provide a phandle
-   293		 * to the ICE devicetree node, otherwise ICE is not supported.
-   294		 */
-   295		node = of_parse_phandle(dev->of_node, "qcom,ice", 0);
-   296		if (!node)
-   297			return NULL;
-   298	
-   299		pdev = of_find_device_by_node(node);
-   300		if (!pdev) {
-   301			dev_err(dev, "Cannot find device node %s\n", node->name);
-   302			ice = ERR_PTR(-EPROBE_DEFER);
-   303			goto out;
-   304		}
-   305	
-   306		base = devm_platform_ioremap_resource(pdev, 0);
-   307		if (IS_ERR(base)) {
-   308			dev_warn(&pdev->dev, "ICE registers not found\n");
- > 309			return PTR_ERR(base);
-   310		}
-   311	
-   312		ice = qcom_ice_create(&pdev->dev, base);
-   313		if (!ice) {
-   314			dev_err(dev, "Cannot get ice instance from %s\n",
-   315				dev_name(&pdev->dev));
-   316			platform_device_put(pdev);
-   317			ice = ERR_PTR(-EPROBE_DEFER);
-   318			goto out;
-   319		}
-   320	
-   321		ice->link = device_link_add(dev, &pdev->dev, DL_FLAG_AUTOREMOVE_SUPPLIER);
-   322		if (!ice->link) {
-   323			dev_err(&pdev->dev,
-   324				"Failed to create device link to consumer %s\n",
-   325				dev_name(dev));
-   326			platform_device_put(pdev);
-   327			ice = ERR_PTR(-EINVAL);
-   328		}
-   329	
-   330	out:
-   331		of_node_put(node);
-   332	
-   333		return ice;
-   334	}
-   335	EXPORT_SYMBOL_GPL(of_qcom_ice_get);
-   336	
+Giving this some more thought, it feels like the current scheme serves
+the purpose of providing mutual exclusion both for the controller and
+to some degree for the device. But I'd like to understand why we can't
+inject the lock/unlock implicitly for each transfer...
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Bjorn
+
+> regards,
+> dan carpenter
+> 
 
