@@ -1,96 +1,231 @@
-Return-Path: <linux-kernel+bounces-345598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D557E98B7E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:07:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BC3C98B7F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F8A1C2282C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC4E82868F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075F719D083;
-	Tue,  1 Oct 2024 09:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F7519D88A;
+	Tue,  1 Oct 2024 09:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=helene.moe header.i=@helene.moe header.b="O6MiPbSL"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SecvBdft"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E7E19CD1E
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5740C19D090
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:07:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773615; cv=none; b=ckiqOX0S5d9WEuHAVsYyBqX+CBQv4A7chrPigEt+BJ0ASe6Tquaf6rS87jyDRE2HXmfEDvX5+lUn4jweWtdEO+7djjpi4xTcOCbFEANzNu99KmhIMEhaWf3/n9ICnaUTQDgyukRJltjT6cJRIAfKMr2XhBLhLmXcD0QDxfJLNSI=
+	t=1727773649; cv=none; b=aaeM3WKn57yqddhh9I7hiQD63lEc5wwD2NPio2Qo6Fj0UyJH2O3P+e/0UF5gESiv7EXpM6T1FItEpm1jYLt2C5yP2ezjntqy2hIMSMb8EGxeLjZMdeC+Itiffdv8j3qzz4APTnOSsGgIb/8BWpuKRvzbkbFlfpx3KY6rDHISXA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773615; c=relaxed/simple;
-	bh=60kvU3f5rwL+N5NZfEw/fLwTrZWWJdK+QWDglVUKT4E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=AoOiqZ7ZSeAPmoCONqKctEEzo1T4QUDMsPo7yShQNvjaLASiPgVnPnqhN+3WZihMKUEF809rY6uYLXWkBzVjUaVApYbY+ldkXGl0P3hHuP0hAU3yIWh6JpwJJX06Uu1aFiJgj5WXxJaGz8wRKRFhas5wm2BxmbJpPWa7q9V5qmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helene.moe; spf=pass smtp.mailfrom=helene.moe; dkim=pass (2048-bit key) header.d=helene.moe header.i=@helene.moe header.b=O6MiPbSL; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helene.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helene.moe
+	s=arc-20240116; t=1727773649; c=relaxed/simple;
+	bh=U/0i22kNrA1tDzRJKeF4+zviF/lA9MFw9WKnRtiuR2o=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rH7wpSLhsBwO/VGlpK8hoLJkSJFBXkcTvmfO1rg7HarJZrMTwKwU9ufMRYFXd2nwH3UOfgQ+cV12T4fNA2sTrFcQOvv+Auj3qZeGu9X7UA9DxK6EmKFzT55lG0vPCJE3couvIRSz8vccXprWzmyj2WYbLYivSBv4ht79rLcNRKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SecvBdft; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e278b2a5c4so33004207b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727773645; x=1728378445; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yoKDQi0r8wbYcqAYza+qd9SS3eEkfqLLzK4aTuWZSMA=;
+        b=SecvBdftSPd4/uq6/t6coXtbEWpDw8hsrsaHqsLKAMiwSyEjKNugCNNBhfClkxroXi
+         /l18GRNHTaBRUBlvfKynCZW+kUb0QQsMBq/Xmx9xa40dtM+wmHTD1CWsd7sGvY0ucUSN
+         mwkhI5WgXIuJd1osnnkcC+lji8FpAEPspVTV2auiiuKsP1DwKEVWtvxsQlU9wYddUbcG
+         7+JZ6xyaEhYDHii0zcvpPz142pUpwE6X07BzYHJm2gHrmGJfIJq4vxXfNPs1z6KtXY78
+         9SwL8WwVizUe/2PreFdc/n7itN3NiZqpUHUMnsrVqdJ+PM2B9Rrt9siGeB04vWzvx97d
+         caMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727773645; x=1728378445;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yoKDQi0r8wbYcqAYza+qd9SS3eEkfqLLzK4aTuWZSMA=;
+        b=EGXe4sz8OJkqLmswBuWtQWHsOgx4E6YbOtMD/x7w0IELI2KaZawWFohsI4P4yRYpd9
+         Ob6o1RqTcTOsrk1ITW4MI404qe6rHCbnVt1CuadibbdwyAtENiDKmN+gW6JPTjThfgIw
+         grOFjqFlIAx/xwHJbIcRrg39bmjVTh9FkuYtoQLU9VOgq/rlR/wOzi1u749qJWdZG9ea
+         IejYcB2Top7+rtBo/CXWC+WcpA6CLnvPefIvAFtDZUZI7GndJgHYvRaWo9BW36nm58MC
+         8F+yOf9pJr57xCmWTZCAS1xPpxm6K5OOx5bRMUvdAqVDubN4eg6yo4Mu5QdgGmt0XuER
+         KB0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIBjTGyiMnJKh27GQRaVEMDSeQE3j9YgFjPqs2e4yZaYKTJThha90NdSkJeyjvCcaVxEBRK0zqV0+OcAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2ISjuCDp+fFKKLpuOdDKhMbJqaj957Q+AuSTOgye3Y/DtTofZ
+	SjwbgxLfBeWejnWtJ6BUXNsxovPS1mZ1MudqifTGbf2c+XEzOyvtkBKa6+/ccvVr30kscsJtDck
+	IfBF1dTTHrObGCA==
+X-Google-Smtp-Source: AGHT+IFKluXh5UbQs3Dh59WxAVP5LkVfvSvhj/dQ8vpSnI8/rLgur9z8Ejs4MoaNSbJe+XASrpKhjwBFxhyWRW0=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:4285:b0:6db:54ae:fd0f with SMTP
+ id 00721157ae682-6e2475d5026mr1045187b3.7.1727773645312; Tue, 01 Oct 2024
+ 02:07:25 -0700 (PDT)
+Date: Tue, 01 Oct 2024 09:07:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=helene.moe; s=key1;
-	t=1727773612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4Zdv10SJzsReJ9cdAvKhNMK+4CSxsDOH1wiW7DwcRJU=;
-	b=O6MiPbSL6N+4wvOtq6fDYRD5nneMzkq5R3ODanXsqIkxfje7mW1umGyEwwqXSzaSPW9ahp
-	Ui9KT57n3axkifB34GHdZ0xQtIppAE/fdhT9+tEqQNBNwzXYW7JYqSBAggSRcoTGoWcxVV
-	THchCpw4/K5KKKW2A6iHpB0l3MAZxV9D+Hytc17WHRIcFemIhsCwJelHHu1KCWV2seyMI3
-	7NKiPjrrBM8tMFKvAYpWiDLY7o/sp56oFm54n5O3PjgF7IFr7SdQu4P21mKsIBKqHoiw1O
-	zbn3ISnh/iGJ9arOSbHivu4elN4NbcVbUbFKsAgjcon6l4JFg/iGM0PJyKByaA==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Oct 2024 11:06:49 +0200
-Message-Id: <D4KCMMJN9ED4.1L7FRSI7NHU7C@helene.moe>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: =?utf-8?q?H=C3=A9l=C3=A8ne_Vulquin?= <oss@helene.moe>
-To: "Dragan Simic" <dsimic@manjaro.org>, <linux-spi@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>
-Cc: <broonie@kernel.org>, <heiko@sntech.de>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 5/5] spi: rockchip: Use dev_{err,warn}_probe() in the
- probe path
-References: <cover.1727601608.git.dsimic@manjaro.org>
- <5b6bd142dab3ab93d7039db3e2fdcfea6bee2217.1727601608.git.dsimic@manjaro.org>
-In-Reply-To: <5b6bd142dab3ab93d7039db3e2fdcfea6bee2217.1727601608.git.dsimic@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIALW7+2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAwND3eLUwrTMnFRdS8MUIyMT4ySLVEtLJaDqgqLUtMwKsEnRsbW1ACw xhgFZAAAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4109; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=U/0i22kNrA1tDzRJKeF4+zviF/lA9MFw9WKnRtiuR2o=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBm+7u6teqEnvzUE5GDG9wow47s78hZyUSaWdMQ2
+ SvDzUzFXOSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZvu7ugAKCRAEWL7uWMY5
+ RqXWD/925ORtPpCeovZgOyee0ZKqC3vWoRgO0exjTSeuuM9ZsMHNemXjPtNjTZN+vhsRXlOpugY
+ eTsnbGZcjF5Cn7KzLt3ZjrT696/44xTAoegjE25E8y1Mn8phiZP1QG69UoD+2WAX3u00ZeX0UoV
+ IKjYdQ6sHa+wRIu6SsVS0q3XnXHVKEMuOyJcIKz0218ty2dMS1BpaI8MkjG6zgL5yq3QjNVTo1N
+ i2Vi9axRAZh2y5wytWwy+BBtIZgcaPvz3I9Xrx/A1Ak6BCZB8B2sUTUpXWzQoTSpq8OPrlxDeGR
+ Nc3pwiGZkUtf21JRY4quQJiLHwXnHNydx/CJJt/kk8VICYkKhddacBHxNvfTwSnzjDPIUlzQ5nN
+ 68/LvQOJEUdkswssK1Jg9MSkJsWqkFodVbImbintgodQsaws5X2N97ER6EqkuLSBJZnQrr3V6Ec
+ OLffj0k69nuaKs+Ev0vUjwY0bQH9+7dbwZOsrhiYD5mcY355Hu69vGLL91NBWcWEztZS166iUeN
+ iQLVUlAxTHNU8i0oDBkzGat1PWC1ym6Xf9IPwcKlkspbne1loTId9IYFTCSOdACIvMbV3KNixaW
+ erd4Ar5Sh5nsPwhMfG+83ds/sVDFhOV3ZNl9aE4o5Xy9jbgVBa7bgoI/eQrppClMMeZ2iMa93pe 67ONpvEwqaf9T5Q==
+X-Mailer: b4 0.13.0
+Message-ID: <20241001-seqfile-v1-1-dfcd0fc21e96@google.com>
+Subject: [PATCH] rust: add seqfile abstraction
+From: Alice Ryhl <aliceryhl@google.com>
+To: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Sun Sep 29, 2024 at 11:21 AM CEST, Dragan Simic wrote:
-> Use function dev_err_probe() in the probe path instead of dev_err() where
-> appropriate, to make the code a bit more uniform and compact.  Use the ne=
-w
-> function dev_warn_probe() to improve error handling for the TX and RX DMA
-> channel requests, which are actually optional, and tweak the logged warni=
-ngs
-> a bit to additionally describe their optional nature.
->
-> Previously, deferred requests for the TX and RX DMA channels produced no
-> debug messages, and the final error messages didn't include the error cod=
-es,
-> which are all highly useful when debugging permanently failed DMA channel
-> requests, such as when the required drivers aren't enabled.
->
-> Suggested-by: H=C3=A9lene Vulquin <oss@helene.moe>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+This adds a simple seq file abstraction that lets you print to a seq
+file using ordinary Rust printing syntax.
 
-I can now see appropriate messages for pending probes on Rockchip SPI
-devices, instead of "(reason unknown)", which is incredibly helpful
-for debugging DeviceTrees and kernel configs.
+An example user from Rust Binder:
 
-Tested on 6.11 and looks like it works as intended.
+    pub(crate) fn full_debug_print(
+        &self,
+        m: &SeqFile,
+        owner_inner: &mut ProcessInner,
+    ) -> Result<()> {
+        let prio = self.node_prio();
+        let inner = self.inner.access_mut(owner_inner);
+        seq_print!(
+            m,
+            "  node {}: u{:016x} c{:016x} pri {}:{} hs {} hw {} cs {} cw {}",
+            self.debug_id,
+            self.ptr,
+            self.cookie,
+            prio.sched_policy,
+            prio.prio,
+            inner.strong.has_count,
+            inner.weak.has_count,
+            inner.strong.count,
+            inner.weak.count,
+        );
+        if !inner.refs.is_empty() {
+            seq_print!(m, " proc");
+            for node_ref in &inner.refs {
+                seq_print!(m, " {}", node_ref.process.task.pid());
+            }
+        }
+        seq_print!(m, "\n");
+        for t in &inner.oneway_todo {
+            t.debug_print_inner(m, "    pending async transaction ");
+        }
+        Ok(())
+    }
 
-Thank you for this patch!
+The `SeqFile` type is marked not thread safe so that `call_printf` can
+be a `&self` method. The alternative is to use `self: Pin<&mut Self>`
+which is inconvenient, or to have `SeqFile` wrap a pointer instead of
+wrapping the C struct directly.
 
-Tested-by: H=C3=A9l=C3=A8ne Vulquin <oss@helene.moe>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/kernel/lib.rs      |  1 +
+ rust/kernel/seq_file.rs | 52 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 53 insertions(+)
+
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index ff7d88022c57..bb6919c4e9bc 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -49,6 +49,7 @@
+ pub mod sizes;
+ pub mod rbtree;
+ pub mod security;
++pub mod seq_file;
+ mod static_assert;
+ #[doc(hidden)]
+ pub mod std_vendor;
+diff --git a/rust/kernel/seq_file.rs b/rust/kernel/seq_file.rs
+new file mode 100644
+index 000000000000..6ca29d576d02
+--- /dev/null
++++ b/rust/kernel/seq_file.rs
+@@ -0,0 +1,52 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Seq file bindings.
++//!
++//! C header: [`include/linux/seq_file.h`](srctree/include/linux/seq_file.h)
++
++use crate::{bindings, c_str, types::NotThreadSafe, types::Opaque};
++
++/// A utility for generating the contents of a seq file.
++#[repr(transparent)]
++pub struct SeqFile {
++    inner: Opaque<bindings::seq_file>,
++    _not_send: NotThreadSafe,
++}
++
++impl SeqFile {
++    /// Creates a new [`SeqFile`] from a raw pointer.
++    ///
++    /// # Safety
++    ///
++    /// The caller must ensure that for the duration of 'a the following is satisfied:
++    /// * The pointer points at a valid `struct seq_file`.
++    /// * The `struct seq_file` is not accessed from any other thread.
++    pub unsafe fn from_raw<'a>(ptr: *mut bindings::seq_file) -> &'a SeqFile {
++        // SAFETY: The caller ensures that the reference is valid for 'a. There's no way to trigger
++        // a data race by using the `&SeqFile` since this is the only thread accessing the seq_file.
++        //
++        // CAST: The layout of `struct seq_file` and `SeqFile` is compatible.
++        unsafe { &*ptr.cast() }
++    }
++
++    /// Used by the [`seq_print`] macro.
++    pub fn call_printf(&self, args: core::fmt::Arguments<'_>) {
++        // SAFETY: Passing a void pointer to `Arguments` is valid for `%pA`.
++        unsafe {
++            bindings::seq_printf(
++                self.inner.get(),
++                c_str!("%pA").as_char_ptr(),
++                &args as *const _ as *const core::ffi::c_void,
++            );
++        }
++    }
++}
++
++/// Write to a [`SeqFile`] with the ordinary Rust formatting syntax.
++#[macro_export]
++macro_rules! seq_print {
++    ($m:expr, $($arg:tt)+) => (
++        $m.call_printf(format_args!($($arg)+))
++    );
++}
++pub use seq_print;
+
+---
+base-commit: e9980e40804730de33c1563d9ac74d5b51591ec0
+change-id: 20241001-seqfile-91d2243b8e99
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
