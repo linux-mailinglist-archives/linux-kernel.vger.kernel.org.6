@@ -1,54 +1,90 @@
-Return-Path: <linux-kernel+bounces-345463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADC898B697
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:11:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF63A98B693
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB5F41F212FD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B4D2820D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDC91BE222;
-	Tue,  1 Oct 2024 08:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE121BE22F;
+	Tue,  1 Oct 2024 08:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fIMN1muB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iqhe7qvw"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D240D1BD023
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0A41BCA15
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770292; cv=none; b=Hb4WrHfZ8x8BY8BIgLfWqGzIxPpbTzmvwUWc0qoJ0kOGy1itsWy6IG8MdpP12cYp9YbV2qVqAkL7ZfIn8Q4o+BT044Yj2TZdn4d85CRI8O9cJrIXMZ1CLiy6h+NWWoSG0NMHqIuH3gnQsYA0QByPZciu+ziuM3o9Mww5nLx4m0I=
+	t=1727770236; cv=none; b=B/gGjcwgQbBe+72XDCt8LKrkIuu/4HKtbVyf7m30q4AdXFNHGossVsJCyt4e/p0PY+kZhAisPYN4/md7FyTM3sv/1hOZZk7I1obFCluI0QoqE/g5Hpc8bn2YoNNfA7r6EEliI0f3MEDbKiABrGgXoXk1d13/fVIK9v6EHxJ3+/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727770292; c=relaxed/simple;
-	bh=hYPoCmqYVOsA4MSW7XrikRkk5GBP8028e7wOQylmFbc=;
+	s=arc-20240116; t=1727770236; c=relaxed/simple;
+	bh=xDBEBJYP/Tdw9WDuI3MHDdod4ymMNREYAh/l2E6YSV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzZwijlgk7CJlJtXBJtverG4yPrPkVP3schJQjSBSVhK7NFn1V03sap3VqLAW5T1t0rRJLmuJZPGIAN6JOL9Kkr1RcT6Qr5jWSpc3DKyPI/GlJN3jiK/KITTBG6e3rJcoUQ3GoF8xQDOgrmGwUDXF4BlHP753r7kuikkK7yJUmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fIMN1muB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E033C4CECD;
-	Tue,  1 Oct 2024 08:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727770292;
-	bh=hYPoCmqYVOsA4MSW7XrikRkk5GBP8028e7wOQylmFbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fIMN1muBV6m/cicun+vVeJ3Anxk04puuWU8sJXtTnQMAc/TnrXLFXFezrJlOaqBWW
-	 h7vjhyEWdx0mu/1ATEm5YwsaKP3j8GD3p/Y3X/MARfWLsCGXlDdEJ0QxnaxMdkAYc0
-	 KwKjm71jVapE2+PFMkUAwjPqe9Gk4cG5q9XZVxpNBtu3diyFldRMxYLRqPELLqxmm4
-	 6Xrj2IbVV6tb7nr3dA3sr+09twXgCdrvLi2sHDC+AoCU6bYbiyFY1iDggpNRUV/E/b
-	 zIY54P3GnIGdWFIyphrx7O8SKDWsY4Q9dEcB/kDheNalcSVG0vYQ+os+uzXPT/DPtO
-	 WINE+xgTbzbTw==
-Date: Tue, 1 Oct 2024 11:08:14 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Patrick Roy <roypat@amazon.co.uk>
-Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, graf@amazon.com, jgowans@amazon.com
-Subject: Re: [PATCH] secretmem: disable memfd_secret() if arch cannot set
- direct map
-Message-ID: <Zvut7i6d5ijl1nEH@kernel.org>
-References: <20241001080056.784735-1-roypat@amazon.co.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TX44d/LCyfxgGwWkS3rGXO4Bb8nJ1bKQV/VIEt1qG0KJAebH9eo/1mS+gIJvzlUDGrt+U/egeag4pGRt165/CH+06RjdjQGz6gTRRXpUxbDQEsOaFWZcyLxzXQWBSizp/ms0B8d5ebKVm4wBMsiTbjrHk5irTtbUs7mLjJ3QGuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iqhe7qvw; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so47569265e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:10:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1727770231; x=1728375031; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mt71aA3aNionD9vjty8trgPSbvpRPNwvwgRBKUpuCro=;
+        b=iqhe7qvwgsAYOosPsxBxNtKnzSPvRJLpAEnOTsufYh6RP+Zf47Eqdh2lIJTo4tYReK
+         fkrPWRlKu1pwS6GPAHiDrilHxefninkzuT6A0X5jXF5Yrb6/9ojRBE8D9gb1H6j2ATLg
+         O2ayBumTl6pP+YqVJzxheTL27FyT3mjY4v59mPqCtamdYRCrHDNCTsjYHlCvbAkvDVeu
+         kZn/9UdqYRRG5yOIH0z3ZpMX+cwXQYE+NFPPnootd+p/+Sxdxn7TxdA4vd9MW0uy8K7D
+         /Z5rhSunAM3LdBm+H3xF8A+8zICD3pbKKcAfPT2o5A/EoQ8f1UZ9xaoceZfI52YPyNG+
+         mlpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727770231; x=1728375031;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mt71aA3aNionD9vjty8trgPSbvpRPNwvwgRBKUpuCro=;
+        b=tFNOQkyvxkjAsUDR9ceQnxcVsf7ft57I2mkm+a85aUoXBDZiYvdAWz+yKDrHIsJBU0
+         iHHKkx9D1t7YxRyIaCSWQHoco4+FFEpyOmhKFzm2FzwHtfkTiO/RyRck0zFTCCj3w+VC
+         WZP8pr0TN1ilkaBeMbwzwkrYeR3/hP6tktekvI5pMPVibitXuGNg91DkhQ4ZHbY2sGX8
+         pX6XZBm9DI9yTVevH3cYTKB4EK8R4O9HExzpOoiiQWfPBtIgwVM9QF7SVwmMgGZ0fMUd
+         B7HLrCYMMZysK6wG/x1pm0dK05vc5edUcsevjGAeGOKLUim/OtE6i67+qJTGS+umc+H7
+         PEkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUI3fI/MDGedjY0GTDvbFBp8ZLzGlGFIoPzeg8aoa0LOd8Qzub42u48s1ugc4+4YGBleiWRxoy8f8i2MQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwELYfnKhxLDDYQFFdFO6cWP6CWcqxoLV0q3AdkFrlVHK2mLMfC
+	UnbAiaFnnk7YNzARveuMGUwIgKYxMTpI3w1+QIIrr+XO30bqOspkMdTD9KSo8khgb89ITeFg2XT
+	6
+X-Google-Smtp-Source: AGHT+IFAT2GKz+3bbbUxTwJ5qGuV5dXG3CAZRzMSRP57EqszCzBxYwM1Phs9qCxbipijlK+Xp1Ma5w==
+X-Received: by 2002:a05:600c:458b:b0:42c:b1ee:4b04 with SMTP id 5b1f17b1804b1-42f58488161mr101014635e9.28.1727770231366;
+        Tue, 01 Oct 2024 01:10:31 -0700 (PDT)
+Received: from dfj (host-79-54-25-3.retail.telecomitalia.it. [79.54.25.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57e13524sm125973965e9.37.2024.10.01.01.10.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 01:10:29 -0700 (PDT)
+Date: Tue, 1 Oct 2024 10:09:11 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 04/10] dt-bindings: iio: dac: ad3552r: add io-backend
+ support
+Message-ID: <bih7fzhv6ecpk2lkszsnweiduycc6ensofxpjjrfxwqz7wyplt@3mtqxpl7bsc6>
+References: <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
+ <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-4-a17b9b3d05d9@baylibre.com>
+ <20240929115150.6d1c22b3@jic23-huawei>
+ <oh2xoym6dwvfn5lbzx3j5ckd3gfzvl2ukohrs4ukumkv6kzwi5@ume3z224gjta>
+ <20240930154958.00004507@Huawei.com>
+ <ipnqs4uektoysenkr7jvf6ic2rh56n3e5fmmheay323yhavs7u@th7qmxwmkiqo>
+ <453ab98b-618f-45ba-9eab-e462829d25ae@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,81 +93,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001080056.784735-1-roypat@amazon.co.uk>
+In-Reply-To: <453ab98b-618f-45ba-9eab-e462829d25ae@baylibre.com>
 
-On Tue, Oct 01, 2024 at 09:00:41AM +0100, Patrick Roy wrote:
-> Return -ENOSYS from memfd_secret() syscall if !can_set_direct_map().
-> This is the case for example on some arm64 configurations, where marking
-> 4k PTEs in the direct map not present can only be done if the direct map
-> is set up at 4k granularity in the first place (as ARM's
-> break-before-make semantics do not easily allow breaking apart
-> large/gigantic pages).
+On 30.09.2024 14:20, David Lechner wrote:
+> On 9/30/24 10:08 AM, Angelo Dureghello wrote:
+> > On 30.09.2024 15:49, Jonathan Cameron wrote:
+> >> On Mon, 30 Sep 2024 16:15:41 +0200
+> >> Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >>
+> >>> On 29.09.2024 11:51, Jonathan Cameron wrote:
+> >>>> On Thu, 19 Sep 2024 11:20:00 +0200
+> >>>> Angelo Dureghello <adureghello@baylibre.com> wrote:
+> >>>>   
+> >>>>> From: Angelo Dureghello <adureghello@baylibre.com>
+> >>>>>
+> >>>>> There is a version AXI DAC IP block (for FPGAs) that provides
+> >>>>> a physical bus for AD3552R and similar chips, and acts as
+> >>>>> an SPI controller.  
+> >>>>
+> >>>> Wrap is a bit short. Aim for < 75 chars for patch descriptions.
+> >>>>   
+> >>>>>
+> >>>>> For this case, the binding is modified to include some
+> >>>>> additional properties.
+> >>>>>
+> >>>>> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> >>>>> ---
+> >>>>>  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   | 42 ++++++++++++++++++++++
+> >>>>>  1 file changed, 42 insertions(+)
+> >>>>>
+> >>>>> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> >>>>> index 41fe00034742..aca4a41c2633 100644
+> >>>>> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> >>>>> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> >>>>> @@ -60,6 +60,18 @@ properties:
+> >>>>>      $ref: /schemas/types.yaml#/definitions/uint32
+> >>>>>      enum: [0, 1, 2, 3]
+> >>>>>  
+> >>>>> +  io-backends:
+> >>>>> +    description: The iio backend reference.  
+> >>>>
+> >>>> Give a description of what the backend does in this case.  I.e. that it is
+> >>>> a qspi DDR backend with ...
+> >>>>   
+> >>>>> +      An example backend can be found at
+> >>>>> +        https://analogdevicesinc.github.io/hdl/library/axi_ad3552r/index.html
+> >>>>> +    maxItems: 1
+> >>>>> +
+> >>>>> +  adi,synchronous-mode:
+> >>>>> +    description: Enable waiting for external synchronization signal.
+> >>>>> +      Some AXI IP configuration can implement a dual-IP layout, with internal
+> >>>>> +      wirings for streaming synchronization.  
+> >>>>
+> >>>> I've no idea what a dual-IP layout is.  Can you provide a little more info
+> >>>> here?  What are the two IPs?
+> >>>>  
+> >>> IP is a term used in fpga design as "intellectual property", that is
+> >>> intended as a functional block of logic or data used to make a 
+> >>> field-programmable gate array module.
+> >>>
+> >>> A dual layout is just 2 same fpga modules in place of one.
+> >>>  
+> >>> I can add a "fpga" regerence to be more clear.
+> >>
+> >> IP I was familiar with.  I'm more interested in what each IP is doing in this
+> >> case.  Or at least an example of what sort of split of functionality might
+> >> make use of this.
+> >>
+> > 
+> > I have an image of the project (that is under development or testing now),
+> > not sure how to attach the image here, btw, something as
+> >  
+> >           axi_ad3552r_0  ----------->---- qspi0
+> >               sync_ext_device --.
+> >        .- external_sync          |
+> >        |                         |
+> >        |-------------<-----------                        
+> >        |
+> >        |   axi_ad3552r_1 ----------->---- qspi1
+> >        `- external_sync
+> >  
+> > My understanding is that it's just a method to use a octal spi,
+> > duplicating the transfer rate. I can collect more info in case.
+> > 
 > 
-> More precisely, on arm64 systems with !can_set_direct_map(),
-> set_direct_map_invalid_noflush() is a no-op, however it returns success
-> (0) instead of an error. This means that memfd_secret will seemingly
-> "work" (e.g. syscall succeeds, you can mmap the fd and fault in pages),
-> but it does not actually achieve its goal of removing its memory from
-> the direct map.
+> No, it's not for octal SPI. It is for synchronizing the data
+> transfer to two different DAC chips.
 > 
-> Note that with this patch, memfd_secret() will start erroring on systems
-> where can_set_direct_map() returns false (arm64 with
-> CONFIG_RODATA_FULL_DEFAULT_ENABLED=n, CONFIG_DEBUG_PAGEALLOC=n and
-> CONFIG_KFENCE=n), but that still seems better than the current silent
-> failure. Since CONFIG_RODATA_FULL_DEFAULT_ENABLED defaults to 'y', most
-> arm64 systems actually have a working memfd_secret() and aren't be
-> affected.
+> I think we need a bit more in the DT bindings for this to fully
+> describe the wiring shown. We need to indicate that both of the
+> two AXI AD3552R IP blocks have external_sync connected, so a
+> adi,external-sync flag could be used for this. Then we also need
+> to describe that sync_ext_device is only wired up on one of the
+> IP blocks. So we would need a separate adi,sync-ext-device flag.
 > 
-> From going through the iterations of the original memfd_secret patch
-> series, it seems that disabling the syscall in these scenarios was the
-> intended behavior [1] (preferred over having
-> set_direct_map_invalid_noflush return an error as that would result in
-> SIGBUSes at page-fault time), however the check for it got dropped
-> between v16 [2] and v17 [3], when secretmem moved away from CMA
-> allocations.
-> 
-> [1]: https://lore.kernel.org/lkml/20201124164930.GK8537@kernel.org/
-> [2]: https://lore.kernel.org/lkml/20210121122723.3446-11-rppt@kernel.org/#t
-> [3]: https://lore.kernel.org/lkml/20201125092208.12544-10-rppt@kernel.org/
-> 
-> Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
-> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
+> Then the driver would use this information to A) know that we
+> need to set the external sync arm bit when starting buffered
+> reads and B) know that the buffered read for the IP block
+> instance with sync_ext_device needs to be started last so that
+> the data streams for both DACs will be synchronized.
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> ---
->  mm/secretmem.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 3afb5ad701e14..399552814fd0f 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -238,7 +238,7 @@ SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
->  	/* make sure local flags do not confict with global fcntl.h */
->  	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
->  
-> -	if (!secretmem_enable)
-> +	if (!secretmem_enable || !can_set_direct_map())
->  		return -ENOSYS;
->  
->  	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
-> @@ -280,7 +280,7 @@ static struct file_system_type secretmem_fs = {
->  
->  static int __init secretmem_init(void)
->  {
-> -	if (!secretmem_enable)
-> +	if (!secretmem_enable || !can_set_direct_map())
->  		return 0;
->  
->  	secretmem_mnt = kern_mount(&secretmem_fs);
-> 
-> base-commit: abf2050f51fdca0fd146388f83cddd95a57a008d
-> -- 
-> 2.46.2
-> 
+I thought to add this sync stuff thinking that it will be needed
+soon, btw, it is not used right now for a single IP. 
+I suggest to remove it entirely, since it is actually dead code,
+and this hopefully can fast up things.
 
 -- 
-Sincerely yours,
-Mike.
+
+Regards,
+  Angelo
+       
 
