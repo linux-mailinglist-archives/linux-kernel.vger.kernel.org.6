@@ -1,401 +1,563 @@
-Return-Path: <linux-kernel+bounces-346445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD6098C4D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC05498C4DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73FB71F245EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:53:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D7A1F245F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C413C1CC17C;
-	Tue,  1 Oct 2024 17:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F8F1CCEEC;
+	Tue,  1 Oct 2024 17:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azzV+i62"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bffRVUGn"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7942515E97;
-	Tue,  1 Oct 2024 17:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727805175; cv=fail; b=NGztnsbprGZPxgX5uHt5IJ02sGJszf4G5qSSTRQ76dRFLojViYouHdTPeF8JQr5hT1Sjk+otJyMOOXeWQ+NNuCt20e9rQkWMhEdrq+6yTSEUnL7U4TCo18UGdGY4+1jdYV1rYMx6u1VTS9429E/DfZYf/YAo0dhaArIqMJlwMp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727805175; c=relaxed/simple;
-	bh=mBhYpO4zuDblhPRUsf4L3yA1bi4b5CUy+SwYenrE1bo=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RZRdhfk3SeNqKUTjHGjCXhScHZl+DKugAvq31czcCdy9FnInlTvIHO+v0TM8ZRi6zxpypuuUmCXlx0c/Mlzlr1AA08RkLC4HDrB4J2vHrCBa2Rkj1wXupsBJFEIcMWoLAGfSIFxPW66mvaucdPQ4xVNnoOgojbXPYvriNxv4yU0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azzV+i62; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727805173; x=1759341173;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=mBhYpO4zuDblhPRUsf4L3yA1bi4b5CUy+SwYenrE1bo=;
-  b=azzV+i625ekMYWFvdXmba2HIGgm54VmOAzG1TU1n205sLC0fCWdKo2yL
-   XwLAEAqrdO2Jv9e/TuDPQ2VV1zPgrGOICDbdktU3XChbuxx5TByXhHQpz
-   Gz8Mm4jB5KzqpRN8UTeMXKDxaJMKgVkKPs9RlPQiOcCjiECWch+HHAMl7
-   T7CXWu5L1reC7FZ8sBkwOrA9Qs7zzDuocOUffjyUgq3uTLTsnxerQlV7Y
-   bUm00VpJ9+HpW5VFI10J3hHTNKmctMqW58Ifn95CGazaDHp29uVSW40Cq
-   yPZgoHTmnHNpaxkR86h4sv1ukGnCf9Z9C64kjNBaW6Wge5bfYyfXi7Yn0
-   A==;
-X-CSE-ConnectionGUID: vF57IPlwQ4OJF52E1RD3NQ==
-X-CSE-MsgGUID: WA1S7PiHR1O8zmGP0OadcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="44416937"
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="44416937"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 10:52:53 -0700
-X-CSE-ConnectionGUID: iBgtCYiSQPiUmgh7wCT33Q==
-X-CSE-MsgGUID: HqYMFOkhRMW4mZjbyFQASg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,169,1725346800"; 
-   d="scan'208";a="74168878"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Oct 2024 10:52:53 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 1 Oct 2024 10:52:52 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 1 Oct 2024 10:52:52 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 1 Oct 2024 10:52:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Otfbg4CIAydxAdg54GmnVG/Vk7h8V/HUQ1m6/WVK0Fe7OCnXupLEP4ZF+ssOlpUnf2b7HBc5OX4v7SYKiK6P+cv8DCy/zMNpi47V6yFJkqHSP3R6hmkpEK+G6HvdYDzGu713ez+tXKMYaTVZBwlkCOX9WtpDrVYuPGUI03+Xol7TzK+D+hTwo83BlUVokAbf9YyWlIA/pBMvWZ5/ilp3EoEXce1cM8hbTFJ/XuhLoSmzFAH7fHuWKVpwLvvkv6YWKGjYSL/p0trY1mesFhNJNWhe1ieQ6TlwzNW8P2glQIjatgm9E5QoqfpxzkPQVO+p8XxcKG94QWxnjOlFvacSyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BpGzGCy13KKwBzLeA+PgPI1UGfXCabzRFinrpb82HbM=;
- b=Wf9qHS+2ZJClLtYweRkrQ6yBZIwQ/VWQIGT+V+Hzsxi7wcj21Z1Pd+lorpIfJJPXBWNy4M087ZGMNLg5NqkuHssGIqLnY/QQPT0UQjTIuHyByS8MAHmRpdYdkV7r2fYkYf0+Z8/SR4XjOMs4phkjDdCYka1QQnaDRfIM78nwKgnngdFIqMqdNvNRcWr7EFXRk6hfbg9alKr2/uQmSbPJGBRSgGb1YbRv82jp8wA8nkZpu5tLJ/5TsAyCgr+aJnCwuf9/4umuDe3P8md0cWriLBzmvKxQNbe93DHyqKPxV662x9B+tYT4v4jfgHh+2/9gzbSLLh3wV1X8mCiZ9mTSAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by MN0PR11MB5961.namprd11.prod.outlook.com (2603:10b6:208:381::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
- 2024 17:52:46 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
- 17:52:46 +0000
-Message-ID: <61470f4b-2cc6-49ea-a94e-35df1642922d@intel.com>
-Date: Tue, 1 Oct 2024 10:52:44 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 02/15] net: sparx5: add indirection layer to
- register macros
-To: Daniel Machon <daniel.machon@microchip.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lars Povlsen
-	<lars.povlsen@microchip.com>, Steen Hegelund <Steen.Hegelund@microchip.com>,
-	<horatiu.vultur@microchip.com>, <jensemil.schulzostergaard@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, Richard Cochran <richardcochran@gmail.com>,
-	<horms@kernel.org>, <justinstitt@google.com>, <gal@nvidia.com>,
-	<aakash.r.menon@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
- <20241001-b4-sparx5-lan969x-switch-driver-v1-2-8c6896fdce66@microchip.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-2-8c6896fdce66@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0018.namprd13.prod.outlook.com
- (2603:10b6:a03:2c0::23) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AE91CCEC3
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727805197; cv=none; b=birqKK0bfsfBPM3Vub1WpEWBeJICmfroEThz26px3qXIE/6i9ra4hXqcq2CFzkGDRJwtnBY5Gm8RvLGUpQR9kr40/sh3r86Gz9X+uu5QZoX7lLBc1JP8h93BsxU19fEGYD1f7QzFkWcOvfYtroVPxxYQVMxkoRPf0oxyNt0MMdw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727805197; c=relaxed/simple;
+	bh=HvfV771p9SpNflU09QJhrpVjpuEOOILdsvGW+K/26kM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mCVXWmb+a0H6tgbOO+PvbNqV55VreZSxZq9QjSsBmrtNrGsqrUYHMnYekyau274kIB9gJyuzqmJPpWG0Z3hJMsIxYE3biCQFVJkTHjrEFTaPFdu88cS2l8bnuSyQA++hn6GzxyL8RApsL6dqmgYB+JNS8ktANTNamhdcda6moZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bffRVUGn; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20b061b7299so15215ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:53:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727805194; x=1728409994; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zNZIvgOTzPRRkE0xHkf+iIBsdvuygvhCHoCihiVvDQ=;
+        b=bffRVUGnu9XBnmebnFujBoEqHbZHp4rNsGllaCKwrw2FlzVtncUYJCehHtKb1h1bmQ
+         C4lcUXvT6pJVJOVcMazH7Wud1hFpocscz5kk2FueMTpfKBogGyL6Y88yKtV0p58swNE7
+         6SBs+pVV0OfueZvw+Eu6xdCQAiebyVw6wgPq7q6Fv6mBmBnDdKhdN4WZMGZ/XalH95jM
+         VvdeT/bCmLh/nOl+uJHkeFS5gp6Z+0Gii23hJ+JxzVcIQmD3eYGFERYOR2PW6CPMDYgZ
+         bdtJPlFkCEhPYpBtHo+T12rVJ60IkQ8wGPrtvGO59f9EhCbtAo5mwffvDSb+3exxILv7
+         8Zzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727805194; x=1728409994;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6zNZIvgOTzPRRkE0xHkf+iIBsdvuygvhCHoCihiVvDQ=;
+        b=fvduE/YJ9+G2T9QMCaKb8OF19oVBtPBwfrwnkg8TeAVpiS792eUNPxm4f3wQbop5K6
+         qh7Nbsv/aEpL38IvvkNQLfh56md8vjexsjvVXMhmiCLaGjhOGCh652wJfx6fgJldsGq1
+         76/DHPKGjKxpmF9OwHJeqWBYMKsrxziIkS34x7s3Fa9CPVBGJqDM5u0clXZy8y/YGNj2
+         eihCsW1s9UtFQjXa9aNcRUI267KsisjI6/lY4O7EbPSSZLG2/tlyHMdZdjIEOHNFtp25
+         zioq1L8gwHRcWUXYKAbNTc/K1zIQ3CaKN+sjaG5OBgfZFcbhn+UXdQ5e2boCWZuu+XJL
+         6ktg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPESwXBHHcO2iKL2EkHuaSx7ECuKcUd1yy/lnck2WhIQhJhgSlIePTxiLc3gSOV6gsUDZziPcUc1qxX3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6Ku6RNS9n2CbJzAmcqKO+LWcpnPzmT0XXx2ewJTtqyFvzmIjz
+	OzK23o6DE1xL5Pqoa1+aMiFcH0M+FdkVthbq/LPREFB5XTleGgv5++GhrJ/KyB+CWDjR9IvSKKF
+	uNoaIAJ29ZlgsUl9enwu1gJqMC2NC/0USivlO
+X-Google-Smtp-Source: AGHT+IEkBrCYCuLdrIIq5ZQzTMx0neZL5kEzphJLAuy0GHHfBFt/UZkxMJN5P8NSMU4spMfr408T8O+Ak8Z6ZiprWMU=
+X-Received: by 2002:a17:902:ecce:b0:205:8ceb:79a7 with SMTP id
+ d9443c01a7336-20bc6fc62b2mr20725ad.23.1727805194079; Tue, 01 Oct 2024
+ 10:53:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|MN0PR11MB5961:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5994f15a-f2a8-4812-9a31-08dce241db7d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?S1pza3NFVEIyMStORWxWckxmWkRuMWtvYk1pVDlseEo5eHIvd0dZbFZiUkVn?=
- =?utf-8?B?YWxpVDh6cG1pV25oMFRmSTFLcXlvdEJhbkJSMUI2Wkg5MDlmWUFlWC90dENR?=
- =?utf-8?B?S3BFTXJkTm9PWTZwS1pmdUljR2lqRGhxYmF2R0d6WitQaG5BUHpSZ3VySVFO?=
- =?utf-8?B?bDhJRjFyemlPR1lyeUk0Z1VKR3NCVitHK3BrTEVyV1lGQndTNmtONDBadERk?=
- =?utf-8?B?Slg5cXRMeXo0U1A4czBLTEZ0cUE4VWVDNnp5Z093TkNkNTFXVU9hd1V1K1FX?=
- =?utf-8?B?OGFRMDEwcXRIck5ZaVVYRnREQnB3SVY0RldmU2pLUzdDOURIbHVVaU1LMlYv?=
- =?utf-8?B?SjgwZTZHZUNGQ1J0YVh5SnF0ZjNpM2RCRVcyN2lOMU1tOVl3Q2RsdUI4bzRM?=
- =?utf-8?B?cVZBTXg5MGg1eWtiQW9mM2IwRFdJYUNUUnB5UWs0eFJpK2VQejBHNUpNcm5v?=
- =?utf-8?B?bjNNSjZ6OGVsbmYxSWh6S2sxRnR3dlBSZWxFRnhCMjFDVWdxUFovNHUxUWFB?=
- =?utf-8?B?OW5XRExvVWlhTlhSK2dVQVVjcUo5V0FTckdLQ1RjOHVWV3VobEl2anJ2Y2Na?=
- =?utf-8?B?amdzSVZDYVlIdE14cHZmYUlIY3E5aUNhRENTSnRzNG9zSkk5Rlg0SFNvbTRX?=
- =?utf-8?B?SnlpcGxnVm1meW54ckVVRGo3N2tzZVhycTVkemY3UDZHUjcrbXhMMmQ2cGxo?=
- =?utf-8?B?a21DVWJLa3AxQjQzUXBSSlE4VnBLTUVmeFphaGowTnAvQUhpSnBsZXFYY0hq?=
- =?utf-8?B?MXZ5c0lBZ1RSamIrZTlQU3pTa291ZzB5M04wWWlFTUVrbXExT20ySG9qMnBy?=
- =?utf-8?B?b1ZBZ1NRcDdHVXRVSmk0clo2OXUzUVBrNG5uOTBabGJCZnhCaHduQjQrTWhj?=
- =?utf-8?B?aE5OWnVsYWFaS2NmTUpCeWtvd1RDQVNDODgxZVhFT2l4U3Q3a2FnSElwZ2ZS?=
- =?utf-8?B?NXE4R1UzY2pBYVpVRGpBYVBKMHNBQWNhMGg5TVUwV2ZMaDFQWW41T2hWYUJu?=
- =?utf-8?B?OXA1MVVUNUwrUnRXV01VZEVBWmJPVmIvS3BRdEwzYXRZLzdKd3VhZlduVHA0?=
- =?utf-8?B?em56OWdTK2dBa2tGd1djeDVUczVLYUtVby9LWUExbnZyWmF0L2hXekszYzgx?=
- =?utf-8?B?ZWxkM1Z0cVVtUm85NUh0T3Q5MmJMNEFQODh0aG1UaWRoYkRkWk41aFdrb1dl?=
- =?utf-8?B?QWkzU2NIRFU4b1JaaVlHUnBuRm9sdWhJUGFDL2NoRXFDaU9nbVBHd0FUUy9Q?=
- =?utf-8?B?bFdiaGI1L0pMWUt1L2h1d3ZheG9kblFPNENQNjJndHh2bE9tTENxVXU5Ym5a?=
- =?utf-8?B?UG9uUzJ2TlkwUFlGOVVickd1MXkvdWlhdXppalNxM0l5a2J1b3FYU2tRamM0?=
- =?utf-8?B?RXZjSlZXcWhHZmRCcHRDVWJPc2kyOUJJODJOaDNoY3hrYWU0aG1lSk15cUlT?=
- =?utf-8?B?Q0E3cDRkamlaNitZV1djbVRudlNaREFxWThwMVdFNWFaby9RVk5Salhwcm1o?=
- =?utf-8?B?NDdDM1dqZWhMcU83N2NxdStUTUZQcWsxTEJabXU0NjViWXhoSTFoaXN1dldL?=
- =?utf-8?B?MzNOVFVKVEUyWjFRRFJZeU5yaU9WekJ3cHh6V1o5ZjhNbm5pVkx1NXFTODJl?=
- =?utf-8?B?OEdTM0dseUhaSDlBcDdEWjI0NTBwOS9uZGFUc1dBZVd1M2U2VGhIREFsaUJO?=
- =?utf-8?B?UmgvbkR1Z3MxSkdUelZHVkwvWDY1VUFvTU1yUjEwYjNmZk95ZFpkRXZEQzNr?=
- =?utf-8?Q?MWoFHqLALNbJoG13OUWYchX0A807cCVNMoUPzDU?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y08zeW5DcnBLOWZwN3NHUm8waXlUN0N3dTNGZXpPaFJ4RTZ6bTZoNTlCekh2?=
- =?utf-8?B?OVM4dkJUU1JId2N2bWNJOWhqMEdGQ3BydGVFSFhaTXVTMk5PM2JYZUI3N0o3?=
- =?utf-8?B?OUJFbnl6NDdRT2ZhNWRNYWY2SFFXNlRYZjVjZWFESHdDaU5iNmZBZzJVTUpW?=
- =?utf-8?B?SUJtb0JNR05PSFlicHhMeC9JemhYUkU0d0tWVUMrWWxMYkpjQUx6U0dneEh5?=
- =?utf-8?B?bk9NODcrRXhRaWxGT0J0di9vQnQxVVZqaGVhZkw0RFJPblJyYncxN2h5NWsy?=
- =?utf-8?B?RHBGVEZydlE0OWNROUIvT1pUanB2UjVtdGhRc21lK2VKWTR1QnZsMjFUd3hQ?=
- =?utf-8?B?ZTR4anNuU3k4cjJ2T2haTk5CYTR5OG1RMjZjemMzVHg3bk5CejExc3UyRHg2?=
- =?utf-8?B?bVRSRU8yUXpXQnBzOXNPSE8yaDE1c0IrVUhJK3BLd1ZpWVRTOW9ya0FvZzlU?=
- =?utf-8?B?ZHdkRklNQ0ZQZDlDVHpZMGd3RHNiK0tOQk1kT0phWTRHNW1IL1pSSnUvRXVl?=
- =?utf-8?B?QUtGK1F5Y0NpWHYzbVhLeFF3eXVkR1BiNVRSelBFYUx0c3UwNVVsN1h0ZUdQ?=
- =?utf-8?B?RUNqeThiS0E5T1hSU0ZnbERnMk1TUkpYZ3R3ZC9PU2FRMnY0TTBzdnp3MUdD?=
- =?utf-8?B?ZUNuU1F1TTlpYUVaMGdnQWpIMGtVMHZ3WGRxcUp1YXI4YlI1THF5TjJHMkhO?=
- =?utf-8?B?YmVBUnZ2akFJdjZsT3RSRDZyOVJPLytZSHdiWG5FTklqSjZ1bGMwQWlHWHNU?=
- =?utf-8?B?SnZKK052NCtSTGNJdlAvNWI3aVFDc0xoOHdwR2RjNnRBTC8wM0hRRElwQUpy?=
- =?utf-8?B?alhmLzhRTWhHcVVNZG5oYjM5bWwxeG9tOGZ1UFhuSU96THhEYkxnN2Y5dllj?=
- =?utf-8?B?R25EUFgxejhyWjQ0TGNRbDFySmRBR3RGZlBZcGpXV2NFQUFtbG5oNmRkNTBH?=
- =?utf-8?B?QzNLVkFDRVI4aUhqbEthUEtOSU9OUm5XaFE3ZzQ2VHJJUXV5Ymx4Tkc4NmxE?=
- =?utf-8?B?d2NVb25KU1I5RFdIUzNOV2ljQ3NhazdMMHlGTzdCeC9pRVNGUlJvNmZKOTBD?=
- =?utf-8?B?eXRzdncyZTErRzdoMWNPQ3k2RzN1NXdCNSt4eEo3anRzTGNzS1Q3YXBBY3Y4?=
- =?utf-8?B?OENvNjQrVHNQVTZ3VThZRkFCRUhyZEZkMVRNMGg5VHByaUFVSHJ6djc0L2pC?=
- =?utf-8?B?WFFqd2tNLytYdHNKSnZPSiszakdZcUFEN3UyZlk0b3FnY3pIN0Q1Tm1UZE5s?=
- =?utf-8?B?aDNXbFlVZldlczViWVV1dk1HdEtYNWN1R2pLNitXR1ZKWS9pVDVCZ2dXbTZI?=
- =?utf-8?B?eGtveVBQTi9tb2pVcXY2Y3ZqOWlOTHc5WVZxSkJBUHJoTGEyQ1dQTTgvNzVB?=
- =?utf-8?B?RFp1ZVE4dzhBOXFUTHJXQXhLdDhWZ2lwT3VDL0Y4R28xYklFandIYVIwc3pY?=
- =?utf-8?B?REZMc210NnExcmllMVJJbkd5MTZOcWlvS2FZMHhCdEp1NEhlUitkUTdpOVdB?=
- =?utf-8?B?N2hVZ0VmRSswcWhEVTRlSUZ1UmVqTTAyejF1T3hTeXhOMkxsQTJJVWtEU015?=
- =?utf-8?B?cDdYSDdJeGo5eWJMVjBUV3J5NVBxRlR1NnVQeGlhbXFxdzZEU3lBL2JLR041?=
- =?utf-8?B?WWJ5VTY2NVgwQjVEb3puRVdkclVETkY1RUpFdEVBZ25YSFpqUHJlY1h2eW1p?=
- =?utf-8?B?M3NxbUkxN245OC9OdUJtVEJqUVJobnJGUTJlbEY2cEx5VTBkOEVvd1JzMElV?=
- =?utf-8?B?NFFPTzVZYXJFZW5RaHlEOUszdC9MS1orZGNrUjQwc1RlWlpRdWNxb0ZGQU92?=
- =?utf-8?B?QytPeXN2eGRLZzM5ZC8xYnB2YmhuQWplUjczd2toakwzS1VtZ3A4QVc4SU5z?=
- =?utf-8?B?dWNwNlN2Q0k1YStid3QwN1gybFM4VVFXWHRCL05OOXE3bFBQbWJyZGF2STBz?=
- =?utf-8?B?NUVHdExScmdrakRTSmZNVHRPSGRRVW40TjkzM3BoVFJOaGk3NVpGL3VUNE9t?=
- =?utf-8?B?dmRlZUFRcXdnNGk2akw1RngvVW11aDdrYlgxVERZbk1TMGhzWlc5M1dhVUhv?=
- =?utf-8?B?ZE9KbWlGeU56M1EvcDZ0TTU1Y1hMMEtNWTZxbTVGMkRnYndDVDNpRkVtMjVZ?=
- =?utf-8?B?TjBVZEVsTksvZm9uVSsvc2UwUnh6VDZZTUxCUHhxZXc4cFZBRW11ZDFrbXRQ?=
- =?utf-8?B?M3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5994f15a-f2a8-4812-9a31-08dce241db7d
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 17:52:46.3841
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zl3pjJN8OqSEapxfjldi1/dvLwXS4HUaU6FkyCafXGJMN0ejEeFScOz/qx9ciMO+BntMPPtZRzDhEbZxMgM+A6ASUWTLoqwibja+y+dgMJU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5961
-X-OriginatorOrg: intel.com
+References: <20241001002027.1272889-1-namhyung@kernel.org> <20241001002027.1272889-6-namhyung@kernel.org>
+In-Reply-To: <20241001002027.1272889-6-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 10:53:02 -0700
+Message-ID: <CAP-5=fVrptOSOK+sBo0rHR1QWQ0i1WigMaFRy=So-HATKr=R9A@mail.gmail.com>
+Subject: Re: [PATCH 5/8] perf tools: Detect missing kernel features properly
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>, 
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/1/2024 6:50 AM, Daniel Machon wrote:
-> The register macros are used to read and write to the switch registers.
-> The registers are largely the same on Sparx5 and lan969x, however in some
-> cases they differ. The differences can be one or more of the following:
-> target size, register address, register count, group address, group
-> count, group size, field position, field size.
-> 
-> In order to handle these differences, we introduce a new indirection
-> layer, that defines and maps them to corresponding values, based on the
-> platform. As the register macro arguments can now be non-constants, we
-> also add non-constant variants of FIELD_GET and FIELD_PREP.
-> 
-> Since the indirection layer contributes to longer macros, we have
-> changed the formatting of them slightly, to adhere to a 80 character
-> limit, and added a comment if a macro is platform-specific.
-> 
-> With these additions, we can reuse all the existing macros for
-> lan969x.
-> 
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+On Mon, Sep 30, 2024 at 5:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The evsel__detect_missing_features() is to check if the attributes of
+> the evsel is supported or not.  But it checks the attribute based on the
+> given evsel, it might miss something if the attr doesn't have the bit or
+> give incorrect results if the event is special.
+>
+> Also it maintains the order of the feature that was added to the kernel
+> which means it can assume older features should be supported once it
+> detects the current feature is working.  To minimized the confusion and
+> to accurately check the kernel features, I think it's better to use a
+> software event and go through all the features at once.
+>
+> Also make the function static since it's only used in evsel.c.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > ---
->  drivers/net/ethernet/microchip/sparx5/Makefile     |    2 +-
->  .../net/ethernet/microchip/sparx5/sparx5_main.c    |   17 +
->  .../net/ethernet/microchip/sparx5/sparx5_main.h    |   15 +
->  .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 4128 +++++++++++---------
->  .../net/ethernet/microchip/sparx5/sparx5_regs.c    |  219 ++
->  .../net/ethernet/microchip/sparx5/sparx5_regs.h    |  244 ++
->  6 files changed, 2755 insertions(+), 1870 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microchip/sparx5/Makefile b/drivers/net/ethernet/microchip/sparx5/Makefile
-> index 288de95add18..3435ca86dd70 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/Makefile
-> +++ b/drivers/net/ethernet/microchip/sparx5/Makefile
-> @@ -11,7 +11,7 @@ sparx5-switch-y  := sparx5_main.o sparx5_packet.o \
->   sparx5_ptp.o sparx5_pgid.o sparx5_tc.o sparx5_qos.o \
->   sparx5_vcap_impl.o sparx5_vcap_ag_api.o sparx5_tc_flower.o \
->   sparx5_tc_matchall.o sparx5_pool.o sparx5_sdlb.o sparx5_police.o \
-> - sparx5_psfp.o sparx5_mirror.o
-> + sparx5_psfp.o sparx5_mirror.o sparx5_regs.o
->  
->  sparx5-switch-$(CONFIG_SPARX5_DCB) += sparx5_dcb.o
->  sparx5-switch-$(CONFIG_DEBUG_FS) += sparx5_vcap_debugfs.o
-> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-> index 179a1dc0d8f6..9a8d2e8c02a5 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-> @@ -29,6 +29,8 @@
->  #include "sparx5_port.h"
->  #include "sparx5_qos.h"
->  
-> +const struct sparx5_regs *regs;
-> +
->  #define QLIM_WM(fraction) \
->  	((SPX5_BUFFER_MEMORY / SPX5_BUFFER_CELL_SZ - 100) * (fraction) / 100)
->  #define IO_RANGES 3
-> @@ -759,6 +761,9 @@ static int mchp_sparx5_probe(struct platform_device *pdev)
->  	sparx5->data = device_get_match_data(sparx5->dev);
->  	if (!sparx5->data)
->  		return -EINVAL;
-> +
-> +	regs = sparx5->data->regs;
-> +
->  	/* Do switch core reset if available */
->  	reset = devm_reset_control_get_optional_shared(&pdev->dev, "switch");
->  	if (IS_ERR(reset))
-> @@ -937,10 +942,22 @@ static void mchp_sparx5_remove(struct platform_device *pdev)
->  	destroy_workqueue(sparx5->mact_queue);
+>  tools/perf/util/evsel.c | 345 +++++++++++++++++++++++++++++-----------
+>  tools/perf/util/evsel.h |   1 -
+>  2 files changed, 249 insertions(+), 97 deletions(-)
+>
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index f202d28147d62a44..32e30c293d0c6198 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/zalloc.h>
+>  #include <sys/ioctl.h>
+>  #include <sys/resource.h>
+> +#include <sys/syscall.h>
+>  #include <sys/types.h>
+>  #include <dirent.h>
+>  #include <stdlib.h>
+> @@ -2150,120 +2151,272 @@ int evsel__prepare_open(struct evsel *evsel, st=
+ruct perf_cpu_map *cpus,
+>         return err;
 >  }
->  
-> +static const struct sparx5_regs sparx5_regs = {
-> +	.tsize = sparx5_tsize,
-> +	.gaddr = sparx5_gaddr,
-> +	.gcnt = sparx5_gcnt,
-> +	.gsize = sparx5_gsize,
-> +	.raddr = sparx5_raddr,
-> +	.rcnt = sparx5_rcnt,
-> +	.fpos = sparx5_fpos,
-> +	.fsize = sparx5_fsize,
-> +};
+>
+> -bool evsel__detect_missing_features(struct evsel *evsel)
+> +static bool has_attr_feature(struct perf_event_attr *attr, unsigned long=
+ flags)
+>  {
+> +       int fd =3D syscall(SYS_perf_event_open, attr, /*pid=3D*/0, /*cpu=
+=3D*/-1,
+> +                        /*group_fd=3D*/-1, flags);
+> +       close(fd);
 > +
->  static const struct sparx5_match_data sparx5_desc = {
->  	.iomap = sparx5_main_iomap,
->  	.iomap_size = ARRAY_SIZE(sparx5_main_iomap),
->  	.ioranges = 3,
-> +	.regs = &sparx5_regs,
->  };
->  
->  static const struct of_device_id mchp_sparx5_match[] = {
-> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-> index 845f918aaf5e..e3f22b730d80 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-> @@ -226,6 +226,17 @@ struct sparx5_mall_entry {
->  #define SPARX5_SKB_CB(skb) \
->  	((struct sparx5_skb_cb *)((skb)->cb))
->  
-> +struct sparx5_regs {
-> +	const unsigned int *tsize;
-> +	const unsigned int *gaddr;
-> +	const unsigned int *gcnt;
-> +	const unsigned int *gsize;
-> +	const unsigned int *raddr;
-> +	const unsigned int *rcnt;
-> +	const unsigned int *fpos;
-> +	const unsigned int *fsize;
-> +};
+> +       if (fd < 0) {
+> +               attr->exclude_kernel =3D 1;
 > +
->  struct sparx5_main_io_resource {
->  	enum sparx5_target id;
->  	phys_addr_t offset;
-> @@ -233,6 +244,7 @@ struct sparx5_main_io_resource {
->  };
->  
->  struct sparx5_match_data {
-> +	const struct sparx5_regs *regs;
->  	const struct sparx5_main_io_resource *iomap;
->  	int ioranges;
->  	int iomap_size;
-> @@ -308,6 +320,9 @@ struct sparx5 {
->  	const struct sparx5_match_data *data;
->  };
->  
-> +/* sparx5_main.c */
-> +extern const struct sparx5_regs *regs;
+> +               fd =3D syscall(SYS_perf_event_open, attr, /*pid=3D*/0, /*=
+cpu=3D*/-1,
+> +                            /*group_fd=3D*/-1, flags);
+> +               close(fd);
+> +       }
 > +
->  /* sparx5_switchdev.c */
->  int sparx5_register_notifier_blocks(struct sparx5 *sparx5);
->  void sparx5_unregister_notifier_blocks(struct sparx5 *sparx5);
-> diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main_regs.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main_regs.h
-> index 22acc1f3380c..3783cfd1d855 100644
-> --- a/drivers/net/ethernet/microchip/sparx5/sparx5_main_regs.h
-> +++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main_regs.h
-> @@ -1,11 +1,11 @@
->  /* SPDX-License-Identifier: GPL-2.0+
->   * Microchip Sparx5 Switch driver
->   *
-> - * Copyright (c) 2021 Microchip Technology Inc.
-> + * Copyright (c) 2024 Microchip Technology Inc.
->   */
->  
-> -/* This file is autogenerated by cml-utils 2023-02-10 11:18:53 +0100.
-> - * Commit ID: c30fb4bf0281cd4a7133bdab6682f9e43c872ada
-> +/* This file is autogenerated by cml-utils 2024-09-24 14:13:28 +0200.
-> + * Commit ID: 9d07b8d19363f3cd3590ddb3f7a2e2768e16524b
->   */
->  
->  #ifndef _SPARX5_MAIN_REGS_H_
-> @@ -15,6 +15,8 @@
->  #include <linux/types.h>
->  #include <linux/bug.h>
->  
-> +#include "sparx5_regs.h"
+> +       if (fd < 0) {
+> +               attr->exclude_hv =3D 1;
 > +
->  enum sparx5_target {
->  	TARGET_ANA_AC = 1,
->  	TARGET_ANA_ACL = 2,
-> @@ -52,14 +54,28 @@ enum sparx5_target {
->  	TARGET_VCAP_SUPER = 326,
->  	TARGET_VOP = 327,
->  	TARGET_XQS = 331,
-> -	NUM_TARGETS = 332
-> +	NUM_TARGETS = 517
->  };
->  
-> +/* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
-> +#define spx5_field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#define spx5_field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+> +               fd =3D syscall(SYS_perf_event_open, attr, /*pid=3D*/0, /*=
+cpu=3D*/-1,
+> +                            /*group_fd=3D*/-1, flags);
+> +               close(fd);
+> +       }
 > +
+> +       if (fd < 0) {
+> +               attr->exclude_guest =3D 1;
+> +
+> +               fd =3D syscall(SYS_perf_event_open, attr, /*pid=3D*/0, /*=
+cpu=3D*/-1,
+> +                            /*group_fd=3D*/-1, flags);
+> +               close(fd);
+> +       }
+> +
+> +       attr->exclude_kernel =3D 0;
+> +       attr->exclude_guest =3D 0;
+> +       attr->exclude_hv =3D 0;
+> +
+> +       return fd >=3D 0;
+> +}
+> +
+> +static void evsel__detect_missing_brstack_features(struct evsel *evsel)
 
-FIELD_GET and FIELD_SET have restrictions in place to enforce constant
-mask, which enables strict checks to ensure things fit and determine the
-bit shifts at compile time without ffs.
+In the future could other PMU specific unsupported features be added
+not just brstack? Perhaps evsel__detect_missing_pmu_features would
+better capture that.
 
-Would it make sense for these to exist in <linux/bitfields.h>? I'm not
-sure how common it is to have non-const masks..
+> +{
+> +       static bool detection_done =3D false;
+> +       struct perf_event_attr attr =3D {
+> +               .type =3D evsel->core.attr.type,
+> +               .config =3D evsel->core.attr.config,
+> +               .disabled =3D 1,
+> +               .sample_type =3D PERF_SAMPLE_BRANCH_STACK,
+> +               .sample_period =3D 1000,
+> +       };
+> +       int old_errno;
+> +
+> +       if (detection_done)
+> +               return;
+> +
+> +       old_errno =3D errno;
+> +
+>         /*
+>          * Must probe features in the order they were added to the
+> -        * perf_event_attr interface.
+> +        * perf_event_attr interface.  These are PMU specific limitation
+> +        * so we can detect with the given hardware event and stop on the
+> +        * first one succeeded.
+>          */
+> -       if (!perf_missing_features.branch_counters &&
+> -           (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COU=
+NTERS)) {
+> -               perf_missing_features.branch_counters =3D true;
+> -               pr_debug2("switching off branch counters support\n");
+> -               return true;
+> -       } else if (!perf_missing_features.read_lost &&
+> -           (evsel->core.attr.read_format & PERF_FORMAT_LOST)) {
+> -               perf_missing_features.read_lost =3D true;
+> -               pr_debug2("switching off PERF_FORMAT_LOST support\n");
+> +
+> +       /* Please add new feature detection here. */
+> +
+> +       attr.branch_sample_type =3D PERF_SAMPLE_BRANCH_COUNTERS;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.branch_counters =3D true;
 
-> +#define GADDR(o)  regs->gaddr[o]
-> +#define GCNT(o)   regs->gcnt[o]
-> +#define GSIZE(o)  regs->gsize[o]
-> +#define RADDR(o)  regs->raddr[o]
-> +#define RCNT(o)   regs->rcnt[o]
-> +#define FPOS(o)   regs->fpos[o]
-> +#define FSIZE(o)  regs->fsize[o]
-> +#define TSIZE(o)  regs->tsize[o]
+It feels like these global variables should be part of the PMU state.
+There is already perf_pmu.missing_features.
 
-This implementation requires 'regs' to be in scope without being passed
-as a parameter. I guess thats just assumed here?
+Thanks,
+Ian
+
+> +       pr_debug2("switching off branch counters support\n");
+> +
+> +       attr.branch_sample_type =3D PERF_SAMPLE_BRANCH_HW_INDEX;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.branch_hw_idx =3D true;
+> +       pr_debug2("switching off branch HW index support\n");
+> +
+> +       attr.branch_sample_type =3D PERF_SAMPLE_BRANCH_NO_CYCLES | PERF_S=
+AMPLE_BRANCH_NO_FLAGS;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.lbr_flags =3D true;
+> +       pr_debug2_peo("switching off branch sample type no (cycles/flags)=
+\n");
+> +
+> +found:
+> +       detection_done =3D true;
+> +       errno =3D old_errno;
+> +}
+> +
+> +static bool evsel__detect_missing_features(struct evsel *evsel)
+> +{
+> +       static bool detection_done =3D false;
+> +       struct perf_event_attr attr =3D {
+> +               .type =3D PERF_TYPE_SOFTWARE,
+> +               .config =3D PERF_COUNT_SW_TASK_CLOCK,
+> +               .disabled =3D 1,
+> +       };
+> +       int old_errno;
+> +
+> +       if (evsel__has_br_stack(evsel))
+> +               evsel__detect_missing_brstack_features(evsel);
+> +
+> +       if (detection_done)
+> +               goto check;
+> +
+> +       old_errno =3D errno;
+> +
+> +       /*
+> +        * Must probe features in the order they were added to the
+> +        * perf_event_attr interface.  These are kernel core limitation
+> +        * not PMU-specific so we can detect with a software event and
+> +        * stop on the first one succeeded.
+> +        */
+> +
+> +       /* Please add new feature detection here. */
+> +
+> +       attr.read_format =3D PERF_FORMAT_LOST;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.read_lost =3D true;
+> +       pr_debug2("switching off PERF_FORMAT_LOST support\n");
+> +       attr.read_format =3D 0;
+> +
+> +       attr.sample_type =3D PERF_SAMPLE_WEIGHT_STRUCT;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.weight_struct =3D true;
+> +       pr_debug2("switching off weight struct support\n");
+> +       attr.sample_type =3D 0;
+> +
+> +       attr.sample_type =3D PERF_SAMPLE_CODE_PAGE_SIZE;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.code_page_size =3D true;
+> +       pr_debug2_peo("Kernel has no PERF_SAMPLE_CODE_PAGE_SIZE support\n=
+");
+> +       attr.sample_type =3D 0;
+> +
+> +       attr.sample_type =3D PERF_SAMPLE_DATA_PAGE_SIZE;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.data_page_size =3D true;
+> +       pr_debug2_peo("Kernel has no PERF_SAMPLE_DATA_PAGE_SIZE support\n=
+");
+> +       attr.sample_type =3D 0;
+> +
+> +       attr.cgroup =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.cgroup =3D true;
+> +       pr_debug2_peo("Kernel has no cgroup sampling support\n");
+> +       attr.cgroup =3D 0;
+> +
+> +       attr.aux_output =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.aux_output =3D true;
+> +       pr_debug2_peo("Kernel has no attr.aux_output support\n");
+> +       attr.aux_output =3D 0;
+> +
+> +       attr.bpf_event =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.bpf =3D true;
+> +       pr_debug2_peo("switching off bpf_event\n");
+> +       attr.bpf_event =3D 0;
+> +
+> +       attr.ksymbol =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.ksymbol =3D true;
+> +       pr_debug2_peo("switching off ksymbol\n");
+> +       attr.ksymbol =3D 0;
+> +
+> +       attr.write_backward =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.write_backward =3D true;
+> +       pr_debug2_peo("switching off write_backward\n");
+> +       attr.write_backward =3D 0;
+> +
+> +       attr.use_clockid =3D 1;
+> +       attr.clockid =3D CLOCK_MONOTONIC;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.clockid =3D true;
+> +       pr_debug2_peo("switching off clockid\n");
+> +       attr.use_clockid =3D 0;
+> +       attr.clockid =3D 0;
+> +
+> +       if (has_attr_feature(&attr, /*flags=3D*/PERF_FLAG_FD_CLOEXEC))
+> +               goto found;
+> +       perf_missing_features.cloexec =3D true;
+> +       pr_debug2_peo("switching off cloexec flag\n");
+> +
+> +       attr.mmap2 =3D 1;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.mmap2 =3D true;
+> +       pr_debug2_peo("switching off mmap2\n");
+> +       attr.mmap2 =3D 0;
+> +
+> +       /* set this unconditionally? */
+> +       perf_missing_features.sample_id_all =3D true;
+> +       pr_debug2_peo("switching off sample_id_all\n");
+> +
+> +       attr.inherit =3D 1;
+> +       attr.read_format =3D PERF_FORMAT_GROUP;
+> +       if (has_attr_feature(&attr, /*flags=3D*/0))
+> +               goto found;
+> +       perf_missing_features.group_read =3D true;
+> +       pr_debug2_peo("switching off group read\n");
+> +       attr.inherit =3D 0;
+> +       attr.read_format =3D 0;
+> +
+> +found:
+> +       detection_done =3D true;
+> +       errno =3D old_errno;
+> +
+> +check:
+> +       if ((evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_COU=
+NTERS) &&
+> +           perf_missing_features.branch_counters)
+>                 return true;
+> -       } else if (!perf_missing_features.weight_struct &&
+> -           (evsel->core.attr.sample_type & PERF_SAMPLE_WEIGHT_STRUCT)) {
+> -               perf_missing_features.weight_struct =3D true;
+> -               pr_debug2("switching off weight struct support\n");
+> +
+> +       if ((evsel->core.attr.read_format & PERF_FORMAT_LOST) &&
+> +           perf_missing_features.read_lost)
+>                 return true;
+> -       } else if (!perf_missing_features.code_page_size &&
+> -           (evsel->core.attr.sample_type & PERF_SAMPLE_CODE_PAGE_SIZE)) =
+{
+> -               perf_missing_features.code_page_size =3D true;
+> -               pr_debug2_peo("Kernel has no PERF_SAMPLE_CODE_PAGE_SIZE s=
+upport, bailing out\n");
+> -               return false;
+> -       } else if (!perf_missing_features.data_page_size &&
+> -           (evsel->core.attr.sample_type & PERF_SAMPLE_DATA_PAGE_SIZE)) =
+{
+> -               perf_missing_features.data_page_size =3D true;
+> -               pr_debug2_peo("Kernel has no PERF_SAMPLE_DATA_PAGE_SIZE s=
+upport, bailing out\n");
+> -               return false;
+> -       } else if (!perf_missing_features.cgroup && evsel->core.attr.cgro=
+up) {
+> -               perf_missing_features.cgroup =3D true;
+> -               pr_debug2_peo("Kernel has no cgroup sampling support, bai=
+ling out\n");
+> -               return false;
+> -       } else if (!perf_missing_features.branch_hw_idx &&
+> -           (evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_HW_=
+INDEX)) {
+> -               perf_missing_features.branch_hw_idx =3D true;
+> -               pr_debug2("switching off branch HW index support\n");
+> +
+> +       if ((evsel->core.attr.sample_type & PERF_SAMPLE_WEIGHT_STRUCT) &&
+> +           perf_missing_features.weight_struct)
+>                 return true;
+> -       } else if (!perf_missing_features.aux_output && evsel->core.attr.=
+aux_output) {
+> -               perf_missing_features.aux_output =3D true;
+> -               pr_debug2_peo("Kernel has no attr.aux_output support, bai=
+ling out\n");
+> -               return false;
+> -       } else if (!perf_missing_features.bpf && evsel->core.attr.bpf_eve=
+nt) {
+> -               perf_missing_features.bpf =3D true;
+> -               pr_debug2_peo("switching off bpf_event\n");
+> +
+> +       if (evsel->core.attr.use_clockid && evsel->core.attr.clockid !=3D=
+ CLOCK_MONOTONIC &&
+> +           !perf_missing_features.clockid) {
+> +               perf_missing_features.clockid_wrong =3D true;
+>                 return true;
+> -       } else if (!perf_missing_features.ksymbol && evsel->core.attr.ksy=
+mbol) {
+> -               perf_missing_features.ksymbol =3D true;
+> -               pr_debug2_peo("switching off ksymbol\n");
+> +       }
+> +
+> +       if (evsel->core.attr.use_clockid && perf_missing_features.clockid=
+)
+>                 return true;
+> -       } else if (!perf_missing_features.write_backward && evsel->core.a=
+ttr.write_backward) {
+> -               perf_missing_features.write_backward =3D true;
+> -               pr_debug2_peo("switching off write_backward\n");
+> -               return false;
+> -       } else if (!perf_missing_features.clockid_wrong && evsel->core.at=
+tr.use_clockid) {
+> -               perf_missing_features.clockid_wrong =3D true;
+> -               pr_debug2_peo("switching off clockid\n");
+> +
+> +       if ((evsel->open_flags & PERF_FLAG_FD_CLOEXEC) &&
+> +           perf_missing_features.cloexec)
+>                 return true;
+> -       } else if (!perf_missing_features.clockid && evsel->core.attr.use=
+_clockid) {
+> -               perf_missing_features.clockid =3D true;
+> -               pr_debug2_peo("switching off use_clockid\n");
+> +
+> +       if (evsel->core.attr.mmap2 && perf_missing_features.mmap2)
+>                 return true;
+> -       } else if (!perf_missing_features.cloexec && (evsel->open_flags &=
+ PERF_FLAG_FD_CLOEXEC)) {
+> -               perf_missing_features.cloexec =3D true;
+> -               pr_debug2_peo("switching off cloexec flag\n");
+> +
+> +       if ((evsel->core.attr.branch_sample_type & (PERF_SAMPLE_BRANCH_NO=
+_FLAGS |
+> +                                                   PERF_SAMPLE_BRANCH_NO=
+_CYCLES)) &&
+> +           perf_missing_features.lbr_flags)
+>                 return true;
+> -       } else if (!perf_missing_features.mmap2 && evsel->core.attr.mmap2=
+) {
+> -               perf_missing_features.mmap2 =3D true;
+> -               pr_debug2_peo("switching off mmap2\n");
+> +
+> +       if (evsel->core.attr.inherit && (evsel->core.attr.read_format & P=
+ERF_FORMAT_GROUP) &&
+> +           perf_missing_features.group_read)
+>                 return true;
+> -       } else if (evsel->core.attr.exclude_guest || evsel->core.attr.exc=
+lude_host) {
+> -               if (evsel->pmu =3D=3D NULL)
+> -                       evsel->pmu =3D evsel__find_pmu(evsel);
+> -
+> -               if (evsel->pmu)
+> -                       evsel->pmu->missing_features.exclude_guest =3D tr=
+ue;
+> -               else {
+> -                       /* we cannot find PMU, disable attrs now */
+> -                       evsel->core.attr.exclude_host =3D false;
+> -                       evsel->core.attr.exclude_guest =3D false;
+> -               }
+>
+> -               if (evsel->exclude_GH) {
+> -                       pr_debug2_peo("PMU has no exclude_host/guest supp=
+ort, bailing out\n");
+> -                       return false;
+> -               }
+> -               if (!perf_missing_features.exclude_guest) {
+> -                       perf_missing_features.exclude_guest =3D true;
+> -                       pr_debug2_peo("switching off exclude_guest, exclu=
+de_host\n");
+> -               }
+> +       if (evsel->core.attr.ksymbol && perf_missing_features.ksymbol)
+>                 return true;
+> -       } else if (!perf_missing_features.sample_id_all) {
+> -               perf_missing_features.sample_id_all =3D true;
+> -               pr_debug2_peo("switching off sample_id_all\n");
+> +
+> +       if (evsel->core.attr.bpf_event && perf_missing_features.bpf)
+>                 return true;
+> -       } else if (!perf_missing_features.lbr_flags &&
+> -                       (evsel->core.attr.branch_sample_type &
+> -                        (PERF_SAMPLE_BRANCH_NO_CYCLES |
+> -                         PERF_SAMPLE_BRANCH_NO_FLAGS))) {
+> -               perf_missing_features.lbr_flags =3D true;
+> -               pr_debug2_peo("switching off branch sample type no (cycle=
+s/flags)\n");
+> +
+> +       if ((evsel->core.attr.branch_sample_type & PERF_SAMPLE_BRANCH_HW_=
+INDEX) &&
+> +           perf_missing_features.branch_hw_idx)
+>                 return true;
+> -       } else if (!perf_missing_features.group_read &&
+> -                   evsel->core.attr.inherit &&
+> -                  (evsel->core.attr.read_format & PERF_FORMAT_GROUP) &&
+> -                  evsel__is_group_leader(evsel)) {
+> -               perf_missing_features.group_read =3D true;
+> -               pr_debug2_peo("switching off group read\n");
+> +
+> +       if (evsel->core.attr.sample_id_all && perf_missing_features.sampl=
+e_id_all)
+>                 return true;
+> -       } else {
+> -               return false;
+> -       }
+> +
+> +       return false;
+>  }
+>
+>  static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpu=
+s,
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 3e751ea769ac4d3a..ea3140cd91c589fd 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -368,7 +368,6 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_=
+map *cpus,
+>  void evsel__close(struct evsel *evsel);
+>  int evsel__prepare_open(struct evsel *evsel, struct perf_cpu_map *cpus,
+>                 struct perf_thread_map *threads);
+> -bool evsel__detect_missing_features(struct evsel *evsel);
+>
+>  bool evsel__precise_ip_fallback(struct evsel *evsel);
+>
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
