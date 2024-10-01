@@ -1,190 +1,303 @@
-Return-Path: <linux-kernel+bounces-346174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9415F98C0EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:59:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74E5698C0F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E4F1C240E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:59:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCE36B23935
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0619C1C9EAB;
-	Tue,  1 Oct 2024 14:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D2E42A92;
+	Tue,  1 Oct 2024 15:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="RAlI+0aK"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013052.outbound.protection.outlook.com [52.101.67.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAZxkhTa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC431C9B7E;
-	Tue,  1 Oct 2024 14:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794745; cv=fail; b=p71Nwy6sb3ZT28WnuQ6T7NYZDSRFdiOSWjkO2/axtM0N+smQAR8jKA3A3fJEa+4Pl1vfytJ8XbxljiatoLxqdv5gwJGQ7e5CL0uW6FX0BwJxfruuMBrnP+q7Ku3Jmdr0As9dgvb/cpe5Q9EfIwavHwgySFeqY2UqURq4TU/B4Xs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794745; c=relaxed/simple;
-	bh=W1GexsQwDyamtJyvjoian5d3olFuHdFc4HCtJW0Qqvk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Dhdk+9DsgKcJUD6mQNTti5ovGr0FrFbO6qZ5eFq4/NpXKn3k/UbgDd/1Y23aTHzBotbW8h4ju2PV07oc7CcYwaAObGKQglRLUniqqj8x2R8Qaz6YrKUSbgtsmUrfArfGCgOw7EuSEqQCGsMECAiEz+MRcQWmunIx0JMjP50Pj80=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=RAlI+0aK; arc=fail smtp.client-ip=52.101.67.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r60bCG2IKvucMObw+m2vs3NsOhGuRx2kOU8GyTHOJtUJWl4QKhXgCVFDzB6Et7WlwGD1r1KzxKg3xZOlesdi7v5CrIBa4b4SYe0KexTMCdkXYrQFbaP9f/lILqdGq6WsoznrPJM2V4a+SUF0ne3Y1YGj/oKiSS5098In6Rdl7mz0uvT109NTxfkylf0mthwfVC/kSrE6mlcK6QxMkW5+9tro9kvJG1AcihqNZB0twSnPXm2zCCrhDJgsOoffCDO49353u4andhT6vempzc8Hawg8I56jh55XpjiQy0GplG6ovtplHKqA7RRqali5w1cBHZzHEji1CElyqGS59MXfZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8Ll07kiXTloVVw6iS5fJ7OEyfEbVhWObHloRf7Upwck=;
- b=k4UuvdQJbB7LmIvID+w7DyJNxVpBXcVRIzRzPlE7RF8L9fYLavSauBDmb6RZ5O5V7B3dKAgj+0cqas+i0c9fjHqCA0WxWrxaMoYp9/r+iH/0x5Z4n6joaOmauhj6Rf1a46mky5c2JHSOpFCIuLt9onK8P2vPyjfTB+N9D8svLwDUPajFbEs5Lw6lFL5YQtnjJMweeyeN+aipoUQCvyvOIwP1x66WKcQpwLZsmjiO+3yPvsr7YsPRjcFx6aK9D/yhk8zbzSxmeo6QPtAZXU3xVyaN6Ast4G5WJB+rU3a8QMJuRi+gau+jbMvy3oKaETfCRBNQaiCcP0ZtnCZt6U7bRg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8Ll07kiXTloVVw6iS5fJ7OEyfEbVhWObHloRf7Upwck=;
- b=RAlI+0aKKOr3prAi+S42OkalmcnSIkootuVOgYlZykKe1j5cIuTuwaYcbfs/UfnvvJC7jvNonzNzrSt1h61h1kR9/n4daJFx0QTiCNjTZDTqwTlpr5o1PmIXAxEGKefXftwykkbduzYs+F1IkPk0dgQguxfvxdZ98KhOOiSUu5Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PA1PR04MB10793.eurprd04.prod.outlook.com (2603:10a6:102:485::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.26; Tue, 1 Oct
- 2024 14:58:59 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%6]) with mapi id 15.20.8026.016; Tue, 1 Oct 2024
- 14:58:59 +0000
-Message-ID: <54e8e758-3d6d-4625-9a6b-7ede12acc577@cherry.de>
-Date: Tue, 1 Oct 2024 16:58:58 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add power button for puma-haikou
-To: Daniel Semkowicz <dse@thaumatec.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Farouk Bouabid <farouk.bouabid@theobroma-systems.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Vahe Grigoryan <vahe.grigoryan@theobroma-systems.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20241001134741.210979-1-dse@thaumatec.com>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20241001134741.210979-1-dse@thaumatec.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0087.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:1e::12) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2829F27448;
+	Tue,  1 Oct 2024 15:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727794817; cv=none; b=Re7G8TIYq4TQahIhpYS7dG709xgJEBT+1TqOrNn2HbCpa9AjU5HMUyME11FKc6Lk0bqw/7Mnhyzs/IBWQ79c8ukimwd2CkFC46PDE9Heg4LOCAUQzvXMqrQl7sonRfYCQlvzuDOzhNsE5swLM+5qK/f8PAiIQ8/0RegnJZunRKo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727794817; c=relaxed/simple;
+	bh=TY5QTgWwxcJ1l0LmCJfN1EPNmFztFC3t7VJK8afO1Z4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rDh17oQc1CkcUJk/fNNv9UMiM/RtTAZo60+gYrssu6VyPLlzlYQSo9x1ERDqkyTSENEjZfJup9EOLs7S2Wc2dNd/SqhN52/TaGyCwl9FxGFUz6F1j+e8LXtKLYEXzUgAb0K42bNBdQQg+ebYk87E9TsQp4JwPEWRGYVetL057tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAZxkhTa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBF2C4CEC6;
+	Tue,  1 Oct 2024 15:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727794816;
+	bh=TY5QTgWwxcJ1l0LmCJfN1EPNmFztFC3t7VJK8afO1Z4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HAZxkhTaunlrbgHCLe+elDs5UNKXOLeVOu+fht/Oacya2f1qGfqLqczmu6kk1YHnk
+	 O5a3zHsm5+SobPZHt9eg/qcFWAMxLaZqQqF46OwU142PZ2Rhz911rJCZdZE59u9zgc
+	 syZ65RRR/0I2hvK4yemz0txZaoMQiLjNu71ZOxGuOPtS5J54UTs6GVYIt82ZCbsucq
+	 GHTu/4jkoYu41xRQrDhWUa5AkyuPmZWg+1GnJuszce+d0oY8gS2jZ/xiHsINZj3K9+
+	 K5FNN+4ltFnwBB2MKbQoLwC27kvEUN2/GZiyaVxo5lcs3D8ZlhjnitvTUuOSuyOtKv
+	 +9LdfN/TeVswQ==
+From: Danilo Krummrich <dakr@kernel.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com,
+	lina@asahilina.net,
+	mcanal@igalia.com,
+	zhiw@nvidia.com,
+	cjia@nvidia.com,
+	jhubbard@nvidia.com,
+	airlied@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v8 00/29] Generic `Allocator` support for Rust
+Date: Tue,  1 Oct 2024 16:59:35 +0200
+Message-ID: <20241001150008.183102-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PA1PR04MB10793:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8122d92-1ab8-4478-4080-08dce2299472
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NGNsKy9UelVtYStOeEtMTmw2bi9mWmd6djZDR3p3bmRhTnRqbm5SQklGeHJj?=
- =?utf-8?B?NE9rT3ZDUDJzQ3dyZlM4TGV5ZTVkZ3VaZzFvc1pSZmtMM0FOQ1o1eThsUnZv?=
- =?utf-8?B?blhFSDFqV3dhdXNyamkvMjdXNXM2N3hWNW05YmpCb0F2cFdlMjF5SHJ0SE9R?=
- =?utf-8?B?Z1krOWE5SUpqSVAxZEE4SzZqWVdlMnUyNTI2Rk5jaVltVnZCeVlPM0MzOGdJ?=
- =?utf-8?B?aWszdWRIcEZRNWhBdW5ZL1pyMS9uZkt6RjQ1RG5jV0J6MHoxTmNLbVoyWmpr?=
- =?utf-8?B?RlJJMDMreEM2UVZId3FaekIvcmxNcXhhaURlWVJhQ3VmaDNZRnAreENDbEZT?=
- =?utf-8?B?N0hMY1doRk15c2dVVnE1Tlo1eXpZMC9BbWxndlF0NTZDWXB4eThzT3RVYmRL?=
- =?utf-8?B?b000WDdOamU0NlFWQzNoRFV1TjJ4MkFxMldHL1NTYkpoT0hiaTFWamw3VzRD?=
- =?utf-8?B?NEphNGV3S0Jzelh3T1RYMWNuaEtPcjNUbzR0N0JUbUZCNlJBeVNYdUlzTmZX?=
- =?utf-8?B?eGYyaHlubUYvbFdNVkhTKzN0ZE1IUlk3YTYwRGU2VERaSlZOOGNDWHQvS0wx?=
- =?utf-8?B?QXJ3VGRXNlIrNWl6T05KU2NPQVFTRkNZN0FNRWZBMFZ2NU9WMlhHaFJLT3pz?=
- =?utf-8?B?RlBMZHI2UHVuOW9DWTloTWFWbVc1dHFGUnZsVERuNmpFeVlqSUNzc2xOZFBs?=
- =?utf-8?B?NjczTWliejh5WG8rNFh5MVpXaXEwdlU0ZElsQ1V0akxPdG1leTd5MHNONUdX?=
- =?utf-8?B?MGQyUjNMblh6Sm5rR2h0UUJlK2Q3M1FkQjN4dkdHZ2pyWHBWQmxhZTVzeFQ0?=
- =?utf-8?B?RUNxS3J6TVZldVpMbzFiemFkTi9Ib1g1UlNrdGx0aDh5b2U3V3dwWThNY0J6?=
- =?utf-8?B?NUFSNXF3VDRPd0xsMll2SVRjM3NpblpUb09nT2ZpZXRoMXJpbFpnWCtRaENi?=
- =?utf-8?B?NDI2ZkxqYzZtMFJLTHBSTzFQK3lPN3UvOEp6WDhyS0VoSlo4OHozNVZYUHR4?=
- =?utf-8?B?OEgzUjh0eUxzejFrSW5nTzFvZ1JuWFZpa1JYOUVvOHNOVGRrQThFQk9oWEsv?=
- =?utf-8?B?NnA3Q0ZYNU4vSXpUQmFCSEpHZmZ0QzdjV1hOWlQzb1Q3Z0Y2Z1NmNWUwaFlZ?=
- =?utf-8?B?MHpIRnVMMlBGRUR2R0dkVWZDTCtTamR3bFBUQUIydEoxME80TFprNHd2UEN2?=
- =?utf-8?B?eFJRNitPTFFXM1BTOGxrZi9KTWRFbmlWZjZPMnQrOTNOMm1RZ20xRldlZlJp?=
- =?utf-8?B?ZXF5WUxxaW5la0J0VGlhRHgxa012WlAxbmJrcXdBQXVSbGw4aXFHdlVPLzBR?=
- =?utf-8?B?S29pZnpSa2w0U082NHNzRG4xL09ROUJuTHVWRjRkeXVVRFgxdkVuQWNvb01a?=
- =?utf-8?B?bGMweWFqMnRSUEpQNXIyRGVmSWZEbVJWeUJTRjhxS1NoZEJtdFFGb3cxTldr?=
- =?utf-8?B?RW42cHlLd203QU5XbnVSK21GanNrM2NMVHlld1BhUzNzWG5UOHZWVVIzRzBC?=
- =?utf-8?B?VXlSd2h2ZWV5bWRkVlp3VG9nVWRsdlp6UXg4ZURoeXdlY2pyUElHVlVzbDBu?=
- =?utf-8?B?VnQzWEZzTFo2cTU0WlI0cnBocWtOOU15SWloSXpSRHA5Q0NrRktna1VtQWpV?=
- =?utf-8?B?ZWxGQ2huYzBsVDFTanNwRXVPWkZFRjhKM0U2c2NObEVsd0U2Z0RaYUw2clVO?=
- =?utf-8?B?amRicUxFMEpScHJtRk9kVXVQZjQvNW1OUjhWRTBLeXRvcytvK3ZTL2xBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXFXRzlaM0t1WnFPTnZobDF6UDgzMWNxRVNURVhqYzVUSENDM0szeEpxT0hm?=
- =?utf-8?B?YXRuZkNzZlZJOTRaQzFtNlM3NDlvMkRUNXRsSmhnKzRLeW1DZGNhY1U4cktH?=
- =?utf-8?B?cUJIb05YQzZQVWVEVXowMVpadG1tYW5sdjVnUmh2OTNDalM1ME1pRitYOEZH?=
- =?utf-8?B?NFRrckZML3lJNkl1Z1dMUWFVQkJod3J4ZTd2a3J6ZGw0dVlDbVZNZk1kKy9j?=
- =?utf-8?B?dlZiTWQ2aWl1MURuNlJmd3ZDeCtacXRtWnNZNXNHTTIyeG5rSEJIMGpIVW9D?=
- =?utf-8?B?QkkxcS83My94c2MwWWZVQVdCWXlkY0Q1VGJsQ2tKcGdYREROaGJwMHg0eDhm?=
- =?utf-8?B?OTdaYVNZRFo2Q2p3ZklQTXJhNnVyMGdadWJ0NExTTkM2TFRYeG5IMFY5OFJC?=
- =?utf-8?B?SU01Ty9VbCtDSWxqaUJCNWJXdFRmcE1VQ3MyUEZMWXBWdEFMQkJXbS9NaGVD?=
- =?utf-8?B?YjA2ZnViaTVrbWl5ajM4R0xmSUt0SVNMMEEybTV3YXg4R2g3cXdGUVpnMi9a?=
- =?utf-8?B?bDZKcEpLeHdjZmJzbVQ4WGhIN0xrME5NaXAxdkJXemljSEVGOFRDZkFtQXBk?=
- =?utf-8?B?L3E2MnRBVmhubnBRVk96RnNqdzhucVNqRmVHaStiOHFRcEs3YnBKRHVBQmho?=
- =?utf-8?B?K2diWC93Wms2QUpKU0pZbXMrUS91Mkd0d1VDeitGTnhRNDhER25OMmphTlZw?=
- =?utf-8?B?WEFzbWppdUVVdVVMTmtlU2N1M2Jac0ZGajdHZnN3R0lRb082b1JiWU5pZURB?=
- =?utf-8?B?cUxaVERkRDFMTjBVdUwvSEhqQXVIWTdJMFdzY3QyZU9YYVVtQzFEdWZUTFFO?=
- =?utf-8?B?MFJqcHcrYjJnb2ViTjA4Zzc1SmdGZzhsb1dtSVZLUVpueHZEaThMMUF5RHJa?=
- =?utf-8?B?bE03VlRjYXc1Q2hUeDVLbmVJSjVwa2x5RkY1S2tISDBDUUkrMFFjeWxyRTBv?=
- =?utf-8?B?eXpRQmQva3p0QjhnblpWOTdGbGIvaTMrQjJqOU91dFRXT0x6ai8zYTczYlRx?=
- =?utf-8?B?RlB6cnVFcHk2anNGaEExalFsdkdjVzU0bWI3L0hwdnJjeTRaNWFLRWdaQmtm?=
- =?utf-8?B?b21LekpwTnhkYmJqNFNoNC9OVStmMXNabWFoY2JjaUw0VHFEOGZ4Z3gvanJU?=
- =?utf-8?B?YlpQcVM1Qm5Tb25rYS9yOE9wbGw5T04yajJERTVFZ1FGY1NUR2xDZ2pyU0p6?=
- =?utf-8?B?Mk95QjhjaDZtcHE2Z25BMm1EdnZEQlRmOGpEaDJKQjdKR3N4OWRVUHRXUmRM?=
- =?utf-8?B?VlBKWE56Tm9ZbS90azZlQjdFc0UyQjhzYXBpWElZV25BT1R2QS93S2xOL1A0?=
- =?utf-8?B?TzBTWU1KTThFM3hlMkpSSTl6Sjc2LzBWaE9NdE1GQzVnYmFxc1BqYkxwcUVm?=
- =?utf-8?B?NHIwQWRmaExGaTJvU0Q0ZzAzREd3aGc4dEwzZFp0VVJZczBBVGNGSnV3RUZl?=
- =?utf-8?B?K2RENXdPN1IxWTN4ZnhZTkloQjE2S1hybUxlQ2x4WEtsckt5b0M0eVQ0ZzJz?=
- =?utf-8?B?Q24zWEtCSVB2c0xrZy91cm1oVWFzY0N0Si9maTh0LzhkSlJuSHhZSUV4U0JS?=
- =?utf-8?B?YkZ2Q3lCNmZucFhxOW8vMUFrUkNYRnlIdUpLczVNaHI0d3dJdnhMR21mRWxh?=
- =?utf-8?B?QzRmblNGV3pLcXNsYTBPUHlMdCs4RkpRZHVMTW91c2EvMHk2emRiWnlLL0NH?=
- =?utf-8?B?YXFLQXRvL0RNeUJPdnZuQ0VoeU45OGxRckV3OU1nTTdhS1h1U1llWXk3Snk0?=
- =?utf-8?B?YzNTalo4TjIyYmFpcktlTWsvdXNMbXdUdUZ6c3podFBYbGEzeE9sclNmWHI5?=
- =?utf-8?B?elhCYmxBZTFDTGppeGg3c2pZQjVud3N0a2cxc3g1QXRpODBUVkFPL1h4OXI0?=
- =?utf-8?B?TDltYUVQaVlQTFF5OWFNN3pDSFRvdDliWlRrSXluUGlyWjV3N2ZOaGJ1TFdE?=
- =?utf-8?B?RVRDVkJZa2ZYTFlqam93T1dlaHFhMHhtTTREL01NaXhEaUhnbUplNVJIQmpj?=
- =?utf-8?B?ajBMYWprT00wcEM4cUExMXZGSngvSndNNGoxWlJJWDhUZFBSeTVGZnJtOHQ0?=
- =?utf-8?B?OVd3cTdtZndPdEMwaGtJYjVTclBad2tudExyL1IwUk5OM29BekZhRTdEdkFN?=
- =?utf-8?B?ZHY4MWN4Si9PZXQzV1JRWWtTRHEzT1NWRklKVlV4RVlQeTBrZG1zdFBBNVBh?=
- =?utf-8?B?VFE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8122d92-1ab8-4478-4080-08dce2299472
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 14:58:59.3986
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yrkCaS/Mo3H/nBo9IrXyZfNwqV66G/Z/dk6FN8AExPvZeUoF/jGBnknTADwzToncKfUqYJRTB18F3JDkXcvG5NeSImkfXOdOj7fRh84VagM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10793
+Content-Transfer-Encoding: 8bit
 
-Hi Daniel,
+Hi,
 
-On 10/1/24 3:46 PM, Daniel Semkowicz wrote:
-> There is a PWRBTN# input pin exposed on a Q7 connector. The pin
-> is routed to a GPIO0_A1 through a diode. Q7 specification describes
-> the PWRBTN# pin as a Power Button signal.
-> Configure the pin as KEY_POWER, so it can function as power button and
-> trigger device shutdown.
-> 
-> Signed-off-by: Daniel Semkowicz <dse@thaumatec.com>
+This patch series adds generic kernel allocator support for Rust, which so far
+is limited to `kmalloc` allocations.
 
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+In order to abstain from (re-)adding unstable Rust features to the kernel, this
+patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+nor does it extend the `BoxExt` and `VecExt` extensions.
 
-Thanks!
-Quentin
+Instead, this series introduces a kernel specific `Allocator` trait, which is
+implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+implemented in the context of this series.
+
+As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+Additionally, this series adds the following type aliases:
+
+```
+pub type KBox<T> = Box<T, Kmalloc>;
+pub type VBox<T> = Box<T, Vmalloc>;
+pub type KVBox<T> = Box<T, KVmalloc>;
+
+
+pub type KVec<T> = Vec<T, Kmalloc>;
+pub type VVec<T> = Vec<T, Vmalloc>;
+pub type KVVec<T> = Vec<T, KVmalloc>;
+```
+
+With that, we can start using the kernel `Box` and `Vec` types throughout the
+tree and remove the now obolete extensions `BoxExt` and `VecExt`.
+
+For a final cleanup, this series removes the last minor dependencies to Rust's
+`alloc` crate and removes it from the entire kernel build.
+
+The series ensures not to break the `rusttest` make target by implementing the
+`allocator_test` module providing a stub implementation for all kernel
+`Allocator`s.
+
+This patch series passes all KUnit tests, including the ones added by this
+series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+without any issues.
+
+This series is based on [1], which hit -mm/mm-stable, and is also available
+in [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+
+Changes in v8:
+  - rebase onto rust-next (v6.12-rc1), including the -mm dependencies from [1]
+  - introduce `ArrayLayout` and rework the `Allocator` trait to take an
+    `old_layout` argument
+  - split up "rust: alloc: implement `Allocator` for `Kmalloc`" in three
+    separate patches (introduce `ReallocFunc`, make allocator module public and
+    implement `Kmalloc`)
+  - wrap `impl_slice_eq!` pattern in `$()*`
+  - couple of style changes suggested by Benno and Gary
+
+Changes in v7:
+ - rebase onto rust-next resolving recent conflicts (93dc3be19450447a3a7090bd1dfb9f3daac3e8d2)
+ - documentation / safety comment changes suggested by Benno and Boqun
+ - rename `ptr` to `current` in `IntoIter::next` (Alice)
+ - remove unnecessary braces in `kvec!` (Benno)
+ - add `debug_assert!` in `Vec::set_len` (Benno)
+ - remove unused args in `impl_slice_eq!` (Benno)
+ - simplify `if` statement in `Cmalloc::realloc` (Benno)
+
+Changes in v6:
+ - rebase onto rust-dev
+ - keep compiler annotations for {k,v,kv}realloc()
+ - documentation changes suggested by Alice, Benno
+ - remove `Box::into_pin`
+ - fix typo in `Send` and `Sync` for `Box` and `Vec`
+ - `kvec!` changes suggested by Alice
+ - free `src` after copy in `Cmalloc`
+ - handle `n == 0` in `Vec::extend_with`
+
+Changes in v5:
+ - (safety) comment / documentation fixes suggested by Alice, Benno and Gary
+ - remove `Unique<T>` and implement `Send` and `Sync` for `Box` and `Vec`
+ - use `KMALLOC_MAX_SIZE` for `KVmalloc` test and add a `Kmalloc` test that
+   expects to fail for `KMALLOC_MAX_SIZE`
+ - create use constants `KREALLOC`, `VREALLOC` and `KVREALLOC` for
+   `ReallocFuncs`
+ - drop `Box::drop_contents` for now, will add it again, once I actually rebase
+   on the original patch that introduces it
+ - improve usage of `size_of_val` in `Box`
+ - move `InPlaceInit` and `ForeignOwnable` impls into kbox.rs
+ - fix missing `Box` conversions in rnull.rs
+ - reworked `Cmalloc` to keep track of the size of memory allocations itself
+ - remove `GlobalAlloc` together with the `alloc` crate to avoid a linker error
+ - remove `alloc` from scripts/generate_rust_analyzer.py
+
+Changes in v4:
+ - (safety) comment fixes suggested by Alice and Boqun
+ - remove `Box::from_raw_alloc` and `Box::into_raw_alloc`, we don't need them
+ - in `Box::drop` call `size_of_val` before `drop_in_place`
+ - implement ForeignOwnable for Pin<Box<T>> as suggested by Alice
+ - in `Vec::extend_with`, iterate over `n` instead of `spare.len()`
+ - for `Vmalloc` and `KVmalloc` fail allocation for alignments larger than
+   PAGE_SIZE for now (will add support for larger alignments in a separate
+   series)
+ - implement `Cmalloc` in `allocator_test` and type alias all kernel allocator
+   types to it, such that we can use the kernel's `Box` and `Vec` types in
+   userspace tests (rusttest)
+   - this makes patch "rust: str: test: replace `alloc::format`" rather trivial
+
+Changes in v3:
+ - Box:
+   - minor documentation fixes
+   - removed unnecessary imports in doc tests
+   - dropeed `self` argument from some remaining `Box` methods
+   - implement `InPlaceInit` for Box<T, A> rather than specifically for `KBox<T>`
+ - Vec:
+   - minor documentation fixes
+   - removed useless `Vec::allocator` method
+   - in `Vec::extend_with` use `Vec::spare_capacity_mut` instead of raw pointer operations
+   - added a few missing safety comments
+   - pass GFP flags to `Vec::collect`
+ - fixed a rustdoc warning in alloc.rs
+ - fixed the allocator_test module to implement the `Allocator` trait correctly
+ - rebased to rust-next
+
+Changes in v2:
+  - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+  - remove `&self` parameter from all `Allocator` functions (Benno)
+  - various documentation fixes for `Allocator` (Benno)
+  - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+    `Allocator::realloc` (Benno)
+  - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+  - always realloc (try to shrink) in `Vec::collect`, it's up the the
+    `Allocator` to provide a heuristic whether it makes sense to actually shrink
+  - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+    provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+    - This allows for much cleaner code and, in combination with removing
+      `&self` parameters from `Allocator`s, gets us rid of the need for
+      `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+      functions.
+    - Before: `KBox::new_alloc(foo, Vmalloc)?`
+    - After:  `VBox::new(foo)?`, which resolves to
+              `Box::<Foo,  Vmalloc>::new(foo)?;
+
+Benno Lossin (1):
+  rust: alloc: introduce `ArrayLayout`
+
+Danilo Krummrich (28):
+  rust: alloc: add `Allocator` trait
+  rust: alloc: separate `aligned_size` from `krealloc_aligned`
+  rust: alloc: rename `KernelAllocator` to `Kmalloc`
+  rust: alloc: implement `ReallocFunc`
+  rust: alloc: make `allocator` module public
+  rust: alloc: implement `Allocator` for `Kmalloc`
+  rust: alloc: add module `allocator_test`
+  rust: alloc: implement `Vmalloc` allocator
+  rust: alloc: implement `KVmalloc` allocator
+  rust: alloc: add __GFP_NOWARN to `Flags`
+  rust: alloc: implement kernel `Box`
+  rust: treewide: switch to our kernel `Box` type
+  rust: alloc: remove extension of std's `Box`
+  rust: alloc: add `Box` to prelude
+  rust: alloc: implement kernel `Vec` type
+  rust: alloc: implement `IntoIterator` for `Vec`
+  rust: alloc: implement `collect` for `IntoIter`
+  rust: treewide: switch to the kernel `Vec` type
+  rust: alloc: remove `VecExt` extension
+  rust: alloc: add `Vec` to prelude
+  rust: error: use `core::alloc::LayoutError`
+  rust: error: check for config `test` in `Error::name`
+  rust: alloc: implement `contains` for `Flags`
+  rust: alloc: implement `Cmalloc` in module allocator_test
+  rust: str: test: replace `alloc::format`
+  rust: alloc: update module comment of alloc.rs
+  kbuild: rust: remove the `alloc` crate and `GlobalAlloc`
+  MAINTAINERS: add entry for the Rust `alloc` module
+
+ MAINTAINERS                         |   7 +
+ drivers/block/rnull.rs              |   4 +-
+ rust/Makefile                       |  43 +-
+ rust/bindings/bindings_helper.h     |   1 +
+ rust/exports.c                      |   1 -
+ rust/helpers/helpers.c              |   1 +
+ rust/helpers/slab.c                 |   6 +
+ rust/helpers/vmalloc.c              |   9 +
+ rust/kernel/alloc.rs                | 150 ++++-
+ rust/kernel/alloc/allocator.rs      | 208 +++++--
+ rust/kernel/alloc/allocator_test.rs |  95 +++
+ rust/kernel/alloc/box_ext.rs        |  89 ---
+ rust/kernel/alloc/kbox.rs           | 455 ++++++++++++++
+ rust/kernel/alloc/kvec.rs           | 901 ++++++++++++++++++++++++++++
+ rust/kernel/alloc/layout.rs         |  91 +++
+ rust/kernel/alloc/vec_ext.rs        | 185 ------
+ rust/kernel/error.rs                |   6 +-
+ rust/kernel/init.rs                 |  95 +--
+ rust/kernel/init/__internal.rs      |   2 +-
+ rust/kernel/lib.rs                  |   1 -
+ rust/kernel/prelude.rs              |   5 +-
+ rust/kernel/rbtree.rs               |  49 +-
+ rust/kernel/str.rs                  |  35 +-
+ rust/kernel/sync/arc.rs             |  17 +-
+ rust/kernel/sync/condvar.rs         |   4 +-
+ rust/kernel/sync/lock/mutex.rs      |   2 +-
+ rust/kernel/sync/lock/spinlock.rs   |   2 +-
+ rust/kernel/sync/locked_by.rs       |   2 +-
+ rust/kernel/types.rs                |  52 +-
+ rust/kernel/uaccess.rs              |  17 +-
+ rust/kernel/workqueue.rs            |  20 +-
+ rust/macros/lib.rs                  |  12 +-
+ samples/rust/rust_minimal.rs        |   4 +-
+ scripts/Makefile.build              |   7 +-
+ scripts/generate_rust_analyzer.py   |  11 +-
+ 35 files changed, 2009 insertions(+), 580 deletions(-)
+ create mode 100644 rust/helpers/vmalloc.c
+ create mode 100644 rust/kernel/alloc/allocator_test.rs
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
+ create mode 100644 rust/kernel/alloc/kbox.rs
+ create mode 100644 rust/kernel/alloc/kvec.rs
+ create mode 100644 rust/kernel/alloc/layout.rs
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
+
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+-- 
+2.46.1
+
 
