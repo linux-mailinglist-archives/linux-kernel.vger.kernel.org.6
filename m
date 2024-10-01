@@ -1,135 +1,185 @@
-Return-Path: <linux-kernel+bounces-346168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F8398C0C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:53:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A8A98C068
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8AB71F236CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 046F7B263CC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 596581C9B71;
-	Tue,  1 Oct 2024 14:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB3B1C7B97;
+	Tue,  1 Oct 2024 14:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UMJexj75"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="nVKn6zYB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534521C57BE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476441C6F7A;
+	Tue,  1 Oct 2024 14:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794412; cv=none; b=AdGVrtmpd6KAUZYLDNrzYJoIjKYtJ3YU+z0sPnBH4Grcq3TmXekZqhhffQcSL/NeT1HV1XOBnbazZhUIX6woUZLi1dmrctvEN2WtIFJ0ZSNCwWv08CswcZdwqIwIFjXuOOp8qFv8L6Yk54q6nFoQqx60whhsxO0FSmfFtEE9t0A=
+	t=1727793486; cv=none; b=S21fp5Fw0raLcRyZz0iw/VLcYviA9Ph+mObOb86Dt4u8n0kDLeTlUyKiavt/Y4PyP6VXWGSjdH+JirFQF+abmZF7ZyQviCm3SaUlFO/hMPDFebKPxpYfGrP7SLgE0/iDIVXcitYAt5sLtSbGH1tGYIMcuv+UAD28FGVNKRdqyo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794412; c=relaxed/simple;
-	bh=yvBBJl5SIqqmo3U4YGxGGFdYZwKItrjypC/o5O9XQxQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dLIGBUFFbtBfWY8RAivRKWKBG59Ea97JbBr126snLqxdrmDnha7KQWnNivuxXy8BfN/JZ/x1dVl6i4JYbwnv8uELPdWI37R1/ZX+3BkzdXjVDBVEwBvmkarq+XZVlCuFlf5WQl/HGOPQNiEdW1NxBHE1CbTN9HToNywsKQ0Kg6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UMJexj75; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1727793486; c=relaxed/simple;
+	bh=jfVsYpkir0k3lmTrvxYtwcsj3SsjsgLmclZ+WaqdzKU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OIuYwnUx0LH31Mn+CcEjLOzLYbKH4krdMcMyGzITZVln35MysOTePNspmJNFL79Y3MgXWIRXztdNVY/jKAKJ6M9DFq03hUsEXOfdGXmPnf2dUVasWvLhXdt2oczC0Y3lRa9+UX/Vxml8aUhstHW+wNJis8//wNqJ5k/AUw+xpTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=nVKn6zYB; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1727794411; x=1759330411;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yvBBJl5SIqqmo3U4YGxGGFdYZwKItrjypC/o5O9XQxQ=;
-  b=UMJexj75PTvH2fixjiCCXwfU2LjUx9zNCU8OX1m2wi13nwGEygTWVdIo
-   Teqn53TDZRgO7xxqwI2Ek4tT2IesRwRhllTcs2KqAQIHboqtcPZIUWqLu
-   sBsqayN4VYKkl2MairG6eu3HLTDRa/7BWJ9+VUy7SUdAR+4xiXCbkWeb/
-   i5ipqHQMIlxeOJ52VcItnyHbNteFx+9mrM+ZU7mJeJGuGvZmRcT86AqWJ
-   2/IlsiQjotkwR/jaMoYMvu3NEIENfNmQWna/KwMKjQ4Bv0kTF+YESHRfr
-   pzNgnzMENhA3RB/+FpKeQL+JknAx8iEbRbDvqQ0FuiunQ+yda/IVKyVfp
-   A==;
-X-CSE-ConnectionGUID: 3UvTtcG1SlGR8wRe42A7qQ==
-X-CSE-MsgGUID: zA6W9U5jTy+b+BThFVslrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27091374"
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727793484; x=1759329484;
+  h=from:to:subject:date:message-id:mime-version;
+  bh=jfVsYpkir0k3lmTrvxYtwcsj3SsjsgLmclZ+WaqdzKU=;
+  b=nVKn6zYBkHVhLNfh0vT3C9zmVk7WxNgvj3ju1smsyQ57sEdO1kSlgnr6
+   02Wo40uGvJl33VQKmtukpyenNvyUsv4rGj2J5lXUC5YGHVYZTQYGgxf9q
+   1s2r9eDpWkAe4udIEb/3K1DAAkD6tElHRihJ+xnsi4IZYHcb1z2MIpuiT
+   gnRTRhT/UAFZtX2A1tlR2rZh/xDfgj3ERxBWJU62sY5MQDpNv5DADOFce
+   rxw4wJJUkzNTn1LZqt3ysqx8h3zxaxOPYaVIu2FC8b9LfFbSKUndzyLNQ
+   AxVqeyDgA93NXtQ3O2c19kt3PSAdQgUUEl/fQnozQ0PtALAKDA7n+rTzH
+   w==;
+X-CSE-ConnectionGUID: APWxkd+jQIOd5mDRlmtNJw==
+X-CSE-MsgGUID: 7UhC6AvmRaaVXjsJIAysMw==
 X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="27091374"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:53:31 -0700
-X-CSE-ConnectionGUID: 1ijE/HElTkmYjojgOyxuEw==
-X-CSE-MsgGUID: 1g6Zju8NS7ygpDcU28iPVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="97048611"
-Received: from mkuoppal-desk.fi.intel.com ([10.237.72.193])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:53:27 -0700
-From: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-To: intel-xe@lists.freedesktop.org
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Dave Airlie <airlied@redhat.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Andi Shyti <andi.shyti@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Maciej Patelczyk <maciej.patelczyk@linux.intel.com>,
-	Dominik Grzegorzek <dominik.grzegorzek@intel.com>,
-	Jonathan Cavitt <jonathan.cavitt@intel.com>,
-	Andi Shyti <andi.shyti@linux.intel.com>
-Subject: [PATCH 01/18] ptrace: export ptrace_may_access
-Date: Tue,  1 Oct 2024 17:42:49 +0300
-Message-Id: <20241001144306.1991001-2-mika.kuoppala@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241001144306.1991001-1-mika.kuoppala@linux.intel.com>
-References: <20241001144306.1991001-1-mika.kuoppala@linux.intel.com>
+   d="scan'208";a="33060315"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 07:38:03 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 1 Oct 2024 07:37:52 -0700
+Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 07:37:48 -0700
+From: Divya Koppera <divya.koppera@microchip.com>
+To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kalesh-anakkur.purayil@broadcom.com>,
+	<Parthiban.Veerasooran@microchip.com>
+Subject: [PATCH net-next v2] net: phy: microchip_t1: Interrupt support for lan887x
+Date: Tue, 1 Oct 2024 20:14:21 +0530
+Message-ID: <20241001144421.6661-1-divya.koppera@microchip.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-xe driver would like to allow fine grained access control
-for GDB debugger using ptrace. Without this export, the only
-option would be to check for CAP_SYS_ADMIN.
+Add support for link up and link down interrupts in lan887x.
 
-The check intended for an ioctl to attach a GPU debugger
-is similar to the ptrace use case: allow a calling process
-to manipulate a target process if it has the necessary
-capabilities or the same permissions, as described in
-Documentation/process/adding-syscalls.rst.
-
-Export ptrace_may_access function to allow GPU debugger to
-have identical access control for debugger(s)
-as a CPU debugger.
-
-v2: proper commit message (Lucas)
-
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: Dave Airlie <airlied@redhat.com>
-CC: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Matthew Brost <matthew.brost@intel.com>
-CC: Andi Shyti <andi.shyti@intel.com>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-CC: Maciej Patelczyk <maciej.patelczyk@linux.intel.com>
-Cc: Dominik Grzegorzek <dominik.grzegorzek@intel.com>
-Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Signed-off-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
-Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
+Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
 ---
- kernel/ptrace.c | 1 +
- 1 file changed, 1 insertion(+)
+v1 -> v2
+- Replaced ret with rc return variable.
+- Moved interrupt APIs to proper place and removed forward declaration.
+- Removed redundant return variable declaration.
+---
+ drivers/net/phy/microchip_t1.c | 61 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
 
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index d5f89f9ef29f..86be1805ebd8 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -354,6 +354,7 @@ bool ptrace_may_access(struct task_struct *task, unsigned int mode)
- 	task_unlock(task);
- 	return !err;
- }
-+EXPORT_SYMBOL_GPL(ptrace_may_access);
+diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
+index a5ef8fe50704..f99f37634d5e 100644
+--- a/drivers/net/phy/microchip_t1.c
++++ b/drivers/net/phy/microchip_t1.c
+@@ -226,6 +226,18 @@
+ #define MICROCHIP_CABLE_MAX_TIME_DIFF	\
+ 	(MICROCHIP_CABLE_MIN_TIME_DIFF + MICROCHIP_CABLE_TIME_MARGIN)
  
- static int check_ptrace_options(unsigned long data)
++#define LAN887X_INT_STS				0xf000
++#define LAN887X_INT_MSK				0xf001
++#define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
++#define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
++#define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
++
++#define LAN887X_MX_CHIP_TOP_LINK_MSK	(LAN887X_INT_MSK_LINK_UP_MSK |\
++					 LAN887X_INT_MSK_LINK_DOWN_MSK)
++
++#define LAN887X_MX_CHIP_TOP_ALL_MSK	(LAN887X_INT_MSK_T1_PHY_INT_MSK |\
++					 LAN887X_MX_CHIP_TOP_LINK_MSK)
++
+ #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
+ #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
+ 
+@@ -1474,6 +1486,49 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
+ 		ethtool_puts(&data, lan887x_hw_stats[i].string);
+ }
+ 
++static int lan887x_config_intr(struct phy_device *phydev)
++{
++	int rc;
++
++	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
++		/* Clear the interrupt status before enabling interrupts */
++		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
++		if (rc < 0)
++			return rc;
++
++		/* Unmask for enabling interrupt */
++		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_MSK,
++				   (u16)~LAN887X_MX_CHIP_TOP_ALL_MSK);
++	} else {
++		rc = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_MSK,
++				   GENMASK(15, 0));
++		if (rc < 0)
++			return rc;
++
++		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
++	}
++
++	return rc < 0 ? rc : 0;
++}
++
++static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
++{
++	int irq_status;
++
++	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
++	if (irq_status < 0) {
++		phy_error(phydev);
++		return IRQ_NONE;
++	}
++
++	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
++		phy_trigger_machine(phydev);
++		return IRQ_HANDLED;
++	}
++
++	return IRQ_NONE;
++}
++
+ static int lan887x_cd_reset(struct phy_device *phydev,
+ 			    enum cable_diag_state cd_done)
  {
+@@ -1504,6 +1559,10 @@ static int lan887x_cd_reset(struct phy_device *phydev,
+ 		if (rc < 0)
+ 			return rc;
+ 
++		rc = lan887x_config_intr(phydev);
++		if (rc < 0)
++			return rc;
++
+ 		rc = lan887x_phy_reconfig(phydev);
+ 		if (rc < 0)
+ 			return rc;
+@@ -1881,6 +1940,8 @@ static struct phy_driver microchip_t1_phy_driver[] = {
+ 		.read_status	= genphy_c45_read_status,
+ 		.cable_test_start = lan887x_cable_test_start,
+ 		.cable_test_get_status = lan887x_cable_test_get_status,
++		.config_intr    = lan887x_config_intr,
++		.handle_interrupt = lan887x_handle_interrupt,
+ 	}
+ };
+ 
 -- 
-2.34.1
+2.17.1
 
 
