@@ -1,148 +1,155 @@
-Return-Path: <linux-kernel+bounces-345269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6579998B3F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:56:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5984A98B3F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F651B22C54
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:56:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A69B22C3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C831BBBD6;
-	Tue,  1 Oct 2024 05:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FB71BBBD3;
+	Tue,  1 Oct 2024 05:57:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LDDEEblA"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eyVoNyOc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEE736AF8;
-	Tue,  1 Oct 2024 05:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E698B36AF8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 05:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762180; cv=none; b=BLhPK2XZpiX5lyR+BNuUyvhF3Ka7WXHL8FJhhFgJ/mhZISIEkQ6S18jOdKuq7IBCqNtaqIM9Gl7j/WFdmJKwOiI5tMubxC1Rtpvr2TRkV9EsW4p0DT8Tlv73ERwwbt0h92JL1q7bJFjfEPfd5Z7S16ybnwkhvFLPZfwdYStpEhA=
+	t=1727762250; cv=none; b=Y7x+uWSXL+np1anC50fFFv+8rNolSGEwe+yWlCXO2Tp7oeO8OoVQe1eYBAz3abEzkLymg82mt86T4FB8hMH7FcPvMLrSNqe3JWyyD6M9fqNMgaQxiLnIIdga0ma3o7EsfzjbovGO9t65vRM4phPj4fv6aiee3JY6Os6+zSybdOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762180; c=relaxed/simple;
-	bh=ExMjnSP9sJ1OhmA+NnmHR9K1OURkugire2cpBKFzPjk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmWY6jPVRwILXHbP8fZl8nzahk0ULKfjy/UpMqhuiIIzRTzRuU6KQ3SewB/663Arq5DzEMimkm5E1akWuqBNAzCIGF+1Elkos2dzZaifekSpDxM6fBetT/R/+w7sHWdFgGYWi/7M9lqG0WWQ7ehlbAugebNq6SuAaQKcnlpc2ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LDDEEblA; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4915trho116154;
-	Tue, 1 Oct 2024 00:55:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727762153;
-	bh=2NdUyEyvt9UUPlWmqWz0ga5Ikg4GePs2gjqgOXQbphc=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=LDDEEblA1DPsLrfUlyw59AZ9GHr0sDFeCd6Hmj3ZILko830JJjCscs6k9PmlR5DIj
-	 u4RxFBCsfzY+q0Afabnw8a1sbH0SOwLR2I4YTa8DYfWaoROTU6N9aHSE97UfdRGmVR
-	 PUmKufo6IhES4XPlNhwbKb2H//TUddtgExP88lx8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4915trGO005685
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 1 Oct 2024 00:55:53 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
- Oct 2024 00:55:52 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 1 Oct 2024 00:55:52 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4915tpPT008934;
-	Tue, 1 Oct 2024 00:55:52 -0500
-Date: Tue, 1 Oct 2024 11:25:51 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Beleswar Padhi
-	<b-padhi@ti.com>,
-        Siddharth Vadapalli <s-vadapalli@ti.com>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RESEND v6 0/5] Introduce J742S2 SoC and EVM
-Message-ID: <20241001055551.md35lxzwsvx4mktj@uda0497581>
-References: <20240903-b4-upstream-j742s2-v6-0-49d980fed889@ti.com>
+	s=arc-20240116; t=1727762250; c=relaxed/simple;
+	bh=wURtk0+ETt/SBfDkjZewKyw4HeyFZtBkbpc/ZZTwHDI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CGLcXo1HiDWKv/J1DxQJ0tUw6eEjXLbTEuOMiLWfhwu3CF/CTuP5zKQxv9F4L+K20aC+cPV9gdh7LG2ocQ4V9bSaT6VKQHXAC/SIiw/GjByzadwOXX8Q0IQfrAk9gjzQ9uzO6WCDjVec6mpt4bzv3d4UvdkiLfin26gLm6T9WXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eyVoNyOc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49110GGo023436;
+	Tue, 1 Oct 2024 05:56:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=l8NHi5Dbyv4rp8gb+LVSw/Z7+qJoWd5is+WvTYL/xWI=; b=ey
+	VoNyOcUAPwxKoKXu+DHdtoiI/nsn72uZRMTkX4kugntX1gDdeRDtQ/o1wPPNHTBK
+	DZIAVrMiCeYDMjMg7S4aDAaJq1ja2MQ1PIMn7+estnh2x3Gm48Mtop2G9gN4hkSM
+	Ii+w+3Mm5wI/o45YkSa+dZyaiPaKM/sY7kKxeXrlH3LxjnyOAYsok7ztLrQFh7Ep
+	1HdIJ2+e2lIwhE3ELm3PQ7kCyUjH+mlpYZ0zsjA6OG/8RY66HbTs8oCy8N36X7Hh
+	YUA0IdPnYBgnnrsYUQ4+82KunFg0BHchsWlGXeXo8gcHQnYJVliKSuRIlHrNd4EW
+	ZF7MYsJDQSEQZc/vRQQA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41xajff2cv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 05:56:57 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4915uuuZ026101
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 05:56:57 GMT
+Received: from hu-pbrahma-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 30 Sep 2024 22:56:52 -0700
+From: Pratyush Brahma <quic_pbrahma@quicinc.com>
+To: <will@kernel.org>
+CC: <robin.murphy@arm.com>, <joro@8bytes.org>, <jgg@ziepe.ca>,
+        <jsnitsel@redhat.com>, <robdclark@chromium.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-kernel@vger.kernel.org>,
+        Pratyush Brahma
+	<quic_pbrahma@quicinc.com>,
+        Prakash Gupta <quic_guptap@quicinc.com>
+Subject: [PATCH] iommu/arm-smmu: Defer probe of clients after smmu device bound
+Date: Tue, 1 Oct 2024 11:26:33 +0530
+Message-ID: <20241001055633.21062-1-quic_pbrahma@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240903-b4-upstream-j742s2-v6-0-49d980fed889@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HhDrH_lDxbp9AiQPWo-8IuI2O14j82zF
+X-Proofpoint-ORIG-GUID: HhDrH_lDxbp9AiQPWo-8IuI2O14j82zF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=981
+ impostorscore=0 mlxscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010038
 
-Hi Vignesh/Nishanth,
+Null pointer dereference occurs due to a race between smmu
+driver probe and client driver probe, when of_dma_configure()
+for client is called after the iommu_device_register() for smmu driver
+probe has executed but before the driver_bound() for smmu driver
+has been called.
 
-On 13:42-20240903, Manorit Chawdhry wrote:
-> The series adds support for J742S2 family of SoCs. Also adds J742S2 EVM
-> Support and re-uses most of the stuff from the superset device J784s4.
-> 
-> It initially cleans up the J784s4 SoC files so that they can be
-> re-usable for j742s2 by introducing -common files. Next it cleans up the
-> EVM files for j784s4 in a similar way and then goes about adding the
-> support for j742s2.
-> 
-> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
-> ---
-> Changes in v6:
-> - Rebased on upstream-next
-> - Add a comment for MSMC node (Udit)
-> - Link to v5: https://lore.kernel.org/r/20240828-b4-upstream-j742s2-v5-0-9aaa02a0faee@ti.com
-> 
-> Changes in v5:
-> - Rebased on upstream-next
-> - Align j742s2 and j784s4 comments (Siddharth)
-> - Link to v4: https://lore.kernel.org/r/20240819-b4-upstream-j742s2-v4-0-f2284f6f771d@ti.com
-> 
-> ---
-> Manorit Chawdhry (5):
->       arm64: dts: ti: Refactor J784s4 SoC files to a common file
->       arm64: dts: ti: Refactor J784s4-evm to a common file
->       dt-bindings: arm: ti: Add bindings for J742S2 SoCs and Boards
->       arm64: dts: ti: Introduce J742S2 SoC family
->       arm64: dts: ti: Add support for J742S2 EVM board
+Following is how the race occurs:
 
-The patches are still valid for 6.12-rc1.
+T1:Smmu device probe		T2: Client device probe
 
-Regards,
-Manorit
+really_probe()
+arm_smmu_device_probe()
+iommu_device_register()
+					really_probe()
+					platform_dma_configure()
+					of_dma_configure()
+					of_dma_configure_id()
+					of_iommu_configure()
+					iommu_probe_device()
+					iommu_init_device()
+					arm_smmu_probe_device()
+					arm_smmu_get_by_fwnode()
+						driver_find_device_by_fwnode()
+						driver_find_device()
+						next_device()
+						klist_next()
+							/* null ptr
+							assigned to smmu */
+					/* null ptr dereference
+					while smmu->streamid_mask */
+driver_bound()
+	klist_add_tail()
 
-> 
->  Documentation/devicetree/bindings/arm/ti/k3.yaml   |    6 +
->  arch/arm64/boot/dts/ti/Makefile                    |    4 +
->  arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           |   26 +
->  arch/arm64/boot/dts/ti/k3-j742s2-main.dtsi         |   45 +
->  arch/arm64/boot/dts/ti/k3-j742s2.dtsi              |   98 +
->  arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 1488 +---------
->  .../arm64/boot/dts/ti/k3-j784s4-j742s2-common.dtsi |  148 +
->  .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 1490 ++++++++++
->  .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi  | 2671 ++++++++++++++++++
->  ...tsi => k3-j784s4-j742s2-mcu-wakeup-common.dtsi} |    2 +-
->  ...l.dtsi => k3-j784s4-j742s2-thermal-common.dtsi} |    0
->  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi         | 2847 +-------------------
->  arch/arm64/boot/dts/ti/k3-j784s4.dtsi              |  133 +-
->  13 files changed, 4592 insertions(+), 4366 deletions(-)
-> ---
-> base-commit: ecc768a84f0b8e631986f9ade3118fa37852fef0
-> change-id: 20240620-b4-upstream-j742s2-7ba652091550
-> 
-> Best regards,
-> -- 
-> Manorit Chawdhry <m-chawdhry@ti.com>
-> 
+When this null smmu pointer is dereferenced later in
+arm_smmu_probe_device, the device crashes.
+
+Fix this by deferring the probe of the client device
+until the smmu device has bound to the arm smmu driver.
+
+Co-developed-by: Prakash Gupta <quic_guptap@quicinc.com>
+Signed-off-by: Prakash Gupta <quic_guptap@quicinc.com>
+Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
+Fixes: 021bb8420d44 ("iommu/arm-smmu: Wire up generic configuration support")
+---
+ drivers/iommu/arm/arm-smmu/arm-smmu.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+index 723273440c21..1f2bafa92f1f 100644
+--- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
++++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+@@ -1437,6 +1437,8 @@ static struct iommu_device *arm_smmu_probe_device(struct device *dev)
+ 			goto out_free;
+ 	} else {
+ 		smmu = arm_smmu_get_by_fwnode(fwspec->iommu_fwnode);
++		if (!smmu)
++			return dev_err_probe(dev, -EPROBE_DEFER, "smmu dev has not bound yet\n");
+ 	}
+ 
+ 	ret = -EINVAL;
+-- 
+2.17.1
+
 
