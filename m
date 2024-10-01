@@ -1,85 +1,53 @@
-Return-Path: <linux-kernel+bounces-345717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9026C98BA2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827C298BA92
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 583832832E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49F61C235A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A579C1BF303;
-	Tue,  1 Oct 2024 10:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jToG2rnW"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA7B1BF324;
+	Tue,  1 Oct 2024 11:05:08 +0000 (UTC)
+Received: from tretyak2.mcst.ru (tretyak2.mcst.ru [212.5.119.215])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C517E1BE844;
-	Tue,  1 Oct 2024 10:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 309931A08B2
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.5.119.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780275; cv=none; b=rn55Aqpzh3IUIyQMNN7uzkdd2pYad4P97Kfz5lF5O9+bJkIEVFq1C+fe57c6KYgJnVY09pgPw7CZvi0/Bu26UXNoS/ei+q6kqdy9hCDrRs9IxnkPvH4U2+X2N5l0jQwCQUMBCURfJJb8SnFcynMyOK0UP7t01VheiTouQvUxZyA=
+	t=1727780708; cv=none; b=Hk9TUFYkjPcz6icbCoU1AqpfmeVR99wJYaAX0VcifuCsjkv1WxX1wpNjBiyx6vraB5onVd+Oq1/zLYB7evJb/+R9t4EXsOUkqwOjrNJDcHD4AMhCz3APP5J7Mk631f88S/4UzAeehxYHlHJIqtJm7jlF7bIMixhZjlKku5ds1EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780275; c=relaxed/simple;
-	bh=kX4fvjsFongNoCxNryFoqj8xRI066V4+yt0N+iVFFMQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DoLaf/weNSpxhtruYqQrxJZH5DOLvUAlMqsW64nKf5yjJejUVxY0VWZoNR3ILg/Q/+b1nj83XodUPr7yjSjjESiHIMXeIhsqiZhoWRVwOUpAQ13f0JPmJl6iNRQ4yd/olAI5TfgTHLxX4PAZaerJ9zC1XR4QDozFl9qUhIgl8JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jToG2rnW; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e7b121be30so3570923a12.1;
-        Tue, 01 Oct 2024 03:57:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727780273; x=1728385073; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+XodivF81UWtP2cNwWOGWcI/Uct7qBUohMsaji6ENUY=;
-        b=jToG2rnWCSFqzJ0MlJqhXN6Vg/OVFH5q1qn/xh5XYOWAhUUt9YF8TFEz65oGeqZ5W5
-         Dho7UwVPnanpap6gEwt/mlm3ZRjZib2nYrDgwnW5wPFfokmSYYBSFWep+uD6wD+l4i+u
-         Oeds6ZWdn96wzoGYPO2UpAZ1HlFR8CmiAINlTJWgXy5siL5i8ltWgiHsUDFkcq4AdMPi
-         pQGTBLTZtEhgixVKwGgy8NUz5H2sQ9J/sCTAtfsgWq6C06JJAQjE5houGd9OjdE1MYRQ
-         91jCGljlChYWwi3KN9K82cSq2TsGrXf7VxfRJtLP49ssTFKWQED1iNzjVdALvjoU7djQ
-         aK6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727780273; x=1728385073;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+XodivF81UWtP2cNwWOGWcI/Uct7qBUohMsaji6ENUY=;
-        b=fPooNu8CrIc5ZHsEW+UmBMLqBWU6SsKeeQEj6hgTAAW426jizuzJJfsOrdJxnDB+Vb
-         /UdEOgymPpMYQbEha2L0f3Daopa8p91YSwRFe/PmAVgvL+vm7CGp26zAvXvbEmpIUfjS
-         waBxHdGINjgISlx/qm803YjL8mc4xzBm6hMI1BhckBXFOwdDV1MfzwEeWj8LVM5M+TyB
-         SBW+zpzXM+Tsdwa1Hm0WJkcT/OhowF0fWkvS/EySq/xQCP/hGU29MEBE5ABK2N2oVsIh
-         jMFJGIT1bUTswrWKuFrehDHISZAZ897WDPU8OB7ynA4oQGJDm92jg4jnu3zPAVnnsmo/
-         iHHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4wynpvycPVeXz1yQlxYD/3zOog7ZMicfKspzBlkkB/VYvyTMWRXs7qCmCYoJpKHqQKNcqx6O4aT/vNg==@vger.kernel.org, AJvYcCXo/TuZD2llutxwEH7q3alWNPk49USlia45YOcNFMEKIdCSySdl8G8gho+pKfSNfmSUTnQjKrKl9P03@vger.kernel.org, AJvYcCXvWnfPexuMJpDXF2uCImG/ySKfDn8zPZ/eR/e2jtnzCWShkNi//LxB8PKK3FHqZ6AQ9hctkM7on4fjuQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydrF5fCmFf+ac8RixNgcD2jkNgtWnhoR+rMYeno6mRlTjzxopg
-	R6wuA6/ZK0orLLGWKTVuzQdntKws/TrraOSnSy7zAVZYKqlsAR0H
-X-Google-Smtp-Source: AGHT+IGhZN9+wVKG14eYUdsgaPGOEoVAZRpX351sFX9Rh29MejCBf9Qb4pmMk6uv2ceETeAVZBeWUA==
-X-Received: by 2002:a05:6a21:1193:b0:1c4:9ef6:499b with SMTP id adf61e73a8af0-1d4fa6cfd50mr21889572637.29.1727780272943;
-        Tue, 01 Oct 2024 03:57:52 -0700 (PDT)
-Received: from fedora.. ([106.219.166.49])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db5ed0e9sm8069195a12.57.2024.10.01.03.57.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:57:52 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: vigneshr@ti.com,
-	s-vadapalli@ti.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	bhelgaas@google.com
-Cc: kishon@kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH v2] PCI: dra7xx: Added error handling in probe function when devm_phy_get() fails
-Date: Tue,  1 Oct 2024 16:27:18 +0530
-Message-ID: <20241001105717.4566-2-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1727780708; c=relaxed/simple;
+	bh=+rHmXUJz9yFvw6S5U3VrCkjI9zxfOHt3F8VTxWbRo1s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4rn6kASqcOQorDRED4Sym8iWCBxJTBWNKOMNLvF1ivhgRVRSPOKA0/wOx+LRydU2bb9646h917dmRjsfzGq2cqfctsE8VT9LmkyCACMVofQIlOP2Jy2NZTXmPhSU3brXlORF3C4fORgC/80dWzT09FOoK9G8SDbQsrkyTY5VBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru; spf=pass smtp.mailfrom=mcst.ru; arc=none smtp.client-ip=212.5.119.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mcst.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mcst.ru
+Received: from tretyak2.mcst.ru (localhost [127.0.0.1])
+	by tretyak2.mcst.ru (Postfix) with ESMTP id F3FF5102392;
+	Tue,  1 Oct 2024 14:05:00 +0300 (MSK)
+Received: from frog.lab.sun.mcst.ru (frog.lab.sun.mcst.ru [176.16.4.50])
+	by tretyak2.mcst.ru (Postfix) with ESMTP id EAC41101765;
+	Tue,  1 Oct 2024 14:04:10 +0300 (MSK)
+Received: from artemiev-i.lab.sun.mcst.ru (avior-1 [192.168.63.223])
+	by frog.lab.sun.mcst.ru (8.13.4/8.12.11) with ESMTP id 491B4AwQ005662;
+	Tue, 1 Oct 2024 14:04:10 +0300
+From: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
+To: Alex Deucher <alexander.deucher@amd.com>
+Cc: Igor Artemiev <Igor.A.Artemiev@mcst.ru>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+        Kenneth Feng <kenneth.feng@amd.com>, Simona Vetter <simona@ffwll.ch>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: [PATCH] drm/amd/pm: check return value of amdgpu_irq_add_id()
+Date: Tue,  1 Oct 2024 13:57:27 +0300
+Message-Id: <20241001105727.1582368-1-Igor.A.Artemiev@mcst.ru>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,40 +55,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Anti-Virus: Kaspersky Anti-Virus for Linux Mail Server 5.6.39/RELEASE,
+	 bases: 20111107 #2745587, check: 20241001 notchecked
+X-AV-Checked: ClamAV using ClamSMTP
 
-While creation of device link, if devm_phy_get() function fails then it 
-directly returns PTR_ERR without any cleanup of previous added device 
-links.
+amdgpu_irq_ad_id() may fail and the irq handlers will not be registered.
+This patch adds error code check.
 
-Added goto statement to handle the cleanup of already added device links.
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
 
-Fixes: 7a4db656a635 (PCI: dra7xx: Create functional dependency between 
-PCIe and PHY)
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+Signed-off-by: Igor Artemiev <Igor.A.Artemiev@mcst.ru>
 ---
-v2: resend when tree is open and reformat commit message
+ .../drm/amd/pm/powerplay/hwmgr/smu_helper.c   | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
- drivers/pci/controller/dwc/pci-dra7xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-dra7xx.c b/drivers/pci/controller/dwc/pci-dra7xx.c
-index 4fe3b0cb72ec..c329d107b811 100644
---- a/drivers/pci/controller/dwc/pci-dra7xx.c
-+++ b/drivers/pci/controller/dwc/pci-dra7xx.c
-@@ -762,8 +762,10 @@ static int dra7xx_pcie_probe(struct platform_device *pdev)
- 	for (i = 0; i < phy_count; i++) {
- 		snprintf(name, sizeof(name), "pcie-phy%d", i);
- 		phy[i] = devm_phy_get(dev, name);
--		if (IS_ERR(phy[i]))
--			return PTR_ERR(phy[i]);
-+		if (IS_ERR(phy[i])) {
-+			ret = PTR_ERR(phy[i]);
-+			goto err_link;
-+		}
+diff --git a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
+index 79a566f3564a..109df1039d5c 100644
+--- a/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
++++ b/drivers/gpu/drm/amd/pm/powerplay/hwmgr/smu_helper.c
+@@ -647,28 +647,41 @@ int smu9_register_irq_handlers(struct pp_hwmgr *hwmgr)
+ {
+ 	struct amdgpu_irq_src *source =
+ 		kzalloc(sizeof(struct amdgpu_irq_src), GFP_KERNEL);
++	int ret;
  
- 		link[i] = device_link_add(dev, &phy[i]->dev, DL_FLAG_STATELESS);
- 		if (!link[i]) {
+ 	if (!source)
+ 		return -ENOMEM;
+ 
+ 	source->funcs = &smu9_irq_funcs;
+ 
+-	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
++	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+ 			SOC15_IH_CLIENTID_THM,
+ 			THM_9_0__SRCID__THM_DIG_THERM_L2H,
+ 			source);
+-	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
++	if (ret)
++		goto err;
++
++	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+ 			SOC15_IH_CLIENTID_THM,
+ 			THM_9_0__SRCID__THM_DIG_THERM_H2L,
+ 			source);
++	if (ret)
++		goto err;
+ 
+ 	/* Register CTF(GPIO_19) interrupt */
+-	amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
++	ret = amdgpu_irq_add_id((struct amdgpu_device *)(hwmgr->adev),
+ 			SOC15_IH_CLIENTID_ROM_SMUIO,
+ 			SMUIO_9_0__SRCID__SMUIO_GPIO19,
+ 			source);
++	if (ret)
++		goto err;
+ 
+ 	return 0;
++
++err:
++	kfree(source);
++
++	return ret;
+ }
+ 
+ void *smu_atom_get_data_table(void *dev, uint32_t table, uint16_t *size,
 -- 
-2.46.1
+2.39.2
 
 
