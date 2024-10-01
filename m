@@ -1,359 +1,169 @@
-Return-Path: <linux-kernel+bounces-345943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A432698BD39
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:16:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6082098BD2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12FD3B23D5B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793FC1C237DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5AF1C5786;
-	Tue,  1 Oct 2024 13:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8D71EA87;
+	Tue,  1 Oct 2024 13:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PqSci2JL"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ih45VQBQ"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB941C3F00
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA48C2E3
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727788561; cv=none; b=DZp7b9xRWwIwM5KujDhhucV+eT1KKFHXXg6inysvzin50tASyuXFgXeyNiGbCxEHW8l9sky0Dms86cFATyjCpWfPwKJ96TFUCQlALC1GFwnV1ssT9TL7wijEjFWzlij0j4b/gHZgG6Iy9newvqnyXJGDie4CEtR0QaRyOxJG82I=
+	t=1727788557; cv=none; b=tGJyxfWNvB+M61UGU5S1SciTo/iOFQtns3l12VpgYIB719VJ3CLfxUURZDlR0ZTNCNNLikHEiARL3xkKN9eZ5gYksX+KObyh7TRml7gX1AZQ5nCE9GEXZ3zgsyfKSlPy0XUQDaVCc7+1NqYh3yitfcytjqCMHfj/01Fzx1RYLPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727788561; c=relaxed/simple;
-	bh=FVAk+BLOdIqzb/efcHFww/qH9ibBCHrZeGC+jervWLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k98to0sl4lvqdXz0ZUc+zuNenCCnIII9tAdI8+onhs1Nn7IEV7HE5SzbO043GbPdp96plfywOnF4osYoB0GP/JYbcWaSNAh1LAOoSgyori0uHs8Ao7W3AyNJwzu3xVj2/kWd+OyOdVGjlWpArW212b70lgS3vAb8yjHx12Bsd1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PqSci2JL; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1727788557; c=relaxed/simple;
+	bh=ZnF7wm42EvgCWGiJrdHox4g3kg/iuW1AhL5etYPRUM0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sCS7LduFWT3LoBIHARvV4sTjNeL9B2W4uq/jpo568FXTgoiiJ8YTTxq1iUt7HXdvm+np38F1Qo3PpSNUp4NR6VtLGiWtrDFuSVxQPf+ZmoOb/BH2DddRFQmhuFRWv2NxoerNjrbg9k+3g6CNVWjKk3rUi1ah6jg3LQYeJuaBu+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ih45VQBQ; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398b589032so4823280e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:15:58 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c40aea5c40so10091694a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727788556; x=1728393356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5d0oytKKUoV7wMWG1zsqDf6MGeXNHEnligQuB1wzGpo=;
-        b=PqSci2JLbfqwQJm5OFcf71XqciE5/WJHPWbIwovTVnZEDzRZw0AHzTwfoQJCYw6c8C
-         fyDXkw71z06C32nj8Ej8rcwUpp5BGNysTZH2AuolhYWr14J2gKtj4LGAPpeCwu/4ItVg
-         AFJ7WgMiTPFEQZQBciy3kJI0ow+xqhmD6Y4RZmDDQMcWm/CvnjmglrIy423XHWe5arqF
-         IDWJDUqRq8lseiFi45iPzWtc5uYHuwY1QSeYk+ai7KEaL5tXPwqQGrDFp/WQ79FLIyLj
-         QAupn/Qf35GZ9cI33GA4oXPHuHvLVmbwkknvfmpRIL2ym405qOSB71U9cVzyestsIiNH
-         Sg/A==
+        d=linaro.org; s=google; t=1727788554; x=1728393354; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHNq/8fEpEpzhzO15Rr2H0soDaHS4wrw70IWmYALeO8=;
+        b=Ih45VQBQUZEURatoJocLOJc5ZSx/FOPOBJPJv4GURHMDmxACryISZT0gXPWuIH3PKR
+         ZOaBmHV6lS6KO50Zg9W2w9qLi9uI9oOYAImvpQFZSUuO04hoQLl6m2U4Bg9GIN7wp4rQ
+         VD2KOFDZqALLzMbGpAx/xAN1jJE+zmw3D+NU2XDkfhvANe1+/rSmnLuvZLxSybFCnBRL
+         YfBZ3ecN+1HyLh23rEJW0ZbYwfpdGNX6xmyRQRqJl4gR3c6Ym5WodbclZCo6ZOxTRogp
+         pDPxFN+3VfmxOlIw3xA5CGgCxbImEvclxbjxviL3fPqxoD/R4bIo0E411rgaSX/jpEu4
+         gfvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727788556; x=1728393356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5d0oytKKUoV7wMWG1zsqDf6MGeXNHEnligQuB1wzGpo=;
-        b=mkMIkO4zUzpIqqcc1JyzgUWbiMUOHiQuTsCJUTmUUXTh6pNIsqWMIsU4rN3X/SltkY
-         Y7IH8ROMT7juTDuAziE5ifaA3d5q4jCjGN/aFZgZ/OrIyDDrxVn+qlepGrlpQmIz3qIL
-         v+NRBo7upf9wLtOlXAPeb3oJBx2eb2Oy4SRz2EzbRv0IFdCYkWzUe60XH0A0HCRxEJ/y
-         jJOqfvGDcVfPBhkPawj2kofI9wvWYDR71Hv8cM00C6UWgmXzbN3mByUGzhRbCAa4Edq3
-         Jt7+vWXAfkUV52zplgeroPPzKYKN1oW2FBFc9Vt2mE2Mbf/lDRhFKj2nnrCDff5ahWoN
-         3Fpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWs3O5NGy4EUNTp7/HJMU/Ert7g2mNsG6ketsT1N4ubbgfcExVJjfynVQqHOXYAHzCYjlsnfVV+wkw+CQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYtH2v3TgvxN/pvdgWdxtxdqS+0J9RS/UmiU/Xewi805olkVHy
-	mDMjim0V77IDcvN/HPB4Iq1pOnydk/81BvX0UYQ0jHK9JgYanxBHYffTdio4W4AJqj/Cbl4CDl5
-	HC5tTomNievI/1gdrr5iRloa9Bqac5VD8tMq78g==
-X-Google-Smtp-Source: AGHT+IFSCJODkQZaEKKvFqJ003dLieDQX4xED+qGDI+GkjgnscjHC7N9CLzuAMkbp4HaVOfhZAiiAgojIxmNepS1Y24=
-X-Received: by 2002:a05:6512:3343:b0:531:8f2f:8ae7 with SMTP id
- 2adb3069b0e04-5389fc46b2dmr10930455e87.25.1727788555727; Tue, 01 Oct 2024
- 06:15:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727788554; x=1728393354;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uHNq/8fEpEpzhzO15Rr2H0soDaHS4wrw70IWmYALeO8=;
+        b=sdwcdxp8cDsfkoqwNZahLEaP+6wX6eEquJ4YGUX1YqFYso/JGMqFX3qsSmp3g8GasG
+         Xp3yWJ+al9lRzZ3oNxmrO64mgvdrGYrkcOPE9lJueWa9OV1DOYIWbRyjDjWmXS3pk1wK
+         Kz6+L+ESlvp6X+PVbRjeHLIcduvDsv0+ybBICiamNPcKHGssKc1vKwmUEJMOt9oOO+Ay
+         iXyS+wDoSmYfFvn/R+zpRACV1TBnLDjk7ysACAqPQxVjLj/0NGddvpMUnvWF/EAC81oU
+         7FJng2Zv9mTrzwz5F/3ciCLVdYolWZeE3MU0JqhwQeTnNlcvQ6mK6soDuuU4cXesixOu
+         VTkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUp0PdI2f+pYYxG98pjsa0o22zuhozDijiWLPgYZSgSdxFxeop0MnBw0+58J9/zhK7a3nda/KRSa1q1f1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/jLJVCPrrB9YR9lii8go8NVl2kuWg+6LcetD7G2DHwuHhjZ53
+	1uydVnxIOah0XmZ1xsGC5FX8eMjAl75H4Pl16+WGQRJbihwYmPHqSJ0XEOcOuK8=
+X-Google-Smtp-Source: AGHT+IH2WkOGnSVNvyKKZPS7PClTVofiofQ8J3AJTG5TUP+u9T23cfrzaZKl2s3Chl0l9bdUxeu4VA==
+X-Received: by 2002:a05:6402:4406:b0:5c8:8844:7874 with SMTP id 4fb4d7f45d1cf-5c8a2a1c8dcmr4373156a12.10.1727788553718;
+        Tue, 01 Oct 2024 06:15:53 -0700 (PDT)
+Received: from [127.0.0.1] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88248abf5sm6170875a12.77.2024.10.01.06.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 06:15:53 -0700 (PDT)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v2 0/4] ov08x40: Enable use of ov08x40 on Qualcomm X1E80100
+ CRD
+Date: Tue, 01 Oct 2024 14:15:48 +0100
+Message-Id: <20241001-b4-master-24-11-25-ov08x40-v2-0-e478976b20c1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926143122.1385658-1-andrei.stefanescu@oss.nxp.com> <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
-In-Reply-To: <20240926143122.1385658-4-andrei.stefanescu@oss.nxp.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 1 Oct 2024 15:15:43 +0200
-Message-ID: <CACRpkdaYcis2r6eNDfdXV9zcXof6x_XfGHFADJ2RojxLNp7C-A@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] gpio: siul2-s32g2: add NXP S32G2/S32G3 SoCs support
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	NXP S32 Linux Team <s32@nxp.com>, Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAT2+2YC/43NTQ6CMBCG4auQrh3T1vKjK+9hWAwwwCRKzZQ0G
+ NK7WzmBy+dbvN+uAglTULdiV0KRA/slw54K1c+4TAQ8ZCurrdNXW0Hn4IVhJQHrwBiwJfiom81
+ p6KvR1TUiVuhUDryFRt6O+KPNnjmsXj7HVzS/9a9sNKCB3FCO3XDpygbvT15Q/NnLpNqU0hcY4
+ 036xQAAAA==
+X-Change-ID: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Jason Chen <jason.z.chen@intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sergey Senozhatsky <senozhatsky@chromium.org>, 
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2245;
+ i=bryan.odonoghue@linaro.org; h=from:subject:message-id;
+ bh=ZnF7wm42EvgCWGiJrdHox4g3kg/iuW1AhL5etYPRUM0=;
+ b=owEBbQKS/ZANAwAIASJxO7Ohjcg6AcsmYgBm+/YG1UwWihgb4Yf2TiSAHh7q4sNFfQhRAlNTI
+ ElQPXSMVquJAjMEAAEIAB0WIQTmk/sqq6Nt4Rerb7QicTuzoY3IOgUCZvv2BgAKCRAicTuzoY3I
+ Ogj5EACrJpfXay6BFxWy81j1/8KaUoVCS6Uhe8eG4G88Rk15zYVvSZMhGAal8cxt21LDD8W8GIc
+ w3JtoiBTG1C+kb1E026ApqmFrGBZEopowRqJCf38SwFHrPrDiICVbsgRSRik9NTna3VN2MsUCT6
+ CW6vm8dI5JFNGdPvJFl6+H8ujY6iwWo4QK/iXesk+ad8nllagsKx4W6Y4A3N74w+XCTgHRGBOWf
+ bJSPRibUh6ZPgNQ5Nva4uwiCx08XN0ULrxcmtZp2eyFlBWrkAhGBLNok+TOfQxMD6AXJ+W3eYzY
+ jgXZ8NXsw3c3x0ZGNGz8N8dwvdt874Cja8Lmyr4gVKfM46gUnoIepYLTnYyy7WUUFUSlVmQcdgn
+ boKKwYUFcFyJKMnrUJDv5nOhVm3c/IcJMkCPBBa1NYxi7IJczmwb34GkDxtcOlu0URrOHKEDADW
+ xXdQxpPaspqdXvJc4YUlwtKqtl/h//2TfQVC7/4XspLZ0mYM9GCPtVOqiD84Pxcr6OD+soryCdw
+ 4cdPovUsgGaxnVztX8UzeLh6Wh0Zg6pJH7CnwL0D9TfJEMYQw99+TDh9lGAk35uX8tQ6cJvQl7K
+ s+EqYqnzC8ut/0VY0Bedf+D34x9aEdErIfqmDiZuduwU6WWYg7bELwu2PDmLB35+rpZ1B9OIKW3
+ edBeRkv8HhpBY2Q==
+X-Developer-Key: i=bryan.odonoghue@linaro.org; a=openpgp;
+ fpr=E693FB2AABA36DE117AB6FB422713BB3A18DC83A
 
-Hi Andrei,
+V2:
+Changes in v2:
+- Drops "-" in ovti,ov08x40.yaml after description: - Rob
+- Adds ":" after first line of description text - Rob
+- dts -> DT in commit log - Rob
+- Removes dependency on 'xvclk' as a name in yaml
+  and driver - Sakari
+- Uses assigned-clock, assigned-clock-parents and assigned-clock-rates -
+  Sakari
+- Drops clock-frequency - Sakarai, Krzysztof
+- Drops dovdd-supply, avdd-supply, dvdd-supply and reset-gpios
+  as required, its perfectly possible not to have the reset GPIO or the
+  power rails under control of the SoC. - bod
 
-thanks for your patch!
+- Link to v1: https://lore.kernel.org/r/20240926-b4-master-24-11-25-ov08x40-v1-0-e4d5fbd3b58a@linaro.org
 
-Sorry for being so late in giving any deeper review of it.
+V1:
+This series brings fixes and updates to ov08x40 which allows for use of
+this sensor on the Qualcomm x1e80100 CRD but also on any other dts based
+system.
 
-On Thu, Sep 26, 2024 at 4:32=E2=80=AFPM Andrei Stefanescu
-<andrei.stefanescu@oss.nxp.com> wrote:
+Firstly there's a fix for the pseudo burst mode code that was added in
+8f667d202384 ("media: ov08x40: Reduce start streaming time"). Not every I2C
+controller can handle an arbitrary sized write, this is the case on
+Qualcomm CAMSS/CCI I2C sensor interfaces which limit the transaction size
+and communicate this limit via I2C quirks. A simple fix to optionally break
+up the large submitted burst into chunks not exceeding adapter->quirk size
+fixes.
 
-> Add the GPIO driver for S32G2/S32G3 SoCs. This driver uses the SIUL2
-> (System Integration Unit Lite2) hardware module. There are two
-> SIUL2 hardware modules present, SIUL2_0(controlling GPIOs 0-101) and
-> SIUL2_1 for the rest.
->
-> The GPIOs are not fully contiguous, there are some gaps:
-> - GPIO102 up to GPIO111(inclusive) are invalid
-> - GPIO123 up to GPIO143(inclusive) are invalid
->
-> Some GPIOs are input only(i.e. GPI182) though this restriction
-> is not yet enforced in code.
->
-> This patch adds basic GPIO functionality(no interrupts, no
-> suspend/resume functions).
->
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Secondly then is addition of a yaml description for the ov08x40 and
+extension of the driver to support OF probe and powering on of the power
+rails from the driver instead of from ACPI.
 
-(...)
+Once done the sensor works without further modification on the Qualcomm
+x1e80100 CRD.
 
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/pinctrl/consumer.h>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Bryan O'Donoghue (4):
+      media: ov08x40: Fix burst write sequence
+      media: dt-bindings: Add OmniVision OV08X40
+      media: ov08x40: Rename ext_clk to xvclk
+      media: ov08x40: Add OF probe support
 
-Hm, are you sure you don't want one of those combined
-GPIO+pinctrl drivers? Look in drivers/pinctrl for examples such
-as drivers/pinctrl/pinctrl-stmfx.c
+ .../bindings/media/i2c/ovti,ov08x40.yaml           | 120 ++++++++++++++
+ drivers/media/i2c/ov08x40.c                        | 179 ++++++++++++++++++---
+ 2 files changed, 276 insertions(+), 23 deletions(-)
+---
+base-commit: 2b7275670032a98cba266bd1b8905f755b3e650f
+change-id: 20240926-b4-master-24-11-25-ov08x40-c6f477aaa6a4
 
-> +/* PGPDOs are 16bit registers that come in big endian
-> + * order if they are grouped in pairs of two.
-> + *
-> + * For example, the order is PGPDO1, PGPDO0, PGPDO3, PGPDO2...
-> + */
-> +#define SIUL2_PGPDO(N)         (((N) ^ 1) * 2)
-> +#define S32G2_SIUL2_NUM                2
-> +#define S32G2_PADS_DTS_TAG_LEN 7
-> +
-> +#define SIUL2_GPIO_16_PAD_SIZE 16
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-You seem to be manipulating "pads" which is pin control territory.
-That should be done in a pin control driver.
-
-> +/**
-> + * struct siul2_device_data  - platform data attached to the compatible.
-> + * @pad_access: access table for I/O pads, consists of S32G2_SIUL2_NUM t=
-ables.
-> + * @reset_cnt: reset the pin name counter to zero when switching to SIUL=
-2_1.
-> + */
-> +struct siul2_device_data {
-> +       const struct regmap_access_table **pad_access;
-> +       const bool reset_cnt;
-
-I don't understand the reset_cnt variable at all. Explain why it exists in =
-the
-kerneldoc please.
-
-> +/**
-> + * struct siul2_desc - describes a SIUL2 hw module.
-> + * @pad_access: array of valid I/O pads.
-
-Now that is really pin control isn't it.
-
-> + * @opadmap: the regmap of the Parallel GPIO Pad Data Out Register.
-> + * @ipadmap: the regmap of the Parallel GPIO Pad Data In Register.
-> + * @gpio_base: the first GPIO pin.
-> + * @gpio_num: the number of GPIO pins.
-> + */
-> +struct siul2_desc {
-> +       const struct regmap_access_table *pad_access;
-> +       struct regmap *opadmap;
-> +       struct regmap *ipadmap;
-> +       u32 gpio_base;
-> +       u32 gpio_num;
-> +};
-(...)
-
-> +static int siul2_get_gpio_pinspec(struct platform_device *pdev,
-> +                                 struct of_phandle_args *pinspec,
-> +                                 unsigned int range_index)
-> +{
-> +       struct device_node *np =3D pdev->dev.of_node;
-> +
-> +       return of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
-> +                                               range_index, pinspec);
-> +}
-
-I do not see why a driver would parse gpio-ranges since the gpiolib
-core should normally deal with the translation between GPIO lines
-and pins.
-
-This looks hacky and probably an indication that you want to use
-a combined pinctrl+gpio driver so the different parts of the driver
-can access the same structures easily without hacks.
-
-> +static void siul2_gpio_set_direction(struct siul2_gpio_dev *dev,
-> +                                    unsigned int gpio, int dir)
-> +{
-> +       guard(raw_spinlock_irqsave)(&dev->lock);
-> +
-> +       if (dir =3D=3D GPIO_LINE_DIRECTION_IN)
-> +               __clear_bit(gpio, dev->pin_dir_bitmap);
-> +       else
-> +               __set_bit(gpio, dev->pin_dir_bitmap);
-> +}
-
-This looks like a job for gpio regmap?
-
-select GPIO_REGMAP,
-look in other driver for examples of how to use it.
-
-> +static int siul2_get_direction(struct siul2_gpio_dev *dev,
-> +                              unsigned int gpio)
-> +{
-> +       return test_bit(gpio, dev->pin_dir_bitmap) ? GPIO_LINE_DIRECTION_=
-OUT :
-> +                                                    GPIO_LINE_DIRECTION_=
-IN;
-> +}
-
-Also looks like a reimplementation of GPIO_REGMAP.
-
-> +static int siul2_gpio_dir_out(struct gpio_chip *chip, unsigned int gpio,
-> +                             int val)
-> +{
-> +       struct siul2_gpio_dev *gpio_dev;
-> +       int ret =3D 0;
-> +
-> +       gpio_dev =3D to_siul2_gpio_dev(chip);
-> +       siul2_gpio_set_val(chip, gpio, val);
-> +
-> +       ret =3D pinctrl_gpio_direction_output(chip, gpio);
-(...)
-
-This is nice, pin control is properly used as the back-end.
-
-> +static int siul2_gpio_remove_reserved_names(struct device *dev,
-> +                                           struct siul2_gpio_dev *gpio_d=
-ev,
-> +                                           char **names)
-> +{
-> +       struct device_node *np =3D dev->of_node;
-> +       int num_ranges, i, j, ret;
-> +       u32 base_gpio, num_gpio;
-> +
-> +       /* Parse the gpio-reserved-ranges to know which GPIOs to exclude.=
- */
-> +
-> +       num_ranges =3D of_property_count_u32_elems(dev->of_node,
-> +                                                "gpio-reserved-ranges");
-> +
-> +       /* The "gpio-reserved-ranges" is optional. */
-> +       if (num_ranges < 0)
-> +               return 0;
-> +       num_ranges /=3D 2;
-> +
-> +       for (i =3D 0; i < num_ranges; i++) {
-> +               ret =3D of_property_read_u32_index(np, "gpio-reserved-ran=
-ges",
-> +                                                i * 2, &base_gpio);
-> +               if (ret) {
-> +                       dev_err(dev, "Could not parse the start GPIO: %d\=
-n",
-> +                               ret);
-> +                       return ret;
-> +               }
-> +
-> +               ret =3D of_property_read_u32_index(np, "gpio-reserved-ran=
-ges",
-> +                                                i * 2 + 1, &num_gpio);
-> +               if (ret) {
-> +                       dev_err(dev, "Could not parse num. GPIOs: %d\n", =
-ret);
-> +                       return ret;
-> +               }
-> +
-> +               if (base_gpio + num_gpio > gpio_dev->gc.ngpio) {
-> +                       dev_err(dev, "Reserved GPIOs outside of GPIO rang=
-e\n");
-> +                       return -EINVAL;
-> +               }
-> +
-> +               /* Remove names set for reserved GPIOs. */
-> +               for (j =3D base_gpio; j < base_gpio + num_gpio; j++) {
-> +                       devm_kfree(dev, names[j]);
-> +                       names[j] =3D NULL;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-
-I don't get this. gpio-reserved-ranges is something that is parsed and
-handled by gpiolib. Read the code in gpiolib.c and you'll probably
-figure out how to let gpiolib take care of this for you.
-
-> +static int siul2_gpio_populate_names(struct device *dev,
-> +                                    struct siul2_gpio_dev *gpio_dev)
-> +{
-> +       unsigned int num_index =3D 0;
-> +       char ch_index =3D 'A';
-> +       char **names;
-> +       int i, ret;
-> +
-> +       names =3D devm_kcalloc(dev, gpio_dev->gc.ngpio, sizeof(*names),
-> +                            GFP_KERNEL);
-> +       if (!names)
-> +               return -ENOMEM;
-> +
-> +       for (i =3D 0; i < S32G2_SIUL2_NUM; i++) {
-> +               ret =3D siul2_gen_names(dev, gpio_dev->siul2[i].gpio_num,
-> +                                     names + gpio_dev->siul2[i].gpio_bas=
-e,
-> +                                     &ch_index, &num_index);
-> +               if (ret) {
-> +                       dev_err(dev, "Could not set names for SIUL2_%d GP=
-IOs\n",
-> +                               i);
-> +                       return ret;
-> +               }
-> +
-> +               if (gpio_dev->platdata->reset_cnt)
-> +                       num_index =3D 0;
-> +
-> +               ch_index++;
-> +       }
-> +
-> +       ret =3D siul2_gpio_remove_reserved_names(dev, gpio_dev, names);
-> +       if (ret)
-> +               return ret;
-> +
-> +       gpio_dev->gc.names =3D (const char *const *)names;
-> +
-> +       return 0;
-> +}
-
-Interesting!
-
-I'm not against, on the contrary this looks really helpful to users.
-
-> +       gc =3D &gpio_dev->gc;
-
-No poking around in the gpiolib internals please.
-
-Look at what other drivers do and do like they do.
-
-On top of these comments:
-everywhere you do [raw_spin_]locks: try to use guards or
-scoped guards instead. git grep guard drivers/gpio for
-many examples.
-
-Yours,
-Linus Walleij
 
