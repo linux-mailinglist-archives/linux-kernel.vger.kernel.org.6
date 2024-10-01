@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-345797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF62098BB43
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19D8598BB44
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B3A1C236D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:35:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C47DC283F7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5A11C1746;
-	Tue,  1 Oct 2024 11:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243241C1ACA;
+	Tue,  1 Oct 2024 11:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Idet+m9h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFwht7Mb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42C31C0DE1;
-	Tue,  1 Oct 2024 11:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A211C1750;
+	Tue,  1 Oct 2024 11:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782510; cv=none; b=HECXA/DgFvm1fFFvtk5gWJZiNOIxAapd9l4pesAPMSXfcdIqy2RjpL/7vVUb8WVZN7IMTNdePSCkAvBZ0bMUUzSx2JJ23WHTHhP0+nri8B3qR/C0qZo6rzeQ1PWya40krUJY1g2X+RYLaRFZnBTJa90aOg1iMhc9eEZKlvpPvlI=
+	t=1727782511; cv=none; b=GcHqfPLiS+ZqFxFyd6wYRCW7sItN6CWLJfGljc5uydXsWeWsIVr+AH0QGri4DuedESpJaFl20pau55S2qAW05VU0mqmNMOeT33kQ+2QCv2e/Of6oatFTuM1D2pYd4koI+6Xu9zU4sntPVffpWMol1Xz610ReTYaOIGto0ForFh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782510; c=relaxed/simple;
-	bh=ejwveurcpiVUAMtfc3MmS1K+nDymKKvZqi9zObr58qA=;
+	s=arc-20240116; t=1727782511; c=relaxed/simple;
+	bh=11ixGMiy4P5OEvKM+IS3Ql37oz30zYU1wmZDtstmxAo=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=r0iMo5PDusQAj127sNRTM29ZbcsbL0bBv7FkQ8HAUv9y/VZV3e5nqfk8m32y4zumQxYQ6n/JBj8z4LLWFuTA4IU8ry+LEjFwo9/ffmyQ0fiDwROcnHJX71EDHyTqEkQPsT7XWa7hLn0VRz9zz7kdXxd5ARLaV4E3FJcUxe4zcW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Idet+m9h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CEABC4CECD;
-	Tue,  1 Oct 2024 11:35:10 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=DhPgfWNu9qO7+44KUm17mcZbTeJ6/EBco/W/mindyyag2Fv2sMRAH9XLNacN80l0oV2irue2sVAtg5RxboDAWOa8LJBpNtH2PP3XWYOjYqEET7Fc6Oo8LPSoqObYyA2FuLK9u4VljcHLTp6pT/kAl66WFLkFhLvd4n5vn7kkxd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFwht7Mb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566F5C4CECE;
+	Tue,  1 Oct 2024 11:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727782510;
-	bh=ejwveurcpiVUAMtfc3MmS1K+nDymKKvZqi9zObr58qA=;
+	s=k20201202; t=1727782511;
+	bh=11ixGMiy4P5OEvKM+IS3Ql37oz30zYU1wmZDtstmxAo=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Idet+m9hEi7jJ4H+tzI8sgt1F12+rWXx1hzKRoo7R7Vf/Xgvmsut0lmGxVftjGc4w
-	 KAkhiLDqoZFsGDzodrIzAnLMdPPxitEcu0n6U5HgYzxt4L2S6gIwY+fgfhF1k7wxoz
-	 2+FBjBo+hRVPRIZWLB/GKaPvc+9QoClDEjrsbL1+t16nIotas4nqW3sqGCfYA4TNGR
-	 9pY3xePlrMnjdALt+1E5qo/rLXuO3Owi1jAp6pbIHZlwfkw/tU3Xd1WZCCzW4D6drq
-	 loW/aFF2yqMB9IiQJ+EExy6Z/EXu5CKGkmsKZBNhTHsfX66ugaDTc63cZsek8LSRu0
-	 4d8+s1QstP60w==
+	b=iFwht7MbXQlFvMtvfhQJJmjjjbBnN1fMUwVS79nG/JzTESaSbzCZ8IV1mO97NJeVO
+	 uPZwP7SuJl1E/2sJaIhNZqIm3A0/8+LBu/GOm0o+h3cYNrul8XNO/3z0WpTxPT5wgT
+	 ctQxhlbiePJUmWrbj6aCaOpAQzK5b6U7uhkr0nIFoZ78/RIPzU5Mw5/x92+hwbezMT
+	 rmUeeCMDpukng9rWXPITx6zfHDksBrHi2SLbWZQQMqPKukUt2i2spv4jHN1xujBOJN
+	 pKLbhHiPfPn5inrvvZR6fDsU/ODN7S6/J4dSx+gK+/LtsLfrh7P3DRhKVtYnywu+bb
+	 Yrkzvi6jw/vMg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C33380DBF7;
-	Tue,  1 Oct 2024 11:35:14 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEB3380DBF7;
+	Tue,  1 Oct 2024 11:35:15 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,46 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/7] i2c: designware: Group all DesignWare drivers under a
- single option
+Subject: Re: [PATCH v2 0/2] KVM: Coalesced IO cleanup and test
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172778251300.314421.9094418199342099537.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Oct 2024 11:35:13 +0000
-References: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20240903142506.3444628-1-heikki.krogerus@linux.intel.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: linux-riscv@lists.infradead.org, andi.shyti@kernel.org,
- jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com,
- mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, vgupta@kernel.org, linux@armlinux.org.uk,
- dinguyen@kernel.org, catalin.marinas@arm.com, will@kernel.org,
- alexandre.belloni@bootlin.com, tsbogend@alpha.franken.de,
+ <172778251450.314421.17878360494032462055.git-patchwork-notify@kernel.org>
+Date: Tue, 01 Oct 2024 11:35:14 +0000
+References: <20240828181446.652474-1-seanjc@google.com>
+In-Reply-To: <20240828181446.652474-1-seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-riscv@lists.infradead.org, pbonzini@redhat.com,
  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- jiawenwu@trustnetic.com, mengyuanlou@net-swift.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-snps-arc@lists.infradead.org
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org, ilstam@amazon.com,
+ maz@kernel.org, oliver.upton@linux.dev, anup@brainfault.org, paul@xen.org
 
 Hello:
 
-This patch was applied to riscv/linux.git (fixes)
-by Andi Shyti <andi.shyti@kernel.org>:
+This series was applied to riscv/linux.git (fixes)
+by Sean Christopherson <seanjc@google.com>:
 
-On Tue,  3 Sep 2024 17:24:59 +0300 you wrote:
-> Hi guys,
+On Wed, 28 Aug 2024 11:14:44 -0700 you wrote:
+> Add a regression test for the bug fixed by commit 92f6d4130497 ("KVM:
+> Fix coalesced_mmio_has_room() to avoid premature userspace exit"), and
+> then do additional clean up on the offending KVM code.  I wrote the test
+> mainly so that I was confident I actually understood Ilias' fix.
 > 
-> This is a proposal for Kconfig improvement regarding the Synopsys
-> DesignWare I2C adapter driver.
-> 
-> Changes since v1:
+> This applies on the aforementioned commit, which is sitting in
+> kvm-x86/generic.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,5/7] RISC-V: configs: enable I2C_DESIGNWARE_CORE with I2C_DESIGNWARE_PLATFORM
-    https://git.kernel.org/riscv/c/0175b1d3c6df
+  - [v2,1/2] KVM: selftests: Add a test for coalesced MMIO (and PIO on x86)
+    https://git.kernel.org/riscv/c/215b3cb7a84f
+  - [v2,2/2] KVM: Clean up coalesced MMIO ring full check
+    https://git.kernel.org/riscv/c/e027ba1b83ad
 
 You are awesome, thank you!
 -- 
