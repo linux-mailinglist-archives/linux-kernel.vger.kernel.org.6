@@ -1,158 +1,72 @@
-Return-Path: <linux-kernel+bounces-346738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA34B98C82F
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BD498C831
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 827AF285D00
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33A481C22E1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715741CEACE;
-	Tue,  1 Oct 2024 22:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E38B1CEE9E;
+	Tue,  1 Oct 2024 22:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpycLX0l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ybKWwSjz"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBD318754F;
-	Tue,  1 Oct 2024 22:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF811CBE86;
+	Tue,  1 Oct 2024 22:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727821453; cv=none; b=Uf9q1iguY7uZ3y+LQuJuT/1sIOYAYJgOsw1XBHVCZ0u6Op1+PFFVGtDHp8F9HwjSMvS1KgKSbF6XXsfl5+SNl+79Kxv5QDFOcJX3fET4v12UgEYULGVAsgPwCM/kYkgubMy6kxku1ecd51SHBIekaev6nt/rYwaP4SyrzDqaRDw=
+	t=1727821472; cv=none; b=YoieKmihnjtfFmJ6pJ4j15e3bTFHOg2pYyG7lMG5JudjelTjI7rrZoEgfgpWQQeVmUD63QGKzN+zbpTyxHG+VaXtDWhGkiUm+zqm4crDssd7Q9DoV50kDpfT3UHDS1dPVFtkXlsuvkiEhI1KJBZAEaocemLtaOj0hizBHDp1bqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727821453; c=relaxed/simple;
-	bh=4R7pYlKOszuJiy1Kcuzstu3b3sGDugsks6KTwrgnmIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J1d7T5Ldg+RdSM36/sMqimApLurBBTL1gr87C+0lBhqx9XaHm4InE/3JDZm3KUyJTp5ARzy0lND2arm9X42tipfeFJAu7DEm70JxsbUPS19X/7oiKXe66msNwy4ufS78XzLKhjopx8VkxRrZomMflycDZZkkqwK+vordydaAHGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpycLX0l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23D24C4CEC6;
-	Tue,  1 Oct 2024 22:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727821453;
-	bh=4R7pYlKOszuJiy1Kcuzstu3b3sGDugsks6KTwrgnmIc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kpycLX0lae07qpU/QD+mp3fABHYzGr8nMw7SNNQwL1SZH8/M8VOfKRl0LA1RmzUoP
-	 XcL3VfoPCHsmbUJkEd7hKPhaFcDCAV6XduGxWp86ShyMklT/yoj3I9he/nq7fjeMd2
-	 vtOSk6bfRi6/FbMJiLEc92jml/FaN0eWg44IcsfReafsll1yobp3NHam2vICwvuN/9
-	 swq3wjJZ3NQ9N3bqmrf46Bcd3f6qqJmrfizNRrbIL9QmgjSmhh/TI6vInb3y3BY6xg
-	 CQbd5AstIr8B1Z7qcqOMb4qd3pCSOEkA6g1aMUEbAGODU8luvbZWsSckhZc55G3NUw
-	 ZKtGt8veTqTNg==
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: [PATCH] tracepoints: Use new static branch API
-Date: Tue,  1 Oct 2024 15:24:01 -0700
-Message-ID: <03da49e81c50eb2a9f47918409e4c590c0f28060.1727817249.git.jpoimboe@kernel.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1727821472; c=relaxed/simple;
+	bh=uc6Mp6kPUv3MmFOChXXDBolLcyb+hQcrEIvuBkYPYrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8th6yH6FCzj3hf8G1usL3/cNVI5OcCm+JzeQ2XidC3cB2zII+8F+k2vo3tVCCjrjI940sFRBTsVnlgauwfyhBlapUsUKc3RpPAwo/mzU7kgTX4p2N03JLIABb/Z+0a895vpZOaIRmJkUXMmjuKwL4mhhCEx3++9QCULAWBhJkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ybKWwSjz; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=W5kS7flzgHmzQnvGcq4iqgSNYZpXcpeHPnbr1xLtZ/M=; b=ybKWwSjzkUhPiPHQrKGOE/01/C
+	G9gKWel+utxOFn6gbCus1NZTwRKgZ+ti1ZST3NFBKAF9pUoHE6bVfb0uR/PYdhy6UDWSMd3vUQTPH
+	aE2FseQ+jBRRLE6/NNF2I5889bNs+dgaFYYLFoZsZ2Paslp9KNoKyOfseYgqXMmWTKsg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svlI8-008mV4-7B; Wed, 02 Oct 2024 00:24:24 +0200
+Date: Wed, 2 Oct 2024 00:24:24 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org,
+	steve.glendinning@shawell.net
+Subject: Re: [PATCHv2 net-next 2/9] net: smsc911x: use devm_alloc_etherdev
+Message-ID: <b5056d6d-ab14-493c-b29c-39eb95114965@lunn.ch>
+References: <20241001182916.122259-1-rosenp@gmail.com>
+ <20241001182916.122259-3-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241001182916.122259-3-rosenp@gmail.com>
 
-The old static key API based on 'struct static_key' is deprecated.
-Convert tracepoints to use the new API.
+On Tue, Oct 01, 2024 at 11:29:09AM -0700, Rosen Penev wrote:
+> Allows removal of various gotos and manual frees.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- include/linux/tracepoint-defs.h | 4 ++--
- include/linux/tracepoint.h      | 8 ++++----
- kernel/tracepoint.c             | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 4dc4955f0fbf..60a6e8314d4c 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -31,7 +31,7 @@ struct tracepoint_func {
- 
- struct tracepoint {
- 	const char *name;		/* Tracepoint name */
--	struct static_key key;
-+	struct static_key_false key;
- 	struct static_call_key *static_call_key;
- 	void *static_call_tramp;
- 	void *iterator;
-@@ -83,7 +83,7 @@ struct bpf_raw_event_map {
- 
- #ifdef CONFIG_TRACEPOINTS
- # define tracepoint_enabled(tp) \
--	static_key_false(&(__tracepoint_##tp).key)
-+	static_branch_unlikely(&(__tracepoint_##tp).key)
- #else
- # define tracepoint_enabled(tracepoint) false
- #endif
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 6be396bb4297..ab5162fc3e4a 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -228,7 +228,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
- 	static inline void trace_##name##_rcuidle(proto)		\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 1);			\
-@@ -254,7 +254,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	extern struct tracepoint __tracepoint_##name;			\
- 	static inline void trace_##name(proto)				\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 0);			\
-@@ -291,7 +291,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	static inline bool						\
- 	trace_##name##_enabled(void)					\
- 	{								\
--		return static_key_false(&__tracepoint_##name.key);	\
-+		return static_branch_unlikely(&__tracepoint_##name.key);\
- 	}
- 
- /*
-@@ -308,7 +308,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	struct tracepoint __tracepoint_##_name	__used			\
- 	__section("__tracepoints") = {					\
- 		.name = __tpstrtab_##_name,				\
--		.key = STATIC_KEY_INIT_FALSE,				\
-+		.key = STATIC_KEY_FALSE_INIT,				\
- 		.static_call_key = &STATIC_CALL_KEY(tp_func_##_name),	\
- 		.static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
- 		.iterator = &__traceiter_##_name,			\
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8d1507dd0724..dc160cc0b616 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -358,7 +358,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
- 		rcu_assign_pointer(tp->funcs, tp_funcs);
--		static_key_enable(&tp->key);
-+		static_branch_enable(&tp->key);
- 		break;
- 	case TP_FUNC_2:		/* 1->2 */
- 		/* Set iterator static call */
-@@ -414,7 +414,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		if (tp->unregfunc && static_key_enabled(&tp->key))
- 			tp->unregfunc();
- 
--		static_key_disable(&tp->key);
-+		static_branch_disable(&tp->key);
- 		/* Set iterator static call */
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
--- 
-2.46.0
-
+    Andrew
 
