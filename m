@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-346159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A09198C07F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:43:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3E798C083
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:43:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C03F1C23AF7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E291C238A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B0A1C9EAB;
-	Tue,  1 Oct 2024 14:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2351C9EBD;
+	Tue,  1 Oct 2024 14:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QsI5mclX"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BkSI2Y7h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41C81C9DFD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2B71C7B9D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727793645; cv=none; b=ZwkxIdZtJiemTgIQMshWIc+ePJQrvUFJgF66giOGFQaqKj6CdTnuW3PcH44e+HFvQfsir5Cpw2PubY9mlwaXzgB4uiPhPggeuy7+t3laVI/g9wzbySklvXrpHmEnX3p/KP4tLd8zDt2L77GYNZ2xALjCEnw+PEQrROQMeZPMvQg=
+	t=1727793683; cv=none; b=SxiDOWI1N4B2+Br4FjsKjOCdzfS1gxRQ04xJ461yc2hq8qTA3VAMP07idf+KH1fPQOwrn2k0wEJkNy5e8LrOcUHSPlKBXkTGGLzDkjeNHKWNBmEAQdA2E2rek7RNSwwCnw06s0QCUFRl50IHtZn0DsiOfmOdH2gepLd2FXzakiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727793645; c=relaxed/simple;
-	bh=zxHbuzdK8nWsF4Qd8mbyl+FzEThCtJXb9mYf/9pkr5U=;
+	s=arc-20240116; t=1727793683; c=relaxed/simple;
+	bh=q+pR5Hyk93EPohurVGBw+JRAYbGlRxHW+GhE1y5tCPk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C7KRUYvKrx1HoeR1KvakvDbnVjEdDSUck7YjSqPhLkv6TWVpCT6+MxszdXS4Auwk5mtc+OI1dZpf2J5t9P8DH8sMoQcasIKNsCP882bv01OJnjOm0Wu7KQgJgiF3vmAXAGbqzb/XsN4C92lPoD2kdfKUgs2XcCzMQnysLZOYqj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QsI5mclX; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-82aa3f65864so249220439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:40:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1727793641; x=1728398441; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aH6Gj5o0Dsut7SHZMO7xTQsbpbbShGmKYJpl5e/my0c=;
-        b=QsI5mclXbbkvXpZcY5hQvpYnB19G2hBKY4+uGsJ8BOEEuqlRHcvSEI1fxE45FJ3NJy
-         xab9jJbltK0Gk9GDODw2ghaYxPEN2InJFYbMVM3xRlhXsHnVVF6BldzY18oW4cGtcVY/
-         JJOQPKJwBOwWKbqcQRSLuefkK6ewPO7fLxUUc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727793641; x=1728398441;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aH6Gj5o0Dsut7SHZMO7xTQsbpbbShGmKYJpl5e/my0c=;
-        b=ZE7ltnanaM/HRmf79P4dyvmV3GYyBVPvom3vfTeC0FFbdtTdSC2Nd70KlAvmEuLmuJ
-         1D+VoDPrkS/3nJ7Ehtj5LgvuiAC5WBQBWmp6n7CX0EZUE3szY+EsGp39u9KxSPA/92FE
-         FOGoW6pRBc40gDhIKeEnEA23th5BdGiKEaJpUmp3NGTKoaQ8/LCTFI9QLzVzvcY9w4lC
-         MWhRRjePp8111+fvfTaE8c4AyG9Y5vAbNcn8ViDIIPjFB8rMRCnQjDYhkH6QzUo7ZK85
-         obmjNiYH8Q/NneRNYWsNv+Z0i2ON7sz2INRDvIGD383pJbLNKMlmjxJr2f4yrPKHzl1R
-         ZxpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8aJ44U2dvfFZUiqcHhxbzBa0y00Rvh6C+Gu9hGag0RAPHd2EWeiV6n4rUpexUrFzPCyEXzWo+uqjypXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKQWHpLexZ/wv2/cKFvdl5MKPfs879in1jvJr/5BBnX0AiGjBJ
-	BVMG1xcQVf/vhnWIOsDIeIUL1qtUdEVvtatmr1CsXa9R7FCYGFWATpLRTTPORtI=
-X-Google-Smtp-Source: AGHT+IHaEVwDtNrwo0NR3zyG0+hO0l1ljDQU1Gt3urcoO8IOOyU9n3Km7W8VE6gwm2ssz1JIotug6Q==
-X-Received: by 2002:a05:6602:148c:b0:82c:d67d:aa91 with SMTP id ca18e2360f4ac-834d83bd384mr3618639f.1.1727793641103;
-        Tue, 01 Oct 2024 07:40:41 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-834936e2c94sm280716139f.29.2024.10.01.07.40.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:40:40 -0700 (PDT)
-Message-ID: <04fac319-2cfe-46ff-b932-e3c867d1c9b2@linuxfoundation.org>
-Date: Tue, 1 Oct 2024 08:40:39 -0600
+	 In-Reply-To:Content-Type; b=ENsa9L1GfLoF7OGJ31nDQyqiPFAcmPZ7sS5JMzAM4trK7bfvlwb9M+LdWCxV8sOjN6G6BvBXgnuGjDRpTxIaf8B+Vu2cuVMRTazkVLgBV4FrrncORoN1GFA1qPcXqzMuwIOpm+ibmVK2UQ4OeHhBmpay042UNITSmh867rpLF7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BkSI2Y7h; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727793681; x=1759329681;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=q+pR5Hyk93EPohurVGBw+JRAYbGlRxHW+GhE1y5tCPk=;
+  b=BkSI2Y7hNoIuzJ0MjtB0Uwsh5I5h4Zoq+0pKAI7xamPu8MXXbSeW/qdH
+   7Qj0ksa2Id84Uhso+VorQudjoBt8FfFSF6ZLoxjd4J1D5OGzCSNqAcqF7
+   wFiq6CIoiDIj13SUS/KxnUtQgJUUN5+Tj0SQ5bDjvLO2Mf+PvOR51xufu
+   xVuZ9fgrMS0+tM3Rd/l2i/2bZAVkcJsRRZ6i3BZkZTq08p35lX0Xur3DP
+   7V+F1Jn2ev5y/WWdIHFdMb7vuq283UjxNv0kxNPyCMNAdjA+bMJ4V9Ml6
+   Nq0c+jBqTQ74NswH/st5J82/VOe/0Rme1/orNtGK1M0SeQ2VNL5CLr2WK
+   w==;
+X-CSE-ConnectionGUID: tOvlzDQSQtmVctUGqmVBqw==
+X-CSE-MsgGUID: IcDOaJRLQZq2BeiRC1Joog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="49454293"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="49454293"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:41:21 -0700
+X-CSE-ConnectionGUID: PAuirELBRY+1mEnwV+unaw==
+X-CSE-MsgGUID: uN/JxacAQv6VAWnWUl2+ug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="73655206"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 07:41:20 -0700
+Received: from [10.212.71.24] (kliang2-mobl1.ccr.corp.intel.com [10.212.71.24])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id F13CC20B8DDA;
+	Tue,  1 Oct 2024 07:41:18 -0700 (PDT)
+Message-ID: <513602fc-38fd-4764-82a4-7b91dfb37d0e@linux.intel.com>
+Date: Tue, 1 Oct 2024 10:41:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,73 +72,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: hid: add missing run-hid-tools-tests.sh
-To: luyun <luyun@kylinos.cn>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: jikos@kernel.org, shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240929085549.3528293-1-luyun@kylinos.cn>
- <mimf5cv52q747fwhafr7pv6lgxyyt3rauz373e7hoinpqycmha@2oncke2rw2sc>
- <7910784d-18c2-4e72-9dd8-6b8bd1b9dd0b@linuxfoundation.org>
- <c9763b7c-fc93-44cf-bccb-9709a542e3e6@kylinos.cn>
+Subject: Re: [PATCH 3/3] perf/x86/intel: Support auto counter reload
+To: Andi Kleen <ak@linux.intel.com>
+Cc: peterz@infradead.org, mingo@kernel.org, acme@kernel.org,
+ namhyung@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+ linux-kernel@vger.kernel.org, eranian@google.com, thomas.falcon@intel.com
+References: <20240930154122.578924-1-kan.liang@linux.intel.com>
+ <20240930154122.578924-4-kan.liang@linux.intel.com>
+ <ZvvZ78QAH254TiHe@tassilo>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <c9763b7c-fc93-44cf-bccb-9709a542e3e6@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <ZvvZ78QAH254TiHe@tassilo>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 9/30/24 20:43, luyun wrote:
+
+
+On 2024-10-01 7:16 a.m., Andi Kleen wrote:
 > 
-> 在 2024/10/1 04:57, Shuah Khan 写道:
->> On 9/30/24 02:38, Benjamin Tissoires wrote:
->>> On Sep 29 2024, Yun Lu wrote:
->>>> The HID test cases actually run tests using the run-hid-tools-tests.sh
->>>> script. However, if installed with "make install", the run-hid-tools-tests.sh
->>>> script will not be copied over, resulting in the following error message.
->>>>
->>>>    make -C tools/testing/selftests/ TARGETS=hid install \
->>>>          INSTALL_PATH=$KSFT_INSTALL_PATH
->>>>
->>>>    cd $KSFT_INSTALL_PATH
->>>>    ./run_kselftest.sh -c hid
->>>>
->>>> selftests: hid: hid-core.sh
->>>> bash: ./run-hid-tools-tests.sh: No such file or directory
->>>>
->>>> So add the run-hid-tools-tests.sh script to the TEST_FILES in the Makefile.
->>>>
->>>
->>> I assume we probably also want:
->>>
->>> Cc: stable@vger.kernel.org
->>>
->>>> Signed-off-by: Yun Lu <luyun@kylinos.cn>
->>>
->>> Not sure about the timing regarding our next PR to Linus, so in any cases:
->>>
->>> Acked-by: Benjamin Tissoires <bentiss@kernel.org>
->>
->> Thank you. This commit appears to be right one for Fixes tag?
->>
->> Is this the right commit for Fixes tag:
->>
->> Fixes: commit ffb85d5c9e80 ("selftests: hid: import hid-tools hid-core tests")
+> I hope the perf tools will support a nicer syntax, the mask is quite
+> obscure.
+
+Yes, it's a little bit hard to use, but it's workable with the current
+perf too. So I post the kernel patch separately.
+Thomas will work on improving the tool side, which will provide a new
+and more convenient option.
+
 > 
-> Yes,  the run-hid-tools-tests.sh script has been introduced since commit ffb85d5c9e80,
+> On Mon, Sep 30, 2024 at 08:41:22AM -0700, kan.liang@linux.intel.com wrote:
+>>  }
+>>  
+>> +static void intel_pmu_config_acr(int idx, u64 mask, u32 reload)
+>> +{
+>> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+>> +	int msr_b, msr_c;
+>> +
+>> +	if (!mask && cpuc->acr_cfg_b[idx] == mask)
+>> +		return;
 > 
-> but not added to TEST_FILES.
 > 
->>
->> Will apply with this tag added to linux-kselftest fixes for next rc
->> once I get conformation.
-> 
-> So should I need to send a v2 patch to add the Fixes and Cc tags?
-> 
+> if (!mask && !cpuc->acr_cfg_b[idx])
 > 
 
-No need to send v2 - I added the Fixes tag and applied to linux-kselftest fixes
-branch for next rc.
+Sure
 
-thanks,
--- Shuah
+>> +
+>> +	if (idx < INTEL_PMC_IDX_FIXED) {
+>> +		msr_b = MSR_IA32_PMC_V6_GP0_CFG_B;
+>> +		msr_c = MSR_IA32_PMC_V6_GP0_CFG_C;
+>> +	} else {
+>> +		msr_b = MSR_IA32_PMC_V6_FX0_CFG_B;
+>> +		msr_c = MSR_IA32_PMC_V6_FX0_CFG_C;
+>> +		idx -= INTEL_PMC_IDX_FIXED;
+>> +	}
+> 
+> Does this handle metrics correctly?
+> 
 
+You mean perf metric? The perf errors out if a perf metric event is
+detected.
+
+> I assume you ran the fuzzer over this.
+> 
+>> +	if (cpuc->acr_cfg_b[idx] != mask) {
+>> +		wrmsrl(msr_b + x86_pmu.addr_offset(idx, false), mask);
+>> +		cpuc->acr_cfg_b[idx] = mask;
+>> +	}
+>> +	/* Only need to update the reload value when there is a valid config value. */
+>> +	if (mask && cpuc->acr_cfg_c[idx] != reload) {
+>> +		wrmsrl(msr_c + x86_pmu.addr_offset(idx, false), reload);
+>> +		cpuc->acr_cfg_c[idx] = reload;
+> 
+> Can reload be larger than the counter width? What happens then?
+
+I will add a check in the hw_config() to make sure that the period is
+less than the counter width for the auto-reload case.
+
+> 
+>>  	return c2;
+>>  }
+>>  
+>> @@ -3948,6 +4004,78 @@ static inline bool intel_pmu_has_cap(struct perf_event *event, int idx)
+>>  	return test_bit(idx, (unsigned long *)&intel_cap->capabilities);
+>>  }
+>>  
+>> +static bool intel_pmu_is_acr_group(struct perf_event *event)
+>> +{
+>> +	if (!hybrid(event->pmu, acr_cntr_mask64))
+>> +		return false;
+> 
+> Shouldn't this error when the group leader
+> has the flag set?
+
+Only when both config2 and acr_cntr_mask64 have values, the group leader
+has the flag set by the kernel. The case cannot happen, when
+!acr_cntr_mask64, but a group leader has the flag set.
+
+> 
+>> +	/* The group leader has the ACR flag set */
+>> +	if (is_acr_event_group(event))
+>> +		return true;
+>> +
+>> +	/* The acr_mask is set */
+>> +	if (event->attr.config2)
+>> +		return true;
+> 
+>> +		 * the group. Reconfigure the dyn_mask of each X86 event
+>> +		 * every time when add a new event.
+>> +		 *
+>> +		 * Check whether the reloadable counters is enough and
+>> +		 * initialize the dyn_mask.
+>> +		 */
+>> +		if (intel_pmu_acr_check_reloadable_event(event))
+>> +			return -EINVAL;
+>> +
+>> +		/* Reconfigure the dyn_mask for each event */
+>> +		intel_pmu_set_acr_dyn_mask(leader, event_idx++, event);
+>> +		for_each_sibling_event(sibling, leader)
+>> +			intel_pmu_set_acr_dyn_mask(sibling, event_idx++, event);
+>> +		intel_pmu_set_acr_dyn_mask(event, event_idx, event);
+>> +
+> 
+> Shouldn't there be an error somewhere when a mask bit is set that
+> exceeds the group? (maybe I missed it)
+
+We have no idea how big the whole group is at that moment. We don't know
+if the current event is the last one in a group.
+Even if the mask (config2) exceeds the group, the invalid part will be
+ignored. It should be harmless.
+
+> 
+> I assume it could #GP on the MSR write, or maybe even overflow into
+> some other field.
+
+The mask (config2) set by the user cannot be directly written to the
+MSRs. They are used to find the reloadable mask and caused reload mask,
+which are from the enumeration. It guarantees that only the supported
+MSRs/counters will be accessed.
+
+The mask (config2) is also used in the intel_pmu_update_acr_mask() which
+is after the scheduler. The n - n0 guarantees that only the bits in the
+group is converted. The invalid part of the mask (config2) is ignored.
+
++		/* Convert the group index into the counter index */
++		for_each_set_bit(off, (unsigned long *)&event->attr.config2, n - n0)
++			set_bit(assign[n0 + off], (unsigned long *)&event->hw.config1);
+
+
+
+Thanks,
+Kan
 
