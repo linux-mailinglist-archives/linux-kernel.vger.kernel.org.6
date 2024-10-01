@@ -1,202 +1,162 @@
-Return-Path: <linux-kernel+bounces-345637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3324298B86F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:35:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED23A98B870
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B274C282124
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:35:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B571F225E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5AC19DFA6;
-	Tue,  1 Oct 2024 09:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7EA19DFA6;
+	Tue,  1 Oct 2024 09:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BulZI2t7"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/R5EPAh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42262B9B0;
-	Tue,  1 Oct 2024 09:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4852B9B0;
+	Tue,  1 Oct 2024 09:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727775293; cv=none; b=lBQ+BzAsJgMh9T0frFEfNcvjamIEpANUl6r94AXXwyanwIvsmrx3S9Yz+x/sA0WDrQvivJSJMBWPPs8j3pFFmUY1XCG4vvp3tsdb7w5eaOemQwVcBpvwo8JAakCGUKiRyyI96dAOTQlMi3IpQyGbkNC+WBPWRmCf9yVObc3uaJg=
+	t=1727775368; cv=none; b=q1RzGxewUckplaNEvRQ+fZHKrYA5aQLXuAERovDlK/I2qFdW3CYXrD7Bt4t3YLNMztN6/bDPov6VB2i5PzBcANyixPB+2I+iBALwoMwVzuRSR/hhMC+CdI3AgL9zf0sBE+Fqh89xXZekdHQEiBt4PYF1dJLEjpeJAUgOp74bq4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727775293; c=relaxed/simple;
-	bh=nPAhLL4dCEvf+6KLCH+xxbdHbJQ75yK2bzAeNuHjg7Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=troM/FB8Gb0VN/psMummBbZweO24ykpBoEu2B7GqDMU7KEXgd57xdpvNAGuOo5LMtF8mniVOmBgiIirJZ9AhV4MIbqIMTQ/jmfeOl82I/R3hVaC+0DNz2V71FpAJ3l7/IRHcDGA4fPtXD46Arw3AfT2Yhp736p4xF93uYunoHiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BulZI2t7; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4919YWS1016155;
-	Tue, 1 Oct 2024 04:34:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1727775272;
-	bh=FtgklXq5IUBxZsv7K/tdb7i/ncVceTgGqh8VSnQk5x4=;
-	h=From:To:CC:Subject:Date;
-	b=BulZI2t7hXg+ac0Ep74w8KV8figqkyD5VrQI2FLJKt0e5465grdBYVgRyNJdEDZFK
-	 PVJV9JeGtU2OUDza6MTGD9WyoOvKh1/G6XE2hzBJdnR/4aMwOkh6uvdVA5DCoF3OtA
-	 XhDGtWMA9DBwjBkDVgL/PQlzP77Yco1S2RYXVmqc=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4919YWoX008355
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 1 Oct 2024 04:34:32 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 1
- Oct 2024 04:34:31 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 1 Oct 2024 04:34:31 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4919YRTt000755;
-	Tue, 1 Oct 2024 04:34:28 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-j7200-evm: Add overlay for PCIE1 Endpoint Mode
-Date: Tue, 1 Oct 2024 15:04:26 +0530
-Message-ID: <20241001093426.3401765-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1727775368; c=relaxed/simple;
+	bh=SnKJ8A/vrtG422XbxnH3Br2x9iyClLI2yfFFQeZjfl8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ul68765viLxTkgZrTXhrlPgXJIX/6G2JDwEcEo/yHVvxH+L95onM8cdMjovrQMwP70OrMYQZJk+Fmguwoi4WkyQ+U7jBVZX3E13hMCSMuAffYkycRVVirAzRoxaPpucSpNqVdCQH+HfXaNhsm0e24hfsS81JcscS3kWRqwWSeCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/R5EPAh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF36C4CECD;
+	Tue,  1 Oct 2024 09:36:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727775367;
+	bh=SnKJ8A/vrtG422XbxnH3Br2x9iyClLI2yfFFQeZjfl8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i/R5EPAhJcjj2cZOIWH43NQD5aI2gXW6tizlcVgj5V0WN7WsF5uWVw67N1AEr38kI
+	 06ILmgQsTs9pxOjLFicPxumon3RenwQWmhQD8mz55RtKhHEB9a7IM9+ioTLKqO6xy8
+	 wO0SralHcePj95Z1+hYICj4MIVeDmpXxJblwufSOATXYGqqxz26uSSv8qFKjeL/NFj
+	 W8ZNp85zP+3faF1u9+CV9jTPaN/a5g+XuNNvgpJOC1hrTs9jSYe6xKMAQv35FP2Tc0
+	 fZkGpS9oic4Wm58vK0dJlHfjOYu8Cws09tvgTiYmPqMoTRoT9umw2jtioHlN344GQi
+	 vWXlS9UbH8MuA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5399041167cso3440224e87.0;
+        Tue, 01 Oct 2024 02:36:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGCUWaTimU/GZZ62zkVZRnovxOCShdq1b0+DL1YzKCNQAHh4Vvnuf7BdS32Oz/yozvmkd86y+qsjLqfBh2xUdQ0n5c@vger.kernel.org, AJvYcCUOpQb3pFbR26i56d9m59Ns1QsxV/J8H+xBcliQfFRVVZreeA2aXKHHkdjVSH90fGgX3UpzSfNCbk7KcJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3nn7lS+3T0MnuWkXOyMOfoxzNH33zlW2Teojzo0iQum3cjkfe
+	3NP5QbUaCWgGLbF8b8//lSKts2w6xX7K5zu9D64iKOU04hmkiX/ne84LRtjYNhSKDSfmPx8K7CH
+	UVBgF1NGX/LK2A8cudHkKk8xs1p8=
+X-Google-Smtp-Source: AGHT+IGqOr0HnptSMm3/I2Aa0tANJfQTfWfI/KDOrnqNJZ02shy9R8xgW+fAnrU9ARH1qSSQA004DXP0THV22Zx0m64=
+X-Received: by 2002:a05:6512:6618:b0:539:89a8:600f with SMTP id
+ 2adb3069b0e04-53989a86942mr8741150e87.23.1727775365090; Tue, 01 Oct 2024
+ 02:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20240926130159.19e6d0e2@rorschach.local.home> <CAMj1kXF1=2wLgM8HP6BvUxdZLK4EdnaORLUTjoDJSZP-hhDJwA@mail.gmail.com>
+ <80930b34-3b31-46d7-8172-6c0cd2ee497f@redhat.com>
+In-Reply-To: <80930b34-3b31-46d7-8172-6c0cd2ee497f@redhat.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 1 Oct 2024 11:35:53 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGz2isSBBkm1R7DiinNt5nxELRTvrD4XXN9v_TRQrNr-A@mail.gmail.com>
+Message-ID: <CAMj1kXGz2isSBBkm1R7DiinNt5nxELRTvrD4XXN9v_TRQrNr-A@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/tracing: Mention that RESET_ATTACK_MITIGATION
+ can clear memory
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mike Rapoport <mike.rapoport@gmail.com>, 
+	Kees Cook <keescook@chromium.org>, Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 
-Add overlay to enable the PCIE1 instance of PCIe on J7200-EVM in
-Endpoint mode of operation.
+Hi Hans,
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+On Tue, 1 Oct 2024 at 10:57, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 1-Oct-24 8:17 AM, Ard Biesheuvel wrote:
+> > On Thu, 26 Sept 2024 at 19:02, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >>
+> >> From: Steven Rostedt <rostedt@goodmis.org>
+> >>
+> >> At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
+> >> about the persistent buffer to display traces from previous boots. He
+> >> mentioned that UEFI can clear memory. In my own tests I have not seen
+> >> this. He later informed me that it requires the config option:
+> >>
+> >>  CONFIG_RESET_ATTACK_MITIGATION
+> >>
+> >> It appears that setting this will allow the memory to be cleared on boot
+> >> up, which will definitely clear out the trace of the previous boot.
+> >>
+> >> Add this information under the trace_instance in kernel-parameters.txt
+> >> to let people know that this can cause issues.
+> >>
+> >> Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
+> >>
+> >> Reported-by: Hans de Goede <hdegoede@redhat.com>
+> >> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> >> ---
+> >>  Documentation/admin-guide/kernel-parameters.txt | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> >> index bb48ae24ae69..f9b79294f84a 100644
+> >> --- a/Documentation/admin-guide/kernel-parameters.txt
+> >> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> >> @@ -6850,6 +6850,9 @@
+> >>
+> >>                                 reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
+> >>
+> >> +                       Note, CONFIG_RESET_ATTACK_MITIGATION can force a memory reset on boot which
+> >> +                       will clear any trace that was stored.
+> >> +
+> >
+> > CONFIG_RESET_ATTACK_MITIGATION can force a wipe of system RAM at warm
+> > reboot on systems that have a TPM enabled, but disabling it does not
+> > prevent it. Also, there are many other reasons why the trace buffer
+> > region may be wiped and/or reused for other purposes, so singling out
+> > CONFIG_RESET_ATTACK_MITIGATION like this is not that useful imo.
+>
+> Since the userspace parts to clear the CONFIG_RESET_ATTACK_MITIGATION
+> related EFI variable after cleaning cryptographic keys from RAM has
+> never materialized CONFIG_RESET_ATTACK_MITIGATION is pretty much
+> guaranteed to clear any traces on any modern machine (and at least
+> in Fedora's kernel config it is disabled because of this).
+>
 
-Hello,
+Any modern x86 PC, sure.
 
-This patch is based on linux-next tagged next-20241001.
-v1:
-https://lore.kernel.org/r/20240304094559.76406-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased patch on next-20241001.
+> I agree that there are more ways the RAM might get cleared, but
+> since this will clear the RAM almost 100% of the time it is worth
+> documenting this IMHO.
+>
 
-Logs validating overlay with J784S4-EVM as Root-Complex and J7200-EVM as
-Endpoint:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/38364f5fc47b670fff4ef65dcf60b9fc
+Fair enough.
 
-Regards,
-Siddharth.
+> I get the feeling you (Ard) see documenting this as some sorta bug
+> report against CONFIG_RESET_ATTACK_MITIGATION, that is not the intention.
+> Quite the opposite the documentation is there to let the user know
+> that CONFIG_RESET_ATTACK_MITIGATION works as advertised and that it
+> will (almost) always clear the RAM on reboot and thus conflicts with
+> keeping traces over reboot.
+>
 
- arch/arm64/boot/dts/ti/Makefile               |  5 ++
- .../boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso    | 53 +++++++++++++++++++
- 2 files changed, 58 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso
+I am not against documenting this. CONFIG_RESET_ATTACK_MITIGATION is
+simply incompatible with this feature so it makes sense calling that
+out.
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index bcd392c3206e..3ced231d273e 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -96,6 +96,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am654-pcie-usb3.dtbo
- # Boards with J7200 SoC
- k3-j7200-evm-dtbs := k3-j7200-common-proc-board.dtb k3-j7200-evm-quad-port-eth-exp.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j7200-evm.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-j7200-evm-pcie1-ep.dtbo
- 
- # Boards with J721e SoC
- k3-j721e-evm-dtbs := k3-j721e-common-proc-board.dtb k3-j721e-evm-quad-port-eth-exp.dtbo
-@@ -188,6 +189,8 @@ k3-am68-sk-base-board-csi2-dual-imx219-dtbs := k3-am68-sk-base-board.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtbo
- k3-am69-sk-csi2-dual-imx219-dtbs := k3-am69-sk.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtbo
-+k3-j7200-evm-pcie1-ep-dtbs := k3-j7200-common-proc-board.dtb \
-+	k3-j7200-evm-pcie1-ep.dtbo
- k3-j721e-common-proc-board-infotainment-dtbs := k3-j721e-common-proc-board.dtb \
- 	k3-j721e-common-proc-board-infotainment.dtbo
- k3-j721e-evm-pcie0-ep-dtbs := k3-j721e-common-proc-board.dtb \
-@@ -221,6 +224,7 @@ dtb- += k3-am625-beagleplay-csi2-ov5640.dtb \
- 	k3-am642-tqma64xxl-mbax4xxl-wlan.dtb \
- 	k3-am68-sk-base-board-csi2-dual-imx219.dtb \
- 	k3-am69-sk-csi2-dual-imx219.dtb \
-+	k3-j7200-evm-pcie1-ep.dtbo \
- 	k3-j721e-common-proc-board-infotainment.dtb \
- 	k3-j721e-evm-pcie0-ep.dtb \
- 	k3-j721e-sk-csi2-dual-imx219.dtb \
-@@ -243,6 +247,7 @@ DTC_FLAGS_k3-am642-tqma64xxl-mbax4xxl += -@
- DTC_FLAGS_k3-am6548-iot2050-advanced-m2 += -@
- DTC_FLAGS_k3-am68-sk-base-board += -@
- DTC_FLAGS_k3-am69-sk += -@
-+DTC_FLAGS_k3-j7200-common-proc-board += -@
- DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso b/arch/arm64/boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso
-new file mode 100644
-index 000000000000..3cc315a0e084
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-evm-pcie1-ep.dtso
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/**
-+ * DT Overlay for enabling PCIE1 instance in Endpoint Configuration with the
-+ * J7 common processor board.
-+ *
-+ * J7 Common Processor Board Product Link: https://www.ti.com/tool/J721EXCPXEVM
-+ *
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/soc/ti,sci_pm_domain.h>
-+
-+#include "k3-pinctrl.h"
-+
-+/*
-+ * Since Root Complex and Endpoint modes are mutually exclusive
-+ * disable Root Complex mode.
-+ */
-+&pcie1_rc {
-+	status = "disabled";
-+};
-+
-+&cbass_main {
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	interrupt-parent = <&gic500>;
-+
-+	pcie1_ep: pcie-ep@2910000 {
-+		compatible = "ti,j7200-pcie-ep", "ti,j721e-pcie-ep";
-+		reg = <0x00 0x02910000 0x00 0x1000>,
-+		      <0x00 0x02917000 0x00 0x400>,
-+		      <0x00 0x0d800000 0x00 0x00800000>,
-+		      <0x00 0x18000000 0x00 0x08000000>;
-+		reg-names = "intd_cfg", "user_cfg", "reg", "mem";
-+		interrupt-names = "link_state";
-+		interrupts = <GIC_SPI 330 IRQ_TYPE_EDGE_RISING>;
-+		max-link-speed = <3>;
-+		num-lanes = <2>;
-+		power-domains = <&k3_pds 240 TI_SCI_PD_EXCLUSIVE>;
-+		clocks = <&k3_clks 240 6>;
-+		clock-names = "fck";
-+		max-functions = /bits/ 8 <6>;
-+		max-virtual-functions = /bits/ 8 <4 4 4 4 0 0>;
-+		dma-coherent;
-+		phys = <&serdes0_pcie_link>;
-+		phy-names = "pcie-phy";
-+		ti,syscon-pcie-ctrl = <&scm_conf 0x4074>;
-+	};
-+};
--- 
-2.40.1
+But there are so many other ways in which the trace buffer might get
+clobbered, and mentioning CONFIG_RESET_ATTACK_MITIGATION in particular
+might suggest to some that those other causes are due to kernel bugs.
 
+All I am asking for is a line in the documentation that says that
+clobbered trace buffers could occur at any time, regardless of whether
+CONFIG_RESET_ATTACK_MITIGATION is enabled or not. That way, we have
+something to refer to when people start filing bugs against the EFI
+component when this breaks.
 
