@@ -1,135 +1,292 @@
-Return-Path: <linux-kernel+bounces-345620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D376E98B83B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:21:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A3798B847
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ED7A1C22DA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:21:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A174B2343F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD60119DFA6;
-	Tue,  1 Oct 2024 09:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0087819E96D;
+	Tue,  1 Oct 2024 09:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AUFEUynd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uc3r7U4k"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF04519CCFC
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C9E19E7F5
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727774457; cv=none; b=agO/NHQsdNU2/9GUxJXwEN452AsAxg9fLv17pZvNMEHoVokBY3T4NR9zNY5EeB2DEI2xngiAzoNJiws/6dTvJqDFOul6aExozMGXR8gQZQa3Hj6ITJRb8SFGt32k/kqNPSvuik1UpoTOemU7IRIRFB1+qq1DpbaJVTUj29l73vs=
+	t=1727774787; cv=none; b=iZPgO6iNW3IokwmL1b66BvBVLP7LOCZVxmIzR+vGdVLW0i8P0/+5kCd8jrPyr6k6YJSXRiqJxavQDM3ph0/H6BQkOhD2tbhh/y32vwXFGQOHfLaUwKyc4kaIiqL5OD4ZiBfCzjIs8RVvLs4k99fK3B6NDaKFFQseJwKyhr69bV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727774457; c=relaxed/simple;
-	bh=52IMNoGjtf99CyRrdB3LZ+pHd2q6WDHjEC/EO7H4MgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KXyG/qCzE+iSaIgN+TkZOIglkQdMDX+td0V9c/CbMHOeviFLF/j4GujMDPJYSHDU3rWgIymMPEThDoPV3Tp1cwZqcEqUXlCNxMrVZT9E1HJqjcYQBw8AZDPp918253RbdVEoY/uNv69o0f2dcy9C6yNjDwnUihGPmIrgUS+WrV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AUFEUynd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727774454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2Z6bQqCmFRAYWIokTtq6KZjfUYmd4+jPRAYrukjBoAQ=;
-	b=AUFEUyndFj+em2B0D79/kDVsM+FOYi1DUwJSJF7udOD5/lF8JCvQfIbLV6FYxrNbLAlaz7
-	TlGK6vcCxKnv01KnsL/JBAap4oe2G6CHaMif/LaItSuTqkyHaoGXEN33Y45rnJ6wdn+egd
-	AOIVq8EWUAEh3gCh0AsLWT4lSTCjte0=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-Y3HB8KGhMoWz6X0S7ULQaQ-1; Tue, 01 Oct 2024 05:20:53 -0400
-X-MC-Unique: Y3HB8KGhMoWz6X0S7ULQaQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42cb374f0cdso28662195e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 02:20:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727774452; x=1728379252;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Z6bQqCmFRAYWIokTtq6KZjfUYmd4+jPRAYrukjBoAQ=;
-        b=Q6gZsN/zARxSYu5BW/G1GoHja3d5W6+oC3oNYY5iOEopbPfswOzYCGZ4I4DptAf4K/
-         13D2kacLHh2onMAI1GPkKjR1eBd8+3blL/FwnlW34PZFLgGyCel2aDZXMQrLOUCFJNgT
-         2R6Tnz1Iis2KzoE+oWpxguOxRi2YxVvZ6mvGGEbrfftnl832o8PKMpP2wE8mpCVxoncc
-         5O2Mobk78SEqHq4v2SrVNgC7A4+5kJvTUSx4SAAdMcQRM41gE0bphrp4QS6SwMQrgvIt
-         v9diV8EE/zJc8BPpWh9FwDivaxJqX+5EU6tLusP6c3M8OWQUfvI+yirF32ATLadcLv8T
-         mCTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLcrMPYe6huVeoEqO5XbiQ3bsvvEcKReDLIzTnwz77gsPR0lKfYO4pIf9K9WiPQPMawiPyxttMIRD5yw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ4CJdy8I1XmEkJ3/GnBntx27sCjhpQuQgYORAbhrQVlwN5DnW
-	kIJScT743xQvCgJehDG9eB2erOB9NiyqBMhGdRXP3cvNWwVvK9W9Vx7aAHslD9yRxy8Shb4DYHP
-	5T81L+JN0LatiXqn2zHIiMrq/7VGmC/qpdcDc22ii1HXBuwXMcjmj5UGK0TC4QA==
-X-Received: by 2002:a05:600c:4754:b0:424:a7f1:ba2 with SMTP id 5b1f17b1804b1-42f71385a8dmr13033925e9.17.1727774452491;
-        Tue, 01 Oct 2024 02:20:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOJV5mOCGH2U7gQYy/ih7+a9WULHZSwtnUxNtta7gzvyhknzvDfxI3Q/tjNxWfZohulqwtaw==
-X-Received: by 2002:a05:600c:4754:b0:424:a7f1:ba2 with SMTP id 5b1f17b1804b1-42f71385a8dmr13033765e9.17.1727774452086;
-        Tue, 01 Oct 2024 02:20:52 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c? ([2a0d:3341:b088:b810:c085:e1b4:9ce7:bb1c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57d31283sm128091585e9.0.2024.10.01.02.20.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 02:20:51 -0700 (PDT)
-Message-ID: <998a4b7e-8d29-4702-87fb-726117369240@redhat.com>
-Date: Tue, 1 Oct 2024 11:20:49 +0200
+	s=arc-20240116; t=1727774787; c=relaxed/simple;
+	bh=8KIr8c0ryeTX0ItSMQoDRRqktHwk49XiMkLG1N1m/v8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=M/11oo6kwjeCIOQ3gW/WHz4COzMsKH6/MZkBei9eniQvem8YhNlrngMzQwAOQRYhQ4leMWanFhzNjEoaGDrKD/SehQjGFvrMQmi7ORNFAJ0erj8zj/+tG/5JdXYPk1qL6DdJVL9QXnAeot40oPKzpvKs1wkUDi4tgR3m3GVR6Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uc3r7U4k; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241001092616epoutp03d81d9a182c2332fa9aa9b4472f338945~6SgFp5fQ_0719707197epoutp032
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:26:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241001092616epoutp03d81d9a182c2332fa9aa9b4472f338945~6SgFp5fQ_0719707197epoutp032
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1727774777;
+	bh=uEV7AKekCPqeEJnBRs0q31kqOMH6sTgLv47MuznncBY=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=uc3r7U4ka/FpByJHvbucEip1sX3VwM7UKkENQ0zI/+1pe9vWnfjz2FRvUBEBAheeL
+	 e2AzKQTx3axK2JeQ9x31PKpMH8b8kJ68rj+qqnNvJCbo22Xb36IAfWELTsWGZWJksl
+	 c5PrFTmtU4vQhZrsBVE1P+TAY3u6ognYksUDuZAo=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20241001092616epcas5p1f746a3355f44e3ac588bb08ac96fb6da~6SgFIAaPP2097520975epcas5p1W;
+	Tue,  1 Oct 2024 09:26:16 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XHsxy1rTGz4x9Pw; Tue,  1 Oct
+	2024 09:26:14 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9D.08.09800.630CBF66; Tue,  1 Oct 2024 18:26:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241001092437epcas5p220d68d2b7aeeda4f766e4c83c7c9e79a~6SepGB6Ha0604706047epcas5p27;
+	Tue,  1 Oct 2024 09:24:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241001092437epsmtrp144171194025493dde8b4dd0f78c40c98~6SepFV66K2044120441epsmtrp1K;
+	Tue,  1 Oct 2024 09:24:37 +0000 (GMT)
+X-AuditID: b6c32a4b-23fff70000002648-36-66fbc036f9b0
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2D.B2.08229.5DFBBF66; Tue,  1 Oct 2024 18:24:37 +0900 (KST)
+Received: from FDSFTE196 (unknown [107.116.189.214]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241001092435epsmtip2a711f1c09bcaa3ec1ef771a9d53a1818~6SenhES3P1396013960epsmtip2_;
+	Tue,  1 Oct 2024 09:24:35 +0000 (GMT)
+From: "Inbaraj E" <inbaraj.e@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Stephen Boyd'"
+	<sboyd@kernel.org>, <alim.akhtar@samsung.com>, <cw00.choi@samsung.com>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <mturquette@baylibre.com>,
+	<s.nawrocki@samsung.com>
+Cc: <pankaj.dubey@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
+Subject: RE: [PATCH] clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+Date: Tue, 1 Oct 2024 14:54:34 +0530
+Message-ID: <03ca01db13e3$bc12e360$3438aa20$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 1/2] net: fec: Restart PPS after link state change
-To: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>,
- Wei Fang <wei.fang@nxp.com>, Frank Li <frank.li@nxp.com>
-Cc: Shenwei Wang <shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Richard Cochran <richardcochran@gmail.com>,
- "David S. Miller" <davem@davemloft.net>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240924093705.2897329-1-csokas.bence@prolan.hu>
- <PAXPR04MB8510B574A53DAD7E1256A9E688692@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <6be53466-fd53-44e9-b83a-b714737865dc@prolan.hu>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <6be53466-fd53-44e9-b83a-b714737865dc@prolan.hu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMYu0UT7KgXFJ9p8WqzYl/+4ytJPAKVNCMjAc9ECZkCVSVjTgGurbUsAUVIpqkCfYGRoa+U+ARQ
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmlq7Zgd9pBpO6uC0ezNvGZnH9y3NW
+	i5sHdjJZnD+/gd3iY889VovLu+awWcw4v4/J4uIpV4tFW7+wWxx+085q8e/aRhYHbo/3N1rZ
+	PTat6mTz6NuyitHj8ya5AJaobJuM1MSU1CKF1Lzk/JTMvHRbJe/geOd4UzMDQ11DSwtzJYW8
+	xNxUWyUXnwBdt8wcoKOUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnF
+	pXnpenmpJVaGBgZGpkCFCdkZl99NZS/YaVCx9e9p5gbGXo0uRk4OCQETibVbjjN3MXJxCAns
+	ZpR4u/AHE4TziVHi25vfjBDON0aJyc96GGFaHk+dzg5iCwnsZZRo+yMIUfQSqP1ECxNIgk1A
+	U+Lm0X9g3SICS5kkOu/9AOtgFjCT2HL3PmsXIwcHp4CdxOFNgiBhYQEXiRn/LjGD2CwCKhLX
+	f0Es4BWwlHjzcD0LhC0ocXLmExaIMdoSyxa+ZoY4SEHi59NlrCC2iECUxILTG9kgasQljv7s
+	AftNQmAth8SEzc/YQPZKAC3r2KYC0Sss8er4FnYIW0riZX8blO0jsX/OL6iHMySObV/OCmHb
+	Sxy4MocFZAwz0I/rd+lDhGUlpp5axwSxlk+i9/cTJog4r8SOeTC2ssTMI/fZIGxJiZ2Xd7JM
+	YFSaheSzWUg+m4Xkg1kI2xYwsqxilEwtKM5NTy02LTDOSy2Hx3dyfu4mRnCS1fLewfjowQe9
+	Q4xMHIyHGCU4mJVEeO8d+pkmxJuSWFmVWpQfX1Sak1p8iNEUGNwTmaVEk/OBaT6vJN7QxNLA
+	xMzMzMTS2MxQSZz3devcFCGB9MSS1OzU1ILUIpg+Jg5OqQYmWdn37o0uMv6sTN/4g33O9T5g
+	uzVvr9KvX/KP1sRWNyqk6lTZHXlp5bbdr8xpW5GBSdP73XvWy2jbTzBpldDi2+dx73Y8d7Hk
+	dLYMUz+z1Isp+3MvtjdsLrm5ybYjeNuWkuLFZ7+XaKuvVFj0i5er4NOvDaWBKnzMSlu2dy+9
+	yspqd1zxzu5VNSEyRzdm/DKYetJ16cLUPp6DvEYHLwdtUX7duuJS+bv1SROsJ3oqdTotKdAV
+	3Z8Sop6dlqgksvhZhk8X/4RFz/4dXtnvPM3z3YkrelF3w/3KVnetmrx2QeKc/hg7cfnbhc1X
+	zBQDl8fJTopXPjktbqqI2RKeEw4Gt47PCmr/zHHizqn2k7xKLMUZiYZazEXFiQDJzxhGOwQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvO7V/b/TDF5fl7d4MG8bm8X1L89Z
+	LW4e2Mlkcf78BnaLjz33WC0u75rDZjHj/D4mi4unXC0Wbf3CbnH4TTurxb9rG1kcuD3e32hl
+	99i0qpPNo2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDJm31vFWHBAv6J/8gnmBsY29S5GTg4J
+	AROJx1Ons3cxcnEICexmlFi5/jYrREJSYvZvkASILSyx8t9zMFtI4DmjxIuVVSA2m4CmxM2j
+	/xhBmkUE1jJJdGxfyQiSYBawkFj+5zobREMDs8SNZ+VdjBwcnAJ2Eoc3CYKEhQVcJGb8u8QM
+	YrMIqEhc/wWxi1fAUuLNw/UsELagxMmZT1ggRmpL9D5sZYSxly18zQxxm4LEz6fLwG4WEYiS
+	WHB6IxtEjbjE0Z89zBMYhWchGTULyahZSEbNQtKygJFlFaNkakFxbnpusWGBYV5quV5xYm5x
+	aV66XnJ+7iZGcKRpae5g3L7qg94hRiYOxkOMEhzMSiK89w79TBPiTUmsrEotyo8vKs1JLT7E
+	KM3BoiTOK/6iN0VIID2xJDU7NbUgtQgmy8TBKdXAdPBG743lvjt0/n5z+sptWfPvNut5luhb
+	vQFRfge3KN96/O5+hq5E2IPDZ8r0rmfO0jvOEiPEuEf01SblOcpuu3eG7LX+bHf7UywP//2p
+	/nnzTu0Ovjzt35rJfLdmpDNfsL+95e77uTJZM3wWGS++tWH7+dSvoevOsTKKTdnK+9jyjPMu
+	oY9irgEX50gEXua+3b1JNeRWZdGzQ27Ps8tMy5uP7WNXz58/TbfsJ8/RuAdbBasc718Qed5g
+	e3y5iKlbvP5UDeM+hrdBElxXimJOl7UGSy/qqdec/YB7+/6aNWc+3JrZoidc+0bp2YzWlp7N
+	iUKRqx2fLN/Z4XnYp+fgDM4XjFf/9FzN5/DKtt++YYISS3FGoqEWc1FxIgAYZuEZIwMAAA==
+X-CMS-MailID: 20241001092437epcas5p220d68d2b7aeeda4f766e4c83c7c9e79a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300
+References: <CGME20240917101102epcas5p3b17d2774cb74fd4cf61ea52fde85c300@epcas5p3.samsung.com>
+	<20240917101016.23238-1-inbaraj.e@samsung.com>
+	<0d43a00985a815c1869ebc6c441a2aed.sboyd@kernel.org>
+	<00f001db0a87$cd9ddfa0$68d99ee0$@samsung.com>
+	<633ff284-101d-4651-833e-a6b01626c9a1@kernel.org>
+	<011401db0b13$cbd045f0$6370d1d0$@samsung.com>
+	<1c6c56f7-bdda-4e14-9910-80e0cda0d631@kernel.org>
 
-On 9/30/24 10:20, Csókás Bence wrote:
-> On 2024. 09. 25. 6:37, Wei Fang wrote:
->>> +/* Restore PTP functionality after a reset */ void
->>> +fec_ptp_restore_state(struct fec_enet_private *fep) {
->>> +	unsigned long flags;
->>> +
->>> +	spin_lock_irqsave(&fep->tmreg_lock, flags);
->>> +
->>> +	/* Reset turned it off, so adjust our status flag */
->>> +	fep->pps_enable = 0;
->>> +
->>> +	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
->>> +
->>> +	/* Restart PPS if needed */
->>> +	if (fep->ptp_saved_state.pps_enable) {
->>
->> It's better to put " fep->pps_enable = 0" here so that it does
->> not need to be set when PPS is disabled.
-> 
-> It doesn't hurt to set it to 0 when it's already 0, and it saves us
-> having to unlock separately in the if {} and else blocks. Plus, after
-> reset, PPS will be turned off unconditionally, since the actual HW gets
-> reset.
 
-I agree with Csókás, the proposed code looks simpler and more readable.
 
-I'm applying this.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 20 September 2024 18:07
+> To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
+> <sboyd=40kernel.org>; alim.akhtar=40samsung.com; cw00.choi=40samsung.com;
+> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org; linux-samsun=
+g-
+> soc=40vger.kernel.org; mturquette=40baylibre.com; s.nawrocki=40samsung.co=
+m
+> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
+> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critical
+>=20
+> On 20/09/2024 06:15, Inbaraj E wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Inbaraj E <inbaraj.e=40samsung.com>
+> >> Sent: 20 September 2024 09:35
+> >> To: 'Krzysztof Kozlowski' <krzk=40kernel.org>; 'Stephen Boyd'
+> >> <sboyd=40kernel.org>; 'alim.akhtar=40samsung.com'
+> >> <alim.akhtar=40samsung.com>; 'cw00.choi=40samsung.com'
+> >> <cw00.choi=40samsung.com>; 'linux-clk=40vger.kernel.org' <linux-
+> >> clk=40vger.kernel.org>; 'linux-kernel=40vger.kernel.org' <linux-
+> >> kernel=40vger.kernel.org>; 'linux-samsung-soc=40vger.kernel.org' <linu=
+x-
+> >> samsung-soc=40vger.kernel.org>; 'mturquette=40baylibre.com'
+> >> <mturquette=40baylibre.com>; 's.nawrocki=40samsung.com'
+> >> <s.nawrocki=40samsung.com>
+> >> Cc: 'pankaj.dubey=40samsung.com' <pankaj.dubey=40samsung.com>;
+> >> 'gost.dev=40samsung.com' <gost.dev=40samsung.com>
+> >> Subject: RE: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as critic=
+al
+> >>
+> >>
+> >>
+> >>> -----Original Message-----
+> >>> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> >>> Sent: 19 September 2024 17:33
+> >>> To: Inbaraj E <inbaraj.e=40samsung.com>; 'Stephen Boyd'
+> >>> <sboyd=40kernel.org>; alim.akhtar=40samsung.com;
+> >> cw00.choi=40samsung.com;
+> >>> linux-clk=40vger.kernel.org; linux-kernel=40vger.kernel.org;
+> >>> linux-samsung- soc=40vger.kernel.org; mturquette=40baylibre.com;
+> >>> s.nawrocki=40samsung.com
+> >>> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com
+> >>> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as criti=
+cal
+> >>>
+> >>> On 19/09/2024 13:33, Inbaraj E wrote:
+> >>>>
+> >>>>
+> >>>>> -----Original Message-----
+> >>>>> From: Stephen Boyd <sboyd=40kernel.org>
+> >>>>> Sent: 19 September 2024 15:51
+> >>>>> To: Inbaraj E <inbaraj.e=40samsung.com>; alim.akhtar=40samsung.com;
+> >>>>> cw00.choi=40samsung.com; krzk=40kernel.org; linux-
+> clk=40vger.kernel.org;
+> >>>>> linux- kernel=40vger.kernel.org; linux-samsung-soc=40vger.kernel.or=
+g;
+> >>>>> mturquette=40baylibre.com; s.nawrocki=40samsung.com
+> >>>>> Cc: pankaj.dubey=40samsung.com; gost.dev=40samsung.com; Inbaraj E
+> >>>>> <inbaraj.e=40samsung.com>
+> >>>>> Subject: Re: =5BPATCH=5D clk: samsung: fsd: Mark PLL_CAM_CSI as
+> >>>>> critical
+> >>>>>
+> >>>>> Quoting Inbaraj E (2024-09-17 03:10:16)
+> >>>>>> PLL_CAM_CSI is the parent clock for the ACLK and PCLK in the
+> >>>>>> CMU_CAM_CSI block. When we gate ACLK or PCLK, the clock
+> >> framework
+> >>>>> will
+> >>>>>> subsequently disables the parent clocks(PLL_CAM_CSI). Disabling
+> >>>>>> PLL_CAM_CSI is causing sytem level halt.
+> >>>>>>
+> >>>>>> It was observed on FSD SoC, when we gate the ACLK and PCLK
+> during
+> >>>>>> CSI stop streaming through pm_runtime_put system is getting
+> halted.
+> >>>>>> So marking PLL_CAM_CSI as critical to prevent disabling.
+> >>>>>>
+> >>>>>> Signed-off-by: Inbaraj E <inbaraj.e=40samsung.com>
+> >>>>>> ---
+> >>>>>
+> >>>>> Please add a fixes tag. Although this is likely a band-aid fix
+> >>>>> because marking something critical leaves it enabled forever.
+> >>>>
+> >>>> Sure, will add fixes tag. As per HW manual, this PLL_CAM_CSI is
+> >>>> supplying clock even for CMU SFR access of CSI block, so we can't
+> >>>> gate this.
+> >>>
+> >>> Hm, I am not so sure. The CMU driver should just take appropriate clo=
+ck.
+> >>> Sprinkling CLK_CRITICAL looks as substitute of missing clock
+> >>> handling/
+> >>
+> >> As per HW design, PLL_CAM_CSI is responsible for suppling clock to
+> >> CSI SFR, CMU SFR and some internal block of CAM_CSI. In this some of
+> >> the clock is not handled by any driver but it is required for CSI to
+> >> work properly. For example CSI NOC clock. So this is the reason we are
+> marking PLL_CAM_CSI as critical.
+> >>
+> >
+> > This is clock hierarchy for CMU_CAM_CSI block.
+> >
+> > PLL_CAM_CSI -----> DIVIDER --------> CSI_SFR clock
+> > 			=7C
+> > 			=7C----> DIVIDER --------> CMU_SFR clock
+> > 			=7C
+> > 			=7C----> DIVIDER --------> CSI NOC clock.
+> >
+>=20
+> And what is the problem in adding proper handling in the driver? You just
+> described case valid for 99% of SoC components.
 
-Thanks!
+Hi Kryzstof,
 
-Paolo
+Sorry, but it seems I was not able to explain the issue. Let me add more
+details:
+So for CSI IP we have two clocks as ACLK and PCLK which needs to be
+handled by the driver during start and stop streaming.=20
+
+In BLK_CSI we have CSI IP along with other bunch supporting modules such
+as CMU_CSI, NOC_CSI, CSI_SFR. For all these components of BLK_CSI we have
+a single top level parent PLL clock as PLL_CAM_CSI.=20
+
+Now if we look into CSI driver perspective it needs only ACLK and PCLK
+clocks for it's operations. But to access CMU SFRs (including ACLK/PCLK
+or any other CMU SFR of BLK_CSI) we need parent clock keep supplying=20
+clocks. While we try to gate ACLK clock, due to propagation logic of clock
+gating the CCF scans all the clocks from leaf level to the parent clock
+and tries to gate clocks if enable/disable ops is valid for any such
+clock.=20
+
+Issue here is that we are trying to gate PLL_CAM_CSI which itself is
+accessible only when this clock is enabled. In fact none of CMU_SFR will
+be accessible as soon as PLL_CAM_CSI is gated. CSI driver is not intended
+to gate this PLL clock but only the leaf level clock which is supplying to
+CSI IP. So in absence of any alternate source of clock hierarchy which
+can supply clock for CMU_CSI we can't gate PLL_CAM_CSI.=20
+
+Please let us know if you have any other queries why we are insisting on
+marking PLL_CAM_CSI as CRITICAL clock.
+
+Regards,
+Inbaraj E
+
+>=20
+> Best regards,
+> Krzysztof
+
 
 
