@@ -1,136 +1,169 @@
-Return-Path: <linux-kernel+bounces-346220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121B898C14E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 794BC98C155
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:15:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4406C1C23E36
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:13:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0528F1F22C63
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA4A1C9DF0;
-	Tue,  1 Oct 2024 15:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41491C9EB7;
+	Tue,  1 Oct 2024 15:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="lqxU2aYj"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S1OfRk18"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EADA1C5782
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27E31C9EA8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727795629; cv=none; b=pmHgoYHtZ95nCxvS6dKrtZ3+GxpmNA8JRimbN2K00IcUnSvsNOibpf1bAxsLnXOrIKJmVYz+fpTHm1DZK1b56K/zs2DajS9y4QHldlZ2A8Uh92pfVtykyrpFGg6iD7UAVN8dn3qn9WN8J6eCSQmRa2914sv4vEdOatQuLvEENQE=
+	t=1727795694; cv=none; b=uLtGgGZ1yBGSr3/S30i2BsemmjIeTWGe2sXDwh/UqjNT7lF95wBgPrBdBXZ4/clZASM+qkMlvqsyxI2SNivvZd6PHP/3J+LA5fqpim8BrQcY0w3q3rGwCEKk4YvPgM5YxlDpOWxE5Uzqd2JUnx1fX8ZEDbehERPB5sGI2PcXIw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727795629; c=relaxed/simple;
-	bh=klvPYQvceMS7e+u435x6bBIuMEfX1hIM61WYALoMLVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P3Iw5k6ZX77suvn2ziSSLp/6A/CijEhR1MxQC3+6U5iW6uQ2w6r4IvaCr3HKJ+Vulk7ryXNoClhsLUYHBuw9Ua86eqI33HFoPcx8a1fFVF+LFOdhsIRvzKKKgLybJniVIJ3hjvZes+0njkyk9M5jPZE65fDcz/3huQufX6rXgRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=lqxU2aYj; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4583068795eso49857851cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:13:47 -0700 (PDT)
+	s=arc-20240116; t=1727795694; c=relaxed/simple;
+	bh=K7etQLbsdRPA9ww2bgOCB4P1qo2jzjsVUWz7e6BZbX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mBWBPQttLKxfa7vd/6/ofA7uViqK54BW+Mk8cAPDr0viBrxWVDqc5NJwYlARRztx8gTU+F6bkDX5hD48paBqhB/DR8pZbZAmxO+jWyt2zG1Q/5y5EoFYcedzZaZy15A2h/sTg3rbl10vtHf+ueFjbcXcadMQCc0PxMk3394F3sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=S1OfRk18; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71b070ff24dso5050209b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1727795627; x=1728400427; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wH/D8AAkmGXfodYMfAwyRCswFUR0f/XeaeOOtQHZJR8=;
-        b=lqxU2aYj4EuR1YXA/5MxyC6wjP+tycpcDYcs7S2AnU3SP4zzHkb52d+ev+Yacmw2kv
-         HZEvfGahmwr1+ogSw/O2qFH+k3iWS/q9WExvWqNP5/SFbcp6ts7uIGuw4jBtops6TWRs
-         vMwo2RQs51vnIBekP2oLnee0EJduOE+icmM/A5xqsTyxgxMtSaFjDjt5EU4kP77o1ZN4
-         bOFWzgWlLXBRWQVUIy6y022CYyPfNjcaNgjEy/EjeS1aLY9tfenC1tEP3/Y/4eXQlt5t
-         RNxrRTrJNpu7PxekFG54e2+od3pDFcGMXP0rOepypD/xfJpiPluGFY4/HKk2LJAkVgVU
-         gFnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727795627; x=1728400427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1727795692; x=1728400492; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wH/D8AAkmGXfodYMfAwyRCswFUR0f/XeaeOOtQHZJR8=;
-        b=Wc1RNVnuWWAD9+40jlY1fFnuhS+wS5ygacysRogvb15UPkzGTC7OiN+u5r7nxB05un
-         sK3nzD5y0C9FI0puWB+DVpoC2fIg16maG/DSa44ubWmnE02cITPC/u3G+jAJtJ/l8lsB
-         ifMRRMpIc6Fdj3jP7SA+izykIGQG/jTdioAeu2ERkPu2sgKWosaLEhJLZEhYpuZWA1/z
-         q9Qa+Kj7y08CzoDKMQrf6G1YSJ7LDiMLbKXy4Oy82tvhV1iQve8qsB7ugcF6GI3Dhycj
-         0W+kDpbwfUm/E7VDdungi6Y7qCGmool+OjHbSmR+13DkjQbaTdzNTsnYv5piKcMzk70Y
-         OGfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaxtrro+GMi/YMwAX0mgeMZ40cx3Vs81s2/xvyVEQoJovvzxvECms1CDVJwBWzOoFIcwRWK/Jqx9WfG/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Qjl3m/7mdTySgcX6affoT9FSvAeFhJw4PjjJutBHnTbnfjDt
-	khB8ReZgUdvfbmv01zcuyT6wBqpkA5ClmcoAUQ4E5gEZlPvWz7v9dWDFNr0g4KQ=
-X-Google-Smtp-Source: AGHT+IEgx5X0C3Z/TUBNZmAt37mnOUy5vuCV8HD5LocgLsm01ba949ibJenHp7iZk6fvm6cIrWafiA==
-X-Received: by 2002:a05:622a:1a02:b0:458:42aa:9853 with SMTP id d75a77b69052e-45c9f227955mr260457751cf.23.1727795626732;
-        Tue, 01 Oct 2024 08:13:46 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45c9f35392esm46664201cf.82.2024.10.01.08.13.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 08:13:46 -0700 (PDT)
-Date: Tue, 1 Oct 2024 11:13:17 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-pci@vger.kernel.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bhelgaas@google.com, dave@stgolabs.net, dave.jiang@intel.com,
-	vishal.l.verma@intel.com, lukas@wunner.de
-Subject: Re: [PATCH] pci/doe: add a 1 second retry window to pci_doe
-Message-ID: <ZvwRjbRIrkCSjwQI@PC2K9PVX.TheFacebook.com>
-References: <20240913183241.17320-1-gourry@gourry.net>
- <66e51febbab99_ae212949d@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20240916101557.00007b3a@Huawei.com>
+        bh=oXk/gs0HYEU1ezw3ww3vXkMichEEjYvt1gYwWCgyPCc=;
+        b=S1OfRk18+pPseAcyuu5l5U+E4eYU2t0YnJNd7ELnZ3qK2ssbxJWKaBSsD1pHm8r67o
+         u94evu8R2xSNeejesh8ONH1mIJcz58laE0SVvyD/nKbB10OlflkLHxxKfh9M205+ik9H
+         ftYzfvdbWsejWpQQ52DxCxG7yKeR9KRtf1arw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727795692; x=1728400492;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oXk/gs0HYEU1ezw3ww3vXkMichEEjYvt1gYwWCgyPCc=;
+        b=ACdkyhht6Xu3X41XngKW2bzdzLLjZNjjDSlSRGT/DqtFFUwWBjlGjYUDgjwBkMiyRE
+         75ioaOU2h3EApCnk6YzD4q1m5NzYJK6CvgsDhpxdxdsGxK23+tZLZ++/AkqgoFfwf6bG
+         tYss3mOwQwIcmV94HMuFS7mSkeuZhiwt8o8E+UXnWM1tYBt5qA0gnC6/ClSTxjQV7fJi
+         srCkpafuNJhhxz9lyeWU5VI+N4lZA5fj+fMWthG6dnj+NwREy5UMwdCWHt6hVPGqj+WQ
+         Os3XZn5gCmhXmHZGD2G169rgcpOD2AtNYutt0icY9y4xrvaUpO4r33ThZSTed7uKVZom
+         a5/A==
+X-Gm-Message-State: AOJu0YySJmqSzRFjgv49an33qvAkSLMLDU4D+H0HhFPxnIGWEWWJeQm3
+	iED/Ki5MKW+qOvph2/EUAwOhznKRjNZLxN+faDZUGSwXkCCp2ZWHBvQe07OSjjfhex3Q1j4RlP0
+	=
+X-Google-Smtp-Source: AGHT+IF/rWJehoUVH0pyDiSO0j7nClL1eFd0utwOhnLH+Mn+W/RbZk7ylBYUjqHhts5UtzK0c0HJAg==
+X-Received: by 2002:a05:6a21:3942:b0:1d4:fb58:e74c with SMTP id adf61e73a8af0-1d5db0e19d5mr189542637.3.1727795691941;
+        Tue, 01 Oct 2024 08:14:51 -0700 (PDT)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com. [209.85.215.182])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b264bedf2sm8125992b3a.86.2024.10.01.08.14.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 08:14:50 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ae3d7222d4so4837540a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:14:50 -0700 (PDT)
+X-Received: by 2002:a17:90a:b38b:b0:2e1:5a55:a4b9 with SMTP id
+ 98e67ed59e1d1-2e18456a9a3mr52944a91.2.1727795689370; Tue, 01 Oct 2024
+ 08:14:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240916101557.00007b3a@Huawei.com>
+References: <20240911123507.v2.1.Id08823b2f848237ae90ce5c5fa7e027e97c33ad3@changeid>
+ <ZuwfvyiOMAzciZX2@pathway.suse.cz> <CAHQZ30CVM3toTJCki_ao_+_2VkOxmB+a=BU73HF+4WCM0qRbwA@mail.gmail.com>
+ <ZvwQiSNEwD6XB0yA@pathway.suse.cz>
+In-Reply-To: <ZvwQiSNEwD6XB0yA@pathway.suse.cz>
+From: Raul Rangel <rrangel@chromium.org>
+Date: Tue, 1 Oct 2024 09:14:35 -0600
+X-Gmail-Original-Message-ID: <CAHQZ30DMD9eqN7hFL8z6+XuJ1N_0EfyE8d9F2Vv+CsHn0UBAdQ@mail.gmail.com>
+Message-ID: <CAHQZ30DMD9eqN7hFL8z6+XuJ1N_0EfyE8d9F2Vv+CsHn0UBAdQ@mail.gmail.com>
+Subject: Re: [PATCH v2] init: Don't proxy `console=` to earlycon
+To: Petr Mladek <pmladek@suse.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huang Shijie <shijie@os.amperecomputing.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Yuntao Wang <ytcoode@gmail.com>, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 16, 2024 at 10:15:57AM +0100, Jonathan Cameron wrote:
-> On Fri, 13 Sep 2024 22:32:28 -0700
-> Dan Williams <dan.j.williams@intel.com> wrote:
-> 
-> > [ add linux-pci and Lukas ]
-> > 
-> > Gregory Price wrote:
-> > > Depending on the device, sometimes firmware clears the busy flag
-> > > later than expected.  This can cause the device to appear busy when
-> > > calling multiple commands in quick sucession. Add a 1 second retry
-> > > window to all doe commands that end with -EBUSY.  
-> > 
-> > I would have expected this to be handled as part of finishing off
-> > pci_doe_recv_resp() not retrying on a new submission.
-> > 
-> > It also occurs to me that instead of warning "another entity is sending conflicting
-> > requests" message, the doe core should just ensure that it is the only
-> > agent using the mailbox. Something like hold the PCI config lock over
-> > DOE transactions. Then it will remove ambiguity of "conflicting agent"
-> > vs "device is slow to clear BUSY".
-> > 
-> 
-> I believe we put that dance in to not fail too horribly
-> if a firmware was messing with the DOE behind our backs rather than
-> another OS level actor was messing with it.
-> 
-> We wouldn't expect firmware to be using a DOE that Linux wants, but
-> the problem is the discovery protocol which the firmware might run
-> to find the DOE it does want to use.
-> 
-> My memory might be wrong though as this was a while back.
-> 
-> Jonathan
+On Tue, Oct 1, 2024 at 9:09=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
+:
+>
+> On Tue 2024-09-24 10:05:08, Raul Rangel wrote:
+> > On Thu, Sep 19, 2024 at 6:57=E2=80=AFAM Petr Mladek <pmladek@suse.com> =
+wrote:
+> >
+> > > On Wed 2024-09-11 12:35:14, Raul E Rangel wrote:
+> > > > Today we are proxying the `console=3D` command line args to the
+> > > > `param_setup_earlycon()` handler. This is done because the followin=
+g are
+> > > > equivalent:
+> > > >
+> > > >     console=3Duart[8250],mmio,<addr>[,options]
+> > > >     earlycon=3Duart[8250],mmio,<addr>[,options]
+> > > >
+> > > > Both invocations enable an early `bootconsole`. `console=3DuartXXXX=
+` is
+> > > > just an alias for `earlycon=3DuartXXXX`.
+> > > >
+> > > > In addition, when `earlycon=3D` (empty value) or just `earlycon`
+> > > > (no value) is specified on the command line, we enable the earlycon
+> > > > `bootconsole` specified by the SPCR table or the DT.
+> > > >
+> > > > The problem arises when `console=3D` (empty value) is specified on =
+the
+> > > > command line. It's intention is to disable the `console`, but what
+> > > > happens instead is that the SPRC/DT console gets enabled.
+> > > >
+> > > > This happens because we are proxying the `console=3D` (empty value)
+> > > > parameter to the `earlycon` handler. The `earlycon` handler then se=
+es
+> > > > that the parameter value is empty, so it enables the SPCR/DT
+> > > > `bootconsole`.
+> > > >
+> > > > This change makes it so that the `console` or `console=3D` paramete=
+rs no
+> > > > longer enable the SPCR/DT `bootconsole`. I also cleans up the hack =
+in
+> > > > `main.c` that would forward the `console` parameter to the `earlyco=
+n`
+> > > > handler.
+> > > >
+> > > > Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> > >
+> > > It like this approach. It works well:
+> > >
+> > > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > > Tested-by: Petr Mladek <pmladek@suse.com>
+> > >
+> >
+> > Thanks for reviewing and testing! I know it takes a significant amount =
+of
+> > time, so thank you.
+> >
+> > >
+> > > I could take it via the printk tree for 6.13. From my POV, it is too
+> > > late for 6.12. I am sorry I have been busy with the printk rework :-(
+> > >
+> >
+> > 6.13 is fine. As long as it lands upstream I can cherry pick the patch =
+into
+> > our forks without any pushback.
+>
+> JFYI, the patch has been committed into printk/linux.git,
+> branch for-6.13.
 
-Just following up here, it sounds like everyone is unsure of this change.
-
-I can confirm that this handles the CDAT retry issue I am seeing, and that
-the BUSY bit is set upon entry into the initial call. Only 1 or 2 retries
-are attempted before it is cleared and returns successfully.
-
-I'd explored putting the retry logic in the CDAT code that calls into here,
-but that just seemed wrong.  Is there a suggestion or a nak here?
-
-Trying to find a path forward.
-
-~Gregory
+Thank you!
+>
+> Best Regards,
+> Petr
 
