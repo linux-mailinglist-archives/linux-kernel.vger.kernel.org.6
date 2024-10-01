@@ -1,170 +1,142 @@
-Return-Path: <linux-kernel+bounces-346254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7617198C1E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC1B98C1EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380C32857E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 925BE1F24047
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6646C1CB30B;
-	Tue,  1 Oct 2024 15:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714D81CB30B;
+	Tue,  1 Oct 2024 15:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T4xJxuhW"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DWa9aVsc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F61C1C8FD5;
-	Tue,  1 Oct 2024 15:44:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F131C2DA4;
+	Tue,  1 Oct 2024 15:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797454; cv=none; b=acRKYjZC4Fty4lNBV+SpXjtXULJj1GwkedN/0VKnZpZlmjdxe80HvcrEx+ooitZmAJJlkAUaScFj9rOlkkDv0g3aqicIJeT9Rk0NUtEOZCoY9c+6qczyoWQEcrVNuvDpBquV7dz2+TyJOMnvvoo5WGmqcxmWeZcwIS3CkVvGBt0=
+	t=1727797528; cv=none; b=HKD2aU4/pRKMMMg0Zb6yrMfea5q4OB5nh87a7Y2jtjZ+JmoRtEOVCzaBA+CubVRuhjDxNdrAlAmAFgQmmLeDnpIIfCIkg/tdsn6MWDfoIZpr62gPN0C+yv2locRKeE64+GFy4Rb8iuWAW5UtIHOPJD6DCsb+kMGBdxTiw7zMC7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797454; c=relaxed/simple;
-	bh=uh9EhIRmTQfFlAsmyL3OVDGo/q51it5ueX+NO09uEbc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=smLZKm1oDd3SaLMz0UeQ+xTBgxX/Mr6j2I7ntA3PvbtQ52c7F21MGA/ylZAP/6QTzhBebbEJYBQv3FH7zoEFylQE/wSFrDCsLhAKhjfp+ysNFaC9FD+UsJBjSr/7fapVfP+NnTq61S9h867s2l46Dv3wCnNEPl7WDYw3GaW5mXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T4xJxuhW; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727797451;
-	bh=uh9EhIRmTQfFlAsmyL3OVDGo/q51it5ueX+NO09uEbc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=T4xJxuhWZDmr4RQw/qGKq8YoSdDeaRZSKIJ7crVtLTibbNqgnVmCCQXMIL7s7cxN7
-	 SM2GZadJykWIgbjaosM4l6L6HrcNbx1FK7xzd4OPpbafP22gYF9vAnwSN/yemHtom/
-	 nN68JbmHn/mMLS5gtOcMfGW9e+msWXsRjVMfs7mXZbUfDjGcxBRYUYlipeKXgd1XfQ
-	 MdsldGQz1qxgly7N0Z7k+d366fX7iP1ApsQqX7j5DgfhezKeWIjIO1OUTPe2mzT7Vv
-	 5MLVFYLpPMJmYZRP9FaDkEDY5iEfI30XgsRHlSJDMthv5hBToonOa9SBU3Emx1tXJr
-	 /EJWSIr5UnPFg==
-Received: from [192.168.1.33] (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 62CEC17E0FE4;
-	Tue,  1 Oct 2024 17:44:10 +0200 (CEST)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Tue, 01 Oct 2024 11:43:23 -0400
-Subject: [PATCH] docs: dev-tools: Add documentation for the device focused
- kselftests
+	s=arc-20240116; t=1727797528; c=relaxed/simple;
+	bh=HKxl86d6npKrI4kMMT4X35cwFBejD519E/tSaDfV/Qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VrhvrQkC+oaKW1fWPXwkhcWFHUKEPonYUjhKBSi49kQaa0av8v3havPLnvniuRsBe9KsqlLnELjTIomEj5onzMlCdLtxENIScXDMEcGkSKE6pw4JirsybDa1IM4u19GOwpPI2gV7r6N76XfELU1jWyOEJMtcUrEKzazhcoveJPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DWa9aVsc; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727797527; x=1759333527;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HKxl86d6npKrI4kMMT4X35cwFBejD519E/tSaDfV/Qo=;
+  b=DWa9aVsc8ySoxDaWFdrvVPVUqXZ4SQMi0ic7jq4aFvhRxFag6EO+guwE
+   PL7cR4c/higOQmS+hYYvTxYnwu9jAKv5SwEBJHmsFVHTYZ3KSCzlX41iP
+   wkBmsG8Eno4GFfKZ6pqEdG5iZZjRtv7Y+/C55U6lfPOJGB9wnbGk4S0NJ
+   Y87qASBy8XomnlDUhZFRhoW23If6W/okinhOAxVw+CRfXZ8hgSylCxCDC
+   fUQUSucg+7/LOfDJji3z1mYcVHIrJl2Nwj0/AZXGhsXaUqhwa0FYLu2ao
+   yWM66YJieQWqfx/BatxOWYc4Xb1TIjE9S1a8hDmtSQGjr8MBZjVJZPiTr
+   Q==;
+X-CSE-ConnectionGUID: gMz7v7zvQiueFXjWRUB+gw==
+X-CSE-MsgGUID: LVRiKxXiTIm5Kw/ujXTzDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="37534558"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="37534558"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 08:45:26 -0700
+X-CSE-ConnectionGUID: I2x18V+oT9COg4Vh27+nAg==
+X-CSE-MsgGUID: qQdbZXNbRxWKoHR1qCNeTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="104530965"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 01 Oct 2024 08:45:24 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svf3x-000Qpx-0m;
+	Tue, 01 Oct 2024 15:45:21 +0000
+Date: Tue, 1 Oct 2024 23:44:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, steve.glendinning@shawell.net
+Subject: Re: [PATCH net-next 7/8] net: smsc91xx: move down struct members
+Message-ID: <202410012317.iGlUJQY9-lkp@intel.com>
+References: <20240930224056.354349-8-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241001-kselftest-device-docs-v1-1-be28b70dd855@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAJoY/GYC/x2M0QpAQBAAf0X7bOtWCL8iD9wtNjq6ldTl310ep
- 2YmgnIQVuiyCIFvUTl8AsozsOvoF0ZxiaEwRUnGEG7K+3yxXuiSbhndYRVr24wlEZl2qiC1Z+B
- Znv/bD+/7ARsAJ4ZnAAAA
-To: Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: kernel@collabora.com, linux-kselftest@vger.kernel.org, 
- workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernelci@lists.linux.dev, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930224056.354349-8-rosenp@gmail.com>
 
-Add documentation for the kselftests focused on testing devices and
-point to it from the kselftest documentation. There are multiple tests
-in this category so the aim of this page is to make it clear when to run
-each test.
+Hi Rosen,
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
-This patch depends on patch "kselftest: devices: Add test to detect
-missing devices" [1], since this patch documents that test.
+kernel test robot noticed the following build warnings:
 
-[1] https://lore.kernel.org/all/20240928-kselftest-dev-exist-v2-1-fab07de6b80b@collabora.com
----
- Documentation/dev-tools/kselftest.rst       |  9 ++++++
- Documentation/dev-tools/testing-devices.rst | 47 +++++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+)
+[auto build test WARNING on net-next/main]
 
-diff --git a/Documentation/dev-tools/kselftest.rst b/Documentation/dev-tools/kselftest.rst
-index f3766e326d1e..fdb1df86783a 100644
---- a/Documentation/dev-tools/kselftest.rst
-+++ b/Documentation/dev-tools/kselftest.rst
-@@ -31,6 +31,15 @@ kselftest runs as a userspace process.  Tests that can be written/run in
- userspace may wish to use the `Test Harness`_.  Tests that need to be
- run in kernel space may wish to use a `Test Module`_.
- 
-+Documentation on the tests
-+==========================
-+
-+For documentation on the kselftests themselves, see:
-+
-+.. toctree::
-+
-+   testing-devices
-+
- Running the selftests (hotplug tests are run in limited mode)
- =============================================================
- 
-diff --git a/Documentation/dev-tools/testing-devices.rst b/Documentation/dev-tools/testing-devices.rst
-new file mode 100644
-index 000000000000..ab26adb99051
---- /dev/null
-+++ b/Documentation/dev-tools/testing-devices.rst
-@@ -0,0 +1,47 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright (c) 2024 Collabora Ltd
-+
-+=============================
-+Device testing with kselftest
-+=============================
-+
-+
-+There are a few different kselftests available for testing devices generically,
-+with some overlap in coverage and different requirements. This document aims to
-+give an overview of each one.
-+
-+Note: Paths in this document are relative to the kselftest folder
-+(``tools/testing/selftests``).
-+
-+Device oriented kselftests:
-+
-+* Devicetree (``dt``)
-+
-+  * **Coverage**: Probe status for devices described in Devicetree
-+  * **Requirements**: None
-+
-+* Error logs (``devices/error_logs``)
-+
-+  * **Coverage**: Error (or more critical) log messages presence coming from any
-+    device
-+  * **Requirements**: None
-+
-+* Discoverable bus (``devices/probe``)
-+
-+  * **Coverage**: Presence and probe status of USB or PCI devices that have been
-+    described in the reference file
-+  * **Requirements**: Manually describe the devices that should be tested in a
-+    YAML reference file (see ``devices/probe/boards/google,spherion.yaml`` for
-+    an example)
-+
-+* Exist (``devices/exist``)
-+
-+  * **Coverage**: Presence of all devices
-+  * **Requirements**: Generate the reference (see ``devices/exist/README.rst``
-+    for details) on a known-good kernel
-+
-+Therefore, the suggestion is to enable the error log and devicetree tests on all
-+(DT-based) platforms, since they don't have any requirements. Then to greatly
-+improve coverage, generate the reference for each platform and enable the exist
-+test. The discoverable bus test can be used to verify the probe status of
-+specific USB or PCI devices, but is probably not worth it for most cases.
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-smsc911x-use-devm_platform_ioremap_resource/20241001-064430
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240930224056.354349-8-rosenp%40gmail.com
+patch subject: [PATCH net-next 7/8] net: smsc91xx: move down struct members
+config: i386-randconfig-001-20241001 (https://download.01.org/0day-ci/archive/20241001/202410012317.iGlUJQY9-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410012317.iGlUJQY9-lkp@intel.com/reproduce)
 
----
-base-commit: cea5425829f77e476b03702426f6b3701299b925
-change-id: 20241001-kselftest-device-docs-6c8a411109b5
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410012317.iGlUJQY9-lkp@intel.com/
 
-Best regards,
+All warnings (new ones prefixed by >>):
+
+   drivers/net/ethernet/smsc/smsc911x.c: In function 'smsc911x_request_resources':
+>> drivers/net/ethernet/smsc/smsc911x.c:378:27: warning: variable 'reset_gpiod' set but not used [-Wunused-but-set-variable]
+     378 |         struct gpio_desc *reset_gpiod;
+         |                           ^~~~~~~~~~~
+
+
+vim +/reset_gpiod +378 drivers/net/ethernet/smsc/smsc911x.c
+
+   368	
+   369	/*
+   370	 * Request resources, currently just regulators.
+   371	 *
+   372	 * The SMSC911x has two power pins: vddvario and vdd33a, in designs where
+   373	 * these are not always-on we need to request regulators to be turned on
+   374	 * before we can try to access the device registers.
+   375	 */
+   376	static int smsc911x_request_resources(struct platform_device *pdev)
+   377	{
+ > 378		struct gpio_desc *reset_gpiod;
+   379		struct clk *clk;
+   380	
+   381		/* Request optional RESET GPIO */
+   382		reset_gpiod =
+   383			devm_gpiod_get_optional(&pdev->dev, "reset", GPIOD_OUT_LOW);
+   384	
+   385		/* Request clock */
+   386		clk = devm_clk_get_optional(&pdev->dev, NULL);
+   387		if (IS_ERR(clk))
+   388			return dev_err_probe(&pdev->dev, PTR_ERR(clk),
+   389					     "couldn't get clock");
+   390	
+   391		return 0;
+   392	}
+   393	
+
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
