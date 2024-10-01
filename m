@@ -1,125 +1,204 @@
-Return-Path: <linux-kernel+bounces-346596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD18698C67B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:08:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9894D98C678
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39B81C2265D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:08:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5491F25269
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9330B1CEACA;
-	Tue,  1 Oct 2024 20:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ABF1CDFD7;
+	Tue,  1 Oct 2024 20:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="idvLeY8g"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sPrrp6Oe"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510081CDFDE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC381CBE98;
+	Tue,  1 Oct 2024 20:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727813259; cv=none; b=WayYEAUrJXxLj8Uuae9ubHf7lrAXf3qPE5Y5tpM0i9gZXdv6kI9Ht30iMqJcaKLB2Zbu8lChJd6k+Pk0GU3yc1YrkLRwrLFwyVkImyy37rcPfCj3s3evZPLTSbeOCxWq0ph19tAGp6mH4Zk8IdRGVfv09ri0XeEF81sBy0X8L4o=
+	t=1727813256; cv=none; b=f7KvBADwjzXNBIfuWmlF/VjDOhOtX4WDY3lVeIWHLzClvYakDcad7qk0uS128hLUP1pKphVvhnsaQPdRg4/6AiYmOVXFBq95YJIzci1ZfA2p0NhQ7ef9RJA9DteXzE6VnHoyOWLO6aWbk6EXNm5HomWWo24mag2DvPBsC/Svhko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727813259; c=relaxed/simple;
-	bh=nb+1zuofbp/YLzRVQkvPoNQ/yPtfFbypigrtq+u1nsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tfbpwAj/DCzp/94tunugYtQ4GiDqwQgj5hUJbyVd1jX9XfzjeTH5DLNAGF/3U1PN6x9km4EvaFsqM3gluk1bHYUW8atQajwcsYKeOC82lqhsZPpTGuvvFeiOcP+eqBRR0IuGMoDnNcLSXLdYTKBtOXLm9bElTLEFcDWJMpKBkXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=idvLeY8g; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4582a5b495cso12451cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 13:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727813256; x=1728418056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mMY9PPpiy6n79kGTLnpvPmokvdMN2sau/6lNm64LaIc=;
-        b=idvLeY8gy3pcXPegwFWCxfs/2XC8TdIuc0Vzx5rcJenIxUAwmQ5AIV4m5rOi62RzWo
-         MMzG+BZ7xkjmEZuVyXnI+docOUek+M2gQZQPzR3Vh88c/dbeQAv/T4VY51x9gnJdtsN5
-         qRvFFo3hO9JFQbOaiUhPvnd0FmSBj8Yp/iVMpDkLnLbLgkCOdeNQGu9zCT/Z6rFlL9gI
-         RiGt2juiGf1qfaS0QeQdwNJRBI1tJSSJskajTTT81P6TneGO1TQIxbS0TVEO0/Ik6Pyv
-         z2Phe3n7j3B5PpN4pXnNpVmCwsC/lIKIPLPHBKjVIb/yuvf7AJjuFGvyhY9eI4eecr4k
-         KFmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727813256; x=1728418056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mMY9PPpiy6n79kGTLnpvPmokvdMN2sau/6lNm64LaIc=;
-        b=H+09bCzugFkhtMba3otg3pM4RCJSGQFfHI6sVtysYUjnOuwLV+9RVFqp+p+LITY5rt
-         DJcMS3cDPbvFjbOVO5o8oDmYRDJ+VnDAaXIn5i38MR0EWP++/qYGGpocJbODvFiiFhXL
-         BLFOAWA4GON2cW+bK9lTPipzh86LT16vO34+OEO0Y9fpANbp2H0YXA0HHg9eiixSz0V8
-         6hiZlfQyj4DxVTL2j00F4kPafikoXQ5+x8AW78+0fY6tolvxLwYaY2zzppM5DhhZBE/A
-         UoTNSszNnmTx2lgmr0VLhatLSZF3t2+duJTPOrP+JtdQs4LOJo3fIg6aXbIGUfWR+z4z
-         ySTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsRyo724N84eSkkA888TiK/7E2MZb6xCWcrsTtYoGkG3gf1uMGxWNPZqgMXbOYJJv1cPJB21XGBgVLMLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQTQYzK4Mk3o140k34JW4hPYmJGNHioPnlesMUnkyv2aBgzFfK
-	Sikn18D1fXx6Z0byNZ39DDtqvKOK7CD2eNE1ffXgd/yxwJwTmJQTIZ3OxCl+i/O0dr4IJj+NpUT
-	7H7rh2cHLN+uz3j7MjeXoLg9DTSULZJjHTQA3
-X-Google-Smtp-Source: AGHT+IHKBvWS6PLEHB2YJgh6RwJYvXytEANIAFFLs7YtFd7/8QYOtHb1Is9sK/px/8P98dxvd7EeN/7sfEz9KfBXdkM=
-X-Received: by 2002:a05:622a:5796:b0:453:58c8:3fd1 with SMTP id
- d75a77b69052e-45d814de7f6mr742221cf.0.1727813255948; Tue, 01 Oct 2024
- 13:07:35 -0700 (PDT)
+	s=arc-20240116; t=1727813256; c=relaxed/simple;
+	bh=RwlNbHbEggXjoUOJqdOh2JuBuCr/584bhOnSF2T317M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4uBInIRA/FieUxM8iPWrMA/luD5upfq8djkjGt17HYAX1chZvzK0koM2hkjlxp9bngfDUvTOb9mY95PPGXWPqkOyudxpSn/hHyhgUIPMQrJP109Gnlaan4YZyh9hPodMHkLLFL485qzAtdAoCr95zAQ+sHo4a+nE1KzR2zJfYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sPrrp6Oe; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=aaXdue1ZA7Ch185TFMrVveuH4KfcXYm2oKa4uAKPZV8=; b=sPrrp6OefCaCsCtsBGAyER+oCN
+	MZLPVM8LiVivw5EbzY7Dbeeq/mtCncrngNoyVL5tPMxNK+gtziwzvn8QziwgRxkVczo7xHN+8Y4W0
+	of1WUoiliHl9FvPJz6lvxYvqcX5TFGEM9RE3hDfQ14le9sZGtwhV/lNGZmEa8+v5kj+A=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1svj9U-008lmx-Qm; Tue, 01 Oct 2024 22:07:20 +0200
+Date: Tue, 1 Oct 2024 22:07:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: Saravana Kannan <saravanak@google.com>, Rob Herring <robh@kernel.org>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Abhishek Chauhan <quic_abchauha@quicinc.com>,
+	Serge Semin <fancer.lancer@gmail.com>, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT] of: property: fw_devlink: Add support for the
+ "phy-handle" binding
+Message-ID: <5bded0f6-a49b-4606-b990-dc5aad360bf8@lunn.ch>
+References: <20240930-phy-handle-fw-devlink-v1-1-4ea46acfcc12@redhat.com>
+ <CAGETcx-z+Evd95QzhPePOf3=fZ7QUpWC2spA=q_ASyAfVHJD1A@mail.gmail.com>
+ <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-26-samitolvanen@google.com> <429b7310-3724-48a2-a8ac-e686c6945024@suse.com>
-In-Reply-To: <429b7310-3724-48a2-a8ac-e686c6945024@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 1 Oct 2024 20:06:59 +0000
-Message-ID: <CABCJKueyGPNeUqW_xWdG11OxHDWsMM0CtV31sbg4LL0FggEN=g@mail.gmail.com>
-Subject: Re: [PATCH v3 04/20] gendwarfksyms: Add address matching
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <rqn4kaogp2oukghm3hz7sbbvayj6aiflgbtoyk6mhxg4jss7ig@iv24my4iheij>
 
-On Tue, Oct 1, 2024 at 2:06=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wro=
-te:
->
-> On 9/23/24 20:18, Sami Tolvanen wrote:
-> > -     for_each(name, get_symbol, &sym);
-> > +     for_each(name, false, get_symbol, &sym);
-> >       return sym;
-> >  }
->
-> What is the reason that the for_each() call in symbol_get() is invoked
-> with name_only=3Dfalse?
+> Let me see if I can hack something up on this board (which has a decent
+> dependency tree for testing this stuff) to use the generic phy driver
+> instead of the marvell one that it needs and see how that goes. It won't
+> *actually* work from a phy perspective, but it will at least test out
+> the driver core bits here I think.
+> 
+> > 
+> > But like you said, it's been a while and fw_devlink has improved since
+> > then (I think). So please go ahead and give this a shot. If you can
+> > help fix any issues this highlights, I'd really appreciate it and I'd
+> > be happy to guide you through what I think needs to happen. But I
+> > don't think I have the time to fix it myself.
+> 
+> Sure, I tend to agree. Let me check the generic phy driver path for any
+> issues and if that test seems to go okay I too am of the opinion that
+> without any solid reasoning against this we enable it and battle through
+> (revert and fix after the fact if necessary) any newly identified issues
+> that prevent phy-handle and fw_devlink have with each other.
 
-It was initially added to skip address checking when reading the
-symbol list, but it's redundant since there are no addresses to check
-at that point anyway. I think we can just drop the name_only argument
-completely. I'll change this in v4.
+Here is one for you to look at:
 
-> > +                     for (n =3D 1; n < nsyms; ++n) {
-> > +                             const char *name =3D NULL;
-> > +                             Elf32_Word xndx =3D 0;
-> > +                             GElf_Sym sym_mem;
-> > +                             GElf_Sym *sym;
-> > +
-> > +                             sym =3D gelf_getsymshndx(data, xndx_data,=
- n,
-> > +                                                    &sym_mem, &xndx);
->
-> Please check for sym=3D=3DNULL in case the file is malformed, e.g.
-> .symtab_shndx is truncated.
+https://elixir.bootlin.com/linux/v6.11.1/source/drivers/net/ethernet/freescale/fec_main.c#L2481
 
-Good catch, I'll add a check.
+I don't know if there is a real issue here, but if the order of the
+probe gets swapped, i think the usage of mii_cnt will break.
 
-Sami
+I don't remember what broke last time, and i'm currently too lazy to
+go look. But maybe take a look at devices like this:
+
+arch/arm/boot/dts/nxp/vf/vf610-zii-dev-rev-b.dts
+
+       mdio-mux {
+                compatible = "mdio-mux-gpio";
+                pinctrl-0 = <&pinctrl_mdio_mux>;
+                pinctrl-names = "default";
+                gpios = <&gpio0 8  GPIO_ACTIVE_HIGH
+                         &gpio0 9  GPIO_ACTIVE_HIGH
+                         &gpio0 24 GPIO_ACTIVE_HIGH
+                         &gpio0 25 GPIO_ACTIVE_HIGH>;
+                mdio-parent-bus = <&mdio1>;
+                #address-cells = <1>;
+                #size-cells = <0>;
+
+                mdio_mux_1: mdio@1 {
+                        reg = <1>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
+
+                        switch0: switch@0 {
+                                compatible = "marvell,mv88e6085";
+                                pinctrl-0 = <&pinctrl_gpio_switch0>;
+                                pinctrl-names = "default";
+                                reg = <0>;
+                                dsa,member = <0 0>;
+                                interrupt-parent = <&gpio0>;
+                                interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
+                                interrupt-controller;
+                                #interrupt-cells = <2>;
+                                eeprom-length = <512>;
+
+                                ports {
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
+
+                                        port@0 {
+                                                reg = <0>;
+                                                label = "lan0";
+                                                phy-handle = <&switch0phy0>;
+                                        };
+
+                                        port@1 {
+                                                reg = <1>;
+                                                label = "lan1";
+                                                phy-handle = <&switch0phy1>;
+                                        };
+
+                                        port@2 {
+                                                reg = <2>;
+                                                label = "lan2";
+                                                phy-handle = <&switch0phy2>;
+                                        };
+
+                                        switch0port5: port@5 {
+                                                reg = <5>;
+                                                label = "dsa";
+                                                phy-mode = "rgmii-txid";
+                                                link = <&switch1port6
+                                                        &switch2port9>;
+                                                fixed-link {
+                                                        speed = <1000>;
+                                                        full-duplex;
+                                                };
+                                        };
+
+                                        port@6 {
+                                                reg = <6>;
+                                                phy-mode = "rmii";
+                                                ethernet = <&fec1>;
+
+                                                fixed-link {
+                                                        speed = <100>;
+                                                        full-duplex;
+                                                };
+                                        };
+                                };
+                                mdio {
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
+                                        switch0phy0: switch0phy0@0 {
+                                                reg = <0>;
+                                                interrupt-parent = <&switch0>;
+                                                interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+                                        };
+                                        switch0phy1: switch1phy0@1 {
+                                                reg = <1>;
+                                                interrupt-parent = <&switch0>;
+                                                interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+                                        };
+                                        switch0phy2: switch1phy0@2 {
+                                                reg = <2>;
+                                                interrupt-parent = <&switch0>;
+                                                interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
+                                        };
+                                };
+                        };
+                };
+
+
+This would be an example of circular dependencies, with the interrupt
+properties closing the loop.
+
+switch -> mdio -> phy
+ ^                |
+ |----------------+
+
+	Andrew
 
