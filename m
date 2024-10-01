@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-345559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FBBD98B77B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:49:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAD398B77D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E77E5281F94
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD72E1C22726
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBCE19D095;
-	Tue,  1 Oct 2024 08:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nz9t751U"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6231819F499;
+	Tue,  1 Oct 2024 08:47:02 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040EA19AA68;
-	Tue,  1 Oct 2024 08:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AC519F466
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727772401; cv=none; b=CE6HyAtvnCcjzfznLgvjUd0e75nIcRkdhossBkbyt2ZXuFBlvEdu1DCZ5axwKjihdYkVu/ZhU7H1uvcFRJKAKFqUtE3wT1VKOuCfy6Emcxgi4vKI0jB4We5PdMl0dUp21E0OeVsp2DlmVqUNDsXiCwtZXxqLl5VEiYEbrS9UBEA=
+	t=1727772422; cv=none; b=mwn9soDaF69HbxavhbmGtDrpkpYPCRIhAveIhk+v6tgEU4uu7K9AhundHEuF+jNKNhGMKzoiCS+gFMkfpQCqWh0T8+66jeM/6unva1AbyfJtLtrbqbgoTE6c221pngfOgB0BI/81XOnYanxpU5nwU4MlBkJmF0Ke3FeAxROGneE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727772401; c=relaxed/simple;
-	bh=n3Y6ASDlkI3ZkY4nGFCWmpxPfiDDBWBr1yndf3YF4vc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ihALtcx1pC9nBwUYzT5sn4NR9vw2D+Nsjg5lWbG0W29o4p2G+ZoQRD2f5zETWcrnf/aDPbO9TYG3GA0tV/D4y4pvLTA1/CxDlPFk3tQG5QoIaE8/Xn5QGQu8d89V1p7P4Ses9qeTDiF6O+zl7LrebpMAxRSUZW1ZXJsWpc9Y/ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nz9t751U; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=hs6v3onqz5emdo3dj25npgdpvy.protonmail; t=1727772397; x=1728031597;
-	bh=g1VQQYJsjsUnxadkJGJ8Fma6HLCkKyqxvROl+zkzNtA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=nz9t751Ub73yklIQj9ggK3GQji1z8rD84Iom4clLVB9MzLF8uye7YrAw4djPQN45f
-	 Vpvlrwv3U6aFq6M9xlyolavJB81u4FDiLf/k8LX2XLd842Vk4cR0GRgR5Shrs+I0tn
-	 0AK4aVG/aW8LIEwoAD7aRjyo/73dazax8+lFUvhnQg82uDkDCpfdgUgA69v7r24KYB
-	 P7tMkHhbEpG2MXo1NxL/WpCyMANzmAaZq03y2HhUOAoAL0cKPdzyChDM7OtDOfu7XW
-	 F8zEdsDGeUtirJxDHFz1iLz75ekwyUq9IjUhF/ABfcWzdNdDKRXqx3/zOrt+Lw79lt
-	 xMfVqgNXmsmwQ==
-Date: Tue, 01 Oct 2024 08:46:31 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] rust: types: add Opaque::try_ffi_init
-Message-ID: <dca42b2e-f10f-45bc-bd79-ba86e78e3017@proton.me>
-In-Reply-To: <20241001-b4-miscdevice-v2-1-330d760041fa@google.com>
-References: <20241001-b4-miscdevice-v2-0-330d760041fa@google.com> <20241001-b4-miscdevice-v2-1-330d760041fa@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 4eb89e6f0ebb8860c65afe539cb44d414a1f2a39
+	s=arc-20240116; t=1727772422; c=relaxed/simple;
+	bh=/fXMwGVaahBsSaPXpcYDcv3WCPF7fsy9WoyEQYI7PTg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=li1YcaEjSUY+enxNVDFfv5c6rFNirzNe3SqWMl7Jm7CjZ9PdSZvBrl5zPEqy0ivJUvYd981W51RW6igBF5UK8CBLuaxeJ3n8XYOTCg8XBCVK8rw8Pql3YAj8dReLh+JchaKJcN21r2xTkPQXBJpi1J210iNT9SIo1aZq7NwLRZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svYX3-0002EJ-4S; Tue, 01 Oct 2024 10:46:57 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svYX2-002pqT-75; Tue, 01 Oct 2024 10:46:56 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svYX2-000283-0W;
+	Tue, 01 Oct 2024 10:46:56 +0200
+Message-ID: <e9e2f114dd4051e59071768de814a1908f8a207e.camel@pengutronix.de>
+Subject: Re: linux-next: Signed-off-by missing for commit in the reset tree
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+	Mailing List <linux-next@vger.kernel.org>
+Date: Tue, 01 Oct 2024 10:46:56 +0200
+In-Reply-To: <20241001074106.2a545de5@canb.auug.org.au>
+References: <20241001074106.2a545de5@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 01.10.24 10:22, Alice Ryhl wrote:
-> This will be used by the miscdevice abstractions, as the C function
-> `misc_register` is fallible.
+On Di, 2024-10-01 at 07:41 +1000, Stephen Rothwell wrote:
+> Hi all,
 >=20
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Commits
+>=20
+>   5b93105afcdc ("reset: amlogic: add auxiliary reset driver support")
+>   e66eebb88564 ("reset: amlogic: split the device core and platform probe=
+")
+>   33e712a6dfc9 ("reset: amlogic: move drivers to a dedicated directory")
+>   2941bb7a8c43 ("reset: amlogic: add reset status support")
+>   85873c151943 ("reset: amlogic: use reset number instead of register cou=
+nt")
+>   1392f6d3692b ("reset: amlogic: add driver parameters")
+>   45d73c01b0a3 ("reset: amlogic: make parameters unsigned")
+>   49ae3e0e55f5 ("reset: amlogic: use generic data matching function")
+>   ac1bc5f19401 ("reset: amlogic: convert driver to regmap")
+>=20
+> are missing a Signed-off-by from their committer.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Thank you, fixed in reset/next.
 
----
-Cheers,
-Benno
-
-> ---
->  rust/kernel/types.rs | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->=20
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 9e7ca066355c..070d03152937 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -299,6 +299,22 @@ pub fn ffi_init(init_func: impl FnOnce(*mut T)) -> i=
-mpl PinInit<Self> {
->          }
->      }
->=20
-> +    /// Creates a fallible pin-initializer from the given initializer cl=
-osure.
-> +    ///
-> +    /// The returned initializer calls the given closure with the pointe=
-r to the inner `T` of this
-> +    /// `Opaque`. Since this memory is uninitialized, the closure is not=
- allowed to read from it.
-> +    ///
-> +    /// This function is safe, because the `T` inside of an `Opaque` is =
-allowed to be
-> +    /// uninitialized. Additionally, access to the inner `T` requires `u=
-nsafe`, so the caller needs
-> +    /// to verify at that point that the inner value is valid.
-> +    pub fn try_ffi_init<E>(
-> +        init_func: impl FnOnce(*mut T) -> Result<(), E>,
-> +    ) -> impl PinInit<Self, E> {
-> +        // SAFETY: We contain a `MaybeUninit`, so it is OK for the `init=
-_func` to not fully
-> +        // initialize the `T`.
-> +        unsafe { init::pin_init_from_closure::<_, E>(move |slot| init_fu=
-nc(Self::raw_get(slot))) }
-> +    }
-> +
->      /// Returns a raw pointer to the opaque data.
->      pub const fn get(&self) -> *mut T {
->          UnsafeCell::get(&self.value).cast::<T>()
->=20
-> --
-> 2.46.1.824.gd892dcdcdd-goog
->=20
-
+regards
+Philipp
 
