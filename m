@@ -1,163 +1,247 @@
-Return-Path: <linux-kernel+bounces-346335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 841DC98C34A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:23:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC7698C34B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42D85286F58
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:23:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE7E5B254BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8B41CC168;
-	Tue,  1 Oct 2024 16:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8808E1CC894;
+	Tue,  1 Oct 2024 16:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HF9Uazie"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WcPGsVOO"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49361CB339;
-	Tue,  1 Oct 2024 16:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098711CB339
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799604; cv=none; b=ZgCHtCaldVp0/tIlmo6UExCB9E4X3t/FExRGnrbgCWtgHocIBhvNorv7bXbkRL5jGnM8ZaZxDlkEGrurh/Jefw/I852Oh3Gk3DK05XLF0eRLpeLmHG9eQejIQESuTPxVg32KcZ5vZpBfru7lLSDdiwK/z2+61n+YlrxwZz2l2wo=
+	t=1727799617; cv=none; b=VEJtzOg8ficLXWAriNQCvlvgMwALLoOMjjO5I1MpJE5vDjwJ//T1AH9im6FPX/XHi6ho4fMXUJdvyjUUNs/GkWQfN7V9/HucxJMGRz58jH/RyP6T+N6I4ZV/yzUXKDDjM8hP2nAsenSB4z1LYruACAYeoexebIgpnj14wqNNYDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799604; c=relaxed/simple;
-	bh=guDjXhdBFwrItrIxNPx2IN7uUqlKR5v/xqg2PEwLuT0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Cc:To:Subject:
-	 References:In-Reply-To; b=uY4dKvwrBiMZx0eiZi7DQomc5sWjIOAwzndD+bYSkR098eHHFU5kKB6puTcwha5OKhP6CFjN+9+K5uAn+fxpFl562nd6rtOsUIUYfHZJ7mtMDJLiPaqnkqzrlr8mz7iuNuJItMl0pASGqcXXnu5858UH42c/vFst6ItMl94rCvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HF9Uazie; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491Et2mP008773;
-	Tue, 1 Oct 2024 16:20:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	mime-version:content-transfer-encoding:content-type:date
-	:message-id:from:cc:to:subject:references:in-reply-to; s=pp1;
-	 bh=S7xiCSmZ8Vlg0fk38XWweYgmP+1e29O0s5PXt7lVJdU=; b=HF9UazietIi8
-	wEtauY8M3np4EgLNKn4VhHt15+QIVw6GowhMDZrtdKLijaHmMSRG3y4SQl5WhpPr
-	zMaMVmYzXq5/BoMHLX6kjKKsnuBfE9mbih4kumgD6V1oPg5fLTBtRF1OSWLmLCNU
-	qdk1iYyRI8cRMCOd1dvjPwCP6fBNHb19pSZ75fmR2GHNhBWbmzJdyyMz2jY9T5yi
-	EBj8b+2Xvmll5LXnTgY+jCCISwz3j1nqKFDMTaG27Rt/xEBN9f/KcpexaHvT/vll
-	khd1mX2dWvEXKMcDA9vh9t3J7FzucUw8c6ZitwajaokbjXlo3FWY8FsQFjkKz5Ah
-	eUD8abCVTw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420k8s0f4p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 16:20:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491EoUQL020424;
-	Tue, 1 Oct 2024 16:19:59 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41xv4s5nk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 16:19:59 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491GJud555509288
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 16:19:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2111920043;
-	Tue,  1 Oct 2024 16:19:56 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EEBD820040;
-	Tue,  1 Oct 2024 16:19:55 +0000 (GMT)
-Received: from darkmoore (unknown [9.171.30.50])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 16:19:55 +0000 (GMT)
+	s=arc-20240116; t=1727799617; c=relaxed/simple;
+	bh=HXAypAu67r8SaQritYIHJ9dukhURzXnYviEqSBnitLs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KnXC7C4x/T56L9k8eYZRoGJnll+ofjHvdR9Zel8RDm6/NzlSMnbmgWEgwbrCDjM/HtOnlAVSkLE/57Sga4731zB4R9xoGSXa7ucZczSLIENnM/bD+0ns+U2vUsvguUuYq0z+9K9ITcuwPMS0vDXbWa/MqfOMEbXMWTRp3MnDXNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WcPGsVOO; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e08085596eso5235661a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727799615; x=1728404415; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9zDS0+dMmJVmlufOQQSr0/FQ4ues7NtwXZCmiMpp054=;
+        b=WcPGsVOOjbeAZ2wunVQbrHVlqXfBokD2hBCKW97Bzlyc7byncoReO0J/1DdMOeqe2s
+         v2mHCIvu/ZwD4lK8e+xteIMaSL/mOYJT9tRWeRTh7eY5YCQXtFiHVyh0GSz5jS8RMPyc
+         uBdulqG+rVd+wh+oigFJN7GSm9PbRKxGSn/xWD+oty/unPcAoRN5hN/2LARlQMLPVjAN
+         +lyliPV2BrbL4rx9ps/JJOhSsukGSrMIOTjX1tnrOV9Bx5DnN3EsXNMtoo1JFBUTbIey
+         NtN1DCzXC1qY4wzXaByLspeTIzG1i80Fn3sgpVv5tzS10vQy4AOiCFMhTPZmdBJuoh+Y
+         R4BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727799615; x=1728404415;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9zDS0+dMmJVmlufOQQSr0/FQ4ues7NtwXZCmiMpp054=;
+        b=OX7p3kgZp56wzkCbyhDLn5XTBXlnOHA1wDigxYeM40ftZ4fFF3cdIXO267diQ07UVs
+         Ts8ZAUsJ4tmxvnpirA9W+cBCl8+Wuh6R3xE7+rN4mO9iPYuGvPyQLEmsP8eRtK7Udc2o
+         1bBG9XzpZzk18Bmawhv7s8VgzCP4dW+PtY7UNQuWMV1gERGKulrOQaHZVhDEMr/XcUMm
+         RbVEWqRdfeE8vaGbeXIRqHCRG62g2s26ogVeHchJexGzo2lrY6hJR5ArDXbB+Q9icCM/
+         xKplWPgFGEDZl0UaGNRaF94GiJ54r17x2QDlzObemVrJwNwZbk3lRPd+w+SJ7Wd9ytcr
+         o6Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzISav3SKFCaeT7WWq6gSsFxKbO114ICnySQZk1SULYDQvaga9gmeLzHQ7hPoaRlDJfJzsRtps0q2S4ik=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFsbrH7wFHRZd2t14UaC/aiwDLJxPHYm7K+hkSazfe7BVPSzwg
+	CAHsxGucAr9JWRNrH1mTrcsH1bkmZ4gCyZrA5wIoBWtNMGz9+8npw68EiV6NkoQc9FG5qWk3fV0
+	ymjNgLMcmLV90mF5SGVfzv3dkKzNqmTvqgZO6SA==
+X-Google-Smtp-Source: AGHT+IHjbO9qCs+qHmEJsT2LBD9iUNk52EDALIUxZieteDa3lQXgNMmYuY+f/SlsvR44tUYqeXwFkfADRF1JIqOBo+g=
+X-Received: by 2002:a17:90a:bb04:b0:2d8:8991:211f with SMTP id
+ 98e67ed59e1d1-2e18490a137mr267814a91.28.1727799615279; Tue, 01 Oct 2024
+ 09:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Oct 2024 18:19:50 +0200
-Message-Id: <D4KLU6A3D449.1P07EI9XL7IY2@linux.ibm.com>
-From: "Christoph Schlameuss" <schlameuss@linux.ibm.com>
-Cc: "Ingo Franzki" <ifranzki@linux.ibm.com>,
-        "Harald Freudenberger"
- <freude@linux.ibm.com>,
-        "Janosch Frank" <frankja@linux.ibm.com>,
-        "Claudio
- Imbrenda" <imbrenda@linux.ibm.com>
-To: "Steffen Eiden" <seiden@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v1 5/6] s390/uvdevice: Add List Secrets Ext IOCTL
-X-Mailer: aerc 0.18.2
-References: <20240930131909.2079965-1-seiden@linux.ibm.com>
- <20240930131909.2079965-6-seiden@linux.ibm.com>
-In-Reply-To: <20240930131909.2079965-6-seiden@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: p2uBNTBPwJInNQl44cVCiXnrctEQCdAW
-X-Proofpoint-ORIG-GUID: p2uBNTBPwJInNQl44cVCiXnrctEQCdAW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_13,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 mlxlogscore=720 mlxscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010105
+MIME-Version: 1.0
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org> <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com> <ZvUlB8s-zIkDQji7@google.com>
+In-Reply-To: <ZvUlB8s-zIkDQji7@google.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 1 Oct 2024 18:20:03 +0200
+Message-ID: <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+To: Quentin Perret <qperret@google.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
+	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
+	hongyan.xia2@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon Sep 30, 2024 at 3:19 PM CEST, Steffen Eiden wrote:
-> Add an extended List Secrets IOCTL. In contrast to the first list IOCTL
-> this accepts an index as the first two bytes of the provided page as an
-> input. This index is then taken as the index offset for the list UVC to
-> receive later entries for the list.
+On Thu, 26 Sept 2024 at 11:10, Quentin Perret <qperret@google.com> wrote:
 >
-> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> Hi Vincent,
+>
+> On Wednesday 25 Sep 2024 at 15:27:45 (+0200), Vincent Guittot wrote:
+> > On Fri, 20 Sept 2024 at 18:17, Quentin Perret <qperret@google.com> wrote:
+> > >
+> > > Hi Vincent,
+> > >
+> > > On Friday 30 Aug 2024 at 15:03:08 (+0200), Vincent Guittot wrote:
+> > > > Keep looking for an energy efficient CPU even when the system is
+> > > > overutilized and use the CPU returned by feec() if it has been able to find
+> > > > one. Otherwise fallback to the default performance and spread mode of the
+> > > > scheduler.
+> > > > A system can become overutilized for a short time when workers of a
+> > > > workqueue wake up for a short background work like vmstat update.
+> > > > Continuing to look for a energy efficient CPU will prevent to break the
+> > > > power packing of tasks.
+> > > >
+> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > > ---
+> > > >  kernel/sched/fair.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > > index 2273eecf6086..e46af2416159 100644
+> > > > --- a/kernel/sched/fair.c
+> > > > +++ b/kernel/sched/fair.c
+> > > > @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
+> > > >                   cpumask_test_cpu(cpu, p->cpus_ptr))
+> > > >                       return cpu;
+> > > >
+> > > > -             if (!is_rd_overutilized(this_rq()->rd)) {
+> > > > +             if (sched_energy_enabled()) {
+> > >
+> > > As mentioned during LPC, when there is no idle time on a CPU, the
+> > > utilization value of the tasks running on it is no longer a good
+> > > approximation for how much the tasks want, it becomes an image of how
+> > > much CPU time they were given. That is particularly problematic in the
+> > > co-scheduling case, but not just.
+> >
+> > Yes, this is not always true when overutilized and  true after a
+> > certain amount of time. When a CPU is fully utilized without any idle
+> > time anymore, feec() will not find a CPU for the task
+>
+> Well the problem is that is might actually find a CPU for the task -- a
+> co-scheduled task can obviously look arbitrarily small from a util PoV.
 
-[...]
+With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
+utilization"), the util_est remains set the value before having to
+share the cpu with other tasks which means that the util_est remains
+correct even if its util_avg decrease because of sharing the cpu with
+other task. This has been done to cover the cases that you mention
+above whereboth util_avg and util_est where decreasing when tasks
+starts to  share  the CPU bandwidth with others
 
-> +/* The actual list(_ext) IOCTL.
-> + * If list_ext is true, the first two bytes of the user buffer set the s=
-tarting index of the
-> + * list-UVC
-> + */
-> +static int list_secrets(struct uvio_ioctl_cb *uv_ioctl, bool list_ext)
-> +{
-> +	void __user *user_buf_arg =3D (void __user *)uv_ioctl->argument_addr;
-> +	u16 __user *user_index =3D (u16 __user *)uv_ioctl->argument_addr;
-> +	u16 start_idx =3D 0;
-> +	u8 *secrets =3D NULL;
-> +	int ret;
+>
+> > >
+> > > IOW, when we're OU, the util values are bogus, so using feec() is frankly
+> > > wrong IMO. If we don't have a good idea of how long tasks want to run,
+> >
+> > Except that the CPU is not already fully busy without idle time when
+> > the system is overutilized. We have  ~20% margin on each CPU which
+> > means that system are overutilized as soon as one CPU is more than 80%
+> > utilized which is far from not having idle time anymore. So even when
+> > OU, it doesn't mean that all CPUs don't have idle time and most of the
+> > time the opposite happens and feec() can still make a useful decision.
+>
+> My problem with the proposed change here is that it doesn't at all
+> distinguish between the truly overloaded case (when we have more compute
+> demand that resources) from a system with a stable-ish utilization at
+> 90%. If you're worried about the latter, then perhaps we should think
+> about redefining the OU threshold some other way (either by simply
+> making higher or configurable, or changing its nature to look at the
 
-nit: These can be reordered to reverse xmas tree.
+we definitely increase the OU threshold but we still have case with
+truly overutilized CPU but still good utilization value
 
-> +
-> +	if (uv_ioctl->argument_len !=3D UVIO_LIST_SECRETS_LEN)
-> +		return -EINVAL;
-> +
-> +	BUILD_BUG_ON(UVIO_LIST_SECRETS_LEN !=3D PAGE_SIZE);
-> +	secrets =3D (u8 *)get_zeroed_page(GFP_KERNEL);
-> +	if (!secrets)
-> +		return -ENOMEM;
-> +
-> +	// The extended call accepts an u16 index as input
+> last time we actually got idle time in the system). But I'm still rather
+> opinionated that util-based placement is wrong for the former.
 
-Comments should use /* */
+And feec() will return -1 for that case because util_est remains high
 
-> +	ret =3D -EFAULT;
-> +	if (list_ext) {
-> +		if (get_user(start_idx, user_index))
-> +			goto err;
-> +	}
-> +
-> +	uv_list_secrets(secrets, start_idx, &uv_ioctl->uv_rc, &uv_ioctl->uv_rrc=
-);
-> +
-> +	if (copy_to_user(user_buf_arg, secrets, UVIO_LIST_SECRETS_LEN))
-> +		goto err;
-> +	ret =3D 0;
-> +
-> +err:
-> +	free_pages((unsigned long)secrets, 0);
-> +	return ret;
-> +}
+>
+> And for what it's worth, in my experience if any of the big CPUs get
+> anywhere near the top of their OPP range, given that the power/perf
+> curve is exponential it's being penny-wise and pound-foolish to
+> micro-optimise the placement of the other smaller tasks from an energy
+> PoV at the same time. But if we can show that it helps real use-cases,
+> then why not.
 
-[...]
+The thermal mitigation and/or power budget policy quickly reduce the
+max compute capacity of such big CPUs becomes overutilized with lower
+OPP which reduce the diff between big/medium/little
+
+>
+> > Also, when there is no idle time on a CPU, the task doesn't fit and
+> > feec() doesn't return a CPU.
+>
+> It doesn't fit on that CPU but might still (incorrectly) fit on another
+> CPU right?
+
+the commit that I mentioned above covers those cases and the task will
+not incorrectly fit to another smaller CPU because its util_est is
+preserved during the overutilized phase
+
+>
+> > Then, the old way to compute invariant utilization was particularly
+> > sensible to the overutilized state because the utilization was capped
+> > and asymptotically converging to max cpu compute capacity but this is
+> > not true with the new pelt and we can go above compute capacity of the
+> > cpu and remain correct as long as we are able to increase the compute
+> > capacity before that there is no idle time. In theory, the utilization
+> > "could" be correct until we reach 1024 (for utilization or runnable)
+> > and there is no way to catch up the temporary under compute capacity.
+> >
+> > > the EM just can't help us with anything so we should stay away from it.
+> > >
+> > > I understand how just plain bailing out as we do today is sub-optimal,
+> > > but whatever we do to improve on that can't be doing utilization-based
+> > > task placement.
+> > >
+> > > Have you considered making the default (non-EAS) wake-up path a little
+> > > more reluctant to migrations when EAS is enabled? That should allow us
+> > > to maintain a somewhat stable task placement when OU is only transient
+> > > (e.g. due to misfit), but without using util values when we really
+> > > shouldn't.
+> > >
+> > > Thoughts?
+> >
+> > As mentioned above OU doesn't mean no idle time anymore and in this
+> > case utilization is still relevant
+>
+> OK, but please distinguish this from the truly overloaded case somehow,
+> I really don't think we can 'break' it just to help with the corner case
+> when we've got 90% ish util.
+>
+> > In would be in favor of adding
+> > more performance related decision into feec() similarly to have is
+> > done in patch 3 which would be for example that if a cpu doesn't fit
+> > we could still return  a CPU with more performance focus
+>
+> Fine with me in principle as long as we stop using utilization as a
+> proxy for how much a task wants when it really isn't that any more.
+>
+> Thanks!
+> Quentin
+>
+> > >
+> > > Thanks,
+> > > Quentin
+> > >
+> > > >                       new_cpu = find_energy_efficient_cpu(p, prev_cpu);
+> > > >                       if (new_cpu >= 0)
+> > > >                               return new_cpu;
+> > > > --
+> > > > 2.34.1
+> > > >
+> > > >
 
