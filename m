@@ -1,189 +1,167 @@
-Return-Path: <linux-kernel+bounces-345484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6CD98B6D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:24:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A3998B6DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8361A1C221E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9910B283328
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA1B19ABAE;
-	Tue,  1 Oct 2024 08:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6D819ABBF;
+	Tue,  1 Oct 2024 08:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="gjK9ZxBO"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMoaTJ9J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4EE19ABA8
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77B119AA68;
+	Tue,  1 Oct 2024 08:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727771064; cv=none; b=SOUGzhyhqDQziSLPC1iCch822oyypY2JWnB4M2bIL2kUJi43uXkFYgrXM7sq3htGok5Cqif36wnuPeRIE4HJWDDLZJWYrmA2S5NLXBedDhTuHdsl69Tfke+zDCvkVN6sSl/Z25/2xC6oSWLVWwrunp1B9JGajtJBKXD7egRevhI=
+	t=1727771107; cv=none; b=aPARmixNbldVqAj5926VEBwBVsf6ETuHoWIirAqM7svJ196jehzWsi6b29UvWUZhTbvAS6Zu6AhgjLPYjiXWd/pxpwue5Qm/ZCdelIKzXul1gFf9aYglw4t/zZ8oXgKDD7ucp0uPqXdR8VM7ErR57KzVQRqZtMVaw6TGC58+4MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727771064; c=relaxed/simple;
-	bh=8AJMW8Z3b9wJetqkBgaR2aftrmfyvbru3456YvuWlM0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gt0YScdfsF8sLtvCRZrTfhcclcvrPLk3vlTX8rTXDj933jZlgaMymVueq9F7nfgTtpUoxAmw+u/B0GbUZu0GUURyO4z8IM9/LRS/iwrQ5sCCIhw2jcfgeepUGFiiGwk1c4o1EuKae0bOzNDpvQjfnRpcUrXB6JNVuUmqBB9OlDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=gjK9ZxBO; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso817545166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:24:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1727771061; x=1728375861; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8AJMW8Z3b9wJetqkBgaR2aftrmfyvbru3456YvuWlM0=;
-        b=gjK9ZxBOKt2DXyjXzXanLq52+5dfGxlBMZ6lpb1J4cmMIzHPxYlLcjqnyaNJV/p/Gb
-         ePuT/9i95AkOsdHxjggqUIo+7b7szxEriTBEeYQ54jk4fkhKrJvpVeNfwOHIVnspXUP0
-         zdMGQUYg8tWIBamq9MIR+sS0o9lo1lxG2tjJZsGyALwjwaqOvSZVuhSzI3x40XVRpBfg
-         gvokcRUs0MQgyaQI/dC/vwVHJWQo4kg1eWrCyB9yoNRpn2aDXRU6xiCu9ffAVLkInpLS
-         AF1E2KObXB34CK41ZooVGvr9wtiPMvI+bbW3t4sNEsHQNon7mNGbeAebbkhe6FKRG9oY
-         WgNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727771061; x=1728375861;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8AJMW8Z3b9wJetqkBgaR2aftrmfyvbru3456YvuWlM0=;
-        b=EY9HkmNOj9q/IdDGhLHEVT3b9NMWnRRgw4Bbj8cbO/LFm+fCXCB+xQNNNPC9VJ5dEu
-         6v+E7nINS+dkxwOlXEG/TWY1BJ8Vk6SMG9CzpkQErQXpeNAPxdLToVwQo+1lyMqH6yHs
-         Vw/G/IIzFXx5SLVEYoP93PI+dx8uoH2pI5loPUDBnkLPZBUA3LuRyqBqP6+cHdwLOmzu
-         GT0jWQP5pSWb99TTbFU2yKeDuJ7NAKrgDNWpeBpQXzoMPer9/V8TU4TMm7iDmoOM2Pm3
-         oyXM9fqEjFjN2x+3T0eHYKrEdDnslyMtheZDW4FL1tWf4I+xyDsuduZxjiqkfb06tBfl
-         Hziw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrww5TO99GRJLL7aYvjsTuRWGnCFCgOKzcsnuJgoNkJ7peHhHfa94ToV54BZ3HNSChoWdSCfPAO06QNYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz27XBOT8hdTb+jedEk/BoyArW/Kn0lPpnARvmXeJERdAomQlrf
-	AqyPGJYIoVY51eCAE9ZtTuTUsCyKClN+A7tGBJEbuSIw1Dcr+tjmB+pLk8wJ43o=
-X-Google-Smtp-Source: AGHT+IFdMH1/s+U1Oar448DJMRPdY0HO+iMivk6aBcjMowrJwubM44U3KXpO6X+6VBpy2DswJlUdNA==
-X-Received: by 2002:a17:907:7e85:b0:a77:f2c5:84b3 with SMTP id a640c23a62f3a-a93c491f380mr1305042666b.22.1727771060815;
-        Tue, 01 Oct 2024 01:24:20 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27758dcsm667920866b.37.2024.10.01.01.24.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 01:24:20 -0700 (PDT)
+	s=arc-20240116; t=1727771107; c=relaxed/simple;
+	bh=b+AcDnEGb8LdEXd0c2T2qtZIELfJ7T27ILtRG0/kCLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u7hnjRJUgfQrEAQ+bcTqEkPtvezmGRX2KX1mu7QT+IkMiyU2HtYOr1FrAjMei/g771yke4Zu3DiLKEEnPmUSGs1gZKKprtzdD19u8shf2z4lP6/tQNccBEp89oCOOhIQ1GfJjm6yW0Xm3jVuCygmd0cjueTMpCTdl/PQe0OHZW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMoaTJ9J; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1727771106; x=1759307106;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=b+AcDnEGb8LdEXd0c2T2qtZIELfJ7T27ILtRG0/kCLY=;
+  b=QMoaTJ9J78MjSyZeDfQHUaoU7gY01h88x2c6hSjJNZ1rnkUf8bG7aF0t
+   /YepkoZIBGpcAH2FuWY/w01ZqEzQ/wTJUDk501SsXnOJwn0+ICk94q4FV
+   vIdfR4hkzMrXezvBIIRa4TPNfpSjDVX8K6BJP068mtkdLEyiBkZbagRYt
+   bj2DXbcykCwz1uPjhU2Yi97ofsicuJmgFZ5lLeyU1r/OoMHc1v6DDwWLf
+   +2vLqBTSBo0yzcPVAPFT+/jvvIA3FLRHfoYA36ZmXG0eaIXaLzUNpFLIo
+   Fb9AI9kxbg7qj6DENuKQpRPfxmor0HrVi3ky1tMlQ+uwBMA+DbElP3oc/
+   g==;
+X-CSE-ConnectionGUID: xIE4NqRjR3abZgNJtUlMfg==
+X-CSE-MsgGUID: kdDjTUy6T0WCNeZhJ5MlJA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11211"; a="26346000"
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="26346000"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 01:25:05 -0700
+X-CSE-ConnectionGUID: CmIVYcjpRQS3nt0Myd2/yQ==
+X-CSE-MsgGUID: wnSj9acpSn64b1C21OAnCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="73995499"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 01 Oct 2024 01:25:02 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1svYBn-000QQd-1b;
+	Tue, 01 Oct 2024 08:24:59 +0000
+Date: Tue, 1 Oct 2024 16:24:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, jacob.e.keller@intel.com,
+	horms@kernel.org, sd@queasysnail.net, chunkeey@gmail.com
+Subject: Re: [PATCH net-next 09/13] net: ibm: emac: rgmii:
+ devm_platform_get_resource
+Message-ID: <202410011636.QtBtiUKi-lkp@intel.com>
+References: <20240930180036.87598-10-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Oct 2024 10:24:19 +0200
-Message-Id: <D4KBQ3ENKF5Y.3D2AK81PELAEZ@fairphone.com>
-Cc: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, "Suresh Vankadara"
- <quic_svankada@quicinc.com>, "Trishansh Bhardwaj"
- <quic_tbhardwa@quicinc.com>, <stable@vger.kernel.org>, "Hariram
- Purushothaman" <quic_hariramp@quicinc.com>
-Subject: Re: [PATCH 00/10] (no cover subject)
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, "Vikram Sharma"
- <quic_vikramsa@quicinc.com>, "Robert Foss" <rfoss@kernel.org>, "Todor
- Tomov" <todor.too@gmail.com>, "Mauro Carvalho Chehab" <mchehab@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Kapatrala
- Syed" <akapatra@quicinc.com>, "Hariram Purushothaman"
- <hariramp@quicinc.com>, "Bjorn Andersson" <andersson@kernel.org>, "Konrad
- Dybcio" <konradybcio@kernel.org>, "Hans Verkuil"
- <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>, "Catalin
- Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com> <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com> <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
-In-Reply-To: <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240930180036.87598-10-rosenp@gmail.com>
 
-On Mon Sep 30, 2024 at 1:54 PM CEST, Bryan O'Donoghue wrote:
-> On 30/09/2024 11:52, Luca Weiss wrote:
-> > On Wed Sep 4, 2024 at 1:10 PM CEST, Vikram Sharma wrote:
-> >> SC7280 is a Qualcomm SoC. This series adds support to
-> >> bring up the CSIPHY, CSID, VFE/RDI interfaces in SC7280.
-> >>
-> >> SC7280 provides
-> >>
-> >> - 3 x VFE, 3 RDI per VFE
-> >> - 2 x VFE Lite, 4 RDI per VFE
-> >> - 3 x CSID
-> >> - 2 x CSID Lite
-> >> - 5 x CSI PHY
-> >=20
-> > Hi Vikram,
-> >=20
-> > I tried this on my QCM6490 Fairphone 5 smartphone.
-> >=20
-> > Unfortunately I couldn't get e.g. CSID test pattern out of camss. I've
-> > tested this patchset on v6.11.
-> >=20
-> > These commands did work on an older sc7280 camss patchset (which was
-> > never sent to the lists). Can you please take a look?
-> >=20
-> > v4l2-ctl -d /dev/v4l-subdev5 -c test_pattern=3D1
-> > media-ctl -d /dev/media0 -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> > media-ctl -d /dev/media0 -V '"msm_csid0":1[fmt:UYVY8_2X8/1920x1080 fiel=
-d:none],"msm_vfe0_rdi0":0[fmt:UYVY8_2X8/1920x1080 field:none]'
-> > gst-launch-1.0 v4l2src device=3D/dev/video0 num-buffers=3D1 ! 'video/x-=
-raw,format=3DUYVY,width=3D1920,height=3D1080' ! jpegenc ! filesink location=
-=3Dimage01.jpg
->
-> Here's what I have for rb5
->
-> # CSID0 TPG RB5
-> media-ctl --reset
-> yavta --no-query -w '0x009f0903 2' /dev/v4l-subdev6
-> yavta --list /dev/v4l-subdev6
-> media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> media-ctl -d /dev/media0 -p
->
-> Maybe on FP5 ...
->
-> media-ctl --reset
-> yavta --no-query -w '0x009f0903 2' /dev/v4l-subdev5
-> yavta --list /dev/v4l-subdev5
-> media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> media-ctl -d /dev/media0 -p
+Hi Rosen,
 
-Hi Bryan!
+kernel test robot noticed the following build errors:
 
-These commands are to set up the pipeline, and what then to grab an
-image from it?
+[auto build test ERROR on net-next/main]
 
-I tried this, but it also just hangs:
+url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-ibm-emac-remove-custom-init-exit-functions/20241001-020553
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20240930180036.87598-10-rosenp%40gmail.com
+patch subject: [PATCH net-next 09/13] net: ibm: emac: rgmii: devm_platform_get_resource
+config: powerpc-fsp2_defconfig (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/reproduce)
 
-$ yavta -B capture-mplane --capture=3D3 -n 3 -f SRGGB10P -s 4056x3040 /dev/=
-video0 --file=3Dfoo-#.bin
-Device /dev/video0 opened.
-Device `Qualcomm Camera Subsystem' on `platform:acb3000.camss' (driver 'qco=
-m-camss') supports video, capture, with mplanes.
-Video format set: SRGGB10P (41415270) 4056x3040 field none, 1 planes:=20
- * Stride 5072, buffer size 15418880
-Video format: SRGGB10P (41415270) 4056x3040 field none, 1 planes:=20
- * Stride 5072, buffer size 15418880
-3 buffers requested.
-length: 1 offset: 3326519176 timestamp type/source: mono/EoF
-Buffer 0/0 mapped at address 0xffffa0c00000.
-length: 1 offset: 3326519176 timestamp type/source: mono/EoF
-Buffer 1/0 mapped at address 0xffff9fc08000.
-length: 1 offset: 3326519176 timestamp type/source: mono/EoF
-Buffer 2/0 mapped at address 0xffff9ec10000.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410011636.QtBtiUKi-lkp@intel.com/
 
-Regards
-Luca
+All errors (new ones prefixed by >>):
+
+   drivers/net/ethernet/ibm/emac/rgmii.c: In function 'rgmii_probe':
+>> drivers/net/ethernet/ibm/emac/rgmii.c:229:21: error: implicit declaration of function 'devm_platform_get_resource'; did you mean 'platform_get_resource'? [-Wimplicit-function-declaration]
+     229 |         dev->base = devm_platform_get_resource(ofdev, 0);
+         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                     platform_get_resource
+>> drivers/net/ethernet/ibm/emac/rgmii.c:229:19: error: assignment to 'struct rgmii_regs *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     229 |         dev->base = devm_platform_get_resource(ofdev, 0);
+         |                   ^
 
 
+vim +229 drivers/net/ethernet/ibm/emac/rgmii.c
 
->
-> ?
->
-> ---
-> bod
+   215	
+   216	
+   217	static int rgmii_probe(struct platform_device *ofdev)
+   218	{
+   219		struct rgmii_instance *dev;
+   220	
+   221		dev = devm_kzalloc(&ofdev->dev, sizeof(struct rgmii_instance),
+   222				   GFP_KERNEL);
+   223		if (!dev)
+   224			return -ENOMEM;
+   225	
+   226		mutex_init(&dev->lock);
+   227		dev->ofdev = ofdev;
+   228	
+ > 229		dev->base = devm_platform_get_resource(ofdev, 0);
+   230		if (IS_ERR(dev->base)) {
+   231			dev_err(&ofdev->dev, "can't map device registers");
+   232			return PTR_ERR(dev->base);
+   233		}
+   234	
+   235		/* Check for RGMII flags */
+   236		if (of_property_read_bool(ofdev->dev.of_node, "has-mdio"))
+   237			dev->flags |= EMAC_RGMII_FLAG_HAS_MDIO;
+   238	
+   239		/* CAB lacks the right properties, fix this up */
+   240		if (of_device_is_compatible(ofdev->dev.of_node, "ibm,rgmii-axon"))
+   241			dev->flags |= EMAC_RGMII_FLAG_HAS_MDIO;
+   242	
+   243		DBG2(dev, " Boot FER = 0x%08x, SSR = 0x%08x\n",
+   244		     in_be32(&dev->base->fer), in_be32(&dev->base->ssr));
+   245	
+   246		/* Disable all inputs by default */
+   247		out_be32(&dev->base->fer, 0);
+   248	
+   249		printk(KERN_INFO
+   250		       "RGMII %pOF initialized with%s MDIO support\n",
+   251		       ofdev->dev.of_node,
+   252		       (dev->flags & EMAC_RGMII_FLAG_HAS_MDIO) ? "" : "out");
+   253	
+   254		wmb();
+   255		platform_set_drvdata(ofdev, dev);
+   256	
+   257		return 0;
+   258	}
+   259	
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
