@@ -1,359 +1,144 @@
-Return-Path: <linux-kernel+bounces-346035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D4398BE99
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:56:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399A898BE85
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:54:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717DD1F22363
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:56:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6CC9B24353
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB261C9ECA;
-	Tue,  1 Oct 2024 13:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E841C9B7C;
+	Tue,  1 Oct 2024 13:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="TX6Vbmz/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bbeWAO54"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238D71C9DFD;
-	Tue,  1 Oct 2024 13:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3471C6F58
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 13:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790719; cv=none; b=LaiY+TjhANiYVftuTJaJ0q+nxYC2mwP94b5qmAj6YYEeRw79/FljnYVkqNebjihuh3kD6DNFPCil91VJnTr/EnpQ1wN/qQQSWjTrDzhZ06IhXziIEBtXJJRyCTipJqLgj1xC9pyblDgVwe1MyNu02poCxe5zO04LRSitnNrTXGc=
+	t=1727790700; cv=none; b=fl1KrpqG9OX3fVZhJ2IxMN03FIK0T0Rnl1o8NDyEn8ZaQ4y5TKWUy55g8EY0PioxFIPKASdlMUM/0S0d6JxNxyxw4He4sbihbSwWrV+mg5IrFyK8t/ks8mRY8IRhtOumYZqOGB5OoStJqySWkLh2DMtF1/wApmMhg3yDBWWDodc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790719; c=relaxed/simple;
-	bh=mOj5JOdow5wuqv+h4v4oSNGJAxVJQHDe5dZFLi/5Vsc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Pu09O7gu67Gftsy187EYH6ncSVZRaCSyMsK6+BnN8gdxtYCLqIQaAdJgA8BTY0S7kYDs05gSQvuxsActbkZGoa2MKZajYVeVb2saSK0s26X2+aF9LaAi+48toqFZf97F1N3Va5lZJ59h2gY9vuXqI4BDOT2my7YRfWm7BOLgD08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=TX6Vbmz/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1727790716; x=1759326716;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=mOj5JOdow5wuqv+h4v4oSNGJAxVJQHDe5dZFLi/5Vsc=;
-  b=TX6Vbmz/T5gxgTH6x/LPbMDXq4o2IPLfn6c0Gm3h/xU/liyCEXPJBRA6
-   2ME3GMeKqM7ADUMEoQ2bsyUKZyum8iVBj0iLTNaGE9HRC/OrB9p16bAo5
-   UJYlPBOVGluIARDIj4P1xxCKK0AWPlSZuorh4YbtffFG6IwwSTOdRHSW8
-   Jyk7n4cUpGuPwDMsbqVx5bY8sTr8k1t/tcG/Na3AQGX8YqLIeQbsjvAb2
-   HM6jLadoI1HIMdE6cJs4dG8+92TCvgX+b9/BH2Is902pgVcBjntzOrB1k
-   UgdYlBKIySDir4OyNlFNoHP3UyCxC7XUslvrz2Kb+GhReg+0WrCwUyuXU
-   g==;
-X-CSE-ConnectionGUID: PEtbMb/SSnq9y/Yd81naGA==
-X-CSE-MsgGUID: uktqJOuxTreLhJoLa4Jjmw==
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="199893176"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 06:51:54 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 1 Oct 2024 06:51:48 -0700
-Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 06:51:45 -0700
-From: Daniel Machon <daniel.machon@microchip.com>
-Date: Tue, 1 Oct 2024 15:50:45 +0200
-Subject: [PATCH net-next 15/15] net: sparx5: add is_sparx5 macro and use it
- throughout
+	s=arc-20240116; t=1727790700; c=relaxed/simple;
+	bh=DKMT61YzqQ1gvISKlWmlLIYiprIGfEGiqyn8K0KQMmY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cCvUyWnP+6x6TflIQ/XEmWWhhbFrke0Js0ZcYEDx5XKiTemS2jGJL7BAmdxIBm6a8jZuDaVEHaAoR2RxBbco9B/12/2IDWfT0wt0JUz8lNen6e6Q1GqI+foJXym7XrBwdLgGiH4LIv7FLyg2hr59WsUhaVkPDy9NfzI1yOlyreE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bbeWAO54; arc=none smtp.client-ip=209.85.166.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a0cb892c6aso359275ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 06:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727790697; x=1728395497; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=48wUOkFe53TjLWfnqR6mtcm302S1oICUhkJf6xdI3GE=;
+        b=bbeWAO54ycOWxO4QS37HsMCVVP+9lAT3kT/fCSUbiN1Cc7nslyZzuWlg8RrEVfCYWz
+         AAe60SxpsbgxeHDcjcZ0Uuy8qh1yRQOVCr+Ma9yu7dhs3hEOWsiSDSbd5OMBEhaaRp4z
+         ednp51iRYY+FkAr92AGVBmQceDoLbBqt1wdfv7IpIGXkmNV85/elKxhScNP4vKoBLUBc
+         YgUYjOMXwAf5IymTqKrw4lBUJAZejMbRLi1pXYABQGVC9ngC5Wr/AhTC+n+nYIW1XLS8
+         fOeQkYFdI4EtPmW5y5HRlrGwZq6QyJRelyxvUX9NFWIVTfid2VRIfRvjnTN5Nvba8s25
+         4LTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727790697; x=1728395497;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=48wUOkFe53TjLWfnqR6mtcm302S1oICUhkJf6xdI3GE=;
+        b=RK9zLgU6hpXh40QIRwrr/FxtEDzIC3NWrbVguWwb/R37SmKZrnUiyEuKICMJ9HXmqB
+         J0yuqEdIy1yLFL20MPiJ7nbt/IA+PyxNkvySc4udKDomBnAD8zh5HTzh1CfiBY6qkXIR
+         hwe3rcp5WcTQSbEqYUcjDwwTA+/m3UqxIunSCVVBhsCqe0iMnSqGaM0RYoLot1T2tX+9
+         DcYlGcJ0NtxzcF3mQhMCIYyqvmQqwcNsh62uxE4FvvyCSWzfv8YJRs6ys2mvMMe/Ibpg
+         5dVsGsuGsi8b+tKJtyZoJEsdYeTpDVuzo38Txv84fuFCfGzeTzlED+3rsxi85w94misM
+         30Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDYIiMicmYjYpLoKrPuCtFd9rzEnvXwcul/YmbBBMWforp4zjOTg68SZPz2Wqw77Ml9nx5eMXntECLyB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgIpFCv4sE+3g176YHkEepXUsJrQH3toIrt7rz67B15VtrJSEp
+	182zHhrkWLgFTHz0q1z8Odlb9QiRUQGRG9Sid0I5HCi/RBfkvD4grCoWxBXVsDYvlAkNVYEttiI
+	WWxlZy7YhMMK6gC1YJw0xZbjieSoTfDDPuX9J
+X-Google-Smtp-Source: AGHT+IFcHk3nqjivw+SJYZ1aoJmxEgVk8y9/J6HHuCIHNMPZ7sipZFKYUdJWncidCw3XXnrEA8ibHKSYEC3fjQvG8T0=
+X-Received: by 2002:a05:6e02:1a62:b0:3a0:b0dc:ac0d with SMTP id
+ e9e14a558f8ab-3a36083bf05mr3161285ab.27.1727790696651; Tue, 01 Oct 2024
+ 06:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241001-b4-sparx5-lan969x-switch-driver-v1-15-8c6896fdce66@microchip.com>
-References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
- Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
-	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	Richard Cochran <richardcochran@gmail.com>, <horms@kernel.org>,
-	<justinstitt@google.com>, <gal@nvidia.com>, <aakash.r.menon@gmail.com>,
-	<jacob.e.keller@intel.com>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-X-Mailer: b4 0.14-dev
+References: <20241001123625.1063153-1-james.clark@linaro.org> <Zvv9eBDrquBHBHhF@x1>
+In-Reply-To: <Zvv9eBDrquBHBHhF@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 06:51:24 -0700
+Message-ID: <CAP-5=fX3X22NS35YQwcMgv03Cw9acjDC_AC-Yocm-zMJXpBg4g@mail.gmail.com>
+Subject: Re: [PATCH] perf dwarf-aux: Fix build with !HAVE_DWARF_GETLOCATIONS_SUPPORT
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org, 
+	namhyung@kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Kajol Jain <kjain@linux.ibm.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We dont want to ops out each time a function needs to do some platform
-specifics. In particular we have a few places, where it would be
-convenient to just branch out on the platform type. Add the function
-is_sparx5() and, initially, use it for:
+On Tue, Oct 1, 2024 at 6:47=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Tue, Oct 01, 2024 at 01:36:25PM +0100, James Clark wrote:
+> > The linked fixes commit added an #include "dwarf-aux.h" to disasm.h
+> > which gets picked up in a lot of places. Without
+> > HAVE_DWARF_GETLOCATIONS_SUPPORT the stubs return an errno, so include
+> > errno.h to fix the following build error:
+> >
+> >   In file included from util/disasm.h:8,
+> >                  from util/annotate.h:16,
+> >                  from builtin-top.c:23:
+> >   util/dwarf-aux.h: In function 'die_get_var_range':
+> >   util/dwarf-aux.h:183:10: error: 'ENOTSUP' undeclared (first use in th=
+is function)
+> >     183 |  return -ENOTSUP;
+> >         |          ^~~~~~~
+> >
+> > Fixes: 782959ac248a ("perf annotate: Add "update_insn_state" callback f=
+unction to handle arch specific instruction tracking")
+> > Signed-off-by: James Clark <james.clark@linaro.org>
 
-    - register writes that should only be done on Sparx5 (QSYS_CAL_CTRL,
-      CLKGEN_LCPLL1_CORE_CLK).
+There are a few variants of this same patch flying around:
+https://lore.kernel.org/lkml/20240919013513.118527-4-yangjihong@bytedance.c=
+om/
+https://lore.kernel.org/lkml/20240924003720.617258-4-irogers@google.com/
+Just a heads up that we only need to apply 1.
 
-    - function calls that should only be done on Sparx5
-      (ethtool_op_get_ts_info())
+Thanks,
+Ian
 
-    - register writes that are chip-exclusive (MASK_CFG1/2, PGID_CFG1/2,
-      these are replicated for n_ports >32 on Sparx5).
-
-The is_sparx5() function simply checks the target chip type, to
-determine if this is a Sparx5 SKU or not.
-
-Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
----
- .../ethernet/microchip/sparx5/sparx5_calendar.c    |  7 +-
- .../net/ethernet/microchip/sparx5/sparx5_ethtool.c |  2 +-
- .../net/ethernet/microchip/sparx5/sparx5_main.c    | 88 +++++++++++++---------
- .../net/ethernet/microchip/sparx5/sparx5_main.h    |  1 +
- .../net/ethernet/microchip/sparx5/sparx5_vlan.c    | 42 +++++++----
- 5 files changed, 88 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_calendar.c b/drivers/net/ethernet/microchip/sparx5/sparx5_calendar.c
-index 35456cd35a40..78600b6aeaf2 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_calendar.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_calendar.c
-@@ -193,9 +193,10 @@ int sparx5_config_auto_calendar(struct sparx5 *sparx5)
- 	}
- 
- 	/* Halt the calendar while changing it */
--	spx5_rmw(QSYS_CAL_CTRL_CAL_MODE_SET(10),
--		 QSYS_CAL_CTRL_CAL_MODE,
--		 sparx5, QSYS_CAL_CTRL);
-+	if (is_sparx5(sparx5))
-+		spx5_rmw(QSYS_CAL_CTRL_CAL_MODE_SET(10),
-+			 QSYS_CAL_CTRL_CAL_MODE,
-+			 sparx5, QSYS_CAL_CTRL);
- 
- 	/* Assign port bandwidth to auto calendar */
- 	for (idx = 0; idx < SPX5_CONST(n_auto_cals); idx++)
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
-index 4176733179db..516eb107040f 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
-@@ -1189,7 +1189,7 @@ static int sparx5_get_ts_info(struct net_device *dev,
- 	struct sparx5 *sparx5 = port->sparx5;
- 	struct sparx5_phc *phc;
- 
--	if (!sparx5->ptp)
-+	if (!sparx5->ptp && is_sparx5(sparx5))
- 		return ethtool_op_get_ts_info(dev, info);
- 
- 	phc = &sparx5->phc[SPARX5_PHC_PORT];
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-index 67e8d2d70816..04ccfb448c2c 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.c
-@@ -210,6 +210,25 @@ static const struct sparx5_main_io_resource sparx5_main_iomap[] =  {
- 	{ TARGET_VOP,                0x11a00000, 2 }, /* 0x611a00000 */
- };
- 
-+bool is_sparx5(struct sparx5 *sparx5)
-+{
-+	switch (sparx5->target_ct) {
-+	case SPX5_TARGET_CT_7546:
-+	case SPX5_TARGET_CT_7549:
-+	case SPX5_TARGET_CT_7552:
-+	case SPX5_TARGET_CT_7556:
-+	case SPX5_TARGET_CT_7558:
-+	case SPX5_TARGET_CT_7546TSN:
-+	case SPX5_TARGET_CT_7549TSN:
-+	case SPX5_TARGET_CT_7552TSN:
-+	case SPX5_TARGET_CT_7556TSN:
-+	case SPX5_TARGET_CT_7558TSN:
-+		return true;
-+	default:
-+		return false;
-+	}
-+}
-+
- static int sparx5_create_targets(struct sparx5 *sparx5)
- {
- 	const struct sparx5_main_io_resource *iomap = sparx5->data->iomap;
-@@ -464,44 +483,45 @@ static int sparx5_init_coreclock(struct sparx5 *sparx5)
- 		return -ENODEV;
- 	}
- 
--	switch (freq) {
--	case SPX5_CORE_CLOCK_250MHZ:
--		clk_div = 10;
--		pol_upd_int = 312;
--		break;
--	case SPX5_CORE_CLOCK_500MHZ:
--		clk_div = 5;
--		pol_upd_int = 624;
--		break;
--	case SPX5_CORE_CLOCK_625MHZ:
--		clk_div = 4;
--		pol_upd_int = 780;
--		break;
--	default:
--		dev_err(sparx5->dev, "%d coreclock not supported on (%#04x)\n",
--			sparx5->coreclock, sparx5->target_ct);
--		return -EINVAL;
-+	if (is_sparx5(sparx5)) {
-+		switch (freq) {
-+		case SPX5_CORE_CLOCK_250MHZ:
-+			clk_div = 10;
-+			pol_upd_int = 312;
-+			break;
-+		case SPX5_CORE_CLOCK_500MHZ:
-+			clk_div = 5;
-+			pol_upd_int = 624;
-+			break;
-+		case SPX5_CORE_CLOCK_625MHZ:
-+			clk_div = 4;
-+			pol_upd_int = 780;
-+			break;
-+		default:
-+			dev_err(sparx5->dev,
-+				"%d coreclock not supported on (%#04x)\n",
-+				sparx5->coreclock, sparx5->target_ct);
-+			return -EINVAL;
-+		}
-+
-+		/* Configure the LCPLL */
-+		spx5_rmw(CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_DIV_SET(clk_div) |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_PRE_DIV_SET(0) |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_DIR_SET(0) |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_SEL_SET(0) |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_ENA_SET(0) |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_ENA_SET(1),
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_DIV |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_PRE_DIV |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_DIR |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_SEL |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_ENA |
-+			 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_ENA,
-+			 sparx5, CLKGEN_LCPLL1_CORE_CLK_CFG);
- 	}
- 
- 	/* Update state with chosen frequency */
- 	sparx5->coreclock = freq;
--
--	/* Configure the LCPLL */
--	spx5_rmw(CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_DIV_SET(clk_div) |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_PRE_DIV_SET(0) |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_DIR_SET(0) |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_SEL_SET(0) |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_ENA_SET(0) |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_ENA_SET(1),
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_DIV |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_PRE_DIV |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_DIR |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_SEL |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_ROT_ENA |
--		 CLKGEN_LCPLL1_CORE_CLK_CFG_CORE_CLK_ENA,
--		 sparx5,
--		 CLKGEN_LCPLL1_CORE_CLK_CFG);
--
- 	clk_period = sparx5_clk_period(freq);
- 
- 	spx5_rmw(HSCH_SYS_CLK_PER_100PS_SET(clk_period / 100),
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-index 55fc21fbf63d..6aa7b58556e9 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
-@@ -380,6 +380,7 @@ struct sparx5 {
- 
- /* sparx5_main.c */
- extern const struct sparx5_regs *regs;
-+bool is_sparx5(struct sparx5 *sparx5);
- 
- /* sparx5_switchdev.c */
- int sparx5_register_notifier_blocks(struct sparx5 *sparx5);
-diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_vlan.c b/drivers/net/ethernet/microchip/sparx5/sparx5_vlan.c
-index 5d5e5c2c05c5..36a5b3c09469 100644
---- a/drivers/net/ethernet/microchip/sparx5/sparx5_vlan.c
-+++ b/drivers/net/ethernet/microchip/sparx5/sparx5_vlan.c
-@@ -16,8 +16,10 @@ static int sparx5_vlant_set_mask(struct sparx5 *sparx5, u16 vid)
- 
- 	/* Output mask to respective registers */
- 	spx5_wr(mask[0], sparx5, ANA_L3_VLAN_MASK_CFG(vid));
--	spx5_wr(mask[1], sparx5, ANA_L3_VLAN_MASK_CFG1(vid));
--	spx5_wr(mask[2], sparx5, ANA_L3_VLAN_MASK_CFG2(vid));
-+	if (is_sparx5(sparx5)) {
-+		spx5_wr(mask[1], sparx5, ANA_L3_VLAN_MASK_CFG1(vid));
-+		spx5_wr(mask[2], sparx5, ANA_L3_VLAN_MASK_CFG2(vid));
-+	}
- 
- 	return 0;
- }
-@@ -141,15 +143,19 @@ void sparx5_pgid_update_mask(struct sparx5_port *port, int pgid, bool enable)
- void sparx5_pgid_clear(struct sparx5 *spx5, int pgid)
- {
- 	spx5_wr(0, spx5, ANA_AC_PGID_CFG(pgid));
--	spx5_wr(0, spx5, ANA_AC_PGID_CFG1(pgid));
--	spx5_wr(0, spx5, ANA_AC_PGID_CFG2(pgid));
-+	if (is_sparx5(spx5)) {
-+		spx5_wr(0, spx5, ANA_AC_PGID_CFG1(pgid));
-+		spx5_wr(0, spx5, ANA_AC_PGID_CFG2(pgid));
-+	}
- }
- 
- void sparx5_pgid_read_mask(struct sparx5 *spx5, int pgid, u32 portmask[3])
- {
- 	portmask[0] = spx5_rd(spx5, ANA_AC_PGID_CFG(pgid));
--	portmask[1] = spx5_rd(spx5, ANA_AC_PGID_CFG1(pgid));
--	portmask[2] = spx5_rd(spx5, ANA_AC_PGID_CFG2(pgid));
-+	if (is_sparx5(spx5)) {
-+		portmask[1] = spx5_rd(spx5, ANA_AC_PGID_CFG1(pgid));
-+		portmask[2] = spx5_rd(spx5, ANA_AC_PGID_CFG2(pgid));
-+	}
- }
- 
- void sparx5_update_fwd(struct sparx5 *sparx5)
-@@ -164,8 +170,10 @@ void sparx5_update_fwd(struct sparx5 *sparx5)
- 	/* Update flood masks */
- 	for (port = PGID_UC_FLOOD; port <= PGID_BCAST; port++) {
- 		spx5_wr(mask[0], sparx5, ANA_AC_PGID_CFG(port));
--		spx5_wr(mask[1], sparx5, ANA_AC_PGID_CFG1(port));
--		spx5_wr(mask[2], sparx5, ANA_AC_PGID_CFG2(port));
-+		if (is_sparx5(sparx5)) {
-+			spx5_wr(mask[1], sparx5, ANA_AC_PGID_CFG1(port));
-+			spx5_wr(mask[2], sparx5, ANA_AC_PGID_CFG2(port));
-+		}
- 	}
- 
- 	/* Update SRC masks */
-@@ -176,12 +184,16 @@ void sparx5_update_fwd(struct sparx5 *sparx5)
- 			clear_bit(port, workmask);
- 			bitmap_to_arr32(mask, workmask, SPX5_PORTS);
- 			spx5_wr(mask[0], sparx5, ANA_AC_SRC_CFG(port));
--			spx5_wr(mask[1], sparx5, ANA_AC_SRC_CFG1(port));
--			spx5_wr(mask[2], sparx5, ANA_AC_SRC_CFG2(port));
-+			if (is_sparx5(sparx5)) {
-+				spx5_wr(mask[1], sparx5, ANA_AC_SRC_CFG1(port));
-+				spx5_wr(mask[2], sparx5, ANA_AC_SRC_CFG2(port));
-+			}
- 		} else {
- 			spx5_wr(0, sparx5, ANA_AC_SRC_CFG(port));
--			spx5_wr(0, sparx5, ANA_AC_SRC_CFG1(port));
--			spx5_wr(0, sparx5, ANA_AC_SRC_CFG2(port));
-+			if (is_sparx5(sparx5)) {
-+				spx5_wr(0, sparx5, ANA_AC_SRC_CFG1(port));
-+				spx5_wr(0, sparx5, ANA_AC_SRC_CFG2(port));
-+			}
- 		}
- 	}
- 
-@@ -192,8 +204,10 @@ void sparx5_update_fwd(struct sparx5 *sparx5)
- 
- 	/* Apply learning mask */
- 	spx5_wr(mask[0], sparx5, ANA_L2_AUTO_LRN_CFG);
--	spx5_wr(mask[1], sparx5, ANA_L2_AUTO_LRN_CFG1);
--	spx5_wr(mask[2], sparx5, ANA_L2_AUTO_LRN_CFG2);
-+	if (is_sparx5(sparx5)) {
-+		spx5_wr(mask[1], sparx5, ANA_L2_AUTO_LRN_CFG1);
-+		spx5_wr(mask[2], sparx5, ANA_L2_AUTO_LRN_CFG2);
-+	}
- }
- 
- void sparx5_vlan_port_apply(struct sparx5 *sparx5,
-
--- 
-2.34.1
-
+> > ---
+> >  tools/perf/util/dwarf-aux.h | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/tools/perf/util/dwarf-aux.h b/tools/perf/util/dwarf-aux.h
+> > index 336a3a183a78..bd7505812569 100644
+> > --- a/tools/perf/util/dwarf-aux.h
+> > +++ b/tools/perf/util/dwarf-aux.h
+> > @@ -9,6 +9,7 @@
+> >  #include <elfutils/libdw.h>
+> >  #include <elfutils/libdwfl.h>
+> >  #include <elfutils/version.h>
+> > +#include <errno.h>
+>
+> Simple enough, thanks, applied to perf-tools/perf-tools.
+>
+> - Arnaldo
+>
+> >  struct strbuf;
+> >
+> > --
+> > 2.34.1
+> >
 
