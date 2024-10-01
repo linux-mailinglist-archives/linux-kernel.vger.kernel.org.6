@@ -1,470 +1,222 @@
-Return-Path: <linux-kernel+bounces-345283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFA098B416
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:04:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA45F98B417
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23831C22C72
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:04:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D8F5282790
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686A01BBBEB;
-	Tue,  1 Oct 2024 06:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1949E1BBBDB;
+	Tue,  1 Oct 2024 06:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pw2iSSnW"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AaTcoT0I"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC981BBBD6;
-	Tue,  1 Oct 2024 06:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88203201
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762651; cv=none; b=XmF7YfKVUTCdLqmpt09wAzAQOav1aEgyeBtvt5qvMiM9zSzxvZw5DpR7sdFO878btKSCtTHGE1tPG7opTPK6oxDRd1Pseg6ksWVF6qm5yQqm4I1L86CUrPJsJpncMUMu0mb6VcNDvGe1d67wMAPNqUM5WSfZlYZZ8wyddOrPUV0=
+	t=1727762754; cv=none; b=c3bciBhdCwO7I0M3gdC++KFR2d/KRZ6pAQVBp0qK+orfNShGm0xvoQFVOYdq7I4aBR4cPEgLjbjwrxCuNmwSeTm4rRbKYtqY7RgsdLLHdKWjTTWsr7PWRCMnBHfdkozK4/VIdTbjTGVcuvf8cBLSqv1aESd2uaf0IPJ8qoTB6iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762651; c=relaxed/simple;
-	bh=dkgDnCRbFnPZwqTYcf6bADDehQ64yHjle5VO/m+LrAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u2fTVeNX4iMJ+SYx8ZzOeKj8qaZSUavIQI2yTd/iyOqw/IO5FE8NoV93FXuOhoHpkr88VS/wSOehgs2pRsvCKF1rkULpInuyo9BUQrQ9J2WYWDMVHodlg68dHvkFVj4JIdci4P77mTqJZYHEsf7bDcGs63z7WhE8GY1X/7fjdxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pw2iSSnW; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48UKR7hg021749;
-	Tue, 1 Oct 2024 06:03:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=f
-	MSgl6EiouNEj1qT9vZmlvnyNtAu8Vn285GxHelAV6c=; b=pw2iSSnWOZ955f6s3
-	rt9/dPLNyGegMUnzMTcQcIRpU8pxZoV6cNP0He+ZQauZ2XtmxRg+uey6/zwU2HpG
-	QYG5TVRQhPwEe9YeS/LV04VSyJPUMdcuKajG9kBw4z5TNOGtHdBd3iLHd/QVF1R3
-	dxpnlnArv2FwUix1HkZxOY9R6Amwj8l1VDV0aX4ZsnTbjARMeX77f5dvaQPw0fgF
-	tdVV+w6Z7WF2b5+LxqzdW6bXIx5R8V0qMI77Jk+OybJ/L25hpX/xJ+OZASc7+XRw
-	7p3OjnBg9PpA8qwLBVMuLDAJr8UGZstLK4WEPGle8ty8Db/t7Q8iph3asUkxCScl
-	2M96Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x87kndeb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 06:03:42 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49163fej017020;
-	Tue, 1 Oct 2024 06:03:41 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41x87knde7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 06:03:41 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4915orw6017866;
-	Tue, 1 Oct 2024 06:03:40 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xw4mtj2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 06:03:40 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49163eMT22020764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 06:03:40 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4B9FE58059;
-	Tue,  1 Oct 2024 06:03:40 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A261E58055;
-	Tue,  1 Oct 2024 06:03:31 +0000 (GMT)
-Received: from [9.43.73.171] (unknown [9.43.73.171])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 06:03:31 +0000 (GMT)
-Message-ID: <37ee8dd8-2204-4eca-b938-38c5b2fb10d1@linux.ibm.com>
-Date: Tue, 1 Oct 2024 11:33:29 +0530
+	s=arc-20240116; t=1727762754; c=relaxed/simple;
+	bh=vQexvvhk5fJr2dXH4vbsL8BRDbhC51Ft5X2lyUzfzs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZqpGWvYZSPxeeejkVa5XF1HQvfSg0jO5yNoVO5OECUTVjkrgL++5qiaqREB1um0gDtjrsdchPLuQQ/tUS8kKm3nR2wIOfEi7Bp6wszwgrfEgspR2sDRtELkHHNZVTNJfdf81lXGLsrgWvg1uUFPnWQDOowuClovm69C0wuiEP/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AaTcoT0I; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53988c54ec8so4050224e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:05:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727762750; x=1728367550; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LDX300SfQ8XSrIseTiWT0bT/7uJ6lLhpLAjt+5qtDPM=;
+        b=AaTcoT0IlOB33PkHCf+y0t12ukA6R2NvfcRHXdaxVaw/AMlwphOrLv5bIIRv5A/6Ex
+         N4/B9ytuhsoc2IbNRrd/T+RBkrp9DLh4UXCKa1erxruNbxHwDzc19IgWh4kMdLTjMJSX
+         h2OrBT3oM2a//hCItpwKoQeg2+kRNjBL7T31Lmz9E96wRQWW9WsFkPesoZkjb/1Xf3GI
+         Qu+/6g8aNIDL57uAiHEuCW4eF3c5juuWa5xaQPygKK9LdLl/aAESk37gJ8W6qbRoZlEG
+         /rMcZjZDNqD1lvuax66UbEJqoT0uYvTPpKd1zbojzt30i02b1mU2/XXNh+nweG5MOFXv
+         o+Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727762750; x=1728367550;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LDX300SfQ8XSrIseTiWT0bT/7uJ6lLhpLAjt+5qtDPM=;
+        b=rQ0qosuRcOluVtcg/ThC26fAauBwqNSY6bKzOn9vaIXhvwt1HBQAZ//5GxpoOatwYc
+         jee1LyyULEwkMIm1tP5bVHzzo5aEcfp8ygauz+ZHSZGX4j6GM/I8UGPkBDr6x/0oPgFB
+         BqflZO3xfTZwnhUqay19HqGyAUzwdKBT3WgXF30rsR+oQz5Uaf1DRJrxbLb452jr57Bz
+         oJCtdMozNw7UbjYchGskMDCfLudvwc7izacYVyPtk8MSbztT4I77FOCaPUwdkdnIZdRf
+         MHcTfz1wsFgPzxURTYBepwUb6cNpZKTCWBek4+RyPd4mALZVaP1SbOjyolueSSUc4Rt4
+         v0pg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+WyVgHvc2xgH9MINYiAA1dDSir1YRsnVMlz2oY3FIthinF4EEzQeRLqG8qST+t6HnUFb1VuxUdHf8lKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuXdEggQkKlWIVrgMl2sCROJzr0ELR850CIDk/8yNZHKtliEyW
+	33g5JNZ12zKlyRgWNvW8+Y3IOJOnggrQqM+H3P1gSqMR9eJhlpNU0KZkiqfBu0sdoTBsrR4UiMu
+	HkfPc3D2KkmMYWtkFgj5B0v/1dNM=
+X-Google-Smtp-Source: AGHT+IFbcvAwj92GwWG0q111tl4frudVTrCcrvbq6hNYm5bc5VJf4uoHjMb2dhPhlED70BX0sCtzSED5DSplo+sEXKs=
+X-Received: by 2002:a05:6512:3ba6:b0:538:9e1e:b068 with SMTP id
+ 2adb3069b0e04-5389fc3bd6fmr7170466e87.15.1727762750129; Mon, 30 Sep 2024
+ 23:05:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf sched timehist: Add pre-migration wait time option
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Athira Rajeev
- <atrajeev@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20240917091537.46684-1-vineethr@linux.ibm.com>
- <ZvXom7j_LdYYyVUz@google.com>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <ZvXom7j_LdYYyVUz@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: sxv6tJr_8ExF4R1rvkFgJqRf9QRYsnGd
-X-Proofpoint-ORIG-GUID: ybCOPZ87MthkC8vfkuokuYEkjGQ2Iuw-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_02,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 phishscore=0 spamscore=0
- priorityscore=1501 mlxscore=0 mlxlogscore=999 adultscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010039
+References: <20240930-b4-slub-kunit-fix-v1-0-32ca9dbbbc11@suse.cz> <20240930-b4-slub-kunit-fix-v1-1-32ca9dbbbc11@suse.cz>
+In-Reply-To: <20240930-b4-slub-kunit-fix-v1-1-32ca9dbbbc11@suse.cz>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Tue, 1 Oct 2024 15:05:37 +0900
+Message-ID: <CAB=+i9QOrgKcp24i_O9nFkxnySWdO0Yv6NjjDwXopDWbT3RJQw@mail.gmail.com>
+Subject: Re: [PATCH slab hotfixes 1/2] mm, slab: suppress warnings in
+ test_leak_destroy kunit test
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	kernel test robot <oliver.sang@intel.com>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Namhyung,
+On Mon, Sep 30, 2024 at 5:37=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> The test_leak_destroy kunit test intends to test the detection of stray
+> objects in kmem_cache_destroy(), which normally produces a warning. The
+> other slab kunit tests suppress the warnings in the kunit test context,
+> so suppress warnings and related printk output in this test as well.
+> Automated test running environments then don't need to learn to filter
+> the warnings.
+>
+> Also rename the test's kmem_cache, the name was wrongly copy-pasted from
+> test_kfree_rcu.
+>
+> Fixes: 4e1c44b3db79 ("kunit, slub: add test_kfree_rcu() and test_leak_des=
+troy()")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202408251723.42f3d902-oliver.sang@=
+intel.com
+> Reported-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+> Closes: https://lore.kernel.org/all/CAB=3D+i9RHHbfSkmUuLshXGY_ifEZg9vCZi3=
+fqr99+kmmnpDus7Q@mail.gmail.com/
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Closes: https://lore.kernel.org/all/6fcb1252-7990-4f0d-8027-5e83f0fb9409@=
+roeck-us.net/
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  lib/slub_kunit.c | 4 ++--
+>  mm/slab.h        | 6 ++++++
+>  mm/slab_common.c | 5 +++--
+>  mm/slub.c        | 5 +++--
+>  4 files changed, 14 insertions(+), 6 deletions(-)
 
-On 27/09/24 04:34, Namhyung Kim wrote:
-> Hello,
-> 
-> On Tue, Sep 17, 2024 at 02:45:37PM +0530, Madadi Vineeth Reddy wrote:
->> pre-migration wait time is the time that a task unnecessarily spends
->> on the runqueue of a CPU but doesn't get switched-in there. In terms
->> of tracepoints, it is the time between sched:sched_wakeup and
->> sched:sched_migrate_task.
-> 
-> Sounds useful.
-> 
->>
->> Let's say a task woke up on CPU2, then it got migrated to CPU4 and
->> then it's switched-in to CPU4. So, here pre-migration wait time is
->> time that it was waiting on runqueue of CPU2 after it is woken up.
->>
->> The general pattern for pre-migration to occur is:
->> sched:sched_wakeup
->> sched:sched_migrate_task
->> sched:sched_switch
->> So, this option expects sched_wakeup also to be recorded and fails
->> if attempted to use the option without sched:sched_wakeup tracepoint.
-> 
-> I'm curious if you check sched_migrate_task as well.
+Looks good to me,
+Reviewed-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 
-Yes, I do check it in timehist_migrate_task_event().
-
-> 
->>
->> pre-migrations are generally not useful and it increases migrations.
->> This metric would be helpful in testing patches mainly related to wakeup
->> and load-balancer code paths as better wakeup logic would choose an
->> optimal CPU where task would be switched-in and thereby reducing pre-
->> migrations.
->>
->> The sample output(s) when -P or --pre-migrations is used:
->> =================
->>            time    cpu  task name                       wait time  sch delay   run time  pre-mig time
->>                         [tid/pid]                          (msec)     (msec)     (msec)     (msec)
->> --------------- ------  ------------------------------  ---------  ---------  ---------  ---------
->>   103032.721020 [0000]  perf[47206]                         0.000      0.000      0.000      0.000
->>   103032.721034 [0000]  migration/0[18]                     0.000      0.003      0.013      0.000
->>   103032.736716 [0001]  schbench[47229/47207]              10.664      9.231      0.039      9.170
->>   103032.736719 [0005]  <idle>                              0.000      0.000     15.405      0.000
->>   103032.736726 [0003]  schbench[47216/47207]              11.251      9.193      0.022      9.126
->>   103032.736727 [0001]  schbench[47228/47207]              10.752      9.264      0.010      9.169
->>   103032.736731 [0007]  <idle>                              0.000      0.000     15.314      0.000
->>   103032.736739 [0008]  <idle>                              0.000      0.000     15.249      0.000
->>   103032.736742 [0003]  schbench[47257/47207]               9.498      9.184      0.015      9.100
->>
->>    51370.894024 [0012]  schbench[38775/38770]              21.047     21.047      8.950      0.000
->>    51370.894024 [0008]  schbench[38781/38770]              39.597     39.448      9.984     39.437
->>    51370.894025 [0009]  stress-ng-cpu[38743]                7.971      7.971      9.997      0.000
->>
->> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
->> ---
->>  tools/perf/Documentation/perf-sched.txt |   8 ++
->>  tools/perf/builtin-sched.c              | 110 +++++++++++++++++-------
->>  2 files changed, 85 insertions(+), 33 deletions(-)
->>
->> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
->> index 3db64954a267..7935499b88b0 100644
->> --- a/tools/perf/Documentation/perf-sched.txt
->> +++ b/tools/perf/Documentation/perf-sched.txt
->> @@ -221,6 +221,14 @@ OPTIONS for 'perf sched timehist'
->>  	priorities are specified with -: 120-129. A combination of both can also be
->>  	provided: 0,120-129.
->>  
->> +-P::
->> +--pre-migrations::
->> +	Show pre-migration wait time. pre-migration wait time is the time spent
->> +	by a task waiting on a runqueue but not getting the chance to run there
->> +	and is migrated to a different runqueue where it is finally run. This
->> +	time between migrate_task and sched_wakeup is the pre-migration wait
->> +	time. This option is valid only if sched_wakeup tracepoint is recorded.
->> +
->>  OPTIONS for 'perf sched replay'
->>  ------------------------------
->>  
->> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
->> index 5981cc51abc8..252e71d83d82 100644
->> --- a/tools/perf/builtin-sched.c
->> +++ b/tools/perf/builtin-sched.c
->> @@ -228,6 +228,7 @@ struct perf_sched {
->>  	bool		show_wakeups;
->>  	bool		show_next;
->>  	bool		show_migrations;
->> +	bool		pre_migrations;
->>  	bool		show_state;
->>  	bool		show_prio;
->>  	u64		skipped_samples;
->> @@ -247,7 +248,10 @@ struct thread_runtime {
->>  	u64 dt_iowait;      /* time between CPU access by iowait (off cpu) */
->>  	u64 dt_preempt;     /* time between CPU access by preempt (off cpu) */
->>  	u64 dt_delay;       /* time between wakeup and sched-in */
->> +	u64 dt_pre_mig;     /* time between migration and wakeup */
->>  	u64 ready_to_run;   /* time of wakeup */
->> +	u64 woken;	    /* time when sched_wakeup tracepoint is hit */
->> +	u64 migrated;	    /* time when a thread is migrated */
->>  
->>  	struct stats run_stats;
->>  	u64 total_run_time;
->> @@ -255,6 +259,7 @@ struct thread_runtime {
->>  	u64 total_iowait_time;
->>  	u64 total_preempt_time;
->>  	u64 total_delay_time;
->> +	u64 total_pre_mig_time;
->>  
->>  	char last_state;
->>  
->> @@ -2083,14 +2088,15 @@ static void timehist_header(struct perf_sched *sched)
->>  		printf(" ");
->>  	}
->>  
->> -	if (sched->show_prio) {
->> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
->> -		       comm_width, "task name", MAX_PRIO_STR_LEN, "prio",
->> -		       "wait time", "sch delay", "run time");
->> -	} else {
->> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
->> -		       "task name", "wait time", "sch delay", "run time");
->> -	}
->> +	printf(" %-*s", comm_width, "task name");
->> +
->> +	if (sched->show_prio)
->> +		printf("  %-*s", MAX_PRIO_STR_LEN, "prio");
->> +
->> +	printf("  %9s  %9s  %9s", "wait time", "sch delay", "run time");
->> +
->> +	if (sched->pre_migrations)
->> +		printf("  %9s", "pre-mig time");
->>  
->>  	if (sched->show_state)
->>  		printf("  %s", "state");
->> @@ -2105,17 +2111,15 @@ static void timehist_header(struct perf_sched *sched)
->>  	if (sched->show_cpu_visual)
->>  		printf(" %*s ", ncpus, "");
->>  
->> -	if (sched->show_prio) {
->> -		printf(" %-*s  %-*s  %9s  %9s  %9s",
->> -		       comm_width, "[tid/pid]", MAX_PRIO_STR_LEN, "",
->> -		       "(msec)", "(msec)", "(msec)");
->> -	} else {
->> -		printf(" %-*s  %9s  %9s  %9s", comm_width,
->> -		       "[tid/pid]", "(msec)", "(msec)", "(msec)");
->> -	}
->> +	printf(" %-*s", comm_width, "[tid/pid]");
->>  
->> -	if (sched->show_state)
->> -		printf("  %5s", "");
->> +	if (sched->show_prio)
->> +		printf("  %-*s", MAX_PRIO_STR_LEN, "");
->> +
->> +	printf("  %9s  %9s  %9s", "(msec)", "(msec)", "(msec)");
->> +
->> +	if (sched->pre_migrations)
->> +		printf("  %9s", "(msec)");
->>  
->>  	printf("\n");
->>  
->> @@ -2127,15 +2131,15 @@ static void timehist_header(struct perf_sched *sched)
->>  	if (sched->show_cpu_visual)
->>  		printf(" %.*s ", ncpus, graph_dotted_line);
->>  
->> -	if (sched->show_prio) {
->> -		printf(" %.*s  %.*s  %.9s  %.9s  %.9s",
->> -		       comm_width, graph_dotted_line, MAX_PRIO_STR_LEN, graph_dotted_line,
->> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line);
->> -	} else {
->> -		printf(" %.*s  %.9s  %.9s  %.9s", comm_width,
->> -		       graph_dotted_line, graph_dotted_line, graph_dotted_line,
->> -		       graph_dotted_line);
->> -	}
->> +	printf(" %.*s", comm_width, graph_dotted_line);
->> +
->> +	if (sched->show_prio)
->> +		printf("  %.*s", MAX_PRIO_STR_LEN, graph_dotted_line);
->> +
->> +	printf("  %.9s  %.9s  %.9s", graph_dotted_line, graph_dotted_line, graph_dotted_line);
->> +
->> +	if (sched->pre_migrations)
->> +		printf("  %.9s", graph_dotted_line);
->>  
->>  	if (sched->show_state)
->>  		printf("  %.5s", graph_dotted_line);
->> @@ -2190,6 +2194,8 @@ static void timehist_print_sample(struct perf_sched *sched,
->>  
->>  	print_sched_time(tr->dt_delay, 6);
->>  	print_sched_time(tr->dt_run, 6);
->> +	if (sched->pre_migrations)
->> +		print_sched_time(tr->dt_pre_mig, 6);
->>  
->>  	if (sched->show_state)
->>  		printf(" %5c ", thread__tid(thread) == 0 ? 'I' : state);
->> @@ -2249,6 +2255,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
->>  	r->dt_iowait  = 0;
->>  	r->dt_preempt = 0;
->>  	r->dt_run     = 0;
->> +	r->dt_pre_mig = 0;
->>  
->>  	if (tprev) {
->>  		r->dt_run = t - tprev;
->> @@ -2257,6 +2264,11 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
->>  				pr_debug("time travel: wakeup time for task > previous sched_switch event\n");
->>  			else
->>  				r->dt_delay = tprev - r->ready_to_run;
->> +
->> +			if (r->woken && r->migrated) {
->> +				if ((r->migrated > r->woken) && (r->migrated < tprev))
->> +					r->dt_pre_mig = r->migrated - r->woken;
->> +			}
->>  		}
->>  
->>  		if (r->last_time > tprev)
->> @@ -2280,6 +2292,7 @@ static void timehist_update_runtime_stats(struct thread_runtime *r,
->>  	r->total_sleep_time   += r->dt_sleep;
->>  	r->total_iowait_time  += r->dt_iowait;
->>  	r->total_preempt_time += r->dt_preempt;
->> +	r->total_pre_mig_time += r->dt_pre_mig;
->>  }
->>  
->>  static bool is_idle_sample(struct perf_sample *sample,
->> @@ -2579,12 +2592,27 @@ static void timehist_print_wakeup_event(struct perf_sched *sched,
->>  	printf("\n");
->>  }
->>  
->> -static int timehist_sched_wakeup_ignore(const struct perf_tool *tool __maybe_unused,
->> +static int timehist_sched_wakeup_consider(const struct perf_tool *tool __maybe_unused,
-> 
-> No this function is to not duplicate work when you have both
-> sched_wakeup and sched_waking tracepoints.
-> 
->>  					union perf_event *event __maybe_unused,
->>  					struct evsel *evsel __maybe_unused,
->>  					struct perf_sample *sample __maybe_unused,
->>  					struct machine *machine __maybe_unused)
->>  {
->> +	struct thread *thread;
->> +	struct thread_runtime *tr = NULL;
->> +	const u32 pid = evsel__intval(evsel, sample, "pid");
->> +
->> +	thread = machine__findnew_thread(machine, 0, pid);
->> +	if (thread == NULL)
->> +		return -1;
->> +
->> +	tr = thread__get_runtime(thread);
->> +	if (tr == NULL)
->> +		return -1;
->> +
->> +	if (tr->woken == 0)
->> +		tr->woken = sample->time;
-> 
-> I think you can add this to timehist_sched_wakeup_event().
-
-Got it. I will do that. May be I will do it by skipping
-
-if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
-		handlers[1].handler = timehist_sched_wakeup_ignore;
-
-when using pre-migration option.
-
-> 
->> +
->>  	return 0;
->>  }
->>  
->> @@ -2694,8 +2722,14 @@ static int timehist_migrate_task_event(const struct perf_tool *tool,
->>  
->>  	tr->migrations++;
->>  
->> +	if (tr->migrated == 0)
->> +		tr->migrated = sample->time;
->> +
->>  	/* show migrations if requested */
->> -	timehist_print_migration_event(sched, evsel, sample, machine, thread);
->> +	if (sched->show_migrations) {
->> +		timehist_print_migration_event(sched, evsel, sample,
->> +							machine, thread);
->> +	}
->>  
->>  	return 0;
->>  }
->> @@ -2846,11 +2880,14 @@ static int timehist_sched_change_event(const struct perf_tool *tool,
->>  		/* last state is used to determine where to account wait time */
->>  		tr->last_state = state;
->>  
->> -		/* sched out event for task so reset ready to run time */
->> +		/* sched out event for task so reset ready to run time, woken and migrated time */
->>  		if (state == 'R')
->>  			tr->ready_to_run = t;
->>  		else
->>  			tr->ready_to_run = 0;
->> +
->> +		tr->woken = 0;
->> +		tr->migrated = 0;
->>  	}
->>  
->>  	evsel__save_time(evsel, sample->time, sample->cpu);
->> @@ -3278,7 +3315,7 @@ static int perf_sched__timehist(struct perf_sched *sched)
->>  
->>  	/* prefer sched_waking if it is captured */
->>  	if (evlist__find_tracepoint_by_name(session->evlist, "sched:sched_waking"))
->> -		handlers[1].handler = timehist_sched_wakeup_ignore;
->> +		handlers[1].handler = timehist_sched_wakeup_consider;
->>  
->>  	/* setup per-evsel handlers */
->>  	if (perf_session__set_tracepoints_handlers(session, handlers))
->> @@ -3290,8 +3327,14 @@ static int perf_sched__timehist(struct perf_sched *sched)
->>  		goto out;
->>  	}
->>  
->> -	if (sched->show_migrations &&
->> -	    perf_session__set_tracepoints_handlers(session, migrate_handlers))
->> +	if (sched->pre_migrations && !evlist__find_tracepoint_by_name(session->evlist,
->> +									"sched:sched_wakeup")) {
->> +		pr_err("No sched_wakeup events found. sched_wakeup tracepoint is mandatory for -P option\n");
->> +		goto out;
->> +	}
->> +
->> +	if ((sched->show_migrations || sched->pre_migrations) &&
->> +		(perf_session__set_tracepoints_handlers(session, migrate_handlers)))
-> 
-> No need for parenthesis.
-
-Got it. Thanks for your time. Will send v2 with the changes.
-
-Thanks,
-Madadi Vineeth Reddy
-
-> 
-> Thanks,
-> Namhyung
-> 
-> 
->>  		goto out;
->>  
->>  	/* pre-allocate struct for per-CPU idle stats */
->> @@ -3833,6 +3876,7 @@ int cmd_sched(int argc, const char **argv)
->>  	OPT_BOOLEAN(0, "show-prio", &sched.show_prio, "Show task priority"),
->>  	OPT_STRING(0, "prio", &sched.prio_str, "prio",
->>  		   "analyze events only for given task priority(ies)"),
->> +	OPT_BOOLEAN('P', "pre-migrations", &sched.pre_migrations, "Show pre-migration wait time"),
->>  	OPT_PARENT(sched_options)
->>  	};
->>  
->> -- 
->> 2.43.1
->>
-
+> diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
+> index 6e3a1e5a7142f797fe20a28967657f50a466d4ee..85d51ec09846d4fa219db6bda=
+336c6f0b89e98e4 100644
+> --- a/lib/slub_kunit.c
+> +++ b/lib/slub_kunit.c
+> @@ -177,13 +177,13 @@ static void test_kfree_rcu(struct kunit *test)
+>
+>  static void test_leak_destroy(struct kunit *test)
+>  {
+> -       struct kmem_cache *s =3D test_kmem_cache_create("TestSlub_kfree_r=
+cu",
+> +       struct kmem_cache *s =3D test_kmem_cache_create("TestSlub_leak_de=
+stroy",
+>                                                         64, SLAB_NO_MERGE=
+);
+>         kmem_cache_alloc(s, GFP_KERNEL);
+>
+>         kmem_cache_destroy(s);
+>
+> -       KUNIT_EXPECT_EQ(test, 1, slab_errors);
+> +       KUNIT_EXPECT_EQ(test, 2, slab_errors);
+>  }
+>
+>  static int test_init(struct kunit *test)
+> diff --git a/mm/slab.h b/mm/slab.h
+> index f22fb760b2866124d9d873d28b5a7fa6867aeb90..5cf0fbab0b0554ee70f537177=
+2bc37b290893b8a 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -546,6 +546,12 @@ static inline bool kmem_cache_debug_flags(struct kme=
+m_cache *s, slab_flags_t fla
+>         return false;
+>  }
+>
+> +#if IS_ENABLED(CONFIG_SLUB_DEBUG) && IS_ENABLED(CONFIG_KUNIT)
+> +bool slab_in_kunit_test(void);
+> +#else
+> +static inline bool slab_in_kunit_test(void) { return false; }
+> +#endif
+> +
+>  #ifdef CONFIG_SLAB_OBJ_EXT
+>
+>  /*
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 7443244656150325fb2a7d0158a71821e1418062..3d26c257ed8b57c336ec5c38d=
+4bbd5f5e51d50ff 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -508,8 +508,9 @@ void kmem_cache_destroy(struct kmem_cache *s)
+>         kasan_cache_shutdown(s);
+>
+>         err =3D __kmem_cache_shutdown(s);
+> -       WARN(err, "%s %s: Slab cache still has objects when called from %=
+pS",
+> -            __func__, s->name, (void *)_RET_IP_);
+> +       if (!slab_in_kunit_test())
+> +               WARN(err, "%s %s: Slab cache still has objects when calle=
+d from %pS",
+> +                    __func__, s->name, (void *)_RET_IP_);
+>
+>         list_del(&s->list);
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 21f71cb6cc06d951a657290421f41170bb3c76cf..5b832512044e3ead8ccde2c02=
+308bd8954246db5 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -827,7 +827,7 @@ static bool slab_add_kunit_errors(void)
+>         return true;
+>  }
+>
+> -static bool slab_in_kunit_test(void)
+> +bool slab_in_kunit_test(void)
+>  {
+>         struct kunit_resource *resource;
+>
+> @@ -843,7 +843,6 @@ static bool slab_in_kunit_test(void)
+>  }
+>  #else
+>  static inline bool slab_add_kunit_errors(void) { return false; }
+> -static inline bool slab_in_kunit_test(void) { return false; }
+>  #endif
+>
+>  static inline unsigned int size_from_object(struct kmem_cache *s)
+> @@ -5436,6 +5435,8 @@ static void list_slab_objects(struct kmem_cache *s,=
+ struct slab *slab,
+>         for_each_object(p, s, addr, slab->objects) {
+>
+>                 if (!test_bit(__obj_to_index(s, addr, p), object_map)) {
+> +                       if (slab_add_kunit_errors())
+> +                               continue;
+>                         pr_err("Object 0x%p @offset=3D%tu\n", p, p - addr=
+);
+>                         print_tracking(s, p);
+>                 }
+>
+> --
+> 2.46.1
+>
 
