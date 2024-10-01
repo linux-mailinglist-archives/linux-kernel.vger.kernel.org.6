@@ -1,73 +1,51 @@
-Return-Path: <linux-kernel+bounces-345897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4402598BCA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:50:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538F598BCAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CA2B24112
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C421C235BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4B71C3304;
-	Tue,  1 Oct 2024 12:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D02F1C3F1A;
+	Tue,  1 Oct 2024 12:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mj7rdSzd"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="xwg3lWQB"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B5A1C32EE
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A60A1C2DB1;
+	Tue,  1 Oct 2024 12:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727786997; cv=none; b=ThzO2JDiiGWT98ETOlmLNMvSowfh/2ov6gpckhuUIPvDGhBOCXSRg8H0KayZ+9yXoUCYsRjjnQoSeHDcQ2go5geCA+z3tekQhuCO4U71fVoHbRvrKN+YtcqmAdMB77np4m/MAvY14Lqb3pOJgqM3fo1DrDkVl6omIjuQ7Esr6c8=
+	t=1727787004; cv=none; b=AYMVZcTmKeZZkushNrqXsfitO3kjZOeorwwVlqmJA2npA3MwnOCBaO0hmnAXxPNBrtRSYmcu42DQ8yvpnubgcfsSYErsNE8ILIcbNcuvY8olEtl6tSROcZp9OZwFomIn6eIv3xV1so2SzHuGfKmF7xUEkoUEWnAhbNcu+cG/vFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727786997; c=relaxed/simple;
-	bh=CbT+qiU/vq9R0tnkpOy3+PJvaW5jLycGAU8OpY63rRo=;
+	s=arc-20240116; t=1727787004; c=relaxed/simple;
+	bh=xns8hsxhIdD6+hI7mmFB5qJiP3BTBo67OOjHhk9I9Tk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lwkLyxntgIksGKFtgJqIfMct3oUKhpivXgoP0WSOaRs6Hw0bU3ueMFpklwQ+2+4PYg2VUCWsuA2jc91NG8MNalkiVwDN3+XC+f+LwR3D9PFAdl+ZpZx+kH95arqLWQ9KQd0uzhMSwc0nFLicG4kZJfikIzTa4LpnFjOaqBObvHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mj7rdSzd; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a8a7596b7dfso737883166b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 05:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727786994; x=1728391794; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9afpXEL55MUlwjnfdU5WzlBLeVBfmS2NJq+jPkuACDs=;
-        b=Mj7rdSzd4w+kU0IrgmMBpiSG67XbvddizBUp1g8mEukNy1gtluFwIrD6epDoloHJIo
-         m7uTQvLuvTuEqFRHc1JPmOrUITTRw4WPLV7Phj5+SD5hBZ9Kunjd1L0bPXFDd6DZSRut
-         WZq0xg97pXd+LYR+rAFhSpFrfnc/CY4sXy6NwvooFfTNvaiZpvDG90c7gFWKIQvHqZyG
-         R9M3hHnGXWp7JNDXE4Q0ns2cH5VEU18wkIXHvJwhajvbNjBvnI0BA07EyUWTSotxv5x8
-         YmeYEWVWn3KZ5QyG1E8q1UT+lvgy1eBof6jnAtYCWDNU67Nl3lTWd+2pxqtFXv62Lite
-         5WYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727786994; x=1728391794;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9afpXEL55MUlwjnfdU5WzlBLeVBfmS2NJq+jPkuACDs=;
-        b=rdGmJHUrQcay5VnXE5Q9fOXgnJ3JLEWRK4KDzi5OOaiCaee3pUJAOYps+OzV0Y6SpU
-         4Fmd1koJs5xiR1k52GculEleJJ6GKTjmZSts+FJPVLHDrgTujCs4hseGF7W9YGKmeDLL
-         33W6h0nDMDrFHUp+smFr0o4OmEFL3wcV/LfnahFVse37/Z9PVYJIMfe1P07+YjWYJVe+
-         LylFOFHRnhFv2XSiO3xmFtqgT+myZ3iUJ91/woC0KzQc1IZkmmc3VSu3/upkqauDBVAE
-         +C1eToIfK41ubNJSM3W+oPeEfB2xi70L8UWED4AMsCsY1DEesx4wFQbrTtHlZam9E1vy
-         69tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgKxIsPWZdSRWI7oRMadyWUebyPTY48vDGrMTjt66pYNGm4zUc71RXYPqY3eVYsSi9ZwOONPO2iyK3CDE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZUdeeUHh3s6xl9WMRAT7g0H4UXHc99G1rCH2cgARNGrAOU3LJ
-	45BhaV5kVykrqWxoQQte4Rz5Xop3njmn2D59VeCgYd4fRyxY9vrMDPgQTO3bazo=
-X-Google-Smtp-Source: AGHT+IFdeytN/mmapjvnod27wfN3C5x03kaUeBmTVVQbHTk9ROmaV2euFnRoXPRA5dJwoBB2aYDOeg==
-X-Received: by 2002:a17:906:dc90:b0:a8d:592d:f56 with SMTP id a640c23a62f3a-a967c0b53e0mr293748866b.31.1727786994094;
-        Tue, 01 Oct 2024 05:49:54 -0700 (PDT)
-Received: from [192.168.0.15] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c299861bsm705327566b.192.2024.10.01.05.49.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 05:49:53 -0700 (PDT)
-Message-ID: <c912f2da-519c-4bdc-a5cb-e19c3aa63ea8@linaro.org>
-Date: Tue, 1 Oct 2024 13:49:51 +0100
+	 In-Reply-To:Content-Type; b=FMt9AAM6cAUOyd2IjFOHsxbQ7diJOvsmD0O2/2NFB6B2si9ZTtbjkNiz/6ChKLAdARtYIT6Y5YhhEbzSd/fSEIn03mlqaQLrzhaZfSgv2WkkpBJZ2P4dR+cDtw4Ni6gBWAIW/gfo5c2MQj008GkKUodrl0vcp5Y61u3ubmxwOfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=xwg3lWQB; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=v2VbEpiu02sSfttNZ1FIT6I0JoTTAy8v78m159FGc9c=;
+	t=1727787002; x=1728219002; b=xwg3lWQB2SmD+yEeHiW8rBym9RlQ2WCxPnDPO2olVqsxE13
+	jJHmqltEGeumQUO5txmJhdzRFnctVI2o+4SEN7AvhpvjQMOqDPxrY86mwP3nBhPX+1qjUp43+XyF7
+	Dj0D2jpinEj/rn63KKSeP+lVWShf3465Ulxrk9pmwa83AL6kWZyzc7zBd1y2xUvXTSd3PTNKCDjbB
+	aEi2Eb7zvhA5yLpXAonvY5MBom5TB7rX+RDlKCwQU1hVqo2FPy8T/NeZA44s4jSTgdfRgQY93674C
+	xTUaIXKSbxILnnn2JoxyORyUb1TwEERdYFGI9tBMclBOpGn2YXjrdVtxZd1cYyDg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1svcK7-00079U-U7; Tue, 01 Oct 2024 14:49:52 +0200
+Message-ID: <b77aa757-4ea2-4c0a-8ba9-3685f944aa34@leemhuis.info>
+Date: Tue, 1 Oct 2024 14:49:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,84 +53,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/10] (no cover subject)
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kapatrala Syed <akapatra@quicinc.com>,
- Hariram Purushothaman <hariramp@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- cros-qcom-dts-watchers@chromium.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Suresh Vankadara <quic_svankada@quicinc.com>,
- Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>, stable@vger.kernel.org,
- Hariram Purushothaman <quic_hariramp@quicinc.com>
-References: <20240904-camss_on_sc7280_rb3gen2_vision_v2_patches-v1-0-b18ddcd7d9df@quicinc.com>
- <D4JK8TRL7XBL.3TBA1FBF32RXL@fairphone.com>
- <fc0ce5cd-e42a-432b-ad74-01de67ec0d5c@linaro.org>
- <D4KBQ3ENKF5Y.3D2AK81PELAEZ@fairphone.com>
- <e7cc5f91-a0a8-48fc-9eb6-b9c46b22dfeb@linaro.org>
- <D4KFVNV1A4KG.CFLT81CFBDTM@fairphone.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <D4KFVNV1A4KG.CFLT81CFBDTM@fairphone.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [regression] getdents() does not list entries created after
+ opening the directory
+To: =?UTF-8?Q?Krzysztof_Ma=C5=82ysa?= <varqox@gmail.com>
+Cc: yangerkun <yangerkun@huawei.com>, Christian Brauner <brauner@kernel.org>,
+ linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+ LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <8196cf54-5783-4905-af00-45a869537f7c@leemhuis.info>
+ <ZvvonHPqrAqSHhgV@casper.infradead.org>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Language: en-US, de-DE
+In-Reply-To: <ZvvonHPqrAqSHhgV@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1727787002;408a80b2;
+X-HE-SMSGID: 1svcK7-00079U-U7
 
-On 01/10/2024 12:39, Luca Weiss wrote:
-
-> And v4l-subdev5 is msm_csid0 on my device.
-
-<snip>
-
+On 01.10.24 14:18, Matthew Wilcox wrote:
+> On Tue, Oct 01, 2024 at 01:29:09PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+>>> 	DIR* dir = opendir("/tmp/dirent-problems-test-dir");
+>>>
+>>> 	fd = creat("/tmp/dirent-problems-test-dir/after", 0644);
 > 
-> - entity 16: msm_csid0 (5 pads, 22 links, 0 routes)
->               type V4L2 subdev subtype Unknown flags 0
->               device node name /dev/v4l-subdev5
->          pad0: Sink
->                  [stream:0 fmt:SRGGB10_1X10/4056x3040 field:none colorspace:srgb]
->                  <- "msm_csiphy0":1 []
->                  <- "msm_csiphy1":1 []
->                  <- "msm_csiphy2":1 []
->                  <- "msm_csiphy3":1 []
->                  <- "msm_csiphy4":1 []
->          pad1: Source
->                  [stream:0 fmt:SRGGB10_1X10/4056x3040 field:none colorspace:srgb]
->                  -> "msm_vfe0_rdi0":0 [ENABLED]
->                  -> "msm_vfe1_rdi0":0 []
->                  -> "msm_vfe2_rdi0":0 []
->                  -> "msm_vfe3_rdi0":0 []
->                  -> "msm_vfe4_rdi0":0 []
+> "If a file is removed from or added to the directory after the most
+> recent call to opendir() or rewinddir(), whether a subsequent call to
+> readdir() returns an entry for that file is unspecified."
+> 
+> https://pubs.opengroup.org/onlinepubs/007904975/functions/readdir.html
+> 
+> That said, if there's an easy fix here, it'd be a nice improvement to
+> QoI to do it, but the test-case as written is incorrect.
 
-<snip>
+Many thx Willy!
 
-media-ctl --reset
-yavta --no-query -w '0x009f0903 2' /dev/v4l-subdev5
-yavta --list /dev/v4l-subdev5
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-media-ctl -d /dev/media0 -p
+Which leads to a question:
 
-That command list and this
+Krzysztof, how did you find the problem? Was there a practical use case
+(some software or workload) with this behavior that broke and made your
+write that test-case? Or is that a test-program older and part of your
+CI tests or something like that?
 
-yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video0
+Ciao, Thorsten
 
-should work.
 
-I have to test Vladimir's two patches. I'll verify rb5 TPG while I'm at 
-it, perhaps the error is not sdm670 specific.
-
-That said last time I tested it, it worked and no changes have gone in, 
-in the meantime.
-
----
-bod
 
