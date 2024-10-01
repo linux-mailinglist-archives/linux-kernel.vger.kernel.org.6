@@ -1,189 +1,196 @@
-Return-Path: <linux-kernel+bounces-346105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C092E98BFA9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41CD998BEF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 081EBB2806E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654F61C217F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE22F1C7B8D;
-	Tue,  1 Oct 2024 14:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38151C4602;
+	Tue,  1 Oct 2024 14:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fGLpMqly"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="O9ydflBN"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FBF1C7B75
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39475BE6F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792162; cv=none; b=HOKSMSTvrONCWhGHS5tnq8f8AP5x5c0U+RNMahcCvAfz8gchtDml7WOihQjzCd7YzYKiC5GyDFqecYcQDLw9QBdgKZ4xjihNurX0BvtzPkm0I2CuEi7DzATpNaUHBjEAp3Ngmhi+f2BVwHrPN0dSOg6NYs0j30UmejmonB/iN1Q=
+	t=1727791560; cv=none; b=FMxiWWRRLJaqVY1sTD04D8coNSpTbnAe6y5OpNZW6ulPc5/+noucxbREgQHIlX/xtajrwWQAR2ocJcgwJigr6OiF8oEfe1X8TkuwOgMQdL1MY9hf53KutOf4v55yuTBw8l6J6m/4XNEBnz/dn91+U0Zr2U5eHMoiyJEzp0+VhH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792162; c=relaxed/simple;
-	bh=coLwseDCM6znTuSriRNR7Ug5LwHb1xNJUeaXyoJAILA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=Vc4T9xfacuFfdZcYSNXveYLJZlmzUM+DHbGuNRbuMFzse34eqXF1hzD8uvWP9Vu2mfQWZJLHpuErt0usXO6lfIGJ3pAtztncFzIRdkw9lCEb1Sct9Eiaiw1mT+rkhjpPTlyIrYibGi69PYqUzKAKW9VQuI4v0zbb4NKACnv9Umo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fGLpMqly; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241001141553epoutp04a3a3fd6e78c20ee74066743458a75314~6Wc8lA89i0371803718epoutp04B
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:15:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241001141553epoutp04a3a3fd6e78c20ee74066743458a75314~6Wc8lA89i0371803718epoutp04B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1727792153;
-	bh=coLwseDCM6znTuSriRNR7Ug5LwHb1xNJUeaXyoJAILA=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=fGLpMqlymKhU22lS/S4BEBkCjC9Ieb1N/TQ+8927r9tEw+x3PMJQAFDK4uoZTYiPV
-	 9bpPgVnBNeF0mM3yjE0OZea+yfSR+qtNHGqnmVOzT1IygL29Ijuq6/wiVmQnhKfbC6
-	 fKZGfrL4myzb7kx4FVRoJIjTw8xKRNPtQFzh/zgM=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241001141552epcas5p36d4744c337c6b572f50097609a080e8c~6Wc79W1S70168401684epcas5p3J;
-	Tue,  1 Oct 2024 14:15:52 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4XJ0N72nG2z4x9Pt; Tue,  1 Oct
-	2024 14:15:51 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	74.AC.09800.7140CF66; Tue,  1 Oct 2024 23:15:51 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241001133437epcas5p2ca35fbd3f31aec3997b3907e9c25330a~6V47DI5li0314703147epcas5p2i;
-	Tue,  1 Oct 2024 13:34:37 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241001133437epsmtrp24b5c78c1b9ba399ceec0f9c7eac1c02c~6V47Cc8PY2026620266epsmtrp2i;
-	Tue,  1 Oct 2024 13:34:37 +0000 (GMT)
-X-AuditID: b6c32a4b-23fff70000002648-e4-66fc04173135
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BC.E1.18937.D6AFBF66; Tue,  1 Oct 2024 22:34:37 +0900 (KST)
-Received: from FDSFTE353 (unknown [107.122.81.138]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241001133435epsmtip2fb48c75c78d7a04f435c7bea4fa83472~6V45IQYES0214202142epsmtip2H;
-	Tue,  1 Oct 2024 13:34:35 +0000 (GMT)
-From: "Varada Pavani" <v.pavani@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <s.nawrocki@samsung.com>,
-	<cw00.choi@samsung.com>, <alim.akhtar@samsung.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Cc: <aswani.reddy@samsung.com>, <pankaj.dubey@samsung.com>,
-	<gost.dev@samsung.com>, <stable@vger.kernel.org>
-In-Reply-To: <f8b36300-cf7e-4cdc-b1d4-ed4a64453d4e@kernel.org>
-Subject: RE: [PATCH 2/2] clk: samsung: Fixes PLL locktime for PLL142XX used
- on FSD platfom
-Date: Tue, 1 Oct 2024 19:04:34 +0530
-Message-ID: <009601db1406$a8f5ec50$fae1c4f0$@samsung.com>
+	s=arc-20240116; t=1727791560; c=relaxed/simple;
+	bh=xSAkhE2YErzGcQpoRZe1n2yueELvAkjr0GYGS15YMgg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DRDcFAMorJEy0EyFK0RxFtINBVixX7klZv5ats8t3+3pch+z1NH4AMw7PtS21FnU/HVSOeJo3bg76WTIjgzaXpjVFX48PwktRzB30Xt+hMygy69NPCjfyKLVOugzhLvCQWNgHnhcUlx7YnTifrNyLiSzBk+mKbgsiM9AXNOmfVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=O9ydflBN; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <17a0ad71-c8ea-4ddd-81d5-b5e5cf7da334@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727791555;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WP8Ea3FTMEaJZz4Aye+QXhBOCFZYoGecK0PTlUFcWU4=;
+	b=O9ydflBNHJ0uXii5CmkmjFS80LLkLezOqMPCa9WGbNDGzQSOiKrREmUMMATfjbOuLNNAre
+	Dm6i4WFQDpieX41GM3QdxDq9hAyvZMg7KYlTJxgKHHkceV+vv9k3fPWAIEbiXE0oBDTxnS
+	m58gQwuoZ1Yx8ctTxaav4FhSU9rK+Ro=
+Date: Tue, 1 Oct 2024 22:05:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHgPYoJbOScyTLaZbJAwfQ0Jvmx2AF7r+vcAuu0B8cCMRhRVbIyzYtw
-Content-Language: en-in
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmlq44y580g9l9fBYP5m1jszi0eSu7
-	xfUvz1ktbh7YyWRx/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVqsWjrF3aLw2/aWS3+
-	XdvIYrFg4yNGBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
-	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
-	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfc37iFreAXT8XxTY/ZGxjv
-	c3UxcnJICJhIrPg+l72LkYtDSGA3o0Tn8j3MEM4nRondz18hOHPePGaFaVm65jhUy05Gicur
-	V0JVvWCUeH24gRGkik1AR2L3y+WsIAkRgT1MEmeXXwNrZxbIk2i6vZMNxOYUsJO4OGkpM4gt
-	LBAjsXXndjCbRUBF4ub/BhYQm1fAUuJ9wwJ2CFtQ4uTMJywQc7Qlli18zQxxkoLEz6fLwOaL
-	CLhJXN62iR2iRlzi6M8esOskBPZwSDReXgz1g4vE+zfrmSBsYYlXx7ewQ9hSEp/f7QU6jgPI
-	TpZo/8QNEc6RuLR7FVS5vcSBK3NYQEqYBTQl1u/ShwjLSkw9tY4JYi2fRO/vJ1DlvBI75sHY
-	ShI7d0yAsiUknq5ewzaBUWkWks9mIflsFpIPZiFsW8DIsopRMrWgODc9tdi0wDgvtRwe48n5
-	uZsYwelYy3sH46MHH/QOMTJxMB5ilOBgVhLhvXfoZ5oQb0piZVVqUX58UWlOavEhRlNgcE9k
-	lhJNzgdmhLySeEMTSwMTMzMzE0tjM0Mlcd7XrXNThATSE0tSs1NTC1KLYPqYODilGphW1WQ6
-	yj/n0H0R5XKE7/syzdbo+fMDfj1h0PS1C+/ObCrzYFoQ8PHNerEQxUfbjCfFpMaF62kzvEm5
-	ctGy7779xjgBlRer/315/CRiver3WRH7I1Xc9Rr7l5v3TZnM4ta/d4JTz4cVJ49Xppl1TnGJ
-	ubV8Oe+y1rfnfZh/nLXxeT1/UlHQ3Nf/S5YuPriyMK7cl8P0QcQh145b8aU6k1kLUwKDag8m
-	Tz/08Nti4cS4wN/cVazsXwwT+LpEZJnt3Jfc+Sl1Nj+EV33G7Eu9JqJLp1ipBO/knhvj9+VB
-	JE+VnnfGP0GuH0+0ouwWhG2/xio774Q1m5VlR9iNXywrwieaHf/5srIhdMX0Occ3syuxFGck
-	GmoxFxUnAgChRDaDUAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrIIsWRmVeSWpSXmKPExsWy7bCSvG7ur99pBh/vqVk8mLeNzeLQ5q3s
-	Fte/PGe1uHlgJ5PF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxaKtX9gtDr9pZ7X4
-	d20ji8WCjY8YHfg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgyri6
-	aQpTwXWeigOrJ7M2MO7i6mLk5JAQMJFYuuY4excjF4eQwHZGiXMb2pghEhISO7+1QtnCEiv/
-	PYcqesYocXFiLytIgk1AR2L3y+WsIAkRgWNMEt8nngJLMAsUSdxt+M4CYgsJvGaUeHbBE8Tm
-	FLCTuDhpKdhUYYEoia+zXoHVsAioSNz83wBm8wpYSrxvWMAOYQtKnJz5hAViprZE78NWRhh7
-	2cLXUNcpSPx8ugxsr4iAm8TlbZvYIWrEJY7+7GGewCg8C8moWUhGzUIyahaSlgWMLKsYRVML
-	inPTc5MLDPWKE3OLS/PS9ZLzczcxgmNRK2gH47L1f/UOMTJxMB5ilOBgVhLhvXfoZ5oQb0pi
-	ZVVqUX58UWlOavEhRmkOFiVxXuWczhQhgfTEktTs1NSC1CKYLBMHp1QD09wlVvd4fZmEHnkV
-	fBJgOC3aWaCXMsvvAuvD2Hl9xiY/nnvHau2esDdF4WrQrOXz5de6hOVPYy7XEr9etUXr/jI1
-	Xaa16TxafmZXFz5qCT5yrWNna9lHr73X17B1mZpwrVibnq74rji6JVPzTKi62L/I3j3Rv0TO
-	CQbpfH9fN1u0YrYYT4Y1g9SeTRfuBjxiO/uXN0D9WEDg1C+fe12zZ31f2jel/vCCx01Rf2LM
-	vq57sWtvxK0vfy++r9rS98vm1of895mFkokd08qObGz6fUVlTdOztbsnTg2XEA5ffGRbco1O
-	+D79BF+HyuVPbaru8RsJJVbPMXLRd03bNH8NQ4Lcv1bW6ZuP9wSxfzrMrMRSnJFoqMVcVJwI
-	AMgGTCI0AwAA
-X-CMS-MailID: 20241001133437epcas5p2ca35fbd3f31aec3997b3907e9c25330a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67
-References: <20240930111859.22264-1-v.pavani@samsung.com>
-	<CGME20240930112135epcas5p2175ec81bb609da5b166d47341ece2f67@epcas5p2.samsung.com>
-	<20240930111859.22264-3-v.pavani@samsung.com>
-	<f8b36300-cf7e-4cdc-b1d4-ed4a64453d4e@kernel.org>
+Subject: Re: [PATCH v15 04/19] drm/etnaviv: Make etnaviv_gem_prime_vmap() a
+ static function
+To: Lucas Stach <l.stach@pengutronix.de>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ dri-devel@lists.freedesktop.org, etnaviv@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+ <20240908094357.291862-5-sui.jingfeng@linux.dev>
+ <4a8d06075edb6b5e0d2d71355a55acfd19cd2983.camel@pengutronix.de>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+In-Reply-To: <4a8d06075edb6b5e0d2d71355a55acfd19cd2983.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi,
+
+On 2024/10/1 21:40, Lucas Stach wrote:
+> Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+>> The etnaviv_gem_prime_vmap() function has no caller in the
+>> etnaviv_gem_prime.c file, move it into etnaviv_gem.c file.
+>> While at it, rename it as etnaviv_gem_object_vmap(), since
+>> it is a intermidiate layer function, it has no direct relation
+>> ship with the PRIME. The etnaviv_gem_prime.c file already has
+>> etnaviv_gem_prime_vmap_impl() as the implementation to vmap
+>> a imported GEM buffer object.
+>>
+> I don't agree with the premise with this patch.
+
+I think it is a fact, not a premise.
+
+> This function is
+> clearly prime specific,
+
+Because the drm_gem_object_funcs::vmap() will be called by the drm_gem_vmap().
+Therefore, all etnaviv GEM buffer object has to response to the invoke of the
+drm_gem_object_funcs::vmap() interface.
+
+- Dedicated VRAM buffer object
+- SHMEM buffer object
+- PRIME buffer object
+- userptr (I'm not sure if this one has the need)
+
+> so I don't think it should move.
+
+The name of the etnaviv_gem_prime_vmap() sounds like that
+a PRIME buffer object is being vmapped. But dedicated VRAM
+backed BO, SHMEM backed BO can also be vmapped as well. So
+I think the etnaviv_gem_object_vmap() should be universal.
 
 
+> Regards,
+> Lucas
+>
+>> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+>> ---
+>>   drivers/gpu/drm/etnaviv/etnaviv_drv.h       |  1 -
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem.c       | 16 +++++++++++++++-
+>>   drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c | 12 ------------
+>>   3 files changed, 15 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.h b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+>> index 2eb2ff13f6e8..c217b54b214c 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.h
+>> @@ -55,7 +55,6 @@ int etnaviv_ioctl_gem_submit(struct drm_device *dev, void *data,
+>>   
+>>   int etnaviv_gem_mmap_offset(struct drm_gem_object *obj, u64 *offset);
+>>   struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj);
+>> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map);
+>>   struct drm_gem_object *etnaviv_gem_prime_import_sg_table(struct drm_device *dev,
+>>   	struct dma_buf_attachment *attach, struct sg_table *sg);
+>>   int etnaviv_gem_prime_pin(struct drm_gem_object *obj);
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> index fad23494d08e..85d4e7c87a6a 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
+>> @@ -6,6 +6,7 @@
+>>   #include <drm/drm_gem.h>
+>>   #include <drm/drm_prime.h>
+>>   #include <linux/dma-mapping.h>
+>> +#include <linux/iosys-map.h>
+>>   #include <linux/shmem_fs.h>
+>>   #include <linux/spinlock.h>
+>>   #include <linux/vmalloc.h>
+>> @@ -340,6 +341,19 @@ void *etnaviv_gem_vmap(struct drm_gem_object *obj)
+>>   	return etnaviv_obj->vaddr;
+>>   }
+>>   
+>> +static int etnaviv_gem_object_vmap(struct drm_gem_object *obj,
+>> +				   struct iosys_map *map)
+>> +{
+>> +	void *vaddr;
+>> +
+>> +	vaddr = etnaviv_gem_vmap(obj);
+>> +	if (!vaddr)
+>> +		return -ENOMEM;
+>> +	iosys_map_set_vaddr(map, vaddr);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>   void etnaviv_gem_vunmap(struct drm_gem_object *obj)
+>>   {
+>>   	struct etnaviv_gem_object *etnaviv_obj = to_etnaviv_bo(obj);
+>> @@ -595,7 +609,7 @@ static const struct drm_gem_object_funcs etnaviv_gem_object_funcs = {
+>>   	.pin = etnaviv_gem_prime_pin,
+>>   	.unpin = etnaviv_gem_prime_unpin,
+>>   	.get_sg_table = etnaviv_gem_prime_get_sg_table,
+>> -	.vmap = etnaviv_gem_prime_vmap,
+>> +	.vmap = etnaviv_gem_object_vmap,
+>>   	.vunmap = etnaviv_gem_object_vunmap,
+>>   	.mmap = etnaviv_gem_mmap,
+>>   	.vm_ops = &vm_ops,
+>> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+>> index bea50d720450..8f523cbee60a 100644
+>> --- a/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+>> +++ b/drivers/gpu/drm/etnaviv/etnaviv_gem_prime.c
+>> @@ -25,18 +25,6 @@ struct sg_table *etnaviv_gem_prime_get_sg_table(struct drm_gem_object *obj)
+>>   	return drm_prime_pages_to_sg(obj->dev, etnaviv_obj->pages, npages);
+>>   }
+>>   
+>> -int etnaviv_gem_prime_vmap(struct drm_gem_object *obj, struct iosys_map *map)
+>> -{
+>> -	void *vaddr;
+>> -
+>> -	vaddr = etnaviv_gem_vmap(obj);
+>> -	if (!vaddr)
+>> -		return -ENOMEM;
+>> -	iosys_map_set_vaddr(map, vaddr);
+>> -
+>> -	return 0;
+>> -}
+>> -
+>>   int etnaviv_gem_prime_pin(struct drm_gem_object *obj)
+>>   {
+>>   	if (!obj->import_attach) {
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
-> Sent: 30 September 2024 18:05
-> To: Varada Pavani <v.pavani=40samsung.com>; s.nawrocki=40samsung.com;
-> cw00.choi=40samsung.com; alim.akhtar=40samsung.com;
-> mturquette=40baylibre.com; sboyd=40kernel.org; linux-samsung-
-> soc=40vger.kernel.org; linux-clk=40vger.kernel.org; linux-arm-
-> kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org
-> Cc: aswani.reddy=40samsung.com; pankaj.dubey=40samsung.com;
-> gost.dev=40samsung.com; stable=40vger.kernel.org
-> Subject: Re: =5BPATCH 2/2=5D clk: samsung: Fixes PLL locktime for PLL142X=
-X used
-> on FSD platfom
->=20
-> On 30/09/2024 13:18, Varada Pavani wrote:
-> > Add PLL locktime for PLL142XX controller.
-> >
->=20
-> So you send the same? Or something new? Please provide proper changelog
-> and mark patches as v2/v3 or RESEND.
->=20
-> But anyway this cannot be RESEND as I explicitly asked for fixing.
->=20
-> <form letter>
-> This is a friendly reminder during the review process.
->=20
-> It seems my or other reviewer's previous comments were not fully
-> addressed. Maybe the feedback got lost between the quotes, maybe you
-> just forgot to apply it. Please go back to the previous discussion and ei=
-ther
-> implement all requested changes or keep discussing them.
->=20
-> Thank you.
-> </form letter>
->=20
-> Best regards,
-> Krzysztof
-
-Sorry, have sent the same patch again. As I need to post one patch alone wh=
-ich got
-missed due to internal technical issue. Next time onwards will make sure to=
- mark the
-patches as V2/V3 or RESEND accordingly.
-
-Regards,
-Varada Pavani
+-- 
+Best regards,
+Sui
 
 
