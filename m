@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-345049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E805698B169
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:22:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485A298B16B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:24:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA26282DA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B801F23921
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 00:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09F528F1;
-	Tue,  1 Oct 2024 00:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A11F33F7;
+	Tue,  1 Oct 2024 00:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="b0LQpM3N"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8otNILN"
+Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E05D4A06
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 00:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2839173;
+	Tue,  1 Oct 2024 00:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727742134; cv=none; b=LbAdhLII8+J3YcgJctM5dsoZnnvMSzZDREMyo2+ypmBDA2InNrf1vSxACNX/muM32qyGAoz76siveZRllL6aNUrfM0dbJYc5/dVUQnRpLpzEIufM4xT8Z7PycmyauD++BLgRPu8bmQIfJ3Auw18YRe2cxy5qkMn1q6eSC+5v7MA=
+	t=1727742274; cv=none; b=Q/VbjaFJi1ppgPLNR1aHcCG4oxx0KG8OWlOr6TXvsvxJinWA8zQR/M7LRe4TmFe5ROF+4v4rTjCgNIfo0X1xegPazSMNwSHzxH734wQr4DLUdd+V/rgbdDAAgeZVqqZ2ByPLWO9JiiPMoixXbOtYFdESzdOtnaiu1JXrE6oxkT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727742134; c=relaxed/simple;
-	bh=i6qtBHJubMxW+MCswOYEVYPKlwtQLyoLSqKWdIqtOj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCIi3fxPF713x2mILhrPllergUxP0uECtY+W2OpcNgbgknQnyuEVl4DQavn+h8jmSAtrTYhMsqTaFBdD7ZOvCdBx9ay1zoeXyldY8pNxcGmWpo/NG817FJRXr73PJv2giHoiDXMtOgyjhWiduMbKRKXuRUu/5fdld6Sb4dHOWH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=b0LQpM3N; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7ac83a98e5eso431569285a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 17:22:10 -0700 (PDT)
+	s=arc-20240116; t=1727742274; c=relaxed/simple;
+	bh=RR4YJEuiCB+s4fOTHaO2fk03o/BIx9b2dGauH/q9zfI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K86TkI+fkUkOcW5pwhIQdyjvKEXDXO6bGG7rWKkMiwAQ/zpVqnQZHLPS7iNIXX2P2rssQXYRwF6/dj/YetrelnlUhHoM7vq98IBAVQA4FvG/Og6N6dK302nMAUkHYZb4KGpV6KgiSuvvdRHN6RHc39IF47nj9us+mCNN6zSa8m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8otNILN; arc=none smtp.client-ip=209.85.219.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-6cb2824ddc2so39531606d6.1;
+        Mon, 30 Sep 2024 17:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1727742130; x=1728346930; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vmEMUmiLlB6m/T/P5xBRLncvNWoi4hp4LZTs+dQITMo=;
-        b=b0LQpM3NXsxmmRoAIDKUmGJm/SzgoFkkzOQbNj1VxxQb69IJ3/Yf00sk+kXXhbDkg2
-         HOlBd1KbjYvEO7xa7P4Y+3ogeGBogvWAg6vz5CgX1qj6lytVcX01EVKl9I3rihGeMt9E
-         S0/Sx7riPWmlxjq9z0vCWr8IiPH1tb8BkjvydKHsO9Hms73K0gxu63QHh0rfxe6ktRmn
-         QBsyxYfj4jgj6A/OPx4fU6B0yGVXdHoDvOgW65HhuwHIQWDPDcVrkkwrDziFy1dukaFO
-         kCxvq7i1AhFCkjpgFxFwEoMugYIgzkCwjFWGjseYIgaR3UHc12OKX/xQl/4VOPnF+hn7
-         D+Fw==
+        d=gmail.com; s=20230601; t=1727742272; x=1728347072; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UXJNocpNHIaneGGPh7u0gkYrjLLyA3SxEfbfZIWZAYE=;
+        b=P8otNILNZhG1P0cukcyh3sY5jROW69KKkCgThUI04WIqlzcsVPS/0CgsIY7YpYvLXC
+         o7DgI9RBtshoJJrxTBtLk2VhPZH6euFRinmtCrCH34QfS4h3Qa/PsCZ3EETRolZeQfAw
+         /gDGHnJjsbvWND1/J3/8xkMqNoq6GKiSQoPxF2PwOm86xLZQgAgy6w7J7z7J/TW2SkXW
+         Y0hLQcJ04pou+/jk0up+V1bCQdBefXngMEmocWxAYgHQls6ff3T1PxOh7o5G97lqxNwP
+         7oGMfsIgydieDVoy/AFuiQrQIbywdXEn0V2e0JSkRN9HHrdLznSBroYaU3YRK3+h8JW6
+         zTkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727742130; x=1728346930;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vmEMUmiLlB6m/T/P5xBRLncvNWoi4hp4LZTs+dQITMo=;
-        b=rad8n2MaNVUKJVmnVVvkkoFsa05R5q4yuRovllxOdaB/TyA7qzCkpVbnhZs1hyg/cT
-         O2otatSYPw40W/fhhZ9hWoyG0Vkfoc1jAI5VI8AYMxfCPMFEA7wHP0fkvznHQ/mpSsNO
-         tjG4kJ8T9LSdN4Hujr6QOB6Cj2d0KvKFldKSdt7yhwr5CJcPNmj7B0+DEzphjRrjUZrI
-         /FdigEK/o4OsTfATkMMXItJb9e3Xq/aFNRnFZPVbwhU249kcSlMpXGqOidEL7pgXnNNF
-         x4GkBQrMB8rrXvtgSo7F62ajdbEzV8JxpQr7LKg5BMqn4FAyBiirmiOjcni4vdcidoSf
-         /bYA==
-X-Gm-Message-State: AOJu0Yyjr2cUK7urGx/1sYicsH4ID6Nbh2Wp4TQYOBIIqkXj0IU1h1WX
-	dKigZ5a+XpaTVnYrKaFSCgZj2U6etmgx/jxTa/TgfGrmInZVBWntniopxS9VALc=
-X-Google-Smtp-Source: AGHT+IH00sGjApfw8Q08fLdU6Khjgn27dLqCwr8RPVTJIvXjW9eQUAC/pBFTI7E7vu7z7LywpcOfWA==
-X-Received: by 2002:a05:620a:25d0:b0:7a9:c0f3:6425 with SMTP id af79cd13be357-7ae5b7f92acmr294180285a.3.1727742129803;
-        Mon, 30 Sep 2024 17:22:09 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:97cf:7b55:44af:acd6])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ae377d8699sm455524285a.40.2024.09.30.17.22.08
+        d=1e100.net; s=20230601; t=1727742272; x=1728347072;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UXJNocpNHIaneGGPh7u0gkYrjLLyA3SxEfbfZIWZAYE=;
+        b=wPg57s3BAIbPHDFDFOMlO63LUFA4mu9YIpKNo1+4ldbnxR8YX+9FVeiVwjSde3em47
+         QS1O9JO2mGwDnFZFWY/zixyHOO7p2SMALzMxXHZy3FfpE7GV4Iyf6gbhUf6ASDcR0LST
+         ASMikCgq30iNfD55MPD2Azcz9oXaPJZA3Zc9KntRYzhevI7sm/ApvfYQJPrhFxu7Mtgi
+         cA1xKdAZqUNBWxyIMJhBmUisEMy23URsqVixpPbgZYKap6MZf2h232DBdf3FncjamHk+
+         PjKcKA/iY/UkQsn0qeBnsvRr8ToIKjGyIAOlyUP2sLOqjZNIuyveTmiTSsJsBhyvPynM
+         GrhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjBi7QTHLVVJmXSigmeYk81k8LBKrctlr9XVLgrZcDFDt8VuhFTihRayRaidRSxLbDlssRFipz@vger.kernel.org, AJvYcCVA+B1lxVbiG1ZDgBpwHh+Sti8nOeCTv2XwmXicbdW88oufYrAzScQGKewdSCGWapsGhGd8eyauX2qc0/OZ@vger.kernel.org, AJvYcCWlcoqTcDgq4EtFLCTNgr06zWBFd7sJfJ8EITMnFM2caAxPHOkzEf/OypBdiSQQAGZ7Pox3zOCWYNHzCEA=@vger.kernel.org, AJvYcCXYIL8C0mWkBLAV39Yu5vfmea5bJCDnYxlY6jvymm2mP4FWc47RXjgRZlLUnAM0WI5KSvl/H/bhnGD2vGkQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWZPndUtEXVZVmrNg1GxeZTuORofl51yhhB3GpB0Xd27aCFE05
+	Ko7coOoFX2WG/onNkNqA7Y8AODj4nVbbs+PFMX+LmMgeqrXTEYFs
+X-Google-Smtp-Source: AGHT+IFqcL3S9UyEKrwwWrFna24JxfP1Qfwil+sI6wQESX1DtQgsUOKRCkTwCI1uJWo3OmH6tjkBtA==
+X-Received: by 2002:a05:6214:4206:b0:6cb:3ba9:b834 with SMTP id 6a1803df08f44-6cb3ba9b883mr186213266d6.24.1727742271738;
+        Mon, 30 Sep 2024 17:24:31 -0700 (PDT)
+Received: from localhost.localdomain (mobile-130-126-255-54.near.illinois.edu. [130.126.255.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb3b66b5a8sm44361256d6.79.2024.09.30.17.24.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 17:22:08 -0700 (PDT)
-Date: Mon, 30 Sep 2024 20:22:07 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, yosryahmed@google.com,
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
-	shakeel.butt@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
-	21cnbao@gmail.com, akpm@linux-foundation.org, willy@infradead.org,
-	nanhai.zou@intel.com, wajdi.k.feghali@intel.com,
-	vinodh.gopal@intel.com
-Subject: Re: [PATCH v9 4/7] mm: Change count_objcg_event() to
- count_objcg_events() for batch event updates.
-Message-ID: <20241001002207.GA1349@cmpxchg.org>
-References: <20240930221221.6981-1-kanchana.p.sridhar@intel.com>
- <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
+        Mon, 30 Sep 2024 17:24:30 -0700 (PDT)
+From: Gax-c <zichenxie0106@gmail.com>
+To: srinivas.kandagatla@linaro.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	rohitkr@codeaurora.org
+Cc: alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Gax-c <zichenxie0106@gmail.com>,
+	Zijie Zhao <zzjas98@gmail.com>,
+	Chenyuan Yang <chenyuan0y@gmail.com>
+Subject: [PATCH] ASoC: qcom: Fix NULL Dereference in asoc_qcom_lpass_cpu_platform_probe()
+Date: Mon, 30 Sep 2024 19:24:09 -0500
+Message-Id: <20241001002409.11989-1-zichenxie0106@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240930221221.6981-5-kanchana.p.sridhar@intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 30, 2024 at 03:12:18PM -0700, Kanchana P Sridhar wrote:
-> With the introduction of zswap_store() swapping out large folios,
-> we need to efficiently update the objcg's memcg events once per
-> successfully stored folio. For instance, the 'ZSWPOUT' event needs
-> to be incremented by folio_nr_pages().
-> 
-> To facilitate this, the existing count_objcg_event() API is modified
-> to be count_objcg_events() that additionally accepts a count parameter.
-> The only existing calls to count_objcg_event() are in zswap.c - these
-> have been modified to call count_objcg_events() with a count of 1.
-> 
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+A devm_kzalloc() in asoc_qcom_lpass_cpu_platform_probe() could possibly return NULL pointer.
+NULL Pointer Dereference may be triggerred without addtional check.
+Add a NULL check for the returned pointer.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Fixes: b5022a36d28f ("ASoC: qcom: lpass: Use regmap_field for i2sctl and dmactl registers")
+Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
+Reported-by: Zichen Xie <zichenxie0106@gmail.com>
+Reported-by: Zijie Zhao <zzjas98@gmail.com>
+Reported-by: Chenyuan Yang <chenyuan0y@gmail.com>
+---
+ sound/soc/qcom/lpass-cpu.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/sound/soc/qcom/lpass-cpu.c b/sound/soc/qcom/lpass-cpu.c
+index 5a47f661e0c6..a8e56f47f237 100644
+--- a/sound/soc/qcom/lpass-cpu.c
++++ b/sound/soc/qcom/lpass-cpu.c
+@@ -1243,6 +1243,9 @@ int asoc_qcom_lpass_cpu_platform_probe(struct platform_device *pdev)
+ 	drvdata->i2sctl = devm_kzalloc(&pdev->dev, sizeof(struct lpaif_i2sctl),
+ 					GFP_KERNEL);
+ 
++	if (!drvdata->i2sctl)
++		return -ENOMEM;
++
+ 	/* Initialize bitfields for dai I2SCTL register */
+ 	ret = lpass_cpu_init_i2sctl_bitfields(dev, drvdata->i2sctl,
+ 						drvdata->lpaif_map);
+-- 
+2.25.1
+
 
