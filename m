@@ -1,108 +1,78 @@
-Return-Path: <linux-kernel+bounces-345869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0E798BC27
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9BF98BC23
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D59B232B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E4E51C228CB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046991C2DB1;
-	Tue,  1 Oct 2024 12:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DMF1+/yr";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1N/X5Pri"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD88E1C2DAB;
+	Tue,  1 Oct 2024 12:32:51 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015DE1C2DB2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BC8156C6A;
+	Tue,  1 Oct 2024 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727785992; cv=none; b=sIvbA3DeBC/YB3CiiJFWQT8y0B9sB9Nx8rOvBHnwn6fgRKmSQbk+aHSBS1AnCyT2VT7IjA7RJL8pkT1dgZsLc7Q+DiohTXC+dxtB2Tok1GfZWp3ajupF+uABjlc6tTRIr3q+ARWeFnYfG9vzBPRWaNpLU7qaoIg82fexiaLCSAg=
+	t=1727785971; cv=none; b=LS3euBnaIE96EfgRvoscLBLASY+KZ2LPHzWinCyKDKBxNsd0hio41UgCXoxKYrFvmEM8vmFunEcwHLnNIf70yVjzLFUj8Z6zRjvIwjhucTlmJxSgG+wBTmTwI9fIPsgYu+NjhkWGchGONFT9j8zx2GRXJUSicBm5n4vbb65ZzjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727785992; c=relaxed/simple;
-	bh=5MrYlsryO9DyW+f6YhuNgihMOlIp0dj251treliLUbM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IhEuJDm1SDrZBIbx4NUhFTtIgauZZ7nVZhJFGnAiKthgczcNm4m37t7mlZu/26jjtnz5yQM3FD0woOsWtkGSTAXQjwIjAuXV2qKEAMyYaV3IGas+sB9nW4rzw+Y6mIzv4FXMpZLDXTYoFHG/281IFYy86IaAZoRbEq3WOJJvjL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DMF1+/yr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1N/X5Pri; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1727785983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1Ysj8ha5ntJle7w3acvDm6aMN37rYFth4LF/GUDPbQ=;
-	b=DMF1+/yrx/fy5KCdrS5z2c+VyfSgLZCdzf1au13Fby/yN6dLs5yk+ORbfajpK5vFS2Rjix
-	mIqHkN9F2W2RE+V2gffZIN9++KVIEIqmVH94ysrf4Rb6Dm8RYoE34VMuDWJLB9fyLKBX0u
-	0IC4KVNfw+tz2FPT5oFbli1JeqjLGcwnT7fAED9iyFHxXKJ1rTJ14qaZMGqJrcKEpT+1uh
-	1HriqpVqkjRcAoh3jzhvF2RLPUYartO3hMT+k8T3AF0NL+jN8zxuHaOLk8OLmtepQWw1/+
-	P5AaWUH2snBcJw1S43fF+01gcwyvhodfJMf4XYrJ4XeZr3n6y9jgCpG9cmH5+w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1727785983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U1Ysj8ha5ntJle7w3acvDm6aMN37rYFth4LF/GUDPbQ=;
-	b=1N/X5Priwbtk69oG8POZJJ4GpyHzL4sYsd23kneCPM3cYqKrOz/9oTr0HqdQE53iRUdZhJ
-	2BnjcIAXgo/TJsAQ==
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King
- <linux@armlinux.org.uk>, linux-kernel@vger.kernel.org, Bart Van Assche
- <bvanassche@acm.org>
-Subject: Re: [PATCH 01/21] genirq: Introduce number_of_interrupts() and
- set_number_of_interrupts()
-In-Reply-To: <20240930181600.1684198-2-bvanassche@acm.org>
-References: <20240930181600.1684198-1-bvanassche@acm.org>
- <20240930181600.1684198-2-bvanassche@acm.org>
-Date: Tue, 01 Oct 2024 14:33:03 +0200
-Message-ID: <875xqcypds.ffs@tglx>
+	s=arc-20240116; t=1727785971; c=relaxed/simple;
+	bh=DGbX1ZbsnhlL6zqk1rlga8QyOPbbUd7y07TXI/tvErI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KzJjoulQjBKT0C4PdZd0BZx92PkqBGid1wB7E/pIdEjYlmKdD0REb4Ls22kdjwbp1o47jcmirHFclGV6fo09+XDygeoi0+gIgj7pXfn57TCa4RvfB/wND1hvtKCtRu+3YNyATFPMPsxeNWfhW/Hf5p1SqpDbxVsagG+JJlCn1Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E751C4CEC6;
+	Tue,  1 Oct 2024 12:32:50 +0000 (UTC)
+Date: Tue, 1 Oct 2024 08:33:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Question about config UPROBES and UPROBE_EVENTS
+Message-ID: <20241001083339.612395ba@gandalf.local.home>
+In-Reply-To: <20241001083042.12f388e7@gandalf.local.home>
+References: <1a3567d5-e558-351a-c45d-73b2e5a8788c@loongson.cn>
+	<20240930081529.f6f9161c20db9b95c9b46252@kernel.org>
+	<f639079e-bc1c-7f2a-4c3f-de1a6780da84@loongson.cn>
+	<20240930100630.7894c442@gandalf.local.home>
+	<20241001002813.6012587b5e52737a576f1d0b@kernel.org>
+	<20240930113231.6c87108d@gandalf.local.home>
+	<20241001004307.bc238bbda81907c08a8c1e96@kernel.org>
+	<10d33d7f-5785-93e1-128d-5ad6ac2e771f@loongson.cn>
+	<20241001083042.12f388e7@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30 2024 at 11:15, Bart Van Assche wrote:
-> This patch prepares for changing 'nr_irqs' from an exported global
-> variable
+On Tue, 1 Oct 2024 08:30:42 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-git grep 'This patch' Documentation/process/
+> On Tue, 1 Oct 2024 14:30:33 +0800
+> Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
+> 
+> > Then, CONFIG_KPROBE_EVENTS should depend on or select CONFIG_KPROBES?
+> > In the current code, CONFIG_KPROBE_EVENTS depend on CONFIG_KPROBES,
+> > the CONFIG_KPROBE_EVENTS menu is hidden if CONFIG_KPROBES is not set.  
+> 
+> We could just for consistency. KPROBE_EVENTS would then need to depend on
+> HAVE_KPROBES as well. It does add some duplication.
+>
 
-> into a variable with file scope.
+I take this back. I don't think there's any reason to have a UPROBES prompt.
 
-Also what's the rationale for this?
+If you want UPROBES, you should have UPROBE_EVENTS. They are completely
+different than kprobes.
 
->  
->  extern int nr_irqs;
-> +int number_of_interrupts(void) __pure;
-> +int set_number_of_interrupts(int nr);
-
-Please use a proper name space prefix for the functions
-irq_.....(). These random names are horrible.
-
->  extern struct irq_desc *irq_to_desc(unsigned int irq);
->  unsigned int irq_get_next_irq(unsigned int offset);
->  
-> diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-> index 1dee88ba0ae4..8c6280843964 100644
-> --- a/kernel/irq/irqdesc.c
-> +++ b/kernel/irq/irqdesc.c
-> @@ -141,6 +141,20 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
->  int nr_irqs = NR_IRQS;
->  EXPORT_SYMBOL_GPL(nr_irqs);
->  
-> +int number_of_interrupts(void)
-> +{
-> +	return nr_irqs;
-
-Why is this int? The number of interrupts is strictly positive, no?
-
+-- Steve
 
