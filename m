@@ -1,148 +1,126 @@
-Return-Path: <linux-kernel+bounces-346818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AF298C956
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC5D798C958
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56841C243FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 525E81F2362C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DB51CF7BC;
-	Tue,  1 Oct 2024 23:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAAB1CF7D8;
+	Tue,  1 Oct 2024 23:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/nIdavm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fxbyntyu"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726151CEEA7;
-	Tue,  1 Oct 2024 23:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B0A1CF5C4
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727824242; cv=none; b=IiehTPVKL/6THXMW2/Bh75WPhVKstbfoDOJODvnysUco+pNY861Sxbdc2P3Nh40SK9pzOikxWI3A3qJns13uWENK4a5uSdi4xayYoLnGj4azmJSNsSCjhkBMGZwXDmDg8XcIxOewFH1YG7iaZDrAHW7dzMDVe/Rgv3YvPASkAFM=
+	t=1727824353; cv=none; b=GJm1npCGKHx0rLon3r/lznfN4rW1iOiYjK4Ji+ugnQM4kNgc9B5LK4k6Sf2b3ll5kBm2QnvNomLyqAu1eqmLQOzDtAHpi8DMucfoWf7POzuuJW+m38eRAONL2pDhlSrjcqIPbXancBljwthmRd0ov3xjZbr96auRXT8B4iXkqQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727824242; c=relaxed/simple;
-	bh=DcJk0ZurD4m477NZqGPsjHZFR3HoBgS1o2cMcYNYB2s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=eWSW0FbdbOk5Q2n9WQEKZ+ORRXmqc1nA+IdILGEIfMRlHnaw7Wl/1Hzq8Yd1LKPGXiFoBosQC5q5HOd9Kb0BqLNXvdTxGIc9fL/uWdewQefBTXqy6b3h3jcKfTLQOKpDQXXPuRlgx9oB7A01ZsOl6dKm9Rq2Qt4Fh1LnY3ccM2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/nIdavm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A67C4CEC6;
-	Tue,  1 Oct 2024 23:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727824242;
-	bh=DcJk0ZurD4m477NZqGPsjHZFR3HoBgS1o2cMcYNYB2s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W/nIdavm1JqAX/giEtnJOkGz3xbjdMq6KQkVw4ljhSRaSLSeInkxiw57CPANodEdt
-	 BDUmGhFZm3fprZ+HevIktBUAx5izVq2R/JTp8im484EKY4oXw8NTt5t6oKNbAQp1kC
-	 e8yGKgKRY02ydyHb6dqxZyFPr4GJ8e9yA250mszB4bEa89E1LainJdofTupgX33ff2
-	 LHU3kk6t+C1PUfcD4xRbxeFFbInkC08OQmL7FF6cple4SqU8vaHvD8uzGuqokjYtWd
-	 GNQDdGXc7GtxZBSNqO/lNAEZp+2CDk/O28MXbb+Aezidxvikak450fAzj1jNkx2SkF
-	 /ltNKeuVdCAyA==
-Date: Wed, 2 Oct 2024 08:10:37 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-Id: <20241002081037.e9b825f7456ce4815eccad1b@kernel.org>
-In-Reply-To: <20240930145548.08c8f666@gandalf.local.home>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-	<172615373091.133222.1812791604518973124.stgit@devnote2>
-	<20240915051144.445681c2@rorschach.local.home>
-	<20240917095538.GA27384@willie-the-truck>
-	<20240930145548.08c8f666@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727824353; c=relaxed/simple;
+	bh=UJEo7ZbVngp//T9WAn3g+kIQ8hS525iGbt6hspN/biQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=t1+gxie8TrRD28wButJgodmADRNKbBxV0TGZm1V6m5AquWp1X5yl+fRLoIKmGdX7nfzhaRe1S9t5AUVsZDpmd71Tgdzbde8RfEDkelC1XKrgybhuyhn3RmQHPHvqUeUBNXyPGNCDFQN3vhumXPO9l1AeD3Fy25MCrCDCmEbmlns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--tkjos.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fxbyntyu; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--tkjos.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-20afe0063e0so59549355ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727824350; x=1728429150; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yfKsYMpaU7VvuhLl70RiS1jJf8XNvJoYo4Hby8DN+CU=;
+        b=fxbyntyuQ0rm7BLDzlyhZnTYzekqbZ3ujfeORgKNPJRBlKqKWMv+gwCTbJVSUf3ceQ
+         t0h2ITk5INCXIqNg2w5EoYWx7jNQ46Dna1c6ZI/CKKZ92V1KNjfZaDfRmTJuKdrNUxmY
+         XivHRZmEy/1fwJk3xUBoHg/j+wB5DWnwj0WSns5J6/kmzvHQJdFm5aVgqUbuNFvf2eUO
+         oLwwONBaDPIwfTh0bHJJv6diJQWRZFaoLau6AjFMKJq/G+AppVGhnJ7+0NHbEH04hVOP
+         Nafz5bTyyPcTK3OUdP+ZK0jteuxUyjAQD2o4OZbECRgyO+wIOghUxmFN1/3lSqtYQujw
+         5mmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727824350; x=1728429150;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yfKsYMpaU7VvuhLl70RiS1jJf8XNvJoYo4Hby8DN+CU=;
+        b=u8BH6sp7DI1I/4h8IktEjB37rr+z4iaBYGk9qmYVThtexWmqJ3JGg+24K5GXaeV74U
+         tdSujsYtfEd+pBWy8yff4pvbgJ0JGqiEQgvo7ooVLPATAL/DS+zereKTXqcfTDluRvHU
+         H+k7tJyOzniT1XJKVsGH+lKK8EZ0ROfOj/mKcUJF/AL0lBcVf47NjXfyCDzcxP2GmxY5
+         VDa0VFW1IiYnLsfPBGSoxK+yJ6NBAXLIJfjWXShWm/ANOYw3GmZHk8l00OkuGzLzsjKP
+         PYM8AtSvJdGGAWUN1LCx+UbsEmAoV+Fx/8Z86H+hxl1hr+KGD3t3vopnyhp4w41n1rth
+         IVNw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0KtXeaLBMq17Wzk4XIHcWZuynAKWrrmwPI+jiStIKptutWYSReBLHef2CtKf0fsDYrXo7eidEQmINi38=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwShzqriOF7n3+PaJ58LYaKoS9Hzwh4qcJq+hSxmhgc4I8+wAIl
+	Q22kvL2Lmvx2y4ngNVRvMbNaUwn5Viv4ZWrLZ37yzlLOghDhaYQluPuAElOhdi+HRjiX3O3zug=
+	=
+X-Google-Smtp-Source: AGHT+IFYlrcOGsDvZLY/eGYCzs70AYjmWagZL0Cjjfxx6fUGcCl923aS8j/xVPRRR+iJEaJLcWnUjAtpBg==
+X-Received: from avak.c.googlers.com ([fda3:e722:ac3:cc00:ef:85c8:ac13:4199])
+ (user=tkjos job=sendgmr) by 2002:a17:903:41c9:b0:20b:bc4b:2bc4 with SMTP id
+ d9443c01a7336-20bc5a599f2mr78285ad.10.1727824349757; Tue, 01 Oct 2024
+ 16:12:29 -0700 (PDT)
+Date: Tue,  1 Oct 2024 23:11:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.46.1.824.gd892dcdcdd-goog
+Message-ID: <20241001231147.3583649-1-tkjos@google.com>
+Subject: [PATCH] PCI: fix memory leak in reset_method_store()
+From: Todd Kjos <tkjos@google.com>
+To: kernel-team@android.com, bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Todd Kjos <tkjos@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 30 Sep 2024 14:55:48 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+In reset_method_store(), a string is allocated via kstrndup()
+and assigned to the local "options". options is then used
+in with strsep() to find spaces:
 
-> On Tue, 17 Sep 2024 10:55:39 +0100
-> Will Deacon <will@kernel.org> wrote:
-> 
-> > The arm64 part looks good to me, although passing a partially-populated
-> > struct out of asm feels like it's going to cause us hard-to-debug
-> > problems down the line if any of those extra fields get used. How hard
-> > would it be to poison the unpopulated members of 'ftrace_regs'?
-> 
-> The purpose of creating ftrace_regs was to allow a partially populated
-> pt_regs to be sent around, as Thomas Gleixner and Peter Zijlstra were
-> against using pt_regs that were not fully populated. Hence, I created
-> "ftrace_regs" for this purpose.
-> 
-> ftrace_regs should never be accessed via its internal elements but only with
-> its accessor functions, as depending on the arch or functionality used, the
-> content of the structure should never be trusted. The accessor functions
-> will do all the verification needed.
-> 
-> I may add some compiler hacks to enforce this. Something like:
-> 
-> struct ftrace_regs {
-> 	void *nothing_to_see_here;
-> };
+  while ((name = strsep(&options, " ")) != NULL) {
 
-Yeah, OK. But sizeof(fregs) may be changed. (Shouldn't we do too?)
+If there are no remaining spaces, then options is set to NULL
+by strsep(), so the subsequent kfree(options) doesn't free the
+memory allocated via kstrndup().
 
-> 
-> And then change the arch code to be something like:
-> 
-> // in arch/arm64/include/asm/ftrace.h:
-> 
-> struct arch_ftrace_regs {
->         /* x0 - x8 */
->         unsigned long regs[9];
-> 
-> #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
->         unsigned long direct_tramp;
-> #else
->         unsigned long __unused;
-> #endif
-> 
->         unsigned long fp;
->         unsigned long lr;
-> 
->         unsigned long sp;
->         unsigned long pc;
-> };
+Fix by using a separate tmp_options to iterate with
+strsep() so options is preserved.
 
-And if it is pt_regs compatible, 
+Fixes: d88f521da3ef ("PCI: Allow userspace to query and set device reset mechanism")
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+ drivers/pci/pci.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-#define arch_ftrace_regs pt_regs
-
-?
-
-> 
-> #define get_arch_ftrace_regs(fregs) ((struct arch_ftrace_regs *)(fregs))
-> 
-> static __always_inline void
-> ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
->                                     unsigned long pc)
-> {
-> 	struct arch_ftrace_regs *afregs = get_ftrace_regs(fregs);
->         afregs->pc = pc;
-> }
-> 
-> 
-> -- Steve
-
-
-Thanks,
-
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 7d85c04fbba2..0e6562ff3dcf 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -5244,7 +5244,7 @@ static ssize_t reset_method_store(struct device *dev,
+ 				  const char *buf, size_t count)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+-	char *options, *name;
++	char *options, *tmp_options, *name;
+ 	int m, n;
+ 	u8 reset_methods[PCI_NUM_RESET_METHODS] = { 0 };
+ 
+@@ -5264,7 +5264,8 @@ static ssize_t reset_method_store(struct device *dev,
+ 		return -ENOMEM;
+ 
+ 	n = 0;
+-	while ((name = strsep(&options, " ")) != NULL) {
++	tmp_options = options;
++	while ((name = strsep(&tmp_options, " ")) != NULL) {
+ 		if (sysfs_streq(name, ""))
+ 			continue;
+ 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.46.1.824.gd892dcdcdd-goog
+
 
