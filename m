@@ -1,66 +1,55 @@
-Return-Path: <linux-kernel+bounces-346678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E2C98C775
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:19:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8298998C778
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BEEF283BAC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975771C22500
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616D11CDA31;
-	Tue,  1 Oct 2024 21:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAC91CDFB8;
+	Tue,  1 Oct 2024 21:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VuFbAORd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slgR241p"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF85419C56F;
-	Tue,  1 Oct 2024 21:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7324F19C56F;
+	Tue,  1 Oct 2024 21:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817555; cv=none; b=c1XcL0jTEMP/S0bcOmjzjSVo07U1TzvMJvnQzR3WNMpcBoApAWVYenYP2DpZ4yVGgWP23r4aScJ96K39kfP8ppOej+kFbRsGR16ZQbYtprfa617rkLi1gin438cqUvPDbXNsJNdjEOL3h+D5tN5Qpo/8n1yT5s2dl8ky9A6xKHg=
+	t=1727817599; cv=none; b=EyVgw1N9KcFZMNt1aMHcrYChDjbDm39QXUDIdR5jfbbTZBFO81ai/et1PZvQXnIjr0x3zKbBQ+9k8GDOOqvHmr2Py0G2PaTnD5/OKfuHth+VAT10mDp+YICyaKLo3yvi1Jzl/wkR1ZhuPdHUMCnHDpy0gNoj2UP1PpiYIXo2rac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817555; c=relaxed/simple;
-	bh=244LgueFRtPdrYTYFFh1neNOJHKmMrFxLaO4qT37TdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4v8dkd5QkqW7lnLGWbGmavfdP4XyLkhtyHSn4tgMxVJBMVYtKpUcKGFQh2cbJRQC2ntVcE96EI5myyh8wu6sMURd977yfaA6gVJef+gjScbLQr8ET9HkIQ7l0jrtCPgY8Ir+sVYeXbulH7ne/lw4cjF7HXGxGY4MSczIVJAm5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VuFbAORd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC2AC4CEC6;
-	Tue,  1 Oct 2024 21:19:14 +0000 (UTC)
+	s=arc-20240116; t=1727817599; c=relaxed/simple;
+	bh=UvFS9AEFBRiLrqnwziEbTU80f5qSBbjblSE7Jg3jCZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=AGrRPtzGSo76OvqOHrbEKQ2Nlr/Qv/PX1it8gXh2lyhNAJhoUwif847Q0/cueOchDVvk9/K9TBLV4WmSvmGE6ypsyfHJaLu2NYATiFngTGhsfCTam8M9lK0W4Exx/5zbPfu1cAKIaHW5LqvPCFlP6v58Yw9TR87hYH7gBnO/Gtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slgR241p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25FF2C4CECD;
+	Tue,  1 Oct 2024 21:19:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727817555;
-	bh=244LgueFRtPdrYTYFFh1neNOJHKmMrFxLaO4qT37TdI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VuFbAORdc5igqvJcV+l36uysAL/HAooTfAqXKCLQ7Ezo44aOp2sYKrY1MzcCa8eK9
-	 Mc3b1o3VqCMWCKSmHaZqQUTHGzVOFN5be1fXFXzZJC0D7PgxUBda5jn7fKkPsibmf8
-	 lOwW3NS/DHOuN02skoAv59Xayrbp6qn1/swV14MITq5REkSADBsP7+pM9XUGyCZ35j
-	 uILqPTsuTspsxu2V3MK7hGPClF4ZbxiZqMVbaVuAnNdAYIExKJIAUmFqRXjMtIu9+B
-	 +1WK9rnT7LwmUrU+y/buwX3G/d5VkkPRg75xyeAmek9Vf6OIV905oErk1JEYUc71OO
-	 Db5VaH8tE5AXg==
-Date: Tue, 1 Oct 2024 14:19:13 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Mingwei Zhang <mizhang@google.com>
-Subject: Re: [PATCHSET 0/8] perf tools: Do not set attr.exclude_guest by
- default (v4)
-Message-ID: <ZvxnUfgEiHY-Zmr4@google.com>
-References: <20241001002027.1272889-1-namhyung@kernel.org>
- <4ce19789-eea1-4e5e-9269-13bd78d846c2@linux.intel.com>
+	s=k20201202; t=1727817599;
+	bh=UvFS9AEFBRiLrqnwziEbTU80f5qSBbjblSE7Jg3jCZI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=slgR241pNj7FVdUseXdhRjPnFtvdPDvVYakmHU40zolreBSBusNC/HaoLzxqOSKIV
+	 PvCtfyMmRhgz1HWENNdYkxST1qGEtXRoNXnE4WAEyJOyOgMRsd7CQudXXdmJOSioY8
+	 BfSl1PLS0/GWZivLfwLY/eBo+RZim1Qrbc18e+D18kIs4GrWsHFlRaAtbCkw+7L48U
+	 WhEuydAZFplrmjXiY3gF1TVG/OKg050H9G+sFrT8+vrfrTQY395NS/2qFGjyjNk/bP
+	 I/3lW+jyGU/9liEUFaQFSiwB0UeNiHaEL4W4x9CPLWEdthk4cv48swhVeDl5gr6teS
+	 M36lgmDBQzHwQ==
+Date: Tue, 1 Oct 2024 16:19:57 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_qianyu@quicinc.com, Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH] PCI: qcom: Enable MSI interrupts together with Link up
+ if global IRQ is supported
+Message-ID: <20241001211957.GA227250@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,77 +58,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4ce19789-eea1-4e5e-9269-13bd78d846c2@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001042055.ivf4zspq4fqmaxth@thinkpad>
 
-On Tue, Oct 01, 2024 at 01:46:36PM -0400, Liang, Kan wrote:
+On Tue, Oct 01, 2024 at 09:50:55AM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Sep 30, 2024 at 12:11:01PM -0500, Bjorn Helgaas wrote:
+> > On Mon, Sep 30, 2024 at 07:14:09PM +0530, Manivannan Sadhasivam wrote:
+> > > Currently, if global IRQ is supported by the platform, only the Link up
+> > > interrupt is enabled in the PARF_INT_ALL_MASK register. But on some Qcom
+> > > platforms like SM8250, and X1E80100, MSIs are getting masked due to this.
+> > > They require enabling the MSI interrupt bits in the register to unmask
+> > > (enable) the MSIs.
+> > 
+> > "global IRQ" is a very generic name.  If that's the official name, it
+> > should at least be capitalized, e.g., "Global IRQ", to show that it is
+> > a proper noun that refers to a specific IRQ.
 > 
+> Sure.
 > 
-> On 2024-09-30 8:20 p.m., Namhyung Kim wrote:
-> > Hello,
+> > > Even though the MSI interrupt enable bits in PARF_INT_ALL_MASK are
+> > > described as 'diagnostic' interrupts in the internal documentation,
+> > > disabling them masks MSI on these platforms. Due to this,
 > > 
-> > I found perf tools set exclude_guest bit inconsistently.  It used to
-> > set the bit but now the default event for perf record doesn't.  So I'm
-> > wondering why we want the bit in the first place.
+> > > MSIs were not
+> > > reported to be received these platforms while supporting global IRQ.
 > > 
-> > Actually it's not good for PMUs don't support any exclusion like AMD
-> > IBS because it disables new features after the exclude_guest due to
-> > the missing feature detection logic.
-> > 
-> > v4 changes)
-> > 
-> >  * handle EOPNOTSUPP error in compatible way  (Kan)
-> >  * drop --exclude-guest option in perf stat
-> >  * not to separate exclude_hv fallback
-> >  * rename to exclude_GH_default  (Kan)
-> >  * drop the RFC from the subject
-> > 
-> > v3) https://lore.kernel.org/lkml/20240905202426.2690105-1-namhyung@kernel.org/
-> > 
-> >  * move exclude_guest fallback to the front
-> >  * fix precise_max handling on AMD
-> >  * simplify the default event for perf record
-> > 
-> > v2) https://lore.kernel.org/lkml/20240904064131.2377873-1-namhyung@kernel.org/
-> > 
-> >  * update the missing feature detection logic
-> >  * separate exclude_hv fallback
-> >  * add new fallback for exclude_guest
-> > 
-> > v1) https://lore.kernel.org/lkml/20240902014621.2002343-1-namhyung@kernel.org/
-> > 
-> > AFAIK it doesn't matter for the most cases but perf kvm.  If users
-> > need to set the bit, they can still use :H modifier.  For vPMU pass-
-> > through or Apple M1, it'd add the exclude_guest during the fallback
-> > logic.
-> > 
-> > Also the kernel feature detection logic should be separated from the
-> > exclude bit tests since it depends on the PMU implementation rather
-> > than the core kernel features.  So I changed it to use a software
-> > event for the detection and factor out some hw-specific checks.
-> > 
-> > The code is available at 'perf/exclude-v4' branch in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> > 
-> > Thanks,
-> > Namhyung
-> > 
-> > 
-> > Namhyung Kim (8):
-> >   perf tools: Add fallback for exclude_guest
-> >   perf tools: Don't set attr.exclude_guest by default
-> >   perf tools: Simplify evsel__add_modifier()
-> >   perf tools: Do not set exclude_guest for precise_ip
-> >   perf tools: Detect missing kernel features properly
-> >   perf tools: Move x86__is_amd_cpu() to util/env.c
-> >   perf tools: Check fallback error and order
-> >   perf record: Just use "cycles:P" as the default event
-> > 
+> > I'm trying to parse "while supporting global IRQ."  We basically
+> > support global IRQ by installing qcom_pcie_global_irq_thread(), but of
+> > course the device doesn't see that, so I assume it would be more
+> > informative to say that MSIs are masked by some register setting.
 > 
-> The patch set looks good to me.
-> 
-> Acked-by: Kan Liang <kan.liang@linux.intel.com>
+> Hmm, this is what I mentioned in the above paragraph referencing
+> PARF_INT_ALL_MASK register. Is that not clear enough?
 
-Thanks for your review!
-Namhyung
+It requires the knowledge that the MSI enable bits are set by
+hardware, cleared by 4581403f6792, and set again here.  This will be
+more accessible to non-qcom experts if that information is included
+here.
 
+> > The patch suggests that MSIs are masked internally unless
+> > PARF_INT_MSI_DEV_0_7 is set in PARF_INT_ALL_MASK.
+> > 
+> > Are you saying that prior to 4581403f6792, MSIs did work?  Does that
+> > mean PARF_INT_MSI_DEV_0_7 was set by a bootloader or something, so
+> > MSIs worked?  And then 4581403f6792 came along and implicitly cleared
+> > PARF_INT_MSI_DEV_0_7, so MSIs were then masked?
+> 
+> Yeah. Those bits were enabled by default in hardware, but since they were
+> mentioned as 'diagnostic interrupts' in documentation, commit 4581403f6792
+> intentionally disabled them. But that results in MSIs getting masked in
+> *some* platforms.
+
+Apparently the "*some* platforms" part is more qcom-expert knowledge?
+There are other qcom platforms where MSIs are not disabled by
+4581403f6792?  Information about which platforms are which also sounds
+useful for future maintenance.
+
+> > > So enable the MSI interrupts along with the Link up interrupt in the
+> > > PARF_INT_ALL_MASK register if global IRQ is supported. This ensures that
+> > > the MSIs continue to work and also the driver is able to catch the Link
+> > > up interrupt for enumerating endpoint devices.
+> > > 
+> > > Fixes: 4581403f6792 ("PCI: qcom: Enumerate endpoints based on Link up event in 'global_irq' interrupt")
+> > > Reported-by: Konrad Dybcio <konradybcio@kernel.org>
+> > > Closes: https://lore.kernel.org/linux-pci/9a692c98-eb0a-4d86-b642-ea655981ff53@kernel.org/
+> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > ---
+> > >  drivers/pci/controller/dwc/pcie-qcom.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > index ef44a82be058..2b33d03ed054 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > @@ -133,6 +133,7 @@
+> > >  
+> > >  /* PARF_INT_ALL_{STATUS/CLEAR/MASK} register fields */
+> > >  #define PARF_INT_ALL_LINK_UP			BIT(13)
+> > > +#define PARF_INT_MSI_DEV_0_7			GENMASK(30, 23)
+> > >  
+> > >  /* PARF_NO_SNOOP_OVERIDE register fields */
+> > >  #define WR_NO_SNOOP_OVERIDE_EN			BIT(1)
+> > > @@ -1716,7 +1717,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+> > >  			goto err_host_deinit;
+> > >  		}
+> > >  
+> > > -		writel_relaxed(PARF_INT_ALL_LINK_UP, pcie->parf + PARF_INT_ALL_MASK);
+> > > +		writel_relaxed(PARF_INT_ALL_LINK_UP | PARF_INT_MSI_DEV_0_7,
+> > > +			       pcie->parf + PARF_INT_ALL_MASK);
+> > >  	}
+> > >  
+> > >  	qcom_pcie_icc_opp_update(pcie);
+> > > -- 
+> > > 2.25.1
+> > > 
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
 
