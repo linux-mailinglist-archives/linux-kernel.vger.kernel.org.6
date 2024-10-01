@@ -1,194 +1,92 @@
-Return-Path: <linux-kernel+bounces-346057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA1F98BED1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D55698BEDF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D381C232AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3D51F219BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5C11C688E;
-	Tue,  1 Oct 2024 14:02:35 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3A1C463C;
+	Tue,  1 Oct 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wh7MHN2W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EE71C3F1F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DADB28F4;
+	Tue,  1 Oct 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791354; cv=none; b=hhUV+XAQI4GQ2vG01ONs0uR0E/H7dsCuXCO08QOLZRwmtFt6BA/ZOkOlhPVpjTvCOHJM1jMDmuGx6ewE2GBu3sX3mmih3jFUn56umTC04TimUpL3XtF7KZDe5+IPJSCuWwYgWpdcAFdapA4lKQqHU6dqAZUXi4dT+1OEBrNB4wM=
+	t=1727791428; cv=none; b=luFQk6JZ+AwjB1CTDTq/ZZp+h5JfcFETXeOzExLU3NImIN8YnjtCgZJWvyVwbjbmRiesdDzf5WZiyrNPaZeymtfaE9viFj/0yMs/E41M9iQ064raO2M/lRwxwZkIMZYDkkpQuvK0Yt8N/LUeYty8uD0NF2Jck5fcMuXiWD/wwLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791354; c=relaxed/simple;
-	bh=Ckc72aVHYwHH+0b8Dup10FlBpKezb8SoAeySuKNPmFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=eqImbzQ4dvaYQLlGvBuc0Gg/vRTuhZMkQo9vmxWI5HRl1sA92byXXIej8IDIlZbG7YkVJG5P/ywpEbgaXlrAERCsehst+4a5JwhxHP0hd+Mnl6FkLBV19F2ZCHX/6C5abIJIus182GjbWARRq7NK8+7Oy44F+vw6PDpEKqy9dYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 816B71C0005;
-	Tue,  1 Oct 2024 14:02:23 +0000 (UTC)
-Message-ID: <f98f4a08-8673-45f6-b060-b1247a5c6c25@ghiti.fr>
-Date: Tue, 1 Oct 2024 16:02:22 +0200
+	s=arc-20240116; t=1727791428; c=relaxed/simple;
+	bh=/nhn+SWprwiztlWKYdYqdvIVtsJh5dygDuCJ0NZz6XQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IGGBNNd2Xs5hb54QKDCY5Tql1SChWBgadd5eaXYLgxvfV7oqtC+DzIeyc+9/bq9U+Mv6bpXiAYQ7kNEl3A5nZG5vZqbsf/XlJsTZ1fE/acmIC71Jogm1+TlMsbqp4ScwZFmW6clyqIRlscKXFi8jOJb+452RcR4DJuxEsAL8PoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wh7MHN2W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCD4C4CEC7;
+	Tue,  1 Oct 2024 14:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727791428;
+	bh=/nhn+SWprwiztlWKYdYqdvIVtsJh5dygDuCJ0NZz6XQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Wh7MHN2WYalSL7SA8PvpNjeaBafbTlCGjSOjtpXQv3Mizs/MgcwCGBaEoRpU124R7
+	 Uks6JHchwRlMszJr2Tkmz1beRSvmO74JgQnuTOLXrls2y21dDEWPgG6Z1ApCB8jf03
+	 nPbwpEiOJOFJwsDmSqgdD+YOlTL90yXiLdYbW0SNyp/1Fuk98Y1mNosnrRPPC3VcH4
+	 qQ9D3+LOvq9U4egKnUA+Y8PymE6jzP6mjMaapECbknPXHZUjVIjzLB+Esv8/c1FR0X
+	 3SKHlK+gKzr6XwxSqcCK+6MDwK9WEcjchPTYpFbYAGAfzViFkSovmEFK+PKNYyLpWb
+	 CwJIRIr1j1Q7w==
+From: Christian Brauner <brauner@kernel.org>
+To: dhowells@redhat.com,
+	Chang Yu <marcus.yu.56@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	jlayton@kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
+Date: Tue,  1 Oct 2024 16:03:40 +0200
+Message-ID: <20241001-parade-futter-776bcefe0ce5@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <ZvuXWC2bYpvQsWgS@gmail.com>
+References: <ZvuXWC2bYpvQsWgS@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [riscv?] kernel panic: corrupted stack end in
- handle_page_fault (2)
-Content-Language: en-US
-To: syzbot <syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com>,
- aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, syzkaller-bugs@googlegroups.com
-References: <000000000000fa38f30622019b6e@google.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <000000000000fa38f30622019b6e@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=941; i=brauner@kernel.org; h=from:subject:message-id; bh=/nhn+SWprwiztlWKYdYqdvIVtsJh5dygDuCJ0NZz6XQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT9YbSbFeb1TUNE7ZjgtkVWFybI7ai53X6YdeNaK3lJf d/yH28yO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyPJSRoTUtxsJodZuLolBy w6ElTHIfJs5bcLP4IotMxzOjjHixyYwMa6NzDv+dGdlmkbIy5jPvLEGj0DvebMcKp/ge/bTmv2o XIwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On 13/09/2024 17:09, syzbot wrote:
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    1ff95eb2bebd riscv: Fix RISCV_ALTERNATIVE_EARLY
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
-> console output: https://syzkaller.appspot.com/x/log.txt?x=119b27c7980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c79e90d7b2f5b364
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5a364b90a40e8fe8ab78
-> compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: riscv64
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-1ff95eb2.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/1491182abe4e/vmlinux-1ff95eb2.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/926302c5c645/Image-1ff95eb2.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com
->
-> Registered RDS/tcp transport
-> NET: Registered PF_SMC protocol family
-> 9pnet: Installing 9P2000 support
-> Key type dns_resolver registered
-> Key type ceph registered
-> libceph: loaded (mon/osd proto 15/24)
-> NET: Registered PF_VSOCK protocol family
-> registered taskstats version 1
-> Loading compiled-in X.509 certificates
-> Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
-> zswap: loaded using pool 842/z3fold
-> Demotion targets for Node 0: null
-> debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
-> Key type .fscrypt registered
-> Key type fscrypt-provisioning registered
-> Key type big_key registered
-> Key type encrypted registered
-> AppArmor: AppArmor sha256 policy hashing enabled
-> ima: No TPM chip found, activating TPM-bypass!
-> Loading compiled-in module X.509 certificates
-> Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
-> ima: Allocated hash algorithm: sha256
-> ima: No architecture policies found
-> evm: Initialising EVM extended attributes:
-> evm: security.selinux (disabled)
-> evm: security.SMACK64 (disabled)
-> evm: security.SMACK64EXEC (disabled)
-> evm: security.SMACK64TRANSMUTE (disabled)
-> evm: security.SMACK64MMAP (disabled)
-> evm: security.apparmor
-> evm: security.ima
-> evm: security.capability
-> evm: HMAC attrs: 0x1
-> printk: legacy console [netcon0] enabled
-> netconsole: network logging started
-> gtp: GTP module loaded (pdp ctx size 128 bytes)
-> rdma_rxe: loaded
-> clk: Disabling unused clocks
-> PM: genpd: Disabling unused power domains
-> ALSA device list:
->    #0: Dummy 1
->    #1: Loopback 1
->    #2: Virtual MIDI Card 1
-> md: Skipping autodetection of RAID arrays. (raid=autodetect will force)
-> EXT4-fs (vda): mounted filesystem 34b94c48-234b-4869-b990-1f782e29954a ro with ordered data mode. Quota mode: none.
-> VFS: Mounted root (ext4 filesystem) readonly on device 253:0.
-> devtmpfs: mounted
-> Freeing unused kernel image (initmem) memory: 2532K
-> Failed to set sysctl parameter 'max_rcu_stall_to_panic=1': parameter not found
-> Run /sbin/init as init process
-> Kernel panic - not syncing: corrupted stack end detected inside scheduler
-> CPU: 1 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc2-syzkaller-g1ff95eb2bebd #0
-> Hardware name: riscv-virtio,qemu (DT)
-> Call Trace:
-> [<ffffffff80010216>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
-> [<ffffffff85edbc4e>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
-> [<ffffffff85f3714c>] __dump_stack lib/dump_stack.c:93 [inline]
-> [<ffffffff85f3714c>] dump_stack_lvl+0x108/0x196 lib/dump_stack.c:119
-> [<ffffffff85f371f6>] dump_stack+0x1c/0x24 lib/dump_stack.c:128
-> [<ffffffff85edc812>] panic+0x388/0x806 kernel/panic.c:348
-> [<ffffffff85f4533a>] schedule_debug kernel/sched/core.c:5745 [inline]
-> [<ffffffff85f4533a>] __schedule+0x3230/0x3288 kernel/sched/core.c:6411
-> [<ffffffff85f4585c>] preempt_schedule_common kernel/sched/core.c:6708 [inline]
-> [<ffffffff85f4585c>] preempt_schedule+0xd2/0x1e2 kernel/sched/core.c:6732
-> [<ffffffff85f5a472>] __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
-> [<ffffffff85f5a472>] _raw_spin_unlock+0x88/0xa8 kernel/locking/spinlock.c:186
-> [<ffffffff806c89e0>] spin_unlock include/linux/spinlock.h:391 [inline]
-> [<ffffffff806c89e0>] filemap_map_pages+0xa4a/0xf70 mm/filemap.c:3655
-> [<ffffffff807efa7c>] do_fault_around mm/memory.c:5019 [inline]
-> [<ffffffff807efa7c>] do_read_fault mm/memory.c:5052 [inline]
-> [<ffffffff807efa7c>] do_fault mm/memory.c:5191 [inline]
-> [<ffffffff807efa7c>] do_pte_missing mm/memory.c:3947 [inline]
-> [<ffffffff807efa7c>] handle_pte_fault mm/memory.c:5522 [inline]
-> [<ffffffff807efa7c>] __handle_mm_fault+0x1cbe/0x3998 mm/memory.c:5665
-> [<ffffffff807f1d08>] handle_mm_fault+0x5b2/0xb36 mm/memory.c:5833
-> [<ffffffff8002350a>] handle_page_fault+0x2ba/0x1588 arch/riscv/mm/fault.c:302
-> [<ffffffff85f3950a>] do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:362
-> [<ffffffff85f5b85a>] handle_exception+0xca/0xd6 arch/riscv/kernel/entry.S:110
-> SMP: stopping secondary CPUs
-> Rebooting in 86400 seconds..
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+On Mon, 30 Sep 2024 23:31:52 -0700, Chang Yu wrote:
+> Use folioq_count instead of folioq_nr_slots to fix a KMSAN uninit-value
+> error in netfs_clear_buffer
+> 
+> 
 
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-And I think that this one *could* be related to 
-https://lore.kernel.org/all/000000000000eb301906222aadc2@google.com/ 
-given that IIUC, the last usable word of the stack is corrupted, so 
-increasing the kernel stack size would fix that (which is the fix for 
-the related syzbot report).
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
+      https://git.kernel.org/vfs/vfs/c/f6023535b52f
 
