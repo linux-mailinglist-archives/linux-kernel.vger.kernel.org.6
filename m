@@ -1,192 +1,123 @@
-Return-Path: <linux-kernel+bounces-346625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C4398C6DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:34:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C78198C6E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5EBE285A29
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:34:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 838DCB22060
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF14199FC9;
-	Tue,  1 Oct 2024 20:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F131BDAB3;
+	Tue,  1 Oct 2024 20:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cKid3GhR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="nwQ9EuUc"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BFF1BDAAB
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805061925B8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 20:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727814871; cv=none; b=uD9ZemOQRA3fZ2gCRcvkCL+jECAjB/y9FGvnY7UCsi0ffBZD8oKvOnUkq8LKY7owr4OcEzo4IdGbORd8mVu72lVHBEvNNjylunssuljKJwxjyNAbsCGsR5XqR9CEIad4Bm+o36eGv7T7PTGBgwBJJhFYg7O+A8jGeMLi1X7R3J8=
+	t=1727815051; cv=none; b=PAy8Oe9hADQSieSTFKT3dL875ilZy5/paSJ4FsxNC8mpD5XHwhIfZu3l/y1N7vLzhqr+ISr2z2IWGANiv23sE0jSDLuU2T2mhRatOifNfeNyUY4213dsOSnkdFH/PNHK6v4Ev4AP+8fwt9OsfNoJVdV8/7P0nWDv3nWrw0pkJts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727814871; c=relaxed/simple;
-	bh=twyWuEH7ZNZ0FxF8hSQLE0IYI6L5y5QkWu1i6eGuckA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=A/QWec3ABc7n4FLVn1Xja15ZcqGpiFnAl48X6FOkjkYYAphY7U/UoSTZhvDRK5mdqGX891tgpEA+rQGrDNHZzffZIc5Vci9bslIHQAN/VJSP0WkYdmCwtbJaBT1cfKwPfscB8R16mpVv6Y/oP3C3fNMf0mjKpqAVZvfe1LVIlL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cKid3GhR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42ee66c2c49so8699965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 13:34:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727814867; x=1728419667; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XUhsUIUdDrwwZHsNvPFB6O8FHHi07d0Hdx096Y1IBPk=;
-        b=cKid3GhRDPMPuQ5KfUc4Geqx4REWp8hPO1+ifp0/lcAon7z1/w4S0Qw6kfaFiwXdyb
-         ycjkJKzSRr7jG2KIv6F1cNJ1kwtmrAmcmHooB4jtFqVWM8kEBA62kr7DlDcrIc8jKrGH
-         rcH5WraWtny60h474kX5L04zqAEy2W286bmCMT27asmjxYnXMpp4N9HOHoiQChoyLOjk
-         mBLtk+xjrquuC8Yi4W0GFRXh7cCfFvkbWrB3Gzc84TJcV8/b8w3Rx0TM6NubxGSQUlSR
-         PaxlpLgScuOOg7ZWEz/cX1vwJ9puEpgb2FcIovJ7/wP2w6y06CSDBT6zgT75aQMk+Xy/
-         qrhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727814867; x=1728419667;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XUhsUIUdDrwwZHsNvPFB6O8FHHi07d0Hdx096Y1IBPk=;
-        b=mpot0XsJehGCapDUcCNYTLzsQYrSVQLiQV2Eh6ZZ69QkmskZSvemvPjD8tzfvk5hMa
-         nrlEnH0iANiSoorzX82Me4uwEyyJKGQ4atPQheww7z5KCnOsavKnOtUjxuAmpXTs8wty
-         UML0P9raw8ue8czNt2TCyzakmLR08Z/ma3Iy7+yq5XNo77KvNJzdOU/RFPzwQ21HLf7d
-         iTh2yPnU35kobIsG40DtD9Fh/hx2S6adr+iifOeUQlpkk3suOvccY0B7Db4sVAa7XIr8
-         38mhtmsn7ODijwqlwOUihIioVVaYEfn3QcG/HmlFqkYREk4hB0c8HUa1ggW41hXe9kZY
-         YUKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbiimSSEgEuSOgMwAywED/5QW7gOky9DWhnvugkY3IZBsTV9HtzAVPnIwfuzFro27hhuSwmWlb4+G/kqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvY0A5742DxPJVkOuTSHOYqyO5rJ0vcXAcSQDjpBAb3/vTtu7h
-	4LQb4rPGkKgjKvPPkLOOFbdyeEXwIffdCRrB8bBU3IxaK/pdXy9VO6W7xFWsvg0=
-X-Google-Smtp-Source: AGHT+IHjnrkFTsfnoO1YYJ4m7JpOk2P9PAv+wj6ATG6VN/ZpgMn+48M1GtODuGoKAnonLaUv69c1nQ==
-X-Received: by 2002:a5d:63c2:0:b0:374:cd01:8b72 with SMTP id ffacd0b85a97d-37cfba0a5d0mr221218f8f.9.1727814867007;
-        Tue, 01 Oct 2024 13:34:27 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd566a41fsm12614134f8f.45.2024.10.01.13.34.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 13:34:26 -0700 (PDT)
-Message-ID: <c15b73f1-6045-499e-8b4d-6cf8140e7de0@linaro.org>
-Date: Tue, 1 Oct 2024 22:34:23 +0200
+	s=arc-20240116; t=1727815051; c=relaxed/simple;
+	bh=ysjV7DFTS8G5S7VFux9lMUVNZMhtzd8HLff23IKgLOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSCAZDIEiW0XgCIK4ll3zmF1E6CUZ0HsLt+3l6TCRDrmIpydON3TKa1B5iI07EOGTvJn8DWg9WRQycInmGFl5W2vZuqnlgQLnLmPGJ2m6W0P23DUTYzFRXif/CdOFnWbkmRWu2o+8BdTr4TV8wXuPjNO7H/5K/PSs5IqhqmjcxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=nwQ9EuUc; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=7fnSGYhniQwLAJoqqmgeDP6zdAognPdAB/UHbLqgj10=; b=nwQ9EuUczb92u4w9
+	OxhpSgqKBefhixFpJfhHESG9v2gP0xrDG4pfFb8At2gpuq9hXgrIOtgl6qrjGyT5s39I+Y6QCQY6X
+	7lv4o/A/K1m0TnOm8cUnQq7TtDf+0iOlp/udMQ211uEH4rp6Dg6A7ooHpWO41uZuyk6Esskm51emU
+	zDxDaipqvy++8DHQiDWlS5pdZPCHes7IV6fti+RsWiJIcuc1mepUwkUHNxsVhhomju+voXmveHG/F
+	ACGFonZ8pAOtDedSuViBhxENqhrQPhcINwRRNFgBoU07MJ0sWd5eFZt8Bv6l4ZIgyTAmptrZDBD6f
+	mXtk7m27mP9tPrEb1A==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1svjcU-008Jvz-3A;
+	Tue, 01 Oct 2024 20:37:18 +0000
+Date: Tue, 1 Oct 2024 20:37:18 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: nicolas.ferre@microchip.com, miquel.raynal@bootlin.com, richard@nod.at,
+	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: of atmel_pmecc_destroy_user
+Message-ID: <Zvxdfh3FobjpvcRb@gallifrey>
+References: <ZvmIvRJCf6VhHvpo@gallifrey>
+ <20240930090817.0a86e538@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] firmware: tegra: bpmp: use scoped device node
- handling to simplify error paths
-To: Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Timo Alho <talho@nvidia.com>,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240816135722.105945-1-krzysztof.kozlowski@linaro.org>
- <20240816135722.105945-2-krzysztof.kozlowski@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240816135722.105945-2-krzysztof.kozlowski@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20240930090817.0a86e538@collabora.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 20:36:38 up 146 days,  7:50,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 16/08/2024 15:57, Krzysztof Kozlowski wrote:
-> Obtain the device node reference with scoped/cleanup.h to reduce error
-> handling and make the code a bit simpler.
+* Boris Brezillon (boris.brezillon@collabora.com) wrote:
+> Hi David,
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/firmware/tegra/bpmp.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
+> On Sun, 29 Sep 2024 17:05:01 +0000
+> "Dr. David Alan Gilbert" <linux@treblig.org> wrote:
 > 
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-> index c3a1dc344961..2edc3838538e 100644
-> --- a/drivers/firmware/tegra/bpmp.c
-> +++ b/drivers/firmware/tegra/bpmp.c
-> @@ -3,6 +3,7 @@
->   * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
->   */
->  
-> +#include <linux/cleanup.h>
->  #include <linux/clk/tegra.h>
->  #include <linux/genalloc.h>
->  #include <linux/mailbox_client.h>
-> @@ -36,27 +37,22 @@ struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
->  {
->  	struct platform_device *pdev;
->  	struct tegra_bpmp *bpmp;
-> -	struct device_node *np;
->  
-> -	np = of_parse_phandle(dev->of_node, "nvidia,bpmp", 0);
-> +	struct device_node *np __free(device_node) = of_parse_phandle(dev->of_node,
-> +								      "nvidia,bpmp", 0);
+> > Hi Boris and co,
+> >   One of my scripts noticed that 'atmel_pmecc_destroy_user'
+> > isn't called anywhere; I was going to delete it, but hmm, I wonder
+> > if it's actually a missing call and leaking (in the unlikely case
+> > the device was ever removed).
+> > 
+> > It was added by your:
+> >   commit f88fc122cc34c2545dec9562eaab121494e401ef
+> >   Author: Boris Brezillon <bbrezillon@kernel.org>
+> >   Date:   Thu Mar 16 09:02:40 2017 +0100
+> > 
+> >     mtd: nand: Cleanup/rework the atmel_nand driver
+> > 
+> > and I see the allocation in:
+> >      user = kzalloc(size, GFP_KERNEL);
+> >        in
+> >      nand->pmecc = atmel_pmecc_create_user(nc->pmecc, &req);
+> >        called in atmel_nand_pmecc_init
+> >          from atmel_nand_ecc_init
+> >            from atmel_hsmc_nand_ecc_init
+> >  
+> > But I don't see any freeing.
+> > 
+> > (I don't knowingly have hardware to test a fix, although I guess
+> > there's probably one somewhere....)
+> > 
+> > Suggestions?
+> 
+> There's definitely a leak. I haven't looked at NAND stuff for a while
+> though, so I'll let Miquel advise you on where
+> atmel_pmecc_destroy_user() should be called.
 
-Uhhh, this is very strange.
+I see Miquel has posted a fix.
 
-Above is correct code which I sent.
+Thanks to both of you!
 
-But look what was applied:
+Dave
 
- struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
- {
-+       struct device_node *np __free(device_node);
-
-That's very different.
-
-See commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped device node
-handling to simplify error paths").
-
-Commit msg does not explain at all why my code was changed. It is not
-only a courtesy but also requirement to mark changes done to commits
-when applying.
-
-Shall I assume more of my patches were silently changed when applied,
-including adding questionable code there?
-
-
-Best regards,
-Krzysztof
-
+> Regards,
+> 
+> Boris
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
