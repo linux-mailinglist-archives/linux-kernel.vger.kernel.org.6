@@ -1,145 +1,456 @@
-Return-Path: <linux-kernel+bounces-346017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1798BE66
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DC098BE7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7D0CB24D53
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:51:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A581F244DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36701C57A4;
-	Tue,  1 Oct 2024 13:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B731C8FB5;
+	Tue,  1 Oct 2024 13:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YKqD4Ys/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KpdYzn+s"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96781C4624;
-	Tue,  1 Oct 2024 13:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667AE1C6F6E;
+	Tue,  1 Oct 2024 13:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727790650; cv=none; b=cppJe0aGaMY16zvYvtAoNLXRumbO5NgHtffSZm7q6SXJCUJhfovzbtJoHcsc+Ejg878mSSWjB8PO4qsq+0uhNOlMGMXQL8PL4AF7ETAnz7wCaVcmrqBihv0+X58lIisRA8Heg2stWBjuwUTc9Qh6CxyjdhhU3cQcrmxOQCe6tOo=
+	t=1727790693; cv=none; b=co+cZUVEPkV6Z3GifvrUsicOQIRK53EArA8IfQImRL1orr8SGDshYrrbKD12oAYosZTyFp2lxk+olwmrXFEm6oud3yJdaFrgOjm2H5pCcX/ZH6jiXEckkJTyfWsAqRD3qQuEYQT8UhW9MWdE9JtAOFZFLQKS6NPvj0V8zRJzeCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727790650; c=relaxed/simple;
-	bh=Wrdy0e1dz6T5uwCE6i2Zj6+AsBKQNypB0lnUzsj5xCI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=QswNP8V/zr/KlzChTo5U6IPHyLa/XDw85cdKpbkoPj90nMt+5Ek1H/Eg4JCr0FZu5xFrGzneogH9oFqnPTh0tSEx4AzPaL1AkVu31JbusPnXz3IXwidQ+w2c2szb92zadZRzmQhm3YjkffzFU/mUBZ2oxAPa1ph2jfqJWC883Mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YKqD4Ys/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1727790644;
-	bh=Wrdy0e1dz6T5uwCE6i2Zj6+AsBKQNypB0lnUzsj5xCI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=YKqD4Ys/oGurqoWIOyx7Wn0hRTWDfyPPhsxJBv4liLaL79RWNITs6yYigoa9t0bYR
-	 apYOKXRQwcu6+xBYSMhtRzZYX8riNbY3jwGgx54B/mqtnC6ECCMjvF74G/KjKZbgVO
-	 RJzRdFANc0GPw4iUWTjgPb0VclImiN7kwj4rnOBg0+pqJjlWEITVsXj59SE2r7LUoj
-	 5BPDH1RBCLKq/QZ/2cqqNz0kemyYFg31AZl1ypfI77sHEXKV+OTQMPdPXhzsDquLmV
-	 MCPct2nkHj5eYZYOGgoLbN+JW1S3vLWHHoQv7M/X9CrsLunLU6HnxNWpHM5ZiXsYda
-	 Riy6fn3Jf9ZCg==
-Received: from [192.168.50.250] (unknown [171.76.80.165])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: vignesh)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6F28B17E0FC0;
-	Tue,  1 Oct 2024 15:50:39 +0200 (CEST)
-Message-ID: <87fea8ea-fe9d-4114-b03c-7ec50a4be874@collabora.com>
-Date: Tue, 1 Oct 2024 19:20:35 +0530
+	s=arc-20240116; t=1727790693; c=relaxed/simple;
+	bh=KlomNTpGXr/A3oCv/IJgJ1UvclyuMcU7GI9wd7depZY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=sWbyzoK96YL3BTpD2JeM6GqaayN0iH3QYFeiumLVzgFNCMP/SiPZ693ov9V1EUNaST7ZJVNjPVyl3B9R0bN5sBzEJrNEuDyPtKHuTQv/3tHfAGheqEDIe7p4NZTDKHFL5tJVNMgD05+n2UZU7gtFt34fjOMefIo7OdSY9Mbj7GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KpdYzn+s; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1727790691; x=1759326691;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:references:in-reply-to:to:cc;
+  bh=KlomNTpGXr/A3oCv/IJgJ1UvclyuMcU7GI9wd7depZY=;
+  b=KpdYzn+ssiQQOktXV0F5y+yw/yDd9O2Au0qbVPGD8FQn8/J2fUUVLYRf
+   w8d1AXIWK1ZIHEMpTcNKcQGnPIKJmoNo7MDOc7PX/EzpCQ2t8KG283O0N
+   wHxgWyno0F3Vgefc4xq7w8ksLDfLSBJcm7Go7GteCHcYaA0+AJDM8WM1J
+   yxmipx++KAGZ4uYD0Ia3lyBFNucFDfC3VcEmXrZCu7LHBQUKy+Sdiii6N
+   0zt7gOikzDeVg3gx8MourN3rpl1Idsd3ACJMxqkb/V6C0NttxsArS/uZm
+   1HAbGurznwlv81rlK4Yu8Pz8tmoF1CVXXhW2hFvSFqC0swV+8bnBDvEev
+   g==;
+X-CSE-ConnectionGUID: xZlwFxFMQxGj0XznyNUoig==
+X-CSE-MsgGUID: V4R7+2aLRxmnPPilof6I7w==
+X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
+   d="scan'208";a="33057490"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Oct 2024 06:51:25 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 1 Oct 2024 06:51:16 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Tue, 1 Oct 2024 06:51:13 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Date: Tue, 1 Oct 2024 15:50:35 +0200
+Subject: [PATCH net-next 05/15] net: sparx5: add *sparx5 argument to a few
+ functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] docs/gpu: ci: update flake tests requirements
-From: Vignesh Raman <vignesh.raman@collabora.com>
-To: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
- amd-gfx@lists.freedesktop.org
-Cc: daniels@collabora.com, helen.koike@collabora.com, airlied@gmail.com,
- daniel@ffwll.ch, robdclark@gmail.com, guilherme.gallo@collabora.com,
- sergi.blanch.torne@collabora.com, deborah.brouwer@collabora.com,
- dmitry.baryshkov@linaro.org, mripard@kernel.org, rodrigo.vivi@intel.com,
- quic_abhinavk@quicinc.com, linux-mediatek@lists.infradead.org,
- linux-amlogic@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20240930095255.2071586-1-vignesh.raman@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240930095255.2071586-1-vignesh.raman@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20241001-b4-sparx5-lan969x-switch-driver-v1-5-8c6896fdce66@microchip.com>
+References: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
+In-Reply-To: <20241001-b4-sparx5-lan969x-switch-driver-v1-0-8c6896fdce66@microchip.com>
+To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Lars Povlsen <lars.povlsen@microchip.com>, "Steen
+ Hegelund" <Steen.Hegelund@microchip.com>, <horatiu.vultur@microchip.com>,
+	<jensemil.schulzostergaard@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	Richard Cochran <richardcochran@gmail.com>, <horms@kernel.org>,
+	<justinstitt@google.com>, <gal@nvidia.com>, <aakash.r.menon@gmail.com>,
+	<jacob.e.keller@intel.com>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+X-Mailer: b4 0.14-dev
 
-Hi amdgpu Maintainers,
+The *sparx5 context pointer is required in functions that need to use
+platform specific data using the SPX5_CONST macro (which will be added
+in a subsequent patch). Prepare for this by updating the prototype and
+use of such functions.
 
-On 30/09/24 15:22, Vignesh Raman wrote:
-> Update the documentation to specify linking to a relevant GitLab
-> issue or email report for each new flake entry. Added specific
-> GitLab issue urls for amdgpu, i915, msm and xe driver.
-> 
-> Acked-by: Maxime Ripard <mripard@kernel.org>
-> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com> #intel and xe
-> Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com> # msm
-> Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # msm
-> Signed-off-by: Vignesh Raman <vignesh.raman@collabora.com>
-> ---
-> 
-> v2:
-> - Add gitlab issue link for msm driver.
-> 
-> v3:
-> - Update docs to specify we use email reporting or GitLab issues for flake entries.
-> 
-> v4:
-> - Add gitlab issue link for xe driver.
-> 
-> ---
->   Documentation/gpu/automated_testing.rst | 14 ++++++++++----
->   1 file changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/gpu/automated_testing.rst b/Documentation/gpu/automated_testing.rst
-> index 2d5a28866afe..6d7c6086034d 100644
-> --- a/Documentation/gpu/automated_testing.rst
-> +++ b/Documentation/gpu/automated_testing.rst
-> @@ -68,19 +68,25 @@ known to behave unreliably. These tests won't cause a job to fail regardless of
->   the result. They will still be run.
->   
->   Each new flake entry must be associated with a link to the email reporting the
-> -bug to the author of the affected driver, the board name or Device Tree name of
-> -the board, the first kernel version affected, the IGT version used for tests,
-> -and an approximation of the failure rate.
-> +bug to the author of the affected driver or the relevant GitLab issue. The entry
-> +must also include the board name or Device Tree name, the first kernel version
-> +affected, the IGT version used for tests, and an approximation of the failure rate.
->   
->   They should be provided under the following format::
->   
-> -  # Bug Report: $LORE_OR_PATCHWORK_URL
-> +  # Bug Report: $LORE_URL_OR_GITLAB_ISSUE
->     # Board Name: broken-board.dtb
->     # Linux Version: 6.6-rc1
->     # IGT Version: 1.28-gd2af13d9f
->     # Failure Rate: 100
->     flaky-test
->   
-> +Use the appropriate link below to create a GitLab issue:
-> +amdgpu driver: https://gitlab.freedesktop.org/drm/amd/-/issues
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+---
+ .../net/ethernet/microchip/sparx5/sparx5_ethtool.c | 24 +++++++++----------
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |  2 +-
+ .../net/ethernet/microchip/sparx5/sparx5_netdev.c  |  2 +-
+ .../net/ethernet/microchip/sparx5/sparx5_packet.c  |  2 +-
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    | 28 +++++++++++-----------
+ .../net/ethernet/microchip/sparx5/sparx5_port.h    |  6 ++---
+ .../net/ethernet/microchip/sparx5/sparx5_psfp.c    | 24 +++++++++----------
+ drivers/net/ethernet/microchip/sparx5/sparx5_tc.c  |  8 +++----
+ 8 files changed, 48 insertions(+), 48 deletions(-)
 
-Please could you ack this patch. Thanks.
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
+index d898a7238b48..ca97d51e6a8d 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_ethtool.c
+@@ -505,8 +505,8 @@ static void sparx5_get_dev_misc_stats(u64 *portstats, void __iomem *inst, u32
+ static void sparx5_get_device_stats(struct sparx5 *sparx5, int portno)
+ {
+ 	u64 *portstats = &sparx5->stats[portno * sparx5->num_stats];
+-	u32 tinst = sparx5_port_dev_index(portno);
+-	u32 dev = sparx5_to_high_dev(portno);
++	u32 tinst = sparx5_port_dev_index(sparx5, portno);
++	u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 	void __iomem *inst;
+ 
+ 	inst = spx5_inst_get(sparx5, dev, tinst);
+@@ -819,8 +819,8 @@ static void sparx5_get_eth_phy_stats(struct net_device *ndev,
+ 
+ 	portstats = &sparx5->stats[portno * sparx5->num_stats];
+ 	if (sparx5_is_baser(port->conf.portmode)) {
+-		u32 tinst = sparx5_port_dev_index(portno);
+-		u32 dev = sparx5_to_high_dev(portno);
++		u32 tinst = sparx5_port_dev_index(sparx5, portno);
++		u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 
+ 		inst = spx5_inst_get(sparx5, dev, tinst);
+ 		sparx5_get_dev_phy_stats(portstats, inst, tinst);
+@@ -844,8 +844,8 @@ static void sparx5_get_eth_mac_stats(struct net_device *ndev,
+ 
+ 	portstats = &sparx5->stats[portno * sparx5->num_stats];
+ 	if (sparx5_is_baser(port->conf.portmode)) {
+-		u32 tinst = sparx5_port_dev_index(portno);
+-		u32 dev = sparx5_to_high_dev(portno);
++		u32 tinst = sparx5_port_dev_index(sparx5, portno);
++		u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 
+ 		inst = spx5_inst_get(sparx5, dev, tinst);
+ 		sparx5_get_dev_mac_stats(portstats, inst, tinst);
+@@ -912,8 +912,8 @@ static void sparx5_get_eth_mac_ctrl_stats(struct net_device *ndev,
+ 
+ 	portstats = &sparx5->stats[portno * sparx5->num_stats];
+ 	if (sparx5_is_baser(port->conf.portmode)) {
+-		u32 tinst = sparx5_port_dev_index(portno);
+-		u32 dev = sparx5_to_high_dev(portno);
++		u32 tinst = sparx5_port_dev_index(sparx5, portno);
++		u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 
+ 		inst = spx5_inst_get(sparx5, dev, tinst);
+ 		sparx5_get_dev_mac_ctrl_stats(portstats, inst, tinst);
+@@ -944,8 +944,8 @@ static void sparx5_get_eth_rmon_stats(struct net_device *ndev,
+ 
+ 	portstats = &sparx5->stats[portno * sparx5->num_stats];
+ 	if (sparx5_is_baser(port->conf.portmode)) {
+-		u32 tinst = sparx5_port_dev_index(portno);
+-		u32 dev = sparx5_to_high_dev(portno);
++		u32 tinst = sparx5_port_dev_index(sparx5, portno);
++		u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 
+ 		inst = spx5_inst_get(sparx5, dev, tinst);
+ 		sparx5_get_dev_rmon_stats(portstats, inst, tinst);
+@@ -1027,8 +1027,8 @@ static void sparx5_get_sset_data(struct net_device *ndev,
+ 
+ 	portstats = &sparx5->stats[portno * sparx5->num_stats];
+ 	if (sparx5_is_baser(port->conf.portmode)) {
+-		u32 tinst = sparx5_port_dev_index(portno);
+-		u32 dev = sparx5_to_high_dev(portno);
++		u32 tinst = sparx5_port_dev_index(sparx5, portno);
++		u32 dev = sparx5_to_high_dev(sparx5, portno);
+ 
+ 		inst = spx5_inst_get(sparx5, dev, tinst);
+ 		sparx5_get_dev_misc_stats(portstats, inst, tinst);
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
+index 824849869f61..738b86999fd8 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_main.h
+@@ -404,7 +404,7 @@ void sparx5_set_port_ifh_timestamp(void *ifh_hdr, u64 timestamp);
+ void sparx5_set_port_ifh_rew_op(void *ifh_hdr, u32 rew_op);
+ void sparx5_set_port_ifh_pdu_type(void *ifh_hdr, u32 pdu_type);
+ void sparx5_set_port_ifh_pdu_w16_offset(void *ifh_hdr, u32 pdu_w16_offset);
+-void sparx5_set_port_ifh(void *ifh_hdr, u16 portno);
++void sparx5_set_port_ifh(struct sparx5 *sparx5, void *ifh_hdr, u16 portno);
+ bool sparx5_netdevice_check(const struct net_device *dev);
+ struct net_device *sparx5_create_netdev(struct sparx5 *sparx5, u32 portno);
+ int sparx5_register_netdevs(struct sparx5 *sparx5);
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_netdev.c b/drivers/net/ethernet/microchip/sparx5/sparx5_netdev.c
+index 705a004b324f..3ae6bad3bbb3 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_netdev.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_netdev.c
+@@ -55,7 +55,7 @@ static void __ifh_encode_bitfield(void *ifh, u64 value, u32 pos, u32 width)
+ 		ifh_hdr[byte - 5] |= (u8)((encode & 0xFF0000000000) >> 40);
+ }
+ 
+-void sparx5_set_port_ifh(void *ifh_hdr, u16 portno)
++void sparx5_set_port_ifh(struct sparx5 *sparx5, void *ifh_hdr, u16 portno)
+ {
+ 	/* VSTAX.RSV = 1. MSBit must be 1 */
+ 	ifh_encode_bitfield(ifh_hdr, 1, VSTAX + 79,  1);
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+index 70427643f777..e637834b56df 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+@@ -235,7 +235,7 @@ netdev_tx_t sparx5_port_xmit_impl(struct sk_buff *skb, struct net_device *dev)
+ 	netdev_tx_t ret;
+ 
+ 	memset(ifh, 0, IFH_LEN * 4);
+-	sparx5_set_port_ifh(ifh, port->portno);
++	sparx5_set_port_ifh(sparx5, ifh, port->portno);
+ 
+ 	if (sparx5->ptp && skb_shinfo(skb)->tx_flags & SKBTX_HW_TSTAMP) {
+ 		if (sparx5_ptp_txtstamp_request(port, skb) < 0)
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_port.c b/drivers/net/ethernet/microchip/sparx5/sparx5_port.c
+index 062e486c002c..ea3454342665 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_port.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_port.c
+@@ -132,8 +132,8 @@ static int sparx5_get_sfi_status(struct sparx5 *sparx5,
+ 		return -EINVAL;
+ 	}
+ 
+-	dev = sparx5_to_high_dev(portno);
+-	tinst = sparx5_port_dev_index(portno);
++	dev = sparx5_to_high_dev(sparx5, portno);
++	tinst = sparx5_port_dev_index(sparx5, portno);
+ 	inst = spx5_inst_get(sparx5, dev, tinst);
+ 
+ 	value = spx5_inst_rd(inst, DEV10G_MAC_TX_MONITOR_STICKY(0));
+@@ -316,9 +316,9 @@ static int sparx5_port_flush_poll(struct sparx5 *sparx5, u32 portno)
+ static int sparx5_port_disable(struct sparx5 *sparx5, struct sparx5_port *port, bool high_spd_dev)
+ {
+ 	u32 tinst = high_spd_dev ?
+-		    sparx5_port_dev_index(port->portno) : port->portno;
++		    sparx5_port_dev_index(sparx5, port->portno) : port->portno;
+ 	u32 dev = high_spd_dev ?
+-		  sparx5_to_high_dev(port->portno) : TARGET_DEV2G5;
++		  sparx5_to_high_dev(sparx5, port->portno) : TARGET_DEV2G5;
+ 	void __iomem *devinst = spx5_inst_get(sparx5, dev, tinst);
+ 	u32 spd = port->conf.speed;
+ 	u32 spd_prm;
+@@ -427,7 +427,7 @@ static int sparx5_port_disable(struct sparx5 *sparx5, struct sparx5_port *port,
+ 		 HSCH_FLUSH_CTRL);
+ 
+ 	if (high_spd_dev) {
+-		u32 pcs = sparx5_to_pcs_dev(port->portno);
++		u32 pcs = sparx5_to_pcs_dev(sparx5, port->portno);
+ 		void __iomem *pcsinst = spx5_inst_get(sparx5, pcs, tinst);
+ 
+ 		/* 12: Disable 5G/10G/25 BaseR PCS */
+@@ -558,8 +558,8 @@ static int sparx5_port_max_tags_set(struct sparx5 *sparx5,
+ 	bool dtag           = max_tags == SPX5_PORT_MAX_TAGS_TWO;
+ 	enum sparx5_vlan_port_type vlan_type  = port->vlan_type;
+ 	bool dotag          = max_tags != SPX5_PORT_MAX_TAGS_NONE;
+-	u32 dev             = sparx5_to_high_dev(port->portno);
+-	u32 tinst           = sparx5_port_dev_index(port->portno);
++	u32 dev             = sparx5_to_high_dev(sparx5, port->portno);
++	u32 tinst           = sparx5_port_dev_index(sparx5, port->portno);
+ 	void __iomem *inst  = spx5_inst_get(sparx5, dev, tinst);
+ 	u32 etype;
+ 
+@@ -789,9 +789,9 @@ static int sparx5_port_pcs_high_set(struct sparx5 *sparx5,
+ 				    struct sparx5_port_config *conf)
+ {
+ 	u32 clk_spd = conf->portmode == PHY_INTERFACE_MODE_5GBASER ? 1 : 0;
+-	u32 pix = sparx5_port_dev_index(port->portno);
+-	u32 dev = sparx5_to_high_dev(port->portno);
+-	u32 pcs = sparx5_to_pcs_dev(port->portno);
++	u32 pix = sparx5_port_dev_index(sparx5, port->portno);
++	u32 dev = sparx5_to_high_dev(sparx5, port->portno);
++	u32 pcs = sparx5_to_pcs_dev(sparx5, port->portno);
+ 	void __iomem *devinst;
+ 	void __iomem *pcsinst;
+ 	int err;
+@@ -843,7 +843,7 @@ static int sparx5_port_pcs_high_set(struct sparx5 *sparx5,
+ /* Switch between 1G/2500 and 5G/10G/25G devices */
+ static void sparx5_dev_switch(struct sparx5 *sparx5, int port, bool hsd)
+ {
+-	int bt_indx = BIT(sparx5_port_dev_index(port));
++	int bt_indx = BIT(sparx5_port_dev_index(sparx5, port));
+ 
+ 	if (sparx5_port_is_5g(port)) {
+ 		spx5_rmw(hsd ? 0 : bt_indx,
+@@ -1016,9 +1016,9 @@ int sparx5_port_init(struct sparx5 *sparx5,
+ {
+ 	u32 pause_start = sparx5_wm_enc(6  * (ETH_MAXLEN / SPX5_BUFFER_CELL_SZ));
+ 	u32 atop = sparx5_wm_enc(20 * (ETH_MAXLEN / SPX5_BUFFER_CELL_SZ));
+-	u32 devhigh = sparx5_to_high_dev(port->portno);
+-	u32 pix = sparx5_port_dev_index(port->portno);
+-	u32 pcs = sparx5_to_pcs_dev(port->portno);
++	u32 devhigh = sparx5_to_high_dev(sparx5, port->portno);
++	u32 pix = sparx5_port_dev_index(sparx5, port->portno);
++	u32 pcs = sparx5_to_pcs_dev(sparx5, port->portno);
+ 	bool sd_pol = port->signd_active_high;
+ 	bool sd_sel = !port->signd_internal;
+ 	bool sd_ena = port->signd_enable;
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_port.h b/drivers/net/ethernet/microchip/sparx5/sparx5_port.h
+index 607c4ff1df6b..468e3d34d6e1 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_port.h
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_port.h
+@@ -40,7 +40,7 @@ static inline bool sparx5_port_is_25g(int portno)
+ 	return portno >= 56 && portno <= 63;
+ }
+ 
+-static inline u32 sparx5_to_high_dev(int port)
++static inline u32 sparx5_to_high_dev(struct sparx5 *sparx5, int port)
+ {
+ 	if (sparx5_port_is_5g(port))
+ 		return TARGET_DEV5G;
+@@ -49,7 +49,7 @@ static inline u32 sparx5_to_high_dev(int port)
+ 	return TARGET_DEV25G;
+ }
+ 
+-static inline u32 sparx5_to_pcs_dev(int port)
++static inline u32 sparx5_to_pcs_dev(struct sparx5 *sparx5, int port)
+ {
+ 	if (sparx5_port_is_5g(port))
+ 		return TARGET_PCS5G_BR;
+@@ -58,7 +58,7 @@ static inline u32 sparx5_to_pcs_dev(int port)
+ 	return TARGET_PCS25G_BR;
+ }
+ 
+-static inline int sparx5_port_dev_index(int port)
++static inline int sparx5_port_dev_index(struct sparx5 *sparx5, int port)
+ {
+ 	if (sparx5_port_is_2g5(port))
+ 		return port;
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_psfp.c b/drivers/net/ethernet/microchip/sparx5/sparx5_psfp.c
+index 8dee1ab1fa75..5d9c7b782352 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_psfp.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_psfp.c
+@@ -20,34 +20,34 @@ static struct sparx5_pool_entry sparx5_psfp_sg_pool[SPX5_PSFP_SG_CNT];
+ /* Pool of available stream filters */
+ static struct sparx5_pool_entry sparx5_psfp_sf_pool[SPX5_PSFP_SF_CNT];
+ 
+-static int sparx5_psfp_sf_get(u32 *id)
++static int sparx5_psfp_sf_get(struct sparx5 *sparx5, u32 *id)
+ {
+ 	return sparx5_pool_get(sparx5_psfp_sf_pool, SPX5_PSFP_SF_CNT, id);
+ }
+ 
+-static int sparx5_psfp_sf_put(u32 id)
++static int sparx5_psfp_sf_put(struct sparx5 *sparx5, u32 id)
+ {
+ 	return sparx5_pool_put(sparx5_psfp_sf_pool, SPX5_PSFP_SF_CNT, id);
+ }
+ 
+-static int sparx5_psfp_sg_get(u32 idx, u32 *id)
++static int sparx5_psfp_sg_get(struct sparx5 *sparx5, u32 idx, u32 *id)
+ {
+ 	return sparx5_pool_get_with_idx(sparx5_psfp_sg_pool, SPX5_PSFP_SG_CNT,
+ 					idx, id);
+ }
+ 
+-static int sparx5_psfp_sg_put(u32 id)
++static int sparx5_psfp_sg_put(struct sparx5 *sparx5, u32 id)
+ {
+ 	return sparx5_pool_put(sparx5_psfp_sg_pool, SPX5_PSFP_SG_CNT, id);
+ }
+ 
+-static int sparx5_psfp_fm_get(u32 idx, u32 *id)
++static int sparx5_psfp_fm_get(struct sparx5 *sparx5, u32 idx, u32 *id)
+ {
+ 	return sparx5_pool_get_with_idx(sparx5_psfp_fm_pool, SPX5_SDLB_CNT, idx,
+ 					id);
+ }
+ 
+-static int sparx5_psfp_fm_put(u32 id)
++static int sparx5_psfp_fm_put(struct sparx5 *sparx5, u32 id)
+ {
+ 	return sparx5_pool_put(sparx5_psfp_fm_pool, SPX5_SDLB_CNT, id);
+ }
+@@ -205,7 +205,7 @@ int sparx5_psfp_sf_add(struct sparx5 *sparx5, const struct sparx5_psfp_sf *sf,
+ {
+ 	int ret;
+ 
+-	ret = sparx5_psfp_sf_get(id);
++	ret = sparx5_psfp_sf_get(sparx5, id);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -220,7 +220,7 @@ int sparx5_psfp_sf_del(struct sparx5 *sparx5, u32 id)
+ 
+ 	sparx5_psfp_sf_set(sparx5, id, &sf);
+ 
+-	return sparx5_psfp_sf_put(id);
++	return sparx5_psfp_sf_put(sparx5, id);
+ }
+ 
+ int sparx5_psfp_sg_add(struct sparx5 *sparx5, u32 uidx,
+@@ -229,7 +229,7 @@ int sparx5_psfp_sg_add(struct sparx5 *sparx5, u32 uidx,
+ 	ktime_t basetime;
+ 	int ret;
+ 
+-	ret = sparx5_psfp_sg_get(uidx, id);
++	ret = sparx5_psfp_sg_get(sparx5, uidx, id);
+ 	if (ret < 0)
+ 		return ret;
+ 	/* Was already in use, no need to reconfigure */
+@@ -253,7 +253,7 @@ int sparx5_psfp_sg_del(struct sparx5 *sparx5, u32 id)
+ 	const struct sparx5_psfp_sg sg = { 0 };
+ 	int ret;
+ 
+-	ret = sparx5_psfp_sg_put(id);
++	ret = sparx5_psfp_sg_put(sparx5, id);
+ 	if (ret < 0)
+ 		return ret;
+ 	/* Stream gate still in use ? */
+@@ -270,7 +270,7 @@ int sparx5_psfp_fm_add(struct sparx5 *sparx5, u32 uidx,
+ 	int ret;
+ 
+ 	/* Get flow meter */
+-	ret = sparx5_psfp_fm_get(uidx, &fm->pol.idx);
++	ret = sparx5_psfp_fm_get(sparx5, uidx, &fm->pol.idx);
+ 	if (ret < 0)
+ 		return ret;
+ 	/* Was already in use, no need to reconfigure */
+@@ -303,7 +303,7 @@ int sparx5_psfp_fm_del(struct sparx5 *sparx5, u32 id)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	ret = sparx5_psfp_fm_put(id);
++	ret = sparx5_psfp_fm_put(sparx5, id);
+ 	if (ret < 0)
+ 		return ret;
+ 	/* Do not reset flow-meter if still in use. */
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_tc.c b/drivers/net/ethernet/microchip/sparx5/sparx5_tc.c
+index e80f3166db7d..28b2514c8330 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_tc.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_tc.c
+@@ -60,8 +60,8 @@ static int sparx5_tc_setup_block(struct net_device *ndev,
+ 					  cb, ndev, ndev, false);
+ }
+ 
+-static void sparx5_tc_get_layer_and_idx(u32 parent, u32 portno, u32 *layer,
+-					u32 *idx)
++static void sparx5_tc_get_layer_and_idx(struct sparx5 *sparx5, u32 parent,
++					u32 portno, u32 *layer, u32 *idx)
+ {
+ 	if (parent == TC_H_ROOT) {
+ 		*layer = 2;
+@@ -90,8 +90,8 @@ static int sparx5_tc_setup_qdisc_tbf(struct net_device *ndev,
+ 	struct sparx5_port *port = netdev_priv(ndev);
+ 	u32 layer, se_idx;
+ 
+-	sparx5_tc_get_layer_and_idx(qopt->parent, port->portno, &layer,
+-				    &se_idx);
++	sparx5_tc_get_layer_and_idx(port->sparx5, qopt->parent, port->portno,
++				    &layer, &se_idx);
+ 
+ 	switch (qopt->command) {
+ 	case TC_TBF_REPLACE:
 
-> +i915 driver: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues
-> +msm driver: https://gitlab.freedesktop.org/drm/msm/-/issues
-> +xe driver: https://gitlab.freedesktop.org/drm/xe/kernel/-/issues
-> +
->   drivers/gpu/drm/ci/${DRIVER_NAME}-${HW_REVISION}-skips.txt
->   -----------------------------------------------------------
->   
+-- 
+2.34.1
 
-Regards,
-Vignesh
 
