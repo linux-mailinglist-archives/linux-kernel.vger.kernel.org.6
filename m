@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-345959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB4098BD6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:25:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6098BD70
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05156B212E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25709B21959
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9A71C331E;
-	Tue,  1 Oct 2024 13:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2B51C3F06;
+	Tue,  1 Oct 2024 13:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QImwC3rm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Glki7/V6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E012C2E3;
-	Tue,  1 Oct 2024 13:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F8C1C2DD6;
+	Tue,  1 Oct 2024 13:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727789109; cv=none; b=MHd3OyZaQl68hJo567wSNfytASJlmnDI8z3ujVPPUJKPWmCc4ggPSuDHJmJYfnYFqPsylf8G5mquBJzF58sTPesQ/3EJ0UymnD0cbCzzUM66sdgDwaBPQKoRfoDFQVeJbgydmpJk9QBk/TlY5cPGEvtNM0Xj2UgFmOP/jSF+YJ8=
+	t=1727789129; cv=none; b=npvioSSQ8X78BesCRO2eXHT4S/jwXUVU8qX787XALlWJqg7Uw0bDL9xS2OAtC1lVrAf8h/i3R/ntBwYF58iwMbtBMD1iyAhMVisbhh7F4VqYKSBDDmzlLp3n1hNdj0tZQL2MoshMykobdd8MVwatzz5Nr4zaHhmJLELaMaunYZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727789109; c=relaxed/simple;
-	bh=jtKDRpjdK9jUbeCpp0LYmIoJsrHhJpELlWFxaJgj/Kc=;
+	s=arc-20240116; t=1727789129; c=relaxed/simple;
+	bh=1CE1AVPyTdLHY7nU4OIhfXrULaTU2aSDh/nKeaZPus4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nhjs413q8LUv26BdSOSZy0bNNKLRZ16PwquLuMwbbinAOfsQbozK/P8iM8BjvCQ4aiYnCA0M8ak5jkgfrLlxZpi7ndhD7c3HCVuEI7vSdLwD2BiI7t702IydAHB233xJDPiaYc++9iT9oij+55A7lmoY6LxavxamUw5qzU1LjBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QImwC3rm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01030C4CEC6;
-	Tue,  1 Oct 2024 13:25:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OoAqn5BhQafSFaj1gbQXid8wJUWenGuglMsFdPaIgUUDTFP0Quq8LFN5WxJR/fyw8MVqeJpjiIxWn+mp99xR3+Mlas0eg1fjDhm1fD4tyq/pKW9ZyHGWxCC1ekUkO54D/6F85II6cO+8FDs/0EYNEbdQoYtV+E2kry5sppkQHYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Glki7/V6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59926C4CEC6;
+	Tue,  1 Oct 2024 13:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727789108;
-	bh=jtKDRpjdK9jUbeCpp0LYmIoJsrHhJpELlWFxaJgj/Kc=;
+	s=k20201202; t=1727789128;
+	bh=1CE1AVPyTdLHY7nU4OIhfXrULaTU2aSDh/nKeaZPus4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QImwC3rm9spBvW4cijK7NY0oE5/B+BbG6ec6C3gJhTx0rXP11nlsNpykv8rUt2OfR
-	 JlrY96M9RMsoFQOJ4zZEcQPKxtPmjhtoMvoZhi3SwnmH0XBcUnigReqR71RG7IDRkh
-	 vDTgQKxCMY8w8880D+f8qy8rqkNcEVH11FwEoy5FoPwncx36LHbR2hwXOSoH2h8dq0
-	 OZzJaxOrOl/8hLRVgkBcq5r2sSluGZ7pfzJRRL2+s30VJu9qHerFoeMgqpAR+4WyZ5
-	 hxPR4Zk2kvOZ2TunZlGgRWP/3y2Nr0YErODHXYpojpOZ2YZQAdcq8m4oTGCxB+CK4O
-	 hNh0edvagmm0g==
-Date: Tue, 1 Oct 2024 15:25:04 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, shyam-sundar.s-k@amd.com, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: amd-asf: Fix uninitialized variables issue in
- amd_asf_process_target
-Message-ID: <7v2bow4onf4y4dcegtloqxc5np7ces4i65ghcrlw6mp4f4othj@vksupiyyhc63>
-References: <20240926151348.71206-1-qianqiang.liu@163.com>
- <cc527d62-7d0b-42f8-b14c-6448d3665989@stanley.mountain>
- <Zva0dBAZWpd1e4as@iZbp1asjb3cy8ks0srf007Z>
+	b=Glki7/V63pMVYLOOSkJLAtr/TLQYWCYAWtLkc95H9aIMvw4Kr01M12W2hnKttuVBL
+	 nJ3tjEvgThzqiB5iL/CzXaNJrEp2Rhx2NFFM4bdUQjv9PkOv/5h9OqaD9D0HSxQCVn
+	 wdGxTnG/KVnb7j3v6FHYhvkpWpBhrEDNjpwbhIphHVBVPQy2zx2FuFHeYfla1DJ5mT
+	 PDMCeuMFC+xBnLsg8grGUGKx2vv4PBB4wJ+fXfruwvmMC4Dixj96LaFpLz2z1owKqp
+	 khaX7K7ofA5upFA7FcLKkCY3AVpFJLdqpcGbtilr0fuUL5XZjnjVHVnH1S5lyhag8j
+	 tRCnBgZXjxicg==
+Date: Tue, 1 Oct 2024 14:25:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org, jacob.e.keller@intel.com,
+	sd@queasysnail.net, chunkeey@gmail.com
+Subject: Re: [PATCH net-next 09/13] net: ibm: emac: rgmii:
+ devm_platform_get_resource
+Message-ID: <20241001132523.GQ1310185@kernel.org>
+References: <20240930180036.87598-10-rosenp@gmail.com>
+ <202410011636.QtBtiUKi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,21 +61,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zva0dBAZWpd1e4as@iZbp1asjb3cy8ks0srf007Z>
+In-Reply-To: <202410011636.QtBtiUKi-lkp@intel.com>
 
-Hi Qianqiang,
-
-On Fri, Sep 27, 2024 at 09:34:44PM GMT, Qianqiang Liu wrote:
-> The len variable is not initialized, which may cause the for loop to
-> behave unexpectedly.
+On Tue, Oct 01, 2024 at 04:24:39PM +0800, kernel test robot wrote:
+> Hi Rosen,
 > 
-> Fixes: 20c3cc299218 ("i2c: amd-asf: Add routine to handle the ASF slave process")
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on net-next/main]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Rosen-Penev/net-ibm-emac-remove-custom-init-exit-functions/20241001-020553
+> base:   net-next/main
+> patch link:    https://lore.kernel.org/r/20240930180036.87598-10-rosenp%40gmail.com
+> patch subject: [PATCH net-next 09/13] net: ibm: emac: rgmii: devm_platform_get_resource
+> config: powerpc-fsp2_defconfig (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/config)
+> compiler: powerpc-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241001/202410011636.QtBtiUKi-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410011636.QtBtiUKi-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    drivers/net/ethernet/ibm/emac/rgmii.c: In function 'rgmii_probe':
+> >> drivers/net/ethernet/ibm/emac/rgmii.c:229:21: error: implicit declaration of function 'devm_platform_get_resource'; did you mean 'platform_get_resource'? [-Wimplicit-function-declaration]
+>      229 |         dev->base = devm_platform_get_resource(ofdev, 0);
+>          |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                     platform_get_resource
 
-This patch is fixing a commit still in i2c/i2c-host.
+Hi Rosen,
 
-Applied to i2c/i2c-host.
+I'm curious to know where devm_platform_get_resource comes from.
 
-Thanks,
-Andi
+In any case, it would need to be present in net-next, when patches that use
+it are posted, for use of it to be accepted there.
 
