@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-345193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C3098B2FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:26:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CB5B98B300
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF2FA283A14
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F4F283A3B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE071B5EC4;
-	Tue,  1 Oct 2024 04:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA581B6524;
+	Tue,  1 Oct 2024 04:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="ZLb3Hg5J"
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KTHaUHi1"
 Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474731B5839;
-	Tue,  1 Oct 2024 04:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783421B5EC5;
+	Tue,  1 Oct 2024 04:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727756749; cv=none; b=BMZXfpnIlQ6UfkW5EtspMAGsMGneOIatEy6KMPAJp8l+p/f8fz6mMUsfb1g5qIO1y/uiSKNizuBhoX6VvQqx67rgheU3DI7a4Z3aoWBsWOLDecBK3L1F+TbREg8hividJSJbFIf39YdoKEhkyvaH+ytmEQLFkP22IW2h3LpOnPs=
+	t=1727756751; cv=none; b=LiggwVt9Djvap4dvQOXtk67fj2Yvj+tSaiVoegc2WdXKozGM0JCATqhv1hpsjh9Fil01qe6AC3sipNs6/b2HUqYokNCKzgTQ6492leEUCPI6okkRaDm+4in9/vkdORSoBG/3bsTKE8MAEx99xhwR2t5XqD242i4X4+DwhdGUoQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727756749; c=relaxed/simple;
-	bh=5MrQbBokfZMOsLxeFgXKXqngGLTWAVulicUDVAiD3dc=;
+	s=arc-20240116; t=1727756751; c=relaxed/simple;
+	bh=g3/xsaggoBD8STCM4ioqMxyKkwu2ClnVteNZa156RfA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qZjkrY4FaLUcdzbMDQhn1T9gSj9eISeKPvpMEIS9Ul3DuIj7wFeNzBkRNq8Cl+ggiQNWQetxM1VmXbIOCk7vhf3vkaXVIPxEVzj58sLrqKsYs74vNGOnEhtNcYUM2EJKmUsG6PwqFoCLCoIYC4UCNHZDgBdWo/XZdmTqiB3SOcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=ZLb3Hg5J; arc=none smtp.client-ip=178.21.23.139
+	 MIME-Version; b=fOlVYpmeMcO6jKIdWqTL0mqBHkb6OKsK1tUjkXBtn9yKkIwWKp241RDkAwDpmexmq0mv/vOq2EYr/2+cZdiZcOWR2XIyecJ+fG7x6WcBbbeQ9Udq8rjLWXBHaN5PULIA1DAiRBOeAvXpnHK7XtYQ3hOYmVE+i+srnXikqsQUJG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KTHaUHi1; arc=none smtp.client-ip=178.21.23.139
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
 Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id E3B8023DA2;
-	Tue,  1 Oct 2024 06:25:45 +0200 (CEST)
+	by disroot.org (Postfix) with ESMTP id 0867823CB2;
+	Tue,  1 Oct 2024 06:25:49 +0200 (CEST)
 X-Virus-Scanned: SPAM Filter at disroot.org
 Received: from layka.disroot.org ([127.0.0.1])
  by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 1GZLnuBHkKf2; Tue,  1 Oct 2024 06:25:45 +0200 (CEST)
+ id EQi-h7-SyM0d; Tue,  1 Oct 2024 06:25:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1727756745; bh=5MrQbBokfZMOsLxeFgXKXqngGLTWAVulicUDVAiD3dc=;
+	t=1727756748; bh=g3/xsaggoBD8STCM4ioqMxyKkwu2ClnVteNZa156RfA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZLb3Hg5JpYgyHICNo8PHo4FdgSJ1G15e47gYb5CK8D2WLjhQ5T/fw6PIa1TmdV9SM
-	 8eq+uFmPbLAqquCYQoXg+fLbNlKvgQcuUcW2DTiDRvvsDDKJy0Gj/Ei9O/G7r8eikk
-	 QcV0pCNdKtAN8Qfc7yJf6LPleddthpbxyOotK/QQx3yFtKKSpygBMYGK3+LrZXnfXY
-	 ItcZlTAkQ04tyU1JYY+2F4u7fJS6wCzJwpfHdmUr5rzpxbGZY58g8pExdOR1yQoLk6
-	 VOOKD62hErQXD6SEwCznQCFi1hnBMIaSV5gnNjF0pTa5LoCdOazF1MmfU+sxZAt3v7
-	 xcB56LadeQYQQ==
+	b=KTHaUHi1CaAPViTnRp4BcBT/sKGPTXc54XXajNENC0cMFzf3fe7XB/TMz/nIZoKxZ
+	 9bO5sZ2xuKZ1kWtbp4uh3dc2gRCYDnphjrfbS2pSvXeCdbMHfabSCq7QTNuKjMpstA
+	 SmC9SJc0iUh8JppZXanppafF9RaIyIIjucv1O0qoKMBXIrJWQGuQAxWNJI4TDvjWDt
+	 AmPgfbu4ki53n0Vyl8EEK9yHx1nuJtifBZCM5TnnVIUYxzlnOVMmDVcmtHmenP1Uyv
+	 zzZ6SY2jaZl1H1q171JJRHoexOR34HzXWjATQhMuWnFRhNAav6t1Pf7JE0m08zFCZw
+	 glskzc2BSudwQ==
 From: Yao Zi <ziyao@disroot.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -61,9 +61,9 @@ Cc: linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Celeste Liu <CoelacanthusHex@gmail.com>,
 	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH 3/8] dt-bindings: clock: Add rockchip,rk3528-cru
-Date: Tue,  1 Oct 2024 04:23:57 +0000
-Message-ID: <20241001042401.31903-5-ziyao@disroot.org>
+Subject: [PATCH 4/8] clk: rockchip: Add PLL flag ROCKCHIP_PLL_FIXED_MODE
+Date: Tue,  1 Oct 2024 04:23:58 +0000
+Message-ID: <20241001042401.31903-6-ziyao@disroot.org>
 In-Reply-To: <20241001042401.31903-2-ziyao@disroot.org>
 References: <20241001042401.31903-2-ziyao@disroot.org>
 Precedence: bulk
@@ -74,83 +74,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Document Rockchip RK3528 clock and reset unit.
+RK3528 comes with a new PLL type, flagged by ROCKCHIP_PLL_FIXED_MODE,
+which should operate in normal mode only. Add corresponding definition
+and handle it in code.
 
 Signed-off-by: Yao Zi <ziyao@disroot.org>
 ---
- .../bindings/clock/rockchip,rk3528-cru.yaml   | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+ drivers/clk/rockchip/clk-pll.c | 10 ++++++----
+ drivers/clk/rockchip/clk.h     |  2 ++
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-new file mode 100644
-index 000000000000..ae51dfde5bb9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
-@@ -0,0 +1,63 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/rockchip,rk3528-cru.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Rockchip RK3528 Clock and Reset Controller
-+
-+maintainers:
-+  - Yao Zi <ziyao@disroot.org>
-+
-+description: |
-+  The RK3528 clock controller generates the clock and also implements a reset
-+  controller for SoC peripherals. For example, it provides SCLK_UART0 and
-+  PCLK_UART0 as well as SRST_P_UART0 and SRST_S_UART0 for the first UART
-+  module.
-+  Each clock is assigned an identifier, consumer nodes can use it to specify
-+  the clock. All available clock and reset IDs are defined in dt-binding
-+  headers.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - rockchip,rk3528-cru
-+
-+  reg:
-+    maxItems: 1
-+
-+  assigned-clocks: true
-+
-+  assigned-clock-rates: true
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: xin24m
-+      - const: phy_50m_out
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+  - "#reset-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cru: clock-controller@ff4a0000 {
-+        compatible = "rockchip,rk3528-cru";
-+        reg = <0xff4a0000 0x30000>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 606ce5458f54..46be1c67301a 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -204,10 +204,12 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
+ 	rockchip_rk3036_pll_get_params(pll, &cur);
+ 	cur.rate = 0;
+ 
+-	cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
+-	if (cur_parent == PLL_MODE_NORM) {
+-		pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
+-		rate_change_remuxed = 1;
++	if (!(pll->flags & ROCKCHIP_PLL_FIXED_MODE)) {
++		cur_parent = pll_mux_ops->get_parent(&pll_mux->hw);
++		if (cur_parent == PLL_MODE_NORM) {
++			pll_mux_ops->set_parent(&pll_mux->hw, PLL_MODE_SLOW);
++			rate_change_remuxed = 1;
++		}
+ 	}
+ 
+ 	/* update pll values */
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index fd3b476dedda..1efc5c3a1e77 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -391,6 +391,7 @@ struct rockchip_pll_rate_table {
+  * Flags:
+  * ROCKCHIP_PLL_SYNC_RATE - check rate parameters to match against the
+  *	rate_table parameters and ajust them if necessary.
++ * ROCKCHIP_PLL_FIXED_MODE - the pll operates in normal mode only
+  */
+ struct rockchip_pll_clock {
+ 	unsigned int		id;
+@@ -408,6 +409,7 @@ struct rockchip_pll_clock {
+ };
+ 
+ #define ROCKCHIP_PLL_SYNC_RATE		BIT(0)
++#define ROCKCHIP_PLL_FIXED_MODE		BIT(1)
+ 
+ #define PLL(_type, _id, _name, _pnames, _flags, _con, _mode, _mshift,	\
+ 		_lshift, _pflags, _rtable)				\
 -- 
 2.46.0
 
