@@ -1,96 +1,132 @@
-Return-Path: <linux-kernel+bounces-346241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0AD98C1A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E701A98C1A5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415411F23B56
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A10481F24A93
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6E91C9ECD;
-	Tue,  1 Oct 2024 15:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6001C9ECD;
+	Tue,  1 Oct 2024 15:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dbdy4aKL"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bFgWid9N"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B8E1C9EA5
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15251C9EA3;
+	Tue,  1 Oct 2024 15:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727796555; cv=none; b=NspXsWTbxeepYPBlbjonOed6jfMKFa+/eBaPbyHcQ3I1XmBLMhRvI0fn4D3QewjWQimA2x5bEW8ZMSH0uD8xpEFZvaUhkiMo23VHMUVMVWS2ar6+LF3PV+QXFOQ5pByNUYEFUZ1NldWuZJ5GVSm4e5iF3BVPBKO1+Qdg0xwxOWM=
+	t=1727796574; cv=none; b=sUmt3YxsV1/0m87wFw6iGMlxdmpq8goXZW9MgCUeukrnSQuJT3jKuOuaqaRbN8iabY7yG/tSk+dx/vfk2r5BqqVD3ZkjpXDq12J4n1549kymx7n8kqU7W0WWASlEGdHNCo0FA/35VH0ddVYmh2ahcPjJB4ieZkii1O5tfxxYpfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727796555; c=relaxed/simple;
-	bh=x0K+zPxurcPZc7T/0ku2nqo+pouZWvdWEQrURO8PaFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuGZmXUIIu3m6grYnxKmNPSB4MrFP1K6FR+Uj82X/i/rdEHQNz4NMiZAC3e+SJg0xj3g9/7Xm30ybmOgleUjRsb5LJu0S/MzZeVrP8DjBlwrxe1/dNwEV2lh/+a9Tb2LHH1gUFs/LRFNbRjBGaV2NZddT2ZH/2C04hRJdrqZzo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dbdy4aKL; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37ccfba5df5so3656513f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 08:29:13 -0700 (PDT)
+	s=arc-20240116; t=1727796574; c=relaxed/simple;
+	bh=ExSg9jxWWOXUZIYAenu/yAYPq0EsIP31UsbMrncQcVo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bu8IiZNogKScFPyQ2v8pg/1T7c0SDdt6vJctq/sVQLJSVPUnlrvSTf7uNqYbYvjKZ1PlEOjZNLYr46JjpBXv/wV48vQ0PiKp/5cOD4IReQVl6ngynjNEiBUu8wNQoyQNwgHw2fDbqDMhcZy0iDm3ZfNnfOGvWzXRwviNJrqRmKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bFgWid9N; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fac275471dso29385461fa.0;
+        Tue, 01 Oct 2024 08:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727796552; x=1728401352; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6p5BIzs+G9R7kkXcfnWlKyc4GV8KawD5tTiNldE9OU=;
-        b=dbdy4aKLNpoovgHmOdjG294k86jRGuMX1ymGs3Aagn15Wx87tMFd+Rcl//pNAvVPj5
-         jaZdvNuAspYN5EgMcm38KDucGkAaXWD5yenisJAlcTLk1/v+R1/7lkzuCKRYNBwig8le
-         ljNPwTSQ3jG8HFww3DXkyAoaKzwrFzY91x+TFg3AQgu3emYdlgh4Vujb8DcVlzoCJvR/
-         bmT0gVQWOeo8RR4rUY8v2KC2Bh/usR+/KU9dvtn6h+5e2I8QKRcwFlGGPW4FxMUUnYXK
-         TJGg5+vmzJfg2RINTnbrNGAV5F84NUokqDdCUYr8ggqOoYbncdVc4CMOJN/5s75OpK/3
-         plzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727796552; x=1728401352;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1727796571; x=1728401371; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b6p5BIzs+G9R7kkXcfnWlKyc4GV8KawD5tTiNldE9OU=;
-        b=a49Nd2kbzqEgL3Mj2HkVMgrTXblzby59zYNk0lOp9pk+qYe+JWZAp6UZLnI3eCiemk
-         cnn4MtJiN15GUblY7pwFWN0uBsYVWMgFva+sTGR5sJIluLyEl4RO18y7UYXjMr8RUsyd
-         O2SkFTYTFNa2CEIaOo2Xtfvhc4noeP1QXUPWO9wVQh3yVeR0MeORs6DAvX8H0B8iur5C
-         poXZby/uVQzAqkg0iF+97Fsp7znsT27E36i28MSBCxo6ClmPH5/3dmixu3C4NJD0Yx4K
-         XHuUKN6Ta+Vj5zPwizXj3T2J197lR9+zj9oRVkrhwddYFfYlEVYkEIpRrVFLiJj3VzVa
-         Dbpg==
-X-Gm-Message-State: AOJu0YzMRag4X9WI4PDMrDHpm54ZCkHy67s+S0kUHAe0Q0bOffCFyc2G
-	khOqgFhYhIyiL1+hj+8n1ef0WoRUq3LlJJT9DUoHPBSA1nI+cmpIR2YTl5yYbIo=
-X-Google-Smtp-Source: AGHT+IGgImbinqs+Rcc+CHQ8JL/+9OoDVAqWT3R4ao9u1pYDvZzJtY+qfvUAJ+095/y74H3Xk/fJLw==
-X-Received: by 2002:adf:a155:0:b0:37c:d275:9ede with SMTP id ffacd0b85a97d-37cd5acbb8fmr8775963f8f.26.1727796552131;
-        Tue, 01 Oct 2024 08:29:12 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd572fb5dsm12053705f8f.88.2024.10.01.08.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 08:29:11 -0700 (PDT)
-Date: Tue, 1 Oct 2024 18:29:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>
-Subject: Re: [RFC PATCH v2] Simply enable one to write code like:
-Message-ID: <35b3305f-d2c6-4d2b-9ac5-8bbb93873b92@stanley.mountain>
-References: <20241001145718.8962-1-przemyslaw.kitszel@intel.com>
+        bh=JKiujOg6CYINrgCG2TnZdYyyvY37bP0hD4EoAW2yqHU=;
+        b=bFgWid9NwEbkQ7M1EAD+urGmuAq7ppj+/OrKCi3mnEpvqjfgjlvKdb3HGlZYlcPjjW
+         PhpUq8SZVxoJiPK1ZV0hQYZ/9glnaZJj4Llu13dzZfSPk7bg4V6BQ+uS9HJ3CjR08Jzz
+         c915d8SKLuirOwxYiNPpAIPu8g9stMwKcc5GsSdKGXH9YZnsHifdej4SSbxLn1jlKlwl
+         VtLGRHCqXQTj3TIdrmQkUpUEVh6BLRXpxYz5fGsURifSlXe5+SMEUAwQg675faZukRHB
+         8MN0/7PEh1qPcWWQqWuhVcTfAc/gBvN7HCM/f4wgIP6wZvx3VlcyDAkRzibyHdzK4dxo
+         hpsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727796571; x=1728401371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JKiujOg6CYINrgCG2TnZdYyyvY37bP0hD4EoAW2yqHU=;
+        b=FEVFddsUwsM3zqBx6G6CtsAYwrtrNKsCXKzABJDdEFfVS7GPsnSilghjynu5KBSp+b
+         RcNKaVIyYKwYg+J/xTHDUSXuA61jXinpY6U3Im62SMw+lCr0s7B1HFLN+xfisbcEiqjl
+         R8qPj/hwMK0Ohv/blROpJ1Vn59SIPT4TeK8KWRvpZVNPtFYxJN3zcGITezrllqwJQ/u4
+         DgszZt2HAM0XeCzxAOgQ/MSJyUr4PJ/zy9QEW3r4nE65wcIE//ewta+VC6nIV/nvWyLX
+         n+5QdTlnTc26IVWhadkfBDYQQYOk4ewdPiO+p3EXiwpFeaOTfhuubC7y+9/QcDWgOZU2
+         vp3A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1DW3rubLrnni0e42Jgz4wcMYi/neq4oxltZaG6fsMWtgb+ritCf0M9WQC6WJ5c59O6XDCASli4Qgb/bvQ1yc=@vger.kernel.org, AJvYcCXiPqNCSCN+4JrqDT7vAQxGJYIy7AIN/qUo6+U5h6ZjLlBSFym9hiVvyHRjTLhfRbVuzhkA32q4fBduc7ER@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGebafo60zxeroCwLbKPY7n4140sEX4SBnktgUA3ZwFwPAc9Ae
+	tjt9M0YhMzXcK59IKuXrlrvjo69wpiLeOn33pQFX2LFZifxSInC5kPhxG/8IVQ7Rb9lFp6PP4uV
+	goykQ5kuz9Ers7m0x9k6TQ0iZc3g=
+X-Google-Smtp-Source: AGHT+IGWY4UN/+6v16SuDRnsJsC9wBlxJW95T/Ea6m+RdbOLxmzcd6XTbioSzCVIjgQoRhDE3YcGu6heBwkap1rVVfU=
+X-Received: by 2002:a2e:be27:0:b0:2f5:2ba:2c89 with SMTP id
+ 38308e7fff4ca-2fad86962c9mr15446781fa.11.1727796570754; Tue, 01 Oct 2024
+ 08:29:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001145718.8962-1-przemyslaw.kitszel@intel.com>
+References: <20241001074339.1160157-1-hildawu@realtek.com>
+In-Reply-To: <20241001074339.1160157-1-hildawu@realtek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Tue, 1 Oct 2024 11:29:17 -0400
+Message-ID: <CABBYNZJj+gtmSUUz4gUigkg3GUaBuR29jEU=ZxKjxu7cPSv1Yw@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: btrtl: Decrease HCI_OP_RESET timeout from
+ 10 s to 2 s
+To: Hilda Wu <hildawu@realtek.com>
+Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, alex_lu@realsil.com.cn, max.chou@realtek.com, 
+	kidman@realtek.com, howardchung@google.com, apusaka@chromium.org, 
+	yinghsu@chromium.org, johnlai@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Nice.  This would make it easier for Smatch to parse scope_guard() macros.
+Hi Hilda,
 
-regards,
-dan carpenter
+On Tue, Oct 1, 2024 at 3:43=E2=80=AFAM Hilda Wu <hildawu@realtek.com> wrote=
+:
+>
+> The original timeout setting for HCI Reset on shutdown is 10 seconds.
+> Since the HCI Reset processing time is soon, so decrease the timeout
+> to 2 seconds for HCI Reset on shutdown.
+
+I guess you are saying that HCI Reset shouldn't take 10 seconds to
+complete so instead use the default timeout for commands. I can update
+the description myself if you agree to use the above sentence.
+
+> Signed-off-by: Hilda Wu <hildawu@realtek.com>
+> ---
+> V1 -> V2: Modify commit message and summary
+> ---
+> ---
+>  drivers/bluetooth/btrtl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+> index 2d95b3ea046d..7128a8a0ba25 100644
+> --- a/drivers/bluetooth/btrtl.c
+> +++ b/drivers/bluetooth/btrtl.c
+> @@ -1371,7 +1371,7 @@ int btrtl_shutdown_realtek(struct hci_dev *hdev)
+>         /* According to the vendor driver, BT must be reset on close to a=
+void
+>          * firmware crash.
+>          */
+> -       skb =3D __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_INIT_TIME=
+OUT);
+> +       skb =3D __hci_cmd_sync(hdev, HCI_OP_RESET, 0, NULL, HCI_CMD_TIMEO=
+UT);
+>         if (IS_ERR(skb)) {
+>                 ret =3D PTR_ERR(skb);
+>                 bt_dev_err(hdev, "HCI reset during shutdown failed");
+> --
+> 2.34.1
+>
 
 
+--=20
+Luiz Augusto von Dentz
 
