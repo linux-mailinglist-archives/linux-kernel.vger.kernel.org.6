@@ -1,115 +1,186 @@
-Return-Path: <linux-kernel+bounces-345106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F97A98B216
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E195B98B21A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:34:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149B8282E7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163521C21727
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2229406;
-	Tue,  1 Oct 2024 02:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F76F38DE1;
+	Tue,  1 Oct 2024 02:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="qndyLruj"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UAnerSJ9"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B673B2CA2;
-	Tue,  1 Oct 2024 02:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8947848E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727749828; cv=none; b=CSbAlMO79omWUK84QuYi2mmLlbMeO7fxwUhb0N/U4JHrIZ3D1AYqxGZzoMhxlsgGJfm/N08w9P9/7jBSr2qhi6PqURnkG73fJgE3WrP7otdFi65JAEm7cpbSICg4lyE2J4gyVYa6iDz1w0gevylZA08Ai5a2BVVg2YZM+uOdCYU=
+	t=1727750045; cv=none; b=VNr3MGAFfLijF5C3gfZEVNgXDzHXTLNAdrWeW0D8sQH4k+Zo4f3qY0Xvi8b1vinHMO7KwDcQyJWbu+MIH5+5af+e3zo/74ejlI/Ro9utxI7Tn5sNOWq5xhKgX1ddhxEkmD/v5yOO+8HxU9XtGgLKs6KiVXhc0CF/3A2E61e7u/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727749828; c=relaxed/simple;
-	bh=pHtZdpH6E3OkWZne6jKOeKSBdeHF3dpFP2dAp2FNAdY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=fip/8n2QZgPR0gojDEBpCLM9FzIspaW0iHeEX0yhA2L2b1aWq+Q7XO2XCBZ6dnAARST5lqq0Zu7NMIqE5H29QLsewl4Vm1YHuKVm5XWuUpBvS36azy9PfmuhJIzvsg+ljkcvTJZtksikz5XpSB8dyZ31lrxUkJHLPrjxdAcKurE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=qndyLruj; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1727750045; c=relaxed/simple;
+	bh=3Lax1a51FpGxs8aUU8rWQPnGiqIQ+xprsIA3ixmbbTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aKf9wL1PwkCyOnbU4CPl5oKwfFnr7dea5XosroAinMOAd0wLkD4RB8cD3KfBsCIREel2Us2grdObCwbGaB/M67QzuuuoTvBYDqO6c+0bzINB296h+MMmkOz+Sg8kOmFAhdS1sS2/GtbZAZRoZn1aRfjZC31Pnf+eMGy9gy/7Xd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UAnerSJ9; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6f0cb09c-3a3b-4307-8b7e-6a7c6e45b97e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727750039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7FDUIwg+b2BEQXcQCTShkc7XaViRzXKe7OyrM24xOog=;
+	b=UAnerSJ9FAQbFKKHVlm3Zry60b6tYjKahxmvoHAN8VT9EfexI5+/HyDFoCGhhqKDgQV1k+
+	U+7IomHnBe1GXwNtN/p1JrE1BMe+hFjF07SCpNZ81ArC7Zy54SUMdyKHIrRkBtW5UHCZc2
+	OWtXZuMbu37K/ZPKB3Ahwyz97xE4Rx4=
+Date: Mon, 30 Sep 2024 19:33:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1727749817;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pvkn9unYKg5jrQqXLz3IKj4eW4g7FS1Yw0ALAhtHSGI=;
-	b=qndyLrujoJpXhrA3PsDJWmA2Mn5Jupk9HKInMqWbJFm7SNH2FUWsZbsKtwAdnm7X+gv9xN
-	irTXR+w+OXHKApotKB0mrNBM/KhtMxzuApUBe72+kJjTP77c/t+Zn339vsSkq0xYGCxWWx
-	x8PbXOuTw/JJ4h23ml5IQP4Jd8s3+LGKFDs32Exgsq/1DqHMUhsvntCoe84sZziW+5/y0f
-	KL+62oseiCSsWqkM8oijpjjt5OXyKjFBEB8nrf2diRU194PJbAz4eiV9/k7YIsL79tNed7
-	dXgzlVWrLE00DFt6Wq69Xp5Tam8neqR9Mz6WS8r/bV+nFV2GbAZQGiYkUbP4Tg==
-Date: Tue, 01 Oct 2024 04:30:17 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
- linux-rockchip@lists.infradead.org, heiko@sntech.de, oss@helene.moe,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/5] Improve error handling in Rockchip SPI
- drivers
-In-Reply-To: <D4K14E2EOSC6.1VYBGSQKSIRW1@cknow.org>
-References: <cover.1727337732.git.dsimic@manjaro.org>
- <172774028424.2264837.4595727034314147956.b4-ty@kernel.org>
- <D4K14E2EOSC6.1VYBGSQKSIRW1@cknow.org>
-Message-ID: <c69fef216b1a2474bbab1a146ec63450@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Subject: Re: [PATCH bpf-next v3 2/2] selftests/bpf: Setget_sockopt add a test
+ for tcp over ipv4 via ipv6
+To: Feng zhou <zhoufeng.zf@bytedance.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mykolal@fb.com,
+ shuah@kernel.org, alan.maguire@oracle.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, yangzhenze@bytedance.com,
+ wangdongdong.6@bytedance.com
+References: <20240914103226.71109-1-zhoufeng.zf@bytedance.com>
+ <20240914103226.71109-3-zhoufeng.zf@bytedance.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240914103226.71109-3-zhoufeng.zf@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-Migadu-Flow: FLOW_OUT
 
-Hello Diederik and Mark,
-
-On 2024-10-01 02:05, Diederik de Haas wrote:
-> On Tue Oct 1, 2024 at 1:51 AM CEST, Mark Brown wrote:
->> On Thu, 26 Sep 2024 10:38:11 +0200, Dragan Simic wrote:
->> > This is a small series that improves error handling in the probe path
->> > of the Rockchip SPI drivers, by using dev_err_probe() properly in multiple
->> > places.  It also removes one unnecessary check of a function return value,
->> > and performs a bunch of small, rather trivial code cleanups, to make the
->> > code neater and a bit easier to read.
->> >
->> > Dragan Simic (5):
->> >   spi: rockchip: Perform trivial code cleanups
->> >   spi: rockchip-sfc: Perform trivial code cleanups
->> >   spi: rockchip: Don't check for failed get_fifo_len()
->> >   spi: rockchip: Use dev_err_probe() in the probe path
->> >   spi: rockchip-sfc: Use dev_err_probe() in the probe path
->> >
->> > [...]
->> 
->> Applied to
->> 
->>    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
->> for-next
-
-Thanks for applying a subset of the patches!
-
->> [1/5] spi: rockchip: Perform trivial code cleanups
->>       commit: d87ec94e48dd2da27fbe948f2dc6c8fedc98fff4
->> [2/5] spi: rockchip-sfc: Perform trivial code cleanups
->>       commit: 6c510eac1528d8939bad8b6df72c7b23ffec8c25
->> [5/5] spi: rockchip-sfc: Use dev_err_probe() in the probe path
->>       commit: 1482c40b440fa58f956bc3e1ef3426e0cdbc09e0
+On 9/14/24 3:32 AM, Feng zhou wrote:
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
 > 
-> It looks like you applied some patches from v1 of this series while the
-> current version is v3.
+> This patch adds a test for TCP over IPv4 via INET6 API.
 > 
-> https://lore.kernel.org/linux-rockchip/cover.1727601608.git.dsimic@manjaro.org/
+> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+> ---
+>   .../selftests/bpf/prog_tests/setget_sockopt.c | 33 +++++++++++++++++++
+>   .../selftests/bpf/progs/setget_sockopt.c      | 13 ++++++--
+>   2 files changed, 43 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
+> index 7d4a9b3d3722..3cad92128e60 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/setget_sockopt.c
+> @@ -15,8 +15,11 @@
+>   
+>   #define CG_NAME "/setget-sockopt-test"
+>   
+> +#define INT_PORT	8008
+> +
+>   static const char addr4_str[] = "127.0.0.1";
+>   static const char addr6_str[] = "::1";
+> +static const char addr6_any_str[] = "::";
+>   static struct setget_sockopt *skel;
+>   static int cg_fd;
+>   
+> @@ -67,6 +70,35 @@ static void test_tcp(int family)
+>   	ASSERT_EQ(bss->nr_binddev, 2, "nr_bind");
+>   }
+>   
+> +static void test_tcp_over_ipv4_via_ipv6(void)
+> +{
+> +	struct setget_sockopt__bss *bss = skel->bss;
+> +	int sfd, cfd;
+> +
+> +	memset(bss, 0, sizeof(*bss));
+> +	skel->bss->test_tcp_over_ipv4_via_ipv6 = 1;
+> +
+> +	sfd = start_server(AF_INET6, SOCK_STREAM,
+> +			   addr6_any_str, INT_PORT, 0);
+> +	if (!ASSERT_GE(sfd, 0, "start_server"))
+> +		return;
+> +
+> +	cfd = connect_to_addr_str(AF_INET, SOCK_STREAM, addr4_str, INT_PORT, NULL);
+> +	if (!ASSERT_GE(cfd, 0, "connect_to_addr_str")) {
+> +		close(sfd);
+> +		return;
+> +	}
+> +	close(sfd);
+> +	close(cfd);
+> +
+> +	ASSERT_EQ(bss->nr_listen, 1, "nr_listen");
+> +	ASSERT_EQ(bss->nr_connect, 1, "nr_connect");
+> +	ASSERT_EQ(bss->nr_active, 1, "nr_active");
+> +	ASSERT_EQ(bss->nr_passive, 1, "nr_passive");
+> +	ASSERT_EQ(bss->nr_socket_post_create, 2, "nr_socket_post_create");
+> +	ASSERT_EQ(bss->nr_binddev, 2, "nr_bind");
+> +}
+> +
+>   static void test_udp(int family)
+>   {
+>   	struct setget_sockopt__bss *bss = skel->bss;
+> @@ -191,6 +223,7 @@ void test_setget_sockopt(void)
+>   	test_udp(AF_INET);
+>   	test_ktls(AF_INET6);
+>   	test_ktls(AF_INET);
+> +	test_tcp_over_ipv4_via_ipv6();
 
-Just checked this by hand, and the three patches that were applied
-are the same as the respective patches from the v3 of the series,
-albeit being picked from the v1 of the series.  It's just that the
-patch 5/5 from the v1 became patch 3/5 in the v3, which pushed the
-patches with no dependencies earlier within the series.
+This has a conflict with commit d53050934e66.
+
+pw-bot: cr
+
+>   
+>   done:
+>   	setget_sockopt__destroy(skel);
+> diff --git a/tools/testing/selftests/bpf/progs/setget_sockopt.c b/tools/testing/selftests/bpf/progs/setget_sockopt.c
+> index 60518aed1ffc..ff834d94dd23 100644
+> --- a/tools/testing/selftests/bpf/progs/setget_sockopt.c
+> +++ b/tools/testing/selftests/bpf/progs/setget_sockopt.c
+> @@ -20,6 +20,7 @@ int nr_connect;
+>   int nr_binddev;
+>   int nr_socket_post_create;
+>   int nr_fin_wait1;
+> +int test_tcp_over_ipv4_via_ipv6;
+>   
+>   struct sockopt_test {
+>   	int opt;
+> @@ -262,9 +263,15 @@ static int bpf_test_sockopt(void *ctx, struct sock *sk)
+>   		if (n != ARRAY_SIZE(sol_ip_tests))
+>   			return -1;
+>   	} else {
+> -		n = bpf_loop(ARRAY_SIZE(sol_ipv6_tests), bpf_test_ipv6_sockopt, &lc, 0);
+> -		if (n != ARRAY_SIZE(sol_ipv6_tests))
+> -			return -1;
+> +		if (test_tcp_over_ipv4_via_ipv6) {
+> +			n = bpf_loop(ARRAY_SIZE(sol_ip_tests), bpf_test_ip_sockopt, &lc, 0);
+
+Can this bpf_loop(..., bpf_test_ip_sockopt, ...) be always run? Then the above 
+test_tcp_over_ipv4_via_ipv6() addition will not be needed.
+
+
+> +			if (n != ARRAY_SIZE(sol_ip_tests))
+> +				return -1;
+> +		} else {
+> +			n = bpf_loop(ARRAY_SIZE(sol_ipv6_tests), bpf_test_ipv6_sockopt, &lc, 0);
+> +			if (n != ARRAY_SIZE(sol_ipv6_tests))
+> +				return -1;
+> +		}
+>   	}
+>   
+>   	return 0;
+
 
