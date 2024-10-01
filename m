@@ -1,235 +1,148 @@
-Return-Path: <linux-kernel+bounces-346817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8383098C955
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:12:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AF298C956
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A72DB1C24644
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A56841C243FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83341CF5CE;
-	Tue,  1 Oct 2024 23:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DB51CF7BC;
+	Tue,  1 Oct 2024 23:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L+ttDD8O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/nIdavm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B4E1CF2A4;
-	Tue,  1 Oct 2024 23:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726151CEEA7;
+	Tue,  1 Oct 2024 23:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727824199; cv=none; b=PmaDQnOx5oJlzIjVTejk5D5t7KbhB1po+vRn1xe53fVZbmsu1EjXOC65MAHOM+fiyS8q9iz6KKZAY7NA/10ZlVm6lpA76CsxWNRscYqMEePe1Fc09A4OPSIQMYIJDMJsn3PjhEejzmUuOuWXPuac1vvOtPVatWCfF+kebAPIh98=
+	t=1727824242; cv=none; b=IiehTPVKL/6THXMW2/Bh75WPhVKstbfoDOJODvnysUco+pNY861Sxbdc2P3Nh40SK9pzOikxWI3A3qJns13uWENK4a5uSdi4xayYoLnGj4azmJSNsSCjhkBMGZwXDmDg8XcIxOewFH1YG7iaZDrAHW7dzMDVe/Rgv3YvPASkAFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727824199; c=relaxed/simple;
-	bh=pF10SgafKHT8nhP6OVtYlWEK4BQ14Dt6JDhg5N/Pv88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jlKWGJpalJqNxENHEaP8JfkEKLdMHMNcqBPW/NiUWhSQ21Yi5tUehFL2K6IUJqrI9EinauzfJsaJRhmq5Z9D3Bq1+zRZyOGhy/+/hSclTayxFlBgJJwwA5fBa/n110zWpw6ytwg1ihVw8p5AaksDa6rG2cnFbJ6PCzKJxZ1Bmg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L+ttDD8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AE14C4CEC6;
-	Tue,  1 Oct 2024 23:09:57 +0000 (UTC)
+	s=arc-20240116; t=1727824242; c=relaxed/simple;
+	bh=DcJk0ZurD4m477NZqGPsjHZFR3HoBgS1o2cMcYNYB2s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=eWSW0FbdbOk5Q2n9WQEKZ+ORRXmqc1nA+IdILGEIfMRlHnaw7Wl/1Hzq8Yd1LKPGXiFoBosQC5q5HOd9Kb0BqLNXvdTxGIc9fL/uWdewQefBTXqy6b3h3jcKfTLQOKpDQXXPuRlgx9oB7A01ZsOl6dKm9Rq2Qt4Fh1LnY3ccM2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/nIdavm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A67C4CEC6;
+	Tue,  1 Oct 2024 23:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727824198;
-	bh=pF10SgafKHT8nhP6OVtYlWEK4BQ14Dt6JDhg5N/Pv88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L+ttDD8O5uI1aAMqhas9wkfV5KUf4Wge0RUaw1QoeV6GZVd5joQMAzvEb9/jnYgxL
-	 dXBMl5RckVtmfg1WGCT6GAx5FMrSmxhZuWQE4+l3ea1OHiJySobCWd6/SuP+u68qOl
-	 YEEOArrPCW+Z32FwJ+tOu8l1n2X95CJCLhMuKi7iGXWXS1OZdKXQW532xBLcReu1WH
-	 xdkGwhEeJ9sodsfmRFORKLv3cnLWnNS1Pm6NAMhtLrLcUIiJGicPQ6u7ZBj4IG0UGo
-	 P7apJqUyaltgVcsK9F2gxOWFmTFT6q1E4vnxcaE0v/7Bhmylgn7pSX2jKu1ivuF8w1
-	 zZrHvGZAZFPBw==
-Date: Tue, 1 Oct 2024 16:09:55 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Guo Ren <guoren@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Nick Terrell <terrelln@fb.com>,
-	Guilherme Amadio <amadio@gentoo.org>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Aditya Gupta <adityag@linux.ibm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	Kajol Jain <kjain@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
-	Shenlin Liang <liangshenlin@eswincomputing.com>,
-	Atish Patra <atishp@rivosinc.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Chen Pei <cp0613@linux.alibaba.com>,
-	Dima Kogan <dima@secretsauce.net>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	Yang Jihong <yangjihong@bytedance.com>
-Subject: Re: [PATCH v1 11/11] perf build: Rename PERF_HAVE_DWARF_REGS to
- PERF_HAVE_LIBDW_REGS
-Message-ID: <ZvyBQ6xgGE4gZdoo@google.com>
-References: <20240924160418.1391100-1-irogers@google.com>
- <20240924160418.1391100-12-irogers@google.com>
- <ZvTUo_nbr_gKaJrs@google.com>
- <CAP-5=fVQVEgSK55Y_38KXyp3CJ1ssPOcqkA2JKwMDVYJe8iztA@mail.gmail.com>
- <ZvW4iZpTinJKWIFD@google.com>
- <CAP-5=fUcV6rXiTSpGPCGou6h9Gy-MYcYtrvdFJKCz28gQAf-LA@mail.gmail.com>
- <ZvbocHwtPkwJwDOA@google.com>
- <CAP-5=fWn6ejdozTt8GHvDkv-QW_GF5+b4C3kTO_544H-fXZ+0w@mail.gmail.com>
- <20240929113521.9b7e8fd67af154520e2c9d8e@kernel.org>
- <CAP-5=fV8vZoieMrRxCrF5EkUBP0HWd=ZLHXEHTq1X_mni0wMsA@mail.gmail.com>
+	s=k20201202; t=1727824242;
+	bh=DcJk0ZurD4m477NZqGPsjHZFR3HoBgS1o2cMcYNYB2s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W/nIdavm1JqAX/giEtnJOkGz3xbjdMq6KQkVw4ljhSRaSLSeInkxiw57CPANodEdt
+	 BDUmGhFZm3fprZ+HevIktBUAx5izVq2R/JTp8im484EKY4oXw8NTt5t6oKNbAQp1kC
+	 e8yGKgKRY02ydyHb6dqxZyFPr4GJ8e9yA250mszB4bEa89E1LainJdofTupgX33ff2
+	 LHU3kk6t+C1PUfcD4xRbxeFFbInkC08OQmL7FF6cple4SqU8vaHvD8uzGuqokjYtWd
+	 GNQDdGXc7GtxZBSNqO/lNAEZp+2CDk/O28MXbb+Aezidxvikak450fAzj1jNkx2SkF
+	 /ltNKeuVdCAyA==
+Date: Wed, 2 Oct 2024 08:10:37 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Will Deacon <will@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
+ Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v14 04/19] function_graph: Replace fgraph_ret_regs with
+ ftrace_regs
+Message-Id: <20241002081037.e9b825f7456ce4815eccad1b@kernel.org>
+In-Reply-To: <20240930145548.08c8f666@gandalf.local.home>
+References: <172615368656.133222.2336770908714920670.stgit@devnote2>
+	<172615373091.133222.1812791604518973124.stgit@devnote2>
+	<20240915051144.445681c2@rorschach.local.home>
+	<20240917095538.GA27384@willie-the-truck>
+	<20240930145548.08c8f666@gandalf.local.home>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV8vZoieMrRxCrF5EkUBP0HWd=ZLHXEHTq1X_mni0wMsA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 30, 2024 at 09:02:36PM -0700, Ian Rogers wrote:
-> On Sat, Sep 28, 2024 at 7:35 PM Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> >
-> > On Fri, 27 Sep 2024 11:15:21 -0700
-> > Ian Rogers <irogers@google.com> wrote:
-> >
-> > > On Fri, Sep 27, 2024 at 10:16 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Thu, Sep 26, 2024 at 12:55:18PM -0700, Ian Rogers wrote:
-> > > > > On Thu, Sep 26, 2024 at 12:40 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > >
-> > > > > > On Thu, Sep 26, 2024 at 05:47:16AM -0700, Ian Rogers wrote:
-> > > > > > > On Wed, Sep 25, 2024 at 8:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Sep 24, 2024 at 09:04:18AM -0700, Ian Rogers wrote:
-> > > > > > > > > The name dwarf can imply libunwind support, whereas
-> > > > > > > > > PERF_HAVE_DWARF_REGS is only enabled with libdw support. Rename to
-> > > > > > > > > make it clearer there is a libdw connection.
-> > > > > > > >
-> > > > > > > > While it only covers libdw, I think the idea of this macro is whether
-> > > > > > > > the arch has register mappings defined in DWARF standard.  So I think
-> > > > > > > > it's better to keep the name for this case.
-> > > > > > >
-> > > > > > > How can the dwarf standard exist for an arch but not define registers?
-> > > > > >
-> > > > > > I meant it's about the arch code in the perf tools to have the mapping,
-> > > > > > not the DWARF standard itself.
-> > > > >
-> > > > > But we guard those definitions behind having libdw:
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/x86/Makefile?h=perf-tools-next#n3
-> > > > > So we only have the regs if libdw is present, not if dwarf is in use
-> > > > > for libunwind/libdw. Hence wanting to be specific that they are just a
-> > > > > libdw and not a dwarf thing. Trying to use the regs in libunwind code
-> > > > > would be broken. That could change but I wanted to make the code clear
-> > > > > for the way things are at the moment.
-> > > >
-> > > > I understand your point but calling it LIBDW_REGS looks unnatural to me.
-> > >
-> > > I don't follow. Wouldn't it be unnatural to see PERF_HAVE_DWARF_REGS
-> > > in libunwind code but you are to some how know that the code only had
-> > > meaning if libdw was present? I don't like the implication that DWARF
-> > > means LIBDW as throughout the code it doesn't. I think the name
-> > > PERF_HAVE_LIBDW_REGS better captures how the code is, makes the code
-> > > more intention revealing and so readable, etc.
-> >
-> > I agree with Namhyung this point. dwarf-regs is defined only by the
-> > DWARF standard, not libdw only. The standard encode registers by a digit
-> > number and the dwarf-regs decode the number to actual register name.
+On Mon, 30 Sep 2024 14:55:48 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Tue, 17 Sep 2024 10:55:39 +0100
+> Will Deacon <will@kernel.org> wrote:
 > 
-> The code is not making a statement about the DWARF standard, take arch/csky:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/arch/csky/Makefile?h=perf-tools-next
-> ```
-> # SPDX-License-Identifier: GPL-2.0-only
-> ifndef NO_DWARF
-> PERF_HAVE_DWARF_REGS := 1
-> endif
-> ```
-> in the patch series NO_DWARF becomes NO_LIBDW, so it is now:
-> ```
-> # SPDX-License-Identifier: GPL-2.0-only
-> ifndef NO_LIBDW
-> PERF_HAVE_DWARF_REGS := 1
-> endif
-> ```
-> So the Makefile says that PERF_HAVE_DWARF_REGS is dependent on having
-> NO_LIBDW, that is having libdw implies PERF_HAVE_DWARF_REGS is defined
-> for csky.
+> > The arm64 part looks good to me, although passing a partially-populated
+> > struct out of asm feels like it's going to cause us hard-to-debug
+> > problems down the line if any of those extra fields get used. How hard
+> > would it be to poison the unpopulated members of 'ftrace_regs'?
+> 
+> The purpose of creating ftrace_regs was to allow a partially populated
+> pt_regs to be sent around, as Thomas Gleixner and Peter Zijlstra were
+> against using pt_regs that were not fully populated. Hence, I created
+> "ftrace_regs" for this purpose.
+> 
+> ftrace_regs should never be accessed via its internal elements but only with
+> its accessor functions, as depending on the arch or functionality used, the
+> content of the structure should never be trusted. The accessor functions
+> will do all the verification needed.
+> 
+> I may add some compiler hacks to enforce this. Something like:
+> 
+> struct ftrace_regs {
+> 	void *nothing_to_see_here;
+> };
 
-I think this is totally fine and we can change the condition later if
-needed.
+Yeah, OK. But sizeof(fregs) may be changed. (Shouldn't we do too?)
 
-After all, I don't think it's a big deal.  Let's just call DWARF
-registers DWARF_REGS. :)
+> 
+> And then change the arch code to be something like:
+> 
+> // in arch/arm64/include/asm/ftrace.h:
+> 
+> struct arch_ftrace_regs {
+>         /* x0 - x8 */
+>         unsigned long regs[9];
+> 
+> #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+>         unsigned long direct_tramp;
+> #else
+>         unsigned long __unused;
+> #endif
+> 
+>         unsigned long fp;
+>         unsigned long lr;
+> 
+>         unsigned long sp;
+>         unsigned long pc;
+> };
+
+And if it is pt_regs compatible, 
+
+#define arch_ftrace_regs pt_regs
+
+?
+
+> 
+> #define get_arch_ftrace_regs(fregs) ((struct arch_ftrace_regs *)(fregs))
+> 
+> static __always_inline void
+> ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+>                                     unsigned long pc)
+> {
+> 	struct arch_ftrace_regs *afregs = get_ftrace_regs(fregs);
+>         afregs->pc = pc;
+> }
+> 
+> 
+> -- Steve
+
 
 Thanks,
-Namhyung
 
-> 
-> Dwarf in the code base implies libdw, libunwind and potentially other
-> dwarf capable things like llvm. If we don't have libdw then NO_LIBDW
-> will be set and PERF_HAVE_DWARF_REGS won't be set. That is the more
-> general dwarf thing will not be set because of missing libdw. This
-> goes contrary to wanting this to be true whenever a dwarf thing is
-> present - something that reflecting what the standard says would
-> achieve.
-> 
-> In the code base right now PERF_HAVE_DWARF_REGS isn't a dwarf
-> dependent thing, it is a libdw dependent thing, this is why
-> PERF_HAVE_LIBDW_REGS is a more intention revealing name as it makes
-> the connection explicit.
-> 
-> We could change the code so that in Makefile.config we set something like:
-> ```
-> ...
-> ifndef NO_LIBDW
->   PERF_HAVE_DWARF := 1
-> ...
-> ```
-> and in the arch/.../Makefiles change them to be:
-> ```
-> if PERF_HAVE_DWARF
-> PERF_HAVE_DWARF_REGS := 1
-> endif
-> ```
-> but this is going beyond the clean up this patch series was trying to
-> achieve. I also don't know of an architecture where dwarf is present
-> but registers are not, so having a definition for this case feels
-> redundant.
-> 
-> Thanks,
-> Ian
-> 
-> > Actually, there is a histrical reason I had called it is DWARF. I used to
-> > use "libdwarf", and switched to "libdw" for required features. So I know
-> > there are more than 1 implementation of DWARF library, and the libdwarf
-> > also uses the same operation number because it depends on the same standard.
-> >
-> > https://github.com/davea42/libdwarf-code/blob/main/src/lib/libdwarf/dwarf.h#L809
-> >
-> > So I think we'd better keep it call as DWARF_REGS.
-> >
-> > Thank you,
-> >
-> > >
-> > > Thanks,
-> > > Ian
-> > >
-> >
-> >
-> > --
-> > Masami Hiramatsu (Google) <mhiramat@kernel.org>
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
