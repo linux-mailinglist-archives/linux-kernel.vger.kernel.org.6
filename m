@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-345272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D3B98B3F9
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:59:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9C398B3FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1412C1F23D79
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F44E1C23296
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066E51BBBD6;
-	Tue,  1 Oct 2024 05:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71B91BBBDD;
+	Tue,  1 Oct 2024 06:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pw/PCx5q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OA+RgESP"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5799636AF8;
-	Tue,  1 Oct 2024 05:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA10B3201;
+	Tue,  1 Oct 2024 06:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727762348; cv=none; b=RSCwJIp3mc8wdaKvbiekXiGUuvhsUTFRdRiAUW72elH0gYRlW+kmTtZEQaxqp/MWZsYEBC4xvUYUUosjaZpqvmupeyu7qfhETpA1M8qIKmBbyK4/NDqVpkeSZ6hBtJFfDRPH1rBfbZuFHPcgKuj7dctJ5k7VNREisngTM8oUKBA=
+	t=1727762447; cv=none; b=S3rgmk1NRUYbTK80pJEBHhoJeer/Vy00a1scr6uTYobTo7bvUiRFz3YHqolvjgxWfJTSxLSGZeW0NwEne2+t4hsIHwnFjeU9l8cCc7d3rFzqPnBvDUrj2a5UMmpsdT5okaQwwi+VS3oIznPlI1TVc56DXQu2gol63Ptc+4bCjtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727762348; c=relaxed/simple;
-	bh=HfbzoxMtDwCaO5o4crY+tAP8aTcFv4LOoZTLbizRq64=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QF36dtKA7ATINCmDzevelR+esOg/9WJHABI6N3jv982SvfUw/cK26EtYALMUOP0RnbE3+6XZcHnOm6LCHqN69+oVP/lIwVNSmOEVtBSvzxT1oAKPieQ7C4U4xmUc0suWHehTFvo7IK5zSZA7pB+V/o0zOxZjI0EmsSFhgW0bCQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pw/PCx5q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E43CAC4CEC6;
-	Tue,  1 Oct 2024 05:59:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727762347;
-	bh=HfbzoxMtDwCaO5o4crY+tAP8aTcFv4LOoZTLbizRq64=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pw/PCx5qFobE+Omwl/t2AJOS+8PYOGYBnu2FqEBF1eqXg80fyEZ4f6UkLmpC97/Vy
-	 r+zR/Cd+lc5klJX5xYgS7DlelcM3CzSlsTeMYH0sYSzBUvTrpoir3sqmy+iJSdEqcc
-	 NDp0IK3VmFvcT+/aKMSecYx1m1FYvRAg0mEPjUo5HAEka/yVYA2ApBaADFXWAERPhs
-	 KiLod4ro5Ctn1x90EpW+ITEBuLtmhX/1F7K7oyq6/h3vWkRqZw4MdxFhLebyBN81lY
-	 PYNzNMEP4tGi04x6b8eZwliEgdICzXNvIuzT7sJa2yeWqL/+ADD28RYIxXgXTc908o
-	 qCm3XCcc9VlBw==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539973829e7so1595700e87.0;
-        Mon, 30 Sep 2024 22:59:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgEhMjCVwX457IyxrM3YLAkF6BoPPXgwuvd83jFUUkUdnL3EzzMfZg5XkP4zd//y7Z19F68aXhX7LQ7HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSfqzw24xOMVX+qjvHhoSk5o1NguEv5DKsYzjRKdcObJnz8p7v
-	gcLNPqKfBFFo8KVzQgUMzBMFhflsfr7+ER/r259tHYVfkYY0i3hZ7ZgLpFAkQH9zoS9sibKHgGs
-	n2CdLkLE3+DceRWDjZpiV8K+Zp7I=
-X-Google-Smtp-Source: AGHT+IFXQwHKD0uaOWpCND7OCsswTrsvCQ/vNYzlRQfaD0tTW74PT0VYPMtXPJvjn31Vm9qS5qGXXjyH/KWiqpEnVKY=
-X-Received: by 2002:a05:6512:3b0e:b0:52c:86d7:fa62 with SMTP id
- 2adb3069b0e04-5389fc43de2mr8653973e87.23.1727762346227; Mon, 30 Sep 2024
- 22:59:06 -0700 (PDT)
+	s=arc-20240116; t=1727762447; c=relaxed/simple;
+	bh=celzY8OV4GMmy/RwTNyebjUESHinD4fwKxA7pGOfvoU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nJkkX78gKrZP0lkql3lMSejC9OAGYS29ZQ6eugdA6cM76xP2OoVH1RncWT+wWLF5MB9F9qiwgD0N3loLQVTQ5HBz6xPXNSGx09hUybNJXOjtDROWlyy2EvkSaQPv450HjnvgXixSv6hnoOgqk6Gxh3bZcOzsNtr8cllumYXmP9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OA+RgESP; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20ba9f3824fso5077795ad.0;
+        Mon, 30 Sep 2024 23:00:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727762445; x=1728367245; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KYn484j8l4FCD86Dl+kKDGHdgRbar+9TjSd1oUL2FFI=;
+        b=OA+RgESPelSiZUnaRnTHjYdyF2QSeZ1buauOmlg2M9+/8vi7j/gXp7MeorCsU4YUyh
+         jw85mc6gDaxOYX9EXoYFNnodSNJMNQvLBDnEhYo6EdEwVczRe06rjjF5dYpwmttgjwcY
+         39ymBNxeOj86y9VqB/tdqT4qUx93i6vGsItE6O7Iq/6bof7gI28J+KnOralm06udR+kp
+         esmb40QaW9JJwS/uVKIDkEbmTN7e4mfAODNMsNNdMVLgT+EKfX5PWzt0shRJhoP5p9si
+         UJsl9XnUtlizoct0e/U1CFTGHzW2R19wZ5NaqEzT2jx2e6fNoGXo2RaZXVnU4Fa4M/kx
+         BU1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727762445; x=1728367245;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KYn484j8l4FCD86Dl+kKDGHdgRbar+9TjSd1oUL2FFI=;
+        b=i6ci5fIP4VEOcp1Vk/NRHWrXck6E0VzU8yf74dPzhP/OGoDRL8qz4NGCb/nRv8Owh9
+         g+vLzumweD6FdVK47TSP6WH03UDEbUlGS8hbQw+YgLWamAJWj3+cqhw4clW5VxWb9D68
+         EJSU3K2dGlo14+AS0ibiK23CCwBluOxOZfJ2AAm+dJ6EXghxx+yCK5SGKrr2Sg09ZNqQ
+         tThVdW4wm+Dlowxqn6zTQfAl/XETcU5FkIEvJzvV2cE1jDj3w3pC3h5eRr9c09QSEYI/
+         2I4OkG0iIgAFA1P1eJrkSA0NBFwgxCt0mEQl6x7EbuHB8I+R+FHYuEteACCw7c1kFKD2
+         5vYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdfhcyirLMk6rrM+fE31XaYzfyvboGlt4YkGkjePqbkqsz1avBhd+zYpKgzF2YopefvIJYgyu6@vger.kernel.org, AJvYcCWQO//L+BacUNrSLzKMqzZII8rG4MAdJOrMb1TEgfaH8diTk9DEglIIHlfEVB8j2ZD/s/4=@vger.kernel.org, AJvYcCWTR1n9T6c4hmRTLPVIHy6FGzpM5vGKxUQV/LEsWxbe/5MB35U0Wow1q9liRwI10fL3a+/k11D+cITzlbNd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFXM90SX8KuRIpuoC5RCW/GR4YIpM5F7ZqBJM+Jk43/gvt58S5
+	XYnyvqAdpusqgNrnoNnpKXT461E0my9pS8yzfId1YAsGLWTQkyRU
+X-Google-Smtp-Source: AGHT+IH1pKSJeJiEgVfFv68wIuaVvU4tg1Wi7Zm+7o/jsbQlnUC62A5cd4JrjlSUdWHwg83V4X9CWQ==
+X-Received: by 2002:a17:903:947:b0:20b:5ea2:e04 with SMTP id d9443c01a7336-20b5ea21240mr139933675ad.27.1727762444940;
+        Mon, 30 Sep 2024 23:00:44 -0700 (PDT)
+Received: from localhost.localdomain ([43.129.25.208])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c4bc46sm9055950a91.7.2024.09.30.23.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Sep 2024 23:00:44 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: edumazet@google.com,
+	atenart@kernel.org
+Cc: davem@davemloft.net,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	steffen.klassert@secunet.com,
+	herbert@gondor.apana.org.au,
+	dongml2@chinatelecom.cn,
+	bigeasy@linutronix.de,
+	toke@redhat.com,
+	idosch@nvidia.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH net-next 0/7] net: ip: add drop reasons to input route
+Date: Tue,  1 Oct 2024 13:59:58 +0800
+Message-Id: <20241001060005.418231-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001032028.483199-1-jeremy.linton@arm.com>
-In-Reply-To: <20241001032028.483199-1-jeremy.linton@arm.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 1 Oct 2024 07:58:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
-Message-ID: <CAMj1kXEwsB2JZeE451Qf=tad7mapWATu_-ty+r7fcMTcxQ=StQ@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: measure initrd to PCR9 independent of source
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: linux-efi@vger.kernel.org, bp@alien8.de, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, linux-kernel@vger.kernel.org, 
-	Jeremy Linton <jeremy.linton@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-(cc Ilias)
+In this series, we mainly add some skb drop reasons to the input path of
+ip routing.
 
-On Tue, 1 Oct 2024 at 05:20, Jeremy Linton <jeremy.linton@arm.com> wrote:
->
-> Currently the initrd is only measured if it can be loaded using the
-> INITRD_MEDIA_GUID, if we are loading it from a path provided via the
-> command line it is never measured. Lets move the check down a couple
-> lines so the measurement happens independent of the source.
->
-> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-> ---
->  drivers/firmware/efi/libstub/efi-stub-helper.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> index de659f6a815f..555f84287f0b 100644
-> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> @@ -621,10 +621,6 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
->         status = efi_load_initrd_dev_path(&initrd, hard_limit);
->         if (status == EFI_SUCCESS) {
->                 efi_info("Loaded initrd from LINUX_EFI_INITRD_MEDIA_GUID device path\n");
-> -               if (initrd.size > 0 &&
-> -                   efi_measure_tagged_event(initrd.base, initrd.size,
-> -                                            EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> -                       efi_info("Measured initrd data into PCR 9\n");
->         } else if (status == EFI_NOT_FOUND) {
->                 status = efi_load_initrd_cmdline(image, &initrd, soft_limit,
->                                                  hard_limit);
-> @@ -637,6 +633,11 @@ efi_status_t efi_load_initrd(efi_loaded_image_t *image,
->         if (status != EFI_SUCCESS)
->                 goto failed;
->
-> +       if (initrd.size > 0 &&
-> +           efi_measure_tagged_event(initrd.base, initrd.size,
-> +                                    EFISTUB_EVT_INITRD) == EFI_SUCCESS)
-> +               efi_info("Measured initrd data into PCR 9\n");
-> +
->         status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, sizeof(initrd),
->                              (void **)&tbl);
->         if (status != EFI_SUCCESS)
-> --
-> 2.46.1
->
+The function ip_route_input_noref() is used commonly, and its return value
+is used by the caller sometimes. So, it's not easy to make it return skb
+drop reasons. Instead, we add the pointer of the drop reason to the
+function arguments of it. And we do the same things to
+ip_route_input_rcu() and ip_route_input_slow().
+
+The errno from fib_validate_source() is -EINVAL or -EXDEV, and -EXDEV is
+used in ip_rcv_finish_core() to increase the LINUX_MIB_IPRPFILTER. For
+this case, we can check it by
+"drop_reason == SKB_DROP_REASON_IP_RPFILTER" instead. Therefore, we can
+make fib_validate_source() return -reason. Meanwhile, we make
+ip_route_input_mc() and ip_mc_validate_source() return drop reason.
+
+Following new skb drop reasons are added:
+
+  SKB_DROP_REASON_IP_LOCAL_SOURCE
+  SKB_DROP_REASON_IP_INVALID_SOURCE
+  SKB_DROP_REASON_IP_INVALID_DEST
+  SKB_DROP_REASON_IP_LOCALNET
+
+Menglong Dong (7):
+  net: ip: add drop reason to ip_route_input_noref()
+  net: ip: add drop reason to ip_route_input_rcu()
+  net: ip: add drop reason to ip_route_input_slow()
+  net: ip: make fib_validate_source() return drop reason
+  net: ip: make ip_route_input_mc() return drop reason
+  net: ip: make ip_mc_validate_source() return drop reason
+  net: ip: fix typo in the doc of SKB_DROP_REASON_IP_INNOROUTES
+
+ drivers/net/ipvlan/ipvlan_l3s.c |   2 +-
+ include/net/dropreason-core.h   |  21 +++++-
+ include/net/route.h             |  12 ++--
+ net/core/lwt_bpf.c              |   2 +-
+ net/ipv4/arp.c                  |   2 +-
+ net/ipv4/fib_frontend.c         |  19 ++++--
+ net/ipv4/ip_fragment.c          |   2 +-
+ net/ipv4/ip_input.c             |  11 ++--
+ net/ipv4/route.c                | 111 +++++++++++++++++++++-----------
+ net/ipv4/xfrm4_input.c          |   2 +-
+ net/ipv4/xfrm4_protocol.c       |   2 +-
+ 11 files changed, 122 insertions(+), 64 deletions(-)
+
+-- 
+2.39.5
+
 
