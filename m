@@ -1,227 +1,118 @@
-Return-Path: <linux-kernel+bounces-346265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF3898C20B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21BA498C208
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C131F26617
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17811F265D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 15:51:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E79B1CB319;
-	Tue,  1 Oct 2024 15:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="jiSI3g6Q"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35BA1C9EDC;
+	Tue,  1 Oct 2024 15:51:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E5D1C8FCE;
-	Tue,  1 Oct 2024 15:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3C31C3F01
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 15:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727797891; cv=none; b=LgwgqIJEOr/+ye3va6i/qNJw0R/yGpv96l4g8Q/rlzxvZ4GEi/3lM5uvRnPQhV5JnVl60nWekhVtfihrrrCarMSSG3V/5w2mnla3TwLFOaCIaNgdxz6NJaw5wGU5oAUGSOdNN/Ht3CkYdGlhjRc95TByiHPzz+rsnLLxyhb8AlU=
+	t=1727797878; cv=none; b=XZzehvg5dTqm+AzS+MK/GLnUfsdi+oamI+KYOXfT/T6j3z41EE53Y0yWs4LJnR//LNaXJctheue4CLCUaiEc0RHgfP/9i5ehEyBy8aNXaYZJ7JrwanilvQfz48tgSBGJKUcHmyDABg7BtLTZZPgUz0ZIA7BEoeJ82EdBcXN+WJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727797891; c=relaxed/simple;
-	bh=ly6KJzZt+dDWtNumDIkheZpJjvtCauXr6XMlbKzH5R8=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sMK07UAtUNbWwtkUd1xu597ri8qwKFxWkNasfHA2VjsdLnZUnMsoCtp3bDhDpDVixXV/k/8JOygu7pcBUMExv0uR3epsXqW5/2IxlLEyCZLAnBx4zgMCsiftfdXLz6Yma8TNszB7RuuRxrXUcTw+PkIjCdUMCmYxDBaufZNQkMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=jiSI3g6Q; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1727797890; x=1759333890;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-transfer-encoding:mime-version:subject;
-  bh=VAtge26Bh/EfVdiVj6CNvp5Mqp5EqlbS+wH7+7c3Or8=;
-  b=jiSI3g6QijRwjnvVoi56u+yrJFCDestBnoFIBjleIifwVw0Gm9l/G8+n
-   0Gjdg/wkMGOZhxFwEj1KZi4pq003RdbhsBrJqBYbqYYupVloXE9m4OLXN
-   cOtK9i5ppZvcNLEDypqt+T+crz611bf8HbkUZYSy7KSELs9kuREzEhU0v
-   M=;
-X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
-   d="scan'208";a="338104738"
-Subject: RE: [net-next 2/2] ena: Link queues to NAPIs
-Thread-Topic: [net-next 2/2] ena: Link queues to NAPIs
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 15:50:27 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:46486]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.202:2525] with esmtp (Farcaster)
- id db4cda57-91b6-4495-9d5b-aacc4c561e59; Tue, 1 Oct 2024 15:50:25 +0000 (UTC)
-X-Farcaster-Flow-ID: db4cda57-91b6-4495-9d5b-aacc4c561e59
-Received: from EX19D017EUA001.ant.amazon.com (10.252.50.71) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 15:50:25 +0000
-Received: from EX19D005EUA002.ant.amazon.com (10.252.50.11) by
- EX19D017EUA001.ant.amazon.com (10.252.50.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 1 Oct 2024 15:50:25 +0000
-Received: from EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9]) by
- EX19D005EUA002.ant.amazon.com ([fe80::6aa4:b4a3:92f6:8e9%3]) with mapi id
- 15.02.1258.035; Tue, 1 Oct 2024 15:50:24 +0000
-From: "Arinzon, David" <darinzon@amazon.com>
-To: Joe Damato <jdamato@fastly.com>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "Agroskin, Shay"
-	<shayagr@amazon.com>, "Kiyanovski, Arthur" <akiyano@amazon.com>, "Dagan,
- Noam" <ndagan@amazon.com>, "Bshara, Saeed" <saeedb@amazon.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Kamal Heib
-	<kheib@redhat.com>, open list <linux-kernel@vger.kernel.org>, "Bernstein,
- Amit" <amitbern@amazon.com>
-Thread-Index: AQHbE3LvonMH5qZYjUqecQ4N60GeD7JxkpvggABi2oCAABVxAA==
-Date: Tue, 1 Oct 2024 15:50:24 +0000
-Message-ID: <26bda21325814a8cb11f997b80bf5262@amazon.com>
-References: <20240930195617.37369-1-jdamato@fastly.com>
- <20240930195617.37369-3-jdamato@fastly.com>
- <eb828dd9f65847a49eb64763740c84ff@amazon.com> <ZvwHC6VLihXevnPo@LQ3V64L9R2>
-In-Reply-To: <ZvwHC6VLihXevnPo@LQ3V64L9R2>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
+	s=arc-20240116; t=1727797878; c=relaxed/simple;
+	bh=05WVPGiDbB4JdAt3sJE01nHanmqyzysXC06ortam0iU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UTuXIj1w4QIzsdDCMDPslwnjHntQl/T5lITOpd9RQ0E+duAkr5GiJIhL/8cPjk/cDXl4nbwod+fzptc0ys29F0B2bJbMSmBESHThQ4Y7XtTceJkXAlSdqLiR+2IKSTHGjdxa26BuMWuOiDAJY3S2Y+1kj0rEa7u1ERChGc821dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svf9R-0004JJ-Ch; Tue, 01 Oct 2024 17:51:01 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svf9P-002uLD-As; Tue, 01 Oct 2024 17:50:59 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1svf9P-000BSD-0r;
+	Tue, 01 Oct 2024 17:50:59 +0200
+Message-ID: <c5d318947728e9e5b66d11542023b79452705ca3.camel@pengutronix.de>
+Subject: Re: [PATCH v2 0/3] reset: Requesting pre-deasserted,
+ auto-reasserting reset controls via devres
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>,  Geert Uytterhoeven
+ <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,  kernel@pengutronix.de
+Date: Tue, 01 Oct 2024 17:50:59 +0200
+In-Reply-To: <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
+References: <20240925-reset-get-deasserted-v2-0-b3601bbd0458@pengutronix.de>
+	 <vvthbvqhcvaau2bfvlg7yajpeybrvlvqdmbqzgygk6wyjcf7di@lfwuqmpk2u3z>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> > > Link queues to NAPIs using the netdev-genl API so this information
-> > > is queryable.
-> > >
-> > > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.ya=
-ml
-> \
-> > >                          --dump queue-get --json=3D'{"ifindex": 2}'
-> > >
-> > > [{'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'rx'},
-> > >  {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'rx'},
-> > >  {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'rx'},
-> > >  {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'rx'},
-> > >  {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'rx'},
-> > >  {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'rx'},
-> > >  {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'rx'},
-> > >  {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'rx'},
-> > >  {'id': 0, 'ifindex': 2, 'napi-id': 8201, 'type': 'tx'},
-> > >  {'id': 1, 'ifindex': 2, 'napi-id': 8202, 'type': 'tx'},
-> > >  {'id': 2, 'ifindex': 2, 'napi-id': 8203, 'type': 'tx'},
-> > >  {'id': 3, 'ifindex': 2, 'napi-id': 8204, 'type': 'tx'},
-> > >  {'id': 4, 'ifindex': 2, 'napi-id': 8205, 'type': 'tx'},
-> > >  {'id': 5, 'ifindex': 2, 'napi-id': 8206, 'type': 'tx'},
-> > >  {'id': 6, 'ifindex': 2, 'napi-id': 8207, 'type': 'tx'},
-> > >  {'id': 7, 'ifindex': 2, 'napi-id': 8208, 'type': 'tx'}]
-> > >
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > > ---
-> > >  drivers/net/ethernet/amazon/ena/ena_netdev.c | 26
-> > > +++++++++++++++++---
-> > >  1 file changed, 22 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> > > b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> > > index e88de5e426ef..1c59aedaa5d5 100644
-> > > --- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> > > +++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
-> > > @@ -1821,20 +1821,38 @@ static void ena_napi_disable_in_range(struct
-> > > ena_adapter *adapter,
-> > >                                       int first_index,
-> > >                                       int count)  {
-> > > +       struct napi_struct *napi;
-> >
-> > Is this variable necessary? It has been defined in the enable function
-> > because it is needed in netif_queue_set_napi() API as well as in
-> > napi_enable(), and it makes sense in order to avoid long lines In
-> > here, the variable is only used in a call to napi_disable(), can the
-> > code be kept as it is? don't see a need to shorten the napi_disable() c=
-all
-> line.
->=20
-> It is true that its only used to call napi_disable so if you prefer to ha=
-ve it
-> removed let me know?
->=20
-> I think it looks nicer with the variable, but it's your driver.
->=20
-> > >         int i;
-> > >
-> > > -       for (i =3D first_index; i < first_index + count; i++)
-> > > -               napi_disable(&adapter->ena_napi[i].napi);
-> > > +       for (i =3D first_index; i < first_index + count; i++) {
-> > > +               napi =3D &adapter->ena_napi[i].napi;
-> > > +               if (!ENA_IS_XDP_INDEX(adapter, i)) {
-> > > +                       netif_queue_set_napi(adapter->netdev, i,
-> > > +                                            NETDEV_QUEUE_TYPE_TX, NU=
-LL);
-> > > +                       netif_queue_set_napi(adapter->netdev, i,
-> > > +                                            NETDEV_QUEUE_TYPE_RX, NU=
-LL);
-> > > +               }
-> > > +               napi_disable(napi);
-> > > +       }
-> > >  }
-> > >
-> > >  static void ena_napi_enable_in_range(struct ena_adapter *adapter,
-> > >                                      int first_index,
-> > >                                      int count)  {
-> > > +       struct napi_struct *napi;
-> > >         int i;
-> > >
-> > > -       for (i =3D first_index; i < first_index + count; i++)
-> > > -               napi_enable(&adapter->ena_napi[i].napi);
-> > > +       for (i =3D first_index; i < first_index + count; i++) {
-> > > +               napi =3D &adapter->ena_napi[i].napi;
-> > > +               napi_enable(napi);
-> > > +               if (!ENA_IS_XDP_INDEX(adapter, i)) {
-> >
-> > Can you share some info on why you decided to set the queue to napi
-> > association only in non-xdp case?
-> > In XDP, there's a napi poll function that's executed and it runs on the=
- TX
-> queue.
-> > I am assuming that it's because XDP is not yet supported in the
-> > framework? If so, there's a need to add an explicit comment above if
-> > (!ENA_IS_XDP_INDEX(adapter, i)) { explaining this in order to avoid
-> confusion with the rest of the code.
->=20
-> Yes; it is skipped for XDP queues, but they could be supported in the fut=
-ure.
->=20
-> Other drivers that support this API work similarly (see also: bnxt, ice, =
-mlx4,
-> etc).
->=20
-> > > +                       netif_queue_set_napi(adapter->netdev, i,
-> > > +                                            NETDEV_QUEUE_TYPE_RX, na=
-pi);
-> > > +                       netif_queue_set_napi(adapter->netdev, i,
-> > > +                                            NETDEV_QUEUE_TYPE_TX, na=
-pi);
-> > > +               }
-> > > +       }
-> > >  }
-> > >
-> > >  /* Configure the Rx forwarding */
-> > > --
-> > > 2.43.0
-> >
-> > Thank you for uploading this patch.
->=20
-> Can you please let me know (explicitly) if you want me to send a second
-> revision (when net-next allows for it) to remove the 'struct napi_struct'=
- and
-> add a comment as described above?
+Hi Uwe,
 
-Yes, I would appreciate that.
-I guess the `struct napi_struct` is OK, this way both functions will look t=
-he same.
-Regarding the comment, yes please, something like /* This API is supported =
-for non-XDP queues only */ in both places.
-I also added a small request to preserve reverse christmas tree order on pa=
-tch 1/2 in the series.
+On Do, 2024-09-26 at 07:57 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Philipp,
+>=20
+> On Wed, Sep 25, 2024 at 06:40:08PM +0200, Philipp Zabel wrote:
+> > There is a recurring pattern of drivers requesting a reset control and
+> > deasserting the reset during probe, followed by registering a reset
+> > assertion via devm_add_action_or_reset().
+> >=20
+> > We can simplify this by providing devm_reset_control_get_*_deasserted()
+> > helpers that return an already deasserted reset control, similarly to
+> > devm_clk_get_enabled().
+> >=20
+> > This doesn't remove a lot of boilerplate at each instance, but there ar=
+e
+> > quite a few of them now.
+>=20
+> I really like it, thanks for respinning!
+>=20
+> Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+>
+> Two small notes: I think __devm_reset_control_get() could be a bit
+> simplified if it used devm_add_action_or_reset() instead of
+> devres_alloc() + devres_add(). I also would have prefered an if block
+> (or a function pointer) in the release function instead of a ?:
+> construct to select the right release function like e.g.
+> __devm_clk_get() does it. But that's both subjective I think and
+> orthogonal to this patch set.
 
-Thank you again for the patches in the driver.
+Thank you. Not sure about using devm_add_action_or_reset(), but I'll
+look into using a single release function.
+
+Applied to reset/next.
+
+[1/3] reset: replace boolean parameters with flags parameter
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Ddad35f7d2fc1
+[2/3] reset: Add devres helpers to request pre-deasserted reset controls
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Ddad35f7d2fc1
+[3/3] reset: uniphier-glue: Use devm_reset_control_bulk_get_shared_deassert=
+ed()
+      https://git.pengutronix.de/cgit/pza/linux/commit/?id=3Dc0260e2b0ed8
+
+regards
+Philipp
 
