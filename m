@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-346330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F2098C335
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:22:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489E498C33B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C22284602
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10061F22DEA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BC91CC162;
-	Tue,  1 Oct 2024 16:16:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90BC1CF291;
+	Tue,  1 Oct 2024 16:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6M89iS2"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0435F2A1D2;
-	Tue,  1 Oct 2024 16:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC44D1CC15E
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 16:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727799419; cv=none; b=EjC1/DclyLhSzBjzdDQosFGbWwqNWF1gPcs9QcpJE/ySy3fJH+Nol6mzaIFBTz4hqQI6wFQHaUro+xVqmResh5byOn2NB+IycnXH5xa+ZtjPRz8sRCrRlb+g8nReFd3Zln0QAcJi2iphe6dL0iuJ96x/4iZUJu7Uo5GUOWiAPB4=
+	t=1727799468; cv=none; b=psxkEGw10etwazOcNOQ7ikyhnRxhnC1Nvdy6ikZekJQMGhXvGmwkoJNJj5xIjugYBni1+7hCUIHR2CAtJa+uc1TFMs0k4oLvT7L/aeESof6EtpMHHmpC/GCjBy2DWdjUGxfujT+vxpn3IOtSBg2gt9JA4ZGepfk1GAlFexLn9vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727799419; c=relaxed/simple;
-	bh=+xOBbJqEQIRC0gl2frSEEZG/U6gjZcSnXTHQoY+QbGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7G9ONds6SizHRNMDx2TKbuN2Vy7oCw00JDepRz+75jJFCSrbjhc/YXhzvjfryAsXlzKu6DkXx4EUeJiqje+XI5I0Ylg5M4jyfl97TGcdbe2uk+FKw8xsj6F0vVJWG4PNedPrgqU806Chnan2gbDJ2EP1MH4vX/2Mmye2dcoUdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65BF7C4CEC6;
-	Tue,  1 Oct 2024 16:16:50 +0000 (UTC)
-Date: Tue, 1 Oct 2024 17:16:48 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Uros Bizjak <ubizjak@gmail.com>, Will Deacon <will@kernel.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Subject: Re: [PATCH v9 4/5] jump_label: adjust inline asm to be consistent
-Message-ID: <ZvwgcBzLwYkgsJ2u@arm.com>
-References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
- <20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
+	s=arc-20240116; t=1727799468; c=relaxed/simple;
+	bh=nvUOMkUhAIlhTvp2v7jF7CiybAc7a4O7z3ckYf3J0cE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WJna9yhyfxa4GKBgcrzQuPCrl7IrGf59nuIO7gMZ8ONVJUtIhE/+8Hbn0/+uUjgaViH0LW9A6vBEsqMYy3g0i0nEFWgBIpO1hvyQOfNm4u1sH+/iRX6UEC7YTVQmUAA+QXVwCH49IHBytf8buvmRDiGChnm59Yxr3kKA9gavsWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n6M89iS2; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a90349aa7e5so844032366b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 09:17:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727799464; x=1728404264; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
+        b=n6M89iS2RniF2RYZSWZ4sNnyvw19kd8737yL+vkFqxGdtXv65HFs2ne4xHZd6EiYt2
+         haa2Fv20tWSAxqboq9E7vJL2wubXsiT+lOrWuEc61seBF8uBVNv+If5X7cBvx8Uzqe8z
+         So0UkNfksKxLK+1R2NXRpJppJ41dikYYlsWT2AnaCo0t75hDiJs6/Mbl7onU80uBBL9a
+         79OzYZaFjq5IoE2dD50Prd48wqdBsK7676+GnLr7ahyqqeQ9bj8O46u3aGZ+1wq3leoG
+         4M2EvP8M6YPxpjsCchzrzGIvbgE1CwnGeCGykgQxL1138DSMhM6PuG1Yxrzm0+pND/jW
+         FAPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727799464; x=1728404264;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1gtQcrWNpd5RcxSJdvlyP5hnxs6NY26BZrJEREQ6SI=;
+        b=E57rKG9kKhvZeS9Ajfqn3g+dDTy1aT//cgSbpRWcE+JTysq6LYzzc+XGHXj1Ili0Ax
+         A74RW9RicOrfi9nMRlmG2BW7czsvcHBOwG/z1+uZIQ1w8sb1lBR8WaERjqAfkaOud61k
+         AI94SgRCwR4vfv6ib3ij9S3xCMzb6yHBrbpR6jO4Qx3MTFc8SfSeNcjldPeyE/37miiU
+         OgKcwGfwq6zn71aRDTqInM+jR5VU4t1WtAKyxuctZUgbZJMusZe1aCbApXiVfQhrlxLT
+         6ZrsLR/cDI9ZWWJiuWokSw3Wb8/jp2bwKKPgI8lxdSuncnnMNh85mtlfJjYlEusDJR07
+         TqOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDJEURN9OHD8E36lgcHvTNT7AALj+akKRVwll6fropO1XJ27jtS+pKcLvIZKFqe4nW0XXnVIaLLE8IXI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxak7m7aTNxfLnATTskcUzcQTJkF9r3HnnMwKJUs9O7HASBlhLh
+	4m7c5PPUIDnvDM7ZlKRvH3vud/kJtbuot3j7gn5INPd38MoPrDax07nOcwdKGpZs4ZIFTP/wq7z
+	+M9gZaGlCopf3Z3BzqFOFy7JAvwRNTSpigog=
+X-Google-Smtp-Source: AGHT+IEb55N3RbLLnNditOaIXzMGvdtfhXP4P7OFauiPnc3PqRDlMwtWq4LEIawZw0mkwT8uv4u9xKZ9+AFgQWhXcHQ=
+X-Received: by 2002:a17:907:3f97:b0:a86:b923:4a04 with SMTP id
+ a640c23a62f3a-a98f834d078mr13740866b.50.1727799463691; Tue, 01 Oct 2024
+ 09:17:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001-tracepoint-v9-4-1ad3b7d78acb@google.com>
+References: <20241001-mgtime-v8-0-903343d91bc3@kernel.org> <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
+In-Reply-To: <20241001-mgtime-v8-1-903343d91bc3@kernel.org>
+From: John Stultz <jstultz@google.com>
+Date: Tue, 1 Oct 2024 09:17:31 -0700
+Message-ID: <CANDhNCrKFvUYchQ8UStxUEpBmFpN4ZeP4W4DdwJ5WxZ5EbqjMw@mail.gmail.com>
+Subject: Re: [PATCH v8 01/12] timekeeping: add interfaces for handling
+ timestamps with a floor value
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Randy Dunlap <rdunlap@infradead.org>, Chandan Babu R <chandan.babu@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2024 at 01:30:01PM +0000, Alice Ryhl wrote:
-> diff --git a/arch/arm64/include/asm/jump_label.h b/arch/arm64/include/asm/jump_label.h
-> index a0a5bbae7229..424ed421cd97 100644
-> --- a/arch/arm64/include/asm/jump_label.h
-> +++ b/arch/arm64/include/asm/jump_label.h
-> @@ -19,10 +19,14 @@
->  #define JUMP_TABLE_ENTRY(key, label)			\
->  	".pushsection	__jump_table, \"aw\"\n\t"	\
->  	".align		3\n\t"				\
-> -	".long		1b - ., %l["#label"] - .\n\t"	\
-> -	".quad		%c0 - .\n\t"			\
-> -	".popsection\n\t"				\
-> -	:  :  "i"(key) :  : label
-> +	".long		1b - ., " label " - .\n\t"	\
-> +	".quad		" key " - .\n\t"		\
-> +	".popsection\n\t"
-> +
-> +/* This macro is also expanded on the Rust side. */
-> +#define ARCH_STATIC_BRANCH_ASM(key, label)		\
-> +	"1:	nop\n\t"				\
-> +	JUMP_TABLE_ENTRY(key, label)
->  
->  static __always_inline bool arch_static_branch(struct static_key * const key,
->  					       const bool branch)
-> @@ -30,8 +34,8 @@ static __always_inline bool arch_static_branch(struct static_key * const key,
->  	char *k = &((char *)key)[branch];
->  
->  	asm goto(
-> -		"1:	nop					\n\t"
-> -		JUMP_TABLE_ENTRY(k, l_yes)
-> +		ARCH_STATIC_BRANCH_ASM("%c0", "%l[l_yes]")
-> +		:  :  "i"(k) :  : l_yes
->  		);
->  
->  	return false;
-> @@ -43,9 +47,11 @@ static __always_inline bool arch_static_branch_jump(struct static_key * const ke
->  						    const bool branch)
->  {
->  	char *k = &((char *)key)[branch];
-> +
->  	asm goto(
->  		"1:	b		%l[l_yes]		\n\t"
-> -		JUMP_TABLE_ENTRY(k, l_yes)
-> +		JUMP_TABLE_ENTRY("%c0", "%l[l_yes]")
-> +		:  :  "i"(k) :  : l_yes
->  		);
->  	return false;
->  l_yes:
+On Tue, Oct 1, 2024 at 3:59=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wro=
+te:
+>
+> Multigrain timestamps allow the kernel to use fine-grained timestamps
+> when an inode's attributes is being actively observed via ->getattr().
+> With this support, it's possible for a file to get a fine-grained
+> timestamp, and another modified after it to get a coarse-grained stamp
+> that is earlier than the fine-grained time.  If this happens then the
+> files can appear to have been modified in reverse order, which breaks
+> VFS ordering guarantees.
+>
+> To prevent this, maintain a floor value for multigrain timestamps.
+> Whenever a fine-grained timestamp is handed out, record it, and when
+> coarse-grained stamps are handed out, ensure they are not earlier than
+> that value. If the coarse-grained timestamp is earlier than the
+> fine-grained floor, return the floor value instead.
+>
+> Add a static singleton atomic64_t into timekeeper.c that we can use to
+> keep track of the latest fine-grained time ever handed out. This is
+> tracked as a monotonic ktime_t value to ensure that it isn't affected by
+> clock jumps. Because it is updated at different times than the rest of
+> the timekeeper object, the floor value is managed independently of the
+> timekeeper via a cmpxchg() operation, and sits on its own cacheline.
+>
+> This patch also adds two new public interfaces:
+>
+> - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of th=
+e
+>   coarse-grained clock and the floor time
+>
+> - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
+>   to swap it into the floor. A timespec64 is filled with the result.
+>
+> Since the floor is global, take care to avoid updating it unless it's
+> absolutely necessary. If we do the cmpxchg and find that the value has
+> been updated since we fetched it, then we discard the fine-grained time
+> that was fetched in favor of the recent update.
+>
+> Note that the VFS ordering guarantees assume that the realtime clock
+> does not experience a backward jump. POSIX requires that we stamp files
+> using realtime clock values, so if a backward clock jump occurs, then
+> files can appear to have been modified in reverse order.
+>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org> # documentation bits
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-For the arm64 changes:
-
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: John Stultz <jstultz@google.com>
 
