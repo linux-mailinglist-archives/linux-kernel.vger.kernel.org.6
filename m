@@ -1,189 +1,190 @@
-Return-Path: <linux-kernel+bounces-345816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E098BB75
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C4998BB74
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE3D01C235A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD631C2362A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693521C1725;
-	Tue,  1 Oct 2024 11:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3DD19AD48;
+	Tue,  1 Oct 2024 11:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OjAgC3K0"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jVdxEPPV"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CF61C0DFD
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5F31BF804;
+	Tue,  1 Oct 2024 11:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783056; cv=none; b=S3TwOZYv3Xhy6Sw/yd3ae5yvrOrcfRBsBytP90URlRSP23rUKdTUoEKyc3Q38GxmK4F2d5KqnqMDs24Ug6AeSemw0eEP8BaIMwZRFMXJF1aOgDL+PWnTZw6KJhzYD20zr1r3zIkTy1HOuXpmnusEy8ti6ioKkS9BjKA6jn22nX4=
+	t=1727783047; cv=none; b=SPra4r0mg4J445wb2wpeFwQ87XyqCIrxb/vU7J+C2QeFp4RcEacIN2soJma1yCEeTebkea5Bt6scxaJzqzCm2TXKQTFPOH0gUreit3nAOBRjbiuy9adpUNiuYVF3SYEtReLaxJaOW6N1OR3dKT2cd1SqUwEsoTIwOXYQVMkXX00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783056; c=relaxed/simple;
-	bh=JSWgRqDtMC6o8jXAzgMhgEMgegxVy+BDmFdQJs6enCI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=NhMDOynLfiN4neCRHj3mXvLXSQqDiFDZrlZcRWI+Ces6QUWNLo/jFDjx3xo7ns9TZAw9ToIc9NVDjWkI5W0equy3tV8ob0Ok8WCZyl81fBBwCKoqNbCvzx3pCukSI9tKEzWHj4LSpjduOzwY8nOKRRKxbbYWbjYZJGNQHXULq4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OjAgC3K0; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cc8782869so49996165e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727783053; x=1728387853; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hE8HfYVLQDsZ3wtBhSvRBEn+QK2WZJr3IsyjzHlvzXQ=;
-        b=OjAgC3K0rCLDfanVD+5QLj1UsUXgb/D1ZXtq3U7nu7c5AT23BvIem1ewKQVlDKNoqO
-         7BmEeVEn/MxoqJ6ffOhBkq7Tr5sWj0dxrOiriqovyNww6dRlJG81Que5GUiYUgIGSA3Q
-         8TYPbh8e9NPC5LFuGsNNX/IuSo0z0aMZk8+wPzZNOb3rqKKQ+BMHA/rjx8fbsETG1UfY
-         Y4aE9ZvPk/b+f9i62WqfjcwSdePvit0EEg5dMNpN4NXJEziymekYjk3SYOHzwDJayNsh
-         8ILPJUi5cM1nKqc0w1vkKNsHQsYsVynVenAwfgC2IJ4Jb4Q+LbFSaz1CffAg0qSTKOZI
-         ZxNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727783053; x=1728387853;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hE8HfYVLQDsZ3wtBhSvRBEn+QK2WZJr3IsyjzHlvzXQ=;
-        b=hb7dzQidZBQ9zi2sk4MDXNx8lDTSqb5ZzAZfmsX8Q86NOrui0bIHUbSKmD5TscTbqV
-         ssQAkIPG4Uutgd7IyvO+pCT2HFgy4NzP0uPllnzo0AGGU/YzceMOJvED/IlBNXn8OBRS
-         n0UoK+6y+R5+eLOZbS/jzuCR88igKAoTSW6icc0fohb574+koS4O5hhkk3uiZtL3+4M8
-         Fw+q2vZORNrgbsmUOqoDSYbhxY1av5n+iDlVwxAUKMhtEO1aA69x4e1wLcTmK/DdNlV1
-         LWKcS0K6PeEH6wliwCQRfiMrloPtXcrKtfwW5136bWCPdUyufygxse1Tz+TkN2h6BNJm
-         YEMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUJ+qogJd/ElNu4e21Jw9mIAC+a7fr68ptNkXF3rCpDsZYEC7ukuGWRWrJxOAw1+O5jI5QKbJWCmFpDrY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2ulNxmqb0Rt0X5HhrHgEnDrUOFPDdzvaHDDwUa6qRtrn95Pf2
-	eB4Tpswn5CGf//u31Z+fmloxRh2QRjoqA1v82a6kNsCnfjN+1mT4
-X-Google-Smtp-Source: AGHT+IGeDz8l92SuJjN7soj2lj2UDtxw6eV6hAuz1M4Uk0QCQjAVN/YVLw0GN6nEogHPSEHosnzvVg==
-X-Received: by 2002:a05:600c:4e8f:b0:42c:b950:680b with SMTP id 5b1f17b1804b1-42f5844b9e9mr105142045e9.20.1727783052716;
-        Tue, 01 Oct 2024 04:44:12 -0700 (PDT)
-Received: from wheatley.localdomain (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42f57d31283sm131012725e9.0.2024.10.01.04.44.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 04:44:12 -0700 (PDT)
-Received: from wheatley.redhat.com (wheatley.k8r.cz [127.0.0.1])
-	by wheatley.localdomain (Postfix) with ESMTP id 151F62C626B7;
-	Tue, 01 Oct 2024 13:44:11 +0200 (CEST)
-From: Martin Kletzander <nert.pinx@gmail.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] x86/resctrl: Avoid overflow in MB settings in bw_validate()
-Date: Tue,  1 Oct 2024 13:43:56 +0200
-Message-ID: <a8c3ef3e3d35924781280064a9f8c7dd2ee60565.1727782826.git.nert.pinx@gmail.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1727783047; c=relaxed/simple;
+	bh=PwSHgvI0MsZksfpoKeIXbBxZcNs0ma4uHHPcr0C8eaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UYM3KGMwMv1hm8Gq9tMjXQHpU8SqwP/HkuPlqHeNNVs07Tq9exLahulvegaP4yHijVvFG8Ioi2jZ5oTMedLnw9VYYDUK9oTRjlvUmVemMV8aWnIzKc1w20MLo6GwdhhPF+OFlicM1UCFFyKWyCB4SZxXsR7Mil0MTa2t1aLHiOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jVdxEPPV; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4917KBZW007654;
+	Tue, 1 Oct 2024 11:44:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=0
+	nbQfVQTQm/cCLWC4AIRbz9oJwHIv9ib36Gv7R5B3j8=; b=jVdxEPPVFSoAU7yN8
+	1FgRR1EcYlgVbWoEGbLaHQnlI6ghh4AOt3dLyYxW9sM4dBr3um6Dynfom8ezEBDK
+	qwjnuS80cnUk2bV7ZQSwGZEcnINU+jyowku9WpGEWEypEZGCZktAfw3LQHyC4fxa
+	vUELAbwTHgZtSOLyqiIa1dE4CTOb0pCbdr8AwoPjf6HZNbv4FuamlYa6xF5w2kg5
+	Tqc0adALu+TSdfVVn9p89N4C4an6W8yuRNGXcyCEevAE+UQmm4ApU6yhp8Oq+stJ
+	G0fI4RtMi3LW+wPMg7cM5gyg+KXU7w4lks+sYl40K9OvSdmFNwHg138YbtefaPP3
+	Xi/7w==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420ckj99sp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 11:44:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4918anTB007923;
+	Tue, 1 Oct 2024 11:44:04 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxv6q2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 11:44:04 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491Bi0bE32833938
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 1 Oct 2024 11:44:00 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 828032004B;
+	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2151020043;
+	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
+Received: from [9.179.3.12] (unknown [9.179.3.12])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
+Message-ID: <9c1edf9c-589c-4998-8211-adc0e766438c@linux.ibm.com>
+Date: Tue, 1 Oct 2024 13:43:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] s390/uv: Refactor uv-sysfs creation
+To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20240930132042.2081982-1-seiden@linux.ibm.com>
+ <20240930132042.2081982-2-seiden@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20240930132042.2081982-2-seiden@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: IVk8KNxczUmip8mF-Wpq1kxDPPFTryvb
+X-Proofpoint-GUID: IVk8KNxczUmip8mF-Wpq1kxDPPFTryvb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-01_07,2024-09-30_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ phishscore=0 adultscore=0 mlxlogscore=729 suspectscore=0 malwarescore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2410010075
 
-The resctrl schemata file supports specifying memory bandwidth
-associated with the Memory Bandwidth Allocation (MBA) feature
-via a percentage (this is the default) or bandwidth in MiBps
-(when resctrl is mounted with the "mba_MBps" option). The allowed
-range for the bandwidth percentage is from
-/sys/fs/resctrl/info/MB/min_bandwidth to 100, using a granularity
-of /sys/fs/resctrl/info/MB/bandwidth_gran. The supported range for
-the MiBps bandwidth is 0 to U32_MAX.
+On 9/30/24 3:20 PM, Steffen Eiden wrote:
+> Streamline the sysfs generation to make it more extensible.
+> Add a function to create a sysfs entry in the uv-sysfs dir.
+> Use this function for the query directory.
+> 
+> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
 
-There are two issues with parsing of MiBps memory bandwidth:
-* The user provided MiBps is mistakenly rounded up to the granularity
-  that is unique to percentage input.
-* The user provided MiBps is parsed using unsigned long (thus accepting
-  values up to ULONG_MAX), and then assigned to u32 that could result in
-  overflow.
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-Do not round up the MiBps value and parse user provided bandwidth as
-the u32 it is intended to be. Use the appropriate kstrtou32() that
-can detect out of range values.
 
-Fixes: 8205a078ba78 ("x86/intel_rdt/mba_sc: Add schemata support")
-Fixes: 6ce1560d35f6 ("x86/resctrl: Switch over to the resctrl mbps_val list")
-Co-developed-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Martin Kletzander <nert.pinx@gmail.com>
----
-v4:
- - format the u32 variable properly
- - use better commit message
+> @@ -767,17 +786,11 @@ static int __init uv_info_init(void)
+>   	if (rc)
+>   		goto out_kobj;
+>   
+> -	uv_query_kset = kset_create_and_add("query", NULL, uv_kobj);
+> -	if (!uv_query_kset) {
+> -		rc = -ENOMEM;
+> +	rc = uv_sysfs_dir_init(&uv_query_attr_group, &uv_query_kset, "query");
+> +	if (rc)
+>   		goto out_ind_files;
+> -	}
+> -
+> -	rc = sysfs_create_group(&uv_query_kset->kobj, &uv_query_attr_group);
+> -	if (!rc)
+> -		return 0;
+> +	return 0;
 
-v3:
- - use u32 right away without going through unsigned long
+Could've left a \n before the return so it doesn't look weird if only 
+this patch is applied. But that's not important.
 
-v2:
- - actually save the value in the output parameter @data
-
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 50fa1fe9a073..200d89a64027 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -29,10 +29,10 @@
-  * hardware. The allocated bandwidth percentage is rounded to the next
-  * control step available on the hardware.
-  */
--static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
-+static bool bw_validate(char *buf, u32 *data, struct rdt_resource *r)
- {
--	unsigned long bw;
- 	int ret;
-+	u32 bw;
- 
- 	/*
- 	 * Only linear delay values is supported for current Intel SKUs.
-@@ -42,16 +42,21 @@ static bool bw_validate(char *buf, unsigned long *data, struct rdt_resource *r)
- 		return false;
- 	}
- 
--	ret = kstrtoul(buf, 10, &bw);
-+	ret = kstrtou32(buf, 10, &bw);
- 	if (ret) {
--		rdt_last_cmd_printf("Non-decimal digit in MB value %s\n", buf);
-+		rdt_last_cmd_printf("Invalid MB value %s\n", buf);
- 		return false;
- 	}
- 
--	if ((bw < r->membw.min_bw || bw > r->default_ctrl) &&
--	    !is_mba_sc(r)) {
--		rdt_last_cmd_printf("MB value %ld out of range [%d,%d]\n", bw,
--				    r->membw.min_bw, r->default_ctrl);
-+	/* Nothing else to do if software controller is enabled. */
-+	if (is_mba_sc(r)) {
-+		*data = bw;
-+		return true;
-+	}
-+
-+	if (bw < r->membw.min_bw || bw > r->default_ctrl) {
-+		rdt_last_cmd_printf("MB value %u out of range [%d,%d]\n",
-+				    bw, r->membw.min_bw, r->default_ctrl);
- 		return false;
- 	}
- 
-@@ -65,7 +70,7 @@ int parse_bw(struct rdt_parse_data *data, struct resctrl_schema *s,
- 	struct resctrl_staged_config *cfg;
- 	u32 closid = data->rdtgrp->closid;
- 	struct rdt_resource *r = s->res;
--	unsigned long bw_val;
-+	u32 bw_val;
- 
- 	cfg = &d->staged_config[s->conf_type];
- 	if (cfg->have_new_ctrl) {
-
-base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
--- 
-2.46.2
+>   
+> -	kset_unregister(uv_query_kset);
+>   out_ind_files:
+>   	sysfs_remove_files(uv_kobj, uv_prot_virt_attrs);
+>   out_kobj:
+> @@ -785,4 +798,4 @@ static int __init uv_info_init(void)
+>   	kobject_put(uv_kobj);
+>   	return rc;
+>   }
+> -device_initcall(uv_info_init);
+> +device_initcall(uv_sysfs_init);
 
 
