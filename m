@@ -1,89 +1,125 @@
-Return-Path: <linux-kernel+bounces-345347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259DB98B51A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:03:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600BC98B522
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:04:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD942282013
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0FADB228F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267EC1BCA14;
-	Tue,  1 Oct 2024 07:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D895F1BD03E;
+	Tue,  1 Oct 2024 07:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPBkQEnk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U48KyXAp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BA0197512;
-	Tue,  1 Oct 2024 07:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FD51BC9EC;
+	Tue,  1 Oct 2024 07:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727766210; cv=none; b=eXM2qpxa8s+mgy6OT3HHn+1oAnTCSD7DIA7jedPozbm2LqRDoVIoc9HRgczZEy8sjId9QyuICJCAwmsttLlsI+/piKXl/AagXxDIElhPYcF2Itsnrf1d7G//rREeShVq0r4g0ADF53NeT52WzfQSYdrbCQaKL4zDfdRYUieyBDo=
+	t=1727766251; cv=none; b=kHrjGlseE61eTumwkxFJE/v1F3VHVLWU3J0X1oA1jgwqF3JBBJz3N9okSsWM77PrZsifLqEFq5bB586ODcIansn9+VDrwkb1F+NqbeCUNRMxikxF/EAXP/MAR5x4hUgfqFaOWeCpapbSrhA318MzqNN/QNqvOytVaIFlurysVos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727766210; c=relaxed/simple;
-	bh=giW38/Jr2OriJfpRZd499uWn9qePO8iOv9QP2qTGkho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJMa56+ioZmbohV+Uz/UY4QB73EOrX+00xTClb5T0UgzYSqmnHTST/V30OEY80N+gNSeAMUcBqaf+r2fQ0AygsRmMc7vHP1Zs2UGNSv3PbB0q4H9BfIUG8yoQMBjvAQFP9tDE2221Luu6vDtnrSBBZ7WuXGsvam1X0D+cUNQPNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPBkQEnk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E130FC4CEC6;
-	Tue,  1 Oct 2024 07:03:29 +0000 (UTC)
+	s=arc-20240116; t=1727766251; c=relaxed/simple;
+	bh=YxTGQndDRXUrIv1rcoZzDFrSZkpN1CHT/gS1t6B9Ipo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vh72BhbmxdBqiqyUpAUhg2OJWYccs7pnezxLkeOePeUo8q8HpT2FL85kQlTpOF/dx3HImpqEGvCDcqewle1yuzhXWJ+1NIFiwJLajRvEhitNcsRLMLZwYoRTeWfrzLY4484lPKHv1N53qGIf6f4i/hue9uAgEctZujtqz/rFQ7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U48KyXAp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F49AC4CED2;
+	Tue,  1 Oct 2024 07:04:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727766210;
-	bh=giW38/Jr2OriJfpRZd499uWn9qePO8iOv9QP2qTGkho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sPBkQEnkvDrdj1MvoN9JLxXF+YAbZoaiwiobABRDDYhBlWckP5ZBAGtUyGpZCQjNo
-	 ODy2Q2zGCyDTfGuwJlWbHg1mUr1eV+vLVxV9k0qkU3W7akd1xRu2sli3LOMSfN5Qpt
-	 0MxSzmsi+Pgrp8xggctnbvXni58KxGmclwNZPiuKYYRyP2mZUXtZyy1VGhpW4DNqtQ
-	 gD/urD4xdOpGlM8G135qU5iySFTvc8DnYgIZzd/W/MBSzCLHPrQDddSESMdzLM0sJF
-	 6iwweKVCYLu035m4vfr/wecI0Xq3tyf06w/FC6ry5He+gGGlcJvHt3stil7/5FsCBy
-	 JNv/atcR//JFg==
-Date: Tue, 1 Oct 2024 09:03:27 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org, 
-	Conor Dooley <conor+dt@kernel.org>, tony@atomide.com, linux-kernel@vger.kernel.org, 
-	linux-omap@vger.kernel.org, Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org, 
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: mfd: twl: add charger node also for
- TWL603x
-Message-ID: <dda44pt5prwebl5qcxr5mtyihyjjhs3fkqnocwd2ptpudicbda@pdch2x2hlkta>
-References: <20240930155404.1275702-1-andreas@kemnade.info>
- <20240930155404.1275702-3-andreas@kemnade.info>
+	s=k20201202; t=1727766251;
+	bh=YxTGQndDRXUrIv1rcoZzDFrSZkpN1CHT/gS1t6B9Ipo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=U48KyXApci3UtxQWQZGJOivaoaBm54OMwNhLIDUKNMLk/lKydMXiobmwy5JQap02V
+	 ycIF3JFoJWdIMs/UAvzUC3/ph6sbhe+8p9rONZY8gMkG5DaG6tCMFpQh+YRcE7TrE3
+	 o2L/4EL8amY1ChcXXLqz796i7CFCMGM34YgBOWVx5K+r0l42fRA+2OayziUVTvJAur
+	 WG4RpsH+W6KDcvbDE3UWuyXneac9Sa2ZoAHqJDlHanFq5uo1JxlRYY4tF6WRsj5t90
+	 DsbjQketoBNk9Ar24iXB5vVQSgrEKe9hgWNIWvnXkFPCTKafUu6+l69lJCe1TiOWuN
+	 0QE6YNbFDuxzA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab@kernel.org>)
+	id 1svWvY-00000001V0L-18y3;
+	Tue, 01 Oct 2024 09:04:08 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH v2 00/15] Prepare GHES driver to support error injection
+Date: Tue,  1 Oct 2024 09:03:37 +0200
+Message-ID: <cover.1727766088.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240930155404.1275702-3-andreas@kemnade.info>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On Mon, Sep 30, 2024 at 05:54:03PM +0200, Andreas Kemnade wrote:
-> Also the TWL603X devices have a charger, so allow to specify it here.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
->  .../devicetree/bindings/mfd/ti,twl.yaml       | 22 +++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/ti,twl.yaml b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> index e94b0fd7af0f8..488d419b211d1 100644
-> --- a/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/ti,twl.yaml
-> @@ -105,6 +105,12 @@ allOf:
->              regulator-initial-mode: false
->  
->        properties:
-> +        charger:
+During the development of a patch series meant to allow GHESv2 error injections,
+it was requested a change on how CPER offsets are calculated, by adding a new
+BIOS pointer and reworking the GHES logic. See:
 
-Properties should be defined in top-level, mot in allOf. You can
-disallow them for certain variants.
+https://lore.kernel.org/qemu-devel/cover.1726293808.git.mchehab+huawei@kernel.org/
 
-Best regards,
-Krzysztof
+Such change ended being a big patch, so several intermediate steps are needed,
+together with several cleanups and renames.
+
+As agreed duing v10 review, I'll be splitting the big patch series into separate pull 
+requests, starting with the cleanup series. This is the first patch set, containing
+only such preparation patches.
+
+The next series will contain the shift to use offsets from the location of the
+HEST table, together with a migration logic to make it compatible with 9.1.
+
+---
+
+v2: 
+- some indentation fixes;
+- some description improvements;
+- fixed a badly-solved merge conflict that ended renaming a parameter.
+
+Mauro Carvalho Chehab (15):
+  acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
+  acpi/ghes: simplify acpi_ghes_record_errors() code
+  acpi/ghes: simplify the per-arch caller to build HEST table
+  acpi/ghes: better handle source_id and notification
+  acpi/ghes: Fix acpi_ghes_record_errors() argument
+  acpi/ghes: Remove a duplicated out of bounds check
+  acpi/ghes: Change the type for source_id
+  acpi/ghes: Prepare to support multiple sources on ghes
+  acpi/ghes: make the GHES record generation more generic
+  acpi/ghes: move offset calculus to a separate function
+  acpi/ghes: better name GHES memory error function
+  acpi/ghes: don't crash QEMU if ghes GED is not found
+  acpi/ghes: rename etc/hardware_error file macros
+  acpi/ghes: better name the offset of the hardware error firmware
+  docs: acpi_hest_ghes: fix documentation for CPER size
+
+ docs/specs/acpi_hest_ghes.rst  |   6 +-
+ hw/acpi/generic_event_device.c |   4 +-
+ hw/acpi/ghes-stub.c            |   2 +-
+ hw/acpi/ghes.c                 | 279 ++++++++++++++++++++-------------
+ hw/arm/virt-acpi-build.c       |  10 +-
+ include/hw/acpi/ghes.h         |  34 ++--
+ target/arm/kvm.c               |   3 +-
+ 7 files changed, 206 insertions(+), 132 deletions(-)
+
+-- 
+2.46.0
+
 
 
