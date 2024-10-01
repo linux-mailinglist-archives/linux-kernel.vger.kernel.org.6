@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-345287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2293B98B426
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677E698B427
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30FF28417D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17626284047
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E581BBBF8;
-	Tue,  1 Oct 2024 06:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FF81A3BDA;
+	Tue,  1 Oct 2024 06:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BarxashM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZO6iwsC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB5C153;
-	Tue,  1 Oct 2024 06:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC56C153;
+	Tue,  1 Oct 2024 06:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727763415; cv=none; b=TQPKfhkg1c1XsKExPK8rQqEm7Hc0NjO5JVbg26xde4MgER7nZ6uFOWMbZ/vSIU00WPqxwif+8zA6CYlgmUqktWWOhmrPc2Im4E5c9/GxwvF2yDX81EmzfMY1N94AuYhpyebpgNbfKO21kG9jL/59t8b7N+wy3RAWTIyz3va3k0s=
+	t=1727763470; cv=none; b=MeWcK1jvSjNp9IRRynE0Dl4yevG+iRJhF0g0EcJ4ht8lnF4NqFo0jpTx4/isIeILSIfgP5LzgVavTRu+K2uEZ6KJT/tH/OTKpcZfG6CojJAEwLUTdTUTZuJI1PpG/p6RtA8jIaew/YJ1Aonkn8aRBNvr2KCPv99yzZWLViUv64s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727763415; c=relaxed/simple;
-	bh=Hg4IVEOTj4JriXTMF/0hLXqKoldcay2hkZN5Fq1Yakc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mTfxIEIug3fPndbcaeYk+j4jfndE8gfc4EyXaXhnlhegIYawvLtwvbPI0UysZdlhQy6/VcL/5EwS+zwSS2zJch62UrrNUWUG6ilaVuCFNPzBV2Osda0jrxxgWlDnaXbUY4SFg8JLh32IQynMtb37aISj9eswfwx3kNbFHfiMdQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BarxashM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DDCC4CEC6;
-	Tue,  1 Oct 2024 06:16:40 +0000 (UTC)
+	s=arc-20240116; t=1727763470; c=relaxed/simple;
+	bh=kBUT3EwDlDLkppuHGAjL9CS1vbLaheFqYLZFALiq2jE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J3xT5zn7YSYPuOl0nIUxxRuKgpqjPXpPen+6zDYMzFRUAURbgLSy6PYUVNjYeTsoJnaNcoV17lEAzNIVvqiJ9/Ww4yCuHhx98zT2Nw5uCSYKOBBJJoRFYRaOGKAidiLPw5JZ0zR+Jea8tizx1jFx+DvpTIyhUdUSja76Hw/m+UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZO6iwsC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55CA4C4AF0B;
+	Tue,  1 Oct 2024 06:17:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727763415;
-	bh=Hg4IVEOTj4JriXTMF/0hLXqKoldcay2hkZN5Fq1Yakc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BarxashMr3+CY5FBEM2U/PJW5q6wPC6dVt+mzB8egTBhcrlaVcQFYdktWYgO+j7Yv
-	 st50W7cT6gVEA1/dqDGaNjGnQ9AA7gJD8n39MO3BV+QS8PYRyKkFgRwCwRf2uXp2Y8
-	 dp0MSy8wQU32Rg+er7QSDMBsvPmxO8FtjjNjWdI+RBSy9Pkiff17xYddZcuy1U7MmD
-	 8G2j28TOkFm0vYpz5O+m6VrxQgVrUbADYqKtkm4v+kH0x6BE0wOgLNe9/byQAyhzAt
-	 oANVnz/YuEyuHy0rS3qUYr1qmkfNjzY7Or6LCFfrX8R+CDPDSbqK8TRB8tpythzZkI
-	 KC1d+v2a8Gx6A==
-Message-ID: <2915d4aa-a01d-4d00-ada9-43bbc227f9eb@kernel.org>
-Date: Tue, 1 Oct 2024 08:16:38 +0200
+	s=k20201202; t=1727763470;
+	bh=kBUT3EwDlDLkppuHGAjL9CS1vbLaheFqYLZFALiq2jE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lZO6iwsChTVHWcmVkbtT+HEtmVpn8/DKDSyrzfGSWVNoS2AsJW61BFCi6ds8dXJPv
+	 AvaOc5J3KZI2Yy1AUHhSN+VhfXyI9QL8XIDcnPvmAGVofLcAd4OJuMuzIounjyq5oh
+	 4iMDh5sh6w7ADcuYi3c2GdKb3LMK8K4uTB9y7GUiOscFo79syHV5MmMUEsZYeNfp8e
+	 OgLocX6VB8gopaE2DjeQpaFYl1REcNgAt816X0lJdv1DCboYchrbZsDZXrH6Qn2a1E
+	 LPT5hoFNEQ/b4F5t7T8X/LsTxGIBZQsdH7ozYnLdO9JfXy3uK582So2CshwWhvEsQO
+	 LNAnh7Q9i8/6g==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fad15b3eeeso14777211fa.2;
+        Mon, 30 Sep 2024 23:17:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUnB0YDMkdvYF6hzyWQyerfD8ZTCyahsi9mc2lZMYfMjC02hoKxpesrq6waPyl9DT3TPDpKy307Vx4tWne2usVMQ6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUz7rXf02TXttH9lOqYSu+vxz1scJyRp04v447OhJBy9harqWi
+	8ndSPp0kuJRdrVo9zwXDORlivLnkM0GcxSfDi6BgnDJ1bsvK+3fvMYv3LljShc0Rlfsht+MsteP
+	ANKP1eL9X389ZBj9EUExEbg99iN8=
+X-Google-Smtp-Source: AGHT+IGbGutJbA/ztjpsmdWguIxi5XOiBbzu9AF9cYX2DKiBEjTC2FnLnXg5HamKCCDbnP0XS+ChLWVKT0u3KmUQaUc=
+X-Received: by 2002:a2e:beaa:0:b0:2ee:8453:5164 with SMTP id
+ 38308e7fff4ca-2f9d3dbc770mr72590261fa.0.1727763468614; Mon, 30 Sep 2024
+ 23:17:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ARM: dts: replace gpio = with gpios =
-To: Rosen Penev <rosenp@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Antoine Tenart <atenart@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Lars Persson <lars.persson@axis.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Viresh Kumar <vireshk@kernel.org>,
- Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
- "maintainer:SPEAR PLATFORM/CLOCK/PINCTRL SUPPORT" <soc@kernel.org>,
- Marek Vasut <marex@denx.de>, Jisheng Zhang <jszhang@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, David Lechner <david@lechnology.com>,
- Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
- Tony Lindgren <tony@atomide.com>,
- Enric Balletbo i Serra <eballetbo@gmail.com>,
- Javier Martinez Canillas <javier@dowhile0.org>,
- Alexey Charkov <alchark@gmail.com>, Denis Burkov <hitechshell@mail.ru>,
- Arnd Bergmann <arnd@arndb.de>, Stefan Wahren <wahrenst@gmx.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
- Nicolas Chauvet <kwizart@gmail.com>, Tomasz Maciej Nowak <tmn505@gmail.com>,
- Robert Eckelmann <longnoserob@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ARM/Amlogic Meson SoC support"
- <linux-amlogic@lists.infradead.org>,
- "moderated list:ARM/ASPEED MACHINE SUPPORT" <linux-aspeed@lists.ozlabs.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:ARM/Mediatek SoC support"
- <linux-mediatek@lists.infradead.org>,
- "moderated list:ARM/NUVOTON NPCM ARCHITECTURE" <openbmc@lists.ozlabs.org>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>,
- "open list:DH ELECTRONICS IMX6 DHCOM/DHCOR BOARD SUPPORT"
- <kernel@dh-electronics.com>,
- "moderated list:ARM/STM32 ARCHITECTURE"
- <linux-stm32@st-md-mailman.stormreply.com>,
- "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
- "open list:ARM/RISC-V/RENESAS ARCHITECTURE"
- <linux-renesas-soc@vger.kernel.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- "open list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES"
- <linux-samsung-soc@vger.kernel.org>,
- "open list:OMAP DEVICE TREE SUPPORT" <linux-omap@vger.kernel.org>
-References: <20240930223550.353882-1-rosenp@gmail.com>
- <20240930223550.353882-2-rosenp@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240930223550.353882-2-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240926130159.19e6d0e2@rorschach.local.home>
+In-Reply-To: <20240926130159.19e6d0e2@rorschach.local.home>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 1 Oct 2024 08:17:37 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXF1=2wLgM8HP6BvUxdZLK4EdnaORLUTjoDJSZP-hhDJwA@mail.gmail.com>
+Message-ID: <CAMj1kXF1=2wLgM8HP6BvUxdZLK4EdnaORLUTjoDJSZP-hhDJwA@mail.gmail.com>
+Subject: Re: [PATCH] Documentation/tracing: Mention that RESET_ATTACK_MITIGATION
+ can clear memory
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mike Rapoport <mike.rapoport@gmail.com>, 
+	Kees Cook <keescook@chromium.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/10/2024 00:35, Rosen Penev wrote:
-> Found with dtc:
-> 
-> Warning (deprecated_gpio_property): '[*-]gpio' is deprecated, use
-> '[*-]gpios' instead
-> 
-> Transformation performed with
-> 
-> find -name "*.dts" -exec sed -i 's/\tgpio = </\tgpios = </g' '{}' \
-> find -name "*.dtsi" -exec sed -i 's/\tgpio = </\tgpios = </g' '{}' \
+On Thu, 26 Sept 2024 at 19:02, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> From: Steven Rostedt <rostedt@goodmis.org>
+>
+> At the 2024 Linux Plumbers Conference, I was talking with Hans de Goede
+> about the persistent buffer to display traces from previous boots. He
+> mentioned that UEFI can clear memory. In my own tests I have not seen
+> this. He later informed me that it requires the config option:
+>
+>  CONFIG_RESET_ATTACK_MITIGATION
+>
+> It appears that setting this will allow the memory to be cleared on boot
+> up, which will definitely clear out the trace of the previous boot.
+>
+> Add this information under the trace_instance in kernel-parameters.txt
+> to let people know that this can cause issues.
+>
+> Link: https://lore.kernel.org/all/20170825155019.6740-2-ard.biesheuvel@linaro.org/
+>
+> Reported-by: Hans de Goede <hdegoede@redhat.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index bb48ae24ae69..f9b79294f84a 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -6850,6 +6850,9 @@
+>
+>                                 reserve_mem=12M:4096:trace trace_instance=boot_map^traceoff^traceprintk@trace,sched,irq
+>
+> +                       Note, CONFIG_RESET_ATTACK_MITIGATION can force a memory reset on boot which
+> +                       will clear any trace that was stored.
+> +
 
-Uh, no, please check if each is correct and already handled by bindings.
+CONFIG_RESET_ATTACK_MITIGATION can force a wipe of system RAM at warm
+reboot on systems that have a TPM enabled, but disabling it does not
+prevent it. Also, there are many other reasons why the trace buffer
+region may be wiped and/or reused for other purposes, so singling out
+CONFIG_RESET_ATTACK_MITIGATION like this is not that useful imo.
 
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+As I indicated when this feature was under review, it should be made
+very clear that any kernel side changes that affect the system's
+behavior in this regard should not be considered regressions. So
+instead of mentioning CONFIG_RESET_ATTACK_MITIGATION here, perhaps it
+would be better to document that system firmware generally makes no
+guarantees about preserving memory contents, and so this feature may
+break without warning.
 
-
-
-Best regards,
-Krzysztof
-
+Note that on UEFI systems, there is a so-called 'capsule' interface
+which does allow the OS to preserve an arbitrary buffer across a warm
+reboot. However, whether it works on all systems is anybody's guess.
 
