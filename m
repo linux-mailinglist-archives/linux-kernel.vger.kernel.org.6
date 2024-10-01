@@ -1,151 +1,191 @@
-Return-Path: <linux-kernel+bounces-345096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E31F98B1F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23BAD98B1F9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 03:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 176E71F22BA3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:58:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55731F2369F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 01:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFED52868D;
-	Tue,  1 Oct 2024 01:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1BE286A8;
+	Tue,  1 Oct 2024 01:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDWPDii8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fxMehmws"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349D0A5F;
-	Tue,  1 Oct 2024 01:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDA63839C
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 01:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727747879; cv=none; b=qC9B4j1Pqm6v9l9MuuYWiV/4V2TPjkV5n4GLrBBxBGMhEViwBd2RbdILbPCZ82ZOaYP+4ibHRvfXJ2Gsu3FST0KfOiGVQJ4GE76MOJdsQ9H7PYPJFsA6j+MOtR29unTHeHNT70tyVUEveXHs33tJ9LmhOcz12Esn3dHzRtoDRJM=
+	t=1727747901; cv=none; b=GEW0kR/IuxY0wDe3fTfrGp/DB/IE7NcLm8ZlC99eb332ZXOjJyvVC33s2Ki9hRuUd0K+VQwqjTBt503LBh2bGIHNrerdM8bMSKdpRh+mhplEpuAQgoj3vyJpylZoCNZsvtHfXnxCj3Fl0Hnj+lGQPojICN8pKfOhHhk8OlYpBU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727747879; c=relaxed/simple;
-	bh=IYEMmh/FsI2Dol2j7J7yefHUkiDeEMb7ZjHXw8AaVy4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Sv4AAln0Pu+Coryiu/I6CHUYtNjEWPk6an1PTGosiV7iTt5ShmaZmoEnp439feJajG3svTMcfzy7DM9GPh6GbFasP0sEthdZKQWn+aOOKOdb6tzFa+v1lkP13xAlh5H+rJ2yvJf8goVud1zF5j5PdnUvQl33bOtlYZ5G1ltzO5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDWPDii8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88933C4CEC7;
-	Tue,  1 Oct 2024 01:57:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727747879;
-	bh=IYEMmh/FsI2Dol2j7J7yefHUkiDeEMb7ZjHXw8AaVy4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pDWPDii8fCQnzNfylwXI5t/KB4gMatH/u/1Lus+CoQQGVv8EnqgLWSm7hlN9x5eNX
-	 dL0LtoGdsxTfo6HpvjBJph8kHlmsCMQfh8KaTTGcX/ToPFtQCwtg8BSbwVBzLzhN33
-	 KFmXaGmz7S968N4dvxEfEbVFW/eoDDmt0/eS5doa+/izqXBm3xvdp9Fl4QjFyGCulU
-	 UyanrmFW6xjylrGilbVZYaR76R0MRsj0pDvQvCk7+4fZzE7DXTxSwfHNFRluAGDeNk
-	 bljeN3UYNmTbvUY0eOIWD3npibDIVpDPq6UdijjUO+8R/m8RJ5S6Ds7IGtKnyCvFQ+
-	 dNRgf7gyLhiZA==
-Date: Tue, 1 Oct 2024 10:57:53 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Will Deacon <will@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, linux-arm-kernel@lists.infradead.org,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Florent Revest
- <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
- <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v14 03/19] function_graph: Pass ftrace_regs to entryfunc
-Message-Id: <20241001105753.723314ca371e9f484c88bcac@kernel.org>
-In-Reply-To: <20240930144659.5aaf7be4@gandalf.local.home>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-	<172615372005.133222.15797801841635819220.stgit@devnote2>
-	<20240915044614.5721947e@rorschach.local.home>
-	<20240917082624.GC27290@willie-the-truck>
-	<20240930144659.5aaf7be4@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727747901; c=relaxed/simple;
+	bh=8Y+WnIyKoqdfaJlKH+KC75pnTaZZbappW+5Vga7ETag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LHXaOIAfPA6KNh0NYj3KnuNy31NwQGpo0T7RY2dERtGvwozKjoy8bhMNp/JvVCKbsJnlVqS8U58gRQNaeafRovZ524B52ga7R0R06f1xdr/JttNZ1ORbgMRNEl4z+6nb9j9bQ/iHK3HtjsdKz7cLOoTy1RzgqTBMLbi3lPM6UoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fxMehmws; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <075e314c-3aa5-4f7b-81f7-3bc0e055334a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727747897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lnIHn0BF5I13YOzLPkhPaKL/Qst4Kg2kv0TRJKsCPcA=;
+	b=fxMehmwsRJzfvj0Vi78qAXO/boLwVzMUeDJPechQuFoncZIMJhXrwupLTgEFoSNr0fp5S6
+	b+b8M7kywArhMwJCxkvx4+6kYuOAlk+Ktn4OMINxIMBtctRA79wiEicMNKknIq9eKeh6uB
+	X19GsyjjZeOI61WdUt+nH0QmRFZX0gQ=
+Date: Mon, 30 Sep 2024 18:58:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Subject: Re: [PATCH bpf-next v2 2/2] bpf, selftests: Add test case for cgroup
+ skb to get net_cls classid helpers
+To: Feng zhou <zhoufeng.zf@bytedance.com>
+Cc: daniel@iogearbox.net, john.fastabend@gmail.com, ast@kernel.org,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mykolal@fb.com,
+ shuah@kernel.org, geliang@kernel.org, laoar.shao@gmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, yangzhenze@bytedance.com,
+ wangdongdong.6@bytedance.com
+References: <20240918074516.5697-1-zhoufeng.zf@bytedance.com>
+ <20240918074516.5697-3-zhoufeng.zf@bytedance.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20240918074516.5697-3-zhoufeng.zf@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 30 Sep 2024 14:46:59 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 9/18/24 12:45 AM, Feng zhou wrote:
+> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+> 
+> This patch adds a test for cgroup skb to get classid.
+> 
+> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+> ---
+>   .../bpf/prog_tests/cg_skb_get_classid.c       | 87 +++++++++++++++++++
+>   .../selftests/bpf/progs/cg_skb_get_classid.c  | 19 ++++
+>   2 files changed, 106 insertions(+)
+>   create mode 100644 tools/testing/selftests/bpf/prog_tests/cg_skb_get_classid.c
+>   create mode 100644 tools/testing/selftests/bpf/progs/cg_skb_get_classid.c
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/cg_skb_get_classid.c b/tools/testing/selftests/bpf/prog_tests/cg_skb_get_classid.c
+> new file mode 100644
+> index 000000000000..13a5943c387d
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/prog_tests/cg_skb_get_classid.c
+> @@ -0,0 +1,87 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +
+> +/*
+> + * Copyright 2024 Bytedance.
+> + */
+> +
+> +#include <test_progs.h>
+> +
+> +#include "cg_skb_get_classid.skel.h"
+> +
+> +#include "cgroup_helpers.h"
+> +#include "network_helpers.h"
+> +
+> +static int run_test(int cgroup_fd, int server_fd)
+> +{
+> +	struct cg_skb_get_classid *skel;
+> +	int fd, err = 0;
+> +
+> +	skel = cg_skb_get_classid__open_and_load();
+> +	if (!ASSERT_OK_PTR(skel, "skel_open"))
+> +		return -1;
+> +
+> +	skel->links.cg_skb_classid =
+> +		bpf_program__attach_cgroup(skel->progs.cg_skb_classid,
+> +					   cgroup_fd);
+> +	if (!ASSERT_OK_PTR(skel->links.cg_skb_classid, "prog_attach")) {
+> +		err = -1;
+> +		goto out;
+> +	}
+> +
+> +	if (!ASSERT_OK(join_classid(), "join_classid")) {
+> +		err = -1;
+> +		goto out;
+> +	}
+> +
+> +	errno = 0;
+> +	fd = connect_to_fd_opts(server_fd, NULL);
+> +	if (fd >= 0) {
+> +		if (skel->bss->classid != getpid()) {
+> +			log_err("Get unexpected classid");
+> +			err = -1;
+> +		}
+> +
+> +		close(fd);
+> +	} else {
+> +		log_err("Unexpected errno from connect to server");
+> +		err = -1;
+> +	}
+> +out:
+> +	cg_skb_get_classid__destroy(skel);
+> +	return err;
+> +}
+> +
+> +void test_cg_skb_get_classid(void)
+> +{
+> +	struct network_helper_opts opts = {};
+> +	int server_fd, client_fd, cgroup_fd;
+> +	static const int port = 60120;
 
-> On Tue, 17 Sep 2024 09:26:25 +0100
-> Will Deacon <will@kernel.org> wrote:
-> 
-> > On Sun, Sep 15, 2024 at 04:46:14AM -0400, Steven Rostedt wrote:
-> > > Can I get an Acked-by from the AARCH64 maintainers for this patch?  
-> > 
-> > Sorry, I wasn't CC'd on the thread, so I missed this.
-> 
-> Here's the lore link that starts it all:
-> 
->   https://lore.kernel.org/all/172615368656.133222.2336770908714920670.stgit@devnote2/
-> 
-> There's also a v15:
-> 
->    https://lore.kernel.org/linux-trace-kernel/172639136989.366111.11359590127009702129.stgit@devnote2/
-> 
-> > 
-> > > On Fri, 13 Sep 2024 00:08:40 +0900
-> > > "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> > >   
-> > > > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > > > 
-> > > > Pass ftrace_regs to the fgraph_ops::entryfunc(). If ftrace_regs is not
-> > > > available, it passes a NULL instead. User callback function can access
-> > > > some registers (including return address) via this ftrace_regs.  
-> > 
-> > Under which circumstances is 'ftrace_regs' NULL?
-> 
-> When the arch does not define: HAVE_DYNAMIC_FTRACE_WITH_ARGS or
-> HAVE_DYNAMIC_FTRACE_WITH_REGS
-> 
-> If HAVE_DYNAMIC_FTRACE_WITH_REGS is defined but not the WITH_ARGS, and the
-> ops used to register the function callback does not set FTRACE_OPS_FL_SAVE_REGS.
-> 
-> Otherwise it should be set.
+Running a test with a specific port without netns could fail when test_progs is 
+run in parallel (-j). e.g. cgroup_v1v2 is using the same port.
 
-I will add this condition in the description in next version.
+> +
+> +	/* Step 1: Check base connectivity works without any BPF. */
+> +	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, port, 0);
+> +	if (!ASSERT_GE(server_fd, 0, "server_fd"))
+> +		return;
+> +	client_fd = connect_to_fd_opts(server_fd, &opts);
+> +	if (!ASSERT_GE(client_fd, 0, "client_fd")) {
+> +		close(server_fd);
+> +		return;
+> +	}
+> +	close(client_fd);
+> +	close(server_fd);
 
-Thank you,
+imo, this connection pre-test is unnecessary. I would remove it.
 
+> +
+> +	/* Step 2: Check BPF prog attached to cgroups. */
+> +	cgroup_fd = test__join_cgroup("/cg_skb_get_classid");
+> +	if (!ASSERT_GE(cgroup_fd, 0, "cgroup_fd"))
+> +		return;
+> +	server_fd = start_server(AF_INET, SOCK_STREAM, NULL, port, 0);
+> +	if (!ASSERT_GE(server_fd, 0, "server_fd")) {
+> +		close(cgroup_fd);
+> +		return;
+> +	}
+> +	setup_classid_environment();
+> +	set_classid();
+> +	ASSERT_OK(run_test(cgroup_fd, server_fd), "cg_skb_get_classid");
 
-> 
-> > 
-> > The arm64 implementation of ftrace_graph_func() is:
-> > 
-> > > > diff --git a/arch/arm64/kernel/ftrace.c b/arch/arm64/kernel/ftrace.c
-> > > > index a650f5e11fc5..bc647b725e6a 100644
-> > > > --- a/arch/arm64/kernel/ftrace.c
-> > > > +++ b/arch/arm64/kernel/ftrace.c
-> > > > @@ -481,7 +481,25 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
-> > > >  void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
-> > > >  		       struct ftrace_ops *op, struct ftrace_regs *fregs)
-> > > >  {
-> > > > -	prepare_ftrace_return(ip, &fregs->lr, fregs->fp);
-> > > > +	unsigned long return_hooker = (unsigned long)&return_to_handler;
-> > > > +	unsigned long frame_pointer = fregs->fp;  
-> > 
-> > Which dereferences the unchecked pointer here ^^.
-> 
-> Just above the visible portion of the patch, we have:
-> 
-> #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
->                        struct ftrace_ops *op, struct ftrace_regs *fregs)
-> {
-> 
-> Which means fregs will be available. The "WITH_ARGS" config tells us that
-> the arch will supply the function with valid fregs to the ftrace callback
-> (which this is).
-> 
-> -- Steve
-> 
+Please run this test under a netns and without specifying a particular port. 
+connect_to_fd_opts will figure out the port used in server_fd.
 
+Patch 1 lgtm.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Please add a few words to the cover letter also.
+
+pw-bot: cr
 
