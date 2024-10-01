@@ -1,159 +1,255 @@
-Return-Path: <linux-kernel+bounces-346440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE7E98C4C6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:47:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B66398C4C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD29A1F241F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:47:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3CE31F2384B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 17:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531741CBEAA;
-	Tue,  1 Oct 2024 17:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96F01CB501;
+	Tue,  1 Oct 2024 17:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bCXSolBW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SjZ3DBoh"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49451C9ED0;
-	Tue,  1 Oct 2024 17:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D96418E02D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 17:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727804815; cv=none; b=Z5DU3hbyccLlkS/jf4T/jZFg/2k0mwnuwuggP2xQKGPepHaL8//bgqpkhSc6WEvK21WS2ArDX6oT171Dnw+i7BOx2gecGw+UVGCpAAMUHeAqen3t8tXBmV2afXIMK2c9m9zepkKkpVihF3zXMzqw4Q/pP3bBy+++2NuoX8A5w8c=
+	t=1727804788; cv=none; b=ovxIx9ibrAuvGubrRGzzpg7jo+bCDHzCqftZRhtO8GUwbnoY7UrW2EziD0x1Rgleff5FyzROUFVr6yMPau6+QuEu90lFHvoFkCyB7jXHUBC0C5+12vQhCcfwnT3C1C4GLgDPLYasgv3FUh4BUemq2LKBX8z9NOp4paT1DWzg/xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727804815; c=relaxed/simple;
-	bh=obLBRgivTjpJgl/s3rbPI7W+iEFQUdK1eaiKRL9Csn8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NlTbWtJRYsAyVKr3YUyMNs3VDILFXv/+Ox0k0K8yPgYvM94h/BoORSbCl5Aup0WUi2ZnduGIG07yC15UcNw+uOX/cKpPXfxp6CGLZ++rnQNSMIEX41FIEmgRuYaZExGngZ8CCHWTbuIJAJfk7PgoHo8IQRSXtaT5r+qgIXO0zJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bCXSolBW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491BHprD005662;
-	Tue, 1 Oct 2024 17:46:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=kqwtTT2Xmi0dBarsC1gFmGcmL0gZDFbIMoJyvbEUTQQ=; b=bC
-	XSolBW5DHSr0Khnj2egSU02fg1nCOz9Bei3YPUxZhldLK/bJcZjPH04n1KMf9OXp
-	3kX9qegaFHhR/A8z+ub1nr29JgRCremroiMsn0ZTVRp1IOEJGSi+6GecwtYh2gRC
-	vWMo5RpXFXZjzUvw4i/c+l7BBftjz0KBpdGI0MG0AzZKju7SuN7YyHVCs3qTs4zi
-	rTtOiQlLpVZGVAlFC31mIl4qt0ECFH4g4uvNVPTGeV+fW1KjzhBdraVC5/Rha7rX
-	DzgCVH7EBsqijfNCo6T6kSzNQO16JS8Av3u9btKl0yyI8pzapzsPqNHhT0pgcadq
-	74GaVypJpmKYqxDygRUg==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x9vu98q1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 17:46:41 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 491Hkew9019635
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 1 Oct 2024 17:46:40 GMT
-Received: from hu-pintu-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 1 Oct 2024 10:46:35 -0700
-From: Pintu Kumar <quic_pintu@quicinc.com>
-To: <sumit.semwal@linaro.org>, <christian.koenig@amd.com>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>
-CC: <joe@perches.com>, <skhan@linuxfoundation.org>, <pintu.ping@gmail.com>,
-        Pintu Kumar <quic_pintu@quicinc.com>
-Subject: [PATCH 1/3] dma-buf: replace symbolic permission S_IRUGO with octal 0444
-Date: Tue, 1 Oct 2024 23:16:11 +0530
-Message-ID: <20241001174611.12155-1-quic_pintu@quicinc.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1727804788; c=relaxed/simple;
+	bh=9F/toJpxNElR3PbDbEoXx82+WfuM9bJIRnpAzhuQT1U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LKJ5UQxkH3Lk2+eExop3BUTMYaO/+mfvvmYOa2ZwS4pLc3QwMm4OrxczrxvOoTuu9lyRL37JUkhwXV7uXnGK5X2NRpx6/Ou/LB7+hpGQQS3uM4geGoZ3v3hxMOCHodsRuvCKQJYmmEcmFWscIAEVr82IzJV821d5FilSEd2cN+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SjZ3DBoh; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3a1a662a633so15835ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 10:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727804785; x=1728409585; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lZy9/QIAL7I1WICx12bXOxFmW8cOAQaIYW0jgY3fIUQ=;
+        b=SjZ3DBoh/uHcydJVuxvLx/ClT1xTwTZX/wju2gKnhFEFohzpy2bPB5HD1gi1seehmP
+         aVqJLxy6AR3+1wRJTm4ihP81pEK7n88dCYoYhPC4B93S13DukCF8mZ/JyPv7LTDjvQeD
+         RMUPLZtdxzvB7RTHWEFVkiaS+UEr6euqJAMnrIRRpCW2AdVHeVDXZwzip6MRUykaqIhr
+         1HXXWINRvCVr/0pioe5qF3pLyzE0YLrsL+XgIxo/e91U67Z5oOLF86wayZjWvT71j+fw
+         ONIt1qIyv8l4qStBE+joJCd/jJR+wccsRvhAxwjwxwUmxRR384h21SgacLR4l8AzVJHz
+         e+fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727804785; x=1728409585;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lZy9/QIAL7I1WICx12bXOxFmW8cOAQaIYW0jgY3fIUQ=;
+        b=jbl0XUV2jZBNHuynlHhQ1SN4aa5Ja4JHbW4vCHHTC7wt4ZlX2rEDiXEsKyvVK5AL27
+         vUsCAH1Hr8SQcNB7nz0DrgqWlNp6RHjnaGIyJtHkrYP+glJPHVuP7P2UgzkXqerqhuXd
+         fldiSY52AT88eUup2BffIcgf0I7fQIo+SY12WqJfU1M+3uTASSuLhmH08fWhs8IdeTdi
+         jXlXzY3iWJKzrRU1caKFEIu7dMFD9ZyDrBEDaaQeRSUT2SrtyaSwfaF6KNqbbd6W9sFd
+         MRENAV3Psy4Raiya5uY7tGrihwI7cTu44lDRTY1zxb0NV6o2+N+IAbEsqoORd1K5oYJE
+         qovQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWle4e17FvdOIYUXqVgzq048GTIl6odsBWC9lH1vRbD2FE331tLmFPOiyGKgpX8sanpYxWU6rcgdNyEpE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgGgWy+i/HHZJWEUJrxdRJnorQV9J8caKqrmbkt2JRMtg0wxOk
+	CajjcUzCIVK5wTfmYzBAzbKdW3jLVE1BmaJubWwkBJPkkYAiKGKb8hAzgO4vRjLMRGAO0R8yq4v
+	tlbClLfZ2MCIcPU9sfkAdWcsS2pQbnOoaxzFD
+X-Google-Smtp-Source: AGHT+IFa9K5O/7IzOLYui9Qt8ZjI7hzNrMV704sAFF8kngD20Uuy2o50O1AHDRE6+pfOXKsSOTlPnt3NNwyZ6wontb8=
+X-Received: by 2002:a05:6e02:160f:b0:3a0:7212:94b5 with SMTP id
+ e9e14a558f8ab-3a36636ecd1mr8925ab.25.1727804785411; Tue, 01 Oct 2024 10:46:25
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -iu2D-fBp2R3ZcgbTbDYCzb4T9PP3EKp
-X-Proofpoint-ORIG-GUID: -iu2D-fBp2R3ZcgbTbDYCzb4T9PP3EKp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1011 spamscore=0 suspectscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 adultscore=0 mlxscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010114
+References: <20241001002027.1272889-1-namhyung@kernel.org> <20241001002027.1272889-5-namhyung@kernel.org>
+In-Reply-To: <20241001002027.1272889-5-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 1 Oct 2024 10:46:14 -0700
+Message-ID: <CAP-5=fXZF8tweCFV28zMeSH3A6Wqh+7R4FQ+efcU7BC-z1=iQw@mail.gmail.com>
+Subject: Re: [PATCH 4/8] perf tools: Do not set exclude_guest for precise_ip
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Mark Rutland <mark.rutland@arm.com>, 
+	James Clark <james.clark@arm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Atish Patra <atishp@atishpatra.org>, 
+	Palmer Dabbelt <palmer@rivosinc.com>, Mingwei Zhang <mizhang@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Symbolic permissions are not preferred, instead use the octal.
-Also, fix other warnings/errors as well for cleanup.
+On Mon, Sep 30, 2024 at 5:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> It seems perf sets the exclude_guest bit because of Intel PEBS
+> implementation which uses a virtual address.  IIUC now kernel disables
+> PEBS when it goes to the guest mode regardless of this bit so we don't
+> need to set it explicitly.  At least for the other archs/vendors.
+>
+> I found the commit 1342798cc13e set the exclude_guest for precise_ip
+> in the tool and the commit 20b279ddb38c added kernel side enforcement
+> which was reverted by commit a706d965dcfd later.
+>
+> Actually it doesn't set the exclude_guest for the default event
+> (cycles:P) already.
+>
+>   $ grep -m1 vendor /proc/cpuinfo
+>   vendor_id     : GenuineIntel
+>
+>   $ perf record -e cycles:P true
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+>
+>   $ perf evlist -v | tr ',' '\n' | grep -e exclude -e precise
+>    precise_ip: 3
+>
+> But having lower 'p' modifier set the bit for some reason.
+>
+>   $ perf record -e cycles:pp true
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.002 MB perf.data (9 samples) ]
+>
+>   $ perf evlist -v | tr ',' '\n' | grep -e exclude -e precise
+>    precise_ip: 2
+>    exclude_guest: 1
+>
+> Actually AMD IBS suffers from this because it doesn't support excludes
+> and having this bit effectively disables new features in the current
+> implementation (due to the missing feature check).
+>
+>   $ grep -m1 vendor /proc/cpuinfo
+>   vendor_id     : AuthenticAMD
+>
+>   $ perf record -W -e cycles:p -vv true 2>&1 | grep switching
+>   switching off PERF_FORMAT_LOST support
+>   switching off weight struct support
+>   switching off bpf_event
+>   switching off ksymbol
+>   switching off cloexec flag
+>   switching off mmap2
+>   switching off exclude_guest, exclude_host
+>
+> By not setting exclude_guest, we can fix this inconsistency and the
+> troubles.
+>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 
-WARNING: Block comments use * on subsequent lines
-+       /* only support discovering the end of the buffer,
-+          but also allow SEEK_SET to maintain the idiomatic
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-WARNING: Block comments use a trailing */ on a separate line
-+          SEEK_END(0), SEEK_CUR(0) pattern */
+Thanks,
+Ian
 
-WARNING: Block comments use a trailing */ on a separate line
-+        * before passing the sgt back to the exporter. */
-
-ERROR: "foo * bar" should be "foo *bar"
-+static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
-
-WARNING: Symbolic permissions 'S_IRUGO' are not preferred. Consider using octal permissions '0444'.
-+       d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
-
-total: 1 errors, 4 warnings, 1746 lines checked
-
-Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
----
- drivers/dma-buf/dma-buf.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 8892bc701a66..2e63d50e46d3 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -176,8 +176,9 @@ static loff_t dma_buf_llseek(struct file *file, loff_t offset, int whence)
- 	dmabuf = file->private_data;
- 
- 	/* only support discovering the end of the buffer,
--	   but also allow SEEK_SET to maintain the idiomatic
--	   SEEK_END(0), SEEK_CUR(0) pattern */
-+	 * but also allow SEEK_SET to maintain the idiomatic
-+	 * SEEK_END(0), SEEK_CUR(0) pattern.
-+	 */
- 	if (whence == SEEK_END)
- 		base = dmabuf->size;
- 	else if (whence == SEEK_SET)
-@@ -782,13 +783,14 @@ static void mangle_sg_table(struct sg_table *sg_table)
- 	/* To catch abuse of the underlying struct page by importers mix
- 	 * up the bits, but take care to preserve the low SG_ bits to
- 	 * not corrupt the sgt. The mixing is undone in __unmap_dma_buf
--	 * before passing the sgt back to the exporter. */
-+	 * before passing the sgt back to the exporter.
-+	 */
- 	for_each_sgtable_sg(sg_table, sg, i)
- 		sg->page_link ^= ~0xffUL;
- #endif
- 
- }
--static struct sg_table * __map_dma_buf(struct dma_buf_attachment *attach,
-+static struct sg_table *__map_dma_buf(struct dma_buf_attachment *attach,
- 				       enum dma_data_direction direction)
- {
- 	struct sg_table *sg_table;
-@@ -1694,7 +1696,7 @@ static int dma_buf_init_debugfs(void)
- 
- 	dma_buf_debugfs_dir = d;
- 
--	d = debugfs_create_file("bufinfo", S_IRUGO, dma_buf_debugfs_dir,
-+	d = debugfs_create_file("bufinfo", 0444, dma_buf_debugfs_dir,
- 				NULL, &dma_buf_debug_fops);
- 	if (IS_ERR(d)) {
- 		pr_debug("dma_buf: debugfs: failed to create node bufinfo\n");
--- 
-2.17.1
-
+> ---
+>  tools/perf/tests/parse-events.c | 12 ++++--------
+>  tools/perf/util/parse-events.c  |  4 ----
+>  2 files changed, 4 insertions(+), 12 deletions(-)
+>
+> diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-eve=
+nts.c
+> index 727683f249f66f5a..82a19674a38f774e 100644
+> --- a/tools/perf/tests/parse-events.c
+> +++ b/tools/perf/tests/parse-events.c
+> @@ -898,8 +898,7 @@ static int test__group1(struct evlist *evlist)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               /* use of precise requires exclude_guest */
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.prec=
+ise_ip =3D=3D 2);
+>                 TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, =
+leader));
+> @@ -1016,9 +1015,8 @@ static int test__group3(struct evlist *evlist __may=
+be_unused)
+>                                 TEST_ASSERT_VAL("wrong exclude_kernel",
+>                                                 !evsel->core.attr.exclude=
+_kernel);
+>                                 TEST_ASSERT_VAL("wrong exclude_hv", evsel=
+->core.attr.exclude_hv);
+> -                               /* use of precise requires exclude_guest =
+*/
+>                                 TEST_ASSERT_VAL("wrong exclude guest",
+> -                                               evsel->core.attr.exclude_=
+guest);
+> +                                               !evsel->core.attr.exclude=
+_guest);
+>                                 TEST_ASSERT_VAL("wrong exclude host",
+>                                                 !evsel->core.attr.exclude=
+_host);
+>                                 TEST_ASSERT_VAL("wrong precise_ip",
+> @@ -1103,8 +1101,7 @@ static int test__group4(struct evlist *evlist __may=
+be_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", !evsel->core.attr.e=
+xclude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", evsel->core.attr.=
+exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               /* use of precise requires exclude_guest */
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.prec=
+ise_ip =3D=3D 1);
+>                 TEST_ASSERT_VAL("wrong group name", !evsel->group_name);
+> @@ -1122,8 +1119,7 @@ static int test__group4(struct evlist *evlist __may=
+be_unused)
+>                 TEST_ASSERT_VAL("wrong exclude_user", evsel->core.attr.ex=
+clude_user);
+>                 TEST_ASSERT_VAL("wrong exclude_kernel", !evsel->core.attr=
+.exclude_kernel);
+>                 TEST_ASSERT_VAL("wrong exclude_hv", evsel->core.attr.excl=
+ude_hv);
+> -               /* use of precise requires exclude_guest */
+> -               TEST_ASSERT_VAL("wrong exclude guest", evsel->core.attr.e=
+xclude_guest);
+> +               TEST_ASSERT_VAL("wrong exclude guest", !evsel->core.attr.=
+exclude_guest);
+>                 TEST_ASSERT_VAL("wrong exclude host", !evsel->core.attr.e=
+xclude_host);
+>                 TEST_ASSERT_VAL("wrong precise_ip", evsel->core.attr.prec=
+ise_ip =3D=3D 2);
+>                 TEST_ASSERT_VAL("wrong leader", evsel__has_leader(evsel, =
+leader));
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
+s.c
+> index ff67213d6e887169..63da105ba914ef29 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -1769,10 +1769,6 @@ static int parse_events__modifier_list(struct pars=
+e_events_state *parse_state,
+>                 int exclude =3D eu | ek | eh;
+>                 int exclude_GH =3D group ? evsel->exclude_GH : 0;
+>
+> -               if (mod.precise) {
+> -                       /* use of precise requires exclude_guest */
+> -                       eG =3D 1;
+> -               }
+>                 if (mod.user) {
+>                         if (!exclude)
+>                                 exclude =3D eu =3D ek =3D eh =3D 1;
+> --
+> 2.46.1.824.gd892dcdcdd-goog
+>
 
