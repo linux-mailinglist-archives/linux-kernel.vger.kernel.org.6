@@ -1,121 +1,169 @@
-Return-Path: <linux-kernel+bounces-345801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA5C98BB4D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:36:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B4598BB52
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FE751F2270F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F100D1C22E2B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3B11C0DD1;
-	Tue,  1 Oct 2024 11:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022AA1C0DC5;
+	Tue,  1 Oct 2024 11:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuJGJWOv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e/86Gb1A"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3A21C2DB4;
-	Tue,  1 Oct 2024 11:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BE81BFE10;
+	Tue,  1 Oct 2024 11:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727782519; cv=none; b=jhXHHLDPqX42apaTBhTw2euLBWAgBRgZ1nSDiPJrVesiiFr0Nx/dvJW6ZwR5KcVup/efUY4rClMaM3B43FKDpidveMBm4BZMkecD1WC69BPHDHRRAMI1f0qv9wYNcuVHN+KydljYvvGcoPXbyTRklNHl+ZeOPrTxqhsJ5o5uNLs=
+	t=1727782586; cv=none; b=Z3aEClHkvoiD+AJ0NZlHS3zun9sHBGRpzOyPSO3C+4f1Tcs5QjLRqM/2kalsClIxDVJc+tJmB3nnR2dF6qO/kB/5u+oDhyJ6NkIb26dvMYKEaJ8zWqjEjeTc+YTtHT3qd+Dcx1eN7nwqSLELvAyAfm8jP64Yq2icjYvv5Z87lIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727782519; c=relaxed/simple;
-	bh=PLCfu9k2nrqK0Q23eCcS61S+UCWbhfJU+ryvhWPppaw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XEnwf7GE990+Dgh9MMxbPC8QJXo3a71TxfhGXu4FnhUah6VEhmQz1c01ywD+DnWLXcchFJsNRn1Zs2Tfy1x8jiWoD2DpftTU3Bks4jS5gy8AFzmXyAgRttaTLPtLUYSSLaOtBhFWWzgzMjM60M3+2sMOA5+gCYH+tFETq3Y1tvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuJGJWOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A215C4CEC6;
-	Tue,  1 Oct 2024 11:35:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727782518;
-	bh=PLCfu9k2nrqK0Q23eCcS61S+UCWbhfJU+ryvhWPppaw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=cuJGJWOvGtuy95w2CKuaTFpyUid4icwEMHtbAyOEd1SBP7T3ALRPCsctRnLg3yM8P
-	 iCZnl1sN6HzCcahiMymrWhb6zvpjtn7kRTI+CEEV5vNHlGUFG1me+IkGsZZJ/pHaJM
-	 VmW8I3FPpnoErlyQS4+CXDVl3LkmEFfG2MCQMArLnI4/li4dHOUOlcc7imoBT2gMw6
-	 oeosrCrdIEuuAvU11L9j7ri8ih2y/RK4DYUiRqpW0QCgDOrVZht/FuuI59+fG+q7aM
-	 ifEpF9KFVK6ZA11o0c44kU2gjmaVelyl8SG9/cc1ct5ubuW+ARJ2BsAyno5maDgk75
-	 yyroMfbYk1HfQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0F2380DBF7;
-	Tue,  1 Oct 2024 11:35:22 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1727782586; c=relaxed/simple;
+	bh=9LVfX5DE4WDwQ8o0TCm+Ht76lDuHkNfNyC8x+bsil+4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t8n3/jcaR/LvC4CeT7e5ZfvVLHFt8iUXiyi0tPcvzIGBnHt+bJ6Du15ImUpGmH4VwI7zNlIRb1c/t3YiSrNv2mEOsTSCpFgllWU2Leaq2tIQKE9cpJxmp/erwPSmjw2/KYbl+nfoOcSnPM0cGaMVil3Vw2L0kiLudzlCOT2AS0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e/86Gb1A; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1727782582;
+	bh=9LVfX5DE4WDwQ8o0TCm+Ht76lDuHkNfNyC8x+bsil+4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e/86Gb1AM4O0IEKiOyQ4yd6lMyq+7+f7d7WHPpjqKiUuawvdYjDQdFqQQRDNIJOI7
+	 WvCNWvzh6fOdo8MDAhOVuigra8U2jud1+AVMauKohpruTg8W3dAYvJeSnnyW0YGyT5
+	 W46JHAjyJI5bpUBpw9iMJQxvAUL45xy8Jj8VWvZ25jDQtOt6i/8aFUm/hv4tQcFWr3
+	 KPSsjgzVgt0OMO7u8Lk9PxCifkkRUuGwBo/3l3jyghZVHg+YviKsBOclkmmixg73pY
+	 pBPFPm9XqNwRT6/NHi8rlFrhpHoPWf/YX9xbZ9E8a/bM2S/RWY7cZpQGjGL4h2/meN
+	 H9MmARibsgmLA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 64C2F17E0F7D;
+	Tue,  1 Oct 2024 13:36:22 +0200 (CEST)
+Message-ID: <b7032557-0b7c-4329-9762-14bda341e79c@collabora.com>
+Date: Tue, 1 Oct 2024 13:36:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediate: Introduce MT8186
+ Chinchou/Chinchou360 Chromebooks
+To: =?UTF-8?Q?Albert_Jakie=C5=82a?= <jakiela@google.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, wenst@chromium.org, rafal@milecki.pl,
+ hsinyi@chromium.org, nfraprado@collabora.com, sean.wang@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240927122940.4190949-1-jakiela@google.com>
+ <20240927122940.4190949-2-jakiela@google.com>
+ <2c5614f7-0ada-453a-bd81-2f0054a919a0@collabora.com>
+ <CAODvyLQ0pUUvBtfk7Pj05vwTkjEnCkfBY4-EG0okQB972tLC-g@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAODvyLQ0pUUvBtfk7Pj05vwTkjEnCkfBY4-EG0okQB972tLC-g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] RISC-V: KVM: Don't zero-out PMU snapshot area before freeing
- data
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <172778252124.314421.2392376531840304330.git-patchwork-notify@kernel.org>
-Date: Tue, 01 Oct 2024 11:35:21 +0000
-References: <20240815170907.2792229-1-apatel@ventanamicro.com>
-In-Reply-To: <20240815170907.2792229-1-apatel@ventanamicro.com>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, atishp@atishpatra.org, ajones@ventanamicro.com,
- anup@brainfault.org, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
 
-Hello:
-
-This patch was applied to riscv/linux.git (fixes)
-by Anup Patel <anup@brainfault.org>:
-
-On Thu, 15 Aug 2024 22:39:07 +0530 you wrote:
-> With the latest Linux-6.11-rc3, the below NULL pointer crash is observed
-> when SBI PMU snapshot is enabled for the guest and the guest is forcefully
-> powered-off.
+Il 01/10/24 13:13, Albert Jakieła ha scritto:
+> Deleting `compatible` property will not allow the sound card to probe, so I
+> override it with proper compat.
 > 
->   Unable to handle kernel NULL pointer dereference at virtual address 0000000000000508
->   Oops [#1]
->   Modules linked in: kvm
->   CPU: 0 UID: 0 PID: 61 Comm: term-poll Not tainted 6.11.0-rc3-00018-g44d7178dd77a #3
->   Hardware name: riscv-virtio,qemu (DT)
->   epc : __kvm_write_guest_page+0x94/0xa6 [kvm]
->    ra : __kvm_write_guest_page+0x54/0xa6 [kvm]
->   epc : ffffffff01590e98 ra : ffffffff01590e58 sp : ffff8f80001f39b0
->    gp : ffffffff81512a60 tp : ffffaf80024872c0 t0 : ffffaf800247e000
->    t1 : 00000000000007e0 t2 : 0000000000000000 s0 : ffff8f80001f39f0
->    s1 : 00007fff89ac4000 a0 : ffffffff015dd7e8 a1 : 0000000000000086
->    a2 : 0000000000000000 a3 : ffffaf8000000000 a4 : ffffaf80024882c0
->    a5 : 0000000000000000 a6 : ffffaf800328d780 a7 : 00000000000001cc
->    s2 : ffffaf800197bd00 s3 : 00000000000828c4 s4 : ffffaf800248c000
->    s5 : ffffaf800247d000 s6 : 0000000000001000 s7 : 0000000000001000
->    s8 : 0000000000000000 s9 : 00007fff861fd500 s10: 0000000000000001
->    s11: 0000000000800000 t3 : 00000000000004d3 t4 : 00000000000004d3
->    t5 : ffffffff814126e0 t6 : ffffffff81412700
->   status: 0000000200000120 badaddr: 0000000000000508 cause: 000000000000000d
->   [<ffffffff01590e98>] __kvm_write_guest_page+0x94/0xa6 [kvm]
->   [<ffffffff015943a6>] kvm_vcpu_write_guest+0x56/0x90 [kvm]
->   [<ffffffff015a175c>] kvm_pmu_clear_snapshot_area+0x42/0x7e [kvm]
->   [<ffffffff015a1972>] kvm_riscv_vcpu_pmu_deinit.part.0+0xe0/0x14e [kvm]
->   [<ffffffff015a2ad0>] kvm_riscv_vcpu_pmu_deinit+0x1a/0x24 [kvm]
->   [<ffffffff0159b344>] kvm_arch_vcpu_destroy+0x28/0x4c [kvm]
->   [<ffffffff0158e420>] kvm_destroy_vcpus+0x5a/0xda [kvm]
->   [<ffffffff0159930c>] kvm_arch_destroy_vm+0x14/0x28 [kvm]
->   [<ffffffff01593260>] kvm_destroy_vm+0x168/0x2a0 [kvm]
->   [<ffffffff015933d4>] kvm_put_kvm+0x3c/0x58 [kvm]
->   [<ffffffff01593412>] kvm_vm_release+0x22/0x2e [kvm]
+
+The inherited `compatible = "mediatek,mt8186-mt6366-rt1019-rt5682s-sound"` from
+mt8186-corsola.dtsi should allow that to probe correctly.
+
+Can you please share the log of the error(s) that you're seeing?
+
+Thanks,
+Angelo
+
+> On Mon, Sep 30, 2024 at 11:23 AM AngeloGioacchino Del Regno <
+> angelogioacchino.delregno@collabora.com> wrote:
 > 
-> [...]
-
-Here is the summary with links:
-  - RISC-V: KVM: Don't zero-out PMU snapshot area before freeing data
-    https://git.kernel.org/riscv/c/47d40d93292d
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+>> Il 27/09/24 14:29, Albert Jakieła ha scritto:
+>>> The MT8186 Chinchou/Chinchou360, also known as the Asus Chromebook
+>>> CZ12/CZ11 Flip, is a clamshell or convertible device with touchscreen,
+>>> stylus and extra buttons.
+>>>
+>>
+>> You have a typo in your commit title `mediate` -> `mediatek`
+>>
+>>> Signed-off-by: Albert Jakieła <jakiela@google.com>
+>>> ---
+>>> Changes in v2:
+>>> - PATCH 2/2: Remove sku2147483647, remove duplicate nodes, add model
+>>>        and remove uneccecery nodes from sound card.
+>>> - Link to v1:
+>> https://lore.kernel.org/all/20240925080353.2362879-2-jakiela@google.com/
+>>>
+>>> ---
+>>>    arch/arm64/boot/dts/mediatek/Makefile         |   3 +
+>>>    .../mediatek/mt8186-corsola-chinchou-sku0.dts |  18 +
+>>>    .../mediatek/mt8186-corsola-chinchou-sku1.dts |  34 ++
+>>>    .../mt8186-corsola-chinchou-sku16.dts         |  28 ++
+>>>    .../dts/mediatek/mt8186-corsola-chinchou.dtsi | 432 ++++++++++++++++++
+>>>    5 files changed, 515 insertions(+)
+>>>    create mode 100644
+>> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku0.dts
+>>>    create mode 100644
+>> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku1.dts
+>>>    create mode 100644
+>> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou-sku16.dts
+>>>    create mode 100644
+>> arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+>>>
+>>
+>> ..snip..
+>>
+>>
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+>> b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+>>> new file mode 100644
+>>> index 000000000000..96cc3c267c20
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola-chinchou.dtsi
+>>> @@ -0,0 +1,432 @@
+>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+>>> +/*
+>>> + * Copyright 2023 Google LLC
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +#include "mt8186-corsola.dtsi"
+>>> +
+>>> +/ {
+>>
+>> ..snip..
+>>
+>>> +
+>>> +&sound {
+>>> +     status = "okay";
+>>> +
+>>> +     compatible = "mediatek,mt8186-mt6366-rt5650-sound";
+>>
+>> Why did you keep the compatible string override?
+>>
+>>> +     model = "mt8186_rt5650";
+>>> +
+>>
+>> Regards,
+>> Angelo
+>>
+>>
+>>
+>>
+>>
+> 
 
 
 
