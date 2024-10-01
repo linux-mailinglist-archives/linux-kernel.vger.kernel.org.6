@@ -1,176 +1,103 @@
-Return-Path: <linux-kernel+bounces-346721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1205998C7DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:59:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B3498C7F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB581F23E69
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE64428622B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25571CF29C;
-	Tue,  1 Oct 2024 21:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EBC1C3314;
+	Tue,  1 Oct 2024 22:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inB9y5QX"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AC+YzHU8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF0B1CEE89;
-	Tue,  1 Oct 2024 21:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2495199FCE
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 22:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727819953; cv=none; b=qgtePtfbKjhWg6/KdNSh9eO+AH6H9n2OCdgqghBP9VtUua17ozZVZvt9/1OAVSpdzNp28oyTGq2rDHxfbbgVKLQCgC4jR9oYueNH+6DlTtS55/yZWed2m3C48nEfP+VU2IrxNRfdlm5sKL/zSUSI+juuoCgG1/PlAlgOeoAkT6Y=
+	t=1727820279; cv=none; b=XAeevHCbSk7HhIgiJOR7cz8kHWR+oIX7GsJ3aujbXBJrAnX/wLAE7se++Ucs5iD0tZBRf+v4IBEV3lo2iPqZcn1g809JOhuWE1ZyIUo4QILo+5oCA/vxIiUWPIj4nFsrr3f3JJijsmSpdhVZhSdxhjkZb/ToCCf0GUA7ayTg7Gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727819953; c=relaxed/simple;
-	bh=LkItG/XM2lPcbiYc9wOuFAj95UjQCOY/auMtrslpOY0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=je8oAtJx+52J97BprG9JgPvGDBOGVKDJQYfndWjBZdh6DVlqsFfT82OEQOhnUX/JCXEdbBAgG65UlPpkncBeMyoCIcwmuSpJqcQLMKEZ4AW35dcjHyLzTI9RpAQrkC8hxITuNxHh2B0GDeitiZq00Ymu4gGEs4+jH6JmM9LfeOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inB9y5QX; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7e6afa8baeaso5154465a12.3;
-        Tue, 01 Oct 2024 14:59:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727819951; x=1728424751; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LDUmlBvkzd45Lb0kE8W4n/5dpJsPmG0u2wmjx5yqbQQ=;
-        b=inB9y5QXDLahvAKlZlEG1Lyi9KG7Ygjr9Co7ziAs3SNQtJtGVFS+tAyeRZTjIOcbBy
-         KZaHHHC36b2Jgf2CInfZHgkB1F7BsYexLcTxizyJ7suWiFVZFaP1SlYKGwOnV6jUak8A
-         kg6JacqHqJlOVZ2NI/9xZ3XL7ZWiehUcQM3XIu+CqA9vV5jHV9R7llFXyhzrfg551F6d
-         9T/l6vsRm8F7G8zVZe8LUqisbSgUTRA33Nu6ko3HI9lQe5B/I7Rdn7bzzzwCU46YQUpC
-         h/9YcMHPGtyvjNMaHBlt7N42u+j58Bg5W+4sjgDRK1sBcRAvW42qZk4OyxzGRSUnlwtj
-         77LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727819951; x=1728424751;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LDUmlBvkzd45Lb0kE8W4n/5dpJsPmG0u2wmjx5yqbQQ=;
-        b=Vp/72nB8unJOcbRohnbyAVYwJR9xZPKgMTCowpg/JovGCuulGPqodzWOaKCHcaRZCt
-         1xrOmCFb1bPIBsNqtpE2EwELp8giEB568yYV+DH0a9eH8voKbdZjL/ChnSRLb5IVH4Et
-         ypDxZkUOi97NVWuTDiIIXGoIlTzbwfMh8EJZHFSrhQOekar3DpmuRMVZTXxtRPkwd4uW
-         3+fDz+ahaC1/e79qnqKDBV2nf/wZBBKlayGiJQpmc2RF2qrhhyJCKYyV+zRdg9bkz1sX
-         m1xxaNqtEoXBVHzzM5mvRiGGiQIoEU17jMVVwYrDvq+/2ZvOWWsjW7lRssWKTWYP+09y
-         S9zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcbTly3qAqTVH4BINr/2ctOT2JKXphJTIi8ZCRcQ79+epyEeRIdjTfSmz+mJZn6zpuPfBKdeezVpRKdFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVTr+0KupBzUvUVjS0vplxNQ1iqlml155TZdh/CpglOwRM2D6n
-	lRMCwC+TrtiUnDBkRp6toTPMQMnqb35Oz2QZs9j4oBxA1BnXknxw7qSlGDSD
-X-Google-Smtp-Source: AGHT+IHjtg7fH1kJgK/bPu9LnMjn4rLIwOCsVQ7TuJLmUrSlmPmtimjQo+lRK7OnIKTnuiIbhU4CpQ==
-X-Received: by 2002:a05:6a20:c6cd:b0:1d5:1604:65e5 with SMTP id adf61e73a8af0-1d5e2d2f303mr1421339637.40.1727819951052;
-        Tue, 01 Oct 2024 14:59:11 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b2651630esm8599162b3a.109.2024.10.01.14.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 14:59:10 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: dmaengine@vger.kernel.org
-Cc: Vinod Koul <vkoul@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 3/3] dma: mv_xor: use devm for request_irq
-Date: Tue,  1 Oct 2024 14:59:05 -0700
-Message-ID: <20241001215905.316366-4-rosenp@gmail.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241001215905.316366-1-rosenp@gmail.com>
-References: <20241001215905.316366-1-rosenp@gmail.com>
+	s=arc-20240116; t=1727820279; c=relaxed/simple;
+	bh=A+MVeG5VL58i8Luj1L2tLWQOv70M3mGJmVOJtGoKQJY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=ej4WtyTIr6HRvAkGOn+JWbThoU2kT/sc8FaNpnQiVr4uaRjEP65pnkPIa4JREup8EMUsewNrd8xGh3O+cMJYmXyyNVeU7dCCoPATxFCUZiwHor1CQ6W3az3oN5h0NAItH0iZuhFxRhOXqawWukbj4Gtz8bQdi9JEazKgLjPCKuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AC+YzHU8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1263C4CEC6;
+	Tue,  1 Oct 2024 22:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1727820279;
+	bh=A+MVeG5VL58i8Luj1L2tLWQOv70M3mGJmVOJtGoKQJY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AC+YzHU8leL8i+EYVMpSqsmzKiAwgAUWMET8Zqi8/r/s8NWsptyd0RLJpkHu/dkeg
+	 yE5o/jIS3/0wrBOJqH8nAI31EIgqyKG/Buryxe6dxC8NZ6ldLsBi50O/YR1m6wLYrZ
+	 jkL5JMORWiTOkihdNedepP5CwwgakNGzN1jONoiU=
+Date: Tue, 1 Oct 2024 15:04:38 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Patrick Roy <roypat@amazon.co.uk>
+Cc: <rppt@kernel.org>, <david@redhat.com>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, <graf@amazon.com>, <jgowans@amazon.com>
+Subject: Re: [PATCH] secretmem: disable memfd_secret() if arch cannot set
+ direct map
+Message-Id: <20241001150438.017b7bb4cd1baceb53a764bf@linux-foundation.org>
+In-Reply-To: <20241001080056.784735-1-roypat@amazon.co.uk>
+References: <20241001080056.784735-1-roypat@amazon.co.uk>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is only called in _probe. Removes the need to manually free_irq.
+On Tue, 1 Oct 2024 09:00:41 +0100 Patrick Roy <roypat@amazon.co.uk> wrote:
 
-Same with irq_dispose_mapping.
+> Return -ENOSYS from memfd_secret() syscall if !can_set_direct_map().
+> This is the case for example on some arm64 configurations, where marking
+> 4k PTEs in the direct map not present can only be done if the direct map
+> is set up at 4k granularity in the first place (as ARM's
+> break-before-make semantics do not easily allow breaking apart
+> large/gigantic pages).
+> 
+> More precisely, on arm64 systems with !can_set_direct_map(),
+> set_direct_map_invalid_noflush() is a no-op, however it returns success
+> (0) instead of an error. This means that memfd_secret will seemingly
+> "work" (e.g. syscall succeeds, you can mmap the fd and fault in pages),
+> but it does not actually achieve its goal of removing its memory from
+> the direct map.
+> 
+> Note that with this patch, memfd_secret() will start erroring on systems
+> where can_set_direct_map() returns false (arm64 with
+> CONFIG_RODATA_FULL_DEFAULT_ENABLED=n, CONFIG_DEBUG_PAGEALLOC=n and
+> CONFIG_KFENCE=n), but that still seems better than the current silent
+> failure. Since CONFIG_RODATA_FULL_DEFAULT_ENABLED defaults to 'y', most
+> arm64 systems actually have a working memfd_secret() and aren't be
+> affected.
+> 
+> >From going through the iterations of the original memfd_secret patch
+> series, it seems that disabling the syscall in these scenarios was the
+> intended behavior [1] (preferred over having
+> set_direct_map_invalid_noflush return an error as that would result in
+> SIGBUSes at page-fault time), however the check for it got dropped
+> between v16 [2] and v17 [3], when secretmem moved away from CMA
+> allocations.
+> 
+> [1]: https://lore.kernel.org/lkml/20201124164930.GK8537@kernel.org/
+> [2]: https://lore.kernel.org/lkml/20210121122723.3446-11-rppt@kernel.org/#t
+> [3]: https://lore.kernel.org/lkml/20201125092208.12544-10-rppt@kernel.org/
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/dma/mv_xor.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+Thanks.
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 54e3c24d1666..3a0044bff993 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1025,8 +1025,6 @@ static int mv_xor_channel_remove(struct mv_xor_chan *mv_chan)
- 		list_del(&chan->device_node);
- 	}
- 
--	free_irq(mv_chan->irq, mv_chan);
--
- 	return 0;
- }
- 
-@@ -1102,8 +1100,9 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 	/* clear errors before enabling interrupts */
- 	mv_chan_clear_err_status(mv_chan);
- 
--	ret = request_irq(mv_chan->irq, mv_xor_interrupt_handler,
--			  0, dev_name(&pdev->dev), mv_chan);
-+	ret = devm_request_irq(&pdev->dev, mv_chan->irq,
-+			       mv_xor_interrupt_handler, 0,
-+			       dev_name(&pdev->dev), mv_chan);
- 	if (ret)
- 		goto err_free_dma;
- 
-@@ -1128,14 +1127,14 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 		ret = mv_chan_memcpy_self_test(mv_chan);
- 		dev_dbg(&pdev->dev, "memcpy self test returned %d\n", ret);
- 		if (ret)
--			goto err_free_irq;
-+			goto err_free_dma;
- 	}
- 
- 	if (dma_has_cap(DMA_XOR, dma_dev->cap_mask)) {
- 		ret = mv_chan_xor_self_test(mv_chan);
- 		dev_dbg(&pdev->dev, "xor self test returned %d\n", ret);
- 		if (ret)
--			goto err_free_irq;
-+			goto err_free_dma;
- 	}
- 
- 	dev_info(&pdev->dev, "Marvell XOR (%s): ( %s%s%s)\n",
-@@ -1146,12 +1145,10 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
- 
- 	ret = dma_async_device_register(dma_dev);
- 	if (ret)
--		goto err_free_irq;
-+		goto err_free_dma;
- 
- 	return mv_chan;
- 
--err_free_irq:
--	free_irq(mv_chan->irq, mv_chan);
- err_free_dma:
- 	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
- 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
-@@ -1382,7 +1379,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 						  cap_mask, irq);
- 			if (IS_ERR(chan)) {
- 				ret = PTR_ERR(chan);
--				irq_dispose_mapping(irq);
- 				goto err_channel_add;
- 			}
- 
-@@ -1417,11 +1413,8 @@ static int mv_xor_probe(struct platform_device *pdev)
- 
- err_channel_add:
- 	for (i = 0; i < MV_XOR_MAX_CHANNELS; i++)
--		if (xordev->channels[i]) {
-+		if (xordev->channels[i])
- 			mv_xor_channel_remove(xordev->channels[i]);
--			if (pdev->dev.of_node)
--				irq_dispose_mapping(xordev->channels[i]->irq);
--		}
- 
- 	return ret;
- }
--- 
-2.46.2
+> Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+
+So I'm thinking this fix should be backported into kernels which
+contain 1507f51255c9, agree?
 
 
