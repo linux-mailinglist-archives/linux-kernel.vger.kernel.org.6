@@ -1,135 +1,216 @@
-Return-Path: <linux-kernel+bounces-345718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85DF98BA2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDA898BA32
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158031C235D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 388C72832FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43201BF333;
-	Tue,  1 Oct 2024 10:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B284F1BF334;
+	Tue,  1 Oct 2024 10:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="efNyB8Z+"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqCwKBGQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755011BE871
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7D11BE844;
+	Tue,  1 Oct 2024 10:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727780284; cv=none; b=W++PXW8cwoc5KoRlQSckEoUZf56Wna8WAMqZ0qVzZZD7vJje/xZ4d0NZi0PIrnpU9wVx67trDP4F20Wzs7l8BJyXOi78T/ZvZEUHP8dKspyLzc4azyf+878W28AjPsF+v065MDEG6YQCEGaaBOEg5i6rd+9eeDNGX0XVhTYD9hY=
+	t=1727780351; cv=none; b=ZVSPP9H+Ntyh4DizcODdv7jGG/27qV9ORAoGIM+L691SjegOnS7W/mHN+UlKXVcYHyl9bk9MYptcvfuCunz4wgP13YV6n3W+mF7XT8zzWrQIgyRJK2BWIUtodOzR9G/tDLbDotYQ5AExotUttFhghOcUvAtixuDJ+6OzHTEVyuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727780284; c=relaxed/simple;
-	bh=60EhXKAteHv2MPzzdgUAD7FikabFpPaPZwrLroTEnQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgOZihmKYWqS3RffREb7TvYgCXRDIr5KVRsL9E1drVJ4yPUr0MejqSlQd0hrkgCQBZHH+Tsrf3VOXasln1aHzPBx7h3WoeEFqbu3bxvMG/Xym2KHGLfAy/7DlifMkaqF+s92o72iKnlVeI9IOmg7b5TegJqeVhnCxRN1ROoCvlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=efNyB8Z+; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cd8972738so2601892f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727780281; x=1728385081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a1/SnEV7GpnCmA2f8SClpEwW0fcraNKH9MQf0vKkPjQ=;
-        b=efNyB8Z+AvCwCkWkdL4h24U/TWX5Xmp4VJ2RIHSU9QUZq10Id9xKOA+YeAxKOonZW3
-         N4rMc0/lYeVT6M95i6G5Yt1SfO3gBVE/ICwXCEkuhh0GmFyYLCNGTErEGPHWhr3Nkej4
-         sK5r1Q9W/6vRsdu9BUXDIXvweyGRDHbczIK96DFbtJyvDuNTU1fdqd0nChksFaqqqA37
-         0UgaQbZce0AD9LJX/4VZk1SYcJUgGAo5T9t7wFA8ijFvVvAfnJa5l/HknFFT5lzb5mZA
-         1d87CEOFJwW2P7GDILhzwWM1tS9tIksUCAQnSNM++s1mGlXcpxE9gb87k1qzreuE1zfo
-         kzJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727780281; x=1728385081;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a1/SnEV7GpnCmA2f8SClpEwW0fcraNKH9MQf0vKkPjQ=;
-        b=omyW81q3BCvw+GzgAiPNT0ypmOq97fwLzR8IUd8LW4/xDSZSfcSaAbMYjOgrAURk5Q
-         nODhFOtemqJcEou3K79QUwL/hQk6evJPHBzQy6omSn881vXK3UyZqSuhEfQwt6ZFP3Ar
-         vVF+vxOFtLXLIY8sUFVTtsOHOyJTE9L5ZQYgVP6jFA3repCvYKHO/yLh00yA3Jtpw3kb
-         k9LWo8ZiS2vdhSYzJj75NqViRe+AewceW1VWvaBQRwOe/H6l/1FJY9+xOzUAlDai/HzG
-         yDpW0zEsxRsKJY7XFoEL7OjbN9HkZSEOr30LdnefyN5MB1IIFodyKQ9E7FbUMmbhKj5Y
-         TIdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZHzyncCEKf/g45FWVvtIFM42uZrv1SDd3pu8Q3Iq77f7VWXCiVdOpI8E9Adc66wuwHB3+DfqCpIMbEZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSk4HzqSn4ZhMLA9k/y2eej5eNU5mXNrf+GOK0RSv82NJ1XHWI
-	YHRVDHwNerduoVlW7T51SQWa4PAGVQwl3iykERUQusjBMvRA4P6f81QaQF0hJQCcAkBDV0Xy80n
-	SH1FSuPzy0WRPsU7kzC0gJOXjtw2/itZauov4
-X-Google-Smtp-Source: AGHT+IG/OuMrpizTXMK9ykXj5tQizpl0H0yQsEL9StHtl8bSdqhVYJ82YEbwzDkAtDBmCQuH6QaI4BhD+/admbTQT6g=
-X-Received: by 2002:a5d:4a92:0:b0:37c:d21a:3d61 with SMTP id
- ffacd0b85a97d-37cd5b319b6mr9097510f8f.39.1727780280536; Tue, 01 Oct 2024
- 03:58:00 -0700 (PDT)
+	s=arc-20240116; t=1727780351; c=relaxed/simple;
+	bh=VLG6bH+4TEIixDiT/n5phywyTssvqS4L5B6xFjWpTj8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Rq+CmCgpJyRVj4SOx1AyW/CtDJoKOe5hY8ia1gf4UNVGCz5EQ+BYc2LacNwfn5jABk8dqjfG6jXMQuGruFoIIhiLZYOcvnv0PTMQ03I1m9FdMvnU/j118Bb7HtwitcBr5ltGNREJKf7OyL25muW4a9lv9GtL+ihm34gWg8zFnTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqCwKBGQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13B87C4CEC6;
+	Tue,  1 Oct 2024 10:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727780350;
+	bh=VLG6bH+4TEIixDiT/n5phywyTssvqS4L5B6xFjWpTj8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qqCwKBGQbvG5Y7mZadC21ECsFZNdJvThYEu/Dv+m4Qm2YJpPEw1ehBj3+E4O1j0Hc
+	 34iGuvB+XYv+ko88xtmz50o1jPX4QsFOOAkrGWer9YtYbLYpzNPhoywZWUI3BzXqA8
+	 whBHNvTEoN3TeH7/xY748xHxVmuCN45euqpjyEwh6iY1NiYsepnbjp7qQ/AOssqT3l
+	 RTVCurl1yLRKecobCnstz3PKjoBa9+Ypvjkm4bCLf12sScF16s5b/73uHNAXhCpyK2
+	 IxYaT50e5qyd5tbrvVdnRWbi5L/OQmYx5UseY365i6yAeSjqpNVlQbDEquK6M/ssxy
+	 GE3ua1LLqdrtA==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v8 00/12] fs: multigrain timestamp redux
+Date: Tue, 01 Oct 2024 06:58:54 -0400
+Message-Id: <20241001-mgtime-v8-0-903343d91bc3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913210031.20802-1-aliceryhl@google.com> <CALNs47sMJzeZ0yEF9sc-VO_QEu4=jc3QBa1_fhnhX9gdETYaNA@mail.gmail.com>
-In-Reply-To: <CALNs47sMJzeZ0yEF9sc-VO_QEu4=jc3QBa1_fhnhX9gdETYaNA@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 1 Oct 2024 12:57:47 +0200
-Message-ID: <CAH5fLgi4YNsLHFoKw7UsGbmpEaqeG4o5yMQAodZ1KwfExAPL3w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: harden index manipulation using ownership
-To: Trevor Gross <tmgross@umich.edu>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Kees Cook <kees@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Carlos Llamas <cmllamas@google.com>, rust-for-linux@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO7V+2YC/1WNQQ6CMBBFr0Jmbc1QChRX3sO4oHSEiQKmJY2Gc
+ HcLxqjL9zPvzQyeHJOHQzKDo8CexyGC3iXQdPXQkmAbGSRKhVWaib6duCchsam0aWytNUE8vju
+ 68GMLnc6RO/bT6J5bNxTr+k6Uaf5JhEKgUJpymyljpamPV3ID3faja2FthPLr/bwOZfQqaRVKp
+ Mwg/nnLsrwA+W2M09UAAAA=
+To: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+ Stephen Boyd <sboyd@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>, 
+ Chandan Babu R <chandan.babu@oracle.com>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+ Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+ Chuck Lever <chuck.lever@oracle.com>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5473; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=VLG6bH+4TEIixDiT/n5phywyTssvqS4L5B6xFjWpTj8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBm+9X51ZWxnSKAlgEHwigtPXgYjKvq2MPxoDofW
+ DNLLrUo8GyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZvvV+QAKCRAADmhBGVaC
+ FXUnD/9xk4rPMsOtYRJn8MOO+8/wK4SICpYo7lIFsgLUPfBpnAKNP7LkeQCRJUPQ6t0Iqv8CCw1
+ m1RnSWyApVghZBl1ekTUYvFXl1YmeXaYR658KnqlrzpxjEXHo9gcvc6J4yJ/SzxoNT5U0fbBjdQ
+ BtDokFss63xqrWz6LrlmT4Ei3hS4r8RN9vQ80/F7mmwd4c2hI5QgXOFWMVAebF7OmELcRD57PKi
+ YOyH4RvlM5dyXYaeHLy67DiA3m2DhKqZL20ZiNQtBSZTitLWcWRSHT9/NdKL3FtPT+H2Pp+F3rd
+ n1HSKA9jfXaJpZmxXDY76sxl5l0PEWFL70N9Zm9JzbTxTe8LtQBM3zxWGrf9IQSKODhmAgBigPO
+ KzNevAoKHwDlG6dOVwJYdhv4h7GnutryT8KF7Sn1Zdoakfe5cWfUZ0XL8RK6zvqF62hXkysUwKA
+ PwoLRSMsKyck7oAfJwhOnLEpeReMW6vTT/NzOvB3CYR/bjkUEyB8Mt64SJzuwgZsqKZfUEfdFRu
+ h3GSFEft5mhQOOmKuGyTL6ef3p1Dhz1EbWWdsTy+RS53VvOuLKupj8EvIr91Mvx0IfbVsOUQ7Kq
+ /UnT4LFTEg9ef6a4gimMUdyqdz1I+LxBJ+2iqLGoOCawWztpO0XPrUqk42qzWOIYyxtDqVf+GDu
+ oIN/luq0GQ530aw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Mon, Sep 30, 2024 at 1:16=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
-ote:
->
-> On Fri, Sep 13, 2024 at 5:01=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
- wrote:
->
-> > +//! Utilities for working with ranges of indices.
-> > +
-> > +/// A range of indices.
-> > +///
-> > +/// This utility is useful for ensuring that no index in the range is =
-used more than once.
-> > +#[derive(Debug)]
-> > +pub struct Range {
-> > +    offset: usize,
-> > +    length: usize,
-> > +}
->
-> Would a name like "DataRange" or "CheckedRange" be better here, to
-> avoid confusion with core::ops::Range?
+This is a replacement for the v6 series sitting in Christian's
+vfs.mgtime branch.
 
-Probably a good idea. I've had collisions on those types.
+The kernel test robot reported a performance regression in v6 due to the
+changes to current_time(). This patchset addresses that by moving the
+ctime floor handling into the timekeeper code, which allows us to avoid
+multiple seqcount loops when fetching and converting times. The basic
+approach is still the same. The only difference is in where the
+timestamp floor is handled, and in how we get new timestamps.
 
-> > +    /// Use this range of indices.
-> > +    ///
-> > +    /// This destroys the `Range` object, so these indices cannot be u=
-sed again after this call.
-> > +    pub fn use_range(self) -> UsedRange {
->
-> Maybe just `.use()`?
+This reduces the changes to fs/inode.c and avoids a lot of the messiness
+of handling both timespec64's and ktime_t values.
 
-Makes sense to me.
+The pipe1_threads test shows these averages on my test rig:
 
-> > +    /// Assert that this range is aligned properly.
-> > +    pub fn assert_aligned(&self, alignment: usize) -> Result<(), Range=
-Error> {
->
-> It would probably be good to warn that this alignment is relative to
-> the offset, i.e. if you split a range at an unaligned point then this
-> may not be useful.
->
-> This is a pretty cool API idea.
+    v6.11-rc7				103561295 (baseline)
+    v6.11-rc7 + v6 series		95995565  (~7% slower)
+    v6.11-rc7 + v7 series		101357203 (~2% slower)
 
-Thanks!
+...so the performance difference here is significant.
 
-Alice
+The main difference between v6 and v7 is in the first two patches, so
+I've dropped the R-b's from those. The rest I left intact.
+
+Note that there is one additional patch in this series (#4) that adds
+support for handling delegated timestamps. The patches that make use of
+that are in Chuck's nfsd-next branch. Taking that in here should make
+that merge easier.
+
+R-b's would be welcome (particularly from the timekeeper folks).
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v8:
+- split patch that adds percpu counters into fs and timekeeping patches
+- convert percpu counters to unsigned longs
+- directly access the offs_real value in timekeeper instead of going
+  through offsets array
+- drop WARN_ON's in timekeeping patches
+- better changelogs and more comments for the timekeeping bits
+- better document how backward realtime clock jumps affect things
+- Link to v7: https://lore.kernel.org/r/20240913-mgtime-v7-0-92d4020e3b00@kernel.org
+
+Changes in v7:
+- move the floor value handling into timekeeper for better performance
+- Link to v6: https://lore.kernel.org/r/20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org
+
+Changes in v6:
+- Normalize timespec64 in inode_set_ctime_to_ts
+- use DEFINE_PER_CPU counters for better vfs consistency
+- skip ctime cmpxchg if the result means nothing will change
+- add trace_ctime_xchg_skip to track skipped ctime updates
+- use __print_flags in ctime_ns_xchg tracepoint
+- Link to v5: https://lore.kernel.org/r/20240711-mgtime-v5-0-37bb5b465feb@kernel.org
+
+Changes in v5:
+- refetch coarse time in coarse_ctime if not returning floor
+- timestamp_truncate before swapping new ctime value into place
+- track floor value as atomic64_t
+- cleanups to Documentation file
+- Link to v4: https://lore.kernel.org/r/20240708-mgtime-v4-0-a0f3c6fb57f3@kernel.org
+
+Changes in v4:
+- reordered tracepoint fields for better packing
+- rework percpu counters again to also count fine grained timestamps
+- switch to try_cmpxchg for better efficiency
+- Link to v3: https://lore.kernel.org/r/20240705-mgtime-v3-0-85b2daa9b335@kernel.org
+
+Changes in v3:
+- Drop the conversion of i_ctime fields to ktime_t, and use an unused bit
+  of the i_ctime_nsec field as QUERIED flag.
+- Better tracepoints for tracking floor and ctime updates
+- Reworked percpu counters to be more useful
+- Track floor as monotonic value, which eliminates clock-jump problem
+
+Changes in v2:
+- Added Documentation file
+- Link to v1: https://lore.kernel.org/r/20240626-mgtime-v1-0-a189352d0f8f@kernel.org
+
+---
+Jeff Layton (12):
+      timekeeping: add interfaces for handling timestamps with a floor value
+      fs: add infrastructure for multigrain timestamps
+      fs: have setattr_copy handle multigrain timestamps appropriately
+      fs: handle delegated timestamps in setattr_copy_mgtime
+      fs: tracepoints around multigrain timestamp events
+      fs: add percpu counters for significant multigrain timestamp events
+      timekeeping: add percpu counter for tracking floor swap events
+      Documentation: add a new file documenting multigrain timestamps
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+      tmpfs: add support for multigrain timestamps
+
+ Documentation/filesystems/index.rst         |   1 +
+ Documentation/filesystems/multigrain-ts.rst | 125 +++++++++++++
+ fs/attr.c                                   |  60 +++++-
+ fs/btrfs/file.c                             |  25 +--
+ fs/btrfs/super.c                            |   3 +-
+ fs/ext4/super.c                             |   2 +-
+ fs/inode.c                                  | 278 +++++++++++++++++++++++++---
+ fs/stat.c                                   |  42 ++++-
+ fs/xfs/libxfs/xfs_trans_inode.c             |   6 +-
+ fs/xfs/xfs_iops.c                           |  10 +-
+ fs/xfs/xfs_super.c                          |   2 +-
+ include/linux/fs.h                          |  36 +++-
+ include/linux/timekeeping.h                 |   5 +
+ include/trace/events/timestamp.h            | 124 +++++++++++++
+ kernel/time/timekeeping.c                   |  97 ++++++++++
+ kernel/time/timekeeping_debug.c             |  13 ++
+ kernel/time/timekeeping_internal.h          |   9 +
+ mm/shmem.c                                  |   2 +-
+ 18 files changed, 767 insertions(+), 73 deletions(-)
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20240913-mgtime-20c98bcda88e
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
