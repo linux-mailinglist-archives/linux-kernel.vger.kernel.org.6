@@ -1,289 +1,252 @@
-Return-Path: <linux-kernel+bounces-345462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534FA98B696
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:10:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3B698B69F
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:18:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D490E1F220A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:10:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30561F21F18
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC46E1BE843;
-	Tue,  1 Oct 2024 08:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC6F199FBE;
+	Tue,  1 Oct 2024 08:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emJxK/jt"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X2SrU10w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD6C1BDAA8;
-	Tue,  1 Oct 2024 08:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E2A155738
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727770238; cv=none; b=HK1szR9lBTFeOHPRYyzVsBWU+42MaXvoOf7KiSQpOwtxri4iyQaOB4nkwBbWEltEA4SUUn8I5/F7DJ9qUev8U+3bkYFO+jwIpVQlL0+vKbzrp9eXICpOdZnmyA+Tzn52ai0ppMDLjzdERRRaF01NJq51olNlUW4KWsUj+JZWJNY=
+	t=1727770715; cv=none; b=u87XVFuztUP6LvEM/Hu9Wo65whKTNbBVuw4LV1RmTDik9FiyVQ/4QXjW2uwp0oMXIyyPRo5JGGsI7IcEHK70NWZRUq9FpxUFuCNQsvpwY/RwDLilrw/KB8/mFOSwPNrtiqD+5QUuOf1mSTfOVwjSGfOlRvadHjWYmTMz7ikODzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727770238; c=relaxed/simple;
-	bh=42O3WG7idEz0kt6z2OClF0wZmbxLAUMQFZADcf0A7DQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XBHwQvfmmJJzZ5HrxERrocs3ztMLRqpNKfkCq3/mjYwpFg4VinyZKGBYXqnGl9BU/Ld24hO4aPbxJIG6vBpbA9sDLBEAOnllsVvxkINS3YzF78SfAccPoU1M5gjgZzWr4PSxsediAhCU/52THPUVRrz+dCItgPJ6alloGTp4xjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emJxK/jt; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37cdb42b29dso2166921f8f.0;
-        Tue, 01 Oct 2024 01:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727770234; x=1728375034; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gCFgGTaj2mpysw+k4DdlR3/nJ2KKF9nZPNZv+TdifjM=;
-        b=emJxK/jtQlR60or3AcaLQde0mgq4nl4FSeaRbYSChFlEY4jnF5F6YxUTjj1EAaEX5g
-         Hj8ec9Izpa5y6doxB9sqLVJjV3mjNdjdDbE7k5i/NoHeTkp6YuqlksicinWjPPz9z+n3
-         SmRaZUkctAB1yMfAYePnNcxPyncT27reWD08xnwNKTaz/0umSYHnkzAOmN6bvgPnvwBR
-         a+n6Sg5FRrSC2BzLnwO843qlLh7cCAiQxKYIY7uM2QuhaRQVxdoq/26kB43syiXQulk1
-         jfYyhdM62tgWsWf2QgBHyE/VhqZHDZYtQ6j3gF4KeoxSRA1o0pbDOE7xrWGODBTkVtjN
-         p1Ig==
+	s=arc-20240116; t=1727770715; c=relaxed/simple;
+	bh=FVxXA/46bA5Ju+Ip7o8RoCF1qH4WFWf5J+bvz/jXLNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bStJGGPTdc32GylcGRomKK+Wqn7mSUxc9WhmmDdn3lsuhw20P7zRoutzPg5SybdtFHa1CE7nctSbeVkT/VEso78PjC+avBuzK6p3udu0BMpEY5b1LXS6QdGuujfmmaMJGVf8dwkESK+sK9zDGvfutrSEfv1rk550+BPRO2KXq+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X2SrU10w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727770710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6fHoFX0PDnSZTfecN4IZ6eBr8XhvG76aRuFk6iUg1wg=;
+	b=X2SrU10wxz1xKAnN9Gep020hPJNhuF1E0LHb5OkGHHnIyjXNnwHt4zyTJhb00G96Ntk+Pz
+	htzFvnmUy/oW1PlSulOk1aw45XeIarMPAOEe002iJBrqKpaNom4TliYbFsN8vlazXRb6fj
+	b8MZPj4ICUslQEB2S1DiBHpYu7FUZa0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-6-yp53AI6kPi6mP6JScelzYg-1; Tue, 01 Oct 2024 04:18:29 -0400
+X-MC-Unique: yp53AI6kPi6mP6JScelzYg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42cdeac2da6so43501645e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 01:18:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727770234; x=1728375034;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gCFgGTaj2mpysw+k4DdlR3/nJ2KKF9nZPNZv+TdifjM=;
-        b=ZZ4ERzDi0Mb9Itzng3poIIO80GANkh106KKcvd/bkn/NDZogqjD/9TIc2qLMBsD+Z2
-         8k/ZJA+G3oDI0nQJdzz5uQJ/YpxjZZobePVfOiVkXptXYN+qOlwHMhn4aMRQMQhkBDOY
-         05Wls6BJraPPcGQbzwtmEdy/iyoBSaPzUW9+b1MpB7KO/lYoXyeVCa4/LbOUfAAmLVnG
-         rF44luGd1UvbxVs3C+JKTVaVpEmDDwFT0fTJTrA2v8XVdFf9FFCqMS4COr9iWMpavD3x
-         PFTMUzOEh+PAaPvV0KDGWrnGwyvj/nebNKO13x1bObd1QziuCG7YzQppUuYcZzwOYCX3
-         hf1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUYLVq2oy0G5mT1gkTMfr4QHYmSciN3rwterLxsQAxH+7s4BgHnwQuyr1MizSXCy9mD+JdMSdNnIQ3n@vger.kernel.org, AJvYcCWM9LsbVITpddv5CcFYoaNnsc2XbE1aqRyFQku1PZGFtrNksgNm5+mN89EizfZO0lNqnNAQb16x+NyK@vger.kernel.org, AJvYcCX4YEMdtn71aRJ+rPX6S98ei3KjfdeTUL421FXDwW1RqilrApOocwp7X7KWcgCnKobrIlGVrFxxTehUfDjj@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMS5SboAj2xqfbMb1VZaZkQ+dZyPv3reFPkNRXNzHQnPUsO2QF
-	7UYt9LUmdaRqRBJ+ar6lRK3R677QGIumeL+3dinNi5HOU+w4sKoE
-X-Google-Smtp-Source: AGHT+IG8zsGXHj764hEucv2Jn32Z7x2kMFq36S9oUI53hN/t80pUkIhlERR7i1FrvE9QOrLC3TLRfw==
-X-Received: by 2002:a5d:6751:0:b0:37c:cca1:b1e3 with SMTP id ffacd0b85a97d-37cd5aec57cmr8224211f8f.41.1727770234141;
-        Tue, 01 Oct 2024 01:10:34 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef02:2700:7684:3ff1:6790:3866? (p200300f6ef02270076843ff167903866.dip0.t-ipconnect.de. [2003:f6:ef02:2700:7684:3ff1:6790:3866])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd575d459sm11131609f8f.113.2024.10.01.01.10.32
+        d=1e100.net; s=20230601; t=1727770707; x=1728375507;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6fHoFX0PDnSZTfecN4IZ6eBr8XhvG76aRuFk6iUg1wg=;
+        b=B96f0Vw7G/ZQseZBvL1SAVaJIz04xHiNAE+Yf8crh1R02WwmVuTFr4lFuTqKs2ukN6
+         AjLLFQRjzAZ6Jb2NP7iRiXqZHh/iEH0DzkSn4CXMYp5B4/wuYDjIe9Cqp54PgTtJ5sye
+         BSNclElELuXMbZ8fYx3pGWuNF1TU2ptJKJZyhJZJQht++ce68gGASh3Acr1VC3AZkcDk
+         4notMpHnUL/VFNu4GoDHMCRnfSaVOimcJaE42cL6YmRouAd4mSY7TKBNgSEo9es/fvRB
+         t39RhHXvKFmouEI+WbQCNd8TfxCq/jP4jMwNfqlFasHnDgoY0k0js/xlg7UePiRvnObJ
+         z9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsnrWVxtombQQjgHfsqUUUGoBIeMDRaVcYMcJpii2vqWnAUCDpofWA2Uzfn9NZyptIlQDrVpfizK/33GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQmWSB/IbkJE1tJjmdoCvp2mloXOZHpnc1AuIuCkX6HIZ1OeIE
+	xj599fsxllcETyHSKsAKEyvxSxGhquPCA9AfgVuOBBMBMo5aCrcq9sda6ddklJnY/S+96AyUnId
+	/ZmZAjYOWjDd4xD8nCQCgUTrFb+8SbzxrNgPTCARw+mVBTocXVVQ6UUpA51LQw78dGJAwWg==
+X-Received: by 2002:a05:600c:a4b:b0:42c:b6e4:e3aa with SMTP id 5b1f17b1804b1-42f5840d0e8mr111361475e9.5.1727770707340;
+        Tue, 01 Oct 2024 01:18:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw8ufUH6F5nDbkSSNEqTEzuf4KWYsJLQeJtg49jP8WrSSKL+9gbTDJ/scSAsPl74EhIIVgvA==
+X-Received: by 2002:a05:600c:a4b:b0:42c:b6e4:e3aa with SMTP id 5b1f17b1804b1-42f5840d0e8mr111361235e9.5.1727770706900;
+        Tue, 01 Oct 2024 01:18:26 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd56e6875sm11227722f8f.55.2024.10.01.01.18.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 01:10:33 -0700 (PDT)
-Message-ID: <3370ba6d9a6bb8da5ca1415c354a6076de6f1d79.camel@gmail.com>
-Subject: Re: [PATCH v3 05/10] iio: backend: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>,  Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
-	 <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Date: Tue, 01 Oct 2024 10:14:45 +0200
-In-Reply-To: <c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
-References: 
-	<20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-0-a17b9b3d05d9@baylibre.com>
-	 <20240919-wip-bl-ad3552r-axi-v0-iio-testing-v3-5-a17b9b3d05d9@baylibre.com>
-	 <20240929120535.6b41c37e@jic23-huawei>
-	 <c9e30ebf-c661-4345-87bd-3169b57175fc@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.0 
+        Tue, 01 Oct 2024 01:18:26 -0700 (PDT)
+Date: Tue, 1 Oct 2024 10:18:25 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Eric Mackay <eric.mackay@oracle.com>
+Cc: boris.ostrovsky@oracle.com, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com
+Subject: Re: [PATCH] KVM/x86: Do not clear SIPI while in SMM
+Message-ID: <20241001101825.38b23397@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20240930233458.27182-1-eric.mackay@oracle.com>
+References: <20240927112839.1b59ca46@imammedo.users.ipa.redhat.com>
+	<20240930233458.27182-1-eric.mackay@oracle.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-09-30 at 14:25 -0500, David Lechner wrote:
-> On 9/29/24 6:05 AM, Jonathan Cameron wrote:
-> > On Thu, 19 Sep 2024 11:20:01 +0200
-> > Angelo Dureghello <adureghello@baylibre.com> wrote:
-> >=20
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
+On Mon, 30 Sep 2024 16:34:57 -0700
+Eric Mackay <eric.mackay@oracle.com> wrote:
+
+> > On Thu, 26 Sep 2024 18:22:39 -0700
+> > Eric Mackay <eric.mackay@oracle.com> wrote: =20
+> > > > On 9/24/24 5:40 AM, Igor Mammedov wrote:   =20
+> > > >> On Fri, 19 Apr 2024 12:17:01 -0400
+> > > >> boris.ostrovsky@oracle.com wrote:
+> > > >>    =20
+> > > >>> On 4/17/24 9:58 AM, boris.ostrovsky@oracle.com wrote:   =20
+> > > >>>>
+> > > >>>> I noticed that I was using a few months old qemu bits and now I =
+am
+> > > >>>> having trouble reproducing this on latest bits. Let me see if I =
+can get
+> > > >>>> this to fail with latest first and then try to trace why the pro=
+cessor
+> > > >>>> is in this unexpected state.   =20
+> > > >>>
+> > > >>> Looks like 012b170173bc "system/qdev-monitor: move drain_call_rcu=
+ call
+> > > >>> under if (!dev) in qmp_device_add()" is what makes the test to st=
+op failing.
+> > > >>>
+> > > >>> I need to understand whether lack of failures is a side effect of=
+ timing
+> > > >>> changes that simply make hotplug fail less likely or if this is an
+> > > >>> actual (but seemingly unintentional) fix.   =20
+> > > >>=20
+> > > >> Agreed, we should find out culprit of the problem.   =20
+> > > >
+> > > >
+> > > > I haven't been able to spend much time on this unfortunately, Eric =
+is=20
+> > > > now starting to look at this again.
+> > > >
+> > > > One of my theories was that ich9_apm_ctrl_changed() is sending SMIs=
+ to=20
+> > > > vcpus serially while on HW my understanding is that this is done as=
+ a=20
+> > > > broadcast so I thought this could cause a race. I had a quick test =
+with=20
+> > > > pausing and resuming all vcpus around the loop but that didn't help.
+> > > >
+> > > >   =20
+> > > >>=20
+> > > >> PS:
+> > > >> also if you are using AMD host, there was a regression in OVMF
+> > > >> where where vCPU that OSPM was already online-ing, was yanked
+> > > >> from under OSMP feet by OVMF (which depending on timing could
+> > > >> manifest as lost SIPI).
+> > > >>=20
+> > > >> edk2 commit that should fix it is:
+> > > >>      https://github.com/tianocore/edk2/commit/1c19ccd5103b
+> > > >>=20
+> > > >> Switching to Intel host should rule that out at least.
+> > > >> (or use fixed edk2-ovmf-20240524-5.el10.noarch package from centos,
+> > > >> if you are forced to use AMD host)   =20
 > > >=20
-> > > Extend backend features with new calls needed later on this
-> > > patchset from axi version of ad3552r.
+> > > I haven't been able to reproduce the issue on an Intel host thus far,
+> > > but it may not be an apples-to-apples comparison because my AMD hosts
+> > > have a much higher core count.
+> > >  =20
+> > > >
+> > > > I just tried with latest bits that include this commit and still wa=
+s=20
+> > > > able to reproduce the problem.
+> > > >
+> > > >
+> > > >-boris   =20
 > > >=20
-> > > The follwoing calls are added:
+> > > The initial hotplug of each CPU appears to complete from the
+> > > perspective of OVMF and OSPM. SMBASE relocation succeeds, and the new
+> > > CPU reports back from the pen. It seems to be the later INIT-SIPI-SIPI
+> > > sequence sent from the guest that doesn't complete.
 > > >=20
-> > > iio_backend_ext_sync_enable
-> > > 	enable synchronize channels on external trigger
-> > > iio_backend_ext_sync_disable
-> > > 	disable synchronize channels on external trigger
-> > > iio_backend_ddr_enable
-> > > 	enable ddr bus transfer
-> > > iio_backend_ddr_disable
-> > > 	disable ddr bus transfer
-> > > iio_backend_set_bus_mode
-> > > 	select the type of bus, so that specific read / write
-> > > 	operations are performed accordingly
-> > > iio_backend_buffer_enable
-> > > 	enable buffer
-> > > iio_backend_buffer_disable
-> > > 	disable buffer
-> > > iio_backend_data_transfer_addr
-> > > 	define the target register address where the DAC sample
-> > > 	will be written.
+> > > My working theory has been that some CPU/AP is lagging behind the oth=
+ers
+> > > when the BSP is waiting for all the APs to go into SMM, and the BSP j=
+ust
+> > > gives up and moves on. Presumably the INIT-SIPI-SIPI is sent while th=
+at
+> > > CPU does finally go into SMM, and other CPUs are in normal mode.
 > > >=20
-> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > Hi Angelo,
-> > A few trivial comments inline.
+> > > I've been able to observe the SMI handler for the problematic CPU will
+> > > sometimes start running when no BSP is elected. This means we have a
+> > > window of time where the CPU will ignore SIPI, and least 1 CPU is in
+> > > normal mode (the BSP) which is capable of sending INIT-SIPI-SIPI from
+> > > the guest. =20
 > >=20
-> > > ---
-> > > =C2=A0drivers/iio/industrialio-backend.c | 111
-> > > +++++++++++++++++++++++++++++++++++++
-> > > =C2=A0include/linux/iio/backend.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 23 ++++++++
-> > > =C2=A02 files changed, 134 insertions(+)
-> > >=20
-> > > diff --git a/drivers/iio/industrialio-backend.c
-> > > b/drivers/iio/industrialio-backend.c
-> > > index 20b3b5212da7..f4802c422dbf 100644
-> > > --- a/drivers/iio/industrialio-backend.c
-> > > +++ b/drivers/iio/industrialio-backend.c
-> > > @@ -718,6 +718,117 @@ static int __devm_iio_backend_get(struct device
-> > > *dev, struct iio_backend *back)
-> > ...
+> > I've re-read whole thread and noticed Boris were saying: =20
+> >   > On Tue, Apr 16, 2024 at 10:57=E2=80=AFPM <boris.ostrovsky@oracle.co=
+m> wrote: =20
+> >   > > On 4/16/24 4:53 PM, Paolo Bonzini wrote:   =20
+> >   ... =20
+> >   > > >
+> >   > > > What is the reproducer for this?   =20
+> >   > >
+> >   > > Hotplugging/unplugging cpus in a loop, especially if you oversubs=
+cribe
+> >   > > the guest, will get you there in 10-15 minutes. =20
+> >   ...
 > >=20
-> > > +/**
-> > > + * iio_backend_ddr_disable - Disable interface DDR (Double Data Rate=
-)
-> > > mode
-> > > + * @back: Backend device
-> > > + *
-> > > + * Disabling DDR data is generated byt the IP at rising or falling f=
-ront
+> > So there was unplug involved as well, which was broken since forever.
 > >=20
-> > Spell check your comments.
+> > Recent patch
+> >  https://patchew.org/QEMU/20230427211013.2994127-1-alxndr@bu.edu/202304=
+27211013.2994127-2-alxndr@bu.edu/
+> > has exposed issue (unexpected uplug/unplug flow) with root cause in OVM=
+F.
+> > Firmware was letting non involved APs run wild in normal mode.
+> > As result AP that was calling _EJ0 and holding ACPI lock was
+> > continuing _EJ0 and releasing ACPI lock, while BSP and a being removed
+> > CPU were still in SMM world. And any other plug/unplug op
+> > were able to grab ACPI lock and trigger another SMI, which breaks
+> > hotplug flow expectations (aka exclusive access to hotplug registers
+> > during plug/unplug op)
+> > Perhaps that's what you are observing.
 > >=20
-> > > + * of the interface clock signal (SDR, Single Data Rate).
-> > > + *
-> > > + * RETURNS:
-> > > + * 0 on success, negative error number on failure.
-> > > + */
-> > > +int iio_backend_ddr_disable(struct iio_backend *back)
-> > > +{
-> > > +	return iio_backend_op_call(back, ddr_disable);
-> > > +}
-> > > +EXPORT_SYMBOL_NS_GPL(iio_backend_ddr_disable, IIO_BACKEND);
-> > 				 struct fwnode_handle *fwnode)
-> > > =C2=A0{
-> > > diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.=
-h
-> > > index 37d56914d485..41619b803cd6 100644
-> > > --- a/include/linux/iio/backend.h
-> > > +++ b/include/linux/iio/backend.h
-> > > @@ -14,12 +14,14 @@ struct iio_dev;
-> > > =C2=A0enum iio_backend_data_type {
-> > > =C2=A0	IIO_BACKEND_TWOS_COMPLEMENT,
-> > > =C2=A0	IIO_BACKEND_OFFSET_BINARY,
-> > > +	IIO_BACKEND_DATA_UNSIGNED,
-> > > =C2=A0	IIO_BACKEND_DATA_TYPE_MAX
-> > > =C2=A0};
-> > > =C2=A0
-> > > =C2=A0enum iio_backend_data_source {
-> > > =C2=A0	IIO_BACKEND_INTERNAL_CONTINUOUS_WAVE,
-> > > =C2=A0	IIO_BACKEND_EXTERNAL,
-> > > +	IIO_BACKEND_INTERNAL_RAMP_16BIT,
-> > > =C2=A0	IIO_BACKEND_DATA_SOURCE_MAX
-> > > =C2=A0};
-> > > =C2=A0
-> > > @@ -89,6 +91,13 @@ enum iio_backend_sample_trigger {
-> > > =C2=A0 * @read_raw: Read a channel attribute from a backend device
-> > > =C2=A0 * @debugfs_print_chan_status: Print channel status into a buff=
-er.
-> > > =C2=A0 * @debugfs_reg_access: Read or write register value of backend=
-.
-> > > + * @ext_sync_enable: Enable external synchronization.
-> > > + * @ext_sync_disable: Disable external synchronization.
-> > > + * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
-> > > + * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
-> > > + * @buffer_enable: Enable data buffer.
-> > > + * @buffer_disable: Disable data buffer.
-> >=20
-> > This needs more specific text. What buffer?=C2=A0 I think this came
-> > up earlier but it needs to say something about the fact it's enabling
-> > or disabling the actual capture of data into the DMA buffers that
-> > userspace will read.
-> >=20
-> > > + * @data_transfer_addr: Set data address.
-> > > =C2=A0 **/
-> > > =C2=A0struct iio_backend_ops {
-> > > =C2=A0	int (*enable)(struct iio_backend *back);
-> > > @@ -129,6 +138,13 @@ struct iio_backend_ops {
-> > > =C2=A0					 size_t len);
-> > > =C2=A0	int (*debugfs_reg_access)(struct iio_backend *back, unsigned i=
-nt
-> > > reg,
-> > > =C2=A0				=C2=A0 unsigned int writeval, unsigned int
-> > > *readval);
-> > > +	int (*ext_sync_enable)(struct iio_backend *back);
-> > I know we've done it this way for existing items, but I wonder if we sh=
-ould
-> > squish down the ops slightly and have new enable/disable pairs as
-> > single functions.
-> > 	int (*ext_sync_set_state)(struct iio_backend *back, bool enable);
-> > etc.=C2=A0 If nothing else reduces how many things need documentation ;=
-)
-> >=20
-> > Nuno, what do you think? Worth squashing these pairs into single
-> > callbacks?
+> > Please check if following helps:
+> >   https://github.com/kraxel/edk2/commit/738c09f6b5ab87be48d754e62deb72b=
+767415158
+> >  =20
 >=20
-> I'm not a fan of combining enable and disable functions into one function=
-.
+> I haven't actually seen the guest crash during unplug, though certainly
+> there have been unplug failures. I haven't been keeping track of the
+> unplug failures as closely, but a test I ran over the weekend with this
+> patch added seemed to show less unplug failures.
+
+it's not only about unplug, unfortunately.
+QEMU that includes Alexander's patch, essentially denies access to hotplug
+registers if unplug is in process. So if there is hotplug going at the same
+time, it may be broken by that access deny.
+To exclude this issue, you need to test with edk2 fix or use older QEMU
+without Alexander's patch.
+
+
+> I'm still getting hotplug failures that cause a guest crash though, so
+> that mystery remains.
 >=20
-> The implementation will pretty much always be:
+> > So yes, SIPI can be lost (which should be expected as others noted)
+> > but that normally shouldn't be an issue as wakeup_secondary_cpu_via_ini=
+t()
+> > do resend SIPI.
+> > However if wakeup_secondary_cpu is set to another handler that doesn't
+> > resend SIPI, It might be an issue. =20
 >=20
-> if (enabled) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* so stuff */
-> } else {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* do other stuff */
-> }
->=20
-> Which just adds indent and makes code harder to read.
->=20
+> We're using wakeup_secondary_cpu_via_init(). acpi_wakeup_cpu() and
+> wakeup_cpu_via_vmgexit(), for example, are a bit opaque to me, so I'm
+> not sure if those code paths include a SIPI resend.
 
-Hi Jonathan and David,
+wakeup_secondary_cpu_via_init() should re-send SIPI.
+If you can reproduce with KVM tracing and guest kernel debug enabled,
+I'd try to do that and check if SIPI are being re-sent or not.
+That at least should give a hint if we should look at guest side or at KVM/=
+QEMU.
 
-Yeah, I have this on my todo list and to be fair with Angelo, he already ha=
-d
-something like you're suggesting. I kind of asked him to postpone that so w=
-e
-don't have mixed styles in the file for now. Then I would convert them all.=
- My
-plan would be to squash the .ops into one and then have inline
-enable()/disable() helpers (at least for the current users in order to keep
-things easier to convert).
-
-As for David's comment, I see your point but one can always improve things =
-a bit
-
-if (enable) {
-	/* do stuff */
-	return;
-}
-
-/* do disable stuff */
-return 0
-
-I'm aware the above is always not that straight... but I do think there's a=
-lways
-ways to rearrange things a bit to make it better. Because even with the
-enable()/disable() approach, if you start to have a lot of common code, lik=
-ely
-you'll add an helper function. In some cases, one can even add the helper r=
-ight
-away with an 'enable' argument effectively doing what is being suggested in
-here. It always depends on the person implementing the ops :)
-
-Anyways, I really don't have a strong feeling about this. I had in my mind =
-to do
-something like this. It feels that Jonathan would already be ok with it. If=
- it's
-not that awful for David, I'll eventually send the patches (unless Angelo w=
-ants
-to take care if it in this series).
-
-- Nuno S=C3=A1
->=20
 
