@@ -1,95 +1,93 @@
-Return-Path: <linux-kernel+bounces-345591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF9698B7D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:02:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6D398B7D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 011E8B2609F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:02:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D013828451A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 09:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB25C19CD1E;
-	Tue,  1 Oct 2024 09:02:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CC419CCFC;
+	Tue,  1 Oct 2024 09:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=helene.moe header.i=@helene.moe header.b="Bgkh+Nfa"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4ubeKcR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3F619CC0A
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 09:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E354519ABCB;
+	Tue,  1 Oct 2024 09:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727773337; cv=none; b=CtYQfcHPvM4EyRT0az8GUiEmJLFHNfeWWvoJGFcnlER/ahb7VuPrMorFj6hS9gQ10hqCHwoPsNDhfSOgFCdKOiIzXJhhpeCFGUDDRD36tHufWyr6PdQY0iGiXKfudqFMUdD+64oHq+ghGPRGwoqYXvx08EWYGDzk5aEVMSLBv4w=
+	t=1727773354; cv=none; b=rPgNNCKj8Y2c3m3Snm/VpPVafVpZ697XY8gqoesxg+gRTxtq8IyOIgQPRADIn9bipaD2My+UT4U8Epe/ZiGm1Mq1AsAgjJ2G5SF74kN1+dCJfoi2kKbvTBuq5njJng9xClrk58/gzqkC/Gh9Mjjic/IBAE289gnKZyF6vdwL/6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727773337; c=relaxed/simple;
-	bh=lB/q12JPSaPUA3WAv3k50l5Eoenredy6Lsztq37ipTg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=MIC5Y3Y1A0T8GMbHAmXo/vv7t8BB1XTKQqCuJPp35sMYIswjWuYL4gtmWxzYo4I9wi9B9IiuHeYCgdopTWLU1KUE2K2YShWJ/Svibmp7lrLiOy8Tf0qclUHxwG5Sq9tzTF72LJtYcx96xZ4JFXT7qMpTHdBkAR1V80lnefA+5+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helene.moe; spf=pass smtp.mailfrom=helene.moe; dkim=pass (2048-bit key) header.d=helene.moe header.i=@helene.moe header.b=Bgkh+Nfa; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=helene.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helene.moe
+	s=arc-20240116; t=1727773354; c=relaxed/simple;
+	bh=6bf5fSHj60t3k4yhPDUaRPovE0nur9YRMmZw68ogcyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tAXLh4feRMgB6K67YHAdCE23CxBIJTYKqRaYbexMyf+v30DDTwZHDryhv56rUeWr5YRhCgbXuoRn8uQL0Vb2pMibbhiKE4J42e/RK+H95BtylMuExV99OYUMqeBnGNdnS2r6EvyFl1q/WA8vu27RPFQfZ7Zt7vYkowTo2SktBmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4ubeKcR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F075C4CEC6;
+	Tue,  1 Oct 2024 09:02:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727773353;
+	bh=6bf5fSHj60t3k4yhPDUaRPovE0nur9YRMmZw68ogcyU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=A4ubeKcRZU2j6ThTxZUlFYodHpwGp/gsahSoDaeouA+16K8/I2wTIg+cdviIb7Z2a
+	 SG4EMlY16FMVnjykuSHWX48SRKAsZ4Q7ApQmYYJO/yiLkvlRnLDki5C9mBc8XY/BWT
+	 Mb95xqE0JdZ8PanrSeDIAtCWUM+rzRjTVmr+D5eBn2b5ARiuREzP/K5I6zjbiwnhnB
+	 XKb3FsHbP4fDuL7oItv1PIchypmY44Jgc/TZkkSt4ZWkX3vK5LFHdgLIkrbFHTR+Vk
+	 h67HQyOOtXo8g6wjlGVr25Ty7tNdXUZXLRZ7OLj3knXPtBpjaj1CthioUJRl8m7CMF
+	 1dVzvjqUMW2XQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Subject: [PATCH] kconfig: qconf: fix buffer overflow in debug links
+Date: Tue,  1 Oct 2024 18:02:22 +0900
+Message-ID: <20241001090226.2784447-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=helene.moe; s=key1;
-	t=1727773333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+2PdjCDGOk6QxIKmF2vicvMps7T1/RqF8HcaNkYp8E4=;
-	b=Bgkh+NfasmTc46ZM68ek6kMrD9a8s0l7K5O6MkLPz4DoLO4pjH2/86MYbl3HpvXctvil+g
-	jqNie6UyOaOwzA/TRe5UEMWG2DWEl9eyw5sY8s4X5wRJD/5i2jjxPv08kuJtjmwzdaPeCj
-	W3P90QyO/s7LrBk6Djedixj50yuPh33VGlfuxn5WUzS+Y/E6NX89/f36WvLIQZu257M3T4
-	2xSnyVK1AQ6J7oDudbYQpdiLHWMGRz80UaYkWZn+ErC2Dil9guSZFPPjQrcalh30xhnSdL
-	aXhSIBdhWa3ZGlV5S0ckfAFpz3RetqS21OBoieBnqwUrnEo4JFwo5YNan16NuQ==
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 01 Oct 2024 11:02:11 +0200
-Message-Id: <D4KCJ2SLGMWG.1ZGZRDMNDKAVD@helene.moe>
-Subject: Re: [PATCH v3 4/5] driver core: Add device probe log helper
- dev_warn_probe()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: =?utf-8?q?H=C3=A9l=C3=A8ne_Vulquin?= <oss@helene.moe>
-To: "Dragan Simic" <dsimic@manjaro.org>, <linux-spi@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>
-Cc: <broonie@kernel.org>, <heiko@sntech.de>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-References: <cover.1727601608.git.dsimic@manjaro.org>
- <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
-In-Reply-To: <2be0a28538bb2a3d1bcc91e2ca1f2d0dc09146d9.1727601608.git.dsimic@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun Sep 29, 2024 at 11:21 AM CEST, Dragan Simic wrote:
-> Some drivers can still provide their functionality to a certain extent ev=
-en
-> some of their resource acquisitions eventually fail.  In such cases, emit=
-ting
-> errors isn't the desired action, but warnings should be emitted instead.
->
-> To solve this, introduce dev_warn_probe() as a new device probe log helpe=
-r,
-> which behaves identically as the already existing dev_err_probe(), while =
-it
-> produces warnings instead of errors.  The intended use is with the resour=
-ces
-> that are actually optional for a particular driver.
->
-> While there, copyedit the kerneldoc for dev_err_probe() a bit, to simplif=
-y
-> its wording a bit, and reuse it as the kerneldoc for dev_warn_probe(), wi=
-th
-> the necessary wording adjustments, of course.
->
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+If you enable the "Option -> Show Debug Info" and click a click, the
+program terminates with the following error:
 
-Applied and tested on 6.11 for arm64 without noticing any issues.
+    *** buffer overflow detected ***: terminated
 
-Tested-by: H=C3=A9l=C3=A8ne Vulquin <oss@helene.moe>
+The buffer overflow is caused by the following line:
+
+    strcat(data, "$");
+
+The buffer needs one more byte to accommodate the additional character.
+
+Fixes: c4f7398bee9c ("kconfig: qconf: make debug links work again")
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/qconf.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index 7dba8014ead4..e260cab1c2af 100644
+--- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -1166,7 +1166,7 @@ void ConfigInfoView::clicked(const QUrl &url)
+ {
+ 	QByteArray str = url.toEncoded();
+ 	const std::size_t count = str.size();
+-	char *data = new char[count + 1];
++	char *data = new char[count + 2];  // '$' + '\0'
+ 	struct symbol **result;
+ 	struct menu *m = NULL;
+ 
+-- 
+2.43.0
+
 
