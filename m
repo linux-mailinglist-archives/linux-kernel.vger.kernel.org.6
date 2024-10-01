@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-345815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C4998BB74
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A70998BB79
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD631C2362A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EC661C23659
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3DD19AD48;
-	Tue,  1 Oct 2024 11:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACDC1C1725;
+	Tue,  1 Oct 2024 11:44:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jVdxEPPV"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SY4DzbBC"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5F31BF804;
-	Tue,  1 Oct 2024 11:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24011BF804
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 11:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727783047; cv=none; b=SPra4r0mg4J445wb2wpeFwQ87XyqCIrxb/vU7J+C2QeFp4RcEacIN2soJma1yCEeTebkea5Bt6scxaJzqzCm2TXKQTFPOH0gUreit3nAOBRjbiuy9adpUNiuYVF3SYEtReLaxJaOW6N1OR3dKT2cd1SqUwEsoTIwOXYQVMkXX00=
+	t=1727783074; cv=none; b=lGf4c/HoMz8GMuNt22NPeggVgWeROysPKnoeDVrwdhb4GONVJSoQv4Mc4k76CfGo3GHUvDuCm/4mh2pYSECP/ItBgUudjUKayIdzFAu0h2iPgONaP3y42C740jX1mhr2ClRTmArjFJFHWX4N8ueOMe4nOJ3P7WFJdYQH0F4d9Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727783047; c=relaxed/simple;
-	bh=PwSHgvI0MsZksfpoKeIXbBxZcNs0ma4uHHPcr0C8eaA=;
+	s=arc-20240116; t=1727783074; c=relaxed/simple;
+	bh=UfCZ5OSllqSeXGlaYqhvmmSzhNtxhix8wAxk4b0oSdg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UYM3KGMwMv1hm8Gq9tMjXQHpU8SqwP/HkuPlqHeNNVs07Tq9exLahulvegaP4yHijVvFG8Ioi2jZ5oTMedLnw9VYYDUK9oTRjlvUmVemMV8aWnIzKc1w20MLo6GwdhhPF+OFlicM1UCFFyKWyCB4SZxXsR7Mil0MTa2t1aLHiOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jVdxEPPV; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4917KBZW007654;
-	Tue, 1 Oct 2024 11:44:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=0
-	nbQfVQTQm/cCLWC4AIRbz9oJwHIv9ib36Gv7R5B3j8=; b=jVdxEPPVFSoAU7yN8
-	1FgRR1EcYlgVbWoEGbLaHQnlI6ghh4AOt3dLyYxW9sM4dBr3um6Dynfom8ezEBDK
-	qwjnuS80cnUk2bV7ZQSwGZEcnINU+jyowku9WpGEWEypEZGCZktAfw3LQHyC4fxa
-	vUELAbwTHgZtSOLyqiIa1dE4CTOb0pCbdr8AwoPjf6HZNbv4FuamlYa6xF5w2kg5
-	Tqc0adALu+TSdfVVn9p89N4C4an6W8yuRNGXcyCEevAE+UQmm4ApU6yhp8Oq+stJ
-	G0fI4RtMi3LW+wPMg7cM5gyg+KXU7w4lks+sYl40K9OvSdmFNwHg138YbtefaPP3
-	Xi/7w==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420ckj99sp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:44:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4918anTB007923;
-	Tue, 1 Oct 2024 11:44:04 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxv6q2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 11:44:04 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491Bi0bE32833938
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 11:44:00 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 828032004B;
-	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2151020043;
-	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
-Received: from [9.179.3.12] (unknown [9.179.3.12])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 11:44:00 +0000 (GMT)
-Message-ID: <9c1edf9c-589c-4998-8211-adc0e766438c@linux.ibm.com>
-Date: Tue, 1 Oct 2024 13:43:59 +0200
+	 In-Reply-To:Content-Type; b=M9EvKVZ3JKAc88bRNu/7LE4Te2ql6l0WqmOy57mlMrWgcLaWmv58fPLLfuPVnJ/+xjyD4nULj519qKnSEttBWweonY+lbwNEJY6Wo3yIm6TzuGOml8L+D0eM+0vGuPmegvKWG9UDeWApEFotALwaWeCIrW4P8WoBYMKq+CxVOls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SY4DzbBC; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42ca5447142so7447005e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 04:44:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727783069; x=1728387869; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0xt74XDtLYLrzwMux2kzWqyPPKPQra8xynuSJjZWCI=;
+        b=SY4DzbBCW8JE3dzrcEMqZP9Y+o0QKwbxZkgpCpzZVnRo8gGE/v6a1iyUgISuLoCZ6v
+         mVZLdVQR8N3lA13jlgak1JGXZs++fQsJmcKQC9Zo6wP2kptjspVUlHTIKxKr/4CYYrSB
+         3o26IsMp3BOVwTf0C5QfqlOidM2oxpfBk65X67/p+bqCeYx/youfj2bsiLnit/8QCQyH
+         d01VcUnggT8dcJqbA4VerWoARm2yFSHss3C1HUMj/CMvLKO3qDzPHaZq9OuI+8O1kbN5
+         HRa+kUsYsKRFQh+ahKewCLIpWzP2trWw/vwTyI8QnZojdhvs+2h3EPI2nvF2NW69UK1W
+         GWmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727783069; x=1728387869;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u0xt74XDtLYLrzwMux2kzWqyPPKPQra8xynuSJjZWCI=;
+        b=m1oWLiiv1DWW2gGNyVKn0mVvmIKJ7TsLQZrEBRWfZ3DvPmPjQDKGoBIIgmoUvMdGIK
+         QxDvyRbROeDr0jMuqRX5+BOWuA5wgfkqHjLSVV5lbh6ePbe2hN+kG6CnQ+xJYPjre5yr
+         T6qtJtvVFmcsMaDiVnN1He+sFewkVg8XAI6aZYa4ibYham88TOHS4SZbB/gm7g3pk+LN
+         Dp7+mr/jgtTDO24XA14UpCuKsM6ydm85yo39icoPclSIlelNJbWzqgApmdcENJDXfU31
+         CVjy+WnIa5euF+qVvRJYORShxHR70VM+Ztzp2rvqZZpTt8twU7bNO4jVSdOOOE475HPb
+         ozPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc2q0B4I0XU6Cj0YbJC/Guzme59ta+eCQjHik0Ca1JEnouB0CB+RPSMZxZYYfvoBPGNSJQFuKevGeftAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXrIp+wpe/MHngKxqfWC+dbdq2PUxxiloB9uGCRtmVSzxtIBiY
+	1Y2EfrXhNyIre+Axc7dqV3F81yOvFq21jTwyNmJghL6g/Wb0OYby/wrpHwog2/A=
+X-Google-Smtp-Source: AGHT+IHtoLqojStvAJOJ7nyS7a/BdZb7ENOyCHLj5dQfWmE97We1en6aMHdLyrXhGV7uqMLcNZscrg==
+X-Received: by 2002:a05:600c:350f:b0:42c:ba61:d20b with SMTP id 5b1f17b1804b1-42f58416273mr51174925e9.3.1727783068944;
+        Tue, 01 Oct 2024 04:44:28 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cd57427fbsm11535366f8f.100.2024.10.01.04.44.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Oct 2024 04:44:28 -0700 (PDT)
+Message-ID: <e009fba7-7881-433a-9e33-f4c5f9d0fd86@linaro.org>
+Date: Tue, 1 Oct 2024 13:44:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,115 +76,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] s390/uv: Refactor uv-sysfs creation
-To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20240930132042.2081982-1-seiden@linux.ibm.com>
- <20240930132042.2081982-2-seiden@linux.ibm.com>
+Subject: Re: [PATCH] ARM: dts: microchip: sam9x7: Add missing usart-mode
+ property
+To: Jihed Chaibi <jihed.chaibi.dev@gmail.com>, claudiu.beznea@tuxon.dev,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ conor+dt@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240930202639.37606-1-jihed.chaibi.dev@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <20240930132042.2081982-2-seiden@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240930202639.37606-1-jihed.chaibi.dev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: IVk8KNxczUmip8mF-Wpq1kxDPPFTryvb
-X-Proofpoint-GUID: IVk8KNxczUmip8mF-Wpq1kxDPPFTryvb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_07,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- phishscore=0 adultscore=0 mlxlogscore=729 suspectscore=0 malwarescore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2410010075
 
-On 9/30/24 3:20 PM, Steffen Eiden wrote:
-> Streamline the sysfs generation to make it more extensible.
-> Add a function to create a sysfs entry in the uv-sysfs dir.
-> Use this function for the query directory.
+On 30/09/2024 22:26, Jihed Chaibi wrote:
+> Add the atmel,usart-mode property to UART nodes in Microchip SAM9X75
+> boards' device trees (boards which inherit sam9x7.dtsi). This ensures
+> compliance with the atmel at91-usart.yaml schema and resolves errors
+> that occur during DT validation, such as:
+
+That's redundant statement.
+
 > 
-> Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
+> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: serial@200:
+> serial@200' does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
+> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
+> 
+> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
+> serial@200: atmel,use-dma-rx: False schema does not allow True
+> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
+> 
+> arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb:
+> serial@200: atmel,fifo-size: False schema does not allow 16
+> from schema: http://devicetree.org/schemas/serial/atmel,at91-usart.yaml#
 
-Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
+And why is this a property of SoC? Does not look right, at least nothing
+here explains this.
 
+Trim the commit msg to relevant logs and statements. You do not have to
+explain everyone what dtbs_check is.
 
-> @@ -767,17 +786,11 @@ static int __init uv_info_init(void)
->   	if (rc)
->   		goto out_kobj;
->   
-> -	uv_query_kset = kset_create_and_add("query", NULL, uv_kobj);
-> -	if (!uv_query_kset) {
-> -		rc = -ENOMEM;
-> +	rc = uv_sysfs_dir_init(&uv_query_attr_group, &uv_query_kset, "query");
-> +	if (rc)
->   		goto out_ind_files;
-> -	}
-> -
-> -	rc = sysfs_create_group(&uv_query_kset->kobj, &uv_query_attr_group);
-> -	if (!rc)
-> -		return 0;
-> +	return 0;
+> 
+> 
+> By adding "atmel,usart-mode = <AT91_USART_MODE_SERIAL>" to UART nodes
+> 0 up until 12, these errors are resolved, ensuring proper DTB validation.
 
-Could've left a \n before the return so it doesn't look weird if only 
-this patch is applied. But that's not important.
+But in the same time you entirely skipped relevant information: why is
+this a correct fix for the issue.
 
->   
-> -	kset_unregister(uv_query_kset);
->   out_ind_files:
->   	sysfs_remove_files(uv_kobj, uv_prot_virt_attrs);
->   out_kobj:
-> @@ -785,4 +798,4 @@ static int __init uv_info_init(void)
->   	kobject_put(uv_kobj);
->   	return rc;
->   }
-> -device_initcall(uv_info_init);
-> +device_initcall(uv_sysfs_init);
+> 
+> This issue has been tested on the sam9x75 (sam9x75eb & sam9x75_curiosity)
+> boards, both of which inherit the sam9x7.dtsi file.
+> 
+> Signed-off-by: Jihed Chaibi <jihed.chaibi.dev@gmail.com>
+
+I think you work on some really old Linux kernel, judging by CC list.
+
+Please rebase on latest next or mainline kernel.
+
+Best regards,
+Krzysztof
 
 
