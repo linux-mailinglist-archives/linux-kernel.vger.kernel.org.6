@@ -1,266 +1,194 @@
-Return-Path: <linux-kernel+bounces-346056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834EF98BED0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA1F98BED1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8DF1C21948
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14D381C232AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F221C57A9;
-	Tue,  1 Oct 2024 14:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="b7H7T/uk"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011043.outbound.protection.outlook.com [52.101.70.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5C11C688E;
+	Tue,  1 Oct 2024 14:02:35 +0000 (UTC)
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18DF228F4;
-	Tue,  1 Oct 2024 14:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791352; cv=fail; b=n5D2a0WwrgGQtU/nI6bsDu8hSbrulmoH5ww8utP/37xZwoUILW47G3XeqYSVgW52K7nI9zMtqfBGey1A5QlQJ8cgDgfHyTRVx+Amr26s8xaNpyO8v2B4AZcB2DrXMZ3wr2e+mDX8EGVl2Pjme6zqMTaWA00QWGDsdmDSs0Dail0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791352; c=relaxed/simple;
-	bh=YhRHfZ55OKgxvk2HYG39We7O7AFr4I/I8uG5Pmp6U3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=YpNzbh1mAbuqq06eB7vnkKF1sKN02Huj4A+mmTmoGetC1l4GLZaz78b00Uup294ozr+Srz0jkAvebC8r1zFKu8m/ESarG37Xks5CBOFsMJwkk9Ziq8Gbh33NFGvhSjg3GI6M7jt6LnpNP1yPjJTbRjDATh93BzNXkl0g2nBXuzs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=b7H7T/uk; arc=fail smtp.client-ip=52.101.70.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ww36jA7m8VLC4NioobBfAlngiOBau1qOD/jpt8ZiDJaC/LlXoEWQwUPC6oYuYbVZJg5qgvPs5UAuOyNbKJVXX0DrIVVolTXN3LabmGhB6641Xan4y40RLsGuRKQBJ33O5ktdlC9sWAqf0Qh9TOKlUXCDPSrTQZ2AGOFBdHGBcbBE0s2IoDwBP30UtAuxLyA7Tn1+ilst0SGqlpttkygFt5H+lwxPSkL4V330A7ZyOOiVllUEmxv+5lr0IfwPhQT+HNBugO6mMcBawZn4/ICxDu8yD+ar+4z8FZIqPszqjQnIZb+J3F65lwV9Pae8r5eEmTkYSlW8hdRnS6hCI36tWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cS0wPm3raaus2TWqKlY36hHWRj6/hX868KknPYFnyd8=;
- b=axpn0MoTH4O7UWe76eNTeHKxu2xb+Rmmqj4svUJOxUcn08wGrBkDqtZGc5rE4JWLw9T7oVvvBmglQ+irwUJA6hnowSWQqYDZ5yymPjuWo2X/hzkYmh33RCB0LInFxU2QhHtuObkWChM0ipgPNnCNTa7fHfUMctkxtnejBFDrhPmtHRzvT7by7rfbkdjzuGsMonm3bd4Xk5CXbqS0hL5VacPd0QkL9l+fFT0OZA80gl2cWQFUioqazz7n5NzXpLq24ZNZ+I26+6RvKZXFsRNAihiFcGWnIO8Ochmmm7sVSOMU+JXVL7FiVOGKikS7Gu3oaPH1Zm/PZVzEYJOLMBw2uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cS0wPm3raaus2TWqKlY36hHWRj6/hX868KknPYFnyd8=;
- b=b7H7T/uk1ULfvOiC5Jg/tX6RxnizqXWMS2VizChOBQLKGqQ0A4eh46Dnklx1XpNqxu/7Rk3D51TyllHCYPBMwSSTWMKJT1GrulfPNHKb32MU2W4pWzQWsAPtLkprx3EFdJvKnXJRN4TrR5hriYcWQm80BbQZxj+9RZSVG1DbP5uKUmi/B87PFi0qymjgfAc0fDD5Akpuv+MHiO0TBAOivJCddia/XtAsfnXaxgziVifsRQIb24/ArJTpHZjSorF4J6RdGBc2+rOFcveOyz05iRUujaos14udbRIXKmrqpqJg+f8M/5uebjHTojt5rP5M5eD2RLK2x3okp0pzlL9VoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by VE1PR04MB7213.eurprd04.prod.outlook.com (2603:10a6:800:1b3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Tue, 1 Oct
- 2024 14:02:19 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7982.033; Tue, 1 Oct 2024
- 14:02:19 +0000
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net: dsa: sja1105: fix reception from VLAN-unaware bridges
-Date: Tue,  1 Oct 2024 17:02:06 +0300
-Message-ID: <20241001140206.50933-1-vladimir.oltean@nxp.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: VI1PR0202CA0004.eurprd02.prod.outlook.com
- (2603:10a6:803:14::17) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EE71C3F1F
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727791354; cv=none; b=hhUV+XAQI4GQ2vG01ONs0uR0E/H7dsCuXCO08QOLZRwmtFt6BA/ZOkOlhPVpjTvCOHJM1jMDmuGx6ewE2GBu3sX3mmih3jFUn56umTC04TimUpL3XtF7KZDe5+IPJSCuWwYgWpdcAFdapA4lKQqHU6dqAZUXi4dT+1OEBrNB4wM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727791354; c=relaxed/simple;
+	bh=Ckc72aVHYwHH+0b8Dup10FlBpKezb8SoAeySuKNPmFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eqImbzQ4dvaYQLlGvBuc0Gg/vRTuhZMkQo9vmxWI5HRl1sA92byXXIej8IDIlZbG7YkVJG5P/ywpEbgaXlrAERCsehst+4a5JwhxHP0hd+Mnl6FkLBV19F2ZCHX/6C5abIJIus182GjbWARRq7NK8+7Oy44F+vw6PDpEKqy9dYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 816B71C0005;
+	Tue,  1 Oct 2024 14:02:23 +0000 (UTC)
+Message-ID: <f98f4a08-8673-45f6-b060-b1247a5c6c25@ghiti.fr>
+Date: Tue, 1 Oct 2024 16:02:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VE1PR04MB7213:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4a17c6f-0e0b-446b-3348-08dce221a9f3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?L3dF0sgHpenK6+k4+tqhIQGNYP1+ELqUFPO30uSOOgv+anJULarYSrhYhVW8?=
- =?us-ascii?Q?/6GaOPL+wwG2nHsFX8kC4Kw3u+XiR4EqMLJfaTLzYE0reVRZog8ctOyjtRrN?=
- =?us-ascii?Q?reJUMPKUkF9rG2MTWCr4t5zwVgfEHc3NarSLAakOywJkhSQ0G4RJ5WAN+t+c?=
- =?us-ascii?Q?+VV8xZQPGGwvFY9TOqum0xylCYBy4hgLSMjBQ3ar95hWOBcxolHPZspXB98l?=
- =?us-ascii?Q?MpdgTup1FUnyts+1Wkfk9qsEnKbJngDRf0uFS5/Cb5E/2/IDUt/xvW/ExtMC?=
- =?us-ascii?Q?l6hj0DQ29DoCTOviEsva03wgKTc0L+JtR1rizcKn1XyzXmK7cDIaBIn1hZ9m?=
- =?us-ascii?Q?j3tEuZDgL6bETwQgcl98Bq0oMNfIR56oH9IM/G6foOf4jHhsA6W/T/F0k9aj?=
- =?us-ascii?Q?GhBAphYNMyvfj//EXsy6r9+aDa2aWqA9bWPDqHyvaAq6W85cIUfK6ClRdvLq?=
- =?us-ascii?Q?6RS1tLi/qpS2jGMfKAGOnwyTGPUExszs//X3KwIv99UILKAq5ti37V4JDxDt?=
- =?us-ascii?Q?fbI5k1xwZISKyXhTEQj+dIGfgEa+X8z5yGqTvUGkW0DGhwOqyQUJpeDWM9Ma?=
- =?us-ascii?Q?Tu+IqCQjgpbNy1LorqW+vXSHbnr60erJkpk2qNeoVVbCq9+YBa2UiDuHa6Zq?=
- =?us-ascii?Q?JYwb9EMh/f3YVC3FZMx3NlIBuQW7CwvO9JPMk2jPElBJXgBg+Je09qGK89vK?=
- =?us-ascii?Q?bGFPbLtl4HRuhRl7KuigW0og20otklQXD9ybsvmbIFlAFk06ZHr0I9bgZ5Cm?=
- =?us-ascii?Q?c1JvrrP1AyJeNXyNgvm4LkahH9qi/tdJo5n7+qEjyraZS5sJnZoyvMGLhZiR?=
- =?us-ascii?Q?SMwVBQJvM59VzUIRQ4rwt+lJShlKnvWA4PmgDqKwxsz2JeF+/kax2IjbYRRz?=
- =?us-ascii?Q?JuAgyHxJ85HUA2mZ6dqCTEQaXsEH5tbapjzPftSw9Jp5f6fo+kmYGCxsc/P7?=
- =?us-ascii?Q?Kx3d0QYirNK1FvcXx0A8Q7AG1Wh2X13N94dK6nJUfsVGmI4DRlJE6s+Fkfh8?=
- =?us-ascii?Q?TLdo3QX8/FwMT6gD/ao87UZESTZrVarN8lnvgugqjRt1RfvCwtERzKoLJA3F?=
- =?us-ascii?Q?hD5JC/fxJeK8eq81AhYeTOhwp2f8FDcWYA7649TYpaMsJ9w6UAVWEzpgrvkg?=
- =?us-ascii?Q?nzi6z8o4Hy8JUoyMVWpb/AiCe4opmLzdc85E3rwD2bN5yJH3J4KAaisDQrPD?=
- =?us-ascii?Q?rQ71NjC/gtsvAYRHUW7y/TGB2bKeMnNhGWrHyHZ70r4RaPZYyt2SPxVM/FxP?=
- =?us-ascii?Q?zW7QBWnmP9lEcq+na2HLC4Ni9XkTZu7PQZK2LKUNF5ACJ1i94FLvSq7AfLTn?=
- =?us-ascii?Q?BvNybNVy576crBKdRR/+dtm+EhMIfGDEq10GTR1TeVKNyQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ctSZGJWVpyhrRcxooXC6SjBb21AqfpJqWOwTcif8Dl9iwB60ifmndsdBDXVG?=
- =?us-ascii?Q?0FI23sippS0QLiEyGU3H+Nyajf/2GWKZ16rttQGGEHTE+TWAJcFiyZvRF2sM?=
- =?us-ascii?Q?+ibRZhyXZUr9BDjsmTztiA2ZDXNCKJh0kP5dqEciqXbfumRkrwr9KgZPxvuY?=
- =?us-ascii?Q?i33/X6WI0k8bKwoyb6mLShKoYg6zq+sVatQVUUvuo9zOEXWjoEtMJvXQZr22?=
- =?us-ascii?Q?hv1ANu4he24+zbDIwOTLLnUFz032HEOUIg7IjvZp259FX99WksYk2/yCLCsb?=
- =?us-ascii?Q?uIPRYm+zEzm4eewLtSZO/wcjfv9A6AQlxMpy+8AmoR4BfD3ZUq7u38G/JMSh?=
- =?us-ascii?Q?r9IBGiw+XDp6hoR+rH1B/q6HJTrlAwAzD5C4c6JbVaJE3RWJn+Vv1nEHRANb?=
- =?us-ascii?Q?cddVB7krSvDUDD0tSg301rQ8BDntM9HU2TSGwDe2Ba7I40fVAeVQ5zPZX4at?=
- =?us-ascii?Q?qsy7CCdVrZjzlrXHQKEKXJEU7x0Vyaqcpq3AbVfJ25OFMtcVhyUmAR3VO9so?=
- =?us-ascii?Q?n/XiKEMFCfvokcGXCE+hsnoEzO/xBkS9J5inbcD25G5EGFhBd1IPEOyHJgJv?=
- =?us-ascii?Q?JXe7lnCHpQpRpWbk8lPaVxfhGw/lJDnRcR/E+WbtAcGciKl4Pwxc+k+AERYl?=
- =?us-ascii?Q?d6tjTFW7JfcI5Rpb/rZ3b2h7wIQOlUiQzLv7nIk1vWva61/32BGZc8zDaf71?=
- =?us-ascii?Q?pYgUEeIGT/ib2LPS40IFvqChRX5A/xRS3VabLTYLr0B+m0bhGQncc9S8hgz9?=
- =?us-ascii?Q?G0HpFJ5dsgWXMEzjMprfrgUN/dcuEcERuY8dKXJgn2m3KXc0zJ5WXJRypnQc?=
- =?us-ascii?Q?11hIf3ERcrGnVfMxoZe/APfy4zP/T5/MXw63ex8TlscDLmnCTbR8sQcq2CXS?=
- =?us-ascii?Q?hzKUbkhXKWJI+2IfayafKxzKV3lbi2VSD06J3OgdjxHp3XxYDamsgtxZqEUu?=
- =?us-ascii?Q?5LiUxshb/uQzWrLTHgkM7EKpNTuVvypxK/GdO/HUSEb2zAcJ31nc2PouYMeu?=
- =?us-ascii?Q?3HE+uv9XWwSSXka3qMUHKLxNeLgXgZjm7bl3Dn5jqbsxX3mf1alp1V7UIEV3?=
- =?us-ascii?Q?Unc0YgV5HtbfNjzAod4a7FIQjcSQ984HzkgekuZ1dxLrs9RMp33XIrrblCKz?=
- =?us-ascii?Q?3hUs8b1IDPr1nMOEfC1QJiyIM1wGb+2lRiTQto7++z8hhmWDSVGZDNFtF6TH?=
- =?us-ascii?Q?uCIld47lCXg4TCiSp7mSCVwNMXEy99Eh7mGPw062ltg4UxEQz7lrjaqGCjKq?=
- =?us-ascii?Q?0ptNOciop2TGrM4ODiBUIhE0AsVGjB0Vnrglm3zOfEiuWXvEUjjUKMcjgiPZ?=
- =?us-ascii?Q?ETPnMrMcI5dv1qLh4cbo5y/iSsQhoKQtK9SjmtKD+k+wU7aR0jChvMWMWrx7?=
- =?us-ascii?Q?KOCaf6g1jSx/9QikWsQrxVo0a9Q1A0HEUk8Q7LFymKWfyqGAtsSmFlUWL57A?=
- =?us-ascii?Q?AdzUHiCfkGIxXQzuTD7dgYFQHTQKtfSCMIo2E/WdmvFyQKrcSNMJEOrsZEu7?=
- =?us-ascii?Q?bgGdJfb0QWJpc+wQGyh6zv99F8xnMQNSRJKk8NaAOyJSVbNk0tFi7SjQf92g?=
- =?us-ascii?Q?I9UoNTI+UJDDITYMcSzQoSjix1qaXSspWLrH9SY+P/qlEKpGuDq61gAF7/Ni?=
- =?us-ascii?Q?EQ=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4a17c6f-0e0b-446b-3348-08dce221a9f3
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 14:02:19.4702
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qkUOAo7JuN5KZ00ftNBBmFxhPUeIC2venXTlFfb1p/vWyo9Q3G3e8pWu8WPs7gzqDSsc0RJs6MR57ckF6Q2zNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7213
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [riscv?] kernel panic: corrupted stack end in
+ handle_page_fault (2)
+Content-Language: en-US
+To: syzbot <syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com>,
+ aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, palmer@dabbelt.com,
+ paul.walmsley@sifive.com, syzkaller-bugs@googlegroups.com
+References: <000000000000fa38f30622019b6e@google.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <000000000000fa38f30622019b6e@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-The blamed commit introduced an unexpected regression in the sja1105
-driver. Packets from VLAN-unaware bridge ports get received correctly,
-but the protocol stack can't seem to decode them properly.
+On 13/09/2024 17:09, syzbot wrote:
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    1ff95eb2bebd riscv: Fix RISCV_ALTERNATIVE_EARLY
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+> console output: https://syzkaller.appspot.com/x/log.txt?x=119b27c7980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c79e90d7b2f5b364
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a364b90a40e8fe8ab78
+> compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: riscv64
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-1ff95eb2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1491182abe4e/vmlinux-1ff95eb2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/926302c5c645/Image-1ff95eb2.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com
+>
+> Registered RDS/tcp transport
+> NET: Registered PF_SMC protocol family
+> 9pnet: Installing 9P2000 support
+> Key type dns_resolver registered
+> Key type ceph registered
+> libceph: loaded (mon/osd proto 15/24)
+> NET: Registered PF_VSOCK protocol family
+> registered taskstats version 1
+> Loading compiled-in X.509 certificates
+> Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
+> zswap: loaded using pool 842/z3fold
+> Demotion targets for Node 0: null
+> debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+> Key type .fscrypt registered
+> Key type fscrypt-provisioning registered
+> Key type big_key registered
+> Key type encrypted registered
+> AppArmor: AppArmor sha256 policy hashing enabled
+> ima: No TPM chip found, activating TPM-bypass!
+> Loading compiled-in module X.509 certificates
+> Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
+> ima: Allocated hash algorithm: sha256
+> ima: No architecture policies found
+> evm: Initialising EVM extended attributes:
+> evm: security.selinux (disabled)
+> evm: security.SMACK64 (disabled)
+> evm: security.SMACK64EXEC (disabled)
+> evm: security.SMACK64TRANSMUTE (disabled)
+> evm: security.SMACK64MMAP (disabled)
+> evm: security.apparmor
+> evm: security.ima
+> evm: security.capability
+> evm: HMAC attrs: 0x1
+> printk: legacy console [netcon0] enabled
+> netconsole: network logging started
+> gtp: GTP module loaded (pdp ctx size 128 bytes)
+> rdma_rxe: loaded
+> clk: Disabling unused clocks
+> PM: genpd: Disabling unused power domains
+> ALSA device list:
+>    #0: Dummy 1
+>    #1: Loopback 1
+>    #2: Virtual MIDI Card 1
+> md: Skipping autodetection of RAID arrays. (raid=autodetect will force)
+> EXT4-fs (vda): mounted filesystem 34b94c48-234b-4869-b990-1f782e29954a ro with ordered data mode. Quota mode: none.
+> VFS: Mounted root (ext4 filesystem) readonly on device 253:0.
+> devtmpfs: mounted
+> Freeing unused kernel image (initmem) memory: 2532K
+> Failed to set sysctl parameter 'max_rcu_stall_to_panic=1': parameter not found
+> Run /sbin/init as init process
+> Kernel panic - not syncing: corrupted stack end detected inside scheduler
+> CPU: 1 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc2-syzkaller-g1ff95eb2bebd #0
+> Hardware name: riscv-virtio,qemu (DT)
+> Call Trace:
+> [<ffffffff80010216>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
+> [<ffffffff85edbc4e>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
+> [<ffffffff85f3714c>] __dump_stack lib/dump_stack.c:93 [inline]
+> [<ffffffff85f3714c>] dump_stack_lvl+0x108/0x196 lib/dump_stack.c:119
+> [<ffffffff85f371f6>] dump_stack+0x1c/0x24 lib/dump_stack.c:128
+> [<ffffffff85edc812>] panic+0x388/0x806 kernel/panic.c:348
+> [<ffffffff85f4533a>] schedule_debug kernel/sched/core.c:5745 [inline]
+> [<ffffffff85f4533a>] __schedule+0x3230/0x3288 kernel/sched/core.c:6411
+> [<ffffffff85f4585c>] preempt_schedule_common kernel/sched/core.c:6708 [inline]
+> [<ffffffff85f4585c>] preempt_schedule+0xd2/0x1e2 kernel/sched/core.c:6732
+> [<ffffffff85f5a472>] __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+> [<ffffffff85f5a472>] _raw_spin_unlock+0x88/0xa8 kernel/locking/spinlock.c:186
+> [<ffffffff806c89e0>] spin_unlock include/linux/spinlock.h:391 [inline]
+> [<ffffffff806c89e0>] filemap_map_pages+0xa4a/0xf70 mm/filemap.c:3655
+> [<ffffffff807efa7c>] do_fault_around mm/memory.c:5019 [inline]
+> [<ffffffff807efa7c>] do_read_fault mm/memory.c:5052 [inline]
+> [<ffffffff807efa7c>] do_fault mm/memory.c:5191 [inline]
+> [<ffffffff807efa7c>] do_pte_missing mm/memory.c:3947 [inline]
+> [<ffffffff807efa7c>] handle_pte_fault mm/memory.c:5522 [inline]
+> [<ffffffff807efa7c>] __handle_mm_fault+0x1cbe/0x3998 mm/memory.c:5665
+> [<ffffffff807f1d08>] handle_mm_fault+0x5b2/0xb36 mm/memory.c:5833
+> [<ffffffff8002350a>] handle_page_fault+0x2ba/0x1588 arch/riscv/mm/fault.c:302
+> [<ffffffff85f3950a>] do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:362
+> [<ffffffff85f5b85a>] handle_exception+0xca/0xd6 arch/riscv/kernel/entry.S:110
+> SMP: stopping secondary CPUs
+> Rebooting in 86400 seconds..
+>
+>
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-For ds->untag_bridge_pvid users (thus also sja1105), the blamed commit
-did introduce a functional change: dsa_switch_rcv() used to call
-dsa_untag_bridge_pvid(), which looked like this:
 
-	err = br_vlan_get_proto(br, &proto);
-	if (err)
-		return skb;
-
-	/* Move VLAN tag from data to hwaccel */
-	if (!skb_vlan_tag_present(skb) && skb->protocol == htons(proto)) {
-		skb = skb_vlan_untag(skb);
-		if (!skb)
-			return NULL;
-	}
-
-and now it calls dsa_software_vlan_untag() which has just this:
-
-	/* Move VLAN tag from data to hwaccel */
-	if (!skb_vlan_tag_present(skb)) {
-		skb = skb_vlan_untag(skb);
-		if (!skb)
-			return NULL;
-	}
-
-thus lacks any skb->protocol == bridge VLAN protocol check. That check
-is deferred until a later check for skb->vlan_proto (in the hwaccel area).
-
-The new code is problematic because, for VLAN-untagged packets,
-skb_vlan_untag() blindly takes the 4 bytes starting with the EtherType
-and turns them into a hwaccel VLAN tag. This is what breaks the protocol
-stack.
-
-It would be tempting to "make it work as before" and only call
-skb_vlan_untag() for those packets with the skb->protocol actually
-representing a VLAN.
-
-But the premise of the newly introduced dsa_software_vlan_untag() core
-function is not wrong. Drivers set ds->untag_bridge_pvid or
-ds->untag_vlan_aware_bridge_pvid presumably because they send all
-traffic to the CPU reception path as VLAN-tagged. So why should we spend
-any additional CPU cycles assuming that the packet may be VLAN-untagged?
-And why does the sja1105 driver opt into ds->untag_bridge_pvid if it
-doesn't always deliver packets to the CPU as VLAN-tagged?
-
-The answer to the latter question is indeed more interesting: it doesn't
-need to. This got done in commit 884be12f8566 ("net: dsa: sja1105: add
-support for imprecise RX"), because I thought it would be needed, but I
-didn't realize that it doesn't actually make a difference.
-
-As explained in the commit message of the blamed patch, ds->untag_bridge_pvid
-only makes a difference in the VLAN-untagged receive path of a bridge port.
-However, in that operating mode, tag_sja1105.c makes use of VLAN tags
-with the ETH_P_SJA1105 TPID, and it decodes and consumes these VLAN tags
-as if they were DSA tags (aka tag_8021q operation). Even if commit
-884be12f8566 ("net: dsa: sja1105: add support for imprecise RX") added
-this logic in sja1105_bridge_vlan_add():
-
-	/* Always install bridge VLANs as egress-tagged on the CPU port. */
-	if (dsa_is_cpu_port(ds, port))
-		flags = 0;
-
-that was for _bridge_ VLANs, which are _not_ committed to hardware
-in VLAN-unaware mode (aka the mode where ds->untag_bridge_pvid does
-anything at all). Even prior to that change, the tag_8021q VLANs
-were always installed as egress-tagged on the CPU port, see
-dsa_switch_tag_8021q_vlan_add():
-
-	u16 flags = 0; // egress-tagged, non-PVID
-
-	if (dsa_port_is_user(dp))
-		flags |= BRIDGE_VLAN_INFO_UNTAGGED |
-			 BRIDGE_VLAN_INFO_PVID;
-
-	err = dsa_port_do_tag_8021q_vlan_add(dp, info->vid,
-					     flags);
-	if (err)
-		return err;
-
-Whether the sja1105 driver needs the new flag, ds->untag_vlan_aware_bridge_pvid,
-rather than ds->untag_bridge_pvid, is a separate discussion. To fix the
-current bug in VLAN-unaware bridge mode, I would argue that the sja1105
-driver should not request something it doesn't need, rather than
-complicating the core DSA helper. Whereas before the blamed commit, this
-setting was harmless, now it has caused breakage.
-
-Fixes: 93e4649efa96 ("net: dsa: provide a software untagging function on RX for VLAN-aware bridges")
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/dsa/sja1105/sja1105_main.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/net/dsa/sja1105/sja1105_main.c b/drivers/net/dsa/sja1105/sja1105_main.c
-index bc7e50dcb57c..d0563ef59acf 100644
---- a/drivers/net/dsa/sja1105/sja1105_main.c
-+++ b/drivers/net/dsa/sja1105/sja1105_main.c
-@@ -3158,7 +3158,6 @@ static int sja1105_setup(struct dsa_switch *ds)
- 	 * TPID is ETH_P_SJA1105, and the VLAN ID is the port pvid.
- 	 */
- 	ds->vlan_filtering_is_global = true;
--	ds->untag_bridge_pvid = true;
- 	ds->fdb_isolation = true;
- 	ds->max_num_bridges = DSA_TAG_8021Q_MAX_NUM_BRIDGES;
- 
--- 
-2.43.0
+And I think that this one *could* be related to 
+https://lore.kernel.org/all/000000000000eb301906222aadc2@google.com/ 
+given that IIUC, the last usable word of the stack is corrupted, so 
+increasing the kernel stack size would fix that (which is the fix for 
+the related syzbot report).
 
 
