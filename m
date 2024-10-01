@@ -1,246 +1,185 @@
-Return-Path: <linux-kernel+bounces-345673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F8098B915
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:16:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D45F98B912
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:16:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6731C21D06
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25951F23481
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A903E1A0AF7;
-	Tue,  1 Oct 2024 10:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7378519DF77;
+	Tue,  1 Oct 2024 10:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v56ybqSL"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhDVwrJC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346B51A08AB
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3ECC3209;
+	Tue,  1 Oct 2024 10:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727777791; cv=none; b=IJAHXg41jf0Bh3T1aN8OU0nMShd0u+uZNC5JQ8qWqBvaMEyFoANzWN7eehRiL7dMz2/cvwvb55XWMvrS3VIEThJfOPHpiZhnDVS4fUSPugcJvnzHyaDWN2SRDgvoZFCpmfDYGJ6yKZ38jyK1osAffTrl7jVKEb9EY3jIDKNkZuk=
+	t=1727777788; cv=none; b=KCIWwcDRqBPoIPtKLdccBDgsxwUkL2U4vVltPYuirrQRTVqvAj+Tdv+gjHc1g0bxZAyc0lQXB5TS2DehQw2BkNX1tu97d3tvWYED36nCNKjUTby3X8eDjoNcZV0aTmDDGpa3w0uBusG/eVWoUtMgaANlwLUB4LSd8rH/z9Gr/tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727777791; c=relaxed/simple;
-	bh=SLtTu3IL6LDgby4y+6PpF+5CxE4Cp3ifpTj6cEABEYs=;
+	s=arc-20240116; t=1727777788; c=relaxed/simple;
+	bh=YQx7FeRcu9P6Be4U/Hjhs4f/myEgGAkd2TSGzXQlQEw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QG2v7AIO4UWLW8WcRjBHqni7mWA+hrXbjtlks2OV9pm2gB3STEceYh7MihCeAiGuUe5iYBGiH7iJl1s4C/wD3ZMVchJbfofT0BwQ2aEaEEugscxCaFiru+uBOZQGkr3L8Y1kUrBAvg6ytenlZUEbDCwxV/APoCs8mGGfZZS7S+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v56ybqSL; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718e2855479so3799204b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727777789; x=1728382589; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7xJfFb9OXfKCKyEf8rku/AUF7m8DFvn5lEQLXOiYm1s=;
-        b=v56ybqSLpQL1RMBM3c2QOataNzX/HsLQBY8FeNTnLtSxywxO9mwcfTbCMeVV54qeea
-         cbMBD7Mfa5+YGow+M/3ImltyoPdLbUQA6LwF8Mus6noU1rlHasI1sGsnnzYh5ALX6/y+
-         k85DQiZ7CC+eZgdMYiX27h+0PNjLba0QzEd+Cfar81EZp5h1PPxKWuFLyjgoHpTLEOhi
-         I7vY0kgaEgRRLnrRTZZ3xCtUYS1Ba787ZXdKlY6WZq7xjt3WPqGCQ71nqMEWU98KXb9i
-         3xtNozkEZy4K6jILKvK8RvFczdx8NjOruUkqzLcyQB9WUMkkfKtR0If18pOwlchD2wtr
-         AszA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727777789; x=1728382589;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xJfFb9OXfKCKyEf8rku/AUF7m8DFvn5lEQLXOiYm1s=;
-        b=IXWx4VAfkZbDz3LT3tGV6eUGAkGTB3/H26bh8rMMZ0dZOJG9dK9w+7ux78xRILLOkZ
-         BaxKVXZyNmCYmZzVd1juuq435SRuy0tWMwia0D/X4QVno/CYsJXarYX7gqgnB0ft+CiH
-         0zzNmrKD0chl7R0NnKoLRd86K8CVXYNmYREjyyEJtIbvU7lTfvJaYq7w9hmZUj1z/ijB
-         EmDwwFueDeALF9elkems9amXe03dqucZVv9sS2PdloZjdBpuuWyzuZqgrJlzbqbJTh5e
-         4n7bVcYnRSb6aByn7mxhgAh5GBwp9kDUXnmJ57eOXWlv3bRB97JiJA8MQ0dOUWr20u32
-         E/gw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8o/b7p9CwvFaLeG2YtFf2tFCAoXX+pefWrGHwIyW6KBB3zLXQ3tNJlcx/slGYCCsu3OGa5Xy60+x8ojw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/poLcFsjftsNGgHH79QTLYnNXBuf4elIa2XOyKPq5/XEqQdCa
-	U0xnUlT4xMal+akK1NCj8wQA/qwclwK6hn/Kb8r2zH7H+asvZlW0XyCM3mIE/w==
-X-Google-Smtp-Source: AGHT+IG906Y5WrfPvkSFRlwSRimFFyhVffR8lxQBd4ADp4oyVjxHKJ6izFGXe7OZDAtkNUW7jX74EA==
-X-Received: by 2002:a05:6a21:164e:b0:1bd:2214:e92f with SMTP id adf61e73a8af0-1d4fa6a173emr20544864637.14.1727777789459;
-        Tue, 01 Oct 2024 03:16:29 -0700 (PDT)
-Received: from thinkpad ([36.255.17.150])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b2f73sm7965180a12.25.2024.10.01.03.16.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 03:16:29 -0700 (PDT)
-Date: Tue, 1 Oct 2024 15:46:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
-	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
-	quic_parass@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
-Message-ID: <20241001101622.ys36slymgjbaz26q@thinkpad>
-References: <20240207-enable_pcie-v1-1-b684afa6371c@quicinc.com>
- <CAA8EJpqjm_2aE+7BtMkFUdet11q7v_jyHbUEpiDHSBSnzhndYA@mail.gmail.com>
- <dec2976e-6e1e-6121-e175-210377ff6925@quicinc.com>
- <CAA8EJprsm5Tw=vFpmfEKL8fxS-S+aW+YR0byfyL=v78k75TGEw@mail.gmail.com>
- <3ad77846-b4a8-80ee-e9e1-d5cbf4add6d8@quicinc.com>
- <CAA8EJprRF0tVFZK9c=MT8bSRcBdRvcugBaeEzpX5-wfRyNgc3Q@mail.gmail.com>
- <c8be2bbf-a51c-a38f-6e6f-a88801f953d5@quicinc.com>
- <20240209075716.GA12035@thinkpad>
- <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8ZAAyNNEuc2fwixRGQqc83NoQZbzPUc25/Sl/IUWDX6cI4LKjj9jqypc6qVB/IYfz8YxTzCiC63j4jDP9LyxHh9j7/yo5ZxrGgnB+k/DsrjOWJPGEBA4yMYbBCB2FeyWrm/S5GezlnlrAutji9+8oHYnAWP4cAHL5/eqlMGDdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhDVwrJC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E26DC4CEC6;
+	Tue,  1 Oct 2024 10:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727777788;
+	bh=YQx7FeRcu9P6Be4U/Hjhs4f/myEgGAkd2TSGzXQlQEw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LhDVwrJCyJ4XMpJIrkjH7E4Vy3XUelLRLUXyqh+IgOP3aApVoJZYM7kSOas1YrHl6
+	 cO9tNN7YiO7l9Srm+TWTl0Y+AcgakW/ZSYWKgwU4TO4cgb00FsjTafZMiKwX7j/m8Q
+	 Sk0XXB52xzC4iCAwdNKOtrGbZX15kRHGh5p+DMZtfINestzKIOgWqrKf2qm4//ZBIl
+	 dUjUhlDkqdo0snXUGr/89oR6Gqc30Lm+ZnR3Ee/QPOOBLEvC1BUssE3WrsXgMR+lhk
+	 4ljiE8/f+csi4oKfp6FtgwIVw/eNP3QtpXIY/kEJFe5T3P8LIxRl6EPWELGtXYRyyL
+	 rpN2+RQonUMYg==
+Date: Tue, 1 Oct 2024 11:16:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
+Message-ID: <20241001-haphazard-fineness-ac536ff4ae96@spud>
+References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
+ <Zvu38H2Y-pRryFFQ@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pyVrSTv7wMWn+iPE"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
+In-Reply-To: <Zvu38H2Y-pRryFFQ@shikoro>
 
-On Fri, Feb 09, 2024 at 12:56:18PM +0200, Dmitry Baryshkov wrote:
-> On Fri, 9 Feb 2024 at 09:57, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Fri, Feb 09, 2024 at 12:58:15PM +0530, Krishna Chaitanya Chundru wrote:
-> > >
-> > >
-> > > On 2/8/2024 8:49 PM, Dmitry Baryshkov wrote:
-> > > > On Thu, 8 Feb 2024 at 16:58, Krishna Chaitanya Chundru
-> > > > <quic_krichai@quicinc.com> wrote:
-> > > > > On 2/8/2024 12:21 PM, Dmitry Baryshkov wrote:
-> > > > > > On Thu, 8 Feb 2024 at 08:14, Krishna Chaitanya Chundru
-> > > > > > <quic_krichai@quicinc.com> wrote:
-> > > > > > >
-> > > > > > >
-> > > > > > >
-> > > > > > > On 2/7/2024 5:17 PM, Dmitry Baryshkov wrote:
-> > > > > > > > On Wed, 7 Feb 2024 at 12:42, Krishna chaitanya chundru
-> > > > > > > > <quic_krichai@quicinc.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Enable PCIe1 controller and its corresponding PHY nodes on
-> > > > > > > > > qcs6490-rb3g2 platform.
-> > > > > > > > >
-> > > > > > > > > PCIe switch is connected to PCIe1, PCIe switch has multiple endpoints
-> > > > > > > > > connected. For each endpoint a unique BDF will be assigned and should
-> > > > > > > > > assign unique smmu id. So for each BDF add smmu id.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> > > > > > > > > ---
-> > > > > > > > >     arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 42 ++++++++++++++++++++++++++++
-> > > > > > > > >     1 file changed, 42 insertions(+)
-> > > > > > > > >
-> > > > > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > > > > > > > index 8bb7d13d85f6..0082a3399453 100644
-> > > > > > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > > > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > > > > > > > @@ -413,6 +413,32 @@ vreg_bob_3p296: bob {
-> > > > > > > > >            };
-> > > > > > > > >     };
-> > > > > > > > >
-> > > > > > > > > +&pcie1 {
-> > > > > > > > > +       perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
-> > > > > > > > > +
-> > > > > > > > > +       pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
-> > > > > > > > > +       pinctrl-names = "default";
-> > > > > > > > > +
-> > > > > > > > > +       iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
-> > > > > > > > > +                   <0x100 &apps_smmu 0x1c81 0x1>,
-> > > > > > > > > +                   <0x208 &apps_smmu 0x1c84 0x1>,
-> > > > > > > > > +                   <0x210 &apps_smmu 0x1c85 0x1>,
-> > > > > > > > > +                   <0x218 &apps_smmu 0x1c86 0x1>,
-> > > > > > > > > +                   <0x300 &apps_smmu 0x1c87 0x1>,
-> > > > > > > > > +                   <0x400 &apps_smmu 0x1c88 0x1>,
-> > > > > > > > > +                   <0x500 &apps_smmu 0x1c89 0x1>,
-> > > > > > > > > +                   <0x501 &apps_smmu 0x1c90 0x1>;
-> > > > > > > >
-> > > > > > > > Is the iommu-map really board specific?
-> > > > > > > >
-> > > > > > > The iommu-map for PCIe varies if PCIe switch is connected.
-> > > > > > > For this platform a PCIe switch is connected and for that reason
-> > > > > > > we need to define additional smmu ID's for each BDF.
-> > > > > > >
-> > > > > > > For that reason we defined here as these ID's are applicable only
-> > > > > > > for this board.
-> > > > > >
-> > > > > > So, these IDs are the same for all boards, just being unused on
-> > > > > > devices which have no bridges / switches connected to this PCIe host.
-> > > > > > If this is correct, please move them to sc7280.dtsi.
-> > > > > >
-> > > > > Yes ID's will be same for all boards. we can move them sc7280.dtsi
-> > > > > but the BDF to smmu mapping will be specific to this board only.
-> > > > > if there is some other PCIe switch with different configuration is
-> > > > > connected to different board of same variant in future again these
-> > > > > mapping needs to updated.
-> > > >
-> > > > Could you possibly clarify this? Are they assigned one at a time
-> > > > manually? Or is it somehow handled by the board's TZ code, which
-> > > > assigns them sequentially to the known endpoints? And is it done via
-> > > > probing the link or via some static configuration?
-> > >
-> > > There is no assignment of SID's in TZ for PCIe.
-> > > PCIe controller has BDF to SID mapping table which we need to
-> > > program with the iommu map table.
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-qcom.c?h=v6.8-rc3#n997
-> > >
-> > > Based upon switch the BDF to SID table will change for example I had two
-> > > switches with one switch has 2 PCIe ports and other has 3 ports one
-> > > embedded port which supports multiple functions.
-> > >
-> > > For the first switch the BDF's are
-> > >       - 0x000(root complex),
-> > >       - 0x100(USP),
-> > >       - 0x208(DSP 0),
-> > >       - 0x210(DSP 1),
-> > >       - 0x300(endpoint connected to DSP 0),
-> > >       - 0x400( endpoint connected to DSP 1).
-> > >
-> > > For 2nd switch the BDF's are
-> > >       - 0x000(root complex),
-> > >       - 0x100(USP),
-> > >       - 0x208(embeeded DSP 0),
-> > >       - 0x210(DSP 1),
-> > >       - 0x218 (DSP 2),
-> > >       - 0x300(embedded endpoint function 0),
-> > >       - 0x301 (embedded endpoint function 1)
-> > >       - 0x400( endpoint connected to DSP 1)
-> > >       - 0x500(endpoint connected to DSP2).
-> > >
-> > > For these two switches we need different BDF to SID table so for that
-> > > reason we are keeping iommu map here as this is specific to this board.
-> > >
-> >
-> > I don't understand why the SID table has to change between PCIe devices. The SID
-> > mapping should be part of the SoC dtsi, where a single SID would be defined for
-> > the devices under a bus. And all the devices under the bus have to use the same
-> > SID.
-> 
-> This sounds like a sane default, indeed. Nevertheless, I see a point
-> in having per-device-SID assignment. This increases isolation and can
-> potentially prevent security issues. However in such case SID
-> assignment should be handled in some automagic way. In other words,
-> there must be no need to duplicate the topology of the PCIe bus in the
-> iommu-maps property.
-> 
 
-Agree with you on this. This is what I suggested some time back to have the
-logic in the SMMU/PCIe drivers to assign SIDs dynamically. Unfortunately, it is
-not a trivial work and it requires a broader discussion with the community.
+--pyVrSTv7wMWn+iPE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also starting with SMMUv3, there are practically no limitations in SIDs and
-each device should get a unique SID by default.
+On Tue, Oct 01, 2024 at 10:50:56AM +0200, Wolfram Sang wrote:
+> > At present, where repeated sends are intended to be used, the
+> > i2c-microchip-core driver sends a stop followed by a start. Lots of i2c
+>=20
+> Oh, this is wrong. Was this just overlooked or was maybe older hardware
+> not able to generated correct repeated-starts?
 
-So I got convinced that we can have these static mappings in the DT *atm* for
-non SMMUv3 based hardwares and at the same time let the discussion happen with
-the community. But this static mapping solution is just an interim one and won't
-scale if more devices are added to the topology.
+Overlooked, because the devices that had been used until recently didn't
+care about whether they got a repeated start or stop + start. The bare
+metal driver upon which the Linux one was originally based had a trivial
+time of supporting repeated starts because it only allows specific sorts
+of transfers. I kinda doubt you care, but the bare metal implementation
+is here:
+https://github.com/polarfire-soc/polarfire-soc-bare-metal-library/blob/614a=
+67abb3023ba47ea6d1b8d7b9a9997353e007/src/platform/drivers/mss/mss_i2c/mss_i=
+2c.c#L737
 
-- Mani
+It just must have been missed that the bare metal method was not replaced.
 
--- 
-மணிவண்ணன் சதாசிவம்
+> > devices must not malfunction in the face of this behaviour, because the
+> > driver has operated like this for years! Try to keep track of whether or
+> > not a repeated send is required, and suppress sending a stop in these
+> > cases.
+>=20
+> ? I don't get that argument. If the driver is expected to do a repeated
+> start, it should do a repeated start. If it didn't, it was a bug and you
+> were lucky that the targets could handle this. Because most controllers
+> can do repeated starts correctly, we can also argue that this works for
+> most targets for years. In the unlikely event that a target fails after
+> converting this driver to proper repeated starts, the target is buggy
+> and needs fixing. It would not work with the majority of other
+> controllers this way.
+>=20
+> I didn't look at the code but reading "keeping track whether rep start
+> is required" looks wrong from a high level perspective.
+
+I think if you had looked at the code, you'd (hopefully) understand what
+I meant w.r.t. tracking that.
+The design of this IP is pretty old, and intended for use with other
+logic implemented in FPGA fabric where each interrupt generated by
+the core would be the stimulus for the state machine controlling it to
+transition state. Cos of that, when controlling it from software, the
+interrupt handler assumes the role of that state machine. When I talk
+about tracking whether or not a repeated send is required, that's
+whether or not a particular message in a transfer requires it, not
+whether or not the target device requires them or not.
+
+Currently the driver operates by iterating over a list of messages in a
+transfer, and calling send() for each one, and then effectively "looping"
+in the interrupt handler until the message has been sent. By looking at
+the current code, you can see that the completion's "lifecycle" matches
+that. Currently, at the end of each message being sent
+	static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *idev)
+	{
+=09
+		<snip>
+=09
+		/* On the last byte to be transmitted, send STOP */
+		if (last_byte)
+			mchp_corei2c_stop(idev);
+=09
+		if (last_byte || finished)
+			complete(&idev->msg_complete);
+=09
+		return IRQ_HANDLED;
+	}
+a stop is put on the bus, unless !last_byte, which is only true in error
+cases. Clearly I don't need to explain why that is a problem to you...
+You'd think that we could do something like moving the stop out of the
+interrupt handler, and to the loop in mchp_corei2c_xfer(), where we have
+access to the transfer's message list and can check if a stop should be
+sent or not - that's not really possible with the hardware we have.
+
+When the interrupt handler completes, it clears the interrupt bit in the
+IP, as you might expect. The controller IP uses that as the trigger to
+transition state in its state machine, which is detailed in
+https://ww1.microchip.com/downloads/aemDocuments/documents/FPGA/ProductDocu=
+ments/UserGuides/ip_cores/directcores/CoreI2C_HB.pdf
+On page 23, row 0x28, you can see the case that (IIRC) is the
+problematic one. It is impossible to leave this state without triggering
+some sort of action.
+The only way that I could see to make this work correctly was to get the
+driver track whether or not the next message required a repeated start or
+not, so as to transition out of state 0x28 correctly.
+
+Unfortunately, then the clearing of the interrupt bit causing state
+transitions kicked in again - after sending a repeated start, it will
+immediately attempt to act (see state 0x10 on page 23). Without
+reworking the driver to send entire transfers "in one go" (where the
+completion is that of the transfer rather than the message as it
+currently is) the controller will re-send the last target address +
+read/write command it sent, instead of the next one. That's why there's
+so many changes outside of the interrupt handler and so many additional
+members in the controller's private data structure.
+
+I hope that that at least makes some sense..
+
+> The driver
+> should do repeated start when it should do repeated start.
+
+Yup, that's what I'm trying to do here :)
+
+--pyVrSTv7wMWn+iPE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZvvL+AAKCRB4tDGHoIJi
+0mOnAP4+xs5yL6wkcBkpOyCc5Vy7umDFIYydMTIrHO0f3pSOrAD/b1UltiYEXah9
+hTtHzrc/2bswOIFDFP4AIzr6rgqLMAs=
+=dDbX
+-----END PGP SIGNATURE-----
+
+--pyVrSTv7wMWn+iPE--
 
