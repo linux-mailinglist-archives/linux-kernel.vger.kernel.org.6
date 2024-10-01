@@ -1,110 +1,143 @@
-Return-Path: <linux-kernel+bounces-345316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8934F98B49A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:42:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D738A98B4C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5B02281F87
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8986C1F245E1
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 06:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F2E1BC078;
-	Tue,  1 Oct 2024 06:41:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2160B1BC06B;
+	Tue,  1 Oct 2024 06:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EZLEUNrq"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b="lXbgNz5+"
+Received: from ironport.ite.com.tw (60-251-196-230.hinet-ip.hinet.net [60.251.196.230])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678EC1BBBC4
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DA1BC072
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 06:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.251.196.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727764909; cv=none; b=mmiXDAxyvV6PpVMN83vulvvLpPCjeQN88CcmnJY6H4e5WsAGyrtkgf9MIrR4y6s9qHMcoExEtOm76e/pP1NsX00tANuSp4sc4EVGsQVOc0t74ZVGhK80yAQvWEXGgTGLnL/DLyGMIw/MVC/iZA89fSaeFGsINz7FT4/hoBoK+r8=
+	t=1727765032; cv=none; b=WBwwoqXNows0kqjI6jQ4Lf0vwJmUiapXmaMMAuTvHblnG7c1vFUwmFaQr1M5O7mgAIPe+h5P8zj2bhsEJqY/nL3lwKODHuXNA/11OuZTr5a5Hs0etrNP951ekwfFvK38vTNai033lbUjH0Je9BpUM0jxM0H0oCBROIm+n1osmjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727764909; c=relaxed/simple;
-	bh=YtVW8h8bqOHldp7HwSG/PfiEqEPsdApO6u51GkoDJ1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FH/9XwdZjs0icjtn1CA4K2Rw1ZSkf1K/u0wJX4Uetfikl78QZykzwlyzp99srCcqun8MW3W0qnZ25Of8fg1mVOF2fTDCUV6MOgtKbllUtInGgHMg/vsowsJungv065oOYIkuO8k2eK0MJj93VsS5QyCMKFOQ+Wt67ld1WEXU7pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EZLEUNrq; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b9b35c7c3so14440565ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 23:41:48 -0700 (PDT)
+	s=arc-20240116; t=1727765032; c=relaxed/simple;
+	bh=QsyfgTQaLv7x1i0pUbu6WTKkthWCES5zNH+ez7F1AhY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FIsf2tvbFQUDpLCUTzcqFVOqeR/C8+Lfy+xrAuiqD5oG+k2uzaNo6wfP/haaGUAiz45ee5KsYoz60HQ2qCbWDiCx5wzYPEdtbvIrWE3OaOgcTqTwq7eaV/M+X6ETxSkQbN65oBHjSilYwrLQhMHgfO51aVs8pL6d5/jr9L9CAEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw; spf=pass smtp.mailfrom=ite.com.tw; dkim=fail (0-bit key) header.d=ite.com.tw header.i=@ite.com.tw header.b=lXbgNz5+ reason="key not found in DNS"; arc=none smtp.client-ip=60.251.196.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ite.com.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ite.com.tw
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1727764907; x=1728369707; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MrlCI6gDMqjjvh07SpujHzw4G0hvOwNj3Og9A77/EN4=;
-        b=EZLEUNrqGipYiaptsr6ndy/8aAtR41d9ZDSMX8RF1iJB4mqInjey8WOgh6IhHbpUXm
-         gImks6yAyICA2Ko/KWXQ0xISLgd+nSaeWaYqJIVviaEabrEQfrreY1GDUUsign+Tsyek
-         LBnc/bm5JfV+QhvpssESYQ1APqeluhijTKKvrgSAH1KyUvpBYE2SidvjcI5YCzj/+HIQ
-         t59iII3uwZfcjQB7mZLR+yfWqsr/h/24h0lVwIDUq9mz2kIRsYqmM1yI+EtbYJiqqrRn
-         Jz46vdLq5K1DV/+svHHkH5211hg+blaO5bOH+s49uIXWih1HPaDRGvhu6OD/Fosv7pCe
-         Mq5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727764907; x=1728369707;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrlCI6gDMqjjvh07SpujHzw4G0hvOwNj3Og9A77/EN4=;
-        b=feGdUMejD9XlHkU5HCqkthedVWdcbi9WNf9YPSK5v8kIZQzTrmxp45z41NOPm6puQs
-         frhFR7lNKHM1EAhXJDHlEyHK+ad3TaEWx16q/cb+1kmPsdvIjIV8yeRVqyWu8X/uXXL/
-         Uw88plxQ42/zetswHoIDTc3ujGG8OKwzzyGp+EfnLvHzAXc1VjrSb9UUbcq1gCJjLlPZ
-         YeORTF6/hUqmMZtNOXO/RH1q8x8oYKOdyfiie9HpJ2ULHA9VBcMh/vuh1Qqn13l+TZoL
-         oE2HyLuxgfG+MGwTC+TaQOEh4I8fn7Hd7XJoGAe+N9YyCde0RlxW045JDs+9pnc/PfxU
-         rU6w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2wBuDOeVrAJR1ZdCa6Hn1yTMXQ9VfQ65XEuK53QBHO20lOQzoQp58SisZFiPJW01CHLijJmtDiyxKUDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0ZB7X3GsunvEEcQ5hPgbRPRkvF4toOzkmqqapXfl/kpL62sp7
-	Zg5EToTK3IM5+NKDeN/hFPd6liBGIo8ZyRbrAF6NqtRskAy16OEXYeItgim5Jy0=
-X-Google-Smtp-Source: AGHT+IFP3u0mkHLILfVEb/4G2eiUN2Rl9g69lxh2r/A1UnM0/qF+U9h+WXBSTr/0YXwcXLpcsRJ+KA==
-X-Received: by 2002:a17:902:e80a:b0:20b:58f2:e1a0 with SMTP id d9443c01a7336-20b58f2e394mr152709015ad.18.1727764907712;
-        Mon, 30 Sep 2024 23:41:47 -0700 (PDT)
-Received: from localhost ([122.172.83.237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37daf85dsm63772875ad.113.2024.09.30.23.41.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 23:41:47 -0700 (PDT)
-Date: Tue, 1 Oct 2024 12:11:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Mark Tseng <chun-jen.tseng@mediatek.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v1 1/2] PM / devfreq: mediatek: protect oop in critical
- session
-Message-ID: <20241001064145.fnnzcsrewz6pttoe@vireshk-i7>
-References: <20240913103933.30895-1-chun-jen.tseng@mediatek.com>
- <20240913103933.30895-2-chun-jen.tseng@mediatek.com>
- <20241001063919.ekqfd4epcefh5eci@vireshk-i7>
+  d=ite.com.tw; s=dkim;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yId9hUjXMvIgIK6EfcFuOboUd7/oDFwEzCFgGZmvOZs=;
+  b=lXbgNz5+ZHEg03rJXnxpTB8uza0OgIZakcoogsLRkwesleiBlzRbQDRM
+   L4ZMpsHJK7w58SZEq3iX+UPH6ZEHSg6QiRzIH2vAXnmvUqSt35pRlJ6Lh
+   kTOELNdGnUcbSkjuqk7AiqbF5vtPOdZ6+6uxnqZ2qiHQ2NP2g5vOAZLa/
+   Ak3suGPCJOGAjpbbRZUAz8ACda2/rJw+tMW3ratM+vkpubL18aCzUwXNv
+   lRVGuL9Uqy+lxRv09K5tVrRNcDPQVai4HVCFSGf+hyuoiIlQKtu1kEjlt
+   24eWKllLQCxYnXLd6W5/7wxSBS/pel1NIGged0B108rBzRhj4So3ELCOH
+   Q==;
+X-CSE-ConnectionGUID: 19ILxpjeTqiKkqOJYEVW6Q==
+X-CSE-MsgGUID: EnfVdjXZQhawdG3M6Ix2UA==
+Received: from unknown (HELO mse.ite.com.tw) ([192.168.35.30])
+  by ironport.ite.com.tw with ESMTP; 01 Oct 2024 14:43:42 +0800
+Received: from tpemail1.internal.ite.com.tw (TPEMAIL1.internal.ite.com.tw [192.168.15.58])
+	by mse.ite.com.tw with ESMTP id 4916hcY2044673;
+	Tue, 1 Oct 2024 14:43:38 +0800 (GMT-8)
+	(envelope-from Hermes.Wu@ite.com.tw)
+Received: from LAPTOP-C4GM1L3U.localdomain (192.168.82.6) by
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 1 Oct 2024 14:43:38 +0800
+From: Hermes Wu <Hermes.Wu@ite.com.tw>
+To: Pin-yen Lin <treapking@chromium.org>
+CC: Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>,
+        Hermes Wu <Hermes.wu@ite.com.tw>, Allen Chen <allen.chen@ite.com.tw>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        "open
+ list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+        Hermes Wu
+	<hermes.wu@ite.com.tw>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Jonas
+ Karlman <jonas@kwiboo.se>,
+        Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>,
+        open list
+	<linux-kernel@vger.kernel.org>,
+        Robert Foss <rfoss@kernel.org>
+Subject: [PATCH v5 00/10]drm/bridge: it6505: fix HDCP CTS fail items and add MCCS support
+Date: Tue, 1 Oct 2024 14:42:59 +0800
+Message-ID: <20241001064305.32180-1-Hermes.Wu@ite.com.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001063919.ekqfd4epcefh5eci@vireshk-i7>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TPEMAIL1.internal.ite.com.tw (192.168.15.58) To
+ TPEMAIL1.internal.ite.com.tw (192.168.15.58)
+X-TM-SNTS-SMTP:
+	5BEC668B2C8AAEBEF419837CB032D160902223DAA3B18AA826522A2476B3CE132002:8
+X-MAIL:mse.ite.com.tw 4916hcY2044673
 
-On 01-10-24, 12:09, Viresh Kumar wrote:
-> On 13-09-24, 18:39, Mark Tseng wrote:
-> > mtk_ccifreq_target() & mtk_ccifreq_opp_notifier() is re-enter funtion
-> > when cpufreq governor is more than one. It should add global mutex to
-> > protect OPP , avoid get wrong frequency & voltage.
-> 
-> I am not sure I understood the problem well. Can you explain clearly
-> why the current locking doesn't work with details call chain ?
+From: Hermes Wu <Hermes.wu@ite.com.tw>
 
-Ended up replying to the wrong email. This comment is for patch 2/2.
+This is a v5 patch-set.
+
+There are lots of failure items while running HDCP CTS using UNIGRAF DPR-100.
+In Order to fix those failures, HDCP flow needs to be changed.
+
+The DisplayPort AUX protocol supports I2C transport.
+In Order to support MCCS via the aux channel, the aux-i2c operation is added.
+
+v4 ->v5:
+	-add more messages for changes.
+	-[2/10] modified AUX transfer data size judgment.
+		change for-loop to do-while.
+	-[7/10] change for-loop to do-while.
+	-[9/10] change wait timer with timer_after()
+
+	links:
+	https://lore.kernel.org/all/20240926074755.22176-4-Hermes.Wu@ite.com.tw/
+	https://lore.kernel.org/all/20240926075134.22394-1-Hermes.Wu@ite.com.tw/
+
+v3 ->v4:
+	-split changes  into patches.
+
+v2- > v3:
+	-split aux read  KSV function to a patch.
+	-[1/3] new in v3
+	-[2/3] add description of patch
+
+v1 -> v2 :
+	- ignored.
+
+
+
+Hermes Wu (10):
+  drm/bridge: it6505: Change definition of AUX_FIFO_MAX_SIZE
+  drm/bridge: it6505: improve AUX operation for edid read
+  drm/bridge: it6505: add AUX operation for HDCP KSV list read
+  drm/bridge: it6505: Change definition MAX_HDCP_DOWN_STREAM_COUNT
+  drm/bridge: it6505: fix HDCP Bstatus check
+  drm/bridge: it6505: fix HDCP encryption when R0 ready
+  drm/bridge: it6505: fix HDCP CTS KSV list read with UNIGRAF DPR-100.
+  drm/bridge: it6505: fix HDCP CTS compare V matching
+  drm/bridge: it6505: fix HDCP CTS KSV list wait timer
+  drm/bridge: it6505: add I2C functionality on AUX
+
+ drivers/gpu/drm/bridge/ite-it6505.c | 334 +++++++++++++++++++++++-----
+ 1 file changed, 277 insertions(+), 57 deletions(-)
 
 -- 
-viresh
+2.34.1
+
 
