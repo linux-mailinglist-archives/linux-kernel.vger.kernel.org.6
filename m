@@ -1,90 +1,81 @@
-Return-Path: <linux-kernel+bounces-346085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB3C98BF5D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:14:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A7198BF64
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD621F240EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28841F22001
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7641CC159;
-	Tue,  1 Oct 2024 14:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lijWMfAI"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E2D1C7B7C;
+	Tue,  1 Oct 2024 14:10:46 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E481CBE8A;
-	Tue,  1 Oct 2024 14:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A4D1C7B68;
+	Tue,  1 Oct 2024 14:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791800; cv=none; b=HlIEB3cZnn+QfCA9v8iH71AVAkWMSoOh07pzpyN0e8XBIye0d/gXi5/2Sj7C6VKBnVxY8ZiwwJnjZJBBkpAZPMQPhGJCDA32okhck3kIDOlJSdFHaKHci8cN05sAhurSrz/hutr/miiLm4+X0kjpzERcAYCCq42egD+l4aZEi+k=
+	t=1727791846; cv=none; b=q7gzpeEFCgiI2tyHtAlVUADKZFfClxLeeRcrzYzND+Ez/oggiyaeQn9mNh1TAvmYo+Zfcqp0PQ5U0ZlG1DavnF2AooexeR15UUnyxvYG2vh7RJ0c+CR2DoxC86/IP+YWl/cvsBjnXRS60c4l1zUKCtmPkEnxcPEcf7DHjPsCPz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791800; c=relaxed/simple;
-	bh=VY91vW/qC6MJTXVGzHNIgCf1mq1jUFKjewgTdlz4O8A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kfeDvUw/4MLPU/nM3+XgouwhJE0W8djDOY2olvz4LNmp9vgnpe3qJLtZnYKDU1dQIHr9RJPJUZK8eib1Ka8RVrhpom/7WJRzF7a0N87hwhvwzjWsShWYAb8OPk9SilEUmSegXBhTbl1QiE7tS2w7TUuE9Dughi6OFyqTZJbWgbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lijWMfAI; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1727791846; c=relaxed/simple;
+	bh=1Dx1gN2k2nOa+Rt58OoTR5fnHwu54Rev2gCbVCrJ/SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sATl43EtzFTRi3HO2SjUqgOUV1c3I/BMVzMcqhZWCmWAjl1L3qWmtOUpm4u0uaw2sqNPmqh1JEqKjr5jM3ffVJQrnSC4dabiA0Umyg2ONYROR4K9zcQYtWsKGXdTJxqhkALVzuOf3I2dgkdTD3z+XXcihS50gUG0t9SPl3NEHDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a93b2070e0cso674327966b.3;
-        Tue, 01 Oct 2024 07:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727791797; x=1728396597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tEOzuVCWMUdGlzBesvO8nBRO0Iupuq39zvRd6ja3B6U=;
-        b=lijWMfAI49IaTFg4HKr0uwOFrtS2CNv+fySQ5+LV9a5CfNmO3rbSoLmJ+vn5W1rCjR
-         7Mhr6Tqih5T0pYBbS+mkoOMS2R1NoN/3Pwo0Iwp2yc9YjPWmQr84ONYerHWjLfyy+JKo
-         TqflngFFTQWq2xbJhiSTRDmMbWVZvUAPJypSg30L8UY1LpLjbiYaB/zVBPwgb9VKs3d5
-         +qUc1tiD6Ly13tHt79ymlSAyoK0+PFF2FYfAjmtXDJlM+hodgwHDflr6Qnxv+elMHs99
-         Frt9tb9MmnUUowcOBfxyULdeFk2C/CXuvflmZ828mY3ddTMLo/4cHtdTzGBbFovfxQR0
-         9OAg==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so1222951466b.1;
+        Tue, 01 Oct 2024 07:10:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727791797; x=1728396597;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tEOzuVCWMUdGlzBesvO8nBRO0Iupuq39zvRd6ja3B6U=;
-        b=Hwi2F7Xii9Qz7iJyzIqbVYaCh/1+6EFqg449d8xDYHEKSgS0lSpAPKBUiFfkRGmdBl
-         s7NirpvaWR34R1he8TMkQOsbkbobX2YqbAn+/ShAVuWWfSekjzXwoZ5yCT9WxUFTUMi9
-         bObdf0we8W/mGSCbL8slNPjG5oosTNxAULgtfvt4UI6ijCpeGJ6rNXXx/vkfqACJ2IQr
-         /FTQwoprSju1UIwxKNje+ScUmXivvWCQlGvsyfRgZC+we5gxCtrLwp07UfeasTKRecpI
-         aDAfaGKUIfiXXY79/qrmQ/1OJFGRy97U0pF+8KYcS5+l9HYUbNH88hHQwIo1vNlDF/KO
-         JVjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQeLl2J56Ywo0N8s+MPb4vU9YZz5VCoqBBRLwXLrIQC/I2kmRd0P2y2XLTIgj7Jx6VtPdfHxYH71SWCoY=@vger.kernel.org, AJvYcCWHW6D0AOweOpoC+rQWC3NBOnGWCeRkJvlXLWNqrNtjkrsopHIuTRJ/BujMbrJiWD1m/mWRcB3xDt3q0sGMQRjede8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweoggMgwz5vmy5lrE0aMMr3dU4aYv/yrRWFiAGKD+co3k5n003
-	GqpNfgzAvHiyILJW8qu0rGd5b6ise18SLc8rLEGMPlMou000WW3F
-X-Google-Smtp-Source: AGHT+IGD5XwMQGufA+hBlEEu8kdEe7bkLLmIhLCjRvsQ4yUNdPPf9Cz3ZFuNrk2j+NlI1cLmGhTnuQ==
-X-Received: by 2002:a17:907:9812:b0:a91:1634:9e92 with SMTP id a640c23a62f3a-a93c4919832mr1616220666b.21.1727791796741;
-        Tue, 01 Oct 2024 07:09:56 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2776de0sm723532966b.2.2024.10.01.07.09.55
+        d=1e100.net; s=20230601; t=1727791843; x=1728396643;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dj68yZiPQBnR0TH4Q75P/Z/Ts9MBPlWW2+d5H/Vz/dQ=;
+        b=DgYwmK1CxTifHlhrZfaNaaf6aJg8jeAmpSj/zynKEZaHO8pd3uotl8Cm+lp4sJBTEC
+         afad4rsGyQ2YKmt/jQlJoCLKJlTS14wGT4EmufkNBIzpFha4wGXOmHvYIQo3G6fTx3oK
+         wM2fw7m2ts6cirx4AO70Wi4pKl5eXgw54sHjTOrB3YFVGKmRxQDYeyCPDYAmcONzj3mj
+         5k8KVmfmg4bIzzO2y3B7jPlSk5JevKX8NomDHg0aagrh1s+9ZtfvkZ+MwfhCXO+NzJGr
+         2eKcck9RaGx7Hial8WsJdqW2DW3zNnwNRVDLTw8JcWAwTn7OK5IAPkpaf9QBSumF/Rkf
+         0e1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUK0U0QjkFXwyXH+dNZyCoxBnNfeKF3De7t1VCxb2RYRi11/6iyDARi3cLFZqVqhKExITSYQ8hx9S0IB7k=@vger.kernel.org, AJvYcCVlIqAxMgAnqjAv2YeF6pi3yj9nY2XgHpuF+DPxFzI6bA4IHfCH68PjyePKGbfuS/v9KV2TsyY8cfkCJVCKqTk3QA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7bKPmx8zgNr7PqaaL1OkbXKaUZem33ofL2tdLtB6p5QDYFL1j
+	NpItXi+n0FFea/mA3WnbJpsWlb67cNqLP/RqJ6Trnf7Ew3yieJul
+X-Google-Smtp-Source: AGHT+IEy67YIdI755Oqs8rPTmChwJf8ZQTep1dLvkKsmi5Q7cC9i/FmdAOAo/KcaOUC8fEAgoK93Uw==
+X-Received: by 2002:a17:906:478b:b0:a8d:65f4:c7c6 with SMTP id a640c23a62f3a-a967c0853ddmr377768066b.24.1727791842477;
+        Tue, 01 Oct 2024 07:10:42 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c58edsm712566666b.46.2024.10.01.07.10.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 07:09:55 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 17/17] media: rzg2l-cru: Move register definitions to a separate file
-Date: Tue,  1 Oct 2024 15:09:19 +0100
-Message-ID: <20241001140919.206139-18-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 01 Oct 2024 07:10:41 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: leit@meta.com,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Sandipan Das <sandipan.das@amd.com>,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH RESEND v3] perf/x86/amd: Warn only on new bits set
+Date: Tue,  1 Oct 2024 07:10:19 -0700
+Message-ID: <20241001141020.2620361-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,189 +84,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Warning at every leaking bits can cause a flood of message, triggering
+various stall-warning mechanisms to fire, including CSD locks, which
+makes the machine to be unusable.
 
-Move the RZ/G2L CRU register definitions from `rzg2l-video.c` to a
-dedicated header file, `rzg2l-cru-regs.h`. Separating these definitions
-into their own file improves the readability of the code.
+Track the bits that are being leaked, and only warn when a new bit is
+set.
 
-Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+That said, this patch will help with the following issues:
+
+1) It will tell us which bits are being set, so, it is easy to
+   communicate it back to vendor, and to do a root-cause analyzes.
+
+2) It avoid the machine to be unusable, because, worst case
+   scenario, the user gets less than 60 WARNs (one per unhandled bit).
+
+Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Sandipan Das <sandipan.das@amd.com>
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
-v2->v3
-- New patch
----
- .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 79 +++++++++++++++++++
- .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 69 +---------------
- 2 files changed, 80 insertions(+), 68 deletions(-)
- create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+Changelog:
 
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-new file mode 100644
-index 000000000000..458f7452e5d3
---- /dev/null
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-@@ -0,0 +1,79 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * rzg2l-cru-regs.h--RZ/G2L (and alike SoCs) CRU Registers Definitions
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#ifndef __RZG2L_CRU_REGS_H__
-+#define __RZG2L_CRU_REGS_H__
-+
-+/* HW CRU Registers Definition */
-+
-+/* CRU Control Register */
-+#define CRUnCTRL			0x0
-+#define CRUnCTRL_VINSEL(x)		((x) << 0)
-+
-+/* CRU Interrupt Enable Register */
-+#define CRUnIE				0x4
-+#define CRUnIE_EFE			BIT(17)
-+
-+/* CRU Interrupt Status Register */
-+#define CRUnINTS			0x8
-+#define CRUnINTS_SFS			BIT(16)
-+
-+/* CRU Reset Register */
-+#define CRUnRST				0xc
-+#define CRUnRST_VRESETN			BIT(0)
-+
-+/* Memory Bank Base Address (Lower) Register for CRU Image Data */
-+#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
-+
-+/* Memory Bank Base Address (Higher) Register for CRU Image Data */
-+#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
-+
-+/* Memory Bank Enable Register for CRU Image Data */
-+#define AMnMBVALID			0x148
-+#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
-+
-+/* Memory Bank Status Register for CRU Image Data */
-+#define AMnMBS				0x14c
-+#define AMnMBS_MBSTS			0x7
-+
-+/* AXI Master Transfer Setting Register for CRU Image Data */
-+#define AMnAXIATTR			0x158
-+#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
-+#define AMnAXIATTR_AXILEN		(0xf)
-+
-+/* AXI Master FIFO Pointer Register for CRU Image Data */
-+#define AMnFIFOPNTR			0x168
-+#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
-+#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
-+
-+/* AXI Master Transfer Stop Register for CRU Image Data */
-+#define AMnAXISTP			0x174
-+#define AMnAXISTP_AXI_STOP		BIT(0)
-+
-+/* AXI Master Transfer Stop Status Register for CRU Image Data */
-+#define AMnAXISTPACK			0x178
-+#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
-+
-+/* CRU Image Processing Enable Register */
-+#define ICnEN				0x200
-+#define ICnEN_ICEN			BIT(0)
-+
-+/* CRU Image Processing Main Control Register */
-+#define ICnMC				0x208
-+#define ICnMC_CSCTHR			BIT(5)
-+#define ICnMC_INF(x)			((x) << 16)
-+#define ICnMC_VCSEL(x)			((x) << 22)
-+#define ICnMC_INF_MASK			GENMASK(21, 16)
-+
-+/* CRU Module Status Register */
-+#define ICnMS				0x254
-+#define ICnMS_IA			BIT(2)
-+
-+/* CRU Data Output Mode Register */
-+#define ICnDMR				0x26c
-+
-+#endif /* __RZG2L_CRU_REGS_H__ */
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index c3d10b001b7c..d7c82c7b9044 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -20,74 +20,7 @@
- #include <media/videobuf2-dma-contig.h>
+v3:
+ * Avoid potential false reporting when concurrent execution occurs on
+   different CPUs (Paul E. McKenney)
+
+v2:
+  * Improved the patch description, getting the benefits in words.
+  * https://lore.kernel.org/all/20240731154651.1555511-1-leitao@debian.org/
+
+v1:
+  * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
+
+ arch/x86/events/amd/core.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 920e3a640cad..b4a1a2576510 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++	static atomic64_t status_warned = ATOMIC64_INIT(0);
++	u64 reserved, status, mask, new_bits, prev_bits;
+ 	struct perf_sample_data data;
+ 	struct hw_perf_event *hwc;
+ 	struct perf_event *event;
+ 	int handled = 0, idx;
+-	u64 reserved, status, mask;
+ 	bool pmu_enabled;
  
- #include "rzg2l-cru.h"
--
--/* HW CRU Registers Definition */
--
--/* CRU Control Register */
--#define CRUnCTRL			0x0
--#define CRUnCTRL_VINSEL(x)		((x) << 0)
--
--/* CRU Interrupt Enable Register */
--#define CRUnIE				0x4
--#define CRUnIE_EFE			BIT(17)
--
--/* CRU Interrupt Status Register */
--#define CRUnINTS			0x8
--#define CRUnINTS_SFS			BIT(16)
--
--/* CRU Reset Register */
--#define CRUnRST				0xc
--#define CRUnRST_VRESETN			BIT(0)
--
--/* Memory Bank Base Address (Lower) Register for CRU Image Data */
--#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
--
--/* Memory Bank Base Address (Higher) Register for CRU Image Data */
--#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
--
--/* Memory Bank Enable Register for CRU Image Data */
--#define AMnMBVALID			0x148
--#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
--
--/* Memory Bank Status Register for CRU Image Data */
--#define AMnMBS				0x14c
--#define AMnMBS_MBSTS			0x7
--
--/* AXI Master Transfer Setting Register for CRU Image Data */
--#define AMnAXIATTR			0x158
--#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
--#define AMnAXIATTR_AXILEN		(0xf)
--
--/* AXI Master FIFO Pointer Register for CRU Image Data */
--#define AMnFIFOPNTR			0x168
--#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
--#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
--
--/* AXI Master Transfer Stop Register for CRU Image Data */
--#define AMnAXISTP			0x174
--#define AMnAXISTP_AXI_STOP		BIT(0)
--
--/* AXI Master Transfer Stop Status Register for CRU Image Data */
--#define AMnAXISTPACK			0x178
--#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
--
--/* CRU Image Processing Enable Register */
--#define ICnEN				0x200
--#define ICnEN_ICEN			BIT(0)
--
--/* CRU Image Processing Main Control Register */
--#define ICnMC				0x208
--#define ICnMC_CSCTHR			BIT(5)
--#define ICnMC_INF(x)			((x) << 16)
--#define ICnMC_VCSEL(x)			((x) << 22)
--#define ICnMC_INF_MASK			GENMASK(21, 16)
--
--/* CRU Module Status Register */
--#define ICnMS				0x254
--#define ICnMS_IA			BIT(2)
--
--/* CRU Data Output Mode Register */
--#define ICnDMR				0x26c
-+#include "rzg2l-cru-regs.h"
+ 	/*
+@@ -1012,7 +1013,12 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ 	 * the corresponding PMCs are expected to be inactive according to the
+ 	 * active_mask
+ 	 */
+-	WARN_ON(status > 0);
++	if (status > 0) {
++		prev_bits = atomic64_fetch_or(status, &status_warned);
++		// A new bit was set for the very first time.
++		new_bits = status & ~prev_bits;
++		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
++	}
  
- #define RZG2L_TIMEOUT_MS		100
- #define RZG2L_RETRIES			10
+ 	/* Clear overflow and freeze bits */
+ 	amd_pmu_ack_global_status(~status);
 -- 
-2.43.0
+2.43.5
 
 
