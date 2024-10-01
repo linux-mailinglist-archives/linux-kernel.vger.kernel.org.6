@@ -1,82 +1,106 @@
-Return-Path: <linux-kernel+bounces-345911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E3198BCCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B544298BCD7
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497B71C22138
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59531C236A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE3D1C3315;
-	Tue,  1 Oct 2024 12:52:40 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7D01C330B;
+	Tue,  1 Oct 2024 12:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="ntJCOUuK"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4271C3312;
-	Tue,  1 Oct 2024 12:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9C719D88D;
+	Tue,  1 Oct 2024 12:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787159; cv=none; b=NeFlaRHJSOGl1jHiizdrXS9eKdeQVtOo6jHmeU7da4G7AapR/crViAvqgsfCSyBm0mv07Q7O2w1KPVNPdkomeLtFBDEKdAEfba4COWtMclrMofRl0+fiv1kTA+uTvwapGIEgAt+nC4MS1BpXXQZfvuZN+HnUV/yeawBMkXPQTMM=
+	t=1727787234; cv=none; b=N6xVzAm8DmmhzwTPdjyJGV/C61stmSY0Aa4AWy8TK9fVqConscwGF5V6FojrOcnG4Wi+G0wprLxgUtyeDQrrA+I+h0v/7Gww+8GKxnjwBzrDKeMiqr/p9QrhOqFYlCbpqtyakJexmNFlEhJ0pOWBE1BhZjDMUEIiQ9HfF9V8rzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787159; c=relaxed/simple;
-	bh=aGaAIKBOaEg38Bg0Blb5V51gc+udAfeRUBy9Fk/mbKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UwrV69YtlAbqT1QO0gbSuGALypImnezfyZ9nZxj4s10TbL4RqdiCYxWSeOKhNxRcGuRIK25ZYvhJRzd5jJ5I+YhfalYQawrPUvpHzyiZGqOgGIl0F0/H77X6F8s5ZMRArN+lUOQoSvz54mGjX0hG2uovZmQjUS4rszGJhYsAgXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F3EC4CEC6;
-	Tue,  1 Oct 2024 12:52:38 +0000 (UTC)
-Date: Tue, 1 Oct 2024 08:53:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>, LKML
- <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mike Rapoport <mike.rapoport@gmail.com>, Kees Cook <keescook@chromium.org>,
- Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] Documentation/tracing: Mention that
- RESET_ATTACK_MITIGATION can clear memory
-Message-ID: <20241001085326.5841a9ce@gandalf.local.home>
-In-Reply-To: <CAMj1kXGz2isSBBkm1R7DiinNt5nxELRTvrD4XXN9v_TRQrNr-A@mail.gmail.com>
-References: <20240926130159.19e6d0e2@rorschach.local.home>
-	<CAMj1kXF1=2wLgM8HP6BvUxdZLK4EdnaORLUTjoDJSZP-hhDJwA@mail.gmail.com>
-	<80930b34-3b31-46d7-8172-6c0cd2ee497f@redhat.com>
-	<CAMj1kXGz2isSBBkm1R7DiinNt5nxELRTvrD4XXN9v_TRQrNr-A@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727787234; c=relaxed/simple;
+	bh=wVmIzLHrlB9vbqZZ4IHk4yXT9OkBR1Nuo7JXvIjOmAQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fZiYatGgHUFBgktib31jQFARudtbm4DgqL7jyDS0YUqpF5U2jKm9Hh5l2mmp4o4cRYeWO4wQYHxBC2zGTMVNCpJOmLA5LZ+CCBqmipClU3nKIZWdA3d5VuOOnrhTIRwyWgsBmi3JGpIHDkSLn9FkK/nbrtSLh+7cCD2S+BxqM6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=ntJCOUuK; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=wVmIzLHrlB9vbqZZ4IHk4yXT9OkBR1Nuo7JXvIjOmAQ=;
+	t=1727787232; x=1728996832; b=ntJCOUuK3sDdtk53DJ4WarNW5pHlX5uKG+pdjf+EajFeF9I
+	u2W/S4tYfNcwDYrV5sd5BTB9Y1CswC/V4PTq2aChKbJZGgoqVHvsdfzj453Ri7vD5zXsDSy5DBP2h
+	Mb432pJleTOxhScrcvMc6sXwq+oqbsw3VdOBtO0o7aLA82FDip44DrHAoTJukCGRJP873el8drwB1
+	292xlW/jyd66G2/xq7piPEXnPYv3h2/HnLreNuez8SUuY8JPke2Q5W/9lCcJz08QXJ+uDEcNzQCwA
+	BkgIfWdJdaC4BC3/GTRjBcxuDWKNSvPMV/D1Y9ZHOXqiB5cRS0hweGU0kf6M6TUw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1svcNg-0000000Elbd-23z1;
+	Tue, 01 Oct 2024 14:53:32 +0200
+Message-ID: <168acf1cc03e2a7f4a918210ab2a05ee845ce247.camel@sipsolutions.net>
+Subject: Re: [PATCH v7 09/10] um: Add dummy implementation for IO
+ memcpy/memset
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Julian Vetter <jvetter@kalrayinc.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Russell King <linux@armlinux.org.uk>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,  Guo Ren
+ <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>,  Andrew Morton <akpm@linux-foundation.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Richard Henderson
+ <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+  Matt Turner <mattst88@gmail.com>, "James E . J . Bottomley"
+ <James.Bottomley@hansenpartnership.com>,  Helge Deller <deller@gmx.de>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,  Richard
+ Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-csky@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-m68k@lists.linux-m68k.org, linux-alpha@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-sh@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, Yann Sionneau
+	 <ysionneau@kalrayinc.com>
+Date: Tue, 01 Oct 2024 14:53:31 +0200
+In-Reply-To: <20240930132321.2785718-10-jvetter@kalrayinc.com>
+References: <20240930132321.2785718-1-jvetter@kalrayinc.com>
+	 <20240930132321.2785718-10-jvetter@kalrayinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-On Tue, 1 Oct 2024 11:35:53 +0200
-Ard Biesheuvel <ardb@kernel.org> wrote:
+On Mon, 2024-09-30 at 15:23 +0200, Julian Vetter wrote:
+> The um arch is the only architecture that sets the config 'NO_IOMEM',
+> yet drivers that use IO memory can be selected. In order to make these
+> drivers happy we add a dummy implementation for memcpy_{from,to}io and
+> memset_io functions.
 
-> All I am asking for is a line in the documentation that says that
-> clobbered trace buffers could occur at any time, regardless of whether
-> CONFIG_RESET_ATTACK_MITIGATION is enabled or not. That way, we have
-> something to refer to when people start filing bugs against the EFI
-> component when this breaks.
+Maybe I'm just not understanding this series, but how does this work
+with lib/logic_iomem.c?
 
-How about if I change the comment to this?
+You're adding these inlines unconditionally, so if this included
+logic_io.h, you should get symbol conflicts?
 
-        Note, saving the trace buffer across reboots does require that the system
-        is set up to not wipe memory. For instance, CONFIG_RESET_ATTACK_MITIGATION
-        can force a memory reset on boot which will clear any trace that was stored.
-        This is just one of many ways that can clear memory. Make sure your system
-        keeps the content of memory across reboots before relying on this option.
+Also not sure these functions should/need to do anything at all, there's
+no IO memory on ARCH=3Dum in case of not having logic_io.h. Maybe even
+BUG_ON() or something? It can't be reachable (under correct drivers)
+since ioremap() always returns NULL (without logic_iomem).
 
-Would that be better?
+I think Arnd also said that other architectures might want to use
+logic_iomem, though I don't see any now.
 
-I want to stress that this doesn't work for every setup. It just so happens
-to work for mine and others. I do not want people thinking that it's a bug
-if it doesn't work for them.
-
--- Steve
+johannes
 
