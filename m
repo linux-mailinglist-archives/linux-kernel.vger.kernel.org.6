@@ -1,127 +1,197 @@
-Return-Path: <linux-kernel+bounces-345251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FE298B3AD
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2980798B3B9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 07:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25986B21744
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44731F22DD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 05:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362251BBBDB;
-	Tue,  1 Oct 2024 05:33:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72541BD516;
+	Tue,  1 Oct 2024 05:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kaVQMaga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DiFuxIjG"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2066.outbound.protection.outlook.com [40.107.237.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691306F31E;
-	Tue,  1 Oct 2024 05:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727760802; cv=none; b=BL0VLi9yFXEC5LMZEsmumzNjHu0V55RlXFdHr2IEgAJU7qnpMHA5s8xQVbBig/kn0GwrAmY+F6cHJeddpLjqLMb1Ip4RMz1zXPaoKRj5eOwslvNFRuZeFCWKcmD0/Mz0JJGKglRezcuKtp0uRwJiwfLq+OIat/NJXUHOjcZal0E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727760802; c=relaxed/simple;
-	bh=ALkA67D2rrKVC3yq6JegYHLnnbAgFq9HD2IAj9UHyx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n7BxmBmhO7/ZglhuShcpiCvqTm/qmT5EU2gtNYLAG8zRfhJn+eRBEXrXg/MsualD1XPpv3tC4XhF2XvkvAl5QjOZb+mcSTQpZ8d6Xd2UxzL/g592Z+j5j3/1ml2tNMNn7WYIn3rD6tUWVKKvmJKMTS/WvuM3+wpFaHsz7jmMDqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kaVQMaga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746B3C4CEC6;
-	Tue,  1 Oct 2024 05:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727760801;
-	bh=ALkA67D2rrKVC3yq6JegYHLnnbAgFq9HD2IAj9UHyx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kaVQMaga3ThzkwWDWuQk6rDB3RSXwRBcTwVGj8nhKaCxd8DGvY0nFCd3IYRsTljub
-	 AZKP4ayTicXJrMtWGj3619WfldHuCsfWcGmrgx6E5KyTalkkIaPvDa79j8IX7+KCf9
-	 tyL1xiG/I6r77qcfTBBo8IHr09HTVxQ5ElVlGqCP6PER85aneiWgpkfNVBK7/pOc2d
-	 0IB7OJr+GBkkTfq3dlA5pz5ppoFJHfbV+YEe6fDprG8RfaDEijzbt4+Mc2WLN9Cu7U
-	 G+M9qW3AxZz15VbiWMQ7LPrCzm4ijKVB3gpMkuSL/R/mT8sVLa15UwdAicPRjd0T7A
-	 AapjojwaZZpvA==
-Date: Mon, 30 Sep 2024 22:33:18 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Uros Bizjak <ubizjak@gmail.com>, Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Keith Packard <keithp@keithp.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-doc@vger.kernel.org,
-	linux-pm@vger.kernel.org, kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-efi@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-sparse@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [RFC PATCH 04/28] x86/boot: Permit GOTPCREL relocations for
- x86_64 builds
-Message-ID: <20241001053318.elfwwiyluw6rlynz@treble>
-References: <20240925150059.3955569-30-ardb+git@google.com>
- <20240925150059.3955569-34-ardb+git@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5241BD50D;
+	Tue,  1 Oct 2024 05:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727761039; cv=fail; b=rde649F/wGWbjEaApa9dXKUabbleVWKmhOBqeGcUUbKOjM6jfGKCfXR7qZkMBazoAnrIo84JDos6mP+VbOfnx7S0AWh3rJ1loWvwwlQ9EjYhZ6pRUUSKwVGinDgSOA3igkjzvDoWzX3dJMkG412WbSycWTLXHeaydPkeJbnQw0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727761039; c=relaxed/simple;
+	bh=eQMQofAwJSdYK7jr42X1rx9LGofLyLia8AH6ez20jHg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hWK0HKwwGH4d1X96Jra1FPhyBnwVW7jB27QAHmFyShu2Rk2rrXiVMqbTd7YJcPb1HiLOb3yQjuffD2jpEY9Y+9bhn0qAYUkaWklwyGmRz3BNREBkgJk/OTrc6Bb2gedyRi4RP2MI71FZtJ8ZeU0zyB4YyWzgYLYPxkSTa09dhP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DiFuxIjG; arc=fail smtp.client-ip=40.107.237.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=u9tiG2+BqV4rsO7nwclEqmkVsJYpg9kVHyFPTMLnamkuSZdIHA90RBzk0TtgJeORV8x1+eVQImmoHKVK6PRzJwO9Wfo96imgIly+6aHOm4fewkKsWxLnwjouY9WJsulv5s8IWLmVfZ4FXHVlzhoS4ql6dicwtxowhZ9XfWZkaC+M2co8w5+UdT84lt72O5HcozoGxUQ74QxDa/3NnLI6nShVvjLPIMHcUHHSguWdEULRinkOhc5M4eX1oG4FsF3WPrl1LVhnWRkyzhew2dRbX3cjN03JhwvGvxcrH6btLg2Wk3d+cPWKpZ6J0prli4KLAIlOWUu1GGZju0vCMwYqYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Hsn8Ew76F3mAxHDHcu0UZMO8OsOGrXN9p4BSJameETE=;
+ b=wiKGSmHF8jwJ3PVNvgTqIEITZ6YMTic8ZMPFoIzsaPgtHJcyDpxmv1oal4xHXGajQtqNkU2v6b+FC2TIv72mk8948VjVXEAF5opINKOf3GQ4XWEiSVCLAJeK2QMg1AKxusoU+tr/5ndmkT4uvwZXVIv8BWF3UccmsYZyWOCN1TXTN/B5yyOykmS4V9e5KiGpIJK4jyRu8OtA/0Z/eizNdEKKpzTMVBNBHa5uQ6h2SSshTZXqkHlbTikg0kT0pmL0JUEiiLLb8Sd4aH9aoOb1B8kVVgATcCYVhPcTh4Q2ZqV7FyffgKGG80U3xAAQjGc4MZ2pz+6/ugD7TEM6B1XP3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Hsn8Ew76F3mAxHDHcu0UZMO8OsOGrXN9p4BSJameETE=;
+ b=DiFuxIjG20Tz5WzcUWCIu53v8jYkPiE7e3fzKai6LoPWWL8ZjX3q7zcQ4SJYsiQofxQR3/iXTFA3XZ8i1eL+zea5jkEmcN7IHq+TbcT1yaE/U0d/K3dRHQvqKrCGCalUDzwgSJ7HlqJOjxQ441rVRHXv9L9Qt99w33M0jX6hWfjm+GMZbQqG58a9lo2jFLbzUwC9aCWNj7GueVzfhcObGaeAj/2miSSHk6CV+JRVVW2HjTj9SmlLFPxylvWED9kuIrGiTgH7qMtkvvSeCJKIO3bNGsSBbpv1P0+QZFekgZiLxrhlKIreR9YMORq2Fs1XNeqACpJx45FFpBy2pzKxBQ==
+Received: from CO1PR11MB4771.namprd11.prod.outlook.com (2603:10b6:303:9f::9)
+ by DM6PR11MB4628.namprd11.prod.outlook.com (2603:10b6:5:28f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8026.15; Tue, 1 Oct
+ 2024 05:37:14 +0000
+Received: from CO1PR11MB4771.namprd11.prod.outlook.com
+ ([fe80::bfb9:8346:56a5:e708]) by CO1PR11MB4771.namprd11.prod.outlook.com
+ ([fe80::bfb9:8346:56a5:e708%2]) with mapi id 15.20.8005.026; Tue, 1 Oct 2024
+ 05:37:14 +0000
+From: <Divya.Koppera@microchip.com>
+To: <andrew@lunn.ch>
+CC: <Arun.Ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] net: phy: microchip_t1: Interrupt support for
+ lan887x
+Thread-Topic: [PATCH net-next] net: phy: microchip_t1: Interrupt support for
+ lan887x
+Thread-Index: AQHbE01nB5y9tkf9zECXlzvwEYnrpLJwiVaAgADXxWA=
+Date: Tue, 1 Oct 2024 05:37:14 +0000
+Message-ID:
+ <CO1PR11MB47719360D9B331C4A723F7C0E2772@CO1PR11MB4771.namprd11.prod.outlook.com>
+References: <20240930153423.16893-1-divya.koppera@microchip.com>
+ <31efa9fa-f4e3-4538-b09b-b1363e419079@lunn.ch>
+In-Reply-To: <31efa9fa-f4e3-4538-b09b-b1363e419079@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR11MB4771:EE_|DM6PR11MB4628:EE_
+x-ms-office365-filtering-correlation-id: 39e9a49d-7524-4bbd-ed7d-08dce1db1ad0
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4771.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?OZ0oVCbuOT2eH1mpcNvJNDrJD6d5V8ceBdAT4Ng6ZhVE2fIoYfxLIdbsDsqn?=
+ =?us-ascii?Q?VEHfiTibuvRDEFaAkYQutoL6HgnqcAqnphMOXvUpXUGMwzky+LQKjYZjtNyB?=
+ =?us-ascii?Q?fDpgKM0Ol4i6zQ4ZrYw+IscxCi82Sap3PBbLLFeE5hDUr/9PwO4JlYbftXf9?=
+ =?us-ascii?Q?HcUtT2tTg0EAlLId9Iyp7cLJVKc1Ea1Iv2B+LfNxKoAseXwpiRUlddZKc9VK?=
+ =?us-ascii?Q?AZ2Tgu2xPhqbMvrfFr8EmBus1aVI2/DSFLqx2+pZM8EQGetnfjaxyn4RS2Fs?=
+ =?us-ascii?Q?MsZAlQWK6NP95+CgaUlXF4i94HzLJLIVKIfOlQC4PcBAU5DqLTTyiK/sTJxR?=
+ =?us-ascii?Q?cyLzQ2Ic0sm14lR+bALdolKSZaRXJ8IQpheVPUlOvNUxqFkhx/+nd6AYyjBl?=
+ =?us-ascii?Q?cLu7g/M9Hbn3FDWSzzpWQI+PrP/Nfi/Mkd4vVao77pz5ibcpl4mKjlgKmPVE?=
+ =?us-ascii?Q?JAXBKGYzfJHvyhWMnmKq7LtPOGqjkoEK0QWy9xF4VX444H+zgv5OhTlOOFa1?=
+ =?us-ascii?Q?kWNQNMuAzMlY5SiVzxSgAhwFds6YyMpTvpXObIJAXemJQ3fr9WiG+hNaIi/Y?=
+ =?us-ascii?Q?PhW6mfoIhArYnQyZwAmnTmGY+JyQbJJBMoQcV4rKwA7D8HtuzOJcGn6fCsUf?=
+ =?us-ascii?Q?7iLBec0E1t3grzWRGFcnOKJyWH99q0Z/z1n8HDY1cUD3QHmrstcAtwFwsIqM?=
+ =?us-ascii?Q?zpbQLVBmmXvjJafIgkvlbQwSZv+I2x5PC9rlgs8FXcNtYdEFqmMur7UWZITz?=
+ =?us-ascii?Q?3uf/PvoOdAOUbVfWPT69lCqvWrE2zc0I0/+WmMC7VkzneUABNfQOU0y5oc2p?=
+ =?us-ascii?Q?ZEfVvhtrKWMr3kNuQLu8S09A7W3IUcGOuc6s5ipfIx9cqwnLJpg8pMvhoIE1?=
+ =?us-ascii?Q?6UiBJ1yQbAOFECxfM4dHscYv9fd5UJXfE/qLdER9yaHaVTsaIOgHnLxNHhqb?=
+ =?us-ascii?Q?H+mZnOLrrYfgkXd3YGD47f5dEHdkvmL7aqunep4y4J7NiehVq3ZkOq1SIYnh?=
+ =?us-ascii?Q?A+mJfR3VDY9ssK7VTMAc8czFuOlEatSDPgMyhW+mJT7t7KJIFC/rkXOu9B8b?=
+ =?us-ascii?Q?cuh8v/qRrUV49qThakJQntfgJoITorm1u6CsVjYyx5yfe4kHmrINPk4V+Ii0?=
+ =?us-ascii?Q?j+/qDb24lUHfTAXUgoJzkT/1OuOOU7CkV9J8Iy5WFfN+FOr3oWoF2wXTAHkE?=
+ =?us-ascii?Q?SnF6K/H3L8WiFMBKpbNBr6RSzXOyHqKOCvlSpRmQrlUQqbXn1hCjANsg5+g/?=
+ =?us-ascii?Q?aF0X2efoDYwDRuO7ukhMBKv+qKrA86wTXLiOH12+DrqvissQccIXE4dn7jKL?=
+ =?us-ascii?Q?hQLlnHZZi8Hi41B7vLgq0hCQWLWXNsQgCUvFu+QgpMp7NWuesiEdaed3uMs9?=
+ =?us-ascii?Q?1TUWpPzSl8T3a0j/vfctMlJcJnxkjL9E0aJ4vxcbeQp3gXZfyw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cW7ILbxzvb/jcsr4XzAF4QTCqNiTmkgta8weAbKI255R/S/ku7wFOvHBBgAI?=
+ =?us-ascii?Q?GwOuK1U7dwy1OIUz9nnl1vpKmrMs5BR/5dePnAnRftZzqQKA3t5U0ncemuA9?=
+ =?us-ascii?Q?bcsjCkelqdb1kpiEBKDtXNG5biT1B080DAni4jZLYrF68XQrZdEai96rZuRn?=
+ =?us-ascii?Q?2yl7N3bz8l6SzIiMsnBo7RRswfxBTR89L04ncinkSCJRYY48tPCJv0Nn1st5?=
+ =?us-ascii?Q?IwM4Gf/fsdrag+waRlsQzS85DhRVwPzjgIg1o89mpd688tukrC2QhnX7qMZA?=
+ =?us-ascii?Q?X7zMRnKGefrakBwwOwRdCVG4qPpIt62PTgtLSUtNGauHs8NFGTkE+xOmde8z?=
+ =?us-ascii?Q?+WVhWTLlrTtLkz8GLqWxkPXVDSJrPU5dlt6+QCjX7AYryjjyBKJ+DcEibkII?=
+ =?us-ascii?Q?yeurfb9y4nHPJcOHo5gXVdXjKGbmMB2s7tC4OWurip6VOqA3KLg8SjwZKij7?=
+ =?us-ascii?Q?zoc7rPuNHooeqH6AyLWiQZHxoV58Gxk/Fzyrth/gc8Y8iEIaCf+IIVC4au+S?=
+ =?us-ascii?Q?eRyZtaOjY73qp5a7gaD8KxbwRyCW0T+SJZ4A8pBMAAer+lojq4naB+Fuy+q+?=
+ =?us-ascii?Q?XeKmWAX9UWZu7he9awbWrhqO8CAPL4F798Sy8s0gIdZiZkw4X1czwuMUG33e?=
+ =?us-ascii?Q?DITI/afKR39G8YQswQP2Ctw5yMf+yxqABYk8YGXvxbIvyAKdUqs2+MGH8uXj?=
+ =?us-ascii?Q?mfWLGxCyuvFs9T794gDaEUa7WI+nEq4O4JA38EKNAdPIHFF7BgAzY73yGaqN?=
+ =?us-ascii?Q?LxfUIYhS/F667L+/zakgTqnWG0VpAdh4JCKXjUxvqGaSyyP1Gv/0+F3crANp?=
+ =?us-ascii?Q?Q+0wBiXKw+igNVmWn7DC+CqTL450sbrK/z+idOFT0HOrVHJ/gbXAFeXd1VbH?=
+ =?us-ascii?Q?VM4VDE71dqnfXsBqjBohUtzXWVcTJa2NP6u5PDgXwKiBQhbUDRC30xuxmnZ1?=
+ =?us-ascii?Q?lJ5huiSSo5Lq/Ib7+Ws8CMa5icHYubBsAISndtUPzZDnNpa2wIF5o18gOQMh?=
+ =?us-ascii?Q?h+BJlULQmkS8CaSBgYs3UVP7hLVuzCAYPwROdlfqEJK7opw2gPhi7cN5U+ik?=
+ =?us-ascii?Q?COKchbJ89vLKkibpT2o99wvSbrIPQiXjDqiEziSncdOhrUp0Ihb0E/G4eTEy?=
+ =?us-ascii?Q?n5Kuks8YXoba+/N0HJ1eLvFQfmP9WSOo9fBGZMXaXJKiUoIsfS0yIfcb4lek?=
+ =?us-ascii?Q?z69kUNl0SdjtfUFwX8JZiHPNm8PHaWyeJUS3pbZCs7A8KV46RaGg/x3mcr2w?=
+ =?us-ascii?Q?0rocD7QZMecp9WYIDUqA6FcaSxmHi/H5PgSYdK5totSxRKasIZf/Q8/HlDIZ?=
+ =?us-ascii?Q?2/SB/SoiElYvmg2CrFVwbgafQrK+zC2XuvAkbdLkMtoy+2ykmwDrhetIq1+8?=
+ =?us-ascii?Q?43PHj1xiy5+C+8k8Vyd3/ZqoJdu+XM7lG8/B4YBAEoYxsF9lN3RdP7aIfDt3?=
+ =?us-ascii?Q?N+z8UwZe3ocnXAOd9M5rrioF/W2SBkJNsxpifYaus1XE42xkfDNbiYufdDIq?=
+ =?us-ascii?Q?xCbksn+ONKUacux4+SDtQrOt5sP/fzG1gDQElDjElo80N2tdp15euaL6phhv?=
+ =?us-ascii?Q?JF/LrUNf31gy1Z9qduZR8Lzym/hhQeBDCbN2LcB/Na+Zla8WQJrDzR+TPR1W?=
+ =?us-ascii?Q?Aw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240925150059.3955569-34-ardb+git@google.com>
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4771.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39e9a49d-7524-4bbd-ed7d-08dce1db1ad0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2024 05:37:14.3275
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SR73KytwVFoyvVPLRvsHSyZj4Y+RFBYGUL14QBjwvxfVfTPwj1uKeeysZFQz9Krcyjwry6KWtJ5A58D8RlM8lsW62P/ozwcmkoqX/FcmJYc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4628
 
-On Wed, Sep 25, 2024 at 05:01:04PM +0200, Ard Biesheuvel wrote:
-> +		if (r_type == R_X86_64_GOTPCREL) {
-> +			Elf_Shdr *s = &secs[sec->shdr.sh_info].shdr;
-> +			unsigned file_off = offset - s->sh_addr + s->sh_offset;
-> +
-> +			/*
-> +			 * GOTPCREL relocations refer to instructions that load
-> +			 * a 64-bit address via a 32-bit relative reference to
-> +			 * the GOT.  In this case, it is the GOT entry that
-> +			 * needs to be fixed up, not the immediate offset in
-> +			 * the opcode. Note that the linker will have applied an
-> +			 * addend of -4 to compensate for the delta between the
-> +			 * relocation offset and the value of RIP when the
-> +			 * instruction executes, and this needs to be backed out
-> +			 * again. (Addends other than -4 are permitted in
-> +			 * principle, but make no sense in practice so they are
-> +			 * not supported.)
-> +                         */
-> +			if (rel->r_addend != -4) {
-> +				die("invalid addend (%ld) for %s relocation: %s\n",
-> +				    rel->r_addend, rel_type(r_type), symname);
-> +				break;
-> +			}
+Hi Andrew,
 
-For x86 PC-relative addressing, the addend is <reloc offset> -
-<subsequent insn offset>.  So a PC-relative addend can be something
-other than -4 when the relocation applies to the middle of an
-instruction, e.g.:
+Thanks for the review comments, I will apply it in next revision.
 
-   5b381:	66 81 3d 00 00 00 00 01 06 	cmpw   $0x601,0x0(%rip)        # 5b38a <generic_validate_add_page+0x4a>	5b384: R_X86_64_PC32	boot_cpu_data-0x6
+/Divya
 
-   5f283:	81 3d 00 00 00 00 ff ff ff 00 	cmpl   $0xffffff,0x0(%rip)        # 5f28d <x86_acpi_suspend_lowlevel+0x9d>	5f285: R_X86_64_PC32	smpboot_control-0x8
-
-   72f67:       c6 05 00 00 00 00 01    movb   $0x1,0x0(%rip)        # 72f6e <sched_itmt_update_handler+0x6e>   72f69: R_X86_64_PC32    x86_topology_update-0x5
-
-Presumably that could also happen with R_X86_64_GOTPCREL?
-
--- 
-Josh
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Monday, September 30, 2024 10:14 PM
+> To: Divya Koppera - I30481 <Divya.Koppera@microchip.com>
+> Cc: Arun Ramadoss - I17769 <Arun.Ramadoss@microchip.com>;
+> UNGLinuxDriver <UNGLinuxDriver@microchip.com>; hkallweit1@gmail.com;
+> linux@armlinux.org.uk; davem@davemloft.net; edumazet@google.com;
+> kuba@kernel.org; pabeni@redhat.com; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH net-next] net: phy: microchip_t1: Interrupt support f=
+or
+> lan887x
+>=20
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e
+> content is safe
+>=20
+> > +static int lan887x_config_intr(struct phy_device *phydev) {
+> > +     int ret;
+>=20
+> This driver consistently uses rc, not ret. It would be good to keep with =
+the
+> existing convention.
+>=20
+>     Andrew
+>=20
+> ---
+> pw-bot: cr
 
