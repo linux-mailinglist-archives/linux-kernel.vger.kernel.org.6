@@ -1,210 +1,194 @@
-Return-Path: <linux-kernel+bounces-346674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4970298C76B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:15:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9E998C76E
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B6F1F24CAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C3F1F24D7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082071CDFAF;
-	Tue,  1 Oct 2024 21:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE61F1CDFA8;
+	Tue,  1 Oct 2024 21:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9SjY7ZI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lBiSGNRz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4461D13DDB8;
-	Tue,  1 Oct 2024 21:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE2513DDB8;
+	Tue,  1 Oct 2024 21:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817347; cv=none; b=A2hUM7Na2Y1oiq1M3kQV1sXxrAzo7Bbg1SDCZ6POyrV2WnHS610au3yyUlQAVyA+O5NMFnz3WVpkTv2hI7aTm4qrkm47wjR551rolEmS2AkuqPv5cXvS9fyt/OBPds7pIfbgyRPnqyKzuJnBQ9Z0/Z592CbYP6X/cPdqhaD6pY0=
+	t=1727817364; cv=none; b=Dt6vAsGQgqFlBKMsbdnNRjeDibK+Yg2w28NqqiJpIjeYzf1qt/CheXW3dg14xSxFnMbW9YeFSsIuSg8EM3DNtAtR8UnD0wjlaPHXOJ28OSQmOgJXLD4fNpP6oLqpqx1iG5uVNvJa5yTO70UtfAl71Hi6xPVFKFceu4Smr+zce2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817347; c=relaxed/simple;
-	bh=zIunEwmYTd0NyuAVHZUL9O6r94/rT93DprfNy0CkwOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SzibX6Sq6BLepamFYT5QeGDC6qaQo4fr1psY/cyvK1qKB5wGj9M1xwYOIfbI/m5parSkzYm60rsLUnq7ETCAkO4diFp9OQXRLoEjiTp0KJFRdSyjNHTnxudy4SDUu0zloXiTl4JjSJzcDg3YT40U7EIP+sEg4kEO4eECtVWgniQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9SjY7ZI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AC6C4CEC6;
-	Tue,  1 Oct 2024 21:15:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727817346;
-	bh=zIunEwmYTd0NyuAVHZUL9O6r94/rT93DprfNy0CkwOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K9SjY7ZIRHXkM3WIzigkh1FJdIU+ucFgFb6ob+6P4Al2CTTuHDPW7VIby6UnDNIYq
-	 ZNxhGjkGnOf7xenkDc7W5MMX9OUm1TxoY3AiMCO0GtpKpk2gUZupIKpMTJJI45WFue
-	 OU7/Kkk2BaeOYE5si7gIUF9nDcTt8TH9UPcSVzepxzw1rcyk0AAMLHA16vQXRJySzC
-	 /1WpDOaTyJgxz3gsqWeokB315Q6EZ/XcRD7HU0WyaMp5r4SZ8rtS8T/aTUu50MJ0cF
-	 bqGO8B5unrHiw3+LBLxt0EkE47XZsFTK54mf/UtqZ0IZHkBQxrl3Y9hrY057U3Otlp
-	 XmHAzFWzbNFBQ==
-Date: Tue, 1 Oct 2024 14:15:43 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Subject: Re: [PATCH v9 1/5] rust: add generic static_key_false
-Message-ID: <20241001211543.qdjl4pyfhehxqfk7@treble>
-References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
- <20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
+	s=arc-20240116; t=1727817364; c=relaxed/simple;
+	bh=BEWoFEIool2KPYSaFruttx6efsYogde+T1lHsBy+Ps8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWfk6jjHqHhUxSwAHLIMI7+VnMO37BUYYSeRQz8Pr9WxNE73qAPONq8bobwTgROZIXhk29garpVV1Op6XiveISDLjYG8tDfu4wfHQbsSd8EENvdwk7VxtOCKGrCJBKry4aO8/syjz3/XqXvEJy5iR7G8EoNyEDEz61cETTx9cKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lBiSGNRz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491BPSAu012388;
+	Tue, 1 Oct 2024 21:15:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=g76O4uFgGk453CC6oPH84sTJ
+	Pbhb0R4Pg3pWVy6eZdw=; b=lBiSGNRzgbJzrKC/MfAuNOT6irBgDtczznoeeW+y
+	uZ7hf+0dmzQPyo06busCHAAmGVHPO2cXq6HoDpYN1wsTo0qSDJM9bcbDr7KfkK9T
+	k0kHvO0rvzrOGPHpDtEYDR7uoAowDRi7vtBqZ/usfDnyRjx0Px8QNl2Z8T0Ci7Mu
+	4T3AckhTG+zC0huiGcikeenZoHcjO5mIh2kVTsHvUvYnyNCviAh8ROiZy8r42vUH
+	HTZ1ZmMKfYgNBYu4OCZsL/WfRx9iZr/1fsmy4mgz5gPPJMebXoqV8MaB+vphupol
+	MQetknHY7WH+jrCXGB+evz+EZGjG6TZ/oTqbJtJUltS8yQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41x8t6su21-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 01 Oct 2024 21:15:55 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 491LFrBE007902
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 1 Oct 2024 21:15:53 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 1 Oct 2024 14:15:53 -0700
+Date: Tue, 1 Oct 2024 14:15:52 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] remoteproc: qcom: Fix NULL pointer in glink_subdev_stop()
+Message-ID: <ZvxmiEnHprF5q4ug@hu-bjorande-lv.qualcomm.com>
+References: <20240925103351.1628788-1-quic_mojha@quicinc.com>
+ <ZvTYA1Rg6DrEEabk@hu-bjorande-lv.qualcomm.com>
+ <ZvcJhzDmdhO/wbKq@hu-mojha-hyd.qualcomm.com>
+ <ZvcqrbLKqCQyYBsF@hu-bjorande-lv.qualcomm.com>
+ <ZvuYYbIycFKRBcCi@hu-mojha-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241001-tracepoint-v9-1-1ad3b7d78acb@google.com>
+In-Reply-To: <ZvuYYbIycFKRBcCi@hu-mojha-hyd.qualcomm.com>
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UsvrLaTcaGQL9BcNxyuKzbdkzT_Rg-CF
+X-Proofpoint-ORIG-GUID: UsvrLaTcaGQL9BcNxyuKzbdkzT_Rg-CF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 spamscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2410010141
 
-On Tue, Oct 01, 2024 at 01:29:58PM +0000, Alice Ryhl wrote:
-> Add just enough support for static key so that we can use it from
-> tracepoints. Tracepoints rely on `static_key_false` even though it is
-> deprecated, so we add the same functionality to Rust.
+On Tue, Oct 01, 2024 at 12:06:17PM +0530, Mukesh Ojha wrote:
+> On Fri, Sep 27, 2024 at 02:59:09PM -0700, Bjorn Andersson wrote:
+> > On Sat, Sep 28, 2024 at 01:07:43AM +0530, Mukesh Ojha wrote:
+> > > On Wed, Sep 25, 2024 at 08:41:55PM -0700, Bjorn Andersson wrote:
+> > > > On Wed, Sep 25, 2024 at 04:03:51PM +0530, Mukesh Ojha wrote:
+> > > > > Multiple call to glink_subdev_stop() for the same remoteproc can happen
+> > > > > if rproc_stop() fails from Process-A that leaves the rproc state to
+> > > > > RPROC_CRASHED state later a call to recovery_store from user space in
+> > > > > Process B triggers rproc_trigger_recovery() of the same remoteproc to
+> > > > > recover it results in NULL pointer dereference issue in
+> > > > > qcom_glink_smem_unregister().
+> > > > > 
+> > > > > Fix it by having a NULL check in glink_subdev_stop().
+> > > > > 
+> > > > > 	Process-A                			Process-B
+> > > > > 
+> > > > >   fatal error interrupt happens
+> > > > > 
+> > > > >   rproc_crash_handler_work()
+> > > > >     mutex_lock_interruptible(&rproc->lock);
+> > > > >     ...
+> > > > > 
+> > > > >        rproc->state = RPROC_CRASHED;
+> > > > >     ...
+> > > > >     mutex_unlock(&rproc->lock);
+> > > > > 
+> > > > >     rproc_trigger_recovery()
+> > > > >      mutex_lock_interruptible(&rproc->lock);
+> > > > > 
+> > > > >       adsp_stop()
+> > > > >       qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+> > > > >       remoteproc remoteproc3: can't stop rproc: -22
+> > > > 
+> > > > I presume that at this point this remoteproc is in some undefined state
+> > > > and the only way to recover is for the user to reboot the machine?
+> > > 
+> > > Here, 50+ (5s) retry of scm shutdown is failing during decryption of
+> > > remote processor memory region, and i don't think, it is anyway to do
+> > > with remote processor state here, as a best effort more number of
+> > > retries can be tried instead of 50 or wait for some other recovery
+> > > command like recovery_store() to let it do the retry again from
+> > > beginning.
+> > > 
+> > 
+> > But are you saying that retrying a bit later would allow us to get out
+> > of this problem? If we just didn't hit the NULL pointer(s)?
+> 
+> I am not sure whether adding more number of retries will solve the issue
+> and initially thinking from perspective that, it is better to retry than
+> to leave the remoteproc in some unknown state however, I do get that
+> letting it retry could give unnecessary patching every code e.g., ssr
+> notifier callbacks, which is not expecting to be called twice as a
+> side-effect of remoteproc unknown state.
 
-Instead of extending the old deprecated static key interface into Rust,
-can we just change tracepoints to use the new one?
+That's not what I'm asking you. When the remote processor fails to stop,
+can you recover the system by just trying a bit later, or is the
+remoteproc dead until reboot?
 
-/me makes a note to go convert the other users...
+> > 
+> > How long are we talking about here? Is the timeout too short?
+> 
+> 5sec is very significant amount of time in wait for remote processor to
+> get recovered, we should not change this.
 
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: [PATCH] tracepoints: Use new static branch API
+Okay, I'm just trying to understand the problem you're trying to solve.
 
-The old static key API based on 'struct static_key' is deprecated.
-Convert tracepoints to use the new API.
+Regards,
+Bjorn
 
-Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
----
- include/linux/tracepoint-defs.h | 4 ++--
- include/linux/tracepoint.h      | 8 ++++----
- kernel/tracepoint.c             | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-defs.h
-index 4dc4955f0fbf..60a6e8314d4c 100644
---- a/include/linux/tracepoint-defs.h
-+++ b/include/linux/tracepoint-defs.h
-@@ -31,7 +31,7 @@ struct tracepoint_func {
- 
- struct tracepoint {
- 	const char *name;		/* Tracepoint name */
--	struct static_key key;
-+	struct static_key_false key;
- 	struct static_call_key *static_call_key;
- 	void *static_call_tramp;
- 	void *iterator;
-@@ -83,7 +83,7 @@ struct bpf_raw_event_map {
- 
- #ifdef CONFIG_TRACEPOINTS
- # define tracepoint_enabled(tp) \
--	static_key_false(&(__tracepoint_##tp).key)
-+	static_branch_unlikely(&(__tracepoint_##tp).key)
- #else
- # define tracepoint_enabled(tracepoint) false
- #endif
-diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-index 6be396bb4297..ab5162fc3e4a 100644
---- a/include/linux/tracepoint.h
-+++ b/include/linux/tracepoint.h
-@@ -228,7 +228,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- #define __DECLARE_TRACE_RCU(name, proto, args, cond)			\
- 	static inline void trace_##name##_rcuidle(proto)		\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 1);			\
-@@ -254,7 +254,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	extern struct tracepoint __tracepoint_##name;			\
- 	static inline void trace_##name(proto)				\
- 	{								\
--		if (static_key_false(&__tracepoint_##name.key))		\
-+		if (static_branch_unlikely(&__tracepoint_##name.key))	\
- 			__DO_TRACE(name,				\
- 				TP_ARGS(args),				\
- 				TP_CONDITION(cond), 0);			\
-@@ -291,7 +291,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	static inline bool						\
- 	trace_##name##_enabled(void)					\
- 	{								\
--		return static_key_false(&__tracepoint_##name.key);	\
-+		return static_branch_unlikely(&__tracepoint_##name.key);\
- 	}
- 
- /*
-@@ -308,7 +308,7 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
- 	struct tracepoint __tracepoint_##_name	__used			\
- 	__section("__tracepoints") = {					\
- 		.name = __tpstrtab_##_name,				\
--		.key = STATIC_KEY_INIT_FALSE,				\
-+		.key = STATIC_KEY_FALSE_INIT,				\
- 		.static_call_key = &STATIC_CALL_KEY(tp_func_##_name),	\
- 		.static_call_tramp = STATIC_CALL_TRAMP_ADDR(tp_func_##_name), \
- 		.iterator = &__traceiter_##_name,			\
-diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
-index 8d1507dd0724..dc160cc0b616 100644
---- a/kernel/tracepoint.c
-+++ b/kernel/tracepoint.c
-@@ -358,7 +358,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
- 		rcu_assign_pointer(tp->funcs, tp_funcs);
--		static_key_enable(&tp->key);
-+		static_branch_enable(&tp->key);
- 		break;
- 	case TP_FUNC_2:		/* 1->2 */
- 		/* Set iterator static call */
-@@ -414,7 +414,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
- 		if (tp->unregfunc && static_key_enabled(&tp->key))
- 			tp->unregfunc();
- 
--		static_key_disable(&tp->key);
-+		static_branch_disable(&tp->key);
- 		/* Set iterator static call */
- 		tracepoint_update_call(tp, tp_funcs);
- 		/* Both iterator and static call handle NULL tp->funcs */
--- 
-2.46.0
-
+> > 
+> > > > 
+> > > > 
+> > > > The check for glink->edge avoids one pitfall following this, but I'd
+> > > > prefer to see a solution that avoids issues in this scenario in the
+> > > > remoteproc core - rather than working around side effects of this in
+> > > > different places.
+> > > 
+> > > Handling in a remoteproc core means we may need another state something
+> > > like "RPROC_UNKNOWN" which can be kept after one attempt of recovery
+> > > failure and checking the same during another try return immediately with
+> > > some log message.
+> > > 
+> > 
+> > Yes, if we are failing to shut down the remoteproc and there's no way
+> > for us to reliably recover from that (e.g. we are not able to reclaim
+> > the memory), it seems reasonable that we have to mark it using a new
+> > state.
+> > 
+> > If that is the case, I'd call it RPROC_DEFUNCT (or something like that
+> > instead), because while in some "unknown" state, from a remoteproc
+> > framework's point of view, it's in a well known (broken) state.
+> 
+> Ack.
+> 
+> -Mukesh
+> > 
+> > Regards,
+> > Bjorn
 
