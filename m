@@ -1,200 +1,152 @@
-Return-Path: <linux-kernel+bounces-346165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AB798C09F
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C84098C0B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC161F228D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C141B1C2418A
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AE991C6F6C;
-	Tue,  1 Oct 2024 14:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knVZFeXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C061C9B72;
+	Tue,  1 Oct 2024 14:51:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BA2645;
-	Tue,  1 Oct 2024 14:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C6C1BF7F8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727794133; cv=none; b=WHT0pufoE9LkPmo61IIVQrmWZZWVsTGsZLPeP/K6LkxzTJN2/gw3lxO1hP7pkJ05YdAWc3SAsejSZcSQRQNHLDDN6puNnoGCY6+2F+S+2hRTTfyYBZRPywtcLVMVvgbQ8G5MDn0l3Dd2UDE3+RFcgqMBrxTBhUfLv2QFSBqPqxQ=
+	t=1727794269; cv=none; b=fNniIzlN3p5BRXu4fllmU7dn742BWjuebBa3cayZDc2vW67+K89ejPtGQ/8a/bPD2xMeRi8mIFJ6E9su+pn6ADw8WDySuNNgsyQ+/Uy9IrCz+2iQpoAmm3LZhUzi/sx4pjlFFcIus5prORn5B05fFm08zc/MgKRY2dFksrD4keY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727794133; c=relaxed/simple;
-	bh=EAv1lrQVcymYc99WOIdzGZa/Io0fq6ARfqrObpJAVZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZPWWGZxzmfEbS1QOXwHU+tk0kZ13aPGRK+1l2B4GTM6qtjTSpbnmE33iVXEfJXQTI1WuOb/9+mLKvP+AT8mTjItorGwyReTZb8u7uwaJ7ohkCIMGLQIVjqv45LcaR1ipkkjtcEVEGZUY3a89XnHpsgyeBmcVPpHyRZbFM+7xXt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knVZFeXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAC4C4CEC6;
-	Tue,  1 Oct 2024 14:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727794132;
-	bh=EAv1lrQVcymYc99WOIdzGZa/Io0fq6ARfqrObpJAVZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=knVZFeXJi83A5T9sFZDsYDEoxj2yoqGO4W1B9/shd81sw/ifOXt/9HuXc3PuB1DcS
-	 p6exPzv+8Ltt4Vy8hkEhBOa/A6XprtCp1Lmq/nYobA4+7XNsKzgHAtEbUCvB5/B6jn
-	 9IvjPSCq56NZsOQcTAcydOi8whSkUZXh9Zpk71ijW/1WjAQSq7QxnOyt0qj3pUM9hD
-	 I1rNYwkkx0CcZ4Qz6eqbh5yB5eDgmgyN4RsrUjYGIv4fAuu9f7p5prQkaKkmJsfUkU
-	 KtWY5cvs9CwCbQWXHi6RKyIB29/HJYYMCl91nVpJpIHKzCB1uqFnI5UtFkOagCc5sK
-	 FqtWo/VLfVLqg==
-Date: Tue, 1 Oct 2024 07:48:51 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, viro@zeniv.linux.org.uk,
-	jack@suse.cz, dchinner@redhat.com, hch@lst.de, cem@kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	hare@suse.de, martin.petersen@oracle.com,
-	catherine.hoang@oracle.com, mcgrof@kernel.org,
-	ritesh.list@gmail.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH v6 6/7] xfs: Validate atomic writes
-Message-ID: <20241001144851.GW21853@frogsfrogsfrogs>
-References: <20240930125438.2501050-1-john.g.garry@oracle.com>
- <20240930125438.2501050-7-john.g.garry@oracle.com>
- <20240930164116.GP21853@frogsfrogsfrogs>
- <7fa598f5-3920-4b13-9d15-49337688713f@oracle.com>
+	s=arc-20240116; t=1727794269; c=relaxed/simple;
+	bh=AMPWG09ijUQ6HTLD7Z2CrDUC7/eS/Zy0+89nC6dSVrg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NRlRvMHvQtyYetW8und4ZL/NnuYhVuwKZHbLQ8YzR8JCYl+q5KLdmprw+LjArodNVz/g72pDDZDpsurbdW1W+awsw8yPNz0gSFFv+cYbKjoVHvk4ze2FraZB4N42wp53/LNJv23YQZwjIZwQtzWABmOBkNkEU6jQAsPVQxvkKj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sveDO-0004wV-Qj; Tue, 01 Oct 2024 16:51:02 +0200
+Message-ID: <2b5afbe1d32c984f67555d73a35ae24eed60dd68.camel@pengutronix.de>
+Subject: Re: [PATCH v15 18/19] drm/etnaviv: Allow userspace specify the
+ domain of etnaviv GEM buffer object
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Christian Gmeiner <christian.gmeiner@gmail.com>, Russell King
+	 <linux+etnaviv@armlinux.org.uk>, dri-devel@lists.freedesktop.org, 
+	etnaviv@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 01 Oct 2024 16:51:02 +0200
+In-Reply-To: <20240908094357.291862-19-sui.jingfeng@linux.dev>
+References: <20240908094357.291862-1-sui.jingfeng@linux.dev>
+	 <20240908094357.291862-19-sui.jingfeng@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7fa598f5-3920-4b13-9d15-49337688713f@oracle.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 01, 2024 at 02:22:23PM +0100, John Garry wrote:
-> On 30/09/2024 17:41, Darrick J. Wong wrote:
-> > On Mon, Sep 30, 2024 at 12:54:37PM +0000, John Garry wrote:
-> > > Validate that an atomic write adheres to length/offset rules. Currently
-> > > we can only write a single FS block.
-> > > 
-> > > For an IOCB with IOCB_ATOMIC set to get as far as xfs_file_dio_write(),
-> > > FMODE_CAN_ATOMIC_WRITE will need to be set for the file; for this,
-> > > ATOMICWRITES flags would also need to be set for the inode.
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   fs/xfs/xfs_file.c | 7 +++++++
-> > >   1 file changed, 7 insertions(+)
-> > > 
-> > > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> > > index 412b1d71b52b..fa6a44b88ecc 100644
-> > > --- a/fs/xfs/xfs_file.c
-> > > +++ b/fs/xfs/xfs_file.c
-> > > @@ -688,6 +688,13 @@ xfs_file_dio_write(
-> > >   	struct xfs_buftarg      *target = xfs_inode_buftarg(ip);
-> > >   	size_t			count = iov_iter_count(from);
-> > > +	if (iocb->ki_flags & IOCB_ATOMIC) {
-> > > +		if (count != ip->i_mount->m_sb.sb_blocksize)
-> > > +			return -EINVAL;
-> > > +		if (!generic_atomic_write_valid(iocb, from))
-> > > +			return -EINVAL;
-> > > +	}
-> > 
-> > Does xfs_file_write_iter need a catch-all so that we don't fall back to
-> > buffered write for a directio write that returns ENOTBLK?
-> > 
-> > 	if (iocb->ki_flags & IOCB_DIRECT) {
-> > 		/*
-> > 		 * Allow a directio write to fall back to a buffered
-> > 		 * write *only* in the case that we're doing a reflink
-> > 		 * CoW.  In all other directio scenarios we do not
-> > 		 * allow an operation to fall back to buffered mode.
-> > 		 */
-> > 		ret = xfs_file_dio_write(iocb, from);
-> > 		if (ret != -ENOTBLK || (iocb->ki_flags & IOCB_ATOMIC))
-> > 			return ret;
-> > 	}
-> > 
-> > IIRC iomap_dio_rw can return ENOTBLK if pagecache invalidation fails for
-> > the region that we're trying to directio write.
-> 
-> I see where you are talking about. There is also a ENOTBLK from unaligned
-> write for CoW, but we would not see that.
-> 
-> But I was thinking to use a common helper to catch this, like
-> generic_write_checks_count() [which is called on the buffered IO path]:
-> 
-> ----8<-----
-> 
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index 32b476bf9be0..222f25c6439c 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -1774,6 +1774,10 @@ int generic_write_checks_count(struct kiocb *iocb,
-> loff_t *count)
->  	if (!*count)
->  		return 0;
-> 
-> +	if (iocb->ki_flags & IOCB_ATOMIC &&
-> +	    !(iocb->ki_flags & IOCB_DIRECT))
-> +		return -EINVAL;
+Am Sonntag, dem 08.09.2024 um 17:43 +0800 schrieb Sui Jingfeng:
+> Otherwise we don't know where a etnaviv GEM buffer object should put when
+> we create it at userspace.
+>=20
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> ---
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c |  9 +++++++++
+>  include/uapi/drm/etnaviv_drm.h        | 12 ++++++++++++
+>  2 files changed, 21 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etna=
+viv/etnaviv_drv.c
+> index f10661fe079f..cdc62f64b200 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -331,11 +331,20 @@ static int etnaviv_ioctl_gem_new(struct drm_device =
+*dev, void *data,
+>  		struct drm_file *file)
+>  {
+>  	struct drm_etnaviv_gem_new *args =3D data;
+> +	u32 domain;
 > +
->  	if (iocb->ki_flags & IOCB_APPEND)
->  		iocb->ki_pos = i_size_read(inode);
-> 
-> ---->8-----
-> 
-> But we keep the IOCB_DIRECT flag for the buffered IO fallback (so no good).
-> 
-> Another option would be:
-> 
-> ----8<-----
-> 
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -679,7 +679,12 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter
-> *iter,
->  			if (ret != -EAGAIN) {
->  				trace_iomap_dio_invalidate_fail(inode, iomi.pos,
->  								iomi.len);
-> -				ret = -ENOTBLK;
-> +				if (iocb->ki_flags & IOCB_ATOMIC) {
-> +					if (ret == -ENOTBLK)
-> +						ret = -EAGAIN;
+> +	domain =3D args->flags & ETNA_BO_DOMAIN_MASK;
+> +
+> +	args->flags &=3D ~ETNA_BO_DOMAIN_MASK;
 
-I don't follow the logic here -- all the error codes except for EAGAIN
-are squashed into ENOTBLK, so why would we let them through for an
-atomic write?
+This is not a proper input validation, as it would accept data in the
+domain mask range that doesn't correspond to valid flags. You need to
+add your new valid flag bits to the check below.
 
-	if (ret != -EAGAIN) {
-		trace_iomap_dio_invalidate_fail(inode, iomi.pos,
-						iomi.len);
+> =20
+>  	if (args->flags & ~(ETNA_BO_CACHED | ETNA_BO_WC | ETNA_BO_UNCACHED |
+>  			    ETNA_BO_FORCE_MMU))
+>  		return -EINVAL;
+> =20
+> +	if (domain =3D=3D ETNA_BO_PL_VRAM)
+> +		return etnaviv_gem_new_vram(dev, file, args->size,
+> +					    args->flags, &args->handle);
+> +
+>  	return etnaviv_gem_new_handle(dev, file, args->size,
+>  			args->flags, &args->handle);
+>  }
+> diff --git a/include/uapi/drm/etnaviv_drm.h b/include/uapi/drm/etnaviv_dr=
+m.h
+> index 61eaa8cd0f5e..00e778c9d312 100644
+> --- a/include/uapi/drm/etnaviv_drm.h
+> +++ b/include/uapi/drm/etnaviv_drm.h
+> @@ -99,6 +99,18 @@ struct drm_etnaviv_param {
+>  /* map flags */
+>  #define ETNA_BO_FORCE_MMU    0x00100000
+> =20
+> +/* domain (placement) flags */
+> +#define ETNA_BO_DOMAIN_MASK  0x00f00000
 
-		if (iocb->ki_flags & IOCB_ATOMIC) {
-			/*
-			 * folio invalidation failed, maybe this is
-			 * transient, unlock and see if the caller
-			 * tries again
-			 */
-			return -EAGAIN;
-		} else {
-			/* fall back to buffered write */
-			return -ENOTBLK;
-		}
-	}
+How does this work? Has this been tested? This define masks different
+bits than the placement flags defined below.
+>=20
+> +
+> +/* CPU accessible, GPU accessible pages in dedicated VRAM */
+> +#define ETNA_BO_PL_VRAM      0x01000000
 
---D
+Other drivers call this the visible VRAM range.
 
-> +				}else {
-> +					ret = -ENOTBLK;
-> +				}
->  			}
->  			goto out_free_dio;
->  		}
-> ---->8-----
-> 
-> I suggest that, as other FSes (like ext4) handle -ENOTBLK and would need to
-> be changed similar to XFS. But I am not sure if changing the error code from
-> -ENOTBLK for IOCB_ATOMIC is ok.
-> 
-> Let me know what you think about possible alternative solutions.
-> 
-> Thanks,
-> John
-> 
+> +/* CPU accessible, GPU accessible pages in SHMEM */
+> +#define ETNA_BO_PL_GTT       0x02000000
+> +/* Userspace allocated memory, at least CPU accessible */
+> +#define ETNA_BO_PL_USERPTR   0x08000000
+
+How is this a valid placement? If it's userspace allocated memory, the
+driver has no influence on placement. All it can do is to pin the pages
+and set up a GART mapping.
+
+> +/* GPU accessible but CPU not accessible private VRAM pages */
+> +#define ETNA_BO_PL_PRIV      0x04000000
+> +
+
+VRAM_INVISIBLE would be a more descriptive name for the flag than PRIV.
+
+However I'm not sure if we can make the distinction between visible and
+invisible VRAM at allocation time. What needs to be CPU visible may
+change over the runtime of the workload, which is why real TTM drivers
+can migrate BOs in and out of the visible region.
+
+Regards,
+Lucas
+
+>  struct drm_etnaviv_gem_new {
+>  	__u64 size;           /* in */
+>  	__u32 flags;          /* in, mask of ETNA_BO_x */
+
 
