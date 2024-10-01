@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-346091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7784198BF7C
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AA2D98BF7B
 	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EE71F24689
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310FD1C23F3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91871CB30D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C912F1CB30C;
 	Tue,  1 Oct 2024 14:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZBVof4Aq"
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QJi0lLhu"
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED411C6F5F
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA821C9EC7
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791978; cv=none; b=L8CgpEnjk/shxlEwEqhHraFF38MyncvxDXKemQ36utdcnfyIrepEeW7PAW14GHgtlKD4bCH9FM5IE2mYmS4kWCW7BzvJl8vQTF7V4A+6swCHt98LQLLzSwZM2HDsdplqA6LGQQJnxzdRT8EnHk1Ed3npcI8LTdyzMmPKSgFndQA=
+	t=1727791978; cv=none; b=qesDfI50R0r23A/wqT9/8tkZK3peGPcq/DjGJ8qbPCqTt+lfRB5qO+tiDxj+NnJqUn54+eREhX9BZmPplaGAMDZ36X/RRQwuqoooB6RD/JfF+/Sdr6O43D+sf+ELNXt1vHw8aeX/mm1LDbgQYLmqR0lvM6wMaf6nFkQMuDkxI+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1727791978; c=relaxed/simple;
-	bh=uHbKwYqqKXkPA7jjIXOCVVcyiqToNnGB+5UWWhQeVxs=;
+	bh=ueKXlRKbUxKgW/VYitwtQFQ3oZkGIkwxW/mJgtz7r7g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bIPajU+pj+1d0GL+PaqGC8pCprSq8cJKh9tNt71OsazseKV9a7VX+f2NRNnNx5ZzACw9D7kesQqjxxvzXftJR0+cXybgFrPiar7Bq03sMZHQRcUBSz2wWGkH8WSelCjipDcHZ6whkwMWFrPfG8VCvKIuDzz2ZBZb+Ov2kx6Dyv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZBVof4Aq; arc=none smtp.client-ip=83.166.143.173
+	 MIME-Version:Content-Type; b=l2EWMO5GbSBcc8LPnEKeO5O4vCI520b529bKe4kRK4DZXpwdZVpU19sDCE55i2Whk07Fc6cggB5/fmjMSqSKnptxGRyF4F1zbbC0zAlC5DCOLJsiwCshdSZSPlwMZOQW02oUisgJANeaTng6v3oQPn3viekhjU2nYnZbDqWJ4Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QJi0lLhu; arc=none smtp.client-ip=84.16.66.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XJ0JX6JdMz2k5;
-	Tue,  1 Oct 2024 16:12:44 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XJ0JZ0dnZz4fm;
+	Tue,  1 Oct 2024 16:12:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727791964;
-	bh=IrIkK2fNdyjcGD+ubjmwgC6LWOg8OIHYVEbiJtZfSdk=;
+	s=20191114; t=1727791965;
+	bh=Dj0MGq2F7eT7dWux7TQJIkSeSK0bidTDsqd/S578HcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZBVof4AqrKjLYk/G4KB1HLHx0G8ysiz5pht95WrAbpWEK9z3wQYcU1MNW+v7Yvx2g
-	 YELL5lLgaHISI20jaQTdTl7Jr0Ef3vZ80XPaNbI9tkGplrFV+7R8a163FJMqLF7/65
-	 nw9TMKm1KIyrnM8R06rtE7KSpiNCUCmI3UETqqVA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XJ0JX0xz6zZDn;
-	Tue,  1 Oct 2024 16:12:44 +0200 (CEST)
+	b=QJi0lLhu4AnjRR2h9kdlOuBQ6LsMCmMm+0cDxL8LofGgcPPVvrppWmdhskTd6WASl
+	 7oygurNxglPypTxibL5oxxydqsRCd9bgfaK+KdXUKs2yPVEfYDEzEWaCP4X47k0Kdr
+	 E7HAIh/kTwCA+/mc1wINsc4UxfGavJOsz1TQaLGw=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XJ0JY2RsbzYqn;
+	Tue,  1 Oct 2024 16:12:45 +0200 (CEST)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
@@ -51,9 +51,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	Tahera Fahimi <fahimitahera@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v1 2/3] landlock: Refactor network access mask management
-Date: Tue,  1 Oct 2024 16:12:33 +0200
-Message-ID: <20241001141234.397649-3-mic@digikod.net>
+Subject: [PATCH v1 3/3] landlock: Optimize scope enforcement
+Date: Tue,  1 Oct 2024 16:12:34 +0200
+Message-ID: <20241001141234.397649-4-mic@digikod.net>
 In-Reply-To: <20241001141234.397649-1-mic@digikod.net>
 References: <20241001141234.397649-1-mic@digikod.net>
 Precedence: bulk
@@ -66,54 +66,85 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Replace the get_raw_handled_net_accesses() implementation with a call to
-landlock_filter_access_masks().
+Do not walk through the domain hierarchy when the required scope is not
+supported by this domain.  This is the same approach as for filesystem
+and network restrictions.
 
 Cc: Günther Noack <gnoack@google.com>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241001141234.397649-3-mic@digikod.net
+Link: https://lore.kernel.org/r/20241001141234.397649-4-mic@digikod.net
 ---
- security/landlock/net.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ security/landlock/task.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/security/landlock/net.c b/security/landlock/net.c
-index c8bcd29bde09..bc3d943a7118 100644
---- a/security/landlock/net.c
-+++ b/security/landlock/net.c
-@@ -39,26 +39,14 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
- 	return err;
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index 4acbd7c40eee..02e3a0330b21 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -204,12 +204,22 @@ static bool is_abstract_socket(struct sock *const sock)
+ 	return false;
  }
  
--static access_mask_t
--get_raw_handled_net_accesses(const struct landlock_ruleset *const domain)
--{
--	access_mask_t access_dom = 0;
--	size_t layer_level;
--
--	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
--		access_dom |= landlock_get_net_access_mask(domain, layer_level);
--	return access_dom;
--}
--
- static const struct landlock_ruleset *get_current_net_domain(void)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
--
--	if (!dom || !get_raw_handled_net_accesses(dom))
--		return NULL;
-+	const union access_masks all_net = {
-+		.net = ~0,
++static const struct landlock_ruleset *get_current_unix_scope_domain(void)
++{
++	const union access_masks unix_scope = {
++		.scope = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
 +	};
- 
--	return dom;
++
 +	return landlock_filter_access_masks(landlock_get_current_domain(),
-+					    all_net);
++					    unix_scope);
++}
++
+ static int hook_unix_stream_connect(struct sock *const sock,
+ 				    struct sock *const other,
+ 				    struct sock *const newsk)
+ {
+ 	const struct landlock_ruleset *const dom =
+-		landlock_get_current_domain();
++		get_current_unix_scope_domain();
+ 
+ 	/* Quick return for non-landlocked tasks. */
+ 	if (!dom)
+@@ -225,7 +235,7 @@ static int hook_unix_may_send(struct socket *const sock,
+ 			      struct socket *const other)
+ {
+ 	const struct landlock_ruleset *const dom =
+-		landlock_get_current_domain();
++		get_current_unix_scope_domain();
+ 
+ 	if (!dom)
+ 		return 0;
+@@ -243,6 +253,10 @@ static int hook_unix_may_send(struct socket *const sock,
+ 	return 0;
  }
  
- static int current_check_access_socket(struct socket *const sock,
++static const union access_masks signal_scope = {
++	.scope = LANDLOCK_SCOPE_SIGNAL,
++};
++
+ static int hook_task_kill(struct task_struct *const p,
+ 			  struct kernel_siginfo *const info, const int sig,
+ 			  const struct cred *const cred)
+@@ -256,6 +270,7 @@ static int hook_task_kill(struct task_struct *const p,
+ 	} else {
+ 		dom = landlock_get_current_domain();
+ 	}
++	dom = landlock_filter_access_masks(dom, signal_scope);
+ 
+ 	/* Quick return for non-landlocked tasks. */
+ 	if (!dom)
+@@ -279,7 +294,8 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
+ 
+ 	/* Lock already held by send_sigio() and send_sigurg(). */
+ 	lockdep_assert_held(&fown->lock);
+-	dom = landlock_file(fown->file)->fown_domain;
++	dom = landlock_filter_access_masks(
++		landlock_file(fown->file)->fown_domain, signal_scope);
+ 
+ 	/* Quick return for unowned socket. */
+ 	if (!dom)
 -- 
 2.46.1
 
