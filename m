@@ -1,86 +1,76 @@
-Return-Path: <linux-kernel+bounces-345449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B2E98B676
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:03:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1783F98B677
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90A90B21D7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:03:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47A071C22047
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 08:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CA01C2454;
-	Tue,  1 Oct 2024 08:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26AA1BE241;
+	Tue,  1 Oct 2024 08:01:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFIyGyQ5"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="YqjUyA9a"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EAD1BF33C;
-	Tue,  1 Oct 2024 08:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B481BDAB9
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 08:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727769638; cv=none; b=pVudCHgQW21OT7z0imqU4Qv8TqGOuKjkTbjRh28qtxj+tcy2niQ/uAkxc04CR4aWtz08iHfn6iWS5NwF2tDq52T0wYGczcOX0qt3Kq8KVqYkIxMe4dzRKg3hXe9BYkDLhoyKmM8gUaQU1rIM0P/za6w4FhPxl84u2+B6klQqJWw=
+	t=1727769690; cv=none; b=dlq0dgPD17q8TkU5x595LTIBMnwJpltHdHHzeQt1h87zLEx6xJZf+pfm8oWH3on1uSyHVWo4lIrlEydWckEAqGujClrQLCkDGPxSPHjUVjflTwhuuSMIpENqqR98h89/q7fWyr9KLVIvKzwmbAAMGQBbbFT3Nn3GYMmysLYlKpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727769638; c=relaxed/simple;
-	bh=iLDhrZd6nqm8fibuYV3aF+o5WHXEJKdLMLwqzDI28AU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qp9EmXuYWRCRY9+APquZkan7l8DnCXjIxq4QV7ZwQAZfBX7elb+9u8iBBYlpJDL0etDQB+Yc/yaD2CLkOtZ1mrzsDFYfWySVPixuwZG+PjNjgY8/yhHajHyoNQwGQFN3152+7yvfLJ0HggZAOH3sOoRK4Ob1gEON3W1MPrdRlhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFIyGyQ5; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7db90a28cf6so4436626a12.0;
-        Tue, 01 Oct 2024 01:00:36 -0700 (PDT)
+	s=arc-20240116; t=1727769690; c=relaxed/simple;
+	bh=GFzaJ0MFbRasXMqqqJaB4ZF+n+30c3MYiBHLlyHvfdg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r3zGdXuit2cCzSr2QES6DtmXscom42ua9KzVPLOysH8iMMiDa6sPSnhJDOcekdSVzgjeZe8pIPKL2VE/x1HZvjpv1q4Y/AU1nkprRP0WWtlhMDNC+6YV6Mgf2ZZhI/fkCz8DuKd8HfmG7plfcLp1DYGYNkXSuAtDwmYEfzBu2gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=YqjUyA9a; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727769636; x=1728374436; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=58g1IecKWl1H+iaQbjvUK7bF9Ui/htls5xzmgF1E8ZI=;
-        b=TFIyGyQ5aK4UbFAYjE/IieN+ic4FG95jBQONHlD4MA6Yez7g/jjG0YEToDY20Jb+3T
-         JKpfoYz3DnEuXnSmzw9hlMVgERRZzRdrx/AH8XzB374FFqMdSlnlrL3vLGYgHRHZHMQJ
-         VaWILIcuFQXJOUQ5emr7qpNiBzMEkAj7Y2Gr94vPVs7GDN0b+8b+csdbY7OuRuhkEODi
-         Ful7jZUNBfxbPtgC1icJyKDMIoAdv16T4vtCqjuzCGkmtFcxp/HnE2Uwgl98+6trhIwM
-         Qu8NyYsPp8ueL43sHIPipOMtYs74AeHW4Oi7d4iaIiCJ3amx6qhCn20GEIN+aMeAmbQm
-         2mzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727769636; x=1728374436;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=58g1IecKWl1H+iaQbjvUK7bF9Ui/htls5xzmgF1E8ZI=;
-        b=KQKR4uSsfQ0XWfqGgWRhrvQ9m+aIWcWS0aHjsb3NzZk+UCk1pow7jjFQbPEJ5owkKD
-         fUeYzbpH9x+kAsZY8ufWgEGsmWZ2YxFPFpDDb+/yzZJtkZdJBTFS0i3xzvlqEt/196rS
-         OpFfViDiZrrGt7e4pUUPqgQJ0PsmvR187ITezCRk+wZWUNEYk92Z/wFRTF+dltzsOsD5
-         mSoSY04hZ/CcLmekujuF29OIm64ibqzT/nBaPyryQp+vqKHxEz41SpZYALTrWvCDg/tz
-         0jmzORXnPU3+nolQ0SDWDf+59o4FTuDkbWciVJNqbI8Xrx00xmUyXPbXziJZbTKcCFLg
-         BK1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXCTU7jWGUwTLcySuGOJ+tg7UJWhPDz9clywkRCfMkDM4pCdOnNVszUE+0BBwZDsJORVURsgZfvV7ReczI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDnH+xQ90bX4VBU0O+E4VxTJ+52UHI3PluPdoOA6BJWNACBnnh
-	ObDi7I+K2MvmuHsy2ST/LwS3T69LvDn8Eq/VTKfkzMHF1jXdUvuC
-X-Google-Smtp-Source: AGHT+IFkOrisr6bJa2UOCN3zarGX2rCOWIi7W7XMuVBjqkfitwZ6FuLO7hnxX6vN3kxpJR3e+Jpj5Q==
-X-Received: by 2002:a17:90a:6f82:b0:2e0:6c66:8aa0 with SMTP id 98e67ed59e1d1-2e15a3442c0mr3491904a91.17.1727769635957;
-        Tue, 01 Oct 2024 01:00:35 -0700 (PDT)
-Received: from yunshenglin-MS-7549.. ([2409:8a55:301b:e120:88bd:a0fb:c6d6:c4a2])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e06e16d6d2sm13168168a91.2.2024.10.01.01.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 01:00:35 -0700 (PDT)
-From: Yunsheng Lin <yunshenglin0825@gmail.com>
-X-Google-Original-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: davem@davemloft.net,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunsheng Lin <linyunsheng@huawei.com>,
-	Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v19 14/14] mm: page_frag: add an entry in MAINTAINERS for page_frag
-Date: Tue,  1 Oct 2024 15:58:57 +0800
-Message-Id: <20241001075858.48936-15-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241001075858.48936-1-linyunsheng@huawei.com>
-References: <20241001075858.48936-1-linyunsheng@huawei.com>
+  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
+  s=amazon201209; t=1727769688; x=1759305688;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L/Ba4CuddkD+e4fPw52EHuHMwtFDq8hBWqlmCnVy1ak=;
+  b=YqjUyA9a3IZ6Lnc13dyNdfsMTJMbDyPJH/aHDS4LiOK2EUPbgIaQ/GLy
+   vp6h+ICeSzQzooh9QjmMuqWFgtei7JUUITVXOxVinXDOcQAR8QzdGV69+
+   jzCMsos/BK5pSjOUYtmUt8VKBNDqE4twApaWvCauDMrSgmsD4+kFHTJrV
+   U=;
+X-IronPort-AV: E=Sophos;i="6.11,167,1725321600"; 
+   d="scan'208";a="133361570"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 08:01:19 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.17.79:1795]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.46.202:2525] with esmtp (Farcaster)
+ id dd6681b8-edac-4771-9971-99d358a89959; Tue, 1 Oct 2024 08:01:18 +0000 (UTC)
+X-Farcaster-Flow-ID: dd6681b8-edac-4771-9971-99d358a89959
+Received: from EX19D015EUB003.ant.amazon.com (10.252.51.113) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 08:01:18 +0000
+Received: from EX19MTAUEA001.ant.amazon.com (10.252.134.203) by
+ EX19D015EUB003.ant.amazon.com (10.252.51.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 1 Oct 2024 08:01:17 +0000
+Received: from email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com
+ (10.43.8.2) by mail-relay.amazon.com (10.252.134.102) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Tue, 1 Oct 2024 08:01:17 +0000
+Received: from ua2d7e1a6107c5b.home (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
+	by email-imr-corp-prod-pdx-1box-2b-ecca39fb.us-west-2.amazon.com (Postfix) with ESMTPS id 65B5880165;
+	Tue,  1 Oct 2024 08:01:15 +0000 (UTC)
+From: Patrick Roy <roypat@amazon.co.uk>
+To: <rppt@kernel.org>, <akpm@linux-foundation.org>
+CC: Patrick Roy <roypat@amazon.co.uk>, <david@redhat.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <graf@amazon.com>,
+	<jgowans@amazon.com>
+Subject: [PATCH] secretmem: disable memfd_secret() if arch cannot set direct map
+Date: Tue, 1 Oct 2024 09:00:41 +0100
+Message-ID: <20241001080056.784735-1-roypat@amazon.co.uk>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,45 +78,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add an entry in MAINTAINERS to indicate the
-new subsystem/library's maintainer, maillist, status and file
-lists of page_frag.
+Return -ENOSYS from memfd_secret() syscall if !can_set_direct_map().
+This is the case for example on some arm64 configurations, where marking
+4k PTEs in the direct map not present can only be done if the direct map
+is set up at 4k granularity in the first place (as ARM's
+break-before-make semantics do not easily allow breaking apart
+large/gigantic pages).
 
-Alexander is the original author of page_frag, add him in the
-MAINTAINERS too.
+More precisely, on arm64 systems with !can_set_direct_map(),
+set_direct_map_invalid_noflush() is a no-op, however it returns success
+(0) instead of an error. This means that memfd_secret will seemingly
+"work" (e.g. syscall succeeds, you can mmap the fd and fault in pages),
+but it does not actually achieve its goal of removing its memory from
+the direct map.
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Note that with this patch, memfd_secret() will start erroring on systems
+where can_set_direct_map() returns false (arm64 with
+CONFIG_RODATA_FULL_DEFAULT_ENABLED=n, CONFIG_DEBUG_PAGEALLOC=n and
+CONFIG_KFENCE=n), but that still seems better than the current silent
+failure. Since CONFIG_RODATA_FULL_DEFAULT_ENABLED defaults to 'y', most
+arm64 systems actually have a working memfd_secret() and aren't be
+affected.
+
+From going through the iterations of the original memfd_secret patch
+series, it seems that disabling the syscall in these scenarios was the
+intended behavior [1] (preferred over having
+set_direct_map_invalid_noflush return an error as that would result in
+SIGBUSes at page-fault time), however the check for it got dropped
+between v16 [2] and v17 [3], when secretmem moved away from CMA
+allocations.
+
+[1]: https://lore.kernel.org/lkml/20201124164930.GK8537@kernel.org/
+[2]: https://lore.kernel.org/lkml/20210121122723.3446-11-rppt@kernel.org/#t
+[3]: https://lore.kernel.org/lkml/20201125092208.12544-10-rppt@kernel.org/
+
+Fixes: 1507f51255c9 ("mm: introduce memfd_secret system call to create "secret" memory areas")
+Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
 ---
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ mm/secretmem.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e71d066dc919..6d8e0c4c4780 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17492,6 +17492,18 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
+diff --git a/mm/secretmem.c b/mm/secretmem.c
+index 3afb5ad701e14..399552814fd0f 100644
+--- a/mm/secretmem.c
++++ b/mm/secretmem.c
+@@ -238,7 +238,7 @@ SYSCALL_DEFINE1(memfd_secret, unsigned int, flags)
+ 	/* make sure local flags do not confict with global fcntl.h */
+ 	BUILD_BUG_ON(SECRETMEM_FLAGS_MASK & O_CLOEXEC);
  
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	tools/testing/selftests/mm/page_frag/
-+F:	tools/testing/selftests/mm/test_page_frag.sh
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
+-	if (!secretmem_enable)
++	if (!secretmem_enable || !can_set_direct_map())
+ 		return -ENOSYS;
+ 
+ 	if (flags & ~(SECRETMEM_FLAGS_MASK | O_CLOEXEC))
+@@ -280,7 +280,7 @@ static struct file_system_type secretmem_fs = {
+ 
+ static int __init secretmem_init(void)
+ {
+-	if (!secretmem_enable)
++	if (!secretmem_enable || !can_set_direct_map())
+ 		return 0;
+ 
+ 	secretmem_mnt = kern_mount(&secretmem_fs);
+
+base-commit: abf2050f51fdca0fd146388f83cddd95a57a008d
 -- 
-2.34.1
+2.46.2
 
 
