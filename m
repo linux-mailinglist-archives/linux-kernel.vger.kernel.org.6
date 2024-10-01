@@ -1,745 +1,209 @@
-Return-Path: <linux-kernel+bounces-346585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D7898C63A
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 388ED98C63C
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:48:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF80B214A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D5D1B212FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 19:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A281CDA25;
-	Tue,  1 Oct 2024 19:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674E51CDA09;
+	Tue,  1 Oct 2024 19:48:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVUizJpc"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Q/PM9Be4"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2110.outbound.protection.outlook.com [40.107.93.110])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EEE1CBEB8;
-	Tue,  1 Oct 2024 19:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727812042; cv=none; b=lKrKuYVYvIZP9znlIgUsbPuaADF2MMY85qJmOqek9ufJHdr/5nZ2ZPonVR61s0BP/fYxuTZ6fmHssM4G8f8azswumCk8YEhfaPaOjIJyXYDAjWBMfqbhQmlHedL24A9P85l/K0VLUxjXoa1wwIZxFdiHX1XS3WZlIXwwKZrpIWU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727812042; c=relaxed/simple;
-	bh=ho3gnrgX3DAl8B43acro+CI0MeD2sUh7BcyFwkFVD6w=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rvc9zXRC+4fm8cWDFot7/l+C27xQlZCo1jJlEJepjirr+Ovh3/UbJgEsOIO0Ma2g8Qy0FltT3X/l6F51s5V/43fgUSnIKRLQ5U7ccAlNWTEwTu9wRo+ab971IsarQoj1GmXFZ4sJu+sG9RU1H/N3ZHasiAG4LR3ODteYO3FrM14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVUizJpc; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e9ad969a4fso460153a12.3;
-        Tue, 01 Oct 2024 12:47:20 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D9B1CBEB8
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 19:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727812091; cv=fail; b=crzFbBkg65Cubk6Z2rC3AqVePIJGvA/mE9KusR7T3aRxNvteDGf8ViSQQt+vHg3Ik4va+DAeCc0uy0rtC4kBURz0uQljZP8au1WFFYsXhW2Phv6Kp+hq+zXmjQ5A0HgXmCm1auqiGbJ1Ka4lHMPLt5dA5nY+9+wLoXbLQulDCqs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727812091; c=relaxed/simple;
+	bh=LJBLpbsfgNjkCtyXcq1wQcQ7woF1DmRDCG1c0BuQ62s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MH3itIm20UTraxyiZhph/tl21z7OfJwZ+Jn5cSUVl7gsgm6SDLBhj4J1faouOIjoehX9kTx4+Vtfftjm5e3mu2tIOdn4hyM4D8gMHCiPQc+w684RPpX0sFaJBfjEJXgny9h6PlbP/KnGVFmSy6oNn1YkCRiZLZ0arRYL4NQxp4U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Q/PM9Be4; arc=fail smtp.client-ip=40.107.93.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C3US0DdOQ/ZPM+J/3Smn+Ij0Izp82MXN2I9U0v0I0WWZF7QLOkHf83es/J84nmdfOTfe6AZpMsKktPjy+K2arfcf3c3K/v56CsLpOfhQsXcQeTRrq6O7wzYpQNBxJxUOGSW+zJqfphhnMDNh3aH8xAghdYW1jYzsnYCaf/b2HnF1QlKVlGS1cxl9lIqu0MTwairJO5P/CRFFZQoA5E62hi4XHl2U+CNRm9GU7NnsLMzJkyLYCXgZgOfakxy8/aeV5p8/tBxpq9/WIG8PzqNI+sr6UJCzWJWyn/gMHQJhCYX4NFuNzoe6rTata5EkbPP6G+PMycPVaFNrf5qHaAi8Fw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nkxOCKElOI3w7mNzMbUy3Fq589s4Utye/PiPTFGjqz8=;
+ b=bhvui9S13QyvBIB4skbB0YorBv3WwK8z5yStweJzo0Fh/aNVyGHmuhj3Fwg2Z5EnHWwSLx9e9iiLMx04phamWrB4VPZEvDML3sXYgap0XZWWrnBJXIWQqFyXRQv31PQ1Os/SsfY6fTGVEb5QnqOobrrysVXuzxMdZCI431ChdA7efF6GtwpJKOQrB0p8Blwd+wrTGC7sm0EsZdf8IzMUNlQhslwlSzv/PRBr97j+QR+Uk0xNNsCXIf1SY10vF+KpD2diQcNfdwCSoTlk26Dtaxv6NtfbVpsTNN7TvWd0ByXqIGc0GrbBXhH19GS/8eqeiiKQok+BhQU/7I8hnUHSAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727812040; x=1728416840; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U8OrM4njEn2VLMc8gPMWN55rjcCAVrMFlI0GT2+2Zgc=;
-        b=DVUizJpcj8uqUW+5DoQaruLTlMSvqYILhKZmQWb5/LAXRTYIseJ+iL9kO+HjiZ9wSg
-         qnw243mdSYgV9/W7ZTMpV/z9FVrIfrK7vTrxSD/DUj5CkPrOcGtSo0rjOKWCUVT7nCry
-         SJiEYNVURPSd8VA0GbAo1w7LtnJFG78fCAuPjQJ3tQNVsN3Iue3fx+znhogXCt/kHW3W
-         rkd1HhPBTbfOpK6/u9dMUz7HgyMlvaa7uI2mjG99/5oqamCLbyrw/xMPKvcZrnXywJVm
-         6J6Y4jSD2K6n4E1qf8JkdXeaNwgTjk9bEy3+DTWFWywweXQ2JWAKSkoVeDRZyisyMYEB
-         sz+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727812040; x=1728416840;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U8OrM4njEn2VLMc8gPMWN55rjcCAVrMFlI0GT2+2Zgc=;
-        b=netxfiQUR3lp5vqDtm7nzS/g10qT2Ll4ZxMalE7QDlqs5Qae6no5a7OH9e9qL8i1kG
-         k5kqS5fOH86j5aZT282z48VPsVbEKfE9KAKX2SZMBFlbvH04dG88CoGVEY7rdJX/VtF+
-         0CFyaRcJIOCR7Pee073ihAr642VC7xNjnVW3O67L7KabCNWij+lmvqWlMUynfJsOZE8S
-         QRCwaVv2AxNBCQpyMPVcA2WMwNsVYaJ+6ee6sVNSY2CxNPqnQmzj15LZhHXD15wFArrK
-         LH7qOWTRIs4mKsbFleK2rR+YbRJTk3twbbQhEUCmTuxCVcwnP3GP+HpZhj1mauoy2uPz
-         4nKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCURaNIC119FB30cd8AGpeirJRY1OugJofmosiIzbYaBPZXntOyQGU+rLOZqko0DMH8NvU98MT6LM6@vger.kernel.org, AJvYcCUm1sCfTCtrWfpKwaBhVHHpQici4D05uNIPDyR6lmaU59MHmQc+dm2mHuTir7iSRHXRVokjvjDKknjZ@vger.kernel.org, AJvYcCVmKzQSO//uJc3GGPnkr0vMZ+5sgWNYjLQkbcQ9RUVsQZlFON/MZZ7Wtq9GWobwmw8ab+CQV8p3axLQnx43@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiNxCnLuhcKOckpEiTsaAFPUIqgyBt9zohnZ/EOpE8sZ/S7vQ8
-	g+1qSYjM5v92WR6kF8MHO1CCAXVPVyxTo0DQK7+UEm8v2cSwODnf
-X-Google-Smtp-Source: AGHT+IHFfRIUjgqzfIqjPg7VtnmAVD/8zzUg4fTNvQI7RGOihalXQr6Nl3H+ybZljmQ2r/ZgqhvnoQ==
-X-Received: by 2002:a05:6a20:b58b:b0:1d1:1e26:d2e1 with SMTP id adf61e73a8af0-1d5e2ca453amr1281289637.36.1727812039727;
-        Tue, 01 Oct 2024 12:47:19 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:7dd:d82b:9686:b02a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db29427bsm8691981a12.15.2024.10.01.12.47.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 12:47:19 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Tue, 1 Oct 2024 12:47:01 -0700
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
-	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
-	dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, mike.malvestuto@intel.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com, jgroves@micron.com,
-	vsalve@micron.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v12 10/17] cxl/memfeature: Add CXL memory device patrol
- scrub control feature
-Message-ID: <ZvxRtVWlRMFM0z1I@fan>
-References: <20240911090447.751-1-shiju.jose@huawei.com>
- <20240911090447.751-11-shiju.jose@huawei.com>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nkxOCKElOI3w7mNzMbUy3Fq589s4Utye/PiPTFGjqz8=;
+ b=Q/PM9Be4c8wmIbn+6zo4w2pqMi/3BXKg93ACA6Wx7VGxqF9JudzIZdLYiFXMVaP29xf4UytDeazqC5cTxFQbSnJpIPX61+QO7RzRm3/VO64FEZ9d5+B5UwBK0mD5X8XF+4XROhjp8afZf0I31OO3fklQebaR8BmXBOVTsa2DoKk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ CH3PR01MB8575.prod.exchangelabs.com (2603:10b6:610:168::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7982.34; Tue, 1 Oct 2024 19:48:04 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%5]) with mapi id 15.20.7982.022; Tue, 1 Oct 2024
+ 19:48:04 +0000
+Message-ID: <742bd6d6-9d25-4f8c-9574-3d39a91c89cb@os.amperecomputing.com>
+Date: Tue, 1 Oct 2024 12:48:01 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/arm-smmu-v3: Fix L1 stream table index calculation
+ for AmpereOne
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@ziepe.ca, will@kernel.org, robin.murphy@arm.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241001180346.1485194-1-yang@os.amperecomputing.com>
+ <Zvw/Kghyt9zUkupn@Asurada-Nvidia>
+ <45b97496-29a2-4111-ba38-3c8bcf9f8b4d@os.amperecomputing.com>
+ <ZvxNo8ZWeyBOBU8b@Asurada-Nvidia>
+Content-Language: en-US
+From: Yang Shi <yang@os.amperecomputing.com>
+In-Reply-To: <ZvxNo8ZWeyBOBU8b@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH0PR03CA0007.namprd03.prod.outlook.com
+ (2603:10b6:610:b0::12) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911090447.751-11-shiju.jose@huawei.com>
-
-On Wed, Sep 11, 2024 at 10:04:39AM +0100, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> CXL spec 3.1 section 8.2.9.9.11.1 describes the device patrol scrub control
-> feature. The device patrol scrub proactively locates and makes corrections
-> to errors in regular cycle.
-> 
-> Allow specifying the number of hours within which the patrol scrub must be
-> completed, subject to minimum and maximum limits reported by the device.
-> Also allow disabling scrub allowing trade-off error rates against
-> performance.
-> 
-> Add support for CXL memory device based patrol scrub control.
-> Register with EDAC RAS control feature driver, which gets the scrub attr
-> descriptors from the EDAC scrub and expose sysfs scrub control attributes
-> to the userspace.
-> For example CXL device based scrub control for the CXL mem0 device is
-> exposed in /sys/bus/edac/devices/cxl_mem0/scrub*/
-> 
-> Also add support for region based CXL memory patrol scrub control.
-> CXL memory region may be interleaved across one or more CXL memory devices.
-> For example region based scrub control for CXL region1 is exposed in
-> /sys/bus/edac/devices/cxl_region1/scrub*/
-> 
-> Open Questions:
-> Q1: CXL 3.1 spec defined patrol scrub control feature at CXL memory devices
-> with supporting set scrub cycle and enable/disable scrub. but not based on
-> HPA range. Thus presently scrub control for a region is implemented based
-> on all associated CXL memory devices.
-> What is the exact use case for the CXL region based scrub control?
-> How the HPA range, which Dan asked for region based scrubbing is used?
-> Does spec change is required for patrol scrub control feature with support
-> for setting the HPA range?
-> 
-> Q2: Both CXL device based and CXL region based scrub control would be
-> enabled at the same time in a system?
-> 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> ---
->  Documentation/edac/edac-scrub.rst |  74 ++++++
->  drivers/cxl/Kconfig               |  18 ++
->  drivers/cxl/core/Makefile         |   1 +
->  drivers/cxl/core/memfeature.c     | 372 ++++++++++++++++++++++++++++++
->  drivers/cxl/core/region.c         |   6 +
->  drivers/cxl/cxlmem.h              |   7 +
->  drivers/cxl/mem.c                 |   4 +
->  7 files changed, 482 insertions(+)
->  create mode 100644 Documentation/edac/edac-scrub.rst
->  create mode 100644 drivers/cxl/core/memfeature.c
-> 
-> diff --git a/Documentation/edac/edac-scrub.rst b/Documentation/edac/edac-scrub.rst
-> new file mode 100644
-> index 000000000000..243035957e99
-> --- /dev/null
-> +++ b/Documentation/edac/edac-scrub.rst
-> @@ -0,0 +1,74 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===================
-> +EDAC Scrub control
-> +===================
-> +
-> +Copyright (c) 2024 HiSilicon Limited.
-> +
-> +:Author:   Shiju Jose <shiju.jose@huawei.com>
-> +:License:  The GNU Free Documentation License, Version 1.2
-> +          (dual licensed under the GPL v2)
-> +:Original Reviewers:
-> +
-> +- Written for: 6.12
-> +- Updated for:
-> +
-> +Introduction
-> +------------
-> +The EDAC enhancement for RAS featurues exposes interfaces for controlling
-> +the memory scrubbers in the system. The scrub device drivers in the
-> +system register with the EDAC scrub. The driver exposes the
-> +scrub controls to user in the sysfs.
-> +
-> +The File System
-> +---------------
-> +
-> +The control attributes of the registered scrubber instance could be
-> +accessed in the /sys/bus/edac/devices/<dev-name>/scrub*/
-> +
-> +sysfs
-> +-----
-> +
-> +Sysfs files are documented in
-> +`Documentation/ABI/testing/sysfs-edac-scrub-control`.
-> +
-> +Example
-> +-------
-> +
-> +The usage takes the form shown in this example::
-> +
-> +1. CXL memory device patrol scrubber
-> +1.1 device based
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/min_cycle_duration
-> +3600
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/max_cycle_duration
-> +918000
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
-> +43200
-> +root@localhost:~# echo 54000 > /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
-> +54000
-> +root@localhost:~# echo 1 > /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
-> +1
-> +root@localhost:~# echo 0 > /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
-> +0
-> +
-> +1.2. region based
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/min_cycle_duration
-> +3600
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/max_cycle_duration
-> +918000
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
-> +43200
-> +root@localhost:~# echo 54000 > /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
-> +54000
-> +root@localhost:~# echo 1 > /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
-> +1
-> +root@localhost:~# echo 0 > /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
-> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
-> +0
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index 99b5c25be079..394bdbc4de87 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -145,4 +145,22 @@ config CXL_REGION_INVALIDATION_TEST
->  	  If unsure, or if this kernel is meant for production environments,
->  	  say N.
->  
-> +config CXL_RAS_FEAT
-> +	bool "CXL: Memory RAS features"
-
-If EDAC is compiled as module, it will lead to a situlation where EDAC is a
-module, and CXL_RAS_FEAT is compiled in, and causing compile issue like below
-
-----
-  CC [M]  arch/arm64/crypto/aes-neon-blk.mod.o
-  CC [M]  arch/arm64/crypto/sha512-arm64.mod.o
-  CC [M]  arch/arm64/crypto/chacha-neon.mod.o
-  CC [M]  arch/arm64/crypto/aes-neon-bs.mod.o
-  CC [M]  fs/nfs/blocklayout/blocklayoutdriver.mod.o
-  CC [M]  fs/pstore/ramoops.mod.o
-  CC [M]  fs/ubifs/ubifs.mod.o
-  CC [M]  fs/fuse/fuse.mod.o
-  CC [M]  fs/fuse/cuse.mod.o
-  CC [M]  fs/overlayfs/overlay.mod.o
-  CC [M]  fs/btrfs/btrfs.mod.o
-aarch64-linux-gnu-ld: drivers/cxl/core/memfeature.o: in function `cxl_mem_ras_features_init':
-/home/fan/cxl/linux-edac/drivers/cxl/core/memfeature.c:1133:(.text+0x3ac): undefined reference to `edac_dev_register'
-----
-I think it should be "tristate" instead of "bool" like blew.
-
-diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-index 394bdbc4de87..b717a152d2a5 100644
---- a/drivers/cxl/Kconfig
-+++ b/drivers/cxl/Kconfig
-@@ -146,7 +146,7 @@ config CXL_REGION_INVALIDATION_TEST
-          say N.
- 
- config CXL_RAS_FEAT
--       bool "CXL: Memory RAS features"
-+       tristate "CXL: Memory RAS features"
-        depends on CXL_PCI
-        depends on CXL_MEM
-        depends on EDAC
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH3PR01MB8575:EE_
+X-MS-Office365-Filtering-Correlation-Id: 624b91fc-7b8f-4c62-61c3-08dce251f6e5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Qzc3KzlaSi8rS04zenBEWktGdnZtMHFBT1orM01NaGVGa1htNG5HNGluUzh4?=
+ =?utf-8?B?aXVGaE5VS05hNnBLSTdjSGVHdk5NUzd0Y2FhVlBHRnBFVStWVFIvd3pQdFV5?=
+ =?utf-8?B?SFhiSFZFc2oyRjNsYUpDY2tJQ0liOW9obU84Ny9EYnRraDJ3a1BxL1dNdDAw?=
+ =?utf-8?B?WGg2bUNTS3QzbU1UREthdDB1Wjk3VlJCSE03MSsyZmZhczFZOUQrL3V0RHcw?=
+ =?utf-8?B?dWI1dFh1SnczOXp6anhRaitVZGZhcUJCUGs3QWhwYWdOT1NSb1pSWkVuekRC?=
+ =?utf-8?B?TW05cDVzQlZtWHQrMW0zUVBoTGttejJVQTJmMkg4dlcvMWtXS2NFTUNsaUt6?=
+ =?utf-8?B?NUxWRDR6ck9KQ1VlSmtCdDFqMG5DVTJOMFJaZUdQNnNnVmJxSThYUHk2SDcw?=
+ =?utf-8?B?T0xMR1QxWmE2MFhaMkRzQ2tFWi92S0RIV2Q2ajlGbm9Eam5BYnpkM2RSTVFM?=
+ =?utf-8?B?UTAyMzJuVXpJRW5nS0F3d09hdFA3NFY3bENYWWhQWFJoMDA2VGxCZTJIZDYx?=
+ =?utf-8?B?cTVLcVcyQlI1WWc3UU5LSE4vK0xNOHRsM3RSd2tpWnhHN0RUdjRpS2dpL2VZ?=
+ =?utf-8?B?YUUvYmZZZTdGZWg2c29qdlZ5Z1BvbFpPOUI1YXBIVGJpR1pTQTc1SE1UVFJz?=
+ =?utf-8?B?R0g1VG83dnJnbHZ6SmFDWlJscXVCZHFCNjVQTzB2RVZmZTM3YWEyUVJ6d09u?=
+ =?utf-8?B?eWlpUTdLU0xPQndTV2FKWlVpc2ZYeFZQNFJmcHhBaHZQdHd5UDBJQmVJK1JL?=
+ =?utf-8?B?RW04UFVZVlV4eE9RaGtLQmxRVnk2Y0VPYmVrQUMvOS9ZZ2ppL3BsamxJaHh6?=
+ =?utf-8?B?Zi9jdUVLNWNyTG5ZTk9FVG40V253QjVTSWx0YnFQREdOeTNZdnBsN3FGM25a?=
+ =?utf-8?B?TXlvVVlBK0cvS3ZnblJXWDN4SHhodGp2aFpqc3hTQXBDeXYrM3NJUExMeFlj?=
+ =?utf-8?B?ZlBKVE9rYWw5MFgvUVo3a3M1WkY5bVEvYUtpUTRkS0sySkJaMlpuMEpGTXdP?=
+ =?utf-8?B?bEQwbGJhNXZNamswMDVLVjdNenVWTWtKTU5oOVBiem8weCtUeEI1QXBaeENn?=
+ =?utf-8?B?dzRtUUJneDhhRzFCd0ZYRHNkUHdtR0xVTjNGSkcxNGR5ZC9iQ1ZOWnFWbFRh?=
+ =?utf-8?B?M3k5T0pRT0tZMEdMUFhWT0VsejM3Nnh0UDdSWnpuTWliYk53YjJVd243VlVs?=
+ =?utf-8?B?a2pud1phMU5IV3BZWjhCRUQxUjlSVm9zSGZLbkhER0VqbklCakV3QjMrWHpU?=
+ =?utf-8?B?d25pQ1lneXBTdnFJK2E0WUhzekVXbE1RN1FFeWwxVi9jRjl6YTEwY0VlVm9v?=
+ =?utf-8?B?Ni9wOU00cDBFQVlBa2czN2hZTk5JMlFTaEhYUVJrRndJS2R0UkMrTldBYXZ3?=
+ =?utf-8?B?SlhwNjlTaTBocVRVM2FkMEtWRW5oNFlXNHZRamZjamQxdTFVUzJ5b25TQ2pz?=
+ =?utf-8?B?bUtJTnV6SEk0b0E0MjY4b2tUU3RqSzJzemVtWXNDMk92aEkxQ1grSG5vWVN0?=
+ =?utf-8?B?Q1Bhc1dBekptT0cyNE1BVTZkU2FYWGxZcFVEZFF2QzcvL3B0Z1kwVFVwYml2?=
+ =?utf-8?B?SHlITFJUMWYwdFVQbk9md1NCRmovSzFxN2pGZDFrY0Z2bFA3ZkdlR01xd0Mw?=
+ =?utf-8?B?c3N5N3JjZHUrdnZtQi8vMzFQZ29CeVdjQSswUUNXZjdaWEhHa2x0alhLK1Zz?=
+ =?utf-8?B?R0pTRE1JcVZRMzBTclFFRHRTRDYzbFpZbm9nR09zS1RFT0RBUlJRYmdBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cFhrRjBvbnYrVGxxNStaRGNDOWpFbXRFbDc3MDVwVlZiOUxOWFovMStlYVBU?=
+ =?utf-8?B?T3FHM0xuMldYeVV0SGN4U1ZJczhZSDU0RGkrZktEWkpwa2laaDBJUDVVRFgw?=
+ =?utf-8?B?TGFuNkgwTkFiTVl2RzhBK2YxVXA2SStheTlON0VXSGFvYWt3c1JUQ2tWck51?=
+ =?utf-8?B?bG55ZzcvL0t1ZnFZWGZGVWttaDV5aXNkUndNZmNwSy9xM1E3MkRlVzlERlJz?=
+ =?utf-8?B?OE1CSmlwLzRXRXlweS9QNDRoZjZPalB1azBjNkMyYXliRWdodjIwUm1Zd1g3?=
+ =?utf-8?B?ODI5dVpuNFhqMjNLL2g0L241cG9tQXNDZ2dPblJ5ODUvOGJ6TGQ3Y21KYmVt?=
+ =?utf-8?B?UVQ1VU5IZXlmcVFPcGF3ejNyVHgzREFPWjdWb3AzWGxvcXlyaDJRNEFvNFh1?=
+ =?utf-8?B?dzBiOFQzK2MzTC9OZG9uV2J0MUxHdWwyT0l1SVJnczdiVFZ3MHhnTEtTd1Np?=
+ =?utf-8?B?MnVMR1c3Q0dLcTY1ZXhUZWJCSWV0S05ZeXFzc2cvWHUxUXViSkZObERsbEJu?=
+ =?utf-8?B?OWRlOU41RTRGQlZHdlIzNkwvaXlPelhhNlpPS052VTlKbUVMRFlCWlZobkFP?=
+ =?utf-8?B?Wi9VMzQxRm5kM0lJdXZVZ1Q4VTc0YXJaSi9zOFFnZzZpMUVCRndTT0F5WHls?=
+ =?utf-8?B?QzdaZFdmRm1adWtzR2EzSHU0b0pSdmJja3hzOGdCRC9HMGYwME5nSUVKcUgw?=
+ =?utf-8?B?TUd5M3EyWmx4RXkzV1FmTjVxY01lTVhxbVVSRzlqeHZnRFpkbUFsczdic0ZT?=
+ =?utf-8?B?dFk0ekNLL2lKUCtZZkRQbElxSHRVUlErNlpaUnVhSlJCYUc1REo0L3hmM282?=
+ =?utf-8?B?VFNFa2hMcHBTVXo2UWhXNEVEQzIwSTBoK2lKeHZ5TDIxcndmQlI1M0s4d1ox?=
+ =?utf-8?B?Q1dTaXVQaldEQXcvZlQ2bEpIcmY4ZEZOTlRCL0t4MU9NY3hnT0JUckNudGdj?=
+ =?utf-8?B?Y2F4cjUrM2hYRWZJVEsxYUNGUGZ4M21LWVI1SEtLdDZGaDIwcEVCTmFHZ2R4?=
+ =?utf-8?B?SmxkMkd6L2RqRW9LTHJRR0p3d3lneGFkZUhYK2p2NzdiZjZOVVpDSVIyVUpG?=
+ =?utf-8?B?NXdjYU9xQUtjSVNCb1l2YlRhdWV5V09DcWhUM2t1TDBJYUZJei9PRmlEWUNT?=
+ =?utf-8?B?cnp1a29BK0VQMG1JNFZtYmxZbEhyUUE0SU1pVHRvWEc0Sk5obk5iUEZjQktp?=
+ =?utf-8?B?dXQ2WXVvazdGWm42N1lJbWxSOTE0aWRkUHl2eHlKODlOUnl0eUxtdkVYMW16?=
+ =?utf-8?B?QW1WWGZxQU4xOElpUVZVRUZjaFpmbitRNmVGdVZNU1hUS0F2akV1TnlNUmdi?=
+ =?utf-8?B?L0ZnTCtpc2UvMWg0TkpxUEg2QTFKZkJkdVRROWdSQmpacmVUb05KZ0orOEdC?=
+ =?utf-8?B?VXpSKzV6ZGVnRkxOTmJRYnZOanM0R0s5VS91c2F6Y2J3UEwrdDltWlFTSy9q?=
+ =?utf-8?B?MVVFYTBEYUlxSUxwUkVZazNrODBqL25qM2E2L1FoVldCOCtNcnZJTG1KL3Fw?=
+ =?utf-8?B?VytIY3JXbVNXS1RLVTJ4cEh0TGZtaEg3QWFwZTFPWjBDRVpmUDhYRWRZZzhW?=
+ =?utf-8?B?Tm5la3BhUDZGakUrR2xtUm01eTAwNzVHb3hYdzFvcmtlU2xrYzJncDlxNE5T?=
+ =?utf-8?B?S2ZUMlJhcFVLeG1jUEltb1IyTi9SMlJVVGtIWUJ2T0NYV25LVTRtYXp0SGFw?=
+ =?utf-8?B?d0U5dlRuS0F4UWFiamVMUXZTT1Vwd1BqdEpzMHhWbndwWXdvenovQUhhQlB0?=
+ =?utf-8?B?aXBhS2NMdTJQVlVZaU9rN2F0c1hKSGlDL2RNamNYdG8zSVNUZGFFaXdHT2pj?=
+ =?utf-8?B?MHJzbmZDZkpjMUFSd2RUdWpjUktzK1FJU2hHRTlpMmJMbGpkZmVidC9UaDBp?=
+ =?utf-8?B?MWxBL2ZzSzg1dU9xYWxNZ1IxM2lMSkJ5elh4K0c1M3VZa2syNlphZU0yclZy?=
+ =?utf-8?B?L2hTVGdLbndiUnllMXZ4bVdicVNJY0l5QVlnMVNIQjY5d0w4QmU4RnUxN0Ev?=
+ =?utf-8?B?SjdPN2U1OFhkOXRkam05ZjBMejRhcUIwZy83eWdmRGZEQ3dUK1hKN054N0d3?=
+ =?utf-8?B?RTY0am5jbi9MK0VOZ3ZBK0JXNll5cDdGSFNLUjAzVmd4cHUxS1o4bXlJcURL?=
+ =?utf-8?B?SXc1bFVnNlF6RmtwU1UyeElSWHhnb2xaUHpMV3k3M1NWUkdXNUhVaWxTUVhn?=
+ =?utf-8?Q?L81ow2NCUVfspp4VKdxw/8s=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 624b91fc-7b8f-4c62-61c3-08dce251f6e5
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2024 19:48:04.3279
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vhYHCufu10Afz+QPMjAXRz5QorjTbwDuX7To0GXND14pReZ1+fOeFpxeKYa/Zi5CFtvlbPODDdxXNR/KPYR8vG1WY8pKnY66wA4V/vd2C8o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR01MB8575
 
 
-Fan
 
-> +	depends on CXL_PCI
-> +	depends on CXL_MEM
-> +	depends on EDAC
-> +	help
-> +	  The CXL memory RAS feature control is optional allows host to control
-> +	  the RAS features configurations of CXL Type 3 devices.
-> +
-> +	  Registers with the EDAC device subsystem to expose control attributes
-> +	  of CXL memory device's RAS features to the user.
-> +	  Provides interface functions to support configuring the CXL memory
-> +	  device's RAS features.
-> +
-> +	  Say 'y/n' to enable/disable CXL.mem device'ss RAS features control.
-> +	  See section 8.2.9.9.11 of CXL 3.1 specification for the detailed
-> +	  information of CXL memory device features.
-> +
->  endif
-> diff --git a/drivers/cxl/core/Makefile b/drivers/cxl/core/Makefile
-> index 9259bcc6773c..2a3c7197bc23 100644
-> --- a/drivers/cxl/core/Makefile
-> +++ b/drivers/cxl/core/Makefile
-> @@ -16,3 +16,4 @@ cxl_core-y += pmu.o
->  cxl_core-y += cdat.o
->  cxl_core-$(CONFIG_TRACING) += trace.o
->  cxl_core-$(CONFIG_CXL_REGION) += region.o
-> +cxl_core-$(CONFIG_CXL_RAS_FEAT) += memfeature.o
-> diff --git a/drivers/cxl/core/memfeature.c b/drivers/cxl/core/memfeature.c
-> new file mode 100644
-> index 000000000000..90c68d20b02b
-> --- /dev/null
-> +++ b/drivers/cxl/core/memfeature.c
-> @@ -0,0 +1,372 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * CXL memory RAS feature driver.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + *
-> + *  - Supports functions to configure RAS features of the
-> + *    CXL memory devices.
-> + *  - Registers with the EDAC device subsystem driver to expose
-> + *    the features sysfs attributes to the user for configuring
-> + *    CXL memory RAS feature.
-> + */
-> +
-> +#define pr_fmt(fmt)	"CXL MEM FEAT: " fmt
-> +
-> +#include <cxlmem.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/limits.h>
-> +#include <cxl.h>
-> +#include <linux/edac.h>
-> +
-> +#define CXL_DEV_NUM_RAS_FEATURES	1
-> +#define CXL_DEV_HOUR_IN_SECS	3600
-> +
-> +#define CXL_SCRUB_NAME_LEN	128
-> +
-> +/* CXL memory patrol scrub control definitions */
-> +static const uuid_t cxl_patrol_scrub_uuid =
-> +	UUID_INIT(0x96dad7d6, 0xfde8, 0x482b, 0xa7, 0x33, 0x75, 0x77, 0x4e,     \
-> +		  0x06, 0xdb, 0x8a);
-> +
-> +/* CXL memory patrol scrub control functions */
-> +struct cxl_patrol_scrub_context {
-> +	u8 instance;
-> +	u16 get_feat_size;
-> +	u16 set_feat_size;
-> +	u8 get_version;
-> +	u8 set_version;
-> +	u16 set_effects;
-> +	struct cxl_memdev *cxlmd;
-> +	struct cxl_region *cxlr;
-> +};
-> +
-> +/**
-> + * struct cxl_memdev_ps_params - CXL memory patrol scrub parameter data structure.
-> + * @enable:     [IN & OUT] enable(1)/disable(0) patrol scrub.
-> + * @scrub_cycle_changeable: [OUT] scrub cycle attribute of patrol scrub is changeable.
-> + * @scrub_cycle_hrs:    [IN] Requested patrol scrub cycle in hours.
-> + *                      [OUT] Current patrol scrub cycle in hours.
-> + * @min_scrub_cycle_hrs:[OUT] minimum patrol scrub cycle in hours supported.
-> + */
-> +struct cxl_memdev_ps_params {
-> +	bool enable;
-> +	bool scrub_cycle_changeable;
-> +	u16 scrub_cycle_hrs;
-> +	u16 min_scrub_cycle_hrs;
-> +};
-> +
-> +enum cxl_scrub_param {
-> +	CXL_PS_PARAM_ENABLE,
-> +	CXL_PS_PARAM_SCRUB_CYCLE,
-> +};
-> +
-> +#define	CXL_MEMDEV_PS_SCRUB_CYCLE_CHANGE_CAP_MASK	BIT(0)
-> +#define	CXL_MEMDEV_PS_SCRUB_CYCLE_REALTIME_REPORT_CAP_MASK	BIT(1)
-> +#define	CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK	GENMASK(7, 0)
-> +#define	CXL_MEMDEV_PS_MIN_SCRUB_CYCLE_MASK	GENMASK(15, 8)
-> +#define	CXL_MEMDEV_PS_FLAG_ENABLED_MASK	BIT(0)
-> +
-> +struct cxl_memdev_ps_rd_attrs {
-> +	u8 scrub_cycle_cap;
-> +	__le16 scrub_cycle_hrs;
-> +	u8 scrub_flags;
-> +}  __packed;
-> +
-> +struct cxl_memdev_ps_wr_attrs {
-> +	u8 scrub_cycle_hrs;
-> +	u8 scrub_flags;
-> +}  __packed;
-> +
-> +static int cxl_mem_ps_get_attrs(struct cxl_dev_state *cxlds,
-> +				struct cxl_memdev_ps_params *params)
-> +{
-> +	size_t rd_data_size = sizeof(struct cxl_memdev_ps_rd_attrs);
-> +	size_t data_size;
-> +	struct cxl_memdev_ps_rd_attrs *rd_attrs __free(kfree) =
-> +						kmalloc(rd_data_size, GFP_KERNEL);
-> +	if (!rd_attrs)
-> +		return -ENOMEM;
-> +
-> +	data_size = cxl_get_feature(cxlds, cxl_patrol_scrub_uuid,
-> +				    CXL_GET_FEAT_SEL_CURRENT_VALUE,
-> +				    rd_attrs, rd_data_size);
-> +	if (!data_size)
-> +		return -EIO;
-> +
-> +	params->scrub_cycle_changeable = FIELD_GET(CXL_MEMDEV_PS_SCRUB_CYCLE_CHANGE_CAP_MASK,
-> +						   rd_attrs->scrub_cycle_cap);
-> +	params->enable = FIELD_GET(CXL_MEMDEV_PS_FLAG_ENABLED_MASK,
-> +				   rd_attrs->scrub_flags);
-> +	params->scrub_cycle_hrs = FIELD_GET(CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK,
-> +					    rd_attrs->scrub_cycle_hrs);
-> +	params->min_scrub_cycle_hrs = FIELD_GET(CXL_MEMDEV_PS_MIN_SCRUB_CYCLE_MASK,
-> +						rd_attrs->scrub_cycle_hrs);
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_ps_get_attrs(struct device *dev, void *drv_data,
-> +			    struct cxl_memdev_ps_params *params)
-> +{
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> +	struct cxl_memdev *cxlmd;
-> +	struct cxl_dev_state *cxlds;
-> +	u16 min_scrub_cycle = 0;
-> +	int i, ret;
-> +
-> +	if (cxl_ps_ctx->cxlr) {
-> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
-> +		struct cxl_region_params *p = &cxlr->params;
-> +
-> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> +
-> +			cxlmd = cxled_to_memdev(cxled);
-> +			cxlds = cxlmd->cxlds;
-> +			ret = cxl_mem_ps_get_attrs(cxlds, params);
-> +			if (ret)
-> +				return ret;
-> +
-> +			if (params->min_scrub_cycle_hrs > min_scrub_cycle)
-> +				min_scrub_cycle = params->min_scrub_cycle_hrs;
-> +		}
-> +		params->min_scrub_cycle_hrs = min_scrub_cycle;
-> +		return 0;
-> +	}
-> +	cxlmd = cxl_ps_ctx->cxlmd;
-> +	cxlds = cxlmd->cxlds;
-> +
-> +	return cxl_mem_ps_get_attrs(cxlds, params);
-> +}
-> +
-> +static int cxl_mem_ps_set_attrs(struct device *dev, void *drv_data,
-> +				struct cxl_dev_state *cxlds,
-> +				struct cxl_memdev_ps_params *params,
-> +				enum cxl_scrub_param param_type)
-> +{
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> +	struct cxl_memdev_ps_wr_attrs wr_attrs;
-> +	struct cxl_memdev_ps_params rd_params;
-> +	int ret;
-> +
-> +	ret = cxl_mem_ps_get_attrs(cxlds, &rd_params);
-> +	if (ret) {
-> +		dev_err(dev, "Get cxlmemdev patrol scrub params failed ret=%d\n",
-> +			ret);
-> +		return ret;
-> +	}
-> +
-> +	switch (param_type) {
-> +	case CXL_PS_PARAM_ENABLE:
-> +		wr_attrs.scrub_flags = FIELD_PREP(CXL_MEMDEV_PS_FLAG_ENABLED_MASK,
-> +						  params->enable);
-> +		wr_attrs.scrub_cycle_hrs = FIELD_PREP(CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK,
-> +						      rd_params.scrub_cycle_hrs);
-> +		break;
-> +	case CXL_PS_PARAM_SCRUB_CYCLE:
-> +		if (params->scrub_cycle_hrs < rd_params.min_scrub_cycle_hrs) {
-> +			dev_err(dev, "Invalid CXL patrol scrub cycle(%d) to set\n",
-> +				params->scrub_cycle_hrs);
-> +			dev_err(dev, "Minimum supported CXL patrol scrub cycle in hour %d\n",
-> +				params->min_scrub_cycle_hrs);
-> +			return -EINVAL;
-> +		}
-> +		wr_attrs.scrub_cycle_hrs = FIELD_PREP(CXL_MEMDEV_PS_CUR_SCRUB_CYCLE_MASK,
-> +						      params->scrub_cycle_hrs);
-> +		wr_attrs.scrub_flags = FIELD_PREP(CXL_MEMDEV_PS_FLAG_ENABLED_MASK,
-> +						  rd_params.enable);
-> +		break;
-> +	}
-> +
-> +	ret = cxl_set_feature(cxlds, cxl_patrol_scrub_uuid,
-> +			      cxl_ps_ctx->set_version,
-> +			      &wr_attrs, sizeof(wr_attrs),
-> +			      CXL_SET_FEAT_FLAG_DATA_SAVED_ACROSS_RESET);
-> +	if (ret) {
-> +		dev_err(dev, "CXL patrol scrub set feature failed ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_ps_set_attrs(struct device *dev, void *drv_data,
-> +			    struct cxl_memdev_ps_params *params,
-> +			    enum cxl_scrub_param param_type)
-> +{
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> +	struct cxl_memdev *cxlmd;
-> +	struct cxl_dev_state *cxlds;
-> +	int ret, i;
-> +
-> +	if (cxl_ps_ctx->cxlr) {
-> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
-> +		struct cxl_region_params *p = &cxlr->params;
-> +
-> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> +
-> +			cxlmd = cxled_to_memdev(cxled);
-> +			cxlds = cxlmd->cxlds;
-> +			ret = cxl_mem_ps_set_attrs(dev, drv_data, cxlds,
-> +						   params, param_type);
-> +			if (ret)
-> +				return ret;
-> +		}
-> +	} else {
-> +		cxlmd = cxl_ps_ctx->cxlmd;
-> +		cxlds = cxlmd->cxlds;
-> +
-> +		return cxl_mem_ps_set_attrs(dev, drv_data, cxlds, params, param_type);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_patrol_scrub_get_enabled_bg(struct device *dev, void *drv_data, bool *enabled)
-> +{
-> +	struct cxl_memdev_ps_params params;
-> +	int ret;
-> +
-> +	ret = cxl_ps_get_attrs(dev, drv_data, &params);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*enabled = params.enable;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_patrol_scrub_set_enabled_bg(struct device *dev, void *drv_data, bool enable)
-> +{
-> +	struct cxl_memdev_ps_params params = {
-> +		.enable = enable,
-> +	};
-> +
-> +	return cxl_ps_set_attrs(dev, drv_data, &params, CXL_PS_PARAM_ENABLE);
-> +}
-> +
-> +static int cxl_patrol_scrub_read_min_scrub_cycle(struct device *dev, void *drv_data,
-> +						 u32 *min)
-> +{
-> +	struct cxl_memdev_ps_params params;
-> +	int ret;
-> +
-> +	ret = cxl_ps_get_attrs(dev, drv_data, &params);
-> +	if (ret)
-> +		return ret;
-> +	*min = params.min_scrub_cycle_hrs * CXL_DEV_HOUR_IN_SECS;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_patrol_scrub_read_max_scrub_cycle(struct device *dev, void *drv_data,
-> +						 u32 *max)
-> +{
-> +	*max = U8_MAX * CXL_DEV_HOUR_IN_SECS; /* Max set by register size */
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_patrol_scrub_read_scrub_cycle(struct device *dev, void *drv_data,
-> +					     u32 *scrub_cycle_secs)
-> +{
-> +	struct cxl_memdev_ps_params params;
-> +	int ret;
-> +
-> +	ret = cxl_ps_get_attrs(dev, drv_data, &params);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*scrub_cycle_secs = params.scrub_cycle_hrs * CXL_DEV_HOUR_IN_SECS;
-> +
-> +	return 0;
-> +}
-> +
-> +static int cxl_patrol_scrub_write_scrub_cycle(struct device *dev, void *drv_data,
-> +					      u32 scrub_cycle_secs)
-> +{
-> +	struct cxl_memdev_ps_params params = {
-> +		.scrub_cycle_hrs = scrub_cycle_secs / CXL_DEV_HOUR_IN_SECS,
-> +	};
-> +
-> +	return cxl_ps_set_attrs(dev, drv_data, &params, CXL_PS_PARAM_SCRUB_CYCLE);
-> +}
-> +
-> +static const struct edac_scrub_ops cxl_ps_scrub_ops = {
-> +	.get_enabled_bg = cxl_patrol_scrub_get_enabled_bg,
-> +	.set_enabled_bg = cxl_patrol_scrub_set_enabled_bg,
-> +	.min_cycle_read = cxl_patrol_scrub_read_min_scrub_cycle,
-> +	.max_cycle_read = cxl_patrol_scrub_read_max_scrub_cycle,
-> +	.cycle_duration_read = cxl_patrol_scrub_read_scrub_cycle,
-> +	.cycle_duration_write = cxl_patrol_scrub_write_scrub_cycle,
-> +};
-> +
-> +int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
-> +{
-> +	struct edac_dev_feature ras_features[CXL_DEV_NUM_RAS_FEATURES];
-> +	struct cxl_dev_state *cxlds;
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx;
-> +	struct cxl_feat_entry feat_entry;
-> +	char cxl_dev_name[CXL_SCRUB_NAME_LEN];
-> +	int rc, i, num_ras_features = 0;
-> +
-> +	if (cxlr) {
-> +		struct cxl_region_params *p = &cxlr->params;
-> +
-> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> +
-> +			cxlmd = cxled_to_memdev(cxled);
-> +			cxlds = cxlmd->cxlds;
-> +			memset(&feat_entry, 0, sizeof(feat_entry));
-> +			rc = cxl_get_supported_feature_entry(cxlds, &cxl_patrol_scrub_uuid,
-> +							     &feat_entry);
-> +			if (rc < 0)
-> +				return rc;
-> +			if (!(feat_entry.attr_flags & CXL_FEAT_ENTRY_FLAG_CHANGABLE))
-> +				return -EOPNOTSUPP;
-> +		}
-> +	} else {
-> +		cxlds = cxlmd->cxlds;
-> +		rc = cxl_get_supported_feature_entry(cxlds, &cxl_patrol_scrub_uuid,
-> +						     &feat_entry);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		if (!(feat_entry.attr_flags & CXL_FEAT_ENTRY_FLAG_CHANGABLE))
-> +			return -EOPNOTSUPP;
-> +	}
-> +
-> +	cxl_ps_ctx = devm_kzalloc(&cxlmd->dev, sizeof(*cxl_ps_ctx), GFP_KERNEL);
-> +	if (!cxl_ps_ctx)
-> +		return -ENOMEM;
-> +
-> +	*cxl_ps_ctx = (struct cxl_patrol_scrub_context) {
-> +		.instance = cxl_ps_ctx->instance,
-> +		.get_feat_size = feat_entry.get_feat_size,
-> +		.set_feat_size = feat_entry.set_feat_size,
-> +		.get_version = feat_entry.get_feat_ver,
-> +		.set_version = feat_entry.set_feat_ver,
-> +		.set_effects = feat_entry.set_effects,
-> +	};
-> +	if (cxlr) {
-> +		snprintf(cxl_dev_name, sizeof(cxl_dev_name),
-> +			 "cxl_region%d", cxlr->id);
-> +		cxl_ps_ctx->cxlr = cxlr;
-> +	} else {
-> +		snprintf(cxl_dev_name, sizeof(cxl_dev_name),
-> +			 "%s_%s", "cxl", dev_name(&cxlmd->dev));
-> +		cxl_ps_ctx->cxlmd = cxlmd;
-> +	}
-> +
-> +	ras_features[num_ras_features].ft_type = RAS_FEAT_SCRUB;
-> +	ras_features[num_ras_features].scrub_ops = &cxl_ps_scrub_ops;
-> +	ras_features[num_ras_features].ctx = cxl_ps_ctx;
-> +	num_ras_features++;
-> +
-> +	return edac_dev_register(&cxlmd->dev, cxl_dev_name, NULL,
-> +				 num_ras_features, ras_features);
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_mem_ras_features_init, CXL);
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 21ad5f242875..1cc29ec9ffac 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3434,6 +3434,12 @@ static int cxl_region_probe(struct device *dev)
->  					p->res->start, p->res->end, cxlr,
->  					is_system_ram) > 0)
->  			return 0;
-> +
-> +		rc = cxl_mem_ras_features_init(NULL, cxlr);
-> +		if (rc)
-> +			dev_warn(&cxlr->dev, "CXL RAS features init for region_id=%d failed\n",
-> +				 cxlr->id);
-> +
->  		return devm_cxl_add_dax_region(cxlr);
->  	default:
->  		dev_dbg(&cxlr->dev, "unsupported region mode: %d\n",
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index b565a061a4e3..2187c3378eaa 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -889,6 +889,13 @@ int cxl_trigger_poison_list(struct cxl_memdev *cxlmd);
->  int cxl_inject_poison(struct cxl_memdev *cxlmd, u64 dpa);
->  int cxl_clear_poison(struct cxl_memdev *cxlmd, u64 dpa);
->  
-> +#ifdef CONFIG_CXL_RAS_FEAT
-> +int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr);
-> +#else
-> +static inline int cxl_mem_ras_features_init(struct cxl_memdev *cxlmd, struct cxl_region *cxlr)
-> +{ return 0; }
-> +#endif
-> +
->  #ifdef CONFIG_CXL_SUSPEND
->  void cxl_mem_active_inc(void);
->  void cxl_mem_active_dec(void);
-> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-> index 7de232eaeb17..be2e69548909 100644
-> --- a/drivers/cxl/mem.c
-> +++ b/drivers/cxl/mem.c
-> @@ -117,6 +117,10 @@ static int cxl_mem_probe(struct device *dev)
->  	if (!cxlds->media_ready)
->  		return -EBUSY;
->  
-> +	rc = cxl_mem_ras_features_init(cxlmd, NULL);
-> +	if (rc)
-> +		dev_warn(&cxlmd->dev, "CXL RAS features init failed\n");
-> +
->  	/*
->  	 * Someone is trying to reattach this device after it lost its port
->  	 * connection (an endpoint port previously registered by this memdev was
-> -- 
-> 2.34.1
-> 
+On 10/1/24 12:29 PM, Nicolin Chen wrote:
+> On Tue, Oct 01, 2024 at 12:09:03PM -0700, Yang Shi wrote:
+>> On 10/1/24 11:27 AM, Nicolin Chen wrote:
+>>> On Tue, Oct 01, 2024 at 11:03:46AM -0700, Yang Shi wrote:
+>>>> Using 64 bit immediate when doing shift can solve the problem.  The
+>>>> disssembly after the fix looks like:
+>>> [...]
+>>>
+>>>>           unsigned int last_sid_idx =
+>>>> -               arm_smmu_strtab_l1_idx((1 << smmu->sid_bits) - 1);
+>>>> +               arm_smmu_strtab_l1_idx((1UL << smmu->sid_bits) - 1);
+>>> Could a 32-bit build be a corner case where UL is no longer a
+>>> "64 bit" stated in the commit message?
+>> It shouldn't. Because smmu v3 depends on ARM64.
+>>
+>> config ARM_SMMU_V3
+>>          tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+>>          depends on ARM64
+> ARM64 can have aarch32 support. I am not sure if ARM64 running a
+> 32-bit OS can be a case though, (and not confined to AmpereOne).
 
--- 
-Fan Ni
+I don't think ARM64 runs 32-bit kernel, at least for newer kernel.
+
+>
+>>> Then, can ssid_bits/s1cdmax be a concern similarly?
+>> IIUC, ssid_bits is determined by IDR1_SSIDSIZE. It is GENMASK(10, 6). So
+>> it shouldn't be 32. IDR1_SIDSIZE is GENMASK(5, 0).
+> Rechecked the RM. Yea, max sid can be 32 but max ssid is 20 at
+> this moment, so we should be safe.
+>
+> Thanks
+> Nicolin
+
 
