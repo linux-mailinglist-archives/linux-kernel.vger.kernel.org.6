@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-346853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C74998C9B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:56:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 501A098C9B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 01:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3C8284EEC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:56:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BE01C22FCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200341E4110;
-	Tue,  1 Oct 2024 23:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D9F1E0096;
+	Tue,  1 Oct 2024 23:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="I9CuXGuZ"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uBs4nShn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AC61E202D
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 23:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF151BFDFE;
+	Tue,  1 Oct 2024 23:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727826849; cv=none; b=EaJICXj+igc8mtx7UyxuAby73unBHnoU7p3gslXUnMWIml+Y9ejHkUqowJi8hi9eYNxiYC5VBleXg+XgVqqhlmwznksh+qw/W96wXC7NH89aDw3BhG+7vky/suSXrl0E3BCvJZaNmnWPDm4Ogqz6MiWmjeQt9XL5C106vSv08nk=
+	t=1727827141; cv=none; b=tQYdr1q9PflcJJg55R8am4jOhUFV/TE1wPnIT/07vR9EtVXihTeNdxPQ05CTP+2DbRYwSY+jiTxaVSYThT7Hd1UHt2xT/eLJi4622PmibLSMKHDsXECmOMJXeM1LibkwAFDfhk8ZulwJhD/yljx8jKBN4bQJsQ0GDO9Qt1KB8mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727826849; c=relaxed/simple;
-	bh=acO4k3Tl1873YqlB+9+oRM1/HbYr6wa8DEvdBbXxJoQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BxaFypc+NhPDgYk5D0vvlkprArEiWTJYQJ9xJVxXj73hQ1PNFZbmPZGj4CVWZx1emeIooTPIx43ZsJ2DhmrUkE0edET0OOv/RmPY0c1DE+7/2nWtc8EEgWH2ZfhdMIrk/7hWyqlUJ7yrpUbK8gHbJQ5tEXpNzfbe9yiYWH99csM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=I9CuXGuZ; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e0a74ce880so5043514a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 16:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1727826847; x=1728431647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PGtnVysYWBB+XDp/kZF0mQyFvrv7Ut5AwNUz8on3uqI=;
-        b=I9CuXGuZCTP3ykMhvyDAZ3l2VCzD+7AFe15fY10/SC64P7jfCeMu44RPAapDArvRNa
-         +O9ayxq+2/5owICuq02oO5dZ9kAd00aJK+IsJ5aEuNo3NUOH/CRoN6i7UMAagl24I4Q3
-         aJF29Wq5iOl8V13wSgyVBST713b896eQivgFU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727826847; x=1728431647;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PGtnVysYWBB+XDp/kZF0mQyFvrv7Ut5AwNUz8on3uqI=;
-        b=UjwawzWWz+PI40pefCEKUJgdI2VqEXOIQHUPtiNe8sxlALV5OqJrfsYymu5EEeaKrx
-         TyWOF+H8h7Oh/Rzbf99e8WcuNKI79XjtR7NczsmDA7fs7XaQozbnA1dnVkHBqqf4ciR0
-         sgT5xCRTCn/VTQcV9LytyXMczFyWBGlUKi8v/3otm5ppasxfDoDMBE508CquvBpFKBkw
-         beKVXC3VNBE3xGMtTwuUTyNN8KKv/JcZ6CzV82ypB1aHfGEIPTj29XeLlzCB1wNMwaiI
-         1RWO1IOM4jHSjmeeZ/az7w1WfvDhxMUR7CU9ghgndvSmoOUEZrnB/9nbte7u1mZMs/0U
-         QBvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW835Llfrrh7YWdOSY+NMnVrEENkgUUceUObUxFbsVTCKPUnyseedWhosicwq/n1PLsOSiFNDhC9tkpq2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziiPIxNgvdljtfI1EY8NidyQFGK8Zg2PxKp1V1xnNN0JpW3y3t
-	0te5LmM2c1rdsLxMoAd6ZlboUBb1h13lolcx4QKH3inEKME4OwxGWir+xyg3kPk=
-X-Google-Smtp-Source: AGHT+IFCgBS+YgTB1iRrCXeD774tHuBkiuRdbbUI5qwujyFtDh9/oA9HeddTZv+rnPbzAgKNnb5EZQ==
-X-Received: by 2002:a17:90a:bd0c:b0:2d8:aa9c:e386 with SMTP id 98e67ed59e1d1-2e18455c8e2mr1759138a91.14.1727826846920;
-        Tue, 01 Oct 2024 16:54:06 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e18f89e973sm213130a91.29.2024.10.01.16.54.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2024 16:54:06 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	skhawaja@google.com,
-	sdf@fomichev.me,
-	bjorn@rivosinc.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	willemdebruijn.kernel@gmail.com,
-	Joe Damato <jdamato@fastly.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
+	s=arc-20240116; t=1727827141; c=relaxed/simple;
+	bh=VzEbZVagWQal/mZU9TpTiSBwVAhimMl8r2t0YidJUA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uiq4yTGxQnPyEo4rFGej+jmgxP5w4XvicK3XPdKL24PAudZD3fcbhv+1m1nHxnXGpK2IF13A2fdZ5x4OPA/60WVfdsU+PpeBLjw2gFn0jTJzfnD3+dc6ETq5RzBQLy/3JfU0eCsbNmojMELuyjqKwid/0rVDt9pAJmlD8+am/h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uBs4nShn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A121EC4CEC6;
+	Tue,  1 Oct 2024 23:59:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727827141;
+	bh=VzEbZVagWQal/mZU9TpTiSBwVAhimMl8r2t0YidJUA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uBs4nShnKB6H1yAjwQfeHxTKgP/mwDwGrQU3vpXNMU300Mrr9mZXra9AIeTkLkA79
+	 KlOu4BBhT+llHPXlYEAchdE907//EvRYV9LSfWT25kySAljDAgZwuViozgjZkHRGKz
+	 W8s/1u5vogqRPQNKtEwmO317BDtHw4wTz5/eb5yxRazRMzBkHyWkacxpN64a1x+dFK
+	 iyjn8G/9MQGILpj5i2ewum/U/oW4dVhfF6a7kHgVVS56qubZkFTnrakkqPoQoe4Czh
+	 Kt19VZk0mUQEvR9+kDMHsX6RmAswGt9v+VnZHxJeYDt9c97FA5Coj1V1iBhko7wMHH
+	 NuMxjhbmk7vUg==
+Date: Tue, 1 Oct 2024 16:58:59 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Kajol Jain <kjain@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-rdma@vger.kernel.org (open list:MELLANOX MLX4 core VPI driver),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC net-next v4 9/9] mlx4: Add support for persistent NAPI config to RX CQs
-Date: Tue,  1 Oct 2024 23:52:40 +0000
-Message-Id: <20241001235302.57609-10-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241001235302.57609-1-jdamato@fastly.com>
-References: <20241001235302.57609-1-jdamato@fastly.com>
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Hemant Kumar <hemant@linux.vnet.ibm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yang Jihong <yangjihong@bytedance.com>, leo.yan@arm.com
+Subject: Re: [PATCH v1 0/3] 2 memory fixes and a build fix
+Message-ID: <ZvyMw2xwnyEnMaSa@google.com>
+References: <20240924003720.617258-1-irogers@google.com>
+ <ZvMEGn5RIWMZNvFc@google.com>
+ <CAP-5=fUP07h=RFQ7n0pwzeK4-DgD2st3tfYxT0_e-y9GOst4fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUP07h=RFQ7n0pwzeK4-DgD2st3tfYxT0_e-y9GOst4fA@mail.gmail.com>
 
-Use netif_napi_add_config to assign persistent per-NAPI config when
-initializing RX CQ NAPIs.
+On Mon, Sep 30, 2024 at 10:11:34PM -0700, Ian Rogers wrote:
+> On Tue, Sep 24, 2024 at 11:25 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Mon, Sep 23, 2024 at 05:37:17PM -0700, Ian Rogers wrote:
+> > > I was looking into some lsan regressions and a latent issue with
+> > > libdw, creating these fixes.
+> > >
+> > > A thought, we should probably simplify the libdw logic but rather than
+> > > do it here I'll do it as a separate series on top of these. The issues
+> > > I see are:
+> > >
+> > > 1) dwfl_thread_getframes is used to test for the presence of
+> > >    libdw-dwarf-unwind. The blame date on this function is
+> > >    2013-05-30. As the function is 10 years old I think having libdw
+> > >    implies having dwfl_thread_getframes and so we can just merge the
+> > >    two pieces of logic instead of having different feature tests and
+> > >    ifdefs.
+> > >
+> > > 2) similarly, dwarf_getlocations has a blame date of 2013-08-23 so
+> > >    let's just make libdw tests test for this and make having libdw
+> > >    imply dwarf_getlocations support.
+> > >
+> > > 3) similarly, dwarf_getcfi has a blame date of 2009-06-24 so let's
+> > >    just make libdw tests test for this and make having libdw imply
+> > >    dwarf_getcfi support.
+> > >
+> > > 4) in Makefie.config feature-dwarf is a synonym for libdw support. I
+> > >    think using the name libdw is more intention revealing as dwarf can
+> > >    mean multiple things. Let's change HAVE_DWARF_SUPPORT to
+> > >    HAVE_LIBDW_SUPPORT and all similar dwarf vs libdw names.
+> > >
+> > > 5) We have "#if _ELFUTILS_PREREQ(0, 142)" testing for elfutils version
+> > >    0.142. Elfutils 0.142 was released around 2009-06-13 (via git blame
+> > >    on the NEWS file). Let's remove the #if and ensure elfutils feature
+> > >    tests for at least 0.142. If someone were using an incredibly old
+> > >    version then they'd lose some elfutils support, but given the 15
+> > >    year old age of the library I find it unlikely anyone is doing
+> > >    this. They can also just move to a newer version.
+> >
+> > Looking at the map file in libdw, the latest addition was 0.158 for
+> > dwfl_thread_getframes().  Probably we can add the version check to the
+> > feature test to make sure if it has all the required APIs.
+> >
+> > https://sourceware.org/git/?p=elfutils.git;a=blob;f=libdw/libdw.map;h=552588a94c0c1a1f2fd5b973553c784026e6de14;hb=HEAD#l274
+> >
+> > >
+> > > From the mailing list I notice also overlap with the last patch and
+> > > this series:
+> > > https://lore.kernel.org/lkml/20240919013513.118527-1-yangjihong@bytedance.com/
+> > > Simplifying the libdw support will address some of those issues too.
+> >
+> > Yeah I noticed that too and feel like it should go to perf-tools tree.
+> > Probably it doesn't clash with this so I think it's ok to have this in
+> > perf-tools-next.
+> 
+> I think the comments wrt libdw are covered in the series cleaning up libdw:
+> https://lore.kernel.org/lkml/20240924160418.1391100-1-irogers@google.com/
+> so these fixes should be good to land?
 
-Presently, struct napi_config only has support for two fields used for
-RX, so there is no need to support them with TX CQs, yet.
+Sure, I'll just adjust the errno.h part as it's picked up by Arnaldo
+to the perf-tools already.  I'll merge the branch later.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/mellanox/mlx4/en_cq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_cq.c b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-index 461cc2c79c71..0e92956e84cf 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-@@ -156,7 +156,8 @@ int mlx4_en_activate_cq(struct mlx4_en_priv *priv, struct mlx4_en_cq *cq,
- 		break;
- 	case RX:
- 		cq->mcq.comp = mlx4_en_rx_irq;
--		netif_napi_add(cq->dev, &cq->napi, mlx4_en_poll_rx_cq);
-+		netif_napi_add_config(cq->dev, &cq->napi, mlx4_en_poll_rx_cq,
-+				      cq_idx);
- 		netif_napi_set_irq(&cq->napi, irq);
- 		napi_enable(&cq->napi);
- 		netif_queue_set_napi(cq->dev, cq_idx, NETDEV_QUEUE_TYPE_RX, &cq->napi);
--- 
-2.25.1
-
+Thanks,
+Namhyung
 
