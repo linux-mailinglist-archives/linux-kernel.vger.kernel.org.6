@@ -1,74 +1,144 @@
-Return-Path: <linux-kernel+bounces-345666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07E1798B904
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:12:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E0198B908
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F1751C2258C
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:12:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C29BEB21CB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7AB1A073B;
-	Tue,  1 Oct 2024 10:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A731A0AFB;
+	Tue,  1 Oct 2024 10:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="T26ozhoF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="awv9XCLc"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947191A0706;
-	Tue,  1 Oct 2024 10:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F41C1A0732
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727777558; cv=none; b=k118WHY5rmZYZx1nn0cKhaZ2CF/duL0WfvjH+H7yPh/iXWN+y3pnfQAJjbuRQ6z3B1JK4htdm498WCGhcBvDLCBOATmr14QWxJIA41ZIkNzDK9z7/xo0ipbA3tvWl/KirYjeS9kVz1VmEFbBo6t7KPR+80bOKRMAJ44rwPH38O8=
+	t=1727777668; cv=none; b=nrzOE4W3CGL9XSZMC2Ac/BnR3ZldoarAQL7h1Gh3CYz7ECY2GnYw1ZunCIlF8dN11bfiXCao6UF7ZxhAGa+rwrOLMHOv18pPm3eF3JNjhNXGfZo0Bv+QlTOHVvaKJtZ0kk9U8NeNCwaAkBdDWMadpCBugBI0atzt08VUejL45fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727777558; c=relaxed/simple;
-	bh=eMQfwbeuxjeGz8czwVHpYthf5K8I7DXdKaQYgdXolNo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k61Sx3sOLP/cs2qxaT2iO0z3r5XYslmgQsxihhdjEXpHOrGKetv2goMG6/AkcNb4N/H1qVY1+Vayuxma8t/gVbQtYb5OF0EjGKq36f46G86v6nRCieGfc3XG/UVUHSyvMysclNB/ViFvsMsy7Z78UAsxOEQcyJQ8vKjtpB6H+lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=T26ozhoF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C38B1C4CEC6;
-	Tue,  1 Oct 2024 10:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1727777558;
-	bh=eMQfwbeuxjeGz8czwVHpYthf5K8I7DXdKaQYgdXolNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T26ozhoFGcSnBuTzphtCnVke2qkLJOFPqtFAxMBa2/CWpZ3rw00f3SMQRRyAILRmi
-	 tKtKNxBFdT8Pm1aeVmVOX9cxbYaWWpLnVqhizjh84CDwvV/cLOE6kedRvtiPXoqaa1
-	 uq8sPwbygPSDyKDENH3EW97yV2moU83TXE1ie7GQ=
-Date: Tue, 1 Oct 2024 12:12:35 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Sasha Levin <sashal@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>, stable@vger.kernel.org
-Subject: Re: [PATCH 6.10.y] Revert "LoongArch: KVM: Invalidate guest steal
- time address on vCPU reset"
-Message-ID: <2024100122-wince-acquire-dc0b@gregkh>
-References: <CAAhV-H4WLByJ53oqQgEnVjy4bT0pS77fT5BA4NaCp8AOn+cyJw@mail.gmail.com>
- <20241001085521.102817-1-chenhuacai@loongson.cn>
+	s=arc-20240116; t=1727777668; c=relaxed/simple;
+	bh=C9Z3BNLw6LfFJPLPyGgEm8h2Ama/2rQyMGSHUPjWohs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PQaXtXBlAcu0M7BPjTEXHYF0iYPuZMTXZS0HKkwt19w5SufmGFn++mF/+Ej3eg5pdA3M3GGW3EV7doj+0S7cHL45dyOtI1f/wqdmLyayz/ve0kf0VMIMLhleL9T+FjVG+zInhhY6Sv0RqC8kCUAqVXN2oJYKKD80ng2camMYyGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=awv9XCLc; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20b90984971so19521935ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727777667; x=1728382467; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sxgg1V9IIYjZBuF6K7HNHwUu/QxJj4beWplXFzMVBU8=;
+        b=awv9XCLcZcUuMXPCWyr3f5pWzJ/K3YzOSRmi1mm/GZnNuj/bO+Nc0uA2c/7wKExy6A
+         zhSRTfk4oi5gQAnWAoTiSC3BdVoqiYIHnZUg7QN41LhUtUG6lZGfzyALCvA4fr9tuT6V
+         fzOb8sPJkUjWXpUtC5J/55GoPdymdkuD3FGzT6a4iGhBiN0pNsmWEsnGn10RHrcoPRjd
+         JK5Z+Qy++xvf5fzTdCzszZXMgVWA6R8q6tR9c1pjiH03KAlOKbZYs1aTceEDgKspseZt
+         7xPGfQ+CIUj3orYrdjeJYvVY12Txe05NsusniF53KjIgyGdEXPP0kg318T7xU1LJYESi
+         Frdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727777667; x=1728382467;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sxgg1V9IIYjZBuF6K7HNHwUu/QxJj4beWplXFzMVBU8=;
+        b=avo+tIJ+kbHruhJYF7mBAoq9I3qoHg3S0wcgYfQ0TmJ1/t1j2WX0c2k8ct5WnRUJrn
+         h5j/2EeuEeiiYuKr2S7MKs8zBkFZc74mTS3UgS8S6zmTCIOY+MeXmgueTFD5L0M9RImK
+         7rGH60i4AytETG8R9oWwCas5i8Tz5mFHAX4WwWiVdTngZE2aELtgtPm+aDlmVdqn8ZnQ
+         VhDrCzoogoCJbYpsoxRVFBu5dP0sKlVkK6u6phPxNLwMJaMOzIewKGbkSZbAchCVbk0F
+         HupuJNcATxhbeWVwdIjTwnS8BxWYj2KpvRb7f1/pK+GMxvIm1fky6Ozk0fK0m0HvMuZh
+         z6oA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7qdnpo4hpd0YU0d8pd3UrlKdUYi4kSkLZqPbUjxJbQbuxaGe42q1dhPQI4sinPdc2XaxVQ/t+sv3kKRc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJdIolV/qjgwzC7ymWSD68nM85S2BzsbnYtJunyQv0ejdSTXJl
+	AASG8SuQHSjqBuxhDp+O5HOLvgH0uHl4F8pdKm/LFTjmgXw3xz4jP68mulvxNcT/NPC2hXsl93g
+	kqmZt5g0BHY/rCkg9GPcXa+Zzk9ZfKE9yLszKFA==
+X-Google-Smtp-Source: AGHT+IFAojq+hFFSbm6O7/pXPyOERGD3B3lbulOnL3rtAdpTiqzTE+pyZUDKRIKCN7iAQe4rHeQMfPLtKXjYsepmUpY=
+X-Received: by 2002:a17:902:c94a:b0:20b:9b07:7779 with SMTP id
+ d9443c01a7336-20b9b077929mr77225635ad.15.1727777666774; Tue, 01 Oct 2024
+ 03:14:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001085521.102817-1-chenhuacai@loongson.cn>
+References: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
+In-Reply-To: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 1 Oct 2024 12:14:14 +0200
+Message-ID: <CAKfTPtDOvbsOUa-nQgcv6BkEbDcmf4z3M2NtYoS_GCcMspXjuQ@mail.gmail.com>
+Subject: Re: [PATCHv2] cpufreq/schedutil: Only bind threads if needed
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Qais Yousef <qyousef@layalina.io>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 01, 2024 at 04:55:21PM +0800, Huacai Chen wrote:
-> This reverts commit 05969a6944713f159e8f28be2388500174521818.
-> 
-> LoongArch's PV steal time support is add after 6.10, so 6.10.y doesn't
-> need this fix.
-> 
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+On Fri, 27 Sept 2024 at 10:59, Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> Remove the unconditional binding of sugov kthreads to the affected CPUs
+> if the cpufreq driver indicates that updates can happen from any CPU.
+> This allows userspace to set affinities to either save power (waking up
+> bigger CPUs on HMP can be expensive) or increasing performance (by
+> letting the utilized CPUs run without preemption of the sugov kthread).
+>
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 
-Now queued up, thanks.
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-but really, this should have been "v2" :)
+> ---
+> - v2: Add comment for the dl_task_check_affinity return (Juri)
+> v1: https://lore.kernel.org/lkml/480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com/
+>
+>  kernel/sched/cpufreq_schedutil.c | 6 +++++-
+>  kernel/sched/syscalls.c          | 7 +++++++
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index c6ba15388ea7..10faab849a3e 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -691,7 +691,11 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
+>         }
+>
+>         sg_policy->thread = thread;
+> -       kthread_bind_mask(thread, policy->related_cpus);
+> +       if (policy->dvfs_possible_from_any_cpu)
+> +               set_cpus_allowed_ptr(thread, policy->related_cpus);
+> +       else
+> +               kthread_bind_mask(thread, policy->related_cpus);
+> +
+>         init_irq_work(&sg_policy->irq_work, sugov_irq_work);
+>         mutex_init(&sg_policy->work_lock);
+>
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index aa70beee9895..2ef1cb8626bc 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1172,6 +1172,13 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
+>         if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+>                 return 0;
+>
+> +       /*
+> +        * The special/sugov task isn't part of regular bandwidth/admission
+> +        * control so let userspace change affinities.
+> +        */
+> +       if (dl_entity_is_special(&p->dl))
+> +               return 0;
+> +
+>         /*
+>          * Since bandwidth control happens on root_domain basis,
+>          * if admission test is enabled, we only admit -deadline
+> --
+> 2.34.1
 
