@@ -1,106 +1,100 @@
-Return-Path: <linux-kernel+bounces-345915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D55798BCDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E11D98BCDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65E51C2365D
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F731F266F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1528E1C1758;
-	Tue,  1 Oct 2024 12:54:16 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6971C3F0E;
+	Tue,  1 Oct 2024 12:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GKqIfl9C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239C81A0733;
-	Tue,  1 Oct 2024 12:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C931C231D
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 12:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727787255; cv=none; b=bKylHrmJBxwn7VNcAsffLPzxG09a1TdVLMzZvWail7weYJQdPKACEAek7XKDNw+lyfiN6sl9rTmIha8t1L9TaCRmRVtC/LkKyvdMWUd1iDlxE39FDzNgQ1PRY6xq+8TL/f8z4tCv+sTg650oH8fmDgIuVRUrkIf1UIWKGgNhogs=
+	t=1727787262; cv=none; b=czfWFSKbPVmr8z64Lt7EhNI+Z1iDe9wsAMMA+KJJffDMGYqqAhivtyanHfDP+CxiI82z4sk16PJ7ltfzui1lifiD3I+UHfmt2R6Cel70XIPU4ngK8UbG8noJTqIiUnqEeCqSXWekk63ajNIrUsMAI/SveyZLdFsIL6wJc4/STCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727787255; c=relaxed/simple;
-	bh=ZXXbUqt1MI3dgRFUEtXUCu3+/KWfXxEGNPo9YGuAnkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IP0V7vtINaEm6ubsAFd2/NwBhDLhSN5lK/PNYh/OeRVYp6//2e6ps5kZ4UwxWdF95qkFNvNfBA2RoO6/xcb+2RuSNqf4Jz8Roh4AcXDAtG6r9G6fmfmD/x2j7k9NfMJy86onqNHOUVC5bH2GTqVyJNj8Gj0WMTQyUl58rlm9FYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: 2I/ocrZrQIK7HrCml6Ve/g==
-X-CSE-MsgGUID: rNXRqZxwTrCP2K/c2jzIsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11212"; a="27058876"
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="27058876"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 05:54:14 -0700
-X-CSE-ConnectionGUID: 4R8C4JUETC+XwIOofpirMw==
-X-CSE-MsgGUID: f5DcL2aTTcS+80fNN6H4xA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,167,1725346800"; 
-   d="scan'208";a="73905649"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2024 05:54:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1svcOD-0000000FCEh-1PCQ;
-	Tue, 01 Oct 2024 15:54:05 +0300
-Date: Tue, 1 Oct 2024 15:54:05 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	"Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
-	"Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
-	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
-Message-ID: <Zvvw7ah4wGsl2vjw@smile.fi.intel.com>
-References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
- <20240923101206.3753-7-antoniu.miclaus@analog.com>
- <20240928184722.314b329b@jic23-huawei>
- <CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1727787262; c=relaxed/simple;
+	bh=SlgkcT3VIvsR9xt5rJ/ZZZ2NrD2d4Bg54ZZmbv8EgXY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nlgDxvQTiGPlgZkT53Lp4noxsL/ocjVTR3tTQ9SaNqSjnK9zBnLUfEAG/EheIjSZ9Rxa77o9Yw20f82LoqxjQRZbelKxY+Xxl/IoNmOk/rKJwI/EwPuua7+p9CZS6n+u6OBE8339DDbPfEDRzmNTe359jePaLcjVoqu/jKRFioA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GKqIfl9C; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727787258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SlgkcT3VIvsR9xt5rJ/ZZZ2NrD2d4Bg54ZZmbv8EgXY=;
+	b=GKqIfl9CZYH9TsgK5e/YfkmEUjQ7PrzmKweMnVPjSF9HfGZISQcm6rm3kNKcSUjBpEqmtY
+	tsCp7WshtE4/TnkYtnI59l/9W5/N54MZ/aFWx2+Sv2fNf8lVtuBS+DEdpolbXjbGOZfRcM
+	RtZUP16dQkFFtCK1T+ZiBtxPancIkR0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-52vA4fYgNJig4i_2LyBlIQ-1; Tue,
+ 01 Oct 2024 08:54:15 -0400
+X-MC-Unique: 52vA4fYgNJig4i_2LyBlIQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E563A19626FC;
+	Tue,  1 Oct 2024 12:54:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 01371195605A;
+	Tue,  1 Oct 2024 12:54:11 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <ZvuXWC2bYpvQsWgS@gmail.com>
+References: <ZvuXWC2bYpvQsWgS@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: dhowells@redhat.com, Chang Yu <marcus.yu.56@gmail.com>,
+    jlayton@kernel.org, netfs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    skhan@linuxfoundation.org
+Subject: Re: [PATCH v2] netfs: Fix a KMSAN uninit-value error in netfs_clear_buffer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY4PR03MB33991208029C4877760B528D9B772@CY4PR03MB3399.namprd03.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3115999.1727787250.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 01 Oct 2024 13:54:10 +0100
+Message-ID: <3116000.1727787250@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, Oct 01, 2024 at 11:53:18AM +0000, Miclaus, Antoniu wrote:
+Chang Yu <marcus.yu.56@gmail.com> wrote:
 
-> Regarding the bulk writes/reads, the msb/mid/lsb registers need to be
-> read/write in a specific order and the addresses are not incremental,
+> Use folioq_count instead of folioq_nr_slots to fix a KMSAN uninit-value
+> error in netfs_clear_buffer
+> =
 
-We have _noinc() variants of regmap accessors.
+> Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+> Reported-by: syzbot+921873345a95f4dae7e9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D921873345a95f4dae7e9
+> Fixes: cd0277ed0c18 ("netfs: Use new folio_queue data type and iterator =
+instead of xarray iter")
 
-> so I am not sure how the bulk functions fit. On this matter, we will need
-> unsigned int (not u8) to store the values read via regmap_read, and in this
-> case we will need extra casts and assignments to use get_unaligned.
+Acked-by: David Howells <dhowells@redhat.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Christian: Can you pick this up?
 
 
