@@ -1,118 +1,384 @@
-Return-Path: <linux-kernel+bounces-346723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8AE98C7F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:12:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B2998C802
+	for <lists+linux-kernel@lfdr.de>; Wed,  2 Oct 2024 00:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B6F1F24EA4
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:12:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8AB4B210F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 22:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8CF1CEAD0;
-	Tue,  1 Oct 2024 22:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC8A19F48D;
+	Tue,  1 Oct 2024 22:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfyqjRJI"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IEF0QXML"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83ED1CCEE5;
-	Tue,  1 Oct 2024 22:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EC01A276
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 22:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727820755; cv=none; b=sKZ3Wmnf7WG9SsjWJauxz+YR39+3Zj4of+nu/+OebK9n++4VSPaADSnL/uI3rw7B+cP3aB5ds/55KlNq3PVcHsJcN0h8GXax/xScDfbLgMr/jU5axo7e2GQnEycB3u7aayVv2+NAOZZDVmiRo2TuuydsaLO9UoaqAauCRZDOPZQ=
+	t=1727821026; cv=none; b=EtLbU11admnOVa+Unh/f9fhMCvu7vWCSDHWqgg20F3TDd1UMcE645aS4i7p9dzL6FovKUfMkc9O4FIi76XcxEFD96GU2GWsIuOaqO4I0e2txZOjA7RO2N1uSyHF03VReLo0MMjmuJv/XDxz3zaPckAPTKT8Fj90atO8I5keQDXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727820755; c=relaxed/simple;
-	bh=+Y4UDQ0SBLFXK+EKaoLuBpz9TvjY4PQlfPV4NBauuBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dFYYDu5Fl15QB9eUHV7JhSHq63mnbZnbwjyCl4ZeikjwG/obacEanZbL1X5s88276ieHpdWChcmWm8jM/tBBqWiauDxW35T4/liFXFNFww9P7yCMo8SHOigIOJPklv9LHQAGKvEqdhFODWcC/BJ3gZI2ESP1pKNBmBq6g1R2ULg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TfyqjRJI; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718e0421143so875275b3a.0;
-        Tue, 01 Oct 2024 15:12:33 -0700 (PDT)
+	s=arc-20240116; t=1727821026; c=relaxed/simple;
+	bh=aUycHbqaI1GxiTXNAuLFzydIxxDE2ASlSYxOxFOpKmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDzEHlS9P2562SxWmwqvk0QcxN3sI/mQA83JjEWp7+o5X5eFlhulqI6W9ywep2BBVXWD40Y1Oif/EiHUjrsOGfiqmwkXojNxfcIh3zmSNnGUN4ZelxFD/yFrSk8kSOKUqmh7u4pZAHMekaJaE+eW9vtdWsfZXSOFXq2RVZdDgrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IEF0QXML; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71db62281aeso204526b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 15:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727820753; x=1728425553; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Frfh6hBj6DUTGEMrubT/n9jUTuny2AERvO+Dq7ZfqEA=;
-        b=TfyqjRJIXZBi4w3A8i6LelPObBJwzQhqhUJ825zj5XvOhEQGBFcVlm/+NLroZAfkFj
-         HwsKSvsX5bn6cEylZlHsHNEiMqD7Odg90yht3Fh3pfErCUeXxUdBoLds2qzOSjmO30/x
-         tg2zc/nxFmDFXiSxSCgKq4Q9eiWymIO9C8TYGLC5X4EbMXlQu3DRzstcvfy8cK/1GkKu
-         LUu7vimKTm6iSBVGPLrzufrgAxARvZj1D3TCdXiRe9ALzBS/zO45cItF6EC5JqElsdFH
-         Xo0oE9lgPXEzZAVFMYyMSc7VNO3tZmlGCe20Pjj8cJytDHobTPQJJOIyFUmyWAcKs5kQ
-         mmfQ==
+        d=google.com; s=20230601; t=1727821024; x=1728425824; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSwzDsaIMy9+ZyD0fmi1eb2qHMifMlGySR6mVsA4DyE=;
+        b=IEF0QXML//ylGfHiiEuQ7h2LzUOoWk4YxR3HjuyFPk1VicoDkO11pxSwG7wdbM+w1t
+         HfxGJ7tFz6TjQUetgI+uZ+GCiRKoyzdwBQd2p99imJ6COYVKB1kOVBL/Vru3Z/d1CXRk
+         O+SRST87cYxzymV/AiiE/e3ZlHOAXfOz+Z6RCWjbBI3fDASy07HiArv0wz9gX3o+gDxl
+         LlaOXhmBpFyyFz1iBxB9Ia21s59nDMUqJkVXssF2iyLbZoNXOu0CUBuQO4XUbpzSl8QR
+         dJQl1nvI39Jjp/o3yegYYq+UbRLJu3jKS94v5ZU61SmGbmvrLSrVQpzjs3rqoTNv8INb
+         3eEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727820753; x=1728425553;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Frfh6hBj6DUTGEMrubT/n9jUTuny2AERvO+Dq7ZfqEA=;
-        b=jdgQjbSezM8UFcUgz9cnL/E4fp7vn2Qlkb4K4YeIrFF3bzL6/b7EWiXoVJ5+jxiYCn
-         DI5CwGO2cjTGq8mglqL/42MEozeW+7wVL7ILD8LMzHFzzAYPsp1oKG0NyLZCMYQVEre3
-         IrPo1lWtdxWo/6G5e1+Hz2qW8AK9UXzCsRPuyTKiNxVkMkRhnwa7kfLvuNaBAA2BRdE1
-         YBMITLSy1gOt/LcSs87nn2jD/do+9kvqNmbyUFP0IZO9PauZTCKZUk6vqC/lylfqSAtX
-         9n4Tyydq0e7IALXFth45LouLXVEicKe3lacw9EVDePGnwRSm22aaYHzIJpcsb4Wy27WX
-         fqWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDMth9HLen0mi64lkNriSU8pxEa2TxPJw3Wld+qrkEfjMtGhsS/Jhqn/bpEWaeKIH6s7i8gaN5xdegbIA=@vger.kernel.org, AJvYcCX0Kob7z/MGXvzBHKFlVqdgMSuq5L+t5bvqVwVeG6Awr4QWYO5hNyxANZwZ77lF2+uhrooduo9Qi7TpqNlkHqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylts7fwOX0pVCG/K0aqT73EKPNb8Z3rdY+j42tCUcPmnFMU7hu
-	yDRyd529ufCC7ptqAXyfWLkJEsIcGMsIrxDWMClOweiiP9MyAPUfep+rlhKrlg8U3CPTAo2Xv3f
-	KWI670Ok9MDCAnjJUdrv0FqjJlwU=
-X-Google-Smtp-Source: AGHT+IHSa0R4OQIO3Y/6fLRRBq/Xo5ODccew70DFb/Dr7Z1Sg3pF8k4ffLa067F2mmhJkkeuuAW91uzXNwCGzvJB800=
-X-Received: by 2002:a05:6a00:23c9:b0:718:e49f:246e with SMTP id
- d2e1a72fcca58-71dc5d5cce5mr771264b3a.6.1727820752956; Tue, 01 Oct 2024
- 15:12:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727821024; x=1728425824;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FSwzDsaIMy9+ZyD0fmi1eb2qHMifMlGySR6mVsA4DyE=;
+        b=CRGfqABLTCBgoc4Vn44bw9V1XaledYyiFydCRH1wP0jMXmLRp+W5bbhQpjOFf8K4cY
+         RR3vttTmy11gLhEBX6s0iY1kGVWj56cWGjeV2wafKe4dUB7/OjbRZf90hF4kO+3+c/Zb
+         09zdUxqLYRcjHq4ue53qXhGQMmNkFTeCEkqNdtbYCvbeIRDkn+y35zVm2AnFN7H9a96u
+         3EYEOPlr1B06l/Yz0MjIRGFk4jBtjHBaD43XahVBI2fEgyXr3kT25FUIlOAvxNPSbYWO
+         A0ezc+aDdxGnDA4qoaY/Ou7MuaK9jXn/8LEwrfa7ob3Zga4VuQ4+83atCNAX+fyYd6TV
+         v7bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLO9a0NXnFNVjsRH6wV47pSW8OUeJIdP+jAwPC/g+RE5EZtLEWqJ0qrI2a2JKFSV9dTO/aGse5Gjt87tE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC3srL2IHV73S6bc0ukJKFxt01YfwkImktwhrvwSAlZON4wnnO
+	PUWC9gv3Utd9CVeGGnBDmoDvxMAVH+dXsGWeLSlzxrj85dOhXbdvCPWHLvg8Eg==
+X-Google-Smtp-Source: AGHT+IEwweHTjwunyGCO7vEqdEao2XuJo6kPSMJhifYwsVemZvbeHHj398MLBV6ASijYoj8B0VDfYg==
+X-Received: by 2002:a05:6a00:66cc:b0:717:98e7:3d0 with SMTP id d2e1a72fcca58-71db787e996mr8161121b3a.0.1727821023427;
+        Tue, 01 Oct 2024 15:17:03 -0700 (PDT)
+Received: from google.com (46.242.125.34.bc.googleusercontent.com. [34.125.242.46])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26518a2asm8617710b3a.107.2024.10.01.15.17.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 15:17:02 -0700 (PDT)
+Date: Tue, 1 Oct 2024 15:16:58 -0700
+From: David Matlack <dmatlack@google.com>
+To: Vipin Sharma <vipinsh@google.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, zhi.wang.linux@gmail.com,
+	weijiang.yang@intel.com, mizhang@google.com,
+	liangchen.linux@gmail.com, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KVM: x86/mmu: Use MMU shrinker to shrink KVM MMU
+ memory caches
+Message-ID: <Zvx02r8XjllG7oI_@google.com>
+References: <20240913214316.1945951-1-vipinsh@google.com>
+ <20240913214316.1945951-3-vipinsh@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927164414.560906-1-ojeda@kernel.org>
-In-Reply-To: <20240927164414.560906-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 2 Oct 2024 00:12:20 +0200
-Message-ID: <CANiq72k7ttdioXrto8VRJL+q2F9EjuPxhOR9HgpwdM+ZySM_+g@mail.gmail.com>
-Subject: Re: [PATCH] rust: kunit: use C-string literals to clean warning
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913214316.1945951-3-vipinsh@google.com>
 
-On Fri, Sep 27, 2024 at 6:44=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> Starting with upstream Rust commit a5e3a3f9b6bd ("move
-> `manual_c_str_literals` to complexity"), to be released in Rust 1.83.0
-> [1], Clippy now warns on `manual_c_str_literals` by default, e.g.:
->
->     error: manually constructing a nul-terminated string
->       --> rust/kernel/kunit.rs:21:13
->        |
->     21 |             b"\x013%pA\0".as_ptr() as _,
->        |             ^^^^^^^^^^^^^ help: use a `c""` literal: `c"\x013%pA=
-"`
->        |
->        =3D help: for further information visit https://rust-lang.github.i=
-o/rust-clippy/master/index.html#manual_c_str_literals
->        =3D note: `-D clippy::manual-c-str-literals` implied by `-D warnin=
-gs`
->        =3D help: to override `-D warnings` add `#[allow(clippy::manual_c_=
-str_literals)]`
->
-> Apply the suggestion to clean up the warnings.
->
-> Link: https://github.com/rust-lang/rust-clippy/pull/13263 [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On 2024-09-13 02:43 PM, Vipin Sharma wrote:
+> Use MMU shrinker to iterate through all the vCPUs of all the VMs and
+> free pages allocated in MMU memory caches. Protect cache allocation in
+> page fault and MMU load path from MMU shrinker by using a per vCPU
+> mutex. In MMU shrinker, move the iterated VM to the end of the VMs list
+> so that the pain of emptying cache spread among other VMs too.
+> 
+> The specific caches to empty are mmu_shadow_page_cache and
+> mmu_shadowed_info_cache as these caches store whole pages. Emptying them
+> will give more impact to shrinker compared to other caches like
+> mmu_pte_list_desc_cache{} and mmu_page_header_cache{}
+> 
+> Holding per vCPU mutex lock ensures that a vCPU doesn't get surprised
+> by finding its cache emptied after filling them up for page table
+> allocations during page fault handling and MMU load operation. Per vCPU
+> mutex also makes sure there is only race between MMU shrinker and all
+> other vCPUs. This should result in very less contention.
+> 
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Suggested-by: David Matlack <dmatlack@google.com>
+> Signed-off-by: Vipin Sharma <vipinsh@google.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  6 +++
+>  arch/x86/kvm/mmu/mmu.c          | 69 +++++++++++++++++++++++++++------
+>  arch/x86/kvm/mmu/paging_tmpl.h  | 14 ++++---
+>  include/linux/kvm_host.h        |  1 +
+>  virt/kvm/kvm_main.c             |  8 +++-
+>  5 files changed, 81 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index cbfe31bac6cf..63eaf03111eb 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -811,6 +811,12 @@ struct kvm_vcpu_arch {
+>  	 */
+>  	struct kvm_mmu *walk_mmu;
+>  
+> +	/*
+> +	 * Protect cache from getting emptied in MMU shrinker while vCPU might
+> +	 * use cache for fault handling or loading MMU.  As this is a per vCPU
+> +	 * lock, only contention might happen when MMU shrinker runs.
+> +	 */
+> +	struct mutex mmu_memory_cache_lock;
+>  	struct kvm_mmu_memory_cache mmu_pte_list_desc_cache;
+>  	struct kvm_mmu_memory_cache mmu_shadow_page_cache;
+>  	struct kvm_mmu_memory_cache mmu_shadowed_info_cache;
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 213e46b55dda..8e2935347615 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4524,29 +4524,33 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  	if (r != RET_PF_INVALID)
+>  		return r;
+>  
+> +	mutex_lock(&vcpu->arch.mmu_memory_cache_lock);
+>  	r = mmu_topup_memory_caches(vcpu, false);
+>  	if (r)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	r = kvm_faultin_pfn(vcpu, fault, ACC_ALL);
+>  	if (r != RET_PF_CONTINUE)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	r = RET_PF_RETRY;
+>  	write_lock(&vcpu->kvm->mmu_lock);
+>  
+>  	if (is_page_fault_stale(vcpu, fault))
+> -		goto out_unlock;
+> +		goto out_mmu_unlock;
+>  
+>  	r = make_mmu_pages_available(vcpu);
+>  	if (r)
+> -		goto out_unlock;
+> +		goto out_mmu_unlock;
+>  
+>  	r = direct_map(vcpu, fault);
+>  
+> -out_unlock:
+> +out_mmu_unlock:
+>  	write_unlock(&vcpu->kvm->mmu_lock);
+>  	kvm_release_pfn_clean(fault->pfn);
+> +out_mmu_memory_cache_unlock:
+> +	mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+> +
+>  	return r;
+>  }
+>  
+> @@ -4617,25 +4621,28 @@ static int kvm_tdp_mmu_page_fault(struct kvm_vcpu *vcpu,
+>  	if (r != RET_PF_INVALID)
+>  		return r;
+>  
+> +	mutex_lock(&vcpu->arch.mmu_memory_cache_lock);
+>  	r = mmu_topup_memory_caches(vcpu, false);
+>  	if (r)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	r = kvm_faultin_pfn(vcpu, fault, ACC_ALL);
+>  	if (r != RET_PF_CONTINUE)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	r = RET_PF_RETRY;
+>  	read_lock(&vcpu->kvm->mmu_lock);
+>  
+>  	if (is_page_fault_stale(vcpu, fault))
+> -		goto out_unlock;
+> +		goto out_mmu_unlock;
+>  
+>  	r = kvm_tdp_mmu_map(vcpu, fault);
+>  
+> -out_unlock:
+> +out_mmu_unlock:
+>  	read_unlock(&vcpu->kvm->mmu_lock);
+>  	kvm_release_pfn_clean(fault->pfn);
+> +out_mmu_memory_cache_unlock:
+> +	mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+>  	return r;
+>  }
+>  #endif
+> @@ -5691,6 +5698,7 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+>  {
+>  	int r;
+>  
+> +	mutex_lock(&vcpu->arch.mmu_memory_cache_lock);
+>  	r = mmu_topup_memory_caches(vcpu, !vcpu->arch.mmu->root_role.direct);
+>  	if (r)
+>  		goto out;
+> @@ -5717,6 +5725,7 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+>  	 */
+>  	kvm_x86_call(flush_tlb_current)(vcpu);
+>  out:
+> +	mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+>  	return r;
+>  }
+>  
+> @@ -6303,6 +6312,7 @@ int kvm_mmu_create(struct kvm_vcpu *vcpu)
+>  	if (!vcpu->arch.mmu_shadow_page_cache.init_value)
+>  		vcpu->arch.mmu_shadow_page_cache.gfp_zero = __GFP_ZERO;
+>  
+> +	mutex_init(&vcpu->arch.mmu_memory_cache_lock);
+>  	vcpu->arch.mmu = &vcpu->arch.root_mmu;
+>  	vcpu->arch.walk_mmu = &vcpu->arch.root_mmu;
+>  
+> @@ -6997,13 +7007,50 @@ void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, u64 gen)
+>  static unsigned long mmu_shrink_scan(struct shrinker *shrink,
+>  				     struct shrink_control *sc)
+>  {
+> -	return SHRINK_STOP;
+> +	struct kvm *kvm, *next_kvm, *first_kvm = NULL;
+> +	unsigned long i, freed = 0;
+> +	struct kvm_vcpu *vcpu;
+> +
+> +	mutex_lock(&kvm_lock);
+> +	list_for_each_entry_safe(kvm, next_kvm, &vm_list, vm_list) {
+> +		if (!first_kvm)
+> +			first_kvm = kvm;
+> +		else if (first_kvm == kvm)
+> +			break;
+> +
+> +		list_move_tail(&kvm->vm_list, &vm_list);
+> +
+> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+> +			if (!mutex_trylock(&vcpu->arch.mmu_memory_cache_lock))
+> +				continue;
+> +			freed += kvm_mmu_empty_memory_cache(&vcpu->arch.mmu_shadow_page_cache);
+> +			freed += kvm_mmu_empty_memory_cache(&vcpu->arch.mmu_shadowed_info_cache);
+> +			mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+> +			if (freed >= sc->nr_to_scan)
+> +				goto out;
 
-Applied to `rust-fixes` -- thanks everyone!
+Looking at the caller in mm/shrinker.c, sc->nr_to_scan will be <= 128
+(SHRINK_BATCH), which is only enough for 2 vCPUs. So I think the
+shrinker will only ever free 2 vCPU caches of each VM (probably the
+first 2 vCPUs) before reordering the list and moving onto the next VM on
+the next call.
 
-Cheers,
-Miguel
+Does that match the behavior you observe?
+
+> +		}
+> +	}
+> +out:
+> +	mutex_unlock(&kvm_lock);
+> +	return freed;
+>  }
+>  
+>  static unsigned long mmu_shrink_count(struct shrinker *shrink,
+>  				      struct shrink_control *sc)
+>  {
+> -	return SHRINK_EMPTY;
+> +	unsigned long i, count = 0;
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm *kvm;
+> +
+> +	mutex_lock(&kvm_lock);
+> +	list_for_each_entry(kvm, &vm_list, vm_list) {
+> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+> +			count += READ_ONCE(vcpu->arch.mmu_shadow_page_cache.nobjs);
+> +			count += READ_ONCE(vcpu->arch.mmu_shadowed_info_cache.nobjs);
+> +		}
+> +	}
+> +	mutex_unlock(&kvm_lock);
+> +	return !count ? SHRINK_EMPTY : count;
+>  }
+>  
+>  static struct shrinker *mmu_shrinker;
+> diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+> index 405bd7ceee2a..084a5c532078 100644
+> --- a/arch/x86/kvm/mmu/paging_tmpl.h
+> +++ b/arch/x86/kvm/mmu/paging_tmpl.h
+> @@ -809,13 +809,14 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  		return RET_PF_EMULATE;
+>  	}
+>  
+> +	mutex_lock(&vcpu->arch.mmu_memory_cache_lock);
+>  	r = mmu_topup_memory_caches(vcpu, true);
+>  	if (r)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	r = kvm_faultin_pfn(vcpu, fault, walker.pte_access);
+>  	if (r != RET_PF_CONTINUE)
+> -		return r;
+> +		goto out_mmu_memory_cache_unlock;
+>  
+>  	/*
+>  	 * Do not change pte_access if the pfn is a mmio page, otherwise
+> @@ -840,16 +841,19 @@ static int FNAME(page_fault)(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>  	write_lock(&vcpu->kvm->mmu_lock);
+>  
+>  	if (is_page_fault_stale(vcpu, fault))
+> -		goto out_unlock;
+> +		goto out_mmu_unlock;
+>  
+>  	r = make_mmu_pages_available(vcpu);
+>  	if (r)
+> -		goto out_unlock;
+> +		goto out_mmu_unlock;
+>  	r = FNAME(fetch)(vcpu, fault, &walker);
+>  
+> -out_unlock:
+> +out_mmu_unlock:
+>  	write_unlock(&vcpu->kvm->mmu_lock);
+>  	kvm_release_pfn_clean(fault->pfn);
+> +out_mmu_memory_cache_unlock:
+> +	mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+> +
+>  	return r;
+>  }
+>  
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index b23c6d48392f..288e503f14a0 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1446,6 +1446,7 @@ void kvm_flush_remote_tlbs_memslot(struct kvm *kvm,
+>  int kvm_mmu_topup_memory_cache(struct kvm_mmu_memory_cache *mc, int min);
+>  int __kvm_mmu_topup_memory_cache(struct kvm_mmu_memory_cache *mc, int capacity, int min);
+>  int kvm_mmu_memory_cache_nr_free_objects(struct kvm_mmu_memory_cache *mc);
+> +int kvm_mmu_empty_memory_cache(struct kvm_mmu_memory_cache *mc);
+>  void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+>  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+>  #endif
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index cb2b78e92910..5d89ca218791 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -451,15 +451,21 @@ int kvm_mmu_memory_cache_nr_free_objects(struct kvm_mmu_memory_cache *mc)
+>  	return mc->nobjs;
+>  }
+>  
+> -void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc)
+> +int kvm_mmu_empty_memory_cache(struct kvm_mmu_memory_cache *mc)
+>  {
+> +	int freed = mc->nobjs;
+>  	while (mc->nobjs) {
+>  		if (mc->kmem_cache)
+>  			kmem_cache_free(mc->kmem_cache, mc->objects[--mc->nobjs]);
+>  		else
+>  			free_page((unsigned long)mc->objects[--mc->nobjs]);
+>  	}
+> +	return freed;
+> +}
+>  
+> +void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc)
+> +{
+> +	kvm_mmu_empty_memory_cache(mc);
+>  	kvfree(mc->objects);
+>  
+>  	mc->objects = NULL;
+> -- 
+> 2.46.0.662.g92d0881bb0-goog
+> 
 
