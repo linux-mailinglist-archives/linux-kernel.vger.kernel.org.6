@@ -1,237 +1,246 @@
-Return-Path: <linux-kernel+bounces-345670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587C698B90E
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F8098B915
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 12:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE9B1B229E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB6731C21D06
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 10:16:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8327019D8BB;
-	Tue,  1 Oct 2024 10:15:31 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A903E1A0AF7;
+	Tue,  1 Oct 2024 10:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v56ybqSL"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E414594C
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346B51A08AB
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 10:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727777731; cv=none; b=fYEhbtTokC9V7ulAaPJfoWhwJ4SI4rxz0+rcv43Ly1Xvul8ybk6c424K97QtImDLTKdP7ML/0i6vFOMLE+YTZXuxZT47ODKDnIiCEl9FUUxQjcW2yLSbgJ35YP5QDUfjra8qsVseUbjuUe/cFq+VOMvnUf1FvfLS0QLSK/Pffbw=
+	t=1727777791; cv=none; b=IJAHXg41jf0Bh3T1aN8OU0nMShd0u+uZNC5JQ8qWqBvaMEyFoANzWN7eehRiL7dMz2/cvwvb55XWMvrS3VIEThJfOPHpiZhnDVS4fUSPugcJvnzHyaDWN2SRDgvoZFCpmfDYGJ6yKZ38jyK1osAffTrl7jVKEb9EY3jIDKNkZuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727777731; c=relaxed/simple;
-	bh=lc/E+luZd1F0MNzXV7BZPZja1beqMPB1l595a90Ds9c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=TRoseXlkKqUKk7WJutfjeozHH2HQo7e65dqD+9CIMDjBP3XnFlyz8PGH2GXc2urVtJDENGCFnftKSgj0uVnL72eqR5l8HyO0mSjkx4TIizkb76MkO+BtgaekWpJh9ftXhABsVAKDdKfY2edOqhSbBsAeUOkyrCWvuGvxKxQhkTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a19665ed40so43568405ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:15:29 -0700 (PDT)
+	s=arc-20240116; t=1727777791; c=relaxed/simple;
+	bh=SLtTu3IL6LDgby4y+6PpF+5CxE4Cp3ifpTj6cEABEYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QG2v7AIO4UWLW8WcRjBHqni7mWA+hrXbjtlks2OV9pm2gB3STEceYh7MihCeAiGuUe5iYBGiH7iJl1s4C/wD3ZMVchJbfofT0BwQ2aEaEEugscxCaFiru+uBOZQGkr3L8Y1kUrBAvg6ytenlZUEbDCwxV/APoCs8mGGfZZS7S+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v56ybqSL; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-718e2855479so3799204b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 03:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1727777789; x=1728382589; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7xJfFb9OXfKCKyEf8rku/AUF7m8DFvn5lEQLXOiYm1s=;
+        b=v56ybqSLpQL1RMBM3c2QOataNzX/HsLQBY8FeNTnLtSxywxO9mwcfTbCMeVV54qeea
+         cbMBD7Mfa5+YGow+M/3ImltyoPdLbUQA6LwF8Mus6noU1rlHasI1sGsnnzYh5ALX6/y+
+         k85DQiZ7CC+eZgdMYiX27h+0PNjLba0QzEd+Cfar81EZp5h1PPxKWuFLyjgoHpTLEOhi
+         I7vY0kgaEgRRLnrRTZZ3xCtUYS1Ba787ZXdKlY6WZq7xjt3WPqGCQ71nqMEWU98KXb9i
+         3xtNozkEZy4K6jILKvK8RvFczdx8NjOruUkqzLcyQB9WUMkkfKtR0If18pOwlchD2wtr
+         AszA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727777728; x=1728382528;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ptr5r2SpkMbHm5MxrAOzGN6piib9APQNVGMdCf7EpM8=;
-        b=cQMcCpQ5kSsflUZsDApNqT/+FTCqsRkufUAa1EGDp9o735CseS+JM4vX85LDMRDykK
-         sWrJFCp9+JLE2QX5RUVjpuMq+n1L5Rz1uL3pZBknF3ZqWFllFQGfoosZQb6gm1usdJVX
-         p3soCRAZHT0yJ7yG6tDw96+07rFN6fpHMyVIOW63zg4I6mtwtNZUbHcv2k9A5ZQscKhY
-         KyzIa8dW2ZjoJ9p9JY0AfGujM5dg+dzol9YLfVrVhX3uRpXLoWD7ABzodBhko/tMzUhd
-         O6WsJuwv/xX5uK7vizkgb4wC7XaUdJmkA6T7MAMKYPmzOL8TxdtC3CfEaAwUrEwAE04o
-         CnLg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLqStvLfUAfsd4OLyxbNwIy+kU2PDcS0aF+FND3tYHVDrRp5lIQNE7HCbdYeHoRhsETRW/gz3CI4zTfbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyjOYCcHcu7UTgqMcxWJZdGM6yWyN6OYdHDJ6kS6UyDS93u7Vn
-	e5m6nGgFyu3ZB6DG3C77Y8nzeNgzAB2Z/+m22feojlzD2f+2JO95TiM8svJ12myPWs1QJoz7cpH
-	+meQbQfHTy3ESm3Es9rkGMW+yc2faAxvgOlZt69WGyhCCE/L1fLg+XAI=
-X-Google-Smtp-Source: AGHT+IEfma8UNMcsxL0kSSN3RDomzWpJaEIsamZceUEnGiKsmdDamfYeVA7XXNhO1RkEkP4wr2wIS59EDAAMAWCrMLpxFgl7M/2N
+        d=1e100.net; s=20230601; t=1727777789; x=1728382589;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xJfFb9OXfKCKyEf8rku/AUF7m8DFvn5lEQLXOiYm1s=;
+        b=IXWx4VAfkZbDz3LT3tGV6eUGAkGTB3/H26bh8rMMZ0dZOJG9dK9w+7ux78xRILLOkZ
+         BaxKVXZyNmCYmZzVd1juuq435SRuy0tWMwia0D/X4QVno/CYsJXarYX7gqgnB0ft+CiH
+         0zzNmrKD0chl7R0NnKoLRd86K8CVXYNmYREjyyEJtIbvU7lTfvJaYq7w9hmZUj1z/ijB
+         EmDwwFueDeALF9elkems9amXe03dqucZVv9sS2PdloZjdBpuuWyzuZqgrJlzbqbJTh5e
+         4n7bVcYnRSb6aByn7mxhgAh5GBwp9kDUXnmJ57eOXWlv3bRB97JiJA8MQ0dOUWr20u32
+         E/gw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8o/b7p9CwvFaLeG2YtFf2tFCAoXX+pefWrGHwIyW6KBB3zLXQ3tNJlcx/slGYCCsu3OGa5Xy60+x8ojw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/poLcFsjftsNGgHH79QTLYnNXBuf4elIa2XOyKPq5/XEqQdCa
+	U0xnUlT4xMal+akK1NCj8wQA/qwclwK6hn/Kb8r2zH7H+asvZlW0XyCM3mIE/w==
+X-Google-Smtp-Source: AGHT+IG906Y5WrfPvkSFRlwSRimFFyhVffR8lxQBd4ADp4oyVjxHKJ6izFGXe7OZDAtkNUW7jX74EA==
+X-Received: by 2002:a05:6a21:164e:b0:1bd:2214:e92f with SMTP id adf61e73a8af0-1d4fa6a173emr20544864637.14.1727777789459;
+        Tue, 01 Oct 2024 03:16:29 -0700 (PDT)
+Received: from thinkpad ([36.255.17.150])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7e6db2b2f73sm7965180a12.25.2024.10.01.03.16.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 03:16:29 -0700 (PDT)
+Date: Tue, 1 Oct 2024 15:46:22 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com,
+	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com,
+	quic_parass@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
+Message-ID: <20241001101622.ys36slymgjbaz26q@thinkpad>
+References: <20240207-enable_pcie-v1-1-b684afa6371c@quicinc.com>
+ <CAA8EJpqjm_2aE+7BtMkFUdet11q7v_jyHbUEpiDHSBSnzhndYA@mail.gmail.com>
+ <dec2976e-6e1e-6121-e175-210377ff6925@quicinc.com>
+ <CAA8EJprsm5Tw=vFpmfEKL8fxS-S+aW+YR0byfyL=v78k75TGEw@mail.gmail.com>
+ <3ad77846-b4a8-80ee-e9e1-d5cbf4add6d8@quicinc.com>
+ <CAA8EJprRF0tVFZK9c=MT8bSRcBdRvcugBaeEzpX5-wfRyNgc3Q@mail.gmail.com>
+ <c8be2bbf-a51c-a38f-6e6f-a88801f953d5@quicinc.com>
+ <20240209075716.GA12035@thinkpad>
+ <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148a:b0:3a0:cc84:9859 with SMTP id
- e9e14a558f8ab-3a35eb6177fmr18980275ab.10.1727777728417; Tue, 01 Oct 2024
- 03:15:28 -0700 (PDT)
-Date: Tue, 01 Oct 2024 03:15:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66fbcbc0.050a0220.6bad9.0058.GAE@google.com>
-Subject: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- l2cap_sock_ready_cb (2)
-From: syzbot <syzbot+9265e754091c2d27ea29@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
 
-Hello,
+On Fri, Feb 09, 2024 at 12:56:18PM +0200, Dmitry Baryshkov wrote:
+> On Fri, 9 Feb 2024 at 09:57, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Fri, Feb 09, 2024 at 12:58:15PM +0530, Krishna Chaitanya Chundru wrote:
+> > >
+> > >
+> > > On 2/8/2024 8:49 PM, Dmitry Baryshkov wrote:
+> > > > On Thu, 8 Feb 2024 at 16:58, Krishna Chaitanya Chundru
+> > > > <quic_krichai@quicinc.com> wrote:
+> > > > > On 2/8/2024 12:21 PM, Dmitry Baryshkov wrote:
+> > > > > > On Thu, 8 Feb 2024 at 08:14, Krishna Chaitanya Chundru
+> > > > > > <quic_krichai@quicinc.com> wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > On 2/7/2024 5:17 PM, Dmitry Baryshkov wrote:
+> > > > > > > > On Wed, 7 Feb 2024 at 12:42, Krishna chaitanya chundru
+> > > > > > > > <quic_krichai@quicinc.com> wrote:
+> > > > > > > > >
+> > > > > > > > > Enable PCIe1 controller and its corresponding PHY nodes on
+> > > > > > > > > qcs6490-rb3g2 platform.
+> > > > > > > > >
+> > > > > > > > > PCIe switch is connected to PCIe1, PCIe switch has multiple endpoints
+> > > > > > > > > connected. For each endpoint a unique BDF will be assigned and should
+> > > > > > > > > assign unique smmu id. So for each BDF add smmu id.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > > > > > > > > ---
+> > > > > > > > >     arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 42 ++++++++++++++++++++++++++++
+> > > > > > > > >     1 file changed, 42 insertions(+)
+> > > > > > > > >
+> > > > > > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > > > > > index 8bb7d13d85f6..0082a3399453 100644
+> > > > > > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > > > > > @@ -413,6 +413,32 @@ vreg_bob_3p296: bob {
+> > > > > > > > >            };
+> > > > > > > > >     };
+> > > > > > > > >
+> > > > > > > > > +&pcie1 {
+> > > > > > > > > +       perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+> > > > > > > > > +
+> > > > > > > > > +       pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
+> > > > > > > > > +       pinctrl-names = "default";
+> > > > > > > > > +
+> > > > > > > > > +       iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
+> > > > > > > > > +                   <0x100 &apps_smmu 0x1c81 0x1>,
+> > > > > > > > > +                   <0x208 &apps_smmu 0x1c84 0x1>,
+> > > > > > > > > +                   <0x210 &apps_smmu 0x1c85 0x1>,
+> > > > > > > > > +                   <0x218 &apps_smmu 0x1c86 0x1>,
+> > > > > > > > > +                   <0x300 &apps_smmu 0x1c87 0x1>,
+> > > > > > > > > +                   <0x400 &apps_smmu 0x1c88 0x1>,
+> > > > > > > > > +                   <0x500 &apps_smmu 0x1c89 0x1>,
+> > > > > > > > > +                   <0x501 &apps_smmu 0x1c90 0x1>;
+> > > > > > > >
+> > > > > > > > Is the iommu-map really board specific?
+> > > > > > > >
+> > > > > > > The iommu-map for PCIe varies if PCIe switch is connected.
+> > > > > > > For this platform a PCIe switch is connected and for that reason
+> > > > > > > we need to define additional smmu ID's for each BDF.
+> > > > > > >
+> > > > > > > For that reason we defined here as these ID's are applicable only
+> > > > > > > for this board.
+> > > > > >
+> > > > > > So, these IDs are the same for all boards, just being unused on
+> > > > > > devices which have no bridges / switches connected to this PCIe host.
+> > > > > > If this is correct, please move them to sc7280.dtsi.
+> > > > > >
+> > > > > Yes ID's will be same for all boards. we can move them sc7280.dtsi
+> > > > > but the BDF to smmu mapping will be specific to this board only.
+> > > > > if there is some other PCIe switch with different configuration is
+> > > > > connected to different board of same variant in future again these
+> > > > > mapping needs to updated.
+> > > >
+> > > > Could you possibly clarify this? Are they assigned one at a time
+> > > > manually? Or is it somehow handled by the board's TZ code, which
+> > > > assigns them sequentially to the known endpoints? And is it done via
+> > > > probing the link or via some static configuration?
+> > >
+> > > There is no assignment of SID's in TZ for PCIe.
+> > > PCIe controller has BDF to SID mapping table which we need to
+> > > program with the iommu map table.
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-qcom.c?h=v6.8-rc3#n997
+> > >
+> > > Based upon switch the BDF to SID table will change for example I had two
+> > > switches with one switch has 2 PCIe ports and other has 3 ports one
+> > > embedded port which supports multiple functions.
+> > >
+> > > For the first switch the BDF's are
+> > >       - 0x000(root complex),
+> > >       - 0x100(USP),
+> > >       - 0x208(DSP 0),
+> > >       - 0x210(DSP 1),
+> > >       - 0x300(endpoint connected to DSP 0),
+> > >       - 0x400( endpoint connected to DSP 1).
+> > >
+> > > For 2nd switch the BDF's are
+> > >       - 0x000(root complex),
+> > >       - 0x100(USP),
+> > >       - 0x208(embeeded DSP 0),
+> > >       - 0x210(DSP 1),
+> > >       - 0x218 (DSP 2),
+> > >       - 0x300(embedded endpoint function 0),
+> > >       - 0x301 (embedded endpoint function 1)
+> > >       - 0x400( endpoint connected to DSP 1)
+> > >       - 0x500(endpoint connected to DSP2).
+> > >
+> > > For these two switches we need different BDF to SID table so for that
+> > > reason we are keeping iommu map here as this is specific to this board.
+> > >
+> >
+> > I don't understand why the SID table has to change between PCIe devices. The SID
+> > mapping should be part of the SoC dtsi, where a single SID would be defined for
+> > the devices under a bus. And all the devices under the bus have to use the same
+> > SID.
+> 
+> This sounds like a sane default, indeed. Nevertheless, I see a point
+> in having per-device-SID assignment. This increases isolation and can
+> potentially prevent security issues. However in such case SID
+> assignment should be handled in some automagic way. In other words,
+> there must be no need to duplicate the topology of the PCIe bus in the
+> iommu-maps property.
+> 
 
-syzbot found the following issue on:
+Agree with you on this. This is what I suggested some time back to have the
+logic in the SMMU/PCIe drivers to assign SIDs dynamically. Unfortunately, it is
+not a trivial work and it requires a broader discussion with the community.
 
-HEAD commit:    5f5673607153 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12881980580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dedbcb1ff4387972
-dashboard link: https://syzkaller.appspot.com/bug?extid=9265e754091c2d27ea29
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+Also starting with SMMUv3, there are practically no limitations in SIDs and
+each device should get a unique SID by default.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+So I got convinced that we can have these static mappings in the DT *atm* for
+non SMMUv3 based hardwares and at the same time let the discussion happen with
+the community. But this static mapping solution is just an interim one and won't
+scale if more devices are added to the topology.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/40172aed5414/disk-5f567360.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/58372f305e9d/vmlinux-5f567360.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d2aae6fa798f/Image-5f567360.gz.xz
+- Mani
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9265e754091c2d27ea29@syzkaller.appspotmail.com
-
-kobject: kobject_add_internal failed for hci0:201 with -EEXIST, don't try to register things with the same name in the same directory.
-Bluetooth: hci0: failed to register connection device
-==================================================================
-BUG: KASAN: slab-use-after-free in l2cap_sock_ready_cb+0xc4/0x130 net/bluetooth/l2cap_sock.c:1670
-Read of size 8 at addr ffff0000da74b188 by task kworker/u9:6/6425
-
-CPU: 0 UID: 0 PID: 6425 Comm: kworker/u9:6 Not tainted 6.11.0-rc7-syzkaller-g5f5673607153 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: hci0 hci_rx_work
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:319
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:326
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x198/0x538 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
- l2cap_sock_ready_cb+0xc4/0x130 net/bluetooth/l2cap_sock.c:1670
- l2cap_chan_ready net/bluetooth/l2cap_core.c:1256 [inline]
- l2cap_le_start+0xa6c/0x1384 net/bluetooth/l2cap_core.c:1368
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1624 [inline]
- l2cap_connect_cfm+0x57c/0xe24 net/bluetooth/l2cap_core.c:7286
- hci_connect_cfm+0xa0/0x13c include/net/bluetooth/hci_core.h:1960
- le_conn_complete_evt+0xa1c/0xf0c net/bluetooth/hci_event.c:5761
- hci_le_conn_complete_evt+0x114/0x404 net/bluetooth/hci_event.c:5787
- hci_le_meta_evt+0x2a4/0x478 net/bluetooth/hci_event.c:7135
- hci_event_func net/bluetooth/hci_event.c:7443 [inline]
- hci_event_packet+0x890/0x106c net/bluetooth/hci_event.c:7498
- hci_rx_work+0x318/0xa80 net/bluetooth/hci_core.c:4023
- process_one_work+0x79c/0x15b8 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x978/0xec4 kernel/workqueue.c:3389
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-
-Allocated by task 6795:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:565
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:387
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __do_kmalloc_node mm/slub.c:4162 [inline]
- __kmalloc_noprof+0x2a4/0x498 mm/slub.c:4174
- kmalloc_noprof include/linux/slab.h:685 [inline]
- sk_prot_alloc+0xc4/0x1f0 net/core/sock.c:2096
- sk_alloc+0x44/0x3f0 net/core/sock.c:2149
- bt_sock_alloc+0x4c/0x304 net/bluetooth/af_bluetooth.c:148
- l2cap_sock_alloc net/bluetooth/l2cap_sock.c:1877 [inline]
- l2cap_sock_create+0x140/0x2b8 net/bluetooth/l2cap_sock.c:1917
- bt_sock_create+0x14c/0x248 net/bluetooth/af_bluetooth.c:132
- __sock_create+0x43c/0x884 net/socket.c:1571
- sock_create net/socket.c:1622 [inline]
- __sys_socket_create net/socket.c:1659 [inline]
- __sys_socket+0x134/0x340 net/socket.c:1706
- __do_sys_socket net/socket.c:1720 [inline]
- __se_sys_socket net/socket.c:1718 [inline]
- __arm64_sys_socket+0x7c/0x94 net/socket.c:1718
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-Freed by task 6794:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x40/0x78 mm/kasan/common.c:68
- kasan_save_free_info+0x54/0x6c mm/kasan/generic.c:579
- poison_slab_object+0x128/0x180 mm/kasan/common.c:240
- __kasan_slab_free+0x3c/0x70 mm/kasan/common.c:256
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2256 [inline]
- slab_free mm/slub.c:4477 [inline]
- kfree+0x154/0x3e0 mm/slub.c:4598
- sk_prot_free net/core/sock.c:2132 [inline]
- __sk_destruct+0x4b8/0x74c net/core/sock.c:2224
- sk_destruct net/core/sock.c:2239 [inline]
- __sk_free+0x388/0x4f4 net/core/sock.c:2250
- sk_free+0x60/0xc8 net/core/sock.c:2261
- sock_put include/net/sock.h:1884 [inline]
- l2cap_sock_kill+0x12c/0x234 net/bluetooth/l2cap_sock.c:1250
- l2cap_sock_release+0x138/0x1b4 net/bluetooth/l2cap_sock.c:1421
- __sock_release net/socket.c:659 [inline]
- sock_close+0xa4/0x1e8 net/socket.c:1421
- __fput+0x1bc/0x774 fs/file_table.c:422
- ____fput+0x20/0x30 fs/file_table.c:450
- task_work_run+0x230/0x2e0 kernel/task_work.c:228
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- do_notify_resume+0x178/0x1f4 arch/arm64/kernel/entry-common.c:151
- exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
- el0_svc+0xac/0x168 arch/arm64/kernel/entry-common.c:713
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-The buggy address belongs to the object at ffff0000da74b000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 392 bytes inside of
- freed 2048-byte region [ffff0000da74b000, ffff0000da74b800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff0000da74e000 pfn:0x11a748
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x5ffc00000000240(workingset|head|node=0|zone=2|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 05ffc00000000240 ffff0000c0002000 fffffdffc369c610 fffffdffc3093810
-raw: ffff0000da74e000 0000000000080006 00000001fdffffff 0000000000000000
-head: 05ffc00000000240 ffff0000c0002000 fffffdffc369c610 fffffdffc3093810
-head: ffff0000da74e000 0000000000080006 00000001fdffffff 0000000000000000
-head: 05ffc00000000003 fffffdffc369d201 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff0000da74b080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000da74b100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff0000da74b180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                      ^
- ffff0000da74b200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff0000da74b280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+மணிவண்ணன் சதாசிவம்
 
