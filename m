@@ -1,153 +1,148 @@
-Return-Path: <linux-kernel+bounces-345163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AF0198B291
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E1C98B297
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 04:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6F81B26B61
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:53:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A99AB26DE0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 02:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056934CE13;
-	Tue,  1 Oct 2024 02:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FAB78B4E;
+	Tue,  1 Oct 2024 02:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="Xqhaygni"
-Received: from skyblue.cherry.relay.mailchannels.net (skyblue.cherry.relay.mailchannels.net [23.83.223.167])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hNs3XmJ3"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A494AEE9;
-	Tue,  1 Oct 2024 02:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.167
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727750911; cv=pass; b=kAFVZ/C16BpvGgJpYwt3MYPYBRbBlgKclxVAdy2taOVns6fGJMOzxsIaOJxuJQxyIrtA9bbstpVJdRZKpCNOPqm9CjjNPdo7Fb8qp0igwzxfJCOU+3r0oaENYSvtH159EkPiV7orfnN2w7y9I1b78+ETFvznxE0faBj5KJSs200=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727750911; c=relaxed/simple;
-	bh=pXnC0I5nFoihOuSkOJv2WVy9n/hXu5luM0AO1mqv84c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ou1Joo6P4+uO4y78JnP5QD3ujXXc04XPFFoT3IPOo2iyMAN/3YKfs5LKY71gGFpbCD2Vej0Nab8BRXDWX+wzfZCWr+uIrZvQ4d0m0ODWF+hJvJZsNBBXKOs+FrEfByw7EK4jtJLrtAFVf+lY2/oJDJL8GnLq31/g3q7jSZEZcWM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=Xqhaygni; arc=pass smtp.client-ip=23.83.223.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id A114A82FE0;
-	Tue,  1 Oct 2024 02:48:22 +0000 (UTC)
-Received: from pdx1-sub0-mail-a311.dreamhost.com (100-96-87-216.trex-nlb.outbound.svc.cluster.local [100.96.87.216])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 32C7D82E00;
-	Tue,  1 Oct 2024 02:48:22 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1727750902; a=rsa-sha256;
-	cv=none;
-	b=0kaveM/E9E+kS2N7Lv3Ssnodr7fPPX7kSP7efKRRwrvTf1ZX08rq47WY5JbZGyJHneqOaH
-	i82pzDpv1wjBL3w/wKYh2In2gJwG8Qr73iGGKNdIBsjbT9zvl2LlcnMZYbNxVzY5TM/Y01
-	VlCHW2oHDx2aLNxBaNh8qfI/WrAoFUsolIVv7nFbi0HzUDKqHvafFIN8AVEz054xFvSStU
-	DbcfRPhTsqI01BPNw6MXqwjO6v1qkDzwkeH7H36FEaYf71z4BRX7cJCrlScQ9tZf/IkaAi
-	OKI6xLk8gktWOgbxC05siexfYT5oLhzryCjRfHa1Tlz1Qh6M3vZ5bolJkdggOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1727750902;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=+OzDF51qHcsxAKYk7mQb7m9zf6kbvxorNI13kUbqlHs=;
-	b=fwtilx9McqGMFXtVHIYx9+nbcR6plCdZffcE7neO/9CVf8GnL8bTcDA08CSiqCGf4/wQyZ
-	D/mkqSPXkOPpO9FN29IRLu2IZf2UPTVcxQCwQpX2IJp3Gl42k3UV00o2rSiHrZhzOEd+s6
-	zVyf64Cf7TOhKa7GJPobD7sFYliVHS+Jw/JS+8dJkvXNg6aLsrMEpWTjvLlD2Fp7XVHfdn
-	iSIVPBTMlMGLLUKm8/6Pgnpk8Mitr6ohvedRb7FJIGi5pEfXRHyJw4oaoqZp7421ybHCeN
-	2e42EvQyBzgs1v0NJxNr3fZDhefBvNWXiPPDU/+X0AOuRUFZ87lCrIRiSqhYdw==
-ARC-Authentication-Results: i=1;
-	rspamd-9d66c6866-z8h92;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Trouble-Lyrical: 77a35d3a52075bfd_1727750902479_2277151766
-X-MC-Loop-Signature: 1727750902479:1982707863
-X-MC-Ingress-Time: 1727750902479
-Received: from pdx1-sub0-mail-a311.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.96.87.216 (trex/7.0.2);
-	Tue, 01 Oct 2024 02:48:22 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a311.dreamhost.com (Postfix) with ESMTPSA id 4XHj6s2ZGjzGP;
-	Mon, 30 Sep 2024 19:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1727750902;
-	bh=+OzDF51qHcsxAKYk7mQb7m9zf6kbvxorNI13kUbqlHs=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=Xqhaygnivi7U0M/nFzgy2h26I7egcM1+IuPxD+GwAUo8LXlKprlmg2cXYEZ3bvUPx
-	 0dmjl4/Vn7z/m+z1RpLUcq6QyqGzGLvM0vQxyF94btlF/VJ3r2QYD6AeY1vfSe2VoU
-	 4u/vgjsASdXpok78JXjHkmEdzUbjO5+Q6Av5vuYZ9KS/4wqvxmyOaDwLYUVHbQ95ft
-	 QfXeG9StELaQM/4gdGIUHoqHv67pauckBvUl+o6xoxWxuNlDdn81rPuuSjlB+MrfU7
-	 zTzE4i9xNeeHntFnoq7grznfU/zlLjWUYsCcjD8b1nbFA2rwYRORdRl1ZxEaTi5VMy
-	 txthvqKn8JSwg==
-Date: Mon, 30 Sep 2024 19:48:18 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Huang Ying <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Alejandro Lucero <alucerop@amd.com>
-Subject: Re: [RFC 1/5] cxl: Rename ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3
-Message-ID: <20241001024818.lvby5jab645nhnsc@offworld>
-References: <20240925024647.46735-1-ying.huang@intel.com>
- <20240925024647.46735-2-ying.huang@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC2F3F9EC
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 02:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727751070; cv=none; b=E6T6z5oD34t/tcY/UEVamGoLxAiW7nqB5vUDeYrZ8QHFpKTuxsFDFwImtjH5GNlOsr+hXwATo8ZiVDM1bmzqYpYCV6Fc2gfB+TDrLDAF6xJ1o35Lopq6lr5YVjMSQYw7ExNPkzB8CuuG6Veda55El24TKTN44Os+QDWcSEKzGNg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727751070; c=relaxed/simple;
+	bh=21feO5ASMrbHPTE8t6IaMLzP3I+HTER+pHbTEeBY/GY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IvEg8ypJo4rIT6rBT6SP2JHvQjvn7UZfDIJBWOXc/SIHd9k1dOT1AE3I9hhJQFhVbLhzZ4U+ZtIjKEd4GMbuB8BL/5axW7o5RRmnbfwcKv2pZvQ/JQKl2pwa0juI6VkCrdoR9I3skadtZ8QE3hFpashtYizqI2pMqsl4JV2SD9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hNs3XmJ3; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6dbc5db8a31so38985807b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Sep 2024 19:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727751067; x=1728355867; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kw9bjEOH7sJi84d8amI0HlgnwlcLtdrC8YTmlPpTOEM=;
+        b=hNs3XmJ3lWEPLmlWPCQDfiE/XJ3j2VKIO+VjSR0oIqIalkOitvdbrHIljFHGv093PC
+         OMNxha8vBgIDDQM8y9Gbp6+YO8LC2nhijTjw7yxYqUJR5WxfjfgUq3X6JW7OLuUrKfVe
+         qU1brwxHtMKRPQ3ODTbIKiWi+hABFzzdCRYvc3tQm7tuOTt9yTDXEmeBQTxcgOSvxA0J
+         OyQ6lpFab4dHbuNN6aLfbRqNx+P1UFEk0VnQnEZraqCphKlmuOCNuZHmusXsKWejTBla
+         iKxf6bIDttmshQDqt9UCjtgIQ2qr/naEr8/iBv910stsQ036Gz9ycR+pwuj6G7Hq8wyF
+         ekXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727751067; x=1728355867;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kw9bjEOH7sJi84d8amI0HlgnwlcLtdrC8YTmlPpTOEM=;
+        b=DyCZyfBMB/TE6PS7Zsw4m6bi3gWMknubTdClB3F/NwF+qP7qpgXnX9L8fDq+iSgQHz
+         dH9y/N/695Uh4qL+pefLO+aYiIlUePvU0IHtaTHUzUYn/5X6gcgFvXbXAIPltlfjsDCO
+         us3v/JG3eumkh4aENu//nAHDFtTC82shZQzoMYJ5M1rbLKnN7dSBp0rOEczfe33Lpy5E
+         QB1JvLYADKxxLtqS1QZr7ioXleoZneC5OHiwOxleOt0F4yd76NyZRRyHWtvS3yrkKPAP
+         hsqd+L2vMcsVmESwDLi8WVO2ExiEaJtasmaJ1TlTHR4ma+HY23/JcslEYkNLtRsQBuNU
+         ohUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGTFr+F9+Uq9QQ8gqIxq2akLhtd5IzzKWF3Rm4lo3lkaQHwg39QC9HKDYW+BvDdL+98/ZFPQ6dMPCdJRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybEY5x5VrObu5Ta4WPTINBkxPrSWtAx3qPG7o4Wzog/biDPQGG
+	frXK/rrmy35vFIIcJDOoG3Dawv5dwo6TAQ0QTMKglxDbfI6xwvC95dtdHg+u8yUbBDWOYpMZnYy
+	BtZRsnhePleuqp3wh9y0C6DQdoS0=
+X-Google-Smtp-Source: AGHT+IGQINgk6UFRmYO8tunNkTiP270bh8X4zMWuNZL3LkkgBCDhQvD0PPhdvlOM615bdaVtI6XZxFr066qhAEmfszQ=
+X-Received: by 2002:a05:690c:6703:b0:6db:e1e0:bf6a with SMTP id
+ 00721157ae682-6e290dce418mr17591927b3.7.1727751067387; Mon, 30 Sep 2024
+ 19:51:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240925024647.46735-2-ying.huang@intel.com>
-User-Agent: NeoMutt/20220429
+References: <20240930215934.349238-1-rosenp@gmail.com> <e729da5b-3964-4cdc-bdf4-2352be5b093e@lunn.ch>
+In-Reply-To: <e729da5b-3964-4cdc-bdf4-2352be5b093e@lunn.ch>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 30 Sep 2024 19:50:56 -0700
+Message-ID: <CAKxU2N9sBOnTGDhtxGVvyrSw=_WuJH29tgZXfmK-RD2RRY=ZSQ@mail.gmail.com>
+Subject: Re: [PATCH] arch: arm: kirkwood: support nvmem mac address
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com, 
+	sebastian.hesselbarth@gmail.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 25 Sep 2024, Huang Ying wrote:
+On Mon, Sep 30, 2024 at 6:53=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Sep 30, 2024 at 02:59:34PM -0700, Rosen Penev wrote:
+> > of_get_ethdev_address gets called too early for nvmem. If EPROBE_DEFER
+> > gets called, skip so that the ethernet driver can adjust the MAC addres=
+s
+> > through nvmem.
+>
+> Is this from code analysis or do you have a board with real issues? Do
+> we want to add a Fixed: so it gets back ported in stable?
+Working with a guy that does. This device has not been upstreamed, so
+not quite valid.
+>
+> >
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  arch/arm/mach-mvebu/kirkwood.c | 11 ++++++++---
+> >  1 file changed, 8 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkw=
+ood.c
+> > index 73b2a86d6489..da347f66900b 100644
+> > --- a/arch/arm/mach-mvebu/kirkwood.c
+> > +++ b/arch/arm/mach-mvebu/kirkwood.c
+> > @@ -86,13 +86,18 @@ static void __init kirkwood_dt_eth_fixup(void)
+> >               void __iomem *io;
+> >               u8 *macaddr;
+> >               u32 reg;
+> > +             int err;
+> >
+> >               if (!pnp)
+> >                       continue;
+> >
+> > -             /* skip disabled nodes or nodes with valid MAC address*/
+> > -             if (!of_device_is_available(pnp) ||
+> > -                 !of_get_mac_address(np, tmpmac))
+> > +             /* skip disabled nodes */
+> > +             if (!of_device_is_available(pnp))
+> > +                     goto eth_fixup_skip;
+> > +
+> > +             /* skip nodes with valid MAC address*/
+> > +             err =3D of_get_mac_address(np, tmpmac);
+> > +             if (err =3D=3D -EPROBE_DEFER || !err)
+> >                       goto eth_fixup_skip;
+>
+> I'm wondering about ordering here. What exactly does EPROBE_DEFER
+> mean? Does it mean we know there is a MAC address in nvmem, but the
+> nvmem has not probed yet? Or can it mean, the nvmem has not probed
+> yet, and maybe there is a MAC address in it, maybe not?
+It only means NVMEM has not loaded. NVMEM loads after MTD, meaning quite la=
+te.
+>
+> In the maybe not case, we should still be trying to read the MAC from
+> the hardware and storing it way safe for later use.
+Not sure how to go about that. OTOH it's not very common to have
+CONFIG_NVMEM where not needed.
 
->According to the description of the "Window Restrictions" field of
->"CFMWS Structure" in the CXL spec v3.1 section 9.18.1.3: CXL Fixed
->Memory Window Structure (CFMWS), the bit 0 of "Window Restrictions" is
->formerly known as "CXL Type 2 Memory" and renamed to "Device
->Coherent", while the bit 1 is formerly known as "CXL Type 3 Memory"
->and renamed to "Host-only Coherent".  Because type 3 memory can only
->be host-only coherent before, while it can be host-only coherent or
->device coherent with "Back-Invalidate" now.
+Actually I have no idea what this whole function even does. For these
+devices, uboot usually reads the ethaddr variable and passes it to the
+kernel. Something like that can be handled entirely by nvmem.
 >
->To avoid confusing about type 3 memory and host-only coherent in Linux
->kernel, we rename corresponding bit definition from
->ACPI_CEDT_CFMWS_RESTRICT_TYPE2/TYPE3 to
->ACPI_CEDT_CFMWS_RESTRICT_DEVCOH/HOSTONLYCOH.  This makes the kernel
->code consistent with the spec too.
->
->Also rename the corresponding cxl_decoder flags
->CXL_DECODER_F_TYPE2/TYPE3 to CXL_DECODER_F_DEVCOH/HOSTONLYCOH.
->
->No functionality change is expected, because we just rename the flags
->constant definition.
->
->Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->Cc: Dan Williams <dan.j.williams@intel.com>
->Cc: Davidlohr Bueso <dave@stgolabs.net>
->Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->Cc: Dave Jiang <dave.jiang@intel.com>
->Cc: Alison Schofield <alison.schofield@intel.com>
->Cc: Vishal Verma <vishal.l.verma@intel.com>
->Cc: Ira Weiny <ira.weiny@intel.com>
->Cc: Alejandro Lucero <alucerop@amd.com>
-
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+>         Andrew
 
