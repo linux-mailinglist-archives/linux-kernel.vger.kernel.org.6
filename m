@@ -1,361 +1,165 @@
-Return-Path: <linux-kernel+bounces-346106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2208898BFAF
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2C698BFB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AEFB28290
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:20:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F01C1C23FA0
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E62D1C8FCE;
-	Tue,  1 Oct 2024 14:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA541C9B87;
+	Tue,  1 Oct 2024 14:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ux7DY547"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uau/vZa5"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300781C6893
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D841C9B75;
+	Tue,  1 Oct 2024 14:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727792194; cv=none; b=u8blW18Qv1hgQs01e6gLElFvP9RuU8X4qLdWgWTTRJtpYgnlJKYbV2hG5wNZRnTGVL2K1Z+qRDt4h0snNn03im/n0ZWsjle1b7g5SS0UBGrXRauZ2Ku64yktSGFaO/cIrnsaTdTtZMWkvqFTvIa7HcGayiwrLMBq+DOSfS6DwvM=
+	t=1727792217; cv=none; b=gD7WUYnHeECpnWVULjjnlgBFq/esDHgLxsWYQJbHumCRW0qOsL62afYCQ2RlKjPJJtfoxd+E7rQawOK6KyoL89upG1LTETL54zUXFrfqT8rCWEcqHkeZ6zpeRt518tTcrFwtaNxsSE4aleN/gjtm9C6o9M+e5VoiuMYT7elxXGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727792194; c=relaxed/simple;
-	bh=KZ6gxq2XwRcWtv8D5rnzb8GbirDDkQOi0Cssa0mv4jI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jblWBbMzP0f1wGj7Wp6opYES+E8CGE/eWcwWvOOmfl27yyGESaJ4mUEyuJsYVeH/G1F/jWIc/X7vY4QI+idVg5xQHZVX2r34ttWpCsExzUjcnGNtJ8ufB1DYdysxQ+TA+RkggdVSsla/lkaLZL6JCQLMkg33SaLAt5ezRepkW+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ux7DY547; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398b589032so4960577e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 07:16:31 -0700 (PDT)
+	s=arc-20240116; t=1727792217; c=relaxed/simple;
+	bh=g41OALnsL4wl6u9fk+xYcaWtmMY9YbrmA0fZDhVPSC4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jXJyxVDt7AJL7hLfawhmZOGFGMco7q6RX4dyyic8s7WCgwOU2D2h9qsPIWglLxBBbgctVlncoybMj6B3CDYMQoPQ5xMBCQh66SJuul01jE3YKdMpZXJ/5vVRLPYirKCMdlbpd5pB4IIOWJPoO/ICTB6Nui1p+yVcO6debODFs6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uau/vZa5; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-710e489860bso2885275a34.1;
+        Tue, 01 Oct 2024 07:16:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1727792190; x=1728396990; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1y1eDJ+lKiKTVFnuA1FG1rr27+98ONVA3jJSEumLGkM=;
-        b=Ux7DY547cRRiPvPq5LwdAb4+zcqqRbj63AE2h0qTsNC2ZYxUX9t4gG9VqjRmB6x6ec
-         VmFdHYqkSuyzr+fbiofgv5kktWDmJg1Cvgn+YAgkqhlM7ti3xFagWELKopk05QH2T9Ns
-         W9DhKYVb9gHc7y8/6vsL9dle9DwKwXql0peIaBtOfZgrAwqsS806ue8hvsRE5keJ9qIu
-         4xDkpZqUYh7Gk4InAjyWv0mNwLcf0eIh1sdwGuASqZ4EOkAicXxwGDmid97ff15nrtOt
-         LZwg/HS2zWaQ/iE60Qv8rsQ6xclVOrlyActcil3AEpCBqG0lee5klonUNMOInun/w6TE
-         L6Yw==
+        d=gmail.com; s=20230601; t=1727792214; x=1728397014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ph1CXMwrM0Od7OuVQ28Be8BUbBXIPRQeBdm8AFbgkow=;
+        b=Uau/vZa5i4+TDBltpxwIMUhw8yE3fQxLfUhmPjNZLnQCchEPnywKdZXRlj+uQKYRGC
+         WTb2aJPLq1Ky48sJfVEBuD3MmOZvAht1YdD/uQYwQUULjHkF8LSoYh42QrE5e6Zvu7Qq
+         ILkfaYMfrZXILqMX0yRjpLBv7LLibOQ09/K4eM8WawkV7+aF4wEIc7grqV7h9QYz0sEl
+         Vun+mPT5jW5AE9oWz7l4Ylzpo3X8jQ4F339beZuDKXPsQrjHtxqoVHY5Bf2K6WKgsWpX
+         UR1SlhYLQFr/TwBhxOkZXHC6+kZbrYmjN8Zbl9e68KfMZkO6GXP6nnPLgOrSLclgyfAN
+         sd9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727792190; x=1728396990;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1y1eDJ+lKiKTVFnuA1FG1rr27+98ONVA3jJSEumLGkM=;
-        b=vJuMCylZ9V7rIpTkoifpnPdsJgCQTqnXDX1ttgZWB10TBspFq6udJ9beOqf86aoq6L
-         nxNpBj38uMcESuMDXuzQzVCddLadDW0OuPnGZY63M2Lsd5LobLQCFJSbusdFyaCk0viw
-         TvPTbjhR2aENnBsvxaIQmzKsXdt/hOsjduyLrzVABPZLX2/PjdHtFXzTr8TWSoWv/xBs
-         cWAlSTEYPiqTB0xmc+Bg/ra5OoQS0svPROfFuDuAEkw1nnTmPYeBbxHGnhEl2ViZuKL+
-         p/sU61cnqyZCcFsG/WEFx2UVM3Q2/6Rcu5mgI41aLBHZE22g59NPTcIihmOcLGMv3+3U
-         2EuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUX9+hDhM43SZA0MslCeTy7aU7O+gFbenN4nySnVp10kuC7XCafYE812QOecBCm4oUH3M2N6QWCGnTeKHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxv4Co5q6CxXzeMeHEyvk32nxfTU92NTa0gNJVAmol1KMBOB4HY
-	HDqFkCMuzIIDgbDZWrgK1J38F1EvlnvxNQ01e6rVDLyIR8x59n3uHbPUBUMmZgs=
-X-Google-Smtp-Source: AGHT+IEzx34F6+yE7XgQFu9qIVSJy8ZDXJAMsrzTVer9/GuJ3EjuwlRAW1LXhB1QTpJqjxs6itlZSg==
-X-Received: by 2002:a05:6512:6618:b0:539:89a8:600f with SMTP id 2adb3069b0e04-53989a86942mr9581897e87.23.1727792190265;
-        Tue, 01 Oct 2024 07:16:30 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27c70d3sm717663766b.78.2024.10.01.07.16.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 07:16:29 -0700 (PDT)
-Message-ID: <f0eee8a9-766a-463c-bc36-676e49efe950@suse.com>
-Date: Tue, 1 Oct 2024 16:16:28 +0200
+        d=1e100.net; s=20230601; t=1727792214; x=1728397014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ph1CXMwrM0Od7OuVQ28Be8BUbBXIPRQeBdm8AFbgkow=;
+        b=TvMQjNBLAwUEU1guf973cTml38Lgz605lYMwe9WDnnmT7+uGVIQMQ2Kbnw6zqvcL0/
+         MFVEr8cfN5oZUTW7BikVePrlJ/T+wxE/JrXOmzGwDcS1RJpUCFNQbdmLCphh3usKGkUh
+         DlYe0Sec2B4QuNqyh7WpuUXC5r6NfHnTxa1iiy5KbvI9fDRA2SgnkHaJT1XwOsX3tS69
+         MVK7mkd/TlYXfwf6YJprlMYUJaN76LhiM6A4V9nwtMdYWcLCs7AeBp9COi4VM2rRDHMt
+         HTMSwqkg9RXgXpl1/+X/jWo0cGeQeZ0Ef/xr8Jg84bH6063kmPzCOcKEAGL93WBLhKA2
+         118g==
+X-Forwarded-Encrypted: i=1; AJvYcCViiJtgOfEpL7CJ7fgniNHWrp5yY6oO4xyxF03qF6RotWIZMZJ1IfCpwV7/2RtNvnx5HEr+cbC0LanQe/o=@vger.kernel.org, AJvYcCX3jl1EmhdRQhc7zhGnY4GPUS7y65b8tWNsiA+ab6LPfdrjblnTraRwpvlXyjrM3NctM68R6PCx@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ8kuoLFaB9Cfs2qGaOtmRE1/f6EJDGS49hcczWqLdPrc68OAU
+	fBwybOjlU4aM6bZLDrHeWnWYgT1M5PLQvalhUXoGDz0n47iI2dxXkk8Q0fy5Km4Ib9XEy61LSYU
+	3FBp+ZTQpWksnN9WC6DYhhMT2xi0=
+X-Google-Smtp-Source: AGHT+IFfVSlGf0zJL6/ZI6y0JzFNCuskPx0Gyc8YhUaiOcui23/iIxvQOogfzVfOf5Ay4G0kU+eQQi3qHXBu2AsBY/Q=
+X-Received: by 2002:a05:6359:7406:b0:1be:de52:97c3 with SMTP id
+ e5c5f4694b2df-1bede52a407mr283920455d.5.1727792214436; Tue, 01 Oct 2024
+ 07:16:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/20] gendwarfksyms: Expand structure types
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- Petr Pavlu <petr.pavlu@suse.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240923181846.549877-22-samitolvanen@google.com>
- <20240923181846.549877-32-samitolvanen@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20240923181846.549877-32-samitolvanen@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240926211936.75373-1-21cnbao@gmail.com> <871q13qj2t.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <CAGsJ_4w2PjN+4DKWM6qvaEUAX=FQW0rp+6Wjx1Qrq=jaAz7wsw@mail.gmail.com> <877caspv6u.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <877caspv6u.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 1 Oct 2024 22:16:40 +0800
+Message-ID: <CAGsJ_4wfjo2-dnGwybx5YR_o+FEzoVG+V=O1mxQ801FdHPSGiA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
+ swapcache_prepare fails
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>, 
+	Kairui Song <kasong@tencent.com>, Yu Zhao <yuzhao@google.com>, 
+	David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>, 
+	Minchan Kim <minchan@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	SeongJae Park <sj@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, stable@vger.kernel.org, 
+	Oven Liyang <liyangouwen1@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/23/24 20:18, Sami Tolvanen wrote:
-> Recursively expand DWARF structure types, i.e. structs, unions, and
-> enums. Also include relevant DWARF attributes in type strings to
-> encode structure layout, for example.
-> 
-> Example output with --dump-dies:
-> 
->   subprogram (
->     formal_parameter structure_type &str {
->       member pointer_type {
->         base_type u8 byte_size(1) encoding(7)
->       } data_ptr data_member_location(0) ,
->       member base_type usize byte_size(8) encoding(7) length data_member_location(8)
->     } byte_size(16) alignment(8) msg
->   )
->   -> base_type void
-> 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> ---
->  scripts/gendwarfksyms/dwarf.c         | 137 +++++++++++++++++++++++++-
->  scripts/gendwarfksyms/gendwarfksyms.h |   5 +
->  2 files changed, 140 insertions(+), 2 deletions(-)
-> 
-> diff --git a/scripts/gendwarfksyms/dwarf.c b/scripts/gendwarfksyms/dwarf.c
-> index caf25da0a9b9..b7f1dc29cb9c 100644
-> --- a/scripts/gendwarfksyms/dwarf.c
-> +++ b/scripts/gendwarfksyms/dwarf.c
-> @@ -205,9 +205,13 @@ static void process_fqn(struct die *cache, Dwarf_Die *die)
->  				    value);                                \
->  	}
->  
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(accessibility)
->  DEFINE_PROCESS_UDATA_ATTRIBUTE(alignment)
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(bit_size)
->  DEFINE_PROCESS_UDATA_ATTRIBUTE(byte_size)
->  DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(data_bit_offset)
-> +DEFINE_PROCESS_UDATA_ATTRIBUTE(data_member_location)
->  
->  /* Match functions -- die_match_callback_t */
->  #define DEFINE_MATCH(type)                                     \
-> @@ -216,8 +220,11 @@ DEFINE_PROCESS_UDATA_ATTRIBUTE(encoding)
->  		return dwarf_tag(die) == DW_TAG_##type##_type; \
->  	}
->  
-> +DEFINE_MATCH(enumerator)
->  DEFINE_MATCH(formal_parameter)
-> +DEFINE_MATCH(member)
->  DEFINE_MATCH(subrange)
-> +DEFINE_MATCH(variant)
->  
->  bool match_all(Dwarf_Die *die)
->  {
-> @@ -295,6 +302,10 @@ static void __process_list_type(struct state *state, struct die *cache,
->  		process(cache, " ");
->  		process(cache, name);
->  	}
-> +	process_accessibility_attr(cache, die);
-> +	process_bit_size_attr(cache, die);
-> +	process_data_bit_offset_attr(cache, die);
-> +	process_data_member_location_attr(cache, die);
->  }
->  
->  #define DEFINE_PROCESS_LIST_TYPE(type)                                       \
-> @@ -305,6 +316,7 @@ static void __process_list_type(struct state *state, struct die *cache,
->  	}
->  
->  DEFINE_PROCESS_LIST_TYPE(formal_parameter)
-> +DEFINE_PROCESS_LIST_TYPE(member)
->  
->  /* Container types with DW_AT_type */
->  static void __process_type(struct state *state, struct die *cache,
-> @@ -337,6 +349,7 @@ DEFINE_PROCESS_TYPE(reference)
->  DEFINE_PROCESS_TYPE(restrict)
->  DEFINE_PROCESS_TYPE(rvalue_reference)
->  DEFINE_PROCESS_TYPE(shared)
-> +DEFINE_PROCESS_TYPE(template_type_parameter)
->  DEFINE_PROCESS_TYPE(volatile)
->  DEFINE_PROCESS_TYPE(typedef)
->  
-> @@ -390,6 +403,106 @@ static void process_subroutine_type(struct state *state, struct die *cache,
->  	__process_subroutine_type(state, cache, die, "subroutine_type");
->  }
->  
-> +static void process_variant_type(struct state *state, struct die *cache,
-> +				 Dwarf_Die *die)
-> +{
-> +	process_list_comma(state, cache);
-> +	process(cache, "variant {");
-> +	process_linebreak(cache, 1);
-> +	check(process_die_container(state, cache, die, process_type,
-> +				    match_member_type));
-> +	process_linebreak(cache, -1);
-> +	process(cache, "}");
-> +}
-> +
-> +static void process_variant_part_type(struct state *state, struct die *cache,
-> +				      Dwarf_Die *die)
-> +{
-> +	process_list_comma(state, cache);
-> +	process(cache, "variant_part {");
-> +	process_linebreak(cache, 1);
-> +	check(process_die_container(state, cache, die, process_type,
-> +				    match_variant_type));
-> +	process_linebreak(cache, -1);
-> +	process(cache, "}");
-> +}
+On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@intel.com> w=
+rote:
+>
+> Barry Song <21cnbao@gmail.com> writes:
+>
+> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
+om> wrote:
+> >>
+> >> Hi, Barry,
+> >>
+> >> Barry Song <21cnbao@gmail.com> writes:
+> >>
+> >> > From: Barry Song <v-songbaohua@oppo.com>
+> >> >
+> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swapcache")
+> >> > introduced an unconditional one-tick sleep when `swapcache_prepare()=
+`
+> >> > fails, which has led to reports of UI stuttering on latency-sensitiv=
+e
+> >> > Android devices. To address this, we can use a waitqueue to wake up
+> >> > tasks that fail `swapcache_prepare()` sooner, instead of always
+> >> > sleeping for a full tick. While tasks may occasionally be woken by a=
+n
+> >> > unrelated `do_swap_page()`, this method is preferable to two scenari=
+os:
+> >> > rapid re-entry into page faults, which can cause livelocks, and
+> >> > multiple millisecond sleeps, which visibly degrade user experience.
+> >>
+> >> In general, I think that this works.  Why not extend the solution to
+> >> cover schedule_timeout_uninterruptible() in __read_swap_cache_async()
+> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  To avoid
+> >
+> > Hi Ying,
+> > Thanks for your comments.
+> > I feel extending the solution to __read_swap_cache_async() should be do=
+ne
+> > in a separate patch. On phones, I've never encountered any issues repor=
+ted
+> > on that path, so it might be better suited for an optimization rather t=
+han a
+> > hotfix?
+>
+> Yes.  It's fine to do that in another patch as optimization.
 
-For variant types, should the tool worry also about DW_AT_discr and
-DW_AT_discr_value?
+Ok. I'll prepare a separate patch for optimizing that path.
 
-> +
-> +static int ___process_structure_type(struct state *state, struct die *cache,
-> +				     Dwarf_Die *die)
-> +{
-> +	switch (dwarf_tag(die)) {
-> +	case DW_TAG_member:
-> +	case DW_TAG_variant_part:
-> +		return check(process_type(state, cache, die));
-> +	case DW_TAG_class_type:
-> +	case DW_TAG_enumeration_type:
-> +	case DW_TAG_structure_type:
-> +	case DW_TAG_template_type_parameter:
-> +	case DW_TAG_union_type:
-> +	case DW_TAG_subprogram:
-> +		/* Skip non-member types, including member functions */
-> +		return 0;
-> +	default:
-> +		error("unexpected structure_type child: %x", dwarf_tag(die));
-> +	}
-> +}
-> +
-> +static void __process_structure_type(struct state *state, struct die *cache,
-> +				     Dwarf_Die *die, const char *type,
-> +				     die_callback_t process_func,
-> +				     die_match_callback_t match_func)
-> +{
-> +	process(cache, type);
-> +	process_fqn(cache, die);
-> +	process(cache, " {");
-> +	process_linebreak(cache, 1);
-> +
-> +	check(process_die_container(state, cache, die, process_func,
-> +				    match_func));
-> +
-> +	process_linebreak(cache, -1);
-> +	process(cache, "}");
-> +
-> +	process_byte_size_attr(cache, die);
-> +	process_alignment_attr(cache, die);
-> +}
-> +
-> +#define DEFINE_PROCESS_STRUCTURE_TYPE(structure)                        \
-> +	static void process_##structure##_type(                         \
-> +		struct state *state, struct die *cache, Dwarf_Die *die) \
-> +	{                                                               \
-> +		__process_structure_type(state, cache, die,             \
-> +					 #structure "_type",            \
-> +					 ___process_structure_type,     \
-> +					 match_all);                    \
-> +	}
-> +
-> +DEFINE_PROCESS_STRUCTURE_TYPE(class)
-> +DEFINE_PROCESS_STRUCTURE_TYPE(structure)
-> +DEFINE_PROCESS_STRUCTURE_TYPE(union)
-> +
-> +static void process_enumerator_type(struct state *state, struct die *cache,
-> +				    Dwarf_Die *die)
-> +{
-> +	Dwarf_Word value;
-> +
-> +	process_list_comma(state, cache);
-> +	process(cache, "enumerator");
-> +	process_fqn(cache, die);
-> +
-> +	if (get_udata_attr(die, DW_AT_const_value, &value)) {
-> +		process(cache, " = ");
-> +		process_fmt(cache, "%" PRIu64, value);
-> +	}
-> +}
-> +
-> +static void process_enumeration_type(struct state *state, struct die *cache,
-> +				     Dwarf_Die *die)
-> +{
-> +	__process_structure_type(state, cache, die, "enumeration_type",
-> +				 process_type, match_enumerator_type);
-> +}
-> +
->  static void process_base_type(struct state *state, struct die *cache,
->  			      Dwarf_Die *die)
->  {
-> @@ -400,6 +513,16 @@ static void process_base_type(struct state *state, struct die *cache,
->  	process_alignment_attr(cache, die);
->  }
->  
-> +static void process_unspecified_type(struct state *state, struct die *cache,
-> +				     Dwarf_Die *die)
-> +{
-> +	/*
-> +	 * These can be emitted for stand-elone assembly code, which means we
-> +	 * might run into them in vmlinux.o.
-> +	 */
+>
+> >> overhead to call wake_up() when there's no task waiting, we can use an
+> >> atomic to count waiting tasks.
+> >
+> > I'm not sure it's worth adding the complexity, as wake_up() on an empty
+> > waitqueue should have a very low cost on its own?
+>
+> wake_up() needs to call spin_lock_irqsave() unconditionally on a global
+> shared lock.  On systems with many CPUs (such servers), this may cause
+> severe lock contention.  Even the cache ping-pong may hurt performance
+> much.
 
-Nit: stand-elone -> stand-alone.
+I understand that cache synchronization was a significant issue before
+qspinlock, but it seems to be less of a concern after its implementation.
+However, using a global atomic variable would still trigger cache broadcast=
+s,
+correct?
 
-> +	process(cache, "unspecified_type");
-> +}
-> +
->  static void process_cached(struct state *state, struct die *cache,
->  			   Dwarf_Die *die)
->  {
-> @@ -460,17 +583,27 @@ static int process_type(struct state *state, struct die *parent, Dwarf_Die *die)
->  	PROCESS_TYPE(rvalue_reference)
->  	PROCESS_TYPE(shared)
->  	PROCESS_TYPE(volatile)
-> +	/* Container types */
-> +	PROCESS_TYPE(class)
-> +	PROCESS_TYPE(structure)
-> +	PROCESS_TYPE(union)
-> +	PROCESS_TYPE(enumeration)
->  	/* Subtypes */
-> +	PROCESS_TYPE(enumerator)
->  	PROCESS_TYPE(formal_parameter)
-> +	PROCESS_TYPE(member)
->  	PROCESS_TYPE(subrange)
-> +	PROCESS_TYPE(template_type_parameter)
-> +	PROCESS_TYPE(variant)
-> +	PROCESS_TYPE(variant_part)
->  	/* Other types */
->  	PROCESS_TYPE(array)
->  	PROCESS_TYPE(base)
->  	PROCESS_TYPE(subroutine)
->  	PROCESS_TYPE(typedef)
-> +	PROCESS_TYPE(unspecified)
->  	default:
-> -		debug("unimplemented type: %x", tag);
-> -		break;
-> +		error("unexpected type: %x", tag);
->  	}
->  
->  	/* Update cache state and append to the parent (if any) */
-> diff --git a/scripts/gendwarfksyms/gendwarfksyms.h b/scripts/gendwarfksyms/gendwarfksyms.h
-> index d5186472f705..ad50e35e3351 100644
-> --- a/scripts/gendwarfksyms/gendwarfksyms.h
-> +++ b/scripts/gendwarfksyms/gendwarfksyms.h
-> @@ -63,8 +63,13 @@ extern int dump_dies;
->  #define checkp(expr) __check(expr, __res < 0)
->  
->  /* Consistent aliases (DW_TAG_<type>_type) for DWARF tags */
-> +#define DW_TAG_enumerator_type DW_TAG_enumerator
->  #define DW_TAG_formal_parameter_type DW_TAG_formal_parameter
-> +#define DW_TAG_member_type DW_TAG_member
-> +#define DW_TAG_template_type_parameter_type DW_TAG_template_type_parameter
->  #define DW_TAG_typedef_type DW_TAG_typedef
-> +#define DW_TAG_variant_part_type DW_TAG_variant_part
-> +#define DW_TAG_variant_type DW_TAG_variant
->  
->  /*
->   * symbols.c
+>
+> --
+> Best Regards,
+> Huang, Ying
 
--- 
-Thanks,
-Petr
+Thanks
+Barry
 
