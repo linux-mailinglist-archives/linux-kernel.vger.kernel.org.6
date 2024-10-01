@@ -1,210 +1,162 @@
-Return-Path: <linux-kernel+bounces-346521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EA598C585
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:43:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D19698C588
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 20:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C661C21779
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78BB1F225D3
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 18:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87E41CCB46;
-	Tue,  1 Oct 2024 18:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D1F1CCB53;
+	Tue,  1 Oct 2024 18:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIGa3c8B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="oG5Z2ZTx"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EF5194083;
-	Tue,  1 Oct 2024 18:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3BE1CCB30;
+	Tue,  1 Oct 2024 18:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727808182; cv=none; b=cUhRAuJxQKe5VprWNgrVnbh/Z2fkhsHMJiVnn7JmF0tJPLOsWJOaWczhmAaA4FzsgzsrTjDFlZomkAjAabC83DKst67UhkgIwHqWgHu/dRhijP7OlJotrav90bei1brjH/Bo1+bmuw4dOxWcYtWQFgAo/QYnSgNCl0oLbXaRopo=
+	t=1727808210; cv=none; b=I0H4WsP57/yZTw+5qZVWsRrYGs/xYtP+ykHG1EW3D3/HexfbIGcge9n+8eBsH7qa9EuG8BLe1d5vDnzcp1z0bpX96LtCFUxrlkDm56Gt6gRr80oHM2xvRJTij/oXRywZcamVwVKCN72toOyuhuMsnS8XLsF0wI55p0oWWrDU5vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727808182; c=relaxed/simple;
-	bh=UT0ZXBDJPID4cLmR4j11b2t4OSXkBbMG9Hy9iT7gSmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=udBlaNsELs6uqME9T6Soe5FJblYgwYjCdjhl6Ms6B/MrK03qUCcBurv9n1PIOFx9uY62ARkSJeaQ9aTrzf08hVqvRu752pnVKIvGuVlmTbY7t6BzKUpTi5vomlrhSlkL757EeDTBRdfSvR7HMJRPqb3twU1ngZmivtTuaqLFBbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIGa3c8B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B0EC4CEC6;
-	Tue,  1 Oct 2024 18:42:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727808181;
-	bh=UT0ZXBDJPID4cLmR4j11b2t4OSXkBbMG9Hy9iT7gSmI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iIGa3c8B+Z9wY8Ec+F8UteIxwl+A0x8s6bu23sjDsztxjH6ar8rgOYPlzwbld/Ehl
-	 yl08+W2w0m0EgDG7H5sSdRYCtKPSk81Uw9GZ0Hi/f7j5jzjIzuqeXznipxHDVVAUDc
-	 U74Uqtm1blbbyRN5Ai0zlLNDKyDSsTN2aE3qfENV2tz6HAD9alLHhgw6v6SZpjqKc+
-	 k9Cxa9MLKUPQXsmivbXzapxhuaEBEB+FYyIOHR1DjzR6nr4Hd/QFN15V+MiPjM20VE
-	 4zWBDLz6d2/iG1cLLlR6+qkrGiX0ap/z1jhXtrvon77wt+lDz8epgC/R825ZjxFHBo
-	 SpF+DCNU3NsUg==
-Date: Tue, 1 Oct 2024 19:42:52 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: <Jianping.Shen@de.bosch.com>
-Cc: <lars@metafoo.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
- <marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <Christian.Lorenz3@de.bosch.com>, <Ulrike.Frauendorf@de.bosch.com>,
- <Kai.Dolde@de.bosch.com>
-Subject: Re: [PATCH v8 2/2] iio: imu: smi240: add driver
-Message-ID: <20241001194252.778fb555@jic23-huawei>
-In-Reply-To: <20240928181121.0e62f0ad@jic23-huawei>
-References: <20240923124017.43867-1-Jianping.Shen@de.bosch.com>
-	<20240923124017.43867-3-Jianping.Shen@de.bosch.com>
-	<20240928181121.0e62f0ad@jic23-huawei>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1727808210; c=relaxed/simple;
+	bh=kxsD0tcrpOtkWzlDymask8mRZIgqH1j9jpMBg93Ru08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yfw3/97VVI+gqGR9+vBmRstkIxDD1+oLHmeuA7dB+s4Epk2eqKCGCVTKb7Uwu2PhUofiy3bCeDdKDbp41VVp8DkEgxUmn5Z/3j5rEjaXZZki9VHIb3yLGQnRpN27uDfEigXwCwwS1jg/uQ+3Uyhf7xSfnd7cXUWua55gQhaSMn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=oG5Z2ZTx; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4XJ6Jk63MBz9stL;
+	Tue,  1 Oct 2024 20:43:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1727808198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SfckWOZyeKCCTkxlw0k8OsZZpMs7CWgdY49hBe8AMoU=;
+	b=oG5Z2ZTxIpWVgyVsZemiSxwbZUERvfeEdxz0D41pOp46VXnRvnqIZE/8cLih9YvGZQ+/S0
+	1fa0AWD0FuRL5s8FgJER8vVDtQv5tAoIxrVd9QPt3YxM2qy+nS3YMa3Ze4kM9Q5xzYuuQj
+	spi0sIx0wHSbC45DLMkThHYvDnMsXZobaGs84oN6VQi9iPoxBRtLtGI+w7hVe2G6yKU8s0
+	e372CE9pRP2d0pPjK3zSDEUfwZ1rbkujnrtXbZgLvPk4uxw4VAFGRTSmye33sDQPTapImS
+	rJspoTiIc8bakMSuge7Uqqww72ikghA9G24jeVUu405coV488g4Tpl49FDmbDQ==
+Date: Tue, 1 Oct 2024 20:42:56 +0200
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Tycho Andersen <tycho@tycho.pizza>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Tycho Andersen <tandersen@netflix.com>, Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: [PATCH v3 1/2] exec: fix up /proc/pid/comm in the
+ execveat(AT_EMPTY_PATH) case
+Message-ID: <20241001.175124-western.preview.meager.saws-pzvpWxOhfokt@cyphar.com>
+References: <20241001134945.798662-1-tycho@tycho.pizza>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q3lo5xmu6ghn35bw"
+Content-Disposition: inline
+In-Reply-To: <20241001134945.798662-1-tycho@tycho.pizza>
+
+
+--q3lo5xmu6ghn35bw
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, 28 Sep 2024 18:11:21 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+On 2024-10-01, Tycho Andersen <tycho@tycho.pizza> wrote:
+> From: Tycho Andersen <tandersen@netflix.com>
+>=20
+> Zbigniew mentioned at Linux Plumber's that systemd is interested in
+> switching to execveat() for service execution, but can't, because the
+> contents of /proc/pid/comm are the file descriptor which was used,
+> instead of the path to the binary. This makes the output of tools like
+> top and ps useless, especially in a world where most fds are opened
+> CLOEXEC so the number is truly meaningless.
+>=20
+> Change exec path to fix up /proc/pid/comm in the case where we have
+> allocated one of these synthetic paths in bprm_init(). This way the actual
+> exec machinery is unchanged, but cosmetically the comm looks reasonable to
+> admins investigating things.
 
-> On Mon, 23 Sep 2024 14:40:17 +0200
-> <Jianping.Shen@de.bosch.com> wrote:
->=20
-> > From: Shen Jianping <Jianping.Shen@de.bosch.com>
-> >=20
-> > add the iio driver for bosch imu smi240. The smi240 is a combined
-> > three axis angular rate and three axis acceleration sensor module
-> > with a measurement range of +/-300=C2=B0/s and up to 16g. A synchronous
-> > acc and gyro sampling can be triggered by setting the capture bit
-> > in spi read command.
-> >=20
-> > Implemented features:
-> > * raw data access for each axis through sysfs
-> > * tiggered buffer for continuous sampling
-> > * synchronous acc and gyro data from tiggered buffer
-> >=20
-> > Signed-off-by: Shen Jianping <Jianping.Shen@de.bosch.com> =20
-> At least one endian issue remaining ;( =20
-I'd unintentionally left this on my tree after the build issue.
-Dropped now from the testing branch of iio.git.
+While I still think the argv[0] solution was semantically nicer, it
+seems this is enough to fix the systemd problem for most cases and so we
+can revisit the argv[0] discussion in another 10 years. :D
 
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
+
+> Signed-off-by: Tycho Andersen <tandersen@netflix.com>
+> Suggested-by: Zbigniew J=C4=99drzejewski-Szmek <zbyszek@in.waw.pl>
+> CC: Aleksa Sarai <cyphar@cyphar.com>
+> Link: https://github.com/uapi-group/kernel-features#set-comm-field-before=
+-exec
+> ---
+> v2: * drop the flag, everyone :)
+>     * change the rendered value to f_path.dentry->d_name.name instead of
+>       argv[0], Eric
+> v3: * fix up subject line, Eric
+> ---
+>  fs/exec.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 >=20
-> Make sure you run at least C=3D1 builds before sending patches to the list
->   CHECK   drivers/iio/imu/smi240.c
-> drivers/iio/imu/smi240.c:223:14: warning: incorrect type in assignment (d=
-ifferent base types)
-> drivers/iio/imu/smi240.c:223:14:    expected unsigned short [usertype]
-> drivers/iio/imu/smi240.c:223:14:    got restricted __le16 [usertype]
+> diff --git a/fs/exec.c b/fs/exec.c
+> index dad402d55681..9520359a8dcc 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1416,7 +1416,18 @@ int begin_new_exec(struct linux_binprm * bprm)
+>  		set_dumpable(current->mm, SUID_DUMP_USER);
+> =20
+>  	perf_event_exec();
+> -	__set_task_comm(me, kbasename(bprm->filename), true);
+> +
+> +	/*
+> +	 * If fdpath was set, execveat() made up a path that will
+> +	 * probably not be useful to admins running ps or similar.
+> +	 * Let's fix it up to be something reasonable.
+> +	 */
+> +	if (bprm->fdpath) {
+> +		BUILD_BUG_ON(TASK_COMM_LEN > DNAME_INLINE_LEN);
+> +		__set_task_comm(me, bprm->file->f_path.dentry->d_name.name, true);
+> +	} else {
+> +		__set_task_comm(me, kbasename(bprm->filename), true);
+> +	}
+> =20
+>  	/* An exec changes our domain. We are no longer part of the thread
+>  	   group */
 >=20
->=20
-> > +
-> > +static int smi240_regmap_spi_read(void *context, const void *reg_buf,
-> > +				  size_t reg_size, void *val_buf,
-> > +				  size_t val_size)
-> > +{
-> > +	int ret;
-> > +	u32 request, response;
-> > +	u16 *val =3D val_buf;
-> > +	struct spi_device *spi =3D context;
-> > +	struct iio_dev *indio_dev =3D dev_get_drvdata(&spi->dev);
-> > +	struct smi240_data *iio_priv_data =3D iio_priv(indio_dev);
-> > +
-> > +	if (reg_size !=3D 1 || val_size !=3D 2)
-> > +		return -EINVAL;
-> > +
-> > +	request =3D FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> > +	request |=3D FIELD_PREP(SMI240_WRITE_CAP_BIT_MASK, iio_priv_data->cap=
-ture);
-> > +	request |=3D FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
-> > +	request |=3D smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> > +
-> > +	iio_priv_data->spi_buf =3D cpu_to_be32(request);
-> > +
-> > +	/*
-> > +	 * SMI240 module consists of a 32Bit Out Of Frame (OOF)
-> > +	 * SPI protocol, where the slave interface responds to
-> > +	 * the Master request in the next frame.
-> > +	 * CS signal must toggle (> 700 ns) between the frames.
-> > +	 */
-> > +	ret =3D spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	ret =3D spi_read(spi, &iio_priv_data->spi_buf, sizeof(response));
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	response =3D be32_to_cpu(iio_priv_data->spi_buf);
-> > +
-> > +	if (!smi240_sensor_data_is_valid(response))
-> > +		return -EIO;
-> > +
-> > +	*val =3D cpu_to_le16(FIELD_GET(SMI240_READ_DATA_MASK, response)); =20
-> So this is line sparse doesn't like which is reasonable given you are for=
-cing
-> an le16 value into a u16.=20
-> Minimal fix is just to change type of val to __le16 *
->=20
-> I still find the endian handling in here mess and am not convinced
-> the complexity is strictly necessary or correct.
->=20
-> I'd expect the requirements of reordering to be same in read and write
-> directions (unless device is really crazy), so why do we need
-> a conversion to le16 here but not one from le16 in the write?
->=20
->=20
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int smi240_regmap_spi_write(void *context, const void *data,
-> > +				   size_t count)
-> > +{
-> > +	u8 reg_addr;
-> > +	u16 reg_data;
-> > +	u32 request;
-> > +	const u8 *data_ptr =3D data;
-> > +	struct spi_device *spi =3D context;
-> > +	struct iio_dev *indio_dev =3D dev_get_drvdata(&spi->dev);
-> > +	struct smi240_data *iio_priv_data =3D iio_priv(indio_dev);
-> > +
-> > +	if (count < 2)
-> > +		return -EINVAL;
-> > +
-> > +	reg_addr =3D data_ptr[0];
-> > +	memcpy(&reg_data, &data_ptr[1], sizeof(reg_data));
-> > +
-> > +	request =3D FIELD_PREP(SMI240_WRITE_BUS_ID_MASK, SMI240_BUS_ID);
-> > +	request |=3D FIELD_PREP(SMI240_WRITE_BIT_MASK, 1);
-> > +	request |=3D FIELD_PREP(SMI240_WRITE_ADDR_MASK, reg_addr);
-> > +	request |=3D FIELD_PREP(SMI240_WRITE_DATA_MASK, reg_data); =20
->=20
-> This is built as fields in a native 32 bit register.
-> My gut feeling is that you don't want the REGMAP_ENDIAN_LITTLE but
-> rather use REGMAP_ENDIAN_NATIVE.
->=20
-> The explicit reorder to be32 is fine though as that is just
-> switching from the this native endian value to the byte ordering on
-> the bus.
->=20
-> > +	request |=3D smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
-> > +
-> > +	iio_priv_data->spi_buf =3D cpu_to_be32(request);
-> > +
-> > +	return spi_write(spi, &iio_priv_data->spi_buf, sizeof(request));
-> > +}
-> > +
-> > +static const struct regmap_bus smi240_regmap_bus =3D {
-> > +	.read =3D smi240_regmap_spi_read,
-> > +	.write =3D smi240_regmap_spi_write,
-> > +};
-> > +
-> > +static const struct regmap_config smi240_regmap_config =3D {
-> > +	.reg_bits =3D 8,
-> > +	.val_bits =3D 16,
-> > +	.val_format_endian =3D REGMAP_ENDIAN_LITTLE,
-> > +}; =20
+> base-commit: baeb9a7d8b60b021d907127509c44507539c15e5
+> --=20
+> 2.34.1
 >=20
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--q3lo5xmu6ghn35bw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZvxCsAAKCRAol/rSt+lE
+b9a7AQCywMOUyIiShRxJolrjyHBHkJI94qweiIBj8LqxUmjrpQEAnpFpW/U64Nn6
+jN42oNJkKE07fVbcd+YXiM4zAGksbgg=
+=XP0W
+-----END PGP SIGNATURE-----
+
+--q3lo5xmu6ghn35bw--
 
