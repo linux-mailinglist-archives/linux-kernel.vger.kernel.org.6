@@ -1,158 +1,211 @@
-Return-Path: <linux-kernel+bounces-346671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1ED98C759
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:11:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D0B198C755
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 23:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67731F25912
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:11:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D9241C2189B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 21:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D891CDA08;
-	Tue,  1 Oct 2024 21:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CLgn3b9K"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C161CCEC7;
+	Tue,  1 Oct 2024 21:10:27 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D42114B972;
-	Tue,  1 Oct 2024 21:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3891BD00A
+	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 21:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817040; cv=none; b=uvY0s/2Kyv8GAz5oT8IUhS0B77UIdAdZ1KIF1GshFAsg4Y42k2KOrNdezJkbozi+APt5UXJkM9mOutAO+1frQDRUB5Eq+GvxDoAdKFBaYfN6ockU4B3t4dpdsWWCh/eR6DqyPhhsoSqDNRdHBTiYROC/XJI8NZWI76rhnCqlCV0=
+	t=1727817027; cv=none; b=r7Z5sVycazVC0+O9W8I0QdMewSbT02O1bAr4tEgbDI9Sr8vdZwBtWv8bb13PHjJptpkdCV1/PBu+H0oBqSb+PoeO5FDNkddffeKuTY6jAevAd/S5oW3G2DjEUhsjKUtJkiVs3nlLzJtGRGufhNak+aAP5egTSbwGUO+sGCeAbDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817040; c=relaxed/simple;
-	bh=BdLPaNlX/F3gzkLxlYzljybqQgCh1CZlleMAH3/NzJA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VyEv0zt22UyABkfHXCyzY5oIknqfdRsewP23oaPtCmDkDaxFjFpGilr12uUD9PsDUEhMSZkBjeFkux19QhiDj/zY+BidKsKJQcAWPlNNdp5IHsL7VSOp25087pQAJTd25/Nb+vwe4KMkkVCgW9bCqJ2SEYo8YpFDlzqUF++mwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CLgn3b9K; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2faccada15bso28636491fa.3;
-        Tue, 01 Oct 2024 14:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727817037; x=1728421837; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
-        b=CLgn3b9KoSx9JIAdndd0qu5wGcg/6R4xE0JJJWHm3hYT7fHVTwpv2UbZDk6QFhqQ5z
-         qCFq+K/UsssncG5hieEIqSui913bI5MwRgRjdy7DxdYZg1vEaFQpTx3XUm02AvA8/NOL
-         6nKmxML9RPR8VOMp7BPkoC49urkG5ruColaQQRo1G/OwitDFgCp15YYA4XQtyyWA0edh
-         bwy+UWbgZUafvH4Htuc+8Dlu1y+2yYvKdKsCD+VD048C1ODs/YBBKrDQyis3A9O0aPN3
-         94wMwQhdF5cz2Uey+enmfo0+0NqU+PDaI2bGTi5RXxd2oTsjPJVVe34Qn7AepqxFT8BD
-         N4qQ==
+	s=arc-20240116; t=1727817027; c=relaxed/simple;
+	bh=UpBEPo04+d2HrbW9QvxVfNJJbfjw76eQqAvmLhvfRTc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=k1FijPv6F6Qm/Ru+qdObFSlWYY2DYQ8Z1J3T2ETZqUFAEKrvkHrpDxIOjD1h5lZ4+JfqrQo3ArcDIFmnT6Q+nu2rN/FHXgTSrOPt7kD7SLcYT+ZXcw2fzUV1i2ldgxGor9cRv8873tTP2vqsuelLwaZQHqqNEtuCROPn7wZaPKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82d0daa1b09so787276139f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 01 Oct 2024 14:10:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727817037; x=1728421837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j5FPHhbte4Tmc4ZuPG7hVMprQvRDLf4/a9y4DExRTII=;
-        b=SwSHGP0feJ1qzJccy4YePLClZ2/H14zA4upYAkPMpW9mz4RoozF7ZNq7t2iXS+wDAa
-         B1QcSa7RoDwGMBgtQRc5N7ujE5r1ZRP11Ic1Zhzpf8mNDwXaHeQGypKtnqfZfPcKX+I0
-         bhN3ZwbN7IRnTvJP9y74t7I0Mp3WEybAtYsKeRR3oh4KmsoiwacaIOYih0q3Q4S2XJot
-         Rh9tUkshpVLd3ExzQI4BjDvEVZWmy7a/nDatruvuYcc5pHLgQc9JOTgIvwoQoxTtq6dP
-         ir4Y2gNz9ehGx53Ofce+QBR/ULw0y1QYrlKI9tDFT9gg7+aA9tpvAa3UjtdghkEBOiXF
-         ldOA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9YkoWBif9GTfBcV5t7ZAk/OSPRFBkn8YueSErk2UC1i1sv+GNfljRiWVJI+TtmbDdHX/BRRBW8oGe@vger.kernel.org, AJvYcCXHMEpBT7rBMI/uAO/9dwOlfjVh/Ypaf9+Xdb4CQFOjAMaS0Ubm8hCUz2kKWYI6Ff3kbzahC5Y0fa/l+TcM@vger.kernel.org, AJvYcCXM0afpXGUmhICT0DuK7bhe0GNEUuyNEmgDwfCFTmDvsANejPM0W5zkIBcAm7fre4D43PkvFlwZaZdYATMF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc5BIjiGD2SnclvtEoruDbfViQVcH1IY5h//vMrYlewnW6b/vI
-	X7uaRTePvrblI1g7Zmve3hOdFBx3AjsYg9fJ2mAdBBmvCLg+g/sUjOSP/Jcuc2PBrHfQSOGm9pf
-	mCEm+nskbWfDpTuMNVrk8ymqMNmM=
-X-Google-Smtp-Source: AGHT+IHyH38WiVX8HHUwc+OFQWovZwKbJEqW/O3u3XocYkPNvtQCAvFmTdZx0nP6F2Y0oSa7jC6KgiPT019755iLMPg=
-X-Received: by 2002:a2e:be9e:0:b0:2f7:6e3a:7c1d with SMTP id
- 38308e7fff4ca-2fae1044cf5mr8284241fa.15.1727817036745; Tue, 01 Oct 2024
- 14:10:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727817024; x=1728421824;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1tfyFcihlETFm+A5IfYHL8hOTS2f/ye7cbla1LxQlUE=;
+        b=qNN1tbcQOqOp9v0xE7HVt5kXpl5yAMpXWYHpWnIZKW7jpG9QK6z1Zq8Qc0yceIP91E
+         gNT2KsrEBwn7YzNJpB58cFNswFbMqQWTIhXPXNFYOiSV73YIiq+MBCGr6ePDHUbXKz/N
+         eZB3lct8k2/LMKVdKM/k4XX1pPTWtntx8Ap11jjktiXJjxtKY4FXrxAmUI+dWHUZMz5E
+         WasSNPIsxJEJCbXISwD3lX8JKW9cIo34h232lBNSe3SeNFZ7FfCmlRnpZEcOhuvZlrrc
+         FkzmotaJWweenffCqzRnCPJpCXD+mMhXVezCRvzPFh73F2OC8BCz0fbhmFUHYV43FM9u
+         RLgg==
+X-Forwarded-Encrypted: i=1; AJvYcCU9qQZq4VF0nvvh3uKhagYY18Y5HAKyVRC5MZcy2DjWih2+g2ag+Xi9GmwkWP1fVE+M0bBXrkX590FxJ6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGIh8cL03EDgliWaY2FlV2Fb5TWoSFkXgGx4jxXf7uGE3xZi+J
+	vmGp2DIz2ljIdl1g2EuairNPlqT14svQhcrMVeUxzPysQJukoujJAe7MGKCT0yUZHumPMkKsC1H
+	xzoIWnrRHbM+C/P/ypz9SM4Q81VrnAgNnkeSFjQjp/FASk2f5sWmgi58=
+X-Google-Smtp-Source: AGHT+IFm+0J0m41FowfwABd+pWgbZj8AwcCdjzF9XJ0IfhchAuItRobPcem8ndtBUYdISaCedRt4X2wd073kda9IJXKumtqB8Shj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0a3b09db-23e8-4a06-85f8-a0d7bbc3228b@meta.com>
- <87plotvuo1.fsf@gentoo.org> <CAMgjq7A3uRcr5VzPYo-hvM91fT+01tB-D3HPvk6_wcx3pq+m+Q@mail.gmail.com>
- <87y13dtaih.fsf@gentoo.org> <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
-In-Reply-To: <0bdce668-5711-4315-ab05-1a3492cb8bf6@kernel.dk>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 2 Oct 2024 05:10:20 +0800
-Message-ID: <CAMgjq7DMWGyXDdf86tkZ=1N6CnFQza4xzRhZXcw1j1WQXWBn=g@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Sam James <sam@gentoo.org>, Greg KH <gregkh@linuxfoundation.org>, stable@kernel.org, 
-	clm@meta.com, Matthew Wilcox <willy@infradead.org>, ct@flyingcircus.io, david@fromorbit.com, 
-	dqminh@cloudflare.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	regressions@leemhuis.info, regressions@lists.linux.dev, 
-	torvalds@linux-foundation.org
+X-Received: by 2002:a92:c24e:0:b0:3a1:a26e:81a with SMTP id
+ e9e14a558f8ab-3a36591ae72mr10485125ab.7.1727817024716; Tue, 01 Oct 2024
+ 14:10:24 -0700 (PDT)
+Date: Tue, 01 Oct 2024 14:10:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <66fc6540.050a0220.f28ec.04d2.GAE@google.com>
+Subject: [syzbot] [v9fs?] WARNING in legacy_get_tree
+From: syzbot <syzbot+03231aee4187c1602cba@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, lucho@ionkov.net, syzkaller-bugs@googlegroups.com, 
+	v9fs@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 10:58=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote=
-:
->
-> On 9/27/24 8:51 AM, Sam James wrote:
-> > Kairui Song <ryncsn@gmail.com> writes:
-> >
-> >> On Wed, Sep 25, 2024 at 1:16?AM Sam James <sam@gentoo.org> wrote:
-> >>>
-> >>> Kairui, could you send them to the stable ML to be queued if Willy is
-> >>> fine with it?
-> >>>
-> >>
-> >> Hi Sam,
-> >
-> > Hi Kairui,
-> >
-> >>
-> >> Thanks for adding me to the discussion.
-> >>
-> >> Yes I'd like to, just not sure if people are still testing and
-> >> checking the commits.
-> >>
-> >> And I haven't sent seperate fix just for stable fix before, so can
-> >> anyone teach me, should I send only two patches for a minimal change,
-> >> or send a whole series (with some minor clean up patch as dependency)
-> >> for minimal conflicts? Or the stable team can just pick these up?
-> >
-> > Please see https://www.kernel.org/doc/html/v6.11/process/stable-kernel-=
-rules.html.
-> >
-> > If Option 2 can't work (because of conflicts), please follow Option 3
-> > (https://www.kernel.org/doc/html/v6.11/process/stable-kernel-rules.html=
-#option-3).
-> >
-> > Just explain the background and link to this thread in a cover letter
-> > and mention it's your first time. Greg didn't bite me when I fumbled my
-> > way around it :)y
-> >
-> > (greg, please correct me if I'm talking rubbish)
->
-> It needs two cherry picks, one of them won't pick cleanly. So I suggest
-> whoever submits this to stable does:
->
-> 1) Cherry pick the two commits, fixup the simple issue with one of them.
->    I forget what it was since it's been a week and a half since I did
->    it, but it's trivial to fixup.
->
->    Don't forget to add the "commit XXX upstream" to the commit message.
->
-> 2) Test that it compiles and boots and send an email to
->    stable@vger.kernel.org with the patches attached and CC the folks in
->    this thread, to help spot if there are mistakes.
->
-> and that should be it. Worst case, we'll need a few different patches
-> since this affects anything back to 5.19, and each currently maintained
-> stable kernel version will need it.
->
+Hello,
 
-Hi Sam, Jens,
+syzbot found the following issue on:
 
-Thanks very much, currently maintained upstream kernels are
-6.10, 6.6, 6.1, 5.15, 5.10, 5.4, 4.19.
+HEAD commit:    e477dba5442c Merge tag 'for-6.12/dm-changes' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f77a80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35e823d88dbbbfe5
+dashboard link: https://syzkaller.appspot.com/bug?extid=03231aee4187c1602cba
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-I think only 6.6 and 6.1 need backport, I've sent a fix for these two,
-it's three checkpicks from the one 6.10 series so the conflict is
-minimal. The stable series can be applied without conflict for both.
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e477dba5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b9ec64056ebb/vmlinux-e477dba5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/87b5c9bcdaed/bzImage-e477dba5.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+03231aee4187c1602cba@syzkaller.appspotmail.com
+
+kmem_cache of name '9p-fcall-cache' already exists
+WARNING: CPU: 2 PID: 14626 at mm/slab_common.c:107 kmem_cache_sanity_check mm/slab_common.c:107 [inline]
+WARNING: CPU: 2 PID: 14626 at mm/slab_common.c:107 __kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
+Modules linked in:
+CPU: 2 UID: 0 PID: 14626 Comm: syz.1.2250 Not tainted 6.11.0-syzkaller-11624-ge477dba5442c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
+RIP: 0010:__kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
+Code: 98 48 3d d0 b7 f1 8d 74 25 48 8b 7b 60 48 89 ee e8 b5 06 33 09 85 c0 75 e0 90 48 c7 c7 30 f7 57 8d 48 89 ee e8 b1 cc 7e ff 90 <0f> 0b 90 90 be 20 00 00 00 48 89 ef e8 3f 08 33 09 48 85 c0 0f 85
+RSP: 0018:ffffc90002b0f8f0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888049cdb540 RCX: ffffc9002363b000
+RDX: 0000000000040000 RSI: ffffffff814dc916 RDI: 0000000000000001
+RBP: ffffffff8ca1d8e0 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000020018 R14: ffffc90002b0f9e0 R15: 0000000000020018
+FS:  0000000000000000(0000) GS:ffff88802b600000(0063) knlGS:00000000f5716b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000f73dbc38 CR3: 0000000000282000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000000047d
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1800
+ do_new_mount fs/namespace.c:3507 [inline]
+ path_mount+0x6e1/0x1f10 fs/namespace.c:3834
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf742e579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f571656c EFLAGS: 00000296 ORIG_RAX: 0000000000000015
+CPU: 2 UID: 0 PID: 14626 Comm: syz.1.2250 Not tainted 6.11.0-syzkaller-11624-ge477dba5442c #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+ <TASK>
+ check_panic_on_warn+0xab/0xb0 kernel/panic.c:243
+ __warn+0xf6/0x3d0 kernel/panic.c:748
+ __report_bug lib/bug.c:199 [inline]
+ report_bug+0x3c0/0x580 lib/bug.c:219
+ handle_bug+0x54/0xa0 arch/x86/kernel/traps.c:285
+ exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
+ asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+RIP: 0010:kmem_cache_sanity_check mm/slab_common.c:107 [inline]
+RIP: 0010:__kmem_cache_create_args+0xb0/0x3c0 mm/slab_common.c:294
+Code: 98 48 3d d0 b7 f1 8d 74 25 48 8b 7b 60 48 89 ee e8 b5 06 33 09 85 c0 75 e0 90 48 c7 c7 30 f7 57 8d 48 89 ee e8 b1 cc 7e ff 90 <0f> 0b 90 90 be 20 00 00 00 48 89 ef e8 3f 08 33 09 48 85 c0 0f 85
+RSP: 0018:ffffc90002b0f8f0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888049cdb540 RCX: ffffc9002363b000
+RDX: 0000000000040000 RSI: ffffffff814dc916 RDI: 0000000000000001
+RBP: ffffffff8ca1d8e0 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000020018 R14: ffffc90002b0f9e0 R15: 0000000000020018
+ kmem_cache_create_usercopy include/linux/slab.h:361 [inline]
+ p9_client_create+0xe04/0x1150 net/9p/client.c:1042
+ v9fs_session_init+0x1f8/0x1a80 fs/9p/v9fs.c:410
+ v9fs_mount+0xc6/0xa50 fs/9p/vfs_super.c:122
+ legacy_get_tree+0x109/0x220 fs/fs_context.c:662
+ vfs_get_tree+0x8f/0x380 fs/super.c:1800
+ do_new_mount fs/namespace.c:3507 [inline]
+ path_mount+0x6e1/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount fs/namespace.c:4032 [inline]
+ __ia32_sys_mount+0x292/0x310 fs/namespace.c:4032
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf742e579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RSP: 002b:00000000f571656c EFLAGS: 00000296 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 00000000200001c0 RCX: 0000000020000480
+RDX: 00000000200004c0 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
