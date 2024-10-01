@@ -1,185 +1,158 @@
-Return-Path: <linux-kernel+bounces-346067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-346068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECD898BF14
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF14598BF1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 16:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9737A1F22376
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FDBE2843BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 14:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D031C68A5;
-	Tue,  1 Oct 2024 14:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662121C6F54;
+	Tue,  1 Oct 2024 14:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lPRuRoV2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSeHzJQ7"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CBB2A1D2
-	for <linux-kernel@vger.kernel.org>; Tue,  1 Oct 2024 14:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6E01C6899;
+	Tue,  1 Oct 2024 14:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727791741; cv=none; b=HE+olmda41OCojb5cxGCwuKSnte5g4l3+mD8A6XuJJ6zUIluqWiD9G1vF5uQozbkiLCji3KHiSYVqUNiVe1In55qcsWwOFpKL1RSwadjdzUQV4jvq+2RR51I6DMRA0RotkWREBznJDsP5BoPlEJKAVjdVEs/HTPCIFa3D+Ujs00=
+	t=1727791779; cv=none; b=W278OPvrG2BlnH+nBXNaHI1xvHV0DfKyn4vQKp+X7uBan3AXRfkj2c21tCVcGjbBExSBQIfQKAj9tA9TGMrK6nsQVmQw37qHjGtM95Xvnrwx4zfc3P9+Tmw96I53HRhKmphPNDF4N/WVPlmMMgi+gakjC5ugvOggSVJarUZIFjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727791741; c=relaxed/simple;
-	bh=6EPCaFAuMzqTqe5Vt5IbJBvDuX/iDueGxt36SNd14wM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YmGx6+arLp0zV4U1YCnAtGvhDc3oKYi5PwJQ0ITTj5mdA3RttHI1Sd/ZVLiR69boXbcU6YaIdVPdEr4RAYbfqhm6JJgMo9uSF2gzFYYJGKW7tgo1LSN+GuthTSPRsEs76eObDhP1VXrCluN0B7KHoJz26HvTAniGx3eLk2DvwUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lPRuRoV2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491AqPIm000675;
-	Tue, 1 Oct 2024 14:08:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=8VlSY6iKsLVApkVuyQXp2M9m3ap
-	zchCe2fKoIeySkWc=; b=lPRuRoV2ILrcvgVN065LcUM7AEv9fUhGR1Z0ootDhvo
-	jF65WxTm1wR1vi4ZYVbJ45D3wlhZCixi75MyHIElB1P0hk27jzwBRFgaHKAZUq39
-	kSRLoaPrdVklhVQQgNHw74hiPVKmUI+NNQVgEai4Yc+yJOg9E3TFgxWKX/BnxS4Z
-	1w3l1EVJMg0hvXKJNZ8BMwZHFmWNcNxECtHNrvDxO6mk8/9iWdueoVEk5lI6Mljn
-	uzYKRmoGrMybtuwo3VMzH7UKB0brM/j0TO4A5ktx9D7V934kBjW34NxnF7h3L6Kk
-	rUSWq9lJC9mmFS31qWf6YMfdXBAei/hTnfxqE0hGZ0A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420fq4s29b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 14:08:49 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 491E4G3D026696;
-	Tue, 1 Oct 2024 14:08:48 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420fq4s295-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 14:08:48 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491CTuAC007957;
-	Tue, 1 Oct 2024 14:08:47 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxvxbh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 14:08:47 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491E8j6M55836988
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 14:08:45 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A78020043;
-	Tue,  1 Oct 2024 14:08:45 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B390C20040;
-	Tue,  1 Oct 2024 14:08:42 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.39.29.138])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue,  1 Oct 2024 14:08:42 +0000 (GMT)
-Date: Tue, 1 Oct 2024 19:38:40 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        luis.machado@arm.com
-Subject: Re: sched/fair: Kernel panics in pick_next_entity
-Message-ID: <ZvwCaKkgb2F6pzLP@linux.ibm.com>
-References: <ZvVWq3WM6zVza_mD@linux.ibm.com>
- <20240930144157.GH5594@noisy.programming.kicks-ass.net>
- <Zvr2bLBEYyu1gtNz@linux.ibm.com>
- <Zvr4wJ9YJRzWrbEF@linux.ibm.com>
- <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
+	s=arc-20240116; t=1727791779; c=relaxed/simple;
+	bh=l5vbDexJZYLqVrio8XqYUZt5qR95Y/YOl/YKwAIZBB4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fYGrQ9vlMqErr++j3y7bfQKMxEOyoIEh0GBP4F5MyUVe4p1IEygdrXpg57ZsQ3FU+Pl9KsR6a6BALWw4CwCqcnuThKSyV7ol0RwMhe0vSnU70U17BFFJ///6ARDF0SrdSEIMykAa5yH90EtlS+c/SyAAwWwjp7JfJW4rvKz5Yiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SSeHzJQ7; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fad6de2590so21791641fa.0;
+        Tue, 01 Oct 2024 07:09:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727791776; x=1728396576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I0BW3zJMCDVDC+cJUw8LxvuLNWN0y0JnmO2i0aX9BIo=;
+        b=SSeHzJQ73Uon5tZxiok6q7t+s+n7V4YA4dGERWs8vaZoIQzECAaTK+YBF3sdLEXh+m
+         GyCxX0MNxhiRCXP2g/rr958C4oS1DNDaRaHWa4Pk2vNU+d3Y95J4qpLycaSN7QjjD8vh
+         ycEVsOdkpQqVZi9QasRlfzZWgnZojAO2vDSYuQ1AvvwbdW5fO2y0Ia+YmHJnkL8PY+Ws
+         m0Sr5zhkRsYdcdTBaWdSu60cMDpDUpHRMIj8hgYgSsheCBLsjMJEm0S3ytYr3x8zjD6b
+         YDSLLJB34cveERHypt3Niyq9GEoLaDq7cmLEwhdOrcH8057L/XK+VpnOMvY+wwQBa80U
+         zy7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727791776; x=1728396576;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I0BW3zJMCDVDC+cJUw8LxvuLNWN0y0JnmO2i0aX9BIo=;
+        b=ekOTv6A7DVJhn7jszg4Lere4uIXUMomf0WZ15uSs++14hjS8s5pK6hXJLymrWRKv91
+         Tfv0ZTnNgPgZH7rtfySRB1APD+iSm/XvQNTwgmkIUBVb64CO/pDCoucSjstiBow3u1li
+         gSM6Yqyj40PQC29+FUdWL9XQx+UbswhMC6Fv5ot150iJFY2xqvS6/L6CxdG1Dyip6iGI
+         LcFLGP3hDXRBI1hlrzJNJO891tR9mq6Y791pLYI9fJ0SQ8cBAvBnNJ3aAeViBPCUKfIn
+         RAS0jjqJyVY1fqBrkXtgyhZ3jFCOT+zi2n8csQrBlBXUzcqK8j3HQeXkbTCwR+mOYKNA
+         7Jwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDb1tZzS5QIZzxxewz5+H6ZXPwM05Y6a7gVBvHvXC2fYX/J6XFkmls3DKy04uHNaBMAhMMwGa1EKvAu6Q=@vger.kernel.org, AJvYcCVPoAHwhl0iDL/ZOG4mDJe+az+RqGI/oX/5qHNrymSx8JNSs4JpUAwEMMnbncdyfLNifk+c0JojfktdX9nHeJIE+gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJ8kFhYJK5P8Y4WWxTrJ3pIplG/KQ9tYak595t4sfzEP7IGoPw
+	sk9p+3E7Qkisf9MxQXhB1872kcmbsULZIXqXnJLbwtt+rbS/EWaA
+X-Google-Smtp-Source: AGHT+IHwbbG6VS0fm1tK/JbSvEZnLxASPFRvME3znuWgdG/Hr1XTtDe5jS0vm/SgkTwJsSCXAWAiMg==
+X-Received: by 2002:a05:6512:ba3:b0:539:8fcd:520 with SMTP id 2adb3069b0e04-5398fcd0637mr7124871e87.36.1727791775606;
+        Tue, 01 Oct 2024 07:09:35 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c2776de0sm723532966b.2.2024.10.01.07.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Oct 2024 07:09:35 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 00/17] media: platform: rzg2l-cru: CSI-2 and CRU enhancements
+Date: Tue,  1 Oct 2024 15:09:02 +0100
+Message-ID: <20241001140919.206139-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <55a2acefffb8c99e4234bd18656a75625447c2d0.camel@gmx.de>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jHAGQj8LJI6GOPC-5PFjrGxjXIPmslPf
-X-Proofpoint-GUID: 4OKfyh3Bato2NMtBRqg0AlBvzRwU3SHB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_10,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- suspectscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=581 clxscore=1015 mlxscore=0 priorityscore=1501 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010089
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 01, 2024 at 10:30:26AM +0200, Mike Galbraith wrote:
-> On Tue, 2024-10-01 at 00:45 +0530, Vishal Chourasia wrote:
-> > >
-> > for sanity, I ran the workload (kernel compilation) on the base commit
-> > where the kernel panic was initially observed, which resulted in a
-> > kernel panic, along with it couple of warnings where also printed on the
-> > console, and a circular locking dependency warning with it.
-> >
-> > Kernel 6.11.0-kp-base-10547-g684a64bf32b6 on an ppc64le
-> >
-> > ------------[ cut here ]------------
-> >
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > 6.11.0-kp-base-10547-g684a64bf32b6 #69 Not tainted
-> > ------------------------------------------------------
-> 
-> ...
-> 
-> > --- interrupt: 900
-> > se->sched_delayed
-> > WARNING: CPU: 1 PID: 27867 at kernel/sched/fair.c:6062 unthrottle_cfs_rq+0x644/0x660
-> 
-> ...that warning also spells eventual doom for the box, here it does
-> anyway, running LTPs cfs_bandwidth01 testcase and hackbench together,
-> box grinds to a halt in pretty short order.
-> 
-> With the patchlet below (submitted), I can beat on box to my hearts
-> content without meeting throttle/unthrottle woes.
-> 
-> sched: Fix sched_delayed vs cfs_bandwidth
-> 
-> Meeting an unfinished DELAY_DEQUEUE treated entity in unthrottle_cfs_rq()
-> leads to a couple terminal scenarios.  Finish it first, so ENQUEUE_WAKEUP
-> can proceed as it would have sans DELAY_DEQUEUE treatment.
-> 
-> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Tested-by: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
-> Signed-off-by: Mike Galbraith <efault@gmx.de>
-Hello Mike, Thank you the patch!
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-With the below changes, I don't see any warnings been printed on the
-console, along with it, there were no kernel panics
+Hi All,
 
-Tested-by: Vishal Chourasia <vishalc@linux.ibm.com>
-> ---
->  kernel/sched/fair.c |    9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -6058,10 +6058,13 @@ void unthrottle_cfs_rq(struct cfs_rq *cf
->  	for_each_sched_entity(se) {
->  		struct cfs_rq *qcfs_rq = cfs_rq_of(se);
-> 
-> -		if (se->on_rq) {
-> -			SCHED_WARN_ON(se->sched_delayed);
-> +		/* Handle any unfinished DELAY_DEQUEUE business first. */
-> +		if (se->sched_delayed) {
-> +			int flags = DEQUEUE_SLEEP | DEQUEUE_DELAYED;
-> +
-> +			dequeue_entity(qcfs_rq, se, flags);
-> +		} else if (se->on_rq)
->  			break;
-> -		}
->  		enqueue_entity(qcfs_rq, se, ENQUEUE_WAKEUP);
-> 
->  		if (cfs_rq_is_idle(group_cfs_rq(se)))
-> 
+This patch series aims to add the below:
+- Retrieve virtual channel from remote subdev
+- Support to capture 8bit Bayer formats.
+
+v2->v3
+- Added MUST_CONNECT flag for source pads
+- Used ARRAY_SIZE() instead of NR_OF_RZG2L_CSI2_PAD
+- Implemented rzg2l_cru_ip_format_to_fmt() and rzg2l_cru_ip_index_to_fmt()
+- Dropped checking fmt in rzg2l_cru_initialize_image_conv()
+- Dropped fse->index checks
+- Implemented link_validate for video node
+- Re-used rzg2l_cru_ip_format_to_fmt() to fetch icndmr details
+- Moved register definitions to separate header file
+- Updated subject lines and commit messages
+- Collected RB tag
+
+v1->v2
+- Fixed retrieving VC from subdev
+- Fixed review comments pointed by Laurent
+  * Refactored supported CRU formats
+  * Added MUST_CONNECT flag wherever required
+  * Dropped `channel` member from `struct
+
+v1:
+Link: https://lore.kernel.org/all/20240906173947.282402-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (17):
+  media: rzg2l-cru: Use RZG2L_CRU_IP_SINK/SOURCE enum entries
+  media: rzg2l-cru: Mark sink and source pad with MUST_CONNECT flag
+  media: rzg2l-cru: csi2: Mark sink and source pad with MUST_CONNECT
+    flag
+  media: rzg2l-cru: csi2: Use ARRAY_SIZE() in media_entity_pads_init()
+  media: rzg2l-cru: csi2: Implement .get_frame_desc()
+  media: rzg2l-cru: Retrieve virtual channel information
+  media: rzg2l-cru: Remove `channel` member from `struct rzg2l_cru_csi`
+  media: rzg2l-cru: Use MIPI CSI-2 data types for ICnMC_INF definitions
+  media: rzg2l-cru: Remove unused fields from rzg2l_cru_ip_format struct
+  media: rzg2l-cru: Simplify handling of supported formats
+  media: rzg2l-cru: Use `rzg2l_cru_ip_formats` array in enum_frame_size
+  media: rzg2l-cru: csi2: Remove unused field from rzg2l_csi2_format
+  media: rzg2l-cru: video: Implement .link_validate() callback
+  media: rzg2l-cru: csi2: Use rzg2l_csi2_formats array in
+    enum_frame_size
+  media: rzg2l-cru: Refactor ICnDMR register configuration
+  media: rzg2l-cru: Add support to capture 8bit raw sRGB
+  media: rzg2l-cru: Move register definitions to a separate file
+
+ .../platform/renesas/rzg2l-cru/rzg2l-core.c   |   3 +-
+ .../renesas/rzg2l-cru/rzg2l-cru-regs.h        |  79 +++++
+ .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  30 +-
+ .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   |  39 ++-
+ .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  79 ++++-
+ .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 289 ++++++++----------
+ 6 files changed, 325 insertions(+), 194 deletions(-)
+ create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
+
+-- 
+2.43.0
+
 
