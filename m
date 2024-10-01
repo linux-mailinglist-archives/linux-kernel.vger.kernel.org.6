@@ -1,142 +1,125 @@
-Return-Path: <linux-kernel+bounces-345767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-345777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C7998BAD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:18:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5982D98BB07
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 13:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21217281717
-	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:18:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1BD6B21A70
+	for <lists+linux-kernel@lfdr.de>; Tue,  1 Oct 2024 11:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9195A1BF339;
-	Tue,  1 Oct 2024 11:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FCD1BFDF0;
+	Tue,  1 Oct 2024 11:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLyWhz/t"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="To/dlGCm";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="hr25LAVC"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7064839B;
-	Tue,  1 Oct 2024 11:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266C21BE844;
+	Tue,  1 Oct 2024 11:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727781504; cv=none; b=WZE68SIELF7d/ddtj0J1NQzipbnNOzMfi4+DduyHe2gqdf8KPYBd/qiZyS0WytBZCDsLr5OZOmsZkls3NH6H00Z03zV8YPobAQvj0WYg3WMOvn6kxi+J9RGaalz8hNS03L1gA6A+UdJVK5FxoII+csqkroBhK2VsSFe7xZA+i8M=
+	t=1727782097; cv=none; b=K9EB/DOxx3Qqn3x3IE3NBf8GmdR4uINNpYMv6tgNDMfqBRRtEP8NI5zeg0TS10lgECNwCVwdypPF+jEezyQmZQL22XVZvwjaLzCZjiZOQNGJ9EKVzq5jLhgwWdRcBhXPei0RXpCkxzjSuBmxiW/vSXXz8meFIUHlWkXq7cLXL3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727781504; c=relaxed/simple;
-	bh=Mioa/5LJHiFVwRnLUJ3TyjnE9QgsmBQmcNPMZ83ReDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dYbu4PbcoANcRgaaAkdbVNfNW0jddtPhYZlnXbRbSnS1ztnyNzwedm4gSQz8CRlTmYQYk5Dhq6BZmoREY3AH88XEmHf6TSd+362gZ7QFllTQWRwdahPVqxY9HtxUS5vkuhnq2Wrz7pG6iLdfszIbA+xjqD3lLkao9Juz62GCmT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dLyWhz/t; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d51a7d6f5so712492966b.2;
-        Tue, 01 Oct 2024 04:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727781501; x=1728386301; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=M7Y+01ypUJsEmgwdYhnhTchynt4rwwmYzwYQjNI7xpM=;
-        b=dLyWhz/tj+yNwNDWEkh+QTvIVHtXfw6ZbQ2a/OTnAOpgBPKpQ/MYoYiRPZm7SFXfi9
-         4WGOhibVSpL5kBoVqyKQiAKCLG0Hx1awz62WT1p4KOOlx4SVkSex7yKPpyXJsgPJDBzr
-         ZB8hbVQZU7pArkofuHAO/np0xmpbv52bQ5Mj+0wy1ftOJTuFAMzGvUj6EGOzkbnOJOnT
-         De2YFrqyFeu9Uce5p5cZm/1BZBHuNUHr1uVe6tzEuU0N/1lEFzJxc81tDblDF7s28QX/
-         shqG1F2/76QZcySBGiCxFsJESUh/Ea/ITqElTT0oRAUB+3khcGD0sOfwXDeN3I6HfcmP
-         MY4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727781501; x=1728386301;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M7Y+01ypUJsEmgwdYhnhTchynt4rwwmYzwYQjNI7xpM=;
-        b=vGjXtdhPMsE4QWeEHop4Q2vaqN/s9sWAO8PaG+rkLR2Ax77WIY34LmszaPuX0JUA77
-         tM9Pgj5KFS6+ykpRw+UY4aVs/S8wJqeQczCaM7/Zu0gm89rkfd+KQHSRAfZl9v245bUz
-         EJpjBbAn2+mdJaLsW9du/I4jv54XkblASz10rpKLQ3eOBvvKVxzdCZAAOtCy325nRwlA
-         xH/AyWBMLQtniaEvvP4u16WyUS7/InnmmtYgVyvgbGrSpdBJ/S7h0G+c5VWRzcMxEo32
-         xtYRJLn5vFIrlRXhHjG0bqbYLB79ongzPY45SrUVH4TJhhC3UibWI4QTE/Lkhg/atKNz
-         W5Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCVy1WHc3QC+egrkHWANx77YalQ+keIUIf8kf9eIUbzt1gqdi6xHlRO9U7b5WnEV7M8ZcSBR9ptD2v0=@vger.kernel.org, AJvYcCWRM5hJWyXTEzQsRkkmWR6xoTb9U91kQvVD6g1P8vnchfCe37JidNuZOfD0wyzS/h/SlTMFo8cA2cYE2SNz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6p713iawBVutnQHebSmhqjPiuDNyr0pDqQ3z/QYkORb1kQzA5
-	dQWC/F+lNzYyls9J99/nKCVFSADudz8/MHTY/s3YnmqlEGgGzeed
-X-Google-Smtp-Source: AGHT+IEjf7kjW+MgxUTDGHSJNPDYgDC2pVN3zKWGsYHhpG6QGdF/JkSRWRkTQCML9v/lBAseCkcp7g==
-X-Received: by 2002:a17:907:ea7:b0:a8a:8c92:1c76 with SMTP id a640c23a62f3a-a93c4961721mr1478843866b.36.1727781500535;
-        Tue, 01 Oct 2024 04:18:20 -0700 (PDT)
-Received: from [192.168.1.17] (host-79-12-161-203.retail.telecomitalia.it. [79.12.161.203])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a93c27ecf90sm694400766b.97.2024.10.01.04.18.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Oct 2024 04:18:20 -0700 (PDT)
-Message-ID: <0aab9845-b960-477f-b869-e8d0759c4671@gmail.com>
-Date: Tue, 1 Oct 2024 13:18:18 +0200
+	s=arc-20240116; t=1727782097; c=relaxed/simple;
+	bh=bDoNHdGMvOldNnAHOPFZPgGm8ZvgR8+T8X8OFve4coA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gL7C/w2DK1Ye5wFXXuB1Gegzq9sY7sLO7zyuGGPKeIxvaUwPyAUeomkwV0ttYPJbtUoqdnfO8Pk/9nyAaznIzGM94o6/W0lUsLK4y1PhbmNTCFJ8ag3kKwNPo6QIII+RVj1Hf3i6aJ7LdE9yZQXc4k2LpXo4/OZd+E53TRomMy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=To/dlGCm; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=hr25LAVC; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 4EC53E0005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1727781537; bh=4WKPhPCzv0PRccHj8E3gU/C6ldhuqZJP/djUeDytt50=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=To/dlGCmRo5I2ueWSJ1TlL1+Q02GxxSMMkKXGbO+DPWVhwfzSKv+pJUJTrzL7ZC87
+	 MqOgXJwRhSlORRv9IuoIJWAQUOkPlTmFaHMFi7Ep4Ym+qF9PpwmU5eYIkPxfcy64wM
+	 l3CS+0jWxjrMlBYtydD8yktCUmH0FRUVhONP+am3OfpaEELrjvuBJmtWaPXffoiISR
+	 bYIkcKTXxO3dLvwt6D4Y0Xr4W8o7q/x2XAT3LpWCPsc69tOW/hT1uYr/BdZ/03bh5v
+	 /+9LcVVxNlZogPK6xKxQMZIRDh6LNuKo+DMOBgNY9Ad94x+KrbGsOBQ6Ti9qkVemAL
+	 /5K8tYKFSpObg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1727781537; bh=4WKPhPCzv0PRccHj8E3gU/C6ldhuqZJP/djUeDytt50=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=hr25LAVCZr/c5S3a4NzhxQBomrO88Gb5mSCc93zY402/hJDBrRJoulcayiknUmXfT
+	 Ap4dDgyvUfGNNM04JCJzt8fdJAXMvAuALFU3POv/ABS5Us6Ig9D1gd3obH9tDKOeaA
+	 AP+rw9MXvT06m4FPJovaOxl1CzryKYPzv2QILz++VOa1yOBuNJD+3bYwkAXASwPcjI
+	 Bb4bsTCycBI9YjByWKTzx0woKhnv+EWc78/O5hofT7uQPt8/HpVDA+/VnffYZKJ3V6
+	 IirP+PoPBsNCGs3Fr5dutuYNHnXJt6QpPM11+LsegTA5kxQsw4z26HJfYSHAkVtoUW
+	 6FcdqDUfqYIpA==
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+To: <netdev@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+	<linux@yadro.com>
+Subject: [PATCH net] net: Fix an unsafe loop on the list
+Date: Tue, 1 Oct 2024 14:18:40 +0300
+Message-ID: <20241001111840.24810-1-a.kovaleva@yadro.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/11] Documentation: document adreno preemption
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20240926-preemption-a750-t-v6-0-7b6e1ef3648f@gmail.com>
- <20240926-preemption-a750-t-v6-11-7b6e1ef3648f@gmail.com>
- <ZvtMB14Yx5m3TzFJ@archie.me>
-Content-Language: en-US
-From: Antonino Maniscalco <antomani103@gmail.com>
-In-Reply-To: <ZvtMB14Yx5m3TzFJ@archie.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: T-EXCH-08.corp.yadro.com (172.17.11.58) To
+ T-EXCH-09.corp.yadro.com (172.17.11.59)
 
-On 10/1/24 3:10 AM, Bagas Sanjaya wrote:
-> On Thu, Sep 26, 2024 at 11:16:53PM +0200, Antonino Maniscalco wrote:
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +:orphan:
-> 
-> Why don't this be added to toctree in Documentation/gpu/index.rst?
+The kernel may crash when deleting a genetlink family if there are still
+listeners for that family:
+_______________________________________________________________________
+Oops: Kernel access of bad area, sig: 11 [#1]
+  ...
+  NIP [c000000000c080bc] netlink_update_socket_mc+0x3c/0xc0
+  LR [c000000000c0f764] __netlink_clear_multicast_users+0x74/0xc0
+  Call Trace:
+__netlink_clear_multicast_users+0x74/0xc0
+genl_unregister_family+0xd4/0x2d0
+_______________________________________________________________________
 
-Yes so there is existing orphan documentation for msm so my intention 
-was to add it as orphan then eventually send out a series to organize it 
-properly (so creating an msm directory with an index which then points 
-two files we currently have). Does that sound good to you?
+Change the unsafe loop on the list to a safe one, because inside the
+loop there is an element removal from this list.
 
-> 
->> +
->> +=============
->> +MSM Preemtion
->> +=============
-> s/Preemtion/Preemption/
+Fixes: b8273570f802 ("genetlink: fix netns vs. netlink table locking (2)")
+Signed-off-by: Anastasia Kovaleva <a.kovaleva@yadro.com>
+Reviewed-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
+---
+ include/net/sock.h       | 2 ++
+ net/netlink/af_netlink.c | 3 ++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-Thanks for pointing out the typo!
-
-> 
-> 
->> +This mechanism can be used by the kernel to switch between rings. Whenever a
->> +submission occurs the kernel finds the highest priority ring which isn't empty
->> +and preempts to it if said ring is not the one being currently executed. This is
->> +also done whenever a submission completes to make sure execution resumes on a
->> +lower priority ring when a higher priority ring is done.
-> 
-> Do you mean that the kernel finds highest priority ring possible that is not
-> empty? What if all these 4 rings are empty?
-> 
-> Confused...
-> 
-
-Yep, if all rings are empty we don't preempt, same as when the highest 
-priority ring is the current one.
-
-Best regards,
+diff --git a/include/net/sock.h b/include/net/sock.h
+index c58ca8dd561b..eec77a18602a 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -894,6 +894,8 @@ static inline void sk_add_bind_node(struct sock *sk,
+ 	hlist_for_each_entry_safe(__sk, tmp, list, sk_node)
+ #define sk_for_each_bound(__sk, list) \
+ 	hlist_for_each_entry(__sk, list, sk_bind_node)
++#define sk_for_each_bound_safe(__sk, tmp, list) \
++        hlist_for_each_entry_safe(__sk, tmp, list, sk_bind_node)
+ 
+ /**
+  * sk_for_each_entry_offset_rcu - iterate over a list at a given struct offset
+diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+index 0b7a89db3ab7..0a9287fadb47 100644
+--- a/net/netlink/af_netlink.c
++++ b/net/netlink/af_netlink.c
+@@ -2136,8 +2136,9 @@ void __netlink_clear_multicast_users(struct sock *ksk, unsigned int group)
+ {
+ 	struct sock *sk;
+ 	struct netlink_table *tbl = &nl_table[ksk->sk_protocol];
++	struct hlist_node *tmp;
+ 
+-	sk_for_each_bound(sk, &tbl->mc_list)
++	sk_for_each_bound_safe(sk, tmp, &tbl->mc_list)
+ 		netlink_update_socket_mc(nlk_sk(sk), group, 0);
+ }
+ 
 -- 
-Antonino Maniscalco <antomani103@gmail.com>
+2.40.1
+
 
